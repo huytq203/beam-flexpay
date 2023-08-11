@@ -27,9 +27,7 @@ vite.config.ts.*
 .yarn
 .codiga.yml
 .turbo
-*.env.*
 .gitlab-ci.yml
-.env
 
 openapi-config.js
 turbo.json
