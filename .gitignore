@@ -31,3 +31,5 @@ vite.config.ts.*
 
 openapi-config.js
 turbo.json
+
+.env
