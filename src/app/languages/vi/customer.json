@@ -1,0 +1,9 @@
+{
+  "customer": {
+    "information": "Thông tin chung",
+    "wallet": "Ví điện tử",
+    "banks": "Ngân hàng liên kêt",
+    "transaction": "Giao dịch",
+    "history": "Lịch sử"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "nodata": "Chưa có dữ liệu",
+  "feesByTransactionType": {
+    "title": "Cấu hình phí theo loại giao dịch",
+    "transactionType": "Loại giao dịch",
+    "funds": "Nguồn tiền",
+    "services": "Dịch vụ",
+    "partner": "Đối tác",
+    "collectionAndPaymentPartner": "Đối tác thu hộ - Chi hộ",
+    "affiliateBank": "Ngân hàng liên kết",
+    "chargingMethod": "Cách thức tính phí",
+    "fee": "Phí",
+    "vat": "VAT",
+    "service": "Dịch vụ",
+    "maximumFee": "Phí tối đa",
+    "minimumFee": "Phí tối thiểu",
+    "maximumVat": "VAT tối đa",
+    "minimumVat": "VAT tối thiểu",
+    "amount": "Số tiền",
+    "customers": "Đối tượng khách hàng",
+    "ratings": "Hạng ví"
+  },
+  "internalBalanceWallet": {
+    "walletGroup": "Nhóm ví",
+    "walletGroupName": "Tên nhóm ví",
+    "walletNumber": "Số ví nội bộ",
+    "walletName": "Tên ví nội bộ",
+    "balance": "Số dư",
+    "status": "Trạng thái ví nội bộ"
+  },
+  "internalWallet": {
+    "walletType": "Loại ví",
+    "walletGroup": "Nhóm ví",
+    "walletNumber": "Số ví nội bộ",
+    "walletName": "Tên ví nội bộ"
+  },
+  "transaction": {
+    "transactionType": "Loại giao dịch",
+    "content": "Nội dung giao dịch"
+  },
+  "groups": {
+    "group-type": "Nhóm ví",
+    "wallet-name": "Tên nhóm ví",
+    "wallet-type": "Loại ví",
+    "note": "Ghi chú"
+  },
+  "transactionConfig": {
+    "transactionType": "Loại giao dịch",
+    "content": "Nội dung"
+  }
+}

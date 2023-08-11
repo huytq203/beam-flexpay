@@ -1,0 +1,31 @@
+@for $fs from 0 to 100 {
+  .fs-#{$fs*1} {
+    font-size: $fs * 1px;
+  }
+}
+
+@for $fw from 1 to 10 {
+  .fw-#{$fw*100} {
+    font-weight: $fw * 100;
+  }
+}
+
+.text-right {
+  text-align: end;
+}
+
+.text-left {
+  text-align: start;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.pre-wrap {
+  white-space: pre-line;
+}
+
+.text-through {
+  text-decoration: line-through;
+}

@@ -1,0 +1,18 @@
+{
+  "invoiceQuery": {
+    "id": "Mã truy vấn",
+    "invoiceId": "Mã hóa đơn",
+    "customer": "Khách hàng",
+    "debt": "Dư nợ",
+    "invoiceStatus": "Trạng thái hóa đơn",
+    "note": "Ghi chú",
+    "billCodeNullError": "Vui lòng nhập mã hóa đơn để thực hiện tìm kiếm !!!",
+    "partnerName": "Tên đối tác",
+    "fee": "Phí",
+    "address": "Địa chỉ",
+    "billDetails": "Hóa đơn chi tiết",
+    "period": "Giai đoạn",
+    "paid": "Đã thanh toán",
+    "unpaid": "Chưa thanh toán"
+  }
+}

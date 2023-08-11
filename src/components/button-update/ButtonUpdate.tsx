@@ -1,0 +1,39 @@
+import { useAppSelector } from '@hooks/hook'
+import { Button, ButtonProps, Tooltip } from 'antd'
+import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+import { FaPen } from 'react-icons/fa'
+
+interface CustomButtonProps extends ButtonProps {
+  module: string
+  label?: string
+}
+
+const ButtonUpdate = (props: CustomButtonProps) => {
+  const { module } = props
+
+  const { permissions } = useAppSelector((state) => state.auth.profile)
+  const { t } = useTranslation()
+
+  /**
+   * function get view permission
+   */
+  const isHasPermission = useCallback((): boolean => {
+    const moduleCreate = module + ':update'
+    if (permissions.includes('admin*') || permissions.includes(moduleCreate))
+      return true
+    else return false
+  }, [permissions])
+
+  return !isHasPermission() ? null : (
+    <Tooltip title={t('tooltips.update')}>
+      <Button
+        icon={<FaPen />}
+        hidden={isHasPermission()}
+        {...props}
+      />
+    </Tooltip>
+  )
+}
+
+export default ButtonUpdate

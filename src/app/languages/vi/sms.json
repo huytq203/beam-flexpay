@@ -1,0 +1,9 @@
+{
+  "sms": {
+    "index": "Số thứ tự",
+    "date": "Ngày",
+    "total": "Tổng số tin nhắn trong ngày",
+    "startDate": "Từ ngày",
+    "endDate": "Đến ngày"
+  }
+}

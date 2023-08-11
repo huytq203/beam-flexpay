@@ -1,0 +1,15 @@
+.modal-product {
+    width: 655px !important;
+
+    .checkbox-container {
+        display: flex;
+    }
+
+    .image {
+        img {
+            width: 100px;
+            height: auto;
+            margin-top: 10px;
+        }
+    }
+}

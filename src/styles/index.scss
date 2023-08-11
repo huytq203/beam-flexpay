@@ -1,0 +1,40 @@
+@import '_variables';
+@import '_spacing';
+@import '_helper';
+@import '_layout';
+
+@import 'color';
+// @import 'override';
+@import 'text';
+// @import 'reset';
+
+.card-table {
+  .ant-card .ant-card-body {
+    height: 600px;
+  }
+}
+
+.input-number {
+  min-width: 300px;
+  height: 22px !important;
+}
+
+.input-description {
+  height: 22px !important;
+}
+
+.ant-descriptions-item-content {
+  max-height: 54px;
+}
+
+.ant-descriptions-item {
+  padding: 0px !important;
+}
+
+.mb-16 {
+  margin-bottom: 16px;
+}
+
+.box-shadow {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}

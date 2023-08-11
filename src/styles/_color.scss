@@ -1,0 +1,173 @@
+$primary: #007fff;
+$primary-shade: #0070e0;
+$primary-tint: #1a8cff;
+
+$secondary: #8806ce;
+$secondary-shade: #7805b5;
+$secondary-tint: #941fd3;
+
+$tertiary: #0d98ba;
+$tertiary-shade: #0b86a4;
+$tertiary-tint: #25a2c1;
+
+$success: #32cd32;
+$success-shade: #2cb42c;
+$success-tint: #47d247;
+
+$warning: #e3ff00;
+$warning-shade: #c8e000;
+$warning-tint: #e6ff1a;
+
+$danger: #ff2400;
+$danger-shade: #e02000;
+$danger-tint: #ff3a1a;
+
+$white: #fff;
+
+.color-primary {
+  color: $primary;
+}
+
+.color-secondary {
+  color: $secondary;
+}
+
+.color-tertiary {
+  color: $tertiary;
+}
+
+.color-success {
+  color: $success;
+}
+
+.color-warning {
+  color: $warning;
+}
+
+.color-danger {
+  color: $danger;
+}
+
+.color-white {
+  color: $white;
+}
+
+.color-primary-shade {
+  color: $primary-shade;
+}
+
+.color-secondary-shade {
+  color: $secondary-shade;
+}
+
+.color-tertiary-shade {
+  color: $tertiary-shade;
+}
+
+.color-success-shade {
+  color: $success-shade;
+}
+
+.color-warning-shade {
+  color: $warning-shade;
+}
+
+.color-danger-shade {
+  color: $danger-shade;
+}
+
+.color-primary-tint {
+  color: $primary-tint;
+}
+
+.color-secondary-tint {
+  color: $secondary-tint;
+}
+
+.color-tertiary-tint {
+  color: $tertiary-tint;
+}
+
+.color-success-tint {
+  color: $success-tint;
+}
+
+.color-warning-tint {
+  color: $warning-tint;
+}
+
+.color-danger-tint {
+  color: $danger-tint;
+}
+
+.bg-primary {
+  background: $primary;
+}
+
+.bg-secondary {
+  background: $secondary;
+}
+
+.bg-tertiary {
+  background: $tertiary;
+}
+
+.bg-success {
+  background: $success;
+}
+
+.bg-warning {
+  background: $warning;
+}
+
+.bg-danger {
+  background: $danger;
+}
+
+.bg-primary-shade {
+  background: $primary-shade;
+}
+
+.bg-secondary-shade {
+  background: $secondary-shade;
+}
+
+.bg-tertiary-shade {
+  background: $tertiary-shade;
+}
+
+.bg-success-shade {
+  background: $success-shade;
+}
+
+.bg-warning-shade {
+  background: $warning-shade;
+}
+
+.bg-danger-shade {
+  background: $danger-shade;
+}
+
+.bg-primary-tint {
+  background: $primary-tint;
+}
+
+.bg-secondary-tint {
+  background: $secondary-tint;
+}
+
+.bg-tertiary-tint {
+  background: $tertiary-tint;
+}
+
+.bg-success-tint {
+  background: $success-tint;
+}
+
+.bg-warning-tint {
+  background: $warning-tint;
+}
+
+.bg-danger-tint {
+  background: $danger-tint;
+}

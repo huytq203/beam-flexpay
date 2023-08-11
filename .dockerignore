@@ -1,0 +1,30 @@
+# compiled output
+dist
+
+dependencies
+node_modules
+**/node_modules
+package-lock.json
+**/package-lock.json
+yarn.lock
+
+# tests
+coverage
+
+# git, vs config
+.git
+.husky
+.vscode
+**/.vscode
+
+# docs
+CHANGELOG.md
+README.md
+
+# deploy
+deploy
+
+# lint
+commitlint.config.ts
+.gitignore
+**/.gitignore

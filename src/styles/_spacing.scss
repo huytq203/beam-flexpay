@@ -1,0 +1,117 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@for $x from 0 through 100 {
+  .m-#{$x*1} {
+    margin: $x * 1px;
+  }
+}
+
+@for $x from 0 through 10 {
+  .mx-#{$x*5} {
+    margin-left: $x * 5px;
+    margin-right: $x * 5px;
+  }
+}
+
+@for $x from 0 through 10 {
+  .my-#{$x*5} {
+    margin-top: $x * 5px;
+    margin-bottom: $x * 5px;
+  }
+}
+
+@for $x from 0 through 10 {
+  .mt-#{$x*5} {
+    margin-top: $x * 5px;
+  }
+}
+
+@for $x from 0 through 10 {
+  .mr-#{$x*5} {
+    margin-right: $x * 5px;
+  }
+}
+
+@for $x from 0 through 10 {
+  .mb-#{$x*5} {
+    margin-bottom: $x * 5px;
+  }
+}
+
+@for $x from 0 through 10 {
+  .ml-#{$x*5} {
+    margin-left: $x * 5px;
+  }
+}
+
+// Padding
+@for $x from 0 through 100 {
+  .p-#{$x*1} {
+    padding: $x * 1px;
+  }
+}
+
+@for $x from 0 through 10 {
+  .px-#{$x*5} {
+    padding-left: $x * 5px;
+    padding-right: $x * 5px;
+  }
+}
+
+@for $x from 0 through 10 {
+  .py-#{$x*5} {
+    padding-top: $x * 5px;
+    padding-bottom: $x * 5px;
+  }
+}
+
+@for $x from 0 through 10 {
+  .pt-#{$x*5} {
+    padding-top: $x * 5px;
+  }
+}
+
+@for $x from 0 through 10 {
+  .pr-#{$x*5} {
+    padding-right: $x * 5px;
+  }
+}
+
+@for $x from 0 through 10 {
+  .pb-#{$x*5} {
+    padding-bottom: $x * 5px;
+  }
+}
+
+@for $x from 0 through 10 {
+  .pl-#{$x*5} {
+    padding-left: $x * 5px;
+  }
+}
+
+@for $w from 0 to 1000 {
+  .wx-#{$w*1} {
+    width: $w * 1px;
+  }
+}
+
+@for $h from 0 to 1000 {
+  .hx-#{$h*1} {
+    height: $h * 1px;
+  }
+}
+
+@for $h from 0 to 100 {
+  .hp-#{$h*1} {
+    height: $h * 1%;
+  }
+}
+
+@for $w from 0 to 500 {
+  .mw-#{$w*1} {
+    width: $w * 1px;
+  }
+}

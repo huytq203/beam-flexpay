@@ -1,0 +1,101 @@
+import {
+  EditOutlined,
+  ExclamationCircleOutlined,
+  LogoutOutlined,
+  SettingOutlined
+} from '@ant-design/icons'
+import { GUTTER } from '@constants/appConstant'
+import { useAppDispatch, useAppSelector } from '@hooks/hook'
+import { authService } from '@services/bankSerice'
+import { logout } from '@slices/authSlice'
+import { showPassword, showProfile } from '@utils/events'
+import { Avatar, Col, Dropdown, MenuProps, Modal, Row, Typography } from 'antd'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+
+const { Text } = Typography
+
+export default function NavProfile() {
+  const dispatch = useAppDispatch()
+
+  const { t: trans } = useTranslation()
+
+  const { profile } = useAppSelector((state) => state.auth)
+
+  const items: MenuProps['items'] = [
+    {
+      key: 'editProfile',
+      label: trans('navigation.editProfile'),
+      icon: <EditOutlined />
+    },
+    {
+      label: trans('navigation.changePassword'),
+      icon: <SettingOutlined />,
+      key: 'changePassword'
+    },
+    {
+      type: 'divider'
+    },
+    {
+      label: trans('navigation.logout'),
+      icon: <LogoutOutlined />,
+      key: 'logout'
+    }
+  ]
+
+  const handleMenuClick: MenuProps['onClick'] = (event) => {
+    switch (event.key) {
+      case 'editProfile':
+        showProfile()
+        break
+      case 'changePassword':
+        showPassword()
+        break
+      case 'logout':
+        signOut()
+        break
+    }
+  }
+
+  const menuProps = {
+    items,
+    onClick: handleMenuClick
+  }
+
+  const handleSignout = async () => {
+    dispatch(authService.util.resetApiState())
+    dispatch(logout())
+  }
+
+  const signOut = () => {
+    Modal.confirm({
+      title: trans('labels.logout'),
+      icon: <ExclamationCircleOutlined />,
+      content: trans('labels.logoutDescription'),
+      okText: trans('buttons.logout'),
+      cancelText: trans('buttons.cancel'),
+      onOk: handleSignout,
+      centered: true
+    })
+  }
+
+  return (
+    <React.Fragment>
+      <Dropdown
+        placement='bottomLeft'
+        menu={menuProps}
+        trigger={['click']}
+        arrow={{ pointAtCenter: true }}
+      >
+        <Row gutter={GUTTER}>
+          <Col>
+            <Text className='fw-500'>{profile.fullName}</Text>
+          </Col>
+          <Col>
+            <Avatar size='large'>{profile.fullName?.charAt(0)}</Avatar>
+          </Col>
+        </Row>
+      </Dropdown>
+    </React.Fragment>
+  )
+}
