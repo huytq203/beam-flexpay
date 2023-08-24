@@ -1096,6 +1096,7 @@
         "withdraw-money": "Chính sách rút tiền",
         "setting-withdraw": "Thiết lập chính sách rút tiền",
         "setting-account-bank": "Thiết lập chính sách thanh toán bằng tài khoản/thẻ ngân hàng",
+        "update-setting-account-bank": "Cập nhật chính sách thanh toán bằng tài khoản/thẻ ngân hàng",
         "update-setting-withdraw": "Cập nhật chính sách rút tiền"
       },
       "placeholder": {

@@ -112,11 +112,6 @@ const personalWallet = {
           icon: <PushpinTwoTone twoToneColor={COlOR} />,
           label: i18n.t('navigation.transfer-history')
         },
-        {
-          key: 'napas-token',
-          icon: <PushpinTwoTone twoToneColor={COlOR} />,
-          label: i18n.t('navigation.napas-token')
-        }
       ]
     }
   ]
