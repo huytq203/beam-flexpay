@@ -223,7 +223,7 @@ function TransferHistory() {
                         },
                         {
                           label: t('transfer-history.choice.reject'),
-                          value: TransactionStatus.FAILURE
+                          value: TransactionStatus.FAILED
                         }
                       ]}
                     />

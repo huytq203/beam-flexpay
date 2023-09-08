@@ -44,7 +44,6 @@ export enum TransactionStatus {
   APPROVED = 'APPROVED',
   PENDING = 'PENDING',
   FAILED = 'FAILED',
-  FAILURE = 'FAILURE',
   ERROR = 'ERROR',
   REFUND_SUCCESS = 'REFUND_SUCCESS'
 }

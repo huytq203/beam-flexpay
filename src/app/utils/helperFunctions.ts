@@ -275,7 +275,7 @@ export const getTransactionStatus = (status: string) => {
         label: i18n.t('transfer-history.choice.approved'),
         value: '#87d068'
       }
-    case TransactionStatus.FAILURE:
+    case TransactionStatus.FAILED:
       return {
         label: i18n.t('transfer-history.choice.reject'),
         value: 'error'

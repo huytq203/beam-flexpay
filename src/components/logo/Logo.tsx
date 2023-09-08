@@ -1,9 +1,10 @@
 import { Image } from 'antd'
+import ILogo from '@assets/image/logo.png'
 
 export default function Logo() {
   return (
     <Image
-      src='/logo.png'
+      src={ILogo}
       preview={false}
       height={64}
     />

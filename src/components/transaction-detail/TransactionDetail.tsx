@@ -55,7 +55,7 @@ const TransactionDetail = ({ open, onCancel, id }: IProps) => {
     },
     {
       label: t`transfer-history.modal.reject`,
-      value: TransactionStatus.FAILURE
+      value: TransactionStatus.FAILED
     }
   ]
 
