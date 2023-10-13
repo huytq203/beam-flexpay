@@ -1,8 +1,12 @@
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
+import ButtonAdd from '@components/button-add/ButtonAdd'
+import ButtonSearch from '@components/button-search/ButtonSearch'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
+import SearchBar from '@components/search-bar/SearchBar'
+import { GUTTER } from '@constants/appConstant'
 import { TimeFormat } from '@constants/datetime'
 import { useToggle } from 'ahooks'
-import { Button, Card, Empty, Form, Space, Table } from 'antd'
+import { Button, Card, Col, DatePicker, Empty, Form, Input, Row, Select, Space, Table } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
 import { useState } from 'react'
@@ -68,60 +72,45 @@ function TransactionAccountingConfiguration() {
 
   return (
     <Card
-    // title={
-    //   <SearchBar
-    //     headerMenu={
-    //       <Form form={form}>
-    //         <Row>
-    //           {/* Loại giao dịch - select */}
-    //           <Col>
-    //             <Form.Item name="transactionType" label={t('transactionConfig.transactionType')}>
-    //               <Select />
-    //             </Form.Item>
-    //           </Col>
-    //           {/* Cách thức tính phí - select*/}
-    //           <Col>
-    //             <Form.Item>
-    //               <Select />
-    //             </Form.Item>
-    //           </Col>
-    //           {/* Ngân hàng liên kết - select */}
-    //           <Col>
-    //             <Form.Item>
-    //               <Select />
-    //             </Form.Item>
-    //           </Col>
-    //           {/* Đối tác thu hộ/chi hộ - select */}
-    //           <Col>
-    //             <Form.Item>
-    //               <Select />
-    //             </Form.Item>
-    //           </Col>
-    //           {/* dịch vụ - select */}
-    //           <Col>
-    //             <Form.Item>
-    //               <Select />
-    //             </Form.Item>
-    //           </Col>
-    //         </Row>
-    //         <Row
-    //           justify='end'
-    //           gutter={GUTTER}
-    //         >
-    //           <Col>
-    //             <ButtonAdd
-    //               module='internal-wallet'
-    //               onClick={addFormToggle}
-    //             />
-    //           </Col>
-    //           <Col>
-    //             <ButtonSearch onClick={handleSearch} />
-    //           </Col>
-    //         </Row>
-    //       </Form>
-    //     }
-    //   />
-    // }
+    title={
+      <SearchBar
+      headerMenu={
+        <Form form={form} layout='vertical'>
+          <Row gutter={GUTTER}>
+            <Col span={6}>
+              <Form.Item>
+                <Select placeholder={t`internal-wallet.placeholders.transaction_type`.toString()}/>
+              </Form.Item>
+            </Col>
+            <Col  span={6}>
+              <Form.Item>
+                <Input placeholder={t`internal-wallet.placeholders.wallet_id`.toString()} />
+              </Form.Item>
+            </Col>
+            <Col  span={6}>
+              <Form.Item>
+                <Select placeholder={t`internal-wallet.placeholders.status`.toString()} />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row
+            justify='end'
+            gutter={GUTTER}
+          >
+            <Col>
+              <ButtonAdd
+                module='internal-wallet'
+                onClick={addFormToggle}
+              />
+            </Col>
+            <Col>
+              <ButtonSearch onClick={handleSearch} />
+            </Col>
+          </Row>
+        </Form>
+      }
+    />
+    }
     >
       <Table
         columns={columns}

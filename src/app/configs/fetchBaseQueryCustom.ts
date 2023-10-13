@@ -19,13 +19,20 @@ import { RootState } from '../store'
 
 export const openNotification = (
   message: string,
-  messageType?: 'warning' | 'info' | 'success'
+  messageType?: 'warning' | 'info' | 'success' | 'error'
 ) => {
   if (messageType) {
     switch (messageType) {
       case 'warning':
         break
       case 'info':
+        break
+        case 'error':
+          notification.error({
+            message: t(message),
+            placement: 'top'
+          })
+          break
         break
       default:
         notification.success({

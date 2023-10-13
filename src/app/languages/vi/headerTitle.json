@@ -59,6 +59,9 @@
     "/reports/bank/system-overview": "Báo cáo tổng quát hệ thống",
     "/reports/bank/wallet-account": "Báo cáo tài khoản ví điện tử",
     "/fee/form-setting": "Cấu hình biểu phí",
-    "/forbidden": "Không có quyền truy cập trang"
+    "/forbidden": "Không có quyền truy cập trang",
+    "/internal-wallet/group": "Quản lý nhóm tài khoản nội bộ",
+    "/internal-wallet/account": "Quản lý tài khoản nội bộ",
+    "/internal-wallet/setting": "Cấu hình hạch toán"
   }
 }

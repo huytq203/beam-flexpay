@@ -1618,6 +1618,7 @@
     }
   },
   "login": {
+    "ssoLogin": "Đăng nhập bằng Microsoft",
     "title": "Đăng nhập",
     "forgot-password": "Quên mật khẩu",
     "description": "Ví điện tử Flexpay",
@@ -2327,5 +2328,34 @@
     "type": "Loại",
     "status": "Trạng thái",
     "logo": "Logo"
+  },
+  "internal-wallet": {
+    "group": "Nhóm tài khoản nội bộ",
+    "account": "Tài khoản ví nội bộ",
+    "setting": "Cấu hình hạch toán",
+    "groups-title": "Thêm mới nhóm tài khoản",
+    "walletType": "Loại ví",
+    "groupType": "Nhóm ví",
+    "groupName": "Tên nhóm",
+    "groupNameTitle": "Tên nhóm ví",
+    "add-wallet-titles": "Thêm mới nhóm ví",
+    "walletNumber": "Số ví nội bộ",
+    "walletName": "Tên ví",
+    "wallet-internal": "Ví Nội bộ",
+    "messages": {
+      "create-group-success": "Tạo nhóm ví thành công",
+      "create-group-failed": "Tạo nhóm ví thất bại"
+    },
+
+    "placeholders": {
+      "group_id": "Nhập nhóm ví",
+      "group_name": "Nhập tên nhóm ví",
+      "status": "Chọn trạng thái",
+      "date": "Chọn ngày cập nhật",
+      "wallet_id": "Nhập số ví điện tử",
+      "wallet_name": "Nhập tên ví",
+      "wallet_number": "Nhập số ví",
+      "transaction_type": "Loại giao dịch"
+    }
   }
 }

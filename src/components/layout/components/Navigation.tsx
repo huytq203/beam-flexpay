@@ -15,6 +15,7 @@ import {
   _CUSTOMERTRANSACTION,
   _FEEMANAGEMENT,
   _INTERNAL,
+  _INTERNAL_WALLET,
   _PERSONALWALLET,
   _PRODUCTS,
   _REPAYMENTANDDISBURSE,
@@ -292,11 +293,36 @@ const reports = {
   ]
 }
 
+const internal_wallet = {
+  key: _INTERNAL_WALLET,
+  icon: <PieChartTwoTone twoToneColor={COlOR} />,
+  label: i18n.t('navigation.internal-wallet'),
+  children: [
+   
+        {
+          key: 'group',
+          icon: <PushpinTwoTone twoToneColor={COlOR} />,
+          label: i18n.t('internal-wallet.group')
+        },
+        {
+          key: 'account',
+          icon: <PushpinTwoTone twoToneColor={COlOR} />,
+          label: i18n.t('internal-wallet.account')
+        },
+        {
+          key: 'setting',
+          icon: <PushpinTwoTone twoToneColor={COlOR} />,
+          label: i18n.t('internal-wallet.setting')
+        }
+  ]
+}
+
 export const navigationItems: ItemTypeCustom[] = [
   roleManagement,
   personalWallet,
   feeManagement,
   bankAndConnect,
   repaymentAndDisburse,
-  reports
+  reports,
+  internal_wallet
 ]

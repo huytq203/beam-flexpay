@@ -11,6 +11,7 @@ import {
   FEEMANAGEMENT,
   FORBIDDENERROR,
   INTERNAL,
+  INTERNAL_WALLET,
   PERSONALWALLET,
   REPAYMENTANDDISBURSE,
   REPORTS,
@@ -55,6 +56,9 @@ import EkycPage from '@pages/transfer/ekyc-page/EkycPage'
 import FreezeAccount from '@pages/transfer/freeze-account/FreezeAccount'
 import TransferHistory from '@pages/transfer/transfer-history/TransferHistory'
 import UnfreezeAccount from '@pages/transfer/unfreeze-account/UnfreezeAccount'
+import InternalGroupWallet from '@pages/internal-wallet/InternalGroupWallet'
+import InternalWalletAccount from '@pages/internal-wallet/InternalWalletAccount'
+import TransactionAccountingConfiguration from '@pages/internal-wallet/TransactionAccountingConfiguration'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -294,6 +298,41 @@ const repaymentAndDisburse = {
   ]
 }
 
+const internalWallet = {
+  path: INTERNAL_WALLET,
+  element: createElement(AppLayout),
+  errorElement: createElement(NotFound),
+  children: [
+    {
+      path: INTERNAL_WALLET + '/group',
+      children: [
+        {
+          path: INTERNAL_WALLET + '/group',
+          element: createElement(InternalGroupWallet)
+        }
+      ]
+    },
+    {
+      path: INTERNAL_WALLET + '/account',
+      children: [
+        {
+          path: INTERNAL_WALLET + '/account',
+          element: createElement(InternalWalletAccount)
+        }
+      ]
+    },
+    {
+      path: INTERNAL_WALLET + '/setting',
+      children: [
+        {
+          path: INTERNAL_WALLET + '/setting',
+          element: createElement(TransactionAccountingConfiguration)
+        }
+      ]
+    }
+  ]
+}
+
 export const WalletRoutes = createBrowserRouter([
   authentication,
   defaultRouter,
@@ -303,5 +342,6 @@ export const WalletRoutes = createBrowserRouter([
   feeManagement,
   bankAndConnect,
   reports,
-  repaymentAndDisburse
+  repaymentAndDisburse,
+  internalWallet
 ])

@@ -34,54 +34,55 @@ function InternalWalletForm({ record, isShow, onCancel, title }: props) {
       <Form
         layout='vertical'
         form={form}
+        initialValues={{walletType: "Ví nội bộ"}}
       >
         {/* Loại ví */}
         <Form.Item
           name='walletType'
-          label={t('internalGroup.walletType')}
+          label={t('internal-wallet.walletType')}
         >
-          <Input />
+          <Input readOnly />
         </Form.Item>
         {/* Nhóm ví */}
         <Form.Item
           name='groupType'
-          label={t('internalGroup.groupType')}
+          label={t('internal-wallet.groupType')}
         >
-          <Select />
+          <Select placeholder={t`internal-wallet.placeholders.group_id`.toString()}/>
         </Form.Item>
         {/* Tên nhóm ví */}
         <Form.Item
           name='groupType'
-          label={t('internalGroup.groupType')}
+          label={t('internal-wallet.groupNameTitle')}
         >
-          <Input />
+          <Input placeholder={t`internal-wallet.placeholders.group_name`.toString()} />
         </Form.Item>
         {/* Số ví nội bộ */}
         <Form.Item
-          label={t('internalGroup.walletNumber')}
+          label={t('internal-wallet.walletNumber')}
           name='walletNumber'
         >
-          <Input />
+          <Input  placeholder={t`internal-wallet.placeholders.wallet_number`.toString()}/>
         </Form.Item>
         {/* Tên ví nội bộ */}
         <Form.Item
-          label={t('internalGroup.walletName')}
+          label={t('internal-wallet.walletName')}
           rules={[
             {
               required: true,
-              message: t('internalGroup.groupNameRequired').toString()
+              message: t('internal-wallet.groupNameRequired').toString()
             },
             {
               min: 5,
-              message: t('internalGroup.groupNameMin').toString()
+              message: t('internal-wallet.groupNameMin').toString()
             },
             {
               max: 20,
-              message: t('internalGroup.groupNameMax').toString()
+              message: t('internal-wallet.groupNameMax').toString()
             }
           ]}
         >
-          <Input />
+          <Input placeholder={t`internal-wallet.placeholders.wallet_name`.toString()} />
         </Form.Item>
         <Row
           justify='end'
