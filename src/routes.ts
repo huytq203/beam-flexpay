@@ -59,6 +59,7 @@ import UnfreezeAccount from '@pages/transfer/unfreeze-account/UnfreezeAccount'
 import InternalGroupWallet from '@pages/internal-wallet/InternalGroupWallet'
 import InternalWalletAccount from '@pages/internal-wallet/InternalWalletAccount'
 import TransactionAccountingConfiguration from '@pages/internal-wallet/TransactionAccountingConfiguration'
+import VerifyAzure from '@pages/verify/sso/VerifyAzure'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -84,6 +85,10 @@ const authentication = {
     {
       path: AUTHENTICATION + '/verify-token',
       element: createElement(VerifyToken)
+    },
+    {
+      path: AUTHENTICATION + '/verify',
+      element: createElement(VerifyAzure)
     }
   ]
 }
@@ -343,5 +348,5 @@ export const WalletRoutes = createBrowserRouter([
   bankAndConnect,
   reports,
   repaymentAndDisburse,
-  internalWallet
+  internalWallet,
 ])

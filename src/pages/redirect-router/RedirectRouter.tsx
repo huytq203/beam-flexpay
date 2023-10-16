@@ -1,12 +1,17 @@
 // RedirectRouter.tsx
 import { ItemTypeCustom } from '@components/layout/components/Navigation'
 import useNavigationEw from '@hooks/useNavigation'
+import { getParamsFromURL } from '@utils/helperFunctions'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 function RedirectRouter() {
   const [navigation] = useNavigationEw()
   const navigate = useNavigate()
+
+  const code = getParamsFromURL('code')
+  console.log('code', code, window.location);
+  
 
   useEffect(() => {
     if (navigation && navigation.length > 0) {

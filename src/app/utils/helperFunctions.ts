@@ -396,3 +396,12 @@ export const fnDisableEndDate = (current: dayjs.Dayjs, from: dayjs.Dayjs) => {
   from = from.startOf('day')
   return current > dayjs().endOf('day') || current < dayjs(from, 'YYYY-MM-DD')
 }
+
+
+/**
+ * function that support to get params from url
+ * @param key
+ * @returns
+ */
+export const getParamsFromURL = (key: string) =>
+  new URLSearchParams(window.location.search).get(key)

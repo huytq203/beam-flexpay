@@ -8,7 +8,9 @@ export const apiService = createApi({
     'productTypeService',
     'productService',
     'productDiscount',
-    'ekycService'
+    'ekycService',
+    'internal-wallet-group',
+    'internal-wallet-account'
   ],
   endpoints: () => ({}),
   refetchOnMountOrArgChange: true

@@ -27,14 +27,24 @@ export const groupPermissionApi = apiService.injectEndpoints({
         baseQueryReturnValue: ResponseType<GroupPermissionPayload>
       ): GroupPermissionPayload {
         return baseQueryReturnValue.data
-      }
+      },
+      providesTags: ['internal-wallet-group']
     }),
     createInternalWalletGroup: builder.mutation({
       query: (payload) => ({
         url: '/balance-internal-group',
         method: 'POST',
         body: payload
-      })
+      }),
+      invalidatesTags: ['internal-wallet-group']
+    }),
+    updateInternalWalletGroup: builder.mutation({
+      query: ({id, ...body}) => ({
+        url: `/balance-internal-group/${id}`,
+        method: 'PUT',
+        body: body
+      }),
+      invalidatesTags: ['internal-wallet-group']
     }),
     getListWallets: builder.query<
       InternalWalletResponse,
@@ -74,6 +84,7 @@ export const groupPermissionApi = apiService.injectEndpoints({
 export const {
   useGetListWalletGroupsQuery,
   useCreateInternalWalletGroupMutation,
+  useUpdateInternalWalletGroupMutation,
   useGetListWalletsQuery,
   useLazyGetListWalletGroupsQuery,
   useCreateInternalWalletMutation,

@@ -214,7 +214,20 @@ const injectedRtkApi = api
           body: queryArg.updatePermissionForUserDto
         }),
         invalidatesTags: ['[Admin] Admin User']
-      })
+      }),
+      ssoLogin: build.query({
+      query: (code) => ({
+        url: `/oauth/authorization-code/exchange?code=${code}`,
+        method: 'GET',
+      }),
+    }),
+      getUrlLogin: build.query({
+      query: () => ({
+        url: `/oauth/authorization-code`,
+        method: 'GET'
+      }),
+    }),
+
     }),
     overrideExisting: false
   })
@@ -236,5 +249,7 @@ export const {
   useUserNewPasswordMutation,
   useUserLockAdminMutation,
   useUserUnlockAdminMutation,
-  useUserUpdatePermissionUserMutation
+  useUserUpdatePermissionUserMutation,
+  useLazyGetUrlLoginQuery,
+  useLazySsoLoginQuery
 } = injectedRtkApi

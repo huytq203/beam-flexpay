@@ -44,6 +44,9 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
   const [totalPages, setTotalPages] = useState(1)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  console.log(mode);
+  
+
   const handleGetWalletGroups = useCallback(
     (page: number = 1, keyword: string = walletGroupQuery) => {
       if (page > totalPages) return
@@ -73,7 +76,7 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
       form.resetFields()
       onCancel()
     })
-  }, [])
+  }, [mode])
 
   useEffect(() => {
     if (isShow && record && record.id && mode === viewMode.update)
@@ -90,6 +93,7 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
       footer={null}
       title={title}
       onCancel={onCancel}
+      destroyOnClose
     >
       <Form
         onFinish={handleSubmitForm}

@@ -1618,6 +1618,8 @@
     }
   },
   "login": {
+    "sso-loading": "Đang xác thực...",
+    "other": "Đăng nhập bằng phương thức khác",
     "ssoLogin": "Đăng nhập bằng Microsoft",
     "title": "Đăng nhập",
     "forgot-password": "Quên mật khẩu",
@@ -1630,7 +1632,8 @@
     "messages": {
       "email": "Bạn chưa nhập tài khoản",
       "password": "Bạn chưa nhập mật khẩu",
-      "email-format": "Tài khoản chưa chính xác"
+      "email-format": "Tài khoản chưa chính xác",
+      "sso-failed": "Có lỗi xảy ra vui lòng thử lại"
     }
   },
   "forgot": {
@@ -2355,7 +2358,33 @@
       "required-wallet-account-number": "Vui lòng cung cấp số ví nội bộ",
       "required-wallet-account-name": "Vui lòng cung cấp tên ví nội bộ",
       "success-create-wallet-account": "Tạo thành công",
-      "success-edit-wallet-account": "Cập nhật thành thông tin ví công"
+      "success-edit-wallet-account": "Cập nhật thành thông tin ví công",
+      "update-group-success": "Cập nhật thành công",
+      "update-group-failed": "Cập nhật thất bại",
+      "lock-group-success": "Khóa nhóm thành công",
+      "lock-group-failed": "Khóa nhóm thất bại",
+      "unlock-group-success": "Mở nhóm thành công",
+      "unlock-group-failed": "Mở nhóm thất bại",
+      "lock-account-success": "Khóa ví nội bộ thành công",
+      "lock-account-failed": "Khóa ví nội bộ thất bại",
+      "unlock-account-success": "Mở ví nội bộ thành công",
+      "unlock-account-failed": "Mở ví nội bộ thất bại"
+    },
+    "update-groups-title": "Chỉnh sửa thông tin",
+
+    "modal": {
+      "change-status-lock-title": "Khóa nhóm",
+      "change-status-unlock-title": "Mở khóa nhóm",
+      "change-status-lock-description": "Hành động này không thể khôi phục, bạn có muốn khóa nhóm không?",
+      "change-status-unlock-description": "Hành động này không thể khôi phục, bạn có muốn mở khóa nhóm không?",
+      "change-status-lock-ok-button": "Khóa",
+      "change-status-unlock-ok-button": "Mở khóa",
+      "change-status-cancel-button": "Hủy",
+      
+      "change-status-lock-account-title": "Khóa ví",
+      "change-status-unlock-account-title": "Mở khóa ví",
+      "change-status-lock-account-description": "Hành động này không thể khôi phục, bạn có muốn khóa ví không?",
+      "change-status-unlock-account-description": "Hành động này không thể khôi phục, bạn có muốn mở khóa không?"
     },
 
     "placeholders": {

@@ -1,6 +1,7 @@
 import { appName } from '@constants/appConstant'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { enhancedApi as authService } from '@services/cmsService'
+import { enhancedApi as userApi } from '@services/cmsUser'
 import { IUserProfile } from '@type/auth'
 
 const name = 'authSlice'
@@ -57,11 +58,23 @@ const authSlice = createSlice({
         }
       )
       .addMatcher(
-        authService.endpoints.userGetMyInfo.matchFulfilled,
+        authService.endpoints.userLogin.matchFulfilled,
         (state, { payload }) => {
+          localStorage.setItem(appName, payload.accessToken)
           return {
             ...state,
-            profile: payload
+            accessToken: payload.accessToken
+          }
+        }
+      )
+      .addMatcher(
+        userApi.endpoints.ssoLogin.matchFulfilled,
+        (state, { payload }) => {
+          console.log('pad', payload);
+          localStorage.setItem(appName, payload.data.accessToken)
+          return {
+            ...state,
+            accessToken: payload.data.accessToken
           }
         }
       )
