@@ -6,7 +6,19 @@ import SearchBar from '@components/search-bar/SearchBar'
 import { GUTTER } from '@constants/appConstant'
 import { TimeFormat } from '@constants/datetime'
 import { useToggle } from 'ahooks'
-import { Button, Card, Col, DatePicker, Empty, Form, Input, Row, Select, Space, Table } from 'antd'
+import {
+  Button,
+  Card,
+  Col,
+  DatePicker,
+  Empty,
+  Form,
+  Input,
+  Row,
+  Select,
+  Space,
+  Table
+} from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
 import { useState } from 'react'
@@ -14,24 +26,32 @@ import { useTranslation } from 'react-i18next'
 import InternalWalletForm from './components/InternalWalletForm'
 import { InternalWalletPayload } from '@type/internalWallet'
 import { useGetListWalletsQuery } from '@services/apiInternalWallet'
+import { GroupPermissionData } from '@type/permission'
 
 function InternalWalletAccount() {
   const [form] = Form.useForm()
   const { t } = useTranslation()
-  const [search, setSearch] = useState<InternalWalletPayload>({order: 'DESC', page:1, take: 10, query: '', orderBy: 'createdAt'})
+  const [recordSelected, setRecordSelected] =
+    useState<GroupPermissionData | null>(null)
+  const [search, setSearch] = useState<InternalWalletPayload>({
+    order: 'DESC',
+    page: 1,
+    take: 10,
+    query: '',
+    orderBy: 'createdAt'
+  })
   const [addForm, { toggle: addFormToggle }] = useToggle()
 
-  const {data: interWallet} = useGetListWalletsQuery(search)
+  const { data: interWallet, refetch } = useGetListWalletsQuery(search)
 
-  console.log('interWallet', interWallet);
-  
+  console.log('interWallet', interWallet)
 
   const columns: ColumnsType<any> = [
     {
       title: t('internalWallet.walletType'),
       dataIndex: 'walletType',
       key: 'walletType',
-      render: () =>  t`internal-wallet.wallet-internal`
+      render: () => t`internal-wallet.wallet-internal`
     },
     {
       title: t('internalWallet.walletGroup'),
@@ -51,18 +71,18 @@ function InternalWalletAccount() {
 
     {
       title: t('partner.createdBy'),
-      dataIndex:'createdAt',
+      dataIndex: 'createdAt',
       key: 'createdAt',
       render(value, record, index) {
         return value ? moment(value).format('DD/MM/YYYY HH:mm:ss') : '-'
       },
-      align: 'center',
+      align: 'center'
     },
     {
       title: t('partner.updatedBy'),
       align: 'center',
       render(value, record, index) {
-        return record?.updatedBy?.fullName??'-'
+        return record?.updatedBy?.fullName ?? '-'
       }
     },
     {
@@ -77,7 +97,13 @@ function InternalWalletAccount() {
       render(value, record, index) {
         return (
           <Space>
-            <ButtonUpdate module='internal-wallet' />
+            <ButtonUpdate
+              onClick={() => {
+                addFormToggle()
+                setRecordSelected(record)
+              }}
+              module='internal-wallet'
+            />
             <Button
               icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
             />
@@ -95,50 +121,62 @@ function InternalWalletAccount() {
 
   return (
     <Card
-    title={
-      <SearchBar
-      headerMenu={
-        <Form form={form} layout='vertical'>
-          <Row gutter={GUTTER}>
-            <Col span={6}>
-              <Form.Item>
-                <Input placeholder={t`internal-wallet.placeholders.wallet_id`.toString()}/>
-              </Form.Item>
-            </Col>
-            <Col  span={6}>
-              <Form.Item>
-                <Input placeholder={t`internal-wallet.placeholders.wallet_name`.toString()} />
-              </Form.Item>
-            </Col>
-            <Col  span={6}>
-              <Form.Item>
-                <Select placeholder={t`internal-wallet.placeholders.status`.toString()} />
-              </Form.Item>
-            </Col>
-            <Col  span={6}>
-              <Form.Item>
-                <DatePicker style={{width: '100%'}}placeholder={t`internal-wallet.placeholders.date`.toString()} />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row
-            justify='end'
-            gutter={GUTTER}
-          >
-            <Col>
-              <ButtonAdd
-                module='internal-wallet'
-                onClick={addFormToggle}
-              />
-            </Col>
-            <Col>
-              <ButtonSearch onClick={handleSearch} />
-            </Col>
-          </Row>
-        </Form>
+      title={
+        <SearchBar
+          headerMenu={
+            <Form
+              form={form}
+              layout='vertical'
+            >
+              <Row gutter={GUTTER}>
+                <Col span={6}>
+                  <Form.Item>
+                    <Input
+                      placeholder={t`internal-wallet.placeholders.wallet_id`.toString()}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={6}>
+                  <Form.Item>
+                    <Input
+                      placeholder={t`internal-wallet.placeholders.wallet_name`.toString()}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={6}>
+                  <Form.Item>
+                    <Select
+                      placeholder={t`internal-wallet.placeholders.status`.toString()}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={6}>
+                  <Form.Item>
+                    <DatePicker
+                      style={{ width: '100%' }}
+                      placeholder={t`internal-wallet.placeholders.date`.toString()}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row
+                justify='end'
+                gutter={GUTTER}
+              >
+                <Col>
+                  <ButtonAdd
+                    module='internal-wallet'
+                    onClick={addFormToggle}
+                  />
+                </Col>
+                <Col>
+                  <ButtonSearch onClick={handleSearch} />
+                </Col>
+              </Row>
+            </Form>
+          }
+        />
       }
-    />
-    }
     >
       <Table
         columns={columns}
@@ -167,9 +205,14 @@ function InternalWalletAccount() {
           }
         }}
       />
-     <InternalWalletForm
+      <InternalWalletForm
+        record={recordSelected}
         isShow={addForm}
-        onCancel={addFormToggle}
+        onCancel={() => {
+          addFormToggle()
+          setRecordSelected(null)
+          refetch()
+        }}
         title={t('internal-wallet.add-wallet-title')}
       />
     </Card>

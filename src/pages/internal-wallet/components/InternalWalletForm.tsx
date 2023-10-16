@@ -1,6 +1,12 @@
 import { GUTTER } from '@constants/appConstant'
+import {
+  useCreateInternalWalletMutation,
+  useLazyGetListWalletGroupsQuery,
+  useUpdateInternalWalletMutation
+} from '@services/apiInternalWallet'
+import { GroupPermissionData } from '@type/permission'
 import { Button, Col, Form, Input, Modal, Row, Select } from 'antd'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 type props = {
@@ -10,17 +16,57 @@ type props = {
   onCancel: VoidFunction
 }
 
+const limit = 10
+
 function InternalWalletForm({ record, isShow, onCancel, title }: props) {
   const { t } = useTranslation()
   const [form] = Form.useForm()
+  const [walletGroups, setWalletGroups] = useState<GroupPermissionData[]>([])
+  const [firstLoadWalletGroups, setFirstLoadWalletGroups] = useState(false)
+  const [getWalletGroups] = useLazyGetListWalletGroupsQuery()
+  const [updateIntercalWallet, { isLoading: updateLoading }] =
+    useUpdateInternalWalletMutation()
+  const [createInternalWallet, { isLoading: createLoading }] =
+    useCreateInternalWalletMutation()
+  const [walletGroupsPage, setWalletGroupsPage] = useState(1)
+  const [walletGroupQuery, setWalletGroupQuery] = useState('')
+  const [totalPages, setTotalPages] = useState(1)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const createLoading = false
-  const updateLoading = false
+  const handleGetWalletGroups = useCallback(
+    (page: number = 1, keyword: string = walletGroupQuery) => {
+      if (page > totalPages) return
+      getWalletGroups({ page, query: keyword, take: limit })
+        .unwrap()
+        .then((res) => {
+          setTotalPages(res.meta.pageCount)
+          setWalletGroupsPage(res.meta.page)
+          setWalletGroups((state) =>
+            page === 1 ? res.data : [...state, ...res.data]
+          )
+        })
+    },
+    [totalPages]
+  )
 
-  const handleSubmit = () => {}
+  const handleSubmitForm = useCallback((values: any) => {
+    const { walletNumber, name, balanceInternalGroupId } = values
+    const body = { walletNumber, name, balanceInternalGroupId }
+    ;(record
+      ? updateIntercalWallet({ id: record.id, body }).unwrap()
+      : createInternalWallet(body).unwrap()
+    ).then((res) => {
+      onCancel()
+    })
+  }, [])
 
   useEffect(() => {
-    if (isShow && record && record.id) form.setFieldsValue(record)
+    console.log(record)
+    if (isShow && record && record.id)
+      form.setFieldsValue({
+        record,
+        groupName: record?.balanceInternalGroup?.name ?? ''
+      })
     if (!isShow) form.resetFields()
   }, [isShow, record])
 
@@ -32,9 +78,10 @@ function InternalWalletForm({ record, isShow, onCancel, title }: props) {
       onCancel={onCancel}
     >
       <Form
+        onFinish={handleSubmitForm}
         layout='vertical'
         form={form}
-        initialValues={{walletType: "Ví nội bộ"}}
+        initialValues={{ walletType: 'Ví nội bộ' }}
       >
         {/* Loại ví */}
         <Form.Item
@@ -45,24 +92,70 @@ function InternalWalletForm({ record, isShow, onCancel, title }: props) {
         </Form.Item>
         {/* Nhóm ví */}
         <Form.Item
-          name='groupType'
+          name='balanceInternalGroupId'
           label={t('internal-wallet.groupType')}
         >
-          <Select placeholder={t`internal-wallet.placeholders.group_id`.toString()}/>
+          <Select
+            onSelect={(id) => {
+              const item = walletGroups.find((x) => x.id === id)
+              form.setFields([{ name: 'groupName', value: item?.name ?? '' }])
+            }}
+            showSearch
+            onSearch={(value) => {
+              if (timeoutRef.current) clearTimeout(timeoutRef.current)
+              timeoutRef.current = setTimeout(() => {
+                setWalletGroupQuery(value)
+                handleGetWalletGroups(1, value)
+              }, 400)
+            }}
+            onPopupScroll={(e) => {
+              const target = e.target as any
+              const remainingScroll =
+                target.scrollHeight -
+                  target.offsetHeight -
+                  Number(target.scrollTop) <
+                20
+              if (remainingScroll) {
+                handleGetWalletGroups(walletGroupsPage + 1)
+              }
+            }}
+            optionLabelProp={'label'}
+            filterOption={false}
+            placeholder={t`internal-wallet.placeholders.group_id`.toString()}
+            onDropdownVisibleChange={(value) => {
+              if (!firstLoadWalletGroups) handleGetWalletGroups()
+              setFirstLoadWalletGroups(true)
+            }}
+          >
+            {walletGroups?.map((x) => (
+              <Select.Option
+                label={`${x.id}`}
+                value={x.id}
+                key={`wallet-group-${x.id}`}
+              >
+                {x.name}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
         {/* Tên nhóm ví */}
         <Form.Item
-          name='groupType'
+          name='groupName'
           label={t('internal-wallet.groupNameTitle')}
         >
-          <Input placeholder={t`internal-wallet.placeholders.group_name`.toString()} />
+          <Input
+            readOnly
+            placeholder={t`internal-wallet.placeholders.group_name`.toString()}
+          />
         </Form.Item>
         {/* Số ví nội bộ */}
         <Form.Item
           label={t('internal-wallet.walletNumber')}
           name='walletNumber'
         >
-          <Input  placeholder={t`internal-wallet.placeholders.wallet_number`.toString()}/>
+          <Input
+            placeholder={t`internal-wallet.placeholders.wallet_number`.toString()}
+          />
         </Form.Item>
         {/* Tên ví nội bộ */}
         <Form.Item
@@ -81,8 +174,11 @@ function InternalWalletForm({ record, isShow, onCancel, title }: props) {
               message: t('internal-wallet.groupNameMax').toString()
             }
           ]}
+          name='name'
         >
-          <Input placeholder={t`internal-wallet.placeholders.wallet_name`.toString()} />
+          <Input
+            placeholder={t`internal-wallet.placeholders.wallet_name`.toString()}
+          />
         </Form.Item>
         <Row
           justify='end'
@@ -99,9 +195,9 @@ function InternalWalletForm({ record, isShow, onCancel, title }: props) {
           </Col>
           <Col>
             <Button
+              htmlType='submit'
               className='btn-100'
               type='primary'
-              onClick={handleSubmit}
               loading={createLoading || updateLoading}
             >
               {t('buttons.save')}
