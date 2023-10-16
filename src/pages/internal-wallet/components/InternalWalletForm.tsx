@@ -4,8 +4,18 @@ import {
   useLazyGetListWalletGroupsQuery,
   useUpdateInternalWalletMutation
 } from '@services/apiInternalWallet'
+import { viewMode } from '@type/customer'
 import { GroupPermissionData } from '@type/permission'
-import { Button, Col, Form, Input, Modal, Row, Select } from 'antd'
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  Modal,
+  Row,
+  Select,
+  notification
+} from 'antd'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -14,11 +24,12 @@ type props = {
   record?: any | undefined
   isShow: boolean
   onCancel: VoidFunction
+  mode: viewMode
 }
 
 const limit = 10
 
-function InternalWalletForm({ record, isShow, onCancel, title }: props) {
+function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
   const { t } = useTranslation()
   const [form] = Form.useForm()
   const [walletGroups, setWalletGroups] = useState<GroupPermissionData[]>([])
@@ -52,19 +63,22 @@ function InternalWalletForm({ record, isShow, onCancel, title }: props) {
   const handleSubmitForm = useCallback((values: any) => {
     const { walletNumber, name, balanceInternalGroupId } = values
     const body = { walletNumber, name, balanceInternalGroupId }
-    ;(record
+    ;(mode === viewMode.update
       ? updateIntercalWallet({ id: record.id, body }).unwrap()
       : createInternalWallet(body).unwrap()
-    ).then((res) => {
+    ).then(() => {
+      notification.success({
+        message: mode === viewMode.update ? t('internal-wallet.messages.success-edit-wallet-account') : t('internal-wallet.messages.success-create-wallet-account')
+      })
+      form.resetFields()
       onCancel()
     })
   }, [])
 
   useEffect(() => {
-    console.log(record)
-    if (isShow && record && record.id)
+    if (isShow && record && record.id && mode === viewMode.update)
       form.setFieldsValue({
-        record,
+        ...record,
         groupName: record?.balanceInternalGroup?.name ?? ''
       })
     if (!isShow) form.resetFields()

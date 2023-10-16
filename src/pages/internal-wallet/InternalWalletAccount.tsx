@@ -27,12 +27,15 @@ import InternalWalletForm from './components/InternalWalletForm'
 import { InternalWalletPayload } from '@type/internalWallet'
 import { useGetListWalletsQuery } from '@services/apiInternalWallet'
 import { GroupPermissionData } from '@type/permission'
+import { viewMode } from '@type/customer'
 
 function InternalWalletAccount() {
   const [form] = Form.useForm()
   const { t } = useTranslation()
-  const [recordSelected, setRecordSelected] =
-    useState<GroupPermissionData | null>(null)
+  const [recordSelected, setRecordSelected] = useState<any | undefined>(
+    undefined
+  )
+  const [mode, setMode] = useState<viewMode>(viewMode.create)
   const [search, setSearch] = useState<InternalWalletPayload>({
     order: 'DESC',
     page: 1,
@@ -43,8 +46,6 @@ function InternalWalletAccount() {
   const [addForm, { toggle: addFormToggle }] = useToggle()
 
   const { data: interWallet, refetch } = useGetListWalletsQuery(search)
-
-  console.log('interWallet', interWallet)
 
   const columns: ColumnsType<any> = [
     {
@@ -71,10 +72,10 @@ function InternalWalletAccount() {
 
     {
       title: t('partner.createdBy'),
-      dataIndex: 'createdAt',
-      key: 'createdAt',
+      dataIndex: 'createdBy',
+      key: 'createdBy',
       render(value, record, index) {
-        return value ? moment(value).format('DD/MM/YYYY HH:mm:ss') : '-'
+        return value ? value?.fullName : '-'
       },
       align: 'center'
     },
@@ -99,8 +100,9 @@ function InternalWalletAccount() {
           <Space>
             <ButtonUpdate
               onClick={() => {
-                addFormToggle()
                 setRecordSelected(record)
+                setMode(viewMode.update)
+                addFormToggle()
               }}
               module='internal-wallet'
             />
@@ -113,11 +115,21 @@ function InternalWalletAccount() {
     }
   ]
 
-  const handleSearch = () =>
+  const handleSearch = () => {
+    const active = form.getFieldValue('active')
     setSearch({
       ...search,
-      ...form.getFieldsValue()
+      ...form.getFieldsValue(),
+      active: active !== null ? active : undefined
     })
+  }
+  
+
+  const cancelModal = () => {
+    setRecordSelected(null)
+    addFormToggle()
+    refetch()
+  }
 
   return (
     <Card
@@ -127,34 +139,32 @@ function InternalWalletAccount() {
             <Form
               form={form}
               layout='vertical'
+              initialValues={{active: null}}
             >
               <Row gutter={GUTTER}>
                 <Col span={6}>
-                  <Form.Item>
+                  <Form.Item name='walletNumber'>
                     <Input
                       placeholder={t`internal-wallet.placeholders.wallet_id`.toString()}
                     />
                   </Form.Item>
                 </Col>
                 <Col span={6}>
-                  <Form.Item>
+                  <Form.Item name='name'>
                     <Input
                       placeholder={t`internal-wallet.placeholders.wallet_name`.toString()}
                     />
                   </Form.Item>
                 </Col>
                 <Col span={6}>
-                  <Form.Item>
+                  <Form.Item name='active'>
                     <Select
                       placeholder={t`internal-wallet.placeholders.status`.toString()}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={6}>
-                  <Form.Item>
-                    <DatePicker
-                      style={{ width: '100%' }}
-                      placeholder={t`internal-wallet.placeholders.date`.toString()}
+                      options={[
+                        { label: t`internal-wallet.status.all`, value: null },
+                        { label: t`internal-wallet.status.active`, value: 1 },
+                        { label: t`internal-wallet.status.de-active`, value: 0 }
+                      ]}
                     />
                   </Form.Item>
                 </Col>
@@ -166,7 +176,10 @@ function InternalWalletAccount() {
                 <Col>
                   <ButtonAdd
                     module='internal-wallet'
-                    onClick={addFormToggle}
+                    onClick={() => {
+                      setMode(viewMode.create)
+                      addFormToggle()
+                    }}
                   />
                 </Col>
                 <Col>
@@ -193,9 +206,9 @@ function InternalWalletAccount() {
           )
         }}
         pagination={{
-          current: 1, // partners?.meta.page,
-          pageSize: 10, // partners?.meta.take,
-          total: 20, //partners?.meta.itemCount,
+          current: interWallet?.meta.page,
+          pageSize: interWallet?.meta.take,
+          total: interWallet?.meta.itemCount,
           showSizeChanger: false,
           onChange(page) {
             setSearch({
@@ -208,12 +221,13 @@ function InternalWalletAccount() {
       <InternalWalletForm
         record={recordSelected}
         isShow={addForm}
-        onCancel={() => {
-          addFormToggle()
-          setRecordSelected(null)
-          refetch()
-        }}
-        title={t('internal-wallet.add-wallet-title')}
+        onCancel={cancelModal}
+        title={
+          mode === viewMode.create
+            ? t('internal-wallet.add-wallet-title')
+            : t('internal-wallet.edit-wallet-title')
+        }
+        mode={mode}
       />
     </Card>
   )

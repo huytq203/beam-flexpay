@@ -2,6 +2,7 @@ import { appName } from '@constants/appConstant'
 import {
   BANKANDCONNECT,
   FEEMANAGEMENT,
+  INTERNAL_WALLET,
   PERSONALWALLET,
   PRODUCTS,
   ROLEMANAGEMENT
@@ -176,11 +177,11 @@ const whiteList = [
   {
     pathname: ROLEMANAGEMENT + '/manage-group-permissions',
     requestUrl: '/group-permission'
+  },
+  {
+    pathname: INTERNAL_WALLET + '/account',
+    requestUrl: '/balance-internal-group'
   }
-  // {
-  //   pathname: REPAYMENTANDDISBURSE + '/repayment/repayment-transaction',
-  //   requestUrl: '/payment-order'
-  // }
 ]
 
 const isWhiteList = (url?: string, pathname?: string) => {
@@ -197,6 +198,8 @@ export const fetchBaseQueryCustom: BaseQueryFn<
       ? window.location.pathname.slice(0, -1)
       : window.location.pathname
   const isLoading = (args as any)?.params?.isLoading
+  console.log((args as any).url, pathName);
+  
   isLoading !== false &&
     !isWhiteList((args as any).url, pathName) &&
     showLoading()

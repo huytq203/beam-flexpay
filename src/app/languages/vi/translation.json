@@ -2342,9 +2342,20 @@
     "walletNumber": "Số ví nội bộ",
     "walletName": "Tên ví",
     "wallet-internal": "Ví Nội bộ",
+    "add-wallet-title": "Thêm ví nội bộ",
+    "edit-wallet-title": "Cập nhật nội dung",
+    "status": {
+      "all": "Chọn tất cả",
+      "active": "Hoạt động",
+      "de-active": "Khoá"
+    },
     "messages": {
       "create-group-success": "Tạo nhóm ví thành công",
-      "create-group-failed": "Tạo nhóm ví thất bại"
+      "create-group-failed": "Tạo nhóm ví thất bại",
+      "required-wallet-account-number": "Vui lòng cung cấp số ví nội bộ",
+      "required-wallet-account-name": "Vui lòng cung cấp tên ví nội bộ",
+      "success-create-wallet-account": "Tạo thành công",
+      "success-edit-wallet-account": "Cập nhật thành thông tin ví công"
     },
 
     "placeholders": {
