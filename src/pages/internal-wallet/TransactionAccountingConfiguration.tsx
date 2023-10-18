@@ -11,11 +11,15 @@ import { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import TransactionAccountingConfigurationForm from './TransactionAccountingConfigurationForm'
+import { viewMode } from '@type/customer'
 
 function TransactionAccountingConfiguration() {
   const [form] = Form.useForm()
   const { t } = useTranslation()
   const [search, setSearch] = useState({})
+  const [selected, setSelected] = useState(undefined)
+  const [mode, setMode] = useState<viewMode>(viewMode.create)
   const [addForm, { toggle: addFormToggle }] = useToggle()
 
   const columns: ColumnsType<any> = [
@@ -70,47 +74,53 @@ function TransactionAccountingConfiguration() {
       ...form.getFieldsValue()
     })
 
+  const onCancel = () => {
+    setMode(viewMode.update)
+    setSelected(undefined)
+    addFormToggle();
+  }
+
   return (
     <Card
-    title={
-      <SearchBar
-      headerMenu={
-        <Form form={form} layout='vertical'>
-          <Row gutter={GUTTER}>
-            <Col span={6}>
-              <Form.Item>
-                <Select placeholder={t`internal-wallet.placeholders.transaction_type`.toString()}/>
-              </Form.Item>
-            </Col>
-            <Col  span={6}>
-              <Form.Item>
-                <Input placeholder={t`internal-wallet.placeholders.wallet_id`.toString()} />
-              </Form.Item>
-            </Col>
-            <Col  span={6}>
-              <Form.Item>
-                <Select placeholder={t`internal-wallet.placeholders.status`.toString()} />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row
-            justify='end'
-            gutter={GUTTER}
-          >
-            <Col>
-              <ButtonAdd
-                module='internal-wallet'
-                onClick={addFormToggle}
-              />
-            </Col>
-            <Col>
-              <ButtonSearch onClick={handleSearch} />
-            </Col>
-          </Row>
-        </Form>
+      title={
+        <SearchBar
+          headerMenu={
+            <Form form={form} layout='vertical'>
+              <Row gutter={GUTTER}>
+                <Col span={6}>
+                  <Form.Item>
+                    <Select placeholder={t`internal-wallet.placeholders.transaction_type`.toString()} />
+                  </Form.Item>
+                </Col>
+                <Col span={6}>
+                  <Form.Item>
+                    <Input placeholder={t`internal-wallet.placeholders.wallet_id`.toString()} />
+                  </Form.Item>
+                </Col>
+                <Col span={6}>
+                  <Form.Item>
+                    <Select placeholder={t`internal-wallet.placeholders.status`.toString()} />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row
+                justify='end'
+                gutter={GUTTER}
+              >
+                <Col>
+                  <ButtonAdd
+                    module='internal-wallet'
+                    onClick={addFormToggle}
+                  />
+                </Col>
+                <Col>
+                  <ButtonSearch onClick={handleSearch} />
+                </Col>
+              </Row>
+            </Form>
+          }
+        />
       }
-    />
-    }
     >
       <Table
         columns={columns}
@@ -139,6 +149,7 @@ function TransactionAccountingConfiguration() {
           }
         }}
       />
+      <TransactionAccountingConfigurationForm title={t`internal-wallet.add-configuration`} isShow={addForm} onCancel={onCancel} />
     </Card>
   )
 }

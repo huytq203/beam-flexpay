@@ -2333,6 +2333,7 @@
     "logo": "Logo"
   },
   "internal-wallet": {
+    "add-configuration": "Thêm cấu hình",
     "group": "Nhóm tài khoản nội bộ",
     "account": "Tài khoản ví nội bộ",
     "setting": "Cấu hình hạch toán",
@@ -2373,14 +2374,22 @@
     "update-groups-title": "Chỉnh sửa thông tin",
 
     "modal": {
+      "transactionType": "Loại giao dịch",
+      "funds": "Nguồn tiền",
+      "service": "Dịch vụ",
+      "partner": "Đối tác",
+      "walletType": "Loại ví",
+      "walletNumber": "Số ví điện tử",
+      "accounting": "Hạch toán",
+      "credit": "Ghi Có",
+      "debit": "Ghi nợ",
       "change-status-lock-title": "Khóa nhóm",
       "change-status-unlock-title": "Mở khóa nhóm",
       "change-status-lock-description": "Hành động này không thể khôi phục, bạn có muốn khóa nhóm không?",
       "change-status-unlock-description": "Hành động này không thể khôi phục, bạn có muốn mở khóa nhóm không?",
       "change-status-lock-ok-button": "Khóa",
       "change-status-unlock-ok-button": "Mở khóa",
-      "change-status-cancel-button": "Hủy",
-      
+      "change-status-cancel-button": "Hủy", 
       "change-status-lock-account-title": "Khóa ví",
       "change-status-unlock-account-title": "Mở khóa ví",
       "change-status-lock-account-description": "Hành động này không thể khôi phục, bạn có muốn khóa ví không?",

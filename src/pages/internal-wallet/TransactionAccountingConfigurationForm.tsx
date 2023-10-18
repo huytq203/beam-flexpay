@@ -1,5 +1,5 @@
 import { GUTTER } from '@constants/appConstant'
-import { Button, Col, Form, Input, Modal, Row, Select } from 'antd'
+import { Button, Col, Divider, Form, Input, Modal, Row, Select, Typography } from 'antd'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -22,7 +22,7 @@ function TransactionAccountingConfigurationForm({
   const createLoading = false
   const updateLoading = false
 
-  const handleSubmit = () => {}
+  const handleSubmit = () => { }
 
   useEffect(() => {
     if (isShow && record && record.id) form.setFieldsValue(record)
@@ -35,6 +35,7 @@ function TransactionAccountingConfigurationForm({
       footer={null}
       title={title}
       onCancel={onCancel}
+      width={1000}
     >
       <Form
         layout='vertical'
@@ -43,14 +44,14 @@ function TransactionAccountingConfigurationForm({
         {/* Loại giao dịch - select */}
         <Form.Item
           name='transactionType'
-          label={t('internalGroup.transactionType')}
+          label={t('internal-wallet.modal.transactionType')}
         >
           <Input />
         </Form.Item>
         {/* Nguồn tiền - select */}
         <Form.Item
           name='funds'
-          label={t('internalGroup.funds')}
+          label={t('internal-wallet.modal.funds')}
         >
           <Select />
         </Form.Item>
@@ -58,48 +59,77 @@ function TransactionAccountingConfigurationForm({
         {/* Dịch vụ - select */}
         <Form.Item
           name='service'
-          label={t('internalGroup.service')}
+          label={t('internal-wallet.modal.service')}
         >
           <Select />
         </Form.Item>
         {/* Đối tác - select */}
         <Form.Item
           name='partner'
-          label={t('internalGroup.partner')}
+          label={t('internal-wallet.modal.partner')}
         >
           <Select />
         </Form.Item>
         {/* Ghi nợ - input */}
         {/* Loại ví - select */}
-        <Form.Item
-          name='walletType'
-          label={t('internalGroup.walletType')}
-        >
-          <Select />
-        </Form.Item>
-        {/* Số ví điện tử - select - required */}
-        <Form.Item
-          name='walletNumber'
-          label={t('internalGroup.walletNumber')}
-          rules={[{ required: true }]}
-        >
-          <Select />
-        </Form.Item>
-        {/* hạch toán - select - required */}
-        <Form.Item
-          name='accounting'
-          label={t('internalGroup.accounting')}
-          rules={[{ required: true }]}
-        >
-          <Select />
-        </Form.Item>
-        {/* ghi có - text */}
-        <Form.Item
-          name='credit'
-          label={t('internalGroup.credit')}
-        >
-          <Input />
-        </Form.Item>
+        <Row gutter={GUTTER}>
+          <Col xs={24} lg={12}>
+            <div>
+              <Typography.Text style={{ fontWeight: 600, fontSize: 14 }}>{t('internal-wallet.modal.debit')}</Typography.Text>
+              <Divider style={{ marginTop: 8, marginBottom: 8 }} />
+            </div>
+            <Form.Item
+              name='walletType'
+              label={t('internal-wallet.modal.walletType')}
+            >
+              <Select />
+            </Form.Item>
+            {/* Số ví điện tử - select - required */}
+            <Form.Item
+              name='walletNumber'
+              label={t('internal-wallet.modal.walletNumber')}
+              rules={[{ required: true }]}
+            >
+              <Select />
+            </Form.Item>
+            {/* hạch toán - select - required */}
+            <Form.Item
+              name='accounting'
+              label={t('internal-wallet.modal.accounting')}
+              rules={[{ required: true }]}
+            >
+              <Select />
+            </Form.Item>
+          </Col>
+          <Col xs={24} lg={12}>
+            <div>
+              <Typography.Text style={{ fontWeight: 600, fontSize: 14 }}>{t('internal-wallet.modal.credit')}</Typography.Text>
+              <Divider style={{ marginTop: 8, marginBottom: 8 }} />
+            </div>
+            <Form.Item
+              name='walletType'
+              label={t('internal-wallet.modal.walletType')}
+            >
+              <Select />
+            </Form.Item>
+            {/* Số ví điện tử - select - required */}
+            <Form.Item
+              name='walletNumber'
+              label={t('internal-wallet.modal.walletNumber')}
+              rules={[{ required: true }]}
+            >
+              <Select />
+            </Form.Item>
+            {/* hạch toán - select - required */}
+            <Form.Item
+              name='accounting'
+              label={t('internal-wallet.modal.accounting')}
+              rules={[{ required: true }]}
+            >
+              <Select />
+            </Form.Item>
+          </Col>
+        </Row>
         <Row
           justify='end'
           gutter={GUTTER}
