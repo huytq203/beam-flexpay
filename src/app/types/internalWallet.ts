@@ -21,7 +21,8 @@ export interface InternalWalletResponse {
 }
 
 export interface ModifyInternalWalletBody {
-  balanceInternalGroupId: number
-  name: string
-  walletNumber: string
+  balanceInternalGroupId?: number
+  name?: string
+  walletNumber?: string
+  active?: number
 }

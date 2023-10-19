@@ -26,7 +26,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import InternalWalletForm from './components/InternalWalletForm'
 import { InternalWalletPayload } from '@type/internalWallet'
-import { useGetListWalletsQuery, useUpdateInternalWalletGroupMutation } from '@services/apiInternalWallet'
+import { useGetListWalletsQuery, useUpdateInternalWalletGroupMutation, useUpdateInternalWalletMutation } from '@services/apiInternalWallet'
 import { GroupPermissionData } from '@type/permission'
 import { viewMode } from '@type/customer'
 import { openNotification } from '@configs/fetchBaseQueryCustom'
@@ -48,9 +48,9 @@ function InternalWalletAccount() {
   const [addForm, { toggle: addFormToggle }] = useToggle()
 
   const { data: interWallet, refetch } = useGetListWalletsQuery(search)
-  const [updateInternalWalletGroup] = useUpdateInternalWalletGroupMutation()
+  const [updateInternalWallet] = useUpdateInternalWalletMutation()
 
-  const changeStatus = (status: number, id: string) => {
+  const changeStatus = (status: number, id:  number) => {
     Modal.confirm({
       title: status ? t`internal-wallet.modal.change-status-lock-account-title` : t`internal-wallet.modal.change-status-unlock-account-title`,
       content: status ? t`internal-wallet.modal.change-status-lock-account-description` : t`internal-wallet.modal.change-status-unlock-account-description`,
@@ -58,7 +58,7 @@ function InternalWalletAccount() {
       cancelText: t`internal-wallet.modal.change-status-cancel-button`,
       onOk: async () => {
         try {
-          const response = await updateInternalWalletGroup({name, active: status ? 0 : 1, id }) as { data: { statusCode: number } }
+          const response = await updateInternalWallet({id, body: {active: status ? 0 : 1} }) as { data: { statusCode: number } }
           if (response.data.statusCode === 201 || response.data.statusCode === 200) {
             openNotification(status ? t`internal-wallet.messages.lock-account-success` : t`internal-wallet.messages.unlock-account-success`, 'success')
           } else {

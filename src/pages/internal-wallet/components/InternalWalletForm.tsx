@@ -35,8 +35,8 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
   const [walletGroups, setWalletGroups] = useState<GroupPermissionData[]>([])
   const [firstLoadWalletGroups, setFirstLoadWalletGroups] = useState(false)
   const [getWalletGroups] = useLazyGetListWalletGroupsQuery()
-  const [updateIntercalWallet, { isLoading: updateLoading }] =
-    useUpdateInternalWalletMutation()
+  const [updateInternalWallet, { isLoading: updateLoading }] =
+  useUpdateInternalWalletMutation()
   const [createInternalWallet, { isLoading: createLoading }] =
     useCreateInternalWalletMutation()
   const [walletGroupsPage, setWalletGroupsPage] = useState(1)
@@ -67,7 +67,7 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
     const { walletNumber, name, balanceInternalGroupId } = values
     const body = { walletNumber, name, balanceInternalGroupId }
     ;(mode === viewMode.update
-      ? updateIntercalWallet({ id: record.id, body }).unwrap()
+      ? updateInternalWallet({ id: record.id, body }).unwrap()
       : createInternalWallet(body).unwrap()
     ).then(() => {
       notification.success({
