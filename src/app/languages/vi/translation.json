@@ -2242,6 +2242,7 @@
   "REPAYMENT": "Thu Hộ",
   "DISBURSE": "Chi hộ",
   "partner": {
+    "status": "Trạng thái",
     "repaymentPartner": "Đối tác thu hộ",
     "repayment-transaction": "Giao dịch thu hộ",
     "pay-on-behalf-transaction": "Giao dịch chi hộ",

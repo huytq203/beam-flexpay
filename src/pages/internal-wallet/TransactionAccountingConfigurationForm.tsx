@@ -4,14 +4,10 @@ import { useLazyPaymentServiceFindAllQuery } from '@services/cmsPaymentService'
 import {
   Button,
   Col,
-  Divider,
   Form,
-  Input,
-  InputNumber,
   Modal,
   Row,
   Select,
-  Typography,
   notification
 } from 'antd'
 import { useEffect, useState } from 'react'
@@ -23,12 +19,6 @@ import {
   fundsOptions,
   walletTypeOptions
 } from '@constants/options'
-import {
-  blockArrowValue,
-  blockLetterDecimal,
-  moneyInputFormatter
-} from '@utils/helperFunctions'
-import { useLazyCustomerFindAllQuery } from '@services/cmsService'
 import { useCreateAccountingMutation } from '@services/accountingService'
 import { useLazyGetListWalletsQuery } from '@services/apiInternalWallet'
 

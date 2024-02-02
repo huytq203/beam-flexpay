@@ -1,7 +1,6 @@
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
 import ButtonAdd from '@components/button-add/ButtonAdd'
 import ButtonSearch from '@components/button-search/ButtonSearch'
-import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import SearchBar from '@components/search-bar/SearchBar'
 import { GUTTER } from '@constants/appConstant'
 import { TimeFormat } from '@constants/datetime'
@@ -10,15 +9,14 @@ import {
   Button,
   Card,
   Col,
-  DatePicker,
   Empty,
   Form,
-  Input,
   Modal,
   Row,
   Select,
   Space,
-  Table
+  Table,
+  Tag
 } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
@@ -26,20 +24,19 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import TransactionAccountingConfigurationForm from './TransactionAccountingConfigurationForm'
 import { viewMode } from '@type/customer'
-import { accountingStatus, accountingTransactionType, fundsOptions } from '@constants/options'
 import {
-  blockArrowValue,
-  blockLetterDecimal,
+  accountingStatus,
+  accountingTransactionType,
+  fundsOptions
+} from '@constants/options'
+import {
   getAccountingTransactionType,
-  getTransactionType
 } from '@utils/helperFunctions'
-import { get, orderBy, take } from 'lodash'
 import {
   useGetAccountingQuery,
   useUpdateActiveMutation
 } from '@services/accountingService'
 import { openNotification } from '@configs/fetchBaseQueryCustom'
-import CustomAccountingSelect from './components/customer-accouting-select/CustomAccountingSelect'
 import { useLazyGetListWalletsQuery } from '@services/apiInternalWallet'
 
 function TransactionAccountingConfiguration() {
@@ -113,7 +110,7 @@ function TransactionAccountingConfiguration() {
       dataIndex: 'transactionType',
       key: 'transactionType',
       align: 'center',
-      render(value, record, index) {
+      render(value) {
         return getAccountingTransactionType(value)
       }
     },
@@ -129,7 +126,7 @@ function TransactionAccountingConfiguration() {
     {
       title: t('partner.createdBy'),
       align: 'center',
-      render(value, record, index) {
+      render(_, record) {
         return record?.createdBy?.fullName ?? '-'
       }
     },
@@ -137,24 +134,34 @@ function TransactionAccountingConfiguration() {
       title: t('partner.updatedBy'),
       align: 'center',
       dataIndex: 'updatedBy',
-      render(value, record, index) {
-        return record?.createdBy?.fullName ?? '-'
+      render(_, record) {
+        return record?.updatedBy?.fullName ?? '-'
       }
     },
     {
       align: 'center',
       title: t('partner.updatedDate'),
       dataIndex: 'updatedAt',
-      render: (value, record, index) =>
+      render: (_, record) =>
         record?.updatedAt
           ? moment(new Date(record?.updatedAt)).format(TimeFormat).toString()
           : '-'
     },
     {
+      align: 'center',
+      title: t('partner.status'),
+      dataIndex: 'active',
+      render: (value) => (
+        <Tag color={!value ? 'error' : 'success'}>
+          {!value ? 'Khóa' : 'Hoạt động'}
+        </Tag>
+      )
+    },
+    {
       title: t('labels.action'),
       key: 'actions',
       align: 'center',
-      render(value, record, index) {
+      render(_, record) {
         return (
           <Space>
             <Button

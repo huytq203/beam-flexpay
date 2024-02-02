@@ -23,7 +23,7 @@ export const accountingService = apiService.injectEndpoints({
       query: ({ id, active }) => ({
         url: `/accounting/${id}`,
         method: 'PUT',
-        params: { active }
+        body: { active }
       }),
       invalidatesTags: ['accounting']
     })
