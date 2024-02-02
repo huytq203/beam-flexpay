@@ -11,14 +11,26 @@ import {
   Modal,
   Row,
   Select,
-  Typography
+  Typography,
+  notification
 } from 'antd'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import CustomAccountingSelect from './components/customer-accouting-select/CustomAccountingSelect'
-import { accountingOptions, accountingTransactionType, fundsOptions, walletTypeOptions } from '@constants/options'
-import { blockArrowValue, blockLetterDecimal, moneyInputFormatter } from '@utils/helperFunctions'
+import {
+  accountingOptions,
+  accountingTransactionType,
+  fundsOptions,
+  walletTypeOptions
+} from '@constants/options'
+import {
+  blockArrowValue,
+  blockLetterDecimal,
+  moneyInputFormatter
+} from '@utils/helperFunctions'
 import { useLazyCustomerFindAllQuery } from '@services/cmsService'
+import { useCreateAccountingMutation } from '@services/accountingService'
+import { useLazyGetListWalletsQuery } from '@services/apiInternalWallet'
 
 type props = {
   title: string
@@ -35,17 +47,37 @@ function TransactionAccountingConfigurationForm({
 }: props) {
   const { t } = useTranslation()
   const [form] = Form.useForm()
+  const transactionType = Form.useWatch('transactionType', form)
 
   const [getPartners] = useLazyPaymentPartnerFindAllQuery()
   const [getServices] = useLazyPaymentServiceFindAllQuery()
-  const [getWalletIds] = useLazyCustomerFindAllQuery()
+  const [getWalletIds] = useLazyGetListWalletsQuery()
+  const [createAccounting] = useCreateAccountingMutation()
 
-  const createLoading = false
+  const [createLoading, setCreateLoading] = useState(false)
   const updateLoading = false
 
-  const handleSubmit = (value: Record<string, any>) => {
-    console.log("run here", value);
+  const handleSubmit = async (value: Record<string, any>) => {
+    if (value) {
+      try {
+        setCreateLoading(true)
+        const response = (await createAccounting(value)) as any
 
+        if (response?.data?.statusCode < 400) {
+          notification.success({
+            message: t(`internal-wallet.messages.create-accounting-success`)
+          })
+          form.resetFields()
+          onCancel()
+        }
+      } catch (error) {
+        notification.error({
+          message: t(`internal-wallet.messages.create-accounting-failed`)
+        })
+      } finally {
+        setCreateLoading(false)
+      }
+    }
   }
 
   useEffect(() => {
@@ -74,133 +106,148 @@ function TransactionAccountingConfigurationForm({
         <Form.Item
           name='transactionType'
           label={t('internal-wallet.modal.transactionType')}
+          rules={[
+            {
+              required: true,
+              message: t('internal-wallet.messages.required').toString()
+            }
+          ]}
         >
-          <Select placeholder={t('internal-wallet.placeholders.transaction_type')} options={accountingTransactionType} />
+          <Select
+            placeholder={t('internal-wallet.placeholders.transaction_type')}
+            options={accountingTransactionType}
+          />
         </Form.Item>
         {/* Nguồn tiền - select */}
         <Form.Item
-          name='funds'
+          name='fundSource'
           label={t('internal-wallet.modal.funds')}
+          rules={[
+            {
+              required: true,
+              message: t('internal-wallet.messages.required').toString()
+            }
+          ]}
         >
-          <Select placeholder={t('internal-wallet.placeholders.funds')} options={fundsOptions} />
+          <Select
+            placeholder={t('internal-wallet.placeholders.funds')}
+            options={fundsOptions}
+          />
         </Form.Item>
 
-        {/* Dịch vụ - select */}
+        {transactionType === 'ADVANDED_COLLECT' && (
+          <>
+            {/* Dịch vụ - select */}
+            <Form.Item
+              name='serviceId'
+              label={t('internal-wallet.modal.service')}
+              rules={[
+                {
+                  required: true,
+                  message: t('internal-wallet.messages.required').toString()
+                }
+              ]}
+            >
+              <CustomAccountingSelect
+                trigger={getServices}
+                search={{
+                  page: 1,
+                  take: 10,
+                  active: true
+                }}
+                field='name'
+                onSelectData={onSelectData}
+                valueSearch='serviceId'
+                placeholder={t('internal-wallet.placeholders.service')}
+              />
+            </Form.Item>
+            {/* Đối tác - select */}
+            <Form.Item
+              name='partnerId'
+              label={t('internal-wallet.modal.partner')}
+              rules={[
+                {
+                  required: true,
+                  message: t('internal-wallet.messages.required').toString()
+                }
+              ]}
+            >
+              <CustomAccountingSelect
+                trigger={getPartners}
+                search={{
+                  page: 1,
+                  take: 10,
+                  type: 'REPAYMENT'
+                }}
+                field='name'
+                onSelectData={onSelectData}
+                valueSearch='partnerId'
+                placeholder={t('internal-wallet.placeholders.partner')}
+              />
+            </Form.Item>
+          </>
+        )}
+        {/* Ghi nợ - input */}
+        {/* Loại ví - select */}
         <Form.Item
-          name='serviceId'
-          label={t('internal-wallet.modal.service')}
+          name='balanceType'
+          label={t('internal-wallet.modal.walletType')}
+          rules={[
+            {
+              required: true,
+              message: t('internal-wallet.messages.required').toString()
+            }
+          ]}
+        >
+          <Select
+            placeholder={t('internal-wallet.placeholders.wallet_type')}
+            options={walletTypeOptions}
+          />
+        </Form.Item>
+        {/* Số ví điện tử - select - required */}
+        <Form.Item
+          name='walletNumber'
+          label={t('internal-wallet.modal.walletNumber')}
+          rules={[
+            {
+              required: true,
+              message: t('internal-wallet.messages.required').toString()
+            }
+          ]}
         >
           <CustomAccountingSelect
-            trigger={getServices}
+            trigger={getWalletIds}
             search={{
               page: 1,
               take: 10,
               active: true
             }}
-            field='name'
+            field='walletNumber'
             onSelectData={onSelectData}
-            valueSearch='serviceId'
-            placeholder={t('internal-wallet.placeholders.service')}
+            valueSearch='walletNumber'
+            placeholder={t(
+              'internal-wallet.placeholders.wallet_number'
+            ).toString()}
+            valuePassed='walletNumber'
           />
         </Form.Item>
-        {/* Đối tác - select */}
         <Form.Item
-          name='partnerId'
-          label={t('internal-wallet.modal.partner')}
+          name='accountingType'
+          label={t('internal-wallet.modal.accounting')}
+          rules={[
+            {
+              required: true,
+              message: t('internal-wallet.messages.required').toString()
+            }
+          ]}
         >
-          <CustomAccountingSelect
-            trigger={getPartners}
-            search={{
-              page: 1,
-              take: 10,
-              type: 'REPAYMENT'
-            }}
-            field='name'
-            onSelectData={onSelectData}
-            valueSearch='partnerId'
-            placeholder={t('internal-wallet.placeholders.partner')}
+          <Select
+            placeholder={t(
+              'internal-wallet.placeholders.accounting'
+            ).toString()}
+            options={accountingOptions}
           />
         </Form.Item>
-        {/* Ghi nợ - input */}
-        {/* Loại ví - select */}
-        <Row gutter={GUTTER}>
-          <Col
-            xs={24}
-            lg={12}
-          >
-            <div>
-              <Typography.Text style={{ fontWeight: 600, fontSize: 14 }}>
-                {t('internal-wallet.modal.debit')}
-              </Typography.Text>
-              <Divider style={{ marginTop: 8, marginBottom: 8 }} />
-            </div>
-            <Form.Item
-              name='walletType'
-              label={t('internal-wallet.modal.walletType')}
-            >
-              <Select placeholder={t('internal-wallet.placeholders.wallet_type')} options={walletTypeOptions} />
-            </Form.Item>
-            {/* Số ví điện tử - select - required */}
-            <Form.Item
-              name='walletNumber'
-              label={t('internal-wallet.modal.walletNumber')}
-              rules={[{ required: true }]}
-            >
-              <Input placeholder={t('internal-wallet.placeholders.wallet_number').toString()}
-                type='text'
-                inputMode='numeric'
-                style={{ width: '100%' }}
-                onKeyDown={blockArrowValue}
-                onKeyPress={blockLetterDecimal} />
-            </Form.Item>
-            {/* hạch toán - select - required */}
-            <Form.Item
-              name='accounting'
-              label={t('internal-wallet.modal.accounting')}
-              rules={[{ required: true }]}
-            >
-              <Select placeholder={t('internal-wallet.placeholders.accounting').toString()} options={accountingOptions} />
-            </Form.Item>
-          </Col>
-          <Col
-            xs={24}
-            lg={12}
-          >
-            <div>
-              <Typography.Text style={{ fontWeight: 600, fontSize: 14 }}>
-                {t('internal-wallet.modal.credit')}
-              </Typography.Text>
-              <Divider style={{ marginTop: 8, marginBottom: 8 }} />
-            </div>
-            <Form.Item
-              name='walletType'
-              label={t('internal-wallet.modal.walletType')}
-            >
-              <Select placeholder={t('internal-wallet.placeholders.wallet_type')} options={walletTypeOptions} />
-            </Form.Item>
-            {/* Số ví điện tử - select - required */}
-            <Form.Item
-              name='walletNumber'
-              label={t('internal-wallet.modal.walletNumber')}
-              rules={[{ required: true }]}
-            >
-              <Input placeholder={t('internal-wallet.placeholders.wallet_number').toString()}
-                type='text'
-                inputMode='numeric'
-                style={{ width: '100%' }}
-                onKeyDown={blockArrowValue}
-                onKeyPress={blockLetterDecimal} />
-            </Form.Item>
-            {/* hạch toán - select - required */}
-            <Form.Item
-              name='accounting'
-              label={t('internal-wallet.modal.accounting')}
-              rules={[{ required: true }]}
-            >
-              <Select placeholder={t('internal-wallet.placeholders.accounting').toString()} options={accountingOptions} />
-            </Form.Item>
-          </Col>
-        </Row>
         <Row
           justify='end'
           gutter={GUTTER}
@@ -219,7 +266,6 @@ function TransactionAccountingConfigurationForm({
               className='btn-100'
               type='primary'
               htmlType='submit'
-              onClick={handleSubmit}
               loading={createLoading || updateLoading}
             >
               {t('buttons.save')}

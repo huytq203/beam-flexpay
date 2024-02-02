@@ -11,6 +11,7 @@ interface CustomSelectType<T extends PageMetaSearchDto> extends SelectProps {
   onSelectData: (value: any, field: string) => void
   valueSearch: string
   placeholder: string
+  valuePassed?: string
 }
 function CustomAccountingSelect<T extends PageMetaSearchDto>(props: CustomSelectType<T>) {
   const [data, setData] = useState<any[]>([])
@@ -78,10 +79,10 @@ function CustomAccountingSelect<T extends PageMetaSearchDto>(props: CustomSelect
     >
       {data.map((el) => (
         <Select.Option
-          value={el.id}
+          value={props?.valuePassed ? el[props?.valuePassed] : el.id}
           key={el.id}
         >
-          {el[props.field]}
+          {props?.valuePassed ? el[props?.valuePassed] : el[props.field]}
         </Select.Option>
       ))}
     </Select>

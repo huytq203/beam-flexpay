@@ -1,4 +1,4 @@
-import { serviceTypes } from '@constants/options'
+import { accountingTransactionType, serviceTypes } from '@constants/options'
 import { notificationService } from '@type/notification'
 import { APPLICABLE_OBJECTS, history_type } from '@type/policyManagement'
 import { TransactionStatus, TransactionType } from '@type/transfer'
@@ -397,7 +397,6 @@ export const fnDisableEndDate = (current: dayjs.Dayjs, from: dayjs.Dayjs) => {
   return current > dayjs().endOf('day') || current < dayjs(from, 'YYYY-MM-DD')
 }
 
-
 /**
  * function that support to get params from url
  * @param key
@@ -405,3 +404,13 @@ export const fnDisableEndDate = (current: dayjs.Dayjs, from: dayjs.Dayjs) => {
  */
 export const getParamsFromURL = (key: string) =>
   new URLSearchParams(window.location.search).get(key)
+
+export const getAccountingTransactionType = (transaction: string) => {
+  const filters = accountingTransactionType.find(
+    (item: { value: string; label: string }) => item.value === transaction
+  )
+
+  if (filters) return filters.label
+
+  return '-'
+}

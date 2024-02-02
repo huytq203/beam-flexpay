@@ -56,7 +56,9 @@ function InternalBalanceWallet() {
       title: t('partner.updatedDate'),
       key: 'updatedDate',
       render: (value, record, index) =>
-        moment(new Date(record?.updatedAt)).format(TimeFormat).toString()
+        record?.updatedAt
+          ? moment(new Date(record?.updatedAt)).format(TimeFormat).toString()
+          : '-'
     },
     {
       title: t('internalBalanceWallet.status'),

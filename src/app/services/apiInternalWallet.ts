@@ -89,6 +89,7 @@ export const {
   useCreateInternalWalletGroupMutation,
   useUpdateInternalWalletGroupMutation,
   useGetListWalletsQuery,
+  useLazyGetListWalletsQuery,
   useLazyGetListWalletGroupsQuery,
   useCreateInternalWalletMutation,
   useUpdateInternalWalletMutation
