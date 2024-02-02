@@ -30,6 +30,22 @@ export const groupPermissionApi = apiService.injectEndpoints({
       },
       providesTags: ['internal-wallet-group']
     }),
+    getListWalletInternalGroups: builder.query<
+      InternalWalletResponse,
+      InternalWalletPayload
+    >({
+      query: (payload) => ({
+        url: '/internal-wallet-group',
+        method: 'GET',
+        params: payload
+      }),
+      transformResponse(
+        baseQueryReturnValue: ResponseType<GroupPermissionPayload>
+      ): GroupPermissionPayload {
+        return baseQueryReturnValue.data
+      },
+      providesTags: ['internal-wallet-group']
+    }),
     createInternalWalletGroup: builder.mutation({
       query: (payload) => ({
         url: '/balance-internal-group',
@@ -39,7 +55,7 @@ export const groupPermissionApi = apiService.injectEndpoints({
       invalidatesTags: ['internal-wallet-group']
     }),
     updateInternalWalletGroup: builder.mutation({
-      query: ({id, ...body}) => ({
+      query: ({ id, ...body }) => ({
         url: `/balance-internal-group/${id}`,
         method: 'PUT',
         body: body
@@ -74,7 +90,7 @@ export const groupPermissionApi = apiService.injectEndpoints({
       any,
       { body: ModifyInternalWalletBody; id: number }
     >({
-      query: ({id, body}) => ({
+      query: ({ id, body }) => ({
         url: `/internal-wallet/${id}`,
         method: 'PATCH',
         body
@@ -91,6 +107,7 @@ export const {
   useGetListWalletsQuery,
   useLazyGetListWalletsQuery,
   useLazyGetListWalletGroupsQuery,
+  useLazyGetListWalletInternalGroupsQuery,
   useCreateInternalWalletMutation,
   useUpdateInternalWalletMutation
 } = groupPermissionApi

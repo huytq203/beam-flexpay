@@ -2,6 +2,7 @@ import { GUTTER } from '@constants/appConstant'
 import {
   useCreateInternalWalletMutation,
   useLazyGetListWalletGroupsQuery,
+  useLazyGetListWalletInternalGroupsQuery,
   useUpdateInternalWalletMutation
 } from '@services/apiInternalWallet'
 import { viewMode } from '@type/customer'
@@ -34,7 +35,7 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
   const [form] = Form.useForm()
   const [walletGroups, setWalletGroups] = useState<GroupPermissionData[]>([])
   const [firstLoadWalletGroups, setFirstLoadWalletGroups] = useState(false)
-  const [getWalletGroups] = useLazyGetListWalletGroupsQuery()
+  const [getWalletGroups] = useLazyGetListWalletInternalGroupsQuery()
   const [updateInternalWallet, { isLoading: updateLoading }] =
     useUpdateInternalWalletMutation()
   const [createInternalWallet, { isLoading: createLoading }] =
@@ -43,9 +44,6 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
   const [walletGroupQuery, setWalletGroupQuery] = useState('')
   const [totalPages, setTotalPages] = useState(1)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  console.log(mode);
-
 
   const handleGetWalletGroups = useCallback(
     (page: number = 1, keyword: string = walletGroupQuery) => {
