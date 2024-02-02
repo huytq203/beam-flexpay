@@ -50,7 +50,7 @@ function InternalWalletAccount() {
   const { data: interWallet, refetch } = useGetListWalletsQuery(search)
   const [updateInternalWallet] = useUpdateInternalWalletMutation()
 
-  const changeStatus = (status: number, id:  number) => {
+  const changeStatus = (status: number, id: number) => {
     Modal.confirm({
       title: status ? t`internal-wallet.modal.change-status-lock-account-title` : t`internal-wallet.modal.change-status-unlock-account-title`,
       content: status ? t`internal-wallet.modal.change-status-lock-account-description` : t`internal-wallet.modal.change-status-unlock-account-description`,
@@ -58,7 +58,7 @@ function InternalWalletAccount() {
       cancelText: t`internal-wallet.modal.change-status-cancel-button`,
       onOk: async () => {
         try {
-          const response = await updateInternalWallet({id, body: {active: status ? 0 : 1} }) as { data: { statusCode: number } }
+          const response = await updateInternalWallet({ id, body: { active: status ? 0 : 1 } }) as { data: { statusCode: number } }
           if (response.data.statusCode === 201 || response.data.statusCode === 200) {
             openNotification(status ? t`internal-wallet.messages.lock-account-success` : t`internal-wallet.messages.unlock-account-success`, 'success')
           } else {
@@ -81,8 +81,11 @@ function InternalWalletAccount() {
     },
     {
       title: t('internalWallet.walletGroup'),
-      dataIndex: 'balanceInternalGroupId',
-      key: 'balanceInternalGroupId'
+      dataIndex: 'balanceInternalGroup',
+      key: 'balanceInternalGroup',
+      render(value, record, index) {
+        return value ? value?.name : '-'
+      },
     },
     {
       title: t('internalWallet.walletNumber'),
@@ -132,7 +135,7 @@ function InternalWalletAccount() {
               module='internal-wallet'
             />
             <Button
-             onClick={() => changeStatus(record.active, record.id)}
+              onClick={() => changeStatus(record.active, record.id)}
               icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
             />
           </Space>
@@ -149,7 +152,7 @@ function InternalWalletAccount() {
       active: active !== null ? active : undefined
     })
   }
-  
+
 
   const cancelModal = () => {
     setRecordSelected(null)
@@ -165,7 +168,7 @@ function InternalWalletAccount() {
             <Form
               form={form}
               layout='vertical'
-              initialValues={{active: null}}
+              initialValues={{ active: null }}
             >
               <Row gutter={GUTTER}>
                 <Col span={6}>

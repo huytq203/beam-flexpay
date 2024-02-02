@@ -13,6 +13,8 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import TransactionAccountingConfigurationForm from './TransactionAccountingConfigurationForm'
 import { viewMode } from '@type/customer'
+import { accountingStatus, accountingTransactionType } from '@constants/options'
+import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions'
 
 function TransactionAccountingConfiguration() {
   const [form] = Form.useForm()
@@ -85,21 +87,26 @@ function TransactionAccountingConfiguration() {
       title={
         <SearchBar
           headerMenu={
-            <Form form={form} layout='vertical'>
+            <Form form={form} layout='vertical' initialValues={{ active: 1 }}>
               <Row gutter={GUTTER}>
                 <Col span={6}>
-                  <Form.Item>
-                    <Select placeholder={t`internal-wallet.placeholders.transaction_type`.toString()} />
+                  <Form.Item name="transaction_type">
+                    <Select placeholder={t`internal-wallet.placeholders.transaction_type`.toString()} options={accountingTransactionType} />
                   </Form.Item>
                 </Col>
                 <Col span={6}>
-                  <Form.Item>
-                    <Input placeholder={t`internal-wallet.placeholders.wallet_id`.toString()} />
+                  <Form.Item name='wallet_id'>
+                    <Input placeholder={t`internal-wallet.placeholders.wallet_id`.toString()}
+                      type='text'
+                      inputMode='numeric'
+                      style={{ width: '100%' }}
+                      onKeyDown={blockArrowValue}
+                      onKeyPress={blockLetterDecimal} />
                   </Form.Item>
                 </Col>
                 <Col span={6}>
-                  <Form.Item>
-                    <Select placeholder={t`internal-wallet.placeholders.status`.toString()} />
+                  <Form.Item name='active'>
+                    <Select placeholder={t`internal-wallet.placeholders.status`.toString()} options={accountingStatus} />
                   </Form.Item>
                 </Col>
               </Row>

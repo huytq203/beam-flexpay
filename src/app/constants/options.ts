@@ -5,6 +5,7 @@ import { notificationService } from '@type/notification'
 import { APPLICABLE_OBJECTS, history_type } from '@type/policyManagement'
 import { t } from 'i18next'
 import { templateFormatBody, templateFormatTitle } from './regex'
+import { TRANSACTION_TYPE } from '@pages/policy-management/limit-management/LimitAndRegulationsConst'
 
 export const objectOptions = [
   { label: t`management.sales-fee.system`, value: 'SYSTEM' },
@@ -564,3 +565,37 @@ export const attributeOptions = [
     value: 'PROMOTION_PRODUCTS'
   }
 ]
+
+export const accountingOptions = [
+  { label: i18n.t('internal-wallet.placeholders.add'), value: 'ADD' },
+  { label: i18n.t('internal-wallet.placeholders.reduce'), value: 'REDUCE' },
+]
+
+export const fundsOptions = [
+  { label: i18n.t('internal-wallet.fundsOptions.bank'), value: 'LINK_BANK' },
+  { label: i18n.t('internal-wallet.fundsOptions.napas'), value: 'NAPAS' },
+  { label: i18n.t('internal-wallet.fundsOptions.gate'), value: 'PAYMENT_GATEWAY' },
+  { label: i18n.t('internal-wallet.fundsOptions.wallet'), value: 'EWALLET' },
+]
+
+export const walletTypeOptions = [
+  { label: i18n.t('internal-wallet.walletTypeOptions.internalWallet'), value: 'internalWallet' },
+  { label: i18n.t('internal-wallet.walletTypeOptions.khcn'), value: 'internalWallet' },
+]
+
+export const accountingStatus = [
+  { label: i18n.t('internal-wallet.status.active'), value: 1 },
+  { label: i18n.t('internal-wallet.status.in-active'), value: 0 },
+]
+
+export const accountingTransactionType = [
+  { label: i18n.t('internal-wallet.transactionType.transfer'), value: TRANSACTION_TYPE.TRANSFER },
+  { label: i18n.t('internal-wallet.transactionType.deposit'), value: TRANSACTION_TYPE.DEPOSIT },
+  { label: i18n.t('internal-wallet.transactionType.withdraw'), value: TRANSACTION_TYPE.WITHDRAW },
+  { label: i18n.t('internal-wallet.transactionType.billPayment'), value: 'BILL_PAYMENT' },
+  { label: i18n.t('internal-wallet.transactionType.collet'), value: 'ADVANDED_COLLECT' },
+]
+
+
+
+

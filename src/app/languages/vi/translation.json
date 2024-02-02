@@ -2348,10 +2348,29 @@
     "wallet-internal": "Ví Nội bộ",
     "add-wallet-title": "Thêm ví nội bộ",
     "edit-wallet-title": "Cập nhật nội dung",
+    "groupNameMin": "Chưa đủ kí tự yêu cầu",
     "status": {
       "all": "Chọn tất cả",
       "active": "Hoạt động",
-      "de-active": "Khoá"
+      "de-active": "Khoá",
+      "in-active": "Không hoạt động"
+    },
+    "fundsOptions": {
+      "bank": "Ngân hàng liên kết",
+      "napas": "NAPAS",
+      "gate": "Cổng thanh toán",
+      "wallet": "Ví điện tử"
+    },
+    "walletTypeOptions": {
+      "internalWallet": "Ví Nội bộ",
+      "khcn": "Ví KHCN"
+    },
+    "transactionType": {
+      "transfer": "Chuyển tiền",
+      "deposit": "Nạp tiền",
+      "withdraw": "Rút tiền",
+      "billPayment": "Thanh toán hóa đơn",
+      "collet": "Chi hộ - Ứng lương"
     },
     "messages": {
       "create-group-success": "Tạo nhóm ví thành công",
@@ -2404,7 +2423,14 @@
       "wallet_id": "Nhập số ví điện tử",
       "wallet_name": "Nhập tên ví",
       "wallet_number": "Nhập số ví",
-      "transaction_type": "Loại giao dịch"
+      "transaction_type": "Loại giao dịch",
+      "service": "Chọn dịch vụ",
+      "partner": "Chọn đối tác",
+      "funds": "Chọn nguồn tiền",
+      "wallet_type": "Chọn loại ví",
+      "accounting": "Chọn hạch toán",
+      "add": "Hạch toán (+) tiền",
+      "reduce": "Hạch toán (-) tiền"
     }
   }
 }

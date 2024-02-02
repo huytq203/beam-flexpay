@@ -2,6 +2,7 @@ import { openNotification } from '@configs/fetchBaseQueryCustom'
 import { GUTTER } from '@constants/appConstant'
 import { useCreateInternalWalletGroupMutation, useUpdateInternalWalletGroupMutation } from '@services/apiInternalWallet'
 import { viewMode } from '@type/customer'
+import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions'
 import { Button, Col, Form, Input, Row, Spin } from 'antd'
 import Modal from 'antd/es/modal/Modal'
 import { useEffect, useState } from 'react'
@@ -40,6 +41,7 @@ function InternalGroupForm({ group, onCancel, title, mode, isShow }: props) {
       openNotification(mode === viewMode.create ? t`internal-wallet.messages.create-group-failed` : t`internal-wallet.messages.update-group-failed`, 'error')
     } finally {
       setLoading(false)
+      form.resetFields();
     }
   }
 
@@ -78,6 +80,11 @@ function InternalGroupForm({ group, onCancel, title, mode, isShow }: props) {
               disabled={mode === viewMode.update}
               readOnly={mode === viewMode.update}
               placeholder={t`internal-wallet.placeholders.group_id`.toString()}
+              type='text'
+              inputMode='numeric'
+              style={{ width: '100%' }}
+              onKeyDown={blockArrowValue}
+              onKeyPress={blockLetterDecimal} 
             />
           </Form.Item>
           {/* Tên nhóm */}

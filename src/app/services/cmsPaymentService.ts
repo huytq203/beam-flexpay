@@ -86,6 +86,7 @@ const injectedRtkApi = api
 export { injectedRtkApi as enhancedApi }
 export const {
   usePaymentServiceFindAllQuery,
+  useLazyPaymentServiceFindAllQuery,
   usePaymentServiceFindOneQuery,
   usePaymentServiceUpdateMutation,
   usePaymentServiceDeleteMutation,

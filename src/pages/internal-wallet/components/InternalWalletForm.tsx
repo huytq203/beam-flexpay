@@ -36,7 +36,7 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
   const [firstLoadWalletGroups, setFirstLoadWalletGroups] = useState(false)
   const [getWalletGroups] = useLazyGetListWalletGroupsQuery()
   const [updateInternalWallet, { isLoading: updateLoading }] =
-  useUpdateInternalWalletMutation()
+    useUpdateInternalWalletMutation()
   const [createInternalWallet, { isLoading: createLoading }] =
     useCreateInternalWalletMutation()
   const [walletGroupsPage, setWalletGroupsPage] = useState(1)
@@ -45,7 +45,7 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   console.log(mode);
-  
+
 
   const handleGetWalletGroups = useCallback(
     (page: number = 1, keyword: string = walletGroupQuery) => {
@@ -65,17 +65,17 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
 
   const handleSubmitForm = useCallback((values: any) => {
     const { walletNumber, name, balanceInternalGroupId } = values
-    const body = { walletNumber, name, balanceInternalGroupId }
-    ;(mode === viewMode.update
-      ? updateInternalWallet({ id: record.id, body }).unwrap()
-      : createInternalWallet(body).unwrap()
-    ).then(() => {
-      notification.success({
-        message: mode === viewMode.update ? t('internal-wallet.messages.success-edit-wallet-account') : t('internal-wallet.messages.success-create-wallet-account')
+    const body = { walletNumber, name, internalWalletGroupId: balanceInternalGroupId }
+      ; (mode === viewMode.update
+        ? updateInternalWallet({ id: record.id, body }).unwrap()
+        : createInternalWallet(body).unwrap()
+      ).then(() => {
+        notification.success({
+          message: mode === viewMode.update ? t('internal-wallet.messages.success-edit-wallet-account') : t('internal-wallet.messages.success-create-wallet-account')
+        })
+        form.resetFields()
+        onCancel()
       })
-      form.resetFields()
-      onCancel()
-    })
   }, [mode])
 
   useEffect(() => {
@@ -130,8 +130,8 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
               const target = e.target as any
               const remainingScroll =
                 target.scrollHeight -
-                  target.offsetHeight -
-                  Number(target.scrollTop) <
+                target.offsetHeight -
+                Number(target.scrollTop) <
                 20
               if (remainingScroll) {
                 handleGetWalletGroups(walletGroupsPage + 1)
@@ -185,12 +185,12 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
             },
             {
               min: 5,
-              message: t('internal-wallet.groupNameMin').toString()
-            },
-            {
               max: 20,
-              message: t('internal-wallet.groupNameMax').toString()
-            }
+              message: t('messages.minMaxFormValidate', {
+                min: 5,
+                max: 255
+              }).toString()
+            },
           ]}
           name='name'
         >
