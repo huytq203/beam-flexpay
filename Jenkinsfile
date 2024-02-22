@@ -9,7 +9,7 @@ pipeline {
     stage('Build Image') {
       steps {
         nvm('v18.19.1') {
-          sh 'npm install'
+          sh 'npm install --force'
           sh 'npm run build'
           sh 'docker build -t $DOCKER_REPOSITORY .'
         }
