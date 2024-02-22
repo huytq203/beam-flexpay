@@ -19,7 +19,7 @@ export const groupPermissionApi = apiService.injectEndpoints({
       InternalWalletPayload
     >({
       query: (payload) => ({
-        url: '/balance-internal-group',
+        url: '/internal-wallet-group',
         method: 'GET',
         params: payload
       }),
@@ -48,7 +48,7 @@ export const groupPermissionApi = apiService.injectEndpoints({
     }),
     createInternalWalletGroup: builder.mutation({
       query: (payload) => ({
-        url: '/balance-internal-group',
+        url: '/internal-wallet-group',
         method: 'POST',
         body: payload
       }),
@@ -56,7 +56,7 @@ export const groupPermissionApi = apiService.injectEndpoints({
     }),
     updateInternalWalletGroup: builder.mutation({
       query: ({ id, ...body }) => ({
-        url: `/balance-internal-group/${id}`,
+        url: `/internal-wallet-group/${id}`,
         method: 'PUT',
         body: body
       }),
