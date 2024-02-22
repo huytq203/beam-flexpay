@@ -8,12 +8,9 @@ pipeline {
   stages {
     stage('Build Image') {
       steps {
-        script {
-          source ~/.bashrc
-          npm install
-          npm run build
-          docker build -t $DOCKER_REPOSITORY .
-        }
+        sh 'npm install'
+        sh 'npm run build'
+        sh 'docker build -t $DOCKER_REPOSITORY .'
       }
     }
     stage('Push Image') {
