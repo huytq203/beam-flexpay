@@ -8,7 +8,7 @@ pipeline {
     stage('Build Image') {
       steps {
         sh 'npm install'
-          sh 'docker build --no-cache -t $DOCKER_REPOSITORY .'
+          sh 'docker build -t $DOCKER_REPOSITORY .'
       }
     }
     stage('Push Image') {
