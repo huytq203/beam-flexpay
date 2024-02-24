@@ -10,12 +10,6 @@ pipeline {
   stages {
     stage('Build Image') {
       steps {
-          sh 'echo TEST'
-      }
-    }
-
-    stage('Build Image') {
-      steps {
         sh 'npm install'
           sh 'docker build -t $DOCKER_REPOSITORY .'
       }
