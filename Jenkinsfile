@@ -10,30 +10,14 @@ pipeline {
   stages {
     stage('Build Image') {
       steps {
-        sh 'npm install'
-          sh 'docker build -t $DOCKER_REPOSITORY .'
+          sh 'echo TEST'
       }
-    }
-    stage('Push Image') {
-      steps {
-        sh 'docker push $DOCKER_REPOSITORY'
-      }
-    }
-    stage('Pull Image & Rebuild') {
-      steps {
-        sshagent(credentials : ['worker-node']) {
-          sh 'ssh -o StrictHostKeyChecking=no -l $WORKER_USER $WORKER_HOST docker pull $DOCKER_REPOSITORY'
-          sh 'ssh -o StrictHostKeyChecking=no -l $WORKER_USER $WORKER_HOST docker rm -f frontend-cms 2> /dev/null'
-          sh 'ssh -o StrictHostKeyChecking=no -l $WORKER_USER $WORKER_HOST docker run -dit -p 8000:8000 --name=frontend-cms $DOCKER_REPOSITORY'
-        } 
-      }
-
     }
   }
 
   post {
     success {
-      telegramSend(message: 'Test Message', chatId: $TELEGRAM_MONITORING_CHANNEL_ID)
+      telegramSend(message: 'Test Message', chatId: '$TELEGRAM_MONITORING_CHANNEL_ID')
     }
   }
 }
