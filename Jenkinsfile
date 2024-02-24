@@ -10,7 +10,8 @@ pipeline {
   stages {
     stage('Build Image') {
       steps {
-          sh 'echo TEST'
+        sh 'echo TEST'
+        telegramSend(message: 'Test Message', chatId: -1002076184692)
       }
     }
   }
