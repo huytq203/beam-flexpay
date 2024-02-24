@@ -4,6 +4,7 @@ pipeline {
       DOCKER_REPOSITORY = 'registry.beamewa.com.vn/beam-uat/cms-frontend'
       WORKER_HOST = '10.10.10.2'
       WORKER_USER = 'ubuntu'
+      TELEGRAM_MONITORING_CHANNEL_ID = '-1002076184692'
     }
 
   stages {
@@ -16,7 +17,6 @@ pipeline {
     stage('Push Image') {
       steps {
         sh 'docker push $DOCKER_REPOSITORY'
-          sh 'echo test'
       }
     }
     stage('Pull Image & Rebuild') {
@@ -28,6 +28,12 @@ pipeline {
         } 
       }
 
+    }
+  }
+
+  post {
+    success {
+      telegramSend(message: 'Test Message', chatId: $TELEGRAM_MONITORING_CHANNEL_ID)
     }
   }
 }
