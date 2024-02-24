@@ -37,9 +37,4 @@ pipeline {
     }
   }
 
-  post {
-    success {
-      telegramSend(message: 'Test Message', chatId: '$TELEGRAM_MONITORING_CHANNEL_ID')
-    }
-  }
 }
