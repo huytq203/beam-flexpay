@@ -210,7 +210,6 @@ export const fetchBaseQueryCustom: BaseQueryFn<
       case 401:
         localStorage.removeItem(appName)
         if (window.location.pathname !== '/auth/login') {
-          openNotification(t(`login.unauthorized`))
           setTimeout(() => {
             window.location.href = '/auth/login'
           }, 700)
