@@ -16,6 +16,7 @@ import { InternalWalletPayload } from '@type/internalWallet'
 import { useGetListWalletGroupsQuery, useUpdateInternalWalletGroupMutation } from '@services/apiInternalWallet'
 import { viewMode } from '@type/customer'
 import { openNotification } from '@configs/fetchBaseQueryCustom'
+import { internalWalletGroupStatusOptions } from '@constants/options'
 
 function InternalGroupWallet() {
   const [form] = Form.useForm()
@@ -36,7 +37,7 @@ function InternalGroupWallet() {
       cancelText: t`internal-wallet.modal.change-status-cancel-button`,
       onOk: async () => {
         try {
-          const response = await updateInternalWalletGroup({name, active: status ? 0 : 1, id }) as { data: { statusCode: number } }
+          const response = await updateInternalWalletGroup({ name, active: status ? 0 : 1, id }) as { data: { statusCode: number } }
           if (response.data.statusCode === 201 || response.data.statusCode === 200) {
             openNotification(status ? t`internal-wallet.messages.lock-group-success` : t`internal-wallet.messages.unlock-group-success`, 'success')
           } else {
@@ -99,13 +100,6 @@ function InternalGroupWallet() {
       width: 150
     },
     {
-      title: t('groups.note'),
-      dataIndex: 'note',
-      key: 'note',
-      width: 250,
-      render: (value) => value ? value : '-'
-    },
-    {
       title: t('labels.action'),
       render(value, record, index) {
         return (
@@ -157,7 +151,10 @@ function InternalGroupWallet() {
                 </Col>
                 <Col span={6}>
                   <Form.Item>
-                    <Select placeholder={t`internal-wallet.placeholders.status`.toString()} />
+                    <Select
+                      placeholder={t`internal-wallet.placeholders.status`.toString()}
+                      options={internalWalletGroupStatusOptions}
+                    />
                   </Form.Item>
                 </Col>
               </Row>

@@ -6,6 +6,7 @@ import {
   useUpdateInternalWalletMutation
 } from '@services/apiInternalWallet'
 import { viewMode } from '@type/customer'
+import { InternalWalletGroup } from '@type/internalWallet'
 import { GroupPermissionData } from '@type/permission'
 import {
   Button,
@@ -33,7 +34,7 @@ const limit = 10
 function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
   const { t } = useTranslation()
   const [form] = Form.useForm()
-  const [walletGroups, setWalletGroups] = useState<GroupPermissionData[]>([])
+  const [walletGroups, setWalletGroups] = useState<InternalWalletGroup[]>([])
   const [firstLoadWalletGroups, setFirstLoadWalletGroups] = useState(false)
   const [getWalletGroups] = useLazyGetListWalletInternalGroupsQuery()
   const [updateInternalWallet, { isLoading: updateLoading }] =
@@ -44,6 +45,7 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
   const [walletGroupQuery, setWalletGroupQuery] = useState('')
   const [totalPages, setTotalPages] = useState(1)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [selectedWalletGroup, setSelectedWalletGroup] = useState<InternalWalletGroup>()
 
   const handleGetWalletGroups = useCallback(
     (page: number = 1, keyword: string = walletGroupQuery) => {
@@ -82,6 +84,7 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
         ...record,
         groupName: record?.balanceInternalGroup?.name ?? ''
       })
+    setSelectedWalletGroup(record?.balanceInternalGroup)
     if (!isShow) form.resetFields()
   }, [isShow, record])
 
@@ -110,10 +113,12 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
         <Form.Item
           name='balanceInternalGroupId'
           label={t('internal-wallet.groupType')}
+          initialValue={selectedWalletGroup?.name}
         >
           <Select
             onSelect={(id) => {
               const item = walletGroups.find((x) => x.id === id)
+              setSelectedWalletGroup(item)
               form.setFields([{ name: 'groupName', value: item?.name ?? '' }])
             }}
             showSearch
@@ -145,7 +150,7 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
           >
             {walletGroups?.map((x) => (
               <Select.Option
-                label={`${x.id}`}
+                label={`${x.name}`}
                 value={x.id}
                 key={`wallet-group-${x.id}`}
               >
@@ -170,6 +175,7 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
           name='walletNumber'
         >
           <Input
+            prefix={`${selectedWalletGroup?.walletGroup ?? "XXX"}.`}
             placeholder={t`internal-wallet.placeholders.wallet_number`.toString()}
           />
         </Form.Item>

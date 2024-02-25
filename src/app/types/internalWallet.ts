@@ -11,6 +11,8 @@ export interface InternalWalletPayload {
 export interface InternalWalletGroup {
   id: number
   name: string
+  active: boolean
+  walletGroup: number
 }
 
 export interface InternalWalletResponse {

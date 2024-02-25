@@ -2333,6 +2333,13 @@
     "status": "Trạng thái",
     "logo": "Logo"
   },
+  "internal-wallet-group": {
+    "status": {
+      "all": "Chọn tất cả",
+      "active": "Hoạt động",
+      "in-active": "Không hoạt động"
+    }
+  },
   "internal-wallet": {
     "add-configuration": "Thêm cấu hình",
     "group": "Nhóm tài khoản nội bộ",

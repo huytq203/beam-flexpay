@@ -7,10 +7,12 @@ import {
 } from '@type/permission'
 import { apiService } from './apiService'
 import {
+    InternalWalletGroup,
   InternalWalletPayload,
   InternalWalletResponse,
   ModifyInternalWalletBody
 } from '@type/internalWallet'
+import { CommonResponsePayload } from '@type/common'
 
 export const groupPermissionApi = apiService.injectEndpoints({
   endpoints: (builder) => ({
@@ -40,8 +42,8 @@ export const groupPermissionApi = apiService.injectEndpoints({
         params: payload
       }),
       transformResponse(
-        baseQueryReturnValue: ResponseType<GroupPermissionPayload>
-      ): GroupPermissionPayload {
+        baseQueryReturnValue: ResponseType<CommonResponsePayload<InternalWalletGroup[]>>
+      ): CommonResponsePayload<InternalWalletGroup[]> {
         return baseQueryReturnValue.data
       },
       providesTags: ['internal-wallet-group']
