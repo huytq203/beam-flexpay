@@ -121,6 +121,7 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
               setSelectedWalletGroup(item)
               form.setFields([{ name: 'groupName', value: item?.name ?? '' }])
             }}
+            disabled={mode != viewMode.create}
             showSearch
             onSearch={(value) => {
               if (timeoutRef.current) clearTimeout(timeoutRef.current)
@@ -166,6 +167,7 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
         >
           <Input
             readOnly
+            disabled
             placeholder={t`internal-wallet.placeholders.group_name`.toString()}
           />
         </Form.Item>
@@ -177,6 +179,7 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
           <Input
             prefix={`${selectedWalletGroup?.walletGroup ?? "XXX"}.`}
             placeholder={t`internal-wallet.placeholders.wallet_number`.toString()}
+            disabled={mode != viewMode.create}
           />
         </Form.Item>
         {/* Tên ví nội bộ */}

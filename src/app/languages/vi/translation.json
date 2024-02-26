@@ -984,8 +984,8 @@
       "old-value": "Giá trị cũ",
       "creator": "Người tạo",
       "createdAt": "Ngày tạo",
-      "update": "Sửa chính sách",
-      "delete": "Xóa chính sách",
+      "update": "Sửa hạn mức",
+      "delete": "Xóa hạn mức",
       "placeholders": {
         "history-type": "Nhập loại lịch sử",
         "update-date": "Chọn ngày cập nhật",
