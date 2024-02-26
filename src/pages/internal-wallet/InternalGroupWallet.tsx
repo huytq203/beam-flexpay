@@ -87,7 +87,7 @@ function InternalGroupWallet() {
       dataIndex: 'lastUpdatedBy',
       key: 'lastUpdatedBy',
       render(value, record, index) {
-        return record?.lastUpdatedBy?.fullName ?? '-'
+        return record?.updatedBy?.fullName ?? '-'
       },
       align: 'center',
       width: 200
