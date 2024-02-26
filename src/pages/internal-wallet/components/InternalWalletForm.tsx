@@ -154,7 +154,7 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
                 value={x.id}
                 key={`wallet-group-${x.id}`}
               >
-                {x.name}
+                {x.walletGroup}
               </Select.Option>
             ))}
           </Select>
