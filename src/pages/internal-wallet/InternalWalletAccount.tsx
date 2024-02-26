@@ -68,7 +68,11 @@ function InternalWalletAccount() {
       dataIndex: 'name',
       key: 'name'
     },
-
+    {
+      title: t('internalBalanceWallet.walletNumber'),
+      dataIndex: 'availableMoney',
+      key: 'availableMoney'
+    },
     {
       title: t('partner.createdBy'),
       dataIndex: 'createdBy',

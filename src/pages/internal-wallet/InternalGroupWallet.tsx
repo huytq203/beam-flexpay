@@ -150,7 +150,7 @@ function InternalGroupWallet() {
                   </Form.Item>
                 </Col>
                 <Col span={6}>
-                  <Form.Item>
+                  <Form.Item name='active'>
                     <Select
                       placeholder={t`internal-wallet.placeholders.status`.toString()}
                       options={internalWalletGroupStatusOptions}
