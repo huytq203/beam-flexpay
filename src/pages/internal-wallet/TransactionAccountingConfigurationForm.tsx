@@ -1,4 +1,5 @@
 import { GUTTER } from '@constants/appConstant'
+import ButtonAdd from '@components/button-add/ButtonAdd'
 import { useLazyPaymentPartnerFindAllQuery } from '@services/cmsPaymentParner'
 import { useLazyPaymentServiceFindAllQuery } from '@services/cmsPaymentService'
 import {
@@ -8,7 +9,8 @@ import {
   Modal,
   Row,
   Select,
-  notification
+  notification,
+  Space
 } from 'antd'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -21,6 +23,9 @@ import {
 } from '@constants/options'
 import { useCreateAccountingMutation } from '@services/accountingService'
 import { useLazyGetListWalletsQuery } from '@services/apiInternalWallet'
+import Title from 'antd/es/typography/Title'
+import { Accounting, AccountingBalanceType, AccountingDetails, AccountingDetailsType } from '@type/accounting'
+import { PlusOutlined } from '@ant-design/icons'
 
 type props = {
   title: string
@@ -43,6 +48,20 @@ function TransactionAccountingConfigurationForm({
   const [getServices] = useLazyPaymentServiceFindAllQuery()
   const [getWalletIds] = useLazyGetListWalletsQuery()
   const [createAccounting] = useCreateAccountingMutation()
+
+  const [selectedAccounting, setSelectedAccounting] = useState<Accounting>({
+    details: [
+      {
+        id: 1,
+        type: AccountingDetailsType.DEBIT,
+        balanceType: AccountingBalanceType.INTERNAL,
+      }, {
+        id: 2,
+        type: AccountingDetailsType.DEBIT,
+        balanceType: AccountingBalanceType.PERSONAL,
+      }
+    ]
+  })
 
   const [createLoading, setCreateLoading] = useState(false)
   const updateLoading = false
@@ -74,6 +93,10 @@ function TransactionAccountingConfigurationForm({
     if (isShow && record && record.id) form.setFieldsValue(record)
     if (!isShow) form.resetFields()
   }, [isShow, record])
+
+  useEffect(() => {
+    console.log("Accounting:", selectedAccounting)
+  }, [selectedAccounting])
 
   const onSelectData = (value: Record<string, any>, field: string) => {
     form.setFieldValue(field, value.value)
@@ -177,67 +200,103 @@ function TransactionAccountingConfigurationForm({
             </Form.Item>
           </>
         )}
-        {/* Ghi nợ - input */}
+        {/* Ghi nợ - title*/}
+        <Form.Item noStyle>
+          <Title level={5}>Ghi co</Title>
+        </Form.Item>
         {/* Loại ví - select */}
-        <Form.Item
-          name='balanceType'
-          label={t('internal-wallet.modal.walletType')}
-          rules={[
-            {
-              required: true,
-              message: t('internal-wallet.messages.required').toString()
-            }
-          ]}
-        >
-          <Select
-            placeholder={t('internal-wallet.placeholders.wallet_type')}
-            options={walletTypeOptions}
-          />
-        </Form.Item>
-        {/* Số ví điện tử - select - required */}
-        <Form.Item
-          name='walletNumber'
-          label={t('internal-wallet.modal.walletNumber')}
-          rules={[
-            {
-              required: true,
-              message: t('internal-wallet.messages.required').toString()
-            }
-          ]}
-        >
-          <CustomAccountingSelect
-            trigger={getWalletIds}
-            search={{
-              page: 1,
-              take: 10,
-              active: true
+        <Form.List name="details">
+          {(fields, { add, remove }) => (
+            <>
+              {selectedAccounting?.details
+                .map((details, index) => {details.type === AccountingDetailsType.DEBIT
+                ? (<Space
+                  key={details.id}
+                  direction='vertical'
+                  style={{
+                    "padding-left": "30px",
+                    "width": "100%"
+                  }}
+                >
+                  <Form.Item
+                    label={t('internal-wallet.modal.walletType')}
+                    rules={[
+                      {
+                        required: true,
+                        message: t('internal-wallet.messages.required').toString()
+                      }
+                    ]}
+                  >
+                    <Select
+                      placeholder={t('internal-wallet.placeholders.wallet_type')}
+                      options={walletTypeOptions}
+                    />
+                  </Form.Item>
+                  {/* Số ví điện tử - select - required */}
+                  <Form.Item
+                    label={t('internal-wallet.modal.walletNumber')}
+                    rules={[
+                      {
+                        required: true,
+                        message: t('internal-wallet.messages.required').toString()
+                      }
+                    ]}
+                  >
+                    <CustomAccountingSelect
+                      trigger={getWalletIds}
+                      search={{
+                        page: 1,
+                        take: 10,
+                        active: true
+                      }}
+                      field='walletNumber'
+                      onSelectData={onSelectData}
+                      valueSearch='walletNumber'
+                      placeholder={t(
+                        'internal-wallet.placeholders.wallet_number'
+                      ).toString()}
+                      valuePassed='walletNumber'
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label={t('internal-wallet.modal.accounting')}
+                    rules={[
+                      {
+                        required: true,
+                        message: t('internal-wallet.messages.required').toString()
+                      }
+                    ]}
+                  >
+                    <Select
+                      placeholder={t(
+                        'internal-wallet.placeholders.accounting'
+                      ).toString()}
+                      options={accountingOptions}
+                    />
+                  </Form.Item>
+                </Space>)
+                : <div>sdfs</div>
+              })}
+            </>
+          )}
+        </Form.List>
+        <Form.Item>
+          <ButtonAdd
+            module='internal-wallet'
+            onClick={() => {
+              setSelectedAccounting({
+                ...selectedAccounting,
+                details: [...selectedAccounting?.details ?? [], {
+                  balanceType: AccountingBalanceType.INTERNAL,
+                  type: AccountingDetailsType.DEBIT,
+                  isPositive: true
+                }]
+              })
             }}
-            field='walletNumber'
-            onSelectData={onSelectData}
-            valueSearch='walletNumber'
-            placeholder={t(
-              'internal-wallet.placeholders.wallet_number'
-            ).toString()}
-            valuePassed='walletNumber'
           />
         </Form.Item>
-        <Form.Item
-          name='accountingType'
-          label={t('internal-wallet.modal.accounting')}
-          rules={[
-            {
-              required: true,
-              message: t('internal-wallet.messages.required').toString()
-            }
-          ]}
-        >
-          <Select
-            placeholder={t(
-              'internal-wallet.placeholders.accounting'
-            ).toString()}
-            options={accountingOptions}
-          />
-        </Form.Item>
+
+
         <Row
           justify='end'
           gutter={GUTTER}
@@ -262,8 +321,8 @@ function TransactionAccountingConfigurationForm({
             </Button>
           </Col>
         </Row>
-      </Form>
-    </Modal>
+      </Form >
+    </Modal >
   )
 }
 

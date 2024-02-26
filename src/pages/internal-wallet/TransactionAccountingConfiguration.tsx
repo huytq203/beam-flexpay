@@ -56,8 +56,6 @@ function TransactionAccountingConfiguration() {
   const { data: accounting } = useGetAccountingQuery(search)
   const [updateStatus] = useUpdateActiveMutation()
 
-  console.log('accounting', accounting)
-
   const changeStatus = (status: number, id: string) => {
     Modal.confirm({
       title: status
