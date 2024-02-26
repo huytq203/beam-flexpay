@@ -61,7 +61,10 @@ function InternalWalletAccount() {
     {
       title: t('internalWallet.walletNumber'),
       dataIndex: 'walletNumber',
-      key: 'walletNumber'
+      key: 'walletNumber',
+      render(value, record, index) {
+        return `${record.balanceInternalGroup.walletGroup}.${record.walletNumber}`
+      }
     },
     {
       title: t('internalWallet.walletName'),
