@@ -113,7 +113,7 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
         <Form.Item
           name='balanceInternalGroupId'
           label={t('internal-wallet.groupType')}
-          initialValue={selectedWalletGroup?.name}
+          initialValue={selectedWalletGroup?.walletGroup}
         >
           <Select
             onSelect={(id) => {
