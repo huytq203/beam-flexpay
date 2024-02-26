@@ -189,7 +189,7 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
             },
             {
               min: 5,
-              max: 20,
+              max: 255,
               message: t('messages.minMaxFormValidate', {
                 min: 5,
                 max: 255
