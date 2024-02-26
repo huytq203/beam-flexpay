@@ -150,7 +150,7 @@ function InternalWalletForm({ record, isShow, onCancel, title, mode }: props) {
           >
             {walletGroups?.map((x) => (
               <Select.Option
-                label={`${x.name}`}
+                label={`${x.walletGroup}`}
                 value={x.id}
                 key={`wallet-group-${x.id}`}
               >
