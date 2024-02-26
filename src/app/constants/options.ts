@@ -567,7 +567,7 @@ export const attributeOptions = [
 ]
 
 export const internalWalletGroupStatusOptions = [
-  { label: i18n.t('internal-wallet-group.status.all'), value: null },
+  { label: i18n.t('internal-wallet-group.status.all'), value: null},
   { label: i18n.t('internal-wallet-group.status.active'), value: 1 },
   { label: i18n.t('internal-wallet-group.status.in-active'), value: 0 },
 ]

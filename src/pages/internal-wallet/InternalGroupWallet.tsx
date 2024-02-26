@@ -121,11 +121,14 @@ function InternalGroupWallet() {
     }
   ]
 
-  const handleSearch = () =>
+  const handleSearch = () => {
+    const active = form.getFieldValue('active')
     setSearch({
       ...search,
-      ...form.getFieldsValue()
+      ...form.getFieldsValue(),
+      active: active !== null ? active : undefined
     })
+  }
 
   const cancelModal = () => {
     setSelected(undefined)

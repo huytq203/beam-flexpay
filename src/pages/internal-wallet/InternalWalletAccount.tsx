@@ -69,7 +69,7 @@ function InternalWalletAccount() {
       key: 'name'
     },
     {
-      title: t('internalBalanceWallet.walletNumber'),
+      title: t('internalBalanceWallet.balance'),
       dataIndex: 'availableMoney',
       key: 'availableMoney'
     },
