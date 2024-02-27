@@ -14,13 +14,15 @@ import {
   FloatButton,
   FormListFieldData,
   Space,
-  notification
+  notification,
+  Radio
 } from 'antd'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import CustomAccountingSelect from './components/customer-accouting-select/CustomAccountingSelect'
 import {
   accountingOptions,
+  accountingSubType,
   accountingTransactionType,
   fundsOptions,
   walletTypeOptions
@@ -30,6 +32,8 @@ import { useGetListWalletsQuery, useLazyGetListWalletsQuery } from '@services/ap
 import Title from 'antd/es/typography/Title'
 import { Accounting, AccountingBalanceType, AccountingDetails, AccountingDetailsType } from '@type/accounting'
 import { QueryStatus } from '@reduxjs/toolkit/dist/query'
+import { AccountingTransactionType } from '@type/accounting'
+import { AccountingSubType } from '@type/accounting'
 
 type props = {
   title: string
@@ -68,6 +72,10 @@ function TransactionAccountingConfigurationForm({
   const [createAccounting, createAccountingStatus] = useCreateAccountingMutation()
 
   const updateLoading = false
+
+  useEffect(() => {
+    console.log(transactionType)
+  }, [transactionType])
 
   const handleSubmit = async (value: Record<string, any>) => {
     if (!value) {
@@ -210,6 +218,24 @@ function TransactionAccountingConfigurationForm({
             options={accountingTransactionType}
           />
         </Form.Item>
+        {/* Sub type - select */}
+        <Form.Item
+          name='subType'
+          label={t('internal-wallet.modal.subType')}
+          rules={[
+            {
+              required: true,
+              message: t('internal-wallet.messages.required').toString()
+            }
+          ]}
+        >
+          <Radio.Group
+            disabled={mode === viewMode.view}
+            initialValue={AccountingSubType.OTHER}
+            options={accountingSubType}
+          >
+          </Radio.Group>
+        </Form.Item>
         {/* Nguồn tiền - select */}
         <Form.Item
           name='fundSource'
@@ -227,108 +253,76 @@ function TransactionAccountingConfigurationForm({
             options={fundsOptions}
           />
         </Form.Item>
-
-        {transactionType === 'ADVANDED_COLLECT' && (
-          <>
-            {/* Dịch vụ - select */}
-            <Form.Item
-              name='serviceId'
-              label={t('internal-wallet.modal.service')}
-              rules={[
-                {
-                  required: true,
-                  message: t('internal-wallet.messages.required').toString()
-                }
-              ]}
-            >
-              <CustomAccountingSelect
-                trigger={getServices}
-                search={{
-                  page: 1,
-                  take: 10,
-                  active: true
-                }}
-                field='name'
-                onSelectData={onSelectData}
-                valueSearch='serviceId'
-                disabled={mode === viewMode.view}
-                placeholder={t('internal-wallet.placeholders.service')}
-              />
-            </Form.Item>
-            {/* Đối tác - select */}
-            <Form.Item
-              name='partnerId'
-              label={t('internal-wallet.modal.partner')}
-              rules={[
-                {
-                  required: true,
-                  message: t('internal-wallet.messages.required').toString()
-                }
-              ]}
-            >
-              <CustomAccountingSelect
-                trigger={getPartners}
-                search={{
-                  page: 1,
-                  take: 10,
-                  type: 'REPAYMENT'
-                }}
-                field='name'
-                disabled={mode === viewMode.view}
-                onSelectData={onSelectData}
-                valueSearch='partnerId'
-                placeholder={t('internal-wallet.placeholders.partner')}
-              />
-            </Form.Item>
-          </>
-        )}
-        {/* Ghi có - title*/}
-        <Form.Item noStyle>
-          <Title level={5}>{t('accounting.details.type.credit')}</Title>
-        </Form.Item>
-        {/* Loại ví - select */}
-        <Form.List
-          name="details"
+        {/* Dịch vụ - select */}
+        <Form.Item
+          name='serviceId'
+          label={t('internal-wallet.modal.service')}
           rules={[
             {
-              validator: async (_, details) => {
-                const childCount = (details as AccountingDetails[])
-                  .filter(details => details.type === AccountingDetailsType.CREDIT)
-                  .length
-
-                if (childCount < 1) {
-                  return Promise.reject(new Error(t('accounting.messages.at-least-one-credit-accounting-details') ?? ''))
+              validator: async (n, serviceId) => {
+                if (transactionType != AccountingTransactionType.ADVANCED_COLLLECT
+                  && transactionType != AccountingTransactionType.BILL_PAYMENT
+                ) {
+                  return
+                } else if (!serviceId) {
+                  return Promise.reject(new Error(t('internal-wallet.messages.required').toString()))
                 }
-              }
+              },
             }
           ]}
         >
-          {(fields, { add, remove, }) => (
-            <div>
-              {fields
-                .map((field, index) => (
-                  details[index].type == AccountingDetailsType.CREDIT
-                    ? <AccountingDetailsForm
-                      field={field}
-                      index={index}
-                      isDefaultPositive={true}
-                      onRemove={() => remove(field.name)}
-                    />
-                    : <Space />
-                ))}
-              <ButtonAdd
-                module='internal-wallet'
-                disabled={mode === viewMode.view}
-                onClick={() => {
-                  const initialValue: AccountingDetails = {
-                    type: AccountingDetailsType.CREDIT,
-                  }
-                  add(initialValue)
-                }}
-              />
-            </div>
-          )}
-        </Form.List>
+          <CustomAccountingSelect
+            trigger={getServices}
+            search={{
+              page: 1,
+              take: 10,
+              active: true
+            }}
+            field='name'
+            onSelectData={onSelectData}
+            valueSearch='serviceId'
+            disabled={(transactionType != AccountingTransactionType.ADVANCED_COLLLECT &&
+              transactionType != AccountingTransactionType.BILL_PAYMENT) ||
+              transactionType === undefined ||
+              mode === viewMode.view}
+            placeholder={t('internal-wallet.placeholders.service')}
+          />
+        </Form.Item>
+        {/* Đối tác - select */}
+        <Form.Item
+          name='partnerId'
+          label={t('internal-wallet.modal.partner')}
+          rules={[
+            {
+              validator: async (n, partnerId) => {
+                if (transactionType != AccountingTransactionType.ADVANCED_COLLLECT
+                  && transactionType != AccountingTransactionType.BILL_PAYMENT
+                ) {
+                  return
+                } else if (!partnerId) {
+                  return Promise.reject(new Error(n.message))
+                }
+              },
+            }
+          ]}
+        >
+          <CustomAccountingSelect
+            trigger={getPartners}
+            search={{
+              page: 1,
+              take: 10,
+              type: 'REPAYMENT'
+            }}
+            field='name'
+            disabled={(transactionType != AccountingTransactionType.ADVANCED_COLLLECT &&
+              transactionType != AccountingTransactionType.BILL_PAYMENT) ||
+              transactionType === undefined ||
+              mode === viewMode.view}
+            onSelectData={onSelectData}
+            valueSearch='partnerId'
+            placeholder={t('internal-wallet.placeholders.partner')}
+          />
+        </Form.Item>
         {/* Ghi nợ - title*/}
         <Form.Item noStyle>
           <Title level={5}>{t('accounting.details.type.debit')}</Title>
@@ -370,6 +364,53 @@ function TransactionAccountingConfigurationForm({
                 onClick={() => {
                   const initialValue: AccountingDetails = {
                     type: AccountingDetailsType.DEBIT,
+                  }
+                  add(initialValue)
+                }}
+              />
+            </div>
+          )}
+        </Form.List>
+        {/* Ghi có - title*/}
+        <Form.Item noStyle>
+          <Title level={5}>{t('accounting.details.type.credit')}</Title>
+        </Form.Item>
+        {/* Loại ví - select */}
+        <Form.List
+          name="details"
+          rules={[
+            {
+              validator: async (_, details) => {
+                const childCount = (details as AccountingDetails[])
+                  .filter(details => details.type === AccountingDetailsType.CREDIT)
+                  .length
+
+                if (childCount < 1) {
+                  return Promise.reject(new Error(t('accounting.messages.at-least-one-credit-accounting-details') ?? ''))
+                }
+              }
+            }
+          ]}
+        >
+          {(fields, { add, remove, }) => (
+            <div>
+              {fields
+                .map((field, index) => (
+                  details[index].type == AccountingDetailsType.CREDIT
+                    ? <AccountingDetailsForm
+                      field={field}
+                      index={index}
+                      isDefaultPositive={true}
+                      onRemove={() => remove(field.name)}
+                    />
+                    : <Space />
+                ))}
+              <ButtonAdd
+                module='internal-wallet'
+                disabled={mode === viewMode.view}
+                onClick={() => {
+                  const initialValue: AccountingDetails = {
+                    type: AccountingDetailsType.CREDIT,
                   }
                   add(initialValue)
                 }}

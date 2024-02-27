@@ -2342,6 +2342,11 @@
   },
   "accounting": {
     "fundSource": "Nguồn tiền",
+    "subType": {
+      "fee": "Thu phí",
+      "vat": "VAT",
+      "other": "Khác"
+    },
     "details": {
       "type": {
         "credit": "Ghi có",
@@ -2424,6 +2429,7 @@
 
     "modal": {
       "transactionType": "Loại giao dịch",
+      "subType": "Mục đích",
       "funds": "Nguồn tiền",
       "service": "Dịch vụ",
       "partner": "Đối tác",

@@ -26,10 +26,17 @@ export enum AccountingDetailsType {
   DEBIT = "DEBIT",
 }
 
+export enum AccountingSubType {
+  VAT = "VAT",
+  FEE = "FEE",
+  OTHER = "OTHER",
+}
+
 export interface Accounting {
   id: number
   transactionType: AccountingTransactionType
   active: boolean
+  subType: AccountingSubType
   fundSource: AccountingFundSource
   service: PaymentServiceDto
   partner: PaymentPartnerDto
