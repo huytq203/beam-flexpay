@@ -8,6 +8,15 @@ export interface InternalWalletPayload {
   orderBy?: string
 }
 
+export interface InternalWalletTransactionPayload {
+  order?: string
+  page: number
+  take: number
+  query?: string
+  orderBy?: string
+  internalWalletId?: number
+}
+
 export interface InternalWallet {
   id: number
   name: string

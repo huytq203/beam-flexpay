@@ -8,9 +8,11 @@ import {
   InternalWalletGroup,
   InternalWalletPayload,
   InternalWalletResponse,
+  InternalWalletTransactionPayload,
   ModifyInternalWalletBody
 } from '@type/internalWallet'
 import { CommonResponsePayload } from '@type/common'
+import { TransactionDto } from '@type/application'
 
 export const groupPermissionApi = apiService.injectEndpoints({
   endpoints: (builder) => ({
@@ -79,6 +81,23 @@ export const groupPermissionApi = apiService.injectEndpoints({
       },
       providesTags: ['internal-wallet-account']
     }),
+    getInternalWalletTransactions: builder.query<
+      CommonResponsePayload<TransactionDto[]>,
+      InternalWalletTransactionPayload
+    >({
+      query: (payload) => ({
+        url: '/internal-wallet/transactions',
+        method: 'GET',
+        cache: 'default',
+        params: payload
+      }),
+      transformResponse(
+        baseQueryReturnValue: ResponseType<CommonResponsePayload<TransactionDto[]>>
+      ): CommonResponsePayload<TransactionDto[]> {
+        return baseQueryReturnValue.data
+      },
+      providesTags: ['internal-wallet-transactions']
+    }),
     createInternalWallet: builder.mutation<any, ModifyInternalWalletBody>({
       query: (body) => ({
         url: '/internal-wallet',
@@ -110,5 +129,6 @@ export const {
   useLazyGetListWalletGroupsQuery,
   useLazyGetListWalletInternalGroupsQuery,
   useCreateInternalWalletMutation,
-  useUpdateInternalWalletMutation
+  useUpdateInternalWalletMutation,
+  useGetInternalWalletTransactionsQuery,
 } = groupPermissionApi

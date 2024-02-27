@@ -2381,6 +2381,15 @@
       "de-active": "Khoá",
       "in-active": "Không hoạt động"
     },
+    "transaction": {
+      "date": "Ngày giao dịch",
+      "type": "Loại giao dịch",
+      "amount": "Số tiền",
+      "note": "Nội dung giao dịch",
+      "code": "Mã giao dịch",
+      "debitCreditAccount": "Tài khoản Ghi nợ/ Ghi có",
+      "afterBalance": "Số dư của ví nội bộ"
+    },
     "fundsOptions": {
       "bank": "Ngân hàng liên kết",
       "napas": "NAPAS",

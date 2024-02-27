@@ -24,6 +24,8 @@ import InternalWalletForm from './components/InternalWalletForm'
 import { InternalWalletPayload } from '@type/internalWallet'
 import { useGetListWalletsQuery } from '@services/apiInternalWallet'
 import { viewMode } from '@type/customer'
+import InternalWalletModal from './InternalWalletModal'
+import ButtonView from '@components/button-view/ButtonView'
 
 function InternalWalletAccount() {
   const [form] = Form.useForm()
@@ -111,6 +113,13 @@ function InternalWalletAccount() {
                 addFormToggle()
               }}
               module='internal-wallet'
+            />
+            <ButtonView
+              onClick={() => {
+                setMode(viewMode.view)
+                setRecordSelected(record)
+                addFormToggle()
+              }}
             />
           </Space>
         )
@@ -221,8 +230,8 @@ function InternalWalletAccount() {
           }
         }}
       />
-      <InternalWalletForm
-        record={recordSelected}
+      <InternalWalletModal
+        selectedInternalWallet={recordSelected}
         isShow={addForm}
         onCancel={cancelModal}
         title={
