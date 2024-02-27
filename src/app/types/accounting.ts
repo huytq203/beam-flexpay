@@ -1,29 +1,29 @@
 import { PaymentPartnerDto, PaymentServiceDto, UserDetailDto } from "./application"
 
 export enum AccountingTransactionType {
-  TRANSFER,
-  CASH_IN,
-  CASH_OUT,
-  BILL_PAYMENT,
-  ADVANDED_COLLECT,
+  TRANSFER = "TRANSFER",
+  CASH_IN = "CASH_IN",
+  CASH_OUT = "CASH_OUT",
+  BILL_PAYMENT = "BILL_PAYMENT",
+  ADVANDED_COLLECT = "ADVANDED_COLLECT",
 }
 
 export enum AccountingFundSource {
-  LINK_BANK,
-  PAYMENT_GATEWAY,
-  NAPAS,
-  EWALLET,
+  LINK_BANK = "LINK_BANK",
+  PAYMENT_GATEWAY = "PAYMENT_GATEWAY",
+  NAPAS = "NAPAS",
+  EWALLET = "EWALLET",
 }
 
 export enum AccountingBalanceType {
-  INTERNAL,
-  PERSONAL,
-  ENTERPRISE,
+  INTERNAL = "INTERNAL",
+  PERSONAL = "PERSONAL",
+  ENTERPRISE = "ENTERPRISE",
 }
 
 export enum AccountingDetailsType {
-  CREDIT,
-  DEBIT
+  CREDIT = "CREDIT",
+  DEBIT = "DEBIT",
 }
 
 export interface Accounting {

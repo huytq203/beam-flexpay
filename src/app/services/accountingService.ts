@@ -1,3 +1,6 @@
+import { ResponseType } from '@type/api'
+import { Accounting } from '@type/accounting'
+import { CommonResponsePayload } from '@type/common'
 import { apiService } from './apiService'
 
 export const accountingService = apiService.injectEndpoints({
@@ -8,6 +11,11 @@ export const accountingService = apiService.injectEndpoints({
         method: 'GET',
         params: payload
       }),
+      transformResponse: (
+        baseQueryReturnValue: ResponseType<CommonResponsePayload<Accounting[]>>
+      ): CommonResponsePayload<Accounting[]> => {
+        return baseQueryReturnValue.data
+      },
       transformErrorResponse: (res) => res.data,
       providesTags: ['accounting']
     }),

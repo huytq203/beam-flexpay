@@ -8,6 +8,16 @@ export interface InternalWalletPayload {
   orderBy?: string
 }
 
+export interface InternalWallet {
+  id: number
+  name: string
+  walletNumber: string
+  availableMoney: number
+  active: boolean
+  balanceInternalGroup: InternalWalletGroup
+  createdAt: string
+}
+
 export interface InternalWalletGroup {
   id: number
   name: string
@@ -16,7 +26,7 @@ export interface InternalWalletGroup {
 }
 
 export interface InternalWalletResponse {
-  data: any
+  data: InternalWallet[]
   meta: Pagination
   statusCode: number
   message: string

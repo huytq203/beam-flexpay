@@ -1,4 +1,4 @@
-import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
+import { LockOutlined, UnlockOutlined, EyeOutlined } from '@ant-design/icons'
 import ButtonAdd from '@components/button-add/ButtonAdd'
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import SearchBar from '@components/search-bar/SearchBar'
@@ -38,6 +38,7 @@ import {
 } from '@services/accountingService'
 import { openNotification } from '@configs/fetchBaseQueryCustom'
 import { useLazyGetListWalletsQuery } from '@services/apiInternalWallet'
+import { Accounting } from '@type/accounting'
 
 function TransactionAccountingConfiguration() {
   const [form] = Form.useForm()
@@ -52,6 +53,8 @@ function TransactionAccountingConfiguration() {
   const [mode, setMode] = useState<viewMode>(viewMode.create)
   const [addForm, { toggle: addFormToggle }] = useToggle()
   const [getWalletIds] = useLazyGetListWalletsQuery()
+
+  const [selectedAccounting, setSelectedAccounting] = useState<Accounting>()
 
   const { data: accounting } = useGetAccountingQuery(search)
   const [updateStatus] = useUpdateActiveMutation()
@@ -114,11 +117,21 @@ function TransactionAccountingConfiguration() {
     },
     {
       align: 'center',
-      title: t('transactionConfig.content'),
-      dataIndex: 'content',
-      key: 'content',
-      render() {
-        return '-'
+      title: t('accounting.fundSource'),
+      dataIndex: 'fundSource',
+      key: 'fundSource',
+      render(value) {
+        //todo
+        switch (value) {
+          case 'NAPAS':
+            return t('internal-wallet.fundsOptions.napas')
+          case 'LINK_BANK':
+            return t('internal-wallet.fundsOptions.bank')
+          case 'PAYMENT_GATEWAY':
+            return t('internal-wallet.fundsOptions.gate')
+          case 'EWALLET':
+            return t('internal-wallet.fundsOptions.wallet')
+        }
       }
     },
     {
@@ -163,6 +176,14 @@ function TransactionAccountingConfiguration() {
         return (
           <Space>
             <Button
+              icon={<EyeOutlined />}
+              onClick={() => {
+                setMode(viewMode.view)
+                setSelectedAccounting(record)
+                addFormToggle()
+              }}
+            />
+            <Button
               icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
               onClick={() => changeStatus(record.active, record.id)}
             />
@@ -184,7 +205,7 @@ function TransactionAccountingConfiguration() {
     addFormToggle()
   }
 
-  const onSelectData = (data: any, field: string) => {}
+  const onSelectData = (data: any, field: string) => { }
 
   return (
     <Card
@@ -243,7 +264,7 @@ function TransactionAccountingConfiguration() {
     >
       <Table
         columns={columns}
-        dataSource={accounting?.data?.data ?? []}
+        dataSource={accounting?.data ?? []}
         scroll={{ x: '100%' }}
         rowKey='id'
         size='small'
@@ -256,9 +277,9 @@ function TransactionAccountingConfiguration() {
           )
         }}
         pagination={{
-          current: accounting?.data?.meta.page,
-          pageSize: accounting?.data?.meta.take,
-          total: accounting?.data?.meta.itemCount,
+          current: accounting?.meta.page,
+          pageSize: accounting?.meta.take,
+          total: accounting?.meta.itemCount,
           showSizeChanger: false,
           onChange(page) {
             setSearch({
@@ -271,6 +292,8 @@ function TransactionAccountingConfiguration() {
       <TransactionAccountingConfigurationForm
         title={t`internal-wallet.add-configuration`}
         isShow={addForm}
+        mode={mode}
+        selectedAccounting={selectedAccounting}
         onCancel={onCancel}
       />
     </Card>

@@ -2340,6 +2340,19 @@
       "in-active": "Không hoạt động"
     }
   },
+  "accounting": {
+    "fundSource": "Nguồn tiền",
+    "details": {
+      "type": {
+        "credit": "Ghi có",
+        "debit": "Ghi nợ"
+      }
+    },
+    "messages": {
+      "at-least-one-debit-accounting-details": "Vui lòng cấu hình ít nhất 1 loại ghi nợ",
+      "at-least-one-credit-accounting-details": "Vui lòng cấu hình ít nhất 1 loại ghi có"
+    }
+  },
   "internal-wallet": {
     "add-configuration": "Thêm cấu hình",
     "group": "Nhóm tài khoản nội bộ",
@@ -2371,7 +2384,8 @@
     },
     "walletTypeOptions": {
       "internalWallet": "Ví Nội bộ",
-      "khcn": "Ví KHCN"
+      "khcn": "Ví KHCN",
+      "khdn": "Ví KHDN"
     },
     "transactionType": {
       "transfer": "Chuyển tiền",
