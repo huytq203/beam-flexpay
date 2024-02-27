@@ -6,6 +6,7 @@ import { APPLICABLE_OBJECTS, history_type } from '@type/policyManagement'
 import { t } from 'i18next'
 import { templateFormatBody, templateFormatTitle } from './regex'
 import { TRANSACTION_TYPE } from '@pages/policy-management/limit-management/LimitAndRegulationsConst'
+import { AccountingBalanceType } from '@type/accounting'
 
 export const objectOptions = [
   { label: t`management.sales-fee.system`, value: 'SYSTEM' },
@@ -567,7 +568,7 @@ export const attributeOptions = [
 ]
 
 export const internalWalletGroupStatusOptions = [
-  { label: i18n.t('internal-wallet-group.status.all'), value: null},
+  { label: i18n.t('internal-wallet-group.status.all'), value: null },
   { label: i18n.t('internal-wallet-group.status.active'), value: 1 },
   { label: i18n.t('internal-wallet-group.status.in-active'), value: 0 },
 ]
@@ -589,10 +590,17 @@ export const fundsOptions = [
 
 export const walletTypeOptions = [
   {
+    label: i18n.t('internal-wallet.walletTypeOptions.khcn'),
+    value: AccountingBalanceType.PERSONAL,
+  },
+  {
     label: i18n.t('internal-wallet.walletTypeOptions.internalWallet'),
-    value: 'INTERNAL'
-  }
-  // { label: i18n.t('internal-wallet.walletTypeOptions.khcn'), value: 'EXTERNAL' },
+    value: AccountingBalanceType.INTERNAL,
+  },
+  {
+    label: i18n.t('internal-wallet.walletTypeOptions.khdn'),
+    value: AccountingBalanceType.ENTERPRISE,
+  },
 ]
 
 export const accountingStatus = [
