@@ -36,7 +36,7 @@ export interface Accounting {
   id: number
   transactionType: AccountingTransactionType
   active: boolean
-  subType: AccountingSubType
+  subTypes: AccountingSubType[]
   fundSource: AccountingFundSource
   service: PaymentServiceDto
   partner: PaymentPartnerDto

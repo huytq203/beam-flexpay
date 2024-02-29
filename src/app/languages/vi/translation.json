@@ -2362,6 +2362,8 @@
     "add-configuration": "Thêm cấu hình",
     "group": "Nhóm tài khoản nội bộ",
     "account": "Tài khoản ví nội bộ",
+    "account-details": "Quản lý tài khoản nội bộ",
+    "account-transactions": "Quản lý giao dịch tài khoản nội bộ",
     "setting": "Cấu hình hạch toán",
     "groups-title": "Thêm mới nhóm tài khoản",
     "walletType": "Loại ví",
@@ -2373,6 +2375,7 @@
     "walletName": "Tên ví",
     "wallet-internal": "Ví Nội bộ",
     "add-wallet-title": "Thêm ví nội bộ",
+    "view-transactions": "Lịch sử giao dịch Ví nội bộ",
     "edit-wallet-title": "Cập nhật nội dung",
     "groupNameMin": "Chưa đủ kí tự yêu cầu",
     "status": {

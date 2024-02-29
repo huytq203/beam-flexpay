@@ -15,7 +15,8 @@ import {
   FormListFieldData,
   Space,
   notification,
-  Radio
+  Radio,
+  Checkbox
 } from 'antd'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -220,7 +221,7 @@ function TransactionAccountingConfigurationForm({
         </Form.Item>
         {/* Sub type - select */}
         <Form.Item
-          name='subType'
+          name='subTypes'
           label={t('internal-wallet.modal.subType')}
           rules={[
             {
@@ -229,12 +230,11 @@ function TransactionAccountingConfigurationForm({
             }
           ]}
         >
-          <Radio.Group
-            disabled={mode === viewMode.view}
-            initialValue={AccountingSubType.OTHER}
+          <Checkbox.Group
             options={accountingSubType}
-          >
-          </Radio.Group>
+            disabled={mode === viewMode.view}
+            defaultValue={['Apple']}
+          />
         </Form.Item>
         {/* Nguồn tiền - select */}
         <Form.Item

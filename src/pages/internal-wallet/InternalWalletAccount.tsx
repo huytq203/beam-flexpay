@@ -6,11 +6,13 @@ import { GUTTER } from '@constants/appConstant'
 import { TimeFormat } from '@constants/datetime'
 import { useToggle } from 'ahooks'
 import {
+  Button,
   Card,
   Col,
   Empty,
   Form,
   Input,
+  Modal,
   Row,
   Select,
   Space,
@@ -22,10 +24,12 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import InternalWalletForm from './components/InternalWalletForm'
 import { InternalWalletPayload } from '@type/internalWallet'
-import { useGetListWalletsQuery } from '@services/apiInternalWallet'
+import { useGetListWalletsQuery, useUpdateInternalWalletMutation } from '@services/apiInternalWallet'
 import { viewMode } from '@type/customer'
 import InternalWalletModal from './InternalWalletModal'
 import ButtonView from '@components/button-view/ButtonView'
+import { openNotification } from '@configs/fetchBaseQueryCustom'
+import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
 
 function InternalWalletAccount() {
   const [form] = Form.useForm()
@@ -44,6 +48,7 @@ function InternalWalletAccount() {
   const [addForm, { toggle: addFormToggle }] = useToggle()
 
   const { data: interWallet, refetch } = useGetListWalletsQuery(search)
+  const [updateInternalWallet] = useUpdateInternalWalletMutation()
 
   const columns: ColumnsType<any> = [
     {
@@ -72,11 +77,6 @@ function InternalWalletAccount() {
       title: t('internalWallet.walletName'),
       dataIndex: 'name',
       key: 'name'
-    },
-    {
-      title: t('internalBalanceWallet.balance'),
-      dataIndex: 'availableMoney',
-      key: 'availableMoney'
     },
     {
       title: t('partner.createdBy'),
@@ -114,12 +114,9 @@ function InternalWalletAccount() {
               }}
               module='internal-wallet'
             />
-            <ButtonView
-              onClick={() => {
-                setMode(viewMode.view)
-                setRecordSelected(record)
-                addFormToggle()
-              }}
+            <Button
+              onClick={() => changeStatus(record.active, record.id)}
+              icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
             />
           </Space>
         )
@@ -133,6 +130,28 @@ function InternalWalletAccount() {
       ...search,
       ...form.getFieldsValue(),
       active: active !== null ? active : undefined
+    })
+  }
+
+  const changeStatus = (status: number, id: number) => {
+    Modal.confirm({
+      title: status ? t`internal-wallet.modal.change-status-lock-account-title` : t`internal-wallet.modal.change-status-unlock-account-title`,
+      content: status ? t`internal-wallet.modal.change-status-lock-account-description` : t`internal-wallet.modal.change-status-unlock-account-description`,
+      okText: status ? t`internal-wallet.modal.change-status-lock-ok-button` : t`internal-wallet.modal.change-status-unlock-ok-button`,
+      cancelText: t`internal-wallet.modal.change-status-cancel-button`,
+      onOk: async () => {
+        try {
+          const response = await updateInternalWallet({ id, body: { active: status ? 0 : 1 } }) as { data: { statusCode: number } }
+          if (response.data.statusCode === 201 || response.data.statusCode === 200) {
+            openNotification(status ? t`internal-wallet.messages.lock-account-success` : t`internal-wallet.messages.unlock-account-success`, 'success')
+          } else {
+            openNotification(status ? t`internal-wallet.messages.lock-account-failed` : t`internal-wallet.messages.unlock-account-failed`)
+          }
+        } catch (error) {
+          openNotification(status ? t`internal-wallet.messages.lock-account-failed` : t`internal-wallet.messages.unlock-account-failed`)
+        }
+
+      }
     })
   }
 

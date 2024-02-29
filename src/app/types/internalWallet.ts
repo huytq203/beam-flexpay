@@ -15,6 +15,8 @@ export interface InternalWalletTransactionPayload {
   query?: string
   orderBy?: string
   internalWalletId?: number
+  startDate: string
+  endDate: string
 }
 
 export interface InternalWallet {
