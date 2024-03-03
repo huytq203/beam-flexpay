@@ -974,7 +974,7 @@
   },
   "policy-management": {
     "history": {
-      "title": "Lịch sử chỉnh sửa chính sách",
+      "title": "Lịch sử chỉnh sửa hạn mức",
       "history-type": "Loại lịch sử",
       "update-date": "Ngày cập nhật",
       "update-person": "Người cập nhật",
@@ -2456,8 +2456,8 @@
       "change-status-unlock-description-accounting": "Hành động này không thể khôi phục, bạn có muốn kích hoạt cấu hình hạch toán không?",
       "change-status-lock-title": "Khóa nhóm",
       "change-status-unlock-title": "Mở khóa nhóm",
-      "change-status-lock-description": "Hành động này không thể khôi phục, bạn có muốn khóa nhóm không?",
-      "change-status-unlock-description": "Hành động này không thể khôi phục, bạn có muốn mở khóa nhóm không?",
+      "change-status-lock-description": "Bạn có chắc chắn muốn khoá nhóm không?",
+      "change-status-unlock-description": "Bạn có chắc chắn muốn mở khoá nhóm không?",
       "change-status-lock-ok-button": "Khóa",
       "change-status-unlock-ok-button": "Mở khóa",
       "change-status-cancel-button": "Hủy",

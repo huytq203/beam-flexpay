@@ -56,7 +56,7 @@ function InternalGroupWallet() {
       dataIndex: 'walletGroup',
       key: 'walletGroup',
       align: 'center',
-      width: 200
+      width: 200,
     },
     {
       title: t('groups.wallet-name'),

@@ -63,10 +63,12 @@ function InternalWalletForm({ selectedInternalWallet, isShow, onCancel, title, m
   )
 
   useEffect(() => {
+  console.log(selectedWalletGroup)
     switch (mode) {
       case viewMode.create:
       case viewMode.update:
         form.setFieldsValue(selectedInternalWallet)
+        setSelectedWalletGroup(selectedInternalWallet?.balanceInternalGroup)
     }
   }, [selectedInternalWallet])
 

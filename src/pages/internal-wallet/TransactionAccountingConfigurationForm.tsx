@@ -148,6 +148,11 @@ function TransactionAccountingConfigurationForm({
             placeholder={t('internal-wallet.placeholders.wallet_type')}
             disabled={mode === viewMode.view}
             options={walletTypeOptions}
+            onChange={value => {
+              if (value !== AccountingBalanceType.INTERNAL) {
+                form.setFieldValue([`details`, props.field.name, "internalWalletId"], null)
+              }
+            }}
           />
         </Form.Item>
         {/* Số ví điện tử - select - required */}
@@ -217,6 +222,13 @@ function TransactionAccountingConfigurationForm({
             placeholder={t('internal-wallet.placeholders.transaction_type')}
             disabled={mode === viewMode.view}
             options={accountingTransactionType}
+            onChange={value => {
+              if (value !== AccountingTransactionType.BILL_PAYMENT &&
+                value !== AccountingTransactionType.ADVANDED_COLLECT) {
+                form.setFieldValue("serviceId", null)
+                form.setFieldValue("partnerId", null)
+              }
+            }}
           />
         </Form.Item>
         {/* Sub type - select */}
