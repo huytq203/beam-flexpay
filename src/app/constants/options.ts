@@ -634,6 +634,6 @@ export const accountingTransactionType = [
   },
   {
     label: i18n.t('internal-wallet.transactionType.collet'),
-    value: AccountingTransactionType.ADVANCED_COLLECT
+    value: AccountingTransactionType.ADVANDED_COLLECT
   }
 ]
