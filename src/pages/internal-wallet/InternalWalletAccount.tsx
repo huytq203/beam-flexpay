@@ -1,4 +1,3 @@
-import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
 import ButtonAdd from '@components/button-add/ButtonAdd'
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
@@ -10,7 +9,6 @@ import {
   Button,
   Card,
   Col,
-  DatePicker,
   Empty,
   Form,
   Input,
@@ -26,10 +24,13 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import InternalWalletForm from './components/InternalWalletForm'
 import { InternalWalletPayload } from '@type/internalWallet'
-import { useGetListWalletsQuery, useUpdateInternalWalletGroupMutation, useUpdateInternalWalletMutation } from '@services/apiInternalWallet'
-import { GroupPermissionData } from '@type/permission'
+import { useGetListWalletsQuery, useUpdateInternalWalletMutation } from '@services/apiInternalWallet'
 import { viewMode } from '@type/customer'
+import InternalWalletModal from './InternalWalletModal'
+import ButtonView from '@components/button-view/ButtonView'
 import { openNotification } from '@configs/fetchBaseQueryCustom'
+import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
+import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions'
 
 function InternalWalletAccount() {
   const [form] = Form.useForm()
@@ -50,28 +51,6 @@ function InternalWalletAccount() {
   const { data: interWallet, refetch } = useGetListWalletsQuery(search)
   const [updateInternalWallet] = useUpdateInternalWalletMutation()
 
-  const changeStatus = (status: number, id: number) => {
-    Modal.confirm({
-      title: status ? t`internal-wallet.modal.change-status-lock-account-title` : t`internal-wallet.modal.change-status-unlock-account-title`,
-      content: status ? t`internal-wallet.modal.change-status-lock-account-description` : t`internal-wallet.modal.change-status-unlock-account-description`,
-      okText: status ? t`internal-wallet.modal.change-status-lock-ok-button` : t`internal-wallet.modal.change-status-unlock-ok-button`,
-      cancelText: t`internal-wallet.modal.change-status-cancel-button`,
-      onOk: async () => {
-        try {
-          const response = await updateInternalWallet({ id, body: { active: status ? 0 : 1 } }) as { data: { statusCode: number } }
-          if (response.data.statusCode === 201 || response.data.statusCode === 200) {
-            openNotification(status ? t`internal-wallet.messages.lock-account-success` : t`internal-wallet.messages.unlock-account-success`, 'success')
-          } else {
-            openNotification(status ? t`internal-wallet.messages.lock-account-failed` : t`internal-wallet.messages.unlock-account-failed`)
-          }
-        } catch (error) {
-          openNotification(status ? t`internal-wallet.messages.lock-account-failed` : t`internal-wallet.messages.unlock-account-failed`)
-        }
-
-      }
-    })
-  }
-
   const columns: ColumnsType<any> = [
     {
       title: t('internalWallet.walletType'),
@@ -90,14 +69,16 @@ function InternalWalletAccount() {
     {
       title: t('internalWallet.walletNumber'),
       dataIndex: 'walletNumber',
-      key: 'walletNumber'
+      key: 'walletNumber',
+      render(value, record, index) {
+        return `${record.balanceInternalGroup.walletGroup}.${record.walletNumber}`
+      }
     },
     {
       title: t('internalWallet.walletName'),
       dataIndex: 'name',
       key: 'name'
     },
-
     {
       title: t('partner.createdBy'),
       dataIndex: 'createdBy',
@@ -123,9 +104,9 @@ function InternalWalletAccount() {
     {
       title: t('labels.action'),
       key: 'actions',
-      render(value, record, index) {
+      render(record) {
         return (
-          <Space>
+          <Space align="center">
             <ButtonUpdate
               onClick={() => {
                 setMode(viewMode.update)
@@ -153,6 +134,28 @@ function InternalWalletAccount() {
     })
   }
 
+  const changeStatus = (status: number, id: number) => {
+    Modal.confirm({
+      title: status ? t`internal-wallet.modal.change-status-lock-account-title` : t`internal-wallet.modal.change-status-unlock-account-title`,
+      content: status ? t`internal-wallet.modal.change-status-lock-account-description` : t`internal-wallet.modal.change-status-unlock-account-description`,
+      okText: status ? t`internal-wallet.modal.change-status-lock-ok-button` : t`internal-wallet.modal.change-status-unlock-ok-button`,
+      cancelText: t`internal-wallet.modal.change-status-cancel-button`,
+      onOk: async () => {
+        try {
+          const response = await updateInternalWallet({ id, body: { active: status ? 0 : 1 } }) as { data: { statusCode: number } }
+          if (response.data.statusCode === 201 || response.data.statusCode === 200) {
+            openNotification(status ? t`internal-wallet.messages.lock-account-success` : t`internal-wallet.messages.unlock-account-success`, 'success')
+          } else {
+            openNotification(status ? t`internal-wallet.messages.lock-account-failed` : t`internal-wallet.messages.unlock-account-failed`)
+          }
+        } catch (error) {
+          openNotification(status ? t`internal-wallet.messages.lock-account-failed` : t`internal-wallet.messages.unlock-account-failed`)
+        }
+
+      }
+    })
+  }
+
 
   const cancelModal = () => {
     setRecordSelected(null)
@@ -175,6 +178,8 @@ function InternalWalletAccount() {
                   <Form.Item name='walletNumber'>
                     <Input
                       placeholder={t`internal-wallet.placeholders.wallet_id`.toString()}
+                      onKeyDown={blockArrowValue}
+                      onKeyPress={blockLetterDecimal}
                     />
                   </Form.Item>
                 </Col>
@@ -247,8 +252,8 @@ function InternalWalletAccount() {
           }
         }}
       />
-      <InternalWalletForm
-        record={recordSelected}
+      <InternalWalletModal
+        selectedInternalWallet={recordSelected}
         isShow={addForm}
         onCancel={cancelModal}
         title={

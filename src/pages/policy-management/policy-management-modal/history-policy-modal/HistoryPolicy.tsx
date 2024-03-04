@@ -1,5 +1,5 @@
 import CellContent from '@components/cell-content/CellContent'
-import { TimeFormat } from '@constants/datetime'
+import { TimeFullFormat } from '@constants/datetime'
 import { historyType } from '@constants/options'
 import { SelectAdminAccount } from '@pages/policy-management/components/SelectAdminAccount'
 import { useGetListHistoryQuery } from '@services/apiDirectDeposit'
@@ -57,7 +57,7 @@ export const HistoryPolicy = ({
       record.valueType === 'Ngày áp dụng' ||
       record.valueType === 'Thời gian áp dụng'
     ) {
-      return dayjs(value).format(TimeFormat)
+      return dayjs(value).format(TimeFullFormat)
     } else {
       return <CellContent data={formatHisoryData(value)} />
     }
@@ -86,7 +86,7 @@ export const HistoryPolicy = ({
         align: 'center',
         width: 200,
         render: (record) =>
-          record ? dayjs(record).format(TimeFormat) : trans`lables.nodata`
+          record ? dayjs(record).format(TimeFullFormat) : trans`lables.nodata`
       },
       {
         title: trans('policy-management.history.update-person'),
@@ -130,7 +130,7 @@ export const HistoryPolicy = ({
         align: 'center',
         width: 180,
         render: (record) =>
-          record ? dayjs(record).format(TimeFormat) : trans`lables.nodata`
+          record ? dayjs(record).format(TimeFullFormat) : trans`lables.nodata`
       }
     ],
     []

@@ -1,8 +1,7 @@
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
-import { TimeFormat } from '@constants/datetime'
 import { useToggle } from 'ahooks'
-import { Button, Card, Col, DatePicker, Empty, Form, Input, Modal, Row, Select, Space } from 'antd'
+import { Button, Card, Col, Empty, Form, Input, Modal, Row, Select, Space } from 'antd'
 import Table, { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
 import { useState } from 'react'
@@ -16,6 +15,7 @@ import { InternalWalletPayload } from '@type/internalWallet'
 import { useGetListWalletGroupsQuery, useUpdateInternalWalletGroupMutation } from '@services/apiInternalWallet'
 import { viewMode } from '@type/customer'
 import { openNotification } from '@configs/fetchBaseQueryCustom'
+import { internalWalletGroupStatusOptions } from '@constants/options'
 
 function InternalGroupWallet() {
   const [form] = Form.useForm()
@@ -36,7 +36,7 @@ function InternalGroupWallet() {
       cancelText: t`internal-wallet.modal.change-status-cancel-button`,
       onOk: async () => {
         try {
-          const response = await updateInternalWalletGroup({name, active: status ? 0 : 1, id }) as { data: { statusCode: number } }
+          const response = await updateInternalWalletGroup({ name, active: status ? 0 : 1, id }) as { data: { statusCode: number } }
           if (response.data.statusCode === 201 || response.data.statusCode === 200) {
             openNotification(status ? t`internal-wallet.messages.lock-group-success` : t`internal-wallet.messages.unlock-group-success`, 'success')
           } else {
@@ -56,7 +56,7 @@ function InternalGroupWallet() {
       dataIndex: 'walletGroup',
       key: 'walletGroup',
       align: 'center',
-      width: 200
+      width: 200,
     },
     {
       title: t('groups.wallet-name'),
@@ -86,7 +86,7 @@ function InternalGroupWallet() {
       dataIndex: 'lastUpdatedBy',
       key: 'lastUpdatedBy',
       render(value, record, index) {
-        return record?.lastUpdatedBy?.fullName ?? '-'
+        return record?.updatedBy?.fullName ?? '-'
       },
       align: 'center',
       width: 200
@@ -97,13 +97,6 @@ function InternalGroupWallet() {
       render: (value, record, index) => value ? moment(value).format('DD/MM/YYYY HH:mm:ss') : '-',
       align: 'center',
       width: 150
-    },
-    {
-      title: t('groups.note'),
-      dataIndex: 'note',
-      key: 'note',
-      width: 250,
-      render: (value) => value ? value : '-'
     },
     {
       title: t('labels.action'),
@@ -127,11 +120,14 @@ function InternalGroupWallet() {
     }
   ]
 
-  const handleSearch = () =>
+  const handleSearch = () => {
+    const active = form.getFieldValue('active')
     setSearch({
       ...search,
-      ...form.getFieldsValue()
+      ...form.getFieldsValue(),
+      active: active !== null ? active : undefined
     })
+  }
 
   const cancelModal = () => {
     setSelected(undefined)
@@ -156,8 +152,11 @@ function InternalGroupWallet() {
                   </Form.Item>
                 </Col>
                 <Col span={6}>
-                  <Form.Item>
-                    <Select placeholder={t`internal-wallet.placeholders.status`.toString()} />
+                  <Form.Item name='active'>
+                    <Select
+                      placeholder={t`internal-wallet.placeholders.status`.toString()}
+                      options={internalWalletGroupStatusOptions}
+                    />
                   </Form.Item>
                 </Col>
               </Row>

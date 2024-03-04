@@ -1,16 +1,18 @@
 import { ResponseType } from '@type/api'
 import {
-  DetailPermissionPayload,
   GroupPermissionPayload,
-  GroupPermissionSearchParams,
-  PermissionDataType
 } from '@type/permission'
 import { apiService } from './apiService'
 import {
+  InternalWallet,
+  InternalWalletGroup,
   InternalWalletPayload,
   InternalWalletResponse,
+  InternalWalletTransactionPayload,
   ModifyInternalWalletBody
 } from '@type/internalWallet'
+import { CommonResponsePayload } from '@type/common'
+import { TransactionDto } from '@type/application'
 
 export const groupPermissionApi = apiService.injectEndpoints({
   endpoints: (builder) => ({
@@ -19,7 +21,7 @@ export const groupPermissionApi = apiService.injectEndpoints({
       InternalWalletPayload
     >({
       query: (payload) => ({
-        url: '/balance-internal-group',
+        url: '/internal-wallet-group',
         method: 'GET',
         params: payload
       }),
@@ -40,15 +42,15 @@ export const groupPermissionApi = apiService.injectEndpoints({
         params: payload
       }),
       transformResponse(
-        baseQueryReturnValue: ResponseType<GroupPermissionPayload>
-      ): GroupPermissionPayload {
+        baseQueryReturnValue: ResponseType<CommonResponsePayload<InternalWalletGroup[]>>
+      ): CommonResponsePayload<InternalWalletGroup[]> {
         return baseQueryReturnValue.data
       },
       providesTags: ['internal-wallet-group']
     }),
     createInternalWalletGroup: builder.mutation({
       query: (payload) => ({
-        url: '/balance-internal-group',
+        url: '/internal-wallet-group',
         method: 'POST',
         body: payload
       }),
@@ -56,7 +58,7 @@ export const groupPermissionApi = apiService.injectEndpoints({
     }),
     updateInternalWalletGroup: builder.mutation({
       query: ({ id, ...body }) => ({
-        url: `/balance-internal-group/${id}`,
+        url: `/internal-wallet-group/${id}`,
         method: 'PUT',
         body: body
       }),
@@ -69,14 +71,32 @@ export const groupPermissionApi = apiService.injectEndpoints({
       query: (payload) => ({
         url: '/internal-wallet',
         method: 'GET',
+        cache: 'default',
         params: payload
       }),
       transformResponse(
-        baseQueryReturnValue: ResponseType<GroupPermissionPayload>
-      ): GroupPermissionPayload {
+        baseQueryReturnValue: ResponseType<CommonResponsePayload<InternalWallet[]>>
+      ): CommonResponsePayload<InternalWallet[]> {
         return baseQueryReturnValue.data
       },
       providesTags: ['internal-wallet-account']
+    }),
+    getInternalWalletTransactions: builder.query<
+      CommonResponsePayload<TransactionDto[]>,
+      InternalWalletTransactionPayload
+    >({
+      query: (payload) => ({
+        url: '/internal-wallet/transactions',
+        method: 'GET',
+        cache: 'default',
+        params: payload
+      }),
+      transformResponse(
+        baseQueryReturnValue: ResponseType<CommonResponsePayload<TransactionDto[]>>
+      ): CommonResponsePayload<TransactionDto[]> {
+        return baseQueryReturnValue.data
+      },
+      providesTags: ['internal-wallet-transactions']
     }),
     createInternalWallet: builder.mutation<any, ModifyInternalWalletBody>({
       query: (body) => ({
@@ -109,5 +129,6 @@ export const {
   useLazyGetListWalletGroupsQuery,
   useLazyGetListWalletInternalGroupsQuery,
   useCreateInternalWalletMutation,
-  useUpdateInternalWalletMutation
+  useUpdateInternalWalletMutation,
+  useGetInternalWalletTransactionsQuery,
 } = groupPermissionApi

@@ -974,7 +974,7 @@
   },
   "policy-management": {
     "history": {
-      "title": "Lịch sử chỉnh sửa chính sách",
+      "title": "Lịch sử chỉnh sửa hạn mức",
       "history-type": "Loại lịch sử",
       "update-date": "Ngày cập nhật",
       "update-person": "Người cập nhật",
@@ -984,8 +984,8 @@
       "old-value": "Giá trị cũ",
       "creator": "Người tạo",
       "createdAt": "Ngày tạo",
-      "update": "Sửa chính sách",
-      "delete": "Xóa chính sách",
+      "update": "Sửa hạn mức",
+      "delete": "Xóa hạn mức",
       "placeholders": {
         "history-type": "Nhập loại lịch sử",
         "update-date": "Chọn ngày cập nhật",
@@ -2333,10 +2333,37 @@
     "status": "Trạng thái",
     "logo": "Logo"
   },
+  "internal-wallet-group": {
+    "status": {
+      "all": "Chọn tất cả",
+      "active": "Hoạt động",
+      "in-active": "Không hoạt động"
+    }
+  },
+  "accounting": {
+    "fundSource": "Nguồn tiền",
+    "subType": {
+      "fee": "Thu phí",
+      "vat": "VAT",
+      "other": "Khác"
+    },
+    "details": {
+      "type": {
+        "credit": "Ghi có",
+        "debit": "Ghi nợ"
+      }
+    },
+    "messages": {
+      "at-least-one-debit-accounting-details": "Vui lòng cấu hình ít nhất 1 loại ghi nợ",
+      "at-least-one-credit-accounting-details": "Vui lòng cấu hình ít nhất 1 loại ghi có"
+    }
+  },
   "internal-wallet": {
     "add-configuration": "Thêm cấu hình",
     "group": "Nhóm tài khoản nội bộ",
     "account": "Tài khoản ví nội bộ",
+    "account-details": "Quản lý tài khoản nội bộ",
+    "account-transactions": "Quản lý giao dịch tài khoản nội bộ",
     "setting": "Cấu hình hạch toán",
     "groups-title": "Thêm mới nhóm tài khoản",
     "walletType": "Loại ví",
@@ -2348,6 +2375,7 @@
     "walletName": "Tên ví",
     "wallet-internal": "Ví Nội bộ",
     "add-wallet-title": "Thêm ví nội bộ",
+    "view-transactions": "Lịch sử giao dịch Ví nội bộ",
     "edit-wallet-title": "Cập nhật nội dung",
     "groupNameMin": "Chưa đủ kí tự yêu cầu",
     "status": {
@@ -2355,6 +2383,15 @@
       "active": "Hoạt động",
       "de-active": "Khoá",
       "in-active": "Không hoạt động"
+    },
+    "transaction": {
+      "date": "Ngày giao dịch",
+      "type": "Loại giao dịch",
+      "amount": "Số tiền",
+      "note": "Nội dung giao dịch",
+      "code": "Mã giao dịch",
+      "debitCreditAccount": "Tài khoản Ghi nợ/ Ghi có",
+      "afterBalance": "Số dư của ví nội bộ"
     },
     "fundsOptions": {
       "bank": "Ngân hàng liên kết",
@@ -2364,7 +2401,8 @@
     },
     "walletTypeOptions": {
       "internalWallet": "Ví Nội bộ",
-      "khcn": "Ví KHCN"
+      "khcn": "Ví KHCN",
+      "khdn": "Ví KHDN"
     },
     "transactionType": {
       "transfer": "Chuyển tiền",
@@ -2403,6 +2441,7 @@
 
     "modal": {
       "transactionType": "Loại giao dịch",
+      "subType": "Mục đích",
       "funds": "Nguồn tiền",
       "service": "Dịch vụ",
       "partner": "Đối tác",
@@ -2417,8 +2456,8 @@
       "change-status-unlock-description-accounting": "Hành động này không thể khôi phục, bạn có muốn kích hoạt cấu hình hạch toán không?",
       "change-status-lock-title": "Khóa nhóm",
       "change-status-unlock-title": "Mở khóa nhóm",
-      "change-status-lock-description": "Hành động này không thể khôi phục, bạn có muốn khóa nhóm không?",
-      "change-status-unlock-description": "Hành động này không thể khôi phục, bạn có muốn mở khóa nhóm không?",
+      "change-status-lock-description": "Bạn có chắc chắn muốn khoá nhóm không?",
+      "change-status-unlock-description": "Bạn có chắc chắn muốn mở khoá nhóm không?",
       "change-status-lock-ok-button": "Khóa",
       "change-status-unlock-ok-button": "Mở khóa",
       "change-status-cancel-button": "Hủy",

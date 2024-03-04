@@ -298,22 +298,35 @@ const internal_wallet = {
   icon: <PieChartTwoTone twoToneColor={COlOR} />,
   label: i18n.t('navigation.internal-wallet'),
   children: [
-   
+    {
+      key: 'group',
+      icon: <PushpinTwoTone twoToneColor={COlOR} />,
+      label: i18n.t('internal-wallet.group')
+    },
+    {
+      key: 'account',
+      icon: <PushpinTwoTone twoToneColor={COlOR} />,
+      label: i18n.t('internal-wallet.account'),
+      children: [
         {
-          key: 'group',
+          key: 'details',
           icon: <PushpinTwoTone twoToneColor={COlOR} />,
-          label: i18n.t('internal-wallet.group')
+          label: i18n.t('internal-wallet.account-details')
         },
         {
-          key: 'account',
+          key: 'transactions',
           icon: <PushpinTwoTone twoToneColor={COlOR} />,
-          label: i18n.t('internal-wallet.account')
-        },
-        {
-          key: 'setting',
-          icon: <PushpinTwoTone twoToneColor={COlOR} />,
-          label: i18n.t('internal-wallet.setting')
+          label: i18n.t('internal-wallet.account-transactions')
         }
+
+      ]
+
+    },
+    {
+      key: 'setting',
+      icon: <PushpinTwoTone twoToneColor={COlOR} />,
+      label: i18n.t('internal-wallet.setting')
+    }
   ]
 }
 

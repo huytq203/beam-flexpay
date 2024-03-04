@@ -60,6 +60,7 @@ import InternalGroupWallet from '@pages/internal-wallet/InternalGroupWallet'
 import InternalWalletAccount from '@pages/internal-wallet/InternalWalletAccount'
 import TransactionAccountingConfiguration from '@pages/internal-wallet/TransactionAccountingConfiguration'
 import VerifyAzure from '@pages/verify/sso/VerifyAzure'
+import InternalBalanceWallet from '@pages/internal-wallet/InternalBalanceWallet'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -321,9 +322,14 @@ const internalWallet = {
       path: INTERNAL_WALLET + '/account',
       children: [
         {
-          path: INTERNAL_WALLET + '/account',
+          path: INTERNAL_WALLET + '/account/details',
           element: createElement(InternalWalletAccount)
+        },
+        {
+          path: INTERNAL_WALLET + '/account/transactions',
+          element: createElement(InternalBalanceWallet)
         }
+
       ]
     },
     {

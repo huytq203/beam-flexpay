@@ -6,6 +6,8 @@ import { APPLICABLE_OBJECTS, history_type } from '@type/policyManagement'
 import { t } from 'i18next'
 import { templateFormatBody, templateFormatTitle } from './regex'
 import { TRANSACTION_TYPE } from '@pages/policy-management/limit-management/LimitAndRegulationsConst'
+import { AccountingTransactionType, AccountingBalanceType } from '@type/accounting'
+import { AccountingSubType } from '@type/accounting'
 
 export const objectOptions = [
   { label: t`management.sales-fee.system`, value: 'SYSTEM' },
@@ -566,6 +568,12 @@ export const attributeOptions = [
   }
 ]
 
+export const internalWalletGroupStatusOptions = [
+  { label: i18n.t('internal-wallet-group.status.all'), value: null },
+  { label: i18n.t('internal-wallet-group.status.active'), value: 1 },
+  { label: i18n.t('internal-wallet-group.status.in-active'), value: 0 },
+]
+
 export const accountingOptions = [
   { label: i18n.t('internal-wallet.placeholders.add'), value: 1 },
   { label: i18n.t('internal-wallet.placeholders.reduce'), value: 0 }
@@ -583,10 +591,17 @@ export const fundsOptions = [
 
 export const walletTypeOptions = [
   {
+    label: i18n.t('internal-wallet.walletTypeOptions.khcn'),
+    value: AccountingBalanceType.PERSONAL,
+  },
+  {
     label: i18n.t('internal-wallet.walletTypeOptions.internalWallet'),
-    value: 'INTERNAL'
-  }
-  // { label: i18n.t('internal-wallet.walletTypeOptions.khcn'), value: 'EXTERNAL' },
+    value: AccountingBalanceType.INTERNAL,
+  },
+  {
+    label: i18n.t('internal-wallet.walletTypeOptions.khdn'),
+    value: AccountingBalanceType.ENTERPRISE,
+  },
 ]
 
 export const accountingStatus = [
@@ -594,25 +609,31 @@ export const accountingStatus = [
   { label: i18n.t('internal-wallet.status.in-active'), value: 0 }
 ]
 
+export const accountingSubType = [
+  { label: i18n.t('accounting.subType.fee'), value: AccountingSubType.FEE },
+  { label: i18n.t('accounting.subType.vat'), value: AccountingSubType.VAT },
+  { label: i18n.t('accounting.subType.other'), value: AccountingSubType.OTHER },
+]
+
 export const accountingTransactionType = [
   {
     label: i18n.t('internal-wallet.transactionType.transfer'),
-    value: TRANSACTION_TYPE.TRANSFER
+    value: AccountingTransactionType.TRANSFER
   },
   {
     label: i18n.t('internal-wallet.transactionType.deposit'),
-    value: TRANSACTION_TYPE.DEPOSIT
+    value: AccountingTransactionType.CASH_IN
   },
   {
     label: i18n.t('internal-wallet.transactionType.withdraw'),
-    value: TRANSACTION_TYPE.WITHDRAW
+    value: AccountingTransactionType.CASH_OUT
   },
   {
     label: i18n.t('internal-wallet.transactionType.billPayment'),
-    value: 'BILL_PAYMENT'
+    value: AccountingTransactionType.BILL_PAYMENT
   },
   {
     label: i18n.t('internal-wallet.transactionType.collet'),
-    value: 'ADVANDED_COLLECT'
+    value: AccountingTransactionType.ADVANCED_COLLECT
   }
 ]

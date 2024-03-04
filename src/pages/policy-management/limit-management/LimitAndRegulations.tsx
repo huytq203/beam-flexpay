@@ -306,34 +306,34 @@ const LimitAndRegulation = () => {
                   APPLICABLE_OBJECTS.ACCOUNT_TYPE,
                   APPLICABLE_OBJECTS.PRIVATE_ACCOUNT
                 ].includes(object) && (
-                  <Col>
-                    {object === APPLICABLE_OBJECTS.ACCOUNT_TYPE ? (
-                      <Form.Item
-                        name='accountGroup'
-                        label={trans`policy-management.payment.selectAccountGroup`}
-                      >
-                        <CustomAccountGroupSelect
-                          mode='multiple'
-                          listAccountGroup={listAccountGroup}
-                          setSearchValue={setSearchValue}
-                          searchInput={searchValue}
-                          placeholder={trans`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
-                          triggerFunction={triggerListAccountGroup}
-                          onClearSearch={onClear}
-                        />
-                      </Form.Item>
-                    ) : (
-                      <Form.Item
-                        name='accountNumber'
-                        label={trans`policy-management.payment.inputAccount`}
-                      >
-                        <Input
-                          placeholder={trans`policy-management.limitAndRegulations.placeholder.accountNumberPlaceholder`.toString()}
-                        />
-                      </Form.Item>
-                    )}
-                  </Col>
-                )}
+                    <Col>
+                      {object === APPLICABLE_OBJECTS.ACCOUNT_TYPE ? (
+                        <Form.Item
+                          name='accountGroup'
+                          label={trans`policy-management.payment.selectAccountGroup`}
+                        >
+                          <CustomAccountGroupSelect
+                            mode='multiple'
+                            listAccountGroup={listAccountGroup}
+                            setSearchValue={setSearchValue}
+                            searchInput={searchValue}
+                            placeholder={trans`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
+                            triggerFunction={triggerListAccountGroup}
+                            onClearSearch={onClear}
+                          />
+                        </Form.Item>
+                      ) : (
+                        <Form.Item
+                          name='accountNumber'
+                          label={trans`policy-management.payment.inputAccount`}
+                        >
+                          <Input
+                            placeholder={trans`policy-management.limitAndRegulations.placeholder.accountNumberPlaceholder`.toString()}
+                          />
+                        </Form.Item>
+                      )}
+                    </Col>
+                  )}
                 <Col>
                   <Form.Item
                     name='serviceType'

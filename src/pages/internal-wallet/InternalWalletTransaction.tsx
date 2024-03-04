@@ -1,0 +1,224 @@
+import dayjs, { Dayjs } from 'dayjs';
+
+import ButtonSearch from "@components/button-search/ButtonSearch"
+import SearchBar from "@components/search-bar/SearchBar"
+import { GUTTER } from "@constants/appConstant"
+import { TimeFormat } from "@constants/datetime"
+import { useGetInternalWalletTransactionsQuery } from "@services/apiInternalWallet"
+import { viewMode } from "@type/customer"
+import { InternalWallet, InternalWalletTransactionPayload } from "@type/internalWallet"
+import { Card, Col, DatePicker, Form, Input, Row, Table, TimeRangePickerProps } from "antd"
+import { ColumnsType } from "antd/es/table"
+import moment from "moment"
+import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions';
+
+type props = {
+  title: string
+  record?: any | undefined
+  isShow: boolean
+  onCancel: VoidFunction
+  mode: viewMode
+  selectedInternalWallet?: InternalWallet
+}
+
+
+const { RangePicker } = DatePicker;
+
+const rangePresets: TimeRangePickerProps['presets'] = [
+  { label: 'Last 7 Days', value: [dayjs().add(-7, 'd'), dayjs()] },
+  { label: 'Last 14 Days', value: [dayjs().add(-14, 'd'), dayjs()] },
+  { label: 'Last 30 Days', value: [dayjs().add(-30, 'd'), dayjs()] },
+  { label: 'Last 90 Days', value: [dayjs().add(-90, 'd'), dayjs()] },
+];
+
+
+function InternalWalletTransaction(props: props) {
+  const [form] = Form.useForm()
+  const [search, setSearch] = useState<InternalWalletTransactionPayload>({
+    order: 'DESC',
+    page: 1,
+    take: 10,
+    query: '',
+    orderBy: 'createdAt'
+  })
+
+  const [startDate, setStartDate] = useState<dayjs>(dayjs())
+  const [endDate, setEndDate] = useState<dayjs>(dayjs().subtract(1, 'year'))
+
+  const { t } = useTranslation()
+
+  useEffect(() => {
+    setSearch({
+      ...search,
+      internalWalletId: props.selectedInternalWallet?.id,
+      startDate: startDate.format("DD/MM/YYYY HH:mm:ss"),
+      endDate: endDate.format("DD/MM/YYYY HH:mm:ss")
+    })
+  }, [props.selectedInternalWallet])
+
+  const { data: transactionData, refetch } = useGetInternalWalletTransactionsQuery(search)
+
+  const columns: ColumnsType<any> = [
+    {
+      title: t('internal-wallet.transaction.date'),
+      dataIndex: 'transactionDate',
+      key: 'transactionDate'
+    },
+    {
+      title: t('internal-wallet.transaction.type'),
+      dataIndex: 'type',
+      key: 'type',
+      render(value) {
+        switch (value) {
+          case 'NAPAS':
+            return t('internal-wallet.fundsOptions.napas')
+          case 'LINK_BANK':
+            return t('internal-wallet.fundsOptions.bank')
+          case 'PAYMENT_GATEWAY':
+            return t('internal-wallet.fundsOptions.gate')
+          case 'EWALLET':
+            return t('internal-wallet.fundsOptions.wallet')
+        }
+
+      }
+    },
+    {
+      title: t('internal-wallet.transaction.amount'),
+      dataIndex: 'amount',
+      key: 'amount'
+    },
+    {
+      title: t('internal-wallet.transaction.note'),
+      dataIndex: 'note',
+      key: 'note'
+    },
+    {
+      title: t('internal-wallet.transaction.code'),
+      dataIndex: 'code',
+      key: 'code'
+    },
+    {
+      title: t('internal-wallet.transaction.debitCreditAccount'),
+      dataIndex: 'debitCreditAccount',
+      key: 'debitCreditAccount'
+    },
+    {
+      title: t('internal-wallet.transaction.afterBalance'),
+      dataIndex: 'afterBalance',
+      key: 'afterBalance'
+    },
+  ]
+
+  const handleSearch = () => {
+
+    setSearch({
+      ...search,
+      startDate: startDate.format("DD/MM/YYYY HH:mm:ss"),
+      endDate: endDate.format("DD/MM/YYYY HH:mm:ss")
+    })
+  }
+
+  const onDateRangeChange = (dates: null | (Dayjs | null)[], dateStrings: string[]) => {
+    if (dates) {
+      let startDate = (dates[0] as Dayjs).startOf('day')
+      let endDate = (dates[1] as Dayjs).endOf('day')
+
+      setStartDate(startDate)
+      setEndDate(endDate)
+    }
+  }
+
+  useEffect(() => {
+    refetch()
+  }, [search])
+
+  return (
+    <Card
+      title={
+        <SearchBar
+          headerMenu={
+            <Form
+              labelCol={{ span: 8 }}
+              wrapperCol={{ span: 16 }}
+              form={form}
+              layout='horizontal'
+            >
+              <Row gutter={GUTTER}>
+                <Col>
+                  {/* Ngày cập nhật - từ ngày */}
+                  <Form.Item
+                    label={t('internal-wallet.transaction.date')}
+                  >
+                    <RangePicker
+                      value={[startDate, endDate]}
+                      allowClear={false}
+                      presets={rangePresets}
+                      format="DD/MM/YYYY"
+                      onChange={onDateRangeChange}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col>
+                  {/* Tai khoan */}
+                  <Form.Item
+                    name='accountName'
+                    label={t('transfer-history.accountName')}
+                  >
+                    <Input
+                      onKeyDown={blockArrowValue}
+                      onKeyPress={blockLetterDecimal}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col>
+                  {/* Ma giao dich */}
+                  <Form.Item
+                    name='transactionCode'
+                    label={t('internal-wallet.transaction.code')}
+                  >
+                    <Input
+                      onKeyDown={blockArrowValue}
+                      onKeyPress={blockLetterDecimal}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row
+                justify='end'
+                gutter={GUTTER}
+              >
+                <Col>
+                  <ButtonSearch onClick={handleSearch} />
+                </Col>
+              </Row>
+            </Form>
+          }
+        />
+      }
+    >
+      <Table
+        columns={columns}
+        dataSource={transactionData?.data ?? []}
+        rowKey='id'
+        size='middle'
+        bordered
+        pagination={{
+          current: transactionData?.meta.page,
+          pageSize: transactionData?.meta.take,
+          total: transactionData?.meta.itemCount,
+          showSizeChanger: false,
+          onChange(page) {
+            setSearch({
+              ...search,
+              page
+            })
+          }
+        }}
+      />
+    </Card>
+  )
+}
+
+export default InternalWalletTransaction
