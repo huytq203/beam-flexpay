@@ -29,16 +29,14 @@ function InternalGroupForm({ group, onCancel, title, mode, isShow }: props) {
     try {
       setLoading(true)
       console.log('mode === viewMode.create', mode === viewMode.create);
-      
-      const response = mode === viewMode.create ? await createInternalWalletGroup(value) as { data: { statusCode: number } } : await updateInternalWalletGroup({name: value.name, id: group?.id}) as { data: { statusCode: number } }
+
+      const response = mode === viewMode.create ? await createInternalWalletGroup(value) as { data: { statusCode: number } } : await updateInternalWalletGroup({ name: value.name, id: group?.id }) as { data: { statusCode: number } }
       if (response.data.statusCode === 201 || response.data.statusCode === 200) {
         openNotification(mode === viewMode.create ? t`internal-wallet.messages.create-group-success` : t`internal-wallet.messages.update-group-success`, 'success')
         onCancel()
       } else {
         openNotification(mode === viewMode.create ? t`internal-wallet.messages.create-group-failed` : t`internal-wallet.messages.update-group-failed`, 'error')
       }
-    } catch (err) {
-      openNotification(mode === viewMode.create ? t`internal-wallet.messages.create-group-failed` : t`internal-wallet.messages.update-group-failed`, 'error')
     } finally {
       setLoading(false)
       form.resetFields();
@@ -49,6 +47,10 @@ function InternalGroupForm({ group, onCancel, title, mode, isShow }: props) {
     if (mode === viewMode.update && group && group?.id) form.setFieldsValue(group)
     if (mode !== viewMode.update || !isShow) form.resetFields()
   }, [group, mode])
+
+  useEffect(() => {
+    console.log("form", mode)
+  }, [mode])
 
   return (
     <Modal
@@ -84,7 +86,7 @@ function InternalGroupForm({ group, onCancel, title, mode, isShow }: props) {
               inputMode='numeric'
               style={{ width: '100%' }}
               onKeyDown={blockArrowValue}
-              onKeyPress={blockLetterDecimal} 
+              onKeyPress={blockLetterDecimal}
             />
           </Form.Item>
           {/* Tên nhóm */}

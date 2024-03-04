@@ -1,4 +1,5 @@
 import { EyeOutlined } from '@ant-design/icons'
+import dayjs, { Dayjs } from 'dayjs';
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import ButtonView from '@components/button-view/ButtonView'
 import SearchBar from '@components/search-bar/SearchBar'
@@ -7,6 +8,7 @@ import { TimeFormat } from '@constants/datetime'
 import { useGetListWalletGroupsQuery, useGetListWalletsQuery } from '@services/apiInternalWallet'
 import { viewMode } from '@type/customer'
 import { InternalWallet, InternalWalletPayload } from '@type/internalWallet'
+import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions'
 import { useToggle } from 'ahooks'
 import {
   Button,
@@ -19,13 +21,23 @@ import {
   Row,
   Select,
   Space,
-  Tag
+  Tag,
+  TimeRangePickerProps
 } from 'antd'
 import Table, { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import InternalWalletTransactionModal from './InternalWalletTransactionModal'
+
+const { RangePicker } = DatePicker;
+
+const rangePresets: TimeRangePickerProps['presets'] = [
+  { label: 'Last 7 Days', value: [dayjs().add(-7, 'd'), dayjs()] },
+  { label: 'Last 14 Days', value: [dayjs().add(-14, 'd'), dayjs()] },
+  { label: 'Last 30 Days', value: [dayjs().add(-30, 'd'), dayjs()] },
+  { label: 'Last 90 Days', value: [dayjs().add(-90, 'd'), dayjs()] },
+];
 
 function InternalBalanceWallet() {
   const [form] = Form.useForm()
@@ -34,6 +46,9 @@ function InternalBalanceWallet() {
 
   const [selectedInternalWallet, setSelectedInternalWallet] = useState<InternalWallet>()
   const [mode, setMode] = useState<viewMode>(viewMode.create)
+
+  const [startDate, setStartDate] = useState<dayjs>(dayjs())
+  const [endDate, setEndDate] = useState<dayjs>(dayjs().subtract(1, 'year'))
 
   const [search, setSearch] = useState<InternalWalletPayload>({
     order: 'DESC',
@@ -130,11 +145,26 @@ function InternalBalanceWallet() {
     refetch()
   }
 
+  useEffect(() => {
+  }, [form])
+
+  const onDateRangeChange = (dates: null | (Dayjs | null)[], dateStrings: string[]) => {
+    if (dates) {
+      let startDate = (dates[0] as Dayjs).startOf('day')
+      let endDate = (dates[1] as Dayjs).endOf('day')
+
+      setStartDate(startDate)
+      setEndDate(endDate)
+    }
+  }
+
 
   const handleSearch = () =>
     setSearch({
       ...search,
-      ...form.getFieldsValue()
+      ...form.getFieldsValue(),
+      startDate: startDate.format("DD/MM/YYYY HH:mm:ss"),
+      endDate: endDate.format("DD/MM/YYYY HH:mm:ss")
     })
 
   return (
@@ -153,7 +183,10 @@ function InternalBalanceWallet() {
                     name='walletNumber'
                     label={t('internalBalanceWallet.walletNumber')}
                   >
-                    <Input />
+                    <Input
+                      onKeyDown={blockArrowValue}
+                      onKeyPress={blockLetterDecimal}
+                    />
                   </Form.Item>
                 </Col>
                 <Col flex='250px'>
@@ -173,31 +206,21 @@ function InternalBalanceWallet() {
                 <Col>
                   {/* Ngày cập nhật - từ ngày */}
                   <Form.Item
-                    name='startDate'
-                    label={t('labels.startDate')}
+                    label={t('internal-wallet.transaction.date')}
                   >
-                    <DatePicker
-                      format={TimeFormat}
-                      allowClear
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  {/* Ngày cập nhật - đến ngày */}
-                  <Form.Item
-                    name='endDate'
-                    label={t('labels.endDate')}
-                  >
-                    <DatePicker
-                      format={TimeFormat}
-                      allowClear
+                    <RangePicker
+                      value={[startDate, endDate]}
+                      allowClear={false}
+                      presets={rangePresets}
+                      format="DD/MM/YYYY"
+                      onChange={onDateRangeChange}
                     />
                   </Form.Item>
                 </Col>
                 <Col flex='250px'>
                   {/* Trạng thái ví nội bộ */}
                   <Form.Item
-                    name='status'
+                    name='active'
                     label={t('internalBalanceWallet.status')}
                   >
                     <Select

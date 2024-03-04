@@ -8,6 +8,7 @@ import {
 import { viewMode } from '@type/customer'
 import { InternalWallet, InternalWalletGroup } from '@type/internalWallet'
 import { GroupPermissionData } from '@type/permission'
+import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions'
 import {
   Button,
   Col,
@@ -63,7 +64,7 @@ function InternalWalletForm({ selectedInternalWallet, isShow, onCancel, title, m
   )
 
   useEffect(() => {
-  console.log(selectedWalletGroup)
+    console.log(selectedWalletGroup)
     switch (mode) {
       case viewMode.create:
       case viewMode.update:
@@ -88,13 +89,13 @@ function InternalWalletForm({ selectedInternalWallet, isShow, onCancel, title, m
   }, [mode])
 
   //useEffect(() => {
-    //if (isShow && selectedInternalWallet && selectedInternalWallet.id && mode === viewMode.update)
-      //form.setFieldsValue({
-        //...selectedInternalWallet,
-        //groupName: selectedInternalWallet?.balanceInternalGroup?.name ?? ''
-      //})
-    //setSelectedWalletGroup(selectedInternalWallet?.balanceInternalGroup)
-    //if (!isShow) form.resetFields()
+  //if (isShow && selectedInternalWallet && selectedInternalWallet.id && mode === viewMode.update)
+  //form.setFieldsValue({
+  //...selectedInternalWallet,
+  //groupName: selectedInternalWallet?.balanceInternalGroup?.name ?? ''
+  //})
+  //setSelectedWalletGroup(selectedInternalWallet?.balanceInternalGroup)
+  //if (!isShow) form.resetFields()
   //}, [isShow, selectedInternalWallet])
 
   return (
@@ -181,6 +182,8 @@ function InternalWalletForm({ selectedInternalWallet, isShow, onCancel, title, m
         <Input
           prefix={`${selectedWalletGroup?.walletGroup ?? "XXX"}.`}
           placeholder={t`internal-wallet.placeholders.wallet_number`.toString()}
+          onKeyDown={blockArrowValue}
+          onKeyPress={blockLetterDecimal}
           disabled={mode != viewMode.create}
         />
       </Form.Item>
