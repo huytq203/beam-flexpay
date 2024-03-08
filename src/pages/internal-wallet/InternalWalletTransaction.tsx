@@ -44,8 +44,8 @@ function InternalWalletTransaction(props: props) {
     orderBy: 'createdAt'
   })
 
-  const [startDate, setStartDate] = useState<dayjs>(dayjs())
-  const [endDate, setEndDate] = useState<dayjs>(dayjs().subtract(1, 'year'))
+  const [startDate, setStartDate] = useState<dayjs>(dayjs().subtract(1, 'year'))
+  const [endDate, setEndDate] = useState<dayjs>(dayjs())
 
   const { t } = useTranslation()
 
@@ -96,8 +96,8 @@ function InternalWalletTransaction(props: props) {
     },
     {
       title: t('internal-wallet.transaction.code'),
-      dataIndex: 'code',
-      key: 'code'
+      dataIndex: 'referenceId',
+      key: 'referenceId'
     },
     {
       title: t('internal-wallet.transaction.debitCreditAccount'),
