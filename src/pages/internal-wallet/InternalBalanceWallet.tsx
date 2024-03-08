@@ -81,14 +81,17 @@ function InternalBalanceWallet() {
       dataIndex: 'balanceInternalGroup',
       key: 'balanceInternalGroup',
       render(value, record, index) {
-        return `${record.balanceInternalGroup.walletGroup}.${record.walletNumber}`
+        return record.balanceInternalGroup.name
       },
 
     },
     {
       title: t('internalBalanceWallet.walletNumber'),
       dataIndex: 'walletNumber',
-      key: 'walletNumber'
+      key: 'walletNumber',
+      render(value, record, index) {
+        return `${record.balanceInternalGroup.walletGroup}.${record.walletNumber}`
+      },
     },
     {
       title: t('internalBalanceWallet.walletName'),
