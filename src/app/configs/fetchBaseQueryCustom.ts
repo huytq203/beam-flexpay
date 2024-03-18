@@ -213,9 +213,10 @@ export const fetchBaseQueryCustom: BaseQueryFn<
           setTimeout(() => {
             window.location.href = '/auth/login'
           }, 700)
-        } else {
-          openNotification((result.error.data as any).message)
         }
+        //else {
+          //openNotification((result.error.data as any).message)
+        //}
         break
       case 400:
         openNotification((result.error.data as any).message)
