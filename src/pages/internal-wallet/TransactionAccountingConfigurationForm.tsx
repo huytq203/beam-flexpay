@@ -272,7 +272,7 @@ function TransactionAccountingConfigurationForm({
           rules={[
             {
               validator: async (n, serviceId) => {
-                if (transactionType != AccountingTransactionType.ADVANCED_COLLLECT
+                if (transactionType != AccountingTransactionType.ADVANDED_COLLECT
                   && transactionType != AccountingTransactionType.BILL_PAYMENT
                 ) {
                   return
@@ -293,7 +293,7 @@ function TransactionAccountingConfigurationForm({
             field='name'
             onSelectData={onSelectData}
             valueSearch='serviceId'
-            disabled={(transactionType != AccountingTransactionType.ADVANCED_COLLLECT &&
+            disabled={(transactionType != AccountingTransactionType.ADVANDED_COLLECT &&
               transactionType != AccountingTransactionType.BILL_PAYMENT) ||
               transactionType === undefined ||
               mode === viewMode.view}
@@ -307,7 +307,7 @@ function TransactionAccountingConfigurationForm({
           rules={[
             {
               validator: async (n, partnerId) => {
-                if (transactionType != AccountingTransactionType.ADVANCED_COLLLECT
+                if (transactionType != AccountingTransactionType.ADVANDED_COLLECT
                   && transactionType != AccountingTransactionType.BILL_PAYMENT
                 ) {
                   return
@@ -326,7 +326,7 @@ function TransactionAccountingConfigurationForm({
               type: 'REPAYMENT'
             }}
             field='name'
-            disabled={(transactionType != AccountingTransactionType.ADVANCED_COLLLECT &&
+            disabled={(transactionType != AccountingTransactionType.ADVANDED_COLLECT &&
               transactionType != AccountingTransactionType.BILL_PAYMENT) ||
               transactionType === undefined ||
               mode === viewMode.view}
