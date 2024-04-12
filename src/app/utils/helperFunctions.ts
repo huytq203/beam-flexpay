@@ -42,7 +42,7 @@ export const getLabelButton = (status: string) => {
 }
 
 export const moneyInputFormatter = (value?: string) => {
-  if (value) {
+  if (value !== undefined) {
     return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
   } else return ''
 }

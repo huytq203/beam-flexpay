@@ -3,6 +3,8 @@ import ButtonSearch from '@components/button-search/ButtonSearch'
 import SearchBar from '@components/search-bar/SearchBar'
 import { GUTTER } from '@constants/appConstant'
 import { TimeFormat } from '@constants/datetime'
+import { transactionType } from '@pages/policy-management/limit-management/LimitAndRegulationsConst'
+import { moneyInputFormatter } from '@utils/helperFunctions'
 import { useToggle } from 'ahooks'
 import {
   Card,
@@ -16,6 +18,7 @@ import {
   Select
 } from 'antd'
 import Table, { ColumnsType } from 'antd/es/table'
+import _ from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -45,13 +48,21 @@ function InternalBalanceWalletHistory({
     },
     {
       title: t('internalBalanceWallet.transactionType'),
-      dataIndex: 'transactionType',
-      key: 'transactionType'
+      dataIndex: 'type',
+      key: 'type',
+      render(transactionT) {
+        var value = _.find(transactionType, (tt) => tt.value == transactionT)
+
+        return value?.label ?? "hhwrwe"
+      }
     },
     {
       title: t('internalBalanceWallet.amount'),
       dataIndex: 'amount',
-      key: 'amount'
+      key: 'amount',
+      render(value) {
+        return moneyInputFormatter(value)
+      }
     },
     {
       title: t('internalBalanceWallet.transactionContent'),

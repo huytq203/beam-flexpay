@@ -39,6 +39,8 @@ import {
 import { openNotification } from '@configs/fetchBaseQueryCustom'
 import { useLazyGetListWalletsQuery } from '@services/apiInternalWallet'
 import { Accounting } from '@type/accounting'
+import ButtonUpdate from '@components/button-update/ButtonUpdate'
+import { FaPen } from 'react-icons/fa'
 
 function TransactionAccountingConfiguration() {
   const [form] = Form.useForm()
@@ -184,6 +186,14 @@ function TransactionAccountingConfiguration() {
               }}
             />
             <Button
+              icon={<FaPen />}
+              onClick={() => {
+                setMode(viewMode.update)
+                setSelectedAccounting(record)
+                addFormToggle()
+              }}
+            />
+            <Button
               icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
               onClick={() => changeStatus(record.active, record.id)}
             />
@@ -200,8 +210,7 @@ function TransactionAccountingConfiguration() {
     })
 
   const onCancel = () => {
-    setMode(viewMode.update)
-    setSelected(undefined)
+    setMode(null)
     addFormToggle()
   }
 

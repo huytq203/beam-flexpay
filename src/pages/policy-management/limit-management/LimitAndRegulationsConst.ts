@@ -34,6 +34,8 @@ export enum TIME_TYPE_APPLY {
 
 export enum TRANSACTION_TYPE {
   DEPOSIT = 'DEPOSIT',
+  FEE = 'FEE',
+  VAT = 'VAT',
   WITHDRAWAL = 'WITHDRAWAL',
   WITHDRAW = 'WITHDRAW',
   TRANSFER = 'TRANSFER',
@@ -83,7 +85,15 @@ export const transactionType = [
   {
     value: TRANSACTION_TYPE.PAYMENT,
     label: t`policy-management.limitAndRegulations.payment`.toString()
-  }
+  },
+  {
+    value: TRANSACTION_TYPE.FEE,
+    label: t`policy-management.limitAndRegulations.fee`.toString()
+  },
+  {
+    value: TRANSACTION_TYPE.VAT,
+    label: t`policy-management.limitAndRegulations.vat`.toString()
+  },
   // TODO: Hidden TOTAL_LIMIT
   // {
   //   value: TRANSACTION_TYPE.TOTAL_LIMIT,

@@ -16,7 +16,8 @@ import {
   Space,
   notification,
   Radio,
-  Checkbox
+  Checkbox,
+  Badge
 } from 'antd'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -28,7 +29,7 @@ import {
   fundsOptions,
   walletTypeOptions
 } from '@constants/options'
-import { useCreateAccountingMutation } from '@services/accountingService'
+import { useCreateAccountingMutation, useUpdateAccountingMutation } from '@services/accountingService'
 import { useGetListWalletsQuery, useLazyGetListWalletsQuery } from '@services/apiInternalWallet'
 import Title from 'antd/es/typography/Title'
 import { Accounting, AccountingBalanceType, AccountingDetails, AccountingDetailsType } from '@type/accounting'
@@ -71,6 +72,7 @@ function TransactionAccountingConfigurationForm({
     orderBy: 'createdAt'
   })
   const [createAccounting, createAccountingStatus] = useCreateAccountingMutation()
+  const [updateAccounting, updateAccountingStatus] = useUpdateAccountingMutation()
 
   const updateLoading = false
 
@@ -82,22 +84,45 @@ function TransactionAccountingConfigurationForm({
     if (!value) {
       return
     }
-    await createAccounting(value)
-      .then(_ => {
-        notification.success({
-          message: t(`internal-wallet.messages.create-accounting-success`)
-        })
-        form.resetFields()
-        onCancel()
-      })
-      .catch(_ => {
-        notification.error({
-          message: t(`internal-wallet.messages.create-accounting-failed`)
-        })
-      })
+
+    switch (mode) {
+      case viewMode.create:
+        await createAccounting(value)
+          .then(_ => {
+            notification.success({
+              message: t(`internal-wallet.messages.create-accounting-success`)
+            })
+            form.resetFields()
+            onCancel()
+          })
+          .catch(_ => {
+            notification.error({
+              message: t(`internal-wallet.messages.create-accounting-failed`)
+            })
+          })
+      case viewMode.update:
+        if (selectedAccounting === undefined) {
+          return
+        }
+        await updateAccounting({ id: selectedAccounting.id, payload: value })
+          .then(_ => {
+            notification.success({
+              message: t(`internal-wallet.messages.create-accounting-success`)
+            })
+            form.resetFields()
+            onCancel()
+          })
+          .catch(_ => {
+            notification.error({
+              message: t(`internal-wallet.messages.create-accounting-failed`)
+            })
+          })
+    }
+
   }
 
   useEffect(() => {
+    console.log(mode)
     switch (mode) {
       case viewMode.create:
         form.setFieldsValue({
@@ -112,6 +137,7 @@ function TransactionAccountingConfigurationForm({
         })
         break;
       case viewMode.view:
+      case viewMode.update:
         form.setFieldsValue(selectedAccounting)
         break;
     }
@@ -133,7 +159,9 @@ function TransactionAccountingConfigurationForm({
     onRemove: () => void
   }) => {
     return (
-      <Card>
+      <Card
+        extra={<Badge />}
+      >
         <Form.Item
           label={t('internal-wallet.modal.walletType')}
           name={[props.field.name, 'balanceType']}
