@@ -80,11 +80,11 @@ const TransactionTable = ({ search, setSearch, skip, className }: props) => {
       render: (value) => getTransactionType(value),
       width: 120
     },
-    {
+{
       title: t('transfer-history.value') + ' (VNĐ)',
       dataIndex: 'amount',
       align: 'center',
-      render: (value, amount) => convertLocalStringNumber(value),
+      render: (value, amount) => convertLocalStringNumber(value + amount.fee),
       width: 200
     },
     {
