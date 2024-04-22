@@ -230,6 +230,7 @@ function TransactionAccountingConfigurationForm({
       onCancel={onCancel}
       width={1000}
     >
+    <h1>{mode}</h1>
       <Form
         layout='vertical'
         form={form}
