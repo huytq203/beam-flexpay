@@ -357,10 +357,12 @@ export const AddFeePackageModal = ({
           <Form.Item
             name='transactionFrom'
             label={t`policy-management.depositManagement.modalContent.tabelModal.transactionFrom`}
+            dependencies={['transactionTo']}
             rules={[
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   const transactionTo = getFieldValue('transactionTo') || 0
+                  console.log("test")
                   value = value || 0
                   if (value > transactionTo) {
                     return Promise.reject(
@@ -396,6 +398,7 @@ export const AddFeePackageModal = ({
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   const transactionFrom = getFieldValue('transactionFrom') || 0
+
                   value = value || 0
                   if (value < transactionFrom) {
                     return Promise.reject(

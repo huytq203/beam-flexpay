@@ -17,7 +17,8 @@ import {
   notification,
   Radio,
   Checkbox,
-  Badge
+  Badge,
+  Dropdown
 } from 'antd'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -42,6 +43,7 @@ type props = {
   record?: any | undefined
   isShow: boolean
   onCancel: VoidFunction
+  onSubmit: VoidFunction
   mode: viewMode
   selectedAccounting?: Accounting
 }
@@ -49,6 +51,7 @@ type props = {
 function TransactionAccountingConfigurationForm({
   record,
   isShow,
+  onSubmit,
   onCancel,
   title,
   mode,
@@ -75,10 +78,6 @@ function TransactionAccountingConfigurationForm({
   const [updateAccounting, updateAccountingStatus] = useUpdateAccountingMutation()
 
   const updateLoading = false
-
-  useEffect(() => {
-    console.log(transactionType)
-  }, [transactionType])
 
   const handleSubmit = async (value: Record<string, any>) => {
     if (!value) {
@@ -119,10 +118,10 @@ function TransactionAccountingConfigurationForm({
           })
     }
 
+    onSubmit()
   }
 
   useEffect(() => {
-    console.log(mode)
     switch (mode) {
       case viewMode.create:
         form.setFieldsValue({
@@ -137,8 +136,13 @@ function TransactionAccountingConfigurationForm({
         })
         break;
       case viewMode.view:
+        form.setFieldsValue(selectedAccounting)
+        form.setFieldValue("serviceId", selectedAccounting?.service?.id)
+        form.setFieldValue("partnerId", selectedAccounting?.partner?.id)
       case viewMode.update:
         form.setFieldsValue(selectedAccounting)
+        form.setFieldValue("serviceId", selectedAccounting?.service?.id)
+        form.setFieldValue("partnerId", selectedAccounting?.partner?.id)
         break;
     }
   }, [mode])
@@ -183,6 +187,33 @@ function TransactionAccountingConfigurationForm({
             }}
           />
         </Form.Item>
+        <Form.Item
+          name={[props.field.name, 'subType']}
+          label={t('internal-wallet.modal.subType')}
+          rules={[
+            {
+              required: true,
+              message: t('internal-wallet.messages.required').toString()
+            }
+          ]}
+          rules={[
+            {
+              validator: async (n, subType) => {
+                if (details[props.index].balanceType !== AccountingBalanceType.INTERNAL) {
+                  return
+                }
+                if (!subType) {
+                  return Promise.reject(new Error(t('internal-wallet.messages.required').toString()))
+                }
+              }
+            },
+          ]}
+        >
+          <Select
+            disabled={details[props.index].balanceType != AccountingBalanceType.INTERNAL || mode === viewMode.view}
+            options={accountingSubType}
+          />
+        </Form.Item>
         {/* Số ví điện tử - select - required */}
         <Form.Item
           label={t('internal-wallet.modal.walletNumber')}
@@ -218,7 +249,7 @@ function TransactionAccountingConfigurationForm({
             options={accountingOptions}
           />
         </Form.Item>
-      </Card>
+      </Card >
     )
   }
 
@@ -230,7 +261,6 @@ function TransactionAccountingConfigurationForm({
       onCancel={onCancel}
       width={1000}
     >
-    <h1>{mode}</h1>
       <Form
         layout='vertical'
         form={form}
@@ -249,7 +279,7 @@ function TransactionAccountingConfigurationForm({
         >
           <Select
             placeholder={t('internal-wallet.placeholders.transaction_type')}
-            disabled={mode === viewMode.view}
+            disabled={mode !== viewMode.create}
             options={accountingTransactionType}
             onChange={value => {
               if (value !== AccountingTransactionType.BILL_PAYMENT &&
@@ -261,22 +291,7 @@ function TransactionAccountingConfigurationForm({
           />
         </Form.Item>
         {/* Sub type - select */}
-        <Form.Item
-          name='subTypes'
-          label={t('internal-wallet.modal.subType')}
-          rules={[
-            {
-              required: true,
-              message: t('internal-wallet.messages.required').toString()
-            }
-          ]}
-        >
-          <Checkbox.Group
-            options={accountingSubType}
-            disabled={mode === viewMode.view}
-            defaultValue={['Apple']}
-          />
-        </Form.Item>
+
         {/* Nguồn tiền - select */}
         <Form.Item
           name='fundSource'
@@ -290,7 +305,7 @@ function TransactionAccountingConfigurationForm({
         >
           <Select
             placeholder={t('internal-wallet.placeholders.funds')}
-            disabled={mode === viewMode.view}
+            disabled={mode !== viewMode.create}
             options={fundsOptions}
           />
         </Form.Item>
@@ -325,7 +340,7 @@ function TransactionAccountingConfigurationForm({
             disabled={(transactionType != AccountingTransactionType.ADVANDED_COLLECT &&
               transactionType != AccountingTransactionType.BILL_PAYMENT) ||
               transactionType === undefined ||
-              mode === viewMode.view}
+              mode !== viewMode.create}
             placeholder={t('internal-wallet.placeholders.service')}
           />
         </Form.Item>
@@ -358,7 +373,7 @@ function TransactionAccountingConfigurationForm({
             disabled={(transactionType != AccountingTransactionType.ADVANDED_COLLECT &&
               transactionType != AccountingTransactionType.BILL_PAYMENT) ||
               transactionType === undefined ||
-              mode === viewMode.view}
+              mode !== viewMode.create}
             onSelectData={onSelectData}
             valueSearch='partnerId'
             placeholder={t('internal-wallet.placeholders.partner')}

@@ -80,7 +80,7 @@ export const SetupEWalletTransferMoneyContent = ({
     string | number
   >('')
   const [object, setObject] = useState<APPLICABLE_OBJECT>(
-    APPLICABLE_OBJECT.SYSTEM
+    APPLICABLE_OBJECT.ALL
   )
 
   const [searchValue, setSearchValue] = useState<SearchValueType>({
@@ -404,7 +404,7 @@ export const SetupEWalletTransferMoneyContent = ({
                   name='applicableObject'
                   label={t`policy-management.payment.applicableObject`}
                   {...formItemStyle}
-                  initialValue={APPLICABLE_OBJECT.SYSTEM}
+                  initialValue={APPLICABLE_OBJECT.ALL}
                   labelAlign='left'
                   rules={[
                     {

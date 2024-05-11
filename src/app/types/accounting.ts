@@ -53,4 +53,5 @@ export interface AccountingDetails {
   isPositive: boolean
   balanceType: AccountingBalanceType
   internalWallet: any
+  subType?: AccountingSubType
 }

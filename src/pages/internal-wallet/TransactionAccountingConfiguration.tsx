@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { LockOutlined, UnlockOutlined, EyeOutlined } from '@ant-design/icons'
 import ButtonAdd from '@components/button-add/ButtonAdd'
 import ButtonSearch from '@components/button-search/ButtonSearch'
@@ -20,7 +21,7 @@ import {
 } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import TransactionAccountingConfigurationForm from './TransactionAccountingConfigurationForm'
 import { viewMode } from '@type/customer'
@@ -37,9 +38,7 @@ import {
   useUpdateActiveMutation
 } from '@services/accountingService'
 import { openNotification } from '@configs/fetchBaseQueryCustom'
-import { useLazyGetListWalletsQuery } from '@services/apiInternalWallet'
 import { Accounting } from '@type/accounting'
-import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import { FaPen } from 'react-icons/fa'
 
 function TransactionAccountingConfiguration() {
@@ -51,15 +50,21 @@ function TransactionAccountingConfiguration() {
     order: 'DESC',
     orderBy: 'createdAt'
   })
-  const [selected, setSelected] = useState(undefined)
   const [mode, setMode] = useState<viewMode>(viewMode.create)
   const [addForm, { toggle: addFormToggle }] = useToggle()
-  const [getWalletIds] = useLazyGetListWalletsQuery()
 
   const [selectedAccounting, setSelectedAccounting] = useState<Accounting>()
 
-  const { data: accounting } = useGetAccountingQuery(search)
+  const { data: accounting, refetch: refetchAccounting } = useGetAccountingQuery(search)
   const [updateStatus] = useUpdateActiveMutation()
+
+  useEffect(() => {
+    console.log("123", selectedAccounting)
+  }, [selectedAccounting])
+
+  useEffect(() => {
+    console.log("selected", accounting)
+  }, [accounting])
 
   const changeStatus = (status: number, id: string) => {
     Modal.confirm({
@@ -259,7 +264,11 @@ function TransactionAccountingConfiguration() {
                 <Col>
                   <ButtonAdd
                     module='internal-wallet'
-                    onClick={addFormToggle}
+                    onClick={() => {
+                      setMode(viewMode.create)
+                      setSelectedAccounting(undefined)
+                      addFormToggle()
+                    }}
                   />
                 </Col>
                 <Col>
@@ -299,11 +308,16 @@ function TransactionAccountingConfiguration() {
         }}
       />
       <TransactionAccountingConfigurationForm
-        title={t`internal-wallet.add-configuration`}
+        title={mode === viewMode.create
+          ? t(`internal-wallet.create-configuration`)
+          : mode === viewMode.update
+            ? t(`internal-wallet.update-configuration`)
+            : t(`internal-wallet.view-configuration`)}
         isShow={addForm}
         mode={mode}
         selectedAccounting={selectedAccounting}
         onCancel={onCancel}
+        onSubmit={refetchAccounting}
       />
     </Card>
   )

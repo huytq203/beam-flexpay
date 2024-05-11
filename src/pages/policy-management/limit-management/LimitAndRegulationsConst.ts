@@ -6,6 +6,7 @@ export enum CUSTOMER_SERCURITY_METHODS {
 }
 
 export enum APPLICABLE_OBJECTS {
+  ALL = 'ALL',
   SYSTEM = 'SYSTEM',
   PERSONAL_ACCOUNT = 'PRIVATE_ACCOUNT',
   ACCOUNT_GROUP = 'ACCOUNT_GROUP',
@@ -44,6 +45,10 @@ export enum TRANSACTION_TYPE {
 }
 
 export const objects = [
+  {
+    value: APPLICABLE_OBJECTS.ALL,
+    name: t`policy-management.payment.all`
+  },
   {
     value: APPLICABLE_OBJECTS.SYSTEM,
     name: t`policy-management.payment.system`

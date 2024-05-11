@@ -202,11 +202,11 @@ export const formatHisoryData = (value: string | number) => {
   }
 }
 
-export const convertNumber = (amount: string | number) => {
+export const convertNumber = (amount: string | number,suffix?: string | undefined) => {
   if (!amount && amount !== 0) {
     return '-'
   }
-  return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (suffix ?? '')
 }
 
 export const getStatusText = (status?: boolean) => {
