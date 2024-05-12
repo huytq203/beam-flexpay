@@ -125,7 +125,7 @@ export const HistoryPolicy = ({
       },
       {
         title: trans('policy-management.history.createdAt'),
-        dataIndex: 'createTime',
+        dataIndex: 'createdAt',
         key: 'id',
         align: 'center',
         width: 180,
