@@ -126,22 +126,7 @@ function CreateGroup({ mode, onCancel, selectedId, refetch }: IProps) {
   }
 
   const onCloseModal = () => {
-    if (form.isFieldsTouched()) {
-      Modal.confirm({
-        centered: true,
-        title: t`labels.confirmClose`,
-        content: t('labels.createUserGroupCancel'),
-        okText: t('buttons.cancel'),
-        cancelText: t('buttons.no'),
-        onOk: () => {
-          form.resetFields()
-          onCancel()
-        }
-      })
-    } else {
-      form.resetFields()
-      onCancel()
-    }
+    onCancel()
   }
 
   const showSuccessMessage = (msg: string) => {

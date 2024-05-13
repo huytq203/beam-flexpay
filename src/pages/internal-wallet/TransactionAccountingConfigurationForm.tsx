@@ -11,14 +11,10 @@ import {
   Row,
   Select,
   Card,
-  FloatButton,
   FormListFieldData,
   Space,
   notification,
-  Radio,
-  Checkbox,
   Badge,
-  Dropdown
 } from 'antd'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -31,12 +27,13 @@ import {
   walletTypeOptions
 } from '@constants/options'
 import { useCreateAccountingMutation, useUpdateAccountingMutation } from '@services/accountingService'
-import { useGetListWalletsQuery, useLazyGetListWalletsQuery } from '@services/apiInternalWallet'
+import { useGetListWalletsQuery } from '@services/apiInternalWallet'
 import Title from 'antd/es/typography/Title'
 import { Accounting, AccountingBalanceType, AccountingDetails, AccountingDetailsType } from '@type/accounting'
 import { QueryStatus } from '@reduxjs/toolkit/dist/query'
 import { AccountingTransactionType } from '@type/accounting'
-import { AccountingSubType } from '@type/accounting'
+
+import { MinusCircleOutlined } from '@ant-design/icons';
 
 type props = {
   title: string
@@ -165,6 +162,16 @@ function TransactionAccountingConfigurationForm({
     return (
       <Card
         extra={<Badge />}
+        title={mode != viewMode.view &&
+          <div>
+            <MinusCircleOutlined
+              onClick={props.onRemove}
+              style={{
+                color: "red",
+                float: "right",
+              }} />
+          </div>
+        }
       >
         <Form.Item
           label={t('internal-wallet.modal.walletType')}

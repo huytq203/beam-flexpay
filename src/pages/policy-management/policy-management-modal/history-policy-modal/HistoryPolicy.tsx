@@ -58,6 +58,8 @@ export const HistoryPolicy = ({
       record.valueType === 'Thời gian áp dụng'
     ) {
       return dayjs(value).format(TimeFullFormat)
+    } else if (record.valueType === 'Loại phí') {
+    return value == "FIXED" ? "Cố định" : "Linh hoạt"
     } else {
       return <CellContent data={formatHisoryData(value)} />
     }
