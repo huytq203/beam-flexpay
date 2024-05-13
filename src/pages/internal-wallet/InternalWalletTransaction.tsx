@@ -12,7 +12,9 @@ import { ColumnsType } from "antd/es/table"
 import moment from "moment"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions';
+import { blockArrowValue, blockLetterDecimal, moneyInputFormatter } from '@utils/helperFunctions';
+import _ from 'lodash';
+import { transactionType } from '@pages/policy-management/limit-management/LimitAndRegulationsConst';
 
 type props = {
   title: string
@@ -63,54 +65,58 @@ function InternalWalletTransaction(props: props) {
   const columns: ColumnsType<any> = [
     {
       title: t('internal-wallet.transaction.date'),
-      dataIndex: 'transactionDate',
-      key: 'transactionDate',
+      dataIndex: 'transaction',
+      key: 'transaction.transactionDate',
       render(value) {
-        return moment(value).format('DD-MM-YYYY HH:mm:ss')
+        return moment(value.transactionDate).format('DD-MM-YYYY HH:mm:ss')
       }
     },
     {
       title: t('internal-wallet.transaction.type'),
-      dataIndex: 'type',
-      key: 'type',
+      dataIndex: 'transaction',
+      key: 'transaction.type',
       render(value) {
-        switch (value) {
-          case 'NAPAS':
-            return t('internal-wallet.fundsOptions.napas')
-          case 'LINK_BANK':
-            return t('internal-wallet.fundsOptions.bank')
-          case 'PAYMENT_GATEWAY':
-            return t('internal-wallet.fundsOptions.gate')
-          case 'EWALLET':
-            return t('internal-wallet.fundsOptions.wallet')
-        }
+        var tt = _.find(transactionType, (tt) => tt.value == value.type)
 
+        return tt?.label
       }
     },
     {
       title: t('internal-wallet.transaction.amount'),
       dataIndex: 'amount',
-      key: 'amount'
+      key: 'amount',
+      render(value) {
+        return moneyInputFormatter(value)
+      }
     },
     {
       title: t('internal-wallet.transaction.note'),
-      dataIndex: 'note',
-      key: 'note'
+      dataIndex: 'transaction',
+      key: 'note',
+      render(value) {
+        return value.note
+      }
     },
     {
       title: t('internal-wallet.transaction.code'),
-      dataIndex: 'referenceId',
-      key: 'referenceId'
+      dataIndex: 'transaction',
+      key: 'referenceId',
+      render(value) {
+        return value.referenceId
+      }
     },
     {
       title: t('internal-wallet.transaction.debitCreditAccount'),
-      dataIndex: 'debitCreditAccount',
-      key: 'debitCreditAccount'
+      dataIndex: 'targetAccount',
+      key: 'targetAccount'
     },
     {
       title: t('internal-wallet.transaction.afterBalance'),
-      dataIndex: 'afterBalance',
-      key: 'afterBalance'
+      dataIndex: 'afterAvailable',
+      key: 'afterAvailable',
+      render(value) {
+        return moneyInputFormatter(value)
+      }
     },
   ]
 

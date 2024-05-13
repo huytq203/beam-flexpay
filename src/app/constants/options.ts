@@ -289,6 +289,10 @@ export const verifiedOptions = [
 
 export const applicableObjects = [
   {
+    value: APPLICABLE_OBJECTS.ALL,
+    label: t`policy-management.payment.all`
+  },
+  {
     value: APPLICABLE_OBJECTS.SYSTEM,
     label: t`policy-management.payment.system`
   },
@@ -610,9 +614,9 @@ export const accountingStatus = [
 ]
 
 export const accountingSubType = [
+  { label: i18n.t('accounting.subType.other'), value: AccountingSubType.OTHER },
   { label: i18n.t('accounting.subType.fee'), value: AccountingSubType.FEE },
   { label: i18n.t('accounting.subType.vat'), value: AccountingSubType.VAT },
-  { label: i18n.t('accounting.subType.other'), value: AccountingSubType.OTHER },
 ]
 
 export const accountingTransactionType = [

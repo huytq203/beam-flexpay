@@ -27,6 +27,13 @@ export const accountingService = apiService.injectEndpoints({
       }),
       invalidatesTags: ['accounting']
     }),
+    updateAccounting: builder.mutation({
+      query: ({ id, payload }) => ({
+        url: `accounting/${id}`,
+        method: 'PUT',
+        body: payload,
+      })
+    }),
     updateActive: builder.mutation({
       query: ({ id, active }) => ({
         url: `/accounting/${id}`,
@@ -41,5 +48,6 @@ export const accountingService = apiService.injectEndpoints({
 export const {
   useGetAccountingQuery,
   useCreateAccountingMutation,
-  useUpdateActiveMutation
+  useUpdateAccountingMutation,
+  useUpdateActiveMutation,
 } = accountingService

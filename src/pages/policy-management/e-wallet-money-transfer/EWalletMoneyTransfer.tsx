@@ -137,7 +137,7 @@ const EWalletMoneyTransferManagement = () => {
               align: 'center',
               width: 100,
               render: (record) => (
-                <div>{convertNumber(record?.transferorFlexibleFee)}%</div>
+                <div>{convertNumber(record?.transferorFlexibleFee, '%')}</div>
               )
             },
             {
@@ -176,7 +176,7 @@ const EWalletMoneyTransferManagement = () => {
               align: 'center',
               width: 100,
               render: (record) => (
-                <div>{convertNumber(record?.receiverFlexibleFee)}%</div>
+                <div>{convertNumber(record?.receiverFlexibleFee, '%')}</div>
               )
             },
             {

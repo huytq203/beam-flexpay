@@ -46,14 +46,14 @@ const WithdrawManagement = () => {
   const [search, setSearch] = useState<SearchType>({
     page: 1,
     take: 10,
-    applicableObject: APPLICABLE_OBJECTS.SYSTEM
+    applicableObject: APPLICABLE_OBJECTS.ALL
   })
   const [searchValue, setSearchValue] = useState<SearchValueType>({
     accountGroupSearch: '',
     privateAccountSearch: ''
   })
   const [object, setObject] = useState<APPLICABLE_OBJECTS>(
-    APPLICABLE_OBJECTS.SYSTEM
+    APPLICABLE_OBJECTS.ALL
   )
   const [open, setOpen] = useState<boolean>(false)
   const [mode, setMode] = useState<viewMode>(viewMode.create)
@@ -118,7 +118,7 @@ const WithdrawManagement = () => {
                 align: 'center',
                 width: 100,
                 dataIndex: 'transferorFlexibleFee',
-                render: (record) => <div>{convertNumber(record)}%</div>
+                render: (record) => <div>{convertNumber(record, '%')}</div>
               },
               {
                 title: `${trans`policy-management.payment.fixedCharge`} (VNĐ)`,
@@ -152,7 +152,7 @@ const WithdrawManagement = () => {
                 align: 'center',
                 width: 100,
                 dataIndex: 'receiverFlexibleFee',
-                render: (record) => <div>{convertNumber(record)}</div>
+                render: (record) => <div>{convertNumber(record, '%')}</div>
               },
               {
                 title: `${trans`policy-management.payment.fixedCharge`} (VNĐ)`,
@@ -350,7 +350,7 @@ const WithdrawManagement = () => {
                 <Col>
                   <Form.Item
                     name='applicableObject'
-                    initialValue={APPLICABLE_OBJECTS.SYSTEM}
+                    initialValue={APPLICABLE_OBJECTS.ALL}
                     label={trans`policy-management.payment.applicableObject`}
                   >
                     <Select

@@ -56,7 +56,7 @@ import weekOfYear from 'dayjs/plugin/weekOfYear'
 import weekYear from 'dayjs/plugin/weekYear'
 import weekday from 'dayjs/plugin/weekday'
 import { GUTTER } from '@constants/appConstant'
-import { TimeFormat } from '@constants/datetime'
+import { TimeFormat, TimeFullFormat } from '@constants/datetime'
 
 dayjs.extend(customParseFormat)
 dayjs.extend(advancedFormat)
@@ -362,12 +362,12 @@ export const SetupDirectDepositPolicyContent = ({
   }
 
   const handleSelectMethod = (values: number[] | string, status?: string) => {
-    if (typeof status === 'string' && status === 'all') {
-      form.setFieldsValue({
-        depositMethod: undefined
-      })
-      return
-    }
+    //if (typeof status === 'string') {
+    //form.setFieldsValue({
+    //depositMethod: undefined
+    //})
+    //return
+    //}
 
     form.setFieldsValue({
       depositMethod: values
@@ -680,7 +680,7 @@ export const SetupDirectDepositPolicyContent = ({
                 use12Hours={false}
                 disabledDate={disabledDate}
                 className='w-100'
-                format={TimeFormat}
+                format={TimeFullFormat}
                 onChange={onChangeStartDate}
                 showNow={false}
               />
@@ -698,7 +698,7 @@ export const SetupDirectDepositPolicyContent = ({
                 showNow={false}
                 disabledDate={disabledEndDate}
                 className='w-100'
-                format={TimeFormat}
+                format={TimeFullFormat}
                 placeholder={t`policy-management.depositManagement.modalContent.endDatePlaceholder`.toString()}
               />
             </Form.Item>

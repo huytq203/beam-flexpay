@@ -62,7 +62,7 @@ const OmipayWalletPaymentPolicyManagement = () => {
   const [search, setSearch] = useState<findAllArgs>({
     page: 1,
     take: 10,
-    applicableObject: APPLICABLE_OBJECTS.SYSTEM
+    applicableObject: APPLICABLE_OBJECTS.ALL
   })
 
   const [selectedItem, setSelectedItem] = useState<IPolicyTable | undefined>(
@@ -138,7 +138,7 @@ const OmipayWalletPaymentPolicyManagement = () => {
                 align: 'center',
                 width: 100,
                 render: (record) => (
-                  <div>{convertNumber(record.transferorFlexibleFee)}%</div>
+                  <div>{convertNumber(record.transferorFlexibleFee, '%')}</div>
                 )
               },
               {
@@ -176,7 +176,7 @@ const OmipayWalletPaymentPolicyManagement = () => {
                 align: 'center',
                 width: 100,
                 render: (record) => (
-                  <div>{convertNumber(record.receiverFlexibleFee)}%</div>
+                  <div>{convertNumber(record.receiverFlexibleFee, '%')}</div>
                 )
               },
               {
@@ -331,7 +331,7 @@ const OmipayWalletPaymentPolicyManagement = () => {
                   <Form.Item
                     name='object'
                     label={t`policy-management.payment.applicableObject`}
-                    initialValue={APPLICABLE_OBJECTS.SYSTEM}
+                    initialValue={APPLICABLE_OBJECTS.ALL}
                   >
                     <Select
                       onChange={(value) => {

@@ -26,12 +26,17 @@ export enum pageEnum {
 }
 
 export enum APPLICABLE_OBJECTS {
+  ALL  = 'ALL',
   SYSTEM = 'SYSTEM',
   PERSONAL_ACCOUNT = 'PERSONAL_ACCOUNT',
   ACCOUNT_GROUP = 'ACCOUNT_GROUP'
 }
 
 export const objects = [
+  {
+    value: APPLICABLE_OBJECTS.ALL,
+    label: t`policy-management.payment.all`
+  },
   {
     value: APPLICABLE_OBJECTS.SYSTEM,
     label: t`policy-management.payment.system`

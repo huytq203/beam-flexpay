@@ -8,7 +8,7 @@ import { TimeFormat } from '@constants/datetime'
 import { useGetListWalletGroupsQuery, useGetListWalletsQuery } from '@services/apiInternalWallet'
 import { viewMode } from '@type/customer'
 import { InternalWallet, InternalWalletPayload } from '@type/internalWallet'
-import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions'
+import { blockArrowValue, blockLetterDecimal, moneyInputFormatter } from '@utils/helperFunctions'
 import { useToggle } from 'ahooks'
 import {
   Button,
@@ -101,7 +101,10 @@ function InternalBalanceWallet() {
     {
       title: t('internalBalanceWallet.balance'),
       dataIndex: 'availableMoney',
-      key: 'availableMoney'
+      key: 'availableMoney',
+      render(value) {
+        return moneyInputFormatter(value)
+      }
     },
     {
       title: t('partner.updatedDate'),
@@ -265,9 +268,9 @@ function InternalBalanceWallet() {
           )
         }}
         pagination={{
-          current: 1, // partners?.meta.page,
-          pageSize: 10, // partners?.meta.take,
-          total: 20, //partners?.meta.itemCount,
+          current: internalWallet?.meta.page,
+          pageSize: internalWallet?.meta.take,
+          total: internalWallet?.meta.itemCount,
           showSizeChanger: false,
           onChange(page) {
             setSearch({

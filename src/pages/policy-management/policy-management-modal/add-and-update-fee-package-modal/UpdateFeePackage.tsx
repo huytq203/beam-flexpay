@@ -204,11 +204,6 @@ export const UpdateFeePackageModal = ({
               name='receiverFeeMin'
               label={t`policy-management.depositManagement.modalContent.tabelModal.minFee`}
               rules={[
-                {
-                  required: true,
-                  message:
-                    t`policy-management.depositManagement.validateRequired`.toString()
-                },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     if (value > getFieldValue('receiverFeeMax') && value) {
@@ -251,11 +246,6 @@ export const UpdateFeePackageModal = ({
               name='receiverFeeMax'
               label={t`policy-management.depositManagement.modalContent.tabelModal.maxFee`}
               rules={[
-                {
-                  required: true,
-                  message:
-                    t`policy-management.depositManagement.validateRequired`.toString()
-                },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     if (value < getFieldValue('receiverFeeMin') && value) {
@@ -351,6 +341,7 @@ export const UpdateFeePackageModal = ({
           <Form.Item
             name='transactionFrom'
             label={t`policy-management.depositManagement.modalContent.tabelModal.transactionFrom`}
+            dependencies={['transactionTo']}
             rules={[
               ({ getFieldValue }) => ({
                 validator(_, value) {
@@ -501,13 +492,6 @@ export const UpdateFeePackageModal = ({
                   <Form.Item
                     name='receiverFlexibleFee'
                     label={t`policy-management.depositManagement.modalContent.tabelModal.variableFee`}
-                    rules={[
-                      {
-                        required: true,
-                        message:
-                          t`policy-management.depositManagement.validateRequired`.toString()
-                      }
-                    ]}
                   >
                     <InputNumber
                       // disabled={mode == viewMode.update}

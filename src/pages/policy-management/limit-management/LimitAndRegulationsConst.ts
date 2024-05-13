@@ -6,6 +6,7 @@ export enum CUSTOMER_SERCURITY_METHODS {
 }
 
 export enum APPLICABLE_OBJECTS {
+  ALL = 'ALL',
   SYSTEM = 'SYSTEM',
   PERSONAL_ACCOUNT = 'PRIVATE_ACCOUNT',
   ACCOUNT_GROUP = 'ACCOUNT_GROUP',
@@ -34,6 +35,8 @@ export enum TIME_TYPE_APPLY {
 
 export enum TRANSACTION_TYPE {
   DEPOSIT = 'DEPOSIT',
+  FEE = 'FEE',
+  VAT = 'VAT',
   WITHDRAWAL = 'WITHDRAWAL',
   WITHDRAW = 'WITHDRAW',
   TRANSFER = 'TRANSFER',
@@ -42,6 +45,10 @@ export enum TRANSACTION_TYPE {
 }
 
 export const objects = [
+  {
+    value: APPLICABLE_OBJECTS.ALL,
+    name: t`policy-management.payment.all`
+  },
   {
     value: APPLICABLE_OBJECTS.SYSTEM,
     name: t`policy-management.payment.system`
@@ -83,7 +90,15 @@ export const transactionType = [
   {
     value: TRANSACTION_TYPE.PAYMENT,
     label: t`policy-management.limitAndRegulations.payment`.toString()
-  }
+  },
+  {
+    value: TRANSACTION_TYPE.FEE,
+    label: t`policy-management.limitAndRegulations.fee`.toString()
+  },
+  {
+    value: TRANSACTION_TYPE.VAT,
+    label: t`policy-management.limitAndRegulations.vat`.toString()
+  },
   // TODO: Hidden TOTAL_LIMIT
   // {
   //   value: TRANSACTION_TYPE.TOTAL_LIMIT,
