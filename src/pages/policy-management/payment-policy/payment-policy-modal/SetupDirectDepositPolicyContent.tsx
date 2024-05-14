@@ -57,6 +57,7 @@ import weekYear from 'dayjs/plugin/weekYear'
 import weekday from 'dayjs/plugin/weekday'
 import { GUTTER } from '@constants/appConstant'
 import { TimeFormat, TimeFullFormat } from '@constants/datetime'
+import moment from 'moment'
 
 dayjs.extend(customParseFormat)
 dayjs.extend(advancedFormat)
@@ -87,6 +88,9 @@ export const SetupDirectDepositPolicyContent = ({
 }: ModalContentType) => {
   const { t } = useTranslation()
   const [form] = useForm()
+
+  const endDate = Form.useWatch("endDate")
+
   const [openAddAndUpdateFeePackage, setOpenAddAndUpdateFeePackage] =
     useState<boolean>(false)
   const [feeMode, setFeeMode] = useState<viewMode>(viewMode.create)
@@ -389,8 +393,8 @@ export const SetupDirectDepositPolicyContent = ({
       applicableObject === APPLICABLE_OBJECTS.ACCOUNT_GROUP
         ? values.accountGroup?.value
         : applicableObject === APPLICABLE_OBJECTS.PERSONAL_ACCOUNT
-        ? values.accountNumber?.value
-        : undefined
+          ? values.accountNumber?.value
+          : undefined
 
     const data = {
       ...values,
@@ -404,7 +408,7 @@ export const SetupDirectDepositPolicyContent = ({
     if (viewMode.update && record) {
       if (data.endDate === undefined) data.endDate = null
       Object.keys(record).forEach((value) => {
-          console.log("new change check - ", value, data[value], record[value as keyof IPolicyTable])
+        console.log("new change check - ", value, data[value], record[value as keyof IPolicyTable])
         if (
           ['endDate', 'startDate', 'transactionFrom', 'transactionTo', 'transferorFlexibleFee', 'transferorFixedFee', 'transferorFeeMin', 'transferorFeeMax'].includes(
             value
@@ -548,56 +552,56 @@ export const SetupDirectDepositPolicyContent = ({
               APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
               APPLICABLE_OBJECTS.ACCOUNT_GROUP
             ].includes(object) && (
-              <>
-                {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
-                  <Form.Item
-                    name='accountGroup'
-                    {...formItemStyle}
-                    labelAlign='left'
-                    label={t`policy-management.payment.selectAccountGroup`}
-                    rules={[
-                      {
-                        required: true,
-                        message:
-                          t`policy-management.depositManagement.validateAccountGroupRequired`.toString()
-                      }
-                    ]}
-                  >
-                    <CustomAccountGroupSelect
-                      disabled={mode === viewMode.update}
-                      listAccountGroup={listAccountGroup}
-                      setSearchValue={setSearchValue}
-                      searchInput={searchValue}
-                      placeholder={t`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
-                      triggerFunction={triggerListAccountGroup}
-                    />
-                  </Form.Item>
-                ) : (
-                  <Form.Item
-                    {...formItemStyle}
-                    labelAlign='left'
-                    name='accountNumber'
-                    label={t`policy-management.payment.inputAccount`}
-                    rules={[
-                      {
-                        required: true,
-                        message:
-                          t`policy-management.depositManagement.validateAccountRequired`.toString()
-                      }
-                    ]}
-                  >
-                    <CustomPrivateAccountSelect
-                      disabled={mode === viewMode.update}
-                      listAccount={listAccount}
-                      setSearchValue={setSearchValue}
-                      searchInput={searchValue}
-                      placeholder={t`policy-management.payment.accountNumberPlaceholder`.toString()}
-                      triggerFunction={triggerListAccount}
-                    />
-                  </Form.Item>
-                )}
-              </>
-            )}
+                <>
+                  {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
+                    <Form.Item
+                      name='accountGroup'
+                      {...formItemStyle}
+                      labelAlign='left'
+                      label={t`policy-management.payment.selectAccountGroup`}
+                      rules={[
+                        {
+                          required: true,
+                          message:
+                            t`policy-management.depositManagement.validateAccountGroupRequired`.toString()
+                        }
+                      ]}
+                    >
+                      <CustomAccountGroupSelect
+                        disabled={mode === viewMode.update}
+                        listAccountGroup={listAccountGroup}
+                        setSearchValue={setSearchValue}
+                        searchInput={searchValue}
+                        placeholder={t`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
+                        triggerFunction={triggerListAccountGroup}
+                      />
+                    </Form.Item>
+                  ) : (
+                    <Form.Item
+                      {...formItemStyle}
+                      labelAlign='left'
+                      name='accountNumber'
+                      label={t`policy-management.payment.inputAccount`}
+                      rules={[
+                        {
+                          required: true,
+                          message:
+                            t`policy-management.depositManagement.validateAccountRequired`.toString()
+                        }
+                      ]}
+                    >
+                      <CustomPrivateAccountSelect
+                        disabled={mode === viewMode.update}
+                        listAccount={listAccount}
+                        setSearchValue={setSearchValue}
+                        searchInput={searchValue}
+                        placeholder={t`policy-management.payment.accountNumberPlaceholder`.toString()}
+                        triggerFunction={triggerListAccount}
+                      />
+                    </Form.Item>
+                  )}
+                </>
+              )}
             <Form.Item
               rules={[
                 {
@@ -682,7 +686,7 @@ export const SetupDirectDepositPolicyContent = ({
                 use12Hours={false}
                 disabledDate={disabledDate}
                 className='w-100'
-                format={TimeFullFormat}
+                format='DD/MM/YYYY HH:mm:ss'
                 onChange={onChangeStartDate}
                 showNow={false}
               />
@@ -696,11 +700,11 @@ export const SetupDirectDepositPolicyContent = ({
               labelAlign='left'
             >
               <DatePicker
-                showTime
+                showTime={{ defaultValue: dayjs('23:59:59', 'HH:mm:ss') }}
                 showNow={false}
                 disabledDate={disabledEndDate}
                 className='w-100'
-                format={TimeFullFormat}
+                format='DD/MM/YYYY HH:mm:ss'
                 placeholder={t`policy-management.depositManagement.modalContent.endDatePlaceholder`.toString()}
               />
             </Form.Item>
