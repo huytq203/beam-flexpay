@@ -529,6 +529,7 @@ export const SetupEWalletTransferMoneyContent = ({
                   label={t`policy-management.eWalletTransferMoneyManagement.applicableTimeStart`}
                   {...formItemStyle}
                   labelAlign='left'
+                  initialValue={dayjs().startOf('day')}
                   rules={[
                     {
                       required: true,
@@ -575,8 +576,8 @@ export const SetupEWalletTransferMoneyContent = ({
                   labelAlign='left'
                 >
                   <DatePicker
+                    showTime={{ defaultValue: dayjs('23:59:59', 'HH:mm:ss') }}
                     disabled={!form.getFieldValue('startDate')}
-                    showTime
                     showNow={false}
                     disabledDate={disabledEndDate}
                     placeholder={t`policy-management.eWalletTransferMoneyManagement.placeholders.endDate`.toString()}
