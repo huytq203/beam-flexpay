@@ -30,6 +30,7 @@ const injectedRtkApi = api
             take: queryArg.take,
             query: queryArg.query,
             code: queryArg.code,
+            referenceId: queryArg.referenceId,
             type: queryArg['type'],
             status: queryArg.status,
             from: queryArg['from'],

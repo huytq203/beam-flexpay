@@ -37,9 +37,10 @@ function RepaymentServiceForm({ record, isShow, onCancel, title }: props) {
         form.getFieldValue('file').originFileObj,
         form.getFieldValue('file').name
       )
+
     formdata.append('name', record.name)
     formdata.append('type', record.type)
-    formdata.append('active', String(record.active))
+    formdata.append('active', String(record.active ?? true))
 
     if (record.id) {
       update({ id: record.id, formData: formdata })

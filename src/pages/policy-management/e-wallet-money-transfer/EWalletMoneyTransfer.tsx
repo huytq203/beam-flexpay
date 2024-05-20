@@ -136,24 +136,26 @@ const EWalletMoneyTransferManagement = () => {
               title: `${trans`policy-management.eWalletTransferMoneyManagement.flexibleFee`} (%)`,
               align: 'center',
               width: 100,
-              render: (record) => (
-                <div>{convertNumber(record?.transferorFlexibleFee, '%')}</div>
+              render: (_, record) => (
+                record.type === "FLEXIBLE"
+                  ? <div>{convertNumber(record.transferorFlexibleFee, '%')}</div>
+                  : <div>-</div>
               )
             },
             {
               title: `${trans`policy-management.eWalletTransferMoneyManagement.fixedCharge`} (VNĐ)`,
               align: 'center',
               width: 100,
-              render: (record) => (
-                <div>{convertNumber(record?.transferorFixedFee)}</div>
+              render: (_, record) => (
+                <div>{convertNumber(record.type === "FIXED" ? record.transferorFixedFee : null)}</div>
               )
             },
             {
               title: `${trans`policy-management.eWalletTransferMoneyManagement.minFee`} (VNĐ)`,
               align: 'center',
               width: 100,
-              render: (record) => (
-                <div>{convertNumber(record?.transferorFeeMin)}</div>
+              render: (_, record) => (
+                <div>{convertNumber(record.type === "FLEXIBLE" ? record.transferorFeeMin : null)}</div>
               )
             },
             {
@@ -161,7 +163,7 @@ const EWalletMoneyTransferManagement = () => {
               align: 'center',
               width: 100,
               render: (record) => (
-                <div>{convertNumber(record?.transferorFeeMax)}</div>
+                <div>{convertNumber(record.type === "FLEXIBLE" ? record.transferorFeeMax : null)}</div>
               )
             }
           ]
@@ -176,7 +178,7 @@ const EWalletMoneyTransferManagement = () => {
               align: 'center',
               width: 100,
               render: (record) => (
-                <div>{convertNumber(record?.receiverFlexibleFee, '%')}</div>
+                <div>{convertNumber(record.type === "FLEXIBLE" ? record.receiverFlexibleFee : null, '%')}</div>
               )
             },
             {
@@ -184,7 +186,7 @@ const EWalletMoneyTransferManagement = () => {
               align: 'center',
               width: 100,
               render: (record) => (
-                <div>{convertNumber(record?.receiverFixedFee)}</div>
+                <div>{convertNumber(record.type === "FIXED" ? record.receiverFixedFee : null)}</div>
               )
             },
             {
@@ -192,7 +194,7 @@ const EWalletMoneyTransferManagement = () => {
               align: 'center',
               width: 100,
               render: (record) => (
-                <div>{convertNumber(record?.receiverFeeMin)}</div>
+                <div>{convertNumber(record.type === "FLEXIBLE" ? record.receiverFeeMin : null)}</div>
               )
             },
             {
@@ -200,7 +202,7 @@ const EWalletMoneyTransferManagement = () => {
               align: 'center',
               width: 100,
               render: (record) => (
-                <div>{convertNumber(record?.receiverFeeMax)}</div>
+                <div>{convertNumber(record.type === "FLEXIBLE" ? record.receiverFeeMax : null)}</div>
               )
             }
           ]
@@ -342,40 +344,40 @@ const EWalletMoneyTransferManagement = () => {
                   APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
                   APPLICABLE_OBJECTS.ACCOUNT_GROUP
                 ].includes(object) && (
-                  <Col>
-                    {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
-                      <Form.Item
-                        name='accountGroup'
-                        label={trans`policy-management.payment.selectAccountGroup`}
-                      >
-                        <CustomAccountGroupSelect
-                          mode='multiple'
-                          listAccountGroup={listAccountGroup}
-                          setSearchValue={setSearchValue}
-                          searchInput={searchValue}
-                          placeholder={trans`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
-                          triggerFunction={triggerListAccountGroup}
-                          onClearSearch={onClear}
-                        />
-                      </Form.Item>
-                    ) : (
-                      <Form.Item
-                        name='accountNumber'
-                        label={trans`policy-management.payment.inputAccount`}
-                      >
-                        <CustomPrivateAccountSelect
-                          mode='multiple'
-                          listAccount={listAccount}
-                          setSearchValue={setSearchValue}
-                          searchInput={searchValue}
-                          placeholder={trans`policy-management.payment.accountNumberPlaceholder`.toString()}
-                          triggerFunction={triggerListAccount}
-                          onClearSearch={onClear}
-                        />
-                      </Form.Item>
-                    )}
-                  </Col>
-                )}
+                    <Col>
+                      {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
+                        <Form.Item
+                          name='accountGroup'
+                          label={trans`policy-management.payment.selectAccountGroup`}
+                        >
+                          <CustomAccountGroupSelect
+                            mode='multiple'
+                            listAccountGroup={listAccountGroup}
+                            setSearchValue={setSearchValue}
+                            searchInput={searchValue}
+                            placeholder={trans`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
+                            triggerFunction={triggerListAccountGroup}
+                            onClearSearch={onClear}
+                          />
+                        </Form.Item>
+                      ) : (
+                        <Form.Item
+                          name='accountNumber'
+                          label={trans`policy-management.payment.inputAccount`}
+                        >
+                          <CustomPrivateAccountSelect
+                            mode='multiple'
+                            listAccount={listAccount}
+                            setSearchValue={setSearchValue}
+                            searchInput={searchValue}
+                            placeholder={trans`policy-management.payment.accountNumberPlaceholder`.toString()}
+                            triggerFunction={triggerListAccount}
+                            onClearSearch={onClear}
+                          />
+                        </Form.Item>
+                      )}
+                    </Col>
+                  )}
               </Row>
               <Row
                 justify='end'

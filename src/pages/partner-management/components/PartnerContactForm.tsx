@@ -80,6 +80,7 @@ export default function PartnerContactForm({
       form.setFieldsValue({
         id: record.id,
         paymentServiceId: record.paymentService.id,
+        description: record.description,
         name: record.name,
         active: record.active,
         logo: record.logo

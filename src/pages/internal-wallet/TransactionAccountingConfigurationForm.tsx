@@ -67,7 +67,7 @@ function TransactionAccountingConfigurationForm({
   } = useGetListWalletsQuery({
     order: 'DESC',
     page: 1,
-    take: 10,
+    take: -1,
     query: '',
     orderBy: 'createdAt'
   })

@@ -584,6 +584,7 @@ export const accountingOptions = [
 ]
 
 export const fundsOptions = [
+  { label: i18n.t('internal-wallet.fundsOptions.all'), value: null },
   { label: i18n.t('internal-wallet.fundsOptions.bank'), value: 'LINK_BANK' },
   { label: i18n.t('internal-wallet.fundsOptions.napas'), value: 'NAPAS' },
   {
@@ -620,6 +621,10 @@ export const accountingSubType = [
 ]
 
 export const accountingTransactionType = [
+  {
+    label: i18n.t('internal-wallet.transactionType.all'),
+    value: null
+  },
   {
     label: i18n.t('internal-wallet.transactionType.transfer'),
     value: AccountingTransactionType.TRANSFER

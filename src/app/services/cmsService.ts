@@ -938,6 +938,7 @@ const injectedRtkApi = api
           url: `/transaction`,
           params: {
             order: queryArg.order,
+            referenceId: queryArg.referenceId,
             page: queryArg.page,
             take: queryArg.take,
             query: queryArg.query,

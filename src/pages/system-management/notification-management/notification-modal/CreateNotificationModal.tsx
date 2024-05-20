@@ -220,28 +220,13 @@ export const CreateNotificationModal = ({
     }
   }
 
-  const handleClose = () => {
-    if (mode === notificationMode.UPDATE) {
-      onClose()
-    } else if (form.isFieldsTouched()) {
-      Modal.confirm({
-        centered: true,
-        title: t`labels.confirmClose`,
-        content: t('labels.createNotificationCancel'),
-        okText: t('buttons.cancel'),
-        cancelText: t('buttons.no'),
-        onOk: onCancel
-      })
-    } else {
-      form.resetFields()
-      onCancel()
-    }
-  }
-
   const onClose = () => {
     Modal.confirm({
       title: t('notification-management.confirm.update-title'),
-      onOk: () => handleClose(),
+      onOk: () => {
+      console.log("rwerwe")
+      onCancel()
+      },
       okText: t('buttons.ok'),
       cancelText: t('buttons.back'),
       type: 'warning'
@@ -514,7 +499,7 @@ export const CreateNotificationModal = ({
               className='mr-10'
               type='primary'
               ghost
-              onClick={handleClose}
+              onClick={onClose}
             >
               {mode === notificationMode.VIEW
                 ? t`notification-management.close`

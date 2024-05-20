@@ -198,7 +198,13 @@ function RepaymentService() {
           current: services?.meta.page,
           pageSize: services?.meta.take,
           total: services?.meta.itemCount,
-          showSizeChanger: false
+          showSizeChanger: false,
+          onChange(page) {
+            setSearch({
+              ...search,
+              page
+            })
+          }
         }}
       />
       <RepaymentServiceForm

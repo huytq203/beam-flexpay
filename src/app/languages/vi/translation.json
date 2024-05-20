@@ -1113,7 +1113,7 @@
       },
       "paymentMethod": "Phương thức thanh toán",
       "withDrawBank": "Ngân hàng rút tiền",
-      "depositMethod": "Phương thức chuyển tiền",
+      "depositMethod": "Phương thức nạp tiền",
       "applicableObject": "Đối tượng áp dụng",
       "withdrawal": "Phương thức nạp tiền",
       "transactionLevelFrom": "Mức giao dịch từ",
@@ -2399,6 +2399,7 @@
       "afterBalance": "Số dư của ví nội bộ"
     },
     "fundsOptions": {
+      "all": "Tất cả",
       "bank": "Ngân hàng liên kết",
       "napas": "NAPAS",
       "gate": "Cổng thanh toán",
@@ -2410,6 +2411,7 @@
       "khdn": "Ví KHDN"
     },
     "transactionType": {
+      "all": "Tất cả",
       "transfer": "Chuyển tiền",
       "deposit": "Nạp tiền",
       "withdraw": "Rút tiền",

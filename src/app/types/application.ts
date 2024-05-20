@@ -304,6 +304,7 @@ export type TransactionFindAllApiArg = {
   take: number
   query?: string
   code?: string
+  referenceId?: string
   type?:
     | 'DEPOSIT'
     | 'TRANSFER'

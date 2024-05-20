@@ -179,7 +179,6 @@ function InternalWalletAccount() {
                     <Input
                       placeholder={t`internal-wallet.placeholders.wallet_id`.toString()}
                       onKeyDown={blockArrowValue}
-                      onKeyPress={blockLetterDecimal}
                     />
                   </Form.Item>
                 </Col>

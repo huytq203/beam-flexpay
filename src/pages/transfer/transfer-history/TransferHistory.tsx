@@ -35,10 +35,10 @@ function TransferHistory() {
         values?.accountNumber === '' || values?.accountNumber === undefined
           ? undefined
           : values?.accountNumber?.trim(),
-      code:
-        values?.code === '' || values?.code === undefined
+      referenceId:
+        values?.referenceId === '' || values?.referenceId === undefined
           ? undefined
-          : values?.code?.trim(),
+          : values?.referenceId?.trim(),
       page: 1,
       take: 10
     }
@@ -78,19 +78,19 @@ function TransferHistory() {
                 <Col flex='auto'>
                   <Form.Item
                     label={t('transfer-history.transferNumber')}
-                    name='code'
+                    name='referenceId'
                   >
                     <Input
                       allowClear
                       className='w-100'
                       placeholder={t`transfer-history.placeholders.code`.toString()}
-                      onBlur={(e) => onBlur('code', e.target.value)}
+                      onBlur={(e) => onBlur('referenceId', e.target.value)}
                       onChange={(event) => {
                         if (
                           event.target.value === '' ||
                           event.target.value === undefined
                         ) {
-                          refreshData('code', event.target.value)
+                          refreshData('referenceId', event.target.value)
                         }
                       }}
                     />

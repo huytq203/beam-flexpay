@@ -58,14 +58,6 @@ function TransactionAccountingConfiguration() {
   const { data: accounting, refetch: refetchAccounting } = useGetAccountingQuery(search)
   const [updateStatus] = useUpdateActiveMutation()
 
-  useEffect(() => {
-    console.log("123", selectedAccounting)
-  }, [selectedAccounting])
-
-  useEffect(() => {
-    console.log("selected", accounting)
-  }, [accounting])
-
   const changeStatus = (status: number, id: string) => {
     Modal.confirm({
       title: status
@@ -211,7 +203,7 @@ function TransactionAccountingConfiguration() {
   const handleSearch = () =>
     setSearch({
       ...search,
-      ...form.getFieldsValue()
+      ..._(form.getFieldsValue()).omitBy(_.isUndefined).omitBy(_.isNull).value()
     })
 
   const onCancel = () => {
@@ -233,9 +225,10 @@ function TransactionAccountingConfiguration() {
             >
               <Row gutter={GUTTER}>
                 <Col span={6}>
-                  <Form.Item name='transaction_type'>
+                  <Form.Item name='type'>
                     <Select
                       placeholder={t`internal-wallet.placeholders.transaction_type`.toString()}
+                      defaultValue={null}
                       options={accountingTransactionType}
                     />
                   </Form.Item>
@@ -244,6 +237,7 @@ function TransactionAccountingConfiguration() {
                   <Form.Item name='fundSource'>
                     <Select
                       placeholder={t('internal-wallet.placeholders.funds')}
+                      defaultValue={null}
                       options={fundsOptions}
                     />
                   </Form.Item>
