@@ -13,6 +13,7 @@ export enum AccountingFundSource {
   PAYMENT_GATEWAY = "PAYMENT_GATEWAY",
   NAPAS = "NAPAS",
   EWALLET = "EWALLET",
+  ATM_CARD = 'ATM_CARD',
 }
 
 export enum AccountingBalanceType {

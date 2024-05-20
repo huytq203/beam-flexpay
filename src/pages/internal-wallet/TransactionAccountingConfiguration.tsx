@@ -138,6 +138,8 @@ function TransactionAccountingConfiguration() {
             return t('internal-wallet.fundsOptions.gate')
           case 'EWALLET':
             return t('internal-wallet.fundsOptions.wallet')
+          case 'ATM_CARD':
+            return t('internal-wallet.fundsOptions.atm')
         }
       }
     },

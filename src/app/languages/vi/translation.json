@@ -2402,7 +2402,8 @@
       "bank": "Ngân hàng liên kết",
       "napas": "NAPAS",
       "gate": "Cổng thanh toán",
-      "wallet": "Ví điện tử"
+      "wallet": "Ví điện tử",
+      "atm": "Thẻ ATM"
     },
     "walletTypeOptions": {
       "internalWallet": "Ví Nội bộ",
