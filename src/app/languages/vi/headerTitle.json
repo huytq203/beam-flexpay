@@ -62,7 +62,7 @@
     "/forbidden": "Không có quyền truy cập trang",
     "/internal-wallet/group": "Quản lý nhóm tài khoản nội bộ",
     "/internal-wallet/account/details": "Quản lý tài khoản nội bộ",
-    "/internal-wallet/account/transactions": "Quản lý giao dịch tài khoản nội bộ",
+    "/internal-wallet/account/transactions": "Quản lý số dư Ví nội bộ",
     "/internal-wallet/setting": "Cấu hình hạch toán"
   }
 }

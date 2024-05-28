@@ -289,10 +289,6 @@ export const verifiedOptions = [
 
 export const applicableObjects = [
   {
-    value: APPLICABLE_OBJECTS.ALL,
-    label: t`policy-management.payment.all`
-  },
-  {
     value: APPLICABLE_OBJECTS.SYSTEM,
     label: t`policy-management.payment.system`
   },
@@ -610,6 +606,7 @@ export const walletTypeOptions = [
 ]
 
 export const accountingStatus = [
+  { label: i18n.t('internal-wallet.status.all'), value: null },
   { label: i18n.t('internal-wallet.status.active'), value: 1 },
   { label: i18n.t('internal-wallet.status.in-active'), value: 0 }
 ]

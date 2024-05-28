@@ -30,7 +30,7 @@ import InternalWalletModal from './InternalWalletModal'
 import ButtonView from '@components/button-view/ButtonView'
 import { openNotification } from '@configs/fetchBaseQueryCustom'
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
-import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions'
+import { blockArrowValue, blockLetterDecimal, blockLetterValue } from '@utils/helperFunctions'
 
 function InternalWalletAccount() {
   const [form] = Form.useForm()
@@ -186,6 +186,7 @@ function InternalWalletAccount() {
                   <Form.Item name='name'>
                     <Input
                       placeholder={t`internal-wallet.placeholders.wallet_name`.toString()}
+                      onKeyDown={blockArrowValue}
                     />
                   </Form.Item>
                 </Col>

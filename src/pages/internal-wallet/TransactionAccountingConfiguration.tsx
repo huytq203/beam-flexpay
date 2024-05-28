@@ -94,11 +94,6 @@ function TransactionAccountingConfiguration() {
             )
           }
         } catch (error) {
-          openNotification(
-            status
-              ? t`internal-wallet.messages.lock-group-failed`
-              : t`internal-wallet.messages.unlock-group-failed`
-          )
         }
       }
     })
@@ -201,13 +196,9 @@ function TransactionAccountingConfiguration() {
   ]
 
   const handleSearch = () =>
-    setSearch({
-      ...search,
-      ..._(form.getFieldsValue()).omitBy(_.isUndefined).omitBy(_.isNull).value()
-    })
+    setSearch(_(form.getFieldsValue()).omitBy(_.isUndefined).omitBy(_.isNull).value())
 
   const onCancel = () => {
-    setMode(null)
     addFormToggle()
   }
 
@@ -243,9 +234,12 @@ function TransactionAccountingConfiguration() {
                   </Form.Item>
                 </Col>
                 <Col span={6}>
-                  <Form.Item name='active'>
+                  <Form.Item
+                    name='active'
+                  >
                     <Select
                       placeholder={t`internal-wallet.placeholders.status`.toString()}
+                      defaultValue={null}
                       options={accountingStatus}
                     />
                   </Form.Item>

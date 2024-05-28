@@ -1,3 +1,4 @@
+import { t } from 'i18next'
 import { SearchOutlined } from '@ant-design/icons'
 import ButtonAdd from '@components/button-add/ButtonAdd'
 import ButtonDelete from '@components/button-delete/ButtonDelete'
@@ -5,6 +6,7 @@ import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import SearchBar from '@components/search-bar/SearchBar'
 import { useLazyGetListGroupQuery } from '@services/apiAccountGroup'
 import { useLazyGetCustomersQuery } from '@services/customerService'
+import { applicableObjects } from '@constants/options'
 import {
   useCreateTransferPolicyMutation,
   useGetListTransferPolicyQuery,
@@ -13,7 +15,6 @@ import {
 import {
   APPLICABLE_OBJECTS,
   IPolicyTable,
-  objects,
   pageEnum,
   viewMode
 } from '@type/policyManagement'
@@ -325,7 +326,7 @@ const EWalletMoneyTransferManagement = () => {
                   <Form.Item
                     name='object'
                     label={trans`policy-management.payment.applicableObject`}
-                    initialValue={APPLICABLE_OBJECTS.SYSTEM}
+                    initialValue={APPLICABLE_OBJECTS.ALL}
                   >
                     <Select
                       onChange={(value) => {
@@ -336,7 +337,10 @@ const EWalletMoneyTransferManagement = () => {
                         })
                       }}
                       style={{ minWidth: 190 }}
-                      options={objects}
+                      options={[{
+                        value: APPLICABLE_OBJECTS.ALL,
+                        label: t`policy-management.payment.all`
+                      }, ...applicableObjects]}
                     />
                   </Form.Item>
                 </Col>

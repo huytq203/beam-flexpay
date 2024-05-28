@@ -1,3 +1,4 @@
+import { t } from 'i18next'
 import ButtonAdd from '@components/button-add/ButtonAdd'
 import ButtonDelete from '@components/button-delete/ButtonDelete'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
@@ -5,7 +6,6 @@ import CellContent from '@components/cell-content/CellContent'
 import CustomPaymentMethod from '@components/custom-payment-method/CustomPaymentMethod'
 import { applicableObjects } from '@constants/options'
 import { useLazyGetListGroupQuery } from '@services/apiAccountGroup'
-import { useGetListBankPaymentPolicyQuery } from '@services/apiBankPaymentPolicy'
 import { useLazyGetCustomersQuery } from '@services/customerService'
 import { SearchOutlined } from '@ant-design/icons'
 import {
@@ -369,7 +369,10 @@ const AccountAndBankPaymentManagement = () => {
                         form.resetFields(['accountNumber', 'accountGroup'])
                       }}
                       style={{ minWidth: 190 }}
-                      options={applicableObjects}
+                      options={[{
+                        value: APPLICABLE_OBJECTS.ALL,
+                        label: t`policy-management.payment.all`
+                      }, ...applicableObjects]}
                     />
                   </Form.Item>
                 </Col>
@@ -377,40 +380,40 @@ const AccountAndBankPaymentManagement = () => {
                   APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
                   APPLICABLE_OBJECTS.ACCOUNT_GROUP
                 ].includes(object) && (
-                  <Col>
-                    {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
-                      <Form.Item
-                        name='accountGroup'
-                        label={trans`policy-management.payment.selectAccountGroup`}
-                      >
-                        <CustomAccountGroupSelect
-                          mode='multiple'
-                          listAccountGroup={listAccountGroup}
-                          setSearchValue={setSearchValue}
-                          searchInput={searchValue}
-                          placeholder={trans`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
-                          triggerFunction={triggerListAccountGroup}
-                          onClearSearch={onClearSearch}
-                        />
-                      </Form.Item>
-                    ) : (
-                      <Form.Item
-                        name='accountNumber'
-                        label={trans`policy-management.payment.inputAccount`}
-                      >
-                        <CustomPrivateAccountSelect
-                          mode='multiple'
-                          listAccount={listAccount}
-                          setSearchValue={setSearchValue}
-                          searchInput={searchValue}
-                          placeholder={trans`policy-management.payment.accountNumberPlaceholder`.toString()}
-                          triggerFunction={triggerListAccount}
-                          onClearSearch={onClearSearch}
-                        />
-                      </Form.Item>
-                    )}
-                  </Col>
-                )}
+                    <Col>
+                      {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
+                        <Form.Item
+                          name='accountGroup'
+                          label={trans`policy-management.payment.selectAccountGroup`}
+                        >
+                          <CustomAccountGroupSelect
+                            mode='multiple'
+                            listAccountGroup={listAccountGroup}
+                            setSearchValue={setSearchValue}
+                            searchInput={searchValue}
+                            placeholder={trans`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
+                            triggerFunction={triggerListAccountGroup}
+                            onClearSearch={onClearSearch}
+                          />
+                        </Form.Item>
+                      ) : (
+                        <Form.Item
+                          name='accountNumber'
+                          label={trans`policy-management.payment.inputAccount`}
+                        >
+                          <CustomPrivateAccountSelect
+                            mode='multiple'
+                            listAccount={listAccount}
+                            setSearchValue={setSearchValue}
+                            searchInput={searchValue}
+                            placeholder={trans`policy-management.payment.accountNumberPlaceholder`.toString()}
+                            triggerFunction={triggerListAccount}
+                            onClearSearch={onClearSearch}
+                          />
+                        </Form.Item>
+                      )}
+                    </Col>
+                  )}
               </Row>
               <Row
                 justify='end'

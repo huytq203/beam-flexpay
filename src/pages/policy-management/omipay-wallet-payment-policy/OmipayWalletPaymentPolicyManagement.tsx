@@ -344,7 +344,10 @@ const OmipayWalletPaymentPolicyManagement = () => {
                       // getPopupContainer={(trigger) => trigger.parentNode}
                       style={{ minWidth: 190 }}
                     >
-                      {objects.map((x) => {
+                      {[{
+                        value: APPLICABLE_OBJECTS.ALL,
+                        label: t`policy-management.payment.all`
+                      }, ...objects].map((x) => {
                         return (
                           <Select.Option
                             key={x.value}
@@ -361,40 +364,40 @@ const OmipayWalletPaymentPolicyManagement = () => {
                   APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
                   APPLICABLE_OBJECTS.ACCOUNT_GROUP
                 ].includes(object) && (
-                  <Col>
-                    {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
-                      <Form.Item
-                        name='accountGroup'
-                        label={t`policy-management.payment.selectAccountGroup`}
-                      >
-                        <CustomAccountGroupSelect
-                          mode='multiple'
-                          listAccountGroup={listAccountGroup}
-                          setSearchValue={setSearchValue}
-                          searchInput={searchValue}
-                          placeholder={t`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
-                          triggerFunction={triggerListAccountGroup}
-                          onClearSearch={onClear}
-                        />
-                      </Form.Item>
-                    ) : (
-                      <Form.Item
-                        name='accountNumber'
-                        label={t`policy-management.payment.inputAccount`}
-                      >
-                        <CustomPrivateAccountSelect
-                          mode='multiple'
-                          listAccount={listAccount}
-                          setSearchValue={setSearchValue}
-                          searchInput={searchValue}
-                          placeholder={t`policy-management.payment.accountNumberPlaceholder`.toString()}
-                          triggerFunction={triggerListAccount}
-                          onClearSearch={onClear}
-                        />
-                      </Form.Item>
-                    )}
-                  </Col>
-                )}
+                    <Col>
+                      {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
+                        <Form.Item
+                          name='accountGroup'
+                          label={t`policy-management.payment.selectAccountGroup`}
+                        >
+                          <CustomAccountGroupSelect
+                            mode='multiple'
+                            listAccountGroup={listAccountGroup}
+                            setSearchValue={setSearchValue}
+                            searchInput={searchValue}
+                            placeholder={t`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
+                            triggerFunction={triggerListAccountGroup}
+                            onClearSearch={onClear}
+                          />
+                        </Form.Item>
+                      ) : (
+                        <Form.Item
+                          name='accountNumber'
+                          label={t`policy-management.payment.inputAccount`}
+                        >
+                          <CustomPrivateAccountSelect
+                            mode='multiple'
+                            listAccount={listAccount}
+                            setSearchValue={setSearchValue}
+                            searchInput={searchValue}
+                            placeholder={t`policy-management.payment.accountNumberPlaceholder`.toString()}
+                            triggerFunction={triggerListAccount}
+                            onClearSearch={onClear}
+                          />
+                        </Form.Item>
+                      )}
+                    </Col>
+                  )}
               </Row>
               <Row
                 justify='end'

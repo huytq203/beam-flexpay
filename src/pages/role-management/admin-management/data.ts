@@ -323,6 +323,7 @@ export const fakeData = {
         }
       ]
     },
+
     // {
     //   id: 3,
     //   createdAt: '2023-01-11T04:47:44.830Z',
@@ -1685,9 +1686,164 @@ export const fakeData = {
               order: 5
             }
           ]
+        },
+        ,
+      ]
+    },
+    {
+      id: 9,
+      createdAt: '2023-01-11T04:47:44.830Z',
+      updatedAt: '2023-01-11T04:47:44.830Z',
+      deletedAt: null,
+      name: 'Ví nội bộ',
+      groups: [
+        {
+          id: 100,
+          createdAt: '2023-01-11T04:47:57.676Z',
+          updatedAt: '2023-01-11T04:47:57.676Z',
+          deletedAt: null,
+          name: 'notification',
+          description: 'Quản lý ví nội bộ',
+          featureId: 30,
+          permissions: [
+            {
+              id: 2910,
+              createdAt: '2023-01-11T01:38:31.369Z',
+              updatedAt: '2023-01-11T01:40:48.172Z',
+              deletedAt: null,
+              permission: 'internalwallet:view',
+              order: 2,
+              description: 'Quản lý ví nội bộ view',
+              realId: 2901
+            },
+            {
+              id: 2912,
+              createdAt: '2023-01-11T01:38:55.771Z',
+              updatedAt: '2023-01-11T01:38:55.771Z',
+              deletedAt: null,
+              permission: 'internalwallet:create',
+              description: 'Quản lý ví nội bộ create',
+              order: 3,
+              realId: 2903
+            },
+            {
+              id: 2911,
+              createdAt: '2023-01-11T01:38:45.936Z',
+              updatedAt: '2023-01-11T01:38:45.936Z',
+              deletedAt: null,
+              permission: 'internalwallet:update',
+              description: 'Quản lý ví nội bộ update',
+              order: 4,
+              realId: 2902
+            },
+          ]
+        },
+        {
+          id: 101,
+          createdAt: '2023-01-11T04:47:57.676Z',
+          updatedAt: '2023-01-11T04:47:57.676Z',
+          deletedAt: null,
+          name: 'notification',
+          description: 'Quản lý số dư ví nội bộ',
+          featureId: 31,
+          permissions: [
+            {
+              id: 2916,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'internalwallettransaction:view',
+              description: 'Quản lý  giao dịch ví nội bộ view',
+              order: 2,
+              realId: 2909
+            },
+          ]
+        },
+        {
+          id: 102,
+          createdAt: '2023-01-11T04:47:57.676Z',
+          updatedAt: '2023-01-11T04:47:57.676Z',
+          deletedAt: null,
+          name: 'internalwallet_group',
+          description: 'Quản lý nhóm ví nội bộ',
+          featureId: 32,
+          permissions: [
+            {
+              id: 2905,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'internalwalletgroup:view',
+              description: 'Quản lý Nhóm ví nội bộ view',
+              order: 2,
+              realId: 2905
+            },
+            {
+              id: 2907,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'internalwalletgroup:update',
+              description: 'Quản lý Nhóm ví nội bộ create',
+              order: 3,
+              realId: 2907
+            },
+            {
+              id: 2906,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'internalwalletgroup:update',
+              description: 'Quản lý Nhóm ví nội bộ update',
+              order: 4,
+              realId: 2906
+            },
+          ]
+        },
+        {
+          id: 103,
+          createdAt: '2023-01-11T04:47:57.676Z',
+          updatedAt: '2023-01-11T04:47:57.676Z',
+          deletedAt: null,
+          name: 'accounting',
+          description: 'Hạch toán',
+          featureId: 33,
+          permissions: [
+            {
+              id: 2910,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'accounting:view',
+              description: 'Quản lý hạch toán view',
+              order: 2,
+              realId: 2910
+            },
+
+            {
+              id: 2912,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'accounting:create',
+              description: 'Quản lý hạch toán create',
+              order: 3,
+              realId: 2912
+            },
+            {
+              id: 2911,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'accounting:update',
+              description: 'Quản lý hạch toán update',
+              order: 4,
+              realId: 2911
+            },
+          ]
         }
       ]
-    }
+    },
   ],
   statusCode: 200,
   message: ''

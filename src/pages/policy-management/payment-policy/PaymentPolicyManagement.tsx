@@ -13,6 +13,7 @@ import {
 import { SearchOutlined } from '@ant-design/icons'
 import { ColumnsType } from 'antd/es/table'
 import { useMemo, useState } from 'react'
+import { t } from 'i18next'
 import { useTranslation } from 'react-i18next'
 import { useForm } from 'antd/es/form/Form'
 import { PolicyManagementModal } from '../policy-management-modal/PolicyManagementModal'
@@ -389,7 +390,10 @@ const PaymentPolicyManagement = () => {
                         form.resetFields(['accountNumber', 'accountGroup'])
                       }}
                       style={{ minWidth: 190 }}
-                      options={objects}
+                      options={[{
+                        value: APPLICABLE_OBJECTS.ALL,
+                        label: t`policy-management.payment.all`
+                      }, ...objects]}
                     />
                   </Form.Item>
                 </Col>

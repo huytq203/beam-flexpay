@@ -404,7 +404,7 @@ export const SetupEWalletTransferMoneyContent = ({
                   name='applicableObject'
                   label={t`policy-management.payment.applicableObject`}
                   {...formItemStyle}
-                  initialValue={APPLICABLE_OBJECT.ALL}
+                  initialValue={APPLICABLE_OBJECT.SYSTEM}
                   labelAlign='left'
                   rules={[
                     {

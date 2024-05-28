@@ -45,6 +45,9 @@ type props = {
   selectedAccounting?: Accounting
 }
 
+let timeout: ReturnType<typeof setTimeout> | null;
+let currentValue: string;
+
 function TransactionAccountingConfigurationForm({
   record,
   isShow,
@@ -84,12 +87,14 @@ function TransactionAccountingConfigurationForm({
     switch (mode) {
       case viewMode.create:
         await createAccounting(value)
-          .then(_ => {
-            notification.success({
-              message: t(`internal-wallet.messages.create-accounting-success`)
-            })
-            form.resetFields()
-            onCancel()
+          .then((res) => {
+            if (!res.error) {
+              notification.success({
+                message: t(`internal-wallet.messages.create-accounting-success`)
+              })
+              form.resetFields()
+              onCancel()
+            }
           })
           .catch(_ => {
             notification.error({
@@ -151,6 +156,15 @@ function TransactionAccountingConfigurationForm({
 
   const onSelectData = (value: Record<string, any>, field: string) => {
     form.setFieldValue(field, value.value)
+  }
+
+  const onSearchInternalWallet = (keyword: string) => {
+    if (timeout) {
+      clearTimeout(timeout);
+      timeout = null;
+    }
+    currentValue = keyword;
+    refetch()
   }
 
   const AccountingDetailsForm = (props: {
@@ -228,6 +242,7 @@ function TransactionAccountingConfigurationForm({
         >
           <Select
             disabled={details[props.index].balanceType != AccountingBalanceType.INTERNAL || mode === viewMode.view}
+            onSearch={onSearchInternalWallet}
             placeholder={t(
               'internal-wallet.placeholders.wallet_number'
             ).toString()}

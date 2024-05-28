@@ -34,10 +34,6 @@ export enum APPLICABLE_OBJECTS {
 
 export const objects = [
   {
-    value: APPLICABLE_OBJECTS.ALL,
-    label: t`policy-management.payment.all`
-  },
-  {
     value: APPLICABLE_OBJECTS.SYSTEM,
     label: t`policy-management.payment.system`
   },
