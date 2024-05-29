@@ -13,6 +13,7 @@ import {
 } from '@type/internalWallet'
 import { CommonResponsePayload } from '@type/common'
 import { TransactionDto } from '@type/application'
+import { pretty } from '@utils/qs'
 
 export const groupPermissionApi = apiService.injectEndpoints({
   endpoints: (builder) => ({
@@ -23,7 +24,7 @@ export const groupPermissionApi = apiService.injectEndpoints({
       query: (payload) => ({
         url: '/internal-wallet-group',
         method: 'GET',
-        params: payload
+        params: pretty(payload)
       }),
       transformResponse(
         baseQueryReturnValue: ResponseType<GroupPermissionPayload>

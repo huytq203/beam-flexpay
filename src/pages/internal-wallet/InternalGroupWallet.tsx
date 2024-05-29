@@ -16,6 +16,7 @@ import { useGetListWalletGroupsQuery, useUpdateInternalWalletGroupMutation } fro
 import { viewMode } from '@type/customer'
 import { openNotification } from '@configs/fetchBaseQueryCustom'
 import { internalWalletGroupStatusOptions } from '@constants/options'
+import { pretty } from '@utils/qs'
 
 function InternalGroupWallet() {
   const [form] = Form.useForm()
@@ -121,12 +122,15 @@ function InternalGroupWallet() {
   ]
 
   const handleSearch = () => {
-    const active = form.getFieldValue('active')
-    setSearch({
+    const active = form.getFieldValue('active');
+    const newsValue = pretty({
       ...search,
       ...form.getFieldsValue(),
       active: active !== null ? active : undefined
-    })
+    });
+
+    setSearch(newsValue);
+    form.setFieldsValue(newsValue);
   }
 
   const cancelModal = () => {
