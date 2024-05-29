@@ -53,7 +53,7 @@ export const groupPermissionApi = apiService.injectEndpoints({
       query: (payload) => ({
         url: '/internal-wallet-group',
         method: 'POST',
-        body: payload
+        body: pretty(payload)
       }),
       invalidatesTags: ['internal-wallet-group']
     }),
