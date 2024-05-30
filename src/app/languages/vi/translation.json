@@ -2407,7 +2407,7 @@
       "napas": "NAPAS",
       "gate": "Cổng thanh toán",
       "wallet": "Ví điện tử",
-      "atmCard": "Thẻ nội địa"
+      "atmCard": "Thẻ ATM"
     },
     "walletTypeOptions": {
       "internalWallet": "Ví Nội bộ",
@@ -2454,7 +2454,6 @@
       "change-status-success": "Đổi trạng thái hoạt động thành công"
     },
     "update-groups-title": "Chỉnh sửa thông tin",
-
     "modal": {
       "transactionType": "Loại giao dịch",
       "subType": "Mục đích",
@@ -2483,7 +2482,6 @@
       "change-status-lock-account-description": "Hành động này không thể khôi phục, bạn có muốn khóa ví không?",
       "change-status-unlock-account-description": "Hành động này không thể khôi phục, bạn có muốn mở khóa không?"
     },
-
     "placeholders": {
       "group_id": "Nhập nhóm ví",
       "pickGroup": "Chọn nhóm ví",
@@ -2503,3 +2501,4 @@
       "reduce": "Hạch toán (-) tiền"
     }
   }
+}
