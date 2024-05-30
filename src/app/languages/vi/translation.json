@@ -2486,6 +2486,7 @@
 
     "placeholders": {
       "group_id": "Nhập nhóm ví",
+      "pickGroup": "Chọn nhóm ví",
       "group_name": "Nhập tên nhóm ví",
       "status": "Chọn trạng thái",
       "date": "Chọn ngày cập nhật",

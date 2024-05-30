@@ -190,6 +190,7 @@ function InternalBalanceWallet() {
                     label={t('internalBalanceWallet.walletNumber')}
                   >
                     <Input
+                      placeholder={t`internal-wallet.placeholders.wallet_id`.toString()}
                       onKeyDown={blockArrowValue}
                       onKeyPress={blockLetterDecimal}
                     />
@@ -202,6 +203,7 @@ function InternalBalanceWallet() {
                     label={t('internalBalanceWallet.walletGroup')}
                   >
                     <Select
+                      placeholder={t`internal-wallet.placeholders.pickGroup`}
                       options={internalWalletGroup?.data?.map(group => ({
                         label: group.name,
                         value: group.id
