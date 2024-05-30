@@ -212,7 +212,6 @@ function TransactionAccountingConfiguration() {
             <Form
               form={form}
               layout='vertical'
-              initialValues={{ active: 1 }}
             >
               <Row gutter={GUTTER}>
                 <Col span={6}>
@@ -234,9 +233,7 @@ function TransactionAccountingConfiguration() {
                   </Form.Item>
                 </Col>
                 <Col span={6}>
-                  <Form.Item
-                    name='active'
-                  >
+                  <Form.Item name='active'>
                     <Select
                       placeholder={t`internal-wallet.placeholders.status`.toString()}
                       defaultValue={null}

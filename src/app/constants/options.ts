@@ -587,7 +587,8 @@ export const fundsOptions = [
     label: i18n.t('internal-wallet.fundsOptions.gate'),
     value: 'PAYMENT_GATEWAY'
   },
-  { label: i18n.t('internal-wallet.fundsOptions.wallet'), value: 'EWALLET' }
+  { label: i18n.t('internal-wallet.fundsOptions.wallet'), value: 'EWALLET' },
+  { label: i18n.t('internal-wallet.fundsOptions.atmCard'), value: 'ATM_CARD' },
 ]
 
 export const walletTypeOptions = [

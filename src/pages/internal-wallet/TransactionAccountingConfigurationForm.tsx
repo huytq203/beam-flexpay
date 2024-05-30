@@ -16,7 +16,7 @@ import {
   notification,
   Badge,
 } from 'antd'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import CustomAccountingSelect from './components/customer-accouting-select/CustomAccountingSelect'
 import {
@@ -34,6 +34,7 @@ import { QueryStatus } from '@reduxjs/toolkit/dist/query'
 import { AccountingTransactionType } from '@type/accounting'
 
 import { MinusCircleOutlined } from '@ant-design/icons';
+import { InternalWallet } from '@type/internalWallet'
 
 type props = {
   title: string
@@ -77,6 +78,8 @@ function TransactionAccountingConfigurationForm({
   const [createAccounting, createAccountingStatus] = useCreateAccountingMutation()
   const [updateAccounting, updateAccountingStatus] = useUpdateAccountingMutation()
 
+
+  let timeout: ReturnType<typeof setTimeout> | null;
   const updateLoading = false
 
   const handleSubmit = async (value: Record<string, any>) => {
@@ -158,21 +161,31 @@ function TransactionAccountingConfigurationForm({
     form.setFieldValue(field, value.value)
   }
 
-  const onSearchInternalWallet = (keyword: string) => {
-    if (timeout) {
-      clearTimeout(timeout);
-      timeout = null;
-    }
-    currentValue = keyword;
-    refetch()
-  }
-
   const AccountingDetailsForm = (props: {
     field: FormListFieldData
     index: number
     isDefaultPositive: boolean
     onRemove: () => void
+    internalWalletData: InternalWallet[]
   }) => {
+    const [internalWalletOptions, setInternalWalletOptions] = useState<InternalWallet[]>()
+
+    const onSearchInternalWalletFetch = (value: string) => {
+      currentValue = value;
+
+      const fake = () => {
+        setInternalWalletOptions(internalWalletData?.data?.filter(iw => (iw.balanceInternalGroup.walletGroup + "." + iw.walletNumber).includes(value)) ?? [])
+      };
+      fake()
+    }
+    useEffect(() => {
+      setInternalWalletOptions(props.internalWalletData)
+    }, [props.internalWalletData])
+
+    const onSearchInternalWallet = (value: string) => {
+      onSearchInternalWalletFetch(value)
+    }
+
     return (
       <Card
         extra={<Badge />}
@@ -241,12 +254,13 @@ function TransactionAccountingConfigurationForm({
           name={[props.field.name, 'internalWalletId']}
         >
           <Select
+            showSearch
             disabled={details[props.index].balanceType != AccountingBalanceType.INTERNAL || mode === viewMode.view}
             onSearch={onSearchInternalWallet}
             placeholder={t(
               'internal-wallet.placeholders.wallet_number'
             ).toString()}
-            options={internalWalletData?.data.map(internalWallet => ({
+            options={(internalWalletOptions || []).map(internalWallet => ({
               label: `${internalWallet.balanceInternalGroup.walletGroup}.${internalWallet.walletNumber} - ${internalWallet.name}`,
               value: internalWallet.id,
             }))}
@@ -429,6 +443,7 @@ function TransactionAccountingConfigurationForm({
                 .map((field, index) => (
                   details[index].type == AccountingDetailsType.DEBIT
                     ? <AccountingDetailsForm
+                      internalWalletData={internalWalletData?.data ?? []}
                       field={field}
                       index={index}
                       isDefaultPositive={false}
@@ -476,6 +491,7 @@ function TransactionAccountingConfigurationForm({
                 .map((field, index) => (
                   details[index].type == AccountingDetailsType.CREDIT
                     ? <AccountingDetailsForm
+                      internalWalletData={internalWalletData?.data ?? []}
                       field={field}
                       index={index}
                       isDefaultPositive={true}

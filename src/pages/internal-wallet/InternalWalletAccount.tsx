@@ -22,12 +22,10 @@ import { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import InternalWalletForm from './components/InternalWalletForm'
 import { InternalWalletPayload } from '@type/internalWallet'
 import { useGetListWalletsQuery, useUpdateInternalWalletMutation } from '@services/apiInternalWallet'
 import { viewMode } from '@type/customer'
 import InternalWalletModal from './InternalWalletModal'
-import ButtonView from '@components/button-view/ButtonView'
 import { openNotification } from '@configs/fetchBaseQueryCustom'
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
 import { blockArrowValue, blockLetterDecimal, blockLetterValue } from '@utils/helperFunctions'
@@ -127,8 +125,12 @@ function InternalWalletAccount() {
 
   const handleSearch = () => {
     const active = form.getFieldValue('active')
-    setSearch({
+    const payload: InternalWalletPayload = {
       ...search,
+      active: active !== null ? active : undefined
+    }
+    setSearch({
+
       ...form.getFieldsValue(),
       active: active !== null ? active : undefined
     })
