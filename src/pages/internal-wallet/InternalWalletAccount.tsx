@@ -177,7 +177,10 @@ function InternalWalletAccount() {
             >
               <Row gutter={GUTTER}>
                 <Col span={6}>
-                  <Form.Item name='walletNumber'>
+                  <Form.Item
+                    name='walletNumber'
+                    label={t('internalBalanceWallet.walletNumber')}
+                  >
                     <Input
                       placeholder={t`internal-wallet.placeholders.wallet_id`.toString()}
                       onKeyDown={blockArrowValue}
@@ -185,7 +188,10 @@ function InternalWalletAccount() {
                   </Form.Item>
                 </Col>
                 <Col span={6}>
-                  <Form.Item name='name'>
+                  <Form.Item
+                    name='name'
+                    label={t('internalBalanceWallet.walletName')}
+                  >
                     <Input
                       placeholder={t`internal-wallet.placeholders.wallet_name`.toString()}
                       onKeyDown={blockArrowValue}
@@ -193,7 +199,10 @@ function InternalWalletAccount() {
                   </Form.Item>
                 </Col>
                 <Col span={6}>
-                  <Form.Item name='active'>
+                  <Form.Item
+                    name='active'
+                    label={t('internalBalanceWallet.status')}
+                  >
                     <Select
                       placeholder={t`internal-wallet.placeholders.status`.toString()}
                       options={[

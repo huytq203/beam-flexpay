@@ -148,17 +148,26 @@ function InternalGroupWallet() {
             <Form form={form} layout='vertical'>
               <Row gutter={GUTTER}>
                 <Col span={6}>
-                  <Form.Item name='walletGroup'>
+                  <Form.Item
+                    name='walletGroup'
+                    label={t('internal-wallet.groupType')}
+                  >
                     <Input placeholder={t`internal-wallet.placeholders.group_id`.toString()} />
                   </Form.Item>
                 </Col>
                 <Col span={6}>
-                  <Form.Item name='name'>
+                  <Form.Item
+                    name='name'
+                    label={t('internal-wallet.groupName')}
+                  >
                     <Input placeholder={t`internal-wallet.placeholders.group_name`.toString()} />
                   </Form.Item>
                 </Col>
                 <Col span={6}>
-                  <Form.Item name='active'>
+                  <Form.Item
+                    name='active'
+                    label={t('internal-wallet.active')}
+                  >
                     <Select
                       placeholder={t`internal-wallet.placeholders.status`.toString()}
                       options={internalWalletGroupStatusOptions}

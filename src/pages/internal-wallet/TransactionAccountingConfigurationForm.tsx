@@ -255,6 +255,7 @@ function TransactionAccountingConfigurationForm({
         >
           <Select
             showSearch
+            filterOption={false}
             disabled={details[props.index].balanceType != AccountingBalanceType.INTERNAL || mode === viewMode.view}
             onSearch={onSearchInternalWallet}
             placeholder={t(

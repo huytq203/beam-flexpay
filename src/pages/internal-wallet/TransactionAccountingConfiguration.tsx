@@ -202,8 +202,6 @@ function TransactionAccountingConfiguration() {
     addFormToggle()
   }
 
-  const onSelectData = (data: any, field: string) => { }
-
   return (
     <Card
       title={
@@ -215,7 +213,10 @@ function TransactionAccountingConfiguration() {
             >
               <Row gutter={GUTTER}>
                 <Col span={6}>
-                  <Form.Item name='type'>
+                  <Form.Item
+                    name='type'
+                    label={t('accounting.transactionType')}
+                  >
                     <Select
                       placeholder={t`internal-wallet.placeholders.transaction_type`.toString()}
                       defaultValue={null}
@@ -224,7 +225,10 @@ function TransactionAccountingConfiguration() {
                   </Form.Item>
                 </Col>
                 <Col span={6}>
-                  <Form.Item name='fundSource'>
+                  <Form.Item
+                    name='fundSource'
+                    label={t('accounting.fundSource')}
+                  >
                     <Select
                       placeholder={t('internal-wallet.placeholders.funds')}
                       defaultValue={null}
@@ -233,7 +237,10 @@ function TransactionAccountingConfiguration() {
                   </Form.Item>
                 </Col>
                 <Col span={6}>
-                  <Form.Item name='active'>
+                  <Form.Item
+                    name='active'
+                    label={t('accounting.status')}
+                  >
                     <Select
                       placeholder={t`internal-wallet.placeholders.status`.toString()}
                       defaultValue={null}

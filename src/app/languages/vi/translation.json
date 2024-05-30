@@ -2344,7 +2344,9 @@
     }
   },
   "accounting": {
+    "transactionType": "Loại giao dịch",
     "fundSource": "Nguồn tiền",
+    "status": "Trạng thái",
     "subType": {
       "fee": "Thu phí",
       "vat": "VAT",
@@ -2378,6 +2380,7 @@
     "add-wallet-titles": "Thêm mới nhóm ví",
     "walletNumber": "Số ví nội bộ",
     "walletName": "Tên ví",
+    "active": "Trạng thái",
     "wallet-internal": "Ví Nội bộ",
     "add-wallet-title": "Thêm ví nội bộ",
     "view-transactions": "Lịch sử giao dịch Ví nội bộ",
