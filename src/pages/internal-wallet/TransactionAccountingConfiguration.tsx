@@ -126,7 +126,7 @@ function TransactionAccountingConfiguration() {
           case 'EWALLET':
             return t('internal-wallet.fundsOptions.wallet')
           case 'ATM_CARD':
-            return t('internal-wallet.fundsOptions.atm')
+            return t('internal-wallet.fundsOptions.atmCard')
         }
       }
     },
