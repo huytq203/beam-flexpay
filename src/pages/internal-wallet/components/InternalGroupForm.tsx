@@ -77,6 +77,7 @@ function InternalGroupForm({ group, onCancel, title, mode, isShow }: props) {
           <Form.Item
             name='walletGroup'
             label={t('internal-wallet.groupType')}
+            rules={[{ required: true, message: t`internal-wallet.messages.group-type-required`.toString() }]}
           >
             <Input
               disabled={mode === viewMode.update}
@@ -93,6 +94,7 @@ function InternalGroupForm({ group, onCancel, title, mode, isShow }: props) {
           <Form.Item
             label={t('internal-wallet.groupName')}
             name='name'
+            rules={[{ required: true, message: t`internal-wallet.messages.group-name-required`.toString() }]}
           >
             <Input
               placeholder={t`internal-wallet.placeholders.group_name`.toString()}

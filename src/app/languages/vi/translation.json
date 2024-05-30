@@ -2445,7 +2445,10 @@
       "unlock-accounting-success": "Kích hoạt câu hình hạch toán thành công",
       "lock-accounting-failed": "Khóa cấu hình hạch toán thất bại",
       "unlock-accounting-failed": "Kích hoạt câu hình hạch toán thất bại",
-      "required": "Vui lòng cung cấp thông tin"
+      "required": "Vui lòng cung cấp thông tin",
+      "group-name-required": "Vui lòng nhập tên nhóm tài khoản",
+      "group-type-required": "Vui lòng nhập nhóm ví",
+      "change-status-success": "Đổi trạng thái hoạt động thành công"
     },
     "update-groups-title": "Chỉnh sửa thông tin",
 
@@ -2468,6 +2471,7 @@
       "change-status-unlock-title": "Mở khóa nhóm",
       "change-status-lock-description": "Bạn có chắc chắn muốn khoá nhóm không?",
       "change-status-unlock-description": "Bạn có chắc chắn muốn mở khoá nhóm không?",
+      "change-status-lock-group-title": "Bạn có chắc chắn muốn chuyển trạng thái hoạt động không",
       "change-status-lock-ok-button": "Khóa",
       "change-status-unlock-ok-button": "Mở khóa",
       "change-status-cancel-button": "Hủy",

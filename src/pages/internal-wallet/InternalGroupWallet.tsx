@@ -1,7 +1,7 @@
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import { useToggle } from 'ahooks'
-import { Button, Card, Col, Empty, Form, Input, Modal, Row, Select, Space } from 'antd'
+import { Button, Card, Col, Empty, Form, Input, Modal, Row, Select, Space, Tooltip } from 'antd'
 import Table, { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
 import { useState } from 'react'
@@ -16,6 +16,7 @@ import { useGetListWalletGroupsQuery, useUpdateInternalWalletGroupMutation } fro
 import { viewMode } from '@type/customer'
 import { openNotification } from '@configs/fetchBaseQueryCustom'
 import { internalWalletGroupStatusOptions } from '@constants/options'
+import { pretty } from '@utils/qs'
 
 function InternalGroupWallet() {
   const [form] = Form.useForm()
@@ -30,15 +31,15 @@ function InternalGroupWallet() {
 
   const changeStatus = (status: number, name: string, id: string) => {
     Modal.confirm({
-      title: status ? t`internal-wallet.modal.change-status-lock-title` : t`internal-wallet.modal.change-status-unlock-title`,
-      content: status ? t`internal-wallet.modal.change-status-lock-description` : t`internal-wallet.modal.change-status-unlock-description`,
-      okText: status ? t`internal-wallet.modal.change-status-lock-ok-button` : t`internal-wallet.modal.change-status-unlock-ok-button`,
-      cancelText: t`internal-wallet.modal.change-status-cancel-button`,
+      title: status ? t`internal-wallet.modal.change-status-unlock-title` : t`internal-wallet.modal.change-status-lock-title`,
+      content: t`internal-wallet.modal.change-status-lock-group-title`,
+      okText: t`buttons.yes`,
+      cancelText: t`buttons.no`,
       onOk: async () => {
         try {
           const response = await updateInternalWalletGroup({ name, active: status ? 0 : 1, id }) as { data: { statusCode: number } }
           if (response.data.statusCode === 201 || response.data.statusCode === 200) {
-            openNotification(status ? t`internal-wallet.messages.lock-group-success` : t`internal-wallet.messages.unlock-group-success`, 'success')
+            openNotification(t`internal-wallet.messages.change-status-success`, 'success')
           } else {
             openNotification(status ? t`internal-wallet.messages.lock-group-failed` : t`internal-wallet.messages.unlock-group-failed`)
           }
@@ -108,10 +109,12 @@ function InternalGroupWallet() {
               setSelected(record)
               addFormToggle()
             }} />
-            <Button
-              icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
-              onClick={() => changeStatus(record.active, record.name, record.id)}
-            />
+            <Tooltip title={record.active ? t`internal-wallet.modal.change-status-unlock-ok-button` : t`internal-wallet.modal.change-status-lock-ok-button`}>
+              <Button
+                icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
+                onClick={() => changeStatus(record.active, record.name, record.id)}
+              />
+            </Tooltip>
           </Space>
         )
       },
@@ -121,12 +124,15 @@ function InternalGroupWallet() {
   ]
 
   const handleSearch = () => {
-    const active = form.getFieldValue('active')
-    setSearch({
+    const active = form.getFieldValue('active');
+    const newsValue = pretty({
       ...search,
       ...form.getFieldsValue(),
       active: active !== null ? active : undefined
-    })
+    });
+
+    setSearch(newsValue);
+    form.setFieldsValue(newsValue);
   }
 
   const cancelModal = () => {
