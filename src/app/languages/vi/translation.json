@@ -2451,7 +2451,8 @@
       "required": "Vui lòng cung cấp thông tin",
       "group-name-required": "Vui lòng nhập tên nhóm tài khoản",
       "group-type-required": "Vui lòng nhập nhóm ví",
-      "change-status-success": "Đổi trạng thái hoạt động thành công"
+      "change-status-success": "Đổi trạng thái hoạt động thành công",
+      "numeric-group-number": "Nhóm ví phải là số"
     },
     "update-groups-title": "Chỉnh sửa thông tin",
     "modal": {

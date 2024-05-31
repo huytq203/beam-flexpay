@@ -48,10 +48,6 @@ function InternalGroupForm({ group, onCancel, title, mode, isShow }: props) {
     if (mode !== viewMode.update || !isShow) form.resetFields()
   }, [group, mode])
 
-  useEffect(() => {
-    console.log("form", mode)
-  }, [mode])
-
   return (
     <Modal
       open={isShow}
@@ -77,7 +73,10 @@ function InternalGroupForm({ group, onCancel, title, mode, isShow }: props) {
           <Form.Item
             name='walletGroup'
             label={t('internal-wallet.groupType')}
-            rules={[{ required: true, message: t`internal-wallet.messages.group-type-required`.toString() }]}
+            rules={[
+              { required: true, message: t`internal-wallet.messages.group-type-required`.toString() },
+              { validator: (_, value) => isNaN(value) ? Promise.reject(t`internal-wallet.messages.numeric-group-number`.toString()): Promise.resolve() },
+            ]}
           >
             <Input
               disabled={mode === viewMode.update}
