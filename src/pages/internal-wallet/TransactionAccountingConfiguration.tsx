@@ -17,7 +17,8 @@ import {
   Select,
   Space,
   Table,
-  Tag
+  Tag,
+  Tooltip
 } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
@@ -30,9 +31,7 @@ import {
   accountingTransactionType,
   fundsOptions
 } from '@constants/options'
-import {
-  getAccountingTransactionType,
-} from '@utils/helperFunctions'
+import { getAccountingTransactionType } from '@utils/helperFunctions'
 import {
   useGetAccountingQuery,
   useUpdateActiveMutation
@@ -55,7 +54,8 @@ function TransactionAccountingConfiguration() {
 
   const [selectedAccounting, setSelectedAccounting] = useState<Accounting>()
 
-  const { data: accounting, refetch: refetchAccounting } = useGetAccountingQuery(search)
+  const { data: accounting, refetch: refetchAccounting } =
+    useGetAccountingQuery(search)
   const [updateStatus] = useUpdateActiveMutation()
 
   const changeStatus = (status: number, id: string) => {
@@ -93,8 +93,7 @@ function TransactionAccountingConfiguration() {
                 : t`internal-wallet.messages.unlock-accounting-failed`
             )
           }
-        } catch (error) {
-        }
+        } catch (error) {}
       }
     })
   }
@@ -171,26 +170,43 @@ function TransactionAccountingConfiguration() {
       render(_, record) {
         return (
           <Space>
-            <Button
-              icon={<EyeOutlined />}
-              onClick={() => {
-                setMode(viewMode.view)
-                setSelectedAccounting(record)
-                addFormToggle()
-              }}
-            />
-            <Button
-              icon={<FaPen />}
-              onClick={() => {
-                setMode(viewMode.update)
-                setSelectedAccounting(record)
-                addFormToggle()
-              }}
-            />
-            <Button
-              icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
-              onClick={() => changeStatus(record.active, record.id)}
-            />
+            <Tooltip
+              placement='topLeft'
+              title='Xem'
+            >
+              <Button
+                icon={<EyeOutlined />}
+                onClick={() => {
+                  setMode(viewMode.view)
+                  setSelectedAccounting(record)
+                  addFormToggle()
+                }}
+              />
+            </Tooltip>
+
+            <Tooltip
+              placement='topLeft'
+              title='Sửa'
+            >
+              <Button
+                icon={<FaPen />}
+                onClick={() => {
+                  setMode(viewMode.update)
+                  setSelectedAccounting(record)
+                  addFormToggle()
+                }}
+              />
+            </Tooltip>
+
+            <Tooltip
+              placement='topLeft'
+              title={record.active ? 'Khóa' : 'Mở khóa'}
+            >
+              <Button
+                icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
+                onClick={() => changeStatus(record.active, record.id)}
+              />
+            </Tooltip>
           </Space>
         )
       }
@@ -198,7 +214,9 @@ function TransactionAccountingConfiguration() {
   ]
 
   const handleSearch = () =>
-    setSearch(_(form.getFieldsValue()).omitBy(_.isUndefined).omitBy(_.isNull).value())
+    setSearch(
+      _(form.getFieldsValue()).omitBy(_.isUndefined).omitBy(_.isNull).value()
+    )
 
   const onCancel = () => {
     addFormToggle()
@@ -301,18 +319,22 @@ function TransactionAccountingConfiguration() {
           }
         }}
       />
+
       <TransactionAccountingConfigurationForm
-        title={mode === viewMode.create
-          ? t(`internal-wallet.create-configuration`)
-          : mode === viewMode.update
+        title={
+          mode === viewMode.create
+            ? t(`internal-wallet.create-configuration`)
+            : mode === viewMode.update
             ? t(`internal-wallet.update-configuration`)
-            : t(`internal-wallet.view-configuration`)}
+            : t(`internal-wallet.view-configuration`)
+        }
         isShow={addForm}
         mode={mode}
         selectedAccounting={selectedAccounting}
         onCancel={onCancel}
         onSubmit={refetchAccounting}
       />
+      
     </Card>
   )
 }
