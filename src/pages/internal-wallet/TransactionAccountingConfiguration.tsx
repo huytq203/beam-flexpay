@@ -220,6 +220,8 @@ function TransactionAccountingConfiguration() {
 
   const onCancel = () => {
     addFormToggle()
+    setMode(viewMode.create)
+    setSelectedAccounting(undefined)
   }
 
   return (
