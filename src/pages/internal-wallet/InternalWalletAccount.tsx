@@ -16,7 +16,8 @@ import {
   Row,
   Select,
   Space,
-  Table
+  Table,
+  Tooltip
 } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
@@ -113,10 +114,15 @@ function InternalWalletAccount() {
               }}
               module='internal-wallet'
             />
+            <Tooltip
+              placement='topLeft'
+              title={record.active ? 'Khóa' : 'Mở khóa'}
+            >
             <Button
               onClick={() => changeStatus(record.active, record.id)}
               icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
             />
+            </Tooltip>
           </Space>
         )
       }
