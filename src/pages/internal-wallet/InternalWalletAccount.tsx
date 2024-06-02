@@ -3,7 +3,7 @@ import ButtonSearch from '@components/button-search/ButtonSearch'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import SearchBar from '@components/search-bar/SearchBar'
 import { GUTTER } from '@constants/appConstant'
-import { TimeFormat } from '@constants/datetime'
+import { FullFormatTime, TimeFormat } from '@constants/datetime'
 import { useToggle } from 'ahooks'
 import {
   Button,
@@ -98,7 +98,7 @@ function InternalWalletAccount() {
       title: t('partner.updatedDate'),
       dataIndex: 'updatedAt',
       render: (value, record, index) =>
-        moment(value).format(TimeFormat).toString()
+        moment(value).format(FullFormatTime).toString()
     },
     {
       title: t('labels.action'),
