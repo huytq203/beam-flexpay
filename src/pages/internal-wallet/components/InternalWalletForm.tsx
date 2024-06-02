@@ -110,7 +110,7 @@ function InternalWalletForm({ selectedInternalWallet, isShow, onCancel, title, m
         name='walletType'
         label={t('internal-wallet.walletType')}
       >
-        <Input readOnly />
+        <Input disabled />
       </Form.Item>
       {/* Nhóm ví */}
       <Form.Item
