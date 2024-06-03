@@ -24,12 +24,16 @@ import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { InternalWalletPayload } from '@type/internalWallet'
-import { useGetListWalletsQuery, useUpdateInternalWalletMutation } from '@services/apiInternalWallet'
+import {
+  useGetListWalletsQuery,
+  useUpdateInternalWalletMutation
+} from '@services/apiInternalWallet'
 import { viewMode } from '@type/customer'
 import InternalWalletModal from './InternalWalletModal'
 import { openNotification } from '@configs/fetchBaseQueryCustom'
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
 import { blockArrowValue, blockLetterDecimal, blockLetterValue } from '@utils/helperFunctions'
+import { pretty } from '@utils/qs'
 
 function InternalWalletAccount() {
   const [form] = Form.useForm()
@@ -133,13 +137,12 @@ function InternalWalletAccount() {
     const active = form.getFieldValue('active')
     const payload: InternalWalletPayload = {
       ...search,
-      active: active !== null ? active : undefined
-    }
-    setSearch({
-
       ...form.getFieldsValue(),
       active: active !== null ? active : undefined
-    })
+    }
+
+    setSearch(pretty(payload));
+    form.setFieldsValue(pretty(payload))
   }
 
   const changeStatus = (status: number, id: number) => {
@@ -163,7 +166,6 @@ function InternalWalletAccount() {
       }
     })
   }
-
 
   const cancelModal = () => {
     setRecordSelected(null)
