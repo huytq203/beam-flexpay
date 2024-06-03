@@ -3,7 +3,7 @@ import { GUTTER } from '@constants/appConstant'
 import { useCreateInternalWalletGroupMutation, useUpdateInternalWalletGroupMutation } from '@services/apiInternalWallet'
 import { viewMode } from '@type/customer'
 import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions'
-import { Button, Col, Form, Input, Row, Spin } from 'antd'
+import { Button, Col, Form, Input, Popconfirm, Row, Spin } from 'antd'
 import Modal from 'antd/es/modal/Modal'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -97,6 +97,9 @@ function InternalGroupForm({ group, onCancel, title, mode, isShow }: props) {
           >
             <Input
               placeholder={t`internal-wallet.placeholders.group_name`.toString()}
+              onBlur={() => {
+                form.setFieldsValue({ name: form.getFieldValue('name').trim() })
+              }}
             />
           </Form.Item>
           <Row
@@ -104,13 +107,28 @@ function InternalGroupForm({ group, onCancel, title, mode, isShow }: props) {
             gutter={GUTTER}
           >
             <Col>
-              <Button
-                className='btn-100'
-                onClick={onCancel}
-                loading={loading}
-              >
-                {t('buttons.cancel')}
-              </Button>
+              <Form.Item shouldUpdate>
+                {(form) => {
+                  return (
+                    form.getFieldValue('walletGroup') && form.getFieldValue('name') ?
+                      <Popconfirm title={t`internal-wallet.messages.confirm-cancel-create-group`} onConfirm={onCancel} okText={t('buttons.yes')} cancelText={t('buttons.no')}>
+                        <Button
+                          className='btn-100'
+                          loading={loading}
+                        >
+                          {t('buttons.cancel')}
+                        </Button>
+                      </Popconfirm>
+                      : <Button
+                        className='btn-100'
+                        loading={loading}
+                        onClick={onCancel}
+                      >
+                        {t('buttons.cancel')}
+                      </Button>
+                  )
+                }}
+              </Form.Item>
             </Col>
             <Col>
               <Button

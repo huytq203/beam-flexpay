@@ -32,7 +32,7 @@ import { viewMode } from '@type/customer'
 import InternalWalletModal from './InternalWalletModal'
 import { openNotification } from '@configs/fetchBaseQueryCustom'
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
-import { blockArrowValue, blockLetterDecimal, blockLetterValue } from '@utils/helperFunctions'
+import { blockArrowValue, blockLetterDecimal, blockLetterDecimalAndDot, blockLetterValue } from '@utils/helperFunctions'
 import { pretty } from '@utils/qs'
 
 function InternalWalletAccount() {
@@ -182,16 +182,28 @@ function InternalWalletAccount() {
               form={form}
               layout='vertical'
               initialValues={{ active: null }}
+              onFinish={handleSearch}
             >
               <Row gutter={GUTTER}>
                 <Col span={6}>
                   <Form.Item
                     name='walletNumber'
                     label={t('internalBalanceWallet.walletNumber')}
+                    rules={[
+                      {
+                        min: 5,
+                        message: t`internal-wallet.messages.wallet-number-min-length` as string
+                      },
+                      {
+                        max: 20,
+                        message: t`internal-wallet.validation.wallet-number-max-length` as string
+                      }
+                    ]}
                   >
                     <Input
                       placeholder={t`internal-wallet.placeholders.wallet_id`.toString()}
                       onKeyDown={blockArrowValue}
+                      onKeyPress={blockLetterDecimalAndDot}
                     />
                   </Form.Item>
                 </Col>
@@ -253,9 +265,7 @@ function InternalWalletAccount() {
         bordered
         locale={{
           emptyText: (
-            <>
-              <Empty description={t`nodata`} />
-            </>
+            <Empty description={t`noresult`} />
           )
         }}
         pagination={{
