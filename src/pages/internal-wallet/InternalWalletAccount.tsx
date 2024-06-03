@@ -148,9 +148,9 @@ function InternalWalletAccount() {
   const changeStatus = (status: number, id: number) => {
     Modal.confirm({
       title: status ? t`internal-wallet.modal.change-status-lock-account-title` : t`internal-wallet.modal.change-status-unlock-account-title`,
-      content: status ? t`internal-wallet.modal.change-status-lock-account-description` : t`internal-wallet.modal.change-status-unlock-account-description`,
-      okText: status ? t`internal-wallet.modal.change-status-lock-ok-button` : t`internal-wallet.modal.change-status-unlock-ok-button`,
-      cancelText: t`internal-wallet.modal.change-status-cancel-button`,
+      content: t`internal-wallet.modal.change-status-lock-group-title`,
+      okText: t`buttons.yes`,
+      cancelText: t`buttons.no`,
       onOk: async () => {
         try {
           const response = await updateInternalWallet({ id, body: { active: status ? 0 : 1 } }) as { data: { statusCode: number } }
