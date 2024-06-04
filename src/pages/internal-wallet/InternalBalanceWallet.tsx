@@ -1,14 +1,21 @@
 import { EyeOutlined } from '@ant-design/icons'
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs'
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import ButtonView from '@components/button-view/ButtonView'
 import SearchBar from '@components/search-bar/SearchBar'
 import { GUTTER } from '@constants/appConstant'
-import { TimeFormat } from '@constants/datetime'
-import { useGetListWalletGroupsQuery, useGetListWalletsQuery } from '@services/apiInternalWallet'
+import { FullFormatTime, TimeFormat } from '@constants/datetime'
+import {
+  useGetListWalletGroupsQuery,
+  useGetListWalletsQuery
+} from '@services/apiInternalWallet'
 import { viewMode } from '@type/customer'
 import { InternalWallet, InternalWalletPayload } from '@type/internalWallet'
-import { blockArrowValue, blockLetterDecimal, moneyInputFormatter } from '@utils/helperFunctions'
+import {
+  blockArrowValue,
+  blockLetterDecimal,
+  moneyInputFormatter
+} from '@utils/helperFunctions'
 import { useToggle } from 'ahooks'
 import {
   Button,
@@ -30,25 +37,26 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import InternalWalletTransactionModal from './InternalWalletTransactionModal'
 
-const { RangePicker } = DatePicker;
+const { RangePicker } = DatePicker
 
 const rangePresets: TimeRangePickerProps['presets'] = [
   { label: 'Last 7 Days', value: [dayjs().add(-7, 'd'), dayjs()] },
   { label: 'Last 14 Days', value: [dayjs().add(-14, 'd'), dayjs()] },
   { label: 'Last 30 Days', value: [dayjs().add(-30, 'd'), dayjs()] },
-  { label: 'Last 90 Days', value: [dayjs().add(-90, 'd'), dayjs()] },
-];
+  { label: 'Last 90 Days', value: [dayjs().add(-90, 'd'), dayjs()] }
+]
 
 function InternalBalanceWallet() {
   const [form] = Form.useForm()
   const { t } = useTranslation()
   const [addForm, { toggle: addFormToggle }] = useToggle()
 
-  const [selectedInternalWallet, setSelectedInternalWallet] = useState<InternalWallet>()
+  const [selectedInternalWallet, setSelectedInternalWallet] =
+    useState<InternalWallet>()
   const [mode, setMode] = useState<viewMode>(viewMode.create)
 
-  const [startDate, setStartDate] = useState<dayjs>(dayjs())
-  const [endDate, setEndDate] = useState<dayjs>(dayjs().subtract(1, 'year'))
+  const [startDate, setStartDate] = useState<Dayjs>(dayjs())
+  const [endDate, setEndDate] = useState<Dayjs>(dayjs().subtract(1, 'year'))
 
   const [search, setSearch] = useState<InternalWalletPayload>({
     order: 'DESC',
@@ -60,12 +68,10 @@ function InternalBalanceWallet() {
 
   const { data: internalWallet, refetch } = useGetListWalletsQuery(search)
 
-  const { data: internalWalletGroup } = useGetListWalletGroupsQuery(
-    {
-      page: 1,
-      take: 10,
-    }
-  )
+  const { data: internalWalletGroup } = useGetListWalletGroupsQuery({
+    page: 1,
+    take: 10
+  })
 
   const columns: ColumnsType<any> = [
     {
@@ -74,7 +80,7 @@ function InternalBalanceWallet() {
       key: 'balanceInternalGroup',
       render(value, record, index) {
         return value ? value?.walletGroup : '-'
-      },
+      }
     },
     {
       title: t('internalBalanceWallet.walletGroupName'),
@@ -82,8 +88,7 @@ function InternalBalanceWallet() {
       key: 'balanceInternalGroup',
       render(value, record, index) {
         return record.balanceInternalGroup.name
-      },
-
+      }
     },
     {
       title: t('internalBalanceWallet.walletNumber'),
@@ -91,7 +96,7 @@ function InternalBalanceWallet() {
       key: 'walletNumber',
       render(value, record, index) {
         return `${record.balanceInternalGroup.walletGroup}.${record.walletNumber}`
-      },
+      }
     },
     {
       title: t('internalBalanceWallet.walletName'),
@@ -111,7 +116,9 @@ function InternalBalanceWallet() {
       key: 'updatedDate',
       render: (value, record, index) =>
         record?.updatedAt
-          ? moment(new Date(record?.updatedAt)).format(TimeFormat).toString()
+          ? moment(new Date(record?.updatedAt))
+              .format(FullFormatTime)
+              .toString()
           : '-'
     },
     {
@@ -120,10 +127,9 @@ function InternalBalanceWallet() {
       key: 'active',
       render: (value, record, index) => {
         if (value == true) {
-          return (<Tag color="green">{t("internal-wallet.status.active")}</Tag>)
+          return <Tag color='green'>{t('internal-wallet.status.active')}</Tag>
         } else {
-
-          return (<Tag color="red">{t("internal-wallet.status.in-active")}</Tag>)
+          return <Tag color='red'>{t('internal-wallet.status.in-active')}</Tag>
         }
       }
     },
@@ -131,7 +137,7 @@ function InternalBalanceWallet() {
       title: t('labels.action'),
       render(value, record, index) {
         return (
-          <Space align="center">
+          <Space align='center'>
             <ButtonView
               onClick={() => {
                 setMode(viewMode.view)
@@ -151,10 +157,11 @@ function InternalBalanceWallet() {
     refetch()
   }
 
-  useEffect(() => {
-  }, [form])
-
-  const onDateRangeChange = (dates: null | (Dayjs | null)[], dateStrings: string[]) => {
+  
+  const onDateRangeChange = (
+    dates: null | (Dayjs | null)[],
+    dateStrings: string[]
+  ) => {
     if (dates) {
       let startDate = (dates[0] as Dayjs).startOf('day')
       let endDate = (dates[1] as Dayjs).endOf('day')
@@ -164,13 +171,12 @@ function InternalBalanceWallet() {
     }
   }
 
-
   const handleSearch = () =>
     setSearch({
       ...search,
       ...form.getFieldsValue(),
-      startDate: startDate.format("DD/MM/YYYY HH:mm:ss"),
-      endDate: endDate.format("DD/MM/YYYY HH:mm:ss")
+      startDate: startDate.format('DD/MM/YYYY HH:mm:ss'),
+      endDate: endDate.format('DD/MM/YYYY HH:mm:ss')
     })
 
   return (
@@ -204,7 +210,7 @@ function InternalBalanceWallet() {
                   >
                     <Select
                       placeholder={t`internal-wallet.placeholders.pickGroup`}
-                      options={internalWalletGroup?.data?.map(group => ({
+                      options={internalWalletGroup?.data?.map((group) => ({
                         label: group.name,
                         value: group.id
                       }))}
@@ -213,14 +219,12 @@ function InternalBalanceWallet() {
                 </Col>
                 <Col>
                   {/* Ngày cập nhật - từ ngày */}
-                  <Form.Item
-                    label={t('internal-wallet.transaction.date')}
-                  >
+                  <Form.Item label={t('internal-wallet.transaction.date')}>
                     <RangePicker
                       value={[startDate, endDate]}
                       allowClear={false}
                       presets={rangePresets}
-                      format="DD/MM/YYYY"
+                      format='DD/MM/YYYY'
                       onChange={onDateRangeChange}
                     />
                   </Form.Item>
@@ -290,7 +294,6 @@ function InternalBalanceWallet() {
         title={t('internal-wallet.view-transactions')}
         mode={mode}
       />
-
     </Card>
   )
 }
