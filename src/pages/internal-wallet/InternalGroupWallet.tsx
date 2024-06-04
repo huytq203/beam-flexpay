@@ -1,7 +1,19 @@
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import { useToggle } from 'ahooks'
-import { Button, Card, Col, Empty, Form, Input, Modal, Row, Select, Space, Tooltip } from 'antd'
+import {
+  Button,
+  Card,
+  Col,
+  Empty,
+  Form,
+  Input,
+  Modal,
+  Row,
+  Select,
+  Space,
+  Tooltip
+} from 'antd'
 import Table, { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
 import { useState } from 'react'
@@ -12,18 +24,28 @@ import { GUTTER } from '@constants/appConstant'
 import ButtonAdd from '@components/button-add/ButtonAdd'
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import { InternalWalletPayload } from '@type/internalWallet'
-import { useGetListWalletGroupsQuery, useUpdateInternalWalletGroupMutation } from '@services/apiInternalWallet'
+import {
+  useGetListWalletGroupsQuery,
+  useUpdateInternalWalletGroupMutation
+} from '@services/apiInternalWallet'
 import { viewMode } from '@type/customer'
 import { openNotification } from '@configs/fetchBaseQueryCustom'
 import { internalWalletGroupStatusOptions } from '@constants/options'
 import { pretty } from '@utils/qs'
+import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions'
 
 function InternalGroupWallet() {
   const [form] = Form.useForm()
   const { t } = useTranslation()
   const [mode, setMode] = useState<viewMode>(viewMode.create)
   const [selected, setSelected] = useState<any | undefined>(undefined)
-  const [search, setSearch] = useState<InternalWalletPayload>({ order: 'DESC', page: 1, take: 10, query: '', orderBy: 'createdAt' })
+  const [search, setSearch] = useState<InternalWalletPayload>({
+    order: 'DESC',
+    page: 1,
+    take: 10,
+    query: '',
+    orderBy: 'createdAt'
+  })
   const [addForm, { toggle: addFormToggle }] = useToggle()
 
   const { data: internalWalletGroup } = useGetListWalletGroupsQuery(search)
@@ -31,22 +53,41 @@ function InternalGroupWallet() {
 
   const changeStatus = (status: number, name: string, id: string) => {
     Modal.confirm({
-      title: status ? t`internal-wallet.modal.change-status-unlock-title` : t`internal-wallet.modal.change-status-lock-title`,
+      title: status
+        ? t`internal-wallet.modal.change-status-unlock-title`
+        : t`internal-wallet.modal.change-status-lock-title`,
       content: t`internal-wallet.modal.change-status-lock-group-title`,
       okText: t`buttons.yes`,
       cancelText: t`buttons.no`,
       onOk: async () => {
         try {
-          const response = await updateInternalWalletGroup({ name, active: status ? 0 : 1, id }) as { data: { statusCode: number } }
-          if (response.data.statusCode === 201 || response.data.statusCode === 200) {
-            openNotification(t`internal-wallet.messages.change-status-success`, 'success')
+          const response = (await updateInternalWalletGroup({
+            name,
+            active: status ? 0 : 1,
+            id
+          })) as { data: { statusCode: number } }
+          if (
+            response.data.statusCode === 201 ||
+            response.data.statusCode === 200
+          ) {
+            openNotification(
+              t`internal-wallet.messages.change-status-success`,
+              'success'
+            )
           } else {
-            openNotification(status ? t`internal-wallet.messages.lock-group-failed` : t`internal-wallet.messages.unlock-group-failed`)
+            openNotification(
+              status
+                ? t`internal-wallet.messages.lock-group-failed`
+                : t`internal-wallet.messages.unlock-group-failed`
+            )
           }
         } catch (error) {
-          openNotification(status ? t`internal-wallet.messages.lock-group-failed` : t`internal-wallet.messages.unlock-group-failed`)
+          openNotification(
+            status
+              ? t`internal-wallet.messages.lock-group-failed`
+              : t`internal-wallet.messages.unlock-group-failed`
+          )
         }
-
       }
     })
   }
@@ -57,7 +98,7 @@ function InternalGroupWallet() {
       dataIndex: 'walletGroup',
       key: 'walletGroup',
       align: 'center',
-      width: 200,
+      width: 200
     },
     {
       title: t('groups.wallet-name'),
@@ -95,7 +136,8 @@ function InternalGroupWallet() {
     {
       title: t('partner.updatedDate'),
       dataIndex: 'updatedAt',
-      render: (value, record, index) => value ? moment(value).format('DD/MM/YYYY HH:mm:ss') : '-',
+      render: (value, record, index) =>
+        value ? moment(value).format('DD/MM/YYYY HH:mm:ss') : '-',
       align: 'center',
       width: 150
     },
@@ -104,15 +146,26 @@ function InternalGroupWallet() {
       render(value, record, index) {
         return (
           <Space>
-            <ButtonUpdate module='internal-wallet' onClick={() => {
-              setMode(viewMode.update)
-              setSelected(record)
-              addFormToggle()
-            }} />
-            <Tooltip title={record.active ? t`internal-wallet.modal.change-status-unlock-ok-button` : t`internal-wallet.modal.change-status-lock-ok-button`}>
+            <ButtonUpdate
+              module='internal-wallet'
+              onClick={() => {
+                setMode(viewMode.update)
+                setSelected(record)
+                addFormToggle()
+              }}
+            />
+            <Tooltip
+              title={
+                record.active
+                  ? t`internal-wallet.modal.change-status-unlock-ok-button`
+                  : t`internal-wallet.modal.change-status-lock-ok-button`
+              }
+            >
               <Button
                 icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
-                onClick={() => changeStatus(record.active, record.name, record.id)}
+                onClick={() =>
+                  changeStatus(record.active, record.name, record.id)
+                }
               />
             </Tooltip>
           </Space>
@@ -124,15 +177,15 @@ function InternalGroupWallet() {
   ]
 
   const handleSearch = () => {
-    const active = form.getFieldValue('active');
+    const active = form.getFieldValue('active')
     const newsValue = pretty({
       ...search,
       ...form.getFieldsValue(),
       active: active !== null ? active : undefined
-    });
+    })
 
-    setSearch(newsValue);
-    form.setFieldsValue(newsValue);
+    setSearch(newsValue)
+    form.setFieldsValue(newsValue)
   }
 
   const cancelModal = () => {
@@ -145,14 +198,23 @@ function InternalGroupWallet() {
       title={
         <SearchBar
           headerMenu={
-            <Form form={form} layout='vertical'>
+            <Form
+              form={form}
+              layout='vertical'
+            >
               <Row gutter={GUTTER}>
                 <Col span={6}>
                   <Form.Item
                     name='walletGroup'
                     label={t('internal-wallet.groupType')}
                   >
-                    <Input placeholder={t`internal-wallet.placeholders.group_id`.toString()} />
+                    <Input
+                      placeholder={t`internal-wallet.placeholders.group_id`.toString()}
+                      type='text'
+                      inputMode='numeric'
+                      onKeyDown={blockArrowValue}
+                      onKeyPress={blockLetterDecimal}
+                    />
                   </Form.Item>
                 </Col>
                 <Col span={6}>
@@ -160,7 +222,9 @@ function InternalGroupWallet() {
                     name='name'
                     label={t('internal-wallet.groupName')}
                   >
-                    <Input placeholder={t`internal-wallet.placeholders.group_name`.toString()} />
+                    <Input
+                      placeholder={t`internal-wallet.placeholders.group_name`.toString()}
+                    />
                   </Form.Item>
                 </Col>
                 <Col span={6}>
@@ -224,13 +288,19 @@ function InternalGroupWallet() {
           }
         }}
       />
-      <InternalGroupForm
-        isShow={addForm}
-        onCancel={cancelModal}
-        title={mode === viewMode.create ? t('internal-wallet.groups-title') : t('internal-wallet.update-groups-title')}
-        mode={mode}
-        group={selected}
-      />
+      {addForm && (
+        <InternalGroupForm
+          isShow={addForm}
+          onCancel={cancelModal}
+          title={
+            mode === viewMode.create
+              ? t('internal-wallet.groups-title')
+              : t('internal-wallet.update-groups-title')
+          }
+          mode={mode}
+          group={selected}
+        />
+      )}
     </Card>
   )
 }

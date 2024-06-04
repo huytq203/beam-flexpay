@@ -163,11 +163,11 @@ function InternalBalanceWallet() {
     dateStrings: string[]
   ) => {
     if (dates) {
-      let startDate = (dates[0] as Dayjs).startOf('day')
-      let endDate = (dates[1] as Dayjs).endOf('day')
+      // let startDate = (dates[0] as Dayjs).startOf('day')
+      // let endDate = (dates[1] as Dayjs).endOf('day')
 
-      setStartDate(startDate)
-      setEndDate(endDate)
+      setStartDate(dates[0] as Dayjs)
+      setEndDate(dates[1] as Dayjs)
     }
   }
 
@@ -175,8 +175,8 @@ function InternalBalanceWallet() {
     setSearch({
       ...search,
       ...form.getFieldsValue(),
-      startDate: startDate.format('DD/MM/YYYY HH:mm:ss'),
-      endDate: endDate.format('DD/MM/YYYY HH:mm:ss')
+      from: dayjs(startDate).startOf('day').toISOString(),
+      to: dayjs(endDate).endOf('day').toISOString(),
     })
 
   return (

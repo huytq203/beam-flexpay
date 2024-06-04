@@ -46,8 +46,8 @@ function InternalWalletTransaction(props: props) {
     orderBy: 'createdAt'
   })
 
-  const [startDate, setStartDate] = useState<dayjs>(dayjs().subtract(1, 'year'))
-  const [endDate, setEndDate] = useState<dayjs>(dayjs())
+  const [startDate, setStartDate] = useState<Dayjs>(dayjs().subtract(1, 'year'))
+  const [endDate, setEndDate] = useState<Dayjs>(dayjs())
 
   const { t } = useTranslation()
 
@@ -68,7 +68,7 @@ function InternalWalletTransaction(props: props) {
       dataIndex: 'transaction',
       key: 'transaction.transactionDate',
       render(value) {
-        return moment(value.transactionDate).format('DD-MM-YYYY HH:mm:ss')
+        return moment(value.transactionDate).format('DD/MM/YYYY')
       }
     },
     {
@@ -89,14 +89,14 @@ function InternalWalletTransaction(props: props) {
         return moneyInputFormatter(value)
       }
     },
-    {
-      title: t('internal-wallet.transaction.note'),
-      dataIndex: 'transaction',
-      key: 'note',
-      render(value) {
-        return value.note
-      }
-    },
+    // {
+    //   title: t('internal-wallet.transaction.note'),
+    //   dataIndex: 'transaction',
+    //   key: 'note',
+    //   render(value) {
+    //     return value.note
+    //   }
+    // },
     {
       title: t('internal-wallet.transaction.code'),
       dataIndex: 'transaction',
