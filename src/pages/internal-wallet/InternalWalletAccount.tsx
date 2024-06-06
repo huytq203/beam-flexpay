@@ -32,8 +32,14 @@ import { viewMode } from '@type/customer'
 import InternalWalletModal from './InternalWalletModal'
 import { openNotification } from '@configs/fetchBaseQueryCustom'
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
-import { blockArrowValue, blockLetterDecimal, blockLetterDecimalAndDot, blockLetterValue } from '@utils/helperFunctions'
+import {
+  blockArrowValue,
+  blockLetterDecimal,
+  blockLetterDecimalAndDot,
+  blockLetterValue
+} from '@utils/helperFunctions'
 import { pretty } from '@utils/qs'
+import { numberValidation } from '@utils/constants'
 
 function InternalWalletAccount() {
   const [form] = Form.useForm()
@@ -63,11 +69,11 @@ function InternalWalletAccount() {
     },
     {
       title: t('internalWallet.walletGroup'),
-      dataIndex: 'balanceInternalGroup',
-      key: 'balanceInternalGroup',
+      dataIndex: 'walletGroup',
+      key: 'walletGroup',
       render(value, record, index) {
-        return value ? value?.name : '-'
-      },
+        return record?.balanceInternalGroup?.walletGroup || '-'
+      }
     },
     {
       title: t('internalWallet.walletNumber'),
@@ -109,7 +115,7 @@ function InternalWalletAccount() {
       key: 'actions',
       render(record) {
         return (
-          <Space align="center">
+          <Space align='center'>
             <ButtonUpdate
               onClick={() => {
                 setMode(viewMode.update)
@@ -122,10 +128,10 @@ function InternalWalletAccount() {
               placement='topLeft'
               title={record.active ? 'Khóa' : 'Mở khóa'}
             >
-            <Button
-              onClick={() => changeStatus(record.active, record.id)}
-              icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
-            />
+              <Button
+                onClick={() => changeStatus(record.active, record.id)}
+                icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
+              />
             </Tooltip>
           </Space>
         )
@@ -134,6 +140,10 @@ function InternalWalletAccount() {
   ]
 
   const handleSearch = () => {
+    if (form.getFieldError('walletNumber')?.length > 0) {
+      return
+    }
+
     const active = form.getFieldValue('active')
     const payload: InternalWalletPayload = {
       ...search,
@@ -141,28 +151,48 @@ function InternalWalletAccount() {
       active: active !== null ? active : undefined
     }
 
-    setSearch(pretty(payload));
+    setSearch(pretty(payload))
     form.setFieldsValue(pretty(payload))
   }
 
   const changeStatus = (status: number, id: number) => {
     Modal.confirm({
-      title: status ? t`internal-wallet.modal.change-status-lock-account-title` : t`internal-wallet.modal.change-status-unlock-account-title`,
+      title: status
+        ? t`internal-wallet.modal.change-status-lock-account-title`
+        : t`internal-wallet.modal.change-status-unlock-account-title`,
       content: t`internal-wallet.modal.change-status-lock-group-title`,
       okText: t`buttons.yes`,
       cancelText: t`buttons.no`,
       onOk: async () => {
         try {
-          const response = await updateInternalWallet({ id, body: { active: status ? 0 : 1 } }) as { data: { statusCode: number } }
-          if (response.data.statusCode === 201 || response.data.statusCode === 200) {
-            openNotification(status ? t`internal-wallet.messages.lock-account-success` : t`internal-wallet.messages.unlock-account-success`, 'success')
+          const response = (await updateInternalWallet({
+            id,
+            body: { active: status ? 0 : 1 }
+          })) as { data: { statusCode: number } }
+          if (
+            response.data.statusCode === 201 ||
+            response.data.statusCode === 200
+          ) {
+            openNotification(
+              status
+                ? t`internal-wallet.messages.lock-account-success`
+                : t`internal-wallet.messages.unlock-account-success`,
+              'success'
+            )
           } else {
-            openNotification(status ? t`internal-wallet.messages.lock-account-failed` : t`internal-wallet.messages.unlock-account-failed`)
+            openNotification(
+              status
+                ? t`internal-wallet.messages.lock-account-failed`
+                : t`internal-wallet.messages.unlock-account-failed`
+            )
           }
         } catch (error) {
-          openNotification(status ? t`internal-wallet.messages.lock-account-failed` : t`internal-wallet.messages.unlock-account-failed`)
+          openNotification(
+            status
+              ? t`internal-wallet.messages.lock-account-failed`
+              : t`internal-wallet.messages.unlock-account-failed`
+          )
         }
-
       }
     })
   }
@@ -187,23 +217,38 @@ function InternalWalletAccount() {
               <Row gutter={GUTTER}>
                 <Col span={6}>
                   <Form.Item
+                    name='walletGroup'
+                    label={"Nhóm ví"}
+                    rules={[
+                      ...numberValidation,
+                    ]}
+                  >
+                    <Input
+                      placeholder={"Nhập nhóm ví"}
+                    />
+                  </Form.Item>
+                </Col>
+
+                <Col span={6}>
+                  <Form.Item
                     name='walletNumber'
                     label={t('internalBalanceWallet.walletNumber')}
                     rules={[
+                      ...numberValidation,
                       {
                         min: 5,
-                        message: t`internal-wallet.messages.wallet-number-min-length` as string
+                        message:
+                          t`internal-wallet.messages.wallet-number-min-length` as string
                       },
                       {
                         max: 20,
-                        message: t`internal-wallet.validation.wallet-number-max-length` as string
+                        message:
+                          t`internal-wallet.validation.wallet-number-max-length` as string
                       }
                     ]}
                   >
                     <Input
                       placeholder={t`internal-wallet.placeholders.wallet_id`.toString()}
-                      onKeyDown={blockArrowValue}
-                      onKeyPress={blockLetterDecimalAndDot}
                     />
                   </Form.Item>
                 </Col>
@@ -264,9 +309,7 @@ function InternalWalletAccount() {
         size='small'
         bordered
         locale={{
-          emptyText: (
-            <Empty description={t`noresult`} />
-          )
+          emptyText: <Empty description={t`noresult`} />
         }}
         pagination={{
           current: interWallet?.meta.page,
