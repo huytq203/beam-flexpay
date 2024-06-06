@@ -66,8 +66,7 @@ function TransactionAccountingConfigurationForm({
   const [getPartners] = useLazyPaymentPartnerFindAllQuery()
   const [getServices] = useLazyPaymentServiceFindAllQuery()
   const {
-    data: internalWalletData,
-    refetch
+    data: internalWalletData
   } = useGetListWalletsQuery({
     order: 'DESC',
     page: 1,
@@ -79,7 +78,6 @@ function TransactionAccountingConfigurationForm({
   const [updateAccounting, updateAccountingStatus] = useUpdateAccountingMutation()
 
 
-  let timeout: ReturnType<typeof setTimeout> | null;
   const updateLoading = false
 
   const handleSubmit = async (value: Record<string, any>) => {
@@ -150,7 +148,7 @@ function TransactionAccountingConfigurationForm({
         form.setFieldValue("partnerId", selectedAccounting?.partner?.id)
         break;
     }
-  }, [mode])
+  }, [mode, selectedAccounting])
 
   useEffect(() => {
     if (isShow && record && record.id) form.setFieldsValue(record)

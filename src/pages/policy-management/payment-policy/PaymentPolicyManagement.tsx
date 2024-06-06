@@ -252,16 +252,14 @@ const PaymentPolicyManagement = () => {
       width: 80,
       fixed: 'right',
       render: (record) => (
-        <Tooltip title={trans`buttons.update`}>
-          <ButtonUpdate
-            module=''
-            onClick={() => {
-              setMode(viewMode.update)
-              setSelectedRecord(record.id)
-              setOpen(true)
-            }}
-          />
-        </Tooltip>
+        <ButtonUpdate
+          module=''
+          onClick={() => {
+            setMode(viewMode.update)
+            setSelectedRecord(record.id)
+            setOpen(true)
+          }}
+        />
       )
     },
     {
