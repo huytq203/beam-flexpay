@@ -73,7 +73,7 @@ export const groupPermissionApi = apiService.injectEndpoints({
         url: '/internal-wallet',
         method: 'GET',
         cache: 'default',
-        params: payload
+        params: pretty(payload)
       }),
       transformResponse(
         baseQueryReturnValue: ResponseType<CommonResponsePayload<InternalWallet[]>>

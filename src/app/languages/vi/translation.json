@@ -2451,7 +2451,11 @@
       "required": "Vui lòng cung cấp thông tin",
       "group-name-required": "Vui lòng nhập tên nhóm tài khoản",
       "group-type-required": "Vui lòng nhập nhóm ví",
-      "change-status-success": "Đổi trạng thái hoạt động thành công"
+      "change-status-success": "Đổi trạng thái hoạt động thành công",
+      "numeric-group-number": "Nhóm ví phải là số",
+      "confirm-cancel-create-group": "Bạn có chắc chắn muốn hủy thêm mới nhóm tài khoản?",
+      "wallet-number-min-length": "Số ví nội bộ phải lớn hơn hoặc bằng 5 ký tự",
+      "wallet-number-max-length": "Số ví nội bộ phải nhỏ hơn hoặc bằng 20 ký tự"
     },
     "update-groups-title": "Chỉnh sửa thông tin",
     "modal": {

@@ -1,4 +1,5 @@
 {
+  "noresult": "Không có kết quả nào thỏa mãn",
   "nodata": "Chưa có dữ liệu",
   "feesByTransactionType": {
     "title": "Cấu hình phí theo loại giao dịch",
