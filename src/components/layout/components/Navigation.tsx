@@ -297,11 +297,13 @@ const internal_wallet = {
   key: _INTERNAL_WALLET,
   icon: <PieChartTwoTone twoToneColor={COlOR} />,
   label: i18n.t('navigation.internal-wallet'),
+  permission: 'internalwallet',
   children: [
     {
       key: 'group',
       icon: <PushpinTwoTone twoToneColor={COlOR} />,
-      label: i18n.t('internal-wallet.group')
+      label: i18n.t('internal-wallet.group'),
+      permission: 'internalwalletgroup'
     },
     {
       key: 'account',
