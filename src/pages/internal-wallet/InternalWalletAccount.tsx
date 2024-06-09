@@ -39,7 +39,7 @@ import {
   blockLetterValue
 } from '@utils/helperFunctions'
 import { pretty } from '@utils/qs'
-import { numberValidation } from '@utils/constants'
+import { numberAndDotValidation, numberValidation } from '@utils/constants'
 
 function InternalWalletAccount() {
   const [form] = Form.useForm()
@@ -234,7 +234,7 @@ function InternalWalletAccount() {
                     name='walletNumber'
                     label={t('internalBalanceWallet.walletNumber')}
                     rules={[
-                      ...numberValidation,
+                      ...numberAndDotValidation,
                       {
                         min: 5,
                         message:

@@ -14,3 +14,10 @@ export const numberValidation: Rule[] = [
     message: "Vui lòng nhập số",
   },
 ];
+
+export const numberAndDotValidation: Rule[] = [
+  {
+    pattern: /^[0-9.]+$/,
+    message: "Vui lòng nhập số hoặc dấu chấm",
+  },
+];

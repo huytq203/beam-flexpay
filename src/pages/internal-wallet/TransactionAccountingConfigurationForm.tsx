@@ -315,7 +315,7 @@ function TransactionAccountingConfigurationForm({
           <Select
             placeholder={t('internal-wallet.placeholders.transaction_type')}
             disabled={mode !== viewMode.create}
-            options={accountingTransactionType}
+            options={accountingTransactionType.filter(x => x.value)}
             onChange={value => {
               if (value !== AccountingTransactionType.BILL_PAYMENT &&
                 value !== AccountingTransactionType.ADVANDED_COLLECT) {
@@ -341,7 +341,7 @@ function TransactionAccountingConfigurationForm({
           <Select
             placeholder={t('internal-wallet.placeholders.funds')}
             disabled={mode !== viewMode.create}
-            options={fundsOptions}
+            options={fundsOptions.filter(x => x.value)}
           />
         </Form.Item>
         {/* Dịch vụ - select */}
