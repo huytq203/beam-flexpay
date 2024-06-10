@@ -189,11 +189,6 @@ export const AddFeePackageModal = ({
               name='receiverFeeMin'
               label={t`policy-management.depositManagement.modalContent.tabelModal.minFee`}
               rules={[
-                {
-                  required: true,
-                  message:
-                    t`policy-management.depositManagement.validateRequired`.toString()
-                },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     if (value > getFieldValue('receiverFeeMax') && value) {
@@ -236,11 +231,6 @@ export const AddFeePackageModal = ({
               name='receiverFeeMax'
               label={t`policy-management.depositManagement.modalContent.tabelModal.maxFee`}
               rules={[
-                {
-                  required: true,
-                  message:
-                    t`policy-management.depositManagement.validateRequired`.toString()
-                },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     if (value < getFieldValue('receiverFeeMin') && value) {

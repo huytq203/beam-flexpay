@@ -103,11 +103,6 @@ export const UpdateFeePackageModal = ({
               name='transferorFeeMin'
               label={t`policy-management.depositManagement.modalContent.tabelModal.minFee`}
               rules={[
-                {
-                  required: true,
-                  message:
-                    t`policy-management.common.validation.noTransactionMinFeeValidate`.toString()
-                },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     if (value > getFieldValue('transferorFeeMax') && value) {
@@ -149,11 +144,6 @@ export const UpdateFeePackageModal = ({
               name='transferorFeeMax'
               label={t`policy-management.depositManagement.modalContent.tabelModal.maxFee`}
               rules={[
-                {
-                  required: true,
-                  message:
-                    t`policy-management.common.validation.noTransactionMaxFeeValidate`.toString()
-                },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     if (value < getFieldValue('transferorFeeMin') && value) {
