@@ -72,7 +72,8 @@ function TransactionAccountingConfigurationForm({
     page: 1,
     take: -1,
     query: '',
-    orderBy: 'createdAt'
+    orderBy: 'createdAt',
+    active: true
   })
   const [createAccounting, createAccountingStatus] = useCreateAccountingMutation()
   const [updateAccounting, updateAccountingStatus] = useUpdateAccountingMutation()
