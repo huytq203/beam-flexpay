@@ -1841,12 +1841,200 @@ export const fakeData = {
               realId: 2911
             },
           ]
+        },
+        // + Nhóm tài khoản nội bộ(Xem / thêm / sửa / xoá / mở khoá)
+        // + Quản lý tài khoản ví nội bộ(Xem / thêm / sửa / xoá / mở khoá)
+        // + Quản lý số dư ví nội bộ(Xem)
+        // + Cấu hình hạch toán(Xem / thêm / sửa / xoá / mở khoá)
+        {
+          id: 104,
+          createdAt: '2023-01-11T04:47:57.676Z',
+          updatedAt: '2023-01-11T04:47:57.676Z',
+          deletedAt: null,
+          name: 'internalwallet_group',
+          description: 'Nhóm tài khoản nội bộ',
+          featureId: 34,
+          permissions: [
+            {
+              id: 2920,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'internalaccountgroup:view',
+              description: 'Nhóm tài khoản nội bộ view',
+              order: 2,
+              realId: 2920
+            },
+            {
+              id: 2922,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'internalaccountgroup:create',
+              description: 'Nhóm tài khoản nội bộ create',
+              order: 3,
+              realId: 2922
+            },
+            {
+              id: 2921,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'internalaccountgroup:update',
+              description: 'Nhóm tài khoản nội bộ update',
+              order: 4,
+              realId: 2921
+            },
+            {
+              id: 2923,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'internalaccountgroup:delete',
+              description: 'Nhóm tài khoản nội bộ delete',
+              order: 5,
+              realId: 2923
+            },
+            {
+              id: 2924,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'internalaccountgroup:lock',
+              description: 'Nhóm tài khoản nội bộ lock',
+              order: 6,
+              realId: 2924
+            },
+          ]
+        },
+        {
+          id: 105,
+          createdAt: '2023-01-11T04:47:57.676Z',
+          updatedAt: '2023-01-11T04:47:57.676Z',
+          deletedAt: null,
+          name: 'internalwallet_group',
+          description: 'Quản lý tài khoản ví nội bộ',
+          featureId: 35,
+          permissions: [
+            {
+              id: 2930,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'internalaccount:view',
+              description: 'Quản lý tài khoản ví nội bộ view',
+              order: 2,
+              realId: 2930
+            },
+            {
+              id: 2932,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'internalaccount:create',
+              description: 'Quản lý tài khoản ví nội bộ create',
+              order: 3,
+              realId: 2932
+            },
+            {
+              id: 2931,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'internalaccount:update',
+              description: 'Quản lý tài khoản ví nội bộ update',
+              order: 4,
+              realId: 2931
+            },
+            {
+              id: 2933,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'internalaccount:delete',
+              description: 'Quản lý tài khoản ví nội bộ delete',
+              order: 5,
+              realId: 2933
+            },
+            {
+              id: 2934,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'internalaccount:lock',
+              description: 'Quản lý tài khoản ví nội bộ lock',
+              order: 6,
+              realId: 2934
+            },
+          ]
+        },
+        {
+          id: 106,
+          createdAt: '2023-01-11T04:47:57.676Z',
+          updatedAt: '2023-01-11T04:47:57.676Z',
+          deletedAt: null,
+          name: 'internalwallet_group',
+          description: 'Quản lý số dư ví nội bộ',
+          featureId: 36,
+          permissions: [
+            {
+              id: 2940,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'internalaccountbalance:view',
+              description: 'Quản lý số dư ví nội bộ view',
+              order: 2,
+              realId: 2940
+            },
+          ]
+        },
+        {
+          id: 107,
+          createdAt: '2023-01-11T04:47:57.676Z',
+          updatedAt: '2023-01-11T04:47:57.676Z',
+          deletedAt: null,
+          name: 'internalwallet_group',
+          description: 'Cấu hình hạch toán',
+          featureId: 37,
+          permissions: [
+            {
+              id: 2950,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'accountingconfig:view',
+              description: 'Cấu hình hạch toán view',
+              order: 2,
+              realId: 2950
+            },
+            {
+              id: 2952,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'accountingconfig:create',
+              description: 'Cấu hình hạch toán create',
+              order: 3,
+              realId: 2952
+            },
+            {
+              id: 2951,
+              createdAt: '2023-01-11T01:39:13.126Z',
+              updatedAt: '2023-01-11T01:39:13.126Z',
+              deletedAt: null,
+              permission: 'accountingconfig:update',
+              description: 'Cấu hình hạch toán update',
+              order: 4,
+              realId: 2951
+            },
+          ]
         }
       ]
     },
   ],
   statusCode: 200,
   message: ''
-}
+};
 
-export const getMePermission = [1, 3, 7, 9, 4, 6]
+export const getMePermission = [1, 3, 7, 9, 4, 6];
