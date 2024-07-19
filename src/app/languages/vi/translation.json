@@ -2294,7 +2294,9 @@
     "collection-transaction": "Giao dịch thu hộ",
     "collection-total": "Tổng tiền - Thu hộ",
     "percentPreDisbursementNeedPayment": "Tỉ lệ thu nợ",
-    "transactionOverview": "Tổng quan giao dịch"
+    "transactionOverview": "Tổng quan giao dịch",
+    "serviceName": "Tên dịch vụ",
+    "partnerName": "Tên đối tác"
   },
   "partner-repayment-list": {
     "fullname": "Họ tên khách hàng",
