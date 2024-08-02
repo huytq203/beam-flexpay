@@ -412,7 +412,7 @@ const OmipayWalletPaymentPolicyManagement = () => {
                 </Col>
                 <Col>
                   <ButtonAdd
-                    module='allet_payment'
+                    module='wallet_payment'
                     type='primary'
                     onClick={() => {
                       setMode(viewMode.create)

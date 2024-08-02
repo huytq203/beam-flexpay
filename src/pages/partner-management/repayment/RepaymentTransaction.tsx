@@ -218,6 +218,7 @@ function RepaymentTransaction() {
   }
 
   const handleExport = async () => {
+
     const _headers = new Headers()
     _headers.append('Authorization', `Bearer ${accessToken}`)
     var requestOptions: any = {
@@ -227,7 +228,9 @@ function RepaymentTransaction() {
     }
     let args = ''
     for (const key in search) {
-      args += key + '=' + (search as any)[key] + '&'
+      if ((search as any)[key]) {
+        args += key + '=' + (search as any)[key] + '&'
+      }
     }
     fetch(
       import.meta.env.VITE_API_URL + '/payment-order/export/excel?' + args,

@@ -2202,7 +2202,7 @@ export type PaymentOrderDetailDto = {
   paymentPeriodTo: string
   partner: number
   paymentServiceType: number
-  transactionStatus: number
+  transactionStatus: string
   balanceSource: number
   customerPaymentPartner: PaymentOrderCustomerPartnerDto
 }

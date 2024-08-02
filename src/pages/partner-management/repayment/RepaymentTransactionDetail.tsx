@@ -27,6 +27,20 @@ const RepaymentTransactionDetail = ({ isShow, onCancel, record }: props) => {
     }
   }
 
+  const getTransactionStatus = (value?: string) => {
+    switch (value) {
+      case 'SUCCESS':
+        return t('partner-repayment-list.success')
+      case 'APPROVED':
+        return t('partner-repayment-list.approved')
+      case 'FAILED':
+        return t('partner-repayment-list.failed')
+      default:
+        return t('partner-repayment-list.pending')
+    }
+
+  }
+
   return (
     <Modal
       open={isShow}
@@ -76,7 +90,7 @@ const RepaymentTransactionDetail = ({ isShow, onCancel, record }: props) => {
         <Descriptions.Item
           label={t('partner-repayment-list.transactionStatus')}
         >
-          {getStatus(record?.transactionStatus)}
+          {getTransactionStatus(record?.transactionStatus)}
         </Descriptions.Item>
         <Descriptions.Item label={t('partner-repayment-list.transactionDate')}>
           {dayjs(record?.createdAt).format(TimeFormat).toString()}

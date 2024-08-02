@@ -96,6 +96,7 @@ export const AddFeePackageModal = ({
           <Col span={12}>
             <Form.Item
               name='transferorFeeMin'
+              initialValue={undefined}
               label={t`policy-management.depositManagement.modalContent.tabelModal.minFee`}
               rules={[
                 ({ getFieldValue }) => ({
@@ -126,6 +127,7 @@ export const AddFeePackageModal = ({
               <InputNumber
                 type='text'
                 inputMode='numeric'
+                defaultValue={undefined}
                 style={{ width: '100%' }}
                 formatter={moneyInputFormatter}
                 onKeyDown={blockArrowValue}
@@ -167,6 +169,7 @@ export const AddFeePackageModal = ({
               <InputNumber
                 type='text'
                 inputMode='numeric'
+                defaultValue={undefined}
                 style={{ width: '100%' }}
                 formatter={moneyInputFormatter}
                 onKeyDown={blockArrowValue}
