@@ -146,6 +146,18 @@ function TransactionAccountingConfiguration() {
     },
     {
       align: 'center',
+      title: t('partner.serviceName'),
+      dataIndex: 'serviceName',
+      render: (_, record) => record?.serviceName ?? '-'
+    },
+    {
+      align: 'center',
+      title: t('partner.partnerName'),
+      dataIndex: 'partnerName',
+      render: (_, record) => record?.partnerName ?? '-'
+    },
+    {
+      align: 'center',
       title: t('partner.updatedDate'),
       dataIndex: 'updatedAt',
       render: (_, record) =>
@@ -336,7 +348,7 @@ function TransactionAccountingConfiguration() {
         onCancel={onCancel}
         onSubmit={refetchAccounting}
       />
-      
+
     </Card>
   )
 }
