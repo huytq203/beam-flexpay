@@ -19,6 +19,8 @@ variables:
   script:
     - docker build --build-arg ENV_FILE=$ENV_FILE -t $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA .
     - docker push -t $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA .
+  tags:
+    - beam_ci
 .deploy-module:
   allow_failure: false
   script:
@@ -39,9 +41,12 @@ deploy-dev:
     - .dev-env-module
     - .deploy-module
   needs: ["build-dev"]
+  tags:
+    - beam_cd_dev
 deploy-uat:
   stage: deploy
   extends:
     - .uat-env-module
     - .deploy-module
   needs: ["build-uat"]
+    - beam_cd_uat
