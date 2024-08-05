@@ -338,8 +338,8 @@ export const AddFeePackageModal = ({
         transferorFeeMax: undefined,
         receiverFlexibleFee: 0,
         receiverFixedFee: 0,
-        receiverFeeMin: 0,
-        receiverFeeMax: 0
+        receiverFeeMin: undefined,
+        receiverFeeMax: undefined
       }}
     >
       <Row gutter={GUTTER}>
