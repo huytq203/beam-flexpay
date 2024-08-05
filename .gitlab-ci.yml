@@ -29,7 +29,7 @@ build-dev:
     - .build-module
 build-uat:
   extends:
-    - .dev-uat-module
+    - .uat-env-module
     - .build-module
 deploy-dev:
   extends:
