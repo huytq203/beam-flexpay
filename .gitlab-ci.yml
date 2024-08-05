@@ -9,12 +9,12 @@ variables:
   variables:
     ENV: dev
     ENV_FILE: .env.dev
-    DOCKER_FILE: Dockerfile-dev
+    DOCKER_FILE: Dockerfile.dev
 .uat-env-module:
   variables:
     ENV: uat 
     ENV_FILE: .env.uat
-    DOCKER_FILE: Dockerfile-uat
+    DOCKER_FILE: Dockerfile.uat
 .build-module:
   allow_failure: false
   when: manual
