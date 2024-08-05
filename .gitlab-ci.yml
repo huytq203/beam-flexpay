@@ -49,4 +49,5 @@ deploy-uat:
     - .uat-env-module
     - .deploy-module
   needs: ["build-uat"]
+  tags:
     - beam_cd_uat
