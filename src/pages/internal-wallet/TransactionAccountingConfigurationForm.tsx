@@ -141,12 +141,12 @@ function TransactionAccountingConfigurationForm({
         break;
       case viewMode.view:
         form.setFieldsValue(selectedAccounting)
-        form.setFieldValue("serviceId", selectedAccounting?.service?.id)
-        form.setFieldValue("partnerId", selectedAccounting?.partner?.id)
+        form.setFieldValue("serviceId", selectedAccounting?.service?.name)
+        form.setFieldValue("partnerId", selectedAccounting?.partner?.name)
       case viewMode.update:
         form.setFieldsValue(selectedAccounting)
-        form.setFieldValue("serviceId", selectedAccounting?.service?.id)
-        form.setFieldValue("partnerId", selectedAccounting?.partner?.id)
+        form.setFieldValue("serviceId", selectedAccounting?.service?.name)
+        form.setFieldValue("partnerId", selectedAccounting?.partner?.name)
         break;
     }
   }, [mode, selectedAccounting])

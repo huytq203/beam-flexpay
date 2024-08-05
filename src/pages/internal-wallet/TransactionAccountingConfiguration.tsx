@@ -148,13 +148,13 @@ function TransactionAccountingConfiguration() {
       align: 'center',
       title: t('partner.serviceName'),
       dataIndex: 'serviceName',
-      render: (_, record) => record?.serviceName ?? '-'
+      render: (_, record) => record?.service?.name ?? '-'
     },
     {
       align: 'center',
       title: t('partner.partnerName'),
       dataIndex: 'partnerName',
-      render: (_, record) => record?.partnerName ?? '-'
+      render: (_, record) => record?.partner?.name ?? '-'
     },
     {
       align: 'center',
