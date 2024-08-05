@@ -18,7 +18,7 @@ variables:
   when: manual
   script:
     - docker build --build-arg ENV_FILE=$ENV_FILE -t $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA .
-    - docker push -t $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA .
+    - docker push $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA
   tags:
     - beam_ci
 .deploy-module:
