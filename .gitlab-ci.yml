@@ -21,7 +21,7 @@ variables:
     - docker push -t $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA .
 .deploy-module:
   allow_failure: false
-  scripts:
+  script:
     - docker service update --with-registry-auth --image $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA beam_cms
 build-dev:
   extends:
