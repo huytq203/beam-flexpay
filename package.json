@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:dev": "REACT_APP_ENV=dev vite build",
+    "build:uat": "REACT_APP_UAT=uat vite build",
     "lint": "tsc",
     "api": "npx @rtk-query/codegen-openapi openapi-config.js",
     "preview": "vite preview"
