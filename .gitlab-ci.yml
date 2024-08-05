@@ -24,19 +24,23 @@ variables:
   script:
     - docker service update --with-registry-auth --image $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA beam_cms
 build-dev:
+  stage: build
   extends:
     - .dev-env-module
     - .build-module
 build-uat:
+  stage: build
   extends:
     - .uat-env-module
     - .build-module
 deploy-dev:
+  stage: deploy
   extends:
     - .dev-env-module
     - .deploy-module
   needs: ["build-dev"]
 deploy-uat:
+  stage: deploy
   extends:
     - .uat-env-module
     - .deploy-module
