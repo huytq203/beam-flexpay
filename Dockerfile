@@ -8,8 +8,6 @@ RUN yarn install
 
 COPY . .
 
-COPY $ENV_FILE .env
-
 RUN yarn build
 
 # 2. Serve

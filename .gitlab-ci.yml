@@ -13,32 +13,20 @@ variables:
   variables:
     ENV: uat 
     ENV_FILE: .env.uat
-.build-module:
-  allow_failure: false
-  when: manual
-  script:
-    - docker build --build-arg ENV_FILE=$ENV_FILE -t $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA .
-    - docker push $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA
-  tags:
-    - beam_ci
 .deploy-module:
   allow_failure: false
   script:
-    - docker service update --with-registry-auth --image $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA beam_cms
-build-dev:
-  stage: build
-  extends:
-    - .dev-env-module
-    - .build-module
-build-uat:
-  stage: build
-  extends:
-    - .uat-env-module
-    - .build-module
+    - docker service update --with-registry-auth --image $DOCKER_IMAGE:$CI_COMMIT_SHA beam_cms
+build-module:
+  allow_failure: false
+  script:
+    - docker build -t $DOCKER_IMAGE:$CI_COMMIT_SHA .
+    - docker push $DOCKER_IMAGE:$CI_COMMIT_SHA
+  tags:
+    - beam_ci
 deploy-dev:
   stage: deploy
   extends:
-    - .dev-env-module
     - .deploy-module
   needs: ["build-dev"]
   tags:
@@ -46,7 +34,6 @@ deploy-dev:
 deploy-uat:
   stage: deploy
   extends:
-    - .uat-env-module
     - .deploy-module
   needs: ["build-uat"]
   tags:
