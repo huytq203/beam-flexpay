@@ -183,13 +183,21 @@ export const PermissionGroupModal = ({
     payloadPermissionsArr = listIdChecked.filter(
       (el: number) => !initListId.includes(el)
     )
+    const payLoadPermissionsInput = listChecked.filter(
+      (el) => !initListChecked.includes(el)
+    )
+
+    const payLoadPermissionsDelete = initListChecked.filter(
+      (el) => !listChecked.includes(el)
+    )
+
     const payload = {
       id,
-      permissionIds: payloadPermissionsArr,
-      permissionDeleteIds:
-        payloadListIdUnchecked.length > 0
-          ? payloadListIdUnchecked
-          : listIdUnchecked
+      permissionNames: payLoadPermissionsInput,
+      permissionDeleteNames:
+        payLoadPermissionsDelete.length > 0
+          ? payLoadPermissionsDelete
+          : listUnchecked,
     }
     const data: any = await updateAdminPermission(payload)
     if (data.data.statusCode === 200) {
