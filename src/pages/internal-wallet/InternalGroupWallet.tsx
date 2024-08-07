@@ -147,7 +147,7 @@ function InternalGroupWallet() {
         return (
           <Space>
             <ButtonUpdate
-              module='internal-wallet'
+              module='internalwallet'
               onClick={() => {
                 setMode(viewMode.update)
                 setSelected(record)
@@ -245,7 +245,7 @@ function InternalGroupWallet() {
               >
                 <Col>
                   <ButtonAdd
-                    module='internal-wallet'
+                    module='internalwallet'
                     onClick={() => {
                       setMode(viewMode.create)
                       addFormToggle()

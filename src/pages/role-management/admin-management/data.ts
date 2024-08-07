@@ -1895,16 +1895,6 @@ export const fakeData = {
               order: 5,
               realId: 2923
             },
-            {
-              id: 2924,
-              createdAt: '2023-01-11T01:39:13.126Z',
-              updatedAt: '2023-01-11T01:39:13.126Z',
-              deletedAt: null,
-              permission: 'internalaccountgroup:lock',
-              description: 'Nhóm tài khoản nội bộ lock',
-              order: 6,
-              realId: 2924
-            },
           ]
         },
         {
@@ -1955,16 +1945,6 @@ export const fakeData = {
               description: 'Quản lý tài khoản ví nội bộ delete',
               order: 5,
               realId: 2933
-            },
-            {
-              id: 2934,
-              createdAt: '2023-01-11T01:39:13.126Z',
-              updatedAt: '2023-01-11T01:39:13.126Z',
-              deletedAt: null,
-              permission: 'internalaccount:lock',
-              description: 'Quản lý tài khoản ví nội bộ lock',
-              order: 6,
-              realId: 2934
             },
           ]
         },
