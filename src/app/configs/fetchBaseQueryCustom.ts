@@ -199,7 +199,7 @@ export const fetchBaseQueryCustom: BaseQueryFn<
       : window.location.pathname
   const isLoading = (args as any)?.params?.isLoading
   console.log((args as any).url, pathName);
-  
+
   isLoading !== false &&
     !isWhiteList((args as any).url, pathName) &&
     showLoading()
@@ -214,9 +214,9 @@ export const fetchBaseQueryCustom: BaseQueryFn<
             window.location.href = '/auth/login'
           }, 700)
         }
-        //else {
-          //openNotification((result.error.data as any).message)
-        //}
+        else {
+          openNotification((result.error.data as any).message)
+        }
         break
       case 400:
         openNotification((result.error.data as any).message)
