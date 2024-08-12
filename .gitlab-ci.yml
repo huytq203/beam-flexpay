@@ -5,6 +5,7 @@ variables:
   DOCKER_REGISTRY: "registry.beamewa.com.vn"
   DOCKER_IMAGE: "$DOCKER_REGISTRY/beam-uat/cms-frontend"
   DOCKER_TAG: "$CI_COMMIT_SHA"
+  NODE_OPTIONS: "--max-old-space-size=3072"
 .dev-env-module:
   variables:
     ENV: dev
@@ -19,6 +20,7 @@ variables:
   allow_failure: false
   when: manual
   script:
+    - echo $NODE_OPTIONS
     - docker build -f $DOCKER_FILE -t $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA .
     - docker push $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA
   tags:
