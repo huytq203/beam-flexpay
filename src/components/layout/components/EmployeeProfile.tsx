@@ -48,7 +48,7 @@ function EmployeeProfile(props: CustomModalProps) {
   }, [profile])
 
   useEffect(() => {
-    if (open) getProfile.refetch()
+    if (open) getProfile.refetch().then((res) => form.setFieldsValue(res.data))
   }, [open])
 
   return (
@@ -83,6 +83,7 @@ function EmployeeProfile(props: CustomModalProps) {
           <Input
             type='email'
             readOnly
+            value={profile.email}
             bordered={false}
           />
         </Form.Item>

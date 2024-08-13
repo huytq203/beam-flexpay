@@ -1,27 +1,27 @@
-import FileUpload from '@components/upload/FileUpload'
-import { openNotification } from '@configs/fetchBaseQueryCustom'
-import { GUTTER } from '@constants/appConstant'
-import { PARTNER_TYPE, PARTNER_TYPE_OPTIONS } from '@constants/partnerOptions'
+import FileUpload from '@components/upload/FileUpload';
+import { openNotification } from '@configs/fetchBaseQueryCustom';
+import { GUTTER } from '@constants/appConstant';
+import { PARTNER_TYPE, PARTNER_TYPE_OPTIONS } from '@constants/partnerOptions';
 import {
   usePaymentPartnerCreateMutation,
   usePaymentPartnerUpdateMutation
-} from '@services/cmsPaymentParner'
-import { usePaymentServiceFindAllQuery } from '@services/cmsPaymentService'
-import { PaymentPartnerDetailDto } from '@type/application'
-import { Button, Col, Form, Input, Modal, Row, Select } from 'antd'
-import { useForm } from 'antd/es/form/Form'
-import { useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
+} from '@services/cmsPaymentParner';
+import { usePaymentServiceFindAllQuery } from '@services/cmsPaymentService';
+import { PaymentPartnerDetailDto } from '@type/application';
+import { Button, Col, Form, Input, Modal, Row, Select } from 'antd';
+import { useForm } from 'antd/es/form/Form';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import './index.scss'
+import './index.scss';
 
 type props = {
-  title: string
-  record?: PaymentPartnerDetailDto | undefined
-  isShow: boolean
-  onCancel: VoidFunction
-  type: PARTNER_TYPE
-}
+  title: string;
+  record?: PaymentPartnerDetailDto | undefined;
+  isShow: boolean;
+  onCancel: VoidFunction;
+  type: PARTNER_TYPE;
+};
 
 export default function PartnerContactForm({
   record,
@@ -30,66 +30,66 @@ export default function PartnerContactForm({
   title,
   type
 }: props) {
-  const { t } = useTranslation()
-  const [form] = useForm()
+  const { t } = useTranslation();
+  const [form] = useForm();
 
   const { data: services } = usePaymentServiceFindAllQuery({
     type: type,
     active: true
-  })
+  });
 
   const [createPartner, { isLoading: createLoading }] =
-    usePaymentPartnerCreateMutation()
+    usePaymentPartnerCreateMutation();
   const [updatePartner, { isLoading: updateLoading }] =
-    usePaymentPartnerUpdateMutation()
+    usePaymentPartnerUpdateMutation();
 
   const onSubmit = async () => {
-    const record = form.getFieldsValue()
-    let res: any
-    var formdata = new FormData()
+    const record = form.getFieldsValue();
+    let res: any;
+    var formdata = new FormData();
     if (form.getFieldValue('file'))
       formdata.append(
         'file',
         form.getFieldValue('file').originFileObj,
         form.getFieldValue('file').name
-      )
-    formdata.append('name', record.name)
-    formdata.append('description', record.description)
-    formdata.append('active', record.active)
-    formdata.append('paymentServiceId', record.paymentServiceId)
+      );
+    formdata.append('name', record.name);
+    formdata.append('description', record.description);
+    formdata.append('active', record.active);
+    formdata.append('paymentServiceId', record.paymentServiceId);
 
     if (record.id) {
       updatePartner({ id: record.id, body: formdata })
         .unwrap()
         .then(() => {
-          openNotification(t('messages.update-success'), 'success')
-          onCancel()
-        })
+          openNotification(t('messages.update-success'), 'success');
+          onCancel();
+        });
     } else {
       createPartner(formdata)
         .unwrap()
         .then(() => {
-          openNotification(t('messages.create-success'), 'success')
-          onCancel()
-        })
+          openNotification(t('messages.create-success'), 'success');
+          onCancel();
+        });
     }
-  }
+  };
 
   useEffect(() => {
     if (isShow && record && record.id) {
       form.setFieldsValue({
         id: record.id,
-        paymentServiceId: record.paymentService.id,
+        paymentServiceId: record.paymentService.name,
         description: record.description,
         name: record.name,
         active: record.active,
         logo: record.logo
-      })
+      });
     }
     if (!isShow) {
-      form.resetFields()
+      form.resetFields();
     }
-  }, [isShow, record])
+  }, [isShow, record]);
 
   return (
     <Modal
@@ -104,7 +104,7 @@ export default function PartnerContactForm({
         form={form}
         initialValues={{
           type: type,
-          active: true
+          active: true,
         }}
       >
         <Form.Item
@@ -127,6 +127,7 @@ export default function PartnerContactForm({
           name='paymentServiceId'
         >
           <Select
+            defaultValue={record?.paymentService?.name}
             options={services?.data.map((s) => ({
               label: s.name,
               value: s.id
@@ -197,5 +198,5 @@ export default function PartnerContactForm({
         </Row>
       </Form>
     </Modal>
-  )
+  );
 }
