@@ -289,7 +289,7 @@ function TransactionAccountingConfiguration() {
               >
                 <Col>
                   <ButtonAdd
-                    module='internal-wallet'
+                    module='internalwallet'
                     onClick={() => {
                       setMode(viewMode.create)
                       setSelectedAccounting(undefined)

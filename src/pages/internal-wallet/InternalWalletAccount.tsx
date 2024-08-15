@@ -122,7 +122,7 @@ function InternalWalletAccount() {
                 setRecordSelected(record)
                 addFormToggle()
               }}
-              module='internal-wallet'
+              module='internalwallet'
             />
             <Tooltip
               placement='topLeft'
