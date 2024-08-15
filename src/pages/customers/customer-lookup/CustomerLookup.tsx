@@ -1,13 +1,13 @@
-import ButtonSearch from '@components/button-search/ButtonSearch'
-import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER } from '@constants/appConstant'
-import { TimeFormat, TimeFullFormat } from '@constants/datetime'
-import { useLazyCustomerFindOneByAccountNumberQuery } from '@services/cmsService'
+import ButtonSearch from '@components/button-search/ButtonSearch';
+import SearchBar from '@components/search-bar/SearchBar';
+import { GUTTER } from '@constants/appConstant';
+import { TimeFormat, TimeFullFormat } from '@constants/datetime';
+import { useLazyCustomerFindOneByAccountNumberQuery } from '@services/cmsService';
 import {
   CustomerBalanceDetailDto,
   TransactionDto,
   TransactionFindAllApiArg
-} from '@type/application'
+} from '@type/application';
 import {
   convertLocalStringNumber,
   getStatusAccountText,
@@ -16,45 +16,45 @@ import {
   getTagColor,
   getTransactionStatus,
   getTransactionType
-} from '@utils/helperFunctions'
-import { Card, Col, Descriptions, Input, Row, Tag, Typography } from 'antd'
-import moment from 'moment'
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
+} from '@utils/helperFunctions';
+import { Card, Col, Descriptions, Input, Row, Tag, Typography } from 'antd';
+import moment from 'moment';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import CellContent from '@components/cell-content/CellContent'
-import TransactionTable from '@components/transaction-table/TransactionTable'
-import { ColumnsType } from 'antd/es/table'
-import dayjs from 'dayjs'
-import '../style.scss'
+import CellContent from '@components/cell-content/CellContent';
+import TransactionTable from '@components/transaction-table/TransactionTable';
+import { ColumnsType } from 'antd/es/table';
+import dayjs from 'dayjs';
+import '../style.scss';
 
-const { Text } = Typography
+const { Text } = Typography;
 
 function CustomerLookup() {
-  const { t: trans } = useTranslation()
-  const [search, setSearch] = useState<string>()
+  const { t: trans } = useTranslation();
+  const [search, setSearch] = useState<string>();
   const [historySearch, setHistorySearch] = useState<TransactionFindAllApiArg>({
     page: 1,
     take: 10
-  })
-  const [customerInfo, setCustomerInfo] = useState<CustomerBalanceDetailDto>()
+  });
+  const [customerInfo, setCustomerInfo] = useState<CustomerBalanceDetailDto>();
 
   const [getCustomerByAccountNumber] =
-    useLazyCustomerFindOneByAccountNumberQuery()
+    useLazyCustomerFindOneByAccountNumberQuery();
 
   const lookUp = async () => {
     if (search) {
       setHistorySearch({
         ...historySearch,
         accountNumber: search
-      })
+      });
       getCustomerByAccountNumber({ accountNumber: search })
         .unwrap()
         .then((result: CustomerBalanceDetailDto) => {
-          setCustomerInfo(result)
-        })
+          setCustomerInfo(result);
+        });
     }
-  }
+  };
 
   const transferHistoryColumns: ColumnsType<TransactionDto> = [
     {
@@ -64,9 +64,9 @@ function CustomerLookup() {
       align: 'center',
       render(value, record, index) {
         if (historySearch.page === 1) {
-          return index + historySearch.page
+          return index + historySearch.page;
         } else {
-          return index + ((historySearch.page - 1) * historySearch.take + 1)
+          return index + ((historySearch.page - 1) * historySearch.take + 1);
         }
       },
       fixed: 'left'
@@ -154,7 +154,7 @@ function CustomerLookup() {
     //     />
     //   )
     // }
-  ]
+  ];
 
   return (
     <Card
@@ -169,7 +169,7 @@ function CustomerLookup() {
                 <Input
                   onChange={(e) => {
                     if (e.target.value !== '') {
-                      setSearch(e.target.value)
+                      setSearch(e.target.value);
                     }
                   }}
                   placeholder={trans('placeholders.phone').toString()}
@@ -271,29 +271,102 @@ function CustomerLookup() {
         <Descriptions.Item label={trans('labels.totalBalance')}>
           {customerInfo?.balances
             ? convertLocalStringNumber(
-                customerInfo?.balances?.[0]?.availableMoney +
-                  customerInfo?.balances?.[0]?.freezedMoney
-              )
+              customerInfo?.balances?.[0]?.availableMoney +
+              customerInfo?.balances?.[0]?.freezedMoney
+            )
             : '0'}
         </Descriptions.Item>
         <Descriptions.Item label={trans('labels.availableBalances')}>
           {customerInfo?.balances?.[0]?.availableMoney
             ? convertLocalStringNumber(
-                customerInfo?.balances?.[0]?.availableMoney
-              )
+              customerInfo?.balances?.[0]?.availableMoney
+            )
             : '0'}
         </Descriptions.Item>
         <Descriptions.Item label={trans('labels.lockedBalance')}>
           {customerInfo?.balances?.[0]?.freezedMoney ||
-          customerInfo?.balances?.[0]?.freezedMoney !== 0
+            customerInfo?.balances?.[0]?.freezedMoney !== 0
             ? convertLocalStringNumber(
-                customerInfo?.balances?.[0]?.freezedMoney
-              )
+              customerInfo?.balances?.[0]?.freezedMoney
+            )
             : '0'}
         </Descriptions.Item>
-        <Descriptions.Item label={trans('customer.banks')}>
-          {/* TODO: banks.map -> watting for api */}
+        <Descriptions.Item label={trans('labels.createdWalletDate')}>
+          {customerInfo?.createdAt ? moment(
+            new Date(customerInfo.createdAt),
+            TimeFormat
+          ).format(TimeFormat) : <Text>{trans('labels.nodata')}</Text>}
         </Descriptions.Item>
+        <Descriptions.Item label={trans('labels.verifiedWalletDate')}>
+          {customerInfo?.customerVerification ? moment(
+            new Date(customerInfo?.customerVerification?.createdAt),
+            TimeFormat
+          ).format(TimeFormat) : <Text>{trans('labels.nodata')}</Text>}
+        </Descriptions.Item>
+        {/* ngày khóa ví */}
+        <Descriptions.Item label={trans('labels.lockedWalletDate')}>
+          {(customerInfo?.isLocked && customerInfo?.lockedAt) ? moment(
+            new Date(customerInfo?.lockedAt),
+            TimeFormat
+          ).format(TimeFormat) : <Text>{trans('labels.nodata')}</Text>}
+        </Descriptions.Item>
+        {/* ngày đóng băng */}
+        <Descriptions.Item label={trans('labels.frozenWalletDate')}>
+          {(customerInfo?.balances[0] && customerInfo?.balances[0]?.freezedMoney) ? moment(
+            new Date(customerInfo?.balances[0]?.updatedAt),
+            TimeFormat
+          ).format(TimeFormat
+          ) : <Text>{trans('labels.nodata')}</Text>}
+        </Descriptions.Item>
+      </Descriptions>
+      <Descriptions
+        bordered
+        size='small'
+        labelStyle={{ fontWeight: 'bold' }}
+        title={trans('customer.banks')}
+        className='mb-16'
+      >
+        {customerInfo?.paymentLinks && customerInfo?.paymentLinks?.length > 0 &&
+          customerInfo?.paymentLinks?.map((item, index) => (
+            <>
+              <Descriptions.Item label={trans('customer.banks')} key={index}>
+                {item.provider}
+              </Descriptions.Item>
+              <Descriptions.Item label={trans('customer.linkedDate')} key={index}>
+                {moment(
+                  new Date(item.createdAt),
+                  TimeFormat
+                ).format(TimeFormat)}
+              </Descriptions.Item>
+              <Descriptions.Item label={trans('customer.cancelLinkedDate')} key={index}>
+                {item.deletedAt ? moment(
+                  new Date(item.deletedAt),
+                  TimeFormat
+                ).format(TimeFormat) : <Text>{trans('labels.nodata')}</Text>}
+              </Descriptions.Item>
+            </>
+          ))}
+        {/* <Descriptions.Item label={trans('customer.banks')}>
+          {customerInfo?.paymentLinks && customerInfo?.paymentLinks?.length > 0
+            ? customerInfo?.paymentLinks?.[0].provider
+            : '0'}
+        </Descriptions.Item>
+        <Descriptions.Item label={trans('customer.linkedDate')}>
+          {customerInfo?.paymentLinks && customerInfo?.paymentLinks?.length > 0
+            ? moment(
+                new Date(customerInfo?.paymentLinks?.[0].createdAt),
+                TimeFormat
+              ).format(TimeFormat)
+            : '0'}
+        </Descriptions.Item>
+        <Descriptions.Item label={trans('customer.cancelLinkedDate')}>
+          {customerInfo?.paymentLinks && customerInfo?.paymentLinks?.length > 0
+            ? moment(
+              new Date(customerInfo?.paymentLinks?.[0].deletedAt),
+                TimeFormat
+              ).format(TimeFormat)
+            : '0'}
+        </Descriptions.Item> */}
       </Descriptions>
 
       <h3 className='mb-16'>{trans('customer.transaction')}</h3>
@@ -311,7 +384,7 @@ function CustomerLookup() {
         className='mb-16'
       ></Descriptions>
     </Card>
-  )
+  );
 }
 
-export default CustomerLookup
+export default CustomerLookup;
