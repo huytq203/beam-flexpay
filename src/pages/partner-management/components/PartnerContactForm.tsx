@@ -35,7 +35,8 @@ export default function PartnerContactForm({
 
   const { data: services } = usePaymentServiceFindAllQuery({
     type: type,
-    active: true
+    active: true,
+    take: 50,
   });
 
   const [createPartner, { isLoading: createLoading }] =
@@ -79,7 +80,8 @@ export default function PartnerContactForm({
     if (isShow && record && record.id) {
       form.setFieldsValue({
         id: record.id,
-        paymentServiceId: record.paymentService.name,
+        paymentServiceId: record.paymentService.id,
+        paymentServiceName: record.paymentService.name,
         description: record.description,
         name: record.name,
         active: record.active,
