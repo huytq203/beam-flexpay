@@ -33,6 +33,10 @@ import { openNotification } from '@configs/fetchBaseQueryCustom'
 import { internalWalletGroupStatusOptions } from '@constants/options'
 import { pretty } from '@utils/qs'
 import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions'
+import { BsEyeFill } from 'react-icons/bs';
+import { pageEnum, viewMode as viewModeHistory } from '../../app/types/policyManagement';
+import { PolicyManagementModal } from '../policy-management/policy-management-modal/PolicyManagementModal';
+
 
 function InternalGroupWallet() {
   const [form] = Form.useForm()
@@ -46,6 +50,23 @@ function InternalGroupWallet() {
     query: '',
     orderBy: 'createdAt'
   })
+
+  const [open, setOpen] = useState<boolean>(false);
+  const [modeHistory, setModeHistory] = useState<viewModeHistory>(viewModeHistory.create);
+  const [selectedId, setSelectedId] = useState<number>();
+  const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false);
+
+  const onCloseConfirmModal = () => {
+    setVisibleConfirmModal(false);
+  };
+
+  const onCancelHistory = () => {
+    if (modeHistory === viewModeHistory.history || modeHistory === viewModeHistory.delete) {
+      setOpen(false);
+    } else {
+      setVisibleConfirmModal(true);
+    }
+  }
   const [addForm, { toggle: addFormToggle }] = useToggle()
 
   const { data: internalWalletGroup } = useGetListWalletGroupsQuery(search)
@@ -146,6 +167,15 @@ function InternalGroupWallet() {
       render(value, record, index) {
         return (
           <Space>
+            <Tooltip title={t`buttons.history`}>
+              <Button
+                icon={<BsEyeFill />}
+                onClick={() => {
+                  setModeHistory(viewModeHistory.history);
+                  setSelectedId(record.id);
+                  setOpen(true);
+                }} />
+            </Tooltip>
             <ButtonUpdate
               module='internalwallet'
               onClick={() => {
@@ -301,6 +331,17 @@ function InternalGroupWallet() {
           group={selected}
         />
       )}
+      <PolicyManagementModal
+        onCloseConfirmModal={onCloseConfirmModal}
+        visibleConfirmModal={visibleConfirmModal}
+        page={pageEnum.internalGroupWallet}
+        onCancel={onCancelHistory}
+        open={open}
+        setOpen={setOpen}
+        recordId={selectedId}
+        mode={modeHistory}
+        entityType='INTERNAL_WALLET_GROUP'
+      />
     </Card>
   )
 }

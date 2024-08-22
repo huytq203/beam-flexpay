@@ -415,6 +415,7 @@ const LimitAndRegulation = () => {
         open={open}
         setOpen={setOpen}
         mode={mode}
+        entityType='SYSTEM_FEE_MANAGEMENT'
       />
     </Card>
   )

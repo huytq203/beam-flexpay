@@ -38,7 +38,10 @@ import dayjs from 'dayjs'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AiFillDelete, AiFillEye, AiFillSound } from 'react-icons/ai'
+import { BsEyeFill } from 'react-icons/bs';
 import { FaPen } from 'react-icons/fa'
+import { pageEnum, viewMode } from '../../../app/types/policyManagement';
+import { PolicyManagementModal } from '../../policy-management/policy-management-modal/PolicyManagementModal';
 import NotificationModal from './notification-modal/NotificationModal'
 
 function NotificationManagement() {
@@ -61,6 +64,11 @@ function NotificationManagement() {
   const [deleteNotification] = useLazyDeleteNotificationQuery()
   const [publishNotification] = useLazyPublishNotificationQuery()
 
+
+  const [openHistory, setOpenHistory] = useState<boolean>(false);
+  const [modeHistory, setModeHistory] = useState<viewMode>(viewMode.create);
+  const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false);
+
   const toggleMode = (state: boolean) => setOpen(state)
 
   const handleModal = (action: notificationMode, id?: string) => {
@@ -68,6 +76,19 @@ function NotificationManagement() {
     if (id) setSelectedId(id)
     setMode(action)
   }
+
+  const onCloseConfirmModal = () => {
+    setVisibleConfirmModal(false);
+  }
+
+  const onCancelHistory = () => {
+    if (modeHistory === viewMode.history || modeHistory === viewMode.delete) {
+      setOpenHistory(false);
+    } else {
+      setVisibleConfirmModal(true);
+    }
+  }
+
 
   /**
    * function handle when click delete button
@@ -255,6 +276,17 @@ function NotificationManagement() {
           gutter={GUTTER}
           justify='center'
         >
+          <Col>
+            <Tooltip title={t`buttons.history`}>
+              <Button
+                icon={<BsEyeFill />}
+                onClick={() => {
+                  setModeHistory(viewMode.history);
+                  setSelectedId(record.id);
+                  setOpenHistory(true);
+                }} />
+            </Tooltip>
+          </Col>
           <Col>
             <Tooltip
               placement='top'
@@ -486,6 +518,18 @@ function NotificationManagement() {
           refetch={refetch}
         />
       )}
+      <PolicyManagementModal
+        onCloseConfirmModal={onCloseConfirmModal}
+        visibleConfirmModal={visibleConfirmModal}
+        refetch={refetch}
+        page={pageEnum.notificationManagement}
+        onCancel={onCancelHistory}
+        open={openHistory}
+        setOpen={setOpenHistory}
+        mode={modeHistory}
+        recordId={Number(selectedId)}
+        entityType='NOTIFICATION_CONTEXT_SETTING'
+      />
     </Card>
   )
 }

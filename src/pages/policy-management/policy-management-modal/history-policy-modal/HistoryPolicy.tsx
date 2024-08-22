@@ -1,55 +1,55 @@
-import CellContent from '@components/cell-content/CellContent'
-import { TimeFullFormat } from '@constants/datetime'
-import { historyType } from '@constants/options'
-import { SelectAdminAccount } from '@pages/policy-management/components/SelectAdminAccount'
-import { useGetListHistoryQuery } from '@services/apiDirectDeposit'
-import { HistoryPolicyInterface, pageEnum } from '@type/policyManagement'
-import { formatHisoryData, getTypeHistory } from '@utils/helperFunctions'
-import { Button, Col, DatePicker, Empty, Form, Row, Select } from 'antd'
-import { useForm } from 'antd/es/form/Form'
-import Table, { ColumnsType } from 'antd/es/table'
-import dayjs from 'dayjs'
-import { useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import CellContent from '@components/cell-content/CellContent';
+import { TimeFullFormat } from '@constants/datetime';
+import { historyType } from '@constants/options';
+import { SelectAdminAccount } from '@pages/policy-management/components/SelectAdminAccount';
+import { useGetListHistoryQuery } from '@services/apiDirectDeposit';
+import { HistoryPolicyInterface, pageEnum } from '@type/policyManagement';
+import { formatHistoryData, formatObjectHistory, getTypeHistory } from '@utils/helperFunctions';
+import { Button, Col, DatePicker, Empty, Form, Row, Select } from 'antd';
+import { useForm } from 'antd/es/form/Form';
+import Table, { ColumnsType } from 'antd/es/table';
+import dayjs from 'dayjs';
+import { isString } from 'lodash';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type HistoryPolicyType = {
-  policyId: number
-  onCancel: () => void
-  module: pageEnum
-}
+  policyId?: number;
+  onCancel: () => void;
+  module: pageEnum;
+  entityType: string;
+};
 
 type SearchType = {
-  page: number
-  take: number
-  orderBy: string
-  systemFeeManagementId?: number
-  updatedAt?: string
-  historyType?: string
-  updater?: string
-}
+  page: number;
+  take: number;
+  orderBy: string;
+  systemFeeManagementId?: number;
+  updatedAt?: string;
+  historyType?: string;
+  updater?: string;
+};
 
 export const HistoryPolicy = ({
   policyId,
   onCancel,
-  module
+  module,
+  entityType
 }: HistoryPolicyType) => {
-  const { t: trans } = useTranslation()
-  const [form] = useForm()
+  const { t: trans } = useTranslation();
+  const [form] = useForm();
 
   const [search, setSearch] = useState<SearchType>({
     page: 1,
     take: 10,
     orderBy: 'updater'
-  })
+  });
 
   const { data } = useGetListHistoryQuery({
     entityId: policyId,
-    entityType:
-      module === pageEnum.limitAndRegulations
-        ? 'TRANSACTION_LIMIT'
-        : 'SYSTEM_FEE_MANAGEMENT',
+    entityType: entityType,
     ...search
-  })
+  });
 
   const renderValue = (value: string, record: HistoryPolicyInterface) => {
     if (
@@ -57,13 +57,30 @@ export const HistoryPolicy = ({
       record.valueType === 'Ngày áp dụng' ||
       record.valueType === 'Thời gian áp dụng'
     ) {
-      return dayjs(value).format(TimeFullFormat)
+      return dayjs(value).format(TimeFullFormat);
     } else if (record.valueType === 'Loại phí') {
-    return value == "FIXED" ? "Cố định" : "Linh hoạt"
+      return value == "FIXED" ? "Cố định" : "Linh hoạt";
     } else {
-      return <CellContent data={formatHisoryData(value)} />
+      const objectValue = JSON.parse(value.toString());
+      if (value && isString(objectValue)) {
+        return <span>{value}</span>;
+      }
+      return (
+        <>
+          {objectValue &&
+            Object.entries(objectValue).map(([key, value], index) => (
+              <div key={index} style={{ marginBottom: "10px" }}>
+                <h4>{key}:</h4>
+                <div
+                  dangerouslySetInnerHTML={{ __html: formatObjectHistory(value) }}
+                  style={{ whiteSpace: "pre-wrap" }}
+                />
+              </div>
+            ))}
+        </>
+      );
     }
-  }
+  };
 
   const columns: ColumnsType<HistoryPolicyInterface> = useMemo(
     () => [
@@ -136,16 +153,16 @@ export const HistoryPolicy = ({
       }
     ],
     []
-  )
+  );
 
   const historyList = useMemo(() => {
     if (data?.data && data.data.length > 0) {
       return data?.data?.map((item: HistoryPolicyInterface, index: number) => ({
         no: ((search?.page ?? 1) - 1) * 10 + index + 1,
         ...item
-      }))
-    } else return []
-  }, [data?.data])
+      }));
+    } else return [];
+  }, [data?.data]);
 
   const submit = (value: any) => {
     const newQuery = {
@@ -155,18 +172,18 @@ export const HistoryPolicy = ({
       updatedAt: value?.updatedAt
         ? dayjs(value?.updatedAt).toISOString()
         : undefined
-    }
-    setSearch(newQuery)
-  }
+    };
+    setSearch(newQuery);
+  };
 
   const reload = (field: string) => {
     const newSearch = {
       ...search,
       page: 1,
       [field]: undefined
-    }
-    setSearch(newSearch)
-  }
+    };
+    setSearch(newSearch);
+  };
 
   return (
     <>
@@ -210,7 +227,7 @@ export const HistoryPolicy = ({
                 placeholder={trans`policy-management.history.placeholders.update-date`.toString()}
                 onChange={(e) => {
                   if (!e) {
-                    reload('updatedAt')
+                    reload('updatedAt');
                   }
                 }}
               />
@@ -264,7 +281,7 @@ export const HistoryPolicy = ({
             setSearch({
               ...search,
               page
-            })
+            });
           }
         }}
       />
@@ -275,5 +292,5 @@ export const HistoryPolicy = ({
         >{trans`buttons.close`}</Button>
       </div>
     </>
-  )
-}
+  );
+};

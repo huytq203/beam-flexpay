@@ -397,7 +397,8 @@
     "authStatus": "Trạng thái xác thực",
     "cancel": "Hủy",
     "search": "Tìm kiếm",
-    "cancelMessage": "Hủy tài khoản mọi thông tin bị xóa trên hệ thống?"
+    "cancelMessage": "Hủy tài khoản mọi thông tin bị xóa trên hệ thống?",
+    "history":"Lịch sử hủy tài khoản"
   },
   "transfer-history": {
     "number": "STT",
@@ -1763,7 +1764,8 @@
         "LINK": "Liên kết",
         "DEPOSIT": "Nạp tiền",
         "WITHDRAW": "Rút tiền",
-        "GATEWAY": "Cổng thanh toán"
+        "GATEWAY": "Cổng thanh toán",
+        "ATM_CARD": "Thẻ ATM"
       }
     },
     "message": {

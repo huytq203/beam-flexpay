@@ -1,11 +1,11 @@
-import _ from 'lodash'
-import { LockOutlined, UnlockOutlined, EyeOutlined } from '@ant-design/icons'
-import ButtonAdd from '@components/button-add/ButtonAdd'
-import ButtonSearch from '@components/button-search/ButtonSearch'
-import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER } from '@constants/appConstant'
-import { TimeFormat } from '@constants/datetime'
-import { useToggle } from 'ahooks'
+import _ from 'lodash';
+import { LockOutlined, UnlockOutlined, EyeOutlined } from '@ant-design/icons';
+import ButtonAdd from '@components/button-add/ButtonAdd';
+import ButtonSearch from '@components/button-search/ButtonSearch';
+import SearchBar from '@components/search-bar/SearchBar';
+import { GUTTER } from '@constants/appConstant';
+import { TimeFormat } from '@constants/datetime';
+import { useToggle } from 'ahooks';
 import {
   Button,
   Card,
@@ -19,44 +19,65 @@ import {
   Table,
   Tag,
   Tooltip
-} from 'antd'
-import { ColumnsType } from 'antd/es/table'
-import moment from 'moment'
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import TransactionAccountingConfigurationForm from './TransactionAccountingConfigurationForm'
-import { viewMode } from '@type/customer'
+} from 'antd';
+import { ColumnsType } from 'antd/es/table';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import TransactionAccountingConfigurationForm from './TransactionAccountingConfigurationForm';
+import { viewMode } from '@type/customer';
 import {
   accountingStatus,
   accountingTransactionType,
   fundsOptions
-} from '@constants/options'
-import { getAccountingTransactionType } from '@utils/helperFunctions'
+} from '@constants/options';
+import { getAccountingTransactionType } from '@utils/helperFunctions';
 import {
   useGetAccountingQuery,
   useUpdateActiveMutation
-} from '@services/accountingService'
-import { openNotification } from '@configs/fetchBaseQueryCustom'
-import { Accounting } from '@type/accounting'
-import { FaPen } from 'react-icons/fa'
+} from '@services/accountingService';
+import { openNotification } from '@configs/fetchBaseQueryCustom';
+import { Accounting } from '@type/accounting';
+import { FaPen } from 'react-icons/fa';
+import { AiFillEye } from 'react-icons/ai';
+import { pageEnum, viewMode as viewModeHistory } from '../../app/types/policyManagement';
+import { PolicyManagementModal } from '../policy-management/policy-management-modal/PolicyManagementModal';
 
 function TransactionAccountingConfiguration() {
-  const [form] = Form.useForm()
-  const { t } = useTranslation()
+  const [form] = Form.useForm();
+  const { t } = useTranslation();
   const [search, setSearch] = useState({
     page: 1,
     take: 10,
     order: 'DESC',
     orderBy: 'createdAt'
-  })
-  const [mode, setMode] = useState<viewMode>(viewMode.create)
-  const [addForm, { toggle: addFormToggle }] = useToggle()
+  });
+  const [mode, setMode] = useState<viewMode>(viewMode.create);
+  const [addForm, { toggle: addFormToggle }] = useToggle();
 
-  const [selectedAccounting, setSelectedAccounting] = useState<Accounting>()
+  const [selectedAccounting, setSelectedAccounting] = useState<Accounting>();
+
+
+  const [open, setOpen] = useState<boolean>(false);
+  const [modeHistory, setModeHistory] = useState<viewModeHistory>(viewModeHistory.create);
+  const [selectedId, setSelectedId] = useState<number>();
+  const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false);
+
+  const onCloseConfirmModal = () => {
+    setVisibleConfirmModal(false);
+  };
+
+  const onCancelHistory = () => {
+    if (modeHistory === viewModeHistory.history || modeHistory === viewModeHistory.delete) {
+      setOpen(false);
+    } else {
+      setVisibleConfirmModal(true);
+    }
+  };
 
   const { data: accounting, refetch: refetchAccounting } =
-    useGetAccountingQuery(search)
-  const [updateStatus] = useUpdateActiveMutation()
+    useGetAccountingQuery(search);
+  const [updateStatus] = useUpdateActiveMutation();
 
   const changeStatus = (status: number, id: string) => {
     Modal.confirm({
@@ -75,7 +96,7 @@ function TransactionAccountingConfiguration() {
           const response = (await updateStatus({
             active: status ? 0 : 1,
             id
-          })) as { data: { statusCode: number } }
+          })) as { data: { statusCode: number; }; };
           if (
             response.data.statusCode === 201 ||
             response.data.statusCode === 200
@@ -85,18 +106,18 @@ function TransactionAccountingConfiguration() {
                 ? t`internal-wallet.messages.lock-accounting-success`
                 : t`internal-wallet.messages.unlock-accounting-success`,
               'success'
-            )
+            );
           } else {
             openNotification(
               status
                 ? t`internal-wallet.messages.lock-accounting-failed`
                 : t`internal-wallet.messages.unlock-accounting-failed`
-            )
+            );
           }
         } catch (error) {}
       }
-    })
-  }
+    });
+  };
 
   const columns: ColumnsType<any> = [
     {
@@ -105,7 +126,7 @@ function TransactionAccountingConfiguration() {
       key: 'transactionType',
       align: 'center',
       render(value) {
-        return getAccountingTransactionType(value)
+        return getAccountingTransactionType(value);
       }
     },
     {
@@ -117,15 +138,15 @@ function TransactionAccountingConfiguration() {
         //todo
         switch (value) {
           case 'NAPAS':
-            return t('internal-wallet.fundsOptions.napas')
+            return t('internal-wallet.fundsOptions.napas');
           case 'LINK_BANK':
-            return t('internal-wallet.fundsOptions.bank')
+            return t('internal-wallet.fundsOptions.bank');
           case 'PAYMENT_GATEWAY':
-            return t('internal-wallet.fundsOptions.gate')
+            return t('internal-wallet.fundsOptions.gate');
           case 'EWALLET':
-            return t('internal-wallet.fundsOptions.wallet')
+            return t('internal-wallet.fundsOptions.wallet');
           case 'ATM_CARD':
-            return t('internal-wallet.fundsOptions.atmCard')
+            return t('internal-wallet.fundsOptions.atmCard');
         }
       }
     },
@@ -133,7 +154,7 @@ function TransactionAccountingConfiguration() {
       title: t('partner.createdBy'),
       align: 'center',
       render(_, record) {
-        return record?.createdBy?.fullName ?? '-'
+        return record?.createdBy?.fullName ?? '-';
       }
     },
     {
@@ -141,7 +162,7 @@ function TransactionAccountingConfiguration() {
       align: 'center',
       dataIndex: 'updatedBy',
       render(_, record) {
-        return record?.updatedBy?.fullName ?? '-'
+        return record?.updatedBy?.fullName ?? '-';
       }
     },
     {
@@ -183,15 +204,28 @@ function TransactionAccountingConfiguration() {
         return (
           <Space>
             <Tooltip
+              placement='top'
+              title={t('tooltips.viewHistory')}
+            >
+              <Button
+                icon={<AiFillEye />}
+                onClick={() => {
+                  setModeHistory(viewModeHistory.history);
+                  setOpen(true);
+                  setSelectedId(record.id);
+                }}
+              />
+            </Tooltip>
+            <Tooltip
               placement='topLeft'
               title='Xem'
             >
               <Button
                 icon={<EyeOutlined />}
                 onClick={() => {
-                  setMode(viewMode.view)
-                  setSelectedAccounting(record)
-                  addFormToggle()
+                  setMode(viewMode.view);
+                  setSelectedAccounting(record);
+                  addFormToggle();
                 }}
               />
             </Tooltip>
@@ -203,9 +237,9 @@ function TransactionAccountingConfiguration() {
               <Button
                 icon={<FaPen />}
                 onClick={() => {
-                  setMode(viewMode.update)
-                  setSelectedAccounting(record)
-                  addFormToggle()
+                  setMode(viewMode.update);
+                  setSelectedAccounting(record);
+                  addFormToggle();
                 }}
               />
             </Tooltip>
@@ -220,21 +254,21 @@ function TransactionAccountingConfiguration() {
               />
             </Tooltip>
           </Space>
-        )
+        );
       }
     }
-  ]
+  ];
 
   const handleSearch = () =>
     setSearch(
       _(form.getFieldsValue()).omitBy(_.isUndefined).omitBy(_.isNull).value()
-    )
+    );
 
   const onCancel = () => {
-    addFormToggle()
-    setMode(viewMode.create)
-    setSelectedAccounting(undefined)
-  }
+    addFormToggle();
+    setMode(viewMode.create);
+    setSelectedAccounting(undefined);
+  };
 
   return (
     <Card
@@ -291,9 +325,9 @@ function TransactionAccountingConfiguration() {
                   <ButtonAdd
                     module='internalwallet'
                     onClick={() => {
-                      setMode(viewMode.create)
-                      setSelectedAccounting(undefined)
-                      addFormToggle()
+                      setMode(viewMode.create);
+                      setSelectedAccounting(undefined);
+                      addFormToggle();
                     }}
                   />
                 </Col>
@@ -329,7 +363,7 @@ function TransactionAccountingConfiguration() {
             setSearch({
               ...search,
               page
-            })
+            });
           }
         }}
       />
@@ -339,8 +373,8 @@ function TransactionAccountingConfiguration() {
           mode === viewMode.create
             ? t(`internal-wallet.create-configuration`)
             : mode === viewMode.update
-            ? t(`internal-wallet.update-configuration`)
-            : t(`internal-wallet.view-configuration`)
+              ? t(`internal-wallet.update-configuration`)
+              : t(`internal-wallet.view-configuration`)
         }
         isShow={addForm}
         mode={mode}
@@ -348,9 +382,19 @@ function TransactionAccountingConfiguration() {
         onCancel={onCancel}
         onSubmit={refetchAccounting}
       />
-
+      <PolicyManagementModal
+        onCloseConfirmModal={onCloseConfirmModal}
+        visibleConfirmModal={visibleConfirmModal}
+        page={pageEnum.customerCancel}
+        onCancel={onCancelHistory}
+        open={open}
+        setOpen={setOpen}
+        mode={modeHistory}
+        recordId={selectedId}
+        entityType='ACCOUNTING'
+      />
     </Card>
-  )
+  );
 }
 
-export default TransactionAccountingConfiguration
+export default TransactionAccountingConfiguration;

@@ -40,6 +40,9 @@ import {
 } from '@utils/helperFunctions'
 import { pretty } from '@utils/qs'
 import { numberAndDotValidation, numberValidation } from '@utils/constants'
+import { pageEnum, viewMode as viewModeHistory } from '../../app/types/policyManagement';
+import { AiFillEye } from 'react-icons/ai';
+import { PolicyManagementModal } from '../policy-management/policy-management-modal/PolicyManagementModal';
 
 function InternalWalletAccount() {
   const [form] = Form.useForm()
@@ -55,6 +58,23 @@ function InternalWalletAccount() {
     query: '',
     orderBy: 'createdAt'
   })
+
+  const [open, setOpen] = useState<boolean>(false);
+  const [modeHistory, setModeHistory] = useState<viewModeHistory>(viewModeHistory.create);
+  const [selectedId, setSelectedId] = useState<number>();
+  const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false);
+
+  const onCloseConfirmModal = () => {
+    setVisibleConfirmModal(false);
+  };
+
+  const onCancelHistory = () => {
+    if (modeHistory === viewModeHistory.history || modeHistory === viewModeHistory.delete) {
+      setOpen(false);
+    } else {
+      setVisibleConfirmModal(true);
+    }
+  }
   const [addForm, { toggle: addFormToggle }] = useToggle()
 
   const { data: interWallet, refetch } = useGetListWalletsQuery(search)
@@ -116,6 +136,19 @@ function InternalWalletAccount() {
       render(record) {
         return (
           <Space align='center'>
+            <Tooltip
+              placement='top'
+              title={t('tooltips.viewHistory')}
+            >
+              <Button
+                icon={<AiFillEye />}
+                onClick={() => {
+                  setModeHistory(viewModeHistory.history);
+                  setOpen(true);
+                  setSelectedId(record.id);
+                }}
+              />
+            </Tooltip>
             <ButtonUpdate
               onClick={() => {
                 setMode(viewMode.update)
@@ -334,6 +367,18 @@ function InternalWalletAccount() {
             : t('internal-wallet.edit-wallet-title')
         }
         mode={mode}
+      />
+      <PolicyManagementModal
+        onCloseConfirmModal={onCloseConfirmModal}
+        visibleConfirmModal={visibleConfirmModal}
+        refetch={refetch}
+        page={pageEnum.customerCancel}
+        onCancel={onCancelHistory}
+        open={open}
+        setOpen={setOpen}
+        mode={modeHistory}
+        recordId={selectedId}
+        entityType='INTERNAL_WALLET'
       />
     </Card>
   )

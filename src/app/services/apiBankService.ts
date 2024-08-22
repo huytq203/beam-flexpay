@@ -107,5 +107,5 @@ export const {
   useCreateBankAccountMutation,
   useUpdateBankAccountMutation,
   useLazyDeleteBankAccountQuery,
-  useLazyExportCsvQuery
+  useLazyExportCsvQuery,
 } = bankAPI

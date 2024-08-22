@@ -1,18 +1,18 @@
-import ButtonExcel from '@components/button-excel/ButtonExcel'
-import ButtonSearch from '@components/button-search/ButtonSearch'
-import ButtonUpdate from '@components/button-update/ButtonUpdate'
-import CellContent from '@components/cell-content/CellContent'
-import NoDataText from '@components/no-data-text/NoDataText'
-import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER } from '@constants/appConstant'
-import { TimeFormat } from '@constants/datetime'
-import { bankSearchStatus, bankTypeSearchStatus } from '@constants/options'
-import { useAppSelector } from '@hooks/hook'
-import { useBankCmsFindAllQuery } from '@services/cmsService'
-import { BankCmsFindAllApiArg } from '@type/application'
-import { BankInformation } from '@type/bank'
-import { viewMode } from '@type/customer'
-import { getBankStatus, getTagColor } from '@utils/helperFunctions'
+import ButtonExcel from '@components/button-excel/ButtonExcel';
+import ButtonSearch from '@components/button-search/ButtonSearch';
+import ButtonUpdate from '@components/button-update/ButtonUpdate';
+import CellContent from '@components/cell-content/CellContent';
+import NoDataText from '@components/no-data-text/NoDataText';
+import SearchBar from '@components/search-bar/SearchBar';
+import { GUTTER } from '@constants/appConstant';
+import { TimeFormat } from '@constants/datetime';
+import { bankSearchStatus, bankTypeSearchStatus } from '@constants/options';
+import { useAppSelector } from '@hooks/hook';
+import { useBankCmsFindAllQuery } from '@services/cmsService';
+import { BankCmsFindAllApiArg } from '@type/application';
+import { BankInformation } from '@type/bank';
+import { viewMode } from '@type/customer';
+import { getBankStatus, getTagColor } from '@utils/helperFunctions';
 import {
   Button,
   Card,
@@ -26,31 +26,52 @@ import {
   Tooltip,
   Typography,
   notification
-} from 'antd'
-import { ColumnsType } from 'antd/es/table'
-import dayjs from 'dayjs'
-import { useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { AiFillEye } from 'react-icons/ai'
-import BankModal from './bank-modal/BankModal'
-import { BankSelection } from './bank-selection/BankSelection'
+} from 'antd';
+import { ColumnsType } from 'antd/es/table';
+import dayjs from 'dayjs';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AiFillEye } from 'react-icons/ai';
+import { BsEyeFill } from 'react-icons/bs';
+import { pageEnum } from '../../../app/types/policyManagement';
+import { PolicyManagementModal } from '../../policy-management/policy-management-modal/PolicyManagementModal';
+import BankModal from './bank-modal/BankModal';
+import { BankSelection } from './bank-selection/BankSelection';
+import { viewMode as viewModeHistory } from '../../../app/types/policyManagement';
 
 function BankManagement() {
-  const { t } = useTranslation()
-  const [selectedBank, setSelectedBank] = useState()
-  const [open, setOpen] = useState(false)
-  const [mode, setMode] = useState<viewMode>(viewMode.view)
-  const [form] = Form.useForm<BankCmsFindAllApiArg>()
-  const { accessToken } = useAppSelector((state) => state.auth)
+  const { t } = useTranslation();
+  const [selectedBank, setSelectedBank] = useState();
+  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<viewMode>(viewMode.view);
+  const [form] = Form.useForm<BankCmsFindAllApiArg>();
+  const { accessToken } = useAppSelector((state) => state.auth);
 
   const [search, setSearch] = useState<BankCmsFindAllApiArg>({
     page: 1,
     take: 10
-  })
+  });
 
-  const { data: banks, refetch } = useBankCmsFindAllQuery(search)
+  const [openHistory, setOpenHistory] = useState<boolean>(false);
+  const [modeHistory, setModeHistory] = useState<viewModeHistory>(viewModeHistory.create);
+  const [selectedId, setSelectedId] = useState<number>();
+  const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false);
 
-  const toggleModal = (value: boolean) => setOpen(value)
+  const { data: banks, refetch } = useBankCmsFindAllQuery(search);
+
+  const toggleModal = (value: boolean) => setOpen(value);
+
+  const onCancelHistory = () => {
+    if (modeHistory === viewModeHistory.history || modeHistory === viewModeHistory.delete) {
+      setOpenHistory(false);
+    } else {
+      setVisibleConfirmModal(true);
+    }
+  }
+
+  const onCloseConfirmModal = () => {
+    setVisibleConfirmModal(false);
+  }
 
   const columns: ColumnsType<BankInformation> = [
     {
@@ -68,7 +89,7 @@ function BankManagement() {
       ellipsis: true,
       width: 200,
       render: (record) => {
-        return <CellContent data={record} />
+        return <CellContent data={record} />;
       }
     },
     {
@@ -78,7 +99,7 @@ function BankManagement() {
       fixed: 'left',
       width: 150,
       render: (record) => {
-        return <CellContent data={record} />
+        return <CellContent data={record} />;
       }
     },
     {
@@ -87,7 +108,7 @@ function BankManagement() {
       align: 'center',
       width: 200,
       render: (record) => {
-        return <CellContent data={record} />
+        return <CellContent data={record} />;
       }
     },
     {
@@ -101,7 +122,7 @@ function BankManagement() {
             d
             data={value ? t(`system-management.bank.options.${value}`) : null}
           />
-        )
+        );
       }
     },
     {
@@ -116,7 +137,7 @@ function BankManagement() {
             d
             data={value}
           />
-        )
+        );
       }
     },
     {
@@ -175,7 +196,7 @@ function BankManagement() {
       align: 'center',
       width: 130,
       render: (record) => {
-        return <Typography> {dayjs(record).format(TimeFormat)}</Typography>
+        return <Typography> {dayjs(record).format(TimeFormat)}</Typography>;
       }
     },
     {
@@ -201,7 +222,7 @@ function BankManagement() {
             d
             data={record}
           />
-        )
+        );
       }
     },
     {
@@ -213,13 +234,23 @@ function BankManagement() {
       render: (record) => (
         <Row justify='center'>
           <Col>
+            <Tooltip title={t`buttons.history`}>
+              <Button
+                className='mr-10'
+                icon={<BsEyeFill />}
+                onClick={() => {
+                  setModeHistory(viewModeHistory.history);
+                  setSelectedId(record.id);
+                  setOpenHistory(true);
+                }} />
+            </Tooltip>
             <Tooltip title={t`system-management.bank.modal.update-button`}>
               <ButtonUpdate
                 className='mr-10'
                 onClick={() => {
-                  setMode(viewMode.update)
-                  setSelectedBank(record)
-                  toggleModal(true)
+                  setMode(viewMode.update);
+                  setSelectedBank(record);
+                  toggleModal(true);
                 }}
                 module='bank_payment'
               />
@@ -231,9 +262,9 @@ function BankManagement() {
                 icon={<AiFillEye />}
                 className='mr-10'
                 onClick={() => {
-                  setMode(viewMode.view)
-                  setSelectedBank(record)
-                  toggleModal(true)
+                  setMode(viewMode.view);
+                  setSelectedBank(record);
+                  toggleModal(true);
                 }}
               />
             </Tooltip>
@@ -241,39 +272,39 @@ function BankManagement() {
         </Row>
       )
     }
-  ]
+  ];
 
   const onSearch = (value: BankCmsFindAllApiArg) => {
     if (value.active === -1)
       value = {
         ...value,
         active: undefined
-      }
-    if (value.type === -1) value = { ...value, type: undefined }
-    setSearch(value)
-  }
+      };
+    if (value.type === -1) value = { ...value, type: undefined };
+    setSearch(value);
+  };
 
   const bankList = useMemo(() => {
     if (banks && banks.data && banks.data.length > 0) {
       return banks.data.map((bank: BankInformation, index: number) => ({
         no: ((search?.page ?? 1) - 1) * 10 + index + 1,
         ...bank
-      }))
-    } else return []
-  }, [banks?.data])
+      }));
+    } else return [];
+  }, [banks?.data]);
 
   const handleExport = async () => {
-    const _headers = new Headers()
-    _headers.append('Authorization', `Bearer ${accessToken}`)
+    const _headers = new Headers();
+    _headers.append('Authorization', `Bearer ${accessToken}`);
     var requestOptions: any = {
       method: 'GET',
       headers: _headers,
       redirect: 'follow'
-    }
-    let args = ''
+    };
+    let args = '';
     for (const key in search) {
       if ((search as any)[key]) {
-        args += key + '=' + (search as any)[key] + '&'
+        args += key + '=' + (search as any)[key] + '&';
       }
     }
     fetch(
@@ -282,28 +313,28 @@ function BankManagement() {
     )
       .then((response) => response.blob())
       .then((result) => {
-        const downloadItem = document.createElement('a')
-        const url = window.URL || window.webkitURL
-        downloadItem.href = url.createObjectURL(result)
-        downloadItem.target = '_blank'
-        downloadItem.download = `banks.xlsx`
-        downloadItem.click()
+        const downloadItem = document.createElement('a');
+        const url = window.URL || window.webkitURL;
+        downloadItem.href = url.createObjectURL(result);
+        downloadItem.target = '_blank';
+        downloadItem.download = `banks.xlsx`;
+        downloadItem.click();
       })
       .then(() => {
         notification.info({
           message: t`system-management.message.export-process`
-        })
-      })
-  }
+        });
+      });
+  };
 
   useEffect(() => {
     if (bankList && bankList.length === 0 && banks !== undefined) {
-      notification.destroy()
+      notification.destroy();
       notification.info({
         message: t`system-management.message.no-data`.toString()
-      })
+      });
     }
-  }, [bankList])
+  }, [bankList]);
 
   return (
     <Card
@@ -337,7 +368,7 @@ function BankManagement() {
                             ...search,
                             page: 1,
                             key: undefined
-                          })
+                          });
                         }
                       }}
                     />
@@ -355,7 +386,7 @@ function BankManagement() {
                           ...search,
                           page: 1,
                           name: undefined
-                        })
+                        });
                       }}
                     />
                   </Form.Item>
@@ -373,7 +404,7 @@ function BankManagement() {
                         setSearch({
                           ...search,
                           type: undefined
-                        })
+                        });
                       }}
                     />
                   </Form.Item>
@@ -392,7 +423,7 @@ function BankManagement() {
                           ...search,
                           page: 1,
                           active: undefined
-                        })
+                        });
                       }}
                     />
                   </Form.Item>
@@ -436,7 +467,7 @@ function BankManagement() {
             setSearch({
               ...search,
               page
-            })
+            });
           }
         }}
       />
@@ -449,7 +480,19 @@ function BankManagement() {
           refetch={refetch}
         />
       )}
+      <PolicyManagementModal
+        onCloseConfirmModal={onCloseConfirmModal}
+        visibleConfirmModal={visibleConfirmModal}
+        refetch={refetch}
+        page={pageEnum.customerCancel}
+        onCancel={onCancelHistory}
+        open={openHistory}
+        setOpen={setOpenHistory}
+        mode={modeHistory}
+        recordId={selectedId}
+        entityType='BANK'
+      />
     </Card>
-  )
+  );
 }
-export default BankManagement
+export default BankManagement;

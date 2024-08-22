@@ -123,7 +123,7 @@ export enum viewMode {
   'freeze' = 'freeze',
   'updateDiscount' = 'updateDiscount',
   'configuration' = 'configuration',
-  'delete' = 'delete'
+  'delete' = 'delete',
 }
 
 export enum accountStatus {

@@ -1,16 +1,16 @@
-import ButtonExcel from '@components/button-excel/ButtonExcel'
-import ButtonSearch from '@components/button-search/ButtonSearch'
-import CellContent from '@components/cell-content/CellContent'
-import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER } from '@constants/appConstant'
-import { TimeFormat } from '@constants/datetime'
-import { useCustomerFindAllQuery } from '@services/cmsService'
+import ButtonExcel from '@components/button-excel/ButtonExcel';
+import ButtonSearch from '@components/button-search/ButtonSearch';
+import CellContent from '@components/cell-content/CellContent';
+import SearchBar from '@components/search-bar/SearchBar';
+import { GUTTER } from '@constants/appConstant';
+import { TimeFormat } from '@constants/datetime';
+import { useCustomerFindAllQuery } from '@services/cmsService';
 import {
   useCancelAccountMutation,
   useExportExcelQuery
-} from '@services/customerService'
-import { CustomerFindAllApiArg, UserDetailDto } from '@type/application'
-import { accountStatus } from '@type/customer'
+} from '@services/customerService';
+import { CustomerFindAllApiArg, UserDetailDto } from '@type/application';
+import { accountStatus } from '@type/customer';
 import {
   fnDisableEndDate,
   fnDisableStartDate,
@@ -20,7 +20,7 @@ import {
   getStringDateFromMoment,
   getTagAccountStatusColor,
   getTagColor
-} from '@utils/helperFunctions'
+} from '@utils/helperFunctions';
 import {
   Button,
   Card,
@@ -33,40 +33,58 @@ import {
   Table,
   Tag,
   Typography
-} from 'antd'
-import { ColumnsType } from 'antd/es/table'
-import dayjs from 'dayjs'
-import moment from 'moment'
-import { useCallback, useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+} from 'antd';
+import { ColumnsType } from 'antd/es/table';
+import dayjs from 'dayjs';
+import moment from 'moment';
+import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { pageEnum, viewMode } from '../../../app/types/policyManagement';
+import { PolicyManagementModal } from '../../policy-management/policy-management-modal/PolicyManagementModal';
 
 const CustomerCancel = () => {
-  const { t: trans } = useTranslation()
-  const [form] = Form.useForm()
+  const { t: trans } = useTranslation();
+  const [form] = Form.useForm();
   const [search, setSearch] = useState<CustomerFindAllApiArg>({
     page: 1,
     take: 10,
     status: [accountStatus.NOT_VERIFIED]
-  })
+  });
 
-  const { data: accounts, refetch } = useCustomerFindAllQuery(search)
+  const [open, setOpen] = useState<boolean>(false);
+  const [mode, setMode] = useState<viewMode>(viewMode.create);
+  const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false)
 
-  const [cancelAccount] = useCancelAccountMutation()
+  const { data: accounts, refetch } = useCustomerFindAllQuery(search);
+
+  const [cancelAccount] = useCancelAccountMutation();
+
+  const onCancelHistory = () => {
+    if (mode === viewMode.history || mode === viewMode.delete) {
+      setOpen(false);
+    } else {
+      setVisibleConfirmModal(true);
+    }
+  }
+
+  const onCloseConfirmModal = () => {
+    setVisibleConfirmModal(false);
+  }
 
   const onCancel = useCallback((customerId: string) => {
     Modal.confirm({
       centered: true,
       title: trans`customer-cancel.cancelMessage`,
       onOk: async () => {
-        const result = await cancelAccount({ customerId })
+        const result = await cancelAccount({ customerId });
         if (result) {
-          refetch()
+          refetch();
         }
       },
       okText: trans`buttons.ok`,
       cancelText: trans`buttons.back`
-    })
-  }, [])
+    });
+  }, []);
 
   const columns: ColumnsType<UserDetailDto> = [
     {
@@ -136,7 +154,7 @@ const CustomerCancel = () => {
         <div>
           <Button
             onClick={() => {
-              onCancel(value)
+              onCancel(value);
             }}
             type='primary'
             danger
@@ -147,7 +165,7 @@ const CustomerCancel = () => {
         </div>
       )
     }
-  ]
+  ];
 
   const submit = (value: CustomerFindAllApiArg) => {
     const data = {
@@ -160,28 +178,33 @@ const CustomerCancel = () => {
         ? getStringDateFromMoment(value?.to, TimeFormat)
         : undefined,
       page: 1
-    }
-    setSearch(data)
-  }
+    };
+    setSearch(data);
+  };
 
   // #region export excel
-  const [skip, setSkip] = useState(true)
+  const [skip, setSkip] = useState(true);
   const { isSuccess } = useExportExcelQuery(
     { pageCount: accounts?.meta.pageCount, ...search },
     { skip: skip, refetchOnMountOrArgChange: true }
-  )
+  );
 
   const handleExport = () => {
     if (accounts?.meta.itemCount) {
-      setSkip(false)
+      setSkip(false);
     }
+  };
+
+  const handleOpenHistory = () => {
+    setMode(viewMode.history);
+    setOpen(true);
   }
 
   useEffect(() => {
     if (isSuccess) {
-      setSkip(true)
+      setSkip(true);
     }
-  }, [isSuccess])
+  }, [isSuccess]);
   // #endregion
 
   return (
@@ -255,6 +278,16 @@ const CustomerCancel = () => {
                 gutter={GUTTER}
                 justify='end'
               >
+                {/* lịch sử hoạt động */}
+                <Col>
+                  <Button
+                    type='primary'
+                    className='btn-200'
+                    onClick={handleOpenHistory}
+                  >
+                    {trans`customer-cancel.history`}
+                  </Button>
+                </Col>
                 <Col>
                   <ButtonExcel
                     module='customer'
@@ -288,12 +321,23 @@ const CustomerCancel = () => {
             setSearch({
               ...search,
               page
-            })
+            });
           }
         }}
       />
+      <PolicyManagementModal
+        onCloseConfirmModal={onCloseConfirmModal}
+        visibleConfirmModal={visibleConfirmModal}
+        refetch={refetch}
+        page={pageEnum.customerCancel}
+        onCancel={onCancelHistory}
+        open={open}
+        setOpen={setOpen}
+        mode={mode}
+        entityType='CUSTOMER_MANAGEMENT'
+      />
     </Card>
-  )
-}
+  );
+};
 
-export default CustomerCancel
+export default CustomerCancel;

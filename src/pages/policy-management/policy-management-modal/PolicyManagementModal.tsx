@@ -24,7 +24,8 @@ type PaymentPolicyModalType = {
   visibleConfirmModal?: boolean
   setVisibleConfirmModal?: React.Dispatch<React.SetStateAction<boolean>>
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>
-  onCloseConfirmModal?: () => void
+  onCloseConfirmModal?: () => void,
+  entityType: string
 }
 
 export const PolicyManagementModal = ({
@@ -42,7 +43,8 @@ export const PolicyManagementModal = ({
   visibleConfirmModal,
   onCloseConfirmModal,
   setOpen,
-  setVisibleConfirmModal
+  setVisibleConfirmModal,
+  entityType
 }: PaymentPolicyModalType) => {
   const { t } = useTranslation()
 
@@ -84,7 +86,24 @@ export const PolicyManagementModal = ({
       case `${viewMode.update}-${pageEnum.accountBankPayment}`:
         return t`policy-management.payment.title.update-setting-account-bank`
       case `${viewMode.history}`:
-        return t`policy-management.history.title`
+        switch(entityType){
+          case 'SYSTEM_FEE_MANAGEMENT':
+            return 'Lịch sử chỉnh sửa hạn mức'
+          case 'CUSTOMER_MANAGEMENT':
+            return 'Lịch sử hủy tài khoản'
+          case 'SYSTEM_SETTING':
+            return 'Lịch sử chỉnh sửa cấu hình'
+          case 'NOTIFICATION_CONTEXT_SETTING':
+            return 'Lịch sử chỉnh sửa cấu hình thông báo'
+          case 'INTERNAL_WALLET_GROUP':
+            return 'Lịch sử chỉnh sửa nhóm ví'
+          case 'INTERNAL_WALLET':
+            return 'Lịch sử chỉnh sửa ví'
+          case 'ACCOUNTING':
+            return 'Lịch sử chỉnh sửa hạch toán'
+          default:
+            break
+        }
       default:
         break
     }
@@ -93,6 +112,7 @@ export const PolicyManagementModal = ({
   const render = () => {
     const value =
       mode === viewMode.history ? viewMode.history : `${mode}-${page}`
+    console.log('value', value)
     switch (value) {
       case `${viewMode.history}`:
         if (recordId) {
@@ -101,6 +121,16 @@ export const PolicyManagementModal = ({
               module={page}
               policyId={recordId}
               onCancel={onCancel}
+              entityType={entityType}
+            />
+          )
+        }
+        else{
+          return (
+            <HistoryPolicy
+              module={page}
+              onCancel={onCancel}
+              entityType={entityType}
             />
           )
         }
