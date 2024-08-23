@@ -190,8 +190,7 @@ export function processValue(
     return dayjs(value).format("DD/MM/YYYY");
   } else if (key === "qualifications") {
     return `${value && value.length > 0
-      ? `<ul>${value
-        .join(" ")}</ul>`
+      ? `<ul>${trans(value).split(",").map((item: string) => `<li>${item}</li>`).join(" ")}</ul>`
       : null
       }`;
   }
