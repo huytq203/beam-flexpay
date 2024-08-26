@@ -61,24 +61,29 @@ export const HistoryPolicy = ({
     } else if (record.valueType === 'Loại phí') {
       return value == "FIXED" ? "Cố định" : "Linh hoạt";
     } else {
-      const objectValue = JSON.parse(value.toString());
-      if (value && isString(objectValue)) {
-        return <span>{value}</span>;
+      if (value === null) return;
+      try {
+        const objectValue = JSON.parse(value.toString() || '{}');
+        if (value && isString(objectValue)) {
+          return <span>{value}</span>;
+        }
+        return (
+          <>
+            {objectValue &&
+              Object.entries(objectValue).map(([key, value], index) => (
+                <div key={index} style={{ marginBottom: "10px" }}>
+                  <h4>{key}:</h4>
+                  <div
+                    dangerouslySetInnerHTML={{ __html: formatObjectHistory(value) }}
+                    style={{ whiteSpace: "pre-wrap" }}
+                  />
+                </div>
+              ))}
+          </>
+        );
+      } catch (error) {
+        return value;
       }
-      return (
-        <>
-          {objectValue &&
-            Object.entries(objectValue).map(([key, value], index) => (
-              <div key={index} style={{ marginBottom: "10px" }}>
-                <h4>{key}:</h4>
-                <div
-                  dangerouslySetInnerHTML={{ __html: formatObjectHistory(value) }}
-                  style={{ whiteSpace: "pre-wrap" }}
-                />
-              </div>
-            ))}
-        </>
-      );
     }
   };
 
