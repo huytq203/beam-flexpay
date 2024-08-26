@@ -71,7 +71,7 @@ export const HistoryPolicy = ({
           <>
             {objectValue &&
               Object.entries(objectValue).map(([key, value], index) => (
-                <div key={index} style={{ marginBottom: "10px" }}>
+                <div key={index} style={{ marginBottom: "10px", display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                   <h4>{key}:</h4>
                   <div
                     dangerouslySetInnerHTML={{ __html: formatObjectHistory(value) }}
