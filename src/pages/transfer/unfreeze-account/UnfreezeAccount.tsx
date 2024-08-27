@@ -89,8 +89,8 @@ const UnFreezeAccount = (props: UnfreezeAccountType) => {
       dataIndex: ['createdAt'],
       fixed: 'right',
       width: 250,
-      render: (record: CustomerElementType) => (
-        <div>{dayjs(record?.createdAt).format(TimeFullFormat)}</div>
+      render: (value) => (
+        <div>{dayjs(value).format(TimeFullFormat)}</div>
       )
     }
   ]
