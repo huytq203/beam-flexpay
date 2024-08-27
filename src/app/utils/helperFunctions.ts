@@ -169,12 +169,22 @@ export const formatLimitType = (value: string) => {
 };
 
 export function formatObjectHistory(obj: any): string {
-  if (typeof obj === "object" && obj !== null) {
-    const formattedEntries = Object.entries(obj).map(([key, value]) => {
-      return `<strong>${formatKey(key)}</strong>: ${processValue(value, key)}`;
-    });
-    return formattedEntries.join("<br/>");
-  }
+  if (Array.isArray(JSON.parse(obj))) {
+    const array = JSON.parse(obj);
+    return array.map((item: string) => {
+      const formattedEntries = Object.entries(item).map(([key, value]) => {
+        return `<strong>${key.toString()}</strong>: ${value.toString()}`;
+      });
+      return formattedEntries.join(", ");
+    }).join("<br/>");
+  } else
+    if (typeof obj === "object" && obj !== null) {
+      const formattedEntries = Object.entries(obj).map(([key, value]) => {
+        console.log(key);
+        return `<strong>${formatKey(key)}</strong>: ${processValue(value, key)}`;
+      });
+      return formattedEntries.join("<br/>");
+    }
   return processValue(obj);
 }
 
@@ -188,9 +198,9 @@ export function processValue(
 ): string {
   if (typeof value === "string" && isDate(value)) {
     return dayjs(value).format("DD/MM/YYYY");
-  } else if (key === "qualifications") {
+  } else if (key === "DETAILS") {
     return `${value && value.length > 0
-      ? `<ul>${trans(value).split(",").map((item: string) => `<li>${item}</li>`).join(" ")}</ul>`
+      ? `<ul>${t(value).split(",").map((item: string) => `<li>${item}</li>`).join(" ")}</ul>`
       : null
       }`;
   }
