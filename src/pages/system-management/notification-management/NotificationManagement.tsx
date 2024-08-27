@@ -1,48 +1,45 @@
-import ButtonAdd from '@components/button-add/ButtonAdd'
-import ButtonSearch from '@components/button-search/ButtonSearch'
-import CellContent from '@components/cell-content/CellContent'
-import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER } from '@constants/appConstant'
-import { TimeFormat } from '@constants/datetime'
-import { notificationStatus, serviceTypes } from '@constants/options'
+import ButtonAdd from '@components/button-add/ButtonAdd';
+import ButtonSearch from '@components/button-search/ButtonSearch';
+import CellContent from '@components/cell-content/CellContent';
+import SearchBar from '@components/search-bar/SearchBar';
+import { GUTTER } from '@constants/appConstant';
+import { TimeFormat } from '@constants/datetime';
+import { notificationStatus, serviceTypes } from '@constants/options';
 import {
   useLazyDeleteNotificationQuery,
   useLazyPublishNotificationQuery
-} from '@services/apiNotification'
-import { useNotificationContextSettingFindAllQuery } from '@services/cmsService'
-import { STATUS_CODE } from '@type/api'
-import { NotificationContextSettingFindAllApiArg } from '@type/application'
-import { INotification, notificationMode } from '@type/notification'
+} from '@services/apiNotification';
+import { useNotificationContextSettingFindAllQuery } from '@services/cmsService';
+import { STATUS_CODE } from '@type/api';
+import { NotificationContextSettingFindAllApiArg } from '@type/application';
+import { INotification, notificationMode } from '@type/notification';
 import {
   getApplicableObject,
   getNotificationService,
   showSuccessMessage
-} from '@utils/helperFunctions'
+} from '@utils/helperFunctions';
 import {
   Button,
   Card,
   Col,
   DatePicker,
   Form,
-  Input,
-  Modal,
+  Input, message, Modal,
   Row,
   Select,
   Switch,
   Table,
-  Tooltip,
-  message
-} from 'antd'
-import { ColumnsType } from 'antd/es/table'
-import dayjs from 'dayjs'
-import { useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { AiFillDelete, AiFillEye, AiFillSound } from 'react-icons/ai'
-import { BsEyeFill } from 'react-icons/bs';
-import { FaPen } from 'react-icons/fa'
+  Tooltip
+} from 'antd';
+import { ColumnsType } from 'antd/es/table';
+import dayjs from 'dayjs';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AiFillDelete, AiFillEye, AiFillSound, AiOutlineHistory } from 'react-icons/ai';
+import { FaPen } from 'react-icons/fa';
 import { pageEnum, viewMode } from '../../../app/types/policyManagement';
 import { PolicyManagementModal } from '../../policy-management/policy-management-modal/PolicyManagementModal';
-import NotificationModal from './notification-modal/NotificationModal'
+import NotificationModal from './notification-modal/NotificationModal';
 
 function NotificationManagement() {
   const { t } = useTranslation()
@@ -279,7 +276,7 @@ function NotificationManagement() {
           <Col>
             <Tooltip title={t`buttons.history`}>
               <Button
-                icon={<BsEyeFill />}
+                icon={<AiOutlineHistory />}
                 onClick={() => {
                   setModeHistory(viewMode.history);
                   setSelectedId(record.id);

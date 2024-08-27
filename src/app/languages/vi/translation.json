@@ -294,7 +294,7 @@
   "buttons": {
     "yes": "Có",
     "no": "Không",
-    "history": "Xem lịch sử chỉnh sửa chính sách",
+    "history": "Xem lịch sử chỉnh sửa",
     "configuration": "Cấu hình",
     "create-notify": "Tạo notify",
     "update-notify": "Cập nhật notify",

@@ -1,6 +1,20 @@
-import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
-import ButtonUpdate from '@components/button-update/ButtonUpdate'
-import { useToggle } from 'ahooks'
+import { LockOutlined, UnlockOutlined } from '@ant-design/icons';
+import ButtonAdd from '@components/button-add/ButtonAdd';
+import ButtonSearch from '@components/button-search/ButtonSearch';
+import ButtonUpdate from '@components/button-update/ButtonUpdate';
+import SearchBar from '@components/search-bar/SearchBar';
+import { openNotification } from '@configs/fetchBaseQueryCustom';
+import { GUTTER } from '@constants/appConstant';
+import { internalWalletGroupStatusOptions } from '@constants/options';
+import {
+  useGetListWalletGroupsQuery,
+  useUpdateInternalWalletGroupMutation
+} from '@services/apiInternalWallet';
+import { viewMode } from '@type/customer';
+import { InternalWalletPayload } from '@type/internalWallet';
+import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions';
+import { pretty } from '@utils/qs';
+import { useToggle } from 'ahooks';
 import {
   Button,
   Card,
@@ -13,29 +27,15 @@ import {
   Select,
   Space,
   Tooltip
-} from 'antd'
-import Table, { ColumnsType } from 'antd/es/table'
-import moment from 'moment'
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import InternalGroupForm from './components/InternalGroupForm'
-import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER } from '@constants/appConstant'
-import ButtonAdd from '@components/button-add/ButtonAdd'
-import ButtonSearch from '@components/button-search/ButtonSearch'
-import { InternalWalletPayload } from '@type/internalWallet'
-import {
-  useGetListWalletGroupsQuery,
-  useUpdateInternalWalletGroupMutation
-} from '@services/apiInternalWallet'
-import { viewMode } from '@type/customer'
-import { openNotification } from '@configs/fetchBaseQueryCustom'
-import { internalWalletGroupStatusOptions } from '@constants/options'
-import { pretty } from '@utils/qs'
-import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions'
-import { BsEyeFill } from 'react-icons/bs';
+} from 'antd';
+import Table, { ColumnsType } from 'antd/es/table';
+import moment from 'moment';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AiOutlineHistory } from 'react-icons/ai';
 import { pageEnum, viewMode as viewModeHistory } from '../../app/types/policyManagement';
 import { PolicyManagementModal } from '../policy-management/policy-management-modal/PolicyManagementModal';
+import InternalGroupForm from './components/InternalGroupForm';
 
 
 function InternalGroupWallet() {
@@ -169,7 +169,7 @@ function InternalGroupWallet() {
           <Space>
             <Tooltip title={t`buttons.history`}>
               <Button
-                icon={<BsEyeFill />}
+                icon={<AiOutlineHistory />}
                 onClick={() => {
                   setModeHistory(viewModeHistory.history);
                   setSelectedId(record.id);

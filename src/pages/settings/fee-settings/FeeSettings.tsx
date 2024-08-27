@@ -8,11 +8,11 @@ import {
   SystemSettingFindOneByKeyApiArg
 } from '@type/application';
 import { useBoolean } from 'ahooks';
-import { Button, Card, Col, Form, Modal, Row, Table, Tooltip } from 'antd';
+import { Button, Card, Col, Form, Row, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BsEyeFill } from 'react-icons/bs';
+import { AiOutlineHistory } from 'react-icons/ai';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { pageEnum, viewMode } from '../../../app/types/policyManagement';
@@ -86,7 +86,8 @@ const FeeSettings = () => {
           <>
             <Tooltip title={t`buttons.history`}>
               <Button
-                icon={<BsEyeFill />}
+                icon={<AiOutlineHistory />}
+                className='mr-10'
                 onClick={() => {
                   setModeHistory(viewMode.history);
                   setSelectedId(record.id);

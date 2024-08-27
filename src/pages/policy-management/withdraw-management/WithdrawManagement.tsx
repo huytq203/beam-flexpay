@@ -1,23 +1,24 @@
-import { t } from 'i18next'
+import { t } from 'i18next';
 
-import ButtonAdd from '@components/button-add/ButtonAdd'
-import ButtonDelete from '@components/button-delete/ButtonDelete'
-import ButtonUpdate from '@components/button-update/ButtonUpdate'
-import CellContent from '@components/cell-content/CellContent'
-import CustomPaymentMethod from '@components/custom-payment-method/CustomPaymentMethod'
-import { applicableObjects } from '@constants/options'
-import { useLazyGetListGroupQuery } from '@services/apiAccountGroup'
-import { useGetListWithdrawQuery } from '@services/apiWidthdraw'
-import { useLazyGetCustomersQuery } from '@services/customerService'
-import { SearchOutlined } from '@ant-design/icons'
+import { SearchOutlined } from '@ant-design/icons';
+import ButtonAdd from '@components/button-add/ButtonAdd';
+import ButtonDelete from '@components/button-delete/ButtonDelete';
+import ButtonUpdate from '@components/button-update/ButtonUpdate';
+import CellContent from '@components/cell-content/CellContent';
+import CustomPaymentMethod from '@components/custom-payment-method/CustomPaymentMethod';
+import SearchBar from '@components/search-bar/SearchBar';
+import { applicableObjects } from '@constants/options';
+import { useLazyGetListGroupQuery } from '@services/apiAccountGroup';
+import { useGetListWithdrawQuery } from '@services/apiWidthdraw';
+import { useLazyGetCustomersQuery } from '@services/customerService';
 import {
   APPLICABLE_OBJECTS,
   pageEnum,
   SearchType,
   SearchValueType,
   viewMode
-} from '@type/policyManagement'
-import { convertNumber, getApplicableObject } from '@utils/helperFunctions'
+} from '@type/policyManagement';
+import { convertNumber, getApplicableObject } from '@utils/helperFunctions';
 import {
   Button,
   Card,
@@ -29,17 +30,16 @@ import {
   Select,
   Table,
   Tooltip
-} from 'antd'
-import { ColumnsType } from 'antd/es/table'
-import dayjs from 'dayjs'
-import { useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { BsEyeFill } from 'react-icons/bs'
-import { CustomAccountGroupSelect } from '../components/SelectAccountGroup'
-import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount'
-import { DeletePolicyModal } from '../policy-management-modal/delete-modal/DeletePolicyModal'
-import { PolicyManagementModal } from '../policy-management-modal/PolicyManagementModal'
-import SearchBar from '@components/search-bar/SearchBar'
+} from 'antd';
+import { ColumnsType } from 'antd/es/table';
+import dayjs from 'dayjs';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AiOutlineHistory } from 'react-icons/ai';
+import { CustomAccountGroupSelect } from '../components/SelectAccountGroup';
+import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount';
+import { DeletePolicyModal } from '../policy-management-modal/delete-modal/DeletePolicyModal';
+import { PolicyManagementModal } from '../policy-management-modal/PolicyManagementModal';
 
 const WithdrawManagement = () => {
   const { t: trans } = useTranslation()
@@ -209,7 +209,7 @@ const WithdrawManagement = () => {
         render: (record) => (
           <Tooltip title={trans`buttons.history`}>
             <Button
-              icon={<BsEyeFill />}
+              icon={<AiOutlineHistory />}
               onClick={() => {
                 setMode(viewMode.history)
                 setSelectedRecord(record.id)

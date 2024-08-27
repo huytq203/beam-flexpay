@@ -18,26 +18,22 @@ import {
   Card,
   Col,
   Form,
-  Input,
-  Row,
+  Input, notification, Row,
   Select,
   Table,
   Tag,
   Tooltip,
-  Typography,
-  notification
+  Typography
 } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AiFillEye } from 'react-icons/ai';
-import { BsEyeFill } from 'react-icons/bs';
-import { pageEnum } from '../../../app/types/policyManagement';
+import { AiFillEye, AiOutlineHistory } from 'react-icons/ai';
+import { pageEnum, viewMode as viewModeHistory } from '../../../app/types/policyManagement';
 import { PolicyManagementModal } from '../../policy-management/policy-management-modal/PolicyManagementModal';
 import BankModal from './bank-modal/BankModal';
 import { BankSelection } from './bank-selection/BankSelection';
-import { viewMode as viewModeHistory } from '../../../app/types/policyManagement';
 
 function BankManagement() {
   const { t } = useTranslation();
@@ -237,7 +233,7 @@ function BankManagement() {
             <Tooltip title={t`buttons.history`}>
               <Button
                 className='mr-10'
-                icon={<BsEyeFill />}
+                icon={<AiOutlineHistory />}
                 onClick={() => {
                   setModeHistory(viewModeHistory.history);
                   setSelectedId(record.id);
