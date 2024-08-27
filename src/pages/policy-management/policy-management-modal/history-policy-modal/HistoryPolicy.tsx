@@ -4,7 +4,7 @@ import { historyType } from '@constants/options';
 import { SelectAdminAccount } from '@pages/policy-management/components/SelectAdminAccount';
 import { useGetListHistoryQuery } from '@services/apiDirectDeposit';
 import { HistoryPolicyInterface, pageEnum } from '@type/policyManagement';
-import { formatHistoryData, formatObjectHistory, getTypeHistory } from '@utils/helperFunctions';
+import { formatObjectHistory, getTypeHistory, parseManually } from '@utils/helperFunctions';
 import { Button, Col, DatePicker, Empty, Form, Row, Select } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import Table, { ColumnsType } from 'antd/es/table';
@@ -63,7 +63,7 @@ export const HistoryPolicy = ({
     } else {
       if (value === null) return;
       try {
-        const objectValue = JSON.parse(value.toString() || '{}');
+        const objectValue = JSON.parse(value);
         if (value && isString(objectValue)) {
           return <span>{value}</span>;
         }
@@ -71,10 +71,10 @@ export const HistoryPolicy = ({
           <>
             {objectValue &&
               Object.entries(objectValue).map(([key, value], index) => (
-                <div key={index} style={{ marginBottom: "10px", display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <div key={`${index}-${key}`} style={{ marginBottom: "10px", display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                   <h4>{key}:</h4>
                   <div
-                    dangerouslySetInnerHTML={{ __html: formatObjectHistory(value) }}
+                    dangerouslySetInnerHTML={{ __html: formatObjectHistory(value, key) }}
                     style={{ whiteSpace: "pre-wrap" }}
                   />
                 </div>
@@ -82,6 +82,10 @@ export const HistoryPolicy = ({
           </>
         );
       } catch (error) {
+        // if value contain html tag return html
+        if (value.includes('<')) {
+          return <div dangerouslySetInnerHTML={{ __html: value }} />;
+        }
         return value;
       }
     }

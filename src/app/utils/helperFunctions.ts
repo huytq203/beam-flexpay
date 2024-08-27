@@ -168,24 +168,34 @@ export const formatLimitType = (value: string) => {
   }
 };
 
-export function formatObjectHistory(obj: any): string {
-  if (Array.isArray(JSON.parse(obj))) {
-    const array = JSON.parse(obj);
-    return array.map((item: string) => {
-      const formattedEntries = Object.entries(item).map(([key, value]) => {
-        return `<strong>${key.toString()}</strong>: ${value.toString()}`;
-      });
-      return formattedEntries.join(", ");
-    }).join("<br/>");
-  } else
-    if (typeof obj === "object" && obj !== null) {
+export function formatObjectHistory(obj: any, key?: string): string {
+  try {
+    if (key && key === 'Chi tiết') {
+      if (Array.isArray(obj)) {
+        const array = obj;
+        return array.map((item: string) => {
+          const formattedEntries = Object.entries(item).map(([key, value]) => {
+            return `<strong>${key.toString()}</strong>: ${value.toString()}`;
+          });
+          return formattedEntries.join(", ");
+        }).join("<br/>");
+      } else {
+        console.log(obj);
+        return obj;
+      }
+    } else if (typeof obj === "object" && obj !== null) {
       const formattedEntries = Object.entries(obj).map(([key, value]) => {
-        console.log(key);
         return `<strong>${formatKey(key)}</strong>: ${processValue(value, key)}`;
       });
       return formattedEntries.join("<br/>");
     }
-  return processValue(obj);
+    else{
+      return processValue(obj);
+    }
+  }
+  catch (e) {
+    return obj;
+  }
 }
 
 export function formatKey(key: string): string {
@@ -464,3 +474,36 @@ export const getAccountingTransactionType = (transaction: string) => {
 
   return '-';
 };
+
+export function parseManually(str: string) {
+  // Remove the outer braces and whitespace
+  const trimmedStr = str.trim().slice(1, -1);
+
+  // Initialize an empty object to hold the parsed data
+  const result: Record<string, any> = {};
+
+  // Split the string by commas, but only those outside of quotes
+  const pairs = trimmedStr.match(/("(?:\\"|[^"])*?"|\d+):("(?:\\"|[^"])*?"|\d+)/g);
+
+  if (pairs) {
+    pairs.forEach((pair: any) => {
+      // Split each pair by the colon
+      const [key, value] = pair.split(/:(.+)/).map((s: string) => s.trim());
+
+      // Remove quotes from around the key and value
+      const cleanedKey = key.replace(/^"(.*)"$/, '$1');
+      let cleanedValue = value.replace(/^"(.*)"$/, '$1');
+
+      // Convert numeric strings to numbers
+      if (!isNaN(cleanedValue)) {
+        cleanedValue = Number(cleanedValue);
+      }
+
+      // Add the key-value pair to the result object
+      result[cleanedKey] = cleanedValue;
+    });
+
+    return result;
+  }
+  return str;
+}
