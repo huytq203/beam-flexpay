@@ -63,11 +63,11 @@ function BankManagement() {
     } else {
       setVisibleConfirmModal(true);
     }
-  }
+  };
 
   const onCloseConfirmModal = () => {
     setVisibleConfirmModal(false);
-  }
+  };
 
   const columns: ColumnsType<BankInformation> = [
     {
@@ -240,17 +240,15 @@ function BankManagement() {
                   setOpenHistory(true);
                 }} />
             </Tooltip>
-            <Tooltip title={t`system-management.bank.modal.update-button`}>
-              <ButtonUpdate
-                className='mr-10'
-                onClick={() => {
-                  setMode(viewMode.update);
-                  setSelectedBank(record);
-                  toggleModal(true);
-                }}
-                module='bank_payment'
-              />
-            </Tooltip>
+            <ButtonUpdate
+              className='mr-10'
+              onClick={() => {
+                setMode(viewMode.update);
+                setSelectedBank(record);
+                toggleModal(true);
+              }}
+              module='bank_payment'
+            />
           </Col>
           <Col>
             <Tooltip title={t`buttons.detail`}>
