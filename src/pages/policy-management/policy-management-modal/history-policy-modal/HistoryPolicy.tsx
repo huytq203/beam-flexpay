@@ -9,7 +9,7 @@ import { Button, Col, DatePicker, Empty, Form, Row, Select } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import Table, { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
-import { isString } from 'lodash';
+import { isNumber, isString } from 'lodash';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -64,7 +64,7 @@ export const HistoryPolicy = ({
       if (value === null) return;
       try {
         const objectValue = JSON.parse(value);
-        if (value && isString(objectValue)) {
+        if (value && (isString(objectValue) || isNumber(objectValue))) {
           return <span>{value}</span>;
         }
         return (

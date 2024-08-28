@@ -465,6 +465,7 @@ const WithdrawManagement = () => {
           mode={mode}
           refetch={refetch}
           recordId={selectedRecord}
+          entityType={'SYSTEM_FEE_MANAGEMENT'}
         />
       )}
 

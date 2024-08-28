@@ -101,6 +101,8 @@ export const PolicyManagementModal = ({
             return 'Lịch sử chỉnh sửa ví'
           case 'ACCOUNTING':
             return 'Lịch sử chỉnh sửa hạch toán'
+          case 'TRANSACTION_LIMIT':
+            return 'Lịch sử chỉnh sửa hạn mức giao dịch'
           default:
             break
         }

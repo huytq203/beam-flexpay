@@ -444,7 +444,7 @@ const EWalletMoneyTransferManagement = () => {
         onCancel={onCancel}
         open={open}
         mode={mode}
-      />
+        entityType={'SYSTEM_FEE_MANAGEMENT'}      />
     </Card>
   )
 }
