@@ -269,6 +269,8 @@ function NotificationManagement() {
       width: 200,
       fixed: 'right',
       render: (record) => (
+        console.log(record),
+        console.log(checkKeywords(record.title), checkKeywords(record.body)),
         <Row
           gutter={GUTTER}
           justify='center'
@@ -301,9 +303,9 @@ function NotificationManagement() {
               title={t('admin-management.tooltip.edit')}
             >
               <Button
-                disabled={
-                  checkKeywords(record.title) && checkKeywords(record.body)
-                }
+                // disabled={
+                //   checkKeywords(record.title) && checkKeywords(record.body)
+                // }
                 icon={<FaPen />}
                 onClick={() => handleModal(notificationMode.UPDATE, record?.id)}
               />
