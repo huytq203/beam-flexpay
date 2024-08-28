@@ -41,7 +41,7 @@ import {
 import { pretty } from '@utils/qs'
 import { numberAndDotValidation, numberValidation } from '@utils/constants'
 import { pageEnum, viewMode as viewModeHistory } from '../../app/types/policyManagement';
-import { AiFillEye } from 'react-icons/ai';
+import { AiFillEye, AiOutlineHistory } from 'react-icons/ai';
 import { PolicyManagementModal } from '../policy-management/policy-management-modal/PolicyManagementModal';
 
 function InternalWalletAccount() {
@@ -141,7 +141,7 @@ function InternalWalletAccount() {
               title={t('tooltips.viewHistory')}
             >
               <Button
-                icon={<AiFillEye />}
+                icon={<AiOutlineHistory />}
                 onClick={() => {
                   setModeHistory(viewModeHistory.history);
                   setOpen(true);

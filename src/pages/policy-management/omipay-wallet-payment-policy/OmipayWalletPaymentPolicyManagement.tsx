@@ -34,7 +34,7 @@ import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AiFillEye } from 'react-icons/ai'
+import { AiFillEye, AiOutlineHistory } from 'react-icons/ai'
 import { objects } from '../../../app/types/policyManagement'
 import { CustomAccountGroupSelect } from '../components/SelectAccountGroup'
 import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount'
@@ -239,7 +239,7 @@ const OmipayWalletPaymentPolicyManagement = () => {
               setOpen(true)
               setSelectedItem(record)
             }}
-            icon={<AiFillEye />}
+            icon={<AiOutlineHistory />}
           />
         )
       },

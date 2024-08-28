@@ -40,6 +40,7 @@ import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount'
 import { useLazyGetCustomersQuery } from '@services/customerService'
 import SearchBar from '@components/search-bar/SearchBar'
 import { TimeFullFormat } from '@constants/datetime'
+import { AiOutlineHistory } from 'react-icons/ai';
 
 type SearchType = {
   page: number
@@ -236,7 +237,7 @@ const PaymentPolicyManagement = () => {
       render: (record) => (
         <Tooltip title={trans`buttons.history`}>
           <Button
-            icon={<BsEyeFill />}
+            icon={<AiOutlineHistory />}
             onClick={() => {
               setMode(viewMode.history)
               setSelectedRecord(record.id)

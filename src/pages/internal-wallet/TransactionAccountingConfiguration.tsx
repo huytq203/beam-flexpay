@@ -39,7 +39,7 @@ import {
 import { openNotification } from '@configs/fetchBaseQueryCustom';
 import { Accounting } from '@type/accounting';
 import { FaPen } from 'react-icons/fa';
-import { AiFillEye } from 'react-icons/ai';
+import { AiFillEye, AiOutlineHistory } from 'react-icons/ai';
 import { pageEnum, viewMode as viewModeHistory } from '../../app/types/policyManagement';
 import { PolicyManagementModal } from '../policy-management/policy-management-modal/PolicyManagementModal';
 
@@ -208,7 +208,7 @@ function TransactionAccountingConfiguration() {
               title={t('tooltips.viewHistory')}
             >
               <Button
-                icon={<AiFillEye />}
+                icon={<AiOutlineHistory />}
                 onClick={() => {
                   setModeHistory(viewModeHistory.history);
                   setOpen(true);

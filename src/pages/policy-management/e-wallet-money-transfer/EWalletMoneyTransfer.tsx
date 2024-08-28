@@ -35,7 +35,7 @@ import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AiFillEye } from 'react-icons/ai'
+import { AiFillEye, AiOutlineHistory } from 'react-icons/ai'
 import { CustomAccountGroupSelect } from '../components/SelectAccountGroup'
 import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount'
 import { PolicyManagementModal } from '../policy-management-modal/PolicyManagementModal'
@@ -235,12 +235,12 @@ const EWalletMoneyTransferManagement = () => {
       title: `${trans`policy-management.eWalletTransferMoneyManagement.policyHistory`}`,
       render: (record) => (
         <Button
+          icon={<AiOutlineHistory />}
           onClick={() => {
             setMode(viewMode?.history)
             setOpen(true)
             setSelectedItem(record)
           }}
-          icon={<AiFillEye />}
         />
       )
     },

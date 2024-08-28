@@ -41,6 +41,7 @@ import { PolicyManagementModal } from '../policy-management-modal/PolicyManageme
 import { useSystemFeeManagementGetPolicyPaymentWithBankCardListQuery as findAllQuery } from '@services/cmsFee'
 import { SystemFeeManagementGetPolicyPaymentWithBankCardListApiArg as findAllArgs } from '@type/application'
 import SearchBar from '@components/search-bar/SearchBar'
+import { AiOutlineHistory } from 'react-icons/ai';
 
 const AccountAndBankPaymentManagement = () => {
   const { t: trans } = useTranslation()
@@ -214,7 +215,7 @@ const AccountAndBankPaymentManagement = () => {
         render: (record) => (
           <Tooltip title={trans`buttons.history`}>
             <Button
-              icon={<BsEyeFill />}
+              icon={<AiOutlineHistory />}
               onClick={() => {
                 setMode(viewMode.history)
                 setSelectedRecord(record.id)

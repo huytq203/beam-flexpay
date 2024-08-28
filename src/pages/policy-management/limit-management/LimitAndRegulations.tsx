@@ -21,7 +21,7 @@ import { pageEnum, SearchValueType, viewMode } from '@type/policyManagement'
 import ButtonAdd from '@components/button-add/ButtonAdd'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import ButtonDelete from '@components/button-delete/ButtonDelete'
-import { AiFillEye } from 'react-icons/ai'
+import { AiFillEye, AiOutlineHistory } from 'react-icons/ai'
 import { CustomAccountGroupSelect } from '../components/SelectAccountGroup'
 import { useLazyGetListGroupQuery } from '@services/apiAccountGroup'
 import { useGetListTransactionLimitQuery } from '@services/limitRegulationService'
@@ -177,7 +177,7 @@ const LimitAndRegulation = () => {
                 title={trans('tooltips.viewHistory')}
               >
                 <Button
-                  icon={<AiFillEye />}
+                  icon={<AiOutlineHistory />}
                   onClick={() => {
                     setMode(viewMode.history)
                     setOpen(true)
