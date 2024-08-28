@@ -186,13 +186,13 @@ function InternalGroupWallet() {
             />
             <Tooltip
               title={
-                record.active
+                !record.active
                   ? t`internal-wallet.modal.change-status-unlock-ok-button`
                   : t`internal-wallet.modal.change-status-lock-ok-button`
               }
             >
               <Button
-                icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
+                icon={!record.active ? <LockOutlined /> : <UnlockOutlined />}
                 onClick={() =>
                   changeStatus(record.active, record.name, record.id)
                 }

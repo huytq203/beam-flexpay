@@ -249,7 +249,7 @@ function TransactionAccountingConfiguration() {
               title={record.active ? 'Khóa' : 'Mở khóa'}
             >
               <Button
-                icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
+                icon={!record.active ? <LockOutlined /> : <UnlockOutlined />}
                 onClick={() => changeStatus(record.active, record.id)}
               />
             </Tooltip>

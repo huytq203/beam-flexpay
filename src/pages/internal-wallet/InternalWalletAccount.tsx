@@ -163,7 +163,7 @@ function InternalWalletAccount() {
             >
               <Button
                 onClick={() => changeStatus(record.active, record.id)}
-                icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
+                icon={!record.active ? <LockOutlined /> : <UnlockOutlined />}
               />
             </Tooltip>
           </Space>
