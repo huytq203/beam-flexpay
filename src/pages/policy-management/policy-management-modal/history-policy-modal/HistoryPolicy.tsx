@@ -71,7 +71,7 @@ export const HistoryPolicy = ({
           <>
             {objectValue &&
               Object.entries(objectValue).map(([key, value], index) => (
-                <div key={`${index}-${key}`} style={{ marginBottom: "10px", display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <div key={`${index}-${key}`} style={{ marginBottom: "10px", display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap',flexFlow:'column' }}>
                   <h4>{key}:</h4>
                   <div
                     dangerouslySetInnerHTML={{ __html: formatObjectHistory(value, key) }}
@@ -135,14 +135,16 @@ export const HistoryPolicy = ({
         dataIndex: 'newValue',
         key: 'id',
         align: 'center',
-        render: (record, values) => renderValue(record, values)
+        render: (record, values) => renderValue(record, values),
+        ellipsis: true
       },
       {
         title: trans('policy-management.history.old-value'),
         dataIndex: 'oldValue',
         key: 'id',
         align: 'center',
-        render: (record, values) => renderValue(record, values)
+        render: (record, values) => renderValue(record, values),
+        ellipsis: true
       },
       {
         title: trans('policy-management.history.creator'),
