@@ -14,7 +14,7 @@ export const apiDirectDeposit = apiService.injectEndpoints({
     }),
     getListHistory: build.query({
       query: (params) => ({
-        url: '/history-fee-management',
+        url: '/history-audit-log-management',
         method: 'GET',
         params: params
       }),

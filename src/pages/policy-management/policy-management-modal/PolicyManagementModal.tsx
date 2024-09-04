@@ -51,7 +51,6 @@ export const PolicyManagementModal = ({
   const getTitle = () => {
     const value =
       mode === viewMode.history ? `${viewMode.history}` : `${mode}-${page}`
-
     switch (value) {
       case `${viewMode.create}-${pageEnum.directDeposit}`:
         return t`policy-management.depositManagement.setUpModalTitle`

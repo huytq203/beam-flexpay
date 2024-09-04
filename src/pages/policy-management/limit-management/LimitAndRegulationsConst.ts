@@ -144,3 +144,33 @@ export const limitTimeTypeOptions = [
     label: t`policy-management.limitAndRegulations.year`.toString()
   }
 ]
+export enum LIMIT_AND_REGULATIONS {
+  /**
+   * Loại đối tượng áp dụng
+   */
+  APPLICABLE_OBJECT = 'APPLICABLE_OBJECT', //Loại đối tượng áp dụng
+  /**
+   * Loại hạn mức
+   */
+  LIMIT_TYPE = 'LIMIT_TYPE',               
+  /**
+   * Loại giá trị hạn mức
+   */
+  LIMIT_VALUE_TYPE = 'LIMIT_VALUE_TYPE',
+  /**
+   * Giá trị hạn mức
+   */
+  LIMIT_VALUE = 'LIMIT_VALUE',             
+  /**
+   * Thời gian tính hạn mức
+   */
+  TIME_LIMIT = 'TIME_LIMIT',               
+  /**
+   * Thời gian áp dụng hạn mức
+   */
+  APPLICABLE_TIME = 'APPLICABLE_TIME',
+  /**
+   * Loại dịch vụ
+   */
+  TRANSACTION_TYPE = 'TRANSACTION_TYPE',
+}

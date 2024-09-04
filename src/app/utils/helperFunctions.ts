@@ -1,322 +1,345 @@
-import { accountingTransactionType, serviceTypes } from '@constants/options';
-import { notificationService } from '@type/notification';
-import { APPLICABLE_OBJECTS, history_type } from '@type/policyManagement';
-import { TransactionStatus, TransactionType } from '@type/transfer';
-import { notification } from 'antd';
-import dayjs from 'dayjs';
-import { t } from 'i18next';
-import { isDate } from 'lodash';
-import i18n from '../languages/i18n';
+import { accountingTransactionType, serviceTypes } from '@constants/options'
+import { notificationService } from '@type/notification'
+import { APPLICABLE_OBJECTS, history_type } from '@type/policyManagement'
+import { TransactionStatus, TransactionType } from '@type/transfer'
+import { notification } from 'antd'
+import dayjs from 'dayjs'
+import { t } from 'i18next'
+import { isDate } from 'lodash'
+import i18n from '../languages/i18n'
+import {
+  LIMIT_AND_REGULATIONS,
+  LIMIT_TYPE,
+  TIME_TYPE_APPLY,
+  TRANSACTION_TYPE,
+  VALUE_LIMIT_TYPE
+} from '@pages/policy-management/limit-management/LimitAndRegulationsConst'
 
 export const getGender = (gender: string | number) => {
   switch (+gender) {
     case 0:
-      return t`labels.unknow`;
+      return t`labels.unknow`
     case 1:
-      return t`labels.male`;
+      return t`labels.male`
     default:
-      return t`labels.female`;
+      return t`labels.female`
   }
-};
+}
 
 export const getTagColor = (status?: boolean, active?: number) => {
-  if (status || active === 1) return 'geekblue';
-  else return 'error';
-};
+  if (status || active === 1) return 'geekblue'
+  else return 'error'
+}
 
 export const getTagAccountStatusColor = (status?: string) => {
   switch (status) {
     case 'LINKED':
-      return 'geekblue';
+      return 'geekblue'
     case 'NOT_VERIFIED':
-      return '';
+      return ''
     case 'waitingForRefund':
-      return 'processing';
+      return 'processing'
     case 'VERIFIED':
-      return 'cyan';
+      return 'cyan'
   }
-};
+}
 
 export const getLabelButton = (status: string) => {
-  if (status === 'lock') return i18n.t('buttons.lockAccount');
-  else return i18n.t('buttons.unlockAccount');
-};
+  if (status === 'lock') return i18n.t('buttons.lockAccount')
+  else return i18n.t('buttons.unlockAccount')
+}
 
 export const moneyInputFormatter = (value?: string) => {
   if (value !== undefined) {
-    return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  } else return '';
-};
+    return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  } else return ''
+}
 
 export const blockLetterValue = (e: React.KeyboardEvent<HTMLInputElement>) => {
-  const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
+  const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
   if (!numbers.includes(e.nativeEvent.key.toString())) {
-    e.preventDefault();
+    e.preventDefault()
   }
-};
+}
 
 export const blockArrowValue = (e: React.KeyboardEvent<HTMLInputElement>) => {
   if (['ArrowUp', 'ArrowDown'].includes(e.key)) {
-    e.stopPropagation();
+    e.stopPropagation()
   }
-};
+}
 
 export const blockLetterDecimal = (
   e: React.KeyboardEvent<HTMLInputElement>
 ) => {
-  const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
   if (!numbers.includes(e.nativeEvent.key.toString())) {
-    e.preventDefault();
+    e.preventDefault()
   }
-};
+}
 
-export const blockLetterDecimalAndDot =
-  (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
-    if (!numbers.includes(e.nativeEvent.key.toString())) {
-      e.preventDefault();
-    }
-  };
+export const blockLetterDecimalAndDot = (
+  e: React.KeyboardEvent<HTMLInputElement>
+) => {
+  const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
+  if (!numbers.includes(e.nativeEvent.key.toString())) {
+    e.preventDefault()
+  }
+}
 
 export const formatObject = (value: string) => {
   switch (value) {
     case 'SYSTEM':
-      return i18n.t('management.sales-fee.system');
+      return i18n.t('management.sales-fee.system')
     case 'CUSTOMER_TYPE':
-      return i18n.t('management.sales-fee.customer-type');
+      return i18n.t('management.sales-fee.customer-type')
     case 'PERSONAL_ACCOUNT':
-      return i18n.t('policy-management.common.applicableObjectPrivateAccount');
+      return i18n.t('policy-management.common.applicableObjectPrivateAccount')
     case 'PRIVATE_ACCOUNT':
-      return i18n.t('policy-management.common.applicableObjectPrivateAccount');
+      return i18n.t('policy-management.common.applicableObjectPrivateAccount')
   }
-};
+}
 
 export const formatObjectPolicy = (value: string) => {
   switch (value) {
     case 'SYSTEM':
-      return i18n.t('policy-management.common.applicableObjectSystem');
+      return i18n.t('policy-management.common.applicableObjectSystem')
     case 'ACCOUNT_GROUP':
-      return i18n.t('policy-management.common.applicableObjectAccountGroup');
+      return i18n.t('policy-management.common.applicableObjectAccountGroup')
     case 'PERSONAL_ACCOUNT':
-      return i18n.t('policy-management.common.applicableObjectPrivateAccount');
+      return i18n.t('policy-management.common.applicableObjectPrivateAccount')
     case 'PRIVATE_ACCOUNT':
-      return i18n.t('policy-management.common.applicableObjectPrivateAccount');
+      return i18n.t('policy-management.common.applicableObjectPrivateAccount')
     case 'ACCOUNT_TYPE':
-      return i18n.t('policy-management.common.applicableObjectAccountGroup');
+      return i18n.t('policy-management.common.applicableObjectAccountGroup')
     default:
-      return '-';
+      return '-'
   }
-};
+}
 
 export const formatTransactionType = (value: string) => {
   switch (value) {
     case 'DEPOSIT':
-      return i18n.t('policy-management.limitAndRegulations.recharge');
+      return i18n.t('policy-management.limitAndRegulations.recharge')
     case 'WITHDRAWAL':
-      return i18n.t('policy-management.limitAndRegulations.withDraw');
+      return i18n.t('policy-management.limitAndRegulations.withDraw')
     case 'WITHDRAW':
-      return i18n.t('policy-management.limitAndRegulations.withDraw');
+      return i18n.t('policy-management.limitAndRegulations.withDraw')
     case 'TRANSFER':
-      return i18n.t('policy-management.limitAndRegulations.transferMoney');
+      return i18n.t('policy-management.limitAndRegulations.transferMoney')
     case 'PAYMENT':
-      return i18n.t('policy-management.limitAndRegulations.payment');
+      return i18n.t('policy-management.limitAndRegulations.payment')
     case 'TOTAL_LIMIT':
       return i18n.t(
         'policy-management.limitAndRegulations.totalLimitTransaction'
-      );
+      )
     default:
-      return '-';
+      return '-'
   }
-};
+}
 
 export const formatLimitValueType = (value: string) => {
   switch (value) {
     case 'VALUE':
-      return i18n.t('policy-management.limitAndRegulations.value');
+      return i18n.t('policy-management.limitAndRegulations.value')
     case 'TIMES':
-      return i18n.t('policy-management.limitAndRegulations.count');
+      return i18n.t('policy-management.limitAndRegulations.count')
     default:
-      return '-';
+      return '-'
   }
-};
+}
 
 export const formatLimitTimeType = (value: string) => {
   switch (value) {
     case 'TIMES':
-      return i18n.t('policy-management.limitAndRegulations.times');
+      return i18n.t('policy-management.limitAndRegulations.times')
     case 'DAY':
-      return i18n.t('policy-management.limitAndRegulations.day');
+      return i18n.t('policy-management.limitAndRegulations.day')
     case 'WEEK':
-      return i18n.t('policy-management.limitAndRegulations.week');
+      return i18n.t('policy-management.limitAndRegulations.week')
     case 'MONTH':
-      return i18n.t('policy-management.limitAndRegulations.month');
+      return i18n.t('policy-management.limitAndRegulations.month')
     case 'YEAR':
-      return i18n.t('policy-management.limitAndRegulations.year');
+      return i18n.t('policy-management.limitAndRegulations.year')
     default:
-      return '-';
+      return '-'
   }
-};
+}
 
 export const formatLimitType = (value: string) => {
   switch (value) {
     case 'LIMIT_MIN':
-      return i18n.t('policy-management.limitAndRegulations.minLimit');
+      return i18n.t('policy-management.limitAndRegulations.minLimit')
     case 'LIMIT_MAX':
-      return i18n.t('policy-management.limitAndRegulations.maxLimit');
+      return i18n.t('policy-management.limitAndRegulations.maxLimit')
     default:
-      return '-';
+      return '-'
   }
-};
+}
 
 export function formatObjectHistory(obj: any, key?: string): string {
   try {
     if (key && key === 'Chi tiết') {
       if (Array.isArray(obj)) {
-        const array = obj;
-        return array.map((item: string) => {
-          const formattedEntries = Object.entries(item).map(([key, value]) => {
-            return `<strong>${key.toString()}</strong>: ${value.toString()}`;
-          });
-          return formattedEntries.join(", ");
-        }).join("<br/>");
+        const array = obj
+        return array
+          .map((item: string) => {
+            const formattedEntries = Object.entries(item).map(
+              ([key, value]) => {
+                return `<strong>${key.toString()}</strong>: ${value.toString()}`
+              }
+            )
+            return formattedEntries.join(', ')
+          })
+          .join('<br/>')
       } else {
-        console.log(obj);
-        return obj;
+        console.log(obj)
+        return obj
       }
-    } else if (typeof obj === "object" && obj !== null) {
+    } else if (typeof obj === 'object' && obj !== null) {
       const formattedEntries = Object.entries(obj).map(([key, value]) => {
-        return `<strong>${formatKey(key)}</strong>: ${processValue(value, key)}`;
-      });
-      return formattedEntries.join("<br/>");
+        return `<strong>${formatKey(key)}</strong>: ${processValue(value, key)}`
+      })
+      return formattedEntries.join('<br/>')
+    } else {
+      return processValue(obj)
     }
-    else{
-      return processValue(obj);
-    }
-  }
-  catch (e) {
-    return obj;
+  } catch (e) {
+    return obj
   }
 }
 
 export function formatKey(key: string): string {
-  return key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
+  return key
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, (str) => str.toUpperCase())
 }
 
-export function processValue(
-  value: any,
-  key?: string
-): string {
-  if (typeof value === "string" && isDate(value)) {
-    return dayjs(value).format("DD/MM/YYYY");
-  } else if (key === "DETAILS") {
-    return `${value && value.length > 0
-      ? `<ul>${t(value).split(",").map((item: string) => `<li>${item}</li>`).join(" ")}</ul>`
-      : null
-      }`;
+export function processValue(value: any, key?: string): string {
+  if (typeof value === 'string' && isDate(value)) {
+    return dayjs(value).format('DD/MM/YYYY')
+  } else if (key === 'DETAILS') {
+    return `${
+      value && value.length > 0
+        ? `<ul>${t(value)
+            .split(',')
+            .map((item: string) => `<li>${item}</li>`)
+            .join(' ')}</ul>`
+        : null
+    }`
   }
-  return String(value);
+  return String(value)
 }
 
 export const formatHistoryData = (value: string | number) => {
   if (!isNaN(Number(value))) {
     if (value) {
-      return convertNumber(value);
-    } else return '-';
+      return convertNumber(value)
+    } else return '-'
   } else {
     switch (value) {
-      case 'DEPOSIT':
-        return i18n.t('policy-management.limitAndRegulations.recharge');
-      case 'WITHDRAWAL':
-        return i18n.t('policy-management.limitAndRegulations.withDraw');
-      case 'WITHDRAW':
-        return i18n.t('policy-management.limitAndRegulations.withDraw');
-      case 'TRANSFER':
-        return i18n.t('policy-management.limitAndRegulations.transferMoney');
-      case 'PAYMENT':
-        return i18n.t('policy-management.limitAndRegulations.payment');
-      case 'TOTAL_LIMIT':
+      case TRANSACTION_TYPE.DEPOSIT:
+        return i18n.t('policy-management.limitAndRegulations.recharge')
+      case TRANSACTION_TYPE.WITHDRAWAL:
+        return i18n.t('policy-management.limitAndRegulations.withDraw')
+      case TRANSACTION_TYPE.WITHDRAW:
+        return i18n.t('policy-management.limitAndRegulations.withDraw')
+      case TRANSACTION_TYPE.TRANSFER:
+        return i18n.t('policy-management.limitAndRegulations.transferMoney')
+      case TRANSACTION_TYPE.PAYMENT:
+        return i18n.t('policy-management.limitAndRegulations.payment')
+      case TRANSACTION_TYPE.FEE:
+        return i18n.t(`policy-management.limitAndRegulations.fee`)
+      case TRANSACTION_TYPE.VAT:
+        return i18n.t(`policy-management.limitAndRegulations.vat`)
+      case TRANSACTION_TYPE.TOTAL_LIMIT:
         return i18n.t(
           'policy-management.limitAndRegulations.totalLimitTransaction'
-        );
-      case 'VALUE':
-        return i18n.t('policy-management.limitAndRegulations.value');
-      case 'TIMES':
-        return i18n.t('policy-management.limitAndRegulations.count');
-      case 'LIMIT_MIN':
-        return i18n.t('policy-management.limitAndRegulations.minLimit');
-      case 'LIMIT_MAX':
-        return i18n.t('policy-management.limitAndRegulations.maxLimit');
-      case 'DAY':
-        return i18n.t('policy-management.limitAndRegulations.day');
-      case 'WEEK':
-        return i18n.t('policy-management.limitAndRegulations.week');
-      case 'MONTH':
-        return i18n.t('policy-management.limitAndRegulations.month');
-      case 'YEAR':
-        return i18n.t('policy-management.limitAndRegulations.year');
+        )
+      case VALUE_LIMIT_TYPE.VALUE:
+        return i18n.t('policy-management.limitAndRegulations.value')
+      case VALUE_LIMIT_TYPE.TIMES:
+        return i18n.t('policy-management.limitAndRegulations.count')
+      case LIMIT_TYPE.LIMIT_MIN:
+        return i18n.t('policy-management.limitAndRegulations.minLimit')
+      case LIMIT_TYPE.LIMIT_MAX:
+        return i18n.t('policy-management.limitAndRegulations.maxLimit')
+      case TIME_TYPE_APPLY.DAY:
+        return i18n.t('policy-management.limitAndRegulations.day')
+      case TIME_TYPE_APPLY.WEEK:
+        return i18n.t('policy-management.limitAndRegulations.week')
+      case TIME_TYPE_APPLY.MONTH:
+        return i18n.t('policy-management.limitAndRegulations.month')
+      case TIME_TYPE_APPLY.YEAR:
+        return i18n.t('policy-management.limitAndRegulations.year')
       default:
-        if (typeof JSON.parse(value.toString()) === 'string') return value;
-        else if (typeof JSON.parse(value.toString()) === 'object') return formatObjectHistory(JSON.parse(value.toString()));
-        else return '-';
+        // if (typeof JSON.parse(value.toString()) === 'string') return value;
+        // else if (typeof JSON.parse(value.toString()) === 'object') return formatObjectHistory(JSON.parse(value.toString()));
+        // else return '-';
+        return value
     }
   }
-};
+}
 
-export const convertNumber = (amount: string | number, suffix?: string | undefined) => {
+export const convertNumber = (
+  amount: string | number,
+  suffix?: string | undefined
+) => {
   if (!amount && amount !== 0) {
-    return '-';
+    return '-'
   }
-  return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (suffix ?? '');
-};
+  return (
+    amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (suffix ?? '')
+  )
+}
 
 export const getStatusText = (status?: boolean) => {
-  if (status) return i18n.t('labels.active');
-  else return i18n.t('labels.lock');
-};
+  if (status) return i18n.t('labels.active')
+  else return i18n.t('labels.lock')
+}
 
 export const getStatusAccountText = (status: string | null | undefined) => {
   switch (status) {
     case 'LINKED':
-      return i18n.t('labels.linked');
+      return i18n.t('labels.linked')
     case 'NOT_VERIFIED':
-      return i18n.t('labels.notVerified');
+      return i18n.t('labels.notVerified')
     case 'VERIFIED':
-      return i18n.t('labels.verified');
+      return i18n.t('labels.verified')
     default:
-      return i18n.t('labels.linked');
+      return i18n.t('labels.linked')
   }
-};
+}
 
 export function toPromise<T>(func: T): Promise<T> {
-  return Promise.resolve(func);
+  return Promise.resolve(func)
 }
 
 export function getDate(date: string | null | undefined) {
-  return date?.split('T')?.[0] ?? null;
+  return date?.split('T')?.[0] ?? null
 }
 
 export function getRefundStatusText(status: string) {
-  if (status === 'refunded') return i18n.t('labels.refunded');
-  else return i18n.t('labels.waitingForRefund');
+  if (status === 'refunded') return i18n.t('labels.refunded')
+  else return i18n.t('labels.waitingForRefund')
 }
 
 export function getBankStatus(status: boolean) {
-  if (status) return i18n.t`labels.active`;
-  else return i18n.t`labels.lock`;
+  if (status) return i18n.t`labels.active`
+  else return i18n.t`labels.lock`
 }
 
 export const getAccountType = (type?: string) => {
-  if (type === 'PERSONAL') return i18n.t('internal-accounts-report.personal');
-  else return i18n.t('internal-accounts-report.enterprise');
-};
+  if (type === 'PERSONAL') return i18n.t('internal-accounts-report.personal')
+  else return i18n.t('internal-accounts-report.enterprise')
+}
 
 export const getStringDateFromMoment = (
   date: string | undefined,
   formatDate: string
 ) => {
-  if (date) return dayjs(date).toISOString();
-  else return undefined;
-};
+  if (date) return dayjs(date).toISOString()
+  else return undefined
+}
 
 export const getTransactionStatus = (status: string) => {
   switch (status) {
@@ -324,101 +347,101 @@ export const getTransactionStatus = (status: string) => {
       return {
         label: i18n.t('transfer-history.choice.success'),
         value: 'success'
-      };
+      }
     case TransactionStatus.PENDING:
       return {
         label: i18n.t('transfer-history.choice.inprogress'),
         value: 'geekblue'
-      };
+      }
     case TransactionStatus.APPROVED:
       return {
         label: i18n.t('transfer-history.choice.approved'),
         value: '#87d068'
-      };
+      }
     case TransactionStatus.FAILED:
       return {
         label: i18n.t('transfer-history.choice.reject'),
         value: 'error'
-      };
+      }
   }
-};
+}
 
 export const getTransactionType = (type: string) => {
   switch (type) {
     case TransactionType.DEPOSIT:
-      return i18n.t('transfer-history.types.deposit');
+      return i18n.t('transfer-history.types.deposit')
     case TransactionType.TRANSFER:
-      return i18n.t('transfer-history.types.transfer');
+      return i18n.t('transfer-history.types.transfer')
     case TransactionType.PAYMENT:
-      return i18n.t('transfer-history.types.payment');
+      return i18n.t('transfer-history.types.payment')
     case TransactionType.WITHDRAW:
-      return i18n.t('transfer-history.types.withdraw');
+      return i18n.t('transfer-history.types.withdraw')
     case TransactionType.RECEIVAL:
-      return i18n.t('transfer-history.types.receival');
+      return i18n.t('transfer-history.types.receival')
     case TransactionType.TOPUP:
-      return i18n.t('transfer-history.types.topup');
+      return i18n.t('transfer-history.types.topup')
   }
-};
+}
 
 export const renderDisplayOn = (detailData: any) => {
   if (detailData?.data?.showWeb && detailData?.data?.showApp === 1) {
-    return t`productType.web-app`;
+    return t`productType.web-app`
   } else if (detailData?.data?.showApp === 1) {
-    return t`productType.app`;
+    return t`productType.app`
   } else if (detailData?.data?.showWeb === 1) {
-    return t`productType.web`;
+    return t`productType.web`
   } else {
-    return t`product.noneDisplayOn`;
+    return t`product.noneDisplayOn`
   }
-};
+}
 
 export const convertValueCheckbox = (value: boolean | number): string => {
-  return value ? '1' : '0';
-};
+  return value ? '1' : '0'
+}
 
 export const convertLocalStringNumber = (number?: number | string) => {
-  if (!number) return 0;
+  if (!number) return 0
   return typeof number === 'string' || typeof number === 'number'
     ? Number(number).toLocaleString()
-    : 0;
-};
+    : 0
+}
 
 export const getApplicableObject = (object: APPLICABLE_OBJECTS) => {
   switch (object) {
     case APPLICABLE_OBJECTS.SYSTEM:
-      return i18n.t`policy-management.payment.system`;
+      return i18n.t`policy-management.payment.system`
     case APPLICABLE_OBJECTS.ACCOUNT_GROUP:
-      return i18n.t`policy-management.payment.accountGroup`;
+      return i18n.t`policy-management.payment.accountGroup`
     case APPLICABLE_OBJECTS.PERSONAL_ACCOUNT:
-      return i18n.t`policy-management.payment.personalAccount`;
+      return i18n.t`policy-management.payment.personalAccount`
     default:
-      break;
+      break
   }
-};
+}
 
 export const showSuccessMessage = (msg: string) => {
-  notification.destroy();
-  notification.success({ message: msg });
-};
+  notification.destroy()
+  notification.success({ message: msg })
+}
 
 export const getTypeHistory = (msg: string) => {
   if (msg === history_type.UPDATE_HISTORY)
-    return i18n.t`policy-management.history.update`;
-  else return i18n.t`policy-management.history.delete`;
-};
+    return i18n.t`policy-management.history.update`
+  else return i18n.t`policy-management.history.delete`
+}
 
 export const getGeneralReportDeviceChartTitle = (title: string) => {
   switch (title) {
     case 'totalDeviceAndroid':
-      return i18n.t`internal-accounts-report.chart.title.totalDeviceAndroid`;
+      return i18n.t`internal-accounts-report.chart.title.totalDeviceAndroid`
     case 'totalDeviceIos':
-      return i18n.t`internal-accounts-report.chart.title.totalDeviceIos`;
+      return i18n.t`internal-accounts-report.chart.title.totalDeviceIos`
     case 'totalDeviceOther':
-      return i18n.t`internal-accounts-report.chart.title.totalDeviceOther`;
+      return i18n.t`internal-accounts-report.chart.title.totalDeviceOther`
     default:
-      break;
+      break
   }
-};
+}
 
 export const getNotificationService = (service: notificationService) => {
   const services = serviceTypes.concat([
@@ -426,36 +449,36 @@ export const getNotificationService = (service: notificationService) => {
       value: notificationService.OTHER,
       label: i18n.t`notification-management.service-type.other-service`
     }
-  ]);
+  ])
 
-  const item: { value: string; label: string; } | undefined = services.find(
+  const item: { value: string; label: string } | undefined = services.find(
     (item) => service === item.value
-  );
-  if (item) return item.label;
-  else return undefined;
-};
+  )
+  if (item) return item.label
+  else return undefined
+}
 
 export const getVerifyTye = (customerVerificationId: string) => {
   if (customerVerificationId)
-    return i18n.t`internal-account-report.verified.ekyc`;
-  else return i18n.t`internal-account-report.verified.not_ekyc`;
-};
+    return i18n.t`internal-account-report.verified.ekyc`
+  else return i18n.t`internal-account-report.verified.not_ekyc`
+}
 
 export const fnTransformResponse = (response: any) => {
-  return response.data;
-};
+  return response.data
+}
 
 export const fnDisableStartDate = (current: dayjs.Dayjs, to: dayjs.Dayjs) => {
-  current = current.startOf('day');
-  to = to.endOf('day');
-  return current > dayjs().endOf('day') || current > dayjs(to, 'YYYY-MM-DD');
-};
+  current = current.startOf('day')
+  to = to.endOf('day')
+  return current > dayjs().endOf('day') || current > dayjs(to, 'YYYY-MM-DD')
+}
 
 export const fnDisableEndDate = (current: dayjs.Dayjs, from: dayjs.Dayjs) => {
-  current = current.endOf('day');
-  from = from.startOf('day');
-  return current > dayjs().endOf('day') || current < dayjs(from, 'YYYY-MM-DD');
-};
+  current = current.endOf('day')
+  from = from.startOf('day')
+  return current > dayjs().endOf('day') || current < dayjs(from, 'YYYY-MM-DD')
+}
 
 /**
  * function that support to get params from url
@@ -463,47 +486,70 @@ export const fnDisableEndDate = (current: dayjs.Dayjs, from: dayjs.Dayjs) => {
  * @returns
  */
 export const getParamsFromURL = (key: string) =>
-  new URLSearchParams(window.location.search).get(key);
+  new URLSearchParams(window.location.search).get(key)
 
 export const getAccountingTransactionType = (transaction: string) => {
   const filters = accountingTransactionType.find(
-    (item: { value: string; label: string; }) => item.value === transaction
-  );
+    (item: { value: string; label: string }) => item.value === transaction
+  )
 
-  if (filters) return filters.label;
+  if (filters) return filters.label
 
-  return '-';
-};
+  return '-'
+}
 
 export function parseManually(str: string) {
   // Remove the outer braces and whitespace
-  const trimmedStr = str.trim().slice(1, -1);
+  const trimmedStr = str.trim().slice(1, -1)
 
   // Initialize an empty object to hold the parsed data
-  const result: Record<string, any> = {};
+  const result: Record<string, any> = {}
 
   // Split the string by commas, but only those outside of quotes
-  const pairs = trimmedStr.match(/("(?:\\"|[^"])*?"|\d+):("(?:\\"|[^"])*?"|\d+)/g);
+  const pairs = trimmedStr.match(
+    /("(?:\\"|[^"])*?"|\d+):("(?:\\"|[^"])*?"|\d+)/g
+  )
 
   if (pairs) {
     pairs.forEach((pair: any) => {
       // Split each pair by the colon
-      const [key, value] = pair.split(/:(.+)/).map((s: string) => s.trim());
+      const [key, value] = pair.split(/:(.+)/).map((s: string) => s.trim())
 
       // Remove quotes from around the key and value
-      const cleanedKey = key.replace(/^"(.*)"$/, '$1');
-      let cleanedValue = value.replace(/^"(.*)"$/, '$1');
+      const cleanedKey = key.replace(/^"(.*)"$/, '$1')
+      let cleanedValue = value.replace(/^"(.*)"$/, '$1')
 
       // Convert numeric strings to numbers
       if (!isNaN(cleanedValue)) {
-        cleanedValue = Number(cleanedValue);
+        cleanedValue = Number(cleanedValue)
       }
 
       // Add the key-value pair to the result object
-      result[cleanedKey] = cleanedValue;
-    });
+      result[cleanedKey] = cleanedValue
+    })
 
-    return result;
+    return result
   }
-  return str;
+  return str
+}
+
+export const getNameColumnTypeChange = (title: string) => {
+  switch (title) {
+    case LIMIT_AND_REGULATIONS.APPLICABLE_OBJECT:
+      return i18n.t`policy-management.limitAndRegulations.label.appliableTime`
+    case LIMIT_AND_REGULATIONS.LIMIT_TYPE:
+      return i18n.t`policy-management.limitAndRegulations.label.limitType`
+    case LIMIT_AND_REGULATIONS.LIMIT_VALUE_TYPE:
+      return i18n.t`policy-management.limitAndRegulations.label.limitValueType`
+    case LIMIT_AND_REGULATIONS.LIMIT_VALUE:
+      return i18n.t`policy-management.limitAndRegulations.label.limitValue`
+    case LIMIT_AND_REGULATIONS.TIME_LIMIT:
+      return i18n.t`policy-management.limitAndRegulations.label.timeLimit`
+    case LIMIT_AND_REGULATIONS.APPLICABLE_TIME:
+      return i18n.t`policy-management.limitAndRegulations.label.appliableTime`
+    case LIMIT_AND_REGULATIONS.TRANSACTION_TYPE:
+      return i18n.t`policy-management.limitAndRegulations.label.transactionType`
+    default:
+      return title
+  }
 }
