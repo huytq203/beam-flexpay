@@ -1,34 +1,39 @@
-import CellContent from '@components/cell-content/CellContent';
-import { TimeFullFormat } from '@constants/datetime';
-import { historyType } from '@constants/options';
-import { SelectAdminAccount } from '@pages/policy-management/components/SelectAdminAccount';
-import { useGetListHistoryQuery } from '@services/apiDirectDeposit';
-import { HistoryPolicyInterface, pageEnum } from '@type/policyManagement';
-import { formatObjectHistory, getTypeHistory, parseManually } from '@utils/helperFunctions';
-import { Button, Col, DatePicker, Empty, Form, Row, Select } from 'antd';
-import { useForm } from 'antd/es/form/Form';
-import Table, { ColumnsType } from 'antd/es/table';
-import dayjs from 'dayjs';
-import { isNumber, isString } from 'lodash';
-import { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import CellContent from '@components/cell-content/CellContent'
+import { TimeFullFormat } from '@constants/datetime'
+import { historyType } from '@constants/options'
+import { SelectAdminAccount } from '@pages/policy-management/components/SelectAdminAccount'
+import { useGetListHistoryQuery } from '@services/apiDirectDeposit'
+import { HistoryPolicyInterface, pageEnum } from '@type/policyManagement'
+import {
+  formatHistoryData,
+  formatObjectHistory,
+  getNameColumnTypeChange,
+  getTypeHistory
+} from '@utils/helperFunctions'
+import { Button, Col, DatePicker, Empty, Form, Row, Select } from 'antd'
+import { useForm } from 'antd/es/form/Form'
+import Table, { ColumnsType } from 'antd/es/table'
+import dayjs from 'dayjs'
+import { isNumber, isString } from 'lodash'
+import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 type HistoryPolicyType = {
-  policyId?: number;
-  onCancel: () => void;
-  module: pageEnum;
-  entityType: string;
-};
+  policyId?: number
+  onCancel: () => void
+  module: pageEnum
+  entityType: string
+}
 
 type SearchType = {
-  page: number;
-  take: number;
-  orderBy: string;
-  systemFeeManagementId?: number;
-  updatedAt?: string;
-  historyType?: string;
-  updater?: string;
-};
+  page: number
+  take: number
+  orderBy: string
+  systemFeeManagementId?: number
+  updatedAt?: string
+  historyType?: string
+  updater?: string
+}
 
 export const HistoryPolicy = ({
   policyId,
@@ -36,20 +41,20 @@ export const HistoryPolicy = ({
   module,
   entityType
 }: HistoryPolicyType) => {
-  const { t: trans } = useTranslation();
-  const [form] = useForm();
+  const { t: trans } = useTranslation()
+  const [form] = useForm()
 
   const [search, setSearch] = useState<SearchType>({
     page: 1,
     take: 10,
     orderBy: 'updater'
-  });
+  })
 
   const { data } = useGetListHistoryQuery({
     entityId: policyId,
     entityType: entityType,
     ...search
-  });
+  })
 
   const renderValue = (value: string, record: HistoryPolicyInterface) => {
     if (
@@ -57,39 +62,51 @@ export const HistoryPolicy = ({
       record.valueType === 'Ngày áp dụng' ||
       record.valueType === 'Thời gian áp dụng'
     ) {
-      return dayjs(value).format(TimeFullFormat);
+      return dayjs(value).format(TimeFullFormat)
     } else if (record.valueType === 'Loại phí') {
-      return value == "FIXED" ? "Cố định" : "Linh hoạt";
+      return value == 'FIXED' ? 'Cố định' : 'Linh hoạt'
     } else {
-      if (value === null) return;
+      if (value === null) return
       try {
-        const objectValue = JSON.parse(value);
+        const objectValue = JSON.parse(value)
         if (value && (isString(objectValue) || isNumber(objectValue))) {
-          return <span>{value}</span>;
+          return <span>{value}</span>
         }
         return (
           <>
             {objectValue &&
               Object.entries(objectValue).map(([key, value], index) => (
-                <div key={`${index}-${key}`} style={{ marginBottom: "10px", display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap',flexFlow:'column' }}>
+                <div
+                  key={`${index}-${key}`}
+                  style={{
+                    marginBottom: '10px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    flexWrap: 'wrap',
+                    flexFlow: 'column'
+                  }}
+                >
                   <h4>{key}:</h4>
                   <div
-                    dangerouslySetInnerHTML={{ __html: formatObjectHistory(value, key) }}
-                    style={{ whiteSpace: "pre-wrap" }}
+                    dangerouslySetInnerHTML={{
+                      __html: formatObjectHistory(value, key)
+                    }}
+                    style={{ whiteSpace: 'pre-wrap' }}
                   />
                 </div>
               ))}
           </>
-        );
+        )
       } catch (error) {
         // if value contain html tag return html
         if (value.includes('<')) {
-          return <div dangerouslySetInnerHTML={{ __html: value }} />;
+          return <div dangerouslySetInnerHTML={{ __html: value }} />
         }
-        return value;
+        return formatHistoryData(value);
       }
     }
-  };
+  }
 
   const columns: ColumnsType<HistoryPolicyInterface> = useMemo(
     () => [
@@ -105,6 +122,7 @@ export const HistoryPolicy = ({
         dataIndex: 'historyType',
         key: 'id',
         align: 'center',
+        width: 100,
         render: (record) => <CellContent data={getTypeHistory(record)} />
       },
       {
@@ -112,7 +130,7 @@ export const HistoryPolicy = ({
         dataIndex: 'updatedAt',
         key: 'id',
         align: 'center',
-        width: 200,
+        width: 180,
         render: (record) =>
           record ? dayjs(record).format(TimeFullFormat) : trans`lables.nodata`
       },
@@ -128,7 +146,11 @@ export const HistoryPolicy = ({
         dataIndex: 'valueType',
         key: 'id',
         align: 'center',
-        render: (record) => <CellContent data={record} />
+        render: (record, value) => (
+          getNameColumnTypeChange(value?.valueType)
+        ),
+        width: 220,
+        ellipsis: true
       },
       {
         title: trans('policy-management.history.new-value'),
@@ -164,16 +186,16 @@ export const HistoryPolicy = ({
       }
     ],
     []
-  );
+  )
 
   const historyList = useMemo(() => {
     if (data?.data && data.data.length > 0) {
       return data?.data?.map((item: HistoryPolicyInterface, index: number) => ({
         no: ((search?.page ?? 1) - 1) * 10 + index + 1,
         ...item
-      }));
-    } else return [];
-  }, [data?.data]);
+      }))
+    } else return []
+  }, [data?.data])
 
   const submit = (value: any) => {
     const newQuery = {
@@ -183,18 +205,18 @@ export const HistoryPolicy = ({
       updatedAt: value?.updatedAt
         ? dayjs(value?.updatedAt).toISOString()
         : undefined
-    };
-    setSearch(newQuery);
-  };
+    }
+    setSearch(newQuery)
+  }
 
   const reload = (field: string) => {
     const newSearch = {
       ...search,
       page: 1,
       [field]: undefined
-    };
-    setSearch(newSearch);
-  };
+    }
+    setSearch(newSearch)
+  }
 
   return (
     <>
@@ -238,7 +260,7 @@ export const HistoryPolicy = ({
                 placeholder={trans`policy-management.history.placeholders.update-date`.toString()}
                 onChange={(e) => {
                   if (!e) {
-                    reload('updatedAt');
+                    reload('updatedAt')
                   }
                 }}
               />
@@ -292,7 +314,7 @@ export const HistoryPolicy = ({
             setSearch({
               ...search,
               page
-            });
+            })
           }
         }}
       />
@@ -303,5 +325,5 @@ export const HistoryPolicy = ({
         >{trans`buttons.close`}</Button>
       </div>
     </>
-  );
-};
+  )
+}
