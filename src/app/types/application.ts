@@ -1,3 +1,5 @@
+import { accountStatus } from "./customer";
+
 export type UserFindAllApiResponse = /** status 200  */ UserPageDto;
 export type UserFindAllApiArg = {
   order?: 'ASC' | 'DESC';
@@ -139,7 +141,7 @@ export type CustomerGetExportExcelApiArg = {
   email?: string;
   active?: boolean;
   name?: string;
-  status?: 'LINKED' | 'NOT_VERIFIED' | 'VERIFIED';
+  status?: accountStatus.LINKED | accountStatus.NOT_VERIFIED | accountStatus.VERIFIED;
   accountNumber?: string;
   hasTransactions?: boolean;
   from?: string;
@@ -158,7 +160,7 @@ export type CustomerGetExportCsvApiArg = {
   email?: string;
   active?: boolean;
   name?: string;
-  status?: 'LINKED' | 'NOT_VERIFIED' | 'VERIFIED';
+  status?: accountStatus.LINKED | accountStatus.NOT_VERIFIED | accountStatus.VERIFIED;
   accountNumber?: string;
   hasTransactions?: boolean;
   from?: string;
@@ -1322,7 +1324,7 @@ export type Customer = {
   accountGroupId: number;
   accountGroup: AccountGroup;
   reasonLock: string;
-  status: 'LINKED' | 'NOT_VERIFIED' | 'VERIFIED';
+  status: accountStatus.LINKED | accountStatus.NOT_VERIFIED | accountStatus.VERIFIED;
   customerVerification: CustomerVerification;
   customerVerificationId: number;
   hasTransactions: number;
@@ -1601,7 +1603,7 @@ export type CustomerDto = {
   isLocked: boolean;
   isTempLocked: boolean;
   accountNumber: string;
-  status: 'LINKED' | 'NOT_VERIFIED' | 'VERIFIED';
+  status: accountStatus.LINKED | accountStatus.NOT_VERIFIED | accountStatus.VERIFIED;
   hasTransactions: boolean;
   isNotification: boolean;
   isMyOffer: boolean;

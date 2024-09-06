@@ -5,7 +5,7 @@ import { TransactionStatus, TransactionType } from '@type/transfer'
 import { notification } from 'antd'
 import dayjs from 'dayjs'
 import { t } from 'i18next'
-import { isDate } from 'lodash'
+import { isDate, fromPairs, isEqual, forOwn } from 'lodash'
 import i18n from '../languages/i18n'
 import {
   LIMIT_AND_REGULATIONS,
@@ -14,6 +14,8 @@ import {
   TRANSACTION_TYPE,
   VALUE_LIMIT_TYPE
 } from '@pages/policy-management/limit-management/LimitAndRegulationsConst'
+import { accountStatus } from '@type/customer'
+import { BANK_MANAGEMENT, BANK_TYPE } from '@pages/system-management/bank-management/bank-modal/BankManagementConst'
 
 export const getGender = (gender: string | number) => {
   switch (+gender) {
@@ -33,13 +35,13 @@ export const getTagColor = (status?: boolean, active?: number) => {
 
 export const getTagAccountStatusColor = (status?: string) => {
   switch (status) {
-    case 'LINKED':
+    case accountStatus.LINKED:
       return 'geekblue'
-    case 'NOT_VERIFIED':
+    case accountStatus.NOT_VERIFIED:
       return ''
     case 'waitingForRefund':
       return 'processing'
-    case 'VERIFIED':
+    case accountStatus.VERIFIED:
       return 'cyan'
   }
 }
@@ -92,7 +94,7 @@ export const formatObject = (value: string) => {
       return i18n.t('management.sales-fee.system')
     case 'CUSTOMER_TYPE':
       return i18n.t('management.sales-fee.customer-type')
-    case 'PERSONAL_ACCOUNT':
+    case APPLICABLE_OBJECTS.PERSONAL_ACCOUNT:
       return i18n.t('policy-management.common.applicableObjectPrivateAccount')
     case 'PRIVATE_ACCOUNT':
       return i18n.t('policy-management.common.applicableObjectPrivateAccount')
@@ -118,17 +120,21 @@ export const formatObjectPolicy = (value: string) => {
 
 export const formatTransactionType = (value: string) => {
   switch (value) {
-    case 'DEPOSIT':
+    case TRANSACTION_TYPE.DEPOSIT:
       return i18n.t('policy-management.limitAndRegulations.recharge')
-    case 'WITHDRAWAL':
+    case TRANSACTION_TYPE.WITHDRAWAL:
       return i18n.t('policy-management.limitAndRegulations.withDraw')
-    case 'WITHDRAW':
+    case TRANSACTION_TYPE.WITHDRAW:
       return i18n.t('policy-management.limitAndRegulations.withDraw')
-    case 'TRANSFER':
+    case TRANSACTION_TYPE.TRANSFER:
       return i18n.t('policy-management.limitAndRegulations.transferMoney')
-    case 'PAYMENT':
+    case TRANSACTION_TYPE.PAYMENT:
       return i18n.t('policy-management.limitAndRegulations.payment')
-    case 'TOTAL_LIMIT':
+    case TRANSACTION_TYPE.FEE:
+      return i18n.t(`policy-management.limitAndRegulations.fee`)
+    case TRANSACTION_TYPE.VAT:
+      return i18n.t(`policy-management.limitAndRegulations.vat`)
+    case TRANSACTION_TYPE.TOTAL_LIMIT:
       return i18n.t(
         'policy-management.limitAndRegulations.totalLimitTransaction'
       )
@@ -139,9 +145,9 @@ export const formatTransactionType = (value: string) => {
 
 export const formatLimitValueType = (value: string) => {
   switch (value) {
-    case 'VALUE':
+    case VALUE_LIMIT_TYPE.VALUE:
       return i18n.t('policy-management.limitAndRegulations.value')
-    case 'TIMES':
+    case VALUE_LIMIT_TYPE.TIMES:
       return i18n.t('policy-management.limitAndRegulations.count')
     default:
       return '-'
@@ -150,15 +156,15 @@ export const formatLimitValueType = (value: string) => {
 
 export const formatLimitTimeType = (value: string) => {
   switch (value) {
-    case 'TIMES':
+    case VALUE_LIMIT_TYPE.TIMES:
       return i18n.t('policy-management.limitAndRegulations.times')
-    case 'DAY':
+    case TIME_TYPE_APPLY.DAY:
       return i18n.t('policy-management.limitAndRegulations.day')
-    case 'WEEK':
+    case TIME_TYPE_APPLY.WEEK:
       return i18n.t('policy-management.limitAndRegulations.week')
-    case 'MONTH':
+    case TIME_TYPE_APPLY.MONTH:
       return i18n.t('policy-management.limitAndRegulations.month')
-    case 'YEAR':
+    case TIME_TYPE_APPLY.YEAR:
       return i18n.t('policy-management.limitAndRegulations.year')
     default:
       return '-'
@@ -167,9 +173,9 @@ export const formatLimitTimeType = (value: string) => {
 
 export const formatLimitType = (value: string) => {
   switch (value) {
-    case 'LIMIT_MIN':
+    case LIMIT_TYPE.LIMIT_MIN:
       return i18n.t('policy-management.limitAndRegulations.minLimit')
-    case 'LIMIT_MAX':
+    case LIMIT_TYPE.LIMIT_MAX:
       return i18n.t('policy-management.limitAndRegulations.maxLimit')
     default:
       return '-'
@@ -271,6 +277,14 @@ export const formatHistoryData = (value: string | number) => {
         return i18n.t('policy-management.limitAndRegulations.month')
       case TIME_TYPE_APPLY.YEAR:
         return i18n.t('policy-management.limitAndRegulations.year')
+      case BANK_TYPE.LINK:
+        return i18n.t('system-management.bank.options.LINK')
+      case BANK_TYPE.LINK_DEPOSIT:
+        return i18n.t('system-management.bank.options.LINK_DEPOSIT')
+      case BANK_TYPE.LINK_GATEWAY:
+        return i18n.t('system-management.bank.options.LINK_GATEWAY')
+      case BANK_TYPE.LINK_WITHDRAW:
+        return i18n.t('system-management.bank.options.LINK_WITHDRAW')
       default:
         // if (typeof JSON.parse(value.toString()) === 'string') return value;
         // else if (typeof JSON.parse(value.toString()) === 'object') return formatObjectHistory(JSON.parse(value.toString()));
@@ -299,11 +313,11 @@ export const getStatusText = (status?: boolean) => {
 
 export const getStatusAccountText = (status: string | null | undefined) => {
   switch (status) {
-    case 'LINKED':
+    case accountStatus.LINKED:
       return i18n.t('labels.linked')
-    case 'NOT_VERIFIED':
+    case accountStatus.NOT_VERIFIED:
       return i18n.t('labels.notVerified')
-    case 'VERIFIED':
+    case accountStatus.VERIFIED:
       return i18n.t('labels.verified')
     default:
       return i18n.t('labels.linked')
@@ -490,7 +504,7 @@ export const getParamsFromURL = (key: string) =>
 
 export const getAccountingTransactionType = (transaction: string) => {
   const filters = accountingTransactionType.find(
-    (item: { value: string; label: string }) => item.value === transaction
+    (item: { value: string | null; label: string }) => item.value === transaction
   )
 
   if (filters) return filters.label
@@ -549,7 +563,82 @@ export const getNameColumnTypeChange = (title: string) => {
       return i18n.t`policy-management.limitAndRegulations.label.appliableTime`
     case LIMIT_AND_REGULATIONS.TRANSACTION_TYPE:
       return i18n.t`policy-management.limitAndRegulations.label.transactionType`
+    case BANK_MANAGEMENT.TRADING_NAME:
+      return i18n.t`system-management.bank.trading-name`
+    case BANK_MANAGEMENT.ADDRESS:
+      return i18n.t`system-management.bank.address`
+    case BANK_MANAGEMENT.FULL_LOGO:
+      return i18n.t`system-management.bank.full-logo`
+    case BANK_MANAGEMENT.PRIORITY:
+      return i18n.t`system-management.bank.priority`
+    case BANK_MANAGEMENT.TINY_LOGO:
+      return i18n.t`system-management.bank.tiny-logo`
+    case BANK_MANAGEMENT.STATUS:
+      return i18n.t`system-management.bank.status`
+    case BANK_MANAGEMENT.TYPE:
+      return i18n.t`system-management.bank.type`
+    case BANK_MANAGEMENT.WEBSITE:
+      return i18n.t`system-management.bank.website`
     default:
       return title
+  }
+}
+
+export interface Data {
+  [key: string]: any
+}
+
+/**
+ * Chuyển đổi một đối tượng FormData thành một đối tượng JavaScript thuần.
+ * @param formData - Đối tượng FormData cần chuyển đổi.
+ * @returns Đối tượng JavaScript thuần đã chuyển đổi.
+ */
+export const formDataToObject = (formData: FormData): Data => {
+  const entries = Array.from(formData.entries())
+  return fromPairs(entries)
+}
+
+/**
+ * So sánh dữ liệu trong đối tượng `formData` với dữ liệu ban đầu trong đối tượng `initData` và trả về một mảng các trường khác nhau.
+ *
+ * @param formData - Đối tượng dữ liệu biểu mẫu để so sánh.
+ * @param initData - Đối tượng dữ liệu ban đầu để so sánh.
+ * @returns Một mảng các chuỗi đại diện cho các trường khác nhau giữa hai đối tượng.
+ */
+export const compareData = (formData: FormData, initData: Data): string[] => {
+  const formDataObj = formDataToObject(formData)
+  const differentFields: string[] = []
+
+  forOwn(formDataObj, (value, key) => {
+    // không so sánh trường bigImage 
+    if(key === 'bigImage'){
+      return;
+    }
+    if (value != initData[key]) {
+      differentFields.push(key)
+    }
+  })
+
+  return differentFields
+}
+
+/**
+ * Ghi log dữ liệu được cung cấp cùng với một tin nhắn tùy chọn.
+ * Nếu dữ liệu là một thể hiện của FormData, nó sẽ chuyển đổi thành JSON và ghi log.
+ * Nếu dữ liệu không phải là một thể hiện của FormData, nó sẽ ghi log tin nhắn và dữ liệu như vậy.
+ *
+ * @param message - Một tin nhắn tùy chọn để ghi log cùng với dữ liệu.
+ * @param data - Dữ liệu cần ghi log.
+ */
+export const logData = (message: string = '', data: any) => {
+  if (data instanceof FormData) {
+    const formDataObject: { [key: string]: any } = {}
+    data.forEach((value, key) => {
+      formDataObject[key] = value
+    })
+    message = 'FormData as JSON:' && message
+    console.log(message, JSON.stringify(formDataObject, null, 2))
+  } else {
+    console.log(message, data)
   }
 }
