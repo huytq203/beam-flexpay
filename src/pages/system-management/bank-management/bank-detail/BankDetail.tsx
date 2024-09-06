@@ -69,7 +69,7 @@ function BankDetail({ bank, onCancel }: IProps) {
           />
           <ItemDetail
             boldTitle={true}
-            title={t`system-management.bank.short-name`.toString()}
+            title={t`system-management.bank.trading-name`.toString()}
             data={bank?.tradingName}
           />
           <ItemDetail

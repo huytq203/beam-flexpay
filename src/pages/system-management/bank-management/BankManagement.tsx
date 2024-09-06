@@ -11,7 +11,6 @@ import { useAppSelector } from '@hooks/hook';
 import { useBankCmsFindAllQuery } from '@services/cmsService';
 import { BankCmsFindAllApiArg } from '@type/application';
 import { BankInformation } from '@type/bank';
-import { viewMode } from '@type/customer';
 import { getBankStatus, getTagColor } from '@utils/helperFunctions';
 import {
   Button,
@@ -30,7 +29,7 @@ import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AiFillEye, AiOutlineHistory } from 'react-icons/ai';
-import { pageEnum, viewMode as viewModeHistory } from '../../../app/types/policyManagement';
+import { pageEnum, viewMode } from '../../../app/types/policyManagement';
 import { PolicyManagementModal } from '../../policy-management/policy-management-modal/PolicyManagementModal';
 import BankModal from './bank-modal/BankModal';
 import { BankSelection } from './bank-selection/BankSelection';
@@ -48,8 +47,8 @@ function BankManagement() {
     take: 10
   });
 
-  const [openHistory, setOpenHistory] = useState<boolean>(false);
-  const [modeHistory, setModeHistory] = useState<viewModeHistory>(viewModeHistory.create);
+  //const [openHistory, setOpenHistory] = useState<boolean>(false);
+  // const [modeHistory, setModeHistory] = useState<viewModeHistory>(viewModeHistory.create);
   const [selectedId, setSelectedId] = useState<number>();
   const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false);
 
@@ -57,12 +56,11 @@ function BankManagement() {
 
   const toggleModal = (value: boolean) => setOpen(value);
 
-  const onCancelHistory = () => {
-    if (modeHistory === viewModeHistory.history || modeHistory === viewModeHistory.delete) {
-      setOpenHistory(false);
-    } else {
+  const onCancel = () => {
+    if (mode !== viewMode.history) {
       setVisibleConfirmModal(true);
     }
+    setOpen(false);
   };
 
   const onCloseConfirmModal = () => {
@@ -89,7 +87,7 @@ function BankManagement() {
       }
     },
     {
-      title: t('system-management.bank.short-name'),
+      title: t('system-management.bank.trading-name'),
       dataIndex: 'tradingName',
       align: 'center',
       fixed: 'left',
@@ -235,9 +233,9 @@ function BankManagement() {
                 className='mr-10'
                 icon={<AiOutlineHistory />}
                 onClick={() => {
-                  setModeHistory(viewModeHistory.history);
+                  setMode(viewMode.history);
                   setSelectedId(record.id);
-                  setOpenHistory(true);
+                  toggleModal(true);
                 }} />
             </Tooltip>
             <ButtonUpdate
@@ -467,14 +465,20 @@ function BankManagement() {
       />
       {open && (
         <BankModal
+          onCloseConfirmModal={onCloseConfirmModal}
+          visibleConfirmModal={visibleConfirmModal}
           bank={selectedBank}
           open={open}
           mode={mode}
-          onCancel={() => toggleModal(false)}
+          onCancel={onCancel}
           refetch={refetch}
+          page={pageEnum.customerCancel}
+          recordId={selectedId}
+          setOpen={setOpen}
+          entityType='BANK_MANAGEMENT'
         />
       )}
-      <PolicyManagementModal
+      {/* <PolicyManagementModal
         onCloseConfirmModal={onCloseConfirmModal}
         visibleConfirmModal={visibleConfirmModal}
         refetch={refetch}
@@ -484,8 +488,8 @@ function BankManagement() {
         setOpen={setOpenHistory}
         mode={modeHistory}
         recordId={selectedId}
-        entityType='BANK'
-      />
+        entityType='BANK_MANAGEMENT'
+      /> */}
     </Card>
   );
 }

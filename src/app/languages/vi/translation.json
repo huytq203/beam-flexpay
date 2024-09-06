@@ -1715,12 +1715,12 @@
       "created-time": "Thời gian tạo",
       "order": "Thứ tự sắp xếp",
       "order-view": "Thứ tự hiển thị",
-      "bank-order": "Thứ tự ưu tiên",
+      "priority": "Thứ tự ưu tiên",
       "channel": "Điều kênh",
       "action": "Thao tác",
       "tradingName": "Trading name",
       "back": "Quay lại",
-      "short-name": "Tên viết tắt",
+      "trading-name": "Tên viết tắt",
       "bank-type": "Loại ngân hàng",
       "type": "Loại liên kết",
       "created-at": "Thời gian tạo",
@@ -1762,9 +1762,9 @@
       },
       "options": {
         "LINK": "Liên kết",
-        "DEPOSIT": "Nạp tiền",
-        "WITHDRAW": "Rút tiền",
-        "GATEWAY": "Cổng thanh toán",
+        "LINK_DEPOSIT": "Nạp tiền",
+        "LINK_WITHDRAW": "Rút tiền",
+        "LINK_GATEWAY": "Cổng thanh toán",
         "ATM_CARD": "Thẻ ATM"
       }
     },

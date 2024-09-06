@@ -57,6 +57,7 @@ export const HistoryPolicy = ({
   })
 
   const renderValue = (value: string, record: HistoryPolicyInterface) => {
+    console.log('record.valueType: ', record.valueType)
     if (
       (value && record && record.valueType === 'Ngày kết thúc') ||
       record.valueType === 'Ngày áp dụng' ||
@@ -65,6 +66,8 @@ export const HistoryPolicy = ({
       return dayjs(value).format(TimeFullFormat)
     } else if (record.valueType === 'Loại phí') {
       return value == 'FIXED' ? 'Cố định' : 'Linh hoạt'
+    } else if (record.valueType === 'STATUS') {
+      return value == '1' ? 'Đang Hoạt động' : 'Khoá'
     } else {
       if (value === null) return
       try {
