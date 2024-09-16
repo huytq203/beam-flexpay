@@ -1,3 +1,4 @@
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal';
 import ButtonExcel from '@components/button-excel/ButtonExcel';
 import ButtonSearch from '@components/button-search/ButtonSearch';
 import CellContent from '@components/cell-content/CellContent';
@@ -41,7 +42,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AiOutlineHistory } from 'react-icons/ai';
 import { pageEnum, viewMode } from '../../../app/types/policyManagement';
-import { PolicyManagementModal } from '../../policy-management/policy-management-modal/PolicyManagementModal';
 
 const CustomerCancel = () => {
   const { t: trans } = useTranslation();
@@ -327,7 +327,7 @@ const CustomerCancel = () => {
           }
         }}
       />
-      <PolicyManagementModal
+      <AuditLogManagementModal
         onCloseConfirmModal={onCloseConfirmModal}
         visibleConfirmModal={visibleConfirmModal}
         refetch={refetch}

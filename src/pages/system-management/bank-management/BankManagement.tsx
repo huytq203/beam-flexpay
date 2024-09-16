@@ -1,3 +1,4 @@
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal';
 import ButtonExcel from '@components/button-excel/ButtonExcel';
 import ButtonSearch from '@components/button-search/ButtonSearch';
 import ButtonUpdate from '@components/button-update/ButtonUpdate';
@@ -30,8 +31,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AiFillEye, AiOutlineHistory } from 'react-icons/ai';
 import { pageEnum, viewMode } from '../../../app/types/policyManagement';
-import { PolicyManagementModal } from '../../policy-management/policy-management-modal/PolicyManagementModal';
-import BankModal from './bank-modal/BankModal';
 import { BankSelection } from './bank-selection/BankSelection';
 
 function BankManagement() {
@@ -464,32 +463,20 @@ function BankManagement() {
         }}
       />
       {open && (
-        <BankModal
+        <AuditLogManagementModal
           onCloseConfirmModal={onCloseConfirmModal}
           visibleConfirmModal={visibleConfirmModal}
-          bank={selectedBank}
+          record={selectedBank}
           open={open}
           mode={mode}
           onCancel={onCancel}
           refetch={refetch}
-          page={pageEnum.customerCancel}
+          page={pageEnum.bankManagement}
           recordId={selectedId}
           setOpen={setOpen}
           entityType='BANK_MANAGEMENT'
         />
       )}
-      {/* <PolicyManagementModal
-        onCloseConfirmModal={onCloseConfirmModal}
-        visibleConfirmModal={visibleConfirmModal}
-        refetch={refetch}
-        page={pageEnum.customerCancel}
-        onCancel={onCancelHistory}
-        open={openHistory}
-        setOpen={setOpenHistory}
-        mode={modeHistory}
-        recordId={selectedId}
-        entityType='BANK_MANAGEMENT'
-      /> */}
     </Card>
   );
 }

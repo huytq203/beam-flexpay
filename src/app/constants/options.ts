@@ -1,13 +1,13 @@
 import i18n from '@languages/i18n'
 import { CustomerType, VerifiedOptions } from '@type/accountGroup'
 import { accountStatus } from '@type/customer'
-import { notificationService } from '@type/notification'
 import { APPLICABLE_OBJECTS, history_type } from '@type/policyManagement'
 import { t } from 'i18next'
 import { templateFormatBody, templateFormatTitle } from './regex'
 import { TRANSACTION_TYPE } from '@pages/policy-management/limit-management/LimitAndRegulationsConst'
 import { AccountingTransactionType, AccountingBalanceType } from '@type/accounting'
 import { AccountingSubType } from '@type/accounting'
+import { NOTIFICATION_TYPE_SERVICE } from '@pages/system-management/notification-management/NotificationManagementConst'
 
 export const objectOptions = [
   { label: t`management.sales-fee.system`, value: 'SYSTEM' },
@@ -321,93 +321,93 @@ export const historyType = [
 
 export const serviceTypes = [
   {
-    value: notificationService.DEPOSIT_LINK_BANK,
+    value: NOTIFICATION_TYPE_SERVICE.DEPOSIT_LINK_BANK,
     label: t`notification-management.service-type.deposit-link-bank`
   },
   {
-    value: notificationService.DEPOSIT_CARD_PHONE,
+    value: NOTIFICATION_TYPE_SERVICE.DEPOSIT_CARD_PHONE,
     label: t`notification-management.service-type.deposit-phone-number`
   },
   {
-    value: notificationService.DEPOSIT_FAIL,
+    value: NOTIFICATION_TYPE_SERVICE.DEPOSIT_FAIL,
     label: t`notification-management.service-type.deposit-fail`
   },
 
   {
-    value: notificationService.CHARGE_CARD_PHONE_NUMBER,
+    value: NOTIFICATION_TYPE_SERVICE.CHARGE_CARD_PHONE_NUMBER,
     label: t`notification-management.service-type.charge-card-phone-number`
   },
   {
-    value: notificationService.CHARGE_DATA_3G_4G,
+    value: NOTIFICATION_TYPE_SERVICE.CHARGE_DATA_3G_4G,
     label: t`notification-management.service-type.charge-data-3g-4g`
   },
   {
-    value: notificationService.PAYMENT_CARD_PHONE,
+    value: NOTIFICATION_TYPE_SERVICE.PAYMENT_CARD_PHONE,
     label: t`notification-management.service-type.payment-card-phone`
   },
   {
-    value: notificationService.PAYMENT_DATA_3G_4G,
+    value: NOTIFICATION_TYPE_SERVICE.PAYMENT_DATA_3G_4G,
     label: t`notification-management.service-type.payment-data-3g-4g`
   },
   {
-    value: notificationService.TRANSFER_MOVER,
+    value: NOTIFICATION_TYPE_SERVICE.TRANSFER_MOVER,
     label: t`notification-management.service-type.transfer-mover`
   },
   {
-    value: notificationService.TRANSFER_RECEIVE,
+    value: NOTIFICATION_TYPE_SERVICE.TRANSFER_RECEIVE,
     label: t`notification-management.service-type.transfer-receive`
   },
   {
-    value: notificationService.WITHDRAW_LINK_BANK,
+    value: NOTIFICATION_TYPE_SERVICE.WITHDRAW_LINK_BANK,
     label: t`notification-management.service-type.withdraw-link-bank`
   },
   {
-    value: notificationService.WITHDRAW_NOT_LINK_BANK,
+    value: NOTIFICATION_TYPE_SERVICE.WITHDRAW_NOT_LINK_BANK,
     label: t`notification-management.service-type.withdraw-not-link-bank`
   },
   {
-    value: notificationService.LINK_BANK,
+    value: NOTIFICATION_TYPE_SERVICE.LINK_BANK,
     label: t`notification-management.service-type.link-bank`
   },
   {
-    value: notificationService.UNLINK_BANK,
+    value: NOTIFICATION_TYPE_SERVICE.UNLINK_BANK,
     label: t`notification-management.service-type.un-link-bank`
   },
   {
-    value: notificationService.PAYMENT_BILL,
+    value: NOTIFICATION_TYPE_SERVICE.PAYMENT_BILL,
     label: t`notification-management.service-type.payment-bill`
   },
   {
-    value: notificationService.WARNING_LOGIN_NEW_DEVICE,
+    value: NOTIFICATION_TYPE_SERVICE.WARNING_LOGIN_NEW_DEVICE,
     label: t`notification-management.service-type.warning-login-new-device`
   },
   {
-    value: notificationService.WARNING_CHANGE_PASSWORD,
+    value: NOTIFICATION_TYPE_SERVICE.WARNING_CHANGE_PASSWORD,
     label: t`notification-management.service-type.warning-change-password`
   },
   {
-    value: notificationService.OTHER,
+    value: NOTIFICATION_TYPE_SERVICE.OTHER,
     label: t`notification-management.service-type.other-service`
   }
 ]
 
 export const serviceRegex = [
   {
-    value: notificationService.DEPOSIT_LINK_BANK,
+    value: NOTIFICATION_TYPE_SERVICE.DEPOSIT_LINK_BANK,
     bodyRegex: templateFormatBody.depositLinkBank,
     titleRegex: undefined,
     defaultTile: t`notification-management.default-title.deposit-link-bank`,
     defaultBody: t`notification-management.default-body.deposit-link-bank`
   },
   {
-    value: notificationService.DEPOSIT_CARD_PHONE,
+    value: NOTIFICATION_TYPE_SERVICE.DEPOSIT_CARD_PHONE,
     bodyRegex: templateFormatBody.depositCardPhone,
     titleRegex: templateFormatTitle.depositCardPhone,
     defaultTile: t`notification-management.default-title.deposit-phone-number`,
     defaultBody: t`notification-management.default-body.deposit-phone-number`
   },
   {
-    value: notificationService.DEPOSIT_FAIL,
+    value: NOTIFICATION_TYPE_SERVICE.DEPOSIT_FAIL,
     bodyRegex: templateFormatBody.depositFail,
     titleRegex: undefined,
     defaultTile: t`notification-management.default-title.deposit-fail`,
@@ -415,91 +415,91 @@ export const serviceRegex = [
   },
 
   {
-    value: notificationService.CHARGE_CARD_PHONE_NUMBER,
+    value: NOTIFICATION_TYPE_SERVICE.CHARGE_CARD_PHONE_NUMBER,
     bodyRegex: templateFormatBody.chargeCardPhoneNumber,
     titleRegex: templateFormatTitle.chargeCardPhoneNumber,
     defaultTile: t`notification-management.default-title.charge-card-phone-number`,
     defaultBody: t`notification-management.default-body.charge-card-phone-number`
   },
   {
-    value: notificationService.CHARGE_DATA_3G_4G,
+    value: NOTIFICATION_TYPE_SERVICE.CHARGE_DATA_3G_4G,
     bodyRegex: templateFormatBody.chargeData3G,
     titleRegex: templateFormatTitle.chargeData3G,
     defaultTile: t`notification-management.default-title.charge-data-3g-4g`,
     defaultBody: t`notification-management.default-body.charge-data-3g-4g`
   },
   {
-    value: notificationService.PAYMENT_CARD_PHONE,
+    value: NOTIFICATION_TYPE_SERVICE.PAYMENT_CARD_PHONE,
     bodyRegex: templateFormatBody.paymentCardPhone,
     titleRegex: templateFormatTitle.paymentCardPhone,
     defaultTile: t`notification-management.default-title.payment-card-phone`,
     defaultBody: t`notification-management.default-body.payment-card-phone`
   },
   {
-    value: notificationService.PAYMENT_DATA_3G_4G,
+    value: NOTIFICATION_TYPE_SERVICE.PAYMENT_DATA_3G_4G,
     bodyRegex: templateFormatBody.payment3G,
     titleRegex: templateFormatTitle.payment3G,
     defaultTile: t`notification-management.default-title.payment-data-3g-4g`,
     defaultBody: t`notification-management.default-body.payment-data-3g-4g`
   },
   {
-    value: notificationService.TRANSFER_MOVER,
+    value: NOTIFICATION_TYPE_SERVICE.TRANSFER_MOVER,
     bodyRegex: templateFormatBody.transferMover,
     titleRegex: undefined,
     defaultTile: t`notification-management.default-title.transfer-mover`,
     defaultBody: t`notification-management.default-body.transfer-mover`
   },
   {
-    value: notificationService.TRANSFER_RECEIVE,
+    value: NOTIFICATION_TYPE_SERVICE.TRANSFER_RECEIVE,
     bodyRegex: templateFormatBody.transferReceive,
     titleRegex: templateFormatTitle.transferReceive,
     defaultTile: t`notification-management.default-title.transfer-receive`,
     defaultBody: t`notification-management.default-body.transfer-receive`
   },
   {
-    value: notificationService.WITHDRAW_LINK_BANK,
+    value: NOTIFICATION_TYPE_SERVICE.WITHDRAW_LINK_BANK,
     bodyRegex: templateFormatBody.withdrawLinkBank,
     titleRegex: undefined,
     defaultTile: t`notification-management.default-title.withdraw-link-bank`,
     defaultBody: t`notification-management.default-body.withdraw-link-bank`
   },
   {
-    value: notificationService.WITHDRAW_NOT_LINK_BANK,
+    value: NOTIFICATION_TYPE_SERVICE.WITHDRAW_NOT_LINK_BANK,
     bodyRegex: templateFormatBody.withdrawUnlinkBank,
     titleRegex: undefined,
     defaultTile: t`notification-management.default-title.withdraw-not-link-bank`,
     defaultBody: t`notification-management.default-body.withdraw-not-link-bank`
   },
   {
-    value: notificationService.LINK_BANK,
+    value: NOTIFICATION_TYPE_SERVICE.LINK_BANK,
     bodyRegex: templateFormatBody.linkBank,
     titleRegex: undefined,
     defaultTile: t`notification-management.default-title.link-bank`,
     defaultBody: t`notification-management.default-body.link-bank`
   },
   {
-    value: notificationService.UNLINK_BANK,
+    value: NOTIFICATION_TYPE_SERVICE.UNLINK_BANK,
     bodyRegex: templateFormatBody.unLinkBank,
     titleRegex: undefined,
     defaultTile: t`notification-management.default-title.un-link-bank`,
     defaultBody: t`notification-management.default-body.un-link-bank`
   },
   {
-    value: notificationService.PAYMENT_BILL,
+    value: NOTIFICATION_TYPE_SERVICE.PAYMENT_BILL,
     bodyRegex: templateFormatBody.paymentBill,
     titleRegex: undefined,
     defaultTile: t`notification-management.default-title.payment-bill`,
     defaultBody: t`notification-management.default-body.payment-bill`
   },
   {
-    value: notificationService.WARNING_LOGIN_NEW_DEVICE,
+    value: NOTIFICATION_TYPE_SERVICE.WARNING_LOGIN_NEW_DEVICE,
     bodyRegex: templateFormatBody.loginWarning,
     titleRegex: undefined,
     defaultTile: t`notification-management.default-title.warning-login-new-device`,
     defaultBody: t`notification-management.default-body.warning-login-new-device`
   },
   {
-    value: notificationService.WARNING_CHANGE_PASSWORD,
+    value: NOTIFICATION_TYPE_SERVICE.WARNING_CHANGE_PASSWORD,
     bodyRegex: undefined,
     titleRegex: undefined,
     defaultTile: t`notification-management.default-title.warning-change-password`,

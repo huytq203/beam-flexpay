@@ -1,13 +1,16 @@
-import { t } from 'i18next'
+import { SearchOutlined } from '@ant-design/icons'
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal'
 import ButtonAdd from '@components/button-add/ButtonAdd'
 import ButtonDelete from '@components/button-delete/ButtonDelete'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import CellContent from '@components/cell-content/CellContent'
 import CustomPaymentMethod from '@components/custom-payment-method/CustomPaymentMethod'
+import SearchBar from '@components/search-bar/SearchBar'
 import { applicableObjects } from '@constants/options'
 import { useLazyGetListGroupQuery } from '@services/apiAccountGroup'
+import { useSystemFeeManagementGetPolicyPaymentWithBankCardListQuery as findAllQuery } from '@services/cmsFee'
 import { useLazyGetCustomersQuery } from '@services/customerService'
-import { SearchOutlined } from '@ant-design/icons'
+import { SystemFeeManagementGetPolicyPaymentWithBankCardListApiArg as findAllArgs } from '@type/application'
 import {
   APPLICABLE_OBJECTS,
   pageEnum,
@@ -22,7 +25,6 @@ import {
   Col,
   Empty,
   Form,
-  Input,
   Modal,
   Row,
   Select,
@@ -31,17 +33,13 @@ import {
 } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
-import { useMemo, useState, useCallback } from 'react'
+import { t } from 'i18next'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BsEyeFill } from 'react-icons/bs'
+import { AiOutlineHistory } from 'react-icons/ai'
 import { CustomAccountGroupSelect } from '../components/SelectAccountGroup'
 import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount'
 import { DeletePolicyModal } from '../policy-management-modal/delete-modal/DeletePolicyModal'
-import { PolicyManagementModal } from '../policy-management-modal/PolicyManagementModal'
-import { useSystemFeeManagementGetPolicyPaymentWithBankCardListQuery as findAllQuery } from '@services/cmsFee'
-import { SystemFeeManagementGetPolicyPaymentWithBankCardListApiArg as findAllArgs } from '@type/application'
-import SearchBar from '@components/search-bar/SearchBar'
-import { AiOutlineHistory } from 'react-icons/ai';
 
 const AccountAndBankPaymentManagement = () => {
   const { t: trans } = useTranslation()
@@ -466,7 +464,7 @@ const AccountAndBankPaymentManagement = () => {
         }}
       />
       {open && mode !== viewMode.delete && (
-        <PolicyManagementModal
+        <AuditLogManagementModal
           page={pageEnum.accountBankPayment}
           onCancel={onCancel}
           open={open}

@@ -1,10 +1,23 @@
-import _ from 'lodash';
-import { LockOutlined, UnlockOutlined, EyeOutlined } from '@ant-design/icons';
+import { EyeOutlined, LockOutlined, UnlockOutlined } from '@ant-design/icons';
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal';
 import ButtonAdd from '@components/button-add/ButtonAdd';
 import ButtonSearch from '@components/button-search/ButtonSearch';
 import SearchBar from '@components/search-bar/SearchBar';
+import { openNotification } from '@configs/fetchBaseQueryCustom';
 import { GUTTER } from '@constants/appConstant';
 import { TimeFormat } from '@constants/datetime';
+import {
+  accountingStatus,
+  accountingTransactionType,
+  fundsOptions
+} from '@constants/options';
+import {
+  useGetAccountingQuery,
+  useUpdateActiveMutation
+} from '@services/accountingService';
+import { Accounting } from '@type/accounting';
+import { viewMode } from '@type/customer';
+import { getAccountingTransactionType } from '@utils/helperFunctions';
 import { useToggle } from 'ahooks';
 import {
   Button,
@@ -21,27 +34,14 @@ import {
   Tooltip
 } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import _ from 'lodash';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import TransactionAccountingConfigurationForm from './TransactionAccountingConfigurationForm';
-import { viewMode } from '@type/customer';
-import {
-  accountingStatus,
-  accountingTransactionType,
-  fundsOptions
-} from '@constants/options';
-import { getAccountingTransactionType } from '@utils/helperFunctions';
-import {
-  useGetAccountingQuery,
-  useUpdateActiveMutation
-} from '@services/accountingService';
-import { openNotification } from '@configs/fetchBaseQueryCustom';
-import { Accounting } from '@type/accounting';
+import { AiOutlineHistory } from 'react-icons/ai';
 import { FaPen } from 'react-icons/fa';
-import { AiFillEye, AiOutlineHistory } from 'react-icons/ai';
 import { pageEnum, viewMode as viewModeHistory } from '../../app/types/policyManagement';
-import { PolicyManagementModal } from '../policy-management/policy-management-modal/PolicyManagementModal';
+import TransactionAccountingConfigurationForm from './TransactionAccountingConfigurationForm';
 
 function TransactionAccountingConfiguration() {
   const [form] = Form.useForm();
@@ -382,7 +382,7 @@ function TransactionAccountingConfiguration() {
         onCancel={onCancel}
         onSubmit={refetchAccounting}
       />
-      <PolicyManagementModal
+      <AuditLogManagementModal
         onCloseConfirmModal={onCloseConfirmModal}
         visibleConfirmModal={visibleConfirmModal}
         page={pageEnum.customerCancel}

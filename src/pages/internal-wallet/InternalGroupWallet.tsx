@@ -1,4 +1,5 @@
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons';
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal';
 import ButtonAdd from '@components/button-add/ButtonAdd';
 import ButtonSearch from '@components/button-search/ButtonSearch';
 import ButtonUpdate from '@components/button-update/ButtonUpdate';
@@ -34,7 +35,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AiOutlineHistory } from 'react-icons/ai';
 import { pageEnum, viewMode as viewModeHistory } from '../../app/types/policyManagement';
-import { PolicyManagementModal } from '../policy-management/policy-management-modal/PolicyManagementModal';
 import InternalGroupForm from './components/InternalGroupForm';
 
 
@@ -331,7 +331,7 @@ function InternalGroupWallet() {
           group={selected}
         />
       )}
-      <PolicyManagementModal
+      <AuditLogManagementModal
         onCloseConfirmModal={onCloseConfirmModal}
         visibleConfirmModal={visibleConfirmModal}
         page={pageEnum.internalGroupWallet}
