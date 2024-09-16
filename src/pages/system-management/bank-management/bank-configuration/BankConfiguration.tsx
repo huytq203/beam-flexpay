@@ -1,19 +1,18 @@
 import { ExclamationCircleFilled, PlusOutlined } from '@ant-design/icons'
 import { GUTTER } from '@constants/appConstant'
 import { bankStatus } from '@constants/options'
-import { address, bankName, hyperLink } from '@constants/regex'
+import { bankName, hyperLink } from '@constants/regex'
 import {
   useCreateBankAccountMutation,
   useUpdateBankAccountMutation
 } from '@services/apiBankService'
 import { useBankFindOneQuery } from '@services/cmsBank'
 import { STATUS_CODE } from '@type/api'
-import { BANK_CHANNEL, TYPE_BANK } from '@type/bank'
+import { BANK_CHANNEL } from '@type/bank'
 import { viewMode } from '@type/policyManagement'
 import {
   blockLetterDecimal,
-  compareData,
-  logData
+  compareFormData
 } from '@utils/helperFunctions'
 import {
   Button,
@@ -21,13 +20,12 @@ import {
   Form,
   Input,
   InputNumber,
+  message,
   Modal,
   Row,
   Select,
-  Upload,
-  message,
-  Space,
-  Spin
+  Spin,
+  Upload
 } from 'antd'
 import type { RcFile } from 'antd/es/upload'
 import { useCallback, useEffect, useState } from 'react'
@@ -39,7 +37,7 @@ interface IProps {
   onCancel: () => void
   mode: viewMode
   bank?: any
-  refetch: () => void
+  refetch?: () => void
 }
 
 type BankType = 'LINK' | 'LINK_DEPOSIT' | 'LINK_WITHDRAW' | 'LINK_GATEWAY'
@@ -112,7 +110,6 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
     setLoading(true)
     const formData = new FormData()
     const { image, shortLogo, bankCode, name, ...rest } = value
-    logData('value----', value)
     let restData = { ...rest, name }
     /**
      * for in the value that get from form without image and shortlogo
@@ -142,12 +139,10 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
     } else if (mode === viewMode.update) {
       let initData = { ...DetailData }
       let valueTypeUpdate: string[] = []
-      valueTypeUpdate = compareData(formData, initData)
+      valueTypeUpdate = compareFormData(formData, initData)
       if (valueTypeUpdate.length > 0) {
         formData.append('valueTypeUpdate', JSON.stringify(valueTypeUpdate))
       }
-      logData('valueTypeUpdate', valueTypeUpdate)
-      logData('3', formData)
       data = bank?.id && (await updateBankAccount({ id: bank.id, formData }))
     }
 
@@ -164,7 +159,7 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
           : t`system-management.message.edit-success`
       )
       closeModal()
-      refetch()
+      refetch && refetch()
     }
     setLoading(false)
   }

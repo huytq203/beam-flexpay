@@ -1,3 +1,4 @@
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal';
 import ButtonAdd from '@components/button-add/ButtonAdd';
 import ButtonSearch from '@components/button-search/ButtonSearch';
 import CellContent from '@components/cell-content/CellContent';
@@ -12,7 +13,7 @@ import {
 import { useNotificationContextSettingFindAllQuery } from '@services/cmsService';
 import { STATUS_CODE } from '@type/api';
 import { NotificationContextSettingFindAllApiArg } from '@type/application';
-import { INotification, notificationMode } from '@type/notification';
+import { INotification } from '@type/notification';
 import {
   getApplicableObject,
   getNotificationService,
@@ -38,8 +39,6 @@ import { useTranslation } from 'react-i18next';
 import { AiFillDelete, AiFillEye, AiFillSound, AiOutlineHistory } from 'react-icons/ai';
 import { FaPen } from 'react-icons/fa';
 import { pageEnum, viewMode } from '../../../app/types/policyManagement';
-import { PolicyManagementModal } from '../../policy-management/policy-management-modal/PolicyManagementModal';
-import NotificationModal from './notification-modal/NotificationModal';
 
 function NotificationManagement() {
   const { t } = useTranslation()
@@ -55,20 +54,17 @@ function NotificationManagement() {
   )
   const [selectedId, setSelectedId] = useState<string>('')
   const [open, setOpen] = useState(false)
-  const [mode, setMode] = useState<notificationMode>(notificationMode.CREATE)
+  const [mode, setMode] = useState<viewMode>(viewMode.create)
 
   const { data, refetch } = useNotificationContextSettingFindAllQuery(search)
   const [deleteNotification] = useLazyDeleteNotificationQuery()
   const [publishNotification] = useLazyPublishNotificationQuery()
 
-
-  const [openHistory, setOpenHistory] = useState<boolean>(false);
-  const [modeHistory, setModeHistory] = useState<viewMode>(viewMode.create);
   const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false);
 
   const toggleMode = (state: boolean) => setOpen(state)
 
-  const handleModal = (action: notificationMode, id?: string) => {
+  const handleModal = (action: viewMode, id?: string) => {
     setOpen(true)
     if (id) setSelectedId(id)
     setMode(action)
@@ -77,14 +73,12 @@ function NotificationManagement() {
   const onCloseConfirmModal = () => {
     setVisibleConfirmModal(false);
   }
-
-  const onCancelHistory = () => {
-    if (modeHistory === viewMode.history || modeHistory === viewMode.delete) {
-      setOpenHistory(false);
-    } else {
+  const onCancel = () => {
+    if (mode !== viewMode.history) {
       setVisibleConfirmModal(true);
     }
-  }
+    setOpen(false);
+  };
 
 
   /**
@@ -280,9 +274,9 @@ function NotificationManagement() {
               <Button
                 icon={<AiOutlineHistory />}
                 onClick={() => {
-                  setModeHistory(viewMode.history);
+                  setMode(viewMode.history);
                   setSelectedId(record.id);
-                  setOpenHistory(true);
+                  setOpen(true);
                 }} />
             </Tooltip>
           </Col>
@@ -293,7 +287,7 @@ function NotificationManagement() {
             >
               <Button
                 icon={<AiFillEye />}
-                onClick={() => handleModal(notificationMode.VIEW, record?.id)}
+                onClick={() => handleModal(viewMode.view, record?.id)}
               />
             </Tooltip>
           </Col>
@@ -307,7 +301,7 @@ function NotificationManagement() {
                 //   checkKeywords(record.title) && checkKeywords(record.body)
                 // }
                 icon={<FaPen />}
-                onClick={() => handleModal(notificationMode.UPDATE, record?.id)}
+                onClick={() => handleModal(viewMode.update, record?.id)}
               />
             </Tooltip>
           </Col>
@@ -475,7 +469,7 @@ function NotificationManagement() {
                   <ButtonAdd
                     module=''
                     onClick={() => {
-                      setMode(notificationMode.CREATE)
+                      setMode(viewMode.create)
                       toggleMode(true)
                     }}
                   />
@@ -509,26 +503,19 @@ function NotificationManagement() {
         }}
       />
       {open && (
-        <NotificationModal
+        <AuditLogManagementModal
+          onCloseConfirmModal={onCloseConfirmModal}
+          visibleConfirmModal={visibleConfirmModal}
+          page={pageEnum.notificationManagement}
           open={open}
           mode={mode}
-          onCancel={() => toggleMode(false)}
-          id={selectedId}
+          onCancel={onCancel} 
+          setOpen={setOpen}
+          recordId={Number(selectedId)}
           refetch={refetch}
+          entityType='NOTIFICATION_CONTEXT_SETTING'
         />
       )}
-      <PolicyManagementModal
-        onCloseConfirmModal={onCloseConfirmModal}
-        visibleConfirmModal={visibleConfirmModal}
-        refetch={refetch}
-        page={pageEnum.notificationManagement}
-        onCancel={onCancelHistory}
-        open={openHistory}
-        setOpen={setOpenHistory}
-        mode={modeHistory}
-        recordId={Number(selectedId)}
-        entityType='NOTIFICATION_CONTEXT_SETTING'
-      />
     </Card>
   )
 }

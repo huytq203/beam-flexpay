@@ -1,6 +1,7 @@
 import { t } from 'i18next';
 
 import { SearchOutlined } from '@ant-design/icons';
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal';
 import ButtonAdd from '@components/button-add/ButtonAdd';
 import ButtonDelete from '@components/button-delete/ButtonDelete';
 import ButtonUpdate from '@components/button-update/ButtonUpdate';
@@ -39,7 +40,6 @@ import { AiOutlineHistory } from 'react-icons/ai';
 import { CustomAccountGroupSelect } from '../components/SelectAccountGroup';
 import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount';
 import { DeletePolicyModal } from '../policy-management-modal/delete-modal/DeletePolicyModal';
-import { PolicyManagementModal } from '../policy-management-modal/PolicyManagementModal';
 
 const WithdrawManagement = () => {
   const { t: trans } = useTranslation()
@@ -458,7 +458,7 @@ const WithdrawManagement = () => {
         }}
       />
       {open && mode !== viewMode.delete && (
-        <PolicyManagementModal
+        <AuditLogManagementModal
           page={pageEnum.withdrawMoney}
           onCancel={onCancel}
           open={open}

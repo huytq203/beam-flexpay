@@ -1,3 +1,4 @@
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal';
 import ButtonAdd from '@components/button-add/ButtonAdd';
 import ButtonUpdate from '@components/button-update/ButtonUpdate';
 import SearchBar from '@components/search-bar/SearchBar';
@@ -16,7 +17,6 @@ import { AiOutlineHistory } from 'react-icons/ai';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { pageEnum, viewMode } from '../../../app/types/policyManagement';
-import { PolicyManagementModal } from '../../policy-management/policy-management-modal/PolicyManagementModal';
 import FeeSettingsForm from './FeeSettingsForm';
 
 const FeeSettings = () => {
@@ -157,7 +157,7 @@ const FeeSettings = () => {
         mode={mode}
         record={record}
       />
-      <PolicyManagementModal
+      <AuditLogManagementModal
         onCloseConfirmModal={onCloseConfirmModal}
         visibleConfirmModal={visibleConfirmModal}
         recordId={selectedId}

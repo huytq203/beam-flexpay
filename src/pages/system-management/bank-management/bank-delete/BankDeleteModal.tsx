@@ -7,8 +7,8 @@ import { useTranslation } from 'react-i18next'
 
 interface IProps {
   onCancel: () => void
-  bankId: number
-  refetch: () => void
+  bankId?: number
+  refetch?: () => void
 }
 function BankDeleteModal({ onCancel, bankId, refetch }: IProps) {
   const { t } = useTranslation()
@@ -25,7 +25,7 @@ function BankDeleteModal({ onCancel, bankId, refetch }: IProps) {
       }
       setLoading(false)
       onCancel()
-      refetch()
+      refetch && refetch()
     }
   }
 

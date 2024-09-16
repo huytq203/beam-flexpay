@@ -1,12 +1,12 @@
-import { t } from 'i18next'
 import { SearchOutlined } from '@ant-design/icons'
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal'
 import ButtonAdd from '@components/button-add/ButtonAdd'
 import ButtonDelete from '@components/button-delete/ButtonDelete'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import SearchBar from '@components/search-bar/SearchBar'
+import { applicableObjects } from '@constants/options'
 import { useLazyGetListGroupQuery } from '@services/apiAccountGroup'
 import { useLazyGetCustomersQuery } from '@services/customerService'
-import { applicableObjects } from '@constants/options'
 import {
   useCreateTransferPolicyMutation,
   useGetListTransferPolicyQuery,
@@ -33,12 +33,12 @@ import {
 import { useForm } from 'antd/es/form/Form'
 import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
+import { t } from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AiFillEye, AiOutlineHistory } from 'react-icons/ai'
+import { AiOutlineHistory } from 'react-icons/ai'
 import { CustomAccountGroupSelect } from '../components/SelectAccountGroup'
 import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount'
-import { PolicyManagementModal } from '../policy-management-modal/PolicyManagementModal'
 
 type SearchType = {
   page: number
@@ -432,7 +432,7 @@ const EWalletMoneyTransferManagement = () => {
           }
         }}
       />
-      <PolicyManagementModal
+      <AuditLogManagementModal
         recordId={selectedItem?.id}
         isLoadingCreate={isLoadingCreatePolicy}
         isLoadingUpdate={isLoadingUpdatePolicy}

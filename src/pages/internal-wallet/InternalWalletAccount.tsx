@@ -1,9 +1,23 @@
+import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal'
 import ButtonAdd from '@components/button-add/ButtonAdd'
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import SearchBar from '@components/search-bar/SearchBar'
+import { openNotification } from '@configs/fetchBaseQueryCustom'
 import { GUTTER } from '@constants/appConstant'
-import { FullFormatTime, TimeFormat } from '@constants/datetime'
+import { FullFormatTime } from '@constants/datetime'
+import {
+  useGetListWalletsQuery,
+  useUpdateInternalWalletMutation
+} from '@services/apiInternalWallet'
+import { viewMode } from '@type/customer'
+import { InternalWalletPayload } from '@type/internalWallet'
+import { numberAndDotValidation, numberValidation } from '@utils/constants'
+import {
+  blockArrowValue
+} from '@utils/helperFunctions'
+import { pretty } from '@utils/qs'
 import { useToggle } from 'ahooks'
 import {
   Button,
@@ -23,26 +37,9 @@ import { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { InternalWalletPayload } from '@type/internalWallet'
-import {
-  useGetListWalletsQuery,
-  useUpdateInternalWalletMutation
-} from '@services/apiInternalWallet'
-import { viewMode } from '@type/customer'
+import { AiOutlineHistory } from 'react-icons/ai'
+import { pageEnum, viewMode as viewModeHistory } from '../../app/types/policyManagement'
 import InternalWalletModal from './InternalWalletModal'
-import { openNotification } from '@configs/fetchBaseQueryCustom'
-import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
-import {
-  blockArrowValue,
-  blockLetterDecimal,
-  blockLetterDecimalAndDot,
-  blockLetterValue
-} from '@utils/helperFunctions'
-import { pretty } from '@utils/qs'
-import { numberAndDotValidation, numberValidation } from '@utils/constants'
-import { pageEnum, viewMode as viewModeHistory } from '../../app/types/policyManagement';
-import { AiFillEye, AiOutlineHistory } from 'react-icons/ai';
-import { PolicyManagementModal } from '../policy-management/policy-management-modal/PolicyManagementModal';
 
 function InternalWalletAccount() {
   const [form] = Form.useForm()
@@ -368,7 +365,7 @@ function InternalWalletAccount() {
         }
         mode={mode}
       />
-      <PolicyManagementModal
+      <AuditLogManagementModal
         onCloseConfirmModal={onCloseConfirmModal}
         visibleConfirmModal={visibleConfirmModal}
         refetch={refetch}

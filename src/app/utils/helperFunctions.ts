@@ -1,12 +1,4 @@
 import { accountingTransactionType, serviceTypes } from '@constants/options'
-import { notificationService } from '@type/notification'
-import { APPLICABLE_OBJECTS, history_type } from '@type/policyManagement'
-import { TransactionStatus, TransactionType } from '@type/transfer'
-import { notification } from 'antd'
-import dayjs from 'dayjs'
-import { t } from 'i18next'
-import { isDate, fromPairs, isEqual, forOwn } from 'lodash'
-import i18n from '../languages/i18n'
 import {
   LIMIT_AND_REGULATIONS,
   LIMIT_TYPE,
@@ -14,8 +6,16 @@ import {
   TRANSACTION_TYPE,
   VALUE_LIMIT_TYPE
 } from '@pages/policy-management/limit-management/LimitAndRegulationsConst'
-import { accountStatus } from '@type/customer'
 import { BANK_MANAGEMENT, BANK_TYPE } from '@pages/system-management/bank-management/bank-modal/BankManagementConst'
+import { NOTIFICATION_CONTEXT_SETTING, NOTIFICATION_TYPE_OBJECT, NOTIFICATION_TYPE_SERVICE } from '@pages/system-management/notification-management/NotificationManagementConst'
+import { accountStatus } from '@type/customer'
+import { APPLICABLE_OBJECTS, history_type } from '@type/policyManagement'
+import { TransactionStatus, TransactionType } from '@type/transfer'
+import { notification } from 'antd'
+import dayjs from 'dayjs'
+import { t } from 'i18next'
+import { forOwn, fromPairs, isDate, isEqual, reduce } from 'lodash'
+import i18n from '../languages/i18n'
 
 export const getGender = (gender: string | number) => {
   switch (+gender) {
@@ -285,6 +285,47 @@ export const formatHistoryData = (value: string | number) => {
         return i18n.t('system-management.bank.options.LINK_GATEWAY')
       case BANK_TYPE.LINK_WITHDRAW:
         return i18n.t('system-management.bank.options.LINK_WITHDRAW')
+      case APPLICABLE_OBJECTS.SYSTEM:
+        return i18n.t('policy-management.payment.system')
+      case APPLICABLE_OBJECTS.ACCOUNT_GROUP:
+        return i18n.t('policy-management.payment.accountGroup')
+      case APPLICABLE_OBJECTS.PERSONAL_ACCOUNT:
+        return i18n.t('policy-management.payment.personalAccount')
+      case NOTIFICATION_TYPE_SERVICE.DEPOSIT_LINK_BANK:
+        return i18n.t('notification-management.service-type.deposit-link-bank')
+      case NOTIFICATION_TYPE_SERVICE.DEPOSIT_CARD_PHONE:
+        return i18n.t('notification-management.service-type.deposit-card-phone')
+      case NOTIFICATION_TYPE_SERVICE.DEPOSIT_FAIL:
+        return i18n.t('notification-management.service-type.deposit-fail')
+      case NOTIFICATION_TYPE_SERVICE.CHARGE_CARD_PHONE_NUMBER:
+        return i18n.t('notification-management.service-type.charge-card-phone-number')
+      case NOTIFICATION_TYPE_SERVICE.CHARGE_DATA_3G_4G:
+        return i18n.t('notification-management.service-type.charge-data-3g-4g')
+      case NOTIFICATION_TYPE_SERVICE.PAYMENT_CARD_PHONE:
+        return i18n.t('notification-management.service-type.payment-card-phone')
+      case NOTIFICATION_TYPE_SERVICE.PAYMENT_DATA_3G_4G:
+        return i18n.t('notification-management.service-type.payment-data-3g-4g')
+      case NOTIFICATION_TYPE_SERVICE.TRANSFER_MOVER:
+        return i18n.t('notification-management.service-type.transfer-mover')
+      case NOTIFICATION_TYPE_SERVICE.TRANSFER_RECEIVE:
+        return i18n.t('notification-management.service-type.transfer-receive')
+      case NOTIFICATION_TYPE_SERVICE.WITHDRAW_LINK_BANK:
+        return i18n.t('notification-management.service-type.withdraw-link-bank')
+      case NOTIFICATION_TYPE_SERVICE.WITHDRAW_NOT_LINK_BANK:
+        return i18n.t('notification-management.service-type.withdraw-not-link-bank')
+      case NOTIFICATION_TYPE_SERVICE.LINK_BANK:
+        return i18n.t('notification-management.service-type.link-bank')
+      case NOTIFICATION_TYPE_SERVICE.UNLINK_BANK:
+        return i18n.t('notification-management.service-type.un-link-bank')
+      case NOTIFICATION_TYPE_SERVICE.PAYMENT_BILL:
+        return i18n.t('notification-management.service-type.payment-bill')
+      case NOTIFICATION_TYPE_SERVICE.WARNING_LOGIN_NEW_DEVICE:
+        return i18n.t('notification-management.service-type.warning-login-new-device')
+      case NOTIFICATION_TYPE_SERVICE.WARNING_CHANGE_PASSWORD:
+        return i18n.t('notification-management.service-type.warning-change-password')
+      case NOTIFICATION_TYPE_SERVICE.OTHER:
+        return i18n.t('notification-management.service-type.other-service')
+
       default:
         // if (typeof JSON.parse(value.toString()) === 'string') return value;
         // else if (typeof JSON.parse(value.toString()) === 'object') return formatObjectHistory(JSON.parse(value.toString()));
@@ -457,10 +498,10 @@ export const getGeneralReportDeviceChartTitle = (title: string) => {
   }
 }
 
-export const getNotificationService = (service: notificationService) => {
+export const getNotificationService = (service: NOTIFICATION_TYPE_SERVICE) => {
   const services = serviceTypes.concat([
     {
-      value: notificationService.OTHER,
+      value: NOTIFICATION_TYPE_SERVICE.OTHER,
       label: i18n.t`notification-management.service-type.other-service`
     }
   ])
@@ -579,6 +620,18 @@ export const getNameColumnTypeChange = (title: string) => {
       return i18n.t`system-management.bank.type`
     case BANK_MANAGEMENT.WEBSITE:
       return i18n.t`system-management.bank.website`
+    case NOTIFICATION_CONTEXT_SETTING.OBJECT:
+      return i18n.t`notification-management.object`
+    case NOTIFICATION_CONTEXT_SETTING.SERVICE:
+      return i18n.t`notification-management.service`
+    case NOTIFICATION_CONTEXT_SETTING.STATUS:
+      return i18n.t`notification-management.status`
+    case NOTIFICATION_CONTEXT_SETTING.TEXT_TITLE:
+      return i18n.t`notification-management.text-title`
+    case NOTIFICATION_CONTEXT_SETTING.APPLY_DATE:
+      return i18n.t`notification-management.apply-date`
+    case NOTIFICATION_CONTEXT_SETTING.CONTENT:
+      return i18n.t`notification-management.content`
     default:
       return title
   }
@@ -605,7 +658,7 @@ export const formDataToObject = (formData: FormData): Data => {
  * @param initData - Đối tượng dữ liệu ban đầu để so sánh.
  * @returns Một mảng các chuỗi đại diện cho các trường khác nhau giữa hai đối tượng.
  */
-export const compareData = (formData: FormData, initData: Data): string[] => {
+export const compareFormData = (formData: FormData, initData: Data): string[] => {
   const formDataObj = formDataToObject(formData)
   const differentFields: string[] = []
 
@@ -621,6 +674,26 @@ export const compareData = (formData: FormData, initData: Data): string[] => {
 
   return differentFields
 }
+/**
+ * So sánh các thuộc tính của một đối tượng thông báo với một đối tượng payload và trả về một mảng các khóa
+ * nơi các giá trị khác nhau.
+ *
+ * @param notification - Đối tượng thông báo để so sánh.
+ * @param payload - Đối tượng payload để so sánh với thông báo.
+ * @returns Một mảng các khóa nơi các giá trị trong payload khác với các giá trị trong thông báo.
+ */
+export const compareData = (notification: any, payload: any) => {
+  return reduce(payload, (result: string[], value, key) => {
+    if (!isEqual(value, notification[key])) {
+      console.log('key: ', key)
+      console.log('value: ', value)
+      console.log('notification[key]: ', notification[key])
+
+      result.push(key);
+    }
+    return result;
+  }, [] as string[]);
+};
 
 /**
  * Ghi log dữ liệu được cung cấp cùng với một tin nhắn tùy chọn.

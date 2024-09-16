@@ -29,7 +29,8 @@ export enum pageEnum {
   'customerCancel' = 'customerCancel',
   'feeSettings' = 'feeSettings',
   notificationManagement = "notificationManagement",
-  internalGroupWallet = "internalGroupWallet"
+  internalGroupWallet = "internalGroupWallet",
+  'bankManagement' = 'bankManagement',
 }
 
 export enum APPLICABLE_OBJECTS {

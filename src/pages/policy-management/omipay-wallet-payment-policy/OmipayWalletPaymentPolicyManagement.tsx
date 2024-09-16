@@ -1,7 +1,11 @@
 import { SearchOutlined } from '@ant-design/icons'
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal'
 import ButtonAdd from '@components/button-add/ButtonAdd'
 import ButtonDelete from '@components/button-delete/ButtonDelete'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
+import SearchBar from '@components/search-bar/SearchBar'
+import { GUTTER } from '@constants/appConstant'
+import { TimeFullFormat } from '@constants/datetime'
 import { useLazyGetListGroupQuery } from '@services/apiAccountGroup'
 import { useSystemFeeManagementGetPolicyPaymentWithFlexpayListQuery as findAllQuery } from '@services/cmsFee'
 import { useLazyGetCustomersQuery } from '@services/customerService'
@@ -34,14 +38,10 @@ import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AiFillEye, AiOutlineHistory } from 'react-icons/ai'
+import { AiOutlineHistory } from 'react-icons/ai'
 import { objects } from '../../../app/types/policyManagement'
 import { CustomAccountGroupSelect } from '../components/SelectAccountGroup'
 import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount'
-import { PolicyManagementModal } from '../policy-management-modal/PolicyManagementModal'
-import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER } from '@constants/appConstant'
-import { TimeFullFormat } from '@constants/datetime'
 
 type SearchType = {
   page: number
@@ -448,7 +448,7 @@ const OmipayWalletPaymentPolicyManagement = () => {
         }}
       />
       {open && (
-        <PolicyManagementModal
+        <AuditLogManagementModal
           recordId={selectedItem?.id}
           isLoadingCreate={isLoadingCreatePolicy}
           isLoadingUpdate={isLoadingUpdatePolicy}

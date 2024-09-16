@@ -1,3 +1,22 @@
+import { SearchOutlined } from '@ant-design/icons'
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal'
+import ButtonAdd from '@components/button-add/ButtonAdd'
+import ButtonDelete from '@components/button-delete/ButtonDelete'
+import ButtonUpdate from '@components/button-update/ButtonUpdate'
+import CellContent from '@components/cell-content/CellContent'
+import CustomPaymentMethod from '@components/custom-payment-method/CustomPaymentMethod'
+import SearchBar from '@components/search-bar/SearchBar'
+import { TimeFullFormat } from '@constants/datetime'
+import { useLazyGetListGroupQuery } from '@services/apiAccountGroup'
+import { useGetListDirectDepositQuery } from '@services/apiDirectDeposit'
+import { useLazyGetCustomersQuery } from '@services/customerService'
+import {
+  APPLICABLE_OBJECTS,
+  objects,
+  pageEnum,
+  viewMode
+} from '@type/policyManagement'
+import { convertNumber, getApplicableObject } from '@utils/helperFunctions'
 import {
   Button,
   Card,
@@ -10,37 +29,17 @@ import {
   Table,
   Tooltip
 } from 'antd'
-import { SearchOutlined } from '@ant-design/icons'
-import { ColumnsType } from 'antd/es/table'
-import { useMemo, useState } from 'react'
-import { t } from 'i18next'
-import { useTranslation } from 'react-i18next'
 import { useForm } from 'antd/es/form/Form'
-import { PolicyManagementModal } from '../policy-management-modal/PolicyManagementModal'
-import {
-  APPLICABLE_OBJECTS,
-  objects,
-  pageEnum,
-  viewMode
-} from '@type/policyManagement'
-import ButtonAdd from '@components/button-add/ButtonAdd'
-import CustomPaymentMethod from '@components/custom-payment-method/CustomPaymentMethod'
-import { useGetListDirectDepositQuery } from '@services/apiDirectDeposit'
-import { BsEyeFill } from 'react-icons/bs'
-import ButtonDelete from '@components/button-delete/ButtonDelete'
-import ButtonUpdate from '@components/button-update/ButtonUpdate'
-import { convertNumber, getApplicableObject } from '@utils/helperFunctions'
-import CellContent from '@components/cell-content/CellContent'
+import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
-import { DeletePolicyModal } from '../policy-management-modal/delete-modal/DeletePolicyModal'
+import { t } from 'i18next'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { AiOutlineHistory } from 'react-icons/ai'
 import { CustomAccountGroupSelect } from '../components/SelectAccountGroup'
-import { useLazyGetListGroupQuery } from '@services/apiAccountGroup'
-import { SearchValueType } from '../e-wallet-money-transfer/e-wallet-transfer-money-modal/SetupEWalletTransferMoneyContent'
 import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount'
-import { useLazyGetCustomersQuery } from '@services/customerService'
-import SearchBar from '@components/search-bar/SearchBar'
-import { TimeFullFormat } from '@constants/datetime'
-import { AiOutlineHistory } from 'react-icons/ai';
+import { SearchValueType } from '../e-wallet-money-transfer/e-wallet-transfer-money-modal/SetupEWalletTransferMoneyContent'
+import { DeletePolicyModal } from '../policy-management-modal/delete-modal/DeletePolicyModal'
 
 type SearchType = {
   page: number
@@ -485,7 +484,7 @@ const PaymentPolicyManagement = () => {
         }}
       />
       {open && mode !== viewMode.delete && (
-        <PolicyManagementModal
+        <AuditLogManagementModal
           page={pageEnum.directDeposit}
           onCancel={onCancel}
           open={open}
