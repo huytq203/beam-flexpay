@@ -1,44 +1,51 @@
-import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal';
-import ButtonAdd from '@components/button-add/ButtonAdd';
-import ButtonSearch from '@components/button-search/ButtonSearch';
-import CellContent from '@components/cell-content/CellContent';
-import SearchBar from '@components/search-bar/SearchBar';
-import { GUTTER } from '@constants/appConstant';
-import { TimeFormat } from '@constants/datetime';
-import { notificationStatus, serviceTypes } from '@constants/options';
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal'
+import ButtonAdd from '@components/button-add/ButtonAdd'
+import ButtonHistory from '@components/button-history/ButtonHistory'
+import ButtonSearch from '@components/button-search/ButtonSearch'
+import ButtonView from '@components/button-view/ButtonView'
+import CellContent from '@components/cell-content/CellContent'
+import SearchBar from '@components/search-bar/SearchBar'
+import { GUTTER, SIZE_ICON } from '@constants/appConstant'
+import { TimeFormat } from '@constants/datetime'
+import { notificationStatus, serviceTypes } from '@constants/options'
+import {
+  PencilSimple,
+  SpeakerHigh,
+  Trash
+} from '@phosphor-icons/react'
 import {
   useLazyDeleteNotificationQuery,
   useLazyPublishNotificationQuery
-} from '@services/apiNotification';
-import { useNotificationContextSettingFindAllQuery } from '@services/cmsService';
-import { STATUS_CODE } from '@type/api';
-import { NotificationContextSettingFindAllApiArg } from '@type/application';
-import { INotification } from '@type/notification';
+} from '@services/apiNotification'
+import { useNotificationContextSettingFindAllQuery } from '@services/cmsService'
+import { STATUS_CODE } from '@type/api'
+import { NotificationContextSettingFindAllApiArg } from '@type/application'
+import { INotification } from '@type/notification'
 import {
   getApplicableObject,
   getNotificationService,
   showSuccessMessage
-} from '@utils/helperFunctions';
+} from '@utils/helperFunctions'
 import {
   Button,
   Card,
   Col,
   DatePicker,
   Form,
-  Input, message, Modal,
+  Input,
+  message,
+  Modal,
   Row,
   Select,
   Switch,
   Table,
   Tooltip
-} from 'antd';
-import { ColumnsType } from 'antd/es/table';
-import dayjs from 'dayjs';
-import { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { AiFillDelete, AiFillEye, AiFillSound, AiOutlineHistory } from 'react-icons/ai';
-import { FaPen } from 'react-icons/fa';
-import { pageEnum, viewMode } from '../../../app/types/policyManagement';
+} from 'antd'
+import { ColumnsType } from 'antd/es/table'
+import dayjs from 'dayjs'
+import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { pageEnum, viewMode } from '../../../app/types/policyManagement'
 
 function NotificationManagement() {
   const { t } = useTranslation()
@@ -60,7 +67,7 @@ function NotificationManagement() {
   const [deleteNotification] = useLazyDeleteNotificationQuery()
   const [publishNotification] = useLazyPublishNotificationQuery()
 
-  const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false);
+  const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false)
 
   const toggleMode = (state: boolean) => setOpen(state)
 
@@ -71,15 +78,14 @@ function NotificationManagement() {
   }
 
   const onCloseConfirmModal = () => {
-    setVisibleConfirmModal(false);
+    setVisibleConfirmModal(false)
   }
   const onCancel = () => {
     if (mode !== viewMode.history) {
-      setVisibleConfirmModal(true);
+      setVisibleConfirmModal(true)
     }
-    setOpen(false);
-  };
-
+    setOpen(false)
+  }
 
   /**
    * function handle when click delete button
@@ -265,73 +271,67 @@ function NotificationManagement() {
       render: (record) => (
         console.log(record),
         console.log(checkKeywords(record.title), checkKeywords(record.body)),
-        <Row
-          gutter={GUTTER}
-          justify='center'
-        >
-          <Col>
-            <Tooltip title={t`buttons.history`}>
-              <Button
-                icon={<AiOutlineHistory />}
+        (
+          <Row
+            gutter={GUTTER}
+            justify='center'
+          >
+            <Col>
+              <ButtonHistory
                 onClick={() => {
-                  setMode(viewMode.history);
-                  setSelectedId(record.id);
-                  setOpen(true);
-                }} />
-            </Tooltip>
-          </Col>
-          <Col>
-            <Tooltip
-              placement='top'
-              title={t('admin-management.tooltip.view')}
-            >
-              <Button
-                icon={<AiFillEye />}
+                  setMode(viewMode.history)
+                  setSelectedId(record.id)
+                  setOpen(true)
+                }}
+              />
+            </Col>
+            <Col>
+              <ButtonView
                 onClick={() => handleModal(viewMode.view, record?.id)}
               />
-            </Tooltip>
-          </Col>
-          <Col>
-            <Tooltip
-              placement='top'
-              title={t('admin-management.tooltip.edit')}
-            >
-              <Button
-                // disabled={
-                //   checkKeywords(record.title) && checkKeywords(record.body)
-                // }
-                icon={<FaPen />}
-                onClick={() => handleModal(viewMode.update, record?.id)}
-              />
-            </Tooltip>
-          </Col>
-          <Col>
-            <Tooltip
-              placement='top'
-              title={t('admin-management.tooltip.delete')}
-            >
-              <Button
-                disabled={record.status === 1}
-                danger
-                icon={<AiFillDelete />}
-                onClick={async () => onHandleDelete(record?.id)}
-              />
-            </Tooltip>
-          </Col>
-          <Col>
-            <Tooltip
-              placement='top'
-              title={t('notification-management.publish')}
-            >
-              <Button
-                icon={<AiFillSound />}
-                onClick={async () =>
-                  onHandlePublish(record?.id, record?.status)
-                }
-              />
-            </Tooltip>
-          </Col>
-        </Row>
+            </Col>
+            <Col>
+              <Tooltip
+                placement='top'
+                title={t('admin-management.tooltip.edit')}
+              >
+                <Button
+                  // disabled={
+                  //   checkKeywords(record.title) && checkKeywords(record.body)
+                  // }
+                  icon={<PencilSimple size={SIZE_ICON} />}
+                  onClick={() => handleModal(viewMode.update, record?.id)}
+                />
+              </Tooltip>
+            </Col>
+            <Col>
+              <Tooltip
+                placement='top'
+                title={t('admin-management.tooltip.delete')}
+              >
+                <Button
+                  disabled={record.status === 1}
+                  danger
+                  icon={<Trash size={SIZE_ICON} />}
+                  onClick={async () => onHandleDelete(record?.id)}
+                />
+              </Tooltip>
+            </Col>
+            <Col>
+              <Tooltip
+                placement='top'
+                title={t('notification-management.publish')}
+              >
+                <Button
+                  icon={<SpeakerHigh size={SIZE_ICON} />}
+                  onClick={async () =>
+                    onHandlePublish(record?.id, record?.status)
+                  }
+                />
+              </Tooltip>
+            </Col>
+          </Row>
+        )
       )
     }
   ]
@@ -509,7 +509,7 @@ function NotificationManagement() {
           page={pageEnum.notificationManagement}
           open={open}
           mode={mode}
-          onCancel={onCancel} 
+          onCancel={onCancel}
           setOpen={setOpen}
           recordId={Number(selectedId)}
           refetch={refetch}

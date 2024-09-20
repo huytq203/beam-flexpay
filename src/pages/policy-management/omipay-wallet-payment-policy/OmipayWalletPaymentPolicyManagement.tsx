@@ -42,6 +42,7 @@ import { AiOutlineHistory } from 'react-icons/ai'
 import { objects } from '../../../app/types/policyManagement'
 import { CustomAccountGroupSelect } from '../components/SelectAccountGroup'
 import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount'
+import ButtonHistory from '@components/button-history/ButtonHistory'
 
 type SearchType = {
   page: number
@@ -233,13 +234,12 @@ const OmipayWalletPaymentPolicyManagement = () => {
         width: 200,
         ellipsis: true,
         render: (record) => (
-          <Button
+          <ButtonHistory
             onClick={() => {
               setMode(viewMode?.history)
               setOpen(true)
               setSelectedItem(record)
             }}
-            icon={<AiOutlineHistory />}
           />
         )
       },

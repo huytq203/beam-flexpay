@@ -14,9 +14,7 @@ import {
 import { viewMode } from '@type/customer'
 import { InternalWalletPayload } from '@type/internalWallet'
 import { numberAndDotValidation, numberValidation } from '@utils/constants'
-import {
-  blockArrowValue
-} from '@utils/helperFunctions'
+import { blockArrowValue } from '@utils/helperFunctions'
 import { pretty } from '@utils/qs'
 import { useToggle } from 'ahooks'
 import {
@@ -38,8 +36,14 @@ import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AiOutlineHistory } from 'react-icons/ai'
-import { pageEnum, viewMode as viewModeHistory } from '../../app/types/policyManagement'
+import {
+  pageEnum,
+  viewMode as viewModeHistory
+} from '../../app/types/policyManagement'
 import InternalWalletModal from './InternalWalletModal'
+import ButtonHistory from '@components/button-history/ButtonHistory'
+import ButtonLock from '@components/button-lock/ButtonLock'
+import ButtonUnlock from '@components/button-unlock/ButtonUnlock'
 
 function InternalWalletAccount() {
   const [form] = Form.useForm()
@@ -56,20 +60,25 @@ function InternalWalletAccount() {
     orderBy: 'createdAt'
   })
 
-  const [open, setOpen] = useState<boolean>(false);
-  const [modeHistory, setModeHistory] = useState<viewModeHistory>(viewModeHistory.create);
-  const [selectedId, setSelectedId] = useState<number>();
-  const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false)
+  const [modeHistory, setModeHistory] = useState<viewModeHistory>(
+    viewModeHistory.create
+  )
+  const [selectedId, setSelectedId] = useState<number>()
+  const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false)
 
   const onCloseConfirmModal = () => {
-    setVisibleConfirmModal(false);
-  };
+    setVisibleConfirmModal(false)
+  }
 
   const onCancelHistory = () => {
-    if (modeHistory === viewModeHistory.history || modeHistory === viewModeHistory.delete) {
-      setOpen(false);
+    if (
+      modeHistory === viewModeHistory.history ||
+      modeHistory === viewModeHistory.delete
+    ) {
+      setOpen(false)
     } else {
-      setVisibleConfirmModal(true);
+      setVisibleConfirmModal(true)
     }
   }
   const [addForm, { toggle: addFormToggle }] = useToggle()
@@ -137,12 +146,11 @@ function InternalWalletAccount() {
               placement='top'
               title={t('tooltips.viewHistory')}
             >
-              <Button
-                icon={<AiOutlineHistory />}
+              <ButtonHistory
                 onClick={() => {
-                  setModeHistory(viewModeHistory.history);
-                  setOpen(true);
-                  setSelectedId(record.id);
+                  setModeHistory(viewModeHistory.history)
+                  setOpen(true)
+                  setSelectedId(record.id)
                 }}
               />
             </Tooltip>
@@ -155,13 +163,23 @@ function InternalWalletAccount() {
               module='internalwallet'
             />
             <Tooltip
-              placement='topLeft'
-              title={record.active ? 'Khóa' : 'Mở khóa'}
+              title={
+                record.active
+                  ? t`internal-wallet.modal.change-status-lock-ok-button`
+                  : t`internal-wallet.modal.change-status-unlock-ok-button`
+              }
             >
-              <Button
-                onClick={() => changeStatus(record.active, record.id)}
-                icon={!record.active ? <LockOutlined /> : <UnlockOutlined />}
-              />
+              {record.active ? (
+                <ButtonLock
+                  module=''
+                  onClick={() => changeStatus(record.active, record.id)}
+                />
+              ) : (
+                <ButtonUnlock
+                  module=''
+                  onClick={() => changeStatus(record.active, record.id)}
+                />
+              )}
             </Tooltip>
           </Space>
         )
@@ -248,14 +266,10 @@ function InternalWalletAccount() {
                 <Col span={6}>
                   <Form.Item
                     name='walletGroup'
-                    label={"Nhóm ví"}
-                    rules={[
-                      ...numberValidation,
-                    ]}
+                    label={'Nhóm ví'}
+                    rules={[...numberValidation]}
                   >
-                    <Input
-                      placeholder={"Nhập nhóm ví"}
-                    />
+                    <Input placeholder={'Nhập nhóm ví'} />
                   </Form.Item>
                 </Col>
 

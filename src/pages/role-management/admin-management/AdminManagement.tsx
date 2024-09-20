@@ -30,6 +30,7 @@ import { useTranslation } from 'react-i18next'
 import { AiFillEye } from 'react-icons/ai'
 import { AdminModal } from './AdminModal/AdminModal'
 import { AdminManagementOptions } from '@constants/options'
+import ButtonView from '@components/button-view/ButtonView'
 
 const AdminManagement = () => {
   const [visible, setVisible] = useState(false)
@@ -148,8 +149,7 @@ const AdminManagement = () => {
               placement='top'
               title={trans('admin-management.tooltip.view')}
             >
-              <Button
-                icon={<AiFillEye />}
+              <ButtonView
                 onClick={() => handleModal(viewMode.view, record.id)}
               />
             </Tooltip>

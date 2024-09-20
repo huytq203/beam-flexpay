@@ -40,6 +40,7 @@ import {
   objects,
   transactionType
 } from './LimitAndRegulationsConst'
+import ButtonHistory from '@components/button-history/ButtonHistory'
 
 type SearchType = {
   page: number
@@ -176,8 +177,7 @@ const LimitAndRegulation = () => {
                 placement='top'
                 title={trans('tooltips.viewHistory')}
               >
-                <Button
-                  icon={<AiOutlineHistory />}
+                <ButtonHistory
                   onClick={() => {
                     setMode(viewMode.history)
                     setOpen(true)

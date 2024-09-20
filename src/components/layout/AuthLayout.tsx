@@ -36,20 +36,21 @@ function AuthLayout() {
   return (
     <Row className='auth-page'>
       <Col
-        lg={12}
+        lg={18}
         sm={0}
+        
       >
         <div className='auth-bg-mask auth-mask-color' />
         <div className='auth-bg' />
-        <div className='auth-description'>
+        {/* <div className='auth-description'>
           <div className='m-auto'>
             <h1 className='t-white f-30'>{title}</h1>
             <p className='t-white'>{description}</p>
           </div>
-        </div>
+        </div> */}
       </Col>
       <Col
-        lg={12}
+        lg={6}
         sm={0}
         style={{
           display: 'flex',

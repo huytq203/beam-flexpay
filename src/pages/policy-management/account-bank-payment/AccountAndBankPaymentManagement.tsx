@@ -40,6 +40,7 @@ import { AiOutlineHistory } from 'react-icons/ai'
 import { CustomAccountGroupSelect } from '../components/SelectAccountGroup'
 import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount'
 import { DeletePolicyModal } from '../policy-management-modal/delete-modal/DeletePolicyModal'
+import ButtonHistory from '@components/button-history/ButtonHistory'
 
 const AccountAndBankPaymentManagement = () => {
   const { t: trans } = useTranslation()
@@ -212,8 +213,7 @@ const AccountAndBankPaymentManagement = () => {
         title: `${trans`policy-management.payment.policyHistory`}`,
         render: (record) => (
           <Tooltip title={trans`buttons.history`}>
-            <Button
-              icon={<AiOutlineHistory />}
+            <ButtonHistory
               onClick={() => {
                 setMode(viewMode.history)
                 setSelectedRecord(record.id)

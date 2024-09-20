@@ -1,14 +1,14 @@
-import ButtonExcel from '@components/button-excel/ButtonExcel';
-import ButtonFreeze from '@components/button-freeze/ButtonFreeze';
-import ButtonLock from '@components/button-lock/ButtonLock';
-import ButtonSearch from '@components/button-search/ButtonSearch';
-import ButtonUnlock from '@components/button-unlock/ButtonUnlock';
-import SearchBar from '@components/search-bar/SearchBar';
-import { GUTTER } from '@constants/appConstant';
-import { useCustomerFindAllQuery } from '@services/cmsService';
-import { useExportExcelQuery } from '@services/customerService';
-import { CustomerFindAllApiArg } from '@type/application';
-import { CustomerTable, accountStatus, viewMode } from '@type/customer';
+import ButtonExcel from '@components/button-excel/ButtonExcel'
+import ButtonFreeze from '@components/button-freeze/ButtonFreeze'
+import ButtonLock from '@components/button-lock/ButtonLock'
+import ButtonSearch from '@components/button-search/ButtonSearch'
+import ButtonUnlock from '@components/button-unlock/ButtonUnlock'
+import SearchBar from '@components/search-bar/SearchBar'
+import { GUTTER } from '@constants/appConstant'
+import { useCustomerFindAllQuery } from '@services/cmsService'
+import { useExportExcelQuery } from '@services/customerService'
+import { CustomerFindAllApiArg } from '@type/application'
+import { CustomerTable, accountStatus, viewMode } from '@type/customer'
 import {
   getGender,
   getStatusAccountText,
@@ -16,8 +16,8 @@ import {
   getTagAccountStatusColor,
   getTagColor,
   toPromise
-} from '@utils/helperFunctions';
-import { useBoolean } from 'ahooks';
+} from '@utils/helperFunctions'
+import { useBoolean } from 'ahooks'
 import {
   Button,
   Card,
@@ -30,66 +30,67 @@ import {
   Tag,
   Tooltip,
   Typography
-} from 'antd';
-import { ColumnsType } from 'antd/es/table';
-import { t } from 'i18next';
-import { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { BsEyeFill } from 'react-icons/bs';
-import CustomerModal from './customer-modal/CustomerModal';
+} from 'antd'
+import { ColumnsType } from 'antd/es/table'
+import { t } from 'i18next'
+import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { BsEyeFill } from 'react-icons/bs'
+import CustomerModal from './customer-modal/CustomerModal'
 
-import './style.scss';
+import './style.scss'
+import ButtonView from '@components/button-view/ButtonView'
 
-const { Text } = Typography;
+const { Text } = Typography
 
 function Customers() {
-  const { t: trans } = useTranslation();
-  const [mode, setMode] = useState<viewMode>(viewMode.lock);
-  const [visible, { toggle }] = useBoolean(false);
-  const [selected, setSelected] = useState<string>('');
-  const [skip, setSkip] = useState(true);
-  const [form] = Form.useForm();
+  const { t: trans } = useTranslation()
+  const [mode, setMode] = useState<viewMode>(viewMode.lock)
+  const [visible, { toggle }] = useBoolean(false)
+  const [selected, setSelected] = useState<string>('')
+  const [skip, setSkip] = useState(true)
+  const [form] = Form.useForm()
   const [search, setSearch] = useState<CustomerFindAllApiArg>({
     page: 1,
     take: 10
-  });
+  })
 
-  const { data: accounts, refetch } = useCustomerFindAllQuery(search);
+  const { data: accounts, refetch } = useCustomerFindAllQuery(search)
 
   const { isSuccess } = useExportExcelQuery(
     { pageCount: accounts?.meta.pageCount, ...search },
     { skip: skip, refetchOnMountOrArgChange: true }
-  );
+  )
 
   useEffect(() => {
     if (isSuccess) {
-      setSkip(true);
+      setSkip(true)
     }
-  }, [isSuccess]);
+  }, [isSuccess])
 
-  const setModal = () => toPromise(toggle());
-  const setModePromise = (mode: viewMode) => toPromise(setMode(mode));
+  const setModal = () => toPromise(toggle())
+  const setModePromise = (mode: viewMode) => toPromise(setMode(mode))
 
   const handleModal = async (mode: viewMode, id?: string) => {
-    await setModePromise(mode);
-    if (id) setSelected(id);
-    await setModal();
-  };
+    await setModePromise(mode)
+    if (id) setSelected(id)
+    await setModal()
+  }
 
   const accountList = useMemo(() => {
     if (accounts?.data && accounts.data.length > 0) {
       return accounts?.data?.map((item: CustomerTable, index: number) => ({
         no: ((search?.page ?? 1) - 1) * 10 + index + 1,
         ...item
-      }));
-    } else return [];
-  }, [accounts?.data]);
+      }))
+    } else return []
+  }, [accounts?.data])
 
-  const Nodata = () => <Text>{trans`labels.nodata`}</Text>;
+  const Nodata = () => <Text>{trans`labels.nodata`}</Text>
 
-  const CellContent = ({ content }: { content: string; }) => (
+  const CellContent = ({ content }: { content: string }) => (
     <Text>{content}</Text>
-  );
+  )
 
   const accountColumns: ColumnsType<CustomerTable> = [
     {
@@ -108,7 +109,7 @@ function Customers() {
       width: 120,
       fixed: 'left',
       render: (record) => {
-        return record ? <CellContent content={record} /> : <Nodata />;
+        return record ? <CellContent content={record} /> : <Nodata />
       }
     },
     {
@@ -125,7 +126,7 @@ function Customers() {
           </Tooltip>
         ) : (
           <Nodata />
-        );
+        )
       }
     },
     {
@@ -135,7 +136,7 @@ function Customers() {
       align: 'center',
       width: 100,
       render: (record) => {
-        return record ? <CellContent content={record} /> : <Nodata />;
+        return record ? <CellContent content={record} /> : <Nodata />
       }
     },
     {
@@ -146,7 +147,7 @@ function Customers() {
       width: 80,
       ellipsis: true,
       render: (record: string | number) => {
-        return getGender(record);
+        return getGender(record)
       }
     },
     {
@@ -156,7 +157,7 @@ function Customers() {
       align: 'center',
       width: 140,
       render: (record) => {
-        return record ? <CellContent content={record} /> : <Nodata />;
+        return record ? <CellContent content={record} /> : <Nodata />
       }
     },
     {
@@ -202,50 +203,38 @@ function Customers() {
           justify='center'
         >
           <Col>
-            <Button
-              icon={<BsEyeFill />}
+            <ButtonView
               onClick={async () => await handleModal(viewMode.view, record.id)}
             />
           </Col>
 
-          {record.active ? (
-            <Col>
-              <Tooltip
-                title={
-                  !record.active
-                    ? t`internal-wallet.modal.change-status-unlock-ok-button`
-                    : t`internal-wallet.modal.change-status-lock-ok-button`
-                }
-              >
+          <Col>
+            <Tooltip
+              title={
+                record.active
+                  ? t`internal-wallet.modal.change-status-lock-ok-button`
+                  : t`internal-wallet.modal.change-status-unlock-ok-button`
+              }
+            >
+              {record.active ? (
                 <ButtonLock
                   module='customer'
                   onClick={async () =>
                     await handleModal(viewMode.lock, record.id)
                   }
                 />
-              </Tooltip>
-            </Col>
-          ) : (
-            <Col>
-              <Tooltip
-                title={
-                  !record.active
-                    ? t`internal-wallet.modal.change-status-unlock-ok-button`
-                    : t`internal-wallet.modal.change-status-lock-ok-button`
-                }
-              >
+              ) : (
                 <ButtonUnlock
                   module='customer'
                   onClick={async () =>
                     await handleModal(viewMode.unlock, record.id)
                   }
                 />
-              </Tooltip>
-            </Col>
-          )}
+              )}
+            </Tooltip>
+          </Col>
           <Col>
             <ButtonFreeze
-              danger
               module='customer'
               onClick={async () =>
                 await handleModal(viewMode.freeze, record.id)
@@ -255,13 +244,13 @@ function Customers() {
         </Row>
       )
     }
-  ];
+  ]
 
   const exportData = () => {
     if (accounts?.meta.itemCount) {
-      setSkip(false);
+      setSkip(false)
     }
-  };
+  }
 
   const submit = (value: any) => {
     const newQuery = {
@@ -270,9 +259,9 @@ function Customers() {
       active: value.active === '' ? undefined : value.active,
       status: value.status === '' ? undefined : value.status,
       page: 1
-    };
-    setSearch(newQuery);
-  };
+    }
+    setSearch(newQuery)
+  }
 
   return (
     <Card
@@ -403,7 +392,7 @@ function Customers() {
             setSearch({
               ...search,
               page
-            });
+            })
           }
         }}
       />
@@ -415,7 +404,7 @@ function Customers() {
         refetch={refetch}
       />
     </Card>
-  );
+  )
 }
 
-export default Customers;
+export default Customers

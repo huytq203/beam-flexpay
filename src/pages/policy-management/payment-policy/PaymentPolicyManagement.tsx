@@ -40,6 +40,7 @@ import { CustomAccountGroupSelect } from '../components/SelectAccountGroup'
 import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount'
 import { SearchValueType } from '../e-wallet-money-transfer/e-wallet-transfer-money-modal/SetupEWalletTransferMoneyContent'
 import { DeletePolicyModal } from '../policy-management-modal/delete-modal/DeletePolicyModal'
+import ButtonHistory from '@components/button-history/ButtonHistory'
 
 type SearchType = {
   page: number
@@ -235,8 +236,7 @@ const PaymentPolicyManagement = () => {
       fixed: 'right',
       render: (record) => (
         <Tooltip title={trans`buttons.history`}>
-          <Button
-            icon={<AiOutlineHistory />}
+          <ButtonHistory
             onClick={() => {
               setMode(viewMode.history)
               setSelectedRecord(record.id)

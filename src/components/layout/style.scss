@@ -1,10 +1,12 @@
+@import '../../styles/_variables.scss';
+
 .ant-select-single .ant-select-selector {
   color: rgba(0, 0, 0, 0.88) !important;
 }
 
 .custom-sidebar {
   position: relative;
-  background-color: #fff;
+  background-color: #f0eaea;
   height: 100%;
   transition: all 0.3s ease-in-out;
 }
@@ -21,7 +23,7 @@
   height: 100vh;
   display: flex;
   align-items: center;
-  background: #fff;
+  background: #ffffff;
 
   .auth-form {
     height: inherit;
@@ -31,7 +33,8 @@
     .logo {
       text-align: center;
       margin-bottom: 30px;
-      background-color: #1890ff;
+      background-color: var(--primary-color);
+
       img {
         max-width: 100px;
       }
@@ -41,17 +44,18 @@
   .auth-bg {
     height: 100vh;
     width: 100%;
-    background-image: url('https://account.omipay.vn/public/images/bg/image-3.jpeg');
+    background-color: #d2f8f4 !important;
+    background-image: url('../../styles/assets/capybara/Cappybara_17_Poses-02.png');
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: cover;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
+    background-size: contain;
+    -webkit-background-size: contain;
+    -moz-background-size: contain;
     transition: background-image 0.3s ease-in 0.2s;
   }
 
   .auth-mask-color {
-    background-color: #1890ff !important;
+    // background-color: #f0eaea !important;
   }
 
   .auth-bg-mask {
@@ -70,4 +74,20 @@
     left: 50%;
     z-index: 2;
   }
+}
+
+.ant-btn-default:not(:disabled):not(.ant-btn-disabled):hover {
+  color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  background: #ffffff;
+}
+:where(.css-dev-only-do-not-override-qnu6hi).ant-btn-primary {
+  color: #fff;
+  background: var(--primary-color)!important;
+  box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
+}
+:where(.css-dev-only-do-not-override-qnu6hi).ant-btn-primary:not(:disabled):not(
+    .ant-btn-disabled
+  ):hover {
+  color: #fff;
 }
