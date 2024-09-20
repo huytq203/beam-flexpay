@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client'
 import { I18nextProvider } from 'react-i18next'
 import { Provider } from 'react-redux'
 import { RouterProvider } from 'react-router-dom'
+import { ConfigProvider } from 'antd'
 
 import i18next from './app/languages/i18n'
 import { store } from './app/store'
@@ -14,18 +15,56 @@ import React from 'react'
 
 // add events to global
 window.events = new EventEmitter()
+const primaryColor = '#2bd9d0'
+const primaryHoverColor = '#9feeea'
+
+const common = {
+  colorPrimary: primaryColor,
+  colorInfo: primaryColor,
+  colorLink: primaryColor,
+  colorPrimaryHover: primaryHoverColor,
+  algorithm: true
+}
+const theme = {
+  token: {
+    colorPrimary: primaryColor,
+    colorInfo: primaryColor,
+    colorLink: primaryColor,
+    colorLinkHover: primaryHoverColor,
+    colorPrimaryHover: primaryHoverColor,
+  },
+  components: {
+    // Button: common,
+    // Input: common,
+    // Select: common,
+    // DatePicker: common,
+    // Link: common,
+    // Table: common,
+    // Pagination: { ...common, colorItemActiveColor: primaryColor },
+    // Checkbox: common,
+    // Modal: {
+    //   ...common,
+    //   Button: {
+    //     colorPrimary: primaryColor, // Đặt màu cho nút trong Modal
+    //     colorPrimaryHover: primaryHoverColor,
+    //   },
+    // }
+  }
+}
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Provider store={store}>
       <I18nextProvider i18n={i18next}>
-        <React.Suspense fallback={<ScreenLoading />}>
-          <RouterProvider
-            router={WalletRoutes}
-            fallbackElement={<ScreenLoading />}
-          />
-        </React.Suspense>
-        <ScreenLoading />
+        <ConfigProvider theme={theme}>
+          <React.Suspense fallback={<ScreenLoading />}>
+            <RouterProvider
+              router={WalletRoutes}
+              fallbackElement={<ScreenLoading />}
+            />
+          </React.Suspense>
+          <ScreenLoading />
+        </ConfigProvider>
       </I18nextProvider>
     </Provider>
   </React.StrictMode>

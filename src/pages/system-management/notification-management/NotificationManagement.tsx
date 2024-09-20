@@ -1,10 +1,18 @@
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal'
 import ButtonAdd from '@components/button-add/ButtonAdd'
+import ButtonHistory from '@components/button-history/ButtonHistory'
 import ButtonSearch from '@components/button-search/ButtonSearch'
+import ButtonView from '@components/button-view/ButtonView'
 import CellContent from '@components/cell-content/CellContent'
 import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER } from '@constants/appConstant'
+import { GUTTER, SIZE_ICON } from '@constants/appConstant'
 import { TimeFormat } from '@constants/datetime'
 import { notificationStatus, serviceTypes } from '@constants/options'
+import {
+  PencilSimple,
+  SpeakerHigh,
+  Trash
+} from '@phosphor-icons/react'
 import {
   useLazyDeleteNotificationQuery,
   useLazyPublishNotificationQuery
@@ -12,7 +20,7 @@ import {
 import { useNotificationContextSettingFindAllQuery } from '@services/cmsService'
 import { STATUS_CODE } from '@type/api'
 import { NotificationContextSettingFindAllApiArg } from '@type/application'
-import { INotification, notificationMode } from '@type/notification'
+import { INotification } from '@type/notification'
 import {
   getApplicableObject,
   getNotificationService,
@@ -25,21 +33,19 @@ import {
   DatePicker,
   Form,
   Input,
+  message,
   Modal,
   Row,
   Select,
   Switch,
   Table,
-  Tooltip,
-  message
+  Tooltip
 } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AiFillDelete, AiFillEye, AiFillSound } from 'react-icons/ai'
-import { FaPen } from 'react-icons/fa'
-import NotificationModal from './notification-modal/NotificationModal'
+import { pageEnum, viewMode } from '../../../app/types/policyManagement'
 
 function NotificationManagement() {
   const { t } = useTranslation()
@@ -55,18 +61,30 @@ function NotificationManagement() {
   )
   const [selectedId, setSelectedId] = useState<string>('')
   const [open, setOpen] = useState(false)
-  const [mode, setMode] = useState<notificationMode>(notificationMode.CREATE)
+  const [mode, setMode] = useState<viewMode>(viewMode.create)
 
   const { data, refetch } = useNotificationContextSettingFindAllQuery(search)
   const [deleteNotification] = useLazyDeleteNotificationQuery()
   const [publishNotification] = useLazyPublishNotificationQuery()
 
+  const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false)
+
   const toggleMode = (state: boolean) => setOpen(state)
 
-  const handleModal = (action: notificationMode, id?: string) => {
+  const handleModal = (action: viewMode, id?: string) => {
     setOpen(true)
     if (id) setSelectedId(id)
     setMode(action)
+  }
+
+  const onCloseConfirmModal = () => {
+    setVisibleConfirmModal(false)
+  }
+  const onCancel = () => {
+    if (mode !== viewMode.history) {
+      setVisibleConfirmModal(true)
+    }
+    setOpen(false)
   }
 
   /**
@@ -251,62 +269,69 @@ function NotificationManagement() {
       width: 200,
       fixed: 'right',
       render: (record) => (
-        <Row
-          gutter={GUTTER}
-          justify='center'
-        >
-          <Col>
-            <Tooltip
-              placement='top'
-              title={t('admin-management.tooltip.view')}
-            >
-              <Button
-                icon={<AiFillEye />}
-                onClick={() => handleModal(notificationMode.VIEW, record?.id)}
+        console.log(record),
+        console.log(checkKeywords(record.title), checkKeywords(record.body)),
+        (
+          <Row
+            gutter={GUTTER}
+            justify='center'
+          >
+            <Col>
+              <ButtonHistory
+                onClick={() => {
+                  setMode(viewMode.history)
+                  setSelectedId(record.id)
+                  setOpen(true)
+                }}
               />
-            </Tooltip>
-          </Col>
-          <Col>
-            <Tooltip
-              placement='top'
-              title={t('admin-management.tooltip.edit')}
-            >
-              <Button
-                disabled={
-                  checkKeywords(record.title) && checkKeywords(record.body)
-                }
-                icon={<FaPen />}
-                onClick={() => handleModal(notificationMode.UPDATE, record?.id)}
+            </Col>
+            <Col>
+              <ButtonView
+                onClick={() => handleModal(viewMode.view, record?.id)}
               />
-            </Tooltip>
-          </Col>
-          <Col>
-            <Tooltip
-              placement='top'
-              title={t('admin-management.tooltip.delete')}
-            >
-              <Button
-                disabled={record.status === 1}
-                danger
-                icon={<AiFillDelete />}
-                onClick={async () => onHandleDelete(record?.id)}
-              />
-            </Tooltip>
-          </Col>
-          <Col>
-            <Tooltip
-              placement='top'
-              title={t('notification-management.publish')}
-            >
-              <Button
-                icon={<AiFillSound />}
-                onClick={async () =>
-                  onHandlePublish(record?.id, record?.status)
-                }
-              />
-            </Tooltip>
-          </Col>
-        </Row>
+            </Col>
+            <Col>
+              <Tooltip
+                placement='top'
+                title={t('admin-management.tooltip.edit')}
+              >
+                <Button
+                  // disabled={
+                  //   checkKeywords(record.title) && checkKeywords(record.body)
+                  // }
+                  icon={<PencilSimple size={SIZE_ICON} />}
+                  onClick={() => handleModal(viewMode.update, record?.id)}
+                />
+              </Tooltip>
+            </Col>
+            <Col>
+              <Tooltip
+                placement='top'
+                title={t('admin-management.tooltip.delete')}
+              >
+                <Button
+                  disabled={record.status === 1}
+                  danger
+                  icon={<Trash size={SIZE_ICON} />}
+                  onClick={async () => onHandleDelete(record?.id)}
+                />
+              </Tooltip>
+            </Col>
+            <Col>
+              <Tooltip
+                placement='top'
+                title={t('notification-management.publish')}
+              >
+                <Button
+                  icon={<SpeakerHigh size={SIZE_ICON} />}
+                  onClick={async () =>
+                    onHandlePublish(record?.id, record?.status)
+                  }
+                />
+              </Tooltip>
+            </Col>
+          </Row>
+        )
       )
     }
   ]
@@ -444,7 +469,7 @@ function NotificationManagement() {
                   <ButtonAdd
                     module=''
                     onClick={() => {
-                      setMode(notificationMode.CREATE)
+                      setMode(viewMode.create)
                       toggleMode(true)
                     }}
                   />
@@ -478,12 +503,17 @@ function NotificationManagement() {
         }}
       />
       {open && (
-        <NotificationModal
+        <AuditLogManagementModal
+          onCloseConfirmModal={onCloseConfirmModal}
+          visibleConfirmModal={visibleConfirmModal}
+          page={pageEnum.notificationManagement}
           open={open}
           mode={mode}
-          onCancel={() => toggleMode(false)}
-          id={selectedId}
+          onCancel={onCancel}
+          setOpen={setOpen}
+          recordId={Number(selectedId)}
           refetch={refetch}
+          entityType='NOTIFICATION_CONTEXT_SETTING'
         />
       )}
     </Card>

@@ -142,6 +142,10 @@
     "totalBalance": "Tổng số dư",
     "availableBalance": "Số dư khả dụng",
     "lockedBalance": "Đóng băng tài khoản",
+    "frozenWalletDate": "Ngày đóng băng tài khoản",
+    "createdWalletDate": "Ngày mở ví điện tử",
+    "verifiedWalletDate": "Ngày xác thực ví điện tử",
+    "lockedWalletDate": "Ngày khóa ví điện tử",
     "logout": "Đăng xuất",
     "logoutDescription": "Bạn có muốn đăng xuất khỏi tài khoản này không?",
     "all": "Tất cả",
@@ -290,7 +294,7 @@
   "buttons": {
     "yes": "Có",
     "no": "Không",
-    "history": "Xem lịch sử chỉnh sửa chính sách",
+    "history": "Xem lịch sử chỉnh sửa",
     "configuration": "Cấu hình",
     "create-notify": "Tạo notify",
     "update-notify": "Cập nhật notify",
@@ -393,7 +397,8 @@
     "authStatus": "Trạng thái xác thực",
     "cancel": "Hủy",
     "search": "Tìm kiếm",
-    "cancelMessage": "Hủy tài khoản mọi thông tin bị xóa trên hệ thống?"
+    "cancelMessage": "Hủy tài khoản mọi thông tin bị xóa trên hệ thống?",
+    "history":"Lịch sử hủy tài khoản"
   },
   "transfer-history": {
     "number": "STT",
@@ -1710,12 +1715,12 @@
       "created-time": "Thời gian tạo",
       "order": "Thứ tự sắp xếp",
       "order-view": "Thứ tự hiển thị",
-      "bank-order": "Thứ tự ưu tiên",
+      "priority": "Thứ tự ưu tiên",
       "channel": "Điều kênh",
       "action": "Thao tác",
       "tradingName": "Trading name",
       "back": "Quay lại",
-      "short-name": "Tên viết tắt",
+      "trading-name": "Tên viết tắt",
       "bank-type": "Loại ngân hàng",
       "type": "Loại liên kết",
       "created-at": "Thời gian tạo",
@@ -1757,9 +1762,10 @@
       },
       "options": {
         "LINK": "Liên kết",
-        "DEPOSIT": "Nạp tiền",
-        "WITHDRAW": "Rút tiền",
-        "GATEWAY": "Cổng thanh toán"
+        "LINK_DEPOSIT": "Nạp tiền",
+        "LINK_WITHDRAW": "Rút tiền",
+        "LINK_GATEWAY": "Cổng thanh toán",
+        "ATM_CARD": "Thẻ ATM"
       }
     },
     "message": {

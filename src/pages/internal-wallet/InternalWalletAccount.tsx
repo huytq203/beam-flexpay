@@ -1,9 +1,21 @@
+import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal'
 import ButtonAdd from '@components/button-add/ButtonAdd'
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import SearchBar from '@components/search-bar/SearchBar'
+import { openNotification } from '@configs/fetchBaseQueryCustom'
 import { GUTTER } from '@constants/appConstant'
-import { FullFormatTime, TimeFormat } from '@constants/datetime'
+import { FullFormatTime } from '@constants/datetime'
+import {
+  useGetListWalletsQuery,
+  useUpdateInternalWalletMutation
+} from '@services/apiInternalWallet'
+import { viewMode } from '@type/customer'
+import { InternalWalletPayload } from '@type/internalWallet'
+import { numberAndDotValidation, numberValidation } from '@utils/constants'
+import { blockArrowValue } from '@utils/helperFunctions'
+import { pretty } from '@utils/qs'
 import { useToggle } from 'ahooks'
 import {
   Button,
@@ -23,23 +35,15 @@ import { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { InternalWalletPayload } from '@type/internalWallet'
+import { AiOutlineHistory } from 'react-icons/ai'
 import {
-  useGetListWalletsQuery,
-  useUpdateInternalWalletMutation
-} from '@services/apiInternalWallet'
-import { viewMode } from '@type/customer'
+  pageEnum,
+  viewMode as viewModeHistory
+} from '../../app/types/policyManagement'
 import InternalWalletModal from './InternalWalletModal'
-import { openNotification } from '@configs/fetchBaseQueryCustom'
-import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
-import {
-  blockArrowValue,
-  blockLetterDecimal,
-  blockLetterDecimalAndDot,
-  blockLetterValue
-} from '@utils/helperFunctions'
-import { pretty } from '@utils/qs'
-import { numberAndDotValidation, numberValidation } from '@utils/constants'
+import ButtonHistory from '@components/button-history/ButtonHistory'
+import ButtonLock from '@components/button-lock/ButtonLock'
+import ButtonUnlock from '@components/button-unlock/ButtonUnlock'
 
 function InternalWalletAccount() {
   const [form] = Form.useForm()
@@ -55,6 +59,28 @@ function InternalWalletAccount() {
     query: '',
     orderBy: 'createdAt'
   })
+
+  const [open, setOpen] = useState<boolean>(false)
+  const [modeHistory, setModeHistory] = useState<viewModeHistory>(
+    viewModeHistory.create
+  )
+  const [selectedId, setSelectedId] = useState<number>()
+  const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false)
+
+  const onCloseConfirmModal = () => {
+    setVisibleConfirmModal(false)
+  }
+
+  const onCancelHistory = () => {
+    if (
+      modeHistory === viewModeHistory.history ||
+      modeHistory === viewModeHistory.delete
+    ) {
+      setOpen(false)
+    } else {
+      setVisibleConfirmModal(true)
+    }
+  }
   const [addForm, { toggle: addFormToggle }] = useToggle()
 
   const { data: interWallet, refetch } = useGetListWalletsQuery(search)
@@ -116,22 +142,44 @@ function InternalWalletAccount() {
       render(record) {
         return (
           <Space align='center'>
+            <Tooltip
+              placement='top'
+              title={t('tooltips.viewHistory')}
+            >
+              <ButtonHistory
+                onClick={() => {
+                  setModeHistory(viewModeHistory.history)
+                  setOpen(true)
+                  setSelectedId(record.id)
+                }}
+              />
+            </Tooltip>
             <ButtonUpdate
               onClick={() => {
                 setMode(viewMode.update)
                 setRecordSelected(record)
                 addFormToggle()
               }}
-              module='internal-wallet'
+              module='internalwallet'
             />
             <Tooltip
-              placement='topLeft'
-              title={record.active ? 'Khóa' : 'Mở khóa'}
+              title={
+                record.active
+                  ? t`internal-wallet.modal.change-status-lock-ok-button`
+                  : t`internal-wallet.modal.change-status-unlock-ok-button`
+              }
             >
-              <Button
-                onClick={() => changeStatus(record.active, record.id)}
-                icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
-              />
+              {record.active ? (
+                <ButtonLock
+                  module=''
+                  onClick={() => changeStatus(record.active, record.id)}
+                />
+              ) : (
+                <ButtonUnlock
+                  module=''
+                  onClick={() => changeStatus(record.active, record.id)}
+                />
+              )}
             </Tooltip>
           </Space>
         )
@@ -218,14 +266,10 @@ function InternalWalletAccount() {
                 <Col span={6}>
                   <Form.Item
                     name='walletGroup'
-                    label={"Nhóm ví"}
-                    rules={[
-                      ...numberValidation,
-                    ]}
+                    label={'Nhóm ví'}
+                    rules={[...numberValidation]}
                   >
-                    <Input
-                      placeholder={"Nhập nhóm ví"}
-                    />
+                    <Input placeholder={'Nhập nhóm ví'} />
                   </Form.Item>
                 </Col>
 
@@ -334,6 +378,18 @@ function InternalWalletAccount() {
             : t('internal-wallet.edit-wallet-title')
         }
         mode={mode}
+      />
+      <AuditLogManagementModal
+        onCloseConfirmModal={onCloseConfirmModal}
+        visibleConfirmModal={visibleConfirmModal}
+        refetch={refetch}
+        page={pageEnum.customerCancel}
+        onCancel={onCancelHistory}
+        open={open}
+        setOpen={setOpen}
+        mode={modeHistory}
+        recordId={selectedId}
+        entityType='INTERNAL_WALLET'
       />
     </Card>
   )

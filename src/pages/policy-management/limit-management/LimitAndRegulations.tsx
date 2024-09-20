@@ -1,3 +1,20 @@
+import { SearchOutlined } from '@ant-design/icons'
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal'
+import ButtonAdd from '@components/button-add/ButtonAdd'
+import ButtonDelete from '@components/button-delete/ButtonDelete'
+import ButtonUpdate from '@components/button-update/ButtonUpdate'
+import SearchBar from '@components/search-bar/SearchBar'
+import { useLazyGetListGroupQuery } from '@services/apiAccountGroup'
+import { useGetListTransactionLimitQuery } from '@services/limitRegulationService'
+import { pageEnum, SearchValueType, viewMode } from '@type/policyManagement'
+import {
+  convertNumber,
+  formatLimitTimeType,
+  formatLimitType,
+  formatLimitValueType,
+  formatObjectPolicy,
+  formatTransactionType
+} from '@utils/helperFunctions'
 import {
   Button,
   Card,
@@ -11,35 +28,19 @@ import {
   Table,
   Tooltip
 } from 'antd'
-import { SearchOutlined } from '@ant-design/icons'
+import { useForm } from 'antd/es/form/Form'
 import { ColumnsType } from 'antd/es/table'
+import dayjs from 'dayjs'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useForm } from 'antd/es/form/Form'
-import { PolicyManagementModal } from '../policy-management-modal/PolicyManagementModal'
-import { pageEnum, SearchValueType, viewMode } from '@type/policyManagement'
-import ButtonAdd from '@components/button-add/ButtonAdd'
-import ButtonUpdate from '@components/button-update/ButtonUpdate'
-import ButtonDelete from '@components/button-delete/ButtonDelete'
-import { AiFillEye } from 'react-icons/ai'
+import { AiOutlineHistory } from 'react-icons/ai'
 import { CustomAccountGroupSelect } from '../components/SelectAccountGroup'
-import { useLazyGetListGroupQuery } from '@services/apiAccountGroup'
-import { useGetListTransactionLimitQuery } from '@services/limitRegulationService'
-import {
-  convertNumber,
-  formatLimitTimeType,
-  formatLimitType,
-  formatLimitValueType,
-  formatObjectPolicy,
-  formatTransactionType
-} from '@utils/helperFunctions'
-import dayjs from 'dayjs'
 import {
   APPLICABLE_OBJECTS,
   objects,
   transactionType
 } from './LimitAndRegulationsConst'
-import SearchBar from '@components/search-bar/SearchBar'
+import ButtonHistory from '@components/button-history/ButtonHistory'
 
 type SearchType = {
   page: number
@@ -176,8 +177,7 @@ const LimitAndRegulation = () => {
                 placement='top'
                 title={trans('tooltips.viewHistory')}
               >
-                <Button
-                  icon={<AiFillEye />}
+                <ButtonHistory
                   onClick={() => {
                     setMode(viewMode.history)
                     setOpen(true)
@@ -405,7 +405,7 @@ const LimitAndRegulation = () => {
           }
         }}
       />
-      <PolicyManagementModal
+      <AuditLogManagementModal
         onCloseConfirmModal={onCloseConfirmModal}
         visibleConfirmModal={visibleConfirmModal}
         recordId={selectedId}
@@ -415,6 +415,7 @@ const LimitAndRegulation = () => {
         open={open}
         setOpen={setOpen}
         mode={mode}
+        entityType='TRANSACTION_LIMIT'
       />
     </Card>
   )

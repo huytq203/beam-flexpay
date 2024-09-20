@@ -1,8 +1,8 @@
+import { SIZE_ICON } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
+import { Lock } from '@phosphor-icons/react'
 import { Button, ButtonProps } from 'antd'
 import { useCallback } from 'react'
-import { BsFillLockFill } from 'react-icons/bs'
-
 interface CustomButtonProps extends ButtonProps {
   module: string
   label?: string
@@ -25,7 +25,7 @@ const ButtonUnlock = (props: CustomButtonProps) => {
 
   return !isHasPermission() ? null : (
     <Button
-      icon={<BsFillLockFill />}
+      icon={<Lock size={SIZE_ICON} />}
       hidden={isHasPermission()}
       {...props}
     />

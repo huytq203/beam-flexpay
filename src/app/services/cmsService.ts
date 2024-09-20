@@ -1586,7 +1586,7 @@ const injectedRtkApi = api
         HistoryFeeManagementFindAllApiArg
       >({
         query: (queryArg) => ({
-          url: `/history-fee-management`,
+          url: `/history-audit-log-management`,
           params: {
             order: queryArg.order,
             page: queryArg.page,

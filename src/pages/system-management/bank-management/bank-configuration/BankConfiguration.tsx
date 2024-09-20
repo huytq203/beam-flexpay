@@ -1,43 +1,46 @@
 import { ExclamationCircleFilled, PlusOutlined } from '@ant-design/icons'
 import { GUTTER } from '@constants/appConstant'
 import { bankStatus } from '@constants/options'
-import { address, bankName, hyperLink } from '@constants/regex'
+import { bankName, hyperLink } from '@constants/regex'
 import {
   useCreateBankAccountMutation,
   useUpdateBankAccountMutation
 } from '@services/apiBankService'
 import { useBankFindOneQuery } from '@services/cmsBank'
 import { STATUS_CODE } from '@type/api'
-import { BANK_CHANNEL, TYPE_BANK } from '@type/bank'
-import { viewMode } from '@type/customer'
-import { blockLetterDecimal } from '@utils/helperFunctions'
+import { BANK_CHANNEL } from '@type/bank'
+import { viewMode } from '@type/policyManagement'
+import {
+  blockLetterDecimal,
+  compareFormData
+} from '@utils/helperFunctions'
 import {
   Button,
   Col,
   Form,
   Input,
   InputNumber,
+  message,
   Modal,
   Row,
   Select,
-  Upload,
-  message,
-  Space,
-  Spin
+  Spin,
+  Upload
 } from 'antd'
 import type { RcFile } from 'antd/es/upload'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AiFillDelete } from 'react-icons/ai'
+import { BANK_TYPE } from '../bank-modal/BankManagementConst'
 
 interface IProps {
   onCancel: () => void
   mode: viewMode
   bank?: any
-  refetch: () => void
+  refetch?: () => void
 }
 
-type BankType = 'LINK' | 'DEPOSIT' | 'WITHDRAW' | 'GATEWAY'
+type BankType = 'LINK' | 'LINK_DEPOSIT' | 'LINK_WITHDRAW' | 'LINK_GATEWAY'
 
 function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
   const { t } = useTranslation()
@@ -50,10 +53,13 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
 
   const [form] = Form.useForm()
 
-  const [createBankAccount] = useCreateBankAccountMutation()
-  const [updateBankAccount] = useUpdateBankAccountMutation()
-  const { data, isLoading } = useBankFindOneQuery({ id: bank?.id })
+  const [createBankAccount, { isLoading: isLoadingCreate }] =
+    useCreateBankAccountMutation()
+  const [updateBankAccount, { isLoading: isLoadingUpdate }] =
+    useUpdateBankAccountMutation()
+  const { data: DetailData, isLoading } = useBankFindOneQuery({ id: bank?.id })
 
+  console.log('data', DetailData)
   /**
    * if mode is edit, that function auto set value item for form
    */
@@ -62,12 +68,12 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
     if (mode === viewMode.update && bank) {
       // setType(bank?.typeBank ?? TYPE_BANK.DEPOSIT_BANK)
       form.setFieldsValue({
-        ...data
+        ...DetailData
       })
       setImage(bank.image)
       setShortImage(bank.shortLogo)
     }
-  }, [data])
+  }, [DetailData])
 
   useEffect(() => {
     if (form.getFieldValue('type')) {
@@ -101,13 +107,10 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
    */
   const submit = async (value: any) => {
     if (!value) return
-
     setLoading(true)
     const formData = new FormData()
     const { image, shortLogo, bankCode, name, ...rest } = value
-
     let restData = { ...rest, name }
-
     /**
      * for in the value that get from form without image and shortlogo
      */
@@ -117,7 +120,6 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
         formData.append(item, value[item])
       }
     }
-
     /**
      * for in only image and shortLogo to decision append data ot not
      */
@@ -127,7 +129,6 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
       if (typeof propValue !== 'object' || propValue === null) continue
       formData.append(prop, propValue)
     }
-
     let data: any
 
     /**
@@ -135,12 +136,12 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
      */
     if (mode === viewMode.configuration) {
       data = await createBankAccount(formData)
-    } else {
-      if (typeof image !== 'object' && image) {
-        formData.append('bigImage', image)
-      }
-      if (typeof shortLogo !== 'object' && shortLogo) {
-        formData.append('logo', shortLogo)
+    } else if (mode === viewMode.update) {
+      let initData = { ...DetailData }
+      let valueTypeUpdate: string[] = []
+      valueTypeUpdate = compareFormData(formData, initData)
+      if (valueTypeUpdate.length > 0) {
+        formData.append('valueTypeUpdate', JSON.stringify(valueTypeUpdate))
       }
       data = bank?.id && (await updateBankAccount({ id: bank.id, formData }))
     }
@@ -158,7 +159,7 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
           : t`system-management.message.edit-success`
       )
       closeModal()
-      refetch()
+      refetch && refetch()
     }
     setLoading(false)
   }
@@ -269,7 +270,7 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
    * get channel depend on value of bank type
    * @returns
    */
-  const depositeArrOption = [
+  const depositArrOption = [
     {
       value: BANK_CHANNEL.DIRECT,
       label: t`system-management.bank.direct`
@@ -323,17 +324,20 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
    */
 
   const checkDisable = (restValue: any) => {
+    console.log('restValue', restValue)
     const {
       name = undefined,
       tradingName = undefined,
       typeBank = undefined,
       website = undefined,
       address = undefined,
-      type = undefined
+      type = undefined,
+      // image = undefined,
+      // shortLogo = undefined,
       // depositType = undefined,
       // withdrawType = undefined
     } = restValue
-
+   
     return (
       name === undefined ||
       tradingName === undefined ||
@@ -346,7 +350,7 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
       tradingName === '' ||
       typeBank === '' ||
       website == '' ||
-      address === ''
+      address === '' 
     )
   }
 
@@ -357,22 +361,37 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
    */
 
   const handleChangeValues = (_: any, allValue: any) => {
-    const { active, chanel, shortLogo, priority, ...rest } = allValue
+    console.log('allValue', allValue)
+    const { active, chanel, priority, ...rest } = allValue
     const isDisable = checkDisable(rest)
     if (isDisable) setIsDisable(true)
     else setIsDisable(false)
   }
 
+  const handleDeleteImage = (nameField: string) => {
+  
+    switch (nameField) {
+      case 'image':
+        setImage(undefined)
+        break;
+      case 'shortLogo':
+        setShortImage(undefined)
+        break;  
+    }
+    form.resetFields([nameField])
+    
+  }
+
   const withdrawFromType = useCallback(() => {
     const type: BankType = form.getFieldValue('type')
     switch (type) {
-      case 'LINK':
+      case BANK_TYPE.LINK:
         return BANK_CHANNEL.DIRECT
-      case 'DEPOSIT':
+      case BANK_TYPE.LINK_DEPOSIT:
         return BANK_CHANNEL.IBFT
-      case 'GATEWAY':
+      case BANK_TYPE.LINK_GATEWAY:
         return BANK_CHANNEL.NAPAS
-      case 'WITHDRAW':
+      case BANK_TYPE.LINK_WITHDRAW:
         return BANK_CHANNEL.NONE
       default:
         return BANK_CHANNEL.NONE
@@ -382,13 +401,13 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
   const depositFromType = useCallback(() => {
     const type: BankType = form.getFieldValue('type')
     switch (type) {
-      case 'LINK':
+      case BANK_TYPE.LINK:
         return BANK_CHANNEL.DIRECT
-      case 'DEPOSIT':
+      case BANK_TYPE.LINK_DEPOSIT:
         return BANK_CHANNEL.NONE
-      case 'GATEWAY':
+      case BANK_TYPE.LINK_GATEWAY:
         return BANK_CHANNEL.NAPAS
-      case 'WITHDRAW':
+      case BANK_TYPE.LINK_WITHDRAW:
         return BANK_CHANNEL.IBFT
       default:
         return BANK_CHANNEL.NONE
@@ -400,13 +419,13 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
    */
 
   useEffect(() => {
-    if (mode === viewMode.update && data) {
+    if (mode === viewMode.update && DetailData) {
       const { active, shortLogo, priority, ...rest } = form.getFieldsValue()
       const isDisable = checkDisable(rest)
       if (isDisable || image === undefined) setIsDisable(true)
       else setIsDisable(false)
     }
-  }, [image, data])
+  }, [image, DetailData])
 
   return (
     <Spin spinning={isLoading}>
@@ -464,7 +483,7 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
               />
             </Form.Item>
             <Form.Item
-              label={t`system-management.bank.short-name`}
+              label={t`system-management.bank.trading-name`}
               name='tradingName'
               rules={[
                 {
@@ -495,7 +514,7 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
               ]}
             >
               <Select
-                options={['LINK', 'DEPOSIT', 'WITHDRAW', 'GATEWAY'].map(
+                options={['LINK', 'LINK_DEPOSIT', 'LINK_WITHDRAW', 'LINK_GATEWAY'].map(
                   (x) => ({
                     value: x,
                     label: x ? t(`system-management.bank.options.${x}`) : null
@@ -509,7 +528,7 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
                 <p>{t`system-management.bank.deposit-bank`}</p>
                 <Select
                   value={withdrawFromType()}
-                  options={depositeArrOption}
+                  options={depositArrOption}
                   bordered={false}
                   suffixIcon={null}
                   disabled
@@ -588,7 +607,7 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
               />
             </Form.Item>
             <Form.Item
-              label={t`system-management.bank.bank-order`}
+              label={t`system-management.bank.priority`}
               name='priority'
             >
               <InputNumber
@@ -632,10 +651,7 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
                   >
                     <AiFillDelete
                       color='red'
-                      onClick={() => {
-                        setImage(undefined)
-                        form.resetFields(['image'])
-                      }}
+                      onClick={ () => handleDeleteImage('image') }  
                     />
                   </div>
                 )}
@@ -665,10 +681,7 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
                   >
                     <AiFillDelete
                       color='red'
-                      onClick={() => {
-                        setShortImage(undefined)
-                        form.resetFields(['shortLogo'])
-                      }}
+                      onClick={ () => handleDeleteImage('shortLogo') }
                     />
                   </div>
                 )}

@@ -1,5 +1,20 @@
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal'
+import ButtonAdd from '@components/button-add/ButtonAdd'
+import ButtonSearch from '@components/button-search/ButtonSearch'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
+import SearchBar from '@components/search-bar/SearchBar'
+import { openNotification } from '@configs/fetchBaseQueryCustom'
+import { GUTTER } from '@constants/appConstant'
+import { internalWalletGroupStatusOptions } from '@constants/options'
+import {
+  useGetListWalletGroupsQuery,
+  useUpdateInternalWalletGroupMutation
+} from '@services/apiInternalWallet'
+import { viewMode } from '@type/customer'
+import { InternalWalletPayload } from '@type/internalWallet'
+import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions'
+import { pretty } from '@utils/qs'
 import { useToggle } from 'ahooks'
 import {
   Button,
@@ -18,21 +33,15 @@ import Table, { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import InternalGroupForm from './components/InternalGroupForm'
-import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER } from '@constants/appConstant'
-import ButtonAdd from '@components/button-add/ButtonAdd'
-import ButtonSearch from '@components/button-search/ButtonSearch'
-import { InternalWalletPayload } from '@type/internalWallet'
+import { AiOutlineHistory } from 'react-icons/ai'
 import {
-  useGetListWalletGroupsQuery,
-  useUpdateInternalWalletGroupMutation
-} from '@services/apiInternalWallet'
-import { viewMode } from '@type/customer'
-import { openNotification } from '@configs/fetchBaseQueryCustom'
-import { internalWalletGroupStatusOptions } from '@constants/options'
-import { pretty } from '@utils/qs'
-import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions'
+  pageEnum,
+  viewMode as viewModeHistory
+} from '../../app/types/policyManagement'
+import InternalGroupForm from './components/InternalGroupForm'
+import ButtonHistory from '@components/button-history/ButtonHistory'
+import ButtonLock from '@components/button-lock/ButtonLock'
+import ButtonUnlock from '@components/button-unlock/ButtonUnlock'
 
 function InternalGroupWallet() {
   const [form] = Form.useForm()
@@ -46,6 +55,28 @@ function InternalGroupWallet() {
     query: '',
     orderBy: 'createdAt'
   })
+
+  const [open, setOpen] = useState<boolean>(false)
+  const [modeHistory, setModeHistory] = useState<viewModeHistory>(
+    viewModeHistory.create
+  )
+  const [selectedId, setSelectedId] = useState<number>()
+  const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false)
+
+  const onCloseConfirmModal = () => {
+    setVisibleConfirmModal(false)
+  }
+
+  const onCancelHistory = () => {
+    if (
+      modeHistory === viewModeHistory.history ||
+      modeHistory === viewModeHistory.delete
+    ) {
+      setOpen(false)
+    } else {
+      setVisibleConfirmModal(true)
+    }
+  }
   const [addForm, { toggle: addFormToggle }] = useToggle()
 
   const { data: internalWalletGroup } = useGetListWalletGroupsQuery(search)
@@ -146,6 +177,15 @@ function InternalGroupWallet() {
       render(value, record, index) {
         return (
           <Space>
+            <Tooltip title={t`buttons.history`}>
+              <ButtonHistory
+                onClick={() => {
+                  setModeHistory(viewModeHistory.history)
+                  setSelectedId(record.id)
+                  setOpen(true)
+                }}
+              />
+            </Tooltip>
             <ButtonUpdate
               module='internalwallet'
               onClick={() => {
@@ -154,19 +194,29 @@ function InternalGroupWallet() {
                 addFormToggle()
               }}
             />
+
             <Tooltip
               title={
                 record.active
-                  ? t`internal-wallet.modal.change-status-unlock-ok-button`
-                  : t`internal-wallet.modal.change-status-lock-ok-button`
+                  ? t`internal-wallet.modal.change-status-lock-ok-button`
+                  : t`internal-wallet.modal.change-status-unlock-ok-button`
               }
             >
-              <Button
-                icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
-                onClick={() =>
-                  changeStatus(record.active, record.name, record.id)
-                }
-              />
+              {record.active ? (
+                <ButtonLock
+                  module=''
+                  onClick={() =>
+                    changeStatus(record.active, record.name, record.id)
+                  }
+                />
+              ) : (
+                <ButtonUnlock
+                  module=''
+                  onClick={() =>
+                    changeStatus(record.active, record.name, record.id)
+                  }
+                />
+              )}
             </Tooltip>
           </Space>
         )
@@ -301,6 +351,17 @@ function InternalGroupWallet() {
           group={selected}
         />
       )}
+      <AuditLogManagementModal
+        onCloseConfirmModal={onCloseConfirmModal}
+        visibleConfirmModal={visibleConfirmModal}
+        page={pageEnum.internalGroupWallet}
+        onCancel={onCancelHistory}
+        open={open}
+        setOpen={setOpen}
+        recordId={selectedId}
+        mode={modeHistory}
+        entityType='INTERNAL_WALLET_GROUP'
+      />
     </Card>
   )
 }

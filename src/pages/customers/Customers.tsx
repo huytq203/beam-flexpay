@@ -32,12 +32,14 @@ import {
   Typography
 } from 'antd'
 import { ColumnsType } from 'antd/es/table'
+import { t } from 'i18next'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BsEyeFill } from 'react-icons/bs'
 import CustomerModal from './customer-modal/CustomerModal'
 
 import './style.scss'
+import ButtonView from '@components/button-view/ButtonView'
 
 const { Text } = Typography
 
@@ -201,33 +203,38 @@ function Customers() {
           justify='center'
         >
           <Col>
-            <Button
-              icon={<BsEyeFill />}
+            <ButtonView
               onClick={async () => await handleModal(viewMode.view, record.id)}
             />
           </Col>
-          {record.active ? (
-            <Col>
-              <ButtonLock
-                module='customer'
-                onClick={async () =>
-                  await handleModal(viewMode.lock, record.id)
-                }
-              />
-            </Col>
-          ) : (
-            <Col>
-              <ButtonUnlock
-                module='customer'
-                onClick={async () =>
-                  await handleModal(viewMode.unlock, record.id)
-                }
-              />
-            </Col>
-          )}
+
+          <Col>
+            <Tooltip
+              title={
+                record.active
+                  ? t`internal-wallet.modal.change-status-lock-ok-button`
+                  : t`internal-wallet.modal.change-status-unlock-ok-button`
+              }
+            >
+              {record.active ? (
+                <ButtonLock
+                  module='customer'
+                  onClick={async () =>
+                    await handleModal(viewMode.lock, record.id)
+                  }
+                />
+              ) : (
+                <ButtonUnlock
+                  module='customer'
+                  onClick={async () =>
+                    await handleModal(viewMode.unlock, record.id)
+                  }
+                />
+              )}
+            </Tooltip>
+          </Col>
           <Col>
             <ButtonFreeze
-              danger
               module='customer'
               onClick={async () =>
                 await handleModal(viewMode.freeze, record.id)

@@ -1,3 +1,4 @@
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal'
 import ButtonExcel from '@components/button-excel/ButtonExcel'
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import CellContent from '@components/cell-content/CellContent'
@@ -32,6 +33,7 @@ import {
   Row,
   Table,
   Tag,
+  Tooltip,
   Typography
 } from 'antd'
 import { ColumnsType } from 'antd/es/table'
@@ -39,6 +41,9 @@ import dayjs from 'dayjs'
 import moment from 'moment'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { AiOutlineHistory } from 'react-icons/ai'
+import { pageEnum, viewMode } from '../../../app/types/policyManagement'
+import ButtonCancel from '@components/button-cancel/ButtonCancel'
 
 const CustomerCancel = () => {
   const { t: trans } = useTranslation()
@@ -49,9 +54,25 @@ const CustomerCancel = () => {
     status: [accountStatus.NOT_VERIFIED]
   })
 
+  const [open, setOpen] = useState<boolean>(false)
+  const [mode, setMode] = useState<viewMode>(viewMode.create)
+  const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false)
+
   const { data: accounts, refetch } = useCustomerFindAllQuery(search)
 
   const [cancelAccount] = useCancelAccountMutation()
+
+  const onCancelHistory = () => {
+    if (mode === viewMode.history || mode === viewMode.delete) {
+      setOpen(false)
+    } else {
+      setVisibleConfirmModal(true)
+    }
+  }
+
+  const onCloseConfirmModal = () => {
+    setVisibleConfirmModal(false)
+  }
 
   const onCancel = useCallback((customerId: string) => {
     Modal.confirm({
@@ -133,18 +154,18 @@ const CustomerCancel = () => {
       dataIndex: 'id',
       align: 'center',
       render: (value) => (
-        <div>
-          <Button
+        <Tooltip title={trans`customer-cancel.cancel`}>
+          <ButtonCancel
+            module='customer'
             onClick={() => {
               onCancel(value)
             }}
             type='primary'
+            className='mw-100'
             danger
             ghost
-          >
-            {trans`customer-cancel.cancel`}
-          </Button>
-        </div>
+          />
+        </Tooltip>
       )
     }
   ]
@@ -175,6 +196,11 @@ const CustomerCancel = () => {
     if (accounts?.meta.itemCount) {
       setSkip(false)
     }
+  }
+
+  const handleOpenHistory = () => {
+    setMode(viewMode.history)
+    setOpen(true)
   }
 
   useEffect(() => {
@@ -255,6 +281,17 @@ const CustomerCancel = () => {
                 gutter={GUTTER}
                 justify='end'
               >
+                {/* lịch sử hoạt động */}
+                <Col>
+                  <Button
+                    icon={<AiOutlineHistory />}
+                    type='primary'
+                    className='btn-200'
+                    onClick={handleOpenHistory}
+                  >
+                    {trans`customer-cancel.history`}
+                  </Button>
+                </Col>
                 <Col>
                   <ButtonExcel
                     module='customer'
@@ -291,6 +328,17 @@ const CustomerCancel = () => {
             })
           }
         }}
+      />
+      <AuditLogManagementModal
+        onCloseConfirmModal={onCloseConfirmModal}
+        visibleConfirmModal={visibleConfirmModal}
+        refetch={refetch}
+        page={pageEnum.customerCancel}
+        onCancel={onCancelHistory}
+        open={open}
+        setOpen={setOpen}
+        mode={mode}
+        entityType='CUSTOMER_MANAGEMENT'
       />
     </Card>
   )

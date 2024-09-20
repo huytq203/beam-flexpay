@@ -1,3 +1,4 @@
+@import '_variables.scss';
 .text-left {
   text-align: left;
 }
@@ -250,7 +251,7 @@
 }
 
 .text-blue {
-  color: rgb(70, 70, 218);
+  color:var(--primary-color);
 }
 
 .text-green {

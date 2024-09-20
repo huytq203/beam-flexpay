@@ -16,13 +16,21 @@ export enum viewMode {
   'history' = 'history'
 }
 
+
+
+
 export enum pageEnum {
   'directDeposit' = 'directDeposit',
   'eWalletTransferMoney' = 'eWalletTransferMoney',
   'omipayPayment' = 'omipayPayment',
   'accountBankPayment' = 'accountBankPayment',
   'withdrawMoney' = 'withdrawMoney',
-  'limitAndRegulations' = 'limitAndRegulations'
+  'limitAndRegulations' = 'limitAndRegulations',
+  'customerCancel' = 'customerCancel',
+  'feeSettings' = 'feeSettings',
+  notificationManagement = "notificationManagement",
+  internalGroupWallet = "internalGroupWallet",
+  'bankManagement' = 'bankManagement',
 }
 
 export enum APPLICABLE_OBJECTS {

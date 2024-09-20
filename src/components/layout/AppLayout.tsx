@@ -1,12 +1,11 @@
 // AppLayout.tsx
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
-import Logo from '@components/logo/Logo'
+import { Logo } from '@components/logo/Logo'
 import { useAppDispatch, useAppSelector } from '@hooks/hook'
 import useNavigationEw from '@hooks/useNavigation'
 import { savePermissions } from '@slices/authSlice'
 import { useBoolean, useUpdate } from 'ahooks'
-import { Col, Layout, Menu, Row } from 'antd'
-import { ItemType } from 'antd/es/menu/hooks/useItems'
+import { Col, Layout, Menu, MenuProps, Row } from 'antd'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
@@ -122,12 +121,12 @@ function AppLayout() {
             className='custom-sidebar'
           >
             <div className='logo'>
-              <Logo />
+              <Logo collapsed = {collapsed} />
             </div>
             <Menu
               className='scroll-custom sidebar-menu'
               mode='inline'
-              items={navigation as ItemType[]}
+              items={navigation as MenuProps['items']}
               onClick={handleSelectMenu}
               selectedKeys={currentKey}
               defaultOpenKeys={currentKey}

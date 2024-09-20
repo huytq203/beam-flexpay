@@ -4,18 +4,25 @@ import { historyType } from '@constants/options'
 import { SelectAdminAccount } from '@pages/policy-management/components/SelectAdminAccount'
 import { useGetListHistoryQuery } from '@services/apiDirectDeposit'
 import { HistoryPolicyInterface, pageEnum } from '@type/policyManagement'
-import { formatHisoryData, getTypeHistory } from '@utils/helperFunctions'
+import {
+  formatHistoryData,
+  formatObjectHistory,
+  getNameColumnTypeChange,
+  getTypeHistory
+} from '@utils/helperFunctions'
 import { Button, Col, DatePicker, Empty, Form, Row, Select } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import Table, { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
+import { isNumber, isString } from 'lodash'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 type HistoryPolicyType = {
-  policyId: number
+  policyId?: number
   onCancel: () => void
   module: pageEnum
+  entityType: string
 }
 
 type SearchType = {
@@ -31,7 +38,8 @@ type SearchType = {
 export const HistoryPolicy = ({
   policyId,
   onCancel,
-  module
+  module,
+  entityType
 }: HistoryPolicyType) => {
   const { t: trans } = useTranslation()
   const [form] = useForm()
@@ -44,14 +52,12 @@ export const HistoryPolicy = ({
 
   const { data } = useGetListHistoryQuery({
     entityId: policyId,
-    entityType:
-      module === pageEnum.limitAndRegulations
-        ? 'TRANSACTION_LIMIT'
-        : 'SYSTEM_FEE_MANAGEMENT',
+    entityType: entityType,
     ...search
   })
 
   const renderValue = (value: string, record: HistoryPolicyInterface) => {
+    console.log('record.valueType: ', record.valueType)
     if (
       (value && record && record.valueType === 'Ngày kết thúc') ||
       record.valueType === 'Ngày áp dụng' ||
@@ -59,9 +65,49 @@ export const HistoryPolicy = ({
     ) {
       return dayjs(value).format(TimeFullFormat)
     } else if (record.valueType === 'Loại phí') {
-    return value == "FIXED" ? "Cố định" : "Linh hoạt"
+      return value == 'FIXED' ? 'Cố định' : 'Linh hoạt'
+    } else if (record.valueType === 'STATUS') {
+      return value == '1' ? 'Đang Hoạt động' : 'Khoá'
     } else {
-      return <CellContent data={formatHisoryData(value)} />
+      if (value === null) return
+      try {
+        const objectValue = JSON.parse(value)
+        if (value && (isString(objectValue) || isNumber(objectValue))) {
+          return <span>{value}</span>
+        }
+        return (
+          <>
+            {objectValue &&
+              Object.entries(objectValue).map(([key, value], index) => (
+                <div
+                  key={`${index}-${key}`}
+                  style={{
+                    marginBottom: '10px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    flexWrap: 'wrap',
+                    flexFlow: 'column'
+                  }}
+                >
+                  <h4>{key}:</h4>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: formatObjectHistory(value, key)
+                    }}
+                    style={{ whiteSpace: 'pre-wrap' }}
+                  />
+                </div>
+              ))}
+          </>
+        )
+      } catch (error) {
+        // if value contain html tag return html
+        if (value.includes('<')) {
+          return <div dangerouslySetInnerHTML={{ __html: value }} />
+        }
+        return formatHistoryData(value);
+      }
     }
   }
 
@@ -79,6 +125,7 @@ export const HistoryPolicy = ({
         dataIndex: 'historyType',
         key: 'id',
         align: 'center',
+        width: 100,
         render: (record) => <CellContent data={getTypeHistory(record)} />
       },
       {
@@ -86,7 +133,7 @@ export const HistoryPolicy = ({
         dataIndex: 'updatedAt',
         key: 'id',
         align: 'center',
-        width: 200,
+        width: 180,
         render: (record) =>
           record ? dayjs(record).format(TimeFullFormat) : trans`lables.nodata`
       },
@@ -102,21 +149,27 @@ export const HistoryPolicy = ({
         dataIndex: 'valueType',
         key: 'id',
         align: 'center',
-        render: (record) => <CellContent data={record} />
+        render: (record, value) => (
+          getNameColumnTypeChange(value?.valueType)
+        ),
+        width: 220,
+        ellipsis: true
       },
       {
         title: trans('policy-management.history.new-value'),
         dataIndex: 'newValue',
         key: 'id',
         align: 'center',
-        render: (record, values) => renderValue(record, values)
+        render: (record, values) => renderValue(record, values),
+        ellipsis: true
       },
       {
         title: trans('policy-management.history.old-value'),
         dataIndex: 'oldValue',
         key: 'id',
         align: 'center',
-        render: (record, values) => renderValue(record, values)
+        render: (record, values) => renderValue(record, values),
+        ellipsis: true
       },
       {
         title: trans('policy-management.history.creator'),

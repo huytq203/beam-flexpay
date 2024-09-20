@@ -22,7 +22,7 @@ export const SelectAdminAccount = (props: SelectAdminAccount) => {
   const [string, setString] = useState<string | undefined>()
   const [search, setSearch] = useState<AdminSearchParams>({
     page: 1,
-    take: 10
+    take: 50
   })
 
   const [getListAccountAdmin] = useLazyGetListAccountAdminQuery()

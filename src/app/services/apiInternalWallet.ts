@@ -65,6 +65,12 @@ export const groupPermissionApi = apiService.injectEndpoints({
       }),
       invalidatesTags: ['internal-wallet-group']
     }),
+    getInternalWalletGroup: builder.query({
+      query: (id) => ({
+        url: `/internal-wallet-group/${id}`,
+        method: 'GET'
+      })
+    }),
     getListWallets: builder.query<
       InternalWalletResponse,
       InternalWalletPayload
@@ -125,6 +131,7 @@ export const {
   useGetListWalletGroupsQuery,
   useCreateInternalWalletGroupMutation,
   useUpdateInternalWalletGroupMutation,
+  useGetInternalWalletGroupQuery,
   useGetListWalletsQuery,
   useLazyGetListWalletsQuery,
   useLazyGetListWalletGroupsQuery,

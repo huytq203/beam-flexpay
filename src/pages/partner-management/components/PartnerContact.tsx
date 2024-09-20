@@ -23,7 +23,8 @@ import {
   Input,
   Modal,
   Row,
-  Select
+  Select,
+  Tooltip
 } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import Table, { ColumnsType } from 'antd/es/table'
@@ -37,6 +38,8 @@ import {
   PaymentPartnerDetailDto,
   PaymentPartnerFindAllApiArg
 } from '@type/application'
+import ButtonLock from '@components/button-lock/ButtonLock'
+import ButtonUnlock from '@components/button-unlock/ButtonUnlock'
 
 const { confirm } = Modal
 
@@ -57,15 +60,19 @@ export default function PartnerContactComponent(props: props) {
     order: 'DESC',
     type: props.type
   })
+  const [type, setType] = useState<PARTNER_TYPE>(props.type)
 
   const [updatePartner] = usePaymentPartnerUpdateMutation()
 
   const { data: partners } = usePaymentPartnerFindAllQuery(search)
 
   const handleSearch = () => {
+    console.log('search', search)
+    console.log('search', form.getFieldsValue())
     const values = form.getFieldsValue()
     setSearch({
       ...search,
+      type: type,
       ...values
     })
   }
@@ -198,11 +205,27 @@ export default function PartnerContactComponent(props: props) {
               />
             </Col>
             <Col>
-              <Button
-                icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
-                className='ml-5'
-                onClick={() => handleActive(record)}
-              />
+              <Tooltip
+                title={
+                  record.active
+                    ? t`internal-wallet.modal.change-status-lock-ok-button`
+                    : t`internal-wallet.modal.change-status-unlock-ok-button`
+                }
+              >
+                {record.active ? (
+                  <ButtonLock
+                    className='ml-5'
+                    module='customer'
+                    onClick={() => handleActive(record)}
+                  />
+                ) : (
+                  <ButtonUnlock
+                    className='ml-5'
+                    module='customer'
+                    onClick={() => handleActive(record)}
+                  />
+                )}
+              </Tooltip>
             </Col>
           </Row>
         )
@@ -229,17 +252,17 @@ export default function PartnerContactComponent(props: props) {
                     <Input />
                   </Form.Item>
                 </Col>
-                <Col flex='350px'>
+                {/* <Col flex='350px'>
                   <Form.Item
                     label={t('partner.service-type')}
                     name='type'
                   >
                     <Select
                       options={PARTNER_TYPE_OPTIONS}
-                      value={props.type}
+                      defaultValue={props.type}
                     />
                   </Form.Item>
-                </Col>
+                </Col> */}
               </Row>
               <Row
                 justify='end'

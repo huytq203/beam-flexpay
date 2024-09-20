@@ -1,10 +1,23 @@
-import _ from 'lodash'
-import { LockOutlined, UnlockOutlined, EyeOutlined } from '@ant-design/icons'
+import { EyeOutlined, LockOutlined, UnlockOutlined } from '@ant-design/icons'
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal'
 import ButtonAdd from '@components/button-add/ButtonAdd'
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import SearchBar from '@components/search-bar/SearchBar'
+import { openNotification } from '@configs/fetchBaseQueryCustom'
 import { GUTTER } from '@constants/appConstant'
 import { TimeFormat } from '@constants/datetime'
+import {
+  accountingStatus,
+  accountingTransactionType,
+  fundsOptions
+} from '@constants/options'
+import {
+  useGetAccountingQuery,
+  useUpdateActiveMutation
+} from '@services/accountingService'
+import { Accounting } from '@type/accounting'
+import { viewMode } from '@type/customer'
+import { getAccountingTransactionType } from '@utils/helperFunctions'
 import { useToggle } from 'ahooks'
 import {
   Button,
@@ -21,24 +34,22 @@ import {
   Tooltip
 } from 'antd'
 import { ColumnsType } from 'antd/es/table'
+import _ from 'lodash'
 import moment from 'moment'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import TransactionAccountingConfigurationForm from './TransactionAccountingConfigurationForm'
-import { viewMode } from '@type/customer'
-import {
-  accountingStatus,
-  accountingTransactionType,
-  fundsOptions
-} from '@constants/options'
-import { getAccountingTransactionType } from '@utils/helperFunctions'
-import {
-  useGetAccountingQuery,
-  useUpdateActiveMutation
-} from '@services/accountingService'
-import { openNotification } from '@configs/fetchBaseQueryCustom'
-import { Accounting } from '@type/accounting'
+import { AiOutlineHistory } from 'react-icons/ai'
 import { FaPen } from 'react-icons/fa'
+import {
+  pageEnum,
+  viewMode as viewModeHistory
+} from '../../app/types/policyManagement'
+import TransactionAccountingConfigurationForm from './TransactionAccountingConfigurationForm'
+import ButtonHistory from '@components/button-history/ButtonHistory'
+import ButtonView from '@components/button-view/ButtonView'
+import ButtonUpdate from '@components/button-update/ButtonUpdate'
+import ButtonLock from '@components/button-lock/ButtonLock'
+import ButtonUnlock from '@components/button-unlock/ButtonUnlock'
 
 function TransactionAccountingConfiguration() {
   const [form] = Form.useForm()
@@ -53,6 +64,28 @@ function TransactionAccountingConfiguration() {
   const [addForm, { toggle: addFormToggle }] = useToggle()
 
   const [selectedAccounting, setSelectedAccounting] = useState<Accounting>()
+
+  const [open, setOpen] = useState<boolean>(false)
+  const [modeHistory, setModeHistory] = useState<viewModeHistory>(
+    viewModeHistory.create
+  )
+  const [selectedId, setSelectedId] = useState<number>()
+  const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false)
+
+  const onCloseConfirmModal = () => {
+    setVisibleConfirmModal(false)
+  }
+
+  const onCancelHistory = () => {
+    if (
+      modeHistory === viewModeHistory.history ||
+      modeHistory === viewModeHistory.delete
+    ) {
+      setOpen(false)
+    } else {
+      setVisibleConfirmModal(true)
+    }
+  }
 
   const { data: accounting, refetch: refetchAccounting } =
     useGetAccountingQuery(search)
@@ -183,11 +216,22 @@ function TransactionAccountingConfiguration() {
         return (
           <Space>
             <Tooltip
+              placement='top'
+              title={t('tooltips.viewHistory')}
+            >
+              <ButtonHistory
+                onClick={() => {
+                  setModeHistory(viewModeHistory.history)
+                  setOpen(true)
+                  setSelectedId(record.id)
+                }}
+              />
+            </Tooltip>
+            <Tooltip
               placement='topLeft'
               title='Xem'
             >
-              <Button
-                icon={<EyeOutlined />}
+              <ButtonView
                 onClick={() => {
                   setMode(viewMode.view)
                   setSelectedAccounting(record)
@@ -200,24 +244,35 @@ function TransactionAccountingConfiguration() {
               placement='topLeft'
               title='Sửa'
             >
-              <Button
-                icon={<FaPen />}
+              <ButtonUpdate
                 onClick={() => {
                   setMode(viewMode.update)
                   setSelectedAccounting(record)
                   addFormToggle()
                 }}
+                module={''}
               />
             </Tooltip>
 
             <Tooltip
               placement='topLeft'
-              title={record.active ? 'Khóa' : 'Mở khóa'}
+              title={
+                record.active
+                  ? t`internal-wallet.modal.change-status-lock-ok-button`
+                  : t`internal-wallet.modal.change-status-unlock-ok-button`
+              }
             >
-              <Button
-                icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
-                onClick={() => changeStatus(record.active, record.id)}
-              />
+              {record.active ? (
+                <ButtonLock
+                  module=''
+                  onClick={() => changeStatus(record.active, record.id)}
+                />
+              ) : (
+                <ButtonUnlock
+                  module=''
+                  onClick={() => changeStatus(record.active, record.id)}
+                />
+              )}
             </Tooltip>
           </Space>
         )
@@ -289,7 +344,7 @@ function TransactionAccountingConfiguration() {
               >
                 <Col>
                   <ButtonAdd
-                    module='internal-wallet'
+                    module='internalwallet'
                     onClick={() => {
                       setMode(viewMode.create)
                       setSelectedAccounting(undefined)
@@ -348,7 +403,17 @@ function TransactionAccountingConfiguration() {
         onCancel={onCancel}
         onSubmit={refetchAccounting}
       />
-
+      <AuditLogManagementModal
+        onCloseConfirmModal={onCloseConfirmModal}
+        visibleConfirmModal={visibleConfirmModal}
+        page={pageEnum.customerCancel}
+        onCancel={onCancelHistory}
+        open={open}
+        setOpen={setOpen}
+        mode={modeHistory}
+        recordId={selectedId}
+        entityType='ACCOUNTING'
+      />
     </Card>
   )
 }

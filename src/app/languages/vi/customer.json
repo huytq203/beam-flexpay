@@ -3,6 +3,8 @@
     "information": "Thông tin chung",
     "wallet": "Ví điện tử",
     "banks": "Ngân hàng liên kêt",
+    "linkedDate": "Ngày liên kết",
+    "cancelLinkedDate": "Ngày hủy liên kết",
     "transaction": "Giao dịch",
     "history": "Lịch sử"
   }

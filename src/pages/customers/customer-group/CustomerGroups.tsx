@@ -209,7 +209,6 @@ function CustomerGroup() {
                 module='customer_group'
               />
               <ButtonDelete
-                icon={<AiFillDelete />}
                 danger
                 onClick={() => {
                   setSelectedId(row.groupId)

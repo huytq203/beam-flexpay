@@ -53,10 +53,14 @@ function CustomPaymentMethod({
   const fetchData = async () => {
     const { data } = await getPublicBanks({})
     if (data && data.length > 0) {
-      const bankList = data.map((bank: PublicBankInterface) => ({
+      let bankList = data.map((bank: PublicBankInterface) => ({
         value: bank.id,
         label: bank.name
       })) as SelectItem[]
+      if (pageEnum.withdrawMoney === module || pageEnum.directDeposit === module) {
+        bankList = bankList.filter((bank) => bank.value === 48)
+        // set default value for withdraw money and direct deposit with VP Bank
+      }
       setBanks(bankList)
       setSelectedValues(getBankIds(bankList))
       handleSelectMethod(getBankIds(bankList), 'all')

@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
+import { reduce, isEqual } from 'lodash'
+
 import {
   INotification,
   INotificationForm,
-  notificationMode,
-  notificationService
+  notificationMode
 } from '@type/notification'
 import {
   Button,
@@ -19,7 +20,7 @@ import {
   Switch
 } from 'antd'
 import { useTranslation } from 'react-i18next'
-import { APPLICABLE_OBJECTS } from '@type/policyManagement'
+import { APPLICABLE_OBJECTS, viewMode } from '@type/policyManagement'
 import {
   applicableObjects,
   serviceRegex,
@@ -35,13 +36,14 @@ import {
   useLazyGetNotificationQuery,
   useUpdateNotificationMutation
 } from '@services/apiNotification'
-import { showSuccessMessage } from '@utils/helperFunctions'
+import { compareData, showSuccessMessage } from '@utils/helperFunctions'
 import { ResponseType, STATUS_CODE } from '@type/api'
 import { GUTTER } from '@constants/appConstant'
 import { TimeFullFormat } from '@constants/datetime'
+import { NOTIFICATION_TYPE_SERVICE } from '../NotificationManagementConst'
 
 interface IProps {
-  mode: notificationMode
+  mode: viewMode
   onCancel: () => void
   id?: string
   refetch?: () => void
@@ -137,7 +139,8 @@ export const CreateNotificationModal = ({
           applicableObject,
           startDate: data.data.startDate
             ? dayjs(data.data.startDate)
-            : undefined
+            : undefined,
+          status: data.data.status === 1 ? true : false,
         })
         setIsLoading(false)
       }
@@ -151,9 +154,7 @@ export const CreateNotificationModal = ({
   }
 
   useEffect(() => {
-    ;(mode === notificationMode.UPDATE || mode === notificationMode.VIEW) &&
-      id &&
-      fetchData(id)
+    ;(mode === viewMode.update || mode === viewMode.view) && id && fetchData(id)
   }, [id, mode])
 
   const onSubmit = async (values: INotificationForm) => {
@@ -172,10 +173,16 @@ export const CreateNotificationModal = ({
         ? accountGroup?.value
         : applicableObject === APPLICABLE_OBJECTS.PERSONAL_ACCOUNT
         ? accountNumber?.value
-        : undefined
-
-    let result, msg
-    if (mode === notificationMode.CREATE) {
+        : null
+    const payload = {
+      ...values,
+      id: notification?.id ?? undefined,
+      applicableObjectId: objectIds,
+      status: values.status === true ? 1 : 0,
+      startDate: date
+    }
+    let result
+    if (mode === viewMode.create) {
       result = await createNotification({
         startDate: date,
         applicableObjectId: objectIds,
@@ -184,7 +191,10 @@ export const CreateNotificationModal = ({
       })
     }
 
-    if (mode === notificationMode.UPDATE && id && notification) {
+    if (mode === viewMode.update && id && notification) {
+      let initData = { ...notification }
+      let valueTypeUpdate: string[] = []
+      valueTypeUpdate = compareData(initData, payload)
       result = await updateNotification({
         id: notification?.id,
         startDate: date,
@@ -192,6 +202,7 @@ export const CreateNotificationModal = ({
         applicableObject: applicableObject,
         title: rest.title?.trim(),
         body: rest.body?.trim(),
+        valueTypeUpdate: valueTypeUpdate,
         ...rest
       })
     }
@@ -200,32 +211,39 @@ export const CreateNotificationModal = ({
       (result as ResponseData)?.data?.statusCode === STATUS_CODE.CREATED ||
       (result as ResponseData)?.data?.statusCode === STATUS_CODE.SUCCESS
     ) {
-      msg =
-        mode === notificationMode.CREATE
-          ? t`notification-management.message.create-success`
-          : t`notification-management.message.edit-success`
-      showSuccessMessage(msg)
-      setIsLoading(false)
-      onCancel()
-      form.resetFields()
-      refetch?.()
+      handleSuccess()
     } else {
-      msg =
-        mode === notificationMode.CREATE
-          ? t`notification-management.message.create-failed`
-          : t`notification-management.message.edit-failed`
-      message.destroy()
-      message.error(msg)
-      setIsLoading(false)
+      handleError()
     }
   }
 
+  const handleSuccess = () => {
+    const msg =
+      mode === viewMode.create
+        ? t`notification-management.message.create-success`
+        : t`notification-management.message.edit-success`
+    showSuccessMessage(msg)
+    setIsLoading(false)
+    onCancel()
+    form.resetFields()
+    refetch?.()
+  }
+
+  const handleError = () => {
+    const msg =
+      mode === viewMode.create
+        ? t`notification-management.message.create-failed`
+        : t`notification-management.message.edit-failed`
+    message.destroy()
+    message.error(msg)
+    setIsLoading(false)
+  }
   const onClose = () => {
     Modal.confirm({
       title: t('notification-management.confirm.update-title'),
       onOk: () => {
-      console.log("rwerwe")
-      onCancel()
+        console.log('rwerwe')
+        onCancel()
       },
       okText: t('buttons.ok'),
       cancelText: t('buttons.back'),
@@ -233,7 +251,7 @@ export const CreateNotificationModal = ({
     })
   }
 
-  const defaultTemplate = (service: notificationService) =>
+  const defaultTemplate = (service: NOTIFICATION_TYPE_SERVICE) =>
     serviceRegex.find((item) => item.value === service)
 
   return (
@@ -259,15 +277,13 @@ export const CreateNotificationModal = ({
               initialValue={APPLICABLE_OBJECTS.SYSTEM}
             >
               <Select
-                disabled={mode === notificationMode.UPDATE}
-                className={
-                  mode === notificationMode.VIEW ? 'readonly-class' : ''
-                }
+                disabled={mode === viewMode.update}
+                className={mode === viewMode.view ? 'readonly-class' : ''}
                 onChange={(value) => {
                   setObject(value)
                   if (
                     form.getFieldValue('serviceType') !==
-                    notificationService.OTHER
+                    NOTIFICATION_TYPE_SERVICE.OTHER
                   )
                     form.resetFields(['serviceType', 'title', 'body'])
                 }}
@@ -294,7 +310,7 @@ export const CreateNotificationModal = ({
                     ]}
                   >
                     <CustomAccountGroupSelect
-                      readonly={mode === notificationMode.VIEW}
+                      readonly={mode === viewMode.view}
                       listAccountGroup={listAccountGroup}
                       setSearchValue={setSearchValue}
                       searchInput={searchValue}
@@ -316,7 +332,7 @@ export const CreateNotificationModal = ({
                     ]}
                   >
                     <CustomPrivateAccountSelect
-                      readonly={mode === notificationMode.VIEW}
+                      readonly={mode === viewMode.view}
                       listAccount={listAccount}
                       setSearchValue={setSearchValue}
                       searchInput={searchValue}
@@ -350,13 +366,13 @@ export const CreateNotificationModal = ({
                 showTime
                 allowClear={false}
                 className={`${
-                  mode === notificationMode.VIEW ? 'readonly-class' : ''
+                  mode === viewMode.view ? 'readonly-class' : ''
                 } w-100`}
                 placeholder={t`notification-management.placeholders.date`.toString()}
                 format={TimeFullFormat}
               />
             </Form.Item>
-            {mode === notificationMode.VIEW && (
+            {mode === viewMode.view && (
               <Form.Item
                 label={t`notification-management.createdAt`}
                 name='startDate'
@@ -365,7 +381,7 @@ export const CreateNotificationModal = ({
                   showTime
                   allowClear={false}
                   className={`${
-                    mode === notificationMode.VIEW ? 'readonly-class' : ''
+                    mode === viewMode.view ? 'readonly-class' : ''
                   } w-100`}
                   format={TimeFullFormat}
                 />
@@ -379,9 +395,8 @@ export const CreateNotificationModal = ({
               valuePropName='checked'
             >
               <Switch
-                className={
-                  mode === notificationMode.VIEW ? 'readonly-class' : ''
-                }
+                className={mode === viewMode.view ? 'readonly-class' : ''}
+                checked = {notification?.status === 1? true:false}
               />
             </Form.Item>
           </Col>
@@ -401,10 +416,8 @@ export const CreateNotificationModal = ({
               ]}
             >
               <Select
-                className={
-                  mode === notificationMode.VIEW ? 'readonly-class' : ''
-                }
-                disabled={mode === notificationMode.UPDATE}
+                className={mode === viewMode.view ? 'readonly-class' : ''}
+                disabled={mode === viewMode.update}
                 options={serviceTypes}
                 placeholder={t`notification-management.placeholders.service`}
                 onChange={(value) => {
@@ -447,9 +460,7 @@ export const CreateNotificationModal = ({
               ]}
             >
               <Input
-                className={
-                  mode === notificationMode.VIEW ? 'readonly-class' : ''
-                }
+                className={mode === viewMode.view ? 'readonly-class' : ''}
                 placeholder={t`notification-management.placeholders.text-title`.toString()}
                 onBlur={(e) => onBlur(e.target.value, 'title')}
               />
@@ -484,7 +495,7 @@ export const CreateNotificationModal = ({
               ]}
             >
               <Input.TextArea
-                readOnly={mode === notificationMode.VIEW}
+                readOnly={mode === viewMode.view}
                 rows={5}
                 placeholder={t`notification-management.placeholders.content`.toString()}
                 onBlur={(e) => onBlur(e.target.value, 'body')}
@@ -501,16 +512,16 @@ export const CreateNotificationModal = ({
               ghost
               onClick={onClose}
             >
-              {mode === notificationMode.VIEW
+              {mode === viewMode.view
                 ? t`notification-management.close`
                 : t`notification-management.cancel`}
             </Button>
-            {mode !== notificationMode.VIEW && (
+            {mode !== viewMode.view && (
               <Button
                 type='primary'
                 htmlType='submit'
               >
-                {mode === notificationMode.CREATE
+                {mode === viewMode.create
                   ? t`notification-management.add`
                   : t`notification-management.update`}
               </Button>

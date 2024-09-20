@@ -1,6 +1,9 @@
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal'
 import ButtonExcel from '@components/button-excel/ButtonExcel'
+import ButtonHistory from '@components/button-history/ButtonHistory'
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
+import ButtonView from '@components/button-view/ButtonView'
 import CellContent from '@components/cell-content/CellContent'
 import NoDataText from '@components/no-data-text/NoDataText'
 import SearchBar from '@components/search-bar/SearchBar'
@@ -11,28 +14,24 @@ import { useAppSelector } from '@hooks/hook'
 import { useBankCmsFindAllQuery } from '@services/cmsService'
 import { BankCmsFindAllApiArg } from '@type/application'
 import { BankInformation } from '@type/bank'
-import { viewMode } from '@type/customer'
 import { getBankStatus, getTagColor } from '@utils/helperFunctions'
 import {
-  Button,
   Card,
   Col,
   Form,
   Input,
+  notification,
   Row,
   Select,
   Table,
   Tag,
-  Tooltip,
-  Typography,
-  notification
+  Typography
 } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AiFillEye } from 'react-icons/ai'
-import BankModal from './bank-modal/BankModal'
+import { pageEnum, viewMode } from '../../../app/types/policyManagement'
 import { BankSelection } from './bank-selection/BankSelection'
 
 function BankManagement() {
@@ -48,9 +47,25 @@ function BankManagement() {
     take: 10
   })
 
+  //const [openHistory, setOpenHistory] = useState<boolean>(false);
+  // const [modeHistory, setModeHistory] = useState<viewModeHistory>(viewModeHistory.create);
+  const [selectedId, setSelectedId] = useState<number>()
+  const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false)
+
   const { data: banks, refetch } = useBankCmsFindAllQuery(search)
 
   const toggleModal = (value: boolean) => setOpen(value)
+
+  const onCancel = () => {
+    if (mode !== viewMode.history) {
+      setVisibleConfirmModal(true)
+    }
+    setOpen(false)
+  }
+
+  const onCloseConfirmModal = () => {
+    setVisibleConfirmModal(false)
+  }
 
   const columns: ColumnsType<BankInformation> = [
     {
@@ -72,7 +87,7 @@ function BankManagement() {
       }
     },
     {
-      title: t('system-management.bank.short-name'),
+      title: t('system-management.bank.trading-name'),
       dataIndex: 'tradingName',
       align: 'center',
       fixed: 'left',
@@ -213,30 +228,33 @@ function BankManagement() {
       render: (record) => (
         <Row justify='center'>
           <Col>
-            <Tooltip title={t`system-management.bank.modal.update-button`}>
-              <ButtonUpdate
-                className='mr-10'
-                onClick={() => {
-                  setMode(viewMode.update)
-                  setSelectedBank(record)
-                  toggleModal(true)
-                }}
-                module='bank_payment'
-              />
-            </Tooltip>
+            <ButtonHistory
+              className='mr-10'
+              onClick={() => {
+                setMode(viewMode.history)
+                setSelectedId(record.id)
+                toggleModal(true)
+              }}
+            />
+            <ButtonUpdate
+              className='mr-10'
+              onClick={() => {
+                setMode(viewMode.update)
+                setSelectedBank(record)
+                toggleModal(true)
+              }}
+              module='bank_payment'
+            />
           </Col>
           <Col>
-            <Tooltip title={t`buttons.detail`}>
-              <Button
-                icon={<AiFillEye />}
-                className='mr-10'
-                onClick={() => {
-                  setMode(viewMode.view)
-                  setSelectedBank(record)
-                  toggleModal(true)
-                }}
-              />
-            </Tooltip>
+            <ButtonView
+              className='mr-10'
+              onClick={() => {
+                setMode(viewMode.view)
+                setSelectedBank(record)
+                toggleModal(true)
+              }}
+            />
           </Col>
         </Row>
       )
@@ -441,12 +459,18 @@ function BankManagement() {
         }}
       />
       {open && (
-        <BankModal
-          bank={selectedBank}
+        <AuditLogManagementModal
+          onCloseConfirmModal={onCloseConfirmModal}
+          visibleConfirmModal={visibleConfirmModal}
+          record={selectedBank}
           open={open}
           mode={mode}
-          onCancel={() => toggleModal(false)}
+          onCancel={onCancel}
           refetch={refetch}
+          page={pageEnum.bankManagement}
+          recordId={selectedId}
+          setOpen={setOpen}
+          entityType='BANK_MANAGEMENT'
         />
       )}
     </Card>

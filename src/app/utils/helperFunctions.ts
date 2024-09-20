@@ -1,10 +1,20 @@
 import { accountingTransactionType, serviceTypes } from '@constants/options'
-import { notificationService } from '@type/notification'
+import {
+  LIMIT_AND_REGULATIONS,
+  LIMIT_TYPE,
+  TIME_TYPE_APPLY,
+  TRANSACTION_TYPE,
+  VALUE_LIMIT_TYPE
+} from '@pages/policy-management/limit-management/LimitAndRegulationsConst'
+import { BANK_MANAGEMENT, BANK_TYPE } from '@pages/system-management/bank-management/bank-modal/BankManagementConst'
+import { NOTIFICATION_CONTEXT_SETTING, NOTIFICATION_TYPE_OBJECT, NOTIFICATION_TYPE_SERVICE } from '@pages/system-management/notification-management/NotificationManagementConst'
+import { accountStatus } from '@type/customer'
 import { APPLICABLE_OBJECTS, history_type } from '@type/policyManagement'
 import { TransactionStatus, TransactionType } from '@type/transfer'
 import { notification } from 'antd'
 import dayjs from 'dayjs'
 import { t } from 'i18next'
+import { forOwn, fromPairs, isDate, isEqual, reduce } from 'lodash'
 import i18n from '../languages/i18n'
 
 export const getGender = (gender: string | number) => {
@@ -25,13 +35,13 @@ export const getTagColor = (status?: boolean, active?: number) => {
 
 export const getTagAccountStatusColor = (status?: string) => {
   switch (status) {
-    case 'LINKED':
+    case accountStatus.LINKED:
       return 'geekblue'
-    case 'NOT_VERIFIED':
+    case accountStatus.NOT_VERIFIED:
       return ''
     case 'waitingForRefund':
       return 'processing'
-    case 'VERIFIED':
+    case accountStatus.VERIFIED:
       return 'cyan'
   }
 }
@@ -69,13 +79,14 @@ export const blockLetterDecimal = (
   }
 }
 
-export const blockLetterDecimalAndDot =
-   (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
-    if (!numbers.includes(e.nativeEvent.key.toString())) {
-      e.preventDefault()
-    }
+export const blockLetterDecimalAndDot = (
+  e: React.KeyboardEvent<HTMLInputElement>
+) => {
+  const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
+  if (!numbers.includes(e.nativeEvent.key.toString())) {
+    e.preventDefault()
   }
+}
 
 export const formatObject = (value: string) => {
   switch (value) {
@@ -83,7 +94,7 @@ export const formatObject = (value: string) => {
       return i18n.t('management.sales-fee.system')
     case 'CUSTOMER_TYPE':
       return i18n.t('management.sales-fee.customer-type')
-    case 'PERSONAL_ACCOUNT':
+    case APPLICABLE_OBJECTS.PERSONAL_ACCOUNT:
       return i18n.t('policy-management.common.applicableObjectPrivateAccount')
     case 'PRIVATE_ACCOUNT':
       return i18n.t('policy-management.common.applicableObjectPrivateAccount')
@@ -109,17 +120,21 @@ export const formatObjectPolicy = (value: string) => {
 
 export const formatTransactionType = (value: string) => {
   switch (value) {
-    case 'DEPOSIT':
+    case TRANSACTION_TYPE.DEPOSIT:
       return i18n.t('policy-management.limitAndRegulations.recharge')
-    case 'WITHDRAWAL':
+    case TRANSACTION_TYPE.WITHDRAWAL:
       return i18n.t('policy-management.limitAndRegulations.withDraw')
-    case 'WITHDRAW':
+    case TRANSACTION_TYPE.WITHDRAW:
       return i18n.t('policy-management.limitAndRegulations.withDraw')
-    case 'TRANSFER':
+    case TRANSACTION_TYPE.TRANSFER:
       return i18n.t('policy-management.limitAndRegulations.transferMoney')
-    case 'PAYMENT':
+    case TRANSACTION_TYPE.PAYMENT:
       return i18n.t('policy-management.limitAndRegulations.payment')
-    case 'TOTAL_LIMIT':
+    case TRANSACTION_TYPE.FEE:
+      return i18n.t(`policy-management.limitAndRegulations.fee`)
+    case TRANSACTION_TYPE.VAT:
+      return i18n.t(`policy-management.limitAndRegulations.vat`)
+    case TRANSACTION_TYPE.TOTAL_LIMIT:
       return i18n.t(
         'policy-management.limitAndRegulations.totalLimitTransaction'
       )
@@ -130,9 +145,9 @@ export const formatTransactionType = (value: string) => {
 
 export const formatLimitValueType = (value: string) => {
   switch (value) {
-    case 'VALUE':
+    case VALUE_LIMIT_TYPE.VALUE:
       return i18n.t('policy-management.limitAndRegulations.value')
-    case 'TIMES':
+    case VALUE_LIMIT_TYPE.TIMES:
       return i18n.t('policy-management.limitAndRegulations.count')
     default:
       return '-'
@@ -141,15 +156,15 @@ export const formatLimitValueType = (value: string) => {
 
 export const formatLimitTimeType = (value: string) => {
   switch (value) {
-    case 'TIMES':
+    case VALUE_LIMIT_TYPE.TIMES:
       return i18n.t('policy-management.limitAndRegulations.times')
-    case 'DAY':
+    case TIME_TYPE_APPLY.DAY:
       return i18n.t('policy-management.limitAndRegulations.day')
-    case 'WEEK':
+    case TIME_TYPE_APPLY.WEEK:
       return i18n.t('policy-management.limitAndRegulations.week')
-    case 'MONTH':
+    case TIME_TYPE_APPLY.MONTH:
       return i18n.t('policy-management.limitAndRegulations.month')
-    case 'YEAR':
+    case TIME_TYPE_APPLY.YEAR:
       return i18n.t('policy-management.limitAndRegulations.year')
     default:
       return '-'
@@ -158,63 +173,178 @@ export const formatLimitTimeType = (value: string) => {
 
 export const formatLimitType = (value: string) => {
   switch (value) {
-    case 'LIMIT_MIN':
+    case LIMIT_TYPE.LIMIT_MIN:
       return i18n.t('policy-management.limitAndRegulations.minLimit')
-    case 'LIMIT_MAX':
+    case LIMIT_TYPE.LIMIT_MAX:
       return i18n.t('policy-management.limitAndRegulations.maxLimit')
     default:
       return '-'
   }
 }
 
-export const formatHisoryData = (value: string | number) => {
+export function formatObjectHistory(obj: any, key?: string): string {
+  try {
+    if (key && key === 'Chi tiết') {
+      if (Array.isArray(obj)) {
+        const array = obj
+        return array
+          .map((item: string) => {
+            const formattedEntries = Object.entries(item).map(
+              ([key, value]) => {
+                return `<strong>${key.toString()}</strong>: ${value.toString()}`
+              }
+            )
+            return formattedEntries.join(', ')
+          })
+          .join('<br/>')
+      } else {
+        console.log(obj)
+        return obj
+      }
+    } else if (typeof obj === 'object' && obj !== null) {
+      const formattedEntries = Object.entries(obj).map(([key, value]) => {
+        return `<strong>${formatKey(key)}</strong>: ${processValue(value, key)}`
+      })
+      return formattedEntries.join('<br/>')
+    } else {
+      return processValue(obj)
+    }
+  } catch (e) {
+    return obj
+  }
+}
+
+export function formatKey(key: string): string {
+  return key
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, (str) => str.toUpperCase())
+}
+
+export function processValue(value: any, key?: string): string {
+  if (typeof value === 'string' && isDate(value)) {
+    return dayjs(value).format('DD/MM/YYYY')
+  } else if (key === 'DETAILS') {
+    return `${
+      value && value.length > 0
+        ? `<ul>${t(value)
+            .split(',')
+            .map((item: string) => `<li>${item}</li>`)
+            .join(' ')}</ul>`
+        : null
+    }`
+  }
+  return String(value)
+}
+
+export const formatHistoryData = (value: string | number) => {
   if (!isNaN(Number(value))) {
     if (value) {
       return convertNumber(value)
     } else return '-'
   } else {
     switch (value) {
-      case 'DEPOSIT':
+      case TRANSACTION_TYPE.DEPOSIT:
         return i18n.t('policy-management.limitAndRegulations.recharge')
-      case 'WITHDRAWAL':
+      case TRANSACTION_TYPE.WITHDRAWAL:
         return i18n.t('policy-management.limitAndRegulations.withDraw')
-      case 'WITHDRAW':
+      case TRANSACTION_TYPE.WITHDRAW:
         return i18n.t('policy-management.limitAndRegulations.withDraw')
-      case 'TRANSFER':
+      case TRANSACTION_TYPE.TRANSFER:
         return i18n.t('policy-management.limitAndRegulations.transferMoney')
-      case 'PAYMENT':
+      case TRANSACTION_TYPE.PAYMENT:
         return i18n.t('policy-management.limitAndRegulations.payment')
-      case 'TOTAL_LIMIT':
+      case TRANSACTION_TYPE.FEE:
+        return i18n.t(`policy-management.limitAndRegulations.fee`)
+      case TRANSACTION_TYPE.VAT:
+        return i18n.t(`policy-management.limitAndRegulations.vat`)
+      case TRANSACTION_TYPE.TOTAL_LIMIT:
         return i18n.t(
           'policy-management.limitAndRegulations.totalLimitTransaction'
         )
-      case 'VALUE':
+      case VALUE_LIMIT_TYPE.VALUE:
         return i18n.t('policy-management.limitAndRegulations.value')
-      case 'TIMES':
+      case VALUE_LIMIT_TYPE.TIMES:
         return i18n.t('policy-management.limitAndRegulations.count')
-      case 'LIMIT_MIN':
+      case LIMIT_TYPE.LIMIT_MIN:
         return i18n.t('policy-management.limitAndRegulations.minLimit')
-      case 'LIMIT_MAX':
+      case LIMIT_TYPE.LIMIT_MAX:
         return i18n.t('policy-management.limitAndRegulations.maxLimit')
-      case 'DAY':
+      case TIME_TYPE_APPLY.DAY:
         return i18n.t('policy-management.limitAndRegulations.day')
-      case 'WEEK':
+      case TIME_TYPE_APPLY.WEEK:
         return i18n.t('policy-management.limitAndRegulations.week')
-      case 'MONTH':
+      case TIME_TYPE_APPLY.MONTH:
         return i18n.t('policy-management.limitAndRegulations.month')
-      case 'YEAR':
+      case TIME_TYPE_APPLY.YEAR:
         return i18n.t('policy-management.limitAndRegulations.year')
+      case BANK_TYPE.LINK:
+        return i18n.t('system-management.bank.options.LINK')
+      case BANK_TYPE.LINK_DEPOSIT:
+        return i18n.t('system-management.bank.options.LINK_DEPOSIT')
+      case BANK_TYPE.LINK_GATEWAY:
+        return i18n.t('system-management.bank.options.LINK_GATEWAY')
+      case BANK_TYPE.LINK_WITHDRAW:
+        return i18n.t('system-management.bank.options.LINK_WITHDRAW')
+      case APPLICABLE_OBJECTS.SYSTEM:
+        return i18n.t('policy-management.payment.system')
+      case APPLICABLE_OBJECTS.ACCOUNT_GROUP:
+        return i18n.t('policy-management.payment.accountGroup')
+      case APPLICABLE_OBJECTS.PERSONAL_ACCOUNT:
+        return i18n.t('policy-management.payment.personalAccount')
+      case NOTIFICATION_TYPE_SERVICE.DEPOSIT_LINK_BANK:
+        return i18n.t('notification-management.service-type.deposit-link-bank')
+      case NOTIFICATION_TYPE_SERVICE.DEPOSIT_CARD_PHONE:
+        return i18n.t('notification-management.service-type.deposit-card-phone')
+      case NOTIFICATION_TYPE_SERVICE.DEPOSIT_FAIL:
+        return i18n.t('notification-management.service-type.deposit-fail')
+      case NOTIFICATION_TYPE_SERVICE.CHARGE_CARD_PHONE_NUMBER:
+        return i18n.t('notification-management.service-type.charge-card-phone-number')
+      case NOTIFICATION_TYPE_SERVICE.CHARGE_DATA_3G_4G:
+        return i18n.t('notification-management.service-type.charge-data-3g-4g')
+      case NOTIFICATION_TYPE_SERVICE.PAYMENT_CARD_PHONE:
+        return i18n.t('notification-management.service-type.payment-card-phone')
+      case NOTIFICATION_TYPE_SERVICE.PAYMENT_DATA_3G_4G:
+        return i18n.t('notification-management.service-type.payment-data-3g-4g')
+      case NOTIFICATION_TYPE_SERVICE.TRANSFER_MOVER:
+        return i18n.t('notification-management.service-type.transfer-mover')
+      case NOTIFICATION_TYPE_SERVICE.TRANSFER_RECEIVE:
+        return i18n.t('notification-management.service-type.transfer-receive')
+      case NOTIFICATION_TYPE_SERVICE.WITHDRAW_LINK_BANK:
+        return i18n.t('notification-management.service-type.withdraw-link-bank')
+      case NOTIFICATION_TYPE_SERVICE.WITHDRAW_NOT_LINK_BANK:
+        return i18n.t('notification-management.service-type.withdraw-not-link-bank')
+      case NOTIFICATION_TYPE_SERVICE.LINK_BANK:
+        return i18n.t('notification-management.service-type.link-bank')
+      case NOTIFICATION_TYPE_SERVICE.UNLINK_BANK:
+        return i18n.t('notification-management.service-type.un-link-bank')
+      case NOTIFICATION_TYPE_SERVICE.PAYMENT_BILL:
+        return i18n.t('notification-management.service-type.payment-bill')
+      case NOTIFICATION_TYPE_SERVICE.WARNING_LOGIN_NEW_DEVICE:
+        return i18n.t('notification-management.service-type.warning-login-new-device')
+      case NOTIFICATION_TYPE_SERVICE.WARNING_CHANGE_PASSWORD:
+        return i18n.t('notification-management.service-type.warning-change-password')
+      case NOTIFICATION_TYPE_SERVICE.OTHER:
+        return i18n.t('notification-management.service-type.other-service')
+
       default:
-        return '-'
+        // if (typeof JSON.parse(value.toString()) === 'string') return value;
+        // else if (typeof JSON.parse(value.toString()) === 'object') return formatObjectHistory(JSON.parse(value.toString()));
+        // else return '-';
+        return value
     }
   }
 }
 
-export const convertNumber = (amount: string | number,suffix?: string | undefined) => {
+export const convertNumber = (
+  amount: string | number,
+  suffix?: string | undefined
+) => {
   if (!amount && amount !== 0) {
     return '-'
   }
-  return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (suffix ?? '')
+  return (
+    amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (suffix ?? '')
+  )
 }
 
 export const getStatusText = (status?: boolean) => {
@@ -224,11 +354,11 @@ export const getStatusText = (status?: boolean) => {
 
 export const getStatusAccountText = (status: string | null | undefined) => {
   switch (status) {
-    case 'LINKED':
+    case accountStatus.LINKED:
       return i18n.t('labels.linked')
-    case 'NOT_VERIFIED':
+    case accountStatus.NOT_VERIFIED:
       return i18n.t('labels.notVerified')
-    case 'VERIFIED':
+    case accountStatus.VERIFIED:
       return i18n.t('labels.verified')
     default:
       return i18n.t('labels.linked')
@@ -368,10 +498,10 @@ export const getGeneralReportDeviceChartTitle = (title: string) => {
   }
 }
 
-export const getNotificationService = (service: notificationService) => {
+export const getNotificationService = (service: NOTIFICATION_TYPE_SERVICE) => {
   const services = serviceTypes.concat([
     {
-      value: notificationService.OTHER,
+      value: NOTIFICATION_TYPE_SERVICE.OTHER,
       label: i18n.t`notification-management.service-type.other-service`
     }
   ])
@@ -415,10 +545,173 @@ export const getParamsFromURL = (key: string) =>
 
 export const getAccountingTransactionType = (transaction: string) => {
   const filters = accountingTransactionType.find(
-    (item: { value: string; label: string }) => item.value === transaction
+    (item: { value: string | null; label: string }) => item.value === transaction
   )
 
   if (filters) return filters.label
 
   return '-'
+}
+
+export function parseManually(str: string) {
+  // Remove the outer braces and whitespace
+  const trimmedStr = str.trim().slice(1, -1)
+
+  // Initialize an empty object to hold the parsed data
+  const result: Record<string, any> = {}
+
+  // Split the string by commas, but only those outside of quotes
+  const pairs = trimmedStr.match(
+    /("(?:\\"|[^"])*?"|\d+):("(?:\\"|[^"])*?"|\d+)/g
+  )
+
+  if (pairs) {
+    pairs.forEach((pair: any) => {
+      // Split each pair by the colon
+      const [key, value] = pair.split(/:(.+)/).map((s: string) => s.trim())
+
+      // Remove quotes from around the key and value
+      const cleanedKey = key.replace(/^"(.*)"$/, '$1')
+      let cleanedValue = value.replace(/^"(.*)"$/, '$1')
+
+      // Convert numeric strings to numbers
+      if (!isNaN(cleanedValue)) {
+        cleanedValue = Number(cleanedValue)
+      }
+
+      // Add the key-value pair to the result object
+      result[cleanedKey] = cleanedValue
+    })
+
+    return result
+  }
+  return str
+}
+
+export const getNameColumnTypeChange = (title: string) => {
+  switch (title) {
+    case LIMIT_AND_REGULATIONS.APPLICABLE_OBJECT:
+      return i18n.t`policy-management.limitAndRegulations.label.appliableTime`
+    case LIMIT_AND_REGULATIONS.LIMIT_TYPE:
+      return i18n.t`policy-management.limitAndRegulations.label.limitType`
+    case LIMIT_AND_REGULATIONS.LIMIT_VALUE_TYPE:
+      return i18n.t`policy-management.limitAndRegulations.label.limitValueType`
+    case LIMIT_AND_REGULATIONS.LIMIT_VALUE:
+      return i18n.t`policy-management.limitAndRegulations.label.limitValue`
+    case LIMIT_AND_REGULATIONS.TIME_LIMIT:
+      return i18n.t`policy-management.limitAndRegulations.label.timeLimit`
+    case LIMIT_AND_REGULATIONS.APPLICABLE_TIME:
+      return i18n.t`policy-management.limitAndRegulations.label.appliableTime`
+    case LIMIT_AND_REGULATIONS.TRANSACTION_TYPE:
+      return i18n.t`policy-management.limitAndRegulations.label.transactionType`
+    case BANK_MANAGEMENT.TRADING_NAME:
+      return i18n.t`system-management.bank.trading-name`
+    case BANK_MANAGEMENT.ADDRESS:
+      return i18n.t`system-management.bank.address`
+    case BANK_MANAGEMENT.FULL_LOGO:
+      return i18n.t`system-management.bank.full-logo`
+    case BANK_MANAGEMENT.PRIORITY:
+      return i18n.t`system-management.bank.priority`
+    case BANK_MANAGEMENT.TINY_LOGO:
+      return i18n.t`system-management.bank.tiny-logo`
+    case BANK_MANAGEMENT.STATUS:
+      return i18n.t`system-management.bank.status`
+    case BANK_MANAGEMENT.TYPE:
+      return i18n.t`system-management.bank.type`
+    case BANK_MANAGEMENT.WEBSITE:
+      return i18n.t`system-management.bank.website`
+    case NOTIFICATION_CONTEXT_SETTING.OBJECT:
+      return i18n.t`notification-management.object`
+    case NOTIFICATION_CONTEXT_SETTING.SERVICE:
+      return i18n.t`notification-management.service`
+    case NOTIFICATION_CONTEXT_SETTING.STATUS:
+      return i18n.t`notification-management.status`
+    case NOTIFICATION_CONTEXT_SETTING.TEXT_TITLE:
+      return i18n.t`notification-management.text-title`
+    case NOTIFICATION_CONTEXT_SETTING.APPLY_DATE:
+      return i18n.t`notification-management.apply-date`
+    case NOTIFICATION_CONTEXT_SETTING.CONTENT:
+      return i18n.t`notification-management.content`
+    default:
+      return title
+  }
+}
+
+export interface Data {
+  [key: string]: any
+}
+
+/**
+ * Chuyển đổi một đối tượng FormData thành một đối tượng JavaScript thuần.
+ * @param formData - Đối tượng FormData cần chuyển đổi.
+ * @returns Đối tượng JavaScript thuần đã chuyển đổi.
+ */
+export const formDataToObject = (formData: FormData): Data => {
+  const entries = Array.from(formData.entries())
+  return fromPairs(entries)
+}
+
+/**
+ * So sánh dữ liệu trong đối tượng `formData` với dữ liệu ban đầu trong đối tượng `initData` và trả về một mảng các trường khác nhau.
+ *
+ * @param formData - Đối tượng dữ liệu biểu mẫu để so sánh.
+ * @param initData - Đối tượng dữ liệu ban đầu để so sánh.
+ * @returns Một mảng các chuỗi đại diện cho các trường khác nhau giữa hai đối tượng.
+ */
+export const compareFormData = (formData: FormData, initData: Data): string[] => {
+  const formDataObj = formDataToObject(formData)
+  const differentFields: string[] = []
+
+  forOwn(formDataObj, (value, key) => {
+    // không so sánh trường bigImage 
+    if(key === 'bigImage'){
+      return;
+    }
+    if (value != initData[key]) {
+      differentFields.push(key)
+    }
+  })
+
+  return differentFields
+}
+/**
+ * So sánh các thuộc tính của một đối tượng thông báo với một đối tượng payload và trả về một mảng các khóa
+ * nơi các giá trị khác nhau.
+ *
+ * @param notification - Đối tượng thông báo để so sánh.
+ * @param payload - Đối tượng payload để so sánh với thông báo.
+ * @returns Một mảng các khóa nơi các giá trị trong payload khác với các giá trị trong thông báo.
+ */
+export const compareData = (notification: any, payload: any) => {
+  return reduce(payload, (result: string[], value, key) => {
+    if (!isEqual(value, notification[key])) {
+      console.log('key: ', key)
+      console.log('value: ', value)
+      console.log('notification[key]: ', notification[key])
+
+      result.push(key);
+    }
+    return result;
+  }, [] as string[]);
+};
+
+/**
+ * Ghi log dữ liệu được cung cấp cùng với một tin nhắn tùy chọn.
+ * Nếu dữ liệu là một thể hiện của FormData, nó sẽ chuyển đổi thành JSON và ghi log.
+ * Nếu dữ liệu không phải là một thể hiện của FormData, nó sẽ ghi log tin nhắn và dữ liệu như vậy.
+ *
+ * @param message - Một tin nhắn tùy chọn để ghi log cùng với dữ liệu.
+ * @param data - Dữ liệu cần ghi log.
+ */
+export const logData = (message: string = '', data: any) => {
+  if (data instanceof FormData) {
+    const formDataObject: { [key: string]: any } = {}
+    data.forEach((value, key) => {
+      formDataObject[key] = value
+    })
+    message = 'FormData as JSON:' && message
+    console.log(message, JSON.stringify(formDataObject, null, 2))
+  } else {
+    console.log(message, data)
+  }
 }

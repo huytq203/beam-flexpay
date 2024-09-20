@@ -1,12 +1,15 @@
 import { Image } from 'antd'
 import ILogo from '@assets/image/logo.png'
-
-export default function Logo() {
+import SLogo from '@assets/image/short_logo.svg'
+interface LogoProps{
+  collapsed: boolean
+}
+export const Logo = (props: LogoProps) => {
   return (
     <Image
-      src={ILogo}
+      src={props.collapsed?SLogo:ILogo}
       preview={false}
-      height={64}
+      height={props.collapsed?41:64}
     />
   )
 }
