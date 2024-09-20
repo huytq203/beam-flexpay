@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 
 import './style.scss'
 import { useLazyGetUrlLoginQuery } from '@services/cmsUser'
+import { COlOR } from '@components/layout/components/Navigation'
 
 interface PayloadInterface {
   email: string
@@ -85,6 +86,7 @@ function Login() {
           <Col>
             <Form.Item>
               <Link
+                style={{color: COlOR}}
                 className='mb-24'
                 to='/auth/forget-password'
               >

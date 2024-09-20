@@ -4,7 +4,7 @@ import {
   LogoutOutlined,
   SettingOutlined
 } from '@ant-design/icons'
-import { GUTTER } from '@constants/appConstant'
+import { GUTTER, SIZE_ICON } from '@constants/appConstant'
 import { useAppDispatch, useAppSelector } from '@hooks/hook'
 import { authService } from '@services/bankSerice'
 import { logout } from '@slices/authSlice'
@@ -12,7 +12,9 @@ import { showPassword, showProfile } from '@utils/events'
 import { Avatar, Col, Dropdown, MenuProps, Modal, Row, Typography } from 'antd'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-
+import IAvatarDefault from '@assets/image/avatar_default.webp'
+import { LockKey, SignOut, User, WarningCircle } from '@phosphor-icons/react'
+import { COlOR } from './Navigation'
 const { Text } = Typography
 
 export default function NavProfile() {
@@ -26,11 +28,11 @@ export default function NavProfile() {
     {
       key: 'editProfile',
       label: trans('navigation.editProfile'),
-      icon: <EditOutlined />
+      icon: <User size={SIZE_ICON} color={COlOR}/>
     },
     {
       label: trans('navigation.changePassword'),
-      icon: <SettingOutlined />,
+      icon: <LockKey size={SIZE_ICON} color={COlOR}/>,
       key: 'changePassword'
     },
     {
@@ -38,7 +40,7 @@ export default function NavProfile() {
     },
     {
       label: trans('navigation.logout'),
-      icon: <LogoutOutlined />,
+      icon: <SignOut size={SIZE_ICON} color={COlOR}/>,
       key: 'logout'
     }
   ]
@@ -70,7 +72,7 @@ export default function NavProfile() {
   const signOut = () => {
     Modal.confirm({
       title: trans('labels.logout'),
-      icon: <ExclamationCircleOutlined />,
+      icon: <WarningCircle size={24} color='#de831b' />,
       content: trans('labels.logoutDescription'),
       okText: trans('buttons.logout'),
       cancelText: trans('buttons.cancel'),
@@ -92,7 +94,7 @@ export default function NavProfile() {
             <Text className='fw-500'>{profile.fullName}</Text>
           </Col>
           <Col>
-            <Avatar size='large'>{profile.fullName?.charAt(0)}</Avatar>
+            <Avatar src={<img src={IAvatarDefault} alt="avatar" />} size='large'>{profile.fullName?.charAt(0)}</Avatar>
           </Col>
         </Row>
       </Dropdown>

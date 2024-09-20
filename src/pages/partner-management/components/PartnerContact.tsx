@@ -2,17 +2,17 @@ import {
   LockOutlined,
   UnlockOutlined,
   WarningOutlined
-} from '@ant-design/icons';
-import ButtonAdd from '@components/button-add/ButtonAdd';
-import ButtonSearch from '@components/button-search/ButtonSearch';
-import ButtonUpdate from '@components/button-update/ButtonUpdate';
-import SearchBar from '@components/search-bar/SearchBar';
-import { PARTNER_TYPE, PARTNER_TYPE_OPTIONS } from '@constants/partnerOptions';
+} from '@ant-design/icons'
+import ButtonAdd from '@components/button-add/ButtonAdd'
+import ButtonSearch from '@components/button-search/ButtonSearch'
+import ButtonUpdate from '@components/button-update/ButtonUpdate'
+import SearchBar from '@components/search-bar/SearchBar'
+import { PARTNER_TYPE, PARTNER_TYPE_OPTIONS } from '@constants/partnerOptions'
 import {
   usePaymentPartnerFindAllQuery,
   usePaymentPartnerUpdateMutation
-} from '@services/cmsPaymentParner';
-import { useToggle } from 'ahooks';
+} from '@services/cmsPaymentParner'
+import { useToggle } from 'ahooks'
 import {
   Button,
   Card,
@@ -25,73 +25,75 @@ import {
   Row,
   Select,
   Tooltip
-} from 'antd';
-import { useForm } from 'antd/es/form/Form';
-import Table, { ColumnsType } from 'antd/es/table';
-import moment from 'moment';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import PartnerContactForm from './PartnerContactForm';
-import { GUTTER } from '@constants/appConstant';
-import { TimeFormat } from '@constants/datetime';
+} from 'antd'
+import { useForm } from 'antd/es/form/Form'
+import Table, { ColumnsType } from 'antd/es/table'
+import moment from 'moment'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import PartnerContactForm from './PartnerContactForm'
+import { GUTTER } from '@constants/appConstant'
+import { TimeFormat } from '@constants/datetime'
 import {
   PaymentPartnerDetailDto,
   PaymentPartnerFindAllApiArg
-} from '@type/application';
+} from '@type/application'
+import ButtonLock from '@components/button-lock/ButtonLock'
+import ButtonUnlock from '@components/button-unlock/ButtonUnlock'
 
-const { confirm } = Modal;
+const { confirm } = Modal
 
 type props = {
-  type: PARTNER_TYPE;
-};
+  type: PARTNER_TYPE
+}
 
 export default function PartnerContactComponent(props: props) {
-  const [form] = useForm();
-  const { t } = useTranslation();
-  const [addForm, { toggle: addFormToggle }] = useToggle();
-  const [updateForm, { toggle: updateFormToggle }] = useToggle();
+  const [form] = useForm()
+  const { t } = useTranslation()
+  const [addForm, { toggle: addFormToggle }] = useToggle()
+  const [updateForm, { toggle: updateFormToggle }] = useToggle()
 
-  const [record, setRecord] = useState<PaymentPartnerDetailDto>();
+  const [record, setRecord] = useState<PaymentPartnerDetailDto>()
   const [search, setSearch] = useState<PaymentPartnerFindAllApiArg>({
     page: 1,
     take: 10,
     order: 'DESC',
     type: props.type
-  });
-  const [type, setType] = useState<PARTNER_TYPE>(props.type);
+  })
+  const [type, setType] = useState<PARTNER_TYPE>(props.type)
 
-  const [updatePartner] = usePaymentPartnerUpdateMutation();
+  const [updatePartner] = usePaymentPartnerUpdateMutation()
 
-  const { data: partners } = usePaymentPartnerFindAllQuery(search);
+  const { data: partners } = usePaymentPartnerFindAllQuery(search)
 
   const handleSearch = () => {
-    console.log('search', search);
-    console.log('search', form.getFieldsValue());
-    const values = form.getFieldsValue();
+    console.log('search', search)
+    console.log('search', form.getFieldsValue())
+    const values = form.getFieldsValue()
     setSearch({
       ...search,
       type: type,
       ...values
-    });
-  };
+    })
+  }
 
   const handleActive = (record: PaymentPartnerDetailDto) => {
-    var formdata = new FormData();
-    formdata.append('active', (!record.active).toString());
-    formdata.append('file', record.logo);
-    formdata.append('name', record.name);
-    formdata.append('paymentServiceId', record.paymentService.id.toString());
+    var formdata = new FormData()
+    formdata.append('active', (!record.active).toString())
+    formdata.append('file', record.logo)
+    formdata.append('name', record.name)
+    formdata.append('paymentServiceId', record.paymentService.id.toString())
     confirm({
       icon: <WarningOutlined />,
       title: record.active
         ? t('messages.confirmInactive')
         : t('messages.confirmActive'),
       onOk() {
-        updatePartner({ id: record.id, body: formdata });
+        updatePartner({ id: record.id, body: formdata })
       },
       onCancel() {}
-    });
-  };
+    })
+  }
 
   //#region columns
   const columns: ColumnsType<PaymentPartnerDetailDto> = [
@@ -108,7 +110,7 @@ export default function PartnerContactComponent(props: props) {
       width: 200,
       fixed: 'left',
       render(value, record, index) {
-        return t(record.paymentService.type);
+        return t(record.paymentService.type)
       }
     },
     {
@@ -118,7 +120,7 @@ export default function PartnerContactComponent(props: props) {
       width: 200,
       fixed: 'left',
       render(value, record, index) {
-        return t(record.paymentService.name);
+        return t(record.paymentService.name)
       }
     },
     {
@@ -140,7 +142,7 @@ export default function PartnerContactComponent(props: props) {
               preview={false}
               width={150}
             />
-          );
+          )
         }
       }
     },
@@ -155,7 +157,7 @@ export default function PartnerContactComponent(props: props) {
       align: 'center',
       width: 200,
       render(value, record, index) {
-        return record.createdBy.fullName;
+        return record.createdBy.fullName
       }
     },
     {
@@ -163,7 +165,7 @@ export default function PartnerContactComponent(props: props) {
       align: 'center',
       width: 200,
       render(value, record, index) {
-        return record.updatedBy.fullName;
+        return record.updatedBy.fullName
       }
     },
     {
@@ -182,7 +184,7 @@ export default function PartnerContactComponent(props: props) {
           <h4>{t('labels.active')}</h4>
         ) : (
           <h4>{t('labels.inActive')}</h4>
-        );
+        )
       }
     },
     {
@@ -197,31 +199,39 @@ export default function PartnerContactComponent(props: props) {
               <ButtonUpdate
                 module='partner'
                 onClick={() => {
-                  setRecord(record);
-                  updateFormToggle();
+                  setRecord(record)
+                  updateFormToggle()
                 }}
               />
             </Col>
             <Col>
               <Tooltip
                 title={
-                  !record.active
-                    ? t`internal-wallet.modal.change-status-unlock-ok-button`
-                    : t`internal-wallet.modal.change-status-lock-ok-button`
+                  record.active
+                    ? t`internal-wallet.modal.change-status-lock-ok-button`
+                    : t`internal-wallet.modal.change-status-unlock-ok-button`
                 }
               >
-                <Button
-                  icon={!record.active ? <LockOutlined /> : <UnlockOutlined />}
-                  className='ml-5'
-                  onClick={() => handleActive(record)}
-                />
+                {record.active ? (
+                  <ButtonLock
+                    className='ml-5'
+                    module='customer'
+                    onClick={() => handleActive(record)}
+                  />
+                ) : (
+                  <ButtonUnlock
+                    className='ml-5'
+                    module='customer'
+                    onClick={() => handleActive(record)}
+                  />
+                )}
               </Tooltip>
             </Col>
           </Row>
-        );
+        )
       }
     }
-  ];
+  ]
   //#endregion
 
   return (
@@ -296,7 +306,7 @@ export default function PartnerContactComponent(props: props) {
             setSearch({
               ...search,
               page
-            });
+            })
           }
         }}
       />
@@ -314,5 +324,5 @@ export default function PartnerContactComponent(props: props) {
         type={props.type}
       />
     </Card>
-  );
+  )
 }

@@ -2,11 +2,17 @@ import { openNotification } from '@configs/fetchBaseQueryCustom'
 import { GUTTER } from '@constants/appConstant'
 import {
   useCreateInternalWalletGroupMutation,
+  useGetInternalWalletGroupQuery,
   useUpdateInternalWalletGroupMutation
 } from '@services/apiInternalWallet'
+import { STATUS_CODE } from '@type/api'
 import { viewMode } from '@type/customer'
-import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions'
-import { Button, Col, Form, Input, Popconfirm, Row, Spin } from 'antd'
+import {
+  blockArrowValue,
+  blockLetterDecimal,
+  compareData
+} from '@utils/helperFunctions'
+import { Button, Col, Form, Input, Row, Spin } from 'antd'
 import Modal from 'antd/es/modal/Modal'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -26,41 +32,59 @@ function InternalGroupForm({ group, onCancel, title, mode, isShow }: props) {
   const [createInternalWalletGroup] = useCreateInternalWalletGroupMutation()
   const [updateInternalWalletGroup] = useUpdateInternalWalletGroupMutation()
 
+  const { data: internalWalletGroup } = useGetInternalWalletGroupQuery(
+    group?.id,
+    { skip: !group?.id }
+  )
+
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (value: any) => {
     try {
       setLoading(true)
-      console.log('mode === viewMode.create', mode === viewMode.create)
+      let data: any
 
-      const response =
+      if (mode === viewMode.create) {
+        data = await createInternalWalletGroup(value)
+      } else if (mode === viewMode.update) {
+        let initData = { ...internalWalletGroup.data }
+        let valueTypeUpdate: string[] = []
+        const { walletType = 'Ví nội bộ', ...payload } = { ...value }
+        valueTypeUpdate = compareData(initData, payload)
+        data = await updateInternalWalletGroup({
+          name: value.name,
+          id: group?.id,
+          valueTypeUpdate: valueTypeUpdate
+        })
+      }
+
+      const { statusCode } = data.data
+
+      const successMessage =
         mode === viewMode.create
-          ? ((await createInternalWalletGroup(value)) as {
-              data: { statusCode: number }
-            })
-          : ((await updateInternalWalletGroup({
-              name: value.name,
-              id: group?.id
-            })) as { data: { statusCode: number } })
+          ? t`internal-wallet.messages.create-group-success`
+          : t`internal-wallet.messages.update-group-success`
+
+      const errorMessage =
+        mode === viewMode.create
+          ? t`internal-wallet.messages.create-group-failed`
+          : t`internal-wallet.messages.update-group-failed`
+
       if (
-        response.data.statusCode === 201 ||
-        response.data.statusCode === 200
+        statusCode === STATUS_CODE.CREATED ||
+        statusCode === STATUS_CODE.SUCCESS
       ) {
-        openNotification(
-          mode === viewMode.create
-            ? t`internal-wallet.messages.create-group-success`
-            : t`internal-wallet.messages.update-group-success`,
-          'success'
-        )
+        openNotification(successMessage, 'success')
         onCancel()
       } else {
-        openNotification(
-          mode === viewMode.create
-            ? t`internal-wallet.messages.create-group-failed`
-            : t`internal-wallet.messages.update-group-failed`,
-          'error'
-        )
+        openNotification(errorMessage, 'error')
       }
+    } catch (error) {
+      const errorMessage =
+        mode === viewMode.create
+          ? t`internal-wallet.messages.create-group-failed`
+          : t`internal-wallet.messages.update-group-failed`
+      openNotification(errorMessage, 'error')
     } finally {
       setLoading(false)
       form.resetFields()
@@ -76,7 +100,7 @@ function InternalGroupForm({ group, onCancel, title, mode, isShow }: props) {
   const onCancelModal = () => {
     if (walletGroupValue && nameValue) {
       Modal.confirm({
-        title: "Hủy thêm mới nhóm tài khoản",
+        title: 'Hủy thêm mới nhóm tài khoản',
         content: t`internal-wallet.messages.confirm-cancel-create-group`,
         okText: t`buttons.yes`,
         cancelText: t`buttons.no`,

@@ -39,6 +39,7 @@ import { useTranslation } from 'react-i18next'
 import { AiOutlineHistory } from 'react-icons/ai'
 import { CustomAccountGroupSelect } from '../components/SelectAccountGroup'
 import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount'
+import ButtonHistory from '@components/button-history/ButtonHistory'
 
 type SearchType = {
   page: number
@@ -234,8 +235,7 @@ const EWalletMoneyTransferManagement = () => {
       align: 'center',
       title: `${trans`policy-management.eWalletTransferMoneyManagement.policyHistory`}`,
       render: (record) => (
-        <Button
-          icon={<AiOutlineHistory />}
+        <ButtonHistory
           onClick={() => {
             setMode(viewMode?.history)
             setOpen(true)

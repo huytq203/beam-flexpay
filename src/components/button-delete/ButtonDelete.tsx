@@ -1,7 +1,8 @@
+import { SIZE_ICON } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
+import { Trash } from '@phosphor-icons/react'
 import { Button, ButtonProps } from 'antd'
 import { useCallback } from 'react'
-import { AiFillDelete } from 'react-icons/ai'
 
 interface CustomButtonProps extends ButtonProps {
   module: string
@@ -28,7 +29,7 @@ const ButtonDelete = (props: CustomButtonProps) => {
     <Button
       disabled={hidden}
       danger
-      icon={<AiFillDelete />}
+      icon={<Trash size= {SIZE_ICON} />}
       hidden={isHasPermission()}
       {...props}
     />

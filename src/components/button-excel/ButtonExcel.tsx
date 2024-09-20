@@ -1,5 +1,7 @@
 import { FileExcelOutlined } from '@ant-design/icons'
+import { SIZE_ICON } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
+import { MicrosoftExcelLogo } from '@phosphor-icons/react'
 import { Button, ButtonProps } from 'antd'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -24,11 +26,15 @@ const ButtonExcel = (props: ButtonExcelProps) => {
 
   return (
     <Button
-      icon={<FileExcelOutlined />}
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+    }}
+      icon={<MicrosoftExcelLogo  size={SIZE_ICON} />}
       hidden={isHasPermission()}
       {...props}
     >
-      {label ? trans(label) : trans('buttons.excel')}
+      <span>{label ? trans(label) : trans('buttons.excel')}</span>
     </Button>
   )
 }

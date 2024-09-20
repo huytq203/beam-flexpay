@@ -1,17 +1,17 @@
-import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal';
-import ButtonExcel from '@components/button-excel/ButtonExcel';
-import ButtonSearch from '@components/button-search/ButtonSearch';
-import CellContent from '@components/cell-content/CellContent';
-import SearchBar from '@components/search-bar/SearchBar';
-import { GUTTER } from '@constants/appConstant';
-import { TimeFormat } from '@constants/datetime';
-import { useCustomerFindAllQuery } from '@services/cmsService';
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal'
+import ButtonExcel from '@components/button-excel/ButtonExcel'
+import ButtonSearch from '@components/button-search/ButtonSearch'
+import CellContent from '@components/cell-content/CellContent'
+import SearchBar from '@components/search-bar/SearchBar'
+import { GUTTER } from '@constants/appConstant'
+import { TimeFormat } from '@constants/datetime'
+import { useCustomerFindAllQuery } from '@services/cmsService'
 import {
   useCancelAccountMutation,
   useExportExcelQuery
-} from '@services/customerService';
-import { CustomerFindAllApiArg, UserDetailDto } from '@type/application';
-import { accountStatus } from '@type/customer';
+} from '@services/customerService'
+import { CustomerFindAllApiArg, UserDetailDto } from '@type/application'
+import { accountStatus } from '@type/customer'
 import {
   fnDisableEndDate,
   fnDisableStartDate,
@@ -21,7 +21,7 @@ import {
   getStringDateFromMoment,
   getTagAccountStatusColor,
   getTagColor
-} from '@utils/helperFunctions';
+} from '@utils/helperFunctions'
 import {
   Button,
   Card,
@@ -33,43 +33,45 @@ import {
   Row,
   Table,
   Tag,
+  Tooltip,
   Typography
-} from 'antd';
-import { ColumnsType } from 'antd/es/table';
-import dayjs from 'dayjs';
-import moment from 'moment';
-import { useCallback, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { AiOutlineHistory } from 'react-icons/ai';
-import { pageEnum, viewMode } from '../../../app/types/policyManagement';
+} from 'antd'
+import { ColumnsType } from 'antd/es/table'
+import dayjs from 'dayjs'
+import moment from 'moment'
+import { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { AiOutlineHistory } from 'react-icons/ai'
+import { pageEnum, viewMode } from '../../../app/types/policyManagement'
+import ButtonCancel from '@components/button-cancel/ButtonCancel'
 
 const CustomerCancel = () => {
-  const { t: trans } = useTranslation();
-  const [form] = Form.useForm();
+  const { t: trans } = useTranslation()
+  const [form] = Form.useForm()
   const [search, setSearch] = useState<CustomerFindAllApiArg>({
     page: 1,
     take: 10,
     status: [accountStatus.NOT_VERIFIED]
-  });
+  })
 
-  const [open, setOpen] = useState<boolean>(false);
-  const [mode, setMode] = useState<viewMode>(viewMode.create);
+  const [open, setOpen] = useState<boolean>(false)
+  const [mode, setMode] = useState<viewMode>(viewMode.create)
   const [visibleConfirmModal, setVisibleConfirmModal] = useState<boolean>(false)
 
-  const { data: accounts, refetch } = useCustomerFindAllQuery(search);
+  const { data: accounts, refetch } = useCustomerFindAllQuery(search)
 
-  const [cancelAccount] = useCancelAccountMutation();
+  const [cancelAccount] = useCancelAccountMutation()
 
   const onCancelHistory = () => {
     if (mode === viewMode.history || mode === viewMode.delete) {
-      setOpen(false);
+      setOpen(false)
     } else {
-      setVisibleConfirmModal(true);
+      setVisibleConfirmModal(true)
     }
   }
 
   const onCloseConfirmModal = () => {
-    setVisibleConfirmModal(false);
+    setVisibleConfirmModal(false)
   }
 
   const onCancel = useCallback((customerId: string) => {
@@ -77,15 +79,15 @@ const CustomerCancel = () => {
       centered: true,
       title: trans`customer-cancel.cancelMessage`,
       onOk: async () => {
-        const result = await cancelAccount({ customerId });
+        const result = await cancelAccount({ customerId })
         if (result) {
-          refetch();
+          refetch()
         }
       },
       okText: trans`buttons.ok`,
       cancelText: trans`buttons.back`
-    });
-  }, []);
+    })
+  }, [])
 
   const columns: ColumnsType<UserDetailDto> = [
     {
@@ -152,21 +154,21 @@ const CustomerCancel = () => {
       dataIndex: 'id',
       align: 'center',
       render: (value) => (
-        <div>
-          <Button
+        <Tooltip title={trans`customer-cancel.cancel`}>
+          <ButtonCancel
+            module='customer'
             onClick={() => {
-              onCancel(value);
+              onCancel(value)
             }}
             type='primary'
+            className='mw-100'
             danger
             ghost
-          >
-            {trans`customer-cancel.cancel`}
-          </Button>
-        </div>
+          />
+        </Tooltip>
       )
     }
-  ];
+  ]
 
   const submit = (value: CustomerFindAllApiArg) => {
     const data = {
@@ -179,33 +181,33 @@ const CustomerCancel = () => {
         ? getStringDateFromMoment(value?.to, TimeFormat)
         : undefined,
       page: 1
-    };
-    setSearch(data);
-  };
+    }
+    setSearch(data)
+  }
 
   // #region export excel
-  const [skip, setSkip] = useState(true);
+  const [skip, setSkip] = useState(true)
   const { isSuccess } = useExportExcelQuery(
     { pageCount: accounts?.meta.pageCount, ...search },
     { skip: skip, refetchOnMountOrArgChange: true }
-  );
+  )
 
   const handleExport = () => {
     if (accounts?.meta.itemCount) {
-      setSkip(false);
+      setSkip(false)
     }
-  };
+  }
 
   const handleOpenHistory = () => {
-    setMode(viewMode.history);
-    setOpen(true);
+    setMode(viewMode.history)
+    setOpen(true)
   }
 
   useEffect(() => {
     if (isSuccess) {
-      setSkip(true);
+      setSkip(true)
     }
-  }, [isSuccess]);
+  }, [isSuccess])
   // #endregion
 
   return (
@@ -323,7 +325,7 @@ const CustomerCancel = () => {
             setSearch({
               ...search,
               page
-            });
+            })
           }
         }}
       />
@@ -339,7 +341,7 @@ const CustomerCancel = () => {
         entityType='CUSTOMER_MANAGEMENT'
       />
     </Card>
-  );
-};
+  )
+}
 
-export default CustomerCancel;
+export default CustomerCancel

@@ -1,6 +1,7 @@
+import { SIZE_ICON } from '@constants/appConstant'
+import { Eye } from '@phosphor-icons/react'
 import { Button, ButtonProps, Tooltip } from 'antd'
 import { useTranslation } from 'react-i18next'
-import { FaEye } from 'react-icons/fa'
 
 interface CustomButtonProps extends ButtonProps {
   label?: string
@@ -11,7 +12,7 @@ const ButtonView = (props: CustomButtonProps) => {
   return (
     <Tooltip title={t('tooltips.view')}>
       <Button
-        icon={<FaEye />}
+        icon={<Eye size={SIZE_ICON} />}
         {...props}
       />
     </Tooltip>
