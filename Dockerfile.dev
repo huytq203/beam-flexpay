@@ -8,6 +8,8 @@ RUN yarn install
 
 COPY . .
 
+CMD ["export", "NODE_OPTIONS=\"--max-old-space-size=4096\""]
+
 RUN yarn build:dev
 
 # 2. Serve

@@ -20,7 +20,7 @@ variables:
   allow_failure: false
   when: manual
   script:
-    - echo $NODE_OPTIONS
+    - export NODE_OPTIONS="--max-old-space-size=4096"
     - docker build -f $DOCKER_FILE -t $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA .
     - docker push $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA
   tags:
