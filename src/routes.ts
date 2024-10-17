@@ -15,7 +15,8 @@ import {
   PERSONALWALLET,
   REPAYMENTANDDISBURSE,
   REPORTS,
-  ROLEMANAGEMENT
+  ROLEMANAGEMENT,
+  STATE_BANK
 } from '@constants/routersConstant'
 
 import ForgotPassword from '@pages/auth/forgot-password/ForgotPassword'
@@ -30,6 +31,10 @@ import CustomerLookup from '@pages/customers/customer-lookup/CustomerLookup'
 import ForbiddenError from '@pages/error/ForbiddenError'
 import InternalAccountReport from '@pages/internal-report/internal-account-report/InternalAccountReport'
 import InternalAccountsReport from '@pages/internal-report/internal-accounts-report/InternalAccountReport'
+import InternalBalanceWallet from '@pages/internal-wallet/InternalBalanceWallet'
+import InternalGroupWallet from '@pages/internal-wallet/InternalGroupWallet'
+import InternalWalletAccount from '@pages/internal-wallet/InternalWalletAccount'
+import TransactionAccountingConfiguration from '@pages/internal-wallet/TransactionAccountingConfiguration'
 import Dashboard from '@pages/partner-management/dashboard/Dashboard'
 import DisburseInvoiceQuery from '@pages/partner-management/disburse/DisburseInvoiceQuery'
 import DisbursePartnerContact from '@pages/partner-management/disburse/DisbursePartnerContact'
@@ -56,11 +61,8 @@ import EkycPage from '@pages/transfer/ekyc-page/EkycPage'
 import FreezeAccount from '@pages/transfer/freeze-account/FreezeAccount'
 import TransferHistory from '@pages/transfer/transfer-history/TransferHistory'
 import UnfreezeAccount from '@pages/transfer/unfreeze-account/UnfreezeAccount'
-import InternalGroupWallet from '@pages/internal-wallet/InternalGroupWallet'
-import InternalWalletAccount from '@pages/internal-wallet/InternalWalletAccount'
-import TransactionAccountingConfiguration from '@pages/internal-wallet/TransactionAccountingConfiguration'
 import VerifyAzure from '@pages/verify/sso/VerifyAzure'
-import InternalBalanceWallet from '@pages/internal-wallet/InternalBalanceWallet'
+import StateBankOverviewReport from '@pages/bank-report/state-bank-overview/StateBankOverviewReport'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -246,6 +248,10 @@ const reports = {
     {
       path: REPORTS + INTERNAL + '/detail-account',
       element: createElement(InternalAccountReport)
+    },
+    {
+      path: REPORTS + STATE_BANK + '/overview',
+      element: createElement(StateBankOverviewReport)
     }
   ]
 }

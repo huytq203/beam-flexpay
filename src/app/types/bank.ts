@@ -7,7 +7,7 @@ export interface IBankQuery {
   name?: string
   active?: string
   orderBy: string
-  typeBank?: string
+  type?: string
   isLoading?: boolean
   key?: string
 }
@@ -32,6 +32,7 @@ export interface BankInformation {
   bankCode: string | null
   deletedAt: null
   no?: string | number
+  type: string
 }
 
 export interface PublicBankInterface {

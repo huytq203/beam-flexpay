@@ -6,9 +6,14 @@ import {
   ReportGetMetricOfAccountApiArg,
   ReportGetMetricOfAccountApiResponse,
   ReportGetMetricProvinceApiArg,
-  ReportGetMetricProvinceApiResponse
+  ReportGetMetricProvinceApiResponse,
+  ReportGetStateBankOverviewApiResponse,
+  ReportGetStateBankOverviewApiArg
 } from '@type/application'
 import { apiService as api } from './apiService'
+import { CustomerTableReport, IStateBank } from '@type/report'
+import { ResponseType } from '@type/api'
+import { fnTransformResponse } from '@utils/helperFunctions'
 export const addTagTypes = ['[Admin] Admin Report'] as const
 const injectedRtkApi = api
   .enhanceEndpoints({
@@ -60,7 +65,40 @@ const injectedRtkApi = api
           params: { order: queryArg.order, take: queryArg.take }
         }),
         providesTags: ['[Admin] Admin Report']
-      })
+      }),
+      reportGetStateBankOverview: build.query({
+        query: (queryArg) => ({
+          url: `/report/state-bank`,
+          params: {
+            order: queryArg.order,
+            page: queryArg.page,
+            take: queryArg.take,
+            query: queryArg.query,
+            from: queryArg['from'],
+            to: queryArg.to,
+            orderBy: queryArg.orderBy,
+            name: queryArg.name,
+            email: queryArg.email,
+            phoneNumber: queryArg.phone,
+            status: queryArg.status,
+            type: queryArg.type,
+            linkBank: queryArg.linkBank
+          }
+        }),
+        transformResponse: (response: ResponseType<IStateBank<[CustomerTableReport]>>) => response.data,
+        providesTags: ['[Admin] Admin Report']
+      }),
+      reportGetStateBankOverviewDetail: build.query({
+        query: (queryArg) => {
+          // In ra giá trị của queryArg?.id để debug
+          console.log('queryArg.id:', queryArg);
+          return {
+            url: `/report/state-bank/${queryArg}`
+          };
+        },
+        providesTags: ['[Admin] Admin Report'],
+        transformResponse: fnTransformResponse
+      }),
     }),
     overrideExisting: false
   })
@@ -69,5 +107,7 @@ export const {
   useReportGetMetricOfAccountQuery,
   useReportGetMetricAccountRegisterQuery,
   useReportGetMetricDeviceQuery,
-  useReportGetMetricProvinceQuery
+  useReportGetMetricProvinceQuery,
+  useReportGetStateBankOverviewQuery,
+  useReportGetStateBankOverviewDetailQuery
 } = injectedRtkApi

@@ -1,5 +1,13 @@
 import { accountStatus } from "./customer";
+import { ReportType } from "./report";
 
+export type PaginationParams = {
+  order?: 'ASC' | 'DESC';
+  page?: number;
+  take?: number;
+  query?: string;
+  orderBy?: string;
+};
 export type UserFindAllApiResponse = /** status 200  */ UserPageDto;
 export type UserFindAllApiArg = {
   order?: 'ASC' | 'DESC';
@@ -1003,6 +1011,18 @@ export type ReportGetMetricProvinceApiArg = {
   order?: 'ASC' | 'DESC';
   take?: number;
 };
+export type ReportGetStateBankOverviewApiResponse =
+  /** status 200  */ ReportPageDto;
+export type ReportGetStateBankOverviewApiArg = PaginationParams & {
+  name?: string;
+  email?: string;
+  phone?: string;
+  status?: accountStatus.LINKED | accountStatus.NOT_VERIFIED | accountStatus.VERIFIED;
+  type?: ReportType;
+  linkBank?: string;
+  from?: string;
+  to?: string;
+}
 export type SystemSettingFindAllApiResponse = /** status 200  */ SystemSetting[];
 export type SystemSettingFindAllApiArg = void;
 export type SystemSettingCreateApiResponse = /** status 201  */ SystemSetting;

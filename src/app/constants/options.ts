@@ -8,6 +8,7 @@ import { TRANSACTION_TYPE } from '@pages/policy-management/limit-management/Limi
 import { AccountingTransactionType, AccountingBalanceType } from '@type/accounting'
 import { AccountingSubType } from '@type/accounting'
 import { NOTIFICATION_TYPE_SERVICE } from '@pages/system-management/notification-management/NotificationManagementConst'
+import { ReportType } from '@type/report'
 
 export const objectOptions = [
   { label: t`management.sales-fee.system`, value: 'SYSTEM' },
@@ -642,5 +643,15 @@ export const accountingTransactionType = [
   {
     label: i18n.t('internal-wallet.transactionType.collet'),
     value: AccountingTransactionType.ADVANDED_COLLECT
+  }
+]
+export const reportType = [
+  {
+    label: i18n.t('state-bank-overview.reportType.highest-transaction-value'),
+    value: ReportType.HIGHEST_TRANSACTION_VALUE
+  },
+  {
+    label: i18n.t('state-bank-overview.reportType.highest-number-transactions'),
+    value: ReportType.HIGHEST_NUMBER_TRANSACTIONS
   }
 ]
