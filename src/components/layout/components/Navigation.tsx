@@ -8,10 +8,11 @@ import {
   _PERSONALWALLET,
   _REPAYMENTANDDISBURSE,
   _REPORTS,
-  _ROLEMANAGEMENT
+  _ROLEMANAGEMENT,
+  _STATE_BANK
 } from '@constants/routersConstant';
 import i18n from '@languages/i18n';
-import { ArrowCircleDown, ArrowCircleUp, ArrowsDownUp, ArrowsLeftRight, Bank, Bell, Cardholder, ClockCounterClockwise, CreditCard, CurrencyCircleDollar, EnvelopeSimple, FileLock, FileText, Fingerprint, FolderOpen, Gear, HandArrowDown, HandCoins, HandPalm, Handshake, Invoice, List, ListNumbers, Lock, LockOpen, MagnifyingGlass, Money, ShieldCheck, Sliders, SlidersHorizontal, Storefront, Swap, Trash, UserGear, Users, UsersFour, UsersThree, Wallet } from "@phosphor-icons/react";
+import { ArrowCircleDown, ArrowCircleUp, ArrowsDownUp, ArrowsLeftRight, Bank, Bell, Cardholder, ChartBar, ClipboardText, ClockCounterClockwise, CreditCard, CurrencyCircleDollar, EnvelopeSimple, FileLock, FileText, Fingerprint, FolderOpen, Gear, HandArrowDown, HandCoins, HandPalm, Handshake, Invoice, List, ListNumbers, Lock, LockKeyOpen, LockOpen, MagnifyingGlass, Money, ShieldCheck, Sliders, SlidersHorizontal, Storefront, Swap, Trash, UserGear, Users, UsersFour, UsersThree, Wallet } from "@phosphor-icons/react";
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 
 
@@ -278,6 +279,29 @@ const reports = {
           key: 'detail-account',
           icon: <FileText size={size} weight={weight} color={COlOR} />,
           label: i18n.t('navigation.internal-account-report')
+        }
+      ]
+    },
+    {
+      key: _STATE_BANK,
+      icon: <Bank size={size} weight={weight} color={COlOR} />,
+      label: i18n.t('navigation.state-bank-report'),
+      permission: 'state_bank_report',
+      children: [
+        {
+          key: 'overview',
+          icon: <ChartBar size={size} weight={weight} color={COlOR} />,
+          label: i18n.t('navigation.overview-report')
+        },
+        {
+          key: 'account-management-ensure-payment',
+          icon: <LockKeyOpen size={size} weight={weight} color={COlOR} />,
+          label: i18n.t('navigation.account-management-ensure-payment')
+        },
+        {
+          key: 'transaction-management-report',
+          icon: <ClipboardText size={size} weight={weight} color={COlOR} />,
+          label: i18n.t('navigation.transaction-management-report')
         }
       ]
     }

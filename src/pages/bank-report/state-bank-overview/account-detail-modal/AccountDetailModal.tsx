@@ -1,0 +1,332 @@
+import FloatingLabelInput from '@components/floating-label-input/FloatingLabelInput'
+import ItemDetail from '@components/item-detail/ItemDetail'
+import { useReportGetStateBankOverviewDetailQuery } from '@services/cmsReport'
+import {
+  convertNumber,
+  getAccountType,
+  getGender,
+  getStatusAccountText
+} from '@utils/helperFunctions'
+import { Button, Col, Divider, Modal, Row } from 'antd'
+import { useTranslation } from 'react-i18next'
+
+interface IProps {
+  open: boolean
+  onCancel: () => void
+  account: any
+}
+const xs = 24
+const md = 12
+const xl = 6
+function AccountDetailReportModal({ open, onCancel, account }: IProps) {
+  const { t } = useTranslation()
+  const { data: accountDetail } = useReportGetStateBankOverviewDetailQuery(
+    account?.id
+  )
+  console.log('accountDetail', accountDetail)
+  return (
+    <>
+      <Modal
+        centered
+        title={t`state-bank-overview.info` + ` ${accountDetail?.fullName}`}
+        open={open}
+        onCancel={onCancel}
+        footer={null}
+        width={900}
+      >
+        <Divider className='mt-20' />
+        <Row>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`internal-account-report.name`.toString()}
+              value={accountDetail?.fullName}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.birth-day`.toString()}
+              value={
+                accountDetail?.birthDay
+                  ? accountDetail?.birthDay
+                  : 'Chưa có ngày sinh'
+              }
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.number-wallet`.toString()}
+              value={accountDetail?.phoneNumber}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.status-wallet`.toString()}
+              value={getStatusAccountText(accountDetail?.status)}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.cmnd-passport`.toString()}
+              value={accountDetail?.identityNumber}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.gender`.toString()}
+              value={getGender(accountDetail?.gender)}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.link-bank`.toString()}
+              value={accountDetail?.linkBank}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.account-link`.toString()}
+              value={accountDetail?.linkedAccount}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.opening-balance`.toString()}
+              value={convertNumber(accountDetail?.openingBalance)}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.closing-balance`.toString()}
+              value={convertNumber(accountDetail?.closingBalance)}
+            />
+          </Col>
+        </Row>
+        <Divider className='mt-20' >Thanh toán hoá đơn</Divider>
+        <Row>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.daily-payment-limit`.toString()}
+              value={convertNumber(accountDetail?.dailyPaymentLimit)}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.monthly-payment-limit`.toString()}
+              value={convertNumber(accountDetail?.monthlyPaymentLimit)}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.bill-payment-count`.toString()}
+              value={convertNumber(accountDetail?.billPaymentCount)}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.bill-payment-total`.toString()}
+              value={convertNumber(accountDetail?.billPaymentTotal)}
+            />
+          </Col>
+        </Row>
+        <Divider className='mt-20'> Rút tiền </Divider>
+        <Row>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.daily-Withdrawal-limit`.toString()}
+              value={convertNumber(accountDetail?.dailyWithdrawalLimit)}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.monthly-Withdrawal-limit`.toString()}
+              value={convertNumber(accountDetail?.monthlyWithdrawalLimit)}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.withdrawal-count`.toString()}
+              value={convertNumber(accountDetail?.withdrawalCount)}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.withdrawal-total`.toString()}
+              value={convertNumber(accountDetail?.withdrawalTotal)}
+            />
+          </Col>
+
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.min-withdrawal-amount`.toString()}
+              value={convertNumber(accountDetail?.minWithdrawalAmount)}
+            />
+          </Col>
+
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.max-withdrawal-amount`.toString()}
+              value={convertNumber(accountDetail?.maxWithdrawalAmount)}
+            />
+          </Col>
+        </Row>
+        <Divider className='mt-20'>Nạp tiền</Divider>
+        <Row>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.daily-deposit-limit`.toString()}
+              value={convertNumber(accountDetail?.dailyDepositLimit)}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.monthly-deposit-limit`.toString()}
+              value={convertNumber(accountDetail?.monthlyDepositLimit)}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.deposit-count`.toString()}
+              value={convertNumber(accountDetail?.depositCount)}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.deposit-total`.toString()}
+              value={convertNumber(accountDetail?.depositTotal)}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.min-deposit-amount`.toString()}
+              value={convertNumber(accountDetail?.minDepositAmount)}
+            />
+          </Col>
+          <Col
+            xs={xs}
+            md={md}
+            xl={xl}
+          >
+            <FloatingLabelInput
+              label={t`state-bank-overview.max-deposit-amount`.toString()}
+              value={convertNumber(accountDetail?.maxDepositAmount)}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col
+            span={24}
+            className='d-flex justify-end'
+          >
+            <Button
+              type='primary'
+              ghost
+              onClick={onCancel}
+              className='mb-10'
+            >{t`buttons.close`}</Button>
+          </Col>
+        </Row>
+      </Modal>
+    </>
+  )
+}
+export default AccountDetailReportModal
