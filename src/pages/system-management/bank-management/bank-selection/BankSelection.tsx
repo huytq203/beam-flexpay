@@ -9,20 +9,18 @@ import { useLazyGetBanksQuery } from '@services/apiBankService'
 interface IBankSelection {
   onClear?: (field: string) => void
   placeholder?: string
+  type?: '' | 'LINK' | 'DEPOSIT' | 'WITHDRAW' | 'GATEWAY';
 }
 
 export const BankSelection = (props: IBankSelection) => {
-  const { onClear, placeholder } = props
+  const { onClear, placeholder, type } = props
 
   const [bankList, setBankList] = useState<BankInformation[]>([])
   const [pagination, setPagination] = useState<Pagination | undefined>()
   const [string, setString] = useState<string>('')
-  const [search, setSearch] = useState<IBankQuery>({
-    page: 1,
-    take: 10,
-    orderBy: 'createdAt',
-    isLoading: false
-  })
+  const [search, setSearch] = useState<IBankQuery>(
+    type ? { page: 1, type: type, orderBy: 'createdAt' } : { page: 1, take: 10, orderBy: 'createdAt', isLoading: false }
+  )
 
   const [getBanks] = useLazyGetBanksQuery()
 
@@ -60,7 +58,11 @@ export const BankSelection = (props: IBankSelection) => {
         ...search
       })) as { data: BankResponse }
       if (data) {
-        setBankList(data?.data)
+        if(type){
+          setBankList(data?.data.filter((el) => el.type === type))
+        }else{
+          setBankList(data?.data)
+        }
         setPagination(data?.meta)
       }
     } else {
@@ -91,10 +93,10 @@ export const BankSelection = (props: IBankSelection) => {
     >
       {bankList?.map((el) => (
         <Select.Option
-          value={el.name}
+          value={el.tradingName}
           key={el.id}
         >
-          {el.name}
+          {el.tradingName}
         </Select.Option>
       ))}
     </Select>

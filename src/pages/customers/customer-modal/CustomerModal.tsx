@@ -1,15 +1,13 @@
-import { useGetCustomerQuery } from '@services/customerService'
+import {
+  useLazyCustomerFindOneQuery
+} from '@services/cmsService'
 import { viewMode } from '@type/customer'
 import { Button, Col, Modal, Row } from 'antd'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import CustomerFreeze from '../customer-freeze/CustomerFreeze'
 import CustomerInformation from '../customer-infomation/CustomerInfomation'
 import CustomerReason from '../customer-reason/CustomerReason'
-import {
-  useCustomerFindOneQuery,
-  useLazyCustomerFindOneQuery
-} from '@services/cmsService'
-import { useEffect } from 'react'
 
 type CustomerModalType = {
   mode: viewMode

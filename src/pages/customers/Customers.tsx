@@ -19,7 +19,6 @@ import {
 } from '@utils/helperFunctions'
 import { useBoolean } from 'ahooks'
 import {
-  Button,
   Card,
   Col,
   Form,
@@ -35,11 +34,10 @@ import { ColumnsType } from 'antd/es/table'
 import { t } from 'i18next'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BsEyeFill } from 'react-icons/bs'
 import CustomerModal from './customer-modal/CustomerModal'
 
-import './style.scss'
 import ButtonView from '@components/button-view/ButtonView'
+import './style.scss'
 
 const { Text } = Typography
 

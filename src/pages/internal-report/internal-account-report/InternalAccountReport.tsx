@@ -1,5 +1,7 @@
+import ButtonView from '@components/button-view/ButtonView'
 import CellContent from '@components/cell-content/CellContent'
 import NoDataText from '@components/no-data-text/NoDataText'
+import SearchBar from '@components/search-bar/SearchBar'
 import { GUTTER } from '@constants/appConstant'
 import { TimeFormat, TimeFullFormat } from '@constants/datetime'
 import {
@@ -11,7 +13,8 @@ import {
   useGetCustomersQuery,
   useLazyExportExcelQuery
 } from '@services/customerService'
-import { CustomerSearchParams, CustomerTable } from '@type/customer'
+import { CustomerFindAllApiArg } from '@type/application'
+import { CustomerTable } from '@type/customer'
 import {
   getAccountType,
   getStatusAccountText,
@@ -23,7 +26,6 @@ import {
   Card,
   Col,
   DatePicker,
-  Divider,
   Form,
   Input,
   Row,
@@ -35,10 +37,7 @@ import Table, { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BsEyeFill } from 'react-icons/bs'
 import AccountDetailModal from './account-detail-modal/AccountDetailModal'
-import SearchBar from '@components/search-bar/SearchBar'
-import { CustomerFindAllApiArg } from '@type/application'
 
 function InternalAccountReport() {
   const { t } = useTranslation()
@@ -165,8 +164,7 @@ function InternalAccountReport() {
       dataIndex: '',
       title: t`internal-account-report.action`,
       render: (record: any) => (
-        <Button
-          icon={<BsEyeFill />}
+        <ButtonView
           onClick={() => {
             setSelectedAccount(record)
             toggleModal(true)

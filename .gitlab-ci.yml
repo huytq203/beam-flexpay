@@ -13,14 +13,14 @@ variables:
     DOCKER_FILE: Dockerfile.dev
 .uat-env-module:
   variables:
-    ENV: uat 
+    ENV: uat
     ENV_FILE: .env.uat
     DOCKER_FILE: Dockerfile.uat
 .build-module:
   allow_failure: false
   when: manual
   script:
-    - export NODE_OPTIONS="--max-old-space-size=4096"
+    - export NODE_OPTIONS="--max-old-space-size=8192"
     - docker build -f $DOCKER_FILE -t $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA .
     - docker push $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA
   tags:

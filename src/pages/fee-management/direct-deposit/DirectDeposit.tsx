@@ -27,6 +27,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BsEyeFill } from 'react-icons/bs'
 import DirectDepositSetupModal from './DirectDepositSetupModal'
+import ButtonView from '@components/button-view/ButtonView'
 
 const DirectDeposit = () => {
   const { t } = useTranslation()
@@ -214,8 +215,7 @@ const DirectDeposit = () => {
       fixed: 'right',
       render: (record) => (
         <Tooltip title={t`buttons.history`}>
-          <Button
-            icon={<BsEyeFill />}
+          <ButtonView
             onClick={() => {
               // setMode(viewMode.history)
               // setSelectedRecord(record.id)
