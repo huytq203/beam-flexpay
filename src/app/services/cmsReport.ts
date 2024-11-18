@@ -11,7 +11,7 @@ import {
   ReportGetStateBankOverviewApiArg
 } from '@type/application'
 import { apiService as api } from './apiService'
-import { CustomerTableReport, IStateBank } from '@type/report'
+import { AccountGuaranteeTableReport, CustomerTableReport, IStateBank } from '@type/report'
 import { ResponseType } from '@type/api'
 import { fnTransformResponse } from '@utils/helperFunctions'
 export const addTagTypes = ['[Admin] Admin Report'] as const
@@ -91,13 +91,29 @@ const injectedRtkApi = api
       reportGetStateBankOverviewDetail: build.query({
         query: (queryArg) => {
           // In ra giá trị của queryArg?.id để debug
-          console.log('queryArg.id:', queryArg);
           return {
             url: `/report/state-bank/${queryArg}`
           };
         },
         providesTags: ['[Admin] Admin Report'],
         transformResponse: fnTransformResponse
+      }),
+      reportGetAccountGuarantee: build.query({
+        query: (queryArg) => ({
+          url: `/report/account-guarantee`,
+          params: {
+            order: queryArg.order,
+            page: queryArg.page,
+            take: queryArg.take,
+            query: queryArg.query,
+            startDate: queryArg['startDate'],
+            endDate: queryArg.endDate,
+            name: queryArg.name,
+            walletNumber: queryArg.walletNumber,
+          }
+        }),
+        transformResponse: (response: ResponseType<IStateBank<[AccountGuaranteeTableReport]>>) => response.data,
+        providesTags: ['[Admin] Admin Report']
       }),
     }),
     overrideExisting: false
@@ -109,5 +125,6 @@ export const {
   useReportGetMetricDeviceQuery,
   useReportGetMetricProvinceQuery,
   useReportGetStateBankOverviewQuery,
-  useReportGetStateBankOverviewDetailQuery
+  useReportGetStateBankOverviewDetailQuery,
+  useReportGetAccountGuaranteeQuery
 } = injectedRtkApi

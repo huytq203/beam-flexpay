@@ -370,8 +370,7 @@ export const SetupEWalletTransferMoneyContent = ({
       if (values.applicableObject === APPLICABLE_OBJECT.PERSONAL_ACCOUNT) {
         newData.applicableObjectId = values.accountNumber.value
       }
-
-      console.log("newData", newData)
+      
 
       if (newData && record) {
         for (const key in newData) {

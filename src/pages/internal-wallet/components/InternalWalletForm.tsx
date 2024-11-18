@@ -1,24 +1,16 @@
 import { GUTTER } from '@constants/appConstant'
+import { BankSelection } from '@pages/system-management/bank-management/bank-selection/BankSelection'
 import {
   useCreateInternalWalletMutation,
-  useLazyGetListWalletGroupsQuery,
   useLazyGetListWalletInternalGroupsQuery,
   useUpdateInternalWalletMutation
 } from '@services/apiInternalWallet'
+import { useBankFindOneQuery } from '@services/cmsBank'
+import { BankCmsFindAllApiArg } from '@type/application'
 import { viewMode } from '@type/customer'
 import { InternalWallet, InternalWalletGroup } from '@type/internalWallet'
-import { GroupPermissionData } from '@type/permission'
 import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions'
-import {
-  Button,
-  Col,
-  Form,
-  Input,
-  Modal,
-  Row,
-  Select,
-  notification
-} from 'antd'
+import { Button, Col, Form, Input, Row, Select, notification } from 'antd'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -31,7 +23,13 @@ type props = {
 
 const limit = 10
 
-function InternalWalletForm({ selectedInternalWallet, isShow, onCancel, title, mode }: props) {
+function InternalWalletForm({
+  selectedInternalWallet,
+  isShow,
+  onCancel,
+  title,
+  mode
+}: props) {
   const { t } = useTranslation()
   const [form] = Form.useForm()
   const [walletGroups, setWalletGroups] = useState<InternalWalletGroup[]>([])
@@ -45,7 +43,14 @@ function InternalWalletForm({ selectedInternalWallet, isShow, onCancel, title, m
   const [walletGroupQuery, setWalletGroupQuery] = useState('')
   const [totalPages, setTotalPages] = useState(1)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const [selectedWalletGroup, setSelectedWalletGroup] = useState<InternalWalletGroup>()
+  const [selectedWalletGroup, setSelectedWalletGroup] =
+    useState<InternalWalletGroup>()
+  const { data: DetailData } = useBankFindOneQuery({ id: selectedInternalWallet?.bankId?.toString() || '' })
+  const [searchLinkBank, setSearchLinkBank] = useState<BankCmsFindAllApiArg>({
+    page: 1,
+    take: 10,
+    type: 'LINK'
+  })
 
   const handleGetWalletGroups = useCallback(
     (page: number = 1, keyword: string = walletGroupQuery) => {
@@ -64,39 +69,46 @@ function InternalWalletForm({ selectedInternalWallet, isShow, onCancel, title, m
   )
 
   useEffect(() => {
-    console.log(selectedWalletGroup)
+    if (mode === viewMode.update) {
+      form.setFieldValue('bank', DetailData?.tradingName)
+    }
+  }, [DetailData])
+
+  useEffect(() => {
     switch (mode) {
       case viewMode.create:
       case viewMode.update:
+
         form.setFieldsValue(selectedInternalWallet)
         setSelectedWalletGroup(selectedInternalWallet?.balanceInternalGroup)
     }
   }, [selectedInternalWallet])
 
-  const handleSubmitForm = useCallback((values: any) => {
-    const { walletNumber, name, balanceInternalGroupId } = values
-    const body = { walletNumber, name, internalWalletGroupId: balanceInternalGroupId }
-      ; (mode === viewMode.update
+  const handleSubmitForm = useCallback(
+    (values: any) => {
+      const { walletNumber, name, balanceInternalGroupId, bank } = values
+      const body = {
+        walletNumber,
+        name,
+        internalWalletGroupId: balanceInternalGroupId,
+        bankId: bank
+      }
+      ;(mode === viewMode.update
         ? updateInternalWallet({ id: selectedInternalWallet.id, body }).unwrap()
         : createInternalWallet(body).unwrap()
       ).then(() => {
         notification.success({
-          message: mode === viewMode.update ? t('internal-wallet.messages.success-edit-wallet-account') : t('internal-wallet.messages.success-create-wallet-account')
+          message:
+            mode === viewMode.update
+              ? t('internal-wallet.messages.success-edit-wallet-account')
+              : t('internal-wallet.messages.success-create-wallet-account')
         })
         form.resetFields()
         onCancel()
       })
-  }, [mode])
-
-  //useEffect(() => {
-  //if (isShow && selectedInternalWallet && selectedInternalWallet.id && mode === viewMode.update)
-  //form.setFieldsValue({
-  //...selectedInternalWallet,
-  //groupName: selectedInternalWallet?.balanceInternalGroup?.name ?? ''
-  //})
-  //setSelectedWalletGroup(selectedInternalWallet?.balanceInternalGroup)
-  //if (!isShow) form.resetFields()
-  //}, [isShow, selectedInternalWallet])
+    },
+    [mode]
+  )
 
   return (
     <Form
@@ -137,8 +149,8 @@ function InternalWalletForm({ selectedInternalWallet, isShow, onCancel, title, m
             const target = e.target as any
             const remainingScroll =
               target.scrollHeight -
-              target.offsetHeight -
-              Number(target.scrollTop) <
+                target.offsetHeight -
+                Number(target.scrollTop) <
               20
             if (remainingScroll) {
               handleGetWalletGroups(walletGroupsPage + 1)
@@ -180,7 +192,7 @@ function InternalWalletForm({ selectedInternalWallet, isShow, onCancel, title, m
         name='walletNumber'
       >
         <Input
-          prefix={`${selectedWalletGroup?.walletGroup ?? "XXX"}.`}
+          prefix={`${selectedWalletGroup?.walletGroup ?? 'XXX'}.`}
           placeholder={t`internal-wallet.placeholders.wallet_number`.toString()}
           onKeyDown={blockArrowValue}
           onKeyPress={blockLetterDecimal}
@@ -202,12 +214,30 @@ function InternalWalletForm({ selectedInternalWallet, isShow, onCancel, title, m
               min: 5,
               max: 255
             }).toString()
-          },
+          }
         ]}
         name='name'
       >
         <Input
           placeholder={t`internal-wallet.placeholders.wallet_name`.toString()}
+        />
+      </Form.Item>
+      <Form.Item
+        label={t('internal-wallet.bank-name')}
+        name='bank'
+      >
+        <BankSelection
+          placeholder={t`internal-wallet.placeholders.bank-name`.toString()}
+          onClear={() => {
+            setSearchLinkBank({
+              ...searchLinkBank,
+              page: 1,
+              name: undefined
+            })
+          }}
+          isId={true}
+          type='LINK'
+          disabled={mode != viewMode.create}
         />
       </Form.Item>
       <Row
@@ -239,3 +269,5 @@ function InternalWalletForm({ selectedInternalWallet, isShow, onCancel, title, m
 }
 
 export default InternalWalletForm
+
+

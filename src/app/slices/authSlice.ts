@@ -70,7 +70,6 @@ const authSlice = createSlice({
       .addMatcher(
         userApi.endpoints.ssoLogin.matchFulfilled,
         (state, { payload }) => {
-          console.log('pad', payload);
           localStorage.setItem(appName, payload.data.accessToken)
           return {
             ...state,

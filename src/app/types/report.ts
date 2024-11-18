@@ -1,4 +1,4 @@
-import { PageMeta } from "./api"
+import { PageMeta } from './api'
 
 export enum ReportType {
   /**
@@ -20,6 +20,14 @@ export interface CustomerTableReport {
   status: string
   linkBank: string
   updatedAt: string
+}
+export interface AccountGuaranteeTableReport {
+  id: string
+  name: string
+  walletNumber: string
+  availableMoney: number
+  updatedAt: string
+  linkBank: string
 }
 export interface IStateBank<T> {
   data: T

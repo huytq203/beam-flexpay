@@ -56,7 +56,7 @@ function TransferHistory() {
   }
 
   const onBlur = (field: string, value: string) => {
-    searchForm.setFieldValue(field, value.trim())
+    searchForm.setFieldValue(field as keyof TransactionFindAllApiArg, value.trim())
   }
 
   return (

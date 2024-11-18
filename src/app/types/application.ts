@@ -1023,6 +1023,14 @@ export type ReportGetStateBankOverviewApiArg = PaginationParams & {
   from?: string;
   to?: string;
 }
+export type ReportGetAccountGuaranteeApiResponse =
+  /** status 200  */ ReportPageDto;
+export type ReportGetAccountGuaranteeApiArg = PaginationParams & {
+  name?: string;
+  walletNumber?: string;
+  startDate?: string;
+  endDate?: string;
+}
 export type SystemSettingFindAllApiResponse = /** status 200  */ SystemSetting[];
 export type SystemSettingFindAllApiArg = void;
 export type SystemSettingCreateApiResponse = /** status 201  */ SystemSetting;

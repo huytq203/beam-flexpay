@@ -113,8 +113,6 @@ export const PolicyManagementModal = ({
   const render = () => {
     const value =
       mode === viewMode.history ? viewMode.history : `${mode}-${page}`
-    console.log('value', value)
-    console.log('entityType', entityType)
     switch (value) {
       case `${viewMode.history}`:
         if (recordId) {

@@ -269,8 +269,6 @@ function NotificationManagement() {
       width: 200,
       fixed: 'right',
       render: (record) => (
-        console.log(record),
-        console.log(checkKeywords(record.title), checkKeywords(record.body)),
         (
           <Row
             gutter={GUTTER}

@@ -1,25 +1,29 @@
-import { Select, SelectProps } from 'antd'
-import { useEffect, useState, useCallback } from 'react'
 import { useDebounce } from 'ahooks'
+import { Select } from 'antd'
+import { useCallback, useEffect, useState } from 'react'
 
-import { Pagination } from '@type/table'
-import { BankInformation, BankResponse, IBankQuery } from '@type/bank'
 import { useLazyGetBanksQuery } from '@services/apiBankService'
+import { BankInformation, BankResponse, IBankQuery } from '@type/bank'
+import { Pagination } from '@type/table'
 
 interface IBankSelection {
   onClear?: (field: string) => void
   placeholder?: string
-  type?: '' | 'LINK' | 'DEPOSIT' | 'WITHDRAW' | 'GATEWAY';
+  type?: '' | 'LINK' | 'DEPOSIT' | 'WITHDRAW' | 'GATEWAY'
+  isId?: boolean
+  disabled?: boolean
 }
 
 export const BankSelection = (props: IBankSelection) => {
-  const { onClear, placeholder, type } = props
+  const { onClear, placeholder, type, isId, disabled } = props
 
   const [bankList, setBankList] = useState<BankInformation[]>([])
   const [pagination, setPagination] = useState<Pagination | undefined>()
   const [string, setString] = useState<string>('')
   const [search, setSearch] = useState<IBankQuery>(
-    type ? { page: 1, type: type, orderBy: 'createdAt' } : { page: 1, take: 10, orderBy: 'createdAt', isLoading: false }
+    type
+      ? { page: 1, type: type, orderBy: 'createdAt' }
+      : { page: 1, take: 10, orderBy: 'createdAt', isLoading: false }
   )
 
   const [getBanks] = useLazyGetBanksQuery()
@@ -58,9 +62,9 @@ export const BankSelection = (props: IBankSelection) => {
         ...search
       })) as { data: BankResponse }
       if (data) {
-        if(type){
+        if (type) {
           setBankList(data?.data.filter((el) => el.type === type))
-        }else{
+        } else {
           setBankList(data?.data)
         }
         setPagination(data?.meta)
@@ -90,10 +94,11 @@ export const BankSelection = (props: IBankSelection) => {
       onSearch={onSearchBank}
       {...props}
       onClear={() => onClear?.('name')}
+      disabled={disabled}
     >
       {bankList?.map((el) => (
         <Select.Option
-          value={el.tradingName}
+          value={isId ? el.id : el.tradingName}
           key={el.id}
         >
           {el.tradingName}

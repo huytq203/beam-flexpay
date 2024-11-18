@@ -1,19 +1,18 @@
+import ButtonSearch from '@components/button-search/ButtonSearch'
 import ButtonView from '@components/button-view/ButtonView'
 import CellContent from '@components/cell-content/CellContent'
 import NoDataText from '@components/no-data-text/NoDataText'
 import SearchBar from '@components/search-bar/SearchBar'
 import { GUTTER } from '@constants/appConstant'
 import { TimeFormat, TimeFullFormat } from '@constants/datetime'
-import {
-  accountStatusOptions,
-  reportType
-} from '@constants/options'
+import { accountStatusOptions, reportType } from '@constants/options'
 import { BankSelection } from '@pages/system-management/bank-management/bank-selection/BankSelection'
 import { useReportGetStateBankOverviewQuery } from '@services/cmsReport'
+import { useLazyExportExcelQuery } from '@services/customerService'
 import {
-  useLazyExportExcelQuery
-} from '@services/customerService'
-import { BankCmsFindAllApiArg, ReportGetStateBankOverviewApiArg } from '@type/application'
+  BankCmsFindAllApiArg,
+  ReportGetStateBankOverviewApiArg
+} from '@type/application'
 import { CustomerTableReport } from '@type/report'
 import {
   convertNumber,
@@ -63,15 +62,16 @@ function StateBankOverviewReport() {
 
   const accountList = useMemo(() => {
     if (accounts?.data && accounts.data.length > 0) {
-      const data = accounts?.data?.map((item: CustomerTableReport, index: number) => ({
-        no: ((search?.page ?? 1) - 1) * 10 + index + 1,
-        ...item
-      }))
-      console.log('data', accounts);
-      return data;
+      const data = accounts?.data?.map(
+        (item: CustomerTableReport, index: number) => ({
+          no: ((search?.page ?? 1) - 1) * 10 + index + 1,
+          ...item
+        })
+      )
+      return data
     } else return []
   }, [accounts?.data, search?.page])
-  
+
   const columns: ColumnsType<any> = [
     {
       width: 80,
@@ -158,7 +158,6 @@ function StateBankOverviewReport() {
       render: (record: any) => (
         <ButtonView
           onClick={() => {
-            console.log('record', record);
             setSelectedAccount(record)
             toggleModal(true)
           }}
@@ -188,7 +187,6 @@ function StateBankOverviewReport() {
       page: 1,
       [field]: undefined
     }
-    console.log('newSearch', newSearch);
     setSearch(newSearch)
   }
 
@@ -340,7 +338,7 @@ function StateBankOverviewReport() {
                         setSearchLinkBank({
                           ...searchLinkBank,
                           page: 1,
-                          name: undefined 
+                          name: undefined
                         })
                       }}
                       type={'LINK'}
@@ -403,10 +401,9 @@ function StateBankOverviewReport() {
                     ghost
                     onClick={exportFileCSV}
                   >{t`buttons.exportFile`}</Button>
-                  <Button
-                    type='primary'
-                    htmlType='submit'
-                  >{t`buttons.search`}</Button>
+                  <ButtonSearch htmlType='submit'>
+                    {t`buttons.search`}
+                  </ButtonSearch>
                 </Col>
               </Row>
             </Form>
@@ -440,9 +437,7 @@ function StateBankOverviewReport() {
           onCancel={() => toggleModal(false)}
         />
       )}
-
     </Card>
-    
   )
 }
 export default StateBankOverviewReport

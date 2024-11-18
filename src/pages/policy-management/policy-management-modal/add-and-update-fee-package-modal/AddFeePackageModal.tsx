@@ -345,7 +345,6 @@ export const AddFeePackageModal = ({
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   const transactionTo = getFieldValue('transactionTo') || 0
-                  console.log("test")
                   value = value || 0
                   if (value > transactionTo) {
                     return Promise.reject(
