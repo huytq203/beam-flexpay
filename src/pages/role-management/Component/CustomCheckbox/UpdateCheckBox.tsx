@@ -161,8 +161,6 @@ export const CustomUpdateCheckBox = ({
     const existedPermissions = permissionsArr.filter((el: string) =>
       listChecked.includes(el)
     )
-    console.log('existedPermissions', existedPermissions)
-    console.log('permissionsArr', permissionsArr)
     if (permissionsArr.length === existedPermissions.length) {
       return true
     } else return false

@@ -67,8 +67,6 @@ export default function PartnerContactComponent(props: props) {
   const { data: partners } = usePaymentPartnerFindAllQuery(search)
 
   const handleSearch = () => {
-    console.log('search', search)
-    console.log('search', form.getFieldsValue())
     const values = form.getFieldsValue()
     setSearch({
       ...search,

@@ -2150,14 +2150,14 @@
     "monthly-Withdrawal-limit": "Hạn mức tháng rút tiền",
     "withdrawal-count": "Số lượng giao dịch rút tiền",
     "withdrawal-total": "Tổng giao dịch rút tiền",
-    "max-withdrawal-amount": "Số tiền rút nhỏ nhất",
-    "min-withdrawal-amount": "Số tiền rút lớn nhất",
+    "max-withdrawal-amount": "Số tiền rút lớn nhất",
+    "min-withdrawal-amount": "Số tiền rút nhỏ nhất",
     "daily-deposit-limit": "Hạn mức ngày nạp tiền",
     "monthly-deposit-limit": "Hạn mức tháng nạp tiền",
     "deposit-count": "Số lượng giao dịch nạp tiền",
     "deposit-total": "Tổng giao dịch nạp tiền",
-    "max-deposit-amount": "Số tiền nạp nhỏ nhất",
-    "min-deposit-amount": "Số tiền nạp lớn nhất",
+    "max-deposit-amount": "Số tiền nạp lớn nhất",
+    "min-deposit-amount": "Số tiền nạp nhỏ nhất",
     "reportType":{
       "highest-transaction-value": "Giá trị giao dịch cao nhất",
       "highest-number-transactions": "Số lượng giao dịch cao nhất"
@@ -2169,6 +2169,37 @@
       "number-wallet": "Nhập số điện thoại",
       "report-type": "Chọn loại báo cáo",
       "link-bank": "Chọn ngân hàng liên kết"
+    }
+  },
+  "account-guarantee": {
+    "placeholders":{
+      "from": "Từ ngày (dd/mm/yyyy)",
+      "to": "Đến ngày (dd/mm/yyyy)",
+      "name": "Nhập tên tài khoản đảm bảo",
+      "number": "Nhập số tài khoản"
+    },
+    "label": {
+      "name": "Tên tài khoản",
+      "number": "Số tài khoản",
+      "from": "Từ ngày",
+      "to": "Đến ngày"
+    },
+    "table":{
+      "no": "STT",
+      "name": "Tên tài khoản",
+      "number": "Số tài khoản",
+      "balance": "Số dư",
+      "action": "Thao tác",
+      "updateAt": "Ngày cập nhật",
+      "bank": "Ngân hàng"
+    }
+  },
+  "transaction-management-report": {
+    "table":{
+      "date": "Ngày giao dịch",
+      "type":"Loại giao dịch",
+      "number": "Số lượng",
+      "total": "Tổng giá trị"
     }
   },
   "notification-management": {
@@ -2441,6 +2472,7 @@
     "view-transactions": "Lịch sử giao dịch Ví nội bộ",
     "edit-wallet-title": "Cập nhật nội dung",
     "groupNameMin": "Chưa đủ kí tự yêu cầu",
+    "bank-name":"Tên ngân hàng",
     "status": {
       "all": "Chọn tất cả",
       "active": "Hoạt động",
@@ -2557,7 +2589,8 @@
       "wallet_type": "Chọn loại ví",
       "accounting": "Chọn hạch toán",
       "add": "Hạch toán (+) tiền",
-      "reduce": "Hạch toán (-) tiền"
+      "reduce": "Hạch toán (-) tiền",
+      "bank-name":"Nhập tên ngân hàng"
     }
   }
 }

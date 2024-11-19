@@ -242,7 +242,6 @@ export const CreateNotificationModal = ({
     Modal.confirm({
       title: t('notification-management.confirm.update-title'),
       onOk: () => {
-        console.log('rwerwe')
         onCancel()
       },
       okText: t('buttons.ok'),

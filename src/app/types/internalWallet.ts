@@ -28,6 +28,7 @@ export interface InternalWallet {
   active: boolean
   balanceInternalGroup: InternalWalletGroup
   createdAt: string
+  bankId: number
 }
 
 export interface InternalWalletGroup {
@@ -49,4 +50,5 @@ export interface ModifyInternalWalletBody {
   name?: string
   walletNumber?: string
   active?: number
+  bankId?: number
 }

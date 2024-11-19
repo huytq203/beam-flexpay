@@ -410,14 +410,12 @@ export const SetupDirectDepositPolicyContent = ({
     if (viewMode.update && record) {
       if (data.endDate === undefined) data.endDate = null
       Object.keys(record).forEach((value) => {
-        console.log("new change check - ", value, data[value], record[value as keyof IPolicyTable])
         if (
           ['endDate', 'startDate', 'transactionFrom', 'transactionTo', 'transferorFlexibleFee', 'transferorFixedFee', 'transferorFeeMin', 'transferorFeeMax'].includes(
             value
           ) &&
           data[value] != record[value as keyof IPolicyTable]
         ) {
-          console.log("new change - ", value, data[value], record[value as keyof IPolicyTable])
           valueTypeUpdate.push(value)
         }
       })

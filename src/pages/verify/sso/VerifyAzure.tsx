@@ -14,7 +14,6 @@ const VerifyAzure = () => {
     const handleLogin = useCallback(async () => {
         try {
             const res = await ssoLogin(code) as { data: { data: any, statusCode: number } }
-            console.log('res', res);
             if ([200, 201].includes(res?.data?.statusCode)) {
                 
             } else {
