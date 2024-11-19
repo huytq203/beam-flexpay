@@ -23,7 +23,6 @@ function AccountDetailReportModal({ open, onCancel, account }: IProps) {
   const { data: accountDetail } = useReportGetStateBankOverviewDetailQuery(
     account?.id
   )
-  console.log('accountDetail', accountDetail)
   return (
     <>
       <Modal

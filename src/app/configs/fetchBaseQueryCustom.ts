@@ -198,7 +198,6 @@ export const fetchBaseQueryCustom: BaseQueryFn<
       ? window.location.pathname.slice(0, -1)
       : window.location.pathname
   const isLoading = (args as any)?.params?.isLoading
-  console.log((args as any).url, pathName);
 
   isLoading !== false &&
     !isWhiteList((args as any).url, pathName) &&

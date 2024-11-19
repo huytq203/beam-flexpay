@@ -68,7 +68,7 @@ function InternalWalletTransaction(props: props) {
       dataIndex: 'transaction',
       key: 'transaction.transactionDate',
       render(value) {
-        return moment(value.transactionDate).format('DD/MM/YYYY HH:mm:ss')
+        return moment(value?.transactionDate).format('DD/MM/YYYY HH:mm:ss')
       }
     },
     {

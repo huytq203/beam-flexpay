@@ -59,7 +59,6 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
     useUpdateBankAccountMutation()
   const { data: DetailData, isLoading } = useBankFindOneQuery({ id: bank?.id })
 
-  console.log('data', DetailData)
   /**
    * if mode is edit, that function auto set value item for form
    */
@@ -324,7 +323,6 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
    */
 
   const checkDisable = (restValue: any) => {
-    console.log('restValue', restValue)
     const {
       name = undefined,
       tradingName = undefined,
@@ -361,7 +359,6 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
    */
 
   const handleChangeValues = (_: any, allValue: any) => {
-    console.log('allValue', allValue)
     const { active, chanel, priority, ...rest } = allValue
     const isDisable = checkDisable(rest)
     if (isDisable) setIsDisable(true)

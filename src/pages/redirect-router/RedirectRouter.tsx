@@ -10,7 +10,6 @@ function RedirectRouter() {
   const navigate = useNavigate()
 
   const code = getParamsFromURL('code')
-  console.log('code', code, window.location);
   
 
   useEffect(() => {

@@ -294,7 +294,7 @@ const reports = {
           label: i18n.t('navigation.overview-report')
         },
         {
-          key: 'account-management-ensure-payment',
+          key: 'account-guarantee',
           icon: <LockKeyOpen size={size} weight={weight} color={COlOR} />,
           label: i18n.t('navigation.account-management-ensure-payment')
         },

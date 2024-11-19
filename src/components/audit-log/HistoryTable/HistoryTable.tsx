@@ -57,7 +57,6 @@ export const HistoryTable = ({
   })
 
   const renderValue = (value: string, record: HistoryInterface) => {
-    console.log('record.valueType: ', record.valueType)
     if (
       (value && record && record.valueType === 'Ngày kết thúc') ||
       record.valueType === 'Ngày áp dụng' ||

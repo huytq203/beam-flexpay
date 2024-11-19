@@ -198,7 +198,6 @@ export function formatObjectHistory(obj: any, key?: string): string {
           })
           .join('<br/>')
       } else {
-        console.log(obj)
         return obj
       }
     } else if (typeof obj === 'object' && obj !== null) {
@@ -685,10 +684,6 @@ export const compareFormData = (formData: FormData, initData: Data): string[] =>
 export const compareData = (notification: any, payload: any) => {
   return reduce(payload, (result: string[], value, key) => {
     if (!isEqual(value, notification[key])) {
-      console.log('key: ', key)
-      console.log('value: ', value)
-      console.log('notification[key]: ', notification[key])
-
       result.push(key);
     }
     return result;
@@ -709,9 +704,8 @@ export const logData = (message: string = '', data: any) => {
     data.forEach((value, key) => {
       formDataObject[key] = value
     })
-    message = 'FormData as JSON:' && message
-    console.log(message, JSON.stringify(formDataObject, null, 2))
+    message = `FormData as JSON: ${message}`
   } else {
-    console.log(message, data)
+ 
   }
 }

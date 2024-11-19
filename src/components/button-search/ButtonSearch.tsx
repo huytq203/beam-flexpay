@@ -1,5 +1,6 @@
-import { SearchOutlined } from '@ant-design/icons'
+import { SIZE_ICON } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
+import { MagnifyingGlass } from '@phosphor-icons/react'
 import { Button, ButtonProps } from 'antd'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -23,7 +24,7 @@ const ButtonSearch = (props: ButtonSearchProps) => {
 
   return (
     <Button
-      icon={<SearchOutlined />}
+      icon={<MagnifyingGlass size={SIZE_ICON} />}
       hidden={isHasPermission()}
       type='primary'
       {...props}
