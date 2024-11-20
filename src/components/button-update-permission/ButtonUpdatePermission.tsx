@@ -1,6 +1,6 @@
 import { SIZE_ICON } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
-import { GitBranch } from '@phosphor-icons/react'
+//import { GitBranch } from '@phosphor-icons/react'
 import { Button, ButtonProps } from 'antd'
 import { useCallback } from 'react'
 import { AiOutlineBranches } from 'react-icons/ai'
@@ -27,7 +27,7 @@ const ButtonUpdateGroupPermission = (props: CustomButtonProps) => {
 
   return !isHasPermission() ? null : (
     <Button
-      icon={<GitBranch size={SIZE_ICON} />}
+      //icon={<GitBranch size={SIZE_ICON} />}
       hidden={isHasPermission()}
       {...props}
     />

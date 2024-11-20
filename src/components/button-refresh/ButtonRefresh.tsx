@@ -1,5 +1,5 @@
 import { SIZE_ICON } from '@constants/appConstant'
-import { ArrowsClockwise } from '@phosphor-icons/react'
+//import { ArrowsClockwise } from '@phosphor-icons/react'
 import { Button, ButtonProps, Tooltip } from 'antd'
 import { useTranslation } from 'react-i18next'
 
@@ -12,7 +12,7 @@ const ButtonRefresh = (props: CustomButtonProps) => {
   return (
     <Tooltip title={t('tooltips.view')}>
       <Button
-        icon={<ArrowsClockwise size={SIZE_ICON} />}
+        //icon={<ArrowsClockwise size={SIZE_ICON} />}
         {...props}
       />
     </Tooltip>

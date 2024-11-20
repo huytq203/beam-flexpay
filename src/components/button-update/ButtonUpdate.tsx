@@ -1,6 +1,6 @@
 import { SIZE_ICON } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
-import { PencilSimple } from '@phosphor-icons/react'
+//import { PencilSimple } from '@phosphor-icons/react'
 import { Button, ButtonProps, Tooltip } from 'antd'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -30,7 +30,7 @@ const ButtonUpdate = (props: CustomButtonProps) => {
   return !isHasPermission() ? null : (
     <Tooltip title={t('tooltips.update')}>
       <Button
-        icon={<PencilSimple size={SIZE_ICON} />}
+        //icon={<PencilSimple size={SIZE_ICON} />}
         hidden={isHasPermission()}
         {...props}
       />
