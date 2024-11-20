@@ -10,7 +10,7 @@ COPY . .
 
 CMD ["export", "NODE_OPTIONS=\"--max-old-space-size=4096\""]
 
-RUN NODE_OPTIONS="--max-old-space-size=4096" yarn build
+RUN NODE_OPTIONS="--max-old-space-size=3064" yarn build
 
 # 2. Serve
 FROM nginx:stable-alpine
