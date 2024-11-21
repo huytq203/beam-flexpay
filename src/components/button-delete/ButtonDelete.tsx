@@ -1,6 +1,6 @@
 import { SIZE_ICON } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
-//import { Trash } from '@phosphor-icons/react'
+import { Trash } from '@phosphor-icons/react'
 import { Button, ButtonProps } from 'antd'
 import { useCallback } from 'react'
 
@@ -29,7 +29,7 @@ const ButtonDelete = (props: CustomButtonProps) => {
     <Button
       disabled={hidden}
       danger
-      //icon={<Trash size= {SIZE_ICON} />}
+      icon={<Trash size= {SIZE_ICON} />}
       hidden={isHasPermission()}
       {...props}
     />

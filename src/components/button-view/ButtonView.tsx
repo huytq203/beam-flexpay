@@ -1,5 +1,5 @@
 import { SIZE_ICON } from '@constants/appConstant'
-//import { Eye } from '@phosphor-icons/react'
+import { Eye } from '@phosphor-icons/react'
 import { Button, ButtonProps, Tooltip } from 'antd'
 import { useTranslation } from 'react-i18next'
 
@@ -12,7 +12,7 @@ const ButtonView = (props: CustomButtonProps) => {
   return (
     <Tooltip title={t('tooltips.view')}>
       <Button
-        //icon={<Eye size={SIZE_ICON} />}
+        icon={<Eye size={SIZE_ICON} />}
         {...props}
       />
     </Tooltip>

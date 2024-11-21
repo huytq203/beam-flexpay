@@ -8,11 +8,11 @@ import SearchBar from '@components/search-bar/SearchBar'
 import { GUTTER, SIZE_ICON } from '@constants/appConstant'
 import { TimeFormat } from '@constants/datetime'
 import { notificationStatus, serviceTypes } from '@constants/options'
-//import {
-  //PencilSimple,
-  //SpeakerHigh,
-  //Trash
-//} from '@phosphor-icons/react'
+import {
+  PencilSimple,
+  SpeakerHigh,
+  Trash
+} from '@phosphor-icons/react'
 import {
   useLazyDeleteNotificationQuery,
   useLazyPublishNotificationQuery
@@ -297,7 +297,7 @@ function NotificationManagement() {
                   // disabled={
                   //   checkKeywords(record.title) && checkKeywords(record.body)
                   // }
-                  //icon={<PencilSimple size={SIZE_ICON} />}
+                  icon={<PencilSimple size={SIZE_ICON} />}
                   onClick={() => handleModal(viewMode.update, record?.id)}
                 />
               </Tooltip>
@@ -310,7 +310,7 @@ function NotificationManagement() {
                 <Button
                   disabled={record.status === 1}
                   danger
-                  //icon={<Trash size={SIZE_ICON} />}
+                  icon={<Trash size={SIZE_ICON} />}
                   onClick={async () => onHandleDelete(record?.id)}
                 />
               </Tooltip>
@@ -321,7 +321,7 @@ function NotificationManagement() {
                 title={t('notification-management.publish')}
               >
                 <Button
-                  //icon={<SpeakerHigh size={SIZE_ICON} />}
+                  icon={<SpeakerHigh size={SIZE_ICON} />}
                   onClick={async () =>
                     onHandlePublish(record?.id, record?.status)
                   }

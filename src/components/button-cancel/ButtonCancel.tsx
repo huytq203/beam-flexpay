@@ -1,6 +1,6 @@
 import { SIZE_ICON } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
-//import { Bandaids } from '@phosphor-icons/react'
+import { Bandaids } from '@phosphor-icons/react'
 import { Button, ButtonProps } from 'antd'
 import { t } from 'i18next'
 import { useCallback } from 'react'
@@ -25,7 +25,7 @@ const ButtonCancel = (props: CustomButtonProps) => {
   }, [permissions])
   return !isHasPermission() ? null : (
     <Button
-      //icon={<Bandaids size={SIZE_ICON} />}
+      icon={<Bandaids size={SIZE_ICON} />}
       hidden={isHasPermission()}
       {...props}
     />

@@ -13,7 +13,7 @@ import { Avatar, Col, Dropdown, MenuProps, Modal, Row, Typography } from 'antd'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import IAvatarDefault from '@assets/image/avatar_default.webp'
-//import { LockKey, SignOut, User, WarningCircle } from '@phosphor-icons/react'
+import { LockKey, SignOut, User, WarningCircle } from '@phosphor-icons/react'
 import { COlOR } from './Navigation'
 const { Text } = Typography
 
@@ -28,11 +28,11 @@ export default function NavProfile() {
     {
       key: 'editProfile',
       label: trans('navigation.editProfile'),
-      //icon: <User size={SIZE_ICON} color={COlOR}/>
+      icon: <User size={SIZE_ICON} color={COlOR}/>
     },
     {
       label: trans('navigation.changePassword'),
-      //icon: <LockKey size={SIZE_ICON} color={COlOR}/>,
+      icon: <LockKey size={SIZE_ICON} color={COlOR}/>,
       key: 'changePassword'
     },
     {
@@ -40,7 +40,7 @@ export default function NavProfile() {
     },
     {
       label: trans('navigation.logout'),
-      //icon: <SignOut size={SIZE_ICON} color={COlOR}/>,
+      icon: <SignOut size={SIZE_ICON} color={COlOR}/>,
       key: 'logout'
     }
   ]
@@ -72,7 +72,7 @@ export default function NavProfile() {
   const signOut = () => {
     Modal.confirm({
       title: trans('labels.logout'),
-      //icon: <WarningCircle size={24} color='#de831b' />,
+      icon: <WarningCircle size={24} color='#de831b' />,
       content: trans('labels.logoutDescription'),
       okText: trans('buttons.logout'),
       cancelText: trans('buttons.cancel'),

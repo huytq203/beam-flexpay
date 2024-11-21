@@ -1,6 +1,6 @@
 import { SIZE_ICON } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
-//import { LockOpen } from '@phosphor-icons/react'
+import { LockOpen } from '@phosphor-icons/react'
 import { Button, ButtonProps } from 'antd'
 import { useCallback } from 'react'
 
@@ -26,7 +26,7 @@ const ButtonLock = (props: CustomButtonProps) => {
 
   return !isHasPermission() ? null : (
     <Button
-      //icon={<LockOpen size={SIZE_ICON} />}
+      icon={<LockOpen size={SIZE_ICON} />}
       hidden={isHasPermission()}
       {...props}
     />
