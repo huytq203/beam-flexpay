@@ -15,7 +15,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { ColumnsType } from 'antd/es/table'
 import FormItem from 'antd/es/form/FormItem'
-import { AiFillDelete } from 'react-icons/ai'
+import { Trash } from '@phosphor-icons/react'
 import SettingFormModal from './SettingFormModal'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import ButtonAdd from '@components/button-add/ButtonAdd'
@@ -123,7 +123,7 @@ const SettingFeeModal = ({ closeModal, hasBankCol, open, title }: Props) => {
               <Col>
                 <ButtonDelete
                   icon={
-                    <AiFillDelete
+                    <Trash
                       size={16}
                       style={{ transform: 'translateY(2px)' }}
                     />

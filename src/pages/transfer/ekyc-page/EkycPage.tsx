@@ -23,7 +23,7 @@ import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FaPen } from 'react-icons/fa'
+import { Pencil } from '@phosphor-icons/react'
 import EkycDetail from '../ekyc-detail/EkycDetail'
 import { blockArrowValue, blockLetterDecimal } from '@utils/helperFunctions'
 
@@ -124,7 +124,7 @@ const EkycPage = () => {
       fixed: 'right',
       render: (record: any) => (
         <Button
-          icon={<FaPen />}
+          icon={<Pencil />}
           onClick={() => handleModal(record.id)}
         />
       )

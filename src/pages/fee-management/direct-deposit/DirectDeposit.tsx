@@ -25,7 +25,6 @@ import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BsEyeFill } from 'react-icons/bs'
 import DirectDepositSetupModal from './DirectDepositSetupModal'
 import ButtonView from '@components/button-view/ButtonView'
 

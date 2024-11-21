@@ -30,7 +30,7 @@ import {
 import type { RcFile } from 'antd/es/upload'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AiFillDelete } from 'react-icons/ai'
+import { Trash } from '@phosphor-icons/react'
 import { BANK_TYPE } from '../bank-modal/BankManagementConst'
 
 interface IProps {
@@ -646,7 +646,7 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
                       cursor: 'pointer'
                     }}
                   >
-                    <AiFillDelete
+                    <Trash
                       color='red'
                       onClick={ () => handleDeleteImage('image') }  
                     />
@@ -676,7 +676,7 @@ function BankConfiguration({ onCancel, mode, bank, refetch }: IProps) {
                       cursor: 'pointer'
                     }}
                   >
-                    <AiFillDelete
+                    <Trash
                       color='red'
                       onClick={ () => handleDeleteImage('shortLogo') }
                     />

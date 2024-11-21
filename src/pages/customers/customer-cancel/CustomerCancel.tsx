@@ -41,7 +41,6 @@ import dayjs from 'dayjs'
 import moment from 'moment'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AiOutlineHistory } from 'react-icons/ai'
 import { pageEnum, viewMode } from '../../../app/types/policyManagement'
 import ButtonCancel from '@components/button-cancel/ButtonCancel'
 
@@ -284,7 +283,7 @@ const CustomerCancel = () => {
                 {/* lịch sử hoạt động */}
                 <Col>
                   <Button
-                    icon={<AiOutlineHistory />}
+                    icon={<ClockCounterClockwise />}
                     type='primary'
                     className='btn-200'
                     onClick={handleOpenHistory}

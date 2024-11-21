@@ -38,8 +38,6 @@ import _ from 'lodash'
 import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AiOutlineHistory } from 'react-icons/ai'
-import { FaPen } from 'react-icons/fa'
 import {
   pageEnum,
   viewMode as viewModeHistory

@@ -1,8 +1,7 @@
 import { useAppSelector } from '@hooks/hook'
 import { Button, ButtonProps } from 'antd'
 import { useCallback } from 'react'
-import { BsFillBellFill } from 'react-icons/bs'
-
+import { Bell } from '@phosphor-icons/react'
 interface CustomButtonProps extends ButtonProps {
   module: string
   label?: string
@@ -25,7 +24,7 @@ const ButtonNotify = (props: CustomButtonProps) => {
 
   return !isHasPermission() ? null : (
     <Button
-      icon={<BsFillBellFill />}
+      icon={<Bell />}
       hidden={isHasPermission()}
       {...props}
     />

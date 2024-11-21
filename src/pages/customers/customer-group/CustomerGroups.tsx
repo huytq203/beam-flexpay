@@ -17,9 +17,7 @@ import { Card, Col, Form, Input, Row, Select, Table } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AiFillDelete } from 'react-icons/ai'
 import GroupModal from './group-modal/GroupModal'
-import { accountStatus } from '@type/customer'
 
 function CustomerGroup() {
   const { t } = useTranslation()

@@ -9,9 +9,7 @@ import {
 import { Card, Col, Progress, Row } from 'antd'
 import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
-import { BiDownArrow, BiUpArrow } from 'react-icons/bi'
-import { MdAttachMoney } from 'react-icons/md'
-
+import { ArrowDown, ArrowUp, CurrencyDollar } from '@phosphor-icons/react'
 const time = new Date().toISOString()
 
 const Dashboard = () => {
@@ -31,7 +29,7 @@ const Dashboard = () => {
       <Row gutter={GUTTER}>
         <Col flex='auto'>
           <CardLabel
-            icon={BiUpArrow}
+            icon={ArrowUp}
             iconColor='text-blue'
             label={t('partner.collection-transaction')}
             total={
@@ -43,7 +41,7 @@ const Dashboard = () => {
         </Col>
         <Col flex='auto'>
           <CardLabel
-            icon={BiDownArrow}
+            icon={ArrowDown}
             iconColor='text-purple'
             label={t('partner.pay-on-behalf-transaction')}
             total={
@@ -56,7 +54,7 @@ const Dashboard = () => {
         </Col>
         <Col flex='auto'>
           <CardLabel
-            icon={MdAttachMoney}
+            icon={CurrencyDollar}
             iconColor='text-yellow'
             label={t('partner.collection-total')}
             total={
@@ -69,7 +67,7 @@ const Dashboard = () => {
         </Col>
         <Col flex='auto'>
           <CardLabel
-            icon={MdAttachMoney}
+            icon={CurrencyDollar}
             iconColor='text-green'
             label={t('partner.pay-on-behalf-total')}
             total={

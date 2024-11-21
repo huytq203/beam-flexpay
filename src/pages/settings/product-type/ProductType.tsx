@@ -35,7 +35,7 @@ import { useForm } from 'antd/es/form/Form'
 import moment from 'moment'
 import { useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AiFillEye } from 'react-icons/ai'
+import { Eye } from '@phosphor-icons/react'
 import ProductTypeModal from './ProductTypeModal/ProductTypeModal'
 import './style.scss'
 
@@ -357,7 +357,7 @@ const ProductType = () => {
               title={t('admin-management.tooltip.view')}
             >
               <Button
-                icon={<AiFillEye />}
+                icon={<Eye />}
                 onClick={() => handleModal(viewMode.view, record.id)}
               />
             </Tooltip>

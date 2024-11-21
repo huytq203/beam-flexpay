@@ -33,7 +33,6 @@ import Table, { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AiOutlineHistory } from 'react-icons/ai'
 import {
   pageEnum,
   viewMode as viewModeHistory

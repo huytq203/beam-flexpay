@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
 import { CreateProductChildModal } from '../productChildModal/CreateProductChildModal'
 import { UpdateProductChildModal } from '../productChildModal/UpdateProductChildModal'
-import { AiFillEye } from 'react-icons/ai'
+import { Eye } from '@phosphor-icons/react'
 import { ViewProductChildModal } from '../productChildModal/ViewProductChildModal'
 import { renderDisplayOn } from '@utils/helperFunctions'
 import ButtonAdd from '@components/button-add/ButtonAdd'
@@ -123,7 +123,7 @@ const ViewProductModal = (props: ProductDetailProps) => {
               title={t('admin-management.tooltip.view')}
             >
               <Button
-                icon={<AiFillEye />}
+                icon={<Eye />}
                 onClick={() => handleViewChild(value.id)}
               />
             </Tooltip>

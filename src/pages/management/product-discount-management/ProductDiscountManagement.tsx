@@ -33,7 +33,7 @@ import dayjs from 'dayjs'
 import moment from 'moment'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FaPen } from 'react-icons/fa'
+import { Pencil } from '@phosphor-icons/react'
 import ProductDiscountModal from './product-discount-modal/ProductDiscountModal'
 
 const { Text } = Typography
@@ -595,7 +595,7 @@ function ProductDiscountManagement() {
           title={t('admin-management.tooltip.edit')}
         >
           <Button
-            icon={<FaPen />}
+            icon={<Pencil />}
             onClick={() => {
               handleModal(viewMode.updateDiscount, record.id)
               setSelectedItem(record)

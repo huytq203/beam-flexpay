@@ -30,7 +30,7 @@ import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AiFillEye } from 'react-icons/ai'
+import { Eye } from '@phosphor-icons/react'
 import SaleFeeModal from './sale-fee-modal/SaleFeeModal'
 import SearchBar from '@components/search-bar/SearchBar'
 import ButtonSearch from '@components/button-search/ButtonSearch'
@@ -375,7 +375,7 @@ function SalesFeeManagement() {
         fixed: 'right',
         render: (record) => (
           <Button
-            icon={<AiFillEye />}
+            icon={<Eye />}
             onClick={() => {
               setMode(viewMode.view)
               toggleModal(true)

@@ -4,7 +4,7 @@ import { PencilSimple } from '@phosphor-icons/react'
 import { Button, ButtonProps, Tooltip } from 'antd'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FaPen } from 'react-icons/fa'
+import { Pencil } from '@phosphor-icons/react'
 
 interface CustomButtonProps extends ButtonProps {
   module: string

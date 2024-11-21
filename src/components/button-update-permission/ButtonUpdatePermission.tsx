@@ -3,7 +3,6 @@ import { useAppSelector } from '@hooks/hook'
 import { GitBranch } from '@phosphor-icons/react'
 import { Button, ButtonProps } from 'antd'
 import { useCallback } from 'react'
-import { AiOutlineBranches } from 'react-icons/ai'
 
 interface CustomButtonProps extends ButtonProps {
   module: string

@@ -1,13 +1,12 @@
 import Icon from '@ant-design/icons/lib/components/Icon'
 import { Card, Col, InputNumber, Progress, Row, Space } from 'antd'
-import { IconType } from 'react-icons'
 
 import { useEffect, useState } from 'react'
 import './index.scss'
 
 type props = {
   label: string
-  icon: IconType
+  icon: any
   iconColor: string
   value: number
   total: number

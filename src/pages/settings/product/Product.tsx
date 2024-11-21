@@ -32,7 +32,7 @@ import { useForm } from 'antd/es/form/Form'
 import type { ColumnsType } from 'antd/es/table'
 import React, { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AiFillEye } from 'react-icons/ai'
+import { Eye } from '@phosphor-icons/react'
 import ProductModal from './productModal/ProductModal'
 import './style.scss'
 import SearchBar from '@components/search-bar/SearchBar'
@@ -454,7 +454,7 @@ const Product = () => {
               title={t('admin-management.tooltip.view')}
             >
               <Button
-                icon={<AiFillEye />}
+                icon={<Eye />}
                 onClick={() => handleModal(viewMode.view, record.id)}
               />
             </Tooltip>
