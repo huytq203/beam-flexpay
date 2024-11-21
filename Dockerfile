@@ -4,13 +4,13 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN NODE_OPTIONS="--max-old-space=4096" yarn install
+RUN yarn install
 
 COPY . .
 
 CMD ["export", "NODE_OPTIONS=\"--max-old-space-size=4096\""]
 
-RUN NODE_OPTIONS="--max-old-space-size=4096" yarn build
+RUN yarn build
 
 # 2. Serve
 FROM nginx:stable-alpine
