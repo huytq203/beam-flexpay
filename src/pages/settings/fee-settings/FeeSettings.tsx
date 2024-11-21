@@ -17,6 +17,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { pageEnum, viewMode } from '../../../app/types/policyManagement';
 import FeeSettingsForm from './FeeSettingsForm';
+import { ClockCounterClockwise } from '@phosphor-icons/react';
 
 const FeeSettings = () => {
   const { t } = useTranslation();
