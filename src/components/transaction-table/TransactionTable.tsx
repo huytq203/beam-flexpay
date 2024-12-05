@@ -34,7 +34,6 @@ const TransactionTable = ({ search, setSearch, skip, className }: props) => {
     setSelectedId(id)
     setTrue()
   }
-
   const transferHistoryColumns: ColumnsType<TransactionDto> = [
     {
       title: t('transfer-history.number'),
@@ -68,9 +67,12 @@ const TransactionTable = ({ search, setSearch, skip, className }: props) => {
     },
     {
       title: t('transfer-history.accountName'),
-      dataIndex: 'from',
       align: 'center',
-      render: (record) => <CellContent data={record} />,
+      render: (record) => {
+        const dataIndex = getDataIndex(record.amount);
+        console.log('dataIndex', dataIndex)
+        return <CellContent data={record[dataIndex]} />
+      },
       width: 150
     },
     {
@@ -115,11 +117,13 @@ const TransactionTable = ({ search, setSearch, skip, className }: props) => {
       render: (value) => <ButtonView onClick={() => handleDetail(value)} />
     }
   ]
-
+  const getDataIndex = (amount: number | string) => {
+    return Number(amount)  > 0 ? 'to' : 'from';
+  };
   const { data: transactionHistory } = useTransactionFindAllQuery(search, {
     skip: skip
   })
-
+  console.log('transactionHistory', transactionHistory)
   return (
     <>
       <Table
