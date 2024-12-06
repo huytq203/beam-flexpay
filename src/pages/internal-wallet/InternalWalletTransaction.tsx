@@ -61,7 +61,7 @@ function InternalWalletTransaction(props: props) {
   }, [props.selectedInternalWallet])
 
   const { data: transactionData, refetch } = useGetInternalWalletTransactionsQuery(search)
-
+  console.log('transactionData', transactionData)
   const columns: ColumnsType<any> = [
     {
       title: t('internal-wallet.transaction.date'),
@@ -76,7 +76,7 @@ function InternalWalletTransaction(props: props) {
       dataIndex: 'transaction',
       key: 'transaction.type',
       render(value) {
-        var tt = _.find(transactionType, (tt) => tt.value == value.type)
+        var tt = _.find(transactionType, (tt) => tt?.value == value?.type)
 
         return tt?.label
       }
@@ -102,7 +102,7 @@ function InternalWalletTransaction(props: props) {
       dataIndex: 'transaction',
       key: 'referenceId',
       render(value) {
-        return value.referenceId
+        return value?.referenceId
       }
     },
     {
