@@ -147,7 +147,7 @@ const TransactionDetail = ({ open, onCancel, id }: IProps) => {
             <ItemDetail
               key={crypto.randomUUID()}
               boldTitle={true}
-              title={ref.from}
+              title={Number(ref.amount) > 0 ? ref.to : ref.from}
               data={convertNumber(ref.amount) + ' VNĐ'}
             />
           ))}
