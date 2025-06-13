@@ -65,6 +65,7 @@ import VerifyAzure from '@pages/verify/sso/VerifyAzure'
 import StateBankOverviewReport from '@pages/bank-report/state-bank-overview/StateBankOverviewReport'
 import AccountGuaranteeReport from '@pages/bank-report/account-guarantee-report/AccountGuaranteeReport'
 import TransactionManagementReport from '@pages/bank-report/transaction-management-report/TransactionManagementReport'
+import DepositRequest from '@pages/internal-wallet/deposit-request/DepositRequest'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -354,6 +355,18 @@ const internalWallet = {
         {
           path: INTERNAL_WALLET + '/setting',
           element: createElement(TransactionAccountingConfiguration)
+        }
+      ]
+    },
+    {
+      path: INTERNAL_WALLET + '/internal-accounting',
+      children: [
+        {
+          path: INTERNAL_WALLET + '/internal-accounting/deposit-request',
+          element: createElement(DepositRequest)
+        },
+        {
+          path: INTERNAL_WALLET + '/internal-accounting/deposit-approval',
         }
       ]
     }

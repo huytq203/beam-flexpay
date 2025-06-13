@@ -66,6 +66,8 @@
     "/internal-wallet/group": "Quản lý nhóm tài khoản nội bộ",
     "/internal-wallet/account/details": "Quản lý tài khoản nội bộ",
     "/internal-wallet/account/transactions": "Quản lý số dư Ví nội bộ",
-    "/internal-wallet/setting": "Cấu hình hạch toán"
+    "/internal-wallet/setting": "Cấu hình hạch toán",
+    "/internal-wallet/internal-accounting/deposit-request": "Yêu cầu hạch toán",
+    "/internal-wallet/internal-accounting/deposit-approval": "Phê duyệt hạch toán"
   }
 }

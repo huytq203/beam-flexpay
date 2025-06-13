@@ -42,7 +42,7 @@ export const NotifyProductDiscountModal = ({
         label={t`management.discount.form.title`.toString()}
       >
         <Select
-          showArrow={false}
+          suffixIcon={null}
           disabled
           maxLength={255}
           // placeholder={t`management.discount.form.placeholders.title`.toString()}
@@ -54,7 +54,7 @@ export const NotifyProductDiscountModal = ({
         label={t`management.discount.form.child-product`.toString()}
       >
         <Select
-          showArrow={false}
+          suffixIcon={null}
           disabled
           placeholder={t`management.discount.form.placeholders.childProductPlaceholder`.toString()}
         />
@@ -65,7 +65,7 @@ export const NotifyProductDiscountModal = ({
         label={t`management.discount.form.apply`.toString()}
       >
         <Select
-          showArrow={false}
+          suffixIcon={null}
           disabled
           placeholder={t`management.discount.form.placeholders.apply`.toString()}
           options={objectOptionsNotify}

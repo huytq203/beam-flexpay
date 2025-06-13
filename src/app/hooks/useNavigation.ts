@@ -3,52 +3,81 @@ import {
   navigationItems
 } from '@components/layout/components/Navigation'
 import { useAppSelector } from './hook'
+import { useMemo } from 'react'
 
 const useNavigationEw = () => {
   const {
     profile: { permissions }
   } = useAppSelector((state) => state.auth)
 
+  // Create a permission check map for O(1) lookups instead of O(n) array searches
+  const permissionMap = useMemo(() => {
+    const map = new Set(permissions)
+    return {
+      hasPermission: (permission: string | undefined): boolean => {
+        if (!permission) return false
+
+        const viewPermission = `${permission}-view`
+        const wildcardPermission = `${permission}*`
+
+        return (
+          map.has(viewPermission) ||
+          map.has(wildcardPermission) ||
+          map.has('admin*')
+        )
+      }
+    }
+  }, [permissions])
+
   const getNavigation = () => {
-    let test: any[] = []
+    // Fast path: admin access
     if (permissions.includes('admin*')) {
-      test = navigationItems
-    } else {
-      navigationItems.forEach((item, index) => {
-        if (
-          (item.permission &&
-            permissions.includes(`${item.permission}:view`)) ||
-          permissions.includes(`${item.permission}*`)
-        ) {
-          test[index] = item
-        } else {
-          const children = item.children
-          let subItem: any[] = []
-          if (children && children.length > 0) {
-            children.forEach((childrenItem: ItemTypeCustom, i) => {
-              if (
-                childrenItem &&
-                childrenItem.permission &&
-                (permissions.includes(`${childrenItem.permission}:view`) ||
-                  permissions.includes(`${childrenItem.permission}*`))
-              ) {
-                subItem[i] = childrenItem
-              }
-            })
-            if (subItem.length !== 0) {
-              subItem = subItem.filter(() => true)
-              const newItem = { ...item, children: subItem }
-              test[index] = newItem
-            }
+      return [...navigationItems] // Return shallow copy to avoid mutations
+    }
+
+    // Process navigation items
+    const result: ItemTypeCustom[] = []
+
+    for (let i = 0; i < navigationItems.length; i++) {
+      const item = navigationItems[i]
+
+      // Check if item has direct permission
+      if (item.permission && permissionMap.hasPermission(item.permission)) {
+        result.push(item)
+        continue
+      }
+
+      // Process children if item doesn't have direct permission
+      if (item.children && item.children.length > 0) {
+        const filteredChildren: ItemTypeCustom[] = []
+
+        for (let j = 0; j < item.children.length; j++) {
+          const child = item.children[j]
+          if (
+            child &&
+            child.permission &&
+            permissionMap.hasPermission(child.permission)
+          ) {
+            filteredChildren.push(child)
           }
         }
-      })
+
+        if (filteredChildren.length > 0) {
+          result.push({
+            ...item,
+            children: filteredChildren
+          })
+        }
+      }
     }
-    return test.filter(() => true)
+
+    return result
   }
 
-  const navigation: ItemTypeCustom[] = getNavigation()
+  // Use memoization to prevent unnecessary recalculations
+  const navigation = useMemo(() => getNavigation(), [permissions])
 
   return [navigation, getNavigation]
 }
+
 export default useNavigationEw

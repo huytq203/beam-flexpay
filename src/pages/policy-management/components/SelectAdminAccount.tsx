@@ -90,7 +90,7 @@ export const SelectAdminAccount = (props: SelectAdminAccount) => {
       allowClear
       placeholder={placeholder}
       showSearch
-      showArrow={false}
+      suffixIcon={null}
       filterOption={false}
       style={{ minWidth: 220 }}
       maxTagCount={2}

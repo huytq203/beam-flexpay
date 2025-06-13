@@ -71,7 +71,7 @@ function CustomAccountingSelect<T extends PageMetaSearchDto>(props: CustomSelect
       showSearch
       onPopupScroll={handleScroll}
       onSearch={handleSearch}
-      showArrow={false}
+      suffixIcon={null}
       filterOption={false}
       {...props}
       onSelect={onSelect}

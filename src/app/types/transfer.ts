@@ -57,5 +57,30 @@ export enum TransactionType {
   WITHDRAW = 'WITHDRAW',
   TOPUP = 'TOPUP',
   RECEIVE = 'RECEIVE',
-  RECEIVAL = 'RECEIVAL'
+  RECEIVAL = 'RECEIVAL',
+  TRANSFER_INTERNAL = 'TRANSFER_INTERNAL'
+}
+export enum TransactionSubType {
+  MAIN = 'MAIN',
+  PARTNER = 'PARTNER',
+  /*
+  Phí 
+  */
+  FEE = 'FEE',
+  /*
+    Phí VAT
+  */
+  VAT = 'VAT',
+  /* 
+    Người nhận
+  */
+  RECEIVER = 'RECEIVER',
+  /*
+    Phí VAT người nhận
+  */
+  RECEIVE_VAT = 'RECEIVE_VAT',
+  /*
+    Phí người nhận
+  */
+  RECEIVE_FEE = 'RECEIVE_FEE',
 }

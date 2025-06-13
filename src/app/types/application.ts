@@ -1815,6 +1815,7 @@ export type TransactionDto = {
   destinationAccountType: string;
   referenceId: string;
   references: TransactionReference[];
+  subType: string;
 };
 export type TransactionReference = {
   amount: number;
@@ -1842,6 +1843,7 @@ export type TransactionReference = {
   };
   type: string;
   updatedAt: string;
+  subType: string;
 };
 export type UpdateTransactionStatusDto = {
   status:

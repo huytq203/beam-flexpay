@@ -1,5 +1,15 @@
 import { Pagination } from './table'
 
+export interface IInternalWalletQuery {
+  name?: string
+  order?: string
+  active?: boolean
+  page: number
+  take: number
+  query?: string
+  orderBy?: string
+}
+
 export interface InternalWalletPayload {
   order?: string
   active?: boolean

@@ -11,7 +11,8 @@ export const apiService = createApi({
     'ekycService',
     'internal-wallet-group',
     'internal-wallet-account',
-    'accounting'
+    'accounting',
+    'accounting-requests',
   ],
   endpoints: () => ({}),
   refetchOnMountOrArgChange: true

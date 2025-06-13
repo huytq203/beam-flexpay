@@ -12,7 +12,7 @@ import {
   _STATE_BANK
 } from '@constants/routersConstant';
 import i18n from '@languages/i18n';
-import { ArrowCircleDown, ArrowCircleUp, ArrowsDownUp, ArrowsLeftRight, Bank, Bell, Cardholder, ChartBar, ClipboardText, ClockCounterClockwise, CreditCard, CurrencyCircleDollar, EnvelopeSimple, FileLock, FileText, Fingerprint, FolderOpen, Gear, HandArrowDown, HandCoins, HandPalm, Handshake, Invoice, List, ListNumbers, Lock, LockKeyOpen, LockOpen, MagnifyingGlass, Money, ShieldCheck, Sliders, SlidersHorizontal, Storefront, Swap, Trash, UserGear, Users, UsersFour, UsersThree, Wallet } from "@phosphor-icons/react";
+import { ArrowCircleDown, ArrowCircleUp, ArrowsDownUp, ArrowsLeftRight, Bank, Bell, Cardholder, ChartBar, ClipboardText, ClockCounterClockwise, CreditCard, CurrencyCircleDollar, CurrencyDollar, EnvelopeSimple, FileLock, FileText, Fingerprint, FolderOpen, Gear, GearSix, HandArrowDown, HandCoins, HandPalm, Handshake, Invoice, List, ListNumbers, Lock, LockKeyOpen, LockOpen, MagnifyingGlass, Money, ShieldCheck, Sliders, SlidersHorizontal, Stamp, Storefront, Swap, Trash, UserGear, Users, UsersFour, UsersThree, Wallet } from "@phosphor-icons/react";
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 
 
@@ -343,6 +343,24 @@ const internal_wallet = {
       key: 'setting',
       icon: <Sliders size={size} weight={weight} color={COlOR} />,
       label: i18n.t('internal-wallet.setting')
+    },
+    {
+      key: 'internal-accounting',
+      icon: <GearSix size={size} weight={weight} color={COlOR} />,
+      label: i18n.t('internal-wallet.internal-accounting'),
+      children: [
+        {
+          key: 'deposit-request',
+          icon: <CurrencyDollar size={size} weight={weight} color={COlOR}/>,
+          label: i18n.t('internal-wallet.deposit-request')
+        },
+        {
+          key: 'deposit-approval',
+          icon: <Stamp size={size} weight={weight} color={COlOR} />,
+          label: i18n.t('internal-wallet.deposit-approval')
+        }
+
+      ]
     }
   ]
 }

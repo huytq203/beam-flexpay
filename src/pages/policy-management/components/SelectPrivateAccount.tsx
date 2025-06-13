@@ -106,7 +106,7 @@ export const CustomPrivateAccountSelect = (props: SelectPrivateAccountType) => {
       showSearch
       onPopupScroll={onScroll}
       onSearch={onSearchAccountGroup}
-      showArrow={false}
+      suffixIcon={null}
       filterOption={false}
       style={{ minWidth: 220 }}
       labelInValue
