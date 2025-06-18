@@ -101,7 +101,7 @@ export const CreateAdminModalForm = ({
       return
     }
     const data: any = await createAdmin(payload)
-    if (data.data.statusCode === 201) {
+    if (data?.data?.statusCode === 201) {
       notification.success({
         message: trans('messages.successCreateAdminAccount')
       })

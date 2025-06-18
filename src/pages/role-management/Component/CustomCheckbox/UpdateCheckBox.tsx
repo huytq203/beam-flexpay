@@ -1,5 +1,3 @@
-import { useViewDetailAccountQuery } from '@services/apiAdminAccountService'
-import { AdminAccountData } from '@type/admin'
 import {
   FormatPermissionType,
   GroupType,
@@ -379,12 +377,13 @@ export const CustomUpdateCheckBox = ({
               </Row>
             </Col>
           </Row>
-          {fakeData.data.map((el: GroupType) => (
+          {(fakeData.data as GroupType[]).map((el: GroupType) => (
             <>
               <Row
                 className='custom-row'
                 gutter={GUTTER}
                 style={{ marginBottom: 8, marginTop: 8 }}
+                key={el.id}
               >
                 <Col
                   span={10}

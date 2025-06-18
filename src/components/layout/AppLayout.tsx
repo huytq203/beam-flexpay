@@ -40,7 +40,6 @@ function AppLayout() {
 
   const [navigation] = useNavigationEw()
   const isAccess = usePermission()
-
   const { t } = useTranslation()
 
   const handleSelectMenu = (event: any) => {
@@ -68,7 +67,9 @@ function AppLayout() {
     setTitle(location.pathname)
   }, [location.pathname])
 
-  const getProfile = useUserGetMyInfoQuery()
+  const getProfile = useUserGetMyInfoQuery(undefined, {
+    skip: !accessToken
+  })
 
   useEffect(() => {
     if (getProfile.data && accessToken) {
@@ -81,7 +82,6 @@ function AppLayout() {
       })
     }
   }, [getProfile.data])
-
   useEffect(() => {
     if (!isAccess) {
       navigate(FORBIDDENERROR)
@@ -121,7 +121,7 @@ function AppLayout() {
             className='custom-sidebar'
           >
             <div className='logo'>
-              <Logo collapsed = {collapsed} />
+              <Logo collapsed={collapsed} />
             </div>
             <Menu
               className='scroll-custom sidebar-menu'

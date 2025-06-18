@@ -17,18 +17,19 @@ const useNavigationEw = () => {
       hasPermission: (permission: string | undefined): boolean => {
         if (!permission) return false
 
-        const viewPermission = `${permission}-view`
-        const wildcardPermission = `${permission}*`
+        const checkPermission = (map: Set<string>, permission: string) => {
+          for (const value of map) {
+            if (value.startsWith(`${permission}:`)) {
+              return true
+            }
+          }
+          return false
+        }
 
-        return (
-          map.has(viewPermission) ||
-          map.has(wildcardPermission) ||
-          map.has('admin*')
-        )
+        return checkPermission(map, permission)
       }
     }
   }, [permissions])
-
   const getNavigation = () => {
     // Fast path: admin access
     if (permissions.includes('admin*')) {
@@ -40,19 +41,18 @@ const useNavigationEw = () => {
 
     for (let i = 0; i < navigationItems.length; i++) {
       const item = navigationItems[i]
-
       // Check if item has direct permission
       if (item.permission && permissionMap.hasPermission(item.permission)) {
         result.push(item)
         continue
       }
-
       // Process children if item doesn't have direct permission
       if (item.children && item.children.length > 0) {
         const filteredChildren: ItemTypeCustom[] = []
 
         for (let j = 0; j < item.children.length; j++) {
           const child = item.children[j]
+          // console.log(permissionMap.hasPermission(child.permission))
           if (
             child &&
             child.permission &&
@@ -61,6 +61,7 @@ const useNavigationEw = () => {
             filteredChildren.push(child)
           }
         }
+        // console.log(filteredChildren)
 
         if (filteredChildren.length > 0) {
           result.push({
