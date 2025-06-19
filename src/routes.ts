@@ -66,6 +66,7 @@ import StateBankOverviewReport from '@pages/bank-report/state-bank-overview/Stat
 import AccountGuaranteeReport from '@pages/bank-report/account-guarantee-report/AccountGuaranteeReport'
 import TransactionManagementReport from '@pages/bank-report/transaction-management-report/TransactionManagementReport'
 import DepositRequest from '@pages/internal-wallet/deposit-request/DepositRequest'
+import VerifyCode from '@pages/auth/verify-code/VerifyCode'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -346,7 +347,6 @@ const internalWallet = {
           path: INTERNAL_WALLET + '/account/transactions',
           element: createElement(InternalBalanceWallet)
         }
-
       ]
     },
     {
@@ -366,7 +366,7 @@ const internalWallet = {
           element: createElement(DepositRequest)
         },
         {
-          path: INTERNAL_WALLET + '/internal-accounting/deposit-approval',
+          path: INTERNAL_WALLET + '/internal-accounting/deposit-approval'
         }
       ]
     }
@@ -384,4 +384,8 @@ export const WalletRoutes = createBrowserRouter([
   reports,
   repaymentAndDisburse,
   internalWallet,
+  {
+    path: '/verify-code',
+    element: createElement(VerifyCode)
+  }
 ])
