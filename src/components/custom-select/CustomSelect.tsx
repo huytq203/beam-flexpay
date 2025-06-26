@@ -19,8 +19,8 @@ function CustomSelect<T extends PageMetaSearchDto>(props: CustomSelectType<T>) {
     take: 10,
     pageCount: 1
   })
-
-  const [_search, setSearch] = useState<T>(props.search)
+  const { trigger, search, field, readonly, ...selectProps } = props; // Loại bỏ các props không cần thiết
+  const [_search, setSearch] = useState<T>(search)
 
   const handleScroll = async (e: any) => {
     const target = e.target
@@ -29,28 +29,30 @@ function CustomSelect<T extends PageMetaSearchDto>(props: CustomSelectType<T>) {
       if (meta.hasNextPage)
         setSearch({
           ..._search,
-          page: props.search.page + 1
+          page: _search.page + 1
         })
     }
   }
 
   const handleSearch = (value: string) => {
-    if (!value) setSearch(props.search)
+    if (!value) setSearch(search)
     const asyncData = Promise.resolve(setData([]))
     asyncData.then(() =>
       setSearch({
         ..._search,
         page: 1,
-        [props.field]: value
+        [field]: value
       })
     )
   }
 
   const getData = () => {
-    props.trigger(_search).then((result) => {
+    trigger(_search).then((result) => {
       setData([...data, ...(result.data as any).data])
       setMeta((result.data as any).meta)
-    })
+    }).catch(error => {
+      console.error("Error fetching data:", error);
+    });
   }
 
   useEffect(() => {
@@ -63,16 +65,16 @@ function CustomSelect<T extends PageMetaSearchDto>(props: CustomSelectType<T>) {
       showSearch
       onPopupScroll={handleScroll}
       onSearch={handleSearch}
-      showArrow={false}
+      suffixIcon={null}
       filterOption={false}
-      {...props}
+      {...selectProps}
     >
       {data.map((el) => (
         <Select.Option
           value={el.id}
           key={el.id}
         >
-          {el[props.field]}
+          {el[field]}
         </Select.Option>
       ))}
     </Select>

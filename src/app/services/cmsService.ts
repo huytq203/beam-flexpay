@@ -104,7 +104,7 @@ import {
   NotificationContextSettingRemoveApiArg,
   NotificationContextSettingRemoveApiResponse,
   NotificationContextSettingUpdateApiArg,
-  NotificationContextSettingUpdateApiResponse,
+  NotificationContextSettingUpdateApiResponse, OtpDataDto,
   PaymentLinkCancelTokenApiArg,
   PaymentLinkCancelTokenApiResponse,
   PaymentLinkFindAllApiArg,
@@ -269,6 +269,8 @@ import {
   UserForgotPasswordApiResponse,
   UserGetMyInfoApiArg,
   UserGetMyInfoApiResponse,
+  UserGetResendOtpApiArg,
+  UserGetResendOtpApiResponse,
   UserGetUserOtpApiArg,
   UserGetUserOtpApiResponse,
   UserLockAdminApiArg,
@@ -290,7 +292,8 @@ import {
   UserUploadAvatarApiArg,
   UserUploadAvatarApiResponse,
   UserVerifyTokenApiArg,
-  UserVerifyTokenApiResponse
+  UserVerifyTokenApiResponse, VerifyLoginOtp,
+  VerifyLoginOtpApiArg
 } from '@type/application'
 import { fnTransformResponse } from '@utils/helperFunctions'
 import { apiService as api } from './apiService'
@@ -367,7 +370,32 @@ const injectedRtkApi = api
         transformResponse: fnTransformResponse,
         invalidatesTags: ['[Admin] Admin User']
       }),
-      userLogin: build.mutation<UserLoginApiResponse, UserLoginApiArg>({
+      userGetResendOtp: build.mutation<
+        UserGetResendOtpApiResponse,
+        UserGetResendOtpApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/user/resend-login-otp`,
+          method: 'POST',
+          body: queryArg.adminGetOtp
+        }),
+        transformResponse: fnTransformResponse,
+        invalidatesTags: ['[Admin] Admin User']
+      }),
+      verifyLoginOtp: build.mutation<
+        UserLoginApiResponse,
+        VerifyLoginOtpApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/user/verify-login-otp`,
+          method: 'POST',
+          body: queryArg.verifyLoginOtp
+        }),
+        transformResponse: fnTransformResponse,
+        invalidatesTags: ['[Admin] Admin User']
+      }),
+      // UserLoginApiResponse
+      userLogin: build.mutation<OtpDataDto, UserLoginApiArg>({
         query: (queryArg) => ({
           url: `/user/login`,
           method: 'POST',
@@ -2272,6 +2300,8 @@ export const {
   useUserFindAllQuery,
   useUserCreateMutation,
   useUserGetUserOtpMutation,
+  useUserGetResendOtpMutation,
+  useVerifyLoginOtpMutation,
   useUserLoginMutation,
   useUserGetMyInfoQuery,
   useUserFindOneQuery,

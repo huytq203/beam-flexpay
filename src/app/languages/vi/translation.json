@@ -186,7 +186,8 @@
     "view": "Xem",
     "update": "Sửa",
     "viewHistory": "Xem lịch sử",
-    "delete": "Xóa"
+    "delete": "Xóa",
+    "approve": "Phê duyệt"
   },
   "placeholders": {
     "email": "Nhập email...",
@@ -245,6 +246,7 @@
     "decimalFormat": "Vui lòng chỉ nhập số và số thập phân",
     "password-format": "Nhập mật khẩu sai định dạng",
     "changePasswordSuccess": "Cập nhật mật khẩu thành công",
+    "getOtpSuccess": "Lấy mã OTP thành công",
     "changeProfileSuccess": "Cập nhật thông tin tài khoản thành công",
     "createProductTypeSuccess": "Tạo loại sản phẩm thành công",
     "deleteProductTypeSuccess": "Xóa loại sản phẩm thành công",
@@ -333,7 +335,8 @@
     "back": "Quay lại",
     "add": "Thêm mới",
     "getOtp": "Lấy mã OTP",
-    "create-permission-group": "Tạo nhóm quyền"
+    "create-permission-group": "Tạo nhóm quyền",
+    "clear": "Xóa"
   },
   "customer-modal": {
     "view": "Thông tin tài khoản",
@@ -423,6 +426,11 @@
     "from": "Từ ngày",
     "to": "Đến ngày",
     "action": "Thao tác",
+    "account_number_from": "Số tài khoản nguồn",
+    "account_name_from": "Tên tài khoản nguồn",
+    "account_number_to": "Số tài khoản đích",
+    "account_name_to": "Tên tài khoản đích",
+    "amount_transaction": "Số tiền giao dịch",
     "getNote": {
       "deposit": "Nạp tiền vào {{wallet}} từ {{bank}}",
       "withdraw": "Rút tiền từ {{wallet}} vào {{bank}}",
@@ -1643,8 +1651,18 @@
     "messages": {
       "email": "Bạn chưa nhập tài khoản",
       "password": "Bạn chưa nhập mật khẩu",
-      "email-format": "Tài khoản chưa chính xác",
+      "email-format": "Tài khoản chưa đúng định dạng",
       "sso-failed": "Có lỗi xảy ra vui lòng thử lại"
+    }
+  },
+  "verifyCode": {
+    "messages": {
+      "success": "Xác thực thành công",
+      "error": "Đã xảy ra lỗi khi xác thực",
+      "missingInfo": "Thiếu thông tin email hoặc trackingId",
+      "resendSuccess": "Đã gửi lại mã xác thực",
+      "resendFailed": "Không thể gửi lại mã xác thực",
+      "resendError": "Đã xảy ra lỗi khi gửi lại mã"  
     }
   },
   "forgot": {
@@ -2458,6 +2476,9 @@
     "account-details": "Quản lý tài khoản nội bộ",
     "account-transactions": "Quản lý số dư Ví nội bộ",
     "setting": "Cấu hình hạch toán",
+    "internal-accounting": "Hạch toán nội bộ",
+    "deposit-request": "Yêu cầu hạch toán",
+    "deposit-approval": "Phê duyệt hạch toán",
     "groups-title": "Thêm mới nhóm tài khoản",
     "walletType": "Loại ví",
     "groupType": "Nhóm ví",
@@ -2467,12 +2488,28 @@
     "walletNumber": "Số ví nội bộ",
     "walletName": "Tên ví",
     "active": "Trạng thái",
+    "create-accounting-request": "Thêm yêu cầu hạch toán",
+    "update-accounting-request": "Cập nhật yêu cầu hạch toán",
+    "title":{
+      "status_request":"Trạng thái",
+      "transaction_type": "Loại giao dịch"
+    },
     "wallet-internal": "Ví Nội bộ",
     "add-wallet-title": "Thêm ví nội bộ",
     "view-transactions": "Lịch sử giao dịch Ví nội bộ",
     "edit-wallet-title": "Cập nhật nội dung",
     "groupNameMin": "Chưa đủ kí tự yêu cầu",
     "bank-name":"Tên ngân hàng",
+    "transaction_type":{
+      "Deposite": "Deposite",
+      "Claim": "Claim"
+    },
+    "account-request-status": {
+      "Committed": "Committed",
+      "Pending": "Pending",
+      "Approved": "Approved",
+      "Rejected": "Rejected"
+    },
     "status": {
       "all": "Chọn tất cả",
       "active": "Hoạt động",
@@ -2542,10 +2579,20 @@
       "numeric-group-number": "Nhóm ví phải là số",
       "confirm-cancel-create-group": "Bạn có chắc chắn muốn hủy thêm mới nhóm tài khoản?",
       "wallet-number-min-length": "Số ví nội bộ phải lớn hơn hoặc bằng 5 ký tự",
-      "wallet-number-max-length": "Số ví nội bộ phải nhỏ hơn hoặc bằng 20 ký tự"
+      "wallet-number-max-length": "Số ví nội bộ phải nhỏ hơn hoặc bằng 20 ký tự",
+      "create-deposit-request-success": "Tạo yêu cầu hoạch toán thành công",
+      "create-deposit-request-failed": "Tạo yêu cầu hoạch toán thất bại",
+      "update-deposit-request-success": "Cập nhật yêu cầu hoạch toán thành công",
+      "update-deposit-request-failed": "Cập nhật yêu cầu hoạch toán thất bại",
+      "confirm-cancel-create-deposit-request": "Bạn có chắc chắn muốn hủy thêm mới yêu cầu hoạch toán?",
+      "create-accounting-request-success": "Tạo yêu cầu hạch toán thành công",
+      "update-accounting-request-success": "Cập nhật yêu cầu hạch toán thành công" 
     },
     "update-groups-title": "Chỉnh sửa thông tin",
     "modal": {
+      "accounting-request-update": "Chỉnh sửa thông tin yêu cầu hoạch toán",
+      "accounting-request-add": "Thêm yêu cầu hoạch toán",
+      "accounting-request-view": "Xem chi tiết yêu cầu hoạch toán",
       "transactionType": "Loại giao dịch",
       "subType": "Mục đích",
       "funds": "Nguồn tiền",

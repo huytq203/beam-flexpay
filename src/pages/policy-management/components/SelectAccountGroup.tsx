@@ -106,7 +106,7 @@ export const CustomAccountGroupSelect = (props: SelectAccountgroupType) => {
       disabled={disabled}
       mode={mode}
       showSearch
-      showArrow={false}
+      suffixIcon={null}
       filterOption={false}
       style={{ minWidth: 220 }}
       labelInValue

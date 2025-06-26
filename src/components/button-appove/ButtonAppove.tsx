@@ -1,6 +1,7 @@
-import { CheckOutlined } from '@ant-design/icons'
+import { SIZE_ICON } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
-import { Button, ButtonProps } from 'antd'
+import { CheckFat } from '@phosphor-icons/react'
+import { Button, ButtonProps, Tooltip } from 'antd'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -10,26 +11,29 @@ interface ButtonAppoveProps extends ButtonProps {
 }
 
 const ButtonAppove = (props: ButtonAppoveProps) => {
-  const { label, module } = props
-  const { t } = useTranslation()
+  const { module } = props
 
   const { permissions } = useAppSelector((state) => state.auth.profile)
+  const { t } = useTranslation()
 
   /**
    * function get view permission
    */
   const isHasPermission = useCallback((): boolean => {
-    return false
+    const moduleCreate = module + ':approve'
+    if (permissions.includes('admin*') || permissions.includes(moduleCreate))
+      return true
+    else return false
   }, [permissions])
 
-  return (
-    <Button
-      icon={<CheckOutlined />}
-      hidden={isHasPermission()}
-      {...props}
-    >
-      {label ? t(label) : t('buttons.approve')}
-    </Button>
+  return !isHasPermission() ? null : (
+    <Tooltip title={t('tooltips.approve')}>
+      <Button
+        icon={<CheckFat size={SIZE_ICON} />}
+        hidden={isHasPermission()}
+        {...props}
+      />
+    </Tooltip>
   )
 }
 

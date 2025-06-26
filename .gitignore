@@ -32,3 +32,5 @@ openapi-config.js
 turbo.json
 
 .env
+
+.cursor

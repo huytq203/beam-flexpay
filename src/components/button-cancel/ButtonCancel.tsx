@@ -2,16 +2,15 @@ import { SIZE_ICON } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
 import { Bandaids } from '@phosphor-icons/react'
 import { Button, ButtonProps } from 'antd'
-import { t } from 'i18next'
 import { useCallback } from 'react'
 
 interface CustomButtonProps extends ButtonProps {
   module: string
   label?: string
 }
-const ButtonCancel = (props: CustomButtonProps) => {
-  const { module } = props
 
+const ButtonCancel = (props: CustomButtonProps): JSX.Element | null => {
+  const { module, children, ...rest } = props
   const { permissions } = useAppSelector((state) => state.auth.profile)
 
   /**
@@ -19,16 +18,20 @@ const ButtonCancel = (props: CustomButtonProps) => {
    */
   const isHasPermission = useCallback((): boolean => {
     const moduleCreate = module + ':update'
-    if (permissions.includes('admin*') || permissions.includes(moduleCreate))
-      return true
-    else return false
-  }, [permissions])
-  return !isHasPermission() ? null : (
+    return permissions.includes('admin*') || permissions.includes(moduleCreate)
+  }, [permissions, module])
+
+  if (!isHasPermission()) return null
+
+  return (
     <Button
       icon={<Bandaids size={SIZE_ICON} />}
-      hidden={isHasPermission()}
-      {...props}
-    />
+      danger
+      {...rest}
+    >
+      {children || 'Cancel'}
+    </Button>
   )
 }
+
 export default ButtonCancel

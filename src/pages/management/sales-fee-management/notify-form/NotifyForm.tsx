@@ -35,7 +35,7 @@ function NotifyForm({ onCancel, selectedItem }: IProps) {
         label={t`management.sales-fee.title-notify`}
       >
         <Select
-          showArrow={false}
+          suffixIcon={null}
           disabled
           placeholder={t`management.sales-fee.placeholders.title`.toString()}
           maxLength={255}
@@ -47,7 +47,7 @@ function NotifyForm({ onCancel, selectedItem }: IProps) {
         label={t`management.sales-fee.childProduct`}
       >
         <Select
-          showArrow={false}
+          suffixIcon={null}
           disabled
           placeholder={t`management.sales-fee.placeholders.childProduct`.toString()}
         />
@@ -58,7 +58,7 @@ function NotifyForm({ onCancel, selectedItem }: IProps) {
         label={t`management.sales-fee.apply`}
       >
         <Select
-          showArrow={false}
+          suffixIcon={null}
           disabled
           options={objectOptionsNotify}
           placeholder={t`management.sales-fee.placeholders.apply`.toString()}

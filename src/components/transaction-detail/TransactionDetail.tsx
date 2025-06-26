@@ -5,7 +5,7 @@ import {
   useLazyTransactionFindOneQuery,
   useTransactionUpdateStatusMutation
 } from '@services/cmsService'
-import { TransactionStatus } from '@type/transfer'
+import { TransactionStatus, TransactionSubType } from '@type/transfer'
 import {
   convertNumber,
   getTransactionStatus,
@@ -120,9 +120,42 @@ const TransactionDetail = ({ open, onCancel, id }: IProps) => {
           />
           <ItemDetail
             boldTitle={true}
-            title={t`transfer-history.accountName`.toString()}
-            data={transaction?.sourceAccountName}
+            title={t`transfer-history.value`.toString()}
+            data={convertNumber(transaction?.amount ?? 0) + ' VNĐ'}
           />
+          <ItemDetail
+            boldTitle={true}
+            title={t`transfer-history.account_number_to`.toString()}
+            data={transaction?.to}
+          />
+          <ItemDetail
+            boldTitle={true}
+            title={t`transfer-history.account_name_to`.toString()}
+            data={`${transaction?.destinationAccountName}`}
+          />
+          <ItemDetail
+            boldTitle={true}
+            title={t`transfer-history.account_number_from`.toString()}
+            data={transaction?.from}
+          />
+          <ItemDetail
+            boldTitle={true}
+            title={t`transfer-history.account_name_from`.toString()}
+            data={`${transaction?.sourceAccountName}`}
+          />
+          {(transaction?.subType === TransactionSubType.MAIN ||
+            transaction?.subType === TransactionSubType.RECEIVER ||
+            transaction?.subType === TransactionSubType.PARTNER) && (
+            <ItemDetail
+              boldTitle={true}
+              title={t`transfer-history.amount_transaction`.toString()}
+              data={
+                `${convertNumber(
+                  Math.abs((transaction?.amount ?? 0) + (transaction?.fee ?? 0))
+                )}` + ' VNĐ'
+              }
+            />
+          )}
           <ItemDetail
             boldTitle={true}
             title={t`transfer-history.transferType`.toString()}

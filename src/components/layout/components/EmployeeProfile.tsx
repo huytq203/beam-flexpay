@@ -26,9 +26,12 @@ function EmployeeProfile(props: CustomModalProps) {
   const { onClose, open } = props
   const { t } = useTranslation()
   const [form] = useForm()
-
-  const profile = useAppSelector((state: RootState) => state.auth.profile)
-  const getProfile = useUserGetMyInfoQuery()
+  const { accessToken, profile } = useAppSelector(
+    (state: RootState) => state.auth
+  )
+  const getProfile = useUserGetMyInfoQuery(undefined, {
+    skip: !accessToken
+  })
   const [changeProfile] = useUserUpdateMutation()
 
   const handleUpdate = async () => {
@@ -84,7 +87,7 @@ function EmployeeProfile(props: CustomModalProps) {
             type='email'
             readOnly
             value={profile.email}
-            bordered={false}
+            variant='borderless'
           />
         </Form.Item>
         <Form.Item
@@ -98,7 +101,7 @@ function EmployeeProfile(props: CustomModalProps) {
           label={t('employee.status')}
         >
           <Select
-            bordered={false}
+            variant='borderless'
             disabled
             suffixIcon={null}
             defaultValue={true}

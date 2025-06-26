@@ -148,11 +148,13 @@ export const PermissionGroupModal = ({
 
   const formatData = () => {
     let obj: any = {}
-    fakeData.data.map((el: GroupType) => {
-      el.groups.map((element: PermissionGroupType) => {
-        element.permissions.map((item: PermissionsType) => {
-          obj[item.permission] = item
-        })
+    fakeData.data.forEach((el) => {
+      el.groups.forEach((element) => {
+        if (element && element.permissions) {
+          element.permissions.forEach((item) => {
+            obj[item.permission] = item
+          })
+        }
       })
     })
     const initId = detailData?.data?.permissions
@@ -197,7 +199,7 @@ export const PermissionGroupModal = ({
       permissionDeleteNames:
         payLoadPermissionsDelete.length > 0
           ? payLoadPermissionsDelete
-          : listUnchecked,
+          : listUnchecked
     }
     const data: any = await updateAdminPermission(payload)
     if (data.data.statusCode === 200) {

@@ -87,7 +87,7 @@ export const BankSelection = (props: IBankSelection) => {
       allowClear
       placeholder={placeholder}
       showSearch
-      showArrow={false}
+      suffixIcon={null}
       filterOption={false}
       maxTagCount={2}
       onPopupScroll={onScroll}

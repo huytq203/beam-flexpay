@@ -94,7 +94,7 @@ function CustomPaymentMethod({
 
   return (
     <TreeSelect
-      showArrow
+      suffixIcon
       disabled={mode === viewMode.update}
       treeNodeFilterProp='label'
       treeCheckable={true}

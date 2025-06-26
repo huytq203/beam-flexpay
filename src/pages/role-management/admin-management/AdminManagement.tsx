@@ -27,7 +27,6 @@ import {
 import { ColumnsType } from 'antd/es/table'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Eye } from '@phosphor-icons/react'
 import { AdminModal } from './AdminModal/AdminModal'
 import { AdminManagementOptions } from '@constants/options'
 import ButtonView from '@components/button-view/ButtonView'

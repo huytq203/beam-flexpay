@@ -48,17 +48,7 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addMatcher(
-        authService.endpoints.userLogin.matchFulfilled,
-        (state, { payload }) => {
-          localStorage.setItem(appName, payload.accessToken)
-          return {
-            ...state,
-            accessToken: payload.accessToken
-          }
-        }
-      )
-      .addMatcher(
-        authService.endpoints.userLogin.matchFulfilled,
+        authService.endpoints.verifyLoginOtp.matchFulfilled,
         (state, { payload }) => {
           localStorage.setItem(appName, payload.accessToken)
           return {
