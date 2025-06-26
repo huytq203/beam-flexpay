@@ -96,6 +96,10 @@ const authentication = {
     {
       path: AUTHENTICATION + '/verify',
       element: createElement(VerifyAzure)
+    },
+    {
+      path: AUTHENTICATION + '/verify-code',
+      element: createElement(VerifyCode)
     }
   ]
 }
@@ -384,8 +388,4 @@ export const WalletRoutes = createBrowserRouter([
   reports,
   repaymentAndDisburse,
   internalWallet,
-  {
-    path: '/verify-code',
-    element: createElement(VerifyCode)
-  }
 ])

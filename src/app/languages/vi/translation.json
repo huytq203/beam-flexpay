@@ -246,6 +246,7 @@
     "decimalFormat": "Vui lòng chỉ nhập số và số thập phân",
     "password-format": "Nhập mật khẩu sai định dạng",
     "changePasswordSuccess": "Cập nhật mật khẩu thành công",
+    "getOtpSuccess": "Lấy mã OTP thành công",
     "changeProfileSuccess": "Cập nhật thông tin tài khoản thành công",
     "createProductTypeSuccess": "Tạo loại sản phẩm thành công",
     "deleteProductTypeSuccess": "Xóa loại sản phẩm thành công",
@@ -1650,8 +1651,18 @@
     "messages": {
       "email": "Bạn chưa nhập tài khoản",
       "password": "Bạn chưa nhập mật khẩu",
-      "email-format": "Tài khoản chưa chính xác",
+      "email-format": "Tài khoản chưa đúng định dạng",
       "sso-failed": "Có lỗi xảy ra vui lòng thử lại"
+    }
+  },
+  "verifyCode": {
+    "messages": {
+      "success": "Xác thực thành công",
+      "error": "Đã xảy ra lỗi khi xác thực",
+      "missingInfo": "Thiếu thông tin email hoặc trackingId",
+      "resendSuccess": "Đã gửi lại mã xác thực",
+      "resendFailed": "Không thể gửi lại mã xác thực",
+      "resendError": "Đã xảy ra lỗi khi gửi lại mã"  
     }
   },
   "forgot": {

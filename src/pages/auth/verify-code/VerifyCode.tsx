@@ -1,8 +1,21 @@
 import { useState } from 'react'
 import { Button, Card, Input } from 'antd'
 import './style.scss'
+import { useUserGetResendOtpMutation, useUserGetUserOtpMutation, useVerifyLoginOtpMutation } from '@services/cmsService';
+import { useNavigate } from 'react-router-dom';
+import { notification } from 'antd';
+import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next'
 
 const VerifyCode = () => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [verifyOtp, { isLoading }] = useVerifyLoginOtpMutation();
+  const [getResendOtp, { isLoading: isLoadingGetResendOtp }] = useUserGetResendOtpMutation();
+  const [searchParams] = useSearchParams();
+  //const trackingId = searchParams.get('trackingId');
+  const [trackingId, setTrackingId] = useState(searchParams.get('trackingId'));
+  const email = searchParams.get('email');
   const [verificationCode, setVerificationCode] = useState([
     '',
     '',
@@ -12,19 +25,68 @@ const VerifyCode = () => {
     ''
   ])
 
-  const handleVerify = () => {
-    const code = verificationCode.join('')
-    console.log('Xác nhận mã:', code)
-  }
+  const handleVerify = async () => {
+    const code = verificationCode.join('');
+    
+    try {
+      // Lấy dữ liệu OTP từ localStorage hoặc state
+      // const otpData = JSON.parse(localStorage.getItem('otpData') || '{}');
+      
+      // Gọi API xác thực OTP
+      const result = await verifyOtp({ 
+        verifyLoginOtp: {
+          otpCode: code,
+          action: 'ADMIN_LOGIN',
+          trackingId: trackingId || '',
+          email: email || ''
+          // Các thông tin khác nếu cần
+        }
+      });
+      
+      if ('data' in result && result.data) {
+        notification.success({ message: t('verifyCode.messages.success') });
+        navigate('/role/admin-account'); // Chuyển đến trang chính sau khi xác thực thành công
+      }
+    } catch (error) {
+      notification.error({ message: t('verifyCode.messages.error') });
+    }
+  };
 
-  const handleResendCode = () => {
-    console.log('Gửi lại mã')
-    // Reset code
-    setVerificationCode(['', '', '', '', '', ''])
+  const handleResendCode = async () => {
+    if (!email || !trackingId) {
+      notification.error({ message: t('verifyCode.messages.missingInfo') })
+      return
+    }
+    try {
+      const result = await getResendOtp({
+        adminGetOtp: {
+          email,
+          action: 'ADMIN_LOGIN'
+        }
+      })
+
+      if ('data' in result && result.data) {
+        notification.success({ message: t('verifyCode.messages.resendSuccess') });
+        setVerificationCode(['', '', '', '', '', '']);
+        
+        // Lấy trackingId mới từ kết quả trả về
+        const newTrackingId = result.data.trackingId;
+        if (newTrackingId) {
+          // Cập nhật trackingId
+          console.log('New trackingId:', newTrackingId);
+          setTrackingId(newTrackingId);
+        }
+      }
+      // else {
+      //   notification.error({ message: t('verifyCode.messages.resendFailed') })
+      // }
+    } catch (error) {
+      notification.error({ message: t('verifyCode.messages.resendError') })
+    }
   }
 
   const handleCancel = () => {
-    console.log('Hủy')
+    navigate('/auth/login');
   }
 
   const handleCodeChange = (index: number, value: string) => {
@@ -100,6 +162,8 @@ const VerifyCode = () => {
               className='resend-button'
               type='primary'
               onClick={handleResendCode}
+              loading={isLoadingGetResendOtp}
+              disabled={isLoadingGetResendOtp}
             >
               Gửi lại mã
             </Button>

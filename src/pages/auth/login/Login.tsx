@@ -13,7 +13,7 @@ import {
 } from 'antd'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import './style.scss'
 import { useLazyGetUrlLoginQuery } from '@services/cmsUser'
@@ -25,13 +25,33 @@ interface PayloadInterface {
 }
 
 function Login() {
+  // Add useNavigate hook
+  const navigate = useNavigate()
   const [login, { isLoading }] = useUserLoginMutation()
   const [getUrlLogin] = useLazyGetUrlLoginQuery()
   const { t } = useTranslation()
 
-  const onFinish = async (values: PayloadInterface) => {
-    await login({ userLoginDto: values })
-  }
+    const onFinish = async (values: PayloadInterface) => {
+      try {
+        const result = await login({ userLoginDto: values });
+        
+        if ('data' in result && result.data) {
+          // Chuyển hướng đến trang xác thực mã kèm theo dữ liệu cần thiết
+          navigate(`/auth/verify-code?trackingId=${result.data.trackingId}&email=${encodeURIComponent(values.email)}`);
+        }
+        // else {
+        //   notification.error({
+        //     message: t`login.failed`,
+        //     description: t`login.messages.invalid_credentials`
+        //   });
+        // }
+      } catch (error) {
+        notification.error({
+          message: t`login.failed`,
+          description: t`login.messages.server_error`
+        });
+      }
+    }
 
   const ssoLogin = async () => {
     try {
@@ -66,10 +86,15 @@ function Login() {
       >
         <Form.Item
           name='email'
+          validateTrigger={['onChange', 'onBlur']} // Thêm dòng này để validate khi thay đổi và khi blur
           rules={[
             {
               required: true,
               message: t`login.messages.email`.toString()
+            },
+            {
+              type: 'email',
+              message: t`login.messages.email-format` || 'Vui lòng nhập đúng định dạng email'
             }
           ]}
           normalize={(value) => value.trim()}
@@ -77,6 +102,11 @@ function Login() {
           <Input
             prefix={<UserOutlined className='site-form-item-icon' />}
             placeholder={t`login.placeholders.email`.toString()}
+            onChange={(e) => {
+              // Hàm này giúp kích hoạt validate khi giá trị thay đổi
+              const form = Form.useFormInstance();
+              form.validateFields(['email']).catch(() => {});
+            }}
           />
         </Form.Item>
         <Form.Item

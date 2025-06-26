@@ -2,6 +2,7 @@ import { GUTTER } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
 import {
   useUserChangePasswordMutation,
+  useUserGetMyInfoQuery,
   useUserGetUserOtpMutation
 } from '@services/cmsService'
 import { CustomModalProps } from '@type/api'
@@ -10,18 +11,25 @@ import { Button, Col, Form, Input, Modal, Row, notification } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { RootState } from 'src/app/store'
 
 function EmployeePassword(props: CustomModalProps) {
   const { onClose, open } = props
   const { t } = useTranslation()
   const [form] = useForm()
-  const { profile } = useAppSelector((state) => state.auth)
+  const { accessToken, profile } = useAppSelector(
+    (state: RootState) => state.auth
+  )
+  const getProfile = useUserGetMyInfoQuery(undefined, {
+    skip: !accessToken
+  })
   const [trackingId, setTrackingId] = useState<string | null>(null)
   const [disabled, setDisabled] = useState<boolean>(true)
 
   const [changePassword] = useUserChangePasswordMutation()
   const [getOTP] = useUserGetUserOtpMutation()
 
+  console.log(getProfile.data?.email)
   const handleChangePassword = async () => {
     const record: IChangePassword = {
       trackingId: trackingId || '',
@@ -45,10 +53,11 @@ function EmployeePassword(props: CustomModalProps) {
   const handleGetOTP = async () => {
     const otp = await getOTP({
       adminGetOtp: {
-        email: profile.email,
+        email: getProfile.data?.email || '',
         action: 'ADMIN_CHANGE_PASSWORD'
       }
     }).unwrap()
+    notification.success({ message: t('messages.getOtpSuccess') })
     if (otp) {
       setTrackingId(otp.trackingId)
     }

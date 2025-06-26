@@ -29,6 +29,13 @@ export type UserGetUserOtpApiResponse = /** status 201  */ OtpDataDto;
 export type UserGetUserOtpApiArg = {
   adminGetOtp: AdminGetOtp;
 };
+export type UserGetResendOtpApiResponse = /** status 201  */ OtpDataDto;
+export type UserGetResendOtpApiArg = {
+  adminGetOtp: AdminGetOtp;
+};
+export type VerifyLoginOtpApiArg = {
+  verifyLoginOtp: VerifyLoginOtp;
+};
 export type UserLoginApiResponse = /** status 201  */ UserLoginResponse;
 export type UserLoginApiArg = {
   /** Username and password */
@@ -1498,8 +1505,14 @@ export type OtpDataDto = {
 };
 export type AdminGetOtp = {
   email: string;
-  action: 'ADMIN_CHANGE_PASSWORD';
+  action: 'ADMIN_CHANGE_PASSWORD'|'ADMIN_LOGIN';
 };
+export type VerifyLoginOtp = {
+  otpCode: string;
+  trackingId: string;
+  email: string;
+  action: 'ADMIN_CHANGE_PASSWORD'|'ADMIN_LOGIN';
+}
 export type UserLoginResponse = {
   accessToken: string;
   id: number;
