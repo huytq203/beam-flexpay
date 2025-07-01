@@ -1679,7 +1679,10 @@
       "email": "Vui lòng nhập email"
     },
     "messages": {
-      "email": "Vui lòng cung cấp email"
+      "email": "Vui lòng cung cấp email",
+      "missingEmail": "Vui lòng cung cấp email",
+      "forgotPasswordSuccess": "Email đã được gửi đến bạn",
+      "forgotPasswordError": "Đã xảy ra lỗi khi gửi email"
     }
   },
   "reset": {
@@ -1697,7 +1700,12 @@
     "messages": {
       "dont-match": "Mật khẩu không khớp",
       "password": "Vui lòng cung cấp mật khẩu",
-      "passwordConfirm": "Vui lòng cung cấp mật khẩu"
+      "passwordConfirm": "Vui lòng cung cấp mật khẩu",
+      "tokenMissing": "Token không tồn tại",
+      "passwordMismatch": "Mật khẩu không khớp",
+      "passwordResetSuccess": "Mật khẩu đã được đặt lại",
+      "passwordResetFailed": "Thất bại, vui lòng thử lại",
+      "passwordResetError": "Đã xảy ra lỗi khi đặt lại mật khẩu"
     }
   },
   "employee": {

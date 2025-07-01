@@ -9,8 +9,7 @@ import { TimeFullFormat } from '@constants/datetime'
 import { applicableObjects } from '@constants/options'
 import {
   useLazyCustomerFindAllQuery,
-  useLazyGroupFindAllQuery,
-  useSystemFeeManagementFindOneQuery
+  useLazyGroupFindAllQuery
 } from '@services/cmsService'
 import { APPLICABLE_OBJECTS, pageEnum } from '@type/policyManagement'
 import { convertNumber } from '@utils/helperFunctions'
