@@ -1,5 +1,7 @@
+import { PaymentMethod } from "./bank";
 import { accountStatus } from "./customer";
 import { ReportType } from "./report";
+import { FrozenStatus, TransactionStatus, TransactionType } from "./transfer";
 
 export type PaginationParams = {
   order?: 'ASC' | 'DESC';
@@ -313,6 +315,46 @@ export type ProductTypeRemoveApiResponse = unknown;
 export type ProductTypeRemoveApiArg = {
   id: string;
 };
+export type TransactionStepFindByReferenceIdApiResponse =
+  /** status 200  */ TransactionStepPageDto;
+export type TransactionStepFindByReferenceIdApiArg = {
+  referenceId: string;
+};
+
+export type TransactionMainFindAllApiResponse =
+  /** status 200  */ TransactionPageDto;
+export type TransactionMainFindAllApiArg = {
+  order?: 'ASC' | 'DESC';
+  page: number;
+  take: number;
+  query?: string;
+  code?: string;
+  referenceId?: string;
+  type?:
+  | 'DEPOSIT'
+  | 'TRANSFER'
+  | 'RECEIVAL'
+  | 'RECEIVE'
+  | 'PAYMENT'
+  | 'MERCHANT_PAYMENT_FEE'
+  | 'DISBURSE'
+  | 'WITHDRAWAL'
+  | 'WITHDRAWAL_FEE'
+  | 'REFUND'
+  | 'TOPUP'
+  | 'CASHIN_FEE';
+  status?:
+  | 'SUCCESS'
+  | 'APPROVED'
+  | 'PENDING'
+  | 'FAILED'
+  | 'ERROR'
+  | 'REFUND_SUCCESS';
+  from?: string;
+  to?: string;
+  accountNumber?: string;
+  orderBy?: string;
+};
 export type TransactionFindAllApiResponse =
   /** status 200  */ TransactionPageDto;
 export type TransactionFindAllApiArg = {
@@ -347,6 +389,10 @@ export type TransactionFindAllApiArg = {
   accountNumber?: string;
   orderBy?: string;
 };
+export type TransactionInfoFindOneApiArg = {
+  id: string;
+};
+export type TransactionInfoFindOneApiResponse = /** status 200  */ TransactionInfoDto;
 export type TransactionFindOneApiResponse = /** status 200  */ TransactionDto;
 export type TransactionFindOneApiArg = {
   id: string;
@@ -430,6 +476,10 @@ export type PaymentLinkCancelTokenApiResponse =
   /** status 200  */ PaymentLinkCmsDto;
 export type PaymentLinkCancelTokenApiArg = {
   id: number;
+};
+export type PaymentLinkUpdateStatusApiResponse = unknown;
+export type PaymentLinkUpdateStatusApiArg = {
+  id: string;
 };
 export type BankCmsFindAllApiResponse = /** status 200  */ BankPageDto;
 export type BankCmsFindAllApiArg = {
@@ -1583,6 +1633,12 @@ export type BalanceDto = {
   createdAt: string;
   updatedAt: string;
 };
+export type CustomerInfoWalletDto = {
+  fullName: string;
+  sub: string;
+  phoneNumber: string;
+  active: boolean;
+}
 export type CustomerBalanceDetailDto = {
   balances: BalanceDto[];
   id: number;
@@ -1804,6 +1860,39 @@ export type TransactionPageDto = {
   data: any[];
   meta: PageMetaDto;
 };
+export type TransactionMainPageDto = {
+  data: any[];
+  meta: PageMetaDto;
+};
+export type TransactionStepPageDto = {
+  data: TransactionStepDto[];
+  meta: PageMetaDto;
+};
+export type TransactionStepDto = {
+  id: string;
+  sourceAccountNumber: string;
+  destinationAccountNumber: string;
+  subType: string;
+  amount: number;
+  errorCode: string;
+  createdAt: Date;
+};
+export type TransactionMainDto = {
+  code: string;
+  amount: number;
+  fee: number;
+  note: string;
+  createdAt: Date;
+  type: TransactionType;
+  status: TransactionStatus;
+  bankName: string,
+  paymentMethod: PaymentMethod,
+}
+export type TransactionInfoDto = {
+  transactionSteps: TransactionStepDto[];
+  transaction: TransactionMainDto;
+  customer: CustomerInfoWalletDto;
+}
 export type TransactionDto = {
   code: string;
   amount: number;
@@ -1829,6 +1918,7 @@ export type TransactionDto = {
   referenceId: string;
   references: TransactionReference[];
   subType: string;
+  frozenStatus: FrozenStatus;
 };
 export type TransactionReference = {
   amount: number;
@@ -1943,6 +2033,8 @@ export type PaymentLinkCustomerDto = {
 
   token: string;
 
+  status: number;
+  
   provider: string;
   createdAt: string;
   deletedAt: string;

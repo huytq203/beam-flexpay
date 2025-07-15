@@ -412,6 +412,7 @@
     "time": "Thời gian giao dịch",
     "transferNumber": "Mã giao dịch",
     "accountName": "Tài khoản",
+    "accountCode": "Mã tài khoản",
     "transferType": "Loại giao dịch",
     "description": "Mô tả",
     "transferTo": "Đối tượng giao dịch",
@@ -431,6 +432,8 @@
     "account_number_to": "Số tài khoản đích",
     "account_name_to": "Tên tài khoản đích",
     "amount_transaction": "Số tiền giao dịch",
+    "bankName": "Ngân hàng",
+    "paymentMethod": "Phương thức thanh toán",
     "getNote": {
       "deposit": "Nạp tiền vào {{wallet}} từ {{bank}}",
       "withdraw": "Rút tiền từ {{wallet}} vào {{bank}}",
@@ -457,7 +460,16 @@
       "receive": "Nhận tiền",
       "topup": "Nạp tiền điện thoại"
     },
+    "subTypes": {
+      "transfer": "Chuyển tiền",
+      "receive_vat": "Thuế giá trị gia tăng người nhận",
+      "vat": "Thuế giá trị gia tăng người chuyển",
+      "fee": "Phí dịch vụ người chuyển",
+      "fee_receive": "Phí dịch vụ người nhận"
+
+    },
     "choice": {
+      "init": "Khởi tạo",
       "all": "Tất cả",
       "success": "Thành công",
       "inprogress": "Đang xử lý",
@@ -474,6 +486,13 @@
       "type": "Chọn loại giao dịch",
       "from": "Từ ngày",
       "to": "Đến ngày"
+    },
+    "paymentMethodType": {
+      "atmCard": "Thẻ ATM",
+      "eWallet": "Ví điện tử",
+      "qrCode": "QR Code",
+      "bankTransfer": "Chuyển khoản ngân hàng",
+      "internationalCard": "Thẻ quốc tế"
     }
   },
   "napas-transaction": {
@@ -546,6 +565,8 @@
     "enterprise": "Doanh nghiệp"
   },
   "freezeAndUnfreezeAccount": {
+    "freezeTransaction": "Đóng băng giao dịch",
+    "unFreezeTransaction": "Mở băng giao dịch",
     "successFreeze": "Đóng băng thành công",
     "successUnFreeze": "Mở băng thành công",
     "title": "Đóng băng số dư tài khoản",
@@ -569,7 +590,21 @@
     "openFreezeHistoryTitle": "Lịch sử mở băng",
     "close": "Đóng",
     "submit": "Đóng băng",
+    "label": {
+      "id": "Mã đóng băng",
+      "transactionId": "Mã giao dịch gốc",
+      "startDate": "Từ ngày",
+      "endDate": "Đến ngày",
+      "status": "Trạng thái",
+      "freeze": "Đã đóng băng",
+      "unfreeze": "Đã mở băng"
+    },
     "placeholders": {
+      "id": "Nhập mã đóng băng...",
+      "transactionId": "Nhập mã giao dịch gốc...",
+      "startDate": "dd/mm/yyyy",
+      "endDate": "dd/mm/yyyy",
+      "status": "Trạng thái",
       "phoneNumber": "Nhập số điện thoại...",
       "money": "Nhập số tiền cần đóng băng...",
       "reason": "Nhập lý do..."
@@ -2228,6 +2263,18 @@
       "total": "Tổng giá trị"
     }
   },
+  "transaction-step":{
+    "number": "STT",
+    "transferTime": "Thời gian",
+    "sourceAccountNumber": "Số tài khoản chuyển",
+    "destinationAccountNumber": "Số tài khoản nhận",
+    "transferType": "Loại giao dịch",
+    "value": "Giá trị",
+    "status": "Trạng thái",
+    "description": "Mô tả",
+    "transferTo": "Đối tượng giao dịch",
+    "phoneNumber": "Số điện thoại"
+  },
   "notification-management": {
     "close": "Đóng",
     "service": "Loại dịch vụ",
@@ -2646,6 +2693,12 @@
       "add": "Hạch toán (+) tiền",
       "reduce": "Hạch toán (-) tiền",
       "bank-name":"Nhập tên ngân hàng"
+    }
+  },
+  "payment-link": {
+    "status": {
+      "active": "Đã xác minh",
+      "inactive": "Chưa xác minh"
     }
   }
 }

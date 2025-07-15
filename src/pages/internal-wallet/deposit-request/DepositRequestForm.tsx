@@ -57,56 +57,7 @@ function DepositRequestForm({ record, onCancel, title, mode, isShow }: props) {
       take: 10
     })
   const handleSubmit = async (value: any) => {
-    console.log('handleSubmit', value)
-    // try {
-    //   setLoading(true)
-    //   let data: any
-
-    //   if (mode === viewMode.create) {
-    //     data = await createDepositRequest(value)
-    //   } else if (mode === viewMode.update) {
-    //     let initData = { ...depositRequest.data }
-    //     let valueTypeUpdate: string[] = []
-    //     const { walletType = 'Ví nội bộ', ...payload } = { ...value }
-    //     valueTypeUpdate = compareData(initData, payload)
-    //     data = await updateDepositRequest({
-    //       name: value.name,
-    //       id: record?.id,
-    //       valueTypeUpdate: valueTypeUpdate
-    //     })
-    //   }
-
-    //   const { statusCode } = data.data
-
-    //   const successMessage =
-    //     mode === viewMode.create
-    //       ? t`internal-wallet.messages.create-deposit-request-success`
-    //       : t`internal-wallet.messages.update-deposit-request-success`
-
-    //   const errorMessage =
-    //     mode === viewMode.create
-    //       ? t`internal-wallet.messages.create-deposit-request-failed`
-    //       : t`internal-wallet.messages.update-deposit-request-failed`
-
-    //   if (
-    //     statusCode === STATUS_CODE.CREATED ||
-    //     statusCode === STATUS_CODE.SUCCESS
-    //   ) {
-    //     openNotification(successMessage, 'success')
-    //     onCancel()
-    //   } else {
-    //     openNotification(errorMessage, 'error')
-    //   }
-    // } catch (error) {
-    //   const errorMessage =
-    //     mode === viewMode.create
-    //       ? t`internal-wallet.messages.create-deposit-request-failed`
-    //       : t`internal-wallet.messages.update-deposit-request-failed`
-    //   openNotification(errorMessage, 'error')
-    // } finally {
-    //   setLoading(false)
-    //   form.resetFields()
-    // }
+    
   }
 
   const walletGroupValue = Form.useWatch('walletGroup', {

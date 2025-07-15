@@ -23,7 +23,7 @@ import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import DepositRequestModal from './deposit-request-modal/DepositRequestModal'
-import ButtonAppove from '@components/button-appove/ButtonAppove'
+import ButtonApprover from '@components/button-approver/ButtonApprover'
 
 function DepositRequest() {
   const { t } = useTranslation()
@@ -155,7 +155,6 @@ function DepositRequest() {
             <Col>
               <ButtonUpdate
                 onClick={() => {
-                  console.log('record', record)
                   setSelectedId(record.id)
                   setMode(viewMode.update)
                   triggerModal(true)
@@ -164,10 +163,9 @@ function DepositRequest() {
               />
             </Col>
             <Col>
-              <ButtonAppove
+              <ButtonApprover
                 module='internalwallet'
                 onClick={() => {
-                  console.log('record', record)
                   setSelectedId(record.id)
                   setMode(viewMode.update)
                   triggerModal(true)

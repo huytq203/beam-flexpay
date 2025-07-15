@@ -1,6 +1,6 @@
 import { SIZE_ICON } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
-import { Bandaids } from '@phosphor-icons/react'
+import { Bandaids, BandaidsIcon } from '@phosphor-icons/react'
 import { Button, ButtonProps } from 'antd'
 import { useCallback } from 'react'
 
@@ -25,7 +25,7 @@ const ButtonCancel = (props: CustomButtonProps): JSX.Element | null => {
 
   return (
     <Button
-      icon={<Bandaids size={SIZE_ICON} />}
+      icon={<BandaidsIcon size={SIZE_ICON} />}
       danger
       {...rest}
     >

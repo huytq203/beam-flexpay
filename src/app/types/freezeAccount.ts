@@ -1,3 +1,4 @@
+import { Dayjs } from 'dayjs'
 import { IPageSearch } from './api'
 
 export interface Pagination {
@@ -68,6 +69,8 @@ export type CustomerElementType = {
 }
 
 export interface FreezeAndUnfreezeAccountSearchParams {
+  id?: string
+  transactionId?: string
   customerAccountNumber?: string
   email?: string
   phoneNumber?: string
@@ -75,4 +78,6 @@ export interface FreezeAndUnfreezeAccountSearchParams {
   page?: number
   take?: number
   orderBy?: string
+  startDate?: Date
+  endDate?: Date
 }

@@ -1,28 +1,12 @@
-import ItemDetail from '@components/item-detail/ItemDetail'
-import { GUTTER } from '@constants/appConstant'
+import FloatingLabelInput from '@components/floating-label-input/FloatingLabelInput'
+import TransactionStep from '@components/transaction-step/TransactionStep'
 import { TimeFullFormat } from '@constants/datetime'
-import {
-  useLazyTransactionFindOneQuery,
-  useTransactionUpdateStatusMutation
-} from '@services/cmsService'
-import { TransactionStatus, TransactionSubType } from '@type/transfer'
-import {
-  convertNumber,
-  getTransactionStatus,
-  getTransactionType
-} from '@utils/helperFunctions'
-import {
-  Button,
-  Col,
-  Modal,
-  Radio,
-  RadioChangeEvent,
-  Row,
-  Tag,
-  message
-} from 'antd'
+import { useTransactionInfoFindOneQuery } from '@services/cmsService'
+import { CustomerInfoWalletDto, TransactionMainDto, TransactionStepDto } from '@type/application'
+import { convertLocalStringNumber, getPaymentMethod, getStatusText, getTextTransactionStatus, getTransactionType } from '@utils/helperFunctions'
+import { Col, Divider, Empty, Modal, Row, Spin, Typography } from 'antd'
 import dayjs from 'dayjs'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 interface IProps {
@@ -30,208 +14,146 @@ interface IProps {
   onCancel: () => void
   id: string
 }
-
-type StatusType =
-  | 'SUCCESS'
-  | 'APPROVED'
-  | 'PENDING'
-  | 'FAILED'
-  | 'ERROR'
-  | 'REFUND_SUCCESS'
+const xs = 24
+const md = 12
+const xl = 6
 
 const TransactionDetail = ({ open, onCancel, id }: IProps) => {
   const { t } = useTranslation()
 
-  const [type, setType] = useState<StatusType>()
+  const { data, isLoading, isError, refetch } = useTransactionInfoFindOneQuery({ id }, { skip: !id })
 
-  const [changeStatus] = useTransactionUpdateStatusMutation()
-
-  const [fnQuery, { data: transaction }] = useLazyTransactionFindOneQuery()
-
-  const plainOptions = [
-    {
-      label: t`transfer-history.modal.approve`,
-      value: TransactionStatus.SUCCESS
-    },
-    {
-      label: t`transfer-history.modal.reject`,
-      value: TransactionStatus.FAILED
-    }
-  ]
-
-  const onChange = (event: RadioChangeEvent) => {
-    setType(event.target.value)
-  }
-
-  const showMessage = (msg: string) => {
-    message.destroy()
-    message.success(msg)
-  }
-
-  const updateTransaction = () => {
-    if (type !== undefined) {
-      changeStatus({ id, updateTransactionStatusDto: { status: type } })
-        .unwrap()
-        .then(() => {
-          if (type === 'SUCCESS') {
-            showMessage(
-              t('transfer-history.modal.approved-success', {
-                transaction: transaction?.code
-              })
-            )
-          } else {
-            showMessage(
-              t('transfer-history.modal.rejected-success', {
-                transaction: transaction?.code
-              })
-            )
-          }
-          setType(undefined)
-        })
-      onCancel()
-    }
-  }
-
-  const onClose = () => {
-    setType(undefined)
-    onCancel()
-  }
+  // Memo hóa các giá trị derived
+  const transactionMain = useMemo(
+    () => data?.transaction as TransactionMainDto | undefined,
+    [data]
+  )
+  const customerInfo = useMemo(
+    () => data?.customer as CustomerInfoWalletDto | undefined,
+    [data]
+  )
+  const transactionSteps = useMemo(
+    () => data?.transactionSteps as TransactionStepDto[] | undefined,
+    [data]
+  )
 
   useEffect(() => {
-    if (id) fnQuery({ id: id })
-  }, [id])
+    if (id && open) refetch()
+  }, [id, open, refetch])
+
+  const onClose = () => {
+    onCancel()
+  }
 
   return (
     <Modal
       open={open}
       title={t`transfer-history.modal.detail`}
-      width={850}
+      width={1200}
       footer={null}
       onCancel={onClose}
       centered
+      destroyOnClose
       afterClose={() => {}}
     >
-      <Row>
-        <Col flex='1'>
-          <ItemDetail
-            boldTitle={true}
-            title={t`transfer-history.transferNumber`.toString()}
-            data={transaction?.referenceId}
-          />
-          <ItemDetail
-            boldTitle={true}
-            title={t`transfer-history.value`.toString()}
-            data={convertNumber(transaction?.amount ?? 0) + ' VNĐ'}
-          />
-          <ItemDetail
-            boldTitle={true}
-            title={t`transfer-history.account_number_to`.toString()}
-            data={transaction?.to}
-          />
-          <ItemDetail
-            boldTitle={true}
-            title={t`transfer-history.account_name_to`.toString()}
-            data={`${transaction?.destinationAccountName}`}
-          />
-          <ItemDetail
-            boldTitle={true}
-            title={t`transfer-history.account_number_from`.toString()}
-            data={transaction?.from}
-          />
-          <ItemDetail
-            boldTitle={true}
-            title={t`transfer-history.account_name_from`.toString()}
-            data={`${transaction?.sourceAccountName}`}
-          />
-          {(transaction?.subType === TransactionSubType.MAIN ||
-            transaction?.subType === TransactionSubType.RECEIVER ||
-            transaction?.subType === TransactionSubType.PARTNER) && (
-            <ItemDetail
-              boldTitle={true}
-              title={t`transfer-history.amount_transaction`.toString()}
-              data={
-                `${convertNumber(
-                  Math.abs((transaction?.amount ?? 0) + (transaction?.fee ?? 0))
-                )}` + ' VNĐ'
-              }
-            />
-          )}
-          <ItemDetail
-            boldTitle={true}
-            title={t`transfer-history.transferType`.toString()}
-            data={`${
-              transaction?.type ? getTransactionType(transaction?.type) : ''
-            }`}
-          />
-          <ItemDetail
-            boldTitle={true}
-            title={t`transfer-history.status`.toString()}
-            data={
-              <Tag
-                color={getTransactionStatus(transaction?.status ?? '')?.value}
-              >
-                {getTransactionStatus(transaction?.status ?? '')?.label}
-              </Tag>
-            }
-          />
-        </Col>
-        <Col flex='1'>
-          {transaction?.references.map((ref) => (
-            <ItemDetail
-              key={crypto.randomUUID()}
-              boldTitle={true}
-              title={Number(ref.amount) > 0 ? ref.to : ref.from}
-              data={convertNumber(ref.amount) + ' VNĐ'}
-            />
-          ))}
-          <ItemDetail
-            boldTitle={true}
-            title={t`transfer-history.time`.toString()}
-            data={`${dayjs(transaction?.createdAt).format(TimeFullFormat)}`}
-          />
-          <ItemDetail
-            boldTitle={true}
-            title={t`transfer-history.note`.toString()}
-            data={transaction?.note}
-          />
-          {transaction?.status === TransactionStatus.PENDING && (
-            <Row className='mb-20'>
-              <Col>
-                <Radio.Group
-                  options={plainOptions}
-                  onChange={onChange}
-                  value={type}
-                />
-              </Col>
-            </Row>
-          )}
-        </Col>
-      </Row>
-      <Row
-        justify='center'
-        gutter={GUTTER}
-      >
-        {transaction?.status === TransactionStatus.PENDING && (
-          <Col span={2}>
-            <Button
-              type='primary'
-              onClick={updateTransaction}
-              disabled={!type}
-            >
-              {t('transfer-history.modal.update')}
-            </Button>
-          </Col>
-        )}
-        <Col span={2}>
-          <Button
-            type='primary'
-            onClick={onClose}
-          >
-            {t('buttons.close')}
-          </Button>
-        </Col>
-      </Row>
+      {isLoading ? (
+        <Spin style={{ display: 'flex', justifyContent: 'center', margin: '40px 0' }} />
+      ) : isError ? (
+        <Empty description={t('transfer-history.noData') || 'Không có dữ liệu'} />
+      ) : !transactionMain ? (
+        <Empty description={t('transfer-history.noData') || 'Không có dữ liệu'} />
+      ) : (
+        <>
+          <Divider className='mt-20'>Thông Tin Chi Tiết Giao Dịch</Divider>
+          <Row>
+            <Col xs={xs} md={md} xl={xl}>
+              <FloatingLabelInput
+                label={t`transfer-history.transferNumber`.toString()}
+                value={transactionMain?.code || ''}
+              />
+            </Col>
+            <Col xs={xs} md={md} xl={xl}>
+              <FloatingLabelInput
+                label={t`transfer-history.transferType`.toString()}
+                value={getTransactionType(transactionMain?.type || '')}
+              />
+            </Col>
+            <Col xs={xs} md={md} xl={xl}>
+              <FloatingLabelInput
+                label={t`transfer-history.amount_transaction`.toString()}
+                value={convertLocalStringNumber(transactionMain?.amount || 0)}
+              />
+            </Col>
+            <Col xs={xs} md={md} xl={xl}>
+              <FloatingLabelInput
+                label={t`transfer-history.fee`.toString()}
+                value={convertLocalStringNumber(transactionMain?.fee || 0)}
+              />
+            </Col>
+            <Col xs={xs} md={md} xl={xl}>
+              <FloatingLabelInput
+                label={t`transfer-history.status`.toString()}
+                value={getTextTransactionStatus(transactionMain?.status || '')}
+              />
+            </Col>
+            <Col xs={xs} md={md} xl={xl}>
+              <FloatingLabelInput
+                label={t`transfer-history.time`.toString()}
+                value={dayjs(transactionMain?.createdAt).format(TimeFullFormat)}
+              />
+            </Col>
+            <Col xs={xs} md={md} xl={xl}>
+              <FloatingLabelInput
+                label={t`transfer-history.note`.toString()}
+                value={transactionMain?.note || ''}
+              />
+            </Col>
+            <Col xs={xs} md={md} xl={xl}>
+              <FloatingLabelInput
+                label={t`transfer-history.bankName`.toString()}
+                value={transactionMain?.bankName || ''}
+              />
+            </Col>
+            <Col xs={xs} md={md} xl={xl}>
+              <FloatingLabelInput
+                label={t`transfer-history.paymentMethod`.toString()}
+                value={getPaymentMethod(transactionMain?.paymentMethod || '')}
+              />
+            </Col>
+          </Row>
+          <Divider className='mt-20'>Thông Tin Ví Điện Tử </Divider>
+          <Row>
+            <Col xs={xs} md={md} xl={xl}>
+              <FloatingLabelInput
+                label={t`transfer-history.accountName`.toString()}
+                value={customerInfo?.fullName || ''}
+              />
+            </Col>
+            <Col xs={xs} md={md} xl={xl}>
+              <FloatingLabelInput
+                label={t`transfer-history.accountCode`.toString()}
+                value={customerInfo?.sub || ''}
+              />
+            </Col>
+            <Col xs={xs} md={md} xl={xl}>
+              <FloatingLabelInput
+                label={t`transfer-history.phoneNumber`.toString()}
+                value={customerInfo?.phoneNumber || ''}
+              />
+            </Col>
+            <Col xs={xs} md={md} xl={xl}>
+              <FloatingLabelInput
+                label={t`transfer-history.status`.toString()}
+                value={getStatusText(customerInfo?.active)}
+              />
+            </Col>
+          </Row>
+          <Divider className='mt-20'>Lịch Sử Luồng Tiền</Divider>
+          <TransactionStep transactionSteps={transactionSteps || []} />
+        </>
+      )}
     </Modal>
   )
 }
+
 export default TransactionDetail

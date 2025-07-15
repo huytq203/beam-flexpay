@@ -148,7 +148,7 @@ const UnFreezeAccount = (props: UnfreezeAccountType) => {
       customerAccountNumber: searchValue
     })
     form.setFieldsValue({
-      reason: undefined,
+      reason: undefined,  
       freezeBalanceRequest: undefined
     })
     if (data.data.statusCode === 201) {

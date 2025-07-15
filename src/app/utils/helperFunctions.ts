@@ -10,12 +10,13 @@ import { BANK_MANAGEMENT, BANK_TYPE } from '@pages/system-management/bank-manage
 import { NOTIFICATION_CONTEXT_SETTING, NOTIFICATION_TYPE_OBJECT, NOTIFICATION_TYPE_SERVICE } from '@pages/system-management/notification-management/NotificationManagementConst'
 import { accountStatus } from '@type/customer'
 import { APPLICABLE_OBJECTS, history_type } from '@type/policyManagement'
-import { TransactionStatus, TransactionType } from '@type/transfer'
+import { TransactionStatus, TransactionSubType, TransactionType } from '@type/transfer'
 import { notification } from 'antd'
 import dayjs from 'dayjs'
 import { t } from 'i18next'
 import { forOwn, fromPairs, isDate, isEqual, reduce } from 'lodash'
 import i18n from '../languages/i18n'
+import { PaymentMethod } from '@type/bank'
 
 export const getGender = (gender: string | number) => {
   switch (+gender) {
@@ -417,6 +418,24 @@ export const getTransactionStatus = (status: string) => {
         label: i18n.t('transfer-history.choice.reject'),
         value: 'error'
       }
+    case TransactionStatus.INIT:
+      return {
+        label: i18n.t('transfer-history.choice.init'),
+        value: 'default'
+    }
+  }
+}
+
+export const getTextTransactionStatus = (status: string) => {
+  switch (status) {
+    case TransactionStatus.SUCCESS:
+      return i18n.t('transfer-history.choice.success')
+    case TransactionStatus.PENDING:
+      return i18n.t('transfer-history.choice.inprogress')
+    case TransactionStatus.APPROVED:
+      return i18n.t('transfer-history.choice.approved')
+    case TransactionStatus.FAILED:
+      return i18n.t('transfer-history.choice.reject')
   }
 }
 
@@ -434,6 +453,21 @@ export const getTransactionType = (type: string) => {
       return i18n.t('transfer-history.types.receival')
     case TransactionType.TOPUP:
       return i18n.t('transfer-history.types.topup')
+  }
+}
+
+export const getPaymentMethod = (method: string) => {
+  switch (method) {
+    case PaymentMethod.ATM_CARD:
+      return i18n.t('transfer-history.paymentMethodType.atmCard')
+    case PaymentMethod.QR_CODE:
+      return i18n.t('transfer-history.paymentMethodType.qrCode')
+    case PaymentMethod.BANK_TRANSFER:
+      return i18n.t('transfer-history.paymentMethodType.bankTransfer')
+    case PaymentMethod.INTERNATIONAL_CARD:
+      return i18n.t('transfer-history.paymentMethodType.internationalCard')
+    case PaymentMethod.E_WALLET:
+      return i18n.t('transfer-history.paymentMethodType.eWallet')
   }
 }
 
@@ -636,6 +670,36 @@ export const getNameColumnTypeChange = (title: string) => {
   }
 }
 
+export const getTransactionSubType = (type: string) => {
+  switch(type){
+    case TransactionSubType.MAIN:
+      return i18n.t('transfer-history.subTypes.transfer')
+    case TransactionSubType.PARTNER:
+      return i18n.t('transfer-history.subTypes.transfer')
+    case TransactionSubType.RECEIVER:
+      return i18n.t('transfer-history.subTypes.transfer')
+    case TransactionSubType.FEE:
+      return i18n.t('transfer-history.subTypes.fee')
+    case TransactionSubType.VAT:
+      return i18n.t('transfer-history.subTypes.vat')
+    case TransactionSubType.RECEIVE_VAT:
+      return i18n.t('transfer-history.subTypes.vat')
+    case TransactionSubType.RECEIVE_FEE:
+      return i18n.t('transfer-history.subTypes.fee')
+    default:
+      return '-'
+  }
+}
+
+export const getStatusPaymentLinkBank = (status: number) => {
+  switch (status) {
+    case 0:
+      return i18n.t('payment-link.status.inactive')
+    case 1:
+      return i18n.t('payment-link.status.active')
+  }
+}
+
 export interface Data {
   [key: string]: any
 }
@@ -708,4 +772,14 @@ export const logData = (message: string = '', data: any) => {
   } else {
  
   }
+}
+
+export function removeNullUndefinedFields<T extends object>(obj: T): Partial<T> {
+    const newObj: Partial<T> = {};
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key) && obj[key] !== null && obj[key] !== undefined) {
+            newObj[key] = obj[key];
+        }
+    }
+    return newObj;
 }

@@ -30,7 +30,7 @@ import {
   Tooltip,
   Typography
 } from 'antd'
-import { ColumnsType } from 'antd/es/table'
+import type { ColumnsType } from 'antd/lib/table'
 import { t } from 'i18next'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -66,15 +66,28 @@ function Customers() {
     }
   }, [isSuccess])
 
-  const setModal = () => toPromise(toggle())
-  const setModePromise = (mode: viewMode) => toPromise(setMode(mode))
+  // const setModal = () => toPromise(toggle())
+  // const setModePromise = (mode: viewMode) => toPromise(setMode(mode))
 
   const handleModal = async (mode: viewMode, id?: string) => {
-    await setModePromise(mode)
-    if (id) setSelected(id)
-    await setModal()
+    // Gọi tất cả các hàm setState cùng lúc
+    setMode(mode)
+    if (id) {
+      setSelected(id)
+    } else {
+      // Nếu không có id (ví dụ mode create), nên reset lại
+      setSelected('')
+    }
+    toggle() // Hàm của useBoolean
   }
 
+  const handleCancelModal = () => {
+    toggle();
+    // Có thể thêm một khoảng trễ nhỏ để người dùng không thấy ID bị xóa trước khi modal đóng hẳn
+    setTimeout(() => {
+      setSelected('');
+    }, 200);
+  }
   const accountList = useMemo(() => {
     if (accounts?.data && accounts.data.length > 0) {
       return accounts?.data?.map((item: CustomerTable, index: number) => ({
@@ -202,7 +215,10 @@ function Customers() {
         >
           <Col>
             <ButtonView
-              onClick={async () => await handleModal(viewMode.view, record.id)}
+              onClick={async () => {
+                console.log('View button clicked for record id:', record.id)
+                return handleModal(viewMode.view, record.id)
+              }}
             />
           </Col>
 
@@ -218,14 +234,14 @@ function Customers() {
                 <ButtonLock
                   module='customer'
                   onClick={async () =>
-                    await handleModal(viewMode.lock, record.id)
+                    handleModal(viewMode.lock, record.id)
                   }
                 />
               ) : (
                 <ButtonUnlock
                   module='customer'
                   onClick={async () =>
-                    await handleModal(viewMode.unlock, record.id)
+                    handleModal(viewMode.unlock, record.id)
                   }
                 />
               )}
@@ -235,7 +251,7 @@ function Customers() {
             <ButtonFreeze
               module='customer'
               onClick={async () =>
-                await handleModal(viewMode.freeze, record.id)
+                 handleModal(viewMode.freeze, record.id)
               }
             />
           </Col>
@@ -397,7 +413,7 @@ function Customers() {
       <CustomerModal
         mode={mode}
         visible={visible}
-        onCancel={setModal}
+        onCancel={handleCancelModal}
         id={selected}
         refetch={refetch}
       />
