@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './style.scss'
-import { Input } from 'antd'
+import { Input, Tag } from 'antd'
+import { getTransactionStatus } from '@utils/helperFunctions'
 
 interface FloatingLabelInputProps {
   label: string

@@ -40,6 +40,7 @@ export interface ITransferHistorySearch extends IPageSearch {
 }
 
 export enum TransactionStatus {
+  INIT = 'INIT',
   SUCCESS = 'SUCCESS',
   APPROVED = 'APPROVED',
   PENDING = 'PENDING',
@@ -83,4 +84,19 @@ export enum TransactionSubType {
     Phí người nhận
   */
   RECEIVE_FEE = 'RECEIVE_FEE',
+}
+
+export enum FrozenStatus {
+    /**
+     * Giao dịch chưa được đóng băng.
+     */
+    NONE = 'NONE',
+    /**
+     * Giao dịch đã được mở đóng băng.
+     */
+    UNFROZEN = 'UNFROZEN',
+    /**
+     * Giao dịch đã bị đóng băng.
+     */
+    FROZEN = 'FROZEN'
 }

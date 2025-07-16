@@ -66,3 +66,26 @@ export enum BANK_CHANNEL {
   IBFT = 'IBFT',
   NONE = 'NONE'
 }
+
+export enum PaymentMethod{
+    /**
+     * Thanh toán bằng thẻ ATM
+     */
+    ATM_CARD = 'ATM_CARD',
+    /**
+     * Thanh toán QR Code
+     */
+    QR_CODE = 'QR_CODE',
+    /**
+     * Thanh toán bằng tài khoản ngân hàng (chuyển khoản)
+     */
+    BANK_TRANSFER = 'BANK_TRANSFER',
+    /**
+     * Thanh toán bằng thẻ quốc tế (Visa, Mastercard, v.v.)
+     */
+    INTERNATIONAL_CARD = 'INTERNATIONAL_CARD',
+    /**
+     * Thanh toán qua Ví điện tử (chuyển ví đến ví)
+     */
+    E_WALLET = 'E_WALLET'
+}

@@ -1,16 +1,16 @@
 import { SIZE_ICON } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
-import { CheckFat } from '@phosphor-icons/react'
+import { ProhibitIcon } from '@phosphor-icons/react'
 import { Button, ButtonProps, Tooltip } from 'antd'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
-interface ButtonAppoveProps extends ButtonProps {
+interface ButtonProhibitProps extends ButtonProps {
   module: string
   label?: string
 }
 
-const ButtonAppove = (props: ButtonAppoveProps) => {
+const ButtonProhibit = (props: ButtonProhibitProps) => {
   const { module } = props
 
   const { permissions } = useAppSelector((state) => state.auth.profile)
@@ -27,14 +27,14 @@ const ButtonAppove = (props: ButtonAppoveProps) => {
   }, [permissions])
 
   return !isHasPermission() ? null : (
-    <Tooltip title={t('tooltips.approve')}>
+    //<Tooltip title={t('tooltips.approve')}>
       <Button
-        icon={<CheckFat size={SIZE_ICON} />}
+        icon={<ProhibitIcon size={SIZE_ICON} />}
         hidden={isHasPermission()}
         {...props}
       />
-    </Tooltip>
+    //</Tooltip>
   )
 }
 
-export default ButtonAppove
+export default ButtonProhibit

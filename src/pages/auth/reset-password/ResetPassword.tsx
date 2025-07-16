@@ -1,26 +1,76 @@
 import { LockOutlined } from '@ant-design/icons'
 import { GUTTER } from '@constants/appConstant'
-import { Button, Card, Col, Form, Input, Row } from 'antd'
+import { Button, Card, Col, Form, Input, notification, Row } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import { useEffect } from 'react'
 import './style.scss'
+import { useUserNewPasswordMutation, useUserVerifyTokenMutation } from '@services/cmsService'
 
 const ResetPassword = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [form] = useForm()
+  const [searchParams] = useSearchParams()
+  const [newPassword] = useUserNewPasswordMutation()
+  const [validateResetToken] = useUserVerifyTokenMutation()
+
   const handleCancel = () => {
     navigate('/auth/forgot-password')
   }
-  const handleSubmit = () => {}
+  const handleSubmit = async () => {
+    const password = form.getFieldValue('password')
+    const confirmPassword = form.getFieldValue('confirmPassword')
+    const token = searchParams.get('token')
+
+    if (!token) {
+      notification.error({ message: t('reset.messages.tokenMissing') }) 
+      return
+    }
+
+    if (password !== confirmPassword) {
+      notification.error({ message: t('reset.messages.passwordMismatch') })
+      return
+    }
+
+    try {
+      const result = await newPassword({ token, userNewPassword: { newPassword: password } })
+
+      if ('data' in result && result.data) {
+        notification.success({
+          message: t('reset.messages.passwordResetSuccess')
+        })
+        navigate('/auth/login')
+      } else {
+        notification.error({ message: t('reset.messages.passwordResetFailed') })
+      }
+    } catch (error) {
+      notification.error({ message: t('reset.messages.passwordResetError') })
+    }
+  }
 
   useEffect(() => {
     window.events.emit('auth-set-title', t('reset.title').toString())
     window.events.emit('auth-set-description', t`reset.sub-description`)
   }, [])
+
+  useEffect(() => {
+    const token = searchParams.get('token')
+    if (token) {
+      validateResetToken({ token })
+        .unwrap()
+        .then(() => {})
+        .catch(() => {
+          notification.error({ message: t('reset.messages.tokenInvalid') })
+          navigate('/auth/forgot-password')
+        })
+    } else {
+      notification.error({ message: t('reset.messages.tokenMissing') })
+      navigate('/auth/forgot-password')
+    }
+  }, [searchParams])
 
   return (
     <Card className='wx-450'>

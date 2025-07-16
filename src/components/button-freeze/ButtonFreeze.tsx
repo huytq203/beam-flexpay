@@ -1,6 +1,6 @@
 import { SIZE_ICON } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
-import { Snowflake } from '@phosphor-icons/react'
+import { SnowflakeIcon } from '@phosphor-icons/react'
 import { Button, ButtonProps } from 'antd'
 import { useCallback } from 'react'
 
@@ -26,7 +26,7 @@ const ButtonFreeze = (props: CustomButtonProps) => {
 
   return !isHasPermission() ? null : (
     <Button
-      icon={<Snowflake size={SIZE_ICON} />}
+      icon={<SnowflakeIcon size={SIZE_ICON} />}
       hidden={isHasPermission()}
       {...props}
     />

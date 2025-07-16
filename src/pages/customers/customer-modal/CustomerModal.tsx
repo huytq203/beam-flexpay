@@ -3,11 +3,12 @@ import {
 } from '@services/cmsService'
 import { viewMode } from '@type/customer'
 import { Button, Col, Modal, Row } from 'antd'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import CustomerFreeze from '../customer-freeze/CustomerFreeze'
-import CustomerInformation from '../customer-infomation/CustomerInfomation'
 import CustomerReason from '../customer-reason/CustomerReason'
+import CustomerTabs from '../customer-tabs/CustomerTabs'
+import { TransactionFindAllApiArg } from '@type/application'
 
 type CustomerModalType = {
   mode: viewMode
@@ -23,7 +24,13 @@ function CustomerModal(props: CustomerModalType) {
   const { t } = useTranslation()
 
   const [trigger, { data: customer }] = useLazyCustomerFindOneQuery()
-
+  // const [historySearch, setHistorySearch] = useState<TransactionFindAllApiArg>({
+  //     page: 1,
+  //     take: 10,
+  //     accountNumber: customer?.accountNumber
+  //   })
+  console.log('CustomerModal triggered with id:', id)
+  console.log('CustomerModal customer data:', customer)
   const render = () => {
     switch (mode) {
       case viewMode.lock:
@@ -46,7 +53,9 @@ function CustomerModal(props: CustomerModalType) {
       default:
         return (
           <>
-            <CustomerInformation customer={customer} />
+            
+            {/* <CustomerInformation customer={customer} /> */}
+            <CustomerTabs customer={customer} />
             <Row justify='end'>
               <Col span={2}>
                 <Button
@@ -64,7 +73,7 @@ function CustomerModal(props: CustomerModalType) {
 
   useEffect(() => {
     if (visible && id) trigger({ id })
-  }, [visible])
+  }, [visible, id, trigger])
 
   return (
     <Modal

@@ -6,6 +6,14 @@
     "linkedDate": "Ngày liên kết",
     "cancelLinkedDate": "Ngày hủy liên kết",
     "transaction": "Giao dịch",
-    "history": "Lịch sử"
+    "history": "Lịch sử",
+    "payerDebit": "Số tài khoản",
+    "status": "Trạng thái",
+    "action": "Thao tác",
+    "verify": "Xác thực",
+    "cancelVerify": "Hủy xác thực",
+    "confirmUpdateStatus": "Xác nhận cập nhật trạng thái",
+    "confirmCancelVerifyMsg": "Xác nhận hủy xác thực",
+    "confirmVerifyMsg": "Xác nhận xác thực"
   }
 }

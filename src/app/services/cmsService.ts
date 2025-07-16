@@ -104,11 +104,14 @@ import {
   NotificationContextSettingRemoveApiArg,
   NotificationContextSettingRemoveApiResponse,
   NotificationContextSettingUpdateApiArg,
-  NotificationContextSettingUpdateApiResponse, OtpDataDto,
+  NotificationContextSettingUpdateApiResponse,
+  OtpDataDto,
   PaymentLinkCancelTokenApiArg,
   PaymentLinkCancelTokenApiResponse,
   PaymentLinkFindAllApiArg,
   PaymentLinkFindAllApiResponse,
+  PaymentLinkUpdateStatusApiArg,
+  PaymentLinkUpdateStatusApiResponse,
   PaymentOrderFindAllApiArg,
   PaymentOrderFindAllApiResponse,
   PaymentOrderFindOneApiArg,
@@ -245,6 +248,8 @@ import {
   TransactionFindAllApiResponse,
   TransactionFindOneApiArg,
   TransactionFindOneApiResponse,
+  TransactionInfoFindOneApiArg,
+  TransactionInfoFindOneApiResponse,
   TransactionLimitCreateApiArg,
   TransactionLimitCreateApiResponse,
   TransactionLimitFindAllApiArg,
@@ -255,6 +260,10 @@ import {
   TransactionLimitRemoveApiResponse,
   TransactionLimitUpdateApiArg,
   TransactionLimitUpdateApiResponse,
+  TransactionMainFindAllApiArg,
+  TransactionMainFindAllApiResponse,
+  TransactionStepFindByReferenceIdApiArg,
+  TransactionStepFindByReferenceIdApiResponse,
   TransactionUpdateStatusApiArg,
   TransactionUpdateStatusApiResponse,
   UserChangePasswordApiArg,
@@ -292,7 +301,8 @@ import {
   UserUploadAvatarApiArg,
   UserUploadAvatarApiResponse,
   UserVerifyTokenApiArg,
-  UserVerifyTokenApiResponse, VerifyLoginOtp,
+  UserVerifyTokenApiResponse,
+  VerifyLoginOtp,
   VerifyLoginOtpApiArg
 } from '@type/application'
 import { fnTransformResponse } from '@utils/helperFunctions'
@@ -305,6 +315,8 @@ export const addTagTypes = [
   '[Admin] Admin Customer Verification',
   '[Admin] Admin Product Type',
   'Transaction',
+  '[Admin] Transaction Main',
+  '[Admin] Transaction Step',
   '[Admin] Admin Group Product ',
   '[Admin] Admin Product ',
   '[Admin] Admin Token Management',
@@ -958,6 +970,46 @@ const injectedRtkApi = api
         transformResponse: fnTransformResponse,
         invalidatesTags: ['[Admin] Admin Product Type']
       }),
+      transactionStepFindByReferenceId: build.query<
+        TransactionStepFindByReferenceIdApiResponse,
+        TransactionStepFindByReferenceIdApiArg
+      >({
+        query: (queryArg) => ({ url: `/transaction-step/${queryArg.referenceId}` }),
+        transformResponse: fnTransformResponse,
+        providesTags: ['[Admin] Transaction Step']
+      }),
+      transactionInfoFindOne: build.query<
+        TransactionInfoFindOneApiResponse,
+        TransactionInfoFindOneApiArg
+      >({
+        query: (queryArg) => ({ url: `/transaction-main/info/${queryArg.id}` }),
+        transformResponse: fnTransformResponse,
+        providesTags: ['[Admin] Transaction Main']
+      }),
+      transactionMainFindAll: build.query<
+        TransactionMainFindAllApiResponse,
+        TransactionMainFindAllApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/transaction-main`,
+          params: {
+            order: queryArg.order,
+            referenceId: queryArg.referenceId,
+            page: queryArg.page,
+            take: queryArg.take,
+            query: queryArg.query,
+            code: queryArg.code,
+            type: queryArg['type'],
+            status: queryArg.status,
+            from: queryArg['from'],
+            to: queryArg.to,
+            accountNumber: queryArg.accountNumber,
+            orderBy: queryArg.orderBy
+          }
+        }),
+        transformResponse: fnTransformResponse,
+        providesTags: ['[Admin] Transaction Main']
+      }),
       transactionFindAll: build.query<
         TransactionFindAllApiResponse,
         TransactionFindAllApiArg
@@ -1160,6 +1212,17 @@ const injectedRtkApi = api
         }),
         transformResponse: fnTransformResponse,
         invalidatesTags: ['[Admin] Admin Token Management']
+      }),
+      paymentLinkUpdateStatus: build.mutation<
+        PaymentLinkUpdateStatusApiResponse,
+        PaymentLinkUpdateStatusApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/payment-link/${queryArg.id}/toggle-active`,
+          method: 'PATCH',
+        }),
+        transformResponse: fnTransformResponse,
+        invalidatesTags: ['[Admin] Admin Customer']
       }),
       bankCmsFindAll: build.query<
         BankCmsFindAllApiResponse,
@@ -2353,6 +2416,9 @@ export const {
   useProductTypeRemoveMutation,
   useTransactionFindAllQuery,
   useTransactionFindOneQuery,
+  useTransactionMainFindAllQuery,
+  useTransactionStepFindByReferenceIdQuery,
+  useTransactionInfoFindOneQuery,
   useLazyTransactionFindOneQuery,
   useTransactionUpdateStatusMutation,
   useGroupProductCreateMutation,
@@ -2367,6 +2433,7 @@ export const {
   useProductFindByIdQuery,
   usePaymentLinkFindAllQuery,
   usePaymentLinkCancelTokenMutation,
+  usePaymentLinkUpdateStatusMutation,
   useBankCmsFindAllQuery,
   useBankCmsFindAllActiveQuery,
   useBankCmsUpdateMutation,
