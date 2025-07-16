@@ -71,7 +71,9 @@ const AdminManagement = () => {
   }
 
   const CellContent = ({ content }: { content: string }) => (
-    <Text>{content}</Text>
+    <Tooltip title={content ? content : ''}>
+      <Text>{content}</Text>
+    </Tooltip>
   )
 
   const Nodata = () => <Text>{trans`labels.nodata`}</Text>
@@ -104,6 +106,14 @@ const AdminManagement = () => {
     {
       title: trans('admin-management.label.phoneNumber'),
       dataIndex: 'phoneNumber',
+      align: 'center',
+      render: (record) => {
+        return record ? <CellContent content={record} /> : <Nodata />
+      }
+    },
+    {
+      title: trans('admin-management.label.role'),
+      dataIndex: 'role',
       align: 'center',
       render: (record) => {
         return record ? <CellContent content={record} /> : <Nodata />

@@ -47,7 +47,7 @@
     "connect-management": "Quản lý kết nối",
     "internal-report": "Báo cáo nội bộ",
     "state-bank-report": "Báo cáo NHNN",
-    "overview-report":"Tổng quan báo cáo",
+    "overview-report": "Tổng quan báo cáo",
     "account-management-ensure-payment": "Quản lý tài khoản đảm bảo thanh toán",
     "transaction-management-report": "Quản lý giao dịch",
     "internal-accounts-report": "Tài khoản tổng hợp",
@@ -404,7 +404,7 @@
     "cancel": "Hủy",
     "search": "Tìm kiếm",
     "cancelMessage": "Hủy tài khoản mọi thông tin bị xóa trên hệ thống?",
-    "history":"Lịch sử hủy tài khoản"
+    "history": "Lịch sử hủy tài khoản"
   },
   "transfer-history": {
     "number": "STT",
@@ -1662,7 +1662,7 @@
       "missingInfo": "Thiếu thông tin email hoặc trackingId",
       "resendSuccess": "Đã gửi lại mã xác thực",
       "resendFailed": "Không thể gửi lại mã xác thực",
-      "resendError": "Đã xảy ra lỗi khi gửi lại mã"  
+      "resendError": "Đã xảy ra lỗi khi gửi lại mã"
     }
   },
   "forgot": {
@@ -1832,7 +1832,8 @@
       "phoneNumber": "Số điện thoại",
       "status": "Trạng thái",
       "permissionGroup": "Nhóm quyền",
-      "action": "Thao tác"
+      "action": "Thao tác",
+      "role": "Nhóm quyền"
     },
     "title": {
       "view": "Thông tin tài khoản",
@@ -2176,7 +2177,7 @@
     "deposit-total": "Tổng giao dịch nạp tiền",
     "max-deposit-amount": "Số tiền nạp lớn nhất",
     "min-deposit-amount": "Số tiền nạp nhỏ nhất",
-    "reportType":{
+    "reportType": {
       "highest-transaction-value": "Giá trị giao dịch cao nhất",
       "highest-number-transactions": "Số lượng giao dịch cao nhất"
     },
@@ -2190,7 +2191,7 @@
     }
   },
   "account-guarantee": {
-    "placeholders":{
+    "placeholders": {
       "from": "Từ ngày (dd/mm/yyyy)",
       "to": "Đến ngày (dd/mm/yyyy)",
       "name": "Nhập tên tài khoản đảm bảo",
@@ -2202,7 +2203,7 @@
       "from": "Từ ngày",
       "to": "Đến ngày"
     },
-    "table":{
+    "table": {
       "no": "STT",
       "name": "Tên tài khoản",
       "number": "Số tài khoản",
@@ -2213,9 +2214,9 @@
     }
   },
   "transaction-management-report": {
-    "table":{
+    "table": {
       "date": "Ngày giao dịch",
-      "type":"Loại giao dịch",
+      "type": "Loại giao dịch",
       "number": "Số lượng",
       "total": "Tổng giá trị"
     }
@@ -2490,8 +2491,8 @@
     "active": "Trạng thái",
     "create-accounting-request": "Thêm yêu cầu hạch toán",
     "update-accounting-request": "Cập nhật yêu cầu hạch toán",
-    "title":{
-      "status_request":"Trạng thái",
+    "title": {
+      "status_request": "Trạng thái",
       "transaction_type": "Loại giao dịch"
     },
     "wallet-internal": "Ví Nội bộ",
@@ -2499,8 +2500,8 @@
     "view-transactions": "Lịch sử giao dịch Ví nội bộ",
     "edit-wallet-title": "Cập nhật nội dung",
     "groupNameMin": "Chưa đủ kí tự yêu cầu",
-    "bank-name":"Tên ngân hàng",
-    "transaction_type":{
+    "bank-name": "Tên ngân hàng",
+    "transaction_type": {
       "Deposite": "Deposite",
       "Claim": "Claim"
     },
@@ -2586,7 +2587,7 @@
       "update-deposit-request-failed": "Cập nhật yêu cầu hoạch toán thất bại",
       "confirm-cancel-create-deposit-request": "Bạn có chắc chắn muốn hủy thêm mới yêu cầu hoạch toán?",
       "create-accounting-request-success": "Tạo yêu cầu hạch toán thành công",
-      "update-accounting-request-success": "Cập nhật yêu cầu hạch toán thành công" 
+      "update-accounting-request-success": "Cập nhật yêu cầu hạch toán thành công"
     },
     "update-groups-title": "Chỉnh sửa thông tin",
     "modal": {
@@ -2637,7 +2638,7 @@
       "accounting": "Chọn hạch toán",
       "add": "Hạch toán (+) tiền",
       "reduce": "Hạch toán (-) tiền",
-      "bank-name":"Nhập tên ngân hàng"
+      "bank-name": "Nhập tên ngân hàng"
     }
   }
 }
