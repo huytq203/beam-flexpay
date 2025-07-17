@@ -7,7 +7,9 @@
 // @import 'override';
 @import 'text';
 // @import 'reset';
-
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 .card-table {
   .ant-card .ant-card-body {
     height: 600px;
