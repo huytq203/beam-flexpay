@@ -30,7 +30,6 @@ const ButtonUpdate = (props: CustomButtonProps) => {
     <Tooltip title={t('tooltips.update')}>
       <Button
         icon={<PencilSimple size={SIZE_ICON} />}
-        hidden={isHasPermission()}
         {...props}
       />
     </Tooltip>

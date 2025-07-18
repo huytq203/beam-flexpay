@@ -79,8 +79,8 @@ export default function NavProfile() {
   }
 
   const handleSignout = async () => {
-    dispatch(authService.util.resetApiState())
     dispatch(logout())
+    // dispatch(authService.util.resetApiState())
   }
 
   const signOut = () => {

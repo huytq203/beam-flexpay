@@ -25,7 +25,6 @@ const ButtonNotify = (props: CustomButtonProps) => {
   return !isHasPermission() ? null : (
     <Button
       icon={<Bell />}
-      hidden={isHasPermission()}
       {...props}
     />
   )

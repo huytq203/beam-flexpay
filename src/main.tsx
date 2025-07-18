@@ -26,6 +26,7 @@ const common = {
   algorithm: true
 }
 const theme = {
+  hashed: false,
   token: {
     colorPrimary: primaryColor,
     colorInfo: primaryColor,

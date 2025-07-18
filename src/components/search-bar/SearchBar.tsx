@@ -1,16 +1,28 @@
-import { Space } from 'antd'
+import { Form, FormInstance } from 'antd'
 
-type Props = {
+type Props<ApiArg> = {
   headerMenu: string | JSX.Element | JSX.Element[]
+  onFinish: (values: ApiArg) => void
+  form: FormInstance<ApiArg>
+  cols?: string
 }
 
-export default function SearchBar({ headerMenu }: Props) {
+export default function SearchBar<ApiArg extends object>({
+  headerMenu,
+  form,
+  onFinish,
+  cols = '2'
+}: Props<ApiArg>) {
   return (
-    <Space
-      direction='vertical'
-      className='w-100 p-16'
+    <Form
+      layout='vertical'
+      onFinish={onFinish}
+      form={form}
+      initialValues={{
+        active: null
+      }}
     >
-      {headerMenu}
-    </Space>
+      <div className={`grid grid-cols-${cols} gap-3`}>{headerMenu}</div>
+    </Form>
   )
 }

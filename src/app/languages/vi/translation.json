@@ -466,7 +466,6 @@
       "vat": "Thuế giá trị gia tăng người chuyển",
       "fee": "Phí dịch vụ người chuyển",
       "fee_receive": "Phí dịch vụ người nhận"
-
     },
     "choice": {
       "init": "Khởi tạo",
@@ -1866,7 +1865,8 @@
       "delete": "Xoá",
       "permission": "Phân quyền",
       "unlock": "Mở khoá",
-      "lock": "Khoá"
+      "lock": "Khoá",
+      "update": "Sửa"
     },
     "label": {
       "id": "Id",
@@ -2264,7 +2264,7 @@
       "total": "Tổng giá trị"
     }
   },
-  "transaction-step":{
+  "transaction-step": {
     "number": "STT",
     "transferTime": "Thời gian",
     "sourceAccountNumber": "Số tài khoản chuyển",

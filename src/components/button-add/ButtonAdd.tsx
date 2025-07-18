@@ -30,7 +30,6 @@ const ButtonAdd = (props: CustomButtonProps) => {
     <Button
       type='primary'
       icon={<PlusOutlined />}
-      hidden={isHasPermission()}
       {...props}
     >
       {label ? trans(label) : trans('buttons.add')}

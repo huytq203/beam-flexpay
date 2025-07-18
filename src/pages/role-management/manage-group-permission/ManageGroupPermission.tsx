@@ -126,30 +126,23 @@ const ManageGroupPermission = () => {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={submit}
           headerMenu={
-            <Form
-              layout='vertical'
-              onFinish={submit}
-              form={form}
-              initialValues={{
-                status: null
-              }}
-            >
-              <Row gutter={GUTTER}>
-                <Col span={8}>
-                  <Form.Item
-                    name='name'
-                    label={trans('labels.permissionGroupName')}
-                  >
-                    <CustomSelect
-                      field='name'
-                      trigger={triggerGroupPermissionList}
-                      search={{
-                        page: 1,
-                        take: 10
-                      }}
-                    />
-                    {/* <Select
+            <>
+              <Form.Item
+                name='name'
+                label={trans('labels.permissionGroupName')}
+              >
+                <CustomSelect
+                  field='name'
+                  trigger={triggerGroupPermissionList}
+                  search={{
+                    page: 1,
+                    take: 10
+                  }}
+                />
+                {/* <Select
                       allowClear
                       showSearch
                       onSearch={onSearch}
@@ -172,51 +165,39 @@ const ManageGroupPermission = () => {
                         </Select.Option>
                       ))}
                     </Select> */}
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <Form.Item
-                    name='status'
-                    label={trans('labels.status')}
-                  >
-                    <Select
-                      allowClear
-                      placeholder={trans('placeholders.status')}
-                      options={[
-                        {
-                          value: null,
-                          label: trans('labels.all')
-                        },
-                        {
-                          value: true,
-                          label: trans('labels.active')
-                        },
-                        {
-                          value: false,
-                          label: trans('labels.lock')
-                        }
-                      ]}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+              </Form.Item>
+              <Form.Item
+                name='status'
+                label={trans('labels.status')}
               >
-                <Col>
-                  <ButtonAdd
-                    module='group'
-                    onClick={() => {
-                      handleModal(viewMode.create)
-                    }}
-                  />
-                </Col>
-                <Col>
-                  <ButtonSearch htmlType='submit' />
-                </Col>
-              </Row>
-            </Form>
+                <Select
+                  allowClear
+                  placeholder={trans('placeholders.status')}
+                  options={[
+                    {
+                      value: null,
+                      label: trans('labels.all')
+                    },
+                    {
+                      value: true,
+                      label: trans('labels.active')
+                    },
+                    {
+                      value: false,
+                      label: trans('labels.lock')
+                    }
+                  ]}
+                />
+              </Form.Item>
+              <ButtonSearch htmlType='submit' />
+
+              <ButtonAdd
+                module='group'
+                onClick={() => {
+                  handleModal(viewMode.create)
+                }}
+              />
+            </>
           }
         />
       }
