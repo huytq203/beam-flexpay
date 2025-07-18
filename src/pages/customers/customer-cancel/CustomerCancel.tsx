@@ -43,6 +43,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { pageEnum, viewMode } from '../../../app/types/policyManagement'
 import ButtonCancel from '@components/button-cancel/ButtonCancel'
+import { ArrowClockwiseIcon } from '@phosphor-icons/react'
 
 const CustomerCancel = () => {
   const { t: trans } = useTranslation()
@@ -283,7 +284,7 @@ const CustomerCancel = () => {
                 {/* lịch sử hoạt động */}
                 <Col>
                   <Button
-                    icon={<ClockCounterClockwise />}
+                    icon={<ArrowClockwiseIcon />}
                     type='primary'
                     className='btn-200'
                     onClick={handleOpenHistory}
