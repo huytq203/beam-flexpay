@@ -5,18 +5,20 @@ import { useTranslation } from 'react-i18next'
 
 interface ButtonSearchProps extends ButtonProps {
   label?: string
+  className?: string
 }
 
 const ButtonSearch = (props: ButtonSearchProps) => {
   const { t: trans } = useTranslation()
 
-  const { label } = props
+  const { label, className = '' } = props
 
   return (
     <Button
       icon={<MagnifyingGlassIcon size={SIZE_ICON} />}
       type='primary'
       {...props}
+      className={className}
     >
       {label ? trans(label) : trans('buttons.search')}
     </Button>

@@ -7,10 +7,11 @@ import { useTranslation } from 'react-i18next'
 interface CustomButtonProps extends ButtonProps {
   module: string
   label?: string
+  className?: string
 }
 
 const ButtonAdd = (props: CustomButtonProps) => {
-  const { label, module } = props
+  const { label, module, className = '' } = props
   const { t: trans } = useTranslation()
 
   const { permissions } = useAppSelector((state) => state.auth.profile)
@@ -31,6 +32,7 @@ const ButtonAdd = (props: CustomButtonProps) => {
       type='primary'
       icon={<PlusOutlined />}
       {...props}
+      className={className}
     >
       {label ? trans(label) : trans('buttons.add')}
     </Button>

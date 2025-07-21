@@ -29,6 +29,9 @@ function CustomerGroup() {
     take: 10
     // status: accountStatus.VERIFIED
   })
+
+  const [form] = Form.useForm<GroupAccountParamsInterface>()
+
   const [selectedId, setSelectedId] = useState<number | undefined>(undefined)
   const { data: groupCustomer, refetch } = useGetListGroupQuery(search)
 
@@ -39,7 +42,6 @@ function CustomerGroup() {
   const triggerModal = (state: boolean) => {
     setOpen(state)
   }
-
   /**
    * memorized data
    */
@@ -50,8 +52,8 @@ function CustomerGroup() {
     let businessCount = 0
     const defaultType = CustomerType.PERSONAL
 
-    for (const item of groupCustomer?.data ?? []) {
-      for (let i = 0; i < item.customers?.length ?? 0; i++) {
+    for (const item of groupCustomer?.data || []) {
+      for (let i = 0; i < (item.customers?.length || 0); i++) {
         const customer = item.customers[i]
         const number =
           item.totalCustomer > 1 ? (i === 0 ? item.totalCustomer : 0) : 1
@@ -243,94 +245,78 @@ function CustomerGroup() {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={onSearch}
+          cols='2'
           headerMenu={
-            <Form
-              layout='vertical'
-              onFinish={onSearch}
-            >
-              <Row gutter={GUTTER}>
-                <Col flex='300px'>
-                  <Form.Item
-                    name='customerType'
-                    label={t`customer-group.modal.type`}
-                  >
-                    <Select
-                      placeholder={t`customer-group.placeholders.type`}
-                      options={typeOptions}
-                      onChange={(e) => {
-                        if (e === '' || e === undefined) {
-                          setSearch({
-                            page: 1,
-                            ...search,
-                            customerType: undefined
-                          })
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='auto'>
-                  <Form.Item
-                    name='name'
-                    label={t`customer-group.group`}
-                  >
-                    <Input
-                      allowClear
-                      placeholder={t`customer-group.placeholders.groups`.toString()}
-                      onChange={(e) => {
-                        if (
-                          e.target.value === '' ||
-                          e.target.value === undefined
-                        ) {
-                          setSearch({ page: 1, ...search, name: undefined })
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='auto'>
-                  <Form.Item
-                    name='customerAccountNumber'
-                    label={t`customer-group.account`}
-                  >
-                    <Input
-                      allowClear
-                      placeholder={t`customer-group.placeholders.customer`.toString()}
-                      onChange={(e) => {
-                        if (
-                          e.target.value === '' ||
-                          e.target.value === undefined
-                        ) {
-                          setSearch({
-                            page: 1,
-                            ...search,
-                            customerAccountNumber: undefined
-                          })
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                gutter={GUTTER}
-                justify='end'
+            <>
+              <Form.Item
+                name='customerType'
+                label={t`customer-group.modal.type`}
               >
-                <Col>
-                  <ButtonAdd
-                    module='customer_group'
-                    type='primary'
-                    onClick={() => {
-                      setMode(viewMode.create)
-                      triggerModal(true)
-                    }}
-                  >{t`buttons.add`}</ButtonAdd>
-                </Col>
-                <Col>
-                  <ButtonSearch htmlType='submit' />
-                </Col>
-              </Row>
-            </Form>
+                <Select
+                  placeholder={t`customer-group.placeholders.type`}
+                  options={typeOptions}
+                  onChange={(e) => {
+                    if (e === '' || e === undefined) {
+                      setSearch({
+                        page: 1,
+                        ...search,
+                        customerType: undefined
+                      })
+                    }
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                name='name'
+                label={t`customer-group.group`}
+              >
+                <Input
+                  allowClear
+                  placeholder={t`customer-group.placeholders.groups`.toString()}
+                  onChange={(e) => {
+                    if (e.target.value === '' || e.target.value === undefined) {
+                      setSearch({ page: 1, ...search, name: undefined })
+                    }
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                name='customerAccountNumber'
+                label={t`customer-group.account`}
+              >
+                <Input
+                  allowClear
+                  placeholder={t`customer-group.placeholders.customer`.toString()}
+                  onChange={(e) => {
+                    if (e.target.value === '' || e.target.value === undefined) {
+                      setSearch({
+                        page: 1,
+                        ...search,
+                        customerAccountNumber: undefined
+                      })
+                    }
+                  }}
+                />
+              </Form.Item>
+              <div className='flex gap-2 items-center '>
+                <ButtonSearch
+                  htmlType='submit'
+                  className='w-full'
+                />
+
+                <ButtonAdd
+                  module='customer_group'
+                  type='primary'
+                  onClick={() => {
+                    setMode(viewMode.create)
+                    triggerModal(true)
+                  }}
+                  className='w-full'
+                />
+              </div>
+            </>
           }
         />
       }

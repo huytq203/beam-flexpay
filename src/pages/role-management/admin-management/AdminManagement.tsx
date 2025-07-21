@@ -1,13 +1,12 @@
-import ButtonAdd from '@components/button-add/ButtonAdd';
-import ButtonLock from '@components/button-lock/ButtonLock';
-import ButtonSearch from '@components/button-search/ButtonSearch';
-import ButtonUnlock from '@components/button-unlock/ButtonUnlock';
-import SearchBar from '@components/search-bar/SearchBar';
-import { GUTTER } from '@constants/appConstant';
-import { useUserFindAllQuery } from '@services/cmsUser';
-import { AdminAccountData, viewMode } from '@type/admin';
-import { UserFindAllApiArg } from '@type/application';
-import { getStatusText, getTagColor } from '@utils/helperFunctions';
+import ButtonAdd from '@components/button-add/ButtonAdd'
+import ButtonLock from '@components/button-lock/ButtonLock'
+import ButtonSearch from '@components/button-search/ButtonSearch'
+import ButtonUnlock from '@components/button-unlock/ButtonUnlock'
+import SearchBar from '@components/search-bar/SearchBar'
+import { useUserFindAllQuery } from '@services/cmsUser'
+import { AdminAccountData, viewMode } from '@type/admin'
+import { UserFindAllApiArg } from '@type/application'
+import { getStatusText, getTagColor } from '@utils/helperFunctions'
 import {
   Card,
   Col,
@@ -18,58 +17,44 @@ import {
   Table,
   Tag,
   Tooltip,
-  Typography,
-} from 'antd';
-import { ColumnsType } from 'antd/es/table';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { AdminModal } from './AdminModal/AdminModal';
-import { AdminManagementOptions } from '@constants/options';
-import ButtonView from '@components/button-view/ButtonView';
-import ButtonAction, { IconName } from '@components/button-action/ButtonAction';
+  Typography
+} from 'antd'
+import { ColumnsType } from 'antd/es/table'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { AdminModal } from './AdminModal/AdminModal'
+import { AdminManagementOptions } from '@constants/options'
+import ButtonAction from '@components/button-action/ButtonAction'
+import { useActionHandler } from '@hooks/useActionHandler'
 
 const AdminManagement = () => {
-  const [visible, setVisible] = useState(false);
-  const [selectedId, setSelectedId] = useState<string>('');
-  const [mode, setMode] = useState<viewMode>(viewMode.lock);
+  const [visible, setVisible] = useState(false)
+  const [selectedId, setSelectedId] = useState<string>('')
+  const [mode, setMode] = useState<viewMode>(viewMode.lock)
   const [search, setSearch] = useState<UserFindAllApiArg>({
     page: 1,
-    take: 10,
-  });
+    take: 10
+  })
 
-  const { data: adminAccount, refetch } = useUserFindAllQuery(search);
+  const { data: adminAccount, refetch } = useUserFindAllQuery(search)
 
-  const { t: trans } = useTranslation();
+  const { t: trans } = useTranslation()
 
-  const [form] = Form.useForm<UserFindAllApiArg>();
+  const [form] = Form.useForm<UserFindAllApiArg>()
 
-  const { Text } = Typography;
+  const { Text } = Typography
 
   const onCancel = () => {
-    setVisible(false);
-  };
+    setVisible(false)
+  }
 
   const handleModal = (action: viewMode, id?: string) => {
-    setVisible(true);
-    if (id) setSelectedId(id);
-    setMode(action);
-  };
+    setVisible(true)
+    if (id) setSelectedId(id)
+    setMode(action)
+  }
 
-  const handleActionClick = (action: IconName, record: AdminAccountData) => {
-    switch (action) {
-      case 'update':
-        handleModal(viewMode.update, record.id);
-        break;
-      case 'permission':
-        handleModal(viewMode.permission, record.id);
-        break;
-      case 'delete':
-        handleModal(viewMode.delete, record.id);
-        break;
-      default:
-        break;
-    }
-  };
+  const handleActionClick = useActionHandler<AdminAccountData>(handleModal)
 
   const submit = (value: UserFindAllApiArg) => {
     const newQuery = {
@@ -78,25 +63,25 @@ const AdminManagement = () => {
       phoneNumber: value.phoneNumber?.trim(),
       email: value.email?.trim(),
       active: value.active !== null ? value.active : undefined,
-      page: 1,
-    };
-    setSearch(newQuery);
-  };
+      page: 1
+    }
+    setSearch(newQuery)
+  }
 
   const CellContent = ({ content }: { content: string }) => (
     <Tooltip title={content ? content : ''}>
       <Text>{content}</Text>
     </Tooltip>
-  );
+  )
 
-  const Nodata = () => <Text>{trans`labels.nodata`}</Text>;
+  const Nodata = () => <Text>{trans`labels.nodata`}</Text>
 
   const adminColumns: ColumnsType<AdminAccountData> = [
     {
       title: 'Id',
       dataIndex: 'id',
       align: 'center',
-      width: 80,
+      width: 80
     },
     {
       title: trans('admin-management.label.userName'),
@@ -104,8 +89,8 @@ const AdminManagement = () => {
       ellipsis: true,
       align: 'center',
       render: (record) => {
-        return record ? <CellContent content={record} /> : <Nodata />;
-      },
+        return record ? <CellContent content={record} /> : <Nodata />
+      }
     },
     {
       title: trans('admin-management.label.email'),
@@ -113,79 +98,76 @@ const AdminManagement = () => {
       ellipsis: true,
       align: 'center',
       render: (record) => {
-        return record ? <CellContent content={record} /> : <Nodata />;
-      },
+        return record ? <CellContent content={record} /> : <Nodata />
+      }
     },
     {
       title: trans('admin-management.label.phoneNumber'),
       dataIndex: 'phoneNumber',
       align: 'center',
       render: (record) => {
-        return record ? <CellContent content={record} /> : <Nodata />;
-      },
+        return record ? <CellContent content={record} /> : <Nodata />
+      }
     },
     {
       title: trans('admin-management.label.role'),
       dataIndex: 'role',
       align: 'center',
       render: (record) => {
-        return record ? <CellContent content={record} /> : <Nodata />;
-      },
+        return record ? <CellContent content={record} /> : <Nodata />
+      }
     },
     {
       title: trans('admin-management.label.status'),
       dataIndex: 'active',
       align: 'center',
       render: (record: boolean) => (
-        <Tag color={getTagColor(record)} className="text-capitalize">
+        <Tag
+          color={getTagColor(record)}
+          className='text-capitalize'
+        >
           {getStatusText(record)}
         </Tag>
-      ),
+      )
     },
     {
       title: trans('admin-management.label.action'),
       width: 250,
       align: 'center',
       render: (value: string, record: AdminAccountData) => (
-        <div className="flex gap-2">
+        <div className='flex gap-2'>
           <ButtonAction
-            module="admin"
+            module='admin'
             trans={trans}
-            action={['update', 'permission', 'delete']}
-            onClick={(action) => handleActionClick(action, record)}
+            action={['update', 'permission', 'delete', 'view']}
+            record={record}
+            onClick={handleActionClick}
           />
-
-          <Tooltip
-            placement="top"
-            title={trans('admin-management.tooltip.view')}
-          >
-            <ButtonView onClick={() => handleModal(viewMode.view, record.id)} />
-          </Tooltip>
           {record.active === 0 ? (
             <Tooltip
-              placement="top"
+              placement='top'
               title={trans('admin-management.tooltip.unlock')}
             >
               <ButtonUnlock
-                module="admin"
+                module='admin'
                 onClick={() => handleModal(viewMode.unlock, record.id)}
               />
             </Tooltip>
           ) : (
             <Tooltip
-              placement="top"
+              placement='top'
               title={trans('admin-management.tooltip.lock')}
             >
               <ButtonLock
-                module="admin"
+                module='admin'
                 onClick={() => handleModal(viewMode.lock, record.id)}
               />
             </Tooltip>
           )}
         </div>
-      ),
-    },
-  ];
+      )
+    }
+  ]
 
   return (
     <Card
@@ -196,7 +178,7 @@ const AdminManagement = () => {
           headerMenu={
             <>
               <Form.Item
-                name="fullName"
+                name='fullName'
                 label={trans('admin-management.label.userName')}
               >
                 <Input
@@ -208,7 +190,7 @@ const AdminManagement = () => {
               </Form.Item>
 
               <Form.Item
-                name="email"
+                name='email'
                 label={trans('admin-management.label.email')}
               >
                 <Input
@@ -219,7 +201,7 @@ const AdminManagement = () => {
                 />
               </Form.Item>
               <Form.Item
-                name="phoneNumber"
+                name='phoneNumber'
                 label={trans('admin-management.label.phoneNumber')}
                 rules={[
                   {
@@ -228,8 +210,8 @@ const AdminManagement = () => {
                     ),
                     message: trans(
                       'messages.phoneNumberCorrectFormat'
-                    ).toString(),
-                  },
+                    ).toString()
+                  }
                 ]}
               >
                 <Input
@@ -238,13 +220,13 @@ const AdminManagement = () => {
                     'admin-management.placeholder.phoneNumberPlaceholder'
                   ).toString()}
                   onBlur={(e) => {
-                    const value = e.target.value.trim();
-                    form.setFieldValue('phoneNumber', value);
+                    const value = e.target.value.trim()
+                    form.setFieldValue('phoneNumber', value)
                   }}
                 />
               </Form.Item>
               <Form.Item
-                name="active"
+                name='active'
                 label={trans('admin-management.label.status')}
               >
                 <Select
@@ -255,10 +237,10 @@ const AdminManagement = () => {
                   options={AdminManagementOptions}
                 />
               </Form.Item>
-              <ButtonSearch htmlType="submit" />
+              <ButtonSearch htmlType='submit' />
 
               <ButtonAdd
-                module="admin"
+                module='admin'
                 onClick={() => handleModal(viewMode.create)}
               />
             </>
@@ -270,8 +252,8 @@ const AdminManagement = () => {
         columns={adminColumns}
         dataSource={adminAccount?.data || []}
         scroll={{ x: '100%' }}
-        rowKey="id"
-        size="small"
+        rowKey='id'
+        size='small'
         bordered
         pagination={{
           current: adminAccount?.meta?.page || 1,
@@ -280,9 +262,9 @@ const AdminManagement = () => {
           onChange(page) {
             setSearch({
               ...search,
-              page,
-            });
-          },
+              page
+            })
+          }
         }}
       />
       <AdminModal
@@ -293,7 +275,7 @@ const AdminManagement = () => {
         refetch={refetch}
       />
     </Card>
-  );
-};
+  )
+}
 
-export default AdminManagement;
+export default AdminManagement

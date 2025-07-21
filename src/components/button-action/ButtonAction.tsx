@@ -1,27 +1,29 @@
 import { SIZE_ICON } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
-import { GitBranch, PencilSimple, Trash } from '@phosphor-icons/react'
+import { GitBranch, PencilSimple, Trash, Eye } from '@phosphor-icons/react'
 import { Button, ButtonProps, Tooltip } from 'antd'
 import { TFunction } from 'i18next'
 import { useCallback } from 'react'
 
-interface CustomButtonProps extends Omit<ButtonProps, 'onClick'> {
+interface CustomButtonProps<T> extends Omit<ButtonProps, 'onClick'> {
   module: string
   label?: string
   trans: TFunction
   action: IconName | IconName[]
-  onClick: (action: IconName) => void
+  record: T
+  onClick: (action: IconName, record: T) => void
 }
 
 const iconMap = {
   delete: Trash,
   update: PencilSimple,
-  permission: GitBranch
+  permission: GitBranch,
+  view: Eye
 }
 export type IconName = keyof typeof iconMap
 
-const ButtonAction = (props: CustomButtonProps) => {
-  const { module, action, trans, onClick, ...rest } = props
+const ButtonAction = <T,>(props: CustomButtonProps<T>) => {
+  const { module, action, trans, onClick, record, ...rest } = props
 
   const { permissions } = useAppSelector((state) => state.auth.profile)
 
@@ -38,7 +40,7 @@ const ButtonAction = (props: CustomButtonProps) => {
   const namesArray = Array.isArray(action) ? action : [action]
 
   return !isHasPermission() ? null : (
-    <div>
+    <div className='flex'>
       {namesArray.map((name) => {
         const IconComponent = iconMap[name]
         return (
@@ -51,7 +53,7 @@ const ButtonAction = (props: CustomButtonProps) => {
               className='ml-2'
               icon={<IconComponent size={SIZE_ICON} />}
               {...rest}
-              onClick={() => onClick(name)}
+              onClick={() => onClick(name, record)}
             />
           </Tooltip>
         )

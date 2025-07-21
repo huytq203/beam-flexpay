@@ -1,22 +1,21 @@
 import ButtonAdd from '@components/button-add/ButtonAdd'
-import ButtonDelete from '@components/button-delete/ButtonDelete'
 import ButtonSearch from '@components/button-search/ButtonSearch'
-import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import CustomSelect from '@components/custom-select/CustomSelect'
 import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER } from '@constants/appConstant'
 import { useLazyGetListGroupPermissionQuery } from '@services/apiGroupPermissionService'
 import { useGroupFindAllQuery } from '@services/cmsService'
 import { GroupFindAllApiArg } from '@type/application'
 import { GroupPermissionData, viewMode } from '@type/permission'
 import { getStatusText, getTagColor } from '@utils/helperFunctions'
-import { Card, Col, Form, Row, Select, Tag } from 'antd'
+import { Card, Form, Select, Tag } from 'antd'
 import Table, { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import GroupPermissionModal from './group-permission-modal/GroupPermissionModal'
 
+import ButtonAction from '@components/button-action/ButtonAction'
+import { useActionHandler } from '@hooks/useActionHandler'
 import './style.scss'
 
 const ManageGroupPermission = () => {
@@ -40,6 +39,8 @@ const ManageGroupPermission = () => {
     if (id) setSelectedId(id)
     setMode(action)
   }
+
+  const handleActionClick = useActionHandler<GroupPermissionData>(handleModal)
 
   const onCancel = () => {
     setVisible(false)
@@ -99,25 +100,13 @@ const ManageGroupPermission = () => {
       align: 'center',
       width: 120,
       render: (value: string, record: GroupPermissionData) => (
-        <Row
-          gutter={GUTTER}
-          justify='center'
-        >
-          <Col>
-            <ButtonUpdate
-              module='group'
-              onClick={() => {
-                handleModal(viewMode.update, record.id)
-              }}
-            />
-          </Col>
-          <Col>
-            <ButtonDelete
-              module='group'
-              onClick={() => handleModal(viewMode.delete, record.id)}
-            />
-          </Col>
-        </Row>
+        <ButtonAction
+          module='group'
+          trans={trans}
+          action={['update', 'delete']}
+          record={record}
+          onClick={handleActionClick}
+        />
       )
     }
   ]
