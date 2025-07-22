@@ -67,6 +67,7 @@ import AccountGuaranteeReport from '@pages/bank-report/account-guarantee-report/
 import TransactionManagementReport from '@pages/bank-report/transaction-management-report/TransactionManagementReport'
 import DepositRequest from '@pages/internal-wallet/deposit-request/DepositRequest'
 import VerifyCode from '@pages/auth/verify-code/VerifyCode'
+import PolicyManagement from '@pages/policy-management/PolicyManagement'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -197,6 +198,10 @@ const feeManagement = {
   errorElement: createElement(NotFound),
   children: [
     {
+      path: FEEMANAGEMENT + '/policy-management',
+      element: createElement(PolicyManagement)
+    },
+    {                                                     
       path: FEEMANAGEMENT + '/direct-deposit',
       element: createElement(PaymentPolicyManagement)
       // element: createElement(DirectDeposit)

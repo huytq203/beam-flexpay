@@ -129,24 +129,24 @@ export const SetupDirectDepositPolicyContent = ({
     },
     {
       align: 'center',
-      title: t`policy-management.depositManagement.modalContent.tabelModal.transactionFrom`,
+      title: t`policy-management.depositManagement.modalContent.tableModal.transactionFrom`,
       render: (record) => <div>{convertNumber(record.transactionFrom)}</div>
     },
     {
       align: 'center',
-      title: t`policy-management.depositManagement.modalContent.tabelModal.transactionTo`,
+      title: t`policy-management.depositManagement.modalContent.tableModal.transactionTo`,
       render: (record) => <div>{convertNumber(record.transactionTo)}</div>
     },
     {
-      title: t`policy-management.depositManagement.modalContent.tabelModal.transactionFee`,
+      title: t`policy-management.depositManagement.modalContent.tableModal.transactionFee`,
       children: [
         {
           align: 'center',
-          title: t`policy-management.depositManagement.modalContent.tabelModal.onTransferor`,
+          title: t`policy-management.depositManagement.modalContent.tableModal.onTransferor`,
           children: [
             {
               dataIndex: 'transferorFlexibleFee',
-              title: t`policy-management.depositManagement.modalContent.tabelModal.variableFee`,
+              title: t`policy-management.depositManagement.modalContent.tableModal.variableFee`,
               align: 'center',
               render: (value, record) => (
                 <div>{convertNumber(record.type === "FLEXIBLE" ? value : null, '%')}</div>
@@ -154,19 +154,19 @@ export const SetupDirectDepositPolicyContent = ({
             },
             {
               dataIndex: 'transferorFixedFee',
-              title: t`policy-management.depositManagement.modalContent.tabelModal.fixedFee`,
+              title: t`policy-management.depositManagement.modalContent.tableModal.fixedFee`,
               align: 'center',
               render: (value, record) => <div>{convertNumber(record.type === "FIXED" ? value : null)}</div>
             },
             {
               dataIndex: 'transferorFeeMin',
-              title: t`policy-management.depositManagement.modalContent.tabelModal.minFee`,
+              title: t`policy-management.depositManagement.modalContent.tableModal.minFee`,
               align: 'center',
               render: (value, record) => <div>{convertNumber(record.type === "FLEXIBLE" ? value : null)}</div>
             },
             {
               dataIndex: 'transferorFeeMax',
-              title: t`policy-management.depositManagement.modalContent.tabelModal.maxFee`,
+              title: t`policy-management.depositManagement.modalContent.tableModal.maxFee`,
               align: 'center',
               render: (value, record) => <div>{convertNumber(record.type === "FLEXIBLE" ? value : null)}</div>
             }
@@ -174,29 +174,29 @@ export const SetupDirectDepositPolicyContent = ({
         },
         {
           align: 'center',
-          title: t`policy-management.depositManagement.modalContent.tabelModal.onReceiver`,
+          title: t`policy-management.depositManagement.modalContent.tableModal.onReceiver`,
           children: [
             {
               dataIndex: 'receiverFlexibleFee',
-              title: t`policy-management.depositManagement.modalContent.tabelModal.variableFee`,
+              title: t`policy-management.depositManagement.modalContent.tableModal.variableFee`,
               align: 'center',
               render: (value, record) => <div>{convertNumber(record.type === "FLEXIBLE" ? value : null, '%')}</div>
             },
             {
               dataIndex: 'receiverFixedFee',
-              title: t`policy-management.depositManagement.modalContent.tabelModal.fixedFee`,
+              title: t`policy-management.depositManagement.modalContent.tableModal.fixedFee`,
               align: 'center',
               render: (value, record) => <div>{convertNumber(record.type === "FIXED" ? value : null)}</div>
             },
             {
               dataIndex: 'receiverFeeMin',
-              title: t`policy-management.depositManagement.modalContent.tabelModal.minFee`,
+              title: t`policy-management.depositManagement.modalContent.tableModal.minFee`,
               align: 'center',
               render: (value, record) => <div>{convertNumber(record.type === "FLEXIBLE" ? value : null)}</div>
             },
             {
               dataIndex: 'receiverFeeMax',
-              title: t`policy-management.depositManagement.modalContent.tabelModal.maxFee`,
+              title: t`policy-management.depositManagement.modalContent.tableModal.maxFee`,
               align: 'center',
               render: (value, record) => <div>{convertNumber(record.type === "FLEXIBLE" ? value : null)}</div>
             }
@@ -305,6 +305,7 @@ export const SetupDirectDepositPolicyContent = ({
     }
 
     setIsLoading(false)
+    console.log('record1', record)
   }
 
   const getTitle = useCallback(() => {
@@ -687,7 +688,7 @@ export const SetupDirectDepositPolicyContent = ({
                 disabledDate={disabledDate}
                 className='w-100'
                 format='DD/MM/YYYY HH:mm:ss'
-                onChange={onChangeStartDate}
+                onChange={onChangeStartDate as any}
                 showNow={false}
               />
             </Form.Item>

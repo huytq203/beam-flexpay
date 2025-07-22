@@ -1125,6 +1125,14 @@
       "delete-policy": "Xóa chính sách"
     },
     "payment": {
+      "policyManagementType": {
+        "title": "Loại giao dịch",
+        "TRANSFER_INTERNAL": "Chuyển tiền nộ bộ",
+        "DEPOSIT_FLEXPAY": "Nạp tiền vào ví",
+        "PAYMENT_FLEXPAY": "Thanh toán ví",
+        "PAYMENT_BANK_OR_ATM": "Thanh toán ngân hàng hoặc ATM",
+        "WITHDRAW": "Rút tiền"
+      },
       "account-bank": "Phương thức thanh toán",
       "payment.width-raw-bank": "Ngân hàng rút",
       "modal": {
@@ -1410,7 +1418,7 @@
         "warningSetupDepositPolicyText": "Đối tượng áp dụng là Người nhận",
         "packagePackage": "Gói phí",
         "createNewFeePackage": "Tạo gói phí",
-        "tabelModal": {
+        "tableModal": {
           "transactionFrom": "Mức giao dịch từ (VND)",
           "transactionTo": "Mức giao dịch đến (VND)",
           "onTransferor": "Người chuyển chịu",
@@ -1490,7 +1498,7 @@
         "warningSetupEWalletTransferMoneyText": "Đối tượng áp dụng là Người chuyển",
         "packagePackage": "Gói phí",
         "createNewFeePackage": "Tạo gói phí",
-        "tabelModal": {
+        "tableModal": {
           "transactionFrom": "Mức giao dịch từ (VND)",
           "transactionTo": "Mức giao dịch đến (VND)",
           "onTransferor": "Người chuyển chịu",
@@ -1529,7 +1537,7 @@
         "warningSetupEWalletTransferMoneyText": "Đối tượng áp dụng là Merchant",
         "packagePackage": "Gói phí",
         "createNewFeePackage": "Tạo gói phí",
-        "tabelModal": {
+        "tableModal": {
           "transactionFrom": "Mức giao dịch từ (VND)",
           "transactionTo": "Mức giao dịch đến (VND)",
           "onTransferor": "Người chuyển chịu",

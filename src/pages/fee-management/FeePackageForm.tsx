@@ -31,13 +31,13 @@ function FeePackageForm<T>({ receiver, setValue, value }: PackageProp<T>) {
       type === 'FIXED' ? (
         <Row gutter={GUTTER}>
           <Col span={24}>
-            <h3>{t`policy-management.depositManagement.modalContent.tabelModal.onTransferor`}</h3>
+            <h3>{t`policy-management.depositManagement.modalContent.tableModal.onTransferor`}</h3>
           </Col>
           <Col span={12}>
             <Form.Item
               labelAlign='left'
               name='transferorFixedFee'
-              label={t`policy-management.depositManagement.modalContent.tabelModal.fixedFee`}
+              label={t`policy-management.depositManagement.modalContent.tableModal.fixedFee`}
               rules={[
                 {
                   required: true,
@@ -74,12 +74,12 @@ function FeePackageForm<T>({ receiver, setValue, value }: PackageProp<T>) {
       ) : (
         <Row gutter={GUTTER}>
           <Col span={24}>
-            <h3>{t`policy-management.depositManagement.modalContent.tabelModal.onTransferor`}</h3>
+            <h3>{t`policy-management.depositManagement.modalContent.tableModal.onTransferor`}</h3>
           </Col>
           <Col span={12}>
             <Form.Item
               name='transferorFeeMin'
-              label={t`policy-management.depositManagement.modalContent.tabelModal.minFee`}
+              label={t`policy-management.depositManagement.modalContent.tableModal.minFee`}
               rules={[
                 {
                   required: true,
@@ -125,7 +125,7 @@ function FeePackageForm<T>({ receiver, setValue, value }: PackageProp<T>) {
           <Col span={12}>
             <Form.Item
               name='transferorFeeMax'
-              label={t`policy-management.depositManagement.modalContent.tabelModal.maxFee`}
+              label={t`policy-management.depositManagement.modalContent.tableModal.maxFee`}
               rules={[
                 {
                   required: true,
@@ -174,12 +174,12 @@ function FeePackageForm<T>({ receiver, setValue, value }: PackageProp<T>) {
       type === 'FLEXIBLE' ? (
         <Row gutter={GUTTER}>
           <Col span={24}>
-            <h3>{t`policy-management.depositManagement.modalContent.tabelModal.onReceiver`}</h3>
+            <h3>{t`policy-management.depositManagement.modalContent.tableModal.onReceiver`}</h3>
           </Col>
           <Col span={12}>
             <Form.Item
               name='receiverFeeMin'
-              label={t`policy-management.depositManagement.modalContent.tabelModal.minFee`}
+              label={t`policy-management.depositManagement.modalContent.tableModal.minFee`}
               rules={[
                 {
                   required: true,
@@ -226,7 +226,7 @@ function FeePackageForm<T>({ receiver, setValue, value }: PackageProp<T>) {
           <Col span={12}>
             <Form.Item
               name='receiverFeeMax'
-              label={t`policy-management.depositManagement.modalContent.tabelModal.maxFee`}
+              label={t`policy-management.depositManagement.modalContent.tableModal.maxFee`}
               rules={[
                 {
                   required: true,
@@ -274,12 +274,12 @@ function FeePackageForm<T>({ receiver, setValue, value }: PackageProp<T>) {
       ) : (
         <Row gutter={GUTTER}>
           <Col span={24}>
-            <h3>{t`policy-management.depositManagement.modalContent.tabelModal.onReceiver`}</h3>
+            <h3>{t`policy-management.depositManagement.modalContent.tableModal.onReceiver`}</h3>
           </Col>
           <Col span={12}>
             <Form.Item
               name='receiverFixedFee'
-              label={t`policy-management.depositManagement.modalContent.tabelModal.fixedFee`}
+              label={t`policy-management.depositManagement.modalContent.tableModal.fixedFee`}
               rules={[
                 {
                   required: true,
@@ -334,7 +334,7 @@ function FeePackageForm<T>({ receiver, setValue, value }: PackageProp<T>) {
         <Col span={12}>
           <Form.Item
             name='transactionFrom'
-            label={t`policy-management.depositManagement.modalContent.tabelModal.transactionFrom`}
+            label={t`policy-management.depositManagement.modalContent.tableModal.transactionFrom`}
             rules={[
               {
                 required: true,
@@ -380,7 +380,7 @@ function FeePackageForm<T>({ receiver, setValue, value }: PackageProp<T>) {
         <Col span={12}>
           <Form.Item
             name='transactionTo'
-            label={t`policy-management.depositManagement.modalContent.tabelModal.transactionTo`}
+            label={t`policy-management.depositManagement.modalContent.tableModal.transactionTo`}
             rules={[
               {
                 required: true,
@@ -428,7 +428,7 @@ function FeePackageForm<T>({ receiver, setValue, value }: PackageProp<T>) {
         <Col flex='50%'>
           <Form.Item
             name='type'
-            label={t`policy-management.depositManagement.modalContent.tabelModal.type`}
+            label={t`policy-management.depositManagement.modalContent.tableModal.type`}
           >
             <Select
               options={FeeOptions}

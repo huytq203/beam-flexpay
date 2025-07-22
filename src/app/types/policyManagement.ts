@@ -117,6 +117,7 @@ export type SearchType = {
   depositMethod?: string[]
   applicableObject?: string
   applicableObjectId?: string[] | number[] | any
+  policyType?: POLICY_MANAGEMENT_TYPE
 }
 
 export type SearchValueType = {
@@ -157,4 +158,27 @@ export interface IPolicy<T> {
 export enum history_type {
   UPDATE_HISTORY = 'UPDATE_HISTORY',
   DELETE_HISTORY = 'DELETE_HISTORY'
+}
+
+export enum POLICY_MANAGEMENT_TYPE {
+  /**
+   * Chuyển tiền nộ bộ
+   */
+  TRANSFER_INTERNAL = 'TRANSFER_INTERNAL',
+  /**
+   * Nạp tiền vào ví
+   */
+  DEPOSIT_FLEXPAY = 'DEPOSIT_FLEXPAY',
+  /**
+   * Thanh toán ví
+   */
+  PAYMENT_FLEXPAY = 'PAYMENT_FLEXPAY',
+  /**
+   * Thanh toán ngân hàng hoặc ATM
+   */
+  PAYMENT_BANK_OR_ATM = 'PAYMENT_BANK_OR_ATM',
+  /**
+   * Rút tiền
+   */
+  WITHDRAW = 'WITHDRAW',
 }

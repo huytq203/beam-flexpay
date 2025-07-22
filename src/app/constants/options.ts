@@ -536,11 +536,11 @@ export const feeSettingsKey = [
 
 export const FeeOptions = [
   {
-    label: t`policy-management.depositManagement.modalContent.tabelModal.variableFee`,
+    label: t`policy-management.depositManagement.modalContent.tableModal.variableFee`,
     value: 'FLEXIBLE'
   },
   {
-    label: t`policy-management.depositManagement.modalContent.tabelModal.fixedFee`,
+    label: t`policy-management.depositManagement.modalContent.tableModal.fixedFee`,
     value: 'FIXED'
   }
 ]

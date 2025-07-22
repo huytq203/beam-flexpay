@@ -53,7 +53,7 @@ export const AddFeePackageModal = ({
             <Form.Item
               labelAlign='left'
               name='transferorFixedFee'
-              label={t`policy-management.depositManagement.modalContent.tabelModal.fixedFee`}
+              label={t`policy-management.depositManagement.modalContent.tableModal.fixedFee`}
               dependencies={['type']}
               hasFeedback
               rules={[
@@ -97,7 +97,7 @@ export const AddFeePackageModal = ({
             <Form.Item
               name='transferorFeeMin'
               initialValue={undefined}
-              label={t`policy-management.depositManagement.modalContent.tabelModal.minFee`}
+              label={t`policy-management.depositManagement.modalContent.tableModal.minFee`}
               rules={[
                 ({ getFieldValue }) => ({
                   validator(_, value) {
@@ -139,7 +139,7 @@ export const AddFeePackageModal = ({
           <Col span={12}>
             <Form.Item
               name='transferorFeeMax'
-              label={t`policy-management.depositManagement.modalContent.tabelModal.maxFee`}
+              label={t`policy-management.depositManagement.modalContent.tableModal.maxFee`}
               rules={[
                 ({ getFieldValue }) => ({
                   validator(_, value) {
@@ -190,7 +190,7 @@ export const AddFeePackageModal = ({
           <Col span={12}>
             <Form.Item
               name='receiverFeeMin'
-              label={t`policy-management.depositManagement.modalContent.tabelModal.minFee`}
+              label={t`policy-management.depositManagement.modalContent.tableModal.minFee`}
               rules={[
                 ({ getFieldValue }) => ({
                   validator(_, value) {
@@ -232,7 +232,7 @@ export const AddFeePackageModal = ({
           <Col span={12}>
             <Form.Item
               name='receiverFeeMax'
-              label={t`policy-management.depositManagement.modalContent.tabelModal.maxFee`}
+              label={t`policy-management.depositManagement.modalContent.tableModal.maxFee`}
               rules={[
                 ({ getFieldValue }) => ({
                   validator(_, value) {
@@ -279,7 +279,7 @@ export const AddFeePackageModal = ({
           <Col span={12}>
             <Form.Item
               name='receiverFixedFee'
-              label={t`policy-management.depositManagement.modalContent.tabelModal.fixedFee`}
+              label={t`policy-management.depositManagement.modalContent.tableModal.fixedFee`}
               rules={[
                 {
                   required: true,
@@ -339,7 +339,7 @@ export const AddFeePackageModal = ({
         <Col span={12}>
           <Form.Item
             name='transactionFrom'
-            label={t`policy-management.depositManagement.modalContent.tabelModal.transactionFrom`}
+            label={t`policy-management.depositManagement.modalContent.tableModal.transactionFrom`}
             dependencies={['transactionTo']}
             rules={[
               ({ getFieldValue }) => ({
@@ -375,7 +375,7 @@ export const AddFeePackageModal = ({
         <Col span={12}>
           <Form.Item
             name='transactionTo'
-            label={t`policy-management.depositManagement.modalContent.tabelModal.transactionTo`}
+            label={t`policy-management.depositManagement.modalContent.tableModal.transactionTo`}
             rules={[
               ({ getFieldValue }) => ({
                 validator(_, value) {
@@ -412,7 +412,7 @@ export const AddFeePackageModal = ({
         <Col span={12}>
           <Form.Item
             name='type'
-            label={t`policy-management.depositManagement.modalContent.tabelModal.type`}
+            label={t`policy-management.depositManagement.modalContent.tableModal.type`}
           >
             <Select
               options={FeeOptions}
@@ -424,7 +424,7 @@ export const AddFeePackageModal = ({
           span={24}
           style={{ fontWeight: '600', marginBottom: '10px' }}
         >
-          {t`policy-management.depositManagement.modalContent.tabelModal.onTransferor`}
+          {t`policy-management.depositManagement.modalContent.tableModal.onTransferor`}
         </Col>
         {type === 'FLEXIBLE' && (
           <Col span={12}>
@@ -432,7 +432,7 @@ export const AddFeePackageModal = ({
               labelAlign='left'
               initialValue={0}
               name='transferorFlexibleFee'
-              label={t`policy-management.depositManagement.modalContent.tabelModal.variableFee`}
+              label={t`policy-management.depositManagement.modalContent.tableModal.variableFee`}
               rules={[
                 {
                   required: true,
@@ -485,13 +485,13 @@ export const AddFeePackageModal = ({
           <>
             <div
               style={{ fontWeight: '600', marginBottom: '10px' }}
-            >{t`policy-management.depositManagement.modalContent.tabelModal.onReceiver`}</div>
+            >{t`policy-management.depositManagement.modalContent.tableModal.onReceiver`}</div>
             {type === 'FLEXIBLE' && (
               <Row gutter={GUTTER}>
                 <Col span={12}>
                   <Form.Item
                     name='receiverFlexibleFee'
-                    label={t`policy-management.depositManagement.modalContent.tabelModal.variableFee`}
+                    label={t`policy-management.depositManagement.modalContent.tableModal.variableFee`}
                     rules={[
                       {
                         required: true,
