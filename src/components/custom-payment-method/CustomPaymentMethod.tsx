@@ -1,6 +1,6 @@
 import { useLazyGetPublicBanksQuery } from '@services/apiBankService'
 import { PublicBankInterface } from '@type/bank'
-import { pageEnum, viewMode } from '@type/policyManagement'
+import { pageEnum, POLICY_MANAGEMENT_TYPE, viewMode } from '@type/policyManagement'
 import { TreeSelect } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -10,7 +10,7 @@ type IProps = {
   defaultMethod?: string
   handleSelectMethod: (values: number[] | string, status?: string) => void
   defaultSelected?: number[]
-  module?: pageEnum
+  module?: pageEnum | POLICY_MANAGEMENT_TYPE
 }
 
 type SelectItem = {
@@ -35,6 +35,8 @@ function CustomPaymentMethod({
         return t`policy-management.depositManagement.optionLabels.allBankWithdraw`.toString()
       case pageEnum.directDeposit:
         return t`policy-management.depositManagement.optionLabels.allDepositMethods`.toString()
+      case POLICY_MANAGEMENT_TYPE.WITHDRAW:
+        return t`policy-management.depositManagement.optionLabels.allBankWithdraw`.toString()
       default:
         return '-'
     }

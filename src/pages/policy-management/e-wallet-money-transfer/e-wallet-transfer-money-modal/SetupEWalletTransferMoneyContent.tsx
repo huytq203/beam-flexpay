@@ -130,27 +130,27 @@ export const SetupEWalletTransferMoneyContent = ({
       {
         key: 'transactionFrom',
         align: 'center',
-        title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tabelModal.transactionFrom`,
+        title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tableModal.transactionFrom`,
         render: (record) => <div>{convertNumber(record.transactionFrom)}</div>
       },
       {
         key: 'transactionTo',
         align: 'center',
-        title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tabelModal.transactionTo`,
+        title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tableModal.transactionTo`,
         render: (record) => <div>{convertNumber(record.transactionTo)}</div>
       },
       {
         key: 'transactionFee',
-        title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tabelModal.transactionFee`,
+        title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tableModal.transactionFee`,
         children: [
           {
             key: 'transactor',
             align: 'center',
-            title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tabelModal.onTransferor`,
+            title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tableModal.onTransferor`,
             children: [
               {
                 key: 'variableFeeTransactor',
-                title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tabelModal.variableFee`,
+                title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tableModal.variableFee`,
                 align: 'center',
                 render: (record) => (
                   <div>{convertNumber(record.type === "FLEXIBLE" ? record.transferorFlexibleFee : null, '%')}</div>
@@ -158,7 +158,7 @@ export const SetupEWalletTransferMoneyContent = ({
               },
               {
                 key: 'fixedFeeTransactor',
-                title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tabelModal.fixedFee`,
+                title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tableModal.fixedFee`,
                 align: 'center',
                 render: (record) => (
                   <div>{convertNumber(record.type === "FIXED" ? record.transferorFixedFee : null)}</div>
@@ -166,7 +166,7 @@ export const SetupEWalletTransferMoneyContent = ({
               },
               {
                 key: 'minFeeTransactor',
-                title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tabelModal.minFee`,
+                title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tableModal.minFee`,
                 align: 'center',
                 render: (record) => (
                   <div>{convertNumber(record.type === "FLEXIBLE" ? record.transferorFeeMin : null)}</div>
@@ -174,7 +174,7 @@ export const SetupEWalletTransferMoneyContent = ({
               },
               {
                 key: 'maxFeeTransactor',
-                title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tabelModal.maxFee`,
+                title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tableModal.maxFee`,
                 align: 'center',
                 render: (record) => (
                   <div>{convertNumber(record.type === "FLEXIBLE" ? record.transferorFeeMax : null)}</div>
@@ -185,11 +185,11 @@ export const SetupEWalletTransferMoneyContent = ({
           {
             key: 'receiver',
             align: 'center',
-            title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tabelModal.onReceiver`,
+            title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tableModal.onReceiver`,
             children: [
               {
                 key: 'variableFeeReceiver',
-                title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tabelModal.variableFee`,
+                title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tableModal.variableFee`,
                 align: 'center',
                 render: (record) => (
                   <div>{convertNumber(record.type === "FLEXIBLE" ? record.receiverFlexibleFee : null, '%')}</div>
@@ -197,7 +197,7 @@ export const SetupEWalletTransferMoneyContent = ({
               },
               {
                 key: 'fixedFeeReceiver',
-                title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tabelModal.fixedFee`,
+                title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tableModal.fixedFee`,
                 align: 'center',
                 render: (record) => (
                   <div>{convertNumber(record.type === "FIXED" ? record.receiverFixedFee : null)}</div>
@@ -205,7 +205,7 @@ export const SetupEWalletTransferMoneyContent = ({
               },
               {
                 key: 'minFeeReceiver',
-                title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tabelModal.minFee`,
+                title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tableModal.minFee`,
                 align: 'center',
                 render: (record) => (
                   <div>{convertNumber(record.type === "FLEXIBLE" ? record.receiverFeeMin : null)}</div>
@@ -213,7 +213,7 @@ export const SetupEWalletTransferMoneyContent = ({
               },
               {
                 key: 'maxFeeReceiver',
-                title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tabelModal.maxFee`,
+                title: t`policy-management.eWalletTransferMoneyManagement.modalContent.tableModal.maxFee`,
                 align: 'center',
                 render: (record) => (
                   <div>{convertNumber(record.type === "FLEXIBLE" ? record.receiverFeeMax : null)}</div>

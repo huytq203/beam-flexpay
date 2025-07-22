@@ -73,43 +73,43 @@ const FeeSetupModal = ({
     {
       align: 'center',
       dataIndex: ['transactionFrom'],
-      title: t`policy-management.depositManagement.modalContent.tabelModal.transactionFrom`,
+      title: t`policy-management.depositManagement.modalContent.tableModal.transactionFrom`,
       render: (value) => <div>{convertNumber(value)}</div>
     },
     {
       align: 'center',
-      title: t`policy-management.depositManagement.modalContent.tabelModal.transactionTo`,
+      title: t`policy-management.depositManagement.modalContent.tableModal.transactionTo`,
       dataIndex: ['transactionTo'],
       render: (value) => <div>{convertNumber(value)}</div>
     },
     {
-      title: t`policy-management.depositManagement.modalContent.tabelModal.transactionFee`,
+      title: t`policy-management.depositManagement.modalContent.tableModal.transactionFee`,
       children: [
         {
           align: 'center',
-          title: t`policy-management.depositManagement.modalContent.tabelModal.onTransferor`,
+          title: t`policy-management.depositManagement.modalContent.tableModal.onTransferor`,
           children: [
             {
               dataIndex: 'transferorFlexibleFee',
-              title: t`policy-management.depositManagement.modalContent.tabelModal.variableFee`,
+              title: t`policy-management.depositManagement.modalContent.tableModal.variableFee`,
               align: 'center',
               render: (record) => <div>{convertNumber(record)}</div>
             },
             {
               dataIndex: 'transferorFixedFee',
-              title: t`policy-management.depositManagement.modalContent.tabelModal.fixedFee`,
+              title: t`policy-management.depositManagement.modalContent.tableModal.fixedFee`,
               align: 'center',
               render: (record) => <div>{convertNumber(record)}</div>
             },
             {
               dataIndex: 'transferorFeeMin',
-              title: t`policy-management.depositManagement.modalContent.tabelModal.minFee`,
+              title: t`policy-management.depositManagement.modalContent.tableModal.minFee`,
               align: 'center',
               render: (record) => <div>{convertNumber(record)}</div>
             },
             {
               dataIndex: 'transferorFeeMax',
-              title: t`policy-management.depositManagement.modalContent.tabelModal.maxFee`,
+              title: t`policy-management.depositManagement.modalContent.tableModal.maxFee`,
               align: 'center',
               render: (record) => <div>{convertNumber(record)}</div>
             }
@@ -117,29 +117,29 @@ const FeeSetupModal = ({
         },
         {
           align: 'center',
-          title: t`policy-management.depositManagement.modalContent.tabelModal.onReceiver`,
+          title: t`policy-management.depositManagement.modalContent.tableModal.onReceiver`,
           children: [
             {
               dataIndex: 'receiverFlexibleFee',
-              title: t`policy-management.depositManagement.modalContent.tabelModal.variableFee`,
+              title: t`policy-management.depositManagement.modalContent.tableModal.variableFee`,
               align: 'center',
               render: (record) => <div>{convertNumber(record)}</div>
             },
             {
               dataIndex: 'receiverFixedFee',
-              title: t`policy-management.depositManagement.modalContent.tabelModal.fixedFee`,
+              title: t`policy-management.depositManagement.modalContent.tableModal.fixedFee`,
               align: 'center',
               render: (record) => <div>{convertNumber(record)}</div>
             },
             {
               dataIndex: 'receiverFeeMin',
-              title: t`policy-management.depositManagement.modalContent.tabelModal.minFee`,
+              title: t`policy-management.depositManagement.modalContent.tableModal.minFee`,
               align: 'center',
               render: (record) => <div>{convertNumber(record)}</div>
             },
             {
               dataIndex: 'receiverFeeMax',
-              title: t`policy-management.depositManagement.modalContent.tabelModal.maxFee`,
+              title: t`policy-management.depositManagement.modalContent.tableModal.maxFee`,
               align: 'center',
               render: (record) => <div>{convertNumber(record)}</div>
             }

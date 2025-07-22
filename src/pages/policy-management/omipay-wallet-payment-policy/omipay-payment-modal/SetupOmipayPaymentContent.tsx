@@ -101,45 +101,45 @@ export const SetupOmipayPaymentContent = ({ onCancel }: ModalContentType) => {
       {
         key: 'transactionFrom',
         align: 'center',
-        title: t`policy-management.omipayPaymentManagement.modalContent.tabelModal.transactionFrom`,
+        title: t`policy-management.omipayPaymentManagement.modalContent.tableModal.transactionFrom`,
         render: (record) => <div>{convertNumber(record.transactionFrom)}</div>
       },
       {
         key: 'transactionTo',
         align: 'center',
-        title: t`policy-management.omipayPaymentManagement.modalContent.tabelModal.transactionTo`,
+        title: t`policy-management.omipayPaymentManagement.modalContent.tableModal.transactionTo`,
         render: (record) => <div>{convertNumber(record.transactionTo)}</div>
       },
       {
         key: 'transactor',
         align: 'center',
-        title: t`policy-management.omipayPaymentManagement.modalContent.tabelModal.onTransferor`,
+        title: t`policy-management.omipayPaymentManagement.modalContent.tableModal.onTransferor`,
         children: [
           {
             dataIndex: 'transactor',
             key: 'variableFeeTransactor',
-            title: t`policy-management.omipayPaymentManagement.modalContent.tabelModal.variableFee`,
+            title: t`policy-management.omipayPaymentManagement.modalContent.tableModal.variableFee`,
             align: 'center',
             render: (record) => <div>{convertNumber(record.variableFee)}</div>
           },
           {
             dataIndex: 'transactor',
             key: 'fixedFeeTransactor',
-            title: t`policy-management.omipayPaymentManagement.modalContent.tabelModal.fixedFee`,
+            title: t`policy-management.omipayPaymentManagement.modalContent.tableModal.fixedFee`,
             align: 'center',
             render: (record) => <div>{convertNumber(record.fixedFee)}</div>
           },
           {
             dataIndex: 'transactor',
             key: 'minFeeTransactor',
-            title: t`policy-management.omipayPaymentManagement.modalContent.tabelModal.minFee`,
+            title: t`policy-management.omipayPaymentManagement.modalContent.tableModal.minFee`,
             align: 'center',
             render: (record) => <div>{convertNumber(record.minFee)}</div>
           },
           {
             dataIndex: 'transactor',
             key: 'maxFeeTransactor',
-            title: t`policy-management.omipayPaymentManagement.modalContent.tabelModal.maxFee`,
+            title: t`policy-management.omipayPaymentManagement.modalContent.tableModal.maxFee`,
             align: 'center',
             render: (record) => <div>{convertNumber(record.maxFee)}</div>
           }
@@ -148,33 +148,33 @@ export const SetupOmipayPaymentContent = ({ onCancel }: ModalContentType) => {
       {
         key: 'receiver',
         align: 'center',
-        title: t`policy-management.omipayPaymentManagement.modalContent.tabelModal.onReceiver`,
+        title: t`policy-management.omipayPaymentManagement.modalContent.tableModal.onReceiver`,
         children: [
           {
             dataIndex: 'receiver',
             key: 'variableFeeReceiver',
-            title: t`policy-management.omipayPaymentManagement.modalContent.tabelModal.variableFee`,
+            title: t`policy-management.omipayPaymentManagement.modalContent.tableModal.variableFee`,
             align: 'center',
             render: (record) => <div>{convertNumber(record.variableFee)}</div>
           },
           {
             dataIndex: 'receiver',
             key: 'fixedFeeReceiver',
-            title: t`policy-management.omipayPaymentManagement.modalContent.tabelModal.fixedFee`,
+            title: t`policy-management.omipayPaymentManagement.modalContent.tableModal.fixedFee`,
             align: 'center',
             render: (record) => <div>{convertNumber(record.fixedFee)}</div>
           },
           {
             dataIndex: 'receiver',
             key: 'minFeeReceiver',
-            title: t`policy-management.omipayPaymentManagement.modalContent.tabelModal.minFee`,
+            title: t`policy-management.omipayPaymentManagement.modalContent.tableModal.minFee`,
             align: 'center',
             render: (record) => <div>{convertNumber(record.minFee)}</div>
           },
           {
             dataIndex: 'receiver',
             key: 'maxFeeReceiver',
-            title: t`policy-management.omipayPaymentManagement.modalContent.tabelModal.maxFee`,
+            title: t`policy-management.omipayPaymentManagement.modalContent.tableModal.maxFee`,
             align: 'center',
             render: (record) => <div>{convertNumber(record.maxFee)}</div>
           }

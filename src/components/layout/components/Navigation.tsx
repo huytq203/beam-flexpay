@@ -250,6 +250,18 @@ const feeManagement = {
   label: i18n.t('navigation.policy-management'),
   children: [
     {
+      key: 'policy-management',
+      icon: (
+        <Gear
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: i18n.t('navigation.policy-management'),
+      permission: 'policy_management'
+    },
+    {
       key: 'direct-deposit',
       icon: (
         <ArrowCircleDown
