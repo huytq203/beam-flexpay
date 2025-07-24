@@ -39,6 +39,7 @@ import { useTranslation } from 'react-i18next'
 import { CustomAccountGroupSelect } from '../components/SelectAccountGroup'
 import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount'
 import ButtonHistory from '@components/button-history/ButtonHistory'
+import ButtonSearch from '@components/button-search/ButtonSearch'
 
 type SearchType = {
   page: number
@@ -137,18 +138,23 @@ const EWalletMoneyTransferManagement = () => {
               title: `${trans`policy-management.eWalletTransferMoneyManagement.flexibleFee`} (%)`,
               align: 'center',
               width: 100,
-              render: (_, record) => (
-                record.type === "FLEXIBLE"
-                  ? <div>{convertNumber(record.transferorFlexibleFee, '%')}</div>
-                  : <div>-</div>
-              )
+              render: (_, record) =>
+                record.type === 'FLEXIBLE' ? (
+                  <div>{convertNumber(record.transferorFlexibleFee, '%')}</div>
+                ) : (
+                  <div>-</div>
+                )
             },
             {
               title: `${trans`policy-management.eWalletTransferMoneyManagement.fixedCharge`} (VNĐ)`,
               align: 'center',
               width: 100,
               render: (_, record) => (
-                <div>{convertNumber(record.type === "FIXED" ? record.transferorFixedFee : null)}</div>
+                <div>
+                  {convertNumber(
+                    record.type === 'FIXED' ? record.transferorFixedFee : null
+                  )}
+                </div>
               )
             },
             {
@@ -156,7 +162,11 @@ const EWalletMoneyTransferManagement = () => {
               align: 'center',
               width: 100,
               render: (_, record) => (
-                <div>{convertNumber(record.type === "FLEXIBLE" ? record.transferorFeeMin : null)}</div>
+                <div>
+                  {convertNumber(
+                    record.type === 'FLEXIBLE' ? record.transferorFeeMin : null
+                  )}
+                </div>
               )
             },
             {
@@ -164,7 +174,11 @@ const EWalletMoneyTransferManagement = () => {
               align: 'center',
               width: 100,
               render: (record) => (
-                <div>{convertNumber(record.type === "FLEXIBLE" ? record.transferorFeeMax : null)}</div>
+                <div>
+                  {convertNumber(
+                    record.type === 'FLEXIBLE' ? record.transferorFeeMax : null
+                  )}
+                </div>
               )
             }
           ]
@@ -179,7 +193,14 @@ const EWalletMoneyTransferManagement = () => {
               align: 'center',
               width: 100,
               render: (record) => (
-                <div>{convertNumber(record.type === "FLEXIBLE" ? record.receiverFlexibleFee : null, '%')}</div>
+                <div>
+                  {convertNumber(
+                    record.type === 'FLEXIBLE'
+                      ? record.receiverFlexibleFee
+                      : null,
+                    '%'
+                  )}
+                </div>
               )
             },
             {
@@ -187,7 +208,11 @@ const EWalletMoneyTransferManagement = () => {
               align: 'center',
               width: 100,
               render: (record) => (
-                <div>{convertNumber(record.type === "FIXED" ? record.receiverFixedFee : null)}</div>
+                <div>
+                  {convertNumber(
+                    record.type === 'FIXED' ? record.receiverFixedFee : null
+                  )}
+                </div>
               )
             },
             {
@@ -195,7 +220,11 @@ const EWalletMoneyTransferManagement = () => {
               align: 'center',
               width: 100,
               render: (record) => (
-                <div>{convertNumber(record.type === "FLEXIBLE" ? record.receiverFeeMin : null)}</div>
+                <div>
+                  {convertNumber(
+                    record.type === 'FLEXIBLE' ? record.receiverFeeMin : null
+                  )}
+                </div>
               )
             },
             {
@@ -203,7 +232,11 @@ const EWalletMoneyTransferManagement = () => {
               align: 'center',
               width: 100,
               render: (record) => (
-                <div>{convertNumber(record.type === "FLEXIBLE" ? record.receiverFeeMax : null)}</div>
+                <div>
+                  {convertNumber(
+                    record.type === 'FLEXIBLE' ? record.receiverFeeMax : null
+                  )}
+                </div>
               )
             }
           ]
@@ -315,98 +348,95 @@ const EWalletMoneyTransferManagement = () => {
     <Card
       title={
         <SearchBar
+          onFinish={onSearch}
+          form={form}
+          cols='3'
           headerMenu={
-            <Form
-              onFinish={onSearch}
-              form={form}
-            >
-              <Row gutter={16}>
-                <Col>
-                  <Form.Item
-                    name='object'
-                    label={trans`policy-management.payment.applicableObject`}
-                    initialValue={APPLICABLE_OBJECTS.ALL}
-                  >
-                    <Select
-                      onChange={(value) => {
-                        setObject(value)
-                        form.setFieldsValue({
-                          accountGroup: undefined,
-                          accountNumber: undefined
-                        })
-                      }}
-                      style={{ minWidth: 190 }}
-                      options={[{
-                        value: APPLICABLE_OBJECTS.ALL,
-                        label: t`policy-management.payment.all`
-                      }, ...applicableObjects]}
-                    />
-                  </Form.Item>
-                </Col>
-                {[
-                  APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
-                  APPLICABLE_OBJECTS.ACCOUNT_GROUP
-                ].includes(object) && (
-                    <Col>
-                      {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
-                        <Form.Item
-                          name='accountGroup'
-                          label={trans`policy-management.payment.selectAccountGroup`}
-                        >
-                          <CustomAccountGroupSelect
-                            mode='multiple'
-                            listAccountGroup={listAccountGroup}
-                            setSearchValue={setSearchValue}
-                            searchInput={searchValue}
-                            placeholder={trans`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
-                            triggerFunction={triggerListAccountGroup}
-                            onClearSearch={onClear}
-                          />
-                        </Form.Item>
-                      ) : (
-                        <Form.Item
-                          name='accountNumber'
-                          label={trans`policy-management.payment.inputAccount`}
-                        >
-                          <CustomPrivateAccountSelect
-                            mode='multiple'
-                            listAccount={listAccount}
-                            setSearchValue={setSearchValue}
-                            searchInput={searchValue}
-                            placeholder={trans`policy-management.payment.accountNumberPlaceholder`.toString()}
-                            triggerFunction={triggerListAccount}
-                            onClearSearch={onClear}
-                          />
-                        </Form.Item>
-                      )}
-                    </Col>
-                  )}
-              </Row>
-              <Row
-                justify='end'
-                style={{ marginBottom: '18px' }}
-                gutter={16}
+            <>
+              <Form.Item
+                name='object'
+                label={trans`policy-management.payment.applicableObject`}
+                initialValue={APPLICABLE_OBJECTS.ALL}
               >
-                <Col>
-                  <Button
-                    icon={<SearchOutlined />}
-                    htmlType='submit'
-                    type='primary'
-                  >{trans`policy-management.payment.search`}</Button>
-                </Col>
-                <Col>
-                  <ButtonAdd
-                    module='wallet_transfer'
-                    type='primary'
-                    onClick={() => {
-                      setMode(viewMode.create)
-                      setOpen(true)
-                    }}
-                    label={trans`policy-management.payment.establish`.toString()}
-                  >{trans`policy-management.payment.establish`}</ButtonAdd>
-                </Col>
-              </Row>
-            </Form>
+                <Select
+                  onChange={(value) => {
+                    setObject(value)
+                    form.setFieldsValue({
+                      accountGroup: undefined,
+                      accountNumber: undefined
+                    })
+                  }}
+                  style={{ minWidth: 190 }}
+                  options={[
+                    {
+                      value: APPLICABLE_OBJECTS.ALL,
+                      label: t`policy-management.payment.all`
+                    },
+                    ...applicableObjects
+                  ]}
+                />
+              </Form.Item>
+              {[
+                APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
+                APPLICABLE_OBJECTS.ACCOUNT_GROUP
+              ].includes(object) && (
+                <>
+                  {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
+                    <Form.Item
+                      name='accountGroup'
+                      label={trans`policy-management.payment.selectAccountGroup`}
+                    >
+                      <CustomAccountGroupSelect
+                        mode='multiple'
+                        listAccountGroup={listAccountGroup}
+                        setSearchValue={setSearchValue}
+                        searchInput={searchValue}
+                        placeholder={trans`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
+                        triggerFunction={triggerListAccountGroup}
+                        onClearSearch={onClear}
+                      />
+                    </Form.Item>
+                  ) : (
+                    <Form.Item
+                      name='accountNumber'
+                      label={trans`policy-management.payment.inputAccount`}
+                    >
+                      <CustomPrivateAccountSelect
+                        mode='multiple'
+                        listAccount={listAccount}
+                        setSearchValue={setSearchValue}
+                        searchInput={searchValue}
+                        placeholder={trans`policy-management.payment.accountNumberPlaceholder`.toString()}
+                        triggerFunction={triggerListAccount}
+                        onClearSearch={onClear}
+                      />
+                    </Form.Item>
+                  )}
+                </>
+              )}
+
+              <ButtonSearch
+                htmlType='submit'
+                className='mt-7'
+              />
+
+              <ButtonAdd
+                module='wallet_transfer'
+                type='primary'
+                onClick={() => {
+                  setMode(viewMode.create)
+                  setOpen(true)
+                }}
+                className={`${
+                  [
+                    APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
+                    APPLICABLE_OBJECTS.ACCOUNT_GROUP
+                  ].includes(object)
+                    ? ''
+                    : 'mt-7'
+                }`}
+              >{trans`policy-management.payment.establish`}</ButtonAdd>
+            </>
           }
         />
       }
@@ -443,7 +473,8 @@ const EWalletMoneyTransferManagement = () => {
         onCancel={onCancel}
         open={open}
         mode={mode}
-        entityType={'SYSTEM_FEE_MANAGEMENT'}      />
+        entityType={'SYSTEM_FEE_MANAGEMENT'}
+      />
     </Card>
   )
 }

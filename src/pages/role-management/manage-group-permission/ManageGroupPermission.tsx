@@ -1,22 +1,21 @@
 import ButtonAdd from '@components/button-add/ButtonAdd'
-import ButtonDelete from '@components/button-delete/ButtonDelete'
 import ButtonSearch from '@components/button-search/ButtonSearch'
-import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import CustomSelect from '@components/custom-select/CustomSelect'
 import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER } from '@constants/appConstant'
 import { useLazyGetListGroupPermissionQuery } from '@services/apiGroupPermissionService'
 import { useGroupFindAllQuery } from '@services/cmsService'
 import { GroupFindAllApiArg } from '@type/application'
 import { GroupPermissionData, viewMode } from '@type/permission'
 import { getStatusText, getTagColor } from '@utils/helperFunctions'
-import { Card, Col, Form, Row, Select, Tag } from 'antd'
+import { Card, Form, Select, Tag } from 'antd'
 import Table, { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import GroupPermissionModal from './group-permission-modal/GroupPermissionModal'
 
+import ButtonAction from '@components/button-action/ButtonAction'
+import { useActionHandler } from '@hooks/useActionHandler'
 import './style.scss'
 
 const ManageGroupPermission = () => {
@@ -40,6 +39,8 @@ const ManageGroupPermission = () => {
     if (id) setSelectedId(id)
     setMode(action)
   }
+
+  const handleActionClick = useActionHandler<GroupPermissionData>(handleModal)
 
   const onCancel = () => {
     setVisible(false)
@@ -99,25 +100,13 @@ const ManageGroupPermission = () => {
       align: 'center',
       width: 120,
       render: (value: string, record: GroupPermissionData) => (
-        <Row
-          gutter={GUTTER}
-          justify='center'
-        >
-          <Col>
-            <ButtonUpdate
-              module='group'
-              onClick={() => {
-                handleModal(viewMode.update, record.id)
-              }}
-            />
-          </Col>
-          <Col>
-            <ButtonDelete
-              module='group'
-              onClick={() => handleModal(viewMode.delete, record.id)}
-            />
-          </Col>
-        </Row>
+        <ButtonAction
+          module='group'
+          trans={trans}
+          action={['update', 'delete']}
+          record={record}
+          onClick={handleActionClick}
+        />
       )
     }
   ]
@@ -126,30 +115,23 @@ const ManageGroupPermission = () => {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={submit}
           headerMenu={
-            <Form
-              layout='vertical'
-              onFinish={submit}
-              form={form}
-              initialValues={{
-                status: null
-              }}
-            >
-              <Row gutter={GUTTER}>
-                <Col span={8}>
-                  <Form.Item
-                    name='name'
-                    label={trans('labels.permissionGroupName')}
-                  >
-                    <CustomSelect
-                      field='name'
-                      trigger={triggerGroupPermissionList}
-                      search={{
-                        page: 1,
-                        take: 10
-                      }}
-                    />
-                    {/* <Select
+            <>
+              <Form.Item
+                name='name'
+                label={trans('labels.permissionGroupName')}
+              >
+                <CustomSelect
+                  field='name'
+                  trigger={triggerGroupPermissionList}
+                  search={{
+                    page: 1,
+                    take: 10
+                  }}
+                />
+                {/* <Select
                       allowClear
                       showSearch
                       onSearch={onSearch}
@@ -172,51 +154,39 @@ const ManageGroupPermission = () => {
                         </Select.Option>
                       ))}
                     </Select> */}
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <Form.Item
-                    name='status'
-                    label={trans('labels.status')}
-                  >
-                    <Select
-                      allowClear
-                      placeholder={trans('placeholders.status')}
-                      options={[
-                        {
-                          value: null,
-                          label: trans('labels.all')
-                        },
-                        {
-                          value: true,
-                          label: trans('labels.active')
-                        },
-                        {
-                          value: false,
-                          label: trans('labels.lock')
-                        }
-                      ]}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+              </Form.Item>
+              <Form.Item
+                name='status'
+                label={trans('labels.status')}
               >
-                <Col>
-                  <ButtonAdd
-                    module='group'
-                    onClick={() => {
-                      handleModal(viewMode.create)
-                    }}
-                  />
-                </Col>
-                <Col>
-                  <ButtonSearch htmlType='submit' />
-                </Col>
-              </Row>
-            </Form>
+                <Select
+                  allowClear
+                  placeholder={trans('placeholders.status')}
+                  options={[
+                    {
+                      value: null,
+                      label: trans('labels.all')
+                    },
+                    {
+                      value: true,
+                      label: trans('labels.active')
+                    },
+                    {
+                      value: false,
+                      label: trans('labels.lock')
+                    }
+                  ]}
+                />
+              </Form.Item>
+              <ButtonSearch htmlType='submit' />
+
+              <ButtonAdd
+                module='group'
+                onClick={() => {
+                  handleModal(viewMode.create)
+                }}
+              />
+            </>
           }
         />
       }

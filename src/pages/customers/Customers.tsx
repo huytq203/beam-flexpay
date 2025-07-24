@@ -82,11 +82,11 @@ function Customers() {
   }
 
   const handleCancelModal = () => {
-    toggle();
+    toggle()
     // Có thể thêm một khoảng trễ nhỏ để người dùng không thấy ID bị xóa trước khi modal đóng hẳn
     setTimeout(() => {
-      setSelected('');
-    }, 200);
+      setSelected('')
+    }, 200)
   }
   const accountList = useMemo(() => {
     if (accounts?.data && accounts.data.length > 0) {
@@ -233,16 +233,12 @@ function Customers() {
               {record.active ? (
                 <ButtonLock
                   module='customer'
-                  onClick={async () =>
-                    handleModal(viewMode.lock, record.id)
-                  }
+                  onClick={async () => handleModal(viewMode.lock, record.id)}
                 />
               ) : (
                 <ButtonUnlock
                   module='customer'
-                  onClick={async () =>
-                    handleModal(viewMode.unlock, record.id)
-                  }
+                  onClick={async () => handleModal(viewMode.unlock, record.id)}
                 />
               )}
             </Tooltip>
@@ -250,9 +246,7 @@ function Customers() {
           <Col>
             <ButtonFreeze
               module='customer'
-              onClick={async () =>
-                 handleModal(viewMode.freeze, record.id)
-              }
+              onClick={async () => handleModal(viewMode.freeze, record.id)}
             />
           </Col>
         </Row>
@@ -281,111 +275,94 @@ function Customers() {
     <Card
       title={
         <SearchBar
+          onFinish={submit}
+          form={form}
+          cols='2'
           headerMenu={
-            <Form
-              layout='vertical'
-              onFinish={submit}
-              form={form}
-            >
-              <Row gutter={GUTTER}>
-                <Col flex='auto'>
-                  <Form.Item
-                    name='email'
-                    label={trans('labels.email')}
-                  >
-                    <Input
-                      placeholder={trans('placeholders.email').toString()}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='auto'>
-                  <Form.Item
-                    name='phoneNumber'
-                    label={trans('labels.phone')}
-                  >
-                    <Input
-                      placeholder={trans('placeholders.phone').toString()}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='auto'>
-                  <Form.Item
-                    name='name'
-                    label={trans('labels.accountOwner')}
-                  >
-                    <Input
-                      placeholder={trans('placeholders.owner').toString()}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='230px'>
-                  <Form.Item
-                    name='active'
-                    label={trans('labels.status')}
-                  >
-                    <Select
-                      placeholder={trans('placeholders.status')}
-                      options={[
-                        {
-                          value: '',
-                          label: trans('labels.all')
-                        },
-                        {
-                          value: true,
-                          label: trans('labels.active')
-                        },
-                        {
-                          value: false,
-                          label: trans('labels.lock')
-                        }
-                      ]}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='230px'>
-                  <Form.Item
-                    name='status'
-                    label={trans('labels.accountStatus')}
-                  >
-                    <Select
-                      placeholder={trans('placeholders.accountStatus')}
-                      options={[
-                        {
-                          value: '',
-                          label: trans('labels.all')
-                        },
-                        {
-                          label: trans('labels.verified'),
-                          value: accountStatus.VERIFIED
-                        },
-                        {
-                          label: trans('labels.notVerified'),
-                          value: accountStatus.NOT_VERIFIED
-                        },
-                        {
-                          label: trans('labels.linked'),
-                          value: accountStatus.LINKED
-                        }
-                      ]}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+            <>
+              <Form.Item
+                name='email'
+                label={trans('labels.email')}
               >
-                <Col>
-                  <ButtonExcel
-                    module='customer'
-                    onClick={exportData}
-                  />
-                </Col>
-                <Col>
-                  <ButtonSearch htmlType='submit' />
-                </Col>
-              </Row>
-            </Form>
+                <Input placeholder={trans('placeholders.email').toString()} />
+              </Form.Item>
+
+              <Form.Item
+                name='phoneNumber'
+                label={trans('labels.phone')}
+              >
+                <Input placeholder={trans('placeholders.phone').toString()} />
+              </Form.Item>
+
+              <Form.Item
+                name='name'
+                label={trans('labels.accountOwner')}
+              >
+                <Input placeholder={trans('placeholders.owner').toString()} />
+              </Form.Item>
+
+              <Form.Item
+                name='active'
+                label={trans('labels.status')}
+              >
+                <Select
+                  placeholder={trans('placeholders.status')}
+                  options={[
+                    {
+                      value: '',
+                      label: trans('labels.all')
+                    },
+                    {
+                      value: true,
+                      label: trans('labels.active')
+                    },
+                    {
+                      value: false,
+                      label: trans('labels.lock')
+                    }
+                  ]}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='status'
+                label={trans('labels.accountStatus')}
+              >
+                <Select
+                  placeholder={trans('placeholders.accountStatus')}
+                  options={[
+                    {
+                      value: '',
+                      label: trans('labels.all')
+                    },
+                    {
+                      label: trans('labels.verified'),
+                      value: accountStatus.VERIFIED
+                    },
+                    {
+                      label: trans('labels.notVerified'),
+                      value: accountStatus.NOT_VERIFIED
+                    },
+                    {
+                      label: trans('labels.linked'),
+                      value: accountStatus.LINKED
+                    }
+                  ]}
+                />
+              </Form.Item>
+              <div className='flex gap-2 items-center'>
+                <ButtonSearch
+                  htmlType='submit'
+                  className='w-full'
+                />
+
+                <ButtonExcel
+                  module='customer'
+                  onClick={exportData}
+                  className='w-full'
+                />
+              </div>
+            </>
           }
         />
       }

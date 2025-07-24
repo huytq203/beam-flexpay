@@ -2,22 +2,11 @@ import ButtonSearch from '@components/button-search/ButtonSearch'
 import CellContent from '@components/cell-content/CellContent'
 import NoDataText from '@components/no-data-text/NoDataText'
 import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER } from '@constants/appConstant'
 import { TimeFormat, TimeFullFormat } from '@constants/datetime'
 import { useGetListEkycQuery } from '@services/apiEkycService'
 import { IEkycSearch, IEkycType, StatusEkyc } from '@type/ekyc'
 import { useBoolean } from 'ahooks'
-import {
-  Button,
-  Card,
-  Col,
-  DatePicker,
-  Form,
-  Input,
-  Row,
-  Select,
-  Table
-} from 'antd'
+import { Button, Card, DatePicker, Form, Input, Select, Table } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
@@ -149,121 +138,106 @@ const EkycPage = () => {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={handleSearch}
+          cols='2'
           headerMenu={
-            <Form
-              layout='vertical'
-              form={form}
-              onFinish={handleSearch}
-            >
-              <Row gutter={GUTTER}>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t('ekyc.accountNumber')}
-                    name='phoneNumber'
-                  >
-                    <Input
-                      onKeyDown={blockArrowValue}
-                      onKeyPress={blockLetterDecimal}
-                      allowClear
-                      placeholder={t`ekyc.placeholder.accountNumber`.toString()}
-                      onChange={(event) => {
-                        if (
-                          event.target.value === '' ||
-                          event.target.value === undefined
-                        ) {
-                          refreshData('phoneNumber', event.target.value)
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='300px'>
-                  <Form.Item
-                    label={t('ekyc.statusLabel')}
-                    name='status'
-                  >
-                    <Select
-                      allowClear
-                      placeholder={t`ekyc.placeholder.status`.toString()}
-                      options={[
-                        {
-                          label: t('ekyc.status.all'),
-                          value: ''
-                        },
-                        {
-                          label: t('ekyc.status.daDuyet'),
-                          value: StatusEkyc.VERIFIED
-                        },
-                        {
-                          label: t('ekyc.status.daHuy'),
-                          value: StatusEkyc.REFUSED
-                        },
-                        {
-                          label: t('ekyc.status.dangChoDuyet'),
-                          value: StatusEkyc.PENDING
-                        }
-                      ]}
-                      onChange={(event) => {
-                        if (!event) {
-                          refreshData('status', undefined)
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t('napasToken.from')}
-                    name='from'
-                  >
-                    <DatePicker
-                      className='w-100'
-                      placeholder={t`napasToken.placeholders.start`.toString()}
-                      format={TimeFormat}
-                      disabledDate={(current) =>
-                        current > dayjs() ||
-                        current >= dayjs(form.getFieldValue('to'), 'YYYY-MM-DD')
-                      }
-                      onChange={(event) => {
-                        if (!event) {
-                          refreshData('from', undefined)
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t('napasToken.to')}
-                    name='to'
-                  >
-                    <DatePicker
-                      className='w-100'
-                      placeholder={t`napasToken.placeholders.end`.toString()}
-                      format={TimeFormat}
-                      disabledDate={(current) =>
-                        current > dayjs() ||
-                        current <
-                          dayjs(form.getFieldValue('from'), 'YYYY-MM-DD')
-                      }
-                      onChange={(event) => {
-                        if (!event) {
-                          refreshData('to', undefined)
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+            <>
+              <Form.Item
+                label={t('ekyc.accountNumber')}
+                name='phoneNumber'
               >
-                <Col>
-                  <ButtonSearch htmlType='submit' />
-                </Col>
-              </Row>
-            </Form>
+                <Input
+                  onKeyDown={blockArrowValue}
+                  onKeyPress={blockLetterDecimal}
+                  allowClear
+                  placeholder={t`ekyc.placeholder.accountNumber`.toString()}
+                  onChange={(event) => {
+                    if (
+                      event.target.value === '' ||
+                      event.target.value === undefined
+                    ) {
+                      refreshData('phoneNumber', event.target.value)
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={t('ekyc.statusLabel')}
+                name='status'
+              >
+                <Select
+                  allowClear
+                  placeholder={t`ekyc.placeholder.status`.toString()}
+                  options={[
+                    {
+                      label: t('ekyc.status.all'),
+                      value: ''
+                    },
+                    {
+                      label: t('ekyc.status.daDuyet'),
+                      value: StatusEkyc.VERIFIED
+                    },
+                    {
+                      label: t('ekyc.status.daHuy'),
+                      value: StatusEkyc.REFUSED
+                    },
+                    {
+                      label: t('ekyc.status.dangChoDuyet'),
+                      value: StatusEkyc.PENDING
+                    }
+                  ]}
+                  onChange={(event) => {
+                    if (!event) {
+                      refreshData('status', undefined)
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={t('napasToken.from')}
+                name='from'
+              >
+                <DatePicker
+                  className='w-100'
+                  placeholder={t`napasToken.placeholders.start`.toString()}
+                  format={TimeFormat}
+                  disabledDate={(current) =>
+                    current > dayjs() ||
+                    current >= dayjs(form.getFieldValue('to'), 'YYYY-MM-DD')
+                  }
+                  onChange={(event) => {
+                    if (!event) {
+                      refreshData('from', undefined)
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={t('napasToken.to')}
+                name='to'
+              >
+                <DatePicker
+                  className='w-100'
+                  placeholder={t`napasToken.placeholders.end`.toString()}
+                  format={TimeFormat}
+                  disabledDate={(current) =>
+                    current > dayjs() ||
+                    current < dayjs(form.getFieldValue('from'), 'YYYY-MM-DD')
+                  }
+                  onChange={(event) => {
+                    if (!event) {
+                      refreshData('to', undefined)
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <ButtonSearch htmlType='submit' />
+            </>
           }
         />
       }

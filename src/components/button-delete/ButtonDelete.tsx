@@ -29,8 +29,7 @@ const ButtonDelete = (props: CustomButtonProps) => {
     <Button
       disabled={hidden}
       danger
-      icon={<Trash size= {SIZE_ICON} />}
-      hidden={isHasPermission()}
+      icon={<Trash size={SIZE_ICON} />}
       {...props}
     />
   )

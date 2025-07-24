@@ -27,7 +27,6 @@ const ButtonFreeze = (props: CustomButtonProps) => {
   return !isHasPermission() ? null : (
     <Button
       icon={<SnowflakeIcon size={SIZE_ICON} />}
-      hidden={isHasPermission()}
       {...props}
     />
   )

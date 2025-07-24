@@ -28,11 +28,10 @@ const ButtonProhibit = (props: ButtonProhibitProps) => {
 
   return !isHasPermission() ? null : (
     //<Tooltip title={t('tooltips.approve')}>
-      <Button
-        icon={<ProhibitIcon size={SIZE_ICON} />}
-        hidden={isHasPermission()}
-        {...props}
-      />
+    <Button
+      icon={<ProhibitIcon size={SIZE_ICON} />}
+      {...props}
+    />
     //</Tooltip>
   )
 }

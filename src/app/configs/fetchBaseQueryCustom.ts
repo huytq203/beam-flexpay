@@ -28,12 +28,12 @@ export const openNotification = (
         break
       case 'info':
         break
-        case 'error':
-          notification.error({
-            message: t(message),
-            placement: 'top'
-          })
-          break
+      case 'error':
+        notification.error({
+          message: t(message),
+          placement: 'top'
+        })
+        break
         break
       default:
         notification.success({
@@ -212,8 +212,7 @@ export const fetchBaseQueryCustom: BaseQueryFn<
           setTimeout(() => {
             window.location.href = '/auth/login'
           }, 700)
-        }
-        else {
+        } else {
           openNotification((result.error.data as any).message)
         }
         break

@@ -30,7 +30,6 @@ const ButtonApprover = (props: ButtonApproverProps) => {
     <Tooltip title={t('tooltips.approve')}>
       <Button
         icon={<CheckFatIcon size={SIZE_ICON} />}
-        hidden={isHasPermission()}
         {...props}
       />
     </Tooltip>

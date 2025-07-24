@@ -8,11 +8,7 @@ import SearchBar from '@components/search-bar/SearchBar'
 import { GUTTER, SIZE_ICON } from '@constants/appConstant'
 import { TimeFormat } from '@constants/datetime'
 import { notificationStatus, serviceTypes } from '@constants/options'
-import {
-  PencilSimple,
-  SpeakerHigh,
-  Trash
-} from '@phosphor-icons/react'
+import { PencilSimple, SpeakerHigh, Trash } from '@phosphor-icons/react'
 import {
   useLazyDeleteNotificationQuery,
   useLazyPublishNotificationQuery
@@ -269,67 +265,65 @@ function NotificationManagement() {
       width: 200,
       fixed: 'right',
       render: (record) => (
-        (
-          <Row
-            gutter={GUTTER}
-            justify='center'
-          >
-            <Col>
-              <ButtonHistory
-                onClick={() => {
-                  setMode(viewMode.history)
-                  setSelectedId(record.id)
-                  setOpen(true)
-                }}
+        <Row
+          gutter={GUTTER}
+          justify='center'
+        >
+          <Col>
+            <ButtonHistory
+              onClick={() => {
+                setMode(viewMode.history)
+                setSelectedId(record.id)
+                setOpen(true)
+              }}
+            />
+          </Col>
+          <Col>
+            <ButtonView
+              onClick={() => handleModal(viewMode.view, record?.id)}
+            />
+          </Col>
+          <Col>
+            <Tooltip
+              placement='top'
+              title={t('admin-management.tooltip.edit')}
+            >
+              <Button
+                // disabled={
+                //   checkKeywords(record.title) && checkKeywords(record.body)
+                // }
+                icon={<PencilSimple size={SIZE_ICON} />}
+                onClick={() => handleModal(viewMode.update, record?.id)}
               />
-            </Col>
-            <Col>
-              <ButtonView
-                onClick={() => handleModal(viewMode.view, record?.id)}
+            </Tooltip>
+          </Col>
+          <Col>
+            <Tooltip
+              placement='top'
+              title={t('admin-management.tooltip.delete')}
+            >
+              <Button
+                disabled={record.status === 1}
+                danger
+                icon={<Trash size={SIZE_ICON} />}
+                onClick={async () => onHandleDelete(record?.id)}
               />
-            </Col>
-            <Col>
-              <Tooltip
-                placement='top'
-                title={t('admin-management.tooltip.edit')}
-              >
-                <Button
-                  // disabled={
-                  //   checkKeywords(record.title) && checkKeywords(record.body)
-                  // }
-                  icon={<PencilSimple size={SIZE_ICON} />}
-                  onClick={() => handleModal(viewMode.update, record?.id)}
-                />
-              </Tooltip>
-            </Col>
-            <Col>
-              <Tooltip
-                placement='top'
-                title={t('admin-management.tooltip.delete')}
-              >
-                <Button
-                  disabled={record.status === 1}
-                  danger
-                  icon={<Trash size={SIZE_ICON} />}
-                  onClick={async () => onHandleDelete(record?.id)}
-                />
-              </Tooltip>
-            </Col>
-            <Col>
-              <Tooltip
-                placement='top'
-                title={t('notification-management.publish')}
-              >
-                <Button
-                  icon={<SpeakerHigh size={SIZE_ICON} />}
-                  onClick={async () =>
-                    onHandlePublish(record?.id, record?.status)
-                  }
-                />
-              </Tooltip>
-            </Col>
-          </Row>
-        )
+            </Tooltip>
+          </Col>
+          <Col>
+            <Tooltip
+              placement='top'
+              title={t('notification-management.publish')}
+            >
+              <Button
+                icon={<SpeakerHigh size={SIZE_ICON} />}
+                onClick={async () =>
+                  onHandlePublish(record?.id, record?.status)
+                }
+              />
+            </Tooltip>
+          </Col>
+        </Row>
       )
     }
   ]
@@ -361,122 +355,100 @@ function NotificationManagement() {
     <Card
       title={
         <SearchBar
+          onFinish={onSubmit}
+          form={form}
+          cols='2'
           headerMenu={
-            <Form
-              layout='vertical'
-              initialValues={{
-                serviceType: null,
-                status: null,
-                from: dayjs().startOf('month')
-              }}
-              onFinish={onSubmit}
-              form={form}
-            >
-              <Row gutter={GUTTER}>
-                <Col flex='auto'>
-                  <Form.Item
-                    name='title'
-                    label={t`notification-management.search-input`}
-                  >
-                    <Input
-                      allowClear={true}
-                      placeholder={t`notification-management.placeholders.search-input`.toString()}
-                      className='w-100'
-                      onChange={(e) => {
-                        if (
-                          e.target.value === '' ||
-                          e.target.value === undefined
-                        ) {
-                          reload('title')
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='225px'>
-                  <Form.Item
-                    name='serviceType'
-                    label={t`notification-management.service`}
-                  >
-                    <Select
-                      options={[
-                        {
-                          value: null,
-                          label: t`notification-management.service-type.all`
-                        },
-                        ...serviceTypes
-                      ]}
-                      placeholder={t`notification-management.placeholders.service`}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Form.Item
-                    name='from'
-                    label={t`notification-management.created-at`}
-                    style={{ position: 'relative' }}
-                  >
-                    <DatePicker
-                      allowClear={false}
-                      disabledDate={(value) => value > dayjs()}
-                      placeholder={t`notification-management.placeholders.date`.toString()}
-                      className='w-100'
-                      format={TimeFormat}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Form.Item
-                    name='to'
-                    label={t`notification-management.to-date`}
-                    style={{ position: 'relative' }}
-                  >
-                    <DatePicker
-                      allowClear={true}
-                      placeholder={t`notification-management.placeholders.date`.toString()}
-                      className='w-100'
-                      disabledDate={(value) =>
-                        value < form.getFieldValue('from') || value > dayjs()
-                      }
-                      format={TimeFormat}
-                      onChange={(date) => {
-                        if (!date) reload('to')
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='150px'>
-                  <Form.Item
-                    name='status'
-                    label={t`notification-management.status`}
-                  >
-                    <Select
-                      allowClear={false}
-                      placeholder={t`notification-management.placeholders.status`.toString()}
-                      className='w-100'
-                      options={notificationStatus}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+            <>
+              <Form.Item
+                name='title'
+                label={t`notification-management.search-input`}
               >
-                <Col>
-                  <ButtonAdd
-                    module=''
-                    onClick={() => {
-                      setMode(viewMode.create)
-                      toggleMode(true)
-                    }}
-                  />
-                </Col>
-                <Col>
-                  <ButtonSearch htmlType='submit' />
-                </Col>
-              </Row>
-            </Form>
+                <Input
+                  allowClear={true}
+                  placeholder={t`notification-management.placeholders.search-input`.toString()}
+                  className='w-100'
+                  onChange={(e) => {
+                    if (e.target.value === '' || e.target.value === undefined) {
+                      reload('title')
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='serviceType'
+                label={t`notification-management.service`}
+              >
+                <Select
+                  options={[
+                    {
+                      value: null,
+                      label: t`notification-management.service-type.all`
+                    },
+                    ...serviceTypes
+                  ]}
+                  placeholder={t`notification-management.placeholders.service`}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='from'
+                label={t`notification-management.created-at`}
+                style={{ position: 'relative' }}
+              >
+                <DatePicker
+                  allowClear={false}
+                  disabledDate={(value) => value > dayjs()}
+                  placeholder={t`notification-management.placeholders.date`.toString()}
+                  className='w-100'
+                  format={TimeFormat}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='to'
+                label={t`notification-management.to-date`}
+                style={{ position: 'relative' }}
+              >
+                <DatePicker
+                  allowClear={true}
+                  placeholder={t`notification-management.placeholders.date`.toString()}
+                  className='w-100'
+                  disabledDate={(value) =>
+                    value < form.getFieldValue('from') || value > dayjs()
+                  }
+                  format={TimeFormat}
+                  onChange={(date) => {
+                    if (!date) reload('to')
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='status'
+                label={t`notification-management.status`}
+              >
+                <Select
+                  allowClear={false}
+                  placeholder={t`notification-management.placeholders.status`.toString()}
+                  className='w-100'
+                  options={notificationStatus}
+                />
+              </Form.Item>
+              <ButtonSearch
+                htmlType='submit'
+                className='mt-7'
+              />
+
+              <ButtonAdd
+                module=''
+                onClick={() => {
+                  setMode(viewMode.create)
+                  toggleMode(true)
+                }}
+              />
+            </>
           }
         />
       }

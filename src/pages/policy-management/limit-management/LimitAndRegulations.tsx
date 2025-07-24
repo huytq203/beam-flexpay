@@ -265,121 +265,114 @@ const LimitAndRegulation = () => {
     <Card
       title={
         <SearchBar
+          onFinish={onSearch}
+          form={form}
+          cols='3'
           headerMenu={
-            <Form
-              onFinish={onSearch}
-              form={form}
-            >
-              <Row gutter={16}>
-                <Col>
-                  <Form.Item
-                    name='object'
-                    initialValue={APPLICABLE_OBJECTS.ALL}
-                    label={trans`policy-management.common.applicableObject`}
-                  >
-                    <Select
-                      onChange={(value) => {
-                        setObject(value)
-                        form.setFieldsValue({
-                          accountGroup: undefined,
-                          accountNumber: undefined
-                        })
-                      }}
-                      style={{ minWidth: 190 }}
-                    >
-                      {objects.map((x) => {
-                        return (
-                          <Select.Option
-                            key={x.value}
-                            value={x.value}
-                          >
-                            {x.name}
-                          </Select.Option>
-                        )
-                      })}
-                    </Select>
-                  </Form.Item>
-                </Col>
-
-                {[
-                  APPLICABLE_OBJECTS.ACCOUNT_TYPE,
-                  APPLICABLE_OBJECTS.PRIVATE_ACCOUNT
-                ].includes(object) && (
-                    <Col>
-                      {object === APPLICABLE_OBJECTS.ACCOUNT_TYPE ? (
-                        <Form.Item
-                          name='accountGroup'
-                          label={trans`policy-management.payment.selectAccountGroup`}
-                        >
-                          <CustomAccountGroupSelect
-                            mode='multiple'
-                            listAccountGroup={listAccountGroup}
-                            setSearchValue={setSearchValue}
-                            searchInput={searchValue}
-                            placeholder={trans`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
-                            triggerFunction={triggerListAccountGroup}
-                            onClearSearch={onClear}
-                          />
-                        </Form.Item>
-                      ) : (
-                        <Form.Item
-                          name='accountNumber'
-                          label={trans`policy-management.payment.inputAccount`}
-                        >
-                          <Input
-                            placeholder={trans`policy-management.limitAndRegulations.placeholder.accountNumberPlaceholder`.toString()}
-                          />
-                        </Form.Item>
-                      )}
-                    </Col>
-                  )}
-                <Col>
-                  <Form.Item
-                    name='serviceType'
-                    label={trans`policy-management.common.serviceTypeSelectTitle`}
-                  >
-                    <Select
-                      // getPopupContainer={(trigger) => trigger.parentNode}
-                      allowClear
-                      style={{ minWidth: 190 }}
-                      placeholder={trans`policy-management.limitAndRegulations.placeholder.transactionTypePlaceholder`.toString()}
-                    >
-                      {transactionType.map((el) => (
-                        <Select.Option
-                          key={el.value}
-                          value={el.value}
-                        >
-                          {el.label}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                style={{ marginBottom: '18px' }}
-                gutter={16}
+            <>
+              <Form.Item
+                name='object'
+                initialValue={APPLICABLE_OBJECTS.ALL}
+                label={trans`policy-management.common.applicableObject`}
               >
-                <Col>
-                  <Button
-                    icon={<SearchOutlined />}
-                    htmlType='submit'
-                    type='primary'
-                  >{trans`policy-management.payment.search`}</Button>
-                </Col>
-                <Col>
-                  <ButtonAdd
-                    module='direct_deposit'
-                    type='primary'
-                    onClick={() => {
-                      setMode(viewMode.create)
-                      setOpen(true)
-                    }}
-                  >{trans`policy-management.payment.establish`}</ButtonAdd>
-                </Col>
-              </Row>
-            </Form>
+                <Select
+                  onChange={(value) => {
+                    setObject(value)
+                    form.setFieldsValue({
+                      accountGroup: undefined,
+                      accountNumber: undefined
+                    })
+                  }}
+                  style={{ minWidth: 190 }}
+                >
+                  {objects.map((x) => {
+                    return (
+                      <Select.Option
+                        key={x.value}
+                        value={x.value}
+                      >
+                        {x.name}
+                      </Select.Option>
+                    )
+                  })}
+                </Select>
+              </Form.Item>
+
+              {[
+                APPLICABLE_OBJECTS.ACCOUNT_TYPE,
+                APPLICABLE_OBJECTS.PRIVATE_ACCOUNT
+              ].includes(object) && (
+                <>
+                  {object === APPLICABLE_OBJECTS.ACCOUNT_TYPE ? (
+                    <Form.Item
+                      name='accountGroup'
+                      label={trans`policy-management.payment.selectAccountGroup`}
+                    >
+                      <CustomAccountGroupSelect
+                        mode='multiple'
+                        listAccountGroup={listAccountGroup}
+                        setSearchValue={setSearchValue}
+                        searchInput={searchValue}
+                        placeholder={trans`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
+                        triggerFunction={triggerListAccountGroup}
+                        onClearSearch={onClear}
+                      />
+                    </Form.Item>
+                  ) : (
+                    <Form.Item
+                      name='accountNumber'
+                      label={trans`policy-management.payment.inputAccount`}
+                    >
+                      <Input
+                        placeholder={trans`policy-management.limitAndRegulations.placeholder.accountNumberPlaceholder`.toString()}
+                      />
+                    </Form.Item>
+                  )}
+                </>
+              )}
+              <Form.Item
+                name='serviceType'
+                label={trans`policy-management.common.serviceTypeSelectTitle`}
+              >
+                <Select
+                  // getPopupContainer={(trigger) => trigger.parentNode}
+                  allowClear
+                  style={{ minWidth: 190 }}
+                  placeholder={trans`policy-management.limitAndRegulations.placeholder.transactionTypePlaceholder`.toString()}
+                >
+                  {transactionType.map((el) => (
+                    <Select.Option
+                      key={el.value}
+                      value={el.value}
+                    >
+                      {el.label}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+
+              <Button
+                icon={<SearchOutlined />}
+                htmlType='submit'
+                type='primary'
+                className={`${
+                  [
+                    APPLICABLE_OBJECTS.ACCOUNT_TYPE,
+                    APPLICABLE_OBJECTS.PRIVATE_ACCOUNT
+                  ].includes(object)
+                    ? ''
+                    : 'mt-7'
+                }`}
+              >{trans`policy-management.payment.search`}</Button>
+              <ButtonAdd
+                module='direct_deposit'
+                type='primary'
+                onClick={() => {
+                  setMode(viewMode.create)
+                  setOpen(true)
+                }}
+              >{trans`policy-management.payment.establish`}</ButtonAdd>
+            </>
           }
         />
       }

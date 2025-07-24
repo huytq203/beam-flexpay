@@ -27,7 +27,6 @@ const ButtonLock = (props: CustomButtonProps) => {
   return !isHasPermission() ? null : (
     <Button
       icon={<LockOpen size={SIZE_ICON} />}
-      hidden={isHasPermission()}
       {...props}
     />
   )

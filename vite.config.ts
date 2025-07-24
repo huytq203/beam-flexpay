@@ -3,7 +3,6 @@ import path from 'path'
 import { defineConfig, loadEnv, splitVendorChunkPlugin } from 'vite'
 import vitePluginImp from 'vite-plugin-imp'
 import svgr from 'vite-plugin-svgr'
-
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const PORT = env.VITE_PORT

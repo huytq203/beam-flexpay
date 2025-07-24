@@ -113,7 +113,9 @@ export interface FormatPermissionType {
 export enum viewMode {
   'create' = 'create',
   'delete' = 'delete',
-  'update' = 'update'
+  'update' = 'update',
+  'view' = 'view',
+  'permission' = 'permission'
 }
 
 export type CheckListType = number[]
