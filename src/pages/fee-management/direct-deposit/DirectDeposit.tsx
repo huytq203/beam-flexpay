@@ -267,97 +267,93 @@ const DirectDeposit = () => {
     <Card
       title={
         <SearchBar
+          onFinish={onSearch}
+          form={form}
+          cols='2'
           headerMenu={
-            <Form
-              onFinish={onSearch}
-              form={form}
-              layout='vertical'
-            >
-              <Row gutter={16}>
-                <Col>
-                  <Form.Item
-                    name='depositMethod'
-                    label={t`policy-management.common.depositMethod`}
-                  >
-                    <CustomPaymentMethod
-                      module={pageEnum.directDeposit}
-                      defaultMethod='search'
-                      handleSelectMethod={handleSelectMethod}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Form.Item
-                    name='applicableObject'
-                    initialValue={APPLICABLE_OBJECTS.SYSTEM}
-                    label={t`policy-management.payment.applicableObject`}
-                  >
-                    <Select
-                      onChange={(value) => {
-                        setObject(value)
-                        form.resetFields(['accountNumber', 'accountGroup'])
-                      }}
-                      style={{ minWidth: 190 }}
-                      options={objects}
-                    />
-                  </Form.Item>
-                </Col>
-                {[
-                  APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
-                  APPLICABLE_OBJECTS.ACCOUNT_GROUP
-                ].includes(object) && (
-                  <Col>
-                    {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
-                      <Form.Item
-                        name='applicableObjectId'
-                        label={t`policy-management.payment.selectAccountGroup`}
-                      >
-                        <CustomSelect
-                          style={{ minWidth: 350 }}
-                          mode='multiple'
-                          search={{ page: 1, take: 10 }}
-                          trigger={fnFindGroup}
-                          field='name'
-                        />
-                      </Form.Item>
-                    ) : (
-                      <Form.Item
-                        name='applicableObjectId'
-                        label={t`policy-management.payment.inputAccount`}
-                      >
-                        <CustomSelect
-                          style={{ minWidth: 350 }}
-                          mode='multiple'
-                          trigger={fnFindCustomer}
-                          search={{
-                            page: 1,
-                            take: 10
-                          }}
-                          field='phoneNumber'
-                        />
-                      </Form.Item>
-                    )}
-                  </Col>
-                )}
-              </Row>
-              <Row
-                justify='end'
-                style={{ marginBottom: '18px' }}
-                gutter={16}
+            <>
+              <Form.Item
+                name='depositMethod'
+                label={t`policy-management.common.depositMethod`}
               >
-                <Col>
-                  <ButtonSearch htmlType='submit' />
-                </Col>
-                <Col>
-                  <ButtonAdd
-                    module='direct_deposit'
-                    type='primary'
-                    onClick={toggle}
-                    label={t`policy-management.payment.establish`.toString()}
-                  />
-                </Col>
-              </Row>
-            </Form>
+                <CustomPaymentMethod
+                  module={pageEnum.directDeposit}
+                  defaultMethod='search'
+                  handleSelectMethod={handleSelectMethod}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='applicableObject'
+                initialValue={APPLICABLE_OBJECTS.SYSTEM}
+                label={t`policy-management.payment.applicableObject`}
+              >
+                <Select
+                  onChange={(value) => {
+                    setObject(value)
+                    form.resetFields(['accountNumber', 'accountGroup'])
+                  }}
+                  style={{ minWidth: 190 }}
+                  options={objects}
+                />
+              </Form.Item>
+              {[
+                APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
+                APPLICABLE_OBJECTS.ACCOUNT_GROUP
+              ].includes(object) && (
+                <>
+                  {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
+                    <Form.Item
+                      name='applicableObjectId'
+                      label={t`policy-management.payment.selectAccountGroup`}
+                    >
+                      <CustomSelect
+                        style={{ minWidth: 350 }}
+                        mode='multiple'
+                        search={{ page: 1, take: 10 }}
+                        trigger={fnFindGroup}
+                        field='name'
+                      />
+                    </Form.Item>
+                  ) : (
+                    <Form.Item
+                      name='applicableObjectId'
+                      label={t`policy-management.payment.inputAccount`}
+                    >
+                      <CustomSelect
+                        style={{ minWidth: 350 }}
+                        mode='multiple'
+                        trigger={fnFindCustomer}
+                        search={{
+                          page: 1,
+                          take: 10
+                        }}
+                        field='phoneNumber'
+                      />
+                    </Form.Item>
+                  )}
+                </>
+              )}
+
+              <ButtonSearch
+                className={`${
+                  [
+                    APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
+                    APPLICABLE_OBJECTS.ACCOUNT_GROUP
+                  ].includes(object)
+                    ? 'mt-7'
+                    : ''
+                }`}
+                htmlType='submit'
+              />
+
+              <ButtonAdd
+                module='direct_deposit'
+                type='primary'
+                onClick={toggle}
+                label={t`policy-management.payment.establish`.toString()}
+              />
+            </>
           }
         />
       }

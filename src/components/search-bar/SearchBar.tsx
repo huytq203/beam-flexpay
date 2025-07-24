@@ -2,9 +2,21 @@ import { Form, FormInstance } from 'antd'
 
 type Props<ApiArg> = {
   headerMenu: string | JSX.Element | JSX.Element[]
-  onFinish: (values: ApiArg) => void
-  form: FormInstance<ApiArg>
-  cols?: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12'
+  onFinish?: (values: ApiArg) => void
+  form?: FormInstance<ApiArg>
+  cols?:
+    | '1'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '7'
+    | '8'
+    | '9'
+    | '10'
+    | '11'
+    | '12'
 }
 
 const gridColsMap = {
@@ -37,7 +49,9 @@ export default function SearchBar<ApiArg extends object>({
         active: null
       }}
     >
-      <div className={`grid ${gridColsMap[cols] || 'grid-cols-2'} gap-3 mt-3`}>{headerMenu}</div>
+      <div className={`grid ${gridColsMap[cols] || 'grid-cols-2'} gap-3 mt-3`}>
+        {headerMenu}
+      </div>
     </Form>
   )
 }

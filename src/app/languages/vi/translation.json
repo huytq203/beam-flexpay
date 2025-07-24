@@ -389,7 +389,7 @@
   "customer-cancel": {
     "title": "Hủy tài khoản",
     "account": "Tài khoản",
-    "registrationDate": "Ngày đăng kí",
+    "registrationDate": "Ngày đăng ký",
     "fromDate": "từ ngày",
     "toDate": "Đến ngày",
     "exportFile": "Xuất File",
@@ -484,7 +484,8 @@
       "account": "Nhập tài khoản",
       "type": "Chọn loại giao dịch",
       "from": "Từ ngày",
-      "to": "Đến ngày"
+      "to": "Đến ngày",
+      "status": "Chọn trạng thái"
     },
     "paymentMethodType": {
       "atmCard": "Thẻ ATM",
@@ -1196,7 +1197,6 @@
       "majorAccount": "Tài khoản nghiệp vụ",
       "accountGroup": "Nhóm tài khoản",
       "personal": "Cá nhân cụ thể",
-      "all": "Tất cả",
       "selectAccountGroup": "Chọn nhóm tài khoản",
       "inputAccount": "Nhập tài khoản",
       "search": "Tìm kiếm",

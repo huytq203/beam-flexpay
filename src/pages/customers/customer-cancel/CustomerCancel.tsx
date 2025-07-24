@@ -3,7 +3,6 @@ import ButtonExcel from '@components/button-excel/ButtonExcel'
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import CellContent from '@components/cell-content/CellContent'
 import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER } from '@constants/appConstant'
 import { TimeFormat } from '@constants/datetime'
 import { useCustomerFindAllQuery } from '@services/cmsService'
 import {
@@ -25,12 +24,10 @@ import {
 import {
   Button,
   Card,
-  Col,
   DatePicker,
   Form,
   Input,
   Modal,
-  Row,
   Table,
   Tag,
   Tooltip,
@@ -38,7 +35,6 @@ import {
 } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
-import moment from 'moment'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { pageEnum, viewMode } from '../../../app/types/policyManagement'
@@ -94,9 +90,7 @@ const CustomerCancel = () => {
       title: trans`customer-cancel.registrationDate`,
       dataIndex: 'createdAt',
       align: 'center',
-      render: (date) => (
-        <Typography.Text>{moment(date).format(TimeFormat)}</Typography.Text>
-      )
+      render: (date: string) => <p>{dayjs(date).format(TimeFormat)}</p>
     },
     {
       title: trans`customer-cancel.accountNumber`,
@@ -107,19 +101,19 @@ const CustomerCancel = () => {
       title: trans`customer-cancel.typeAccount`,
       dataIndex: 'type',
       align: 'center',
-      render: (record) => <CellContent data={getAccountType(record)} />
+      render: (record: string) => <CellContent data={getAccountType(record)} />
     },
     {
       title: trans`customer-cancel.email`,
       dataIndex: 'email',
       align: 'center',
-      render: (record) => <CellContent data={record} />
+      render: (record: string) => <CellContent data={record} />
     },
     {
       title: trans`customer-cancel.status`,
       dataIndex: 'active',
       align: 'center',
-      render: (record) => (
+      render: (record: boolean) => (
         <CellContent
           data={
             <Tag
@@ -136,7 +130,7 @@ const CustomerCancel = () => {
       title: trans`customer-cancel.authStatus`,
       dataIndex: 'status',
       align: 'center',
-      render: (record) => (
+      render: (record: string) => (
         <CellContent
           data={
             <Tag
@@ -153,7 +147,7 @@ const CustomerCancel = () => {
       title: trans`customer-cancel.cancel`,
       dataIndex: 'id',
       align: 'center',
-      render: (value) => (
+      render: (value: string) => (
         <Tooltip title={trans`customer-cancel.cancel`}>
           <ButtonCancel
             module='customer'
@@ -214,98 +208,72 @@ const CustomerCancel = () => {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={submit}
+          cols='3'
           headerMenu={
-            <Form
-              form={form}
-              onFinish={submit}
-              layout='vertical'
-            >
-              <Row gutter={GUTTER}>
-                <Col
-                  xs={24}
-                  lg={8}
-                >
-                  <Form.Item
-                    name='phoneNumber'
-                    label={trans`customer-cancel.account`}
-                  >
-                    <Input
-                      placeholder={trans('placeholders.omiAccount').toString()}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col
-                  xs={24}
-                  lg={8}
-                >
-                  <Form.Item
-                    name='from'
-                    label={`${trans`customer-cancel.registrationDate`} ${trans`customer-cancel.fromDate`}`}
-                  >
-                    <DatePicker
-                      format={TimeFormat}
-                      allowClear
-                      className='w-100'
-                      disabledDate={(current) =>
-                        fnDisableStartDate(
-                          current,
-                          dayjs(form.getFieldValue('to'), 'YYYY-MM-DD')
-                        )
-                      }
-                    />
-                  </Form.Item>
-                </Col>
-                <Col
-                  xs={24}
-                  lg={8}
-                >
-                  <Form.Item
-                    name='to'
-                    label={trans`customer-cancel.toDate`}
-                  >
-                    <DatePicker
-                      format={TimeFormat}
-                      allowClear
-                      className='w-100'
-                      disabledDate={(current) =>
-                        fnDisableEndDate(
-                          current,
-                          dayjs(form.getFieldValue('from'), 'YYYY-MM-DD')
-                        )
-                      }
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                gutter={GUTTER}
-                justify='end'
+            <>
+              <Form.Item
+                name='phoneNumber'
+                label={trans`customer-cancel.account`}
               >
-                {/* lịch sử hoạt động */}
-                <Col>
-                  <Button
-                    icon={<ArrowClockwiseIcon />}
-                    type='primary'
-                    className='btn-200'
-                    onClick={handleOpenHistory}
-                  >
-                    {trans`customer-cancel.history`}
-                  </Button>
-                </Col>
-                <Col>
-                  <ButtonExcel
-                    module='customer'
-                    onClick={handleExport}
-                  />
-                </Col>
-                <Col>
-                  <ButtonSearch
-                    type='primary'
-                    htmlType='submit'
-                  />
-                </Col>
-              </Row>
-            </Form>
+                <Input
+                  placeholder={trans('placeholders.omiAccount').toString()}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='from'
+                label={`${trans`customer-cancel.registrationDate`} ${trans`customer-cancel.fromDate`}`}
+              >
+                <DatePicker
+                  format={TimeFormat}
+                  allowClear
+                  className='w-100'
+                  disabledDate={(current) =>
+                    fnDisableStartDate(
+                      current,
+                      dayjs(form.getFieldValue('to'), 'YYYY-MM-DD')
+                    )
+                  }
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='to'
+                label={trans`customer-cancel.toDate`}
+              >
+                <DatePicker
+                  format={TimeFormat}
+                  allowClear
+                  className='w-100'
+                  disabledDate={(current) =>
+                    fnDisableEndDate(
+                      current,
+                      dayjs(form.getFieldValue('from'), 'YYYY-MM-DD')
+                    )
+                  }
+                />
+              </Form.Item>
+
+              <ButtonSearch
+                type='primary'
+                htmlType='submit'
+              />
+              {/* lịch sử hoạt động */}
+              <Button
+                icon={<ArrowClockwiseIcon />}
+                type='primary'
+                onClick={handleOpenHistory}
+              >
+                {trans`customer-cancel.history`}
+              </Button>
+
+              <ButtonExcel
+                module='customer'
+                onClick={handleExport}
+              />
+            </>
           }
         />
       }
