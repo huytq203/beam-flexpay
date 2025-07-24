@@ -196,7 +196,7 @@ const CustomerCancel = () => {
     setMode(viewMode.history)
     setOpen(true)
   }
-  //test deploy
+
   useEffect(() => {
     if (isSuccess) {
       setSkip(true)
