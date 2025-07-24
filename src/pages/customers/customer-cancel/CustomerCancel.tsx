@@ -261,18 +261,6 @@ const CustomerCancel = () => {
                 htmlType='submit'
               />
               {/* lịch sử hoạt động */}
-              <Button
-                icon={<ArrowClockwiseIcon />}
-                type='primary'
-                onClick={handleOpenHistory}
-              >
-                {trans`customer-cancel.history`}
-              </Button>
-
-              <ButtonExcel
-                module='customer'
-                onClick={handleExport}
-              />
             </>
           }
         />
