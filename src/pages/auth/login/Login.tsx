@@ -31,27 +31,31 @@ function Login() {
   const [getUrlLogin] = useLazyGetUrlLoginQuery()
   const { t } = useTranslation()
 
-    const onFinish = async (values: PayloadInterface) => {
-      try {
-        const result = await login({ userLoginDto: values });
-        
-        if ('data' in result && result.data) {
-          // Chuyển hướng đến trang xác thực mã kèm theo dữ liệu cần thiết
-          navigate(`/auth/verify-code?trackingId=${result.data.trackingId}&email=${encodeURIComponent(values.email)}`);
-        }
-        // else {
-        //   notification.error({
-        //     message: t`login.failed`,
-        //     description: t`login.messages.invalid_credentials`
-        //   });
-        // }
-      } catch (error) {
-        notification.error({
-          message: t`login.failed`,
-          description: t`login.messages.server_error`
-        });
+  const onFinish = async (values: PayloadInterface) => {
+    try {
+      const result = await login({ userLoginDto: values })
+
+      if ('data' in result && result.data) {
+        // Chuyển hướng đến trang xác thực mã kèm theo dữ liệu cần thiết
+        navigate(
+          `/auth/verify-code?trackingId=${
+            result.data.trackingId
+          }&email=${encodeURIComponent(values.email)}`
+        )
       }
+      // else {
+      //   notification.error({
+      //     message: t`login.failed`,
+      //     description: t`login.messages.invalid_credentials`
+      //   });
+      // }
+    } catch (error) {
+      notification.error({
+        message: t`login.failed`,
+        description: t`login.messages.server_error`
+      })
     }
+  }
 
   const ssoLogin = async () => {
     try {
@@ -94,7 +98,9 @@ function Login() {
             },
             {
               type: 'email',
-              message: t`login.messages.email-format` || 'Vui lòng nhập đúng định dạng email'
+              message:
+                t`login.messages.email-format` ||
+                'Vui lòng nhập đúng định dạng email'
             }
           ]}
           normalize={(value) => value.trim()}
@@ -104,8 +110,8 @@ function Login() {
             placeholder={t`login.placeholders.email`.toString()}
             onChange={(e) => {
               // Hàm này giúp kích hoạt validate khi giá trị thay đổi
-              const form = Form.useFormInstance();
-              form.validateFields(['email']).catch(() => {});
+              const form = Form.useFormInstance()
+              form.validateFields(['email']).catch(() => {})
             }}
           />
         </Form.Item>

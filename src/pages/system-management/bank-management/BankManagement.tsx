@@ -327,110 +327,87 @@ function BankManagement() {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={onSearch}
+          cols='2'
           headerMenu={
-            <Form
-              form={form}
-              onFinish={onSearch}
-              layout='vertical'
-              initialValues={{
-                active: -1,
-                type: -1
-              }}
-            >
-              <Row gutter={GUTTER}>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t`system-management.bank.faster`}
-                    name='key'
-                  >
-                    <Input
-                      allowClear
-                      placeholder={t`system-management.bank.placeholders.faster`.toString()}
-                      onChange={(e) => {
-                        if (
-                          e.target.value === '' ||
-                          e.target.value === undefined
-                        ) {
-                          setSearch({
-                            ...search,
-                            page: 1,
-                            key: undefined
-                          })
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='300px'>
-                  <Form.Item
-                    label={t`system-management.bank.bank-name`}
-                    name='name'
-                  >
-                    <BankSelection
-                      placeholder={t`system-management.bank.placeholders.bank`.toString()}
-                      onClear={() => {
-                        setSearch({
-                          ...search,
-                          page: 1,
-                          name: undefined
-                        })
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='300px'>
-                  <Form.Item
-                    name='type'
-                    label={t`system-management.bank.type`}
-                  >
-                    <Select
-                      allowClear
-                      placeholder={t`system-management.bank.type`}
-                      options={bankTypeSearchStatus}
-                      onClear={() => {
-                        setSearch({
-                          ...search,
-                          type: undefined
-                        })
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='300px'>
-                  <Form.Item
-                    label={t`system-management.bank.status`}
-                    name='active'
-                  >
-                    <Select
-                      allowClear
-                      options={bankSearchStatus}
-                      placeholder={t`system-management.bank.placeholders.status`}
-                      onClear={() => {
-                        setSearch({
-                          ...search,
-                          page: 1,
-                          active: undefined
-                        })
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+            <>
+              <Form.Item
+                label={t`system-management.bank.faster`}
+                name='key'
               >
-                <Col>
-                  <ButtonExcel
-                    module='bank_management'
-                    onClick={handleExport}
-                  />
-                </Col>
-                <Col>
-                  <ButtonSearch htmlType='submit' />
-                </Col>
-              </Row>
-            </Form>
+                <Input
+                  allowClear
+                  placeholder={t`system-management.bank.placeholders.faster`.toString()}
+                  onChange={(e) => {
+                    if (e.target.value === '' || e.target.value === undefined) {
+                      setSearch({
+                        ...search,
+                        page: 1,
+                        key: undefined
+                      })
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={t`system-management.bank.bank-name`}
+                name='name'
+              >
+                <BankSelection
+                  placeholder={t`system-management.bank.placeholders.bank`.toString()}
+                  onClear={() => {
+                    setSearch({
+                      ...search,
+                      page: 1,
+                      name: undefined
+                    })
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='type'
+                label={t`system-management.bank.type`}
+              >
+                <Select
+                  allowClear
+                  placeholder={t`system-management.bank.type`}
+                  options={bankTypeSearchStatus}
+                  onClear={() => {
+                    setSearch({
+                      ...search,
+                      type: undefined
+                    })
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={t`system-management.bank.status`}
+                name='active'
+              >
+                <Select
+                  allowClear
+                  options={bankSearchStatus}
+                  placeholder={t`system-management.bank.placeholders.status`}
+                  onClear={() => {
+                    setSearch({
+                      ...search,
+                      page: 1,
+                      active: undefined
+                    })
+                  }}
+                />
+              </Form.Item>
+              <ButtonSearch htmlType='submit' />
+
+              <ButtonExcel
+                module='bank_management'
+                onClick={handleExport}
+              />
+            </>
           }
         />
       }

@@ -159,7 +159,7 @@ function CreateGroup({ mode, onCancel, selectedId, refetch }: IProps) {
       setIsSubmitting(false)
     }
   }
-
+  // function này (không phải tôi code) có vấn đề với scroll khi scroll lên thì không quay trở lại được trang trước đó, anh em sau làm tìm giải pháp nha, chúc anh em may mắn
   const onScroll = async (event: any) => {
     const target = event.target
     if (

@@ -1,9 +1,3 @@
-import {
-  EditOutlined,
-  ExclamationCircleOutlined,
-  LogoutOutlined,
-  SettingOutlined
-} from '@ant-design/icons'
 import { GUTTER, SIZE_ICON } from '@constants/appConstant'
 import { useAppDispatch, useAppSelector } from '@hooks/hook'
 import { authService } from '@services/bankSerice'
@@ -13,8 +7,13 @@ import { Avatar, Col, Dropdown, MenuProps, Modal, Row, Typography } from 'antd'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import IAvatarDefault from '@assets/image/avatar_default.webp'
-import { LockKey, SignOut, User, WarningCircle } from '@phosphor-icons/react'
 import { COlOR } from './Navigation'
+import {
+  LockKeyIcon,
+  SignOutIcon,
+  UserIcon,
+  WarningCircleIcon
+} from '@phosphor-icons/react/dist/ssr'
 const { Text } = Typography
 
 export default function NavProfile() {
@@ -28,11 +27,21 @@ export default function NavProfile() {
     {
       key: 'editProfile',
       label: trans('navigation.editProfile'),
-      icon: <User size={SIZE_ICON} color={COlOR}/>
+      icon: (
+        <UserIcon
+          size={SIZE_ICON}
+          color={COlOR}
+        />
+      )
     },
     {
       label: trans('navigation.changePassword'),
-      icon: <LockKey size={SIZE_ICON} color={COlOR}/>,
+      icon: (
+        <LockKeyIcon
+          size={SIZE_ICON}
+          color={COlOR}
+        />
+      ),
       key: 'changePassword'
     },
     {
@@ -40,7 +49,12 @@ export default function NavProfile() {
     },
     {
       label: trans('navigation.logout'),
-      icon: <SignOut size={SIZE_ICON} color={COlOR}/>,
+      icon: (
+        <SignOutIcon
+          size={SIZE_ICON}
+          color={COlOR}
+        />
+      ),
       key: 'logout'
     }
   ]
@@ -65,14 +79,19 @@ export default function NavProfile() {
   }
 
   const handleSignout = async () => {
-    dispatch(authService.util.resetApiState())
     dispatch(logout())
+    // dispatch(authService.util.resetApiState())
   }
 
   const signOut = () => {
     Modal.confirm({
       title: trans('labels.logout'),
-      icon: <WarningCircle size={24} color='#de831b' />,
+      icon: (
+        <WarningCircleIcon
+          size={24}
+          color='#de831b'
+        />
+      ),
       content: trans('labels.logoutDescription'),
       okText: trans('buttons.logout'),
       cancelText: trans('buttons.cancel'),
@@ -94,7 +113,17 @@ export default function NavProfile() {
             <Text className='fw-500'>{profile.fullName}</Text>
           </Col>
           <Col>
-            <Avatar src={<img src={IAvatarDefault} alt="avatar" />} size='large'>{profile.fullName?.charAt(0)}</Avatar>
+            <Avatar
+              src={
+                <img
+                  src={IAvatarDefault}
+                  alt='avatar'
+                />
+              }
+              size='large'
+            >
+              {profile.fullName?.charAt(0)}
+            </Avatar>
           </Col>
         </Row>
       </Dropdown>

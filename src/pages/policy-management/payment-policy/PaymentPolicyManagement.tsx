@@ -40,6 +40,7 @@ import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount'
 import { SearchValueType } from '../e-wallet-money-transfer/e-wallet-transfer-money-modal/SetupEWalletTransferMoneyContent'
 import { DeletePolicyModal } from '../policy-management-modal/delete-modal/DeletePolicyModal'
 import ButtonHistory from '@components/button-history/ButtonHistory'
+import ButtonSearch from '@components/button-search/ButtonSearch'
 
 type SearchType = {
   page: number
@@ -134,7 +135,12 @@ const PaymentPolicyManagement = () => {
               width: 100,
               dataIndex: 'transferorFlexibleFee',
               render: (value, record) => (
-                <div>{convertNumber(record.type === "FLEXIBLE" ? value : null, '%')}</div>
+                <div>
+                  {convertNumber(
+                    record.type === 'FLEXIBLE' ? value : null,
+                    '%'
+                  )}
+                </div>
               )
             },
             {
@@ -143,7 +149,9 @@ const PaymentPolicyManagement = () => {
               width: 100,
               dataIndex: 'transferorFixedFee',
               render: (value, record) => (
-                <div>{convertNumber(record.type === "FIXED" ? value : null)}</div>
+                <div>
+                  {convertNumber(record.type === 'FIXED' ? value : null)}
+                </div>
               )
             },
             {
@@ -152,7 +160,9 @@ const PaymentPolicyManagement = () => {
               dataIndex: 'transferorFeeMin',
               width: 100,
               render: (value, record) => (
-                <div>{convertNumber(record.type === "FLEXIBLE" ? value : null)}</div>
+                <div>
+                  {convertNumber(record.type === 'FLEXIBLE' ? value : null)}
+                </div>
               )
             },
             {
@@ -161,7 +171,9 @@ const PaymentPolicyManagement = () => {
               dataIndex: 'transferorFeeMax',
               width: 100,
               render: (value, record) => (
-                <div>{convertNumber(record.type === "FLEXIBLE" ? value : null)}</div>
+                <div>
+                  {convertNumber(record.type === 'FLEXIBLE' ? value : null)}
+                </div>
               )
             }
           ]
@@ -176,7 +188,9 @@ const PaymentPolicyManagement = () => {
               width: 100,
               dataIndex: 'receiverFlexibleFee',
               render: (value, record) => (
-                <div>{convertNumber(record.type === "FLEXIBLE" ? value : null)}</div>
+                <div>
+                  {convertNumber(record.type === 'FLEXIBLE' ? value : null)}
+                </div>
               )
             },
             {
@@ -185,7 +199,9 @@ const PaymentPolicyManagement = () => {
               width: 100,
               dataIndex: 'receiverFixedFee',
               render: (value, record) => (
-                <div>{convertNumber(record.type === "FIXED" ? value : null)}</div>
+                <div>
+                  {convertNumber(record.type === 'FIXED' ? value : null)}
+                </div>
               )
             },
             {
@@ -194,7 +210,9 @@ const PaymentPolicyManagement = () => {
               width: 100,
               dataIndex: 'receiverFeeMin',
               render: (value, record) => (
-                <div>{convertNumber(record.type === "FLEXIBLE" ? value : null)}</div>
+                <div>
+                  {convertNumber(record.type === 'FLEXIBLE' ? value : null)}
+                </div>
               )
             },
             {
@@ -203,7 +221,9 @@ const PaymentPolicyManagement = () => {
               width: 100,
               dataIndex: 'receiverFeeMax',
               render: (value, record) => (
-                <div>{convertNumber(record.type === "FLEXIBLE" ? value : null)}</div>
+                <div>
+                  {convertNumber(record.type === 'FLEXIBLE' ? value : null)}
+                </div>
               )
             }
           ]
@@ -354,108 +374,102 @@ const PaymentPolicyManagement = () => {
     <Card
       title={
         <SearchBar
+          onFinish={onSearch}
+          form={form}
+          cols='3'
           headerMenu={
-            <Form
-              onFinish={onSearch}
-              form={form}
-              layout='vertical'
-            >
-              <Row gutter={16}>
-                <Col>
-                  <Form.Item
-                    name='depositMethod'
-                    label={trans`policy-management.common.depositMethod`}
-                  >
-                    <CustomPaymentMethod
-                      module={pageEnum.directDeposit}
-                      defaultMethod='search'
-                      handleSelectMethod={handleSelectMethod}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Form.Item
-                    name='applicableObject'
-                    initialValue={APPLICABLE_OBJECTS.ALL}
-                    label={trans`policy-management.payment.applicableObject`}
-                  >
-                    <Select
-                      onChange={(value) => {
-                        setObject(value)
-                        form.resetFields(['accountNumber', 'accountGroup'])
-                      }}
-                      style={{ minWidth: 190 }}
-                      options={[{
-                        value: APPLICABLE_OBJECTS.ALL,
-                        label: t`policy-management.payment.all`
-                      }, ...objects]}
-                    />
-                  </Form.Item>
-                </Col>
-                {[
-                  APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
-                  APPLICABLE_OBJECTS.ACCOUNT_GROUP
-                ].includes(object) && (
-                    <Col>
-                      {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
-                        <Form.Item
-                          name='accountGroup'
-                          label={trans`policy-management.payment.selectAccountGroup`}
-                        >
-                          <CustomAccountGroupSelect
-                            mode='multiple'
-                            listAccountGroup={listAccountGroup}
-                            setSearchValue={setSearchValue}
-                            searchInput={searchValue}
-                            placeholder={trans`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
-                            triggerFunction={triggerListAccountGroup}
-                            onClearSearch={onClearSearch}
-                          />
-                        </Form.Item>
-                      ) : (
-                        <Form.Item
-                          name='accountNumber'
-                          label={trans`policy-management.payment.inputAccount`}
-                        >
-                          <CustomPrivateAccountSelect
-                            mode='multiple'
-                            listAccount={listAccount}
-                            setSearchValue={setSearchValue}
-                            searchInput={searchValue}
-                            placeholder={trans`policy-management.payment.accountNumberPlaceholder`.toString()}
-                            triggerFunction={triggerListAccount}
-                            onClearSearch={onClearSearch}
-                          />
-                        </Form.Item>
-                      )}
-                    </Col>
-                  )}
-              </Row>
-              <Row
-                justify='end'
-                style={{ marginBottom: '18px' }}
-                gutter={16}
+            <>
+              <Form.Item
+                name='depositMethod'
+                label={trans`policy-management.common.depositMethod`}
               >
-                <Col>
-                  <Button
-                    icon={<SearchOutlined />}
-                    htmlType='submit'
-                    type='primary'
-                  >{trans`policy-management.payment.search`}</Button>
-                </Col>
-                <Col>
-                  <ButtonAdd
-                    module='direct_deposit'
-                    type='primary'
-                    onClick={() => {
-                      setMode(viewMode.create)
-                      setOpen(true)
-                    }}
-                    label={trans`policy-management.payment.establish`.toString()}
-                  >{trans`policy-management.payment.establish`}</ButtonAdd>
-                </Col>
-              </Row>
-            </Form>
+                <CustomPaymentMethod
+                  module={pageEnum.directDeposit}
+                  defaultMethod='search'
+                  handleSelectMethod={handleSelectMethod}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='applicableObject'
+                initialValue={APPLICABLE_OBJECTS.ALL}
+                label={trans`policy-management.payment.applicableObject`}
+              >
+                <Select
+                  onChange={(value) => {
+                    setObject(value)
+                    form.resetFields(['accountNumber', 'accountGroup'])
+                  }}
+                  style={{ minWidth: 190 }}
+                  options={[
+                    {
+                      value: APPLICABLE_OBJECTS.ALL,
+                      label: t`policy-management.payment.all`
+                    },
+                    ...objects
+                  ]}
+                />
+              </Form.Item>
+
+              {[
+                APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
+                APPLICABLE_OBJECTS.ACCOUNT_GROUP
+              ].includes(object) && (
+                <>
+                  {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
+                    <Form.Item
+                      name='accountGroup'
+                      label={trans`policy-management.payment.selectAccountGroup`}
+                    >
+                      <CustomAccountGroupSelect
+                        mode='multiple'
+                        listAccountGroup={listAccountGroup}
+                        setSearchValue={setSearchValue}
+                        searchInput={searchValue}
+                        placeholder={trans`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
+                        triggerFunction={triggerListAccountGroup}
+                        onClearSearch={onClearSearch}
+                      />
+                    </Form.Item>
+                  ) : (
+                    <Form.Item
+                      name='accountNumber'
+                      label={trans`policy-management.payment.inputAccount`}
+                    >
+                      <CustomPrivateAccountSelect
+                        mode='multiple'
+                        listAccount={listAccount}
+                        setSearchValue={setSearchValue}
+                        searchInput={searchValue}
+                        placeholder={trans`policy-management.payment.accountNumberPlaceholder`.toString()}
+                        triggerFunction={triggerListAccount}
+                        onClearSearch={onClearSearch}
+                      />
+                    </Form.Item>
+                  )}
+                </>
+              )}
+
+              <ButtonSearch
+                htmlType='submit'
+                className={`${
+                  [
+                    APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
+                    APPLICABLE_OBJECTS.ACCOUNT_GROUP
+                  ].includes(object)
+                    ? ''
+                    : 'mt-7'
+                }`}
+              />
+              <ButtonAdd
+                module='direct_deposit'
+                type='primary'
+                onClick={() => {
+                  setMode(viewMode.create)
+                  setOpen(true)
+                }}
+              >{trans`policy-management.payment.establish`}</ButtonAdd>
+            </>
           }
         />
       }

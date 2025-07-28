@@ -42,6 +42,7 @@ import { objects } from '../../../app/types/policyManagement'
 import { CustomAccountGroupSelect } from '../components/SelectAccountGroup'
 import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount'
 import ButtonHistory from '@components/button-history/ButtonHistory'
+import ButtonSearch from '@components/button-search/ButtonSearch'
 
 type SearchType = {
   page: number
@@ -320,108 +321,105 @@ const OmipayWalletPaymentPolicyManagement = () => {
     <Card
       title={
         <SearchBar
+          onFinish={onSearch}
+          form={form}
+          cols='2'
           headerMenu={
-            <Form
-              onFinish={onSearch}
-              form={form}
-            >
-              <Row gutter={GUTTER}>
-                <Col>
-                  <Form.Item
-                    name='object'
-                    label={t`policy-management.payment.applicableObject`}
-                    initialValue={APPLICABLE_OBJECTS.ALL}
-                  >
-                    <Select
-                      onChange={(value) => {
-                        setObject(value)
-                        form.setFieldsValue({
-                          accountGroup: undefined,
-                          accountNumber: undefined
-                        })
-                      }}
-                      // getPopupContainer={(trigger) => trigger.parentNode}
-                      style={{ minWidth: 190 }}
-                    >
-                      {[{
-                        value: APPLICABLE_OBJECTS.ALL,
-                        label: t`policy-management.payment.all`
-                      }, ...objects].map((x) => {
-                        return (
-                          <Select.Option
-                            key={x.value}
-                            value={x.value}
-                          >
-                            {x.label}
-                          </Select.Option>
-                        )
-                      })}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                {[
-                  APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
-                  APPLICABLE_OBJECTS.ACCOUNT_GROUP
-                ].includes(object) && (
-                    <Col>
-                      {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
-                        <Form.Item
-                          name='accountGroup'
-                          label={t`policy-management.payment.selectAccountGroup`}
-                        >
-                          <CustomAccountGroupSelect
-                            mode='multiple'
-                            listAccountGroup={listAccountGroup}
-                            setSearchValue={setSearchValue}
-                            searchInput={searchValue}
-                            placeholder={t`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
-                            triggerFunction={triggerListAccountGroup}
-                            onClearSearch={onClear}
-                          />
-                        </Form.Item>
-                      ) : (
-                        <Form.Item
-                          name='accountNumber'
-                          label={t`policy-management.payment.inputAccount`}
-                        >
-                          <CustomPrivateAccountSelect
-                            mode='multiple'
-                            listAccount={listAccount}
-                            setSearchValue={setSearchValue}
-                            searchInput={searchValue}
-                            placeholder={t`policy-management.payment.accountNumberPlaceholder`.toString()}
-                            triggerFunction={triggerListAccount}
-                            onClearSearch={onClear}
-                          />
-                        </Form.Item>
-                      )}
-                    </Col>
-                  )}
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+            <>
+              <Form.Item
+                name='object'
+                label={t`policy-management.payment.applicableObject`}
+                initialValue={APPLICABLE_OBJECTS.ALL}
               >
-                <Col>
-                  <Button
-                    icon={<SearchOutlined />}
-                    htmlType='submit'
-                    type='primary'
-                  >{t`policy-management.payment.search`}</Button>
-                </Col>
-                <Col>
-                  <ButtonAdd
-                    module='wallet_payment'
-                    type='primary'
-                    onClick={() => {
-                      setMode(viewMode.create)
-                      setOpen(true)
-                    }}
-                    label={t`policy-management.payment.establish`.toString()}
-                  >{t`policy-management.payment.establish`}</ButtonAdd>
-                </Col>
-              </Row>
-            </Form>
+                <Select
+                  onChange={(value) => {
+                    setObject(value)
+                    form.setFieldsValue({
+                      accountGroup: undefined,
+                      accountNumber: undefined
+                    })
+                  }}
+                  // getPopupContainer={(trigger) => trigger.parentNode}
+                  style={{ minWidth: 190 }}
+                >
+                  {[
+                    {
+                      value: APPLICABLE_OBJECTS.ALL,
+                      label: t`policy-management.payment.all`
+                    },
+                    ...objects
+                  ].map((x) => {
+                    return (
+                      <Select.Option
+                        key={x.value}
+                        value={x.value}
+                      >
+                        {x.label}
+                      </Select.Option>
+                    )
+                  })}
+                </Select>
+              </Form.Item>
+              {[
+                APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
+                APPLICABLE_OBJECTS.ACCOUNT_GROUP
+              ].includes(object) && (
+                <>
+                  {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
+                    <Form.Item
+                      name='accountGroup'
+                      label={t`policy-management.payment.selectAccountGroup`}
+                    >
+                      <CustomAccountGroupSelect
+                        mode='multiple'
+                        listAccountGroup={listAccountGroup}
+                        setSearchValue={setSearchValue}
+                        searchInput={searchValue}
+                        placeholder={t`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
+                        triggerFunction={triggerListAccountGroup}
+                        onClearSearch={onClear}
+                      />
+                    </Form.Item>
+                  ) : (
+                    <Form.Item
+                      name='accountNumber'
+                      label={t`policy-management.payment.inputAccount`}
+                    >
+                      <CustomPrivateAccountSelect
+                        mode='multiple'
+                        listAccount={listAccount}
+                        setSearchValue={setSearchValue}
+                        searchInput={searchValue}
+                        placeholder={t`policy-management.payment.accountNumberPlaceholder`.toString()}
+                        triggerFunction={triggerListAccount}
+                        onClearSearch={onClear}
+                      />
+                    </Form.Item>
+                  )}
+                </>
+              )}
+
+              <ButtonSearch
+                htmlType='submit'
+                className={`${
+                  [
+                    APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
+                    APPLICABLE_OBJECTS.ACCOUNT_GROUP
+                  ].includes(object)
+                    ? ''
+                    : 'mt-7'
+                }`}
+              />
+
+              <ButtonAdd
+                module='wallet_payment'
+                type='primary'
+                onClick={() => {
+                  setMode(viewMode.create)
+                  setOpen(true)
+                }}
+              >{t`policy-management.payment.establish`}</ButtonAdd>
+            </>
           }
         />
       }

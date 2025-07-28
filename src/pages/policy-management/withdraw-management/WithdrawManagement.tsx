@@ -1,25 +1,25 @@
-import { t } from 'i18next';
+import { t } from 'i18next'
 
-import { SearchOutlined } from '@ant-design/icons';
-import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal';
-import ButtonAdd from '@components/button-add/ButtonAdd';
-import ButtonDelete from '@components/button-delete/ButtonDelete';
-import ButtonUpdate from '@components/button-update/ButtonUpdate';
-import CellContent from '@components/cell-content/CellContent';
-import CustomPaymentMethod from '@components/custom-payment-method/CustomPaymentMethod';
-import SearchBar from '@components/search-bar/SearchBar';
-import { applicableObjects } from '@constants/options';
-import { useLazyGetListGroupQuery } from '@services/apiAccountGroup';
-import { useGetListWithdrawQuery } from '@services/apiWidthdraw';
-import { useLazyGetCustomersQuery } from '@services/customerService';
+import { SearchOutlined } from '@ant-design/icons'
+import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal'
+import ButtonAdd from '@components/button-add/ButtonAdd'
+import ButtonDelete from '@components/button-delete/ButtonDelete'
+import ButtonUpdate from '@components/button-update/ButtonUpdate'
+import CellContent from '@components/cell-content/CellContent'
+import CustomPaymentMethod from '@components/custom-payment-method/CustomPaymentMethod'
+import SearchBar from '@components/search-bar/SearchBar'
+import { applicableObjects } from '@constants/options'
+import { useLazyGetListGroupQuery } from '@services/apiAccountGroup'
+import { useGetListWithdrawQuery } from '@services/apiWidthdraw'
+import { useLazyGetCustomersQuery } from '@services/customerService'
 import {
   APPLICABLE_OBJECTS,
   pageEnum,
   SearchType,
   SearchValueType,
   viewMode
-} from '@type/policyManagement';
-import { convertNumber, getApplicableObject } from '@utils/helperFunctions';
+} from '@type/policyManagement'
+import { convertNumber, getApplicableObject } from '@utils/helperFunctions'
 import {
   Button,
   Card,
@@ -31,15 +31,15 @@ import {
   Select,
   Table,
   Tooltip
-} from 'antd';
-import { ColumnsType } from 'antd/es/table';
-import dayjs from 'dayjs';
-import { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { CustomAccountGroupSelect } from '../components/SelectAccountGroup';
-import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount';
-import { DeletePolicyModal } from '../policy-management-modal/delete-modal/DeletePolicyModal';
-import ButtonHistory from '@components/button-history/ButtonHistory';
+} from 'antd'
+import { ColumnsType } from 'antd/es/table'
+import dayjs from 'dayjs'
+import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { CustomAccountGroupSelect } from '../components/SelectAccountGroup'
+import { CustomPrivateAccountSelect } from '../components/SelectPrivateAccount'
+import { DeletePolicyModal } from '../policy-management-modal/delete-modal/DeletePolicyModal'
+import ButtonHistory from '@components/button-history/ButtonHistory'
 
 const WithdrawManagement = () => {
   const { t: trans } = useTranslation()
@@ -327,109 +327,105 @@ const WithdrawManagement = () => {
     <Card
       title={
         <SearchBar
+          onFinish={onSearch}
+          form={form}
+          cols='3'
           headerMenu={
-            <Form
-              onFinish={onSearch}
-              form={form}
-              layout='vertical'
-            >
-              <Row gutter={16}>
-                <Col>
-                  <Form.Item
-                    name='depositMethod'
-                    label={trans`policy-management.payment.withDrawBank`}
-                  >
-                    <CustomPaymentMethod
-                      module={pageEnum.withdrawMoney}
-                      defaultMethod='search'
-                      handleSelectMethod={handleSelectMethod}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Form.Item
-                    name='applicableObject'
-                    initialValue={APPLICABLE_OBJECTS.ALL}
-                    label={trans`policy-management.payment.applicableObject`}
-                  >
-                    <Select
-                      // getPopupContainer={(trigger) => trigger.parentNode}
-                      onChange={(value) => {
-                        setObject(value)
-                        form.resetFields(['accountNumber', 'accountGroup'])
-                      }}
-                      style={{ minWidth: 190 }}
-                      options={[{
-                        value: APPLICABLE_OBJECTS.ALL,
-                        label: t`policy-management.payment.all`
-                      }, ...applicableObjects]}
-                    />
-                  </Form.Item>
-                </Col>
-                {[
-                  APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
-                  APPLICABLE_OBJECTS.ACCOUNT_GROUP
-                ].includes(object) && (
-                    <Col>
-                      {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
-                        <Form.Item
-                          name='accountGroup'
-                          label={trans`policy-management.payment.selectAccountGroup`}
-                        >
-                          <CustomAccountGroupSelect
-                            mode='multiple'
-                            listAccountGroup={listAccountGroup}
-                            setSearchValue={setSearchValue}
-                            searchInput={searchValue}
-                            placeholder={trans`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
-                            triggerFunction={triggerListAccountGroup}
-                            onClearSearch={onClearSearch}
-                          />
-                        </Form.Item>
-                      ) : (
-                        <Form.Item
-                          name='accountNumber'
-                          label={trans`policy-management.payment.inputAccount`}
-                        >
-                          <CustomPrivateAccountSelect
-                            mode='multiple'
-                            listAccount={listAccount}
-                            setSearchValue={setSearchValue}
-                            searchInput={searchValue}
-                            placeholder={trans`policy-management.payment.accountNumberPlaceholder`.toString()}
-                            triggerFunction={triggerListAccount}
-                            onClearSearch={onClearSearch}
-                          />
-                        </Form.Item>
-                      )}
-                    </Col>
-                  )}
-              </Row>
-              <Row
-                justify='end'
-                style={{ marginBottom: '18px' }}
-                gutter={16}
+            <>
+              <Form.Item
+                name='depositMethod'
+                label={trans`policy-management.payment.withDrawBank`}
               >
-                <Col>
-                  <Button
-                    icon={<SearchOutlined />}
-                    htmlType='submit'
-                    type='primary'
-                  >{trans`policy-management.payment.search`}</Button>
-                </Col>
-                <Col>
-                  <ButtonAdd
-                    module='withdraw_money'
-                    type='primary'
-                    onClick={() => {
-                      setMode(viewMode.create)
-                      setOpen(true)
-                    }}
-                    label={trans`policy-management.payment.establish`.toString()}
-                  >{trans`policy-management.payment.establish`}</ButtonAdd>
-                </Col>
-              </Row>
-            </Form>
+                <CustomPaymentMethod
+                  module={pageEnum.withdrawMoney}
+                  defaultMethod='search'
+                  handleSelectMethod={handleSelectMethod}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='applicableObject'
+                initialValue={APPLICABLE_OBJECTS.ALL}
+                label={trans`policy-management.payment.applicableObject`}
+              >
+                <Select
+                  // getPopupContainer={(trigger) => trigger.parentNode}
+                  onChange={(value) => {
+                    setObject(value)
+                    form.resetFields(['accountNumber', 'accountGroup'])
+                  }}
+                  style={{ minWidth: 190 }}
+                  options={[
+                    {
+                      value: APPLICABLE_OBJECTS.ALL,
+                      label: t`policy-management.payment.all`
+                    },
+                    ...applicableObjects
+                  ]}
+                />
+              </Form.Item>
+              {[
+                APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
+                APPLICABLE_OBJECTS.ACCOUNT_GROUP
+              ].includes(object) && (
+                <>
+                  {object === APPLICABLE_OBJECTS.ACCOUNT_GROUP ? (
+                    <Form.Item
+                      name='accountGroup'
+                      label={trans`policy-management.payment.selectAccountGroup`}
+                    >
+                      <CustomAccountGroupSelect
+                        mode='multiple'
+                        listAccountGroup={listAccountGroup}
+                        setSearchValue={setSearchValue}
+                        searchInput={searchValue}
+                        placeholder={trans`policy-management.eWalletTransferMoneyManagement.placeholders.accountGroup`.toString()}
+                        triggerFunction={triggerListAccountGroup}
+                        onClearSearch={onClearSearch}
+                      />
+                    </Form.Item>
+                  ) : (
+                    <Form.Item
+                      name='accountNumber'
+                      label={trans`policy-management.payment.inputAccount`}
+                    >
+                      <CustomPrivateAccountSelect
+                        mode='multiple'
+                        listAccount={listAccount}
+                        setSearchValue={setSearchValue}
+                        searchInput={searchValue}
+                        placeholder={trans`policy-management.payment.accountNumberPlaceholder`.toString()}
+                        triggerFunction={triggerListAccount}
+                        onClearSearch={onClearSearch}
+                      />
+                    </Form.Item>
+                  )}
+                </>
+              )}
+
+              <Button
+                icon={<SearchOutlined />}
+                htmlType='submit'
+                type='primary'
+                className={`${
+                  [
+                    APPLICABLE_OBJECTS.PERSONAL_ACCOUNT,
+                    APPLICABLE_OBJECTS.ACCOUNT_GROUP
+                  ].includes(object)
+                    ? ''
+                    : 'mt-7'
+                }`}
+              >{trans`policy-management.payment.search`}</Button>
+
+              <ButtonAdd
+                module='withdraw_money'
+                type='primary'
+                onClick={() => {
+                  setMode(viewMode.create)
+                  setOpen(true)
+                }}
+              >{trans`policy-management.payment.establish`}</ButtonAdd>
+            </>
           }
         />
       }

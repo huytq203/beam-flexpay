@@ -27,7 +27,6 @@ const ButtonUpdateGroupPermission = (props: CustomButtonProps) => {
   return !isHasPermission() ? null : (
     <Button
       icon={<GitBranch size={SIZE_ICON} />}
-      hidden={isHasPermission()}
       {...props}
     />
   )

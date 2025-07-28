@@ -26,12 +26,11 @@ const ButtonExcel = (props: ButtonExcelProps) => {
 
   return (
     <Button
-    style={{
-      display: 'flex',
-      alignItems: 'center',
-    }}
-      icon={<MicrosoftExcelLogo  size={SIZE_ICON} />}
-      hidden={isHasPermission()}
+      style={{
+        display: 'flex',
+        alignItems: 'center'
+      }}
+      icon={<MicrosoftExcelLogo size={SIZE_ICON} />}
       {...props}
     >
       <span>{label ? trans(label) : trans('buttons.excel')}</span>

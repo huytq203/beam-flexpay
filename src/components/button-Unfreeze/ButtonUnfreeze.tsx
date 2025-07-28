@@ -23,11 +23,10 @@ const ButtonUnfreeze = (props: CustomButtonProps) => {
       return true
     else return false
   }, [permissions])
-  
+
   return !isHasPermission() ? null : (
     <Button
       icon={<SunIcon size={SIZE_ICON} />}
-      hidden={isHasPermission()}
       {...props}
     />
   )
