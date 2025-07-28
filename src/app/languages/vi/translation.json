@@ -565,6 +565,17 @@
     "enterprise": "Doanh nghiệp"
   },
   "freezeAndUnfreezeAccount": {
+    "pleaseEnterReason": "Vui lòng nhập lý do",
+    "enterFreezeReason": "Nhập lý do đóng băng giao dịch...",
+    "enterUnfreezeReason": "Nhập lý do mở đóng băng giao dịch...",
+    "freezeTransactionDescription": "Bạn đang thực hiện đóng băng giao dịch. Vui lòng nhập lý do:",
+    "unfreezeTransactionDescription": "Bạn đang thực hiện mở đóng băng giao dịch. Vui lòng nhập lý do:",
+    "freezeReason": "Lý do đóng băng",
+    "unfreezeReason": "Lý do mở đóng băng",
+    "unfreezeTransactionSuccess": "Mở đóng băng giao dịch thành công",
+    "freezeTransactionSuccess": "Đóng băng giao dịch thành công",
+    "cannotFreezeTransaction": "Không thể đóng băng giao dịch. Vui lòng thử lại sau.",
+    "cannotUnfreezeTransaction": "Không thể mở đóng băng giao dịch. Vui lòng thử lại sau.",
     "freezeTransaction": "Đóng băng giao dịch",
     "unFreezeTransaction": "Mở băng giao dịch",
     "successFreeze": "Đóng băng thành công",

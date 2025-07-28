@@ -134,7 +134,7 @@ const VerifyCode = () => {
             <div className='otp-inputs'>
               {verificationCode.map((digit, index) => (
                 <Input
-                  key={index}
+                  key={`code-input-${index}`}
                   id={`code-input-${index}`}
                   className='otp-input'
                   value={digit}

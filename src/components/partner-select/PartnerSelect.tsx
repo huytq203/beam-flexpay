@@ -50,7 +50,7 @@ const PartnerSelect = (props: props) => {
       {...props}
     >
       {data &&
-        data?.map((d) => <Select.Option value={d.id}>{d.name}</Select.Option>)}
+        data?.map((d) => <Select.Option key={d.id} value={d.id}>{d.name}</Select.Option>)}
     </Select>
   )
 }
