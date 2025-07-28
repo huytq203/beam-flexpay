@@ -216,7 +216,10 @@ const CustomerFreezeBalanceHistoryTab = (props: CustomerInfo) => {
               />
             </Form.Item>
 
-            <ButtonSearch htmlType='submit' />
+            <ButtonSearch
+              htmlType='submit'
+              className='mt-7'
+            />
           </>
         }
       />
