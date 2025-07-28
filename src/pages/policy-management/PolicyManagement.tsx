@@ -1,27 +1,25 @@
 
-import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal';
 import { useLazyGetListGroupQuery } from '@services/apiAccountGroup';
 import { useGetListPolicyQuery } from '@services/apiPolicyManagement';
 import { useLazyGetCustomersQuery } from '@services/customerService';
 import {
-    APPLICABLE_OBJECTS,
-    pageEnum,
-    POLICY_MANAGEMENT_TYPE,
-    SearchType,
-    SearchValueType,
-    viewMode
+  APPLICABLE_OBJECTS,
+  POLICY_MANAGEMENT_TYPE,
+  SearchType,
+  SearchValueType,
+  viewMode
 } from '@type/policyManagement';
 import {
-    Card,
-    Form,
-    Modal
+  Card,
+  Form,
+  Modal
 } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import PolicyManagementSearchBar from './PolicyManagementSearchBar';
-import PolicyManagementTable from './PolicyManagementTable';
 import { DeletePolicyModal } from './policy-management-modal/delete-modal/DeletePolicyModal';
 import PolicyManagementModal from './PolicyManagementModal';
+import PolicyManagementSearchBar from './PolicyManagementSearchBar';
+import PolicyManagementTable from './PolicyManagementTable';
 
 const PolicyManagement = () => {
   const { t: trans } = useTranslation()
@@ -159,7 +157,7 @@ const PolicyManagement = () => {
       />
       {open && mode !== viewMode.delete && (
         <PolicyManagementModal
-          policyManagementType={POLICY_MANAGEMENT_TYPE.WITHDRAW}
+          policyManagementType={policyManagementType}
           onCancel={onCancel}
           open={open}
           mode={mode}

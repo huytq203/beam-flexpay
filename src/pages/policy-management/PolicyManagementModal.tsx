@@ -1,7 +1,8 @@
-import { pageEnum, POLICY_MANAGEMENT_TYPE, viewMode } from "@type/policyManagement"
+import { POLICY_MANAGEMENT_TYPE, viewMode } from "@type/policyManagement"
 import { Divider, Modal } from "antd"
 import { useTranslation } from "react-i18next"
 import SetupDirectPolicyContent from "./SetupDirectPolicyContent"
+import { HistoryPolicy } from "./policy-management-modal/history-policy-modal/HistoryPolicy"
 
 
 type PolicyManagementModalType = {
@@ -31,6 +32,30 @@ const PolicyManagementModal = ({
                 return t`policy-management.payment.title.setting-withdraw`
             case `${viewMode.update}-${POLICY_MANAGEMENT_TYPE.WITHDRAW}`:
                 return t`policy-management.payment.title.update-setting-withdraw`
+            case `${viewMode.create}-${POLICY_MANAGEMENT_TYPE.DEPOSIT_FLEXPAY}`:
+                return t`policy-management.depositManagement.setUpModalTitle`
+            case `${viewMode.update}-${POLICY_MANAGEMENT_TYPE.DEPOSIT_FLEXPAY}`:
+                return t`policy-management.depositManagement.updateTitle`
+            case `${viewMode.create}-${POLICY_MANAGEMENT_TYPE.PAYMENT_BANK_OR_ATM}`:
+                return t`policy-management.payment.title.setting-account-bank`
+            case `${viewMode.update}-${POLICY_MANAGEMENT_TYPE.PAYMENT_BANK_OR_ATM}`:
+                return t`policy-management.payment.title.update-setting-account-bank`
+            case `${viewMode.create}-${POLICY_MANAGEMENT_TYPE.TRANSFER_INTERNAL}`:
+                return t`policy-management.eWalletTransferMoneyManagement.setUpModalTitle`
+            case `${viewMode.update}-${POLICY_MANAGEMENT_TYPE.TRANSFER_INTERNAL}`:
+                return t`policy-management.eWalletTransferMoneyManagement.updatePolicyModalTitle`
+            case `${viewMode.create}-${POLICY_MANAGEMENT_TYPE.PAYMENT_FLEXPAY}`:
+                return t`policy-management.eWalletTransferMoneyManagement.setUpModalTitle`
+            case `${viewMode.update}-${POLICY_MANAGEMENT_TYPE.PAYMENT_FLEXPAY}`:
+                return t`policy-management.eWalletTransferMoneyManagement.updatePolicyModalTitle`
+            // case `${viewMode.create}-${POLICY_MANAGEMENT_TYPE.LIMIT_AND_REGULATIONS}`:
+            //     return t`policy-management.limitAndRegulations.modalContent.title.createModalTitle`
+            // case `${viewMode.update}-${POLICY_MANAGEMENT_TYPE.LIMIT_AND_REGULATIONS}`:
+            //     return t`policy-management.limitAndRegulations.modalContent.title.updateModalTitle`
+            // case `${viewMode.delete}-${POLICY_MANAGEMENT_TYPE.LIMIT_AND_REGULATIONS}`:
+            //     return t`policy-management.limitAndRegulations.modalContent.title.deleteModalTitle`
+            // case `${viewMode.view}-${POLICY_MANAGEMENT_TYPE.LIMIT_AND_REGULATIONS}`:
+            //     return t`policy-management.limitAndRegulations.modalContent.title.viewDetailModalTitle`
             case `${viewMode.history}`:
             switch (entityType) {
                 case 'SYSTEM_FEE_MANAGEMENT':
@@ -61,25 +86,121 @@ const PolicyManagementModal = ({
     const render = () => {
         const value = mode === viewMode.history ? viewMode.history : `${mode}-${policyManagementType}`
         switch (value) {
+            case `${viewMode.history}`:
+                if (recordId) {
+                return (
+                    <HistoryPolicy
+                    module={policyManagementType}
+                    policyId={recordId}
+                    onCancel={onCancel}
+                    entityType={entityType}
+                    />
+                )
+                }
+                else{
+                return (
+                    <HistoryPolicy
+                    module={policyManagementType}
+                    onCancel={onCancel}
+                    entityType={entityType}
+                    />
+                )
+                }
             case `${viewMode.create}-${POLICY_MANAGEMENT_TYPE.WITHDRAW}`:
-            return (
-                <SetupDirectPolicyContent
-                    onCancel={onCancel}
-                    module={POLICY_MANAGEMENT_TYPE.WITHDRAW}
-                    mode={mode}
-                    refetch={refetch}
-                />
-            )
+                return (
+                    <SetupDirectPolicyContent
+                        onCancel={onCancel}
+                        module={POLICY_MANAGEMENT_TYPE.WITHDRAW}
+                        mode={mode}
+                        refetch={refetch}
+                    />
+                )
             case `${viewMode.update}-${POLICY_MANAGEMENT_TYPE.WITHDRAW}`:
-            return (
-                <SetupDirectPolicyContent
-                    onCancel={onCancel}
-                    module={POLICY_MANAGEMENT_TYPE.WITHDRAW}
-                    mode={mode}
-                    refetch={refetch}
-                    recordId={recordId}
-                />
-            )
+                return (
+                    <SetupDirectPolicyContent
+                        onCancel={onCancel}
+                        module={POLICY_MANAGEMENT_TYPE.WITHDRAW}
+                        mode={mode}
+                        refetch={refetch}
+                        recordId={recordId}
+                    />
+                )
+            case `${viewMode.create}-${POLICY_MANAGEMENT_TYPE.DEPOSIT_FLEXPAY}`:
+                return (
+                    <SetupDirectPolicyContent
+                        onCancel={onCancel}
+                        module={POLICY_MANAGEMENT_TYPE.DEPOSIT_FLEXPAY}
+                        mode={mode}
+                        refetch={refetch}
+                    />
+                )
+            case `${viewMode.update}-${POLICY_MANAGEMENT_TYPE.DEPOSIT_FLEXPAY}`:
+                return (
+                    <SetupDirectPolicyContent
+                        onCancel={onCancel}
+                        module={POLICY_MANAGEMENT_TYPE.DEPOSIT_FLEXPAY}
+                        mode={mode}
+                        refetch={refetch}
+                        recordId={recordId}
+                    />
+                )
+            case `${viewMode.create}-${POLICY_MANAGEMENT_TYPE.PAYMENT_BANK_OR_ATM}`:
+                return (
+                    <SetupDirectPolicyContent
+                        onCancel={onCancel}
+                        module={POLICY_MANAGEMENT_TYPE.PAYMENT_BANK_OR_ATM}
+                        mode={mode}
+                        refetch={refetch}
+                    />
+                )
+            case `${viewMode.update}-${POLICY_MANAGEMENT_TYPE.PAYMENT_BANK_OR_ATM}`:
+                return (
+                    <SetupDirectPolicyContent
+                        onCancel={onCancel}
+                        module={POLICY_MANAGEMENT_TYPE.PAYMENT_BANK_OR_ATM}
+                        mode={mode}
+                        refetch={refetch}
+                        recordId={recordId}
+                    />
+                )
+            case `${viewMode.create}-${POLICY_MANAGEMENT_TYPE.TRANSFER_INTERNAL}`:
+                return (
+                    <SetupDirectPolicyContent
+                        onCancel={onCancel}
+                        module={POLICY_MANAGEMENT_TYPE.TRANSFER_INTERNAL}
+                        mode={mode}
+                        refetch={refetch}
+                    />
+                )
+            case `${viewMode.update}-${POLICY_MANAGEMENT_TYPE.TRANSFER_INTERNAL}`:
+                return (
+                    <SetupDirectPolicyContent
+                        onCancel={onCancel}
+                        module={POLICY_MANAGEMENT_TYPE.TRANSFER_INTERNAL}
+                        mode={mode}
+                        refetch={refetch}
+                        recordId={recordId}
+                    />
+                )
+            case `${viewMode.create}-${POLICY_MANAGEMENT_TYPE.PAYMENT_FLEXPAY}`:
+                return (
+                    <SetupDirectPolicyContent
+                        onCancel={onCancel}
+                        module={POLICY_MANAGEMENT_TYPE.PAYMENT_FLEXPAY}
+                        mode={mode}
+                        refetch={refetch}
+                    />
+                )
+            case `${viewMode.update}-${POLICY_MANAGEMENT_TYPE.PAYMENT_FLEXPAY}`:
+                return (
+                    <SetupDirectPolicyContent
+                        onCancel={onCancel}
+                        module={POLICY_MANAGEMENT_TYPE.PAYMENT_FLEXPAY}
+                        mode={mode}
+                        refetch={refetch}
+                        recordId={recordId}
+                    />
+                )
             default:
                 return null
         }

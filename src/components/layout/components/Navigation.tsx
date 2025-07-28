@@ -13,51 +13,50 @@ import {
 } from '@constants/routersConstant'
 import i18n from '@languages/i18n'
 import {
-  ArrowCircleDown,
-  ArrowCircleUp,
-  ArrowsDownUp,
-  ArrowsLeftRight,
-  Bank,
-  Bell,
-  Cardholder,
-  ChartBar,
-  ClipboardText,
-  ClockCounterClockwise,
-  CreditCard,
-  CurrencyCircleDollar,
-  CurrencyDollar,
-  EnvelopeSimple,
-  FileLock,
-  FileText,
-  Fingerprint,
-  FolderOpen,
-  Gear,
-  GearSix,
-  HandArrowDown,
-  HandCoins,
-  HandPalm,
-  Handshake,
-  Invoice,
-  List,
-  ListNumbers,
-  Lock,
-  LockKeyOpen,
-  LockOpen,
-  MagnifyingGlass,
-  Money,
-  ShieldCheck,
-  Sliders,
-  SlidersHorizontal,
-  Stamp,
-  Storefront,
-  Swap,
-  Trash,
-  UserGear,
-  Users,
-  UsersFour,
-  UsersThree,
-  Wallet
+  ArrowCircleDownIcon,
+  ArrowsDownUpIcon,
+  ArrowsLeftRightIcon,
+  BankIcon,
+  BellIcon,
+  CardholderIcon,
+  ChartBarIcon,
+  ClipboardTextIcon,
+  ClockCounterClockwiseIcon,
+  CreditCardIcon,
+  CurrencyCircleDollarIcon,
+  CurrencyDollarIcon,
+  EnvelopeSimpleIcon,
+  FileLockIcon,
+  FileTextIcon,
+  FingerprintIcon,
+  FolderOpenIcon,
+  GearIcon,
+  GearSixIcon,
+  HandArrowDownIcon,
+  HandCoinsIcon,
+  HandshakeIcon,
+  InvoiceIcon,
+  ListIcon,
+  ListNumbersIcon,
+  LockIcon,
+  LockKeyOpenIcon,
+  LockOpenIcon,
+  MagnifyingGlassIcon,
+  MoneyIcon,
+  ShieldCheckIcon,
+  SlidersHorizontalIcon,
+  SlidersIcon,
+  StampIcon,
+  StorefrontIcon,
+  SwapIcon,
+  TrashIcon,
+  UserGearIcon,
+  UsersFourIcon,
+  UsersIcon,
+  UsersThreeIcon,
+  WalletIcon
 } from '@phosphor-icons/react'
+import { ArrowCircleUpIcon } from '@phosphor-icons/react/dist/ssr'
 import { ItemType } from 'antd/es/menu/interface'
 
 export type ItemTypeCustom = ItemType & {
@@ -72,7 +71,7 @@ const weight = 'regular'
 const roleManagement = {
   key: _ROLEMANAGEMENT,
   icon: (
-    <UserGear
+    <UserGearIcon
       size={size}
       weight={weight}
       color={COlOR}
@@ -84,7 +83,7 @@ const roleManagement = {
       key: 'admin-account',
       permission: 'admin',
       icon: (
-        <UsersThree
+        <UsersThreeIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -96,7 +95,7 @@ const roleManagement = {
       key: 'manage-group-permissions',
       permission: 'group',
       icon: (
-        <ShieldCheck
+        <ShieldCheckIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -110,7 +109,7 @@ const roleManagement = {
 const personalWallet = {
   key: _PERSONALWALLET,
   icon: (
-    <Wallet
+    <WalletIcon
       size={size}
       weight={weight}
       color={COlOR}
@@ -121,7 +120,7 @@ const personalWallet = {
     {
       key: 'customers-group',
       icon: (
-        <UsersFour
+        <UsersFourIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -133,7 +132,7 @@ const personalWallet = {
     {
       key: _CUSTOMERS,
       icon: (
-        <Cardholder
+        <CardholderIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -145,7 +144,7 @@ const personalWallet = {
         {
           key: 'list',
           icon: (
-            <List
+            <ListIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -156,7 +155,7 @@ const personalWallet = {
         {
           key: 'lookup',
           icon: (
-            <MagnifyingGlass
+            <MagnifyingGlassIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -167,7 +166,7 @@ const personalWallet = {
         {
           key: 'cancel',
           icon: (
-            <Trash
+            <TrashIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -178,7 +177,7 @@ const personalWallet = {
         {
           key: 'ekyc',
           icon: (
-            <Fingerprint
+            <FingerprintIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -189,7 +188,7 @@ const personalWallet = {
         {
           key: 'freeze-account',
           icon: (
-            <Lock
+            <LockIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -200,7 +199,7 @@ const personalWallet = {
         {
           key: 'un-freeze-account',
           icon: (
-            <LockOpen
+            <LockOpenIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -213,7 +212,7 @@ const personalWallet = {
     {
       key: _CUSTOMERTRANSACTION,
       icon: (
-        <ArrowsLeftRight
+        <ArrowsLeftRightIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -225,7 +224,7 @@ const personalWallet = {
         {
           key: 'transfer-history',
           icon: (
-            <ClockCounterClockwise
+            <ClockCounterClockwiseIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -241,7 +240,7 @@ const personalWallet = {
 const feeManagement = {
   key: _FEEMANAGEMENT,
   icon: (
-    <Gear
+    <GearIcon
       size={size}
       weight={weight}
       color={COlOR}
@@ -252,7 +251,7 @@ const feeManagement = {
     {
       key: 'policy-management',
       icon: (
-        <Gear
+        <CurrencyDollarIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -264,7 +263,7 @@ const feeManagement = {
     {
       key: 'direct-deposit',
       icon: (
-        <ArrowCircleDown
+        <ArrowCircleDownIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -276,7 +275,7 @@ const feeManagement = {
     {
       key: 'e-wallet-transfer-money',
       icon: (
-        <ArrowsDownUp
+        <ArrowsDownUpIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -288,7 +287,7 @@ const feeManagement = {
     {
       key: 'payment',
       icon: (
-        <Wallet
+        <WalletIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -300,7 +299,7 @@ const feeManagement = {
     {
       key: 'account-bank-payment',
       icon: (
-        <CreditCard
+        <CreditCardIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -312,7 +311,7 @@ const feeManagement = {
     {
       key: 'withdraw-money',
       icon: (
-        <ArrowCircleUp
+        <ArrowCircleUpIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -324,7 +323,7 @@ const feeManagement = {
     {
       key: 'limit-regulations',
       icon: (
-        <ListNumbers
+        <ListNumbersIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -336,7 +335,7 @@ const feeManagement = {
     {
       key: 'form-setting',
       icon: (
-        <SlidersHorizontal
+        <SlidersHorizontalIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -351,7 +350,7 @@ const feeManagement = {
 const bankAndConnect = {
   key: _BANKANDCONNECT,
   icon: (
-    <Bank
+    <BankIcon
       size={size}
       weight={weight}
       color={COlOR}
@@ -362,7 +361,7 @@ const bankAndConnect = {
     {
       key: 'banks',
       icon: (
-        <Bank
+        <BankIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -375,7 +374,7 @@ const bankAndConnect = {
     {
       key: 'notification-management',
       icon: (
-        <Bell
+        <BellIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -390,7 +389,7 @@ const bankAndConnect = {
 const repaymentAndDisburse = {
   key: _REPAYMENTANDDISBURSE,
   icon: (
-    <Users
+    <UsersIcon
       size={size}
       weight={weight}
       color={COlOR}
@@ -401,7 +400,7 @@ const repaymentAndDisburse = {
     {
       key: 'dashboard',
       icon: (
-        <Swap
+        <SwapIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -413,7 +412,7 @@ const repaymentAndDisburse = {
     {
       key: 'sms-metrics',
       icon: (
-        <EnvelopeSimple
+        <EnvelopeSimpleIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -425,7 +424,7 @@ const repaymentAndDisburse = {
     {
       key: 'repayment',
       icon: (
-        <HandArrowDown
+        <HandArrowDownIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -437,7 +436,7 @@ const repaymentAndDisburse = {
         {
           key: 'repayment-transaction',
           icon: (
-            <ArrowsLeftRight
+            <ArrowsLeftRightIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -449,7 +448,7 @@ const repaymentAndDisburse = {
         {
           key: 'partner-contact',
           icon: (
-            <Handshake
+            <HandshakeIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -461,7 +460,7 @@ const repaymentAndDisburse = {
         {
           key: 'invoice-query',
           icon: (
-            <Invoice
+            <InvoiceIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -473,7 +472,7 @@ const repaymentAndDisburse = {
         {
           key: 'payment-service',
           icon: (
-            <Storefront
+            <StorefrontIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -487,7 +486,7 @@ const repaymentAndDisburse = {
     {
       key: 'disburse',
       icon: (
-        <HandCoins
+        <HandCoinsIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -499,7 +498,7 @@ const repaymentAndDisburse = {
         {
           key: 'disburse-transaction',
           icon: (
-            <CurrencyCircleDollar
+            <CurrencyCircleDollarIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -511,7 +510,7 @@ const repaymentAndDisburse = {
         {
           key: 'disburse-partner-contact',
           icon: (
-            <Handshake
+            <HandshakeIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -523,7 +522,7 @@ const repaymentAndDisburse = {
         {
           key: 'disburse-invoice-query',
           icon: (
-            <List
+            <ListIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -540,7 +539,7 @@ const repaymentAndDisburse = {
 const reports = {
   key: _REPORTS,
   icon: (
-    <FileText
+    <FileTextIcon
       size={size}
       weight={weight}
       color={COlOR}
@@ -551,7 +550,7 @@ const reports = {
     {
       key: _INTERNAL,
       icon: (
-        <FileLock
+        <FileLockIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -563,7 +562,7 @@ const reports = {
         {
           key: 'accounts',
           icon: (
-            <FolderOpen
+            <FolderOpenIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -574,7 +573,7 @@ const reports = {
         {
           key: 'detail-account',
           icon: (
-            <FileText
+            <FileTextIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -587,7 +586,7 @@ const reports = {
     {
       key: _STATE_BANK,
       icon: (
-        <Bank
+        <BankIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -599,7 +598,7 @@ const reports = {
         {
           key: 'overview',
           icon: (
-            <ChartBar
+            <ChartBarIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -610,7 +609,7 @@ const reports = {
         {
           key: 'account-guarantee',
           icon: (
-            <LockKeyOpen
+            <LockKeyOpenIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -621,7 +620,7 @@ const reports = {
         {
           key: 'transaction-management-report',
           icon: (
-            <ClipboardText
+            <ClipboardTextIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -637,7 +636,7 @@ const reports = {
 const internal_wallet = {
   key: _INTERNAL_WALLET,
   icon: (
-    <Wallet
+    <WalletIcon
       size={size}
       weight={weight}
       color={COlOR}
@@ -649,7 +648,7 @@ const internal_wallet = {
     {
       key: 'group',
       icon: (
-        <Users
+        <UsersIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -661,7 +660,7 @@ const internal_wallet = {
     {
       key: 'account',
       icon: (
-        <CreditCard
+        <CreditCardIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -672,7 +671,7 @@ const internal_wallet = {
         {
           key: 'details',
           icon: (
-            <Gear
+            <GearIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -683,7 +682,7 @@ const internal_wallet = {
         {
           key: 'transactions',
           icon: (
-            <Money
+            <MoneyIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -696,7 +695,7 @@ const internal_wallet = {
     {
       key: 'setting',
       icon: (
-        <Sliders
+        <SlidersIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -707,7 +706,7 @@ const internal_wallet = {
     {
       key: 'internal-accounting',
       icon: (
-        <GearSix
+        <GearSixIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -718,7 +717,7 @@ const internal_wallet = {
         {
           key: 'deposit-request',
           icon: (
-            <CurrencyDollar
+            <CurrencyDollarIcon
               size={size}
               weight={weight}
               color={COlOR}
@@ -729,7 +728,7 @@ const internal_wallet = {
         {
           key: 'deposit-approval',
           icon: (
-            <Stamp
+            <StampIcon
               size={size}
               weight={weight}
               color={COlOR}

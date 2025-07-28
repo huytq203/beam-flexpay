@@ -205,18 +205,13 @@ export const SetupOmipayPaymentContent = ({ onCancel }: ModalContentType) => {
               </Tooltip>
             </Col>
             <Col>
-              <Tooltip
-                placement='top'
-                title={t('admin-management.tooltip.delete')}
-              >
-                <ButtonDelete
-                  module='wallet_payment'
-                  onClick={() => {
-                    setFeeMode(viewMode.delete)
-                    setOpenAddAndUpdateFeePackage(true)
-                  }}
-                />
-              </Tooltip>
+              <ButtonDelete
+                module='wallet_payment'
+                onClick={() => {
+                  setFeeMode(viewMode.delete)
+                  setOpenAddAndUpdateFeePackage(true)
+                }}
+              />
             </Col>
           </Row>
         )

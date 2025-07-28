@@ -1,22 +1,13 @@
-import {
-  Button,
-  Col,
-  DatePicker,
-  Empty,
-  Form,
-  message,
-  notification,
-  Row,
-  Select,
-  Spin,
-  Table,
-  Tooltip
-} from 'antd'
-import { useEffect, useMemo, useState, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useForm } from 'antd/es/form/Form'
 import ButtonAdd from '@components/button-add/ButtonAdd'
-import { ColumnsType } from 'antd/es/table'
+import ButtonDelete from '@components/button-delete/ButtonDelete'
+import ButtonUpdate from '@components/button-update/ButtonUpdate'
+import { GUTTER } from '@constants/appConstant'
+import { CustomAccountGroupSelect } from '@pages/policy-management/components/SelectAccountGroup'
+import { CustomPrivateAccountSelect } from '@pages/policy-management/components/SelectPrivateAccount'
+import { AddAndUpdateFeePackageModal } from '@pages/policy-management/policy-management-modal/add-and-update-fee-package-modal/AddAndUpdateFeePackageModal'
+import { useLazyGetListGroupQuery } from '@services/apiAccountGroup'
+import { useLazyGetCustomersQuery } from '@services/customerService'
+import { useLazyGetDetailPolicyQuery } from '@services/transferPolicyServices'
 import {
   APPLICABLE_OBJECTS as APPLICABLE_OBJECT,
   APPLICABLE_OBJECTS,
@@ -25,18 +16,26 @@ import {
   pageEnum,
   viewMode
 } from '@type/policyManagement'
-import dayjs from 'dayjs'
-import ButtonDelete from '@components/button-delete/ButtonDelete'
-import ButtonUpdate from '@components/button-update/ButtonUpdate'
-import { RangePickerProps } from 'antd/es/date-picker'
 import { convertNumber } from '@utils/helperFunctions'
-import { AddAndUpdateFeePackageModal } from '@pages/policy-management/policy-management-modal/add-and-update-fee-package-modal/AddAndUpdateFeePackageModal'
-import { useLazyGetListGroupQuery } from '@services/apiAccountGroup'
-import { useLazyGetCustomersQuery } from '@services/customerService'
-import { CustomAccountGroupSelect } from '@pages/policy-management/components/SelectAccountGroup'
-import { CustomPrivateAccountSelect } from '@pages/policy-management/components/SelectPrivateAccount'
-import { useLazyGetDetailPolicyQuery } from '@services/transferPolicyServices'
-import { GUTTER } from '@constants/appConstant'
+import {
+  Button,
+  Col,
+  DatePicker,
+  Empty,
+  Form,
+  message,
+  Row,
+  Select,
+  Spin,
+  Table,
+  Tooltip
+} from 'antd'
+import { RangePickerProps } from 'antd/es/date-picker'
+import { useForm } from 'antd/es/form/Form'
+import { ColumnsType } from 'antd/es/table'
+import dayjs from 'dayjs'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 type ModalContentType = {
   onCancel: () => void
@@ -248,19 +247,14 @@ export const SetupEWalletTransferMoneyContent = ({
               </Tooltip>
             </Col>
             <Col>
-              <Tooltip
-                placement='top'
-                title={t('admin-management.tooltip.delete')}
-              >
-                <ButtonDelete
-                  disabled={mode === viewMode.update}
-                  module='wallet_transfer'
-                  onClick={() => {
-                    setFeeMode(viewMode.delete)
-                    setOpenAddAndUpdateFeePackage(true)
-                  }}
-                />
-              </Tooltip>
+              <ButtonDelete
+                disabled={mode === viewMode.update}
+                module='wallet_transfer'
+                onClick={() => {
+                  setFeeMode(viewMode.delete)
+                  setOpenAddAndUpdateFeePackage(true)
+                }}
+              />
             </Col>
           </Row>
         )
@@ -531,7 +525,6 @@ export const SetupEWalletTransferMoneyContent = ({
                   label={t`policy-management.eWalletTransferMoneyManagement.applicableTimeStart`}
                   {...formItemStyle}
                   labelAlign='left'
-                  initialValue={dayjs().startOf('day')}
                   rules={[
                     {
                       required: true,

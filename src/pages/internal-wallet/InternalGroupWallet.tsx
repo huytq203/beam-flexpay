@@ -174,15 +174,13 @@ function InternalGroupWallet() {
       render(value, record, index) {
         return (
           <Space>
-            <Tooltip title={t`buttons.history`}>
-              <ButtonHistory
-                onClick={() => {
-                  setModeHistory(viewModeHistory.history)
-                  setSelectedId(record.id)
-                  setOpen(true)
-                }}
-              />
-            </Tooltip>
+            <ButtonHistory
+              onClick={() => {
+                setModeHistory(viewModeHistory.history)
+                setSelectedId(record.id)
+                setOpen(true)
+              }}
+            />
             <ButtonUpdate
               module='internalwallet'
               onClick={() => {
@@ -244,66 +242,55 @@ function InternalGroupWallet() {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={handleSearch}
+          cols='2'
           headerMenu={
-            <Form
-              form={form}
-              layout='vertical'
-            >
-              <Row gutter={GUTTER}>
-                <Col span={6}>
-                  <Form.Item
-                    name='walletGroup'
-                    label={t('internal-wallet.groupType')}
-                  >
-                    <Input
-                      placeholder={t`internal-wallet.placeholders.group_id`.toString()}
-                      type='text'
-                      inputMode='numeric'
-                      onKeyDown={blockArrowValue}
-                      onKeyPress={blockLetterDecimal}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={6}>
-                  <Form.Item
-                    name='name'
-                    label={t('internal-wallet.groupName')}
-                  >
-                    <Input
-                      placeholder={t`internal-wallet.placeholders.group_name`.toString()}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={6}>
-                  <Form.Item
-                    name='active'
-                    label={t('internal-wallet.active')}
-                  >
-                    <Select
-                      placeholder={t`internal-wallet.placeholders.status`.toString()}
-                      options={internalWalletGroupStatusOptions}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+            <>
+              <Form.Item
+                name='walletGroup'
+                label={t('internal-wallet.groupType')}
               >
-                <Col>
-                  <ButtonAdd
-                    module='internalwallet'
-                    onClick={() => {
-                      setMode(viewMode.create)
-                      addFormToggle()
-                    }}
-                  />
-                </Col>
-                <Col>
-                  <ButtonSearch onClick={handleSearch} />
-                </Col>
-              </Row>
-            </Form>
+                <Input
+                  placeholder={t`internal-wallet.placeholders.group_id`.toString()}
+                  type='text'
+                  inputMode='numeric'
+                  onKeyDown={blockArrowValue}
+                  onKeyPress={blockLetterDecimal}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='name'
+                label={t('internal-wallet.groupName')}
+              >
+                <Input
+                  placeholder={t`internal-wallet.placeholders.group_name`.toString()}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='active'
+                label={t('internal-wallet.active')}
+              >
+                <Select
+                  placeholder={t`internal-wallet.placeholders.status`.toString()}
+                  options={internalWalletGroupStatusOptions}
+                />
+              </Form.Item>
+              <ButtonSearch
+                onClick={handleSearch}
+                className='mt-7'
+              />
+
+              <ButtonAdd
+                module='internalwallet'
+                onClick={() => {
+                  setMode(viewMode.create)
+                  addFormToggle()
+                }}
+              />
+            </>
           }
         />
       }

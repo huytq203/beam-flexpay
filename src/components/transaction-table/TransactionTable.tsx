@@ -62,6 +62,8 @@ const TransactionTable = ({ search, setSearch, skip, className }: Props) => {
     const dataIndex = getDataIndex(transaction.type as TransactionType);
     setFreezingId(id)
     setReason('')
+    console.log('transaction', transaction)
+    console.log('transaction amount', transaction.amount)
     setFreezeMoney(transaction.amount)
     showFreezeModal()
     setAccountNumber(transaction[dataIndex])
@@ -79,7 +81,7 @@ const TransactionTable = ({ search, setSearch, skip, className }: Props) => {
   // Handler for confirming freeze
   const handleConfirmFreeze = async () => {
     if (!reason.trim()) {
-      message.error('Vui lòng nhập lý do đóng băng giao dịch')
+      message.error(t('freezeAndUnfreezeAccount.pleaseEnterReason'))
       return
     }
     
@@ -92,13 +94,13 @@ const TransactionTable = ({ search, setSearch, skip, className }: Props) => {
         // Add customerId if your API requires it
       }).unwrap()
       
-      message.success('Đóng băng giao dịch thành công')
+      message.success(t('freezeAndUnfreezeAccount.freezeTransactionSuccess'))
       handleCancelFreeze()
       
       // Refresh the transaction list
       setSearch({...search})
     } catch (error: any) {
-      message.error(error?.data?.message || 'Không thể đóng băng giao dịch. Vui lòng thử lại sau.')
+      message.error(error?.data?.message || t('freezeAndUnfreezeAccount.cannotFreezeTransaction'))
     }
   }
 
@@ -122,7 +124,7 @@ const TransactionTable = ({ search, setSearch, skip, className }: Props) => {
   // Handler for confirming unfreeze
   const handleConfirmUnfreeze = async () => {
     if (!reason.trim()) {
-      message.error('Vui lòng nhập lý do mở đóng băng giao dịch')
+      message.error(t('freezeAndUnfreezeAccount.pleaseEnterReason'))
       return
     }
     
@@ -134,13 +136,13 @@ const TransactionTable = ({ search, setSearch, skip, className }: Props) => {
         customerAccountNumber: accountNumber
       }).unwrap()
       
-      message.success('Mở đóng băng giao dịch thành công')
+      message.success(t('freezeAndUnfreezeAccount.unfreezeTransactionSuccess'))
       handleCancelUnfreeze()
       
       // Refresh the transaction list
       setSearch({...search})
     } catch (error: any) {
-      message.error(error?.data?.message || 'Không thể mở đóng băng giao dịch. Vui lòng thử lại sau.')
+      message.error(error?.data?.message || t('freezeAndUnfreezeAccount.cannotUnfreezeTransaction'))
     }
   }
 
@@ -229,11 +231,10 @@ const TransactionTable = ({ search, setSearch, skip, className }: Props) => {
       width: 180, // Slightly increased width for better spacing
       render: (id, record) => (
         <Space>
-          <ButtonView onClick={() => handleDetail(id)} />
-          
+          <ButtonView key="view" onClick={() => handleDetail(id)} />
           {record.status === TransactionStatus.SUCCESS && record.frozenStatus !== FrozenStatus.FROZEN && (
-            <Tooltip title={t('freezeAndUnfreezeAccount.freezeTransaction')}>
-              <span> {/* Wrapper needed because ButtonFreeze might not accept ref properly */}
+            <Tooltip key="freeze-tooltip" title={t('freezeAndUnfreezeAccount.freezeTransaction')}>
+              <span key="freeze-wrapper"> {/* Wrapper needed because ButtonFreeze might not accept ref properly */}
                 <ButtonFreeze 
                   module="transaction" 
                   onClick={() => handleFreezeClick(id, record)} 
@@ -243,8 +244,8 @@ const TransactionTable = ({ search, setSearch, skip, className }: Props) => {
           )}
         
           {record.frozenStatus === FrozenStatus.FROZEN && (
-            <Tooltip title={t('freezeAndUnfreezeAccount.unfreezeTransaction')}>
-              <span> {/* Wrapper needed for the same reason as above */}
+            <Tooltip key="unfreeze-tooltip" title={t('freezeAndUnfreezeAccount.unfreezeTransaction')}>
+              <span key="unfreeze-wrapper"> {/* Wrapper needed for the same reason as above */}
                 <ButtonUnfreeze
                   module="transaction"
                   onClick={() => handleUnfreezeClick(id, record)}
@@ -298,12 +299,14 @@ const TransactionTable = ({ search, setSearch, skip, className }: Props) => {
         onCancel={handleCancelFreeze}
         footer={[
           <Button
+            key="cancel"  
             className='mr-10'
             onClick={handleCancelFreeze}
           >
             {t('custom-check-box.button.cancel')}
           </Button>,
           <Button
+            key="submit"
             type='primary'
             htmlType='submit'
             loading={isFreezingTransaction}
@@ -313,18 +316,18 @@ const TransactionTable = ({ search, setSearch, skip, className }: Props) => {
           </Button>
         ]}
       >
-        <p>Bạn đang thực hiện đóng băng giao dịch. Vui lòng nhập lý do:</p>
+        <p>{t('freezeAndUnfreezeAccount.freezeTransactionDescription')}</p>
         <Form layout="vertical">
           <Form.Item 
-            label="Lý do đóng băng" 
+            label={t('freezeAndUnfreezeAccount.freezeReason')} 
             required
-            rules={[{ required: true, message: 'Vui lòng nhập lý do đóng băng' }]}
+            rules={[{ required: true, message: t('freezeAndUnfreezeAccount.pleaseEnterReason') || '' }]}
           >
             <Input.TextArea 
               rows={4} 
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="Nhập lý do đóng băng giao dịch..."
+              placeholder={t('freezeAndUnfreezeAccount.enterFreezeReason') || ''}
             />
           </Form.Item>
         </Form>
@@ -332,7 +335,7 @@ const TransactionTable = ({ search, setSearch, skip, className }: Props) => {
       
       {/* Unfreeze Transaction Modal */}
       <Modal
-        title="Mở đóng băng giao dịch"
+        title={t('freezeAndUnfreezeAccount.unfreezeTransaction')}
         open={unfreezeModalVisible}
         onCancel={handleCancelUnfreeze}
         footer={[
@@ -345,22 +348,22 @@ const TransactionTable = ({ search, setSearch, skip, className }: Props) => {
             loading={isUnfreezingTransaction} 
             onClick={handleConfirmUnfreeze}
           >
-            Xác nhận mở đóng băng
+            {t('custom-check-box.button.submit')}
           </Button>
         ]}
       >
-        <p>Bạn đang thực hiện mở đóng băng giao dịch. Vui lòng nhập lý do:</p>
+        <p>{t('freezeAndUnfreezeAccount.unfreezeTransactionDescription')}</p>
         <Form layout="vertical">
           <Form.Item 
-            label="Lý do mở đóng băng" 
+            label={t('freezeAndUnfreezeAccount.unfreezeReason')} 
             required
-            rules={[{ required: true, message: 'Vui lòng nhập lý do mở đóng băng' }]}
+            rules={[{ required: true, message: t('freezeAndUnfreezeAccount.pleaseEnterReason') || '' }]}
           >
             <Input.TextArea 
               rows={4} 
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="Nhập lý do mở đóng băng giao dịch..."
+              placeholder={t('freezeAndUnfreezeAccount.enterUnfreezeReason') || ''}
             />
           </Form.Item>
         </Form>

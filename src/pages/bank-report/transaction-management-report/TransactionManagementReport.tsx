@@ -28,8 +28,10 @@ function TransactionManagementReport() {
       startDate: values?.startDate
         ? dayjs(values?.startDate).startOf('day').toISOString()
         : undefined,
-        endDate: values?.endDate ? dayjs(values?.endDate).endOf('day').toISOString() : undefined,
-        walletNumber:
+      endDate: values?.endDate
+        ? dayjs(values?.endDate).endOf('day').toISOString()
+        : undefined,
+      walletNumber:
         values?.walletNumber === '' || values?.walletNumber === undefined
           ? undefined
           : values?.walletNumber?.trim(),
@@ -45,7 +47,7 @@ function TransactionManagementReport() {
         ...search,
         page: 1,
         [field]: undefined
-      }) 
+      })
     }
   }
 
@@ -60,113 +62,92 @@ function TransactionManagementReport() {
     <Card
       title={
         <SearchBar
+          form={searchForm}
+          onFinish={handleSearch}
+          initialValues={{
+            startDate: null,
+            endDate: null,
+            type: ''
+          }}
+          cols='2'
           headerMenu={
-            <Form
-              form={searchForm}
-              className='w-100'
-              layout='vertical'
-              onFinish={handleSearch}
-              initialValues={{
-                status: '',
-                type: ''
-              }}
-            >
-              <Row gutter={GUTTER}>
-                <Col
-                  xs={24}
-                  md={12}
-                  xl={6}
-                >
-                  <Form.Item
-                    label={t('account-guarantee.label.from')}
-                    name='startDate'
-                  >
-                    <DatePicker
-                      allowClear
-                      format={TimeFormat}
-                      className='w-100'
-                      placeholder={t`account-guarantee.placeholders.from`.toString()}
-                      disabledDate={(current) =>
-                        current > dayjs() ||
-                        current >=
-                          dayjs(searchForm.getFieldValue('endDate'), 'YYYY-MM-DD')
-                      }
-                      onChange={(event) => {
-                        if (!event) {
-                          refreshData('startDate', undefined)
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col
-                  xs={24}
-                  md={12}
-                  xl={6}
-                >
-                  <Form.Item
-                    label={t('account-guarantee.label.to')}
-                    name='endDate'
-                  >
-                    <DatePicker
-                      allowClear
-                      className='w-100'
-                      format={TimeFormat}
-                      disabledDate={(current) =>
-                        current > dayjs() ||
-                        current <
-                          dayjs(searchForm.getFieldValue('startDate'), 'YYYY-MM-DD')
-                      }
-                      placeholder={t`account-guarantee.placeholders.to`.toString()}
-                      onChange={(event) => {
-                        if (!event) {
-                          refreshData('endDate', undefined)
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col
-                  xs={24}
-                  md={12}
-                  xl={6}>
-                    <Form.Item
-                    label={t('transfer-history.transferType')}
-                    name='type'
-                  >
-                    <Select
-                      placeholder={t`transfer-history.placeholders.type`.toString()}
-                      options={[
-                        {
-                          label: t('transfer-history.choice.all'),
-                          value: ''
-                        },
-                        {
-                          label: t('transfer-history.types.deposit'),
-                          value: TransactionType.DEPOSIT
-                        },
-                        {
-                          label: t('transfer-history.types.transfer'),
-                          value: TransactionType.TRANSFER
-                        },
-                        {
-                          label: t('transfer-history.types.payment'),
-                          value: TransactionType.PAYMENT
-                        },
-                        {
-                          label: t('transfer-history.types.withdraw'),
-                          value: TransactionType.WITHDRAW
-                        }
-                      ]}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+            <>
+              <Form.Item
+                label={t('account-guarantee.label.from')}
+                name='startDate'
               >
-                {/* <Col>
+                <DatePicker
+                  allowClear
+                  format={TimeFormat}
+                  className='w-100'
+                  placeholder={t`account-guarantee.placeholders.from`.toString()}
+                  disabledDate={(current) =>
+                    current > dayjs() ||
+                    current >=
+                      dayjs(searchForm.getFieldValue('endDate'), 'YYYY-MM-DD')
+                  }
+                  onChange={(event) => {
+                    if (!event) {
+                      refreshData('startDate', undefined)
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={t('account-guarantee.label.to')}
+                name='endDate'
+              >
+                <DatePicker
+                  allowClear
+                  className='w-100'
+                  format={TimeFormat}
+                  disabledDate={(current) =>
+                    current > dayjs() ||
+                    current <
+                      dayjs(searchForm.getFieldValue('startDate'), 'YYYY-MM-DD')
+                  }
+                  placeholder={t`account-guarantee.placeholders.to`.toString()}
+                  onChange={(event) => {
+                    if (!event) {
+                      refreshData('endDate', undefined)
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={t('transfer-history.transferType')}
+                name='type'
+              >
+                <Select
+                  placeholder={t`transfer-history.placeholders.type`.toString()}
+                  options={[
+                    {
+                      label: t('transfer-history.choice.all'),
+                      value: ''
+                    },
+                    {
+                      label: t('transfer-history.types.deposit'),
+                      value: TransactionType.DEPOSIT
+                    },
+                    {
+                      label: t('transfer-history.types.transfer'),
+                      value: TransactionType.TRANSFER
+                    },
+                    {
+                      label: t('transfer-history.types.payment'),
+                      value: TransactionType.PAYMENT
+                    },
+                    {
+                      label: t('transfer-history.types.withdraw'),
+                      value: TransactionType.WITHDRAW
+                    }
+                  ]}
+                />
+              </Form.Item>
+
+              {/* <Col>
                   <Button
                     className='mr-10'
                     type='primary'
@@ -174,15 +155,11 @@ function TransactionManagementReport() {
                     // onClick={exportFileCSV}
                   >{t`buttons.exportFile`}</Button>
                 </Col> */}
-                <Col>
-                  <ButtonSearch
-                  htmlType='submit'
-                  >
-                    {t`buttons.search`}
-                  </ButtonSearch>
-                </Col>
-              </Row>
-            </Form>
+              <ButtonSearch
+                htmlType='submit'
+                className='mt-7'
+              />
+            </>
           }
         />
       }

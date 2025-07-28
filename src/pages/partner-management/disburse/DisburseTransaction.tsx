@@ -111,7 +111,7 @@ function DisburseTransaction() {
       align: 'center',
       fixed: 'left',
       width: 200,
-      render(value, record, index) {
+      render(_, record) {
         return record.customerPaymentPartner.customer.identityNumber
       }
     },
@@ -119,7 +119,7 @@ function DisburseTransaction() {
       title: t('partner-repayment-list.invoiceDate'),
       align: 'center',
       width: 250,
-      render(value, record, index) {
+      render(_, record) {
         if (record)
           return dayjs(record.paymentPeriodFrom).format('MM/YYYY').toString()
         else return ''
@@ -135,7 +135,7 @@ function DisburseTransaction() {
       title: t('partner-repayment-list.walletId'),
       align: 'center',
       width: 200,
-      render(value, record, index) {
+      render(_, record) {
         return record.customerPaymentPartner.customer.phoneNumber
       }
     },
@@ -144,7 +144,7 @@ function DisburseTransaction() {
       dataIndex: 'amount',
       align: 'center',
       width: 150,
-      render(value, record, index) {
+      render(value) {
         return (
           <InputNumber
             value={value || 0}
@@ -162,7 +162,7 @@ function DisburseTransaction() {
       dataIndex: 'transactionStatus',
       align: 'center',
       width: 150,
-      render(value, record, index) {
+      render(value) {
         switch (value) {
           case 'SUCCESS':
             return t('partner-repayment-list.success')
@@ -179,7 +179,7 @@ function DisburseTransaction() {
       title: t('partner-repayment-list.transactionDate'),
       align: 'center',
       width: 150,
-      render(value, record, index) {
+      render(_, record) {
         return dayjs(record.createdAt).format(TimeFormat).toString()
       }
     },
@@ -188,7 +188,7 @@ function DisburseTransaction() {
       align: 'center',
       width: 100,
       fixed: 'right',
-      render(value, record, index) {
+      render() {
         return <ButtonUpdate module='repayment' />
       }
     }
@@ -199,103 +199,81 @@ function DisburseTransaction() {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={handleSearch}
+          cols='2'
           headerMenu={
-            <Form
-              layout='vertical'
-              form={form}
-            >
-              <Row gutter={GUTTER}>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t('partner.fullname')}
-                    name='partnerCustomerName'
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t('partner.customerId')}
-                    name='customerIdentityNumber'
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Form.Item
-                    label={t('partner.startDate')}
-                    name='from'
-                  >
-                    <DatePicker
-                      format={TimeFormat}
-                      allowClear
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Form.Item
-                    label={t('partner.endDate')}
-                    name='to'
-                  >
-                    <DatePicker
-                      format={TimeFormat}
-                      allowClear
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={GUTTER}>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t('partner.walletId')}
-                    name='customerPhone'
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col flex='300px'>
-                  <Form.Item
-                    label={t('partner.amountOfDays')}
-                    name='amount'
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col flex='300px'>
-                  <Form.Item
-                    label={t('partner.paymentPartner')}
-                    name='partnerId'
-                  >
-                    <PartnerSelect type='DISBURSE' />
-                  </Form.Item>
-                </Col>
-                <Col flex='300px'>
-                  <Form.Item
-                    label={t('partner.paymentPeriod')}
-                    name='paymentPeriod'
-                  >
-                    <Select
-                      disabled={!form.getFieldValue('partnerId')}
-                      options={DisburseTransactionPeriodOption()}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                gutter={GUTTER}
-                justify='end'
+            <>
+              <Form.Item
+                label={t('partner.fullname')}
+                name='partnerCustomerName'
               >
-                <Col>
-                  <ButtonExcel
-                    module='repayment'
-                    onClick={handleExport}
-                  />
-                </Col>
-                <Col>
-                  <ButtonSearch onClick={handleSearch} />
-                </Col>
-              </Row>
-            </Form>
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label={t('partner.customerId')}
+                name='customerIdentityNumber'
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label={t('partner.startDate')}
+                name='from'
+              >
+                <DatePicker
+                  format={TimeFormat}
+                  allowClear
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={t('partner.endDate')}
+                name='to'
+              >
+                <DatePicker
+                  format={TimeFormat}
+                  allowClear
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={t('partner.walletId')}
+                name='customerPhone'
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label={t('partner.amountOfDays')}
+                name='amount'
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label={t('partner.paymentPartner')}
+                name='partnerId'
+              >
+                <PartnerSelect type='DISBURSE' />
+              </Form.Item>
+
+              <Form.Item
+                label={t('partner.paymentPeriod')}
+                name='paymentPeriod'
+              >
+                <Select
+                  disabled={!form.getFieldValue('partnerId')}
+                  options={DisburseTransactionPeriodOption()}
+                />
+              </Form.Item>
+              <ButtonSearch onClick={handleSearch} />
+
+              <ButtonExcel
+                module='repayment'
+                onClick={handleExport}
+              />
+            </>
           }
         />
       }

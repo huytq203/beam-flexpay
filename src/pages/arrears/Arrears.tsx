@@ -141,16 +141,16 @@ function Arrears() {
         title={trans('arrears.accountInfo')}
         className='wx-500 mb-25'
       >
-        <Space split={<div className='wx-30' />}>
-          <Space.Compact direction='vertical'>
-            <Text className='fw-600'>{trans('arrears.accountName')}</Text>
-            <Text className='fw-600'>{trans('arrears.totalBalances')}</Text>
-            <Text className='fw-600'>{trans('arrears.availableBalances')}</Text>
+        <Space split={<div key="split" className='wx-30' />}>
+          <Space.Compact key="labels" direction='vertical'>
+            <Text key="name-label" className='fw-600'>{trans('arrears.accountName')}</Text>
+            <Text key="total-label" className='fw-600'>{trans('arrears.totalBalances')}</Text>
+            <Text key="available-label" className='fw-600'>{trans('arrears.availableBalances')}</Text>
           </Space.Compact>
-          <Space.Compact direction='vertical'>
-            <Text>{trans('arrears.accountName')}</Text>
-            <Text>{trans('arrears.totalBalances')}</Text>
-            <Text>{trans('arrears.availableBalances')}</Text>
+          <Space.Compact key="values" direction='vertical'>
+            <Text key="name-value">{trans('arrears.accountName')}</Text>
+            <Text key="total-value">{trans('arrears.totalBalances')}</Text>
+            <Text key="available-value">{trans('arrears.availableBalances')}</Text>
           </Space.Compact>
         </Space>
       </Card>

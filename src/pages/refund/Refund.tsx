@@ -199,160 +199,135 @@ function Refund() {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={onSearch}
+          // initialValues={{ status: '' }}
+          cols='2'
           headerMenu={
-            <Form
-              form={form}
-              onFinish={onSearch}
-              layout='vertical'
-              initialValues={{ status: '' }}
-            >
-              <Row gutter={GUTTER}>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t('refund.merchantAccount')}
-                    name='merchantAccount'
-                  >
-                    <Input
-                      className='w-100'
-                      placeholder={`${t('placeholders.merchantAccount')}`}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t('refund.merchant')}
-                    name='merchant'
-                  >
-                    <Input
-                      className='w-100'
-                      placeholder={`${t('placeholders.merchant')}`}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='300px'>
-                  <Form.Item
-                    label={t('refund.status')}
-                    name='status'
-                  >
-                    <Select
-                      placeholder={`${t('placeholders.status')}`}
-                      options={statusOptions}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={GUTTER}>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t('refund.transferId')}
-                    name='code'
-                  >
-                    <Input
-                      className='w-100'
-                      placeholder={`${t('placeholders.transferId')}`}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Form.Item
-                    label={t('refund.startDate')}
-                    name='from'
-                    rules={[
-                      () => ({
-                        validator(_, value) {
-                          if (
-                            value !== null &&
-                            form.getFieldValue('to') !== null &&
-                            value > form.getFieldValue('to')
-                          ) {
-                            form.setFields([
-                              {
-                                name: 'to',
-                                errors: []
-                              }
-                            ])
-                            return Promise.reject(
-                              new Error(`${t('messages.startDateValidate')}`)
-                            )
-                          } else {
-                            form.setFields([
-                              {
-                                name: 'to',
-                                errors: []
-                              }
-                            ])
-                            return Promise.resolve()
-                          }
-                        }
-                      })
-                    ]}
-                  >
-                    <DatePicker
-                      showTime
-                      format={TimeFullFormat}
-                      allowClear
-                      className='w-100'
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Form.Item
-                    label={t('refund.endDate')}
-                    name='to'
-                    rules={[
-                      () => ({
-                        validator(_, value) {
-                          if (
-                            value !== null &&
-                            form.getFieldValue('from') !== null &&
-                            value < form.getFieldValue('from')
-                          ) {
-                            form.setFields([
-                              {
-                                name: 'from',
-                                errors: []
-                              }
-                            ])
-                            return Promise.reject(
-                              new Error(`${t('messages.endDateValidate')}`)
-                            )
-                          } else {
-                            form.setFields([
-                              {
-                                name: 'from',
-                                errors: []
-                              }
-                            ])
-                            return Promise.resolve()
-                          }
-                        }
-                      })
-                    ]}
-                  >
-                    <DatePicker
-                      format={TimeFullFormat}
-                      allowClear
-                      showTime
-                      className='w-100'
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                gutter={GUTTER}
-                justify='end'
+            <>
+              <Form.Item
+                label={t('refund.merchantAccount')}
+                name='merchantAccount'
               >
-                <Col>
-                  <ButtonExcel
-                    module='customer'
-                    onClick={exportData}
-                  />
-                </Col>
-                <Col>
-                  <ButtonSearch htmlType='submit' />
-                </Col>
-              </Row>
-            </Form>
+                <Input
+                  className='w-100'
+                  placeholder={`${t('placeholders.merchantAccount')}`}
+                />
+              </Form.Item>
+              <Form.Item
+                label={t('refund.merchant')}
+                name='merchant'
+              >
+                <Input
+                  className='w-100'
+                  placeholder={`${t('placeholders.merchant')}`}
+                />
+              </Form.Item>
+              <Form.Item
+                label={t('refund.status')}
+                name='status'
+              >
+                <Select
+                  placeholder={`${t('placeholders.status')}`}
+                  options={statusOptions}
+                />
+              </Form.Item>
+              <Form.Item
+                label={t('refund.transferId')}
+                name='code'
+              >
+                <Input
+                  className='w-100'
+                  placeholder={`${t('placeholders.transferId')}`}
+                />
+              </Form.Item>
+              <Form.Item
+                label={t('refund.startDate')}
+                name='from'
+                rules={[
+                  () => ({
+                    validator(_, value) {
+                      if (
+                        value !== null &&
+                        form.getFieldValue('to') !== null &&
+                        value > form.getFieldValue('to')
+                      ) {
+                        form.setFields([
+                          {
+                            name: 'to',
+                            errors: []
+                          }
+                        ])
+                        return Promise.reject(
+                          new Error(`${t('messages.startDateValidate')}`)
+                        )
+                      } else {
+                        form.setFields([
+                          {
+                            name: 'to',
+                            errors: []
+                          }
+                        ])
+                        return Promise.resolve()
+                      }
+                    }
+                  })
+                ]}
+              >
+                <DatePicker
+                  showTime
+                  format={TimeFullFormat}
+                  allowClear
+                  className='w-100'
+                />
+              </Form.Item>
+              <Form.Item
+                label={t('refund.endDate')}
+                name='to'
+                rules={[
+                  () => ({
+                    validator(_, value) {
+                      if (
+                        value !== null &&
+                        form.getFieldValue('from') !== null &&
+                        value < form.getFieldValue('from')
+                      ) {
+                        form.setFields([
+                          {
+                            name: 'from',
+                            errors: []
+                          }
+                        ])
+                        return Promise.reject(
+                          new Error(`${t('messages.endDateValidate')}`)
+                        )
+                      } else {
+                        form.setFields([
+                          {
+                            name: 'from',
+                            errors: []
+                          }
+                        ])
+                        return Promise.resolve()
+                      }
+                    }
+                  })
+                ]}
+              >
+                <DatePicker
+                  format={TimeFullFormat}
+                  allowClear
+                  showTime
+                  className='w-100'
+                />
+              </Form.Item>
+
+              <ButtonExcel
+                module='customer'
+                onClick={exportData}
+              />
+              <ButtonSearch htmlType='submit' />
+            </>
           }
         />
       }

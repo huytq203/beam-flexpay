@@ -97,20 +97,12 @@ const CustomerHistoryTab = (props: CustomerHistoryProps) => {
       <Card
         title={
           <SearchBar
+          onFinish={handleSearch}
+          form={searchForm}
+          cols='2'
             headerMenu={
-              <Form
-                form={searchForm}
-                className='w-100'
-                layout='vertical'
-                onFinish={handleSearch}
-                initialValues={{
-                  status: '',
-                  type: ''
-                }}
-              >
-                <Row gutter={GUTTER}>
-                  {/* Reference ID Field */}
-                  <Col flex='auto'>
+            <>
+                
                     <Form.Item
                       label={trans('transfer-history.transferNumber')}
                       name='referenceId'
@@ -123,10 +115,9 @@ const CustomerHistoryTab = (props: CustomerHistoryProps) => {
                         onChange={(e) => handleInputChange('referenceId', e.target.value)}
                       />
                     </Form.Item>
-                  </Col>
 
                   {/* From Date Field */}
-                  <Col flex='140px'>
+                  
                     <Form.Item
                       label={trans('transfer-history.from')}
                       name='from'
@@ -145,10 +136,8 @@ const CustomerHistoryTab = (props: CustomerHistoryProps) => {
                         }}
                       />
                     </Form.Item>
-                  </Col>
 
                   {/* To Date Field */}
-                  <Col flex='140px'>
                     <Form.Item
                       label={trans('transfer-history.to')}
                       name='to'
@@ -167,10 +156,8 @@ const CustomerHistoryTab = (props: CustomerHistoryProps) => {
                         }}
                       />
                     </Form.Item>
-                  </Col>
 
                   {/* Transaction Type Field */}
-                  <Col flex='220px'>
                     <Form.Item
                       label={trans('transfer-history.transferType')}
                       name='type'
@@ -187,10 +174,8 @@ const CustomerHistoryTab = (props: CustomerHistoryProps) => {
                         ]}
                       />
                     </Form.Item>
-                  </Col>
 
                   {/* Status Field */}
-                  <Col flex='220px'>
                     <Form.Item
                       label={trans('transfer-history.status')}
                       name='status'
@@ -205,16 +190,11 @@ const CustomerHistoryTab = (props: CustomerHistoryProps) => {
                         ]}
                       />
                     </Form.Item>
-                  </Col>
-                </Row>
+                  
 
                 {/* Search Button */}
-                <Row justify='end' gutter={GUTTER}>
-                  <Col>
                     <ButtonSearch htmlType='submit' />
-                  </Col>
-                </Row>
-              </Form>
+              </>
             }
           />
         }

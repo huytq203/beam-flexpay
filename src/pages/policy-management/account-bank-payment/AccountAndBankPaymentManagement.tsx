@@ -244,7 +244,6 @@ const AccountAndBankPaymentManagement = () => {
         width: 80,
         title: `${trans`policy-management.payment.cancel`}`,
         render: (record) => (
-          <Tooltip title={trans`buttons.delete`}>
             <ButtonDelete
               module=''
               onClick={() => {
@@ -253,7 +252,6 @@ const AccountAndBankPaymentManagement = () => {
                 setOpen(true)
               }}
             />
-          </Tooltip>
         )
       }
     ],

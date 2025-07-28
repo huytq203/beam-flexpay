@@ -284,109 +284,89 @@ const NapasToken = () => {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={handleSearch}
+          // initialValues={{
+          //   status: ''
+          // }}
           headerMenu={
-            <Form
-              form={form}
-              onFinish={handleSearch}
-              className='w-100'
-              layout='vertical'
-              initialValues={{
-                status: ''
-              }}
-            >
-              <Row
-                className='w-100'
-                gutter={GUTTER}
+            <>
+              <Form.Item
+                label={t('napasToken.accountNumber')}
+                name='cardNumber'
               >
-                <Col span={5}>
-                  <Form.Item
-                    label={t('napasToken.accountNumber')}
-                    name='cardNumber'
-                  >
-                    <Input
-                      placeholder={t`napasToken.placeholders.accountNumber`.toString()}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={5}>
-                  <Form.Item
-                    label={t('napasToken.from')}
-                    name='from'
-                  >
-                    <DatePicker
-                      format={TimeFormat}
-                      allowClear
-                      className='w-100'
-                      placeholder={t`napasToken.placeholders.start`.toString()}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={5}>
-                  <Form.Item
-                    label={t('napasToken.to')}
-                    name='to'
-                  >
-                    <DatePicker
-                      format={TimeFormat}
-                      allowClear
-                      className='w-100'
-                      placeholder={t`napasToken.placeholders.end`.toString()}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={5}>
-                  <Form.Item
-                    label={t('napasToken.banks')}
-                    name='bankName'
-                  >
-                    <Select
-                      placeholder={t`napasToken.placeholders.bank`.toString()}
-                      open={visible}
-                      popupClassName='bank-list'
-                      allowClear={true}
-                      onBlur={handleBlur}
-                      onSelect={handleSelect}
-                      onPopupScroll={handleScroll}
-                      onDropdownVisibleChange={(open) => handleOpenSelect(open)}
-                    >
-                      {bankOptions()}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={4}>
-                  <Form.Item
-                    label={t('napasToken.status')}
-                    name='status'
-                  >
-                    <Select
-                      options={[
-                        { value: '', label: t('napasToken.statusCheck.all') },
-                        {
-                          value: true,
-                          label: t('napasToken.statusCheck.success')
-                        },
-                        {
-                          value: false,
-                          label: t('napasToken.statusCheck.failed')
-                        }
-                      ]}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+                <Input
+                  placeholder={t`napasToken.placeholders.accountNumber`.toString()}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={t('napasToken.from')}
+                name='from'
               >
-                <Col className='mb-20'>
-                  <Button
-                    type='primary'
-                    htmlType='submit'
-                    icon={<SearchOutlined />}
-                  >{t`buttons.search`}</Button>
-                </Col>
-              </Row>
-            </Form>
+                <DatePicker
+                  format={TimeFormat}
+                  allowClear
+                  className='w-100'
+                  placeholder={t`napasToken.placeholders.start`.toString()}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={t('napasToken.to')}
+                name='to'
+              >
+                <DatePicker
+                  format={TimeFormat}
+                  allowClear
+                  className='w-100'
+                  placeholder={t`napasToken.placeholders.end`.toString()}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={t('napasToken.banks')}
+                name='bankName'
+              >
+                <Select
+                  placeholder={t`napasToken.placeholders.bank`.toString()}
+                  open={visible}
+                  popupClassName='bank-list'
+                  allowClear={true}
+                  onBlur={handleBlur}
+                  onSelect={handleSelect}
+                  onPopupScroll={handleScroll}
+                  onDropdownVisibleChange={(open) => handleOpenSelect(open)}
+                >
+                  {bankOptions()}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                label={t('napasToken.status')}
+                name='status'
+              >
+                <Select
+                  options={[
+                    { value: '', label: t('napasToken.statusCheck.all') },
+                    {
+                      value: true,
+                      label: t('napasToken.statusCheck.success')
+                    },
+                    {
+                      value: false,
+                      label: t('napasToken.statusCheck.failed')
+                    }
+                  ]}
+                />
+              </Form.Item>
+
+              <Button
+                type='primary'
+                htmlType='submit'
+                icon={<SearchOutlined />}
+              >{t`buttons.search`}</Button>
+            </>
           }
         />
       }

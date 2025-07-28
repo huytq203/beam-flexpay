@@ -468,124 +468,110 @@ const Product = () => {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={handleSearch}
+          cols='2'
           headerMenu={
-            <Form
-              form={form}
-              onFinish={handleSearch}
-              layout='vertical'
-            >
-              <Row gutter={GUTTER}>
-                <Col span={5}>
-                  <Form.Item
-                    label={t('product.service')}
-                    name='serviceId'
-                  >
-                    <Select
-                      placeholder={t`placeholders.service`}
-                      open={visible}
-                      allowClear={true}
-                      onBlur={handleBlur}
-                      onSelect={handleSelect}
-                      onClear={() => {
-                        clearSelected()
-                        form.setFieldsValue({
-                          productTypeId: undefined
-                        })
-                      }}
-                      onPopupScroll={handleScroll}
-                      onDropdownVisibleChange={(open) => handleOpenSelect(open)}
-                      onChange={(event) => {
-                        if (!event) {
-                          refreshData('serviceId', undefined)
-                        }
-                      }}
-                    >
-                      {serviceOptions()}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={5}>
-                  <Form.Item
-                    label={t('product.productType')}
-                    name='productTypeId'
-                  >
-                    <Select
-                      placeholder={t`placeholders.productType`}
-                      onPopupScroll={handleScrollProductType}
-                      onDropdownVisibleChange={(open) =>
-                        handleOpenSelectProductType(open)
-                      }
-                      allowClear={true}
-                      open={visibleProductType}
-                      onChange={(event) => {
-                        if (!event) {
-                          refreshData('productTypeId', undefined)
-                        }
-                      }}
-                    >
-                      {productTypeOptions()}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={5}>
-                  <Form.Item
-                    label={t('product.attribute')}
-                    name='featured'
-                  >
-                    <Select
-                      allowClear
-                      placeholder={t`placeholders.attribute`}
-                      options={[
-                        {
-                          label: t('product.attributeValue.newProduct'),
-                          value: AttributeProduct.NEW_PRODUCT
-                        },
-                        {
-                          label: t('product.attributeValue.hotProduct'),
-                          value: AttributeProduct.HOT_PRODUCT
-                        },
-                        {
-                          label: t('product.attributeValue.promoProduct'),
-                          value: AttributeProduct.PROMOTION_PRODUCTS
-                        }
-                      ]}
-                      onChange={(event) => {
-                        if (!event) {
-                          refreshData('featured', undefined)
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={9}>
-                  <Form.Item
-                    label={t('product.nameProduct')}
-                    name='groupProduct'
-                  >
-                    <Input
-                      placeholder={t`placeholders.productName`.toString()}
-                      allowClear
-                      onChange={(event) => {
-                        if (
-                          event.target.value === '' ||
-                          event.target.value === undefined
-                        ) {
-                          refreshData('groupProduct', event.target.value)
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+            <>
+              <Form.Item
+                label={t('product.service')}
+                name='serviceId'
               >
-                <Col>
-                  <ButtonSearch htmlType='submit' />
-                </Col>
-              </Row>
-            </Form>
+                <Select
+                  placeholder={t`placeholders.service`}
+                  open={visible}
+                  allowClear={true}
+                  onBlur={handleBlur}
+                  onSelect={handleSelect}
+                  onClear={() => {
+                    clearSelected()
+                    form.setFieldsValue({
+                      productTypeId: undefined
+                    })
+                  }}
+                  onPopupScroll={handleScroll}
+                  onDropdownVisibleChange={(open) => handleOpenSelect(open)}
+                  onChange={(event) => {
+                    if (!event) {
+                      refreshData('serviceId', undefined)
+                    }
+                  }}
+                >
+                  {serviceOptions()}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                label={t('product.productType')}
+                name='productTypeId'
+              >
+                <Select
+                  placeholder={t`placeholders.productType`}
+                  onPopupScroll={handleScrollProductType}
+                  onDropdownVisibleChange={(open) =>
+                    handleOpenSelectProductType(open)
+                  }
+                  allowClear={true}
+                  open={visibleProductType}
+                  onChange={(event) => {
+                    if (!event) {
+                      refreshData('productTypeId', undefined)
+                    }
+                  }}
+                >
+                  {productTypeOptions()}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                label={t('product.attribute')}
+                name='featured'
+              >
+                <Select
+                  allowClear
+                  placeholder={t`placeholders.attribute`}
+                  options={[
+                    {
+                      label: t('product.attributeValue.newProduct'),
+                      value: AttributeProduct.NEW_PRODUCT
+                    },
+                    {
+                      label: t('product.attributeValue.hotProduct'),
+                      value: AttributeProduct.HOT_PRODUCT
+                    },
+                    {
+                      label: t('product.attributeValue.promoProduct'),
+                      value: AttributeProduct.PROMOTION_PRODUCTS
+                    }
+                  ]}
+                  onChange={(event) => {
+                    if (!event) {
+                      refreshData('featured', undefined)
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={t('product.nameProduct')}
+                name='groupProduct'
+              >
+                <Input
+                  placeholder={t`placeholders.productName`.toString()}
+                  allowClear
+                  onChange={(event) => {
+                    if (
+                      event.target.value === '' ||
+                      event.target.value === undefined
+                    ) {
+                      refreshData('groupProduct', event.target.value)
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <ButtonSearch htmlType='submit' />
+            </>
           }
         />
       }

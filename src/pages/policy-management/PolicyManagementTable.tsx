@@ -1,9 +1,9 @@
-import { Table, Empty, Tooltip } from 'antd'
+import ButtonDelete from '@components/button-delete/ButtonDelete'
 import ButtonHistory from '@components/button-history/ButtonHistory'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
-import ButtonDelete from '@components/button-delete/ButtonDelete'
 import CellContent from '@components/cell-content/CellContent'
 import { convertNumber, getApplicableObject } from '@utils/helperFunctions'
+import { Empty, Table } from 'antd'
 import dayjs from 'dayjs'
 import { FC, useMemo } from 'react'
 
@@ -164,7 +164,6 @@ const PolicyManagementTable: FC<PolicyManagementTableProps> = ({
 			align: 'center' as const,
 			title: `${trans`policy-management.payment.policyHistory`}`,
 			render: (record: any) => (
-				//<Tooltip title={trans`buttons.history`}>
 					<ButtonHistory
 						onClick={() => {
 							setMode('history')
@@ -172,14 +171,12 @@ const PolicyManagementTable: FC<PolicyManagementTableProps> = ({
 							setOpen(true)
 						}}
 					/>
-				//</Tooltip>
 			)
 		},
 		{
 			align: 'center' as const,
 			title: `${trans`policy-management.payment.edit`}`,
 			render: (record: any) => (
-				//<Tooltip title={trans`buttons.update`}>
 					<ButtonUpdate
 						module=''
 						onClick={() => {
@@ -188,14 +185,12 @@ const PolicyManagementTable: FC<PolicyManagementTableProps> = ({
 							setOpen(true)
 						}}
 					/>
-				//</Tooltip>
 			)
 		},
 		{
 			align: 'center' as const,
 			title: `${trans`policy-management.payment.cancel`}`,
 			render: (record: any) => (
-				<Tooltip title={trans`buttons.delete`}>
 					<ButtonDelete
 						module=''
 						onClick={() => {
@@ -204,7 +199,6 @@ const PolicyManagementTable: FC<PolicyManagementTableProps> = ({
 							setOpen(true)
 						}}
 					/>
-				</Tooltip>
 			)
 		}
 	], [data, trans, setMode, setSelectedRecord, setOpen])

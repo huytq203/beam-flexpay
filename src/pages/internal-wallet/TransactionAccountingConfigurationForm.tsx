@@ -1,24 +1,5 @@
-import { GUTTER } from '@constants/appConstant'
 import ButtonAdd from '@components/button-add/ButtonAdd'
-import { useLazyPaymentPartnerFindAllQuery } from '@services/cmsPaymentParner'
-import { useLazyPaymentServiceFindAllQuery } from '@services/cmsPaymentService'
-import { viewMode } from '@type/customer'
-import {
-  Button,
-  Col,
-  Form,
-  Modal,
-  Row,
-  Select,
-  Card,
-  FormListFieldData,
-  Space,
-  notification,
-  Badge,
-} from 'antd'
-import { useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import CustomAccountingSelect from './components/customer-accouting-select/CustomAccountingSelect'
+import { GUTTER } from '@constants/appConstant'
 import {
   accountingOptions,
   accountingSubType,
@@ -26,14 +7,32 @@ import {
   fundsOptions,
   walletTypeOptions
 } from '@constants/options'
+import { QueryStatus } from '@reduxjs/toolkit/dist/query'
 import { useCreateAccountingMutation, useUpdateAccountingMutation } from '@services/accountingService'
 import { useGetListWalletsQuery } from '@services/apiInternalWallet'
+import { useLazyPaymentPartnerFindAllQuery } from '@services/cmsPaymentParner'
+import { useLazyPaymentServiceFindAllQuery } from '@services/cmsPaymentService'
+import { Accounting, AccountingBalanceType, AccountingDetails, AccountingDetailsType, AccountingTransactionType } from '@type/accounting'
+import { viewMode } from '@type/customer'
+import {
+  Badge,
+  Button,
+  Card,
+  Col,
+  Form,
+  FormListFieldData,
+  Modal,
+  Row,
+  Select,
+  Space,
+  notification,
+} from 'antd'
 import Title from 'antd/es/typography/Title'
-import { Accounting, AccountingBalanceType, AccountingDetails, AccountingDetailsType } from '@type/accounting'
-import { QueryStatus } from '@reduxjs/toolkit/dist/query'
-import { AccountingTransactionType } from '@type/accounting'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import CustomAccountingSelect from './components/customer-accouting-select/CustomAccountingSelect'
 
-import { MinusCircleOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined } from '@ant-design/icons'
 import { InternalWallet } from '@type/internalWallet'
 
 type props = {
@@ -227,9 +226,7 @@ function TransactionAccountingConfigurationForm({
             {
               required: true,
               message: t('internal-wallet.messages.required').toString()
-            }
-          ]}
-          rules={[
+            },
             {
               validator: async (n, subType) => {
                 if (details[props.index].balanceType !== AccountingBalanceType.INTERNAL) {
@@ -239,7 +236,7 @@ function TransactionAccountingConfigurationForm({
                   return Promise.reject(new Error(t('internal-wallet.messages.required').toString()))
                 }
               }
-            },
+            }
           ]}
         >
           <Select
