@@ -224,19 +224,14 @@ export const SetupDirectDepositPolicyContent = ({
             />
           </Col>
           <Col>
-            <Tooltip
-              placement='top'
-              title={t('admin-management.tooltip.delete')}
-            >
-              <ButtonDelete
-                hidden={mode === viewMode.update}
-                module='direct_deposit'
-                onClick={() => {
-                  setFeeMode(viewMode.delete)
-                  setOpenAddAndUpdateFeePackage(true)
-                }}
-              />
-            </Tooltip>
+            <ButtonDelete
+              hidden={mode === viewMode.update}
+              module='direct_deposit'
+              onClick={() => {
+                setFeeMode(viewMode.delete)
+                setOpenAddAndUpdateFeePackage(true)
+              }}
+            />
           </Col>
         </Row>
       )

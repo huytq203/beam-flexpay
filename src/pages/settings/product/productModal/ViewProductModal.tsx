@@ -140,15 +140,10 @@ const ViewProductModal = (props: ProductDetailProps) => {
             </Tooltip>
           </Col>
           <Col>
-            <Tooltip
-              placement='top'
-              title={t('admin-management.tooltip.delete')}
-            >
-              <ButtonDelete
-                module='product'
-                onClick={async () => onHandleDelete(record.id)}
-              />
-            </Tooltip>
+            <ButtonDelete
+              module='product'
+              onClick={async () => onHandleDelete(record.id)}
+            />
           </Col>
         </Row>
       )

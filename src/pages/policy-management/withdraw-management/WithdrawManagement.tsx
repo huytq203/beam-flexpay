@@ -238,16 +238,14 @@ const WithdrawManagement = () => {
         align: 'center',
         title: `${trans`policy-management.payment.cancel`}`,
         render: (record) => (
-          <Tooltip title={trans`buttons.delete`}>
-            <ButtonDelete
-              module=''
-              onClick={() => {
-                setMode(viewMode.delete)
-                setSelectedRecord(record.id)
-                setOpen(true)
-              }}
-            />
-          </Tooltip>
+          <ButtonDelete
+            module=''
+            onClick={() => {
+              setMode(viewMode.delete)
+              setSelectedRecord(record.id)
+              setOpen(true)
+            }}
+          />
         )
       }
     ],

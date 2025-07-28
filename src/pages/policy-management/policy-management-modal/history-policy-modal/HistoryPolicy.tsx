@@ -3,7 +3,7 @@ import { TimeFullFormat } from '@constants/datetime'
 import { historyType } from '@constants/options'
 import { SelectAdminAccount } from '@pages/policy-management/components/SelectAdminAccount'
 import { useGetListHistoryQuery } from '@services/apiDirectDeposit'
-import { HistoryPolicyInterface, pageEnum } from '@type/policyManagement'
+import { HistoryPolicyInterface, POLICY_MANAGEMENT_TYPE } from '@type/policyManagement'
 import {
   formatHistoryData,
   formatObjectHistory,
@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next'
 type HistoryPolicyType = {
   policyId?: number
   onCancel: () => void
-  module: pageEnum
+  module: POLICY_MANAGEMENT_TYPE
   entityType: string
 }
 

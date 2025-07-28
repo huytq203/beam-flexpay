@@ -1,9 +1,9 @@
-import { pageEnum, POLICY_MANAGEMENT_TYPE, viewMode } from '@type/policyManagement'
+import { POLICY_MANAGEMENT_TYPE, viewMode } from '@type/policyManagement'
 import { Divider, Modal } from 'antd'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeleteFeePackageModal } from '../delete-modal/DeleteFeePackageModal'
 import { AddFeePackageModal } from './AddFeePackageModalV2'
-import { UpdateFeePackageModal } from './UpdateFeePackageV2'
 
 type ModalType = {
   mode: viewMode
@@ -13,7 +13,6 @@ type ModalType = {
   toggleFee?: (value: any, type: viewMode) => void
   module?: POLICY_MANAGEMENT_TYPE
   fee?: any
-  policyMode?: viewMode
 }
 
 export const AddAndUpdateFeePackageModal = ({
@@ -23,7 +22,6 @@ export const AddAndUpdateFeePackageModal = ({
   toggleFee,
   module,
   fee,
-  policyMode,
   id
 }: ModalType) => {
   const { t } = useTranslation()
@@ -38,14 +36,17 @@ export const AddAndUpdateFeePackageModal = ({
         return t`policy-management.payment.feePackageDeleteTitle`
     }
   }
-
+  useEffect(() => {
+    console.log('fee', fee)
+    console.log('mode', mode)
+  }, [fee, mode])
   const render = () => {
     switch (mode) {
       case viewMode.create:
         return (
           <AddFeePackageModal
             onCancel={onCancel}
-            toggleFee={toggleFee}
+            toggleFee={toggleFee || (() => {})}
             module={module}
             mode={mode}
             fee={fee}
@@ -53,11 +54,11 @@ export const AddAndUpdateFeePackageModal = ({
         )
       case viewMode.update:
         return (
-          <UpdateFeePackageModal
-            mode={policyMode}
+          <AddFeePackageModal
+            mode={mode}
             id={id}
             onCancel={onCancel}
-            toggleFee={toggleFee}
+            toggleFee={toggleFee || (() => {})}
             module={module}
             fee={fee}
           />

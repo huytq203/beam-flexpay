@@ -1,8 +1,14 @@
 import { ResponseType } from '@type/api'
+import { SystemFeeManagementCreatePolicyApiArg, SystemFeeManagementCreatePolicyApiResponse, SystemFeeManagementRemovePolicyApiArg, SystemFeeManagementRemovePolicyApiResponse, SystemFeeManagementUpdatePolicyApiArg, SystemFeeManagementUpdatePolicyApiResponse } from '@type/application'
 import { HistoryPolicyInterface, IPolicy, IPolicyResponse, IPolicyTable } from '@type/policyManagement'
+import { fnTransformResponse } from '@utils/helperFunctions'
 import { apiService } from './apiService'
-
-export const apiDirectDeposit = apiService.injectEndpoints({
+export const addTagTypes = [
+  '[Admin] Admin System fee management',
+] as const
+export const apiDirectDeposit = apiService.enhanceEndpoints({
+  addTagTypes
+}).injectEndpoints({
   endpoints: (build) => ({
     getListDirectDeposit: build.query({
       query: ({applicableObjectId, ...params}) => ({
@@ -19,6 +25,52 @@ export const apiDirectDeposit = apiService.injectEndpoints({
         params: params
       }),
       transformResponse: (res: ResponseType<IPolicy<HistoryPolicyInterface[]>>) => res.data
+    }),
+    createDirectPolicy: build.mutation({
+      query: (payload) => ({
+        url: '/system-fee-management/create-policy',
+        method: 'POST',
+        body: payload
+      })
+    }),
+    systemFeeManagementCreatePolicy: build.mutation<
+      SystemFeeManagementCreatePolicyApiResponse,
+      SystemFeeManagementCreatePolicyApiArg
+    >({
+      query: (queryArg) => {
+        // In ra body để debug
+        //console.log('Create Policy BODY1:', queryArg)
+        return {
+          url: `/system-fee-management/create-policy`,
+          method: 'POST',
+          body: queryArg
+        }
+      },
+      transformResponse: fnTransformResponse,
+      invalidatesTags: ['[Admin] Admin System fee management']
+    }),
+    systemFeeManagementUpdatePolicy: build.mutation<
+        SystemFeeManagementUpdatePolicyApiResponse,
+        SystemFeeManagementUpdatePolicyApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/system-fee-management/update-policy/${queryArg.id}`,
+          method: 'PUT',
+          body: queryArg.updateSystemFeeManagementDto
+        }),
+        transformResponse: fnTransformResponse,
+        invalidatesTags: ['[Admin] Admin System fee management']
+    }),
+    systemFeeManagementRemove: build.mutation<
+        SystemFeeManagementRemovePolicyApiResponse,
+        SystemFeeManagementRemovePolicyApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/system-fee-management/${queryArg.id}`,
+          method: 'DELETE'
+        }),
+        transformResponse: fnTransformResponse,
+        invalidatesTags: ['[Admin] Admin System fee management']
     }),
     createDirectDeposit: build.mutation({
       query: (payload) => ({
@@ -52,6 +104,8 @@ export const apiDirectDeposit = apiService.injectEndpoints({
 
 export const {
   useCreateDirectDepositMutation,
+  useSystemFeeManagementCreatePolicyMutation,
+  useSystemFeeManagementUpdatePolicyMutation,
   useLazyDeleteDirectDepositQuery,
   useGetListDirectDepositQuery,
   useGetListHistoryQuery,

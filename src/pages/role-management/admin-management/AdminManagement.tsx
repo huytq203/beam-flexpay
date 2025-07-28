@@ -191,15 +191,10 @@ const AdminManagement = () => {
             </Col>
           )}
           <Col>
-            <Tooltip
-              placement='top'
-              title={trans('admin-management.tooltip.delete')}
-            >
-              <ButtonDelete
-                module='admin'
-                onClick={() => handleModal(viewMode.delete, record.id)}
-              />
-            </Tooltip>
+            <ButtonDelete
+              module='admin'
+              onClick={() => handleModal(viewMode.delete, record.id)}
+            />
           </Col>
         </Row>
       )

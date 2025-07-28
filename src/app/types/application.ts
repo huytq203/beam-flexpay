@@ -1,5 +1,6 @@
 import { PaymentMethod } from "./bank";
 import { accountStatus } from "./customer";
+import { POLICY_MANAGEMENT_TYPE } from "./policyManagement";
 import { ReportType } from "./report";
 import { FrozenStatus, TransactionStatus, TransactionType } from "./transfer";
 
@@ -580,6 +581,20 @@ export type SaleFeeNotifyApiResponse = unknown;
 export type SaleFeeNotifyApiArg = {
   id: string;
 };
+export type SystemFeeManagementCreatePolicyApiResponse = unknown;
+export type SystemFeeManagementCreatePolicyApiArg = {
+  createSystemFeeManagementDto: CreateSystemFeeManagementDto;
+};
+export type SystemFeeManagementUpdatePolicyApiResponse = unknown;
+export type SystemFeeManagementUpdatePolicyApiArg = {
+  id: number;
+  updateSystemFeeManagementDto: UpdateSystemFeeManagementDto;
+};
+export type SystemFeeManagementRemovePolicyApiResponse = unknown;
+export type SystemFeeManagementRemovePolicyApiArg = {
+  id: number;
+};
+
 export type SystemFeeManagementDirectDepositApiResponse = unknown;
 export type SystemFeeManagementDirectDepositApiArg = {
   createSystemFeeManagementDto: CreateSystemFeeManagementDto;
@@ -2145,6 +2160,7 @@ export type CreateSystemFeeManagementDto = {
   startDate: string;
   endDate: string;
   type: 'FLEXIBLE' | 'FIXED';
+  policyType: POLICY_MANAGEMENT_TYPE;
 };
 export type SystemFeeManagementPageDto = {
   data: any[];
@@ -2175,6 +2191,7 @@ export type UpdateSystemFeeManagementDto = {
   type?: 'FLEXIBLE' | 'FIXED';
   valueTypeUpdate: string[];
   valueTypeDelete: string[];
+  policyType: POLICY_MANAGEMENT_TYPE;
 };
 export type SystemFeeManagementDto = {
   applicableObjectName: string;

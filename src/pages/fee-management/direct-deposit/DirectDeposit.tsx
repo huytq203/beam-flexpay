@@ -248,16 +248,14 @@ const DirectDeposit = () => {
       width: 80,
       fixed: 'right',
       render: (record) => (
-        <Tooltip title={t`buttons.delete`}>
-          <ButtonDelete
-            module=''
-            onClick={() => {
-              // setMode(viewMode.delete)
-              // setSelectedRecord(record.id)
-              // setOpen(true)
-            }}
-          />
-        </Tooltip>
+        <ButtonDelete
+          module=''
+          onClick={() => {
+            // setMode(viewMode.delete)
+            // setSelectedRecord(record.id)
+            // setOpen(true)
+          }}
+        />
       )
     }
   ]

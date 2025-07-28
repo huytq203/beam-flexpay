@@ -201,19 +201,14 @@ const LimitAndRegulation = () => {
               </Tooltip>
             </Col>
             <Col>
-              <Tooltip
-                placement='top'
-                title={trans('tooltips.delete')}
-              >
-                <ButtonDelete
-                  module='direct_deposit'
-                  onClick={() => {
-                    setMode(viewMode.delete)
-                    setOpen(true)
-                    setSelectedId(record.id)
-                  }}
-                />
-              </Tooltip>
+              <ButtonDelete
+                module='direct_deposit'
+                onClick={() => {
+                  setMode(viewMode.delete)
+                  setOpen(true)
+                  setSelectedId(record.id)
+                }}
+              />
             </Col>
           </Row>
         )

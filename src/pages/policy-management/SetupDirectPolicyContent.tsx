@@ -5,10 +5,11 @@ import CustomPaymentMethod from "@components/custom-payment-method/CustomPayment
 import { GUTTER } from "@constants/appConstant"
 import { applicableObjects } from "@constants/options"
 import { useLazyGetListGroupQuery } from "@services/apiAccountGroup"
+import { useLazyGetDetailPolicyQuery, useSystemFeeManagementCreatePolicyMutation, useSystemFeeManagementUpdatePolicyMutation } from "@services/apiDirectDeposit"
 import { useLazyGetCustomersQuery } from "@services/customerService"
-import { APPLICABLE_OBJECTS, IPolicyTable, POLICY_MANAGEMENT_TYPE, SearchValueType, viewMode } from "@type/policyManagement"
-import { convertNumber } from "@utils/helperFunctions"
-import { Button, Col, DatePicker, Empty, Form, Row, Select, Spin, Table, Tooltip } from "antd"
+import { APPLICABLE_OBJECTS, IPolicyTable, pageEnum, POLICY_MANAGEMENT_TYPE, SearchValueType, viewMode } from "@type/policyManagement"
+import { convertNumber, showSuccessMessage } from "@utils/helperFunctions"
+import { Button, Col, DatePicker, Empty, Form, Row, Select, Spin, Table } from "antd"
 import { RangePickerProps } from "antd/es/date-picker"
 import { useForm } from "antd/es/form/Form"
 import { ColumnsType } from "antd/es/table"
@@ -18,7 +19,6 @@ import { useTranslation } from "react-i18next"
 import { CustomAccountGroupSelect } from "./components/SelectAccountGroup"
 import { CustomPrivateAccountSelect } from "./components/SelectPrivateAccount"
 import { AddAndUpdateFeePackageModal } from "./policy-management-modal/add-and-update-fee-package-modal/AddAndUpdateFeePackageModalV2"
-import { useLazyGetDetailPolicyQuery } from "@services/apiDirectDeposit"
 
 type SetupDirectPolicyContentProps = {
     onCancel: () => void
@@ -56,21 +56,98 @@ const SetupDirectPolicyContent = ({ onCancel, module, mode, refetch, recordId }:
     const [triggerListAccountGroup, { data: listAccountGroup }] = useLazyGetListGroupQuery()
     const [triggerListAccount, { data: listAccount }] = useLazyGetCustomersQuery()
     const [getDetailPolicy] = useLazyGetDetailPolicyQuery()
+        //* create and update policy mutation hook for system fee management
+    const [ createPolicy ] = useSystemFeeManagementCreatePolicyMutation()
+    const [ updatePolicy ] = useSystemFeeManagementUpdatePolicyMutation()
+
     //* function handle
     const onSubmit = async (values: any) => {
+        if (!fee) {
+            setIsError(true)
+            return
+        }
+        setIsLoading(true)
+        try {
+            // Prepare form data
+            const { endDate, startDate, depositMethod, applicableObject } = values;
+            const timeEnd = endDate ? dayjs(endDate).toISOString() : undefined;
+            const timeStart = dayjs(startDate).toISOString();
 
+            const objectIds = applicableObject === APPLICABLE_OBJECTS.ACCOUNT_GROUP
+            ? values.accountGroup?.value
+            : applicableObject === APPLICABLE_OBJECTS.PERSONAL_ACCOUNT
+                ? values.accountNumber?.value
+                : undefined;
+            
+            const data = {
+                ...values,
+                depositMethod: values?.depositMethod || [],
+                startDate: timeStart,
+                endDate: timeEnd,
+                applicableObjectId: objectIds,
+                valueTypeDelete: [],
+                policyType: module,
+                ...fee
+            }
+            // Handle change tracking for updates
+            if (viewMode.update && record) {
+                if (data.endDate === undefined) data.endDate = null;
+                
+                const monitoredFields = [
+                'endDate', 'startDate', 'transactionFrom', 'transactionTo',
+                'transferorFlexibleFee', 'transferorFixedFee', 'transferorFeeMin', 'transferorFeeMax'
+                ];
+                
+                data.valueTypeUpdate = monitoredFields.filter(field => 
+                data[field] !== record[field as keyof IPolicyTable]
+                );
+            }
+
+            // Execute operation with type safety
+            const isCreate = mode === viewMode.create;
+
+            if (isCreate) {
+                await createPolicy(data).unwrap();
+            } else {
+                await updatePolicy({ id: record?.id as number, updateSystemFeeManagementDto: data }).unwrap();
+            }
+            
+
+            // Handle success
+            const messageKey = isCreate 
+                ? 'policy-management.payment.messages.create-success'
+                : 'policy-management.payment.messages.edit-success';
+
+            showSuccessMessage(t`${messageKey}`);
+            onCancel();
+            form.resetFields();
+            refetch?.();
+        } catch (error) {
+            console.error('Operation failed:', error);
+        } finally {
+            setIsLoading(false);
+        }
     }
+
     const getTitle = useCallback(() => {
         switch (module) {
             case POLICY_MANAGEMENT_TYPE.WITHDRAW:
-            return t`policy-management.payment.withDrawBank`
+                return t`policy-management.payment.withDrawBank`
+            case POLICY_MANAGEMENT_TYPE.PAYMENT_BANK_OR_ATM:
+                return t`policy-management.payment.paymentMethod` 
+            case POLICY_MANAGEMENT_TYPE.DEPOSIT_FLEXPAY:
+                return t`policy-management.payment.depositMethod`
         }
     }, [module])
     
     const getError = useCallback(() => {
         switch (module) {
             case POLICY_MANAGEMENT_TYPE.WITHDRAW:
-            return t`policy-management.depositManagement.validateWBankRequired`.toString()
+                return t`policy-management.depositManagement.validateWBankRequired`.toString()
+            case POLICY_MANAGEMENT_TYPE.PAYMENT_BANK_OR_ATM:
+                return t`policy-management.depositManagement.validateMethodRequired`.toString()
+            case POLICY_MANAGEMENT_TYPE.DEPOSIT_FLEXPAY:
+                return t`policy-management.depositManagement.validateDBankRequired`.toString()
         }
     }, [module])
     
@@ -96,7 +173,6 @@ const SetupDirectPolicyContent = ({ onCancel, module, mode, refetch, recordId }:
 
     //* handle change start date
     const onChangeStartDate = (date: any, dateString: string) => {
-        console.log('date', date)
         setEndDateDisable(date)
     }
 
@@ -106,9 +182,6 @@ const SetupDirectPolicyContent = ({ onCancel, module, mode, refetch, recordId }:
             //* get start date
             const startDate = form.getFieldValue('startDate')
             //* disabled date before start date
-            console.log('startDate', startDate)
-            console.log('current', current)
-            console.log('endDateDisable', endDateDisable)
             const endDate = dayjs.isDayjs(endDateDisable) ? endDateDisable : null
             return (
                 (endDate && current < endDate) ||
@@ -121,6 +194,7 @@ const SetupDirectPolicyContent = ({ onCancel, module, mode, refetch, recordId }:
     const onCancelFeePackageModal = () => {
         setOpenAddAndUpdateFeePackage(false)
     }
+    
     const toggleFee = (value: any[], type: viewMode) => {
         if ((type === viewMode.create || type === viewMode.update) && value) {
             setFee(value)
@@ -129,21 +203,26 @@ const SetupDirectPolicyContent = ({ onCancel, module, mode, refetch, recordId }:
         }
         setIsError(false)
     }
+    
     const fetchData = async () => {
+        // Early return if not in update mode or no record ID
         if (mode !== viewMode.update || !recordId) {
-            return
-        }
-
-        setIsLoading(true)
-
-        const { data } = await getDetailPolicy(recordId)
-
-        if (!data || !data.id) {
-            setIsLoading(false)
-            return
+            return;
         }
         
-        const {
+        setIsLoading(true);
+        
+        try {
+            const { data } = await getDetailPolicy(recordId);
+        
+            // Validate response data
+            if (!data?.id) {
+            console.warn('Invalid policy data received:', data);
+            return;
+            }
+        
+            // Destructure and separate fee data from form data
+            const {
             applicableObject,
             createdAt,
             startDate,
@@ -154,42 +233,68 @@ const SetupDirectPolicyContent = ({ onCancel, module, mode, refetch, recordId }:
             applicableObjectId,
             applicableObjectName,
             depositMethods,
-            ...rest
-        } = data
-
-        setRecord(data)
-        setFee(rest)
-        setObject(applicableObject as APPLICABLE_OBJECTS)
-
-        if (applicableObjectName && applicableObject === APPLICABLE_OBJECTS.ACCOUNT_GROUP) {
-            form.setFieldValue('accountGroup', {
+            ...feeData
+            } = data;
+        
+            // Set state
+            setRecord(data);
+            setFee(feeData);
+            setObject(applicableObject as APPLICABLE_OBJECTS);
+        
+            // Prepare form values
+            const formValues = {
+            ...data,
+            depositMethod: data.depositMethodIds,
+            startDate: startDate ? dayjs(startDate) : null,
+            endDate: endDate ? dayjs(endDate) : null
+            };
+        
+            // Set applicable object field based on type
+            const applicableObjectFields: Record<string, () => any> = {
+            [APPLICABLE_OBJECTS.ACCOUNT_GROUP]: () => ({
+                accountGroup: {
                 id: applicableObjectId,
                 name: applicableObjectName
-            })
-        }
-
-        if (
-            applicableObject === APPLICABLE_OBJECTS.PERSONAL_ACCOUNT &&
-            applicableObjectName
-        ) {
-            form.setFieldValue('accountNumber', {
+                }
+            }),
+            [APPLICABLE_OBJECTS.PERSONAL_ACCOUNT]: () => ({
+                accountNumber: {
                 value: applicableObjectId,
                 label: applicableObjectName
+                }
             })
+            };
+        
+            // Add applicable object field if exists and has name
+            if (applicableObjectName && applicableObjectFields[applicableObject]) {
+            Object.assign(formValues, applicableObjectFields[applicableObject]());
+            }
+        
+            // Set all form values at once
+            form.setFieldsValue(formValues);
+        
+        } catch (error) {
+            console.error('Failed to fetch policy data:', error);
+        } finally {
+            setIsLoading(false);
         }
-
-        if (data) {
-            form.setFieldsValue({
-                ...data,
-                depositMethod: data.depositMethodIds,
-                startDate: startDate && dayjs(startDate),
-                endDate: endDate && dayjs(endDate)
-            })
+    };
+    
+    // Helper function to handle action button clicks
+    const handleFeeAction = (action: 'update' | 'delete', recordId?: string) => {
+        console.log('action', action)
+        const modeMap = {
+        update: viewMode.update,
+        delete: viewMode.delete
+        };
+        
+        setFeeMode(modeMap[action]);
+        setOpenAddAndUpdateFeePackage(true);
+        
+        if (action === 'update' && recordId) {
+        setSelectedFeePackageId(recordId);
         }
-
-        setIsLoading(false)
-        console.log('record', record)
-    }
+    };
     //* use effect
     useEffect(() => {
         fetchData()
@@ -338,29 +443,17 @@ const SetupDirectPolicyContent = ({ onCancel, module, mode, refetch, recordId }:
                 justify='center'
             >
                 <Col>
-                <ButtonUpdate
-                    module='direct_deposit'
-                    onClick={() => {
-                        setFeeMode(viewMode.update)
-                        setOpenAddAndUpdateFeePackage(true)
-                        setSelectedFeePackageId(record.id)
-                    }}
-                />
+                    <ButtonUpdate
+                        module='direct_deposit'
+                        onClick={() => handleFeeAction('update', record.id)}
+                    />
                 </Col>
                 <Col>
-                <Tooltip
-                    placement='top'
-                    title={t('admin-management.tooltip.delete')}
-                >
                     <ButtonDelete
-                    hidden={mode === viewMode.update}
-                    module='direct_deposit'
-                    onClick={() => {
-                        setFeeMode(viewMode.delete)
-                        setOpenAddAndUpdateFeePackage(true)
-                    }}
+                        hidden={mode === viewMode.update}
+                        module='direct_deposit'
+                        onClick={() => handleFeeAction('delete')}
                     />
-                </Tooltip>
                 </Col>
             </Row>
             )
@@ -399,6 +492,7 @@ const SetupDirectPolicyContent = ({ onCancel, module, mode, refetch, recordId }:
                         {/* Account Selection */}
                         {renderAccountSelection()}
                         {/* Deposit Method */}
+                        {(module !== POLICY_MANAGEMENT_TYPE.TRANSFER_INTERNAL && module !== POLICY_MANAGEMENT_TYPE.PAYMENT_FLEXPAY) && (
                         <Form.Item
                             rules={[
                                 {
@@ -418,8 +512,8 @@ const SetupDirectPolicyContent = ({ onCancel, module, mode, refetch, recordId }:
                                 handleSelectMethod={handleSelectMethod}
                                 defaultSelected={record?.depositMethodIds}
                             />
-                
                         </Form.Item>
+                        )}
                     </Col>
                 </Row>
                 <Row gutter={GUTTER} style={{ marginBottom: '20px' }}>
@@ -528,7 +622,6 @@ const SetupDirectPolicyContent = ({ onCancel, module, mode, refetch, recordId }:
                 </Row>
                 {openAddAndUpdateFeePackage && (
                 <AddAndUpdateFeePackageModal
-                    policyMode={mode}
                     id={selectedFeePackageId}
                     open={openAddAndUpdateFeePackage}
                     mode={feeMode}
