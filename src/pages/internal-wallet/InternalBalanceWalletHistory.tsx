@@ -53,7 +53,7 @@ function InternalBalanceWalletHistory({
       render(transactionT) {
         var value = _.find(transactionType, (tt) => tt.value == transactionT)
 
-        return value?.label ?? "hhwrwe"
+        return value?.label ?? 'hhwrwe'
       }
     },
     {
@@ -102,49 +102,39 @@ function InternalBalanceWalletHistory({
       <Card
         title={
           <SearchBar
+            onFinish={handleSearch}
+            form={form}
+            cols='2'
             headerMenu={
-              <Form form={form}>
-                <Row>
-                  <Col>
-                    {/* Ngày cập nhật - từ ngày */}
-                    <Form.Item
-                      name='startDate'
-                      label={t('labels.startDate')}
-                    >
-                      <DatePicker
-                        format={TimeFormat}
-                        allowClear
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col>
-                    {/* Ngày cập nhật - đến ngày */}
-                    <Form.Item
-                      name='endDate'
-                      label={t('labels.endDate')}
-                    >
-                      <DatePicker
-                        format={TimeFormat}
-                        allowClear
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row
-                  justify='end'
-                  gutter={GUTTER}
+              <>
+                {/* Ngày cập nhật - từ ngày */}
+                <Form.Item
+                  name='startDate'
+                  label={t('labels.startDate')}
                 >
-                  <Col>
-                    <ButtonAdd
-                      module='internal-wallet'
-                      onClick={addFormToggle}
-                    />
-                  </Col>
-                  <Col>
-                    <ButtonSearch onClick={handleSearch} />
-                  </Col>
-                </Row>
-              </Form>
+                  <DatePicker
+                    format={TimeFormat}
+                    allowClear
+                  />
+                </Form.Item>
+
+                {/* Ngày cập nhật - đến ngày */}
+                <Form.Item
+                  name='endDate'
+                  label={t('labels.endDate')}
+                >
+                  <DatePicker
+                    format={TimeFormat}
+                    allowClear
+                  />
+                </Form.Item>
+                <ButtonSearch onClick={handleSearch} />
+
+                <ButtonAdd
+                  module='internal-wallet'
+                  onClick={addFormToggle}
+                />
+              </>
             }
           />
         }

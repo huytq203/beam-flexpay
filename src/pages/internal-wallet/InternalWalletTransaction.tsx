@@ -1,19 +1,35 @@
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs'
 
-import ButtonSearch from "@components/button-search/ButtonSearch";
-import SearchBar from "@components/search-bar/SearchBar";
-import { GUTTER } from "@constants/appConstant";
-import { transactionType } from '@pages/policy-management/limit-management/LimitAndRegulationsConst';
-import { useGetInternalWalletTransactionsQuery } from "@services/apiInternalWallet";
-import { viewMode } from "@type/customer";
-import { InternalWallet, InternalWalletTransactionPayload } from "@type/internalWallet";
-import { blockArrowValue, blockLetterDecimal, moneyInputFormatter } from '@utils/helperFunctions';
-import { Card, Col, DatePicker, Form, Input, Row, Table, TimeRangePickerProps } from "antd";
-import { ColumnsType } from "antd/es/table";
-import _ from 'lodash';
-import moment from "moment";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import ButtonSearch from '@components/button-search/ButtonSearch'
+import SearchBar from '@components/search-bar/SearchBar'
+import { GUTTER } from '@constants/appConstant'
+import { transactionType } from '@pages/policy-management/limit-management/LimitAndRegulationsConst'
+import { useGetInternalWalletTransactionsQuery } from '@services/apiInternalWallet'
+import { viewMode } from '@type/customer'
+import {
+  InternalWallet,
+  InternalWalletTransactionPayload
+} from '@type/internalWallet'
+import {
+  blockArrowValue,
+  blockLetterDecimal,
+  moneyInputFormatter
+} from '@utils/helperFunctions'
+import {
+  Card,
+  Col,
+  DatePicker,
+  Form,
+  Input,
+  Row,
+  Table,
+  TimeRangePickerProps
+} from 'antd'
+import { ColumnsType } from 'antd/es/table'
+import _ from 'lodash'
+import moment from 'moment'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 type props = {
   title: string
@@ -24,16 +40,14 @@ type props = {
   selectedInternalWallet?: InternalWallet
 }
 
-
-const { RangePicker } = DatePicker;
+const { RangePicker } = DatePicker
 
 const rangePresets: TimeRangePickerProps['presets'] = [
   { label: 'Last 7 Days', value: [dayjs().add(-7, 'd'), dayjs()] },
   { label: 'Last 14 Days', value: [dayjs().add(-14, 'd'), dayjs()] },
   { label: 'Last 30 Days', value: [dayjs().add(-30, 'd'), dayjs()] },
-  { label: 'Last 90 Days', value: [dayjs().add(-90, 'd'), dayjs()] },
-];
-
+  { label: 'Last 90 Days', value: [dayjs().add(-90, 'd'), dayjs()] }
+]
 
 function InternalWalletTransaction(props: props) {
   const [form] = Form.useForm()
@@ -54,12 +68,13 @@ function InternalWalletTransaction(props: props) {
     setSearch({
       ...search,
       internalWalletId: props.selectedInternalWallet?.id,
-      startDate: startDate.format("DD/MM/YYYY HH:mm:ss"),
-      endDate: endDate.format("DD/MM/YYYY HH:mm:ss")
+      startDate: startDate.format('DD/MM/YYYY HH:mm:ss'),
+      endDate: endDate.format('DD/MM/YYYY HH:mm:ss')
     })
   }, [props.selectedInternalWallet])
 
-  const { data: transactionData, refetch } = useGetInternalWalletTransactionsQuery(search)
+  const { data: transactionData, refetch } =
+    useGetInternalWalletTransactionsQuery(search)
   console.log('transactionData', transactionData)
   const columns: ColumnsType<any> = [
     {
@@ -116,19 +131,21 @@ function InternalWalletTransaction(props: props) {
       render(value) {
         return moneyInputFormatter(value)
       }
-    },
+    }
   ]
 
   const handleSearch = () => {
-
     setSearch({
       ...search,
-      startDate: startDate.format("DD/MM/YYYY HH:mm:ss"),
-      endDate: endDate.format("DD/MM/YYYY HH:mm:ss")
+      startDate: startDate.format('DD/MM/YYYY HH:mm:ss'),
+      endDate: endDate.format('DD/MM/YYYY HH:mm:ss')
     })
   }
 
-  const onDateRangeChange = (dates: null | (Dayjs | null)[], dateStrings: string[]) => {
+  const onDateRangeChange = (
+    dates: null | (Dayjs | null)[],
+    dateStrings: string[]
+  ) => {
     if (dates) {
       let startDate = (dates[0] as Dayjs).startOf('day')
       let endDate = (dates[1] as Dayjs).endOf('day')
@@ -146,62 +163,46 @@ function InternalWalletTransaction(props: props) {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={handleSearch}
+          cols='2'
           headerMenu={
-            <Form
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              form={form}
-              layout='horizontal'
-            >
-              <Row gutter={GUTTER}>
-                <Col>
-                  {/* Ngày cập nhật - từ ngày */}
-                  <Form.Item
-                    label={t('internal-wallet.transaction.date')}
-                  >
-                    <RangePicker
-                      value={[startDate, endDate]}
-                      allowClear={false}
-                      presets={rangePresets}
-                      format="DD/MM/YYYY"
-                      onChange={onDateRangeChange}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  {/* Tai khoan */}
-                  <Form.Item
-                    name='accountName'
-                    label={t('transfer-history.accountName')}
-                  >
-                    <Input
-                      onKeyDown={blockArrowValue}
-                      onKeyPress={blockLetterDecimal}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  {/* Ma giao dich */}
-                  <Form.Item
-                    name='transactionCode'
-                    label={t('internal-wallet.transaction.code')}
-                  >
-                    <Input
-                      onKeyDown={blockArrowValue}
-                      onKeyPress={blockLetterDecimal}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+            <>
+              {/* Ngày cập nhật - từ ngày */}
+              <Form.Item label={t('internal-wallet.transaction.date')}>
+                <RangePicker
+                  value={[startDate, endDate]}
+                  allowClear={false}
+                  presets={rangePresets}
+                  format='DD/MM/YYYY'
+                  onChange={onDateRangeChange}
+                />
+              </Form.Item>
+
+              {/* Tai khoan */}
+              <Form.Item
+                name='accountName'
+                label={t('transfer-history.accountName')}
               >
-                <Col>
-                  <ButtonSearch onClick={handleSearch} />
-                </Col>
-              </Row>
-            </Form>
+                <Input
+                  onKeyDown={blockArrowValue}
+                  onKeyPress={blockLetterDecimal}
+                />
+              </Form.Item>
+
+              {/* Ma giao dich */}
+              <Form.Item
+                name='transactionCode'
+                label={t('internal-wallet.transaction.code')}
+              >
+                <Input
+                  onKeyDown={blockArrowValue}
+                  onKeyPress={blockLetterDecimal}
+                />
+              </Form.Item>
+
+              <ButtonSearch onClick={handleSearch} />
+            </>
           }
         />
       }

@@ -107,75 +107,53 @@ function FeesByTransactionType() {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={handleSearch}
+          cols='2'
           headerMenu={
-            <Form
-              form={form}
-              layout='vertical'
-            >
-              <Row gutter={GUTTER}>
-                {/* Loại giao dịch - select */}
-                <Col flex='auto'>
-                  <Form.Item
-                    name='transactionType'
-                    label={t('transactionConfig.transactionType')}
-                  >
-                    <Select />
-                  </Form.Item>
-                </Col>
-                {/* Cách thức tính phí - select*/}
-                <Col flex='auto'>
-                  <Form.Item
-                    name='chargingMethod'
-                    label={t('feesByTransactionType.chargingMethod')}
-                  >
-                    <Select />
-                  </Form.Item>
-                </Col>
-                {/* Ngân hàng liên kết - select */}
-                <Col flex='auto'>
-                  <Form.Item
-                    name='affiliateBank'
-                    label={t('feesByTransactionType.affiliateBank')}
-                  >
-                    <Select />
-                  </Form.Item>
-                </Col>
-                {/* Đối tác thu hộ/chi hộ - select */}
-                <Col flex='auto'>
-                  <Form.Item
-                    name='collectionAndPaymentPartner'
-                    label={t(
-                      'feesByTransactionType.collectionAndPaymentPartner'
-                    )}
-                  >
-                    <Select />
-                  </Form.Item>
-                </Col>
-                {/* dịch vụ - select */}
-                <Col flex='auto'>
-                  <Form.Item
-                    name='service'
-                    label={t('feesByTransactionType.service')}
-                  >
-                    <Select />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+            <>
+              {/* Loại giao dịch - select */}
+              <Form.Item
+                name='transactionType'
+                label={t('transactionConfig.transactionType')}
               >
-                <Col>
-                  <ButtonAdd
-                    module='internal-wallet'
-                    onClick={addFormToggle}
-                  />
-                </Col>
-                <Col>
-                  <ButtonSearch onClick={handleSearch} />
-                </Col>
-              </Row>
-            </Form>
+                <Select />
+              </Form.Item>
+              {/* Cách thức tính phí - select*/}
+              <Form.Item
+                name='chargingMethod'
+                label={t('feesByTransactionType.chargingMethod')}
+              >
+                <Select />
+              </Form.Item>
+              {/* Ngân hàng liên kết - select */}
+              <Form.Item
+                name='affiliateBank'
+                label={t('feesByTransactionType.affiliateBank')}
+              >
+                <Select />
+              </Form.Item>
+              {/* Đối tác thu hộ/chi hộ - select */}
+              <Form.Item
+                name='collectionAndPaymentPartner'
+                label={t('feesByTransactionType.collectionAndPaymentPartner')}
+              >
+                <Select />
+              </Form.Item>
+              {/* dịch vụ - select */}
+              <Form.Item
+                name='service'
+                label={t('feesByTransactionType.service')}
+              >
+                <Select />
+              </Form.Item>
+              <ButtonSearch onClick={handleSearch} />
+
+              <ButtonAdd
+                module='internal-wallet'
+                onClick={addFormToggle}
+              />
+            </>
           }
         />
       }

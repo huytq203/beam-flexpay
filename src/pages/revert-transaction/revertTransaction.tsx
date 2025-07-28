@@ -126,69 +126,44 @@ function RevertTransaction() {
       title={
         <SearchBar
           headerMenu={
-            <Form
-              layout='vertical'
-              initialValues={{ status: 'all' }}
-            >
-              <Row gutter={GUTTER}>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t('revert-transaction.customerAccount')}
-                    name='customerAccount'
-                  >
-                    <Input
-                      placeholder={`${t('placeholders.customerAccount')}`}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t('revert-transaction.transferId')}
-                    name='transferId'
-                  >
-                    <Input placeholder={`${t('placeholders.transferId')}`} />
-                  </Form.Item>
-                </Col>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t('revert-transaction.reciprocalId')}
-                    name='reciprocalId'
-                  >
-                    <Input placeholder={`${t('placeholders.reciprocalId')}`} />
-                  </Form.Item>
-                </Col>
-                <Col flex='200px'>
-                  <Form.Item
-                    label={t('revert-transaction.status')}
-                    name='status'
-                  >
-                    <Select
-                      placeholder={`${t('placeholders.status')}`}
-                      options={statusOptions}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='310px'>
-                  <Form.Item
-                    label={t('revert-transaction.date')}
-                    name='date'
-                  >
-                    <RangePicker />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                gutter={GUTTER}
-                justify='end'
+            <>
+              <Form.Item
+                label={t('revert-transaction.customerAccount')}
+                name='customerAccount'
               >
-                <Col>
-                  <ButtonExcel module='customer' />
-                </Col>
-                <Col>
-                  <ButtonSearch />
-                </Col>
-              </Row>
-            </Form>
+                <Input placeholder={`${t('placeholders.customerAccount')}`} />
+              </Form.Item>
+              <Form.Item
+                label={t('revert-transaction.transferId')}
+                name='transferId'
+              >
+                <Input placeholder={`${t('placeholders.transferId')}`} />
+              </Form.Item>
+              <Form.Item
+                label={t('revert-transaction.reciprocalId')}
+                name='reciprocalId'
+              >
+                <Input placeholder={`${t('placeholders.reciprocalId')}`} />
+              </Form.Item>
+              <Form.Item
+                label={t('revert-transaction.status')}
+                name='status'
+              >
+                <Select
+                  placeholder={`${t('placeholders.status')}`}
+                  options={statusOptions}
+                />
+              </Form.Item>
+              <Form.Item
+                label={t('revert-transaction.date')}
+                name='date'
+              >
+                <RangePicker />
+              </Form.Item>
+
+              <ButtonExcel module='customer' />
+              <ButtonSearch />
+            </>
           }
         />
       }

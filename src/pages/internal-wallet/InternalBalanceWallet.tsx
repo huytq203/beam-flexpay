@@ -40,10 +40,10 @@ import InternalWalletTransactionModal from './InternalWalletTransactionModal'
 const { RangePicker } = DatePicker
 
 const rangePresets: TimeRangePickerProps['presets'] = [
-  { label: 'Last 7 Days', value: [dayjs().add(-7, 'd'), dayjs()] },
-  { label: 'Last 14 Days', value: [dayjs().add(-14, 'd'), dayjs()] },
-  { label: 'Last 30 Days', value: [dayjs().add(-30, 'd'), dayjs()] },
-  { label: 'Last 90 Days', value: [dayjs().add(-90, 'd'), dayjs()] }
+  { label: '7 ngày trước', value: [dayjs().add(-7, 'd'), dayjs()] },
+  { label: '14 ngày trước', value: [dayjs().add(-14, 'd'), dayjs()] },
+  { label: '30 ngày trước', value: [dayjs().add(-30, 'd'), dayjs()] },
+  { label: '90 ngày trước', value: [dayjs().add(-90, 'd'), dayjs()] }
 ]
 
 function InternalBalanceWallet() {
@@ -157,7 +157,6 @@ function InternalBalanceWallet() {
     refetch()
   }
 
-  
   const onDateRangeChange = (
     dates: null | (Dayjs | null)[],
     dateStrings: string[]
@@ -176,85 +175,73 @@ function InternalBalanceWallet() {
       ...search,
       ...form.getFieldsValue(),
       from: dayjs(startDate).startOf('day').toISOString(),
-      to: dayjs(endDate).endOf('day').toISOString(),
+      to: dayjs(endDate).endOf('day').toISOString()
     })
 
   return (
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={handleSearch}
+          cols='2'
           headerMenu={
-            <Form
-              form={form}
-              layout='vertical'
-            >
-              <Row gutter={GUTTER}>
-                <Col flex='auto'>
-                  {/* Số ví nội bộ */}
-                  <Form.Item
-                    name='walletNumber'
-                    label={t('internalBalanceWallet.walletNumber')}
-                  >
-                    <Input
-                      placeholder={t`internal-wallet.placeholders.wallet_id`.toString()}
-                      onKeyDown={blockArrowValue}
-                      onKeyPress={blockLetterDecimal}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='250px'>
-                  {/* Nhóm ví */}
-                  <Form.Item
-                    name='internalWalletGroupId'
-                    label={t('internalBalanceWallet.walletGroup')}
-                  >
-                    <Select
-                      placeholder={t`internal-wallet.placeholders.pickGroup`}
-                      options={internalWalletGroup?.data?.map((group) => ({
-                        label: group.name,
-                        value: group.id
-                      }))}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  {/* Ngày cập nhật - từ ngày */}
-                  <Form.Item label={t('internal-wallet.transaction.date')}>
-                    <RangePicker
-                      value={[startDate, endDate]}
-                      allowClear={false}
-                      presets={rangePresets}
-                      format='DD/MM/YYYY'
-                      onChange={onDateRangeChange}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='250px'>
-                  {/* Trạng thái ví nội bộ */}
-                  <Form.Item
-                    name='active'
-                    label={t('internalBalanceWallet.status')}
-                  >
-                    <Select
-                      placeholder={t`internal-wallet.placeholders.status`.toString()}
-                      options={[
-                        { label: t`internal-wallet.status.all`, value: null },
-                        { label: t`internal-wallet.status.active`, value: 1 },
-                        { label: t`internal-wallet.status.de-active`, value: 0 }
-                      ]}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+            <>
+              {/* Số ví nội bộ */}
+              <Form.Item
+                name='walletNumber'
+                label={t('internalBalanceWallet.walletNumber')}
               >
-                <Col>
-                  <ButtonSearch onClick={handleSearch} />
-                </Col>
-              </Row>
-            </Form>
+                <Input
+                  placeholder={t`internal-wallet.placeholders.wallet_id`.toString()}
+                  onKeyDown={blockArrowValue}
+                  onKeyPress={blockLetterDecimal}
+                />
+              </Form.Item>
+
+              {/* Nhóm ví */}
+              <Form.Item
+                name='internalWalletGroupId'
+                label={t('internalBalanceWallet.walletGroup')}
+              >
+                <Select
+                  placeholder={t`internal-wallet.placeholders.pickGroup`}
+                  options={internalWalletGroup?.data?.map((group) => ({
+                    label: group.name,
+                    value: group.id
+                  }))}
+                />
+              </Form.Item>
+
+              {/* Ngày cập nhật - từ ngày */}
+              <Form.Item label={t('internal-wallet.transaction.date')}>
+                <RangePicker
+                  value={[startDate, endDate]}
+                  allowClear={false}
+                  presets={rangePresets}
+                  format='DD/MM/YYYY'
+                  onChange={onDateRangeChange}
+                  className='w-full'
+                />
+              </Form.Item>
+
+              {/* Trạng thái ví nội bộ */}
+              <Form.Item
+                name='active'
+                label={t('internalBalanceWallet.status')}
+              >
+                <Select
+                  placeholder={t`internal-wallet.placeholders.status`.toString()}
+                  options={[
+                    { label: t`internal-wallet.status.all`, value: null },
+                    { label: t`internal-wallet.status.active`, value: 1 },
+                    { label: t`internal-wallet.status.de-active`, value: 0 }
+                  ]}
+                />
+              </Form.Item>
+
+              <ButtonSearch onClick={handleSearch} />
+            </>
           }
         />
       }

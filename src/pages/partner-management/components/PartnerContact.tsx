@@ -1,31 +1,15 @@
-import {
-  LockOutlined,
-  UnlockOutlined,
-  WarningOutlined
-} from '@ant-design/icons'
+import { WarningOutlined } from '@ant-design/icons'
 import ButtonAdd from '@components/button-add/ButtonAdd'
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import SearchBar from '@components/search-bar/SearchBar'
-import { PARTNER_TYPE, PARTNER_TYPE_OPTIONS } from '@constants/partnerOptions'
+import { PARTNER_TYPE } from '@constants/partnerOptions'
 import {
   usePaymentPartnerFindAllQuery,
   usePaymentPartnerUpdateMutation
 } from '@services/cmsPaymentParner'
 import { useToggle } from 'ahooks'
-import {
-  Button,
-  Card,
-  Col,
-  Empty,
-  Form,
-  Image,
-  Input,
-  Modal,
-  Row,
-  Select,
-  Tooltip
-} from 'antd'
+import { Card, Col, Empty, Form, Image, Input, Modal, Row, Tooltip } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import Table, { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
@@ -107,7 +91,7 @@ export default function PartnerContactComponent(props: props) {
       align: 'center',
       width: 200,
       fixed: 'left',
-      render(value, record, index) {
+      render(_, record) {
         return t(record.paymentService.type)
       }
     },
@@ -117,7 +101,7 @@ export default function PartnerContactComponent(props: props) {
       align: 'center',
       width: 200,
       fixed: 'left',
-      render(value, record, index) {
+      render(_, record) {
         return t(record.paymentService.name)
       }
     },
@@ -132,7 +116,7 @@ export default function PartnerContactComponent(props: props) {
       dataIndex: 'logo',
       align: 'center',
       width: 200,
-      render(value, record, index) {
+      render(value) {
         if (value) {
           return (
             <Image
@@ -147,29 +131,29 @@ export default function PartnerContactComponent(props: props) {
     {
       title: t('partner.createdDate'),
       width: 200,
-      render: (value, record, index) =>
+      render: (_, record) =>
         moment(new Date(record?.createdAt)).format(TimeFormat).toString()
     },
     {
       title: t('partner.createdBy'),
       align: 'center',
       width: 200,
-      render(value, record, index) {
-        return record.createdBy.fullName
+      render(_, record) {
+        return record.createdBy?.fullName
       }
     },
     {
       title: t('partner.updatedBy'),
       align: 'center',
       width: 200,
-      render(value, record, index) {
-        return record.updatedBy.fullName
+      render(_, record) {
+        return record.updatedBy?.fullName
       }
     },
     {
       title: t('partner.updatedDate'),
       width: 200,
-      render: (value, record, index) =>
+      render: (_, record) =>
         moment(new Date(record?.updatedAt)).format(TimeFormat).toString()
     },
     {
@@ -190,7 +174,7 @@ export default function PartnerContactComponent(props: props) {
       align: 'center',
       width: 120,
       fixed: 'right',
-      render(value, record, index) {
+      render(_, record) {
         return (
           <Row gutter={GUTTER}>
             <Col>
@@ -236,21 +220,18 @@ export default function PartnerContactComponent(props: props) {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={handleSearch}
+          cols='2'
           headerMenu={
-            <Form
-              layout='vertical'
-              form={form}
-            >
-              <Row gutter={GUTTER}>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t('partner.service-name')}
-                    name='name'
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                {/* <Col flex='350px'>
+            <>
+              <Form.Item
+                label={t('partner.service-name')}
+                name='name'
+              >
+                <Input />
+              </Form.Item>
+              {/* <Col flex='350px'>
                   <Form.Item
                     label={t('partner.service-type')}
                     name='type'
@@ -261,22 +242,15 @@ export default function PartnerContactComponent(props: props) {
                     />
                   </Form.Item>
                 </Col> */}
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
-              >
-                <Col>
-                  <ButtonAdd
-                    module='partner'
-                    onClick={addFormToggle}
-                  />
-                </Col>
-                <Col>
-                  <ButtonSearch onClick={handleSearch} />
-                </Col>
-              </Row>
-            </Form>
+
+              <ButtonAdd
+                module='partner'
+                onClick={addFormToggle}
+                className='mt-7'
+              />
+
+              <ButtonSearch onClick={handleSearch} />
+            </>
           }
         />
       }

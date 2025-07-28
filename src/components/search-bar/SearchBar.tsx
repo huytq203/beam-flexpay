@@ -1,5 +1,5 @@
-import { Form, FormInstance } from 'antd'
-
+import { Button, Form, FormInstance } from 'antd'
+import { Broom } from '@phosphor-icons/react'
 type Props<ApiArg> = {
   headerMenu: string | JSX.Element | JSX.Element[]
   onFinish?: (values: ApiArg) => void
@@ -17,6 +17,7 @@ type Props<ApiArg> = {
     | '10'
     | '11'
     | '12'
+  initialValues?: ApiArg
 }
 
 const gridColsMap = {
@@ -38,19 +39,29 @@ export default function SearchBar<ApiArg extends object>({
   headerMenu,
   form,
   onFinish,
-  cols = '2'
+  cols = '2',
+  initialValues
 }: Props<ApiArg>) {
+  const handleReset = () => {
+    form?.resetFields()
+  }
+
   return (
     <Form
       layout='vertical'
       onFinish={onFinish}
       form={form}
-      initialValues={{
-        active: null
-      }}
+      initialValues={initialValues}
     >
       <div className={`grid ${gridColsMap[cols] || 'grid-cols-2'} gap-3 mt-3`}>
         {headerMenu}
+        <Button
+          icon={<Broom />}
+          className='w-[350px]'
+          onClick={handleReset}
+        >
+          Xóa bộ lọc
+        </Button>
       </div>
     </Form>
   )

@@ -111,47 +111,33 @@ function DisburseInvoiceQuery() {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={handleSearch}
           headerMenu={
-            <Form
-              form={form}
-              layout='vertical'
-              onFinish={handleSearch}
-            >
-              <Row gutter={GUTTER}>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t('partner.phoneNumber')}
-                    name='customerPhone'
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t('partner.identityNumber')}
-                    name='customerIdentityNumber'
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col flex='350px'>
-                  <Form.Item
-                    label={t('partner.paymentPartner')}
-                    name='partnerId'
-                  >
-                    <PartnerSelect type='DISBURSE' />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                gutter={GUTTER}
-                justify='end'
+            <>
+              <Form.Item
+                label={t('partner.phoneNumber')}
+                name='customerPhone'
               >
-                <Col>
-                  <ButtonSearch htmlType='submit' />
-                </Col>
-              </Row>
-            </Form>
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label={t('partner.identityNumber')}
+                name='customerIdentityNumber'
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label={t('partner.paymentPartner')}
+                name='partnerId'
+              >
+                <PartnerSelect type='DISBURSE' />
+              </Form.Item>
+
+              <ButtonSearch htmlType='submit' />
+            </>
           }
         />
       }

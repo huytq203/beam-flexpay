@@ -2,25 +2,17 @@ import ButtonSearch from '@components/button-search/ButtonSearch'
 import SearchBar from '@components/search-bar/SearchBar'
 import { GUTTER } from '@constants/appConstant'
 import { TimeFullFormat } from '@constants/datetime'
+import { useGetHistoryFreezeQuery } from '@services/apiFreezeAndUnfreezeAccountService'
 import {
-    useGetHistoryFreezeQuery
-} from '@services/apiFreezeAndUnfreezeAccountService'
-import {
-    CustomerElementType,
-    FreezeAndUnfreezeAccountSearchParams,
-    HistoryElementType
+  CustomerElementType,
+  FreezeAndUnfreezeAccountSearchParams,
+  HistoryElementType
 } from '@type/freezeAccount'
-import { convertNumber, removeNullUndefinedFields } from '@utils/helperFunctions'
 import {
-    Card,
-    Col,
-    DatePicker,
-    Form,
-    Input,
-    Row,
-    Select,
-    Table
-} from 'antd'
+  convertNumber,
+  removeNullUndefinedFields
+} from '@utils/helperFunctions'
+import { Card, Col, DatePicker, Form, Input, Row, Select, Table } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import dayjs, { Dayjs } from 'dayjs'
 import { useEffect, useState } from 'react'
@@ -67,7 +59,7 @@ const CustomerFreezeBalanceHistoryTab = (props: CustomerInfo) => {
   // 5. Implement hàm submit cho form
   const onFinish = (values: HistoryFilterForm) => {
     console.log(values)
-    
+
     // Convert empty string to undefined for status
     let formattedValues: Partial<FreezeAndUnfreezeAccountSearchParams> = {
       ...values,
@@ -144,101 +136,88 @@ const CustomerFreezeBalanceHistoryTab = (props: CustomerInfo) => {
   return (
     <>
       <SearchBar
+        onFinish={onFinish}
+        form={form}
+        cols='2'
         headerMenu={
-          <Form
-            layout='vertical'
-            onFinish={onFinish}
-            form={form}
-          >
-            <Row gutter={GUTTER}>
-              <Col flex='auto'>
-                <Form.Item
-                  name='id'
-                  label={trans('freezeAndUnfreezeAccount.label.id')}
-                >
-                  <Input
-                    onChange={() => setSearch({ ...search, id: undefined })}
-                    placeholder={trans(
-                      'freezeAndUnfreezeAccount.placeholders.id'
-                    ).toString()}
-                  />
-                </Form.Item>
-              </Col>
-              <Col flex='auto'>
-                <Form.Item
-                  name='transactionId'
-                  label={trans('freezeAndUnfreezeAccount.label.transactionId')}
-                >
-                  <Input
-                    onChange={() => setSearch({ ...search, transactionId: undefined })}
-                    placeholder={trans(
-                      'freezeAndUnfreezeAccount.placeholders.transactionId'
-                    ).toString()}
-                  />
-                </Form.Item>
-              </Col>
-              <Col flex='auto'>
-                <Form.Item
-                  name='startDate'
-                  label={trans('freezeAndUnfreezeAccount.label.startDate')}
-                >
-                  <DatePicker
-                    className='w-100'
-                    placeholder={trans(
-                      'freezeAndUnfreezeAccount.placeholders.startDate'
-                    ).toString()}
-                  />
-                </Form.Item>
-              </Col>
-              <Col flex='auto'>
-                <Form.Item
-                  name='endDate'
-                  label={trans('freezeAndUnfreezeAccount.label.endDate')}
-                >
-                  <DatePicker
-                    className='w-100'
-                    placeholder={trans(
-                      'freezeAndUnfreezeAccount.placeholders.endDate'
-                    ).toString()}
-                  />
-                </Form.Item>
-              </Col>
-              <Col flex='180px'>
-                <Form.Item
-                  name='status'
-                  label={trans('freezeAndUnfreezeAccount.label.status')}
-                >
-                  <Select
-                    placeholder={trans(
-                      'freezeAndUnfreezeAccount.placeholders.status'
-                    )}
-                    options={[
-                      {
-                        value: '',
-                        label: trans('labels.all')
-                      },
-                      {
-                        value: true,
-                        label: trans('freezeAndUnfreezeAccount.label.freeze')
-                      },
-                      {
-                        value: false,
-                        label: trans('freezeAndUnfreezeAccount.label.unfreeze')
-                      }
-                    ]}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row
-              justify='end'
-              gutter={GUTTER}
+          <>
+            <Form.Item
+              name='id'
+              label={trans('freezeAndUnfreezeAccount.label.id')}
             >
-              <Col>
-                <ButtonSearch htmlType='submit' />
-              </Col>
-            </Row>
-          </Form>
+              <Input
+                onChange={() => setSearch({ ...search, id: undefined })}
+                placeholder={trans(
+                  'freezeAndUnfreezeAccount.placeholders.id'
+                ).toString()}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name='transactionId'
+              label={trans('freezeAndUnfreezeAccount.label.transactionId')}
+            >
+              <Input
+                onChange={() =>
+                  setSearch({ ...search, transactionId: undefined })
+                }
+                placeholder={trans(
+                  'freezeAndUnfreezeAccount.placeholders.transactionId'
+                ).toString()}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name='startDate'
+              label={trans('freezeAndUnfreezeAccount.label.startDate')}
+            >
+              <DatePicker
+                className='w-100'
+                placeholder={trans(
+                  'freezeAndUnfreezeAccount.placeholders.startDate'
+                ).toString()}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name='endDate'
+              label={trans('freezeAndUnfreezeAccount.label.endDate')}
+            >
+              <DatePicker
+                className='w-100'
+                placeholder={trans(
+                  'freezeAndUnfreezeAccount.placeholders.endDate'
+                ).toString()}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name='status'
+              label={trans('freezeAndUnfreezeAccount.label.status')}
+            >
+              <Select
+                placeholder={trans(
+                  'freezeAndUnfreezeAccount.placeholders.status'
+                )}
+                options={[
+                  {
+                    value: '',
+                    label: trans('labels.all')
+                  },
+                  {
+                    value: true,
+                    label: trans('freezeAndUnfreezeAccount.label.freeze')
+                  },
+                  {
+                    value: false,
+                    label: trans('freezeAndUnfreezeAccount.label.unfreeze')
+                  }
+                ]}
+              />
+            </Form.Item>
+
+            <ButtonSearch htmlType='submit' />
+          </>
         }
       />
       <Row className='w-100'>
