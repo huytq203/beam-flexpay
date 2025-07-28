@@ -17,7 +17,17 @@ import {
 } from '@type/accountingRequest'
 import { viewMode } from '@type/customer'
 import { convertNumber } from '@utils/helperFunctions'
-import { Card, Col, DatePicker, Form, Row, Select, Space, Table, Tag } from 'antd'
+import {
+  Card,
+  Col,
+  DatePicker,
+  Form,
+  Row,
+  Select,
+  Space,
+  Table,
+  Tag
+} from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import moment from 'moment'
 import { useState } from 'react'
@@ -36,7 +46,7 @@ function DepositRequest() {
     // status: accountStatus.VERIFIED
   })
   const [selectedId, setSelectedId] = useState<number | undefined>(undefined)
-
+  const [form] = Form.useForm()
   const { data: accountingRequest, refetch } =
     useGetListDepositRequestQuery(search)
   /**
@@ -197,132 +207,100 @@ function DepositRequest() {
     <Card
       title={
         <SearchBar
+          onFinish={onSearch}
+          cols='2'
+          form={form}
           headerMenu={
-            <Form
-              layout='vertical'
-              onFinish={onSearch}
-            >
-              <Row gutter={GUTTER}>
-                <Col
-                  xs={24}
-                  md={8}
-                  xl={6}
-                >
-                  <Form.Item
-                    name='status'
-                    label={t`internal-wallet.title.status_request`}
-                  >
-                    <Select
-                      placeholder={t`internal-wallet.placeholders.status`.toString()}
-                      options={RequestStatusOptions}
-                      allowClear
-                      onClear={() => onClearSearch('status')}
-                      onChange={(e) => {
-                        if (e === '' || e === undefined) {
-                          setSearch({
-                            ...search,
-                            status: undefined
-                          })
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col
-                  xs={24}
-                  md={8}
-                  xl={6}
-                >
-                  <Form.Item
-                    name='transactionType'
-                    label={t`internal-wallet.title.transaction_type`}
-                  >
-                    <Select
-                      placeholder={t`internal-wallet.placeholders.status`.toString()}
-                      options={TransactionTypeOptions}
-                      allowClear
-                      onClear={() => onClearSearch('transactionType')}
-                      onChange={(e) => {
-                        if (e === '' || e === undefined) {
-                          setSearch({
-                            ...search,
-                            transactionType: undefined
-                          })
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col
-                  xs={24}
-                  md={12}
-                  xl={6}
-                >
-                  <Form.Item
-                    name='startDate'
-                    label={t`internal-account-report.start-time`}
-                  >
-                    <DatePicker
-                      format={TimeFormat}
-                      allowClear
-                      className='w-100'
-                      placeholder={t`internal-account-report.placeholders.start-time`.toString()}
-                      onChange={(e) => {
-                        if (!e) {
-                          onClearSearch('startDate')
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col
-                  xs={24}
-                  md={12}
-                  xl={6}
-                >
-                  <Form.Item
-                    name='endDate'
-                    label={t`internal-account-report.end-time`}
-                  >
-                    <DatePicker
-                      format={TimeFormat}
-                      allowClear
-                      className='w-100'
-                      placeholder={t`internal-account-report.placeholders.end-time`.toString()}
-                      onChange={(e) => {
-                        if (!e) {
-                          onClearSearch('endDate')
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+            <>
+              <Form.Item
+                name='status'
+                label={t`internal-wallet.title.status_request`}
               >
-                <Col>
-                  <ButtonAdd
-                    module='internalwallet'
-                    type='primary'
-                    onClick={() => {
-                      setMode(viewMode.create)
-                      triggerModal(true)
-                    }}
-                  >{t`buttons.add`}</ButtonAdd>
-                </Col>
-                <Col>
-                  <ButtonSearch htmlType='submit' />
-                </Col>
-                <Col>
-                  <ButtonExcel
-                    module='bank_management'
-                    label={t('buttons.exportFile').toString()}
-                  />
-                </Col>
-              </Row>
-            </Form>
+                <Select
+                  placeholder={t`internal-wallet.placeholders.status`.toString()}
+                  options={RequestStatusOptions}
+                  allowClear
+                  onClear={() => onClearSearch('status')}
+                  onChange={(e) => {
+                    if (e === '' || e === undefined) {
+                      setSearch({
+                        ...search,
+                        status: undefined
+                      })
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='transactionType'
+                label={t`internal-wallet.title.transaction_type`}
+              >
+                <Select
+                  placeholder={t`internal-wallet.placeholders.status`.toString()}
+                  options={TransactionTypeOptions}
+                  allowClear
+                  onClear={() => onClearSearch('transactionType')}
+                  onChange={(e) => {
+                    if (e === '' || e === undefined) {
+                      setSearch({
+                        ...search,
+                        transactionType: undefined
+                      })
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='startDate'
+                label={t`internal-account-report.start-time`}
+              >
+                <DatePicker
+                  format={TimeFormat}
+                  allowClear
+                  className='w-100'
+                  placeholder={t`internal-account-report.placeholders.start-time`.toString()}
+                  onChange={(e) => {
+                    if (!e) {
+                      onClearSearch('startDate')
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='endDate'
+                label={t`internal-account-report.end-time`}
+              >
+                <DatePicker
+                  format={TimeFormat}
+                  allowClear
+                  className='w-100'
+                  placeholder={t`internal-account-report.placeholders.end-time`.toString()}
+                  onChange={(e) => {
+                    if (!e) {
+                      onClearSearch('endDate')
+                    }
+                  }}
+                />
+              </Form.Item>
+              <ButtonSearch htmlType='submit' />
+
+              <ButtonAdd
+                module='internalwallet'
+                type='primary'
+                onClick={() => {
+                  setMode(viewMode.create)
+                  triggerModal(true)
+                }}
+              />
+
+              <ButtonExcel
+                module='bank_management'
+                label={t('buttons.exportFile').toString()}
+              />
+            </>
           }
         />
       }

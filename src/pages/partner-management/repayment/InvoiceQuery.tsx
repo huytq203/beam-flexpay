@@ -55,38 +55,26 @@ export default function InvoiceQuery() {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={handleSearch}
+          cols='2'
           headerMenu={
-            <Form
-              form={form}
-              layout='vertical'
-            >
-              <Row gutter={GUTTER}>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t('invoiceQuery.invoiceId')}
-                    name='billCode'
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col flex='400px'>
-                  <Form.Item
-                    label={t('partner.repaymentPartner')}
-                    name='paymentPartnerId'
-                  >
-                    <PartnerSelect type='REPAYMENT' />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                gutter={GUTTER}
-                justify='end'
+            <>
+              <Form.Item
+                label={t('invoiceQuery.invoiceId')}
+                name='billCode'
               >
-                <Col>
-                  <ButtonSearch onClick={handleSearch} />
-                </Col>
-              </Row>
-            </Form>
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label={t('partner.repaymentPartner')}
+                name='paymentPartnerId'
+              >
+                <PartnerSelect type='REPAYMENT' />
+              </Form.Item>
+
+              <ButtonSearch onClick={handleSearch} />
+            </>
           }
         />
       }

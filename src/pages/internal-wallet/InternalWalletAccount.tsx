@@ -254,92 +254,74 @@ function InternalWalletAccount() {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={handleSearch}
+          cols='2'
+          initialValues={{ active: null }}
           headerMenu={
-            <Form
-              form={form}
-              layout='vertical'
-              initialValues={{ active: null }}
-              onFinish={handleSearch}
-            >
-              <Row gutter={GUTTER}>
-                <Col span={6}>
-                  <Form.Item
-                    name='walletGroup'
-                    label={'Nhóm ví'}
-                    rules={[...numberValidation]}
-                  >
-                    <Input placeholder={'Nhập nhóm ví'} />
-                  </Form.Item>
-                </Col>
-
-                <Col span={6}>
-                  <Form.Item
-                    name='walletNumber'
-                    label={t('internalBalanceWallet.walletNumber')}
-                    rules={[
-                      ...numberAndDotValidation,
-                      {
-                        min: 5,
-                        message:
-                          t`internal-wallet.messages.wallet-number-min-length` as string
-                      },
-                      {
-                        max: 20,
-                        message:
-                          t`internal-wallet.validation.wallet-number-max-length` as string
-                      }
-                    ]}
-                  >
-                    <Input
-                      placeholder={t`internal-wallet.placeholders.wallet_id`.toString()}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={6}>
-                  <Form.Item
-                    name='name'
-                    label={t('internalBalanceWallet.walletName')}
-                  >
-                    <Input
-                      placeholder={t`internal-wallet.placeholders.wallet_name`.toString()}
-                      onKeyDown={blockArrowValue}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={6}>
-                  <Form.Item
-                    name='active'
-                    label={t('internalBalanceWallet.status')}
-                  >
-                    <Select
-                      placeholder={t`internal-wallet.placeholders.status`.toString()}
-                      options={[
-                        { label: t`internal-wallet.status.all`, value: null },
-                        { label: t`internal-wallet.status.active`, value: 1 },
-                        { label: t`internal-wallet.status.de-active`, value: 0 }
-                      ]}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+            <>
+              <Form.Item
+                name='walletGroup'
+                label={'Nhóm ví'}
+                rules={[...numberValidation]}
               >
-                <Col>
-                  <ButtonAdd
-                    module='internal-wallet'
-                    onClick={() => {
-                      setMode(viewMode.create)
-                      addFormToggle()
-                    }}
-                  />
-                </Col>
-                <Col>
-                  <ButtonSearch onClick={handleSearch} />
-                </Col>
-              </Row>
-            </Form>
+                <Input placeholder={'Nhập nhóm ví'} />
+              </Form.Item>
+
+              <Form.Item
+                name='walletNumber'
+                label={t('internalBalanceWallet.walletNumber')}
+                rules={[
+                  ...numberAndDotValidation,
+                  {
+                    min: 5,
+                    message:
+                      t`internal-wallet.messages.wallet-number-min-length` as string
+                  },
+                  {
+                    max: 20,
+                    message:
+                      t`internal-wallet.validation.wallet-number-max-length` as string
+                  }
+                ]}
+              >
+                <Input
+                  placeholder={t`internal-wallet.placeholders.wallet_id`.toString()}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='name'
+                label={t('internalBalanceWallet.walletName')}
+              >
+                <Input
+                  placeholder={t`internal-wallet.placeholders.wallet_name`.toString()}
+                  onKeyDown={blockArrowValue}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='active'
+                label={t('internalBalanceWallet.status')}
+              >
+                <Select
+                  placeholder={t`internal-wallet.placeholders.status`.toString()}
+                  options={[
+                    { label: t`internal-wallet.status.all`, value: null },
+                    { label: t`internal-wallet.status.active`, value: 1 },
+                    { label: t`internal-wallet.status.de-active`, value: 0 }
+                  ]}
+                />
+              </Form.Item>
+              <ButtonSearch onClick={handleSearch} />
+              <ButtonAdd
+                module='internal-wallet'
+                onClick={() => {
+                  setMode(viewMode.create)
+                  addFormToggle()
+                }}
+              />
+            </>
           }
         />
       }

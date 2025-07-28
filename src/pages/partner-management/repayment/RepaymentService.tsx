@@ -44,20 +44,22 @@ function RepaymentService() {
     {
       title: t('payment-service.type'),
       dataIndex: 'type',
-      render(value, record, index) {
+      width: 130,
+      render(value) {
         if (value === 'DISBURSE') return t('DISBURSE')
         else return t('REPAYMENT')
       }
     },
     {
       title: t('payment-service.name'),
-      dataIndex: 'name'
+      dataIndex: 'name',
+      width: 130
     },
     {
       title: t('payment-service.logo'),
       dataIndex: 'logo',
       width: 250,
-      render(value, record, index) {
+      render(value) {
         if (value)
           return (
             <Image
@@ -72,7 +74,7 @@ function RepaymentService() {
       dataIndex: 'active',
       width: 130,
       align: 'center',
-      render(value, record, index) {
+      render(value) {
         if (value) return t('labels.active')
         else return t('labels.inActive')
       }
@@ -81,37 +83,37 @@ function RepaymentService() {
       title: t('partner.createdDate'),
       width: 130,
       align: 'center',
-      render: (value, record, index) =>
+      render: (_, record) =>
         moment(new Date(record?.createdAt)).format(TimeFormat).toString()
     },
     {
       title: t('partner.createdBy'),
       width: 130,
       align: 'center',
-      render(value, record, index) {
-        return record.createdBy.fullName
+      render(_, record) {
+        return record.createdBy?.fullName
       }
     },
     {
       title: t('partner.updatedBy'),
       width: 130,
       align: 'center',
-      render(value, record, index) {
-        return record.updatedBy.fullName
+      render(_, record) {
+        return record.updatedBy?.fullName
       }
     },
     {
       title: t('partner.updatedDate'),
       width: 130,
       align: 'center',
-      render: (value, record, index) =>
+      render: (_, record) =>
         moment(new Date(record?.updatedAt)).format(TimeFormat).toString()
     },
     {
       title: t('labels.action'),
       align: 'center',
       width: 100,
-      render(value, record, index) {
+      render(_, record) {
         return (
           <ButtonUpdate
             module='repayment'
@@ -138,44 +140,32 @@ function RepaymentService() {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={handleSearch}
+          cols='2'
           headerMenu={
-            <Form
-              layout='vertical'
-              form={form}
-            >
-              <Row gutter={GUTTER}>
-                <Col flex='auto'>
-                  <Form.Item
-                    label={t('payment-service.name')}
-                    name='name'
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col flex='300px'>
-                  <Form.Item
-                    label={t('payment-service.type')}
-                    name='type'
-                  >
-                    <Select options={PARTNER_TYPE_OPTIONS} />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                gutter={GUTTER}
-                justify='end'
+            <>
+              <Form.Item
+                label={t('payment-service.name')}
+                name='name'
               >
-                <Col>
-                  <ButtonAdd
-                    onClick={addFormToggle}
-                    module='repayment'
-                  />
-                </Col>
-                <Col>
-                  <ButtonSearch onClick={handleSearch} />
-                </Col>
-              </Row>
-            </Form>
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label={t('payment-service.type')}
+                name='type'
+              >
+                <Select options={PARTNER_TYPE_OPTIONS} />
+              </Form.Item>
+
+              <ButtonAdd
+                onClick={addFormToggle}
+                module='repayment'
+              />
+
+              <ButtonSearch onClick={handleSearch} />
+            </>
           }
         />
       }

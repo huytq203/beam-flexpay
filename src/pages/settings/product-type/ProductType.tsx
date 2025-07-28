@@ -386,90 +386,78 @@ const ProductType = () => {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={handleSearch}
+          cols='2'
           headerMenu={
-            <Form
-              form={form}
-              onFinish={handleSearch}
-              layout='vertical'
-            >
-              <Row gutter={GUTTER}>
-                <Col flex='300px'>
-                  <Form.Item
-                    label={t('productType.productType')}
-                    name='id'
-                  >
-                    <Select
-                      placeholder={t`placeholders.productType`}
-                      onPopupScroll={handleScrollProductType}
-                      open={visibleProductType}
-                      allowClear={true}
-                      showSearch
-                      filterOption={false}
-                      value={productTypeSearch?.name ?? undefined}
-                      onSearch={onSearch}
-                      onBlur={handleBlur}
-                      onSelect={handleSelect}
-                      onDropdownVisibleChange={(open) =>
-                        handleOpenSelectProductType(open)
-                      }
-                      onChange={(event) => {
-                        if (!event) {
-                          refreshData('id', undefined)
-                        }
-                      }}
-                    >
-                      {productTypeOptions()}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col flex='300px'>
-                  <Form.Item
-                    label={t('productType.displayOn')}
-                    name='show'
-                  >
-                    <Select
-                      allowClear
-                      placeholder={t`placeholders.displayOn`}
-                      options={[
-                        {
-                          label: t('productType.app'),
-                          value: AttributeDisplayOnProduct.APP
-                        },
-                        {
-                          label: t('productType.web'),
-                          value: AttributeDisplayOnProduct.WEB
-                        },
-                        {
-                          label: t('productType.web-app'),
-                          value: AttributeDisplayOnProduct.BOTH
-                        }
-                      ]}
-                      onChange={(event) => {
-                        if (!event) {
-                          refreshData('show', undefined)
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+            <>
+              <Form.Item
+                label={t('productType.productType')}
+                name='id'
               >
-                <Col>
-                  <Form.Item>
-                    <Button
-                      type='primary'
-                      htmlType='submit'
-                      icon={<SearchOutlined />}
-                    >
-                      {t('buttons.search')}
-                    </Button>
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Form>
+                <Select
+                  placeholder={t`placeholders.productType`}
+                  onPopupScroll={handleScrollProductType}
+                  open={visibleProductType}
+                  allowClear={true}
+                  showSearch
+                  filterOption={false}
+                  value={productTypeSearch?.name ?? undefined}
+                  onSearch={onSearch}
+                  onBlur={handleBlur}
+                  onSelect={handleSelect}
+                  onDropdownVisibleChange={(open) =>
+                    handleOpenSelectProductType(open)
+                  }
+                  onChange={(event) => {
+                    if (!event) {
+                      refreshData('id', undefined)
+                    }
+                  }}
+                >
+                  {productTypeOptions()}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                label={t('productType.displayOn')}
+                name='show'
+              >
+                <Select
+                  allowClear
+                  placeholder={t`placeholders.displayOn`}
+                  options={[
+                    {
+                      label: t('productType.app'),
+                      value: AttributeDisplayOnProduct.APP
+                    },
+                    {
+                      label: t('productType.web'),
+                      value: AttributeDisplayOnProduct.WEB
+                    },
+                    {
+                      label: t('productType.web-app'),
+                      value: AttributeDisplayOnProduct.BOTH
+                    }
+                  ]}
+                  onChange={(event) => {
+                    if (!event) {
+                      refreshData('show', undefined)
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item>
+                <Button
+                  type='primary'
+                  htmlType='submit'
+                  icon={<SearchOutlined />}
+                >
+                  {t('buttons.search')}
+                </Button>
+              </Form.Item>
+            </>
           }
         />
       }

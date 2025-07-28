@@ -113,104 +113,89 @@ const NapasTransaction = () => {
     <Card
       title={
         <SearchBar
+          form={form}
+          // onFinish={handleSearch}
+          cols='2'
           headerMenu={
             <>
-              <Form
-                form={form}
-                layout='vertical'
+              <Form.Item
+                label={trans`napas-transaction.transactionCode`}
+                name='transactionCode'
               >
-                <Row gutter={GUTTER}>
-                  <Col flex='auto'>
-                    <Form.Item
-                      label={trans`napas-transaction.transactionCode`}
-                      name='transactionCode'
-                    >
-                      <Input
-                        placeholder={
-                          trans`napas-transaction.placeholders.inputTransactionCode` ??
-                          ''
-                        }
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col flex='200px'>
-                    <Form.Item
-                      label={trans`napas-transaction.fromDate`}
-                      name='fromDate'
-                    >
-                      <DatePicker
-                        showTime
-                        format={TimeFullFormat}
-                        allowClear
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col flex='200px'>
-                    <Form.Item
-                      label={trans`napas-transaction.endDate`}
-                      name='transactionCode'
-                    >
-                      <DatePicker
-                        showTime
-                        format={TimeFullFormat}
-                        allowClear
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col flex='200px'>
-                    <Form.Item
-                      label={trans`napas-transaction.walletNumber`}
-                      name='transactionCode'
-                    >
-                      <Input
-                        placeholder={trans`napas-transaction.placeholders.inputWallet`.toString()}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col flex='200px'>
-                    <Form.Item
-                      label={trans`napas-transaction.bank`}
-                      name='transactionCode'
-                    >
-                      <Select
-                        placeholder={trans`napas-transaction.placeholders.selectBank`.toString()}
-                      >
-                        <Select.Option>Agribank</Select.Option>
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  <Col flex='200px'>
-                    <Form.Item
-                      label={trans`napas-transaction.bankCode`}
-                      name='transactionCode'
-                    >
-                      <Input
-                        placeholder={trans`napas-transaction.placeholders.inputBankCode`.toString()}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col flex='200px'>
-                    <Form.Item
-                      label={trans`napas-transaction.status`}
-                      name='transactionCode'
-                    >
-                      <Select
-                        placeholder={trans`napas-transaction.placeholders.selectStatus`.toString()}
-                      >
-                        <Select.Option>{trans`napas-transaction.successStatus`}</Select.Option>
-                        <Select.Option>{trans`napas-transaction.failStatus`}</Select.Option>
-                        <Select.Option>{trans`napas-transaction.processingStatus`}</Select.Option>
-                        <Select.Option>{trans`napas-transaction.refund`}</Select.Option>
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Form>
-              <Row justify='end'>
-                <Col>
-                  <ButtonSearch />
-                </Col>
-              </Row>
+                <Input
+                  placeholder={
+                    trans`napas-transaction.placeholders.inputTransactionCode` ||
+                    ''
+                  }
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={trans`napas-transaction.fromDate`}
+                name='fromDate'
+              >
+                <DatePicker
+                  showTime
+                  format={TimeFullFormat}
+                  allowClear
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={trans`napas-transaction.endDate`}
+                name='transactionCode'
+              >
+                <DatePicker
+                  showTime
+                  format={TimeFullFormat}
+                  allowClear
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={trans`napas-transaction.walletNumber`}
+                name='transactionCode'
+              >
+                <Input
+                  placeholder={trans`napas-transaction.placeholders.inputWallet`.toString()}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={trans`napas-transaction.bank`}
+                name='transactionCode'
+              >
+                <Select
+                  placeholder={trans`napas-transaction.placeholders.selectBank`.toString()}
+                >
+                  <Select.Option>Agribank</Select.Option>
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                label={trans`napas-transaction.bankCode`}
+                name='transactionCode'
+              >
+                <Input
+                  placeholder={trans`napas-transaction.placeholders.inputBankCode`.toString()}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={trans`napas-transaction.status`}
+                name='transactionCode'
+              >
+                <Select
+                  placeholder={trans`napas-transaction.placeholders.selectStatus`.toString()}
+                >
+                  <Select.Option>{trans`napas-transaction.successStatus`}</Select.Option>
+                  <Select.Option>{trans`napas-transaction.failStatus`}</Select.Option>
+                  <Select.Option>{trans`napas-transaction.processingStatus`}</Select.Option>
+                  <Select.Option>{trans`napas-transaction.refund`}</Select.Option>
+                </Select>
+              </Form.Item>
+
+              <ButtonSearch htmlType='submit' />
             </>
           }
         />

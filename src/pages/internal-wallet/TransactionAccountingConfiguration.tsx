@@ -293,68 +293,57 @@ function TransactionAccountingConfiguration() {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={handleSearch}
+          cols='2'
           headerMenu={
-            <Form
-              form={form}
-              layout='vertical'
-            >
-              <Row gutter={GUTTER}>
-                <Col span={6}>
-                  <Form.Item
-                    name='type'
-                    label={t('accounting.transactionType')}
-                  >
-                    <Select
-                      placeholder={t`internal-wallet.placeholders.transaction_type`.toString()}
-                      defaultValue={null}
-                      options={accountingTransactionType}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={6}>
-                  <Form.Item
-                    name='fundSource'
-                    label={t('accounting.fundSource')}
-                  >
-                    <Select
-                      placeholder={t('internal-wallet.placeholders.funds')}
-                      defaultValue={null}
-                      options={fundsOptions}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={6}>
-                  <Form.Item
-                    name='active'
-                    label={t('accounting.status')}
-                  >
-                    <Select
-                      placeholder={t`internal-wallet.placeholders.status`.toString()}
-                      defaultValue={null}
-                      options={accountingStatus}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+            <>
+              <Form.Item
+                name='type'
+                label={t('accounting.transactionType')}
               >
-                <Col>
-                  <ButtonAdd
-                    module='internalwallet'
-                    onClick={() => {
-                      setMode(viewMode.create)
-                      setSelectedAccounting(undefined)
-                      addFormToggle()
-                    }}
-                  />
-                </Col>
-                <Col>
-                  <ButtonSearch onClick={handleSearch} />
-                </Col>
-              </Row>
-            </Form>
+                <Select
+                  placeholder={t`internal-wallet.placeholders.transaction_type`.toString()}
+                  defaultValue={null}
+                  options={accountingTransactionType}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='fundSource'
+                label={t('accounting.fundSource')}
+              >
+                <Select
+                  placeholder={t('internal-wallet.placeholders.funds')}
+                  defaultValue={null}
+                  options={fundsOptions}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='active'
+                label={t('accounting.status')}
+              >
+                <Select
+                  placeholder={t`internal-wallet.placeholders.status`.toString()}
+                  defaultValue={null}
+                  options={accountingStatus}
+                />
+              </Form.Item>
+              <ButtonSearch
+                onClick={handleSearch}
+                className='mt-7'
+              />
+
+              <ButtonAdd
+                module='internalwallet'
+                onClick={() => {
+                  setMode(viewMode.create)
+                  setSelectedAccounting(undefined)
+                  addFormToggle()
+                }}
+              />
+            </>
           }
         />
       }

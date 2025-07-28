@@ -3,7 +3,6 @@ import ButtonView from '@components/button-view/ButtonView'
 import CellContent from '@components/cell-content/CellContent'
 import NoDataText from '@components/no-data-text/NoDataText'
 import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER } from '@constants/appConstant'
 import { TimeFormat, TimeFullFormat } from '@constants/datetime'
 import { accountStatusOptions, reportType } from '@constants/options'
 import { BankSelection } from '@pages/system-management/bank-management/bank-selection/BankSelection'
@@ -22,11 +21,9 @@ import {
 import {
   Button,
   Card,
-  Col,
   DatePicker,
   Form,
   Input,
-  Row,
   Select,
   Tag,
   notification
@@ -213,200 +210,139 @@ function StateBankOverviewReport() {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={submit}
+          cols='2'
           headerMenu={
-            <Form
-              form={form}
-              layout='vertical'
-              onFinish={submit}
-            >
-              <Row gutter={GUTTER}>
-                <Col
-                  xs={24}
-                  md={12}
-                  xl={6}
-                >
-                  <Form.Item
-                    name='name'
-                    label={t`state-bank-overview.name`}
-                  >
-                    <Input
-                      allowClear={true}
-                      placeholder={t`state-bank-overview.placeholders.name`.toString()}
-                      onChange={(e) => {
-                        if (
-                          e.target.value === '' ||
-                          e.target.value === undefined
-                        ) {
-                          onClearSearch('name')
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col
-                  xs={24}
-                  md={12}
-                  xl={6}
-                >
-                  <Form.Item
-                    name='email'
-                    label={t`state-bank-overview.email`}
-                  >
-                    <Input
-                      allowClear={true}
-                      placeholder={t`state-bank-overview.placeholders.email`.toString()}
-                      onChange={(e) => {
-                        if (
-                          e.target.value === '' ||
-                          e.target.value === undefined
-                        ) {
-                          onClearSearch('email')
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col
-                  xs={24}
-                  md={12}
-                  xl={6}
-                >
-                  <Form.Item
-                    name='phone'
-                    label={t`state-bank-overview.number-wallet`}
-                  >
-                    <Input
-                      allowClear={true}
-                      placeholder={t`state-bank-overview.placeholders.number-wallet`.toString()}
-                      onChange={(e) => {
-                        if (
-                          e.target.value === '' ||
-                          e.target.value === undefined
-                        ) {
-                          onClearSearch('phone')
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col
-                  xs={24}
-                  md={8}
-                  xl={6}
-                >
-                  <Form.Item
-                    name='status'
-                    label={t`internal-account-report.status`}
-                  >
-                    <Select
-                      placeholder={t`internal-account-report.placeholders.status`.toString()}
-                      options={accountStatusOptions}
-                      allowClear
-                      onClear={() => onClearSearch('status')}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col
-                  xs={24}
-                  md={12}
-                  xl={6}
-                >
-                  <Form.Item
-                    name='type'
-                    label={t`state-bank-overview.report-type`}
-                  >
-                    <Select
-                      placeholder={t`state-bank-overview.placeholders.report-type`.toString()}
-                      allowClear
-                      onClear={() => onClearSearch('type')}
-                      options={reportType}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col
-                  xs={24}
-                  md={8}
-                  xl={6}
-                >
-                  <Form.Item
-                    name='linkBank'
-                    label={t`state-bank-overview.link-bank`}
-                  >
-                    <BankSelection
-                      placeholder={t`state-bank-overview.placeholders.link-bank`.toString()}
-                      onClear={() => {
-                        setSearchLinkBank({
-                          ...searchLinkBank,
-                          page: 1,
-                          name: undefined
-                        })
-                      }}
-                      type={'LINK'}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col
-                  xs={24}
-                  md={12}
-                  xl={6}
-                >
-                  <Form.Item
-                    name='from'
-                    label={t`internal-account-report.start-time`}
-                  >
-                    <DatePicker
-                      format={TimeFormat}
-                      allowClear
-                      className='w-100'
-                      placeholder={t`internal-account-report.placeholders.start-time`.toString()}
-                      onChange={(e) => {
-                        if (!e) {
-                          onClearSearch('from')
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col
-                  xs={24}
-                  md={12}
-                  xl={6}
-                >
-                  <Form.Item
-                    name='to'
-                    label={t`internal-account-report.end-time`}
-                  >
-                    <DatePicker
-                      format={TimeFormat}
-                      allowClear
-                      className='w-100'
-                      placeholder={t`internal-account-report.placeholders.end-time`.toString()}
-                      onChange={(e) => {
-                        if (!e) {
-                          onClearSearch('to')
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col
-                  xs={24}
-                  md={8}
-                  xl={24}
-                  className='d-flex justify-end'
-                >
-                  <Button
-                    className='mr-10'
-                    type='primary'
-                    ghost
-                    onClick={exportFileCSV}
-                  >{t`buttons.exportFile`}</Button>
-                  <ButtonSearch htmlType='submit'>
-                    {t`buttons.search`}
-                  </ButtonSearch>
-                </Col>
-              </Row>
-            </Form>
+            <>
+              <Form.Item
+                name='name'
+                label={t`state-bank-overview.name`}
+              >
+                <Input
+                  allowClear={true}
+                  placeholder={t`state-bank-overview.placeholders.name`.toString()}
+                  onChange={(e) => {
+                    if (e.target.value === '' || e.target.value === undefined) {
+                      onClearSearch('name')
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='email'
+                label={t`state-bank-overview.email`}
+              >
+                <Input
+                  allowClear={true}
+                  placeholder={t`state-bank-overview.placeholders.email`.toString()}
+                  onChange={(e) => {
+                    if (e.target.value === '' || e.target.value === undefined) {
+                      onClearSearch('email')
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='phone'
+                label={t`state-bank-overview.number-wallet`}
+              >
+                <Input
+                  allowClear={true}
+                  placeholder={t`state-bank-overview.placeholders.number-wallet`.toString()}
+                  onChange={(e) => {
+                    if (e.target.value === '' || e.target.value === undefined) {
+                      onClearSearch('phone')
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='status'
+                label={t`internal-account-report.status`}
+              >
+                <Select
+                  placeholder={t`internal-account-report.placeholders.status`.toString()}
+                  options={accountStatusOptions}
+                  allowClear
+                  onClear={() => onClearSearch('status')}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='type'
+                label={t`state-bank-overview.report-type`}
+              >
+                <Select
+                  placeholder={t`state-bank-overview.placeholders.report-type`.toString()}
+                  allowClear
+                  onClear={() => onClearSearch('type')}
+                  options={reportType}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='linkBank'
+                label={t`state-bank-overview.link-bank`}
+              >
+                <BankSelection
+                  placeholder={t`state-bank-overview.placeholders.link-bank`.toString()}
+                  onClear={() => {
+                    setSearchLinkBank({
+                      ...searchLinkBank,
+                      page: 1,
+                      name: undefined
+                    })
+                  }}
+                  type={'LINK'}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='from'
+                label={t`internal-account-report.start-time`}
+              >
+                <DatePicker
+                  format={TimeFormat}
+                  allowClear
+                  className='w-100'
+                  placeholder={t`internal-account-report.placeholders.start-time`.toString()}
+                  onChange={(e) => {
+                    if (!e) {
+                      onClearSearch('from')
+                    }
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='to'
+                label={t`internal-account-report.end-time`}
+              >
+                <DatePicker
+                  format={TimeFormat}
+                  allowClear
+                  className='w-100'
+                  placeholder={t`internal-account-report.placeholders.end-time`.toString()}
+                  onChange={(e) => {
+                    if (!e) {
+                      onClearSearch('to')
+                    }
+                  }}
+                />
+              </Form.Item>
+              <ButtonSearch htmlType='submit' />
+
+              <Button
+                className='mr-10'
+                type='primary'
+                ghost
+                onClick={exportFileCSV}
+              >{t`buttons.exportFile`}</Button>
+            </>
           }
         />
       }

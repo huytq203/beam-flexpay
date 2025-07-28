@@ -190,11 +190,7 @@ function RepaymentTransaction() {
         return (
           <Row gutter={GUTTER}>
             <Col>
-              <Tooltip title={t('partner-repayment-list.checkStatus')}>
-                <ButtonRefresh
-                  onClick={handleRefresh}
-                />
-              </Tooltip>
+              <ButtonRefresh onClick={handleRefresh} />
             </Col>
             <Col>
               <ButtonView onClick={() => handleViewDetail(record)} />
@@ -218,7 +214,6 @@ function RepaymentTransaction() {
   }
 
   const handleExport = async () => {
-
     const _headers = new Headers()
     _headers.append('Authorization', `Bearer ${accessToken}`)
     var requestOptions: any = {
@@ -251,105 +246,91 @@ function RepaymentTransaction() {
     <Card
       title={
         <SearchBar
+          form={form}
+          onFinish={handleSearch}
+          cols='3'
           headerMenu={
-            <Form
-              form={form}
-              layout='vertical'
-              onFinish={handleSearch}
-            >
-              <Row gutter={GUTTER}>
-                <Col flex='auto'>
-                  <Form.Item
-                    name='customerPhone'
-                    label={t('partner-repayment-list.phone')}
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col flex='auto'>
-                  <Form.Item
-                    name='amount'
-                    label={t('partner-repayment-list.amount')}
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col flex='200px'>
-                  <Form.Item
-                    name='transactionStatus'
-                    label={t('partner-repayment-list.transactionStatus')}
-                  >
-                    <Select
-                      allowClear
-                      options={TRANSACTION_STATUS_OPTIONS()}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='170px'>
-                  <Form.Item
-                    name='from'
-                    label={t('partner-repayment-list.startDate')}
-                  >
-                    <DatePicker
-                      format={TimeFormat}
-                      allowClear
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='170px'>
-                  <Form.Item
-                    name='to'
-                    label={t('partner-repayment-list.endDate')}
-                  >
-                    <DatePicker
-                      format={TimeFormat}
-                      allowClear
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='220px'>
-                  <Form.Item
-                    name='partnerOrderStatus'
-                    label={t('partner-repayment-list.invoiceStatus')}
-                  >
-                    <Select
-                      allowClear
-                      options={[0, 1].map((value) => {
-                        return {
-                          value: value,
-                          label:
-                            value === 0
-                              ? t('partner-repayment-list.unpaid')
-                              : t('partner-repayment-list.paid')
-                        }
-                      })}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col flex='220px'>
-                  <Form.Item
-                    name='partnerId'
-                    label={t('partner-repayment-list.repaymentPartner')}
-                  >
-                    <PartnerSelect type='REPAYMENT' />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                justify='end'
-                gutter={GUTTER}
+            <>
+              <Form.Item
+                name='customerPhone'
+                label={t('partner-repayment-list.phone')}
               >
-                <Col>
-                  <ButtonExcel
-                    onClick={handleExport}
-                    module='repayment'
-                  />
-                </Col>
-                <Col>
-                  <ButtonSearch htmlType='submit' />
-                </Col>
-              </Row>
-            </Form>
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name='amount'
+                label={t('partner-repayment-list.amount')}
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                name='transactionStatus'
+                label={t('partner-repayment-list.transactionStatus')}
+              >
+                <Select
+                  allowClear
+                  options={TRANSACTION_STATUS_OPTIONS()}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='from'
+                label={t('partner-repayment-list.startDate')}
+              >
+                <DatePicker
+                  format={TimeFormat}
+                  allowClear
+                  className='w-full'
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='to'
+                label={t('partner-repayment-list.endDate')}
+              >
+                <DatePicker
+                  format={TimeFormat}
+                  allowClear
+                  className='w-full'
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='partnerOrderStatus'
+                label={t('partner-repayment-list.invoiceStatus')}
+              >
+                <Select
+                  allowClear
+                  options={[0, 1].map((value) => {
+                    return {
+                      value: value,
+                      label:
+                        value === 0
+                          ? t('partner-repayment-list.unpaid')
+                          : t('partner-repayment-list.paid')
+                    }
+                  })}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='partnerId'
+                label={t('partner-repayment-list.repaymentPartner')}
+              >
+                <PartnerSelect type='REPAYMENT' />
+              </Form.Item>
+              <ButtonSearch
+                htmlType='submit'
+                className='mt-7'
+              />
+
+              <ButtonExcel
+                onClick={handleExport}
+                module='repayment'
+                className='mt-7'
+              />
+            </>
           }
         />
       }
