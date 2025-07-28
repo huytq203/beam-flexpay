@@ -1,11 +1,10 @@
 import ButtonExcel from '@components/button-excel/ButtonExcel'
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER } from '@constants/appConstant'
 import { TimeFormat } from '@constants/datetime'
 import { useDashboardSendSmsQuery } from '@services/cmsDashboard'
 import { DashboardSendSmsApiArg } from '@type/application'
-import { Card, Col, DatePicker, Empty, Form, Row, Table } from 'antd'
+import { Card, DatePicker, Empty, Form, Table } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { useState } from 'react'
@@ -14,7 +13,6 @@ import { useTranslation } from 'react-i18next'
 const SmsMetrics = () => {
   const [form] = Form.useForm<DashboardSendSmsApiArg>()
   const { t } = useTranslation()
-
   const [search, setSearch] = useState<DashboardSendSmsApiArg>({
     page: 1,
     take: 10,
@@ -58,55 +56,46 @@ const SmsMetrics = () => {
     <Card
       title={
         <SearchBar
+          cols='2'
+          form={form}
+          onFinish={handleSearch}
+          initialValues={{
+            from: dayjs().startOf('month'),
+            to: dayjs().endOf('month')
+          }}
           headerMenu={
-            <Form
-              layout='vertical'
-              form={form}
-              onFinish={handleSearch}
-              initialValues={{
-                from: dayjs().startOf('month'),
-                to: dayjs().endOf('month')
-              }}
-            >
-              <Row gutter={GUTTER}>
-                <Col>
-                  <Form.Item
-                    name='from'
-                    label={t('sms.startDate')}
-                  >
-                    <DatePicker
-                      format={TimeFormat}
-                      allowClear
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Form.Item
-                    name='to'
-                    label={t('sms.endDate')}
-                  >
-                    <DatePicker
-                      format={TimeFormat}
-                      allowClear
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row
-                gutter={GUTTER}
-                justify='end'
+            <>
+              <Form.Item
+                name='from'
+                label={t('sms.startDate')}
               >
-                <Col>
-                  <ButtonExcel
-                    module='sms_stat'
-                    onClick={handleExcel}
-                  />
-                </Col>
-                <Col>
-                  <ButtonSearch htmlType='submit' />
-                </Col>
-              </Row>
-            </Form>
+                <DatePicker
+                  format={TimeFormat}
+                  allowClear
+                  className='w-full'
+                  placeholder={t('sms.startDate').toString()}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name='to'
+                label={t('sms.endDate')}
+              >
+                <DatePicker
+                  format={TimeFormat}
+                  allowClear
+                  className='w-full'
+                  placeholder={t('sms.startDate').toString()}
+                />
+              </Form.Item>
+
+              <ButtonExcel
+                module='sms_stat'
+                onClick={handleExcel}
+              />
+
+              <ButtonSearch htmlType='submit' />
+            </>
           }
         />
       }

@@ -10,7 +10,7 @@ interface CustomButtonProps extends ButtonProps {
 const ButtonRefresh = (props: CustomButtonProps) => {
   const { t } = useTranslation()
   return (
-    <Tooltip title={t('tooltips.view')}>
+    <Tooltip title={t('partner-repayment-list.checkStatus')}>
       <Button
         icon={<ArrowsClockwise size={SIZE_ICON} />}
         {...props}
