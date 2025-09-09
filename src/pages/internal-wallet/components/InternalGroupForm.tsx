@@ -45,7 +45,10 @@ function InternalGroupForm({ group, onCancel, title, mode, isShow }: props) {
       let data: any
 
       if (mode === viewMode.create) {
-        data = await createInternalWalletGroup(value)
+        data = await createInternalWalletGroup({
+          name: value.name,
+          walletGroup: value.walletGroup
+        })
       } else if (mode === viewMode.update) {
         let initData = { ...internalWalletGroup.data }
         let valueTypeUpdate: string[] = []
