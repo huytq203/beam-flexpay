@@ -2559,6 +2559,8 @@
     "groupType": "Nhóm ví",
     "groupName": "Tên nhóm",
     "groupNameTitle": "Tên nhóm ví",
+    "wallet_number_required": "Vui lòng nhập số ví nội bộ",
+    "wallet_name_required": "Vui lòng nhập tên ví nội bộ",
     "add-wallet-titles": "Thêm mới nhóm ví",
     "walletNumber": "Số ví nội bộ",
     "walletName": "Tên ví",

@@ -190,6 +190,12 @@ function InternalWalletForm({
       <Form.Item
         label={t('internal-wallet.walletNumber')}
         name='walletNumber'
+        rules={[
+          {
+            required: true,
+            message: t('internal-wallet.wallet_number_required').toString()
+          }
+        ]}
       >
         <Input
           prefix={`${selectedWalletGroup?.walletGroup ?? 'XXX'}.`}
@@ -205,7 +211,7 @@ function InternalWalletForm({
         rules={[
           {
             required: true,
-            message: t('internal-wallet.groupNameRequired').toString()
+            message: t('internal-wallet.wallet_name_required').toString()
           },
           {
             min: 5,
