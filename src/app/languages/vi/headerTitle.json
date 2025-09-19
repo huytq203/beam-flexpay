@@ -69,6 +69,10 @@
     "/internal-wallet/account/transactions": "Quản lý số dư Ví nội bộ",
     "/internal-wallet/setting": "Cấu hình hạch toán",
     "/internal-wallet/internal-accounting/deposit-request": "Yêu cầu hạch toán",
-    "/internal-wallet/internal-accounting/deposit-approval": "Phê duyệt hạch toán"
+    "/internal-wallet/internal-accounting/deposit-approval": "Phê duyệt hạch toán",
+
+    "/fee-v2/outbound-fee-management": "Quản lý phí đầu ra",
+    "/fee-v2/outbound-fee-management/create": "Thiết lập phí đầu ra"
+
   }
 }

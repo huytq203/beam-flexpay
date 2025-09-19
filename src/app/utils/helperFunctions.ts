@@ -17,6 +17,7 @@ import { t } from 'i18next'
 import { forOwn, fromPairs, isDate, isEqual, reduce } from 'lodash'
 import i18n from '../languages/i18n'
 import { PaymentMethod } from '@type/bank'
+import { DateFormat, FullFormatTime } from '@constants/datetime'
 
 export const getGender = (gender: string | number) => {
   switch (+gender) {
@@ -396,6 +397,27 @@ export const getStringDateFromMoment = (
   else return undefined
 }
 
+export const getVNDateStringFromUTCTimeString = (time?: string | null) => {
+  if (!time) return ''
+  return dayjs(time).add(7, 'hour').format(DateFormat)
+}
+
+
+export const getVNStartOfDayStringFromUTCTimeString = (time?: string | null) => {
+  if (!time) return ''
+  return dayjs(time).add(7, 'hour').startOf('day').format(FullFormatTime)
+}
+
+export const getVNEndOfDayStringFromUTCTimeString = (time?: string | null) => {
+  if (!time) return ''
+  return dayjs(time).add(7, 'hour').endOf('day').format(FullFormatTime)
+}
+
+
+
+
+
+
 export const getTransactionStatus = (status: string) => {
   switch (status) {
     case TransactionStatus.SUCCESS:
@@ -492,6 +514,14 @@ export const convertLocalStringNumber = (number?: number | string) => {
   return typeof number === 'string' || typeof number === 'number'
     ? Number(number).toLocaleString()
     : 0
+}
+
+export const parseNumberFromCommaString = (value?: string): number => {
+  return Number((value ?? '').replace(/,/g, ''))
+}
+
+export const parseNumberFromPercentString = (value?: string): number => {
+  return Number((value ?? '').replace('%', ''))
 }
 
 export const getApplicableObject = (object: APPLICABLE_OBJECTS) => {
@@ -782,4 +812,19 @@ export function removeNullUndefinedFields<T extends object>(obj: T): Partial<T> 
         }
     }
     return newObj;
+}
+
+
+/**
+ * Chuyển đổi dạng mini percent sang percent string kèm %, bỏ các chữ số 0 thừa sau dấu phẩy
+ * @param value - Dạng mini percent
+ * @returns Dạng percent string kèm %, bỏ các chữ số 0 thừa sau dấu phẩy
+ * @example
+ * convertMiniPercentToPercent(1000) // "10%"
+ * convertMiniPercentToPercent(10000) // "100%"
+ * convertMiniPercentToPercent(1050) // "10.5%"
+ */
+export const convertMiniPercentToPercent = (value?: number): string => {
+  if (!value) return ''
+  return `${(value / 100).toFixed(2).replace(/0+$/, '').replace(/\.$/, '')}`
 }

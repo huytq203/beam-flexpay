@@ -9,6 +9,7 @@ import {
   CUSTOMERS,
   CUSTOMERTRANSACTION,
   FEEMANAGEMENT,
+  FEEMANAGEMENT_V2,
   FORBIDDENERROR,
   INTERNAL,
   INTERNAL_WALLET,
@@ -68,6 +69,9 @@ import TransactionManagementReport from '@pages/bank-report/transaction-manageme
 import DepositRequest from '@pages/internal-wallet/deposit-request/DepositRequest'
 import VerifyCode from '@pages/auth/verify-code/VerifyCode'
 import PolicyManagement from '@pages/policy-management/PolicyManagement'
+import { OutboundFeeManagement } from '@pages/outbound-fee-management'
+import { OutboundFeeCreate } from '@pages/outbound-fee-management/outboundfee-create'
+import { OutboundFeeUpdate } from '@pages/outbound-fee-management/outboundfee-update'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -233,6 +237,26 @@ const feeManagement = {
   ]
 }
 
+const feeManagementV2 = {
+  path: FEEMANAGEMENT_V2,
+  element: createElement(AppLayout),
+  errorElement: createElement(NotFound),
+  children: [
+    {
+      path: FEEMANAGEMENT_V2 + '/outbound-fee-management',
+      element: createElement(OutboundFeeManagement)
+    },
+    {
+      path: FEEMANAGEMENT_V2 + '/outbound-fee-management/create',
+      element: createElement(OutboundFeeCreate)
+    },
+    {
+      path: FEEMANAGEMENT_V2 + '/outbound-fee-management/update/:id',
+      element: createElement(OutboundFeeUpdate)
+    }
+  ]
+}
+
 const bankAndConnect = {
   path: BANKANDCONNECT,
   element: createElement(AppLayout),
@@ -389,6 +413,7 @@ export const WalletRoutes = createBrowserRouter([
   roleManagement,
   personalWallet,
   feeManagement,
+  feeManagementV2,
   bankAndConnect,
   reports,
   repaymentAndDisburse,

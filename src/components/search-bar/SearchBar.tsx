@@ -40,8 +40,9 @@ export default function SearchBar<ApiArg extends object>({
   form,
   onFinish,
   cols = '2',
-  initialValues
-}: Props<ApiArg>) {
+  initialValues,
+  isShowClearFilter = true
+}: Props<ApiArg> & { isShowClearFilter?: boolean }) {
   const handleReset = () => {
     form?.resetFields()
   }
@@ -55,13 +56,13 @@ export default function SearchBar<ApiArg extends object>({
     >
       <div className={`grid ${gridColsMap[cols] || 'grid-cols-2'} gap-3 mt-3`}>
         {headerMenu}
-        <Button
+        {isShowClearFilter && <Button
           icon={<Broom />}
           className='w-[350px]'
           onClick={handleReset}
         >
           Xóa bộ lọc
-        </Button>
+        </Button>}
       </div>
     </Form>
   )

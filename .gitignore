@@ -34,3 +34,5 @@ turbo.json
 .env
 
 .cursor
+.claude
+.serena

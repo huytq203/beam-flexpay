@@ -14,3 +14,4 @@ export interface Pagination {
   hasNextPage: boolean
 }
 
+export type TFunction = (key: string) => string

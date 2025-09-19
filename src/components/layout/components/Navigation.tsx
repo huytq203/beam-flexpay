@@ -3,6 +3,7 @@ import {
   _CUSTOMERS,
   _CUSTOMERTRANSACTION,
   _FEEMANAGEMENT,
+  _FEEMANAGEMENT_V2,
   _INTERNAL,
   _INTERNAL_WALLET,
   _PERSONALWALLET,
@@ -344,6 +345,32 @@ const feeManagement = {
       label: i18n.t('navigation.form-setting'),
       permission: 'transaction_limit'
     }
+  ]
+}
+
+const feeManagementV2 = {
+  key: _FEEMANAGEMENT_V2,
+  icon: (
+    <GearIcon
+      size={size}
+      weight={weight}
+      color={COlOR}
+    />
+  ),
+  label: i18n.t('navigation.policy-management-v2'),
+  children: [
+    {
+      key: 'outbound-fee-management',
+      icon: (
+        <CurrencyDollarIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: i18n.t('navigation.outbound-fee-management'),
+      permission: 'policy_management'
+    },
   ]
 }
 
@@ -745,6 +772,7 @@ export const navigationItems: ItemTypeCustom[] = [
   roleManagement,
   personalWallet,
   feeManagement,
+  feeManagementV2,
   bankAndConnect,
   repaymentAndDisburse,
   reports,
