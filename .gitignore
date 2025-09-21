@@ -36,3 +36,6 @@ turbo.json
 .cursor
 .claude
 .serena
+CLAUDE.md
+.env.dev
+.env.development
