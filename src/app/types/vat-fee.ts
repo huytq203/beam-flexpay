@@ -1,0 +1,126 @@
+export interface VatFeeCreateApiArg {
+  createVatFeeDto: CreateVatFeeDto
+}
+
+export interface VatFeeCreateApiResponse {
+  id: string
+  message: string
+}
+
+export interface VatFeeFindAllApiArg {
+  applicationType?: VatFeeApplicationType
+  accountGroup?: string
+  accountNumber?: string
+  status?: boolean
+  createdFrom?: string
+  createdTo?: string
+  appliedFrom?: string
+  appliedTo?: string
+  page?: number
+  take?: number
+  order?: 'ASC' | 'DESC'
+  orderBy?: string
+}
+
+export interface VatFeeFindAllApiResponse {
+  data: VatFee[]
+  meta: {
+    page: number
+    take: number
+    itemCount: number
+    pageCount: number
+    hasPreviousPage: boolean
+    hasNextPage: boolean
+  }
+}
+
+export interface VatFeeUpdateApiArg {
+  id: string
+  updateVatFeeDto: UpdateVatFeeDto
+}
+
+export interface VatFeeUpdateApiResponse {
+  id: string
+  message: string
+}
+
+export interface VatFeeRemoveApiArg {
+  id: string
+}
+
+export interface VatFeeRemoveApiResponse {
+  message: string
+}
+
+export interface VatFeeFindOneApiArg {
+  id: string
+}
+
+export interface VatFeeFindOneApiResponse extends VatFee {
+  // API trả về data trực tiếp, không có nested 'data' property
+}
+
+export interface VatFeeGetAccountGroupsApiResponse {
+  data: AccountGroupOption[]
+}
+
+export interface VatFeeGetAccountsApiResponse {
+  data: AccountOption[]
+}
+
+export interface CreateVatFeeDto {
+  applicationType: VatFeeApplicationType
+  accountGroup?: string
+  accountNumber?: string
+  flexibleFeeMpct?: number
+  startDate: string
+  endDate?: string
+}
+
+export interface UpdateVatFeeDto {
+  applicationType?: VatFeeApplicationType
+  accountGroup?: string
+  accountNumber?: string
+  flexibleFeeMpct?: number
+  startDate?: string
+  endDate?: string
+}
+
+export interface VatFee {
+  id: string
+  applicationType: VatFeeApplicationType
+  accountGroup?: string
+  accountNumber?: string
+  flexibleFeeMpct?: number
+  chargeWithin?: boolean
+  startDate: string
+  endDate?: string
+  active?: boolean
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface AccountGroupOption {
+  value: string
+  label: string
+}
+
+export interface AccountOption {
+  value: string
+  label: string
+  phoneNumber?: string
+  walletCode?: string
+}
+
+export enum VatFeeApplicationType {
+  SYSTEM = 'system',
+  INDIVIDUAL = 'individual',
+  ACCOUNT_GROUP = 'account_group'
+}
+
+export enum VatFeeStatus {
+  PENDING = 'pending',
+  ACTIVE = 'active',
+  EXPIRED = 'expired',
+  DISABLED = 'disabled'
+}

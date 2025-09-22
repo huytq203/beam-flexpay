@@ -371,6 +371,18 @@ const feeManagementV2 = {
       label: i18n.t('navigation.outbound-fee-management'),
       permission: 'policy_management'
     },
+    {
+      key: 'vat-fee-management',
+      icon: (
+        <CurrencyCircleDollarIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý phí VAT',
+      permission: 'policy_management'
+    },
   ]
 }
 

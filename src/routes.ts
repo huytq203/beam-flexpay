@@ -72,6 +72,7 @@ import PolicyManagement from '@pages/policy-management/PolicyManagement'
 import { OutboundFeeManagement } from '@pages/outbound-fee-management'
 import { OutboundFeeCreate } from '@pages/outbound-fee-management/outboundfee-create'
 import { OutboundFeeUpdate } from '@pages/outbound-fee-management/outboundfee-update'
+import { VatFeeCreate, VatFeeManagement } from '@pages/vat-fee-management'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -253,6 +254,14 @@ const feeManagementV2 = {
     {
       path: FEEMANAGEMENT_V2 + '/outbound-fee-management/update/:id',
       element: createElement(OutboundFeeUpdate)
+    },
+    {
+      path: FEEMANAGEMENT_V2 + '/vat-fee-management',
+      element: createElement(VatFeeManagement)
+    },
+    {
+      path: FEEMANAGEMENT_V2 + '/vat-fee-management/create',
+      element: createElement(VatFeeCreate)
     }
   ]
 }
