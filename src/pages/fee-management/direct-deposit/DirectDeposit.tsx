@@ -23,7 +23,7 @@ import { useToggle } from 'ahooks'
 import { Button, Card, Col, Form, Row, Select, Tooltip } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import DirectDepositSetupModal from './DirectDepositSetupModal'
 import ButtonView from '@components/button-view/ButtonView'
@@ -42,6 +42,7 @@ const DirectDeposit = () => {
 
   const { data: directDeposit } =
     useSystemFeeManagementGetDirectDepositListQuery(search)
+
 
   const [object, setObject] = useState<APPLICABLE_OBJECTS>(
     APPLICABLE_OBJECTS.SYSTEM

@@ -7,7 +7,10 @@ import {
 } from 'antd'
 import { useTranslation } from 'react-i18next'
 import ButtonSearch from '@components/button-search/ButtonSearch'
-import { useEffect } from 'react'
+import { useEffect, useState, useMemo } from 'react'
+import { useOutboundFeeGetBanksListQuery, useOutboundFeeGetAccountGroupsListQuery, useOutboundFeeCustomerSearchQuery } from '@services/outboundFeeService'
+import debounce from 'lodash/debounce'
+import { Options } from '@constants/options'
 
 const { RangePicker } = DatePicker
 
@@ -20,13 +23,49 @@ interface OutboundFeeManagementSearchBarProps {
 
 const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreateFee }: OutboundFeeManagementSearchBarProps) => {
   const { t } = useTranslation()
+  const [applicableTarget, setApplicableTarget] = useState('')
+  const [customerSearchQuery, setCustomerSearchQuery] = useState('')
+
+  const { data: banksData } = useOutboundFeeGetBanksListQuery()
+  const { data: accountGroupsData } = useOutboundFeeGetAccountGroupsListQuery()
+
+  const { data: customersData, isFetching: isCustomersFetching } = useOutboundFeeCustomerSearchQuery({
+    query: customerSearchQuery,
+    page: 1,
+    take: 10,
+    order: 'DESC',
+    orderBy: 'createdAt'
+  }, {
+    skip: applicableTarget !== 'individual'
+  })
+
+  // Debounced search function using lodash/debounce (same pattern as example)
+  const debouncedSearch = useMemo(() => {
+    const loadOptions = (value: string) => {
+      // This will trigger the RTK Query
+      setCustomerSearchQuery(value)
+    }
+
+    return debounce(loadOptions, 300)
+  }, [])
 
   useEffect(() => {
-    form.setFieldsValue({
-      method: 'all',
-      provider: 'all',
+    form.setFieldsValue({ 
+      method: Options.ALL,
+      provider: Options.ALL,
+      applicableTarget: Options.ALL,
     })
+    setApplicableTarget('')
   }, [form])
+
+  const handleApplicableTargetChange = (value: string) => {
+    setApplicableTarget(value)
+    setCustomerSearchQuery('')
+    form.setFieldsValue({
+      accountGroup: Options.ALL,
+      phoneNumber: Options.ALL,
+    })
+  }
 
   return (
     <SearchBar
@@ -40,14 +79,22 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
             name='creationTime'
             label={t('labels.creationTime')}
           >
-            <RangePicker className='w-full' size="large" />
+            <RangePicker 
+              className='w-full font-normal text-sm' 
+              showTime size="large" 
+              placeholder={['Từ ngày', 'Đến ngày']} 
+            />
           </Form.Item>
 
           <Form.Item
             name='applicableTime'
             label={t('labels.applicableTime')}
           >
-            <RangePicker className='w-full' size="large" />
+            <RangePicker 
+              className='w-full font-normal' 
+              showTime size="large" 
+              placeholder={['Từ ngày', 'Đến ngày']}
+            />
           </Form.Item>
 
           <Form.Item
@@ -57,9 +104,10 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
             <Select
               placeholder={t('placeholders.status')}
               size="large"
+              defaultValue={Options.ALL}
               options={[
                 {
-                  value: '',
+                  value: Options.ALL,
                   label: t('labels.all')
                 },
                 {
@@ -81,9 +129,10 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
             <Select
               placeholder={t('placeholders.feeInside')}
               size="large"
+              defaultValue={Options.ALL}
               options={[
                 {
-                  value: '',
+                  value: Options.ALL,
                   label: t('labels.all')
                 },
                 {
@@ -100,16 +149,124 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
 
           {/* Row 2 */}
           <Form.Item
+            name='applicableTarget'
+            label={t('labels.applicableTarget')}
+          >
+            <Select
+              placeholder={t('placeholders.applicableTarget')}
+              size="large"
+              defaultValue=""
+              onChange={handleApplicableTargetChange}
+              options={[
+                { value: Options.ALL, label: t('labels.all') },
+                { value: 'system', label: t('labels.system') },
+                { value: 'account_group', label: t('labels.accountGroup') },
+                { value: 'individual', label: t('labels.individual') }
+              ]}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name='transactionType'
+            label={t('labels.transactionType')}
+          >
+            <Select
+              placeholder={t('placeholders.transactionType')}
+              defaultValue={Options.ALL}
+              size="large"
+              options={[
+                { value: Options.ALL, label: t('labels.all') },
+                { value: 'deposit', label: t('labels.deposit') },
+                { value: 'withdrawal', label: t('labels.withdrawal') },
+                { value: 'payment', label: t('labels.payment') },
+                { value: 'transfer', label: t('labels.transfer') },
+                { value: 'refund', label: t('labels.refund') }
+              ]}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name='bank'
+            label={t('labels.bank')}
+          >
+            <Select
+              placeholder={t('placeholders.bank')}
+              size="large"
+              defaultValue={Options.ALL}
+              options={banksData ? [
+                { value: Options.ALL, label: t('labels.all') },
+                ...banksData.map((bank: { id: number; name: string; bankCode: string }) => ({
+                  value: bank.id.toString(),
+                  label: bank.name
+                }))
+              ] : [
+                { value: Options.ALL, label: t('labels.all') }
+              ]}
+            />
+          </Form.Item>
+
+          <div></div>
+
+          {/* Row 3 */}
+          {applicableTarget === 'account_group' && (
+            <Form.Item
+              name='accountGroup'
+              label={t('labels.accountGroup')}
+            >
+              <Select
+                placeholder={t('placeholders.accountGroup')}
+                size="large"
+                showSearch
+                filterOption={(input, option) =>
+                  (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                }
+                options={accountGroupsData ? accountGroupsData.map((group) => ({
+                  value: group.id.toString(),
+                  label: group.name
+                })) : []}
+              />
+            </Form.Item>
+          )}
+
+          {applicableTarget === 'individual' && (
+            <Form.Item
+              name='phoneNumber'
+              className='w-full font-normal text-sm'
+              label={t('labels.phone')}
+            >
+              <Select
+                placeholder={t('placeholders.phone')?.toString()}
+                size="large"
+                showSearch
+                defaultActiveFirstOption={false}
+                filterOption={false}
+                onSearch={debouncedSearch}
+                loading={isCustomersFetching}
+                options={customersData?.data?.map((customer) => ({
+                  value: customer.phoneNumber,
+                  label: `${customer.fullName} - ${customer.phoneNumber}`
+                })) || []}
+                notFoundContent={isCustomersFetching ? 'Loading...' : 'No data'}
+                allowClear
+              />
+            </Form.Item>
+          )}
+
+          {(applicableTarget === '' || applicableTarget === 'system') && (
+            <div></div>
+          )}
+
+          <Form.Item
             name='method'
             label={t('labels.method')}
             rules={[{ required: true, message: t('messages.pleaseSelectMethod').toString() }]}
           >
             <Select
               placeholder={t('placeholders.method')}
-              defaultValue="all"
+              defaultValue=""
               size="large"
               options={[
-                { value: 'all', label: t('labels.all') },
+                { value: Options.ALL, label: t('labels.all') },
                 { value: 'atm_card', label: t('labels.atmCard') },
                 { value: 'qr_code', label: t('labels.qrCode') },
                 { value: 'bank_account', label: t('labels.bankAccount') },
@@ -129,89 +286,12 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
           >
             <Select
               placeholder={t('placeholders.provider')}
-              defaultValue="all"
+              defaultValue=""
               size="large"
               options={[
-                { value: 'all', label: t('labels.all') },
+                { value: Options.ALL, label: t('labels.all') },
                 { value: 'vietqr', label: 'VietQR' },
                 { value: 'napas', label: 'NAPAS' }
-              ]}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name='applicableTarget'
-            label={t('labels.applicableTarget')}
-          >
-            <Select
-              placeholder={t('placeholders.applicableTarget')}
-              size="large"
-              defaultValue=""
-              options={[
-                { value: '', label: t('labels.all') },
-                { value: 'system', label: t('labels.system') },
-                { value: 'account_group', label: t('labels.accountGroup') },
-                { value: 'individual', label: t('labels.individual') }
-              ]}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name='transactionType'
-            label={t('labels.transactionType')}
-          >
-            <Select
-              placeholder={t('placeholders.transactionType')}
-              defaultValue=""
-              size="large"
-              options={[
-                { value: '', label: t('labels.all') },
-                { value: 'deposit', label: t('labels.deposit') },
-                { value: 'withdrawal', label: t('labels.withdrawal') },
-                { value: 'payment', label: t('labels.payment') },
-                { value: 'transfer', label: t('labels.transfer') },
-                { value: 'refund', label: t('labels.refund') }
-              ]}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name='bank'
-            label={t('labels.bank')}
-          >
-            <Select
-              placeholder={t('placeholders.bank')}
-              size="large"
-              options={[
-                {
-                  value: 'bank_1',
-                  label: "VP Bank"
-                },
-                {
-                  value: 'bank_2',
-                  label: "Vietcombank"
-                }
-              ]}
-            />
-          </Form.Item>
-
-          {/* Row 3 */}
-          <Form.Item
-            name='accountGroup'
-            label={t('labels.accountGroup')}
-          >
-            <Select
-              placeholder={t('placeholders.accountGroup')}
-              size="large"
-              options={[
-                {
-                  value: 'group_1',
-                  label: t('labels.group1')
-                },
-                {
-                  value: 'group_2',
-                  label: t('labels.group2')
-                }
               ]}
             />
           </Form.Item>

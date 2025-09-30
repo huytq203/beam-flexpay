@@ -10,10 +10,12 @@ import {
   Typography
 } from 'antd'
 import { useTranslation } from 'react-i18next'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import moment from 'moment'
 import { VatFeeApplicationType } from '@type/vat-fee'
 import { parseNumberFromPercentString } from '@utils/helperFunctions'
+import { useVatFeeGetAccountGroupsQuery, useVatFeeGetAccountsQuery } from '@services/vatFeeService'
+import debounce from 'lodash/debounce'
 
 const { Option } = Select
 const { Title, Text } = Typography
@@ -36,6 +38,23 @@ const VatFeeForm = ({
   const { t } = useTranslation()
   const [form] = Form.useForm()
   const [applicationType, setApplicationType] = useState<VatFeeApplicationType>(VatFeeApplicationType.SYSTEM)
+  const [customerSearchQuery, setCustomerSearchQuery] = useState('')
+  const [selectedCustomerId, setSelectedCustomerId] = useState<number | undefined>()
+
+  // Fetch data from APIs
+  const { data: accountGroupsData } = useVatFeeGetAccountGroupsQuery()
+  const { data: customersData, isFetching: isCustomersFetching } = useVatFeeGetAccountsQuery(
+    { search: customerSearchQuery },
+    { skip: applicationType !== VatFeeApplicationType.INDIVIDUAL }
+  )
+
+  // Debounced search function for customers
+  const debouncedSearch = useMemo(() => {
+    const loadOptions = (value: string) => {
+      setCustomerSearchQuery(value)
+    }
+    return debounce(loadOptions, 300)
+  }, [])
 
   useEffect(() => {
     if (initialValues) {
@@ -52,9 +71,12 @@ const VatFeeForm = ({
 
   const handleApplicationTypeChange = (value: VatFeeApplicationType) => {
     setApplicationType(value)
+    // Reset customer search when changing applicable target
+    setCustomerSearchQuery('')
+    setSelectedCustomerId(undefined)
     form.setFieldsValue({
       accountGroup: undefined,
-      accountNumber: undefined
+      phoneNumber: undefined
     })
   }
 
@@ -64,35 +86,27 @@ const VatFeeForm = ({
   }
 
   const handleSubmit = (values: any) => {
-    const payload = {
+    const payload: any = {
       applicationType: values.applicationType,
-      ...(values.accountGroup && { accountGroup: values.accountGroup }),
-      ...(values.accountNumber && { accountNumber: values.accountNumber }),
       ...(values.vatTaxPercent !== undefined && { flexibleFeeMpct: pctToMpct(values.vatTaxPercent) }),
       startDate: values.startDate?.toISOString(),
       ...(values.endDate && { endDate: values.endDate.toISOString() })
+    }
+
+    // Add customerId if individual
+    if (values.applicationType === VatFeeApplicationType.INDIVIDUAL && selectedCustomerId) {
+      payload.customerId = selectedCustomerId
+    }
+
+    // Add accountGroupId if account_group
+    if (values.applicationType === VatFeeApplicationType.ACCOUNT_GROUP && values.accountGroup) {
+      payload.accountGroupId = parseInt(values.accountGroup)
     }
 
     console.log('VAT Fee form payload to be sent to API:', payload)
     onFinish(payload)
   }
 
-  // Mock data for development
-  const mockAccountGroups = [
-    { value: 'group_1', label: 'Nhóm tài khoản 1' },
-    { value: 'group_2', label: 'Nhóm tài khoản 2' },
-    { value: 'group_3', label: 'Nhóm tài khoản 3' },
-    { value: 'group_retail', label: 'Nhóm bán lẻ' },
-    { value: 'group_wholesale', label: 'Nhóm bán sỉ' }
-  ]
-
-  const mockAccounts = [
-    { value: 'acc_001', label: '0987654321 - Nguyễn Văn A' },
-    { value: 'acc_002', label: '0123456789 - Trần Thị B' },
-    { value: 'acc_003', label: '0369852147 - Lê Văn C' },
-    { value: 'acc_004', label: '0901234567 - Phạm Thị D' },
-    { value: 'acc_005', label: '0912345678 - Hoàng Văn E' }
-  ]
 
   return (
     <div className="vat-fee-form">
@@ -140,7 +154,10 @@ const VatFeeForm = ({
                   filterOption={(input, option) =>
                     (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                   }
-                  options={mockAccountGroups}
+                  options={accountGroupsData ? accountGroupsData.map((group) => ({
+                    value: group.id.toString(),
+                    label: group.name
+                  })) : []}
                   size="large"
                 />
               </Form.Item>
@@ -148,18 +165,33 @@ const VatFeeForm = ({
 
             {applicationType === VatFeeApplicationType.INDIVIDUAL && (
               <Form.Item
-                name="accountNumber"
+                name="phoneNumber"
                 label="Tài khoản*"
                 rules={[{ required: true, message: 'Vui lòng nhập tài khoản' }]}
               >
                 <Select
-                  placeholder="Tìm theo số điện thoại hoặc mã ví"
+                  placeholder="Tìm theo số điện thoại"
                   showSearch
-                  filterOption={(input, option) =>
-                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                  }
-                  options={mockAccounts}
+                  defaultActiveFirstOption={false}
+                  filterOption={false}
+                  onSearch={debouncedSearch}
+                  loading={isCustomersFetching}
+                  options={customersData?.map((customer) => ({
+                    value: customer.phoneNumber,
+                    label: `${customer.fullName} - ${customer.phoneNumber}`,
+                    customerId: customer.id
+                  })) || []}
+                  notFoundContent={isCustomersFetching ? 'Loading...' : 'No data'}
                   size="large"
+                  allowClear
+                  onChange={(_value, option: any) => {
+                    // Store the customer ID when a customer is selected
+                    if (option && option.customerId) {
+                      setSelectedCustomerId(option.customerId)
+                    } else {
+                      setSelectedCustomerId(undefined)
+                    }
+                  }}
                 />
               </Form.Item>
             )}

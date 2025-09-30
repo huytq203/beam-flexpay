@@ -27,6 +27,10 @@ const VatFeeDetailModal = ({
   // API trả về data trực tiếp, không có nested 'data' property
   const vatFee = vatFeeResponse
 
+  const handleCancel = () => {
+    onCancel()
+  }
+
   const formatDateTime = (dateString?: string) => {
     if (!dateString) return 'Không thiết lập'
     return moment(dateString).format('DD/MM/YYYY HH:mm:ss')
@@ -54,7 +58,7 @@ const VatFeeDetailModal = ({
     <Modal
       title='Chi tiết cấu hình phí VAT'
       open={open}
-      onCancel={onCancel}
+      onCancel={handleCancel}
       footer={null}
       width={800}
       className='vat-fee-detail-modal'

@@ -49,6 +49,8 @@
     "outboundFeeDetail": "Outbound Fee Detail"
   },
   "messages": {
-    "loadDataFailed": "Failed to load data"
+    "loadDataFailed": "Failed to load data",
+    "pleaseSelectMethod": "Please select method",
+    "pleaseSelectProvider": "Please select provider"
   }
 }

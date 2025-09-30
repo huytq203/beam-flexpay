@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import { useEffect, useState } from 'react'
 import { VatFeeApplicationType } from '@type/vat-fee'
+import { Options } from '@constants/options'
 
 const { RangePicker } = DatePicker
 
@@ -34,7 +35,7 @@ const VatFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreateFee 
 
   useEffect(() => {
     form.setFieldsValue({
-      applicationType: '',
+      applicationType: Options.ALL,
       status: ''
     })
   }, [form])
@@ -62,7 +63,7 @@ const VatFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreateFee 
             label="Thời gian tạo"
           >
             <RangePicker
-              className='w-full'
+              className='w-full font-normal'
               size="large"
               format="DD/MM/YYYY HH:mm:ss"
               showTime
@@ -75,7 +76,7 @@ const VatFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreateFee 
             label="Thời gian áp dụng"
           >
             <RangePicker
-              className='w-full'
+              className='w-full font-normal'
               size="large"
               format="DD/MM/YYYY HH:mm:ss"
               showTime
@@ -107,10 +108,10 @@ const VatFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreateFee 
             <Select
               placeholder="Chọn đối tượng áp dụng"
               size="large"
-              defaultValue=""
+              defaultValue={Options.ALL}
               onChange={handleApplicationTypeChange}
               options={[
-                { value: '', label: 'Tất cả' },
+                { value: Options.ALL, label: 'Tất cả' },
                 { value: VatFeeApplicationType.SYSTEM, label: 'Hệ thống' },
                 { value: VatFeeApplicationType.ACCOUNT_GROUP, label: 'Nhóm tài khoản' },
                 { value: VatFeeApplicationType.INDIVIDUAL, label: 'Đối tượng riêng' }

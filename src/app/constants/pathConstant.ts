@@ -17,6 +17,11 @@ export const PATHS = {
       CREATE: '/fee-v2/outbound-fee-management/create',
       UPDATE: (id: string) => `/fee-v2/outbound-fee-management/update/${id}`
     },
+    INBOUND_FEE: {
+      LIST: '/fee-v2/inbound-fee-management',
+      CREATE: '/fee-v2/inbound-fee-management/create',
+      UPDATE: '/fee-v2/inbound-fee-management/update'
+    },
     VAT_FEE: {
       MANAGEMENT: '/fee-v2/vat-fee-management',
       CREATE: '/fee-v2/vat-fee-management/create',

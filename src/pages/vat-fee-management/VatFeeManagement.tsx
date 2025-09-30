@@ -6,6 +6,7 @@ import { VatFeeFindAllApiArg, VatFeeApplicationType } from '@type/vat-fee'
 import { PATHS } from '@constants/pathConstant'
 import VatFeeManagementSearchBar from './VatFeeManagementSearchBar'
 import VatFeeManagementTable from './VatFeeManagementTable'
+import { Options } from '@constants/options'
 
 const VatFeeManagement = () => {
   const navigate = useNavigate()
@@ -23,7 +24,7 @@ const VatFeeManagement = () => {
     const searchParams: VatFeeFindAllApiArg = {
       ...search,
       // Nếu chọn "Tất cả" (empty string) thì truyền undefined cho BE
-      applicationType: value.applicationType && value.applicationType !== '' ? value.applicationType : undefined,
+      applicationType: value.applicationType && value.applicationType !== Options.ALL ? value.applicationType : undefined,
       accountGroup: value.accountGroup || undefined,
       accountNumber: value.accountNumber || undefined,
       status: value.status !== '' ? value.status : undefined,

@@ -11,9 +11,11 @@ import {
   Typography
 } from 'antd'
 import { useTranslation } from 'react-i18next'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import moment from 'moment'
 import { parseNumberFromCommaString, parseNumberFromPercentString } from '@utils/helperFunctions'
+import { useOutboundFeeGetBanksListQuery, useOutboundFeeGetAccountGroupsListQuery, useOutboundFeeCustomerSearchQuery } from '@services/outboundFeeService'
+import debounce from 'lodash/debounce'
 
 const { Option } = Select
 const { Title, Text } = Typography
@@ -37,12 +39,37 @@ const OutboundFeeForm = ({
   const [form] = Form.useForm()
   const [applicationType, setApplicationType] = useState('system')
   const [transactionType, setTransactionType] = useState('')
+  const [customerSearchQuery, setCustomerSearchQuery] = useState('')
+  const [selectedCustomerId, setSelectedCustomerId] = useState<number | undefined>()
 
   const chargeWithin = Form.useWatch('chargeWithin', form) ?? true
   const payerFlexibleFee = Form.useWatch('payerFlexibleFeePercent', form)
   const payerFixedFee = Form.useWatch('payerFixedFee', form)
   const receiverFlexibleFee = Form.useWatch('receiverFlexibleFeePercent', form)
   const receiverFixedFee = Form.useWatch('receiverFixedFee', form)
+
+  // Fetch data from APIs
+  const { data: banksData } = useOutboundFeeGetBanksListQuery()
+  const { data: accountGroupsData } = useOutboundFeeGetAccountGroupsListQuery()
+
+  // Customer search with skip condition
+  const { data: customersData, isFetching: isCustomersFetching } = useOutboundFeeCustomerSearchQuery({
+    query: customerSearchQuery,
+    page: 1,
+    take: 10,
+    order: 'DESC',
+    orderBy: 'createdAt'
+  }, {
+    skip: applicationType !== 'individual'
+  })
+
+  // Debounced search function for customers
+  const debouncedSearch = useMemo(() => {
+    const loadOptions = (value: string) => {
+      setCustomerSearchQuery(value)
+    }
+    return debounce(loadOptions, 300)
+  }, [])
 
   useEffect(() => {
     if (initialValues) {
@@ -65,18 +92,29 @@ const OutboundFeeForm = ({
         receiverFlexibleFeePercent:
           typeof initialValues.receiverFlexibleFeeMpct === 'number'
             ? initialValues.receiverFlexibleFeeMpct / 1000
-            : 0
+            : 0,
+        // Set phoneNumber for display in edit mode (individual applicationType)
+        phoneNumber: initialValues.customerId ? initialValues.customerId.toString() : undefined
       })
       setApplicationType(initialValues.applicationType ?? 'system')
       setTransactionType(initialValues.transactionType ?? '')
+
+      // Set selected customer ID if available
+      if (initialValues.customerId) {
+        setSelectedCustomerId(initialValues.customerId)
+      }
     }
   }, [initialValues, form])
 
   const handleApplicationTypeChange = (value: string) => {
     setApplicationType(value)
+    // Reset customer search when changing applicable target
+    setCustomerSearchQuery('')
+    setSelectedCustomerId(undefined)
     form.setFieldsValue({
       accountGroup: undefined,
-      accountNumber: undefined
+      accountNumber: undefined,
+      phoneNumber: undefined
     })
   }
 
@@ -93,19 +131,12 @@ const OutboundFeeForm = ({
   }
 
   const handleSubmit = (values: any) => {
-    const payload = {
-      // Required fields
-      applicationType: values.applicationType,
-      accountGroup: values.accountGroup || values.accountNumber, // Use accountNumber for individual type
-      transactionType: values.transactionType,
-      method: Array.isArray(values.method) ? values.method[0] : values.method, // Take first method if array
-      provider: Array.isArray(values.provider) ? values.provider[0] : values.provider, // Take first provider if array
+    const payload: any = {
       chargeWithin: values.chargeWithin ?? true,
       startDate: values.startDate?.toISOString(),
 
       // Optional fields (only include if they have values)
       ...(values.endDate && { endDate: values.endDate.toISOString() }),
-      ...(values.bank && Array.isArray(values.bank) && values.bank.length > 0 && { bank: values.bank[0] }),
       ...(values.priceFrom !== undefined && { priceFrom: values.priceFrom }),
       ...(values.priceTo !== undefined && { priceTo: values.priceTo }),
 
@@ -122,31 +153,34 @@ const OutboundFeeForm = ({
       ...(values.receiverMaxFee !== undefined && { receiverMaxFee: values.receiverMaxFee })
     }
 
+    // Only include disabled fields when NOT in edit mode (i.e., when creating)
+    if (!isEdit) {
+      payload.applicationType = values.applicationType
+      payload.transactionType = values.transactionType
+      payload.method = Array.isArray(values.method) ? values.method[0] : values.method
+      payload.provider = Array.isArray(values.provider) ? values.provider[0] : values.provider
+
+      // Optional fields based on applicationType (only for create)
+      if (values.applicationType === 'individual' && selectedCustomerId) {
+        payload.customerId = selectedCustomerId
+      }
+      if (values.applicationType === 'account_group' && values.accountGroup) {
+        payload.accountGroupId = parseInt(values.accountGroup)
+      }
+
+      // Bank field (only for create)
+      if (values.bank && Array.isArray(values.bank) && values.bank.length > 0 && values.bank[0] !== 'all') {
+        payload.bankId = parseInt(values.bank[0])
+      }
+    }
+
     console.log('Form payload to be sent to API:', payload)
     onFinish(payload)
   }
 
-  const mockAccountGroups = [
-    { value: 'group_1', label: t('labels.group1') },
-    { value: 'group_2', label: t('labels.group2') },
-    { value: 'group_3', label: t('labels.group3') }
-  ]
-
-  const mockAccounts = [
-    { value: 'acc_001', label: '0987654321 - Nguyen Van A' },
-    { value: 'acc_002', label: '0123456789 - Tran Thi B' },
-    { value: 'acc_003', label: '0369852147 - Le Van C' }
-  ]
-
-  const mockBanks = [
-    { value: 'bank_1', label: 'Bank 1' },
-    { value: 'bank_2', label: 'Bank 2' },
-    { value: 'bank_3', label: 'Bank 3' }
-  ]
-
   const mockProviders = [
     { value: 'vietqr', label: 'VietQR' },
-    { value: 'napas', label: 'Napas' }
+    { value: 'napas', label: 'NAPAS' }
   ]
 
   const getPaymentMethods = (type: string) => {
@@ -213,6 +247,7 @@ const OutboundFeeForm = ({
                 placeholder={t('placeholders.applicableTarget')}
                 onChange={handleApplicationTypeChange}
                 size="large"
+                disabled={isEdit}
               >
                 <Option value="system">{t('labels.system')}</Option>
                 <Option value="individual">{t('labels.individual')}</Option>
@@ -235,8 +270,12 @@ const OutboundFeeForm = ({
                   filterOption={(input, option) =>
                     (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                   }
-                  options={mockAccountGroups}
+                  options={accountGroupsData ? accountGroupsData.map((group) => ({
+                    value: group.id.toString(),
+                    label: group.name
+                  })) : []}
                   size="large"
+                  disabled={isEdit}
                 />
               </Form.Item>
             </Col>
@@ -246,18 +285,46 @@ const OutboundFeeForm = ({
           {applicationType === 'individual' && (
             <Col span={12}>
               <Form.Item
-                name="accountNumber"
-                label={t('labels.enterAccount')}
+                name="phoneNumber"
+                label={t('labels.phone')}
                 rules={[{ required: true, message: t('messages.pleaseEnterAccount').toString() }]}
               >
                 <Select
-                  placeholder={t('placeholders.enterAccount')}
+                  placeholder={t('placeholders.phone')?.toString()}
                   showSearch
-                  filterOption={(input, option) =>
-                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                  defaultActiveFirstOption={false}
+                  filterOption={false}
+                  onSearch={debouncedSearch}
+                  loading={isCustomersFetching}
+                  options={
+                    isEdit && initialValues?.customerId && initialValues?.phoneNumber
+                      ? [
+                          {
+                            value: initialValues.customerId.toString(),
+                            label: initialValues.fullName
+                              ? `${initialValues.fullName} - ${initialValues.phoneNumber}`
+                              : initialValues.phoneNumber,
+                            customerId: initialValues.customerId
+                          }
+                        ]
+                      : customersData?.data?.map((customer) => ({
+                          value: customer.phoneNumber,
+                          label: `${customer.fullName} - ${customer.phoneNumber}`,
+                          customerId: customer.id
+                        })) || []
                   }
-                  options={mockAccounts}
+                  notFoundContent={isCustomersFetching ? 'Loading...' : 'No data'}
                   size="large"
+                  allowClear
+                  disabled={isEdit}
+                  onChange={(value, option: any) => {
+                    // Store the customer ID when a customer is selected
+                    if (option && option.customerId) {
+                      setSelectedCustomerId(option.customerId)
+                    } else {
+                      setSelectedCustomerId(undefined)
+                    }
+                  }}
                 />
               </Form.Item>
             </Col>
@@ -274,6 +341,7 @@ const OutboundFeeForm = ({
                 placeholder={t('placeholders.transactionType')}
                 onChange={handleTransactionTypeChange}
                 size="large"
+                disabled={isEdit}
               >
                 <Option value="deposit">{t('labels.deposit')}</Option>
                 <Option value="withdrawal">{t('labels.withdrawal')}</Option>
@@ -299,6 +367,7 @@ const OutboundFeeForm = ({
                   ...getPaymentMethods(transactionType)
                 ]}
                 size="large"
+                disabled={isEdit}
               />
             </Form.Item>
           </Col>
@@ -313,11 +382,17 @@ const OutboundFeeForm = ({
               <Select
                 mode="multiple"
                 placeholder={t('placeholders.bank')}
-                options={[
+                options={banksData ? [
                   { value: 'all', label: t('labels.all') },
-                  ...mockBanks
+                  ...banksData.map((bank: { id: number; name: string; bankCode: string }) => ({
+                    value: bank.id.toString(),
+                    label: bank.name
+                  }))
+                ] : [
+                  { value: 'all', label: t('labels.all') }
                 ]}
                 size="large"
+                disabled={isEdit}
               />
             </Form.Item>
           </Col>
@@ -337,6 +412,7 @@ const OutboundFeeForm = ({
                   ...mockProviders
                 ]}
                 size="large"
+                disabled={isEdit}
               />
             </Form.Item>
           </Col>

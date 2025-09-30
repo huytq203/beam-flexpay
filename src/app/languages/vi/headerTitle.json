@@ -72,7 +72,12 @@
     "/internal-wallet/internal-accounting/deposit-approval": "Phê duyệt hạch toán",
 
     "/fee-v2/outbound-fee-management": "Quản lý phí đầu ra",
-    "/fee-v2/outbound-fee-management/create": "Thiết lập phí đầu ra"
+    "/fee-v2/outbound-fee-management/create": "Thiết lập phí đầu ra",
+    "/fee-v2/vat-fee-management": "Quản lý thuế VAT",
+    "/fee-v2/vat-fee-management/create": "Thiết lập thuế VAT",
+    "/fee-v2/inbound-fee-management": "Quản lý phí đầu vào",
+    "/fee-v2/inbound-fee-management/create": "Thiết lập phí đầu vào",
+    "/fee-v2/inbound-fee-management/update": "Cập nhật phí đầu vào"
 
   }
 }

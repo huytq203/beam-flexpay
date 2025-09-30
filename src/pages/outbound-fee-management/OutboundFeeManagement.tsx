@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { OutboundFeeFindAllApiArg } from '@type/outbound-fee'
 import { PATHS } from '@constants/pathConstant'
+import { Options } from '@constants/options'
 import OutboundFeeManagementSearchBar from './OutboundFeeManagementSearchBar'
 import OutboundFeeManagementTable from './OutboundFeeManagementTable'
 
@@ -13,16 +14,16 @@ const OutboundFeeManagement = () => {
   const [search, setSearch] = useState<OutboundFeeFindAllApiArg>({
     page: 1,
     take: 10,
-    method: 'all',
-    provider: 'all'
+    method: Options.ALL,
+    provider: Options.ALL
   })
   const { data: outboundFees, refetch } = useOutboundFeeFindAllQuery(search)
 
   const submit = (value: any) => {
     const searchParams: OutboundFeeFindAllApiArg = {
       ...search,
-      method: value.method || 'all',
-      provider: value.provider || 'all',
+      method: value.method || Options.ALL,
+      provider: value.provider || Options.ALL,
       chargeWithin: value.feeInside === 'inside' ? 'system' : value.feeInside === 'outside' ? 'outside' : undefined,
       applicationType: value.applicableTarget,
       transactionType: value.transactionType,
@@ -40,11 +41,17 @@ const OutboundFeeManagement = () => {
 
   const handleClearFilter = () => {
     form.resetFields()
+    // Set lại giá trị mặc định cho các field sau khi reset
+    form.setFieldsValue({
+      method: Options.ALL,
+      provider: Options.ALL,
+      applicableTarget: Options.ALL
+    })
     setSearch({
       page: 1,
       take: 10,
-      method: 'all',
-      provider: 'all'
+      method: Options.ALL,
+      provider: Options.ALL
     })
   }
 

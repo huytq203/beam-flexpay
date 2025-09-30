@@ -7,6 +7,8 @@ import { PATHS } from '@constants/pathConstant'
 import { EditOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons'
 import moment from 'moment'
 import VatFeeDetailModal from './VatFeeDetailModal'
+import { convertMiniPercentToPercent } from '@utils/helperFunctions'
+import CellContent from '@components/cell-content/CellContent'
 
 interface VatFeeManagementTableProps {
   vatFees?: VatFee[]
@@ -41,10 +43,6 @@ const VatFeeManagementTable = ({ vatFees, search, setSearch, pagination }: VatFe
     }
   }
 
-  const formatFeePercent = (mpct?: number) => {
-    if (!mpct) return '0%'
-    return `${(mpct / 1000).toFixed(3)}%`
-  }
 
   const handleView = (record: VatFee) => {
     setSelectedVatFeeId(record.id)
@@ -82,7 +80,7 @@ const VatFeeManagementTable = ({ vatFees, search, setSearch, pagination }: VatFe
       width: 150,
       render: (type: VatFeeApplicationType) => {
         const formatted = formatApplicationType(type)
-        return <Tag color={formatted.color}>{formatted.text}</Tag>
+        return <CellContent data={formatted.text} color={formatted.color} />
       }
     },
     {
@@ -91,13 +89,13 @@ const VatFeeManagementTable = ({ vatFees, search, setSearch, pagination }: VatFe
       width: 200,
       render: (record: VatFee) => {
         if (record.applicationType === VatFeeApplicationType.SYSTEM) {
-          return <span className="text-gray-500">Toàn hệ thống</span>
+          return <CellContent data="Toàn hệ thống" />
         }
         if (record.applicationType === VatFeeApplicationType.ACCOUNT_GROUP) {
-          return <span>{record.accountGroup || 'N/A'}</span>
+          return <CellContent data={record.accountGroup || 'N/A'} />
         }
         if (record.applicationType === VatFeeApplicationType.INDIVIDUAL) {
-          return <span>{record.accountNumber || 'N/A'}</span>
+          return <CellContent data={record.accountNumber || 'N/A'} />
         }
         return 'N/A'
       }
@@ -109,25 +107,19 @@ const VatFeeManagementTable = ({ vatFees, search, setSearch, pagination }: VatFe
       width: 120,
       align: 'center' as const,
       render: (mpct: number) => (
-        <span className="font-semibold text-blue-600">{formatFeePercent(mpct)}</span>
+        <span className="font-semibold text-blue-600">{convertMiniPercentToPercent(mpct)}</span>
       )
     },
     {
       title: 'Thời gian áp dụng',
-      dataIndex: 'startDate',
-      key: 'startDate',
-      width: 180,
-      render: (date: string) => (
-        <span>{moment(date).format('DD/MM/YYYY HH:mm:ss')}</span>
-      )
-    },
-    {
-      title: 'Thời gian kết thúc',
-      dataIndex: 'endDate',
-      key: 'endDate',
-      width: 180,
-      render: (date?: string) => (
-        <span>{date ? moment(date).format('DD/MM/YYYY HH:mm:ss') : 'Không giới hạn'}</span>
+      key: 'dateRange',
+      width: 360,
+      render: (record: VatFee) => (
+        <div>
+          <span>{moment(record.startDate).format('DD/MM/YYYY HH:mm:ss')}</span>
+          <span> - </span>
+          <span>{record.endDate ? moment(record.endDate).format('DD/MM/YYYY HH:mm:ss') : 'Không giới hạn'}</span>
+        </div>
       )
     },
     {

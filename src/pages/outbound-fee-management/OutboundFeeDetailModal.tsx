@@ -1,8 +1,10 @@
 import { Modal, Descriptions, Spin, Alert, Tag } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { useOutboundFeeFindOneQuery } from '@services/outboundFeeService'
-import { OutboundFeeFindOneApiResponse } from '@type/outbound-fee'
+import { OutboundFeeApplicationType, OutboundFeeFindOneApiResponse, OutboundFeeMethod, OutboundFeeProvider } from '@type/outbound-fee'
+import { OutboundFeeTransactionType } from '@type/outbound-fee'
 import { convertLocalStringNumber, convertMiniPercentToPercent } from '@utils/helperFunctions'
+import { Options } from '@constants/options'
 
 interface OutboundFeeDetailModalProps {
   open: boolean
@@ -19,17 +21,17 @@ const OutboundFeeDetailModal = ({ open, onCancel, outboundFeeId }: OutboundFeeDe
   )
 
   const formatCurrency = (value?: number) => {
-    if (value === undefined || value === null) return t('labels.notSet')
+    if (value === undefined || value === null) return t('labels.nodata')
     return `${convertLocalStringNumber(value)} VND`
   }
 
   const formatPercent = (value?: number) => {
-    if (value === undefined || value === null) return t('labels.notSet')
-    return `${convertMiniPercentToPercent(value)}%`
+    if (value === undefined || value === null) return t('labels.nodata')
+    return `${convertMiniPercentToPercent(value)}`
   }
 
   const formatDateTime = (dateString?: string) => {
-    if (!dateString) return t('labels.notSet')
+    if (!dateString) return t('labels.nodata')
     return new Date(dateString).toLocaleString('vi-VN')
   }
 
@@ -39,44 +41,45 @@ const OutboundFeeDetailModal = ({ open, onCancel, outboundFeeId }: OutboundFeeDe
 
   const getApplicationTypeLabel = (type: string) => {
     const labels = {
-      'system': t('labels.system'),
-      'individual': t('labels.individual'),
-      'account_group': t('labels.accountGroup')
+      [OutboundFeeApplicationType.SYSTEM]: t('labels.system'),
+      [OutboundFeeApplicationType.INDIVIDUAL]: t('labels.individual'),
+      [OutboundFeeApplicationType.ACCOUNT_GROUP]: t('labels.accountGroup')
     }
     return labels[type as keyof typeof labels] || type
   }
 
   const getTransactionTypeLabel = (type: string) => {
     const labels = {
-      'deposit': t('labels.deposit'),
-      'withdrawal': t('labels.withdrawal'),
-      'payment': t('labels.payment'),
-      'transfer': t('labels.transfer'),
-      'refund': t('labels.refund')
+      [OutboundFeeTransactionType.DEPOSIT]: t('labels.deposit'),
+      [OutboundFeeTransactionType.WITHDRAWAL]: t('labels.withdrawal'),
+      [OutboundFeeTransactionType.PAYMENT]: t('labels.payment'),
+      [OutboundFeeTransactionType.TRANSFER]: t('labels.transfer'),
+      [OutboundFeeTransactionType.REFUND]: t('labels.refund')
     }
     return labels[type as keyof typeof labels] || type
   }
 
   const getMethodLabel = (method: string) => {
     const labels = {
-      'all': t('labels.all'),
-      'atm_card': t('labels.atmCard'),
-      'qr_code': t('labels.qrCode'),
-      'bank_account': t('labels.bankAccount'),
-      'ewallet': t('labels.ewallet'),
-      'visa_international': t('labels.visaInternational'),
-      'master_international': t('labels.masterInternational'),
-      'jcb_international': t('labels.jcbInternational'),
-      'amex_international': t('labels.amexInternational')
+      [Options.ALL]: t('labels.all'),
+      [OutboundFeeMethod.ATM_CARD]: t('labels.atmCard'),
+      [OutboundFeeMethod.QR_CODE]: t('labels.qrCode'),
+      [OutboundFeeMethod.BANK_ACCOUNT]: t('labels.bankAccount'),
+      [OutboundFeeMethod.EWALLET]: t('labels.ewallet'),
+      [OutboundFeeMethod.VISA_INTERNATIONAL]: t('labels.visaInternational'),
+      [OutboundFeeMethod.MASTER_INTERNATIONAL]: t('labels.masterInternational'),
+      [OutboundFeeMethod.JCB_INTERNATIONAL]: t('labels.jcbInternational'),
+      [OutboundFeeMethod.AMEX_INTERNATIONAL]: t('labels.amexInternational')
     }
     return labels[method as keyof typeof labels] || method
   }
 
   const getProviderLabel = (provider: string) => {
     const labels = {
-      'all': t('labels.all'),
-      'vietqr': 'VietQR',
-      'napas': 'NAPAS'
+      [Options.ALL]: t('labels.all'),
+      [OutboundFeeProvider.VIETQR]: t('labels.vietqr'),
+      [OutboundFeeProvider.NAPAS]: t('labels.napas'),
+      [OutboundFeeProvider.VPB]: t('labels.vpb')
     }
     return labels[provider as keyof typeof labels] || provider
   }
@@ -119,7 +122,13 @@ const OutboundFeeDetailModal = ({ open, onCancel, outboundFeeId }: OutboundFeeDe
 
             {outboundFee.applicationType === 'account_group' && (
               <Descriptions.Item label={t('labels.accountGroup')}>
-                {outboundFee.accountGroup || t('labels.notSet')}
+                {outboundFee.accountGroupName || t('labels.nodata')}
+              </Descriptions.Item>
+            )}
+
+            {outboundFee.applicationType === 'individual' && (
+              <Descriptions.Item label={t('labels.customer')}>
+                {outboundFee.fullname || t('labels.nodata')}
               </Descriptions.Item>
             )}
 
@@ -132,7 +141,7 @@ const OutboundFeeDetailModal = ({ open, onCancel, outboundFeeId }: OutboundFeeDe
             </Descriptions.Item>
 
             <Descriptions.Item label={t('labels.bank')}>
-              {outboundFee.bank || t('labels.notSet')}
+              {outboundFee.bankName || t('labels.nodata')}
             </Descriptions.Item>
 
             <Descriptions.Item label={t('labels.provider')}>
@@ -156,7 +165,7 @@ const OutboundFeeDetailModal = ({ open, onCancel, outboundFeeId }: OutboundFeeDe
             <Descriptions.Item label={t('labels.priceRange')}>
               {outboundFee.priceFrom !== undefined && outboundFee.priceTo !== undefined
                 ? `${formatCurrency(outboundFee.priceFrom)} - ${formatCurrency(outboundFee.priceTo)}`
-                : t('labels.notSet')
+                : t('labels.nodata')
               }
             </Descriptions.Item>
           </Descriptions>

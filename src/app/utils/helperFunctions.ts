@@ -397,9 +397,10 @@ export const getStringDateFromMoment = (
   else return undefined
 }
 
+// dayjs auto convert to browser timezone
 export const getVNDateStringFromUTCTimeString = (time?: string | null) => {
   if (!time) return ''
-  return dayjs(time).add(7, 'hour').format(DateFormat)
+  return dayjs(time).format(DateFormat)
 }
 
 
@@ -826,5 +827,5 @@ export function removeNullUndefinedFields<T extends object>(obj: T): Partial<T> 
  */
 export const convertMiniPercentToPercent = (value?: number): string => {
   if (!value) return ''
-  return `${(value / 100).toFixed(2).replace(/0+$/, '').replace(/\.$/, '')}`
+  return `${(value / 1000).toFixed(2).replace(/0+$/, '').replace(/\.$/, '')}%`
 }

@@ -1,6 +1,15 @@
 export interface OutboundFeeSearchParams {
   // Required fields
-  method: 'all' | 'atm_card' | 'qr_code' | 'bank_account' | 'ewallet' | 'visa_international' | 'master_international' | 'jcb_international' | 'amex_international'
+  method:
+    | 'all'
+    | 'atm_card'
+    | 'qr_code'
+    | 'bank_account'
+    | 'ewallet'
+    | 'visa_international'
+    | 'master_international'
+    | 'jcb_international'
+    | 'amex_international'
   provider: 'all' | 'vietqr' | 'napas'
 
   // Optional time fields
@@ -33,42 +42,76 @@ export interface Pagination {
   hasNextPage: boolean
 }
 
-export type OutboundFeeType ={
+export type OutboundFeeType = {
   id: string
-  applicationType: string,
+  applicationType: string
   transactionType: string
-  method: string,
+  method: string
   bank: string
-  provider: string,
+  provider: string
   accountGroup: string
-  chargeWithin: string,
-  priceFrom: number,
-  priceTo: number,
-  payerFlexibleFeeMpct: number,
-  payerFixedFee: number,
-  payerMinFee: number,
-  payerMaxFee: number,
-  receiverFlexibleFeeMpct: number,
-  receiverFixedFee: number,
-  receiverMinFee: number,
-  receiverMaxFee: number,
+  chargeWithin: string
+  priceFrom: number
+  priceTo: number
+  payerFlexibleFeeMpct: number
+  payerFixedFee: number
+  payerMinFee: number
+  payerMaxFee: number
+  receiverFlexibleFeeMpct: number
+  receiverFixedFee: number
+  receiverMinFee: number
+  receiverMaxFee: number
   createdAt: string
   startDate: string
   endDate: string
 }
 
+export enum OutboundFeeTransactionType {
+  DEPOSIT = 'deposit',
+  WITHDRAWAL = 'withdrawal',
+  PAYMENT = 'payment',
+  TRANSFER = 'transfer',
+  REFUND = 'refund'
+}
+
+export enum OutboundFeeMethod {
+  ALL = 'all',
+  ATM_CARD = 'atm_card',
+  QR_CODE = 'qr_code',
+  BANK_ACCOUNT = 'bank_account',
+  EWALLET = 'ewallet',
+  VISA_INTERNATIONAL = 'visa_international',
+  MASTER_INTERNATIONAL = 'master_international',
+  JCB_INTERNATIONAL = 'jcb_international',
+  AMEX_INTERNATIONAL = 'amex_international'
+}
+
+export enum OutboundFeeProvider {
+  ALL = 'all',
+  VIETQR = 'vietqr',
+  NAPAS = 'napas',
+  VPB = 'vpb'
+}
+
+export enum OutboundFeeApplicationType {
+  SYSTEM = 'system',
+  INDIVIDUAL = 'individual',
+  ACCOUNT_GROUP = 'account_group'
+}
+
 export interface CreateOutboundFeeDto {
   // Required fields
-  applicationType: 'system' | 'individual' | 'account_group'
-  accountGroup: string
-  transactionType: 'deposit' | 'withdrawal' | 'payment' | 'transfer' | 'refund'
-  method: 'all' | 'atm_card' | 'qr_code' | 'bank_account' | 'ewallet' | 'visa_international' | 'master_international' | 'jcb_international' | 'amex_international'
-  provider: 'all' | 'vietqr' | 'napas'
+  applicationType: OutboundFeeApplicationType
+  transactionType: OutboundFeeTransactionType
+  method: OutboundFeeMethod
+  provider: OutboundFeeProvider
   chargeWithin: boolean
   startDate: string // ISO 8601 string
 
-  // Optional fields
-  bank?: string
+  // Optional fields based on applicationType
+  customerId?: number // For applicationType = 'individual'
+  accountGroupId?: number // For applicationType = 'account_group'
+  bankId?: number // Bank ID
   endDate?: string // ISO 8601 string
 
   // Price range
@@ -144,8 +187,12 @@ export interface OutboundFeeFindOneApiArg {
 export interface OutboundFeeFindOneApiResponse {
   id: string
   applicationType: string
-  accountGroup: string
-  bank?: string
+  customerId?: string
+  fullname?: string
+  accountGroupId?: string
+  accountGroupName?: string
+  bankId?: string
+  bankName?: string
   transactionType: string
   method: string
   provider: string
@@ -205,4 +252,34 @@ export interface OutboundFeeGetBanksApiResponse {
 
 export interface OutboundFeeGetProvidersApiResponse {
   data: Provider[]
+}
+
+export interface OutboundFeeGetBanksListApiResponse {
+  id: number
+  name: string
+  bankCode: string
+}
+
+export interface OutboundFeeGetAccountGroupsListApiResponse {
+  id: number
+  name: string
+}
+
+export interface Customer {
+  id: number
+  fullName: string
+  phoneNumber: string
+}
+
+export interface OutboundFeeCustomerSearchApiArg {
+  query?: string
+  page?: number
+  take?: number
+  order?: 'ASC' | 'DESC'
+  orderBy?: string
+}
+
+export interface OutboundFeeCustomerSearchApiResponse {
+  data: Customer[]
+  meta: Pagination
 }

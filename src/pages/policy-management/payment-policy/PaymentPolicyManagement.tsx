@@ -32,6 +32,7 @@ import {
 import { useForm } from 'antd/es/form/Form'
 import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
+import { useEffect } from 'react'
 import { t } from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -79,6 +80,26 @@ const PaymentPolicyManagement = () => {
   const [triggerListAccountGroup, { data: listAccountGroup }] =
     useLazyGetListGroupQuery()
   const [triggerListAccount, { data: listAccount }] = useLazyGetCustomersQuery()
+
+  // Console logs for timezone debugging - PaymentPolicyManagement
+  useEffect(() => {
+    if (data) {
+      console.log('🔍 TIMEZONE DEBUG - PaymentPolicyManagement API Response:', data)
+      if (data?.data && data.data.length > 0) {
+        const firstItem = data.data[0]
+        console.log('🔍 TIMEZONE DEBUG - PaymentPolicy First Item:', firstItem)
+        console.log('🔍 TIMEZONE DEBUG - PaymentPolicy startDate raw:', firstItem.startDate)
+        console.log('🔍 TIMEZONE DEBUG - PaymentPolicy endDate raw:', firstItem.endDate)
+        if (firstItem.startDate) {
+          console.log('🔍 TIMEZONE DEBUG - PaymentPolicy startDate typeof:', typeof firstItem.startDate)
+          console.log('🔍 TIMEZONE DEBUG - PaymentPolicy startDate dayjs():', dayjs(firstItem.startDate).toString())
+          console.log('🔍 TIMEZONE DEBUG - PaymentPolicy startDate formatted:', dayjs(firstItem.startDate).format('DD/MM/YYYY HH:mm:ss'))
+          console.log('🔍 TIMEZONE DEBUG - PaymentPolicy startDate with +7:', dayjs(firstItem.startDate).add(7, 'hour').format('DD/MM/YYYY HH:mm:ss'))
+          console.log('🔍 TIMEZONE DEBUG - PaymentPolicy startDate ISO:', dayjs(firstItem.startDate).toISOString())
+        }
+      }
+    }
+  }, [data])
 
   const columns: ColumnsType<any> = [
     {
@@ -235,18 +256,26 @@ const PaymentPolicyManagement = () => {
       title: `${trans`policy-management.payment.applicableDate`}`,
       dataIndex: 'startDate',
       width: 150,
-      render: (record) => (
-        <div>{record ? dayjs(record).format(TimeFullFormat) : '-'}</div>
-      )
+      render: (record) => {
+        console.log('🔍 TIMEZONE DEBUG - PaymentPolicy startDate render record:', record)
+        console.log('🔍 TIMEZONE DEBUG - PaymentPolicy startDate render formatted:', record ? dayjs(record).format(TimeFullFormat) : '-')
+        return (
+          <div>{record ? dayjs(record).format(TimeFullFormat) : '-'}</div>
+        )
+      }
     },
     {
       align: 'center',
       title: `${trans`policy-management.payment.endDate`}`,
       dataIndex: 'endDate',
       width: 150,
-      render: (record) => (
-        <div>{record ? dayjs(record).format(TimeFullFormat) : '-'}</div>
-      )
+      render: (record) => {
+        console.log('🔍 TIMEZONE DEBUG - PaymentPolicy endDate render record:', record)
+        console.log('🔍 TIMEZONE DEBUG - PaymentPolicy endDate render formatted:', record ? dayjs(record).format(TimeFullFormat) : '-')
+        return (
+          <div>{record ? dayjs(record).format(TimeFullFormat) : '-'}</div>
+        )
+      }
     },
     {
       align: 'center',

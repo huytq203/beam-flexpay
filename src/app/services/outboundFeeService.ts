@@ -12,7 +12,11 @@ import {
   OutboundFeeGetAccountGroupsApiResponse,
   OutboundFeeGetAccountsApiResponse,
   OutboundFeeGetBanksApiResponse,
-  OutboundFeeGetProvidersApiResponse
+  OutboundFeeGetProvidersApiResponse,
+  OutboundFeeGetBanksListApiResponse,
+  OutboundFeeGetAccountGroupsListApiResponse,
+  OutboundFeeCustomerSearchApiArg,
+  OutboundFeeCustomerSearchApiResponse
 } from '@type/outbound-fee'
 import { fnTransformResponse } from '@utils/helperFunctions'
 import { apiService as api } from './apiService'
@@ -138,6 +142,40 @@ const injectedRtkApi = api
           url: `/outbound-fee/providers`
         }),
         transformResponse: fnTransformResponse
+      }),
+      outboundFeeGetBanksList: build.query<
+        OutboundFeeGetBanksListApiResponse[],
+        void
+      >({
+        query: () => ({
+          url: `/outbound-fee/banks/list`
+        }),
+        transformResponse: fnTransformResponse
+      }),
+      outboundFeeGetAccountGroupsList: build.query<
+        OutboundFeeGetAccountGroupsListApiResponse[],
+        void
+      >({
+        query: () => ({
+          url: `/outbound-fee/account-groups/list`
+        }),
+        transformResponse: fnTransformResponse
+      }),
+      outboundFeeCustomerSearch: build.query<
+        OutboundFeeCustomerSearchApiResponse,
+        OutboundFeeCustomerSearchApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/outbound-fee/customers/search`,
+          params: {
+            query: queryArg.query,
+            page: queryArg.page,
+            take: queryArg.take,
+            order: queryArg.order,
+            orderBy: queryArg.orderBy
+          }
+        }),
+        transformResponse: fnTransformResponse
       })
     })
   })
@@ -151,5 +189,9 @@ export const {
   useOutboundFeeGetAccountGroupsQuery,
   useOutboundFeeGetAccountsQuery,
   useOutboundFeeGetBanksQuery,
-  useOutboundFeeGetProvidersQuery
+  useOutboundFeeGetProvidersQuery,
+  useOutboundFeeGetBanksListQuery,
+  useOutboundFeeGetAccountGroupsListQuery,
+  useOutboundFeeCustomerSearchQuery,
+  useLazyOutboundFeeCustomerSearchQuery
 } = injectedRtkApi

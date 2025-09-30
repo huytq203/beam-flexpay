@@ -655,3 +655,7 @@ export const reportType = [
     value: ReportType.HIGHEST_NUMBER_TRANSACTIONS
   }
 ]
+
+export enum Options {
+  ALL = 'all',
+}

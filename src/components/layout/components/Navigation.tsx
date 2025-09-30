@@ -372,6 +372,18 @@ const feeManagementV2 = {
       permission: 'policy_management'
     },
     {
+      key: 'inbound-fee-management',
+      icon: (
+        <ArrowCircleDownIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: i18n.t('navigation.inbound-fee-management'),
+      permission: 'policy_management'
+    },
+    {
       key: 'vat-fee-management',
       icon: (
         <CurrencyCircleDollarIcon
