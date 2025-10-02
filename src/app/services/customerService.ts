@@ -78,10 +78,10 @@ export const customerApi = apiService.injectEndpoints({
       })
     }),
     toggleActive: builder.mutation({
-      query: (payload) => ({
-        url: `/customer/${payload.userId}/toggle-active`,
+      query: ({ userId, ...rest }: { userId: string } & Record<string, unknown>) => ({
+        url: `/customer/${userId}/toggle-active`,
         method: 'PATCH',
-        body: payload
+        body: rest
       })
     }),
     exportExcel: builder.query({
