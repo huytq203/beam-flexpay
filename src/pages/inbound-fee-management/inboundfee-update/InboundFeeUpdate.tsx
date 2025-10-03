@@ -23,21 +23,14 @@ const InboundFeeUpdate = () => {
     try {
       console.log('Updating inbound fee with values:', values)
 
-      // Transform the data to match API requirements
-      const updateDto = {
-        ...values,
-        // Ensure arrays are properly formatted
-        method: Array.isArray(values.method) ? values.method : [values.method],
-        provider: Array.isArray(values.provider) ? values.provider : [values.provider],
-        bank: values.bank && Array.isArray(values.bank) ? values.bank : values.bank ? [values.bank] : undefined
-      }
-
+      // InboundFeeForm already handles the payload correctly for edit mode
+      // It only includes updatable fields (no disabled fields like applicationType, method, provider, bank)
       await updateInboundFee({
         id,
-        updateInboundFeeDto: updateDto
+        updateInboundFeeDto: values
       }).unwrap()
 
-      message.success('Cập nhật cấu hình phí đầu vào thành công')
+      message.success(t('messages.updateInboundFeeSuccess') || 'Cập nhật cấu hình phí đầu vào thành công')
       navigate(PATHS.FEE_V2?.INBOUND_FEE?.LIST || '/fee-management/inbound-fee')
     } catch (error: any) {
       console.error('Error updating inbound fee:', error)

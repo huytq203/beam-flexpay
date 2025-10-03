@@ -11,9 +11,11 @@ import {
   Divider
 } from 'antd'
 import { useTranslation } from 'react-i18next'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import moment from 'moment'
 import { parseNumberFromCommaString, parseNumberFromPercentString } from '@utils/helperFunctions'
+import { useInboundFeeGetBanksListQuery, useInboundFeeGetAccountGroupsListQuery, useInboundFeeCustomerSearchQuery } from '@services/inboundFeeService'
+import debounce from 'lodash/debounce'
 
 const { Option } = Select
 const { Title, Text } = Typography
@@ -37,10 +39,35 @@ const InboundFeeForm = ({
   const [form] = Form.useForm()
   const [applicationType, setApplicationType] = useState('system')
   const [transactionType, setTransactionType] = useState('')
+  const [customerSearchQuery, setCustomerSearchQuery] = useState('')
+  const [selectedCustomerId, setSelectedCustomerId] = useState<number | undefined>()
 
   // Watch form fields
-  const flexibleFee = Form.useWatch('flexibleFeePercent', form)
+  const flexibleFee = Form.useWatch('flexibleFeeMpct', form)
   const fixedFee = Form.useWatch('fixedFee', form)
+
+  // Fetch data from APIs
+  const { data: banksData } = useInboundFeeGetBanksListQuery()
+  const { data: accountGroupsData } = useInboundFeeGetAccountGroupsListQuery()
+
+  // Customer search with skip condition
+  const { data: customersData, isFetching: isCustomersFetching } = useInboundFeeCustomerSearchQuery({
+    query: customerSearchQuery,
+    page: 1,
+    take: 10,
+    order: 'DESC',
+    orderBy: 'createdAt'
+  }, {
+    skip: applicationType !== 'individual'
+  })
+
+  // Debounced search function for customers
+  const debouncedSearch = useMemo(() => {
+    const loadOptions = (value: string) => {
+      setCustomerSearchQuery(value)
+    }
+    return debounce(loadOptions, 300)
+  }, [])
 
   useEffect(() => {
     if (initialValues) {
@@ -54,22 +81,33 @@ const InboundFeeForm = ({
         method: initialValues.method ?? ['all'],
         bank: initialValues.bank ?? ['all'],
         provider: initialValues.provider ?? ['all'],
-        flexibleFeePercent: initialValues.flexibleFeePercent ?? 0,
+        flexibleFeeMpct: initialValues.flexibleFeeMpct ?? 0,
         fixedFee: initialValues.fixedFee ?? 0,
         minFee: initialValues.minFee ?? undefined,
         maxFee: initialValues.maxFee ?? undefined,
-        vat: initialValues.vat ?? 0
+        vat: initialValues.vat ?? 0,
+        // Set phoneNumber for display in edit mode (individual applicationType)
+        phoneNumber: initialValues.customerId ? initialValues.customerId.toString() : undefined
       })
       setApplicationType(initialValues.applicationType ?? 'system')
       setTransactionType(initialValues.transactionType ?? '')
+
+      // Set selected customer ID if available
+      if (initialValues.customerId) {
+        setSelectedCustomerId(initialValues.customerId)
+      }
     }
   }, [initialValues, form])
 
   const handleApplicationTypeChange = (value: string) => {
     setApplicationType(value)
+    // Reset customer search when changing applicable target
+    setCustomerSearchQuery('')
+    setSelectedCustomerId(undefined)
     form.setFieldsValue({
       accountGroup: undefined,
-      accountId: undefined
+      customerId: undefined,
+      phoneNumber: undefined
     })
   }
 
@@ -95,7 +133,7 @@ const InboundFeeForm = ({
       ...(values.priceTo !== undefined && { priceTo: values.priceTo }),
 
       // Fee configuration (only include if they have values)
-      ...(values.flexibleFeePercent !== undefined && { flexibleFeePercent: values.flexibleFeePercent }),
+      ...(values.flexibleFeeMpct !== undefined && { flexibleFeeMpct: values.flexibleFeeMpct }),
       ...(values.fixedFee !== undefined && { fixedFee: values.fixedFee }),
       ...(values.minFee !== undefined && { minFee: values.minFee }),
       ...(values.maxFee !== undefined && { maxFee: values.maxFee }),
@@ -112,8 +150,8 @@ const InboundFeeForm = ({
       payload.provider = Array.isArray(values.provider) ? values.provider[0] : values.provider
 
       // Optional fields based on applicationType (only for create)
-      if (values.applicationType === 'individual' && values.accountId) {
-        payload.accountId = values.accountId
+      if (values.applicationType === 'individual' && selectedCustomerId) {
+        payload.customerId = selectedCustomerId
       }
       if (values.applicationType === 'account_group' && values.accountGroup) {
         payload.accountGroupId = parseInt(values.accountGroup)
@@ -128,27 +166,6 @@ const InboundFeeForm = ({
     console.log('Form payload to be sent to API:', payload)
     onFinish(payload)
   }
-
-  // Mock data for dropdowns
-  const mockAccountGroups = [
-    { value: 'group_1', label: 'Nhóm VIP' },
-    { value: 'group_2', label: 'Nhóm Thường' },
-    { value: 'group_3', label: 'Nhóm Doanh nghiệp' }
-  ]
-
-  const mockAccounts = [
-    { value: 'acc_001', label: 'Ví VIP 001 - 0987654321' },
-    { value: 'acc_002', label: 'Ví Thường 002 - 0123456789' },
-    { value: 'acc_003', label: 'Ví DN 003 - 0369852147' }
-  ]
-
-  const mockBanks = [
-    { value: 'vcb', label: 'Vietcombank' },
-    { value: 'acb', label: 'ACB' },
-    { value: 'tcb', label: 'Techcombank' },
-    { value: 'bidv', label: 'BIDV' },
-    { value: 'vpb', label: 'VPBank' }
-  ]
 
   const mockProviders = [
     { value: 'vpb', label: 'VPB' },
@@ -201,7 +218,7 @@ const InboundFeeForm = ({
           method: ['all'],
           bank: ['all'],
           provider: ['all'],
-          flexibleFeePercent: 0,
+          flexibleFeeMpct: 0,
           fixedFee: 0,
           vat: 0
         }}
@@ -220,6 +237,7 @@ const InboundFeeForm = ({
                 placeholder={t('placeholders.applicableTarget')}
                 onChange={handleApplicationTypeChange}
                 size="large"
+                disabled={isEdit}
               >
                 <Option value="system">Hệ thống</Option>
                 <Option value="individual">Đối tượng riêng</Option>
@@ -239,6 +257,7 @@ const InboundFeeForm = ({
                 placeholder={t('placeholders.transactionType')}
                 onChange={handleTransactionTypeChange}
                 size="large"
+                disabled={isEdit}
               >
                 <Option value="deposit">Nạp tiền</Option>
                 <Option value="withdrawal">Rút tiền</Option>
@@ -262,12 +281,15 @@ const InboundFeeForm = ({
                 <Select
                   placeholder="Tìm và chọn nhóm tài khoản"
                   showSearch
-                  allowClear
                   filterOption={(input, option) =>
                     (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                   }
-                  options={mockAccountGroups}
+                  options={accountGroupsData ? accountGroupsData.map((group) => ({
+                    value: group.id.toString(),
+                    label: group.name
+                  })) : []}
                   size="large"
+                  disabled={isEdit}
                 />
               </Form.Item>
             </Col>
@@ -277,7 +299,7 @@ const InboundFeeForm = ({
           {applicationType === 'individual' && (
             <Col span={12}>
               <Form.Item
-                name="accountId"
+                name="phoneNumber"
                 label="Nhập tài khoản"
                 rules={[{ required: true, message: 'Vui lòng nhập tài khoản' }]}
                 tooltip="Chọn tài khoản ví điện tử để áp dụng chính sách phí"
@@ -285,12 +307,39 @@ const InboundFeeForm = ({
                 <Select
                   placeholder="Tìm theo số điện thoại hoặc mã ví"
                   showSearch
-                  allowClear
-                  filterOption={(input, option) =>
-                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                  defaultActiveFirstOption={false}
+                  filterOption={false}
+                  onSearch={debouncedSearch}
+                  loading={isCustomersFetching}
+                  options={
+                    isEdit && initialValues?.customerId && initialValues?.phoneNumber
+                      ? [
+                          {
+                            value: initialValues.customerId.toString(),
+                            label: initialValues.fullname
+                              ? `${initialValues.fullname} - ${initialValues.phoneNumber}`
+                              : initialValues.phoneNumber,
+                            customerId: initialValues.customerId
+                          }
+                        ]
+                      : customersData?.data?.map((customer) => ({
+                          value: customer.phoneNumber,
+                          label: `${customer.fullName} - ${customer.phoneNumber}`,
+                          customerId: customer.id
+                        })) || []
                   }
-                  options={mockAccounts}
+                  notFoundContent={isCustomersFetching ? 'Loading...' : 'No data'}
                   size="large"
+                  allowClear
+                  disabled={isEdit}
+                  onChange={(value, option: any) => {
+                    // Store the customer ID when a customer is selected
+                    if (option && option.customerId) {
+                      setSelectedCustomerId(option.customerId)
+                    } else {
+                      setSelectedCustomerId(undefined)
+                    }
+                  }}
                 />
               </Form.Item>
             </Col>
@@ -311,6 +360,7 @@ const InboundFeeForm = ({
                   ...getPaymentMethods(transactionType)
                 ]}
                 size="large"
+                disabled={isEdit}
               />
             </Form.Item>
           </Col>
@@ -326,11 +376,17 @@ const InboundFeeForm = ({
               <Select
                 mode="multiple"
                 placeholder="Chọn ngân hàng"
-                options={[
+                options={banksData ? [
                   { value: 'all', label: 'Tất cả' },
-                  ...mockBanks
+                  ...banksData.map((bank: { id: number; name: string; bankCode: string }) => ({
+                    value: bank.id.toString(),
+                    label: bank.name
+                  }))
+                ] : [
+                  { value: 'all', label: 'Tất cả' }
                 ]}
                 size="large"
+                disabled={isEdit}
               />
             </Form.Item>
           </Col>
@@ -350,6 +406,7 @@ const InboundFeeForm = ({
                   ...mockProviders
                 ]}
                 size="large"
+                disabled={isEdit}
               />
             </Form.Item>
           </Col>
@@ -504,7 +561,7 @@ const InboundFeeForm = ({
           {/* Phí linh hoạt */}
           <Col span={12}>
             <Form.Item
-              name="flexibleFeePercent"
+              name="flexibleFeeMpct"
               label="Phí linh hoạt (%)"
               rules={[
                 ({ getFieldValue }) => ({
@@ -541,7 +598,7 @@ const InboundFeeForm = ({
               rules={[
                 ({ getFieldValue }) => ({
                   validator(_, value) {
-                    const flexibleFee = getFieldValue('flexibleFeePercent')
+                    const flexibleFee = getFieldValue('flexibleFeeMpct')
                     if ((value && value > 0) || (flexibleFee && flexibleFee > 0)) {
                       return Promise.resolve()
                     }
@@ -571,7 +628,7 @@ const InboundFeeForm = ({
               rules={[
                 ({ getFieldValue }) => ({
                   validator(_, value) {
-                    const flexibleFee = getFieldValue('flexibleFeePercent')
+                    const flexibleFee = getFieldValue('flexibleFeeMpct')
                     // Chỉ bắt buộc nếu có phí linh hoạt
                     if (flexibleFee && flexibleFee > 0 && !value) {
                       return Promise.reject(new Error('Phí tối thiểu là bắt buộc khi có phí linh hoạt'))

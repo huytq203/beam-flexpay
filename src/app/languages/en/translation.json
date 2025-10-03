@@ -46,7 +46,17 @@
     "fixedFee": "Fixed Fee",
     "minFee": "Min Fee",
     "maxFee": "Max Fee",
-    "outboundFeeDetail": "Outbound Fee Detail"
+    "outboundFeeDetail": "Outbound Fee Detail",
+    "inboundFeeDetail": "Inbound Fee Detail",
+    "vat": "VAT",
+    "feeInfo": "Fee Information",
+    "nodata": "No data",
+    "customer": "Customer",
+    "createdTime": "Created Time",
+    "applicableTarget": "Applicable Target",
+    "vietqr": "VietQR",
+    "napas": "Napas",
+    "vpb": "VPBank"
   },
   "messages": {
     "loadDataFailed": "Failed to load data",

@@ -181,7 +181,7 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
           </Form.Item>
 
           {/* Row 3 */}
-          {applicableTarget === 'account_group' && (
+          {applicableTarget === 'account_group' ? (
             <Form.Item
               name='accountGroup'
               label={t('labels.accountGroup')}
@@ -199,9 +199,7 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
                 })) : []}
               />
             </Form.Item>
-          )}
-
-          {applicableTarget === 'individual' && (
+          ) : applicableTarget === 'individual' ? (
             <Form.Item
               name='phoneNumber'
               className='w-full font-normal text-sm'
@@ -223,6 +221,8 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
                 allowClear
               />
             </Form.Item>
+          ) : (
+            <div></div>
           )}
 
           <Form.Item
@@ -265,10 +265,6 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
             />
           </Form.Item>
 
-          {(applicableTarget === '' || applicableTarget === 'system' || applicableTarget === 'account_group' || applicableTarget === 'individual') && (
-            <div></div>
-          )}
-
           {/* Row 4 */}
           <div className='flex gap-2 items-center'>
             <Button
@@ -301,8 +297,6 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
               {t('buttons.setupFee')}
             </Button>
           </div>
-
-          <div></div>
         </>
       }
     />

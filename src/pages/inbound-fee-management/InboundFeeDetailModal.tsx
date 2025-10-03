@@ -1,186 +1,209 @@
-import { Modal, Descriptions, Tag, Divider } from 'antd'
-import { InboundFeeType } from '@type/inbound-fee'
-import { convertLocalStringNumber } from '@utils/helperFunctions'
-import moment from 'moment'
+import { Modal, Descriptions, Spin, Alert, Tag } from 'antd'
 import { useTranslation } from 'react-i18next'
+import { useInboundFeeFindOneQuery } from '@services/inboundFeeService'
+import { InboundFeeApplicationType, InboundFeeMethod, InboundFeeProvider, InboundFeeTransactionType } from '@type/inbound-fee'
+import { convertLocalStringNumber, convertMiniPercentToPercent } from '@utils/helperFunctions'
+import { Options } from '@constants/options'
 
 interface InboundFeeDetailModalProps {
   visible: boolean
   onClose: () => void
-  fee: InboundFeeType
+  inboundFeeId?: string
 }
 
-const InboundFeeDetailModal = ({ visible, onClose, fee }: InboundFeeDetailModalProps) => {
+const InboundFeeDetailModal = ({ visible, onClose, inboundFeeId }: InboundFeeDetailModalProps) => {
   const { t } = useTranslation()
 
+  const { data: inboundFee, isLoading, error } = useInboundFeeFindOneQuery(
+    { id: inboundFeeId! },
+    { skip: !inboundFeeId || !visible }
+  )
+
   const formatCurrency = (value?: number) => {
-    if (value === undefined || value === null) return t('labels.notSet')
+    if (value === undefined || value === null) return t('labels.nodata')
     return `${convertLocalStringNumber(value)} VND`
   }
 
+  const formatPercent = (value?: number) => {
+    if (value === undefined || value === null) return t('labels.nodata')
+    return `${convertMiniPercentToPercent(value)}`
+  }
+
+  const formatDateTime = (dateString?: string) => {
+    if (!dateString) return t('labels.nodata')
+    return new Date(dateString).toLocaleString('vi-VN')
+  }
+
   const getApplicationTypeLabel = (type: string) => {
-    switch (type) {
-      case 'system':
-        return <Tag color="blue">Hệ thống</Tag>
-      case 'individual':
-        return <Tag color="green">Đối tượng riêng</Tag>
-      case 'account_group':
-        return <Tag color="orange">Nhóm tài khoản</Tag>
-      default:
-        return type
+    const labels = {
+      [InboundFeeApplicationType.SYSTEM]: t('labels.system'),
+      [InboundFeeApplicationType.INDIVIDUAL]: t('labels.individual'),
+      [InboundFeeApplicationType.ACCOUNT_GROUP]: t('labels.accountGroup')
     }
+    return labels[type as keyof typeof labels] || type
   }
 
   const getTransactionTypeLabel = (type: string) => {
-    switch (type) {
-      case 'deposit':
-        return 'Nạp tiền'
-      case 'withdrawal':
-        return 'Rút tiền'
-      case 'payment':
-        return 'Thanh toán'
-      case 'transfer':
-        return 'Chuyển tiền'
-      case 'refund':
-        return 'Hoàn tiền'
-      default:
-        return type
+    const labels = {
+      [InboundFeeTransactionType.DEPOSIT]: t('labels.deposit'),
+      [InboundFeeTransactionType.WITHDRAWAL]: t('labels.withdrawal'),
+      [InboundFeeTransactionType.PAYMENT]: t('labels.payment'),
+      [InboundFeeTransactionType.TRANSFER]: t('labels.transfer'),
+      [InboundFeeTransactionType.REFUND]: t('labels.refund')
     }
+    return labels[type as keyof typeof labels] || type
   }
 
-  const getStatusLabel = () => {
-    const now = moment()
-    const startDate = moment(fee.startDate)
-    const endDate = fee.endDate ? moment(fee.endDate) : null
+  const getMethodLabel = (method: string) => {
+    const labels = {
+      [Options.ALL]: t('labels.all'),
+      [InboundFeeMethod.ATM_CARD]: t('labels.atmCard'),
+      [InboundFeeMethod.QR_CODE]: t('labels.qrCode'),
+      [InboundFeeMethod.BANK_ACCOUNT]: t('labels.bankAccount'),
+      [InboundFeeMethod.EWALLET]: t('labels.ewallet'),
+      [InboundFeeMethod.VISA_INTERNATIONAL]: t('labels.visaInternational'),
+      [InboundFeeMethod.MASTER_INTERNATIONAL]: t('labels.masterInternational'),
+      [InboundFeeMethod.JCB_INTERNATIONAL]: t('labels.jcbInternational'),
+      [InboundFeeMethod.AMEX_INTERNATIONAL]: t('labels.amexInternational')
+    }
+    return labels[method as keyof typeof labels] || method
+  }
 
-    if (now.isBefore(startDate)) {
-      return <Tag color="warning">Chưa áp dụng</Tag>
+  const getProviderLabel = (provider: string) => {
+    const labels = {
+      [Options.ALL]: t('labels.all'),
+      [InboundFeeProvider.VIETQR]: t('labels.vietqr'),
+      [InboundFeeProvider.NAPAS]: t('labels.napas'),
+      [InboundFeeProvider.VPB]: t('labels.vpb')
     }
-    if (endDate && now.isAfter(endDate)) {
-      return <Tag color="default">Hết hạn</Tag>
-    }
-    return <Tag color="success">Đang áp dụng</Tag>
+    return labels[provider as keyof typeof labels] || provider
   }
 
   return (
     <Modal
-      title="Chi tiết cấu hình phí đầu vào"
+      title={t('labels.inboundFeeDetail')}
       open={visible}
       onCancel={onClose}
       footer={null}
       width={800}
+      className="inbound-fee-detail-modal"
     >
-      <Descriptions bordered column={2} size="small">
-        <Descriptions.Item label="Mã cấu hình" span={1}>
-          {fee.id}
-        </Descriptions.Item>
-        <Descriptions.Item label="Trạng thái" span={1}>
-          {getStatusLabel()}
-        </Descriptions.Item>
+      {isLoading && (
+        <div className="flex justify-center py-8">
+          <Spin size="large" />
+        </div>
+      )}
 
-        <Descriptions.Item label="Đối tượng áp dụng" span={1}>
-          {getApplicationTypeLabel(fee.applicationType)}
-        </Descriptions.Item>
-        <Descriptions.Item label="Loại giao dịch" span={1}>
-          {getTransactionTypeLabel(fee.transactionType)}
-        </Descriptions.Item>
+      {error && (
+        <Alert
+          type="error"
+          message={t('messages.loadDataFailed')}
+          className="mb-4"
+        />
+      )}
 
-        {fee.accountGroup && (
-          <Descriptions.Item label="Nhóm tài khoản" span={2}>
-            {fee.accountGroup}
-          </Descriptions.Item>
-        )}
+      {inboundFee && (
+        <div className="space-y-6">
+          {/* Thông tin cơ bản */}
+          <Descriptions
+            title={t('labels.basicInfo')}
+            bordered
+            column={2}
+            size="middle"
+          >
+            <Descriptions.Item label={t('labels.applicableTarget')}>
+              <Tag color="blue">{getApplicationTypeLabel(inboundFee.applicationType)}</Tag>
+            </Descriptions.Item>
 
-        {fee.accountId && (
-          <Descriptions.Item label="Tài khoản" span={2}>
-            {fee.accountId}
-          </Descriptions.Item>
-        )}
+            {inboundFee.applicationType === 'account_group' && (
+              <Descriptions.Item label={t('labels.accountGroup')}>
+                {inboundFee.accountGroupName || t('labels.nodata')}
+              </Descriptions.Item>
+            )}
 
-        <Descriptions.Item label="Phương thức giao dịch" span={1}>
-          {fee.method || 'Tất cả'}
-        </Descriptions.Item>
-        <Descriptions.Item label="Nhà cung cấp" span={1}>
-          {fee.provider || 'Tất cả'}
-        </Descriptions.Item>
+            {inboundFee.applicationType === 'individual' && (
+              <Descriptions.Item label={t('labels.customer')}>
+                {inboundFee.fullname ? `${inboundFee.fullname} - ${inboundFee.phoneNumber}` : inboundFee.phoneNumber || t('labels.nodata')}
+              </Descriptions.Item>
+            )}
 
-        <Descriptions.Item label="Ngân hàng" span={2}>
-          {fee.bank || 'Tất cả'}
-        </Descriptions.Item>
+            <Descriptions.Item label={t('labels.transactionType')}>
+              <Tag color="green">{getTransactionTypeLabel(inboundFee.transactionType)}</Tag>
+            </Descriptions.Item>
 
-        <Descriptions.Item label="Thời gian áp dụng" span={1}>
-          {moment(fee.startDate).format('DD/MM/YYYY HH:mm:ss')}
-        </Descriptions.Item>
-        <Descriptions.Item label="Thời gian kết thúc" span={1}>
-          {fee.endDate ? moment(fee.endDate).format('DD/MM/YYYY HH:mm:ss') : 'Không giới hạn'}
-        </Descriptions.Item>
+            <Descriptions.Item label={t('labels.method')}>
+              <Tag color="orange">{getMethodLabel(inboundFee.method)}</Tag>
+            </Descriptions.Item>
 
-        <Descriptions.Item label="Ngày tạo" span={2}>
-          {moment(fee.createdAt).format('DD/MM/YYYY HH:mm:ss')}
-        </Descriptions.Item>
-      </Descriptions>
+            <Descriptions.Item label={t('labels.bank')}>
+              {inboundFee.bankName || t('labels.all')}
+            </Descriptions.Item>
 
-      <Divider>Thông tin gói phí</Divider>
+            <Descriptions.Item label={t('labels.provider')}>
+              <Tag color="purple">{getProviderLabel(inboundFee.provider)}</Tag>
+            </Descriptions.Item>
+          </Descriptions>
 
-      <Descriptions bordered column={2} size="small">
-        <Descriptions.Item label="Mức giao dịch từ (VND)" span={1}>
-          {formatCurrency(fee.priceFrom)}
-        </Descriptions.Item>
-        <Descriptions.Item label="Mức giao dịch đến (VND)" span={1}>
-          {formatCurrency(fee.priceTo)}
-        </Descriptions.Item>
+          {/* Thông tin gói phí */}
+          <Descriptions
+            title={t('labels.feePackageInfo')}
+            bordered
+            column={2}
+            size="middle"
+          >
+            <Descriptions.Item label={t('labels.priceRange')}>
+              {inboundFee.priceFrom !== undefined && inboundFee.priceTo !== undefined
+                ? `${formatCurrency(inboundFee.priceFrom)} - ${formatCurrency(inboundFee.priceTo)}`
+                : t('labels.nodata')
+              }
+            </Descriptions.Item>
 
-        <Descriptions.Item label="Phí linh hoạt (%)" span={1}>
-          {fee.flexibleFeePercent ? `${fee.flexibleFeePercent}%` : '-'}
-        </Descriptions.Item>
-        <Descriptions.Item label="Phí cố định (VND)" span={1}>
-          {fee.fixedFee ? formatCurrency(fee.fixedFee) : '-'}
-        </Descriptions.Item>
+            <Descriptions.Item label={t('labels.vat')}>
+              {inboundFee.vat !== undefined && inboundFee.vat !== null ? `${inboundFee.vat}%` : t('labels.nodata')}
+            </Descriptions.Item>
+          </Descriptions>
 
-        <Descriptions.Item label="Phí tối thiểu (VND)" span={1}>
-          {fee.minFee ? formatCurrency(fee.minFee) : '-'}
-        </Descriptions.Item>
-        <Descriptions.Item label="Phí tối đa (VND)" span={1}>
-          {fee.maxFee ? formatCurrency(fee.maxFee) : '-'}
-        </Descriptions.Item>
+          {/* Phí giao dịch */}
+          <Descriptions
+            title={t('labels.feeInfo')}
+            bordered
+            column={2}
+            size="middle"
+          >
+            <Descriptions.Item label={t('labels.flexibleFee')}>
+              {formatPercent(inboundFee.flexibleFeeMpct)}
+            </Descriptions.Item>
 
-        <Descriptions.Item label="VAT (%)" span={2}>
-          {fee.vatPercent}%
-        </Descriptions.Item>
-      </Descriptions>
+            <Descriptions.Item label={t('labels.fixedFee')}>
+              {formatCurrency(inboundFee.fixedFee)}
+            </Descriptions.Item>
 
-      <Divider>Công thức tính phí</Divider>
+            <Descriptions.Item label={t('labels.minFee')}>
+              {formatCurrency(inboundFee.minFee)}
+            </Descriptions.Item>
 
-      <div className="bg-gray-50 p-4 rounded">
-        <p className="mb-2">
-          <strong>Phí giao dịch = </strong>
-          {fee.flexibleFeePercent && fee.fixedFee ? (
-            <>
-              Max(Giá trị giao dịch × {fee.flexibleFeePercent}%, {formatCurrency(fee.fixedFee)})
-            </>
-          ) : fee.flexibleFeePercent ? (
-            <>Giá trị giao dịch × {fee.flexibleFeePercent}%</>
-          ) : (
-            <>{formatCurrency(fee.fixedFee)}</>
-          )}
-        </p>
-        {fee.minFee && (
-          <p className="mb-2">
-            <strong>Phí tối thiểu:</strong> {formatCurrency(fee.minFee)}
-          </p>
-        )}
-        {fee.maxFee && (
-          <p className="mb-2">
-            <strong>Phí tối đa:</strong> {formatCurrency(fee.maxFee)}
-          </p>
-        )}
-        <p>
-          <strong>Thuế VAT:</strong> Phí giao dịch × {fee.vatPercent}%
-        </p>
-        <p className="mt-2 text-blue-600 font-semibold">
-          <strong>Tổng phí = Phí giao dịch + VAT</strong>
-        </p>
-      </div>
+            <Descriptions.Item label={t('labels.maxFee')}>
+              {formatCurrency(inboundFee.maxFee)}
+            </Descriptions.Item>
+          </Descriptions>
+
+          {/* Thời gian áp dụng */}
+          <Descriptions
+            title={t('labels.applicableTime')}
+            bordered
+            column={2}
+            size="middle"
+          >
+            <Descriptions.Item label={t('labels.startTime')}>
+              {formatDateTime(inboundFee.startDate)}
+            </Descriptions.Item>
+
+            <Descriptions.Item label={t('labels.endTime')}>
+              {formatDateTime(inboundFee.endDate)}
+            </Descriptions.Item>
+          </Descriptions>
+        </div>
+      )}
     </Modal>
   )
 }
