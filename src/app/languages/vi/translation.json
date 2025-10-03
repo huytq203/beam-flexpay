@@ -241,6 +241,8 @@
     "vpb": "VPB",
     "customer": "Khách hàng",
     "outboundFeeDetail": "Chi tiết phí đầu ra",
+    "inboundFeeDetail": "Chi tiết phí đầu vào",
+    "feeInfo": "Thông tin phí",
     "basicInfo": "Thông tin cơ bản"
   },
   "tooltips": {
