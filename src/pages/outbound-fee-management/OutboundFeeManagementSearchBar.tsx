@@ -1,14 +1,13 @@
 import SearchBar from '@components/search-bar/SearchBar'
-import {
-    Form,
-    Select,
-    DatePicker,
-    Button
-} from 'antd'
+import { Button, DatePicker, Form, Select } from 'antd'
 import { useTranslation } from 'react-i18next'
 import ButtonSearch from '@components/button-search/ButtonSearch'
-import { useEffect, useState, useMemo } from 'react'
-import { useOutboundFeeGetBanksListQuery, useOutboundFeeGetAccountGroupsListQuery, useOutboundFeeCustomerSearchQuery } from '@services/outboundFeeService'
+import { useEffect, useMemo, useState } from 'react'
+import {
+  useOutboundFeeCustomerSearchQuery,
+  useOutboundFeeGetAccountGroupsListQuery,
+  useOutboundFeeGetBanksListQuery
+} from '@services/outboundFeeService'
 import debounce from 'lodash/debounce'
 import { Options } from '@constants/options'
 
@@ -21,7 +20,12 @@ interface OutboundFeeManagementSearchBarProps {
   onCreateFee?: () => void
 }
 
-const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreateFee }: OutboundFeeManagementSearchBarProps) => {
+const OutboundFeeManagementSearchBar = ({
+                                          onFinish,
+                                          form,
+                                          onClearFilter,
+                                          onCreateFee
+                                        }: OutboundFeeManagementSearchBarProps) => {
   const { t } = useTranslation()
   const [applicableTarget, setApplicableTarget] = useState('')
   const [customerSearchQuery, setCustomerSearchQuery] = useState('')
@@ -50,12 +54,12 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
   }, [])
 
   useEffect(() => {
-    form.setFieldsValue({ 
+    form.setFieldsValue({
       method: Options.ALL,
       provider: Options.ALL,
-      applicableTarget: Options.ALL,
+      applicableTarget: Options.ALL
     })
-    setApplicableTarget('')
+    setApplicableTarget(Options.ALL)
   }, [form])
 
   const handleApplicableTargetChange = (value: string) => {
@@ -63,7 +67,7 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
     setCustomerSearchQuery('')
     form.setFieldsValue({
       accountGroup: Options.ALL,
-      phoneNumber: Options.ALL,
+      phoneNumber: Options.ALL
     })
   }
 
@@ -71,34 +75,34 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
     <SearchBar
       onFinish={onFinish}
       form={form}
-      cols='4'
+      cols="4"
       isShowClearFilter={false}
       headerMenu={
         <>
           <Form.Item
-            name='creationTime'
+            name="creationTime"
             label={t('labels.creationTime')}
           >
-            <RangePicker 
-              className='w-full font-normal text-sm' 
-              showTime size="large" 
-              placeholder={['Từ ngày', 'Đến ngày']} 
-            />
-          </Form.Item>
-
-          <Form.Item
-            name='applicableTime'
-            label={t('labels.applicableTime')}
-          >
-            <RangePicker 
-              className='w-full font-normal' 
-              showTime size="large" 
+            <RangePicker
+              className="w-full font-normal text-sm"
+              showTime size="large"
               placeholder={['Từ ngày', 'Đến ngày']}
             />
           </Form.Item>
 
           <Form.Item
-            name='status'
+            name="applicableTime"
+            label={t('labels.applicableTime')}
+          >
+            <RangePicker
+              className="w-full font-normal"
+              showTime size="large"
+              placeholder={['Từ ngày', 'Đến ngày']}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="status"
             label={t('labels.status')}
           >
             <Select
@@ -123,7 +127,7 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
           </Form.Item>
 
           <Form.Item
-            name='feeInside'
+            name="feeInside"
             label={t('labels.feeInside')}
           >
             <Select
@@ -149,13 +153,13 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
 
           {/* Row 2 */}
           <Form.Item
-            name='applicableTarget'
+            name="applicableTarget"
             label={t('labels.applicableTarget')}
           >
             <Select
               placeholder={t('placeholders.applicableTarget')}
               size="large"
-              defaultValue=""
+              defaultValue={Options.ALL}
               onChange={handleApplicableTargetChange}
               options={[
                 { value: Options.ALL, label: t('labels.all') },
@@ -167,7 +171,7 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
           </Form.Item>
 
           <Form.Item
-            name='transactionType'
+            name="transactionType"
             label={t('labels.transactionType')}
           >
             <Select
@@ -186,7 +190,7 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
           </Form.Item>
 
           <Form.Item
-            name='bank'
+            name="bank"
             label={t('labels.bank')}
           >
             <Select
@@ -210,7 +214,7 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
           {/* Row 3 */}
           {applicableTarget === 'account_group' && (
             <Form.Item
-              name='accountGroup'
+              name="accountGroup"
               label={t('labels.accountGroup')}
             >
               <Select
@@ -230,8 +234,8 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
 
           {applicableTarget === 'individual' && (
             <Form.Item
-              name='phoneNumber'
-              className='w-full font-normal text-sm'
+              name="phoneNumber"
+              className="w-full font-normal text-sm"
               label={t('labels.phone')}
             >
               <Select
@@ -252,18 +256,14 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
             </Form.Item>
           )}
 
-          {(applicableTarget === '' || applicableTarget === 'system') && (
-            <div></div>
-          )}
-
           <Form.Item
-            name='method'
+            name="method"
             label={t('labels.method')}
             rules={[{ required: true, message: t('messages.pleaseSelectMethod').toString() }]}
           >
             <Select
               placeholder={t('placeholders.method')}
-              defaultValue=""
+              defaultValue={Options.ALL}
               size="large"
               options={[
                 { value: Options.ALL, label: t('labels.all') },
@@ -280,13 +280,13 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
           </Form.Item>
 
           <Form.Item
-            name='provider'
+            name="provider"
             label={t('labels.provider')}
             rules={[{ required: true, message: t('messages.pleaseSelectProvider').toString() }]}
           >
             <Select
               placeholder={t('placeholders.provider')}
-              defaultValue=""
+              defaultValue={Options.ALL}
               size="large"
               options={[
                 { value: Options.ALL, label: t('labels.all') },
@@ -297,15 +297,14 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
           </Form.Item>
 
 
-
           <div></div>
           <div></div>
 
           {/* Row 4 */}
-          <div className='flex gap-2 items-center'>
+          <div className="flex gap-2 items-center">
             <Button
-              type='default'
-              className='flex-1'
+              type="default"
+              className="flex-1"
               size="large"
               onClick={onClearFilter}
             >
@@ -313,20 +312,20 @@ const OutboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreat
             </Button>
           </div>
 
-          <div className='flex gap-2 items-center'>
+          <div className="flex gap-2 items-center">
             <ButtonSearch
-              htmlType='submit'
-              className='w-full'
+              htmlType="submit"
+              className="w-full"
               size="large"
             >
               {t('buttons.search')}
             </ButtonSearch>
           </div>
 
-          <div className='flex gap-2 items-center'>
+          <div className="flex gap-2 items-center">
             <Button
-              type='primary'
-              className='flex-1'
+              type="primary"
+              className="flex-1"
               size="large"
               onClick={onCreateFee}
             >

@@ -56,11 +56,19 @@
     "applicableTarget": "Applicable Target",
     "vietqr": "VietQR",
     "napas": "Napas",
-    "vpb": "VPBank"
+    "vpb": "VPBank",
+    "createInboundFee": "Create Inbound Fee",
+    "updateInboundFee": "Update Inbound Fee",
+    "createOutboundFee": "Create Outbound Fee",
+    "updateOutboundFee": "Update Outbound Fee"
   },
   "messages": {
     "loadDataFailed": "Failed to load data",
     "pleaseSelectMethod": "Please select method",
-    "pleaseSelectProvider": "Please select provider"
+    "pleaseSelectProvider": "Please select provider",
+    "createInboundFeeSuccess": "Create inbound fee successfully",
+    "createInboundFeeFailed": "Failed to create inbound fee",
+    "updateInboundFeeSuccess": "Update inbound fee successfully",
+    "updateInboundFeeFailed": "Failed to update inbound fee"
   }
 }

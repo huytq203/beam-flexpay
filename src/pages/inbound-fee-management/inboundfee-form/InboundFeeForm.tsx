@@ -1,21 +1,15 @@
-import {
-  Form,
-  Select,
-  DatePicker,
-  InputNumber,
-  Button,
-  Card,
-  Row,
-  Col,
-  Typography,
-  Divider
-} from 'antd'
+import { Button, Col, DatePicker, Divider, Form, InputNumber, Row, Select, Typography } from 'antd'
 import { useTranslation } from 'react-i18next'
-import { useState, useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import moment from 'moment'
 import { parseNumberFromCommaString, parseNumberFromPercentString } from '@utils/helperFunctions'
-import { useInboundFeeGetBanksListQuery, useInboundFeeGetAccountGroupsListQuery, useInboundFeeCustomerSearchQuery } from '@services/inboundFeeService'
+import {
+  useInboundFeeCustomerSearchQuery,
+  useInboundFeeGetAccountGroupsListQuery,
+  useInboundFeeGetBanksListQuery
+} from '@services/inboundFeeService'
 import debounce from 'lodash/debounce'
+import isNil from 'lodash/isNil'
 
 const { Option } = Select
 const { Title, Text } = Typography
@@ -29,12 +23,12 @@ interface InboundFeeFormProps {
 }
 
 const InboundFeeForm = ({
-  initialValues,
-  onFinish,
-  onCancel,
-  loading = false,
-  isEdit = false
-}: InboundFeeFormProps) => {
+                          initialValues,
+                          onFinish,
+                          onCancel,
+                          loading = false,
+                          isEdit = false
+                        }: InboundFeeFormProps) => {
   const { t } = useTranslation()
   const [form] = Form.useForm()
   const [applicationType, setApplicationType] = useState('system')
@@ -223,10 +217,9 @@ const InboundFeeForm = ({
           vat: 0
         }}
       >
-        <Row gutter={[16, 16]}>
-          {/* Hàng 1 */}
-          {/* Cột 1: Đối tượng áp dụng */}
-          <Col span={12}>
+        <div className="flex flex-wrap gap-4">
+          {/* Đối tượng áp dụng */}
+          <div className="w-[calc(50%-8px)]">
             <Form.Item
               name="applicationType"
               label={t('labels.applicableTarget')}
@@ -244,10 +237,10 @@ const InboundFeeForm = ({
                 <Option value="account_group">Nhóm tài khoản</Option>
               </Select>
             </Form.Item>
-          </Col>
+          </div>
 
-          {/* Cột 2: Loại giao dịch */}
-          <Col span={12}>
+          {/* Loại giao dịch */}
+          <div className="w-[calc(50%-8px)]">
             <Form.Item
               name="transactionType"
               label={t('labels.transactionType')}
@@ -266,12 +259,11 @@ const InboundFeeForm = ({
                 <Option value="refund">Hoàn tiền</Option>
               </Select>
             </Form.Item>
-          </Col>
+          </div>
 
-          {/* Hàng 2 */}
-          {/* Cột 1: Chọn nhóm tài khoản (hiện khi chọn Nhóm tài khoản) */}
+          {/* Chọn nhóm tài khoản (hiện khi chọn Nhóm tài khoản) */}
           {applicationType === 'account_group' && (
-            <Col span={12}>
+            <div className="w-[calc(50%-8px)]">
               <Form.Item
                 name="accountGroup"
                 label="Chọn nhóm tài khoản"
@@ -292,12 +284,12 @@ const InboundFeeForm = ({
                   disabled={isEdit}
                 />
               </Form.Item>
-            </Col>
+            </div>
           )}
 
-          {/* Cột 1: Nhập tài khoản (hiện khi chọn Đối tượng riêng) */}
+          {/* Nhập tài khoản (hiện khi chọn Đối tượng riêng) */}
           {applicationType === 'individual' && (
-            <Col span={12}>
+            <div className="w-[calc(50%-8px)]">
               <Form.Item
                 name="phoneNumber"
                 label="Nhập tài khoản"
@@ -314,19 +306,19 @@ const InboundFeeForm = ({
                   options={
                     isEdit && initialValues?.customerId && initialValues?.phoneNumber
                       ? [
-                          {
-                            value: initialValues.customerId.toString(),
-                            label: initialValues.fullname
-                              ? `${initialValues.fullname} - ${initialValues.phoneNumber}`
-                              : initialValues.phoneNumber,
-                            customerId: initialValues.customerId
-                          }
-                        ]
+                        {
+                          value: initialValues.customerId.toString(),
+                          label: initialValues.fullname
+                            ? `${initialValues.fullname} - ${initialValues.phoneNumber}`
+                            : initialValues.phoneNumber,
+                          customerId: initialValues.customerId
+                        }
+                      ]
                       : customersData?.data?.map((customer) => ({
-                          value: customer.phoneNumber,
-                          label: `${customer.fullName} - ${customer.phoneNumber}`,
-                          customerId: customer.id
-                        })) || []
+                      value: customer.phoneNumber,
+                      label: `${customer.fullName} - ${customer.phoneNumber}`,
+                      customerId: customer.id
+                    })) || []
                   }
                   notFoundContent={isCustomersFetching ? 'Loading...' : 'No data'}
                   size="large"
@@ -342,11 +334,11 @@ const InboundFeeForm = ({
                   }}
                 />
               </Form.Item>
-            </Col>
+            </div>
           )}
 
-          {/* Cột 2: Phương thức giao dịch */}
-          <Col span={12}>
+          {/* Phương thức giao dịch */}
+          <div className="w-[calc(50%-8px)]">
             <Form.Item
               name="method"
               label="Phương thức giao dịch"
@@ -363,11 +355,10 @@ const InboundFeeForm = ({
                 disabled={isEdit}
               />
             </Form.Item>
-          </Col>
+          </div>
 
-          {/* Hàng 3 */}
-          {/* Cột 1: Ngân hàng */}
-          <Col span={12}>
+          {/* Ngân hàng */}
+          <div className="w-[calc(50%-8px)]">
             <Form.Item
               name="bank"
               label="Ngân hàng"
@@ -389,10 +380,10 @@ const InboundFeeForm = ({
                 disabled={isEdit}
               />
             </Form.Item>
-          </Col>
+          </div>
 
-          {/* Cột 2: Nhà cung cấp */}
-          <Col span={24}>
+          {/* Nhà cung cấp */}
+          <div className="w-[calc(50%-8px)]">
             <Form.Item
               name="provider"
               label="Nhà cung cấp"
@@ -409,10 +400,11 @@ const InboundFeeForm = ({
                 disabled={isEdit}
               />
             </Form.Item>
-          </Col>
+          </div>
+        </div>
 
-          {/* Hàng 4 */}
-          {/* Cột 1: Thời gian áp dụng */}
+        <Row gutter={[16, 16]}>
+          {/* Thời gian áp dụng */}
           <Col span={12}>
             <Form.Item
               name="startDate"
@@ -421,7 +413,7 @@ const InboundFeeForm = ({
                 { required: true, message: 'Vui lòng chọn thời gian áp dụng' },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
-                    if (value && moment(value).isBefore(moment(), 'day')) {
+                    if (value && moment(value).isBefore(moment())) {
                       return Promise.reject(new Error('Ngày giờ áp dụng phải lớn hơn hoặc bằng ngày giờ hiện tại'))
                     }
                     return Promise.resolve()
@@ -625,14 +617,23 @@ const InboundFeeForm = ({
               name="minFee"
               label="Phí tối thiểu (VND)"
               required
+              dependencies={['flexibleFeeMpct', 'maxFee']}
               rules={[
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     const flexibleFee = getFieldValue('flexibleFeeMpct')
+                    const maxFee = getFieldValue('maxFee')
+
                     // Chỉ bắt buộc nếu có phí linh hoạt
-                    if (flexibleFee && flexibleFee > 0 && !value) {
+                    if (flexibleFee && flexibleFee > 0 && isNil(value)) {
                       return Promise.reject(new Error('Phí tối thiểu là bắt buộc khi có phí linh hoạt'))
                     }
+
+                    // Kiểm tra minFee phải nhỏ hơn maxFee
+                    if (!isNil(value) && !isNil(maxFee) && value >= maxFee) {
+                      return Promise.reject(new Error('Phí tối thiểu phải nhỏ hơn phí tối đa'))
+                    }
+
                     return Promise.resolve()
                   }
                 })
@@ -646,6 +647,10 @@ const InboundFeeForm = ({
                 min={0}
                 className="w-full"
                 size="large"
+                onChange={() => {
+                  // Trigger validation for maxFee when minFee changes
+                  form.validateFields(['maxFee'])
+                }}
               />
             </Form.Item>
           </Col>
@@ -655,15 +660,25 @@ const InboundFeeForm = ({
             <Form.Item
               name="maxFee"
               label="Phí tối đa (VND)"
+              dependencies={['fixedFee', 'minFee']}
               rules={[
                 ({ getFieldValue }) => ({
                   validator(_, value) {
-                    if (!value) return Promise.resolve()
+                    if (isNil(value)) return Promise.resolve()
+
                     const fixedFee = getFieldValue('fixedFee') || 0
-                    const minFee = getFieldValue('minFee') || 0
-                    if (value <= fixedFee || value <= minFee) {
-                      return Promise.reject(new Error('Phí tối đa phải lớn hơn phí cố định và phí tối thiểu'))
+                    const minFee = getFieldValue('minFee')
+
+                    // Kiểm tra maxFee phải lớn hơn fixedFee
+                    if (value <= fixedFee) {
+                      return Promise.reject(new Error('Phí tối đa phải lớn hơn phí cố định'))
                     }
+
+                    // Kiểm tra maxFee phải lớn hơn minFee (nếu minFee có giá trị)
+                    if (!isNil(minFee) && value <= minFee) {
+                      return Promise.reject(new Error('Phí tối đa phải lớn hơn phí tối thiểu'))
+                    }
+
                     return Promise.resolve()
                   }
                 })
@@ -677,6 +692,10 @@ const InboundFeeForm = ({
                 min={0}
                 className="w-full"
                 size="large"
+                onChange={() => {
+                  // Trigger validation for minFee when maxFee changes
+                  form.validateFields(['minFee'])
+                }}
               />
             </Form.Item>
           </Col>

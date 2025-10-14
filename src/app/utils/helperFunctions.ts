@@ -7,7 +7,10 @@ import {
   VALUE_LIMIT_TYPE
 } from '@pages/policy-management/limit-management/LimitAndRegulationsConst'
 import { BANK_MANAGEMENT, BANK_TYPE } from '@pages/system-management/bank-management/bank-modal/BankManagementConst'
-import { NOTIFICATION_CONTEXT_SETTING, NOTIFICATION_TYPE_OBJECT, NOTIFICATION_TYPE_SERVICE } from '@pages/system-management/notification-management/NotificationManagementConst'
+import {
+  NOTIFICATION_CONTEXT_SETTING,
+  NOTIFICATION_TYPE_SERVICE
+} from '@pages/system-management/notification-management/NotificationManagementConst'
 import { accountStatus } from '@type/customer'
 import { APPLICABLE_OBJECTS, history_type } from '@type/policyManagement'
 import { TransactionStatus, TransactionSubType, TransactionType } from '@type/transfer'
@@ -228,9 +231,9 @@ export function processValue(value: any, key?: string): string {
     return `${
       value && value.length > 0
         ? `<ul>${t(value)
-            .split(',')
-            .map((item: string) => `<li>${item}</li>`)
-            .join(' ')}</ul>`
+          .split(',')
+          .map((item: string) => `<li>${item}</li>`)
+          .join(' ')}</ul>`
         : null
     }`
   }
@@ -403,6 +406,10 @@ export const getVNDateStringFromUTCTimeString = (time?: string | null) => {
   return dayjs(time).format(DateFormat)
 }
 
+export const getVNDateTimeStringFromUTCTimeString = (time?: string | null) => {
+  if (!time) return ''
+  return dayjs(time).format(FullFormatTime)
+}
 
 export const getVNStartOfDayStringFromUTCTimeString = (time?: string | null) => {
   if (!time) return ''
@@ -413,10 +420,6 @@ export const getVNEndOfDayStringFromUTCTimeString = (time?: string | null) => {
   if (!time) return ''
   return dayjs(time).add(7, 'hour').endOf('day').format(FullFormatTime)
 }
-
-
-
-
 
 
 export const getTransactionStatus = (status: string) => {
@@ -445,7 +448,7 @@ export const getTransactionStatus = (status: string) => {
       return {
         label: i18n.t('transfer-history.choice.init'),
         value: 'default'
-    }
+      }
   }
 }
 
@@ -702,7 +705,7 @@ export const getNameColumnTypeChange = (title: string) => {
 }
 
 export const getTransactionSubType = (type: string) => {
-  switch(type){
+  switch (type) {
     case TransactionSubType.MAIN:
       return i18n.t('transfer-history.subTypes.transfer')
     case TransactionSubType.PARTNER:
@@ -758,8 +761,8 @@ export const compareFormData = (formData: FormData, initData: Data): string[] =>
 
   forOwn(formDataObj, (value, key) => {
     // không so sánh trường bigImage 
-    if(key === 'bigImage'){
-      return;
+    if (key === 'bigImage') {
+      return
     }
     if (value != initData[key]) {
       differentFields.push(key)
@@ -779,11 +782,11 @@ export const compareFormData = (formData: FormData, initData: Data): string[] =>
 export const compareData = (notification: any, payload: any) => {
   return reduce(payload, (result: string[], value, key) => {
     if (!isEqual(value, notification[key])) {
-      result.push(key);
+      result.push(key)
     }
-    return result;
-  }, [] as string[]);
-};
+    return result
+  }, [] as string[])
+}
 
 /**
  * Ghi log dữ liệu được cung cấp cùng với một tin nhắn tùy chọn.
@@ -801,18 +804,18 @@ export const logData = (message: string = '', data: any) => {
     })
     message = `FormData as JSON: ${message}`
   } else {
- 
+
   }
 }
 
 export function removeNullUndefinedFields<T extends object>(obj: T): Partial<T> {
-    const newObj: Partial<T> = {};
-    for (const key in obj) {
-        if (obj.hasOwnProperty(key) && obj[key] !== null && obj[key] !== undefined) {
-            newObj[key] = obj[key];
-        }
+  const newObj: Partial<T> = {}
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key) && obj[key] !== null && obj[key] !== undefined) {
+      newObj[key] = obj[key]
     }
-    return newObj;
+  }
+  return newObj
 }
 
 

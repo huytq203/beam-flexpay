@@ -1,6 +1,6 @@
 import { Card, message, Spin } from 'antd'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useInboundFeeUpdateMutation, useInboundFeeFindOneQuery } from '@services/inboundFeeService'
+import { useInboundFeeFindOneQuery, useInboundFeeUpdateMutation } from '@services/inboundFeeService'
 import { InboundFeeForm } from '../inboundfee-form'
 import { PATHS } from '@constants/pathConstant'
 import { useTranslation } from 'react-i18next'
@@ -34,7 +34,7 @@ const InboundFeeUpdate = () => {
       navigate(PATHS.FEE_V2?.INBOUND_FEE?.LIST || '/fee-management/inbound-fee')
     } catch (error: any) {
       console.error('Error updating inbound fee:', error)
-      message.error(error?.data?.message || 'Có lỗi xảy ra khi cập nhật cấu hình phí')
+      message.error(error?.data?.message || t('messages.updateInboundFeeFailed'))
     }
   }
 
@@ -63,7 +63,7 @@ const InboundFeeUpdate = () => {
   }
 
   return (
-    <Card title="Cập nhật phí đầu vào">
+    <Card title={t('labels.updateInboundFee')}>
       <InboundFeeForm
         initialValues={inboundFee}
         onFinish={handleFinish}

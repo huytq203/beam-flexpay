@@ -16,11 +16,11 @@ const InboundFeeCreate = () => {
 
       // InboundFeeForm already handles the transformation, just pass through
       await createInboundFee({ createInboundFeeDto: values }).unwrap()
-      message.success('Thêm cấu hình phí đầu vào thành công')
+      message.success(t('messages.createInboundFeeSuccess'))
       navigate(PATHS.FEE_V2?.INBOUND_FEE?.LIST || '/fee-management/inbound-fee')
     } catch (error: any) {
       console.error('Error creating inbound fee:', error)
-      message.error(error?.data?.message || 'Có lỗi xảy ra khi thêm cấu hình phí')
+      message.error(error?.data?.message || t('messages.createInboundFeeFailed'))
     }
   }
 
@@ -29,7 +29,7 @@ const InboundFeeCreate = () => {
   }
 
   return (
-    <Card title="Thêm mới phí đầu vào">
+    <Card title={t('labels.createInboundFee')}>
       <InboundFeeForm
         onFinish={handleFinish}
         onCancel={handleCancel}

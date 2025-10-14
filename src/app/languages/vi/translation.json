@@ -236,6 +236,8 @@
     "startTime": "Thời gian bắt đầu",
     "createOutboundFee": "Tạo mới phí đầu ra",
     "updateOutboundFee": "Cập nhật phí đầu ra",
+    "createInboundFee": "Thêm mới phí đầu vào",
+    "updateInboundFee": "Cập nhật phí đầu vào",
     "vietqr": "VietQR",
     "napas": "NAPAS",
     "vpb": "VPB",
@@ -243,7 +245,8 @@
     "outboundFeeDetail": "Chi tiết phí đầu ra",
     "inboundFeeDetail": "Chi tiết phí đầu vào",
     "feeInfo": "Thông tin phí",
-    "basicInfo": "Thông tin cơ bản"
+    "basicInfo": "Thông tin cơ bản",
+    "vat": "VAT"
   },
   "tooltips": {
     "view": "Xem",

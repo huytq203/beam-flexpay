@@ -1,8 +1,17 @@
-import { Modal, Descriptions, Spin, Alert, Tag } from 'antd'
+import { Alert, Descriptions, Modal, Spin, Tag } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { useInboundFeeFindOneQuery } from '@services/inboundFeeService'
-import { InboundFeeApplicationType, InboundFeeMethod, InboundFeeProvider, InboundFeeTransactionType } from '@type/inbound-fee'
-import { convertLocalStringNumber, convertMiniPercentToPercent } from '@utils/helperFunctions'
+import {
+  InboundFeeApplicationType,
+  InboundFeeMethod,
+  InboundFeeProvider,
+  InboundFeeTransactionType
+} from '@type/inbound-fee'
+import {
+  convertLocalStringNumber,
+  convertMiniPercentToPercent,
+  getVNDateTimeStringFromUTCTimeString
+} from '@utils/helperFunctions'
 import { Options } from '@constants/options'
 
 interface InboundFeeDetailModalProps {
@@ -31,7 +40,7 @@ const InboundFeeDetailModal = ({ visible, onClose, inboundFeeId }: InboundFeeDet
 
   const formatDateTime = (dateString?: string) => {
     if (!dateString) return t('labels.nodata')
-    return new Date(dateString).toLocaleString('vi-VN')
+    return getVNDateTimeStringFromUTCTimeString(dateString)
   }
 
   const getApplicationTypeLabel = (type: string) => {
@@ -187,13 +196,17 @@ const InboundFeeDetailModal = ({ visible, onClose, inboundFeeId }: InboundFeeDet
             </Descriptions.Item>
           </Descriptions>
 
-          {/* Thời gian áp dụng */}
+          {/* Thời gian */}
           <Descriptions
             title={t('labels.applicableTime')}
             bordered
             column={2}
             size="middle"
           >
+            <Descriptions.Item label={t('labels.createdTime')}>
+              {formatDateTime(inboundFee.createdAt)}
+            </Descriptions.Item>
+
             <Descriptions.Item label={t('labels.startTime')}>
               {formatDateTime(inboundFee.startDate)}
             </Descriptions.Item>

@@ -63,8 +63,22 @@ function AppLayout() {
     }
   }, [accessToken, navigate])
 
+  // Helper function to get header title key with wildcard matching support
+  const getHeaderTitleKey = (pathname: string): string => {
+    if (t(`header-title.${pathname}`) !== `header-title.${pathname}`) {
+      return pathname
+    }
+
+    const wildcardPath = pathname.replace(/\/[^/]+$/, '/*')
+    if (wildcardPath !== pathname && t(`header-title.${wildcardPath}`) !== `header-title.${wildcardPath}`) {
+      return wildcardPath
+    }
+
+    return pathname
+  }
+
   useEffect(() => {
-    setTitle(location.pathname)
+    setTitle(getHeaderTitleKey(location.pathname))
   }, [location.pathname])
 
   const getProfile = useUserGetMyInfoQuery(undefined, {
