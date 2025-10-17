@@ -832,3 +832,39 @@ export const convertMiniPercentToPercent = (value?: number): string => {
   if (!value) return ''
   return `${(value / 1000).toFixed(2).replace(/0+$/, '').replace(/\.$/, '')}%`
 }
+
+
+export const extractNativeDateFromPicker = (value: unknown): Date | null => {
+  if (!value) return null
+
+  if (isDate(value)) return value
+
+  if (typeof value === 'object' && value !== null) {
+    const dateObj = value as Record<string, unknown>
+
+    if (dateObj.$d instanceof Date) return dateObj.$d
+    if (dateObj._d instanceof Date) return dateObj._d
+
+    if (typeof dateObj.toDate === 'function') {
+      return (dateObj.toDate as () => Date)()
+    }
+  }
+
+  return null
+}
+
+export const validateFutureDatetime = (_: unknown, value: unknown): Promise<void> => {
+  if (!value) return Promise.resolve()
+
+  const selectedDate = extractNativeDateFromPicker(value)
+  if (!selectedDate) return Promise.resolve()
+
+  const currentDate = new Date()
+
+  const isBefore = selectedDate.getTime() < currentDate.getTime()
+
+  if (isBefore) {
+    return Promise.reject(new Error('Ngày giờ áp dụng phải lớn hơn hoặc bằng ngày giờ hiện tại'))
+  }
+  return Promise.resolve()
+}

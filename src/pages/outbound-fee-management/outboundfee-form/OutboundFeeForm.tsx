@@ -13,7 +13,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useState, useEffect, useMemo } from 'react'
 import moment from 'moment'
-import { parseNumberFromCommaString, parseNumberFromPercentString } from '@utils/helperFunctions'
+import { parseNumberFromCommaString, parseNumberFromPercentString, validateFutureDatetime } from '@utils/helperFunctions'
 import { useOutboundFeeGetBanksListQuery, useOutboundFeeGetAccountGroupsListQuery, useOutboundFeeCustomerSearchQuery } from '@services/outboundFeeService'
 import debounce from 'lodash/debounce'
 
@@ -76,7 +76,7 @@ const OutboundFeeForm = ({
       form.setFieldsValue({
         ...initialValues,
         applicationType: initialValues.applicationType ?? 'system',
-        startDate: initialValues.startDate ? moment(initialValues.startDate) : moment(),
+        startDate: initialValues.startDate ? moment(initialValues.startDate) : undefined,
         endDate: initialValues.endDate ? moment(initialValues.endDate) : undefined,
         chargeWithin: initialValues.chargeWithin ?? true,
         priceFrom: initialValues.priceFrom ?? 0,
@@ -268,7 +268,7 @@ const OutboundFeeForm = ({
                   placeholder={t('placeholders.accountGroup')}
                   showSearch
                   filterOption={(input, option) =>
-                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                    String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                   }
                   options={accountGroupsData ? accountGroupsData.map((group) => ({
                     value: group.id.toString(),
@@ -737,14 +737,7 @@ const OutboundFeeForm = ({
               label={t('labels.applicableTime')}
               rules={[
                 { required: true, message: 'Vui lòng chọn thời gian áp dụng' },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (value && moment(value).isBefore(moment(), 'day')) {
-                      return Promise.reject(new Error('Ngày giờ áp dụng phải lớn hơn hoặc bằng ngày giờ hiện tại'))
-                    }
-                    return Promise.resolve()
-                  }
-                })
+                { validator: validateFutureDatetime }
               ]}
             >
               <DatePicker

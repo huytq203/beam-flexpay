@@ -132,7 +132,7 @@ const VatFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreateFee 
                 allowClear
                 showSearch
                 filterOption={(input, option) =>
-                  (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                  String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                 }
                 options={mockAccountGroups}
               />

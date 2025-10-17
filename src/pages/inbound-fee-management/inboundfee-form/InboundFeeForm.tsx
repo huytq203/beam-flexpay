@@ -2,7 +2,7 @@ import { Button, Col, DatePicker, Divider, Form, InputNumber, Row, Select, Typog
 import { useTranslation } from 'react-i18next'
 import { useEffect, useMemo, useState } from 'react'
 import moment from 'moment'
-import { parseNumberFromCommaString, parseNumberFromPercentString } from '@utils/helperFunctions'
+import { parseNumberFromCommaString, parseNumberFromPercentString, validateFutureDatetime } from '@utils/helperFunctions'
 import {
   useInboundFeeCustomerSearchQuery,
   useInboundFeeGetAccountGroupsListQuery,
@@ -68,7 +68,7 @@ const InboundFeeForm = ({
       form.setFieldsValue({
         ...initialValues,
         applicationType: initialValues.applicationType ?? 'system',
-        startDate: initialValues.startDate ? moment(initialValues.startDate) : moment(),
+        startDate: initialValues.startDate ? moment(initialValues.startDate) : undefined,
         endDate: initialValues.endDate ? moment(initialValues.endDate) : undefined,
         priceFrom: initialValues.priceFrom ?? 0,
         priceTo: initialValues.priceTo ?? 0,
@@ -274,7 +274,7 @@ const InboundFeeForm = ({
                   placeholder="Tìm và chọn nhóm tài khoản"
                   showSearch
                   filterOption={(input, option) =>
-                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                    String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                   }
                   options={accountGroupsData ? accountGroupsData.map((group) => ({
                     value: group.id.toString(),
@@ -411,14 +411,7 @@ const InboundFeeForm = ({
               label="Thời gian áp dụng"
               rules={[
                 { required: true, message: 'Vui lòng chọn thời gian áp dụng' },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (value && moment(value).isBefore(moment())) {
-                      return Promise.reject(new Error('Ngày giờ áp dụng phải lớn hơn hoặc bằng ngày giờ hiện tại'))
-                    }
-                    return Promise.resolve()
-                  }
-                })
+                { validator: validateFutureDatetime }
               ]}
             >
               <DatePicker

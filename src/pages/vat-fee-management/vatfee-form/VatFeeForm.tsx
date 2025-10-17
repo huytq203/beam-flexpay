@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next'
 import { useState, useEffect, useMemo } from 'react'
 import moment from 'moment'
 import { VatFeeApplicationType } from '@type/vat-fee'
-import { parseNumberFromPercentString } from '@utils/helperFunctions'
+import { parseNumberFromPercentString, validateFutureDatetime } from '@utils/helperFunctions'
 import { useVatFeeGetAccountGroupsQuery, useVatFeeGetAccountsQuery } from '@services/vatFeeService'
 import debounce from 'lodash/debounce'
 
@@ -152,7 +152,7 @@ const VatFeeForm = ({
                   placeholder="Chọn nhóm tài khoản"
                   showSearch
                   filterOption={(input, option) =>
-                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                    String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                   }
                   options={accountGroupsData ? accountGroupsData.map((group) => ({
                     value: group.id.toString(),
@@ -254,14 +254,7 @@ const VatFeeForm = ({
               label="Thời gian áp dụng"
               rules={[
                 { required: true, message: 'Vui lòng chọn thời gian áp dụng' },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (value && moment(value).isBefore(moment(), 'day')) {
-                      return Promise.reject(new Error('Ngày giờ áp dụng phải lớn hơn hoặc bằng ngày giờ hiện tại'))
-                    }
-                    return Promise.resolve()
-                  }
-                })
+                { validator: validateFutureDatetime }
               ]}
             >
               <DatePicker

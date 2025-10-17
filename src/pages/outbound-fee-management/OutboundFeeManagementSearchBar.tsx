@@ -222,7 +222,7 @@ const OutboundFeeManagementSearchBar = ({
                 size="large"
                 showSearch
                 filterOption={(input, option) =>
-                  (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                  String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                 }
                 options={accountGroupsData ? accountGroupsData.map((group) => ({
                   value: group.id.toString(),
