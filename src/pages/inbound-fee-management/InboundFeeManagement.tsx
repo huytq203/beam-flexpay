@@ -42,9 +42,16 @@ const InboundFeeManagement = () => {
     form.resetFields()
     // Set lại giá trị mặc định cho các field sau khi reset
     form.setFieldsValue({
+      creationTime: undefined,
+      applicableTime: undefined,
+      status: Options.ALL,
+      applicableTarget: Options.ALL,
+      transactionType: Options.ALL,
+      bank: Options.ALL,
+      accountGroup: undefined,
+      phoneNumber: undefined,
       method: Options.ALL,
-      provider: Options.ALL,
-      applicableTarget: Options.ALL
+      provider: Options.ALL
     })
     setSearch({
       page: 1,

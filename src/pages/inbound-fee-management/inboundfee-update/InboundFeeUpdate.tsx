@@ -30,7 +30,7 @@ const InboundFeeUpdate = () => {
         updateInboundFeeDto: values
       }).unwrap()
 
-      message.success(t('messages.updateInboundFeeSuccess') || 'Cập nhật cấu hình phí đầu vào thành công')
+      message.success(t('messages.updateInboundFeeSuccess'))
       navigate(PATHS.FEE_V2?.INBOUND_FEE?.LIST || '/fee-management/inbound-fee')
     } catch (error: any) {
       console.error('Error updating inbound fee:', error)

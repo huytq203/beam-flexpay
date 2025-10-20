@@ -21,9 +21,11 @@ interface InboundFeeManagementSearchBarProps {
   onCreateFee?: () => void
 }
 
+const INITIAL_APPLICABLE_TARGET = ''
+
 const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreateFee }: InboundFeeManagementSearchBarProps) => {
   const { t } = useTranslation()
-  const [applicableTarget, setApplicableTarget] = useState('')
+  const [applicableTarget, setApplicableTarget] = useState(INITIAL_APPLICABLE_TARGET)
   const [customerSearchQuery, setCustomerSearchQuery] = useState('')
 
   const { data: banksData } = useInboundFeeGetBanksListQuery()
@@ -51,20 +53,32 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
 
   useEffect(() => {
     form.setFieldsValue({
+      status: Options.ALL,
+      applicableTarget: Options.ALL,
+      transactionType: Options.ALL,
+      bank: Options.ALL,
       method: Options.ALL,
       provider: Options.ALL,
-      applicableTarget: Options.ALL,
     })
-    setApplicableTarget('')
+    setApplicableTarget(INITIAL_APPLICABLE_TARGET)
   }, [form])
 
   const handleApplicableTargetChange = (value: string) => {
     setApplicableTarget(value)
     setCustomerSearchQuery('')
     form.setFieldsValue({
-      accountGroup: Options.ALL,
-      phoneNumber: Options.ALL,
+      accountGroup: undefined,
+      phoneNumber: undefined,
     })
+  }
+
+  const handleClearFilterClick = () => {
+    // Reset local states
+    setApplicableTarget(INITIAL_APPLICABLE_TARGET)
+    setCustomerSearchQuery('')
+
+    // Call parent clear filter handler
+    onClearFilter?.()
   }
 
   return (
@@ -271,7 +285,7 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
               type='default'
               className='flex-1'
               size="large"
-              onClick={onClearFilter}
+              onClick={handleClearFilterClick}
             >
               {t('buttons.clearFilter')}
             </Button>

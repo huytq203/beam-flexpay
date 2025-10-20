@@ -44,18 +44,21 @@ const InboundFeeManagementTable = ({
     // Handle delete logic
   }
 
+  const currentPage = pagination?.page || search.page
+  const pageSize = pagination?.take || search.take
+
   return (
     <>
       <Table
-        columns={useInboundFeeColumns(t, handleView, handleEdit, handleDelete)}
+        columns={useInboundFeeColumns(t, handleView, handleEdit, handleDelete, currentPage, pageSize)}
         dataSource={inboundFees || []}
         scroll={{ x: '100%' }}
         rowKey='id'
         size='small'
         bordered
         pagination={{
-          current: pagination?.page || search.page,
-          pageSize: pagination?.take || search.take,
+          current: currentPage,
+          pageSize: pageSize,
           total: pagination?.itemCount || 0,
           showSizeChanger: false,
           onChange(page) {

@@ -26,7 +26,9 @@ export const useInboundFeeColumns = (
   t: TFunction,
   onView?: (record: InboundFeeType) => void,
   onEdit?: (record: InboundFeeType) => void,
-  onDelete?: (record: InboundFeeType) => void
+  onDelete?: (record: InboundFeeType) => void,
+  currentPage?: number,
+  pageSize?: number
 ): ColumnsType<InboundFeeType> => {
   const applicationType: Record<string, string> = {
     [Options.ALL]: t('labels.all'),
@@ -70,9 +72,10 @@ export const useInboundFeeColumns = (
         align: 'center',
         fixed: 'left',
         width: 60,
-        render: (_value, _record, index) => (
-          <CellContent data={`${index + 1}`} />
-        )
+        render: (_value, _record, index) => {
+          const stt = ((currentPage || 1) - 1) * (pageSize || 10) + index + 1
+          return <CellContent data={`${stt}`} />
+        }
       },
       {
         title: t('labels.applicationType'),
@@ -139,14 +142,25 @@ export const useInboundFeeColumns = (
         }
       },
       {
-        title: t('labels.priceRange'),
-        key: 'priceRange',
+        title: t('labels.priceFrom'),
+        dataIndex: 'priceFrom',
+        key: 'priceFrom',
         align: 'center',
-        width: 200,
-        render: (record) => {
-          const from = record.priceFrom?.toLocaleString() || '0'
-          const to = record.priceTo?.toLocaleString() || '0'
-          return <CellContent data={`${from} - ${to} VND`} />
+        width: 150,
+        render: (value) => {
+          const formattedValue = value?.toLocaleString() || '0'
+          return <CellContent data={`${formattedValue} VND`} />
+        }
+      },
+      {
+        title: t('labels.priceTo'),
+        dataIndex: 'priceTo',
+        key: 'priceTo',
+        align: 'center',
+        width: 150,
+        render: (value) => {
+          const formattedValue = value?.toLocaleString() || '0'
+          return <CellContent data={`${formattedValue} VND`} />
         }
       },
       {
@@ -264,6 +278,6 @@ export const useInboundFeeColumns = (
         )
       }
     ],
-    [t, onView, onEdit, onDelete]
+    [t, onView, onEdit, onDelete, currentPage, pageSize]
   )
 }

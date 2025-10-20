@@ -462,7 +462,7 @@ const InboundFeeForm = ({
               <DatePicker
                 showTime
                 format="DD/MM/YYYY HH:mm:ss"
-                placeholder="dd/mm/yyyy hh:mm:ss (Tùy chọn)"
+                placeholder="dd/mm/yyyy hh:mm:ss"
                 className="w-full"
                 size="large"
                 onChange={(date) => {
@@ -486,12 +486,14 @@ const InboundFeeForm = ({
             <Form.Item
               name="priceFrom"
               label="Mức giao dịch từ (VND)"
+              validateTrigger="onChange"
               rules={[
                 { required: true, message: 'Vui lòng nhập mức giao dịch từ' },
                 {
                   type: 'number',
                   min: 0,
                   max: 999999999999,
+                  transform: (value) => Number(value),
                   message: 'Giá trị phải từ 0 đến 999,999,999,999'
                 }
               ]}
@@ -500,8 +502,6 @@ const InboundFeeForm = ({
                 placeholder="0"
                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                 parser={parseNumberFromCommaString}
-                min={0}
-                max={999999999999}
                 className="w-full"
                 size="large"
               />
@@ -513,12 +513,14 @@ const InboundFeeForm = ({
             <Form.Item
               name="priceTo"
               label="Mức giao dịch đến (VND)"
+              validateTrigger="onChange"
               rules={[
                 { required: true, message: 'Vui lòng nhập mức giao dịch đến' },
                 {
                   type: 'number',
                   min: 0,
                   max: 999999999999,
+                  transform: (value) => Number(value),
                   message: 'Giá trị phải từ 0 đến 999,999,999,999'
                 },
                 ({ getFieldValue }) => ({
@@ -535,8 +537,6 @@ const InboundFeeForm = ({
                 placeholder="999,999,999,999"
                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                 parser={parseNumberFromCommaString}
-                min={0}
-                max={999999999999}
                 className="w-full"
                 size="large"
               />
@@ -548,7 +548,15 @@ const InboundFeeForm = ({
             <Form.Item
               name="flexibleFeeMpct"
               label="Phí linh hoạt (%)"
+              validateTrigger="onChange"
               rules={[
+                {
+                  type: 'number',
+                  min: 0,
+                  max: 100,
+                  transform: (value) => Number(value),
+                  message: 'Phí linh hoạt phải từ 0% đến 100%'
+                },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     const fixedFee = getFieldValue('fixedFee')
@@ -563,12 +571,10 @@ const InboundFeeForm = ({
             >
               <InputNumber<number>
                 placeholder="0.000"
-                min={0}
-                max={100}
                 step={0.001}
                 precision={3}
-                formatter={(value) => `${value}%`}
-                parser={parseNumberFromPercentString}
+                formatter={(value) => `${value}`}
+                parser={(value) => value?.replace('%', '') as any}
                 className="w-full"
                 size="large"
               />
@@ -580,7 +586,15 @@ const InboundFeeForm = ({
             <Form.Item
               name="fixedFee"
               label="Phí cố định (VND)"
+              validateTrigger="onChange"
               rules={[
+                {
+                  type: 'number',
+                  min: 0,
+                  max: 999999999999,
+                  transform: (value) => Number(value),
+                  message: 'Phí cố định phải từ 0 đến 999,999,999,999 VND'
+                },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     const flexibleFee = getFieldValue('flexibleFeeMpct')
@@ -597,7 +611,6 @@ const InboundFeeForm = ({
                 placeholder="0"
                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                 parser={parseNumberFromCommaString}
-                min={0}
                 className="w-full"
                 size="large"
               />
@@ -610,8 +623,16 @@ const InboundFeeForm = ({
               name="minFee"
               label="Phí tối thiểu (VND)"
               required
+              validateTrigger="onChange"
               dependencies={['flexibleFeeMpct', 'maxFee']}
               rules={[
+                {
+                  type: 'number',
+                  min: 0,
+                  max: 999999999999,
+                  transform: (value) => Number(value),
+                  message: 'Phí tối thiểu phải từ 0 đến 999,999,999,999 VND'
+                },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     const flexibleFee = getFieldValue('flexibleFeeMpct')
@@ -637,7 +658,6 @@ const InboundFeeForm = ({
                 placeholder="Để trống nếu không cần"
                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                 parser={parseNumberFromCommaString}
-                min={0}
                 className="w-full"
                 size="large"
                 onChange={() => {
@@ -653,8 +673,16 @@ const InboundFeeForm = ({
             <Form.Item
               name="maxFee"
               label="Phí tối đa (VND)"
+              validateTrigger="onChange"
               dependencies={['fixedFee', 'minFee']}
               rules={[
+                {
+                  type: 'number',
+                  min: 0,
+                  max: 999999999999,
+                  transform: (value) => Number(value),
+                  message: 'Phí tối đa phải từ 0 đến 999,999,999,999 VND'
+                },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     if (isNil(value)) return Promise.resolve()
@@ -682,7 +710,6 @@ const InboundFeeForm = ({
                 placeholder="Để trống nếu không giới hạn"
                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                 parser={parseNumberFromCommaString}
-                min={0}
                 className="w-full"
                 size="large"
                 onChange={() => {
@@ -698,12 +725,14 @@ const InboundFeeForm = ({
             <Form.Item
               name="vat"
               label="VAT (%)"
+              validateTrigger="onChange"
               rules={[
                 { required: true, message: 'Vui lòng nhập VAT' },
                 {
                   type: 'number',
                   min: 0,
                   max: 100,
+                  transform: (value) => Number(value),
                   message: 'VAT phải từ 0% đến 100%'
                 }
               ]}
@@ -711,12 +740,10 @@ const InboundFeeForm = ({
             >
               <InputNumber<number>
                 placeholder="0.000"
-                min={0}
-                max={100}
                 step={0.001}
                 precision={3}
-                formatter={(value) => `${value}%`}
-                parser={parseNumberFromPercentString}
+                formatter={(value) => `${value}`}
+                parser={(value) => value?.replace('%', '') as any}
                 className="w-full"
                 size="large"
               />
