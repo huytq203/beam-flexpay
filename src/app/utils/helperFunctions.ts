@@ -833,6 +833,34 @@ export const convertMiniPercentToPercent = (value?: number): string => {
   return `${(value / 1000).toFixed(2).replace(/0+$/, '').replace(/\.$/, '')}%`
 }
 
+/**
+ * Chuyển đổi percent sang mini percent (nhân 1000)
+ * @param value - Giá trị percent (ví dụ: 10.5)
+ * @returns Giá trị mini percent (ví dụ: 10500)
+ * @example
+ * convertPercentToMiniPercent(10) // 10000
+ * convertPercentToMiniPercent(10.5) // 10500
+ * convertPercentToMiniPercent(0.5) // 500
+ */
+export const convertPercentToMiniPercent = (value?: number): number | undefined => {
+  if (value === undefined || value === null) return undefined
+  return Math.round(value * 1000)
+}
+
+/**
+ * Chuyển đổi mini percent sang percent (chia 1000)
+ * @param value - Giá trị mini percent (ví dụ: 10500)
+ * @returns Giá trị percent (ví dụ: 10.5)
+ * @example
+ * convertMiniPercentToPercentNumber(10000) // 10
+ * convertMiniPercentToPercentNumber(10500) // 10.5
+ * convertMiniPercentToPercentNumber(500) // 0.5
+ */
+export const convertMiniPercentToPercentNumber = (value?: number): number | undefined => {
+  if (value === undefined || value === null) return undefined
+  return value / 1000
+}
+
 
 export const extractNativeDateFromPicker = (value: unknown): Date | null => {
   if (!value) return null

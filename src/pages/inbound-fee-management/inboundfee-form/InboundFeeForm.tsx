@@ -75,9 +75,9 @@ const InboundFeeForm = ({
         endDate: initialValues.endDate ? moment(initialValues.endDate) : undefined,
         priceFrom: initialValues.priceFrom ?? 0,
         priceTo: initialValues.priceTo ?? 0,
-        method: initialValues.method ?? ['all'],
-        bank: initialValues.bank ?? ['all'],
-        provider: initialValues.provider ?? ['all'],
+        method: initialValues.method ?? [],
+        bank: initialValues.bank ?? [],
+        provider: initialValues.provider ?? [],
         // Convert flexibleFeeMpct from mini percent to percent for display
         flexibleFeeMpct: convertMiniPercentToPercentNumber(initialValues.flexibleFeeMpct) ?? 0,
         fixedFee: initialValues.fixedFee ?? 0,
@@ -150,8 +150,10 @@ const InboundFeeForm = ({
     if (!isEdit) {
       payload.applicationType = values.applicationType
       payload.transactionType = values.transactionType
-      payload.method = Array.isArray(values.method) ? values.method[0] : values.method
-      payload.provider = Array.isArray(values.provider) ? values.provider[0] : values.provider
+
+      // Convert empty array to 'all' for method, bank, provider
+      payload.method = values.method?.length > 0 ? values.method[0] : 'all'
+      payload.provider = values.provider?.length > 0 ? values.provider[0] : 'all'
 
       // Optional fields based on applicationType (only for create)
       if (values.applicationType === 'individual' && selectedCustomerId) {
@@ -161,10 +163,11 @@ const InboundFeeForm = ({
         payload.accountGroupId = parseInt(values.accountGroup)
       }
 
-      // Bank field (only for create)
-      if (values.bank && Array.isArray(values.bank) && values.bank.length > 0 && values.bank[0] !== 'all') {
+      // Bank field (only for create) - convert empty to 'all'
+      if (values.bank?.length > 0) {
         payload.bankId = parseInt(values.bank[0])
       }
+      // If empty, backend will understand as 'all' (no bankId field sent)
     }
 
     console.log('Form payload to be sent to API:', payload)
@@ -219,9 +222,9 @@ const InboundFeeForm = ({
           applicationType: 'system',
           priceFrom: 0,
           priceTo: 0,
-          method: ['all'],
-          bank: ['all'],
-          provider: ['all'],
+          method: [],
+          bank: [],
+          provider: [],
           flexibleFeeMpct: 0,
           fixedFee: 0,
           vat: 0
@@ -356,11 +359,8 @@ const InboundFeeForm = ({
             >
               <Select
                 mode="multiple"
-                placeholder="Chọn phương thức giao dịch"
-                options={[
-                  { value: 'all', label: 'Tất cả' },
-                  ...getPaymentMethods(transactionType)
-                ]}
+                placeholder="Chọn phương thức (để trống = tất cả)"
+                options={getPaymentMethods(transactionType)}
                 size="large"
                 disabled={isEdit}
               />
@@ -376,16 +376,11 @@ const InboundFeeForm = ({
             >
               <Select
                 mode="multiple"
-                placeholder="Chọn ngân hàng"
-                options={banksData ? [
-                  { value: 'all', label: 'Tất cả' },
-                  ...banksData.map((bank: { id: number; name: string; bankCode: string }) => ({
-                    value: bank.id.toString(),
-                    label: bank.name
-                  }))
-                ] : [
-                  { value: 'all', label: 'Tất cả' }
-                ]}
+                placeholder="Chọn ngân hàng (để trống = tất cả)"
+                options={banksData?.map((bank: { id: number; name: string; bankCode: string }) => ({
+                  value: bank.id.toString(),
+                  label: bank.name
+                })) || []}
                 size="large"
                 disabled={isEdit}
               />
@@ -401,11 +396,8 @@ const InboundFeeForm = ({
             >
               <Select
                 mode="multiple"
-                placeholder="Chọn nhà cung cấp"
-                options={[
-                  { value: 'all', label: 'Tất cả' },
-                  ...mockProviders
-                ]}
+                placeholder="Chọn nhà cung cấp (để trống = tất cả)"
+                options={mockProviders}
                 size="large"
                 disabled={isEdit}
               />
