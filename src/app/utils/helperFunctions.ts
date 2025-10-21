@@ -868,3 +868,18 @@ export const validateFutureDatetime = (_: unknown, value: unknown): Promise<void
   }
   return Promise.resolve()
 }
+
+/**
+ * Kiểm tra xem giá trị có rỗng hay không (null, undefined, hoặc 0)
+ * @param value - Giá trị cần kiểm tra
+ * @returns true nếu giá trị là null, undefined, hoặc 0
+ * @example
+ * isNullOrZero(null) // true
+ * isNullOrZero(undefined) // true
+ * isNullOrZero(0) // true
+ * isNullOrZero(5) // false
+ * isNullOrZero('') // false
+ */
+export const isNullOrZero = (value: any): boolean => {
+  return value === null || value === undefined || value === 0
+}

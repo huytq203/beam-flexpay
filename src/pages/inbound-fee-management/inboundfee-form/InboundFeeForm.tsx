@@ -2,7 +2,7 @@ import { Button, Col, DatePicker, Divider, Form, InputNumber, Row, Select, Typog
 import { useTranslation } from 'react-i18next'
 import { useEffect, useMemo, useState } from 'react'
 import moment from 'moment'
-import { parseNumberFromCommaString, parseNumberFromPercentString, validateFutureDatetime } from '@utils/helperFunctions'
+import { parseNumberFromCommaString, parseNumberFromPercentString, validateFutureDatetime, isNullOrZero } from '@utils/helperFunctions'
 import {
   useInboundFeeCustomerSearchQuery,
   useInboundFeeGetAccountGroupsListQuery,
@@ -39,6 +39,9 @@ const InboundFeeForm = ({
   // Watch form fields
   const flexibleFee = Form.useWatch('flexibleFeeMpct', form)
   const fixedFee = Form.useWatch('fixedFee', form)
+
+  // Check if both flexible fee and fixed fee are 0 or null/undefined
+  const shouldDisableMinMaxFee = isNullOrZero(flexibleFee) && isNullOrZero(fixedFee)
 
   // Fetch data from APIs
   const { data: banksData } = useInboundFeeGetBanksListQuery()
@@ -105,10 +108,15 @@ const InboundFeeForm = ({
     })
   }
 
-  // Remove unused variable warning
+  // Clear minFee and maxFee when both flexible fee and fixed fee are 0
   useEffect(() => {
-    // This effect is intentionally empty
-  }, [])
+    if (shouldDisableMinMaxFee) {
+      form.setFieldsValue({
+        minFee: undefined,
+        maxFee: undefined
+      })
+    }
+  }, [shouldDisableMinMaxFee, form])
 
   const handleTransactionTypeChange = (value: string) => {
     setTransactionType(value)
@@ -622,17 +630,10 @@ const InboundFeeForm = ({
             <Form.Item
               name="minFee"
               label="Phí tối thiểu (VND)"
-              required
+              required={!isNullOrZero(flexibleFee)}
               validateTrigger="onChange"
               dependencies={['flexibleFeeMpct', 'maxFee']}
               rules={[
-                {
-                  type: 'number',
-                  min: 0,
-                  max: 999999999999,
-                  transform: (value) => Number(value),
-                  message: 'Phí tối thiểu phải từ 0 đến 999,999,999,999 VND'
-                },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     const flexibleFee = getFieldValue('flexibleFeeMpct')
@@ -643,9 +644,16 @@ const InboundFeeForm = ({
                       return Promise.reject(new Error('Phí tối thiểu là bắt buộc khi có phí linh hoạt'))
                     }
 
-                    // Kiểm tra minFee phải nhỏ hơn maxFee
-                    if (!isNil(value) && !isNil(maxFee) && value >= maxFee) {
-                      return Promise.reject(new Error('Phí tối thiểu phải nhỏ hơn phí tối đa'))
+                    // Chỉ validate range khi có giá trị
+                    if (!isNil(value)) {
+                      if (value < 0 || value > 999999999999) {
+                        return Promise.reject(new Error('Phí tối thiểu phải từ 0 đến 999,999,999,999 VND'))
+                      }
+
+                      // Kiểm tra minFee phải nhỏ hơn maxFee
+                      if (!isNil(maxFee) && value >= maxFee) {
+                        return Promise.reject(new Error('Phí tối thiểu phải nhỏ hơn phí tối đa'))
+                      }
                     }
 
                     return Promise.resolve()
@@ -660,6 +668,7 @@ const InboundFeeForm = ({
                 parser={parseNumberFromCommaString}
                 className="w-full"
                 size="large"
+                disabled={shouldDisableMinMaxFee}
                 onChange={() => {
                   // Trigger validation for maxFee when minFee changes
                   form.validateFields(['maxFee'])
@@ -676,16 +685,15 @@ const InboundFeeForm = ({
               validateTrigger="onChange"
               dependencies={['fixedFee', 'minFee']}
               rules={[
-                {
-                  type: 'number',
-                  min: 0,
-                  max: 999999999999,
-                  transform: (value) => Number(value),
-                  message: 'Phí tối đa phải từ 0 đến 999,999,999,999 VND'
-                },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
+                    // Nếu không nhập thì không validate
                     if (isNil(value)) return Promise.resolve()
+
+                    // Chỉ validate range khi có giá trị
+                    if (value < 0 || value > 999999999999) {
+                      return Promise.reject(new Error('Phí tối đa phải từ 0 đến 999,999,999,999 VND'))
+                    }
 
                     const fixedFee = getFieldValue('fixedFee') || 0
                     const minFee = getFieldValue('minFee')
@@ -712,6 +720,7 @@ const InboundFeeForm = ({
                 parser={parseNumberFromCommaString}
                 className="w-full"
                 size="large"
+                disabled={shouldDisableMinMaxFee}
                 onChange={() => {
                   // Trigger validation for minFee when maxFee changes
                   form.validateFields(['minFee'])
@@ -725,16 +734,27 @@ const InboundFeeForm = ({
             <Form.Item
               name="vat"
               label="VAT (%)"
+              required={isNullOrZero(fixedFee)}
               validateTrigger="onChange"
+              dependencies={['fixedFee']}
               rules={[
-                { required: true, message: 'Vui lòng nhập VAT' },
-                {
-                  type: 'number',
-                  min: 0,
-                  max: 100,
-                  transform: (value) => Number(value),
-                  message: 'VAT phải từ 0% đến 100%'
-                }
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    const fixedFee = getFieldValue('fixedFee')
+
+                    // Chỉ bắt buộc khi phí cố định = 0 hoặc null/undefined
+                    if (isNullOrZero(fixedFee) && isNil(value)) {
+                      return Promise.reject(new Error('Vui lòng nhập VAT'))
+                    }
+
+                    // Validate giá trị nếu có nhập
+                    if (!isNil(value) && (value < 0 || value > 100)) {
+                      return Promise.reject(new Error('VAT phải từ 0% đến 100%'))
+                    }
+
+                    return Promise.resolve()
+                  }
+                })
               ]}
               tooltip="Thuế giá trị gia tăng tính theo phần trăm"
             >
