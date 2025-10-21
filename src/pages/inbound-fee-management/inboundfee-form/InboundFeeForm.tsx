@@ -10,6 +10,7 @@ import {
 } from '@services/inboundFeeService'
 import debounce from 'lodash/debounce'
 import isNil from 'lodash/isNil'
+import CustomMultiSelect from '@components/custom-multi-select/CustomMultiSelect'
 
 const { Option } = Select
 const { Title, Text } = Typography
@@ -357,12 +358,11 @@ const InboundFeeForm = ({
               label="Phương thức giao dịch"
               rules={[{ required: true, message: 'Vui lòng chọn phương thức giao dịch' }]}
             >
-              <Select
-                mode="multiple"
-                placeholder="Chọn phương thức (để trống = tất cả)"
+              <CustomMultiSelect
                 options={getPaymentMethods(transactionType)}
-                size="large"
+                placeholder="Chọn phương thức giao dịch"
                 disabled={isEdit}
+                className="w-full"
               />
             </Form.Item>
           </div>
@@ -374,15 +374,14 @@ const InboundFeeForm = ({
               label="Ngân hàng"
               rules={[{ required: true, message: 'Vui lòng chọn ngân hàng' }]}
             >
-              <Select
-                mode="multiple"
-                placeholder="Chọn ngân hàng (để trống = tất cả)"
+              <CustomMultiSelect
                 options={banksData?.map((bank: { id: number; name: string; bankCode: string }) => ({
                   value: bank.id.toString(),
                   label: bank.name
                 })) || []}
-                size="large"
+                placeholder="Chọn ngân hàng"
                 disabled={isEdit}
+                className="w-full"
               />
             </Form.Item>
           </div>
@@ -394,12 +393,11 @@ const InboundFeeForm = ({
               label="Nhà cung cấp"
               rules={[{ required: true, message: 'Vui lòng chọn nhà cung cấp' }]}
             >
-              <Select
-                mode="multiple"
-                placeholder="Chọn nhà cung cấp (để trống = tất cả)"
+              <CustomMultiSelect
                 options={mockProviders}
-                size="large"
+                placeholder="Chọn nhà cung cấp"
                 disabled={isEdit}
+                className="w-full"
               />
             </Form.Item>
           </div>
