@@ -2,7 +2,7 @@ import { Button, Col, DatePicker, Divider, Form, InputNumber, Row, Select, Typog
 import { useTranslation } from 'react-i18next'
 import { useEffect, useMemo, useState } from 'react'
 import moment from 'moment'
-import { parseNumberFromCommaString, parseNumberFromPercentString, validateFutureDatetime, isNullOrZero } from '@utils/helperFunctions'
+import { parseNumberFromCommaString, parseNumberFromPercentString, validateFutureDatetime, isNullOrZero, convertPercentToMiniPercent, convertMiniPercentToPercentNumber } from '@utils/helperFunctions'
 import {
   useInboundFeeCustomerSearchQuery,
   useInboundFeeGetAccountGroupsListQuery,
@@ -78,11 +78,13 @@ const InboundFeeForm = ({
         method: initialValues.method ?? ['all'],
         bank: initialValues.bank ?? ['all'],
         provider: initialValues.provider ?? ['all'],
-        flexibleFeeMpct: initialValues.flexibleFeeMpct ?? 0,
+        // Convert flexibleFeeMpct from mini percent to percent for display
+        flexibleFeeMpct: convertMiniPercentToPercentNumber(initialValues.flexibleFeeMpct) ?? 0,
         fixedFee: initialValues.fixedFee ?? 0,
         minFee: initialValues.minFee ?? undefined,
         maxFee: initialValues.maxFee ?? undefined,
-        vat: initialValues.vat ?? 0,
+        // Convert vat from mini percent to percent for display
+        vat: convertMiniPercentToPercentNumber(initialValues.vat) ?? 0,
         // Set phoneNumber for display in edit mode (individual applicationType)
         phoneNumber: initialValues.customerId ? initialValues.customerId.toString() : undefined
       })
@@ -134,14 +136,14 @@ const InboundFeeForm = ({
       ...(values.priceFrom !== undefined && { priceFrom: values.priceFrom }),
       ...(values.priceTo !== undefined && { priceTo: values.priceTo }),
 
-      // Fee configuration (only include if they have values)
-      ...(values.flexibleFeeMpct !== undefined && { flexibleFeeMpct: values.flexibleFeeMpct }),
+      // Fee configuration (convert percent fields to mini percent)
+      ...(values.flexibleFeeMpct !== undefined && { flexibleFeeMpct: convertPercentToMiniPercent(values.flexibleFeeMpct) }),
       ...(values.fixedFee !== undefined && { fixedFee: values.fixedFee }),
       ...(values.minFee !== undefined && { minFee: values.minFee }),
       ...(values.maxFee !== undefined && { maxFee: values.maxFee }),
 
-      // VAT
-      ...(values.vat !== undefined && { vat: values.vat })
+      // VAT (convert percent to mini percent)
+      ...(values.vat !== undefined && { vat: convertPercentToMiniPercent(values.vat) })
     }
 
     // Only include disabled fields when NOT in edit mode (i.e., when creating)
@@ -663,7 +665,7 @@ const InboundFeeForm = ({
               tooltip="Phí tối thiểu cho mỗi giao dịch (bắt buộc khi có phí linh hoạt)"
             >
               <InputNumber<number>
-                placeholder="Để trống nếu không cần"
+                placeholder="Nhập phí tối thiểu"
                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                 parser={parseNumberFromCommaString}
                 className="w-full"
@@ -715,7 +717,7 @@ const InboundFeeForm = ({
               tooltip="Phí tối đa cho mỗi giao dịch (tùy chọn)"
             >
               <InputNumber<number>
-                placeholder="Để trống nếu không giới hạn"
+                placeholder="Nhập phí tối đa"
                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                 parser={parseNumberFromCommaString}
                 className="w-full"

@@ -35,7 +35,7 @@ const InboundFeeDetailModal = ({ visible, onClose, inboundFeeId }: InboundFeeDet
 
   const formatPercent = (value?: number) => {
     if (value === undefined || value === null) return t('labels.nodata')
-    return `${convertMiniPercentToPercent(value)}`
+    return convertMiniPercentToPercent(value)
   }
 
   const formatDateTime = (dateString?: string) => {
@@ -168,7 +168,7 @@ const InboundFeeDetailModal = ({ visible, onClose, inboundFeeId }: InboundFeeDet
             </Descriptions.Item>
 
             <Descriptions.Item label={t('labels.vat')}>
-              {inboundFee.vat !== undefined && inboundFee.vat !== null ? `${inboundFee.vat}%` : t('labels.nodata')}
+              {formatPercent(inboundFee.vat)}
             </Descriptions.Item>
           </Descriptions>
 

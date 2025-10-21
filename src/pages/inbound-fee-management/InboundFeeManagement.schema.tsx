@@ -209,7 +209,7 @@ export const useInboundFeeColumns = (
             width: 100,
             dataIndex: 'vat',
             render: (value) => (
-              <CellContent data={value !== undefined && value !== null ? `${value}%` : '-'} />
+              <CellContent data={value !== undefined && value !== null ? convertMiniPercentToPercent(value) : '-'} />
             )
           }
         ]
