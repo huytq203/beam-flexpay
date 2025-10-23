@@ -82,7 +82,7 @@ export const inboundFeeFormSchema = z.object({
     .max(999999999999, 'Mức giao dịch từ không được vượt quá 999,999,999,999'),
 
   priceTo: z.number()
-    .min(0, 'Mức giao dịch đến phải >= 0')
+    .min(1, 'Mức giao dịch đến phải >= 1')
     .max(999999999999, 'Mức giao dịch đến không được vượt quá 999,999,999,999'),
 
   startDate: z.any()
@@ -357,7 +357,7 @@ export const inboundFeeCreateSchema = z.object({
     .max(999999999999, 'Mức giao dịch từ không được vượt quá 999,999,999,999'),
 
   priceTo: z.number()
-    .min(0, 'Mức giao dịch đến phải >= 0')
+    .min(1, 'Mức giao dịch đến phải >= 1')
     .max(999999999999, 'Mức giao dịch đến không được vượt quá 999,999,999,999'),
 
   startDate: z.date(),
