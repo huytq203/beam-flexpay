@@ -2,12 +2,11 @@ import { z, type ZodError } from 'zod'
 import isNil from 'lodash/isNil'
 import {
   ApplicationTypes,
-  TransactionTypes,
-  MethodsByTransactionType,
-  validateMethodsForTransactionType,
   InboundFeeApplicationType,
-  type ApplicationType,
-  type TransactionType
+  MethodsByTransactionType,
+  type TransactionType,
+  TransactionTypes,
+  validateMethodsForTransactionType
 } from '@type/inbound-fee'
 
 // ============ CONSTANTS ============
@@ -248,8 +247,8 @@ export const inboundFeeFormSchema = z.object({
   })
   .refine(data => {
     // Validation: At least one of flexibleFeeMpct or fixedFee must be provided and > 0
-    const hasFlexibleFee = !isNil(data.flexibleFeeMpct) && data.flexibleFeeMpct > 0
-    const hasFixedFee = !isNil(data.fixedFee) && data.fixedFee > 0
+    const hasFlexibleFee = !isNil(data.flexibleFeeMpct)
+    const hasFixedFee = !isNil(data.fixedFee)
 
     if (!hasFlexibleFee && !hasFixedFee) {
       return false

@@ -40,7 +40,6 @@ function CustomMultiSelect({
                              minWidth = 190,
                              className
                            }: CustomMultiSelectProps) {
-  const { t } = useTranslation()
 
   const [selectedValues, setSelectedValues] = useState<(string | number)[]>(value)
 
@@ -48,10 +47,17 @@ function CustomMultiSelect({
     setSelectedValues(value)
   }, [value])
 
-  const isAllSelected = useMemo(
-    () => (options.length > 0 && selectedValues.length === options.length) || (selectedValues.length === 1 && selectedValues.includes('all')),
-    [options, selectedValues]
-  )
+  const isAllSelected = useMemo(() => {
+    const tmp = selectedValues.length > 1
+      ? selectedValues.filter(v => v !== 'all')
+      : selectedValues;
+
+    return (
+      (options.length > 0 && tmp.length === options.length) ||
+      (tmp.length === 1 && tmp.includes('all'))
+    );
+  }, [options, selectedValues]);
+
 
   const hasSelections = useMemo(
     () => selectedValues.length > 0,
