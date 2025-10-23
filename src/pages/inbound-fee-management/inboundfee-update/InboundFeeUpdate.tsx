@@ -22,6 +22,7 @@ const InboundFeeUpdate = () => {
 
     try {
       console.log('Updating inbound fee with values:', values)
+      console.log('Update payload structure:', JSON.stringify(values, null, 2))
 
       // InboundFeeForm already handles the payload correctly for edit mode
       // It only includes updatable fields (no disabled fields like applicationType, method, provider, bank)
@@ -34,7 +35,18 @@ const InboundFeeUpdate = () => {
       navigate(PATHS.FEE_V2?.INBOUND_FEE?.LIST || '/fee-management/inbound-fee')
     } catch (error: any) {
       console.error('Error updating inbound fee:', error)
-      message.error(error?.data?.message || t('messages.updateInboundFeeFailed'))
+
+      // Handle different error types
+      if (error?.data?.message) {
+        // Backend error message
+        message.error(error.data.message)
+      } else if (error?.message) {
+        // Network or other errors
+        message.error(error.message)
+      } else {
+        // Fallback error message
+        message.error(t('messages.updateInboundFeeFailed'))
+      }
     }
   }
 

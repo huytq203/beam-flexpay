@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next'
 
 const { Text } = Typography
 
-function NoDataText() {
+function NoDataText({ isDash = false }: { isDash?: boolean }) {
   const { t: trans } = useTranslation()
-  return <Text>{trans`labels.nodata`}</Text>
+  return isDash ? <Text>-</Text> : <Text>{trans`labels.nodata`}</Text>
 }
+
 export default NoDataText

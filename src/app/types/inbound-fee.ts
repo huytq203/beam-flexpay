@@ -36,26 +36,28 @@ export interface Pagination {
 export type InboundFeeType = {
   id: string
   applicationType: string
-  customerId?: number
-  fullname?: string
-  phoneNumber?: string
-  accountGroupId?: number
-  accountGroupName?: string
-  bankId?: number
-  bankName?: string
+  customerId?: number | null
+  fullname?: string | null
+  phoneNumber?: string | null
+  accountGroupId?: number | null
+  accountGroupName?: string | null
+  bankIds?: number[]
+  banks?: Array<{ id: number; name: string }>
+  active?: number
   transactionType: string
-  method: string
-  provider: string
+  methods: string[]
+  providers: string[]
   priceFrom?: number
   priceTo?: number
-  flexibleFeeMpct?: number
-  fixedFee?: number
-  minFee?: number
-  maxFee?: number
-  vat?: number
+  flexibleFeeMpct?: number | null
+  fixedFee?: number | null
+  minFee?: number | null
+  maxFee?: number | null
+  vatMpct?: number | null
   createdAt: string
+  updatedAt: string
   startDate: string
-  endDate?: string
+  endDate?: string | null
   status?: 'active' | 'inactive' | 'expired'
 }
 
@@ -63,28 +65,26 @@ export interface CreateInboundFeeDto {
   // Required fields
   applicationType: 'system' | 'individual' | 'account_group'
   transactionType: 'deposit' | 'withdrawal' | 'payment' | 'transfer' | 'refund'
-  method: string // Single value from form (after processing)
-  provider: string // Single value from form (after processing)
-  startDate: string // ISO 8601 string
+  methods: string[] // Array of FeeMethod (minimum 1)
+  providers: string[] // Array of FeeProvider (minimum 1)
+  priceFrom: number // Required: 0 to 999,999,999,999
+  priceTo: number // Required: 0 to 999,999,999,999
+  startDate: string // Required: ISO 8601 string
 
   // Optional fields based on applicationType
-  customerId?: number // For applicationType = 'individual'
-  accountGroupId?: number // For applicationType = 'account_group'
-  bankId?: number // Bank ID
+  customerId?: number // Required when applicationType = 'individual'
+  accountGroupId?: number // Required when applicationType = 'account_group'
+  bankIds?: number[] // Array of bank IDs
   endDate?: string // ISO 8601 string
 
-  // Price range
-  priceFrom?: number
-  priceTo?: number
-
-  // Fee configuration (combined payer + receiver fees)
+  // Fee configuration
   flexibleFeeMpct?: number // 0-100000 (in mpct - mini percent)
-  fixedFee?: number
-  minFee?: number
-  maxFee?: number
+  fixedFee?: number // 0 to 999,999,999,999
+  minFee?: number // 0 to 999,999,999,999
+  maxFee?: number // 0 to 999,999,999,999
 
-  // VAT
-  vat?: number // 0-100 (percentage)
+  // VAT (renamed from vat)
+  vatMpct?: number // 0-100000 (in mpct - mini percent)
 }
 
 export interface UpdateInboundFeeDto {
@@ -97,7 +97,7 @@ export interface UpdateInboundFeeDto {
   fixedFee?: number
   minFee?: number
   maxFee?: number
-  vat?: number
+  vatMpct?: number // Renamed from vat
 }
 
 export interface InboundFeeCreateApiArg {
@@ -236,10 +236,16 @@ export enum InboundFeeTransactionType {
 
 export enum InboundFeeMethod {
   ALL = 'all',
+  // Deposit methods
   ATM_CARD = 'atm_card',
   QR_CODE = 'qr_code',
-  BANK_ACCOUNT = 'bank_account',
+  BANK_ACCOUNT_IB = 'bank_account_ib', // Internet Banking
+  // Withdrawal methods
+  ATM_IBFT = 'atm_ibft', // ATM via IBFT
+  BANK_ACCOUNT_IBFT = 'bank_account_ibft', // Bank account via IBFT
+  // Payment/Refund methods
   EWALLET = 'ewallet',
+  BANK_COUNT = 'bank_count', // Bank account (replaced bank_account)
   VISA_INTERNATIONAL = 'visa_international',
   MASTER_INTERNATIONAL = 'master_international',
   JCB_INTERNATIONAL = 'jcb_international',
@@ -248,13 +254,85 @@ export enum InboundFeeMethod {
 
 export enum InboundFeeProvider {
   ALL = 'all',
-  VIETQR = 'vietqr',
+  VPBANK = 'vpbank',
+  VPB = 'vpbank', // Alias for VPBANK
   NAPAS = 'napas',
-  VPB = 'vpb'
+  VIETQR = 'vietqr'
 }
 
 export enum InboundFeeApplicationType {
   SYSTEM = 'system',
   INDIVIDUAL = 'individual',
   ACCOUNT_GROUP = 'account_group'
+}
+
+// Type definitions for better type safety
+export const ApplicationTypes = ['system', 'individual', 'account_group'] as const
+export const TransactionTypes = ['deposit', 'withdrawal', 'payment', 'transfer', 'refund'] as const
+
+export type ApplicationType = typeof ApplicationTypes[number]
+export type TransactionType = typeof TransactionTypes[number]
+
+// Define allowed methods for each transaction type
+export const MethodsByTransactionType = {
+  deposit: [
+    InboundFeeMethod.ALL,
+    InboundFeeMethod.ATM_CARD,
+    InboundFeeMethod.QR_CODE,
+    InboundFeeMethod.BANK_ACCOUNT_IB
+  ],
+  withdrawal: [
+    InboundFeeMethod.ALL,
+    InboundFeeMethod.ATM_IBFT,
+    InboundFeeMethod.BANK_ACCOUNT_IBFT
+  ],
+  payment: [
+    InboundFeeMethod.ALL,
+    InboundFeeMethod.EWALLET,
+    InboundFeeMethod.BANK_COUNT,
+    InboundFeeMethod.VISA_INTERNATIONAL,
+    InboundFeeMethod.MASTER_INTERNATIONAL,
+    InboundFeeMethod.JCB_INTERNATIONAL,
+    InboundFeeMethod.AMEX_INTERNATIONAL,
+    InboundFeeMethod.QR_CODE
+  ],
+  refund: [
+    InboundFeeMethod.ALL,
+    InboundFeeMethod.EWALLET,
+    InboundFeeMethod.BANK_COUNT,
+    InboundFeeMethod.VISA_INTERNATIONAL,
+    InboundFeeMethod.MASTER_INTERNATIONAL,
+    InboundFeeMethod.JCB_INTERNATIONAL,
+    InboundFeeMethod.AMEX_INTERNATIONAL,
+    InboundFeeMethod.QR_CODE
+  ],
+  transfer: [
+    InboundFeeMethod.ALL,
+    InboundFeeMethod.EWALLET
+  ]
+} as const
+
+// Helper type for method validation
+export type AllowedMethodsMap = typeof MethodsByTransactionType
+
+/**
+ * Check if fee methods are valid for the given transaction type
+ */
+export const validateMethodsForTransactionType = (
+  transactionType: TransactionType,
+  methods: string[]
+): { valid: boolean; invalidMethods?: string[] } => {
+  const allowedMethods = MethodsByTransactionType[transactionType]
+  if (!allowedMethods) {
+    return { valid: false, invalidMethods: methods }
+  }
+
+  const invalidMethods = methods.filter(
+    method => !allowedMethods.includes(method as any)
+  )
+
+  return {
+    valid: invalidMethods.length === 0,
+    invalidMethods: invalidMethods.length > 0 ? invalidMethods : undefined
+  }
 }

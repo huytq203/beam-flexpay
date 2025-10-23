@@ -4,12 +4,10 @@ import {
   DatePicker,
   InputNumber,
   Button,
-  Card,
   Row,
   Col,
   Typography
 } from 'antd'
-import { useTranslation } from 'react-i18next'
 import { useState, useEffect, useMemo } from 'react'
 import moment from 'moment'
 import { VatFeeApplicationType } from '@type/vat-fee'
@@ -32,10 +30,8 @@ const VatFeeForm = ({
   initialValues,
   onFinish,
   onCancel,
-  loading = false,
-  isEdit = false
+  loading = false
 }: VatFeeFormProps) => {
-  const { t } = useTranslation()
   const [form] = Form.useForm()
   const [applicationType, setApplicationType] = useState<VatFeeApplicationType>(VatFeeApplicationType.SYSTEM)
   const [customerSearchQuery, setCustomerSearchQuery] = useState('')
@@ -154,10 +150,10 @@ const VatFeeForm = ({
                   filterOption={(input, option) =>
                     String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                   }
-                  options={accountGroupsData ? accountGroupsData.map((group) => ({
+                  options={accountGroupsData?.data?.map((group) => ({
                     value: group.id.toString(),
                     label: group.name
-                  })) : []}
+                  })) || []}
                   size="large"
                 />
               </Form.Item>
@@ -176,9 +172,9 @@ const VatFeeForm = ({
                   filterOption={false}
                   onSearch={debouncedSearch}
                   loading={isCustomersFetching}
-                  options={customersData?.map((customer) => ({
+                  options={customersData?.data?.map((customer) => ({
                     value: customer.phoneNumber,
-                    label: `${customer.fullName} - ${customer.phoneNumber}`,
+                    label: `${customer.displayName} - ${customer.phoneNumber}`,
                     customerId: customer.id
                   })) || []}
                   notFoundContent={isCustomersFetching ? 'Loading...' : 'No data'}
@@ -307,9 +303,9 @@ const VatFeeForm = ({
                 className="w-full"
                 size="large"
                 suffixIcon={<span className="anticon">📅</span>}
-                onChange={(date) => {
+                onChange={() => {
                   setTimeout(() => {
-                    form.validateFields(['endDate'])
+                    void form.validateFields(['endDate'])
                   }, 100)
                 }}
               />

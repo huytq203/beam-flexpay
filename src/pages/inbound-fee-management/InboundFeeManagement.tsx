@@ -65,7 +65,6 @@ const InboundFeeManagement = () => {
     navigate(PATHS.FEE_V2.INBOUND_FEE.CREATE)
   }
 
-  console.log('inboundFees', inboundFees)
   return (
     <Card
       title={

@@ -2,7 +2,6 @@ import { TreeSelect } from 'antd'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-// Define clear types
 export type SelectOption = {
   value: string | number
   label: string
@@ -18,7 +17,6 @@ type CustomMultiSelectProps = {
   className?: string
 }
 
-// Style constants
 const STYLES = {
   dropdownContainer: { maxHeight: '350px', minWidth: 300 },
   disabledText: {
@@ -44,17 +42,14 @@ function CustomMultiSelect({
                            }: CustomMultiSelectProps) {
   const { t } = useTranslation()
 
-  // State
   const [selectedValues, setSelectedValues] = useState<(string | number)[]>(value)
 
-  // Sync external value changes
   useEffect(() => {
     setSelectedValues(value)
   }, [value])
 
-  // Memoized values
   const isAllSelected = useMemo(
-    () => options.length > 0 && selectedValues.length === options.length,
+    () => (options.length > 0 && selectedValues.length === options.length) || (selectedValues.length === 1 && selectedValues.includes('all')),
     [options, selectedValues]
   )
 
@@ -63,11 +58,20 @@ function CustomMultiSelect({
     [selectedValues]
   )
 
-  // Event handlers
   const handleChange = useCallback((values: any) => {
-    setSelectedValues(values)
-    onChange?.(values)
-  }, [onChange])
+    let processedValues = values
+
+    if (values.includes('all')) {
+      if (!selectedValues.includes('all')) {
+        processedValues = ['all']
+      } else {
+        processedValues = values.filter((v: string | number) => v !== 'all')
+      }
+    }
+
+    setSelectedValues(processedValues)
+    onChange?.(processedValues)
+  }, [onChange, selectedValues])
 
   const handleSelectAll = useCallback(() => {
     const allValues = options.map(opt => opt.value)
@@ -80,7 +84,6 @@ function CustomMultiSelect({
     onChange?.([])
   }, [onChange])
 
-  // Custom dropdown header with "Select All" and "Clear All" options
   const renderDropdownHeader = () => ({
     title: (
       <>
@@ -118,7 +121,6 @@ function CustomMultiSelect({
     disabled: true
   })
 
-  // Generate tree data with header
   const treeData = useMemo(() => {
     if (!options || options.length === 0) return []
 
@@ -128,7 +130,6 @@ function CustomMultiSelect({
     ]
   }, [options, isAllSelected, hasSelections])
 
-  // Custom tag placeholder
   const customTagPlaceholder = useCallback((omittedValues: any) => {
     if (isAllSelected) {
       return 'Tất cả'
@@ -153,6 +154,7 @@ function CustomMultiSelect({
       dropdownStyle={STYLES.dropdownContainer}
       maxTagPlaceholder={customTagPlaceholder}
       treeData={treeData}
+      size={'large'}
     />
   )
 }

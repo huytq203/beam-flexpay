@@ -3,15 +3,23 @@ import { Typography } from 'antd'
 import React from 'react'
 
 const { Text } = Typography
-function CellContent({ data }: any) {
+
+interface ICellContent {
+  data: any
+  isDash?: boolean
+}
+
+function CellContent(props: ICellContent) {
+  const { data, isDash = false } = props
   return (
     <React.Fragment>
       {data ? (
         <> {typeof data === 'string' ? <Text>{data}</Text> : data} </>
       ) : (
-        <NoDataText />
+        <NoDataText isDash={isDash} />
       )}
     </React.Fragment>
   )
 }
+
 export default CellContent

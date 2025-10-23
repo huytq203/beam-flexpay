@@ -101,15 +101,19 @@ export interface VatFee {
 }
 
 export interface AccountGroupOption {
-  value: string
-  label: string
+  id: number
+  name: string
+  code: string
+  description?: string
 }
 
 export interface AccountOption {
-  value: string
-  label: string
-  phoneNumber?: string
-  walletCode?: string
+  id: number
+  accountNumber: string
+  phoneNumber: string
+  name: string
+  displayName: string
+  walletName?: string
 }
 
 export enum VatFeeApplicationType {
