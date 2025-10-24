@@ -9,7 +9,7 @@ RUN corepack enable && corepack prepare yarn@4.8.1 --activate
 
 COPY --chown=node:node package.json ./
 COPY --chown=node:node yarn.lock ./
-COPY --chown=node:node .yarn ./.yarn
+COPY --chown=node:node .yarnrc.yml ./
 
 RUN yarn install --immutable
 
