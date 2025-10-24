@@ -4,10 +4,14 @@ WORKDIR /app
 
 ENV NODE_ENV production
 
+# Enable Corepack for Yarn v4 support
+RUN corepack enable && corepack prepare yarn@4.8.1 --activate
+
 COPY --chown=node:node package.json ./
 COPY --chown=node:node yarn.lock ./
+COPY --chown=node:node .yarn ./.yarn
 
-RUN yarn install --only=production --frozen-lockfile
+RUN yarn install --immutable
 
 COPY --chown=node:node . .
 
