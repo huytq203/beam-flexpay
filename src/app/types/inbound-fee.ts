@@ -1,26 +1,19 @@
 export interface InboundFeeSearchParams {
-  // Required fields
-  method: 'all' | 'atm_card' | 'qr_code' | 'bank_account' | 'ewallet' | 'visa_international' | 'master_international' | 'jcb_international' | 'amex_international'
-  provider: 'all' | 'vietqr' | 'napas' | 'vpb'
-
-  // Optional time fields
+  page: number
+  take: number
+  order?: 'ASC' | 'DESC'
+  orderBy?: string
   createdFrom?: string // Date in ISO format
   createdTo?: string
   appliedFrom?: string
   appliedTo?: string
-
-  // Optional filter fields
-  applicationType?: 'system' | 'individual' | 'account_group'
-  transactionType?: 'deposit' | 'withdrawal' | 'payment' | 'transfer' | 'refund'
-  bank?: string
-  accountGroup?: string
-  accountId?: string
-
-  // Pagination fields
-  page?: number
-  take?: number
-  order?: 'ASC' | 'DESC'
-  orderBy?: string
+  applicationType?: 'all' | 'system' | 'individual' | 'account_group'
+  transactionType?: 'all' | 'deposit' | 'withdrawal' | 'payment' | 'transfer' | 'refund'
+  customerId?: number
+  accountGroupIds?: number[]
+  bankIds?: number[]
+  methods?: string[]
+  providers?: string[]
   query?: string
 }
 
@@ -109,7 +102,8 @@ export interface InboundFeeCreateApiResponse {
   message?: string
 }
 
-export interface InboundFeeFindAllApiArg extends InboundFeeSearchParams {}
+export interface InboundFeeFindAllApiArg extends InboundFeeSearchParams {
+}
 
 export interface InboundFeeFindAllApiResponse {
   data: InboundFeeType[]
@@ -124,7 +118,8 @@ export interface InboundFeeUpdateApiArg {
   updateInboundFeeDto: UpdateInboundFeeDto
 }
 
-export interface InboundFeeUpdateApiResponse extends InboundFeeType {}
+export interface InboundFeeUpdateApiResponse extends InboundFeeType {
+}
 
 export interface InboundFeeRemoveApiArg {
   id: string
@@ -147,7 +142,8 @@ export interface InboundFeeFindOneApiArg {
   id: string
 }
 
-export interface InboundFeeFindOneApiResponse extends InboundFeeType {}
+export interface InboundFeeFindOneApiResponse extends InboundFeeType {
+}
 
 // Shared types with outbound fee
 export interface AccountGroup {

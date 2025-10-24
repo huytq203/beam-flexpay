@@ -13,26 +13,25 @@ const InboundFeeManagement = () => {
   const [form] = Form.useForm()
   const [search, setSearch] = useState<InboundFeeFindAllApiArg>({
     page: 1,
-    take: 10,
-    method: Options.ALL,
-    provider: Options.ALL
+    take: 10
   })
-  const { data: inboundFees, refetch } = useInboundFeeFindAllQuery(search)
+  const { data: inboundFees } = useInboundFeeFindAllQuery(search)
 
   const submit = (value: any) => {
     const searchParams: InboundFeeFindAllApiArg = {
-      ...search,
-      method: value.method || Options.ALL,
-      provider: value.provider || Options.ALL,
+      page: 1,
+      take: search.take,
       applicationType: value.applicableTarget,
       transactionType: value.transactionType,
-      bank: value.bank,
-      accountGroup: value.accountGroup,
+      customerId: value.customerId,
+      accountGroupIds: value.accountGroupIds && value.accountGroupIds.length > 0 ? value.accountGroupIds : undefined,
+      bankIds: value.bankIds && value.bankIds.length > 0 ? value.bankIds : undefined,
+      methods: value.method && value.method !== Options.ALL ? [value.method] : undefined,
+      providers: value.provider && value.provider !== Options.ALL ? [value.provider] : undefined,
       createdFrom: value.creationTime?.[0]?.toISOString(),
       createdTo: value.creationTime?.[1]?.toISOString(),
       appliedFrom: value.applicableTime?.[0]?.toISOString(),
-      appliedTo: value.applicableTime?.[1]?.toISOString(),
-      page: 1
+      appliedTo: value.applicableTime?.[1]?.toISOString()
     }
 
     setSearch(searchParams)
@@ -40,24 +39,21 @@ const InboundFeeManagement = () => {
 
   const handleClearFilter = () => {
     form.resetFields()
-    // Set lại giá trị mặc định cho các field sau khi reset
     form.setFieldsValue({
       creationTime: undefined,
       applicableTime: undefined,
       status: Options.ALL,
       applicableTarget: Options.ALL,
       transactionType: Options.ALL,
-      bank: Options.ALL,
-      accountGroup: undefined,
-      phoneNumber: undefined,
+      bankIds: undefined,
+      accountGroupIds: undefined,
+      customerId: undefined,
       method: Options.ALL,
       provider: Options.ALL
     })
     setSearch({
       page: 1,
-      take: 10,
-      method: Options.ALL,
-      provider: Options.ALL
+      take: 10
     })
   }
 

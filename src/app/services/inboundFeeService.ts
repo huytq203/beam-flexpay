@@ -1,22 +1,22 @@
 import type {
-  InboundFeeFindAllApiArg,
-  InboundFeeFindAllApiResponse,
   InboundFeeCreateApiArg,
   InboundFeeCreateApiResponse,
-  InboundFeeUpdateApiArg,
-  InboundFeeUpdateApiResponse,
-  InboundFeeRemoveApiArg,
-  InboundFeeRemoveApiResponse,
+  InboundFeeCustomerSearchApiArg,
+  InboundFeeCustomerSearchApiResponse,
+  InboundFeeFindAllApiArg,
+  InboundFeeFindAllApiResponse,
   InboundFeeFindOneApiArg,
   InboundFeeFindOneApiResponse,
   InboundFeeGetAccountGroupsApiResponse,
+  InboundFeeGetAccountGroupsListApiResponse,
   InboundFeeGetAccountsApiResponse,
   InboundFeeGetBanksApiResponse,
-  InboundFeeGetProvidersApiResponse,
   InboundFeeGetBanksListApiResponse,
-  InboundFeeGetAccountGroupsListApiResponse,
-  InboundFeeCustomerSearchApiArg,
-  InboundFeeCustomerSearchApiResponse
+  InboundFeeGetProvidersApiResponse,
+  InboundFeeRemoveApiArg,
+  InboundFeeRemoveApiResponse,
+  InboundFeeUpdateApiArg,
+  InboundFeeUpdateApiResponse
 } from '@type/inbound-fee'
 import { fnTransformResponse } from '@utils/helperFunctions'
 import { apiService as api } from './apiService'
@@ -36,18 +36,43 @@ const injectedRtkApi = api
         query: (params) => {
           const queryParams = new URLSearchParams()
 
-          // Add pagination params
-          if (params.page) queryParams.append('page', params.page.toString())
-          if (params.take) queryParams.append('take', params.take.toString())
+          queryParams.append('page', params.page.toString())
+          queryParams.append('take', params.take.toString())
 
-          // Add filter params
-          if (params.method) queryParams.append('method', params.method)
-          if (params.provider) queryParams.append('provider', params.provider)
-          if (params.applicationType) queryParams.append('applicationType', params.applicationType)
-          if (params.transactionType) queryParams.append('transactionType', params.transactionType)
-          if (params.bank) queryParams.append('bank', params.bank)
-          if (params.accountGroup) queryParams.append('accountGroup', params.accountGroup)
-          if (params.accountId) queryParams.append('accountId', params.accountId)
+          if (params.applicationType && params.applicationType !== 'all') {
+            queryParams.append('applicationType', params.applicationType)
+          }
+          if (params.transactionType && params.transactionType !== 'all') {
+            queryParams.append('transactionType', params.transactionType)
+          }
+
+          if (params.customerId) {
+            queryParams.append('customerId', params.customerId.toString())
+          }
+
+          if (params.accountGroupIds && params.accountGroupIds.length > 0) {
+            params.accountGroupIds.forEach(id => {
+              queryParams.append('accountGroupIds[]', id.toString())
+            })
+          }
+
+          if (params.bankIds && params.bankIds.length > 0) {
+            params.bankIds.forEach(id => {
+              queryParams.append('bankIds[]', id.toString())
+            })
+          }
+
+          if (params.methods && params.methods.length > 0) {
+            params.methods.forEach(method => {
+              queryParams.append('methods[]', method)
+            })
+          }
+
+          if (params.providers && params.providers.length > 0) {
+            params.providers.forEach(provider => {
+              queryParams.append('providers[]', provider)
+            })
+          }
 
           // Add date range params
           if (params.createdFrom) queryParams.append('createdFrom', params.createdFrom)

@@ -1,14 +1,13 @@
 import SearchBar from '@components/search-bar/SearchBar'
-import {
-    Form,
-    Select,
-    DatePicker,
-    Button
-} from 'antd'
+import { Button, DatePicker, Form, Select } from 'antd'
 import { useTranslation } from 'react-i18next'
 import ButtonSearch from '@components/button-search/ButtonSearch'
-import { useEffect, useState, useMemo } from 'react'
-import { useInboundFeeGetBanksListQuery, useInboundFeeGetAccountGroupsListQuery, useInboundFeeCustomerSearchQuery } from '@services/inboundFeeService'
+import { useEffect, useMemo, useState } from 'react'
+import {
+  useInboundFeeCustomerSearchQuery,
+  useInboundFeeGetAccountGroupsListQuery,
+  useInboundFeeGetBanksListQuery
+} from '@services/inboundFeeService'
 import debounce from 'lodash/debounce'
 import { Options } from '@constants/options'
 
@@ -23,7 +22,12 @@ interface InboundFeeManagementSearchBarProps {
 
 const INITIAL_APPLICABLE_TARGET = ''
 
-const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreateFee }: InboundFeeManagementSearchBarProps) => {
+const InboundFeeManagementSearchBar = ({
+                                         onFinish,
+                                         form,
+                                         onClearFilter,
+                                         onCreateFee
+                                       }: InboundFeeManagementSearchBarProps) => {
   const { t } = useTranslation()
   const [applicableTarget, setApplicableTarget] = useState(INITIAL_APPLICABLE_TARGET)
   const [customerSearchQuery, setCustomerSearchQuery] = useState('')
@@ -56,9 +60,9 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
       status: Options.ALL,
       applicableTarget: Options.ALL,
       transactionType: Options.ALL,
-      bank: Options.ALL,
+      bankIds: undefined,
       method: Options.ALL,
-      provider: Options.ALL,
+      provider: Options.ALL
     })
     setApplicableTarget(INITIAL_APPLICABLE_TARGET)
   }, [form])
@@ -67,8 +71,8 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
     setApplicableTarget(value)
     setCustomerSearchQuery('')
     form.setFieldsValue({
-      accountGroup: undefined,
-      phoneNumber: undefined,
+      accountGroupIds: undefined,
+      customerId: undefined
     })
   }
 
@@ -85,34 +89,34 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
     <SearchBar
       onFinish={onFinish}
       form={form}
-      cols='3'
+      cols="3"
       isShowClearFilter={false}
       headerMenu={
         <>
           <Form.Item
-            name='creationTime'
+            name="creationTime"
             label={t('labels.creationTime')}
           >
             <RangePicker
-              className='w-full font-normal text-sm'
+              className="w-full font-normal text-sm"
               showTime size="large"
               placeholder={['Từ ngày', 'Đến ngày']}
             />
           </Form.Item>
 
           <Form.Item
-            name='applicableTime'
+            name="applicableTime"
             label={t('labels.applicableTime')}
           >
             <RangePicker
-              className='w-full font-normal'
+              className="w-full font-normal"
               showTime size="large"
               placeholder={['Từ ngày', 'Đến ngày']}
             />
           </Form.Item>
 
           <Form.Item
-            name='status'
+            name="status"
             label={t('labels.status')}
           >
             <Select
@@ -138,7 +142,7 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
 
           {/* Row 2 */}
           <Form.Item
-            name='applicableTarget'
+            name="applicableTarget"
             label={t('labels.applicableTarget')}
           >
             <Select
@@ -156,7 +160,7 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
           </Form.Item>
 
           <Form.Item
-            name='transactionType'
+            name="transactionType"
             label={t('labels.transactionType')}
           >
             <Select
@@ -175,48 +179,52 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
           </Form.Item>
 
           <Form.Item
-            name='bank'
+            name="bankIds"
             label={t('labels.bank')}
           >
             <Select
+              mode="multiple"
               placeholder={t('placeholders.bank')}
               size="large"
-              defaultValue={Options.ALL}
-              options={banksData ? [
-                { value: Options.ALL, label: t('labels.all') },
-                ...banksData.map((bank: { id: number; name: string; bankCode: string }) => ({
-                  value: bank.id.toString(),
-                  label: bank.name
-                }))
-              ] : [
-                { value: Options.ALL, label: t('labels.all') }
-              ]}
+              maxTagCount={2}
+              showSearch
+              filterOption={(input, option) =>
+                String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
+              options={banksData ? banksData.map((bank: { id: number; name: string; bankCode: string }) => ({
+                value: bank.id,
+                label: bank.name
+              })) : []}
+              allowClear
             />
           </Form.Item>
 
           {/* Row 3 */}
           {applicableTarget === 'account_group' ? (
             <Form.Item
-              name='accountGroup'
+              name="accountGroupIds"
               label={t('labels.accountGroup')}
             >
               <Select
+                mode="multiple"
                 placeholder={t('placeholders.accountGroup')}
                 size="large"
+                maxTagCount={2}
                 showSearch
                 filterOption={(input, option) =>
                   String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                 }
                 options={accountGroupsData ? accountGroupsData.map((group) => ({
-                  value: group.id.toString(),
+                  value: group.id,
                   label: group.name
                 })) : []}
+                allowClear
               />
             </Form.Item>
           ) : applicableTarget === 'individual' ? (
             <Form.Item
-              name='phoneNumber'
-              className='w-full font-normal text-sm'
+              name="customerId"
+              className="w-full font-normal text-sm"
               label={t('labels.phone')}
             >
               <Select
@@ -228,7 +236,7 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
                 onSearch={debouncedSearch}
                 loading={isCustomersFetching}
                 options={customersData?.data?.map((customer) => ({
-                  value: customer.phoneNumber,
+                  value: customer.id,
                   label: `${customer.fullName} - ${customer.phoneNumber}`
                 })) || []}
                 notFoundContent={isCustomersFetching ? 'Loading...' : 'No data'}
@@ -240,7 +248,7 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
           )}
 
           <Form.Item
-            name='method'
+            name="method"
             label={t('labels.method')}
             rules={[{ required: true, message: t('messages.pleaseSelectMethod').toString() }]}
           >
@@ -263,7 +271,7 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
           </Form.Item>
 
           <Form.Item
-            name='provider'
+            name="provider"
             label={t('labels.provider')}
             rules={[{ required: true, message: t('messages.pleaseSelectProvider').toString() }]}
           >
@@ -280,10 +288,10 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
           </Form.Item>
 
           {/* Row 4 */}
-          <div className='flex gap-2 items-center'>
+          <div className="flex gap-2 items-center">
             <Button
-              type='default'
-              className='flex-1'
+              type="default"
+              className="flex-1"
               size="large"
               onClick={handleClearFilterClick}
             >
@@ -291,20 +299,20 @@ const InboundFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreate
             </Button>
           </div>
 
-          <div className='flex gap-2 items-center'>
+          <div className="flex gap-2 items-center">
             <ButtonSearch
-              htmlType='submit'
-              className='w-full'
+              htmlType="submit"
+              className="w-full"
               size="large"
             >
               {t('buttons.search')}
             </ButtonSearch>
           </div>
 
-          <div className='flex gap-2 items-center'>
+          <div className="flex gap-2 items-center">
             <Button
-              type='primary'
-              className='flex-1'
+              type="primary"
+              className="flex-1"
               size="large"
               onClick={onCreateFee}
             >
