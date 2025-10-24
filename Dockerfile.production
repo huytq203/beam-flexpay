@@ -19,7 +19,7 @@ COPY --chown=node:node . .
 RUN yarn build
 
 # Install serve globally for production static file serving
-RUN yarn global add serve
+RUN npm install -g serve
 
 EXPOSE 8000
 
