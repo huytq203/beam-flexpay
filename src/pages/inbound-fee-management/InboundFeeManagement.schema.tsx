@@ -15,8 +15,7 @@ import {
   convertLocalStringNumber,
   convertMiniPercentToPercent,
   getVNDateStringFromUTCTimeString,
-  getVNEndOfDayStringFromUTCTimeString,
-  getVNStartOfDayStringFromUTCTimeString
+  getVNDateTimeStringFromUTCTimeString
 } from '@utils/helperFunctions'
 import { Col, Row, Tooltip } from 'antd'
 import { ColumnsType } from 'antd/lib/table'
@@ -278,7 +277,8 @@ export const useInboundFeeColumns = (
             width: 100,
             dataIndex: 'vatMpct',
             render: (value) => (
-              <CellContent isDash={true} data={value !== undefined && value !== null ? convertMiniPercentToPercent(value) : '-'} />
+              <CellContent isDash={true}
+                           data={value !== undefined && value !== null ? convertMiniPercentToPercent(value) : '-'} />
             )
           }
         ]
@@ -298,10 +298,10 @@ export const useInboundFeeColumns = (
         dataIndex: 'startDate',
         key: 'startDate',
         align: 'center',
-        width: 150,
+        width: 180,
         render: (value) => {
           return (
-            <CellContent isDash={true} data={getVNStartOfDayStringFromUTCTimeString(value)} />
+            <CellContent isDash={true} data={getVNDateTimeStringFromUTCTimeString(value)} />
           )
         }
       },
@@ -310,10 +310,10 @@ export const useInboundFeeColumns = (
         dataIndex: 'endDate',
         key: 'endDate',
         align: 'center',
-        width: 150,
+        width: 180,
         render: (value) => {
           return (
-            <CellContent isDash={true} data={getVNEndOfDayStringFromUTCTimeString(value)} />
+            <CellContent isDash={true} data={getVNDateTimeStringFromUTCTimeString(value)} />
           )
         }
       },
@@ -326,7 +326,7 @@ export const useInboundFeeColumns = (
         render: (_value: any, record: InboundFeeType) => (
           <Row
             gutter={GUTTER}
-            justify='center'
+            justify="center"
           >
             <Col>
               <ButtonView

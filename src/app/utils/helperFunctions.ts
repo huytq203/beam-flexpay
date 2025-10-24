@@ -400,26 +400,31 @@ export const getStringDateFromMoment = (
   else return undefined
 }
 
-// dayjs auto convert to browser timezone
-export const getVNDateStringFromUTCTimeString = (time?: string | null) => {
+/**
+ * Format UTC datetime string to local date string
+ * dayjs automatically converts UTC to browser's local timezone
+ * @param time - UTC datetime string (e.g., "2025-10-24T17:00:00.000Z")
+ * @returns Formatted date string in local timezone (e.g., "25/10/2025" for VN +7)
+ */
+export const formatUTCToLocalDate = (time?: string | null) => {
   if (!time) return ''
   return dayjs(time).format(DateFormat)
 }
 
-export const getVNDateTimeStringFromUTCTimeString = (time?: string | null) => {
+/**
+ * Format UTC datetime string to local datetime string
+ * dayjs automatically converts UTC to browser's local timezone
+ * @param time - UTC datetime string (e.g., "2025-10-24T17:00:00.000Z")
+ * @returns Formatted datetime string in local timezone (e.g., "25/10/2025 00:00:00" for VN +7)
+ */
+export const formatUTCToLocalDateTime = (time?: string | null) => {
   if (!time) return ''
   return dayjs(time).format(FullFormatTime)
 }
 
-export const getVNStartOfDayStringFromUTCTimeString = (time?: string | null) => {
-  if (!time) return ''
-  return dayjs(time).add(7, 'hour').startOf('day').format(FullFormatTime)
-}
-
-export const getVNEndOfDayStringFromUTCTimeString = (time?: string | null) => {
-  if (!time) return ''
-  return dayjs(time).add(7, 'hour').endOf('day').format(FullFormatTime)
-}
+// Legacy function names - kept for backward compatibility
+export const getVNDateStringFromUTCTimeString = formatUTCToLocalDate
+export const getVNDateTimeStringFromUTCTimeString = formatUTCToLocalDateTime
 
 
 export const getTransactionStatus = (status: string) => {

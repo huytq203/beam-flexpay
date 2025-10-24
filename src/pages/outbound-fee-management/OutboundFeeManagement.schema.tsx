@@ -15,8 +15,7 @@ import {
   convertLocalStringNumber,
   convertMiniPercentToPercent,
   getVNDateStringFromUTCTimeString,
-  getVNEndOfDayStringFromUTCTimeString,
-  getVNStartOfDayStringFromUTCTimeString
+  getVNDateTimeStringFromUTCTimeString
 } from '@utils/helperFunctions'
 import { Col, Row } from 'antd'
 import { ColumnsType } from 'antd/lib/table'
@@ -258,10 +257,10 @@ export const useOutboundFeeColumns = (
         dataIndex: 'startDate',
         key: 'startDate',
         align: 'center',
-        width: 150,
+        width: 180,
         render: (value) => {
           return (
-            <CellContent data={getVNStartOfDayStringFromUTCTimeString(value)} />
+            <CellContent data={getVNDateTimeStringFromUTCTimeString(value)} />
           )
         }
       },
@@ -270,10 +269,10 @@ export const useOutboundFeeColumns = (
         dataIndex: 'endDate',
         key: 'endDate',
         align: 'center',
-        width: 150,
+        width: 180,
         render: (value) => {
           return (
-            <CellContent data={getVNEndOfDayStringFromUTCTimeString(value)} />
+            <CellContent data={getVNDateTimeStringFromUTCTimeString(value)} />
           )
         }
       },
@@ -286,7 +285,7 @@ export const useOutboundFeeColumns = (
         render: (value: any, record: OutboundFeeType) => (
           <Row
             gutter={GUTTER}
-            justify='center'
+            justify="center"
           >
             <Col>
               <ButtonView

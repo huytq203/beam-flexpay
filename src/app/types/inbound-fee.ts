@@ -81,16 +81,16 @@ export interface CreateInboundFeeDto {
 }
 
 export interface UpdateInboundFeeDto {
-  // Optional fields for update
-  startDate?: string
+  priceFrom: number
+  priceTo: number
+  startDate: string
+
   endDate?: string
-  priceFrom?: number
-  priceTo?: number
   flexibleFeeMpct?: number
   fixedFee?: number
   minFee?: number
   maxFee?: number
-  vatMpct?: number // Renamed from vat
+  vatMpct?: number
 }
 
 export interface InboundFeeCreateApiArg {

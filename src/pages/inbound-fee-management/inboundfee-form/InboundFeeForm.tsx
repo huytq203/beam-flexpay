@@ -71,7 +71,7 @@ const InboundFeeForm = (props: InboundFeeFormProps) => {
           providers={MOCK_PROVIDERS}
         />
 
-        <DateRangeSection />
+        <DateRangeSection isEdit={isEdit} />
 
         <Divider />
         <FeeInfoSection shouldDisableMinMaxFee={shouldDisableMinMaxFee} />

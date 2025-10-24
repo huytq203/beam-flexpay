@@ -116,7 +116,7 @@ const injectedRtkApi = api
       inboundFeeUpdate: build.mutation<InboundFeeUpdateApiResponse, InboundFeeUpdateApiArg>({
         query: ({ id, updateInboundFeeDto }) => ({
           url: `/inbound-fee/${id}`,
-          method: 'PATCH',
+          method: 'PUT',
           body: updateInboundFeeDto
         }),
         transformResponse: fnTransformResponse

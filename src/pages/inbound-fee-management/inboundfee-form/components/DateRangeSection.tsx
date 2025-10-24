@@ -1,6 +1,10 @@
 import { Col, DatePicker, Form, Row } from 'antd'
 
-const DateRangeSection = () => {
+interface DateRangeSectionProps {
+  isEdit?: boolean
+}
+
+const DateRangeSection = ({ isEdit = false }: DateRangeSectionProps) => {
   return (
     <Row gutter={[16, 16]}>
       {/* Thời gian áp dụng */}
@@ -8,9 +12,6 @@ const DateRangeSection = () => {
         <Form.Item
           name="startDate"
           label="Thời gian áp dụng"
-          rules={[
-            { required: true, message: 'Vui lòng chọn thời gian áp dụng' }
-          ]}
           tooltip="Chọn ngày giờ bắt đầu áp dụng chính sách phí"
         >
           <DatePicker
@@ -19,6 +20,7 @@ const DateRangeSection = () => {
             placeholder="Chọn ngày giờ bắt đầu"
             className="w-full"
             size="large"
+            disabled={isEdit}
           />
         </Form.Item>
       </Col>
