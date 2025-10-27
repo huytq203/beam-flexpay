@@ -3,19 +3,23 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useOutboundFeeColumns } from './OutboundFeeManagement.schema'
-import { OutboundFeeFindAllApiArg, OutboundFeeType } from '@type/outbound-fee'
+import { OutboundFeeType, Pagination } from '@type/outbound-fee'
 import { PATHS } from '@constants/pathConstant'
-import { Pagination } from '@type/common'
 import OutboundFeeDetailModal from './OutboundFeeDetailModal'
 
 interface OutboundFeeManagementTableProps {
   outboundFees?: OutboundFeeType[]
-  search: OutboundFeeFindAllApiArg
-  setSearch: (search: OutboundFeeFindAllApiArg) => void
+  search: any
+  setSearch: (search: any) => void
   pagination?: Pagination
 }
 
-const OutboundFeeManagementTable = ({ outboundFees, search, setSearch, pagination }: OutboundFeeManagementTableProps) => {
+const OutboundFeeManagementTable = ({
+                                      outboundFees,
+                                      search,
+                                      setSearch,
+                                      pagination
+                                    }: OutboundFeeManagementTableProps) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [detailModalOpen, setDetailModalOpen] = useState(false)
@@ -40,20 +44,21 @@ const OutboundFeeManagementTable = ({ outboundFees, search, setSearch, paginatio
     // Handle delete logic
   }
 
-  console.log('outboundFees 1', outboundFees)
+  const currentPage = pagination?.page || search.page
+  const pageSize = pagination?.take || search.take
 
   return (
     <>
       <Table
-        columns={useOutboundFeeColumns(t, handleView, handleEdit, handleDelete)}
+        columns={useOutboundFeeColumns(t, handleView, handleEdit, handleDelete, currentPage, pageSize)}
         dataSource={outboundFees || []}
         scroll={{ x: '100%' }}
-        rowKey='id'
-        size='small'
+        rowKey="id"
+        size="small"
         bordered
         pagination={{
-          current: pagination?.page || search.page,
-          pageSize: pagination?.take || search.take,
+          current: currentPage,
+          pageSize: pageSize,
           total: pagination?.itemCount || 0,
           showSizeChanger: false,
           onChange(page) {
@@ -66,8 +71,8 @@ const OutboundFeeManagementTable = ({ outboundFees, search, setSearch, paginatio
       />
 
       <OutboundFeeDetailModal
-        open={detailModalOpen}
-        onCancel={handleCloseDetailModal}
+        visible={detailModalOpen}
+        onClose={handleCloseDetailModal}
         outboundFeeId={selectedOutboundFeeId}
       />
     </>

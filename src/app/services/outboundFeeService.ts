@@ -1,22 +1,22 @@
 import {
   OutboundFeeCreateApiArg,
   OutboundFeeCreateApiResponse,
+  OutboundFeeCustomerSearchApiArg,
+  OutboundFeeCustomerSearchApiResponse,
   OutboundFeeFindAllApiArg,
   OutboundFeeFindAllApiResponse,
-  OutboundFeeUpdateApiArg,
-  OutboundFeeUpdateApiResponse,
-  OutboundFeeRemoveApiArg,
-  OutboundFeeRemoveApiResponse,
   OutboundFeeFindOneApiArg,
   OutboundFeeFindOneApiResponse,
   OutboundFeeGetAccountGroupsApiResponse,
+  OutboundFeeGetAccountGroupsListApiResponse,
   OutboundFeeGetAccountsApiResponse,
   OutboundFeeGetBanksApiResponse,
-  OutboundFeeGetProvidersApiResponse,
   OutboundFeeGetBanksListApiResponse,
-  OutboundFeeGetAccountGroupsListApiResponse,
-  OutboundFeeCustomerSearchApiArg,
-  OutboundFeeCustomerSearchApiResponse
+  OutboundFeeGetProvidersApiResponse,
+  OutboundFeeRemoveApiArg,
+  OutboundFeeRemoveApiResponse,
+  OutboundFeeUpdateApiArg,
+  OutboundFeeUpdateApiResponse
 } from '@type/outbound-fee'
 import { fnTransformResponse } from '@utils/helperFunctions'
 import { apiService as api } from './apiService'
@@ -47,27 +47,65 @@ const injectedRtkApi = api
         OutboundFeeFindAllApiResponse,
         OutboundFeeFindAllApiArg
       >({
-        query: (queryArg) => ({
-          url: `/outbound-fee`,
-          params: {
-            method: queryArg.method,
-            provider: queryArg.provider,
-            createdFrom: queryArg.createdFrom,
-            createdTo: queryArg.createdTo,
-            appliedFrom: queryArg.appliedFrom,
-            appliedTo: queryArg.appliedTo,
-            chargeWithin: queryArg.chargeWithin,
-            applicationType: queryArg.applicationType,
-            transactionType: queryArg.transactionType,
-            bank: queryArg.bank,
-            accountGroup: queryArg.accountGroup,
-            page: queryArg.page,
-            take: queryArg.take,
-            order: queryArg.order,
-            orderBy: queryArg.orderBy,
-            query: queryArg.query
+        query: (queryArg) => {
+          // Build query params manually to handle arrays correctly (same pattern as inboundFeeService)
+          const queryParams = new URLSearchParams()
+
+          // Required pagination
+          queryParams.append('page', queryArg.page.toString())
+          queryParams.append('take', queryArg.take.toString())
+
+          // Optional sorting
+          if (queryArg.order) queryParams.append('order', queryArg.order)
+          if (queryArg.orderBy) queryParams.append('orderBy', queryArg.orderBy)
+
+          // Date range filters
+          if (queryArg.createdFrom) queryParams.append('createdFrom', queryArg.createdFrom)
+          if (queryArg.createdTo) queryParams.append('createdTo', queryArg.createdTo)
+          if (queryArg.appliedFrom) queryParams.append('appliedFrom', queryArg.appliedFrom)
+          if (queryArg.appliedTo) queryParams.append('appliedTo', queryArg.appliedTo)
+
+          // Single-select filters
+          if (queryArg.applicationType && queryArg.applicationType !== 'all') {
+            queryParams.append('applicationType', queryArg.applicationType)
           }
-        }),
+          if (queryArg.transactionType && queryArg.transactionType !== 'all') {
+            queryParams.append('transactionType', queryArg.transactionType)
+          }
+          if (queryArg.customerId) {
+            queryParams.append('customerId', queryArg.customerId.toString())
+          }
+          if (queryArg.chargeWithin !== undefined) {
+            queryParams.append('chargeWithin', queryArg.chargeWithin.toString())
+          }
+
+          // Multi-select filters (arrays) - use [] suffix for array params (same as inbound)
+          if (queryArg.accountGroupIds && queryArg.accountGroupIds.length > 0) {
+            queryArg.accountGroupIds.forEach(id => {
+              queryParams.append('accountGroupIds[]', id.toString())
+            })
+          }
+          if (queryArg.bankIds && queryArg.bankIds.length > 0) {
+            queryArg.bankIds.forEach(id => {
+              queryParams.append('bankIds[]', id.toString())
+            })
+          }
+          if (queryArg.methods && queryArg.methods.length > 0) {
+            queryArg.methods.forEach(method => {
+              queryParams.append('methods[]', method)
+            })
+          }
+          if (queryArg.providers && queryArg.providers.length > 0) {
+            queryArg.providers.forEach(provider => {
+              queryParams.append('providers[]', provider)
+            })
+          }
+
+          return {
+            url: `/outbound-fee?${queryParams.toString()}`,
+            method: 'GET'
+          }
+        },
         transformResponse: fnTransformResponse,
         providesTags: ['[Admin] Admin Outbound Fee']
       }),
@@ -77,7 +115,7 @@ const injectedRtkApi = api
       >({
         query: (queryArg) => ({
           url: `/outbound-fee/${queryArg.id}`,
-          method: 'PATCH',
+          method: 'PUT',
           body: queryArg.updateOutboundFeeDto
         }),
         transformResponse: fnTransformResponse,

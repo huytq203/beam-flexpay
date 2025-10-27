@@ -51,6 +51,14 @@
     "fixedFee": "Fixed Fee",
     "minFee": "Min Fee",
     "maxFee": "Max Fee",
+    "payerFlexibleFee": "Payer Flexible Fee",
+    "payerFixedFee": "Payer Fixed Fee",
+    "payerMinFee": "Payer Min Fee",
+    "payerMaxFee": "Payer Max Fee",
+    "receiverFlexibleFee": "Receiver Flexible Fee",
+    "receiverFixedFee": "Receiver Fixed Fee",
+    "receiverMinFee": "Receiver Min Fee",
+    "receiverMaxFee": "Receiver Max Fee",
     "outboundFeeDetail": "Outbound Fee Detail",
     "inboundFeeDetail": "Inbound Fee Detail",
     "vat": "VAT",
@@ -77,6 +85,10 @@
     "createInboundFeeSuccess": "Create inbound fee successfully",
     "createInboundFeeFailed": "Failed to create inbound fee",
     "updateInboundFeeSuccess": "Update inbound fee successfully",
-    "updateInboundFeeFailed": "Failed to update inbound fee"
+    "updateInboundFeeFailed": "Failed to update inbound fee",
+    "createOutboundFeeSuccess": "Create outbound fee successfully",
+    "createOutboundFeeFailed": "Failed to create outbound fee",
+    "updateOutboundFeeSuccess": "Update outbound fee successfully",
+    "updateOutboundFeeFailed": "Failed to update outbound fee"
   }
 }

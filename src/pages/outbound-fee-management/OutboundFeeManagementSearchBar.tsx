@@ -20,6 +20,8 @@ interface OutboundFeeManagementSearchBarProps {
   onCreateFee?: () => void
 }
 
+const INITIAL_APPLICABLE_TARGET = ''
+
 const OutboundFeeManagementSearchBar = ({
                                           onFinish,
                                           form,
@@ -27,7 +29,7 @@ const OutboundFeeManagementSearchBar = ({
                                           onCreateFee
                                         }: OutboundFeeManagementSearchBarProps) => {
   const { t } = useTranslation()
-  const [applicableTarget, setApplicableTarget] = useState('')
+  const [applicableTarget, setApplicableTarget] = useState(INITIAL_APPLICABLE_TARGET)
   const [customerSearchQuery, setCustomerSearchQuery] = useState('')
 
   const { data: banksData } = useOutboundFeeGetBanksListQuery()
@@ -55,27 +57,39 @@ const OutboundFeeManagementSearchBar = ({
 
   useEffect(() => {
     form.setFieldsValue({
-      method: Options.ALL,
-      provider: Options.ALL,
-      applicableTarget: Options.ALL
+      applicationType: Options.ALL,
+      transactionType: Options.ALL,
+      bankIds: undefined,
+      chargeWithin: Options.ALL,
+      methods: undefined,
+      providers: undefined
     })
-    setApplicableTarget(Options.ALL)
+    setApplicableTarget(INITIAL_APPLICABLE_TARGET)
   }, [form])
 
   const handleApplicableTargetChange = (value: string) => {
     setApplicableTarget(value)
     setCustomerSearchQuery('')
     form.setFieldsValue({
-      accountGroup: Options.ALL,
-      phoneNumber: Options.ALL
+      accountGroupIds: undefined,
+      customerId: undefined
     })
+  }
+
+  const handleClearFilterClick = () => {
+    // Reset local states
+    setApplicableTarget(INITIAL_APPLICABLE_TARGET)
+    setCustomerSearchQuery('')
+
+    // Call parent clear filter handler
+    onClearFilter?.()
   }
 
   return (
     <SearchBar
       onFinish={onFinish}
       form={form}
-      cols="4"
+      cols="3"
       isShowClearFilter={false}
       headerMenu={
         <>
@@ -101,65 +115,15 @@ const OutboundFeeManagementSearchBar = ({
             />
           </Form.Item>
 
-          <Form.Item
-            name="status"
-            label={t('labels.status')}
-          >
-            <Select
-              placeholder={t('placeholders.status')}
-              size="large"
-              defaultValue={Options.ALL}
-              options={[
-                {
-                  value: Options.ALL,
-                  label: t('labels.all')
-                },
-                {
-                  value: 'new',
-                  label: t('labels.newCreated')
-                },
-                {
-                  value: 'applying',
-                  label: t('labels.applying')
-                }
-              ]}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="feeInside"
-            label={t('labels.feeInside')}
-          >
-            <Select
-              placeholder={t('placeholders.feeInside')}
-              size="large"
-              defaultValue={Options.ALL}
-              options={[
-                {
-                  value: Options.ALL,
-                  label: t('labels.all')
-                },
-                {
-                  value: 'inside',
-                  label: t('labels.feeInside')
-                },
-                {
-                  value: 'outside',
-                  label: t('labels.feeOutside')
-                }
-              ]}
-            />
-          </Form.Item>
-
           {/* Row 2 */}
           <Form.Item
-            name="applicableTarget"
+            name="applicationType"
             label={t('labels.applicableTarget')}
           >
             <Select
               placeholder={t('placeholders.applicableTarget')}
               size="large"
-              defaultValue={Options.ALL}
+              defaultValue=""
               onChange={handleApplicableTargetChange}
               options={[
                 { value: Options.ALL, label: t('labels.all') },
@@ -190,51 +154,66 @@ const OutboundFeeManagementSearchBar = ({
           </Form.Item>
 
           <Form.Item
-            name="bank"
+            name="bankIds"
             label={t('labels.bank')}
           >
             <Select
+              mode="multiple"
               placeholder={t('placeholders.bank')}
               size="large"
-              defaultValue={Options.ALL}
-              options={banksData ? [
-                { value: Options.ALL, label: t('labels.all') },
-                ...banksData.map((bank: { id: number; name: string; bankCode: string }) => ({
-                  value: bank.id.toString(),
-                  label: bank.name
-                }))
-              ] : [
-                { value: Options.ALL, label: t('labels.all') }
-              ]}
+              maxTagCount={2}
+              showSearch
+              filterOption={(input, option) =>
+                String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
+              options={banksData ? banksData.map((bank: { id: number; name: string; bankCode: string }) => ({
+                value: bank.id,
+                label: bank.name
+              })) : []}
+              allowClear
             />
           </Form.Item>
 
-          <div></div>
-
           {/* Row 3 */}
-          {applicableTarget === 'account_group' && (
+          <Form.Item
+            name="chargeWithin"
+            label={t('labels.chargeWithin')}
+          >
+            <Select
+              placeholder="Chọn thu phí trong"
+              size="large"
+              defaultValue={Options.ALL}
+              options={[
+                { value: Options.ALL, label: t('labels.all') },
+                { value: 'true', label: 'Có' },
+                { value: 'false', label: 'Không' }
+              ]}
+            />
+          </Form.Item>
+          {applicableTarget === 'account_group' ? (
             <Form.Item
-              name="accountGroup"
+              name="accountGroupIds"
               label={t('labels.accountGroup')}
             >
               <Select
+                mode="multiple"
                 placeholder={t('placeholders.accountGroup')}
                 size="large"
+                maxTagCount={2}
                 showSearch
                 filterOption={(input, option) =>
                   String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                 }
                 options={accountGroupsData ? accountGroupsData.map((group) => ({
-                  value: group.id.toString(),
+                  value: group.id,
                   label: group.name
                 })) : []}
+                allowClear
               />
             </Form.Item>
-          )}
-
-          {applicableTarget === 'individual' && (
+          ) : applicableTarget === 'individual' ? (
             <Form.Item
-              name="phoneNumber"
+              name="customerId"
               className="w-full font-normal text-sm"
               label={t('labels.phone')}
             >
@@ -247,58 +226,67 @@ const OutboundFeeManagementSearchBar = ({
                 onSearch={debouncedSearch}
                 loading={isCustomersFetching}
                 options={customersData?.data?.map((customer) => ({
-                  value: customer.phoneNumber,
+                  value: customer.id,
                   label: `${customer.fullName} - ${customer.phoneNumber}`
                 })) || []}
                 notFoundContent={isCustomersFetching ? 'Loading...' : 'No data'}
                 allowClear
               />
             </Form.Item>
+          ) : (
+            <div></div>
           )}
 
           <Form.Item
-            name="method"
+            name="methods"
             label={t('labels.method')}
-            rules={[{ required: true, message: t('messages.pleaseSelectMethod').toString() }]}
           >
             <Select
+              mode="multiple"
               placeholder={t('placeholders.method')}
-              defaultValue={Options.ALL}
               size="large"
+              maxTagCount={2}
+              showSearch
+              filterOption={(input, option) =>
+                String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
               options={[
-                { value: Options.ALL, label: t('labels.all') },
                 { value: 'atm_card', label: t('labels.atmCard') },
                 { value: 'qr_code', label: t('labels.qrCode') },
-                { value: 'bank_account', label: t('labels.bankAccount') },
+                { value: 'bank_account_ib', label: t('labels.bankAccountIB') },
+                { value: 'atm_ibft', label: t('labels.atmIBFT') },
+                { value: 'bank_account_ibft', label: t('labels.bankAccountIBFT') },
                 { value: 'ewallet', label: t('labels.ewallet') },
+                { value: 'bank_count', label: t('labels.bankCount') },
                 { value: 'visa_international', label: t('labels.visaInternational') },
                 { value: 'master_international', label: t('labels.masterInternational') },
                 { value: 'jcb_international', label: t('labels.jcbInternational') },
                 { value: 'amex_international', label: t('labels.amexInternational') }
               ]}
+              allowClear
             />
           </Form.Item>
 
           <Form.Item
-            name="provider"
+            name="providers"
             label={t('labels.provider')}
-            rules={[{ required: true, message: t('messages.pleaseSelectProvider').toString() }]}
           >
             <Select
+              mode="multiple"
               placeholder={t('placeholders.provider')}
-              defaultValue={Options.ALL}
               size="large"
+              maxTagCount={2}
+              showSearch
+              filterOption={(input, option) =>
+                String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
               options={[
-                { value: Options.ALL, label: t('labels.all') },
-                { value: 'vietqr', label: 'VietQR' },
+                { value: 'vpbank', label: 'VPBank' },
                 { value: 'napas', label: 'NAPAS' }
               ]}
+              allowClear
             />
           </Form.Item>
-
-
-          <div></div>
-          <div></div>
 
           {/* Row 4 */}
           <div className="flex gap-2 items-center">
@@ -306,7 +294,7 @@ const OutboundFeeManagementSearchBar = ({
               type="default"
               className="flex-1"
               size="large"
-              onClick={onClearFilter}
+              onClick={handleClearFilterClick}
             >
               {t('buttons.clearFilter')}
             </Button>
@@ -332,8 +320,6 @@ const OutboundFeeManagementSearchBar = ({
               {t('buttons.setupFee')}
             </Button>
           </div>
-
-          <div></div>
         </>
       }
     />

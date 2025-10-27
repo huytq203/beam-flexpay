@@ -17,7 +17,7 @@ import {
   getVNDateStringFromUTCTimeString,
   getVNDateTimeStringFromUTCTimeString
 } from '@utils/helperFunctions'
-import { Col, Row } from 'antd'
+import { Col, Row, Tooltip } from 'antd'
 import { ColumnsType } from 'antd/lib/table'
 import { useMemo } from 'react'
 
@@ -25,7 +25,9 @@ export const useOutboundFeeColumns = (
   t: TFunction,
   onView?: (record: OutboundFeeType) => void,
   onEdit?: (record: OutboundFeeType) => void,
-  onDelete?: (record: OutboundFeeType) => void
+  onDelete?: (record: OutboundFeeType) => void,
+  currentPage?: number,
+  pageSize?: number
 ): ColumnsType<OutboundFeeType> => {
   const applicationType: Record<string, string> = {
     [Options.ALL]: t('labels.all'),
@@ -47,7 +49,10 @@ export const useOutboundFeeColumns = (
     [Options.ALL]: t('labels.all'),
     [OutboundFeeMethod.ATM_CARD]: t('labels.atmCard'),
     [OutboundFeeMethod.QR_CODE]: t('labels.qrCode'),
-    [OutboundFeeMethod.BANK_ACCOUNT]: t('labels.bankAccount'),
+    [OutboundFeeMethod.BANK_ACCOUNT_IB]: t('labels.bankAccount'),
+    [OutboundFeeMethod.ATM_IBFT]: t('labels.atmCard'),
+    [OutboundFeeMethod.BANK_ACCOUNT_IBFT]: t('labels.bankAccount'),
+    [OutboundFeeMethod.BANK_COUNT]: t('labels.bankAccount'),
     [OutboundFeeMethod.EWALLET]: t('labels.ewallet'),
     [OutboundFeeMethod.VISA_INTERNATIONAL]: t('labels.visaInternational'),
     [OutboundFeeMethod.MASTER_INTERNATIONAL]: t('labels.masterInternational'),
@@ -56,9 +61,8 @@ export const useOutboundFeeColumns = (
   }
   const provider: Record<string, string> = {
     [Options.ALL]: t('labels.all'),
-    [OutboundFeeProvider.VIETQR]: t('labels.vietqr'),
-    [OutboundFeeProvider.NAPAS]: t('labels.napas'),
-    [OutboundFeeProvider.VPB]: t('labels.vpb')
+    [OutboundFeeProvider.VPBANK]: 'VPBank',
+    [OutboundFeeProvider.NAPAS]: 'NAPAS'
   }
 
   return useMemo(
@@ -69,9 +73,10 @@ export const useOutboundFeeColumns = (
         align: 'center',
         fixed: 'left',
         width: 60,
-        render: (_value, _record, index) => (
-          <CellContent data={`${index + 1}`} />
-        )
+        render: (_value, _record, index) => {
+          const stt = ((currentPage || 1) - 1) * (pageSize || 10) + index + 1
+          return <CellContent isDash={true} data={`${stt}`} />
+        }
       },
       {
         title: t('labels.applicationType'),
@@ -81,7 +86,7 @@ export const useOutboundFeeColumns = (
         width: 150,
         render: (value) => {
           const label = applicationType[value]
-          return <CellContent data={label} />
+          return <CellContent isDash={true} data={label} />
         }
       },
       {
@@ -92,39 +97,105 @@ export const useOutboundFeeColumns = (
         width: 150,
         render: (value) => {
           const label = transactionType[value]
-          return <CellContent data={label} />
+          return <CellContent isDash={true} data={label} />
         }
       },
       {
         title: t('labels.method'),
-        dataIndex: 'method',
-        key: 'method',
+        dataIndex: 'methods',
+        key: 'methods',
         align: 'center',
         width: 150,
-        render: (value) => {
-          const label = method[value]
-          return <CellContent data={label} />
+        render: (methods: string[]) => {
+          if (!methods || methods.length === 0) {
+            return <CellContent isDash={true} data="-" />
+          }
+
+          const firstMethodKey = methods[0]
+          const firstMethodLabel = method[firstMethodKey] || firstMethodKey
+
+          if (methods.length === 1) {
+            return <CellContent isDash={true} data={firstMethodLabel} />
+          }
+
+          const methodList = methods.map(m => method[m] || m).join('\n')
+          const displayText = `${firstMethodLabel},...`
+
+          return (
+            <Tooltip
+              title={<div style={{ whiteSpace: 'pre-line' }}>{methodList}</div>}
+              placement="topLeft"
+            >
+              <span style={{ cursor: 'pointer' }}>
+                <CellContent isDash={true} data={displayText} />
+              </span>
+            </Tooltip>
+          )
         }
       },
       {
         title: t('labels.bank'),
-        dataIndex: 'bankName',
-        key: 'bankName',
+        dataIndex: 'banks',
+        key: 'banks',
         align: 'center',
-        width: 120,
-        render: (value) => {
-          return <CellContent data={value} />
+        width: 200,
+        render: (banks: Array<{ id: number; name: string }>) => {
+          if (!banks || banks.length === 0) {
+            return <CellContent isDash={true} data="-" />
+          }
+
+          const firstBankName = banks[0].name
+
+          if (banks.length === 1) {
+            return <CellContent isDash={true} data={firstBankName} />
+          }
+
+          const bankList = banks.map(bank => bank.name).join('\n')
+          const displayText = `${firstBankName},...`
+
+          return (
+            <Tooltip
+              title={<div style={{ whiteSpace: 'pre-line' }}>{bankList}</div>}
+              placement="topLeft"
+            >
+              <span style={{ cursor: 'pointer' }}>
+                <CellContent isDash={true} data={displayText} />
+              </span>
+            </Tooltip>
+          )
         }
       },
       {
         title: t('labels.provider'),
-        dataIndex: 'provider',
-        key: 'provider',
+        dataIndex: 'providers',
+        key: 'providers',
         align: 'center',
         width: 120,
-        render: (value) => {
-          const label = provider[value]
-          return <CellContent data={label} />
+        render: (providers: string[]) => {
+          if (!providers || providers.length === 0) {
+            return <CellContent isDash={true} data="-" />
+          }
+
+          const firstProviderKey = providers[0]
+          const firstProviderLabel = provider[firstProviderKey] || firstProviderKey
+
+          if (providers.length === 1) {
+            return <CellContent isDash={true} data={firstProviderLabel} />
+          }
+
+          const providerList = providers.map(p => provider[p] || p).join('\n')
+          const displayText = `${firstProviderLabel},...`
+
+          return (
+            <Tooltip
+              title={<div style={{ whiteSpace: 'pre-line' }}>{providerList}</div>}
+              placement="topLeft"
+            >
+              <span style={{ cursor: 'pointer' }}>
+                <CellContent isDash={true} data={displayText} />
+              </span>
+            </Tooltip>
+          )
         }
       },
       {
@@ -134,110 +205,79 @@ export const useOutboundFeeColumns = (
         align: 'center',
         width: 150,
         render: (value) => {
-          return <CellContent data={value} />
+          return <CellContent isDash={true} data={value} />
         }
       },
       {
-        title: t('labels.chargeWithin'),
-        dataIndex: 'chargeWithin',
-        key: 'chargeWithin',
+        title: t('labels.priceFrom'),
+        dataIndex: 'priceFrom',
+        key: 'priceFrom',
         align: 'center',
-        width: 120,
+        width: 150,
         render: (value) => {
-          return <CellContent data={value ? 'Có' : 'Không'} />
+          const formattedValue = value?.toLocaleString() || '0'
+          return <CellContent isDash={true} data={`${formattedValue} VND`} />
         }
       },
       {
-        title: t('labels.priceRange'),
-        key: 'priceRange',
+        title: t('labels.priceTo'),
+        dataIndex: 'priceTo',
+        key: 'priceTo',
         align: 'center',
-        width: 200,
-        render: (record) => {
-          const from = record.priceFrom?.toLocaleString() || '0'
-          const to = record.priceTo?.toLocaleString() || '0'
-          return <CellContent data={`${from} - ${to} VND`} />
+        width: 150,
+        render: (value) => {
+          const formattedValue = value?.toLocaleString() || '0'
+          return <CellContent isDash={true} data={`${formattedValue} VND`} />
         }
       },
       {
-        title: t('labels.payerFees'),
+        title: t('labels.feeInfo'),
         align: 'center',
         children: [
           {
             title: t('labels.flexibleFee'),
             align: 'center',
             width: 120,
-            dataIndex: 'payerFlexibleFeeMpct',
+            dataIndex: 'flexibleFeeMpct',
             render: (value) => (
-              <CellContent data={`${convertMiniPercentToPercent(value)}`} />
+              <CellContent isDash={true} data={`${convertMiniPercentToPercent(value)}`} />
             )
           },
           {
             title: t('labels.fixedFee'),
             align: 'center',
             width: 140,
-            dataIndex: 'payerFixedFee',
+            dataIndex: 'fixedFee',
             render: (value) => (
-              <CellContent data={`${convertLocalStringNumber(value)} VND`} />
+              <CellContent isDash={true} data={`${convertLocalStringNumber(value)} VND`} />
             )
           },
           {
             title: t('labels.minFee'),
             align: 'center',
             width: 140,
-            dataIndex: 'payerMinFee',
+            dataIndex: 'minFee',
             render: (value) => (
-              <CellContent data={`${convertLocalStringNumber(value)} VND`} />
+              <CellContent isDash={true} data={`${convertLocalStringNumber(value)} VND`} />
             )
           },
           {
             title: t('labels.maxFee'),
             align: 'center',
             width: 140,
-            dataIndex: 'payerMaxFee',
+            dataIndex: 'maxFee',
             render: (value) => (
-              <CellContent data={`${convertLocalStringNumber(value)} VND`} />
-            )
-          }
-        ]
-      },
-      {
-        title: t('labels.receiverFees'),
-        align: 'center',
-        children: [
-          {
-            title: t('labels.flexibleFee'),
-            align: 'center',
-            width: 120,
-            dataIndex: 'receiverFlexibleFeeMpct',
-            render: (value) => (
-              <CellContent data={`${convertMiniPercentToPercent(value)}`} />
+              <CellContent isDash={true} data={`${convertLocalStringNumber(value)} VND`} />
             )
           },
           {
-            title: t('labels.fixedFee'),
+            title: t('labels.vat'),
             align: 'center',
-            width: 140,
-            dataIndex: 'receiverFixedFee',
+            width: 100,
+            dataIndex: 'vatMpct',
             render: (value) => (
-              <CellContent data={`${convertLocalStringNumber(value)} VND`} />
-            )
-          },
-          {
-            title: t('labels.minFee'),
-            align: 'center',
-            width: 140,
-            dataIndex: 'receiverMinFee',
-            render: (value) => (
-              <CellContent data={`${convertLocalStringNumber(value)} VND`} />
-            )
-          },
-          {
-            title: t('labels.maxFee'),
-            align: 'center',
-            width: 140,
-            dataIndex: 'receiverMaxFee',
-            render: (value) => (
-              <CellContent data={`${convertLocalStringNumber(value)} VND`} />
+              <CellContent isDash={true}
+                           data={value !== undefined && value !== null ? convertMiniPercentToPercent(value) : '-'} />
             )
           }
         ]
@@ -249,7 +289,7 @@ export const useOutboundFeeColumns = (
         align: 'center',
         width: 180,
         render: (value) => {
-          return <CellContent data={getVNDateStringFromUTCTimeString(value)} />
+          return <CellContent isDash={true} data={getVNDateStringFromUTCTimeString(value)} />
         }
       },
       {
@@ -260,7 +300,7 @@ export const useOutboundFeeColumns = (
         width: 180,
         render: (value) => {
           return (
-            <CellContent data={getVNDateTimeStringFromUTCTimeString(value)} />
+            <CellContent isDash={true} data={getVNDateTimeStringFromUTCTimeString(value)} />
           )
         }
       },
@@ -272,7 +312,7 @@ export const useOutboundFeeColumns = (
         width: 180,
         render: (value) => {
           return (
-            <CellContent data={getVNDateTimeStringFromUTCTimeString(value)} />
+            <CellContent isDash={true} data={getVNDateTimeStringFromUTCTimeString(value)} />
           )
         }
       },
@@ -282,7 +322,7 @@ export const useOutboundFeeColumns = (
         align: 'center',
         fixed: 'right',
         width: 160,
-        render: (value: any, record: OutboundFeeType) => (
+        render: (_value: any, record: OutboundFeeType) => (
           <Row
             gutter={GUTTER}
             justify="center"
@@ -306,6 +346,6 @@ export const useOutboundFeeColumns = (
         )
       }
     ],
-    [t, onView, onEdit, onDelete]
+    [t, onView, onEdit, onDelete, currentPage, pageSize]
   )
 }

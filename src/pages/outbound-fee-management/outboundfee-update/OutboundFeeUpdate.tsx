@@ -1,17 +1,17 @@
 import { Card, message, Spin } from 'antd'
-import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
-import { PATHS } from '@constants/pathConstant'
-import { OutboundFeeForm } from '../outboundfee-form'
 import { useOutboundFeeFindOneQuery, useOutboundFeeUpdateMutation } from '@services/outboundFeeService'
+import { OutboundFeeForm } from '../outboundfee-form'
+import { PATHS } from '@constants/pathConstant'
+import { useTranslation } from 'react-i18next'
 
 const OutboundFeeUpdate = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
 
-  const { data: outboundFeeData, isLoading: isFetchingData } = useOutboundFeeFindOneQuery(
-    { id: id || '' },
+  const { data: outboundFee, isLoading: isLoadingFee } = useOutboundFeeFindOneQuery(
+    { id: id! },
     { skip: !id }
   )
 
@@ -21,59 +21,58 @@ const OutboundFeeUpdate = () => {
     if (!id) return
 
     try {
-      console.log('Updating outbound fee with values:', values)
-
-      // Call the actual API
-      const result = await updateOutboundFee({
+      await updateOutboundFee({
         id,
         updateOutboundFeeDto: values
       }).unwrap()
 
-      console.log('Updated outbound fee with ID:', result.id)
-      message.success(t('messages.updateOutboundFeeSuccess') || 'Cập nhật phí outbound thành công')
-
-      // Navigate back to management page after successful update
-      navigate(PATHS.FEE_V2.OUTBOUND_FEE.MANAGEMENT)
+      message.success(t('messages.updateOutboundFeeSuccess'))
+      navigate(PATHS.FEE_V2?.OUTBOUND_FEE?.MANAGEMENT || '/fee-v2/outbound-fee-management')
     } catch (error: any) {
-      console.error('Error updating outbound fee:', error)
-
-      // Handle different error scenarios
-      const errorMessage = error?.data?.message ||
-                          error?.message ||
-                          t('messages.updateOutboundFeeFailed') ||
-                          'Cập nhật phí outbound thất bại'
-
-      message.error(errorMessage)
+      if (error?.data?.message) {
+        message.error(error.data.message)
+      } else if (error?.message) {
+        message.error(error.message)
+      } else {
+        message.error(t('messages.updateOutboundFeeFailed'))
+      }
     }
   }
 
   const handleCancel = () => {
-    navigate(PATHS.FEE_V2.OUTBOUND_FEE.MANAGEMENT)
+    navigate(PATHS.FEE_V2?.OUTBOUND_FEE?.MANAGEMENT || '/fee-v2/outbound-fee-management')
   }
 
-  if (isFetchingData) {
+  if (isLoadingFee) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <Spin size="large" />
-      </div>
+      <Card>
+        <div className="flex justify-center items-center h-64">
+          <Spin size="large" />
+        </div>
+      </Card>
+    )
+  }
+
+  if (!outboundFee) {
+    return (
+      <Card>
+        <div className="text-center py-8">
+          <p>Không tìm thấy cấu hình phí</p>
+        </div>
+      </Card>
     )
   }
 
   return (
-    <div className="outbound-fee-update">
-      <Card
-        title={t('labels.updateOutboundFee')}
-        className="shadow-sm"
-      >
-        <OutboundFeeForm
-          onFinish={handleFinish}
-          onCancel={handleCancel}
-          loading={isUpdating}
-          isEdit={true}
-          initialValues={outboundFeeData}
-        />
-      </Card>
-    </div>
+    <Card title={t('labels.updateOutboundFee')}>
+      <OutboundFeeForm
+        initialValues={outboundFee}
+        onFinish={handleFinish}
+        onCancel={handleCancel}
+        loading={isUpdating}
+        isEdit={true}
+      />
+    </Card>
   )
 }
 

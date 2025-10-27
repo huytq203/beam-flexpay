@@ -13,27 +13,45 @@ const OutboundFeeManagement = () => {
   const [form] = Form.useForm()
   const [search, setSearch] = useState<OutboundFeeFindAllApiArg>({
     page: 1,
-    take: 10,
-    method: Options.ALL,
-    provider: Options.ALL
+    take: 10
   })
-  const { data: outboundFees, refetch } = useOutboundFeeFindAllQuery(search)
+  const { data: outboundFees } = useOutboundFeeFindAllQuery(search)
 
   const submit = (value: any) => {
     const searchParams: OutboundFeeFindAllApiArg = {
-      ...search,
-      method: value.method || Options.ALL,
-      provider: value.provider || Options.ALL,
-      chargeWithin: value.feeInside === 'inside' ? 'system' : value.feeInside === 'outside' ? 'outside' : undefined,
-      applicationType: value.applicableTarget,
-      transactionType: value.transactionType,
-      bank: value.bank,
-      accountGroup: value.accountGroup,
+      // Required pagination
+      page: 1,
+      take: search.take,
+
+      // Optional sorting
+      order: 'DESC',
+      orderBy: 'createdAt',
+
+      // Date range filters
       createdFrom: value.creationTime?.[0]?.toISOString(),
       createdTo: value.creationTime?.[1]?.toISOString(),
       appliedFrom: value.applicableTime?.[0]?.toISOString(),
       appliedTo: value.applicableTime?.[1]?.toISOString(),
-      page: 1
+
+      // Single-select filters
+      applicationType: value.applicationType && value.applicationType !== Options.ALL
+        ? value.applicationType
+        : undefined,
+      transactionType: value.transactionType && value.transactionType !== Options.ALL
+        ? value.transactionType
+        : undefined,
+      customerId: value.customerId,
+
+      // Boolean chargeWithin filter
+      chargeWithin: value.chargeWithin && value.chargeWithin !== Options.ALL
+        ? value.chargeWithin === 'true'
+        : undefined,
+
+      // Multi-select array filters
+      accountGroupIds: value.accountGroupIds?.length > 0 ? value.accountGroupIds : undefined,
+      bankIds: value.bankIds?.length > 0 ? value.bankIds : undefined,
+      methods: value.methods?.length > 0 ? value.methods : undefined,
+      providers: value.providers?.length > 0 ? value.providers : undefined
     }
 
     setSearch(searchParams)
@@ -41,17 +59,23 @@ const OutboundFeeManagement = () => {
 
   const handleClearFilter = () => {
     form.resetFields()
-    // Set lại giá trị mặc định cho các field sau khi reset
     form.setFieldsValue({
-      method: Options.ALL,
-      provider: Options.ALL,
-      applicableTarget: Options.ALL
+      creationTime: undefined,
+      applicableTime: undefined,
+      applicationType: Options.ALL,
+      transactionType: Options.ALL,
+      bankIds: undefined,
+      chargeWithin: Options.ALL,
+      accountGroupIds: undefined,
+      customerId: undefined,
+      methods: undefined,
+      providers: undefined
     })
     setSearch({
       page: 1,
       take: 10,
-      method: Options.ALL,
-      provider: Options.ALL
+      order: 'DESC',
+      orderBy: 'createdAt'
     })
   }
 
@@ -59,7 +83,6 @@ const OutboundFeeManagement = () => {
     navigate(PATHS.FEE_V2.OUTBOUND_FEE.CREATE)
   }
 
-  console.log('outboundFees', outboundFees)
   return (
     <Card
       title={
