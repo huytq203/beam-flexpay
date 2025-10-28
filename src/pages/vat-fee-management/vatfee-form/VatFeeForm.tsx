@@ -37,12 +37,6 @@ const VatFeeForm = ({
   const [customerSearchQuery, setCustomerSearchQuery] = useState('')
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | undefined>()
   const [customerPage, setCustomerPage] = useState(1)
-  const [hasMoreCustomers, setHasMoreCustomers] = useState(false)
-  const [accumulatedCustomers, setAccumulatedCustomers] = useState<any[]>([])
-
-  // Use ref to avoid re-render when loading more
-  const isLoadingMoreRef = useRef(false)
-  const prevCustomersDataRef = useRef<any>(null)
 
   // Fetch data from APIs
   const { data: accountGroupsData } = useVatFeeGetAccountGroupsQuery()
@@ -50,48 +44,16 @@ const VatFeeForm = ({
     {
       query: customerSearchQuery,
       page: customerPage,
-      take: 20
+      take: 50  // Load more items per page to reduce pagination
     },
     { skip: applicationType !== VatFeeApplicationType.INDIVIDUAL }
   )
-
-  // Update hasMoreCustomers and accumulate customers when data changes
-  useEffect(() => {
-    // Skip if no data or data hasn't changed
-    if (!customersData || prevCustomersDataRef.current === customersData) {
-      return
-    }
-
-    prevCustomersDataRef.current = customersData
-
-    if (customersData.meta) {
-      setHasMoreCustomers(customersData.meta.hasNextPage)
-      isLoadingMoreRef.current = false
-    }
-
-    if (customersData.data) {
-      const currentPage = customersData.meta?.page || 1
-
-      if (currentPage === 1) {
-        // First page or new search - replace data
-        setAccumulatedCustomers(customersData.data)
-      } else {
-        // Subsequent pages - append data
-        setAccumulatedCustomers((prev) => {
-          const existingIds = new Set(prev.map((c: any) => c.id))
-          const newCustomers = customersData.data.filter((c: any) => !existingIds.has(c.id))
-          return [...prev, ...newCustomers]
-        })
-      }
-    }
-  }, [customersData])
 
   // Debounced search function for customers
   const debouncedSearch = useMemo(() => {
     const loadOptions = (value: string) => {
       setCustomerSearchQuery(value)
       setCustomerPage(1) // Reset to page 1 on new search
-      setAccumulatedCustomers([]) // Clear accumulated data on new search
     }
     return debounce(loadOptions, 300)
   }, [])
@@ -115,22 +77,11 @@ const VatFeeForm = ({
     setCustomerSearchQuery('')
     setSelectedCustomerId(undefined)
     setCustomerPage(1)
-    setAccumulatedCustomers([])
-    prevCustomersDataRef.current = null
     form.setFieldsValue({
       accountGroup: undefined,
       phoneNumber: undefined
     })
   }
-
-  // Memoize customer options to prevent re-render
-  const customerOptions = useMemo(() => {
-    return accumulatedCustomers.map((customer) => ({
-      value: customer.phoneNumber,
-      label: `${customer.fullName} - ${customer.phoneNumber}`,
-      customerId: customer.id
-    }))
-  }, [accumulatedCustomers])
 
   const pctToMpct = (percent?: number) => {
     if (percent === undefined || percent === null) return undefined
@@ -227,14 +178,15 @@ const VatFeeForm = ({
                   defaultActiveFirstOption={false}
                   filterOption={false}
                   onSearch={debouncedSearch}
-                  loading={isCustomersFetching && customerPage === 1}
-                  options={customerOptions}
+                  loading={isCustomersFetching}
+                  options={customersData?.data?.map((customer) => ({
+                    value: customer.phoneNumber,
+                    label: `${customer.fullName} - ${customer.phoneNumber}`,
+                    customerId: customer.id
+                  })) || []}
                   notFoundContent={isCustomersFetching ? 'Đang tải...' : 'Không tìm thấy dữ liệu'}
                   size="large"
                   allowClear
-                  virtual={false}
-                  listHeight={256}
-                  getPopupContainer={(trigger) => trigger.parentElement || document.body}
                   onChange={(_value, option: any) => {
                     // Store the customer ID when a customer is selected
                     if (option && option.customerId) {
@@ -243,28 +195,6 @@ const VatFeeForm = ({
                       setSelectedCustomerId(undefined)
                     }
                   }}
-                  onPopupScroll={(e) => {
-                    const { target } = e as any
-                    if (!target) return
-
-                    // Ant Design recommended pattern: exact bottom detection
-                    if (target.scrollTop + target.offsetHeight === target.scrollHeight) {
-                      if (hasMoreCustomers && !isCustomersFetching && !isLoadingMoreRef.current) {
-                        isLoadingMoreRef.current = true
-                        setCustomerPage((prev) => prev + 1)
-                      }
-                    }
-                  }}
-                  dropdownRender={(menu) => (
-                    <>
-                      {menu}
-                      {hasMoreCustomers && (
-                        <div style={{ textAlign: 'center', padding: '8px', color: '#888' }}>
-                          {isCustomersFetching ? 'Đang tải thêm...' : 'Cuộn xuống để xem thêm'}
-                        </div>
-                      )}
-                    </>
-                  )}
                 />
               </Form.Item>
             )}
