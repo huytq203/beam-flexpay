@@ -87,13 +87,15 @@ const VatFeeDetailModal = ({
 
           <Descriptions.Item label='Nhóm tài khoản'>
             <span className='font-medium'>
-              {vatFee.accountGroup || 'Không thiết lập'}
+              {vatFee.accountGroupName || vatFee.accountGroup || 'Không thiết lập'}
             </span>
           </Descriptions.Item>
 
-          <Descriptions.Item label='Số tài khoản'>
+          <Descriptions.Item label='Tài khoản'>
             <span className='font-medium'>
-              {vatFee.accountNumber || 'Không thiết lập'}
+              {vatFee.fullname
+                ? `${vatFee.fullname}${vatFee.accountNumber ? ` (${vatFee.accountNumber})` : ''}`
+                : vatFee.accountNumber || 'Không thiết lập'}
             </span>
           </Descriptions.Item>
 

@@ -60,12 +60,28 @@ export interface VatFeeFindOneApiResponse extends VatFee {
   // API trả về data trực tiếp, không có nested 'data' property
 }
 
-export interface VatFeeGetAccountGroupsApiResponse {
-  data: AccountGroupOption[]
+export interface VatFeeGetAccountGroupsApiResponse extends Array<AccountGroupOption> {
+  // API returns array directly, not nested in 'data' property
+}
+
+export interface VatFeeGetAccountsApiArg {
+  query?: string
+  page?: number
+  take?: number
+  order?: 'ASC' | 'DESC'
+  orderBy?: string
 }
 
 export interface VatFeeGetAccountsApiResponse {
-  data: AccountOption[]
+  data: CustomerSearchResult[]
+  meta: {
+    page: number
+    take: number
+    itemCount: number
+    pageCount: number
+    hasPreviousPage: boolean
+    hasNextPage: boolean
+  }
 }
 
 export interface CreateVatFeeDto {
@@ -90,7 +106,12 @@ export interface VatFee {
   id: string
   applicationType: VatFeeApplicationType
   accountGroup?: string
+  accountGroupId?: number | null
+  accountGroupName?: string | null
   accountNumber?: string
+  customerId?: number | null
+  fullname?: string | null
+  phoneNumber?: string | null
   flexibleFeeMpct?: number
   chargeWithin?: boolean
   startDate: string
@@ -114,6 +135,12 @@ export interface AccountOption {
   name: string
   displayName: string
   walletName?: string
+}
+
+export interface CustomerSearchResult {
+  id: number
+  fullName: string
+  phoneNumber: string
 }
 
 export enum VatFeeApplicationType {

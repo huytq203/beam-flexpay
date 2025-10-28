@@ -11,6 +11,7 @@ import ButtonSearch from '@components/button-search/ButtonSearch'
 import { useEffect, useState } from 'react'
 import { VatFeeApplicationType } from '@type/vat-fee'
 import { Options } from '@constants/options'
+import { useVatFeeGetAccountGroupsQuery } from '@services/vatFeeService'
 
 const { RangePicker } = DatePicker
 
@@ -25,13 +26,8 @@ const VatFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreateFee 
   const { t } = useTranslation()
   const [applicationType, setApplicationType] = useState<string>('')
 
-  const mockAccountGroups = [
-    { value: 'group_1', label: 'Nhóm tài khoản 1' },
-    { value: 'group_2', label: 'Nhóm tài khoản 2' },
-    { value: 'group_3', label: 'Nhóm tài khoản 3' },
-    { value: 'group_retail', label: 'Nhóm bán lẻ' },
-    { value: 'group_wholesale', label: 'Nhóm bán sỉ' }
-  ]
+  // Fetch account groups from API
+  const { data: accountGroupsData, isLoading: isAccountGroupsLoading } = useVatFeeGetAccountGroupsQuery()
 
   useEffect(() => {
     form.setFieldsValue({
@@ -131,10 +127,15 @@ const VatFeeManagementSearchBar = ({ onFinish, form, onClearFilter, onCreateFee 
                 mode="multiple"
                 allowClear
                 showSearch
+                loading={isAccountGroupsLoading}
                 filterOption={(input, option) =>
                   String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                 }
-                options={mockAccountGroups}
+                options={accountGroupsData?.map((group) => ({
+                  value: group.id.toString(),
+                  label: group.name
+                })) || []}
+                notFoundContent={isAccountGroupsLoading ? 'Đang tải...' : 'Không có dữ liệu'}
               />
             </Form.Item>
           ) : applicationType === VatFeeApplicationType.INDIVIDUAL ? (

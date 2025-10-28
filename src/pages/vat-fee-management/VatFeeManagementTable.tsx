@@ -92,12 +92,12 @@ const VatFeeManagementTable = ({ vatFees, search, setSearch, pagination }: VatFe
           return <CellContent data="Toàn hệ thống" />
         }
         if (record.applicationType === VatFeeApplicationType.ACCOUNT_GROUP) {
-          return <CellContent data={record.accountGroup || 'N/A'} />
+          return <CellContent data={record.accountGroupName || record.accountGroup || '-'} />
         }
         if (record.applicationType === VatFeeApplicationType.INDIVIDUAL) {
-          return <CellContent data={record.accountNumber || 'N/A'} />
+          return <CellContent data={record.fullname || record.accountNumber || '-'} />
         }
-        return 'N/A'
+        return '-'
       }
     },
     {

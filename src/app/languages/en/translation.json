@@ -74,6 +74,7 @@
     "updateInboundFee": "Update Inbound Fee",
     "createOutboundFee": "Create Outbound Fee",
     "updateOutboundFee": "Update Outbound Fee",
+    "updateVatFee": "Update VAT Fee",
     "activeStatus": "Status",
     "active": "Active",
     "inactive": "Inactive"
@@ -89,6 +90,8 @@
     "createOutboundFeeSuccess": "Create outbound fee successfully",
     "createOutboundFeeFailed": "Failed to create outbound fee",
     "updateOutboundFeeSuccess": "Update outbound fee successfully",
-    "updateOutboundFeeFailed": "Failed to update outbound fee"
+    "updateOutboundFeeFailed": "Failed to update outbound fee",
+    "updateVatFeeSuccess": "Update VAT fee successfully",
+    "updateVatFeeFailed": "Failed to update VAT fee"
   }
 }

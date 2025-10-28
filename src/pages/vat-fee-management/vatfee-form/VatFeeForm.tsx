@@ -36,18 +36,32 @@ const VatFeeForm = ({
   const [applicationType, setApplicationType] = useState<VatFeeApplicationType>(VatFeeApplicationType.SYSTEM)
   const [customerSearchQuery, setCustomerSearchQuery] = useState('')
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | undefined>()
+  const [customerPage, setCustomerPage] = useState(1)
+  const [hasMoreCustomers, setHasMoreCustomers] = useState(false)
 
   // Fetch data from APIs
   const { data: accountGroupsData } = useVatFeeGetAccountGroupsQuery()
   const { data: customersData, isFetching: isCustomersFetching } = useVatFeeGetAccountsQuery(
-    { search: customerSearchQuery },
+    {
+      query: customerSearchQuery,
+      page: customerPage,
+      take: 20
+    },
     { skip: applicationType !== VatFeeApplicationType.INDIVIDUAL }
   )
+
+  // Update hasMoreCustomers when data changes
+  useEffect(() => {
+    if (customersData?.meta) {
+      setHasMoreCustomers(customersData.meta.hasNextPage)
+    }
+  }, [customersData])
 
   // Debounced search function for customers
   const debouncedSearch = useMemo(() => {
     const loadOptions = (value: string) => {
       setCustomerSearchQuery(value)
+      setCustomerPage(1) // Reset to page 1 on new search
     }
     return debounce(loadOptions, 300)
   }, [])
@@ -70,6 +84,7 @@ const VatFeeForm = ({
     // Reset customer search when changing applicable target
     setCustomerSearchQuery('')
     setSelectedCustomerId(undefined)
+    setCustomerPage(1)
     form.setFieldsValue({
       accountGroup: undefined,
       phoneNumber: undefined
@@ -150,7 +165,7 @@ const VatFeeForm = ({
                   filterOption={(input, option) =>
                     String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                   }
-                  options={accountGroupsData?.data?.map((group) => ({
+                  options={accountGroupsData?.map((group) => ({
                     value: group.id.toString(),
                     label: group.name
                   })) || []}
@@ -166,7 +181,7 @@ const VatFeeForm = ({
                 rules={[{ required: true, message: 'Vui lòng nhập tài khoản' }]}
               >
                 <Select
-                  placeholder="Tìm theo số điện thoại"
+                  placeholder="Tìm theo số điện thoại hoặc tên"
                   showSearch
                   defaultActiveFirstOption={false}
                   filterOption={false}
@@ -174,10 +189,10 @@ const VatFeeForm = ({
                   loading={isCustomersFetching}
                   options={customersData?.data?.map((customer) => ({
                     value: customer.phoneNumber,
-                    label: `${customer.displayName} - ${customer.phoneNumber}`,
+                    label: `${customer.fullName} - ${customer.phoneNumber}`,
                     customerId: customer.id
                   })) || []}
-                  notFoundContent={isCustomersFetching ? 'Loading...' : 'No data'}
+                  notFoundContent={isCustomersFetching ? 'Đang tải...' : 'Không tìm thấy dữ liệu'}
                   size="large"
                   allowClear
                   onChange={(_value, option: any) => {
@@ -188,6 +203,24 @@ const VatFeeForm = ({
                       setSelectedCustomerId(undefined)
                     }
                   }}
+                  onPopupScroll={(e) => {
+                    const target = e.target as HTMLElement
+                    const isNearBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 10
+
+                    if (isNearBottom && hasMoreCustomers && !isCustomersFetching) {
+                      setCustomerPage((prev) => prev + 1)
+                    }
+                  }}
+                  dropdownRender={(menu) => (
+                    <>
+                      {menu}
+                      {hasMoreCustomers && (
+                        <div style={{ textAlign: 'center', padding: '8px', color: '#888' }}>
+                          {isCustomersFetching ? 'Đang tải thêm...' : 'Cuộn xuống để xem thêm'}
+                        </div>
+                      )}
+                    </>
+                  )}
                 />
               </Form.Item>
             )}
@@ -217,23 +250,21 @@ const VatFeeForm = ({
             <Form.Item
               name="vatTaxPercent"
               label="VAT (%)"
+              validateTrigger="onChange"
               rules={[
                 {
                   type: 'number',
                   min: 0,
                   max: 100,
+                  transform: (value) => Number(value),
                   message: 'Mức thuế VAT phải từ 0% đến 100%'
                 }
               ]}
             >
               <InputNumber<number>
                 placeholder="Nhập mức thuế VAT"
-                min={0}
-                max={100}
                 step={0.001}
                 precision={3}
-                formatter={(value) => `${value}%`}
-                parser={parseNumberFromPercentString}
                 className="w-full"
                 size="large"
               />

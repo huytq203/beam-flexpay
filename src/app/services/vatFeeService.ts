@@ -10,6 +10,7 @@ import {
   VatFeeFindOneApiArg,
   VatFeeFindOneApiResponse,
   VatFeeGetAccountGroupsApiResponse,
+  VatFeeGetAccountsApiArg,
   VatFeeGetAccountsApiResponse
 } from '@type/vat-fee'
 import { fnTransformResponse } from '@utils/helperFunctions'
@@ -46,6 +47,8 @@ const injectedRtkApi = api
           params: {
             applicationType: queryArg.applicationType,
             accountGroup: queryArg.accountGroup,
+            accountNumber: queryArg.accountNumber,
+            status: queryArg.status,
             createdFrom: queryArg.createdFrom,
             createdTo: queryArg.createdTo,
             appliedFrom: queryArg.appliedFrom,
@@ -53,8 +56,7 @@ const injectedRtkApi = api
             page: queryArg.page,
             take: queryArg.take,
             order: queryArg.order,
-            orderBy: queryArg.orderBy,
-            query: queryArg.query
+            orderBy: queryArg.orderBy
           }
         }),
         transformResponse: fnTransformResponse,
@@ -66,7 +68,7 @@ const injectedRtkApi = api
       >({
         query: (queryArg) => ({
           url: `/vat-fee/${queryArg.id}`,
-          method: 'PATCH',
+          method: 'PUT',
           body: queryArg.updateVatFeeDto
         }),
         transformResponse: fnTransformResponse,
@@ -98,18 +100,22 @@ const injectedRtkApi = api
         void
       >({
         query: () => ({
-          url: `/vat-fee/account-groups`
+          url: `/vat-fee/account-groups/list`
         }),
         transformResponse: fnTransformResponse
       }),
       vatFeeGetAccounts: build.query<
         VatFeeGetAccountsApiResponse,
-        { search?: string }
+        VatFeeGetAccountsApiArg
       >({
         query: (queryArg) => ({
-          url: `/vat-fee/accounts`,
+          url: `/vat-fee/customers/search`,
           params: {
-            search: queryArg.search
+            query: queryArg.query,
+            page: queryArg.page,
+            take: queryArg.take,
+            order: queryArg.order,
+            orderBy: queryArg.orderBy
           }
         }),
         transformResponse: fnTransformResponse
