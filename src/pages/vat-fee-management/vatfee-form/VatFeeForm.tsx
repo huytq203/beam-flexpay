@@ -38,6 +38,8 @@ const VatFeeForm = ({
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | undefined>()
   const [customerPage, setCustomerPage] = useState(1)
   const [hasMoreCustomers, setHasMoreCustomers] = useState(false)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [accumulatedCustomers, setAccumulatedCustomers] = useState<any[]>([])
 
   // Fetch data from APIs
   const { data: accountGroupsData } = useVatFeeGetAccountGroupsQuery()
@@ -50,18 +52,34 @@ const VatFeeForm = ({
     { skip: applicationType !== VatFeeApplicationType.INDIVIDUAL }
   )
 
-  // Update hasMoreCustomers when data changes
+  // Update hasMoreCustomers and accumulate customers when data changes
   useEffect(() => {
     if (customersData?.meta) {
       setHasMoreCustomers(customersData.meta.hasNextPage)
+      setIsLoadingMore(false)
     }
-  }, [customersData])
+
+    if (customersData?.data) {
+      if (customerPage === 1) {
+        // First page or new search - replace data
+        setAccumulatedCustomers(customersData.data)
+      } else {
+        // Subsequent pages - append data
+        setAccumulatedCustomers((prev) => {
+          const existingIds = new Set(prev.map(c => c.id))
+          const newCustomers = customersData.data.filter(c => !existingIds.has(c.id))
+          return [...prev, ...newCustomers]
+        })
+      }
+    }
+  }, [customersData, customerPage])
 
   // Debounced search function for customers
   const debouncedSearch = useMemo(() => {
     const loadOptions = (value: string) => {
       setCustomerSearchQuery(value)
       setCustomerPage(1) // Reset to page 1 on new search
+      setAccumulatedCustomers([]) // Clear accumulated data on new search
     }
     return debounce(loadOptions, 300)
   }, [])
@@ -85,6 +103,7 @@ const VatFeeForm = ({
     setCustomerSearchQuery('')
     setSelectedCustomerId(undefined)
     setCustomerPage(1)
+    setAccumulatedCustomers([])
     form.setFieldsValue({
       accountGroup: undefined,
       phoneNumber: undefined
@@ -136,7 +155,7 @@ const VatFeeForm = ({
           <Col span={12}>
             <Form.Item
               name="applicationType"
-              label="Đối tượng áp dụng*"
+              label="Đối tượng áp dụng"
               rules={[{ required: true, message: 'Vui lòng chọn đối tượng áp dụng' }]}
             >
               <Select
@@ -156,7 +175,7 @@ const VatFeeForm = ({
             {applicationType === VatFeeApplicationType.ACCOUNT_GROUP && (
               <Form.Item
                 name="accountGroup"
-                label="Tài khoản*"
+                label="Tài khoản"
                 rules={[{ required: true, message: 'Vui lòng chọn nhóm tài khoản' }]}
               >
                 <Select
@@ -177,7 +196,7 @@ const VatFeeForm = ({
             {applicationType === VatFeeApplicationType.INDIVIDUAL && (
               <Form.Item
                 name="phoneNumber"
-                label="Tài khoản*"
+                label="Tài khoản"
                 rules={[{ required: true, message: 'Vui lòng nhập tài khoản' }]}
               >
                 <Select
@@ -187,14 +206,16 @@ const VatFeeForm = ({
                   filterOption={false}
                   onSearch={debouncedSearch}
                   loading={isCustomersFetching}
-                  options={customersData?.data?.map((customer) => ({
+                  options={accumulatedCustomers.map((customer) => ({
                     value: customer.phoneNumber,
                     label: `${customer.fullName} - ${customer.phoneNumber}`,
                     customerId: customer.id
-                  })) || []}
+                  }))}
                   notFoundContent={isCustomersFetching ? 'Đang tải...' : 'Không tìm thấy dữ liệu'}
                   size="large"
                   allowClear
+                  virtual={true}
+                  listHeight={256}
                   onChange={(_value, option: any) => {
                     // Store the customer ID when a customer is selected
                     if (option && option.customerId) {
@@ -204,11 +225,18 @@ const VatFeeForm = ({
                     }
                   }}
                   onPopupScroll={(e) => {
+                    e.persist()
                     const target = e.target as HTMLElement
-                    const isNearBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 10
+                    const scrollTop = target.scrollTop
+                    const scrollHeight = target.scrollHeight
+                    const clientHeight = target.clientHeight
 
-                    if (isNearBottom && hasMoreCustomers && !isCustomersFetching) {
-                      setCustomerPage((prev) => prev + 1)
+                    // Trigger when 80% scrolled
+                    if (scrollTop + clientHeight >= scrollHeight * 0.8) {
+                      if (hasMoreCustomers && !isCustomersFetching && !isLoadingMore) {
+                        setIsLoadingMore(true)
+                        setCustomerPage((prev) => prev + 1)
+                      }
                     }
                   }}
                   dropdownRender={(menu) => (
@@ -226,7 +254,7 @@ const VatFeeForm = ({
             )}
 
             {applicationType === VatFeeApplicationType.SYSTEM && (
-              <Form.Item label="Tài khoản*">
+              <Form.Item label="Tài khoản">
                 <Text type="secondary" style={{ fontSize: '14px' }}>
                   Áp dụng cho toàn hệ thống
                 </Text>
