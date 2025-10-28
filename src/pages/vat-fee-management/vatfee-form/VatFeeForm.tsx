@@ -8,7 +8,7 @@ import {
   Col,
   Typography
 } from 'antd'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import moment from 'moment'
 import { VatFeeApplicationType } from '@type/vat-fee'
 import { parseNumberFromPercentString, validateFutureDatetime } from '@utils/helperFunctions'
@@ -38,8 +38,11 @@ const VatFeeForm = ({
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | undefined>()
   const [customerPage, setCustomerPage] = useState(1)
   const [hasMoreCustomers, setHasMoreCustomers] = useState(false)
-  const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [accumulatedCustomers, setAccumulatedCustomers] = useState<any[]>([])
+
+  // Use ref to avoid re-render when loading more
+  const isLoadingMoreRef = useRef(false)
+  const prevCustomersDataRef = useRef<any>(null)
 
   // Fetch data from APIs
   const { data: accountGroupsData } = useVatFeeGetAccountGroupsQuery()
@@ -54,25 +57,34 @@ const VatFeeForm = ({
 
   // Update hasMoreCustomers and accumulate customers when data changes
   useEffect(() => {
-    if (customersData?.meta) {
-      setHasMoreCustomers(customersData.meta.hasNextPage)
-      setIsLoadingMore(false)
+    // Skip if no data or data hasn't changed
+    if (!customersData || prevCustomersDataRef.current === customersData) {
+      return
     }
 
-    if (customersData?.data) {
-      if (customerPage === 1) {
+    prevCustomersDataRef.current = customersData
+
+    if (customersData.meta) {
+      setHasMoreCustomers(customersData.meta.hasNextPage)
+      isLoadingMoreRef.current = false
+    }
+
+    if (customersData.data) {
+      const currentPage = customersData.meta?.page || 1
+
+      if (currentPage === 1) {
         // First page or new search - replace data
         setAccumulatedCustomers(customersData.data)
       } else {
         // Subsequent pages - append data
         setAccumulatedCustomers((prev) => {
-          const existingIds = new Set(prev.map(c => c.id))
-          const newCustomers = customersData.data.filter(c => !existingIds.has(c.id))
+          const existingIds = new Set(prev.map((c: any) => c.id))
+          const newCustomers = customersData.data.filter((c: any) => !existingIds.has(c.id))
           return [...prev, ...newCustomers]
         })
       }
     }
-  }, [customersData, customerPage])
+  }, [customersData])
 
   // Debounced search function for customers
   const debouncedSearch = useMemo(() => {
@@ -104,11 +116,21 @@ const VatFeeForm = ({
     setSelectedCustomerId(undefined)
     setCustomerPage(1)
     setAccumulatedCustomers([])
+    prevCustomersDataRef.current = null
     form.setFieldsValue({
       accountGroup: undefined,
       phoneNumber: undefined
     })
   }
+
+  // Memoize customer options to prevent re-render
+  const customerOptions = useMemo(() => {
+    return accumulatedCustomers.map((customer) => ({
+      value: customer.phoneNumber,
+      label: `${customer.fullName} - ${customer.phoneNumber}`,
+      customerId: customer.id
+    }))
+  }, [accumulatedCustomers])
 
   const pctToMpct = (percent?: number) => {
     if (percent === undefined || percent === null) return undefined
@@ -205,17 +227,14 @@ const VatFeeForm = ({
                   defaultActiveFirstOption={false}
                   filterOption={false}
                   onSearch={debouncedSearch}
-                  loading={isCustomersFetching}
-                  options={accumulatedCustomers.map((customer) => ({
-                    value: customer.phoneNumber,
-                    label: `${customer.fullName} - ${customer.phoneNumber}`,
-                    customerId: customer.id
-                  }))}
+                  loading={isCustomersFetching && customerPage === 1}
+                  options={customerOptions}
                   notFoundContent={isCustomersFetching ? 'Đang tải...' : 'Không tìm thấy dữ liệu'}
                   size="large"
                   allowClear
-                  virtual={true}
+                  virtual={false}
                   listHeight={256}
+                  getPopupContainer={(trigger) => trigger.parentElement || document.body}
                   onChange={(_value, option: any) => {
                     // Store the customer ID when a customer is selected
                     if (option && option.customerId) {
@@ -225,16 +244,13 @@ const VatFeeForm = ({
                     }
                   }}
                   onPopupScroll={(e) => {
-                    e.persist()
-                    const target = e.target as HTMLElement
-                    const scrollTop = target.scrollTop
-                    const scrollHeight = target.scrollHeight
-                    const clientHeight = target.clientHeight
+                    const { target } = e as any
+                    if (!target) return
 
-                    // Trigger when 80% scrolled
-                    if (scrollTop + clientHeight >= scrollHeight * 0.8) {
-                      if (hasMoreCustomers && !isCustomersFetching && !isLoadingMore) {
-                        setIsLoadingMore(true)
+                    // Ant Design recommended pattern: exact bottom detection
+                    if (target.scrollTop + target.offsetHeight === target.scrollHeight) {
+                      if (hasMoreCustomers && !isCustomersFetching && !isLoadingMoreRef.current) {
+                        isLoadingMoreRef.current = true
                         setCustomerPage((prev) => prev + 1)
                       }
                     }
