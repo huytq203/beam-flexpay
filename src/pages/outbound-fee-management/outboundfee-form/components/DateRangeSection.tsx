@@ -12,7 +12,6 @@ const DateRangeSection = ({ isEdit = false }: DateRangeSectionProps) => {
         <Form.Item
           name="startDate"
           label="Thời gian áp dụng"
-          tooltip="Chọn ngày giờ bắt đầu áp dụng chính sách phí"
         >
           <DatePicker
             showTime
@@ -30,7 +29,6 @@ const DateRangeSection = ({ isEdit = false }: DateRangeSectionProps) => {
         <Form.Item
           name="endDate"
           label="Thời gian kết thúc"
-          tooltip="Chọn ngày giờ kết thúc áp dụng (tùy chọn, để trống nếu không có thời hạn)"
         >
           <DatePicker
             showTime

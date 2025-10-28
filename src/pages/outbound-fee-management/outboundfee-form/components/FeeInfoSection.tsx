@@ -35,7 +35,6 @@ const FeeInfoSection = ({
           <Form.Item
             name="chargeWithin"
             valuePropName="checked"
-            tooltip="Chọn nếu thu phí trong giao dịch"
           >
             <Checkbox>Thu phí trong</Checkbox>
           </Form.Item>
@@ -55,7 +54,6 @@ const FeeInfoSection = ({
                 message: 'Vui lòng chọn thời gian áp dụng'
               }
             ]}
-            tooltip="Chọn ngày giờ bắt đầu áp dụng chính sách phí"
           >
             <DatePicker
               showTime
@@ -73,7 +71,6 @@ const FeeInfoSection = ({
           <Form.Item
             name="endDate"
             label="Thời gian kết thúc"
-            tooltip="Chọn ngày giờ kết thúc áp dụng (tùy chọn, để trống nếu không có thời hạn)"
           >
             <DatePicker
               showTime
@@ -106,7 +103,6 @@ const FeeInfoSection = ({
                 message: 'Mức giao dịch từ phải từ 0 đến 999,999,999,999'
               }
             ]}
-            tooltip="Ngưỡng giá trị giao dịch tối thiểu áp dụng chính sách phí này"
           >
             <InputNumber<number>
               placeholder="Nhập mức giao dịch tối thiểu"
@@ -134,7 +130,6 @@ const FeeInfoSection = ({
                 message: 'Mức giao dịch đến phải từ 0 đến 999,999,999,999'
               }
             ]}
-            tooltip="Ngưỡng giá trị giao dịch tối đa áp dụng chính sách phí này"
           >
             <InputNumber<number>
               placeholder="Nhập mức giao dịch tối đa"
@@ -166,7 +161,6 @@ const FeeInfoSection = ({
                 message: 'Phí linh hoạt phải từ 0% đến 100%'
               }
             ]}
-            tooltip="Phí tính theo phần trăm giá trị giao dịch do người chuyển tiền chịu"
           >
             <InputNumber<number>
               placeholder="0.000"
@@ -195,7 +189,6 @@ const FeeInfoSection = ({
                 message: 'Phí cố định phải từ 0 đến 999,999,999,999'
               }
             ]}
-            tooltip="Phí cố định cho mỗi giao dịch do người chuyển tiền chịu"
           >
             <InputNumber<number>
               placeholder="Nhập phí cố định"
@@ -212,7 +205,6 @@ const FeeInfoSection = ({
           <Form.Item
             name="payerMinFee"
             label="Phí tối thiểu (VND)"
-            tooltip="Phí tối thiểu cho mỗi giao dịch (bắt buộc khi có phí linh hoạt)"
             required={hasPayerFlexibleFee}
           >
             <InputNumber<number>
@@ -231,7 +223,6 @@ const FeeInfoSection = ({
           <Form.Item
             name="payerMaxFee"
             label="Phí tối đa (VND)"
-            tooltip="Phí tối đa cho mỗi giao dịch (bắt buộc khi có phí linh hoạt)"
             required={hasPayerFlexibleFee}
           >
             <InputNumber<number>
@@ -265,7 +256,6 @@ const FeeInfoSection = ({
                 message: 'Phí linh hoạt phải từ 0% đến 100%'
               }
             ]}
-            tooltip="Phí tính theo phần trăm giá trị giao dịch do người nhận tiền chịu"
           >
             <InputNumber<number>
               placeholder="0.000"
@@ -294,7 +284,6 @@ const FeeInfoSection = ({
                 message: 'Phí cố định phải từ 0 đến 999,999,999,999'
               }
             ]}
-            tooltip="Phí cố định cho mỗi giao dịch do người nhận tiền chịu"
           >
             <InputNumber<number>
               placeholder="Nhập phí cố định"
@@ -311,7 +300,6 @@ const FeeInfoSection = ({
           <Form.Item
             name="receiverMinFee"
             label="Phí tối thiểu (VND)"
-            tooltip="Phí tối thiểu cho mỗi giao dịch (bắt buộc khi có phí linh hoạt)"
             required={hasReceiverFlexibleFee}
           >
             <InputNumber<number>
@@ -330,7 +318,6 @@ const FeeInfoSection = ({
           <Form.Item
             name="receiverMaxFee"
             label="Phí tối đa (VND)"
-            tooltip="Phí tối đa cho mỗi giao dịch (bắt buộc khi có phí linh hoạt)"
             required={hasReceiverFlexibleFee}
           >
             <InputNumber<number>

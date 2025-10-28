@@ -46,7 +46,6 @@ const ConditionalFieldsSection = ({
             name="accountGroup"
             label="Chọn nhóm tài khoản"
             rules={[{ required: true, message: 'Vui lòng chọn nhóm tài khoản' }]}
-            tooltip="Chọn nhóm tài khoản để áp dụng chính sách phí"
           >
             <Select
               placeholder="Tìm và chọn nhóm tài khoản"
@@ -72,7 +71,6 @@ const ConditionalFieldsSection = ({
             name="phoneNumber"
             label="Nhập tài khoản"
             rules={[{ required: true, message: 'Vui lòng chọn khách hàng' }]}
-            tooltip="Chọn tài khoản ví điện tử để áp dụng chính sách phí"
           >
             <Select
               placeholder="Tìm theo số điện thoại hoặc mã ví"

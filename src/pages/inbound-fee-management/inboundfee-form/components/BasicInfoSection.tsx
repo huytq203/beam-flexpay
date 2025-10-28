@@ -25,7 +25,6 @@ const BasicInfoSection = ({
           name="applicationType"
           label={t('labels.applicableTarget')}
           rules={[{ required: true, message: 'Vui lòng chọn đối tượng áp dụng' }]}
-          tooltip="Hệ thống: áp dụng cho toàn bộ | Đối tượng riêng: áp dụng cho ví cụ thể | Nhóm tài khoản: áp dụng cho nhóm ví"
         >
           <Select
             placeholder="Chọn đối tượng áp dụng"
@@ -46,7 +45,6 @@ const BasicInfoSection = ({
           name="transactionType"
           label={t('labels.transactionType')}
           rules={[{ required: true, message: 'Vui lòng chọn loại giao dịch' }]}
-          tooltip="Chọn loại giao dịch để áp dụng chính sách phí"
         >
           <Select
             placeholder="Chọn loại giao dịch"

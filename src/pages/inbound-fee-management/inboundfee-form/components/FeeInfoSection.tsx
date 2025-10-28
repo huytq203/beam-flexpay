@@ -36,7 +36,6 @@ const FeeInfoSection = ({ shouldDisableMinMaxFee }: FeeInfoSectionProps) => {
                 message: 'Mức giao dịch từ phải từ 0 đến 999,999,999,999'
               }
             ]}
-            tooltip="Ngưỡng giá trị giao dịch tối thiểu áp dụng chính sách phí này"
           >
             <InputNumber<number>
               placeholder="Nhập mức giao dịch tối thiểu"
@@ -64,7 +63,6 @@ const FeeInfoSection = ({ shouldDisableMinMaxFee }: FeeInfoSectionProps) => {
                 message: 'Mức giao dịch đến phải từ 0 đến 999,999,999,999'
               }
             ]}
-            tooltip="Ngưỡng giá trị giao dịch tối đa áp dụng chính sách phí này"
           >
             <InputNumber<number>
               placeholder="Nhập mức giao dịch tối đa"
@@ -91,7 +89,6 @@ const FeeInfoSection = ({ shouldDisableMinMaxFee }: FeeInfoSectionProps) => {
                 message: 'Phí linh hoạt phải từ 0% đến 100%'
               }
             ]}
-            tooltip="Phí tính theo phần trăm giá trị giao dịch"
           >
             <InputNumber<number>
               placeholder="0.000"
@@ -120,7 +117,6 @@ const FeeInfoSection = ({ shouldDisableMinMaxFee }: FeeInfoSectionProps) => {
                 message: 'Phí cố định phải từ 0 đến 999,999,999,999'
               }
             ]}
-            tooltip="Phí cố định cho mỗi giao dịch"
           >
             <InputNumber<number>
               placeholder="Nhập phí cố định"
@@ -137,7 +133,6 @@ const FeeInfoSection = ({ shouldDisableMinMaxFee }: FeeInfoSectionProps) => {
           <Form.Item
             name="minFee"
             label="Phí tối thiểu (VND)"
-            tooltip="Phí tối thiểu cho mỗi giao dịch (bắt buộc khi có phí linh hoạt)"
             required={hasFlexibleFee}
           >
             <InputNumber<number>
@@ -156,7 +151,6 @@ const FeeInfoSection = ({ shouldDisableMinMaxFee }: FeeInfoSectionProps) => {
           <Form.Item
             name="maxFee"
             label="Phí tối đa (VND)"
-            tooltip="Phí tối đa cho mỗi giao dịch (bắt buộc khi có phí linh hoạt)"
             required={hasFlexibleFee}
           >
             <InputNumber<number>
@@ -185,7 +179,6 @@ const FeeInfoSection = ({ shouldDisableMinMaxFee }: FeeInfoSectionProps) => {
                 message: 'VAT phải từ 0% đến 100%'
               }
             ]}
-            tooltip="Thuế giá trị gia tăng tính theo phần trăm"
           >
             <InputNumber<number>
               placeholder="0.000"

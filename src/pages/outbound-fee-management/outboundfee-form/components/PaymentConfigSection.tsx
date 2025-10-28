@@ -40,7 +40,6 @@ const PaymentConfigSection = ({
           name="method"
           label="Phương thức giao dịch"
           rules={[{ required: true, message: 'Phải chọn ít nhất 1 phương thức giao dịch' }]}
-          tooltip="Chọn các phương thức thanh toán áp dụng chính sách phí"
         >
           <CustomMultiSelect
             options={paymentMethods}
@@ -57,7 +56,6 @@ const PaymentConfigSection = ({
           name="bank"
           label="Ngân hàng"
           rules={[{ required: true, message: 'Phải chọn ít nhất 1 ngân hàng' }]}
-          tooltip="Chọn các ngân hàng áp dụng chính sách phí"
         >
           <CustomMultiSelect
             options={banksData?.map((bank) => ({
@@ -77,7 +75,6 @@ const PaymentConfigSection = ({
           name="provider"
           label="Nhà cung cấp"
           rules={[{ required: true, message: 'Phải chọn ít nhất 1 nhà cung cấp' }]}
-          tooltip="Chọn các nhà cung cấp dịch vụ thanh toán áp dụng chính sách phí"
         >
           <CustomMultiSelect
             options={providers}

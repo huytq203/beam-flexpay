@@ -11,7 +11,6 @@ const ChargeWithinSection = ({ isEdit = false }: ChargeWithinSectionProps) => {
         <Form.Item
           name="chargeWithin"
           valuePropName="checked"
-          tooltip="Chọn nếu thu phí trong giao dịch"
         >
           <Checkbox disabled={isEdit}>Thu phí trong</Checkbox>
         </Form.Item>
