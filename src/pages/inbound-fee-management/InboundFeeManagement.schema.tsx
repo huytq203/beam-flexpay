@@ -290,7 +290,7 @@ export const useInboundFeeColumns = (
         align: 'center',
         width: 180,
         render: (value) => {
-          return <CellContent isDash={true} data={getVNDateStringFromUTCTimeString(value)} />
+          return <CellContent isDash={true} data={getVNDateTimeStringFromUTCTimeString(value)} />
         }
       },
       {
