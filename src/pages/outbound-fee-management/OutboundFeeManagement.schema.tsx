@@ -411,8 +411,6 @@ export const useOutboundFeeColumns = (
                 <Col>
                   <ButtonApprover
                     module="outbound_fee"
-                    size="small"
-                    type="text"
                     onClick={async () => {
                       onApprove?.(record)
                     }}
@@ -425,8 +423,6 @@ export const useOutboundFeeColumns = (
                 <Col>
                   <ButtonReject
                     module="outbound_fee"
-                    size="small"
-                    type="text"
                     danger
                     onClick={async () => {
                       onReject?.(record)
