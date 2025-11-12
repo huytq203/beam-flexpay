@@ -129,7 +129,10 @@ export const MethodsByTransactionType = {
   ],
   payment: [
     OutboundFeeMethod.ALL,
+    OutboundFeeMethod.ATM_CARD,
     OutboundFeeMethod.QR_CODE,
+    OutboundFeeMethod.EWALLET,
+    OutboundFeeMethod.BANK_COUNT,
     OutboundFeeMethod.VISA_INTERNATIONAL,
     OutboundFeeMethod.MASTER_INTERNATIONAL,
     OutboundFeeMethod.JCB_INTERNATIONAL,
@@ -143,8 +146,14 @@ export const MethodsByTransactionType = {
   refund: [
     OutboundFeeMethod.ALL,
     OutboundFeeMethod.ATM_CARD,
+    OutboundFeeMethod.QR_CODE,
+    OutboundFeeMethod.EWALLET,
     OutboundFeeMethod.BANK_ACCOUNT,
-    OutboundFeeMethod.EWALLET
+    OutboundFeeMethod.BANK_COUNT,
+    OutboundFeeMethod.VISA_INTERNATIONAL,
+    OutboundFeeMethod.MASTER_INTERNATIONAL,
+    OutboundFeeMethod.JCB_INTERNATIONAL,
+    OutboundFeeMethod.AMEX_INTERNATIONAL
   ]
 } as const
 

@@ -44,7 +44,7 @@ export const getPaymentMethods = (type: string) => {
     case 'deposit':
       return [
         { value: 'atm_card', label: 'Thẻ ATM' },
-        { value: 'qr_code', label: 'QRCODE' },
+        { value: 'qr_code', label: 'QR Code' },
         { value: 'bank_account_ib', label: 'Tài khoản Ngân hàng (IB)' }
       ]
     case 'withdrawal':
@@ -55,6 +55,8 @@ export const getPaymentMethods = (type: string) => {
     case 'payment':
     case 'refund':
       return [
+        { value: 'atm_card', label: 'Thẻ ATM' },
+        { value: 'qr_code', label: 'QR Code' },
         { value: 'ewallet', label: 'Ví điện tử' },
         { value: 'bank_count', label: 'Tài khoản ngân hàng' },
         { value: 'visa_international', label: 'Thẻ quốc tế VISA' },

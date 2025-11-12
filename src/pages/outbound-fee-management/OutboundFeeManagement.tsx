@@ -41,6 +41,7 @@ const OutboundFeeManagement = () => {
         ? value.transactionType
         : undefined,
       customerId: value.customerId,
+      status: value.status && value.status !== '' ? value.status : undefined,
 
       // Boolean chargeWithin filter
       chargeWithin: value.chargeWithin && value.chargeWithin !== Options.ALL
@@ -69,7 +70,8 @@ const OutboundFeeManagement = () => {
       accountGroupIds: undefined,
       customerId: undefined,
       methods: undefined,
-      providers: undefined
+      providers: undefined,
+      status: ''
     })
     setSearch({
       page: 1,
