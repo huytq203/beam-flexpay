@@ -435,15 +435,17 @@ export const useOutboundFeeColumns = (
                 </Col>
               )}
 
-              {/* Delete button - always visible with permission check */}
-              <Col>
-                <ButtonDelete
-                  module="fee-management"
-                  onClick={async () => {
-                    onDelete?.(record)
-                  }}
-                />
-              </Col>
+              {/* Delete button - only visible when status is pending_approval */}
+              {isPendingApproval && (
+                <Col>
+                  <ButtonDelete
+                    module="fee-management"
+                    onClick={async () => {
+                      onDelete?.(record)
+                    }}
+                  />
+                </Col>
+              )}
             </Row>
           )
         }
