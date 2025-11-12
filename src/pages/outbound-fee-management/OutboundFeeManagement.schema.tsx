@@ -237,14 +237,14 @@ export const useOutboundFeeColumns = (
         }
       },
       {
-        title: t('labels.feeInfo'),
+        title: 'Phí người chuyển',
         align: 'center',
         children: [
           {
             title: t('labels.flexibleFee'),
             align: 'center',
             width: 120,
-            dataIndex: 'flexibleFeeMpct',
+            dataIndex: 'payerFlexibleFeeMpct',
             render: (value) => (
               <CellContent isDash={true} data={`${convertMiniPercentToPercent(value)}`} />
             )
@@ -253,7 +253,7 @@ export const useOutboundFeeColumns = (
             title: t('labels.fixedFee'),
             align: 'center',
             width: 140,
-            dataIndex: 'fixedFee',
+            dataIndex: 'payerFixedFee',
             render: (value) => (
               <CellContent isDash={true} data={`${convertLocalStringNumber(value)} VND`} />
             )
@@ -262,7 +262,7 @@ export const useOutboundFeeColumns = (
             title: t('labels.minFee'),
             align: 'center',
             width: 140,
-            dataIndex: 'minFee',
+            dataIndex: 'payerMinFee',
             render: (value) => (
               <CellContent isDash={true} data={`${convertLocalStringNumber(value)} VND`} />
             )
@@ -271,19 +271,51 @@ export const useOutboundFeeColumns = (
             title: t('labels.maxFee'),
             align: 'center',
             width: 140,
-            dataIndex: 'maxFee',
+            dataIndex: 'payerMaxFee',
+            render: (value) => (
+              <CellContent isDash={true} data={`${convertLocalStringNumber(value)} VND`} />
+            )
+          }
+        ]
+      },
+      {
+        title: 'Phí người nhận',
+        align: 'center',
+        children: [
+          {
+            title: t('labels.flexibleFee'),
+            align: 'center',
+            width: 120,
+            dataIndex: 'receiverFlexibleFeeMpct',
+            render: (value) => (
+              <CellContent isDash={true} data={`${convertMiniPercentToPercent(value)}`} />
+            )
+          },
+          {
+            title: t('labels.fixedFee'),
+            align: 'center',
+            width: 140,
+            dataIndex: 'receiverFixedFee',
             render: (value) => (
               <CellContent isDash={true} data={`${convertLocalStringNumber(value)} VND`} />
             )
           },
           {
-            title: t('labels.vat'),
+            title: t('labels.minFee'),
             align: 'center',
-            width: 100,
-            dataIndex: 'vatMpct',
+            width: 140,
+            dataIndex: 'receiverMinFee',
             render: (value) => (
-              <CellContent isDash={true}
-                           data={value !== undefined && value !== null ? convertMiniPercentToPercent(value) : '-'} />
+              <CellContent isDash={true} data={`${convertLocalStringNumber(value)} VND`} />
+            )
+          },
+          {
+            title: t('labels.maxFee'),
+            align: 'center',
+            width: 140,
+            dataIndex: 'receiverMaxFee',
+            render: (value) => (
+              <CellContent isDash={true} data={`${convertLocalStringNumber(value)} VND`} />
             )
           }
         ]

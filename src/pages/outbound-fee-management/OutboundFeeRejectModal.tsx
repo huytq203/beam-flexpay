@@ -1,8 +1,13 @@
 import { useOutboundFeeRejectMutation } from '@services/outboundFeeService'
-import { OutboundFeeType } from '@type/outbound-fee'
+import {
+  OutboundFeeApplicationType,
+  OutboundFeeTransactionType,
+  OutboundFeeType
+} from '@type/outbound-fee'
 import { getVNDateTimeStringFromUTCTimeString } from '@utils/helperFunctions'
 import { Alert, Descriptions, Modal, Typography, message } from 'antd'
 import { useTranslation } from 'react-i18next'
+import { Options } from '@constants/options'
 
 const { Text } = Typography
 
@@ -17,7 +22,30 @@ const OutboundFeeRejectModal: React.FC<OutboundFeeRejectModalProps> = ({
   outboundFee,
   onClose
 }) => {
+  const { t } = useTranslation()
   const [rejectOutboundFee, { isLoading }] = useOutboundFeeRejectMutation()
+
+  // Helper function to translate application type
+  const getApplicationTypeLabel = (type: string) => {
+    const labels: Record<string, string> = {
+      [OutboundFeeApplicationType.SYSTEM]: t('labels.system'),
+      [OutboundFeeApplicationType.INDIVIDUAL]: t('labels.individual'),
+      [OutboundFeeApplicationType.ACCOUNT_GROUP]: t('labels.accountGroup')
+    }
+    return labels[type] || type
+  }
+
+  // Helper function to translate transaction type
+  const getTransactionTypeLabel = (type: string) => {
+    const labels: Record<string, string> = {
+      [OutboundFeeTransactionType.DEPOSIT]: t('labels.deposit'),
+      [OutboundFeeTransactionType.WITHDRAWAL]: t('labels.withdrawal'),
+      [OutboundFeeTransactionType.PAYMENT]: t('labels.payment'),
+      [OutboundFeeTransactionType.TRANSFER]: t('labels.transfer'),
+      [OutboundFeeTransactionType.REFUND]: t('labels.refund')
+    }
+    return labels[type] || type
+  }
 
   const handleReject = async () => {
     if (!outboundFee?.id) return
@@ -79,11 +107,11 @@ const OutboundFeeRejectModal: React.FC<OutboundFeeRejectModalProps> = ({
             size="small"
           >
             <Descriptions.Item label="Loại áp dụng">
-              <Text strong>{outboundFee.applicationType}</Text>
+              <Text strong>{getApplicationTypeLabel(outboundFee.applicationType)}</Text>
             </Descriptions.Item>
 
             <Descriptions.Item label="Loại giao dịch">
-              <Text strong>{outboundFee.transactionType}</Text>
+              <Text strong>{getTransactionTypeLabel(outboundFee.transactionType)}</Text>
             </Descriptions.Item>
 
             {outboundFee.accountGroup && (

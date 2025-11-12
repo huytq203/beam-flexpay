@@ -1,7 +1,12 @@
 import { useOutboundFeeApproveMutation } from '@services/outboundFeeService'
-import { OutboundFeeType } from '@type/outbound-fee'
+import {
+  OutboundFeeApplicationType,
+  OutboundFeeTransactionType,
+  OutboundFeeType
+} from '@type/outbound-fee'
 import { getVNDateTimeStringFromUTCTimeString } from '@utils/helperFunctions'
 import { Alert, Descriptions, message, Modal, Typography } from 'antd'
+import { useTranslation } from 'react-i18next'
 
 const { Text } = Typography
 
@@ -16,7 +21,28 @@ const OutboundFeeApproveModal = ({
   outboundFee,
   onClose
 }: OutboundFeeApproveModalProps) => {
+  const { t } = useTranslation()
   const [approveOutboundFee, { isLoading }] = useOutboundFeeApproveMutation()
+
+  const getApplicationTypeLabel = (type: string) => {
+    const labels: Record<string, string> = {
+      [OutboundFeeApplicationType.SYSTEM]: t('labels.system'),
+      [OutboundFeeApplicationType.INDIVIDUAL]: t('labels.individual'),
+      [OutboundFeeApplicationType.ACCOUNT_GROUP]: t('labels.accountGroup')
+    }
+    return labels[type] || type
+  }
+
+  const getTransactionTypeLabel = (type: string) => {
+    const labels: Record<string, string> = {
+      [OutboundFeeTransactionType.DEPOSIT]: t('labels.deposit'),
+      [OutboundFeeTransactionType.WITHDRAWAL]: t('labels.withdrawal'),
+      [OutboundFeeTransactionType.PAYMENT]: t('labels.payment'),
+      [OutboundFeeTransactionType.TRANSFER]: t('labels.transfer'),
+      [OutboundFeeTransactionType.REFUND]: t('labels.refund')
+    }
+    return labels[type] || type
+  }
 
   const handleApprove = async () => {
     if (!outboundFee?.id) return
@@ -74,11 +100,11 @@ const OutboundFeeApproveModal = ({
             size="small"
           >
             <Descriptions.Item label="Loại áp dụng">
-              <Text strong>{outboundFee.applicationType}</Text>
+              <Text strong>{getApplicationTypeLabel(outboundFee.applicationType)}</Text>
             </Descriptions.Item>
 
             <Descriptions.Item label="Loại giao dịch">
-              <Text strong>{outboundFee.transactionType}</Text>
+              <Text strong>{getTransactionTypeLabel(outboundFee.transactionType)}</Text>
             </Descriptions.Item>
 
             {outboundFee.accountGroup && (
