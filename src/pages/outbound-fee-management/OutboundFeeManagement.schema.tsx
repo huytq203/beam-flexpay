@@ -1,5 +1,6 @@
 import ButtonApprover from '@components/button-approver/ButtonApprover'
 import ButtonDelete from '@components/button-delete/ButtonDelete'
+import ButtonReject from '@components/button-reject/ButtonReject'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import ButtonView from '@components/button-view/ButtonView'
 import CellContent from '@components/cell-content/CellContent'
@@ -20,8 +21,7 @@ import {
   convertMiniPercentToPercent,
   getVNDateTimeStringFromUTCTimeString
 } from '@utils/helperFunctions'
-import { CloseOutlined } from '@ant-design/icons'
-import { Button, Col, Row, Tag, Tooltip } from 'antd'
+import { Col, Row, Tag, Tooltip } from 'antd'
 import { ColumnsType } from 'antd/lib/table'
 import { useMemo } from 'react'
 
@@ -423,17 +423,15 @@ export const useOutboundFeeColumns = (
               {/* Reject button - only visible when status is pending_approval */}
               {isPendingApproval && onReject && (
                 <Col>
-                  <Tooltip title={t('tooltips.reject')}>
-                    <Button
-                      size="small"
-                      type="text"
-                      danger
-                      icon={<CloseOutlined />}
-                      onClick={async () => {
-                        onReject?.(record)
-                      }}
-                    />
-                  </Tooltip>
+                  <ButtonReject
+                    module="outbound_fee"
+                    size="small"
+                    type="text"
+                    danger
+                    onClick={async () => {
+                      onReject?.(record)
+                    }}
+                  />
                 </Col>
               )}
 
