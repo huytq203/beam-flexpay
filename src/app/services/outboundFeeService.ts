@@ -1,4 +1,6 @@
 import {
+  OutboundFeeApproveApiArg,
+  OutboundFeeApproveApiResponse,
   OutboundFeeCreateApiArg,
   OutboundFeeCreateApiResponse,
   OutboundFeeCustomerSearchApiArg,
@@ -13,6 +15,8 @@ import {
   OutboundFeeGetBanksApiResponse,
   OutboundFeeGetBanksListApiResponse,
   OutboundFeeGetProvidersApiResponse,
+  OutboundFeeRejectApiArg,
+  OutboundFeeRejectApiResponse,
   OutboundFeeRemoveApiArg,
   OutboundFeeRemoveApiResponse,
   OutboundFeeUpdateApiArg,
@@ -77,6 +81,9 @@ const injectedRtkApi = api
           }
           if (queryArg.chargeWithin !== undefined) {
             queryParams.append('chargeWithin', queryArg.chargeWithin.toString())
+          }
+          if (queryArg.status) {
+            queryParams.append('status', queryArg.status)
           }
 
           // Multi-select filters (arrays) - use [] suffix for array params (same as inbound)
@@ -214,6 +221,28 @@ const injectedRtkApi = api
           }
         }),
         transformResponse: fnTransformResponse
+      }),
+      outboundFeeApprove: build.mutation<
+        OutboundFeeApproveApiResponse,
+        OutboundFeeApproveApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/outbound-fee/${queryArg.id}/approve`,
+          method: 'POST'
+        }),
+        transformResponse: fnTransformResponse,
+        invalidatesTags: ['[Admin] Admin Outbound Fee']
+      }),
+      outboundFeeReject: build.mutation<
+        OutboundFeeRejectApiResponse,
+        OutboundFeeRejectApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/outbound-fee/${queryArg.id}/reject`,
+          method: 'POST'
+        }),
+        transformResponse: fnTransformResponse,
+        invalidatesTags: ['[Admin] Admin Outbound Fee']
       })
     })
   })
@@ -231,5 +260,7 @@ export const {
   useOutboundFeeGetBanksListQuery,
   useOutboundFeeGetAccountGroupsListQuery,
   useOutboundFeeCustomerSearchQuery,
-  useLazyOutboundFeeCustomerSearchQuery
+  useLazyOutboundFeeCustomerSearchQuery,
+  useOutboundFeeApproveMutation,
+  useOutboundFeeRejectMutation
 } = injectedRtkApi

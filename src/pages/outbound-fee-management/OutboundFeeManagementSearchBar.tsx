@@ -10,6 +10,7 @@ import {
 } from '@services/outboundFeeService'
 import debounce from 'lodash/debounce'
 import { Options } from '@constants/options'
+import { OUTBOUND_FEE_STATUS_OPTIONS } from '@constants/outbound-fee-status'
 
 const { RangePicker } = DatePicker
 
@@ -62,7 +63,8 @@ const OutboundFeeManagementSearchBar = ({
       bankIds: undefined,
       chargeWithin: Options.ALL,
       methods: undefined,
-      providers: undefined
+      providers: undefined,
+      status: '' // Default to "Tất cả"
     })
     setApplicableTarget(INITIAL_APPLICABLE_TARGET)
   }, [form])
@@ -112,6 +114,19 @@ const OutboundFeeManagementSearchBar = ({
               className="w-full font-normal"
               showTime size="large"
               placeholder={['Từ ngày', 'Đến ngày']}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="status"
+            label={t('labels.status')}
+          >
+            <Select
+              placeholder="Chọn trạng thái"
+              size="large"
+              defaultValue=""
+              options={OUTBOUND_FEE_STATUS_OPTIONS}
+              allowClear
             />
           </Form.Item>
 

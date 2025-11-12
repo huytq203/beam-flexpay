@@ -14,6 +14,10 @@ import {
   getVNDateTimeStringFromUTCTimeString
 } from '@utils/helperFunctions'
 import { Options } from '@constants/options'
+import {
+  getOutboundFeeStatusColor,
+  getOutboundFeeStatusLabel
+} from '@constants/outbound-fee-status'
 
 interface OutboundFeeDetailModalProps {
   visible: boolean
@@ -202,6 +206,33 @@ const OutboundFeeDetailModal = ({ visible, onClose, outboundFeeId }: OutboundFee
               {renderProviderTags(outboundFee.providers)}
             </Descriptions.Item>
           </Descriptions>
+
+          {outboundFee.status && (
+            <Descriptions
+              title={t('labels.approvalStatus')}
+              bordered
+              column={2}
+              size="middle"
+            >
+              <Descriptions.Item label={t('labels.status')}>
+                <Tag color={getOutboundFeeStatusColor(outboundFee.status)}>
+                  {getOutboundFeeStatusLabel(outboundFee.status)}
+                </Tag>
+              </Descriptions.Item>
+
+              {outboundFee.approvedAt && (
+                <Descriptions.Item label={t('labels.approvedAt')}>
+                  {formatDateTime(outboundFee.approvedAt)}
+                </Descriptions.Item>
+              )}
+
+              {outboundFee.rejectedAt && (
+                <Descriptions.Item label={t('labels.rejectedAt')}>
+                  {formatDateTime(outboundFee.rejectedAt)}
+                </Descriptions.Item>
+              )}
+            </Descriptions>
+          )}
 
           {/* Thông tin gói phí */}
           <Descriptions

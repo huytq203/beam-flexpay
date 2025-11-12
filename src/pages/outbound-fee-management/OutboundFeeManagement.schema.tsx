@@ -1,23 +1,27 @@
-import ButtonView from '@components/button-view/ButtonView'
+import ButtonApprover from '@components/button-approver/ButtonApprover'
+import ButtonDelete from '@components/button-delete/ButtonDelete'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
+import ButtonView from '@components/button-view/ButtonView'
 import CellContent from '@components/cell-content/CellContent'
 import { GUTTER } from '@constants/appConstant'
 import { Options } from '@constants/options'
+import { getOutboundFeeStatusColor, getOutboundFeeStatusLabel } from '@constants/outbound-fee-status'
 import { TFunction } from '@type/common'
 import {
   OutboundFeeApplicationType,
   OutboundFeeMethod,
   OutboundFeeProvider,
+  OutboundFeeStatus,
   OutboundFeeTransactionType,
   OutboundFeeType
 } from '@type/outbound-fee'
 import {
   convertLocalStringNumber,
   convertMiniPercentToPercent,
-  getVNDateStringFromUTCTimeString,
   getVNDateTimeStringFromUTCTimeString
 } from '@utils/helperFunctions'
-import { Col, Row, Tooltip } from 'antd'
+import { CloseOutlined } from '@ant-design/icons'
+import { Button, Col, Row, Tag, Tooltip } from 'antd'
 import { ColumnsType } from 'antd/lib/table'
 import { useMemo } from 'react'
 
@@ -26,6 +30,8 @@ export const useOutboundFeeColumns = (
   onView?: (record: OutboundFeeType) => void,
   onEdit?: (record: OutboundFeeType) => void,
   onDelete?: (record: OutboundFeeType) => void,
+  onApprove?: (record: OutboundFeeType) => void,
+  onReject?: (record: OutboundFeeType) => void,
   currentPage?: number,
   pageSize?: number
 ): ColumnsType<OutboundFeeType> => {
@@ -317,35 +323,102 @@ export const useOutboundFeeColumns = (
         }
       },
       {
+        title: t('labels.status'),
+        dataIndex: 'status',
+        key: 'status',
+        align: 'center',
+        width: 140,
+        render: (status: OutboundFeeStatus) => {
+          if (!status) {
+            return <CellContent isDash={true} data="-" />
+          }
+          return (
+            <Tag color={getOutboundFeeStatusColor(status)}>
+              {getOutboundFeeStatusLabel(status)}
+            </Tag>
+          )
+        }
+      },
+      {
         title: t('labels.action'),
         key: 'action',
         align: 'center',
         fixed: 'right',
-        width: 160,
-        render: (_value: any, record: OutboundFeeType) => (
-          <Row
-            gutter={GUTTER}
-            justify="center"
-          >
-            <Col>
-              <ButtonView
-                onClick={async () => {
-                  onView?.(record)
-                }}
-              />
-            </Col>
-            <Col>
-              <ButtonUpdate
-                module="fee-management"
-                onClick={async () => {
-                  onEdit?.(record)
-                }}
-              />
-            </Col>
-          </Row>
-        )
+        width: 250,
+        render: (_value: any, record: OutboundFeeType) => {
+          const isPendingApproval = record.status === OutboundFeeStatus.PENDING_APPROVAL
+
+          return (
+            <Row
+              gutter={GUTTER}
+              justify="center"
+            >
+              {/* View button - always visible */}
+              <Col>
+                <ButtonView
+                  onClick={async () => {
+                    onView?.(record)
+                  }}
+                />
+              </Col>
+
+              {/* Edit button - only visible when status is pending_approval */}
+              {isPendingApproval && (
+                <Col>
+                  <ButtonUpdate
+                    module="fee-management"
+                    onClick={async () => {
+                      onEdit?.(record)
+                    }}
+                  />
+                </Col>
+              )}
+
+              {/* Approve button - only visible when status is pending_approval */}
+              {isPendingApproval && (
+                <Col>
+                  <ButtonApprover
+                    module="outbound_fee"
+                    size="small"
+                    type="text"
+                    onClick={async () => {
+                      onApprove?.(record)
+                    }}
+                  />
+                </Col>
+              )}
+
+              {/* Reject button - only visible when status is pending_approval */}
+              {isPendingApproval && onReject && (
+                <Col>
+                  <Tooltip title={t('tooltips.reject')}>
+                    <Button
+                      size="small"
+                      type="text"
+                      danger
+                      icon={<CloseOutlined />}
+                      onClick={async () => {
+                        onReject?.(record)
+                      }}
+                    />
+                  </Tooltip>
+                </Col>
+              )}
+
+              {/* Delete button - always visible with permission check */}
+              <Col>
+                <ButtonDelete
+                  module="fee-management"
+                  onClick={async () => {
+                    onDelete?.(record)
+                  }}
+                />
+              </Col>
+            </Row>
+          )
+        }
       }
     ],
-    [t, onView, onEdit, onDelete, currentPage, pageSize]
+    [t, onView, onEdit, onDelete, onApprove, onReject, currentPage, pageSize]
   )
 }

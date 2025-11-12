@@ -52,6 +52,10 @@ export type OutboundFeeType = {
   createdAt: string
   startDate: string
   endDate: string
+  // Status workflow fields
+  status: OutboundFeeStatus
+  approvedAt?: string
+  rejectedAt?: string
 }
 
 export enum OutboundFeeTransactionType {
@@ -93,6 +97,14 @@ export enum OutboundFeeApplicationType {
   SYSTEM = 'system',
   INDIVIDUAL = 'individual',
   ACCOUNT_GROUP = 'account_group'
+}
+
+export enum OutboundFeeStatus {
+  PENDING_APPROVAL = 'pending_approval', // Chờ duyệt
+  APPROVED = 'approved',                 // Đã duyệt
+  ACTIVE = 'active',                     // Đang áp dụng
+  REJECTED = 'rejected',                 // Đã từ chối
+  EXPIRED = 'expired'                    // Đã hết hạn
 }
 
 // Type definitions for better type safety
@@ -248,6 +260,7 @@ export interface OutboundFeeFindAllApiArg {
   transactionType?: OutboundFeeTransactionType | 'all'
   customerId?: number // For applicationType = 'individual'
   chargeWithin?: boolean // true = charge within, false = no charge within, undefined = all
+  status?: OutboundFeeStatus // Status filter for approval workflow
 
   // ===== MULTI-SELECT FILTERS (Arrays) =====
   accountGroupIds?: number[] // For applicationType = 'account_group'
@@ -324,6 +337,10 @@ export interface OutboundFeeFindOneApiResponse {
   createdAt?: string
   updatedAt?: string
   active?: number
+  // Status workflow fields
+  status?: OutboundFeeStatus
+  approvedAt?: string
+  rejectedAt?: string
 }
 
 export interface AccountGroup {
@@ -397,4 +414,34 @@ export interface OutboundFeeCustomerSearchApiArg {
 export interface OutboundFeeCustomerSearchApiResponse {
   data: Customer[]
   meta: Pagination
+}
+
+// ===== APPROVAL WORKFLOW API TYPES =====
+
+/**
+ * Approve outbound fee API request
+ */
+export interface OutboundFeeApproveApiArg {
+  id: string
+}
+
+/**
+ * Approve outbound fee API response
+ */
+export interface OutboundFeeApproveApiResponse {
+  id: string
+}
+
+/**
+ * Reject outbound fee API request
+ */
+export interface OutboundFeeRejectApiArg {
+  id: string
+}
+
+/**
+ * Reject outbound fee API response
+ */
+export interface OutboundFeeRejectApiResponse {
+  id: string
 }
