@@ -174,7 +174,7 @@ const OutboundFeeManagementSearchBar = ({
           >
             <Select
               mode="multiple"
-              placeholder={t('placeholders.bank')}
+              placeholder="Tất cả"
               size="large"
               maxTagCount={2}
               showSearch
@@ -258,7 +258,7 @@ const OutboundFeeManagementSearchBar = ({
           >
             <Select
               mode="multiple"
-              placeholder={t('placeholders.method')}
+              placeholder="Tất cả"
               size="large"
               maxTagCount={2}
               showSearch
@@ -288,7 +288,7 @@ const OutboundFeeManagementSearchBar = ({
           >
             <Select
               mode="multiple"
-              placeholder={t('placeholders.provider')}
+              placeholder="Tất cả"
               size="large"
               maxTagCount={2}
               showSearch
