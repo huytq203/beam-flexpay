@@ -48,11 +48,11 @@ const OutboundFeeManagement = () => {
         ? value.chargeWithin === 'true'
         : undefined,
 
-      // Multi-select array filters
+      // Array filters (converted from single select to array)
       accountGroupIds: value.accountGroupIds?.length > 0 ? value.accountGroupIds : undefined,
-      bankIds: value.bankIds?.length > 0 ? value.bankIds : undefined,
-      methods: value.methods?.length > 0 ? value.methods : undefined,
-      providers: value.providers?.length > 0 ? value.providers : undefined
+      bankIds: value.bank && value.bank !== Options.ALL ? [value.bank] : undefined,
+      methods: value.method && value.method !== Options.ALL ? [value.method] : undefined,
+      providers: value.provider && value.provider !== Options.ALL ? [value.provider] : undefined
     }
 
     setSearch(searchParams)
@@ -65,12 +65,12 @@ const OutboundFeeManagement = () => {
       applicableTime: undefined,
       applicationType: Options.ALL,
       transactionType: Options.ALL,
-      bankIds: undefined,
+      bank: Options.ALL,
       chargeWithin: Options.ALL,
       accountGroupIds: undefined,
       customerId: undefined,
-      methods: undefined,
-      providers: undefined,
+      method: Options.ALL,
+      provider: Options.ALL,
       status: ''
     })
     setSearch({

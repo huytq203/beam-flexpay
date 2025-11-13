@@ -60,10 +60,10 @@ const OutboundFeeManagementSearchBar = ({
     form.setFieldsValue({
       applicationType: Options.ALL,
       transactionType: Options.ALL,
-      bankIds: undefined,
+      bank: Options.ALL,
       chargeWithin: Options.ALL,
-      methods: undefined,
-      providers: undefined,
+      method: Options.ALL,
+      provider: Options.ALL,
       status: '' // Default to "Tất cả"
     })
     setApplicableTarget(INITIAL_APPLICABLE_TARGET)
@@ -169,23 +169,24 @@ const OutboundFeeManagementSearchBar = ({
           </Form.Item>
 
           <Form.Item
-            name="bankIds"
+            name="bank"
             label={t('labels.bank')}
           >
             <Select
-              mode="multiple"
-              placeholder="Tất cả"
+              placeholder={t('placeholders.bank')}
+              defaultValue={Options.ALL}
               size="large"
-              maxTagCount={2}
               showSearch
               filterOption={(input, option) =>
                 String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
               }
-              options={banksData ? banksData.map((bank: { id: number; name: string; bankCode: string }) => ({
-                value: bank.id,
-                label: bank.name
-              })) : []}
-              allowClear
+              options={[
+                { value: Options.ALL, label: t('labels.all') },
+                ...(banksData ? banksData.map((bank: { id: number; name: string; bankCode: string }) => ({
+                  value: bank.id,
+                  label: bank.name
+                })) : [])
+              ]}
             />
           </Form.Item>
 
@@ -253,19 +254,19 @@ const OutboundFeeManagementSearchBar = ({
           )}
 
           <Form.Item
-            name="methods"
+            name="method"
             label={t('labels.method')}
           >
             <Select
-              mode="multiple"
-              placeholder="Tất cả"
+              placeholder={t('placeholders.method')}
+              defaultValue={Options.ALL}
               size="large"
-              maxTagCount={2}
               showSearch
               filterOption={(input, option) =>
                 String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
               }
               options={[
+                { value: Options.ALL, label: t('labels.all') },
                 { value: 'atm_card', label: t('labels.atmCard') },
                 { value: 'qr_code', label: t('labels.qrCode') },
                 { value: 'bank_account_ib', label: t('labels.bankAccountIb') },
@@ -278,28 +279,26 @@ const OutboundFeeManagementSearchBar = ({
                 { value: 'jcb_international', label: t('labels.jcbInternational') },
                 { value: 'amex_international', label: t('labels.amexInternational') }
               ]}
-              allowClear
             />
           </Form.Item>
 
           <Form.Item
-            name="providers"
+            name="provider"
             label={t('labels.provider')}
           >
             <Select
-              mode="multiple"
-              placeholder="Tất cả"
+              placeholder={t('placeholders.provider')}
+              defaultValue={Options.ALL}
               size="large"
-              maxTagCount={2}
               showSearch
               filterOption={(input, option) =>
                 String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
               }
               options={[
+                { value: Options.ALL, label: t('labels.all') },
                 { value: 'vpbank', label: 'VPBank' },
                 { value: 'napas', label: 'NAPAS' }
               ]}
-              allowClear
             />
           </Form.Item>
 
