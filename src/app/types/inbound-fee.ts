@@ -252,8 +252,7 @@ export enum InboundFeeProvider {
   ALL = 'all',
   VPBANK = 'vpbank',
   VPB = 'vpbank', // Alias for VPBANK
-  NAPAS = 'napas',
-  VIETQR = 'vietqr'
+  NAPAS = 'napas'
 }
 
 export enum InboundFeeApplicationType {

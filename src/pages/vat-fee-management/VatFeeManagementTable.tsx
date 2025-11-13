@@ -210,6 +210,7 @@ const VatFeeManagementTable = ({ vatFees, search, setSearch, pagination }: VatFe
       />
 
       <VatFeeDetailModal
+        key={selectedVatFeeId || 'detail-modal'}
         open={detailModalOpen}
         onCancel={handleCloseDetailModal}
         vatFeeId={selectedVatFeeId}

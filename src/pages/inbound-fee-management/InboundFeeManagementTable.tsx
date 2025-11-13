@@ -71,6 +71,7 @@ const InboundFeeManagementTable = ({
       />
 
       <InboundFeeDetailModal
+        key={selectedInboundFeeId || 'detail-modal'}
         visible={detailModalOpen}
         onClose={handleCloseDetailModal}
         inboundFeeId={selectedInboundFeeId}

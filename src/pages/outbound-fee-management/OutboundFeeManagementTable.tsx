@@ -119,6 +119,7 @@ const OutboundFeeManagementTable = ({
 
       {/* Detail Modal */}
       <OutboundFeeDetailModal
+        key={selectedOutboundFeeId || 'detail-modal'}
         visible={detailModalOpen}
         onClose={handleCloseDetailModal}
         outboundFeeId={selectedOutboundFeeId}

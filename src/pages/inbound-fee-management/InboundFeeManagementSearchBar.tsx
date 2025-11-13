@@ -281,7 +281,6 @@ const InboundFeeManagementSearchBar = ({
               size="large"
               options={[
                 { value: Options.ALL, label: t('labels.all') },
-                { value: 'vietqr', label: 'VietQR' },
                 { value: 'napas', label: 'NAPAS' }
               ]}
             />

@@ -35,8 +35,7 @@ export const FORM_INITIAL_VALUES = {
 
 export const MOCK_PROVIDERS = [
   { value: 'vpbank', label: 'VPBank' },
-  { value: 'napas', label: 'Napas' },
-  { value: 'vietqr', label: 'VietQR' }
+  { value: 'napas', label: 'Napas' }
 ]
 
 export const getPaymentMethods = (type: string) => {

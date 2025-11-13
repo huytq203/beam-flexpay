@@ -62,8 +62,7 @@ export const useInboundFeeColumns = (
   const provider: Record<string, string> = {
     [Options.ALL]: t('labels.all'),
     [InboundFeeProvider.NAPAS]: t('labels.napas'),
-    [InboundFeeProvider.VPB]: t('labels.vpb'),
-    [InboundFeeProvider.VIETQR]: t('labels.vietqr')
+    [InboundFeeProvider.VPB]: t('labels.vpb')
   }
 
   return useMemo(

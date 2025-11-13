@@ -7,14 +7,15 @@ const { Text } = Typography
 interface ICellContent {
   data: any
   isDash?: boolean
+  color?: string
 }
 
 function CellContent(props: ICellContent) {
-  const { data, isDash = false } = props
+  const { data, isDash = false, color } = props
   return (
     <React.Fragment>
       {data ? (
-        <> {typeof data === 'string' ? <Text>{data}</Text> : data} </>
+        <> {typeof data === 'string' ? <Text style={color ? { color } : undefined}>{data}</Text> : data} </>
       ) : (
         <NoDataText isDash={isDash} />
       )}

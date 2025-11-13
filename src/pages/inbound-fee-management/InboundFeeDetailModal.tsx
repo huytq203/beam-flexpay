@@ -88,7 +88,6 @@ const InboundFeeDetailModal = ({ visible, onClose, inboundFeeId }: InboundFeeDet
   const getProviderLabel = (provider: string) => {
     const labels: Record<string, string> = {
       [Options.ALL]: t('labels.all'),
-      [InboundFeeProvider.VIETQR]: t('labels.vietqr'),
       [InboundFeeProvider.NAPAS]: t('labels.napas'),
       [InboundFeeProvider.VPB]: t('labels.vpb')
     }

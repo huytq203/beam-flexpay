@@ -95,7 +95,6 @@ const OutboundFeeDetailModal = ({ visible, onClose, outboundFeeId }: OutboundFee
   const getProviderLabel = (provider: string) => {
     const labels: Record<string, string> = {
       [Options.ALL]: t('labels.all'),
-      [OutboundFeeProvider.VIETQR]: t('labels.vietqr'),
       [OutboundFeeProvider.NAPAS]: t('labels.napas'),
       [OutboundFeeProvider.VPB]: t('labels.vpb')
     }
