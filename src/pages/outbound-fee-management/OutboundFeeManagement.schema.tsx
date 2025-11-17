@@ -1,5 +1,6 @@
 import ButtonApprover from '@components/button-approver/ButtonApprover'
 import ButtonDelete from '@components/button-delete/ButtonDelete'
+import ButtonLockFee from '@components/button-lock-fee/ButtonLockFee'
 import ButtonReject from '@components/button-reject/ButtonReject'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import ButtonView from '@components/button-view/ButtonView'
@@ -32,6 +33,7 @@ export const useOutboundFeeColumns = (
   onDelete?: (record: OutboundFeeType) => void,
   onApprove?: (record: OutboundFeeType) => void,
   onReject?: (record: OutboundFeeType) => void,
+  onLock?: (record: OutboundFeeType) => void,
   currentPage?: number,
   pageSize?: number
 ): ColumnsType<OutboundFeeType> => {
@@ -379,6 +381,7 @@ export const useOutboundFeeColumns = (
         width: 250,
         render: (_value: any, record: OutboundFeeType) => {
           const isPendingApproval = record.status === OutboundFeeStatus.PENDING_APPROVAL
+          const canLock = (record.status === OutboundFeeStatus.ACTIVE || record.status === OutboundFeeStatus.APPROVED) && !record.lockTime
 
           return (
             <Row
@@ -442,11 +445,23 @@ export const useOutboundFeeColumns = (
                   />
                 </Col>
               )}
+
+              {/* Lock button - only visible when status is active or approved and not yet locked */}
+              {canLock && onLock && (
+                <Col>
+                  <ButtonLockFee
+                    module="outbound_fee"
+                    onClick={async () => {
+                      onLock?.(record)
+                    }}
+                  />
+                </Col>
+              )}
             </Row>
           )
         }
       }
     ],
-    [t, onView, onEdit, onDelete, onApprove, onReject, currentPage, pageSize]
+    [t, onView, onEdit, onDelete, onApprove, onReject, onLock, currentPage, pageSize]
   )
 }

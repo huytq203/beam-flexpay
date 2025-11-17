@@ -15,6 +15,8 @@ import {
   OutboundFeeGetBanksApiResponse,
   OutboundFeeGetBanksListApiResponse,
   OutboundFeeGetProvidersApiResponse,
+  OutboundFeeLockApiArg,
+  OutboundFeeLockApiResponse,
   OutboundFeeRejectApiArg,
   OutboundFeeRejectApiResponse,
   OutboundFeeRemoveApiArg,
@@ -243,6 +245,18 @@ const injectedRtkApi = api
         }),
         transformResponse: fnTransformResponse,
         invalidatesTags: ['[Admin] Admin Outbound Fee']
+      }),
+      outboundFeeLock: build.mutation<
+        OutboundFeeLockApiResponse,
+        OutboundFeeLockApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/outbound-fee/${queryArg.id}/lock`,
+          method: 'POST',
+          body: { lockTime: queryArg.lockTime }
+        }),
+        transformResponse: fnTransformResponse,
+        invalidatesTags: ['[Admin] Admin Outbound Fee']
       })
     })
   })
@@ -262,5 +276,6 @@ export const {
   useOutboundFeeCustomerSearchQuery,
   useLazyOutboundFeeCustomerSearchQuery,
   useOutboundFeeApproveMutation,
-  useOutboundFeeRejectMutation
+  useOutboundFeeRejectMutation,
+  useOutboundFeeLockMutation
 } = injectedRtkApi

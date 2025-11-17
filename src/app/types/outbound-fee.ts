@@ -56,6 +56,7 @@ export type OutboundFeeType = {
   status: OutboundFeeStatus
   approvedAt?: string
   rejectedAt?: string
+  lockTime?: string // ISO 8601 UTC DateTime - when the fee will be locked
 }
 
 export enum OutboundFeeTransactionType {
@@ -103,7 +104,8 @@ export enum OutboundFeeStatus {
   APPROVED = 'approved',                 // Đã duyệt
   ACTIVE = 'active',                     // Đang áp dụng
   REJECTED = 'rejected',                 // Đã từ chối
-  EXPIRED = 'expired'                    // Đã hết hạn
+  EXPIRED = 'expired',                   // Đã hết hạn
+  LOCKED = 'locked'                      // Đã khoá
 }
 
 // Type definitions for better type safety
@@ -451,5 +453,20 @@ export interface OutboundFeeRejectApiArg {
  * Reject outbound fee API response
  */
 export interface OutboundFeeRejectApiResponse {
+  id: string
+}
+
+/**
+ * Lock outbound fee API request
+ */
+export interface OutboundFeeLockApiArg {
+  id: string
+  lockTime: string // ISO 8601 UTC DateTime
+}
+
+/**
+ * Lock outbound fee API response
+ */
+export interface OutboundFeeLockApiResponse {
   id: string
 }

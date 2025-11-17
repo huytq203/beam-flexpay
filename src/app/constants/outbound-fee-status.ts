@@ -6,7 +6,8 @@ export const OUTBOUND_FEE_STATUS_OPTIONS = [
   { value: OutboundFeeStatus.APPROVED, label: 'Chờ áp dụng' },
   { value: OutboundFeeStatus.ACTIVE, label: 'Đang áp dụng' },
   { value: OutboundFeeStatus.REJECTED, label: 'Đã từ chối' },
-  { value: OutboundFeeStatus.EXPIRED, label: 'Đã hết hạn' }
+  { value: OutboundFeeStatus.EXPIRED, label: 'Đã hết hạn' },
+  { value: OutboundFeeStatus.LOCKED, label: 'Đã khoá' }
 ]
 
 export const OUTBOUND_FEE_STATUS_COLORS: Record<OutboundFeeStatus, string> = {
@@ -14,7 +15,8 @@ export const OUTBOUND_FEE_STATUS_COLORS: Record<OutboundFeeStatus, string> = {
   [OutboundFeeStatus.APPROVED]: 'processing',
   [OutboundFeeStatus.ACTIVE]: 'success',
   [OutboundFeeStatus.REJECTED]: 'error',
-  [OutboundFeeStatus.EXPIRED]: 'default'
+  [OutboundFeeStatus.EXPIRED]: 'default',
+  [OutboundFeeStatus.LOCKED]: 'default'
 }
 
 export const OUTBOUND_FEE_STATUS_LABELS: Record<OutboundFeeStatus, string> = {
@@ -22,7 +24,8 @@ export const OUTBOUND_FEE_STATUS_LABELS: Record<OutboundFeeStatus, string> = {
   [OutboundFeeStatus.APPROVED]: 'Chờ áp dụng',
   [OutboundFeeStatus.ACTIVE]: 'Đang áp dụng',
   [OutboundFeeStatus.REJECTED]: 'Đã từ chối',
-  [OutboundFeeStatus.EXPIRED]: 'Đã hết hạn'
+  [OutboundFeeStatus.EXPIRED]: 'Đã hết hạn',
+  [OutboundFeeStatus.LOCKED]: 'Đã khoá'
 }
 
 export const getOutboundFeeStatusColor = (status: OutboundFeeStatus): string => {

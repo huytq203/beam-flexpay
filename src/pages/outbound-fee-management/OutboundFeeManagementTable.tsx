@@ -9,6 +9,7 @@ import OutboundFeeDetailModal from './OutboundFeeDetailModal'
 import OutboundFeeApproveModal from './OutboundFeeApproveModal'
 import OutboundFeeRejectModal from './OutboundFeeRejectModal'
 import OutboundFeeDeleteModal from './OutboundFeeDeleteModal'
+import OutboundFeeLockModal from './OutboundFeeLockModal'
 
 interface OutboundFeeManagementTableProps {
   outboundFees?: OutboundFeeType[]
@@ -37,6 +38,9 @@ const OutboundFeeManagementTable = ({
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [selectedOutboundFeeForDelete, setSelectedOutboundFeeForDelete] = useState<OutboundFeeType | null>(null)
+
+  const [lockModalOpen, setLockModalOpen] = useState(false)
+  const [selectedOutboundFeeForLock, setSelectedOutboundFeeForLock] = useState<OutboundFeeType | null>(null)
 
   const handleView = (record: OutboundFeeType) => {
     setSelectedOutboundFeeId(record.id)
@@ -82,6 +86,16 @@ const OutboundFeeManagementTable = ({
     setSelectedOutboundFeeForReject(null)
   }
 
+  const handleLock = (record: OutboundFeeType) => {
+    setSelectedOutboundFeeForLock(record)
+    setLockModalOpen(true)
+  }
+
+  const handleCloseLockModal = () => {
+    setLockModalOpen(false)
+    setSelectedOutboundFeeForLock(null)
+  }
+
   const currentPage = pagination?.page || search.page
   const pageSize = pagination?.take || search.take
 
@@ -95,6 +109,7 @@ const OutboundFeeManagementTable = ({
           handleDelete,
           handleApprove,
           handleReject,
+          handleLock,
           currentPage,
           pageSize
         )}
@@ -144,6 +159,13 @@ const OutboundFeeManagementTable = ({
         open={deleteModalOpen}
         outboundFee={selectedOutboundFeeForDelete}
         onClose={handleCloseDeleteModal}
+      />
+
+      {/* Lock Modal */}
+      <OutboundFeeLockModal
+        open={lockModalOpen}
+        outboundFee={selectedOutboundFeeForLock}
+        onClose={handleCloseLockModal}
       />
     </>
   )
