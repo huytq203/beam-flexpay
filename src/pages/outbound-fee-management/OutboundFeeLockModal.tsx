@@ -63,7 +63,7 @@ const OutboundFeeLockModal = ({
 
   return (
     <Modal
-      title="Khoá phí outbound"
+      title="Khoá phí đầu ra"
       open={open}
       onOk={handleLock}
       onCancel={handleCancel}
