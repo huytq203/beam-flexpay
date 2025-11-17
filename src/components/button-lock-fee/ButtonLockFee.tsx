@@ -1,9 +1,8 @@
 import { SIZE_ICON } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
 import { Lock } from '@phosphor-icons/react'
-import { Button, ButtonProps, Tooltip } from 'antd'
+import { Button, ButtonProps } from 'antd'
 import { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
 
 interface ButtonLockFeeProps extends ButtonProps {
   module: string
@@ -14,7 +13,6 @@ const ButtonLockFee = (props: ButtonLockFeeProps) => {
   const { module } = props
 
   const { permissions } = useAppSelector((state) => state.auth.profile)
-  const { t } = useTranslation()
 
   /**
    * function get lock permission
@@ -27,12 +25,10 @@ const ButtonLockFee = (props: ButtonLockFeeProps) => {
   }, [permissions])
 
   return !isHasPermission() ? null : (
-    <Tooltip title={t('tooltips.lock')}>
-      <Button
-        icon={<Lock size={SIZE_ICON} />}
-        {...props}
-      />
-    </Tooltip>
+    <Button
+      icon={<Lock size={SIZE_ICON} />}
+      {...props}
+    />
   )
 }
 

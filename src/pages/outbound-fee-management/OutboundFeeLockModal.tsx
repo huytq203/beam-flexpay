@@ -1,15 +1,7 @@
 import { useOutboundFeeLockMutation } from '@services/outboundFeeService'
-import {
-  OutboundFeeApplicationType,
-  OutboundFeeTransactionType,
-  OutboundFeeType
-} from '@type/outbound-fee'
-import { getVNDateTimeStringFromUTCTimeString } from '@utils/helperFunctions'
-import { Alert, DatePicker, Descriptions, Form, message, Modal, Typography } from 'antd'
+import { OutboundFeeType } from '@type/outbound-fee'
+import { DatePicker, Form, message, Modal } from 'antd'
 import dayjs from 'dayjs'
-import { useTranslation } from 'react-i18next'
-
-const { Text } = Typography
 
 interface OutboundFeeLockModalProps {
   open: boolean
@@ -22,29 +14,8 @@ const OutboundFeeLockModal = ({
   outboundFee,
   onClose
 }: OutboundFeeLockModalProps) => {
-  const { t } = useTranslation()
   const [form] = Form.useForm()
   const [lockOutboundFee, { isLoading }] = useOutboundFeeLockMutation()
-
-  const getApplicationTypeLabel = (type: string) => {
-    const labels: Record<string, string> = {
-      [OutboundFeeApplicationType.SYSTEM]: t('labels.system'),
-      [OutboundFeeApplicationType.INDIVIDUAL]: t('labels.individual'),
-      [OutboundFeeApplicationType.ACCOUNT_GROUP]: t('labels.accountGroup')
-    }
-    return labels[type] || type
-  }
-
-  const getTransactionTypeLabel = (type: string) => {
-    const labels: Record<string, string> = {
-      [OutboundFeeTransactionType.DEPOSIT]: t('labels.deposit'),
-      [OutboundFeeTransactionType.WITHDRAWAL]: t('labels.withdrawal'),
-      [OutboundFeeTransactionType.PAYMENT]: t('labels.payment'),
-      [OutboundFeeTransactionType.TRANSFER]: t('labels.transfer'),
-      [OutboundFeeTransactionType.REFUND]: t('labels.refund')
-    }
-    return labels[type] || type
-  }
 
   const handleLock = async () => {
     if (!outboundFee?.id) return
@@ -99,145 +70,91 @@ const OutboundFeeLockModal = ({
       okText="Xác nhận khoá"
       cancelText="Hủy"
       confirmLoading={isLoading}
-      width={600}
+      width={500}
       destroyOnClose
       okButtonProps={{
         type: 'primary',
         disabled: !outboundFee
       }}
     >
-      {outboundFee ? (
-        <>
-          <Alert
-            message="Khoá phí để ngăn không cho hệ thống áp dụng"
-            description="Khi đến thời điểm khoá, hệ thống tự động chuyển status phí sang locked và phí sẽ không còn được áp dụng."
-            type="warning"
-            showIcon
-            style={{ marginBottom: 16 }}
-          />
+      <Form form={form} layout="vertical">
+        <Form.Item
+          name="lockTime"
+          label="Thời gian khoá"
+          rules={[
+            {
+              required: true,
+              message: 'Vui lòng chọn thời gian khoá'
+            },
+            {
+              validator: (_, value) => {
+                if (!value) return Promise.reject()
 
-          <Descriptions
-            column={1}
-            bordered
-            size="small"
-            style={{ marginBottom: 16 }}
-          >
-            <Descriptions.Item label="Loại áp dụng">
-              <Text strong>{getApplicationTypeLabel(outboundFee.applicationType)}</Text>
-            </Descriptions.Item>
+                const now = new Date()
+                const lockTime = value.$d || value._d || new Date(value)
 
-            <Descriptions.Item label="Loại giao dịch">
-              <Text strong>{getTransactionTypeLabel(outboundFee.transactionType)}</Text>
-            </Descriptions.Item>
+                if (lockTime <= now) {
+                  return Promise.reject('Thời gian khoá phải lớn hơn hoặc bằng thời gian hiện tại')
+                }
+                return Promise.resolve()
+              }
+            }
+          ]}
+        >
+          <DatePicker
+            showTime
+            format="DD/MM/YYYY HH:mm:ss"
+            placeholder="Chọn thời gian khoá"
+            className="w-full"
+            size="large"
+            disabledDate={(current) => {
+              // Disable all past dates
+              return current && current < dayjs().startOf('day')
+            }}
+            disabledTime={(current) => {
+              if (!current) return {}
 
-            {outboundFee.accountGroup && (
-              <Descriptions.Item label="Nhóm tài khoản">
-                <Text>{outboundFee.accountGroup}</Text>
-              </Descriptions.Item>
-            )}
+              const now = dayjs()
+              const selectedDate = dayjs(current)
 
-            <Descriptions.Item label="Khoảng giá">
-              <Text>
-                {outboundFee.priceFrom?.toLocaleString() || '0'} VND - {outboundFee.priceTo?.toLocaleString() || '0'} VND
-              </Text>
-            </Descriptions.Item>
-
-            <Descriptions.Item label="Thời gian áp dụng">
-              <Text>
-                {getVNDateTimeStringFromUTCTimeString(outboundFee.startDate)}
-                {outboundFee.endDate && (
-                  <> đến {getVNDateTimeStringFromUTCTimeString(outboundFee.endDate)}</>
-                )}
-              </Text>
-            </Descriptions.Item>
-          </Descriptions>
-
-          <Form form={form} layout="vertical">
-            <Form.Item
-              name="lockTime"
-              label="Thời gian khoá"
-              rules={[
-                {
-                  required: true,
-                  message: 'Vui lòng chọn thời gian khoá'
-                },
-                {
-                  validator: (_, value) => {
-                    if (!value) return Promise.reject()
-
-                    const now = new Date()
-                    const lockTime = value.$d || value._d || new Date(value)
-
-                    if (lockTime <= now) {
-                      return Promise.reject('Thời gian khoá phải lớn hơn hoặc bằng thời gian hiện tại')
+              // If selected date is today, disable past hours/minutes/seconds
+              if (selectedDate.isSame(now, 'day')) {
+                return {
+                  disabledHours: () => {
+                    const hours = []
+                    for (let i = 0; i < now.hour(); i++) {
+                      hours.push(i)
                     }
-                    return Promise.resolve()
+                    return hours
+                  },
+                  disabledMinutes: (selectedHour: number) => {
+                    if (selectedHour === now.hour()) {
+                      const minutes = []
+                      for (let i = 0; i <= now.minute(); i++) {
+                        minutes.push(i)
+                      }
+                      return minutes
+                    }
+                    return []
+                  },
+                  disabledSeconds: (selectedHour: number, selectedMinute: number) => {
+                    if (selectedHour === now.hour() && selectedMinute === now.minute()) {
+                      const seconds = []
+                      for (let i = 0; i <= now.second(); i++) {
+                        seconds.push(i)
+                      }
+                      return seconds
+                    }
+                    return []
                   }
                 }
-              ]}
-            >
-              <DatePicker
-                showTime
-                format="DD/MM/YYYY HH:mm:ss"
-                placeholder="Chọn thời gian khoá"
-                className="w-full"
-                size="large"
-                disabledDate={(current) => {
-                  // Disable all past dates
-                  return current && current < dayjs().startOf('day')
-                }}
-                disabledTime={(current) => {
-                  if (!current) return {}
+              }
 
-                  const now = dayjs()
-                  const selectedDate = dayjs(current)
-
-                  // If selected date is today, disable past hours/minutes/seconds
-                  if (selectedDate.isSame(now, 'day')) {
-                    return {
-                      disabledHours: () => {
-                        const hours = []
-                        for (let i = 0; i < now.hour(); i++) {
-                          hours.push(i)
-                        }
-                        return hours
-                      },
-                      disabledMinutes: (selectedHour: number) => {
-                        if (selectedHour === now.hour()) {
-                          const minutes = []
-                          for (let i = 0; i <= now.minute(); i++) {
-                            minutes.push(i)
-                          }
-                          return minutes
-                        }
-                        return []
-                      },
-                      disabledSeconds: (selectedHour: number, selectedMinute: number) => {
-                        if (selectedHour === now.hour() && selectedMinute === now.minute()) {
-                          const seconds = []
-                          for (let i = 0; i <= now.second(); i++) {
-                            seconds.push(i)
-                          }
-                          return seconds
-                        }
-                        return []
-                      }
-                    }
-                  }
-
-                  return {}
-                }}
-              />
-            </Form.Item>
-          </Form>
-        </>
-      ) : (
-        <Alert
-          message="Không tìm thấy thông tin phí"
-          type="warning"
-          showIcon
-        />
-      )}
+              return {}
+            }}
+          />
+        </Form.Item>
+      </Form>
     </Modal>
   )
 }
