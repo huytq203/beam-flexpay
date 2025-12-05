@@ -17,7 +17,8 @@ import {
   REPAYMENTANDDISBURSE,
   REPORTS,
   ROLEMANAGEMENT,
-  STATE_BANK
+  STATE_BANK,
+  TEST
 } from '@constants/routersConstant'
 
 import ForgotPassword from '@pages/auth/forgot-password/ForgotPassword'
@@ -74,6 +75,7 @@ import { OutboundFeeCreate } from '@pages/outbound-fee-management/outboundfee-cr
 import { OutboundFeeUpdate } from '@pages/outbound-fee-management/outboundfee-update'
 import { InboundFeeManagement, InboundFeeCreate, InboundFeeUpdate } from '@pages/inbound-fee-management'
 import { VatFeeCreate, VatFeeUpdate, VatFeeManagement } from '@pages/vat-fee-management'
+import TestDemo from '@pages/test/TestDemo'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -207,7 +209,7 @@ const feeManagement = {
       path: FEEMANAGEMENT + '/policy-management',
       element: createElement(PolicyManagement)
     },
-    {                                                     
+    {
       path: FEEMANAGEMENT + '/direct-deposit',
       element: createElement(PaymentPolicyManagement)
       // element: createElement(DirectDeposit)
@@ -432,6 +434,20 @@ const internalWallet = {
   ]
 }
 
+
+
+const testDemo = {
+  path: TEST,
+  element: createElement(AppLayout),
+  errorElement: createElement(NotFound),
+  children: [
+    {
+      path: TEST,
+      element: createElement(TestDemo)
+    }
+  ]
+}
+
 export const WalletRoutes = createBrowserRouter([
   authentication,
   defaultRouter,
@@ -444,4 +460,5 @@ export const WalletRoutes = createBrowserRouter([
   reports,
   repaymentAndDisburse,
   internalWallet,
+  testDemo
 ])

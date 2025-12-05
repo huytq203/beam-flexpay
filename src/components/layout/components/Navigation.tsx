@@ -10,7 +10,9 @@ import {
   _REPAYMENTANDDISBURSE,
   _REPORTS,
   _ROLEMANAGEMENT,
-  _STATE_BANK
+  _STATE_BANK,
+  _TEST
+
 } from '@constants/routersConstant'
 import i18n from '@languages/i18n'
 import {
@@ -792,6 +794,29 @@ const internal_wallet = {
   ]
 }
 
+const testDemo = {
+  key: _TEST,
+  icon: (
+    <StampIcon
+      size={size}
+      weight={weight}
+      color={COlOR}
+    />
+  ),
+  // children: [
+  //   {
+  //     key: 'test-demo',
+  //     icon: (
+  //       <StampIcon
+  //         size={size}
+  //         weight={weight}
+  //         color={COlOR}
+  //       />
+  //     ),
+  //     label: 'Test Demo',
+  //   }
+   label: 'Test Demo',
+}
 export const navigationItems: ItemTypeCustom[] = [
   roleManagement,
   personalWallet,
@@ -800,5 +825,6 @@ export const navigationItems: ItemTypeCustom[] = [
   bankAndConnect,
   repaymentAndDisburse,
   reports,
-  internal_wallet
+  internal_wallet,
+  testDemo
 ]
