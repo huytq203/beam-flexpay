@@ -445,6 +445,10 @@ const testDemo = {
     {
       path: TEST,
       element: createElement(FeeManagement)
+    },
+    {
+      path: TEST + '/create',
+      element: createElement(TestDemo)
     }
   ]
 }

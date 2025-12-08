@@ -1,14 +1,23 @@
-interface fee_policies {
+export interface feePolicies {
     id?: number,
     name: string,
-    fee_type: string,
+    serviceType: string,
     description: string
-    fee_domain: string
+    feeDomain: string
     currency: string
-    valid_from: string
-    valid_to: string
+    validFrom: string
+    validTo: string
     status: string
     priority: number
-    created_at:string
-    updated_at :string
+    createdAt:string
+    updatedAt :string
+    createdBy :string
+    updatedBy :string
+}
+export interface FeePoliciesResponse {
+  content: feePolicies[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
 }
