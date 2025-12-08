@@ -1,16 +1,17 @@
 import { Input } from 'antd';
-import React from 'react'
+import React, { ChangeEvent } from 'react'
 interface prop{
     lable?:string,
     placeholder?:string,
-    defaultValue?:number
-  
+    defaultValue?:number|string,
+    [key: string]: any;
 }
 
-const input = ({placeholder,defaultValue}:prop) => {
+const InputComponent = React.forwardRef(({placeholder,defaultValue, onchange, ...rest}:prop, ref: any) => {
     return (
-            <Input placeholder={placeholder} defaultValue={defaultValue}/>
+            <Input  {...rest} ref={ref} placeholder={placeholder} defaultValue={defaultValue} />
+                 
     )
-}
+})
 
-export default input
+export default InputComponent

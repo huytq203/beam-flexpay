@@ -76,6 +76,7 @@ import { OutboundFeeUpdate } from '@pages/outbound-fee-management/outboundfee-up
 import { InboundFeeManagement, InboundFeeCreate, InboundFeeUpdate } from '@pages/inbound-fee-management'
 import { VatFeeCreate, VatFeeUpdate, VatFeeManagement } from '@pages/vat-fee-management'
 import TestDemo from '@pages/test/TestDemo'
+import FeeManagement from '@pages/test/FeeManagement'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -443,7 +444,7 @@ const testDemo = {
   children: [
     {
       path: TEST,
-      element: createElement(TestDemo)
+      element: createElement(FeeManagement)
     }
   ]
 }

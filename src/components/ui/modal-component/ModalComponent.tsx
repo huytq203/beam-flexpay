@@ -21,14 +21,7 @@ const ModalComponent = ({
       onOk={onOk}
       confirmLoading={confirmLoading}
       onCancel={onCancel}
-       width={{
-          xs: '90%',
-          sm: '80%',
-          md: '70%',
-          lg: '60%',
-          xl: '50%',
-          xxl: '40%',
-        }}
+       width={'90%'}
       style={{
         top: 20, // đẩy modal lên gần top
         
@@ -42,7 +35,7 @@ const ModalComponent = ({
         },
 
         body: {
-          maxHeight: '75vh', // chiều cao tối đa body
+          maxHeight: '70vh', // chiều cao tối đa body
           overflowY: 'auto' // scroll khi tràn
         }
       }}

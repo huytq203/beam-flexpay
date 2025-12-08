@@ -4,14 +4,17 @@ import type { SelectProps as AntdSelectProps } from 'antd';
 import './style.scss'
 interface OptionItem {
     label: string;
-    value: string;
+    value: string | number;
+
 }
 interface SelectProps {
     handleChange?: AntdSelectProps['onChange']
     data?: OptionItem[]
+    defaultValue?: string | number
 }
-const SelectInput: React.FC<SelectProps> = ({ handleChange, data }) => (
+const SelectInput: React.FC<SelectProps> = ({ handleChange, data, defaultValue }) => (
     <Select
+        defaultValue={defaultValue}
         allowClear
         onChange={handleChange}
         options={data}

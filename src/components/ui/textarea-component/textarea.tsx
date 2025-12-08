@@ -2,18 +2,14 @@ import React from 'react'
 import { Input } from 'antd'
 
 const { TextArea } = Input
-interface TextAreaProps {
+
+interface Props {
   rows?: number
-  placeholder?:string
-}
-const textarea = ({ rows,placeholder }: TextAreaProps) => {
-  return (
-    <div>
-      <>
-        <TextArea rows={rows} placeholder={placeholder}/>
-      </>
-    </div>
-  )
+  placeholder?: string
 }
 
-export default textarea
+const TextAreaComponent = React.forwardRef(({ ...rest }: Props, ref: any) => {
+  return <TextArea ref={ref} {...rest} />
+})
+
+export default TextAreaComponent

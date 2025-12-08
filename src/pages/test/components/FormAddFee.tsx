@@ -1,136 +1,127 @@
 import React, { useState } from 'react'
-import { Card } from 'antd'
-import { Input, InputNumber, SelectInput, Switch } from '@components/common'
-interface FeeInfoCardProps {
-  onDelete: () => void
-  feeCards?: number[]
-}
+import { Card, Table, Button } from 'antd'
+import type { ColumnsType } from 'antd/es/table'
+import { SelectInput, InputNumber } from '@components/common'
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 
-const FeeInfoCard = ({ onDelete, feeCards }: FeeInfoCardProps) => {
-  const [disabled, setDisabled] = useState({
-    min: true,
-    max: true
-  })
-
-  const toggle = (key: 'min' | 'max') => {
-    setDisabled((prev) => ({
-      ...prev,
-      [key]: !prev[key]
-    }))
-  }
-
-  return (
-    <Card
-      className='mb-3'
-      style={{ width: '100%' }}
-    >
-      <div className='flex justify-between items-center'>
-        <p className='font-bold'>Thông tin phí</p>
-        <button
-          disabled={feeCards?.length === 1}
-          className='border rounded-md p-1 hover:bg-gray-100 disabled:bg-gray-200'
-          onClick={(e) => {
-            e.preventDefault()
-
-            onDelete()
-          }}
-        >
-          <svg
-            width={20}
-            height={20}
-          >
-            <use href='/icons.svg#hugeicons-delete-02' />
-          </svg>
-        </button>
-      </div>
-
-      <div className='grid grid-cols-12 gap-3 px-2'>
-        <div className='col-span-12 flex flex-col'>
-          <label
-            className='font-normal mb-1'
-            htmlFor=''
-          >
-            Giá trị từ
-          </label>
-          <InputNumber defaultValue={0} />
-        </div>
-        <div className='col-span-12 flex flex-col'>
-          <label
-            className='font-normal mb-1'
-            htmlFor=''
-          >
-            Đến
-          </label>
-          <InputNumber placeholder='50.000' />
-        </div>
-        <div className='col-span-12 flex flex-col'>
-          <label
-            className='font-normal mb-1'
-            htmlFor=''
-          >
-            Phí %
-          </label>
-          <InputNumber placeholder='Nhập phí %' />
-        </div>
-        <div className='col-span-12 flex flex-col'>
-          <label
-            className='font-normal mb-1'
-            htmlFor=''
-          >
-            Phí cố định
-          </label>
-          <InputNumber placeholder='Nhập phí cố định (VND)' />
-        </div>
-        <div className='col-span-12 flex flex-col'>
-          <div className='flex justify-between items-center'>
-            <label
-              className='font-normal mb-1'
-              htmlFor=''
-            >
-              Giá tối thiểu
-            </label>
-            <Switch onChange={() => toggle('min')} />
-          </div>
-          <InputNumber
-            disabled={disabled.min}
-            placeholder='Nhập phí tối thiểu (VND)'
-          />
-        </div>
-        <div className='col-span-12 flex flex-col'>
-          <div className='flex justify-between items-center'>
-            <label
-              className='font-normal mb-1'
-              htmlFor=''
-            >
-              Giá tối đa
-            </label>
-            <Switch onChange={() => toggle('max')} />
-          </div>
-          <InputNumber
-            disabled={disabled.max}
-            placeholder='Nhập phí tối đa (VND)'
-          />
-        </div>
-      </div>
-    </Card>
-  )
+interface FeeTier {
+  key: React.Key
+  min: number | null
+  max: number | null
+  fixedFee: number | null
+  percentFee: number | null
 }
 
 const FormAddFee = () => {
-  const [feeCards, setFeeCards] = useState<number[]>([1])
+  const [data, setData] = useState<FeeTier[]>([
+    {
+      key: '1',
+      min: null,
+      max: null,
+      fixedFee: null,
+      percentFee: null,
+    },
+  ])
+  const [typeCalculationFee, setTypealculationFee] = useState<number>(1)
+  const handleAdd = () => {
+    const newData: FeeTier = {
+      key: Date.now().toString(), // Simple key generation
+      min: null,
+      max: null,
+      fixedFee: null,
+      percentFee: null,
+    }
+    setData([...data, newData])
+  }
 
-  const handleAddFee = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-    setFeeCards((prev) => {
-      const newId = prev.length > 0 ? Math.max(...prev) + 1 : 1
-      return [...prev, newId]
+  const handleDelete = (key: React.Key) => {
+    if (data.length > 1) {
+      setData(data.filter((item) => item.key !== key))
+    }
+  }
+
+  const handleChange = (
+    key: React.Key,
+    field: keyof FeeTier,
+    value: number | null
+  ) => {
+    const newData = data.map((item) => {
+      if (item.key === key) {
+        return { ...item, [field]: value }
+      }
+      return item
     })
+    setData(newData)
   }
 
-  const handleDeleteFee = (id: number) => {
-    if (feeCards.length === 1) return
-    setFeeCards((prev) => prev.filter((cardId) => cardId !== id))
-  }
+  const columns: ColumnsType<FeeTier> = [
+    {
+      title: 'Từ (Min Value)',
+      dataIndex: 'min',
+      key: 'min',
+      render: (text, record) => (
+        <InputNumber
+          placeholder="Min"
+          value={text}
+          onChange={(val) => handleChange(record.key, 'min', Number(val))}
+          style={{ width: '100%' }}
+        />
+      ),
+    },
+    {
+      title: 'Đến (Max Value)',
+      dataIndex: 'max',
+      key: 'max',
+      render: (text, record) => (
+        <InputNumber
+          placeholder="Max"
+          value={text}
+          onChange={(val) => handleChange(record.key, 'max', Number(val))}
+          style={{ width: '100%' }}
+        />
+      ),
+    },
+    {
+      title: 'Phí Cố định',
+      dataIndex: 'fixedFee',
+      key: 'fixedFee',
+      render: (text, record) => (
+        <InputNumber
+          placeholder="0"
+          value={text}
+          onChange={(val) => handleChange(record.key, 'fixedFee', Number(val))}
+          style={{ width: '100%' }}
+        />
+      ),
+    },
+    {
+      title: 'Phí %',
+      dataIndex: 'percentFee',
+      key: 'percentFee',
+      render: (text, record) => (
+        <InputNumber
+          placeholder="0"
+          value={text}
+          onChange={(val) => handleChange(record.key, 'percentFee', Number(val))}
+          style={{ width: '100%' }}
+        />
+      ),
+    },
+    {
+      title: 'Xóa',
+      key: 'action',
+      width: 60,
+      render: (_, record) => (
+        <Button
+          type="text"
+          danger
+          icon={<DeleteOutlined />}
+          onClick={() => handleDelete(record.key)}
+          disabled={data.length === 1}
+        />
+      ),
+    },
+  ]
 
   return (
     <div className='overflow-auto'>
@@ -140,7 +131,7 @@ const FormAddFee = () => {
       >
         <p className='font-bold mb-1'>Thông tin chung</p>
         <div className='grid grid-cols-12 gap-3 px-2'>
-          <div className='col-span-12 flex flex-col'>
+          <div className='col-span-4 flex flex-col'>
             <label
               className='font-normal mb-1'
               htmlFor=''
@@ -149,7 +140,7 @@ const FormAddFee = () => {
             </label>
             <SelectInput />
           </div>
-          <div className='col-span-12 flex flex-col'>
+          <div className='col-span-4 flex flex-col'>
             <label
               className='font-normal mb-1'
               htmlFor=''
@@ -158,7 +149,7 @@ const FormAddFee = () => {
             </label>
             <SelectInput />
           </div>
-          <div className='col-span-12 flex flex-col'>
+          <div className='col-span-4 flex flex-col'>
             <label
               className='font-normal mb-1'
               htmlFor=''
@@ -167,7 +158,7 @@ const FormAddFee = () => {
             </label>
             <SelectInput />
           </div>
-          <div className='col-span-12 flex flex-col'>
+          <div className='col-span-4 flex flex-col'>
             <label
               className='font-normal mb-1'
               htmlFor=''
@@ -176,16 +167,8 @@ const FormAddFee = () => {
             </label>
             <SelectInput />
           </div>
-          <div className='col-span-12 flex flex-col'>
-            <label
-              className='font-normal mb-1'
-              htmlFor=''
-            >
-              Công thức tính phí
-            </label>
-            <SelectInput />
-          </div>
-          <div className='col-span-12 flex flex-col'>
+
+          <div className='col-span-4 flex flex-col'>
             <label
               className='font-normal mb-1'
               htmlFor=''
@@ -194,20 +177,77 @@ const FormAddFee = () => {
             </label>
             <SelectInput />
           </div>
+          <div className='col-span-4 flex flex-col'>
+            <label
+              className='font-normal mb-1'
+              htmlFor=''
+            >
+              Công thức tính phí
+            </label>
+            <SelectInput />
+          </div>
         </div>
       </Card>
 
-      {feeCards.map((id) => (
-        <FeeInfoCard
-          key={id}
-          onDelete={() => handleDeleteFee(id)}
-          feeCards={feeCards}
-        />
-      ))}
+      <Card
+        className='mb-3'
+        style={{ width: '100%' }}
+      >
+        <p className='font-bold mb-3'>Phương thức tính (Calculation Method)</p>
+        <div className="mb-3">
+          <SelectInput 
+          defaultValue={typeCalculationFee}
+          data={[
+            { label: "Bậc lúy tiến", value: 2 },
+            { label: "Cố định", value: 1},
+            { label: "Bậc thanh toàn phần", value:3 },
+          ]} handleChange={(value) => setTypealculationFee(value)} />
+        </div>
 
-      <div className='flex justify-center items-center'>
-        <button onClick={handleAddFee}>+ Thêm bậc phí</button>
-      </div>
+        {(typeCalculationFee == 2 || typeCalculationFee == 3) ? (
+          <>
+            <Table
+              columns={columns}
+              dataSource={data}
+              pagination={false}
+              bordered
+              size="small"
+            />
+            <Button
+              type="dashed"
+              onClick={handleAdd}
+              style={{ width: '100%', marginTop: 16 }}
+              icon={<PlusOutlined />}
+            >
+              Thêm khoảng phí (Add Tier)
+            </Button>
+          </>):
+          (
+            <Card>
+              <div className="grid grid-cols-12 gap-3">
+                <div className="col-span-3 flex flex-col gap-2">
+                  <label className='font-medium' htmlFor="">Phí cố định (Fixed)</label>
+                  <InputNumber defaultValue={0}/>
+                </div>
+                <div className="col-span-3 flex flex-col gap-2">
+                  <label className='font-medium' htmlFor="">Phí phần trăm (%)</label>
+                  <InputNumber defaultValue={0}/>
+                </div>
+                <div className="col-span-3 flex flex-col gap-2">
+                  <label className='font-medium' htmlFor="">Tối thiểu (Min)</label>
+                  <InputNumber defaultValue={0}/>
+                </div>
+                <div className="col-span-3 flex flex-col gap-2">
+                  <label className='font-medium' htmlFor="">Tối đa (Max)</label>
+                  <InputNumber defaultValue={0}/>
+                </div>
+              </div>
+            </Card>
+          )
+          }
+    
+      </Card>
+
     </div>
   )
 }

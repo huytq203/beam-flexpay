@@ -25,7 +25,6 @@ interface FeeComponentProps {
 const FeeComponent = ({ dataSource, columns }: FeeComponentProps) => {
   return (
     <div>
-      <form action=''>
         <div className='cardItem1 p-3 rounded-lg border hover:border-l-blue-600 transition-all'>
           <div className='flex'>
             {/* <span className='bg-indigo-100 text-indigo-700 w-10 h-10 rounded-lg flex items-center justify-center mr-4 font-bold'>1</span> */}
@@ -76,7 +75,6 @@ const FeeComponent = ({ dataSource, columns }: FeeComponentProps) => {
             />
           </div>
         </div>
-      </form>
     </div>
   )
 }
