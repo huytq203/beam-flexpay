@@ -19,8 +19,8 @@ const FormAddFee = () => {
       min: null,
       max: null,
       fixedFee: null,
-      percentFee: null,
-    },
+      percentFee: null
+    }
   ])
   const [typeCalculationFee, setTypealculationFee] = useState<number>(1)
   const handleAdd = () => {
@@ -29,7 +29,7 @@ const FormAddFee = () => {
       min: null,
       max: null,
       fixedFee: null,
-      percentFee: null,
+      percentFee: null
     }
     setData([...data, newData])
   }
@@ -56,43 +56,17 @@ const FormAddFee = () => {
 
   const columns: ColumnsType<FeeTier> = [
     {
-      title: 'Từ (Min Value)',
-      dataIndex: 'min',
-      key: 'min',
-      render: (text, record) => (
-        <InputNumber
-          placeholder="Min"
-          value={text}
-          onChange={(val) => handleChange(record.key, 'min', Number(val))}
-          style={{ width: '100%' }}
-        />
-      ),
-    },
-    {
-      title: 'Đến (Max Value)',
-      dataIndex: 'max',
-      key: 'max',
-      render: (text, record) => (
-        <InputNumber
-          placeholder="Max"
-          value={text}
-          onChange={(val) => handleChange(record.key, 'max', Number(val))}
-          style={{ width: '100%' }}
-        />
-      ),
-    },
-    {
       title: 'Phí Cố định',
       dataIndex: 'fixedFee',
       key: 'fixedFee',
       render: (text, record) => (
         <InputNumber
-          placeholder="0"
+          placeholder='0'
           value={text}
           onChange={(val) => handleChange(record.key, 'fixedFee', Number(val))}
           style={{ width: '100%' }}
         />
-      ),
+      )
     },
     {
       title: 'Phí %',
@@ -100,27 +74,56 @@ const FormAddFee = () => {
       key: 'percentFee',
       render: (text, record) => (
         <InputNumber
-          placeholder="0"
+          placeholder='0'
           value={text}
-          onChange={(val) => handleChange(record.key, 'percentFee', Number(val))}
+          onChange={(val) =>
+            handleChange(record.key, 'percentFee', Number(val))
+          }
           style={{ width: '100%' }}
         />
-      ),
+      )
     },
+    {
+      title: 'Từ (Min Value)',
+      dataIndex: 'min',
+      key: 'min',
+      render: (text, record) => (
+        <InputNumber
+          placeholder='Min'
+          value={text}
+          onChange={(val) => handleChange(record.key, 'min', Number(val))}
+          style={{ width: '100%' }}
+        />
+      )
+    },
+    {
+      title: 'Đến (Max Value)',
+      dataIndex: 'max',
+      key: 'max',
+      render: (text, record) => (
+        <InputNumber
+          placeholder='Max'
+          value={text}
+          onChange={(val) => handleChange(record.key, 'max', Number(val))}
+          style={{ width: '100%' }}
+        />
+      )
+    },
+
     {
       title: 'Xóa',
       key: 'action',
       width: 60,
       render: (_, record) => (
         <Button
-          type="text"
+          type='text'
           danger
           icon={<DeleteOutlined />}
           onClick={() => handleDelete(record.key)}
           disabled={data.length === 1}
         />
-      ),
-    },
+      )
+    }
   ]
 
   return (
@@ -194,60 +197,79 @@ const FormAddFee = () => {
         style={{ width: '100%' }}
       >
         <p className='font-bold mb-3'>Phương thức tính (Calculation Method)</p>
-        <div className="mb-3">
-          <SelectInput 
-          defaultValue={typeCalculationFee}
-          data={[
-            { label: "Bậc lúy tiến", value: 2 },
-            { label: "Cố định", value: 1},
-            { label: "Bậc thanh toàn phần", value:3 },
-          ]} handleChange={(value) => setTypealculationFee(value)} />
+        <div className='mb-3'>
+          <SelectInput
+            defaultValue={typeCalculationFee}
+            data={[
+              { label: 'Bậc lúy tiến', value: 2 },
+              { label: 'Cố định', value: 1 },
+              { label: 'Bậc thanh toàn phần', value: 3 }
+            ]}
+            handleChange={(value) => setTypealculationFee(value)}
+          />
         </div>
 
-        {(typeCalculationFee == 2 || typeCalculationFee == 3) ? (
+        {typeCalculationFee == 2 || typeCalculationFee == 3 ? (
           <>
             <Table
               columns={columns}
               dataSource={data}
               pagination={false}
               bordered
-              size="small"
+              size='small'
             />
             <Button
-              type="dashed"
+              type='dashed'
               onClick={handleAdd}
               style={{ width: '100%', marginTop: 16 }}
               icon={<PlusOutlined />}
             >
               Thêm khoảng phí (Add Tier)
             </Button>
-          </>):
-          (
-            <Card>
-              <div className="grid grid-cols-12 gap-3">
-                <div className="col-span-3 flex flex-col gap-2">
-                  <label className='font-medium' htmlFor="">Phí cố định (Fixed)</label>
-                  <InputNumber defaultValue={0}/>
-                </div>
-                <div className="col-span-3 flex flex-col gap-2">
-                  <label className='font-medium' htmlFor="">Phí phần trăm (%)</label>
-                  <InputNumber defaultValue={0}/>
-                </div>
-                <div className="col-span-3 flex flex-col gap-2">
-                  <label className='font-medium' htmlFor="">Tối thiểu (Min)</label>
-                  <InputNumber defaultValue={0}/>
-                </div>
-                <div className="col-span-3 flex flex-col gap-2">
-                  <label className='font-medium' htmlFor="">Tối đa (Max)</label>
-                  <InputNumber defaultValue={0}/>
-                </div>
+          </>
+        ) : (
+          <Card>
+            <div className='grid grid-cols-12 gap-3'>
+              <div className='col-span-3 flex flex-col gap-2'>
+                <label
+                  className='font-medium'
+                  htmlFor=''
+                >
+                  Phí cố định (Fixed)
+                </label>
+                <InputNumber defaultValue={0} />
               </div>
-            </Card>
-          )
-          }
-    
+              <div className='col-span-3 flex flex-col gap-2'>
+                <label
+                  className='font-medium'
+                  htmlFor=''
+                >
+                  Phí phần trăm (%)
+                </label>
+                <InputNumber defaultValue={0} />
+              </div>
+              <div className='col-span-3 flex flex-col gap-2'>
+                <label
+                  className='font-medium'
+                  htmlFor=''
+                >
+                  Tối thiểu (Min)
+                </label>
+                <InputNumber defaultValue={0} />
+              </div>
+              <div className='col-span-3 flex flex-col gap-2'>
+                <label
+                  className='font-medium'
+                  htmlFor=''
+                >
+                  Tối đa (Max)
+                </label>
+                <InputNumber defaultValue={0} />
+              </div>
+            </div>
+          </Card>
+        )}
       </Card>
-
     </div>
   )
 }
