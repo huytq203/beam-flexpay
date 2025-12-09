@@ -1,5 +1,5 @@
 export interface feePolicies {
-    id?: number,
+    id?: string,
     name: string,
     serviceType: string,
     description: string
@@ -21,3 +21,4 @@ export interface FeePoliciesResponse {
   size: number;
   number: number;
 }
+

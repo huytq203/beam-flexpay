@@ -3,15 +3,15 @@ import type { DatePickerProps } from "antd";
 import { DatePicker, Space } from "antd";
 import './style.scss'
 
-interface DateInputProps {
-  onChange: DatePickerProps["onChange"];
-  picker: "date" | "week" | "month" | "quarter" | "year";
+interface DateInputProps extends DatePickerProps {
+  onChange?: DatePickerProps["onChange"];
+  picker?: "date" | "week" | "month" | "quarter" | "year";
 }
 
-const DateInput: React.FC<DateInputProps> = ({ picker, onChange }) => {
+const DateInput: React.FC<DateInputProps> = ({ picker, onChange,...rest }) => {
   return (
     <Space direction="vertical">
-      <DatePicker onChange={onChange} picker={picker} />
+      <DatePicker onChange={onChange} picker={picker} {...rest} />
     </Space>
   );
 };

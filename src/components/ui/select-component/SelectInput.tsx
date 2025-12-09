@@ -7,14 +7,17 @@ interface OptionItem {
     value: string | number;
 
 }
-interface SelectProps {
+interface SelectProps extends AntdSelectProps {
     handleChange?: AntdSelectProps['onChange']
     data?: OptionItem[]
     defaultValue?: string | number
+    value?: string | number
 }
-const SelectInput: React.FC<SelectProps> = ({ handleChange, data, defaultValue }) => (
+const SelectInput: React.FC<SelectProps> = ({ handleChange, data, defaultValue, value, ...props }) => (
     <Select
+        {...props}
         defaultValue={defaultValue}
+        value={value}
         allowClear
         onChange={handleChange}
         options={data}

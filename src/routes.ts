@@ -449,6 +449,10 @@ const testDemo = {
     {
       path: TEST + '/create',
       element: createElement(TestDemo)
+    },
+    {
+      path: TEST + '/edit/:id',
+      element: createElement(TestDemo)
     }
   ]
 }
