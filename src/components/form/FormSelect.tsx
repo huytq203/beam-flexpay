@@ -4,7 +4,7 @@ import { SelectInput } from "../ui/select-component"; // Import từ UI componen
 
 interface SelectOption {
   label: string;
-  value: string | number;
+  value: string | number|undefined;
 }
 
 interface FormSelectProps<T extends FieldValues> {

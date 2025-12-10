@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { TEST } from '@constants/routersConstant'
+import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
 import { DeleteOutlined, EditOutlined, LockOutlined, UnlockOutlined } from '@ant-design/icons'
 import { Input, SelectInput, ButtonComponent, Table } from '@components/common'
 import { Card, message } from 'antd'
@@ -122,7 +122,7 @@ const FeeManagement = () => {
                     <ButtonComponent
                         type='default'
                         icon={<EditOutlined />}
-                        onClick={() => navigate(`${TEST}/edit/${record.key}`)}
+                        onClick={() => navigate(`${FEEMANAGEMENR_V3}/edit/${record.key}`)}
                     />
                     <ButtonComponent
                         type='default'
@@ -261,7 +261,7 @@ const FeeManagement = () => {
                                 <ButtonComponent
                                     htmlType='button'
                                     content='Thêm chính sách mới'
-                                    onClick={() => navigate(TEST + '/create')}
+                                    onClick={() => navigate(FEEMANAGEMENR_V3 + '/create')}
                                     type='primary'
                                     icon={
                                         <svg

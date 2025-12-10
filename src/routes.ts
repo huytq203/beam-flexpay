@@ -18,7 +18,7 @@ import {
   REPORTS,
   ROLEMANAGEMENT,
   STATE_BANK,
-  TEST
+  FEEMANAGEMENR_V3,
 } from '@constants/routersConstant'
 
 import ForgotPassword from '@pages/auth/forgot-password/ForgotPassword'
@@ -77,6 +77,7 @@ import { InboundFeeManagement, InboundFeeCreate, InboundFeeUpdate } from '@pages
 import { VatFeeCreate, VatFeeUpdate, VatFeeManagement } from '@pages/vat-fee-management'
 import TestDemo from '@pages/test/TestDemo'
 import FeeManagement from '@pages/test/FeeManagement'
+import FeeAssignmentManagement from '@pages/test/FeeAssignmentManagement'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -436,24 +437,51 @@ const internalWallet = {
 }
 
 
+// const bankAndConnect = {
+//   path: BANKANDCONNECT,
+//   element: createElement(AppLayout),
+//   errorElement: createElement(NotFound),
+//   children: [
+//     {
+//       path: BANKANDCONNECT + '/banks',
+//       element: createElement(BankManagement)
+//     },
+//     {
+//       path: BANKANDCONNECT + '/notification-management',
+//       element: createElement(NotificationManagement)
+//     }
+//   ]
+// }
 
 const testDemo = {
-  path: TEST,
+  path: FEEMANAGEMENR_V3,
   element: createElement(AppLayout),
   errorElement: createElement(NotFound),
   children: [
     {
-      path: TEST,
-      element: createElement(FeeManagement)
+      path: FEEMANAGEMENR_V3 ,
+      children: [
+        {
+          path: FEEMANAGEMENR_V3 + "/fee-management",
+          element: createElement(FeeManagement)
+        },
+        {
+          path: FEEMANAGEMENR_V3 + '/create',
+          element: createElement(TestDemo)
+        },
+
+        {
+          path: FEEMANAGEMENR_V3 + '/edit/:id',
+          element: createElement(TestDemo)
+        }
+      ]
     },
     {
-      path: TEST + '/create',
-      element: createElement(TestDemo)
+      path: FEEMANAGEMENR_V3 + '/fee-assignment',
+      element: createElement(FeeAssignmentManagement)
     },
-    {
-      path: TEST + '/edit/:id',
-      element: createElement(TestDemo)
-    }
+
+
   ]
 }
 

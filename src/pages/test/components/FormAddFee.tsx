@@ -1,277 +1,336 @@
-import React, { useState } from 'react'
+import React, { useState, useImperativeHandle, forwardRef, useEffect } from 'react'
 import { Card, Table, Button } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { SelectInput, InputNumber } from '@components/common'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
+import { useForm, useFieldArray, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { FeeComponentSchema, FeeComponentType } from '../FeeManagement.schema'
+import { FormInputNumber, FormSelect } from '@components/form'
 
-interface FeeTier {
-  key: React.Key
-  min: number | null
-  max: number | null
-  fixedFee: number | null
-  percentFee: number | null
+interface FormAddFeeProps {
+  onSubmit?: (data: FeeComponentType) => void
 }
 
-const FormAddFee = () => {
-  const [data, setData] = useState<FeeTier[]>([
-    {
-      key: '1',
-      min: null,
-      max: null,
-      fixedFee: null,
-      percentFee: null
-    }
-  ])
-  const [typeCalculationFee, setTypealculationFee] = useState<number>(1)
-  const handleAdd = () => {
-    const newData: FeeTier = {
-      key: Date.now().toString(), // Simple key generation
-      min: null,
-      max: null,
-      fixedFee: null,
-      percentFee: null
-    }
-    setData([...data, newData])
-  }
-
-  const handleDelete = (key: React.Key) => {
-    if (data.length > 1) {
-      setData(data.filter((item) => item.key !== key))
-    }
-  }
-
-  const handleChange = (
-    key: React.Key,
-    field: keyof FeeTier,
-    value: number | null
-  ) => {
-    const newData = data.map((item) => {
-      if (item.key === key) {
-        return { ...item, [field]: value }
+const FormAddFee = forwardRef<{ submit: () => void; reset: () => void }, FormAddFeeProps>(
+  ({ onSubmit }, ref) => {
+    const {
+      control,
+      handleSubmit,
+      watch,
+      setValue,
+      reset,
+      formState: { errors }
+    } = useForm<FeeComponentType>({
+      resolver: zodResolver(FeeComponentSchema),
+      defaultValues: {
+        componentType: '',
+        calculationModel: '',
+        payerType: '',
+        beneficiaryType: '',
+        roundType: '',
+        calculationMethod: 1,
+        tiers: [{ minFee: undefined, maxFee: undefined, fixedAmount: undefined, percentage: undefined }],
+        fixedAmount: undefined,
+        percentage: undefined,
+        minFee: undefined,
+        maxFee: undefined
       }
-      return item
     })
-    setData(newData)
-  }
 
-  const columns: ColumnsType<FeeTier> = [
-    {
-      title: 'Phí Cố định',
-      dataIndex: 'fixedFee',
-      key: 'fixedFee',
-      render: (text, record) => (
-        <InputNumber
-          placeholder='0'
-          value={text}
-          onChange={(val) => handleChange(record.key, 'fixedFee', Number(val))}
-          style={{ width: '100%' }}
-        />
-      )
-    },
-    {
-      title: 'Phí %',
-      dataIndex: 'percentFee',
-      key: 'percentFee',
-      render: (text, record) => (
-        <InputNumber
-          placeholder='0'
-          value={text}
-          onChange={(val) =>
-            handleChange(record.key, 'percentFee', Number(val))
+    const { fields, append, remove } = useFieldArray({
+      control,
+      name: 'tiers'
+    })
+
+    const calculationMethod = watch('calculationMethod')
+
+    useImperativeHandle(ref, () => ({
+      submit: () => {
+        handleSubmit((data) => {
+          if (onSubmit) {
+            onSubmit(data)
           }
-          style={{ width: '100%' }}
-        />
-      )
-    },
-    {
-      title: 'Từ (Min Value)',
-      dataIndex: 'min',
-      key: 'min',
-      render: (text, record) => (
-        <InputNumber
-          placeholder='Min'
-          value={text}
-          onChange={(val) => handleChange(record.key, 'min', Number(val))}
-          style={{ width: '100%' }}
-        />
-      )
-    },
-    {
-      title: 'Đến (Max Value)',
-      dataIndex: 'max',
-      key: 'max',
-      render: (text, record) => (
-        <InputNumber
-          placeholder='Max'
-          value={text}
-          onChange={(val) => handleChange(record.key, 'max', Number(val))}
-          style={{ width: '100%' }}
-        />
-      )
-    },
+        })()
+      },
+      reset: () => reset()
+    }))
 
-    {
-      title: 'Xóa',
-      key: 'action',
-      width: 60,
-      render: (_, record) => (
-        <Button
-          type='text'
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => handleDelete(record.key)}
-          disabled={data.length === 1}
-        />
-      )
-    }
-  ]
-
-  return (
-    <div className='overflow-auto'>
-      <Card
-        className='mb-3'
-        style={{ width: '100%' }}
-      >
-        <p className='font-bold mb-1'>Thông tin chung</p>
-        <div className='grid grid-cols-12 gap-3 px-2'>
-          <div className='col-span-4 flex flex-col'>
-            <label
-              className='font-normal mb-1'
-              htmlFor=''
-            >
-              Loại phí
-            </label>
-            <SelectInput />
-          </div>
-          <div className='col-span-4 flex flex-col'>
-            <label
-              className='font-normal mb-1'
-              htmlFor=''
-            >
-              Tính dựa trên
-            </label>
-            <SelectInput />
-          </div>
-          <div className='col-span-4 flex flex-col'>
-            <label
-              className='font-normal mb-1'
-              htmlFor=''
-            >
-              Người chịu
-            </label>
-            <SelectInput />
-          </div>
-          <div className='col-span-4 flex flex-col'>
-            <label
-              className='font-normal mb-1'
-              htmlFor=''
-            >
-              Người hưởng
-            </label>
-            <SelectInput />
-          </div>
-
-          <div className='col-span-4 flex flex-col'>
-            <label
-              className='font-normal mb-1'
-              htmlFor=''
-            >
-              Công thức làm tròn
-            </label>
-            <SelectInput />
-          </div>
-          <div className='col-span-4 flex flex-col'>
-            <label
-              className='font-normal mb-1'
-              htmlFor=''
-            >
-              Công thức tính phí
-            </label>
-            <SelectInput />
-          </div>
-        </div>
-      </Card>
-
-      <Card
-        className='mb-3'
-        style={{ width: '100%' }}
-      >
-        <p className='font-bold mb-3'>Phương thức tính (Calculation Method)</p>
-        <div className='mb-3'>
-          <SelectInput
-            defaultValue={typeCalculationFee}
-            data={[
-              { label: 'Bậc lúy tiến', value: 2 },
-              { label: 'Cố định', value: 1 },
-              { label: 'Bậc thanh toàn phần', value: 3 }
-            ]}
-            handleChange={(value) => setTypealculationFee(value)}
+    const columns: ColumnsType<any> = [
+      {
+        title: 'Phí Cố định',
+        dataIndex: 'fixedAmount ',
+        key: 'fixedAmount',
+        render: (text, record, index) => (
+          <Controller
+            control={control}
+            name={`tiers.${index}.fixedAmount`}
+            render={({ field }) => (
+              <InputNumber
+                {...field}
+                placeholder='0'
+                style={{ width: '100%' }}
+              />
+            )}
           />
-        </div>
+        )
+      },
+      {
+        title: 'Phí %',
+        dataIndex: 'percentFee',
+        key: 'percentage',
+        render: (text, record, index) => (
+          <Controller
+            control={control}
+            name={`tiers.${index}.percentage`}
+            render={({ field }) => (
+              <InputNumber
+                {...field}
+                placeholder='0'
+                style={{ width: '100%' }}
+              />
+            )}
+          />
+        )
+      },
+      {
+        title: 'Từ (Min Value)',
+        dataIndex: 'minFee',
+        key: 'minFee',
+        render: (text, record, index) => (
+          <Controller
+            control={control}
+            name={`tiers.${index}.minFee`}
+            render={({ field }) => (
+              <InputNumber
+                {...field}
+                placeholder='Min'
+                style={{ width: '100%' }}
+              />
+            )}
+          />
+        )
+      },
+      {
+        title: 'Đến (Max Value)',
+        dataIndex: 'maxFee',
+        key: 'maxFee',
+        render: (text, record, index) => (
+          <Controller
+            control={control}
+            name={`tiers.${index}.maxFee`}
+            render={({ field }) => (
+              <InputNumber
+                {...field}
+                placeholder='Max'
+                style={{ width: '100%' }}
+              />
+            )}
+          />
+        )
+      },
+      {
+        title: 'Xóa',
+        key: 'action',
+        width: 60,
+        render: (_, record, index) => (
+          <Button
+            type='text'
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => remove(index)}
+            disabled={fields.length === 1}
+          />
+        )
+      }
+    ]
 
-        {typeCalculationFee == 2 || typeCalculationFee == 3 ? (
-          <>
-            <Table
-              columns={columns}
-              dataSource={data}
-              pagination={false}
-              bordered
-              size='small'
+    return (
+      <div className='overflow-auto'>
+        <Card
+          className='mb-3'
+          style={{ width: '100%' }}
+        >
+          <p className='font-bold mb-1'>Thông tin chung</p>
+          <div className='grid grid-cols-12 gap-3 px-2'>
+            <FormSelect<FeeComponentType>
+              control={control}
+              name='componentType'
+              label='Loại phí'
+              className='col-span-4 flex flex-col'
+              defaultValue={''}
+              options={[
+                { label: 'Chọn', value: '' },
+                { label: 'Phí giao dịch', value: 'TRANSACTION_FEE' },
+                { label: 'Phí duy trì', value: 'MAINTENANCE_FEE' }
+              ]}
+              placeholder='Chọn loại phí'
             />
-            <Button
-              type='dashed'
-              onClick={handleAdd}
-              style={{ width: '100%', marginTop: 16 }}
-              icon={<PlusOutlined />}
-            >
-              Thêm khoảng phí (Add Tier)
-            </Button>
-          </>
-        ) : (
-          <Card>
-            <div className='grid grid-cols-12 gap-3'>
-              <div className='col-span-3 flex flex-col gap-2'>
-                <label
-                  className='font-medium'
-                  htmlFor=''
-                >
-                  Phí cố định (Fixed)
-                </label>
-                <InputNumber defaultValue={0} />
+            <FormSelect<FeeComponentType>
+              control={control}
+              name='calculationModel'
+              label='Tính dựa trên'
+              className='col-span-4 flex flex-col'
+              defaultValue={''}
+              options={[
+                { label: 'Chọn', value: '' },
+                { label: 'Giá trị giao dịch', value: 'TRANSACTION_AMOUNT' },
+                { label: 'Số lượng giao dịch', value: 'TRANSACTION_COUNT' }
+              ]}
+              placeholder='Chọn loại tính phí'
+            />
+            <FormSelect<FeeComponentType>
+              control={control}
+              name='payerType'
+              label='Người chịu'
+              className='col-span-4 flex flex-col'
+              defaultValue={''}
+              options={[
+                { label: 'Chọn', value: '' },
+                { label: 'Người gửi', value: 'SENDER' },
+                { label: 'Người nhận', value: 'RECEIVER' }
+              ]}
+              placeholder='Chọn người chịu phí'
+            />
+            <FormSelect<FeeComponentType>
+              control={control}
+              name='beneficiaryType'
+              label='Người hưởng'
+              className='col-span-4 flex flex-col'
+              defaultValue={''}
+              options={[
+                { label: 'Chọn', value: '' },
+                { label: 'Hệ thống', value: 'SYSTEM' },
+                { label: 'Đối tác', value: 'PARTNER' }
+              ]}
+              placeholder='Chọn người hưởng phí'
+            />
+
+            <FormSelect<FeeComponentType>
+              control={control}
+              name='roundType'
+              label='Công thức làm tròn'
+              className='col-span-4 flex flex-col'
+              defaultValue={''}
+              options={[
+                { label: 'Chọn', value: '' },
+                { label: 'Làm tròn lên', value: 'CEIL' },
+                { label: 'Làm tròn xuống', value: 'FLOOR' },
+                { label: 'Làm tròn gần nhất', value: 'ROUND' }
+              ]}
+              placeholder='Chọn công thức làm tròn'
+            />
+            {/* Field này chưa rõ là text hay select, để tạm FormSelect nếu có options hoặc FormInput nếu cần text */}
+            <FormSelect<FeeComponentType>
+              control={control}
+              name='feeExpression'
+              label='Công thức tính phí'
+              className='col-span-4 flex flex-col'
+              defaultValue={''}
+              options={[
+                { label: 'Chọn', value: '' },
+                { label: 'Mặc định', value: 'DEFAULT' },
+                { label: 'aa', value: 'DEFaaAULT' }
+              ]}
+              placeholder='Chọn công thức'
+            />
+          </div>
+        </Card>
+
+        <Card
+          className='mb-3'
+          style={{ width: '100%' }}
+        >
+          <p className='font-bold mb-3'>Phương thức tính (Calculation Method)</p>
+          <div className='mb-3'>
+            <FormSelect<FeeComponentType>
+              control={control}
+              name='calculationMethod'
+              className='w-full'
+              options={[
+                { label: 'Bậc lũy tiến', value: 2 },
+                { label: 'Cố định', value: 1 },
+                { label: 'Bậc thanh toàn phần', value: 3 }
+              ]}
+            />
+          </div>
+
+          {[2, 3].includes(Number(calculationMethod)) ? (
+            <>
+              <Table
+                columns={columns}
+                dataSource={fields}
+                pagination={false}
+                bordered
+                size='small'
+                rowKey='id'
+              />
+              <Button
+                type='dashed'
+                onClick={() =>
+                  append({
+                    minFee: undefined,
+                    maxFee: undefined,
+                    fixedAmount: undefined,
+                    percentage: undefined
+                  })
+                }
+                style={{ width: '100%', marginTop: 16 }}
+                icon={<PlusOutlined />}
+              >
+                Thêm khoảng phí (Add Tier)
+              </Button>
+            </>
+          ) : (
+            <Card>
+
+              <div className='grid grid-cols-12 gap-3'>
+                <FormInputNumber
+                control={control}
+                name="fixedAmount"
+                label='Phí cố định (Fixed)'
+                className='col-span-3 flex flex-col gap-2'
+                placeholder='0'
+                classNameLable='font-medium'
+                
+                />
+               
+
+                <FormInputNumber
+                control={control}
+                name="percentage"
+                label='Phí phần trăm (%)'
+                className='col-span-3 flex flex-col gap-2'
+               
+                placeholder='0'
+                classNameLable='font-medium'
+                />
+                <FormInputNumber
+                control={control}
+                name="minFee"
+                label='Tối thiểu (Min)'
+                className='col-span-3 flex flex-col gap-2'
+               
+                placeholder='0'
+                classNameLable='font-medium'
+                />
+              
+                <FormInputNumber
+                control={control}
+                name="maxFee"
+                label='Tối đa (Max)'
+                className='col-span-3 flex flex-col gap-2'
+               
+                placeholder='0'
+                classNameLable='font-medium'
+                />
               </div>
-              <div className='col-span-3 flex flex-col gap-2'>
-                <label
-                  className='font-medium'
-                  htmlFor=''
-                >
-                  Phí phần trăm (%)
-                </label>
-                <InputNumber defaultValue={0} />
-              </div>
-              <div className='col-span-3 flex flex-col gap-2'>
-                <label
-                  className='font-medium'
-                  htmlFor=''
-                >
-                  Tối thiểu (Min)
-                </label>
-                <InputNumber defaultValue={0} />
-              </div>
-              <div className='col-span-3 flex flex-col gap-2'>
-                <label
-                  className='font-medium'
-                  htmlFor=''
-                >
-                  Tối đa (Max)
-                </label>
-                <InputNumber defaultValue={0} />
-              </div>
-            </div>
-          </Card>
-        )}
-      </Card>
-    </div>
-  )
-}
+            </Card>
+          )}
+        </Card>
+      </div>
+    )
+  }
+)
 
 export default FormAddFee

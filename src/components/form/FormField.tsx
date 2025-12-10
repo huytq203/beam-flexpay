@@ -6,6 +6,7 @@ interface FormFieldProps<T extends FieldValues> {
   control: Control<T>;
   label?: string;
   className?: string;
+  classNameLable?:string;
   render: (field: any) => React.ReactNode;
 }
 
@@ -14,11 +15,12 @@ export function FormField<T extends FieldValues>({
   control,
   label,
   className = "col-span-6 flex flex-col",
+  classNameLable,
   render,
 }: FormFieldProps<T>) {
   return (
     <div className={className}>
-      {label && <label>{label}</label>}
+      {label && <label className={classNameLable}>{label}</label>}
       <Controller
         name={name}
         control={control}

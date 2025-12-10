@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import dayjs from 'dayjs'
 import { feePolicyComponent } from '@type/feePoliciesComponent'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { PolicySchema, PolicyType } from './components/ZodValidate'
+import { PolicySchema, PolicyType, FeeComponentType } from './FeeManagement.schema'
 import {
   FormInput,
   FormTextArea,
@@ -30,7 +30,7 @@ import {
   usePostFeeComponentPoliciesMutation
 } from '@services/apiFeeComponent'
 import { useNavigate } from 'react-router-dom'
-import { TEST } from '@constants/routersConstant'
+import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
 import {
   useGetFeePolicyByIdQuery,
   usePostNewPolicyMutation,
@@ -220,7 +220,20 @@ const TestDemo = () => {
     }
   ]
 
-  const handleSaveAddFee = () => {}
+  const formRef = useRef<{ submit: () => void; reset: () => void }>(null)
+  
+  const handleFormSubmit = (data: FeeComponentType) => {
+    // console.log('Submitted Data:', data)
+    // formRef.current?.reset();
+    // setOpen(false)
+    alert(123)
+  }
+
+  const handleSaveAddFee = () => {
+    if (formRef.current) {
+      formRef.current.submit()
+    }
+  }
 
   return (
     <div>
@@ -228,7 +241,7 @@ const TestDemo = () => {
         <ButtonComponent
           type='default'
           content='Quay lai'
-          onClick={() => navigate(`${TEST}`)}
+          onClick={() => navigate(`${FEEMANAGEMENR_V3}/fee-management`)}
           icon={
             <svg
               width={20}
@@ -408,7 +421,7 @@ const TestDemo = () => {
               onOk={handleSaveAddFee}
               onCancel={() => setOpen(false)}
               //   confirmLoading={confirmLoading}
-              modalText={<FormAddFee />}
+              modalText={<FormAddFee ref={formRef} onSubmit={handleFormSubmit} />}
             />
           </div>
         </div>

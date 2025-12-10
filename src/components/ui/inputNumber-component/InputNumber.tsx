@@ -9,17 +9,17 @@ interface Props extends InputNumberProps {
 const InputNumberComponent = ({
   defaultValue,
   placeholder,
-  disabled
+  disabled,
+  ...props
 }: Props) => {
   return (
-    <div>
       <InputNumber
         style={{ width: '100%' }}
         defaultValue={defaultValue}
         placeholder={placeholder}
         disabled={disabled}
+        {...props}
       />
-    </div>
   )
 }
 

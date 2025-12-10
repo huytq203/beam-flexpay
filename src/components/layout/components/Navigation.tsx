@@ -11,7 +11,7 @@ import {
   _REPORTS,
   _ROLEMANAGEMENT,
   _STATE_BANK,
-  _TEST
+  _FEEMANAGEMENR_V3
 
 } from '@constants/routersConstant'
 import i18n from '@languages/i18n'
@@ -795,7 +795,7 @@ const internal_wallet = {
 }
 
 const testDemo = {
-  key: _TEST,
+  key: _FEEMANAGEMENR_V3,
   icon: (
     <StampIcon
       size={size}
@@ -803,19 +803,31 @@ const testDemo = {
       color={COlOR}
     />
   ),
-  // children: [
-  //   {
-  //     key: 'test-demo',
-  //     icon: (
-  //       <StampIcon
-  //         size={size}
-  //         weight={weight}
-  //         color={COlOR}
-  //       />
-  //     ),
-  //     label: 'Test Demo',
-  //   }
-   label: 'Test Demo',
+  children: [
+    {
+      key: 'fee-management',
+      icon: (
+        <StampIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý chính sách phí',
+    },
+    {
+      key: 'fee-assignment',
+      icon: (
+        <StampIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý gán phí',
+    }
+  ],
+   label: 'Quản lý phí',
 }
 export const navigationItems: ItemTypeCustom[] = [
   roleManagement,
