@@ -13,33 +13,55 @@ export const feeComponentApi = apiService.injectEndpoints({
         method: 'GET',
         params: params
       }),
-      transformResponse: (res: ResponseType<FeeComponentResponse>) => res.data
+      transformResponse: (res: ResponseType<FeeComponentResponse>) => res.data,
+      providesTags: ['FeePolicyComponent']
     }),
     getFeeComponentPoliciesById: build.query({
       query: (id: string) => ({
         url: `${import.meta.env.VITE_FEE_API_URL}/fee/policy-components/by-policy/${id}`,
         method: 'GET',
       }),
-      transformResponse: (res: ResponseType<feePolicyComponent[]>) => res.data
+      transformResponse: (res: ResponseType<feePolicyComponent[]>) => res.data,
+      providesTags: ['FeePolicyComponent']
+    }),
+    getFeeComponentById: build.query({
+      query: (id: string) => ({
+        url: `${import.meta.env.VITE_FEE_API_URL}/fee/policy-components/${id}`,
+        method: 'GET',
+      }),
+      transformResponse: (res: ResponseType<feePolicyComponent>) => res.data,
+      providesTags: ['FeePolicyComponent']
     }),
     deleteFeeComponentPolicies: build.mutation({
       query: (id: string) => ({
         url: `${import.meta.env.VITE_FEE_API_URL}/fee/policy-components/${id}`,
         method: 'DELETE',
-      })
+      }),
+      invalidatesTags: ['FeePolicyComponent']
     }),
     postFeeComponentPolicies: build.mutation({
       query: (body) => ({
         url: `${import.meta.env.VITE_FEE_API_URL}/fee/policy-components`,
         method: 'POST',
-        body:body
-      })
+        body: body
+      }),
+      invalidatesTags: ['FeePolicyComponent']
+    }),
+     putFeeComponentPolicies: build.mutation({
+      query: ({id,body}) => ({
+        url: `${import.meta.env.VITE_FEE_API_URL}/fee/policy-components/${id}`,
+        method: 'PUT',
+        body: body
+      }),
+      invalidatesTags: ['FeePolicyComponent']
     }),
   })
 })
 export const {
   useGetFeeComponentPoliciesQuery,
   useGetFeeComponentPoliciesByIdQuery,
+  useGetFeeComponentByIdQuery,
   useDeleteFeeComponentPoliciesMutation,
-  usePostFeeComponentPoliciesMutation
+  usePostFeeComponentPoliciesMutation,
+  usePutFeeComponentPoliciesMutation
 } = feeComponentApi

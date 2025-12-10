@@ -3,7 +3,11 @@ import dayjs from 'dayjs'
 import { feePolicyComponent } from '@type/feePoliciesComponent'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { PolicySchema, PolicyType, FeeComponentType } from './FeeManagement.schema'
+import {
+  PolicySchema,
+  PolicyType,
+  FeeComponentType
+} from './FeeManagement.schema'
 import {
   FormInput,
   FormTextArea,
@@ -21,13 +25,15 @@ import {
   Table,
   DialogModal
 } from '@components/common'
-import FormAddFee from '@pages/test/components/FormAddFee'
+import FormAddFeeComponent from '@pages/test/components/FormAddFeeComponent'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import {
   useDeleteFeeComponentPoliciesMutation,
+  useGetFeeComponentByIdQuery,
   useGetFeeComponentPoliciesByIdQuery,
   useGetFeeComponentPoliciesQuery,
-  usePostFeeComponentPoliciesMutation
+  usePostFeeComponentPoliciesMutation,
+  usePutFeeComponentPoliciesMutation
 } from '@services/apiFeeComponent'
 import { useNavigate } from 'react-router-dom'
 import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
@@ -38,6 +44,8 @@ import {
 } from '@services/apiFeePoliciesServices'
 import { message } from 'antd'
 import { useParams } from 'react-router-dom'
+import FormAddPolicy from './components/FormAddPolicy'
+import { useGetFeeComponentTierQuery } from '@services/apiFeeComponentTier'
 
 const TestDemo = () => {
   // Mock API trigger cho CustomSelect
@@ -49,10 +57,53 @@ const TestDemo = () => {
 
   const [pageSize, setPageSize] = useState(10)
 
-  const [selectedRow, setSelectedRow] = useState<any>(null)
+  const [mode, setMode] = useState<'ADD' | 'UPDATE'>('ADD')
 
-  const [deleteFeeComponent, { isLoading, isSuccess, isError, error }] =
-    useDeleteFeeComponentPoliciesMutation()
+  const [selectedRow, setSelectedRow] = useState<any>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [updateComponentId, setUpdateComponentId] = useState<string | null>(
+    null
+  )
+  const { data: feeComponent } = useGetFeeComponentByIdQuery(selectedRow?.id, {
+    skip: !selectedRow?.id
+  })
+  const { data: feeComponentTierData } = useGetFeeComponentTierQuery(
+    selectedRow?.id,
+    {
+      skip:
+        !selectedRow?.id ||
+        (selectedRow?.calculationMethod !== 'PROGRESSIVE_TIER' &&
+          selectedRow?.calculationMethod !== 'FLAT_TIER')
+    }
+  )
+  console.log('feeComponentTierData', feeComponentTierData)
+
+  const combinedInitialData = React.useMemo(() => {
+    if (!feeComponent) return null
+    if (feeComponentTierData && feeComponentTierData.length > 0) {
+      console.log('Mapping tiers from data', feeComponentTierData)
+      const tiers = feeComponentTierData.map((item: any) => ({
+        id: item.id,
+        minValue: item.minValue,
+        maxValue: item.maxValue,
+        roundMode: item.roundMode,
+        minFee: item.minFee,
+        maxFee: item.maxFee,
+        fixedAmount: item.fixedAmount,
+        percentage: item.percentage
+      }))
+      return { ...feeComponent, tiers }
+    }
+    return feeComponent
+  }, [feeComponent, feeComponentTierData])
+  const [
+    putFeeComponentPolicies,
+    { isLoading: putFeeComponentPoliciesLoading }
+  ] = usePutFeeComponentPoliciesMutation()
+  const [
+    deleteFeeComponent,
+    { isLoading: deleteFeeComponentLoading, isSuccess, isError, error }
+  ] = useDeleteFeeComponentPoliciesMutation()
 
   const { id } = useParams()
 
@@ -70,8 +121,9 @@ const TestDemo = () => {
 
   const [putFeePolicies, { isLoading: putFeePoliciesLoading }] =
     usePutFeePolicyMutation()
-  const [postFeeComponent] = usePostFeeComponentPoliciesMutation()
-  const { data: feeData, refetch } = useGetFeeComponentPoliciesQuery(
+  const [postFeeComponent, { isLoading: loadPostComponent }] =
+    usePostFeeComponentPoliciesMutation()
+  const { data: feeData } = useGetFeeComponentPoliciesQuery(
     {
       page,
       size: pageSize,
@@ -119,7 +171,6 @@ const TestDemo = () => {
     try {
       const res = await postNewPolicy(data).unwrap()
       message.success('add thành công')
-      reset()
     } catch (error: any) {
       message.error(error?.data?.message)
     }
@@ -128,7 +179,38 @@ const TestDemo = () => {
   const convertToISO = (dateString: string) => {
     return new Date(dateString.replace(' ', 'T')).toISOString()
   }
-
+  const handleUpdateFeeComponent = async (data: FeeComponentType) => {
+    try {
+      const payload = {
+        componentType: data.componentType,
+        baseOn: data.baseOn,
+        baseComponentType: null,
+        calculationMethod: data.calculationMethod,
+        fixedAmount: data.fixedAmount ?? 0,
+        percentage: data.percentage ?? 0,
+        roundMode: data.roundMode,
+        minFee: data.minFee ?? 0,
+        maxFee: data.maxFee ?? 0,
+        payerType: data.payerType,
+        payerObjectType: null,
+        payerObjectId: null,
+        beneficiaryType: data.beneficiaryType,
+        beneficiaryObjectType: null,
+        beneficiaryObjectId: null
+      }
+      await putFeeComponentPolicies({
+        id: updateComponentId,
+        body: payload
+      }).unwrap()
+      message.success('Cập nhật thành phần phí thành công')
+      setOpen(false)
+      formRef.current?.reset()
+      setSelectedRow(null)
+      setUpdateComponentId(null)
+    } catch (error: any) {
+      message.error(error?.data?.message)
+    }
+  }
   const handleUpdate = async (data: PolicyType) => {
     try {
       const payload = {
@@ -138,13 +220,13 @@ const TestDemo = () => {
       }
       await putFeePolicies({ id: id, body: payload })
       message.success('update thành công')
-    } catch (error) {}
+    } catch (error) { }
   }
 
-  const handleDelete = async (record: any) => {
+  const handleDelete = async (id: any) => {
     try {
-      await deleteFeeComponent(record.id).unwrap()
-      await refetch()
+      if (selectedRow?.id === id) setSelectedRow(null)
+      await deleteFeeComponent(id).unwrap()
       setOpenDialog(false)
       message.success('Xoá thành công!')
     } catch (error) {
@@ -204,14 +286,18 @@ const TestDemo = () => {
           <ButtonComponent
             type='text'
             icon={<EditOutlined />}
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              setSelectedRow(record)
+              setOpen(true)
+              setUpdateComponentId(record.id)
+            }}
           />
           <ButtonComponent
             type='text'
             danger
             icon={<DeleteOutlined />}
             onClick={() => {
-              setSelectedRow(record)
+              setDeletingId(record.id)
               setOpenDialog(true)
             }}
           />
@@ -221,12 +307,36 @@ const TestDemo = () => {
   ]
 
   const formRef = useRef<{ submit: () => void; reset: () => void }>(null)
-  
-  const handleFormSubmit = (data: FeeComponentType) => {
-    // console.log('Submitted Data:', data)
-    // formRef.current?.reset();
-    // setOpen(false)
-    alert(123)
+
+  const handleFormSubmit = async (data: FeeComponentType) => {
+    try {
+      const payload = {
+        feePolicyId: id,
+        componentType: data.componentType,
+        baseOn: data.baseOn,
+        baseComponentType: null,
+        calculationMethod: data.calculationMethod,
+        fixedAmount: data.fixedAmount ?? 0,
+        percentage: data.percentage ?? 0,
+        roundMode: data.roundMode,
+        minFee: data.minFee ?? 0,
+        maxFee: data.maxFee ?? 0,
+        // minValue: data.minValue ?? 0,
+        // maxValue: data.maxValue ?? 0,
+        payerType: data.payerType,
+        payerObjectType: null,
+        payerObjectId: null,
+        beneficiaryType: data.beneficiaryType,
+        beneficiaryObjectType: null,
+        beneficiaryObjectId: null
+      }
+      await postFeeComponent(payload).unwrap()
+      message.success('Thêm thành phần phí thành công')
+      setOpen(false)
+      formRef.current?.reset()
+    } catch (error: any) {
+      message.error(error?.data?.message)
+    }
   }
 
   const handleSaveAddFee = () => {
@@ -274,108 +384,13 @@ const TestDemo = () => {
               </div>
             </div>
             <div className='content'>
-              <form
-                id='policyForm'
-                onSubmit={handleSubmit(id ? handleUpdate : onSubmit)}
-              >
-                <div className='grid grid-cols-12 gap-2'>
-                  <FormInput
-                    name='name'
-                    control={control}
-                    label='Tên chính sách phí'
-                    placeholder='Nhập tên chính sách...'
-                  />
-                  <FormSelect
-                    name='priority'
-                    control={control}
-                    label='Mức độ ưu tiên'
-                    defaultValue={0}
-                    options={[
-                      { label: 'Cao', value: 0 },
-                      { label: 'Trung bình', value: 1 },
-                      { label: 'Thấp', value: 2 }
-                    ]}
-                  />
-
-                  <FormDatePicker
-                    name='validFrom'
-                    control={control}
-                    label='Hiệu lực từ'
-                  />
-                  <FormDatePicker
-                    name='validTo'
-                    control={control}
-                    label='Hiệu lực đến'
-                  />
-
-                  <FormSelect
-                    name='status'
-                    control={control}
-                    label='Trạng thái hoạt động'
-                    defaultValue=''
-                    options={[
-                      { label: 'Chọn', value: '' },
-                      { label: 'INIT', value: 'INIT' },
-                      { label: 'ACTIVE', value: 'ACTIVE' },
-                      { label: 'INACTIVE', value: 'INACTIVE' },
-                      { label: 'LOCKED', value: 'LOCKED' }
-                    ]}
-                  />
-
-                  <FormSelect
-                    name='serviceType'
-                    control={control}
-                    label='Loại dịch vụ'
-                    defaultValue=''
-                    options={[
-                      { label: 'Chọn tất cả', value: '' },
-                      {
-                        label: 'EWALLET_WITHDRAWAL',
-                        value: 'EWALLET_WITHDRAWAL'
-                      },
-                      {
-                        label: 'EWALLET_TRANSFER_INTERNAL',
-                        value: 'EWALLET_TRANSFER_INTERNAL'
-                      },
-                      {
-                        label: 'EWALLET_TRANSFER_EXTERNAL',
-                        value: 'EWALLET_TRANSFER_EXTERNAL'
-                      },
-                      { label: 'EWALLET_CASHBACK', value: 'EWALLET_CASHBACK' },
-                      {
-                        label: 'MERCHANT_VA_BILL_COLLECTION',
-                        value: 'MERCHANT_VA_BILL_COLLECTION'
-                      }
-                    ]}
-                  />
-                  <FormInput
-                    name='currency'
-                    control={control}
-                    label='Đơn vị thanh toán'
-                    placeholder='Nhập đơn vị thanh toán...'
-                  />
-
-                  <FormSelect
-                    name='feeDomain'
-                    control={control}
-                    label='Phí miền'
-                    defaultValue=''
-                    options={[
-                      { label: 'Chọn tất cả', value: '' },
-                      { label: 'BANK', value: 'BANK' },
-                      { label: 'EWALLET', value: 'EWALLET' },
-                      { label: 'MERCHANT', value: 'MERCHANT' }
-                    ]}
-                  />
-
-                  <FormTextArea
-                    name='description'
-                    control={control}
-                    label='Mô tả'
-                    placeholder='Nhập mô tả chính sách...'
-                  />
-                </div>
-              </form>
+              <FormAddPolicy
+                control={control}
+                handleSubmit={handleSubmit}
+                id={id}
+                handleUpdate={handleUpdate}
+                onSubmit={onSubmit}
+              />
             </div>
           </div>
         </div>
@@ -387,7 +402,12 @@ const TestDemo = () => {
             <ButtonComponent
               htmlType='button'
               content='Thêm thành phần phí'
-              onClick={() => setOpen(true)}
+              onClick={() => {
+                setSelectedRow(null)
+                setUpdateComponentId(null)
+                formRef.current?.reset()
+                setOpen(true)
+              }}
               type='primary'
               icon={
                 <svg
@@ -417,20 +437,31 @@ const TestDemo = () => {
               }}
             />
             <ModalComponent
+              title='Thêm thành phần phí'
               open={open}
               onOk={handleSaveAddFee}
               onCancel={() => setOpen(false)}
-              //   confirmLoading={confirmLoading}
-              modalText={<FormAddFee ref={formRef} onSubmit={handleFormSubmit} />}
+              confirmLoading={
+                loadPostComponent || putFeeComponentPoliciesLoading
+              }
+              modalText={
+                <FormAddFeeComponent
+                  ref={formRef}
+                  onSubmit={
+                    selectedRow ? handleUpdateFeeComponent : handleFormSubmit
+                  }
+                  initialData={combinedInitialData}
+                />
+              }
             />
           </div>
         </div>
       </div>
       <DialogModal
         open={openDialog}
-        onOk={() => handleDelete(selectedRow)}
+        onOk={() => handleDelete(deletingId)}
         onCancel={() => setOpenDialog(false)}
-        confirmLoading={isLoading}
+        confirmLoading={deleteFeeComponentLoading}
         content='Bạn có xác nhận xóa ?'
       />
     </div>

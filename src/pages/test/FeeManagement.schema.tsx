@@ -27,15 +27,16 @@ export const FeeTierSchema = z.object({
   maxFee: z.number().nullable().optional(),
   fixedAmount: z.number().nullable().optional(),
   percentage: z.number().nullable().optional(),
+  maxValue: z.number().nullable().optional(),
+  minValue: z.number().nullable().optional(),
 });
 
 export const FeeComponentSchema = z.object({
   componentType: z.string().min(1, "Chọn loại phí"),
-  calculationModel: z.string().min(1, "Chọn tính dựa trên"),
   baseOn: z.string().min(1, "Chọn tính dựa trên"),
   payerType: z.string().min(1, "Chọn người chịu phí"),
   beneficiaryType: z.string().min(1, "Chọn người hưởng phí"),
-  roundType: z.string().min(1, "Chọn công thức làm tròn"),
+  roundMode: z.string().min(1, "Chọn công thức làm tròn"),
   feeExpression: z.string().optional(),
   calculationMethod: z.number().or(z.string()), // Select might return string
   tiers: z.array(FeeTierSchema).optional(),
@@ -43,6 +44,15 @@ export const FeeComponentSchema = z.object({
   percentage: z.number().optional(),
   minFee: z.number().optional(),
   maxFee: z.number().optional(),
-});
+  maxValue: z.number().nullable().optional(),
+  minValue: z.number().nullable().optional(),
+
+}).refine(
+  (data) => data.payerType !== data.beneficiaryType,
+  {
+    message: "Người chịu phí và người hưởng phí không được trùng nhau",
+    path: ["beneficiaryType"], // Show error on beneficiaryType field
+  }
+);
 
 export type FeeComponentType = z.infer<typeof FeeComponentSchema>;

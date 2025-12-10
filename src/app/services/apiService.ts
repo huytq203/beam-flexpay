@@ -13,6 +13,9 @@ export const apiService = createApi({
     'internal-wallet-account',
     'accounting',
     'accounting-requests',
+    'FeePolicy',
+    'FeePolicyComponent',
+    'feeComponentTier',
   ],
   endpoints: () => ({}),
   refetchOnMountOrArgChange: true
