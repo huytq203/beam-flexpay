@@ -23,6 +23,7 @@ export function FormSelect<T extends FieldValues>({
   label,
   options,
   defaultValue,
+   classNameLable="font-medium",
   className = "col-span-6 flex flex-col",
   ...rest
 }: FormSelectProps<T>) {
@@ -31,6 +32,7 @@ export function FormSelect<T extends FieldValues>({
       name={name}
       control={control}
       label={label}
+      classNameLable={classNameLable}
       className={className}
       render={(field) => (
         <SelectInput

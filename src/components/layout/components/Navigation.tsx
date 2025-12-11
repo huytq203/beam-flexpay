@@ -794,10 +794,10 @@ const internal_wallet = {
   ]
 }
 
-const testDemo = {
+const feeManagementV3 = {
   key: _FEEMANAGEMENR_V3,
   icon: (
-    <StampIcon
+    <WalletIcon
       size={size}
       weight={weight}
       color={COlOR}
@@ -807,7 +807,7 @@ const testDemo = {
     {
       key: 'fee-management',
       icon: (
-        <StampIcon
+        <WalletIcon 
           size={size}
           weight={weight}
           color={COlOR}
@@ -818,7 +818,7 @@ const testDemo = {
     {
       key: 'fee-assignment',
       icon: (
-        <StampIcon
+        <WalletIcon 
           size={size}
           weight={weight}
           color={COlOR}
@@ -838,5 +838,5 @@ export const navigationItems: ItemTypeCustom[] = [
   repaymentAndDisburse,
   reports,
   internal_wallet,
-  testDemo
+  feeManagementV3
 ]

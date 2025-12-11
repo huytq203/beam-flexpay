@@ -1,14 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
 import {
-  DeleteOutlined,
-  EditOutlined,
-  LockOutlined,
-  UnlockOutlined
-} from '@ant-design/icons'
-import {
-  Input,
-  SelectInput,
   ButtonComponent,
   Table,
   ModalComponent
@@ -22,22 +14,20 @@ import {
   usePatchActivateFeeMutation,
   usePostNewPolicyMutation
 } from '@services/apiFeePoliciesServices'
-import { P } from '@antv/g2plot'
-import { Controller, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { FormInput, FormSelect } from '@components/form'
-import FormAddPolicy from '@pages/test/components/FormAddPolicy'
+import FormAddPolicy from '@pages/fee-managerment-v3/components/FormAddPolicy'
 import { PolicyType } from './FeeManagement.schema'
-import { set } from 'lodash'
+import { feeDomain, serviceType } from '@type/feePoliciesComponent'
+import { getPolicyColumns } from './FeeManagement.columns'
 
 const FeeManagement = () => {
   const [open, setOpen] = useState(false)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
-  const [patchDeactivateFee, { isLoading: deactiveLoading }] =
-    usePatchDeactivateFeeMutation()
-  const [patchActivateFee, { isLoading: ActiveLoading }] =
-    usePatchActivateFeeMutation()
-  const { data, isLoading } = useGetFeePoliciesQuery({
+  const [patchDeactivateFee] = usePatchDeactivateFeeMutation()
+  const [patchActivateFee] = usePatchActivateFeeMutation()
+  const { data } = useGetFeePoliciesQuery({
     page,
     size: pageSize,
     sortBy: 'createdAt',
@@ -49,6 +39,7 @@ const FeeManagement = () => {
   const [postNewPolicy, { isLoading: loadingNewPolicy }] = usePostNewPolicyMutation()
   const list = (searchData?.content ?? data?.content) || []
   const total = (searchData?.totalElements ?? data?.totalElements) || 0
+  
   const dataSource = list.map((item, index) => ({
     key: item.id,
     no: (page - 1) * pageSize + index + 1,
@@ -72,12 +63,10 @@ const FeeManagement = () => {
     sortDirection: 'DESC'
   })
 
-  const handleDeActiveFee = async (record: any) => {
+  const handleDeActiveFee = async (record: { key: string }) => {
     try {
       await patchDeactivateFee(record.key).unwrap()
       message.success('Cập nhật trạng thái thành công')
-
-      // Load lại dữ liệu
       searchFeePolicies(getSearchParams())
     } catch (error) {
       console.error(error)
@@ -85,120 +74,36 @@ const FeeManagement = () => {
     }
   }
 
-  const handleActiveFee = async (record: any) => {
+  const handleActiveFee = async (record: { key: string }) => {
     try {
       await patchActivateFee(record.key).unwrap()
       message.success('Cập nhật trạng thái thành công')
-
-      // Load lại dữ liệu
       searchFeePolicies(getSearchParams())
     } catch (error) {
       console.error(error)
       message.error('Cập nhật thất bại')
     }
   }
+
   const handleSaveAddFee = async (data: PolicyType) => {
     try {
-      const res = await postNewPolicy(data).unwrap()
-      message.success('add thành công')
+      await postNewPolicy(data).unwrap()
+      message.success('Add thành công')
       resetAdd()
       setOpen(false)
       searchFeePolicies(getSearchParams())
     } catch (error: any) {
-      message.error(error?.data?.message)
+      message.error(error?.data?.message || 'Có lỗi xảy ra')
     }
   }
 
-  const columns = [
-    {
-      title: 'STT',
-      dataIndex: 'no',
-      width: 60,
-      align: 'center' as const,
-      className: 'border'
-    },
-    {
-      title: 'Tên chính sách',
-      dataIndex: 'name',
-      className: 'border border-l-0'
-    },
-    {
-      title: 'Loại dịch vụ',
-      dataIndex: 'serviceType',
-      className: 'border border-l-0'
-    },
-    {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      className: 'border border-l-0',
-      align: 'center' as const,
-      render: (status: string) => (
-        <span
-          className={`px-2 py-1 rounded text-xs font-medium ${status === 'ACTIVE'
-            ? 'bg-green-100 text-green-800'
-            : 'bg-red-100 text-red-800'
-            }`}
-        >
-          {status}
-        </span>
-      )
-    },
-    {
-      title: 'Phí miền',
-      dataIndex: 'feeDomain',
-      className: 'border border-l-0 border-b-0'
-    },
-    {
-      title: 'Loại tiền',
-      dataIndex: 'currency',
-      className: 'border border-l-0 border-b-0'
-    },
-    {
-      title: 'Hiệu lực từ',
-      dataIndex: 'validFrom',
-      className: 'border border-l-0 border-b-0',
-      render: (date: string) =>
-        date ? new Date(date).toLocaleDateString('vi-VN') : ''
-    },
-    {
-      title: 'Hiệu lực đến',
-      dataIndex: 'validTo',
-      className: 'border border-l-0 border-b-0 ',
-      render: (date: string) =>
-        date ? new Date(date).toLocaleDateString('vi-VN') : ''
-    },
-    {
-      title: 'Thao tác',
-      key: 'action',
-      width: 100,
-      className: 'border border-l-0 border-b-0',
-      align: 'center' as const,
-      render: (record: any) => (
-        <div className='flex gap-2 justify-center'>
-          <ButtonComponent
-            type='default'
-            icon={<EditOutlined />}
-            onClick={() => navigate(`${FEEMANAGEMENR_V3}/edit/${record.key}`)}
-          />
-          <ButtonComponent
-            type='default'
-            icon={
-              record.status === 'ACTIVE' ? <UnlockOutlined /> : <LockOutlined />
-            }
-            onClick={() => {
-              if (record.status === 'ACTIVE') {
-                handleDeActiveFee(record)
-              } else {
-                handleActiveFee(record)
-              }
-            }}
-          />
-        </div>
-      )
-    }
-  ]
+  const columns = getPolicyColumns({
+    navigate,
+    handleDeActiveFee,
+    handleActiveFee
+  })
 
-  const { register, handleSubmit, setValue, reset, control } = useForm({
+  const { handleSubmit, reset, control } = useForm({
     defaultValues: {
       keyword: '',
       serviceType: '',
@@ -211,6 +116,7 @@ const FeeManagement = () => {
     handleSubmit: handleSubmitAdd,
     reset: resetAdd
   } = useForm<PolicyType>()
+
   const handleSearch = (formValues: object) => {
     searchFeePolicies({
       ...formValues,
@@ -220,6 +126,7 @@ const FeeManagement = () => {
       sortDirection: 'DESC'
     })
   }
+
   return (
     <>
       <Card>
@@ -232,6 +139,7 @@ const FeeManagement = () => {
             <FormInput
               name='keyword'
               control={control}
+              classNameLable="font-medium"
               label='Tên chính sách'
               placeholder='Nhập tên chính sách..'
             />
@@ -239,24 +147,15 @@ const FeeManagement = () => {
             <FormSelect
               name='serviceType'
               control={control}
+               classNameLable="font-medium"
               label='Loại dịch vụ'
               defaultValue=''
               options={[
                 { label: 'Chọn tất cả', value: '' },
-                { label: 'EWALLET_WITHDRAWAL', value: 'EWALLET_WITHDRAWAL' },
-                {
-                  label: 'EWALLET_TRANSFER_INTERNAL',
-                  value: 'EWALLET_TRANSFER_INTERNAL'
-                },
-                {
-                  label: 'EWALLET_TRANSFER_EXTERNAL',
-                  value: 'EWALLET_TRANSFER_EXTERNAL'
-                },
-                { label: 'EWALLET_CASHBACK', value: 'EWALLET_CASHBACK' },
-                {
-                  label: 'MERCHANT_VA_BILL_COLLECTION',
-                  value: 'MERCHANT_VA_BILL_COLLECTION'
-                }
+                ...Object.entries(serviceType).map(([key, value]) => ({
+                  label: value,
+                  value: key
+                }))
               ]}
             />
             <FormSelect
@@ -280,9 +179,10 @@ const FeeManagement = () => {
               defaultValue=''
               options={[
                 { label: 'Chọn tất cả', value: '' },
-                { label: 'BANK', value: 'BANK' },
-                { label: 'EWALLET', value: 'EWALLET' },
-                { label: 'MERCHANT', value: 'MERCHANT' }
+                ...Object.entries(feeDomain).map(([key, value]) => ({
+                  label: value,
+                  value: key
+                }))
               ]}
             />
 
@@ -303,7 +203,7 @@ const FeeManagement = () => {
                 />
                 <ButtonComponent
                   htmlType='button'
-                  content='Xoa bo loc'
+                  content='Xóa bộ lọc'
                   onClick={() => {
                     reset()
                     searchFeePolicies(getSearchParams())
@@ -361,7 +261,7 @@ const FeeManagement = () => {
         </div>
       </Card>
       <ModalComponent
-        title='Thêm thành phần phí'
+        title='Thêm chính sách mới'
         open={open}
         onOk={handleSubmitAdd(handleSaveAddFee)}
         onCancel={() => setOpen(false)}

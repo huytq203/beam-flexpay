@@ -6,7 +6,7 @@ import React, {
 } from 'react'
 import { Card, Table, Button, message } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { SelectInput, InputNumber, DialogModal } from '@components/common'
+import { SelectInput, InputNumber, DialogModal, Input } from '@components/common'
 import {
   CheckOutlined,
   DeleteOutlined,
@@ -22,13 +22,36 @@ import {
   usePostFeeComponentTierMutation,
   usePutFeeComponentTierMutation
 } from '@services/apiFeeComponentTier'
-import { useParams } from 'react-router-dom'
-import { usePutFeeComponentPoliciesMutation } from '@services/apiFeeComponent'
+import { baseOn, calculationMethodEnum, componentType, payerType, roundMode } from '@type/feePoliciesComponent'
 
 interface FormAddFeeProps {
   initialData?: FeeComponentType | null
   onSubmit?: (data: FeeComponentType) => void
 }
+
+const DEFAULT_TIER = {
+  minFee: undefined,
+  maxFee: undefined,
+  fixedAmount: undefined,
+  percentage: undefined,
+  maxValue: undefined,
+  minValue: undefined
+}
+
+const DEFAULT_VALUES: FeeComponentType = {
+  componentType: '',
+  baseOn: '',
+  payerType: '',
+  beneficiaryType: '',
+  roundMode: '',
+  calculationMethod: 'DIRECT',
+  tiers: [DEFAULT_TIER],
+  fixedAmount: undefined,
+  percentage: undefined,
+  minFee: undefined,
+  maxFee: undefined
+}
+
 const FormAddFeeComponent = forwardRef<
   { submit: () => void; reset: () => void },
   FormAddFeeProps
@@ -37,44 +60,19 @@ const FormAddFeeComponent = forwardRef<
     control,
     handleSubmit,
     watch,
-    setValue,
     getValues,
     reset,
     formState: { errors }
   } = useForm<FeeComponentType>({
     resolver: zodResolver(FeeComponentSchema),
-    defaultValues: {
-      componentType: '',
-      baseOn: '',
-      payerType: '',
-      beneficiaryType: '',
-      roundMode: '',
-      calculationMethod: 'DIRECT',
-      tiers: [
-        {
-          minFee: undefined,
-          maxFee: undefined,
-          fixedAmount: undefined,
-          percentage: undefined,
-          maxValue: undefined,
-          minValue: undefined
-        }
-      ],
-      fixedAmount: undefined,
-      percentage: undefined,
-      minFee: undefined,
-      maxFee: undefined
-    }
+    defaultValues: DEFAULT_VALUES
   })
+
   const [postFeeComponentTier] = usePostFeeComponentTierMutation()
-  const [putFeeComponentTier, { isLoading: isPutFeeComponentTierLoading }] =
-    usePutFeeComponentTierMutation()
-  const [
-    deleteFeeComponentTier,
-    { isLoading: isDeleteFeeComponentTierLoading }
-  ] = useDeleteFeeComponentTierMutation()
-  const [savedTierIds, setSavedTierIds] = useState<Set<string>>(new Set())
-  const isUpdateMode = !!(initialData as any)?.id
+  const [putFeeComponentTier] = usePutFeeComponentTierMutation()
+  const [deleteFeeComponentTier, { isLoading: isDeleteFeeComponentTierLoading }] = useDeleteFeeComponentTierMutation()
+
+  const isUpdateMode = !!(initialData as any)?.id // keeping type assertion for id check if not in schema
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -82,15 +80,16 @@ const FormAddFeeComponent = forwardRef<
   })
   const [openDialog, setOpenDialog] = useState(false)
   const [deleteComponentId, setDeleteComponentId] = useState<string>('')
+
   const handleDeleteTier = async (id?: string) => {
     try {
       if (id) {
         await deleteFeeComponentTier(id).unwrap()
       }
-      // remove(index)
       setOpenDialog(false)
+
       message.success('Xóa thành công')
-    } catch (error) {}
+    } catch (error) { }
   }
 
   const handleUpdateTier = async (tierData: any, id?: string) => {
@@ -106,37 +105,34 @@ const FormAddFeeComponent = forwardRef<
       }
       if (id) {
         await putFeeComponentTier({ id, body: payload }).unwrap()
+        message.success('Cập nhật thành công')
       }
-      message.success('Cập nhật thành công')
-    } catch (error) {}
+    } catch (error) { message.error('Cập nhật thất bại') }
   }
+
   const handleSubmitTier = async (index: number) => {
     try {
       const tierData = getValues(`tiers.${index}`)
       if (!tierData) return
 
-      const roundMode = getValues('roundMode')
+      const roundModeVal = getValues('roundMode')
       const feeComponentId = (initialData as any)?.id
 
-      const payload = {
+      const payload = [{
         feeComponentId,
         minValue: tierData.minValue ?? 0,
         maxValue: tierData.maxValue ?? 0,
-        roundMode: roundMode,
+        roundMode: roundModeVal,
         minFee: tierData.minFee ?? 0,
         maxFee: tierData.maxFee ?? 0,
         fixedAmount: tierData.fixedAmount ?? 0,
         percentage: tierData.percentage ?? 0
-      }
+      }]
 
       await postFeeComponentTier(payload).unwrap()
-
-      const fieldId = fields[index].id
-      setSavedTierIds((prev) => new Set(prev).add(fieldId))
-
-      // Update the button state logic here if needed, or rely on re-render
+      message.success("Thêm mới thành công")
     } catch (error) {
-      console.error('Failed to save tier:', error)
+       message.error('Thêm mới thất bại')
     }
   }
 
@@ -144,41 +140,11 @@ const FormAddFeeComponent = forwardRef<
     if (initialData) {
       const dataToReset = { ...initialData }
       if (!dataToReset.tiers || dataToReset.tiers.length === 0) {
-        dataToReset.tiers = [
-          {
-            minFee: undefined,
-            maxFee: undefined,
-            fixedAmount: undefined,
-            percentage: undefined,
-            maxValue: undefined,
-            minValue: undefined
-          }
-        ]
+        dataToReset.tiers = [DEFAULT_TIER]
       }
       reset(dataToReset)
     } else {
-      reset({
-        componentType: '',
-        baseOn: '',
-        payerType: '',
-        beneficiaryType: '',
-        roundMode: '',
-        calculationMethod: 'DIRECT',
-        tiers: [
-          {
-            minFee: undefined,
-            maxFee: undefined,
-            fixedAmount: undefined,
-            percentage: undefined,
-            maxValue: undefined,
-            minValue: undefined
-          }
-        ],
-        fixedAmount: undefined,
-        percentage: undefined,
-        minFee: undefined,
-        maxFee: undefined
-      })
+      reset(DEFAULT_VALUES)
     }
   }, [initialData, reset])
 
@@ -197,29 +163,7 @@ const FormAddFeeComponent = forwardRef<
         }
       )()
     },
-    reset: () =>
-      reset({
-        componentType: '',
-        baseOn: '',
-        payerType: '',
-        beneficiaryType: '',
-        roundMode: '',
-        calculationMethod: 'DIRECT',
-        tiers: [
-          {
-            minFee: undefined,
-            maxFee: undefined,
-            fixedAmount: undefined,
-            percentage: undefined,
-            maxValue: undefined,
-            minValue: undefined
-          }
-        ],
-        fixedAmount: undefined,
-        percentage: undefined,
-        minFee: undefined,
-        maxFee: undefined
-      })
+    reset: () => reset(DEFAULT_VALUES)
   }))
 
   const columns: ColumnsType<any> = [
@@ -344,18 +288,18 @@ const FormAddFeeComponent = forwardRef<
             icon={<DeleteOutlined />}
             onClick={() => {
               const currentTier = getValues(`tiers.${index}`)
-              if (currentTier) {
+              if (currentTier && (currentTier as any).id) {
                 setDeleteComponentId((currentTier as any).id)
                 setOpenDialog(true)
+              } else {
+                remove(index)
               }
             }}
-            // disabled={fields.length === 1}
           />
           <Button
             type='text'
             icon={<CheckOutlined style={{ color: 'green' }} />}
             onClick={() => handleSubmitTier(index)}
-            // disabled={savedTierIds.has(record.id) || isUpdateMode}
           />
           {isUpdateMode && (
             <Button
@@ -363,7 +307,6 @@ const FormAddFeeComponent = forwardRef<
               icon={<SaveOutlined style={{ color: '#08c' }} />}
               onClick={() => {
                 const tierData = getValues(`tiers.${index}`)
-                console.log('Tier Data Log:', tierData)
                 handleUpdateTier(tierData, (tierData as any).id)
               }}
             />
@@ -388,27 +331,10 @@ const FormAddFeeComponent = forwardRef<
             defaultValue={''}
             options={[
               { label: 'Chọn', value: '' },
-              { label: 'Phí giao dịch cơ bản', value: 'TRANSACTION_FEE' },
-              {
-                label: ' Phí hệ thống',
-                value: 'SYSTEM_FEE'
-              },
-              { label: ' Phí merchant', value: 'MERCHANT_FEE' },
-              { label: ' Phí ngân hàng ', value: 'BANK_FEE' },
-              {
-                label: ' Phí nền tảng',
-                value: 'PLATFORM_FEE'
-              },
-              { label: 'Thuế VAT', value: 'VAT' },
-              { label: ' Phí dịch vụ', value: 'SERVICE_FEE' },
-              {
-                label: 'Phí xử lý  ',
-                value: 'PROCESSING_FEE'
-              },
-              {
-                label: ' Phí hoàn tiền',
-                value: 'REFUND_FEE'
-              }
+              ...Object.entries(componentType).map(([key, value]) => ({
+                label: value,     // hoặc value
+                value: key
+              }))
             ]}
             placeholder='Chọn loại phí'
           />
@@ -420,15 +346,10 @@ const FormAddFeeComponent = forwardRef<
             defaultValue={''}
             options={[
               { label: 'Chọn', value: '' },
-              { label: 'Tính trên số tiền giao dịch ', value: 'AMOUNT' },
-              {
-                label: 'Tính trên kết quả của MERCHANT_FEE component  ',
-                value: 'MERCHANT_FEE'
-              },
-              {
-                label: 'Tính trên kết quả của USER_FEE component ',
-                value: 'USER_FEE'
-              }
+              ...Object.entries(baseOn).map(([key, value]) => ({
+                label: value,     // hoặc value
+                value: key
+              }))
             ]}
             placeholder='Chọn loại tính phí'
           />
@@ -440,12 +361,10 @@ const FormAddFeeComponent = forwardRef<
             defaultValue={''}
             options={[
               { label: 'Chọn', value: '' },
-              { label: 'Người dùng', value: 'USER' },
-              { label: 'Merchant', value: 'MERCHANT' },
-              { label: 'Hệ thống/platform', value: 'SYSTEM' },
-              { label: 'Ngân hàng', value: 'BANK' },
-              { label: 'Đối tác', value: 'PARTNER' },
-              { label: 'Cơ quan thuế', value: 'TAX' }
+              ...Object.entries(payerType).map(([key, value]) => ({
+                label: value,     // hoặc value
+                value: key
+              }))
             ]}
             placeholder='Chọn người chịu phí'
           />
@@ -457,12 +376,10 @@ const FormAddFeeComponent = forwardRef<
             defaultValue={''}
             options={[
               { label: 'Chọn', value: '' },
-              { label: 'Người dùng', value: 'USER' },
-              { label: 'Merchant', value: 'MERCHANT' },
-              { label: 'Hệ thống/platform', value: 'SYSTEM' },
-              { label: 'Ngân hàng', value: 'BANK' },
-              { label: 'Đối tác', value: 'PARTNER' },
-              { label: 'Cơ quan thuế', value: 'TAX' }
+              ...Object.entries(payerType).map(([key, value]) => ({
+                label: value,     // hoặc value
+                value: key
+              }))
             ]}
             placeholder='Chọn người hưởng phí'
           />
@@ -475,118 +392,107 @@ const FormAddFeeComponent = forwardRef<
             defaultValue={''}
             options={[
               { label: 'Chọn', value: '' },
-              { label: 'Làm tròn lên', value: 'UP' },
-              { label: 'Làm tròn xuống', value: 'DOWN' },
-              { label: 'Làm tròn gần nhất', value: 'NEAREST' },
-              { label: 'Không làm tròn', value: 'NONE' }
+              ...Object.entries(roundMode).map(([key, value]) => ({
+                label: value,     // hoặc value
+                value: key
+              }))
             ]}
             placeholder='Chọn công thức làm tròn'
           />
-          {/* Field này chưa rõ là text hay select, để tạm FormSelect nếu có options hoặc FormInput nếu cần text */}
-          {/* <FormSelect<FeeComponentType>
-            control={control}
-            name='feeExpression'
-            label='Công thức tính phí'
-            className='col-span-4 flex flex-col'
-            defaultValue={''}
-            options={[
-              { label: 'Chọn', value: '' },
-              { label: 'FIXED', value: 'FIXED' },
-              { label: 'PERCENTAGE', value: 'PERCENTAGE' },
-              { label: 'MIXED', value: 'MIXED' }
-            ]}
-            placeholder='Chọn công thức'
-          /> */}
-        </div>
-      </Card>
-
-      <Card
-        className='mb-3'
-        style={{ width: '100%' }}
-      >
-        <p className='font-bold mb-3'>Phương thức tính (Calculation Method)</p>
-        <div className='mb-3'>
           <FormSelect<FeeComponentType>
             control={control}
             name='calculationMethod'
-            className='w-full'
+            label='Chọn phương thức tính'
+            className='col-span-4 flex flex-col'
             options={[
-              { label: 'Bậc lũy tiến', value: 'FLAT_TIER' },
-              { label: 'Cố định', value: 'DIRECT' },
-              { label: 'Bậc thanh thành phần', value: 'PROGRESSIVE_TIER' }
+              ...Object.entries(calculationMethodEnum).map(([key, value]) => ({
+                label: value,     // hoặc value
+                value: key
+              }))
             ]}
           />
         </div>
-
-        {['PROGRESSIVE_TIER', 'FLAT_TIER'].includes(
-          String(calculationMethod)
-        ) ? (
-          <>
-            <Table
-              columns={columns}
-              dataSource={fields}
-              pagination={false}
-              bordered
-              size='small'
-              rowKey='id'
-            />
-            <Button
-              type='dashed'
-              onClick={() =>
-                append({
-                  minFee: undefined,
-                  maxFee: undefined,
-                  fixedAmount: undefined,
-                  percentage: undefined
-                })
-              }
-              style={{ width: '100%', marginTop: 16 }}
-              icon={<PlusOutlined />}
-            >
-              Thêm khoảng phí (Add Tier)
-            </Button>
-          </>
-        ) : (
-          <Card>
-            <div className='grid grid-cols-12 gap-3'>
-              <FormInputNumber
-                control={control}
-                name='fixedAmount'
-                label='Phí cố định (Fixed)'
-                className='col-span-3 flex flex-col gap-2'
-                placeholder='0'
-                classNameLable='font-medium'
-              />
-
-              <FormInputNumber
-                control={control}
-                name='percentage'
-                label='Phí phần trăm (%)'
-                className='col-span-3 flex flex-col gap-2'
-                placeholder='0'
-                classNameLable='font-medium'
-              />
-              <FormInputNumber
-                control={control}
-                name='minFee'
-                label='Tối thiểu (Min)'
-                className='col-span-3 flex flex-col gap-2'
-                placeholder='0'
-                classNameLable='font-medium'
-              />
-
-              <FormInputNumber
-                control={control}
-                name='maxFee'
-                label='Tối đa (Max)'
-                className='col-span-3 flex flex-col gap-2'
-                placeholder='0'
-                classNameLable='font-medium'
-              />
-            </div>
-          </Card>
-        )}
       </Card>
+
+      <div className={`${['PROGRESSIVE_TIER', 'FLAT_TIER'].includes(
+        String(calculationMethod)
+      ) && !isUpdateMode ? 'hidden' : ''}`}>
+        <Card
+          className='mb-3'
+          style={{ width: '100%' }}
+        >
+          <p className='font-bold mb-3'>Phương thức tính (Calculation Method)</p>
+          <div className='mb-3'>
+          </div>
+
+          {['PROGRESSIVE_TIER', 'FLAT_TIER'].includes(
+            String(calculationMethod)
+          ) && isUpdateMode ? (
+            <>
+              <Table
+                columns={columns}
+                dataSource={fields}
+                pagination={false}
+                bordered
+                size='small'
+                rowKey='id'
+              />
+              <Button
+                type='dashed'
+                onClick={() =>
+                  append(DEFAULT_TIER)
+                }
+                style={{ width: '100%', marginTop: 16 }}
+                icon={<PlusOutlined />}
+              >
+                Thêm khoảng phí (Add Tier)
+              </Button>
+            </>
+          ) : (
+
+            <Card>
+              <div className='grid grid-cols-12 gap-3'>
+                <FormInputNumber
+                  control={control}
+                  name='fixedAmount'
+                  label='Phí cố định (Fixed)'
+                  className='col-span-3 flex flex-col gap-2'
+                  placeholder='0'
+                  classNameLable='font-medium'
+                />
+
+                <FormInputNumber
+                  control={control}
+                  name='percentage'
+                  label='Phí phần trăm (%)'
+                  className='col-span-3 flex flex-col gap-2'
+                  placeholder='0'
+                  classNameLable='font-medium'
+                />
+                <FormInputNumber
+                  control={control}
+                  name='minFee'
+                  label='Tối thiểu (Min)'
+                  className='col-span-3 flex flex-col gap-2'
+                  placeholder='0'
+                  classNameLable='font-medium'
+                />
+
+                <FormInputNumber
+                  control={control}
+                  name='maxFee'
+                  label='Tối đa (Max)'
+                  className='col-span-3 flex flex-col gap-2'
+                  placeholder='0'
+                  classNameLable='font-medium'
+                />
+              </div>
+            </Card>
+          )}
+        </Card>
+
+      </div>
+
       <DialogModal
         open={openDialog}
         onOk={() => handleDeleteTier(deleteComponentId)}

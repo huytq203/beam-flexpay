@@ -75,9 +75,9 @@ import { OutboundFeeCreate } from '@pages/outbound-fee-management/outboundfee-cr
 import { OutboundFeeUpdate } from '@pages/outbound-fee-management/outboundfee-update'
 import { InboundFeeManagement, InboundFeeCreate, InboundFeeUpdate } from '@pages/inbound-fee-management'
 import { VatFeeCreate, VatFeeUpdate, VatFeeManagement } from '@pages/vat-fee-management'
-import TestDemo from '@pages/test/TestDemo'
-import FeeManagement from '@pages/test/FeeManagement'
-import FeeAssignmentManagement from '@pages/test/FeeAssignmentManagement'
+import FeeComponentManagement from '@pages/fee-managerment-v3/FeeComponentManagement'
+import FeeManagement from '@pages/fee-managerment-v3/FeeManagement'
+import FeeAssignmentManagement from '@pages/fee-managerment-v3/FeeAssignmentManagement'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -453,7 +453,7 @@ const internalWallet = {
 //   ]
 // }
 
-const testDemo = {
+const feeManagementV3 = {
   path: FEEMANAGEMENR_V3,
   element: createElement(AppLayout),
   errorElement: createElement(NotFound),
@@ -467,12 +467,12 @@ const testDemo = {
         },
         {
           path: FEEMANAGEMENR_V3 + '/create',
-          element: createElement(TestDemo)
+          element: createElement(FeeComponentManagement)
         },
 
         {
           path: FEEMANAGEMENR_V3 + '/edit/:id',
-          element: createElement(TestDemo)
+          element: createElement(FeeComponentManagement)
         }
       ]
     },
@@ -497,5 +497,5 @@ export const WalletRoutes = createBrowserRouter([
   reports,
   repaymentAndDisburse,
   internalWallet,
-  testDemo
+  feeManagementV3
 ])

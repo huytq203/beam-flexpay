@@ -1,31 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react'
-import dayjs from 'dayjs'
 import { feePolicyComponent } from '@type/feePoliciesComponent'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   PolicySchema,
   PolicyType,
   FeeComponentType
 } from './FeeManagement.schema'
-import {
-  FormInput,
-  FormTextArea,
-  FormSelect,
-  FormDatePicker
-} from '@components/form'
 
 import {
-  DateInput,
-  SelectInput,
-  TextArea,
-  Input,
+
   ModalComponent,
   ButtonComponent,
+  DialogModal,
   Table,
-  DialogModal
 } from '@components/common'
-import FormAddFeeComponent from '@pages/test/components/FormAddFeeComponent'
+import FormAddFeeComponent from '@pages/fee-managerment-v3/components/FormAddFeeComponent'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import {
   useDeleteFeeComponentPoliciesMutation,
@@ -42,12 +32,16 @@ import {
   usePostNewPolicyMutation,
   usePutFeePolicyMutation
 } from '@services/apiFeePoliciesServices'
-import { message } from 'antd'
+import { message, Tooltip } from 'antd'
 import { useParams } from 'react-router-dom'
 import FormAddPolicy from './components/FormAddPolicy'
 import { useGetFeeComponentTierQuery } from '@services/apiFeeComponentTier'
+import {
+  getCalculationMethodLabel,
+  getComponentTypeLabel
+} from './FeeManagement.utils'
 
-const TestDemo = () => {
+const FeeComponentManagerment = () => {
   // Mock API trigger cho CustomSelect
   const [open, setOpen] = useState(false)
 
@@ -76,12 +70,10 @@ const TestDemo = () => {
           selectedRow?.calculationMethod !== 'FLAT_TIER')
     }
   )
-  console.log('feeComponentTierData', feeComponentTierData)
 
   const combinedInitialData = React.useMemo(() => {
     if (!feeComponent) return null
     if (feeComponentTierData && feeComponentTierData.length > 0) {
-      console.log('Mapping tiers from data', feeComponentTierData)
       const tiers = feeComponentTierData.map((item: any) => ({
         id: item.id,
         minValue: item.minValue,
@@ -204,9 +196,6 @@ const TestDemo = () => {
       }).unwrap()
       message.success('Cập nhật thành phần phí thành công')
       setOpen(false)
-      formRef.current?.reset()
-      setSelectedRow(null)
-      setUpdateComponentId(null)
     } catch (error: any) {
       message.error(error?.data?.message)
     }
@@ -234,18 +223,23 @@ const TestDemo = () => {
     }
   }
 
-  const dataSource = list.map((item: feePolicyComponent, idx: number) => ({
+  const sortedList = [...list].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+
+  const dataSource = sortedList.map((item: feePolicyComponent, idx: number) => ({
     id: item.id,
     no: (page - 1) * pageSize + idx + 1,
     componentType: item.componentType,
     calculationMethod: item.calculationMethod,
     fixedAmount: item.fixedAmount,
+    percentage: item.percentage,
     payerType: item.payerType
-  }))
+  }));
 
   const columns = [
     {
-      title: 'STT',
+      title: '#',
       dataIndex: 'no',
       width: 60,
       align: 'center' as const,
@@ -255,19 +249,27 @@ const TestDemo = () => {
       title: 'Loại (Type)',
       dataIndex: 'componentType',
       key: 'componentType',
-      className: ' border border-l-0'
+      className: ' border border-l-0',
+      render: (value: any) => getComponentTypeLabel(value)
     },
     {
       title: 'Cách tính',
       dataIndex: 'calculationMethod',
       key: 'calculationMethod',
-      className: ' border border-l-0 border-b-0'
+      className: ' border border-l-0 border-b-0',
+      render: (value: any) => getCalculationMethodLabel(value)
     },
     {
       title: 'Công thức',
       dataIndex: 'fixedAmount',
       key: 'fixedAmount',
-      className: ' border border-l-0 border-b-0'
+      className: ' border border-l-0 border-b-0',
+      render: (value: any, record: any) => {
+        if (record.calculationMethod === 'DIRECT') {
+          return `${record.percentage ?? 0}% + ${record.fixedAmount ?? 0}`
+        }
+        return value
+      }
     },
     {
       title: 'Người trả',
@@ -283,24 +285,29 @@ const TestDemo = () => {
       align: 'center' as const,
       render: (record: any) => (
         <div className='flex gap-1 justify-center'>
-          <ButtonComponent
-            type='text'
-            icon={<EditOutlined />}
-            onClick={() => {
-              setSelectedRow(record)
-              setOpen(true)
-              setUpdateComponentId(record.id)
-            }}
-          />
-          <ButtonComponent
-            type='text'
-            danger
-            icon={<DeleteOutlined />}
-            onClick={() => {
-              setDeletingId(record.id)
-              setOpenDialog(true)
-            }}
-          />
+          <Tooltip title="Cập nhật">
+            <ButtonComponent
+              type='text'
+              icon={<EditOutlined />}
+              onClick={() => {
+                setSelectedRow(record)
+                setOpen(true)
+                setUpdateComponentId(record.id)
+              }}
+            />
+
+          </Tooltip>
+          <Tooltip title="Xóa">
+            <ButtonComponent
+              type="text"
+              danger
+              icon={<DeleteOutlined />}
+              onClick={() => {
+                setDeletingId(record.id)
+                setOpenDialog(true)
+              }}
+            />
+          </Tooltip>
         </div>
       )
     }
@@ -333,7 +340,6 @@ const TestDemo = () => {
       await postFeeComponent(payload).unwrap()
       message.success('Thêm thành phần phí thành công')
       setOpen(false)
-      formRef.current?.reset()
     } catch (error: any) {
       message.error(error?.data?.message)
     }
@@ -403,9 +409,9 @@ const TestDemo = () => {
               htmlType='button'
               content='Thêm thành phần phí'
               onClick={() => {
+                formRef.current?.reset()
                 setSelectedRow(null)
                 setUpdateComponentId(null)
-                formRef.current?.reset()
                 setOpen(true)
               }}
               type='primary'
@@ -437,7 +443,7 @@ const TestDemo = () => {
               }}
             />
             <ModalComponent
-              title='Thêm thành phần phí'
+              title={selectedRow ? 'Sửa thành phần phí' : 'Thêm thành phần phí'}
               open={open}
               onOk={handleSaveAddFee}
               onCancel={() => setOpen(false)}
@@ -450,7 +456,8 @@ const TestDemo = () => {
                   onSubmit={
                     selectedRow ? handleUpdateFeeComponent : handleFormSubmit
                   }
-                  initialData={combinedInitialData}
+
+                  initialData={selectedRow ? combinedInitialData : null}
                 />
               }
             />
@@ -468,4 +475,4 @@ const TestDemo = () => {
   )
 }
 
-export default TestDemo
+export default FeeComponentManagerment

@@ -7,6 +7,7 @@ import {
 import { PolicyType } from '../FeeManagement.schema'
 import React from 'react'
 import { Control, UseFormHandleSubmit } from 'react-hook-form'
+import { feeDomain, serviceType } from '@type/feePoliciesComponent'
 
 interface FormAddPolicyProps {
   control: Control<PolicyType>
@@ -14,7 +15,7 @@ interface FormAddPolicyProps {
   id?: string
   handleUpdate?: (data: PolicyType) => Promise<void>
   onSubmit: (data: PolicyType) => Promise<void>
-  
+
 }
 
 const FormAddPolicy = ({
@@ -86,23 +87,10 @@ const FormAddPolicy = ({
             defaultValue=''
             options={[
               { label: 'Chọn tất cả', value: '' },
-              {
-                label: 'EWALLET_WITHDRAWAL',
-                value: 'EWALLET_WITHDRAWAL'
-              },
-              {
-                label: 'EWALLET_TRANSFER_INTERNAL',
-                value: 'EWALLET_TRANSFER_INTERNAL'
-              },
-              {
-                label: 'EWALLET_TRANSFER_EXTERNAL',
-                value: 'EWALLET_TRANSFER_EXTERNAL'
-              },
-              { label: 'EWALLET_CASHBACK', value: 'EWALLET_CASHBACK' },
-              {
-                label: 'MERCHANT_VA_BILL_COLLECTION',
-                value: 'MERCHANT_VA_BILL_COLLECTION'
-              }
+              ...Object.entries(serviceType).map(([key, value]) => ({
+                label: value,     // hoặc value
+                value: key
+              }))
             ]}
           />
           <FormInput
@@ -119,9 +107,10 @@ const FormAddPolicy = ({
             defaultValue=''
             options={[
               { label: 'Chọn tất cả', value: '' },
-              { label: 'BANK', value: 'BANK' },
-              { label: 'EWALLET', value: 'EWALLET' },
-              { label: 'MERCHANT', value: 'MERCHANT' }
+              ...Object.entries(feeDomain).map(([key, value]) => ({
+                label: value,     // hoặc value
+                value: key
+              }))
             ]}
           />
 

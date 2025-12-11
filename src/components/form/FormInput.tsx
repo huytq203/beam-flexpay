@@ -19,6 +19,7 @@ export function FormInput<T extends FieldValues>({
   placeholder,
   className = "col-span-6 flex flex-col",
   disabled,
+  classNameLable,
   ...rest
 }: FormInputProps<T>) {
   return (
@@ -26,6 +27,7 @@ export function FormInput<T extends FieldValues>({
       name={name}
       control={control}
       label={label}
+      classNameLable={classNameLable}
       className={className}
       render={(field) => (
         <Input

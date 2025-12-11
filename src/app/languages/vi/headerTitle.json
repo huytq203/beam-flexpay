@@ -81,6 +81,7 @@
     "/fee-v2/inbound-fee-management/update/*": "Cập nhật phí đầu vào",
 
 
-        "/test-demo":"Test demo"
+    "/fee-v3/fee-management":"Quản lý chính sách phí",
+    "/fee-v3/edit/*":"Cập nhật chính sách phí"
   }
 }
