@@ -17,7 +17,8 @@ import {
   REPAYMENTANDDISBURSE,
   REPORTS,
   ROLEMANAGEMENT,
-  STATE_BANK
+  STATE_BANK,
+  FEEMANAGEMENR_V3,
 } from '@constants/routersConstant'
 
 import ForgotPassword from '@pages/auth/forgot-password/ForgotPassword'
@@ -74,6 +75,9 @@ import { OutboundFeeCreate } from '@pages/outbound-fee-management/outboundfee-cr
 import { OutboundFeeUpdate } from '@pages/outbound-fee-management/outboundfee-update'
 import { InboundFeeManagement, InboundFeeCreate, InboundFeeUpdate } from '@pages/inbound-fee-management'
 import { VatFeeCreate, VatFeeUpdate, VatFeeManagement } from '@pages/vat-fee-management'
+import FeeComponentManagement from '@pages/fee-managerment-v3/FeeComponentManagement'
+import FeeManagement from '@pages/fee-managerment-v3/FeeManagement'
+import FeeAssignmentManagement from '@pages/fee-managerment-v3/FeeAssignmentManagement'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -207,7 +211,7 @@ const feeManagement = {
       path: FEEMANAGEMENT + '/policy-management',
       element: createElement(PolicyManagement)
     },
-    {                                                     
+    {
       path: FEEMANAGEMENT + '/direct-deposit',
       element: createElement(PaymentPolicyManagement)
       // element: createElement(DirectDeposit)
@@ -432,6 +436,55 @@ const internalWallet = {
   ]
 }
 
+
+// const bankAndConnect = {
+//   path: BANKANDCONNECT,
+//   element: createElement(AppLayout),
+//   errorElement: createElement(NotFound),
+//   children: [
+//     {
+//       path: BANKANDCONNECT + '/banks',
+//       element: createElement(BankManagement)
+//     },
+//     {
+//       path: BANKANDCONNECT + '/notification-management',
+//       element: createElement(NotificationManagement)
+//     }
+//   ]
+// }
+
+const feeManagementV3 = {
+  path: FEEMANAGEMENR_V3,
+  element: createElement(AppLayout),
+  errorElement: createElement(NotFound),
+  children: [
+    {
+      path: FEEMANAGEMENR_V3 ,
+      children: [
+        {
+          path: FEEMANAGEMENR_V3 + "/fee-management",
+          element: createElement(FeeManagement)
+        },
+        {
+          path: FEEMANAGEMENR_V3 + '/create',
+          element: createElement(FeeComponentManagement)
+        },
+
+        {
+          path: FEEMANAGEMENR_V3 + '/edit/:id',
+          element: createElement(FeeComponentManagement)
+        }
+      ]
+    },
+    {
+      path: FEEMANAGEMENR_V3 + '/fee-assignment',
+      element: createElement(FeeAssignmentManagement)
+    },
+
+
+  ]
+}
+
 export const WalletRoutes = createBrowserRouter([
   authentication,
   defaultRouter,
@@ -444,4 +497,5 @@ export const WalletRoutes = createBrowserRouter([
   reports,
   repaymentAndDisburse,
   internalWallet,
+  feeManagementV3
 ])

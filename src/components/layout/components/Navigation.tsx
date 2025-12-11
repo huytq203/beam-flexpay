@@ -10,7 +10,9 @@ import {
   _REPAYMENTANDDISBURSE,
   _REPORTS,
   _ROLEMANAGEMENT,
-  _STATE_BANK
+  _STATE_BANK,
+  _FEEMANAGEMENR_V3
+
 } from '@constants/routersConstant'
 import i18n from '@languages/i18n'
 import {
@@ -792,6 +794,41 @@ const internal_wallet = {
   ]
 }
 
+const feeManagementV3 = {
+  key: _FEEMANAGEMENR_V3,
+  icon: (
+    <WalletIcon
+      size={size}
+      weight={weight}
+      color={COlOR}
+    />
+  ),
+  children: [
+    {
+      key: 'fee-management',
+      icon: (
+        <WalletIcon 
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý chính sách phí',
+    },
+    {
+      key: 'fee-assignment',
+      icon: (
+        <WalletIcon 
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý gán phí',
+    }
+  ],
+   label: 'Quản lý phí',
+}
 export const navigationItems: ItemTypeCustom[] = [
   roleManagement,
   personalWallet,
@@ -800,5 +837,6 @@ export const navigationItems: ItemTypeCustom[] = [
   bankAndConnect,
   repaymentAndDisburse,
   reports,
-  internal_wallet
+  internal_wallet,
+  feeManagementV3
 ]

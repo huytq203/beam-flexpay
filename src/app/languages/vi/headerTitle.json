@@ -78,7 +78,10 @@
     "/fee-v2/vat-fee-management/create": "Thiết lập thuế VAT",
     "/fee-v2/inbound-fee-management": "Quản lý phí đầu vào",
     "/fee-v2/inbound-fee-management/create": "Thiết lập phí đầu vào",
-    "/fee-v2/inbound-fee-management/update/*": "Cập nhật phí đầu vào"
+    "/fee-v2/inbound-fee-management/update/*": "Cập nhật phí đầu vào",
 
+
+    "/fee-v3/fee-management":"Quản lý chính sách phí",
+    "/fee-v3/edit/*":"Cập nhật chính sách phí"
   }
 }

@@ -14,6 +14,8 @@ export const BANK = '/bank'
 export const INTERNAL = '/internal'
 export const INTERNAL_WALLET = '/internal-wallet'
 export const STATE_BANK = '/state-bank'
+export const FEEMANAGEMENR_V3='/fee-v3' 
+
 
 export const _ROLEMANAGEMENT = 'role'
 export const _REPAYMENTANDDISBURSE = 'repayment-and-disburse'
@@ -30,3 +32,4 @@ export const _BANK = 'bank'
 export const _INTERNAL = 'internal'
 export const _INTERNAL_WALLET = 'internal-wallet'
 export const _STATE_BANK = 'state-bank'
+export const _FEEMANAGEMENR_V3 = 'fee-v3'
