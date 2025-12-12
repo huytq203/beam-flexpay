@@ -77,7 +77,7 @@ import { InboundFeeManagement, InboundFeeCreate, InboundFeeUpdate } from '@pages
 import { VatFeeCreate, VatFeeUpdate, VatFeeManagement } from '@pages/vat-fee-management'
 import FeeComponentManagement from '@pages/fee-managerment-v3/fee-component-management/FeeComponentManagement'
 import FeeManagement from '@pages/fee-managerment-v3/fee-management/FeeManagement'
-import FeeAssignmentManagement from '@pages/fee-managerment-v3/FeeAssignmentManagement'
+import FeeAssignmentManagement from '@pages/fee-managerment-v3/fee-assignment/FeeAssignmentManagement'
 
 const authentication = {
   path: AUTHENTICATION,

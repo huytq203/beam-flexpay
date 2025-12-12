@@ -48,7 +48,7 @@ const DEFAULT_VALUES: FeeComponentType = {
   calculationMethod: 'DIRECT',
   tiers: [DEFAULT_TIER],
   fixedAmount: undefined,
-  percentage: undefined,
+  percentage: 0,
   minFee: undefined,
   maxFee: undefined
 }
@@ -109,7 +109,7 @@ const FormAddFeeComponent = forwardRef<
         }
       ]
       if (id) {
-        await putFeeComponentTier({body: payload }).unwrap()
+        await putFeeComponentTier({ body: payload }).unwrap()
         successMess('Cập nhật thành công')
       }
     } catch (error) { errorMess('Cập nhật thất bại') }
@@ -154,6 +154,7 @@ const FormAddFeeComponent = forwardRef<
   }, [initialData, reset])
 
   const calculationMethod = watch('calculationMethod')
+  const componentTypes = watch('componentType')
 
   useImperativeHandle(ref, () => ({
     submit: () => {
@@ -418,86 +419,100 @@ const FormAddFeeComponent = forwardRef<
           />
         </div>
       </Card>
+      {
+        ["VAT"].includes(String(componentTypes)) ?
+          <Card>
+            <p className='font-bold mb-3'>Phương thức tính (Calculation Method)</p>
+            <FormInputNumber
+              control={control}
+              name='percentage'
+              label='Phí phần trăm (%)'
+              className='col-span-3 flex flex-col gap-2'
+              placeholder='0'
+              classNameLable='font-medium'
+            />
+          </Card> :
+          <div className={`${['PROGRESSIVE_TIER', 'FLAT_TIER'].includes(
+            String(calculationMethod)
+          ) && !isUpdateMode ? 'hidden' : ''}`}>
+            <Card
+              className='mb-3'
+              style={{ width: '100%' }}
+            >
+              <p className='font-bold mb-3'>Phương thức tính (Calculation Method)</p>
+              <div className='mb-3'>
+              </div>
 
-      <div className={`${['PROGRESSIVE_TIER', 'FLAT_TIER'].includes(
-        String(calculationMethod)
-      ) && !isUpdateMode ? 'hidden' : ''}`}>
-        <Card
-          className='mb-3'
-          style={{ width: '100%' }}
-        >
-          <p className='font-bold mb-3'>Phương thức tính (Calculation Method)</p>
-          <div className='mb-3'>
+              {['PROGRESSIVE_TIER', 'FLAT_TIER'].includes(
+                String(calculationMethod)
+              ) && isUpdateMode ? (
+                <>
+                  <Table
+                    columns={columns}
+                    dataSource={fields}
+                    pagination={false}
+                    bordered
+                    size='small'
+                    rowKey='id'
+                  />
+                  <ButtonComponent
+                    content=' Thêm khoảng phí (Add Tier)'
+                    type='dashed'
+                    onClick={() =>
+                      append(DEFAULT_TIER)
+                    }
+                    style={{ width: '100%', marginTop: 16 }}
+                    icon={<PlusOutlined {...({} as any)} />}
+                  />
+
+
+                </>
+              ) : (
+
+                <Card>
+                  <div className='grid grid-cols-12 gap-3'>
+                    <FormInputNumber
+                      control={control}
+                      name='fixedAmount'
+                      label='Phí cố định (Fixed)'
+                      className='col-span-3 flex flex-col gap-2'
+                      placeholder='0'
+                      classNameLable='font-medium'
+                    />
+
+                    <FormInputNumber
+                      control={control}
+                      name='percentage'
+                      label='Phí phần trăm (%)'
+                      className='col-span-3 flex flex-col gap-2'
+                      placeholder='0'
+                      classNameLable='font-medium'
+                    />
+                    <FormInputNumber
+                      control={control}
+                      name='minFee'
+                      label='Tối thiểu (Min)'
+                      className='col-span-3 flex flex-col gap-2'
+                      placeholder='0'
+                      classNameLable='font-medium'
+                    />
+
+                    <FormInputNumber
+                      control={control}
+                      name='maxFee'
+                      label='Tối đa (Max)'
+                      className='col-span-3 flex flex-col gap-2'
+                      placeholder='0'
+                      classNameLable='font-medium'
+                    />
+                  </div>
+                </Card>
+              )}
+            </Card>
+
           </div>
 
-          {['PROGRESSIVE_TIER', 'FLAT_TIER'].includes(
-            String(calculationMethod)
-          ) && isUpdateMode ? (
-            <>
-              <Table
-                columns={columns}
-                dataSource={fields}
-                pagination={false}
-                bordered
-                size='small'
-                rowKey='id'
-              />
-              <ButtonComponent
-                content=' Thêm khoảng phí (Add Tier)'
-                type='dashed'
-                onClick={() =>
-                  append(DEFAULT_TIER)
-                }
-                style={{ width: '100%', marginTop: 16 }}
-                icon={<PlusOutlined {...({} as any)} />}
-              />
-
-
-            </>
-          ) : (
-
-            <Card>
-              <div className='grid grid-cols-12 gap-3'>
-                <FormInputNumber
-                  control={control}
-                  name='fixedAmount'
-                  label='Phí cố định (Fixed)'
-                  className='col-span-3 flex flex-col gap-2'
-                  placeholder='0'
-                  classNameLable='font-medium'
-                />
-
-                <FormInputNumber
-                  control={control}
-                  name='percentage'
-                  label='Phí phần trăm (%)'
-                  className='col-span-3 flex flex-col gap-2'
-                  placeholder='0'
-                  classNameLable='font-medium'
-                />
-                <FormInputNumber
-                  control={control}
-                  name='minFee'
-                  label='Tối thiểu (Min)'
-                  className='col-span-3 flex flex-col gap-2'
-                  placeholder='0'
-                  classNameLable='font-medium'
-                />
-
-                <FormInputNumber
-                  control={control}
-                  name='maxFee'
-                  label='Tối đa (Max)'
-                  className='col-span-3 flex flex-col gap-2'
-                  placeholder='0'
-                  classNameLable='font-medium'
-                />
-              </div>
-            </Card>
-          )}
-        </Card>
-
-      </div>
+      }
 
       <DialogModal
         open={openDialog}
