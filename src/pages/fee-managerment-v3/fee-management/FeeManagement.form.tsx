@@ -1,5 +1,6 @@
 import { ButtonComponent, Table } from '@components/common'
 import { FormInput, FormSelect } from '@components/form'
+import { feePolicies } from '@type/feePolicies'
 import { feeDomain, serviceType } from '@type/feePoliciesComponent'
 import React from 'react'
 import { Control, UseFormHandleSubmit, UseFormReset } from 'react-hook-form'
@@ -8,7 +9,7 @@ interface FeeManagementFormProps {
     control: Control<any>
     handleSubmit: UseFormHandleSubmit<any>
     reset: UseFormReset<any>
-    handleSearch: (data: any) => void
+    handleSearch: (data: feePolicies) => void
     onReset: () => void
     setOpen: (open: boolean) => void
     dataSource: any[]
