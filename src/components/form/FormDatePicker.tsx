@@ -18,6 +18,7 @@ export function FormDatePicker<T extends FieldValues>({
   label,
   picker = "date",
   className = "col-span-6 flex flex-col",
+  classNameLable='font-medium',
   ...rest
 }: FormDatePickerProps<T>) {
   return (
@@ -26,6 +27,7 @@ export function FormDatePicker<T extends FieldValues>({
       control={control}
       label={label}
       className={className}
+      classNameLable={classNameLable}
       render={(field) => (
         <DateInput
           {...field}

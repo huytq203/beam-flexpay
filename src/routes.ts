@@ -75,8 +75,8 @@ import { OutboundFeeCreate } from '@pages/outbound-fee-management/outboundfee-cr
 import { OutboundFeeUpdate } from '@pages/outbound-fee-management/outboundfee-update'
 import { InboundFeeManagement, InboundFeeCreate, InboundFeeUpdate } from '@pages/inbound-fee-management'
 import { VatFeeCreate, VatFeeUpdate, VatFeeManagement } from '@pages/vat-fee-management'
-import FeeComponentManagement from '@pages/fee-managerment-v3/FeeComponentManagement'
-import FeeManagement from '@pages/fee-managerment-v3/FeeManagement'
+import FeeComponentManagement from '@pages/fee-managerment-v3/fee-component-management/FeeComponentManagement'
+import FeeManagement from '@pages/fee-managerment-v3/fee-management/FeeManagement'
 import FeeAssignmentManagement from '@pages/fee-managerment-v3/FeeAssignmentManagement'
 
 const authentication = {

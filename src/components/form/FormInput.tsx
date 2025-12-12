@@ -19,7 +19,7 @@ export function FormInput<T extends FieldValues>({
   placeholder,
   className = "col-span-6 flex flex-col",
   disabled,
-  classNameLable,
+  classNameLable='font-medium',
   ...rest
 }: FormInputProps<T>) {
   return (

@@ -6,7 +6,7 @@ import React, {
 } from 'react'
 import { Card, Table, Button, message } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { SelectInput, InputNumber, DialogModal, Input } from '@components/common'
+import { SelectInput, InputNumber, DialogModal, Input, ButtonComponent } from '@components/common'
 import {
   CheckOutlined,
   DeleteOutlined,
@@ -23,6 +23,7 @@ import {
   usePutFeeComponentTierMutation
 } from '@services/apiFeeComponentTier'
 import { baseOn, calculationMethodEnum, componentType, payerType, roundMode } from '@type/feePoliciesComponent'
+import { useMessage } from '@hooks/useMessage'
 
 interface FormAddFeeProps {
   initialData?: FeeComponentType | null
@@ -71,7 +72,7 @@ const FormAddFeeComponent = forwardRef<
   const [postFeeComponentTier] = usePostFeeComponentTierMutation()
   const [putFeeComponentTier] = usePutFeeComponentTierMutation()
   const [deleteFeeComponentTier, { isLoading: isDeleteFeeComponentTierLoading }] = useDeleteFeeComponentTierMutation()
-
+  const { successMess, errorMess } = useMessage()
   const isUpdateMode = !!(initialData as any)?.id // keeping type assertion for id check if not in schema
 
   const { fields, append, remove } = useFieldArray({
@@ -88,26 +89,30 @@ const FormAddFeeComponent = forwardRef<
       }
       setOpenDialog(false)
 
-      message.success('Xóa thành công')
+      successMess('Xóa thành công')
     } catch (error) { }
   }
 
   const handleUpdateTier = async (tierData: any, id?: string) => {
     try {
-      const payload = {
-        minValue: tierData.minValue,
-        maxValue: tierData.maxValue,
-        roundMode: tierData.roundMode,
-        minFee: tierData.minFee,
-        maxFee: tierData.maxFee,
-        fixedAmount: tierData.fixedAmount,
-        percentage: tierData.percentage
-      }
+      const feeComponentId = (initialData as any)?.id
+      const payload = [
+        {
+          feeComponentId,
+          minValue: tierData.minValue,
+          maxValue: tierData.maxValue,
+          roundMode: tierData.roundMode,
+          minFee: tierData.minFee,
+          maxFee: tierData.maxFee,
+          fixedAmount: tierData.fixedAmount,
+          percentage: tierData.percentage
+        }
+      ]
       if (id) {
-        await putFeeComponentTier({ id, body: payload }).unwrap()
-        message.success('Cập nhật thành công')
+        await putFeeComponentTier({body: payload }).unwrap()
+        successMess('Cập nhật thành công')
       }
-    } catch (error) { message.error('Cập nhật thất bại') }
+    } catch (error) { errorMess('Cập nhật thất bại') }
   }
 
   const handleSubmitTier = async (index: number) => {
@@ -130,9 +135,9 @@ const FormAddFeeComponent = forwardRef<
       }]
 
       await postFeeComponentTier(payload).unwrap()
-      message.success("Thêm mới thành công")
+      successMess("Thêm mới thành công")
     } catch (error) {
-       message.error('Thêm mới thất bại')
+      errorMess('Thêm mới thất bại')
     }
   }
 
@@ -282,10 +287,10 @@ const FormAddFeeComponent = forwardRef<
       width: 60,
       render: (_, record, index) => (
         <div className='flex justify-center items-center gap-1'>
-          <Button
+          <ButtonComponent
             type='text'
             danger
-            icon={<DeleteOutlined />}
+            icon={<DeleteOutlined {...({} as any)} />}
             onClick={() => {
               const currentTier = getValues(`tiers.${index}`)
               if (currentTier && (currentTier as any).id) {
@@ -296,15 +301,15 @@ const FormAddFeeComponent = forwardRef<
               }
             }}
           />
-          <Button
+          <ButtonComponent
             type='text'
-            icon={<CheckOutlined style={{ color: 'green' }} />}
+            icon={<CheckOutlined style={{ color: 'green' }}  {...({} as any)} />}
             onClick={() => handleSubmitTier(index)}
           />
           {isUpdateMode && (
-            <Button
+            <ButtonComponent
               type='text'
-              icon={<SaveOutlined style={{ color: '#08c' }} />}
+              icon={<SaveOutlined style={{ color: '#08c' }}  {...({} as any)} />}
               onClick={() => {
                 const tierData = getValues(`tiers.${index}`)
                 handleUpdateTier(tierData, (tierData as any).id)
@@ -437,16 +442,17 @@ const FormAddFeeComponent = forwardRef<
                 size='small'
                 rowKey='id'
               />
-              <Button
+              <ButtonComponent
+                content=' Thêm khoảng phí (Add Tier)'
                 type='dashed'
                 onClick={() =>
                   append(DEFAULT_TIER)
                 }
                 style={{ width: '100%', marginTop: 16 }}
-                icon={<PlusOutlined />}
-              >
-                Thêm khoảng phí (Add Tier)
-              </Button>
+                icon={<PlusOutlined {...({} as any)} />}
+              />
+
+
             </>
           ) : (
 

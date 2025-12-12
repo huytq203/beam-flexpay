@@ -1,7 +1,6 @@
 import { useBoolean } from 'ahooks'
 import { Modal, Spin } from 'antd'
 import { useEffect } from 'react'
-
 function ScreenLoading() {
   const [isOpen, { setTrue, setFalse }] = useBoolean(false)
 

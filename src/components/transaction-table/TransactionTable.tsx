@@ -47,7 +47,7 @@ const TransactionTable = ({ search, setSearch, skip, className }: Props) => {
   // API hooks
   const [freezeTransaction, { isLoading: isFreezingTransaction }] = useFreezeAccountMutationMutation()
   const [unfreezeTransaction, { isLoading: isUnfreezingTransaction }] = useUnFreezeAccountMutationMutation()
-
+  
   const handleDetail = (id: number) => {
     setSelectedId(id)
     setTrue()

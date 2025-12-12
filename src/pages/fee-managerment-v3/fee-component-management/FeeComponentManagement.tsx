@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { feeComponentColumns } from './FeeComponentManagement.columns'
 import { feePolicyComponent } from '@type/feePoliciesComponent'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -6,17 +7,14 @@ import {
   PolicySchema,
   PolicyType,
   FeeComponentType
-} from './FeeManagement.schema'
-
+} from '../FeeManagement.schema'
 import {
-
   ModalComponent,
   ButtonComponent,
   DialogModal,
   Table,
 } from '@components/common'
 import FormAddFeeComponent from '@pages/fee-managerment-v3/components/FormAddFeeComponent'
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import {
   useDeleteFeeComponentPoliciesMutation,
   useGetFeeComponentByIdQuery,
@@ -32,17 +30,15 @@ import {
   usePostNewPolicyMutation,
   usePutFeePolicyMutation
 } from '@services/apiFeePoliciesServices'
-import { message, Tooltip } from 'antd'
 import { useParams } from 'react-router-dom'
-import FormAddPolicy from './components/FormAddPolicy'
+import FormAddPolicy from '../components/FormAddPolicy'
 import { useGetFeeComponentTierQuery } from '@services/apiFeeComponentTier'
-import {
-  getCalculationMethodLabel,
-  getComponentTypeLabel
-} from './FeeManagement.utils'
+import { useMessage } from '@hooks/useMessage'
+import { convertToISO } from './FeeComponentManagement.utils'
 
 const FeeComponentManagerment = () => {
-  // Mock API trigger cho CustomSelect
+const {successMess, errorMess ,infoMess,warningMess} = useMessage()
+
   const [open, setOpen] = useState(false)
 
   const [openDialog, setOpenDialog] = useState(false)
@@ -51,16 +47,18 @@ const FeeComponentManagerment = () => {
 
   const [pageSize, setPageSize] = useState(10)
 
-  const [mode, setMode] = useState<'ADD' | 'UPDATE'>('ADD')
-
   const [selectedRow, setSelectedRow] = useState<any>(null)
+
   const [deletingId, setDeletingId] = useState<string | null>(null)
+
   const [updateComponentId, setUpdateComponentId] = useState<string | null>(
     null
   )
+
   const { data: feeComponent } = useGetFeeComponentByIdQuery(selectedRow?.id, {
     skip: !selectedRow?.id
   })
+
   const { data: feeComponentTierData } = useGetFeeComponentTierQuery(
     selectedRow?.id,
     {
@@ -88,10 +86,12 @@ const FeeComponentManagerment = () => {
     }
     return feeComponent
   }, [feeComponent, feeComponentTierData])
+
   const [
     putFeeComponentPolicies,
     { isLoading: putFeeComponentPoliciesLoading }
   ] = usePutFeeComponentPoliciesMutation()
+
   const [
     deleteFeeComponent,
     { isLoading: deleteFeeComponentLoading, isSuccess, isError, error }
@@ -113,8 +113,10 @@ const FeeComponentManagerment = () => {
 
   const [putFeePolicies, { isLoading: putFeePoliciesLoading }] =
     usePutFeePolicyMutation()
+
   const [postFeeComponent, { isLoading: loadPostComponent }] =
     usePostFeeComponentPoliciesMutation()
+
   const { data: feeData } = useGetFeeComponentPoliciesQuery(
     {
       page,
@@ -162,15 +164,14 @@ const FeeComponentManagerment = () => {
   const onSubmit = async (data: PolicyType) => {
     try {
       const res = await postNewPolicy(data).unwrap()
-      message.success('add thành công')
+      successMess('Thêm chính sách thành công!')
     } catch (error: any) {
-      message.error(error?.data?.message)
+      errorMess(error?.data?.message)
     }
   }
 
-  const convertToISO = (dateString: string) => {
-    return new Date(dateString.replace(' ', 'T')).toISOString()
-  }
+ 
+
   const handleUpdateFeeComponent = async (data: FeeComponentType) => {
     try {
       const payload = {
@@ -194,12 +195,13 @@ const FeeComponentManagerment = () => {
         id: updateComponentId,
         body: payload
       }).unwrap()
-      message.success('Cập nhật thành phần phí thành công')
+      successMess('Cập nhật thành phần phí thành công!')
       setOpen(false)
     } catch (error: any) {
-      message.error(error?.data?.message)
+      errorMess(error?.data?.message)
     }
   }
+
   const handleUpdate = async (data: PolicyType) => {
     try {
       const payload = {
@@ -208,8 +210,10 @@ const FeeComponentManagerment = () => {
         validTo: convertToISO(data.validTo)
       }
       await putFeePolicies({ id: id, body: payload })
-      message.success('update thành công')
-    } catch (error) { }
+      successMess('Cập nhật chính sách thành công!')
+    } catch (error) {
+      errorMess('Lỗi cập nhật!')
+     }
   }
 
   const handleDelete = async (id: any) => {
@@ -217,9 +221,9 @@ const FeeComponentManagerment = () => {
       if (selectedRow?.id === id) setSelectedRow(null)
       await deleteFeeComponent(id).unwrap()
       setOpenDialog(false)
-      message.success('Xoá thành công!')
+      successMess('Xoá thành công!')
     } catch (error) {
-      message.error('Lỗi xoá!')
+      errorMess('Lỗi xoá!')
     }
   }
 
@@ -228,90 +232,17 @@ const FeeComponentManagerment = () => {
   );
 
   const dataSource = sortedList.map((item: feePolicyComponent, idx: number) => ({
-    id: item.id,
-    no: (page - 1) * pageSize + idx + 1,
-    componentType: item.componentType,
-    calculationMethod: item.calculationMethod,
-    fixedAmount: item.fixedAmount,
-    percentage: item.percentage,
-    payerType: item.payerType
-  }));
+    ...item,
+    no: (page - 1) * pageSize + idx + 1
+  }))
 
-  const columns = [
-    {
-      title: '#',
-      dataIndex: 'no',
-      width: 60,
-      align: 'center' as const,
-      className: 'border border-b-0'
-    },
-    {
-      title: 'Loại (Type)',
-      dataIndex: 'componentType',
-      key: 'componentType',
-      className: ' border border-l-0',
-      render: (value: any) => getComponentTypeLabel(value)
-    },
-    {
-      title: 'Cách tính',
-      dataIndex: 'calculationMethod',
-      key: 'calculationMethod',
-      className: ' border border-l-0 border-b-0',
-      render: (value: any) => getCalculationMethodLabel(value)
-    },
-    {
-      title: 'Công thức',
-      dataIndex: 'fixedAmount',
-      key: 'fixedAmount',
-      className: ' border border-l-0 border-b-0',
-      render: (value: any, record: any) => {
-        if (record.calculationMethod === 'DIRECT') {
-          return `${record.percentage ?? 0}% + ${record.fixedAmount ?? 0}`
-        }
-        return value
-      }
-    },
-    {
-      title: 'Người trả',
-      dataIndex: 'payerType',
-      key: 'payerType',
-      className: ' border border-l-0 border-b-0'
-    },
-    {
-      title: 'Thao tác',
-      key: 'action',
-      width: 50,
-      className: 'border border-l-0 border-b-0',
-      align: 'center' as const,
-      render: (record: any) => (
-        <div className='flex gap-1 justify-center'>
-          <Tooltip title="Cập nhật">
-            <ButtonComponent
-              type='text'
-              icon={<EditOutlined />}
-              onClick={() => {
-                setSelectedRow(record)
-                setOpen(true)
-                setUpdateComponentId(record.id)
-              }}
-            />
-
-          </Tooltip>
-          <Tooltip title="Xóa">
-            <ButtonComponent
-              type="text"
-              danger
-              icon={<DeleteOutlined />}
-              onClick={() => {
-                setDeletingId(record.id)
-                setOpenDialog(true)
-              }}
-            />
-          </Tooltip>
-        </div>
-      )
-    }
-  ]
+  const columns = feeComponentColumns({
+      setSelectedRow,
+      setOpen,
+      setUpdateComponentId,
+      setDeletingId,
+      setOpenDialog
+  })
 
   const formRef = useRef<{ submit: () => void; reset: () => void }>(null)
 
@@ -328,8 +259,6 @@ const FeeComponentManagerment = () => {
         roundMode: data.roundMode,
         minFee: data.minFee ?? 0,
         maxFee: data.maxFee ?? 0,
-        // minValue: data.minValue ?? 0,
-        // maxValue: data.maxValue ?? 0,
         payerType: data.payerType,
         payerObjectType: null,
         payerObjectId: null,
@@ -338,10 +267,10 @@ const FeeComponentManagerment = () => {
         beneficiaryObjectId: null
       }
       await postFeeComponent(payload).unwrap()
-      message.success('Thêm thành phần phí thành công')
+      successMess('Thêm thành phần phí thành công')
       setOpen(false)
     } catch (error: any) {
-      message.error(error?.data?.message)
+      errorMess(error?.data?.message)
     }
   }
 

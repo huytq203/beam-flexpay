@@ -2,11 +2,12 @@
 import { apiService } from "./apiService";
 import { ResponseType } from '@type/api'
 import { feePolicies, FeePoliciesResponse } from '@type/feePolicies'
+const baseURL=import.meta.env.VITE_FEE_API_URL
 export const feePolicyApi = apiService.injectEndpoints({
   endpoints: (build) => ({
     getFeePolicies: build.query({
       query: (pagination) => ({
-        url: `${import.meta.env.VITE_FEE_API_URL}/fee/policies`,
+        url: `${baseURL}/fee/policies`,
         method: "GET",
         params: pagination // { page, size, sortBy, sortDirection }
       }),
@@ -15,7 +16,7 @@ export const feePolicyApi = apiService.injectEndpoints({
     }),
     searchFeePolicies: build.query({
       query: (params) => ({
-        url: `${import.meta.env.VITE_FEE_API_URL}/fee/policies/search`,
+        url: `${baseURL}/fee/policies/search`,
         method: "GET",
         params: params,
 
@@ -25,7 +26,7 @@ export const feePolicyApi = apiService.injectEndpoints({
     }),
     getFeePolicyById: build.query({
       query: (id) => ({
-        url: `${import.meta.env.VITE_FEE_API_URL}/fee/policies/${id}`,
+        url: `${baseURL}/fee/policies/${id}`,
         method: "GET"
       }),
       transformResponse: (res: ResponseType<feePolicies>) => res.data,
@@ -33,7 +34,7 @@ export const feePolicyApi = apiService.injectEndpoints({
     }),
     postNewPolicy: build.mutation({
       query: (body) => ({
-        url: `${import.meta.env.VITE_FEE_API_URL}/fee/policies`,
+        url: `${baseURL}/fee/policies`,
         method: "POST",
         body: body,
         params: { isLoading: false }
@@ -42,21 +43,21 @@ export const feePolicyApi = apiService.injectEndpoints({
     }),
     patchDeactivateFee: build.mutation({
       query: (id) => ({
-        url: `${import.meta.env.VITE_FEE_API_URL}/fee/policies/${id}/deactivate`,
+        url: `${baseURL}/fee/policies/${id}/deactivate`,
         method: "PATCH",
       }),
       invalidatesTags: ['FeePolicy']
     }),
     patchActivateFee: build.mutation({
       query: (id) => ({
-        url: `${import.meta.env.VITE_FEE_API_URL}/fee/policies/${id}/activate`,
+        url: `${baseURL}/fee/policies/${id}/activate`,
         method: "PATCH",
       }),
       invalidatesTags: ['FeePolicy']
     }),
     putFeePolicy: build.mutation({
       query: ({ id, body }) => ({
-        url: `${import.meta.env.VITE_FEE_API_URL}/fee/policies/${id}`,
+        url: `${baseURL}/fee/policies/${id}`,
         method: "PUT",
         body: body
       }),

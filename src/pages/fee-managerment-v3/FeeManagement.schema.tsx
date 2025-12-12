@@ -14,7 +14,7 @@ export const PolicySchema = z.object({
   (data) => !data.validFrom || !data.validTo || new Date(data.validTo) >= new Date(data.validFrom),
   {
     message: "Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu",
-    path: ["validTo"], // lỗi sẽ hiện ở validTo
+    path: ["validTo"], 
   }
 );
 

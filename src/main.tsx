@@ -12,6 +12,7 @@ import { WalletRoutes } from './routes'
 
 import './styles/index.scss'
 import React from 'react'
+import { MessageProvider } from '@hooks/useMessage'
 
 // add events to global
 window.events = new EventEmitter()
@@ -58,6 +59,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <Provider store={store}>
       <I18nextProvider i18n={i18next}>
         <ConfigProvider theme={theme}>
+          <MessageProvider>
           <App>
             <React.Suspense fallback={<ScreenLoading />}>
               <RouterProvider
@@ -67,6 +69,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
             </React.Suspense>
             <ScreenLoading />
           </App>
+          </MessageProvider>
         </ConfigProvider>
       </I18nextProvider>
     </Provider>

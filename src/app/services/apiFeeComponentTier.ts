@@ -5,11 +5,12 @@ import {
   feePolicyComponent,
   FeeComponentResponse
 } from '@type/feePoliciesComponent'
+const baseURL=import.meta.env.VITE_FEE_API_URL
 export const apiFeeComponentTier = apiService.injectEndpoints({
   endpoints: (build) => ({
     postFeeComponentTier: build.mutation({
       query: (body) => ({
-        url: `${import.meta.env.VITE_FEE_API_URL}/fee/component-tiers`,
+        url: `${baseURL}/fee/component-tiers`,
         method: 'POST',
         body: body
       }),
@@ -17,7 +18,7 @@ export const apiFeeComponentTier = apiService.injectEndpoints({
     }),
     getFeeComponentTier: build.query({
       query: (id) => ({
-        url: `${import.meta.env.VITE_FEE_API_URL}/fee/component-tiers/by-component/${id}`,
+        url: `${baseURL}/fee/component-tiers/by-component/${id}`,
         method: 'GET',
       }),
       transformResponse: (res: ResponseType<any[]>) => res.data,
@@ -25,14 +26,14 @@ export const apiFeeComponentTier = apiService.injectEndpoints({
     }),
    deleteFeeComponentTier: build.mutation({
       query: (id) => ({
-        url: `${import.meta.env.VITE_FEE_API_URL}/fee/component-tiers/${id}`,
+        url: `${baseURL}/fee/component-tiers/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['feeComponentTier']
     }),
    putFeeComponentTier: build.mutation({
       query: ({id,body}) => ({
-        url: `${import.meta.env.VITE_FEE_API_URL}/fee/component-tiers/${id}`,
+        url: `${baseURL}/fee/component-tiers/${id}`,
         method: 'PUT',
         body: body
       }),

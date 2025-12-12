@@ -5,8 +5,9 @@ import {
   LockOutlined,
   UnlockOutlined
 } from '@ant-design/icons'
-import { getFeeDomainLabel, getServiceTypeLabel } from './FeeManagement.utils'
+import { getFeeDomainLabel, getServiceTypeLabel } from '../FeeManagement.utils'
 import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
+
 
 export const getPolicyColumns = ({
   navigate,
@@ -14,8 +15,8 @@ export const getPolicyColumns = ({
   handleActiveFee
 }: {
   navigate: any
-  handleDeActiveFee: (record: any) => void
-  handleActiveFee: (record: any) => void
+  handleDeActiveFee: (record: { key: string }) => void
+  handleActiveFee: (record: { key: string }) => void
 }) => [
   {
     title: 'STT',
@@ -55,7 +56,7 @@ export const getPolicyColumns = ({
     title: 'Phí miền',
     dataIndex: 'feeDomain',
     className: 'border border-l-0 border-b-0',
-    render: (value: any) => getFeeDomainLabel(value)
+    render: (value: string) => getFeeDomainLabel(value)
   },
   {
     title: 'Loại tiền',
@@ -86,13 +87,17 @@ export const getPolicyColumns = ({
       <div className='flex gap-2 justify-center'>
         <ButtonComponent
           type='default'
-          icon={<EditOutlined />}
+          icon={<EditOutlined {...({} as any)} />}
           onClick={() => navigate(`${FEEMANAGEMENR_V3}/edit/${record.key}`)}
         />
         <ButtonComponent
           type='default'
           icon={
-            record.status === 'ACTIVE' ? <UnlockOutlined /> : <LockOutlined />
+            record.status === 'ACTIVE' ? (
+              <UnlockOutlined {...({} as any)} />
+            ) : (
+              <LockOutlined {...({} as any)} />
+            )
           }
           onClick={() => {
             if (record.status === 'ACTIVE') {
@@ -161,7 +166,7 @@ export const getFeeComponentColumns = ({
       <div className='flex gap-1 justify-center'>
         <ButtonComponent
           type='text'
-          icon={<EditOutlined />}
+          icon={<EditOutlined {...({} as any)} />}
           onClick={() => {
             setSelectedRow(record)
             setOpen(true)
@@ -171,7 +176,7 @@ export const getFeeComponentColumns = ({
         <ButtonComponent
           type='text'
           danger
-          icon={<DeleteOutlined />}
+          icon={<DeleteOutlined {...({} as any)} />}
           onClick={() => {
             setDeletingId(record.id)
             setOpenDialog(true)
