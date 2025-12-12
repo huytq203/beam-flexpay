@@ -1,6 +1,6 @@
 import { Control, FieldValues, Path } from "react-hook-form";
 import { FormField } from "./FormField";
-import { DateInput } from "../ui/dateInput-component"; // Import từ UI components của bạn
+import { DateInput } from "@components/ui/dateInput-component"; // Import từ UI components của bạn
 import dayjs, { Dayjs } from "dayjs";
 
 interface FormDatePickerProps<T extends FieldValues> {
