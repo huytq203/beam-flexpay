@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { feeComponentColumns } from './FeeComponentManagement.columns'
 import { feePolicyComponent } from '@type/feePoliciesComponent'
 import { useForm } from 'react-hook-form'
@@ -37,7 +37,7 @@ import { useMessage } from '@hooks/useMessage'
 import { convertToISO } from './FeeComponentManagement.utils'
 
 const FeeComponentManagerment = () => {
-const {successMess, errorMess ,infoMess,warningMess} = useMessage()
+  const { successMess, errorMess, infoMess, warningMess } = useMessage()
 
   const [open, setOpen] = useState(false)
 
@@ -170,7 +170,7 @@ const {successMess, errorMess ,infoMess,warningMess} = useMessage()
     }
   }
 
- 
+
 
   const handleUpdateFeeComponent = async (data: FeeComponentType) => {
     try {
@@ -213,7 +213,7 @@ const {successMess, errorMess ,infoMess,warningMess} = useMessage()
       successMess('Cập nhật chính sách thành công!')
     } catch (error) {
       errorMess('Lỗi cập nhật!')
-     }
+    }
   }
 
   const handleDelete = async (id: any) => {
@@ -227,21 +227,25 @@ const {successMess, errorMess ,infoMess,warningMess} = useMessage()
     }
   }
 
-  const sortedList = [...list].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+  const sortedList = useMemo(() => {
+    return [...list].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [list])
 
-  const dataSource = sortedList.map((item: feePolicyComponent, idx: number) => ({
-    ...item,
-    no: (page - 1) * pageSize + idx + 1
-  }))
-
+  const dataSource = useMemo(() => {
+    return sortedList.map((item: feePolicyComponent, idx: number) => ({
+      ...item,
+      no: (page - 1) * pageSize + idx + 1
+    }));
+  }, [sortedList, page, pageSize]);
+  
   const columns = feeComponentColumns({
-      setSelectedRow,
-      setOpen,
-      setUpdateComponentId,
-      setDeletingId,
-      setOpenDialog
+    setSelectedRow,
+    setOpen,
+    setUpdateComponentId,
+    setDeletingId,
+    setOpenDialog
   })
 
   const formRef = useRef<{ submit: () => void; reset: () => void }>(null)
