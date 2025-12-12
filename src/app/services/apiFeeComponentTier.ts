@@ -32,8 +32,8 @@ export const apiFeeComponentTier = apiService.injectEndpoints({
       invalidatesTags: ['feeComponentTier']
     }),
    putFeeComponentTier: build.mutation({
-      query: ({id,body}) => ({
-        url: `${baseURL}/fee/component-tiers/${id}`,
+      query: ({body}) => ({
+        url: `${baseURL}/fee/component-tiers`,
         method: 'PUT',
         body: body
       }),
