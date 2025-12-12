@@ -20,6 +20,8 @@ export interface feePolicyComponent {
   updatedAt: string
   createdBy: string
   updatedBy: string
+  minValue:number
+  maxValue:number
 }
 export interface FeeComponentResponse {
   content: feePolicyComponent[];
@@ -78,4 +80,17 @@ export enum calculationType {
   FLAT_TIER = 'Flat Tier',
   DIRECT = 'Direct',
   PROGRESSIVE_TIER = 'Progressive Tier',
+}
+
+export interface FeeComponentFormValues {
+  componentType: string;
+  baseOn: string;
+  payerType: string;
+  beneficiaryType: string;
+  roundMode: string;
+  calculationMethod: string | number;
+  feeExpression?: string;
+  tiers?: feePolicyComponent[];
+  minValue?: number;
+  maxValue?: number;
 }

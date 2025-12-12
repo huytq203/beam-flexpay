@@ -22,7 +22,7 @@ import {
   usePostFeeComponentTierMutation,
   usePutFeeComponentTierMutation
 } from '@services/apiFeeComponentTier'
-import { baseOn, calculationMethodEnum, componentType, payerType, roundMode } from '@type/feePoliciesComponent'
+import { baseOn, calculationMethodEnum, componentType, FeeComponentFormValues, feePolicyComponent, payerType, roundMode } from '@type/feePoliciesComponent'
 import { useMessage } from '@hooks/useMessage'
 
 interface FormAddFeeProps {
@@ -73,7 +73,7 @@ const FormAddFeeComponent = forwardRef<
   const [putFeeComponentTier] = usePutFeeComponentTierMutation()
   const [deleteFeeComponentTier, { isLoading: isDeleteFeeComponentTierLoading }] = useDeleteFeeComponentTierMutation()
   const { successMess, errorMess } = useMessage()
-  const isUpdateMode = !!(initialData as any)?.id // keeping type assertion for id check if not in schema
+  const isUpdateMode = !!(initialData as feePolicyComponent)?.id // keeping type assertion for id check if not in schema
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -93,9 +93,9 @@ const FormAddFeeComponent = forwardRef<
     } catch (error) { }
   }
 
-  const handleUpdateTier = async (tierData: any, id?: string) => {
+  const handleUpdateTier = async (tierData: feePolicyComponent, id?: string) => {
     try {
-      const feeComponentId = (initialData as any)?.id
+      const feeComponentId = (initialData as feePolicyComponent)?.id
       const payload = [
         {
           feeComponentId,
@@ -312,7 +312,7 @@ const FormAddFeeComponent = forwardRef<
               icon={<SaveOutlined style={{ color: '#08c' }}  {...({} as any)} />}
               onClick={() => {
                 const tierData = getValues(`tiers.${index}`)
-                handleUpdateTier(tierData, (tierData as any).id)
+                handleUpdateTier(tierData as feePolicyComponent, (tierData as feePolicyComponent).id)
               }}
             />
           )}
