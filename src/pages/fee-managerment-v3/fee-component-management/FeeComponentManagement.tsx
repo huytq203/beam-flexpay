@@ -12,55 +12,79 @@ import {
   ModalComponent,
   ButtonComponent,
   DialogModal,
-  Table,
+  Table
 } from '@components/common'
 import FormAddFeeComponent from '@pages/fee-managerment-v3/components/FormAddFeeComponent'
 import {
-  useDeleteFeeComponentPoliciesMutation,
   useGetFeeComponentByIdQuery,
   useGetFeeComponentPoliciesByIdQuery,
-  useGetFeeComponentPoliciesQuery,
-  usePostFeeComponentPoliciesMutation,
-  usePutFeeComponentPoliciesMutation
+  useGetFeeComponentPoliciesQuery
 } from '@services/apiFeeComponent'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
 import {
   useGetFeePolicyByIdQuery,
   usePostNewPolicyMutation,
   usePutFeePolicyMutation
 } from '@services/apiFeePoliciesServices'
-import { useParams } from 'react-router-dom'
 import FormAddPolicy from '../components/FormAddPolicy'
 import { useGetFeeComponentTierQuery } from '@services/apiFeeComponentTier'
 import { useMessage } from '@hooks/useMessage'
-import { convertToISO } from './FeeComponentManagement.utils'
+import { convertToISO } from '../FeeManagement.utils'
+import { useFeeComponentForm } from '../hooks/useFeeComponentForm'
 
-const FeeComponentManagerment = () => {
-  const { successMess, errorMess, infoMess, warningMess } = useMessage()
+const FeeComponentManagement = () => {
+  const { successMess, errorMess } = useMessage()
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const isEdit = Boolean(id)
 
+  // UI State
   const [open, setOpen] = useState(false)
-
-  const [openDialog, setOpenDialog] = useState(false)
-
   const [page, setPage] = useState(1)
-
   const [pageSize, setPageSize] = useState(10)
-
-  const [selectedRow, setSelectedRow] = useState<any>(null)
-
-  const [deletingId, setDeletingId] = useState<string | null>(null)
-
-  const [updateComponentId, setUpdateComponentId] = useState<string | null>(
+  const [selectedRow, setSelectedRow] = useState<feePolicyComponent | null>(
     null
   )
 
-  const { data: feeComponent } = useGetFeeComponentByIdQuery(selectedRow?.id, {
-    skip: !selectedRow?.id
+  // Form ref
+  const formRef = useRef<{
+    submit: () => void
+    update: () => void
+    reset: () => void
+    submitAllTiers: (feeComponentId?: string) => Promise<void>
+    updateAllTiers: () => Promise<void>
+  }>(null)
+
+  // Custom hook for fee component CRUD
+  const {
+    updateComponentId,
+    setUpdateComponentId,
+    deletingId,
+    setDeletingId,
+    openDialog,
+    setOpenDialog,
+    handleFormSubmit,
+    handleUpdateFeeComponent,
+    handleDelete,
+    isSubmitting,
+    isDeleting
+  } = useFeeComponentForm({
+    feePolicyId: id,
+    onSuccess: () => setOpen(false),
+    setSelectedRow
   })
 
+  // API Queries
+  const { data: feeComponent } = useGetFeeComponentByIdQuery(
+    selectedRow?.id ?? '',
+    {
+      skip: !selectedRow?.id
+    }
+  )
+
   const { data: feeComponentTierData } = useGetFeeComponentTierQuery(
-    selectedRow?.id,
+    selectedRow?.id ?? '',
     {
       skip:
         !selectedRow?.id ||
@@ -69,7 +93,31 @@ const FeeComponentManagerment = () => {
     }
   )
 
-  const combinedInitialData = React.useMemo(() => {
+  const { data: policyData } = useGetFeePolicyByIdQuery(id!, {
+    skip: !isEdit
+  })
+
+  const { data: feeComponentPolicyData } = useGetFeeComponentPoliciesByIdQuery(
+    id!,
+    { skip: !isEdit }
+  )
+
+  const { data: feeData } = useGetFeeComponentPoliciesQuery(
+    {
+      page,
+      size: pageSize,
+      sortBy: 'createdAt',
+      sortDirection: 'DESC'
+    },
+    { skip: isEdit }
+  )
+
+  const [putFeePolicies, { isLoading: putFeePoliciesLoading }] =
+    usePutFeePolicyMutation()
+
+  const [postNewPolicy] = usePostNewPolicyMutation()
+
+  const combinedInitialData = useMemo(() => {
     if (!feeComponent) return null
     if (feeComponentTierData && feeComponentTierData.length > 0) {
       const tiers = feeComponentTierData.map((item: any) => ({
@@ -87,159 +135,23 @@ const FeeComponentManagerment = () => {
     return feeComponent
   }, [feeComponent, feeComponentTierData])
 
-  const [
-    putFeeComponentPolicies,
-    { isLoading: putFeeComponentPoliciesLoading }
-  ] = usePutFeeComponentPoliciesMutation()
-
-  const [
-    deleteFeeComponent,
-    { isLoading: deleteFeeComponentLoading, isSuccess, isError, error }
-  ] = useDeleteFeeComponentPoliciesMutation()
-
-  const { id } = useParams()
-
-  const isEdit = Boolean(id)
-
-  const { data: policyData } = useGetFeePolicyByIdQuery(id!, {
-    skip: !isEdit
-  })
-  const { data: feeComponenPolicyData } = useGetFeeComponentPoliciesByIdQuery(
-    id!,
-    {
-      skip: !isEdit
-    }
-  )
-
-  const [putFeePolicies, { isLoading: putFeePoliciesLoading }] =
-    usePutFeePolicyMutation()
-
-  const [postFeeComponent, { isLoading: loadPostComponent }] =
-    usePostFeeComponentPoliciesMutation()
-
-  const { data: feeData } = useGetFeeComponentPoliciesQuery(
-    {
-      page,
-      size: pageSize,
-      sortBy: 'createdAt',
-      sortDirection: 'DESC'
-    },
-    { skip: isEdit }
-  )
-
-  const list = (feeComponenPolicyData ?? feeData?.content) || []
-
+  const list = (feeComponentPolicyData ?? feeData?.content) || []
   const total = feeData?.totalElements || 0
-
-  const navigate = useNavigate()
-
-  const {
-    handleSubmit,
-    reset,
-    control,
-    formState: { errors }
-  } = useForm<PolicyType>({
-    resolver: zodResolver(PolicySchema),
-    defaultValues: {
-      name: '',
-      description: '',
-      priority: 0,
-      status: '',
-      validFrom: '',
-      validTo: '',
-      currency: '',
-      serviceType: '',
-      feeDomain: ''
-    }
-  })
-
-  useEffect(() => {
-    if (policyData) {
-      reset(policyData)
-    }
-  }, [policyData, reset])
-
-  const [postNewPolicy] = usePostNewPolicyMutation()
-
-  const onSubmit = async (data: PolicyType) => {
-    try {
-      const res = await postNewPolicy(data).unwrap()
-      successMess('Thêm chính sách thành công!')
-    } catch (error: any) {
-      errorMess(error?.data?.message)
-    }
-  }
-
-
-
-  const handleUpdateFeeComponent = async (data: FeeComponentType) => {
-    try {
-      const payload = {
-        componentType: data.componentType,
-        baseOn: data.baseOn,
-        baseComponentType: null,
-        calculationMethod: data.calculationMethod,
-        fixedAmount: data.fixedAmount ?? 0,
-        percentage: data.percentage ?? 0,
-        roundMode: data.roundMode,
-        minFee: data.minFee ?? 0,
-        maxFee: data.maxFee ?? 0,
-        payerType: data.payerType,
-        payerObjectType: null,
-        payerObjectId: null,
-        beneficiaryType: data.beneficiaryType,
-        beneficiaryObjectType: null,
-        beneficiaryObjectId: null
-      }
-      await putFeeComponentPolicies({
-        id: updateComponentId,
-        body: payload
-      }).unwrap()
-      successMess('Cập nhật thành phần phí thành công!')
-      setOpen(false)
-    } catch (error: any) {
-      errorMess(error?.data?.message)
-    }
-  }
-
-  const handleUpdate = async (data: PolicyType) => {
-    try {
-      const payload = {
-        ...data,
-        validFrom: convertToISO(data.validFrom),
-        validTo: convertToISO(data.validTo)
-      }
-      await putFeePolicies({ id: id, body: payload })
-      successMess('Cập nhật chính sách thành công!')
-    } catch (error) {
-      errorMess('Lỗi cập nhật!')
-    }
-  }
-
-  const handleDelete = async (id: any) => {
-    try {
-      if (selectedRow?.id === id) setSelectedRow(null)
-      await deleteFeeComponent(id).unwrap()
-      setOpenDialog(false)
-      successMess('Xoá thành công!')
-    } catch (error) {
-      errorMess('Lỗi xoá!')
-    }
-  }
 
   const sortedList = useMemo(() => {
     return [...list].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
   }, [list])
 
   const dataSource = useMemo(() => {
     return sortedList.map((item: feePolicyComponent, idx: number) => ({
       ...item,
       no: (page - 1) * pageSize + idx + 1
-    }));
-  }, [sortedList, page, pageSize]);
-  
+    }))
+  }, [sortedList, page, pageSize])
+
   const columns = feeComponentColumns({
     setSelectedRow,
     setOpen,
@@ -248,45 +160,75 @@ const FeeComponentManagerment = () => {
     setOpenDialog
   })
 
-  const formRef = useRef<{ submit: () => void; reset: () => void }>(null)
+  const DEFAULT_VALUES = {
+    name: '',
+    description: '',
+    priority: 0,
+    status: '',
+    validFrom: '',
+    validTo: '',
+    currency: '',
+    serviceType: '',
+    feeDomain: ''
+  }
 
-  const handleFormSubmit = async (data: FeeComponentType) => {
+  const {
+    handleSubmit,
+    reset,
+    control,
+    formState: { errors }
+  } = useForm<PolicyType>({
+    resolver: zodResolver(PolicySchema),
+    defaultValues:DEFAULT_VALUES
+  })
+
+  useEffect(() => {
+    if (policyData) {
+      reset(policyData)
+    }
+  }, [policyData, reset])
+
+  const onSubmit = async (data: PolicyType) => {
+    try {
+      await postNewPolicy(data).unwrap()
+      successMess('Thêm chính sách thành công!')
+    } catch (error: any) {
+      errorMess(error?.data?.message || 'Có lỗi xảy ra')
+    }
+  }
+
+  const handleUpdate = async (data: PolicyType) => {
     try {
       const payload = {
-        feePolicyId: id,
-        componentType: data.componentType,
-        baseOn: data.baseOn,
-        baseComponentType: null,
-        calculationMethod: data.calculationMethod,
-        fixedAmount: data.fixedAmount ?? 0,
-        percentage: data.percentage ?? 0,
-        roundMode: data.roundMode,
-        minFee: data.minFee ?? 0,
-        maxFee: data.maxFee ?? 0,
-        payerType: data.payerType,
-        payerObjectType: null,
-        payerObjectId: null,
-        beneficiaryType: data.beneficiaryType,
-        beneficiaryObjectType: null,
-        beneficiaryObjectId: null
+        ...data,
+        validFrom: data.validFrom ? convertToISO(data.validFrom) : '',
+        validTo: data.validTo ? convertToISO(data.validTo) : ''
       }
-      await postFeeComponent(payload).unwrap()
-      successMess('Thêm thành phần phí thành công')
-      setOpen(false)
-    } catch (error: any) {
-      errorMess(error?.data?.message)
+      await putFeePolicies({ id: id, body: payload })
+      successMess('Cập nhật chính sách thành công!')
+    } catch (error) {
+      errorMess('Lỗi cập nhật!')
     }
   }
 
   const handleSaveAddFee = () => {
-    if (formRef.current) {
-      formRef.current.submit()
+    if (selectedRow) {
+      formRef.current?.update()
+    } else {
+      formRef.current?.submit()
     }
+  }
+
+  const handleOpenAddModal = () => {
+    formRef.current?.reset()
+    setSelectedRow(null)
+    setUpdateComponentId(null)
+    setOpen(true)
   }
 
   return (
     <div>
-      <div className=''>
+      <div>
         <ButtonComponent
           type='default'
           content='Quay lai'
@@ -301,8 +243,9 @@ const FeeComponentManagerment = () => {
           }
         />
       </div>
-      <div className='flex flex-col justify-center item-center   my-2 gap-2'>
-        <div className='item1 bg-white rounded p-3 '>
+
+      <div className='flex flex-col justify-center item-center my-2 gap-2'>
+        <div className='item1 bg-white rounded p-3'>
           <div className='header'>
             <div className='flex justify-between items-center'>
               <p className='text-lg font-semibold'>1. Thông tin chung</p>
@@ -333,7 +276,8 @@ const FeeComponentManagerment = () => {
             </div>
           </div>
         </div>
-        <div className='item3 bg-white rounded p-3 '>
+
+        <div className='item3 bg-white rounded p-3'>
           <div className='header flex justify-between items-center'>
             <p className='text-lg font-semibold'>
               2. Danh sách Cấu phần phí (Components)
@@ -341,12 +285,7 @@ const FeeComponentManagerment = () => {
             <ButtonComponent
               htmlType='button'
               content='Thêm thành phần phí'
-              onClick={() => {
-                formRef.current?.reset()
-                setSelectedRow(null)
-                setUpdateComponentId(null)
-                setOpen(true)
-              }}
+              onClick={handleOpenAddModal}
               type='primary'
               icon={
                 <svg
@@ -369,9 +308,9 @@ const FeeComponentManagerment = () => {
                 pageSize: pageSize,
                 total: total,
                 showSizeChanger: true,
-                onChange: (page, pageSize) => {
-                  setPage(page)
-                  setPageSize(pageSize)
+                onChange: (newPage, newPageSize) => {
+                  setPage(newPage)
+                  setPageSize(newPageSize)
                 }
               }}
             />
@@ -380,16 +319,13 @@ const FeeComponentManagerment = () => {
               open={open}
               onOk={handleSaveAddFee}
               onCancel={() => setOpen(false)}
-              confirmLoading={
-                loadPostComponent || putFeeComponentPoliciesLoading
-              }
+              confirmLoading={isSubmitting}
               modalText={
                 <FormAddFeeComponent
                   ref={formRef}
                   onSubmit={
                     selectedRow ? handleUpdateFeeComponent : handleFormSubmit
                   }
-
                   initialData={selectedRow ? combinedInitialData : null}
                 />
               }
@@ -397,15 +333,16 @@ const FeeComponentManagerment = () => {
           </div>
         </div>
       </div>
+
       <DialogModal
         open={openDialog}
         onOk={() => handleDelete(deletingId)}
         onCancel={() => setOpenDialog(false)}
-        confirmLoading={deleteFeeComponentLoading}
+        confirmLoading={isDeleting}
         content='Bạn có xác nhận xóa ?'
       />
     </div>
   )
 }
 
-export default FeeComponentManagerment
+export default FeeComponentManagement

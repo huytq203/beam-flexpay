@@ -82,6 +82,9 @@
 
 
     "/fee-v3/fee-management":"Quản lý chính sách phí",
-    "/fee-v3/edit/*":"Cập nhật chính sách phí"
+    "/fee-v3/edit/*":"Cập nhật chính sách phí",
+    "/fee-v3/fee-assignment/create":"Thiết lập gán phí",
+    "/fee-v3/fee-assignment/edit/*":"Cập nhật gán phí",
+    "/fee-v3/fee-assignment":"Quản lý gán phí"
   }
 }

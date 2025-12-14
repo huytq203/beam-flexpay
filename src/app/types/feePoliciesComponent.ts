@@ -30,6 +30,7 @@ export interface FeeComponentResponse {
   size: number;
   number: number;
 }
+
 export enum feeDomain {
   EWALLET = "Ewallet",
   BANK = "Bank",
@@ -52,18 +53,35 @@ export enum componentType {
   VAT = 'Thuế VAT',
   PROCESSING_FEE = 'Phí xử lý',
   REFUND_FEE = 'Phí hoàn tiền',
+  
 
 }
 export enum baseOn {
   AMOUNT = 'Tính trên số tiền giao dịch',
+  TRANSACTION_FEE = 'Phí giao dịch cơ bản',
+  SYSTEM_FEE = 'Phí hệ thống',
+  MERCHANT_FEE = 'Phí merchant',
+  BANK_FEE = 'Phí ngân hàng',
+  PLATFORM_FEE = 'Phí nền tảng',
+  VAT = 'Thuế VAT',
+  PROCESSING_FEE = 'Phí xử lý',
+  REFUND_FEE = 'Phí hoàn tiền',
 }
+
+
 export enum payerType {
   USER = 'Người dùng',
   MERCHANT = 'Merchant',
   SYSTEM = 'Hệ thống/platform',
-  BANK = 'Ngân hàng',
-  PARTNER = 'Đối tác',
-  TAX = 'Cơ quan thuế',
+  SENDER = 'Người gửi',
+  RECEIVER = 'Người nhận',
+}
+export enum beneficiaryType{
+  SYSTEM='Hệ thống',
+  MERCHANT='Merchant',
+  BANK='Ngân hàng',
+  PARTNER='Đối tác',
+  TAX='Cơ quan thuế',
 }
 export enum roundMode {
   UP = 'Làm tròn lên',

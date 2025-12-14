@@ -16,6 +16,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@phosphor-icons/react": "^2.1.7",
     "@reduxjs/toolkit": "^1.9.0",
+    "@tippyjs/react": "^4.2.6",
     "@vitejs/plugin-react": "^2.2.0",
     "ahooks": "^3.7.2",
     "antd": "5.20.6",

@@ -9,6 +9,7 @@ interface FormDatePickerProps<T extends FieldValues> {
   label?: string;
   picker?: "date" | "week" | "month" | "quarter" | "year";
   className?: string;
+  showTime?: boolean;
   [key: string]: any;
 }
 
@@ -18,7 +19,8 @@ export function FormDatePicker<T extends FieldValues>({
   label,
   picker = "date",
   className = "col-span-6 flex flex-col",
-  classNameLable='font-medium',
+  classNameLable = 'font-medium',
+  showTime = false,
   ...rest
 }: FormDatePickerProps<T>) {
   return (
@@ -32,11 +34,23 @@ export function FormDatePicker<T extends FieldValues>({
         <DateInput
           {...field}
           {...rest}
+          format="DD/MM/YYYY HH:mm:ss"
+          showTime={showTime}
           value={field.value ? dayjs(field.value) : null}
           picker={picker}
-          onChange={(date: Dayjs | null, dateString: string) =>
-            field.onChange(dateString ? `${dateString}T00:00:00.000Z` : "")
-          }
+          onChange={(date: Dayjs | null, dateString: string) => {
+            if (!dateString) {
+              field.onChange("");
+              return;
+            }
+            // If showTime is enabled, use the selected datetime directly
+            if (showTime && date) {
+              field.onChange(date.toISOString());
+            } else {
+              // Date only - append midnight time
+              field.onChange(`${dateString}T00:00:00.000Z`);
+            }
+          }}
         />
       )}
     />

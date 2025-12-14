@@ -15,7 +15,6 @@ interface FormAddPolicyProps {
   id?: string
   handleUpdate?: (data: PolicyType) => Promise<void>
   onSubmit: (data: PolicyType) => Promise<void>
-
 }
 
 const FormAddPolicy = ({
@@ -42,8 +41,10 @@ const FormAddPolicy = ({
             control={control}
             label='Tên chính sách phí'
             placeholder='Nhập tên chính sách...'
+            className='col-span-12 md:col-span-6'
           />
           <FormSelect
+            className='col-span-12 md:col-span-6'
             name='priority'
             control={control}
             label='Mức độ ưu tiên'
@@ -56,17 +57,22 @@ const FormAddPolicy = ({
           />
 
           <FormDatePicker
+            className='col-span-12 md:col-span-6 flex flex-col'
             name='validFrom'
             control={control}
             label='Hiệu lực từ'
+            showTime
           />
           <FormDatePicker
+            className='col-span-12 md:col-span-6 flex flex-col'
             name='validTo'
             control={control}
             label='Hiệu lực đến'
+            showTime
           />
 
           <FormSelect
+            className='col-span-12 md:col-span-6'
             name='status'
             control={control}
             label='Trạng thái hoạt động'
@@ -81,6 +87,7 @@ const FormAddPolicy = ({
           />
 
           <FormSelect
+            className='col-span-12 md:col-span-6'
             name='serviceType'
             control={control}
             label='Loại dịch vụ'
@@ -88,12 +95,13 @@ const FormAddPolicy = ({
             options={[
               { label: 'Chọn tất cả', value: '' },
               ...Object.entries(serviceType).map(([key, value]) => ({
-                label: value,     // hoặc value
+                label: value, // hoặc value
                 value: key
               }))
             ]}
           />
           <FormInput
+            className='col-span-12 md:col-span-6'
             name='currency'
             control={control}
             label='Đơn vị thanh toán'
@@ -101,6 +109,7 @@ const FormAddPolicy = ({
           />
 
           <FormSelect
+            className='col-span-12 md:col-span-6'
             name='feeDomain'
             control={control}
             label='Phí miền'
@@ -108,13 +117,14 @@ const FormAddPolicy = ({
             options={[
               { label: 'Chọn tất cả', value: '' },
               ...Object.entries(feeDomain).map(([key, value]) => ({
-                label: value,     // hoặc value
+                label: value, // hoặc value
                 value: key
               }))
             ]}
           />
 
           <FormTextArea
+            className='col-span-12 md:col-span-12'
             name='description'
             control={control}
             label='Mô tả'

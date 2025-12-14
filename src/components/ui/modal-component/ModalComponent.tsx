@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react'
 import { Modal } from 'antd'
-interface ModalComponentProps {
+import { ModalProps } from 'antd/lib'
+interface ModalComponentProps extends ModalProps {
   open: boolean
   onOk: () => void
   onCancel: () => void
@@ -17,29 +18,33 @@ const ModalComponent = ({
   confirmLoading,
   modalText,
   width,
+  ...props
 }: ModalComponentProps) => {
   return (
     <Modal
+      {...props} // Spread tất cả props trước (bao gồm centered)
       title={title || "title"}
       open={open}
       onOk={onOk}
+      centered
+      destroyOnClose
       confirmLoading={confirmLoading}
       onCancel={onCancel}
-      width={width||'90%'}
-      style={{
-        top: 20, // đẩy modal lên gần top
-      }}
+      width={width || '90%'}
       styles={{
+        ...props.styles, // Merge styles từ props trước
         header: {
+          ...props.styles?.header,
           background: 'none'
         },
         content: {
-          background: '#fafafa' // màu bạn muốn
+          ...props.styles?.content,
+          background: '#fafafa'
         },
-
         body: {
-          maxHeight: '70vh', // chiều cao tối đa body
-          overflowY: 'auto' // scroll khi tràn
+          ...props.styles?.body,
+          maxHeight: '70vh',
+          overflowY: 'auto'
         }
       }}
     >

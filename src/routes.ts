@@ -1,4 +1,4 @@
-import { createElement } from 'react'
+import { Children, createElement } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 
 import AppLayout from '@components/layout/AppLayout'
@@ -18,7 +18,7 @@ import {
   REPORTS,
   ROLEMANAGEMENT,
   STATE_BANK,
-  FEEMANAGEMENR_V3,
+  FEEMANAGEMENR_V3
 } from '@constants/routersConstant'
 
 import ForgotPassword from '@pages/auth/forgot-password/ForgotPassword'
@@ -73,11 +73,20 @@ import PolicyManagement from '@pages/policy-management/PolicyManagement'
 import { OutboundFeeManagement } from '@pages/outbound-fee-management'
 import { OutboundFeeCreate } from '@pages/outbound-fee-management/outboundfee-create'
 import { OutboundFeeUpdate } from '@pages/outbound-fee-management/outboundfee-update'
-import { InboundFeeManagement, InboundFeeCreate, InboundFeeUpdate } from '@pages/inbound-fee-management'
-import { VatFeeCreate, VatFeeUpdate, VatFeeManagement } from '@pages/vat-fee-management'
+import {
+  InboundFeeManagement,
+  InboundFeeCreate,
+  InboundFeeUpdate
+} from '@pages/inbound-fee-management'
+import {
+  VatFeeCreate,
+  VatFeeUpdate,
+  VatFeeManagement
+} from '@pages/vat-fee-management'
 import FeeComponentManagement from '@pages/fee-managerment-v3/fee-component-management/FeeComponentManagement'
 import FeeManagement from '@pages/fee-managerment-v3/fee-management/FeeManagement'
 import FeeAssignmentManagement from '@pages/fee-managerment-v3/fee-assignment/FeeAssignmentManagement'
+import FeeAssignAdd from '@pages/fee-managerment-v3/fee-assignment/FeeAssignAdd'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -436,7 +445,6 @@ const internalWallet = {
   ]
 }
 
-
 // const bankAndConnect = {
 //   path: BANKANDCONNECT,
 //   element: createElement(AppLayout),
@@ -459,10 +467,10 @@ const feeManagementV3 = {
   errorElement: createElement(NotFound),
   children: [
     {
-      path: FEEMANAGEMENR_V3 ,
+      path: FEEMANAGEMENR_V3,
       children: [
         {
-          path: FEEMANAGEMENR_V3 + "/fee-management",
+          path: FEEMANAGEMENR_V3 + '/fee-management',
           element: createElement(FeeManagement)
         },
         {
@@ -477,11 +485,22 @@ const feeManagementV3 = {
       ]
     },
     {
-      path: FEEMANAGEMENR_V3 + '/fee-assignment',
-      element: createElement(FeeAssignmentManagement)
-    },
-
-
+      path: FEEMANAGEMENR_V3,
+      children: [
+        {
+          path: FEEMANAGEMENR_V3 + '/fee-assignment',
+          element: createElement(FeeAssignmentManagement)
+        },
+        {
+          path: FEEMANAGEMENR_V3 + '/fee-assignment/create',
+          element: createElement(FeeAssignAdd)
+        },
+        {
+          path: FEEMANAGEMENR_V3 + '/fee-assignment/edit/:id',
+          element: createElement(FeeAssignAdd)
+        },
+      ]
+    }
   ]
 }
 

@@ -4,16 +4,10 @@ import React, {
   forwardRef,
   useEffect
 } from 'react'
-import { Card, Table, Button, message } from 'antd'
-import type { ColumnsType } from 'antd/es/table'
-import { SelectInput, InputNumber, DialogModal, Input, ButtonComponent } from '@components/common'
-import {
-  CheckOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-  SaveOutlined
-} from '@ant-design/icons'
-import { useForm, useFieldArray, Controller } from 'react-hook-form'
+import { Card, Table } from 'antd'
+import { ButtonComponent, DialogModal } from '@components/common'
+import { PlusOutlined } from '@ant-design/icons'
+import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FeeComponentSchema, FeeComponentType } from '../FeeManagement.schema'
 import { FormInputNumber, FormSelect } from '@components/form'
@@ -22,12 +16,21 @@ import {
   usePostFeeComponentTierMutation,
   usePutFeeComponentTierMutation
 } from '@services/apiFeeComponentTier'
-import { baseOn, calculationMethodEnum, componentType, FeeComponentFormValues, feePolicyComponent, payerType, roundMode } from '@type/feePoliciesComponent'
+import {
+  baseOn,
+  beneficiaryType,
+  calculationMethodEnum,
+  componentType,
+  feePolicyComponent,
+  payerType,
+  roundMode
+} from '@type/feePoliciesComponent'
 import { useMessage } from '@hooks/useMessage'
+import { getTierColumns } from './FormAddFeeComponent.columns'
 
 interface FormAddFeeProps {
   initialData?: FeeComponentType | null
-  onSubmit?: (data: FeeComponentType) => void
+  onSubmit?: (data: FeeComponentType) => Promise<string | undefined | void> | void
 }
 
 const DEFAULT_TIER = {
@@ -53,8 +56,15 @@ const DEFAULT_VALUES: FeeComponentType = {
   maxFee: undefined
 }
 
+
 const FormAddFeeComponent = forwardRef<
-  { submit: () => void; reset: () => void },
+  {
+    submit: () => void
+    update: () => void
+    reset: () => void
+    submitAllTiers: (feeComponentId?: string) => Promise<void>
+    updateAllTiers: () => Promise<void>
+  },
   FormAddFeeProps
 >(({ onSubmit, initialData }, ref) => {
   const {
@@ -71,9 +81,10 @@ const FormAddFeeComponent = forwardRef<
 
   const [postFeeComponentTier] = usePostFeeComponentTierMutation()
   const [putFeeComponentTier] = usePutFeeComponentTierMutation()
-  const [deleteFeeComponentTier, { isLoading: isDeleteFeeComponentTierLoading }] = useDeleteFeeComponentTierMutation()
+  const [deleteFeeComponentTier, { isLoading: isDeleteFeeComponentTierLoading }] =
+    useDeleteFeeComponentTierMutation()
   const { successMess, errorMess } = useMessage()
-  const isUpdateMode = !!(initialData as feePolicyComponent)?.id // keeping type assertion for id check if not in schema
+  const isUpdateMode = !!(initialData as feePolicyComponent)?.id
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -88,42 +99,23 @@ const FormAddFeeComponent = forwardRef<
         await deleteFeeComponentTier(id).unwrap()
       }
       setOpenDialog(false)
-
       successMess('Xóa thành công')
-    } catch (error) { }
+    } catch (error) {
+      errorMess('Xóa thất bại')
+    }
   }
 
-  const handleUpdateTier = async (tierData: feePolicyComponent, id?: string) => {
+  const handleUpdateTier = async () => {
     try {
+      const allTiers = getValues('tiers')
       const feeComponentId = (initialData as feePolicyComponent)?.id
-      const payload = [
-        {
-          feeComponentId,
-          minValue: tierData.minValue,
-          maxValue: tierData.maxValue,
-          roundMode: tierData.roundMode,
-          minFee: tierData.minFee,
-          maxFee: tierData.maxFee,
-          fixedAmount: tierData.fixedAmount,
-          percentage: tierData.percentage
-        }
-      ]
-      if (id) {
-        await putFeeComponentTier({ body: payload }).unwrap()
-        successMess('Cập nhật thành công')
-      }
-    } catch (error) { errorMess('Cập nhật thất bại') }
-  }
-
-  const handleSubmitTier = async (index: number) => {
-    try {
-      const tierData = getValues(`tiers.${index}`)
-      if (!tierData) return
-
       const roundModeVal = getValues('roundMode')
-      const feeComponentId = (initialData as any)?.id
 
-      const payload = [{
+      if (!allTiers || allTiers.length === 0) {
+        return
+      }
+
+      const payload = allTiers.map((tierData) => ({
         feeComponentId,
         minValue: tierData.minValue ?? 0,
         maxValue: tierData.maxValue ?? 0,
@@ -132,12 +124,55 @@ const FormAddFeeComponent = forwardRef<
         maxFee: tierData.maxFee ?? 0,
         fixedAmount: tierData.fixedAmount ?? 0,
         percentage: tierData.percentage ?? 0
-      }]
+      }))
+
+      await putFeeComponentTier({ body: payload }).unwrap()
+    } catch (error) {
+      throw error
+    }
+  }
+
+  const handleSubmitAllTiers = async (feeComponentId?: string) => {
+    try {
+      const allTiers = getValues('tiers')
+      const roundModeVal = getValues('roundMode')
+
+      const componentId = feeComponentId || (initialData as feePolicyComponent)?.id
+
+      if (!componentId) {
+        errorMess('Không có feeComponentId')
+        return
+      }
+
+      if (!allTiers || allTiers.length === 0) {
+        errorMess('Không có dữ liệu tier để thêm')
+        return
+      }
+
+      const payload = allTiers.map((tierData) => ({
+        feeComponentId: componentId,
+        minValue: tierData.minValue ?? 0,
+        maxValue: tierData.maxValue ?? 0,
+        roundMode: roundModeVal,
+        minFee: tierData.minFee ?? 0,
+        maxFee: tierData.maxFee ?? 0,
+        fixedAmount: tierData.fixedAmount ?? 0,
+        percentage: tierData.percentage ?? 0
+      }))
 
       await postFeeComponentTier(payload).unwrap()
-      successMess("Thêm mới thành công")
+      successMess('Thêm mới thành công')
     } catch (error) {
       errorMess('Thêm mới thất bại')
+    }
+  }
+
+  const onDeleteTier = (index: number, id?: string) => {
+    if (id) {
+      setDeleteComponentId(id)
+      setOpenDialog(true)
+    } else {
+      remove(index)
     }
   }
 
@@ -153,15 +188,18 @@ const FormAddFeeComponent = forwardRef<
     }
   }, [initialData, reset])
 
-  const calculationMethod = watch('calculationMethod')
   const componentTypes = watch('componentType')
 
+  const isTierMode = ['PROGRESSIVE_TIER', 'FLAT_TIER'].includes(
+    String(watch('calculationMethod'))
+  )
+
   useImperativeHandle(ref, () => ({
-    submit: () => {
+    submit: async () => {
       handleSubmit(
-        (data) => {
+        async (data) => {
           if (onSubmit) {
-            onSubmit(data)
+            await onSubmit(data)
           }
         },
         (errors) => {
@@ -169,179 +207,100 @@ const FormAddFeeComponent = forwardRef<
         }
       )()
     },
-    reset: () => reset(DEFAULT_VALUES)
+    update: async () => {
+      await handleSubmit(
+        async (data) => {
+          try {
+            const promises: Promise<any>[] = []
+
+            if (onSubmit) {
+              promises.push(onSubmit(data) as Promise<any>)
+            }
+
+            promises.push(handleUpdateTier())
+
+            await Promise.all(promises)
+
+            successMess('Cập nhật phí thành công')
+          } catch (error) {
+            errorMess('Cập nhật phí thất bại')
+          }
+        },
+        (errors) => {
+          console.log('Validation Errors:', errors)
+        }
+      )()
+    },
+    reset: () => reset(DEFAULT_VALUES),
+    submitAllTiers: handleSubmitAllTiers,
+    updateAllTiers: handleUpdateTier
   }))
 
-  const columns: ColumnsType<any> = [
-    {
-      title: 'Phí Cố định',
-      dataIndex: 'fixedAmount',
-      key: 'fixedAmount',
-      render: (text, record, index) => (
-        <Controller
-          control={control}
-          name={`tiers.${index}.fixedAmount`}
-          render={({ field }) => (
-            <InputNumber
-              {...field}
-              placeholder='0'
-              style={{ width: '100%' }}
-            />
-          )}
-        />
-      )
-    },
-    {
-      title: 'Phí %',
-      dataIndex: 'percentage',
-      key: 'percentage',
-      render: (text, record, index) => (
-        <Controller
-          control={control}
-          name={`tiers.${index}.percentage`}
-          render={({ field }) => (
-            <InputNumber
-              {...field}
-              placeholder='0'
-              style={{ width: '100%' }}
-            />
-          )}
-        />
-      )
-    },
-    {
-      title: 'Từ (Min Value)',
-      dataIndex: 'minFee',
-      key: 'minFee',
-      render: (text, record, index) => (
-        <Controller
-          control={control}
-          name={`tiers.${index}.minFee`}
-          render={({ field }) => (
-            <InputNumber
-              {...field}
-              placeholder='Min'
-              style={{ width: '100%' }}
-            />
-          )}
-        />
-      )
-    },
-    {
-      title: 'Đến (Max Value)',
-      dataIndex: 'maxFee',
-      key: 'maxFee',
-      render: (text, record, index) => (
-        <Controller
-          control={control}
-          name={`tiers.${index}.maxFee`}
-          render={({ field }) => (
-            <InputNumber
-              {...field}
-              placeholder='Max'
-              style={{ width: '100%' }}
-            />
-          )}
-        />
-      )
-    },
-    {
-      title: 'Giá trị tối thiểu',
-      dataIndex: 'minValue',
-      key: 'minValue',
-      render: (text, record, index) => (
-        <Controller
-          control={control}
-          name={`tiers.${index}.minValue`}
-          render={({ field }) => (
-            <InputNumber
-              {...field}
-              placeholder='Min'
-              style={{ width: '100%' }}
-            />
-          )}
-        />
-      )
-    },
-    {
-      title: 'Giá trị tối đa',
-      dataIndex: 'maxValue',
-      key: 'maxValue',
-      render: (text, record, index) => (
-        <Controller
-          control={control}
-          name={`tiers.${index}.maxValue`}
-          render={({ field }) => (
-            <InputNumber
-              {...field}
-              placeholder='Max'
-              style={{ width: '100%' }}
-            />
-          )}
-        />
-      )
-    },
-    {
-      title: 'Hoạt động',
-      key: 'action',
-      align: 'center',
-      width: 60,
-      render: (_, record, index) => (
-        <div className='flex justify-center items-center gap-1'>
-          <ButtonComponent
-            type='text'
-            danger
-            icon={<DeleteOutlined {...({} as any)} />}
-            onClick={() => {
-              const currentTier = getValues(`tiers.${index}`)
-              if (currentTier && (currentTier as any).id) {
-                setDeleteComponentId((currentTier as any).id)
-                setOpenDialog(true)
-              } else {
-                remove(index)
-              }
-            }}
-          />
-          <ButtonComponent
-            type='text'
-            icon={<CheckOutlined style={{ color: 'green' }}  {...({} as any)} />}
-            onClick={() => handleSubmitTier(index)}
-          />
-          {isUpdateMode && (
-            <ButtonComponent
-              type='text'
-              icon={<SaveOutlined style={{ color: '#08c' }}  {...({} as any)} />}
-              onClick={() => {
-                const tierData = getValues(`tiers.${index}`)
-                handleUpdateTier(tierData as feePolicyComponent, (tierData as feePolicyComponent).id)
-              }}
-            />
-          )}
-        </div>
-      )
-    }
-  ]
+  const columns = getTierColumns({
+    control,
+    getValues,
+    onDeleteTier,
+  })
+
+  const selectOptions = {
+    componentType: [
+      { label: 'Chọn', value: '' },
+      ...Object.entries(componentType).map(([key, value]) => ({
+        label: value,
+        value: key
+      }))
+    ],
+    baseOn: [
+      { label: 'Chọn', value: '' },
+      ...Object.entries(baseOn).map(([key, value]) => ({
+        label: value,
+        value: key
+      }))
+    ],
+    payerType: [
+      { label: 'Chọn', value: '' },
+      ...Object.entries(payerType).map(([key, value]) => ({
+        label: value,
+        value: key
+      }))
+    ],
+    beneficiaryType: [
+      { label: 'Chọn', value: '' },
+      ...Object.entries(beneficiaryType).map(([key, value]) => ({
+        label: value,
+        value: key
+      }))
+    ],
+    roundMode: [
+      { label: 'Chọn', value: '' },
+      ...Object.entries(roundMode).map(([key, value]) => ({
+        label: value,
+        value: key
+      }))
+    ],
+    calculationMethod: Object.entries(calculationMethodEnum).map(
+      ([key, value]) => ({
+        label: value,
+        value: key
+      })
+    )
+  }
+
+  const isVATType = ['VAT'].includes(String(componentTypes))
+
   return (
     <div className='overflow-auto'>
-      <Card
-        className='mb-3'
-        style={{ width: '100%' }}
-      >
+      {/* Thông tin chung */}
+      <Card className='mb-3' style={{ width: '100%' }}>
         <p className='font-bold mb-1'>Thông tin chung</p>
         <div className='grid grid-cols-12 gap-3 px-2'>
           <FormSelect<FeeComponentType>
             control={control}
             name='componentType'
             label='Loại phí'
-            className='col-span-4 flex flex-col'
-            defaultValue={''}
-            options={[
-              { label: 'Chọn', value: '' },
-              ...Object.entries(componentType).map(([key, value]) => ({
-                label: value,     // hoặc value
-                value: key
-              }))
-            ]}
+            className='col-span-4 flex flex-col '
+            defaultValue=''
+            options={selectOptions.componentType}
             placeholder='Chọn loại phí'
           />
           <FormSelect<FeeComponentType>
@@ -349,14 +308,8 @@ const FormAddFeeComponent = forwardRef<
             name='baseOn'
             label='Tính dựa trên'
             className='col-span-4 flex flex-col'
-            defaultValue={''}
-            options={[
-              { label: 'Chọn', value: '' },
-              ...Object.entries(baseOn).map(([key, value]) => ({
-                label: value,     // hoặc value
-                value: key
-              }))
-            ]}
+            defaultValue=''
+            options={selectOptions.baseOn}
             placeholder='Chọn loại tính phí'
           />
           <FormSelect<FeeComponentType>
@@ -364,14 +317,8 @@ const FormAddFeeComponent = forwardRef<
             name='payerType'
             label='Người chịu'
             className='col-span-4 flex flex-col'
-            defaultValue={''}
-            options={[
-              { label: 'Chọn', value: '' },
-              ...Object.entries(payerType).map(([key, value]) => ({
-                label: value,     // hoặc value
-                value: key
-              }))
-            ]}
+            defaultValue=''
+            options={selectOptions.payerType}
             placeholder='Chọn người chịu phí'
           />
           <FormSelect<FeeComponentType>
@@ -379,30 +326,17 @@ const FormAddFeeComponent = forwardRef<
             name='beneficiaryType'
             label='Người hưởng'
             className='col-span-4 flex flex-col'
-            defaultValue={''}
-            options={[
-              { label: 'Chọn', value: '' },
-              ...Object.entries(payerType).map(([key, value]) => ({
-                label: value,     // hoặc value
-                value: key
-              }))
-            ]}
+            defaultValue=''
+            options={selectOptions.beneficiaryType}
             placeholder='Chọn người hưởng phí'
           />
-
           <FormSelect<FeeComponentType>
             control={control}
             name='roundMode'
             label='Công thức làm tròn'
             className='col-span-4 flex flex-col'
-            defaultValue={''}
-            options={[
-              { label: 'Chọn', value: '' },
-              ...Object.entries(roundMode).map(([key, value]) => ({
-                label: value,     // hoặc value
-                value: key
-              }))
-            ]}
+            defaultValue=''
+            options={selectOptions.roundMode}
             placeholder='Chọn công thức làm tròn'
           />
           <FormSelect<FeeComponentType>
@@ -410,65 +344,50 @@ const FormAddFeeComponent = forwardRef<
             name='calculationMethod'
             label='Chọn phương thức tính'
             className='col-span-4 flex flex-col'
-            options={[
-              ...Object.entries(calculationMethodEnum).map(([key, value]) => ({
-                label: value,     // hoặc value
-                value: key
-              }))
-            ]}
+            options={selectOptions.calculationMethod}
           />
         </div>
       </Card>
-      {
-        ["VAT"].includes(String(componentTypes)) ?
-          <Card>
+
+      {isVATType ? (
+        <Card>
+          <p className='font-bold mb-3'>Phương thức tính (Calculation Method)</p>
+          <FormInputNumber
+            control={control}
+            name='percentage'
+            label='Phí phần trăm (%)'
+            className='col-span-3 flex flex-col gap-2'
+            placeholder='0'
+            classNameLable='font-medium'
+          />
+        </Card>
+      ) : (
+        <div className={`${isTierMode && !isUpdateMode ? 'hidden' : ''}`}>
+          <Card className='mb-3' style={{ width: '100%' }}>
             <p className='font-bold mb-3'>Phương thức tính (Calculation Method)</p>
-            <FormInputNumber
-              control={control}
-              name='percentage'
-              label='Phí phần trăm (%)'
-              className='col-span-3 flex flex-col gap-2'
-              placeholder='0'
-              classNameLable='font-medium'
-            />
-          </Card> :
-          <div className={`${['PROGRESSIVE_TIER', 'FLAT_TIER'].includes(
-            String(calculationMethod)
-          ) && !isUpdateMode ? 'hidden' : ''}`}>
-            <Card
-              className='mb-3'
-              style={{ width: '100%' }}
-            >
-              <p className='font-bold mb-3'>Phương thức tính (Calculation Method)</p>
-              <div className='mb-3'>
-              </div>
+            <div className='mb-3'></div>
 
-              {['PROGRESSIVE_TIER', 'FLAT_TIER'].includes(
-                String(calculationMethod)
-              ) && isUpdateMode ? (
-                <>
-                  <Table
-                    columns={columns}
-                    dataSource={fields}
-                    pagination={false}
-                    bordered
-                    size='small'
-                    rowKey='id'
-                  />
-                  <ButtonComponent
-                    content=' Thêm khoảng phí (Add Tier)'
-                    type='dashed'
-                    onClick={() =>
-                      append(DEFAULT_TIER)
-                    }
-                    style={{ width: '100%', marginTop: 16 }}
-                    icon={<PlusOutlined {...({} as any)} />}
-                  />
+            {isTierMode && isUpdateMode ? (
+              <>
+                <Table
+                  columns={columns}
+                  dataSource={fields}
+                  pagination={false}
+                  bordered
+                  size='small'
+                  rowKey='id'
+                />
+                <ButtonComponent
+                  content=' Thêm khoảng phí (Add Tier)'
+                  type='dashed'
+                  onClick={() => append(DEFAULT_TIER)}
+                  style={{ width: '100%', marginTop: 16 }}
+                  icon={<PlusOutlined {...({} as any)} />}
+                />
+              </>
+            ) :
 
-
-                </>
-              ) : (
-
+              (
                 <Card>
                   <div className='grid grid-cols-12 gap-3'>
                     <FormInputNumber
@@ -496,7 +415,6 @@ const FormAddFeeComponent = forwardRef<
                       placeholder='0'
                       classNameLable='font-medium'
                     />
-
                     <FormInputNumber
                       control={control}
                       name='maxFee'
@@ -508,11 +426,9 @@ const FormAddFeeComponent = forwardRef<
                   </div>
                 </Card>
               )}
-            </Card>
-
-          </div>
-
-      }
+          </Card>
+        </div>
+      )}
 
       <DialogModal
         open={openDialog}

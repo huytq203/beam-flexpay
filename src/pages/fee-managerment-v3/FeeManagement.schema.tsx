@@ -47,14 +47,6 @@ export const FeeComponentSchema = z.object({
   minValue: z.number().optional(),
 
 }).refine(
-  (data) => data.payerType !== data.beneficiaryType,
-  {
-    message: "Người chịu phí và người hưởng phí không được trùng nhau",
-    path: ["beneficiaryType"], // Show error on beneficiaryType field
-  }
-
-)
-  .refine(
     (data) => {
       if (data.minValue !== undefined && data.maxValue !== undefined) {
         return data.minValue < data.maxValue;
@@ -68,3 +60,6 @@ export const FeeComponentSchema = z.object({
   );
 
 export type FeeComponentType = z.infer<typeof FeeComponentSchema>;
+
+export const FeeAssignSchema = z.object({})
+export type FeeAssignType=z.infer<typeof FeeAssignSchema>

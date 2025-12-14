@@ -1786,6 +1786,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@popperjs/core@npm:^2.9.0":
+  version: 2.11.8
+  resolution: "@popperjs/core@npm:2.11.8"
+  checksum: 10c0/4681e682abc006d25eb380d0cf3efc7557043f53b6aea7a5057d0d1e7df849a00e281cd8ea79c902a35a414d7919621fc2ba293ecec05f413598e0b23d5a1e63
+  languageName: node
+  linkType: hard
+
 "@probe.gl/env@npm:3.6.0":
   version: 3.6.0
   resolution: "@probe.gl/env@npm:3.6.0"
@@ -2111,6 +2118,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tippyjs/react@npm:^4.2.6":
+  version: 4.2.6
+  resolution: "@tippyjs/react@npm:4.2.6"
+  dependencies:
+    tippy.js: "npm:^6.3.1"
+  peerDependencies:
+    react: ">=16.8"
+    react-dom: ">=16.8"
+  checksum: 10c0/b174f2fbd27c16c5a8554ee8b26f3cc61bc37507669a1cef3e3333bfb3db85c84a57a93003c972ede8007786cf0e813d489781aa9caf46fb3bf1b851e3f4daba
+  languageName: node
+  linkType: hard
+
 "@turf/bbox-polygon@npm:^6.5.0":
   version: 6.5.0
   resolution: "@turf/bbox-polygon@npm:6.5.0"
@@ -2369,9 +2388,9 @@ __metadata:
   linkType: hard
 
 "@webgpu/types@npm:^0.1.34":
-  version: 0.1.67
-  resolution: "@webgpu/types@npm:0.1.67"
-  checksum: 10c0/31c08792b339bd1f46098a63d1ecb21d61e6c78ff33d9da01c81fa537039ac621d29211e60fa1c0a37f234107991554ac227f8656510378389372cd9bc78a2ac
+  version: 0.1.68
+  resolution: "@webgpu/types@npm:0.1.68"
+  checksum: 10c0/7d197050dcebaaec7ab2f167dbe579b8bd6bf4c2589aec5ec04eb39c4cb2a0a62afb0874554796d7fad7d8fd57069a8ddfe50407cda0323aaa4754e378075238
   languageName: node
   linkType: hard
 
@@ -2690,11 +2709,11 @@ __metadata:
   linkType: hard
 
 "baseline-browser-mapping@npm:^2.9.0":
-  version: 2.9.6
-  resolution: "baseline-browser-mapping@npm:2.9.6"
+  version: 2.9.7
+  resolution: "baseline-browser-mapping@npm:2.9.7"
   bin:
     baseline-browser-mapping: dist/cli.js
-  checksum: 10c0/9d9bae544342c02200e0a489d4caf3611a2a517d0d7a8c97e1dd7d640ac18d2784710bf08375b5951fb9034bd18d902b50797d90218a33b88e6244ae917f881f
+  checksum: 10c0/500af82926d71d23fab20bcf821eb27deeaad45d1a01bd33d2dea7aab6114149068fa0d42bb9c5c18657e996b6e8063b84612c8fb8ac8ba6c6c6028fa4930ed1
   languageName: node
   linkType: hard
 
@@ -3569,8 +3588,8 @@ __metadata:
   linkType: hard
 
 "es-abstract@npm:^1.23.5, es-abstract@npm:^1.23.9":
-  version: 1.24.0
-  resolution: "es-abstract@npm:1.24.0"
+  version: 1.24.1
+  resolution: "es-abstract@npm:1.24.1"
   dependencies:
     array-buffer-byte-length: "npm:^1.0.2"
     arraybuffer.prototype.slice: "npm:^1.0.4"
@@ -3626,7 +3645,7 @@ __metadata:
     typed-array-length: "npm:^1.0.7"
     unbox-primitive: "npm:^1.1.0"
     which-typed-array: "npm:^1.1.19"
-  checksum: 10c0/b256e897be32df5d382786ce8cce29a1dd8c97efbab77a26609bd70f2ed29fbcfc7a31758cb07488d532e7ccccdfca76c1118f2afe5a424cdc05ca007867c318
+  checksum: 10c0/fca062ef8b5daacf743732167d319a212d45cb655b0bb540821d38d715416ae15b04b84fc86da9e2c89135aa7b337337b6c867f84dcde698d75d55688d5d765c
   languageName: node
   linkType: hard
 
@@ -4102,6 +4121,7 @@ __metadata:
     "@hookform/resolvers": "npm:^5.2.2"
     "@phosphor-icons/react": "npm:^2.1.7"
     "@reduxjs/toolkit": "npm:^1.9.0"
+    "@tippyjs/react": "npm:^4.2.6"
     "@types/lodash": "npm:^4.14.195"
     "@types/node": "npm:^18.11.9"
     "@types/react": "npm:^18.0.24"
@@ -7190,17 +7210,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regl@npm:1.6.1":
+"regl@npm:1.6.1, regl@npm:^1.3.11":
   version: 1.6.1
   resolution: "regl@npm:1.6.1"
   checksum: 10c0/ebee2e2926444f9fffde61b2775b50ba8b8e49f53544656618dc9f330d9cbf40a3bd0969b2a48b1edebee649454733e5b6461adee654c29dff325ba3fdf1b456
-  languageName: node
-  linkType: hard
-
-"regl@npm:^1.3.11":
-  version: 1.7.0
-  resolution: "regl@npm:1.7.0"
-  checksum: 10c0/16edd050b76b75c64494ddfe00e2d4d5f1bf374e51d969d93ed2fc493c43d7992efd0d049428b84bf3455fca4f97dd190aeb0b2b145984702bbc9d29033d9d0b
   languageName: node
   linkType: hard
 
@@ -8040,6 +8053,15 @@ __metadata:
   version: 2.0.3
   resolution: "tinyqueue@npm:2.0.3"
   checksum: 10c0/d7b590088f015a94a17132fa209c2f2a80c45158259af5474901fdf5932e95ea13ff6f034bcc725a6d5f66d3e5b888b048c310229beb25ad5bebb4f0a635abf2
+  languageName: node
+  linkType: hard
+
+"tippy.js@npm:^6.3.1":
+  version: 6.3.7
+  resolution: "tippy.js@npm:6.3.7"
+  dependencies:
+    "@popperjs/core": "npm:^2.9.0"
+  checksum: 10c0/ec3677beb8caec791ee1f715663f28f42d60e0f7250074a047d13d5e6db95fdb6d26d8a3ac16cecb4ebcaf33ae919dbc889cf97948d115e8d3c81518c911b379
   languageName: node
   linkType: hard
 
