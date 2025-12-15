@@ -56,7 +56,8 @@ const FeeAssignmentManagement = () => {
     handleSubmit,
     reset,
     control,
-    formState: { errors }
+    formState: { errors },
+    setValue
   } = useForm<FeeAssignmentFormData>()
   const [isSearching, setIsSearching] = useState(false)
 
@@ -112,7 +113,7 @@ const FeeAssignmentManagement = () => {
       <CardComponent
         content={
           <>
-            <FormFieldAssign control={control} />
+            <FormFieldAssign control={control} setValue={setValue}/>
             <div className='flex justify-between mt-4'>
               <div className='flex justify-center items-center gap-2'>
                 <ButtonComponent icon={

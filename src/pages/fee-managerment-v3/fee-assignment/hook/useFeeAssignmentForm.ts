@@ -16,11 +16,19 @@ import { FeeAssignment } from '@type/feeAssignment'
 import { feePolicyComponent } from '@type/feePoliciesComponent'
 import { useFeeComponentForm } from '@pages/fee-managerment-v3/hooks/useFeeComponentForm'
 import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
+import { feeAssignSchema, FeeAssignType } from '../feeAssign.schema'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 // Form type excludes server-generated fields
-export type FeeAssignmentFormData = Omit<FeeAssignment, 'id' | 'createdAt' | 'updatedBy' | 'createdBy' | 'updatedAt'>
+export type FeeAssignmentFormData = Omit<FeeAssignment, 'id' | 'createdAt' | 'updatedBy' | 'createdBy' | 'updatedAt'> & {
+    assignScope?: string
+    applyType?: string
+    account?: string
+    applyDate?: string
+    createDate?: string
+}
 
-const DEFAULT_FORM_VALUES: FeeAssignmentFormData = {
+const DEFAULT_FORM_VALUES: FeeAssignType = {
     feePolicyId: '',
     merchantId: null,
     bankCode: '',
@@ -28,7 +36,9 @@ const DEFAULT_FORM_VALUES: FeeAssignmentFormData = {
     cardType: '',
     serviceType: '',
     customerGroup: '',
-    status: ''
+    status: '',
+    applyType: '',
+    account: '',
 }
 
 interface FormRef {
@@ -60,13 +70,15 @@ export const useFeeAssignmentForm = () => {
         control,
         handleSubmit,
         setValue,
-        reset: resetFormAdd
-    } = useForm<FeeAssignmentFormData>({
+        reset: resetFormAdd,
+        formState: { errors }
+    } = useForm<FeeAssignType>({
+        resolver: zodResolver(feeAssignSchema),
         defaultValues: DEFAULT_FORM_VALUES
     })
 
-    // API queries
-    const { data: dataAssignById } = useGetAssignByIdQuery(id)
+    // API 
+    const { data: dataAssignById } = useGetAssignByIdQuery(id!, { skip: !id })
     const feePolicyId = dataAssignById?.feePolicyId
 
     const { data: feeComponentData } = useGetFeeComponentPoliciesByIdQuery(
@@ -79,13 +91,12 @@ export const useFeeAssignmentForm = () => {
         { skip: !selectedComponent?.id }
     )
 
-    // Mutations
     const [deleteComponent, { isLoading: loadingDeleteComponent }] =
         useDeleteFeeComponentPoliciesMutation()
     const [postAssign, { isLoading: loadingPostAssign }] = usePostAssignMutation()
     const [putAssign, { isLoading: loadingPutAssign }] = usePutAssignMutation()
 
-    // Fee component form hook
+
     const {
         updateComponentId,
         setUpdateComponentId,
@@ -100,7 +111,6 @@ export const useFeeAssignmentForm = () => {
         setSelectedRow: setSelectedComponent
     })
 
-    // Combined initial data for edit modal
     const combinedInitialData = useMemo(() => {
         if (!selectedComponent) return null
         if (editTierData && editTierData.length > 0) {
@@ -119,10 +129,20 @@ export const useFeeAssignmentForm = () => {
         return selectedComponent
     }, [selectedComponent, editTierData])
 
-    // Effects
     useEffect(() => {
         if (dataAssignById) {
-            resetFormAdd(dataAssignById)
+            resetFormAdd({
+                feePolicyId: dataAssignById.feePolicyId,
+                merchantId: dataAssignById.merchantId,
+                bankCode: dataAssignById.bankCode,
+                paymentMethod: dataAssignById.paymentMethod || '',
+                cardType: dataAssignById.cardType || '',
+                serviceType: dataAssignById.serviceType,
+                customerGroup: dataAssignById.customerGroup || '',
+                status: dataAssignById.status,
+                applyType: '',
+                account: ''
+            })
         }
     }, [dataAssignById, resetFormAdd])
 
@@ -144,9 +164,25 @@ export const useFeeAssignmentForm = () => {
         setValue('feePolicyId', feePolicyId)
     }
 
-    const handlePostAssign = async (data: FeeAssignmentFormData) => {
+    const handlePostAssign = async (data: FeeAssignType) => {
+        // Kiểm tra feePolicyId trước khi submit
+        if (!data.feePolicyId || data.feePolicyId.trim() === '') {
+            errorMess('Vui lòng chọn chính sách phí')
+            return
+        }
+
         try {
-            await postAssign(data).unwrap()
+            const payload = {
+                feePolicyId: data.feePolicyId,
+                merchantId: data.merchantId,
+                bankCode: data.bankCode,
+                paymentMethod: data.paymentMethod,
+                cardType: data.cardType,
+                serviceType: data.serviceType,
+                customerGroup: data.customerGroup || '',
+                status: data.status,
+            }
+            await postAssign(payload).unwrap()
             successMess('Thêm mới thành công!')
             resetFormAdd()
         } catch (error: any) {
@@ -171,7 +207,13 @@ export const useFeeAssignmentForm = () => {
         }
     }
 
-    const handlePutAssign = async (data: FeeAssignmentFormData) => {
+    const handlePutAssign = async (data: FeeAssignType) => {
+        // Kiểm tra feePolicyId trước khi submit
+        if (!data.feePolicyId || data.feePolicyId.trim() === '') {
+            errorMess('Vui lòng chọn chính sách phí')
+            return
+        }
+
         try {
             const payload = {
                 merchantId: null,
@@ -179,7 +221,7 @@ export const useFeeAssignmentForm = () => {
                 paymentMethod: data.paymentMethod,
                 cardType: data.cardType,
                 serviceType: data.serviceType,
-                customerGroup: data.customerGroup,
+                customerGroup: data.customerGroup || '',
                 status: data.status
             }
             await putAssign({ id, body: payload }).unwrap()
@@ -212,6 +254,8 @@ export const useFeeAssignmentForm = () => {
         // Form
         control,
         handleSubmit,
+        setValue,
+        errors,
 
         // Data
         id,

@@ -34,15 +34,23 @@ export function FormSelect<T extends FieldValues>({
       label={label}
       classNameLable={classNameLable}
       className={className}
-      render={(field) => (
-        <SelectInput
-          {...field}
-          {...rest}
-          defaultValue={defaultValue}
-          data={options}
-          handleChange={field.onChange}
-        />
-      )}
+      render={(field) => {
+        const { onChange: customOnChange, ...fieldRest } = rest as any
+        return (
+          <SelectInput
+            {...field}
+            {...fieldRest}
+            defaultValue={defaultValue}
+            data={options}
+            handleChange={(value: any, option: any) => {
+              field.onChange(value)
+              if (customOnChange) {
+                customOnChange(value)
+              }
+            }}
+          />
+        )
+      }}
     />
   );
 }

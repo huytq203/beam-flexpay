@@ -1,7 +1,7 @@
+import { FieldBinaryOutlined } from '@ant-design/icons'
 import { FormDatePicker, FormInput, FormSelect } from '@components/form'
-import { FeeAssignType } from '@pages/fee-managerment-v3/FeeManagement.schema'
-import { FeeAssignmentFormData } from '@pages/fee-managerment-v3/fee-assignment/hook/useFeeAssignmentForm'
-import { usePostAssignMutation } from '@services/apiFeeAssignment'
+import { FeeAssignType } from '@pages/fee-managerment-v3/fee-assignment/feeAssign.schema'
+import { useGetBankQuery } from '@services/apiFeeMerchant'
 import {
   bankCodeType,
   cardTypeType,
@@ -10,33 +10,49 @@ import {
   statusType
 } from '@type/feeAssignment'
 import { serviceType } from '@type/feePoliciesComponent'
-import React, { useImperativeHandle } from 'react'
-import { Control } from 'react-hook-form'
+import React, { useEffect, useImperativeHandle, useState } from 'react'
+import { Control, UseFormSetValue } from 'react-hook-form'
+
 interface FormFieldAssign {
-  control: Control<FeeAssignmentFormData>
+  control: Control<FeeAssignType>
+  setValue?: UseFormSetValue<FeeAssignType>
 }
 
-const FormFieldAssign = ({ control }: FormFieldAssign) => {
-  // hookform
+const FormFieldAssign = ({ control, setValue }: FormFieldAssign) => {
+  const [disable, setDisable] = useState('')
 
   // api database
-
+  const { data: dataBank } = useGetBankQuery({})
+  // logic
+  useEffect(() => {
+    if (!setValue) return
+    
+    if (disable === "1") {
+      setValue("customerGroup", "")
+    }
+    else if (disable === "2") {
+      setValue('account', '')
+    }
+  }, [disable, setValue])
   return (
     <div>
-      <div className='grid grid-cols-10 gap-3'>
+      <div className='grid grid-cols-8 gap-3'>
         <FormInput
           control={control}
-          name=''
+          name='account'
           placeholder='Nhập tài khoản...'
           label='Tài khoản'
           className='col-span-2'
+          disabled={disable == "2" ? true : false}
         />
         <FormSelect
           control={control}
-          name=''
+          name='applyType'
           label='Đối tượng áp dụng'
           className='col-span-2'
+          defaultValue={''}
           options={[
+            { label: 'Chọn', value: '' },
             {
               label: 'Đối tượng riêng',
               value: '1'
@@ -46,6 +62,7 @@ const FormFieldAssign = ({ control }: FormFieldAssign) => {
               value: '2'
             }
           ]}
+          onChange={(val: any) => setDisable(val)}
         />
         <FormSelect
           control={control}
@@ -65,12 +82,12 @@ const FormFieldAssign = ({ control }: FormFieldAssign) => {
           name='bankCode'
           options={[
             { label: 'Chọn', value: '' },
-            ...Object.entries(bankCodeType).map(([key, value]) => ({
-              label: value,
-              value: key
+            ...(dataBank?.data?.content || []).map((item: any) => ({
+              label: item.name,
+              value: item.code
             }))
           ]}
-          label='Nhà cung cấp'
+          label='Ngân hàng'
           className='col-span-2'
         />
         <FormSelect
@@ -111,6 +128,7 @@ const FormFieldAssign = ({ control }: FormFieldAssign) => {
           ]}
           label='Nhóm khách hàng'
           className='col-span-2'
+          disabled={disable == "1" ? true : false}
         />
         <FormSelect
           control={control}
@@ -127,16 +145,16 @@ const FormFieldAssign = ({ control }: FormFieldAssign) => {
         />
         <FormDatePicker
           control={control}
-          name=''
+          name='applyDate'
           label='Thời gian áp dụng'
-          className='col-span-2 flex flex-col'
+          className='col-span-2 flex flex-col hidden'
           showTime
         />
         <FormDatePicker
           control={control}
-          name=''
+          name='createDate'
           label='Thời gian tạo'
-          className='col-span-2 flex flex-col'
+          className='col-span-2 flex flex-col hidden'
           showTime
         />
       </div>

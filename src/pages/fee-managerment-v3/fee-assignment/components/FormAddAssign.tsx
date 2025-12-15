@@ -1,7 +1,8 @@
 import { CardComponent, CheckboxComponent, Table } from '@components/common'
 import { FormInput } from '@components/form'
 import { getEnumLabel } from '@pages/fee-managerment-v3/FeeManagement.utils'
-import { useGetFeePoliciesQuery } from '@services/apiFeePoliciesServices'
+import { useGetFeePoliciesQuery, useLazySearchFeePoliciesQuery } from '@services/apiFeePoliciesServices'
+import useDebounce from '@hooks/useDebounce'
 import { serviceType } from '@type/feePoliciesComponent'
 import { TableRowSelection } from 'antd/es/table/interface'
 import React, { useState } from 'react'
@@ -13,21 +14,37 @@ interface FormAddAssignProps {
 
 const FormAddAssign = ({ onSelect }: FormAddAssignProps) => {
   // state
+  const [searchValue, setSearchValue] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [pageListPolicy, setPageListPolicy] = useState(1)
   const [pageSizeListPolicy, setPageSizeListPolicy] = useState(10)
   // api data
 
   const { data: dataPolicy } = useGetFeePoliciesQuery({
-    pageListPolicy,
+    page: pageListPolicy,
     size: pageSizeListPolicy,
     sortBy: 'createdAt',
     sortDirection: 'DESC'
   })
 
+  /* eslint-disable react-hooks/exhaustive-deps */
+  const debouncedSearchValue = useDebounce(searchValue, 500)
+  const [triggerSearch, { data: searchResult, isFetching: isSearching }] = useLazySearchFeePoliciesQuery()
+
   // handle
-  const list = dataPolicy?.content || []
-  const total = dataPolicy?.totalElements || 0
+  const list = (debouncedSearchValue ? searchResult?.content : dataPolicy?.content) || []
+  const total = (debouncedSearchValue ? searchResult?.totalElements : dataPolicy?.totalElements) || 0
+
+  React.useEffect(() => {
+    if (debouncedSearchValue) {
+      triggerSearch({
+        keyword: debouncedSearchValue, page: pageListPolicy,
+        size: pageSizeListPolicy,
+        sortBy: 'createdAt',
+        sortDirection: 'DESC'
+      })
+    }
+  }, [debouncedSearchValue])
 
   const dataSource = list.map((item, index) => ({
     key: item.id,
@@ -46,7 +63,7 @@ const FormAddAssign = ({ onSelect }: FormAddAssignProps) => {
     reset: resetSearch
   } = useForm({
     defaultValues: {
-      search: ''
+      keyword: ''
     }
   })
 
@@ -57,9 +74,10 @@ const FormAddAssign = ({ onSelect }: FormAddAssignProps) => {
           <>
             <FormInput
               control={controlSearch}
-              name='search'
+              name='keyword'
               label='Tìm kiếm tên chính sách'
               placeholder='Tìm kiếm tên chính sách...'
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchValue(e.target.value)}
             />
             <div className='mt-3'>
               <Table

@@ -27,6 +27,8 @@ const FeeAssignAdd = () => {
     // Form
     control,
     handleSubmit,
+    setValue,
+    errors,
 
     // Data
     id,
@@ -90,11 +92,11 @@ const FeeAssignAdd = () => {
               id='formAssign'
               onSubmit={handleSubmit(id ? handlePutAssign : handlePostAssign)}
             >
-              <FormFieldAssign control={control} />
+              <FormFieldAssign control={control} setValue={setValue} />
             </form>
             <div className='flex justify-between mt-4'>
               <div className='flex justify-center items-center gap-2'></div>
-              <div className='flex justify-center items-center'>
+              <div className='flex flex-col items-end'>
                 <ButtonComponent
                   content='Chọn chính sách phí'
                   onClick={() => setOpenModal(true)}
@@ -108,6 +110,11 @@ const FeeAssignAdd = () => {
                     </svg>
                   }
                 />
+                {errors.feePolicyId && (
+                  <p className='text-red-500 text-sm mt-1'>
+                    {errors.feePolicyId.message}
+                  </p>
+                )}
               </div>
             </div>
           </>
@@ -132,7 +139,7 @@ const FeeAssignAdd = () => {
                   ))}
                 </div>
               ) : (
-                <div className=' flex justify-center items-center'>
+                <div className=' flex justify-center items-center '>
                   <div className='flex flex-col items-center text-gray-400'>
                     <svg
                       width={50}

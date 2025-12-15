@@ -4,7 +4,6 @@ import {
   feePolicyComponent,
   FeeComponentResponse
 } from '@type/feePoliciesComponent'
-import { method } from 'lodash'
 const baseURL=import.meta.env.VITE_FEE_API_URL
 export const feeComponentApi = apiService.injectEndpoints({
   endpoints: (build) => ({

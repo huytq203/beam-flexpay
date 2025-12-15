@@ -150,49 +150,49 @@ export const feeAssignColumn = ({
       render: (value, record, index: number) => index + 1
     },
     {
-      title: 'serviceType',
+      title: 'Loại giao dịch',
       dataIndex: 'serviceType',
       align: 'center' as const,
       className: 'border border-b-0 border-l-0',
       render: (value, record, index: number) => value
     },
     {
-      title: 'paymentMethod',
+      title: 'Phương thức thanh toán',
       dataIndex: 'paymentMethod',
       align: 'center' as const,
       className: 'border border-b-0 border-l-0',
       render: (value, record, index: number) => value
     },
     {
-      title: 'bankCode',
+      title: 'Nhân hàng',
       dataIndex: 'bankCode',
       align: 'center' as const,
       className: 'border border-b-0 border-l-0',
       render: (value, record, index: number) => value
     },
     {
-      title: 'cardType',
+      title: 'Loại thẻ',
       dataIndex: 'cardType',
       align: 'center' as const,
       className: 'border border-b-0 border-l-0',
       render: (value, record, index: number) => value
     },
     {
-      title: 'customerGroup',
+      title: 'Nhóm khách hàng',
       dataIndex: 'customerGroup',
       align: 'center' as const,
       className: 'border border-b-0 border-l-0',
       render: (value, record, index: number) => value
     },
     {
-      title: 'createdAt',
+      title: 'Ngày tạo',
       dataIndex: 'createdAt',
       align: 'center' as const,
       className: 'border border-b-0 border-l-0',
       render: (value, record, index: number) => value
     },
     {
-      title: 'status',
+      title: 'Trạng thái',
       dataIndex: 'status',
       align: 'center' as const,
       className: 'border border-b-0 border-l-0',
@@ -200,7 +200,7 @@ export const feeAssignColumn = ({
     },
 
     {
-      title: 'Action',
+      title: 'Hành động',
       dataIndex: 'Action',
       fixed: 'right',
       width: 100,
@@ -234,11 +234,11 @@ export const feeAssignColumn = ({
                 }}
               />
             </TooltipComponent>
-            <ApprovalButton
+            {/* <ApprovalButton
               record={record}
               onApprove={handleAccept}
               onReject={handleReject}
-            />
+            /> */}
           </div>
         )
       }
