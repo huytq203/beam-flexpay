@@ -22,6 +22,7 @@ import { getPolicyColumns } from './FeeManagement.columns'
 import { useMessage } from '@hooks/useMessage'
 import FeeManagementForm from './FeeManagement.form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { feeSearch } from '@type/feePolicies'
 
 const FeeManagement = () => {
   const [open, setOpen] = useState(false)
@@ -89,17 +90,19 @@ const FeeManagement = () => {
     }
   }
 
-  const dataSource = list.map((item, index) => ({
-    key: item.id,
-    no: (page - 1) * pageSize + index + 1,
-    name: item.name,
-    serviceType: item.serviceType,
-    status: item.status,
-    feeDomain: item.feeDomain,
-    currency: item.currency,
-    validFrom: item.validFrom,
-    validTo: item.validTo
-  }))
+  const dataSource = list
+    .filter((item) => item.id !== undefined)
+    .map((item, index) => ({
+      key: item.id!,
+      no: (page - 1) * pageSize + index + 1,
+      name: item.name,
+      serviceType: item.serviceType,
+      status: item.status,
+      feeDomain: item.feeDomain,
+      currency: item.currency,
+      validFrom: item.validFrom,
+      validTo: item.validTo
+    }))
 
   const columns = getPolicyColumns({
     navigate,
@@ -108,7 +111,7 @@ const FeeManagement = () => {
   })
 
 
-  const { handleSubmit, reset, control } = useForm({
+  const { handleSubmit, reset, control } = useForm<feeSearch>({
     defaultValues: {
       keyword: '',
       serviceType: '',

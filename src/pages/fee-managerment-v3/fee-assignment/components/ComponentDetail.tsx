@@ -7,12 +7,73 @@ interface propComponentDetail {
   setOpenModalDetail: (value: boolean) => void
   data: feePolicyComponent
   onEdit?: (data: feePolicyComponent) => void
-  onDelete?:(data:feePolicyComponent)=>void
+  onDelete?: (data: feePolicyComponent) => void
 }
 
-export const ComponentDetail = ({ setOpenModalDetail, data, onEdit ,onDelete}: propComponentDetail) => {
-  // Fetch tier data using component id
+export const ComponentDetail = ({ setOpenModalDetail, data, onEdit, onDelete }: propComponentDetail) => {
   const { data: tierData } = useGetFeeComponentTierQuery(data.id)
+
+
+  const columns = (data: feePolicyComponent) => {
+    if (data.calculationMethod === 'DIRECT') {
+      return [
+        {
+          title: 'Phí cố định',
+          dataIndex: 'fixedAmount',
+          className: 'border border-b-0'
+        },
+        {
+          title: 'Phần trăm',
+          dataIndex: 'percentage',
+          className: 'border border-b-0 border-l-0'
+        },
+        {
+          title: 'Giá trị tối thiểu',
+          dataIndex: 'minFee',
+          className: 'border border-b-0 border-l-0'
+        },
+        {
+          title: 'Giá trị tối đa',
+          dataIndex: 'maxFee',
+          className: 'border border-b-0 border-l-0'
+        }
+      ]
+    }
+    else {
+      return [
+        {
+          title: 'Phí cố định',
+          dataIndex: 'fixedAmount',
+          className: 'border border-b-0'
+        },
+        {
+          title: 'Phần trăm',
+          dataIndex: 'percentage',
+          className: 'border border-b-0 border-l-0'
+        },
+        {
+          title: 'Giá trị từ',
+          dataIndex: 'minFee',
+          className: 'border border-b-0 border-l-0'
+        },
+        {
+          title: 'Giá trị đến',
+          dataIndex: 'maxFee',
+          className: 'border border-b-0 border-l-0'
+        },
+        {
+          title: 'Giá trị min',
+          dataIndex: 'minValue',
+          className: 'border border-b-0 border-l-0'
+        },
+        {
+          title: 'Giá trị max',
+          dataIndex: 'maxValue',
+          className: 'border border-b-0 border-l-0'
+        }
+      ]
+    }
+  }
   return (
     <>
 
@@ -31,15 +92,15 @@ export const ComponentDetail = ({ setOpenModalDetail, data, onEdit ,onDelete}: p
                       onEdit?.(data)
                       setOpenModalDetail(true)
                     }}
-                    icon={<EditOutlined {...({} as any)} />}
+                    icon={<EditOutlined />}
                   />
                   <ButtonComponent
                     type='default'
                     content='Xóa '
                     danger
-                    icon={<DeleteOutlined {...({} as any)} />}
-                    onClick={()=>{
-                        onDelete(data)
+                    icon={<DeleteOutlined />}
+                    onClick={() => {
+                      onDelete?.(data)
                     }}
                   />
                 </div>
@@ -67,39 +128,8 @@ export const ComponentDetail = ({ setOpenModalDetail, data, onEdit ,onDelete}: p
                   <Table
                     size='small'
                     rowKey='id'
-                    dataSource={tierData || []}
-                    columns={[
-                      {
-                        title: 'Phí cố định',
-                        dataIndex: 'fixedAmount',
-                        className: 'border border-b-0'
-                      },
-                      {
-                        title: 'Phần trăm',
-                        dataIndex: 'percentage',
-                        className: 'border border-b-0 border-l-0'
-                      },
-                      {
-                        title: 'Giá trị từ',
-                        dataIndex: 'minFee',
-                        className: 'border border-b-0 border-l-0'
-                      },
-                      {
-                        title: 'Giá trị đến',
-                        dataIndex: 'maxFee',
-                        className: 'border border-b-0 border-l-0'
-                      },
-                      {
-                        title: 'Giá trị min',
-                        dataIndex: 'minValue',
-                        className: 'border border-b-0 border-l-0'
-                      },
-                      {
-                        title: 'Giá trị max',
-                        dataIndex: 'maxValue',
-                        className: 'border border-b-0 border-l-0'
-                      }
-                    ]}
+                    dataSource={(data.calculationMethod === 'DIRECT' ? [data] : tierData) || []}
+                    columns={columns(data)}
                     pagination={false}
                   />
                 )}

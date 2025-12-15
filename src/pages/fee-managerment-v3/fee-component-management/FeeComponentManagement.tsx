@@ -120,7 +120,7 @@ const FeeComponentManagement = () => {
   const combinedInitialData = useMemo(() => {
     if (!feeComponent) return null
     if (feeComponentTierData && feeComponentTierData.length > 0) {
-      const tiers = feeComponentTierData.map((item: any) => ({
+      const tiers = feeComponentTierData.map((item: feePolicyComponent) => ({
         id: item.id,
         minValue: item.minValue,
         maxValue: item.maxValue,
@@ -192,7 +192,7 @@ const FeeComponentManagement = () => {
     try {
       await postNewPolicy(data).unwrap()
       successMess('Thêm chính sách thành công!')
-    } catch (error: any) {
+    } catch (error) {
       errorMess(error?.data?.message || 'Có lỗi xảy ra')
     }
   }

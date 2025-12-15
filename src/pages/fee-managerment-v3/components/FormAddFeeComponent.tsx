@@ -302,6 +302,7 @@ const FormAddFeeComponent = forwardRef<
             defaultValue=''
             options={selectOptions.componentType}
             placeholder='Chọn loại phí'
+            disabled={isUpdateMode}
           />
           <FormSelect<FeeComponentType>
             control={control}
@@ -320,6 +321,7 @@ const FormAddFeeComponent = forwardRef<
             defaultValue=''
             options={selectOptions.payerType}
             placeholder='Chọn người chịu phí'
+            disabled={isUpdateMode}
           />
           <FormSelect<FeeComponentType>
             control={control}

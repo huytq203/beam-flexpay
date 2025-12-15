@@ -3,7 +3,7 @@ import { z } from "zod";
 export const PolicySchema = z.object({
   name: z.string().min(1, "Tên chính sách không được để trống"),
   validFrom: z.string().min(1, "Chọn ngày bắt đầu"),
-  validTo: z.string().optional(),
+  validTo: z.string().nullable().optional(),
   priority: z.number().min(0, "Chọn mức độ ưu tiên"),
   status: z.string().min(1, "Chọn trạng thái"),
   feeDomain: z.string().min(1, "Chọn phí miền"),

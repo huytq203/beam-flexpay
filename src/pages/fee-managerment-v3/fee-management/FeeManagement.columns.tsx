@@ -56,16 +56,16 @@ const ActionButtons = ({
   <div className='flex gap-2 justify-center'>
     <ButtonComponent
       type='default'
-      icon={<EditOutlined {...({} as any)} />}
+      icon={<EditOutlined />}
       onClick={() => navigate(`${FEEMANAGEMENR_V3}/edit/${record.key}`)}
     />
     <ButtonComponent
       type='default'
       icon={
         record.status === 'ACTIVE' ? (
-          <UnlockOutlined {...({} as any)} />
+          <UnlockOutlined />
         ) : (
-          <LockOutlined {...({} as any)} />
+          <LockOutlined />
         )
       }
       onClick={() => {

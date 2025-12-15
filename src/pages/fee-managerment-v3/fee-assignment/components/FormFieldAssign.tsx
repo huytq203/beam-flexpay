@@ -26,33 +26,30 @@ const FormFieldAssign = ({ control, setValue }: FormFieldAssign) => {
   // logic
   useEffect(() => {
     if (!setValue) return
-    
+
     if (disable === "1") {
       setValue("customerGroup", "")
     }
     else if (disable === "2") {
       setValue('account', '')
     }
+    else {
+      setValue('account', '')
+      setValue("customerGroup", "")
+    }
   }, [disable, setValue])
+
   return (
     <div>
       <div className='grid grid-cols-8 gap-3'>
-        <FormInput
-          control={control}
-          name='account'
-          placeholder='Nhập tài khoản...'
-          label='Tài khoản'
-          className='col-span-2'
-          disabled={disable == "2" ? true : false}
-        />
         <FormSelect
           control={control}
           name='applyType'
           label='Đối tượng áp dụng'
           className='col-span-2'
-          defaultValue={''}
+          defaultValue={""}
           options={[
-            { label: 'Chọn', value: '' },
+            { label: 'Hệ thống', value: "" },
             {
               label: 'Đối tượng riêng',
               value: '1'
@@ -64,18 +61,27 @@ const FormFieldAssign = ({ control, setValue }: FormFieldAssign) => {
           ]}
           onChange={(val: any) => setDisable(val)}
         />
+        <FormInput
+          control={control}
+          name='account'
+          placeholder='Nhập tài khoản...'
+          label='Tài khoản'
+          className='col-span-2'
+          disabled={disable == "2" || disable == '' ? true : false}
+        />
         <FormSelect
           control={control}
-          name='serviceType'
+          name='customerGroup'
           options={[
             { label: 'Chọn', value: '' },
-            ...Object.entries(serviceType).map(([key, value]) => ({
+            ...Object.entries(customerGroupType).map(([key, value]) => ({
               label: value,
               value: key
             }))
           ]}
-          label='Loại giao dịch'
+          label='Nhóm khách hàng'
           className='col-span-2'
+          disabled={disable == "1" || disable == '' ? true : false}
         />
         <FormSelect
           control={control}
@@ -90,6 +96,20 @@ const FormFieldAssign = ({ control, setValue }: FormFieldAssign) => {
           label='Ngân hàng'
           className='col-span-2'
         />
+        <FormSelect
+          control={control}
+          name='serviceType'
+          options={[
+            { label: 'Chọn', value: '' },
+            ...Object.entries(serviceType).map(([key, value]) => ({
+              label: value,
+              value: key
+            }))
+          ]}
+          label='Loại giao dịch'
+          className='col-span-2'
+        />
+
         <FormSelect
           control={control}
           name='paymentMethod'
@@ -116,20 +136,7 @@ const FormFieldAssign = ({ control, setValue }: FormFieldAssign) => {
           label='Loại thẻ'
           className='col-span-2'
         />
-        <FormSelect
-          control={control}
-          name='customerGroup'
-          options={[
-            { label: 'Chọn', value: '' },
-            ...Object.entries(customerGroupType).map(([key, value]) => ({
-              label: value,
-              value: key
-            }))
-          ]}
-          label='Nhóm khách hàng'
-          className='col-span-2'
-          disabled={disable == "1" ? true : false}
-        />
+
         <FormSelect
           control={control}
           name='status'

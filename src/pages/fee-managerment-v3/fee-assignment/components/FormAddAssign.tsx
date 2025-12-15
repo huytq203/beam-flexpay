@@ -93,7 +93,7 @@ const FormAddAssign = ({ onSelect }: FormAddAssignProps) => {
                   {
                     title: 'Tên chính sách',
                     dataIndex: 'name',
-                    className: 'border border-l-0  border-b-0'
+                    className: 'border border-l-0  border-b-0',
                   },
                   {
                     title: 'Loại dịch vụ',

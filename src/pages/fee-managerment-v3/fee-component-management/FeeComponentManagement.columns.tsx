@@ -74,7 +74,7 @@ export const feeComponentColumns = ({
           <TooltipComponent title='Cập nhật'>
             <ButtonComponent
               type='text'
-              icon={<EditOutlined {...({} as any)} />}
+              icon={<EditOutlined />}
               onClick={() => {
                 setSelectedRow(record)
                 setOpen(true)
@@ -86,7 +86,7 @@ export const feeComponentColumns = ({
             <ButtonComponent
               type='text'
               danger
-              icon={<DeleteOutlined {...({} as any)} />}
+              icon={<DeleteOutlined/>}
               onClick={() => {
                 setDeletingId(record.id)
                 setOpenDialog(true)

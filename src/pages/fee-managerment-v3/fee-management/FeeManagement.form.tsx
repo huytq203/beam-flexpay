@@ -1,19 +1,32 @@
 import { ButtonComponent, Table } from '@components/common'
 import { FormInput, FormSelect } from '@components/form'
-import { feePolicies } from '@type/feePolicies'
+import { feePolicies, feeSearch } from '@type/feePolicies'
 import { feeDomain, serviceType } from '@type/feePoliciesComponent'
 import React from 'react'
 import { Control, UseFormHandleSubmit, UseFormReset } from 'react-hook-form'
+import { ColumnsType } from 'antd/es/table'
+
+interface PolicyRecord {
+    key: string
+    no: number
+    name: string
+    serviceType: string
+    status: string
+    feeDomain: string
+    currency: string
+    validFrom: string
+    validTo: string
+}
 
 interface FeeManagementFormProps {
-    control: Control<any>
-    handleSubmit: UseFormHandleSubmit<any>
-    reset: UseFormReset<any>
-    handleSearch: (data: feePolicies) => void
+    control: Control<feeSearch>
+    handleSubmit: UseFormHandleSubmit<feeSearch>
+    reset: UseFormReset<feeSearch>
+    handleSearch: (data: feeSearch) => void
     onReset: () => void
     setOpen: (open: boolean) => void
-    dataSource: any[]
-    columns: any[]
+    dataSource: PolicyRecord[]
+    columns: ColumnsType<PolicyRecord>
     page: number
     pageSize: number
     total: number

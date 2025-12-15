@@ -23,12 +23,13 @@ import {
   FeeAssignmentMockup,
   FeeAssignResponse,
 } from '@type/feeAssignment'
-import { FeeAssignmentFormData } from '@pages/fee-managerment-v3/fee-assignment/hook/useFeeAssignmentForm'
+import { FeeAssignType } from '@pages/fee-managerment-v3/fee-assignment/feeAssign.schema'
 
 import React, { useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useMessage } from '@hooks/useMessage'
+import { EditOutlined } from '@ant-design/icons'
 
 const FeeAssignmentManagement = () => {
   // state
@@ -58,7 +59,7 @@ const FeeAssignmentManagement = () => {
     control,
     formState: { errors },
     setValue
-  } = useForm<FeeAssignmentFormData>()
+  } = useForm<FeeAssignType>()
   const [isSearching, setIsSearching] = useState(false)
 
   //logic
@@ -170,13 +171,12 @@ const FeeAssignmentManagement = () => {
           }
         />
       </div>
-
       <DialogModal
         onOk={handleDelete}
         onCancel={() => setOpenModalDelete(false)}
         open={openModalDelete}
         content='Bạn có xác nhận xóa ?'
-      />
+      />\
     </>
   )
 }

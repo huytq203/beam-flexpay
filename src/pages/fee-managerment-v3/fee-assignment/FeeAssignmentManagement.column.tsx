@@ -15,6 +15,8 @@ import 'tippy.js/dist/tippy.css'
 import 'tippy.js/themes/light.css'
 import { useNavigate } from 'react-router-dom'
 import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
+import { getEnumLabel } from '../FeeManagement.utils'
+import { serviceType } from '@type/feePoliciesComponent'
 
 interface prop {
   setSelectRowId: (value: string) => void
@@ -45,14 +47,14 @@ const ApprovalPopupContent = ({
       <ButtonComponent
         type='default'
         content='Hủy bỏ'
-        icon={<CloseOutlined {...({} as any)} />}
+        icon={<CloseOutlined />}
         onClick={onCancel}
       />
       <ButtonComponent
         danger
         type='primary'
         content='Từ chối duyệt'
-        icon={<CloseOutlined {...({} as any)} />}
+        icon={<CloseOutlined />}
         onClick={() => {
           onReject?.(record)
           onCancel()
@@ -62,7 +64,7 @@ const ApprovalPopupContent = ({
         type='primary'
         style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
         content='Duyệt phí'
-        icon={<CheckOutlined {...({} as any)} />}
+        icon={<CheckOutlined />}
         onClick={() => {
           onApprove?.(record)
           onCancel()
@@ -154,7 +156,7 @@ export const feeAssignColumn = ({
       dataIndex: 'serviceType',
       align: 'center' as const,
       className: 'border border-b-0 border-l-0',
-      render: (value, record, index: number) => value
+      render: (value, record, index: number) => getEnumLabel(value,serviceType)
     },
     {
       title: 'Phương thức thanh toán',
@@ -164,7 +166,7 @@ export const feeAssignColumn = ({
       render: (value, record, index: number) => value
     },
     {
-      title: 'Nhân hàng',
+      title: 'Ngân hàng',
       dataIndex: 'bankCode',
       align: 'center' as const,
       className: 'border border-b-0 border-l-0',
@@ -214,9 +216,9 @@ export const feeAssignColumn = ({
                 type='default'
                 icon={
                   record.status === 'ACTIVE' ? (
-                    <UnlockOutlined {...({} as any)} />
+                    <UnlockOutlined />
                   ) : (
-                    <LockOutlined {...({} as any)} />
+                    <LockOutlined />
                   )
                 }
                 onClick={() => onToggleStatus?.(record)}
@@ -225,10 +227,7 @@ export const feeAssignColumn = ({
             <TooltipComponent title='Cập nhật'>
               <ButtonComponent
                 type='default'
-                icon={<EditOutlined {...({} as any)}
-                  style={{ color: '#b86704' }}
-                />}
-
+                icon={<EditOutlined />}
                 onClick={() => {
                   navigate(FEEMANAGEMENR_V3 + `/fee-assignment/edit/${record?.id}`)
                 }}
