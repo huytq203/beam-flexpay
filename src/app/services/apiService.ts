@@ -16,6 +16,8 @@ export const apiService = createApi({
     'FeePolicy',
     'FeePolicyComponent',
     'feeComponentTier',
+    'feeAssign',
+    'feeBank'
   ],
   endpoints: () => ({}),
   refetchOnMountOrArgChange: true

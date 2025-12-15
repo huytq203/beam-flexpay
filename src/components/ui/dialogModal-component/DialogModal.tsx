@@ -21,6 +21,7 @@ const DialogModal: React.FC<ModalConfirmProps> = ({
     <Modal
       open={open}
       title={title}
+      centered
       onOk={onOk}
       confirmLoading={confirmLoading}
       onCancel={onCancel}

@@ -11,8 +11,9 @@ interface props extends ButtonProps {
   htmlType?: "button" | "submit" | "reset" | undefined
 }
 const ButtonComponent = ({ onClick, content, icon, type, variant, color, form, htmlType, ...rest }: props) => {
+  const AntButton = Button as any;
   return (
-      <Button
+      <AntButton
         type={type ?? 'primary'}
         onClick={onClick}
         color={color}
@@ -23,7 +24,7 @@ const ButtonComponent = ({ onClick, content, icon, type, variant, color, form, h
       >
         {icon}
         {content}
-      </Button>
+      </AntButton>
   )
 }
 

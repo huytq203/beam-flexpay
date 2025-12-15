@@ -3,7 +3,7 @@ import { z } from "zod";
 export const PolicySchema = z.object({
   name: z.string().min(1, "Tên chính sách không được để trống"),
   validFrom: z.string().min(1, "Chọn ngày bắt đầu"),
-  validTo: z.string().min(1, "Chọn ngày kết thúc"),
+  validTo: z.string().optional(),
   priority: z.number().min(0, "Chọn mức độ ưu tiên"),
   status: z.string().min(1, "Chọn trạng thái"),
   feeDomain: z.string().min(1, "Chọn phí miền"),
@@ -14,7 +14,7 @@ export const PolicySchema = z.object({
   (data) => !data.validFrom || !data.validTo || new Date(data.validTo) >= new Date(data.validFrom),
   {
     message: "Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu",
-    path: ["validTo"], // lỗi sẽ hiện ở validTo
+    path: ["validTo"],
   }
 );
 
@@ -37,22 +37,29 @@ export const FeeComponentSchema = z.object({
   payerType: z.string().min(1, "Chọn người chịu phí"),
   beneficiaryType: z.string().min(1, "Chọn người hưởng phí"),
   roundMode: z.string().min(1, "Chọn công thức làm tròn"),
-  feeExpression: z.string().optional(),
   calculationMethod: z.number().or(z.string()), // Select might return string
   tiers: z.array(FeeTierSchema).optional(),
   fixedAmount: z.number().optional(),
-  percentage: z.number().optional(),
+  percentage: z.number().min(0, "Min is 0").max(100, "Max is 100"),
   minFee: z.number().optional(),
   maxFee: z.number().optional(),
-  maxValue: z.number().nullable().optional(),
-  minValue: z.number().nullable().optional(),
+  maxValue: z.number().optional(),
+  minValue: z.number().optional(),
 
 }).refine(
-  (data) => data.payerType !== data.beneficiaryType,
-  {
-    message: "Người chịu phí và người hưởng phí không được trùng nhau",
-    path: ["beneficiaryType"], // Show error on beneficiaryType field
-  }
-);
+    (data) => {
+      if (data.minValue !== undefined && data.maxValue !== undefined) {
+        return data.minValue < data.maxValue;
+      }
+      return true;
+    },
+    {
+      message: "Giá trị tối đa phải lớn hơn tối thiểu",
+      path: ["minValue"],
+    }
+  );
 
 export type FeeComponentType = z.infer<typeof FeeComponentSchema>;
+
+export const FeeAssignSchema = z.object({})
+export type FeeAssignType=z.infer<typeof FeeAssignSchema>

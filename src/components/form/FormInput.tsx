@@ -19,7 +19,7 @@ export function FormInput<T extends FieldValues>({
   placeholder,
   className = "col-span-6 flex flex-col",
   disabled,
-  classNameLable,
+  classNameLable='font-medium',
   ...rest
 }: FormInputProps<T>) {
   return (
@@ -29,14 +29,23 @@ export function FormInput<T extends FieldValues>({
       label={label}
       classNameLable={classNameLable}
       className={className}
-      render={(field) => (
-        <Input
-          {...field}
-          {...rest}
-          placeholder={placeholder}
-          disabled={disabled}
-        />
-      )}
+      render={(field) => {
+        const { onChange: customOnChange, ...fieldRest } = rest as any
+        return (
+          <Input
+            {...field}
+            {...fieldRest}
+            placeholder={placeholder}
+            disabled={disabled}
+            onChange={(e: any) => {
+              field.onChange(e)
+              if (customOnChange) {
+                customOnChange(e)
+              }
+            }}
+          />
+        )
+      }}
     />
   );
 }
