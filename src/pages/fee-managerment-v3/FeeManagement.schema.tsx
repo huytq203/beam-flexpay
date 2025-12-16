@@ -40,7 +40,7 @@ export const FeeComponentSchema = z.object({
   calculationMethod: z.number().or(z.string()), // Select might return string
   tiers: z.array(FeeTierSchema).optional(),
   fixedAmount: z.number().optional(),
-  percentage: z.number().min(0, "Min is 0").max(100, "Max is 100"),
+  percentage: z.number().min(0, "Min is 0").max(100, "Max is 100").optional(),
   minFee: z.number().optional(),
   maxFee: z.number().optional(),
   maxValue: z.number().optional(),
@@ -56,6 +56,18 @@ export const FeeComponentSchema = z.object({
     {
       message: "Giá trị tối đa phải lớn hơn tối thiểu",
       path: ["minValue"],
+    }
+  ).refine(
+    (data) => {
+      // Validate percentage is required when componentType is VAT
+      if (data.componentType === 'VAT') {
+        return data.percentage !== undefined && data.percentage !== null;
+      }
+      return true;
+    },
+    {
+      message: "Phí phần trăm không được để trống",
+      path: ["percentage"],
     }
   );
 

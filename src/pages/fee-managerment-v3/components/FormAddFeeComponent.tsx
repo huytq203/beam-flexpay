@@ -51,7 +51,7 @@ const DEFAULT_VALUES: FeeComponentType = {
   calculationMethod: 'DIRECT',
   tiers: [DEFAULT_TIER],
   fixedAmount: undefined,
-  percentage: 0,
+  percentage: undefined,
   minFee: undefined,
   maxFee: undefined
 }
@@ -76,7 +76,8 @@ const FormAddFeeComponent = forwardRef<
     formState: { errors }
   } = useForm<FeeComponentType>({
     resolver: zodResolver(FeeComponentSchema),
-    defaultValues: DEFAULT_VALUES
+    defaultValues: DEFAULT_VALUES,
+    shouldUnregister: true
   })
 
   const [postFeeComponentTier] = usePostFeeComponentTierMutation()
@@ -216,14 +217,16 @@ const FormAddFeeComponent = forwardRef<
             if (onSubmit) {
               promises.push(onSubmit(data) as Promise<any>)
             }
+            if (initialData?.calculationMethod !== (Object.keys(calculationMethodEnum)[1] as keyof typeof calculationMethodEnum)) {
+              promises.push(handleUpdateTier())
 
-            promises.push(handleUpdateTier())
+            }
 
             await Promise.all(promises)
 
             successMess('Cập nhật phí thành công')
           } catch (error) {
-            errorMess('Cập nhật phí thất bại')
+            errorMess(error?.data?.detail)
           }
         },
         (errors) => {
@@ -310,7 +313,14 @@ const FormAddFeeComponent = forwardRef<
             label='Tính dựa trên'
             className='col-span-4 flex flex-col'
             defaultValue=''
-            options={selectOptions.baseOn}
+            options={isUpdateMode ? selectOptions.baseOn : [
+              { label: 'Chọn', value: '' },
+              {
+                ...Object.entries(baseOn).map(([key, value]) => ({
+                  label: value,
+                  value: key
+                }))[0]
+              }]}
             placeholder='Chọn loại tính phí'
           />
           <FormSelect<FeeComponentType>
@@ -341,13 +351,15 @@ const FormAddFeeComponent = forwardRef<
             options={selectOptions.roundMode}
             placeholder='Chọn công thức làm tròn'
           />
-          <FormSelect<FeeComponentType>
+
+          {isVATType ? '' : <FormSelect<FeeComponentType>
             control={control}
             name='calculationMethod'
             label='Chọn phương thức tính'
             className='col-span-4 flex flex-col'
             options={selectOptions.calculationMethod}
-          />
+          />}
+
         </div>
       </Card>
 
@@ -359,12 +371,13 @@ const FormAddFeeComponent = forwardRef<
             name='percentage'
             label='Phí phần trăm (%)'
             className='col-span-3 flex flex-col gap-2'
-            placeholder='0'
+            placeholder='0%'
             classNameLable='font-medium'
           />
         </Card>
-      ) : (
-        <div className={`${isTierMode && !isUpdateMode ? 'hidden' : ''}`}>
+      ) : !(isTierMode && !isUpdateMode) && (
+
+        <div>
           <Card className='mb-3' style={{ width: '100%' }}>
             <p className='font-bold mb-3'>Phương thức tính (Calculation Method)</p>
             <div className='mb-3'></div>
@@ -384,7 +397,7 @@ const FormAddFeeComponent = forwardRef<
                   type='dashed'
                   onClick={() => append(DEFAULT_TIER)}
                   style={{ width: '100%', marginTop: 16 }}
-                  icon={<PlusOutlined {...({} as any)} />}
+                  icon={<PlusOutlined />}
                 />
               </>
             ) :
@@ -406,7 +419,7 @@ const FormAddFeeComponent = forwardRef<
                       name='percentage'
                       label='Phí phần trăm (%)'
                       className='col-span-3 flex flex-col gap-2'
-                      placeholder='0'
+                      placeholder='0%'
                       classNameLable='font-medium'
                     />
                     <FormInputNumber

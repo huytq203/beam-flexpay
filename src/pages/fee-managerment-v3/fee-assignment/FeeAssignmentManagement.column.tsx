@@ -15,7 +15,7 @@ import 'tippy.js/dist/tippy.css'
 import 'tippy.js/themes/light.css'
 import { useNavigate } from 'react-router-dom'
 import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
-import { getEnumLabel } from '../FeeManagement.utils'
+import { formatDate, getEnumLabel } from '../FeeManagement.utils'
 import { serviceType } from '@type/feePoliciesComponent'
 
 interface prop {
@@ -132,8 +132,8 @@ function handleReject(record: FeeAssignment) {
 const StatusBadge = ({ status }: { status: string }) => (
   <span
     className={`px-2 py-1 rounded text-xs font-medium ${status === 'ACTIVE'
-        ? 'bg-green-100 text-green-800'
-        : 'bg-red-100 text-red-800'
+      ? 'bg-green-100 text-green-800'
+      : 'bg-red-100 text-red-800'
       }`}
   >
     {status}
@@ -156,7 +156,7 @@ export const feeAssignColumn = ({
       dataIndex: 'serviceType',
       align: 'center' as const,
       className: 'border border-b-0 border-l-0',
-      render: (value, record, index: number) => getEnumLabel(value,serviceType)
+      render: (value, record, index: number) => getEnumLabel(value, serviceType)
     },
     {
       title: 'Phương thức thanh toán',
@@ -191,7 +191,7 @@ export const feeAssignColumn = ({
       dataIndex: 'createdAt',
       align: 'center' as const,
       className: 'border border-b-0 border-l-0',
-      render: (value, record, index: number) => value
+      render: (date: string) => formatDate(date)
     },
     {
       title: 'Trạng thái',

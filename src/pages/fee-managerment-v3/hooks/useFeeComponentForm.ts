@@ -6,11 +6,12 @@ import {
     usePutFeeComponentPoliciesMutation
 } from '@services/apiFeeComponent'
 import { FeeComponentType } from '../FeeManagement.schema'
+import { feePolicyComponent } from '@type/feePoliciesComponent'
 
 interface UseFeeComponentFormOptions {
     feePolicyId?: string
     onSuccess?: () => void
-    setSelectedRow?: (row: any) => void
+    setSelectedRow?: (row: feePolicyComponent | null) => void
 }
 
 export const useFeeComponentForm = ({
@@ -63,27 +64,35 @@ export const useFeeComponentForm = ({
     }
 
     const handleUpdateFeeComponent = async (data: FeeComponentType) => {
-        const payload = {
-            componentType: data.componentType,
-            baseOn: data.baseOn,
-            baseComponentType: null,
-            calculationMethod: data.calculationMethod,
-            fixedAmount: data.fixedAmount ?? 0,
-            percentage: data.percentage ?? 0,
-            roundMode: data.roundMode,
-            minFee: data.minFee ?? 0,
-            maxFee: data.maxFee ?? 0,
-            payerType: data.payerType,
-            payerObjectType: null,
-            payerObjectId: null,
-            beneficiaryType: data.beneficiaryType,
-            beneficiaryObjectType: null,
-            beneficiaryObjectId: null
+        try {
+            const payload = {
+                componentType: data.componentType,
+                baseOn: data.baseOn,
+                baseComponentType: null,
+                calculationMethod: data.calculationMethod,
+                fixedAmount: data.fixedAmount ?? 0,
+                percentage: data.percentage ?? 0,
+                roundMode: data.roundMode,
+                minFee: data.minFee ?? 0,
+                maxFee: data.maxFee ?? 0,
+                payerType: data.payerType,
+                payerObjectType: null,
+                payerObjectId: null,
+                beneficiaryType: data.beneficiaryType,
+                beneficiaryObjectType: null,
+                beneficiaryObjectId: null
+            }
+            await putFeeComponentPolicies({
+                id: updateComponentId,
+                body: payload
+            }).unwrap()
+            successMess('Cập nhật thành công')
+            onSuccess?.()
+        } catch (error: any) {
+            errorMess(error?.data?.message || 'Cập nhật thất bại')
+            throw error
         }
-        await putFeeComponentPolicies({
-            id: updateComponentId,
-            body: payload
-        }).unwrap()
+
     }
 
     const handleDelete = async (id: string | null) => {

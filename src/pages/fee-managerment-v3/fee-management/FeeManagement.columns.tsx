@@ -5,7 +5,7 @@ import {
   LockOutlined,
   UnlockOutlined
 } from '@ant-design/icons'
-import {  formatDate, getEnumLabel } from '@pages/fee-managerment-v3/FeeManagement.utils'
+import { formatDate, getEnumLabel } from '@pages/fee-managerment-v3/FeeManagement.utils'
 import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
 import { ColumnsType } from 'antd/es/table'
 import { feeDomain, serviceType } from '@type/feePoliciesComponent'
@@ -33,8 +33,8 @@ interface PolicyColumnsOptions {
 const StatusBadge = ({ status }: { status: string }) => (
   <span
     className={`px-2 py-1 rounded text-xs font-medium ${status === 'ACTIVE'
-        ? 'bg-green-100 text-green-800'
-        : 'bg-red-100 text-red-800'
+      ? 'bg-green-100 text-green-800'
+      : 'bg-red-100 text-red-800'
       }`}
   >
     {status}
@@ -100,11 +100,11 @@ export const getPolicyColumns = ({
       title: 'Loại dịch vụ',
       dataIndex: 'serviceType',
       className: 'border border-l-0  border-b-0',
-      render: (value: string) =>  getEnumLabel(value,serviceType)
+      render: (value: string) => getEnumLabel(value, serviceType)
     },
     {
       title: 'Trạng thái',
-      dataIndex: 'status', 
+      dataIndex: 'status',
       className: 'border border-l-0  border-b-0',
       align: 'center',
       render: (status: string) => <StatusBadge status={status} />
@@ -113,7 +113,7 @@ export const getPolicyColumns = ({
       title: 'Phí miền',
       dataIndex: 'feeDomain',
       className: 'border border-l-0 border-b-0',
-      render: (value: string) =>  getEnumLabel(value,feeDomain)
+      render: (value: string) => getEnumLabel(value, feeDomain)
     },
     {
       title: 'Loại tiền',
@@ -130,7 +130,14 @@ export const getPolicyColumns = ({
       title: 'Hiệu lực đến',
       dataIndex: 'validTo',
       className: 'border border-l-0 border-b-0',
-      render: (date: string) => formatDate(date)
+      render: (date: string) => {
+        if (date === null||''||0) {
+          return 'Vô thời hạn'
+        }
+        else {
+          return formatDate(date)
+        }
+      }
     },
     {
       title: 'Thao tác',

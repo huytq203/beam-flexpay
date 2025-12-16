@@ -8,6 +8,7 @@ import { PolicyType } from '../FeeManagement.schema'
 import React from 'react'
 import { Control, UseFormHandleSubmit } from 'react-hook-form'
 import { feeDomain, serviceType } from '@type/feePoliciesComponent'
+import { statusType } from '@type/feePolicies'
 
 interface FormAddPolicyProps {
   control: Control<PolicyType>
@@ -15,6 +16,7 @@ interface FormAddPolicyProps {
   id?: string
   handleUpdate?: (data: PolicyType) => Promise<void>
   onSubmit: (data: PolicyType) => Promise<void>
+  isCreate: boolean
 }
 
 const FormAddPolicy = ({
@@ -22,8 +24,11 @@ const FormAddPolicy = ({
   handleSubmit,
   id,
   handleUpdate,
-  onSubmit
+  onSubmit,
+  isCreate
 }: FormAddPolicyProps) => {
+
+
   return (
     <>
       <form
@@ -77,13 +82,25 @@ const FormAddPolicy = ({
             control={control}
             label='Trạng thái hoạt động'
             defaultValue=''
-            options={[
-              { label: 'Chọn', value: '' },
-              { label: 'INIT', value: 'INIT' },
-              { label: 'ACTIVE', value: 'ACTIVE' },
-              { label: 'INACTIVE', value: 'INACTIVE' },
-              { label: 'LOCKED', value: 'LOCKED' }
-            ]}
+            options={
+              isCreate ? [
+                { label: 'Chọn', value: '' },
+                ...Object.entries(statusType)
+                  .slice(0, 1)
+                  .map(([key, value]) => ({
+                    label: value,
+                    value: key
+                  }))
+              ] : [
+                { label: 'Chọn', value: '' },
+                ...Object.entries(statusType).map(([key, value]) => ({
+                  label: value,
+                  value: key
+                }))
+              ]
+
+            }
+
           />
 
           <FormSelect
@@ -93,7 +110,7 @@ const FormAddPolicy = ({
             label='Loại dịch vụ'
             defaultValue=''
             options={[
-              { label: 'Chọn tất cả', value: '' },
+              { label: 'Chọn', value: '' },
               ...Object.entries(serviceType).map(([key, value]) => ({
                 label: value, // hoặc value
                 value: key

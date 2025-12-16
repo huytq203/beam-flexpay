@@ -43,7 +43,7 @@ function ScreenLoading() {
       getContainer={false}
       zIndex={9999}
     >
-      <Spin size='large' spinning={isOpen} />
+      <Spin    zIndex={9999} size='large' spinning={isOpen} />
     </Modal>
   )
 }

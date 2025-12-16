@@ -261,6 +261,7 @@ export const useFeeAssignmentForm = () => {
         id,
         feeComponentData,
         combinedInitialData,
+        dataAssignById,
 
         // Handlers
         handleNavigateBack,

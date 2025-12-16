@@ -1,4 +1,5 @@
 import { CardComponent, CheckboxComponent, Table } from '@components/common'
+import { Radio } from 'antd'
 import { FormInput } from '@components/form'
 import { getEnumLabel } from '@pages/fee-managerment-v3/FeeManagement.utils'
 import { useGetFeePoliciesQuery, useLazySearchFeePoliciesQuery } from '@services/apiFeePoliciesServices'
@@ -64,7 +65,8 @@ const FormAddAssign = ({ onSelect }: FormAddAssignProps) => {
   } = useForm({
     defaultValues: {
       keyword: ''
-    }
+    },
+    shouldUnregister: true
   })
 
   return (
@@ -102,18 +104,17 @@ const FormAddAssign = ({ onSelect }: FormAddAssignProps) => {
                     render: (value: string) => getEnumLabel(value, serviceType)
                   },
                   {
-                    title: 'Chọn/bỏ chọn',
+                    title: 'Chọn',
                     dataIndex: 'check',
                     align: 'center',
                     className: 'border border-l-0  border-b-0',
                     render: (_, record) => (
-                      <CheckboxComponent
+                      <Radio
                         checked={selectedId === record.key}
                         onChange={() => {
-                          const newId = selectedId === record.key ? null : record.key as string
-                          setSelectedId(newId)
-                          if (newId && onSelect) {
-                            onSelect(newId)
+                          setSelectedId(record.key as string)
+                          if (onSelect) {
+                            onSelect(record.key as string)
                           }
                         }}
                       />

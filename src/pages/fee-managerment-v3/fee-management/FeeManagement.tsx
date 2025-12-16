@@ -28,6 +28,10 @@ const FeeManagement = () => {
   const [open, setOpen] = useState(false)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
+  const [isCreate, setIsCreate] = useState(false)
+
+
+
   const [patchDeactivateFee] = usePatchDeactivateFeeMutation()
   const [patchActivateFee] = usePatchActivateFeeMutation()
   const { successMess, errorMess } = useMessage()
@@ -127,6 +131,7 @@ const FeeManagement = () => {
     formState: { errors },
   } = useForm<PolicyType>({
     resolver: zodResolver(PolicySchema),
+    shouldUnregister: true,
     defaultValues: {
       name: "",
       validFrom: "",
@@ -170,6 +175,7 @@ const FeeManagement = () => {
           total={total}
           setPage={setPage}
           setPageSize={setPageSize}
+          setIsCreate={setIsCreate}
         />
       } />
 
@@ -187,6 +193,7 @@ const FeeManagement = () => {
               control={controlAdd}
               handleSubmit={handleSubmitAdd}
               onSubmit={handleSaveAddFee}
+              isCreate={isCreate}
             />
             }
           />

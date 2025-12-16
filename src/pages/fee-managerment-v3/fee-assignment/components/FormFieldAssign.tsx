@@ -1,7 +1,7 @@
 import { FieldBinaryOutlined } from '@ant-design/icons'
 import { FormDatePicker, FormInput, FormSelect } from '@components/form'
 import { FeeAssignType } from '@pages/fee-managerment-v3/fee-assignment/feeAssign.schema'
-import { useGetBankQuery } from '@services/apiFeeMerchant'
+import { useGetBankQuery } from '@services/apiFeeBank'
 import {
   bankCodeType,
   cardTypeType,
@@ -16,9 +16,10 @@ import { Control, UseFormSetValue } from 'react-hook-form'
 interface FormFieldAssign {
   control: Control<FeeAssignType>
   setValue?: UseFormSetValue<FeeAssignType>
+  isCreate?: boolean
 }
 
-const FormFieldAssign = ({ control, setValue }: FormFieldAssign) => {
+const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
   const [disable, setDisable] = useState('')
 
   // api database
@@ -46,8 +47,11 @@ const FormFieldAssign = ({ control, setValue }: FormFieldAssign) => {
           control={control}
           name='applyType'
           label='Đối tượng áp dụng'
-          className='col-span-2'
+          className={isCreate ? 'col-span-8' : 'col-span-2'}
+          allowClear={false}
           defaultValue={""}
+          hidden={isCreate}
+          classNameLable={isCreate ? 'hidden' : 'font-medium'}
           options={[
             { label: 'Hệ thống', value: "" },
             {
@@ -66,8 +70,11 @@ const FormFieldAssign = ({ control, setValue }: FormFieldAssign) => {
           name='account'
           placeholder='Nhập tài khoản...'
           label='Tài khoản'
-          className='col-span-2'
+          className={isCreate ? 'col-span-4' : 'col-span-2'}
           disabled={disable == "2" || disable == '' ? true : false}
+          hidden={isCreate}
+          
+          classNameLable={isCreate ? 'hidden' : 'font-medium'}
         />
         <FormSelect
           control={control}
@@ -80,8 +87,10 @@ const FormFieldAssign = ({ control, setValue }: FormFieldAssign) => {
             }))
           ]}
           label='Nhóm khách hàng'
-          className='col-span-2'
+          className={isCreate ? 'col-span-4' : 'col-span-2'}
           disabled={disable == "1" || disable == '' ? true : false}
+          hidden={isCreate}
+          classNameLable={isCreate ? 'hidden' : 'font-medium'}
         />
         <FormSelect
           control={control}
@@ -94,7 +103,7 @@ const FormFieldAssign = ({ control, setValue }: FormFieldAssign) => {
             }))
           ]}
           label='Ngân hàng'
-          className='col-span-2'
+          className={isCreate ? 'col-span-4' : 'col-span-2'}
         />
         <FormSelect
           control={control}
@@ -107,7 +116,7 @@ const FormFieldAssign = ({ control, setValue }: FormFieldAssign) => {
             }))
           ]}
           label='Loại giao dịch'
-          className='col-span-2'
+          className={isCreate ? 'col-span-4' : 'col-span-2'}
         />
 
         <FormSelect
@@ -121,7 +130,7 @@ const FormFieldAssign = ({ control, setValue }: FormFieldAssign) => {
             }))
           ]}
           label='Phương thức giao dịch'
-          className='col-span-2'
+          className={isCreate ? 'col-span-4' : 'col-span-2'}
         />
         <FormSelect
           control={control}
@@ -134,7 +143,7 @@ const FormFieldAssign = ({ control, setValue }: FormFieldAssign) => {
             }))
           ]}
           label='Loại thẻ'
-          className='col-span-2'
+          className={isCreate ? 'col-span-4' : 'col-span-2'}
         />
 
         <FormSelect
@@ -148,7 +157,7 @@ const FormFieldAssign = ({ control, setValue }: FormFieldAssign) => {
             }))
           ]}
           label='Trạng thái'
-          className='col-span-2'
+          className={isCreate ? 'col-span-8' : 'col-span-2'}
         />
         <FormDatePicker
           control={control}

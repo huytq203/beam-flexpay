@@ -28,3 +28,9 @@ export interface feeSearch {
   feeDomain: string | null|undefined,
   status: string | null|undefined
 }
+export enum statusType{
+  INIT='INIT',
+  ACTIVE='ACTIVE',
+  INACTIVE='INACTIVE',
+  LOCKED='LOCKED'
+}

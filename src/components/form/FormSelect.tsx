@@ -40,6 +40,7 @@ export function FormSelect<T extends FieldValues>({
           <SelectInput
             {...field}
             {...fieldRest}
+            allowClear={true}
             defaultValue={defaultValue}
             data={options}
             handleChange={(value: any, option: any) => {

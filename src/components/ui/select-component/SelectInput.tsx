@@ -18,7 +18,6 @@ const SelectInput: React.FC<SelectProps> = ({ handleChange, data, defaultValue, 
         {...props}
         defaultValue={defaultValue}
         value={value}
-        allowClear
         onChange={handleChange}
         options={data}
         placeholder="Chọn"

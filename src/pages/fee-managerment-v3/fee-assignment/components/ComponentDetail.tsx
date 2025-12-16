@@ -1,7 +1,7 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons"
 import { ButtonComponent, CardComponent, Table } from "@components/common"
 import { useGetFeeComponentTierQuery } from "@services/apiFeeComponentTier"
-import { feePolicyComponent } from "@type/feePoliciesComponent"
+import { baseOn, beneficiaryType, calculationMethodEnum, componentType, feePolicyComponent, payerType } from "@type/feePoliciesComponent"
 
 interface propComponentDetail {
   setOpenModalDetail: (value: boolean) => void
@@ -83,7 +83,7 @@ export const ComponentDetail = ({ setOpenModalDetail, data, onEdit, onDelete }: 
           content={
             <div className=''>
               <div className='flex justify-between items-center mt-2'>
-                <p className='font-medium'>{data.componentType}</p>
+                <p className='font-medium'>{componentType[data.componentType as keyof typeof componentType]}</p>
                 <div className=' flex gap-2 justify-center items-center'>
                   <ButtonComponent
                     type='default'
@@ -107,16 +107,16 @@ export const ComponentDetail = ({ setOpenModalDetail, data, onEdit, onDelete }: 
               </div>
               <div className=' flex gap-4 px-2 mb-3'>
                 <span className='border px-2 py-1 rounded bg-gray-200 '>
-                  Người trả: <span className='font-medium'>{data.payerType}</span>
+                  Người trả: <span className='font-medium'>{payerType[data.payerType as keyof typeof payerType]}</span>
                 </span>
                 <span className='border px-2 py-1 rounded bg-gray-200'>
-                  Người hưởng: <span className='font-medium'>{data.beneficiaryType}</span>
+                  Người hưởng: <span className='font-medium'>{beneficiaryType[data.beneficiaryType as keyof typeof beneficiaryType]}</span>
                 </span>
                 <span className='border px-2 py-1 rounded bg-gray-200'>
-                  Cách tính: <span className='font-medium'>{data.calculationMethod}</span>
+                  Cách tính: <span className='font-medium'>{calculationMethodEnum[data.calculationMethod as keyof typeof calculationMethodEnum]} </span>
                 </span>
                 <span className='border px-2 py-1 rounded bg-gray-200'>
-                  Dựa trên: <span className='font-medium'>{data.baseOn}</span>
+                  Dựa trên: <span className='font-medium'>{baseOn[data.componentType as keyof typeof baseOn]}</span>
                 </span>
               </div>
               <div className='px-2'>

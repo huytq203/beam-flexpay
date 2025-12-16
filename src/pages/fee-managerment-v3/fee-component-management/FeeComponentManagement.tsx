@@ -32,13 +32,14 @@ import { useGetFeeComponentTierQuery } from '@services/apiFeeComponentTier'
 import { useMessage } from '@hooks/useMessage'
 import { convertToISO } from '../FeeManagement.utils'
 import { useFeeComponentForm } from '../hooks/useFeeComponentForm'
+import { useSVG } from '@hooks/useSVG'
 
 const FeeComponentManagement = () => {
   const { successMess, errorMess } = useMessage()
   const { id } = useParams()
   const navigate = useNavigate()
   const isEdit = Boolean(id)
-
+  const {svg}=useSVG()
   // UI State
   const [open, setOpen] = useState(false)
   const [page, setPage] = useState(1)
@@ -56,7 +57,7 @@ const FeeComponentManagement = () => {
     updateAllTiers: () => Promise<void>
   }>(null)
 
-  // Custom hook for fee component CRUD
+  // hook
   const {
     updateComponentId,
     setUpdateComponentId,
@@ -74,6 +75,31 @@ const FeeComponentManagement = () => {
     onSuccess: () => setOpen(false),
     setSelectedRow
   })
+
+  const DEFAULT_VALUES = {
+    name: '',
+    description: '',
+    priority: 0,
+    status: '',
+    validFrom: '',
+    validTo: '',
+    currency: '',
+    serviceType: '',
+    feeDomain: ''
+  }
+
+  const {
+    handleSubmit,
+    reset,
+    control,
+    formState: { errors }
+  } = useForm<PolicyType>({
+    resolver: zodResolver(PolicySchema),
+    defaultValues: DEFAULT_VALUES,
+    shouldUnregister: true
+  })
+
+
 
   // API Queries
   const { data: feeComponent } = useGetFeeComponentByIdQuery(
@@ -160,27 +186,7 @@ const FeeComponentManagement = () => {
     setOpenDialog
   })
 
-  const DEFAULT_VALUES = {
-    name: '',
-    description: '',
-    priority: 0,
-    status: '',
-    validFrom: '',
-    validTo: '',
-    currency: '',
-    serviceType: '',
-    feeDomain: ''
-  }
 
-  const {
-    handleSubmit,
-    reset,
-    control,
-    formState: { errors }
-  } = useForm<PolicyType>({
-    resolver: zodResolver(PolicySchema),
-    defaultValues:DEFAULT_VALUES
-  })
 
   useEffect(() => {
     if (policyData) {
@@ -233,13 +239,13 @@ const FeeComponentManagement = () => {
           type='default'
           content='Quay lai'
           onClick={() => navigate(`${FEEMANAGEMENR_V3}/fee-management`)}
-          icon={
-            <svg
-              width={20}
-              height={20}
-            >
-              <use href='/icons.svg#hugeicons-arrow-left-02' />
-            </svg>
+          icon={svg('/icons.svg#hugeicons-arrow-left-02' )
+            // <svg
+            //   width={20}
+            //   height={20}
+            // >
+            //   <use href='/icons.svg#hugeicons-arrow-left-02' />
+            // </svg>
           }
         />
       </div>
@@ -255,12 +261,13 @@ const FeeComponentManagement = () => {
                   htmlType='submit'
                   content='Thiết lập'
                   icon={
-                    <svg
-                      width={20}
-                      height={20}
-                    >
-                      <use href='/icons.svg#hugeicons-file-add' />
-                    </svg>
+                    svg('/icons.svg#hugeicons-file-add')
+                    // <svg
+                    //   width={20}
+                    //   height={20}
+                    // >
+                    //   <use href='/icons.svg#hugeicons-file-add' />
+                    // </svg>
                   }
                 />
               </div>
