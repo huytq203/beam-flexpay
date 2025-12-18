@@ -82,10 +82,11 @@ export const ComponentDetail = ({ setOpenModalDetail, data, onEdit, onDelete }: 
           bodyBackground="#f5f5f5"
           content={
             <div className=''>
-              <div className='flex justify-between items-center mt-2'>
+              <div className='flex justify-between items-center mb-2'>
                 <p className='font-medium'>{componentType[data.componentType as keyof typeof componentType]}</p>
                 <div className=' flex gap-2 justify-center items-center'>
                   <ButtonComponent
+                    size="small"
                     type='default'
                     content='Sửa '
                     onClick={() => {
@@ -95,6 +96,7 @@ export const ComponentDetail = ({ setOpenModalDetail, data, onEdit, onDelete }: 
                     icon={<EditOutlined />}
                   />
                   <ButtonComponent
+                    size="small"
                     type='default'
                     content='Xóa '
                     danger
@@ -136,7 +138,6 @@ export const ComponentDetail = ({ setOpenModalDetail, data, onEdit, onDelete }: 
               </div>
             </div>
           } />
-
       </div>
     </>
   )

@@ -6,7 +6,7 @@ import { useGetFeePoliciesQuery, useLazySearchFeePoliciesQuery } from '@services
 import useDebounce from '@hooks/useDebounce'
 import { serviceType } from '@type/feePoliciesComponent'
 import { TableRowSelection } from 'antd/es/table/interface'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 interface FormAddAssignProps {
@@ -21,14 +21,14 @@ const FormAddAssign = ({ onSelect }: FormAddAssignProps) => {
   const [pageSizeListPolicy, setPageSizeListPolicy] = useState(10)
   // api data
 
-  const { data: dataPolicy } = useGetFeePoliciesQuery({
+  const queryParams = useMemo(() => ({
     page: pageListPolicy,
     size: pageSizeListPolicy,
     sortBy: 'createdAt',
     sortDirection: 'DESC'
-  })
+  }), [pageListPolicy, pageSizeListPolicy])
+  const { data: dataPolicy } = useGetFeePoliciesQuery(queryParams)
 
-  /* eslint-disable react-hooks/exhaustive-deps */
   const debouncedSearchValue = useDebounce(searchValue, 500)
   const [triggerSearch, { data: searchResult, isFetching: isSearching }] = useLazySearchFeePoliciesQuery()
 

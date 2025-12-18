@@ -73,7 +73,7 @@ export const feeComponentColumns = ({
         <div className='flex gap-1 justify-center'>
           <TooltipComponent title='Cập nhật'>
             <ButtonComponent
-              type='text'
+              type='default'
               icon={<EditOutlined />}
               onClick={() => {
                 setSelectedRow(record)
@@ -84,8 +84,8 @@ export const feeComponentColumns = ({
           </TooltipComponent>
           <TooltipComponent title='Xóa'>
             <ButtonComponent
-              type='text'
               danger
+              type='default'
               icon={<DeleteOutlined/>}
               onClick={() => {
                 setDeletingId(record.id)

@@ -21,7 +21,6 @@ import {
 } from '@services/apiFeeAssignment'
 import {
   FeeAssignment,
-  FeeAssignmentMockup,
   FeeAssignResponse,
 } from '@type/feeAssignment'
 import { FeeAssignType } from '@pages/fee-managerment-v3/fee-assignment/feeAssign.schema'
@@ -73,7 +72,7 @@ const FeeAssignmentManagement = () => {
 
   //logic
 
-  const handleSearch = async (data: any) => {
+  const handleSearch = async (data: FeeAssignResponse) => {
     const payload = {
       ...data,
       page,
@@ -138,7 +137,6 @@ const FeeAssignmentManagement = () => {
 
   const handleSelectPolicy = (feePolicyId: string) => {
     setValue('feePolicyId', feePolicyId)
-    // Don't auto-close modal - let user manually close after reviewing selection
   }
 
   const columns = feeAssignColumn({ setOpenModalDelete, setSelectRowId, onToggleStatus: handleToggleStatus, navigate })
@@ -163,6 +161,7 @@ const FeeAssignmentManagement = () => {
                 <ButtonComponent icon={svg('/icons.svg#hugeicons-search-01')}
                   content='Search' onClick={handleSubmit(handleSearch)} />
                 <ButtonComponent
+                 type='default'
                   icon={svg('/icons.svg#hugeicons-delete-02')}
                   content='Xóa bộ lọc' onClick={handleReset} />
               </div>

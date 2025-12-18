@@ -1,3 +1,4 @@
+import { DollarOutlined } from '@ant-design/icons'
 import {
   _BANKANDCONNECT,
   _CUSTOMERS,
@@ -26,6 +27,7 @@ import {
   ClipboardTextIcon,
   ClockCounterClockwiseIcon,
   CreditCardIcon,
+  CurrencyCircleDollar,
   CurrencyCircleDollarIcon,
   CurrencyDollarIcon,
   EnvelopeSimpleIcon,
@@ -797,7 +799,7 @@ const internal_wallet = {
 const feeManagementV3 = {
   key: _FEEMANAGEMENR_V3,
   icon: (
-    <WalletIcon
+    <GearIcon
       size={size}
       weight={weight}
       color={COlOR}
@@ -818,7 +820,7 @@ const feeManagementV3 = {
     {
       key: 'fee-assignment',
       icon: (
-        <WalletIcon 
+        <CurrencyCircleDollarIcon  
           size={size}
           weight={weight}
           color={COlOR}

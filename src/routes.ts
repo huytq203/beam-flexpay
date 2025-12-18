@@ -87,6 +87,8 @@ import FeeComponentManagement from '@pages/fee-managerment-v3/fee-component-mana
 import FeeManagement from '@pages/fee-managerment-v3/fee-management/FeeManagement'
 import FeeAssignmentManagement from '@pages/fee-managerment-v3/fee-assignment/FeeAssignmentManagement'
 import FeeAssignAdd from '@pages/fee-managerment-v3/fee-assignment/FeeAssignAdd'
+import login2 from '@pages/auth/login/login2'
+import AuthLayout2 from '@components/layout/AuthLayout2'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -96,6 +98,10 @@ const authentication = {
     {
       path: AUTHENTICATION + '/login',
       element: createElement(Login)
+    },
+    {
+      path: AUTHENTICATION + '/login2',
+      element: createElement(login2)
     },
     {
       path: AUTHENTICATION + '/forgot-password',

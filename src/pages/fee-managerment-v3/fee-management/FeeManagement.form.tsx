@@ -123,7 +123,7 @@ const FeeManagementForm = ({
                                 htmlType='button'
                                 content='Xóa bộ lọc'
                                 onClick={onReset}
-                                type='primary'
+                                type='default'
                                 icon={svg('/icons.svg#hugeicons-delete-02')}
                             />
                         </div>

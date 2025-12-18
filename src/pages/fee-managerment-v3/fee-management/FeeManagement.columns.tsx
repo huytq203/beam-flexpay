@@ -32,7 +32,7 @@ interface PolicyColumnsOptions {
 // Status badge component
 const StatusBadge = ({ status }: { status: string }) => (
   <span
-    className={`px-2 py-1 rounded text-xs font-medium ${status === 'ACTIVE'
+    className={`px-2 py-1 rounded  text-xs font-medium ${status === 'ACTIVE'
       ? 'bg-green-100 text-green-800'
       : 'bg-red-100 text-red-800'
       }`}

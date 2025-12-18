@@ -15,6 +15,7 @@ import React, { useEffect } from 'react'
 import { FieldErrors, useForm, UseFormHandleSubmit, UseFormSetValue } from 'react-hook-form'
 import { feeAssignSchema, FeeAssignType } from './feeAssign.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { FeeAssignment } from '@type/feeAssignment'
 
 interface FormInforAddProps {
   svg: (href: string, options?: { size?: number; width?: number; height?: number; className?: string }) => JSX.Element
@@ -22,7 +23,8 @@ interface FormInforAddProps {
   handlePutAssign: (data: FeeAssignType) => Promise<void>
   handlePostAssign: (data: FeeAssignType) => Promise<void>
   onPolicySelected?: (feePolicyId: string) => void
-  editData?: any // Data from API for edit mode
+  editData?: FeeAssignment // Data from API for edit mode
+  handleSubmit?:()=>void
 }
 
 const DEFAULT_FORM_VALUES: FeeAssignType = {
@@ -73,7 +75,7 @@ export const FormInforAdd = ({ svg, id, handlePutAssign, handlePostAssign, onPol
   const handleLocalPolicySelect = (feePolicyId: string) => {
     setValue('feePolicyId', feePolicyId)
     onPolicySelected?.(feePolicyId)
-    setOpenModal(false)
+    // setOpenModal(false)
   }
 
   const handleReset = () => {
@@ -105,7 +107,7 @@ export const FormInforAdd = ({ svg, id, handlePutAssign, handlePostAssign, onPol
                 <ButtonComponent
                   content='Chọn chính sách phí'
                   onClick={() => setOpenModal(true)}
-                  hidden={id&&true||false}
+                  hidden={id && true || false}
                   icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
                 />
                 {errors.feePolicyId && (
@@ -122,8 +124,14 @@ export const FormInforAdd = ({ svg, id, handlePutAssign, handlePostAssign, onPol
         title={'Chọn chính sách phí'}
         width='70%'
         open={openModal}
-        onOk={() => setOpenModal(false)}
-        onCancel={() => setOpenModal(false)}
+        onOk={() => {
+          handleLocalPolicySelect
+          setOpenModal(false)
+        }}
+        onCancel={() => {
+          setOpenModal(false)
+          handleLocalPolicySelect('')
+        }}
         modalText={<FormAddAssign onSelect={handleLocalPolicySelect} />}
       />
     </>

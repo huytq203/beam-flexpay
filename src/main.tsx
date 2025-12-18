@@ -33,7 +33,11 @@ const theme = {
     colorInfo: primaryColor,
     colorLink: primaryColor,
     colorLinkHover: primaryHoverColor,
-    colorPrimaryHover: primaryHoverColor
+    colorPrimaryHover: primaryHoverColor,
+    Button: {
+      colorPrimary: primaryColor, 
+      colorPrimaryHover: primaryHoverColor,
+    },
   },
   components: {
     // Button: common,
@@ -60,15 +64,15 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <I18nextProvider i18n={i18next}>
         <ConfigProvider theme={theme}>
           <MessageProvider>
-          <App>
-            <React.Suspense fallback={<ScreenLoading />}>
-              <RouterProvider
-                router={WalletRoutes}
-                fallbackElement={<ScreenLoading />}
-              />
-            </React.Suspense>
-            <ScreenLoading />
-          </App>
+            <App>
+              <React.Suspense fallback={<ScreenLoading />}>
+                <RouterProvider
+                  router={WalletRoutes}
+                  fallbackElement={<ScreenLoading />}
+                />
+              </React.Suspense>
+              <ScreenLoading />
+            </App>
           </MessageProvider>
         </ConfigProvider>
       </I18nextProvider>

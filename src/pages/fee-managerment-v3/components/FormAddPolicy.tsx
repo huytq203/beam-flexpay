@@ -16,7 +16,7 @@ interface FormAddPolicyProps {
   id?: string
   handleUpdate?: (data: PolicyType) => Promise<void>
   onSubmit: (data: PolicyType) => Promise<void>
-  isCreate: boolean
+  isCreate?: boolean
 }
 
 const FormAddPolicy = ({

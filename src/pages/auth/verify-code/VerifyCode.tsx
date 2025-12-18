@@ -86,7 +86,7 @@ const VerifyCode = () => {
   }
 
   const handleCancel = () => {
-    navigate('/auth/login');
+    navigate('/auth/login2');
   }
 
   const handleCodeChange = (index: number, value: string) => {
@@ -121,7 +121,7 @@ const VerifyCode = () => {
   }
 
   return (
-    <div className='verify-code-container'>
+    <div className=''>
       <Card className='verify-code-card'>
         <h1 className='verify-code-title'>Nhập mã xác thực</h1>
         <p className='verify-code-subtitle'>
