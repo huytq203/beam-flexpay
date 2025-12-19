@@ -225,7 +225,7 @@ const FormAddFeeComponent = forwardRef<
             await Promise.all(promises)
 
             successMess('Cập nhật phí thành công')
-          } catch (error) {
+          } catch (error:any) {
             errorMess(error?.data?.detail)
           }
         },

@@ -8,7 +8,8 @@ interface FormInputProps<T extends FieldValues> {
   control: Control<T>;
   label?: string;
   placeholder?: string;
-  className?: string;
+  className?: string; // For the wrapper (grid positioning)
+  inputClassName?: string; // For the input element itself
   disabled?: boolean;
   type?: string;
   classNameLable?: string;
@@ -26,7 +27,8 @@ export function FormInput<T extends FieldValues>({
   control,
   label,
   placeholder,
-  className = "col-span-6 flex flex-col",
+  className = "col-span-6 flex flex-col", // Wrapper default
+  inputClassName = "", // Input default
   disabled,
   type,
   classNameLable = 'font-medium',
@@ -39,8 +41,8 @@ export function FormInput<T extends FieldValues>({
       name={name}
       control={control}
       label={label}
+      className={className} // This goes to FormField wrapper div
       classNameLable={classNameLable}
-      
       render={(field) => {
         const { onChange: customOnChange, ...fieldRest } = rest as any;
         if (type === 'password') {
@@ -50,7 +52,7 @@ export function FormInput<T extends FieldValues>({
               {...fieldRest}
               placeholder={placeholder}
               disabled={disabled}
-              className={className}
+              className={inputClassName} // This goes to Input element
               prefix={prefix}
               iconRender={passwordConfig?.iconRender}
               visibilityToggle={passwordConfig?.visibilityToggle ?? true}
@@ -70,7 +72,7 @@ export function FormInput<T extends FieldValues>({
             type={type}
             placeholder={placeholder}
             disabled={disabled}
-            className={className}
+            className={inputClassName} // This goes to Input element
             prefix={prefix}
             onChange={(e: any) => {
               field.onChange(e);

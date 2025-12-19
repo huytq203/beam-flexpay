@@ -6,9 +6,10 @@ import {
   UnlockOutlined
 } from '@ant-design/icons'
 import { formatDate, getEnumLabel } from '@pages/fee-managerment-v3/FeeManagement.utils'
-import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
+import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import { ColumnsType } from 'antd/es/table'
 import { feeDomain, serviceType } from '@type/feePoliciesComponent'
+import { statusType } from '@type/feePolicies'
 
 // Types
 interface PolicyRecord {
@@ -32,12 +33,12 @@ interface PolicyColumnsOptions {
 // Status badge component
 const StatusBadge = ({ status }: { status: string }) => (
   <span
-    className={`px-2 py-1 rounded  text-xs font-medium ${status === 'ACTIVE'
-      ? 'bg-green-100 text-green-800'
-      : 'bg-red-100 text-red-800'
+    className={`px-2  rounded-md  whitespace-nowrap  text-xs font-medium ${status === 'ACTIVE'
+      ? 'bg-green-50 border border-green-800 text-green-800'
+      : `${status == 'INIT' ? 'bg-blue-50 border border-blue-400 text-blue-800' : 'bg-red-50 border border-red-800 text-red-800 '}`
       }`}
   >
-    {status}
+    {getEnumLabel(status, statusType)}
   </span>
 )
 
@@ -57,7 +58,7 @@ const ActionButtons = ({
     <ButtonComponent
       type='default'
       icon={<EditOutlined />}
-      onClick={() => navigate(`${FEEMANAGEMENR_V3}/edit/${record.key}`)}
+      onClick={() => navigate(`${FEEMANAGEMENT_V3}/edit/${record.key}`)}
     />
     <ButtonComponent
       type='default'
@@ -102,13 +103,7 @@ export const getPolicyColumns = ({
       className: 'border border-l-0  border-b-0',
       render: (value: string) => getEnumLabel(value, serviceType)
     },
-    {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      className: 'border border-l-0  border-b-0',
-      align: 'center',
-      render: (status: string) => <StatusBadge status={status} />
-    },
+
     {
       title: 'Phí miền',
       dataIndex: 'feeDomain',
@@ -131,13 +126,20 @@ export const getPolicyColumns = ({
       dataIndex: 'validTo',
       className: 'border border-l-0 border-b-0',
       render: (date: string) => {
-        if (date === null||''||0) {
+        if (date === null || '' || 0) {
           return 'Vô thời hạn'
         }
         else {
           return formatDate(date)
         }
       }
+    },
+    {
+      title: 'Trạng thái',
+      dataIndex: 'status',
+      className: 'border border-l-0  border-b-0',
+      align: 'center',
+      render: (status: string) => <StatusBadge status={status} />
     },
     {
       title: 'Thao tác',

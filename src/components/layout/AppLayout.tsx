@@ -96,12 +96,12 @@ function AppLayout() {
       })
     }
   }, [getProfile.data])
-  useEffect(() => {
-    if (!isAccess) {
-      navigate(FORBIDDENERROR)
-    }
-  }, [isAccess])
-
+useEffect(() => {
+  if ( !isAccess && location.pathname !== FORBIDDENERROR) {
+    navigate(FORBIDDENERROR)
+  }
+}, [isAccess,location.pathname])
+console.log(isAccess)
   const currentKey = useMemo(() => {
     const selected = location.pathname.split('/')
     return selected.filter((n) => n !== '')
@@ -140,7 +140,7 @@ function AppLayout() {
             <Menu
               className='scroll-custom sidebar-menu'
               mode='inline'
-              items={navigation as MenuProps['items']}
+              items={isAccess ? navigation as MenuProps['items'] : []}
               onClick={handleSelectMenu}
               selectedKeys={currentKey}
               defaultOpenKeys={currentKey}

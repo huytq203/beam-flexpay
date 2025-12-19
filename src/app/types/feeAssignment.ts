@@ -92,8 +92,8 @@ export enum customerGroupType {
   MERCHANT = 'User Premium',
   STANDARD = 'User thường',
 }
-export enum statusType {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE'
+export enum statusType{
+  ACTIVE='Hoạt động',
+  INACTIVE='Không hoạt động',
 }
 export type FeeAssignmentResponse = ApiResponse<FeeAssignResponse>

@@ -35,12 +35,12 @@ export function FormSelect<T extends FieldValues>({
       classNameLable={classNameLable}
       className={className}
       render={(field) => {
-        const { onChange: customOnChange, ...fieldRest } = rest as any
+        const { onChange: customOnChange, allowClear = true, ...fieldRest } = rest as any
         return (
           <SelectInput
             {...field}
             {...fieldRest}
-            allowClear={true}
+            allowClear={allowClear} // Use prop value, default to true
             defaultValue={defaultValue}
             data={options}
             handleChange={(value: any, option: any) => {

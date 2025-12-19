@@ -21,7 +21,7 @@ import {
   useGetFeeComponentPoliciesQuery
 } from '@services/apiFeeComponent'
 import { useNavigate, useParams } from 'react-router-dom'
-import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
+import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import {
   useGetFeePolicyByIdQuery,
   usePostNewPolicyMutation,
@@ -198,7 +198,7 @@ const FeeComponentManagement = () => {
     try {
       await postNewPolicy(data).unwrap()
       successMess('Thêm chính sách thành công!')
-    } catch (error) {
+    } catch (error:any) {
       errorMess(error?.data?.message || 'Có lỗi xảy ra')
     }
   }
@@ -238,7 +238,7 @@ const FeeComponentManagement = () => {
         <ButtonComponent
           type='default'
           content='Quay lai'
-          onClick={() => navigate(`${FEEMANAGEMENR_V3}/fee-management`)}
+          onClick={() => navigate(`${FEEMANAGEMENT_V3}/fee-management`)}
           icon={svg('/icons.svg#hugeicons-arrow-left-02' )
             // <svg
             //   width={20}

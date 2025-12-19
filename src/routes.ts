@@ -18,7 +18,7 @@ import {
   REPORTS,
   ROLEMANAGEMENT,
   STATE_BANK,
-  FEEMANAGEMENR_V3
+  FEEMANAGEMENT_V3
 } from '@constants/routersConstant'
 
 import ForgotPassword from '@pages/auth/forgot-password/ForgotPassword'
@@ -87,8 +87,9 @@ import FeeComponentManagement from '@pages/fee-managerment-v3/fee-component-mana
 import FeeManagement from '@pages/fee-managerment-v3/fee-management/FeeManagement'
 import FeeAssignmentManagement from '@pages/fee-managerment-v3/fee-assignment/FeeAssignmentManagement'
 import FeeAssignAdd from '@pages/fee-managerment-v3/fee-assignment/FeeAssignAdd'
-import login2 from '@pages/auth/login/login2'
+import login2 from '@pages/auth/login/Login'
 import AuthLayout2 from '@components/layout/AuthLayout2'
+import VerifyCode2 from '@pages/auth/verify-code/VerifyCode'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -125,7 +126,7 @@ const authentication = {
     },
     {
       path: AUTHENTICATION + '/verify-code',
-      element: createElement(VerifyCode)
+      element: createElement(VerifyCode2)
     }
   ]
 }
@@ -468,41 +469,41 @@ const internalWallet = {
 // }
 
 const feeManagementV3 = {
-  path: FEEMANAGEMENR_V3,
+  path: FEEMANAGEMENT_V3,
   element: createElement(AppLayout),
   errorElement: createElement(NotFound),
   children: [
     {
-      path: FEEMANAGEMENR_V3,
+      path: FEEMANAGEMENT_V3,
       children: [
         {
-          path: FEEMANAGEMENR_V3 + '/fee-management',
+          path: FEEMANAGEMENT_V3 + '/fee-management',
           element: createElement(FeeManagement)
         },
         {
-          path: FEEMANAGEMENR_V3 + '/create',
+          path: FEEMANAGEMENT_V3 + '/create',
           element: createElement(FeeComponentManagement)
         },
 
         {
-          path: FEEMANAGEMENR_V3 + '/edit/:id',
+          path: FEEMANAGEMENT_V3 + '/edit/:id',
           element: createElement(FeeComponentManagement)
         }
       ]
     },
     {
-      path: FEEMANAGEMENR_V3,
+      path: FEEMANAGEMENT_V3,
       children: [
         {
-          path: FEEMANAGEMENR_V3 + '/fee-assignment',
+          path: FEEMANAGEMENT_V3 + '/fee-assignment',
           element: createElement(FeeAssignmentManagement)
         },
         {
-          path: FEEMANAGEMENR_V3 + '/fee-assignment/create',
+          path: FEEMANAGEMENT_V3 + '/fee-assignment/create',
           element: createElement(FeeAssignAdd)
         },
         {
-          path: FEEMANAGEMENR_V3 + '/fee-assignment/edit/:id',
+          path: FEEMANAGEMENT_V3 + '/fee-assignment/edit/:id',
           element: createElement(FeeAssignAdd)
         },
       ]

@@ -42,12 +42,12 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
 
   return (
     <div>
-      <div className='grid grid-cols-8 gap-3'>
+      <div className='grid grid-cols-12 gap-3'>
         <FormSelect
           control={control}
           name='applyType'
           label='Đối tượng áp dụng'
-          className={isCreate ? 'col-span-8' : 'col-span-2'}
+          className={isCreate ? 'col-span-12' : 'col-span-3'}
           allowClear={false}
           defaultValue={""}
           hidden={isCreate}
@@ -66,14 +66,14 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
           onChange={(val: any) => setDisable(val)}
         />
         <FormInput
+          type='text'
           control={control}
           name='account'
           placeholder='Nhập tài khoản...'
           label='Tài khoản'
-          className={isCreate ? 'col-span-4' : 'col-span-2'}
+          className={isCreate ? 'col-span-6' : 'col-span-3'}
           disabled={disable == "2" || disable == '' ? true : false}
           hidden={isCreate}
-          
           classNameLable={isCreate ? 'hidden' : 'font-medium'}
         />
         <FormSelect
@@ -87,7 +87,7 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
             }))
           ]}
           label='Nhóm khách hàng'
-          className={isCreate ? 'col-span-4' : 'col-span-2'}
+          className={isCreate ? 'col-span-6' : 'col-span-3'}
           disabled={disable == "1" || disable == '' ? true : false}
           hidden={isCreate}
           classNameLable={isCreate ? 'hidden' : 'font-medium'}
@@ -103,7 +103,7 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
             }))
           ]}
           label='Ngân hàng'
-          className={isCreate ? 'col-span-4' : 'col-span-2'}
+          className={isCreate ? 'col-span-6' : 'col-span-3'}
         />
         <FormSelect
           control={control}
@@ -116,7 +116,7 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
             }))
           ]}
           label='Loại giao dịch'
-          className={isCreate ? 'col-span-4' : 'col-span-2'}
+          className={isCreate ? 'col-span-6' : 'col-span-3'}
         />
 
         <FormSelect
@@ -130,7 +130,7 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
             }))
           ]}
           label='Phương thức giao dịch'
-          className={isCreate ? 'col-span-4' : 'col-span-2'}
+          className={isCreate ? 'col-span-6' : 'col-span-3'}
         />
         <FormSelect
           control={control}
@@ -143,7 +143,7 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
             }))
           ]}
           label='Loại thẻ'
-          className={isCreate ? 'col-span-4' : 'col-span-2'}
+          className={isCreate ? 'col-span-6' : 'col-span-3'}
         />
 
         <FormSelect
@@ -157,7 +157,7 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
             }))
           ]}
           label='Trạng thái'
-          className={isCreate ? 'col-span-8' : 'col-span-2'}
+          className={isCreate ? 'col-span-12' : 'col-span-3'}
         />
         <FormDatePicker
           control={control}

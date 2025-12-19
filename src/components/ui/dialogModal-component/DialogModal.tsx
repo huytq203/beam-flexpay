@@ -2,11 +2,15 @@ import { Modal } from "antd";
 
 export interface ModalConfirmProps {
   open: boolean;
-  title?: string;
+  title?: string|React.ReactNode;
   content?: React.ReactNode;
   confirmLoading?: boolean;
   onOk: () => void | Promise<void>;
   onCancel: () => void;
+  icon?: React.ReactNode;
+  okText?: string|React.ReactNode;
+  cancelText?: string|React.ReactNode;
+  className?: string;
 }
 
 const DialogModal: React.FC<ModalConfirmProps> = ({
@@ -15,7 +19,11 @@ const DialogModal: React.FC<ModalConfirmProps> = ({
   content,
   confirmLoading = false,
   onOk,
-  onCancel
+  onCancel,
+  icon,
+  okText,
+  cancelText,
+  className
 }) => {
   return (
     <Modal
@@ -25,7 +33,11 @@ const DialogModal: React.FC<ModalConfirmProps> = ({
       onOk={onOk}
       confirmLoading={confirmLoading}
       onCancel={onCancel}
+      okText={okText}
+      cancelText={cancelText} 
+      className={className}
     >
+      {icon}
       {content}
     </Modal>
   );

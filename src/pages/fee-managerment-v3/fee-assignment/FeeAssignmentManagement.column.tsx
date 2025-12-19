@@ -14,9 +14,10 @@ import { useState } from 'react'
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/themes/light.css'
 import { useNavigate } from 'react-router-dom'
-import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
+import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import { formatDate, getEnumLabel } from '../FeeManagement.utils'
 import { serviceType } from '@type/feePoliciesComponent'
+import { statusType } from '@type/feePolicies'
 
 interface prop {
   setSelectRowId: (value: string) => void
@@ -136,7 +137,7 @@ const StatusBadge = ({ status }: { status: string }) => (
       : 'bg-red-100 text-red-800'
       }`}
   >
-    {status}
+    {getEnumLabel(status, statusType)}
   </span>
 )
 export const feeAssignColumn = ({
@@ -229,7 +230,7 @@ export const feeAssignColumn = ({
                 type='default'
                 icon={<EditOutlined />}
                 onClick={() => {
-                  navigate(FEEMANAGEMENR_V3 + `/fee-assignment/edit/${record?.id}`)
+                  navigate(FEEMANAGEMENT_V3 + `/fee-assignment/edit/${record?.id}`)
                 }}
               />
             </TooltipComponent>

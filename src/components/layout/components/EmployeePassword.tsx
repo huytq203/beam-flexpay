@@ -29,7 +29,6 @@ function EmployeePassword(props: CustomModalProps) {
   const [changePassword] = useUserChangePasswordMutation()
   const [getOTP] = useUserGetUserOtpMutation()
 
-  console.log(getProfile.data?.email)
   const handleChangePassword = async () => {
     const record: IChangePassword = {
       trackingId: trackingId || '',

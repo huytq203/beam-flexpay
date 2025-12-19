@@ -3,6 +3,7 @@ import {
   CUSTOMERS,
   CUSTOMERTRANSACTION,
   FEEMANAGEMENT,
+  FEEMANAGEMENT_V3,
   INTERNAL,
   PERSONALWALLET,
   REPAYMENTANDDISBURSE,
@@ -59,7 +60,7 @@ const MappingRouterPermission: IMapping[] = [
   },
   {
     pathName: [FEEMANAGEMENT + '/e-wallet-transfer-money'],
-    permission: 'wallet_transfer:view'
+    permission: 'wallet_transfer:viewssss'
   },
   {
     pathName: [FEEMANAGEMENT + '/account-bank-payment'],
@@ -112,6 +113,14 @@ const MappingRouterPermission: IMapping[] = [
       REPORTS + INTERNAL + '/detail-account'
     ],
     permission: 'internal_report:view'
+  },
+  {
+    pathName: [FEEMANAGEMENT_V3 + '/fee-management'],
+    permission: 'fee_management:view'
+  },
+  {
+    pathName: [FEEMANAGEMENT_V3 + '/fee-assignment'],
+    permission: 'fee_assignment:view'
   }
 ]
 
@@ -124,7 +133,6 @@ const usePermission = (): boolean => {
     return new Promise<boolean>((resolve, reject) => {
       if (permissions.includes('admin*') || location.pathname === '/') {
         resolve(true)
-        // return true
       } else {
         const result = MappingRouterPermission.find(
           (item) =>
@@ -139,11 +147,12 @@ const usePermission = (): boolean => {
   }
 
   useEffect(() => {
-    ;async () => {
-      setAccess(await getPermissionAccess())
+    const checkPermission = async () => {
+      const hasAccess = await getPermissionAccess()
+      setAccess(hasAccess)
     }
-  }, [location.pathname])
-
+    // checkPermission()
+  }, [location.pathname, permissions])
   return isAccess
 }
 

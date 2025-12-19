@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
+import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import {
   ModalComponent,
   CardComponent

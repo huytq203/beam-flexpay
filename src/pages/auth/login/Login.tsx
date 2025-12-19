@@ -1,179 +1,176 @@
-import { LockOutlined, UserOutlined } from '@ant-design/icons'
+import { ButtonComponent } from '@components/common'
+import { FormInput } from '@components/form'
+import React, { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { useUserLoginMutation } from '@services/cmsService'
-import {
-  Button,
-  Card,
-  Col,
-  Divider,
-  Form,
-  Input,
-  Row,
-  Typography,
-  notification
-} from 'antd'
-import { useEffect } from 'react'
+import { useLazyGetUrlLoginQuery } from '@services/cmsUser'
+import { notification } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import "./style2.scss"
+import { useMessage } from '@hooks/useMessage'
+// Define validation schema
+const loginSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'Vui lòng nhập email')
+    .email('Vui lòng nhập đúng định dạng email')
+    .transform(val => val.trim()),
+  password: z
+    .string()
+    .min(1, 'Vui lòng nhập mật khẩu')
+    .transform(val => val.trim())
+})
 
-import './style.scss'
-import { useLazyGetUrlLoginQuery } from '@services/cmsUser'
-import { COlOR } from '@components/layout/components/Navigation'
+type LoginFormData = z.infer<typeof loginSchema>
 
-interface PayloadInterface {
-  email: string
-  password: string
+const Login2 = () => {
+    const navigate = useNavigate()
+    const [login, { isLoading }] = useUserLoginMutation()
+    const [getUrlLogin] = useLazyGetUrlLoginQuery()
+    const { t } = useTranslation()
+    const {infoMess,successMess,warningMess,errorMess} = useMessage()
+
+    const {
+        control,
+        handleSubmit,
+        formState: { errors }
+    } = useForm<LoginFormData>({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            email: '',
+            password: ''
+        }
+    })
+
+    useEffect(() => {
+        window.events.emit('auth-set-title', t('login.title').toString())
+        window.events.emit('auth-set-description', t`login.description`)
+    }, [])
+
+    const onFinish = async (values: LoginFormData) => {
+        try {
+            const result = await login({ userLoginDto: values })
+
+            if ('data' in result && result.data) {
+                // Navigate to verify code page with tracking ID and email
+                navigate(
+                    `/auth/verify-code?trackingId=${
+                        result.data.trackingId
+                    }&email=${encodeURIComponent(values.email)}`
+                )
+            } else if ('error' in result) {
+                // RTK Query error handling
+                const error = result.error as any
+                const errorMessage = error?.data?.message || t`login.failed`
+                errorMess(errorMessage)
+            }
+        } catch (error: any) {
+            // Fallback for unexpected errors
+            const errorMessage = error?.data?.message || error?.message || t`login.messages.server_error`
+            errorMess(errorMessage)
+        
+        }
+    }
+
+    const ssoLogin = async () => {
+        try {
+            const res = (await getUrlLogin({})) as {
+                data: { data: string; statusCode: number }
+            }
+            if ([200, 201].includes(res?.data?.statusCode) && res?.data?.data) {
+                window.location.href = res?.data?.data
+            } else {
+                notification.error({ message: t`login.sso-failed` })
+            }
+        } catch (error:any) {
+            notification.error({ message: t`login.sso-failed` })
+            alert(error?.data?.message)
+        }
+    }
+
+    return (
+        <>
+            <form 
+                onSubmit={handleSubmit(onFinish)}
+                className='border px-5 py-10 rounded-md shadow-xl md:border-none md:shadow-none md:px-4 md:py-0 '
+                // className="relative w-full max-w-[20rem] px-8 py-10 flex flex-col items-center bg-white/30 backdrop-blur-lg border border-white/30 rounded-xl shadow-2xl transition-all duration-300 ease-out hover:backdrop-blur-xl hover:bg-white/30 hover:shadow-[0_25px_60px_rgba(0,0,0,0.25)]" 
+            >
+                <div className="flex w-full flex-1 justify-center flex-col gap-3 "> 
+                    <div className="flex justify-center items-center mb-2">
+                        <div className="rounded-full bg-white p-1 shadow-md  hover:shadow-xl transition-all duration-300">
+                            <img className='w-16 h-16 object-contain' src="/images/BEAM.png" alt="" />
+                        </div>
+                    </div>
+                    <div className="flex justify-center items-center mb-3">
+                        <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight text-gray-600 italic">
+                            Đăng nhập 
+                        </h1>
+                    </div>
+                    
+                    <div className="flex flex-col gap-2">
+                        <div className="space-y-1">
+                            <FormInput 
+                                inputClassName='w-full md:!h-8 bg-transparent ' 
+                                control={control} 
+                                name={"email"} 
+                                placeholder={'Email của bạn'} 
+                                prefix={<UserOutlined className="text-gray-400" />} 
+                            />
+                        </div>
+                        
+                        <div className="space-y-1">
+                            <FormInput 
+                                inputClassName='w-full  md:!h-8 bg-transparent ' 
+                                type='password' 
+                                control={control} 
+                                name={"password"} 
+                                placeholder={'Mật khẩu'} 
+                                prefix={<LockOutlined className="text-gray-400" />} 
+                            />
+                        </div>
+                      
+                        <div className="flex justify-end items-center -mt-2">
+                            <Link 
+                                className='text-[0.75rem] font-medium text-blue-600 hover:text-blue-700 transition-colors duration-200 hover:underline' 
+                                to='/auth/forget-password'
+                            >
+                                Quên mật khẩu?
+                            </Link>
+                        </div>
+                    </div>
+                    
+                    <div className="flex mt-2">
+                        <ButtonComponent 
+                            className="flex-1 !h-18" 
+                            content='Đăng nhập' 
+                            htmlType='submit'
+                            loading={isLoading}
+                        />
+                    </div>
+                    
+                    <div className="flex items-center gap-3 my-2">
+                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+                        <span className="text-gray-500 text-sm font-medium px-2">Hoặc</span>
+                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+                    </div>
+                    
+                    <div className="flex">
+                        <ButtonComponent 
+                            className='flex-1 !h-18 md:!border-2 !border-gray-300 hover:!border-blue-400 !bg-white hover:!bg-blue-50 !text-gray-500 hover:!text-blue-600 !font-semibold !transition-all !duration-300 !shadow-sm hover:!shadow-md' 
+                            type='default' 
+                            content='Đăng nhập với Microsoft'
+                            onClick={ssoLogin}
+                            loading={isLoading}
+                        />
+                    </div>
+                </div>
+            </form>
+        </>
+    )
 }
 
-function Login() {
-  // Add useNavigate hook
-  const navigate = useNavigate()
-  const [login, { isLoading }] = useUserLoginMutation()
-  const [getUrlLogin] = useLazyGetUrlLoginQuery()
-  const { t } = useTranslation()
-
-  const onFinish = async (values: PayloadInterface) => {
-    try {
-      const result = await login({ userLoginDto: values })
-
-      if ('data' in result && result.data) {
-        // Chuyển hướng đến trang xác thực mã kèm theo dữ liệu cần thiết
-        navigate(
-          `/auth/verify-code?trackingId=${
-            result.data.trackingId
-          }&email=${encodeURIComponent(values.email)}`
-        )
-      }
-      // else {
-      //   notification.error({
-      //     message: t`login.failed`,
-      //     description: t`login.messages.invalid_credentials`
-      //   });
-      // }
-    } catch (error) {
-      notification.error({
-        message: t`login.failed`,
-        description: t`login.messages.server_error`
-      })
-    }
-  }
-
-  const ssoLogin = async () => {
-    try {
-      const res = (await getUrlLogin({})) as {
-        data: { data: string; statusCode: number }
-      }
-      if ([200, 201].includes(res?.data?.statusCode) && res?.data?.data) {
-        window.location.href = res?.data?.data
-      } else {
-        notification.error({ message: t`login.sso-failed` })
-      }
-    } catch (error) {
-      notification.error({ message: t`login.sso-failed` })
-    }
-  }
-
-  useEffect(() => {
-    window.events.emit('auth-set-title', t('login.title').toString())
-    window.events.emit('auth-set-description', t`login.description`)
-  }, [])
-
-  return (
-    <Card className='wx-450 box-shadow'>
-      <h1 className='mb-30'>{t`login.title`}</h1>
-      <Form
-        name='normal_login'
-        initialValues={{
-          email: '',
-          password: ''
-        }}
-        onFinish={onFinish}
-      >
-        <Form.Item
-          name='email'
-          validateTrigger={['onChange', 'onBlur']} // Thêm dòng này để validate khi thay đổi và khi blur
-          rules={[
-            {
-              required: true,
-              message: t`login.messages.email`.toString()
-            },
-            {
-              type: 'email',
-              message:
-                t`login.messages.email-format` ||
-                'Vui lòng nhập đúng định dạng email'
-            }
-          ]}
-          normalize={(value) => value.trim()}
-        >
-          <Input
-            prefix={<UserOutlined className='site-form-item-icon' />}
-            placeholder={t`login.placeholders.email`.toString()}
-            onChange={(e) => {
-              // Hàm này giúp kích hoạt validate khi giá trị thay đổi
-              const form = Form.useFormInstance()
-              form.validateFields(['email']).catch(() => {})
-            }}
-          />
-        </Form.Item>
-        <Form.Item
-          name='password'
-          rules={[
-            {
-              required: true,
-              message: t`login.messages.password`.toString()
-            }
-          ]}
-          normalize={(value) => value.trim()}
-        >
-          <Input
-            prefix={<LockOutlined className='site-form-item-icon' />}
-            type='password'
-            placeholder={t`login.placeholders.password`.toString()}
-          />
-        </Form.Item>
-        <Row justify='end'>
-          <Col>
-            <Form.Item>
-              <Link
-                style={{ color: COlOR }}
-                className='mb-24'
-                to='/auth/forget-password'
-              >
-                {t`login.forgot-password`.toString()}
-              </Link>
-            </Form.Item>
-          </Col>
-        </Row>
-        <Form.Item className='text-center'>
-          <Button
-            type='primary'
-            htmlType='submit'
-            block
-            loading={isLoading}
-          >
-            <b>{t`login.title`.toString()}</b>
-          </Button>
-        </Form.Item>
-        <Divider orientation='center'>
-          <Typography.Text
-            italic
-            disabled
-          >{t`login.other`}</Typography.Text>
-        </Divider>
-        <Form.Item className='text-center'>
-          <Button
-            type='primary'
-            ghost
-            block
-            loading={isLoading}
-            onClick={ssoLogin}
-          >
-            <b>{t`login.ssoLogin`.toString()}</b>
-          </Button>
-        </Form.Item>
-      </Form>
-    </Card>
-  )
-}
-
-export default Login
+export default Login2

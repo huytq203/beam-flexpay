@@ -4,8 +4,9 @@ import { authService } from '@services/bankSerice'
 import { logout } from '@slices/authSlice'
 import { showPassword, showProfile } from '@utils/events'
 import { Avatar, Col, Dropdown, MenuProps, Modal, Row, Typography } from 'antd'
-import React from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import IAvatarDefault from '@assets/image/avatar_default.webp'
 import { COlOR } from './Navigation'
 import {
@@ -14,10 +15,13 @@ import {
   UserIcon,
   WarningCircleIcon
 } from '@phosphor-icons/react/dist/ssr'
+import { DialogModal } from '@components/common'
 const { Text } = Typography
 
 export default function NavProfile() {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+  const [open, setOpen] = useState(false)
 
   const { t: trans } = useTranslation()
 
@@ -68,7 +72,7 @@ export default function NavProfile() {
         showPassword()
         break
       case 'logout':
-        signOut()
+          setOpen(true)
         break
     }
   }
@@ -81,23 +85,28 @@ export default function NavProfile() {
   const handleSignout = async () => {
     dispatch(logout())
     // dispatch(authService.util.resetApiState())
+    navigate('/auth/login')
   }
 
   const signOut = () => {
-    Modal.confirm({
-      title: trans('labels.logout'),
-      icon: (
-        <WarningCircleIcon
-          size={24}
-          color='#de831b'
-        />
-      ),
-      content: trans('labels.logoutDescription'),
-      okText: trans('buttons.logout'),
-      cancelText: trans('buttons.cancel'),
-      onOk: handleSignout,
-      centered: true
-    })
+  
+
+
+    
+    // Modal.confirm({
+    //   title: trans('labels.logout'),
+    //   icon: (
+    //     <WarningCircleIcon
+    //       size={24}
+    //       color='#de831b'
+    //     />
+    //   ),
+    //   content: trans('labels.logoutDescription'),
+    //   okText: trans('buttons.logout'),
+    //   cancelText: trans('buttons.cancel'),
+    //   onOk: handleSignout,
+    //   centered: true
+    // })
   }
 
   return (
@@ -127,6 +136,21 @@ export default function NavProfile() {
           </Col>
         </Row>
       </Dropdown>
+      <DialogModal
+        title={
+          <div className="flex items-center gap-2">
+            <WarningCircleIcon size={24} color='#de831b' />
+            <span>{trans('labels.logout')}</span>
+          </div>
+        }
+        content={trans('labels.logoutDescription')}
+        okText={trans('buttons.logout')}
+        cancelText={trans('buttons.cancel')}
+        onOk={handleSignout}
+        open={open}
+        onCancel={() => setOpen(false)}
+      />
     </React.Fragment>
+    
   )
 }

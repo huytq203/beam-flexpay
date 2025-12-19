@@ -15,7 +15,7 @@ import { useGetFeeComponentTierQuery } from '@services/apiFeeComponentTier'
 import { FeeAssignment } from '@type/feeAssignment'
 import { feePolicyComponent } from '@type/feePoliciesComponent'
 import { useFeeComponentForm } from '@pages/fee-managerment-v3/hooks/useFeeComponentForm'
-import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
+import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import { feeAssignSchema, FeeAssignType } from '../feeAssign.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -148,7 +148,7 @@ export const useFeeAssignmentForm = () => {
 
     // Handlers
     const handleNavigateBack = () => {
-        navigate(FEEMANAGEMENR_V3 + '/fee-assignment')
+        navigate(FEEMANAGEMENT_V3 + '/fee-assignment')
     }
 
     const handleEditComponent = (data: feePolicyComponent) => {

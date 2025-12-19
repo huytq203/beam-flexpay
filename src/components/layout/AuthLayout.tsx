@@ -34,33 +34,57 @@ function AuthLayout() {
   }, [])
 
   return (
-    <Row className='auth-page'>
-      <Col
-        lg={18}
-        sm={0}
-        
-      >
-        <div className='auth-bg-mask auth-mask-color' />
-        <div className='auth-bg' />
-        {/* <div className='auth-description'>
-          <div className='m-auto'>
-            <h1 className='t-white f-30'>{title}</h1>
-            <p className='t-white'>{description}</p>
-          </div>
-        </div> */}
-      </Col>
-      <Col
-        lg={6}
-        sm={0}
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
-      >
+    <div className="flex justify-center items-center  bg-gray-50">
+      <div className="auth-page flex-1 hidden md:flex">
+        <div className='auth-bg' >
+        </div>
+      </div>
+      <div className="
+    h-screen 
+    flex-1
+    flex items-center
+    justify-center
+    md:block
+    md:min-w-[28rem]
+    md:px-10
+    md:h-auto
+    md:items-start
+    md:justify-start
+    md:flex-none
+    
+  ">
         <Outlet />
-      </Col>
-    </Row>
+      </div>
+    </div>
+
+
+    // <Row className='auth-page'>
+    //   <Col
+    //     lg={18}
+    //     sm={0}
+
+    //   >
+    //     <div className='auth-bg-mask auth-mask-color' />
+    //     <div className='auth-bg' />
+    //     {/* <div className='auth-description'>
+    //       <div className='m-auto'>
+    //         <h1 className='t-white f-30'>{title}</h1>
+    //         <p className='t-white'>{description}</p>
+    //       </div>
+    //     </div> */}
+    //   </Col>
+    //   <Col
+    //     lg={6}
+    //     sm={0}
+    //     style={{
+    //       display: 'flex',
+    //       justifyContent: 'center',
+    //       alignItems: 'center'
+    //     }}
+    //   >
+    //     <Outlet />
+    //   </Col>
+    // </Row>
   )
 }
 

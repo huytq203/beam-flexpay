@@ -12,7 +12,7 @@ import {
   _REPORTS,
   _ROLEMANAGEMENT,
   _STATE_BANK,
-  _FEEMANAGEMENR_V3
+  _FEEMANAGEMENT_V3
 
 } from '@constants/routersConstant'
 import i18n from '@languages/i18n'
@@ -797,7 +797,7 @@ const internal_wallet = {
 }
 
 const feeManagementV3 = {
-  key: _FEEMANAGEMENR_V3,
+  key: _FEEMANAGEMENT_V3,
   icon: (
     <GearIcon
       size={size}

@@ -29,8 +29,8 @@ export interface feeSearch {
   status: string | null|undefined
 }
 export enum statusType{
-  INIT='INIT',
-  ACTIVE='ACTIVE',
-  INACTIVE='INACTIVE',
-  LOCKED='LOCKED'
+  INIT='Khởi tạo',
+  ACTIVE='Hoạt động',
+  INACTIVE='Không hoạt động',
+  LOCKED='Khóa'
 }

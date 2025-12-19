@@ -1,7 +1,7 @@
 import { appName } from '@constants/appConstant'
 import {
   BANKANDCONNECT,
-  FEEMANAGEMENR_V3,
+  FEEMANAGEMENT_V3,
   FEEMANAGEMENT,
   INTERNAL_WALLET,
   PERSONALWALLET,
@@ -184,7 +184,7 @@ const whiteList = [
     requestUrl: '/balance-internal-group'
   },
   {
-    pathname: FEEMANAGEMENR_V3 + '/fee-v3/fee-assignment',
+    pathname: FEEMANAGEMENT_V3 + '/fee-v3/fee-assignment',
     requestUrl: '/banks'
   }
 ]

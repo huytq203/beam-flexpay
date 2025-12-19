@@ -7,7 +7,7 @@ import {
   Table
 } from '@components/common'
 import { FormDatePicker, FormInput, FormSelect } from '@components/form'
-import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
+import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import { feeAssignColumn } from '@pages/fee-managerment-v3/fee-assignment/FeeAssignmentManagement.column'
 import FormAddAssign from '@pages/fee-managerment-v3/fee-assignment/components/FormAddAssign'
 import FormFieldAssign from '@pages/fee-managerment-v3/fee-assignment/components/FormFieldAssign'
