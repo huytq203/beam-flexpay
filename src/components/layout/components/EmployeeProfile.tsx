@@ -1,7 +1,7 @@
 import { GUTTER } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
 import {
-  useUserGetMyInfoQuery,
+  // useUserGetMyInfoQuery,
   useUserUpdateMutation
 } from '@services/cmsService'
 import { CustomModalProps } from '@type/api'
@@ -29,9 +29,9 @@ function EmployeeProfile(props: CustomModalProps) {
   const { accessToken, profile } = useAppSelector(
     (state: RootState) => state.auth
   )
-  const getProfile = useUserGetMyInfoQuery(undefined, {
-    skip: !accessToken
-  })
+  // const getProfile = useUserGetMyInfoQuery(undefined, {
+  //   skip: !accessToken
+  // })
   const [changeProfile] = useUserUpdateMutation()
 
   const handleUpdate = async () => {
@@ -50,9 +50,9 @@ function EmployeeProfile(props: CustomModalProps) {
     form.setFieldsValue(profile)
   }, [profile])
 
-  useEffect(() => {
-    if (open) getProfile.refetch().then((res) => form.setFieldsValue(res.data))
-  }, [open])
+  // useEffect(() => {
+  //   if (open) getProfile.refetch().then((res) => form.setFieldsValue(res.data))
+  // }, [open])
 
   return (
     <Modal

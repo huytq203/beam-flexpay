@@ -19,6 +19,8 @@ import { hideLoading, showLoading } from '@utils/events'
 import { notification } from 'antd'
 import { t } from 'i18next'
 import { RootState } from '../store'
+import Cookies from 'js-cookie'
+
 export const openNotification = (
   message: string,
   messageType?: 'warning' | 'info' | 'success' | 'error'
@@ -55,7 +57,7 @@ export const openNotification = (
 const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL,
   prepareHeaders: (headers, { getState }) => {
-    const { accessToken } = (getState() as RootState).auth
+    const accessToken = localStorage.getItem(appName)
     if (accessToken) {
       headers.set('authorization', `Bearer ${accessToken}`)
     }
@@ -68,7 +70,7 @@ const baseAuthQuery = fetchBaseQuery({
   baseUrl: ENV.API_LOGIN,
   credentials: 'include',
   prepareHeaders: (headers, { getState }) => {
-    const { accessToken } = (getState() as RootState).auth
+    const accessToken = localStorage.getItem(appName)
     if (accessToken) {
       headers.set('authorization', `Bearer ${accessToken}`)
     }
@@ -77,7 +79,10 @@ const baseAuthQuery = fetchBaseQuery({
 
 })
 
-
+const baseRefreshQuery = fetchBaseQuery({
+  baseUrl: ENV.API_LOGIN,
+  credentials: 'include', // nếu refresh token nằm trong cookie
+});
 
 const whiteList = [
   { pathname: PERSONALWALLET + '/customers-group', requestUrl: '/customer' },
@@ -219,20 +224,72 @@ export const fetchBaseQueryCustom: BaseQueryFn<
   isLoading !== false &&
     !isWhiteList((args as any).url, pathName) &&
     showLoading()
-  const result = await baseQuery(args, api, extraOptions)
+  const result = await baseAuthQuery(args, api, extraOptions)
   hideLoading()
   if (result.error && result.error.status) {
     switch (result.error.status) {
-      case 401:
-        // localStorage.removeItem(appName)
-        // if (window.location.pathname !== '/auth/login') {
-        //   setTimeout(() => {
-        //     window.location.href = '/auth/login'
-        //   }, 700)
-        // } else {
-        //   openNotification((result.error.data as any).message)
+      case 401: {
+        // Lấy refresh token từ Cookies
+        const refreshTokenValue = Cookies.get('refresh_token');
+        // if (!refreshTokenValue) {
+        //   // Không có refresh token → logout
+        //   localStorage.clear();
+        //   window.location.href = '/auth/login';
+        //   break;
         // }
-        break
+
+        const refreshResult = await baseRefreshQuery(
+          {
+            url: '/auth/refresh',
+            method: 'POST',
+            body: { refreshToken: refreshTokenValue }
+          },
+          api,
+          extraOptions
+        );
+
+
+        if (refreshResult.data) {
+          const responseData = (refreshResult.data as any).data;
+          const newAccessToken = responseData?.access_token;
+          const newRefreshToken = responseData?.refresh_token;
+          const refreshExpiresIn = responseData?.refresh_expires_in;
+
+          // Lưu token mới vào localStorage
+          localStorage.setItem(appName, newAccessToken);
+
+          // Lưu refresh token mới vào Cookies (nếu có)
+          if (newRefreshToken) {
+            Cookies.set('refresh_token', newRefreshToken, {
+              expires: refreshExpiresIn || 7
+            });
+          }
+
+          // Đảm bảo token đã được lưu trước khi retry
+          // Chờ cho đến khi localStorage được cập nhật xong
+          await new Promise<void>((resolve) => {
+            const checkToken = () => {
+              const storedToken = localStorage.getItem(appName);
+              if (storedToken === newAccessToken) {
+                resolve();
+              } else {
+                // Retry sau 10ms nếu chưa được lưu
+                setTimeout(checkToken, 10);
+              }
+            };
+            checkToken();
+          });
+
+          // Retry request với token mới
+          return await baseAuthQuery(args, api, extraOptions);
+        } else {
+          Cookies.remove('refresh_token');
+          localStorage.clear();
+          window.location.href = '/auth/login';
+          alert('Refresh token failed');
+        }
+        break;
+      }
       case 400:
         openNotification((result.error.data as any).message)
         break

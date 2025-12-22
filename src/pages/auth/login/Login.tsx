@@ -63,8 +63,7 @@ const Login2 = () => {
                 //     }&email=${encodeURIComponent(values.email)}`
                 // )
                navigate('/role/admin-account'); 
-               Cookies.set("access_token",result?.data?.access_token, { expires: result?.data?.expires_in })
-               Cookies.set("refresh_token",result?.data?.refresh_token, { expires: result?.data?.refresh_expires_in })
+               Cookies.set("refresh_token",result?.data?.refresh_token)
             } else if ('error' in result) {
                 // RTK Query error handling
                 const error = result.error as any

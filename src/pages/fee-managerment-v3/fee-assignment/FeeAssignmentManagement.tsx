@@ -31,6 +31,7 @@ import { useNavigate } from 'react-router-dom'
 import { useMessage } from '@hooks/useMessage'
 import { EditOutlined } from '@ant-design/icons'
 import { useSVG } from '@hooks/useSVG'
+import { useGetExamQuery } from '@services/testExample'
 
 const FeeAssignmentManagement = () => {
   // state
@@ -43,6 +44,7 @@ const FeeAssignmentManagement = () => {
   const [isCreate, setIsCreate] = useState(true)
 
   // call api
+  const{data:exam}=useGetExamQuery({})
 
   const { data: dataFeeAssign } = useGetAssignQuery({
     page,

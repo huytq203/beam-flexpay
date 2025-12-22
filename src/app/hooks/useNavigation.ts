@@ -40,7 +40,7 @@ const useNavigationEw = () => {
     const hasFullAccess = (perms: string[]): boolean => {
       return perms.some(p => p.endsWith(':FULL'))
     }
-    if (!hasFullAccess(permissions)) {
+    if (hasFullAccess(permissions)) {
       return [...navigationItems] // Return shallow copy to avoid mutations
     }
     const result: ItemTypeCustom[] = []

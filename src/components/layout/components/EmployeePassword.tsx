@@ -2,7 +2,7 @@ import { GUTTER } from '@constants/appConstant'
 import { useAppSelector } from '@hooks/hook'
 import {
   useUserChangePasswordMutation,
-  useUserGetMyInfoQuery,
+  // useUserGetMyInfoQuery,
   useUserGetUserOtpMutation
 } from '@services/cmsService'
 import { CustomModalProps } from '@type/api'
@@ -20,9 +20,9 @@ function EmployeePassword(props: CustomModalProps) {
   const { accessToken, profile } = useAppSelector(
     (state: RootState) => state.auth
   )
-  const getProfile = useUserGetMyInfoQuery(undefined, {
-    skip: !accessToken
-  })
+  // const getProfile = useUserGetMyInfoQuery(undefined, {
+  //   skip: !accessToken
+  // })
   const [trackingId, setTrackingId] = useState<string | null>(null)
   const [disabled, setDisabled] = useState<boolean>(true)
 
@@ -52,7 +52,7 @@ function EmployeePassword(props: CustomModalProps) {
   const handleGetOTP = async () => {
     const otp = await getOTP({
       adminGetOtp: {
-        email: getProfile.data?.email || '',
+        email: profile.email || '',
         action: 'ADMIN_CHANGE_PASSWORD'
       }
     }).unwrap()

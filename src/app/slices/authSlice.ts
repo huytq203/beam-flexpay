@@ -47,13 +47,17 @@ export interface IAuthState {
   profile: IUserProfile
 }
 
+// Lấy token từ localStorage và decode permissions khi app khởi tạo
+const storedToken = localStorage.getItem(appName)
+const initialTokenInfo = storedToken ? decodeToken(storedToken) : { permissions: [], email: '', name: '' }
+
 const initialState: IAuthState = {
-  accessToken: localStorage.getItem(appName) || null,
+  accessToken: storedToken,
   refreshToken: '',
   profile: {
     id: 0,
-    email: '',
-    fullName: '',
+    email: initialTokenInfo.email,
+    fullName: initialTokenInfo.name,
     status: true,
     jwtId: '',
     securityMethod: '',
@@ -61,7 +65,7 @@ const initialState: IAuthState = {
     type: '',
     phoneNumber: '',
     avatar: '',
-    permissions: []
+    permissions: initialTokenInfo.permissions
   }
 }
 
@@ -114,27 +118,27 @@ const authSlice = createSlice({
           return state
         }
       )
-      // Giữ lại cho backward compatibility với API cũ
-      .addMatcher(
-        authService.endpoints.verifyLoginOtp.matchFulfilled,
-        (state, { payload }) => {
-          localStorage.setItem(appName, payload.accessToken)
-          return {
-            ...state,
-            accessToken: payload.accessToken
-          }
-        }
-      )
-      .addMatcher(
-        userApi.endpoints.ssoLogin.matchFulfilled,
-        (state, { payload }) => {
-          localStorage.setItem(appName, payload.data.accessToken)
-          return {
-            ...state,
-            accessToken: payload.data.accessToken
-          }
-        }
-      )
+    // Giữ lại cho backward compatibility với API cũ
+    // .addMatcher(
+    //   authService.endpoints.verifyLoginOtp.matchFulfilled,
+    //   (state, { payload }) => {
+    //     localStorage.setItem(appName, payload.accessToken)
+    //     return {
+    //       ...state,
+    //       accessToken: payload.accessToken
+    //     }
+    //   }
+    // )
+    // .addMatcher(
+    //   userApi.endpoints.ssoLogin.matchFulfilled,
+    //   (state, { payload }) => {
+    //     localStorage.setItem(appName, payload.data.accessToken)
+    //     return {
+    //       ...state,
+    //       accessToken: payload.data.accessToken
+    //     }
+    //   }
+    // )
   }
 })
 

@@ -21,7 +21,7 @@ const injectedRtkApi = api
                 query: (body) => ({
                     url: `/auth/refresh`,
                     method: 'POST',
-                    body
+                    body:body
                 }),
                 transformResponse: fnTransformResponse
             })
