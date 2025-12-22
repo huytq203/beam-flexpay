@@ -1566,6 +1566,12 @@ export type CreateUserDto = {
 export type OtpDataDto = {
   trackingId: string
 }
+export interface DataLogin{
+  access_token:string
+  expires_in:number|null,
+  refresh_token:string,
+  refresh_expires_in:number|null,
+}
 export type AdminGetOtp = {
   email: string
   action: 'ADMIN_CHANGE_PASSWORD' | 'ADMIN_LOGIN'
@@ -1582,7 +1588,7 @@ export type UserLoginResponse = {
   tokenType: string
 }
 export type UserLoginDto = {
-  email: string
+  username: string
   password: string
 }
 export type UserDetailDto = {

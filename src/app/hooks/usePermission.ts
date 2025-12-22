@@ -128,32 +128,39 @@ const usePermission = (): boolean => {
   const location = useLocation()
   const [isAccess, setAccess] = useState<boolean>(true)
   const { permissions } = useAppSelector((state) => state.auth.profile)
+  console.log(permissions)
+  const hasFullAccess = (perms: string[]): boolean => {
+    return perms.some(p => p.endsWith(':FULL'))
+  }
 
-  const getPermissionAccess = () => {
-    return new Promise<boolean>((resolve, reject) => {
-      if (permissions.includes('admin*') || location.pathname === '/') {
-        resolve(true)
-      } else {
-        const result = MappingRouterPermission.find(
-          (item) =>
-            item.pathName.includes(location.pathname) &&
-            permissions.includes(item.permission)
-        )
+  const getPermissionAccess = (): boolean => {
+    if (!permissions || permissions.length === 0) {
+      return true
+    }
+    if (location.pathname === '/') {
+      return true
+    }
 
-        if (result) resolve(true)
-        else resolve(false)
-      }
-    })
+    if ( hasFullAccess(permissions)) {
+      return true
+    }
+
+    const result = MappingRouterPermission.find(
+      (item) =>
+        item.pathName.includes(location.pathname) &&
+        permissions.includes(item.permission)
+    )
+
+    return !!result
   }
 
   useEffect(() => {
-    const checkPermission = async () => {
-      const hasAccess = await getPermissionAccess()
-      setAccess(hasAccess)
-    }
-    // checkPermission()
+    const hasAccess = getPermissionAccess()
+    setAccess(hasAccess)
   }, [location.pathname, permissions])
+
   return isAccess
 }
 
 export default usePermission
+

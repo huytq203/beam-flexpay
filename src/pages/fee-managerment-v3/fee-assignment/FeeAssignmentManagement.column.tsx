@@ -1,11 +1,10 @@
 import {
   CheckOutlined,
   CloseOutlined,
-  DeleteOutlined,
   EditOutlined,
   LockOutlined,
   UnlockOutlined
-} from '@ant-design/icons'
+} from '@components/icons/common'
 import { ButtonComponent, TooltipComponent } from '@components/common'
 import { FeeAssignment } from '@type/feeAssignment'
 import { ColumnsType } from 'antd/es/table'

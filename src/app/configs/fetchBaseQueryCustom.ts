@@ -1,3 +1,4 @@
+import { ENV } from './env';
 import { appName } from '@constants/appConstant'
 import {
   BANKANDCONNECT,
@@ -18,7 +19,6 @@ import { hideLoading, showLoading } from '@utils/events'
 import { notification } from 'antd'
 import { t } from 'i18next'
 import { RootState } from '../store'
-
 export const openNotification = (
   message: string,
   messageType?: 'warning' | 'info' | 'success' | 'error'
@@ -62,6 +62,22 @@ const baseQuery = fetchBaseQuery({
     return headers
   }
 })
+
+
+const baseAuthQuery = fetchBaseQuery({
+  baseUrl: ENV.API_LOGIN,
+  credentials: 'include',
+  prepareHeaders: (headers, { getState }) => {
+    const { accessToken } = (getState() as RootState).auth
+    if (accessToken) {
+      headers.set('authorization', `Bearer ${accessToken}`)
+    }
+    return headers
+  }
+
+})
+
+
 
 const whiteList = [
   { pathname: PERSONALWALLET + '/customers-group', requestUrl: '/customer' },
@@ -182,10 +198,6 @@ const whiteList = [
   {
     pathname: INTERNAL_WALLET + '/account',
     requestUrl: '/balance-internal-group'
-  },
-  {
-    pathname: FEEMANAGEMENT_V3 + '/fee-v3/fee-assignment',
-    requestUrl: '/banks'
   }
 ]
 
@@ -212,14 +224,14 @@ export const fetchBaseQueryCustom: BaseQueryFn<
   if (result.error && result.error.status) {
     switch (result.error.status) {
       case 401:
-        localStorage.removeItem(appName)
-        if (window.location.pathname !== '/auth/login') {
-          setTimeout(() => {
-            window.location.href = '/auth/login'
-          }, 700)
-        } else {
-          openNotification((result.error.data as any).message)
-        }
+        // localStorage.removeItem(appName)
+        // if (window.location.pathname !== '/auth/login') {
+        //   setTimeout(() => {
+        //     window.location.href = '/auth/login'
+        //   }, 700)
+        // } else {
+        //   openNotification((result.error.data as any).message)
+        // }
         break
       case 400:
         openNotification((result.error.data as any).message)
@@ -233,3 +245,42 @@ export const fetchBaseQueryCustom: BaseQueryFn<
   }
   return result
 }
+
+/**
+ * Auth Base Query Custom - Dùng cho login, refresh token, và các auth APIs
+ * Sử dụng ENV.API_LOGIN thay vì VITE_API_URL
+ */
+export const fetchAuthBaseQueryCustom: BaseQueryFn<
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError
+> = async (args, api, extraOptions) => {
+  const isLoading = (args as any)?.params?.isLoading
+
+  // Show loading cho auth requests (trừ khi explicitly disabled)
+  isLoading !== false && showLoading()
+
+  const result = await baseAuthQuery(args, api, extraOptions)
+  hideLoading()
+
+  if (result.error && result.error.status) {
+    switch (result.error.status) {
+      case 401:
+        // Với auth APIs, chỉ show notification error, không redirect
+        // vì user có thể đang ở login page
+        openNotification((result.error.data as any)?.message || 'Unauthorized')
+        break
+      case 400:
+        openNotification((result.error.data as any)?.message || 'Bad request')
+        break
+      case 'FETCH_ERROR':
+        openNotification('Network error. Please check your connection.')
+        break
+      default:
+        openNotification((result.error.data as any)?.message || 'An error occurred')
+        break
+    }
+  }
+  return result
+}
+

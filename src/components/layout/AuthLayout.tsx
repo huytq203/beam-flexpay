@@ -34,25 +34,12 @@ function AuthLayout() {
   }, [])
 
   return (
-    <div className="flex justify-center items-center  bg-gray-50">
-      <div className="auth-page flex-1 hidden md:flex">
+    <div className="flex justify-center items-center  bg-gray-50 overflow-auto">
+      <div className="auth-page flex-[3] hidden md:block">
         <div className='auth-bg' >
         </div>
       </div>
-      <div className="
-    h-screen 
-    flex-1
-    flex items-center
-    justify-center
-    md:block
-    md:min-w-[28rem]
-    md:px-10
-    md:h-auto
-    md:items-start
-    md:justify-start
-    md:flex-none
-    
-  ">
+      <div className=" h-screen  flex-1 flex items-center justify-center overflow-auto">
         <Outlet />
       </div>
     </div>
