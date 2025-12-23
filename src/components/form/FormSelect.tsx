@@ -1,16 +1,17 @@
 import { Control, FieldValues, Path } from "react-hook-form";
 import { FormField } from "./FormField";
 import { SelectInput } from "../ui/select-component"; // Import từ UI components của bạn
+import { ReactNode } from "react";
 
 interface SelectOption {
-  label: string;
+  label: string|ReactNode;
   value: string | number|undefined;
 }
 
 interface FormSelectProps<T extends FieldValues> {
   name: Path<T>;
   control: Control<T>;
-  label?: string;
+  label?: string|ReactNode;
   options: SelectOption[];
   defaultValue?: string | number;
   className?: string;

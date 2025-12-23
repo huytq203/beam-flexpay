@@ -2,11 +2,12 @@ import { Control, FieldValues, Path } from "react-hook-form";
 import { FormField } from "./FormField";
 import { Input } from "../ui/Input-component";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { ReactNode } from "react";
 
 interface FormInputProps<T extends FieldValues> {
   name: Path<T>;
   control: Control<T>;
-  label?: string;
+  label?: string|ReactNode;
   placeholder?: string;
   className?: string; // For the wrapper (grid positioning)
   inputClassName?: string; // For the input element itself

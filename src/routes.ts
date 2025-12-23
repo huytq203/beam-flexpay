@@ -92,7 +92,7 @@ import login2 from '@pages/auth/login/Login'
 import AuthLayout2 from '@components/layout/AuthLayout2'
 import VerifyCode2 from '@pages/auth/verify-code/VerifyCode'
 import path from 'path'
-import RoleManagement from '@pages/role-management-V2/RoleManagement'
+import RoleManagement from '@pages/role-management-V2/user-management/RoleManagement'
 
 const authentication = {
   path: AUTHENTICATION,
