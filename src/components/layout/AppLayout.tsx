@@ -98,8 +98,6 @@ function AppLayout() {
       // })
     }
   }, [accessToken])
-  console.log(isAccess)
-  console.log(navigation)
 useEffect(() => {
   if ( !isAccess && location.pathname !== FORBIDDENERROR) {
     navigate(FORBIDDENERROR)

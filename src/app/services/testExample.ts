@@ -1,15 +1,22 @@
 import {ResponseType} from '@type/api'
-import {apiService} from './apiService'
- export const exam=apiService.injectEndpoints({
+import {apiFeeService, apiService} from './apiService'
+ export const exam=apiFeeService.injectEndpoints({
     endpoints: (build) => ({
         getExam:build.query({
             query:()=>({
                 url:'https://identity.ewallet.devops.beamewa.com.vn/api/v1/admin/examples',
                 method:'GET'
             })
+        }),
+        getPermisson:build.query({
+            query:()=>({
+                url:'https://identity.ewallet.devops.beamewa.com.vn/api/v1/admin/permissions',
+                method:'GET'
+            })
         })
     })
  })
  export const{
-    useGetExamQuery
+    useGetExamQuery,
+    useGetPermissonQuery
  }=exam

@@ -31,7 +31,7 @@ import { useNavigate } from 'react-router-dom'
 import { useMessage } from '@hooks/useMessage'
 import { EditOutlined } from '@ant-design/icons'
 import { useSVG } from '@hooks/useSVG'
-import { useGetExamQuery } from '@services/testExample'
+import { useGetExamQuery, useGetPermissonQuery } from '@services/testExample'
 
 const FeeAssignmentManagement = () => {
   // state
@@ -45,6 +45,7 @@ const FeeAssignmentManagement = () => {
 
   // call api
   const{data:exam}=useGetExamQuery({})
+  const{data:per}=useGetPermissonQuery({})
 
   const { data: dataFeeAssign } = useGetAssignQuery({
     page,

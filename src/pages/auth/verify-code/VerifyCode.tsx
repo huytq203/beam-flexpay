@@ -47,7 +47,7 @@ const VerifyCode2 = () => {
 
       if ('data' in result && result.data) {
         notification.success({ message: t('verifyCode.messages.success') });
-        navigate('/role/admin-account'); // Chuyển đến trang chính sau khi xác thực thành công
+        navigate('/'); // Navigate to "/" and let RedirectRouter handle routing to first permitted page
       }
     } catch (error) {
       notification.error({ message: t('verifyCode.messages.error') });

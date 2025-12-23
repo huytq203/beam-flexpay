@@ -1,5 +1,6 @@
 import { DataLogin, OtpDataDto, UserLoginApiArg, UserLoginApiResponse } from '@type/application'
 import { fnTransformResponse } from '@utils/helperFunctions'
+import { url } from 'inspector';
 import { authApiService as api } from './authApiService'
 
 
@@ -21,9 +22,16 @@ const injectedRtkApi = api
                 query: (body) => ({
                     url: `/auth/refresh`,
                     method: 'POST',
-                    body:body
+                    body: body
                 }),
                 transformResponse: fnTransformResponse
+            }),
+            logout: build.mutation({
+                query: (body) => ({
+                    url: '/auth/logout',
+                    method: 'POST',
+                    body: body
+                })
             })
         }),
         overrideExisting: false
@@ -33,5 +41,6 @@ export { injectedRtkApi as enhancedAuthApi }
 
 export const {
     useUserLoginMutation,
-    useRefreshTokenMutation
+    useRefreshTokenMutation,
+    useLogoutMutation
 } = injectedRtkApi

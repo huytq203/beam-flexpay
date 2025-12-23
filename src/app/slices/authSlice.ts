@@ -2,10 +2,10 @@ import { appName } from '@constants/appConstant'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { enhancedApi as authService } from '@services/cmsService'
 import { enhancedApi as userApi } from '@services/cmsUser'
-import { enhancedAuthApi } from '@services/authEndpoints'
+import { enhancedAuthApi, useLogoutMutation } from '@services/authEndpoints'
 import { IUserProfile } from '@type/auth'
 import { jwtDecode } from 'jwt-decode'
-
+import Cookies from 'js-cookie'
 const name = 'authSlice'
 
 // Interface cho JWT payload từ Keycloak/OIDC
@@ -50,7 +50,7 @@ export interface IAuthState {
 // Lấy token từ localStorage và decode permissions khi app khởi tạo
 const storedToken = localStorage.getItem(appName)
 const initialTokenInfo = storedToken ? decodeToken(storedToken) : { permissions: [], email: '', name: '' }
-
+const refresh = Cookies.get('refresh-token')
 const initialState: IAuthState = {
   accessToken: storedToken,
   refreshToken: '',
@@ -69,11 +69,13 @@ const initialState: IAuthState = {
   }
 }
 
+
 const authSlice = createSlice({
   name: name,
   initialState: initialState,
   reducers: {
     logout: () => {
+
       localStorage.removeItem(appName)
       return {
         ...initialState,
@@ -99,7 +101,7 @@ const authSlice = createSlice({
       .addMatcher(
         enhancedAuthApi.endpoints.userLogin.matchFulfilled,
         (state, { payload }) => {
-          const token = (payload as any).accessToken || (payload as any).access_token
+          const token = (payload as any).accessToken || (payload as any).accessToken
           if (token) {
             localStorage.setItem(appName, token)
             // Decode token để lấy permissions
@@ -118,27 +120,6 @@ const authSlice = createSlice({
           return state
         }
       )
-    // Giữ lại cho backward compatibility với API cũ
-    // .addMatcher(
-    //   authService.endpoints.verifyLoginOtp.matchFulfilled,
-    //   (state, { payload }) => {
-    //     localStorage.setItem(appName, payload.accessToken)
-    //     return {
-    //       ...state,
-    //       accessToken: payload.accessToken
-    //     }
-    //   }
-    // )
-    // .addMatcher(
-    //   userApi.endpoints.ssoLogin.matchFulfilled,
-    //   (state, { payload }) => {
-    //     localStorage.setItem(appName, payload.data.accessToken)
-    //     return {
-    //       ...state,
-    //       accessToken: payload.data.accessToken
-    //     }
-    //   }
-    // )
   }
 })
 

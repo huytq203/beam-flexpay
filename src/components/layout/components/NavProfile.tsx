@@ -16,12 +16,17 @@ import {
   WarningCircleIcon
 } from '@phosphor-icons/react/dist/ssr'
 import { DialogModal } from '@components/common'
+import Cookies from 'js-cookie'
+import { useLogoutMutation } from '@services/authEndpoints'
+import { CookieKey } from '@configs/fetchBaseQuery.types'
 const { Text } = Typography
 
 export default function NavProfile() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
+
+  const [logoutApi] = useLogoutMutation();
 
   const { t: trans } = useTranslation()
 
@@ -72,7 +77,7 @@ export default function NavProfile() {
         showPassword()
         break
       case 'logout':
-          setOpen(true)
+        setOpen(true)
         break
     }
   }
@@ -83,16 +88,25 @@ export default function NavProfile() {
   }
 
   const handleSignout = async () => {
-    dispatch(logout())
-    // dispatch(authService.util.resetApiState())
-    navigate('/auth/login')
+    try {
+      const refreshToken = Cookies.get(CookieKey.REFRESH_TOKEN)
+      if (refreshToken) {
+        await logoutApi({ refreshToken }).unwrap()
+      }
+    } catch (error) {
+
+    } finally {
+      Cookies.remove(CookieKey.REFRESH_TOKEN)
+      dispatch(logout())
+      // window.location.href = '/auth/login';
+    }
   }
 
   const signOut = () => {
-  
 
 
-    
+
+
     // Modal.confirm({
     //   title: trans('labels.logout'),
     //   icon: (
@@ -151,6 +165,6 @@ export default function NavProfile() {
         onCancel={() => setOpen(false)}
       />
     </React.Fragment>
-    
+
   )
 }

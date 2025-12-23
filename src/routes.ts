@@ -18,7 +18,8 @@ import {
   REPORTS,
   ROLEMANAGEMENT,
   STATE_BANK,
-  FEEMANAGEMENT_V3
+  FEEMANAGEMENT_V3,
+  ROLEMANAGEMENT_V2
 } from '@constants/routersConstant'
 
 import ForgotPassword from '@pages/auth/forgot-password/ForgotPassword'
@@ -90,6 +91,8 @@ import FeeAssignAdd from '@pages/fee-managerment-v3/fee-assignment/FeeAssignAdd'
 import login2 from '@pages/auth/login/Login'
 import AuthLayout2 from '@components/layout/AuthLayout2'
 import VerifyCode2 from '@pages/auth/verify-code/VerifyCode'
+import path from 'path'
+import RoleManagement from '@pages/role-management-V2/RoleManagement'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -511,6 +514,24 @@ const feeManagementV3 = {
   ]
 }
 
+const roleManagementV2 = {
+  path: ROLEMANAGEMENT_V2,
+  element: createElement(AppLayout),
+  errorElement: createElement(NotFound),
+  children:[
+    {
+      path:ROLEMANAGEMENT_V2,
+      children:[
+        {
+          path: ROLEMANAGEMENT_V2 + '/admin-account',
+          element: createElement(RoleManagement)
+        }
+
+      ]
+    }
+  ]
+
+}
 export const WalletRoutes = createBrowserRouter([
   authentication,
   defaultRouter,
@@ -523,5 +544,6 @@ export const WalletRoutes = createBrowserRouter([
   reports,
   repaymentAndDisburse,
   internalWallet,
-  feeManagementV3
+  feeManagementV3,
+  roleManagementV2
 ])

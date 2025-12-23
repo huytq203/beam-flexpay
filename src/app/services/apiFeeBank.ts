@@ -1,11 +1,10 @@
-import { apiService } from './apiService'
+import { apiFeeService, apiService } from './apiService'
 import { ResponseType } from '@type/api'
-const baseURL = import.meta.env.VITE_FEE_API_URL
-export const apiFeeBank = apiService.injectEndpoints({
+export const apiFeeBank = apiFeeService.injectEndpoints({
     endpoints: (build) => ({
         getBank: build.query({
             query: (params) => ({
-                url: `${baseURL}/fee/banks`,
+                url: `/fee/banks`,
                 method: 'GET',
                 params: params
             }),

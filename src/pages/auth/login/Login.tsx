@@ -12,7 +12,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import "./style2.scss"
 import { useMessage } from '@hooks/useMessage'
-import Cookies from 'js-cookie';
+import Cookies from 'js-cookie'
+import { CookieKey, TokenType } from '@configs/fetchBaseQuery.types'
 // Define validation schema
 const loginSchema = z.object({
     username: z
@@ -56,22 +57,15 @@ const Login2 = () => {
             const result = await login({ userLoginDto: values })
 
             if ('data' in result && result.data) {
-                // Navigate to verify code page with tracking ID and email
-                // navigate(
-                //     `/auth/verify-code?trackingId=${
-                //         result.data.trackingId
-                //     }&email=${encodeURIComponent(values.email)}`
-                // )
-               navigate('/role/admin-account'); 
-               Cookies.set("refresh_token",result?.data?.refresh_token)
+               navigate('/') 
+               Cookies.set(CookieKey.REFRESH_TOKEN, result?.data?.[TokenType.REFRESH_TOKEN] || '')
+               
             } else if ('error' in result) {
-                // RTK Query error handling
                 const error = result.error as any
                 const errorMessage = error?.data?.message || t`login.failed`
                 errorMess(errorMessage)
             }
         } catch (error: any) {
-            // Fallback for unexpected errors
             const errorMessage = error?.data?.message || error?.message || t`login.messages.server_error`
             errorMess(errorMessage)
 

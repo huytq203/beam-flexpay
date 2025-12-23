@@ -1567,10 +1567,10 @@ export type OtpDataDto = {
   trackingId: string
 }
 export interface DataLogin{
-  access_token:string
-  expires_in:number|null,
-  refresh_token:string,
-  refresh_expires_in:number|null,
+  accessToken:string
+  expiresIn:number|null,
+  refreshToken:string,
+  refreshExpiresIn:number|null,
 }
 export type AdminGetOtp = {
   email: string

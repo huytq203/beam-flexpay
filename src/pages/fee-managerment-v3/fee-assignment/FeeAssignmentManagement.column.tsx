@@ -131,14 +131,15 @@ function handleReject(record: FeeAssignment) {
 
 const StatusBadge = ({ status }: { status: string }) => (
   <span
-    className={`px-2 py-1 rounded text-xs font-medium ${status === 'ACTIVE'
-      ? 'bg-green-100 text-green-800'
-      : 'bg-red-100 text-red-800'
+    className={`px-2  rounded-md  whitespace-nowrap  text-xs font-medium ${status === 'ACTIVE'
+      ? 'bg-green-50 border border-green-800 text-green-800'
+      : `${status == 'INIT' ? 'bg-blue-50 border border-blue-400 text-blue-800' : 'bg-red-50 border border-red-800 text-red-800 '}`
       }`}
   >
     {getEnumLabel(status, statusType)}
   </span>
 )
+
 export const feeAssignColumn = ({
   onToggleStatus,
   navigate,

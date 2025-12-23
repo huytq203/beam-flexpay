@@ -1,15 +1,14 @@
-import { apiService } from './apiService'
+import { apiFeeService, apiService } from './apiService'
 import { ResponseType } from '@type/api'
 import {
   feePolicyComponent,
   FeeComponentResponse
 } from '@type/feePoliciesComponent'
-const baseURL=import.meta.env.VITE_FEE_API_URL
-export const feeComponentApi = apiService.injectEndpoints({
+export const feeComponentApi = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
     getFeeComponentPolicies: build.query({
       query: (params) => ({
-        url: `${baseURL}/fee/policy-components`,
+        url: `/fee/policy-components`,
         method: 'GET',
         params: params
       }),
@@ -18,7 +17,7 @@ export const feeComponentApi = apiService.injectEndpoints({
     }),
     getFeeComponentPoliciesById: build.query({
       query: (id: string) => ({
-        url: `${baseURL}/fee/policy-components/by-policy/${id}`,
+        url: `/fee/policy-components/by-policy/${id}`,
         method: 'GET',
       }),
       transformResponse: (res: ResponseType<feePolicyComponent[]>) => res.data,
@@ -26,7 +25,7 @@ export const feeComponentApi = apiService.injectEndpoints({
     }),
     getFeeComponentById: build.query({
       query: (id: string) => ({
-        url: `${baseURL}/fee/policy-components/${id}`,
+        url: `/fee/policy-components/${id}`,
         method: 'GET',
       }),
       transformResponse: (res: ResponseType<feePolicyComponent>) => res.data,
@@ -34,14 +33,14 @@ export const feeComponentApi = apiService.injectEndpoints({
     }),
     deleteFeeComponentPolicies: build.mutation({
       query: (id: string) => ({
-        url: `${baseURL}/fee/policy-components/${id}`,
+        url: `/fee/policy-components/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['FeePolicyComponent']
     }),
     postFeeComponentPolicies: build.mutation({
       query: (body) => ({
-        url: `${baseURL}/fee/policy-components`,
+        url: `/fee/policy-components`,
         method: 'POST',
         body: body
       }),
@@ -49,7 +48,7 @@ export const feeComponentApi = apiService.injectEndpoints({
     }),
      putFeeComponentPolicies: build.mutation({
       query: ({id,body}) => ({
-        url: `${baseURL}/fee/policy-components/${id}`,
+        url: `/fee/policy-components/${id}`,
         method: 'PUT',
         body: body
       }),

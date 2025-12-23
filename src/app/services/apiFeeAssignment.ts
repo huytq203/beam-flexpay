@@ -1,13 +1,11 @@
-import { apiService } from './apiService'
+import { apiFeeService, apiService } from './apiService'
 import { FeeAssignment, FeeAssignmentResponse, FeeAssignResponse } from '@type/feeAssignment'
 import { ResponseType } from '@type/api'
-const baseURL = import.meta.env.VITE_FEE_API_URL
-// const baseURL = `http://localhost:3001`
-export const feeAssignApi = apiService.injectEndpoints({
+export const feeAssignApi = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
     getAssign: build.query<FeeAssignResponse, any>({
       query: (params) => ({
-        url: `${baseURL}/fee/policy-assignments`,
+        url: `/fee/policy-assignments`,
         method: "GET",
         params: params
       }),
@@ -16,7 +14,7 @@ export const feeAssignApi = apiService.injectEndpoints({
     }),
     getAssignSearch: build.query<FeeAssignResponse, any>({
       query: (params) => ({
-        url: `${baseURL}/fee/policy-assignments/search`,
+        url: `/fee/policy-assignments/search`,
         method: "GET",
         params: params
       }),
@@ -25,7 +23,7 @@ export const feeAssignApi = apiService.injectEndpoints({
     }),
     getAssignById: build.query<FeeAssignment, string | undefined>({
       query: (id) => ({
-        url: `${baseURL}/fee/policy-assignments/${id}`,
+        url: `/fee/policy-assignments/${id}`,
         method: "GET",
       }),
       transformResponse: (res: ResponseType<FeeAssignment>) => res.data,
@@ -33,7 +31,7 @@ export const feeAssignApi = apiService.injectEndpoints({
     }),
     postAssign: build.mutation({
       query: (body) => ({
-        url: `${baseURL}/fee/policy-assignments`,
+        url: `/fee/policy-assignments`,
         method: "POST",
         body: body
       }),
@@ -41,7 +39,7 @@ export const feeAssignApi = apiService.injectEndpoints({
     }),
     putAssign: build.mutation({
       query: ({ id, body }) => ({
-        url: `${baseURL}/fee/policy-assignments/${id}`,
+        url: `/fee/policy-assignments/${id}`,
         method: "PUT",
         body: body
       }),
@@ -49,14 +47,14 @@ export const feeAssignApi = apiService.injectEndpoints({
     }),
     patchAssignActive: build.mutation({
       query: (id) => ({
-        url: `${baseURL}/fee/policy-assignments/${id}/activate`,
+        url: `/fee/policy-assignments/${id}/activate`,
         method: "PATCH",
       }),
       invalidatesTags: ['feeAssign']
     }),
     patchAssignInActive: build.mutation({
       query: (id) => ({
-        url: `${baseURL}/fee/policy-assignments/${id}/deactivate`,
+        url: `/fee/policy-assignments/${id}/deactivate`,
         method: "PATCH",
       }),
       invalidatesTags: ['feeAssign']

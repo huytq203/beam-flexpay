@@ -1,343 +1,279 @@
-import { ENV } from './env';
+import { ENV } from './env'
 import { appName } from '@constants/appConstant'
-import {
-  BANKANDCONNECT,
-  FEEMANAGEMENT_V3,
-  FEEMANAGEMENT,
-  INTERNAL_WALLET,
-  PERSONALWALLET,
-  PRODUCTS,
-  ROLEMANAGEMENT
-} from '@constants/routersConstant'
 import {
   BaseQueryFn,
   FetchArgs,
   FetchBaseQueryError,
-  fetchBaseQuery
+  fetchBaseQuery,
+  BaseQueryApi
 } from '@reduxjs/toolkit/dist/query'
 import { hideLoading, showLoading } from '@utils/events'
 import { notification } from 'antd'
 import { t } from 'i18next'
-import { RootState } from '../store'
 import Cookies from 'js-cookie'
 
+// Import types, enums, constants from separate file
+import {
+  HttpStatus,
+  NotificationType,
+  FETCH_ERROR,
+  CookieKey,
+  TokenType,
+  RefreshResponse,
+  ApiErrorResponse,
+  RequestArgs,
+  isInWhiteList,
+  normalizePathname
+} from './fetchBaseQuery.types'
+
+// ============================================================================
+// STATE - Token Refresh Singleton
+// ============================================================================
+
+let isRefreshing = false
+let refreshPromise: Promise<string | null> | null = null
+
+// ============================================================================
+// NOTIFICATION HELPER
+// ============================================================================
+
+/**
+ * Display notification to user
+ * @param message - Message key for translation
+ * @param messageType - Type of notification (default: error)
+ */
 export const openNotification = (
   message: string,
-  messageType?: 'warning' | 'info' | 'success' | 'error'
-) => {
-  if (messageType) {
-    switch (messageType) {
-      case 'warning':
-        break
-      case 'info':
-        break
-      case 'error':
-        notification.error({
-          message: t(message),
-          placement: 'top'
-        })
-        break
-        break
-      default:
-        notification.success({
-          message: t(message),
-          placement: 'top'
-        })
-        break
-    }
-  } else {
-    notification.error({
-      message: t(message),
-      placement: 'top',
-      style: { width: 400 }
-    })
+  messageType: NotificationType = NotificationType.ERROR
+): void => {
+  const config = {
+    message: t(message),
+    placement: 'top' as const
+  }
+
+  switch (messageType) {
+    case NotificationType.WARNING:
+      notification.warning(config)
+      break
+    case NotificationType.INFO:
+      notification.info(config)
+      break
+    case NotificationType.SUCCESS:
+      notification.success(config)
+      break
+    case NotificationType.ERROR:
+    default:
+      notification.error({ ...config, style: { width: 400 } })
+      break
   }
 }
 
-const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_URL,
-  prepareHeaders: (headers, { getState }) => {
-    const accessToken = localStorage.getItem(appName)
-    if (accessToken) {
-      headers.set('authorization', `Bearer ${accessToken}`)
-    }
-    return headers
-  }
-})
+// ============================================================================
+// BASE QUERY CONFIGURATIONS
+// ============================================================================
 
-
+/** Base query with authentication headers */
 const baseAuthQuery = fetchBaseQuery({
   baseUrl: ENV.API_LOGIN,
   credentials: 'include',
-  prepareHeaders: (headers, { getState }) => {
+  prepareHeaders: (headers) => {
     const accessToken = localStorage.getItem(appName)
     if (accessToken) {
       headers.set('authorization', `Bearer ${accessToken}`)
     }
     return headers
   }
-
 })
 
+/** Base query for refresh token (no auth headers) */
 const baseRefreshQuery = fetchBaseQuery({
   baseUrl: ENV.API_LOGIN,
-  credentials: 'include', // nếu refresh token nằm trong cookie
-});
+  credentials: 'include'
+})
 
-const whiteList = [
-  { pathname: PERSONALWALLET + '/customers-group', requestUrl: '/customer' },
-  { pathname: PRODUCTS + '/sales-fee', requestUrl: '/service/services' },
-  { pathname: PRODUCTS + '/sales-fee', requestUrl: '/service' },
-  {
-    pathname: PRODUCTS + '/product-discount',
-    requestUrl: '/service/services'
-  },
-  { pathname: PRODUCTS + '/product-discount', requestUrl: '/service' },
-  {
-    pathname: PRODUCTS + '/product-discount',
-    requestUrl: '/account-group'
-  },
-  { pathname: PRODUCTS + '/product-discount', requestUrl: '/customer' },
-  { pathname: PRODUCTS + '/sales-fee', requestUrl: '/account-group' },
-  { pathname: PRODUCTS + '/sales-fee', requestUrl: '/customer' },
-  {
-    pathname: FEEMANAGEMENT + '/e-wallet-transfer-money',
-    requestUrl: '/account-group'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/e-wallet-transfer-money',
-    requestUrl: '/customer'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/direct-deposit',
-    requestUrl: '/bank/find-all-active'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/withdraw-money',
-    requestUrl: '/bank/find-all-active'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/limit-regulations',
-    requestUrl: '/account-group'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/limit-regulations',
-    requestUrl: '/customer'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/account-bank-payment',
-    requestUrl: '/bank/find-all-active'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/direct-deposit',
-    requestUrl: '/user'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/withdraw-money',
-    requestUrl: '/user'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/account-bank-payment',
-    requestUrl: '/user'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/account-bank-payment',
-    requestUrl: '/user'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/direct-deposit',
-    requestUrl: '/account-group'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/direct-deposit',
-    requestUrl: '/customer'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/withdraw-money',
-    requestUrl: '/account-group'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/withdraw-money',
-    requestUrl: '/customer'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/account-bank-payment',
-    requestUrl: '/account-group'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/account-bank-payment',
-    requestUrl: '/customer'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/account-bank-payment',
-    requestUrl: '/account-group'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/account-bank-payment',
-    requestUrl: '/customer'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/payment',
-    requestUrl: '/account-group'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/payment',
-    requestUrl: '/customer'
-  },
-  {
-    pathname: BANKANDCONNECT + '/notification-management',
-    requestUrl: '/customer'
-  },
-  {
-    pathname: BANKANDCONNECT + '/notification-management',
-    requestUrl: '/account-group'
-  },
-  {
-    pathname: FEEMANAGEMENT + '/limit-regulations',
-    requestUrl: '/user'
-  },
-  {
-    pathname: ROLEMANAGEMENT + '/manage-group-permissions',
-    requestUrl: '/group-permission'
-  },
-  {
-    pathname: INTERNAL_WALLET + '/account',
-    requestUrl: '/balance-internal-group'
-  }
-]
-
-const isWhiteList = (url?: string, pathname?: string) => {
-  return whiteList.find((w) => w.pathname === pathname && w.requestUrl === url)
-}
-
-export const fetchBaseQueryCustom: BaseQueryFn<
-  string | FetchArgs,
-  unknown,
-  FetchBaseQueryError
-> = async (args, api, extraOptions) => {
-  const pathName =
-    window.location.pathname.charAt(window.location.pathname.length - 1) === '/'
-      ? window.location.pathname.slice(0, -1)
-      : window.location.pathname
-  const isLoading = (args as any)?.params?.isLoading
-
-  isLoading !== false &&
-    !isWhiteList((args as any).url, pathName) &&
-    showLoading()
-  const result = await baseAuthQuery(args, api, extraOptions)
-  hideLoading()
-  if (result.error && result.error.status) {
-    switch (result.error.status) {
-      case 401: {
-        // Lấy refresh token từ Cookies
-        const refreshTokenValue = Cookies.get('refresh_token');
-        // if (!refreshTokenValue) {
-        //   // Không có refresh token → logout
-        //   localStorage.clear();
-        //   window.location.href = '/auth/login';
-        //   break;
-        // }
-
-        const refreshResult = await baseRefreshQuery(
-          {
-            url: '/auth/refresh',
-            method: 'POST',
-            body: { refreshToken: refreshTokenValue }
-          },
-          api,
-          extraOptions
-        );
-
-
-        if (refreshResult.data) {
-          const responseData = (refreshResult.data as any).data;
-          const newAccessToken = responseData?.access_token;
-          const newRefreshToken = responseData?.refresh_token;
-          const refreshExpiresIn = responseData?.refresh_expires_in;
-
-          // Lưu token mới vào localStorage
-          localStorage.setItem(appName, newAccessToken);
-
-          // Lưu refresh token mới vào Cookies (nếu có)
-          if (newRefreshToken) {
-            Cookies.set('refresh_token', newRefreshToken, {
-              expires: refreshExpiresIn || 7
-            });
-          }
-
-          // Đảm bảo token đã được lưu trước khi retry
-          // Chờ cho đến khi localStorage được cập nhật xong
-          await new Promise<void>((resolve) => {
-            const checkToken = () => {
-              const storedToken = localStorage.getItem(appName);
-              if (storedToken === newAccessToken) {
-                resolve();
-              } else {
-                // Retry sau 10ms nếu chưa được lưu
-                setTimeout(checkToken, 10);
-              }
-            };
-            checkToken();
-          });
-
-          // Retry request với token mới
-          return await baseAuthQuery(args, api, extraOptions);
-        } else {
-          Cookies.remove('refresh_token');
-          localStorage.clear();
-          window.location.href = '/auth/login';
-          alert('Refresh token failed');
-        }
-        break;
-      }
-      case 400:
-        openNotification((result.error.data as any).message)
-        break
-      case 'FETCH_ERROR':
-        break
-      default:
-        openNotification((result.error.data as any).message)
-        break
+const baseQueryOld = fetchBaseQuery({
+  baseUrl: import.meta.env.VITE_API_URL,
+  prepareHeaders: (headers, { getState }) => {
+   const accessToken = localStorage.getItem(appName)
+    if (accessToken) {
+      headers.set('authorization', `Bearer ${accessToken}`)
     }
+    return headers
   }
-  return result
+})
+
+
+export const baseQueryFee = fetchBaseQuery({
+  baseUrl: ENV.API_FEE,
+  credentials: 'include',
+  prepareHeaders: (headers) => {
+    const accessToken = localStorage.getItem(appName)
+    if (accessToken) {
+      headers.set('authorization', `Bearer ${accessToken}`)
+    }
+    return headers
+  }
+})
+// ============================================================================
+// TOKEN REFRESH LOGIC
+// ============================================================================
+
+/**
+ * Refresh access token using refresh token stored in cookies
+ * Uses singleton pattern to prevent multiple simultaneous refresh requests
+ */
+const refreshAccessToken = async (
+  api: BaseQueryApi,
+  extraOptions: Record<string, unknown>
+): Promise<string | null> => {
+  // Return existing promise if already refreshing (singleton pattern)
+  if (isRefreshing && refreshPromise) {
+    return refreshPromise
+  }
+
+  isRefreshing = true
+
+  refreshPromise = (async () => {
+    try {
+      const refreshToken = Cookies.get(CookieKey.REFRESH_TOKEN)
+      if (!refreshToken) return null
+
+      const refreshResult = await baseRefreshQuery(
+        {
+          url: '/auth/refresh',
+          method: 'POST',
+          body: { refreshToken }
+        },
+        api,
+        extraOptions
+      )
+
+      const data = (refreshResult.data as RefreshResponse)?.data
+      const newAccessToken = data?.[TokenType.ACCESS_TOKEN]
+
+      if (!newAccessToken) return null
+
+      // Save new access token
+      localStorage.setItem(appName, newAccessToken)
+
+      // Update refresh token if provided
+      if (data[TokenType.REFRESH_TOKEN]) {
+        Cookies.set(CookieKey.REFRESH_TOKEN, data[TokenType.REFRESH_TOKEN])
+      }
+
+      return newAccessToken
+    } catch {
+      return null
+    } finally {
+      isRefreshing = false
+      refreshPromise = null
+    }
+  })()
+
+  return refreshPromise
 }
 
 /**
- * Auth Base Query Custom - Dùng cho login, refresh token, và các auth APIs
- * Sử dụng ENV.API_LOGIN thay vì VITE_API_URL
+ * Force logout user and redirect to login page
  */
-export const fetchAuthBaseQueryCustom: BaseQueryFn<
-  string | FetchArgs,
-  unknown,
-  FetchBaseQueryError
-> = async (args, api, extraOptions) => {
-  const isLoading = (args as any)?.params?.isLoading
-
-  // Show loading cho auth requests (trừ khi explicitly disabled)
-  isLoading !== false && showLoading()
-
-  const result = await baseAuthQuery(args, api, extraOptions)
-  hideLoading()
-
-  if (result.error && result.error.status) {
-    switch (result.error.status) {
-      case 401:
-        // Với auth APIs, chỉ show notification error, không redirect
-        // vì user có thể đang ở login page
-        openNotification((result.error.data as any)?.message || 'Unauthorized')
-        break
-      case 400:
-        openNotification((result.error.data as any)?.message || 'Bad request')
-        break
-      case 'FETCH_ERROR':
-        openNotification('Network error. Please check your connection.')
-        break
-      default:
-        openNotification((result.error.data as any)?.message || 'An error occurred')
-        break
-    }
-  }
-  return result
+const forceLogout = (): void => {
+  Cookies.remove(CookieKey.REFRESH_TOKEN)
+  localStorage.clear()
+  window.location.href = '/auth/login'
 }
+
+// ============================================================================
+// FACTORY FUNCTION - Create custom base query with loading & error handling
+// ============================================================================
+
+/**
+ * Factory function to create custom base query with:
+ * - Loading indicator management (with whitelist)
+ * - Automatic token refresh on 401 Unauthorized
+ * - Error notification handling
+ * 
+ * @param baseQuery - The base fetch query to wrap
+ * @returns Custom base query function
+ */
+const createCustomBaseQuery = (
+  baseQuery: ReturnType<typeof fetchBaseQuery>
+): BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> => {
+  return async (args, api, extraOptions) => {
+    // Normalize pathname (remove trailing slash)
+    const pathName = normalizePathname(window.location.pathname)
+
+    // Get loading flag from request params (typed, no any)
+    const requestArgs = args as RequestArgs
+    const isLoading = requestArgs?.params?.isLoading
+    const requestUrl = typeof args === 'string' ? args : requestArgs?.url
+
+    // Show loading indicator if not in whitelist
+    if (isLoading !== false && !isInWhiteList(requestUrl, pathName)) {
+      showLoading()
+    }
+
+    // Execute the request
+    const result = await baseQuery(args, api, extraOptions)
+    hideLoading()
+
+    // Handle errors
+    if (result.error && result.error.status) {
+      const status = result.error.status
+
+      switch (status) {
+        case HttpStatus.UNAUTHORIZED: {
+          // Token expired - try to refresh
+          const newAccessToken = await refreshAccessToken(api, extraOptions as Record<string, unknown>)
+
+          if (!newAccessToken) {
+            forceLogout()
+            break
+          }
+
+          // Retry original request with new token
+          return await baseQuery(args, api, extraOptions)
+        }
+
+        case HttpStatus.BAD_REQUEST: {
+          const errorData = result.error.data as ApiErrorResponse
+          if (errorData?.message) {
+            openNotification(errorData.message)
+          }
+          break
+        }
+
+        case FETCH_ERROR:
+          // Network error - handle silently
+          break
+
+        default: {
+          const errorData = result.error.data as ApiErrorResponse
+          if (errorData?.message) {
+            openNotification(errorData.message)
+          }
+          break
+        }
+      }
+    }
+
+    return result
+  }
+}
+
+// ============================================================================
+// EXPORTED CUSTOM BASE QUERIES
+// ============================================================================
+
+/**
+ * Custom base query for AUTH API (ENV.API_LOGIN)
+ * With loading indicator, error handling, token refresh
+ */
+export const fetchBaseQueryCustom = createCustomBaseQuery(baseAuthQuery)
+
+/**
+ * Custom base query for FEE API (ENV.API_FEE)
+ * With loading indicator, error handling, token refresh
+ */
+export const fetchBaseQueryFee = createCustomBaseQuery(baseQueryFee)
+export const fetchBaseQueryOld = createCustomBaseQuery(baseQueryOld)
 
