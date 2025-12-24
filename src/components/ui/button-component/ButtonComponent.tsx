@@ -6,7 +6,7 @@ interface props extends ButtonProps {
   icon?: ReactNode,
   type?: "link" | "text" | "default" | "primary" | "dashed" | undefined
   color?: "default" | "primary" | "danger" | "blue" | "purple" | "cyan" | "green" | "magenta" | "pink" | "red" | "orange" | "yellow" | "volcano" | "geekblue" | "lime" | "gold" | undefined
-  variant?: "link" | "text" | "dashed" | "outlined" | "solid" | "filled" | undefined
+  variant?: "link" | "text" | "dashed" | "outlined" | "solid" | "filled" |'warning'| undefined
   form?: string,
   htmlType?: "button" | "submit" | "reset" | undefined,
   className?:string

@@ -11,6 +11,7 @@ export interface ModalConfirmProps {
   okText?: string|React.ReactNode;
   cancelText?: string|React.ReactNode;
   className?: string;
+  footer?:React.ReactNode
 }
 
 const DialogModal: React.FC<ModalConfirmProps> = ({
@@ -23,7 +24,8 @@ const DialogModal: React.FC<ModalConfirmProps> = ({
   icon,
   okText,
   cancelText,
-  className
+  className,
+  footer
 }) => {
   return (
     <Modal
@@ -36,6 +38,7 @@ const DialogModal: React.FC<ModalConfirmProps> = ({
       okText={okText}
       cancelText={cancelText} 
       className={className}
+      footer={footer}
     >
       {icon}
       {content}

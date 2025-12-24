@@ -7,5 +7,6 @@ export {
   UnlockOutlined,
   EyeOutlined,
   KeyOutlined,
-  UserSwitchOutlined
+  UserSwitchOutlined,
+  MailOutlined
 } from '@ant-design/icons'

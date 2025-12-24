@@ -35,6 +35,7 @@ export function FormInputNumber<T extends FieldValues>({
                 <InputNumber
                     {...field}
                     {...rest}
+                    id={field.name}
                     placeholder={placeholder}
                     disabled={disabled}
                     defaultValue={defaultValue}

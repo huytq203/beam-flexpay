@@ -136,6 +136,12 @@ const MappingRouterPermission: IMapping[] = [
       ROLEMANAGEMENT_V2 + '/admin-account'
     ],
     permission:'ROLE:FULL'
+  },
+  {
+    pathName:[
+      ROLEMANAGEMENT_V2 + '/role-management'
+    ],
+    permission:'ROLE:FULL'
   }
 ]
 

@@ -857,6 +857,18 @@ const roleManagementV2 = {
         />
       ),
       label: i18n.t('navigation.admin-and-permission-management')
+    },
+    {
+      key: 'role-management',
+      permission: 'ROLE:FULL',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: "Quản lý nhóm quyền"
     }
   ]
 

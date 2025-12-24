@@ -51,6 +51,7 @@ export function FormInput<T extends FieldValues>({
             <Input.Password
               {...field}
               {...fieldRest}
+              id={field.name}
               placeholder={placeholder}
               disabled={disabled}
               className={inputClassName} // This goes to Input element
@@ -70,6 +71,7 @@ export function FormInput<T extends FieldValues>({
           <Input
             {...field}
             {...fieldRest}
+            id={field.name}
             type={type}
             placeholder={placeholder}
             disabled={disabled}

@@ -20,7 +20,7 @@ export function FormField<T extends FieldValues>({
 }: FormFieldProps<T>) {
   return (
     <div className={className}>
-      {label && <label className={classNameLable}>{label}</label>}
+      {label && <label htmlFor={name} className={classNameLable}>{label}</label>}
       <Controller
         name={name}
         control={control}

@@ -7,19 +7,24 @@ import {
   UserSwitchOutlined
 } from '@components/icons/common'
 import { ButtonComponent } from '@components/common'
-import { UserInfor } from '@type/roleManagement'
+import { UserInfor } from '@type/userManagement'
 import { ColumnType } from 'antd/lib/table'
 
 import React from 'react'
+import { ActionMode } from './UserManagement'
 
 interface props {
   setOpenModalDetail: (record: boolean) => void
+  setOpenDialog: (record: boolean) => void
+  setModeAction: (value: ActionMode) => void
 }
 
 export const RoleManagemenColume = ({
-  setOpenModalDetail
-}: props): ColumnType<UserInfor>[] => {
-  const column: ColumnType<UserInfor>[] = [
+  setOpenModalDetail,
+  setModeAction,
+  setOpenDialog
+}: props): ColumnType<UserInfor>[] =>
+  [
     {
       title: 'STT',
       dataIndex: 'no',
@@ -89,7 +94,7 @@ export const RoleManagemenColume = ({
       title: 'action',
       dataIndex: 'action',
       align: 'center',
-      className: 'border',
+      className: 'border border-l-0 border-b-0',
       width: 300,
       fixed: 'right',
       render(value, record, index) {
@@ -110,11 +115,19 @@ export const RoleManagemenColume = ({
               type='default'
               className='text-yellow-600 '
               icon={<LockOutlined />}
+              onClick={() => {
+                setModeAction("lock")
+                setOpenDialog(true)
+              }}
             />
             <ButtonComponent
               type='default'
               className='text-red-600 '
               icon={<DeleteOutlined />}
+              onClick={() => {
+                setModeAction("delete")
+                setOpenDialog(true)
+              }}
             />
             <ButtonComponent
               type='default'
@@ -125,14 +138,17 @@ export const RoleManagemenColume = ({
               type='default'
               className='text-violet-600 '
               icon={<KeyOutlined />}
+              onClick={() => {
+                setModeAction("resetPass")
+                setOpenDialog(true)
+              }}
             />
           </div>
         )
       }
     }
   ]
-  return column
-}
+
 
 
 

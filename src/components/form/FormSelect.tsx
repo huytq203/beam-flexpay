@@ -4,14 +4,14 @@ import { SelectInput } from "../ui/select-component"; // Import từ UI componen
 import { ReactNode } from "react";
 
 interface SelectOption {
-  label: string|ReactNode;
-  value: string | number|undefined;
+  label: string | ReactNode;
+  value: string | number | undefined;
 }
 
 interface FormSelectProps<T extends FieldValues> {
   name: Path<T>;
   control: Control<T>;
-  label?: string|ReactNode;
+  label?: string | ReactNode;
   options: SelectOption[];
   defaultValue?: string | number;
   className?: string;
@@ -24,7 +24,7 @@ export function FormSelect<T extends FieldValues>({
   label,
   options,
   defaultValue,
-   classNameLable="font-medium",
+  classNameLable = "font-medium",
   className = "col-span-6 flex flex-col",
   ...rest
 }: FormSelectProps<T>) {
@@ -41,6 +41,7 @@ export function FormSelect<T extends FieldValues>({
           <SelectInput
             {...field}
             {...fieldRest}
+            id={field.name}
             allowClear={allowClear} // Use prop value, default to true
             defaultValue={defaultValue}
             data={options}

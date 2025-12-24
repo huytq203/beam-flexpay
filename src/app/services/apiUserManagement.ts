@@ -1,4 +1,4 @@
-import { ResponseUserInfor } from "@type/roleManagement";
+import { ResponseUserInfor } from "@type/userManagement";
 import { ResponseType } from "@type/api";
 import { authApiService } from "./authApiService";
 
