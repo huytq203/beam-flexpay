@@ -10,8 +10,8 @@ export interface UserInfor {
     lastName: string | null
     enabled: boolean
     emailVerified: boolean
-    createdTimestamp: string|number|Date|null
-    groups: string | null
+    createdTimestamp: string | number | Date | null
+    groups: string[] | null
 }
 export interface ResponseUserInfor {
     content: UserInfor[]

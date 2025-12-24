@@ -847,7 +847,7 @@ const roleManagementV2 = {
   label: i18n.t('navigation.account'),
   children: [
     {
-      key: 'admin-account',
+      key: 'user-account',
       permission: 'ROLE:FULL',
       icon: (
         <UsersThreeIcon
@@ -859,7 +859,7 @@ const roleManagementV2 = {
       label: i18n.t('navigation.admin-and-permission-management')
     },
     {
-      key: 'role-management',
+      key: 'permission-management',
       permission: 'ROLE:FULL',
       icon: (
         <UsersThreeIcon
@@ -869,6 +869,18 @@ const roleManagementV2 = {
         />
       ),
       label: "Quản lý nhóm quyền"
+    },
+    {
+      key: 'role-management',
+      permission: 'ROLE:FULL',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: "Quản lý  quyền"
     }
   ]
 

@@ -8,5 +8,8 @@ export {
   EyeOutlined,
   KeyOutlined,
   UserSwitchOutlined,
-  MailOutlined
+  MailOutlined,
+  UserOutlined
 } from '@ant-design/icons'
+
+

@@ -133,16 +133,13 @@ const MappingRouterPermission: IMapping[] = [
   },
   {
     pathName:[
-      ROLEMANAGEMENT_V2 + '/admin-account'
-    ],
-    permission:'ROLE:FULL'
-  },
-  {
-    pathName:[
+      ROLEMANAGEMENT_V2 + '/user-account',
+      ROLEMANAGEMENT_V2 + '/permission-management',
       ROLEMANAGEMENT_V2 + '/role-management'
     ],
     permission:'ROLE:FULL'
-  }
+  },
+  
 ]
 
 const usePermission = (): boolean => {

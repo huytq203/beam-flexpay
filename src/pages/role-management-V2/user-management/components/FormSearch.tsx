@@ -42,7 +42,7 @@ const FormSearch = ({setOpenModalAdd}:props) => {
         <div className='flex items-end gap-1'>
           <ButtonComponent content='Tìm kiếm' />
           <ButtonComponent content='Thêm mới' onClick={()=>setOpenModalAdd(true)}/>
-          <ButtonComponent content='Bỏ lọc' />
+          <ButtonComponent content='Xóa lọc' />
         </div>
       </div>
     </>

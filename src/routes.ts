@@ -93,7 +93,8 @@ import AuthLayout2 from '@components/layout/AuthLayout2'
 import VerifyCode2 from '@pages/auth/verify-code/VerifyCode'
 import path from 'path'
 import UserManagement from '@pages/role-management-V2/user-management/UserManagement'
-import { RoleManagement } from '@pages/role-management-V2/role-management/RoleManagement'
+import { PermissionManagement } from '@pages/role-management-V2/permission-management/PermissionManagement'
+import RoleManagement from '@pages/role-management-V2/role-management/RoleManagement'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -524,8 +525,18 @@ const roleManagementV2 = {
       path:ROLEMANAGEMENT_V2,
       children:[
         {
-          path: ROLEMANAGEMENT_V2 + '/admin-account',
+          path: ROLEMANAGEMENT_V2 + '/user-account',
           element: createElement(UserManagement)
+        }
+
+      ]
+    },
+    {
+      path:ROLEMANAGEMENT_V2,
+      children:[
+        {
+          path: ROLEMANAGEMENT_V2 + '/permission-management',
+          element: createElement(PermissionManagement)
         }
 
       ]
