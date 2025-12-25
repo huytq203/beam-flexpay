@@ -15,7 +15,8 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }).concat(
       apiService.middleware,
-      authApiService.middleware
+      authApiService.middleware,
+      apiFeeService.middleware
     )
 })
 

@@ -10,7 +10,7 @@ import {
   UserSwitchOutlined
 } from '@components/icons/common'
 import { ColumnType } from 'antd/lib/table'
-import { ModeAction } from '@pages/role-management-V2/permission-management/PermissionManagement'
+import { ModeAction } from './hook/usePermissionRole'
 interface props {
   setOpenModalDetail: (value: boolean) => void
   setOpenModalAdd: (value: boolean) => void

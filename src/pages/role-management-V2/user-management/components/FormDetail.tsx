@@ -1,17 +1,34 @@
 import { CardComponent } from '@components/common'
+import { RoleUserAccount } from '@type/userAccount'
 import { UserInfor } from '@type/userManagement'
 import dayjs from 'dayjs'
 import React from 'react'
 
 interface props {
-  selectedUser: UserInfor | null
+  selectedUser?: UserInfor 
 }
 const FormDetail = ({ selectedUser }: props) => {
-  const listGroup = selectedUser?.groups?.map((item) => (
-    <p className='col-span-2'>
-      <span className='bg-blue-500 text-white p-1 rounded-md'>{`[${item}]`}</span>
-    </p>
-  ))
+  const listGroup =
+    !selectedUser?.groups || selectedUser.groups.length === 0 ? (
+      <p className="col-span-2">
+        <span className="bg-gray-400 text-white p-1 rounded-md">
+          [Chưa được phân quyền]
+        </span>
+      </p>
+    ) : (
+      selectedUser.groups.map((role) => {
+        const label = RoleUserAccount[role as keyof typeof RoleUserAccount];
+
+        return (
+          <p key={role} className="col-span-2">
+            <span className="bg-blue-500 text-white p-1 rounded-md">
+              [{label ?? role}]
+            </span>
+          </p>
+        );
+      })
+    );
+
 
   return (
     <div>
@@ -35,9 +52,8 @@ const FormDetail = ({ selectedUser }: props) => {
                   <h1 className='font-bold'>HỌ VÀ TÊN</h1>
                   <p className='font-medium'>
                     {' '}
-                    {`${selectedUser?.firstName ?? ''} ${
-                      selectedUser?.lastName ?? ''
-                    }`}
+                    {`${selectedUser?.firstName ?? ''} ${selectedUser?.lastName ?? ''
+                      }`}
                   </p>
                 </div>
                 <div className='col-span-1'>
@@ -77,8 +93,8 @@ const FormDetail = ({ selectedUser }: props) => {
                   <span className=' bg-gray-100 p-1 rounded-md'>
                     {selectedUser?.createdTimestamp
                       ? dayjs(selectedUser.createdTimestamp).format(
-                          'DD/MM/YYYY HH:mm:ss'
-                        )
+                        'DD/MM/YYYY HH:mm:ss'
+                      )
                       : '--'}
                   </span>
                 </p>

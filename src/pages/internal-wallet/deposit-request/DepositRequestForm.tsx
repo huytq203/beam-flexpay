@@ -121,7 +121,7 @@ function DepositRequestForm({ record, onCancel, title, mode, isShow }: props) {
     setSearchInternalWallet({
       ...searchInternalWallet,
       page: 1,
-      name: undefined
+      keyword: undefined
     })
     setWalletNumber(undefined, field)
   }

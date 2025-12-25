@@ -1,134 +1,241 @@
-import { CardComponent } from '@components/common'
-import { FormInput, FormCheckbox } from '@components/form'
-import React, { useMemo, useCallback } from 'react'
-import { useForm, useWatch } from 'react-hook-form'
+import { ButtonComponent, CardComponent } from '@components/common'
+import { FormInput } from '@components/form'
+import React, { useMemo, useCallback, useState, useEffect } from 'react'
+import { useForm } from 'react-hook-form'
 import { Checkbox } from 'antd'
+import {
+    PermissionItem,
+    ParsedPermission,
+    groupPermissionsByType,
+    getFullPermission,
+    getTypeLabel,
+    getActionLabel,
+    ACTION_ORDER
+} from '../utils/permissionUtils'
 
-// Permission types
-type PermissionAction = 'approve' | 'view' | 'add' | 'edit' | 'delete'
-
-interface PermissionItem {
-    key: string
+interface FormData {
     name: string
-    parentKey?: string
+    description: string
 }
 
-interface PermissionGroup {
-    key: string
-    title: string
-    items: PermissionItem[]
+interface Props {
+    permissions: PermissionItem[]
+    onSubmit?: (data: { name: string; description: string; permissionIds: string[] }) => Promise<void>
+    onCancel?: () => void
+    initialData?: {
+        name: string
+        description: string
+        permissionIds: string[]
+    }
+    modeAction?: 'add' | 'update' | ''
 }
 
-const permissionGroups: PermissionGroup[] = [
-    {
-        key: 'admin_permissions',
-        title: 'Quản lý tài khoản Admin và phân quyền',
-        items: [
-            { key: 'admin_account', name: 'Quản lý tài khoản admin và phân quyền' },
-            { key: 'group_permission', name: 'Quản lý nhóm quyền' },
-        ],
-    },
-    {
-        key: 'personal_wallet',
-        title: 'Quản lý Tài khoản ví cá nhân',
-        items: [
-            { key: 'personal_wallet_group', name: 'Quản lý Nhóm tài khoản ví cá nhân' },
-            { key: 'personal_wallet_account', name: 'Quản lý Tài khoản ví cá nhân' },
-            { key: 'personal_wallet_transaction', name: 'Quản lý Giao dịch ví cá nhân' },
-        ],
-    },
-    {
-        key: 'merchant_wallet',
-        title: 'Quản lý Đơn vị thẻ',
-        items: [
-            { key: 'merchant_group', name: 'Quản lý Nhóm đơn vị thẻ' },
-            { key: 'merchant_account', name: 'Quản lý Tài khoản đơn vị thẻ' },
-            { key: 'merchant_transaction', name: 'Quản lý Giao dịch đơn vị thẻ' },
-        ],
-    },
-]
-
-const actions: { key: PermissionAction; label: string }[] = [
-    { key: 'approve', label: 'Duyệt' },
-    { key: 'view', label: 'Xem' },
-    { key: 'add', label: 'Thêm' },
-    { key: 'edit', label: 'Sửa' },
-    { key: 'delete', label: 'Xóa' },
-]
-
-const generateFieldName = (itemKey: string, action: PermissionAction) =>
-    `permissions.${itemKey}.${action}` as const
-
-export const FormAdd = () => {
-    const { control, setValue, getValues } = useForm({
+export const FormAdd = ({ permissions = [], onSubmit, onCancel, initialData, modeAction = 'add' }: Props) => {
+    const { control, handleSubmit, reset } = useForm<FormData>({
         defaultValues: {
-            name: '',
-            permissions: {} as Record<string, Record<PermissionAction, boolean>>,
-        },
+            name: initialData?.name || '',
+            description: initialData?.description || ''
+        }
     })
 
-    const permissions = useWatch({ control, name: 'permissions' })
+    // State to track selected permission IDs
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(initialData?.permissionIds || []))
 
-    const handleSelectAllGroup = useCallback(
-        (group: PermissionGroup, selectAll: boolean) => {
-            group.items.forEach((item) => {
-                actions.forEach((action) => {
-                    setValue(`permissions.${item.key}.${action.key}` as any, selectAll)
-                })
+    // Reset form when initialData changes
+    useEffect(() => {
+        if (initialData) {
+            reset({
+                name: initialData.name,
+                description: initialData.description
             })
-        },
-        [setValue]
-    )
+            setSelectedIds(new Set(initialData.permissionIds))
+        }
+    }, [initialData, reset])
 
-    const isGroupAllSelected = useCallback(
-        (group: PermissionGroup) => {
-            if (!permissions) return false
-            return group.items.every((item) =>
-                actions.every((action) => permissions[item.key]?.[action.key])
-            )
-        },
-        [permissions]
-    )
+    // Ensure permissions is an array
+    const safePermissions = Array.isArray(permissions) ? permissions : []
 
-    const isGroupPartialSelected = useCallback(
-        (group: PermissionGroup) => {
-            if (!permissions) return false
-            const hasAny = group.items.some((item) =>
-                actions.some((action) => permissions[item.key]?.[action.key])
-            )
-            return hasAny && !isGroupAllSelected(group)
-        },
-        [permissions, isGroupAllSelected]
-    )
+    // Group permissions by type
+    const groupedPermissions = useMemo(() => {
+        if (!safePermissions.length) return {}
+        return groupPermissionsByType(safePermissions)
+    }, [safePermissions])
 
-    // Check if any action other than 'view' is selected for an item
-    const hasOtherActionsSelected = useCallback(
-        (itemKey: string) => {
-            if (!permissions) return false
-            const otherActions: PermissionAction[] = ['approve', 'add', 'edit', 'delete']
-            return otherActions.some((action) => permissions[itemKey]?.[action])
-        },
-        [permissions]
-    )
+    // Get all unique types
+    const types = useMemo(() => {
+        return Object.keys(groupedPermissions)
+    }, [groupedPermissions])
 
-    // Handle permission change - auto enable 'view' when selecting other actions
-    const handlePermissionChange = useCallback(
-        (itemKey: string, actionKey: PermissionAction, checked: boolean) => {
-            setValue(`permissions.${itemKey}.${actionKey}` as any, checked)
+    // Debug logging
+    console.log('FormAdd - safePermissions:', safePermissions)
+    console.log('FormAdd - groupedPermissions:', groupedPermissions)
+    console.log('FormAdd - types:', types)
 
-            // If selecting any action other than 'view', auto-enable 'view'
-            if (actionKey !== 'view' && checked) {
-                setValue(`permissions.${itemKey}.view` as any, true)
+    // Get all unique actions across all types (excluding FULL, but include FULL if it's the only action for any type)
+    const allActions = useMemo(() => {
+        const actionsSet = new Set<string>()
+        let hasOnlyFullTypes = false
+        
+        Object.values(groupedPermissions).forEach(typePerms => {
+            const nonFullPerms = typePerms.filter(p => p.action !== 'FULL')
+            if (nonFullPerms.length === 0 && typePerms.some(p => p.action === 'FULL')) {
+                // This type only has FULL
+                hasOnlyFullTypes = true
             }
-        },
-        [setValue]
-    )
+            nonFullPerms.forEach(p => actionsSet.add(p.action))
+        })
+        
+        // Sort by ACTION_ORDER
+        const orderedActions = ACTION_ORDER.filter(action => actionsSet.has(action))
+        
+        // If there are types with only FULL, add FULL as a column
+        if (hasOnlyFullTypes) {
+            orderedActions.push('FULL')
+        }
+        
+        return orderedActions
+    }, [groupedPermissions])
+
+    // Toggle single permission
+    const togglePermission = useCallback((permissionId: string) => {
+        setSelectedIds(prev => {
+            const newSet = new Set(prev)
+            if (newSet.has(permissionId)) {
+                newSet.delete(permissionId)
+            } else {
+                newSet.add(permissionId)
+            }
+            return newSet
+        })
+    }, [])
+
+    // Check if a permission is selected
+    const isSelected = useCallback((permissionId: string) => {
+        return selectedIds.has(permissionId)
+    }, [selectedIds])
+
+    // Get permission by type and action
+    const getPermission = useCallback((type: string, action: string): ParsedPermission | undefined => {
+        return groupedPermissions[type]?.find(p => p.action === action)
+    }, [groupedPermissions])
+
+    // Check if all actions for a type are selected
+    const isTypeAllSelected = useCallback((type: string) => {
+        const typePerms = groupedPermissions[type]
+        if (!typePerms) return false
+
+        const individualPerms = typePerms.filter(p => p.action !== 'FULL')
+        
+        // If type only has FULL, check if FULL is selected
+        if (individualPerms.length === 0) {
+            const fullPerm = typePerms.find(p => p.action === 'FULL')
+            return fullPerm ? selectedIds.has(fullPerm.id) : false
+        }
+        
+        return individualPerms.every(p => selectedIds.has(p.id))
+    }, [groupedPermissions, selectedIds])
+
+    // Check if type is partially selected
+    const isTypePartialSelected = useCallback((type: string) => {
+        const typePerms = groupedPermissions[type]
+        if (!typePerms) return false
+
+        const individualPerms = typePerms.filter(p => p.action !== 'FULL')
+        
+        // If type only has FULL, it can't be partially selected
+        if (individualPerms.length === 0) return false
+        
+        const selectedCount = individualPerms.filter(p => selectedIds.has(p.id)).length
+        return selectedCount > 0 && selectedCount < individualPerms.length
+    }, [groupedPermissions, selectedIds])
+
+    // Toggle all permissions for a type
+    const toggleTypeAll = useCallback((type: string, selectAll: boolean) => {
+        const typePerms = groupedPermissions[type]
+        if (!typePerms) return
+
+        setSelectedIds(prev => {
+            const newSet = new Set(prev)
+            const individualPerms = typePerms.filter(p => p.action !== 'FULL')
+            
+            if (individualPerms.length === 0) {
+                // Type only has FULL, toggle the FULL permission
+                const fullPerm = typePerms.find(p => p.action === 'FULL')
+                if (fullPerm) {
+                    if (selectAll) {
+                        newSet.add(fullPerm.id)
+                    } else {
+                        newSet.delete(fullPerm.id)
+                    }
+                }
+            } else {
+                // Type has individual permissions
+                individualPerms.forEach(p => {
+                    if (selectAll) {
+                        newSet.add(p.id)
+                    } else {
+                        newSet.delete(p.id)
+                    }
+                })
+            }
+            return newSet
+        })
+    }, [groupedPermissions])
+
+    // Get final permission IDs for submission
+    // If all actions for a type are selected, submit FULL permission instead
+    const getFinalPermissionIds = useCallback((): string[] => {
+        const finalIds: string[] = []
+
+        types.forEach(type => {
+            const typePerms = groupedPermissions[type]
+            const fullPerm = getFullPermission(typePerms)
+            const individualPerms = typePerms.filter(p => p.action !== 'FULL')
+
+            if (individualPerms.length === 0) {
+                // Type only has FULL, check if FULL is selected
+                if (fullPerm && selectedIds.has(fullPerm.id)) {
+                    finalIds.push(fullPerm.id)
+                }
+            } else {
+                // Check if all individual permissions for this type are selected
+                const allSelected = individualPerms.every(p => selectedIds.has(p.id))
+
+                if (allSelected && fullPerm) {
+                    // If all selected and FULL exists, only submit FULL
+                    finalIds.push(fullPerm.id)
+                } else {
+                    // Otherwise submit individually selected permissions
+                    individualPerms.forEach(p => {
+                        if (selectedIds.has(p.id)) {
+                            finalIds.push(p.id)
+                        }
+                    })
+                }
+            }
+        })
+
+        return finalIds
+    }, [types, groupedPermissions, selectedIds])
+
+    // Handle form submission
+    const handleFormSubmit = async (data: FormData) => {
+        if (onSubmit) {
+            const permissionIds = getFinalPermissionIds()
+            console.log('Submitting permissions:', permissionIds)
+            await onSubmit({
+                name: data.name,
+                description: data.description,
+                permissionIds
+            })
+        }
+    }
 
     return (
         <div>
             <CardComponent
                 content={
-                    <form>
+                    <form onSubmit={handleSubmit(handleFormSubmit)}>
                         <div className="flex flex-col gap-4">
                             <FormInput
                                 label={
@@ -143,66 +250,71 @@ export const FormAdd = () => {
                             />
 
                             {/* Permission Table */}
+                            {types.length === 0 ? (
+                                <div className="border rounded-lg p-8 text-center text-gray-500">
+                                    {safePermissions.length === 0 
+                                        ? 'Đang tải danh sách quyền...' 
+                                        : 'Không tìm thấy quyền nào'}
+                                </div>
+                            ) : (
                             <div className="border rounded-lg overflow-hidden">
                                 {/* Table Header */}
                                 <div
                                     className="grid bg-gray-50 font-semibold text-sm border-b"
-                                    style={{ gridTemplateColumns: '5fr repeat(5, 1fr)' }}
+                                    style={{ gridTemplateColumns: `3fr repeat(${allActions.length || 1}, 1fr)` }}
                                 >
                                     <div className="p-3 border-r">Chức năng</div>
-                                    {actions.map((action) => (
-                                        <div key={action.key} className="p-3 text-center border-r last:border-r-0">
-                                            {action.label}
+                                    {allActions.map((action) => (
+                                        <div key={action} className="p-3 text-center border-r last:border-r-0">
+                                            {getActionLabel(action)}
                                         </div>
                                     ))}
                                 </div>
 
                                 {/* Permission Groups */}
-                                {permissionGroups.map((group) => (
-                                    <div key={group.key}>
-                                        {/* Group Header */}
+                                {types.map((type) => (
+                                    <div key={type}>
+                                        {/* Group Header with Select All */}
                                         <div
-                                            className="grid bg-gray-100  font-medium"
-                                            style={{ gridTemplateColumns: '1fr' }}
+                                            className="grid  font-medium border-b"
+                                            style={{ gridTemplateColumns: `3fr repeat(${allActions.length}, 1fr)` }}
                                         >
                                             <div className="p-3 flex items-center gap-2 border-r">
-                                                <Checkbox
-                                                    checked={isGroupAllSelected(group)}
-                                                    indeterminate={isGroupPartialSelected(group)}
-                                                    onChange={(e) => handleSelectAllGroup(group, e.target.checked)}
-                                                />
-                                                <span>{group.title}</span>
+                                                <span>{getTypeLabel(type)}</span>
                                             </div>
-                                            <div className="col-span-5"></div>
-                                        </div>
-
-                                        {/* Group Items */}
-                                        {group.items.map((item) => (
-                                            <div
-                                                key={item.key}
-                                                className="grid border-b last:border-b-0 hover:bg-gray-50"
-                                                style={{ gridTemplateColumns: '5fr repeat(5, 1fr)' }}
-                                            >
-                                                <div className="p-3 pl-8 border-r">{item.name}</div>
-                                                {actions.map((action) => {
-                                                    const isViewAction = action.key === 'view'
-                                                    const isViewDisabled = isViewAction && hasOtherActionsSelected(item.key)
-                                                    const isChecked = permissions?.[item.key]?.[action.key] ?? false
-
+                                            {/* Action checkboxes in header row */}
+                                            {allActions.map((action) => {
+                                                const permission = getPermission(type, action)
+                                                if (!permission) {
                                                     return (
-                                                        <div key={action.key} className="p-3 flex justify-center items-center border-r last:border-r-0">
-                                                            <Checkbox
-                                                                checked={isChecked}
-                                                                disabled={isViewDisabled}
-                                                                onChange={(e) => handlePermissionChange(item.key, action.key, e.target.checked)}
-                                                            />
+                                                        <div key={action} className="p-3 flex justify-center items-center border-r last:border-r-0">
+                                                            <span className="text-gray-300">-</span>
                                                         </div>
                                                     )
-                                                })}
-                                            </div>
-                                        ))}
+                                                }
+                                                return (
+                                                    <div key={action} className="p-3 flex justify-center items-center border-r last:border-r-0">
+                                                        <Checkbox
+                                                            checked={isSelected(permission.id)}
+                                                            onChange={() => togglePermission(permission.id)}
+                                                        />
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
                                     </div>
                                 ))}
+                            </div>
+                            )}
+
+                            {/* Form Actions */}
+                            <div className="flex justify-end gap-2 mt-4">
+                                <ButtonComponent type="default" content="Hủy" onClick={onCancel} />
+                                <ButtonComponent
+                                    type="primary"
+                                    content={modeAction === 'update' ? 'Cập nhật' : 'Thêm mới'}
+                                    htmlType="submit"
+                                />
                             </div>
                         </div>
                     </form>
@@ -211,3 +323,5 @@ export const FormAdd = () => {
         </div>
     )
 }
+
+export default FormAdd

@@ -18,10 +18,13 @@ interface props {
   setOpenDialog: (record: boolean) => void
   setModeAction: (value: ActionMode) => void
   handleOpenDetail:(record:UserInfor)=>void
+  handleOpenUpdate:(record:UserInfor)=>void
+  setOpenModalAdd:(value:boolean)=>void
+
 }
 
 export const RoleManagemenColume = ({
-  setOpenModalDetail,
+  handleOpenUpdate,
   setModeAction,
   setOpenDialog,
   handleOpenDetail
@@ -98,6 +101,7 @@ export const RoleManagemenColume = ({
             type='default'
             className=''
             icon={<EditOutlined />}
+            onClick={()=>handleOpenUpdate(record)}
           />
           <ButtonComponent
             type='default'

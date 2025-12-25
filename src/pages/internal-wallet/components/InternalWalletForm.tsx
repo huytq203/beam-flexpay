@@ -238,7 +238,7 @@ function InternalWalletForm({
             setSearchLinkBank({
               ...searchLinkBank,
               page: 1,
-              name: undefined
+              keyword: undefined
             })
           }}
           isId={true}

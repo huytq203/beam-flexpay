@@ -37,7 +37,7 @@ export const DepositRequestSelection = (props: IWalletSelection) => {
   const onSearchWallet = async (newValue: string) => {
     if (newValue) {
       setString(newValue)
-      setSearch({ ...search, name: newValue })
+      setSearch({ ...search, keyword: newValue })
     }
   }
 

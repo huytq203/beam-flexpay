@@ -4,8 +4,8 @@ import { SelectInput } from "../ui/select-component"; // Import từ UI componen
 import { ReactNode } from "react";
 
 interface SelectOption {
-  label: string | ReactNode;
-  value: string | number | undefined;
+  label: string|boolean | ReactNode;
+  value: string|boolean | number | undefined;
 }
 
 interface FormSelectProps<T extends FieldValues> {

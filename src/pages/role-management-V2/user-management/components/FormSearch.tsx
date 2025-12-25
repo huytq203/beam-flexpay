@@ -2,11 +2,14 @@ import { ButtonComponent } from '@components/common'
 import { FormInput, FormSelect } from '@components/form'
 import React from 'react'
 import { useForm } from 'react-hook-form'
+import { ActionMode } from '../UserManagement'
 
-interface props{
-    setOpenModalAdd:(value:boolean)=>void
+interface props {
+  setOpenModalAdd: (value: boolean) => void
+  setModeAction: (value: ActionMode) => void
+
 }
-const FormSearch = ({setOpenModalAdd}:props) => {
+const FormSearch = ({ setOpenModalAdd, setModeAction }: props) => {
   const { control } = useForm()
   return (
     <>
@@ -41,7 +44,10 @@ const FormSearch = ({setOpenModalAdd}:props) => {
 
         <div className='flex items-end gap-1'>
           <ButtonComponent content='Tìm kiếm' />
-          <ButtonComponent content='Thêm mới' onClick={()=>setOpenModalAdd(true)}/>
+          <ButtonComponent content='Thêm mới' onClick={() => {
+            setOpenModalAdd(true)
+            setModeAction('add')
+          }} />
           <ButtonComponent content='Xóa lọc' />
         </div>
       </div>

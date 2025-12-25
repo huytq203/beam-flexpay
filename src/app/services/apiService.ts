@@ -25,6 +25,7 @@ export const apiService = createApi({
 
 
 export const apiFeeService = createApi({
+  reducerPath: 'feeApi',
   baseQuery: fetchBaseQueryFee,
   tagTypes: [
     'FeePolicy',
@@ -32,7 +33,7 @@ export const apiFeeService = createApi({
     'feeComponentTier',
     'feeAssign',
     'feeBank'
-  
+
   ],
   endpoints: () => ({}),
   refetchOnMountOrArgChange: true
