@@ -1,5 +1,6 @@
 import { ButtonComponent, CardComponent } from '@components/common'
 import { FormInput, FormTextArea } from '@components/form'
+import { PermissionItem } from '@type/permissionManagement'
 import { RoleDataItem } from '@type/roleManagementV2'
 import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
@@ -14,7 +15,7 @@ interface FormData {
 interface Props {
   modeAction: ModeAction
   selectedUser: RoleDataItem | undefined
-  onSubmit?: (data: Omit<RoleDataItem, 'id'> | RoleDataItem) => Promise<void>
+  onSubmit?: (data: Omit<PermissionItem, 'id' | 'name'> | RoleDataItem) => Promise<void>
   onCancel?: () => void
 }
 
@@ -39,11 +40,19 @@ const FormAdd = ({ modeAction, selectedUser, onSubmit, onCancel }: Props) => {
 
   const handleFormSubmit = async (data: FormData) => {
     if (onSubmit) {
-      const payload:Omit<RoleDataItem, 'id'> = {
-        name: data.name,
-        description: data.description,
+      if (modeAction === 'update' && selectedUser) {
+        const payload: Omit<PermissionItem, 'id' | "name"> = {
+          description: data.description,
+        }
+        await onSubmit(payload)
       }
-      await onSubmit(payload)
+      else if (modeAction === 'add') {
+        const payload: Omit<PermissionItem, 'id'> = {
+          name: data.name,
+          description: data.description,
+        }
+        await onSubmit(payload)
+      }
     }
   }
 

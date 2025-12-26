@@ -13,8 +13,44 @@ export const permissionApi = authApiService.injectEndpoints({
             providesTags: ['roleManagement'],
             transformResponse: (res: ResponseType<Permission>) => res.data
         }),
+        getPermissionByKey: build.query({
+            query: (params) => ({
+                url: `permissions/search`,
+                method: "GET",
+                params: params
+            }),
+            providesTags: ['roleManagement'],
+            transformResponse: (res: ResponseType<Permission>) => res.data
+        }),
+        putPermission: build.mutation({
+            query: ({permissionName,body}) => ({
+                url: `permissions/${permissionName}`,
+                method: "PUT",
+                body:body
+            }),
+            invalidatesTags: ['roleManagement'],
+        }),
+        deletePermission: build.mutation({
+            query: (permissionName) => ({
+                url: `permissions/${permissionName}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ['roleManagement'],
+        }),
+        postPermission: build.mutation({
+            query: (body) => ({
+                url: `permissions`,
+                method: "POST",
+                body:body
+            }),
+            invalidatesTags: ['roleManagement'],
+        }),
     })
 })
 export const {
-    useGetPermissionQuery
+    useGetPermissionQuery,
+    usePutPermissionMutation,
+    useDeletePermissionMutation,
+    usePostPermissionMutation,
+    useLazyGetPermissionByKeyQuery
 } = permissionApi

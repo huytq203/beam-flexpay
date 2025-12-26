@@ -4,6 +4,8 @@ import { RoleDataItem, RoleData } from '@type/roleManagementV2'
 import { useMessage } from '@hooks/useMessage'
 import { SearchFormData } from '../components/FormSearch'
 import { ButtonComponent } from '@components/common'
+import { useDeletePermissionMutation, useGetPermissionQuery, useLazyGetPermissionByKeyQuery, usePostPermissionMutation, usePutPermissionMutation } from '@services/apiPermission'
+import { PermissionItem } from '@type/permissionManagement'
 
 
 export type ModeAction = 'add' | 'update' | 'delete' | 'lock' | 'unlock' | ''
@@ -14,7 +16,7 @@ export const useRoleManagement = () => {
     const [pageSize, setPageSize] = useState(10)
     const [openModalAdd, setOpenModalAdd] = useState(false)
     const [modeAction, setModeAction] = useState<ModeAction>('')
-    const [selectedUser, setSelectedUser] = useState<RoleDataItem | undefined>(undefined)
+    const [selectedPermission, setSelectedPermission] = useState<RoleDataItem | undefined>(undefined)
     const [isSearchMode, setIsSearchMode] = useState(false)
     const [searchData, setSearchData] = useState<RoleData | null>(null)
     const [openDialog, setOpenDialog] = useState(false)
@@ -28,16 +30,16 @@ export const useRoleManagement = () => {
         sortBy: 'id',
         sortDirection: 'DESC'
     }
-    const { data: getRole, isLoading: loadGetRole, refetch } = useGetRoleQuery(paginationParams, {
+    const { data: getPermission, isLoading: loadGetRole, refetch } = useGetPermissionQuery(paginationParams, {
         skip: isSearchMode // Skip when in search mode
     })
-    const [getRoleByKey, { isLoading: loadSearchRole }] = useLazyGetRoleByKeyQuery()
-    const [postRole] = usePostRoleMutation()
-    const [putRole] = usePutRoleMutation()
-    const [deleteRole] = useDeleteRoleMutation()
+    const [getPermissionByKey, { isLoading: loadSearchRole }] = useLazyGetPermissionByKeyQuery()
+    const [postPermission] = usePostPermissionMutation()
+    const [putPermission] = usePutPermissionMutation()
+    const [deletePermission] = useDeletePermissionMutation()
 
     // Use search data when in search mode, otherwise use normal getRole data
-    const currentData = isSearchMode ? searchData : getRole
+    const currentData = isSearchMode ? searchData : getPermission
 
     // logic
     const dataSource = currentData?.content.map((item, index) => ({
@@ -68,7 +70,7 @@ export const useRoleManagement = () => {
                 ...(data.keyword && { keyword: data.keyword }),
                 ...(data.status && { status: data.status })
             }
-            const result = await getRoleByKey(searchParams).unwrap()
+            const result = await getPermissionByKey(searchParams).unwrap()
             setSearchData(result)
             setIsSearchMode(true)
         } catch (error: any) {
@@ -77,13 +79,12 @@ export const useRoleManagement = () => {
         }
     }
 
-    const hanldePostRole = async (data: RoleDataItem | Omit<RoleDataItem, 'id'>) => {
+    const hanldePostPermission = async (data: PermissionItem | Omit<PermissionItem, 'id'>) => {
         try {
-            const result = await postRole(data).unwrap()
+            const result = await postPermission(data).unwrap()
             console.log(result)
             setOpenModalAdd(false)
             successMess('Thêm thành công')
-            // Clear search mode and refetch
             setIsSearchMode(false)
             setSearchData(null)
             refetch()
@@ -93,10 +94,10 @@ export const useRoleManagement = () => {
         }
     }
 
-    const handlePutRole = async (data: RoleDataItem | Omit<RoleDataItem, 'id'>) => {
+    const handlePutPermission = async (data: PermissionItem | Omit<PermissionItem, 'id'>) => {
         try {
-            await putRole({
-                id: selectedUser?.id,
+            await putPermission({
+                permissionName: selectedPermission?.name,
                 body: data
             }).unwrap()
             setOpenModalAdd(false)
@@ -110,15 +111,15 @@ export const useRoleManagement = () => {
         }
     }
 
-    const handleDeleteRole=async()=>{
-      try {
-          await deleteRole(selectedUser?.id).unwrap()
-          setOpenDialog(false)
-          refetch()
-           successMess('Xóa thành công')
-      } catch (error:any) {
-         errorMess(error?.data?.detail)
-      }
+    const handleDeletePermission = async () => {
+        try {
+            await deletePermission(selectedPermission?.name).unwrap()
+            setOpenDialog(false)
+            refetch()
+            successMess('Xóa thành công')
+        } catch (error: any) {
+            errorMess(error?.data?.detail)
+        }
     }
 
     const typeFooter: Partial<Record<ModeAction, JSX.Element>> = {
@@ -133,7 +134,7 @@ export const useRoleManagement = () => {
                     type='primary'
                     danger
                     content='Delete'
-                    onClick={handleDeleteRole}
+                    onClick={handleDeletePermission}
                 />
             </div>
         ),
@@ -145,14 +146,14 @@ export const useRoleManagement = () => {
         delete: (
             <span>
                 Bạn có chắc chắn muốn <span className='font-bold'>xóa quyền</span>{' '}
-                <span className='font-bold'>{selectedUser?.name} </span>không? Hành động này
+                <span className='font-bold'>{selectedPermission?.name} </span>không? Hành động này
                 không thể hoàn tác.
             </span>
         ),
         lock: (
             <span>
                 Bạn có chắc chắn muốn <span className='font-bold'>khóa quyền</span>{' '}
-                admin <span className='font-bold'>{selectedUser?.name}</span>không? Tài khoản sẽ
+                admin <span className='font-bold'>{selectedPermission?.name}</span>không? Tài khoản sẽ
                 không ttheer đăng nhập cho đến khi mở lại.
             </span>
         ),
@@ -160,7 +161,7 @@ export const useRoleManagement = () => {
             <span>
                 Bạn có chắc chắn muốn{' '}
                 <span className='font-bold'>mở khóa quyền</span>
-                <span className='font-bold'>{selectedUser?.name}</span> không? Tài khoản này sẽ có
+                <span className='font-bold'>{selectedPermission?.name}</span> không? Tài khoản này sẽ có
                 thể hoạt động trở lại.
             </span>
         ),
@@ -177,11 +178,11 @@ export const useRoleManagement = () => {
         setModeAction,
         openModalAdd,
         setOpenModalAdd,
-        selectedUser,
-        setSelectedUser,
+        selectedPermission,
+        setSelectedPermission,
 
 
-        getRole,
+        getPermission,
         loadGetRole: loadGetRole || loadSearchRole,
         dataSource,
         totalElements,
@@ -190,9 +191,9 @@ export const useRoleManagement = () => {
 
 
         handleSearch,
-        hanldePostRole,
-        handlePutRole,
-        handleDeleteRole
+        hanldePostPermission,
+        handlePutPermission,
+        handleDeletePermission
     }
 }
 

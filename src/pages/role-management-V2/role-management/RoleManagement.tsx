@@ -6,6 +6,7 @@ import { RoleManagementColumn } from '@pages/role-management-V2/role-management/
 
 import React, { useState } from 'react'
 import { useRoleManagement } from './hook/useRoleManagement'
+import { PermissionItem } from '@type/permissionManagement'
 
 const RoleManagement = () => {
 
@@ -13,7 +14,6 @@ const RoleManagement = () => {
 
   // hook
   const {
-    getRole,
     loadGetRole,
     dataSource,
     totalElements,
@@ -28,29 +28,29 @@ const RoleManagement = () => {
     setModeAction,
     openModalAdd,
     setOpenModalAdd,
-    selectedUser,
-    setSelectedUser,
+    selectedPermission,
+    setSelectedPermission,
     openDialog,
     setOpenDialog,
 
     handleSearch,
-    hanldePostRole,
-    handlePutRole,
-    handleDeleteRole
+    hanldePostPermission,
+    handlePutPermission,
+    handleDeletePermission
   } = useRoleManagement()
 
   const column = RoleManagementColumn({
     setModeAction,
     setOpenModalAdd,
-    setSelectedUser,
+    setSelectedPermission,
     setOpenDialog
   })
 
-  const onSubmit = async (data: RoleDataItem | Omit<RoleDataItem, 'id'>) => {
+  const onSubmit = async (data: PermissionItem | Omit<PermissionItem, 'id'|'name'>) => {
     if (modeAction === 'add') {
-      await hanldePostRole(data as Omit<RoleDataItem, 'id'>)
+      await hanldePostPermission(data as Omit<PermissionItem, 'id'>)
     } else {
-      await handlePutRole(data as RoleDataItem)
+      await handlePutPermission(data as PermissionItem)
     }
   }
   return (
@@ -83,7 +83,7 @@ const RoleManagement = () => {
         modalText={
           <FormAdd
             modeAction={modeAction}
-            selectedUser={selectedUser}
+            selectedUser={selectedPermission}
             onSubmit={onSubmit}
             onCancel={() => setOpenModalAdd(false)}
           />
@@ -91,7 +91,7 @@ const RoleManagement = () => {
       />
       <DialogModal
         onCancel={() => setOpenDialog(false)}
-        onOk={handleDeleteRole}
+        onOk={handleDeletePermission}
         open={openDialog}
         content={modeAction && typeText[modeAction]}
         footer={modeAction && typeFooter[modeAction]}

@@ -4,37 +4,53 @@ import { ColumnType } from 'antd/lib/table'
 import React from 'react'
 import { RoleDataItem } from '@type/roleManagementV2'
 import { ModeAction } from './hook/useRoleManagement'
+import { PermissionItem } from '@type/permissionManagement'
 interface props {
   setModeAction: (value: ModeAction) => void
   setOpenModalAdd: (value: boolean) => void
   setOpenDialog: (value: boolean) => void
-  setSelectedUser: (value: RoleDataItem) => void
+  setSelectedPermission: (value: PermissionItem) => void
 }
-export const RoleManagementColumn = ({ setModeAction, setOpenModalAdd, setSelectedUser, setOpenDialog }: props): ColumnType<RoleDataItem>[] => [
+export const RoleManagementColumn = ({ setModeAction, setOpenModalAdd, setSelectedPermission, setOpenDialog }: props): ColumnType<RoleDataItem>[] => [
   {
     title: '#',
     dataIndex: 'no',
-    align: 'center'
+    align: 'center',
+    render(value, record, index) {
+      return value ?? '--'
+    }
   },
   {
     title: 'Tên quyền',
     dataIndex: 'name',
-    align: 'center'
+    align: 'center',
+    render(value, record, index) {
+      return value ?? '--'
+    }
   },
   {
     title: 'Mã quyền ',
-    dataIndex: 'description',
-    align: 'center'
+    dataIndex: '',
+    align: 'center',
+    render(value, record, index) {
+      return value ?? '--'
+    }
   },
   {
     title: 'Ngày khởi tạo ',
     dataIndex: '',
-    align: 'center'
+    align: 'center',
+    render(value, record, index) {
+      return value ?? '--'
+    }
   },
   {
     title: 'Trạng thái ',
-    dataIndex: '',
-    align: 'center'
+    dataIndex: 'description',
+    align: 'center',
+    render(value, record, index) {
+      return value ?? '--'
+    }
   },
   {
     title: 'Thao tác  ',
@@ -53,7 +69,7 @@ export const RoleManagementColumn = ({ setModeAction, setOpenModalAdd, setSelect
             onClick={() => {
               setModeAction('update')
               setOpenModalAdd(true)
-              setSelectedUser(record)
+              setSelectedPermission(record)
             }}
           />
 
@@ -69,7 +85,7 @@ export const RoleManagementColumn = ({ setModeAction, setOpenModalAdd, setSelect
             onClick={() => {
               setModeAction('delete')
               setOpenDialog(true)
-              setSelectedUser(record)
+              setSelectedPermission(record)
             }}
           />
         </div>

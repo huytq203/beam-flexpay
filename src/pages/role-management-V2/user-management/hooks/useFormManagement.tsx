@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 import { ActionMode } from '../UserManagement'
 import { FormSendEmail } from '../components/FormSendEmail'
 import { RoleManagemenColume } from '../UserManagement.colume'
+import dayjs from 'dayjs'
 
 export const useFormManagement = () => {
 
@@ -32,8 +33,8 @@ export const useFormManagement = () => {
     ...item,
     no: index + 1,
     createdTimestamp: item.createdTimestamp
-      ? new Date(item.createdTimestamp)
-      : null
+      ? dayjs(item.createdTimestamp).format('DD/MM/YYYY HH:mm:ss')
+      : '--'
   }))
 
   const typeFooter: Partial<Record<ActionMode, JSX.Element>> = {
@@ -100,7 +101,7 @@ export const useFormManagement = () => {
       enabled: data.enabled,
       emailVerified: data.emailVerified,
       createdTimestamp: data.createdTimestamp
-        ? new Date(data.createdTimestamp)
+        ?  data.createdTimestamp
         : null,
       // Keep groups as an array
       groups: Array.isArray(data.groups)
@@ -117,7 +118,6 @@ export const useFormManagement = () => {
       const dataUser = await getUserById(id)
       const dataNormal = normalizeUser(dataUser?.data?.data)
       setSelectedUser(dataNormal)
-      console.log(dataNormal)
     } catch (error: any) {
       errorMess(error?.data?.detail)
     } finally {

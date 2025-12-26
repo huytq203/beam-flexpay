@@ -133,7 +133,7 @@ const FeeManagement = () => {
     resolver: zodResolver(PolicySchema),
     shouldUnregister: true,
     defaultValues: {
-      keyword: "",
+      name: "",
       validFrom: "",
       validTo: "",
       priority: 0,

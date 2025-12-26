@@ -42,34 +42,52 @@ export const RoleManagemenColume = ({
   {
     title: 'Họ và tên',
     dataIndex: 'firstName',
-    align: 'center'
+    align: 'center',
+    render(value,record,index){
+      return value??'--'
+    }
   },
   {
     title: 'Email',
     dataIndex: 'email',
-    align: 'center'
+    align: 'center',
+     render(value,record,index){
+      return value??'--'
+    }
   },
 
   {
     title: 'lastName',
     dataIndex: 'lastName',
-    align: 'center'
+    align: 'center',
+     render(value,record,index){
+      return value??'--'
+     }
   },
  
   {
     title: 'emailVerified',
     dataIndex: 'emailVerified',
-    align: 'center'
+    align: 'center',
+     render(value,record,index){
+      return value??'--'
+     }
   },
   {
     title: 'Nhóm quyền',
     dataIndex: 'groups',
-    align: 'center'
+    align: 'center',
+     render(value,record,index){
+      return value??'--'
+     }
   },
    {
     title: 'Trạng thái',
     dataIndex: 'enabled',
-    align: 'center'
+    align: 'center',
+     render(value,record,index){
+      return value??'--'
+     }
   },
   {
     title: 'Ngày tạo',

@@ -1,5 +1,6 @@
 import { ResponseType } from "@type/api";
 import { RoleData, RoleResponse } from "@type/roleManagementV2";
+import { ResponseUserInfor, UserInfor } from "@type/userManagement";
 import { authApiService } from "./authApiService";
 
 export const roleApi = authApiService.injectEndpoints({
@@ -45,6 +46,14 @@ export const roleApi = authApiService.injectEndpoints({
             }),
             invalidatesTags: ['roleManagement']
         }),
+        getMemberOfRole: build.query({
+            query: (roleId) => ({
+                url: `roles/${roleId}/members`,
+                method: 'GET',
+            }),
+            providesTags: ['roleManagement'],
+            transformResponse: (res: ResponseType<ResponseUserInfor>) => res.data
+        }),
     })
 })
 export const {
@@ -52,5 +61,6 @@ export const {
     usePostRoleMutation,
     usePutRoleMutation,
     useLazyGetRoleByKeyQuery,
-    useDeleteRoleMutation
+    useDeleteRoleMutation,
+    useLazyGetMemberOfRoleQuery
 } = roleApi

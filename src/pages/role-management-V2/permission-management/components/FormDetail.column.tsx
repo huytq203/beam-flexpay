@@ -1,19 +1,24 @@
+import { UserInfor } from "@type/userManagement";
 import { ColumnType } from "antd/lib/table";
-
-export const FormDetailColumn = ():ColumnType<any>[] => [
+interface UserTableRow {
+  username: string;
+  email: string | null;
+  emailVerified: boolean;
+}
+export const FormDetailColumn = ():ColumnType<UserTableRow>[] => [
   {
     title: 'Tên tài khoản',
-    dataIndex: 'no',
+    dataIndex: 'username',
     align: 'center'
   },
   {
     title: 'Email',
-    dataIndex: 'no',
+    dataIndex: 'email',
     align: 'center'
   },
   {
     title: 'Số điện thoại',
-    dataIndex: 'no',
+    dataIndex: 'emailVerified',
     align: 'center'
   },
 ]

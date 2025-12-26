@@ -5,15 +5,17 @@ import {
   Table
 } from '@components/common'
 import React, { useState } from 'react'
-import { FormAdd } from './components/FormAdd'
+import FormAdd from './components/FormAdd'
 import FormSearch from './components/FormSearch'
 import FormDetail from '@pages/role-management-V2/permission-management/components/FormDetail'
 import { usePermissionRole } from './hook/usePermissionRole'
 import { PermissionItem } from './utils/permissionUtils'
+import FormPermission from './components/FormPermission'
 
 
 
 export const PermissionManagement = () => {
+  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([])
   const {
     openModalAdd,
     setOpenModalAdd,
@@ -23,13 +25,24 @@ export const PermissionManagement = () => {
     setModeAction,
     modalDialog,
     setModalDialog,
+    openModalPermission,
+    setOpenModalPermission,
 
+    selectMember,
+    dataPermission,
     dataSource,
     column,
     typeFooter,
     typeText,
     getPermission,
+    isLoadingDetail,
+
+
+    hanldePostPermission,
+    handleDeletePermissionAssign
+
   } = usePermissionRole()
+  console.log(dataPermission)
   return (
     <div className='flex flex-col gap-2'>
       <CardComponent
@@ -53,13 +66,9 @@ export const PermissionManagement = () => {
         onCancel={() => setOpenModalAdd(false)}
         onOk={() => { }}
         open={openModalAdd}
-        width='75%'
-        footer={null}
+        width='35%'
         modalText={
           <FormAdd
-            permissions={(getPermission?.content || []) as PermissionItem[]}
-            onCancel={() => setOpenModalAdd(false)}
-            modeAction={modeAction === 'add' || modeAction === 'edit' ? modeAction === 'add' ? 'add' : 'update' : 'add'}
           />
         }
       />
@@ -69,8 +78,27 @@ export const PermissionManagement = () => {
         open={openModalDetail}
         width='60%'
         title='Danh sách tài khoản Admin'
-        modalText={<FormDetail />}
+        modalText={<FormDetail selectMember={selectMember} />}
+        footer={null}
+        loading={isLoadingDetail}
       />
+      <ModalComponent
+        title={ modeAction=='permission'? 'Gán quyền':modeAction=='edit'?'Chỉnh sửa quyền':'Xem chi tiết'}
+        onCancel={() => setOpenModalPermission(false)}
+        onOk={() => modeAction === 'edit' 
+          ? handleDeletePermissionAssign(selectedPermissions) 
+          : hanldePostPermission(selectedPermissions)}
+        open={openModalPermission}
+        modalText={
+          <FormPermission 
+            dataSource={dataPermission} 
+            onSelectionChange={setSelectedPermissions}
+          />
+        }
+        loading={isLoadingDetail}
+        width='60%'
+      />
+
       <DialogModal
         onCancel={() => setModalDialog(false)}
         onOk={() => { }}
