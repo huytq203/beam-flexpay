@@ -1,10 +1,10 @@
 import { CardComponent } from '@components/common'
 import { FormInput, FormSelect } from '@components/form'
 import { mapEnumToSelectOptions } from '@pages/role-management-V2/RoleManagement.utils'
-import { useSystemFeeManagementUpdatePolicyMutation } from '@services/apiDirectDeposit'
-import { RoleUserAccount, Status } from '@type/userAccount'
+import { useGetRoleQuery } from '@services/apiRoleManagement'
+import { Status } from '@type/userAccount'
 import { UserInfor } from '@type/userManagement'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { ActionMode } from '../UserManagement'
 
@@ -15,8 +15,13 @@ interface Props {
 
 const FormAdd = ({ modeAction, selectedUser }: Props) => {
   const { control, reset } = useForm()
+  const { data: roleData } = useGetRoleQuery({})
 
-  // Fill data vào form khi update
+  const roleOptions = roleData?.content?.map((role) => ({
+    value: role.name,
+    label: role.name
+  })) ?? []
+
   useEffect(() => {
     if (modeAction === 'update' && selectedUser) {
       reset({
@@ -25,17 +30,16 @@ const FormAdd = ({ modeAction, selectedUser }: Props) => {
         lastName: selectedUser.lastName,
         firstName: selectedUser.firstName,
         enabled: selectedUser.enabled ? Status.ACTIVE : Status.INACTIVE,
-        groups: selectedUser.groups || [],
+        groups: selectedUser.groups || []
       })
     } else if (modeAction === 'add') {
-      // Reset form khi thêm mới
       reset({
         username: '',
         email: '',
         lastName: '',
         firstName: '',
         enabled: Status.ACTIVE,
-        groups: [],
+        groups: []
       })
     }
   }, [modeAction, selectedUser, reset])
@@ -51,8 +55,7 @@ const FormAdd = ({ modeAction, selectedUser }: Props) => {
                 placeholder='Tên đăng nhập...'
                 control={control}
                 name='username'
-                disabled={modeAction == "update"}
-              // disabled
+                disabled={modeAction === 'update'}
               />
               <FormInput
                 label={<span>Email <span className='text-red-600'>(*)</span></span>}
@@ -70,30 +73,30 @@ const FormAdd = ({ modeAction, selectedUser }: Props) => {
                 label={<span>Số điện thoại<span className='text-red-600'>(*)</span></span>}
                 placeholder='Số điện thoại...'
                 control={control}
-                name=''
+                name='phone'
               />
-              {modeAction == "update" &&
+              {modeAction === 'update' && (
                 <FormSelect
                   label={<span>Trạng thái <span className='text-red-600'>(*)</span></span>}
                   options={mapEnumToSelectOptions(Status)}
                   control={control}
                   name='enabled'
-
                 />
-              }
+              )}
               <FormSelect
                 label={<span>Nhóm quyền <span className='text-red-600'>(*)</span></span>}
-                options={mapEnumToSelectOptions(RoleUserAccount)}
+                options={roleOptions}
                 control={control}
                 name='groups'
                 mode='multiple'
               />
             </form>
-            {modeAction !== 'update' ? <p>
-              Link tạo mật khẩu sẽ được gửi tự dộng về email cho người dùng sau
-              khi tài khoản được tạo thành công
-            </p> : ''}
-
+            {modeAction !== 'update' && (
+              <p>
+                Link tạo mật khẩu sẽ được gửi tự động về email cho người dùng sau
+                khi tài khoản được tạo thành công
+              </p>
+            )}
           </>
         }
       />

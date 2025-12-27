@@ -1,70 +1,63 @@
 import { DeleteOutlined, EditOutlined, LockOutlined } from '@components/icons/common'
 import { ButtonComponent } from '@components/common'
 import { ColumnType } from 'antd/lib/table'
-import React from 'react'
 import { RoleDataItem } from '@type/roleManagementV2'
 import { ModeAction } from './hook/useRoleManagement'
 import { PermissionItem } from '@type/permissionManagement'
-interface props {
+
+interface Props {
   setModeAction: (value: ModeAction) => void
   setOpenModalAdd: (value: boolean) => void
   setOpenDialog: (value: boolean) => void
   setSelectedPermission: (value: PermissionItem) => void
 }
-export const RoleManagementColumn = ({ setModeAction, setOpenModalAdd, setSelectedPermission, setOpenDialog }: props): ColumnType<RoleDataItem>[] => [
-  {
-    title: '#',
-    dataIndex: 'no',
-    align: 'center',
-    render(value, record, index) {
-      return value ?? '--'
-    }
-  },
-  {
-    title: 'Tên quyền',
-    dataIndex: 'name',
-    align: 'center',
-    render(value, record, index) {
-      return value ?? '--'
-    }
-  },
-  {
-    title: 'Mã quyền ',
-    dataIndex: '',
-    align: 'center',
-    render(value, record, index) {
-      return value ?? '--'
-    }
-  },
-  {
-    title: 'Ngày khởi tạo ',
-    dataIndex: '',
-    align: 'center',
-    render(value, record, index) {
-      return value ?? '--'
-    }
-  },
-  {
-    title: 'Trạng thái ',
-    dataIndex: 'description',
-    align: 'center',
-    render(value, record, index) {
-      return value ?? '--'
-    }
-  },
-  {
-    title: 'Thao tác  ',
-    dataIndex: 'action',
-    align: 'center',
 
-    width: 100,
-    fixed: 'right',
-    render(value, record, index) {
-      return (
+export const RoleManagementColumn = ({
+  setModeAction,
+  setOpenModalAdd,
+  setSelectedPermission,
+  setOpenDialog
+}: Props): ColumnType<RoleDataItem>[] => [
+    {
+      title: '#',
+      dataIndex: 'no',
+      align: 'center',
+      render: (value) => value ?? '--'
+    },
+    {
+      title: 'Tên quyền',
+      dataIndex: 'name',
+      align: 'center',
+      render: (value) => value ?? '--'
+    },
+    {
+      title: 'Mã quyền',
+      dataIndex: 'ma',
+      align: 'center',
+      render: (value) => value ?? '--'
+    },
+    {
+      title: 'Ngày khởi tạo',
+      dataIndex: 'date',
+      align: 'center',
+      render: (value) => value ?? '--'
+    },
+    {
+      title: 'Trạng thái',
+      dataIndex: 'description',
+      align: 'center',
+      render: (value) => value || '--'
+    },
+    {
+      title: 'Thao tác',
+      dataIndex: 'action',
+      align: 'center',
+      width: 100,
+      fixed: 'right',
+      render: (_, record) => (
         <div className='flex justify-center items-center gap-1'>
           <ButtonComponent
             type='default'
-            className=''
             icon={<EditOutlined />}
             onClick={() => {
               setModeAction('update')
@@ -72,15 +65,14 @@ export const RoleManagementColumn = ({ setModeAction, setOpenModalAdd, setSelect
               setSelectedPermission(record)
             }}
           />
-
           <ButtonComponent
             type='default'
-            className='text-yellow-600 '
+            className='text-yellow-600'
             icon={<LockOutlined />}
           />
           <ButtonComponent
             type='default'
-            className='text-red-600 '
+            className='text-red-600'
             icon={<DeleteOutlined />}
             onClick={() => {
               setModeAction('delete')
@@ -91,5 +83,4 @@ export const RoleManagementColumn = ({ setModeAction, setOpenModalAdd, setSelect
         </div>
       )
     }
-  }
-]
+  ]

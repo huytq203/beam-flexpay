@@ -9,12 +9,17 @@ import FormAdd from '@pages/role-management-V2/user-management/components/FormAd
 import FormDetail from '@pages/role-management-V2/user-management/components/FormDetail'
 import { useFormManagement } from './hooks/useFormManagement'
 
-
-export type ActionMode = 'delete' | 'lock' | 'unlock' | 'resetPass' | 'update' | 'add' | ''
-
+export type ActionMode =
+  | 'delete'
+  | 'lock'
+  | 'unlock'
+  | 'resetPass'
+  | 'update'
+  | 'add'
+  | ''
 
 const UserManagement = () => {
-   const {
+  const {
     openModalAdd,
     setOpenModalAdd,
     openModalDetail,
@@ -26,20 +31,23 @@ const UserManagement = () => {
     openDialog,
     setOpenDialog,
     isLoadingDetail,
-
     dataSource,
     typeFooter,
     typeText,
-    normalizeUser,
-    getUserInfo,
     column,
-
+    roleOptions
   } = useFormManagement()
 
   return (
     <div className='flex flex-col gap-2'>
       <CardComponent
-        content={<FormSearch setOpenModalAdd={setOpenModalAdd} setModeAction={setModeAction} />}
+        content={
+          <FormSearch
+            setOpenModalAdd={setOpenModalAdd}
+            setModeAction={setModeAction}
+            roleOptions={roleOptions}
+          />
+        }
       />
       <CardComponent
         content={
@@ -71,7 +79,10 @@ const UserManagement = () => {
         modalText={<FormDetail selectedUser={selectedUser} />}
       />
       <DialogModal
-        onCancel={() => setOpenDialog(false)}
+        onCancel={() => {
+          setOpenDialog(false)
+          setSelectedUser(undefined)
+        }}
         onOk={() => { }}
         open={openDialog}
         content={modeAction && typeText[modeAction]}

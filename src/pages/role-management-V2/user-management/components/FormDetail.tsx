@@ -2,33 +2,31 @@ import { CardComponent } from '@components/common'
 import { RoleUserAccount } from '@type/userAccount'
 import { UserInfor } from '@type/userManagement'
 import dayjs from 'dayjs'
-import React from 'react'
 
-interface props {
-  selectedUser?: UserInfor 
+interface Props {
+  selectedUser?: UserInfor
 }
-const FormDetail = ({ selectedUser }: props) => {
+
+const FormDetail = ({ selectedUser }: Props) => {
   const listGroup =
     !selectedUser?.groups || selectedUser.groups.length === 0 ? (
-      <p className="col-span-2">
-        <span className="bg-gray-400 text-white p-1 rounded-md">
+      <p className='col-span-2'>
+        <span className='bg-gray-400 text-white p-1 rounded-md'>
           [Chưa được phân quyền]
         </span>
       </p>
     ) : (
       selectedUser.groups.map((role) => {
-        const label = RoleUserAccount[role as keyof typeof RoleUserAccount];
-
+        const label = RoleUserAccount[role as keyof typeof RoleUserAccount]
         return (
-          <p key={role} className="col-span-2">
-            <span className="bg-blue-500 text-white p-1 rounded-md">
+          <p key={role} className='col-span-2'>
+            <span className='bg-blue-500 text-white p-1 rounded-md'>
               [{label ?? role}]
             </span>
           </p>
-        );
+        )
       })
-    );
-
+    )
 
   return (
     <div>
@@ -40,7 +38,7 @@ const FormDetail = ({ selectedUser }: props) => {
                 <img
                   className='w-32 h-32 rounded-full'
                   src='/images/user.jpg'
-                  alt=''
+                  alt='User avatar'
                 />
               </div>
               <div className='col-span-3 grid grid-cols-2 gap-1'>
@@ -51,9 +49,7 @@ const FormDetail = ({ selectedUser }: props) => {
                 <div className='col-span-1'>
                   <h1 className='font-bold'>HỌ VÀ TÊN</h1>
                   <p className='font-medium'>
-                    {' '}
-                    {`${selectedUser?.firstName ?? ''} ${selectedUser?.lastName ?? ''
-                      }`}
+                    {`${selectedUser?.firstName ?? ''} ${selectedUser?.lastName ?? ''}`}
                   </p>
                 </div>
                 <div className='col-span-1'>
@@ -67,7 +63,7 @@ const FormDetail = ({ selectedUser }: props) => {
               </div>
             </div>
             <hr className='mt-3' />
-            <div className=' flex flex-col gap-2 mt-3'>
+            <div className='flex flex-col gap-2 mt-3'>
               <h1 className='font-bold'>THÔNG TIN HỆ THỐNG</h1>
               <div className='grid grid-cols-3'>
                 <p className='font-medium col-span-1'>Nhóm quyền:</p>
@@ -90,27 +86,13 @@ const FormDetail = ({ selectedUser }: props) => {
               <div className='grid grid-cols-3'>
                 <p className='font-medium col-span-1'>Ngày tạo:</p>
                 <p className='col-span-2'>
-                  <span className=' bg-gray-100 p-1 rounded-md'>
+                  <span className='bg-gray-100 p-1 rounded-md'>
                     {selectedUser?.createdTimestamp
-                      ? dayjs(selectedUser.createdTimestamp).format(
-                        'DD/MM/YYYY HH:mm:ss'
-                      )
+                      ? dayjs(selectedUser.createdTimestamp).format('DD/MM/YYYY HH:mm:ss')
                       : '--'}
                   </span>
                 </p>
               </div>
-              {/* <div className='grid grid-cols-3'>
-                <p className='font-medium col-span-1'>Người tạo:</p>
-                <p className='col-span-2'>Super Admin</p>
-              </div>
-              <div className='grid grid-cols-3'>
-                <p className='font-medium col-span-1'>Đăng nhập lần cuối:</p>
-                <p className='col-span-2'>
-                  <span className=' bg-gray-100 p-1 rounded-md'>
-                    10/12/2025 - 10:00:00
-                  </span>
-                </p>
-              </div> */}
             </div>
           </>
         }

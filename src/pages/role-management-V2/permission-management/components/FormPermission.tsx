@@ -1,42 +1,44 @@
+import { ModeAction } from '@pages/role-management-V2/permission-management/hook/usePermissionRole'
 import { PermissionItem } from '@type/permissionManagement'
 import { Table } from 'antd'
 import { ColumnType } from 'antd/lib/table'
-import React, { useState } from 'react'
+import { Key, useState } from 'react'
 
 interface Props {
   dataSource?: PermissionItem[]
   onSelectionChange?: (selectedIds: string[]) => void
+  modeAction?: ModeAction
 }
 
-const FormPermission = ({ dataSource, onSelectionChange }: Props) => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
+const FormPermission = ({ dataSource, onSelectionChange, modeAction }: Props) => {
+  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([])
 
   const columns: ColumnType<PermissionItem>[] = [
     {
       title: 'Tên quyền',
       dataIndex: 'name',
-      align: 'center',
+      align: 'center'
     },
     {
       title: 'Mô tả',
       dataIndex: 'description',
       align: 'center',
-      render: (value) => value || '--',
-    },
+      render: (value) => value || '--'
+    }
   ]
 
   const rowSelection = {
     selectedRowKeys,
-    onChange: (newSelectedRowKeys: React.Key[]) => {
+    onChange: (newSelectedRowKeys: Key[]) => {
       setSelectedRowKeys(newSelectedRowKeys)
       onSelectionChange?.(newSelectedRowKeys as string[])
-    },
+    }
   }
 
   return (
     <div>
       <Table
-        rowSelection={rowSelection}
+        rowSelection={modeAction !== 'view' ? rowSelection : undefined}
         columns={columns}
         dataSource={dataSource?.map((item) => ({ ...item, key: item.name }))}
         size='small'

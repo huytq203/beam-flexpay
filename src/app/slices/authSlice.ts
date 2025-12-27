@@ -27,17 +27,18 @@ interface JwtPayload {
 }
 
 // Helper function để decode token và lấy thông tin
-const decodeToken = (token: string): { permissions: string[], email: string, name: string } => {
+const decodeToken = (token: string): { permissions: string[], roles: string[], email: string, name: string } => {
   try {
     const decoded = jwtDecode<JwtPayload>(token)
     return {
-      permissions: decoded.permissions || decoded.roles || [],
+      permissions: decoded.permissions || [],
+      roles: decoded.roles || [],
       email: decoded.email || decoded.preferred_username || decoded.sub || '',
       name: decoded.name || ''
     }
   } catch (error) {
     console.error('Error decoding token:', error)
-    return { permissions: [], email: '', name: '' }
+    return { permissions: [], roles: [], email: '', name: '' }
   }
 }
 
@@ -49,7 +50,7 @@ export interface IAuthState {
 
 // Lấy token từ localStorage và decode permissions khi app khởi tạo
 const storedToken = localStorage.getItem(appName)
-const initialTokenInfo = storedToken ? decodeToken(storedToken) : { permissions: [], email: '', name: '' }
+const initialTokenInfo = storedToken ? decodeToken(storedToken) : { permissions: [], roles: [], email: '', name: '' }
 const refresh = Cookies.get('refresh-token')
 const initialState: IAuthState = {
   accessToken: storedToken,
@@ -65,7 +66,8 @@ const initialState: IAuthState = {
     type: '',
     phoneNumber: '',
     avatar: '',
-    permissions: initialTokenInfo.permissions
+    permissions: initialTokenInfo.permissions,
+    roles: initialTokenInfo.roles
   }
 }
 
@@ -88,9 +90,10 @@ const authSlice = createSlice({
     setAccessToken: (state, action: PayloadAction<string>) => {
       localStorage.setItem(appName, action.payload)
       state.accessToken = action.payload
-      // Decode và lấy permissions từ token
+      // Decode và lấy permissions, roles từ token
       const tokenInfo = decodeToken(action.payload)
       state.profile.permissions = tokenInfo.permissions
+      state.profile.roles = tokenInfo.roles
       state.profile.email = tokenInfo.email
       state.profile.fullName = tokenInfo.name
     }
@@ -112,6 +115,7 @@ const authSlice = createSlice({
               profile: {
                 ...state.profile,
                 permissions: tokenInfo.permissions,
+                roles: tokenInfo.roles,
                 email: tokenInfo.email,
                 fullName: tokenInfo.name
               }

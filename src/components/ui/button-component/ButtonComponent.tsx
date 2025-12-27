@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 import { Button, ButtonProps } from 'antd'
 interface props extends ButtonProps {
-  onclick?:()=>void,
+  onClick?:()=>void,
   content?: string,
   icon?: ReactNode,
   type?: "link" | "text" | "default" | "primary" | "dashed" | undefined

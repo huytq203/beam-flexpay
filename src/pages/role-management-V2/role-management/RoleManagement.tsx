@@ -1,17 +1,11 @@
 import { CardComponent, DialogModal, ModalComponent, Table } from '@components/common'
-import { RoleDataItem } from '@type/roleManagementV2'
 import FormAdd from '@pages/role-management-V2/role-management/components/FormAdd'
 import FormSearch from '@pages/role-management-V2/role-management/components/FormSearch'
 import { RoleManagementColumn } from '@pages/role-management-V2/role-management/RoleManagement.column'
-
-import React, { useState } from 'react'
 import { useRoleManagement } from './hook/useRoleManagement'
 import { PermissionItem } from '@type/permissionManagement'
 
 const RoleManagement = () => {
-
-
-
   // hook
   const {
     loadGetRole,
@@ -19,7 +13,6 @@ const RoleManagement = () => {
     totalElements,
     typeText,
     typeFooter,
-
     page,
     setPage,
     pageSize,
@@ -32,7 +25,6 @@ const RoleManagement = () => {
     setSelectedPermission,
     openDialog,
     setOpenDialog,
-
     handleSearch,
     hanldePostPermission,
     handlePutPermission,
@@ -46,19 +38,33 @@ const RoleManagement = () => {
     setOpenDialog
   })
 
-  const onSubmit = async (data: PermissionItem | Omit<PermissionItem, 'id'|'name'>) => {
+  const onSubmit = async (data: PermissionItem | Omit<PermissionItem, 'id' | 'name'>) => {
     if (modeAction === 'add') {
       await hanldePostPermission(data as Omit<PermissionItem, 'id'>)
     } else {
       await handlePutPermission(data as PermissionItem)
     }
   }
+
   return (
     <div className='flex flex-col gap-2'>
-      <CardComponent content={<FormSearch setOpenModalAdd={setOpenModalAdd} setModeAction={setModeAction} onSearch={handleSearch} />} />
-      <CardComponent content={
-        <>
-          <Table scroll={{ x: 'max-content' }} bordered columns={column} size='small' dataSource={dataSource}
+      <CardComponent
+        content={
+          <FormSearch
+            setOpenModalAdd={setOpenModalAdd}
+            setModeAction={setModeAction}
+            onSearch={handleSearch}
+          />
+        }
+      />
+      <CardComponent
+        content={
+          <Table
+            scroll={{ x: 'max-content' }}
+            bordered
+            columns={column}
+            size='small'
+            dataSource={dataSource}
             pagination={{
               current: page,
               pageSize: pageSize,
@@ -70,8 +76,8 @@ const RoleManagement = () => {
               }
             }}
           />
-        </>
-      } />
+        }
+      />
       <ModalComponent
         title={modeAction === 'update' ? 'Cập nhật quyền' : 'Thêm quyền'}
         onCancel={() => setOpenModalAdd(false)}

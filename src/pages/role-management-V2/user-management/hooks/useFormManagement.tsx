@@ -2,14 +2,14 @@ import { ButtonComponent } from '@components/common'
 import { useMessage } from '@hooks/useMessage'
 import { useGetUserQuery, useLazyGetUserByIdQuery } from '@services/apiUserManagement'
 import { UserInfor } from '@type/userManagement'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { ActionMode } from '../UserManagement'
 import { FormSendEmail } from '../components/FormSendEmail'
 import { RoleManagemenColume } from '../UserManagement.colume'
 import dayjs from 'dayjs'
+import { useGetRoleQuery } from '@services/apiRole'
 
 export const useFormManagement = () => {
-
   // state
   const [openModalAdd, setOpenModalAdd] = useState(false)
   const [openModalDetail, setOpenModalDetail] = useState(false)
@@ -17,17 +17,26 @@ export const useFormManagement = () => {
   const [modeAction, setModeAction] = useState<ActionMode>('')
   const [openDialog, setOpenDialog] = useState(false)
   const [isLoadingDetail, setIsLoadingDetail] = useState(false)
+
   // hook
   const { errorMess } = useMessage()
+
   // api
-  const deFaultPagination = {
+  const defaultPagination = {
     page: 1,
     size: 10,
     sortBy: 'id',
     sortDirection: 'DESC'
   }
-  const { data: getUser } = useGetUserQuery(deFaultPagination)
+  const { data: getUser } = useGetUserQuery(defaultPagination)
   const [getUserById] = useLazyGetUserByIdQuery()
+  const { data: getRole } = useGetRoleQuery({})
+
+  const roleOptions = getRole?.content?.map((role) => ({
+    value: role.name,
+    label: role.name
+  })) ?? []
+
   // logic
   const dataSource = getUser?.content.map((item, index) => ({
     ...item,
@@ -40,23 +49,13 @@ export const useFormManagement = () => {
   const typeFooter: Partial<Record<ActionMode, JSX.Element>> = {
     delete: (
       <div className='flex justify-end items-center gap-2'>
-        <ButtonComponent
-          type='default'
-          content='Cancel'
-        />
-        <ButtonComponent
-          type='primary'
-          danger
-          content='Delete'
-        />
+        <ButtonComponent type='default' content='Cancel' />
+        <ButtonComponent type='primary' danger content='Delete' />
       </div>
     ),
     resetPass: (
       <div className='flex justify-end items-center gap-2'>
-        <ButtonComponent
-          type='default'
-          content='Cancel'
-        />
+        <ButtonComponent type='default' content='Cancel' />
         <ButtonComponent
           type='primary'
           className='bg-teal-700 hover:!bg-teal-600'
@@ -70,47 +69,43 @@ export const useFormManagement = () => {
     delete: (
       <span>
         Bạn có chắc chắn muốn <span className='font-bold'>xóa tài khoản</span>{' '}
-        admin <span className='font-bold'>Nguyễn A </span>không? Hành động này
+        admin <span className='font-bold'>{selectedUser?.username}</span> không? Hành động này
         không thể hoàn tác.
       </span>
     ),
     lock: (
       <span>
         Bạn có chắc chắn muốn <span className='font-bold'>khóa tài khoản</span>{' '}
-        admin <span className='font-bold'>Nguyễn A </span>không? Tài khoản sẽ
-        không ttheer đăng nhập cho đến khi mở lại.
+        admin <span className='font-bold'>{selectedUser?.username}</span> không? Tài khoản sẽ
+        không thể đăng nhập cho đến khi mở lại.
       </span>
     ),
     unlock: (
       <span>
         Bạn có chắc chắn muốn{' '}
         <span className='font-bold'>mở khóa tài khoản</span> admin{' '}
-        <span className='font-bold'>Nguyễn A </span>không? Tài khoản này sẽ có
+        <span className='font-bold'>{selectedUser?.username}</span> không? Tài khoản này sẽ có
         thể hoạt động trở lại.
       </span>
     ),
-    resetPass: <FormSendEmail />
+    resetPass: <FormSendEmail selectedUser={selectedUser} />
   }
-  const normalizeUser = (data: UserInfor): UserInfor => {
-    return {
-      id: data.id,
-      username: data.username,
-      email: data.email,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      enabled: data.enabled,
-      emailVerified: data.emailVerified,
-      createdTimestamp: data.createdTimestamp
-        ?  data.createdTimestamp
-        : null,
-      // Keep groups as an array
-      groups: Array.isArray(data.groups)
-        ? data.groups
-        : data.groups
-          ? [data.groups]
-          : null
-    }
-  }
+
+  const normalizeUser = (data: UserInfor): UserInfor => ({
+    id: data.id,
+    username: data.username,
+    email: data.email,
+    firstName: data.firstName,
+    lastName: data.lastName,
+    enabled: data.enabled,
+    emailVerified: data.emailVerified,
+    createdTimestamp: data.createdTimestamp ?? null,
+    groups: Array.isArray(data.groups)
+      ? data.groups
+      : data.groups
+        ? [data.groups]
+        : null
+  })
 
   const getUserInfo = async (id: string) => {
     setIsLoadingDetail(true)
@@ -126,26 +121,27 @@ export const useFormManagement = () => {
   }
 
   const handleOpenDetail = (record: UserInfor) => {
-    // setSelectedIdUser(record.id)
     getUserInfo(record.id)
     setOpenModalDetail(true)
     setModeAction('add')
   }
+
   const handleOpenUpdate = (record: UserInfor) => {
     getUserInfo(record.id)
     setOpenModalAdd(true)
     setModeAction('update')
   }
+
   const column = RoleManagemenColume({
     setOpenModalDetail,
     setModeAction,
     setOpenDialog,
     handleOpenDetail,
     setOpenModalAdd,
-    handleOpenUpdate
+    handleOpenUpdate,
+    setSelectedUser
   })
 
-  
   return {
     openModalAdd,
     setOpenModalAdd,
@@ -158,17 +154,13 @@ export const useFormManagement = () => {
     openDialog,
     setOpenDialog,
     isLoadingDetail,
-
     dataSource,
     typeFooter,
     typeText,
     normalizeUser,
     getUserInfo,
     column,
-
-    handleOpenUpdate
-
+    handleOpenUpdate,
+    roleOptions
   }
 }
-
-
