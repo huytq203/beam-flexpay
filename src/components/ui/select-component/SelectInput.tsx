@@ -1,29 +1,28 @@
 import React from 'react';
 import { Select } from 'antd';
-import type { SelectProps as AntdSelectProps } from 'antd';
 import './style.scss'
-interface OptionItem {
-    label: string;
-    value: string | number;
+import { SelectProps, DefaultOptionType } from 'antd/es/select';
 
-}
-interface SelectProps extends AntdSelectProps {
-    handleChange?: AntdSelectProps['onChange']
-    data?: OptionItem[]
+interface props extends SelectProps {
+    handleChange?: (value: string | number, option: DefaultOptionType | DefaultOptionType[]) => void
+    data?: DefaultOptionType[]
     defaultValue?: string | number
     value?: string | number
 }
-const SelectInput: React.FC<SelectProps> = ({ handleChange, data, defaultValue, value, ...props }) => (
-    <Select
-        {...props}
-        defaultValue={defaultValue}
-        value={value}
-        allowClear
-        onChange={handleChange}
-        options={data}
-        placeholder="Chọn"
-        style={{ width: '100%' }}
-    />
-);
+const SelectInput: React.FC<props> = ({ handleChange, data, defaultValue, value, ...props }) => {
+    const normalizedValue = value === '' || value === undefined ? undefined : value;
+    
+    return (
+        <Select
+            style={{ width: '100%' }}
+            placeholder="Chọn"
+            defaultValue={defaultValue}
+            value={normalizedValue}
+            onChange={handleChange}
+            options={data}
+            {...props}
+        />
+    );
+};
 
 export default SelectInput;

@@ -1,11 +1,11 @@
 import { CardComponent, CheckboxComponent, Table } from '@components/common'
+import { Radio } from 'antd'
 import { FormInput } from '@components/form'
-import { getEnumLabel } from '@pages/fee-managerment-v3/FeeManagement.utils'
+import { getEnumLabel } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
 import { useGetFeePoliciesQuery, useLazySearchFeePoliciesQuery } from '@services/apiFeePoliciesServices'
 import useDebounce from '@hooks/useDebounce'
 import { serviceType } from '@type/feePoliciesComponent'
-import { TableRowSelection } from 'antd/es/table/interface'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 interface FormAddAssignProps {
@@ -20,14 +20,14 @@ const FormAddAssign = ({ onSelect }: FormAddAssignProps) => {
   const [pageSizeListPolicy, setPageSizeListPolicy] = useState(10)
   // api data
 
-  const { data: dataPolicy } = useGetFeePoliciesQuery({
+  const queryParams = useMemo(() => ({
     page: pageListPolicy,
     size: pageSizeListPolicy,
     sortBy: 'createdAt',
     sortDirection: 'DESC'
-  })
+  }), [pageListPolicy, pageSizeListPolicy])
+  const { data: dataPolicy } = useGetFeePoliciesQuery(queryParams)
 
-  /* eslint-disable react-hooks/exhaustive-deps */
   const debouncedSearchValue = useDebounce(searchValue, 500)
   const [triggerSearch, { data: searchResult, isFetching: isSearching }] = useLazySearchFeePoliciesQuery()
 
@@ -64,7 +64,8 @@ const FormAddAssign = ({ onSelect }: FormAddAssignProps) => {
   } = useForm({
     defaultValues: {
       keyword: ''
-    }
+    },
+    shouldUnregister: true
   })
 
   return (
@@ -93,7 +94,7 @@ const FormAddAssign = ({ onSelect }: FormAddAssignProps) => {
                   {
                     title: 'Tên chính sách',
                     dataIndex: 'name',
-                    className: 'border border-l-0  border-b-0'
+                    className: 'border border-l-0  border-b-0',
                   },
                   {
                     title: 'Loại dịch vụ',
@@ -102,18 +103,17 @@ const FormAddAssign = ({ onSelect }: FormAddAssignProps) => {
                     render: (value: string) => getEnumLabel(value, serviceType)
                   },
                   {
-                    title: 'Chọn/bỏ chọn',
+                    title: 'Chọn',
                     dataIndex: 'check',
                     align: 'center',
                     className: 'border border-l-0  border-b-0',
                     render: (_, record) => (
-                      <CheckboxComponent
+                      <Radio
                         checked={selectedId === record.key}
                         onChange={() => {
-                          const newId = selectedId === record.key ? null : record.key as string
-                          setSelectedId(newId)
-                          if (newId && onSelect) {
-                            onSelect(newId)
+                          setSelectedId(record.key as string)
+                          if (onSelect) {
+                            onSelect(record.key as string)
                           }
                         }}
                       />

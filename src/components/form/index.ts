@@ -4,3 +4,4 @@ export { FormTextArea } from "./FormTextArea";
 export { FormSelect } from "./FormSelect";
 export { FormDatePicker } from "./FormDatePicker";
 export { FormInputNumber } from "./FormInputNumber";
+export { FormCheckbox } from "./FormCheckbox";

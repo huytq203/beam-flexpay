@@ -3,11 +3,13 @@ import {
   CUSTOMERS,
   CUSTOMERTRANSACTION,
   FEEMANAGEMENT,
+  FEEMANAGEMENT_V3,
   INTERNAL,
   PERSONALWALLET,
   REPAYMENTANDDISBURSE,
   REPORTS,
-  ROLEMANAGEMENT
+  ROLEMANAGEMENT,
+  ROLEMANAGEMENT_V2
 } from '@constants/routersConstant'
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -21,11 +23,11 @@ interface IMapping {
 const MappingRouterPermission: IMapping[] = [
   {
     pathName: [ROLEMANAGEMENT + '/admin-account'],
-    permission: 'admin:view'
+    permission: 'ROLE:FULL'
   },
   {
     pathName: [ROLEMANAGEMENT + '/manage-group-permissions'],
-    permission: 'group:view'
+    permission: 'PERMISSION:FULL'
   },
   {
     pathName: [PERSONALWALLET + '/customers-group'],
@@ -59,7 +61,7 @@ const MappingRouterPermission: IMapping[] = [
   },
   {
     pathName: [FEEMANAGEMENT + '/e-wallet-transfer-money'],
-    permission: 'wallet_transfer:view'
+    permission: 'wallet_transfer:viewssss'
   },
   {
     pathName: [FEEMANAGEMENT + '/account-bank-payment'],
@@ -79,11 +81,11 @@ const MappingRouterPermission: IMapping[] = [
   },
   {
     pathName: [BANKANDCONNECT + '/banks'],
-    permission: 'bank_management:view'
+    permission: 'BANK:FULL'
   },
   {
     pathName: [BANKANDCONNECT + '/notification-management'],
-    permission: 'connect_management:view'
+    permission: 'BANK:FULL'
   },
   {
     pathName: [REPAYMENTANDDISBURSE + '/dashboard'],
@@ -111,40 +113,77 @@ const MappingRouterPermission: IMapping[] = [
       REPORTS + INTERNAL + '/accounts',
       REPORTS + INTERNAL + '/detail-account'
     ],
-    permission: 'internal_report:view'
-  }
+    permission: 'REPORTS:FULL'
+  },
+  {
+    pathName: [
+      FEEMANAGEMENT_V3 + '/fee-management',
+      FEEMANAGEMENT_V3 + '/create',
+      FEEMANAGEMENT_V3 + '/edit'
+    ],
+    permission: "FEE:FULL"
+  },
+  {
+    pathName: [
+      FEEMANAGEMENT_V3 + '/fee-assignment',
+      FEEMANAGEMENT_V3 + '/fee-assignment/create',
+      FEEMANAGEMENT_V3 + '/fee-assignment/edit'
+    ],
+    permission: "FEE:FULL"
+  },
+  {
+    pathName:[
+      ROLEMANAGEMENT_V2 + '/user-account',
+      ROLEMANAGEMENT_V2 + '/permission-management',
+      ROLEMANAGEMENT_V2 + '/role-management'
+    ],
+    permission:'ROLE:FULL'
+  },
+  
 ]
 
 const usePermission = (): boolean => {
   const location = useLocation()
   const [isAccess, setAccess] = useState<boolean>(true)
   const { permissions } = useAppSelector((state) => state.auth.profile)
+ 
 
-  const getPermissionAccess = () => {
-    return new Promise<boolean>((resolve, reject) => {
-      if (permissions.includes('admin*') || location.pathname === '/') {
-        resolve(true)
-        // return true
-      } else {
-        const result = MappingRouterPermission.find(
-          (item) =>
-            item.pathName.includes(location.pathname) &&
-            permissions.includes(item.permission)
-        )
+  const getPermissionAccess = (): boolean => {
+    if (!permissions || permissions.length === 0) {
+      return true
+    }
+    if (location.pathname === '/') {
+      return true
+    }
 
-        if (result) resolve(true)
-        else resolve(false)
-      }
-    })
+
+    const hasPermission = (requiredPermission: string): boolean => {
+      return permissions.some(
+        (p) =>
+          p === requiredPermission ||
+          p.endsWith(`:${requiredPermission}`) ||
+          p.includes(`:${requiredPermission}:`)
+      )
+    }
+
+    const result = MappingRouterPermission.find(
+      (item) =>
+        item.pathName.some(
+          (path) => location.pathname === path || location.pathname.startsWith(path + '/')
+        ) &&
+        hasPermission(item.permission)
+    )
+
+    return !!result
   }
 
   useEffect(() => {
-    ;async () => {
-      setAccess(await getPermissionAccess())
-    }
-  }, [location.pathname])
+    const hasAccess = getPermissionAccess()
+    setAccess(hasAccess)
+  }, [location.pathname, permissions])
 
   return isAccess
 }
 
 export default usePermission
+

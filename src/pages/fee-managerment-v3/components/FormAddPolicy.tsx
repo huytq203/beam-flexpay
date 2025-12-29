@@ -1,13 +1,15 @@
 import {
   FormDatePicker,
   FormInput,
+  FormInputNumber,
   FormSelect,
   FormTextArea
 } from '@components/form'
-import { PolicyType } from '../FeeManagement.schema'
+import { PolicyType } from '@pages/fee-managerment-v3/schemas/FeeManagement.schema'
 import React from 'react'
 import { Control, UseFormHandleSubmit } from 'react-hook-form'
 import { feeDomain, serviceType } from '@type/feePoliciesComponent'
+import { statusType } from '@type/feePolicies'
 
 interface FormAddPolicyProps {
   control: Control<PolicyType>
@@ -15,6 +17,7 @@ interface FormAddPolicyProps {
   id?: string
   handleUpdate?: (data: PolicyType) => Promise<void>
   onSubmit: (data: PolicyType) => Promise<void>
+  isCreate?: boolean
 }
 
 const FormAddPolicy = ({
@@ -22,8 +25,11 @@ const FormAddPolicy = ({
   handleSubmit,
   id,
   handleUpdate,
-  onSubmit
+  onSubmit,
+  isCreate
 }: FormAddPolicyProps) => {
+
+
   return (
     <>
       <form
@@ -43,17 +49,13 @@ const FormAddPolicy = ({
             placeholder='Nhập tên chính sách...'
             className='col-span-12 md:col-span-6'
           />
-          <FormSelect
+          <FormInputNumber
             className='col-span-12 md:col-span-6'
             name='priority'
             control={control}
             label='Mức độ ưu tiên'
-            defaultValue={0}
-            options={[
-              { label: 'Cao', value: 0 },
-              { label: 'Trung bình', value: 1 },
-              { label: 'Thấp', value: 2 }
-            ]}
+            placeholder='Nhập mức độ ưu tiên'
+           
           />
 
           <FormDatePicker
@@ -76,14 +78,24 @@ const FormAddPolicy = ({
             name='status'
             control={control}
             label='Trạng thái hoạt động'
-            defaultValue=''
-            options={[
-              { label: 'Chọn', value: '' },
-              { label: 'INIT', value: 'INIT' },
-              { label: 'ACTIVE', value: 'ACTIVE' },
-              { label: 'INACTIVE', value: 'INACTIVE' },
-              { label: 'LOCKED', value: 'LOCKED' }
-            ]}
+            options={
+              isCreate ? [
+                ...Object.entries(statusType)
+                  .slice(0, 1)
+                  .map(([key, value]) => ({
+                    label: value,
+                    value: key
+                  }))
+              ] : [
+                { label: 'Chọn', value: '' },
+                ...Object.entries(statusType).map(([key, value]) => ({
+                  label: value,
+                  value: key
+                }))
+              ]
+
+            }
+
           />
 
           <FormSelect
@@ -91,9 +103,7 @@ const FormAddPolicy = ({
             name='serviceType'
             control={control}
             label='Loại dịch vụ'
-            defaultValue=''
             options={[
-              { label: 'Chọn tất cả', value: '' },
               ...Object.entries(serviceType).map(([key, value]) => ({
                 label: value, // hoặc value
                 value: key
@@ -113,9 +123,7 @@ const FormAddPolicy = ({
             name='feeDomain'
             control={control}
             label='Phí miền'
-            defaultValue=''
             options={[
-              { label: 'Chọn tất cả', value: '' },
               ...Object.entries(feeDomain).map(([key, value]) => ({
                 label: value, // hoặc value
                 value: key

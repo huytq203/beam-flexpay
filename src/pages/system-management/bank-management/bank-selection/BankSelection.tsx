@@ -35,7 +35,7 @@ export const BankSelection = (props: IBankSelection) => {
   const onSearchBank = async (newValue: string) => {
     if (newValue) {
       setString(newValue)
-      setSearch({ ...search, name: newValue })
+      setSearch({ ...search, keyword: newValue })
     }
   }
 

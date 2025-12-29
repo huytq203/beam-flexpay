@@ -1,3 +1,4 @@
+import { DollarOutlined } from '@ant-design/icons'
 import {
   _BANKANDCONNECT,
   _CUSTOMERS,
@@ -11,7 +12,8 @@ import {
   _REPORTS,
   _ROLEMANAGEMENT,
   _STATE_BANK,
-  _FEEMANAGEMENR_V3
+  _FEEMANAGEMENT_V3,
+  _ROLEMANAGEMENT_V2
 
 } from '@constants/routersConstant'
 import i18n from '@languages/i18n'
@@ -26,6 +28,7 @@ import {
   ClipboardTextIcon,
   ClockCounterClockwiseIcon,
   CreditCardIcon,
+  CurrencyCircleDollar,
   CurrencyCircleDollarIcon,
   CurrencyDollarIcon,
   EnvelopeSimpleIcon,
@@ -84,7 +87,7 @@ const roleManagement = {
   children: [
     {
       key: 'admin-account',
-      permission: 'admin',
+      permission: 'ROLE:FULL',
       icon: (
         <UsersThreeIcon
           size={size}
@@ -96,7 +99,7 @@ const roleManagement = {
     },
     {
       key: 'manage-group-permissions',
-      permission: 'group',
+      permission: 'REPORT:FULL',
       icon: (
         <ShieldCheckIcon
           size={size}
@@ -421,7 +424,7 @@ const bankAndConnect = {
         />
       ),
       label: i18n.t('navigation.bank'),
-      permission: 'bank_management'
+      permission: 'BANK:FULL'
     },
     // dont have permission
     {
@@ -434,7 +437,7 @@ const bankAndConnect = {
         />
       ),
       label: i18n.t('navigation.notification-management'),
-      permission: 'connect_management'
+      permission: 'BANK:FULL'
     }
   ]
 }
@@ -610,10 +613,11 @@ const reports = {
         />
       ),
       label: i18n.t('navigation.internal-report'),
-      permission: 'internal_report',
+      permission: 'REPORT:FULL',
       children: [
         {
           key: 'accounts',
+          permission: 'REPORT:FUL',
           icon: (
             <FolderOpenIcon
               size={size}
@@ -696,7 +700,6 @@ const internal_wallet = {
     />
   ),
   label: i18n.t('navigation.internal-wallet'),
-  permission: 'internalwallet',
   children: [
     {
       key: 'group',
@@ -795,9 +798,9 @@ const internal_wallet = {
 }
 
 const feeManagementV3 = {
-  key: _FEEMANAGEMENR_V3,
+  key: _FEEMANAGEMENT_V3,
   icon: (
-    <WalletIcon
+    <GearIcon
       size={size}
       weight={weight}
       color={COlOR}
@@ -806,8 +809,9 @@ const feeManagementV3 = {
   children: [
     {
       key: 'fee-management',
+      permission: "FEE:FULL",
       icon: (
-        <WalletIcon 
+        <WalletIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -817,8 +821,9 @@ const feeManagementV3 = {
     },
     {
       key: 'fee-assignment',
+      permission: "FEE:FULL",
       icon: (
-        <WalletIcon 
+        <CurrencyCircleDollarIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -827,7 +832,58 @@ const feeManagementV3 = {
       label: 'Quản lý gán phí',
     }
   ],
-   label: 'Quản lý phí',
+  label: 'Quản lý phí',
+}
+const roleManagementV2 = {
+  key: _ROLEMANAGEMENT_V2,
+  permission: 'ROLE:FULL',
+  icon: (
+    <UserGearIcon
+      size={size}
+      weight={weight}
+      color={COlOR}
+    />
+  ),
+  label: i18n.t('navigation.account'),
+  children: [
+    {
+      key: 'user-account',
+      permission: 'ROLE:FULL',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: i18n.t('navigation.admin-and-permission-management')
+    },
+    {
+      key: 'permission-management',
+      permission: 'ROLE:FULL',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: "Quản lý nhóm quyền"
+    },
+    {
+      key: 'role-management',
+      permission: 'ROLE:FULL',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: "Quản lý  quyền"
+    }
+  ]
+
 }
 export const navigationItems: ItemTypeCustom[] = [
   roleManagement,
@@ -838,5 +894,6 @@ export const navigationItems: ItemTypeCustom[] = [
   repaymentAndDisburse,
   reports,
   internal_wallet,
-  feeManagementV3
+  feeManagementV3,
+  roleManagementV2
 ]

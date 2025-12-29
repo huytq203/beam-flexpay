@@ -1,16 +1,17 @@
 import { Control, FieldValues, Path } from "react-hook-form";
 import { FormField } from "./FormField";
 import { SelectInput } from "../ui/select-component"; // Import từ UI components của bạn
+import { ReactNode } from "react";
 
 interface SelectOption {
-  label: string;
-  value: string | number|undefined;
+  label: string|boolean | ReactNode;
+  value: string|boolean | number | undefined;
 }
 
 interface FormSelectProps<T extends FieldValues> {
   name: Path<T>;
   control: Control<T>;
-  label?: string;
+  label?: string | ReactNode;
   options: SelectOption[];
   defaultValue?: string | number;
   className?: string;
@@ -23,7 +24,7 @@ export function FormSelect<T extends FieldValues>({
   label,
   options,
   defaultValue,
-   classNameLable="font-medium",
+  classNameLable = "font-medium",
   className = "col-span-6 flex flex-col",
   ...rest
 }: FormSelectProps<T>) {
@@ -35,15 +36,19 @@ export function FormSelect<T extends FieldValues>({
       classNameLable={classNameLable}
       className={className}
       render={(field) => {
-        const { onChange: customOnChange, ...fieldRest } = rest as any
+        const { onChange: customOnChange, allowClear = true, ...fieldRest } = rest as any
+        // Extract onChange from field to prevent it from overriding handleChange in SelectInput
+        const { onChange: fieldOnChange, ...fieldWithoutOnChange } = field
         return (
           <SelectInput
-            {...field}
+            {...fieldWithoutOnChange}
             {...fieldRest}
+            id={field.name}
+            allowClear={allowClear} 
             defaultValue={defaultValue}
             data={options}
             handleChange={(value: any, option: any) => {
-              field.onChange(value)
+              fieldOnChange(value)
               if (customOnChange) {
                 customOnChange(value)
               }

@@ -238,7 +238,7 @@ function CustomerGroup() {
   const onSearch = (value: GroupAccountParamsInterface) => {
     const name = value.name?.trim()
     const customerAccountNumber = value.customerAccountNumber?.trim()
-    setSearch({ page: 1, ...value, name: name, customerAccountNumber })
+    setSearch({ page: 1, ...value, keyword: name, customerAccountNumber })
   }
 
   return (
@@ -277,7 +277,7 @@ function CustomerGroup() {
                   placeholder={t`customer-group.placeholders.groups`.toString()}
                   onChange={(e) => {
                     if (e.target.value === '' || e.target.value === undefined) {
-                      setSearch({ page: 1, ...search, name: undefined })
+                      setSearch({ page: 1, ...search, keyword: undefined })
                     }
                   }}
                 />

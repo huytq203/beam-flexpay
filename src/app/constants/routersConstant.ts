@@ -14,7 +14,9 @@ export const BANK = '/bank'
 export const INTERNAL = '/internal'
 export const INTERNAL_WALLET = '/internal-wallet'
 export const STATE_BANK = '/state-bank'
-export const FEEMANAGEMENR_V3='/fee-v3' 
+export const FEEMANAGEMENT_V3 = '/fee-v3'
+export const ROLEMANAGEMENT_V2 = '/role-v2'
+
 
 
 export const _ROLEMANAGEMENT = 'role'
@@ -32,4 +34,5 @@ export const _BANK = 'bank'
 export const _INTERNAL = 'internal'
 export const _INTERNAL_WALLET = 'internal-wallet'
 export const _STATE_BANK = 'state-bank'
-export const _FEEMANAGEMENR_V3 = 'fee-v3'
+export const _FEEMANAGEMENT_V3 = 'fee-v3'
+export const _ROLEMANAGEMENT_V2 = 'role-v2'

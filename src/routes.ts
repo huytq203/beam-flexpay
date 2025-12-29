@@ -18,7 +18,8 @@ import {
   REPORTS,
   ROLEMANAGEMENT,
   STATE_BANK,
-  FEEMANAGEMENR_V3
+  FEEMANAGEMENT_V3,
+  ROLEMANAGEMENT_V2
 } from '@constants/routersConstant'
 
 import ForgotPassword from '@pages/auth/forgot-password/ForgotPassword'
@@ -87,6 +88,13 @@ import FeeComponentManagement from '@pages/fee-managerment-v3/fee-component-mana
 import FeeManagement from '@pages/fee-managerment-v3/fee-management/FeeManagement'
 import FeeAssignmentManagement from '@pages/fee-managerment-v3/fee-assignment/FeeAssignmentManagement'
 import FeeAssignAdd from '@pages/fee-managerment-v3/fee-assignment/FeeAssignAdd'
+import login2 from '@pages/auth/login/Login'
+import AuthLayout2 from '@components/layout/AuthLayout2'
+import VerifyCode2 from '@pages/auth/verify-code/VerifyCode'
+import path from 'path'
+import UserManagement from '@pages/role-management-V2/user-management/UserManagement'
+import { PermissionManagement } from '@pages/role-management-V2/permission-management/PermissionManagement'
+import RoleManagement from '@pages/role-management-V2/role-management/RoleManagement'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -96,6 +104,10 @@ const authentication = {
     {
       path: AUTHENTICATION + '/login',
       element: createElement(Login)
+    },
+    {
+      path: AUTHENTICATION + '/login2',
+      element: createElement(login2)
     },
     {
       path: AUTHENTICATION + '/forgot-password',
@@ -119,7 +131,7 @@ const authentication = {
     },
     {
       path: AUTHENTICATION + '/verify-code',
-      element: createElement(VerifyCode)
+      element: createElement(VerifyCode2)
     }
   ]
 }
@@ -462,41 +474,41 @@ const internalWallet = {
 // }
 
 const feeManagementV3 = {
-  path: FEEMANAGEMENR_V3,
+  path: FEEMANAGEMENT_V3,
   element: createElement(AppLayout),
   errorElement: createElement(NotFound),
   children: [
     {
-      path: FEEMANAGEMENR_V3,
+      path: FEEMANAGEMENT_V3,
       children: [
         {
-          path: FEEMANAGEMENR_V3 + '/fee-management',
+          path: FEEMANAGEMENT_V3 + '/fee-management',
           element: createElement(FeeManagement)
         },
         {
-          path: FEEMANAGEMENR_V3 + '/create',
+          path: FEEMANAGEMENT_V3 + '/create',
           element: createElement(FeeComponentManagement)
         },
 
         {
-          path: FEEMANAGEMENR_V3 + '/edit/:id',
+          path: FEEMANAGEMENT_V3 + '/edit/:id',
           element: createElement(FeeComponentManagement)
         }
       ]
     },
     {
-      path: FEEMANAGEMENR_V3,
+      path: FEEMANAGEMENT_V3,
       children: [
         {
-          path: FEEMANAGEMENR_V3 + '/fee-assignment',
+          path: FEEMANAGEMENT_V3 + '/fee-assignment',
           element: createElement(FeeAssignmentManagement)
         },
         {
-          path: FEEMANAGEMENR_V3 + '/fee-assignment/create',
+          path: FEEMANAGEMENT_V3 + '/fee-assignment/create',
           element: createElement(FeeAssignAdd)
         },
         {
-          path: FEEMANAGEMENR_V3 + '/fee-assignment/edit/:id',
+          path: FEEMANAGEMENT_V3 + '/fee-assignment/edit/:id',
           element: createElement(FeeAssignAdd)
         },
       ]
@@ -504,6 +516,44 @@ const feeManagementV3 = {
   ]
 }
 
+const roleManagementV2 = {
+  path: ROLEMANAGEMENT_V2,
+  element: createElement(AppLayout),
+  errorElement: createElement(NotFound),
+  children:[
+    {
+      path:ROLEMANAGEMENT_V2,
+      children:[
+        {
+          path: ROLEMANAGEMENT_V2 + '/user-account',
+          element: createElement(UserManagement)
+        }
+
+      ]
+    },
+    {
+      path:ROLEMANAGEMENT_V2,
+      children:[
+        {
+          path: ROLEMANAGEMENT_V2 + '/permission-management',
+          element: createElement(PermissionManagement)
+        }
+
+      ]
+    },
+    {
+      path:ROLEMANAGEMENT_V2,
+      children:[
+        {
+          path: ROLEMANAGEMENT_V2 + '/role-management',
+          element: createElement(RoleManagement)
+        }
+
+      ]
+    },
+  ]
+
+}
 export const WalletRoutes = createBrowserRouter([
   authentication,
   defaultRouter,
@@ -516,5 +566,6 @@ export const WalletRoutes = createBrowserRouter([
   reports,
   repaymentAndDisburse,
   internalWallet,
-  feeManagementV3
+  feeManagementV3,
+  roleManagementV2
 ])

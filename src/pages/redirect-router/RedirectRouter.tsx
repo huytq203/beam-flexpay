@@ -17,10 +17,12 @@ function RedirectRouter() {
       const firstItem = (navigation as ItemTypeCustom[])[0]
       let url = ''
       if (firstItem.children && firstItem.children?.length > 0) {
-        url = `${firstItem.key}/${firstItem?.children[0].key}`
+        url = `/${firstItem.key}/${firstItem?.children[0].key}`
         let subItem = firstItem?.children[0]?.children as ItemTypeCustom[]
+
         if (subItem?.length) {
           url = `${url}/${subItem[0].key}`
+         
         }
       } else {
         url = `/${firstItem.key}`

@@ -5,10 +5,11 @@ import {
   LockOutlined,
   UnlockOutlined
 } from '@ant-design/icons'
-import {  formatDate, getEnumLabel } from '@pages/fee-managerment-v3/FeeManagement.utils'
-import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
+import { formatDate, getEnumLabel } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
+import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import { ColumnsType } from 'antd/es/table'
 import { feeDomain, serviceType } from '@type/feePoliciesComponent'
+import { statusType } from '@type/feePolicies'
 
 // Types
 interface PolicyRecord {
@@ -32,12 +33,12 @@ interface PolicyColumnsOptions {
 // Status badge component
 const StatusBadge = ({ status }: { status: string }) => (
   <span
-    className={`px-2 py-1 rounded text-xs font-medium ${status === 'ACTIVE'
-        ? 'bg-green-100 text-green-800'
-        : 'bg-red-100 text-red-800'
+    className={`px-2  rounded-md  whitespace-nowrap  text-xs font-medium ${status === 'ACTIVE'
+      ? 'bg-green-50 border border-green-800 text-green-800'
+      : `${status == 'INIT' ? 'bg-blue-50 border border-blue-400 text-blue-800' : 'bg-red-50 border border-red-800 text-red-800 '}`
       }`}
   >
-    {status}
+    {getEnumLabel(status, statusType)}
   </span>
 )
 
@@ -56,16 +57,16 @@ const ActionButtons = ({
   <div className='flex gap-2 justify-center'>
     <ButtonComponent
       type='default'
-      icon={<EditOutlined {...({} as any)} />}
-      onClick={() => navigate(`${FEEMANAGEMENR_V3}/edit/${record.key}`)}
+      icon={<EditOutlined />}
+      onClick={() => navigate(`${FEEMANAGEMENT_V3}/edit/${record.key}`)}
     />
     <ButtonComponent
       type='default'
       icon={
         record.status === 'ACTIVE' ? (
-          <UnlockOutlined {...({} as any)} />
+          <UnlockOutlined />
         ) : (
-          <LockOutlined {...({} as any)} />
+          <LockOutlined />
         )
       }
       onClick={() => {
@@ -100,20 +101,14 @@ export const getPolicyColumns = ({
       title: 'Loại dịch vụ',
       dataIndex: 'serviceType',
       className: 'border border-l-0  border-b-0',
-      render: (value: string) =>  getEnumLabel(value,serviceType)
+      render: (value: string) => getEnumLabel(value, serviceType)
     },
-    {
-      title: 'Trạng thái',
-      dataIndex: 'status', 
-      className: 'border border-l-0  border-b-0',
-      align: 'center',
-      render: (status: string) => <StatusBadge status={status} />
-    },
+
     {
       title: 'Phí miền',
       dataIndex: 'feeDomain',
       className: 'border border-l-0 border-b-0',
-      render: (value: string) =>  getEnumLabel(value,feeDomain)
+      render: (value: string) => getEnumLabel(value, feeDomain)
     },
     {
       title: 'Loại tiền',
@@ -130,7 +125,21 @@ export const getPolicyColumns = ({
       title: 'Hiệu lực đến',
       dataIndex: 'validTo',
       className: 'border border-l-0 border-b-0',
-      render: (date: string) => formatDate(date)
+      render: (date: string) => {
+        if (date === null || '' || 0) {
+          return 'Vô thời hạn'
+        }
+        else {
+          return formatDate(date)
+        }
+      }
+    },
+    {
+      title: 'Trạng thái',
+      dataIndex: 'status',
+      className: 'border border-l-0  border-b-0',
+      align: 'center',
+      render: (status: string) => <StatusBadge status={status} />
     },
     {
       title: 'Thao tác',

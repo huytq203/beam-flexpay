@@ -3,9 +3,9 @@ import { z } from "zod";
 export const feeAssignSchema = z.object({
     feePolicyId: z.string().min(1, "Vui lòng chọn chính sách phí").max(255, "Quá giới hạn ký tự"),
     merchantId: z.string().nullable().optional(),
-    bankCode: z.string().min(1, "Không được để trống trường này").max(255, "Quá giới hạn ký tự"),
-    paymentMethod: z.string().min(1, "Không được để trống trường này").max(255, "Quá giới hạn ký tự"),
-    cardType: z.string().min(1, "Không được để trống trường này").max(255, "Quá giới hạn ký tự"),
+    bankCode: z.string().nullable().optional(),
+    paymentMethod:z.string().nullable().optional(),
+    cardType:  z.string().nullable().optional(),
     serviceType: z.string().min(1, "Không được để trống trường này").max(255, "Quá giới hạn ký tự"),
     customerGroup: z.string().optional(),
     status: z.string().min(1, "Không được để trống trường này").max(255, "Quá giới hạn ký tự"),

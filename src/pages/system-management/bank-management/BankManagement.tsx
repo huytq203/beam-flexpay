@@ -361,7 +361,7 @@ function BankManagement() {
                     setSearch({
                       ...search,
                       page: 1,
-                      name: undefined
+                      keyword: undefined
                     })
                   }}
                 />

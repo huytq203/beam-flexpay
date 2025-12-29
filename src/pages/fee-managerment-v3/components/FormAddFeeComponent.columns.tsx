@@ -2,7 +2,7 @@ import { ColumnsType } from 'antd/es/table'
 import { Controller, Control, UseFormGetValues } from 'react-hook-form'
 import { InputNumber, ButtonComponent } from '@components/common'
 import { CheckOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons'
-import { FeeComponentType } from '../FeeManagement.schema'
+import { FeeComponentType } from '@pages/fee-managerment-v3/schemas/FeeManagement.schema'
 import { feePolicyComponent } from '@type/feePoliciesComponent'
 
 interface TierColumnsOptions {

@@ -3,7 +3,7 @@ import { ButtonComponent, TooltipComponent } from '@components/common'
 import { Tooltip } from 'antd'
 import {
   getEnumLabel
-} from '../FeeManagement.utils'
+} from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
 import { beneficiaryType, calculationMethodEnum, componentType, feePolicyComponent, payerType } from '@type/feePoliciesComponent'
 import { ColumnsType } from 'antd/es/table'
 
@@ -73,8 +73,8 @@ export const feeComponentColumns = ({
         <div className='flex gap-1 justify-center'>
           <TooltipComponent title='Cập nhật'>
             <ButtonComponent
-              type='text'
-              icon={<EditOutlined {...({} as any)} />}
+              type='default'
+              icon={<EditOutlined />}
               onClick={() => {
                 setSelectedRow(record)
                 setOpen(true)
@@ -84,9 +84,9 @@ export const feeComponentColumns = ({
           </TooltipComponent>
           <TooltipComponent title='Xóa'>
             <ButtonComponent
-              type='text'
               danger
-              icon={<DeleteOutlined {...({} as any)} />}
+              type='default'
+              icon={<DeleteOutlined/>}
               onClick={() => {
                 setDeletingId(record.id)
                 setOpenDialog(true)

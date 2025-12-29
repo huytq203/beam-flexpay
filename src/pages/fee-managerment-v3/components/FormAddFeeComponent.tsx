@@ -9,7 +9,7 @@ import { ButtonComponent, DialogModal } from '@components/common'
 import { PlusOutlined } from '@ant-design/icons'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FeeComponentSchema, FeeComponentType } from '../FeeManagement.schema'
+import { FeeComponentSchema, FeeComponentType } from '@pages/fee-managerment-v3/schemas/FeeManagement.schema'
 import { FormInputNumber, FormSelect } from '@components/form'
 import {
   useDeleteFeeComponentTierMutation,
@@ -51,7 +51,7 @@ const DEFAULT_VALUES: FeeComponentType = {
   calculationMethod: 'DIRECT',
   tiers: [DEFAULT_TIER],
   fixedAmount: undefined,
-  percentage: 0,
+  percentage: undefined,
   minFee: undefined,
   maxFee: undefined
 }
@@ -76,7 +76,8 @@ const FormAddFeeComponent = forwardRef<
     formState: { errors }
   } = useForm<FeeComponentType>({
     resolver: zodResolver(FeeComponentSchema),
-    defaultValues: DEFAULT_VALUES
+    defaultValues: DEFAULT_VALUES,
+    shouldUnregister: true
   })
 
   const [postFeeComponentTier] = usePostFeeComponentTierMutation()
@@ -216,14 +217,16 @@ const FormAddFeeComponent = forwardRef<
             if (onSubmit) {
               promises.push(onSubmit(data) as Promise<any>)
             }
+            if (initialData?.calculationMethod !== (Object.keys(calculationMethodEnum)[1] as keyof typeof calculationMethodEnum)) {
+              promises.push(handleUpdateTier())
 
-            promises.push(handleUpdateTier())
+            }
 
             await Promise.all(promises)
 
             successMess('Cập nhật phí thành công')
-          } catch (error) {
-            errorMess('Cập nhật phí thất bại')
+          } catch (error:any) {
+            errorMess(error?.data?.detail)
           }
         },
         (errors) => {
@@ -244,35 +247,30 @@ const FormAddFeeComponent = forwardRef<
 
   const selectOptions = {
     componentType: [
-      { label: 'Chọn', value: '' },
       ...Object.entries(componentType).map(([key, value]) => ({
         label: value,
         value: key
       }))
     ],
     baseOn: [
-      { label: 'Chọn', value: '' },
       ...Object.entries(baseOn).map(([key, value]) => ({
         label: value,
         value: key
       }))
     ],
     payerType: [
-      { label: 'Chọn', value: '' },
       ...Object.entries(payerType).map(([key, value]) => ({
         label: value,
         value: key
       }))
     ],
     beneficiaryType: [
-      { label: 'Chọn', value: '' },
       ...Object.entries(beneficiaryType).map(([key, value]) => ({
         label: value,
         value: key
       }))
     ],
     roundMode: [
-      { label: 'Chọn', value: '' },
       ...Object.entries(roundMode).map(([key, value]) => ({
         label: value,
         value: key
@@ -299,17 +297,24 @@ const FormAddFeeComponent = forwardRef<
             name='componentType'
             label='Loại phí'
             className='col-span-4 flex flex-col '
-            defaultValue=''
+            
             options={selectOptions.componentType}
             placeholder='Chọn loại phí'
+            disabled={isUpdateMode}
           />
           <FormSelect<FeeComponentType>
             control={control}
             name='baseOn'
             label='Tính dựa trên'
             className='col-span-4 flex flex-col'
-            defaultValue=''
-            options={selectOptions.baseOn}
+            
+            options={isUpdateMode ? selectOptions.baseOn : [
+              {
+                ...Object.entries(baseOn).map(([key, value]) => ({
+                  label: value,
+                  value: key
+                }))[0]
+              }]}
             placeholder='Chọn loại tính phí'
           />
           <FormSelect<FeeComponentType>
@@ -317,16 +322,17 @@ const FormAddFeeComponent = forwardRef<
             name='payerType'
             label='Người chịu'
             className='col-span-4 flex flex-col'
-            defaultValue=''
+            
             options={selectOptions.payerType}
             placeholder='Chọn người chịu phí'
+            disabled={isUpdateMode}
           />
           <FormSelect<FeeComponentType>
             control={control}
             name='beneficiaryType'
             label='Người hưởng'
             className='col-span-4 flex flex-col'
-            defaultValue=''
+            
             options={selectOptions.beneficiaryType}
             placeholder='Chọn người hưởng phí'
           />
@@ -335,17 +341,20 @@ const FormAddFeeComponent = forwardRef<
             name='roundMode'
             label='Công thức làm tròn'
             className='col-span-4 flex flex-col'
-            defaultValue=''
+            
             options={selectOptions.roundMode}
             placeholder='Chọn công thức làm tròn'
           />
-          <FormSelect<FeeComponentType>
+
+          {isVATType ? '' : <FormSelect<FeeComponentType>
             control={control}
             name='calculationMethod'
             label='Chọn phương thức tính'
             className='col-span-4 flex flex-col'
             options={selectOptions.calculationMethod}
-          />
+             disabled={isUpdateMode}
+          />}
+
         </div>
       </Card>
 
@@ -357,12 +366,13 @@ const FormAddFeeComponent = forwardRef<
             name='percentage'
             label='Phí phần trăm (%)'
             className='col-span-3 flex flex-col gap-2'
-            placeholder='0'
+            placeholder='0%'
             classNameLable='font-medium'
           />
         </Card>
-      ) : (
-        <div className={`${isTierMode && !isUpdateMode ? 'hidden' : ''}`}>
+      ) : !(isTierMode && !isUpdateMode) && (
+
+        <div>
           <Card className='mb-3' style={{ width: '100%' }}>
             <p className='font-bold mb-3'>Phương thức tính (Calculation Method)</p>
             <div className='mb-3'></div>
@@ -382,7 +392,7 @@ const FormAddFeeComponent = forwardRef<
                   type='dashed'
                   onClick={() => append(DEFAULT_TIER)}
                   style={{ width: '100%', marginTop: 16 }}
-                  icon={<PlusOutlined {...({} as any)} />}
+                  icon={<PlusOutlined />}
                 />
               </>
             ) :
@@ -404,7 +414,7 @@ const FormAddFeeComponent = forwardRef<
                       name='percentage'
                       label='Phí phần trăm (%)'
                       className='col-span-3 flex flex-col gap-2'
-                      placeholder='0'
+                      placeholder='0%'
                       classNameLable='font-medium'
                     />
                     <FormInputNumber

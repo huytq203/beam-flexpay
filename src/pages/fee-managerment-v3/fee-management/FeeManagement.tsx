@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
+import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import {
   ModalComponent,
   CardComponent
@@ -16,17 +16,22 @@ import {
 import { useForm } from 'react-hook-form'
 
 import FormAddPolicy from '@pages/fee-managerment-v3/components/FormAddPolicy'
-import { PolicySchema, PolicyType } from '../FeeManagement.schema'
+import { PolicySchema, PolicyType } from '@pages/fee-managerment-v3/schemas/FeeManagement.schema'
 
 import { getPolicyColumns } from './FeeManagement.columns'
 import { useMessage } from '@hooks/useMessage'
 import FeeManagementForm from './FeeManagement.form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { feeSearch } from '@type/feePolicies'
 
 const FeeManagement = () => {
   const [open, setOpen] = useState(false)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
+  const [isCreate, setIsCreate] = useState(false)
+
+
+
   const [patchDeactivateFee] = usePatchDeactivateFeeMutation()
   const [patchActivateFee] = usePatchActivateFeeMutation()
   const { successMess, errorMess } = useMessage()
@@ -89,17 +94,19 @@ const FeeManagement = () => {
     }
   }
 
-  const dataSource = list.map((item, index) => ({
-    key: item.id,
-    no: (page - 1) * pageSize + index + 1,
-    name: item.name,
-    serviceType: item.serviceType,
-    status: item.status,
-    feeDomain: item.feeDomain,
-    currency: item.currency,
-    validFrom: item.validFrom,
-    validTo: item.validTo
-  }))
+  const dataSource = list
+    .filter((item) => item.id !== undefined)
+    .map((item, index) => ({
+      key: item.id!,
+      no: (page - 1) * pageSize + index + 1,
+      name: item.name,
+      serviceType: item.serviceType,
+      status: item.status,
+      feeDomain: item.feeDomain,
+      currency: item.currency,
+      validFrom: item.validFrom,
+      validTo: item.validTo
+    }))
 
   const columns = getPolicyColumns({
     navigate,
@@ -108,12 +115,12 @@ const FeeManagement = () => {
   })
 
 
-  const { handleSubmit, reset, control } = useForm({
+  const { handleSubmit, reset, control } = useForm<feeSearch>({
     defaultValues: {
       keyword: '',
-      serviceType: '',
-      feeDomain: '',
-      status: ''
+      serviceType: undefined,
+      feeDomain: undefined,
+      status: undefined
     }
   })
 
@@ -124,16 +131,17 @@ const FeeManagement = () => {
     formState: { errors },
   } = useForm<PolicyType>({
     resolver: zodResolver(PolicySchema),
+    shouldUnregister: true,
     defaultValues: {
-      name: "",
-      validFrom: "",
-      validTo: "",
-      priority: 0,
-      status: "",
-      feeDomain: "",
-      currency: "",
-      serviceType: "",
-      description: ""
+    name: "",
+  validFrom: "",
+  validTo: undefined,
+  priority: undefined,
+  status: undefined,
+  feeDomain: undefined,
+  currency: "",
+  serviceType: undefined,
+  description: undefined
     }
   });
   const handleSearch = (formValues: object) => {
@@ -167,6 +175,7 @@ const FeeManagement = () => {
           total={total}
           setPage={setPage}
           setPageSize={setPageSize}
+          setIsCreate={setIsCreate}
         />
       } />
 
@@ -184,6 +193,7 @@ const FeeManagement = () => {
               control={controlAdd}
               handleSubmit={handleSubmitAdd}
               onSubmit={handleSaveAddFee}
+              isCreate={isCreate}
             />
             }
           />

@@ -53,23 +53,7 @@ export interface ApiResponse<T> {
   status: string
 }
 
-// Sử dụng
 
-export interface FeeAssignmentMockup {
-  id: string
-  type: string
-  account: string
-  serviceType: string
-  method: string
-  transactionLimit: string
-  fee: string
-  minMax: string
-  createdDate: string
-  appliedDate: string
-  expiryDate: string
-  status: string
-  locked: string
-}
 export interface FeeAssignResponse {
   content: FeeAssignment[]
   totalElements: number
@@ -90,16 +74,26 @@ export enum serviceType {
   MERCHANT_VA_BILL_COLLECTION = 'Thu hộ VA'
 }
 export enum paymentMethodType {
-  ATM = 'ATM'
+  ATM = 'ATM',
+  QR_CODE = 'Quét mã QR',
+  CREDIT_CARD = 'Thẻ tín dụng',
+  BANK_TRANSFER = 'Chuyển khoản ngân hàng',
+  LINKED_ACCOUNT = 'Tài khoản liên kết ',
+  VA = 'Virtual Account (tài khoản ảo)',
+
 }
 export enum cardTypeType {
-  VISA = 'VISA'
+  VISA = 'VISA',
+  
 }
-export enum customerGroupType{
-  VIP='VIP'
+export enum customerGroupType {
+  VIP = 'VIP',
+  PREMIUM = 'User Premium',
+  MERCHANT = 'User Premium',
+  STANDARD = 'User thường',
 }
 export enum statusType{
-  ACTIVE='ACTIVE',
-  INACTIVE='INACTIVE'
+  ACTIVE='Hoạt động',
+  INACTIVE='Không hoạt động',
 }
 export type FeeAssignmentResponse = ApiResponse<FeeAssignResponse>

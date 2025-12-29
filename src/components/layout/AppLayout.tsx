@@ -81,27 +81,28 @@ function AppLayout() {
     setTitle(getHeaderTitleKey(location.pathname))
   }, [location.pathname])
 
-  const getProfile = useUserGetMyInfoQuery(undefined, {
-    skip: !accessToken
-  })
+  // TẠM TẮT: API cũ không nhận token mới → gây 401 → logout loop
+  // TODO: Cần tạo endpoint lấy profile trên API mới (ENV.API_LOGIN) hoặc decode JWT
+  // const getProfile = useUserGetMyInfoQuery(undefined, {
+  //   skip: !accessToken
+  // })
 
   useEffect(() => {
-    if (getProfile.data && accessToken) {
-      dispatch(savePermissions(getProfile?.data?.permissions as string[]))
+    if (accessToken) {
+      // dispatch(savePermissions(getProfile?.data?.permissions as string[]))
       window.events.on('show-profile', () => showProfile())
       window.events.on('show-password', () => showPassword())
-      window.events.on('update-layout', () => {
-        getProfile.refetch()
-        update()
-      })
+      // window.events.on('update-layout', () => {
+      //   getProfile.refetch()
+      //   update()
+      // })
     }
-  }, [getProfile.data])
-  useEffect(() => {
-    if (!isAccess) {
-      navigate(FORBIDDENERROR)
-    }
-  }, [isAccess])
-
+  }, [accessToken])
+useEffect(() => {
+  if ( !isAccess && location.pathname !== FORBIDDENERROR) {
+    navigate(FORBIDDENERROR)
+  }
+}, [isAccess,location.pathname])
   const currentKey = useMemo(() => {
     const selected = location.pathname.split('/')
     return selected.filter((n) => n !== '')
@@ -140,7 +141,7 @@ function AppLayout() {
             <Menu
               className='scroll-custom sidebar-menu'
               mode='inline'
-              items={navigation as MenuProps['items']}
+              items={isAccess ? navigation as MenuProps['items'] : []}
               onClick={handleSelectMenu}
               selectedKeys={currentKey}
               defaultOpenKeys={currentKey}

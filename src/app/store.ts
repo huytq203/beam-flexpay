@@ -1,17 +1,22 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
-import { apiService } from '@services/apiService'
+import { apiFeeService, apiService } from '@services/apiService'
+import { authApiService } from '@services/authApiService'
 import authReducer from '@slices/authSlice'
 import { TypedUseSelectorHook, useSelector } from 'react-redux'
 
 export const store = configureStore({
   reducer: {
     [apiService.reducerPath]: apiService.reducer,
+    [authApiService.reducerPath]: authApiService.reducer,
+    [apiFeeService.reducerPath]: apiFeeService.reducer,
     auth: authReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }).concat(
-      apiService.middleware
+      apiService.middleware,
+      authApiService.middleware,
+      apiFeeService.middleware
     )
 })
 
@@ -26,3 +31,4 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   Action<string>
 >
 export const useTypedSelector: TypedUseSelectorHook<RootState> = useSelector
+

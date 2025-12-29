@@ -1,11 +1,10 @@
 import {
   CheckOutlined,
   CloseOutlined,
-  DeleteOutlined,
   EditOutlined,
   LockOutlined,
   UnlockOutlined
-} from '@ant-design/icons'
+} from '@components/icons/common'
 import { ButtonComponent, TooltipComponent } from '@components/common'
 import { FeeAssignment } from '@type/feeAssignment'
 import { ColumnsType } from 'antd/es/table'
@@ -14,7 +13,10 @@ import { useState } from 'react'
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/themes/light.css'
 import { useNavigate } from 'react-router-dom'
-import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
+import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
+import { formatDate, getEnumLabel } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
+import { serviceType } from '@type/feePoliciesComponent'
+import { statusType } from '@type/feePolicies'
 
 interface prop {
   setSelectRowId: (value: string) => void
@@ -45,14 +47,14 @@ const ApprovalPopupContent = ({
       <ButtonComponent
         type='default'
         content='Hủy bỏ'
-        icon={<CloseOutlined {...({} as any)} />}
+        icon={<CloseOutlined />}
         onClick={onCancel}
       />
       <ButtonComponent
         danger
         type='primary'
         content='Từ chối duyệt'
-        icon={<CloseOutlined {...({} as any)} />}
+        icon={<CloseOutlined />}
         onClick={() => {
           onReject?.(record)
           onCancel()
@@ -62,7 +64,7 @@ const ApprovalPopupContent = ({
         type='primary'
         style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
         content='Duyệt phí'
-        icon={<CheckOutlined {...({} as any)} />}
+        icon={<CheckOutlined />}
         onClick={() => {
           onApprove?.(record)
           onCancel()
@@ -129,14 +131,15 @@ function handleReject(record: FeeAssignment) {
 
 const StatusBadge = ({ status }: { status: string }) => (
   <span
-    className={`px-2 py-1 rounded text-xs font-medium ${status === 'ACTIVE'
-        ? 'bg-green-100 text-green-800'
-        : 'bg-red-100 text-red-800'
+    className={`px-2  rounded-md  whitespace-nowrap  text-xs font-medium ${status === 'ACTIVE'
+      ? 'bg-green-50 border border-green-800 text-green-800'
+      : `${status == 'INIT' ? 'bg-blue-50 border border-blue-400 text-blue-800' : 'bg-red-50 border border-red-800 text-red-800 '}`
       }`}
   >
-    {status}
+    {getEnumLabel(status, statusType)}
   </span>
 )
+
 export const feeAssignColumn = ({
   onToggleStatus,
   navigate,
@@ -154,7 +157,7 @@ export const feeAssignColumn = ({
       dataIndex: 'serviceType',
       align: 'center' as const,
       className: 'border border-b-0 border-l-0',
-      render: (value, record, index: number) => value
+      render: (value, record, index: number) => getEnumLabel(value, serviceType)
     },
     {
       title: 'Phương thức thanh toán',
@@ -164,7 +167,7 @@ export const feeAssignColumn = ({
       render: (value, record, index: number) => value
     },
     {
-      title: 'Nhân hàng',
+      title: 'Ngân hàng',
       dataIndex: 'bankCode',
       align: 'center' as const,
       className: 'border border-b-0 border-l-0',
@@ -189,7 +192,7 @@ export const feeAssignColumn = ({
       dataIndex: 'createdAt',
       align: 'center' as const,
       className: 'border border-b-0 border-l-0',
-      render: (value, record, index: number) => value
+      render: (date: string) => formatDate(date)
     },
     {
       title: 'Trạng thái',
@@ -214,9 +217,9 @@ export const feeAssignColumn = ({
                 type='default'
                 icon={
                   record.status === 'ACTIVE' ? (
-                    <UnlockOutlined {...({} as any)} />
+                    <UnlockOutlined />
                   ) : (
-                    <LockOutlined {...({} as any)} />
+                    <LockOutlined />
                   )
                 }
                 onClick={() => onToggleStatus?.(record)}
@@ -225,12 +228,9 @@ export const feeAssignColumn = ({
             <TooltipComponent title='Cập nhật'>
               <ButtonComponent
                 type='default'
-                icon={<EditOutlined {...({} as any)}
-                  style={{ color: '#b86704' }}
-                />}
-
+                icon={<EditOutlined />}
                 onClick={() => {
-                  navigate(FEEMANAGEMENR_V3 + `/fee-assignment/edit/${record?.id}`)
+                  navigate(FEEMANAGEMENT_V3 + `/fee-assignment/edit/${record?.id}`)
                 }}
               />
             </TooltipComponent>

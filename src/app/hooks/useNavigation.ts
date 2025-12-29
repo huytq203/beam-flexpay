@@ -17,9 +17,15 @@ const useNavigationEw = () => {
       hasPermission: (permission: string | undefined): boolean => {
         if (!permission) return false
 
+        // API returns: "EWALLET:FEE:FULL", navigation requires: "FEE:FULL"
         const checkPermission = (map: Set<string>, permission: string) => {
           for (const value of map) {
-            if (value.startsWith(`${permission}:`)) {
+            // Check exact match OR if user permission contains/ends with required permission
+            if (
+              value === permission ||
+              value.endsWith(`:${permission}`) ||
+              value.includes(`:${permission}:`)
+            ) {
               return true
             }
           }
@@ -32,11 +38,17 @@ const useNavigationEw = () => {
   }, [permissions])
   const getNavigation = () => {
     // Fast path: admin access
-    if (permissions.includes('admin*')) {
-      return [...navigationItems] // Return shallow copy to avoid mutations
-    }
+    // if (permissions.includes('admin*')) {
+    //   return [...navigationItems] // Return shallow copy to avoid mutations
+    // }
 
     // Process navigation items
+    // const hasFullAccess = (perms: string[]): boolean => {
+    //   return perms.some(p => p.endsWith(':FULL'))
+    // }
+    // if (permissions.includes('EWALLET:PERMISSION:FULL')) {
+    //   return [...navigationItems] // Return shallow copy to avoid mutations
+    // }
     const result: ItemTypeCustom[] = []
 
     for (let i = 0; i < navigationItems.length; i++) {

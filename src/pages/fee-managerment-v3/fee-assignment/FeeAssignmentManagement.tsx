@@ -7,10 +7,11 @@ import {
   Table
 } from '@components/common'
 import { FormDatePicker, FormInput, FormSelect } from '@components/form'
-import { FEEMANAGEMENR_V3 } from '@constants/routersConstant'
+import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import { feeAssignColumn } from '@pages/fee-managerment-v3/fee-assignment/FeeAssignmentManagement.column'
 import FormAddAssign from '@pages/fee-managerment-v3/fee-assignment/components/FormAddAssign'
 import FormFieldAssign from '@pages/fee-managerment-v3/fee-assignment/components/FormFieldAssign'
+import { FormInforAdd } from '@pages/fee-managerment-v3/fee-assignment/FeeAssignAdd'
 import {
   useGetAssignQuery,
   useLazyGetAssignSearchQuery,
@@ -20,15 +21,16 @@ import {
 } from '@services/apiFeeAssignment'
 import {
   FeeAssignment,
-  FeeAssignmentMockup,
-  FeeAssignResponse,
 } from '@type/feeAssignment'
-import { FeeAssignmentFormData } from '@pages/fee-managerment-v3/fee-assignment/hook/useFeeAssignmentForm'
+import { FeeAssignType } from '@pages/fee-managerment-v3/fee-assignment/feeAssign.schema'
 
 import React, { useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useMessage } from '@hooks/useMessage'
+import { EditOutlined } from '@ant-design/icons'
+import { useSVG } from '@hooks/useSVG'
+import { useGetExamQuery, useGetPermissonQuery } from '@services/testExample'
 
 const FeeAssignmentManagement = () => {
   // state
@@ -36,8 +38,13 @@ const FeeAssignmentManagement = () => {
   const [pageSize, setPageSize] = useState(10)
   const [openModalDelete, setOpenModalDelete] = useState(false)
   const [selectRowId, setSelectRowId] = useState('')
+  const [openModalAdd, setOpenModalAdd] = useState(false)
+  const [openModalSelectPolicy, setOpenModalSelectPolicy] = useState(false)
+  const [isCreate, setIsCreate] = useState(true)
 
   // call api
+  const{data:exam}=useGetExamQuery({})
+  const{data:per}=useGetPermissonQuery({})
 
   const { data: dataFeeAssign } = useGetAssignQuery({
     page,
@@ -58,12 +65,21 @@ const FeeAssignmentManagement = () => {
     control,
     formState: { errors },
     setValue
-  } = useForm<FeeAssignmentFormData>()
+  } = useForm<FeeAssignType>({
+    shouldUnregister: true,
+    defaultValues:{
+      account:'',
+      applyDate:'',
+      createDate:''
+    }
+  })
+  const [postAssign] = usePostAssignMutation()
   const [isSearching, setIsSearching] = useState(false)
+  const { svg } = useSVG()
 
   //logic
 
-  const handleSearch = async (data: any) => {
+  const handleSearch = async (data: FeeAssignType) => {
     const payload = {
       ...data,
       page,
@@ -99,6 +115,37 @@ const FeeAssignmentManagement = () => {
     alert('Delete ID:' + selectRowId)
   }
 
+  const handlePostAssign = async (data: FeeAssignType) => {
+    // Check feePolicyId before submit
+    if (!data.feePolicyId || data.feePolicyId.trim() === '') {
+      errorMess('Vui lòng chọn chính sách phí')
+      return
+    }
+
+    try {
+      const payload = {
+        feePolicyId: data.feePolicyId,
+        merchantId: data.merchantId,
+        bankCode: data.bankCode,
+        paymentMethod: data.paymentMethod,
+        cardType: data.cardType,
+        serviceType: data.serviceType,
+        customerGroup: data.customerGroup || '',
+        status: data.status,
+      }
+      await postAssign(payload).unwrap()
+      successMess('Thêm mới thành công!')
+      setOpenModalAdd(false)
+      reset()
+    } catch (error: any) {
+      errorMess(error?.message || 'Có lỗi xảy ra')
+    }
+  }
+
+  const handleSelectPolicy = (feePolicyId: string) => {
+    setValue('feePolicyId', feePolicyId)
+  }
+
   const columns = feeAssignColumn({ setOpenModalDelete, setSelectRowId, onToggleStatus: handleToggleStatus, navigate })
 
   const listData: FeeAssignment[] = (isSearching ? searchData?.content : dataFeeAssign?.content) || []
@@ -113,43 +160,29 @@ const FeeAssignmentManagement = () => {
       <CardComponent
         content={
           <>
-            <FormFieldAssign control={control} setValue={setValue}/>
+            <form action="formViewAssign">
+              <FormFieldAssign control={control} setValue={setValue} isCreate={isCreate} />
+            </form>
             <div className='flex justify-between mt-4'>
               <div className='flex justify-center items-center gap-2'>
-                <ButtonComponent icon={
-                  <svg
-                    width={20}
-                    height={20}
-                  >
-                    <use href='/icons.svg#hugeicons-search-01' />
-                  </svg>
-                }
+                <ButtonComponent icon={svg('/icons.svg#hugeicons-search-01')}
                   content='Search' onClick={handleSubmit(handleSearch)} />
                 <ButtonComponent
-                  icon={
-                    <svg
-                      width={20}
-                      height={20}
-                    >
-                      <use href='/icons.svg#hugeicons-delete-02' />
-                    </svg>
-                  }
+                 type='default'
+                  icon={svg('/icons.svg#hugeicons-delete-02')}
                   content='Xóa bộ lọc' onClick={handleReset} />
               </div>
               <div className='flex justify-center items-center'>
                 <ButtonComponent
-                  icon={
-                    <svg
-                      width={20}
-                      height={20}
-                    >
-                      <use href='/icons.svg#hugeicons-plus-sign-circle' />
-                    </svg>
-                  }
+                  icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
                   content='Thiết lập phí'
-                  onClick={() =>
-                    navigate(FEEMANAGEMENR_V3 + '/fee-assignment/create')
+
+                  onClick={() =>{
+                    setIsCreate(true);
+                    // navigate(FEEMANAGEMENR_V3 + '/fee-assignment/create')
+                    setOpenModalAdd(true);
                   }
+                }
                 />
               </div>
             </div>
@@ -170,13 +203,37 @@ const FeeAssignmentManagement = () => {
           }
         />
       </div>
-
       <DialogModal
         onOk={handleDelete}
         onCancel={() => setOpenModalDelete(false)}
         open={openModalDelete}
         content='Bạn có xác nhận xóa ?'
       />
+      <ModalComponent
+        title={'Thêm gán phí'}
+        width='70%'
+        open={openModalAdd}
+        footer={null}
+        onOk={() => setOpenModalAdd(false)}
+        onCancel={() => setOpenModalAdd(false)}
+        modalText={
+          <FormInforAdd
+            svg={svg}
+            id={undefined}
+            handlePutAssign={async () => { }}
+            handlePostAssign={handlePostAssign}
+          />
+        }
+      />
+      <ModalComponent
+        title={'Chọn chính sách phí'}
+        width='70%'
+        open={openModalSelectPolicy}
+        onOk={() => setOpenModalSelectPolicy(false)}
+        onCancel={() => setOpenModalSelectPolicy(false)}
+        modalText={<FormAddAssign onSelect={handleSelectPolicy} />}
+      />
+
     </>
   )
 }
