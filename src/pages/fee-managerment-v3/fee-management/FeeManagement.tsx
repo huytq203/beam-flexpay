@@ -16,7 +16,7 @@ import {
 import { useForm } from 'react-hook-form'
 
 import FormAddPolicy from '@pages/fee-managerment-v3/components/FormAddPolicy'
-import { PolicySchema, PolicyType } from '../FeeManagement.schema'
+import { PolicySchema, PolicyType } from '@pages/fee-managerment-v3/schemas/FeeManagement.schema'
 
 import { getPolicyColumns } from './FeeManagement.columns'
 import { useMessage } from '@hooks/useMessage'
@@ -118,9 +118,9 @@ const FeeManagement = () => {
   const { handleSubmit, reset, control } = useForm<feeSearch>({
     defaultValues: {
       keyword: '',
-      serviceType: '',
-      feeDomain: '',
-      status: ''
+      serviceType: undefined,
+      feeDomain: undefined,
+      status: undefined
     }
   })
 
@@ -133,15 +133,15 @@ const FeeManagement = () => {
     resolver: zodResolver(PolicySchema),
     shouldUnregister: true,
     defaultValues: {
-      name: "",
-      validFrom: "",
-      validTo: "",
-      priority: 0,
-      status: "",
-      feeDomain: "",
-      currency: "",
-      serviceType: "",
-      description: ""
+    name: "",
+  validFrom: "",
+  validTo: undefined,
+  priority: undefined,
+  status: undefined,
+  feeDomain: undefined,
+  currency: "",
+  serviceType: undefined,
+  description: undefined
     }
   });
   const handleSearch = (formValues: object) => {

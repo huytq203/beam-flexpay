@@ -3,7 +3,7 @@ import { ButtonComponent, TooltipComponent } from '@components/common'
 import { Tooltip } from 'antd'
 import {
   getEnumLabel
-} from '../FeeManagement.utils'
+} from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
 import { beneficiaryType, calculationMethodEnum, componentType, feePolicyComponent, payerType } from '@type/feePoliciesComponent'
 import { ColumnsType } from 'antd/es/table'
 

@@ -4,7 +4,7 @@ import { PermissionItem } from '@type/permissionManagement'
 import { RoleDataItem } from '@type/roleManagementV2'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { ModeAction } from '../hook/useRoleManagement'
+import { ModeAction } from '../hooks/useRoleManagement'
 
 interface FormData {
   name: string

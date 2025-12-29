@@ -9,9 +9,10 @@ import {
   UserOutlined
 } from '@components/icons/common'
 import { ColumnType } from 'antd/lib/table'
-import { ModeAction } from './hook/usePermissionRole'
+import { ModeAction } from './hooks/usePermissionRole'
 import { PermissionItem } from '@type/permissionManagement'
 import { DataRoleItem } from '@type/roleManagement'
+import { Permission } from '@constants/permissionConstant'
 
 interface Props {
   setOpenModalDetail: (value: boolean) => void
@@ -39,96 +40,82 @@ export const PermissionManagementColumn = ({
   setSelectRoleItem,
   currentUserRoles = []
 }: Props): ColumnType<DataRoleItem>[] => [
-  {
-    title: '#',
-    dataIndex: 'no',
-    align: 'center'
-  },
-  {
-    title: 'Tên nhóm quyền',
-    dataIndex: 'name',
-    align: 'center',
-    render: (value) => value ?? '--'
-  },
-  {
-    title: 'Mô tả',
-    dataIndex: 'description',
-    align: 'center',
-    render: (value) => value ?? '--'
-  },
-  {
-    title: 'Ngày khởi tạo',
-    dataIndex: 'date',
-    align: 'center',
-    render: (value) => value ?? '--'
-  },
-  {
-    title: 'Thao tác',
-    dataIndex: 'action',
-    align: 'center',
-    width: 100,
-    fixed: 'right',
-    render: (_, record) => {
-      // So sánh role name trong bảng với roles của user hiện tại từ JWT
-      const isCurrentUserRole = currentUserRoles.includes(record.name)
+    {
+      title: '#',
+      dataIndex: 'no',
+      align: 'center'
+    },
+    {
+      title: 'Tên nhóm quyền',
+      dataIndex: 'name',
+      align: 'center',
+      render: (value) => value ?? '--'
+    },
+    {
+      title: 'Mô tả',
+      dataIndex: 'description',
+      align: 'center',
+      render: (value) => value ?? '--'
+    },
+    {
+      title: 'Ngày khởi tạo',
+      dataIndex: 'date',
+      align: 'center',
+      render: (value) => value ?? '--'
+    },
+    {
+      title: 'Thao tác',
+      dataIndex: 'action',
+      align: 'center',
+      width: 100,
+      fixed: 'right',
+      render: (_, record) => {
+        // So sánh role name trong bảng với roles của user hiện tại từ JWT
+        const isCurrentUserRole = currentUserRoles.includes(record.name)
 
-      return (
-        <div className='flex justify-start items-start gap-1'>
-          <PermissionWrapper permission='EWALLET:FEE:FULL'>
+        return (
+          <div className='flex justify-start items-start gap-1'>
+            <PermissionWrapper permission={Permission.FEE_FULL}>
+                <ButtonComponent
+                  type='default'
+                  icon={<EditOutlined />}
+                  onClick={() => {
+                    setModeAction('edit')
+                    setOpenModalPermission(true)
+                    handleGetPermissionAssigned(record.id)
+                  }}
+                />
+
               <ButtonComponent
                 type='default'
-                icon={<EditOutlined />}
+                className='text-blue-600'
+                icon={<EyeOutlined />}
                 onClick={() => {
-                  setModeAction('edit')
+                  setModeAction('view')
                   setOpenModalPermission(true)
                   handleGetPermissionAssigned(record.id)
                 }}
-                disabled={isCurrentUserRole}
               />
-          </PermissionWrapper>
+              <ButtonComponent
+                type='default'
+                className='text-yellow-600'
+                icon={<LockOutlined />}
+                onClick={() => {
+                  setModeAction('lock')
+                  setModalDialog(true)
+                }}
+              />
 
-          {/* View - cần quyền EWALLET:ROLE:VIEW */}
-          <PermissionWrapper permission='EWALLET:ROLE:VIEW'>
-            <ButtonComponent
-              type='default'
-              className='text-blue-600'
-              icon={<EyeOutlined />}
-              onClick={() => {
-                setModeAction('view')
-                setOpenModalPermission(true)
-                handleGetPermissionAssigned(record.id)
-              }}
-            />
-          </PermissionWrapper>
+              <ButtonComponent
+                type='default'
+                className='text-green-600'
+                icon={<UserOutlined />}
+                onClick={() => {
+                  setOpenModalDetail(true)
+                  handleGetMemberOfRole(record.id)
+                }}
+              />
 
-          {/* Lock - cần quyền EWALLET:ROLE:UPDATE */}
-          <PermissionWrapper permission='EWALLET:ROLE:UPDATE'>
-            <ButtonComponent
-              type='default'
-              className='text-yellow-600'
-              icon={<LockOutlined />}
-              onClick={() => {
-                setModeAction('lock')
-                setModalDialog(true)
-              }}
-            />
-          </PermissionWrapper>
-
-          {/* View members - cần quyền EWALLET:ROLE:VIEW */}
-          <PermissionWrapper permission='EWALLET:ROLE:VIEW'>
-            <ButtonComponent
-              type='default'
-              className='text-green-600'
-              icon={<UserOutlined />}
-              onClick={() => {
-                setOpenModalDetail(true)
-                handleGetMemberOfRole(record.id)
-              }}
-            />
-          </PermissionWrapper>
-
-          {/* Delete - cần quyền EWALLET:ROLE:DELETE và không phải role của user hiện tại */}
-          <PermissionWrapper permission='EWALLET:ROLE:DELETE'>
               <ButtonComponent
                 type='default'
                 className='text-red-600'
@@ -139,25 +126,20 @@ export const PermissionManagementColumn = ({
                   setIdRole(record.id)
                   setSelectRoleItem(record)
                 }}
-                disabled={isCurrentUserRole}
               />
-          </PermissionWrapper>
-
-          {/* Assign permission - cần quyền EWALLET:PERMISSION:CREATE */}
-          <PermissionWrapper permission='EWALLET:PERMISSION:CREATE'>
-            <ButtonComponent
-              type='default'
-              className='text-violet-600'
-              icon={<ApartmentOutlined />}
-              onClick={() => {
-                setModeAction('permission')
-                handleGetPermissionAvailable(record.id)
-                setOpenModalPermission(true)
-              }}
-            />
-          </PermissionWrapper>
-        </div>
-      )
+              <ButtonComponent
+                type='default'
+                className='text-violet-600'
+                icon={<ApartmentOutlined />}
+                onClick={() => {
+                  setModeAction('permission')
+                  handleGetPermissionAvailable(record.id)
+                  setOpenModalPermission(true)
+                }}
+              />
+            </PermissionWrapper>
+          </div>
+        )
+      }
     }
-  }
-]
+  ]

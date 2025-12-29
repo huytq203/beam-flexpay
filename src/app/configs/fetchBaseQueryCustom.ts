@@ -12,18 +12,19 @@ import { notification } from 'antd'
 import { t } from 'i18next'
 import Cookies from 'js-cookie'
 
-// Import types, enums, constants from separate file
 import {
   HttpStatus,
   NotificationType,
   FETCH_ERROR,
   CookieKey,
+  CookieExpiry,
   TokenType,
   RefreshResponse,
   ApiErrorResponse,
   RequestArgs,
   isInWhiteList,
-  normalizePathname
+  normalizePathname,
+  callApi
 } from './fetchBaseQuery.types'
 
 // ============================================================================
@@ -72,12 +73,11 @@ export const openNotification = (
 // BASE QUERY CONFIGURATIONS
 // ============================================================================
 
-/** Base query with authentication headers */
 const baseAuthQuery = fetchBaseQuery({
   baseUrl: ENV.API_LOGIN,
   credentials: 'include',
   prepareHeaders: (headers) => {
-    const accessToken = localStorage.getItem(appName)
+    const accessToken = Cookies.get(CookieKey.ACCESS_TOKEN)
     if (accessToken) {
       headers.set('authorization', `Bearer ${accessToken}`)
     }
@@ -85,7 +85,6 @@ const baseAuthQuery = fetchBaseQuery({
   }
 })
 
-/** Base query for refresh token (no auth headers) */
 const baseRefreshQuery = fetchBaseQuery({
   baseUrl: ENV.API_LOGIN,
   credentials: 'include'
@@ -94,7 +93,7 @@ const baseRefreshQuery = fetchBaseQuery({
 const baseQueryOld = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL,
   prepareHeaders: (headers, { getState }) => {
-   const accessToken = localStorage.getItem(appName)
+    const accessToken = Cookies.get(CookieKey.ACCESS_TOKEN)
     if (accessToken) {
       headers.set('authorization', `Bearer ${accessToken}`)
     }
@@ -107,15 +106,18 @@ export const baseQueryFee = fetchBaseQuery({
   baseUrl: ENV.API_FEE,
   credentials: 'include',
   prepareHeaders: (headers) => {
-    const accessToken = localStorage.getItem(appName)
+    const accessToken = Cookies.get(CookieKey.ACCESS_TOKEN)
     if (accessToken) {
       headers.set('authorization', `Bearer ${accessToken}`)
     }
     return headers
   }
 })
+
+
+
 // ============================================================================
-// TOKEN REFRESH LOGIC
+// TOKEN REFRESH
 // ============================================================================
 
 /**
@@ -126,7 +128,6 @@ const refreshAccessToken = async (
   api: BaseQueryApi,
   extraOptions: Record<string, unknown>
 ): Promise<string | null> => {
-  // Return existing promise if already refreshing (singleton pattern)
   if (isRefreshing && refreshPromise) {
     return refreshPromise
   }
@@ -138,31 +139,27 @@ const refreshAccessToken = async (
       const refreshToken = Cookies.get(CookieKey.REFRESH_TOKEN)
       if (!refreshToken) return null
 
-      const refreshResult = await baseRefreshQuery(
-        {
-          url: '/auth/refresh',
-          method: 'POST',
-          body: { refreshToken }
-        },
+      const refreshResult = await callApi<RefreshResponse>(
+        baseRefreshQuery,
+        { url: '/auth/refresh', method: 'POST', body: { refreshToken } },
         api,
         extraOptions
       )
 
-      const data = (refreshResult.data as RefreshResponse)?.data
+      const data = refreshResult?.data
       const newAccessToken = data?.[TokenType.ACCESS_TOKEN]
 
       if (!newAccessToken) return null
 
-      // Save new access token
-      localStorage.setItem(appName, newAccessToken)
+      Cookies.set(CookieKey.ACCESS_TOKEN, newAccessToken, { expires: CookieExpiry.ACCESS_TOKEN_MINUTES / 1440 })
 
-      // Update refresh token if provided
-      if (data[TokenType.REFRESH_TOKEN]) {
-        Cookies.set(CookieKey.REFRESH_TOKEN, data[TokenType.REFRESH_TOKEN])
+      if (data?.[TokenType.REFRESH_TOKEN]) {
+        Cookies.set(CookieKey.REFRESH_TOKEN, data[TokenType.REFRESH_TOKEN], { expires: CookieExpiry.REFRESH_TOKEN_MINUTES / 1440 })
       }
 
       return newAccessToken
-    } catch {
+    } catch (error) {
+      console.error('[Auth] Refresh token failed:', error)
       return null
     } finally {
       isRefreshing = false
@@ -173,12 +170,10 @@ const refreshAccessToken = async (
   return refreshPromise
 }
 
-/**
- * Force logout user and redirect to login page
- */
+
 const forceLogout = (): void => {
+  Cookies.remove(CookieKey.ACCESS_TOKEN)
   Cookies.remove(CookieKey.REFRESH_TOKEN)
-  localStorage.clear()
   window.location.href = '/auth/login'
 }
 
@@ -199,30 +194,24 @@ const createCustomBaseQuery = (
   baseQuery: ReturnType<typeof fetchBaseQuery>
 ): BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> => {
   return async (args, api, extraOptions) => {
-    // Normalize pathname (remove trailing slash)
     const pathName = normalizePathname(window.location.pathname)
 
-    // Get loading flag from request params (typed, no any)
     const requestArgs = args as RequestArgs
     const isLoading = requestArgs?.params?.isLoading
     const requestUrl = typeof args === 'string' ? args : requestArgs?.url
 
-    // Show loading indicator if not in whitelist
     if (isLoading !== false && !isInWhiteList(requestUrl, pathName)) {
       showLoading()
     }
 
-    // Execute the request
     const result = await baseQuery(args, api, extraOptions)
     hideLoading()
 
-    // Handle errors
     if (result.error && result.error.status) {
       const status = result.error.status
 
       switch (status) {
         case HttpStatus.UNAUTHORIZED: {
-          // Token expired - try to refresh
           const newAccessToken = await refreshAccessToken(api, extraOptions as Record<string, unknown>)
 
           if (!newAccessToken) {
@@ -230,7 +219,6 @@ const createCustomBaseQuery = (
             break
           }
 
-          // Retry original request with new token
           return await baseQuery(args, api, extraOptions)
         }
 
@@ -243,7 +231,6 @@ const createCustomBaseQuery = (
         }
 
         case FETCH_ERROR:
-          // Network error - handle silently
           break
 
         default: {
@@ -263,17 +250,7 @@ const createCustomBaseQuery = (
 // ============================================================================
 // EXPORTED CUSTOM BASE QUERIES
 // ============================================================================
-
-/**
- * Custom base query for AUTH API (ENV.API_LOGIN)
- * With loading indicator, error handling, token refresh
- */
 export const fetchBaseQueryCustom = createCustomBaseQuery(baseAuthQuery)
-
-/**
- * Custom base query for FEE API (ENV.API_FEE)
- * With loading indicator, error handling, token refresh
- */
 export const fetchBaseQueryFee = createCustomBaseQuery(baseQueryFee)
 export const fetchBaseQueryOld = createCustomBaseQuery(baseQueryOld)
 

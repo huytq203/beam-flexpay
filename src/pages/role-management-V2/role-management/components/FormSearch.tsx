@@ -2,7 +2,7 @@ import { ButtonComponent } from '@components/common'
 import { FormInput, FormSelect } from '@components/form'
 import { useSVG } from '@hooks/useSVG'
 import { useForm } from 'react-hook-form'
-import { ModeAction } from '../hook/useRoleManagement'
+import { ModeAction } from '@pages/role-management-V2/role-management/hooks/useRoleManagement'
 
 export interface SearchFormData {
   roleCode: string

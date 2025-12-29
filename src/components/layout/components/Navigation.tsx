@@ -99,7 +99,7 @@ const roleManagement = {
     },
     {
       key: 'manage-group-permissions',
-      permission: 'PERMISSION:FULL',
+      permission: 'REPORT:FULL',
       icon: (
         <ShieldCheckIcon
           size={size}
@@ -424,7 +424,7 @@ const bankAndConnect = {
         />
       ),
       label: i18n.t('navigation.bank'),
-      permission: 'FEE:FULL'
+      permission: 'BANK:FULL'
     },
     // dont have permission
     {
@@ -437,7 +437,7 @@ const bankAndConnect = {
         />
       ),
       label: i18n.t('navigation.notification-management'),
-      permission: 'FEE:FULL'
+      permission: 'BANK:FULL'
     }
   ]
 }
@@ -613,11 +613,11 @@ const reports = {
         />
       ),
       label: i18n.t('navigation.internal-report'),
-      permission: 'PERMISSION:FULL',
+      permission: 'REPORT:FULL',
       children: [
         {
           key: 'accounts',
-          permission: 'PERMISSION:FUL',
+          permission: 'REPORT:FUL',
           icon: (
             <FolderOpenIcon
               size={size}

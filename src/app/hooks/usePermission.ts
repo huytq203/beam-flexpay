@@ -81,11 +81,11 @@ const MappingRouterPermission: IMapping[] = [
   },
   {
     pathName: [BANKANDCONNECT + '/banks'],
-    permission: 'FEE:FULL'
+    permission: 'BANK:FULL'
   },
   {
     pathName: [BANKANDCONNECT + '/notification-management'],
-    permission: 'FEE:FULL'
+    permission: 'BANK:FULL'
   },
   {
     pathName: [REPAYMENTANDDISBURSE + '/dashboard'],
@@ -113,7 +113,7 @@ const MappingRouterPermission: IMapping[] = [
       REPORTS + INTERNAL + '/accounts',
       REPORTS + INTERNAL + '/detail-account'
     ],
-    permission: 'PERMISSION:FULL'
+    permission: 'REPORTS:FULL'
   },
   {
     pathName: [

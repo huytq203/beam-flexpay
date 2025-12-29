@@ -94,10 +94,10 @@ export const RoleManagemenColume = ({
       title: 'Thao tác',
       dataIndex: 'action',
       align: 'center',
-      width: 300,
+      width: 250,
       fixed: 'right',
       render: (_, record) => (
-        <div className='flex justify-center items-center gap-1'>
+        <div className='flex justify-start items-center gap-1'>
           <ButtonComponent
             type='default'
             icon={<EditOutlined />}
@@ -128,11 +128,6 @@ export const RoleManagemenColume = ({
               setOpenDialog(true)
               setSelectedUser(record)
             }}
-          />
-          <ButtonComponent
-            type='default'
-            className='text-green-600'
-            icon={<UserSwitchOutlined />}
           />
           <ButtonComponent
             type='default'

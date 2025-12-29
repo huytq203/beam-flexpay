@@ -6,8 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import {
   PolicySchema,
   PolicyType,
-  FeeComponentType
-} from '../FeeManagement.schema'
+} from '@pages/fee-managerment-v3/schemas/FeeManagement.schema'
 import {
   ModalComponent,
   ButtonComponent,
@@ -27,11 +26,11 @@ import {
   usePostNewPolicyMutation,
   usePutFeePolicyMutation
 } from '@services/apiFeePoliciesServices'
-import FormAddPolicy from '../components/FormAddPolicy'
+import FormAddPolicy from '@pages/fee-managerment-v3/components/FormAddPolicy'
 import { useGetFeeComponentTierQuery } from '@services/apiFeeComponentTier'
 import { useMessage } from '@hooks/useMessage'
-import { convertToISO } from '../FeeManagement.utils'
-import { useFeeComponentForm } from '../hooks/useFeeComponentForm'
+import { convertToISO } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
+import { useFeeComponentForm } from '@pages/fee-managerment-v3/hooks/useFeeComponentForm'
 import { useSVG } from '@hooks/useSVG'
 
 const FeeComponentManagement = () => {

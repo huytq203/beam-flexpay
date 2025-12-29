@@ -24,7 +24,6 @@ interface FormInforAddProps {
   handlePostAssign: (data: FeeAssignType) => Promise<void>
   onPolicySelected?: (feePolicyId: string) => void
   editData?: FeeAssignment // Data from API for edit mode
-  handleSubmit?:()=>void
 }
 
 const DEFAULT_FORM_VALUES: FeeAssignType = {

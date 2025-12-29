@@ -37,16 +37,18 @@ export function FormSelect<T extends FieldValues>({
       className={className}
       render={(field) => {
         const { onChange: customOnChange, allowClear = true, ...fieldRest } = rest as any
+        // Extract onChange from field to prevent it from overriding handleChange in SelectInput
+        const { onChange: fieldOnChange, ...fieldWithoutOnChange } = field
         return (
           <SelectInput
-            {...field}
+            {...fieldWithoutOnChange}
             {...fieldRest}
             id={field.name}
-            allowClear={allowClear} // Use prop value, default to true
+            allowClear={allowClear} 
             defaultValue={defaultValue}
             data={options}
             handleChange={(value: any, option: any) => {
-              field.onChange(value)
+              fieldOnChange(value)
               if (customOnChange) {
                 customOnChange(value)
               }

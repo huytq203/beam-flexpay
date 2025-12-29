@@ -1,8 +1,5 @@
 import {
-  feeDomain,
   serviceType,
-  componentType,
-  calculationMethodEnum
 } from '@type/feePoliciesComponent'
 export const getEnumLabel = <T extends Record<string, string>>(
   value: string,

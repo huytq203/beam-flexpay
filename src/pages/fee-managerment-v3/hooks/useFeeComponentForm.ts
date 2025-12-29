@@ -5,7 +5,7 @@ import {
     usePostFeeComponentPoliciesMutation,
     usePutFeeComponentPoliciesMutation
 } from '@services/apiFeeComponent'
-import { FeeComponentType } from '../FeeManagement.schema'
+import { FeeComponentType } from '@pages/fee-managerment-v3/schemas/FeeManagement.schema'
 import { feePolicyComponent } from '@type/feePoliciesComponent'
 
 interface UseFeeComponentFormOptions {

@@ -21,7 +21,6 @@ import {
 } from '@services/apiFeeAssignment'
 import {
   FeeAssignment,
-  FeeAssignResponse,
 } from '@type/feeAssignment'
 import { FeeAssignType } from '@pages/fee-managerment-v3/fee-assignment/feeAssign.schema'
 
@@ -67,7 +66,12 @@ const FeeAssignmentManagement = () => {
     formState: { errors },
     setValue
   } = useForm<FeeAssignType>({
-    shouldUnregister: true
+    shouldUnregister: true,
+    defaultValues:{
+      account:'',
+      applyDate:'',
+      createDate:''
+    }
   })
   const [postAssign] = usePostAssignMutation()
   const [isSearching, setIsSearching] = useState(false)
@@ -75,7 +79,7 @@ const FeeAssignmentManagement = () => {
 
   //logic
 
-  const handleSearch = async (data: FeeAssignResponse) => {
+  const handleSearch = async (data: FeeAssignType) => {
     const payload = {
       ...data,
       page,
@@ -218,10 +222,6 @@ const FeeAssignmentManagement = () => {
             id={undefined}
             handlePutAssign={async () => { }}
             handlePostAssign={handlePostAssign}
-            handleSubmit={handleSubmit}
-            setValue={setValue}
-            setOpenModal={setOpenModalSelectPolicy}
-            errors={errors}
           />
         }
       />

@@ -2,7 +2,7 @@ import { DeleteOutlined, EditOutlined, LockOutlined } from '@components/icons/co
 import { ButtonComponent } from '@components/common'
 import { ColumnType } from 'antd/lib/table'
 import { RoleDataItem } from '@type/roleManagementV2'
-import { ModeAction } from './hook/useRoleManagement'
+import { ModeAction } from './hooks/useRoleManagement'
 import { PermissionItem } from '@type/permissionManagement'
 
 interface Props {

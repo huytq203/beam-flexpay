@@ -5,7 +5,7 @@ import {
   LockOutlined,
   UnlockOutlined
 } from '@ant-design/icons'
-import { formatDate, getEnumLabel } from '@pages/fee-managerment-v3/FeeManagement.utils'
+import { formatDate, getEnumLabel } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
 import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import { ColumnsType } from 'antd/es/table'
 import { feeDomain, serviceType } from '@type/feePoliciesComponent'

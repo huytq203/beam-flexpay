@@ -1,4 +1,4 @@
-import { ModeAction } from '@pages/role-management-V2/permission-management/hook/usePermissionRole'
+import { ModeAction } from '@pages/role-management-V2/permission-management/hooks/usePermissionRole'
 import { PermissionItem } from '@type/permissionManagement'
 import { Table } from 'antd'
 import { ColumnType } from 'antd/lib/table'

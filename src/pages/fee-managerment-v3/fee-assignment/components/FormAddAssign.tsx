@@ -1,11 +1,10 @@
 import { CardComponent, CheckboxComponent, Table } from '@components/common'
 import { Radio } from 'antd'
 import { FormInput } from '@components/form'
-import { getEnumLabel } from '@pages/fee-managerment-v3/FeeManagement.utils'
+import { getEnumLabel } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
 import { useGetFeePoliciesQuery, useLazySearchFeePoliciesQuery } from '@services/apiFeePoliciesServices'
 import useDebounce from '@hooks/useDebounce'
 import { serviceType } from '@type/feePoliciesComponent'
-import { TableRowSelection } from 'antd/es/table/interface'
 import React, { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 

@@ -14,7 +14,7 @@ import 'tippy.js/dist/tippy.css'
 import 'tippy.js/themes/light.css'
 import { useNavigate } from 'react-router-dom'
 import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
-import { formatDate, getEnumLabel } from '../FeeManagement.utils'
+import { formatDate, getEnumLabel } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
 import { serviceType } from '@type/feePoliciesComponent'
 import { statusType } from '@type/feePolicies'
 

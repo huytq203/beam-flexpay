@@ -8,7 +8,7 @@ import { useState } from 'react'
 import FormAdd from './components/FormAdd'
 import FormSearch from './components/FormSearch'
 import FormDetail from '@pages/role-management-V2/permission-management/components/FormDetail'
-import { usePermissionRole } from './hook/usePermissionRole'
+import { usePermissionRole } from './hooks/usePermissionRole'
 import FormPermission from './components/FormPermission'
 import { DataRoleItem } from '@type/roleManagement'
 

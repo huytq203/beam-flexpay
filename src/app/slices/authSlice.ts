@@ -6,6 +6,7 @@ import { enhancedAuthApi, useLogoutMutation } from '@services/authEndpoints'
 import { IUserProfile } from '@type/auth'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
+import { CookieKey, CookieExpiry } from '@configs/fetchBaseQuery.types'
 const name = 'authSlice'
 
 // Interface cho JWT payload từ Keycloak/OIDC
@@ -48,12 +49,12 @@ export interface IAuthState {
   profile: IUserProfile
 }
 
-// Lấy token từ localStorage và decode permissions khi app khởi tạo
-const storedToken = localStorage.getItem(appName)
+// Lấy token từ cookie và decode permissions khi app khởi tạo
+const storedToken = Cookies.get(CookieKey.ACCESS_TOKEN)
 const initialTokenInfo = storedToken ? decodeToken(storedToken) : { permissions: [], roles: [], email: '', name: '' }
-const refresh = Cookies.get('refresh-token')
+const refresh = Cookies.get(CookieKey.REFRESH_TOKEN)
 const initialState: IAuthState = {
-  accessToken: storedToken,
+  accessToken: storedToken ?? null,
   refreshToken: '',
   profile: {
     id: 0,
@@ -78,7 +79,8 @@ const authSlice = createSlice({
   reducers: {
     logout: () => {
 
-      localStorage.removeItem(appName)
+      Cookies.remove(CookieKey.ACCESS_TOKEN)
+      Cookies.remove(CookieKey.REFRESH_TOKEN)
       return {
         ...initialState,
         accessToken: null
@@ -88,7 +90,7 @@ const authSlice = createSlice({
       state.profile.permissions = action.payload
     },
     setAccessToken: (state, action: PayloadAction<string>) => {
-      localStorage.setItem(appName, action.payload)
+      Cookies.set(CookieKey.ACCESS_TOKEN, action.payload, { expires: CookieExpiry.ACCESS_TOKEN_MINUTES / 1440 })
       state.accessToken = action.payload
       // Decode và lấy permissions, roles từ token
       const tokenInfo = decodeToken(action.payload)
@@ -106,7 +108,7 @@ const authSlice = createSlice({
         (state, { payload }) => {
           const token = (payload as any).accessToken || (payload as any).accessToken
           if (token) {
-            localStorage.setItem(appName, token)
+            Cookies.set(CookieKey.ACCESS_TOKEN, token, { expires: CookieExpiry.ACCESS_TOKEN_MINUTES / 1440 })
             // Decode token để lấy permissions
             const tokenInfo = decodeToken(token)
             return {
