@@ -1,4 +1,3 @@
-import { appName } from '@constants/appConstant'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { enhancedApi as authService } from '@services/cmsService'
 import { enhancedApi as userApi } from '@services/cmsUser'

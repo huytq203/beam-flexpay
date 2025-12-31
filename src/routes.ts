@@ -520,10 +520,10 @@ const roleManagementV2 = {
   path: ROLEMANAGEMENT_V2,
   element: createElement(AppLayout),
   errorElement: createElement(NotFound),
-  children:[
+  children: [
     {
-      path:ROLEMANAGEMENT_V2,
-      children:[
+      path: ROLEMANAGEMENT_V2,
+      children: [
         {
           path: ROLEMANAGEMENT_V2 + '/user-account',
           element: createElement(UserManagement)
@@ -532,8 +532,8 @@ const roleManagementV2 = {
       ]
     },
     {
-      path:ROLEMANAGEMENT_V2,
-      children:[
+      path: ROLEMANAGEMENT_V2,
+      children: [
         {
           path: ROLEMANAGEMENT_V2 + '/permission-management',
           element: createElement(PermissionManagement)
@@ -542,8 +542,8 @@ const roleManagementV2 = {
       ]
     },
     {
-      path:ROLEMANAGEMENT_V2,
-      children:[
+      path: ROLEMANAGEMENT_V2,
+      children: [
         {
           path: ROLEMANAGEMENT_V2 + '/role-management',
           element: createElement(RoleManagement)

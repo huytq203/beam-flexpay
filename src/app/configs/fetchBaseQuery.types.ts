@@ -6,7 +6,6 @@ import {
     PRODUCTS,
     ROLEMANAGEMENT
 } from '@constants/routersConstant'
-import { BaseQueryApi, fetchBaseQuery } from '@reduxjs/toolkit/query'
 
 // ============================================================================
 // ENUMS
@@ -38,10 +37,88 @@ export enum TokenType {
     REFRESH_EXPIRES_IN = 'refreshExpiresIn'
 }
 
-
+/**
+ * Cookie storage keys (snake_case for cookie naming convention)
+ */
 export enum CookieKey {
     ACCESS_TOKEN = 'access_token',
     REFRESH_TOKEN = 'refresh_token'
+}
+
+// ============================================================================
+// COOKIE HELPER FUNCTIONS (với security options)
+// ============================================================================
+
+/**
+ * Default cookie options với security settings
+ * - secure: Chỉ gửi qua HTTPS (production)
+ * - sameSite: 'strict' để chống CSRF
+ */
+const getCookieOptions = (expiresInHours: number = 1): Cookies.CookieAttributes => ({
+    secure: window.location.protocol === 'https:',
+    sameSite: 'strict',
+    expires: expiresInHours / 24, // js-cookie expects days
+    path: '/'
+})
+
+/**
+ * Set access token cookie với security options
+ * @param token - Access token string
+ * @param expiresInMinutes - Token expiration in minutes (default: 5 minutes)
+ */
+export const setAccessTokenCookie = (token: string, expiresInMinutes: number = 5): void => {
+    const expiresInDays = expiresInMinutes / (60 * 24) // Convert minutes to days
+    Cookies.set(CookieKey.ACCESS_TOKEN, token, {
+        secure: window.location.protocol === 'https:',
+        sameSite: 'strict',
+        expires: expiresInDays,
+        path: '/'
+    })
+}
+
+/**
+ * Get access token from cookie
+ */
+export const getAccessTokenCookie = (): string | undefined => {
+    return Cookies.get(CookieKey.ACCESS_TOKEN)
+}
+
+/**
+ * Remove access token cookie
+ */
+export const removeAccessTokenCookie = (): void => {
+    Cookies.remove(CookieKey.ACCESS_TOKEN, { path: '/' })
+}
+
+/**
+ * Set refresh token cookie với security options
+ * @param token - Refresh token string
+ * @param expiresInHours - Token expiration in hours (default: 24 hours)
+ */
+export const setRefreshTokenCookie = (token: string, expiresInHours: number = 1): void => {
+    Cookies.set(CookieKey.REFRESH_TOKEN, token, getCookieOptions(expiresInHours))
+}
+
+/**
+ * Get refresh token from cookie
+ */
+export const getRefreshTokenCookie = (): string | undefined => {
+    return Cookies.get(CookieKey.REFRESH_TOKEN)
+}
+
+/**
+ * Remove refresh token cookie
+ */
+export const removeRefreshTokenCookie = (): void => {
+    Cookies.remove(CookieKey.REFRESH_TOKEN, { path: '/' })
+}
+
+/**
+ * Remove all auth cookies (for logout)
+ */
+export const removeAllAuthCookies = (): void => {
+    removeAccessTokenCookie()
+    removeRefreshTokenCookie()
 }
 
 export const CookieExpiry = {

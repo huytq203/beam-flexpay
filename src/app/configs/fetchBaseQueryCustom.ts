@@ -1,5 +1,4 @@
 import { ENV } from './env'
-import { appName } from '@constants/appConstant'
 import {
   BaseQueryFn,
   FetchArgs,

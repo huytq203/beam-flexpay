@@ -12,8 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import "./style2.scss"
 import { useMessage } from '@hooks/useMessage'
-import Cookies from 'js-cookie'
-import { CookieKey, TokenType } from '@configs/fetchBaseQuery.types'
+import { TokenType, setRefreshTokenCookie } from '@configs/fetchBaseQuery.types'
 // Define validation schema
 const loginSchema = z.object({
     username: z
@@ -57,9 +56,9 @@ const Login2 = () => {
             const result = await login({ userLoginDto: values })
 
             if ('data' in result && result.data) {
-               navigate('/') 
-               Cookies.set(CookieKey.REFRESH_TOKEN, result?.data?.[TokenType.REFRESH_TOKEN] || '')
-               
+                navigate('/')
+                setRefreshTokenCookie(result?.data?.[TokenType.REFRESH_TOKEN] || '')
+
             } else if ('error' in result) {
                 const error = result.error as any
                 const errorMessage = error?.data?.message || t`login.failed`

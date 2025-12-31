@@ -1,7 +1,8 @@
 import { SearchOutlined } from '@ant-design/icons'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER, appName } from '@constants/appConstant'
+import { GUTTER } from '@constants/appConstant'
+import { getAccessTokenCookie } from '@configs/fetchBaseQuery.types'
 import { TimeFullFormat } from '@constants/datetime'
 import {
   useDeleteProductTypeMutation,
@@ -131,7 +132,7 @@ const ProductType = () => {
     const endpoint =
       `${import.meta.env.VITE_API_URL}/product-type?` +
       new URLSearchParams(query)
-    const accessToken = localStorage.getItem(appName)
+    const accessToken = getAccessTokenCookie()
     const response = await fetch(endpoint, {
       method: 'GET',
       headers: {
@@ -169,7 +170,7 @@ const ProductType = () => {
           }
         }
       }, 500)
-    } catch (error) {}
+    } catch (error) { }
   }
 
   const handleOpenSelectProductType = (open: boolean) => {
