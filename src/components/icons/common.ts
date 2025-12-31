@@ -10,7 +10,8 @@ export {
   UserSwitchOutlined,
   MailOutlined,
   UserOutlined,
-  ApartmentOutlined 
+  ApartmentOutlined ,
+  SendOutlined
 } from '@ant-design/icons'
 
 

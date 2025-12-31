@@ -32,12 +32,12 @@ const FormSearch = ({ setOpenModalAdd, onSearch }: Props) => {
   }
 
   return (
-    <div className='flex w-full gap-3'>
+    <div className='block w-full gap-3 md:flex'>
       <form
         className='flex-1'
         onSubmit={handleSubmit(handleSearch)}
       >
-        <div className='grid grid-cols-2 gap-3 w-full'>
+        <div className='grid md:grid-cols-2 grid-cols-1 gap-3 w-full'>
           <FormInput
             label='Tên nhóm quyền'
             placeholder='Tên nhóm quyền...'
@@ -54,7 +54,7 @@ const FormSearch = ({ setOpenModalAdd, onSearch }: Props) => {
           />
         </div>
       </form>
-      <div className='flex items-end gap-1'>
+      <div className='grid grid-cols-3 mt-3 md:flex justify-end gap-3 items-end md:gap-1'>
         <ButtonComponent
           icon={svg('/icons.svg#hugeicons-search-01')}
           content='Tìm kiếm'

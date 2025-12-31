@@ -68,7 +68,7 @@ export const PermissionManagementColumn = ({
       dataIndex: 'action',
       align: 'center',
       width: 100,
-      fixed: 'right',
+      // fixed: 'right',
       render: (_, record) => {
         // So sánh role name trong bảng với roles của user hiện tại từ JWT
         const isCurrentUserRole = currentUserRoles.includes(record.name)
