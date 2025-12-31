@@ -124,6 +124,9 @@ export const baseQueryFee = fetchBaseQuery({
  * Refresh access token using refresh token stored in cookies
  * Uses singleton pattern to prevent multiple simultaneous refresh requests
  */
+
+
+
 const refreshAccessToken = async (
   api: BaseQueryApi,
   extraOptions: Record<string, unknown>

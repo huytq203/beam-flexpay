@@ -43,14 +43,14 @@ function ForgotPassword() {
   }, [])
 
   return (
-    <Card className='mw-400'>
-      <Descriptions title={t`forgot.subtitle`}>
-        <Descriptions.Item>{t`forgot.sub-description`}</Descriptions.Item>
-      </Descriptions>
+    <div className='mx-6 border p-3 rounded-lg bg-white'>
+
+      <span>{t`forgot.sub-description`}</span>
       <Form
         layout='vertical'
         onFinish={handleSubmit}
         form={form}
+        className='mt-3'
       >
         <Form.Item
           label=''
@@ -71,7 +71,6 @@ function ForgotPassword() {
         <Row
           gutter={GUTTER}
           justify='end'
-          className='mt-10'
         >
           <Col>
             <Form.Item>
@@ -97,7 +96,7 @@ function ForgotPassword() {
           </Col>
         </Row>
       </Form>
-    </Card>
+    </div>
   )
 }
 
