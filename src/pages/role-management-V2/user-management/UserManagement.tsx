@@ -35,7 +35,9 @@ const UserManagement = () => {
     typeFooter,
     typeText,
     column,
-    roleOptions
+    roleOptions,
+     handleCloseDetail,
+    handleCloseUpdate
   } = useFormManagement()
 
   return (
@@ -62,7 +64,7 @@ const UserManagement = () => {
       />
       <ModalComponent
         title={modeAction === 'update' ? 'Cập nhật tài khoản Admin' : 'Thêm mới tài khoản Admin'}
-        onCancel={() => setOpenModalAdd(false)}
+        onCancel={handleCloseUpdate}
         onOk={() => { }}
         open={openModalAdd}
         loading={isLoadingDetail}
@@ -70,7 +72,7 @@ const UserManagement = () => {
         width='35%'
       />
       <ModalComponent
-        onCancel={() => setOpenModalDetail(false)}
+        onCancel={handleCloseDetail}
         onOk={() => { }}
         open={openModalDetail}
         title='Chi tiết tài khoản Admin'

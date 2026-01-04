@@ -75,7 +75,6 @@ export const PermissionManagementColumn = ({
 
         return (
           <div className='flex justify-start items-start gap-1'>
-            <PermissionWrapper permission={Permission.FEE_FULL}>
                 <ButtonComponent
                   type='default'
                   icon={<EditOutlined />}
@@ -137,7 +136,6 @@ export const PermissionManagementColumn = ({
                   setOpenModalPermission(true)
                 }}
               />
-            </PermissionWrapper>
           </div>
         )
       }

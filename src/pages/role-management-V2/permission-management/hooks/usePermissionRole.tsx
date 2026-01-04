@@ -8,7 +8,7 @@ import {
 } from '@services/apiRole'
 import { useGetRoleQuery } from '@services/apiRoleManagement'
 import { DataRoleItem } from '@type/roleManagement'
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { PermissionManagementColumn } from '../PermissionManagement.column'
 import { UserInfor } from '@type/userManagement'
 import {
@@ -77,7 +77,7 @@ export const usePermissionRole = () => {
   const [deleteRole] = useDeleteRoleMutation()
 
   // handlers
-  const handleDeleteRole = useCallback(async () => {
+  const handleDeleteRole =async () => {
     try {
       await deleteRole(idRole).unwrap()
       setModalDialog(false)
@@ -86,9 +86,9 @@ export const usePermissionRole = () => {
     } catch (error: any) {
       errorMess(error?.data?.detail)
     }
-  }, [idRole, deleteRole, successMess, errorMess, refetch])
+  }
 
-  const handlePostRole = useCallback(async (data: DataRoleItem) => {
+  const handlePostRole =async (data: DataRoleItem) => {
     try {
       await postRole(data).unwrap()
       setOpenModalAdd(false)
@@ -97,9 +97,9 @@ export const usePermissionRole = () => {
     } catch (error: any) {
       errorMess(error?.data?.detail)
     }
-  }, [postRole, successMess, errorMess, refetch])
+  }
 
-  const handleSearch = useCallback(async (data: SearchFormData) => {
+  const handleSearch =async (data: SearchFormData) => {
     if (!data.keyword) {
       setIsSearchMode(false)
       setSearchData(null)
@@ -119,14 +119,14 @@ export const usePermissionRole = () => {
       setSearchData(result)
       setIsSearchMode(true)
     } catch (error) { }
-  }, [pageSize, searchRole])
+  }
 
-  const handleCancel = useCallback(() => {
+  const handleCancel =() => {
     setSelectRole(undefined)
     setOpenModalPermission(false)
-  }, [])
+  }
 
-  const handleDeletePermissionAssign = useCallback(async (permissionNames: string[]) => {
+  const handleDeletePermissionAssign =async (permissionNames: string[]) => {
     try {
       await deletePermissionAssign({
         roleId: idRole,
@@ -137,9 +137,9 @@ export const usePermissionRole = () => {
     } catch (error: any) {
       errorMess(error?.data?.detail)
     }
-  }, [idRole, deletePermissionAssign, successMess, errorMess])
+  }
 
-  const handleGetPermissionAssigned = useCallback(async (roleId: string) => {
+  const handleGetPermissionAssigned =async (roleId: string) => {
     setIsLoadingDetail(true)
     try {
       const data = await getPermissionAssigned(roleId).unwrap()
@@ -149,9 +149,8 @@ export const usePermissionRole = () => {
     } finally {
       setIsLoadingDetail(false)
     }
-  }, [getPermissionAssigned])
-
-  const hanldePostPermission = useCallback(async (permissionNames: string[]) => {
+  }
+  const hanldePostPermission =async (permissionNames: string[]) => {
     try {
       await postPermission({
         roleId: idRole,
@@ -162,9 +161,9 @@ export const usePermissionRole = () => {
     } catch (error: any) {
       errorMess(error?.data?.detail)
     }
-  }, [idRole, postPermission, successMess, errorMess])
+  }
 
-  const handleGetPermissionAvailable = useCallback(async (roleId: string) => {
+  const handleGetPermissionAvailable =async (roleId: string) => {
     setIsLoadingDetail(true)
     try {
       const data = await getPermissionAvailable(roleId).unwrap()
@@ -174,9 +173,9 @@ export const usePermissionRole = () => {
     } finally {
       setIsLoadingDetail(false)
     }
-  }, [getPermissionAvailable])
+  }
 
-  const handleGetMemberOfRole = useCallback(async (roleId: string) => {
+  const handleGetMemberOfRole =async (roleId: string) => {
     setIsLoadingDetail(true)
     try {
       const dataMember = await getMemberOfRole(roleId).unwrap()
@@ -185,7 +184,7 @@ export const usePermissionRole = () => {
     } finally {
       setIsLoadingDetail(false)
     }
-  }, [getMemberOfRole])
+  }
 
   // computed
   const currentData = useMemo(() => isSearchMode ? searchData : getRole, [isSearchMode, searchData, getRole])

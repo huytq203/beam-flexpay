@@ -1,19 +1,25 @@
 import { ButtonComponent } from '@components/common'
 import { useMessage } from '@hooks/useMessage'
-import { useGetUserQuery, useLazyGetUserByIdQuery } from '@services/apiUserManagement'
+import {
+  useGetUserQuery,
+  useLazyGetUserByIdQuery
+} from '@services/apiUserManagement'
 import { UserInfor } from '@type/userManagement'
-import { useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { ActionMode } from '../UserManagement'
 import { FormSendEmail } from '../components/FormSendEmail'
 import { RoleManagemenColume } from '../UserManagement.colume'
 import dayjs from 'dayjs'
 import { useGetRoleQuery } from '@services/apiRole'
+import { SendOutlined } from '@components/icons/common'
 
 export const useFormManagement = () => {
   // state
   const [openModalAdd, setOpenModalAdd] = useState(false)
   const [openModalDetail, setOpenModalDetail] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<UserInfor | undefined>(undefined)
+  const [selectedUser, setSelectedUser] = useState<UserInfor | undefined>(
+    undefined
+  )
   const [modeAction, setModeAction] = useState<ActionMode>('')
   const [openDialog, setOpenDialog] = useState(false)
   const [isLoadingDetail, setIsLoadingDetail] = useState(false)
@@ -32,34 +38,54 @@ export const useFormManagement = () => {
   const [getUserById] = useLazyGetUserByIdQuery()
   const { data: getRole } = useGetRoleQuery({})
 
-  const roleOptions = getRole?.content?.map((role) => ({
-    value: role.name,
-    label: role.name
-  })) ?? []
+  const roleOptions =
+    getRole?.content?.map((role) => ({
+      value: role.name,
+      label: role.name
+    })) ?? []
 
   // logic
-  const dataSource = getUser?.content.map((item, index) => ({
-    ...item,
-    no: index + 1,
-    createdTimestamp: item.createdTimestamp
-      ? dayjs(item.createdTimestamp).format('DD/MM/YYYY HH:mm:ss')
-      : '--'
-  }))
+  const dataSource = useMemo(() => {
+    return (
+      getUser?.content?.map((item: UserInfor, index: number) => ({
+        ...item,
+        no: index + 1,
+        createdTimestamp: item.createdTimestamp
+          ? dayjs(item.createdTimestamp).format('DD/MM/YYYY HH:mm:ss')
+          : '--'
+      })) ?? []
+    )
+  }, [getUser?.content])
 
   const typeFooter: Partial<Record<ActionMode, JSX.Element>> = {
     delete: (
       <div className='flex justify-end items-center gap-2'>
-        <ButtonComponent type='default' content='Cancel' />
-        <ButtonComponent type='primary' danger content='Delete' />
+        <ButtonComponent
+          type='default'
+          content='Cancel'
+        />
+        <ButtonComponent
+          type='primary'
+          danger
+          content='Delete'
+        />
       </div>
     ),
     resetPass: (
       <div className='flex justify-end items-center gap-2'>
-        <ButtonComponent type='default' content='Cancel' />
+        <ButtonComponent
+          type='default'
+          content='Cancel'
+        />
         <ButtonComponent
           type='primary'
           className='bg-teal-700 hover:!bg-teal-600'
-          content='Send email'
+          content={
+            <span>
+              <SendOutlined />
+              Send email
+            </span>
+          }
         />
       </div>
     )
@@ -69,23 +95,23 @@ export const useFormManagement = () => {
     delete: (
       <span>
         Bạn có chắc chắn muốn <span className='font-bold'>xóa tài khoản</span>{' '}
-        admin <span className='font-bold'>{selectedUser?.username}</span> không? Hành động này
-        không thể hoàn tác.
+        admin <span className='font-bold'>{selectedUser?.username}</span> không?
+        Hành động này không thể hoàn tác.
       </span>
     ),
     lock: (
       <span>
         Bạn có chắc chắn muốn <span className='font-bold'>khóa tài khoản</span>{' '}
-        admin <span className='font-bold'>{selectedUser?.username}</span> không? Tài khoản sẽ
-        không thể đăng nhập cho đến khi mở lại.
+        admin <span className='font-bold'>{selectedUser?.username}</span> không?
+        Tài khoản sẽ không thể đăng nhập cho đến khi mở lại.
       </span>
     ),
     unlock: (
       <span>
         Bạn có chắc chắn muốn{' '}
         <span className='font-bold'>mở khóa tài khoản</span> admin{' '}
-        <span className='font-bold'>{selectedUser?.username}</span> không? Tài khoản này sẽ có
-        thể hoạt động trở lại.
+        <span className='font-bold'>{selectedUser?.username}</span> không? Tài
+        khoản này sẽ có thể hoạt động trở lại.
       </span>
     ),
     resetPass: <FormSendEmail selectedUser={selectedUser} />
@@ -107,7 +133,7 @@ export const useFormManagement = () => {
         : null
   })
 
-  const getUserInfo = async (id: string) => {
+  const getUserInfo = useCallback(async (id: string) => {
     setIsLoadingDetail(true)
     try {
       const dataUser = await getUserById(id)
@@ -118,12 +144,16 @@ export const useFormManagement = () => {
     } finally {
       setIsLoadingDetail(false)
     }
-  }
+  }, [getUserById])
 
   const handleOpenDetail = (record: UserInfor) => {
     getUserInfo(record.id)
     setOpenModalDetail(true)
     setModeAction('add')
+  }
+  const handleCloseDetail = () => {
+    setOpenModalDetail(false)
+    setModeAction('')
   }
 
   const handleOpenUpdate = (record: UserInfor) => {
@@ -132,7 +162,22 @@ export const useFormManagement = () => {
     setModeAction('update')
   }
 
-  const column = RoleManagemenColume({
+  const handleCloseUpdate = () => {
+    setOpenModalAdd(false)
+    setModeAction('')
+  }
+
+  const column = useMemo(() => {
+    return RoleManagemenColume({
+      setOpenModalDetail,
+      setModeAction,
+      setOpenDialog,
+      handleOpenDetail,
+      setOpenModalAdd,
+      handleOpenUpdate,
+      setSelectedUser
+    })
+  }, [
     setOpenModalDetail,
     setModeAction,
     setOpenDialog,
@@ -140,7 +185,7 @@ export const useFormManagement = () => {
     setOpenModalAdd,
     handleOpenUpdate,
     setSelectedUser
-  })
+  ])
 
   return {
     openModalAdd,
@@ -161,6 +206,9 @@ export const useFormManagement = () => {
     getUserInfo,
     column,
     handleOpenUpdate,
-    roleOptions
+    roleOptions,
+
+    handleCloseDetail,
+    handleCloseUpdate
   }
 }

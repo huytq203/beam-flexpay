@@ -1,11 +1,14 @@
 import {
     BANKANDCONNECT,
     FEEMANAGEMENT,
+    FEEMANAGEMENT_V3,
     INTERNAL_WALLET,
     PERSONALWALLET,
     PRODUCTS,
     ROLEMANAGEMENT
 } from '@constants/routersConstant'
+import { BaseQueryApi, fetchBaseQuery } from '@reduxjs/toolkit/query'
+import Cookies from 'js-cookie'
 
 // ============================================================================
 // ENUMS
@@ -64,10 +67,10 @@ const getCookieOptions = (expiresInHours: number = 1): Cookies.CookieAttributes 
 /**
  * Set access token cookie với security options
  * @param token - Access token string
- * @param expiresInMinutes - Token expiration in minutes (default: 5 minutes)
+ * @param expiresInSeconds - Token expiration in seconds (default: 300 = 5 minutes)
  */
-export const setAccessTokenCookie = (token: string, expiresInMinutes: number = 5): void => {
-    const expiresInDays = expiresInMinutes / (60 * 24) // Convert minutes to days
+export const setAccessTokenCookie = (token: string, expiresInSeconds: number = 300): void => {
+    const expiresInDays = expiresInSeconds / 86400 // Convert seconds to days (86400 = 24*60*60)
     Cookies.set(CookieKey.ACCESS_TOKEN, token, {
         secure: window.location.protocol === 'https:',
         sameSite: 'strict',
@@ -92,11 +95,17 @@ export const removeAccessTokenCookie = (): void => {
 
 /**
  * Set refresh token cookie với security options
- * @param token - Refresh token string
- * @param expiresInHours - Token expiration in hours (default: 24 hours)
+ * @param token - Refresh token string  
+ * @param expiresInSeconds - Token expiration in seconds (default: 1800 = 30 minutes)
  */
-export const setRefreshTokenCookie = (token: string, expiresInHours: number = 1): void => {
-    Cookies.set(CookieKey.REFRESH_TOKEN, token, getCookieOptions(expiresInHours))
+export const setRefreshTokenCookie = (token: string, expiresInSeconds: number = 1800): void => {
+    const expiresInDays = expiresInSeconds / 86400 // Convert seconds to days
+    Cookies.set(CookieKey.REFRESH_TOKEN, token, {
+        secure: window.location.protocol === 'https:',
+        sameSite: 'strict',
+        expires: expiresInDays,
+        path: '/'
+    })
 }
 
 /**
@@ -121,9 +130,10 @@ export const removeAllAuthCookies = (): void => {
     removeRefreshTokenCookie()
 }
 
+// Default expiry values in SECONDS (matching API response format)
 export const CookieExpiry = {
-    ACCESS_TOKEN_MINUTES: 5,
-    REFRESH_TOKEN_MINUTES: 60
+    ACCESS_TOKEN_SECONDS: 300,    // 5 minutes
+    REFRESH_TOKEN_SECONDS: 1800   // 30 minutes  
 } as const
 
 
@@ -220,7 +230,10 @@ export const WHITE_LIST: WhiteListItem[] = [
 
     { pathname: ROLEMANAGEMENT + '/manage-group-permissions', requestUrl: '/group-permission' },
 
-    { pathname: INTERNAL_WALLET + '/account', requestUrl: '/balance-internal-group' }
+    { pathname: INTERNAL_WALLET + '/account', requestUrl: '/balance-internal-group' },
+    { pathname: FEEMANAGEMENT_V3 + '/fee-management', requestUrl: '/fee/policies' },
+    { pathname: FEEMANAGEMENT_V3 + '/fee-assignment', requestUrl: '/fee/policy-assignments' },
+    { pathname: FEEMANAGEMENT_V3 + '/fee-assignment', requestUrl: '/fee/banks' },
 ]
 
 // ============================================================================
@@ -245,18 +258,18 @@ export const normalizePathname = (pathname: string): string => {
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 
 interface ApiConfig {
-  url: string
-  method: HttpMethod
-  body?: unknown
+    url: string
+    method: HttpMethod
+    body?: unknown
 }
 
 export const callApi = async <TResponse>(
-  baseQuery: ReturnType<typeof fetchBaseQuery>,
-  config: ApiConfig,
-  api: BaseQueryApi,
-  extraOptions: Record<string, unknown>
+    baseQuery: ReturnType<typeof fetchBaseQuery>,
+    config: ApiConfig,
+    api: BaseQueryApi,
+    extraOptions: Record<string, unknown>
 ): Promise<TResponse | null> => {
-  const result = await baseQuery(config, api, extraOptions)
-  if (result.error) return null
-  return result.data as TResponse
+    const result = await baseQuery(config, api, extraOptions)
+    if (result.error) return null
+    return result.data as TResponse
 }

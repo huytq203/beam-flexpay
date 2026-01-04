@@ -43,8 +43,7 @@ const FeeAssignmentManagement = () => {
   const [isCreate, setIsCreate] = useState(true)
 
   // call api
-  const{data:exam}=useGetExamQuery({})
-  const{data:per}=useGetPermissonQuery({})
+
 
   const { data: dataFeeAssign } = useGetAssignQuery({
     page,

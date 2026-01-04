@@ -153,10 +153,16 @@ const refreshAccessToken = async (
 
       if (!newAccessToken) return null
 
-      Cookies.set(CookieKey.ACCESS_TOKEN, newAccessToken, { expires: CookieExpiry.ACCESS_TOKEN_MINUTES / 1440 })
+      // Sử dụng expiresIn từ API (đơn vị giây), fallback 300 giây
+      const expiresInSeconds = data?.[TokenType.EXPIRES_IN] || CookieExpiry.ACCESS_TOKEN_SECONDS
+      const expiresInDays = expiresInSeconds / 86400
+      Cookies.set(CookieKey.ACCESS_TOKEN, newAccessToken, { expires: expiresInDays })
 
       if (data?.[TokenType.REFRESH_TOKEN]) {
-        Cookies.set(CookieKey.REFRESH_TOKEN, data[TokenType.REFRESH_TOKEN], { expires: CookieExpiry.REFRESH_TOKEN_MINUTES / 1440 })
+        // Sử dụng refreshExpiresIn từ API (đơn vị giây), fallback 1800 giây
+        const refreshExpiresInSeconds = data?.[TokenType.REFRESH_EXPIRES_IN] || CookieExpiry.REFRESH_TOKEN_SECONDS
+        const refreshExpiresInDays = refreshExpiresInSeconds / 86400
+        Cookies.set(CookieKey.REFRESH_TOKEN, data[TokenType.REFRESH_TOKEN], { expires: refreshExpiresInDays })
       }
 
       return newAccessToken

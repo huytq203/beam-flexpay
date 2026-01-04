@@ -57,7 +57,10 @@ const Login2 = () => {
 
             if ('data' in result && result.data) {
                 navigate('/')
-                setRefreshTokenCookie(result?.data?.[TokenType.REFRESH_TOKEN] || '')
+                // Truyền refreshExpiresIn từ API (đơn vị giây) vào setRefreshTokenCookie
+                const refreshToken = result?.data?.[TokenType.REFRESH_TOKEN] || ''
+                const refreshExpiresIn = result?.data?.[TokenType.REFRESH_EXPIRES_IN] || 1800
+                setRefreshTokenCookie(refreshToken, refreshExpiresIn)
 
             } else if ('error' in result) {
                 const error = result.error as any
