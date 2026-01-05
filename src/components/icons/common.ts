@@ -11,7 +11,8 @@ export {
   MailOutlined,
   UserOutlined,
   ApartmentOutlined ,
-  SendOutlined
+  SendOutlined,
+  MoreOutlined
 } from '@ant-design/icons'
 
 

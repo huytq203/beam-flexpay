@@ -1,0 +1,57 @@
+{
+    "users": 
+        {
+            "code": 200,
+            "message": "Success",
+            "data": {
+                "content": [
+                    {
+                        "id": 1,
+                        "ten": "Nguyễn Văn A",
+                        "maTk": "WALLET_001",
+                        "email": "nguyenvana@gmail.com",
+                        "phone": "0908123456",
+                        "soDuVi": 5000000,
+                        "gioiTinh": "Nam",
+                        "cccd": "00109123456",
+                        "kycStatus": true,
+                        "accountStatus": "ACTIVE",
+                        "createdAt": "2023-10-20",
+                        "ungLuong":true
+                    },
+                    {
+                        "id": 2,
+                        "ten": "Trần Thị B",
+                        "maTk": "WALLET_002",
+                        "email": "tranthib@yahoo.com",
+                        "phone": "0912333444",
+                        "soDuVi": 0,
+                        "gioiTinh": "Nữ",
+                        "cccd": null,
+                        "kycStatus": false,
+                        "accountStatus": "ACTIVE",
+                        "createdAt": "2023-12-15",
+                        "ungLuong":false
+                    },
+                    {
+                        "id": 3,
+                        "ten": "Lê Văn C",
+                        "maTk": "WALLET_003",
+                        "email": "levanc@gmail.com",
+                        "phone": "0909999888",
+                        "soDuVi": 120000,
+                        "gioiTinh": "Nam",
+                        "cccd": "00109999988",
+                        "kycStatus": true,
+                        "accountStatus": "LOCKED",
+                        "createdAt": "2024-01-01"
+                    }
+                ],
+                "page": 1,
+                "size": 10,
+                "totalElements": 1250,
+                "totalPages": 125
+            }
+        }
+    
+}

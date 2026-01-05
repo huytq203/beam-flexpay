@@ -19,7 +19,8 @@ import {
   ROLEMANAGEMENT,
   STATE_BANK,
   FEEMANAGEMENT_V3,
-  ROLEMANAGEMENT_V2
+  ROLEMANAGEMENT_V2,
+  WALLETADMINISTRATION
 } from '@constants/routersConstant'
 
 import ForgotPassword from '@pages/auth/forgot-password/ForgotPassword'
@@ -95,6 +96,10 @@ import path from 'path'
 import UserManagement from '@pages/role-management-V2/user-management/UserManagement'
 import { PermissionManagement } from '@pages/role-management-V2/permission-management/PermissionManagement'
 import RoleManagement from '@pages/role-management-V2/role-management/RoleManagement'
+import EwalletManagement from '@pages/wallet-administration/e-walletManagement/EwalletManagement'
+import RefundManagement from '@pages/wallet-administration/refund-management/RefundManagement'
+import TransactionManagement from '@pages/wallet-administration/transaction-management/TransactionManagement'
+import DetailUser from '@pages/wallet-administration/e-walletManagement/DetailUser'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -554,6 +559,47 @@ const roleManagementV2 = {
   ]
 
 }
+const walletAministration = {
+  path: WALLETADMINISTRATION,
+  element: createElement(AppLayout),
+  errorElement: createElement(NotFound),
+  children: [
+    {
+      path: WALLETADMINISTRATION,
+      children: [
+        {
+          path: WALLETADMINISTRATION + '/e-walletManagement',
+          element: createElement(EwalletManagement)
+        },
+        {
+          path: WALLETADMINISTRATION + '/e-walletManagement/:id',
+          element: createElement(DetailUser)
+        }
+
+      ]
+    },
+    {
+      path: WALLETADMINISTRATION,
+      children: [
+        {
+          path: WALLETADMINISTRATION + '/refund-management',
+          element: createElement(RefundManagement)
+        }
+
+      ]
+    },
+    {
+      path: WALLETADMINISTRATION,
+      children: [
+        {
+          path: WALLETADMINISTRATION + '/transaction-management',
+          element: createElement(TransactionManagement)
+        }
+
+      ]
+    },
+  ]
+}
 export const WalletRoutes = createBrowserRouter([
   authentication,
   defaultRouter,
@@ -567,5 +613,6 @@ export const WalletRoutes = createBrowserRouter([
   repaymentAndDisburse,
   internalWallet,
   feeManagementV3,
-  roleManagementV2
+  roleManagementV2,
+  walletAministration
 ])
