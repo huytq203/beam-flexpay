@@ -3,11 +3,22 @@ import React from 'react';
 
 
 
-interface props extends TabsProps{
+interface props extends TabsProps {
     items: TabsProps['items']
-    onChange:()=>void
+    onChange?: (value: string) => void
+    className?: string
+    centered?: boolean
+    activeKey?: string
 }
 
-const TabComponent: React.FC<props> = ({items,onChange}) => <Tabs defaultActiveKey="1" items={items} onChange={onChange} />;
+const TabComponent: React.FC<props> = ({ items, onChange, className, centered = false, activeKey, ...rest }) => (
+    <Tabs
+        items={items}
+        onChange={onChange}
+        className={className}
+        centered={centered}
+        {...rest}
+    />
+);
 
 export default TabComponent

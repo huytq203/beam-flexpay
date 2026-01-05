@@ -8,7 +8,6 @@ interface CardComponentProps extends Omit<CardProps, 'content'> {
 const CardComponent = ({ content,bodyBackground, ...rest }: CardComponentProps) => {
     return (
         <Card
-            
             {...rest}
         >   
             {content}
