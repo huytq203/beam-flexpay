@@ -10,9 +10,16 @@ export {
   UserSwitchOutlined,
   MailOutlined,
   UserOutlined,
-  ApartmentOutlined ,
+  ApartmentOutlined,
   SendOutlined,
-  MoreOutlined
+  MoreOutlined,
+  InfoCircleOutlined,
+  CreditCardOutlined,
+  HistoryOutlined,
+  PercentageOutlined,
+  SafetyOutlined ,
+  CheckCircleFilled
 } from '@ant-design/icons'
 
 
+export {  SnowflakeIcon ,WalletIcon,UserIcon   } from "@phosphor-icons/react";

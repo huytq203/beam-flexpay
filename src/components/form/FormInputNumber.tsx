@@ -21,7 +21,7 @@ export function FormInputNumber<T extends FieldValues>({
     className = "col-span-6 flex flex-col",
     disabled,
     defaultValue,
-    classNameLable,
+    classNameLable='font-medium',
     ...rest
 }: FormInputNumberProps<T>) {
     return (

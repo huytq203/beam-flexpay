@@ -1,8 +1,10 @@
+import { CardComponent } from '@components/common'
 import React from 'react'
+import FormSearch from './components/FormSearch'
 
 const TransactionManagement = () => {
   return (
-    <div>TransactionManagement</div>
+    <div><CardComponent content={<FormSearch/>}  /></div>
   )
 }
 
