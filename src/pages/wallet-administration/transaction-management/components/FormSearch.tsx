@@ -1,4 +1,4 @@
-import { ButtonComponent, DateRangePicker } from '@components/common'
+import { ButtonComponent } from '@components/common'
 import { FormDatePicker, FormInput, FormInputNumber, FormSelect } from '@components/form'
 import React from 'react'
 import { useForm } from 'react-hook-form'
@@ -24,7 +24,6 @@ const FormSearch = () => {
             </div>
             <div className="flex justify-end mt-3">
                 <ButtonComponent content={'Tìm kiếm'}/>
-                <DateRangePicker/>
             </div>
         </form>
     </div>

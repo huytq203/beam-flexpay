@@ -100,6 +100,7 @@ import EwalletManagement from '@pages/wallet-administration/e-walletManagement/E
 import RefundManagement from '@pages/wallet-administration/refund-management/RefundManagement'
 import TransactionManagement from '@pages/wallet-administration/transaction-management/TransactionManagement'
 import DetailUser from '@pages/wallet-administration/e-walletManagement/DetailUser'
+import ConfirmRKYC from '@pages/wallet-administration/confirm-ekyc/ConfirmEKYC'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -596,6 +597,15 @@ const walletAministration = {
           element: createElement(TransactionManagement)
         }
 
+      ]
+    },
+    {
+      path: WALLETADMINISTRATION,
+      children: [
+        {
+          path: WALLETADMINISTRATION + '/confirm-eKYC',
+          element: createElement(ConfirmRKYC)
+        },
       ]
     },
   ]

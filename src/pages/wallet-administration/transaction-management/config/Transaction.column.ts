@@ -35,4 +35,29 @@ export const Column = (): ColumnsType<any> => [
         dataIndex: 'soDuVi',
         align: 'center'
     },
+    {
+        title: 'Phí',
+        dataIndex: 'soDuVi',
+        align: 'center'
+    },
+    {
+        title: 'Tổng',
+        dataIndex: 'soDuVi',
+        align: 'center'
+    },
+    {
+        title: 'Ref no/Settlement',
+        dataIndex: 'soDuVi',
+        align: 'center'
+    },
+    {
+        title: 'Trạng thái',
+        dataIndex: 'soDuVi',
+        align: 'center'
+    },
+    {
+        title: 'Thao tác',
+        dataIndex: 'soDuVi',
+        align: 'center'
+    },
 ]

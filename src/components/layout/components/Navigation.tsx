@@ -927,6 +927,17 @@ const walletManagement = {
         />
       ),
       label: "Quản lý giao dịch ví"
+    },
+    {
+      key: 'confirm-eKYC',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: "Duyệt eKYC"
     }
   ]
 

@@ -22,4 +22,4 @@ export {
 } from '@ant-design/icons'
 
 
-export {  SnowflakeIcon ,WalletIcon,UserIcon   } from "@phosphor-icons/react";
+export {  SnowflakeIcon ,WalletIcon,UserIcon,ArrowCounterClockwiseIcon ,UserCheckIcon    } from "@phosphor-icons/react";

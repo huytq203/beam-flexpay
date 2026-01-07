@@ -6,9 +6,9 @@ import useEwalletManagement from './hooks/useEwalletManagement'
 const EwalletManagement = () => {
     const {column,dataSource}=useEwalletManagement()
   return (
-    <div>
+    <div className='flex flex-col gap-3'>
 
-        <CardComponent className='mb-3' content={<FormSearch/>}/>
+        <CardComponent content={<FormSearch/>}/>
 
 
         <CardComponent content={

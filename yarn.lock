@@ -3201,12 +3201,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-flatpickr@npm:^3.8.11":
+  version: 3.8.11
+  resolution: "@types/react-flatpickr@npm:3.8.11"
+  dependencies:
+    "@types/react": "npm:*"
+    flatpickr: "npm:^4.0.6"
+  checksum: 10c0/38717b75a066cc14980c8be8add1cb5f0de0bb4d758b69cb4fd0b67578d5c3325c7b3fb0f7c078ef00838a1ae4b1990e8d339a4169f4f6a2d9851c28e19abe62
+  languageName: node
+  linkType: hard
+
 "@types/react-reconciler@npm:^0.28.9":
   version: 0.28.9
   resolution: "@types/react-reconciler@npm:0.28.9"
   peerDependencies:
     "@types/react": "*"
   checksum: 10c0/9fe71fa856aab2cd4742fe0416bdd4f5c82ecc05ef6451ee7fcb65a5efdf5fa588f5820fbe2a665b15371b0da3bfc4097f28bb6d450b9a834af2d0fc00f403bd
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:*":
+  version: 19.2.7
+  resolution: "@types/react@npm:19.2.7"
+  dependencies:
+    csstype: "npm:^3.2.2"
+  checksum: 10c0/a7b75f1f9fcb34badd6f84098be5e35a0aeca614bc91f93d2698664c0b2ba5ad128422bd470ada598238cebe4f9e604a752aead7dc6f5a92261d0c7f9b27cfd1
   languageName: node
   linkType: hard
 
@@ -5220,6 +5239,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"flatpickr@npm:^4.0.6, flatpickr@npm:^4.6.13":
+  version: 4.6.13
+  resolution: "flatpickr@npm:4.6.13"
+  checksum: 10c0/0e027e72a2ce1716840a8c0bf9094f48d2665dc3f3024bf9604810c5bd7dd94aa830b133c5b5cfc0c330fc88939f33b54c8714515957f9d194c3a3bb7f75a1e2
+  languageName: node
+  linkType: hard
+
 "flexpay@workspace:.":
   version: 0.0.0-use.local
   resolution: "flexpay@workspace:."
@@ -5238,6 +5264,7 @@ __metadata:
     "@types/node": "npm:^18.11.9"
     "@types/react": "npm:^18.0.24"
     "@types/react-dom": "npm:^18.0.8"
+    "@types/react-flatpickr": "npm:^3.8.11"
     "@vitejs/plugin-react": "npm:^2.2.0"
     ahooks: "npm:^3.7.2"
     antd: "npm:5.20.6"
@@ -5245,6 +5272,7 @@ __metadata:
     autoprefixer: "npm:^10.4.21"
     dayjs: "npm:^1.11.7"
     events: "npm:^3.3.0"
+    flatpickr: "npm:^4.6.13"
     i18next: "npm:^22.0.6"
     js-cookie: "npm:^3.0.5"
     jwt-decode: "npm:^4.0.0"
@@ -5253,6 +5281,7 @@ __metadata:
     re-resizable: "npm:^6.9.9"
     react: "npm:^19.2.1"
     react-dom: "npm:^19.2.1"
+    react-flatpickr: "npm:^4.0.11"
     react-hook-form: "npm:^7.68.0"
     react-i18next: "npm:^12.0.0"
     react-quill: "npm:^2.0.0"
@@ -5261,6 +5290,7 @@ __metadata:
     react-scan: "npm:^0.4.3"
     sass: "npm:^1.56.1"
     tailwindcss: "npm:3"
+    tailwindcss-animate: "npm:^1.0.7"
     typescript: "npm:^4.6.4"
     vite: "npm:^3.2.3"
     vite-plugin-chunk-split: "npm:^0.4.7"
@@ -8129,6 +8159,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-flatpickr@npm:^4.0.11":
+  version: 4.0.11
+  resolution: "react-flatpickr@npm:4.0.11"
+  dependencies:
+    flatpickr: "npm:^4.6.13"
+  peerDependencies:
+    react: ">= 16 <= 19"
+  checksum: 10c0/1fb3014e4674bb16a76a18e55876fed9b9ce77537910f1e3c2001295f8667b38ebddf3aeeb785003d5429be382337446e7713d846abca6135f8e308708a8ca7d
+  languageName: node
+  linkType: hard
+
 "react-hook-form@npm:^7.68.0":
   version: 7.69.0
   resolution: "react-hook-form@npm:7.69.0"
@@ -9246,6 +9287,15 @@ __metadata:
   version: 2.0.4
   resolution: "svg-parser@npm:2.0.4"
   checksum: 10c0/02f6cb155dd7b63ebc2f44f36365bc294543bebb81b614b7628f1af3c54ab64f7e1cec20f06e252bf95bdde78441ae295a412c68ad1678f16a6907d924512b7a
+  languageName: node
+  linkType: hard
+
+"tailwindcss-animate@npm:^1.0.7":
+  version: 1.0.7
+  resolution: "tailwindcss-animate@npm:1.0.7"
+  peerDependencies:
+    tailwindcss: "*"
+  checksum: 10c0/ec7dbd1631076b97d66a1fbaaa06e0725fccfa63119221e8d87a997b02dcede98ad88bb1ef6665b968f5d260fcefb10592e0299ca70208d365b37761edf5e19a
   languageName: node
   linkType: hard
 

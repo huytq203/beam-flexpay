@@ -52,6 +52,115 @@
                 "totalElements": 1250,
                 "totalPages": 125
             }
+        },
+    "confirmEKYC": {
+        "code": 200,
+        "message": "Success",
+        "data": {
+            "content": [
+                {
+                    "id": 1,
+                    "tenKhachHang": "Nguyễn Văn A",
+                    "soDienThoai": "0909.123.456",
+                    "maSoThue": null,
+                    "loaiTk": "Cá nhân",
+                    "loaiGiayTo": "CCCD Chip",
+                    "ngayGui": "19/12/2025 10:00",
+                    "ngayXacThuc": null,
+                    "aiScore": 78,
+                    "aiScoreWarning": true,
+                    "trangThai": "CHO_DUYET",
+                    "trangThaiLabel": "Chờ duyệt"
+                },
+                {
+                    "id": 2,
+                    "tenKhachHang": "Trần Thị B",
+                    "soDienThoai": "0912.333.444",
+                    "maSoThue": null,
+                    "loaiTk": "Cá nhân",
+                    "loaiGiayTo": "CCCD (9 số)",
+                    "ngayGui": "18/12/2025 09:30",
+                    "ngayXacThuc": "18/12/2025 10:00",
+                    "aiScore": 99,
+                    "aiScoreWarning": false,
+                    "trangThai": "DA_XAC_THUC",
+                    "trangThaiLabel": "Đã xác thực"
+                },
+                {
+                    "id": 3,
+                    "tenKhachHang": "Lê Văn C",
+                    "soDienThoai": "0988.777.666",
+                    "maSoThue": null,
+                    "loaiTk": "Cá nhân",
+                    "loaiGiayTo": "Hộ chiếu",
+                    "ngayGui": "17/12/2025 14:00",
+                    "ngayXacThuc": "17/12/2025 14:15",
+                    "aiScore": 60,
+                    "aiScoreWarning": true,
+                    "trangThai": "TU_CHOI",
+                    "trangThaiLabel": "Từ chối"
+                },
+                {
+                    "id": 4,
+                    "tenKhachHang": "Công ty TNHH ABC",
+                    "soDienThoai": null,
+                    "maSoThue": "0101234567",
+                    "loaiTk": "Doanh nghiệp",
+                    "loaiGiayTo": "Giấy ĐKKD",
+                    "ngayGui": "19/12/2025 11:30",
+                    "ngayXacThuc": null,
+                    "aiScore": null,
+                    "aiScoreWarning": false,
+                    "trangThai": "CHO_DUYET",
+                    "trangThaiLabel": "Chờ duyệt"
+                },
+                {
+                    "id": 5,
+                    "tenKhachHang": "Phạm Minh D",
+                    "soDienThoai": "0977.888.999",
+                    "maSoThue": null,
+                    "loaiTk": "Cá nhân",
+                    "loaiGiayTo": "CCCD Chip",
+                    "ngayGui": "16/12/2025 08:45",
+                    "ngayXacThuc": "16/12/2025 09:00",
+                    "aiScore": 95,
+                    "aiScoreWarning": false,
+                    "trangThai": "DA_XAC_THUC",
+                    "trangThaiLabel": "Đã xác thực"
+                },
+                {
+                    "id": 6,
+                    "tenKhachHang": "Công ty CP XYZ",
+                    "soDienThoai": null,
+                    "maSoThue": "0309876543",
+                    "loaiTk": "Doanh nghiệp",
+                    "loaiGiayTo": "Giấy ĐKKD",
+                    "ngayGui": "15/12/2025 16:20",
+                    "ngayXacThuc": "15/12/2025 17:00",
+                    "aiScore": null,
+                    "aiScoreWarning": false,
+                    "trangThai": "DA_XAC_THUC",
+                    "trangThaiLabel": "Đã xác thực"
+                },
+                {
+                    "id": 7,
+                    "tenKhachHang": "Hoàng Thị E",
+                    "soDienThoai": "0933.222.111",
+                    "maSoThue": null,
+                    "loaiTk": "Cá nhân",
+                    "loaiGiayTo": "CCCD (9 số)",
+                    "ngayGui": "20/12/2025 07:30",
+                    "ngayXacThuc": null,
+                    "aiScore": 45,
+                    "aiScoreWarning": true,
+                    "trangThai": "CHO_DUYET",
+                    "trangThaiLabel": "Chờ duyệt"
+                }
+            ],
+            "page": 1,
+            "size": 10,
+            "totalElements": 7,
+            "totalPages": 1
         }
-    
+    }
 }
