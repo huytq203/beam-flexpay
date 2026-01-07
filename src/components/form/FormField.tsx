@@ -14,7 +14,7 @@ export function FormField<T extends FieldValues>({
   name,
   control,
   label,
-  className = "col-span-6 flex flex-col",
+  className = "col-span-6 flex flex-col ",
   classNameLable,
   render,
 }: FormFieldProps<T>) {

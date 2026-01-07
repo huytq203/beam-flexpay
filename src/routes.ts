@@ -101,6 +101,7 @@ import RefundManagement from '@pages/wallet-administration/refund-management/Ref
 import TransactionManagement from '@pages/wallet-administration/transaction-management/TransactionManagement'
 import DetailUser from '@pages/wallet-administration/e-walletManagement/DetailUser'
 import ConfirmRKYC from '@pages/wallet-administration/confirm-ekyc/ConfirmEKYC'
+import DetailTransaction from '@pages/wallet-administration/transaction-management/DetailTransaction'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -595,6 +596,10 @@ const walletAministration = {
         {
           path: WALLETADMINISTRATION + '/transaction-management',
           element: createElement(TransactionManagement)
+        },
+        {
+          path: WALLETADMINISTRATION + '/transaction-management/:id',
+          element: createElement(DetailTransaction)
         }
 
       ]

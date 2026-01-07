@@ -12,6 +12,8 @@ const InforUser = () => {
 
   return (
     <>
+    <div className="flex flex-col">
+
       <TabComponent
         activeKey={activeKey}
         items={businessInfo}
@@ -27,6 +29,7 @@ const InforUser = () => {
 
         </div>
       </div>
+    </div>
     </>
   )
 }

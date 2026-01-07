@@ -1,10 +1,13 @@
-import { CardComponent, ModalComponent, Table } from '@components/common'
+import { CardComponent, DialogModal, ModalComponent, Table } from '@components/common'
 import { useSVG } from '@hooks/useSVG'
 import React from 'react'
 import FormSearch from './components/FormSearch'
 import PersonalConfirm from './components/PersonalConfirm'
+import BusinessComfirm from './components/BusinessComfirm'
 import { Column } from './configs/ConfirmEKYC.column'
 import useConfirmEKYC from './hooks/useConfirmEKYC'
+import DialogReject from '@pages/wallet-administration/confirm-ekyc/components/DialogReject'
+import DialogCancel from '@pages/wallet-administration/confirm-ekyc/components/DialogCancel'
 
 const ConfirmEKYC = () => {
   const { dataEKYC } = useConfirmEKYC()
@@ -19,10 +22,13 @@ const ConfirmEKYC = () => {
       <ModalComponent
         onCancel={() => { }}
         onOk={() => { }}
-        open={true}
+        open={false}
         width='75%'
-        modalText={<PersonalConfirm/>}
+        modalText={<BusinessComfirm/>}
+        
         />
+        <DialogModal onCancel={()=>{}} onOk={()=>{}} open={false} content={<DialogReject/>} title={<span className='text-red-600'>Từ chối hồ sơ</span>}  />
+        <DialogModal onCancel={()=>{}} onOk={()=>{}} open={false} content={<DialogCancel/>} title={<span className='text-red-600'>Hủy xác thực</span>}  />
     </div>
   )
 }
