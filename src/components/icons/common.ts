@@ -19,7 +19,9 @@ export {
   PercentageOutlined,
   SafetyOutlined,
   CheckCircleFilled,
-  PrinterOutlined
+  PrinterOutlined,
+  CloseCircleFilled ,
+  FileDoneOutlined 
 } from '@ant-design/icons'
 
 
@@ -32,6 +34,6 @@ export {
   TerminalIcon,
   CopyIcon,
   FireIcon,
-  Warning ,
+  WarningIcon ,
   ArrowsCounterClockwiseIcon 
 } from "@phosphor-icons/react";

@@ -11,15 +11,15 @@ const FormSearch = () => {
         <div>
             <div className="grid grid-cols-4 gap-3">
                 <div className="col-span-1">
-                    <FormInput control={formSearch.control} name='' />
+                    <FormInput control={formSearch.control} name='' label='Từ khóa' />
                 </div>
                 <div className="col-span-1">
-                    <FormSelect control={formSearch.control} name='' options={[]}/>
+                    <FormSelect control={formSearch.control} name='' options={[]} label='Trạng thái ví'/>
                 </div>
                 <div className="col-span-1">
-                     <FormSelect control={formSearch.control} name='' options={[]}/>
+                     <FormSelect control={formSearch.control} name='' options={[]} label='Trạng thái KYC'/>
                 </div>
-                <div className="col-span-1 ">
+                <div className="col-span-1 flex items-end">
                   <ButtonComponent className='w-full' content='Tìm kiếm'icon={svg('/icons.svg#hugeicons-search-01')}/>
                 </div>
                 

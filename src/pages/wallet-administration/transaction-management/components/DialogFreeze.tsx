@@ -1,6 +1,6 @@
 import { Radio } from '@components/common'
 import { FormDatePicker, FormInputNumber, FormRadio, FormTextArea } from '@components/form'
-import { Warning } from '@components/icons/common'
+import {  WarningIcon } from '@components/icons/common'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -33,7 +33,7 @@ const DialogFreeze = () => {
                     <FormTextArea control={control} name='' placeholder='Nhập lý do...' label={<span>Lý do đóng băng <span className='text-red-600'>*</span></span>} />
                 </div>
                 <div className="bg-orange-50 mt-3 p-3 text-yellow-700 rounded-md">
-                    <p><span className='font-medium flex items-center gap-1'><Warning/>Lưu ý:</span> Hệ thống sẽ trừ tiền từ  <span className='underline'> Ví Khả Dụng </span>và chuyển sang <span className='underline'>Ví Đóng Băng</span> của tài khoản<span className='font-medium'> Trần Quang A</span></p>
+                    <p><span className='font-medium flex items-center gap-1'><WarningIcon/>Lưu ý:</span> Hệ thống sẽ trừ tiền từ  <span className='underline'> Ví Khả Dụng </span>và chuyển sang <span className='underline'>Ví Đóng Băng</span> của tài khoản<span className='font-medium'> Trần Quang A</span></p>
                 </div>
             </form>
         </div>
