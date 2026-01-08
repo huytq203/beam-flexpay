@@ -1,11 +1,12 @@
 import { Control, FieldValues, Path } from "react-hook-form";
 import { FormField } from "./FormField";
 import { InputNumber } from "@components/common";
+import { ReactNode } from "react";
 
 interface FormInputNumberProps<T extends FieldValues> {
     name: Path<T>;
     control: Control<T>;
-    label?: string;
+    label?: string|ReactNode;
     placeholder?: string;
     className?: string;
     disabled?: boolean;
@@ -15,7 +16,7 @@ interface FormInputNumberProps<T extends FieldValues> {
 
 export function FormInputNumber<T extends FieldValues>({
     name,
-    control,
+    control, 
     label,
     placeholder,
     className = "col-span-6 flex flex-col",

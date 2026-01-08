@@ -938,6 +938,17 @@ const walletManagement = {
         />
       ),
       label: "Duyệt eKYC"
+    },
+    {
+      key: 'frozen-transactions',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: "Quản lý giao dịch đóng băng"
     }
   ]
 

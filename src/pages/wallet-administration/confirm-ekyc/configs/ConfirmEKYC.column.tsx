@@ -89,13 +89,13 @@ export const Column = ({ svg }: props): ColumnType[] => [
         render(value, record, index) {
             return (
                 <div className="flex justify-center items-center gap-1">
-                    <ButtonComponent size="middle" className="text-green-700" icon={svg('/icons.svg#hugeicons-user-check-01',
+                    <ButtonComponent content='' size="middle" className="text-green-700" icon={svg('/icons.svg#hugeicons-user-check-01',
                         {
                             width: 18,
                             height: 18
                         })} type='default' />
-                    <ButtonComponent size="middle" icon={<EyeOutlined />} type='default' />
-                    <ButtonComponent size="middle" danger icon={<ArrowCounterClockwiseIcon />} type='default' />
+                    <ButtonComponent size="middle" icon={<EyeOutlined />} type='default' content='' />
+                    <ButtonComponent size="middle" danger icon={<ArrowCounterClockwiseIcon />} type='default' content=''/>
                 </div>
             )
         },

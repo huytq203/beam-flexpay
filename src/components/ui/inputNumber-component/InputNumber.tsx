@@ -1,6 +1,7 @@
 import React from 'react'
 import type { InputNumberProps } from 'antd'
 import { InputNumber } from 'antd'
+import './style.scss'
 interface Props extends InputNumberProps {
   defaultValue?: number
   placeholder?: string

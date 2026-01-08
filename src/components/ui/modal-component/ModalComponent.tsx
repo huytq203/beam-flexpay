@@ -6,7 +6,7 @@ interface ModalComponentProps extends ModalProps {
   onOk: () => void
   onCancel: () => void
   confirmLoading?: boolean
-  modalText?: ReactNode
+  modalText: ReactNode
   title?: string
   width?:string,
 }

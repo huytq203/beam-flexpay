@@ -23,6 +23,7 @@ export function FormDatePicker<T extends FieldValues>({
   classNameLable = "font-medium",
   showTime = false,
   isRange = false,
+  placeholder='DD/MM/YYYY',
   ...rest
 }: props<T> & { [key: string]: any }) {
 
@@ -57,6 +58,7 @@ export function FormDatePicker<T extends FieldValues>({
             showTime={showTime}
             value={getRangeValue(field.value)}
             picker={picker}
+            placeholder={placeholder}
             onChange={(dates: [Dayjs, Dayjs] | null, dateStrings: [string, string]) => {
               if (!dates || !dateStrings[0] || !dateStrings[1]) {
                 field.onChange(null);

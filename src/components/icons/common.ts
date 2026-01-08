@@ -17,9 +17,21 @@ export {
   CreditCardOutlined,
   HistoryOutlined,
   PercentageOutlined,
-  SafetyOutlined ,
-  CheckCircleFilled
+  SafetyOutlined,
+  CheckCircleFilled,
+  PrinterOutlined
 } from '@ant-design/icons'
 
 
-export {  SnowflakeIcon ,WalletIcon,UserIcon,ArrowCounterClockwiseIcon ,UserCheckIcon    } from "@phosphor-icons/react";
+export {
+  SnowflakeIcon,
+  WalletIcon,
+  UserIcon,
+  ArrowCounterClockwiseIcon,
+  UserCheckIcon,
+  TerminalIcon,
+  CopyIcon,
+  FireIcon,
+  Warning ,
+  ArrowsCounterClockwiseIcon 
+} from "@phosphor-icons/react";

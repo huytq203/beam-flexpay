@@ -102,6 +102,7 @@ import TransactionManagement from '@pages/wallet-administration/transaction-mana
 import DetailUser from '@pages/wallet-administration/e-walletManagement/DetailUser'
 import ConfirmRKYC from '@pages/wallet-administration/confirm-ekyc/ConfirmEKYC'
 import DetailTransaction from '@pages/wallet-administration/transaction-management/DetailTransaction'
+import FrozenTransactions from '@pages/wallet-administration/frozen-transactions/FrozenTransactions'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -610,6 +611,15 @@ const walletAministration = {
         {
           path: WALLETADMINISTRATION + '/confirm-eKYC',
           element: createElement(ConfirmRKYC)
+        },
+      ]
+    },
+    {
+      path: WALLETADMINISTRATION,
+      children: [
+        {
+          path: WALLETADMINISTRATION + '/frozen-transactions',
+          element: createElement(FrozenTransactions)
         },
       ]
     },
