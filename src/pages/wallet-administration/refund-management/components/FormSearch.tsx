@@ -59,10 +59,17 @@ const FormSearch = () => {
             className='col-span-2'
           />
         </div>
-        <div className="flex justify-start items-center gap-3 mt-3">
-            <ButtonComponent  content={'Tìm kiếm'} />
-            <ButtonComponent type='default'  content={'Xóa lọc'} />
+        <div className="flex justify-between items-center gap-3 mt-3">
+          <div className="flex justify-center items-center gap-3 ">
+            <ButtonComponent content={'Tìm kiếm'} />
+            <ButtonComponent type='default' content={'Xóa lọc'} />
+
+          </div>
+
+          {/* <ButtonComponent className='' content={'Xuất excel'} /> */}
+
         </div>
+
       </form>
     </div>
   )

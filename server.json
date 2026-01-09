@@ -162,5 +162,184 @@
             "totalElements": 7,
             "totalPages": 1
         }
+    },
+    "withdrawHistory": {
+        "code": 200,
+        "message": "Success",
+        "data": {
+            "content": [
+                {
+                    "id": 1,
+                    "maGD": "TRX2512001",
+                    "loaiGD": "Rút tiền ví",
+                    "nguoiYeuCau": {
+                        "ten": "Nguyễn Văn A",
+                        "soDienThoai": "0901.234.567"
+                    },
+                    "soTienRut": -5000000,
+                    "thongTinThuHuong": {
+                        "tenNganHang": "VCB",
+                        "soTaiKhoan": "001xxx888",
+                        "tenThuHuong": "Nguyen Van A"
+                    },
+                    "thongTinNHChiTien": {
+                        "tenNganHang": null,
+                        "soTaiKhoan": null
+                    },
+                    "ngayTao": "25/12/2025 10:00",
+                    "ngayThanhCong": null,
+                    "trangThai": "CHO_DUYET",
+                    "trangThaiLabel": "Chờ duyệt"
+                },
+                {
+                    "id": 2,
+                    "maGD": "TRX2512002",
+                    "loaiGD": "Rút tiền ví",
+                    "nguoiYeuCau": {
+                        "ten": "Trần Thị B",
+                        "soDienThoai": "0988.777.666"
+                    },
+                    "soTienRut": -2500000,
+                    "thongTinThuHuong": {
+                        "tenNganHang": "MBBank",
+                        "soTaiKhoan": "888xxx999",
+                        "tenThuHuong": "Tran Thi B"
+                    },
+                    "thongTinNHChiTien": {
+                        "tenNganHang": "Techcombank",
+                        "soTaiKhoan": "***1234 (Hệ thống)"
+                    },
+                    "ngayTao": "24/12/2025 09:30",
+                    "ngayThanhCong": null,
+                    "trangThai": "DA_DUYET_CHO_CHI",
+                    "trangThaiLabel": "Đã duyệt - Chờ chi"
+                },
+                {
+                    "id": 3,
+                    "maGD": "TRX2512003",
+                    "loaiGD": "Rút tiền ví",
+                    "nguoiYeuCau": {
+                        "ten": "Lê Văn C",
+                        "soDienThoai": "0912.333.444"
+                    },
+                    "soTienRut": -10000000,
+                    "thongTinThuHuong": {
+                        "tenNganHang": "Techcom",
+                        "soTaiKhoan": "1903xxx",
+                        "tenThuHuong": "Le Van C"
+                    },
+                    "thongTinNHChiTien": {
+                        "tenNganHang": "BIDV (Hệ thống)",
+                        "soTaiKhoan": "***1234"
+                    },
+                    "ngayTao": "23/12/2025 14:00",
+                    "ngayThanhCong": "23/12/2025 14:05",
+                    "trangThai": "THANH_CONG",
+                    "trangThaiLabel": "Thành công"
+                },
+                {
+                    "id": 4,
+                    "maGD": "TRX2512004",
+                    "loaiGD": "Hoàn tiền",
+                    "nguoiYeuCau": {
+                        "ten": "Phạm Thị D",
+                        "soDienThoai": "0999.888.777"
+                    },
+                    "soTienRut": 500000,
+                    "thongTinThuHuong": {
+                        "tenNganHang": "Ví Momo",
+                        "soTaiKhoan": "0999.888.777",
+                        "tenThuHuong": "Pham Thi D"
+                    },
+                    "thongTinNHChiTien": {
+                        "tenNganHang": "Vietinbank",
+                        "soTaiKhoan": "***5678"
+                    },
+                    "ngayTao": "22/12/2025 08:00",
+                    "ngayThanhCong": "22/12/2025 08:10",
+                    "trangThai": "THANH_CONG",
+                    "trangThaiLabel": "Thành công"
+                },
+                {
+                    "id": 5,
+                    "maGD": "TRX2512005",
+                    "loaiGD": "Rút tiền ví",
+                    "nguoiYeuCau": {
+                        "ten": "Hoàng Minh E",
+                        "soDienThoai": "0933.222.111"
+                    },
+                    "soTienRut": -3000000,
+                    "thongTinThuHuong": {
+                        "tenNganHang": "ACB",
+                        "soTaiKhoan": "9999xxx123",
+                        "tenThuHuong": "Hoang Minh E"
+                    },
+                    "thongTinNHChiTien": {
+                        "tenNganHang": "VPBank (Hệ thống)",
+                        "soTaiKhoan": "***9999"
+                    },
+                    "ngayTao": "21/12/2025 15:30",
+                    "ngayThanhCong": null,
+                    "trangThai": "THAT_BAI",
+                    "trangThaiLabel": "Thất bại/lỗi"
+                },
+                {
+                    "id": 6,
+                    "maGD": "TRX2512006",
+                    "loaiGD": "Rút tiền ví",
+                    "nguoiYeuCau": {
+                        "ten": "Vũ Thị F",
+                        "soDienThoai": "0944.555.666"
+                    },
+                    "soTienRut": -1500000,
+                    "thongTinThuHuong": {
+                        "tenNganHang": "Sacombank",
+                        "soTaiKhoan": "7777xxx456",
+                        "tenThuHuong": "Vu Thi F"
+                    },
+                    "thongTinNHChiTien": {
+                        "tenNganHang": null,
+                        "soTaiKhoan": null
+                    },
+                    "ngayTao": "20/12/2025 11:00",
+                    "ngayThanhCong": null,
+                    "trangThai": "CHO_DUYET",
+                    "trangThaiLabel": "Chờ duyệt"
+                },
+                {
+                    "id": 7,
+                    "maGD": "TRX2512007",
+                    "loaiGD": "Hoàn tiền",
+                    "nguoiYeuCau": {
+                        "ten": "Đỗ Văn G",
+                        "soDienThoai": "0955.777.888"
+                    },
+                    "soTienRut": 750000,
+                    "thongTinThuHuong": {
+                        "tenNganHang": "TPBank",
+                        "soTaiKhoan": "1234xxx789",
+                        "tenThuHuong": "Do Van G"
+                    },
+                    "thongTinNHChiTien": {
+                        "tenNganHang": "Agribank (Hệ thống)",
+                        "soTaiKhoan": "***4567"
+                    },
+                    "ngayTao": "19/12/2025 09:45",
+                    "ngayThanhCong": "19/12/2025 10:00",
+                    "trangThai": "THANH_CONG",
+                    "trangThaiLabel": "Thành công"
+                }
+            ],
+            "page": 1,
+            "size": 10,
+            "totalElements": 7,
+            "totalPages": 1,
+            "summary": {
+                "choDuyet": 2,
+                "daDuyetChoChi": 1,
+                "thanhCong": 3,
+                "thatBai": 1
+            }
+        }
     }
 }

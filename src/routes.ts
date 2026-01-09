@@ -20,7 +20,8 @@ import {
   STATE_BANK,
   FEEMANAGEMENT_V3,
   ROLEMANAGEMENT_V2,
-  WALLETADMINISTRATION
+  WALLETADMINISTRATION,
+  WITHDRAWHISTORY
 } from '@constants/routersConstant'
 
 import ForgotPassword from '@pages/auth/forgot-password/ForgotPassword'
@@ -103,6 +104,7 @@ import DetailUser from '@pages/wallet-administration/e-walletManagement/DetailUs
 import ConfirmRKYC from '@pages/wallet-administration/confirm-ekyc/ConfirmEKYC'
 import DetailTransaction from '@pages/wallet-administration/transaction-management/DetailTransaction'
 import FrozenTransactions from '@pages/wallet-administration/frozen-transactions/FrozenTransactions'
+import WithdrawHistory from '@pages/wallet-administration/withdraw-history/WithdrawHistory'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -623,8 +625,13 @@ const walletAministration = {
         },
       ]
     },
+    {
+      path: WALLETADMINISTRATION + '/withdraw-history',
+      element: createElement(WithdrawHistory)
+    }
   ]
 }
+
 export const WalletRoutes = createBrowserRouter([
   authentication,
   defaultRouter,
@@ -639,5 +646,5 @@ export const WalletRoutes = createBrowserRouter([
   internalWallet,
   feeManagementV3,
   roleManagementV2,
-  walletAministration
+  walletAministration,
 ])

@@ -20,8 +20,11 @@ export {
   SafetyOutlined,
   CheckCircleFilled,
   PrinterOutlined,
-  CloseCircleFilled ,
-  FileDoneOutlined 
+  CloseCircleFilled,
+  FileDoneOutlined,
+  InfoCircleFilled,
+  EyeFilled,
+  DollarOutlined 
 } from '@ant-design/icons'
 
 
@@ -34,6 +37,11 @@ export {
   TerminalIcon,
   CopyIcon,
   FireIcon,
-  WarningIcon ,
-  ArrowsCounterClockwiseIcon 
+  WarningIcon,
+  ArrowsCounterClockwiseIcon,
+  ClockIcon 
 } from "@phosphor-icons/react";
+export {
+  CornerDownRight,
+  Calculator
+} from 'lucide-react';

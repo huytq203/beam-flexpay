@@ -14,7 +14,8 @@ import {
   _STATE_BANK,
   _FEEMANAGEMENT_V3,
   _ROLEMANAGEMENT_V2,
-  _WALLETADMINISTRATION
+  _WALLETADMINISTRATION,
+  _WITHDRAWHISTORY
 
 } from '@constants/routersConstant'
 import i18n from '@languages/i18n'
@@ -949,10 +950,23 @@ const walletManagement = {
         />
       ),
       label: "Quản lý giao dịch đóng băng"
-    }
+    },
+    {
+      key: 'withdraw-history',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý lịch sử giao dịch rút tiền'
+    },
   ]
 
 }
+
+
 export const navigationItems: ItemTypeCustom[] = [
   roleManagement,
   personalWallet,
@@ -964,5 +978,5 @@ export const navigationItems: ItemTypeCustom[] = [
   internal_wallet,
   feeManagementV3,
   roleManagementV2,
-  walletManagement
+  walletManagement,
 ]
