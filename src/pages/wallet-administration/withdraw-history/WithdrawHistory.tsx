@@ -1,6 +1,8 @@
-import { CardComponent, Table, DialogModal, ModalComponent } from '@components/common'
-import { ClockIcon } from '@components/icons/common'
+import { CardComponent, Table, DialogModal, ModalComponent, UploadCombined } from '@components/common'
+import { CheckCircleFilled, ClockIcon, InfoCircleFilled } from '@components/icons/common'
 import React, { useEffect, useState } from 'react'
+import DialogApproval from './components/DialogApproval'
+import DialogApproveWithdraw from './components/DialogApproveWithdraw'
 import DialogDetailWithdrawHistory from './components/ModalDetailWithdrawHistory'
 import WithdrawHistorySearch from './components/WithdrawHistorySearch'
 import Column from './configs/WithdrawHistory.column'
@@ -12,10 +14,10 @@ const WithdrawHistory = () => {
         { count: 50, label: 'Thành công', borderClass: 'border-l-teal-500', bgClass: 'bg-teal-100', textClass: 'text-teal-600' },
         { count: 50, label: 'Thất bại/lỗi', borderClass: 'border-l-red-500', bgClass: 'bg-red-100', textClass: 'text-red-600' },
     ]
-    const columns=Column()
+    const columns = Column()
 
-       const [data,setData]=useState([])
-    const dataSource=data
+    const [data, setData] = useState([])
+    const dataSource = data
     useEffect(() => {
         const getUser = async () => {
             try {
@@ -51,20 +53,45 @@ const WithdrawHistory = () => {
 
             </div>
             <div className="">
-                <CardComponent content={<WithdrawHistorySearch/>} />
+                <CardComponent content={<WithdrawHistorySearch />} />
             </div>
             <div className="">
-                <CardComponent content={<Table  columns={columns} size='small' bordered dataSource={dataSource} />} />
+                <CardComponent content={<Table columns={columns} size='small' bordered dataSource={dataSource} />} />
             </div>
 
 
             <ModalComponent
-            width='65%'
-             onCancel={()=>{}} 
-             onOk={()=>{}} 
-             open={true}  
-             modalText={<DialogDetailWithdrawHistory/>}
-             />
+                width='65%'
+                onCancel={() => { }}
+                onOk={() => { }}
+                open={false}
+                title={<span className=' flex items-center gap-1'><InfoCircleFilled />Chi tiết giao dịch #TRX-4890328-37849</span>}
+                modalText={<DialogDetailWithdrawHistory />}
+            />
+            <DialogModal
+                onCancel={() => { }}
+                onOk={() => { }}
+                open={false} 
+                styles={{
+                    content:{
+                         background: '#fafafa'
+                    }
+                }}
+                title={<span className=' flex items-center gap-1'><CheckCircleFilled/> Duyệt yêu cầu rút tiền</span>}
+                content={<DialogApproval/>}
+                />
+            <DialogModal
+                onCancel={() => { }}
+                onOk={() => { }}
+                open={false} 
+                styles={{
+                    content:{
+                         background: '#fafafa'
+                    }
+                }}
+                title={<span className=' flex items-center gap-1 text-blue'><CheckCircleFilled/> Duyệt yêu cầu rút tiền</span>}
+                content={<DialogApproveWithdraw/>}
+                />
         </div>
     )
 }

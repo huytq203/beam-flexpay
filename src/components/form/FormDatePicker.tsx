@@ -2,11 +2,12 @@ import { Control, FieldValues, Path } from "react-hook-form";
 import { FormField } from "./FormField";
 import { DateInput } from "@components/ui/dateInput-component";
 import dayjs, { Dayjs } from "dayjs";
+import { ReactNode } from "react";
 
 interface props<T extends FieldValues> {
   name: Path<T>;
   control: Control<T>;
-  label?: string;
+  label?: string|ReactNode;
   picker?: "date" | "week" | "month" | "quarter" | "year";
   className?: string;
   showTime?: boolean;
@@ -59,7 +60,7 @@ export function FormDatePicker<T extends FieldValues>({
             value={getRangeValue(field.value)}
             picker={picker}
             placeholder={placeholder}
-            onChange={(dates: [Dayjs, Dayjs] | null, dateStrings: [string, string]) => {
+            onChange={((dates: [Dayjs, Dayjs] | null, dateStrings: [string, string]) => {
               if (!dates || !dateStrings[0] || !dateStrings[1]) {
                 field.onChange(null);
                 return;
@@ -72,7 +73,7 @@ export function FormDatePicker<T extends FieldValues>({
                   `${dateStrings[1].split(" ")[0]}T23:59:59.999Z`,
                 ]);
               }
-            }}
+            }) as any}
           />
         ) : (
           <DateInput

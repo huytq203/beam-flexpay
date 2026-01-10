@@ -8,7 +8,7 @@ const FormSearch = () => {
   return (
     <div>
       <form>
-        <div className='grid grid-cols-5 gap-3'>
+        <div className='grid grid-cols-4 gap-3'>
           <FormInput
             control={control}
             name=''
@@ -48,7 +48,7 @@ const FormSearch = () => {
             control={control}
             name=''
             label='Ngày tạo'
-            className='col-span-2'
+            className='col-span-1'
           />
           <FormDatePicker
             isRange
@@ -56,7 +56,7 @@ const FormSearch = () => {
             control={control}
             name=''
             label='Ngày duyệt'
-            className='col-span-2'
+            className='col-span-1'
           />
         </div>
         <div className="flex justify-between items-center gap-3 mt-3">

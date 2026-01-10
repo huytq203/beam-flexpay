@@ -341,5 +341,186 @@
                 "thatBai": 1
             }
         }
+    },
+    "freezeTransactions": {
+        "code": 200,
+        "message": "Success",
+        "data": {
+            "content": [
+                {
+                    "id": 1,
+                    "maDongBang": "FRZ-889",
+                    "nguonGD": {
+                        "loai": "Giao dịch",
+                        "maGD": "#TRX-5521"
+                    },
+                    "khachHang": {
+                        "ten": "Nguyễn Văn An",
+                        "soDienThoai": "090***123"
+                    },
+                    "tongDong": 10000000,
+                    "daGiaiToa": 4000000,
+                    "conLai": 6000000,
+                    "trangThai": "MO_MOT_PHAN",
+                    "trangThaiLabel": "Mở một phần",
+                    "lichSuGiaiToa": [
+                        {
+                            "id": 1,
+                            "ngay": "25/12/2025",
+                            "lyDo": "Giải tỏa lần 1 (Xác minh bước 1)",
+                            "soTien": 2000000
+                        },
+                        {
+                            "id": 2,
+                            "ngay": "27/12/2025",
+                            "lyDo": "Giải tỏa lần 2 (Hỗ trợ rút phí)",
+                            "soTien": 2000000
+                        }
+                    ],
+                    "ngayTao": "20/12/2025 09:00"
+                },
+                {
+                    "id": 2,
+                    "maDongBang": "FRZ-772",
+                    "nguonGD": {
+                        "loai": "Số dư",
+                        "maGD": null
+                    },
+                    "khachHang": {
+                        "ten": "Phạm Minh Đức",
+                        "soDienThoai": "091***444"
+                    },
+                    "tongDong": 2500000,
+                    "daGiaiToa": 2500000,
+                    "conLai": 0,
+                    "trangThai": "DA_MO_BANG",
+                    "trangThaiLabel": "Đã mở băng",
+                    "lichSuGiaiToa": [
+                        {
+                            "id": 1,
+                            "ngay": "28/12/2025",
+                            "lyDo": "Giải tỏa toàn bộ - Đã hoàn tất xác minh",
+                            "soTien": 2500000
+                        }
+                    ],
+                    "ngayTao": "15/12/2025 14:30"
+                },
+                {
+                    "id": 3,
+                    "maDongBang": "FRZ-902",
+                    "nguonGD": {
+                        "loai": "Số dư",
+                        "maGD": null
+                    },
+                    "khachHang": {
+                        "ten": "Lê Thị Bình",
+                        "soDienThoai": "098***999"
+                    },
+                    "tongDong": 5000000,
+                    "daGiaiToa": 0,
+                    "conLai": 5000000,
+                    "trangThai": "DANG_DONG_BANG",
+                    "trangThaiLabel": "Đang đóng băng",
+                    "lichSuGiaiToa": [],
+                    "ngayTao": "28/12/2025 10:00"
+                },
+                {
+                    "id": 4,
+                    "maDongBang": "FRZ-655",
+                    "nguonGD": {
+                        "loai": "Giao dịch",
+                        "maGD": "#TRX-9012"
+                    },
+                    "khachHang": {
+                        "ten": "Trần Văn Hùng",
+                        "soDienThoai": "097***888"
+                    },
+                    "tongDong": 15000000,
+                    "daGiaiToa": 5000000,
+                    "conLai": 10000000,
+                    "trangThai": "MO_MOT_PHAN",
+                    "trangThaiLabel": "Mở một phần",
+                    "lichSuGiaiToa": [
+                        {
+                            "id": 1,
+                            "ngay": "22/12/2025",
+                            "lyDo": "Giải tỏa lần 1 (Xác minh giao dịch hợp lệ)",
+                            "soTien": 5000000
+                        }
+                    ],
+                    "ngayTao": "18/12/2025 16:45"
+                },
+                {
+                    "id": 5,
+                    "maDongBang": "FRZ-501",
+                    "nguonGD": {
+                        "loai": "Số dư",
+                        "maGD": null
+                    },
+                    "khachHang": {
+                        "ten": "Hoàng Thị Mai",
+                        "soDienThoai": "093***222"
+                    },
+                    "tongDong": 8000000,
+                    "daGiaiToa": 8000000,
+                    "conLai": 0,
+                    "trangThai": "DA_HOAN_TAT",
+                    "trangThaiLabel": "Đã hoàn tất",
+                    "lichSuGiaiToa": [
+                        {
+                            "id": 1,
+                            "ngay": "10/12/2025",
+                            "lyDo": "Giải tỏa lần 1",
+                            "soTien": 3000000
+                        },
+                        {
+                            "id": 2,
+                            "ngay": "15/12/2025",
+                            "lyDo": "Giải tỏa lần 2",
+                            "soTien": 3000000
+                        },
+                        {
+                            "id": 3,
+                            "ngay": "20/12/2025",
+                            "lyDo": "Giải tỏa cuối cùng - Hoàn tất",
+                            "soTien": 2000000
+                        }
+                    ],
+                    "ngayTao": "05/12/2025 08:30"
+                },
+                {
+                    "id": 6,
+                    "maDongBang": "FRZ-433",
+                    "nguonGD": {
+                        "loai": "Giao dịch",
+                        "maGD": "#TRX-7788"
+                    },
+                    "khachHang": {
+                        "ten": "Vũ Đức Thắng",
+                        "soDienThoai": "096***111"
+                    },
+                    "tongDong": 20000000,
+                    "daGiaiToa": 0,
+                    "conLai": 20000000,
+                    "trangThai": "DANG_DONG_BANG",
+                    "trangThaiLabel": "Đang đóng băng",
+                    "lichSuGiaiToa": [],
+                    "ngayTao": "29/12/2025 11:20"
+                }
+            ],
+            "page": 1,
+            "size": 10,
+            "totalElements": 6,
+            "totalPages": 1,
+            "summary": {
+                "dangDongBang": 2,
+                "moMotPhan": 2,
+                "daMoBang": 1,
+                "daHoanTat": 1,
+                "tongSoDong": 60500000,
+                "tongDaGiaiToa": 19500000,
+                "tongConLai": 41000000
+            }
+        }
     }
 }

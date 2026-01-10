@@ -10,6 +10,76 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  // Flex shortcuts
+  .flex-center {
+    @apply flex justify-center items-center;
+  }
+  .flex-between {
+    @apply flex justify-between items-center;
+  }
+  .flex-start {
+    @apply flex justify-start items-center;
+  }
+  .flex-end {
+    @apply flex justify-end items-center;
+  }
+  .flex-col-center {
+    @apply flex flex-col justify-center items-center;
+  }
+
+  // Color shortcuts: text-red = text-red-600
+  .text-red {
+    @apply text-red-600;
+  }
+  .text-green {
+    @apply text-green-600;
+  }
+  .text-yellow {
+    @apply text-yellow-600;
+  }
+  .text-orange {
+    @apply text-orange-600;
+  }
+  .text-gray {
+    @apply text-gray-600;
+  }
+
+  // border
+  .border-red {
+    @apply border-red-500;
+  }
+  .border-green {
+    @apply border-green-500;
+  }
+  .border-blue {
+    @apply border-blue-500;
+  }
+  .border-yellow {
+    @apply border-yellow-500;
+  }
+  .border-orange {
+    @apply border-orange-500;
+  }
+  .border-gray {
+    @apply border-gray-500;
+  }
+
+  // Background shortcuts
+  .bg-red {
+    @apply bg-red-50;
+  }
+  .bg-green {
+    @apply bg-green-50;
+  }
+  .bg-blue {
+    @apply bg-blue-50;
+  }
+  .bg-gray {
+    @apply bg-gray-50;
+  }
+}
 .card-table {
   .ant-card .ant-card-body {
     height: 600px;

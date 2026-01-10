@@ -1,7 +1,7 @@
 import React from 'react'
 import { TableRows } from '@pages/wallet-administration/e-walletManagement/types/Column.type'
 import { ColumnType } from 'antd/lib/table'
-import { MoreOutlined } from '@components/icons/common'
+import { EnvelopeIcon, MoreOutlined, PhoneIcon } from '@components/icons/common'
 import {DropDownComponent} from '@components/common'
 import { MenuProps } from 'antd/lib'
 import { ButtonComponent } from '@components/common'
@@ -45,23 +45,28 @@ const status = (record: any) => {
 
 export const Column = (): ColumnType<TableRows>[] => [
     {
-        title: 'Khách hàng / Mã TK',
+        title: '#',
         align: 'center',
+      dataIndex:'id'
+    },
+    {
+        title: 'Khách hàng / Mã TK',
+        align: 'left',
         render: (_: any, record: any) => (
             <div>
                 <div className="font-medium">{record.ten}</div>
-                <div className="text-gray-500 text-sm">{record.maTk}</div>
+                <div className="text-gray-500 text-sm">TK: {record.maTk}</div>
             </div>
         ),
     },
     {
         title: 'Thông tin liên hệ',
 
-        align: 'center',
+        align: 'left',
         render: (_: any, record: any) => (
             <div>
-                <div className="text-gray-500">{record.email}</div>
-                <div className="text-gray-500 ">{record.phone}</div>
+                <div className="text-gray-500 flex items-center gap-1"><EnvelopeIcon/>{record.email}</div>
+                <div className="text-gray-500 flex items-center gap-1 "><PhoneIcon/>{record.phone}</div>
             </div>
         ),
     },
@@ -98,6 +103,7 @@ export const Column = (): ColumnType<TableRows>[] => [
     {
         title: 'Thao tác',
         align: 'center',
+        width:100,
         render(value, record, index) {
             const items: MenuProps['items'] = [
                 {

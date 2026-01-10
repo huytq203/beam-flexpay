@@ -6,4 +6,5 @@ export { FormDatePicker } from "./FormDatePicker";
 export { FormInputNumber } from "./FormInputNumber";
 export { FormCheckbox } from "./FormCheckbox";
 export { FormRadio } from "./FormRadio";
+export { default as FormUploadCombined, UploadControl } from "./FormUploadCombined";
 

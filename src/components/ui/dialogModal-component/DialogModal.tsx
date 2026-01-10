@@ -1,7 +1,9 @@
 import { Modal } from "antd";
 import { ModalProps } from "antd/lib";
+import { ModeAction, MODE_CONFIG } from "./dialogModal.config";
 
-export interface ModalConfirmProps extends ModalProps{
+export interface ModalConfirmProps extends ModalProps {
+  mode?: ModeAction,
   open: boolean;
   title?: string | React.ReactNode;
   content: React.ReactNode;
@@ -14,8 +16,8 @@ export interface ModalConfirmProps extends ModalProps{
   className?: string;
   footer?: React.ReactNode
 }
-
 const DialogModal: React.FC<ModalConfirmProps> = ({
+  mode = 'CONFIRM',
   open,
   title = "Xác nhận",
   content,
@@ -29,6 +31,7 @@ const DialogModal: React.FC<ModalConfirmProps> = ({
   footer,
   ...props
 }) => {
+  const modeConfig = MODE_CONFIG[mode];
   return (
     <Modal
       open={open}
@@ -38,8 +41,9 @@ const DialogModal: React.FC<ModalConfirmProps> = ({
       destroyOnClose
       confirmLoading={confirmLoading}
       onCancel={onCancel}
-      okText={okText}
-      cancelText={cancelText}
+      okText={modeConfig.okText}
+      cancelText={modeConfig.cancelText}
+      okButtonProps={modeConfig.okButtonProps}
       className={className}
       footer={footer}
       styles={{

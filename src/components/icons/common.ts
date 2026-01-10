@@ -24,7 +24,9 @@ export {
   FileDoneOutlined,
   InfoCircleFilled,
   EyeFilled,
-  DollarOutlined 
+  DollarOutlined,
+  BankFilled ,
+  StopOutlined
 } from '@ant-design/icons'
 
 
@@ -39,9 +41,15 @@ export {
   FireIcon,
   WarningIcon,
   ArrowsCounterClockwiseIcon,
-  ClockIcon 
+  ClockIcon,
+  KeyIcon ,
+  DeviceMobileSpeakerIcon,
+  PhoneIcon,
+  EnvelopeIcon 
 } from "@phosphor-icons/react";
 export {
   CornerDownRight,
-  Calculator
+  Calculator,
+  PenTool,
+  
 } from 'lucide-react';

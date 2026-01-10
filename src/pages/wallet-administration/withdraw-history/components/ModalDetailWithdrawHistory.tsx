@@ -1,4 +1,5 @@
 import { CardComponent, TimeLineComponent } from '@components/common'
+import { BankFilled, HistoryOutlined, PenTool, UserIcon } from '@components/icons/common'
 import React from 'react'
 
 const ModalDetailWithdrawHistory = () => {
@@ -8,7 +9,7 @@ const ModalDetailWithdrawHistory = () => {
                 <CardComponent className='col-span-1 flex-1 h-full ' content={<>
 
                     <div className="h-full">
-                        <p>Thông tin yêu cầu</p>
+                        <p className='font-medium flex items-center gap-1'><UserIcon weight='fill' />Thông tin yêu cầu</p>
                         <hr className='my-3' />
                         <div className="">
                             {[
@@ -27,12 +28,15 @@ const ModalDetailWithdrawHistory = () => {
                                         <p className="text-gray-500">{item.label}:</p>
 
                                         <p
-                                            className={
-                                                isAmount
-                                                    ? 'font-medium text-red-600'
+                                            className={`
+                                                font-medium
+                                                ${isAmount
+                                                    ? ' text-red-600'
                                                     : isStatus
-                                                        ? 'font-medium text-yellow-600'
+                                                        ? ' text-yellow-600'
                                                         : ''
+                                                }
+                                                `
                                             }
                                         >
                                             {item.value}
@@ -45,7 +49,7 @@ const ModalDetailWithdrawHistory = () => {
                 </>} />
                 <CardComponent className='flex-1 col-span-1' content={<>
                     <div className="">
-                        <p>Thông tin thụ hưởng</p>
+                        <p className='font-medium flex items-center gap-1'><BankFilled />Thông tin thụ hưởng</p>
                         <hr className='my-3' />
                         <div className="">
                             {[
@@ -75,7 +79,7 @@ const ModalDetailWithdrawHistory = () => {
                 </>} />
                 <CardComponent className=' col-span-2' content={<>
                     <div className="">
-                        <p>Lịch sử xử lý (Audit Log)</p>
+                        <p className='font-medium flex items-center gap-1'><HistoryOutlined />Lịch sử xử lý (Audit Log)</p>
                     </div>
                     <hr className='my-3' />
                     <div className="h-56 overflow-auto">
@@ -151,10 +155,14 @@ const ModalDetailWithdrawHistory = () => {
 
                 </>} />
             </div>
-                <div className="">
-                    <p>Ghi chú nội bộ của admin:</p>
-                    <p>Chưa có ghi chú nội dung nào</p>
-                </div>
+            <CardComponent content={
+                <>
+                    <p className='font-medium flex items-center gap-1'><PenTool size={16} />Ghi chú nội bộ của admin:</p>
+                    <div className="bg-yellow-50 border rounded-md p-3 text-gray-500">
+                        <p>Chưa có ghi chú nội dung nào</p>
+                    </div>
+                </>
+            } />
         </div>
     )
 }

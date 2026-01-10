@@ -1,11 +1,16 @@
-import { CardComponent, TabComponent } from '@components/common'
+import { CardComponent, DialogModal, TabComponent } from '@components/common'
 import useDetailUser from '@pages/wallet-administration/e-walletManagement/hooks/useDetailUser'
 import React, { Suspense, lazy, useMemo } from 'react'
 import { items } from './configs/Tabs.config'
 import { useParams } from 'react-router-dom'
 import { TabContentMap } from './types/Tabs.type'
 import { TAB_CONTENT_MAP } from './constants/Tabs.constant'
-import { CheckCircleFilled } from '@components/icons/common'
+import { BankFilled, CheckCircleFilled, SnowflakeIcon } from '@components/icons/common'
+import DialogAccount from './components/detail-infor/personal/components/DialogAccount'
+import DialogConfirmLinkAccount from './components/detail-infor/personal/components/DialogConfirmLinkAccount'
+import DialogFreeze from '@pages/wallet-administration/transaction-management/components/DialogFreeze'
+import DialigLockAccount from './components/detail-infor/personal/components/DialogLockAccount'
+import DialogFreezeWallet from './components/detail-infor/personal/components/DialogFreezeWallet'
 
 
 
@@ -68,6 +73,11 @@ const DetailUser = () => {
           </Suspense>
         </div>
       </div>
+      <DialogModal mode='CONFIRM' content={<DialogAccount/>} onCancel={()=>{}} onOk={()=>{}} open={false} title={<span><BankFilled/> Cập nhật thông tin tài khoản</span>} />
+      
+      <DialogModal mode='CONFIRM' content={<DialogConfirmLinkAccount/>} onCancel={()=>{}} onOk={()=>{}} open={false} title={<span><BankFilled/> Xác thực liên kết thủ công</span>} />
+      <DialogModal mode='WARNING' onCancel={() => { }} onOk={() => { }} open={false} content={<DialogFreeze />} title={<span className='flex items-center gap-2 text-blue-700'><SnowflakeIcon size={18} />Mở băng giao dịch</span>} />
+      <DialogModal mode='DELETE' onCancel={() => { }} onOk={() => { }} open={false} content={<DialigLockAccount />} title={<span className='flex items-center gap-2 text-blue-700 text-red '>Khóa tài khoản</span>} />
     </div>
   )
 }
