@@ -94,22 +94,25 @@ export const RoleManagemenColume = ({
       title: 'Thao tác',
       dataIndex: 'action',
       align: 'center',
-      width: 250,
+      width: 100,
       fixed: 'right',
       render: (_, record) => (
         <div className='flex justify-start items-center gap-1'>
           <ButtonComponent
+            size='small'
             type='default'
             icon={<EditOutlined />}
             onClick={() => handleOpenUpdate(record)}
           />
           <ButtonComponent
+            size='small'
             type='default'
             className='text-blue-600'
             icon={<EyeOutlined />}
             onClick={() => handleOpenDetail(record)}
           />
           <ButtonComponent
+            size='small'
             type='default'
             className='text-yellow-600'
             icon={<LockOutlined />}
@@ -120,6 +123,7 @@ export const RoleManagemenColume = ({
             }}
           />
           <ButtonComponent
+            size='small'
             type='default'
             className='text-red-600'
             icon={<DeleteOutlined />}
@@ -130,6 +134,7 @@ export const RoleManagemenColume = ({
             }}
           />
           <ButtonComponent
+            size='small'
             type='default'
             className='text-violet-600'
             icon={<KeyOutlined />}

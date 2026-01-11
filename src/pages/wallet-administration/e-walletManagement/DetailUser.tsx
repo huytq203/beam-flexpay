@@ -37,7 +37,7 @@ const InforUser = () => {
             <span className='text-green-700 text-3xl font-bold'>5,000,000</span>
             <span className='text-sm font-bold'>VND</span>
           </p>
-          <p className='text-red-700 text-lg'>* Đang đóng băng: 500,000 VND</p>
+          <p className='text-red-700 '>* Đang đóng băng: 500,000 VND</p>
         </div>
       </div>
     </>

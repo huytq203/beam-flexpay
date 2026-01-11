@@ -4,7 +4,7 @@ const DialogConfirmLinkAccount = () => {
   return (
     <div className='space-y-3 '>
       <p className='text-gray-500'>Bạn có chắc chắn muốn xác thực cho tài khoản ngân hàng này? Hành động này cho phép người dùng thực hiện ngay lập tức</p>
-      <div className="bg-gray-100 p-3 border rounded-md">
+      <div className="bg-gray-100 p-3 border rounded-md space-y-3">
         {[
           { label: 'Ngân hàng', value: 'TPBANK' },
           { label: 'Số tài khoản', value: '**** 2003' },

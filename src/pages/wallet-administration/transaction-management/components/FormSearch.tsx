@@ -8,7 +8,7 @@ const FormSearch = () => {
   return (
     <div>
         <form>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
             <FormInput control={formSearch.control} name='' label='Tìm kiếm chung' className='col-span-1'/>
             <FormInput control={formSearch.control} name='' label='Tài khoản (Gửi/Nhận)' className='col-span-1'/>
             <FormSelect control={formSearch.control} name='' label='Trạng thái' className='col-span-1' options={[]}/>
@@ -19,8 +19,8 @@ const FormSearch = () => {
             <FormSelect control={formSearch.control} name='' label='Trạn thái hoàn tiền' className='col-span-1' options={[]}/>
             <FormInputNumber control={formSearch.control} name='' label='Khoảng tiền min' className='col-span-1'/>
             <FormInputNumber control={formSearch.control} name='' label='Khoản tiền max' className='col-span-1'/>
-            <FormDatePicker isRange showTime control={formSearch.control} name='a' label='Thời gian tạo' className='col-span-1'/>
-            <FormDatePicker isRange showTime control={formSearch.control} name='x' label='Thời gian TC' className='col-span-1'/>
+            <FormDatePicker isRange  control={formSearch.control} name='a' label='Thời gian tạo' className='col-span-1'/>
+            <FormDatePicker isRange  control={formSearch.control} name='x' label='Thời gian TC' className='col-span-1'/>
             </div>
             <div className="flex justify-end mt-3">
                 <ButtonComponent content={'Tìm kiếm'}/>

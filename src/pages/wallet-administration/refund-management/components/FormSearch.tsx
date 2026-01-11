@@ -37,7 +37,7 @@ const FormSearch = () => {
           />
           <FormSelect
             control={control}
-            name=''
+            name='a'
             label='Trạng thái'
             className='col-span-1'
             options={[]}
@@ -46,7 +46,7 @@ const FormSearch = () => {
             isRange
             showTime
             control={control}
-            name=''
+            name='q'
             label='Ngày tạo'
             className='col-span-1'
           />
@@ -58,18 +58,26 @@ const FormSearch = () => {
             label='Ngày duyệt'
             className='col-span-1'
           />
+          <div className='col-span-1 flex items-end w-full'>
+            <div className='flex justify-end items-end gap-3 w-full '>
+              <ButtonComponent className='flex-1' content={'Tìm kiếm'} />
+              <ButtonComponent
+              className='flex-1' 
+                type='default'
+                content={'Xóa lọc'}
+              />
+            </div>
+          </div>
         </div>
-        <div className="flex justify-between items-center gap-3 mt-3">
-          <div className="flex justify-center items-center gap-3 ">
+        <div className='flex justify-between items-center gap-3 mt-3'>
+          {/* <div className="flex justify-center items-center gap-3 ">
             <ButtonComponent content={'Tìm kiếm'} />
             <ButtonComponent type='default' content={'Xóa lọc'} />
 
-          </div>
+          </div> */}
 
           {/* <ButtonComponent className='' content={'Xuất excel'} /> */}
-
         </div>
-
       </form>
     </div>
   )

@@ -57,6 +57,7 @@ export const RoleManagementColumn = ({
       render: (_, record) => (
         <div className='flex justify-center items-center gap-1'>
           <ButtonComponent
+          size='small'
             type='default'
             icon={<EditOutlined />}
             onClick={() => {
@@ -66,11 +67,13 @@ export const RoleManagementColumn = ({
             }}
           />
           <ButtonComponent
+          size='small'
             type='default'
             className='text-yellow-600'
             icon={<LockOutlined />}
           />
           <ButtonComponent
+          size='small'
             type='default'
             className='text-red-600'
             icon={<DeleteOutlined />}

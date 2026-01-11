@@ -45,7 +45,7 @@ const UpdateStatusTransaction = () => {
           />
         </div>
         <div className='border p-3 rounded-md bg-green-50'>
-          <p className='font-bold text-green-700 text-lg'>Thông tin đối soát (Bắt buộc)</p>
+          <p className='font-bold text-green-700 '>Thông tin đối soát (Bắt buộc)</p>
           <div className='flex gap-3 justify-between items-center'>
             <FormInputNumber
               className='flex-1'

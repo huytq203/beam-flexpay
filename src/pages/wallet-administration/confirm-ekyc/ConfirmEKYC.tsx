@@ -27,8 +27,8 @@ const ConfirmEKYC = () => {
         modalText={<BusinessComfirm/>}
         
         />
-        <DialogModal onCancel={()=>{}} onOk={()=>{}} open={false} content={<DialogReject/>} title={<span className='text-red-600'>Từ chối hồ sơ</span>}  />
-        <DialogModal onCancel={()=>{}} onOk={()=>{}} open={false} content={<DialogCancel/>} title={<span className='text-red-600'>Hủy xác thực</span>}  />
+        <DialogModal mode='DELETE' okText='Từ chối' onCancel={()=>{}} onOk={()=>{}} open={false} content={<DialogReject/>} title={<span className='text-red-600'>Từ chối hồ sơ</span>}  />
+        <DialogModal mode='DELETE' okText='Hủy xác thực' onCancel={()=>{}} onOk={()=>{}} open={false} content={<DialogCancel/>} title={<span className='text-red-600'>Hủy xác thực</span>}  />
     </div>
   )
 }

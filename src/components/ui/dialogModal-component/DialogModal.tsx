@@ -41,8 +41,8 @@ const DialogModal: React.FC<ModalConfirmProps> = ({
       destroyOnClose
       confirmLoading={confirmLoading}
       onCancel={onCancel}
-      okText={modeConfig.okText}
-      cancelText={modeConfig.cancelText}
+      okText={okText??modeConfig.okText}
+      cancelText={cancelText??modeConfig.cancelText}
       okButtonProps={modeConfig.okButtonProps}
       className={className}
       footer={footer}
