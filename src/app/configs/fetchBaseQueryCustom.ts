@@ -112,6 +112,17 @@ export const baseQueryFee = fetchBaseQuery({
     return headers
   }
 })
+export const baseQueryWalletCore  = fetchBaseQuery({
+  baseUrl: ENV.API_WALLETCORE,
+  credentials: 'include',
+  prepareHeaders: (headers) => {
+    const accessToken = Cookies.get(CookieKey.ACCESS_TOKEN)
+    if (accessToken) {
+      headers.set('authorization', `Bearer ${accessToken}`)
+    }
+    return headers
+  }
+})
 
 
 
@@ -261,4 +272,5 @@ const createCustomBaseQuery = (
 export const fetchBaseQueryCustom = createCustomBaseQuery(baseAuthQuery)
 export const fetchBaseQueryFee = createCustomBaseQuery(baseQueryFee)
 export const fetchBaseQueryOld = createCustomBaseQuery(baseQueryOld)
+export const fetchBaseQueryWalletCore = createCustomBaseQuery(baseQueryWalletCore)
 

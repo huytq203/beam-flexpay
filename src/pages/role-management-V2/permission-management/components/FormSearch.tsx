@@ -1,6 +1,7 @@
 import { ButtonComponent } from '@components/common'
 import { FormInput, FormSelect } from '@components/form'
 import { useSVG } from '@hooks/useSVG'
+import { BroomIcon } from '@components/icons/common'
 import { useForm } from 'react-hook-form'
 
 export interface SearchFormData {
@@ -66,7 +67,7 @@ const FormSearch = ({ setOpenModalAdd, onSearch }: Props) => {
           onClick={() => setOpenModalAdd(true)}
           />
         <ButtonComponent
-          icon={svg('/icons.svg#hugeicons-delete-02')}
+          icon={<BroomIcon size={18}/>}
           type='default'
           content='Xóa lọc'
           onClick={handleClearFilter}

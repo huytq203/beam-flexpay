@@ -9,7 +9,9 @@ import CommonInfo from './components/CommonInfo'
 import InfoUser from './components/InfoUser'
 import UserFees from './components/UserFees'
 import FeeNCC from './components/FeeNCC'
-
+import useDetailTransaction from './hooks/useDetailTransaction'
+import { useGetTransactionByIdQuery } from '@services/apiTransactionV2'
+import dayjs from 'dayjs'
 type ViewMode = 'TEXT' | 'JSON'
 type TitleHover = 'Copy' | 'Copied!' | 'Wrong'
 const LazyLog = LazyLogComponent as React.ComponentType<any>
@@ -19,6 +21,9 @@ const DetailTransaction = () => {
   const column = Column()
   const [viewMode, setViewMode] = useState<ViewMode>()
   const [titleHover, setTitleHover] = useState<TitleHover>('Copy')
+
+  const {id,getTransactionById}=useDetailTransaction()
+  console.log(getTransactionById)
   const logLines = [
     "[08:30:00] INFO  Request sent to partner",
     "[08:30:00] INFO  Endpoint: /api/v1/transfer",
@@ -59,8 +64,8 @@ const DetailTransaction = () => {
     <>
       <div className="flex justify-between items-center mb-3 px-2">
         <div className="flex flex-col gap-1">
-          <p className='text-xl font-bold'>Chi tiết giao dịch: <span className='text-blue-700'>#123456-RTX</span></p>
-          <p className="text-sm text-gray-500">Ngày tạo: 21/12/2022</p>
+          <p className='text-xl font-bold'>Chi tiết giao dịch: <span className='text-blue-700'>{getTransactionById?.transactionCode??'--'}</span></p>
+          <p className="text-sm text-gray-500">{dayjs(getTransactionById?.createdAt).format('DD/MM/YYYY HH:mm:ss')}</p>
         </div>
         <div className="flex justify-center items-center gap-2">
           <ButtonComponent icon={<PrinterOutlined />} type='default' content='In phiếu' />
@@ -69,7 +74,7 @@ const DetailTransaction = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
 
-        <CardComponent className='col-span-1 md:col-span-3 order-1 md:order-1' content={<CommonInfo />} />
+        <CardComponent className='col-span-1 md:col-span-3 order-1 md:order-1' content={<CommonInfo data={getTransactionById}/>} />
        
         <CardComponent className='col-span-1 md:col-span-2 order-4 md:order-2' content={<InfoUser />} />
        

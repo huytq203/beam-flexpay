@@ -1,3 +1,4 @@
+import { FireIcon } from '@components/icons/common';
 export {
   CheckOutlined,
   CloseOutlined,
@@ -45,7 +46,11 @@ export {
   KeyIcon ,
   DeviceMobileSpeakerIcon,
   PhoneIcon,
-  EnvelopeIcon 
+  EnvelopeIcon ,
+  BroadcastIcon ,
+  PencilLineIcon ,
+  MagnifyingGlassIcon ,
+  BroomIcon 
 } from "@phosphor-icons/react";
 export {
   CornerDownRight,

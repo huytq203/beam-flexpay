@@ -3,6 +3,7 @@ import { FormInput, FormSelect } from '@components/form'
 import { useSVG } from '@hooks/useSVG'
 import { useForm } from 'react-hook-form'
 import { ModeAction } from '@pages/role-management-V2/role-management/hooks/useRoleManagement'
+import { BroomIcon } from '@components/icons/common'
 
 export interface SearchFormData {
   roleCode: string
@@ -88,7 +89,7 @@ const FormSearch = ({ setOpenModalAdd, setModeAction, onSearch }: Props) => {
         />
         <ButtonComponent
           type='default'
-          icon={svg('/icons.svg#hugeicons-delete-02')}
+          icon={<BroomIcon size={18}/>}
           content='Xóa lọc'
           onClick={handleClearFilter}
         />

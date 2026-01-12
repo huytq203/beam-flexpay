@@ -69,8 +69,8 @@ export function FormDatePicker<T extends FieldValues>({
                 field.onChange([dates[0].toISOString(), dates[1].toISOString()]);
               } else {
                 field.onChange([
-                  `${dateStrings[0].split(" ")[0]}T00:00:00.000Z`,
-                  `${dateStrings[1].split(" ")[0]}T23:59:59.999Z`,
+                  `${dates[0].format("YYYY-MM-DD")}T00:00:00.000Z`,
+                  `${dates[1].format("YYYY-MM-DD")}T23:59:59.999Z`,
                 ]);
               }
             }) as any}
@@ -86,14 +86,14 @@ export function FormDatePicker<T extends FieldValues>({
             value={getSingleValue(field.value)}
             picker={picker}
             onChange={(date: Dayjs | null, dateString: string) => {
-              if (!dateString) {
+              if (!date) {
                 field.onChange("");
                 return;
               }
-              if (showTime && date) {
+              if (showTime) {
                 field.onChange(date.toISOString());
               } else {
-                field.onChange(`${dateString}T00:00:00.000Z`);
+                field.onChange(`${date.format("YYYY-MM-DD")}T00:00:00.000Z`);
               }
             }}
           />

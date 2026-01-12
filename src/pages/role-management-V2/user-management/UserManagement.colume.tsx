@@ -29,7 +29,7 @@ export const RoleManagemenColume = ({
   setSelectedUser
 }: Props): ColumnType<UserInfor>[] => [
     {
-      title: 'STT',
+      title: '#',
       dataIndex: 'no',
       align: 'center'
     },

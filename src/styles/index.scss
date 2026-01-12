@@ -70,6 +70,10 @@
   .bg-red {
     @apply bg-red-50;
   }
+  .bg-yellow
+  {
+    @apply bg-yellow-50
+  }
   .bg-green {
     @apply bg-green-50;
   }
@@ -80,39 +84,38 @@
     @apply bg-gray-50;
   }
 }
-.card-table {
-  .ant-card .ant-card-body {
-    height: 600px;
-  }
-}
+// .card-table {
+//   .ant-card .ant-card-body {
+//     height: 600px;
+//   }
+// }
 
-.input-number {
-  min-width: 300px;
-  height: 22px !important;
-}
+// .input-number {
+//   min-width: 300px;
+//   height: 22px !important;
+// }
 
-.input-description {
-  height: 22px !important;
-}
+// .input-description {
+//   height: 22px !important;
+// }
 
-.ant-descriptions-item-content {
-  max-height: 54px;
-}
+// .ant-descriptions-item-content {
+//   max-height: 54px;
+// }
 
-.ant-descriptions-item {
-  padding: 0px !important;
-}
+// .ant-descriptions-item {
+//   padding: 0px !important;
+// }
 
-.mb-16 {
-  margin-bottom: 16px;
-}
+// .mb-16 {
+//   margin-bottom: 16px;
+// }
 
-.box-shadow {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
+// .box-shadow {
+//   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+// }
 
 
 html {
-  /* Không nhỏ hơn 12px, không lớn hơn 16px */
-  font-size: clamp(12px, 0.833vw, 16px);
+  font-size: clamp(12px, 0.75vw, 16px) !important;
 }

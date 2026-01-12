@@ -1,6 +1,7 @@
 import { ButtonComponent } from '@components/common'
 import { FormInput, FormSelect } from '@components/form'
 import { useSVG } from '@hooks/useSVG'
+import { BroomIcon } from '@components/icons/common'
 import { useForm } from 'react-hook-form'
 import { ActionMode } from '../UserManagement'
 
@@ -59,7 +60,7 @@ const FormSearch = ({
         />
         <ButtonComponent
           type='default'
-          icon={svg('/icons.svg#hugeicons-delete-02')}
+          icon={<BroomIcon size={18}/>}
           content='Xóa lọc'
         />
       </div>
