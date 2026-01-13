@@ -18,26 +18,6 @@ export default defineConfig(({ mode }) => {
             libName: 'antd',
             libDirectory: 'es',
             style: (name) => `antd/es/${name}/style`
-          },
-          {
-            libName: '@ant-design/icons',
-            libDirectory: 'es/icons',
-            camel2DashComponentName: false
-          },
-          {
-            libName: 'lucide-react',
-            libDirectory: 'dist/esm/icons',
-            camel2DashComponentName: false
-          },
-          {
-            libName: '@phosphor-icons/react',
-            libDirectory: 'dist/ssr',
-            camel2DashComponentName: false
-          },
-          {
-            libName: 'ahooks',
-            libDirectory: 'es',
-            camel2DashComponentName: false
           }
         ]
       }),
