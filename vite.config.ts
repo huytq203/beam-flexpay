@@ -18,6 +18,26 @@ export default defineConfig(({ mode }) => {
             libName: 'antd',
             libDirectory: 'es',
             style: (name) => `antd/es/${name}/style`
+          },
+          {
+            libName: '@ant-design/icons',
+            libDirectory: 'es/icons',
+            camel2DashComponentName: false
+          },
+          {
+            libName: 'lucide-react',
+            libDirectory: 'dist/esm/icons',
+            camel2DashComponentName: false
+          },
+          {
+            libName: '@phosphor-icons/react',
+            libDirectory: 'dist/ssr',
+            camel2DashComponentName: false
+          },
+          {
+            libName: 'ahooks',
+            libDirectory: 'es',
+            camel2DashComponentName: false
           }
         ]
       }),
@@ -87,8 +107,31 @@ export default defineConfig(({ mode }) => {
       port: +PORT || 8000
     },
     build: {
-      sourcemap: 'hidden',
-      manifest: true
+      sourcemap: false,
+      manifest: true,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'antd': ['antd'],
+            'antd-charts': ['@ant-design/charts', '@ant-design/plots'],
+            'icons': ['lucide-react', '@phosphor-icons/react', '@ant-design/icons']
+          }
+        }
+      }
+    },
+    optimizeDeps: {
+      include: [
+        'antd',
+        '@ant-design/icons',
+        '@ant-design/charts',
+        '@ant-design/plots',
+        'lucide-react',
+        '@phosphor-icons/react',
+        'ahooks',
+        'dayjs',
+        'react',
+        'react-dom'
+      ]
     }
   }
 })
