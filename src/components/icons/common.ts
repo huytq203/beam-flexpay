@@ -27,7 +27,8 @@ export {
   EyeFilled,
   DollarOutlined,
   BankFilled ,
-  StopOutlined
+  StopOutlined,
+  SaveOutlined 
 } from '@ant-design/icons'
 
 

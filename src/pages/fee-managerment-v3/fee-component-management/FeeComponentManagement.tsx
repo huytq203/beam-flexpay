@@ -32,6 +32,7 @@ import { useMessage } from '@hooks/useMessage'
 import { convertToISO } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
 import { useFeeComponentForm } from '@pages/fee-managerment-v3/hooks/useFeeComponentForm'
 import { useSVG } from '@hooks/useSVG'
+import { SaveOutlined } from '@components/icons/common'
 
 const FeeComponentManagement = () => {
   const { successMess, errorMess } = useMessage()
@@ -254,22 +255,7 @@ const FeeComponentManagement = () => {
           <div className='header'>
             <div className='flex justify-between items-center'>
               <p className='text-lg font-semibold'>1. Thông tin chung</p>
-              <div className='flex justify-end items-center'>
-                <ButtonComponent
-                  form='policyForm'
-                  htmlType='submit'
-                  content='Thiết lập'
-                  icon={
-                    svg('/icons.svg#hugeicons-file-add')
-                    // <svg
-                    //   width={20}
-                    //   height={20}
-                    // >
-                    //   <use href='/icons.svg#hugeicons-file-add' />
-                    // </svg>
-                  }
-                />
-              </div>
+             
             </div>
             <div className='content'>
               <FormAddPolicy
@@ -281,6 +267,16 @@ const FeeComponentManagement = () => {
               />
             </div>
           </div>
+           <div className='flex justify-end items-center'>
+                <ButtonComponent
+                  form='policyForm'
+                  htmlType='submit'
+                  content='Lưu lại'
+                  icon={
+                    <SaveOutlined/>
+                  }
+                />
+              </div>
         </div>
 
         <div className='item3 bg-white rounded p-3'>

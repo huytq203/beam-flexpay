@@ -1,7 +1,7 @@
 import { CardComponent, Table } from '@components/common'
 import React from 'react'
-import HistoryFormSearch from './components/HistoryFormSearch'
 import { Column } from './configs/HistoryPayment.column'
+import HistoryFormSearch from './components/HistoryFormSearch'
 
 const HistoryPayment = () => {
   const column=Column()

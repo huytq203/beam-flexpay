@@ -212,8 +212,19 @@ export const feeAssignColumn = ({
       render: (value, record: FeeAssignment, index: number) => {
         return (
           <div className='flex gap-1 justify-center'>
+             <TooltipComponent title='Cập nhật'>
+              <ButtonComponent
+              size='small'
+                type='default'
+                icon={<EditOutlined />}
+                onClick={() => {
+                  navigate(FEEMANAGEMENT_V3 + `/fee-assignment/edit/${record?.id}`)
+                }}
+              />
+            </TooltipComponent>
             <TooltipComponent title={record.status === 'ACTIVE' ? 'Khóa' : 'Mở khóa'}>
               <ButtonComponent
+              size='small'
                 type='default'
                 icon={
                   record.status === 'ACTIVE' ? (
@@ -225,15 +236,7 @@ export const feeAssignColumn = ({
                 onClick={() => onToggleStatus?.(record)}
               />
             </TooltipComponent>
-            <TooltipComponent title='Cập nhật'>
-              <ButtonComponent
-                type='default'
-                icon={<EditOutlined />}
-                onClick={() => {
-                  navigate(FEEMANAGEMENT_V3 + `/fee-assignment/edit/${record?.id}`)
-                }}
-              />
-            </TooltipComponent>
+           
             {/* <ApprovalButton
               record={record}
               onApprove={handleAccept}

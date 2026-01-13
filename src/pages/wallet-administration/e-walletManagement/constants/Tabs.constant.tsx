@@ -1,13 +1,13 @@
 import { lazy } from 'react'
 import { TabContentMap } from '../types/Tabs.type'
 
-const CommonInfor = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/personal/CommonInfor'))
+const CommonInfor = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/CommonInfor'))
 const CommonInforBusiness = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/business/CommonInfor'))
-const AccountBank = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/personal/AccountBank'))
-const HistoryPayment = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/personal/HistoryPayment'))
-const FreezeBalance = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/personal/FreezeBalance'))
-const Security = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/personal/Security'))
-const FeeSetting = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/personal/FeeSetting'))
+const AccountBank = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/AccountBank'))
+const HistoryPayment = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/HistoryPayment'))
+const FreezeBalance = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/FreezeBalance'))
+const Security = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/Security'))
+const FeeSetting = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/FeeSetting'))
 
 export const TAB_CONTENT_MAP: TabContentMap = {
   '1': {

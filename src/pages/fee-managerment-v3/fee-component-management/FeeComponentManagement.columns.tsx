@@ -73,6 +73,7 @@ export const feeComponentColumns = ({
         <div className='flex gap-1 justify-center'>
           <TooltipComponent title='Cập nhật'>
             <ButtonComponent
+            size='small'
               type='default'
               icon={<EditOutlined />}
               onClick={() => {
@@ -84,6 +85,7 @@ export const feeComponentColumns = ({
           </TooltipComponent>
           <TooltipComponent title='Xóa'>
             <ButtonComponent
+            size='small'
               danger
               type='default'
               icon={<DeleteOutlined/>}

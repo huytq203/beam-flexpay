@@ -6,7 +6,8 @@ export const Status = {
 export type Status = (typeof Status)[keyof typeof Status];
 
 export enum RoleUserAccount {
-    ACCOUNTANT = 'Kế toán',
-    SUPER_ADMIN = 'Admin',
-    OPERATOR = 'Điều hành',
+    ACCOUNTANT = 'Tài khoản kế toán',
+    OPERATOR = 'Tài khoản tổ chức',
+    SUPER_ADMIN = 'Tài khoản admin',
+    TEST = 'Tài khoản test',
 }

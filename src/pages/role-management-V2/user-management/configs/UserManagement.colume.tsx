@@ -1,4 +1,5 @@
 import {
+  ApartmentOutlined,
   DeleteOutlined,
   EditOutlined,
   EyeOutlined,
@@ -6,10 +7,10 @@ import {
   LockOutlined,
   UserSwitchOutlined
 } from '@components/icons/common'
-import { ButtonComponent } from '@components/common'
+import { ButtonComponent, TooltipComponent } from '@components/common'
 import { UserInfor } from '@type/userManagement'
 import { ColumnType } from 'antd/lib/table'
-import { ActionMode } from './UserManagement'
+import { ActionMode } from '../UserManagement'
 
 interface Props {
   setOpenModalDetail: (record: boolean) => void
@@ -19,6 +20,7 @@ interface Props {
   handleOpenUpdate: (record: UserInfor) => void
   setSelectedUser: (record: UserInfor) => void
   setOpenModalAdd: (value: boolean) => void
+  setOpenModalRoleAssign: (value: boolean) => void
 }
 
 export const RoleManagemenColume = ({
@@ -26,7 +28,8 @@ export const RoleManagemenColume = ({
   setModeAction,
   setOpenDialog,
   handleOpenDetail,
-  setSelectedUser
+  setSelectedUser,
+  setOpenModalRoleAssign
 }: Props): ColumnType<UserInfor>[] => [
     {
       title: '#',
@@ -60,7 +63,7 @@ export const RoleManagemenColume = ({
       title: 'emailVerified',
       dataIndex: 'emailVerified',
       align: 'center',
-      render: (value) => value ?? '--'
+      render: (value) => value || '--'
     },
     {
       title: 'Nhóm quyền',
@@ -97,13 +100,16 @@ export const RoleManagemenColume = ({
       width: 100,
       fixed: 'right',
       render: (_, record) => (
-        <div className='flex justify-start items-center gap-1'>
-          <ButtonComponent
-            size='small'
-            type='default'
-            icon={<EditOutlined />}
-            onClick={() => handleOpenUpdate(record)}
-          />
+        <div className='flex justify-center items-center gap-1'>
+          <TooltipComponent title='Chỉnh sửa'>
+            <ButtonComponent
+              size='small'
+              type='default'
+              icon={<EditOutlined />}
+              onClick={() => handleOpenUpdate(record)}
+            />
+          </TooltipComponent>
+          <TooltipComponent title='Xem chi tiết'>
           <ButtonComponent
             size='small'
             type='default'
@@ -111,6 +117,9 @@ export const RoleManagemenColume = ({
             icon={<EyeOutlined />}
             onClick={() => handleOpenDetail(record)}
           />
+
+          </TooltipComponent>
+          {/* <TooltipComponent title='Khóa tài khoản'>
           <ButtonComponent
             size='small'
             type='default'
@@ -122,6 +131,9 @@ export const RoleManagemenColume = ({
               setSelectedUser(record)
             }}
           />
+
+          </TooltipComponent>
+          <TooltipComponent title='Xóa tài khoản'>
           <ButtonComponent
             size='small'
             type='default'
@@ -133,7 +145,9 @@ export const RoleManagemenColume = ({
               setSelectedUser(record)
             }}
           />
-          <ButtonComponent
+
+          </TooltipComponent> */}
+          {/* <ButtonComponent
             size='small'
             type='default'
             className='text-violet-600'
@@ -143,7 +157,19 @@ export const RoleManagemenColume = ({
               setOpenDialog(true)
               setSelectedUser(record)
             }}
-          />
+          /> */}
+          <TooltipComponent title='Gán nhóm quyền'>
+            <ButtonComponent
+              size='small'
+              type='default'
+              className='text-violet-600'
+              icon={<ApartmentOutlined />}
+              onClick={() => {
+                setSelectedUser(record)
+                setOpenModalRoleAssign(true)
+              }}
+            />
+          </TooltipComponent>
         </div>
       )
     }

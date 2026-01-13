@@ -2,8 +2,9 @@ import { DeleteOutlined, EditOutlined, LockOutlined } from '@components/icons/co
 import { ButtonComponent } from '@components/common'
 import { ColumnType } from 'antd/lib/table'
 import { RoleDataItem } from '@type/roleManagementV2'
-import { ModeAction } from './hooks/useRoleManagement'
+import { ModeAction } from '../hooks/useRoleManagement'
 import { PermissionItem } from '@type/permissionManagement'
+import { translatePermissionName } from '../constants/RoleManagement.config'
 
 interface Props {
   setModeAction: (value: ModeAction) => void
@@ -28,7 +29,7 @@ export const RoleManagementColumn = ({
       title: 'Tên quyền',
       dataIndex: 'name',
       align: 'center',
-      render: (value) => value ?? '--'
+      render: (value) => translatePermissionName(value)
     },
     {
       title: 'Mã quyền',
@@ -43,7 +44,7 @@ export const RoleManagementColumn = ({
       render: (value) => value ?? '--'
     },
     {
-      title: 'Trạng thái',
+      title: 'Mô tả',
       dataIndex: 'description',
       align: 'center',
       render: (value) => value || '--'
@@ -66,12 +67,12 @@ export const RoleManagementColumn = ({
               setSelectedPermission(record)
             }}
           />
-          <ButtonComponent
+          {/* <ButtonComponent
           size='small'
             type='default'
             className='text-yellow-600'
             icon={<LockOutlined />}
-          />
+          /> */}
           <ButtonComponent
           size='small'
             type='default'

@@ -5,7 +5,8 @@ import {
     INTERNAL_WALLET,
     PERSONALWALLET,
     PRODUCTS,
-    ROLEMANAGEMENT
+    ROLEMANAGEMENT,
+    ROLEMANAGEMENT_V2
 } from '@constants/routersConstant'
 import { BaseQueryApi, fetchBaseQuery } from '@reduxjs/toolkit/query'
 import Cookies from 'js-cookie'
@@ -234,6 +235,11 @@ export const WHITE_LIST: WhiteListItem[] = [
     { pathname: FEEMANAGEMENT_V3 + '/fee-management', requestUrl: '/fee/policies' },
     { pathname: FEEMANAGEMENT_V3 + '/fee-assignment', requestUrl: '/fee/policy-assignments' },
     { pathname: FEEMANAGEMENT_V3 + '/fee-assignment', requestUrl: '/fee/banks' },
+
+    { pathname: ROLEMANAGEMENT_V2 + '/user-account', requestUrl: '/roles' },
+    { pathname: ROLEMANAGEMENT_V2 + '/permission-management', requestUrl: '/permissions' },
+    { pathname: ROLEMANAGEMENT_V2 + '/permission-management', requestUrl: '/roles' },
+    { pathname: ROLEMANAGEMENT_V2 + '/role-management', requestUrl: '/permissions' },
 ]
 
 // ============================================================================

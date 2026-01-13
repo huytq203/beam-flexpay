@@ -1,4 +1,4 @@
-import { ButtonComponent } from '@components/common'
+import { ButtonComponent, TooltipComponent } from '@components/common'
 import { PermissionWrapper } from '@components/permission-wrapper'
 import {
   ApartmentOutlined,
@@ -9,10 +9,11 @@ import {
   UserOutlined
 } from '@components/icons/common'
 import { ColumnType } from 'antd/lib/table'
-import { ModeAction } from './hooks/usePermissionRole'
+import { ModeAction } from '../hooks/usePermissionRole'
 import { PermissionItem } from '@type/permissionManagement'
 import { DataRoleItem } from '@type/roleManagement'
 import { Permission } from '@constants/permissionConstant'
+import { RoleName } from './PermissionManagement.config'
 
 interface Props {
   setOpenModalDetail: (value: boolean) => void
@@ -26,19 +27,24 @@ interface Props {
   setIdRole: (value: string) => void
   setSelectRoleItem: (value: PermissionItem) => void
   currentUserRoles?: string[]
+  handleOpenPermissionModal: (value: string) => void
+  setEditRoleData: (value: DataRoleItem | null) => void
 }
 
 export const PermissionManagementColumn = ({
   setOpenModalDetail,
   setModeAction,
   setModalDialog,
+  setOpenModalAdd,
   handleGetMemberOfRole,
   handleGetPermissionAvailable,
   setOpenModalPermission,
   handleGetPermissionAssigned,
   setIdRole,
   setSelectRoleItem,
-  currentUserRoles = []
+  currentUserRoles = [],
+  handleOpenPermissionModal,
+  setEditRoleData
 }: Props): ColumnType<DataRoleItem>[] => [
   {
     title: '#',
@@ -49,7 +55,7 @@ export const PermissionManagementColumn = ({
     title: 'Tên nhóm quyền',
     dataIndex: 'name',
     align: 'center',
-    render: (value) => value ?? '--'
+    render: (value) => RoleName[value] ?? value ?? '--'
   },
   {
     title: 'Mô tả',
@@ -75,16 +81,21 @@ export const PermissionManagementColumn = ({
 
       return (
         <div className='flex justify-start items-start gap-1'>
+          <TooltipComponent title='Cập nhật'>
+
           <ButtonComponent
             size='small'
             type='default'
             icon={<EditOutlined />}
             onClick={() => {
               setModeAction('edit')
-              setOpenModalPermission(true)
-              handleGetPermissionAssigned(record.id)
+              setEditRoleData(record)
+              setOpenModalAdd(true)
             }}
           />
+          </TooltipComponent>
+          <TooltipComponent title='Xem các quyền'>
+
 
           <ButtonComponent
             size='small'
@@ -97,7 +108,8 @@ export const PermissionManagementColumn = ({
               handleGetPermissionAssigned(record.id)
             }}
           />
-          <ButtonComponent
+          </TooltipComponent>
+          {/* <ButtonComponent
             size='small'
             type='default'
             className='text-yellow-600'
@@ -106,8 +118,9 @@ export const PermissionManagementColumn = ({
               setModeAction('lock')
               setModalDialog(true)
             }}
-          />
+          /> */}
 
+          <TooltipComponent title='Xem người dùng'>
           <ButtonComponent
             size='small'
             type='default'
@@ -119,6 +132,9 @@ export const PermissionManagementColumn = ({
             }}
           />
 
+          </TooltipComponent>
+
+          <TooltipComponent title='Xóa'>
           <ButtonComponent
             size='small'
             type='default'
@@ -131,6 +147,9 @@ export const PermissionManagementColumn = ({
               setSelectRoleItem(record)
             }}
           />
+
+          </TooltipComponent>
+          <TooltipComponent title='Phân quyền'>
           <ButtonComponent
             size='small'
             type='default'
@@ -138,10 +157,12 @@ export const PermissionManagementColumn = ({
             icon={<ApartmentOutlined />}
             onClick={() => {
               setModeAction('permission')
-              handleGetPermissionAvailable(record.id)
+              handleOpenPermissionModal(record.id)
               setOpenModalPermission(true)
             }}
           />
+
+          </TooltipComponent>
         </div>
       )
     }
