@@ -13,7 +13,9 @@ import {
   _ROLEMANAGEMENT,
   _STATE_BANK,
   _FEEMANAGEMENT_V3,
-  _ROLEMANAGEMENT_V2
+  _ROLEMANAGEMENT_V2,
+  _WALLETADMINISTRATION,
+  _WITHDRAWHISTORY
 
 } from '@constants/routersConstant'
 import i18n from '@languages/i18n'
@@ -613,11 +615,9 @@ const reports = {
         />
       ),
       label: i18n.t('navigation.internal-report'),
-      permission: 'REPORT:FULL',
       children: [
         {
           key: 'accounts',
-          permission: 'REPORT:FUL',
           icon: (
             <FolderOpenIcon
               size={size}
@@ -885,6 +885,88 @@ const roleManagementV2 = {
   ]
 
 }
+const walletManagement = {
+  key: _WALLETADMINISTRATION,
+  icon: (
+    <UserGearIcon
+      size={size}
+      weight={weight}
+      color={COlOR}
+    />
+  ),
+  label: 'Quản trị ví cá nhân ',
+  children: [
+    {
+      key: 'e-walletManagement',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý ví điện tử'
+    },
+    {
+      key: 'refund-management',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: "Quản lý hoàn tiền"
+    },
+    {
+      key: 'transaction-management',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: "Quản lý giao dịch ví"
+    },
+    {
+      key: 'confirm-eKYC',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: "Duyệt eKYC"
+    },
+    {
+      key: 'frozen-transactions',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: "Quản lý giao dịch đóng băng"
+    },
+    {
+      key: 'withdraw-history',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý lịch sử giao dịch rút tiền'
+    },
+  ]
+
+}
+
+
 export const navigationItems: ItemTypeCustom[] = [
   roleManagement,
   personalWallet,
@@ -895,5 +977,6 @@ export const navigationItems: ItemTypeCustom[] = [
   reports,
   internal_wallet,
   feeManagementV3,
-  roleManagementV2
+  roleManagementV2,
+  walletManagement,
 ]

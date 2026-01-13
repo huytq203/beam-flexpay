@@ -1,12 +1,14 @@
 import {
     BANKANDCONNECT,
     FEEMANAGEMENT,
+    FEEMANAGEMENT_V3,
     INTERNAL_WALLET,
     PERSONALWALLET,
     PRODUCTS,
     ROLEMANAGEMENT
 } from '@constants/routersConstant'
 import { BaseQueryApi, fetchBaseQuery } from '@reduxjs/toolkit/query'
+import Cookies from 'js-cookie'
 
 // ============================================================================
 // ENUMS
@@ -38,15 +40,100 @@ export enum TokenType {
     REFRESH_EXPIRES_IN = 'refreshExpiresIn'
 }
 
-
+/**
+ * Cookie storage keys (snake_case for cookie naming convention)
+ */
 export enum CookieKey {
     ACCESS_TOKEN = 'access_token',
     REFRESH_TOKEN = 'refresh_token'
 }
 
+// ============================================================================
+// COOKIE HELPER FUNCTIONS (với security options)
+// ============================================================================
+
+/**
+ * Default cookie options với security settings
+ * - secure: Chỉ gửi qua HTTPS (production)
+ * - sameSite: 'strict' để chống CSRF
+ */
+const getCookieOptions = (expiresInHours: number = 1): Cookies.CookieAttributes => ({
+    secure: window.location.protocol === 'https:',
+    sameSite: 'strict',
+    expires: expiresInHours / 24, // js-cookie expects days
+    path: '/'
+})
+
+/**
+ * Set access token cookie với security options
+ * @param token - Access token string
+ * @param expiresInSeconds - Token expiration in seconds (default: 300 = 5 minutes)
+ */
+export const setAccessTokenCookie = (token: string, expiresInSeconds: number = 300): void => {
+    const expiresInDays = expiresInSeconds / 86400 // Convert seconds to days (86400 = 24*60*60)
+    Cookies.set(CookieKey.ACCESS_TOKEN, token, {
+        secure: window.location.protocol === 'https:',
+        sameSite: 'strict',
+        expires: expiresInDays,
+        path: '/'
+    })
+}
+
+/**
+ * Get access token from cookie
+ */
+export const getAccessTokenCookie = (): string | undefined => {
+    return Cookies.get(CookieKey.ACCESS_TOKEN)
+}
+
+/**
+ * Remove access token cookie
+ */
+export const removeAccessTokenCookie = (): void => {
+    Cookies.remove(CookieKey.ACCESS_TOKEN, { path: '/' })
+}
+
+/**
+ * Set refresh token cookie với security options
+ * @param token - Refresh token string  
+ * @param expiresInSeconds - Token expiration in seconds (default: 1800 = 30 minutes)
+ */
+export const setRefreshTokenCookie = (token: string, expiresInSeconds: number = 1800): void => {
+    const expiresInDays = expiresInSeconds / 86400 // Convert seconds to days
+    Cookies.set(CookieKey.REFRESH_TOKEN, token, {
+        secure: window.location.protocol === 'https:',
+        sameSite: 'strict',
+        expires: expiresInDays,
+        path: '/'
+    })
+}
+
+/**
+ * Get refresh token from cookie
+ */
+export const getRefreshTokenCookie = (): string | undefined => {
+    return Cookies.get(CookieKey.REFRESH_TOKEN)
+}
+
+/**
+ * Remove refresh token cookie
+ */
+export const removeRefreshTokenCookie = (): void => {
+    Cookies.remove(CookieKey.REFRESH_TOKEN, { path: '/' })
+}
+
+/**
+ * Remove all auth cookies (for logout)
+ */
+export const removeAllAuthCookies = (): void => {
+    removeAccessTokenCookie()
+    removeRefreshTokenCookie()
+}
+
+// Default expiry values in SECONDS (matching API response format)
 export const CookieExpiry = {
-    ACCESS_TOKEN_MINUTES: 5,
-    REFRESH_TOKEN_MINUTES: 60
+    ACCESS_TOKEN_SECONDS: 300,    // 5 minutes
+    REFRESH_TOKEN_SECONDS: 1800   // 30 minutes  
 } as const
 
 
@@ -143,7 +230,10 @@ export const WHITE_LIST: WhiteListItem[] = [
 
     { pathname: ROLEMANAGEMENT + '/manage-group-permissions', requestUrl: '/group-permission' },
 
-    { pathname: INTERNAL_WALLET + '/account', requestUrl: '/balance-internal-group' }
+    { pathname: INTERNAL_WALLET + '/account', requestUrl: '/balance-internal-group' },
+    { pathname: FEEMANAGEMENT_V3 + '/fee-management', requestUrl: '/fee/policies' },
+    { pathname: FEEMANAGEMENT_V3 + '/fee-assignment', requestUrl: '/fee/policy-assignments' },
+    { pathname: FEEMANAGEMENT_V3 + '/fee-assignment', requestUrl: '/fee/banks' },
 ]
 
 // ============================================================================
@@ -168,18 +258,18 @@ export const normalizePathname = (pathname: string): string => {
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 
 interface ApiConfig {
-  url: string
-  method: HttpMethod
-  body?: unknown
+    url: string
+    method: HttpMethod
+    body?: unknown
 }
 
 export const callApi = async <TResponse>(
-  baseQuery: ReturnType<typeof fetchBaseQuery>,
-  config: ApiConfig,
-  api: BaseQueryApi,
-  extraOptions: Record<string, unknown>
+    baseQuery: ReturnType<typeof fetchBaseQuery>,
+    config: ApiConfig,
+    api: BaseQueryApi,
+    extraOptions: Record<string, unknown>
 ): Promise<TResponse | null> => {
-  const result = await baseQuery(config, api, extraOptions)
-  if (result.error) return null
-  return result.data as TResponse
+    const result = await baseQuery(config, api, extraOptions)
+    if (result.error) return null
+    return result.data as TResponse
 }

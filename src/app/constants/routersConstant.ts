@@ -16,6 +16,8 @@ export const INTERNAL_WALLET = '/internal-wallet'
 export const STATE_BANK = '/state-bank'
 export const FEEMANAGEMENT_V3 = '/fee-v3'
 export const ROLEMANAGEMENT_V2 = '/role-v2'
+export const WALLETADMINISTRATION = '/wallet-administration'
+export const WITHDRAWHISTORY = '/withdraw-history'
 
 
 
@@ -36,3 +38,5 @@ export const _INTERNAL_WALLET = 'internal-wallet'
 export const _STATE_BANK = 'state-bank'
 export const _FEEMANAGEMENT_V3 = 'fee-v3'
 export const _ROLEMANAGEMENT_V2 = 'role-v2'
+export const _WALLETADMINISTRATION = 'wallet-administration'
+export const _WITHDRAWHISTORY = 'wallet-administration'

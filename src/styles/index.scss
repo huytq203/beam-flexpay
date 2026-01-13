@@ -10,33 +10,112 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-.card-table {
-  .ant-card .ant-card-body {
-    height: 600px;
+
+@layer utilities {
+  // Flex shortcuts
+  .flex-center {
+    @apply flex justify-center items-center;
+  }
+  .flex-between {
+    @apply flex justify-between items-center;
+  }
+  .flex-start {
+    @apply flex justify-start items-center;
+  }
+  .flex-end {
+    @apply flex justify-end items-center;
+  }
+  .flex-col-center {
+    @apply flex flex-col justify-center items-center;
+  }
+
+  // Color shortcuts: text-red = text-red-600
+  .text-red {
+    @apply text-red-600;
+  }
+  .text-green {
+    @apply text-green-600;
+  }
+  .text-yellow {
+    @apply text-yellow-600;
+  }
+  .text-orange {
+    @apply text-orange-600;
+  }
+  .text-gray {
+    @apply text-gray-600;
+  }
+
+  // border
+  .border-red {
+    @apply border-red-500;
+  }
+  .border-green {
+    @apply border-green-500;
+  }
+  .border-blue {
+    @apply border-blue-500;
+  }
+  .border-yellow {
+    @apply border-yellow-500;
+  }
+  .border-orange {
+    @apply border-orange-500;
+  }
+  .border-gray {
+    @apply border-gray-500;
+  }
+
+  // Background shortcuts
+  .bg-red {
+    @apply bg-red-50;
+  }
+  .bg-yellow
+  {
+    @apply bg-yellow-50
+  }
+  .bg-green {
+    @apply bg-green-50;
+  }
+  .bg-blue {
+    @apply bg-blue-50;
+  }
+  .bg-gray {
+    @apply bg-gray-50;
   }
 }
+// .card-table {
+//   .ant-card .ant-card-body {
+//     height: 600px;
+//   }
+// }
 
-.input-number {
-  min-width: 300px;
-  height: 22px !important;
-}
+// .input-number {
+//   min-width: 300px;
+//   height: 22px !important;
+// }
 
-.input-description {
-  height: 22px !important;
-}
+// .input-description {
+//   height: 22px !important;
+// }
 
-.ant-descriptions-item-content {
-  max-height: 54px;
-}
+// .ant-descriptions-item-content {
+//   max-height: 54px;
+// }
 
-.ant-descriptions-item {
-  padding: 0px !important;
-}
+// .ant-descriptions-item {
+//   padding: 0px !important;
+// }
 
-.mb-16 {
-  margin-bottom: 16px;
-}
+// .mb-16 {
+//   margin-bottom: 16px;
+// }
 
-.box-shadow {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+// .box-shadow {
+//   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+// }
+
+
+html {
+  font-size: clamp(12px, 0.75vw, 16px) !important;
 }

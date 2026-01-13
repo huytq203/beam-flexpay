@@ -1,4 +1,3 @@
-import { appName } from '@constants/appConstant'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { enhancedApi as authService } from '@services/cmsService'
 import { enhancedApi as userApi } from '@services/cmsUser'
@@ -89,11 +88,13 @@ const authSlice = createSlice({
     savePermissions: (state, action: PayloadAction<string[]>) => {
       state.profile.permissions = action.payload
     },
-    setAccessToken: (state, action: PayloadAction<string>) => {
-      Cookies.set(CookieKey.ACCESS_TOKEN, action.payload, { expires: CookieExpiry.ACCESS_TOKEN_MINUTES / 1440 })
-      state.accessToken = action.payload
-      // Decode và lấy permissions, roles từ token
-      const tokenInfo = decodeToken(action.payload)
+    setAccessToken: (state, action: PayloadAction<{ token: string; expiresIn?: number }>) => {
+      const { token, expiresIn } = action.payload
+      const expiresInSeconds = expiresIn || CookieExpiry.ACCESS_TOKEN_SECONDS
+      const expiresInDays = expiresInSeconds / 86400
+      Cookies.set(CookieKey.ACCESS_TOKEN, token, { expires: expiresInDays })
+      state.accessToken = token
+      const tokenInfo = decodeToken(token)
       state.profile.permissions = tokenInfo.permissions
       state.profile.roles = tokenInfo.roles
       state.profile.email = tokenInfo.email
@@ -106,9 +107,21 @@ const authSlice = createSlice({
       .addMatcher(
         enhancedAuthApi.endpoints.userLogin.matchFulfilled,
         (state, { payload }) => {
-          const token = (payload as any).accessToken || (payload as any).accessToken
+          const data = payload as any
+          const token = data.accessToken
           if (token) {
-            Cookies.set(CookieKey.ACCESS_TOKEN, token, { expires: CookieExpiry.ACCESS_TOKEN_MINUTES / 1440 })
+            // Sử dụng expiresIn từ API (đơn vị giây), fallback 300 giây
+            const expiresInSeconds = data.expiresIn || CookieExpiry.ACCESS_TOKEN_SECONDS
+            const expiresInDays = expiresInSeconds / 86400
+            Cookies.set(CookieKey.ACCESS_TOKEN, token, { expires: expiresInDays })
+
+            // Lưu refresh token với refreshExpiresIn từ API
+            if (data.refreshToken) {
+              const refreshExpiresInSeconds = data.refreshExpiresIn || CookieExpiry.REFRESH_TOKEN_SECONDS
+              const refreshExpiresInDays = refreshExpiresInSeconds / 86400
+              Cookies.set(CookieKey.REFRESH_TOKEN, data.refreshToken, { expires: refreshExpiresInDays })
+            }
+
             // Decode token để lấy permissions
             const tokenInfo = decodeToken(token)
             return {

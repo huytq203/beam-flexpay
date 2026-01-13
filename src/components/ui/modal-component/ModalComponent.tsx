@@ -6,8 +6,8 @@ interface ModalComponentProps extends ModalProps {
   onOk: () => void
   onCancel: () => void
   confirmLoading?: boolean
-  modalText?: ReactNode
-  title?: string
+  modalText: ReactNode
+  title?: string|ReactNode
   width?:string,
 }
 const ModalComponent = ({
@@ -48,7 +48,7 @@ const ModalComponent = ({
         }
       }}
     >
-      <p>{modalText}</p>
+      <div>{modalText}</div>
     </Modal>
   )
 }

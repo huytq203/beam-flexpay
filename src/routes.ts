@@ -19,7 +19,9 @@ import {
   ROLEMANAGEMENT,
   STATE_BANK,
   FEEMANAGEMENT_V3,
-  ROLEMANAGEMENT_V2
+  ROLEMANAGEMENT_V2,
+  WALLETADMINISTRATION,
+  WITHDRAWHISTORY
 } from '@constants/routersConstant'
 
 import ForgotPassword from '@pages/auth/forgot-password/ForgotPassword'
@@ -95,6 +97,14 @@ import path from 'path'
 import UserManagement from '@pages/role-management-V2/user-management/UserManagement'
 import { PermissionManagement } from '@pages/role-management-V2/permission-management/PermissionManagement'
 import RoleManagement from '@pages/role-management-V2/role-management/RoleManagement'
+import EwalletManagement from '@pages/wallet-administration/e-walletManagement/EwalletManagement'
+import RefundManagement from '@pages/wallet-administration/refund-management/RefundManagement'
+import TransactionManagement from '@pages/wallet-administration/transaction-management/TransactionManagement'
+import DetailUser from '@pages/wallet-administration/e-walletManagement/DetailUser'
+import ConfirmRKYC from '@pages/wallet-administration/confirm-ekyc/ConfirmEKYC'
+import DetailTransaction from '@pages/wallet-administration/transaction-management/DetailTransaction'
+import FrozenTransactions from '@pages/wallet-administration/frozen-transactions/FrozenTransactions'
+import WithdrawHistory from '@pages/wallet-administration/withdraw-history/WithdrawHistory'
 
 const authentication = {
   path: AUTHENTICATION,
@@ -520,10 +530,10 @@ const roleManagementV2 = {
   path: ROLEMANAGEMENT_V2,
   element: createElement(AppLayout),
   errorElement: createElement(NotFound),
-  children:[
+  children: [
     {
-      path:ROLEMANAGEMENT_V2,
-      children:[
+      path: ROLEMANAGEMENT_V2,
+      children: [
         {
           path: ROLEMANAGEMENT_V2 + '/user-account',
           element: createElement(UserManagement)
@@ -532,8 +542,8 @@ const roleManagementV2 = {
       ]
     },
     {
-      path:ROLEMANAGEMENT_V2,
-      children:[
+      path: ROLEMANAGEMENT_V2,
+      children: [
         {
           path: ROLEMANAGEMENT_V2 + '/permission-management',
           element: createElement(PermissionManagement)
@@ -542,8 +552,8 @@ const roleManagementV2 = {
       ]
     },
     {
-      path:ROLEMANAGEMENT_V2,
-      children:[
+      path: ROLEMANAGEMENT_V2,
+      children: [
         {
           path: ROLEMANAGEMENT_V2 + '/role-management',
           element: createElement(RoleManagement)
@@ -554,6 +564,74 @@ const roleManagementV2 = {
   ]
 
 }
+const walletAministration = {
+  path: WALLETADMINISTRATION,
+  element: createElement(AppLayout),
+  errorElement: createElement(NotFound),
+  children: [
+    {
+      path: WALLETADMINISTRATION,
+      children: [
+        {
+          path: WALLETADMINISTRATION + '/e-walletManagement',
+          element: createElement(EwalletManagement)
+        },
+        {
+          path: WALLETADMINISTRATION + '/e-walletManagement/:id',
+          element: createElement(DetailUser)
+        }
+
+      ]
+    },
+    {
+      path: WALLETADMINISTRATION,
+      children: [
+        {
+          path: WALLETADMINISTRATION + '/refund-management',
+          element: createElement(RefundManagement)
+        }
+
+      ]
+    },
+    {
+      path: WALLETADMINISTRATION,
+      children: [
+        {
+          path: WALLETADMINISTRATION + '/transaction-management',
+          element: createElement(TransactionManagement)
+        },
+        {
+          path: WALLETADMINISTRATION + '/transaction-management/:id',
+          element: createElement(DetailTransaction)
+        }
+
+      ]
+    },
+    {
+      path: WALLETADMINISTRATION,
+      children: [
+        {
+          path: WALLETADMINISTRATION + '/confirm-eKYC',
+          element: createElement(ConfirmRKYC)
+        },
+      ]
+    },
+    {
+      path: WALLETADMINISTRATION,
+      children: [
+        {
+          path: WALLETADMINISTRATION + '/frozen-transactions',
+          element: createElement(FrozenTransactions)
+        },
+      ]
+    },
+    {
+      path: WALLETADMINISTRATION + '/withdraw-history',
+      element: createElement(WithdrawHistory)
+    }
+  ]
+}
+
 export const WalletRoutes = createBrowserRouter([
   authentication,
   defaultRouter,
@@ -567,5 +645,6 @@ export const WalletRoutes = createBrowserRouter([
   repaymentAndDisburse,
   internalWallet,
   feeManagementV3,
-  roleManagementV2
+  roleManagementV2,
+  walletAministration,
 ])

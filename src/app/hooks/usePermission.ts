@@ -132,21 +132,21 @@ const MappingRouterPermission: IMapping[] = [
     permission: "FEE:FULL"
   },
   {
-    pathName:[
+    pathName: [
       ROLEMANAGEMENT_V2 + '/user-account',
       ROLEMANAGEMENT_V2 + '/permission-management',
       ROLEMANAGEMENT_V2 + '/role-management'
     ],
-    permission:'ROLE:FULL'
+    permission: 'ROLE:FULL'
   },
-  
+
 ]
 
 const usePermission = (): boolean => {
   const location = useLocation()
   const [isAccess, setAccess] = useState<boolean>(true)
   const { permissions } = useAppSelector((state) => state.auth.profile)
- 
+
 
   const getPermissionAccess = (): boolean => {
     if (!permissions || permissions.length === 0) {
@@ -173,7 +173,10 @@ const usePermission = (): boolean => {
         ) &&
         hasPermission(item.permission)
     )
-
+    if (!result) {
+      return true
+    }
+    console.log(result)
     return !!result
   }
 

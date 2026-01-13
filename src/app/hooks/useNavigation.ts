@@ -10,17 +10,14 @@ const useNavigationEw = () => {
     profile: { permissions }
   } = useAppSelector((state) => state.auth)
 
-  // Create a permission check map for O(1) lookups instead of O(n) array searches
   const permissionMap = useMemo(() => {
     const map = new Set(permissions)
     return {
       hasPermission: (permission: string | undefined): boolean => {
         if (!permission) return false
 
-        // API returns: "EWALLET:FEE:FULL", navigation requires: "FEE:FULL"
         const checkPermission = (map: Set<string>, permission: string) => {
           for (const value of map) {
-            // Check exact match OR if user permission contains/ends with required permission
             if (
               value === permission ||
               value.endsWith(`:${permission}`) ||
@@ -53,27 +50,28 @@ const useNavigationEw = () => {
 
     for (let i = 0; i < navigationItems.length; i++) {
       const item = navigationItems[i]
-      // Check if item has direct permission
+
+      // 1. Item có permission và user có quyền đó → push toàn bộ (bao gồm children)
       if (item.permission && permissionMap.hasPermission(item.permission)) {
         result.push(item)
         continue
       }
-      // Process children if item doesn't have direct permission
+
+      // 2. Item KHÔNG có permission HOẶC user không có quyền → cần lọc children
       if (item.children && item.children.length > 0) {
         const filteredChildren: ItemTypeCustom[] = []
 
         for (let j = 0; j < item.children.length; j++) {
           const child = item.children[j]
-          // console.log(permissionMap.hasPermission(child.permission))
+
+          // Child chỉ được push nếu: không có permission HOẶC user có quyền
           if (
-            child &&
-            child.permission &&
+            !child.permission ||
             permissionMap.hasPermission(child.permission)
           ) {
             filteredChildren.push(child)
           }
         }
-        // console.log(filteredChildren)
 
         if (filteredChildren.length > 0) {
           result.push({
@@ -81,13 +79,15 @@ const useNavigationEw = () => {
             children: filteredChildren
           })
         }
+      } else if (!item.permission) {
+        // Item không có children và không có permission → push
+        result.push(item)
       }
     }
 
     return result
   }
 
-  // Use memoization to prevent unnecessary recalculations
   const navigation = useMemo(() => getNavigation(), [permissions])
 
   return [navigation, getNavigation]

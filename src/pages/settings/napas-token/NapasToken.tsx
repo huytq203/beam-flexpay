@@ -1,6 +1,7 @@
 import { SearchOutlined } from '@ant-design/icons'
 import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER, appName } from '@constants/appConstant'
+import { GUTTER } from '@constants/appConstant'
+import { getAccessTokenCookie } from '@configs/fetchBaseQuery.types'
 import { TimeFormat, TimeFullFormat } from '@constants/datetime'
 import {
   usePaymentLinkCancelTokenMutation,
@@ -175,7 +176,7 @@ const NapasToken = () => {
   const fetchBanks = async (query: any) => {
     const endpoint =
       `${import.meta.env.VITE_API_URL}/bank?` + new URLSearchParams(query)
-    const accessToken = localStorage.getItem(appName)
+    const accessToken = getAccessTokenCookie()
     const response = await fetch(endpoint, {
       method: 'GET',
       headers: {

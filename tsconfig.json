@@ -30,7 +30,7 @@
       "@languages/*": ["src/app/languages/*"],
       "@constants/*": ["src/app/constants/*"]
     },
-    // "typeRoots": ["./node_modules/@types", "./src/app/types"]
+    "typeRoots": ["./node_modules/@types", "./src/app/types"]
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

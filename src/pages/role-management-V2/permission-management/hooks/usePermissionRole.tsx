@@ -8,7 +8,7 @@ import {
 } from '@services/apiRole'
 import { useGetRoleQuery } from '@services/apiRoleManagement'
 import { DataRoleItem } from '@type/roleManagement'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { PermissionManagementColumn } from '../PermissionManagement.column'
 import { UserInfor } from '@type/userManagement'
 import {
@@ -59,12 +59,12 @@ export const usePermissionRole = () => {
   const currentUserRoles: string[] = profile?.roles ?? []
 
   // api
-  const defaultPagination = {
+  const defaultPagination = useMemo(() => ({
     page: page,
     size: pageSize,
     sortBy: 'id',
     sortDirection: 'DESC'
-  }
+  }), [page, pageSize])
   const { data: getRole, refetch } = useGetRoleQuery(defaultPagination)
   const { data: getPermission } = useGetPermissionQuery({})
   const [getMemberOfRole, { isLoading: loadingGetMember }] = useLazyGetMemberOfRoleQuery()
@@ -77,7 +77,7 @@ export const usePermissionRole = () => {
   const [deleteRole] = useDeleteRoleMutation()
 
   // handlers
-  const handleDeleteRole = async () => {
+  const handleDeleteRole =async () => {
     try {
       await deleteRole(idRole).unwrap()
       setModalDialog(false)
@@ -88,7 +88,7 @@ export const usePermissionRole = () => {
     }
   }
 
-  const handlePostRole = async (data: DataRoleItem) => {
+  const handlePostRole =async (data: DataRoleItem) => {
     try {
       await postRole(data).unwrap()
       setOpenModalAdd(false)
@@ -99,7 +99,7 @@ export const usePermissionRole = () => {
     }
   }
 
-  const handleSearch = async (data: SearchFormData) => {
+  const handleSearch =async (data: SearchFormData) => {
     if (!data.keyword) {
       setIsSearchMode(false)
       setSearchData(null)
@@ -121,12 +121,12 @@ export const usePermissionRole = () => {
     } catch (error) { }
   }
 
-  const handleCancel = () => {
+  const handleCancel =() => {
     setSelectRole(undefined)
     setOpenModalPermission(false)
   }
 
-  const handleDeletePermissionAssign = async (permissionNames: string[]) => {
+  const handleDeletePermissionAssign =async (permissionNames: string[]) => {
     try {
       await deletePermissionAssign({
         roleId: idRole,
@@ -139,7 +139,7 @@ export const usePermissionRole = () => {
     }
   }
 
-  const handleGetPermissionAssigned = async (roleId: string) => {
+  const handleGetPermissionAssigned =async (roleId: string) => {
     setIsLoadingDetail(true)
     try {
       const data = await getPermissionAssigned(roleId).unwrap()
@@ -150,8 +150,7 @@ export const usePermissionRole = () => {
       setIsLoadingDetail(false)
     }
   }
-
-  const hanldePostPermission = async (permissionNames: string[]) => {
+  const hanldePostPermission =async (permissionNames: string[]) => {
     try {
       await postPermission({
         roleId: idRole,
@@ -164,7 +163,7 @@ export const usePermissionRole = () => {
     }
   }
 
-  const handleGetPermissionAvailable = async (roleId: string) => {
+  const handleGetPermissionAvailable =async (roleId: string) => {
     setIsLoadingDetail(true)
     try {
       const data = await getPermissionAvailable(roleId).unwrap()
@@ -176,7 +175,7 @@ export const usePermissionRole = () => {
     }
   }
 
-  const handleGetMemberOfRole = async (roleId: string) => {
+  const handleGetMemberOfRole =async (roleId: string) => {
     setIsLoadingDetail(true)
     try {
       const dataMember = await getMemberOfRole(roleId).unwrap()
@@ -188,18 +187,19 @@ export const usePermissionRole = () => {
   }
 
   // computed
-  const currentData = isSearchMode ? searchData : getRole
+  const currentData = useMemo(() => isSearchMode ? searchData : getRole, [isSearchMode, searchData, getRole])
   const totalElements = currentData?.totalElements
 
-  const dataPermission: PermissionItem[] = selectRole?.map((item) => ({ ...item })) ?? []
+  const dataPermission = useMemo(() => selectRole ?? [], [selectRole])
 
-  const dataSource: DataRoleItem[] =
-    currentData?.content.map((item, idx) => ({
+  const dataSource: DataRoleItem[] = useMemo(() => {
+    return currentData?.content.map((item, idx) => ({
       ...item,
       no: idx + 1
     })) ?? []
+  }, [currentData])
 
-  const column = PermissionManagementColumn({
+  const column = useMemo(() => PermissionManagementColumn({
     setOpenModalDetail,
     setOpenModalAdd,
     setModeAction,
@@ -211,7 +211,7 @@ export const usePermissionRole = () => {
     setIdRole,
     setSelectRoleItem,
     currentUserRoles
-  })
+  }), [handleGetMemberOfRole, handleGetPermissionAvailable, handleGetPermissionAssigned, currentUserRoles])
 
   const getTypeFooter = (
     onCancel: () => void,
@@ -230,7 +230,7 @@ export const usePermissionRole = () => {
     )
   })
 
-  const typeText: Partial<Record<ModeAction, JSX.Element>> = {
+  const typeText = useMemo((): Partial<Record<ModeAction, JSX.Element>> => ({
     delete: (
       <span>
         Bạn có chắc chắn muốn xóa nhóm quyền{' '}
@@ -250,7 +250,7 @@ export const usePermissionRole = () => {
         <span className='font-bold'>{selectRoleItem?.name}</span> không?
       </span>
     )
-  }
+  }), [selectRoleItem?.name])
 
   return {
     openModalAdd,

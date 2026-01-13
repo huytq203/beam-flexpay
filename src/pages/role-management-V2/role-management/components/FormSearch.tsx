@@ -3,6 +3,7 @@ import { FormInput, FormSelect } from '@components/form'
 import { useSVG } from '@hooks/useSVG'
 import { useForm } from 'react-hook-form'
 import { ModeAction } from '@pages/role-management-V2/role-management/hooks/useRoleManagement'
+import { BroomIcon } from '@components/icons/common'
 
 export interface SearchFormData {
   roleCode: string
@@ -35,7 +36,7 @@ const FormSearch = ({ setOpenModalAdd, setModeAction, onSearch }: Props) => {
   }
 
   return (
-    <div className='flex w-full gap-3'>
+    <div className='block w-full gap-3 md:flex'>
       <form
         className='flex-1'
         onSubmit={handleSubmit(handleSearch)}
@@ -72,7 +73,7 @@ const FormSearch = ({ setOpenModalAdd, setModeAction, onSearch }: Props) => {
           className='hidden'
         />
       </form>
-      <div className='flex items-end gap-1'>
+      <div className='md:flex grid grid-cols-3   mt-3  justify-end gap-3 items-end md:gap-1'>
         <ButtonComponent
           icon={svg('/icons.svg#hugeicons-search-01')}
           content='Tìm kiếm'
@@ -88,7 +89,7 @@ const FormSearch = ({ setOpenModalAdd, setModeAction, onSearch }: Props) => {
         />
         <ButtonComponent
           type='default'
-          icon={svg('/icons.svg#hugeicons-delete-02')}
+          icon={<BroomIcon size={18}/>}
           content='Xóa lọc'
           onClick={handleClearFilter}
         />
