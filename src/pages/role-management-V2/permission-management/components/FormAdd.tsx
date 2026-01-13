@@ -1,6 +1,7 @@
 import { ButtonComponent, CardComponent } from '@components/common'
 import { FormInput, FormTextArea } from '@components/form'
 import { DataRoleItem } from '@type/roleManagement'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 interface FormData {
@@ -11,10 +12,27 @@ interface FormData {
 interface Props {
   onSubmit?: (data: Omit<DataRoleItem, 'id'> | DataRoleItem) => Promise<void>
   onCancel?: () => void
+  defaultValues?: { name: string; description: string } | null
+  isEdit?: boolean
 }
 
-const FormAdd = ({ onSubmit, onCancel }: Props) => {
-  const { control, handleSubmit } = useForm<FormData>()
+const FormAdd = ({ onSubmit, onCancel, defaultValues, isEdit = false }: Props) => {
+  const { control, handleSubmit, reset } = useForm<FormData>({
+    defaultValues: {
+      name: '',
+      description: ''
+    }
+  })
+
+  // Pre-fill form when editing
+  useEffect(() => {
+    if (defaultValues) {
+      reset({
+        name: defaultValues.name || '',
+        description: defaultValues.description || ''
+      })
+    }
+  }, [defaultValues, reset])
 
   const handleSubmitForm = async (data: FormData) => {
     if (onSubmit) {
@@ -41,6 +59,7 @@ const FormAdd = ({ onSubmit, onCancel }: Props) => {
                   </span>
                 }
                 placeholder='Tên nhóm quyền...'
+                // disabled={isEdit}
               />
               <FormTextArea
                 control={control}
@@ -50,7 +69,7 @@ const FormAdd = ({ onSubmit, onCancel }: Props) => {
               />
               <div className='flex justify-end gap-2 mt-4'>
                 <ButtonComponent type='default' content='Hủy' onClick={onCancel} />
-                <ButtonComponent type='primary' content='Thêm' htmlType='submit' />
+                <ButtonComponent type='primary' content={isEdit ? 'Cập nhật' : 'Thêm'} htmlType='submit' />
               </div>
             </div>
           </form>
@@ -61,3 +80,4 @@ const FormAdd = ({ onSubmit, onCancel }: Props) => {
 }
 
 export default FormAdd
+

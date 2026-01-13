@@ -31,7 +31,6 @@ export const ActionNames: Record<string, string> = {
     UNLOCK: 'Mở khóa',
     ADD: 'Thêm',
     FULL: 'Tất cả với',
-    // Add more actions as needed
 }
 
 /**

@@ -40,11 +40,28 @@ export const PermissionManagement = () => {
     handleCancel,
     handleSearch,
     handlePostRole,
-    handleDeleteRole
+    handleDeleteRole,
+    // New exports for unified permission flow
+    allPermissions,
+    assignedPermissionNames,
+    handleSubmitPermissionChanges,
+    // Exports for edit role
+    editRoleData,
+    setEditRoleData,
+    handlePutRole
   } = usePermissionRole()
 
   const onSubmit = async (data: DataRoleItem | Omit<DataRoleItem, 'id'>) => {
-    await handlePostRole(data as DataRoleItem)
+    if (modeAction === 'edit') {
+      await handlePutRole(data as { name: string; description: string })
+    } else {
+      await handlePostRole(data as DataRoleItem)
+    }
+  }
+
+  const handleCloseAddModal = () => {
+    setOpenModalAdd(false)
+    setEditRoleData(null)
   }
 
   return (
@@ -79,12 +96,19 @@ export const PermissionManagement = () => {
         }
       />
       <ModalComponent
-        title='Thêm quyền'
-        onCancel={() => setOpenModalAdd(false)}
+        title={modeAction === 'edit' ? 'Cập nhật nhóm quyền' : 'Thêm nhóm quyền'}
+        onCancel={handleCloseAddModal}
         onOk={() => { }}
         open={openModalAdd}
         width='35%'
-        modalText={<FormAdd onSubmit={onSubmit} onCancel={() => setOpenModalAdd(false)} />}
+        modalText={
+          <FormAdd 
+            onSubmit={onSubmit} 
+            onCancel={handleCloseAddModal}
+            defaultValues={editRoleData}
+            isEdit={modeAction === 'edit'}
+          />
+        }
         footer={null}
       />
       <ModalComponent
@@ -110,15 +134,16 @@ export const PermissionManagement = () => {
           modeAction === 'edit'
             ? handleDeletePermissionAssign(selectedPermissions)
             : modeAction === 'permission'
-              ? hanldePostPermission(selectedPermissions)
+              ? handleSubmitPermissionChanges(selectedPermissions)
               : {}
         }
         open={openModalPermission}
         modalText={
           <FormPermission
             modeAction={modeAction}
-            dataSource={dataPermission}
+            dataSource={modeAction === 'permission' ? allPermissions : dataPermission}
             onSelectionChange={setSelectedPermissions}
+            assignedPermissionNames={modeAction === 'permission' ? assignedPermissionNames : []}
           />
         }
         loading={isLoadingDetail}

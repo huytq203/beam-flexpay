@@ -1,5 +1,5 @@
 import { CardComponent } from '@components/common'
-import { RoleUserAccount } from '@type/userAccount'
+import { RoleUserAccount } from '@pages/role-management-V2/user-management/constants/userAccount'
 import { UserInfor } from '@type/userManagement'
 import dayjs from 'dayjs'
 
@@ -12,16 +12,16 @@ const FormDetail = ({ selectedUser }: Props) => {
     !selectedUser?.groups || selectedUser.groups.length === 0 ? (
       <p className='col-span-2'>
         <span className='bg-gray-400 text-white p-1 rounded-md'>
-          [Chưa được phân quyền]
+          Chưa được phân quyền
         </span>
       </p>
     ) : (
       selectedUser.groups.map((role) => {
         const label = RoleUserAccount[role as keyof typeof RoleUserAccount]
         return (
-          <p key={role} className='col-span-2'>
+          <p key={role} className=''>
             <span className='bg-blue-500 text-white p-1 rounded-md'>
-              [{label ?? role}]
+              {label ?? role}
             </span>
           </p>
         )
@@ -49,25 +49,25 @@ const FormDetail = ({ selectedUser }: Props) => {
                 <div className='col-span-1'>
                   <h1 className='font-bold'>HỌ VÀ TÊN</h1>
                   <p className='font-medium'>
-                    {`${selectedUser?.firstName ?? ''} ${selectedUser?.lastName ?? ''}`}
+                    {`${selectedUser?.firstName ?? '--'} ${selectedUser?.lastName ?? '--'}`}
                   </p>
                 </div>
                 <div className='col-span-1'>
                   <h1 className='font-bold'>EMAIL</h1>
-                  <p className='font-medium'>{selectedUser?.email}</p>
+                  <p className='font-medium'>{selectedUser?.email??'--'}</p>
                 </div>
                 <div className='col-span-1'>
                   <h1 className='font-bold'>SỐ ĐIỆN THOẠI</h1>
-                  <p className='font-medium'>{selectedUser?.emailVerified}</p>
+                  <p className='font-medium'>{selectedUser?.emailVerified||'--'}</p>
                 </div>
               </div>
             </div>
             <hr className='mt-3' />
             <div className='flex flex-col gap-2 mt-3'>
               <h1 className='font-bold'>THÔNG TIN HỆ THỐNG</h1>
-              <div className='grid grid-cols-3'>
+              <div className='grid grid-cols-3 '>
                 <p className='font-medium col-span-1'>Nhóm quyền:</p>
-                <div className='flex justify-start items-center gap-2'>
+                <div className='flex flex-wrap justify-start items-center gap-2 col-span-2'>
                   {listGroup}
                 </div>
               </div>

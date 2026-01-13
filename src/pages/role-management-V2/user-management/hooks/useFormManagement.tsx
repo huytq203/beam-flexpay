@@ -8,21 +8,23 @@ import { UserInfor } from '@type/userManagement'
 import { useCallback, useMemo, useState } from 'react'
 import { ActionMode } from '../UserManagement'
 import { FormSendEmail } from '../components/FormSendEmail'
-import { RoleManagemenColume } from '../UserManagement.colume'
+import { RoleManagemenColume } from '../configs/UserManagement.colume'
 import dayjs from 'dayjs'
 import { useGetRoleQuery } from '@services/apiRole'
 import { SendOutlined } from '@components/icons/common'
+import { RoleUserAccount } from '../constants/userAccount'
 
 export const useFormManagement = () => {
-  // state
   const [openModalAdd, setOpenModalAdd] = useState(false)
   const [openModalDetail, setOpenModalDetail] = useState(false)
+  const [openModalRoleAssign, setOpenModalRoleAssign] = useState(false)
   const [selectedUser, setSelectedUser] = useState<UserInfor | undefined>(
     undefined
   )
   const [modeAction, setModeAction] = useState<ActionMode>('')
   const [openDialog, setOpenDialog] = useState(false)
   const [isLoadingDetail, setIsLoadingDetail] = useState(false)
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([])
 
   // hook
   const { errorMess } = useMessage()
@@ -41,10 +43,14 @@ export const useFormManagement = () => {
   const roleOptions =
     getRole?.content?.map((role) => ({
       value: role.name,
-      label: role.name
+      label: RoleUserAccount[role.name as keyof typeof RoleUserAccount] ?? role.name,
     })) ?? []
 
   // logic
+
+
+
+
   const dataSource = useMemo(() => {
     return (
       getUser?.content?.map((item: UserInfor, index: number) => ({
@@ -175,7 +181,8 @@ export const useFormManagement = () => {
       handleOpenDetail,
       setOpenModalAdd,
       handleOpenUpdate,
-      setSelectedUser
+      setSelectedUser,
+      setOpenModalRoleAssign
     })
   }, [
     setOpenModalDetail,
@@ -184,7 +191,8 @@ export const useFormManagement = () => {
     handleOpenDetail,
     setOpenModalAdd,
     handleOpenUpdate,
-    setSelectedUser
+    setSelectedUser,
+    setOpenModalRoleAssign
   ])
 
   return {
@@ -192,6 +200,10 @@ export const useFormManagement = () => {
     setOpenModalAdd,
     openModalDetail,
     setOpenModalDetail,
+    openModalRoleAssign,
+    setOpenModalRoleAssign,
+    selectedRoles,
+    setSelectedRoles,
     selectedUser,
     setSelectedUser,
     modeAction,
@@ -209,6 +221,6 @@ export const useFormManagement = () => {
     roleOptions,
 
     handleCloseDetail,
-    handleCloseUpdate
+    handleCloseUpdate,
   }
 }

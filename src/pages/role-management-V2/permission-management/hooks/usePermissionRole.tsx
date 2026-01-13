@@ -1,10 +1,11 @@
 import { ButtonComponent } from '@components/common'
-import { useGetPermissionQuery } from '@services/apiPermission'
+import { useGetPermissionQuery, useLazyGetPermissionQuery } from '@services/apiPermission'
 import {
   useDeleteRoleMutation,
   useLazyGetMemberOfRoleQuery,
   useLazyGetRoleByKeyQuery,
-  usePostRoleMutation
+  usePostRoleMutation,
+  usePutRoleMutation
 } from '@services/apiRole'
 import { useGetRoleQuery } from '@services/apiRoleManagement'
 import { DataRoleItem } from '@type/roleManagement'
@@ -16,7 +17,7 @@ import {
   useLazyGetPermissionAssignQuery,
   useLazyGetPermissionAvailableQuery,
   usePostPermissionAvailableMutation
-} from '@services/apiPermissionAsign'
+} from '@services/apiPermissionAssign'
 import { PermissionItem } from '@type/permissionManagement'
 import { useMessage } from '@hooks/useMessage'
 import { useAppSelector } from '@hooks/hook'
@@ -49,13 +50,15 @@ export const usePermissionRole = () => {
   const [isLoadingDetail, setIsLoadingDetail] = useState(false)
   const [idRole, setIdRole] = useState<string | undefined>(undefined)
   const [searchData, setSearchData] = useState<RoleData | null>(null)
+  const [allPermissions, setAllPermissions] = useState<PermissionItem[]>([])
+  const [assignedPermissionNames, setAssignedPermissionNames] = useState<string[]>([])
+  const [editRoleData, setEditRoleData] = useState<DataRoleItem | null>(null)
 
   // hook
   const { errorMess, successMess } = useMessage()
   const { profile } = useAppSelector((state) => state.auth)
 
-  // Lấy danh sách roles của user hiện tại từ JWT
-  // roles từ JWT có dạng: ["ACCOUNTANT", "SUPER_ADMIN"]
+ 
   const currentUserRoles: string[] = profile?.roles ?? []
 
   // api
@@ -70,8 +73,10 @@ export const usePermissionRole = () => {
   const [getMemberOfRole, { isLoading: loadingGetMember }] = useLazyGetMemberOfRoleQuery()
   const [getPermissionAvailable] = useLazyGetPermissionAvailableQuery()
   const [getPermissionAssigned] = useLazyGetPermissionAssignQuery()
+  const [getAllPermissions] = useLazyGetPermissionQuery()
   const [postPermission] = usePostPermissionAvailableMutation()
   const [postRole] = usePostRoleMutation()
+  const [putRole] = usePutRoleMutation()
   const [deletePermissionAssign] = useDeletePermissionAssignMutation()
   const [searchRole] = useLazyGetRoleByKeyQuery()
   const [deleteRole] = useDeleteRoleMutation()
@@ -93,6 +98,19 @@ export const usePermissionRole = () => {
       await postRole(data).unwrap()
       setOpenModalAdd(false)
       successMess('Thêm nhóm quyền thành công')
+      refetch()
+    } catch (error: any) {
+      errorMess(error?.data?.detail)
+    }
+  }
+
+  const handlePutRole = async (data: { name: string; description: string }) => {
+    if (!editRoleData?.id) return
+    try {
+      await putRole({ id: editRoleData.id, body: data }).unwrap()
+      setOpenModalAdd(false)
+      setEditRoleData(null)
+      successMess('Cập nhật nhóm quyền thành công')
       refetch()
     } catch (error: any) {
       errorMess(error?.data?.detail)
@@ -175,6 +193,61 @@ export const usePermissionRole = () => {
     }
   }
 
+  // Handler for "Phân quyền" button - fetches ALL permissions and marks assigned ones
+  const handleOpenPermissionModal = async (roleId: string) => {
+    setIsLoadingDetail(true)
+    setIdRole(roleId)
+    try {
+      // Fetch all permissions in the system
+      const allPermsData = await getAllPermissions({}).unwrap()
+      setAllPermissions(allPermsData?.content ?? [])
+      
+      // Fetch permissions already assigned to this role
+      const assignedData = await getPermissionAssigned(roleId).unwrap()
+      const assignedNames = (assignedData.data ?? []).map((p: PermissionItem) => p.name)
+      setAssignedPermissionNames(assignedNames)
+    } catch (error) {
+      setAllPermissions([])
+      setAssignedPermissionNames([])
+    } finally {
+      setIsLoadingDetail(false)
+    }
+  }
+
+  // Handler to submit permission changes when OK is clicked (batch mode)
+  const handleSubmitPermissionChanges = async (selectedPermissions: string[]) => {
+    const originalAssigned = new Set(assignedPermissionNames)
+    const newSelected = new Set(selectedPermissions)
+    
+    // Permissions to add (in selected but not in original)
+    const toAdd = selectedPermissions.filter(p => !originalAssigned.has(p))
+    // Permissions to remove (in original but not in selected)
+    const toRemove = assignedPermissionNames.filter(p => !newSelected.has(p))
+    
+    try {
+      // Add new permissions
+      if (toAdd.length > 0) {
+        await postPermission({
+          roleId: idRole,
+          body: { permissionNames: toAdd }
+        }).unwrap()
+      }
+      
+      // Remove unchecked permissions
+      if (toRemove.length > 0) {
+        await deletePermissionAssign({
+          roleId: idRole,
+          body: { permissionNames: toRemove }
+        }).unwrap()
+      }
+      
+      setOpenModalPermission(false)
+      successMess('Cập nhật quyền thành công')
+    } catch (error: any) {
+      errorMess(error?.data?.detail || 'Có lỗi xảy ra')
+    }
+  }
+
   const handleGetMemberOfRole =async (roleId: string) => {
     setIsLoadingDetail(true)
     try {
@@ -210,8 +283,10 @@ export const usePermissionRole = () => {
     handleGetPermissionAssigned,
     setIdRole,
     setSelectRoleItem,
-    currentUserRoles
-  }), [handleGetMemberOfRole, handleGetPermissionAvailable, handleGetPermissionAssigned, currentUserRoles])
+    currentUserRoles,
+    handleOpenPermissionModal,
+    setEditRoleData
+  }), [handleGetMemberOfRole, handleGetPermissionAvailable, handleGetPermissionAssigned, currentUserRoles, handleOpenPermissionModal])
 
   const getTypeFooter = (
     onCancel: () => void,
@@ -286,6 +361,15 @@ export const usePermissionRole = () => {
     handleCancel,
     handleSearch,
     handlePostRole,
-    handleDeleteRole
+    handleDeleteRole,
+    // New exports for unified permission flow
+    allPermissions,
+    assignedPermissionNames,
+    handleOpenPermissionModal,
+    handleSubmitPermissionChanges,
+    // Exports for edit role
+    editRoleData,
+    setEditRoleData,
+    handlePutRole
   }
 }

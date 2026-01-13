@@ -2,7 +2,7 @@ import { CardComponent } from '@components/common'
 import { FormInput, FormSelect } from '@components/form'
 import { mapEnumToSelectOptions } from '@pages/role-management-V2/utils/RoleManagement.utils'
 import { useGetRoleQuery } from '@services/apiRoleManagement'
-import { Status } from '@type/userAccount'
+import { Status, RoleUserAccount } from '@pages/role-management-V2/user-management/constants/userAccount'
 import { UserInfor } from '@type/userManagement'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
@@ -19,7 +19,7 @@ const FormAdd = ({ modeAction, selectedUser }: Props) => {
 
   const roleOptions = roleData?.content?.map((role) => ({
     value: role.name,
-    label: role.name
+    label: RoleUserAccount[role.name as keyof typeof RoleUserAccount] ?? role.name
   })) ?? []
 
   useEffect(() => {

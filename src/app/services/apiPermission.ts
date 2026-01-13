@@ -49,6 +49,7 @@ export const permissionApi = authApiService.injectEndpoints({
 })
 export const {
     useGetPermissionQuery,
+    useLazyGetPermissionQuery,
     usePutPermissionMutation,
     useDeletePermissionMutation,
     usePostPermissionMutation,
