@@ -1,11 +1,11 @@
 import { SnowflakeIcon, StopOutlined, WarningIcon } from '@components/icons/common'
 import { CardComponent, DialogModal, Table } from '@components/common'
 import React from 'react'
-import DialogFreezeWallet from './components/detail-infor/personal/components/DialogFreezeWallet'
 import FormSearch from './components/FormSearch'
 import useEwalletManagement from './hooks/useEwalletManagement'
 import DialogFreeze from '../transaction-management/components/DialogFreeze'
-import DialogDeleteWallet from './components/detail-infor/personal/components/DialogDeleteWallet'
+import DialogDeleteWallet from './components/detail-infor/Personal/components/DialogDeleteWallet'
+import DialogFreezeWallet from './components/detail-infor/Personal/components/DialogFreezeWallet'
 
 const EwalletManagement = () => {
     const {column,dataSource}=useEwalletManagement()

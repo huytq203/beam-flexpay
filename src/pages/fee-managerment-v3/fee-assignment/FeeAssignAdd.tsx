@@ -16,6 +16,7 @@ import { FieldErrors, useForm, UseFormHandleSubmit, UseFormSetValue } from 'reac
 import { feeAssignSchema, FeeAssignType } from './feeAssign.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FeeAssignment } from '@type/feeAssignment'
+import { SaveOutlined } from '@components/icons/common'
 
 interface FormInforAddProps {
   svg: (href: string, options?: { size?: number; width?: number; height?: number; className?: string }) => JSX.Element
@@ -87,12 +88,7 @@ export const FormInforAdd = ({ svg, id, handlePutAssign, handlePostAssign, onPol
           <>
             <div className='flex justify-between items-center mb-3'>
               <p className='font-medium text-lg'>1. Thông tin chung</p>
-              <ButtonComponent
-                form='formAssign'
-                htmlType='submit'
-                content='Thiết lập'
-                icon={svg('/icons.svg#hugeicons-file-add')}
-              />
+             
             </div>
             <form
               id='formAssign'
@@ -115,6 +111,14 @@ export const FormInforAdd = ({ svg, id, handlePutAssign, handlePostAssign, onPol
                   </p>
                 )}
               </div>
+            </div>
+            <div className="flex justify-end">
+               <ButtonComponent
+                form='formAssign'
+                htmlType='submit'
+                content='Lưu lại'
+                icon={<SaveOutlined/>}
+              />
             </div>
           </>
         }

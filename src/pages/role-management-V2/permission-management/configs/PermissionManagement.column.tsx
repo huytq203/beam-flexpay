@@ -9,7 +9,7 @@ import {
   UserOutlined
 } from '@components/icons/common'
 import { ColumnType } from 'antd/lib/table'
-import { ModeAction } from './hooks/usePermissionRole'
+import { ModeAction } from '../hooks/usePermissionRole'
 import { PermissionItem } from '@type/permissionManagement'
 import { DataRoleItem } from '@type/roleManagement'
 import { Permission } from '@constants/permissionConstant'
@@ -97,7 +97,7 @@ export const PermissionManagementColumn = ({
               handleGetPermissionAssigned(record.id)
             }}
           />
-          <ButtonComponent
+          {/* <ButtonComponent
             size='small'
             type='default'
             className='text-yellow-600'
@@ -106,7 +106,7 @@ export const PermissionManagementColumn = ({
               setModeAction('lock')
               setModalDialog(true)
             }}
-          />
+          /> */}
 
           <ButtonComponent
             size='small'

@@ -6,11 +6,11 @@ import { useParams } from 'react-router-dom'
 import { TabContentMap } from './types/Tabs.type'
 import { TAB_CONTENT_MAP } from './constants/Tabs.constant'
 import { BankFilled, CheckCircleFilled, SnowflakeIcon } from '@components/icons/common'
-import DialogAccount from './components/detail-infor/personal/components/DialogAccount'
-import DialogConfirmLinkAccount from './components/detail-infor/personal/components/DialogConfirmLinkAccount'
+import DialogAccount from './components/detail-infor/Personal/components/DialogAccount'
+import DialogConfirmLinkAccount from './components/detail-infor/Personal/components/DialogConfirmLinkAccount'
 import DialogFreeze from '@pages/wallet-administration/transaction-management/components/DialogFreeze'
-import DialigLockAccount from './components/detail-infor/personal/components/DialogLockAccount'
-import DialogFreezeWallet from './components/detail-infor/personal/components/DialogFreezeWallet'
+import DialigLockAccount from './components/detail-infor/Personal/components/DialogLockAccount'
+import DialogFreezeWallet from './components/detail-infor/Personal/components/DialogFreezeWallet'
 
 
 

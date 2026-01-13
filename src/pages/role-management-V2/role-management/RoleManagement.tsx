@@ -1,7 +1,7 @@
 import { CardComponent, DialogModal, ModalComponent, Table } from '@components/common'
 import FormAdd from '@pages/role-management-V2/role-management/components/FormAdd'
 import FormSearch from '@pages/role-management-V2/role-management/components/FormSearch'
-import { RoleManagementColumn } from '@pages/role-management-V2/role-management/RoleManagement.column'
+import { RoleManagementColumn } from '@pages/role-management-V2/role-management/configs/RoleManagement.column'
 import { useRoleManagement } from './hooks/useRoleManagement'
 import { PermissionItem } from '@type/permissionManagement'
 

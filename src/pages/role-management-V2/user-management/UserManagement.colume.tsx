@@ -6,7 +6,7 @@ import {
   LockOutlined,
   UserSwitchOutlined
 } from '@components/icons/common'
-import { ButtonComponent } from '@components/common'
+import { ButtonComponent, TooltipComponent } from '@components/common'
 import { UserInfor } from '@type/userManagement'
 import { ColumnType } from 'antd/lib/table'
 import { ActionMode } from './UserManagement'
@@ -98,13 +98,15 @@ export const RoleManagemenColume = ({
       fixed: 'right',
       render: (_, record) => (
         <div className='flex justify-start items-center gap-1'>
-          <ButtonComponent
-            size='small'
-            type='default'
-            icon={<EditOutlined />}
-            onClick={() => handleOpenUpdate(record)}
-          />
-          <ButtonComponent
+          <TooltipComponent title='Chỉnh sửa'>
+            <ButtonComponent
+              size='small'
+              type='default'
+              icon={<EditOutlined />}
+              onClick={() => handleOpenUpdate(record)}
+            />
+          </TooltipComponent>
+          {/* <ButtonComponent
             size='small'
             type='default'
             className='text-blue-600'
@@ -132,8 +134,8 @@ export const RoleManagemenColume = ({
               setOpenDialog(true)
               setSelectedUser(record)
             }}
-          />
-          <ButtonComponent
+          /> */}
+          {/* <ButtonComponent
             size='small'
             type='default'
             className='text-violet-600'
@@ -143,7 +145,20 @@ export const RoleManagemenColume = ({
               setOpenDialog(true)
               setSelectedUser(record)
             }}
-          />
+          /> */}
+          <TooltipComponent title='Gán nhóm quyền'>
+            <ButtonComponent
+              size='small'
+              type='default'
+              className='text-violet-600'
+              icon={<KeyOutlined />}
+              onClick={() => {
+                setModeAction('resetPass')
+                setOpenDialog(true)
+                setSelectedUser(record)
+              }}
+            />
+          </TooltipComponent>
         </div>
       )
     }

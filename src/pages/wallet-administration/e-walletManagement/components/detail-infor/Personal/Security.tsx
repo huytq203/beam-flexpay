@@ -1,7 +1,7 @@
 import { CardComponent } from '@components/common'
 import React from 'react'
-import AuthMethod from './components/AuthMethod'
 import HistoryLogin from './components/HistoryLogin'
+import AuthMethod from './components/AuthMethod'
 
 const Security = () => {
     return (
