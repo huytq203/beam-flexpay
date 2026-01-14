@@ -1,7 +1,8 @@
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { defineConfig, loadEnv, splitVendorChunkPlugin } from 'vite'
-import vitePluginImp from 'vite-plugin-imp'
+import { defineConfig, loadEnv } from 'vite'
+
+
 import svgr from 'vite-plugin-svgr'
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
@@ -11,17 +12,17 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       svgr(),
-      vitePluginImp({
-        optimize: true,
-        libList: [
-          {
-            libName: 'antd',
-            libDirectory: 'es',
-            style: (name) => `antd/es/${name}/style`
-          }
-        ]
-      }),
-      splitVendorChunkPlugin()
+      // vitePluginImp({
+      //   optimize: true,
+      //   libList: [
+      //     {
+      //       libName: 'antd',
+      //       libDirectory: 'es',
+      //       style: (name) => `antd/es/${name}/style`
+      //     }
+      //   ]
+      // }),
+      // splitVendorChunkPlugin()
       // viteCompression({
       //   verbose: true,
       //   disable: false,
@@ -30,6 +31,19 @@ export default defineConfig(({ mode }) => {
       //   ext: '.gz'
       // })
     ],
+    build: {
+      sourcemap: false,
+      manifest: true,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom', 'react-router-dom'],
+            antd: ['antd'],
+            icons: ['@ant-design/icons', '@phosphor-icons/react', 'lucide-react']
+          }
+        }
+      }
+    },
     resolve: {
       alias: [
         {
@@ -86,32 +100,6 @@ export default defineConfig(({ mode }) => {
       host: true,
       port: +PORT || 8000
     },
-    build: {
-      sourcemap: false,
-      manifest: true,
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            'antd': ['antd'],
-            'antd-charts': ['@ant-design/charts', '@ant-design/plots'],
-            'icons': ['lucide-react', '@phosphor-icons/react', '@ant-design/icons']
-          }
-        }
-      }
-    },
-    optimizeDeps: {
-      include: [
-        'antd',
-        '@ant-design/icons',
-        '@ant-design/charts',
-        '@ant-design/plots',
-        'lucide-react',
-        '@phosphor-icons/react',
-        'ahooks',
-        'dayjs',
-        'react',
-        'react-dom'
-      ]
-    }
+
   }
 })
