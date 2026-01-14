@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "NODE_OPTIONS='--max-old-space-size=4096' vite build",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build",
     "lint": "tsc",
     "api": "npx @rtk-query/codegen-openapi openapi-config.js",
     "preview": "vite preview"
@@ -58,6 +58,7 @@
     "@types/react": "^18.0.24",
     "@types/react-dom": "^18.0.8",
     "@types/react-lazylog": "^4",
+    "cross-env": "^10.1.0",
     "typescript": "^4.6.4"
   },
   "engines": {

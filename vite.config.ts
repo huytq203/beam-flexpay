@@ -32,15 +32,15 @@ export default defineConfig(({ mode }) => {
       // })
     ],
     build: {
-      sourcemap: 'hidden',
+      sourcemap: false,
       manifest: true,
       rollupOptions: {
         output: {
-          // manualChunks: {
-          //   vendor: ['react', 'react-dom', 'react-router-dom'],
-          //   antd: ['antd'],
-          //   icons: ['@ant-design/icons', '@phosphor-icons/react', 'lucide-react']
-          // }
+          manualChunks: {
+            vendor: ['react', 'react-dom', 'react-router-dom'],
+            antd: ['antd'],
+            icons: ['@ant-design/icons', '@phosphor-icons/react', 'lucide-react']
+          }
         }
       }
     },
