@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build",
+    "build": "vite build",
     "lint": "tsc",
     "api": "npx @rtk-query/codegen-openapi openapi-config.js",
     "preview": "vite preview"
