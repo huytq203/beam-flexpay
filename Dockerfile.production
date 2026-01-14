@@ -18,8 +18,8 @@ COPY --chown=node:node . .
 
 RUN NODE_OPTIONS="--max-old-space-size=6144" yarn build
 
-# Install serve globally for production static file serving using yarn
-RUN yarn global add serve
+# Install serve globally for production static file serving
+RUN npm install -g serve
 
 EXPOSE 8000
 
