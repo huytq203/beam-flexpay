@@ -9,8 +9,8 @@ const useTransaction = () => {
   // hook
 const navigate=useNavigate()
 
-  const { params: Pagination, page, pageSize, setPage, setPageSize } = usePagination({
-    defaultSort: 'createdAt'
+  const { params: Pagination, page, pageSize, setPage, setPageSize,sortBy } = usePagination({
+    defaultSort: 'createdAt',
   })
 
   // constants
