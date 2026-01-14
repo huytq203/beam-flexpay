@@ -157,6 +157,7 @@ export const useFormManagement = () => {
     setOpenModalDetail(true)
     setModeAction('add')
   }
+  
   const handleCloseDetail = () => {
     setOpenModalDetail(false)
     setModeAction('')
@@ -173,8 +174,7 @@ export const useFormManagement = () => {
     setModeAction('')
   }
 
-  const column = useMemo(() => {
-    return RoleManagemenColume({
+  const column = RoleManagemenColume({
       setOpenModalDetail,
       setModeAction,
       setOpenDialog,
@@ -184,16 +184,7 @@ export const useFormManagement = () => {
       setSelectedUser,
       setOpenModalRoleAssign
     })
-  }, [
-    setOpenModalDetail,
-    setModeAction,
-    setOpenDialog,
-    handleOpenDetail,
-    setOpenModalAdd,
-    handleOpenUpdate,
-    setSelectedUser,
-    setOpenModalRoleAssign
-  ])
+  
 
   return {
     openModalAdd,

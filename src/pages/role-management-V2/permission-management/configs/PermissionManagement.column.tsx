@@ -22,7 +22,6 @@ interface Props {
   setModeAction: (value: ModeAction) => void
   setModalDialog: (value: boolean) => void
   handleGetMemberOfRole: (value: string) => void
-  handleGetPermissionAvailable: (value: string) => void
   handleGetPermissionAssigned: (value: string) => void
   setIdRole: (value: string) => void
   setSelectRoleItem: (value: PermissionItem) => void
@@ -37,7 +36,6 @@ export const PermissionManagementColumn = ({
   setModalDialog,
   setOpenModalAdd,
   handleGetMemberOfRole,
-  handleGetPermissionAvailable,
   setOpenModalPermission,
   handleGetPermissionAssigned,
   setIdRole,

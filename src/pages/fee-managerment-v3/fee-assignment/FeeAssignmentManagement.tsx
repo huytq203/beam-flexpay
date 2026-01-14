@@ -8,7 +8,7 @@ import {
 } from '@components/common'
 import { FormDatePicker, FormInput, FormSelect } from '@components/form'
 import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
-import { feeAssignColumn } from '@pages/fee-managerment-v3/fee-assignment/FeeAssignmentManagement.column'
+import { feeAssignColumn } from '@pages/fee-managerment-v3/fee-assignment/configs/FeeAssignmentManagement.column'
 import FormAddAssign from '@pages/fee-managerment-v3/fee-assignment/components/FormAddAssign'
 import FormFieldAssign from '@pages/fee-managerment-v3/fee-assignment/components/FormFieldAssign'
 import { FormInforAdd } from '@pages/fee-managerment-v3/fee-assignment/FeeAssignAdd'
