@@ -6,17 +6,17 @@ import {
 } from '@components/common'
 import { useSVG } from '@hooks/useSVG'
 import FormAddFeeComponent from '@pages/fee-managerment-v3/components/FormAddFeeComponent'
-import { ComponentDetail } from '@pages/fee-managerment-v3/fee-assignment/components/ComponentDetail'
-import FormAddAssign from '@pages/fee-managerment-v3/fee-assignment/components/FormAddAssign'
+import FormChoosePolicy from '@pages/fee-managerment-v3/fee-assignment/components/FormChoosePolicy'
 import FormFieldAssign from '@pages/fee-managerment-v3/fee-assignment/components/FormFieldAssign'
-import { useFeeAssignmentForm } from '@pages/fee-managerment-v3/fee-assignment/hook/useFeeAssignmentForm'
 import { useGetFeePolicyByIdQuery } from '@services/apiFeePoliciesServices'
 import React, { useEffect } from 'react'
 import { FieldErrors, useForm, UseFormHandleSubmit, UseFormSetValue } from 'react-hook-form'
-import { feeAssignSchema, FeeAssignType } from './feeAssign.schema'
+import { feeAssignSchema, FeeAssignType } from '@pages/fee-managerment-v3/fee-assignment/schemas/feeAssign.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FeeAssignment } from '@type/feeAssignment'
 import { SaveOutlined } from '@components/icons/common'
+import { useFeeAssignmentForm } from '@pages/fee-managerment-v3/fee-assignment/hook'
+import { ComponentDetail } from '@pages/fee-managerment-v3/fee-assignment/components/ComponentDetail'
 
 interface FormInforAddProps {
   svg: (href: string, options?: { size?: number; width?: number; height?: number; className?: string }) => JSX.Element
@@ -25,6 +25,7 @@ interface FormInforAddProps {
   handlePostAssign: (data: FeeAssignType) => Promise<void>
   onPolicySelected?: (feePolicyId: string) => void
   editData?: FeeAssignment // Data from API for edit mode
+  isCreate?: boolean
 }
 
 const DEFAULT_FORM_VALUES: FeeAssignType = {
@@ -40,7 +41,7 @@ const DEFAULT_FORM_VALUES: FeeAssignType = {
   account: '',
 }
 
-export const FormInforAdd = ({ svg, id, handlePutAssign, handlePostAssign, onPolicySelected, editData }: FormInforAddProps) => {
+export const FormInforAdd = ({ svg, id, handlePutAssign, handlePostAssign, onPolicySelected, editData, isCreate }: FormInforAddProps) => {
   // Create independent form control for this component
   const {
     control,
@@ -54,6 +55,7 @@ export const FormInforAdd = ({ svg, id, handlePutAssign, handlePostAssign, onPol
   })
 
   const [openModal, setOpenModal] = React.useState(false)
+  const [selectedPolicyId, setSelectedPolicyId] = React.useState<string>('')
 
   useEffect(() => {
     if (editData && id) {
@@ -74,8 +76,8 @@ export const FormInforAdd = ({ svg, id, handlePutAssign, handlePostAssign, onPol
 
   const handleLocalPolicySelect = (feePolicyId: string) => {
     setValue('feePolicyId', feePolicyId)
+    setSelectedPolicyId(feePolicyId)
     onPolicySelected?.(feePolicyId)
-    // setOpenModal(false)
   }
 
   const handleReset = () => {
@@ -86,40 +88,41 @@ export const FormInforAdd = ({ svg, id, handlePutAssign, handlePostAssign, onPol
       <CardComponent
         content={
           <>
-            <div className='flex justify-between items-center mb-3'>
-              <p className='font-medium text-lg'>1. Thông tin chung</p>
-             
-            </div>
+
             <form
               id='formAssign'
               onSubmit={handleSubmit(id ? handlePutAssign : handlePostAssign)}
             >
+              <div className='flex justify-between items-center mb-3 '>
+                <p className='font-medium '>1. Thông tin chung</p>
+                <div className='flex flex-col items-end'>
+                  <ButtonComponent
+                    content='Chọn chính sách phí'
+                    onClick={() => setOpenModal(true)}
+                    hidden={id && true || false}
+                    icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
+                  />
+                  {errors.feePolicyId && (
+                    <p className='text-red-500 text-sm mt-1'>
+                      {errors.feePolicyId.message}
+                    </p>
+                  )}
+                </div>
+              </div>
               <FormFieldAssign control={control} setValue={setValue} />
             </form>
-            <div className='flex justify-between mt-4'>
-              <div className='flex justify-center items-center gap-2'></div>
-              <div className='flex flex-col items-end'>
+
+            {isCreate ??
+              <div className="flex justify-end mt-3">
                 <ButtonComponent
-                  content='Chọn chính sách phí'
-                  onClick={() => setOpenModal(true)}
-                  hidden={id && true || false}
-                  icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
+                  form='formAssign'
+                  htmlType='submit'
+                  content='Lưu lại'
+                  icon={<SaveOutlined />}
                 />
-                {errors.feePolicyId && (
-                  <p className='text-red-500 text-sm mt-1'>
-                    {errors.feePolicyId.message}
-                  </p>
-                )}
               </div>
-            </div>
-            <div className="flex justify-end">
-               <ButtonComponent
-                form='formAssign'
-                htmlType='submit'
-                content='Lưu lại'
-                icon={<SaveOutlined/>}
-              />
-            </div>
+
+            }
           </>
         }
       />
@@ -135,7 +138,7 @@ export const FormInforAdd = ({ svg, id, handlePutAssign, handlePostAssign, onPol
           setOpenModal(false)
           handleLocalPolicySelect('')
         }}
-        modalText={<FormAddAssign onSelect={handleLocalPolicySelect} />}
+        modalText={<FormChoosePolicy onSelect={handleLocalPolicySelect} defaultSelectedId={selectedPolicyId} />}
       />
     </>
   )

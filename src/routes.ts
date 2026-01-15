@@ -89,7 +89,7 @@ import {
 import FeeComponentManagement from '@pages/fee-managerment-v3/fee-component-management/FeeComponentManagement'
 import FeeManagement from '@pages/fee-managerment-v3/fee-management/FeeManagement'
 import FeeAssignmentManagement from '@pages/fee-managerment-v3/fee-assignment/FeeAssignmentManagement'
-import FeeAssignAdd from '@pages/fee-managerment-v3/fee-assignment/FeeAssignAdd'
+import FeeAssignAdd from '@pages/fee-managerment-v3/fee-assignment/components/FeeAssignAdd'
 import login2 from '@pages/auth/login/Login'
 import AuthLayout2 from '@components/layout/AuthLayout2'
 import VerifyCode2 from '@pages/auth/verify-code/VerifyCode'

@@ -21,6 +21,7 @@ interface Props {
   setSelectedUser: (record: UserInfor) => void
   setOpenModalAdd: (value: boolean) => void
   setOpenModalRoleAssign: (value: boolean) => void
+  handleOpenRoleAssign: (record: UserInfor) => void
 }
 
 export const RoleManagemenColume = ({
@@ -29,7 +30,7 @@ export const RoleManagemenColume = ({
   setOpenDialog,
   handleOpenDetail,
   setSelectedUser,
-  setOpenModalRoleAssign
+  handleOpenRoleAssign
 }: Props): ColumnType<UserInfor>[] => [
     {
       title: '#',
@@ -75,7 +76,13 @@ export const RoleManagemenColume = ({
       title: 'Trạng thái',
       dataIndex: 'enabled',
       align: 'center',
-      render: (value) => value ?? '--'
+      render(value, record, index) {
+        return(
+          <div className="">
+            {record.enabled? <p className='text-green bg-green border border-green text-xs rounded-md inline-block px-2 font-medium'>Hoạt động</p>: <p className='text-red bg-red border border-red text-xs rounded-md inline-block px-2 font-medium'>Không hoạt động</p>}
+          </div>
+        )
+      },
     },
     {
       title: 'Ngày tạo',
@@ -164,10 +171,7 @@ export const RoleManagemenColume = ({
               type='default'
               className='text-violet-600'
               icon={<ApartmentOutlined />}
-              onClick={() => {
-                setSelectedUser(record)
-                setOpenModalRoleAssign(true)
-              }}
+              onClick={() => handleOpenRoleAssign(record)}
             />
           </TooltipComponent>
         </div>

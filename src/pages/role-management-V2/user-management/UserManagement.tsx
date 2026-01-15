@@ -11,6 +11,7 @@ import FormDetail from '@pages/role-management-V2/user-management/components/For
 import FormRoleAssign from '@pages/role-management-V2/user-management/components/FormRoleAssign'
 import { useFormManagement } from './hooks/useFormManagement'
 import { useAssignRoleUserMutation, useDeleteRoleUserMutation } from '@services/apiUserRoleAssign'
+import { useMessage } from '@hooks/useMessage'
 
 export type ActionMode =
   | 'delete'
@@ -44,13 +45,18 @@ const UserManagement = () => {
     column,
     roleOptions,
     handleCloseDetail,
-    handleCloseUpdate
+    handleCloseUpdate,
+    isLoadingRoles,
+    // isLoadingUserRoles,
+    getRole,
   } = useFormManagement()
 
   const [assignRoleUser] = useAssignRoleUserMutation()
   const [deleteRoleUser] = useDeleteRoleUserMutation()
   const [initialRoleIds, setInitialRoleIds] = useState<string[]>([])
+  const [isLoadingUserRoles, setIsLoadingUserRoles] = useState(false)
 
+  const { errorMess, successMess } = useMessage()
   const handleSelectionChange = (newSelectedIds: string[], initialIds: string[]) => {
     setSelectedRoles(newSelectedIds)
     setInitialRoleIds(initialIds)
@@ -63,7 +69,6 @@ const UserManagement = () => {
     const rolesToRemove = initialRoleIds.filter(id => !selectedRoles.includes(id))
     
     try {
-      // Gọi API thêm role mới
       if (rolesToAdd.length > 0) {
         await assignRoleUser({
           id: selectedUser.id,
@@ -71,7 +76,6 @@ const UserManagement = () => {
         }).unwrap()
       }
       
-      // Gọi API xóa role
       if (rolesToRemove.length > 0) {
         await deleteRoleUser({
           id: selectedUser.id,
@@ -82,8 +86,9 @@ const UserManagement = () => {
       setOpenModalRoleAssign(false)
       setSelectedRoles([])
       setInitialRoleIds([])
-    } catch (error) {
-      console.error('Error updating roles:', error)
+      successMess('Cập nhật thành công')
+    } catch (error:any) {
+      errorMess(error?.data?.detail)
     }
   }
 
@@ -101,6 +106,7 @@ const UserManagement = () => {
       <CardComponent
         content={
           <Table
+            rowKey='id'
             bordered
             scroll={{ x: 'max-content' }}
             size='small'
@@ -141,9 +147,12 @@ const UserManagement = () => {
       <ModalComponent
         title='Gán nhóm quyền'
         modalText={
-          <FormRoleAssign 
-            userId={selectedUser?.id} 
-            onSelectionChange={handleSelectionChange} 
+          <FormRoleAssign
+            userId={selectedUser?.id}
+            onSelectionChange={handleSelectionChange}
+            isLoadingRoles={isLoadingRoles}
+            roleData={getRole}
+            onLoadingUserRolesChange={setIsLoadingUserRoles}
           />
         }
         onCancel={() => {

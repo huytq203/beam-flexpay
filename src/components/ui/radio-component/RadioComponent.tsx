@@ -5,7 +5,7 @@ import React, { ReactNode } from 'react';
 
 // Single Radio Component
 interface RadioComponentProps extends Omit<RadioProps, 'title'> {
-  title: ReactNode;
+  title?: ReactNode;
 }
 
 export const RadioComponent = ({ title, ...rest }: RadioComponentProps) => {

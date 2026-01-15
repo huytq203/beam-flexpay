@@ -60,6 +60,7 @@ const RoleManagement = () => {
       <CardComponent
         content={
           <Table
+            rowKey='id'
             scroll={{ x: 'max-content' }}
             bordered
             columns={column}

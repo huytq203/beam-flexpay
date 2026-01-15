@@ -176,7 +176,6 @@ const usePermission = (): boolean => {
     if (!result) {
       return true
     }
-    console.log(result)
     return !!result
   }
 

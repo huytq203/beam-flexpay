@@ -23,6 +23,7 @@ import { useMessage } from '@hooks/useMessage'
 import { useAppSelector } from '@hooks/hook'
 import { SearchFormData } from '@pages/role-management-V2/permission-management/components/FormSearch'
 import { RoleData } from '@type/roleManagementV2'
+import usePagination from '@hooks/usePagination'
 
 export type ModeAction =
   | 'edit'
@@ -37,13 +38,14 @@ export type ModeAction =
 export const usePermissionRole = () => {
   // state
   const [isSearchMode, setIsSearchMode] = useState(false)
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
-  const [openModalAdd, setOpenModalAdd] = useState(false)
-  const [openModalDetail, setOpenModalDetail] = useState(false)
-  const [openModalPermission, setOpenModalPermission] = useState(false)
-  const [modeAction, setModeAction] = useState<ModeAction>('')
-  const [modalDialog, setModalDialog] = useState(false)
+  
+  const [modalState, setModalState] = useState({
+    add: false,
+    detail: false,
+    permission: false,
+    dialog: false
+  })
+
   const [selectMember, setSelectMember] = useState<UserInfor[] | undefined>(undefined)
   const [selectRole, setSelectRole] = useState<PermissionItem[] | undefined>(undefined)
   const [selectRoleItem, setSelectRoleItem] = useState<PermissionItem | undefined>(undefined)
@@ -53,11 +55,12 @@ export const usePermissionRole = () => {
   const [allPermissions, setAllPermissions] = useState<PermissionItem[]>([])
   const [assignedPermissionNames, setAssignedPermissionNames] = useState<string[]>([])
   const [editRoleData, setEditRoleData] = useState<DataRoleItem | null>(null)
+  const [modeAction, setModeAction] = useState<ModeAction>('')
 
   // hook
   const { errorMess, successMess } = useMessage()
   const { profile } = useAppSelector((state) => state.auth)
-
+  const { page, setPage, pageSize, setPageSize } = usePagination()
  
   const currentUserRoles: string[] = profile?.roles ?? []
 
@@ -71,7 +74,6 @@ export const usePermissionRole = () => {
   const { data: getRole, refetch } = useGetRoleQuery(defaultPagination)
   const { data: getPermission } = useGetPermissionQuery({})
   const [getMemberOfRole, { isLoading: loadingGetMember }] = useLazyGetMemberOfRoleQuery()
-  const [getPermissionAvailable] = useLazyGetPermissionAvailableQuery()
   const [getPermissionAssigned] = useLazyGetPermissionAssignQuery()
   const [getAllPermissions] = useLazyGetPermissionQuery()
   const [postPermission] = usePostPermissionAvailableMutation()
@@ -80,6 +82,12 @@ export const usePermissionRole = () => {
   const [deletePermissionAssign] = useDeletePermissionAssignMutation()
   const [searchRole] = useLazyGetRoleByKeyQuery()
   const [deleteRole] = useDeleteRoleMutation()
+
+  // Modal handlers
+  const setOpenModalAdd = (isOpen: boolean) => setModalState(prev => ({ ...prev, add: isOpen }))
+  const setOpenModalDetail = (isOpen: boolean) => setModalState(prev => ({ ...prev, detail: isOpen }))
+  const setOpenModalPermission = (isOpen: boolean) => setModalState(prev => ({ ...prev, permission: isOpen }))
+  const setModalDialog = (isOpen: boolean) => setModalState(prev => ({ ...prev, dialog: isOpen }))
 
   // handlers
   const handleDeleteRole =async () => {
@@ -168,6 +176,7 @@ export const usePermissionRole = () => {
       setIsLoadingDetail(false)
     }
   }
+
   const hanldePostPermission =async (permissionNames: string[]) => {
     try {
       await postPermission({
@@ -181,28 +190,12 @@ export const usePermissionRole = () => {
     }
   }
 
-  const handleGetPermissionAvailable =async (roleId: string) => {
-    setIsLoadingDetail(true)
-    try {
-      const data = await getPermissionAvailable(roleId).unwrap()
-      setSelectRole(data.data ?? [])
-      setIdRole(roleId)
-    } catch (error) {
-    } finally {
-      setIsLoadingDetail(false)
-    }
-  }
-
-  // Handler for "Phân quyền" button - fetches ALL permissions and marks assigned ones
   const handleOpenPermissionModal = async (roleId: string) => {
     setIsLoadingDetail(true)
     setIdRole(roleId)
     try {
-      // Fetch all permissions in the system
-      const allPermsData = await getAllPermissions({}).unwrap()
-      setAllPermissions(allPermsData?.content ?? [])
+      setAllPermissions(getPermission?.content ?? [])
       
-      // Fetch permissions already assigned to this role
       const assignedData = await getPermissionAssigned(roleId).unwrap()
       const assignedNames = (assignedData.data ?? []).map((p: PermissionItem) => p.name)
       setAssignedPermissionNames(assignedNames)
@@ -214,18 +207,14 @@ export const usePermissionRole = () => {
     }
   }
 
-  // Handler to submit permission changes when OK is clicked (batch mode)
   const handleSubmitPermissionChanges = async (selectedPermissions: string[]) => {
     const originalAssigned = new Set(assignedPermissionNames)
     const newSelected = new Set(selectedPermissions)
     
-    // Permissions to add (in selected but not in original)
     const toAdd = selectedPermissions.filter(p => !originalAssigned.has(p))
-    // Permissions to remove (in original but not in selected)
     const toRemove = assignedPermissionNames.filter(p => !newSelected.has(p))
     
     try {
-      // Add new permissions
       if (toAdd.length > 0) {
         await postPermission({
           roleId: idRole,
@@ -233,7 +222,6 @@ export const usePermissionRole = () => {
         }).unwrap()
       }
       
-      // Remove unchecked permissions
       if (toRemove.length > 0) {
         await deletePermissionAssign({
           roleId: idRole,
@@ -261,6 +249,7 @@ export const usePermissionRole = () => {
 
   // computed
   const currentData = useMemo(() => isSearchMode ? searchData : getRole, [isSearchMode, searchData, getRole])
+
   const totalElements = currentData?.totalElements
 
   const dataPermission = useMemo(() => selectRole ?? [], [selectRole])
@@ -272,13 +261,12 @@ export const usePermissionRole = () => {
     })) ?? []
   }, [currentData])
 
-  const column = useMemo(() => PermissionManagementColumn({
+  const column =  PermissionManagementColumn({
     setOpenModalDetail,
     setOpenModalAdd,
     setModeAction,
     setModalDialog,
     handleGetMemberOfRole,
-    handleGetPermissionAvailable,
     setOpenModalPermission,
     handleGetPermissionAssigned,
     setIdRole,
@@ -286,7 +274,7 @@ export const usePermissionRole = () => {
     currentUserRoles,
     handleOpenPermissionModal,
     setEditRoleData
-  }), [handleGetMemberOfRole, handleGetPermissionAvailable, handleGetPermissionAssigned, currentUserRoles, handleOpenPermissionModal])
+  })
 
   const getTypeFooter = (
     onCancel: () => void,
@@ -328,24 +316,26 @@ export const usePermissionRole = () => {
   }), [selectRoleItem?.name])
 
   return {
-    openModalAdd,
-    setOpenModalAdd,
-    openModalDetail,
-    setOpenModalDetail,
+    openModalAdd: modalState.add,
+    openModalDetail: modalState.detail,
+    openModalPermission: modalState.permission,
+    modalDialog: modalState.dialog,
+    
     modeAction,
-    setModeAction,
-    modalDialog,
-    setModalDialog,
     selectMember,
-    openModalPermission,
-    setOpenModalPermission,
+
     pageSize,
-    setPageSize,
     page,
+    setOpenModalAdd,
+    setOpenModalDetail,
+    setModeAction,
+    setModalDialog,
+    setOpenModalPermission,
+    setPageSize,
     setPage,
+
     dataSource,
     column,
-    getTypeFooter,
     typeText,
     getPermission,
     loadingGetMember,
@@ -354,8 +344,9 @@ export const usePermissionRole = () => {
     dataPermission,
     totalElements,
     currentData,
+    getTypeFooter,
+
     handleGetMemberOfRole,
-    handleGetPermissionAvailable,
     hanldePostPermission,
     handleDeletePermissionAssign,
     handleCancel,

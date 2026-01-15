@@ -3,7 +3,7 @@ import { Modal } from 'antd'
 import { ModalProps } from 'antd/lib'
 interface ModalComponentProps extends ModalProps {
   open: boolean
-  onOk: () => void
+  onOk?: () => void
   onCancel: () => void
   confirmLoading?: boolean
   modalText: ReactNode
