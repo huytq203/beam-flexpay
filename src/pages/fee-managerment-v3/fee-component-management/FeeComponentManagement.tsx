@@ -105,6 +105,7 @@ const FeeComponentManagement = () => {
               columns={columns}
               dataSource={dataSource}
               size='small'
+              bordered
               pagination={{
                 current: page,
                 pageSize: pageSize,

@@ -4,7 +4,8 @@ import { ColumnsType } from "antd/lib/table";
 import { Link, useNavigate, NavigateFunction } from "react-router-dom";
 import { ButtonComponent, TooltipComponent } from "@components/common";
 import { ArrowCounterClockwiseIcon, BroadcastIcon, CheckOutlined, CloseOutlined, DollarOutlined, EyeFilled, FireIcon, PencilLineIcon, SnowflakeIcon } from "@components/icons/common";
-import { StatusKey, StatusType, TransactionKey, TransactionType } from "../constants/Transaction.constant";
+import { StatusConstants, StatusKey, StatusType, TransactionConstants, TransactionKey, TransactionType } from "@pages/wallet-administration/transaction-management/constants/Transaction.constant";
+import { formatNumber,formatCurrency } from "@utils/index";
 const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<TransactionItem> => [
     {
         title: '#',
@@ -71,8 +72,14 @@ const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<Trans
     },
     {
         title: 'Số tiền gốc',
-        dataIndex: 'amount',
-        align: 'center'
+        align: 'center',
+        render(value, record, index) {
+            return(
+                <div className="font-medium">
+                    <p>{formatNumber(record.amount)}</p>
+                </div>
+            )
+        },
     },
     {
         title: 'Phí',
@@ -80,7 +87,7 @@ const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<Trans
         render(value, record, index) {
             return (
                 <div className="text-gray-500">
-                    <p>{record.feeAmount}</p>
+                    <p>{formatNumber(record.feeAmount)}</p>
                 </div>
             )
         },
@@ -94,13 +101,13 @@ const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<Trans
             if (typesKey=='DEBIT') {
                 return (
                     <div className="font-medium text-red">
-                        <p>-{record.grossAmount}</p>
+                        <p>-{formatNumber(record.grossAmount)}</p>
                     </div>
                 )
             }
             return (
                 <div className="font-medium text-green">
-                    <p>+{record.grossAmount}</p>
+                    <p>+{formatNumber(record.grossAmount)}</p>
                 </div>
             );
         },
@@ -143,39 +150,39 @@ const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<Trans
                         <ButtonComponent onClick={() =>
                             navigate(`/wallet-administration/transaction-management/${record.id}`)} size='small' className='bg-blue-50 !border border-blue-600 text-blue-600 hover:!bg-blue-100 hover:!text-blue-600 ' icon={<EyeFilled />} />
                     </TooltipComponent>
-                    {statusKey == 'SUCCESS' &&
+                    {statusKey === StatusConstants.SUCCESS &&
                         <TooltipComponent title='Hoàn tiền'>
                             <ButtonComponent size='small' className='bg-yellow !border border-yellow text-yellow hover:!bg-yellow-100 hover:!text-yellow-600' icon={<ArrowCounterClockwiseIcon />} />
                         </TooltipComponent>
                     }
-                    {(typesKey == 'CREDIT' && statusKey == 'SUCCESS') &&
+                    {(typesKey === TransactionConstants.CREDIT && statusKey === StatusConstants.SUCCESS) &&
 
                         <TooltipComponent title='Callback'>
                             <ButtonComponent size='small' className='bg-gray-50 !border border-gray-600 text-gray-700 hover:!bg-gray-200 hover:!text-gray-700 ' icon={<BroadcastIcon />} />
                         </TooltipComponent>
                     }
-                    {statusKey == 'PROCESSING' &&
+                    {statusKey === StatusConstants.PROCESSING &&
                         <TooltipComponent title='Cập nhật'>
                             <ButtonComponent size='small' className='bg-teal-50 !border border-teal-600 text-teal-700 hover:!bg-teal-100 hover:!text-teal-700 ' icon={<PencilLineIcon />} />
                         </TooltipComponent>
                     }
-                    {statusKey == 'REVIEW' &&
+                    {statusKey === StatusConstants.REVIEW &&
                         <TooltipComponent title='Duyệt'>
                             <ButtonComponent size='small' className='bg-green-50 !border border-green-600 text-green-600 hover:!bg-green-100 hover:!text-green-600 ' icon={<CheckOutlined />} />
                         </TooltipComponent>
 
                     }
-                    {statusKey == 'SUCCESS' &&
+                    {statusKey === StatusConstants.SUCCESS &&
                         <TooltipComponent title='Mở băng'>
                             <ButtonComponent size='small' className='bg-orange-50 !border border-orange-600 text-orange-600 hover:!bg-orange-100 hover:!text-orange-600 ' icon={<FireIcon weight="fill" />} />
                         </TooltipComponent>
                     }
-                    {statusKey == 'SUCCESS' &&
+                    {statusKey === StatusConstants.SUCCESS &&
                         <TooltipComponent title='Đóng băng'>
                             <ButtonComponent size='small' className='bg-cyan-50 !border border-cyan-600 text-cyan-600 hover:!bg-cyan-100 hover:!text-cyan-600 ' icon={<SnowflakeIcon />} />
                         </TooltipComponent>
                     }
-                    {statusKey == 'REVIEW' &&
+                    {statusKey === StatusConstants.REVIEW &&
                         <TooltipComponent title='Từ chối duyệt'>
                             <ButtonComponent size='small' type='default' danger icon={<CloseOutlined />} />
                         </TooltipComponent>

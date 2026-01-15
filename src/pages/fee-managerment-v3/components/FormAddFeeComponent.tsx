@@ -406,6 +406,8 @@ const FormAddFeeComponent = forwardRef<
                       label='Phí cố định (Fixed)'
                       className='col-span-3 flex flex-col gap-2'
                       placeholder='0'
+                      formatter={(value: string | undefined) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                      parser={(value: string | undefined) => value?.replace(/,/g, '') as any}
                       classNameLable='font-medium'
                     />
 
@@ -423,6 +425,8 @@ const FormAddFeeComponent = forwardRef<
                       label='Tối thiểu (Min)'
                       className='col-span-3 flex flex-col gap-2'
                       placeholder='0'
+                      formatter={(value: string | undefined) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                      parser={(value: string | undefined) => value?.replace(/,/g, '') as any}
                       classNameLable='font-medium'
                     />
                     <FormInputNumber
@@ -431,6 +435,8 @@ const FormAddFeeComponent = forwardRef<
                       label='Tối đa (Max)'
                       className='col-span-3 flex flex-col gap-2'
                       placeholder='0'
+                      formatter={(value: string | undefined) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                      parser={(value: string | undefined) => value?.replace(/,/g, '') as any}
                       classNameLable='font-medium'
                     />
                   </div>
