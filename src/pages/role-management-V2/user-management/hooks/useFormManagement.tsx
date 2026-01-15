@@ -38,7 +38,10 @@ export const useFormManagement = () => {
   }
   const { data: getUser } = useGetUserQuery(defaultPagination)
   const [getUserById] = useLazyGetUserByIdQuery()
-  const { data: getRole } = useGetRoleQuery({})
+  const { data: getRole,isLoading: isLoadingRoles  } = useGetRoleQuery({})
+  // const [ userRoleData, { isLoading: isLoadingUserRoles }] = useLazyGetUserRoleQuery()
+
+
 
   const roleOptions =
     getRole?.content?.map((role) => ({
@@ -157,7 +160,7 @@ export const useFormManagement = () => {
     setOpenModalDetail(true)
     setModeAction('add')
   }
-  
+
   const handleCloseDetail = () => {
     setOpenModalDetail(false)
     setModeAction('')
@@ -174,17 +177,24 @@ export const useFormManagement = () => {
     setModeAction('')
   }
 
+  const handleOpenRoleAssign = async (record: UserInfor) => {
+    setSelectedUser(record)
+    setOpenModalRoleAssign(true)
+    // userRoleData(record.id)
+  }
+
   const column = RoleManagemenColume({
-      setOpenModalDetail,
-      setModeAction,
-      setOpenDialog,
-      handleOpenDetail,
-      setOpenModalAdd,
-      handleOpenUpdate,
-      setSelectedUser,
-      setOpenModalRoleAssign
-    })
-  
+    setOpenModalDetail,
+    setModeAction,
+    setOpenDialog,
+    handleOpenDetail,
+    setOpenModalAdd,
+    handleOpenUpdate,
+    setSelectedUser,
+    setOpenModalRoleAssign,
+    handleOpenRoleAssign
+  })
+
 
   return {
     openModalAdd,
@@ -210,6 +220,10 @@ export const useFormManagement = () => {
     column,
     handleOpenUpdate,
     roleOptions,
+    isLoadingRoles,
+    // isLoadingUserRoles,
+    // userRoleData,
+    getRole,
 
     handleCloseDetail,
     handleCloseUpdate,

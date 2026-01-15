@@ -45,14 +45,18 @@ const UserManagement = () => {
     column,
     roleOptions,
     handleCloseDetail,
-    handleCloseUpdate
+    handleCloseUpdate,
+    isLoadingRoles,
+    // isLoadingUserRoles,
+    getRole,
   } = useFormManagement()
 
   const [assignRoleUser] = useAssignRoleUserMutation()
   const [deleteRoleUser] = useDeleteRoleUserMutation()
   const [initialRoleIds, setInitialRoleIds] = useState<string[]>([])
+  const [isLoadingUserRoles, setIsLoadingUserRoles] = useState(false)
 
-  const {errorMess,successMess}=useMessage()
+  const { errorMess, successMess } = useMessage()
   const handleSelectionChange = (newSelectedIds: string[], initialIds: string[]) => {
     setSelectedRoles(newSelectedIds)
     setInitialRoleIds(initialIds)
@@ -143,9 +147,12 @@ const UserManagement = () => {
       <ModalComponent
         title='Gán nhóm quyền'
         modalText={
-          <FormRoleAssign 
-            userId={selectedUser?.id} 
-            onSelectionChange={handleSelectionChange} 
+          <FormRoleAssign
+            userId={selectedUser?.id}
+            onSelectionChange={handleSelectionChange}
+            isLoadingRoles={isLoadingRoles}
+            roleData={getRole}
+            onLoadingUserRolesChange={setIsLoadingUserRoles}
           />
         }
         onCancel={() => {

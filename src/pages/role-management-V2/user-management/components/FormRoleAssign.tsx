@@ -6,28 +6,29 @@ import { DataRoleItem } from '@type/roleManagement'
 import { RoleName } from '@pages/role-management-V2/permission-management/configs/PermissionManagement.config'
 import { useGetUserRoleQuery } from '@services/apiUserRoleAssign'
 
+interface RoleData {
+  content?: DataRoleItem[]
+}
+
 interface Props {
   userId?: string
   onSelectionChange?: (selectedIds: string[], initialIds: string[]) => void
+  isLoadingRoles?: boolean
+  roleData?: RoleData
+  onLoadingUserRolesChange?: (isLoading: boolean) => void
 }
 
-const FormRoleAssign = ({ userId, onSelectionChange }: Props) => {
+const FormRoleAssign = ({ userId, onSelectionChange, roleData, isLoadingRoles, onLoadingUserRolesChange }: Props) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([])
   const [initialRoleIds, setInitialRoleIds] = useState<string[]>([])
   
-  // Gọi API lấy danh sách tất cả role
-  const { data: roleData, isLoading: isLoadingRoles } = useGetRoleQuery({
- 
-    sortBy: 'id',
-    sortDirection: 'DESC'
-  })
-
-  // Gọi API lấy role hiện tại của user
-  const { data: userRoleData, isLoading: isLoadingUserRoles } = useGetUserRoleQuery(userId, {
+  const { data: userRoleData, isLoading: isLoadingUserRoles } = useGetUserRoleQuery(userId!, {
     skip: !userId
   })
+  useEffect(() => {
+    onLoadingUserRolesChange?.(isLoadingUserRoles)
+  }, [isLoadingUserRoles, onLoadingUserRolesChange])
 
-  // Pre-check các role hiện có của user
   useEffect(() => {
     if (userRoleData?.data) {
       const existingRoleIds = userRoleData.data.map((role: any) => role.id)
@@ -35,7 +36,7 @@ const FormRoleAssign = ({ userId, onSelectionChange }: Props) => {
       setInitialRoleIds(existingRoleIds)
     }
   }, [userRoleData])
-  
+
   const columns: ColumnType<DataRoleItem>[] = [
     {
       title: 'Tên nhóm quyền',
@@ -72,7 +73,7 @@ const FormRoleAssign = ({ userId, onSelectionChange }: Props) => {
         dataSource={dataSource}
         size='small'
         bordered
-        loading={isLoadingRoles || isLoadingUserRoles}
+        loading={isLoadingUserRoles }
         pagination={false}
       />
     </div>
@@ -80,4 +81,5 @@ const FormRoleAssign = ({ userId, onSelectionChange }: Props) => {
 }
 
 export default FormRoleAssign
+
 
