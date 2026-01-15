@@ -1,6 +1,6 @@
 import { ButtonComponent, CardComponent, CopyableText, Table, TooltipComponent } from '@components/common'
 import React, { useState } from 'react'
-import Column from './config/DetailTransaction.column'
+import Column from './columns/DetailTransaction.column'
 import ReactJson from 'react-json-view'
 import { LazyLog as LazyLogComponent } from "react-lazylog"
 import { ArrowCounterClockwiseIcon, CheckCircleFilled, CopyIcon, EyeOutlined, PrinterOutlined, TerminalIcon } from '@components/icons/common'

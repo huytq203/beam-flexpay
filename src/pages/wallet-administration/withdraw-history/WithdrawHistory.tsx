@@ -5,7 +5,7 @@ import DialogApproval from './components/DialogApproval'
 import DialogApproveWithdraw from './components/DialogApproveWithdraw'
 import DialogDetailWithdrawHistory from './components/ModalDetailWithdrawHistory'
 import WithdrawHistorySearch from './components/WithdrawHistorySearch'
-import Column from './configs/WithdrawHistory.column'
+import Column from './columns/WithdrawHistory.column'
 
 const WithdrawHistory = () => {
     const statusCards = [

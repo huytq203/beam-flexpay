@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Column } from '../configs/Column'
+import { Column } from '../columns/Column'
 import { TableRows } from '../types/Column.type'
 
 const useEwalletManagement = () => {

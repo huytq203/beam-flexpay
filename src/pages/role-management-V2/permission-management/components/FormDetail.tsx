@@ -1,5 +1,5 @@
 import { CardComponent, Table } from '@components/common'
-import { FormDetailColumn } from '@pages/role-management-V2/permission-management/configs/FormDetail.column'
+import { FormDetailColumn } from '@pages/role-management-V2/permission-management/columns/FormDetail.column'
 import { UserInfor } from '@type/userManagement'
 
 interface Props {

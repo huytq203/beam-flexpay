@@ -1,7 +1,7 @@
 import { CardComponent, DialogModal, TabComponent } from '@components/common'
 import useDetailUser from '@pages/wallet-administration/e-walletManagement/hooks/useDetailUser'
 import React, { Suspense, lazy, useMemo } from 'react'
-import { items } from './configs/Tabs.config'
+import { items } from './columns/Tabs.config'
 import { useParams } from 'react-router-dom'
 import { TabContentMap } from './types/Tabs.type'
 import { TAB_CONTENT_MAP } from './constants/Tabs.constant'

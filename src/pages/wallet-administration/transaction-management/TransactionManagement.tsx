@@ -6,7 +6,7 @@ import DialogFreeze from './components/DialogFreeze'
 import DialogRefund from './components/DialogRefund'
 import FormSearch from './components/FormSearch'
 import UpdateStatusTransaction from './components/UpdateStatusTransaction'
-import Column from './config/Transaction.column'
+import Column from './columns/Transaction.column'
 import useTransaction from './hooks/useTransaction'
 
 const TransactionManagement = () => {

@@ -1,7 +1,7 @@
 import { CardComponent, TabComponent } from '@components/common'
 import LegalRecords from '@pages/wallet-administration/e-walletManagement/components/detail-infor/business/components/LegalRecords'
 import Representative from '@pages/wallet-administration/e-walletManagement/components/detail-infor/business/components/Representative'
-import { businessInfo } from '@pages/wallet-administration/e-walletManagement/configs/Tabs.config'
+import { businessInfo } from '@pages/wallet-administration/e-walletManagement/columns/Tabs.config'
 import React, { useState } from 'react'
 
 

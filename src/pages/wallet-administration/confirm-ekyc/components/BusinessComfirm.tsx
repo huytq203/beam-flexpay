@@ -1,6 +1,6 @@
 import { CardComponent, Input, TabComponent, Table } from '@components/common'
-import { Column } from '@pages/wallet-administration/confirm-ekyc/configs/BusinessConfirm.column'
-import { items } from '@pages/wallet-administration/confirm-ekyc/configs/TabsConfirmEKYC.config'
+import { Column } from '@pages/wallet-administration/confirm-ekyc/columns/BusinessConfirm.column'
+import { items } from '@pages/wallet-administration/confirm-ekyc/columns/TabsConfirmEKYC.config'
 import { TAB_CONTENT_MAP } from '@pages/wallet-administration/confirm-ekyc/constants/TabConfirmEKYC'
 import React, { Suspense, useState } from 'react'
 

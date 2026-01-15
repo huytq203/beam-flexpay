@@ -13,7 +13,7 @@ import { ModeAction } from '../hooks/usePermissionRole'
 import { PermissionItem } from '@type/permissionManagement'
 import { DataRoleItem } from '@type/roleManagement'
 import { Permission } from '@constants/permissionConstant'
-import { RoleName } from './PermissionManagement.config'
+import { RoleName } from '../constants/PermissionManagement.constant'
 
 interface Props {
   setOpenModalDetail: (value: boolean) => void

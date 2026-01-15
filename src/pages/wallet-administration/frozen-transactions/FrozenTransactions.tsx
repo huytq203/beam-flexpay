@@ -3,7 +3,7 @@ import { SnowflakeIcon } from '@components/icons/common'
 import React from 'react'
 import DialogFreeze from '@pages/wallet-administration/transaction-management/components/DialogFreeze'
 import FormSearch from './components/FormSearch'
-import { Column } from './configs/FrozenTransactions.column'
+import { Column } from './columns/FrozenTransactions.column'
 import useFrozenTransactions from './hooks/useFrozenTransactions'
 
 const FrozenTransactions = () => {

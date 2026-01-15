@@ -10,7 +10,7 @@ import {
 import { useGetRoleQuery } from '@services/apiRoleManagement'
 import { DataRoleItem } from '@type/roleManagement'
 import { useMemo, useState } from 'react'
-import { PermissionManagementColumn } from '../configs/PermissionManagement.column'
+import { PermissionManagementColumn } from '../columns/PermissionManagement.column'
 import { UserInfor } from '@type/userManagement'
 import {
   useDeletePermissionAssignMutation,
