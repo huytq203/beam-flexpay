@@ -190,16 +190,12 @@ export const usePermissionRole = () => {
     }
   }
 
-  // Handler for "Phân quyền" button - fetches ALL permissions and marks assigned ones
   const handleOpenPermissionModal = async (roleId: string) => {
     setIsLoadingDetail(true)
     setIdRole(roleId)
     try {
-      // Fetch all permissions in the system
-      const allPermsData = await getAllPermissions({}).unwrap()
-      setAllPermissions(allPermsData?.content ?? [])
+      setAllPermissions(getPermission?.content ?? [])
       
-      // Fetch permissions already assigned to this role
       const assignedData = await getPermissionAssigned(roleId).unwrap()
       const assignedNames = (assignedData.data ?? []).map((p: PermissionItem) => p.name)
       setAssignedPermissionNames(assignedNames)
@@ -211,18 +207,14 @@ export const usePermissionRole = () => {
     }
   }
 
-  // Handler to submit permission changes when OK is clicked (batch mode)
   const handleSubmitPermissionChanges = async (selectedPermissions: string[]) => {
     const originalAssigned = new Set(assignedPermissionNames)
     const newSelected = new Set(selectedPermissions)
     
-    // Permissions to add (in selected but not in original)
     const toAdd = selectedPermissions.filter(p => !originalAssigned.has(p))
-    // Permissions to remove (in original but not in selected)
     const toRemove = assignedPermissionNames.filter(p => !newSelected.has(p))
     
     try {
-      // Add new permissions
       if (toAdd.length > 0) {
         await postPermission({
           roleId: idRole,
@@ -230,7 +222,6 @@ export const usePermissionRole = () => {
         }).unwrap()
       }
       
-      // Remove unchecked permissions
       if (toRemove.length > 0) {
         await deletePermissionAssign({
           roleId: idRole,
