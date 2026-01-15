@@ -1,4 +1,3 @@
-import { addWaterWave } from '@antv/g2plot'
 import {
   ButtonComponent,
   CardComponent,
@@ -6,12 +5,9 @@ import {
   ModalComponent,
   Table
 } from '@components/common'
-import { FormDatePicker, FormInput, FormSelect } from '@components/form'
-import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
-import { feeAssignColumn } from '@pages/fee-managerment-v3/fee-assignment/configs/FeeAssignmentManagement.column'
-import FormAddAssign from '@pages/fee-managerment-v3/fee-assignment/components/FormAddAssign'
+import FormAddAssign from '@pages/fee-managerment-v3/fee-assignment/components/FormChoosePolicy'
 import FormFieldAssign from '@pages/fee-managerment-v3/fee-assignment/components/FormFieldAssign'
-import { FormInforAdd } from '@pages/fee-managerment-v3/fee-assignment/FeeAssignAdd'
+import { FormInforAdd } from '@pages/fee-managerment-v3/fee-assignment/components/FeeAssignAdd'
 import {
   useGetAssignQuery,
   useLazyGetAssignSearchQuery,
@@ -22,16 +18,15 @@ import {
 import {
   FeeAssignment,
 } from '@type/feeAssignment'
-import { FeeAssignType } from '@pages/fee-managerment-v3/fee-assignment/feeAssign.schema'
+import { FeeAssignType } from '@pages/fee-managerment-v3/fee-assignment/schemas/feeAssign.schema'
 
 import React, { useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useMessage } from '@hooks/useMessage'
-import { EditOutlined } from '@ant-design/icons'
 import { useSVG } from '@hooks/useSVG'
-import { useGetExamQuery, useGetPermissonQuery } from '@services/testExample'
-
+import { FeeAssignmentManagementColumn } from './configs'
+type ModeAction='ADD'|'UPDATE'|''
 const FeeAssignmentManagement = () => {
   // state
   const [page, setPage] = useState<number>(1)
@@ -41,7 +36,6 @@ const FeeAssignmentManagement = () => {
   const [openModalAdd, setOpenModalAdd] = useState(false)
   const [openModalSelectPolicy, setOpenModalSelectPolicy] = useState(false)
   const [isCreate, setIsCreate] = useState(true)
-
   // call api
 
 
@@ -69,10 +63,11 @@ const FeeAssignmentManagement = () => {
     defaultValues:{
       account:'',
       applyDate:'',
+      applyType:'',
       createDate:''
     }
   })
-  const [postAssign] = usePostAssignMutation()
+  const [postAssign,{isLoading:isPostAssign}] = usePostAssignMutation()
   const [isSearching, setIsSearching] = useState(false)
   const { svg } = useSVG()
 
@@ -106,7 +101,7 @@ const FeeAssignmentManagement = () => {
         successMess('Mở khóa thành công!')
       }
     } catch (error: any) {
-      errorMess(error?.message || 'Có lỗi xảy ra')
+      errorMess(error?.data?.detail || 'Có lỗi xảy ra')
     }
   }
 
@@ -115,11 +110,7 @@ const FeeAssignmentManagement = () => {
   }
 
   const handlePostAssign = async (data: FeeAssignType) => {
-    // Check feePolicyId before submit
-    if (!data.feePolicyId || data.feePolicyId.trim() === '') {
-      errorMess('Vui lòng chọn chính sách phí')
-      return
-    }
+
 
     try {
       const payload = {
@@ -137,7 +128,7 @@ const FeeAssignmentManagement = () => {
       setOpenModalAdd(false)
       reset()
     } catch (error: any) {
-      errorMess(error?.message || 'Có lỗi xảy ra')
+      errorMess(error?.data?.detail || 'Có lỗi xảy ra')
     }
   }
 
@@ -145,7 +136,7 @@ const FeeAssignmentManagement = () => {
     setValue('feePolicyId', feePolicyId)
   }
 
-  const columns = feeAssignColumn({ setOpenModalDelete, setSelectRowId, onToggleStatus: handleToggleStatus, navigate })
+  const columns = FeeAssignmentManagementColumn({ setOpenModalDelete, setSelectRowId, onToggleStatus: handleToggleStatus, navigate })
 
   const listData: FeeAssignment[] = (isSearching ? searchData?.content : dataFeeAssign?.content) || []
 
@@ -195,6 +186,7 @@ const FeeAssignmentManagement = () => {
             <Table
               scroll={{ x: 'max-content' }}
               rowKey='id'
+              bordered
               columns={columns}
               dataSource={dataSource}
               size='small'
@@ -212,15 +204,20 @@ const FeeAssignmentManagement = () => {
         title={'Thêm gán phí'}
         width='70%'
         open={openModalAdd}
-        footer={null}
-        onOk={() => setOpenModalAdd(false)}
+        // footer={null}
+        okButtonProps={{
+          htmlType: 'submit', form: 'formAssign'
+        }}
+        // onOk={handlePostAssign}
         onCancel={() => setOpenModalAdd(false)}
+        confirmLoading={isPostAssign}
         modalText={
           <FormInforAdd
             svg={svg}
             id={undefined}
             handlePutAssign={async () => { }}
             handlePostAssign={handlePostAssign}
+            isCreate={isCreate}
           />
         }
       />

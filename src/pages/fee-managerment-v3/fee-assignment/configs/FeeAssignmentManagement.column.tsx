@@ -6,13 +6,12 @@ import {
   UnlockOutlined
 } from '@components/icons/common'
 import { ButtonComponent, TooltipComponent } from '@components/common'
-import { FeeAssignment } from '@type/feeAssignment'
+import { FeeAssignment, paymentMethodType } from '@type/feeAssignment'
 import { ColumnsType } from 'antd/es/table'
 import Tippy from '@tippyjs/react'
 import { useState } from 'react'
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/themes/light.css'
-import { useNavigate } from 'react-router-dom'
 import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import { formatDate, getEnumLabel } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
 import { serviceType } from '@type/feePoliciesComponent'
@@ -140,7 +139,7 @@ const StatusBadge = ({ status }: { status: string }) => (
   </span>
 )
 
-export const feeAssignColumn = ({
+const FeeAssignColumn = ({
   onToggleStatus,
   navigate,
 }: prop): ColumnsType<FeeAssignment> => {
@@ -148,7 +147,7 @@ export const feeAssignColumn = ({
     {
       title: '#',
       align: 'center' as const,
-      className: 'border border-b-0',
+
       width: 40,
       render: (value, record, index: number) => index + 1
     },
@@ -156,49 +155,50 @@ export const feeAssignColumn = ({
       title: 'Loại giao dịch',
       dataIndex: 'serviceType',
       align: 'center' as const,
-      className: 'border border-b-0 border-l-0',
+
       render: (value, record, index: number) => getEnumLabel(value, serviceType)
     },
     {
       title: 'Phương thức thanh toán',
       dataIndex: 'paymentMethod',
       align: 'center' as const,
-      className: 'border border-b-0 border-l-0',
-      render: (value, record, index: number) => value
+
+      render: (value, record, index: number) =>
+        (paymentMethodType[value as keyof typeof paymentMethodType] ?? '--')
     },
     {
       title: 'Ngân hàng',
       dataIndex: 'bankCode',
       align: 'center' as const,
-      className: 'border border-b-0 border-l-0',
+
       render: (value, record, index: number) => value
     },
     {
       title: 'Loại thẻ',
       dataIndex: 'cardType',
       align: 'center' as const,
-      className: 'border border-b-0 border-l-0',
+
       render: (value, record, index: number) => value
     },
     {
       title: 'Nhóm khách hàng',
       dataIndex: 'customerGroup',
       align: 'center' as const,
-      className: 'border border-b-0 border-l-0',
+
       render: (value, record, index: number) => value
     },
     {
       title: 'Ngày tạo',
       dataIndex: 'createdAt',
       align: 'center' as const,
-      className: 'border border-b-0 border-l-0',
+
       render: (date: string) => formatDate(date)
     },
     {
       title: 'Trạng thái',
       dataIndex: 'status',
       align: 'center' as const,
-      className: 'border border-b-0 border-l-0',
+
       render: (status: string) => <StatusBadge status={status} />
     },
 
@@ -208,13 +208,13 @@ export const feeAssignColumn = ({
       fixed: 'right',
       width: 100,
       align: 'center' as const,
-      className: 'border border-b-0 border-l-0',
+
       render: (value, record: FeeAssignment, index: number) => {
         return (
           <div className='flex gap-1 justify-center'>
-             <TooltipComponent title='Cập nhật'>
+            <TooltipComponent title='Cập nhật'>
               <ButtonComponent
-              size='small'
+                size='small'
                 type='default'
                 icon={<EditOutlined />}
                 onClick={() => {
@@ -224,7 +224,7 @@ export const feeAssignColumn = ({
             </TooltipComponent>
             <TooltipComponent title={record.status === 'ACTIVE' ? 'Khóa' : 'Mở khóa'}>
               <ButtonComponent
-              size='small'
+                size='small'
                 type='default'
                 icon={
                   record.status === 'ACTIVE' ? (
@@ -236,7 +236,7 @@ export const feeAssignColumn = ({
                 onClick={() => onToggleStatus?.(record)}
               />
             </TooltipComponent>
-           
+
             {/* <ApprovalButton
               record={record}
               onApprove={handleAccept}
@@ -248,3 +248,5 @@ export const feeAssignColumn = ({
     }
   ]
 }
+
+export default FeeAssignColumn

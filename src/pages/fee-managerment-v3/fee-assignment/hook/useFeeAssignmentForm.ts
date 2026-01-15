@@ -14,9 +14,9 @@ import {
 import { useGetFeeComponentTierQuery } from '@services/apiFeeComponentTier'
 import { FeeAssignment } from '@type/feeAssignment'
 import { feePolicyComponent } from '@type/feePoliciesComponent'
-import { useFeeComponentForm } from '@pages/fee-managerment-v3/hooks/useFeeComponentForm'
+import { useFeeComponentForm } from '@pages/fee-managerment-v3/fee-component-management/hooks/useFeeComponentForm'
 import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
-import { feeAssignSchema, FeeAssignType } from '../feeAssign.schema'
+import { feeAssignSchema, FeeAssignType } from '../schemas/feeAssign.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 // Form type excludes server-generated fields
@@ -57,10 +57,8 @@ export const useFeeAssignmentForm = () => {
     const [selectedComponent, setSelectedComponent] = useState<feePolicyComponent | null>(null)
     const [componentToDelete, setComponentToDelete] = useState<feePolicyComponent | null>(null)
 
-    // Form ref for FormAddFeeComponent
-    const formRef = useRef<FormRef>(null)
-
     // Hooks
+    const formRef = useRef<FormRef>(null)
     const navigate = useNavigate()
     const { successMess, errorMess } = useMessage()
     const { id } = useParams()
@@ -101,15 +99,9 @@ export const useFeeAssignmentForm = () => {
         updateComponentId,
         setUpdateComponentId,
         handleUpdateFeeComponent,
-        isSubmitting
-    } = useFeeComponentForm({
-        feePolicyId: feePolicyId,
-        onSuccess: () => {
-            setOpenModalDetail(false)
-            setSelectedComponent(null)
-        },
-        setSelectedRow: setSelectedComponent
-    })
+        isSubmitting,
+        setSelectedRow
+    } = useFeeComponentForm()
 
     const combinedInitialData = useMemo(() => {
         if (!selectedComponent) return null

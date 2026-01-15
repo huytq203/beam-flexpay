@@ -1,6 +1,5 @@
-import { FieldBinaryOutlined } from '@ant-design/icons'
 import { FormDatePicker, FormInput, FormSelect } from '@components/form'
-import { FeeAssignType } from '@pages/fee-managerment-v3/fee-assignment/feeAssign.schema'
+import { FeeAssignType } from '@pages/fee-managerment-v3/fee-assignment/schemas/feeAssign.schema'
 import { useGetBankQuery } from '@services/apiFeeBank'
 import {
   bankCodeType,
@@ -32,10 +31,10 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
       setValue("customerGroup", undefined)
     }
     else if (disable === "2") {
-      setValue('account', '')
+      setValue('account', undefined)
     }
     else {
-      setValue('account', '')
+      setValue('account', undefined)
       setValue("customerGroup",undefined)
     }
   }, [disable, setValue])

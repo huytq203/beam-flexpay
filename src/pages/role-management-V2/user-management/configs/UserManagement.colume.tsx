@@ -75,7 +75,13 @@ export const RoleManagemenColume = ({
       title: 'Trạng thái',
       dataIndex: 'enabled',
       align: 'center',
-      render: (value) => value ?? '--'
+      render(value, record, index) {
+        return(
+          <div className="">
+            {record.enabled? <p className='text-green bg-green border border-green text-xs rounded-md inline-block px-2 font-medium'>Hoạt động</p>: <p className='text-red bg-red border border-red text-xs rounded-md inline-block px-2 font-medium'>Không hoạt động</p>}
+          </div>
+        )
+      },
     },
     {
       title: 'Ngày tạo',

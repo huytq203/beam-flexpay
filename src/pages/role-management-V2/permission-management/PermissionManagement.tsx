@@ -77,6 +77,7 @@ export const PermissionManagement = () => {
       <CardComponent
         content={
           <Table
+            rowKey='id'
             scroll={{ x: 'max-content' }}
             bordered
             size='small'

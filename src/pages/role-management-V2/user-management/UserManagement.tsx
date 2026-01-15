@@ -102,6 +102,7 @@ const UserManagement = () => {
       <CardComponent
         content={
           <Table
+            rowKey='id'
             bordered
             scroll={{ x: 'max-content' }}
             size='small'
