@@ -1,8 +1,8 @@
 import React, { ReactNode } from 'react'
 import { Button, ButtonProps } from 'antd'
-interface props extends ButtonProps {
-  onclick?:()=>void,
-  content?: string,
+interface props extends  Omit<ButtonProps, 'content'> {
+  onClick?:()=>void,
+  content?: string|ReactNode,
   icon?: ReactNode,
   type?: "link" | "text" | "default" | "primary" | "dashed" | undefined
   color?: "default" | "primary" | "danger" | "blue" | "purple" | "cyan" | "green" | "magenta" | "pink" | "red" | "orange" | "yellow" | "volcano" | "geekblue" | "lime" | "gold" | undefined

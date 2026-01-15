@@ -9,7 +9,7 @@ import { ButtonComponent, DialogModal } from '@components/common'
 import { PlusOutlined } from '@ant-design/icons'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FeeComponentSchema, FeeComponentType } from '../FeeManagement.schema'
+import { FeeComponentSchema, FeeComponentType } from '@pages/fee-managerment-v3/schemas/FeeManagement.schema'
 import { FormInputNumber, FormSelect } from '@components/form'
 import {
   useDeleteFeeComponentTierMutation,
@@ -247,35 +247,30 @@ const FormAddFeeComponent = forwardRef<
 
   const selectOptions = {
     componentType: [
-      { label: 'Chọn', value: '' },
       ...Object.entries(componentType).map(([key, value]) => ({
         label: value,
         value: key
       }))
     ],
     baseOn: [
-      { label: 'Chọn', value: '' },
       ...Object.entries(baseOn).map(([key, value]) => ({
         label: value,
         value: key
       }))
     ],
     payerType: [
-      { label: 'Chọn', value: '' },
       ...Object.entries(payerType).map(([key, value]) => ({
         label: value,
         value: key
       }))
     ],
     beneficiaryType: [
-      { label: 'Chọn', value: '' },
       ...Object.entries(beneficiaryType).map(([key, value]) => ({
         label: value,
         value: key
       }))
     ],
     roundMode: [
-      { label: 'Chọn', value: '' },
       ...Object.entries(roundMode).map(([key, value]) => ({
         label: value,
         value: key
@@ -302,7 +297,7 @@ const FormAddFeeComponent = forwardRef<
             name='componentType'
             label='Loại phí'
             className='col-span-4 flex flex-col '
-            defaultValue=''
+            
             options={selectOptions.componentType}
             placeholder='Chọn loại phí'
             disabled={isUpdateMode}
@@ -312,9 +307,8 @@ const FormAddFeeComponent = forwardRef<
             name='baseOn'
             label='Tính dựa trên'
             className='col-span-4 flex flex-col'
-            defaultValue=''
+            
             options={isUpdateMode ? selectOptions.baseOn : [
-              { label: 'Chọn', value: '' },
               {
                 ...Object.entries(baseOn).map(([key, value]) => ({
                   label: value,
@@ -328,7 +322,7 @@ const FormAddFeeComponent = forwardRef<
             name='payerType'
             label='Người chịu'
             className='col-span-4 flex flex-col'
-            defaultValue=''
+            
             options={selectOptions.payerType}
             placeholder='Chọn người chịu phí'
             disabled={isUpdateMode}
@@ -338,7 +332,7 @@ const FormAddFeeComponent = forwardRef<
             name='beneficiaryType'
             label='Người hưởng'
             className='col-span-4 flex flex-col'
-            defaultValue=''
+            
             options={selectOptions.beneficiaryType}
             placeholder='Chọn người hưởng phí'
           />
@@ -347,7 +341,7 @@ const FormAddFeeComponent = forwardRef<
             name='roundMode'
             label='Công thức làm tròn'
             className='col-span-4 flex flex-col'
-            defaultValue=''
+            
             options={selectOptions.roundMode}
             placeholder='Chọn công thức làm tròn'
           />
@@ -358,6 +352,7 @@ const FormAddFeeComponent = forwardRef<
             label='Chọn phương thức tính'
             className='col-span-4 flex flex-col'
             options={selectOptions.calculationMethod}
+             disabled={isUpdateMode}
           />}
 
         </div>
@@ -411,6 +406,8 @@ const FormAddFeeComponent = forwardRef<
                       label='Phí cố định (Fixed)'
                       className='col-span-3 flex flex-col gap-2'
                       placeholder='0'
+                      formatter={(value: string | undefined) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                      parser={(value: string | undefined) => value?.replace(/,/g, '') as any}
                       classNameLable='font-medium'
                     />
 
@@ -428,6 +425,8 @@ const FormAddFeeComponent = forwardRef<
                       label='Tối thiểu (Min)'
                       className='col-span-3 flex flex-col gap-2'
                       placeholder='0'
+                      formatter={(value: string | undefined) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                      parser={(value: string | undefined) => value?.replace(/,/g, '') as any}
                       classNameLable='font-medium'
                     />
                     <FormInputNumber
@@ -436,6 +435,8 @@ const FormAddFeeComponent = forwardRef<
                       label='Tối đa (Max)'
                       className='col-span-3 flex flex-col gap-2'
                       placeholder='0'
+                      formatter={(value: string | undefined) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                      parser={(value: string | undefined) => value?.replace(/,/g, '') as any}
                       classNameLable='font-medium'
                     />
                   </div>

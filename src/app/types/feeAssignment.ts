@@ -61,39 +61,42 @@ export interface FeeAssignResponse {
   size: number
   number: number
 }
-export enum bankCodeType {
-  VCB = 'VCB',
-  VPB = 'VPB'
-}
-export enum serviceType {
-  EWALLET_DEPOSIT = 'Nạp tiền ví',
-  EWALLET_WITHDRAWAL = 'Rút tiền ví',
-  EWALLET_TRANSFER_INTERNAL = 'Chuyển tiền nội bộ',
-  EWALLET_TRANSFER_EXTERNAL = 'Chuyển tiền liên ngân hàng',
-  EWALLET_CASHBACK = 'Hoàn tiền',
-  MERCHANT_VA_BILL_COLLECTION = 'Thu hộ VA'
-}
-export enum paymentMethodType {
-  ATM = 'ATM',
-  QR_CODE = 'Quét mã QR',
-  CREDIT_CARD = 'Thẻ tín dụng',
-  BANK_TRANSFER = 'Chuyển khoản ngân hàng',
-  LINKED_ACCOUNT = 'Tài khoản liên kết ',
-  VA = 'Virtual Account (tài khoản ảo)',
+export const bankCodeType ={
+  VCB : 'VCB',
+  VPB : 'VPB'
+}as const;
+export const serviceType ={
+  EWALLET_DEPOSIT : 'Nạp tiền ví',
+  EWALLET_WITHDRAWAL : 'Rút tiền ví',
+  EWALLET_TRANSFER_INTERNAL : 'Chuyển tiền nội bộ',
+  EWALLET_TRANSFER_EXTERNAL : 'Chuyển tiền liên ngân hàng',
+  EWALLET_CASHBACK : 'Hoàn tiền',
+  MERCHANT_VA_BILL_COLLECTION : 'Thu hộ VA'
+}as const;
+export const paymentMethodType ={
+  ATM : 'ATM',
+  QR_CODE : 'Quét mã QR',
+  CREDIT_CARD : 'Thẻ tín dụng',
+  BANK_TRANSFER : 'Chuyển khoản ngân hàng',
+  LINKED_ACCOUNT : 'Tài khoản liên kết ',
+  VA : 'Virtual Account (tài khoản ảo)',
 
-}
-export enum cardTypeType {
-  VISA = 'VISA',
-  
-}
-export enum customerGroupType {
-  VIP = 'VIP',
-  PREMIUM = 'User Premium',
-  MERCHANT = 'User Premium',
-  STANDARD = 'User thường',
-}
-export enum statusType{
-  ACTIVE='Hoạt động',
-  INACTIVE='Không hoạt động',
-}
+}as const;
+export const cardTypeType ={
+  VISA : 'VISA',
+  NAPAS : 'Napas',
+
+}as const;
+export const customerGroupType ={
+  VIP :'VIP',
+  PREMIUM :'User Premium',
+  MERCHANT :'User Premium',
+  STANDARD :'User thường',
+}as const;
+export const statusType ={
+  ACTIVE :'Hoạt động',
+  INACTIVE :'Không hoạt động',
+}as const;
 export type FeeAssignmentResponse = ApiResponse<FeeAssignResponse>
+
+

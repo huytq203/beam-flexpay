@@ -1,0 +1,1 @@
+export type TabContentMap = Record<string, Record<string, React.ReactNode>>

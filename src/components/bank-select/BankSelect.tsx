@@ -1,4 +1,4 @@
-import { appName } from '@constants/appConstant'
+import { getAccessTokenCookie } from '@configs/fetchBaseQuery.types'
 import { PageMeta, ResponseType } from '@type/api'
 import { IBank } from '@type/napasToken'
 import { Select, Spin } from 'antd'
@@ -50,7 +50,7 @@ export function BankSelect({ onSelect }: IProps) {
   const fetchBanks = async (query: any) => {
     const endpoint =
       `${import.meta.env.VITE_API_URL}/bank?` + new URLSearchParams(query)
-    const accessToken = localStorage.getItem(appName)
+    const accessToken = getAccessTokenCookie()
     const response = await fetch(endpoint, {
       method: 'GET',
       headers: {

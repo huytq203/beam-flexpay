@@ -3,11 +3,11 @@ import { Modal } from 'antd'
 import { ModalProps } from 'antd/lib'
 interface ModalComponentProps extends ModalProps {
   open: boolean
-  onOk: () => void
+  onOk?: () => void
   onCancel: () => void
   confirmLoading?: boolean
-  modalText?: ReactNode
-  title?: string
+  modalText: ReactNode
+  title?: string|ReactNode
   width?:string,
 }
 const ModalComponent = ({
@@ -48,7 +48,7 @@ const ModalComponent = ({
         }
       }}
     >
-      <p>{modalText}</p>
+      <div>{modalText}</div>
     </Modal>
   )
 }

@@ -16,9 +16,8 @@ import {
   WarningCircleIcon
 } from '@phosphor-icons/react/dist/ssr'
 import { DialogModal } from '@components/common'
-import Cookies from 'js-cookie'
 import { useLogoutMutation } from '@services/authEndpoints'
-import { CookieKey } from '@configs/fetchBaseQuery.types'
+import { getRefreshTokenCookie, removeRefreshTokenCookie } from '@configs/fetchBaseQuery.types'
 const { Text } = Typography
 
 export default function NavProfile() {
@@ -89,14 +88,14 @@ export default function NavProfile() {
 
   const handleSignout = async () => {
     try {
-      const refreshToken = Cookies.get(CookieKey.REFRESH_TOKEN)
+      const refreshToken = getRefreshTokenCookie()
       if (refreshToken) {
         await logoutApi({ refreshToken }).unwrap()
       }
     } catch (error) {
 
     } finally {
-      Cookies.remove(CookieKey.REFRESH_TOKEN)
+      removeRefreshTokenCookie()
       dispatch(logout())
       // window.location.href = '/auth/login';
     }

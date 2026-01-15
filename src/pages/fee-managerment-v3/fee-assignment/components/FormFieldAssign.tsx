@@ -1,6 +1,5 @@
-import { FieldBinaryOutlined } from '@ant-design/icons'
 import { FormDatePicker, FormInput, FormSelect } from '@components/form'
-import { FeeAssignType } from '@pages/fee-managerment-v3/fee-assignment/feeAssign.schema'
+import { FeeAssignType } from '@pages/fee-managerment-v3/fee-assignment/schemas/feeAssign.schema'
 import { useGetBankQuery } from '@services/apiFeeBank'
 import {
   bankCodeType,
@@ -29,17 +28,20 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
     if (!setValue) return
 
     if (disable === "1") {
-      setValue("customerGroup", "")
+      setValue("customerGroup", undefined)
     }
     else if (disable === "2") {
-      setValue('account', '')
+      setValue('account', undefined)
     }
     else {
-      setValue('account', '')
-      setValue("customerGroup", "")
+      setValue('account', undefined)
+      setValue("customerGroup",undefined)
     }
   }, [disable, setValue])
 
+  const handleChangeApplyType = (val: string) => {
+    setDisable(val)
+  }
   return (
     <div>
       <div className='grid grid-cols-12 gap-3'>
@@ -63,7 +65,7 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
               value: '2'
             }
           ]}
-          onChange={(val: any) => setDisable(val)}
+          onChange={handleChangeApplyType}
         />
         <FormInput
           type='text'
@@ -80,7 +82,6 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
           control={control}
           name='customerGroup'
           options={[
-            { label: 'Chọn', value: '' },
             ...Object.entries(customerGroupType).map(([key, value]) => ({
               label: value,
               value: key
@@ -96,7 +97,6 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
           control={control}
           name='bankCode'
           options={[
-            { label: 'Chọn', value: '' },
             ...(dataBank?.data?.content || []).map((item: any) => ({
               label: item.name,
               value: item.code
@@ -109,7 +109,6 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
           control={control}
           name='serviceType'
           options={[
-            { label: 'Chọn', value: '' },
             ...Object.entries(serviceType).map(([key, value]) => ({
               label: value,
               value: key
@@ -123,7 +122,6 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
           control={control}
           name='paymentMethod'
           options={[
-            { label: 'Chọn', value: '' },
             ...Object.entries(paymentMethodType).map(([key, value]) => ({
               label: value,
               value: key
@@ -136,7 +134,6 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
           control={control}
           name='cardType'
           options={[
-            { label: 'Chọn', value: '' },
             ...Object.entries(cardTypeType).map(([key, value]) => ({
               label: value,
               value: key
@@ -150,7 +147,6 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
           control={control}
           name='status'
           options={[
-            { label: 'Chọn', value: '' },
             ...Object.entries(statusType).map(([key, value]) => ({
               label: value,
               value: key

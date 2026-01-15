@@ -2,7 +2,8 @@ import { BellOutlined } from '@ant-design/icons'
 import ButtonAdd from '@components/button-add/ButtonAdd'
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import SearchBar from '@components/search-bar/SearchBar'
-import { GUTTER, appName } from '@constants/appConstant'
+import { GUTTER } from '@constants/appConstant'
+import { getAccessTokenCookie } from '@configs/fetchBaseQuery.types'
 import { TimeFullFormat } from '@constants/datetime'
 import { useGetListDiscountProductQuery } from '@services/discountProductService'
 import { PageMeta, ResponseType } from '@type/api'
@@ -147,7 +148,7 @@ function ProductDiscountManagement() {
   const fetchDataService = async (query: any) => {
     const endpoint =
       `${import.meta.env.VITE_API_URL}/service?` + new URLSearchParams(query)
-    const accessToken = localStorage.getItem(appName)
+    const accessToken = getAccessTokenCookie()
     const response = await fetch(endpoint, {
       method: 'GET',
       headers: {
@@ -243,7 +244,7 @@ function ProductDiscountManagement() {
     const endpoint =
       `${import.meta.env.VITE_API_URL}/product-type?` +
       new URLSearchParams(query)
-    const accessToken = localStorage.getItem(appName)
+    const accessToken = getAccessTokenCookie()
     const response = await fetch(endpoint, {
       method: 'GET',
       headers: {
@@ -338,7 +339,7 @@ function ProductDiscountManagement() {
     const endpoint =
       `${import.meta.env.VITE_API_URL}/group-product?` +
       new URLSearchParams(query)
-    const accessToken = localStorage.getItem(appName)
+    const accessToken = getAccessTokenCookie()
     const response = await fetch(endpoint, {
       method: 'GET',
       headers: {

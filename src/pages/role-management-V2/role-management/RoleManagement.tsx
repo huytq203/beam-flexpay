@@ -1,40 +1,110 @@
-import { CardComponent, ModalComponent, Table } from '@components/common'
-import { useGetRoleQuery } from '@services/apiRoleManagement'
-import { DataRole, DataRoleItem } from '@type/roleManagement'
-import React, { useState } from 'react'
-import { FormAdd } from './components/FormAdd'
-import FormSearch from './components/FormSearch'
-import { RoleManagementColumn } from './RoleManagement.column'
+import { CardComponent, DialogModal, ModalComponent, Table } from '@components/common'
+import FormAdd from '@pages/role-management-V2/role-management/components/FormAdd'
+import FormSearch from '@pages/role-management-V2/role-management/components/FormSearch'
+import { RoleManagementColumn } from '@pages/role-management-V2/role-management/columns/RoleManagement.column'
+import { useRoleManagement } from './hooks/useRoleManagement'
+import { PermissionItem } from '@type/permissionManagement'
 
-export const RoleManagement = () => {
-    const[openModalAdd,setOpenModalAdd]=useState(false)
+const RoleManagement = () => {
+  // hook
+  const {
+    loadGetRole,
+    dataSource,
+    totalElements,
+    typeText,
+    typeFooter,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    modeAction,
+    setModeAction,
+    openModalAdd,
+    setOpenModalAdd,
+    selectedPermission,
+    setSelectedPermission,
+    openDialog,
+    setOpenDialog,
+    handleSearch,
+    hanldePostPermission,
+    handlePutPermission,
+    handleDeletePermission
+  } = useRoleManagement()
 
+  const column = RoleManagementColumn({
+    setModeAction,
+    setOpenModalAdd,
+    setSelectedPermission,
+    setOpenDialog
+  })
 
-    const deFaultPagination = {
-        page: 1,
-        size: 10,
-        sortBy: 'id',
-        sortDirection: 'DESC'
+  const onSubmit = async (data: PermissionItem | Omit<PermissionItem, 'id' | 'name'>) => {
+    if (modeAction === 'add') {
+      await hanldePostPermission(data as Omit<PermissionItem, 'id'>)
+    } else {
+      await handlePutPermission(data as PermissionItem)
     }
-    const { data: getRole } = useGetRoleQuery(deFaultPagination)
+  }
 
-
-    // logic
-    const dataSource: DataRoleItem[] = getRole?.content.map((item, idx) => ({
-        ...item,
-        no: idx + 1,
-    })) ?? []
-    console.log(getRole)
-    const column = RoleManagementColumn()
-    return (
-        <div className='flex flex-col gap-2'>
-            <CardComponent content={<FormSearch />} />
-            <CardComponent content={
-                <>
-                    <Table bordered size='small' columns={column} dataSource={dataSource} />
-                </>
-            } />
-            <ModalComponent title='Thêm quyền' onCancel={()=>setOpenModalAdd(false)} onOk={()=>{}} open={openModalAdd} width="35%" modalText={<FormAdd/>} />
-        </div>
-    )
+  return (
+    <div className='flex flex-col gap-2'>
+      <CardComponent
+        content={
+          <FormSearch
+            setOpenModalAdd={setOpenModalAdd}
+            setModeAction={setModeAction}
+            onSearch={handleSearch}
+          />
+        }
+      />
+      <CardComponent
+        content={
+          <Table
+            rowKey='id'
+            scroll={{ x: 'max-content' }}
+            bordered
+            columns={column}
+            size='small'
+            dataSource={dataSource}
+            pagination={{
+              current: page,
+              pageSize: pageSize,
+              total: totalElements,
+              showSizeChanger: true,
+              onChange: (newPage, newPageSize) => {
+                setPage(newPage)
+                setPageSize(newPageSize)
+              }
+            }}
+          />
+        }
+      />
+      <ModalComponent
+        title={modeAction === 'update' ? 'Cập nhật quyền' : 'Thêm quyền'}
+        onCancel={() => setOpenModalAdd(false)}
+        onOk={() => { }}
+        open={openModalAdd}
+        width='30%'
+        footer={null}
+        loading={loadGetRole}
+        modalText={
+          <FormAdd
+            modeAction={modeAction}
+            selectedUser={selectedPermission}
+            onSubmit={onSubmit}
+            onCancel={() => setOpenModalAdd(false)}
+          />
+        }
+      />
+      <DialogModal
+        onCancel={() => setOpenDialog(false)}
+        onOk={handleDeletePermission}
+        open={openDialog}
+        content={modeAction && typeText[modeAction]}
+        footer={modeAction && typeFooter[modeAction]}
+      />
+    </div>
+  )
 }
+
+export default RoleManagement

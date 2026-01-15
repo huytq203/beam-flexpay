@@ -44,4 +44,21 @@
             <path stroke-linecap="round" d="M3 12c0 1.616 3.407 2.934 7.675 2.998"></path>
         </g>
     </symbol>
+
+
+    <symbol viewBox="0 0 24 24" id="hugeicons-user-check-01"><!-- Icon from Huge Icons by Hugeicons
+        - undefined -->
+        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+            stroke-width="1.5">
+            <path d="M15 8A5 5 0 1 0 5 8a5 5 0 0 0 10 0"></path>
+            <path d="M3 20a7 7 0 0 1 12-4.899M13 18.5s1.348.507 2 2.5c0 0 3.177-5 6-6"></path>
+        </g>
+    </symbol>
+
+    <symbol viewBox="0 0 24 24" id="hugeicons-undo"><!-- Icon from Huge Icons by Hugeicons -
+        undefined -->
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M3 12a9 9 0 1 0 1.383-4.797m-1.09-4.202l.173 2.054c.124 1.479.186 2.218.668 2.634s1.193.343 2.615.197l2.044-.21"></path>
+    </symbol>
 </svg>

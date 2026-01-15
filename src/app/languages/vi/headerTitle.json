@@ -87,7 +87,16 @@
     "/fee-v3/fee-assignment/edit/*":"Cập nhật gán phí",
     "/fee-v3/fee-assignment":"Quản lý gán phí",
 
-    "/role-v2/admin-account":"Quản lý phân quyền",
-    "/role-v2/role-management":"Quản quyền quản trị"
+    "/role-v2/user-account":"Quản lý phân quyền",
+    "/role-v2/role-management":"Quản lý quyền quản trị",
+    "/role-v2/permission-management":"Quản lý nhóm quyền quản trị",
+
+    "/wallet-administration/e-walletManagement":"Quản lý ví điện tử",
+    "/wallet-administration/refund-management":"Quản lý hoàn tiền",
+    "/wallet-administration/transaction-management":"Quản lý giao dịch ví",
+    "/wallet-administration/transaction-management/*":"Chi tiết giao dịch ",
+    "/wallet-administration/confirm-eKYC":"Duyệt eKYC",
+    "/wallet-administration/withdraw-history":"Quản lý lịch sử giao dịch rút tiền",
+    "/wallet-administration/frozen-transactions":"Quản lý giao dịch phí đóng băng"
   }
 }

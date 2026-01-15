@@ -3,7 +3,7 @@ import { ButtonComponent, TooltipComponent } from '@components/common'
 import { Tooltip } from 'antd'
 import {
   getEnumLabel
-} from '../FeeManagement.utils'
+} from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
 import { beneficiaryType, calculationMethodEnum, componentType, feePolicyComponent, payerType } from '@type/feePoliciesComponent'
 import { ColumnsType } from 'antd/es/table'
 
@@ -28,21 +28,18 @@ export const feeComponentColumns = ({
       dataIndex: 'no',
       width: 60,
       align: 'center' as const,
-      className: 'border border-b-0',
       render: (_: any, __: any, index: number) => index + 1 // Assuming 'no' might not be in the data record itself or we can just use index
     },
     {
       title: 'Loại (Type)',
       dataIndex: 'componentType',
       key: 'componentType',
-      className: ' border border-l-0',
       render: (value: string ) =>  getEnumLabel(value,componentType)
     },
     {
       title: 'Cách tính',
       dataIndex: 'calculationMethod',
       key: 'calculationMethod',
-      className: ' border border-l-0 border-b-0',
       render: (value: string ) =>
          getEnumLabel(value,calculationMethodEnum)
     },
@@ -50,7 +47,6 @@ export const feeComponentColumns = ({
       title: 'Người trả',
       dataIndex: 'payerType',
       key: 'payerType',
-      className: ' border border-l-0 border-b-0',
       render(value:string) {
           return getEnumLabel(value,payerType)
       },
@@ -59,7 +55,6 @@ export const feeComponentColumns = ({
       title: 'Người hưởng',
       dataIndex: 'beneficiaryType',
       key: 'beneficiaryType',
-      className: ' border border-l-0 border-b-0',
       render: (value: string) => getEnumLabel(value,beneficiaryType)
     },
 
@@ -67,12 +62,12 @@ export const feeComponentColumns = ({
       title: 'Thao tác',
       key: 'action',
       width: 50,
-      className: 'border border-l-0 border-b-0',
       align: 'center' as const,
       render: (_: any, record: feePolicyComponent) => (
         <div className='flex gap-1 justify-center'>
           <TooltipComponent title='Cập nhật'>
             <ButtonComponent
+            size='small'
               type='default'
               icon={<EditOutlined />}
               onClick={() => {
@@ -84,6 +79,7 @@ export const feeComponentColumns = ({
           </TooltipComponent>
           <TooltipComponent title='Xóa'>
             <ButtonComponent
+            size='small'
               danger
               type='default'
               icon={<DeleteOutlined/>}

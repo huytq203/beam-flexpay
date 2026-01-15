@@ -12,8 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import "./style2.scss"
 import { useMessage } from '@hooks/useMessage'
-import Cookies from 'js-cookie'
-import { CookieKey, TokenType } from '@configs/fetchBaseQuery.types'
+import { TokenType, setRefreshTokenCookie } from '@configs/fetchBaseQuery.types'
 // Define validation schema
 const loginSchema = z.object({
     username: z
@@ -57,9 +56,12 @@ const Login2 = () => {
             const result = await login({ userLoginDto: values })
 
             if ('data' in result && result.data) {
-               navigate('/') 
-               Cookies.set(CookieKey.REFRESH_TOKEN, result?.data?.[TokenType.REFRESH_TOKEN] || '')
-               
+                navigate('/')
+                // Truyền refreshExpiresIn từ API (đơn vị giây) vào setRefreshTokenCookie
+                const refreshToken = result?.data?.[TokenType.REFRESH_TOKEN] || ''
+                const refreshExpiresIn = result?.data?.[TokenType.REFRESH_EXPIRES_IN] || 1800
+                setRefreshTokenCookie(refreshToken, refreshExpiresIn)
+
             } else if ('error' in result) {
                 const error = result.error as any
                 const errorMessage = error?.data?.message || t`login.failed`
@@ -92,7 +94,7 @@ const Login2 = () => {
         <>
             <form
                 onSubmit={handleSubmit(onFinish)}
-                className='border px-5 py-10 rounded-md shadow-xl md:border-none md:shadow-none md:px-14 md:w-full md:py-0 overflow-auto'
+                className='border px-5 py-10 rounded-md shadow-xl md:border-none md:shadow-none md:px-16 md:w-full md:py-0 overflow-auto'
             // className="relative w-full max-w-[20rem] px-8 py-10 flex flex-col items-center bg-white/30 backdrop-blur-lg border border-white/30 rounded-xl shadow-2xl transition-all duration-300 ease-out hover:backdrop-blur-xl hover:bg-white/30 hover:shadow-[0_25px_60px_rgba(0,0,0,0.25)]" 
             >
                 <div className="flex w-full flex-1 justify-center flex-col gap-3 ">

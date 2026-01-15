@@ -16,6 +16,7 @@ export interface IUserProfile {
   avatar: string
   active?: number
   permissions: string[]
+  roles: string[]
 }
 
 export interface IChangePasswordInput {

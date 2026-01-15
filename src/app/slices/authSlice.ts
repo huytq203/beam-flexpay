@@ -1,4 +1,3 @@
-import { appName } from '@constants/appConstant'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { enhancedApi as authService } from '@services/cmsService'
 import { enhancedApi as userApi } from '@services/cmsUser'
@@ -6,6 +5,7 @@ import { enhancedAuthApi, useLogoutMutation } from '@services/authEndpoints'
 import { IUserProfile } from '@type/auth'
 import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
+import { CookieKey, CookieExpiry } from '@configs/fetchBaseQuery.types'
 const name = 'authSlice'
 
 // Interface cho JWT payload từ Keycloak/OIDC
@@ -27,17 +27,18 @@ interface JwtPayload {
 }
 
 // Helper function để decode token và lấy thông tin
-const decodeToken = (token: string): { permissions: string[], email: string, name: string } => {
+const decodeToken = (token: string): { permissions: string[], roles: string[], email: string, name: string } => {
   try {
     const decoded = jwtDecode<JwtPayload>(token)
     return {
-      permissions: decoded.permissions || decoded.roles || [],
+      permissions: decoded.permissions || [],
+      roles: decoded.roles || [],
       email: decoded.email || decoded.preferred_username || decoded.sub || '',
       name: decoded.name || ''
     }
   } catch (error) {
     console.error('Error decoding token:', error)
-    return { permissions: [], email: '', name: '' }
+    return { permissions: [], roles: [], email: '', name: '' }
   }
 }
 
@@ -47,12 +48,12 @@ export interface IAuthState {
   profile: IUserProfile
 }
 
-// Lấy token từ localStorage và decode permissions khi app khởi tạo
-const storedToken = localStorage.getItem(appName)
-const initialTokenInfo = storedToken ? decodeToken(storedToken) : { permissions: [], email: '', name: '' }
-const refresh = Cookies.get('refresh-token')
+// Lấy token từ cookie và decode permissions khi app khởi tạo
+const storedToken = Cookies.get(CookieKey.ACCESS_TOKEN)
+const initialTokenInfo = storedToken ? decodeToken(storedToken) : { permissions: [], roles: [], email: '', name: '' }
+const refresh = Cookies.get(CookieKey.REFRESH_TOKEN)
 const initialState: IAuthState = {
-  accessToken: storedToken,
+  accessToken: storedToken ?? null,
   refreshToken: '',
   profile: {
     id: 0,
@@ -65,7 +66,8 @@ const initialState: IAuthState = {
     type: '',
     phoneNumber: '',
     avatar: '',
-    permissions: initialTokenInfo.permissions
+    permissions: initialTokenInfo.permissions,
+    roles: initialTokenInfo.roles
   }
 }
 
@@ -76,7 +78,8 @@ const authSlice = createSlice({
   reducers: {
     logout: () => {
 
-      localStorage.removeItem(appName)
+      Cookies.remove(CookieKey.ACCESS_TOKEN)
+      Cookies.remove(CookieKey.REFRESH_TOKEN)
       return {
         ...initialState,
         accessToken: null
@@ -85,12 +88,15 @@ const authSlice = createSlice({
     savePermissions: (state, action: PayloadAction<string[]>) => {
       state.profile.permissions = action.payload
     },
-    setAccessToken: (state, action: PayloadAction<string>) => {
-      localStorage.setItem(appName, action.payload)
-      state.accessToken = action.payload
-      // Decode và lấy permissions từ token
-      const tokenInfo = decodeToken(action.payload)
+    setAccessToken: (state, action: PayloadAction<{ token: string; expiresIn?: number }>) => {
+      const { token, expiresIn } = action.payload
+      const expiresInSeconds = expiresIn || CookieExpiry.ACCESS_TOKEN_SECONDS
+      const expiresInDays = expiresInSeconds / 86400
+      Cookies.set(CookieKey.ACCESS_TOKEN, token, { expires: expiresInDays })
+      state.accessToken = token
+      const tokenInfo = decodeToken(token)
       state.profile.permissions = tokenInfo.permissions
+      state.profile.roles = tokenInfo.roles
       state.profile.email = tokenInfo.email
       state.profile.fullName = tokenInfo.name
     }
@@ -101,9 +107,21 @@ const authSlice = createSlice({
       .addMatcher(
         enhancedAuthApi.endpoints.userLogin.matchFulfilled,
         (state, { payload }) => {
-          const token = (payload as any).accessToken || (payload as any).accessToken
+          const data = payload as any
+          const token = data.accessToken
           if (token) {
-            localStorage.setItem(appName, token)
+            // Sử dụng expiresIn từ API (đơn vị giây), fallback 300 giây
+            const expiresInSeconds = data.expiresIn || CookieExpiry.ACCESS_TOKEN_SECONDS
+            const expiresInDays = expiresInSeconds / 86400
+            Cookies.set(CookieKey.ACCESS_TOKEN, token, { expires: expiresInDays })
+
+            // Lưu refresh token với refreshExpiresIn từ API
+            if (data.refreshToken) {
+              const refreshExpiresInSeconds = data.refreshExpiresIn || CookieExpiry.REFRESH_TOKEN_SECONDS
+              const refreshExpiresInDays = refreshExpiresInSeconds / 86400
+              Cookies.set(CookieKey.REFRESH_TOKEN, data.refreshToken, { expires: refreshExpiresInDays })
+            }
+
             // Decode token để lấy permissions
             const tokenInfo = decodeToken(token)
             return {
@@ -112,6 +130,7 @@ const authSlice = createSlice({
               profile: {
                 ...state.profile,
                 permissions: tokenInfo.permissions,
+                roles: tokenInfo.roles,
                 email: tokenInfo.email,
                 fullName: tokenInfo.name
               }

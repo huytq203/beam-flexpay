@@ -81,11 +81,11 @@ const MappingRouterPermission: IMapping[] = [
   },
   {
     pathName: [BANKANDCONNECT + '/banks'],
-    permission: 'FEE:FULL'
+    permission: 'BANK:FULL'
   },
   {
     pathName: [BANKANDCONNECT + '/notification-management'],
-    permission: 'FEE:FULL'
+    permission: 'BANK:FULL'
   },
   {
     pathName: [REPAYMENTANDDISBURSE + '/dashboard'],
@@ -113,7 +113,7 @@ const MappingRouterPermission: IMapping[] = [
       REPORTS + INTERNAL + '/accounts',
       REPORTS + INTERNAL + '/detail-account'
     ],
-    permission: 'PERMISSION:FULL'
+    permission: 'REPORTS:FULL'
   },
   {
     pathName: [
@@ -132,24 +132,21 @@ const MappingRouterPermission: IMapping[] = [
     permission: "FEE:FULL"
   },
   {
-    pathName:[
-      ROLEMANAGEMENT_V2 + '/admin-account'
-    ],
-    permission:'ROLE:FULL'
-  },
-  {
-    pathName:[
+    pathName: [
+      ROLEMANAGEMENT_V2 + '/user-account',
+      ROLEMANAGEMENT_V2 + '/permission-management',
       ROLEMANAGEMENT_V2 + '/role-management'
     ],
-    permission:'ROLE:FULL'
-  }
+    permission: 'ROLE:FULL'
+  },
+
 ]
 
 const usePermission = (): boolean => {
   const location = useLocation()
   const [isAccess, setAccess] = useState<boolean>(true)
   const { permissions } = useAppSelector((state) => state.auth.profile)
- 
+
 
   const getPermissionAccess = (): boolean => {
     if (!permissions || permissions.length === 0) {
@@ -176,7 +173,9 @@ const usePermission = (): boolean => {
         ) &&
         hasPermission(item.permission)
     )
-
+    if (!result) {
+      return true
+    }
     return !!result
   }
 

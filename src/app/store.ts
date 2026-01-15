@@ -1,6 +1,6 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
-import { apiFeeService, apiService } from '@services/apiService'
+import { apiFeeService, apiService, apiWalletCore } from '@services/apiService'
 import { authApiService } from '@services/authApiService'
 import authReducer from '@slices/authSlice'
 import { TypedUseSelectorHook, useSelector } from 'react-redux'
@@ -10,12 +10,15 @@ export const store = configureStore({
     [apiService.reducerPath]: apiService.reducer,
     [authApiService.reducerPath]: authApiService.reducer,
     [apiFeeService.reducerPath]: apiFeeService.reducer,
+    [apiWalletCore.reducerPath]: apiWalletCore.reducer,
     auth: authReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }).concat(
       apiService.middleware,
-      authApiService.middleware
+      authApiService.middleware,
+      apiFeeService.middleware,
+      apiWalletCore.middleware
     )
 })
 

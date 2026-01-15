@@ -1,11 +1,11 @@
-import { ButtonComponent } from '@components/common'
+import { ButtonComponent, TooltipComponent } from '@components/common'
 import {
   DeleteOutlined,
   EditOutlined,
   LockOutlined,
   UnlockOutlined
 } from '@ant-design/icons'
-import { formatDate, getEnumLabel } from '@pages/fee-managerment-v3/FeeManagement.utils'
+import { formatDate, getEnumLabel } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
 import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import { ColumnsType } from 'antd/es/table'
 import { feeDomain, serviceType } from '@type/feePoliciesComponent'
@@ -55,28 +55,38 @@ const ActionButtons = ({
   handleActiveFee: (record: PolicyRecord) => void
 }) => (
   <div className='flex gap-2 justify-center'>
-    <ButtonComponent
-      type='default'
-      icon={<EditOutlined />}
-      onClick={() => navigate(`${FEEMANAGEMENT_V3}/edit/${record.key}`)}
-    />
-    <ButtonComponent
-      type='default'
-      icon={
-        record.status === 'ACTIVE' ? (
-          <UnlockOutlined />
-        ) : (
-          <LockOutlined />
-        )
-      }
-      onClick={() => {
-        if (record.status === 'ACTIVE') {
-          handleDeActiveFee(record)
-        } else {
-          handleActiveFee(record)
+    <TooltipComponent title='Cập nhật'>
+
+      <ButtonComponent
+        type='default'
+        size='small'
+        icon={<EditOutlined />}
+        onClick={() => navigate(`${FEEMANAGEMENT_V3}/edit/${record.key}`)}
+      />
+
+    </TooltipComponent>
+    <TooltipComponent title={record.status === 'ACTIVE' ? 'Khóa' : 'Mở khóa'}>
+
+
+      <ButtonComponent
+        type='default'
+        size='small'
+        icon={
+          record.status === 'ACTIVE' ? (
+            <UnlockOutlined />
+          ) : (
+            <LockOutlined />
+          )
         }
-      }}
-    />
+        onClick={() => {
+          if (record.status === 'ACTIVE') {
+            handleDeActiveFee(record)
+          } else {
+            handleActiveFee(record)
+          }
+        }}
+      />
+    </TooltipComponent>
   </div>
 )
 

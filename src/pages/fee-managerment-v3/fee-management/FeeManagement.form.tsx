@@ -74,9 +74,8 @@ const FeeManagementForm = ({
                         control={control}
                         classNameLable="font-medium"
                         label='Loại dịch vụ'
-                        defaultValue=''
+                        placeholder='Chọn loại dịch vụ'
                         options={[
-                            { label: 'Chọn', value: '' },
                             ...Object.entries(serviceType).map(([key, value]) => ({
                                 label: value,
                                 value: key
@@ -87,9 +86,8 @@ const FeeManagementForm = ({
                         name='status'
                         control={control}
                         label='Trạng thái'
-                        defaultValue=''
+                        placeholder="Chọn trạng thái"
                         options={[
-                            { label: 'Chọn', value: '' },
                             ...Object.entries(statusType).map(([key, value]) => ({
                                 label: value,
                                 value: key
@@ -101,9 +99,8 @@ const FeeManagementForm = ({
                         name='feeDomain'
                         control={control}
                         label='Phí miền'
-                        defaultValue=''
+                        placeholder='Chọn phí miền'
                         options={[
-                            { label: 'Chọn', value: '' },
                             ...Object.entries(feeDomain).map(([key, value]) => ({
                                 label: value,
                                 value: key

@@ -2,7 +2,7 @@ import { ColumnsType } from 'antd/es/table'
 import { Controller, Control, UseFormGetValues } from 'react-hook-form'
 import { InputNumber, ButtonComponent } from '@components/common'
 import { CheckOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons'
-import { FeeComponentType } from '../FeeManagement.schema'
+import { FeeComponentType } from '@pages/fee-managerment-v3/schemas/FeeManagement.schema'
 import { feePolicyComponent } from '@type/feePoliciesComponent'
 
 interface TierColumnsOptions {
@@ -28,6 +28,8 @@ export const getTierColumns = ({
                         <InputNumber
                             {...field}
                             placeholder='0'
+                            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                            parser={(value) => value?.replace(/,/g, '') as any}
                             style={{ width: '100%' }}
                         />
                     )}
@@ -64,6 +66,8 @@ export const getTierColumns = ({
                         <InputNumber
                             {...field}
                             placeholder='Min'
+                            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                            parser={(value) => value?.replace(/,/g, '') as any}
                             style={{ width: '100%' }}
                         />
                     )}
@@ -82,6 +86,8 @@ export const getTierColumns = ({
                         <InputNumber
                             {...field}
                             placeholder='Max'
+                            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                            parser={(value) => value?.replace(/,/g, '') as any}
                             style={{ width: '100%' }}
                         />
                     )}
@@ -100,6 +106,8 @@ export const getTierColumns = ({
                         <InputNumber
                             {...field}
                             placeholder='Min'
+                            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                            parser={(value) => value?.replace(/,/g, '') as any}
                             style={{ width: '100%' }}
                         />
                     )}
@@ -118,6 +126,8 @@ export const getTierColumns = ({
                         <InputNumber
                             {...field}
                             placeholder='Max'
+                            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                            parser={(value) => value?.replace(/,/g, '') as any}
                             style={{ width: '100%' }}
                         />
                     )}

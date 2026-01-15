@@ -11,9 +11,16 @@ export const userApi = authApiService.injectEndpoints({
                 params:params
             }),
             transformResponse: (res: ResponseType<ResponseUserInfor>) => res.data
+        }),
+        getUserById:build.query({
+            query:(id)=>({
+                url:`users/managers/${id}`,
+                method: 'GET',
+            })
         })
     })
 })
 export const {
-    useGetUserQuery
+    useGetUserQuery,
+    useLazyGetUserByIdQuery
 } = userApi

@@ -13,7 +13,9 @@ import {
   _ROLEMANAGEMENT,
   _STATE_BANK,
   _FEEMANAGEMENT_V3,
-  _ROLEMANAGEMENT_V2
+  _ROLEMANAGEMENT_V2,
+  _WALLETADMINISTRATION,
+  _WITHDRAWHISTORY
 
 } from '@constants/routersConstant'
 import i18n from '@languages/i18n'
@@ -99,7 +101,7 @@ const roleManagement = {
     },
     {
       key: 'manage-group-permissions',
-      permission: 'PERMISSION:FULL',
+      permission: 'REPORT:FULL',
       icon: (
         <ShieldCheckIcon
           size={size}
@@ -424,7 +426,7 @@ const bankAndConnect = {
         />
       ),
       label: i18n.t('navigation.bank'),
-      permission: 'FEE:FULL'
+      permission: 'BANK:FULL'
     },
     // dont have permission
     {
@@ -437,7 +439,7 @@ const bankAndConnect = {
         />
       ),
       label: i18n.t('navigation.notification-management'),
-      permission: 'FEE:FULL'
+      permission: 'BANK:FULL'
     }
   ]
 }
@@ -613,11 +615,9 @@ const reports = {
         />
       ),
       label: i18n.t('navigation.internal-report'),
-      permission: 'PERMISSION:FULL',
       children: [
         {
           key: 'accounts',
-          permission: 'PERMISSION:FUL',
           icon: (
             <FolderOpenIcon
               size={size}
@@ -847,7 +847,7 @@ const roleManagementV2 = {
   label: i18n.t('navigation.account'),
   children: [
     {
-      key: 'admin-account',
+      key: 'user-account',
       permission: 'ROLE:FULL',
       icon: (
         <UsersThreeIcon
@@ -859,7 +859,7 @@ const roleManagementV2 = {
       label: i18n.t('navigation.admin-and-permission-management')
     },
     {
-      key: 'role-management',
+      key: 'permission-management',
       permission: 'ROLE:FULL',
       icon: (
         <UsersThreeIcon
@@ -869,10 +869,104 @@ const roleManagementV2 = {
         />
       ),
       label: "Quản lý nhóm quyền"
+    },
+    {
+      key: 'role-management',
+      permission: 'ROLE:FULL',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: "Quản lý  quyền"
     }
   ]
 
 }
+const walletManagement = {
+  key: _WALLETADMINISTRATION,
+  icon: (
+    <UserGearIcon
+      size={size}
+      weight={weight}
+      color={COlOR}
+    />
+  ),
+  label: 'Quản trị ví cá nhân ',
+  children: [
+    {
+      key: 'e-walletManagement',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý ví điện tử'
+    },
+    {
+      key: 'refund-management',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: "Quản lý hoàn tiền"
+    },
+    {
+      key: 'transaction-management',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: "Quản lý giao dịch ví"
+    },
+    {
+      key: 'confirm-eKYC',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: "Duyệt eKYC"
+    },
+    {
+      key: 'frozen-transactions',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: "Quản lý giao dịch đóng băng"
+    },
+    {
+      key: 'withdraw-history',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý lịch sử giao dịch rút tiền'
+    },
+  ]
+
+}
+
+
 export const navigationItems: ItemTypeCustom[] = [
   roleManagement,
   personalWallet,
@@ -883,5 +977,6 @@ export const navigationItems: ItemTypeCustom[] = [
   reports,
   internal_wallet,
   feeManagementV3,
-  roleManagementV2
+  roleManagementV2,
+  walletManagement,
 ]
