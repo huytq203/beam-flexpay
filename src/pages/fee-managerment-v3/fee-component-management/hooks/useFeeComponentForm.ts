@@ -4,20 +4,23 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
-    useDeleteFeeComponentPoliciesMutation,
-    usePostFeeComponentPoliciesMutation,
-    usePutFeeComponentPoliciesMutation,
-    useGetFeeComponentByIdQuery,
-    useGetFeeComponentPoliciesByIdQuery,
-    useGetFeeComponentPoliciesQuery
+  useDeleteFeeComponentPoliciesMutation,
+  usePostFeeComponentPoliciesMutation,
+  usePutFeeComponentPoliciesMutation,
+  useGetFeeComponentByIdQuery,
+  useGetFeeComponentPoliciesByIdQuery,
+  useGetFeeComponentPoliciesQuery
 } from '@services/apiFeeComponent'
 import {
-    useGetFeePolicyByIdQuery,
-    usePostNewPolicyMutation,
-    usePutFeePolicyMutation
+  usePostNewPolicyMutation,
+  usePutFeePolicyMutation
 } from '@services/apiFeePoliciesServices'
 import { useGetFeeComponentTierQuery } from '@services/apiFeeComponentTier'
-import { FeeComponentType, PolicySchema, PolicyType } from '@pages/fee-managerment-v3/schemas/FeeManagement.schema'
+import {
+  FeeComponentType,
+  PolicySchema,
+  PolicyType
+} from '@pages/fee-managerment-v3/schemas/FeeManagement.schema'
 import { feePolicyComponent } from '@type/feePoliciesComponent'
 import { convertToISO } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
 import { feeComponentColumns } from '../FeeComponentManagement.columns'
@@ -25,156 +28,192 @@ import { useSVG } from '@hooks/useSVG'
 import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 
 interface FormRef {
-    submit: () => void
-    update: () => void
-    reset: () => void
-    submitAllTiers: (feeComponentId?: string) => Promise<void>
-    updateAllTiers: () => Promise<void>
+  submit: () => void
+  update: () => void
+  reset: () => void
+  submitAllTiers: (feeComponentId?: string) => Promise<void>
+  updateAllTiers: () => Promise<void>
 }
 
 const DEFAULT_VALUES = {
-    name: '',
-    description: '',
-    priority: 0,
-    status: '',
-    validFrom: '',
-    validTo: '',
-    currency: '',
-    serviceType: '',
-    feeDomain: ''
+  name: '',
+  description: '',
+  priority: 0,
+  status: '',
+  validFrom: '',
+  validTo: '',
+  currency: '',
+  serviceType: '',
+  feeDomain: ''
 }
 
 export const useFeeComponentForm = () => {
-    const { successMess, errorMess } = useMessage()
-    const { id } = useParams()
-    const navigate = useNavigate()
-    const isEdit = Boolean(id)
-    const { svg } = useSVG()
+  const { successMess, errorMess } = useMessage()
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const isEdit = Boolean(id)
+  const { svg } = useSVG()
 
-    // UI State
-    const [open, setOpen] = useState(false)
-    const [page, setPage] = useState(1)
-    const [pageSize, setPageSize] = useState(10)
-    const [selectedRow, setSelectedRow] = useState<feePolicyComponent | null>(null)
-    const [updateComponentId, setUpdateComponentId] = useState<string | null>(null)
-    const [deletingId, setDeletingId] = useState<string | null>(null)
-    const [openDialog, setOpenDialog] = useState(false)
+  // UI State
+  const [open, setOpen] = useState(false)
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+  const [selectedRow, setSelectedRow] = useState<feePolicyComponent | null>(
+    null
+  )
+  const [updateComponentId, setUpdateComponentId] = useState<string | null>(
+    null
+  )
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [openDialog, setOpenDialog] = useState(false)
 
-    // Form ref
-    const formRef = useRef<FormRef>(null)
+  // Form ref
+  const formRef = useRef<FormRef>(null)
 
-    // Policy Form
-    const {
-        handleSubmit,
-        reset,
-        control,
-        formState: { errors }
-    } = useForm<PolicyType>({
-        resolver: zodResolver(PolicySchema),
-        defaultValues: DEFAULT_VALUES,
-        shouldUnregister: true
-    })
+  // Policy Form
+  const {
+    handleSubmit,
+    reset,
+    control,
+    formState: { errors }
+  } = useForm<PolicyType>({
+    resolver: zodResolver(PolicySchema),
+    defaultValues: DEFAULT_VALUES,
+    shouldUnregister: true
+  })
 
-    // API Mutations
-    const [postFeeComponent, { isLoading: loadPostComponent }] =
-        usePostFeeComponentPoliciesMutation()
-    const [putFeeComponentPolicies, { isLoading: putFeeComponentPoliciesLoading }] =
-        usePutFeeComponentPoliciesMutation()
-    const [deleteFeeComponent, { isLoading: deleteFeeComponentLoading }] =
-        useDeleteFeeComponentPoliciesMutation()
-    const [putFeePolicies, { isLoading: putFeePoliciesLoading }] =
-        usePutFeePolicyMutation()
-    const [postNewPolicy] = usePostNewPolicyMutation()
+  // API Mutations
+  const [postFeeComponent, { isLoading: loadPostComponent }] =
+    usePostFeeComponentPoliciesMutation()
+  const [
+    putFeeComponentPolicies,
+    { isLoading: putFeeComponentPoliciesLoading }
+  ] = usePutFeeComponentPoliciesMutation()
+  const [deleteFeeComponent, { isLoading: deleteFeeComponentLoading }] =
+    useDeleteFeeComponentPoliciesMutation()
+  const [putFeePolicies, { isLoading: putFeePoliciesLoading }] =
+    usePutFeePolicyMutation()
+  const [postNewPolicy] = usePostNewPolicyMutation()
 
-    // API Queries
-    const { data: feeComponent } = useGetFeeComponentByIdQuery(
-        selectedRow?.id ?? '',
-        { skip: !selectedRow?.id }
+  // API Queries
+  const { data: feeComponent } = useGetFeeComponentByIdQuery(
+    selectedRow?.id ?? '',
+    { skip: !selectedRow?.id }
+  )
+
+  const { data: feeComponentTierData } = useGetFeeComponentTierQuery(
+    selectedRow?.id ?? '',
+    {
+      skip:
+        !selectedRow?.id ||
+        (selectedRow?.calculationMethod !== 'PROGRESSIVE_TIER' &&
+          selectedRow?.calculationMethod !== 'FLAT_TIER')
+    }
+  )
+
+  // const { data: policyData } = useGetFeePolicyByIdQuery(id!, {
+  //   skip: !isEdit
+  // })
+
+  const { data: feeComponentPolicyData } = useGetFeeComponentPoliciesByIdQuery(
+    id!,
+    { skip: !isEdit }
+  )
+
+  const { data: feeData } = useGetFeeComponentPoliciesQuery(
+    {
+      page,
+      size: pageSize,
+      sortBy: 'createdAt',
+      sortDirection: 'DESC'
+    },
+    { skip: isEdit }
+  )
+
+  // Computed Data
+  const combinedInitialData = useMemo(() => {
+    if (!feeComponent) return null
+    if (feeComponentTierData && feeComponentTierData.length > 0) {
+      const tiers = feeComponentTierData.map((item: feePolicyComponent) => ({
+        id: item.id,
+        minValue: item.minValue,
+        maxValue: item.maxValue,
+        roundMode: item.roundMode,
+        minFee: item.minFee,
+        maxFee: item.maxFee,
+        fixedAmount: item.fixedAmount,
+        percentage: item.percentage
+      }))
+      return { ...feeComponent, tiers }
+    }
+    return feeComponent
+  }, [feeComponent, feeComponentTierData])
+
+  const list = (feeComponentPolicyData ?? feeData?.content) || []
+  const total = feeData?.totalElements || 0
+
+  const sortedList = useMemo(() => {
+    return [...list].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     )
+  }, [list])
 
-    const { data: feeComponentTierData } = useGetFeeComponentTierQuery(
-        selectedRow?.id ?? '',
-        {
-            skip:
-                !selectedRow?.id ||
-                (selectedRow?.calculationMethod !== 'PROGRESSIVE_TIER' &&
-                    selectedRow?.calculationMethod !== 'FLAT_TIER')
-        }
-    )
+  const dataSource = useMemo(() => {
+    return sortedList.map((item: feePolicyComponent, idx: number) => ({
+      ...item,
+      no: (page - 1) * pageSize + idx + 1
+    }))
+  }, [sortedList, page, pageSize])
 
-    const { data: policyData } = useGetFeePolicyByIdQuery(id!, {
-        skip: !isEdit
-    })
+  const columns = feeComponentColumns({
+    setSelectedRow,
+    setOpen,
+    setUpdateComponentId,
+    setDeletingId,
+    setOpenDialog
+  })
 
-    const { data: feeComponentPolicyData } = useGetFeeComponentPoliciesByIdQuery(
-        id!,
-        { skip: !isEdit }
-    )
+  // Effects
+  // useEffect(() => {
+  //   if (policyData) {
+  //     reset(policyData)
+  //   }
+  // }, [policyData, reset])
 
-    const { data: feeData } = useGetFeeComponentPoliciesQuery(
-        {
-            page,
-            size: pageSize,
-            sortBy: 'createdAt',
-            sortDirection: 'DESC'
-        },
-        { skip: isEdit }
-    )
+  // Helpers
+  const transformPayload = (data: FeeComponentType) => ({
+    feePolicyId: id,
+    componentType: data.componentType,
+    baseOn: data.baseOn,
+    baseComponentType: null,
+    calculationMethod: data.calculationMethod,
+    fixedAmount: data.fixedAmount ?? 0,
+    percentage: data.percentage ?? 0,
+    roundMode: data.roundMode,
+    minFee: data.minFee ?? 0,
+    maxFee: data.maxFee ?? 0,
+    payerType: data.payerType,
+    payerObjectType: null,
+    payerObjectId: null,
+    beneficiaryType: data.beneficiaryType,
+    beneficiaryObjectType: null,
+    beneficiaryObjectId: null
+  })
 
-    // Computed Data
-    const combinedInitialData = useMemo(() => {
-        if (!feeComponent) return null
-        if (feeComponentTierData && feeComponentTierData.length > 0) {
-            const tiers = feeComponentTierData.map((item: feePolicyComponent) => ({
-                id: item.id,
-                minValue: item.minValue,
-                maxValue: item.maxValue,
-                roundMode: item.roundMode,
-                minFee: item.minFee,
-                maxFee: item.maxFee,
-                fixedAmount: item.fixedAmount,
-                percentage: item.percentage
-            }))
-            return { ...feeComponent, tiers }
-        }
-        return feeComponent
-    }, [feeComponent, feeComponentTierData])
+  // Handlers
+  const handleFormSubmit = async (data: FeeComponentType) => {
+    try {
+      const payload = transformPayload(data)
+      await postFeeComponent(payload).unwrap()
+      successMess('Thêm thành phần phí thành công')
+      setOpen(false)
+    } catch {}
+  }
 
-    const list = (feeComponentPolicyData ?? feeData?.content) || []
-    const total = feeData?.totalElements || 0
-
-    const sortedList = useMemo(() => {
-        return [...list].sort(
-            (a, b) =>
-                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )
-    }, [list])
-
-    const dataSource = useMemo(() => {
-        return sortedList.map((item: feePolicyComponent, idx: number) => ({
-            ...item,
-            no: (page - 1) * pageSize + idx + 1
-        }))
-    }, [sortedList, page, pageSize])
-
-    const columns = feeComponentColumns({
-        setSelectedRow,
-        setOpen,
-        setUpdateComponentId,
-        setDeletingId,
-        setOpenDialog
-    })
-
-    // Effects
-    useEffect(() => {
-        if (policyData) {
-            reset(policyData)
-        }
-    }, [policyData, reset])
-
-    // Helpers
-    const transformPayload = (data: FeeComponentType) => ({
-        feePolicyId: id,
+  const handleUpdateFeeComponent = async (data: FeeComponentType) => {
+    try {
+      const payload = {
         componentType: data.componentType,
         baseOn: data.baseOn,
         baseComponentType: null,
@@ -190,153 +229,121 @@ export const useFeeComponentForm = () => {
         beneficiaryType: data.beneficiaryType,
         beneficiaryObjectType: null,
         beneficiaryObjectId: null
-    })
+      }
+      await putFeeComponentPolicies({
+        id: updateComponentId,
+        body: payload
+      }).unwrap()
+      successMess('Cập nhật thành công')
+      setOpen(false)
+    } catch (error: any) {
+      errorMess(error?.data?.message || 'Cập nhật thất bại')
+      throw error
+    }
+  }
+
+  const handleDelete = async (deleteId: string | null) => {
+    try {
+      if (!deleteId) return
+      setSelectedRow(null)
+      await deleteFeeComponent(deleteId).unwrap()
+      setOpenDialog(false)
+      successMess('Xoá thành công!')
+    } catch (error) {
+      errorMess('Lỗi xoá!')
+    }
+  }
+
+  const onSubmit = async (data: PolicyType) => {
+    try {
+      await postNewPolicy(data).unwrap()
+      successMess('Thêm chính sách thành công!')
+    } catch (error: any) {
+      errorMess(error?.data?.message || 'Có lỗi xảy ra')
+    }
+  }
+
+  const handleUpdate = async (data: PolicyType) => {
+    try {
+      const payload = {
+        ...data,
+        validFrom: data.validFrom ? convertToISO(data.validFrom) : '',
+        validTo: data.validTo ? convertToISO(data.validTo) : ''
+      }
+      await putFeePolicies({ id: id, body: payload })
+      successMess('Cập nhật chính sách thành công!')
+    } catch (error) {
+      errorMess('Lỗi cập nhật!')
+    }
+  }
+
+  const handleSaveAddFee = () => {
+    if (selectedRow) {
+      formRef.current?.update()
+    } else {
+      formRef.current?.submit()
+    }
+  }
+
+  const handleOpenAddModal = () => {
+    formRef.current?.reset()
+    setSelectedRow(null)
+    setUpdateComponentId(null)
+    setOpen(true)
+  }
+
+  const handleBack = () => {
+    navigate(`${FEEMANAGEMENT_V3}/fee-management`)
+  }
+
+  return {
+    // Params
+    id,
+    isEdit,
+    svg,
+
+    // UI States
+    open,
+    setOpen,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    selectedRow,
+    setSelectedRow,
+    openDialog,
+    setOpenDialog,
+    deletingId,
+    setDeletingId,
+    updateComponentId,
+    setUpdateComponentId,
+
+    // Form
+    formRef,
+    control,
+    handleSubmit,
+    reset,
+    errors,
+
+    // Data
+    dataSource,
+    columns,
+    total,
+    combinedInitialData,
 
     // Handlers
-    const handleFormSubmit = async (data: FeeComponentType) => {
-        try {
-            const payload = transformPayload(data)
-            await postFeeComponent(payload).unwrap()
-            successMess('Thêm thành phần phí thành công')
-            setOpen(false)
-        } catch (error: any) {
-            errorMess(error?.data?.message || 'Có lỗi xảy ra')
-        }
-    }
+    handleFormSubmit,
+    handleUpdateFeeComponent,
+    handleDelete,
+    onSubmit,
+    handleUpdate,
+    handleSaveAddFee,
+    handleOpenAddModal,
+    handleBack,
 
-    const handleUpdateFeeComponent = async (data: FeeComponentType) => {
-        try {
-            const payload = {
-                componentType: data.componentType,
-                baseOn: data.baseOn,
-                baseComponentType: null,
-                calculationMethod: data.calculationMethod,
-                fixedAmount: data.fixedAmount ?? 0,
-                percentage: data.percentage ?? 0,
-                roundMode: data.roundMode,
-                minFee: data.minFee ?? 0,
-                maxFee: data.maxFee ?? 0,
-                payerType: data.payerType,
-                payerObjectType: null,
-                payerObjectId: null,
-                beneficiaryType: data.beneficiaryType,
-                beneficiaryObjectType: null,
-                beneficiaryObjectId: null
-            }
-            await putFeeComponentPolicies({
-                id: updateComponentId,
-                body: payload
-            }).unwrap()
-            successMess('Cập nhật thành công')
-            setOpen(false)
-        } catch (error: any) {
-            errorMess(error?.data?.message || 'Cập nhật thất bại')
-            throw error
-        }
-    }
-
-    const handleDelete = async (deleteId: string | null) => {
-        try {
-            if (!deleteId) return
-            setSelectedRow(null)
-            await deleteFeeComponent(deleteId).unwrap()
-            setOpenDialog(false)
-            successMess('Xoá thành công!')
-        } catch (error) {
-            errorMess('Lỗi xoá!')
-        }
-    }
-
-    const onSubmit = async (data: PolicyType) => {
-        try {
-            await postNewPolicy(data).unwrap()
-            successMess('Thêm chính sách thành công!')
-        } catch (error: any) {
-            errorMess(error?.data?.message || 'Có lỗi xảy ra')
-        }
-    }
-
-    const handleUpdate = async (data: PolicyType) => {
-        try {
-            const payload = {
-                ...data,
-                validFrom: data.validFrom ? convertToISO(data.validFrom) : '',
-                validTo: data.validTo ? convertToISO(data.validTo) : ''
-            }
-            await putFeePolicies({ id: id, body: payload })
-            successMess('Cập nhật chính sách thành công!')
-        } catch (error) {
-            errorMess('Lỗi cập nhật!')
-        }
-    }
-
-    const handleSaveAddFee = () => {
-        if (selectedRow) {
-            formRef.current?.update()
-        } else {
-            formRef.current?.submit()
-        }
-    }
-
-    const handleOpenAddModal = () => {
-        formRef.current?.reset()
-        setSelectedRow(null)
-        setUpdateComponentId(null)
-        setOpen(true)
-    }
-
-    const handleBack = () => {
-        navigate(`${FEEMANAGEMENT_V3}/fee-management`)
-    }
-
-    return {
-        // Params
-        id,
-        isEdit,
-        svg,
-
-        // UI States
-        open,
-        setOpen,
-        page,
-        setPage,
-        pageSize,
-        setPageSize,
-        selectedRow,
-        setSelectedRow,
-        openDialog,
-        setOpenDialog,
-        deletingId,
-        setDeletingId,
-        updateComponentId,
-        setUpdateComponentId,
-
-        // Form
-        formRef,
-        control,
-        handleSubmit,
-        reset,
-        errors,
-
-        // Data
-        dataSource,
-        columns,
-        total,
-        combinedInitialData,
-
-        // Handlers
-        handleFormSubmit,
-        handleUpdateFeeComponent,
-        handleDelete,
-        onSubmit,
-        handleUpdate,
-        handleSaveAddFee,
-        handleOpenAddModal,
-        handleBack,
-
-        // Loading states
-        isSubmitting: loadPostComponent || putFeeComponentPoliciesLoading,
-        isDeleting: deleteFeeComponentLoading,
-        putFeePoliciesLoading
-    }
+    // Loading states
+    isSubmitting: loadPostComponent || putFeeComponentPoliciesLoading,
+    isDeleting: deleteFeeComponentLoading,
+    putFeePoliciesLoading
+  }
 }

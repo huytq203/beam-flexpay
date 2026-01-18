@@ -4,6 +4,7 @@ import { apiFeeService, apiService, apiWalletCore } from '@services/apiService'
 import { authApiService } from '@services/authApiService'
 import authReducer from '@slices/authSlice'
 import { TypedUseSelectorHook, useSelector } from 'react-redux'
+import { errorMiddleware } from './middleware/errorMiddleware'
 
 export const store = configureStore({
   reducer: {
@@ -18,7 +19,8 @@ export const store = configureStore({
       apiService.middleware,
       authApiService.middleware,
       apiFeeService.middleware,
-      apiWalletCore.middleware
+      apiWalletCore.middleware,
+      errorMiddleware
     )
 })
 

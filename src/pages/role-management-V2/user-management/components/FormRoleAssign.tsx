@@ -25,9 +25,6 @@ const FormRoleAssign = ({ userId, onSelectionChange, roleData, isLoadingRoles, o
   const { data: userRoleData, isLoading: isLoadingUserRoles } = useGetUserRoleQuery(userId!, {
     skip: !userId
   })
-  useEffect(() => {
-    onLoadingUserRolesChange?.(isLoadingUserRoles)
-  }, [isLoadingUserRoles, onLoadingUserRolesChange])
 
   useEffect(() => {
     if (userRoleData?.data) {
