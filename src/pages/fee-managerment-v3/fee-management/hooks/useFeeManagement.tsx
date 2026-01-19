@@ -80,7 +80,7 @@ const useFeeManagement = () => {
       setOpen(false)
       searchFeePolicies(getSearchParams())
     } catch (error: any) {
-      errorMess(error?.data?.message || 'Có lỗi xảy ra')
+      errorMess(error?.data?.detail || 'Có lỗi xảy ra')
     }
   }
 
