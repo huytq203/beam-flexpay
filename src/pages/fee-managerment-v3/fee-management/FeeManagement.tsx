@@ -1,9 +1,9 @@
 import {
   ModalComponent,
   CardComponent
-} from '@components/common'
+} from '@components/index'
 import FormAddPolicy from '@pages/fee-managerment-v3/components/FormAddPolicy'
-import FeeManagementForm from './FeeManagement.form'
+import FeeManagementForm from './components/FeeManagement.form'
 import useFeeManagement from './hooks/useFeeManagement'
 
 const FeeManagement = () => {

@@ -1,4 +1,4 @@
-import { ButtonComponent, TooltipComponent } from '@components/common'
+import { ButtonComponent, TooltipComponent } from '@components/index'
 import { PermissionWrapper } from '@components/permission-wrapper'
 import {
   ApartmentOutlined,

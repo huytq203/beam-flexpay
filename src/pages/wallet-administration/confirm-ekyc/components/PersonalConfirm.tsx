@@ -1,4 +1,4 @@
-import { ButtonComponent, CardComponent, Input } from '@components/common'
+import { ButtonComponent, CardComponent, Input } from '@components/index'
 import React from 'react'
 
 

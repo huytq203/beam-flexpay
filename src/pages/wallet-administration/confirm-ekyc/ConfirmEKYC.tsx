@@ -1,4 +1,4 @@
-import { CardComponent, DialogModal, ModalComponent, Table } from '@components/common'
+import { CardComponent, DialogModal, ModalComponent, Table } from '@components/index'
 import { useSVG } from '@hooks/useSVG'
 import React from 'react'
 import FormSearch from './components/FormSearch'

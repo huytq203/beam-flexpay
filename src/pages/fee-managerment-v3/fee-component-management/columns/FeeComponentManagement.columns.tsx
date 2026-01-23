@@ -1,14 +1,14 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
-import { ButtonComponent, TooltipComponent } from '@components/common'
+import { ButtonComponent, TooltipComponent } from '@components/index'
 import { Tooltip } from 'antd'
 import {
   getEnumLabel
 } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
-import { beneficiaryType, calculationMethodEnum, componentType, feePolicyComponent, payerType } from '@type/feePoliciesComponent'
+import { FeeComponent, beneficiaryType, calculationMethodEnum, componentType, payerType } from '../types/FeeComponent.types'
 import { ColumnsType } from 'antd/es/table'
 
 interface FeeComponentColumnsProps {
-  setSelectedRow: (row: feePolicyComponent) => void
+  setSelectedRow: (row: FeeComponent) => void
   setOpen: (open: boolean) => void
   setUpdateComponentId: (id: string) => void
   setDeletingId: (id: string) => void
@@ -21,7 +21,7 @@ export const feeComponentColumns = ({
   setUpdateComponentId,
   setDeletingId,
   setOpenDialog
-}: FeeComponentColumnsProps): ColumnsType<feePolicyComponent> => {
+}: FeeComponentColumnsProps): ColumnsType<FeeComponent> => {
   return [
     {
       title: '#',
@@ -61,9 +61,9 @@ export const feeComponentColumns = ({
     {
       title: 'Thao tác',
       key: 'action',
-      width: 50,
+      width: 100,
       align: 'center' as const,
-      render: (_: any, record: feePolicyComponent) => (
+      render: (_: any, record: FeeComponent) => (
         <div className='flex gap-1 justify-center'>
           <TooltipComponent title='Cập nhật'>
             <ButtonComponent
@@ -73,7 +73,7 @@ export const feeComponentColumns = ({
               onClick={() => {
                 setSelectedRow(record)
                 setOpen(true)
-                setUpdateComponentId(record.id)
+                if (record.id) setUpdateComponentId(record.id)
               }}
             />
           </TooltipComponent>
@@ -84,8 +84,10 @@ export const feeComponentColumns = ({
               type='default'
               icon={<DeleteOutlined/>}
               onClick={() => {
-                setDeletingId(record.id)
-                setOpenDialog(true)
+                if (record.id) {
+                  setDeletingId(record.id)
+                  setOpenDialog(true)
+                }
               }}
             />
           </TooltipComponent>

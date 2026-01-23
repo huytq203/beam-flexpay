@@ -1,4 +1,4 @@
-import { CardComponent } from '@components/common'
+import { CardComponent } from '@components/index'
 import { CheckCircleFilled, UserIcon, WalletIcon } from '@components/icons/common'
 import React from 'react'
 

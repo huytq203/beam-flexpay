@@ -10,6 +10,8 @@ import React from 'react'
 import { Control, UseFormHandleSubmit } from 'react-hook-form'
 import { feeDomain, serviceType } from '@type/feePoliciesComponent'
 import { statusType } from '@type/feePolicies'
+import dayjs, { Dayjs } from 'dayjs'
+import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 
 interface FormAddPolicyProps {
   control: Control<PolicyType>
@@ -30,6 +32,8 @@ const FormAddPolicy = ({
 }: FormAddPolicyProps) => {
 
 
+  
+
   return (
     <>
       <form
@@ -45,7 +49,7 @@ const FormAddPolicy = ({
           <FormInput
             name='name'
             control={control}
-            label='Tên chính sách phí'
+            label={!isCreate?'Tên chính sách phí':<span>Tên chính sách phí <span className='text-red'>(*)</span> </span>}
             placeholder='Nhập tên chính sách...'
             className='col-span-12 md:col-span-6'
           />
@@ -53,23 +57,26 @@ const FormAddPolicy = ({
             className='col-span-12 md:col-span-6'
             name='priority'
             control={control}
-            label='Mức độ ưu tiên'
+            label={!isCreate?'Mức độ ưu tiên':<span>Mức độ ưu tiên <span className='text-red'>(*)</span></span> }
             placeholder='Nhập mức độ ưu tiên'
-           
+
           />
 
           <FormDatePicker
             className='col-span-12 md:col-span-6 flex flex-col'
             name='validFrom'
             control={control}
-            label='Hiệu lực từ'
+            label={!isCreate?'Hiệu lực từ':<span>Hiệu lực từ <span className='text-red'>(*)</span></span> }
             showTime
+            disabledDate={(current: Dayjs) =>
+              current && current < dayjs().startOf('day')
+            }
           />
           <FormDatePicker
             className='col-span-12 md:col-span-6 flex flex-col'
             name='validTo'
             control={control}
-            label='Hiệu lực đến'
+            label={!isCreate?'Hiệu lực đến':<span>Hiệu lực đến <span className='text-red'>(*)</span></span>}
             showTime
           />
 
@@ -77,22 +84,10 @@ const FormAddPolicy = ({
             className='col-span-12 md:col-span-6'
             name='status'
             control={control}
-            label='Trạng thái hoạt động'
+            label={!isCreate?'Trạng thái hoạt động':<span>Trạng thái hoạt động <span className='text-red'>(*)</span></span>}
             options={
-              isCreate ? [
-                ...Object.entries(statusType)
-                  .slice(0, 1)
-                  .map(([key, value]) => ({
-                    label: value,
-                    value: key
-                  }))
-              ] : [
-                { label: 'Chọn', value: '' },
-                ...Object.entries(statusType).map(([key, value]) => ({
-                  label: value,
-                  value: key
-                }))
-              ]
+              isCreate ?mapEnumToSelectOptions(statusType).slice(0, 1) : 
+                mapEnumToSelectOptions(statusType)
 
             }
 
@@ -102,19 +97,14 @@ const FormAddPolicy = ({
             className='col-span-12 md:col-span-6'
             name='serviceType'
             control={control}
-            label='Loại dịch vụ'
-            options={[
-              ...Object.entries(serviceType).map(([key, value]) => ({
-                label: value, // hoặc value
-                value: key
-              }))
-            ]}
+            label={!isCreate?"Loại dịch vụ":<span>Loại dịch vụ <span className='text-red'>(*)</span></span>}
+            options={mapEnumToSelectOptions(serviceType)}
           />
           <FormInput
             className='col-span-12 md:col-span-6'
             name='currency'
             control={control}
-            label='Đơn vị thanh toán'
+            label={!isCreate?"Đơn vị thanh toán":<span>Đơn vị thanh toán <span className='text-red'>(*)</span></span>}
             placeholder='Nhập đơn vị thanh toán...'
           />
 
@@ -122,20 +112,15 @@ const FormAddPolicy = ({
             className='col-span-12 md:col-span-6'
             name='feeDomain'
             control={control}
-            label='Phí miền'
-            options={[
-              ...Object.entries(feeDomain).map(([key, value]) => ({
-                label: value, // hoặc value
-                value: key
-              }))
-            ]}
+            label={!isCreate?"Phí miền":<span>Phí miền <span className='text-red'>(*)</span></span>}
+            options={mapEnumToSelectOptions(feeDomain)}
           />
 
           <FormTextArea
             className='col-span-12 md:col-span-12'
             name='description'
             control={control}
-            label='Mô tả'
+            label={!isCreate?'Mô tả':<span>Mô tả <span className='text-red'>(*)</span></span>}
             placeholder='Nhập mô tả chính sách...'
           />
         </div>

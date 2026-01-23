@@ -1,23 +1,24 @@
 import { z } from "zod";
+import { normalizeText } from "@utils/helperFunctions";
 
 export const PolicySchema = z.object({
-  name: z.string().min(1, "Tên chính sách không được để trống"),
+  name: z.string().min(1, "Tên chính sách không được để trống").max(150,"Tối đa 150 ký tự").transform(normalizeText),
   validFrom: z.string().min(1, "Chọn ngày bắt đầu"),
   validTo: z.string().nullable().optional(),
   priority: z.number({
-    message: "Chọn mức độ ưu tiên",
-  }).min(0, "Chọn mức độ ưu tiên"),
+    message: "Nhập mức độ ưu tiên",
+  }).min(0, "Nhập mức độ ưu tiên").max(9999,'Tối đa 9999'),
   status: z.string({
     message: "Chọn trạng thái",
   }).min(1, "Chọn trạng thái"),
   feeDomain: z.string({
     message: "Chọn phí miền",
   }).min(1, "Chọn phí miền"),
-  currency: z.string().min(1, "Currency không được để trống"),
+  currency: z.string().min(1, "Đơn vị thanh toán không được để trống"),
   serviceType: z.string({
     message: "Chọn loại dịch vụ",
   }).min(1, "Chọn loại dịch vụ"),
-  description: z.string().max(255, 'Tối đa 255 ký tự').optional(),
+  description: z.string().max(150, 'Tối đa 150 ký tự').optional(),
 }).refine(
   (data) => !data.validFrom || !data.validTo || new Date(data.validTo) >= new Date(data.validFrom),
   {
@@ -45,7 +46,7 @@ export const FeeComponentSchema = z.object({
   payerType: z.string().min(1, "Chọn người chịu phí"),
   beneficiaryType: z.string().min(1, "Chọn người hưởng phí"),
   roundMode: z.string().min(1, "Chọn công thức làm tròn"),
-  calculationMethod: z.number().or(z.string()), // Select might return string
+  calculationMethod: z.number().or(z.string()).optional(),
   tiers: z.array(FeeTierSchema).optional(),
   fixedAmount: z.number().optional(),
   percentage: z.number().min(0, "Min is 0").max(100, "Max is 100").optional(),
@@ -69,13 +70,25 @@ export const FeeComponentSchema = z.object({
     (data) => {
       // Validate percentage is required when componentType is VAT
       if (data.componentType === 'VAT') {
-        return data.percentage !== undefined && data.percentage !== null;
+          return data.percentage !== undefined && data.percentage !== null;
       }
       return true;
     },
     {
       message: "Phí phần trăm không được để trống",
       path: ["percentage"],
+    }
+  ).refine(
+    (data) => {
+      // calculationMethod bắt buộc khi KHÔNG phải VAT
+      if (data.componentType !== 'VAT') {
+        return data.calculationMethod !== undefined && data.calculationMethod !== null && data.calculationMethod !== '';
+      }
+      return true;
+    },
+    {
+      message: "Chọn phương thức tính",
+      path: ["calculationMethod"],
     }
   );
 

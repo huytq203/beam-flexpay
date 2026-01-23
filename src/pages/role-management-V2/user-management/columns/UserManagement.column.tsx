@@ -7,7 +7,7 @@ import {
   LockOutlined,
   UserSwitchOutlined
 } from '@components/icons/common'
-import { ButtonComponent, TooltipComponent } from '@components/common'
+import { ButtonComponent, TooltipComponent } from '@components/index'
 import { UserInfor } from '@type/userManagement'
 import { ColumnType } from 'antd/lib/table'
 import { ActionMode } from '../UserManagement'
@@ -24,7 +24,7 @@ interface Props {
   handleOpenRoleAssign: (record: UserInfor) => void
 }
 
-export const RoleManagemenColume = ({
+export const RoleManagementColumn = ({
   handleOpenUpdate,
   setModeAction,
   setOpenDialog,

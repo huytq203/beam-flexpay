@@ -3,11 +3,14 @@ import {
   ButtonComponent,
   DialogModal,
   Table
-} from '@components/common'
-import FormAddFeeComponent from '@pages/fee-managerment-v3/components/FormAddFeeComponent'
+} from '@components/index'
+// import FormAddFeeComponent from '@pages/fee-managerment-v3/components/FormAddFeeComponent'
 import FormAddPolicy from '@pages/fee-managerment-v3/components/FormAddPolicy'
 import { SaveOutlined } from '@components/icons/common'
 import { useFeeComponentForm } from '@pages/fee-managerment-v3/fee-component-management/hooks/useFeeComponentForm'
+import { useGetFeePolicyByIdQuery } from '@services/apiFeePoliciesServices'
+import { useEffect } from 'react'
+import InforPolicy from '../components/InfoPolicy'
 
 const FeeComponentManagement = () => {
   const {
@@ -39,8 +42,21 @@ const FeeComponentManagement = () => {
     handleOpenAddModal,
     handleBack,
     isSubmitting,
-    isDeleting
+    isDeleting,
+    reset,
+    isEdit,
+    loadingFeeComponentById
   } = useFeeComponentForm()
+  const { data: policyData } = useGetFeePolicyByIdQuery(id!, {
+    skip: !isEdit
+  })
+
+  // Effects
+  useEffect(() => {
+    if (policyData) {
+      reset(policyData)
+    }
+  }, [policyData, reset])
 
   return (
     <div>
@@ -118,20 +134,24 @@ const FeeComponentManagement = () => {
               }}
             />
             <ModalComponent
+              width="75%"
               title={selectedRow ? 'Sửa thành phần phí' : 'Thêm thành phần phí'}
               open={open}
               onOk={handleSaveAddFee}
               onCancel={() => setOpen(false)}
               confirmLoading={isSubmitting}
               modalText={
-                <FormAddFeeComponent
-                  ref={formRef}
-                  onSubmit={
-                    selectedRow ? handleUpdateFeeComponent : handleFormSubmit
-                  }
-                  initialData={selectedRow ? combinedInitialData : null}
-                />
+
+                // <FormAddFeeComponent
+                //   ref={formRef}
+                //   onSubmit={
+                //     selectedRow ? handleUpdateFeeComponent : handleFormSubmit
+                //   }
+                //   initialData={selectedRow ? combinedInitialData : null}
+                // />
+                <InforPolicy selectedRow={selectedRow}/>
               }
+              loading={loadingFeeComponentById}
             />
           </div>
         </div>

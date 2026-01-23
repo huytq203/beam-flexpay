@@ -7,7 +7,7 @@ import { notification } from 'antd';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next'
 import InputComponent from '@components/ui/Input-component/input';
-import { ButtonComponent } from '@components/common';
+import { ButtonComponent } from '@components/index';
 
 const VerifyCode2 = () => {
   const { t } = useTranslation();

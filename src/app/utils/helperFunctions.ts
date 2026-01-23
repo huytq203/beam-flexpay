@@ -228,14 +228,13 @@ export function processValue(value: any, key?: string): string {
   if (typeof value === 'string' && isDate(value)) {
     return dayjs(value).format('DD/MM/YYYY')
   } else if (key === 'DETAILS') {
-    return `${
-      value && value.length > 0
+    return `${value && value.length > 0
         ? `<ul>${t(value)
           .split(',')
           .map((item: string) => `<li>${item}</li>`)
           .join(' ')}</ul>`
         : null
-    }`
+      }`
   }
   return String(value)
 }
@@ -916,3 +915,32 @@ export const validateFutureDatetime = (_: unknown, value: unknown): Promise<void
 export const isNullOrZero = (value: any): boolean => {
   return value === null || value === undefined || value === 0
 }
+
+/**
+ * Normalize fullwidth characters to ASCII (normal characters)
+ * Converts characters like Ｐｈí to Phí
+ * Also normalizes fullwidth space to normal space
+ */
+export const normalizeText = (text: string): string => {
+  if (!text) return text
+  return text
+    .replace(/[\uff01-\uff5e]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0xfee0))
+    .replace(/\u3000/g, ' ')
+    .trim()
+}
+
+export interface SelectOption {
+  label: string;
+  value: string | boolean;
+}
+
+export const mapEnumToSelectOptions = <
+  T extends Record<string, string | boolean>
+>(
+  enumObject: T
+): SelectOption[] => {
+  return Object.entries(enumObject).map(([key, value]) => ({
+    label: String(value), // đảm bảo label là string
+    value: key
+  }));
+};

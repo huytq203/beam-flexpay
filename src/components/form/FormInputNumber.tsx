@@ -1,6 +1,6 @@
 import { Control, FieldValues, Path } from "react-hook-form";
 import { FormField } from "./FormField";
-import { InputNumber } from "@components/common";
+import { InputNumber } from "@components/index";
 import { ReactNode } from "react";
 
 interface FormInputNumberProps<T extends FieldValues> {

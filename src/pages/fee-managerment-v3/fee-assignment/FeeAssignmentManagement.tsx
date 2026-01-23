@@ -4,7 +4,7 @@ import {
   DialogModal,
   ModalComponent,
   Table
-} from '@components/common'
+} from '@components/index'
 import FormAddAssign from '@pages/fee-managerment-v3/fee-assignment/components/FormChoosePolicy'
 import FormFieldAssign from '@pages/fee-managerment-v3/fee-assignment/components/FormFieldAssign'
 import { FormInforAdd } from '@pages/fee-managerment-v3/fee-assignment/components/FeeAssignAdd'

@@ -1,5 +1,5 @@
 import { CheckCircleFilled, EyeOutlined } from '@components/icons/common'
-import { CopyableText, TooltipComponent } from '@components/common'
+import { CopyableText, TooltipComponent } from '@components/index'
 import { TransactionItem } from '@type/transaction.type'
 import React from 'react'
 import { StatusKey, StatusType, TransactionKey, TransactionType } from '../constants/Transaction.constant'

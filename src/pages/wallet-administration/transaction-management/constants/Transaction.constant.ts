@@ -1,5 +1,6 @@
 export const TransactionType = {
   WALLET_CREDIT: 'Nạp tiền ví',
+  WALLET_TRANSFER: 'Giao dịch ví',
   DEBIT: 'Rút tiền',
   CREDIT: 'Nạp tiền',
 } as const;
@@ -27,6 +28,7 @@ export const StatusConstants={
 
 export const TransactionConstants={
   WALLET_CREDIT:'WALLET_CREDIT',
+  WALLET_TRANSFER:'WALLET_TRANSFER',
   DEBIT:'DEBIT',
   CREDIT:'CREDIT',
 }as const

@@ -1,4 +1,4 @@
-import { ButtonComponent } from '@components/common'
+import { ButtonComponent } from '@components/index'
 import { useGetPermissionQuery, useLazyGetPermissionQuery } from '@services/apiPermission'
 import {
   useDeleteRoleMutation,
@@ -177,7 +177,7 @@ export const usePermissionRole = () => {
     }
   }
 
-  const hanldePostPermission =async (permissionNames: string[]) => {
+  const handlePostPermission = async (permissionNames: string[]) => {
     try {
       await postPermission({
         roleId: idRole,
@@ -347,7 +347,7 @@ export const usePermissionRole = () => {
     getTypeFooter,
 
     handleGetMemberOfRole,
-    hanldePostPermission,
+    handlePostPermission,
     handleDeletePermissionAssign,
     handleCancel,
     handleSearch,

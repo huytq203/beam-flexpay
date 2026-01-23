@@ -1,4 +1,4 @@
-import { CardComponent, TabComponent } from '@components/common'
+import { CardComponent, TabComponent } from '@components/index'
 import LegalRecords from '@pages/wallet-administration/e-walletManagement/components/detail-infor/business/components/LegalRecords'
 import Representative from '@pages/wallet-administration/e-walletManagement/components/detail-infor/business/components/Representative'
 import { businessInfo } from '@pages/wallet-administration/e-walletManagement/columns/Tabs.config'

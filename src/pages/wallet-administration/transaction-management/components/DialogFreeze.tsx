@@ -1,4 +1,4 @@
-import { Radio } from '@components/common'
+import { Radio } from '@components/index'
 import { FormDatePicker, FormInputNumber, FormRadio, FormTextArea } from '@components/form'
 import { WarningIcon } from '@components/icons/common'
 import React from 'react'
@@ -34,7 +34,9 @@ const DialogFreeze = () => {
                     {
                         typeFeeze == 2 &&
                         <div >
-                            <FormDatePicker showTime control={control} name='' label='Thời gian đóng băng (Tự động)' />
+                            <FormDatePicker
+                            //  getPopupContainer={(trigger: any) => trigger.parentElement!}
+                            showTime control={control} name='' label='Thời gian đóng băng (Tự động)' />
                             <span className='text-gray-500 text-sm'> <span className='text-red-600'>*</span>Để trống sẽ băng vô thời hạn</span>
                         </div>
                     }

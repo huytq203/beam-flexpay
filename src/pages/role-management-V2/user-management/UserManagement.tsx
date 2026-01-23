@@ -4,7 +4,7 @@ import {
   DialogModal,
   ModalComponent,
   Table
-} from '@components/common'
+} from '@components/index'
 import FormSearch from './components/FormSearch'
 import FormAdd from '@pages/role-management-V2/user-management/components/FormAdd'
 import FormDetail from '@pages/role-management-V2/user-management/components/FormDetail'

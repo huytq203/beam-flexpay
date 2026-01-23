@@ -4,7 +4,7 @@ import { feeSearch } from '@type/feePolicies'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { getPolicyColumns } from '../FeeManagement.columns'
+import { getPolicyColumns } from '../columns/FeeManagement.columns'
 import { useMessage } from '@hooks/useMessage'
 import {
   useGetFeePoliciesQuery,
@@ -75,7 +75,7 @@ const useFeeManagement = () => {
   const handleSaveAddFee = async (data: PolicyType) => {
     try {
       await postNewPolicy(data).unwrap()
-      successMess('Add thành công')
+      successMess('Thêm mới thành công')
       resetAdd()
       setOpen(false)
       searchFeePolicies(getSearchParams())

@@ -1,5 +1,5 @@
 import { ArrowCounterClockwiseIcon, DeleteOutlined, EyeOutlined } from "@components/icons/common";
-import { ButtonComponent } from "@components/common";
+import { ButtonComponent } from "@components/index";
 import { useSVG } from "@hooks/useSVG";
 import { ColumnType } from "antd/lib/table";
 //

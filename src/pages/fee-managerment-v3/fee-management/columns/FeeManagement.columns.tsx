@@ -1,4 +1,4 @@
-import { ButtonComponent, TooltipComponent } from '@components/common'
+import { ButtonComponent, TooltipComponent } from '@components/index'
 import {
   DeleteOutlined,
   EditOutlined,
@@ -10,6 +10,8 @@ import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import { ColumnsType } from 'antd/es/table'
 import { feeDomain, serviceType } from '@type/feePoliciesComponent'
 import { statusType } from '@type/feePolicies'
+import dayjs from 'dayjs'
+import { TYPEDATE } from '@constants/date.constant'
 
 // Types
 interface PolicyRecord {
@@ -100,54 +102,56 @@ export const getPolicyColumns = ({
       dataIndex: 'no',
       width: 60,
       align: 'center',
-      className: 'border'
     },
     {
       title: 'Tên chính sách',
       dataIndex: 'name',
-      className: 'border border-l-0  border-b-0'
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (text: string) => (
+        <TooltipComponent title={text}>
+          <span style={{ display: 'inline-block', maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', verticalAlign: 'bottom' }}>
+            {text}
+          </span>
+        </TooltipComponent>
+      ),
     },
     {
       title: 'Loại dịch vụ',
       dataIndex: 'serviceType',
-      className: 'border border-l-0  border-b-0',
       render: (value: string) => getEnumLabel(value, serviceType)
     },
 
     {
       title: 'Phí miền',
       dataIndex: 'feeDomain',
-      className: 'border border-l-0 border-b-0',
       render: (value: string) => getEnumLabel(value, feeDomain)
     },
     {
-      title: 'Loại tiền',
+      title: 'Đơn vị',
       dataIndex: 'currency',
-      className: 'border border-l-0 border-b-0'
     },
     {
       title: 'Hiệu lực từ',
       dataIndex: 'validFrom',
-      className: 'border border-l-0 border-b-0',
-      render: (date: string) => formatDate(date)
+      render: (date: string) => dayjs(date).format(TYPEDATE.fullTime)
     },
     {
       title: 'Hiệu lực đến',
       dataIndex: 'validTo',
-      className: 'border border-l-0 border-b-0',
       render: (date: string) => {
         if (date === null || '' || 0) {
           return 'Vô thời hạn'
         }
         else {
-          return formatDate(date)
+          return dayjs(date).format(TYPEDATE.fullTime)
         }
       }
     },
     {
       title: 'Trạng thái',
       dataIndex: 'status',
-      className: 'border border-l-0  border-b-0',
       align: 'center',
       render: (status: string) => <StatusBadge status={status} />
     },
@@ -155,7 +159,6 @@ export const getPolicyColumns = ({
       title: 'Thao tác',
       key: 'action',
       width: 100,
-      className: 'border border-l-0 border-b-0',
       align: 'center',
       render: (_, record) => (
         <ActionButtons

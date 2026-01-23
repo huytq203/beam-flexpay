@@ -1,4 +1,4 @@
-import { ButtonComponent, CardComponent, Table } from '@components/common'
+import { ButtonComponent, CardComponent, Table } from '@components/index'
 import React from 'react'
 import { Column } from './configs/AccountBank.column'
 

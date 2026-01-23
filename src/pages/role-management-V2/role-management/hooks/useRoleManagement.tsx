@@ -9,7 +9,7 @@ import {
 import { RoleDataItem, RoleData } from '@type/roleManagementV2'
 import { useMessage } from '@hooks/useMessage'
 import { SearchFormData } from '../components/FormSearch'
-import { ButtonComponent } from '@components/common'
+import { ButtonComponent } from '@components/index'
 import { PermissionItem } from '@type/permissionManagement'
 
 export type ModeAction = 'add' | 'update' | 'delete' | 'lock' | 'unlock' | ''
@@ -89,7 +89,7 @@ export const useRoleManagement = () => {
       }
     }
 
-  const hanldePostPermission = useCallback(
+  const handlePostPermission = useCallback(
     async (data: PermissionItem | Omit<PermissionItem, 'id'>) => {
       try {
         await postPermission(data).unwrap()
@@ -195,7 +195,7 @@ export const useRoleManagement = () => {
     typeText,
     typeFooter,
     handleSearch,
-    hanldePostPermission,
+    handlePostPermission,
     handlePutPermission,
     handleDeletePermission
   }

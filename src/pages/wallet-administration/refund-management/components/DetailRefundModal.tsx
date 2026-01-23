@@ -1,4 +1,4 @@
-import { CardComponent } from '@components/common'
+import { CardComponent } from '@components/index'
 import { Calculator, CornerDownRight, EyeOutlined } from '@components/icons/common'
 import React from 'react'
 

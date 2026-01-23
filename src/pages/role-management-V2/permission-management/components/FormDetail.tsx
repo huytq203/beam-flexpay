@@ -1,4 +1,4 @@
-import { CardComponent, Table } from '@components/common'
+import { CardComponent, Table } from '@components/index'
 import { FormDetailColumn } from '@pages/role-management-V2/permission-management/columns/FormDetail.column'
 import { UserInfor } from '@type/userManagement'
 

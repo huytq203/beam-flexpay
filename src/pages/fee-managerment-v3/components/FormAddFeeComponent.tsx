@@ -9,28 +9,30 @@ import { ButtonComponent, DialogModal } from '@components/common'
 import { PlusOutlined } from '@ant-design/icons'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FeeComponentSchema, FeeComponentType } from '@pages/fee-managerment-v3/schemas/FeeManagement.schema'
+import { FeeComponentSchema, FeeComponentType } from '@pages/fee-managerment-v3/fee-component-management/schemas/FeeComponent.schema'
 import { FormInputNumber, FormSelect } from '@components/form'
 import {
   useDeleteFeeComponentTierMutation,
   usePostFeeComponentTierMutation,
   usePutFeeComponentTierMutation
-} from '@services/apiFeeComponentTier'
+} from '@pages/fee-managerment-v3/fee-component-management/services/apiFeeComponentTier.api'
 import {
   baseOn,
   beneficiaryType,
   calculationMethodEnum,
   componentType,
-  feePolicyComponent,
+  FeeComponent,
   payerType,
   roundMode
-} from '@type/feePoliciesComponent'
+} from '@pages/fee-managerment-v3/fee-component-management/types/FeeComponent.types'
 import { useMessage } from '@hooks/useMessage'
 import { getTierColumns } from './FormAddFeeComponent.columns'
+import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 
 interface FormAddFeeProps {
   initialData?: FeeComponentType | null
   onSubmit?: (data: FeeComponentType) => Promise<string | undefined | void> | void
+  onUpdateSuccess?: () => void
 }
 
 const DEFAULT_TIER = {
@@ -66,7 +68,7 @@ const FormAddFeeComponent = forwardRef<
     updateAllTiers: () => Promise<void>
   },
   FormAddFeeProps
->(({ onSubmit, initialData }, ref) => {
+>(({ onSubmit, initialData, onUpdateSuccess }, ref) => {
   const {
     control,
     handleSubmit,
@@ -77,7 +79,7 @@ const FormAddFeeComponent = forwardRef<
   } = useForm<FeeComponentType>({
     resolver: zodResolver(FeeComponentSchema),
     defaultValues: DEFAULT_VALUES,
-    shouldUnregister: true
+    shouldUnregister: false
   })
 
   const [postFeeComponentTier] = usePostFeeComponentTierMutation()
@@ -85,7 +87,7 @@ const FormAddFeeComponent = forwardRef<
   const [deleteFeeComponentTier, { isLoading: isDeleteFeeComponentTierLoading }] =
     useDeleteFeeComponentTierMutation()
   const { successMess, errorMess } = useMessage()
-  const isUpdateMode = !!(initialData as feePolicyComponent)?.id
+  const isUpdateMode = !!(initialData as FeeComponent)?.id
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -109,7 +111,7 @@ const FormAddFeeComponent = forwardRef<
   const handleUpdateTier = async () => {
     try {
       const allTiers = getValues('tiers')
-      const feeComponentId = (initialData as feePolicyComponent)?.id
+      const feeComponentId = (initialData as FeeComponent)?.id
       const roundModeVal = getValues('roundMode')
 
       if (!allTiers || allTiers.length === 0) {
@@ -118,18 +120,19 @@ const FormAddFeeComponent = forwardRef<
 
       const payload = allTiers.map((tierData) => ({
         feeComponentId,
-        minValue: tierData.minValue ?? 0,
-        maxValue: tierData.maxValue ?? 0,
+        minValue: Number(tierData.minValue ?? 0),
+        maxValue: Number(tierData.maxValue ?? 0),
         roundMode: roundModeVal,
-        minFee: tierData.minFee ?? 0,
-        maxFee: tierData.maxFee ?? 0,
-        fixedAmount: tierData.fixedAmount ?? 0,
-        percentage: tierData.percentage ?? 0
+        minFee: Number(tierData.minFee ?? 0),
+        maxFee: Number(tierData.maxFee ?? 0),
+        fixedAmount: Number(tierData.fixedAmount ?? 0),
+        percentage: Number(tierData.percentage ?? 0)
+        
       }))
 
       await putFeeComponentTier({ body: payload }).unwrap()
-    } catch (error) {
-      throw error
+      successMess('Cập nhật tiers thành công')
+    } catch  {
     }
   }
 
@@ -138,7 +141,7 @@ const FormAddFeeComponent = forwardRef<
       const allTiers = getValues('tiers')
       const roundModeVal = getValues('roundMode')
 
-      const componentId = feeComponentId || (initialData as feePolicyComponent)?.id
+      const componentId = feeComponentId || (initialData as FeeComponent)?.id
 
       if (!componentId) {
         errorMess('Không có feeComponentId')
@@ -152,19 +155,18 @@ const FormAddFeeComponent = forwardRef<
 
       const payload = allTiers.map((tierData) => ({
         feeComponentId: componentId,
-        minValue: tierData.minValue ?? 0,
-        maxValue: tierData.maxValue ?? 0,
+        minValue: Number(tierData.minValue ?? 0),
+        maxValue: Number(tierData.maxValue ?? 0),
         roundMode: roundModeVal,
-        minFee: tierData.minFee ?? 0,
-        maxFee: tierData.maxFee ?? 0,
-        fixedAmount: tierData.fixedAmount ?? 0,
-        percentage: tierData.percentage ?? 0
+        minFee: Number(tierData.minFee ?? 0),
+        maxFee: Number(tierData.maxFee ?? 0),
+        fixedAmount: Number(tierData.fixedAmount ?? 0),
+        percentage: Number(tierData.percentage ?? 0)
       }))
 
       await postFeeComponentTier(payload).unwrap()
       successMess('Thêm mới thành công')
-    } catch (error) {
-      errorMess('Thêm mới thất bại')
+    } catch  {
     }
   }
 
@@ -200,12 +202,18 @@ const FormAddFeeComponent = forwardRef<
       handleSubmit(
         async (data) => {
           if (onSubmit) {
-            await onSubmit(data)
+            const result = await onSubmit(data)
+            
+            // Submit tiers nếu là tier-based calculation method và có ID trả về
+            const isTierMode = ['PROGRESSIVE_TIER', 'FLAT_TIER'].includes(
+              String(data.calculationMethod)
+            )
+            
+            if (isTierMode && result) {
+              await handleSubmitAllTiers(result)
+            }
           }
         },
-        (errors) => {
-          console.log('Validation Errors:', errors)
-        }
       )()
     },
     update: async () => {
@@ -223,15 +231,12 @@ const FormAddFeeComponent = forwardRef<
             }
 
             await Promise.all(promises)
-
-            successMess('Cập nhật phí thành công')
-          } catch (error:any) {
-            errorMess(error?.data?.detail)
+            if (onUpdateSuccess) {
+              onUpdateSuccess()
+            }
+          } catch  {
           }
         },
-        (errors) => {
-          console.log('Validation Errors:', errors)
-        }
       )()
     },
     reset: () => reset(DEFAULT_VALUES),
@@ -239,49 +244,19 @@ const FormAddFeeComponent = forwardRef<
     updateAllTiers: handleUpdateTier
   }))
 
-  const columns = getTierColumns({
+  const columns = React.useMemo(() => getTierColumns({
     control,
     getValues,
     onDeleteTier,
-  })
+  }), [control, getValues, onDeleteTier])
 
   const selectOptions = {
-    componentType: [
-      ...Object.entries(componentType).map(([key, value]) => ({
-        label: value,
-        value: key
-      }))
-    ],
-    baseOn: [
-      ...Object.entries(baseOn).map(([key, value]) => ({
-        label: value,
-        value: key
-      }))
-    ],
-    payerType: [
-      ...Object.entries(payerType).map(([key, value]) => ({
-        label: value,
-        value: key
-      }))
-    ],
-    beneficiaryType: [
-      ...Object.entries(beneficiaryType).map(([key, value]) => ({
-        label: value,
-        value: key
-      }))
-    ],
-    roundMode: [
-      ...Object.entries(roundMode).map(([key, value]) => ({
-        label: value,
-        value: key
-      }))
-    ],
-    calculationMethod: Object.entries(calculationMethodEnum).map(
-      ([key, value]) => ({
-        label: value,
-        value: key
-      })
-    )
+    componentType: mapEnumToSelectOptions(componentType),
+    baseOn: mapEnumToSelectOptions(baseOn),
+    payerType: mapEnumToSelectOptions(payerType),
+    beneficiaryType: mapEnumToSelectOptions(beneficiaryType),
+    roundMode: mapEnumToSelectOptions(roundMode),
+    calculationMethod:mapEnumToSelectOptions(calculationMethodEnum)
   }
 
   const isVATType = ['VAT'].includes(String(componentTypes))
@@ -308,13 +283,7 @@ const FormAddFeeComponent = forwardRef<
             label='Tính dựa trên'
             className='col-span-4 flex flex-col'
             
-            options={isUpdateMode ? selectOptions.baseOn : [
-              {
-                ...Object.entries(baseOn).map(([key, value]) => ({
-                  label: value,
-                  value: key
-                }))[0]
-              }]}
+            options={isUpdateMode ? selectOptions.baseOn :mapEnumToSelectOptions(baseOn).slice(0,1)}
             placeholder='Chọn loại tính phí'
           />
           <FormSelect<FeeComponentType>
@@ -364,7 +333,7 @@ const FormAddFeeComponent = forwardRef<
           <FormInputNumber
             control={control}
             name='percentage'
-            label='Phí phần trăm (%)'
+            label='Phần trăm (%)'
             className='col-span-3 flex flex-col gap-2'
             placeholder='0%'
             classNameLable='font-medium'
@@ -414,7 +383,7 @@ const FormAddFeeComponent = forwardRef<
                     <FormInputNumber
                       control={control}
                       name='percentage'
-                      label='Phí phần trăm (%)'
+                      label='Phần trăm (%)'
                       className='col-span-3 flex flex-col gap-2'
                       placeholder='0%'
                       classNameLable='font-medium'
@@ -458,3 +427,5 @@ const FormAddFeeComponent = forwardRef<
 })
 
 export default FormAddFeeComponent
+
+

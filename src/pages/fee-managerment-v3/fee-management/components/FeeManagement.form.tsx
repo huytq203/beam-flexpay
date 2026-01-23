@@ -1,4 +1,4 @@
-import { ButtonComponent, Table } from '@components/common'
+import { ButtonComponent, Table } from '@components/index'
 import { FormInput, FormSelect } from '@components/form'
 import { feePolicies, feeSearch, statusType } from '@type/feePolicies'
 import { feeDomain, serviceType } from '@type/feePoliciesComponent'
@@ -6,6 +6,7 @@ import React from 'react'
 import { Control, UseFormHandleSubmit, UseFormReset } from 'react-hook-form'
 import { ColumnsType } from 'antd/es/table'
 import { useSVG } from '@hooks/useSVG'
+import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 
 interface PolicyRecord {
     key: string
@@ -75,24 +76,14 @@ const FeeManagementForm = ({
                         classNameLable="font-medium"
                         label='Loại dịch vụ'
                         placeholder='Chọn loại dịch vụ'
-                        options={[
-                            ...Object.entries(serviceType).map(([key, value]) => ({
-                                label: value,
-                                value: key
-                            }))
-                        ]}
+                        options={mapEnumToSelectOptions(serviceType)}
                     />
                     <FormSelect
                         name='status'
                         control={control}
                         label='Trạng thái'
                         placeholder="Chọn trạng thái"
-                        options={[
-                            ...Object.entries(statusType).map(([key, value]) => ({
-                                label: value,
-                                value: key
-                            }))
-                        ]}
+                        options={mapEnumToSelectOptions(statusType)}
                     />
 
                     <FormSelect
@@ -100,12 +91,7 @@ const FeeManagementForm = ({
                         control={control}
                         label='Phí miền'
                         placeholder='Chọn phí miền'
-                        options={[
-                            ...Object.entries(feeDomain).map(([key, value]) => ({
-                                label: value,
-                                value: key
-                            }))
-                        ]}
+                        options={mapEnumToSelectOptions(feeDomain)}
                     />
 
                     <div className=' col-span-12 flex justify-between gap-3 '>
@@ -143,6 +129,7 @@ const FeeManagementForm = ({
 
             <div className='mt-2'>
                 <Table
+                    tableLayout="fixed"
                     size='small'
                     dataSource={dataSource}
                     columns={columns}

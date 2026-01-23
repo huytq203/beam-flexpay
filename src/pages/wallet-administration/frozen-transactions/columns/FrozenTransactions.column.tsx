@@ -1,4 +1,4 @@
-import { ButtonComponent } from "@components/common";
+import { ButtonComponent } from "@components/index";
 import { ColumnType } from "antd/lib/table";
 
 export const Column = (): ColumnType[] => [

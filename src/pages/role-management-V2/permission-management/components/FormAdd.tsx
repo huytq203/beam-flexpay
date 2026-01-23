@@ -1,4 +1,4 @@
-import { ButtonComponent, CardComponent } from '@components/common'
+import { ButtonComponent, CardComponent } from '@components/index'
 import { FormInput, FormTextArea } from '@components/form'
 import { DataRoleItem } from '@type/roleManagement'
 import { useEffect } from 'react'

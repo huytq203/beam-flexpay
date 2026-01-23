@@ -3,7 +3,7 @@ import {
   DialogModal,
   ModalComponent,
   Table
-} from '@components/common'
+} from '@components/index'
 import { useState } from 'react'
 import FormAdd from './components/FormAdd'
 import FormSearch from './components/FormSearch'
@@ -35,7 +35,7 @@ export const PermissionManagement = () => {
     typeText,
     isLoadingDetail,
     totalElements,
-    hanldePostPermission,
+    handlePostPermission,
     handleDeletePermissionAssign,
     handleCancel,
     handleSearch,

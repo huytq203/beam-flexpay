@@ -1,4 +1,4 @@
-import { CardComponent, Table } from '@components/common'
+import { CardComponent, Table } from '@components/index'
 import { FormInput } from '@components/form'
 import { FormChoosePolicyColumn } from '@pages/fee-managerment-v3/fee-assignment/configs'
 import { useFormChoosePolicy } from '@pages/fee-managerment-v3/fee-assignment/hook'

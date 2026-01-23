@@ -1,4 +1,4 @@
-import { ButtonComponent, CardComponent, CopyableText, Table, TooltipComponent } from '@components/common'
+import { ButtonComponent, CardComponent, CopyableText, Table, TooltipComponent } from '@components/index'
 import React, { useState } from 'react'
 import Column from './columns/DetailTransaction.column'
 import ReactJson from 'react-json-view'

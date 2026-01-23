@@ -1,4 +1,4 @@
-import { CardComponent } from '@components/common'
+import { CardComponent } from '@components/index'
 import { RoleUserAccount } from '@pages/role-management-V2/user-management/constants/userAccount'
 import { UserInfor } from '@type/userManagement'
 import dayjs from 'dayjs'

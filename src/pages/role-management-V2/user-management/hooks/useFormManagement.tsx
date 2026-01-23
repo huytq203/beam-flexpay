@@ -1,4 +1,4 @@
-import { ButtonComponent } from '@components/common'
+import { ButtonComponent } from '@components/index'
 import { useMessage } from '@hooks/useMessage'
 import {
   useGetUserQuery,
@@ -8,7 +8,7 @@ import { UserInfor } from '@type/userManagement'
 import { useCallback, useMemo, useState } from 'react'
 import { ActionMode } from '../UserManagement'
 import { FormSendEmail } from '../components/FormSendEmail'
-import { RoleManagemenColume } from '../columns/UserManagement.colume'
+import { RoleManagementColumn } from '../columns/UserManagement.column'
 import dayjs from 'dayjs'
 import { useGetRoleQuery } from '@services/apiRole'
 import { SendOutlined } from '@components/icons/common'
@@ -183,7 +183,7 @@ export const useFormManagement = () => {
     // userRoleData(record.id)
   }
 
-  const column = RoleManagemenColume({
+  const column = RoleManagementColumn({
     setOpenModalDetail,
     setModeAction,
     setOpenDialog,

@@ -234,6 +234,7 @@ const createCustomBaseQuery = (
           const newAccessToken = await refreshAccessToken(api, extraOptions as Record<string, unknown>)
 
           if (!newAccessToken) {
+            alert("Đã hết phiên làm việc, vui lòng đăng nhập lại để tiếp tục!")
             forceLogout()
             break
           }

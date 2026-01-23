@@ -1,4 +1,4 @@
-import { ButtonComponent } from '@components/common'
+import { ButtonComponent } from '@components/index'
 import { FormInput } from '@components/form'
 import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'

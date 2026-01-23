@@ -1,4 +1,4 @@
-import { CardComponent, DialogModal, TabComponent } from '@components/common'
+import { CardComponent, DialogModal, TabComponent } from '@components/index'
 import useDetailUser from '@pages/wallet-administration/e-walletManagement/hooks/useDetailUser'
 import React, { Suspense, lazy, useMemo } from 'react'
 import { items } from './columns/Tabs.config'

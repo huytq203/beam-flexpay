@@ -1,5 +1,5 @@
 import { SnowflakeIcon, StopOutlined, WarningIcon } from '@components/icons/common'
-import { CardComponent, DialogModal, Table } from '@components/common'
+import { CardComponent, DialogModal, Table } from '@components/index'
 import React from 'react'
 import FormSearch from './components/FormSearch'
 import useEwalletManagement from './hooks/useEwalletManagement'

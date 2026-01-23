@@ -1,4 +1,4 @@
-import { CardComponent, TimeLineComponent } from '@components/common'
+import { CardComponent, TimeLineComponent } from '@components/index'
 import { BankFilled, HistoryOutlined, PenTool, UserIcon } from '@components/icons/common'
 import React from 'react'
 

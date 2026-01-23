@@ -1,4 +1,4 @@
-import { CardComponent, DialogModal, Table } from '@components/common'
+import { CardComponent, DialogModal, Table } from '@components/index'
 import { ArrowCounterClockwiseIcon, ArrowsCounterClockwiseIcon, FileDoneOutlined, FireIcon, SnowflakeIcon } from '@components/icons/common'
 import DialogConfirm from '@pages/wallet-administration/transaction-management/components/DialogConfirm'
 import React, { useState } from 'react'

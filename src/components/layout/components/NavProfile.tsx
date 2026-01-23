@@ -15,7 +15,7 @@ import {
   UserIcon,
   WarningCircleIcon
 } from '@phosphor-icons/react/dist/ssr'
-import { DialogModal } from '@components/common'
+import { DialogModal } from '@components/index'
 import { useLogoutMutation } from '@services/authEndpoints'
 import { getRefreshTokenCookie, removeRefreshTokenCookie } from '@configs/fetchBaseQuery.types'
 const { Text } = Typography

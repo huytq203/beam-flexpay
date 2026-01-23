@@ -1,4 +1,4 @@
-import { CardComponent } from '@components/common'
+import { CardComponent } from '@components/index'
 import { MailOutlined } from '@components/icons/common'
 import { UserInfor } from '@type/userManagement'
 

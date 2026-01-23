@@ -1,4 +1,4 @@
-import { CardComponent, DialogModal, ModalComponent, Table } from '@components/common'
+import { CardComponent, DialogModal, ModalComponent, Table } from '@components/index'
 import FormAdd from '@pages/role-management-V2/role-management/components/FormAdd'
 import FormSearch from '@pages/role-management-V2/role-management/components/FormSearch'
 import { RoleManagementColumn } from '@pages/role-management-V2/role-management/columns/RoleManagement.column'
@@ -26,7 +26,7 @@ const RoleManagement = () => {
     openDialog,
     setOpenDialog,
     handleSearch,
-    hanldePostPermission,
+    handlePostPermission,
     handlePutPermission,
     handleDeletePermission
   } = useRoleManagement()
@@ -40,7 +40,7 @@ const RoleManagement = () => {
 
   const onSubmit = async (data: PermissionItem | Omit<PermissionItem, 'id' | 'name'>) => {
     if (modeAction === 'add') {
-      await hanldePostPermission(data as Omit<PermissionItem, 'id'>)
+      await handlePostPermission(data as Omit<PermissionItem, 'id'>)
     } else {
       await handlePutPermission(data as PermissionItem)
     }

@@ -2,9 +2,9 @@ import React from 'react'
 import { TableRows } from '@pages/wallet-administration/e-walletManagement/types/Column.type'
 import { ColumnType } from 'antd/lib/table'
 import { EnvelopeIcon, MoreOutlined, PhoneIcon } from '@components/icons/common'
-import {DropDownComponent} from '@components/common'
+import {DropDownComponent} from '@components/index'
 import { MenuProps } from 'antd/lib'
-import { ButtonComponent } from '@components/common'
+import { ButtonComponent } from '@components/index'
 const status = (record: any) => {
     return (
         <div className="inline-flex gap-1">

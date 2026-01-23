@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined, LockOutlined } from '@components/icons/common'
-import { ButtonComponent } from '@components/common'
+import { ButtonComponent } from '@components/index'
 import { ColumnType } from 'antd/lib/table'
 import { RoleDataItem } from '@type/roleManagementV2'
 import { ModeAction } from '../hooks/useRoleManagement'

@@ -2,7 +2,7 @@ import { TransactionItem } from "@type/transaction.type";
 import dayjs from "dayjs";
 import { ColumnsType } from "antd/lib/table";
 import { Link, useNavigate, NavigateFunction } from "react-router-dom";
-import { ButtonComponent, TooltipComponent } from "@components/common";
+import { ButtonComponent, TooltipComponent } from "@components/index";
 import { ArrowCounterClockwiseIcon, BroadcastIcon, CheckOutlined, CloseOutlined, DollarOutlined, EyeFilled, FireIcon, PencilLineIcon, SnowflakeIcon } from "@components/icons/common";
 import { StatusConstants, StatusKey, StatusType, TransactionConstants, TransactionKey, TransactionType } from "@pages/wallet-administration/transaction-management/constants/Transaction.constant";
 import { formatNumber,formatCurrency } from "@utils/index";
@@ -54,7 +54,7 @@ const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<Trans
             const typeKey = record.type as TransactionKey;
             return (
                 <div className='text-start'>
-                    <p className="font-medium"> {TransactionType[typeKey] ?? '--'}</p>
+                    <p className="font-medium"> {(TransactionType[typeKey] ?? record.type)??'--'}</p>
                     <p className="text-gray-500 text-sm"> {record.description}</p>
                 </div>
             )
@@ -62,7 +62,7 @@ const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<Trans
     },
     {
         title: 'Người chuyển',
-        dataIndex: 'soDuVi',
+        dataIndex: 'ownerId',
         align: 'center'
     },
     {

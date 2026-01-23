@@ -1,4 +1,4 @@
-import { ButtonComponent } from '@components/common'
+import { ButtonComponent } from '@components/index'
 import { FormField, FormInput, FormSelect } from '@components/form'
 import { useSVG } from '@hooks/useSVG'
 import React from 'react'

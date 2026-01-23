@@ -1,4 +1,4 @@
-import { ButtonComponent } from '@components/common'
+import { ButtonComponent } from '@components/index'
 import { FormInput } from '@components/form'
 import { Col, Row } from 'antd'
 import React from 'react'

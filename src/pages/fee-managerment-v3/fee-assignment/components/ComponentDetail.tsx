@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons"
-import { ButtonComponent, CardComponent, Table } from "@components/common"
+import { ButtonComponent, CardComponent, Table } from "@components/index"
 import { useGetFeeComponentTierQuery } from "@services/apiFeeComponentTier"
 import { baseOn, beneficiaryType, calculationMethodEnum, componentType, feePolicyComponent, payerType } from "@type/feePoliciesComponent"
 

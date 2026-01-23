@@ -5,7 +5,7 @@ import {
   LockOutlined,
   UnlockOutlined
 } from '@components/icons/common'
-import { ButtonComponent, TooltipComponent } from '@components/common'
+import { ButtonComponent, TooltipComponent } from '@components/index'
 import { FeeAssignment, paymentMethodType } from '@type/feeAssignment'
 import { ColumnsType } from 'antd/es/table'
 import Tippy from '@tippyjs/react'

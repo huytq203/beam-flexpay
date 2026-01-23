@@ -1,4 +1,4 @@
-import { ButtonComponent } from '@components/common'
+import { ButtonComponent } from '@components/index'
 import { FormDatePicker, FormInput, FormInputNumber, FormSelect } from '@components/form'
 import { BroomIcon, MagnifyingGlassIcon } from '@components/icons/common'
 import React from 'react'

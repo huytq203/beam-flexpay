@@ -3,9 +3,9 @@ import {
   CardComponent,
   DialogModal,
   ModalComponent
-} from '@components/common'
+} from '@components/index'
 import { useSVG } from '@hooks/useSVG'
-import FormAddFeeComponent from '@pages/fee-managerment-v3/components/FormAddFeeComponent'
+// import FormAddFeeComponent from '@pages/fee-managerment-v3/components/FormAddFeeComponent'
 import FormChoosePolicy from '@pages/fee-managerment-v3/fee-assignment/components/FormChoosePolicy'
 import FormFieldAssign from '@pages/fee-managerment-v3/fee-assignment/components/FormFieldAssign'
 import { useGetFeePolicyByIdQuery } from '@services/apiFeePoliciesServices'
@@ -26,6 +26,7 @@ import { SaveOutlined } from '@components/icons/common'
 import { useFeeAssignmentForm } from '@pages/fee-managerment-v3/fee-assignment/hook'
 import { ComponentDetail } from '@pages/fee-managerment-v3/fee-assignment/components/ComponentDetail'
 import { skipToken } from '@reduxjs/toolkit/query'
+import InforPolicy from '@pages/fee-managerment-v3/components/InfoPolicy'
 
 interface FormInforAddProps {
   svg: (
@@ -298,11 +299,14 @@ const FeeAssignAdd = () => {
         onCancel={handleCloseModalDetail}
         confirmLoading={isSubmitting}
         modalText={
-          <FormAddFeeComponent
-            ref={formRef}
-            onSubmit={handleUpdateFeeComponent}
-            initialData={combinedInitialData}
-          />
+
+          <InforPolicy/>
+          // <FormAddFeeComponent
+          //   ref={formRef}
+          //   onSubmit={handleUpdateFeeComponent}
+          //   initialData={combinedInitialData}
+          // />
+          
         }
       />
     </div>
