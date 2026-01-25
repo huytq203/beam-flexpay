@@ -1,6 +1,6 @@
 import { apiFeeService } from '@services/apiService'
 import { ResponseType } from '@type/api'
-import { FeeTier } from '../types/FeeComponent.types'
+import { FeeTier } from '../fee-component-management/types/FeeComponent.types'
 export const apiFeeComponentTier = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
     postFeeComponentTier: build.mutation({

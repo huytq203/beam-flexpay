@@ -1,4 +1,4 @@
-import { DeviceMobileSpeakerIcon, HistoryOutlined } from '@components/icons/common'
+import { DeviceMobileSpeakerIcon, HistoryOutlined } from '@components/icons'
 import { ButtonComponent } from '@components/index'
 import React from 'react'
 

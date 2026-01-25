@@ -1,6 +1,6 @@
 import { ButtonComponent } from '@components/index'
 import { FormDatePicker, FormInput, FormInputNumber, FormSelect } from '@components/form'
-import { BroomIcon, MagnifyingGlassIcon } from '@components/icons/common'
+import { BroomIcon, MagnifyingGlassIcon } from '@components/icons'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 

@@ -1,5 +1,5 @@
 import { CardComponent } from '@components/index'
-import { CheckCircleFilled, UserIcon, WalletIcon } from '@components/icons/common'
+import { CheckCircleFilled, UserIcon, WalletIcon } from '@components/icons'
 import React from 'react'
 
 const InforUser = () => {

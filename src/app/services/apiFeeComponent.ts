@@ -3,7 +3,7 @@ import { ResponseType } from '@type/api'
 import {
   feePolicyComponent,
   FeeComponentResponse
-} from '@type/feePoliciesComponent'
+} from '@pages/fee-managerment-v3/constants/feePoliciesComponent'
 export const feeComponentApi = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
     getFeeComponentPolicies: build.query({

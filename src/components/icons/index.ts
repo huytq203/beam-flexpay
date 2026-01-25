@@ -1,4 +1,4 @@
-import { FireIcon } from '@components/icons/common';
+import { FireIcon } from '@components/icons';
 export {
   CheckOutlined,
   CloseOutlined,
@@ -28,7 +28,8 @@ export {
   DollarOutlined,
   BankFilled ,
   StopOutlined,
-  SaveOutlined 
+  SaveOutlined ,
+  PlusOutlined
 } from '@ant-design/icons'
 
 

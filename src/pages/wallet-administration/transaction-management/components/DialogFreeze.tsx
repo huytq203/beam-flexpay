@@ -1,6 +1,6 @@
 import { Radio } from '@components/index'
 import { FormDatePicker, FormInputNumber, FormRadio, FormTextArea } from '@components/form'
-import { WarningIcon } from '@components/icons/common'
+import { WarningIcon } from '@components/icons'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 

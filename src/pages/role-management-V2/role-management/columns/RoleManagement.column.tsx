@@ -1,4 +1,4 @@
-import { DeleteOutlined, EditOutlined, LockOutlined } from '@components/icons/common'
+import { DeleteOutlined, EditOutlined, LockOutlined } from '@components/icons'
 import { ButtonComponent } from '@components/index'
 import { ColumnType } from 'antd/lib/table'
 import { RoleDataItem } from '@type/roleManagementV2'

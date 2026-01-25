@@ -1,5 +1,5 @@
 import { CardComponent, Table, DialogModal, ModalComponent, UploadCombined } from '@components/index'
-import { CheckCircleFilled, ClockIcon, InfoCircleFilled } from '@components/icons/common'
+import { CheckCircleFilled, ClockIcon, InfoCircleFilled } from '@components/icons'
 import React, { useEffect, useState } from 'react'
 import DialogApproval from './components/DialogApproval'
 import DialogApproveWithdraw from './components/DialogApproveWithdraw'

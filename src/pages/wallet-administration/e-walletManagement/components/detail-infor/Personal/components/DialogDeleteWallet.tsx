@@ -1,5 +1,5 @@
 import { FormTextArea } from '@components/form'
-import { StopOutlined } from '@components/icons/common'
+import { StopOutlined } from '@components/icons'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 

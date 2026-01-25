@@ -7,7 +7,7 @@ import {
   EyeOutlined,
   LockOutlined,
   UserOutlined
-} from '@components/icons/common'
+} from '@components/icons'
 import { ColumnType } from 'antd/lib/table'
 import { ModeAction } from '../hooks/usePermissionRole'
 import { PermissionItem } from '@type/permissionManagement'

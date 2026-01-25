@@ -1,6 +1,6 @@
 import { apiFeeService } from '@services/apiService'
 import { ResponseType } from '@type/api'
-import { FeeComponent, FeeComponentResponse } from '../types/FeeComponent.types'
+import { FeeComponent, FeeComponentResponse } from '../fee-component-management/types/FeeComponent.types'
 export const feeComponentApi = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
     getFeeComponentPolicies: build.query({

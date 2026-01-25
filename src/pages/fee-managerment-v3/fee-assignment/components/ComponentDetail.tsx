@@ -1,7 +1,7 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons"
 import { ButtonComponent, CardComponent, Table } from "@components/index"
 import { useGetFeeComponentTierQuery } from "@services/apiFeeComponentTier"
-import { baseOn, beneficiaryType, calculationMethodEnum, componentType, feePolicyComponent, payerType } from "@type/feePoliciesComponent"
+import { baseOn, beneficiaryType, calculationMethodEnum, componentType, feePolicyComponent, payerType } from "@pages/fee-managerment-v3/constants/feePoliciesComponent"
 
 interface propComponentDetail {
   setOpenModalDetail: (value: boolean) => void

@@ -3,7 +3,7 @@ import { FormInput, FormSelect } from '@components/form'
 import { useSVG } from '@hooks/useSVG'
 import { useForm } from 'react-hook-form'
 import { ModeAction } from '@pages/role-management-V2/role-management/hooks/useRoleManagement'
-import { BroomIcon } from '@components/icons/common'
+import { BroomIcon } from '@components/icons'
 
 export interface SearchFormData {
   roleCode: string

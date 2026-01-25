@@ -1,7 +1,7 @@
 import { ButtonComponent } from '@components/index'
 import { FormInput, FormSelect } from '@components/form'
 import { useSVG } from '@hooks/useSVG'
-import { BroomIcon } from '@components/icons/common'
+import { BroomIcon } from '@components/icons'
 import { useForm } from 'react-hook-form'
 
 export interface SearchFormData {

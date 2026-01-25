@@ -8,8 +8,8 @@ import {
 import { formatDate, getEnumLabel } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
 import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import { ColumnsType } from 'antd/es/table'
-import { feeDomain, serviceType } from '@type/feePoliciesComponent'
-import { statusType } from '@type/feePolicies'
+import { feeDomain, serviceType } from '@pages/fee-managerment-v3/constants/feePoliciesComponent'
+import { statusType } from '@pages/fee-managerment-v3/constants/feePolicies'
 import dayjs from 'dayjs'
 import { TYPEDATE } from '@constants/date.constant'
 

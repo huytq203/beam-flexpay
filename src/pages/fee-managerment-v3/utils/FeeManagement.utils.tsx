@@ -1,6 +1,6 @@
 import {
   serviceType,
-} from '@type/feePoliciesComponent'
+} from '@pages/fee-managerment-v3/constants/feePoliciesComponent'
 export const getEnumLabel = <T extends Record<string, string>>(
   value: string,
   typeEnum: T

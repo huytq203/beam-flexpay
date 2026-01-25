@@ -1,5 +1,5 @@
 import { CardComponent } from '@components/index'
-import { Calculator, CornerDownRight, EyeOutlined } from '@components/icons/common'
+import { Calculator, CornerDownRight, EyeOutlined } from '@components/icons'
 import React from 'react'
 
 const DetailRefundModal = () => {

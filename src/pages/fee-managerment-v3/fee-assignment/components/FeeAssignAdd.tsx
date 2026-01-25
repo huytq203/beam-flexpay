@@ -9,7 +9,7 @@ import { useSVG } from '@hooks/useSVG'
 import FormChoosePolicy from '@pages/fee-managerment-v3/fee-assignment/components/FormChoosePolicy'
 import FormFieldAssign from '@pages/fee-managerment-v3/fee-assignment/components/FormFieldAssign'
 import { useGetFeePolicyByIdQuery } from '@services/apiFeePoliciesServices'
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import {
   FieldErrors,
   useForm,
@@ -21,12 +21,12 @@ import {
   FeeAssignType
 } from '@pages/fee-managerment-v3/fee-assignment/schemas/feeAssign.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FeeAssignment } from '@type/feeAssignment'
-import { SaveOutlined } from '@components/icons/common'
+import { FeeAssignment } from '@pages/fee-managerment-v3/constants/feeAssignment'
+import { SaveOutlined } from '@components/icons'
 import { useFeeAssignmentForm } from '@pages/fee-managerment-v3/fee-assignment/hook'
 import { ComponentDetail } from '@pages/fee-managerment-v3/fee-assignment/components/ComponentDetail'
 import { skipToken } from '@reduxjs/toolkit/query'
-import InforPolicy from '@pages/fee-managerment-v3/components/InfoPolicy'
+import InforPolicy, { InfoPolicyRef } from '@pages/fee-managerment-v3/components/InfoPolicy'
 
 interface FormInforAddProps {
   svg: (
@@ -183,6 +183,7 @@ const FeeAssignAdd = () => {
     setOpenDialog,
     openModalDetail,
     setOpenModalDetail,
+    selectedComponent,
 
     // Refs
     formRef,
@@ -216,6 +217,7 @@ const FeeAssignAdd = () => {
   } = useFeeAssignmentForm()
 
   const { svg } = useSVG()
+  const infoPolicyRef = useRef<InfoPolicyRef>(null)
 
   const arr: string[] = []
 
@@ -295,18 +297,17 @@ const FeeAssignAdd = () => {
       <ModalComponent
         title='Sửa thành phần phí'
         open={openModalDetail}
-        onOk={handleSaveAddFee}
+        onOk={() => infoPolicyRef.current?.update()}
         onCancel={handleCloseModalDetail}
         confirmLoading={isSubmitting}
         modalText={
-
-          <InforPolicy/>
-          // <FormAddFeeComponent
-          //   ref={formRef}
-          //   onSubmit={handleUpdateFeeComponent}
-          //   initialData={combinedInitialData}
-          // />
-          
+          <InforPolicy
+            ref={infoPolicyRef}
+            selectedRow={selectedComponent}
+            combinedInitialData={combinedInitialData}
+            onUpdate={handleUpdateFeeComponent}
+            onSuccess={handleCloseModalDetail}
+          />
         }
       />
     </div>

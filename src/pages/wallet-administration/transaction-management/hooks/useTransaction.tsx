@@ -1,5 +1,5 @@
 import usePagination from '@hooks/usePagination'
-import { useGetTransactionQuery } from '@services/apiTransactionV2'
+import { useGetTransactionQuery } from '@pages/wallet-administration/service/apiTransactionV2'
 import React, { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 

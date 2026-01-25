@@ -6,7 +6,7 @@ import {
   KeyOutlined,
   LockOutlined,
   UserSwitchOutlined
-} from '@components/icons/common'
+} from '@components/icons'
 import { ButtonComponent, TooltipComponent } from '@components/index'
 import { UserInfor } from '@type/userManagement'
 import { ColumnType } from 'antd/lib/table'

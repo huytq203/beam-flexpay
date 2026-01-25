@@ -1,5 +1,5 @@
 import { CardComponent } from '@components/index'
-import { MailOutlined } from '@components/icons/common'
+import { MailOutlined } from '@components/icons'
 import { UserInfor } from '@type/userManagement'
 
 interface Props {

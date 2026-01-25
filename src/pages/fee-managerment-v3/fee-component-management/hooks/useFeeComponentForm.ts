@@ -10,17 +10,18 @@ import {
   useGetFeeComponentByIdQuery,
   useGetFeeComponentPoliciesByIdQuery,
   useGetFeeComponentPoliciesQuery
-} from '../services/apiFeeComponent.api'
+} from '../../services/apiFeeComponent.api'
 import {
   useGetFeePolicyByIdQuery,
   usePostNewPolicyMutation,
   usePutFeePolicyMutation
-} from '../../fee-management/services/apiFeePolicy.service'
-import { useGetFeeComponentTierQuery } from '../services/apiFeeComponentTier.api'
+} from '../../services/apiFeePolicy.api'
+import { useGetFeeComponentTierQuery } from '../../services/apiFeeComponentTier.api'
+import { FeeComponentType } from '../schemas/FeeComponent.schema'
 import {
-  FeeComponentType
-} from '../schemas/FeeComponent.schema'
-import { PolicySchema as FeePolicySchema, PolicyType as FeePolicyType } from '../../fee-management/schemas/FeeManagement.schema'
+  PolicySchema as FeePolicySchema,
+  PolicyType as FeePolicyType
+} from '../../fee-management/schemas/FeeManagement.schema'
 import { FeeComponent, FeeTier } from '../types/FeeComponent.types'
 import { convertToISO } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
 import { feeComponentColumns } from '../columns/FeeComponentManagement.columns'
@@ -58,9 +59,7 @@ export const useFeeComponentForm = () => {
   const [open, setOpen] = useState(false)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
-  const [selectedRow, setSelectedRow] = useState<FeeComponent | null>(
-    null
-  )
+  const [selectedRow, setSelectedRow] = useState<FeeComponent | null>(null)
   const [updateComponentId, setUpdateComponentId] = useState<string | null>(
     null
   )
@@ -100,12 +99,14 @@ export const useFeeComponentForm = () => {
   const [postNewPolicy] = usePostNewPolicyMutation()
 
   // API Queries
-  const { data: feeComponent } = useGetFeeComponentByIdQuery(
+  const { data: feeComponent, isFetching: isFetchingComponent } = useGetFeeComponentByIdQuery(
     selectedRow?.id ?? '',
-    { skip: !selectedRow?.id }
+    {
+      skip: !selectedRow?.id || selectedRow?.calculationMethod !== 'DIRECT'
+    }
   )
 
-  const { data: feeComponentTierData } = useGetFeeComponentTierQuery(
+  const { data: feeComponentTierData, isFetching: isFetchingTier } = useGetFeeComponentTierQuery(
     selectedRow?.id ?? '',
     {
       skip:
@@ -115,11 +116,8 @@ export const useFeeComponentForm = () => {
     }
   )
 
-
-  const { data: feeComponentPolicyData, isLoading: loadingFeeComponentById } = useGetFeeComponentPoliciesByIdQuery(
-    id!,
-    { skip: !isEdit }
-  )
+  const { data: feeComponentPolicyData, isLoading: loadingFeeComponentById } =
+    useGetFeeComponentPoliciesByIdQuery(id!, { skip: !isEdit })
 
   const { data: feeData } = useGetFeeComponentPoliciesQuery(
     {
@@ -131,36 +129,35 @@ export const useFeeComponentForm = () => {
     { skip: isEdit }
   )
 
-  // Computed Data
+  // ghép data
+
+  const handleCloseModal = () => {
+    setOpen(false)
+    setSelectedRow(null)
+  }
+
   const combinedInitialData = useMemo(() => {
-    if (!feeComponent) return null
-    if (feeComponentTierData && feeComponentTierData.length > 0) {
-      const tiers = feeComponentTierData.map((item: any) => ({
-        id: item.id,
-        minValue: item.minValue,
-        maxValue: item.maxValue,
-        roundMode: item.roundMode,
-        minFee: item.minFee,
-        maxFee: item.maxFee,
-        fixedAmount: item.fixedAmount,
-        percentage: item.percentage
-      }))
-      return { ...feeComponent, tiers }
+    if (!selectedRow) return null
+
+    // Nếu đang fetch, trả về null để tránh hiển thị cache cũ
+    if (selectedRow.calculationMethod === 'DIRECT') {
+      if (isFetchingComponent) return null
+      return feeComponent ?? null
+    } else {
+      if (isFetchingTier) return null
+      return feeComponentTierData ?? null
     }
-    return feeComponent
-  }, [feeComponent, feeComponentTierData])
+  }, [selectedRow, feeComponent, feeComponentTierData, isFetchingComponent, isFetchingTier])
 
   const list = (feeComponentPolicyData ?? feeData?.content) || []
   const total = feeData?.totalElements || 0
 
   const sortedList = useMemo(() => {
-    return [...list].sort(
-      (a, b) => {
-        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0
-        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0
-        return dateB - dateA
-      }
-    )
+    return [...list].sort((a, b) => {
+      const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0
+      const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0
+      return dateB - dateA
+    })
   }, [list])
 
   const dataSource = useMemo(() => {
@@ -200,42 +197,38 @@ export const useFeeComponentForm = () => {
 
   // Handlers
   const handleFormSubmit = async (data: FeeComponentType) => {
-    try {
-      const payload = transformPayload(data)
-      const response = await postFeeComponent(payload).unwrap()
-      successMess('Thêm thành phần phí thành công')
-      setOpen(false)
-      return response?.id
-    } catch { }
+    const payload = transformPayload(data)
+    const response = await postFeeComponent(payload).unwrap()
+    return response?.id
   }
 
-  const handleUpdateFeeComponent = async (data: FeeComponentType) => {
-    try {
-      const payload = {
-        componentType: data.componentType,
-        baseOn: data.baseOn,
-        baseComponentType: null,
-        calculationMethod: data.calculationMethod,
-        fixedAmount: data.fixedAmount ?? 0,
-        percentage: data.percentage ?? 0,
-        roundMode: data.roundMode,
-        minFee: data.minFee ?? 0,
-        maxFee: data.maxFee ?? 0,
-        payerType: data.payerType,
-        payerObjectType: null,
-        payerObjectId: null,
-        beneficiaryType: data.beneficiaryType,
-        beneficiaryObjectType: null,
-        beneficiaryObjectId: null
-      }
-      await putFeeComponentPolicies({
-        id: updateComponentId,
-        body: payload
-      }).unwrap()
-      // Success toast sẽ được hiển thị trong FormAddFeeComponent.update()
-    } catch (error) {
-      throw error
+  const handleUpdateFeeComponent = async (data: FeeComponentType, componentId?: string) => {
+    const idToUpdate = componentId || selectedRow?.id
+    if (!idToUpdate) {
+      errorMess('Không tìm thấy ID thành phần phí!')
+      return
     }
+    const payload = {
+      componentType: data.componentType,
+      baseOn: data.baseOn,
+      baseComponentType: null,
+      calculationMethod: data.calculationMethod,
+      fixedAmount: data.fixedAmount ?? 0,
+      percentage: data.percentage ?? 0,
+      roundMode: data.roundMode,
+      minFee: data.minFee ?? 0,
+      maxFee: data.maxFee ?? 0,
+      payerType: data.payerType,
+      payerObjectType: null,
+      payerObjectId: null,
+      beneficiaryType: data.beneficiaryType,
+      beneficiaryObjectType: null,
+      beneficiaryObjectId: null
+    }
+    await putFeeComponentPolicies({
+      id: idToUpdate,
+      body: payload
+    }).unwrap()
   }
 
   const handleDelete = async (deleteId: string | null) => {
@@ -245,16 +238,14 @@ export const useFeeComponentForm = () => {
       await deleteFeeComponent(deleteId).unwrap()
       setOpenDialog(false)
       successMess('Xoá thành công!')
-    } catch {
-    }
+    } catch { }
   }
 
   const onSubmit = async (data: FeePolicyType) => {
     try {
       await postNewPolicy(data).unwrap()
       successMess('Thêm chính sách thành công!')
-    } catch {
-    }
+    } catch { }
   }
 
   const handleUpdate = async (data: FeePolicyType) => {
@@ -265,7 +256,6 @@ export const useFeeComponentForm = () => {
     }
     await putFeePolicies({ id: id, body: payload }).unwrap()
     successMess('Cập nhật chính sách thành công!')
-
   }
 
   const handleSaveAddFee = () => {
@@ -332,11 +322,12 @@ export const useFeeComponentForm = () => {
     handleOpenAddModal,
     handleBack,
 
+    handleCloseModal,
+
     // Loading states
     isSubmitting: loadPostComponent || putFeeComponentPoliciesLoading,
     isDeleting: deleteFeeComponentLoading,
     putFeePoliciesLoading,
     loadingFeeComponentById
-
   }
 }

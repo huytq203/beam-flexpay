@@ -1,38 +1,53 @@
-import {
-  ModalComponent,
-  CardComponent
-} from '@components/index'
+import { ModalComponent, CardComponent } from '@components/index'
 import FormAddPolicy from '@pages/fee-managerment-v3/components/FormAddPolicy'
 import FeeManagementForm from './components/FeeManagement.form'
 import useFeeManagement from './hooks/useFeeManagement'
 
 const FeeManagement = () => {
- 
-const{control,handleSubmit,handleSearch,reset,setOpen,dataSource,columns,page,pageSize,total,setPage,setPageSize,setIsCreate,open,handleSubmitAdd,handleSaveAddFee,loadingNewPolicy,controlAdd,isCreate,searchFeePolicies,getSearchParams}=useFeeManagement()
+  const {
+    control,
+    handleSubmit,
+    handleSearch,
+    handleReset,
+    reset,
+    setOpen,
+    dataSource,
+    columns,
+    page,
+    pageSize,
+    total,
+    setPage,
+    setPageSize,
+    setIsCreate,
+    open,
+    handleSubmitAdd,
+    handleSaveAddFee,
+    loadingNewPolicy,
+    controlAdd,
+    isCreate
+  } = useFeeManagement()
   return (
     <>
-      <CardComponent content={
-        <FeeManagementForm
-          control={control}
-          handleSubmit={handleSubmit}
-          handleSearch={handleSearch}
-          reset={reset}
-          onReset={() => {
-            reset()
-            searchFeePolicies(getSearchParams())
-          }}
-          setOpen={setOpen}
-          dataSource={dataSource}
-          columns={columns}
-          page={page}
-          pageSize={pageSize}
-          total={total}
-          setPage={setPage}
-          setPageSize={setPageSize}
-          setIsCreate={setIsCreate}
-        />
-      } />
-
+      <CardComponent
+        content={
+          <FeeManagementForm
+            control={control}
+            handleSubmit={handleSubmit}
+            handleSearch={handleSearch}
+            reset={reset}
+            onReset={handleReset}
+            setOpen={setOpen}
+            dataSource={dataSource}
+            columns={columns}
+            page={page}
+            pageSize={pageSize}
+            total={total}
+            setPage={setPage}
+            setPageSize={setPageSize}
+            setIsCreate={setIsCreate}
+          />
+        }
+      />
 
       <ModalComponent
         title='Thêm chính sách mới'
@@ -43,15 +58,15 @@ const{control,handleSubmit,handleSearch,reset,setOpen,dataSource,columns,page,pa
         confirmLoading={loadingNewPolicy}
         modalText={
           <CardComponent
-            content={<FormAddPolicy
-              control={controlAdd}
-              handleSubmit={handleSubmitAdd}
-              onSubmit={handleSaveAddFee}
-              isCreate={isCreate}
-            />
+            content={
+              <FormAddPolicy
+                control={controlAdd}
+                handleSubmit={handleSubmitAdd}
+                onSubmit={handleSaveAddFee}
+                isCreate={isCreate}
+              />
             }
           />
-
         }
       />
     </>

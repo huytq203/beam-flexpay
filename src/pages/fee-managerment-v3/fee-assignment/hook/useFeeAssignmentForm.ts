@@ -9,11 +9,12 @@ import {
 } from '@services/apiFeeAssignment'
 import {
     useDeleteFeeComponentPoliciesMutation,
-    useGetFeeComponentPoliciesByIdQuery
+    useGetFeeComponentPoliciesByIdQuery,
+    useGetFeeComponentByIdQuery
 } from '@services/apiFeeComponent'
 import { useGetFeeComponentTierQuery } from '@services/apiFeeComponentTier'
-import { FeeAssignment } from '@type/feeAssignment'
-import { feePolicyComponent } from '@type/feePoliciesComponent'
+import { FeeAssignment } from '@pages/fee-managerment-v3/constants/feeAssignment'
+import { feePolicyComponent } from '@pages/fee-managerment-v3/constants/feePoliciesComponent'
 import { useFeeComponentForm } from '@pages/fee-managerment-v3/fee-component-management/hooks/useFeeComponentForm'
 import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import { feeAssignSchema, FeeAssignType } from '../schemas/feeAssign.schema'
@@ -84,9 +85,23 @@ export const useFeeAssignmentForm = () => {
         { skip: !feePolicyId }
     )
 
-    const { data: editTierData } = useGetFeeComponentTierQuery(
+    // Query để lấy dữ liệu component cho DIRECT method
+    const { data: feeComponentById, isFetching: isFetchingComponent } = useGetFeeComponentByIdQuery(
         selectedComponent?.id ?? '',
-        { skip: !selectedComponent?.id }
+        {
+            skip: !selectedComponent?.id || selectedComponent?.calculationMethod !== 'DIRECT'
+        }
+    )
+
+    // Query để lấy dữ liệu tier cho PROGRESSIVE_TIER và FLAT_TIER
+    const { data: editTierData, isFetching: isFetchingTier } = useGetFeeComponentTierQuery(
+        selectedComponent?.id ?? '',
+        {
+            skip:
+                !selectedComponent?.id ||
+                (selectedComponent?.calculationMethod !== 'PROGRESSIVE_TIER' &&
+                    selectedComponent?.calculationMethod !== 'FLAT_TIER')
+        }
     )
 
     const [deleteComponent, { isLoading: loadingDeleteComponent }] =
@@ -105,21 +120,16 @@ export const useFeeAssignmentForm = () => {
 
     const combinedInitialData = useMemo(() => {
         if (!selectedComponent) return null
-        if (editTierData && editTierData.length > 0) {
-            const tiers = editTierData.map((item: any) => ({
-                id: item.id,
-                minValue: item.minValue,
-                maxValue: item.maxValue,
-                roundMode: item.roundMode,
-                minFee: item.minFee,
-                maxFee: item.maxFee,
-                fixedAmount: item.fixedAmount,
-                percentage: item.percentage
-            }))
-            return { ...selectedComponent, tiers }
+
+        // Nếu đang fetch, trả về null để tránh hiển thị cache cũ
+        if (selectedComponent.calculationMethod === 'DIRECT') {
+            if (isFetchingComponent) return null
+            return feeComponentById ?? null
+        } else {
+            if (isFetchingTier) return null
+            return editTierData ?? null
         }
-        return selectedComponent
-    }, [selectedComponent, editTierData])
+    }, [selectedComponent, feeComponentById, editTierData, isFetchingComponent, isFetchingTier])
 
     useEffect(() => {
         if (dataAssignById) {

@@ -42,7 +42,8 @@ export const apiWalletCore = createApi({
   reducerPath: 'walletCore',
   baseQuery: fetchBaseQueryWalletCore,
   tagTypes: [
-    'historyTransaction'
+    'historyTransaction',
+    'Wallet'
   ],
   endpoints: () => ({}),
   refetchOnMountOrArgChange: true

@@ -1,5 +1,5 @@
 import { CardComponent, DialogModal, ModalComponent, Table } from '@components/index'
-import { SnowflakeIcon } from '@components/icons/common'
+import { SnowflakeIcon } from '@components/icons'
 import React from 'react'
 import DialogFreeze from '@pages/wallet-administration/transaction-management/components/DialogFreeze'
 import FormSearch from './components/FormSearch'

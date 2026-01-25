@@ -8,8 +8,8 @@ import {
 import { PolicyType } from '@pages/fee-managerment-v3/schemas/FeeManagement.schema'
 import React from 'react'
 import { Control, UseFormHandleSubmit } from 'react-hook-form'
-import { feeDomain, serviceType } from '@type/feePoliciesComponent'
-import { statusType } from '@type/feePolicies'
+import { Currency, feeDomain, serviceType } from '@pages/fee-managerment-v3/constants/feePoliciesComponent'
+import { statusType } from '@pages/fee-managerment-v3/constants/feePolicies'
 import dayjs, { Dayjs } from 'dayjs'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 
@@ -100,10 +100,11 @@ const FormAddPolicy = ({
             label={!isCreate?"Loại dịch vụ":<span>Loại dịch vụ <span className='text-red'>(*)</span></span>}
             options={mapEnumToSelectOptions(serviceType)}
           />
-          <FormInput
+          <FormSelect
             className='col-span-12 md:col-span-6'
             name='currency'
             control={control}
+            options={mapEnumToSelectOptions(Currency)}
             label={!isCreate?"Đơn vị thanh toán":<span>Đơn vị thanh toán <span className='text-red'>(*)</span></span>}
             placeholder='Nhập đơn vị thanh toán...'
           />

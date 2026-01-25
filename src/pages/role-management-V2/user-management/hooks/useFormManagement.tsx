@@ -11,7 +11,7 @@ import { FormSendEmail } from '../components/FormSendEmail'
 import { RoleManagementColumn } from '../columns/UserManagement.column'
 import dayjs from 'dayjs'
 import { useGetRoleQuery } from '@services/apiRole'
-import { SendOutlined } from '@components/icons/common'
+import { SendOutlined } from '@components/icons'
 import { RoleUserAccount } from '../constants/userAccount'
 
 export const useFormManagement = () => {

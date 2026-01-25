@@ -73,7 +73,7 @@ export const feeComponentColumns = ({
               onClick={() => {
                 setSelectedRow(record)
                 setOpen(true)
-                if (record.id) setUpdateComponentId(record.id)
+                // if (record.id) setUpdateComponentId(record.id)
               }}
             />
           </TooltipComponent>

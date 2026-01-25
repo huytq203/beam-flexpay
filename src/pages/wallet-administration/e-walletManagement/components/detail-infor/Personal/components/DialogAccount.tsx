@@ -1,6 +1,6 @@
 import { CardComponent } from '@components/index'
 import { FormInput, FormInputNumber } from '@components/form'
-import { WarningIcon } from '@components/icons/common'
+import { WarningIcon } from '@components/icons'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 

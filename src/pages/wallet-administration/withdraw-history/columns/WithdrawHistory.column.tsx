@@ -1,4 +1,4 @@
-import { CheckOutlined, CloseOutlined, DollarOutlined, EyeFilled } from '@components/icons/common'
+import { CheckOutlined, CloseOutlined, DollarOutlined, EyeFilled } from '@components/icons'
 import { ButtonComponent, CopyableText } from '@components/index'
 import { ColumnType } from 'antd/lib/table'
 import React from 'react'

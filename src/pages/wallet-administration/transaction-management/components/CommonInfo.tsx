@@ -1,4 +1,4 @@
-import { CheckCircleFilled, EyeOutlined } from '@components/icons/common'
+import { CheckCircleFilled, EyeOutlined } from '@components/icons'
 import { CopyableText, TooltipComponent } from '@components/index'
 import { TransactionItem } from '@type/transaction.type'
 import React from 'react'

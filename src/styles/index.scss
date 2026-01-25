@@ -83,6 +83,20 @@
   .bg-gray {
     @apply bg-gray-50;
   }
+
+
+  .success-status{
+    @apply bg-green border border-green text-green
+  }
+  .danger-status{
+    @apply bg-red border border-red text-red
+  }
+  .warning-status{
+    @apply bg-yellow border border-yellow text-yellow
+  }
+  .info-status{
+    @apply bg-blue border border-blue text-blue
+  }
 }
 // .card-table {
 //   .ant-card .ant-card-body {

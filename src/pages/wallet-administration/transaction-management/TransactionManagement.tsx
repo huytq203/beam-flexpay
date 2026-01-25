@@ -1,5 +1,5 @@
 import { CardComponent, DialogModal, Table } from '@components/index'
-import { ArrowCounterClockwiseIcon, ArrowsCounterClockwiseIcon, FileDoneOutlined, FireIcon, SnowflakeIcon } from '@components/icons/common'
+import { ArrowCounterClockwiseIcon, ArrowsCounterClockwiseIcon, FileDoneOutlined, FireIcon, SnowflakeIcon } from '@components/icons'
 import DialogConfirm from '@pages/wallet-administration/transaction-management/components/DialogConfirm'
 import React, { useState } from 'react'
 import DialogFreeze from './components/DialogFreeze'

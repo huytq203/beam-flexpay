@@ -3,7 +3,7 @@ import { Controller, Control, UseFormGetValues } from 'react-hook-form'
 import { InputNumber, ButtonComponent } from '@components/index'
 import { CheckOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons'
 import { FeeComponentType } from '@pages/fee-managerment-v3/schemas/FeeManagement.schema'
-import { feePolicyComponent } from '@type/feePoliciesComponent'
+import { feePolicyComponent } from '@pages/fee-managerment-v3/constants/feePoliciesComponent'
 
 interface TierColumnsOptions {
     control: Control<FeeComponentType>

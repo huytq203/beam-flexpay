@@ -4,9 +4,9 @@ import {
   EditOutlined,
   LockOutlined,
   UnlockOutlined
-} from '@components/icons/common'
+} from '@components/icons'
 import { ButtonComponent, TooltipComponent } from '@components/index'
-import { FeeAssignment, paymentMethodType } from '@type/feeAssignment'
+import { FeeAssignment, paymentMethodType } from '@pages/fee-managerment-v3/constants/feeAssignment'
 import { ColumnsType } from 'antd/es/table'
 import Tippy from '@tippyjs/react'
 import { useState } from 'react'
@@ -14,8 +14,8 @@ import 'tippy.js/dist/tippy.css'
 import 'tippy.js/themes/light.css'
 import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import { formatDate, getEnumLabel } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
-import { serviceType } from '@type/feePoliciesComponent'
-import { statusType } from '@type/feePolicies'
+import { serviceType } from '@pages/fee-managerment-v3/constants/feePoliciesComponent'
+import { statusType } from '@pages/fee-managerment-v3/constants/feePolicies'
 
 interface prop {
   setSelectRowId: (value: string) => void
@@ -147,9 +147,8 @@ const FeeAssignColumn = ({
     {
       title: '#',
       align: 'center' as const,
-
+      dataIndex:'no',
       width: 40,
-      render: (value, record, index: number) => index + 1
     },
     {
       title: 'Loại giao dịch',

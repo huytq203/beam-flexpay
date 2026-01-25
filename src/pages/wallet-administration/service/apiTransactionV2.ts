@@ -1,6 +1,6 @@
+import { apiWalletCore } from "@services/apiService";
 import { ResponseType } from "@type/api";
 import { PageResult, TransactionItem } from "@type/transaction.type";
-import { apiWalletCore } from "./apiService";
 
 export const apiTransacjtionV2 = apiWalletCore.injectEndpoints({
     endpoints: (build) => ({
