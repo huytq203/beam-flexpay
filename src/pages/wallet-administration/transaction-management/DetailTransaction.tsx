@@ -10,7 +10,7 @@ import InfoUser from './components/InfoUser'
 import UserFees from './components/UserFees'
 import FeeNCC from './components/FeeNCC'
 import useDetailTransaction from './hooks/useDetailTransaction'
-import { useGetTransactionByIdQuery } from '@pages/wallet-administration/service/apiTransactionV2'
+import { useGetTransactionByIdQuery } from '@pages/wallet-administration/transaction-management/services/apiTransactionV2'
 import dayjs from 'dayjs'
 type ViewMode = 'TEXT' | 'JSON'
 type TitleHover = 'Copy' | 'Copied!' | 'Wrong'
@@ -20,7 +20,6 @@ const LazyLog = LazyLogComponent as React.ComponentType<any>
 const DetailTransaction = () => {
   const column = Column()
   const [viewMode, setViewMode] = useState<ViewMode>()
-  const [titleHover, setTitleHover] = useState<TitleHover>('Copy')
 
   const {id,getTransactionById}=useDetailTransaction()
   console.log(getTransactionById)
@@ -122,14 +121,16 @@ const DetailTransaction = () => {
                   />
                 </div>
               ) : (
-                <ReactJson
-                  src={rawJson}
-                  theme="monokai"
-                  collapsed={2}
-                  enableClipboard
-                  displayDataTypes={false}
-                  displayObjectSize={false}
-                />
+                <div style={{ height: 300, overflow: 'auto' }}>
+                  <ReactJson
+                    src={rawJson}
+                    theme="monokai"
+                    collapsed={2}
+                    enableClipboard
+                    displayDataTypes={false}
+                    displayObjectSize={false}
+                  />
+                </div>
               )}
             </div>
           </div>

@@ -43,7 +43,8 @@ export const apiWalletCore = createApi({
   baseQuery: fetchBaseQueryWalletCore,
   tagTypes: [
     'historyTransaction',
-    'Wallet'
+    'Wallet',
+    'ledgerEntries'
   ],
   endpoints: () => ({}),
   refetchOnMountOrArgChange: true

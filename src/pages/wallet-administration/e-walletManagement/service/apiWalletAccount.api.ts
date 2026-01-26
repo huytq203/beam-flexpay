@@ -22,5 +22,6 @@ export const apiEWallet = apiWalletCore.injectEndpoints({
 })
 export const {
     useGetAccountQuery,
+    useLazyGetAccountQuery,
     useGetAccountByIdQuery
 } = apiEWallet

@@ -4,7 +4,7 @@ import { ColumnsType } from "antd/lib/table";
 import { Link, useNavigate, NavigateFunction } from "react-router-dom";
 import { ButtonComponent, TooltipComponent } from "@components/index";
 import { ArrowCounterClockwiseIcon, BroadcastIcon, CheckOutlined, CloseOutlined, DollarOutlined, EyeFilled, FireIcon, PencilLineIcon, SnowflakeIcon } from "@components/icons";
-import { StatusConstants, StatusKey, StatusType, TransactionConstants, TransactionKey, TransactionType } from "@pages/wallet-administration/transaction-management/constants/Transaction.constant";
+import { StatusConstants, StatusEnum, StatusKey, StatusType, TransactionConstants, TransactionKey, TransactionType } from "@pages/wallet-administration/transaction-management/constants/Transaction.constant";
 import { formatNumber,formatCurrency } from "@utils/index";
 const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<TransactionItem> => [
     {
@@ -16,10 +16,17 @@ const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<Trans
         title: 'Thời gian',
         align: 'center',
         render(value, record, index) {
+            const typeKeyStatus = record.status as StatusKey
+             const STATUS_CLASS: Record<string, string> = {
+                SUCCESS: 'text-green text-[12px]',
+                ERROR: 'text-red text-[12px]',
+                WAITING: 'text-blue-600 text-[12px]',
+                REVIEW: 'text-yellow text-[12px]',
+            };
             return (
                 <div className='text-start'>
                     <p>Tạo: {dayjs(record.createdAt).format('DD/MM/YYYY HH:mm:ss')}</p>
-                    <p className="text-gray-500 text-sm" >Kết thúc: {dayjs(record.updatedAt).format('DD/MM/YYYY HH:mm:ss')}</p>
+                    <p className={STATUS_CLASS[typeKeyStatus]} >{record.status ==StatusEnum.SUCCESS?'TC':'Thất bại'}: {dayjs(record.updatedAt).format('DD/MM/YYYY HH:mm:ss')}</p>
                 </div>
             )
         },

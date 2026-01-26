@@ -15,7 +15,6 @@ import {
   _FEEMANAGEMENT_V3,
   _ROLEMANAGEMENT_V2,
   _WALLETADMINISTRATION,
-  _WITHDRAWHISTORY
 
 } from '@constants/routersConstant'
 import i18n from '@languages/i18n'
@@ -961,6 +960,17 @@ const walletManagement = {
         />
       ),
       label: 'Quản lý lịch sử giao dịch rút tiền'
+    },
+    {
+      key: 'system-ledger',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Sổ cái hệ thống'
     },
   ]
 

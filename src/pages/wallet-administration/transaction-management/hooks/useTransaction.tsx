@@ -1,22 +1,33 @@
 import usePagination from '@hooks/usePagination'
-import { useGetTransactionQuery } from '@pages/wallet-administration/service/apiTransactionV2'
+import { useGetTransactionQuery, useLazyGetTransactionQuery } from '@pages/wallet-administration/transaction-management/services/apiTransactionV2'
 import React, { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { FormSearchValues } from '../types/Transaction.type'
 
 const useTransaction = () => {
   // state
-
+  const [filter, setFilter] = useState({})
   // hook
-const navigate=useNavigate()
+  const navigate = useNavigate()
 
-  const { params: Pagination, page, pageSize, setPage, setPageSize,sortBy } = usePagination({
+  const { params, page, pageSize, setPage, setPageSize, sortBy } = usePagination({
     defaultSort: 'createdAt',
   })
 
   // constants
 
   // api
-  const { data: dataTransaction } = useGetTransactionQuery(Pagination)
+  const { data: dataTransaction } = useGetTransactionQuery({...params, ...filter})
+  const [getSearchTransaction] = useLazyGetTransactionQuery()
+
+  // logic
+
+
+  const handleSearch = (data: FormSearchValues) => {
+    setFilter(data)
+    setPage(1)
+  }
+  const totalElements = dataTransaction?.totalElements
   const dataSource = useMemo(() => (
     dataTransaction?.content?.map((item, idx) => (
       {
@@ -26,10 +37,6 @@ const navigate=useNavigate()
 
     ))
   ), [dataTransaction])
-  const totalElements = dataTransaction?.totalElements
-  // logic
-
-
 
   return {
     dataSource,
@@ -39,7 +46,8 @@ const navigate=useNavigate()
     pageSize,
     setPageSize,
 
-    navigate
+    navigate,
+    handleSearch
   }
 }
 

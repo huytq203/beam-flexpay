@@ -60,26 +60,23 @@ const Representative = () => {
       <hr />
       <p className="font-bold text-gray-500 py-2">HÌNH ẢNH XÁC THỰC EKYC</p>
        <div className='flex justify-between gap-4'>
-        {/* CCCD Trước */}
 
-        <div className='flex flex-col items-center gap-2'>
-          <div className='w-60 h-24 flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-400 text-sm'>
+        <div className='flex flex-col flex-1 items-center gap-2'>
+          <div className='w-full h-24 flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-400 text-sm'>
             Mặt trước
           </div>
           <span className='text-xs text-gray-600'>CCCD Trước</span>
         </div>
 
-        {/* CCCD Sau */}
-        <div className='flex flex-col items-center gap-2'>
-          <div className='w-60 h-24 flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-400 text-sm'>
+        <div className='flex flex-col flex-1 items-center gap-2'>
+          <div className='w-full h-24 flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-400 text-sm'>
             Mặt sau
           </div>
           <span className='text-xs text-gray-600'>CCCD Sau</span>
         </div>
 
-        {/* Face Match */}
-        <div className='flex flex-col items-center gap-2'>
-          <div className='w-60 h-24 flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-400 text-sm'>
+        <div className='flex flex-col flex-1 items-center gap-2'>
+          <div className='w-full h-24 flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-400 text-sm'>
             Chân dung
           </div>
           <span className='text-xs text-gray-600'>Face Match</span>

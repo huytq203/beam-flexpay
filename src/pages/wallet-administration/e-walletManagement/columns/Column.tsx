@@ -1,5 +1,4 @@
 import React from 'react'
-import { TableRows } from '@pages/wallet-administration/e-walletManagement/types/Column.type'
 import { ColumnType } from 'antd/lib/table'
 import { EnvelopeIcon, MoreOutlined, PhoneIcon } from '@components/icons'
 import { DropDownComponent } from '@components/index'
@@ -9,14 +8,25 @@ import { AcountItem } from '@pages/wallet-administration/e-walletManagement/type
 import { formatNumber } from '@utils/formatNumber'
 import dayjs from 'dayjs'
 import { TYPEDATE } from '@constants/date.constant'
-const status = (record:AcountItem) => {
+import { useNavigate } from 'react-router-dom'
+import { StatusLabel, StatusKey } from '../constants/Ewallet.constant'
+
+
+
+const status = (record: AcountItem) => {
   return (
     <div className='inline-flex gap-1'>
-      {record.status === 'ACTIVE' && (
+      {StatusKey.ACTIVE ? (
         <span className='inline-flex px-2 text-xs  rounded-md success-status'>
-          ACTIVE
+          {StatusLabel[record.status as StatusKey]}
         </span>
-      )}
+      ) :
+
+        <span className='inline-flex px-2 text-xs  rounded-md danger-status'>
+          {StatusLabel[record.status as StatusKey]}
+        </span>
+
+      }
 
       {/* {!record.kycStatus && (
         <span className='inline-flex px-2 text-xs rounded-md warning-status'>
@@ -45,7 +55,11 @@ const status = (record:AcountItem) => {
   )
 }
 
-export const Column = (): ColumnType<AcountItem>[] => [
+
+
+export const Column = (): ColumnType<AcountItem>[] => {
+  const navigate = useNavigate()
+  return [
   {
     title: '#',
     align: 'center',
@@ -56,8 +70,8 @@ export const Column = (): ColumnType<AcountItem>[] => [
     align: 'left',
     render: (_, record) => (
       <div>
-        <div className='font-medium max-w-[17rem] overflow-hidden text-ellipsis whitespace-nowrap align-bottom'>{record.ownerType??'--'}</div>
-        <div className='text-gray-500 text-sm max-w-[17rem] overflow-hidden text-ellipsis whitespace-nowrap align-bottom'>TK: {record.accout??'--'}</div>
+        <div className='font-medium max-w-[17rem] overflow-hidden text-ellipsis whitespace-nowrap align-bottom'>{record.ownerType ?? '--'}</div>
+        <div className='text-gray-500 text-sm max-w-[17rem] overflow-hidden text-ellipsis whitespace-nowrap align-bottom'>TK: {record.accout ?? '--'}</div>
       </div>
     )
   },
@@ -69,11 +83,11 @@ export const Column = (): ColumnType<AcountItem>[] => [
       <div>
         <div className='text-gray-500 flex items-center gap-1'>
           <EnvelopeIcon />
-          {record.email??'--'}
+          {record.email ?? '--'}
         </div>
         <div className='text-gray-500 flex items-center gap-1 '>
           <PhoneIcon />
-          {record.phone??'--'}
+          {record.phone ?? '--'}
         </div>
       </div>
     )
@@ -83,13 +97,13 @@ export const Column = (): ColumnType<AcountItem>[] => [
     dataIndex: 'availableBalance',
     align: 'center',
     render(value, record, index) {
-        return(
-            <div className={`font-medium ${record.availableBalance>0?'text-green ':record.availableBalance==0?'text-gray-500':'text-red'}`}>
-            {formatNumber(record.availableBalance)} {record.currency}
-            </div>
-        )
+      return (
+        <div className={`font-medium ${record.availableBalance > 0 ? 'text-green ' : record.availableBalance == 0 ? 'text-gray-500' : 'text-red'}`}>
+          {formatNumber(record.availableBalance)} {record.currency}
+        </div>
+      )
     },
-    
+
   },
   {
     title: 'Giới tính / CCCD',
@@ -97,24 +111,24 @@ export const Column = (): ColumnType<AcountItem>[] => [
     align: 'center',
     render: (_, record) => (
       <div>
-        <div className='text-gray-500'>{record.gioiTinh??'--'}</div>
-        <div className='text-gray-500 '>{record.cccd??'--'}</div>
+        <div className='text-gray-500'>{record.gioiTinh ?? '--'}</div>
+        <div className='text-gray-500 '>{record.cccd ?? '--'}</div>
       </div>
     )
   },
   {
     title: 'Trạng thái',
     align: 'center',
-    render: (value, record, index) => <div className=''>{status(record)}</div>
+    render: (value, record, index) => <div >{status(record) ?? record.status}</div>
   },
   {
     title: 'Thời gian tạo',
     dataIndex: 'createdAt',
     align: 'center',
     render(value, record, index) {
-        return(
-            <>{dayjs(value).format(TYPEDATE.fullTime)??'--'}</>
-        )
+      return (
+        <>{dayjs(value).format(TYPEDATE.fullTime) ?? '--'}</>
+      )
     },
   },
   {
@@ -125,7 +139,8 @@ export const Column = (): ColumnType<AcountItem>[] => [
       const items: MenuProps['items'] = [
         {
           key: '1',
-          label: 'Xem chi tiết'
+          label: 'Xem chi tiết',
+          onClick: () => navigate(`/wallet-administration/e-walletManagement/${record.id}`)
         },
         {
           key: '2',
@@ -160,3 +175,4 @@ export const Column = (): ColumnType<AcountItem>[] => [
     }
   }
 ]
+}

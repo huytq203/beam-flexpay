@@ -4,8 +4,8 @@ import React from 'react'
 import FormSearch from './components/FormSearch'
 import useEwalletManagement from './hooks/useEwalletManagement'
 import DialogFreeze from '../transaction-management/components/DialogFreeze'
-import DialogFreezeWallet from '@pages/wallet-administration/e-walletManagement/components/detail-infor/personal/components/DialogFreezeWallet'
-import DialogDeleteWallet from '@pages/wallet-administration/e-walletManagement/components/detail-infor/personal/components/DialogDeleteWallet'
+import DialogDeleteWallet from './components/detail-infor/Personal/components/DialogDeleteWallet'
+import DialogFreezeWallet from './components/detail-infor/Personal/components/DialogFreezeWallet'
 
 const EwalletManagement = () => {
   const {
@@ -15,11 +15,12 @@ const EwalletManagement = () => {
     page,
     size,
     setPage,
-    setPageSize
+    setPageSize,
+    handleSearch
   } = useEwalletManagement()
   return (
     <div className='flex flex-col gap-3'>
-      <CardComponent content={<FormSearch />} />
+      <CardComponent content={<FormSearch handleSearch={handleSearch} />} />
 
       <CardComponent
         content={

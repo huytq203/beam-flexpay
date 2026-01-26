@@ -86,16 +86,16 @@
 
 
   .success-status{
-    @apply bg-green border border-green text-green
+    @apply bg-green border border-green text-green font-medium
   }
   .danger-status{
-    @apply bg-red border border-red text-red
+    @apply bg-red border border-red text-red font-medium
   }
   .warning-status{
-    @apply bg-yellow border border-yellow text-yellow
+    @apply bg-yellow border border-yellow text-yellow font-medium
   }
   .info-status{
-    @apply bg-blue border border-blue text-blue
+    @apply bg-blue border border-blue text-blue font-medium
   }
 }
 // .card-table {
@@ -131,5 +131,5 @@
 
 
 html {
-  font-size: clamp(12px, 0.75vw, 16px) !important;
+  font-size: clamp(12px, 0.9vw, 16px) !important;
 }

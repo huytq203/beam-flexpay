@@ -1,5 +1,5 @@
 import { lazy } from 'react'
-import { TabContentMap } from '../types/Tabs.type'
+import { TabContentMap, TabContentProps } from '../types/Tabs.type'
 
 const CommonInfor = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/CommonInfor'))
 const CommonInforBusiness = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/business/CommonInfor'))
@@ -11,23 +11,23 @@ const FeeSetting = lazy(() => import('@pages/wallet-administration/e-walletManag
 
 export const TAB_CONTENT_MAP: TabContentMap = {
   '1': {
-    '1': <CommonInfor />,
-    '2': <CommonInforBusiness />
+    'USER': (props: TabContentProps) => <CommonInfor accountData={props.accountData} />,
+    'SYSTEM': (props: TabContentProps) => <CommonInforBusiness accountData={props.accountData} />
   },
   '2': {
-    '1': <AccountBank />,
-    '2': '123'
+    'USER': <AccountBank />,
+    'SYSTEM': '123'
   },
   '3': {
-    '1': <HistoryPayment />
+    'USER': <HistoryPayment />
   },
   '4':{
-    '1':<FreezeBalance/>
+    'USER':<FreezeBalance/>
   },
   '5':{
-    '1':<FeeSetting/>
+    'USER':<FeeSetting/>
   },
   '6':{
-    '1':<Security/>
+    'USER':<Security/>
   }
 }

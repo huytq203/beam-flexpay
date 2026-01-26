@@ -97,6 +97,8 @@
     "/wallet-administration/transaction-management/*":"Chi tiết giao dịch ",
     "/wallet-administration/confirm-eKYC":"Duyệt eKYC",
     "/wallet-administration/withdraw-history":"Quản lý lịch sử giao dịch rút tiền",
-    "/wallet-administration/frozen-transactions":"Quản lý giao dịch phí đóng băng"
+    "/wallet-administration/frozen-transactions":"Quản lý giao dịch phí đóng băng",
+    "/wallet-administration/e-walletManagement/*":"Chi tiết ví điện tử",
+    "/wallet-administration/system-ledger":"Sổ cái hệ thống"
   }
 }

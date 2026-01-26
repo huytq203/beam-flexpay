@@ -21,7 +21,6 @@ import {
   FEEMANAGEMENT_V3,
   ROLEMANAGEMENT_V2,
   WALLETADMINISTRATION,
-  WITHDRAWHISTORY
 } from '@constants/routersConstant'
 
 import ForgotPassword from '@pages/auth/forgot-password/ForgotPassword'
@@ -105,6 +104,9 @@ import ConfirmRKYC from '@pages/wallet-administration/confirm-ekyc/ConfirmEKYC'
 import DetailTransaction from '@pages/wallet-administration/transaction-management/DetailTransaction'
 import FrozenTransactions from '@pages/wallet-administration/frozen-transactions/FrozenTransactions'
 import WithdrawHistory from '@pages/wallet-administration/withdraw-history/WithdrawHistory'
+import SystemLedgerManagement from '@pages/wallet-administration/system-ledger/SystemLedgerManagement'
+import DetailSystemLedger from '@pages/wallet-administration/system-ledger/DetailSystemLedger'
+
 
 const authentication = {
   path: AUTHENTICATION,
@@ -623,6 +625,19 @@ const walletAministration = {
           path: WALLETADMINISTRATION + '/frozen-transactions',
           element: createElement(FrozenTransactions)
         },
+      ]
+    },
+    {
+      path: WALLETADMINISTRATION,
+      children: [
+        {
+          path: WALLETADMINISTRATION + '/system-ledger',
+          element: createElement(SystemLedgerManagement)
+        },
+        {
+          path: WALLETADMINISTRATION + '/system-ledger/:id',
+          element: createElement(DetailSystemLedger)
+        }
       ]
     },
     {

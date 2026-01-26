@@ -60,3 +60,10 @@ export interface Sort2 {
   unsorted: boolean
   sorted: boolean
 }
+
+
+export interface FormSearchValues {
+  keyword: string
+  status: string
+  kycStatus: string
+}

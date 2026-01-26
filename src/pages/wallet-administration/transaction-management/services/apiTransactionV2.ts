@@ -25,5 +25,6 @@ export const apiTransacjtionV2 = apiWalletCore.injectEndpoints({
 })
 export const {
     useGetTransactionQuery,
+    useLazyGetTransactionQuery,
     useGetTransactionByIdQuery
 } = apiTransacjtionV2

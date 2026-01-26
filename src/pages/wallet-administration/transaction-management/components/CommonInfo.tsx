@@ -11,10 +11,10 @@ interface CommonInfoProps {
 
 const CommonInfo = ({ data }: CommonInfoProps) => {
   const STATUS_CLASS: Record<string, string> = {
-    SUCCESS: 'text-green  border border-green bg-green',
-    ERROR: 'text-red  text-xs border border-red bg-red',
-    WAITING: 'text-blue-600 border border-blue-500 bg-blue-50',
-    REVIEW: 'text-yellow border border-yellow bg-yellow',
+    SUCCESS: 'text-green  border border-green font-medium bg-green',
+    ERROR: 'text-red  text-xs border border-red font-medium bg-red',
+    WAITING: 'text-blue-600 border border-blue-500 font-medium bg-blue-50',
+    REVIEW: 'text-yellow border border-yellow font-medium bg-yellow',
   };
   const typeKeyStatus = data?.status as StatusKey
   const typesKey = data?.type as TransactionKey
@@ -23,7 +23,7 @@ const CommonInfo = ({ data }: CommonInfoProps) => {
 
       <div className=' flex justify-between '>
         <span className='text-blue-700 font-medium'>1. Thông tin chung</span>
-        <span className={`flex justify-center items-center gap-1 rounded-full py-1 px-2 text-xs ${STATUS_CLASS[typeKeyStatus] ?? ''}`}>
+        <span className={`flex justify-center items-center gap-1 rounded-full px-2 text-[12px] ${STATUS_CLASS[typeKeyStatus] ?? ''}`}>
           <CheckCircleFilled />
           {StatusType[typeKeyStatus]}
         </span>

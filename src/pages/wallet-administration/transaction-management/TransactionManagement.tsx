@@ -19,13 +19,14 @@ const TransactionManagement = () => {
     pageSize,
     setPageSize,
 
-    navigate
+    navigate,
+    handleSearch
   } = useTransaction()
   // const total=dataSource.
   const columns = Column({navigate})
   return (
     <div className='flex flex-col gap-3'>
-      <CardComponent content={<FormSearch />} />
+      <CardComponent content={<FormSearch handleSearch={handleSearch} />} />
       <CardComponent content={
         <Table
         bordered
