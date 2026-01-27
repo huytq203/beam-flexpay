@@ -98,7 +98,7 @@ export const Column = (): ColumnType<AcountItem>[] => {
     align: 'center',
     render(value, record, index) {
       return (
-        <div className={`font-medium ${record.availableBalance > 0 ? 'text-green ' : record.availableBalance == 0 ? 'text-gray-500' : 'text-red'}`}>
+        <div className={` font-medium ${record.availableBalance > 0 ? 'text-green ' : record.availableBalance == 0 ? 'text-gray-500' : 'text-red'}`}>
           {formatNumber(record.availableBalance)} {record.currency}
         </div>
       )

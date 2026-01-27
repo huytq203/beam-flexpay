@@ -250,6 +250,7 @@ const FeeAssignmentManagement = () => {
         onCancel={() => setOpenModalDelete(false)}
         open={openModalDelete}
         content='Bạn có xác nhận xóa ?'
+         mode='DELETE'
       />
       <ModalComponent
         title={'Thêm gán phí'}

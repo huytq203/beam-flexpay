@@ -34,9 +34,16 @@ export const StatusConstants = {
   PROCESSING: 'PROCESSING',
 } as const
 
-export const TransactionConstants = {
-  WALLET_CREDIT: 'WALLET_CREDIT',
-  WALLET_TRANSFER: 'WALLET_TRANSFER',
-  DEBIT: 'DEBIT',
-  CREDIT: 'CREDIT',
-} as const
+export enum  TransactionConstants{
+  WALLET_CREDIT= 'WALLET_CREDIT',
+  WALLET_TRANSFER= 'WALLET_TRANSFER',
+  DEBIT= 'DEBIT',
+  CREDIT= 'CREDIT',
+} 
+
+export const Transaction_Title={
+  [TransactionConstants.CREDIT]:'Credit',
+  [TransactionConstants.DEBIT]:'Debit',
+  [TransactionConstants.WALLET_TRANSFER]:'Wallet transfer',
+  [TransactionConstants.WALLET_CREDIT]:'Wallet credit',
+}as const

@@ -8,12 +8,23 @@ import { StatusType } from '../constants/Transaction.constant'
 import { FormSearchValues } from '../types/Transaction.type'
 
 interface props {
-    handleSearch: (value: FormSearchValues) => void
+    handleSearch: (value: Partial<FormSearchValues>) => void
 }
 const FormSearch = ({ handleSearch }: props) => {
-    const formSearch = useForm<FormSearchValues>()
+    const formSearch = useForm<FormSearchValues>({
+        defaultValues: {
+            status: '',
+            fromDate: '',
+            toDate: ''
+        }
+    })
     const onSubmit: SubmitHandler<FormSearchValues> = (data) => {
         handleSearch(data)
+    }
+    
+    const handleReset = () => {
+        formSearch.reset()
+        handleSearch({})
     }
     return (
         <div>
@@ -36,7 +47,7 @@ const FormSearch = ({ handleSearch }: props) => {
                 </div>
                 <div className="flex justify-end mt-3 gap-1" >
                     <ButtonComponent onClick={formSearch.handleSubmit(onSubmit)} icon={<MagnifyingGlassIcon size={18} />} content={'Tìm kiếm'} />
-                    <ButtonComponent type='default' icon={<BroomIcon size={18} />} content={'Xóa lọc'} />
+                    <ButtonComponent onClick={handleReset} type='default' icon={<BroomIcon size={18} />} content={'Xóa lọc'} />
                 </div>
             </form>
         </div>

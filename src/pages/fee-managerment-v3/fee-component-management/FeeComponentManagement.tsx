@@ -75,7 +75,7 @@ const FeeComponentManagement = () => {
       <div>
         <ButtonComponent
           type='default'
-          content='Quay lai'
+          content='Quay lại'
           onClick={handleBack}
           icon={svg('/icons.svg#hugeicons-arrow-left-02')}
         />
@@ -85,7 +85,7 @@ const FeeComponentManagement = () => {
         <div className='item1 bg-white rounded p-3'>
           <div className='header'>
             <div className='flex justify-between items-center'>
-              <p className='text-lg font-semibold'>1. Thông tin chung</p>
+              <p className='text-[16px] font-semibold'>1. Thông tin chung</p>
             </div>
             <div className='content'>
               <FormAddPolicy
@@ -109,8 +109,8 @@ const FeeComponentManagement = () => {
 
         <div className='item3 bg-white rounded p-3'>
           <div className='header flex justify-between items-center'>
-            <p className='text-lg font-semibold'>
-              2. Danh sách Cấu phần phí (Components)
+            <p className='text-[16px] font-semibold'>
+              2. Danh sách thành phần phí (Components)
             </p>
             <ButtonComponent
               htmlType='button'
@@ -142,8 +142,10 @@ const FeeComponentManagement = () => {
                 onChange: (newPage, newPageSize) => {
                   setPage(newPage)
                   setPageSize(newPageSize)
-                }
+                },
+                showTotal: (total, range) => `hiển thị ${range[0]}-${range[1]} trong ${total} phần tử`
               }}
+
             />
             <ModalComponent
               width="75%"
@@ -174,6 +176,7 @@ const FeeComponentManagement = () => {
         onCancel={() => setOpenDialog(false)}
         confirmLoading={isDeleting}
         content='Bạn có xác nhận xóa ?'
+        mode='DELETE'
       />
     </div>
   )

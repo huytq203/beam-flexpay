@@ -16,7 +16,7 @@ const SystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Colum
         
     },
     {
-        title: 'Transaction Code',
+        title: 'Mã giao dịch',
         align: 'center',
         width: 150,
         render(value, record) {
@@ -44,14 +44,14 @@ const SystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Colum
             const glCode = record.account?.glCode
             return (
                 <div className='text-start'>
-                    <p className="font-medium text-sm">{glCode ?? '--'}</p>
+                    <p className="font-medium ">{glCode ?? '--'}</p>
                     <p className="text-gray-500 text-xs">{GLCodeLabels[glCode] ?? 'N/A'}</p>
                 </div>
             )
         },
     },
     {
-        title: 'Direction',
+        title: 'Loại giao dịch',
         dataIndex: 'direction',
         align: 'center',
         width: 100,
@@ -65,7 +65,7 @@ const SystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Colum
         },
     },
     {
-        title: 'Amount',
+        title: 'Tổng tiền',
         dataIndex: 'amount',
         align: 'right',
         width: 150,
@@ -80,7 +80,7 @@ const SystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Colum
         },
     },
     {
-        title: 'Balance After',
+        title: 'Số dư sau giao dịch',
         dataIndex: 'balanceAfter',
         align: 'right',
         width: 150,
@@ -93,7 +93,7 @@ const SystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Colum
         },
     },
     {
-        title: 'Status',
+        title: 'Trạng thái',
         align: 'center',
         width: 120,
         render(value, record) {
@@ -112,19 +112,19 @@ const SystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Colum
         },
     },
     {
-        title: 'Time',
+        title: 'Thời gian tạo',
         align: 'center',
         width: 180,
         render(value, record) {
             return (
-                <div className='text-start text-xs'>
+                <div className=''>
                     <p>{dayjs(record.createdAt).format('DD/MM/YYYY HH:mm:ss')}</p>
                 </div>
             )
         },
     },
     {
-        title: 'Actions',
+        title: 'Thao tác',
         align: 'center',
         width: 80,
         fixed: 'right',

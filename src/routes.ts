@@ -498,12 +498,12 @@ const feeManagementV3 = {
           element: createElement(FeeManagement)
         },
         {
-          path: FEEMANAGEMENT_V3 + '/create',
+          path: FEEMANAGEMENT_V3 + '/fee-management/create',
           element: createElement(FeeComponentManagement)
         },
 
         {
-          path: FEEMANAGEMENT_V3 + '/edit/:id',
+          path: FEEMANAGEMENT_V3 + '/fee-management/edit/:id',
           element: createElement(FeeComponentManagement)
         }
       ]

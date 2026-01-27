@@ -20,28 +20,28 @@ export const RoleManagementColumn = ({
   setOpenDialog
 }: Props): ColumnType<RoleDataItem>[] => [
     {
-      title: '#',
+      title: 'STT',
       dataIndex: 'no',
       align: 'center',
-      render: (value) => value ?? '--'
+      render: (value) => value || '--'
     },
     {
       title: 'Tên quyền',
       dataIndex: 'name',
-      align: 'center',
+      align: 'left',
       render: (value) => translatePermissionName(value)
     },
     {
       title: 'Mã quyền',
-      dataIndex: 'ma',
-      align: 'center',
-      render: (value) => value ?? '--'
+      dataIndex: 'name',
+      align: 'left',
+      render: (value) => value || '--'
     },
     {
       title: 'Ngày khởi tạo',
       dataIndex: 'date',
       align: 'center',
-      render: (value) => value ?? '--'
+      render: (value) => value || '--'
     },
     {
       title: 'Mô tả',

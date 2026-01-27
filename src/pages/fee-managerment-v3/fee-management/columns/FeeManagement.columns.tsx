@@ -63,7 +63,7 @@ const ActionButtons = ({
         type='default'
         size='small'
         icon={<EditOutlined />}
-        onClick={() => navigate(`${FEEMANAGEMENT_V3}/edit/${record.key}`)}
+        onClick={() => navigate(`${FEEMANAGEMENT_V3}/fee-management/edit/${record.key}`)}
       />
 
     </TooltipComponent>
@@ -159,6 +159,7 @@ export const getPolicyColumns = ({
       title: 'Thao tác',
       key: 'action',
       width: 100,
+      fixed:'right',
       align: 'center',
       render: (_, record) => (
         <ActionButtons

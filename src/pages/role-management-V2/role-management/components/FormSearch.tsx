@@ -4,6 +4,8 @@ import { useSVG } from '@hooks/useSVG'
 import { useForm } from 'react-hook-form'
 import { ModeAction } from '@pages/role-management-V2/role-management/hooks/useRoleManagement'
 import { BroomIcon } from '@components/icons'
+import { mapEnumToSelectOptions } from '@utils/helperFunctions'
+import { RoleStatus } from '../constants/RoleManagement.config'
 
 export interface SearchFormData {
   roleCode: string
@@ -60,11 +62,7 @@ const FormSearch = ({ setOpenModalAdd, setModeAction, onSearch }: Props) => {
             label='Trạng thái'
             control={control}
             name='status'
-            options={[
-              { label: 'Tất cả', value: '' },
-              { label: 'Hoạt động', value: 'ACTIVE' },
-              { label: 'Không hoạt động', value: 'INACTIVE' }
-            ]}
+            options={mapEnumToSelectOptions(RoleStatus)}
             className='col-span-1'
           />
         </div>

@@ -5,6 +5,7 @@ import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { FormSearchValues } from '../types/SystemLedger.type'
 import { StatusLabel, DirectionLabel } from '../constants/SystemLedger.constant'
+import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 
 interface Props {
     handleSearch: (value: FormSearchValues) => void
@@ -30,17 +31,6 @@ const FormSearch = ({ handleSearch }: Props) => {
         formSearch.reset()
         handleSearch({})
     }
-
-    const statusOptions = Object.entries(StatusLabel).map(([key, value]) => ({
-        label: value,
-        value: key
-    }))
-
-    const directionOptions = Object.entries(DirectionLabel).map(([key, value]) => ({
-        label: value,
-        value: key
-    }))
-
     return (
         <div>
             <p className='font-medium mb-3'>Tìm kiếm giao dịch sổ cái</p>
@@ -52,13 +42,13 @@ const FormSearch = ({ handleSearch }: Props) => {
                         name='keyword'
                         label='Tìm kiếm'
                         placeholder='Transaction code, description, GL code, ID...'
-                        className='col-span-1 md:col-span-3'
+                        className='col-span-1 md:col-span-1'
                     />
-                    <FormSelect
+                    {/* <FormSelect
                         control={formSearch.control}
                         name='status'
                         label='Trạng thái'
-                        options={statusOptions}
+                        options={mapEnumToSelectOptions(StatusLabel)}
                         placeholder='Chọn trạng thái'
                         className='col-span-1'
                     />
@@ -66,7 +56,7 @@ const FormSearch = ({ handleSearch }: Props) => {
                         control={formSearch.control}
                         name='direction'
                         label='Hướng'
-                        options={directionOptions}
+                        options={mapEnumToSelectOptions(DirectionLabel)}
                         placeholder='Chọn hướng'
                         className='col-span-1'
                     />
@@ -76,7 +66,7 @@ const FormSearch = ({ handleSearch }: Props) => {
                         label='GL Code'
                         placeholder='Nhập GL Code'
                         className='col-span-1'
-                    />
+                    /> */}
                     <FormDatePicker
                         showTime
                         control={formSearch.control}

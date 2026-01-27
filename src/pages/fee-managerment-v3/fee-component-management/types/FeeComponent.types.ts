@@ -45,7 +45,8 @@ export interface FeeComponentResponse {
 export enum componentType {
     TRANSACTION_FEE = 'Phí giao dịch',
     SERVICE_FEE = 'Phí dịch vụ',
-    VAT = 'VAT'
+    VAT = 'VAT',
+    SYSTEM_FEE = 'Phí hệ thống'
 }
 
 export enum baseOn {
@@ -64,7 +65,8 @@ export enum payerType {
     SENDER = 'Người gửi',
     RECEIVER = 'Người nhận',
     MERCHANT = 'Merchant',
-    SYSTEM = 'Hệ thống'
+    SYSTEM = 'Hệ thống',
+    USER = 'Người dùng',
 }
 
 export enum beneficiaryType {

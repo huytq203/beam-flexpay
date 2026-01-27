@@ -23,7 +23,7 @@ const useTransaction = () => {
   // logic
 
 
-  const handleSearch = (data: FormSearchValues) => {
+  const handleSearch = (data: Partial<FormSearchValues>) => {
     setFilter(data)
     setPage(1)
   }

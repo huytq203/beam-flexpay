@@ -22,7 +22,7 @@ const CommonInfo = ({ data }: CommonInfoProps) => {
     <>
 
       <div className=' flex justify-between '>
-        <span className='text-blue-700 font-medium'>1. Thông tin chung</span>
+        <span className='text-blue-700 font-medium '>1. Thông tin chung</span>
         <span className={`flex justify-center items-center gap-1 rounded-full px-2 text-[12px] ${STATUS_CLASS[typeKeyStatus] ?? ''}`}>
           <CheckCircleFilled />
           {StatusType[typeKeyStatus]}

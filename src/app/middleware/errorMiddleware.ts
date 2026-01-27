@@ -63,7 +63,7 @@ export const errorMiddleware: Middleware = (storeApi) => (next) => (action) => {
         globalMessage.error(errorMessage)
         // Dispatch logout action and redirect
         storeApi.dispatch(logout())
-        window.location.href = '/login'
+        window.location.href = '/auth/login'
         break
 
       case 403:

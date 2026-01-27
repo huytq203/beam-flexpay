@@ -4,8 +4,8 @@ import { ColumnsType } from "antd/lib/table";
 import { Link, useNavigate, NavigateFunction } from "react-router-dom";
 import { ButtonComponent, TooltipComponent } from "@components/index";
 import { ArrowCounterClockwiseIcon, BroadcastIcon, CheckOutlined, CloseOutlined, DollarOutlined, EyeFilled, FireIcon, PencilLineIcon, SnowflakeIcon } from "@components/icons";
-import { StatusConstants, StatusEnum, StatusKey, StatusType, TransactionConstants, TransactionKey, TransactionType } from "@pages/wallet-administration/transaction-management/constants/Transaction.constant";
-import { formatNumber,formatCurrency } from "@utils/index";
+import { StatusConstants, StatusEnum, StatusKey, StatusType, Transaction_Title, TransactionConstants, TransactionKey, TransactionType } from "@pages/wallet-administration/transaction-management/constants/Transaction.constant";
+import { formatNumber, formatCurrency } from "@utils/index";
 const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<TransactionItem> => [
     {
         title: '#',
@@ -17,7 +17,7 @@ const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<Trans
         align: 'center',
         render(value, record, index) {
             const typeKeyStatus = record.status as StatusKey
-             const STATUS_CLASS: Record<string, string> = {
+            const STATUS_CLASS: Record<string, string> = {
                 SUCCESS: 'text-green text-[12px]',
                 ERROR: 'text-red text-[12px]',
                 WAITING: 'text-blue-600 text-[12px]',
@@ -26,7 +26,7 @@ const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<Trans
             return (
                 <div className='text-start'>
                     <p>Tạo: {dayjs(record.createdAt).format('DD/MM/YYYY HH:mm:ss')}</p>
-                    <p className={STATUS_CLASS[typeKeyStatus]} >{record.status ==StatusEnum.SUCCESS?'TC':'Thất bại'}: {dayjs(record.updatedAt).format('DD/MM/YYYY HH:mm:ss')}</p>
+                    <p className={STATUS_CLASS[typeKeyStatus]} >{record.status == StatusEnum.SUCCESS ? 'TC' : 'Thất bại'}: {dayjs(record.updatedAt).format('DD/MM/YYYY HH:mm:ss')}</p>
                 </div>
             )
         },
@@ -61,7 +61,7 @@ const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<Trans
             const typeKey = record.type as TransactionKey;
             return (
                 <div className='text-start'>
-                    <p className="font-medium"> {(TransactionType[typeKey] ?? record.type)??'--'}</p>
+                    <p className="font-medium"> {(TransactionType[typeKey] ?? record.type) ?? '--'}</p>
                     <p className="text-gray-500 text-sm"> {record.description}</p>
                 </div>
             )
@@ -70,19 +70,27 @@ const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<Trans
     {
         title: 'Người chuyển',
         dataIndex: 'ownerId',
-        align: 'center'
+        align: 'center',
+        render(value, record, index) {
+            return (
+                <div className="">{record.ownerId.substring(0, 10)}...</div>
+            )
+        },
     },
     {
         title: 'Người nhận',
         dataIndex: 'soDuVi',
-        align: 'center'
+        align: 'center',
+        render(value, record, index) {
+            return (<>{record.soDuVi ?? '--'}</>)
+        },
     },
     {
         title: 'Số tiền gốc',
-        align: 'center',
+        align: 'right',
         render(value, record, index) {
-            return(
-                <div className="font-medium">
+            return (
+                <div className="text-right font-medium">
                     <p>{formatNumber(record.amount)}</p>
                 </div>
             )
@@ -90,10 +98,10 @@ const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<Trans
     },
     {
         title: 'Phí',
-        align: 'center',
+        align: 'right',
         render(value, record, index) {
             return (
-                <div className="text-gray-500">
+                <div className="text-right text-gray-500">
                     <p>{formatNumber(record.feeAmount)}</p>
                 </div>
             )
@@ -102,27 +110,36 @@ const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<Trans
     {
         title: 'Tổng',
         dataIndex: 'amount',
-        align: 'center',
+        align: 'right',
         render(value, record, index) {
             const typesKey = record.type as TransactionKey
-            if (typesKey=='DEBIT') {
+            if (typesKey == 'DEBIT') {
                 return (
-                    <div className="font-medium text-red">
+                    <div className="text-right font-medium text-red">
                         <p>-{formatNumber(record.grossAmount)}</p>
                     </div>
                 )
             }
             return (
-                <div className="font-medium text-green">
+                <div className="text-right font-medium text-green">
                     <p>+{formatNumber(record.grossAmount)}</p>
                 </div>
             );
         },
     },
     {
-        title: 'Ref no/Settlement',
-        dataIndex: 'soDuVi',
-        align: 'center'
+        title: 'Loại',
+        dataIndex: 'type',
+        align: 'center',
+        render(value, record, index) {
+            const TRANSACTION_CLASS: Record<TransactionConstants, string> = {
+                [TransactionConstants.CREDIT]: 'text-green-600 font-medium',
+                [TransactionConstants.DEBIT]: 'text-red-600 font-medium',
+                [TransactionConstants.WALLET_CREDIT]: 'text-emerald-600 font-medium',
+                [TransactionConstants.WALLET_TRANSFER]: 'text-blue-600 font-medium',
+            }
+            return (<span className={TRANSACTION_CLASS[record.type as TransactionConstants] ?? 'text-gray-400'}>{Transaction_Title[record.type as TransactionConstants] ?? '--'}</span>)
+        },
     },
     {
         title: 'Trạng thái',

@@ -4,13 +4,11 @@ import { PermissionItem } from '@type/permissionManagement'
 import { RoleDataItem } from '@type/roleManagementV2'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { ModeAction } from '../hooks/useRoleManagement'
+import { RoleManagementSchema, RoleManagementFormData } from '../schema/role-management.schema'
 
-interface FormData {
-  name: string
-  roleName: string
-  description: string
-}
+
 
 interface Props {
   modeAction: ModeAction
@@ -20,7 +18,14 @@ interface Props {
 }
 
 const FormAdd = ({ modeAction, selectedUser, onSubmit, onCancel }: Props) => {
-  const { control, reset, handleSubmit } = useForm<FormData>()
+  const { control, reset, handleSubmit } = useForm<RoleManagementFormData>({
+    resolver: zodResolver(RoleManagementSchema),
+    mode: 'onSubmit',
+    defaultValues: {
+      name: '',
+      description: ''
+    }
+  })
 
   useEffect(() => {
     if (modeAction === 'update' && selectedUser) {
@@ -31,13 +36,12 @@ const FormAdd = ({ modeAction, selectedUser, onSubmit, onCancel }: Props) => {
     } else if (modeAction === 'add') {
       reset({
         name: '',
-        roleName: '',
         description: ''
       })
     }
   }, [modeAction, selectedUser, reset])
 
-  const handleFormSubmit = async (data: FormData) => {
+  const handleFormSubmit = async (data: RoleManagementFormData) => {
     if (onSubmit) {
       if (modeAction === 'update' && selectedUser) {
         const payload: Omit<PermissionItem, 'id' | 'name'> = {
@@ -70,7 +74,7 @@ const FormAdd = ({ modeAction, selectedUser, onSubmit, onCancel }: Props) => {
                 }
                 placeholder='Mã quyền...'
               />
-              <FormInput
+              {/* <FormInput
                 control={control}
                 name='roleName'
                 label={
@@ -79,7 +83,7 @@ const FormAdd = ({ modeAction, selectedUser, onSubmit, onCancel }: Props) => {
                   </span>
                 }
                 placeholder='Tên quyền...'
-              />
+              /> */}
               <FormTextArea
                 control={control}
                 name='description'

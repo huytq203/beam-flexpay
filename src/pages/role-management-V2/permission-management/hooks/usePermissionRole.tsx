@@ -107,8 +107,7 @@ export const usePermissionRole = () => {
       setOpenModalAdd(false)
       successMess('Thêm nhóm quyền thành công')
       refetch()
-    } catch (error: any) {
-      errorMess(error?.data?.detail)
+    } catch  {
     }
   }
 

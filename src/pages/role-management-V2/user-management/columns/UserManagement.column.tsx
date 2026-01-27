@@ -33,7 +33,7 @@ export const RoleManagementColumn = ({
   handleOpenRoleAssign
 }: Props): ColumnType<UserInfor>[] => [
     {
-      title: '#',
+      title: 'STT',
       dataIndex: 'no',
       align: 'center'
     },
@@ -48,24 +48,24 @@ export const RoleManagementColumn = ({
       align: 'center',
       render: (value) => value ?? '--'
     },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      align: 'center',
-      render: (value) => value ?? '--'
-    },
-    {
-      title: 'lastName',
-      dataIndex: 'lastName',
-      align: 'center',
-      render: (value) => value ?? '--'
-    },
-    {
-      title: 'emailVerified',
-      dataIndex: 'emailVerified',
-      align: 'center',
-      render: (value) => value || '--'
-    },
+    // {
+    //   title: 'Email',
+    //   dataIndex: 'email',
+    //   align: 'center',
+    //   render: (value) => value ?? '--'
+    // },
+    // {
+    //   title: 'lastName',
+    //   dataIndex: 'lastName',
+    //   align: 'center',
+    //   render: (value) => value ?? '--'
+    // },
+    // {
+    //   title: 'emailVerified',
+    //   dataIndex: 'emailVerified',
+    //   align: 'center',
+    //   render: (value) => value || '--'
+    // },
     {
       title: 'Nhóm quyền',
       dataIndex: 'groups',

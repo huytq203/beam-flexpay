@@ -119,7 +119,7 @@ export const FormInforAdd = ({
               onSubmit={handleSubmit(id ? handlePutAssign : handlePostAssign)}
             >
               <div className='flex justify-between items-center mb-3 '>
-                <p className='font-medium '>1. Thông tin chung</p>
+                <p className='font-medium text-[16px]'>1. Thông tin chung</p>
                 <div className='flex flex-col items-end'>
                   <ButtonComponent
                     content='Chọn chính sách phí'
@@ -239,7 +239,7 @@ const FeeAssignAdd = () => {
         <ButtonComponent
           type='default'
           onClick={handleNavigateBack}
-          content='Quay lai'
+          content='Quay lại'
           icon={svg('/icons.svg#hugeicons-arrow-left-02')}
         />
       </div>
@@ -255,7 +255,7 @@ const FeeAssignAdd = () => {
         <CardComponent
           content={
             <>
-              <p className='font-medium text-lg'>
+              <p className='font-medium text-[16px]'>
                 2. Thông tin thành phần {`(${policyData?.name || ''})`}
               </p>
 

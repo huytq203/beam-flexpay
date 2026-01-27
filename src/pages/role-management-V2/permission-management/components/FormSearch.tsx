@@ -3,6 +3,8 @@ import { FormInput, FormSelect } from '@components/form'
 import { useSVG } from '@hooks/useSVG'
 import { BroomIcon } from '@components/icons'
 import { useForm } from 'react-hook-form'
+import { mapEnumToSelectOptions } from '@utils/helperFunctions'
+import { PermissionStatus } from '../constants/PermissionManagement.constant'
 
 export interface SearchFormData {
   keyword: string
@@ -50,7 +52,7 @@ const FormSearch = ({ setOpenModalAdd, onSearch }: Props) => {
             label='Trạng thái'
             control={control}
             name='status'
-            options={[]}
+            options={mapEnumToSelectOptions(PermissionStatus)}
             className='col-span-1'
           />
         </div>

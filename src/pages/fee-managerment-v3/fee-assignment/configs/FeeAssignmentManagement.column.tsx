@@ -163,28 +163,28 @@ const FeeAssignColumn = ({
       align: 'center' as const,
 
       render: (value, record, index: number) =>
-        (paymentMethodType[value as keyof typeof paymentMethodType] ?? '--')
+        (paymentMethodType[value as keyof typeof paymentMethodType] || '--')
     },
     {
       title: 'Ngân hàng',
       dataIndex: 'bankCode',
       align: 'center' as const,
 
-      render: (value, record, index: number) => value
+      render: (value, record, index: number) => value||'--'
     },
     {
       title: 'Loại thẻ',
       dataIndex: 'cardType',
       align: 'center' as const,
 
-      render: (value, record, index: number) => value
+      render: (value, record, index: number) => value||'--'
     },
     {
       title: 'Nhóm khách hàng',
       dataIndex: 'customerGroup',
       align: 'center' as const,
 
-      render: (value, record, index: number) => value
+      render: (value, record, index: number) => value||'--'
     },
     {
       title: 'Ngày tạo',

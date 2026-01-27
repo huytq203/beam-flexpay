@@ -132,51 +132,14 @@ const InforPolicy = forwardRef<InfoPolicyRef, Props>(
           }
         ></CardComponent>
 
-        <CardComponent
-          content={
-            <>
+   
               {isVATType ? (
-                <>
-                  <p className='font-bold mb-3'>
-                    Phương thức tính (Calculation Method)
-                  </p>
-                  <FormInputNumber
-                    control={control}
-                    name='percentage'
-                    label='Phần trăm (%)'
-                    className='col-span-3 flex flex-col gap-2'
-                    placeholder='0%'
-                    classNameLable='font-medium'
-                  />
-                </>
-              ) : isTierMode ? (
-                <InfoComponents
-                  control={control}
-                  columns={columns}
-                  fields={fields}
-                  append={handleAddTier}
-                />
-              ) : (
-                <>
-                  <p className='font-bold mb-3'>
-                    Phương thức tính (Calculation Method)
-                  </p>
-                  <div className='grid grid-cols-12 gap-3'>
-                    <FormInputNumber
-                      control={control}
-                      name='fixedAmount'
-                      label='Phí cố định (Fixed)'
-                      className='col-span-3 flex flex-col gap-2'
-                      placeholder='0'
-                      formatter={(value: string | undefined) =>
-                        `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                      }
-                      parser={(value: string | undefined) =>
-                        value?.replace(/,/g, '') as any
-                      }
-                      classNameLable='font-medium'
-                    />
+                <CardComponent content={
+                  <>
 
+                    <p className='font-bold mb-3'>
+                      Phương thức tính (Calculation Method)
+                    </p>
                     <FormInputNumber
                       control={control}
                       name='percentage'
@@ -185,40 +148,84 @@ const InforPolicy = forwardRef<InfoPolicyRef, Props>(
                       placeholder='0%'
                       classNameLable='font-medium'
                     />
-                    <FormInputNumber
+
+                  </>
+                } />
+              ) : (isTierMode && isUpdateMode) ? (
+                <CardComponent
+                  content={
+                    <InfoComponents
                       control={control}
-                      name='minFee'
-                      label='Tối thiểu (Min)'
-                      className='col-span-3 flex flex-col gap-2'
-                      placeholder='0'
-                      formatter={(value: string | undefined) =>
-                        `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                      }
-                      parser={(value: string | undefined) =>
-                        value?.replace(/,/g, '') as any
-                      }
-                      classNameLable='font-medium'
+                      columns={columns}
+                      fields={fields}
+                      append={handleAddTier}
                     />
-                    <FormInputNumber
-                      control={control}
-                      name='maxFee'
-                      label='Tối đa (Max)'
-                      className='col-span-3 flex flex-col gap-2'
-                      placeholder='0'
-                      formatter={(value: string | undefined) =>
-                        `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                      }
-                      parser={(value: string | undefined) =>
-                        value?.replace(/,/g, '') as any
-                      }
-                      classNameLable='font-medium'
-                    />
-                  </div>
-                </>
+                  }
+                />
+              ) : !isTierMode && (
+                <CardComponent
+                  content={
+                    <>
+                      <p className='font-bold mb-3'>
+                        Phương thức tính (Calculation Method)
+                      </p>
+                      <div className='grid grid-cols-12 gap-3'>
+                        <FormInputNumber
+                          control={control}
+                          name='fixedAmount'
+                          label='Phí cố định (Fixed)'
+                          className='col-span-3 flex flex-col gap-2'
+                          placeholder='0'
+                          formatter={(value: string | undefined) =>
+                            `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                          }
+                          parser={(value: string | undefined) =>
+                            value?.replace(/,/g, '') as any
+                          }
+                          classNameLable='font-medium'
+                        />
+
+                        <FormInputNumber
+                          control={control}
+                          name='percentage'
+                          label='Phần trăm (%)'
+                          className='col-span-3 flex flex-col gap-2'
+                          placeholder='0%'
+                          classNameLable='font-medium'
+                        />
+                        <FormInputNumber
+                          control={control}
+                          name='minFee'
+                          label='Tối thiểu (Min)'
+                          className='col-span-3 flex flex-col gap-2'
+                          placeholder='0'
+                          formatter={(value: string | undefined) =>
+                            `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                          }
+                          parser={(value: string | undefined) =>
+                            value?.replace(/,/g, '') as any
+                          }
+                          classNameLable='font-medium'
+                        />
+                        <FormInputNumber
+                          control={control}
+                          name='maxFee'
+                          label='Tối đa (Max)'
+                          className='col-span-3 flex flex-col gap-2'
+                          placeholder='0'
+                          formatter={(value: string | undefined) =>
+                            `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                          }
+                          parser={(value: string | undefined) =>
+                            value?.replace(/,/g, '') as any
+                          }
+                          classNameLable='font-medium'
+                        />
+                      </div>
+                    </>
+                  }
+                />
               )}
-            </>
-          }
-        />
 
         <DialogModal
           open={openDialog}

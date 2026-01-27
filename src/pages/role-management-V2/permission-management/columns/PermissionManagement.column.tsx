@@ -44,70 +44,78 @@ export const PermissionManagementColumn = ({
   handleOpenPermissionModal,
   setEditRoleData
 }: Props): ColumnType<DataRoleItem>[] => [
-  {
-    title: '#',
-    dataIndex: 'no',
-    align: 'center'
-  },
-  {
-    title: 'Tên nhóm quyền',
-    dataIndex: 'name',
-    align: 'center',
-    render: (value) => RoleName[value] ?? value ?? '--'
-  },
-  {
-    title: 'Mô tả',
-    dataIndex: 'description',
-    align: 'center',
-    render: (value) => value ?? '--'
-  },
-  {
-    title: 'Ngày khởi tạo',
-    dataIndex: 'date',
-    align: 'center',
-    render: (value) => value ?? '--'
-  },
-  {
-    title: 'Thao tác',
-    dataIndex: 'action',
-    align: 'center',
-    width: 100,
-    // fixed: 'right',
-    render: (_, record) => {
-      // So sánh role name trong bảng với roles của user hiện tại từ JWT
-      const isCurrentUserRole = currentUserRoles.includes(record.name)
+    {
+      title: 'STT',
+      dataIndex: 'no',
+      width: 50,
+      align: 'center'
+    },
+    {
+      title: 'Tên nhóm quyền',
+      dataIndex: 'name',
+      align: 'left',
+      width: 200,
+      render: (text: string) => (
+        <TooltipComponent title={RoleName[text]??text}>
+          <span className='inline-block max-x-[200px] overflow-hidden text-ellipsis whitespace-nowrap '>
+            {RoleName[text] ?? (text ? `${text.substring(0, 20)}...` : '--')}
+          </span>
+        </TooltipComponent>
+      ),
+    },
+    {
+      title: 'Mô tả',
+      dataIndex: 'description',
+      align: 'center',
+      render: (value) => value ?? '--'
+    },
+    {
+      title: 'Ngày khởi tạo',
+      dataIndex: 'date',
+      align: 'center',
+      render: (value) => value ?? '--'
+    },
+    {
+      title: 'Thao tác',
+      dataIndex: 'action',
+      align: 'center',
+      width: 100,
+      // fixed: 'right',
+      render: (_, record) => {
+        // So sánh role name trong bảng với roles của user hiện tại từ JWT
+        const isCurrentUserRole = currentUserRoles.includes(record.name)
 
-      return (
-        <div className='flex justify-start items-start gap-1'>
-          <TooltipComponent title='Cập nhật'>
+        return (
+          <div className='flex justify-start items-start gap-1'>
+            <TooltipComponent title='Cập nhật'>
 
-          <ButtonComponent
-            size='small'
-            type='default'
-            icon={<EditOutlined />}
-            onClick={() => {
-              setModeAction('edit')
-              setEditRoleData(record)
-              setOpenModalAdd(true)
-            }}
-          />
-          </TooltipComponent>
-          <TooltipComponent title='Xem các quyền'>
+              <ButtonComponent
+                size='small'
+                type='default'
+                icon={<EditOutlined />}
+                onClick={() => {
+                  setModeAction('edit')
+                  setEditRoleData(record)
+                  setOpenModalAdd(true)
+                }}
+              />
+            </TooltipComponent>
+            <TooltipComponent title='Xem các quyền'>
 
 
-          <ButtonComponent
-            size='small'
-            type='default'
-            className='text-blue-600'
-            icon={<EyeOutlined />}
-            onClick={() => {
-              setModeAction('view')
-              setOpenModalPermission(true)
-              handleGetPermissionAssigned(record.id)
-            }}
-          />
-          </TooltipComponent>
-          {/* <ButtonComponent
+              <ButtonComponent
+                size='small'
+                type='default'
+                className='text-blue-600'
+                icon={<EyeOutlined />}
+                onClick={() => {
+                  setModeAction('view')
+                  setOpenModalPermission(true)
+                  handleGetPermissionAssigned(record.id)
+                }}
+              />
+            </TooltipComponent>
+            {/* <ButtonComponent
             size='small'
             type='default'
             className='text-yellow-600'
@@ -118,51 +126,51 @@ export const PermissionManagementColumn = ({
             }}
           /> */}
 
-          <TooltipComponent title='Xem người dùng'>
-          <ButtonComponent
-            size='small'
-            type='default'
-            className='text-green-600'
-            icon={<UserOutlined />}
-            onClick={() => {
-              setOpenModalDetail(true)
-              handleGetMemberOfRole(record.id)
-            }}
-          />
+            <TooltipComponent title='Xem người dùng'>
+              <ButtonComponent
+                size='small'
+                type='default'
+                className='text-green-600'
+                icon={<UserOutlined />}
+                onClick={() => {
+                  setOpenModalDetail(true)
+                  handleGetMemberOfRole(record.id)
+                }}
+              />
 
-          </TooltipComponent>
+            </TooltipComponent>
 
-          <TooltipComponent title='Xóa'>
-          <ButtonComponent
-            size='small'
-            type='default'
-            className='text-red-600'
-            icon={<DeleteOutlined />}
-            onClick={() => {
-              setModeAction('delete')
-              setModalDialog(true)
-              setIdRole(record.id)
-              setSelectRoleItem(record)
-            }}
-          />
+            <TooltipComponent title='Xóa'>
+              <ButtonComponent
+                size='small'
+                type='default'
+                className='text-red-600'
+                icon={<DeleteOutlined />}
+                onClick={() => {
+                  setModeAction('delete')
+                  setModalDialog(true)
+                  setIdRole(record.id)
+                  setSelectRoleItem(record)
+                }}
+              />
 
-          </TooltipComponent>
-          <TooltipComponent title='Phân quyền'>
-          <ButtonComponent
-            size='small'
-            type='default'
-            className='text-violet-600'
-            icon={<ApartmentOutlined />}
-            onClick={() => {
-              setModeAction('permission')
-              handleOpenPermissionModal(record.id)
-              setOpenModalPermission(true)
-            }}
-          />
+            </TooltipComponent>
+            <TooltipComponent title='Phân quyền'>
+              <ButtonComponent
+                size='small'
+                type='default'
+                className='text-violet-600'
+                icon={<ApartmentOutlined />}
+                onClick={() => {
+                  setModeAction('permission')
+                  handleOpenPermissionModal(record.id)
+                  setOpenModalPermission(true)
+                }}
+              />
 
-          </TooltipComponent>
-        </div>
-      )
+            </TooltipComponent>
+          </div>
+        )
+      }
     }
-  }
-]
+  ]

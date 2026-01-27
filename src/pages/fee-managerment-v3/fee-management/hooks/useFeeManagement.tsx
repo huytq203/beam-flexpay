@@ -75,9 +75,7 @@ const useFeeManagement = () => {
       await patchDeactivateFee(record.key).unwrap()
       successMess('Cập nhật trạng thái thành công')
       searchFeePolicies(getSearchParams())
-    } catch (error) {
-      console.error(error)
-      errorMess('Cập nhật thất bại')
+    } catch {
     }
   }
 
@@ -86,9 +84,7 @@ const useFeeManagement = () => {
       await patchActivateFee(record.key).unwrap()
       successMess('Cập nhật trạng thái thành công')
       searchFeePolicies(getSearchParams())
-    } catch (error) {
-      console.error(error)
-      errorMess('Cập nhật thất bại')
+    } catch {
     }
   }
 
@@ -99,8 +95,7 @@ const useFeeManagement = () => {
       resetAdd()
       setOpen(false)
       searchFeePolicies(getSearchParams())
-    } catch (error: any) {
-      errorMess(error?.data?.detail || 'Có lỗi xảy ra')
+    } catch{
     }
   }
 

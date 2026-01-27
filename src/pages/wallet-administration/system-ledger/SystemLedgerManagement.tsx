@@ -40,8 +40,8 @@ const SystemLedgerManagement = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Transaction Details */}
           <div className="bg-white p-3 rounded border">
-            <h4 className="font-bold text-sm mb-2 text-gray-700">Transaction Details</h4>
-            <div className="space-y-1 text-xs">
+            <h4 className="font-bold text-[12px] mb-2 text-gray-700">Transaction Details</h4>
+            <div className="space-y-1 text-[12px]">
               {/* <div className="flex justify-between">
                 <span className="text-gray-500">Transaction ID:</span>
                 <span className="font-medium font-mono">{record.transaction?.id.substring(0, 13)}...</span>
@@ -79,8 +79,8 @@ const SystemLedgerManagement = () => {
 
           {/* Account Details */}
           <div className="bg-white p-3 rounded border">
-            <h4 className="font-bold text-sm mb-2 text-gray-700">Account Details</h4>
-            <div className="space-y-1 text-xs">
+            <h4 className="font-bold text-[12px] mb-2 text-gray-700">Account Details</h4>
+            <div className="space-y-1 text-[12px]">
               {/* <div className="flex justify-between">
                 <span className="text-gray-500">Account ID:</span>
                 <span className="font-medium font-mono">{record.account?.id.substring(0, 13)}...</span>
@@ -118,8 +118,8 @@ const SystemLedgerManagement = () => {
 
           {/* Entry Details */}
           <div className="bg-white p-3 rounded border">
-            <h4 className="font-bold text-sm mb-2 text-gray-700">Entry Details</h4>
-            <div className="space-y-1 text-xs">
+            <h4 className="font-bold text-[12px] mb-2 text-gray-700">Entry Details</h4>
+            <div className="space-y-1 text-[12px]">
               {/* <div className="flex justify-between">
                 <span className="text-gray-500">Entry ID:</span>
                 <span className="font-medium font-mono">{record.id.substring(0, 13)}...</span>
