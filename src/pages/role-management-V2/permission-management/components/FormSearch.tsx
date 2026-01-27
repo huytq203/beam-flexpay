@@ -56,6 +56,10 @@ const FormSearch = ({ setOpenModalAdd, onSearch }: Props) => {
             className='col-span-1'
           />
         </div>
+        <button
+          type='submit'
+          className='hidden'
+        />
       </form>
       <div className='grid grid-cols-3 mt-3 md:flex justify-end gap-3 items-end md:gap-1'>
         <ButtonComponent
