@@ -54,7 +54,7 @@ const Login2 = () => {
     const onFinish = async (values: LoginFormData) => {
         try {
             const result = await login({ userLoginDto: values })
-
+            console.log("result:",'error' in result)
             if ('data' in result && result.data) {
                 navigate('/')
                 // Truyền refreshExpiresIn từ API (đơn vị giây) vào setRefreshTokenCookie
@@ -63,13 +63,13 @@ const Login2 = () => {
                 setRefreshTokenCookie(refreshToken, refreshExpiresIn)
 
             } else if ('error' in result) {
-                const error = result.error as any
-                const errorMessage = error?.data?.message || t`login.failed`
-                errorMess(errorMessage)
+                // const error = result.error as any
+                // const errorMessage = error?.data?.message || t`login.failed`
+                // errorMess(errorMessage)
             }
-        } catch (error: any) {
-            const errorMessage = error?.data?.message || error?.message || t`login.messages.server_error`
-            errorMess(errorMessage)
+        } catch  {
+            // const errorMessage = error?.data?.message || error?.message || t`login.messages.server_error`
+            // errorMess(errorMessage)
 
         }
     }

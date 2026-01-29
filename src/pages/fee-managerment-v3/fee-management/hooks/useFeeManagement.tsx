@@ -30,8 +30,8 @@ const useFeeManagement = () => {
   const { successMess, errorMess } = useMessage()
 
   // Lazy queries - control khi nào call
-  const [getAllPolicies, { data: allData }] = useLazyGetFeePoliciesQuery()
-  const [searchFeePolicies, { data: searchData }] = useLazySearchFeePoliciesQuery()
+  const [getAllPolicies, { data: allData ,isLoading: loadingAll}] = useLazyGetFeePoliciesQuery()
+  const [searchFeePolicies, { data: searchData ,isLoading: loadingSearch}] = useLazySearchFeePoliciesQuery()
 
   const navigate = useNavigate()
   const [postNewPolicy, { isLoading: loadingNewPolicy }] = usePostNewPolicyMutation()
@@ -200,7 +200,10 @@ const useFeeManagement = () => {
     loadingNewPolicy,
     controlAdd,
     isCreate,
-    isSearchMode
+    isSearchMode,
+
+    loadingSearch,
+    loadingAll
   }
 }
 

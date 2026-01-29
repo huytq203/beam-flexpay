@@ -99,7 +99,7 @@ const baseQueryOld = fetchBaseQuery({
     return headers
   }
 })
-
+ 
 
 export const baseQueryFee = fetchBaseQuery({
   baseUrl: ENV.API_FEE,

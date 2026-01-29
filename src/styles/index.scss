@@ -70,9 +70,8 @@
   .bg-red {
     @apply bg-red-50;
   }
-  .bg-yellow
-  {
-    @apply bg-yellow-50
+  .bg-yellow {
+    @apply bg-yellow-50;
   }
   .bg-green {
     @apply bg-green-50;
@@ -84,18 +83,26 @@
     @apply bg-gray-50;
   }
 
+  .success-status {
+    @apply bg-green border border-green text-green font-medium;
+  }
+  .danger-status {
+    @apply bg-red border border-red text-red font-medium;
+  }
+  .warning-status {
+    @apply bg-yellow border border-yellow text-yellow font-medium;
+  }
+  .info-status {
+    @apply bg-blue border border-blue text-blue font-medium;
+  }
 
-  .success-status{
-    @apply bg-green border border-green text-green font-medium
-  }
-  .danger-status{
-    @apply bg-red border border-red text-red font-medium
-  }
-  .warning-status{
-    @apply bg-yellow border border-yellow text-yellow font-medium
-  }
-  .info-status{
-    @apply bg-blue border border-blue text-blue font-medium
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
   }
 }
 // .card-table {
@@ -128,7 +135,6 @@
 // .box-shadow {
 //   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 // }
-
 
 html {
   font-size: clamp(12px, 0.9vw, 16px) !important;

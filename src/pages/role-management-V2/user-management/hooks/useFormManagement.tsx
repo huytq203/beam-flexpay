@@ -13,6 +13,7 @@ import dayjs from 'dayjs'
 import { useGetRoleQuery } from '@services/apiRole'
 import { SendOutlined } from '@components/icons'
 import { RoleUserAccount } from '../constants/userAccount'
+import usePagination from '@hooks/usePagination'
 
 export const useFormManagement = () => {
   const [openModalAdd, setOpenModalAdd] = useState(false)
@@ -28,7 +29,7 @@ export const useFormManagement = () => {
 
   // hook
   const { errorMess } = useMessage()
-
+  const {page,size,params}=usePagination()
   // api
   const defaultPagination = {
     page: 1,
@@ -38,10 +39,12 @@ export const useFormManagement = () => {
   }
   const { data: getUser } = useGetUserQuery(defaultPagination)
   const [getUserById] = useLazyGetUserByIdQuery()
-  const { data: getRole,isLoading: isLoadingRoles  } = useGetRoleQuery({})
+  const { data: getRole,isLoading: isLoadingRoles  } = useGetRoleQuery({
+    page,size:1000
+  })
   // const [ userRoleData, { isLoading: isLoadingUserRoles }] = useLazyGetUserRoleQuery()
 
-
+console.log(params)
 
   const roleOptions =
     getRole?.content?.map((role) => ({

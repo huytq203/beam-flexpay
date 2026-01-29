@@ -25,6 +25,7 @@ import { useMessage } from '@hooks/useMessage'
 import { useSVG } from '@hooks/useSVG'
 import { FeeAssignmentManagementColumn } from './configs'
 import usePagination from '@hooks/usePagination'
+import { SkeletonFilterGroup, SkeletonTable } from '@components/ui/skeletons/Skeleton'
 type ModeAction = 'ADD' | 'UPDATE' | ''
 const FeeAssignmentManagement = () => {
   // state
@@ -39,10 +40,10 @@ const FeeAssignmentManagement = () => {
 
   const { params, page, size, pageSize, setPage, setPageSize } = usePagination()
 
-  const [getAllAssign, { data: dataFeeAssign }] = useLazyGetAssignQuery()
+  const [getAllAssign, { data: dataFeeAssign, isLoading: loadingAll }] = useLazyGetAssignQuery()
   const [patchAssignActive] = usePatchAssignActiveMutation()
   const [patchAssignInActive] = usePatchAssignInActiveMutation()
-  const [getAssignSearch, { data: searchData }] = useLazyGetAssignSearchQuery()
+  const [getAssignSearch, { data: searchData, isLoading: loadingSearch }] = useLazyGetAssignSearchQuery()
   // hook
 
   const { successMess, errorMess } = useMessage()
@@ -181,76 +182,95 @@ const FeeAssignmentManagement = () => {
 
   return (
     <>
-      <CardComponent
-        content={
+
+      {
+        (loadingAll || loadingSearch) ? (
           <>
-            <form action='formViewAssign'>
-              <FormFieldAssign
-                control={control}
-                setValue={setValue}
-                isCreate={isCreate}
-              />
-            </form>
-            <div className='flex justify-between mt-4'>
-              <div className='flex justify-center items-center gap-2'>
-                <ButtonComponent
-                  icon={svg('/icons.svg#hugeicons-search-01')}
-                  content='Search'
-                  onClick={handleSubmit(handleSearch)}
-                />
-                <ButtonComponent
-                  type='default'
-                  icon={svg('/icons.svg#hugeicons-delete-02')}
-                  content='Xóa bộ lọc'
-                  onClick={handleReset}
-                />
-              </div>
-              <div className='flex justify-center items-center'>
-                <ButtonComponent
-                  icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
-                  content='Thiết lập phí'
-                  onClick={() => {
-                    setIsCreate(true)
-                    // navigate(FEEMANAGEMENR_V3 + '/fee-assignment/create')
-                    setOpenModalAdd(true)
+            <div className=" mb-3">
+              <SkeletonFilterGroup items={2} />
+            </div>
+            <SkeletonTable rows={5} columns={3} />
+          </>
+        ) : (
+          <>
+            <CardComponent
+              content={
+                <>
+                  <form action='formViewAssign'>
+                    <FormFieldAssign
+                      control={control}
+                      setValue={setValue}
+                      isCreate={isCreate}
+                    />
+                  </form>
+                  <div className='flex justify-between mt-4'>
+                    <div className='flex justify-center items-center gap-2'>
+                      <ButtonComponent
+                        icon={svg('/icons.svg#hugeicons-search-01')}
+                        content='Search'
+                        onClick={handleSubmit(handleSearch)}
+                      />
+                      <ButtonComponent
+                        type='default'
+                        icon={svg('/icons.svg#hugeicons-delete-02')}
+                        content='Xóa bộ lọc'
+                        onClick={handleReset}
+                      />
+                    </div>
+                    <div className='flex justify-center items-center'>
+                      <ButtonComponent
+                        icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
+                        content='Thiết lập phí'
+                        onClick={() => {
+                          setIsCreate(true)
+                          // navigate(FEEMANAGEMENR_V3 + '/fee-assignment/create')
+                          setOpenModalAdd(true)
+                        }}
+                      />
+                    </div>
+                  </div>
+                </>
+              }
+            />
+
+            <CardComponent
+              className='mt-3'
+              content={
+                <Table
+                  scroll={{ x: 'max-content' }}
+                  rowKey='id'
+                  bordered
+                  columns={columns}
+                  dataSource={dataSource}
+                  size='small'
+                  pagination={{
+                    current: page,
+                    showSizeChanger: true,
+                    pageSize: pageSize,
+                    total: total,
+                    onChange: (page, pageSize) => {
+                      setPage(page)
+                      setPageSize(pageSize)
+                    }
                   }}
                 />
-              </div>
-            </div>
-          </>
-        }
-      />
-
-      <div className='mt-3'>
-        <CardComponent
-          content={
-            <Table
-              scroll={{ x: 'max-content' }}
-              rowKey='id'
-              bordered
-              columns={columns}
-              dataSource={dataSource}
-              size='small'
-              pagination={{
-                current: page,
-                showSizeChanger: true,
-                pageSize: pageSize,
-                total: total,
-                onChange: (page, pageSize) => {
-                  setPage(page)
-                  setPageSize(pageSize)
-                }
-              }}
+              }
             />
-          }
-        />
-      </div>
+          </>
+        )
+
+
+      }
+
+
+
+
       <DialogModal
         onOk={handleDelete}
         onCancel={() => setOpenModalDelete(false)}
         open={openModalDelete}
         content='Bạn có xác nhận xóa ?'
-         mode='DELETE'
+        mode='DELETE'
       />
       <ModalComponent
         title={'Thêm gán phí'}
