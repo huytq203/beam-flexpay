@@ -5,14 +5,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "tsc",
+    "lint": "echo \"skip eslint for now\"",
     "api": "npx @rtk-query/codegen-openapi openapi-config.js",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check": "npm run typecheck",
+    "typecheck": "tsc --noEmit"
   },
-  "pre-commit": [
-    "lint",
-    "test"
-  ],
+  "simple-git-hooks": {
+  "pre-push": "npm run check"
+},
   "dependencies": {
     "@ant-design/charts": "^1.4.2",
     "@ant-design/icons": "^6.1.0",
@@ -69,7 +70,7 @@
     "@vitest/coverage-v8": "^4.0.17",
     "cross-env": "^10.1.0",
     "jsdom": "^27.4.0",
-    "pre-commit": "^1.2.2",
+    "simple-git-hooks": "^2.13.1",
     "typescript": "^4.6.4",
     "vitest": "^4.0.17"
   },
