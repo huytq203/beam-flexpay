@@ -6,6 +6,7 @@ import { ModeAction } from '@pages/role-management-V2/role-management/hooks/useR
 import { BroomIcon } from '@components/icons'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import { RoleStatus } from '../constants/RoleManagement.config'
+import { memo } from 'react'
 
 export interface SearchFormData {
   roleCode: string
@@ -78,7 +79,7 @@ const FormSearch = ({ setOpenModalAdd, setModeAction, onSearch }: Props) => {
           onClick={handleSubmit(handleSearch)}
         />
         <ButtonComponent
-         icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
+          icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
           content='Thêm mới'
           onClick={() => {
             setOpenModalAdd(true)
@@ -87,7 +88,7 @@ const FormSearch = ({ setOpenModalAdd, setModeAction, onSearch }: Props) => {
         />
         <ButtonComponent
           type='default'
-          icon={<BroomIcon size={18}/>}
+          icon={<BroomIcon size={18} />}
           content='Xóa lọc'
           onClick={handleClearFilter}
         />
@@ -96,4 +97,4 @@ const FormSearch = ({ setOpenModalAdd, setModeAction, onSearch }: Props) => {
   )
 }
 
-export default FormSearch
+export default memo(FormSearch)

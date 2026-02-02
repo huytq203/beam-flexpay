@@ -241,6 +241,8 @@ export const WHITE_LIST: WhiteListItem[] = [
     { pathname: ROLEMANAGEMENT_V2 + '/user-account', requestUrl: '/users/managers' },
     { pathname: ROLEMANAGEMENT_V2 + '/permission-management', requestUrl: '/permissions' },
     { pathname: ROLEMANAGEMENT_V2 + '/permission-management', requestUrl: '/roles' },
+    { pathname: ROLEMANAGEMENT_V2 + '/role-management', requestUrl: '/permissions' },
+    { pathname: ROLEMANAGEMENT_V2 + '/role-management', requestUrl: '/roles' },
 
 
 

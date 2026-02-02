@@ -2,7 +2,7 @@ import { ButtonComponent, CardComponent } from '@components/index'
 import { FormInput, FormTextArea } from '@components/form'
 import { PermissionItem } from '@type/permissionManagement'
 import { RoleDataItem } from '@type/roleManagementV2'
-import { useEffect } from 'react'
+import { useEffect, memo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ModeAction } from '../hooks/useRoleManagement'
@@ -106,4 +106,4 @@ const FormAdd = ({ modeAction, selectedUser, onSubmit, onCancel }: Props) => {
   )
 }
 
-export default FormAdd
+export default memo(FormAdd)

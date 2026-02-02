@@ -1,6 +1,7 @@
 import { CardComponent, Table } from '@components/index'
 import { FormDetailColumn } from '@pages/role-management-V2/permission-management/columns/FormDetail.column'
 import { UserInfor } from '@type/userManagement'
+import { memo } from 'react'
 
 interface Props {
   selectMember: UserInfor[] | undefined
@@ -32,4 +33,4 @@ const FormDetail = ({ selectMember }: Props) => {
   )
 }
 
-export default FormDetail
+export default memo(FormDetail)

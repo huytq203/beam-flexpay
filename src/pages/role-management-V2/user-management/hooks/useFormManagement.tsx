@@ -37,7 +37,7 @@ export const useFormManagement = () => {
     sortBy: 'id',
     sortDirection: 'DESC'
   }
-  const { data: getUser } = useGetUserQuery(defaultPagination)
+  const { data: getUser , isLoading: isLoadingUser} = useGetUserQuery(defaultPagination)
   const [getUserById] = useLazyGetUserByIdQuery()
   const { data: getRole,isLoading: isLoadingRoles  } = useGetRoleQuery({
     page,size:1000
@@ -224,6 +224,7 @@ console.log(params)
     handleOpenUpdate,
     roleOptions,
     isLoadingRoles,
+    isLoadingUser,
     // isLoadingUserRoles,
     // userRoleData,
     getRole,

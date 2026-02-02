@@ -5,6 +5,7 @@ import { BroomIcon } from '@components/icons'
 import { useForm } from 'react-hook-form'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import { PermissionStatus } from '../constants/PermissionManagement.constant'
+import { memo } from 'react'
 
 export interface SearchFormData {
   keyword: string
@@ -83,4 +84,4 @@ const FormSearch = ({ setOpenModalAdd, onSearch }: Props) => {
   )
 }
 
-export default FormSearch
+export default memo(FormSearch)

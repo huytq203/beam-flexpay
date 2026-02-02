@@ -1,7 +1,7 @@
 import { ButtonComponent, CardComponent } from '@components/index'
 import { FormInput, FormTextArea } from '@components/form'
 import { DataRoleItem } from '@type/roleManagement'
-import { useEffect } from 'react'
+import { memo, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PermissionRoleSchema, PermissionRoleFormData } from '../schemas/Permission.schema'
@@ -80,5 +80,5 @@ const FormAdd = ({ onSubmit, onCancel, defaultValues, isEdit = false }: Props) =
   )
 }
 
-export default FormAdd
+export default memo(FormAdd)
 

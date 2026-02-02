@@ -34,7 +34,7 @@ const FeeManagement = () => {
     <>
       {
 
-        (loadingAll || loadingSearch) ? (
+        (loadingAll) ? (
 
 
           <>  <div className=" mb-3">

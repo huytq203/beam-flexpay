@@ -184,7 +184,7 @@ const FeeAssignmentManagement = () => {
     <>
 
       {
-        (loadingAll || loadingSearch) ? (
+        (loadingAll ) ? (
           <>
             <div className=" mb-3">
               <SkeletonFilterGroup items={2} />
