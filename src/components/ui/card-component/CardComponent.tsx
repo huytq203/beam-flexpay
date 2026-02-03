@@ -2,17 +2,18 @@ import { Card } from 'antd'
 import { CardProps } from 'antd/lib'
 import React, { ReactNode } from 'react'
 interface CardComponentProps extends Omit<CardProps, 'content'> {
-    content: ReactNode
-    bodyBackground ?:string
+  content?: ReactNode
+  bodyBackground?: string
+  children: ReactNode
 }
-const CardComponent = ({ content,bodyBackground, ...rest }: CardComponentProps) => {
-    return (
-        <Card
-            {...rest}
-        >   
-            {content}
-        </Card>
-    )
+const CardComponent = ({children, content, bodyBackground, ...rest }: CardComponentProps) => {
+  return (
+    <Card
+      {...rest}
+    >
+     {content ?? children}
+    </Card>
+  )
 }
 
 export default CardComponent

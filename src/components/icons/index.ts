@@ -26,10 +26,13 @@ export {
   InfoCircleFilled,
   EyeFilled,
   DollarOutlined,
-  BankFilled ,
+  BankFilled,
   StopOutlined,
-  SaveOutlined ,
-  PlusOutlined
+  SaveOutlined,
+  PlusOutlined,
+  ArrowLeftOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined
 } from '@ant-design/icons'
 
 
@@ -45,18 +48,18 @@ export {
   WarningIcon,
   ArrowsCounterClockwiseIcon,
   ClockIcon,
-  KeyIcon ,
+  KeyIcon,
   DeviceMobileSpeakerIcon,
   PhoneIcon,
-  EnvelopeIcon ,
-  BroadcastIcon ,
-  PencilLineIcon ,
-  MagnifyingGlassIcon ,
-  BroomIcon 
+  EnvelopeIcon,
+  BroadcastIcon,
+  PencilLineIcon,
+  MagnifyingGlassIcon,
+  BroomIcon
 } from "@phosphor-icons/react";
 export {
   CornerDownRight,
   Calculator,
   PenTool,
-  
+
 } from 'lucide-react';

@@ -21,6 +21,7 @@ import {
   FEEMANAGEMENT_V3,
   ROLEMANAGEMENT_V2,
   WALLETADMINISTRATION,
+  MERCHANT,
 } from '@constants/routersConstant'
 
 import ForgotPassword from '@pages/auth/forgot-password/ForgotPassword'
@@ -106,6 +107,9 @@ import FrozenTransactions from '@pages/wallet-administration/frozen-transactions
 import WithdrawHistory from '@pages/wallet-administration/withdraw-history/WithdrawHistory'
 import SystemLedgerManagement from '@pages/wallet-administration/system-ledger/SystemLedgerManagement'
 import DetailSystemLedger from '@pages/wallet-administration/system-ledger/DetailSystemLedger'
+import MerchantManagement from '@pages/merchant-management/merchanr-management/MerchantManagement'
+import MerchantDetail from '@pages/merchant-management/merchanr-management/MerchantDetail'
+import CreateMerchant from '@pages/merchant-management/merchanr-management/CreateMerchant'
 
 
 const authentication = {
@@ -647,6 +651,32 @@ const walletAministration = {
   ]
 }
 
+const merchantManagement = {
+  path: MERCHANT,
+  element: createElement(AppLayout),
+  errorElement: createElement(NotFound),
+  children: [
+    {
+      path: MERCHANT,
+      children: [
+        {
+          path: MERCHANT + '/merchant-management',
+          element: createElement(MerchantManagement),
+        },
+        {
+          path: MERCHANT + '/merchant-management/:id',
+          element: createElement(MerchantDetail),
+        },
+        {
+          path: MERCHANT + '/merchant-management/create',
+          element: createElement(CreateMerchant),
+        }
+      ]
+    }
+  ]
+
+}
+
 export const WalletRoutes = createBrowserRouter([
   authentication,
   defaultRouter,
@@ -662,4 +692,5 @@ export const WalletRoutes = createBrowserRouter([
   feeManagementV3,
   roleManagementV2,
   walletAministration,
+  merchantManagement
 ])

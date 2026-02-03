@@ -17,6 +17,7 @@ export const STATE_BANK = '/state-bank'
 export const FEEMANAGEMENT_V3 = '/fee-v3'
 export const ROLEMANAGEMENT_V2 = '/role-v2'
 export const WALLETADMINISTRATION = '/wallet-administration'
+export const MERCHANT = '/merchant'
 
 
 
@@ -38,3 +39,4 @@ export const _STATE_BANK = 'state-bank'
 export const _FEEMANAGEMENT_V3 = 'fee-v3'
 export const _ROLEMANAGEMENT_V2 = 'role-v2'
 export const _WALLETADMINISTRATION = 'wallet-administration'
+export const _MERCHANT = 'merchant'
