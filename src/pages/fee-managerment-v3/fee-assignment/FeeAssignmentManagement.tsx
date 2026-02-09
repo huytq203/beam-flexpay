@@ -18,7 +18,7 @@ import {
 import { FeeAssignment } from '@pages/fee-managerment-v3/constants/feeAssignment'
 import { FeeAssignType } from '@pages/fee-managerment-v3/fee-assignment/schemas/feeAssign.schema'
 
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useMessage } from '@hooks/useMessage'
@@ -86,11 +86,11 @@ const FeeAssignmentManagement = () => {
         sortDirection: 'DESC'
       }).unwrap()
     }
-  }, [page, pageSize, isSearching, JSON.stringify(searchParams)])
+  }, [page, pageSize, isSearching, searchParams])
 
   //logic
 
-  const handleSearch = async (data: FeeAssignType) => {
+  const handleSearch = useCallback(async (data: FeeAssignType) => {
     setPage(1) // Reset về trang 1
     setSearchParams(data) // Lưu params để pagination dùng
     setIsSearching(true) // Chuyển sang search mode
@@ -102,9 +102,9 @@ const FeeAssignmentManagement = () => {
       sortBy: 'createdAt',
       sortDirection: 'DESC'
     }).unwrap()
-  }
+  }, [pageSize, getAssignSearch, setPage])
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     reset()
     setSearchParams(null)
     setIsSearching(false)
@@ -117,8 +117,8 @@ const FeeAssignmentManagement = () => {
       sortBy: 'createdAt',
       sortDirection: 'DESC'
     })
-  }
-  const handleToggleStatus = async (record: FeeAssignment) => {
+  }, [reset, setPage, setPageSize, getAllAssign])
+  const handleToggleStatus = useCallback(async (record: FeeAssignment) => {
     try {
       if (record.status === 'ACTIVE') {
         await patchAssignInActive(record.id).unwrap()
@@ -130,13 +130,13 @@ const FeeAssignmentManagement = () => {
     } catch (error: any) {
       errorMess(error?.data?.detail || 'Có lỗi xảy ra')
     }
-  }
+  }, [patchAssignInActive, patchAssignActive, successMess, errorMess])
 
-  function handleDelete() {
+  const handleDelete = useCallback(() => {
     alert('Delete ID:' + selectRowId)
-  }
+  }, [selectRowId])
 
-  const handlePostAssign = async (data: FeeAssignType) => {
+  const handlePostAssign = useCallback(async (data: FeeAssignType) => {
     try {
       const payload = {
         feePolicyId: data.feePolicyId,
@@ -152,33 +152,56 @@ const FeeAssignmentManagement = () => {
       successMess('Thêm mới thành công!')
       setOpenModalAdd(false)
       reset()
-    } catch (error: any) {
-      errorMess(error?.data?.detail || 'Có lỗi xảy ra')
+    } catch  {
+
     }
-  }
+  }, [postAssign, successMess, reset])
 
-  const handleSelectPolicy = (feePolicyId: string) => {
+  const handleSelectPolicy = useCallback((feePolicyId: string) => {
     setValue('feePolicyId', feePolicyId)
-  }
+  }, [setValue])
 
-  const columns = FeeAssignmentManagementColumn({
+  const columns = useMemo(() => FeeAssignmentManagementColumn({
     setOpenModalDelete,
     setSelectRowId,
     onToggleStatus: handleToggleStatus,
     navigate
-  })
+  }), [handleToggleStatus, navigate])
 
-  const listData: FeeAssignment[] =
+  const listData: FeeAssignment[] = useMemo(() =>
     (isSearching ? searchData?.content : dataFeeAssign?.content) || []
+  , [isSearching, searchData?.content, dataFeeAssign?.content])
 
+  const total = useMemo(() =>
+    (isSearching ? searchData?.totalElements : dataFeeAssign?.totalElements) || 0
+  , [isSearching, searchData?.totalElements, dataFeeAssign?.totalElements])
 
-  const total =
-    (isSearching ? searchData?.totalElements : dataFeeAssign?.totalElements) ||
-    0
-  const dataSource = listData.map((item, idx: number) => ({
+  const dataSource = useMemo(() => listData.map((item, idx: number) => ({
     ...item,
     no: (page - 1) * pageSize + idx + 1
-  }))
+  })), [listData, page, pageSize])
+
+  const handlePaginationChange = useCallback((newPage: number, newPageSize: number) => {
+    setPage(newPage)
+    setPageSize(newPageSize)
+  }, [setPage, setPageSize])
+
+  const handleOpenModalAdd = useCallback(() => {
+    setIsCreate(true)
+    setOpenModalAdd(true)
+  }, [])
+
+  const handleCloseModalAdd = useCallback(() => {
+    setOpenModalAdd(false)
+  }, [])
+
+  const handleCloseModalDelete = useCallback(() => {
+    setOpenModalDelete(false)
+  }, [])
+
+  const handleCloseModalSelectPolicy = useCallback(() => {
+    setOpenModalSelectPolicy(false)
+  }, [])
 
   return (
     <>
@@ -221,11 +244,7 @@ const FeeAssignmentManagement = () => {
                       <ButtonComponent
                         icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
                         content='Thiết lập phí'
-                        onClick={() => {
-                          setIsCreate(true)
-                          // navigate(FEEMANAGEMENR_V3 + '/fee-assignment/create')
-                          setOpenModalAdd(true)
-                        }}
+                        onClick={handleOpenModalAdd}
                       />
                     </div>
                   </div>
@@ -248,10 +267,7 @@ const FeeAssignmentManagement = () => {
                     showSizeChanger: true,
                     pageSize: pageSize,
                     total: total,
-                    onChange: (page, pageSize) => {
-                      setPage(page)
-                      setPageSize(pageSize)
-                    }
+                    onChange: handlePaginationChange
                   }}
                 />
               }
@@ -267,7 +283,7 @@ const FeeAssignmentManagement = () => {
 
       <DialogModal
         onOk={handleDelete}
-        onCancel={() => setOpenModalDelete(false)}
+        onCancel={handleCloseModalDelete}
         open={openModalDelete}
         content='Bạn có xác nhận xóa ?'
         mode='DELETE'
@@ -282,7 +298,7 @@ const FeeAssignmentManagement = () => {
           form: 'formAssign'
         }}
         // onOk={handlePostAssign}
-        onCancel={() => setOpenModalAdd(false)}
+        onCancel={handleCloseModalAdd}
         confirmLoading={isPostAssign}
         modalText={
           <FormInforAdd
@@ -298,8 +314,8 @@ const FeeAssignmentManagement = () => {
         title={'Chọn chính sách phí'}
         width='70%'
         open={openModalSelectPolicy}
-        onOk={() => setOpenModalSelectPolicy(false)}
-        onCancel={() => setOpenModalSelectPolicy(false)}
+        onOk={handleCloseModalSelectPolicy}
+        onCancel={handleCloseModalSelectPolicy}
         modalText={<FormAddAssign onSelect={handleSelectPolicy} />}
       />
     </>

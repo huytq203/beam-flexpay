@@ -9,7 +9,7 @@ import {
   statusType
 } from '@pages/fee-managerment-v3/constants/feeAssignment'
 import { serviceType } from '@pages/fee-managerment-v3/constants/feePoliciesComponent'
-import React, { useEffect, useImperativeHandle, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Control, UseFormSetValue } from 'react-hook-form'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 
@@ -19,7 +19,7 @@ interface FormFieldAssign {
   isCreate?: boolean
 }
 
-const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
+const FormFieldAssign = React.memo(({ control, setValue, isCreate }: FormFieldAssign) => {
   const [disable, setDisable] = useState('')
 
   // api database
@@ -152,6 +152,8 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
       </div>
     </div>
   )
-}
+})
+
+FormFieldAssign.displayName = 'FormFieldAssign'
 
 export default FormFieldAssign

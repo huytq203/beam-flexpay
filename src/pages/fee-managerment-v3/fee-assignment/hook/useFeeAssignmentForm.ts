@@ -187,8 +187,8 @@ export const useFeeAssignmentForm = () => {
             await postAssign(payload).unwrap()
             successMess('Thêm mới thành công!')
             resetFormAdd()
-        } catch (error: any) {
-            errorMess(error?.message || 'Có lỗi xảy ra')
+        } catch  {
+           
         }
     }
 
@@ -229,8 +229,8 @@ export const useFeeAssignmentForm = () => {
             await putAssign({ id, body: payload }).unwrap()
             successMess('Cập nhật thành công!')
             resetFormAdd()
-        } catch (error: any) {
-            errorMess(error?.message || 'Có lỗi xảy ra')
+        } catch {
+           
         }
     }
 

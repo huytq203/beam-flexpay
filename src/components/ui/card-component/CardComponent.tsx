@@ -4,7 +4,7 @@ import React, { ReactNode } from 'react'
 interface CardComponentProps extends Omit<CardProps, 'content'> {
   content?: ReactNode
   bodyBackground?: string
-  children: ReactNode
+  children?: ReactNode
 }
 const CardComponent = ({children, content, bodyBackground, ...rest }: CardComponentProps) => {
   return (
