@@ -25,6 +25,7 @@ import {
   normalizePathname,
   callApi
 } from './fetchBaseQuery.types'
+import { updateAccessToken } from '@slices/authActions'
 
 // ============================================================================
 // STATE - Token Refresh Singleton
@@ -112,8 +113,20 @@ export const baseQueryFee = fetchBaseQuery({
     return headers
   }
 })
-export const baseQueryWalletCore  = fetchBaseQuery({
+export const baseQueryWalletCore = fetchBaseQuery({
   baseUrl: ENV.API_WALLETCORE,
+  credentials: 'include',
+  prepareHeaders: (headers) => {
+    const accessToken = Cookies.get(CookieKey.ACCESS_TOKEN)
+    if (accessToken) {
+      headers.set('authorization', `Bearer ${accessToken}`)
+    }
+    return headers
+  }
+})
+
+export const baseQueryMerchant = fetchBaseQuery({
+  baseUrl: ENV.API_MERCHANT,
   credentials: 'include',
   prepareHeaders: (headers) => {
     const accessToken = Cookies.get(CookieKey.ACCESS_TOKEN)
@@ -168,6 +181,9 @@ const refreshAccessToken = async (
       const expiresInSeconds = data?.[TokenType.EXPIRES_IN] || CookieExpiry.ACCESS_TOKEN_SECONDS
       const expiresInDays = expiresInSeconds / 86400
       Cookies.set(CookieKey.ACCESS_TOKEN, newAccessToken, { expires: expiresInDays })
+
+      // Cập nhật Redux store với access token mới và permissions
+      api.dispatch(updateAccessToken({ token: newAccessToken, expiresIn: expiresInSeconds }))
 
       if (data?.[TokenType.REFRESH_TOKEN]) {
         // Sử dụng refreshExpiresIn từ API (đơn vị giây), fallback 1800 giây
@@ -232,8 +248,8 @@ const createCustomBaseQuery = (
       switch (status) {
         case HttpStatus.UNAUTHORIZED: {
           const newAccessToken = await refreshAccessToken(api, extraOptions as Record<string, unknown>)
-
           if (!newAccessToken) {
+            alert("Đã hết phiên làm việc, vui lòng đăng nhập lại để tiếp tục!")
             forceLogout()
             break
           }
@@ -273,4 +289,5 @@ export const fetchBaseQueryCustom = createCustomBaseQuery(baseAuthQuery)
 export const fetchBaseQueryFee = createCustomBaseQuery(baseQueryFee)
 export const fetchBaseQueryOld = createCustomBaseQuery(baseQueryOld)
 export const fetchBaseQueryWalletCore = createCustomBaseQuery(baseQueryWalletCore)
+export const fetchBaseQueryMerchant = createCustomBaseQuery(baseQueryMerchant)
 

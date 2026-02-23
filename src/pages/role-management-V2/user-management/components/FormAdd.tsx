@@ -1,4 +1,4 @@
-import { CardComponent } from '@components/common'
+import { CardComponent } from '@components/index'
 import { FormInput, FormSelect } from '@components/form'
 import { mapEnumToSelectOptions } from '@pages/role-management-V2/utils/RoleManagement.utils'
 import { useGetRoleQuery } from '@services/apiRoleManagement'

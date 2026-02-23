@@ -1,14 +1,15 @@
 import React, { ReactNode } from 'react'
 import { Modal } from 'antd'
 import { ModalProps } from 'antd/lib'
+export type ModeAction = 'DELETE' | 'CONFIRM' | 'WARNING';
 interface ModalComponentProps extends ModalProps {
-  open: boolean
-  onOk?: () => void
-  onCancel: () => void
-  confirmLoading?: boolean
-  modalText: ReactNode
-  title?: string|ReactNode
-  width?:string,
+  mode?: ModeAction;
+  open: boolean;
+  onOk?: () => void;
+  onCancel: () => void;
+  confirmLoading?: boolean;
+  modalText: ReactNode;
+  title?: string | ReactNode;
 }
 const ModalComponent = ({
   title,

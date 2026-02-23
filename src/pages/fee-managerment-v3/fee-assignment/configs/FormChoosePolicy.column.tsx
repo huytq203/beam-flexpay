@@ -1,6 +1,6 @@
 import { RadioComponent } from '@components/ui/radio-component'
 import { getEnumLabel } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
-import { serviceType } from '@type/feeAssignment'
+import { serviceType } from '@pages/fee-managerment-v3/constants/feeAssignment'
 import { ColumnType } from 'antd/es/table'
 interface FormChoosePolicyColumnProps
 {

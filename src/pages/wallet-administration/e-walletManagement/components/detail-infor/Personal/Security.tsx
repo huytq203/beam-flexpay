@@ -1,4 +1,4 @@
-import { CardComponent } from '@components/common'
+import { CardComponent } from '@components/index'
 import React from 'react'
 import HistoryLogin from './components/HistoryLogin'
 import AuthMethod from './components/AuthMethod'

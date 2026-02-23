@@ -1,12 +1,12 @@
-import { CardComponent, DialogModal, Table } from '@components/common'
-import { ArrowCounterClockwiseIcon, ArrowsCounterClockwiseIcon, FileDoneOutlined, FireIcon, SnowflakeIcon } from '@components/icons/common'
+import { CardComponent, DialogModal, Table } from '@components/index'
+import { ArrowCounterClockwiseIcon, ArrowsCounterClockwiseIcon, FileDoneOutlined, FireIcon, SnowflakeIcon } from '@components/icons'
 import DialogConfirm from '@pages/wallet-administration/transaction-management/components/DialogConfirm'
 import React, { useState } from 'react'
 import DialogFreeze from './components/DialogFreeze'
 import DialogRefund from './components/DialogRefund'
 import FormSearch from './components/FormSearch'
 import UpdateStatusTransaction from './components/UpdateStatusTransaction'
-import Column from './config/Transaction.column'
+import Column from './columns/Transaction.column'
 import useTransaction from './hooks/useTransaction'
 
 const TransactionManagement = () => {
@@ -19,13 +19,14 @@ const TransactionManagement = () => {
     pageSize,
     setPageSize,
 
-    navigate
+    navigate,
+    handleSearch
   } = useTransaction()
   // const total=dataSource.
   const columns = Column({navigate})
   return (
     <div className='flex flex-col gap-3'>
-      <CardComponent content={<FormSearch />} />
+      <CardComponent content={<FormSearch handleSearch={handleSearch} />} />
       <CardComponent content={
         <Table
         bordered

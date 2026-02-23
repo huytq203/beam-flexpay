@@ -7,7 +7,7 @@ import { ReactNode } from "react";
 interface props<T extends FieldValues> {
   name: Path<T>;
   control: Control<T>;
-  label?: string|ReactNode;
+  label?: string | ReactNode;
   picker?: "date" | "week" | "month" | "quarter" | "year";
   className?: string;
   showTime?: boolean;
@@ -24,7 +24,7 @@ export function FormDatePicker<T extends FieldValues>({
   classNameLable = "font-medium",
   showTime = false,
   isRange = false,
-  placeholder='DD/MM/YYYY',
+  placeholder = 'DD/MM/YYYY',
   ...rest
 }: props<T> & { [key: string]: any }) {
 

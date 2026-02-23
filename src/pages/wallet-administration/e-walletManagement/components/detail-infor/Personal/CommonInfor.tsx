@@ -1,7 +1,15 @@
-import { CardComponent } from '@components/common'
-import { CheckCircleFilled, UserIcon, WalletIcon } from '@components/icons/common'
+import { CardComponent } from '@components/index'
+import { CheckCircleFilled, UserIcon, WalletIcon } from '@components/icons'
 import React from 'react'
-
+import { TabContentProps } from '../../../types/Tabs.type'
+import { AcountItem } from '@pages/wallet-administration/e-walletManagement/types/ResponseWalletAccount.type'
+import { formatCurrency } from '@utils/formatNumber'
+import dayjs from 'dayjs'
+import { TYPEDATE } from '@constants/date.constant'
+import { StatusKey, StatusLabel } from '@pages/wallet-administration/e-walletManagement/constants/Ewallet.constant'
+interface props {
+  data?: AcountItem
+}
 const InforUser = () => {
 
 
@@ -16,18 +24,18 @@ const InforUser = () => {
       <hr className='my-3' />
       <div className="space-y-1">
         {[
-          { label: 'Họ và tên', value: 'Trần Quang A', bold: true },
-          { label: 'Số điện thoại', value: '03333333' },
-          { label: 'Email', value: 'A@gmail.com' },
-          { label: 'Loại tài khoản', value: 'Cá nhân' },
-          { label: 'Số CCCD', value: '043243217892' },
-          { label: 'Ngày cấp', value: '10/10/2021' },
-          { label: 'Nơi cấp', value: 'Cục CS QLHC về TTXH' },
-          { label: 'Ngày sinh', value: '01/01/1999' },
-          { label: 'Giới tính', value: 'Nam' },
-          { label: 'Quê quán', value: 'Hải Dương' },
-          { label: 'Nghề nghiệp', value: 'Tự do' },
-          { label: 'Chức vụ', value: 'N/A' },
+          { label: 'Họ và tên', value: '--', bold: true },
+          { label: 'Số điện thoại', value: '--' },
+          { label: 'Email', value: '--' },
+          { label: 'Loại tài khoản', value: '--' },
+          { label: 'Số CCCD', value: '--' },
+          { label: 'Ngày cấp', value: '--' },
+          { label: 'Nơi cấp', value: '--' },
+          { label: 'Ngày sinh', value: '--' },
+          { label: 'Giới tính', value: '--' },
+          { label: 'Quê quán', value: '--' },
+          { label: 'Nghề nghiệp', value: '--' },
+          { label: 'Chức vụ', value: '--' },
         ].map((item, index) => (
           <div key={index} className="flex justify-between items-start py-2 hover:bg-gray-100 -mx-2 px-2 rounded transition-colors">
             <span className=" text-gray-600 min-w-[140px]">{item.label}:</span>
@@ -40,13 +48,21 @@ const InforUser = () => {
       <hr className='my-3' />
       <div className="">
         <p className='text-gray-500'>Địa chỉ thường trú</p>
-        <p className='font-medium'>Số 10, ngõ 123, Đường XYZ, TP Hải Dương</p>
+        <p className='font-medium'>--</p>
       </div>
     </>
   )
 }
 
-const InforEwallet = () => {
+const InforEwallet = ({data}:props) => {
+  if(!data) return null
+    const STATUS_CLASS: Record<string, string> = {
+    ACTIVE: 'text-green   font-medium bg-green-100',
+    ERROR: 'text-red  text-xs  font-medium bg-red-100',
+    WAITING: 'text-blue-600  font-medium bg-blue-50-100',
+    REVIEW: 'text-yellow  font-medium bg-yellow-100',
+  };
+   const typeKeyStatus = data?.status as StatusKey
   return (
     <>
       <div className="flex items-center gap-2 mb-4">
@@ -59,55 +75,56 @@ const InforEwallet = () => {
       <div className='flex flex-col gap-3 '>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Mã ví:</p>
-          <p className="font-medium">WALLET_001</p>
+          <p className="font-medium">{data.glCode}</p>
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Trạng thái ví:</p>
-          <p className="font-medium text-green-700 bg-green-100 px-1  rounded">Hoạt động</p>
+          <p className={`${STATUS_CLASS[typeKeyStatus]} text-[12px] rounded-md px-2`} >{StatusLabel[data.status as StatusKey]}</p>
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Trạng thái EKC:</p>
-          <p className="font-medium text-blue-700 bg-blue-100 px-1  rounded">Đã xác thực</p>
+          <p className="font-medium text-blue-700 bg-blue-100 px-2  rounded-md text-sm">--</p>
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Ứng lương:</p>
-          <p className="font-medium text-green-700 bg-green-100 px-1  rounded"><CheckCircleFilled /> Đang bật</p>
+          {/* <p className="font-medium text-green-700 bg-green-100 px-2  rounded-md text-sm"><CheckCircleFilled /> Đang bật</p> */}
+          <p className="font-medium text-green-700 bg-green-100 px-2  rounded-md text-sm">--</p>
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Liên kết NH:</p>
-          <p className="font-medium text-blue-700">Đã liên kết (VCB)</p>
+          <p className="font-medium text-blue-700">--</p>
         </div>
         <hr />
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Tổng số dư:</p>
-          <p className="font-extrabold ">5,500,000 đ</p>
+          <p className="font-bold ">{formatCurrency(data.balance)}</p>
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Số dư khả dụng:</p>
-          <p className="font-extrabold text-green-700  ">5,000,000 đ</p>
+          <p className="font-bold text-green-700  ">{formatCurrency(data.availableBalance??(data.balance-data.holdBalance))}</p>
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Số dư đóng băng:</p>
-          <p className="font-extrabold text-red-700 ">500,000 đ</p>
+          <p className="font-bold text-red-700 ">{formatCurrency(data.holdBalance)}</p>
         </div>
         <hr />
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Ngày mở ví:</p>
-          <p className="font-medium">01/01/2025</p>
+          <p className="font-medium">{dayjs(data.createdAt).format(TYPEDATE.fullTime)}</p>
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Ngày xác thực:</p>
-          <p className="font-medium">02/01/2025</p>
+          <p className="font-medium">--</p>
         </div>
         <hr />
         <p className='font-bold'>Thông tin xác thực eKYC</p>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Trạng thái:</p>
-          <p className="font-medium  text-blue-700 bg-blue-100 px-1  rounded">Đã xác thực</p>
+          <p className="font-medium  text-blue-700 bg-blue-100 px-2  rounded-md text-sm">--</p>
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Độ chính xác AI:</p>
-          <p className="font-medium text-green-700">91%</p>
+          <p className="font-medium text-green-700">--%</p>
         </div>
       </div>
       <div className="flex justify-between gap-4 mt-3">
@@ -139,7 +156,7 @@ const InforEwallet = () => {
     </>
   )
 }
-const CommonInfor = () => {
+const CommonInfor = ({ accountData }: TabContentProps) => {
   return (
     <div className='flex gap-2 mt-3'>
       <CardComponent
@@ -148,7 +165,7 @@ const CommonInfor = () => {
       />
       <CardComponent
         className='flex-1'
-        content={<InforEwallet />}
+        content={<InforEwallet data={accountData}/>}
       />
     </div>
   )

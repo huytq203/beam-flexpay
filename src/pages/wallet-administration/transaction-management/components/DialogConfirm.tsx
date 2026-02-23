@@ -2,7 +2,7 @@ import {
   CheckCircleFilled,
   CloseCircleFilled,
   WarningIcon
-} from '@components/icons/common'
+} from '@components/icons'
 import React, { useState } from 'react'
 import clsx from 'clsx'
 import { FormInputNumber, FormSelect, FormTextArea } from '@components/form'

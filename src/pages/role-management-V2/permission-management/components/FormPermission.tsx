@@ -3,7 +3,7 @@ import { translatePermissionName } from '@pages/role-management-V2/role-manageme
 import { PermissionItem } from '@type/permissionManagement'
 import { Table } from 'antd'
 import { ColumnType } from 'antd/lib/table'
-import { Key, useEffect, useState } from 'react'
+import { Key, useEffect, useState, memo } from 'react'
 
 interface Props {
   dataSource?: PermissionItem[]
@@ -13,9 +13,9 @@ interface Props {
   assignedPermissionNames?: string[]
 }
 
-const FormPermission = ({ 
-  dataSource, 
-  onSelectionChange, 
+const FormPermission = ({
+  dataSource,
+  onSelectionChange,
   modeAction,
   assignedPermissionNames = []
 }: Props) => {
@@ -35,12 +35,12 @@ const FormPermission = ({
       dataIndex: 'name',
       align: 'center',
       render(value, record) {
-       return(
-         <div className="">
-          <p>{translatePermissionName(record.name)}</p>
-        </div>
-       )
-      },
+        return (
+          <div className=''>
+            <p>{translatePermissionName(record.name)}</p>
+          </div>
+        )
+      }
     },
     {
       title: 'Mô tả',
@@ -72,5 +72,4 @@ const FormPermission = ({
   )
 }
 
-export default FormPermission
-
+export default memo(FormPermission)

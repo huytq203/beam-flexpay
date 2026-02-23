@@ -1,4 +1,4 @@
-import { CardComponent } from '@components/common'
+import { CardComponent } from '@components/index'
 import { FormSelect, FormTextArea } from '@components/form'
 import React from 'react'
 import { useForm } from 'react-hook-form'

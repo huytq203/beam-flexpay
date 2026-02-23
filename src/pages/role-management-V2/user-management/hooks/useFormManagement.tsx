@@ -1,4 +1,4 @@
-import { ButtonComponent } from '@components/common'
+import { ButtonComponent } from '@components/index'
 import { useMessage } from '@hooks/useMessage'
 import {
   useGetUserQuery,
@@ -8,11 +8,12 @@ import { UserInfor } from '@type/userManagement'
 import { useCallback, useMemo, useState } from 'react'
 import { ActionMode } from '../UserManagement'
 import { FormSendEmail } from '../components/FormSendEmail'
-import { RoleManagemenColume } from '../configs/UserManagement.colume'
+import { RoleManagementColumn } from '../columns/UserManagement.column'
 import dayjs from 'dayjs'
 import { useGetRoleQuery } from '@services/apiRole'
-import { SendOutlined } from '@components/icons/common'
+import { SendOutlined } from '@components/icons'
 import { RoleUserAccount } from '../constants/userAccount'
+import usePagination from '@hooks/usePagination'
 
 export const useFormManagement = () => {
   const [openModalAdd, setOpenModalAdd] = useState(false)
@@ -28,7 +29,7 @@ export const useFormManagement = () => {
 
   // hook
   const { errorMess } = useMessage()
-
+  const {page,size,params}=usePagination()
   // api
   const defaultPagination = {
     page: 1,
@@ -36,12 +37,14 @@ export const useFormManagement = () => {
     sortBy: 'id',
     sortDirection: 'DESC'
   }
-  const { data: getUser } = useGetUserQuery(defaultPagination)
+  const { data: getUser , isLoading: isLoadingUser} = useGetUserQuery(defaultPagination)
   const [getUserById] = useLazyGetUserByIdQuery()
-  const { data: getRole,isLoading: isLoadingRoles  } = useGetRoleQuery({})
+  const { data: getRole,isLoading: isLoadingRoles  } = useGetRoleQuery({
+    page,size:1000
+  })
   // const [ userRoleData, { isLoading: isLoadingUserRoles }] = useLazyGetUserRoleQuery()
 
-
+console.log(params)
 
   const roleOptions =
     getRole?.content?.map((role) => ({
@@ -183,7 +186,7 @@ export const useFormManagement = () => {
     // userRoleData(record.id)
   }
 
-  const column = RoleManagemenColume({
+  const column = RoleManagementColumn({
     setOpenModalDetail,
     setModeAction,
     setOpenDialog,
@@ -221,6 +224,7 @@ export const useFormManagement = () => {
     handleOpenUpdate,
     roleOptions,
     isLoadingRoles,
+    isLoadingUser,
     // isLoadingUserRoles,
     // userRoleData,
     getRole,

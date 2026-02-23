@@ -3,11 +3,13 @@ import {
   ButtonComponent,
   DialogModal,
   Table
-} from '@components/common'
-import FormAddFeeComponent from '@pages/fee-managerment-v3/components/FormAddFeeComponent'
+} from '@components/index'
 import FormAddPolicy from '@pages/fee-managerment-v3/components/FormAddPolicy'
-import { SaveOutlined } from '@components/icons/common'
+import { SaveOutlined } from '@components/icons'
 import { useFeeComponentForm } from '@pages/fee-managerment-v3/fee-component-management/hooks/useFeeComponentForm'
+import { useGetFeePolicyByIdQuery } from '@services/apiFeePoliciesServices'
+import { useEffect, useRef } from 'react'
+import InforPolicy, { InfoPolicyRef } from '../components/InfoPolicy'
 
 const FeeComponentManagement = () => {
   const {
@@ -23,7 +25,6 @@ const FeeComponentManagement = () => {
     openDialog,
     setOpenDialog,
     deletingId,
-    formRef,
     control,
     handleSubmit,
     dataSource,
@@ -35,19 +36,46 @@ const FeeComponentManagement = () => {
     handleDelete,
     onSubmit,
     handleUpdate,
-    handleSaveAddFee,
     handleOpenAddModal,
     handleBack,
     isSubmitting,
-    isDeleting
+    isDeleting,
+    reset,
+    isEdit,
+    loadingFeeComponentById,
+    handleCloseModal
   } = useFeeComponentForm()
+
+  const infoPolicyRef = useRef<InfoPolicyRef>(null)
+
+  const { data: policyData } = useGetFeePolicyByIdQuery(id!, {
+    skip: !isEdit
+  })
+
+  useEffect(() => {
+    if (policyData) {
+      reset(policyData)
+    }
+  }, [policyData, reset])
+
+  const handleSaveAddFee = async () => {
+    if (selectedRow) {
+      await infoPolicyRef.current?.update()
+    } else {
+      await infoPolicyRef.current?.submit()
+    }
+  }
+
+  const handleModalSuccess = () => {
+    setOpen(false)
+  }
 
   return (
     <div>
       <div>
         <ButtonComponent
           type='default'
-          content='Quay lai'
+          content='Quay lại'
           onClick={handleBack}
           icon={svg('/icons.svg#hugeicons-arrow-left-02')}
         />
@@ -57,7 +85,7 @@ const FeeComponentManagement = () => {
         <div className='item1 bg-white rounded p-3'>
           <div className='header'>
             <div className='flex justify-between items-center'>
-              <p className='text-lg font-semibold'>1. Thông tin chung</p>
+              <p className='text-[16px] font-semibold'>1. Thông tin chung</p>
             </div>
             <div className='content'>
               <FormAddPolicy
@@ -81,8 +109,8 @@ const FeeComponentManagement = () => {
 
         <div className='item3 bg-white rounded p-3'>
           <div className='header flex justify-between items-center'>
-            <p className='text-lg font-semibold'>
-              2. Danh sách Cấu phần phí (Components)
+            <p className='text-[16px] font-semibold'>
+              2. Danh sách thành phần phí (Components)
             </p>
             <ButtonComponent
               htmlType='button'
@@ -114,24 +142,29 @@ const FeeComponentManagement = () => {
                 onChange: (newPage, newPageSize) => {
                   setPage(newPage)
                   setPageSize(newPageSize)
-                }
+                },
+                showTotal: (total, range) => `hiển thị ${range[0]}-${range[1]} trong ${total} phần tử`
               }}
+
             />
             <ModalComponent
+              width="75%"
               title={selectedRow ? 'Sửa thành phần phí' : 'Thêm thành phần phí'}
               open={open}
               onOk={handleSaveAddFee}
-              onCancel={() => setOpen(false)}
+              onCancel={handleCloseModal}
               confirmLoading={isSubmitting}
               modalText={
-                <FormAddFeeComponent
-                  ref={formRef}
-                  onSubmit={
-                    selectedRow ? handleUpdateFeeComponent : handleFormSubmit
-                  }
-                  initialData={selectedRow ? combinedInitialData : null}
+                <InforPolicy
+                  ref={infoPolicyRef}
+                  selectedRow={selectedRow}
+                  combinedInitialData={combinedInitialData}
+                  onSubmit={handleFormSubmit}
+                  onUpdate={handleUpdateFeeComponent}
+                  onSuccess={handleModalSuccess}
                 />
               }
+              loading={loadingFeeComponentById}
             />
           </div>
         </div>
@@ -143,6 +176,7 @@ const FeeComponentManagement = () => {
         onCancel={() => setOpenDialog(false)}
         confirmLoading={isDeleting}
         content='Bạn có xác nhận xóa ?'
+        mode='DELETE'
       />
     </div>
   )

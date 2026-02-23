@@ -7,10 +7,11 @@ import {
   customerGroupType,
   paymentMethodType,
   statusType
-} from '@type/feeAssignment'
-import { serviceType } from '@type/feePoliciesComponent'
-import React, { useEffect, useImperativeHandle, useState } from 'react'
+} from '@pages/fee-managerment-v3/constants/feeAssignment'
+import { serviceType } from '@pages/fee-managerment-v3/constants/feePoliciesComponent'
+import React, { useEffect, useState } from 'react'
 import { Control, UseFormSetValue } from 'react-hook-form'
+import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 
 interface FormFieldAssign {
   control: Control<FeeAssignType>
@@ -18,7 +19,7 @@ interface FormFieldAssign {
   isCreate?: boolean
 }
 
-const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
+const FormFieldAssign = React.memo(({ control, setValue, isCreate }: FormFieldAssign) => {
   const [disable, setDisable] = useState('')
 
   // api database
@@ -27,15 +28,13 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
   useEffect(() => {
     if (!setValue) return
 
-    if (disable === "1") {
-      setValue("customerGroup", undefined)
-    }
-    else if (disable === "2") {
+    if (disable === '1') {
+      setValue('customerGroup', undefined)
+    } else if (disable === '2') {
       setValue('account', undefined)
-    }
-    else {
+    } else {
       setValue('account', undefined)
-      setValue("customerGroup",undefined)
+      setValue('customerGroup', undefined)
     }
   }, [disable, setValue])
 
@@ -45,54 +44,49 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
   return (
     <div>
       <div className='grid grid-cols-12 gap-3'>
-        <FormSelect
-          control={control}
-          name='applyType'
-          label='Đối tượng áp dụng'
-          className={isCreate ? 'col-span-12' : 'col-span-3'}
-          allowClear={false}
-          defaultValue={""}
-          hidden={isCreate}
-          classNameLable={isCreate ? 'hidden' : 'font-medium'}
-          options={[
-            { label: 'Hệ thống', value: "" },
-            {
-              label: 'Đối tượng riêng',
-              value: '1'
-            },
-            {
-              label: 'Nhóm khách hàng',
-              value: '2'
-            }
-          ]}
-          onChange={handleChangeApplyType}
-        />
-        <FormInput
-          type='text'
-          control={control}
-          name='account'
-          placeholder='Nhập tài khoản...'
-          label='Tài khoản'
-          className={isCreate ? 'col-span-6' : 'col-span-3'}
-          disabled={disable == "2" || disable == '' ? true : false}
-          hidden={isCreate}
-          classNameLable={isCreate ? 'hidden' : 'font-medium'}
-        />
-        <FormSelect
-          control={control}
-          name='customerGroup'
-          options={[
-            ...Object.entries(customerGroupType).map(([key, value]) => ({
-              label: value,
-              value: key
-            }))
-          ]}
-          label='Nhóm khách hàng'
-          className={isCreate ? 'col-span-6' : 'col-span-3'}
-          disabled={disable == "1" || disable == '' ? true : false}
-          hidden={isCreate}
-          classNameLable={isCreate ? 'hidden' : 'font-medium'}
-        />
+        {!isCreate && (
+          <FormSelect
+            control={control}
+            name='applyType'
+            label='Đối tượng áp dụng'
+            className={isCreate ? 'col-span-12' : 'col-span-3'}
+            allowClear={false}
+            defaultValue={''}
+            options={[
+              { label: 'Hệ thống', value: '' },
+              {
+                label: 'Đối tượng riêng',
+                value: '1'
+              },
+              {
+                label: 'Nhóm khách hàng',
+                value: '2'
+              }
+            ]}
+            onChange={handleChangeApplyType}
+          />
+        )}
+        {!isCreate && (
+          <FormInput
+            type='text'
+            control={control}
+            name='account'
+            placeholder='Nhập tài khoản...'
+            label='Tài khoản'
+            className={isCreate ? 'col-span-6' : 'col-span-3'}
+            disabled={disable == '2' || disable == '' ? true : false}
+          />
+        )}
+        {!isCreate && (
+          <FormSelect
+            control={control}
+            name='customerGroup'
+            options={mapEnumToSelectOptions(customerGroupType)}
+            label='Nhóm khách hàng'
+            className={isCreate ? 'col-span-6' : 'col-span-3'}
+            disabled={disable == '1' || disable == '' ? true : false}
+          />
+        )}
         <FormSelect
           control={control}
           name='bankCode'
@@ -105,73 +99,61 @@ const FormFieldAssign = ({ control, setValue, isCreate }: FormFieldAssign) => {
           label='Ngân hàng'
           className={isCreate ? 'col-span-6' : 'col-span-3'}
         />
-        <FormSelect
-          control={control}
-          name='serviceType'
-          options={[
-            ...Object.entries(serviceType).map(([key, value]) => ({
-              label: value,
-              value: key
-            }))
-          ]}
-          label='Loại giao dịch'
-          className={isCreate ? 'col-span-6' : 'col-span-3'}
-        />
+        {!isCreate && (
+          <>
+            <FormSelect
+              control={control}
+              name='serviceType'
+              options={mapEnumToSelectOptions(serviceType)}
+              label='Loại giao dịch'
+              className={isCreate ? 'col-span-6' : 'col-span-3'}
+            />
+            <FormSelect
+              control={control}
+              name='paymentMethod'
+              options={mapEnumToSelectOptions(paymentMethodType)}
+              label='Phương thức giao dịch'
+              className={isCreate ? 'col-span-6' : 'col-span-3'}
+            />
+            <FormSelect
+            control={control}
+            name='cardType'
+            options={mapEnumToSelectOptions(cardTypeType)}
+            label='Loại thẻ'
+            className={isCreate ? 'col-span-6' : 'col-span-3'}
+            hidden={isCreate}
+            classNameLable={isCreate ? 'hidden' : 'font-medium'}
+          />
+          </>
+        )}
 
-        <FormSelect
-          control={control}
-          name='paymentMethod'
-          options={[
-            ...Object.entries(paymentMethodType).map(([key, value]) => ({
-              label: value,
-              value: key
-            }))
-          ]}
-          label='Phương thức giao dịch'
-          className={isCreate ? 'col-span-6' : 'col-span-3'}
-        />
-        <FormSelect
-          control={control}
-          name='cardType'
-          options={[
-            ...Object.entries(cardTypeType).map(([key, value]) => ({
-              label: value,
-              value: key
-            }))
-          ]}
-          label='Loại thẻ'
-          className={isCreate ? 'col-span-6' : 'col-span-3'}
-        />
-
+       
         <FormSelect
           control={control}
           name='status'
-          options={[
-            ...Object.entries(statusType).map(([key, value]) => ({
-              label: value,
-              value: key
-            }))
-          ]}
+          options={mapEnumToSelectOptions(statusType)}
           label='Trạng thái'
-          className={isCreate ? 'col-span-12' : 'col-span-3'}
+          className={isCreate ? 'col-span-6' : 'col-span-3'}
         />
-        <FormDatePicker
+        {/* <FormDatePicker
           control={control}
           name='applyDate'
           label='Thời gian áp dụng'
-          className='col-span-2 flex flex-col hidden'
+          className='col-span-2 flex flex-col '
           showTime
         />
         <FormDatePicker
           control={control}
           name='createDate'
           label='Thời gian tạo'
-          className='col-span-2 flex flex-col hidden'
+          className='col-span-2 flex flex-col '
           showTime
-        />
+        /> */}
       </div>
     </div>
   )
-}
+})
+
+FormFieldAssign.displayName = 'FormFieldAssign'
 
 export default FormFieldAssign

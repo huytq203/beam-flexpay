@@ -3,7 +3,7 @@ import {
   DialogModal,
   ModalComponent,
   Table
-} from '@components/common'
+} from '@components/index'
 import { useState } from 'react'
 import FormAdd from './components/FormAdd'
 import FormSearch from './components/FormSearch'
@@ -11,6 +11,7 @@ import FormDetail from '@pages/role-management-V2/permission-management/componen
 import { usePermissionRole } from './hooks/usePermissionRole'
 import FormPermission from './components/FormPermission'
 import { DataRoleItem } from '@type/roleManagement'
+import { SkeletonButton, SkeletonInput, SkeletonTable } from '@components/ui/skeletons/Skeleton'
 
 export const PermissionManagement = () => {
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([])
@@ -35,7 +36,7 @@ export const PermissionManagement = () => {
     typeText,
     isLoadingDetail,
     totalElements,
-    hanldePostPermission,
+    handlePostPermission,
     handleDeletePermissionAssign,
     handleCancel,
     handleSearch,
@@ -48,7 +49,9 @@ export const PermissionManagement = () => {
     // Exports for edit role
     editRoleData,
     setEditRoleData,
-    handlePutRole
+    handlePutRole,
+    isLoadingRole,
+    isLoadingPermission,
   } = usePermissionRole()
 
   const onSubmit = async (data: DataRoleItem | Omit<DataRoleItem, 'id'>) => {
@@ -68,32 +71,62 @@ export const PermissionManagement = () => {
     <div className='flex flex-col gap-2'>
       <CardComponent
         content={
-          <FormSearch
-            setOpenModalAdd={setOpenModalAdd}
-            onSearch={handleSearch}
-          />
+
+          <>
+            {isLoadingRole || isLoadingPermission ?
+              <>
+                <div className={`bg-white rounded-xl shadow-md p-6 border border-gray-100`}>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    {Array.from({ length: 2 }).map((_, index) => (
+                      <SkeletonInput key={index} />
+                    ))}
+
+                    <div className=" w-full flex items-end gap-2">
+                      <SkeletonButton className='w-full' size="md" />
+                      <SkeletonButton className='w-full' size="md" />
+                      <SkeletonButton className='w-full' size="md" />
+                    </div>
+                  </div>
+                </div>
+              </>
+              :
+              <FormSearch
+                setOpenModalAdd={setOpenModalAdd}
+                onSearch={handleSearch}
+              />
+
+            }
+
+          </>
         }
       />
       <CardComponent
         content={
-          <Table
-            rowKey='id'
-            scroll={{ x: 'max-content' }}
-            bordered
-            size='small'
-            columns={column}
-            dataSource={dataSource}
-            pagination={{
-              current: page,
-              pageSize: pageSize,
-              total: totalElements,
-              showSizeChanger: true,
-              onChange: (newPage, newPageSize) => {
-                setPage(newPage)
-                setPageSize(newPageSize)
-              }
-            }}
-          />
+
+          <>
+            {isLoadingRole || isLoadingPermission ?
+              <SkeletonTable />
+              :
+              <Table
+                rowKey='id'
+                scroll={{ x: 'max-content' }}
+                bordered
+                size='small'
+                columns={column}
+                dataSource={dataSource}
+                pagination={{
+                  current: page,
+                  pageSize: pageSize,
+                  total: totalElements,
+                  showSizeChanger: true,
+                  onChange: (newPage, newPageSize) => {
+                    setPage(newPage)
+                    setPageSize(newPageSize)
+                  }
+                }}
+              />
+            }
+          </>
         }
       />
       <ModalComponent
@@ -103,8 +136,8 @@ export const PermissionManagement = () => {
         open={openModalAdd}
         width='35%'
         modalText={
-          <FormAdd 
-            onSubmit={onSubmit} 
+          <FormAdd
+            onSubmit={onSubmit}
             onCancel={handleCloseAddModal}
             defaultValues={editRoleData}
             isEdit={modeAction === 'edit'}

@@ -4,9 +4,9 @@ import {
   EditOutlined,
   LockOutlined,
   UnlockOutlined
-} from '@components/icons/common'
-import { ButtonComponent, TooltipComponent } from '@components/common'
-import { FeeAssignment, paymentMethodType } from '@type/feeAssignment'
+} from '@components/icons'
+import { ButtonComponent, TooltipComponent } from '@components/index'
+import { FeeAssignment, paymentMethodType } from '@pages/fee-managerment-v3/constants/feeAssignment'
 import { ColumnsType } from 'antd/es/table'
 import Tippy from '@tippyjs/react'
 import { useState } from 'react'
@@ -14,8 +14,8 @@ import 'tippy.js/dist/tippy.css'
 import 'tippy.js/themes/light.css'
 import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import { formatDate, getEnumLabel } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
-import { serviceType } from '@type/feePoliciesComponent'
-import { statusType } from '@type/feePolicies'
+import { serviceType } from '@pages/fee-managerment-v3/constants/feePoliciesComponent'
+import { statusType } from '@pages/fee-managerment-v3/constants/feePolicies'
 
 interface prop {
   setSelectRowId: (value: string) => void
@@ -147,9 +147,8 @@ const FeeAssignColumn = ({
     {
       title: '#',
       align: 'center' as const,
-
+      dataIndex:'no',
       width: 40,
-      render: (value, record, index: number) => index + 1
     },
     {
       title: 'Loại giao dịch',
@@ -164,28 +163,28 @@ const FeeAssignColumn = ({
       align: 'center' as const,
 
       render: (value, record, index: number) =>
-        (paymentMethodType[value as keyof typeof paymentMethodType] ?? '--')
+        (paymentMethodType[value as keyof typeof paymentMethodType] || '--')
     },
     {
       title: 'Ngân hàng',
       dataIndex: 'bankCode',
       align: 'center' as const,
 
-      render: (value, record, index: number) => value
+      render: (value, record, index: number) => value||'--'
     },
     {
       title: 'Loại thẻ',
       dataIndex: 'cardType',
       align: 'center' as const,
 
-      render: (value, record, index: number) => value
+      render: (value, record, index: number) => value||'--'
     },
     {
       title: 'Nhóm khách hàng',
       dataIndex: 'customerGroup',
       align: 'center' as const,
 
-      render: (value, record, index: number) => value
+      render: (value, record, index: number) => value||'--'
     },
     {
       title: 'Ngày tạo',

@@ -1,8 +1,11 @@
-import { ButtonComponent } from '@components/common'
+import { ButtonComponent } from '@components/index'
 import { FormInput, FormSelect } from '@components/form'
 import { useSVG } from '@hooks/useSVG'
-import { BroomIcon } from '@components/icons/common'
+import { BroomIcon } from '@components/icons'
 import { useForm } from 'react-hook-form'
+import { mapEnumToSelectOptions } from '@utils/helperFunctions'
+import { PermissionStatus } from '../constants/PermissionManagement.constant'
+import { memo } from 'react'
 
 export interface SearchFormData {
   keyword: string
@@ -50,10 +53,14 @@ const FormSearch = ({ setOpenModalAdd, onSearch }: Props) => {
             label='Trạng thái'
             control={control}
             name='status'
-            options={[]}
+            options={mapEnumToSelectOptions(PermissionStatus)}
             className='col-span-1'
           />
         </div>
+        <button
+          type='submit'
+          className='hidden'
+        />
       </form>
       <div className='grid grid-cols-3 mt-3 md:flex justify-end gap-3 items-end md:gap-1'>
         <ButtonComponent
@@ -77,4 +84,4 @@ const FormSearch = ({ setOpenModalAdd, onSearch }: Props) => {
   )
 }
 
-export default FormSearch
+export default memo(FormSearch)

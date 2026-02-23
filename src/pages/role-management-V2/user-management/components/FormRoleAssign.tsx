@@ -3,7 +3,7 @@ import { ColumnType } from 'antd/lib/table'
 import { Key, useEffect, useState } from 'react'
 import { useGetRoleQuery } from '@services/apiRoleManagement'
 import { DataRoleItem } from '@type/roleManagement'
-import { RoleName } from '@pages/role-management-V2/permission-management/configs/PermissionManagement.config'
+import { RoleName } from '@pages/role-management-V2/permission-management/constants/PermissionManagement.constant'
 import { useGetUserRoleQuery } from '@services/apiUserRoleAssign'
 
 interface RoleData {
@@ -25,9 +25,6 @@ const FormRoleAssign = ({ userId, onSelectionChange, roleData, isLoadingRoles, o
   const { data: userRoleData, isLoading: isLoadingUserRoles } = useGetUserRoleQuery(userId!, {
     skip: !userId
   })
-  useEffect(() => {
-    onLoadingUserRolesChange?.(isLoadingUserRoles)
-  }, [isLoadingUserRoles, onLoadingUserRolesChange])
 
   useEffect(() => {
     if (userRoleData?.data) {

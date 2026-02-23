@@ -15,7 +15,7 @@ import {
   _FEEMANAGEMENT_V3,
   _ROLEMANAGEMENT_V2,
   _WALLETADMINISTRATION,
-  _WITHDRAWHISTORY
+  _MERCHANT,
 
 } from '@constants/routersConstant'
 import i18n from '@languages/i18n'
@@ -962,8 +962,44 @@ const walletManagement = {
       ),
       label: 'Quản lý lịch sử giao dịch rút tiền'
     },
+    {
+      key: 'system-ledger',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Sổ cái hệ thống'
+    },
   ]
 
+}
+
+
+const merchantManagement = {
+  key: _MERCHANT,
+  icon: (
+    <UserGearIcon
+      size={size}
+      weight={weight}
+      color={COlOR}
+    />
+  ),
+  label: 'Quản lý merchant ',
+  children: [
+    {
+      key: 'merchant-management',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý danh sách merchant'
+    },]
 }
 
 
@@ -979,4 +1015,5 @@ export const navigationItems: ItemTypeCustom[] = [
   feeManagementV3,
   roleManagementV2,
   walletManagement,
+  merchantManagement
 ]

@@ -1,5 +1,5 @@
-import { CardComponent, TimeLineComponent } from '@components/common'
-import { BankFilled, HistoryOutlined, PenTool, UserIcon } from '@components/icons/common'
+import { CardComponent, TimeLineComponent } from '@components/index'
+import { BankFilled, HistoryOutlined, PenTool, UserIcon } from '@components/icons'
 import React from 'react'
 
 const ModalDetailWithdrawHistory = () => {

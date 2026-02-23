@@ -1,202 +1,54 @@
-import { useCallback, useMemo, useState } from 'react'
-import {
-  useDeletePermissionMutation,
-  useGetPermissionQuery,
-  useLazyGetPermissionByKeyQuery,
-  usePostPermissionMutation,
-  usePutPermissionMutation
-} from '@services/apiPermission'
-import { RoleDataItem, RoleData } from '@type/roleManagementV2'
-import { useMessage } from '@hooks/useMessage'
-import { SearchFormData } from '../components/FormSearch'
-import { ButtonComponent } from '@components/common'
-import { PermissionItem } from '@type/permissionManagement'
+import { useRoleManagementUI } from './useRoleManagementUI'
+import { useRoleManagementPagination } from './useRoleManagementPagination'
+import { useRoleManagementActions } from './useRoleManagementActions'
+import { useRoleManagementDialog } from './useRoleManagementDialog'
 
-export type ModeAction = 'add' | 'update' | 'delete' | 'lock' | 'unlock' | ''
+export type { ModeAction } from './useRoleManagementUI'
 
 export const useRoleManagement = () => {
-  // state
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
-  const [openModalAdd, setOpenModalAdd] = useState(false)
-  const [modeAction, setModeAction] = useState<ModeAction>('')
-  const [selectedPermission, setSelectedPermission] = useState<
-    RoleDataItem | undefined
-  >(undefined)
-  const [isSearchMode, setIsSearchMode] = useState(false)
-  const [searchData, setSearchData] = useState<RoleData | null>(null)
-  const [openDialog, setOpenDialog] = useState(false)
+  const ui = useRoleManagementUI()
+  const pagination = useRoleManagementPagination()
 
-  // hook
-  const { errorMess, successMess } = useMessage()
-
-  // api
-  const paginationParams = {
-    page: page,
-    size: pageSize,
-    sortBy: 'id',
-    sortDirection: 'DESC'
-  }
-  const {
-    data: getPermission,
-    isLoading: loadGetRole,
-    refetch
-  } = useGetPermissionQuery(paginationParams, {
-    skip: isSearchMode
+  const actions = useRoleManagementActions({
+    selectedPermission: ui.selectedPermission,
+    setOpenModalAdd: ui.setOpenModalAdd,
+    setOpenDialog: ui.setOpenDialog,
+    setIsSearchMode: pagination.setIsSearchMode,
+    setSearchData: pagination.setSearchData,
+    setPage: pagination.setPage,
+    pageSize: pagination.pageSize,
+    refetch: pagination.refetch
   })
-  const [getPermissionByKey, { isLoading: loadSearchRole }] =
-    useLazyGetPermissionByKeyQuery()
-  const [postPermission] = usePostPermissionMutation()
-  const [putPermission] = usePutPermissionMutation()
-  const [deletePermission] = useDeletePermissionMutation()
 
-  const currentData = isSearchMode ? searchData : getPermission
-
-  // logic
-  const dataSource = useMemo(() => {
-    return currentData?.content.map((item, index) => ({
-      ...item,
-      no: (page - 1) * pageSize + index + 1
-    }))
-  }, [currentData?.content])
-  const totalElements = currentData?.totalElements
-
-  // handlers
-  const handleSearch =  async (data: SearchFormData) => {
-      const isEmpty = !data.roleCode && !data.keyword && !data.status
-      if (isEmpty) {
-        setIsSearchMode(false)
-        setSearchData(null)
-        setPage(1)
-        return
-      }
-      try {
-        setPage(1)
-        const searchParams = {
-          page: 1,
-          size: pageSize,
-          sortBy: 'id',
-          sortDirection: 'DESC',
-          ...(data.roleCode && { roleCode: data.roleCode }),
-          ...(data.keyword && { keyword: data.keyword }),
-          ...(data.status && { status: data.status })
-        }
-        const result = await getPermissionByKey(searchParams).unwrap()
-        setSearchData(result)
-        setIsSearchMode(true)
-      } catch (error: any) {
-        errorMess(error?.data?.detail || 'Lỗi tìm kiếm')
-      }
-    }
-
-  const hanldePostPermission = useCallback(
-    async (data: PermissionItem | Omit<PermissionItem, 'id'>) => {
-      try {
-        await postPermission(data).unwrap()
-        setOpenModalAdd(false)
-        successMess('Thêm thành công')
-        setIsSearchMode(false)
-        setSearchData(null)
-        refetch()
-      } catch (error: any) {
-        errorMess(error?.data?.detail)
-      }
-    }
-  ,[postPermission,refetch])
-
-  const handlePutPermission = async (
-    data: PermissionItem | Omit<PermissionItem, 'id'>
-  ) => {
-    try {
-      await putPermission({
-        permissionName: selectedPermission?.name,
-        body: data
-      }).unwrap()
-      setOpenModalAdd(false)
-      successMess('Sửa thành công')
-      setIsSearchMode(false)
-      setSearchData(null)
-      refetch()
-    } catch (error: any) {
-      errorMess(error?.data?.detail)
-    }
-  }
-
-  const handleDeletePermission = async () => {
-    try {
-      await deletePermission(selectedPermission?.name).unwrap()
-      setOpenDialog(false)
-      refetch()
-      successMess('Xóa thành công')
-    } catch (error: any) {
-      errorMess(error?.data?.detail)
-    }
-  }
-
-  const typeFooter: Partial<Record<ModeAction, JSX.Element>> = {
-    delete: (
-      <div className='flex justify-end items-center gap-2'>
-        <ButtonComponent
-          type='default'
-          content='Cancel'
-          onClick={() => setOpenDialog(false)}
-        />
-        <ButtonComponent
-          type='primary'
-          danger
-          content='Delete'
-          onClick={handleDeletePermission}
-        />
-      </div>
-    )
-  }
-
-  const typeText: Partial<Record<ModeAction, JSX.Element>> = {
-    delete: (
-      <span>
-        Bạn có chắc chắn muốn <span className='font-bold'>xóa quyền</span>{' '}
-        <span className='font-bold'>{selectedPermission?.name}</span> không?
-        Hành động này không thể hoàn tác.
-      </span>
-    ),
-    lock: (
-      <span>
-        Bạn có chắc chắn muốn <span className='font-bold'>khóa quyền</span>{' '}
-        <span className='font-bold'>{selectedPermission?.name}</span> không?
-        Quyền sẽ không thể sử dụng cho đến khi mở lại.
-      </span>
-    ),
-    unlock: (
-      <span>
-        Bạn có chắc chắn muốn <span className='font-bold'>mở khóa quyền</span>{' '}
-        <span className='font-bold'>{selectedPermission?.name}</span> không?
-        Quyền này sẽ có thể hoạt động trở lại.
-      </span>
-    )
-  }
+  const dialog = useRoleManagementDialog({
+    modeAction: ui.modeAction,
+    selectedPermission: ui.selectedPermission,
+    setOpenDialog: ui.setOpenDialog,
+    handleDeletePermission: actions.handleDeletePermission
+  })
 
   return {
-    openDialog,
-    setOpenDialog,
-    page,
-    setPage,
-    pageSize,
-    setPageSize,
-    modeAction,
-    setModeAction,
-    openModalAdd,
-    setOpenModalAdd,
-    selectedPermission,
-    setSelectedPermission,
-    getPermission,
-    loadGetRole: loadGetRole || loadSearchRole,
-    dataSource,
-    totalElements,
-    typeText,
-    typeFooter,
-    handleSearch,
-    hanldePostPermission,
-    handlePutPermission,
-    handleDeletePermission
+    openDialog: ui.openDialog,
+    setOpenDialog: ui.setOpenDialog,
+    page: pagination.page,
+    setPage: pagination.setPage,
+    pageSize: pagination.pageSize,
+    setPageSize: pagination.setPageSize,
+    modeAction: ui.modeAction,
+    setModeAction: ui.setModeAction,
+    openModalAdd: ui.openModalAdd,
+    setOpenModalAdd: ui.setOpenModalAdd,
+    selectedPermission: ui.selectedPermission,
+    setSelectedPermission: ui.setSelectedPermission,
+    getPermission: pagination.getPermission,
+    loadGetRole: pagination.loadGetRole,
+    dataSource: pagination.dataSource,
+    totalElements: pagination.totalElements,
+    typeText: dialog.typeText,
+    typeFooter: dialog.typeFooter,
+    handleSearch: actions.handleSearch,
+    handlePostPermission: actions.handlePostPermission,
+    handlePutPermission: actions.handlePutPermission,
+    handleDeletePermission: actions.handleDeletePermission
   }
 }

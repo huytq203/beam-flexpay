@@ -4,7 +4,7 @@ import {
   DialogModal,
   ModalComponent,
   Table
-} from '@components/common'
+} from '@components/index'
 import FormSearch from './components/FormSearch'
 import FormAdd from '@pages/role-management-V2/user-management/components/FormAdd'
 import FormDetail from '@pages/role-management-V2/user-management/components/FormDetail'
@@ -12,6 +12,7 @@ import FormRoleAssign from '@pages/role-management-V2/user-management/components
 import { useFormManagement } from './hooks/useFormManagement'
 import { useAssignRoleUserMutation, useDeleteRoleUserMutation } from '@services/apiUserRoleAssign'
 import { useMessage } from '@hooks/useMessage'
+import { SkeletonButton, SkeletonInput, SkeletonTable } from '@components/ui/skeletons/Skeleton'
 
 export type ActionMode =
   | 'delete'
@@ -49,6 +50,7 @@ const UserManagement = () => {
     isLoadingRoles,
     // isLoadingUserRoles,
     getRole,
+    isLoadingUser,
   } = useFormManagement()
 
   const [assignRoleUser] = useAssignRoleUserMutation()
@@ -64,10 +66,10 @@ const UserManagement = () => {
 
   const handleAssignRole = async () => {
     if (!selectedUser?.id) return
-    
+
     const rolesToAdd = selectedRoles.filter(id => !initialRoleIds.includes(id))
     const rolesToRemove = initialRoleIds.filter(id => !selectedRoles.includes(id))
-    
+
     try {
       if (rolesToAdd.length > 0) {
         await assignRoleUser({
@@ -75,19 +77,19 @@ const UserManagement = () => {
           body: { roleIds: rolesToAdd }
         }).unwrap()
       }
-      
+
       if (rolesToRemove.length > 0) {
         await deleteRoleUser({
           id: selectedUser.id,
           body: { roleIds: rolesToRemove }
         }).unwrap()
       }
-      
+
       setOpenModalRoleAssign(false)
       setSelectedRoles([])
       setInitialRoleIds([])
       successMess('Cập nhật thành công')
-    } catch (error:any) {
+    } catch (error: any) {
       errorMess(error?.data?.detail)
     }
   }
@@ -96,23 +98,50 @@ const UserManagement = () => {
     <div className='flex flex-col gap-2'>
       <CardComponent
         content={
-          <FormSearch
-            setOpenModalAdd={setOpenModalAdd}
-            setModeAction={setModeAction}
-            roleOptions={roleOptions}
-          />
+          <>
+            {isLoadingUser || isLoadingRoles ?
+              <>
+                <div className={`bg-white rounded-xl shadow-md p-6 border border-gray-100`}>
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+                    {Array.from({ length: 4 }).map((_, index) => (
+                      <SkeletonInput key={index} />
+                    ))}
+
+                    <div className=" flex items-end gap-2">
+                      <SkeletonButton size="md" />
+                      <SkeletonButton size="md" />
+                      <SkeletonButton size="md" />
+                    </div>
+                  </div>
+                </div>
+              </>
+              :
+              <FormSearch
+                setOpenModalAdd={setOpenModalAdd}
+                setModeAction={setModeAction}
+                roleOptions={roleOptions}
+              />
+            }
+          </>
         }
       />
       <CardComponent
         content={
-          <Table
-            rowKey='id'
-            bordered
-            scroll={{ x: 'max-content' }}
-            size='small'
-            columns={column}
-            dataSource={dataSource}
-          />
+          <>
+            {
+              isLoadingUser || isLoadingRoles ?
+                <SkeletonTable />
+                :
+                <Table
+                  rowKey='id'
+                  bordered
+                  scroll={{ x: 'max-content' }}
+                  size='small'
+                  columns={column}
+                  dataSource={dataSource}
+                />
+            }
+          </>
         }
       />
       <ModalComponent

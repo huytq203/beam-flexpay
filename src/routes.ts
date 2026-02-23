@@ -21,7 +21,7 @@ import {
   FEEMANAGEMENT_V3,
   ROLEMANAGEMENT_V2,
   WALLETADMINISTRATION,
-  WITHDRAWHISTORY
+  MERCHANT,
 } from '@constants/routersConstant'
 
 import ForgotPassword from '@pages/auth/forgot-password/ForgotPassword'
@@ -105,6 +105,13 @@ import ConfirmRKYC from '@pages/wallet-administration/confirm-ekyc/ConfirmEKYC'
 import DetailTransaction from '@pages/wallet-administration/transaction-management/DetailTransaction'
 import FrozenTransactions from '@pages/wallet-administration/frozen-transactions/FrozenTransactions'
 import WithdrawHistory from '@pages/wallet-administration/withdraw-history/WithdrawHistory'
+import SystemLedgerManagement from '@pages/wallet-administration/system-ledger/SystemLedgerManagement'
+import DetailSystemLedger from '@pages/wallet-administration/system-ledger/DetailSystemLedger'
+import MerchantManagement from '@pages/merchant-management/merchanr-management/MerchantManagement'
+import MerchantDetail from '@pages/merchant-management/merchanr-management/MerchantDetail'
+import CreateMerchant from '@pages/merchant-management/merchanr-management/CreateMerchant'
+import TestPage from '@pages/test/TestPage'
+
 
 const authentication = {
   path: AUTHENTICATION,
@@ -496,12 +503,12 @@ const feeManagementV3 = {
           element: createElement(FeeManagement)
         },
         {
-          path: FEEMANAGEMENT_V3 + '/create',
+          path: FEEMANAGEMENT_V3 + '/fee-management/create',
           element: createElement(FeeComponentManagement)
         },
 
         {
-          path: FEEMANAGEMENT_V3 + '/edit/:id',
+          path: FEEMANAGEMENT_V3 + '/fee-management/edit/:id',
           element: createElement(FeeComponentManagement)
         }
       ]
@@ -626,10 +633,57 @@ const walletAministration = {
       ]
     },
     {
+      path: WALLETADMINISTRATION,
+      children: [
+        {
+          path: WALLETADMINISTRATION + '/system-ledger',
+          element: createElement(SystemLedgerManagement)
+        },
+        {
+          path: WALLETADMINISTRATION + '/system-ledger/:id',
+          element: createElement(DetailSystemLedger)
+        }
+      ]
+    },
+    {
       path: WALLETADMINISTRATION + '/withdraw-history',
       element: createElement(WithdrawHistory)
     }
   ]
+}
+
+const merchantManagement = {
+  path: MERCHANT,
+  element: createElement(AppLayout),
+  errorElement: createElement(NotFound),
+  children: [
+    {
+      path: MERCHANT,
+      children: [
+        {
+          path: MERCHANT + '/merchant-management',
+          element: createElement(MerchantManagement),
+        },
+        {
+          path: MERCHANT + '/merchant-management/create',
+          element: createElement(CreateMerchant),
+        },
+        {
+          path: MERCHANT + '/merchant-management/create/:id',
+          element: createElement(CreateMerchant),
+        },
+        {
+          path: MERCHANT + '/merchant-management/detail/:id',
+          element: createElement(MerchantDetail),
+        },
+        {
+          path: MERCHANT + '/merchant-management/:id',
+          element: createElement(MerchantDetail),
+        },
+      ]
+    }
+  ]
+
 }
 
 export const WalletRoutes = createBrowserRouter([
@@ -647,4 +701,9 @@ export const WalletRoutes = createBrowserRouter([
   feeManagementV3,
   roleManagementV2,
   walletAministration,
+  merchantManagement,
+  {
+    path: '/test',
+    element: createElement(TestPage),
+  }
 ])

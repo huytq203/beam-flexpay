@@ -1,4 +1,4 @@
-import { ButtonComponent, CardComponent } from '@components/common'
+import { ButtonComponent, CardComponent } from '@components/index'
 import { Table } from 'antd'
 import React from 'react'
 import { Column } from './configs/FeeSetting.column'

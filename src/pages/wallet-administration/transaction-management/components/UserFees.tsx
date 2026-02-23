@@ -1,6 +1,12 @@
+import { TransactionItem } from '@type/transaction.type'
+import { formatCurrency, formatNumber } from '@utils/formatNumber'
 import React from 'react'
 
-const UserFees = () => {
+interface UserFeesProps {
+    data?: TransactionItem
+}
+
+const UserFees = ({ data }: UserFeesProps) => {
     return (
         <>
             <div>
@@ -10,10 +16,10 @@ const UserFees = () => {
             <div className="bg-teal-50 p-3 rounded-md border ">
                 {
                     [
-                        { label: 'Số tiền giao dich', value: <span className='font-medium text-xl'>1,000,000 VND</span> },
-                        { label: 'Tổng phí', value: <span className='font-medium text-lg text-red-700'>10,000 VND</span> },
-                        { label: 'Phí cố định', value: <span className='text-gray-500 text-xs'>5000 VND</span> },
-                        { label: 'Phí phần trăm', value: <span className='text-gray-500 text-xs'>5000 VND (0.5%)</span> },
+                        { label: 'Số tiền giao dich', value: <span className='font-medium text-xl'>{formatCurrency(data?.grossAmount??0,{ symbol: 'VNĐ', position: 'after' })}</span> },
+                        { label: 'Tổng phí', value: <span className='font-medium text-lg text-red-700'>{formatCurrency(data?.feeAmount??0,{ symbol: 'VNĐ', position: 'after' })}</span> },
+                        // { label: 'Phí cố định', value: <span className='text-gray-500 text-xs'>5000 VND</span> },
+                        // { label: 'Phí phần trăm', value: <span className='text-gray-500 text-xs'>5000 VND (0.5%)</span> },
                     ].map((item, index) => (
                         <div className="flex justify-between items-center">
                             <p className='font-medium text-gray-500'>{item.label}</p>
@@ -26,7 +32,7 @@ const UserFees = () => {
             <hr className='my-3' />
             <div className="flex justify-between items-center ">
                 <p className='font-medium text-lg'>Tổng thực thu/chi:</p>
-                <p className='font-medium text-lg text-blue-700'>1,010,000 VND</p>
+                <p className='font-medium text-lg text-blue-700'>{formatCurrency(data?.netAmount??0,{ symbol: 'VNĐ', position: 'after' })}</p>
             </div>
         </>
     )

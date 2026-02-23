@@ -1,6 +1,6 @@
-import { ButtonComponent, CardComponent, DialogModal, ModalComponent, Table } from '@components/common'
+import { ButtonComponent, CardComponent, DialogModal, ModalComponent, Table } from '@components/index'
 import FormSearch from '@pages/wallet-administration/refund-management/components/FormSearch'
-import Column from '@pages/wallet-administration/refund-management/configs/Refund.column'
+import Column from '@pages/wallet-administration/refund-management/columns/Refund.column'
 import React from 'react'
 import DetailRefundModal from './components/DetailRefundModal'
 import DialogConfirmRefund from './components/DialogConfirmRefund'
@@ -24,7 +24,7 @@ const RefundManagement = () => {
           }
         />
         <ModalComponent
-        width='75%'
+          width='75%'
           onCancel={() => { }}
           onOk={() => { }}
           open={false}

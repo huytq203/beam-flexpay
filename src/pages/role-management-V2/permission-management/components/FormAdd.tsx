@@ -1,13 +1,12 @@
-import { ButtonComponent, CardComponent } from '@components/common'
+import { ButtonComponent, CardComponent } from '@components/index'
 import { FormInput, FormTextArea } from '@components/form'
 import { DataRoleItem } from '@type/roleManagement'
-import { useEffect } from 'react'
+import { memo, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { PermissionRoleSchema, PermissionRoleFormData } from '../schemas/Permission.schema'
 
-interface FormData {
-  name: string
-  description: string
-}
+
 
 interface Props {
   onSubmit?: (data: Omit<DataRoleItem, 'id'> | DataRoleItem) => Promise<void>
@@ -17,7 +16,9 @@ interface Props {
 }
 
 const FormAdd = ({ onSubmit, onCancel, defaultValues, isEdit = false }: Props) => {
-  const { control, handleSubmit, reset } = useForm<FormData>({
+  const { control, handleSubmit, reset } = useForm<PermissionRoleFormData>({
+    resolver: zodResolver(PermissionRoleSchema),
+    mode: 'onSubmit',
     defaultValues: {
       name: '',
       description: ''
@@ -34,7 +35,7 @@ const FormAdd = ({ onSubmit, onCancel, defaultValues, isEdit = false }: Props) =
     }
   }, [defaultValues, reset])
 
-  const handleSubmitForm = async (data: FormData) => {
+  const handleSubmitForm = async (data: PermissionRoleFormData) => {
     if (onSubmit) {
       const payload: Omit<DataRoleItem, 'id'> = {
         name: data.name,
@@ -79,5 +80,5 @@ const FormAdd = ({ onSubmit, onCancel, defaultValues, isEdit = false }: Props) =
   )
 }
 
-export default FormAdd
+export default memo(FormAdd)
 

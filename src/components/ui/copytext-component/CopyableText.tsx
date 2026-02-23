@@ -1,4 +1,4 @@
-import { CopyIcon } from "@components/icons/common"
+import { CopyIcon } from "@components/icons"
 import { useState } from "react"
 import TooltipComponent from "../tooltip-component"
 

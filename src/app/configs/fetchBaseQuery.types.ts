@@ -6,7 +6,8 @@ import {
     PERSONALWALLET,
     PRODUCTS,
     ROLEMANAGEMENT,
-    ROLEMANAGEMENT_V2
+    ROLEMANAGEMENT_V2,
+    WALLETADMINISTRATION
 } from '@constants/routersConstant'
 import { BaseQueryApi, fetchBaseQuery } from '@reduxjs/toolkit/query'
 import Cookies from 'js-cookie'
@@ -237,9 +238,15 @@ export const WHITE_LIST: WhiteListItem[] = [
     { pathname: FEEMANAGEMENT_V3 + '/fee-assignment', requestUrl: '/fee/banks' },
 
     { pathname: ROLEMANAGEMENT_V2 + '/user-account', requestUrl: '/roles' },
+    { pathname: ROLEMANAGEMENT_V2 + '/user-account', requestUrl: '/users/managers' },
     { pathname: ROLEMANAGEMENT_V2 + '/permission-management', requestUrl: '/permissions' },
     { pathname: ROLEMANAGEMENT_V2 + '/permission-management', requestUrl: '/roles' },
     { pathname: ROLEMANAGEMENT_V2 + '/role-management', requestUrl: '/permissions' },
+    { pathname: ROLEMANAGEMENT_V2 + '/role-management', requestUrl: '/roles' },
+
+
+
+    // { pathname: WALLETADMINISTRATION + '/role-management', requestUrl: '/wallet/transactions' },
 ]
 
 // ============================================================================
@@ -247,8 +254,28 @@ export const WHITE_LIST: WhiteListItem[] = [
 // ============================================================================
 
 
-export const isInWhiteList = (url?: string, pathname?: string): WhiteListItem | undefined => {
-    return WHITE_LIST.find((item) => item.pathname === pathname && item.requestUrl === url)
+// export const isInWhiteList = (url?: string, pathname?: string): WhiteListItem | undefined => {
+//     console.log(WHITE_LIST.find((item) => item.pathname === pathname && item.requestUrl === url))
+//     return WHITE_LIST.find((item) => item.pathname === pathname && item.requestUrl === url)
+// }
+
+
+const normalizeUrl = (url?: string) => {
+  if (!url) return ''
+  return url.startsWith('/') ? url : `/${url}`
+}
+
+export const isInWhiteList = (
+  url?: string,
+  pathname?: string
+): WhiteListItem | undefined => {
+  const cleanUrl = normalizeUrl(url)
+
+  return WHITE_LIST.find(
+    (item) =>
+      item.pathname === pathname &&
+      cleanUrl.startsWith(item.requestUrl)
+  )
 }
 
 

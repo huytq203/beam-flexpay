@@ -1,7 +1,7 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import clsx from 'clsx'
-import { CheckCircleFilled, CloseCircleFilled, InfoCircleFilled } from '@components/icons/common'
+import { CheckCircleFilled, CloseCircleFilled, InfoCircleFilled } from '@components/icons'
 import { FormTextArea } from '@components/form'
 
 const DialogConfirmRefund = () => {

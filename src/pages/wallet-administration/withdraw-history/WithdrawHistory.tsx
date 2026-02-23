@@ -1,11 +1,11 @@
-import { CardComponent, Table, DialogModal, ModalComponent, UploadCombined } from '@components/common'
-import { CheckCircleFilled, ClockIcon, InfoCircleFilled } from '@components/icons/common'
+import { CardComponent, Table, DialogModal, ModalComponent, UploadCombined } from '@components/index'
+import { CheckCircleFilled, ClockIcon, InfoCircleFilled } from '@components/icons'
 import React, { useEffect, useState } from 'react'
 import DialogApproval from './components/DialogApproval'
 import DialogApproveWithdraw from './components/DialogApproveWithdraw'
 import DialogDetailWithdrawHistory from './components/ModalDetailWithdrawHistory'
 import WithdrawHistorySearch from './components/WithdrawHistorySearch'
-import Column from './configs/WithdrawHistory.column'
+import Column from './columns/WithdrawHistory.column'
 
 const WithdrawHistory = () => {
     const statusCards = [

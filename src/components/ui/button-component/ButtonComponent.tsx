@@ -11,7 +11,7 @@ interface props extends  Omit<ButtonProps, 'content'> {
   htmlType?: "button" | "submit" | "reset" | undefined,
   className?:string
 }
-const ButtonComponent = ({ onClick, content, icon, type, variant, color, form,className, htmlType, ...rest }: props) => {
+const ButtonComponent = ({ onClick, content, icon,children, type, variant, color, form,className, htmlType, ...rest }: props) => {
   const AntButton = Button as any;
   return (
       <AntButton
@@ -25,7 +25,7 @@ const ButtonComponent = ({ onClick, content, icon, type, variant, color, form,cl
         {...rest}
       >
         {icon}
-        {content}
+        {children||content}
       </AntButton>
   )
 }

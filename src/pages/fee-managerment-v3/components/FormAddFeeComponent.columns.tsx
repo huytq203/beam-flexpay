@@ -1,9 +1,9 @@
 import { ColumnsType } from 'antd/es/table'
 import { Controller, Control, UseFormGetValues } from 'react-hook-form'
-import { InputNumber, ButtonComponent } from '@components/common'
+import { InputNumber, ButtonComponent } from '@components/index'
 import { CheckOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons'
 import { FeeComponentType } from '@pages/fee-managerment-v3/schemas/FeeManagement.schema'
-import { feePolicyComponent } from '@type/feePoliciesComponent'
+import { feePolicyComponent } from '@pages/fee-managerment-v3/constants/feePoliciesComponent'
 
 interface TierColumnsOptions {
     control: Control<FeeComponentType>
@@ -138,7 +138,7 @@ export const getTierColumns = ({
             title: 'Xóa',
             key: 'action',
             align: 'center',
-            width: 60,
+            width: 100,
             render: (_, _record, index) => {
                 const currentTier = getValues(`tiers.${index}`)
                 const tierId = (currentTier as any)?.id

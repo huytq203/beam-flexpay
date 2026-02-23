@@ -3,44 +3,10 @@ import { enhancedApi as authService } from '@services/cmsService'
 import { enhancedApi as userApi } from '@services/cmsUser'
 import { enhancedAuthApi, useLogoutMutation } from '@services/authEndpoints'
 import { IUserProfile } from '@type/auth'
-import { jwtDecode } from 'jwt-decode'
 import Cookies from 'js-cookie'
 import { CookieKey, CookieExpiry } from '@configs/fetchBaseQuery.types'
+import { updateAccessToken, decodeToken } from './authActions'
 const name = 'authSlice'
-
-// Interface cho JWT payload từ Keycloak/OIDC
-interface JwtPayload {
-  exp: number
-  iat: number
-  jti: string
-  iss: string
-  typ: string
-  azp: string
-  sid: string
-  scope: string
-  permissions: string[]
-  roles: string[]
-  sub?: string
-  email?: string
-  name?: string
-  preferred_username?: string
-}
-
-// Helper function để decode token và lấy thông tin
-const decodeToken = (token: string): { permissions: string[], roles: string[], email: string, name: string } => {
-  try {
-    const decoded = jwtDecode<JwtPayload>(token)
-    return {
-      permissions: decoded.permissions || [],
-      roles: decoded.roles || [],
-      email: decoded.email || decoded.preferred_username || decoded.sub || '',
-      name: decoded.name || ''
-    }
-  } catch (error) {
-    console.error('Error decoding token:', error)
-    return { permissions: [], roles: [], email: '', name: '' }
-  }
-}
 
 export interface IAuthState {
   accessToken: string | null
@@ -103,6 +69,19 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Lắng nghe updateAccessToken action từ authActions (được dispatch sau khi refresh token)
+      .addCase(updateAccessToken, (state, action) => {
+        const { token, expiresIn } = action.payload
+        const expiresInSeconds = expiresIn || CookieExpiry.ACCESS_TOKEN_SECONDS
+        const expiresInDays = expiresInSeconds / 86400
+        Cookies.set(CookieKey.ACCESS_TOKEN, token, { expires: expiresInDays })
+        state.accessToken = token
+        const tokenInfo = decodeToken(token)
+        state.profile.permissions = tokenInfo.permissions
+        state.profile.roles = tokenInfo.roles
+        state.profile.email = tokenInfo.email
+        state.profile.fullName = tokenInfo.name
+      })
       // Lắng nghe userLogin từ authEndpoints (API mới - ENV.API_LOGIN)
       .addMatcher(
         enhancedAuthApi.endpoints.userLogin.matchFulfilled,

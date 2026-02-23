@@ -1,6 +1,12 @@
+import { TransactionItem } from '@type/transaction.type'
+import { formatCurrency } from '@utils/formatNumber'
 import React from 'react'
 
-const FeeNCC = () => {
+interface FeeNCCProps {
+  data?: TransactionItem
+}
+
+const FeeNCC = ({ data }: FeeNCCProps) => {
   return (
     <>
           <div className="">
@@ -10,23 +16,23 @@ const FeeNCC = () => {
           <div className="flex flex-col gap-3 px-3">
             <div className="flex justify-between items-center">
               <p className='text-gray-500'>Nhà cung cấp:</p>
-              <p className='font-medium'>Napas</p>
+              <p className='font-medium'>{data?.providerName??'--'}</p>
             </div>
             <div className="flex justify-between items-center p-1 bg-orange-100  rounded-md">
               <p className=' font-medium'>Tổng phí phải trả:</p>
-              <p>5,500 VND</p>
+              <p>{formatCurrency(data?.feeAmount??0,{ symbol: 'VNĐ', position: 'after' })}</p>
             </div>
             <ul className='list-disc pl-5'>
               <li>
                 <div className="flex justify-between items-center text-sm">
                   <p className='text-gray-500'>Cố định:</p>
-                  <p className='text-gray-500'>500 VND</p>
+                  <p className='text-gray-500'>{formatCurrency(data?.feeAmount??0,{ symbol: 'VNĐ', position: 'after' })}</p>
                 </div>
               </li>
               <li>
                 <div className="flex justify-between items-center text-sm">
                   <p className='text-gray-500'>% (0.5%):</p>
-                  <p className='text-gray-500'>5000 VND</p>
+                  <p className='text-gray-500'>{formatCurrency(data?.feeAmount??0,{ symbol: 'VNĐ', position: 'after' })}</p>
                 </div>
               </li>
             </ul>

@@ -5,6 +5,13 @@ export const ModuleNames: Record<string, string> = {
     // Add more modules as needed
 }
 
+
+export const RoleStatus: Record<string, string> = {
+  ACTIVE: 'Hoạt động',
+  INACTIVE: 'Khóa',
+}
+
+
 // Resource mappings (second part: FEE, USER, WALLET, etc.)
 export const ResourceNames: Record<string, string> = {
     FEE: 'Phí',

@@ -1,4 +1,4 @@
-import { CardComponent, Table } from '@components/common'
+import { CardComponent, Table } from '@components/index'
 import React from 'react'
 import { Column } from './configs/HistoryPayment.column'
 import HistoryFormSearch from './components/HistoryFormSearch'
