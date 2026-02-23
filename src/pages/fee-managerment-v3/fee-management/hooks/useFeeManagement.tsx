@@ -94,7 +94,7 @@ const useFeeManagement = () => {
       successMess('Thêm mới thành công')
       resetAdd()
       setOpen(false)
-      searchFeePolicies(getSearchParams())
+      // searchFeePolicies(getSearchParams())
     } catch{
     }
   }
