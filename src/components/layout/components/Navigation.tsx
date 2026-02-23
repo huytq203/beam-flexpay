@@ -1004,14 +1004,14 @@ const merchantManagement = {
 
 
 export const navigationItems: ItemTypeCustom[] = [
-  roleManagement,
-  personalWallet,
+  // roleManagement,
+  // personalWallet,
   feeManagement,
   feeManagementV2,
   bankAndConnect,
   repaymentAndDisburse,
-  reports,
-  internal_wallet,
+  // reports,
+  // internal_wallet,
   feeManagementV3,
   roleManagementV2,
   walletManagement,

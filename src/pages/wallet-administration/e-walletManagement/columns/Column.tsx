@@ -104,6 +104,7 @@ export const Column = ({ openModal }: ColumnOptions = {}): ColumnType<AcountItem
         const isLocked = record.status === StatusKey.LOCKED
         const isFrozen = record.status === StatusKey.FROZEN
         const isActive = record.status === StatusKey.ACTIVE
+        const isSystem = record.ownerType === 'SYSTEM'
 
         const accountPayload: SelectedAccount = {
           id: record.id,
@@ -124,19 +125,19 @@ export const Column = ({ openModal }: ColumnOptions = {}): ColumnType<AcountItem
             key: '2',
             label: isLocked ? 'Mở khóa tài khoản' : 'Khóa tài khoản',
             onClick: () => openModal?.(isLocked ? 'unlock' : 'lock', accountPayload),
-            disabled: isFrozen,
+            disabled: isSystem || isFrozen,
           },
           {
             key: '3',
             label: 'Đóng băng số dư',
             onClick: () => openModal?.('freeze', accountPayload),
-            disabled: !isActive,
+            disabled: isSystem || !isActive,
           },
           {
             key: '4',
             label: 'Mở băng số dư',
             onClick: () => openModal?.('unfreeze', accountPayload),
-            disabled: !isFrozen,
+            disabled: isSystem || !isFrozen,
           },
           {
             key: '5',
