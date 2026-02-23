@@ -9,11 +9,11 @@ const STATUS_CONFIG: Record<StatusKey, { label: string; className: string }> = {
         label: 'Ngừng hoạt động',
         className: 'danger-status',
     },
-    [StatusKey.FROZEN]: {
-        label: 'Đóng băng',
+    [StatusKey.LOCKED]: {
+        label: 'Khóa',
         className: 'danger-status',
     },
-    [StatusKey.LOCKED]: {
+    [StatusKey.FROZEN]: {
         label: 'Đóng băng',
         className: 'info-status',
     },
