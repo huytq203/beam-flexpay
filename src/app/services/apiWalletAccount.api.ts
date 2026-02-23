@@ -34,6 +34,22 @@ export const apiEWallet = apiWalletCore.injectEndpoints({
             }),
             invalidatesTags: ['Wallet'],
         }),
+        postUnlock: build.mutation({
+            query: (body) => ({
+                url: '/wallet/accounts/unlock',
+                method: 'POST',
+                body: body,
+            }),
+            invalidatesTags: ['Wallet'],
+        }),
+        postLock: build.mutation({
+            query: (body) => ({
+                url: '/wallet/accounts/lock',
+                method: 'POST',
+                body: body,
+            }),
+            invalidatesTags: ['Wallet'],
+        }),
     })
 })
 export const {
@@ -41,5 +57,7 @@ export const {
     useLazyGetAccountQuery,
     useGetAccountByIdQuery,
     usePostUnfreezeMutation,
-    usePostFreezeMutation
+    usePostFreezeMutation,
+    usePostUnlockMutation,
+    usePostLockMutation
 } = apiEWallet

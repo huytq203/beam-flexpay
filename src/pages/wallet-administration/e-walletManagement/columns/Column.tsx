@@ -12,10 +12,11 @@ import { useNavigate } from 'react-router-dom'
 import { StatusKey } from '../types/WalletAccount.type'
 import StatusBadge from '@components/status-badge/StatusBadge'
 
-type ModalType = 'freeze' | 'unfreeze' | null
+type ModalType = 'freeze' | 'unfreeze' | 'lock' | 'unlock' | null
 
 interface SelectedAccount {
   id: string
+  ownerId?: string
   ownerName?: string
   balance?: number
   holdBalance?: number
@@ -25,8 +26,6 @@ interface SelectedAccount {
 interface ColumnOptions {
   openModal?: (type: ModalType, account: SelectedAccount) => void
 }
-
-
 
 export const Column = ({ openModal }: ColumnOptions = {}): ColumnType<AcountItem>[] => {
   const navigate = useNavigate()
@@ -102,8 +101,13 @@ export const Column = ({ openModal }: ColumnOptions = {}): ColumnType<AcountItem
       align: 'center',
       width: 100,
       render: (_, record) => {
+        const isLocked = record.status === StatusKey.LOCKED
+        const isFrozen = record.status === StatusKey.FROZEN
+        const isActive = record.status === StatusKey.ACTIVE
+
         const accountPayload: SelectedAccount = {
           id: record.id,
+          ownerId: record.ownerId,
           ownerName: record.ownerUsername,
           balance: record.totalCredit,
           holdBalance: record.holdBalance,
@@ -118,19 +122,21 @@ export const Column = ({ openModal }: ColumnOptions = {}): ColumnType<AcountItem
           },
           {
             key: '2',
-            label: 'Khóa tài khoản',
+            label: isLocked ? 'Mở khóa tài khoản' : 'Khóa tài khoản',
+            onClick: () => openModal?.(isLocked ? 'unlock' : 'lock', accountPayload),
+            disabled: isFrozen,
           },
           {
             key: '3',
             label: 'Đóng băng số dư',
             onClick: () => openModal?.('freeze', accountPayload),
-            disabled: record.status !== 'ACTIVE',
+            disabled: !isActive,
           },
           {
             key: '4',
             label: 'Mở băng số dư',
             onClick: () => openModal?.('unfreeze', accountPayload),
-            disabled: record.status !== 'FROZEN',
+            disabled: !isFrozen,
           },
           {
             key: '5',

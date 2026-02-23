@@ -20,3 +20,21 @@ export const UnfreezeSchema = z.object({
 })
 
 export type UnfreezeFormValues = z.infer<typeof UnfreezeSchema>
+
+export const LockSchema = z.object({
+    reason: z
+        .string()
+        .min(1, 'Lý do khóa không được để trống')
+        .max(500, 'Lý do không được vượt quá 500 ký tự'),
+})
+
+export type LockFormValues = z.infer<typeof LockSchema>
+
+export const UnlockSchema = z.object({
+    reason: z
+        .string()
+        .min(1, 'Lý do mở khóa không được để trống')
+        .max(500, 'Lý do không được vượt quá 500 ký tự'),
+})
+
+export type UnlockFormValues = z.infer<typeof UnlockSchema>
