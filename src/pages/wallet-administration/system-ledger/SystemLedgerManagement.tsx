@@ -107,7 +107,7 @@ const SystemLedgerManagement = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Available Balance:</span>
-                <span className="font-medium">{formatCurrency(record.account?.availableBalance)}</span>
+                <span className="font-medium">{formatCurrency(record.account?.balance??0)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Account Status:</span>
