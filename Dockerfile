@@ -1,8 +1,14 @@
-# 1. Build
-FROM node:18-alpine as builder
+# =============================================================================
+# Stage 1: Build
+# =============================================================================
+FROM node:18-alpine AS builder
 WORKDIR /app
 
-COPY package*.json ./
+# Enable Corepack for Yarn 4 (specified in package.json packageManager)
+RUN corepack enable
+
+# Copy dependency files first for better layer caching
+COPY package.json yarn.lock .yarnrc.yml ./
 
 RUN yarn install
 
@@ -22,7 +28,9 @@ ENV VITE_DEPLOY_VERSION=${DEPLOY_VERSION}
 
 RUN NODE_OPTIONS="--max-old-space-size=4096" yarn build
 
-# 2. Serve
+# =============================================================================
+# Stage 2: Serve
+# =============================================================================
 FROM nginx:stable-alpine
 
 COPY --from=builder /app/dist /usr/share/nginx/html
