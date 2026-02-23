@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useGetAccountByIdQuery } from '../service/apiWalletAccount.api'
+import { useGetAccountByIdQuery } from '../../../../app/services/apiWalletAccount.api'
 
 const useDetailUser = () => {
 
@@ -8,7 +8,7 @@ const useDetailUser = () => {
   const { id } = useParams()
 
 
-  const{data:getAccountById}= useGetAccountByIdQuery(id)
+  const { data: getAccountById } = useGetAccountByIdQuery(id)
   return {
     activeKey,
     setActiveKey,

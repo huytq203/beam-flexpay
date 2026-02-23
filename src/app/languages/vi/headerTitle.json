@@ -99,6 +99,9 @@
     "/wallet-administration/withdraw-history":"Quản lý lịch sử giao dịch rút tiền",
     "/wallet-administration/frozen-transactions":"Quản lý giao dịch phí đóng băng",
     "/wallet-administration/e-walletManagement/*":"Chi tiết ví điện tử",
-    "/wallet-administration/system-ledger":"Sổ cái hệ thống"
+    "/wallet-administration/system-ledger":"Sổ cái hệ thống",
+    "/merchant/merchant-management":"Quản lý Merchant",
+    "/merchant/merchant-management/create":"Thêm mới Merchant",
+    "/merchant/merchant-management/create/*":"Chi tiết Merchant"
   }
 }

@@ -1,6 +1,8 @@
 import { isRejectedWithValue, Middleware } from '@reduxjs/toolkit'
 import { logout } from '@slices/authSlice'
 import { globalMessage } from '@hooks/useMessage'
+import Cookies from 'js-cookie'
+import { CookieKey } from '@configs/fetchBaseQuery.types'
 
 /**
  * Error messages mapping by HTTP status code
@@ -59,12 +61,17 @@ export const errorMiddleware: Middleware = (storeApi) => (next) => (action) => {
 
     // Handle specific status codes
     switch (statusCode) {
-      case 401:
-        globalMessage.error(errorMessage)
-        // Dispatch logout action and redirect
-        storeApi.dispatch(logout())
-        window.location.href = '/auth/login'
+      case 401: {
+        const accessToken = Cookies.get(CookieKey.ACCESS_TOKEN)
+        const refreshToken = Cookies.get(CookieKey.REFRESH_TOKEN)
+
+        if (!accessToken && !refreshToken) {
+          globalMessage.error(errorMessage)
+          storeApi.dispatch(logout())
+          window.location.href = '/auth/login'
+        }
         break
+      }
 
       case 403:
         globalMessage.error(errorMessage)

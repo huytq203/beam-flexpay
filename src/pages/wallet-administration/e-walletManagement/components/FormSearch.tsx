@@ -22,7 +22,7 @@ const FormSearch = ({ handleSearch }: props) => {
     <div>
       <div className="grid grid-cols-4 gap-3">
         <div className="col-span-1">
-          <FormInput control={formSearch.control} name='keyword' label='Từ khóa' />
+          <FormInput control={formSearch.control} name='keyword' label='Từ khóa' placeholder='Từ khóa...' />
         </div>
         <div className="col-span-1">
           <FormSelect control={formSearch.control} name='status' options={mapEnumToSelectOptions(StatusLabel)} label='Trạng thái ví' />

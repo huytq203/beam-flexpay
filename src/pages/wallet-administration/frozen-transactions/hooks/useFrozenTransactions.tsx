@@ -1,23 +1,41 @@
-import React, { useEffect, useState } from 'react'
+import usePagination from '@hooks/usePagination'
+import { useGetFreezesQuery } from '@services/apiFreezes'
+import { useMemo, useState } from 'react'
 
 const useFrozenTransactions = () => {
-const [dataTable,setDataTable]=useState()
-//     const getData= async() => {
-//         try {
-//           const res=  await fetch("http://localhost:4000/freezeTransactions") 
-//           const data=await res.json()
-//           setDataTable(data.data.content)
-//         } catch (error) {
-            
-//         }
-//     }
-//     console.log(dataTable)
-// useEffect(()=>{
-//     getData()
-// },[])
+  const [filter, setFilter] = useState({})
+
+  const { params, page, pageSize, setPage, setPageSize } = usePagination({
+    defaultSort: 'createdAt',
+  })
+
+  const { data, isFetching } = useGetFreezesQuery({ ...params, ...filter })
+
+  const totalElements = data?.totalElements
+
+  const dataSource = useMemo(
+    () =>
+      data?.content?.map((item, idx) => ({
+        no: (page - 1) * pageSize + idx + 1,
+        ...item,
+      })),
+    [data, page, pageSize]
+  )
+
+  const handleSearch = (values: Record<string, unknown>) => {
+    setFilter(values)
+    setPage(1)
+  }
+
   return {
-    dataTable,
-    setDataTable
+    dataSource,
+    totalElements,
+    page,
+    pageSize,
+    setPage,
+    setPageSize,
+    isFetching,
+    handleSearch,
   }
 }
 

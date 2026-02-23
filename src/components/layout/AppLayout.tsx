@@ -18,6 +18,8 @@ import usePermission from '@hooks/usePermission'
 
 import './style.scss'
 import { FORBIDDENERROR } from '@constants/routersConstant'
+import Cookies from 'js-cookie'
+import { CookieKey } from '@configs/fetchBaseQuery.types'
 
 const { Header, Sider, Content } = Layout
 
@@ -58,7 +60,10 @@ function AppLayout() {
   }
 
   useEffect(() => {
-    if (!accessToken) {
+    // Chỉ redirect về login khi CẢ HAI access token và refresh token đều không còn
+    // Nếu còn refresh token, không redirect vì fetchBaseQueryCustom sẽ tự refresh khi có API call
+    const refreshToken = Cookies.get(CookieKey.REFRESH_TOKEN)
+    if (!accessToken && !refreshToken) {
       navigate('/auth/login')
     }
   }, [accessToken, navigate])
@@ -98,11 +103,11 @@ function AppLayout() {
       // })
     }
   }, [accessToken])
-useEffect(() => {
-  if ( !isAccess && location.pathname !== FORBIDDENERROR) {
-    navigate(FORBIDDENERROR)
-  }
-}, [isAccess,location.pathname])
+  useEffect(() => {
+    if (!isAccess && location.pathname !== FORBIDDENERROR) {
+      navigate(FORBIDDENERROR)
+    }
+  }, [isAccess, location.pathname])
   const currentKey = useMemo(() => {
     const selected = location.pathname.split('/')
     return selected.filter((n) => n !== '')

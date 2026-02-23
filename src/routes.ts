@@ -664,13 +664,17 @@ const merchantManagement = {
           element: createElement(MerchantManagement),
         },
         {
+          path: MERCHANT + '/merchant-management/create',
+          element: createElement(CreateMerchant),
+        },
+        {
+          path: MERCHANT + '/merchant-management/create/:id',
+          element: createElement(CreateMerchant),
+        },
+        {
           path: MERCHANT + '/merchant-management/:id',
           element: createElement(MerchantDetail),
         },
-        {
-          path: MERCHANT + '/merchant-management/create',
-          element: createElement(CreateMerchant),
-        }
       ]
     }
   ]

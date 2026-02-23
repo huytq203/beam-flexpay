@@ -12,6 +12,7 @@ import FeeNCC from './components/FeeNCC'
 import useDetailTransaction from './hooks/useDetailTransaction'
 import { useGetTransactionByIdQuery } from '@pages/wallet-administration/transaction-management/services/apiTransactionV2'
 import dayjs from 'dayjs'
+import { formatCurrency } from '@utils/formatNumber'
 type ViewMode = 'TEXT' | 'JSON'
 type TitleHover = 'Copy' | 'Copied!' | 'Wrong'
 const LazyLog = LazyLogComponent as React.ComponentType<any>
@@ -75,11 +76,11 @@ const DetailTransaction = () => {
 
         <CardComponent className='col-span-1 md:col-span-3 order-1 md:order-1' content={<CommonInfo data={getTransactionById}/>} />
        
-        <CardComponent className='col-span-1 md:col-span-2 order-4 md:order-2' content={<InfoUser />} />
+        <CardComponent className='col-span-1 md:col-span-2 order-4 md:order-2' content={<InfoUser data={getTransactionById}/>} />
        
-        <CardComponent className='col-span-1 md:col-span-3 order-2 md:order-3' content={<UserFees />} />
+        <CardComponent className='col-span-1 md:col-span-3 order-2 md:order-3' content={<UserFees data={getTransactionById}  />} />
       
-        <CardComponent className='col-span-1 md:col-span-2 order-5 md:order-4' content={<FeeNCC />} />
+        <CardComponent className='col-span-1 md:col-span-2 order-5 md:order-4' content={<FeeNCC data={getTransactionById}/>} />
        
         <CardComponent className='col-span-1 md:col-span-3 order-3 md:order-5' content={<>
           <div>
@@ -92,7 +93,7 @@ const DetailTransaction = () => {
         <div className='col-span-1 md:col-span-2  order-6 md:order-6' >
           <div className=" flex flex-col justify-center items-center border border-blue-700 bg-blue-100 rounded-md py-5 ">
             <p className=' text-xl text-gray-500 font-bold'>LỢI NHUẬN RÒNG (NET PROFIT)</p>
-            <p className='text-xl  text-green-600 font-medium'>+5,5000</p>
+            <p className='text-xl  text-green-600 font-medium'>{formatCurrency(getTransactionById?.netProfit??0,{ symbol: 'VNĐ', position: 'after' })}</p>
             <p className='text-gray-500 text-sm'>(Tổng thu user - Tổng trả NCC)</p>
           </div>
         </div>

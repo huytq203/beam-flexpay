@@ -17,11 +17,29 @@ export const apiEWallet = apiWalletCore.injectEndpoints({
                 method: 'GET'
             }),
             providesTags: ['Wallet'],
-        })
+        }),
+         postUnfreeze: build.mutation({
+            query: (body) => ({
+                url: '/wallet/accounts/unfreeze',
+                method: 'POST',
+                body: body,
+            }),
+            invalidatesTags: ['Wallet'],
+        }),
+        postFreeze: build.mutation({
+            query: (body) => ({
+                url: '/wallet/accounts/freeze',
+                method: 'POST',
+                body: body,
+            }),
+            invalidatesTags: ['Wallet'],
+        }),
     })
 })
 export const {
     useGetAccountQuery,
     useLazyGetAccountQuery,
-    useGetAccountByIdQuery
+    useGetAccountByIdQuery,
+    usePostUnfreezeMutation,
+    usePostFreezeMutation
 } = apiEWallet

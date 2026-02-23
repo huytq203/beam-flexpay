@@ -1,6 +1,43 @@
 import { Dayjs } from 'dayjs'
 import { IPageSearch } from './api'
 
+export interface FreezeAccount {
+  id: string
+  ownerId: string
+  ownerType: string
+  ownerUsername: string
+  glCode: string
+  currency: string
+  balance: number
+  holdBalance: number
+  availableBalance: number | null
+  status: string
+}
+
+export interface FreezeItem {
+  id: string
+  createdAt: string
+  updatedAt: string
+  createdBy: string
+  updatedBy: string
+  account: FreezeAccount
+  idempotencyKey: string
+  amount: number
+  type: string
+  reason: string
+  status: string
+  expiryTime: string | null
+}
+
+export interface FreezeParams {
+  page?: number
+  size?: number
+  sort?: string
+  status?: string
+  type?: string
+  [key: string]: unknown
+}
+
 export interface Pagination {
   page: number
   take: number

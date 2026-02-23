@@ -14,6 +14,7 @@ const FormSearch = () => {
             control={control}
             name=''
             label='Tìm kiếm nhanh'
+            placeholder='Tìm kiếm nhanh'
           />
           <FormSelect
             className='col-span-1'
@@ -55,10 +56,11 @@ const FormSearch = () => {
         </div>
       </form>
       <div className='mt-3 flex justify-end gap-3'>
-        <ButtonComponent content='Tìm kiếm' />
+        <ButtonComponent content='Tìm kiếm' disabled/>
         <ButtonComponent
           type='default'
           content='Xóa lọc'
+          disabled
         />
       </div>
     </div>

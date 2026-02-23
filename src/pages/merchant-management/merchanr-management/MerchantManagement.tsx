@@ -1,8 +1,14 @@
 import { ButtonComponent, CardComponent, Table } from '@components/index'
 import React from 'react'
 import FormSearch from './components/FormSearch'
+import useFetchData from './hooks/useFetchData'
+import { MerchantColumn } from './column/column'
+import { useNavigate } from 'react-router-dom'
 
 const MerchantManagement = () => {
+  const { data, getMerchantLoading } = useFetchData()
+  const navigate = useNavigate()
+
   return (
     <div className='space-y-3'>
       <CardComponent>
@@ -15,11 +21,11 @@ const MerchantManagement = () => {
           </div>
           <div className="flex gap-3">
             <ButtonComponent content='Xuất excel' type='default' />
-            <ButtonComponent content='Tạo mới' type='primary' />
+            <ButtonComponent onClick={() => navigate('create')} content='Tạo mới' type='primary' />
           </div>
         </div>
 
-        <Table />
+        <Table key='id' size='small' columns={MerchantColumn({ onEdit: (id) => navigate(`create/${id}`) })} dataSource={data} />
       </CardComponent>
 
     </div>

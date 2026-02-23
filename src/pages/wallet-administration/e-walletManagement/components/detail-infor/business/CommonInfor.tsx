@@ -45,8 +45,8 @@ const InforUser = () => {
 const InforEwallet = ({ data }: props) => {
   if (!data) return null
   const STATUS_CLASS: Record<string, string> = {
-    ACTIVE: 'text-green   font-medium bg-green-100',
-    ERROR: 'text-red  text-xs  font-medium bg-red-100',
+    ACTIVE: 'text-green  text-[12px]  font-medium bg-green-100',
+    FROZEN: 'text-red  text-[12px]  font-medium bg-red-100',
     WAITING: 'text-blue-600  font-medium bg-blue-50-100',
     REVIEW: 'text-yellow  font-medium bg-yellow-100',
   };
@@ -83,7 +83,7 @@ const InforEwallet = ({ data }: props) => {
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Số dư khả dụng:</p>
-          <p className="font-bold text-green-700  ">{formatCurrency(data.availableBalance)}</p>
+          <p className="font-bold text-green-700  ">{formatCurrency(data.totalCredit)}</p>
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Số dư đóng băng:</p>

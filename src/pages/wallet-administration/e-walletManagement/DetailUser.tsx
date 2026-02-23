@@ -27,8 +27,9 @@ const InforUser = ({ data }: props) => {
             NA
           </div>
           <div className='text-gray-600 flex flex-col gap-1' >
-            <p className='font-extrabold text-xl'>Nguyen A</p>
-            <p>nguyenA@gmail.com - 033333333</p>
+            <p className='font-extrabold text-xl'>{data.ownerUsername}</p>
+            {/* <p>nguyenA@gmail.com - 033333333</p> */}
+            <p></p>
             <p className='flex gap-2 justify-start items-center font-medium'>
               <span className='bg-gray-200 px-1 rounded text-[12px]'>Hạng bạc</span>
               <span className='flex gap-1 text-green-700  bg-green-100 px-1 rounded text-[12px]' ><CheckCircleFilled />Đã xác thực KYC</span>
@@ -38,7 +39,7 @@ const InforUser = ({ data }: props) => {
         <div className='flex flex-col items-end text-gray-600 '>
           <p className='font-medium'>Tổng số dư khả dụng</p>
           <p className='flex justify-end items-end gap-1'>
-            <span className='text-green-700 text-2xl font-bold'>{formatNumber(data.availableBalance)}</span>
+            <span className='text-green-700 text-2xl font-bold'>{formatNumber(data.availableBalance??(data.balance-data.holdBalance))}</span>
             <span className='text-sm font-bold'>{data.currency}</span>
           </p>
           <p className='text-red-700 '>* Đang đóng băng: {formatNumber(data.holdBalance)+' '+ data.currency} </p>

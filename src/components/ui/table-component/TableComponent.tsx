@@ -4,7 +4,7 @@ import type { TableProps } from 'antd';
 
 const TableComponent = <T extends object>(props: TableProps<T>) => {
     return (
-        <Table<T> {...props} bordered  scroll={{x:'max-content'}}/>
+        <Table<T> {...props}  bordered  scroll={{x:'max-content'}}/>
     )
 }
 

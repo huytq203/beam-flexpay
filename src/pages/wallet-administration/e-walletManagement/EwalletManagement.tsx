@@ -3,7 +3,8 @@ import { CardComponent, DialogModal, Table } from '@components/index'
 import React from 'react'
 import FormSearch from './components/FormSearch'
 import useEwalletManagement from './hooks/useEwalletManagement'
-import DialogFreeze from '../transaction-management/components/DialogFreeze'
+import DialogFreeze from './components/DialogFreeze'
+import DialogUnfreeze from './components/DialogUnfreeze'
 import DialogDeleteWallet from './components/detail-infor/Personal/components/DialogDeleteWallet'
 import DialogFreezeWallet from './components/detail-infor/Personal/components/DialogFreezeWallet'
 
@@ -16,8 +17,12 @@ const EwalletManagement = () => {
     size,
     setPage,
     setPageSize,
-    handleSearch
+    handleSearch,
+    modalType,
+    selectedAccount,
+    closeModal,
   } = useEwalletManagement()
+
   return (
     <div className='flex flex-col gap-3'>
       <CardComponent content={<FormSearch handleSearch={handleSearch} />} />
@@ -26,7 +31,7 @@ const EwalletManagement = () => {
         content={
           <>
             <Table
-              rowKey={'id'}
+              rowKey='id'
               scroll={{ x: 'max-content' }}
               size='small'
               columns={column}
@@ -40,7 +45,7 @@ const EwalletManagement = () => {
                 onChange: (page, pageSize) => {
                   setPage(page)
                   setPageSize(pageSize)
-                }
+                },
               }}
             />
           </>
@@ -48,35 +53,69 @@ const EwalletManagement = () => {
       />
 
       <DialogModal
-        onCancel={() => {}}
-        onOk={() => {}}
+        onCancel={closeModal}
+        onOk={() => { }}
         open={false}
         content={<DialogFreezeWallet />}
         title={
-          <span className='flex items-center gap-2  text-red '>
+          <span className='flex items-center gap-2 text-red'>
             <StopOutlined /> Phong tỏa ví điện tử
           </span>
         }
       />
+
       <DialogModal
-        onCancel={() => {}}
-        onOk={() => {}}
-        open={false}
-        content={<DialogFreeze />}
+        onCancel={closeModal}
+        onOk={() => { }}
+        open={modalType === 'freeze'}
+        footer={null}
+        content={
+          <DialogFreeze
+            accountId={selectedAccount?.id}
+            ownerName={selectedAccount?.ownerName}
+            balance={selectedAccount?.balance}
+            currency={selectedAccount?.currency}
+            onSuccess={closeModal}
+            onCancel={closeModal}
+          />
+        }
         title={
-          <span className='flex items-center gap-2  text-red '>
-            <SnowflakeIcon /> Đóng băng ví số dư ví
+          <span className='flex items-center gap-2 text-blue-700'>
+            <SnowflakeIcon /> Đóng băng số dư ví
           </span>
         }
       />
+
+      <DialogModal
+        onCancel={closeModal}
+        onOk={() => { }}
+        open={modalType === 'unfreeze'}
+        footer={null}
+        content={
+          <DialogUnfreeze
+            accountId={selectedAccount?.id}
+            ownerName={selectedAccount?.ownerName}
+            holdBalance={selectedAccount?.holdBalance}
+            currency={selectedAccount?.currency}
+            onSuccess={closeModal}
+            onCancel={closeModal}
+          />
+        }
+        title={
+          <span className='flex items-center gap-2 text-green-700'>
+            <SnowflakeIcon /> Mở băng số dư ví
+          </span>
+        }
+      />
+
       <DialogModal
         mode='DELETE'
-        onCancel={() => {}}
-        onOk={() => {}}
+        onCancel={() => { }}
+        onOk={() => { }}
         open={false}
         content={<DialogDeleteWallet />}
         title={
-          <span className='flex-start gap-2  text-red '>
+          <span className='flex-start gap-2 text-red'>
             <WarningIcon weight='fill' /> Yêu cầu hủy/xóa ví
           </span>
         }

@@ -75,7 +75,7 @@ const InforEwallet = ({data}:props) => {
       <div className='flex flex-col gap-3 '>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Mã ví:</p>
-          <p className="font-medium">--</p>
+          <p className="font-medium">{data.glCode}</p>
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Trạng thái ví:</p>
@@ -101,7 +101,7 @@ const InforEwallet = ({data}:props) => {
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Số dư khả dụng:</p>
-          <p className="font-bold text-green-700  ">{formatCurrency(data.availableBalance)}</p>
+          <p className="font-bold text-green-700  ">{formatCurrency(data.availableBalance??(data.balance-data.holdBalance))}</p>
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Số dư đóng băng:</p>

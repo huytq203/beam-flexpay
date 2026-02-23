@@ -1,13 +1,24 @@
 import usePagination from '@hooks/usePagination'
 import { AcountItem, FormSearchValues } from '@pages/wallet-administration/e-walletManagement/types/ResponseWalletAccount.type'
-import { useGetAccountQuery } from '@pages/wallet-administration/e-walletManagement/service/apiWalletAccount.api'
-import React, { useEffect, useState } from 'react'
+import { useGetAccountQuery } from '@services/apiWalletAccount.api'
+import { useState } from 'react'
 import { Column } from '../columns/Column'
 
+type ModalType = 'freeze' | 'unfreeze' | null
+
+interface SelectedAccount {
+  id: string
+  ownerName?: string
+  balance?: number
+  holdBalance?: number
+  currency?: string
+}
+
 const useEwalletManagement = () => {
-  const [data, setData] = useState([])
   const { params, page, size, setPageSize, setPage } = usePagination()
   const [filter, setFilter] = useState({})
+  const [modalType, setModalType] = useState<ModalType>(null)
+  const [selectedAccount, setSelectedAccount] = useState<SelectedAccount | null>(null)
 
   const { data: getAccount } = useGetAccountQuery({ ...params, ...filter })
 
@@ -15,15 +26,24 @@ const useEwalletManagement = () => {
     setFilter(data)
     setPage(1)
   }
-  const dataSource = getAccount?.data?.content.map((item:AcountItem, index:number) => ({
+
+  const openModal = (type: ModalType, account: SelectedAccount) => {
+    setSelectedAccount(account)
+    setModalType(type)
+  }
+
+  const closeModal = () => {
+    setModalType(null)
+    setSelectedAccount(null)
+  }
+
+  const dataSource = getAccount?.data?.content.map((item: AcountItem, index: number) => ({
     ...item,
-    no: (page - 1) * size + index + 1
+    no: (page - 1) * size + index + 1,
   }))
-  
-  
-  
-  
-  const column = Column()
+
+  const column = Column({ openModal })
+
   return {
     column,
     dataSource,
@@ -32,8 +52,10 @@ const useEwalletManagement = () => {
     size,
     setPageSize,
     setPage,
-
-    handleSearch
+    handleSearch,
+    modalType,
+    selectedAccount,
+    closeModal,
   }
 }
 

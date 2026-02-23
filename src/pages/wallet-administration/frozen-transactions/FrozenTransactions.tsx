@@ -1,4 +1,4 @@
-import { CardComponent, DialogModal, ModalComponent, Table } from '@components/index'
+import { CardComponent, DialogModal, Table } from '@components/index'
 import { SnowflakeIcon } from '@components/icons'
 import React from 'react'
 import DialogFreeze from '@pages/wallet-administration/transaction-management/components/DialogFreeze'
@@ -7,40 +7,58 @@ import { Column } from './columns/FrozenTransactions.column'
 import useFrozenTransactions from './hooks/useFrozenTransactions'
 
 const FrozenTransactions = () => {
-    const column = Column()
-    const { dataTable } = useFrozenTransactions()
+    const {
+        dataSource,
+        totalElements,
+        page,
+        pageSize,
+        setPage,
+        setPageSize,
+        isFetching,
+        handleSearch,
+    } = useFrozenTransactions()
+
+    const columns = Column()
+
     return (
         <>
-            <CardComponent className='mb-3' content={<FormSearch />} />
+            <CardComponent className="mb-3" content={<FormSearch onSearch={handleSearch} />} />
             <CardComponent
                 content={
                     <Table
-                        columns={column}
-                        size='small'
+                        columns={columns}
+                        size="small"
                         rowKey="id"
                         bordered
+                        loading={isFetching}
                         scroll={{ x: 'max-content' }}
-                        expandable={{
-                            expandedRowRender: (record) =>
-                            (
-                                <div className="space-y-2">
-                                    {record.lichSuGiaiToa?.map((item: any) => (
-                                        <div
-                                            key={item.id}
-                                            className="flex border-b pb-1"
-                                        >
-                                            <span>{item.ngay}:</span>
-                                            <span>{item.lyDo}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            ),
-                            rowExpandable: (record) =>
-                                Array.isArray(record?.lichSuGiaiToa) &&
-                                record.lichSuGiaiToa.length > 0,
+                        dataSource={dataSource}
+                        pagination={{
+                            current: page,
+                            pageSize,
+                            total: totalElements,
+                            showSizeChanger: true,
+                            showTotal: (total) => `Tổng ${total} bản ghi`,
+                            onChange: (p, ps) => {
+                                setPage(p)
+                                setPageSize(ps)
+                            },
                         }}
-                        dataSource={dataTable} />} />
-            <DialogModal  onCancel={() => { }} onOk={() => { }} open={false} content={<DialogFreeze />} title={<span className='flex items-center gap-2 text-blue-700'><SnowflakeIcon size={18} />Mở băng giao dịch</span>} />
+                    />
+                }
+            />
+            <DialogModal
+                onCancel={() => { }}
+                onOk={() => { }}
+                open={false}
+                content={<DialogFreeze />}
+                title={
+                    <span className="flex items-center gap-2 text-blue-700">
+                        <SnowflakeIcon size={18} />
+                        Mở băng giao dịch
+                    </span>
+                }
+            />
         </>
     )
 }

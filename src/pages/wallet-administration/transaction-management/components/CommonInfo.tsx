@@ -41,27 +41,27 @@ const CommonInfo = ({ data }: CommonInfoProps) => {
             <p className='text-gray-500'>Loại & Phương thức:</p>
             <div className='font-medium'>
               <p>{TransactionType[typesKey]}</p>
-              <p>VISA</p>
+              <p>{data?.description??'--'}</p>
             </div>
           </div>
         </div>
         <div className='col-span-1'>
           <CopyableText
             label="Mã chuẩn chi:"
-            value="RTX-456"
+            value={data?.referenceNumber??'--'}
           />
         </div>
         <div className='col-span-1'>
           <CopyableText
             label="Mã đối soát:"
-            value="SET-678"
+            value={data?.settlementCode??'--'}
           />
         </div>
         <div className='col-span-1'>
           <div className=''>
             <p className='text-gray-500'>Ngân hàng:</p>
             <div className='font-medium'>
-              <p>Vietcombank(VCB)</p>
+              <p>{data?.bankName??'--'}</p>
 
             </div>
           </div>
@@ -71,7 +71,7 @@ const CommonInfo = ({ data }: CommonInfoProps) => {
             <p className='text-gray-500'>Số tài khoản:</p>
             <div className='font-medium'>
               <div className="flex items-center gap-1">
-                <span>213245******4235</span>
+                <span>{data?.accountNumber??'--'}</span>
                 <TooltipComponent title="Xem chi tiết" children={<EyeOutlined className='text-gray-500' />} />
               </div>
             </div>

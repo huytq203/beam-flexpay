@@ -28,13 +28,14 @@ export interface AcountItem {
   updatedBy: string
   ownerId: string
   ownerType: string
+  ownerUsername: string
   glCode: string
   currency: string
   totalDebit: number
   totalCredit: number
   balance: number
   holdBalance: number
-  availableBalance: number
+  availableBalance: any
   version: number
   status: string
   checksum: string
