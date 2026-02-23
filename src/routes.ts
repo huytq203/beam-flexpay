@@ -110,6 +110,7 @@ import DetailSystemLedger from '@pages/wallet-administration/system-ledger/Detai
 import MerchantManagement from '@pages/merchant-management/merchanr-management/MerchantManagement'
 import MerchantDetail from '@pages/merchant-management/merchanr-management/MerchantDetail'
 import CreateMerchant from '@pages/merchant-management/merchanr-management/CreateMerchant'
+import TestPage from '@pages/test/TestPage'
 
 
 const authentication = {
@@ -700,5 +701,9 @@ export const WalletRoutes = createBrowserRouter([
   feeManagementV3,
   roleManagementV2,
   walletAministration,
-  merchantManagement
+  merchantManagement,
+  {
+    path: '/test',
+    element: createElement(TestPage),
+  }
 ])
