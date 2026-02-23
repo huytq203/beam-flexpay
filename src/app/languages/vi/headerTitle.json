@@ -102,6 +102,7 @@
     "/wallet-administration/system-ledger":"Sổ cái hệ thống",
     "/merchant/merchant-management":"Quản lý Merchant",
     "/merchant/merchant-management/create":"Thêm mới Merchant",
-    "/merchant/merchant-management/create/*":"Chi tiết Merchant"
+    "/merchant/merchant-management/detail/*":"Chi tiết Merchant",
+    "/merchant/merchant-management/create/*":"Cập nhật Merchant"
   }
 }

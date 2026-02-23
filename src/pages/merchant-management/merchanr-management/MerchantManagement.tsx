@@ -25,7 +25,7 @@ const MerchantManagement = () => {
           </div>
         </div>
 
-        <Table key='id' size='small' columns={MerchantColumn({ onEdit: (id) => navigate(`create/${id}`) })} dataSource={data} />
+        <Table key='id' size='small' columns={MerchantColumn({ onEdit: (id) => navigate(`create/${id}`), onView: (id) => navigate(`detail/${id}`) })} dataSource={data} />
       </CardComponent>
 
     </div>

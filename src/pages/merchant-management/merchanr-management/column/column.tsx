@@ -8,11 +8,10 @@ import StatusBadge from '@components/status-badge/StatusBadge'
 
 interface MerchantColumnProps {
     onEdit: (id: string) => void
+    onView?: (id: string) => void
 }
 
-
-
-export const MerchantColumn = ({ onEdit }: MerchantColumnProps): ColumnType<ContentMerchant>[] => [
+export const MerchantColumn = ({ onEdit, onView }: MerchantColumnProps): ColumnType<ContentMerchant>[] => [
     {
         title: 'STT',
         dataIndex: 'stt',
@@ -58,7 +57,7 @@ export const MerchantColumn = ({ onEdit }: MerchantColumnProps): ColumnType<Cont
         render: (_: unknown, record: ContentMerchant) => (
             <div className='flex gap-1 items-center justify-center'>
                 <TooltipComponent title='Xem chi tiết'>
-                    <ButtonComponent size='small' type='default' icon={<EyeOutlined />} onClick={() => { }} />
+                    <ButtonComponent size='small' type='default' icon={<EyeOutlined />} onClick={() => onView?.(record.id)} />
                 </TooltipComponent>
                 <TooltipComponent title='Sửa'>
                     <ButtonComponent size='small' type='default' icon={<EditOutlined />} onClick={() => onEdit(record.id)} />

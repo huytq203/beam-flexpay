@@ -5,13 +5,32 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined
 } from '@components/icons'
-import { ButtonComponent, CardComponent, DialogModal, ModalComponent } from '@components/index'
-import { Alert } from 'antd'
-import { FormInput, FormSelect, FormTextArea } from '@components/form'
+import { ButtonComponent, CardComponent, DialogModal } from '@components/index'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useGetMerchantByIdQuery } from '@services/apiMerchant'
+import { Alert, Skeleton } from 'antd'
+import { FormSelect, FormTextArea } from '@components/form'
 import { useForm } from 'react-hook-form'
+import dayjs from 'dayjs'
+import StatusBadge from '@components/status-badge/StatusBadge'
+import { StatusKey } from '@pages/wallet-administration/e-walletManagement/constants/Ewallet.constant'
+
+const InfoRow = ({ label, value }: { label: string; value?: string | null }) => (
+  <div className='mb-4'>
+    <div className='text-gray-500 text-sm mb-1 uppercase tracking-wide'>{label}</div>
+    <div className={`font-medium ${!value ? 'text-gray-400' : ''}`}>
+      {value ?? 'Chưa cập nhật'}
+    </div>
+  </div>
+)
 
 const MerchantDetail = () => {
-  const {control}=useForm()
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const { control } = useForm()
+
+  const { data, isLoading } = useGetMerchantByIdQuery(id ?? '', { skip: !id })
+
   return (
     <div className='p-6 bg-gray-50 min-h-screen'>
       <div className='mb-6 flex items-center justify-between bg-white p-4 rounded-lg shadow-sm'>
@@ -19,11 +38,13 @@ const MerchantDetail = () => {
           <ButtonComponent
             type='text'
             icon={<ArrowLeftOutlined />}
-            onClick={() => window.history.back()}
+            onClick={() => navigate(-1)}
           />
           <div>
-            <div className='text-sm text-gray-500'>Tài khoản:</div>
-            <div className='text-lg font-semibold'>098****456</div>
+            <div className='text-sm text-gray-500'>Mã merchant:</div>
+            <Skeleton loading={isLoading} active paragraph={false} className='w-32'>
+              <div className='text-lg font-semibold'>{data?.code ?? '--'}</div>
+            </Skeleton>
           </div>
         </div>
 
@@ -35,25 +56,18 @@ const MerchantDetail = () => {
           />
           <ButtonComponent
             type='primary'
-            variant='outlined'
-            content='Hỗ trợ nhập '
-          />
-          <ButtonComponent
-            type='primary'
             icon={<CheckCircleOutlined />}
             content='Phê duyệt hồ sơ'
           />
           <ButtonComponent
             danger
-
             type='default'
             icon={<CloseCircleOutlined />}
             content='Từ chối'
           />
         </div>
       </div>
-
-      <Alert
+       <Alert
         type='error'
         showIcon
         className='mb-6'
@@ -75,75 +89,34 @@ const MerchantDetail = () => {
         }
       />
 
-      <CardComponent
-        title='Thông tin định danh'
-        className='mb-6'
-      >
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4'>
-          <div
-
-          >
+      <Skeleton loading={isLoading} active>
+        <CardComponent title='Thông tin định danh' className='mb-6'>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-2'>
+            <InfoRow label='Mã định danh (ID)' value={data?.id} />
+            <InfoRow label='Tên Merchant' value={data?.name} />
+            <InfoRow label='Mã Merchant' value={data?.code} />
+            <InfoRow label='Email liên hệ' value={data?.contactEmail} />
+            <InfoRow label='Số điện thoại liên hệ' value={data?.contactPhone} />
             <div className='mb-4'>
-              <div className='text-gray-500 text-sm mb-1'>
-                MÃ ĐỊNH DANH (ID)
-              </div>
-              <div className='font-medium'>MC-REG-2020-88</div>
+              <div className='text-gray-500 text-sm mb-1 uppercase tracking-wide'>Trạng thái</div>
+              {data?.status
+                ? <StatusBadge status={data.status as StatusKey} />
+                : <span className='text-gray-400'>Chưa cập nhật</span>
+              }
             </div>
+            <InfoRow
+              label='Ngày tạo tài khoản'
+              value={data?.createdAt ? dayjs(data.createdAt).format('DD/MM/YYYY HH:mm:ss') : undefined}
+            />
+            <InfoRow
+              label='Ngày cập nhật'
+              value={data?.updatedAt ? dayjs(data.updatedAt).format('DD/MM/YYYY HH:mm:ss') : undefined}
+            />
+            <InfoRow label='Người tạo' value={data?.createdBy} />
           </div>
-          <div
+        </CardComponent>
 
-          >
-            <div className='mb-4'>
-              <div className='text-gray-500 text-sm mb-1'>
-                SỐ ĐIỆN THOẠI ĐĂNG KÝ
-              </div>
-              <div className='font-medium'>098****456</div>
-            </div>
-          </div>
-          <div
-
-          >
-            <div className='mb-4'>
-              <div className='text-gray-500 text-sm mb-1'>
-                TÊN MERCHANT / TRỤ SỞ HIỆU
-              </div>
-              <div className='font-medium text-gray-400'>Chưa cập nhật</div>
-            </div>
-          </div>
-          <div
-
-          >
-            <div className='mb-4'>
-              <div className='text-gray-500 text-sm mb-1'>
-                LOẠI HÌNH KINH DOANH
-              </div>
-              <div className='font-medium text-gray-400'>Chưa cập nhật</div>
-            </div>
-          </div>
-          <div
-
-          >
-            <div className='mb-4'>
-              <div className='text-gray-500 text-sm mb-1'>
-                LĨNH VỰC KINH DOANH
-              </div>
-              <div className='font-medium text-gray-400'>Chưa cập nhật</div>
-            </div>
-          </div>
-          <div
-
-          >
-            <div className='mb-4'>
-              <div className='text-gray-500 text-sm mb-1'>
-                NHẬT TẠO TÀI KHOẢN
-              </div>
-              <div className='font-medium'>18/01/2026 10:20</div>
-            </div>
-          </div>
-        </div>
-      </CardComponent>
-
-      <CardComponent title='Hồ sơ hình ảnh & Pháp lý'>
+        <CardComponent title='Hồ sơ hình ảnh & Pháp lý'>
 
         <div className='grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4'>
           <div>
@@ -151,7 +124,7 @@ const MerchantDetail = () => {
               <div className='text-gray-500 text-sm mb-1'>
                 CCCD/Mã số thuế
               </div>
-              <div className='font-medium'>MC-REG-2020-88</div>
+              <div className='font-medium text-gray-400'>Chưa cập nhật</div>
             </div>
           </div>
           <div>
@@ -159,7 +132,7 @@ const MerchantDetail = () => {
               <div className='text-gray-500 text-sm mb-1'>
                 Ngày cấp
               </div>
-              <div className='font-medium'>098****456</div>
+              <div className='font-medium text-gray-400'>Chưa cập nhật</div>
             </div>
           </div>
           <div>
@@ -170,7 +143,7 @@ const MerchantDetail = () => {
               <div className='font-medium text-gray-400'>Chưa cập nhật</div>
             </div>
           </div>
-          <div className='col-span-3'>
+            <div className='col-span-3'>
             <div className='mb-4 '>
               <div className='text-gray-500 text-sm mb-1'>
                 Nơi cấp
@@ -181,7 +154,7 @@ const MerchantDetail = () => {
 
 
         </div>
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4'>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4'>
           <div>
             <div className='border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50'>
               <div className='text-gray-400 mb-2'>
@@ -247,40 +220,45 @@ const MerchantDetail = () => {
               </div>
             </div>
           </div>
-        </div>
-      </CardComponent>
-      <DialogModal title={'Xác nhận phê duyệt'}
-        content={
-        <>
-          <span>Bạn đang thực hiện phê duyệt cho Merchant <strong>Hộ kinh doanh Trần Quang Huy</strong>.</span>
-          <div className="">
-            <span>Sau khi phê duyệt:</span>
-            <ul className='my-3 pl-3 list-disc list-inside'>
-              <li>Hệ thống sẽ tự động kích hoạt tài khoản Merchant</li>
-              <li>Khởi tạo ví tài khoản và các cấu hình phí mặc định</li>
-              <li>Gửi email thông báo "Chào mừng" tới Merchant</li>
-            </ul>
           </div>
-        </>
+        </CardComponent>
+      </Skeleton>
+
+      <DialogModal
+        title='Xác nhận phê duyệt'
+        content={
+          <>
+            <span>Bạn đang thực hiện phê duyệt cho Merchant <strong>{data?.name ?? '--'}</strong>.</span>
+            <div>
+              <span>Sau khi phê duyệt:</span>
+              <ul className='my-3 pl-3 list-disc list-inside'>
+                <li>Hệ thống sẽ tự động kích hoạt tài khoản Merchant</li>
+                <li>Khởi tạo ví tài khoản và các cấu hình phí mặc định</li>
+                <li>Gửi email thông báo "Chào mừng" tới Merchant</li>
+              </ul>
+            </div>
+          </>
         }
         onCancel={() => { }}
         onOk={() => { }}
-        open={false} />
+        open={false}
+      />
 
-
-        <DialogModal title={'Từ chối phê duyệt'}
+      <DialogModal
+        title='Từ chối phê duyệt'
         content={
-        <>
-          <span>Vui lòng nhập lý do từ chối. Thông báo này sẽ gửi trực tiếp đến Merchant để họ cập nhật lại hồ sơ.</span>
-          <div className="my-3">
-            <FormSelect control={control} name='' options={[]} label={<span className='text-gray-400 font-medium'>Lý do từ chối (Bắt buộc):</span>}/>
-            <FormTextArea control={control} name='' options={[]} label={<span className='text-gray-400 font-medium'>Ghi chú:</span>} placeholder='Nhập ghi chú...'/>
-          </div>
-        </>
+          <>
+            <span>Vui lòng nhập lý do từ chối. Thông báo này sẽ gửi trực tiếp đến Merchant để họ cập nhật lại hồ sơ.</span>
+            <div className='my-3'>
+              <FormSelect control={control} name='rejectReason' options={[]} label={<span className='text-gray-400 font-medium'>Lý do từ chối (Bắt buộc):</span>} />
+              <FormTextArea control={control} name='rejectNote' label={<span className='text-gray-400 font-medium'>Ghi chú:</span>} placeholder='Nhập ghi chú...' />
+            </div>
+          </>
         }
         onCancel={() => { }}
         onOk={() => { }}
-        open={false} />
+        open={false}
+      />
     </div>
   )
 }
