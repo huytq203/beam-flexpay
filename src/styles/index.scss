@@ -93,7 +93,7 @@
     @apply bg-yellow border border-yellow text-yellow font-medium;
   }
   .info-status {
-    @apply bg-blue border border-blue text-blue font-medium;
+    @apply bg-blue border border-blue text-blue-500 font-medium;
   }
 
   @keyframes shimmer {

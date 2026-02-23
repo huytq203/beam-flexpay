@@ -1,10 +1,12 @@
-import { SnowflakeIcon, StopOutlined, WarningIcon } from '@components/icons'
+import { SnowflakeIcon, LockOutlined, UnlockOutlined, StopOutlined, WarningIcon } from '@components/icons'
 import { CardComponent, DialogModal, Table } from '@components/index'
 import React from 'react'
 import FormSearch from './components/FormSearch'
 import useEwalletManagement from './hooks/useEwalletManagement'
 import DialogFreeze from './components/DialogFreeze'
 import DialogUnfreeze from './components/DialogUnfreeze'
+import DialogLock from './components/DialogLock'
+import DialogUnlock from './components/DialogUnlock'
 import DialogDeleteWallet from './components/detail-infor/Personal/components/DialogDeleteWallet'
 import DialogFreezeWallet from './components/detail-infor/Personal/components/DialogFreezeWallet'
 
@@ -104,6 +106,46 @@ const EwalletManagement = () => {
         title={
           <span className='flex items-center gap-2 text-green-700'>
             <SnowflakeIcon /> Mở băng số dư ví
+          </span>
+        }
+      />
+
+      <DialogModal
+        onCancel={closeModal}
+        onOk={() => { }}
+        open={modalType === 'lock'}
+        footer={null}
+        content={
+          <DialogLock
+            userId={selectedAccount?.ownerId}
+            ownerName={selectedAccount?.ownerName}
+            onSuccess={closeModal}
+            onCancel={closeModal}
+          />
+        }
+        title={
+          <span className='flex items-center gap-2 text-red-600'>
+            <LockOutlined /> Khóa tài khoản
+          </span>
+        }
+      />
+
+      <DialogModal
+        onCancel={closeModal}
+        onOk={() => { }}
+        open={modalType === 'unlock'}
+        footer={null}
+        content={
+          <DialogUnlock
+            userId={selectedAccount?.ownerId}
+            ownerName={selectedAccount?.ownerName}
+            onSuccess={closeModal}
+            onCancel={closeModal}
+          />
+        }
+        title={
+          <span className='flex items-center gap-2 text-green-700'>
+            <UnlockOutlined /> Mở khóa tài khoản
           </span>
         }
       />

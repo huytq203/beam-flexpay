@@ -4,10 +4,11 @@ import { useGetAccountQuery } from '@services/apiWalletAccount.api'
 import { useState } from 'react'
 import { Column } from '../columns/Column'
 
-type ModalType = 'freeze' | 'unfreeze' | null
+type ModalType = 'freeze' | 'unfreeze' | 'lock' | 'unlock' | null
 
 interface SelectedAccount {
   id: string
+  ownerId?: string
   ownerName?: string
   balance?: number
   holdBalance?: number

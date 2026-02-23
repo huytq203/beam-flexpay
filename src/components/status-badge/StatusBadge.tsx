@@ -13,6 +13,10 @@ const STATUS_CONFIG: Record<StatusKey, { label: string; className: string }> = {
         label: 'Đóng băng',
         className: 'danger-status',
     },
+    [StatusKey.LOCKED]: {
+        label: 'Đóng băng',
+        className: 'info-status',
+    },
 }
 
 interface StatusBadgeProps {
