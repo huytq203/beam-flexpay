@@ -39,6 +39,9 @@ export interface AcountItem {
   version: number
   status: string
   checksum: string
+  lockedReason?: string
+  lockedAt?: string
+  lockedBy?: string
 }
 
 export interface Pageable {

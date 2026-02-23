@@ -57,10 +57,10 @@ const InforUser = () => {
 const InforEwallet = ({data}:props) => {
   if(!data) return null
     const STATUS_CLASS: Record<string, string> = {
-    ACTIVE: 'text-green   font-medium bg-green-100',
-    ERROR: 'text-red  text-xs  font-medium bg-red-100',
-    WAITING: 'text-blue-600  font-medium bg-blue-50-100',
-    REVIEW: 'text-yellow  font-medium bg-yellow-100',
+    ACTIVE: 'text-green text-[12px]  font-medium bg-green-100',
+    LOCKED: 'text-red  text-[12px]  font-medium bg-red-100',
+    WAITING: 'text-blue-600 text-[12px]  font-medium bg-blue-50-100',
+    REVIEW: 'text-yellow text-[12px]  font-medium bg-yellow-100',
   };
    const typeKeyStatus = data?.status as StatusKey
   return (
@@ -81,6 +81,14 @@ const InforEwallet = ({data}:props) => {
           <p className='text-gray-500'>Trạng thái ví:</p>
           <p className={`${STATUS_CLASS[typeKeyStatus]} text-[12px] rounded-md px-2`} >{StatusLabel[data.status as StatusKey]}</p>
         </div>
+        {
+          data.status === StatusKey.LOCKED && (
+            <div className='flex justify-between items-center'>
+              <p className='text-gray-500'>Lý do khóa:</p>
+              <p className="font-medium ">{data?.lockedReason}</p>
+            </div>
+          )
+        }
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Trạng thái EKC:</p>
           <p className="font-medium text-blue-700 bg-blue-100 px-2  rounded-md text-sm">--</p>
