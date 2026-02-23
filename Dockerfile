@@ -4,14 +4,13 @@
 FROM node:18-alpine AS builder
 WORKDIR /app
 
-# Enable Corepack for Yarn 4
+# Enable Corepack for Yarn 4 (specified in package.json packageManager)
 RUN corepack enable
 
 # Copy dependency files first for better layer caching
 COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn .yarn
 
-RUN yarn install --immutable
+RUN yarn install
 
 COPY . .
 
