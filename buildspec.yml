@@ -1,0 +1,56 @@
+version: 0.2
+
+env:
+  variables:
+    DOCKER_BUILDKIT: "1"
+
+phases:
+  pre_build:
+    commands:
+      - echo "=== FlexPay Webportal - Build Started ==="
+      - echo "Commit SHA - $CODEBUILD_RESOLVED_SOURCE_VERSION"
+      - echo "Build Number - $CODEBUILD_BUILD_NUMBER"
+
+      # Login to Amazon ECR
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+
+      # Set image tags
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG="sha-${COMMIT_HASH}"
+      - BUILD_TAG="build-${CODEBUILD_BUILD_NUMBER}"
+
+      # Pull existing image for cache
+      - docker pull $ECR_REPO_URL:latest || true
+
+  build:
+    commands:
+      - echo "Building Docker image..."
+      - |
+        docker build \
+          --cache-from $ECR_REPO_URL:latest \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
+          -t $ECR_REPO_URL:$IMAGE_TAG \
+          -t $ECR_REPO_URL:$BUILD_TAG \
+          -t $ECR_REPO_URL:latest \
+          -f Dockerfile \
+          .
+
+  post_build:
+    commands:
+      - |
+        if [ "$CODEBUILD_BUILD_SUCCEEDING" = "0" ]; then
+          echo "Build failed, skipping push"
+          exit 1
+        fi
+
+      - echo "Pushing to ECR..."
+      - docker push $ECR_REPO_URL:$IMAGE_TAG
+      - docker push $ECR_REPO_URL:$BUILD_TAG
+      - docker push $ECR_REPO_URL:latest
+
+      - echo "=== Build Completed - $ECR_REPO_URL:$IMAGE_TAG ==="
+
+cache:
+  paths:
+    - 'node_modules/**/*'
+    - '.yarn/cache/**/*'

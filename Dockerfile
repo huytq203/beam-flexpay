@@ -1,18 +1,27 @@
-# 1. Build
-FROM node:18-alpine as builder
+# =============================================================================
+# Stage 1: Build
+# =============================================================================
+FROM node:18-alpine AS builder
 WORKDIR /app
 
-COPY package*.json ./
+# Enable Corepack for Yarn 4
+RUN corepack enable
 
-RUN yarn install
+# Copy dependency files first for better layer caching
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn .yarn
+
+RUN yarn install --immutable
 
 COPY . .
 
-CMD ["export", "NODE_OPTIONS=\"--max-old-space-size=4096\""]
-
+# Increase Node memory for production build (React + Antd + TailwindCSS)
+ENV NODE_OPTIONS="--max-old-space-size=8192"
 RUN yarn build
 
-# 2. Serve
+# =============================================================================
+# Stage 2: Serve
+# =============================================================================
 FROM nginx:stable-alpine
 
 COPY --from=builder /app/dist /usr/share/nginx/html
