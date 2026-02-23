@@ -14,9 +14,19 @@ RUN yarn install
 
 COPY . .
 
-# Increase Node memory for production build (React + Antd + TailwindCSS)
-ENV NODE_OPTIONS="--max-old-space-size=8192"
-RUN yarn build
+ENV VITE_APP_NAME=ewallet
+ENV VITE_PORT=8000
+ENV VITE_IMAGE_URL=https://cms.ewallet.devops.beamewa.com.vn/api/admin
+ENV VITE_API_URL=https://cms.ewallet.devops.beamewa.com.vn/api/admin
+ENV VITE_API_LOGIN=https://api.dev.ewallet.flexpay.vn/identity/api/v1/admin
+ENV VITE_API_WALLETCORE=https://api.dev.ewallet.flexpay.vn/wallet-core/api/v1/admin
+ENV VITE_FEE_API_URL=https://api.dev.ewallet.flexpay.vn/fee/api/v1/admin
+ENV VITE_API_MERCHANT=https://api.dev.ewallet.flexpay.vn/merchant/api/v1/admin
+
+ARG DEPLOY_VERSION=1
+ENV VITE_DEPLOY_VERSION=${DEPLOY_VERSION}
+
+RUN NODE_OPTIONS="--max-old-space-size=4096" yarn build
 
 # =============================================================================
 # Stage 2: Serve

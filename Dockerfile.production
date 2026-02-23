@@ -1,9 +1,8 @@
 # Build and Serve
 FROM node:18-alpine
-
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # Enable Corepack for Yarn v4 support
 RUN corepack enable && corepack prepare yarn@4.8.1 --activate
@@ -16,6 +15,18 @@ RUN yarn install --immutable
 
 COPY --chown=node:node . .
 
+ENV VITE_APP_NAME=ewallet
+ENV VITE_PORT=8000
+ENV VITE_IMAGE_URL=https://cms.ewallet.devops.beamewa.com.vn/api/admin
+ENV VITE_API_URL=https://cms.ewallet.devops.beamewa.com.vn/api/admin
+ENV VITE_API_LOGIN=https://api.dev.ewallet.flexpay.vn/identity/api/v1/admin
+ENV VITE_API_WALLETCORE=https://api.dev.ewallet.flexpay.vn/wallet-core/api/v1/admin
+ENV VITE_FEE_API_URL=https://api.dev.ewallet.flexpay.vn/fee/api/v1/admin
+ENV VITE_API_MERCHANT=https://api.dev.ewallet.flexpay.vn/merchant/api/v1/admin
+
+ARG DEPLOY_VERSION=1
+ENV VITE_DEPLOY_VERSION=${DEPLOY_VERSION}
+
 RUN NODE_OPTIONS="--max-old-space-size=6144" yarn build
 
 # Install serve globally for production static file serving
@@ -23,5 +34,4 @@ RUN npm install -g serve
 
 EXPOSE 8000
 
-# Serve static files from dist folder
 CMD ["serve", "-s", "dist", "-l", "8000"]
