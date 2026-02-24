@@ -103,6 +103,9 @@
     "/merchant/merchant-management":"Quản lý Merchant",
     "/merchant/merchant-management/create":"Thêm mới Merchant",
     "/merchant/merchant-management/detail/*":"Chi tiết Merchant",
-    "/merchant/merchant-management/create/*":"Cập nhật Merchant"
+    "/merchant/merchant-management/create/*":"Cập nhật Merchant",
+    "/merchant/merchant-order":"Danh sách Order Merchant",
+    "/merchant/merchant-order/qr/*":"QR Code",
+    "/merchant/dashboard-merchant":"Dashboard Merchant"
   }
 }

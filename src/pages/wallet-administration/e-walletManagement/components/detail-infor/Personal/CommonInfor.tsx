@@ -59,7 +59,7 @@ const InforEwallet = ({data}:props) => {
     const STATUS_CLASS: Record<string, string> = {
     ACTIVE: 'text-green text-[12px]  font-medium bg-green-100',
     LOCKED: 'text-red  text-[12px]  font-medium bg-red-100',
-    WAITING: 'text-blue-600 text-[12px]  font-medium bg-blue-50-100',
+    FROZEN: 'text-blue-600 text-[12px]  font-medium bg-blue-100',
     REVIEW: 'text-yellow text-[12px]  font-medium bg-yellow-100',
   };
    const typeKeyStatus = data?.status as StatusKey
@@ -85,7 +85,7 @@ const InforEwallet = ({data}:props) => {
           data.status === StatusKey.LOCKED && (
             <div className='flex justify-between items-center'>
               <p className='text-gray-500'>Lý do khóa:</p>
-              <p className="font-medium ">{data?.lockedReason}</p>
+              <p className="font-medium text-red ">{data?.lockedReason}</p>
             </div>
           )
         }

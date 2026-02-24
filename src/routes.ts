@@ -110,6 +110,9 @@ import DetailSystemLedger from '@pages/wallet-administration/system-ledger/Detai
 import MerchantManagement from '@pages/merchant-management/merchanr-management/MerchantManagement'
 import MerchantDetail from '@pages/merchant-management/merchanr-management/MerchantDetail'
 import CreateMerchant from '@pages/merchant-management/merchanr-management/CreateMerchant'
+import OrderFeature from '@pages/merchant-management/merchant-order/OrderFeature'
+import OrderQrFeature from '@pages/merchant-management/merchant-order/OrderQrFeature'
+import DashBoardMerchant from '@pages/merchant-management/dashboard-merchant/DashBoard'
 import TestPage from '@pages/test/TestPage'
 
 
@@ -198,12 +201,12 @@ const personalWallet = {
   element: createElement(AppLayout),
   errorElement: createElement(NotFound),
   children: [
-    // root
+
     {
       path: PERSONALWALLET + '/customers-group',
       element: createElement(CustomerGroup)
     },
-    // customers
+
     {
       path: PERSONALWALLET + CUSTOMERS + '/list',
       element: createElement(Customers)
@@ -661,6 +664,10 @@ const merchantManagement = {
       path: MERCHANT,
       children: [
         {
+          path: MERCHANT + '/dashboard-merchant',
+          element: createElement(DashBoardMerchant),
+        },
+        {
           path: MERCHANT + '/merchant-management',
           element: createElement(MerchantManagement),
         },
@@ -679,6 +686,14 @@ const merchantManagement = {
         {
           path: MERCHANT + '/merchant-management/:id',
           element: createElement(MerchantDetail),
+        },
+        {
+          path: MERCHANT + '/merchant-order',
+          element: createElement(OrderFeature),
+        },
+        {
+          path: MERCHANT + '/merchant-order/qr/:id',
+          element: createElement(OrderQrFeature),
         },
       ]
     }

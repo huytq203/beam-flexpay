@@ -12,24 +12,6 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       svgr(),
-      // vitePluginImp({
-      //   optimize: true,
-      //   libList: [
-      //     {
-      //       libName: 'antd',
-      //       libDirectory: 'es',
-      //       style: (name) => `antd/es/${name}/style`
-      //     }
-      //   ]
-      // }),
-      // splitVendorChunkPlugin()
-      // viteCompression({
-      //   verbose: true,
-      //   disable: false,
-      //   threshold: 102400,
-      //   algorithm: 'gzip',
-      //   ext: '.gz'
-      // })
     ],
     build: {
       sourcemap: false,
@@ -94,7 +76,39 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       host: true,
-      port: +PORT || 8000
+      port: +PORT || 8000,
+      proxy: {
+        '/proxy/admin': {
+          target: env.VITE_API_URL?.replace('/api/admin', '') || 'https://cms.ewallet.devops.beamewa.com.vn',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/proxy\/admin/, '/api/admin')
+        },
+        '/proxy/identity': {
+          target: env.VITE_API_LOGIN?.replace('/identity/api/v1/admin', '') || 'https://api.dev.ewallet.flexpay.vn',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/proxy\/identity/, '/identity/api/v1/admin')
+        },
+        '/proxy/wallet-core': {
+          target: env.VITE_API_WALLETCORE?.replace('/wallet-core/api/v1/admin', '') || 'https://api.dev.ewallet.flexpay.vn',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/proxy\/wallet-core/, '/wallet-core/api/v1/admin')
+        },
+        '/proxy/fee': {
+          target: env.VITE_FEE_API_URL?.replace('/fee/api/v1/admin', '') || 'https://api.dev.ewallet.flexpay.vn',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/proxy\/fee/, '/fee/api/v1/admin')
+        },
+        '/proxy/merchant': {
+          target: env.VITE_API_MERCHANT?.replace('/merchant/api/v1/admin', '') || 'https://api.dev.ewallet.flexpay.vn',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/proxy\/merchant/, '/merchant/api/v1/admin')
+        }
+      }
     },
     preview: {
       host: true,
