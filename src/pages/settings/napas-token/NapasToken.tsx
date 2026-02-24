@@ -1,4 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons'
+import { ENV } from '@configs/env'
 import SearchBar from '@components/search-bar/SearchBar'
 import { GUTTER } from '@constants/appConstant'
 import { getAccessTokenCookie } from '@configs/fetchBaseQuery.types'
@@ -175,7 +176,7 @@ const NapasToken = () => {
    */
   const fetchBanks = async (query: any) => {
     const endpoint =
-      `${import.meta.env.VITE_API_URL}/bank?` + new URLSearchParams(query)
+      `${ENV.API_URL}/bank?` + new URLSearchParams(query)
     const accessToken = getAccessTokenCookie()
     const response = await fetch(endpoint, {
       method: 'GET',

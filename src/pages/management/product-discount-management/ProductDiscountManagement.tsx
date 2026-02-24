@@ -1,4 +1,5 @@
 import { BellOutlined } from '@ant-design/icons'
+import { ENV } from '@configs/env'
 import ButtonAdd from '@components/button-add/ButtonAdd'
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import SearchBar from '@components/search-bar/SearchBar'
@@ -147,7 +148,7 @@ function ProductDiscountManagement() {
 
   const fetchDataService = async (query: any) => {
     const endpoint =
-      `${import.meta.env.VITE_API_URL}/service?` + new URLSearchParams(query)
+      `${ENV.API_URL}/service?` + new URLSearchParams(query)
     const accessToken = getAccessTokenCookie()
     const response = await fetch(endpoint, {
       method: 'GET',
@@ -242,7 +243,7 @@ function ProductDiscountManagement() {
 
   const fetchDataProductType = async (query: any) => {
     const endpoint =
-      `${import.meta.env.VITE_API_URL}/product-type?` +
+      `${ENV.API_URL}/product-type?` +
       new URLSearchParams(query)
     const accessToken = getAccessTokenCookie()
     const response = await fetch(endpoint, {
@@ -337,7 +338,7 @@ function ProductDiscountManagement() {
 
   const fetchDataProduct = async (query: any) => {
     const endpoint =
-      `${import.meta.env.VITE_API_URL}/group-product?` +
+      `${ENV.API_URL}/group-product?` +
       new URLSearchParams(query)
     const accessToken = getAccessTokenCookie()
     const response = await fetch(endpoint, {

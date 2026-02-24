@@ -91,7 +91,7 @@ const baseRefreshQuery = fetchBaseQuery({
 })
 
 const baseQueryOld = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_URL,
+  baseUrl: ENV.API_URL,
   prepareHeaders: (headers, { getState }) => {
     const accessToken = Cookies.get(CookieKey.ACCESS_TOKEN)
     if (accessToken) {

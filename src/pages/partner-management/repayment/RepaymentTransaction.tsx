@@ -1,3 +1,4 @@
+import { ENV } from '@configs/env'
 import ButtonExcel from '@components/button-excel/ButtonExcel'
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import ButtonView from '@components/button-view/ButtonView'
@@ -228,7 +229,7 @@ function RepaymentTransaction() {
       }
     }
     fetch(
-      import.meta.env.VITE_API_URL + '/payment-order/export/excel?' + args,
+      ENV.API_URL + '/payment-order/export/excel?' + args,
       requestOptions
     )
       .then((response) => response.blob())
