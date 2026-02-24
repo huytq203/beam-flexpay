@@ -49,14 +49,14 @@ const OrderFeature = () => {
           <>
             <div className="flex justify-between items-end mb-3">
               <span className="font-bold text-xl">Order</span>
-              <ButtonComponent
+              {/* <ButtonComponent
                 onClick={() => openModal('create')}
                 content={
                   <>
                     <PlusCircleOutlined /> Thêm mới
                   </>
                 }
-              />
+              /> */}
             </div>
             <Table
               rowKey={"id"}

@@ -1,10 +1,10 @@
 import { CardComponent, DialogModal, Table } from '@components/index'
 import { SnowflakeIcon } from '@components/icons'
 import React from 'react'
-import DialogFreeze from '@pages/wallet-administration/transaction-management/components/DialogFreeze'
 import FormSearch from './components/FormSearch'
 import { Column } from './columns/FrozenTransactions.column'
 import useFrozenTransactions from './hooks/useFrozenTransactions'
+import DialogFreeze from '../transaction-wallet/components/DialogFreeze'
 
 const FrozenTransactions = () => {
     const {

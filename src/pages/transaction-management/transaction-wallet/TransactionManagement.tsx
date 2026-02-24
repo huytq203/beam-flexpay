@@ -1,6 +1,5 @@
 import { CardComponent, DialogModal, Table } from '@components/index'
 import { ArrowCounterClockwiseIcon, ArrowsCounterClockwiseIcon, FileDoneOutlined, FireIcon, SnowflakeIcon } from '@components/icons'
-import DialogConfirm from '@pages/wallet-administration/transaction-management/components/DialogConfirm'
 import React, { useState } from 'react'
 import DialogFreeze from './components/DialogFreeze'
 import DialogRefund from './components/DialogRefund'
@@ -8,6 +7,7 @@ import FormSearch from './components/FormSearch'
 import UpdateStatusTransaction from './components/UpdateStatusTransaction'
 import Column from './columns/Transaction.column'
 import useTransaction from './hooks/useTransaction'
+import DialogConfirm from './components/DialogConfirm'
 
 const TransactionManagement = () => {
 

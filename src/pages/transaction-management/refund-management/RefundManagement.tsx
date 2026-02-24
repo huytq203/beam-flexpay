@@ -1,9 +1,9 @@
 import { ButtonComponent, CardComponent, DialogModal, ModalComponent, Table } from '@components/index'
-import FormSearch from '@pages/wallet-administration/refund-management/components/FormSearch'
-import Column from '@pages/wallet-administration/refund-management/columns/Refund.column'
 import React from 'react'
 import DetailRefundModal from './components/DetailRefundModal'
 import DialogConfirmRefund from './components/DialogConfirmRefund'
+import Column from './columns/Refund.column'
+import FormSearch from './components/FormSearch'
 
 const RefundManagement = () => {
   const column = Column()

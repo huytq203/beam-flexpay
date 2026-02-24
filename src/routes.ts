@@ -22,6 +22,7 @@ import {
   ROLEMANAGEMENT_V2,
   WALLETADMINISTRATION,
   MERCHANT,
+  TRANSACTIONMANAGEMENT,
 } from '@constants/routersConstant'
 
 import ForgotPassword from '@pages/auth/forgot-password/ForgotPassword'
@@ -98,15 +99,8 @@ import UserManagement from '@pages/role-management-V2/user-management/UserManage
 import { PermissionManagement } from '@pages/role-management-V2/permission-management/PermissionManagement'
 import RoleManagement from '@pages/role-management-V2/role-management/RoleManagement'
 import EwalletManagement from '@pages/wallet-administration/e-walletManagement/EwalletManagement'
-import RefundManagement from '@pages/wallet-administration/refund-management/RefundManagement'
-import TransactionManagement from '@pages/wallet-administration/transaction-management/TransactionManagement'
 import DetailUser from '@pages/wallet-administration/e-walletManagement/DetailUser'
 import ConfirmRKYC from '@pages/wallet-administration/confirm-ekyc/ConfirmEKYC'
-import DetailTransaction from '@pages/wallet-administration/transaction-management/DetailTransaction'
-import FrozenTransactions from '@pages/wallet-administration/frozen-transactions/FrozenTransactions'
-import WithdrawHistory from '@pages/wallet-administration/withdraw-history/WithdrawHistory'
-import SystemLedgerManagement from '@pages/wallet-administration/system-ledger/SystemLedgerManagement'
-import DetailSystemLedger from '@pages/wallet-administration/system-ledger/DetailSystemLedger'
 import MerchantManagement from '@pages/merchant-management/merchanr-management/MerchantManagement'
 import MerchantDetail from '@pages/merchant-management/merchanr-management/MerchantDetail'
 import CreateMerchant from '@pages/merchant-management/merchanr-management/CreateMerchant'
@@ -114,6 +108,13 @@ import OrderFeature from '@pages/merchant-management/merchant-order/OrderFeature
 import OrderQrFeature from '@pages/merchant-management/merchant-order/OrderQrFeature'
 import DashBoardMerchant from '@pages/merchant-management/dashboard-merchant/DashBoard'
 import TestPage from '@pages/test/TestPage'
+import TransactionManagement from '@pages/transaction-management/transaction-wallet/TransactionManagement'
+import FrozenTransactions from '@pages/transaction-management/frozen-transactions/FrozenTransactions'
+import SystemLedgerManagement from '@pages/transaction-management/system-ledger/SystemLedgerManagement'
+import DetailSystemLedger from '@pages/transaction-management/system-ledger/DetailSystemLedger'
+import WithdrawHistory from '@pages/transaction-management/withdraw-history/WithdrawHistory'
+import RefundManagement from '@pages/transaction-management/refund-management/RefundManagement'
+import DetailTransaction from '@pages/transaction-management/transaction-wallet/DetailTransaction'
 
 
 const authentication = {
@@ -630,28 +631,12 @@ const walletAministration = {
       path: WALLETADMINISTRATION,
       children: [
         {
-          path: WALLETADMINISTRATION + '/frozen-transactions',
-          element: createElement(FrozenTransactions)
+          path: WALLETADMINISTRATION + '/transaction-management',
+          element: createElement(TransactionManagement),
         },
       ]
     },
-    {
-      path: WALLETADMINISTRATION,
-      children: [
-        {
-          path: WALLETADMINISTRATION + '/system-ledger',
-          element: createElement(SystemLedgerManagement)
-        },
-        {
-          path: WALLETADMINISTRATION + '/system-ledger/:id',
-          element: createElement(DetailSystemLedger)
-        }
-      ]
-    },
-    {
-      path: WALLETADMINISTRATION + '/withdraw-history',
-      element: createElement(WithdrawHistory)
-    }
+    
   ]
 }
 
@@ -700,6 +685,45 @@ const merchantManagement = {
   ]
 
 }
+const transactionManagement = {
+  path: TRANSACTIONMANAGEMENT,
+  element: createElement(AppLayout),
+  errorElement: createElement(NotFound),
+  children: [
+   
+    {
+      path: TRANSACTIONMANAGEMENT,
+      children: [
+        {
+          path: TRANSACTIONMANAGEMENT + '/frozen-transactions',
+          element: createElement(FrozenTransactions)
+        },
+      ]
+    },
+    {
+      path: TRANSACTIONMANAGEMENT,
+      children: [
+        {
+          path: TRANSACTIONMANAGEMENT + '/system-ledger',
+          element: createElement(SystemLedgerManagement)
+        },
+        {
+          path: TRANSACTIONMANAGEMENT + '/system-ledger/:id',
+          element: createElement(DetailSystemLedger)
+        }
+      ]
+    },
+    {
+      path: TRANSACTIONMANAGEMENT,
+      children: [
+        {
+          path: TRANSACTIONMANAGEMENT + '/withdraw-history',
+          element: createElement(WithdrawHistory)
+        }
+      ]
+    }
+  ]
+}
 
 export const WalletRoutes = createBrowserRouter([
   authentication,
@@ -717,6 +741,7 @@ export const WalletRoutes = createBrowserRouter([
   roleManagementV2,
   walletAministration,
   merchantManagement,
+  transactionManagement,
   {
     path: '/test',
     element: createElement(TestPage),

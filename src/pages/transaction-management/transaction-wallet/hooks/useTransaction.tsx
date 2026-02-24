@@ -1,8 +1,8 @@
 import usePagination from '@hooks/usePagination'
-import { useGetTransactionQuery, useLazyGetTransactionQuery } from '@pages/wallet-administration/transaction-management/services/apiTransactionV2'
 import React, { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FormSearchValues } from '../types/Transaction.type'
+import { useGetTransactionQuery, useLazyGetTransactionQuery } from '../services/apiTransactionV2'
 
 const useTransaction = () => {
   // state

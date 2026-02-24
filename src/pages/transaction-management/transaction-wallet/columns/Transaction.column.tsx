@@ -4,7 +4,7 @@ import { ColumnsType } from "antd/lib/table";
 import { Link, useNavigate, NavigateFunction } from "react-router-dom";
 import { ButtonComponent, TooltipComponent } from "@components/index";
 import { ArrowCounterClockwiseIcon, BroadcastIcon, CheckOutlined, CloseOutlined, DollarOutlined, EyeFilled, FireIcon, PencilLineIcon, SnowflakeIcon } from "@components/icons";
-import { StatusConstants, StatusEnum, StatusKey, StatusType, Transaction_Title, TransactionConstants, TransactionKey, TransactionType } from "@pages/wallet-administration/transaction-management/constants/Transaction.constant";
+import { StatusConstants, StatusEnum, StatusKey, StatusType, Transaction_Title, TransactionConstants, TransactionKey, TransactionType } from "@pages/transaction-management/transaction-wallet/constants/Transaction.constant";
 import { formatNumber, formatCurrency } from "@utils/index";
 const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<TransactionItem> => [
     {
