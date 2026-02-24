@@ -198,12 +198,12 @@ const personalWallet = {
   element: createElement(AppLayout),
   errorElement: createElement(NotFound),
   children: [
-    // root
+
     {
       path: PERSONALWALLET + '/customers-group',
       element: createElement(CustomerGroup)
     },
-    // customers
+ 
     {
       path: PERSONALWALLET + CUSTOMERS + '/list',
       element: createElement(Customers)
