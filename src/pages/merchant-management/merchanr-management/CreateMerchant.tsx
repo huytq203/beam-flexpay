@@ -121,6 +121,7 @@ const CreateMerchant = () => {
               name="code"
               label={<span>Mã merchant <span className="text-red-500">*</span></span>}
               placeholder="Nhập mã merchant"
+              disabled={isEditMode}
             />
             <FormInput
               control={control}
