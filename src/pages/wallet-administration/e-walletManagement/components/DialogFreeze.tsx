@@ -43,8 +43,7 @@ const DialogFreeze = ({
     useEffect(() => {
         if (freezeType === 1) {
 
-            const amount = formatNumber(balance)
-            setValue('amount', amount)
+            setValue('amount', balance)
         } else {
             setValue('amount', 0)
         }
@@ -94,6 +93,8 @@ const DialogFreeze = ({
                         control={control}
                         name="amount"
                         placeholder="Nhập số tiền..."
+                        formatter={(value: string | number | undefined): string => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={(value: string | undefined): number => Number(value?.replace(/,/g, ''))}
                         label={
                             <span>
                                 Số tiền cần đóng băng <span className="text-red-600">*</span>

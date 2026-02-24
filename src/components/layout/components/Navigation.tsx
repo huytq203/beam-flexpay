@@ -16,6 +16,7 @@ import {
   _ROLEMANAGEMENT_V2,
   _WALLETADMINISTRATION,
   _MERCHANT,
+  _TRANSACTIONMANAGEMENT,
 
 } from '@constants/routersConstant'
 import i18n from '@languages/i18n'
@@ -908,28 +909,6 @@ const walletManagement = {
       label: 'Quản lý ví điện tử'
     },
     {
-      key: 'refund-management',
-      icon: (
-        <UsersThreeIcon
-          size={size}
-          weight={weight}
-          color={COlOR}
-        />
-      ),
-      label: "Quản lý hoàn tiền"
-    },
-    {
-      key: 'transaction-management',
-      icon: (
-        <UsersThreeIcon
-          size={size}
-          weight={weight}
-          color={COlOR}
-        />
-      ),
-      label: "Quản lý giao dịch ví"
-    },
-    {
       key: 'confirm-eKYC',
       icon: (
         <UsersThreeIcon
@@ -941,6 +920,44 @@ const walletManagement = {
       label: "Duyệt eKYC"
     },
     {
+      key: 'refund-management',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý hoàn tiền'
+    },
+     {
+      key: 'transaction-management',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý giao dịch ví'
+    },
+  ]
+
+}
+
+
+const transactionManagement = {
+  key: _TRANSACTIONMANAGEMENT,
+  icon: (
+    <ArrowsLeftRightIcon
+      size={size}
+      weight={weight}
+      color={COlOR}
+    />
+  ),
+  label: 'Quản lý giao dịch',
+  children: [
+    {
       key: 'frozen-transactions',
       icon: (
         <UsersThreeIcon
@@ -949,19 +966,9 @@ const walletManagement = {
           color={COlOR}
         />
       ),
-      label: "Quản lý giao dịch đóng băng"
+      label: 'Quản lý giao dịch đóng băng'
     },
-    {
-      key: 'withdraw-history',
-      icon: (
-        <UsersThreeIcon
-          size={size}
-          weight={weight}
-          color={COlOR}
-        />
-      ),
-      label: 'Quản lý lịch sử giao dịch rút tiền'
-    },
+    
     {
       key: 'system-ledger',
       icon: (
@@ -973,11 +980,20 @@ const walletManagement = {
       ),
       label: 'Sổ cái hệ thống'
     },
+   
+    {
+      key: 'withdraw-history',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý lịch sử giao dịch rút tiền'
+    },
   ]
-
 }
-
-
 const merchantManagement = {
   key: _MERCHANT,
   icon: (
@@ -1038,5 +1054,6 @@ export const navigationItems: ItemTypeCustom[] = [
   feeManagementV3,
   roleManagementV2,
   walletManagement,
+  transactionManagement,
   merchantManagement
 ]

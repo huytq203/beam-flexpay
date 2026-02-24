@@ -1,6 +1,6 @@
-import { useGetTransactionByIdQuery } from '@pages/wallet-administration/transaction-management/services/apiTransactionV2'
 import React from 'react'
 import { useParams } from 'react-router-dom'
+import { useGetTransactionByIdQuery } from '../services/apiTransactionV2'
 
 const useDetailTransaction = () => {
     const { id } = useParams()

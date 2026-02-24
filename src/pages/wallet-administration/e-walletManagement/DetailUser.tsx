@@ -7,10 +7,10 @@ import { TAB_CONTENT_MAP } from './constants/TabDetail.constant'
 import { BankFilled, CheckCircleFilled, SnowflakeIcon } from '@components/icons'
 import DialogAccount from './components/detail-infor/Personal/components/DialogAccount'
 import DialogConfirmLinkAccount from './components/detail-infor/Personal/components/DialogConfirmLinkAccount'
-import DialogFreeze from '@pages/wallet-administration/transaction-management/components/DialogFreeze'
 import DialigLockAccount from './components/detail-infor/Personal/components/DialogLockAccount'
 import { AcountItem } from './types/ResponseWalletAccount.type'
 import { formatNumber } from '../../../app/utils/formatNumber'
+import DialogFreeze from '@pages/transaction-management/transaction-wallet/components/DialogFreeze'
 
 
 interface props {
