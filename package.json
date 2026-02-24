@@ -8,7 +8,6 @@
     "lint": "tsc",
     "api": "npx @rtk-query/codegen-openapi openapi-config.js",
     "preview": "vite preview"
-    
   },
   "dependencies": {
     "@ant-design/charts": "^1.4.2",
@@ -46,6 +45,7 @@
     "sass": "^1.56.1",
     "tailwindcss": "3",
     "tailwindcss-animate": "^1.0.7",
+    "vercel": "^50.22.1",
     "vite": "^3.2.3",
     "vite-plugin-chunk-split": "^0.4.7",
     "vite-plugin-compression": "^0.5.1",
