@@ -1,0 +1,28 @@
+{
+    "rewrites": [
+        {
+            "source": "/proxy/admin/:path*",
+            "destination": "https://cms.ewallet.devops.beamewa.com.vn/api/admin/:path*"
+        },
+        {
+            "source": "/proxy/identity/:path*",
+            "destination": "https://api.dev.ewallet.flexpay.vn/identity/api/v1/admin/:path*"
+        },
+        {
+            "source": "/proxy/wallet-core/:path*",
+            "destination": "https://api.dev.ewallet.flexpay.vn/wallet-core/api/v1/admin/:path*"
+        },
+        {
+            "source": "/proxy/fee/:path*",
+            "destination": "https://api.dev.ewallet.flexpay.vn/fee/api/v1/admin/:path*"
+        },
+        {
+            "source": "/proxy/merchant/:path*",
+            "destination": "https://api.dev.ewallet.flexpay.vn/merchant/api/v1/admin/:path*"
+        },
+        {
+            "source": "/((?!proxy/).*)",
+            "destination": "/index.html"
+        }
+    ]
+}
