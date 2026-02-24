@@ -2,11 +2,12 @@ import { Radio } from '@components/index'
 import { FormDatePicker, FormInputNumber, FormRadio, FormTextArea } from '@components/form'
 import { WarningIcon } from '@components/icons'
 import React from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { usePostFreezeMutation } from '@services/apiWalletAccount.api'
 import { notification } from 'antd'
-import { formatCurrency } from '@utils/formatNumber'
+import { formatCurrency, formatNumber } from '@utils/formatNumber'
 import { ButtonComponent } from '@components/index'
 import { useMessage } from '@hooks/useMessage'
 import { FreezeSchema, FreezeFormValues } from '../schemas/Freeze.schema'
@@ -33,11 +34,21 @@ const DialogFreeze = ({
 
     const { successMess } = useMessage()
 
-    const { control, watch, handleSubmit, reset } = useForm<FreezeFormValues>({
-        defaultValues: { freezeType: 1, reason: '' },
+    const { control, watch, handleSubmit, reset, setValue } = useForm<FreezeFormValues>({
+        defaultValues: { freezeType: 1, amount: balance, reason: '' },
         resolver: zodResolver(FreezeSchema),
     })
     const freezeType = watch('freezeType')
+
+    useEffect(() => {
+        if (freezeType === 1) {
+
+            const amount = formatNumber(balance)
+            setValue('amount', amount)
+        } else {
+            setValue('amount', 0)
+        }
+    }, [freezeType, balance])
 
     const [postFreeze, { isLoading }] = usePostFreezeMutation()
 

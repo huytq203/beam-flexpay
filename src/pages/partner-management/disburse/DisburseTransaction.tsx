@@ -1,4 +1,3 @@
-import { ENV } from '@configs/env'
 import ButtonExcel from '@components/button-excel/ButtonExcel'
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
@@ -83,7 +82,7 @@ function DisburseTransaction() {
       args += key + '=' + (search as any)[key] + '&'
     }
     fetch(
-      ENV.API_URL + '/payment-order/export/excel?' + args,
+      import.meta.env.VITE_API_URL + '/payment-order/export/excel?' + args,
       requestOptions
     )
       .then((response) => response.blob())

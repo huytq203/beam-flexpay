@@ -1,5 +1,4 @@
 import { AuditLogManagementModal } from '@components/audit-log/AuditLogManagementModal'
-import { ENV } from '@configs/env'
 import ButtonExcel from '@components/button-excel/ButtonExcel'
 import ButtonHistory from '@components/button-history/ButtonHistory'
 import ButtonSearch from '@components/button-search/ButtonSearch'
@@ -296,7 +295,7 @@ function BankManagement() {
       }
     }
     fetch(
-      ENV.API_URL + '/bank/export/excel?' + args,
+      import.meta.env.VITE_API_URL + '/bank/export/excel?' + args,
       requestOptions
     )
       .then((response) => response.blob())

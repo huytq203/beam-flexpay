@@ -1,5 +1,4 @@
 import { SearchOutlined } from '@ant-design/icons'
-import { ENV } from '@configs/env'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import { GUTTER } from '@constants/appConstant'
 import { getAccessTokenCookie } from '@configs/fetchBaseQuery.types'
@@ -95,7 +94,7 @@ const Product = () => {
 
   const fetchDataService = async (query: any) => {
     const endpoint =
-      `${ENV.API_URL}/service?` + new URLSearchParams(query)
+      `${import.meta.env.VITE_API_URL}/service?` + new URLSearchParams(query)
     const accessToken = getAccessTokenCookie()
     const response = await fetch(endpoint, {
       method: 'GET',
@@ -178,7 +177,7 @@ const Product = () => {
 
   const fetchDataProductType = async (query: any) => {
     const endpoint =
-      `${ENV.API_URL}/product-type?` +
+      `${import.meta.env.VITE_API_URL}/product-type?` +
       new URLSearchParams(query)
     const accessToken = getAccessTokenCookie()
     const response = await fetch(endpoint, {

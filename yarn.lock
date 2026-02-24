@@ -7654,6 +7654,7 @@ __metadata:
     react-router-dom: "npm:^6.4.3"
     react-scan: "npm:^0.4.3"
     sass: "npm:^1.56.1"
+    sweetalert2: "npm:^11.26.20"
     tailwindcss: "npm:3"
     tailwindcss-animate: "npm:^1.0.7"
     typescript: "npm:^4.6.4"
@@ -12873,6 +12874,13 @@ __metadata:
   version: 2.0.4
   resolution: "svg-parser@npm:2.0.4"
   checksum: 10c0/02f6cb155dd7b63ebc2f44f36365bc294543bebb81b614b7628f1af3c54ab64f7e1cec20f06e252bf95bdde78441ae295a412c68ad1678f16a6907d924512b7a
+  languageName: node
+  linkType: hard
+
+"sweetalert2@npm:^11.26.20":
+  version: 11.26.20
+  resolution: "sweetalert2@npm:11.26.20"
+  checksum: 10c0/89545e6cd5f102694661465799820f973a072866df6f55102359b0441bdfa11717985386ed71e11d1b07c5d23625a9b262f71f785da3031a333a27220522d74c
   languageName: node
   linkType: hard
 

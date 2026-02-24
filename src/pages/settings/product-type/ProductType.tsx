@@ -1,5 +1,4 @@
 import { SearchOutlined } from '@ant-design/icons'
-import { ENV } from '@configs/env'
 import ButtonUpdate from '@components/button-update/ButtonUpdate'
 import SearchBar from '@components/search-bar/SearchBar'
 import { GUTTER } from '@constants/appConstant'
@@ -131,7 +130,7 @@ const ProductType = () => {
 
   const fetchDataProductType = async (query: any) => {
     const endpoint =
-      `${ENV.API_URL}/product-type?` +
+      `${import.meta.env.VITE_API_URL}/product-type?` +
       new URLSearchParams(query)
     const accessToken = getAccessTokenCookie()
     const response = await fetch(endpoint, {

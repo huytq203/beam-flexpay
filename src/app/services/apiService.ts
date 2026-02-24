@@ -53,7 +53,8 @@ export const apiMerchant = createApi({
   reducerPath: 'merchant',
   baseQuery: fetchBaseQueryMerchant,
   tagTypes: [
-    'merchant'
+    'merchant',
+    'Order'
   ],
   endpoints: () => ({}),
   refetchOnMountOrArgChange: true

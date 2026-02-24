@@ -114,6 +114,7 @@ export const RoleManagementColumn = ({
               type='default'
               icon={<EditOutlined />}
               onClick={() => handleOpenUpdate(record)}
+              hidden
             />
           </TooltipComponent>
           <TooltipComponent title='Xem chi tiết'>

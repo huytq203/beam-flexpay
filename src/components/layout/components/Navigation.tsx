@@ -990,6 +990,17 @@ const merchantManagement = {
   label: 'Quản lý merchant ',
   children: [
     {
+      key: 'dashboard-merchant',
+      icon: (
+        <ChartBarIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Tổng quan'
+    },
+    {
       key: 'merchant-management',
       icon: (
         <UsersThreeIcon
@@ -999,7 +1010,19 @@ const merchantManagement = {
         />
       ),
       label: 'Quản lý danh sách merchant'
-    },]
+    },
+    {
+      key: 'merchant-order',
+      icon: (
+        <ClipboardTextIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý đơn hàng'
+    },
+  ]
 }
 
 

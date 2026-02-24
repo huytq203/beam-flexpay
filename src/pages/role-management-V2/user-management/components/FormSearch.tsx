@@ -60,6 +60,7 @@ const FormSearch = ({
               setOpenModalAdd(true)
               setModeAction('add')
             }}
+            hidden
           />
           <ButtonComponent
             type='default'
