@@ -12,24 +12,6 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       svgr(),
-      // vitePluginImp({
-      //   optimize: true,
-      //   libList: [
-      //     {
-      //       libName: 'antd',
-      //       libDirectory: 'es',
-      //       style: (name) => `antd/es/${name}/style`
-      //     }
-      //   ]
-      // }),
-      // splitVendorChunkPlugin()
-      // viteCompression({
-      //   verbose: true,
-      //   disable: false,
-      //   threshold: 102400,
-      //   algorithm: 'gzip',
-      //   ext: '.gz'
-      // })
     ],
     build: {
       sourcemap: false,
