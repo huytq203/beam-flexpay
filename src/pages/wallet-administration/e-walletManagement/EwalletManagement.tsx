@@ -1,5 +1,6 @@
 import { SnowflakeIcon, LockOutlined, UnlockOutlined, StopOutlined, WarningIcon } from '@components/icons'
 import { CardComponent, DialogModal, Table } from '@components/index'
+import { SkeletonTable, SkeletonFilterGroup, SkeletonSearchGroup } from '@components/ui/skeletons/Skeleton'
 import React from 'react'
 import FormSearch from './components/FormSearch'
 import useEwalletManagement from './hooks/useEwalletManagement'
@@ -23,34 +24,49 @@ const EwalletManagement = () => {
     modalType,
     selectedAccount,
     closeModal,
+    loadingGetAccount
   } = useEwalletManagement()
 
   return (
     <div className='flex flex-col gap-3'>
-      <CardComponent content={<FormSearch handleSearch={handleSearch} />} />
+      <CardComponent
+        content={
+          loadingGetAccount ? (
+            <SkeletonSearchGroup items={3}  className='grid grid-cols-1 md:grid-cols-4 gap-4 mb-4'/>
+          ) : (
+            <>
+              <FormSearch handleSearch={handleSearch} />
+            </>
+          )
+        }
+      />
 
       <CardComponent
         content={
-          <>
-            <Table
-              rowKey='id'
-              scroll={{ x: 'max-content' }}
-              size='small'
-              columns={column}
-              bordered
-              dataSource={dataSource}
-              pagination={{
-                current: page,
-                showSizeChanger: true,
-                pageSize: size,
-                total: getAccount?.data?.totalElements,
-                onChange: (page, pageSize) => {
-                  setPage(page)
-                  setPageSize(pageSize)
-                },
-              }}
-            />
-          </>
+          loadingGetAccount ? (
+            <SkeletonTable columns={column?.length || 5} rows={size || 5} />
+          ) : (
+            <>
+              <Table
+                rowKey='id'
+                scroll={{ x: 'max-content' }}
+                size='small'
+                columns={column}
+                bordered
+                dataSource={dataSource}
+                pagination={{
+                  current: page,
+                  showSizeChanger: true,
+                  pageSize: size,
+                  total: getAccount?.data?.totalElements,
+                  onChange: (page, pageSize) => {
+                    setPage(page)
+                    setPageSize(pageSize)
+                  },
+                }}
+              />
+            </>
+          )
         }
       />
 

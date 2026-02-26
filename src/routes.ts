@@ -108,13 +108,13 @@ import OrderFeature from '@pages/merchant-management/merchant-order/OrderFeature
 import OrderQrFeature from '@pages/merchant-management/merchant-order/OrderQrFeature'
 import DashBoardMerchant from '@pages/merchant-management/dashboard-merchant/DashBoard'
 import TestPage from '@pages/test/TestPage'
-import TransactionManagement from '@pages/transaction-management/transaction-wallet/TransactionManagement'
+import TransactionManagement from '@pages/wallet-administration/transaction-wallet/TransactionManagement'
 import FrozenTransactions from '@pages/transaction-management/frozen-transactions/FrozenTransactions'
 import SystemLedgerManagement from '@pages/transaction-management/system-ledger/SystemLedgerManagement'
 import DetailSystemLedger from '@pages/transaction-management/system-ledger/DetailSystemLedger'
 import WithdrawHistory from '@pages/transaction-management/withdraw-history/WithdrawHistory'
 import RefundManagement from '@pages/transaction-management/refund-management/RefundManagement'
-import DetailTransaction from '@pages/transaction-management/transaction-wallet/DetailTransaction'
+import DetailTransaction from '@pages/wallet-administration/transaction-wallet/DetailTransaction'
 
 
 const authentication = {
@@ -594,25 +594,16 @@ const walletAministration = {
 
       ]
     },
-    {
-      path: WALLETADMINISTRATION,
-      children: [
-        {
-          path: WALLETADMINISTRATION + '/refund-management',
-          element: createElement(RefundManagement)
-        }
 
-      ]
-    },
     {
       path: WALLETADMINISTRATION,
       children: [
         {
-          path: WALLETADMINISTRATION + '/transaction-management',
+          path: WALLETADMINISTRATION + '/transaction-wallet',
           element: createElement(TransactionManagement)
         },
         {
-          path: WALLETADMINISTRATION + '/transaction-management/:id',
+          path: WALLETADMINISTRATION + '/transaction-wallet/:id',
           element: createElement(DetailTransaction)
         }
 
@@ -631,12 +622,12 @@ const walletAministration = {
       path: WALLETADMINISTRATION,
       children: [
         {
-          path: WALLETADMINISTRATION + '/transaction-management',
+          path: WALLETADMINISTRATION + '/transaction-wallet',
           element: createElement(TransactionManagement),
         },
       ]
     },
-    
+
   ]
 }
 
@@ -685,12 +676,13 @@ const merchantManagement = {
   ]
 
 }
+
 const transactionManagement = {
   path: TRANSACTIONMANAGEMENT,
   element: createElement(AppLayout),
   errorElement: createElement(NotFound),
   children: [
-   
+
     {
       path: TRANSACTIONMANAGEMENT,
       children: [
@@ -698,6 +690,16 @@ const transactionManagement = {
           path: TRANSACTIONMANAGEMENT + '/frozen-transactions',
           element: createElement(FrozenTransactions)
         },
+      ]
+    },
+    {
+      path: TRANSACTIONMANAGEMENT,
+      children: [
+        {
+          path: TRANSACTIONMANAGEMENT + '/refund-management',
+          element: createElement(RefundManagement)
+        }
+
       ]
     },
     {

@@ -15,6 +15,12 @@ export const Skeleton: React.FC<SkeletonProps> = ({ className = '' }) => {
   );
 };
 
+/**
+ * 
+ * @param lines số lượng dòng
+ * @param className class name cho ô chứa
+ * @returns 
+ */
 export const SkeletonText: React.FC<{ lines?: number; className?: string }> = ({
   lines = 3,
   className = '',
@@ -45,6 +51,11 @@ export const SkeletonStats: React.FC = () => {
   );
 };
 
+/**
+ * 
+ * @param className class name cho ô chứa
+ * @returns 
+ */
 export const SkeletonCard: React.FC<{ className?: string }> = ({ className = '' }) => {
   return (
     <div className={`bg-white rounded-xl shadow-md p-6 border border-gray-100 ${className}`}>
@@ -56,15 +67,19 @@ export const SkeletonCard: React.FC<{ className?: string }> = ({ className = '' 
   );
 };
 
-
-
+/**
+ * 
+ * @param rows số lượng hàng
+ * @param columns số lượng cột
+ * @returns 
+ */
 export const SkeletonTable: React.FC<{ rows?: number; columns?: number }> = ({
   rows = 5,
   columns = 3,
 }) => {
   return (
     <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-      <Skeleton className="h-6 w-48 mb-4" />
+      {/* <Skeleton className="h-6 w-48 mb-4" /> */}
 
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -94,6 +109,12 @@ export const SkeletonTable: React.FC<{ rows?: number; columns?: number }> = ({
   );
 };
 
+/**
+ * 
+ * @param className class name cho ô chứa
+ * @param hasLabel có hiển thị label không
+ * @returns 
+ */
 export const SkeletonInput: React.FC<{ className?: string; hasLabel?: boolean }> = ({
   className = '',
   hasLabel = true,
@@ -113,17 +134,23 @@ export const SkeletonButton: React.FC<{
   className = '',
   size = 'md',
 }) => {
-  const sizeClasses = {
-    sm: 'h-8 w-20',
-    md: 'h-10 w-24',
-    lg: 'h-12 w-32',
+    const sizeClasses = {
+      sm: 'h-8 w-28',
+      md: 'h-10 w-32',
+      lg: 'h-12 w-36',
+    };
+
+    return (
+      <Skeleton className={`${sizeClasses[size]} rounded-md ${className}`} />
+    );
   };
-
-  return (
-    <Skeleton className={`${sizeClasses[size]} rounded-md ${className}`} />
-  );
-};
-
+  
+/**
+ * 
+ * @param items số lượng ô input
+ * @param className class name cho ô chứa
+ * @returns 
+ */
 export const SkeletonFilterGroup: React.FC<{
   items?: number;
   className?: string;
@@ -131,21 +158,64 @@ export const SkeletonFilterGroup: React.FC<{
   items = 4,
   className = '',
 }) => {
-  return (
-    <div className={`bg-white rounded-xl shadow-md p-6 border border-gray-100 ${className}`}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        {Array.from({ length: items }).map((_, index) => (
-          <SkeletonInput key={index} />
-        ))}
-      </div>
+    return (
+      <div className={`bg-white rounded-xl shadow-md p-6 border border-gray-100 ${className}`}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          {Array.from({ length: items }).map((_, index) => (
+            <SkeletonInput key={index} />
+          ))}
+        </div>
 
-      <div className="flex flex-wrap gap-3 items-center">
-        <SkeletonButton size="md" />
-        <SkeletonButton size="md" />
-        <div className="ml-auto">
-          <SkeletonButton size="lg" />
+        <div className="flex flex-wrap gap-3 items-center">
+          <SkeletonButton size="md" />
+          <SkeletonButton size="md" />
+          <div className="ml-auto">
+            <SkeletonButton size="lg" />
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
+  /**
+   * 
+   * @param items số lượng ô input
+   * @param itemButton số lượng ô button
+   * @param className class name cho ô chứa
+   * @param positionButton vị trí button
+   * grid grid-cols-1 md:grid-cols-4 gap-4 mb-4
+   * @returns 
+   */
+export const SkeletonSearchGroup: React.FC<{
+  items?: number;
+  itemButton?: number;
+  className?: string;
+  positionButton?: 'start' | 'end' | 'center';
+}> = ({
+  items = 4,
+  itemButton = 2,
+  className = '',
+  positionButton = '',
+}) => {
+    return (
+      <div
+        className={`bg-white rounded-xl shadow-md p-6 border  border-gray-100`}
+      >
+        <div className={className || 'grid grid-cols-1 md:grid-cols-4 gap-4 mb-4'}>
+          {Array.from({ length: items }).map((_, index) => (
+            <SkeletonInput key={index} />
+          ))}
+
+          <div className={`${positionButton ? 'col-span-full' :' '} flex justify-${positionButton ? positionButton : 'between'} gap-2 items-end  mt-4 md:mt-0`}>
+            {
+              Array.from({ length: itemButton }).map((_, index) => (
+                <SkeletonButton
+                  key={index}
+                  size='md'
+                />
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    );
+  };

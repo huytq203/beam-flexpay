@@ -8,6 +8,7 @@ import UpdateStatusTransaction from './components/UpdateStatusTransaction'
 import Column from './columns/Transaction.column'
 import useTransaction from './hooks/useTransaction'
 import DialogConfirm from './components/DialogConfirm'
+import { SkeletonFilterGroup, SkeletonSearchGroup, SkeletonTable } from '@components/ui/skeletons/Skeleton'
 
 const TransactionManagement = () => {
 
@@ -20,14 +21,24 @@ const TransactionManagement = () => {
     setPageSize,
 
     navigate,
-    handleSearch
+    handleSearch,
+    isLoadingGetTransaction
   } = useTransaction()
   // const total=dataSource.
   const columns = Column({navigate})
   return (
     <div className='flex flex-col gap-3'>
-      <CardComponent content={<FormSearch handleSearch={handleSearch} />} />
       <CardComponent content={
+        isLoadingGetTransaction ? (
+          <SkeletonSearchGroup items={3} className='grid grid-cols-1 md:grid-cols-4  gap-4 mb-4' />
+        ) : (
+          <FormSearch handleSearch={handleSearch} />
+        )
+      } />
+      <CardComponent content={
+        isLoadingGetTransaction ? (
+          <SkeletonTable columns={columns?.length || 10} rows={pageSize || 5} />
+        ) : (
         <Table
         bordered
         size='small'
@@ -44,7 +55,7 @@ const TransactionManagement = () => {
             setPageSize(pageSize)
           }
         }}
-      />} 
+      />)} 
       />
       <DialogModal onCancel={() => { }} onOk={() => { }} open={false} content={<DialogFreeze />} title={<span className='flex items-center gap-2 text-blue-700'><SnowflakeIcon size={18} />Đóng băng giao dịch</span>} />
       <DialogModal onCancel={() => { }} onOk={() => { }} open={false} content={<DialogRefund />} title={<span className='flex items-center gap-2 text-orange-700'><ArrowCounterClockwiseIcon size={18} />Hoàn tiền giao dịch</span>} />

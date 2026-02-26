@@ -7,6 +7,7 @@ import {
     PRODUCTS,
     ROLEMANAGEMENT,
     ROLEMANAGEMENT_V2,
+    TRANSACTIONMANAGEMENT,
     WALLETADMINISTRATION
 } from '@constants/routersConstant'
 import { BaseQueryApi, fetchBaseQuery } from '@reduxjs/toolkit/query'
@@ -243,6 +244,12 @@ export const WHITE_LIST: WhiteListItem[] = [
     { pathname: ROLEMANAGEMENT_V2 + '/permission-management', requestUrl: '/roles' },
     { pathname: ROLEMANAGEMENT_V2 + '/role-management', requestUrl: '/permissions' },
     { pathname: ROLEMANAGEMENT_V2 + '/role-management', requestUrl: '/roles' },
+
+    { pathname: WALLETADMINISTRATION + '/e-walletManagement', requestUrl: '/wallet/accounts' },
+    { pathname: WALLETADMINISTRATION + '/transaction-wallet', requestUrl: '/wallet/transactions' },
+
+    { pathname: TRANSACTIONMANAGEMENT + '/frozen-transactions', requestUrl: '/wallet/freezes' },
+    { pathname: TRANSACTIONMANAGEMENT + '/system-ledger', requestUrl: '/wallet/entries' },
 
 
 

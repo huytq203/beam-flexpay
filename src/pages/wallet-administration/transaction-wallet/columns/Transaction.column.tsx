@@ -4,7 +4,7 @@ import { ColumnsType } from "antd/lib/table";
 import { Link, useNavigate, NavigateFunction } from "react-router-dom";
 import { ButtonComponent, TooltipComponent } from "@components/index";
 import { ArrowCounterClockwiseIcon, BroadcastIcon, CheckOutlined, CloseOutlined, DollarOutlined, EyeFilled, FireIcon, PencilLineIcon, SnowflakeIcon } from "@components/icons";
-import { StatusConstants, StatusEnum, StatusKey, StatusType, Transaction_Title, TransactionConstants, TransactionKey, TransactionType } from "@pages/transaction-management/transaction-wallet/constants/Transaction.constant";
+import { StatusConstants, StatusEnum, StatusKey, StatusType, Transaction_Title, TransactionConstants, TransactionKey, TransactionType } from "@pages/wallet-administration/transaction-wallet/constants/Transaction.constant";
 import { formatNumber, formatCurrency } from "@utils/index";
 const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<TransactionItem> => [
     {
@@ -172,7 +172,7 @@ const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<Trans
                 <div className="flex justify-start items-center gap-1">
                     <TooltipComponent title='Xem chi tiết'>
                         <ButtonComponent onClick={() =>
-                            navigate(`/wallet-administration/transaction-management/${record.id}`)} size='small' className='bg-blue-50 !border border-blue-600 text-blue-600 hover:!bg-blue-100 hover:!text-blue-600 ' icon={<EyeFilled />} />
+                            navigate(`/wallet-administration/transaction-wallet/${record.id}`)} size='small' className='bg-blue-50 !border border-blue-600 text-blue-600 hover:!bg-blue-100 hover:!text-blue-600 ' icon={<EyeFilled />} />
                     </TooltipComponent>
                     {statusKey === StatusConstants.SUCCESS &&
                         <TooltipComponent title='Hoàn tiền'>

@@ -9,7 +9,7 @@ const useFrozenTransactions = () => {
     defaultSort: 'createdAt',
   })
 
-  const { data, isFetching } = useGetFreezesQuery({ ...params, ...filter })
+  const { data, isFetching ,isLoading} = useGetFreezesQuery({ ...params, ...filter })
 
   const totalElements = data?.totalElements
 
@@ -36,6 +36,7 @@ const useFrozenTransactions = () => {
     setPageSize,
     isFetching,
     handleSearch,
+    isLoading
   }
 }
 

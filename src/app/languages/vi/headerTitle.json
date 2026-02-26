@@ -92,14 +92,16 @@
     "/role-v2/permission-management":"Quản lý nhóm quyền quản trị",
 
     "/wallet-administration/e-walletManagement":"Quản lý ví điện tử",
-    "/wallet-administration/refund-management":"Quản lý hoàn tiền",
-    "/wallet-administration/transaction-management":"Quản lý giao dịch ví",
-    "/wallet-administration/transaction-management/*":"Chi tiết giao dịch ",
+    "/wallet-administration/transaction-wallet":"Quản lý giao dịch ví",
+    "/wallet-administration/transaction-wallet/*":"Chi tiết giao dịch ",
     "/wallet-administration/confirm-eKYC":"Duyệt eKYC",
+    "/wallet-administration/e-walletManagement/*":"Chi tiết ví điện tử",
+
+    "/transaction-management/refund-management":"Quản lý hoàn tiền",
     "/transaction-management/withdraw-history":"Quản lý lịch sử giao dịch rút tiền",
     "/transaction-management/frozen-transactions":"Quản lý giao dịch phí đóng băng",
-    "/wallet-administration/e-walletManagement/*":"Chi tiết ví điện tử",
     "/transaction-management/system-ledger":"Sổ cái hệ thống",
+    
     "/merchant/merchant-management":"Quản lý Merchant",
     "/merchant/merchant-management/create":"Thêm mới Merchant",
     "/merchant/merchant-management/detail/*":"Chi tiết Merchant",

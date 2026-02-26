@@ -10,7 +10,7 @@ import DialogConfirmLinkAccount from './components/detail-infor/Personal/compone
 import DialigLockAccount from './components/detail-infor/Personal/components/DialogLockAccount'
 import { AcountItem } from './types/ResponseWalletAccount.type'
 import { formatNumber } from '../../../app/utils/formatNumber'
-import DialogFreeze from '@pages/transaction-management/transaction-wallet/components/DialogFreeze'
+import DialogFreeze from '@pages/wallet-administration/transaction-wallet/components/DialogFreeze'
 
 
 interface props {
@@ -18,7 +18,7 @@ interface props {
 }
 const InforUser = ({ data }: props) => {
   if (!data) return null
-  
+
   return (
     <>
       <div className='flex justify-between'>
@@ -39,10 +39,10 @@ const InforUser = ({ data }: props) => {
         <div className='flex flex-col items-end text-gray-600 '>
           <p className='font-medium'>Tổng số dư khả dụng</p>
           <p className='flex justify-end items-end gap-1'>
-            <span className='text-green-700 text-2xl font-bold'>{formatNumber(data.availableBalance??(data.balance-data.holdBalance))}</span>
+            <span className='text-green-700 text-2xl font-bold'>{formatNumber(data.availableBalance ?? (data.balance - data.holdBalance))}</span>
             <span className='text-sm font-bold'>{data.currency}</span>
           </p>
-          <p className='text-red-700 '>* Đang đóng băng: {formatNumber(data.holdBalance)+' '+ data.currency} </p>
+          <p className='text-red-700 '>* Đang đóng băng: {formatNumber(data.holdBalance) + ' ' + data.currency} </p>
         </div>
       </div>
     </>
@@ -52,13 +52,13 @@ const InforUser = ({ data }: props) => {
 const DetailUser = () => {
   const { setActiveKey, activeKey, getAccountById } = useDetailUser()
   const ownerType = getAccountById?.data?.ownerType;
-  
+
   const content = useMemo(() => {
     const tabContent = TAB_CONTENT_MAP[activeKey]?.[ownerType]
     if (!tabContent) return null
     if (typeof tabContent === 'function') {
       // Truyền nhiều data sources vào đây khi cần
-      return tabContent({ 
+      return tabContent({
         accountData: getAccountById?.data,
         // transactionData: getTransactions?.data,
         // bankAccountData: getBankAccounts?.data,

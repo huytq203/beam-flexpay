@@ -27,6 +27,7 @@ import { useFeeAssignmentForm } from '@pages/fee-managerment-v3/fee-assignment/h
 import { ComponentDetail } from '@pages/fee-managerment-v3/fee-assignment/components/ComponentDetail'
 import { skipToken } from '@reduxjs/toolkit/query'
 import InforPolicy, { InfoPolicyRef } from '@pages/fee-managerment-v3/components/InfoPolicy'
+import useHandle from '../hook/useHandle'
 
 interface FormInforAddProps {
   svg: (
@@ -79,7 +80,7 @@ export const FormInforAdd = ({
     resolver: zodResolver(feeAssignSchema),
     defaultValues: DEFAULT_FORM_VALUES
   })
-
+  const { handleChangePolicy } = useHandle()
   const [openModal, setOpenModal] = React.useState(false)
   const [selectedPolicyId, setSelectedPolicyId] = React.useState<string>('')
 
@@ -103,6 +104,7 @@ export const FormInforAdd = ({
   const handleLocalPolicySelect = (feePolicyId: string) => {
     setValue('feePolicyId', feePolicyId)
     setSelectedPolicyId(feePolicyId)
+    handleChangePolicy(feePolicyId)
     onPolicySelected?.(feePolicyId)
   }
 
@@ -256,7 +258,7 @@ const FeeAssignAdd = () => {
           content={
             <>
               <p className='font-medium text-[16px]'>
-                2. Thông tin thành phần {`(${policyData?.name || ''})`}
+                2. Thông tin thành phần {policyData?.name && `(${policyData?.name})`}
               </p>
 
               {(feeComponentData?.length ?? 0) > 0 ? (

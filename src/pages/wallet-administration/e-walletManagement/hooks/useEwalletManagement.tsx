@@ -21,7 +21,7 @@ const useEwalletManagement = () => {
   const [modalType, setModalType] = useState<ModalType>(null)
   const [selectedAccount, setSelectedAccount] = useState<SelectedAccount | null>(null)
 
-  const { data: getAccount } = useGetAccountQuery({ ...params, ...filter })
+  const { data: getAccount,isLoading:loadingGetAccount } = useGetAccountQuery({ ...params, ...filter })
 
   const handleSearch = (data: FormSearchValues) => {
     setFilter(data)
@@ -57,6 +57,7 @@ const useEwalletManagement = () => {
     modalType,
     selectedAccount,
     closeModal,
+    loadingGetAccount
   }
 }
 

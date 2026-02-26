@@ -4,7 +4,8 @@ import React from 'react'
 import FormSearch from './components/FormSearch'
 import { Column } from './columns/FrozenTransactions.column'
 import useFrozenTransactions from './hooks/useFrozenTransactions'
-import DialogFreeze from '../transaction-wallet/components/DialogFreeze'
+import DialogFreeze from './components/DialogFreeze'
+import { SkeletonSearchGroup, SkeletonTable } from '@components/ui/skeletons/Skeleton'
 
 const FrozenTransactions = () => {
     const {
@@ -16,15 +17,18 @@ const FrozenTransactions = () => {
         setPageSize,
         isFetching,
         handleSearch,
+        isLoading
     } = useFrozenTransactions()
 
     const columns = Column()
 
     return (
         <>
-            <CardComponent className="mb-3" content={<FormSearch onSearch={handleSearch} />} />
+            <CardComponent className="mb-3" content={
+                isLoading ? <SkeletonSearchGroup className=' grid grid-cols-1 md:grid-cols-4 gap-4 mb-4' positionButton='end'/> : <FormSearch onSearch={handleSearch} />} />
             <CardComponent
                 content={
+                      isLoading ? <SkeletonTable columns={8} /> :
                     <Table
                         columns={columns}
                         size="small"

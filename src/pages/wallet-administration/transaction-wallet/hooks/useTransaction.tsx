@@ -17,7 +17,7 @@ const useTransaction = () => {
   // constants
 
   // api
-  const { data: dataTransaction } = useGetTransactionQuery({...params, ...filter})
+  const { data: dataTransaction, isLoading: isLoadingGetTransaction } = useGetTransactionQuery({...params, ...filter})
   const [getSearchTransaction] = useLazyGetTransactionQuery()
 
   // logic
@@ -47,7 +47,8 @@ const useTransaction = () => {
     setPageSize,
 
     navigate,
-    handleSearch
+    handleSearch,
+    isLoadingGetTransaction
   }
 }
 
