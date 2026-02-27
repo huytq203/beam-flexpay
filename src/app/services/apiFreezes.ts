@@ -1,35 +1,30 @@
 import { apiWalletCore } from '@services/apiService'
+import { ResponseType } from '@type/api'
+import { DataFreeze } from '@type/freeze.type'
 import { FreezeItem, FreezeParams } from '@type/freezeAccount'
 
-interface SpringPage<T> {
-    content: T[]
-    totalElements: number
-    totalPages: number
-    size: number
-    number: number
-    first: boolean
-    last: boolean
-}
 
-interface FreezeResponse {
-    data: SpringPage<FreezeItem>
-    message: string
-    success: boolean
-    status: string
-}
 
 export const apiFreezes = apiWalletCore.injectEndpoints({
     endpoints: (build) => ({
-        getFreezes: build.query<SpringPage<FreezeItem>, FreezeParams>({
+        getFreezes: build.query({
             query: (params) => ({
                 url: '/wallet/freezes',
-                params,
+                params: params,
                 method: 'GET',
             }),
-            transformResponse: (res: FreezeResponse) => res.data,
+            transformResponse: (res: ResponseType<DataFreeze>) => res.data,
             providesTags: ['Wallet'],
+        }),
+        postUnfreeze: build.mutation({
+            query: (body: { accountId: string; freezeId: string; reason: string }) => ({
+                url: '/wallet/freezes/unfreeze',
+                method: 'POST',
+                body: body,
+            }),
+            invalidatesTags: ['Wallet'],
         }),
     }),
 })
 
-export const { useGetFreezesQuery, useLazyGetFreezesQuery } = apiFreezes
+export const { useGetFreezesQuery, useLazyGetFreezesQuery, usePostUnfreezeMutation } = apiFreezes

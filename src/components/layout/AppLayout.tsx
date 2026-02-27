@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '@hooks/hook'
 import useNavigationEw from '@hooks/useNavigation'
 import { savePermissions } from '@slices/authSlice'
 import { useBoolean, useUpdate } from 'ahooks'
-import { Col, Layout, Menu, MenuProps, Row } from 'antd'
+import { Col, Layout, Menu, MenuProps, Row, Drawer, Grid } from 'antd'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
@@ -22,8 +22,11 @@ import Cookies from 'js-cookie'
 import { CookieKey } from '@configs/fetchBaseQuery.types'
 
 const { Header, Sider, Content } = Layout
+const { useBreakpoint } = Grid
 
 function AppLayout() {
+  const screens = useBreakpoint()
+  const isMobile = screens.lg === false
   const [collapsed, setCollapsed] = useState(false)
   const { accessToken } = useAppSelector((state) => state.auth)
 
@@ -57,7 +60,16 @@ function AppLayout() {
     navigate(path, {
       replace: true
     })
+    if (isMobile) {
+      setCollapsed(true)
+    }
   }
+
+  useEffect(() => {
+    if (isMobile) {
+      setCollapsed(true)
+    }
+  }, [isMobile])
 
   useEffect(() => {
     // Chỉ redirect về login khi CẢ HAI access token và refresh token đều không còn
@@ -124,35 +136,65 @@ function AppLayout() {
     topLeft: false
   }
 
+  const sidebarContent = (
+    <>
+      <div className='logo'>
+        <Logo collapsed={isMobile ? false : collapsed} />
+      </div>
+      <Menu
+        className='scroll-custom sidebar-menu'
+        mode='inline'
+        items={isAccess ? navigation as MenuProps['items'] : []}
+        onClick={handleSelectMenu}
+        selectedKeys={currentKey}
+        defaultOpenKeys={currentKey}
+      />
+    </>
+  )
+
   return (
     <React.Fragment>
       <Layout className='app-layout'>
-        <Resizable
-          maxWidth={collapsed ? '80px' : '378px'}
-          minWidth={collapsed ? '80px' : '250px'}
-          className='resizable'
-          enable={enable}
-        >
-          <Sider
-            trigger={null}
-            collapsible
-            collapsed={collapsed}
-            theme='light'
-            className='custom-sidebar'
+        {!isMobile ? (
+          <Resizable
+            maxWidth={collapsed ? '80px' : '378px'}
+            minWidth={collapsed ? '80px' : '250px'}
+            className='resizable'
+            enable={enable}
           >
-            <div className='logo'>
-              <Logo collapsed={collapsed} />
-            </div>
-            <Menu
-              className='scroll-custom sidebar-menu'
-              mode='inline'
-              items={isAccess ? navigation as MenuProps['items'] : []}
-              onClick={handleSelectMenu}
-              selectedKeys={currentKey}
-              defaultOpenKeys={currentKey}
-            />
-          </Sider>
-        </Resizable>
+            <Sider
+              trigger={null}
+              collapsible
+              collapsed={collapsed}
+              theme='light'
+              className='custom-sidebar'
+            >
+              {sidebarContent}
+            </Sider>
+          </Resizable>
+        ) : (
+          <Drawer
+            placement='left'
+            closable={false}
+            onClose={() => setCollapsed(true)}
+            open={!collapsed}
+            bodyStyle={{ padding: 0 }}
+            width={250}
+            className='mobile-sidebar-drawer'
+          >
+            <Sider
+              trigger={null}
+              collapsible
+              collapsed={false}
+              theme='light'
+              className='custom-sidebar'
+              width={250}
+              style={{ minHeight: '100vh' }}
+            >
+              {sidebarContent}
+            </Sider>
+          </Drawer>
+        )}
         <Layout className='site-layout'>
           <Header className='app-header'>
             <div>
@@ -166,7 +208,7 @@ function AppLayout() {
             </div>
             <Row>
               <Col>
-                <b className='fs-22 text-blue'>{t(`header-title.${title}`)}</b>
+                <b className={`text-blue ${isMobile ? 'fs-16' : 'fs-22'}`}>{t(`header-title.${title}`)}</b>
               </Col>
             </Row>
             <NavProfile />

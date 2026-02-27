@@ -4,10 +4,8 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 
 interface FormSearchValues {
-    id?: string
-    keyword?: string
     status?: string
-    type?: string
+    username?: string
     dateRange?: [string, string]
 }
 
@@ -36,9 +34,8 @@ const FormSearch = ({ onSearch }: FormSearchProps) => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid grid-cols-5 gap-3">
-                <FormInput control={control} name="id" className="col-span-1" label="Mã đóng băng" />
-                <FormInput control={control} name="keyword" className="col-span-1" label="Khách hàng (Tên/SĐT/Ví)" />
+            <div className="grid grid-cols-3 gap-3">
+                <FormInput control={control} name="username" className="col-span-1" label="Tên tài khoản (username)" placeholder='Nhập tên User...' />
                 <FormSelect
                     control={control}
                     name="status"
@@ -46,7 +43,6 @@ const FormSearch = ({ onSearch }: FormSearchProps) => {
                     label="Trạng thái"
                     options={STATUS_OPTIONS}
                 />
-                <FormInput control={control} name="type" className="col-span-1" label="Loại đóng băng" />
                 <FormDatePicker isRange showTime control={control} name="dateRange" className="col-span-1" label="Khoảng ngày" />
             </div>
             <div className="flex justify-end mt-3 gap-2">

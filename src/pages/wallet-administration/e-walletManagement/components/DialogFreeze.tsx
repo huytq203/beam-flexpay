@@ -56,6 +56,7 @@ const DialogFreeze = ({
         try {
             await postFreeze({
                 accountId,
+                amount: values.amount,
                 reason: values.reason,
             }).unwrap()
             successMess('Đóng băng tài khoản thành công')
@@ -83,7 +84,7 @@ const DialogFreeze = ({
                         name="freezeType"
                         options={[
                             { value: 1, label: 'Đóng băng toàn bộ' },
-                            { value: 2, label: 'Đóng băng một phần', disabled: true },
+                            { value: 2, label: 'Đóng băng một phần' },
                         ]}
                     />
 

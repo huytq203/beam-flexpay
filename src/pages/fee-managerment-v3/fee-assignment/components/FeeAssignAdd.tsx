@@ -75,12 +75,13 @@ export const FormInforAdd = ({
     handleSubmit,
     setValue,
     reset,
+    watch,
     formState: { errors }
   } = useForm<FeeAssignType>({
     resolver: zodResolver(feeAssignSchema),
     defaultValues: DEFAULT_FORM_VALUES
   })
-  const { handleChangePolicy } = useHandle()
+  const { handleChoosePolicy, getDataTier } = useHandle()
   const [openModal, setOpenModal] = React.useState(false)
   const [selectedPolicyId, setSelectedPolicyId] = React.useState<string>('')
 
@@ -104,7 +105,7 @@ export const FormInforAdd = ({
   const handleLocalPolicySelect = (feePolicyId: string) => {
     setValue('feePolicyId', feePolicyId)
     setSelectedPolicyId(feePolicyId)
-    handleChangePolicy(feePolicyId)
+    handleChoosePolicy(feePolicyId)
     onPolicySelected?.(feePolicyId)
   }
 
@@ -120,7 +121,7 @@ export const FormInforAdd = ({
               id='formAssign'
               onSubmit={handleSubmit(id ? handlePutAssign : handlePostAssign)}
             >
-              <div className='flex justify-between items-center mb-3 '>
+              <div className='flex md:flex-row flex-col justify-between items-start md:items-center mb-3 '>
                 <p className='font-medium text-[16px]'>1. Thông tin chung</p>
                 <div className='flex flex-col items-end'>
                   <ButtonComponent
@@ -157,7 +158,7 @@ export const FormInforAdd = ({
       />
       <ModalComponent
         title={'Chọn chính sách phí'}
-        width='70%'
+       width={{ xs: "100% ", md: "70%" }}
         open={openModal}
         onOk={() => {
           handleLocalPolicySelect
@@ -171,6 +172,7 @@ export const FormInforAdd = ({
           <FormChoosePolicy
             onSelect={handleLocalPolicySelect}
             defaultSelectedId={selectedPolicyId}
+            serviceType={watch('serviceType')}
           />
         }
       />

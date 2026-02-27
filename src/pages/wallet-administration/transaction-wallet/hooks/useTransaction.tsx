@@ -2,7 +2,7 @@ import usePagination from '@hooks/usePagination'
 import React, { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FormSearchValues } from '../types/Transaction.type'
-import { useGetTransactionQuery, useLazyGetTransactionQuery } from '../services/apiTransactionV2'
+import { useGetTransactionQuery, useLazyGetTransactionQuery } from '../../../../app/services/apiTransactionV2'
 
 const useTransaction = () => {
   // state
@@ -17,7 +17,7 @@ const useTransaction = () => {
   // constants
 
   // api
-  const { data: dataTransaction, isLoading: isLoadingGetTransaction } = useGetTransactionQuery({...params, ...filter})
+  const { data: dataTransaction, isLoading: isLoadingGetTransaction } = useGetTransactionQuery({ ...params, ...filter })
   const [getSearchTransaction] = useLazyGetTransactionQuery()
 
   // logic

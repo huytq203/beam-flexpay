@@ -8,9 +8,10 @@ interface propComponentDetail {
   data: feePolicyComponent
   onEdit?: (data: feePolicyComponent) => void
   onDelete?: (data: feePolicyComponent) => void
+  selectedId?: string
 }
 
-export const ComponentDetail = ({ setOpenModalDetail, data, onEdit, onDelete }: propComponentDetail) => {
+export const ComponentDetail = ({ setOpenModalDetail, data, onEdit, onDelete, selectedId }: propComponentDetail) => {
   const { data: tierData } = useGetFeeComponentTierQuery(data.id)
 
 
@@ -85,26 +86,29 @@ export const ComponentDetail = ({ setOpenModalDetail, data, onEdit, onDelete }: 
               <div className='flex justify-between items-center mb-2'>
                 <p className='font-medium'>{componentType[data.componentType as keyof typeof componentType]}</p>
                 <div className=' flex gap-2 justify-center items-center'>
-                  <ButtonComponent
-                    size="small"
-                    type='default'
-                    content='Sửa '
-                    onClick={() => {
-                      onEdit?.(data)
-                      setOpenModalDetail(true)
-                    }}
-                    icon={<EditOutlined />}
-                  />
-                  <ButtonComponent
-                    size="small"
-                    type='default'
-                    content='Xóa '
-                    danger
-                    icon={<DeleteOutlined />}
-                    onClick={() => {
-                      onDelete?.(data)
-                    }}
-                  />
+                  {!selectedId && <>
+                    <ButtonComponent
+                      size="small"
+                      type='default'
+                      content='Sửa '
+                      onClick={() => {
+                        onEdit?.(data)
+                        setOpenModalDetail(true)
+                      }}
+                      icon={<EditOutlined />}
+                    />
+                    <ButtonComponent
+                      size="small"
+                      type='default'
+                      content='Xóa '
+                      danger
+                      icon={<DeleteOutlined />}
+                      onClick={() => {
+                        onDelete?.(data)
+                      }}
+                    />
+                  </>
+                  }
                 </div>
               </div>
               <div className=' flex gap-4 px-2 mb-3'>

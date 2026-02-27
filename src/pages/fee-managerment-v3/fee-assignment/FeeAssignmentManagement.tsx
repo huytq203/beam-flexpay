@@ -53,7 +53,8 @@ const FeeAssignmentManagement = () => {
     reset,
     control,
     formState: { errors },
-    setValue
+    setValue,
+    watch
   } = useForm<FeeAssignType>({
     shouldUnregister: true,
     defaultValues: {
@@ -152,7 +153,7 @@ const FeeAssignmentManagement = () => {
       successMess('Thêm mới thành công!')
       setOpenModalAdd(false)
       reset()
-    } catch  {
+    } catch {
 
     }
   }, [postAssign, successMess, reset])
@@ -170,11 +171,11 @@ const FeeAssignmentManagement = () => {
 
   const listData: FeeAssignment[] = useMemo(() =>
     (isSearching ? searchData?.content : dataFeeAssign?.content) || []
-  , [isSearching, searchData?.content, dataFeeAssign?.content])
+    , [isSearching, searchData?.content, dataFeeAssign?.content])
 
   const total = useMemo(() =>
     (isSearching ? searchData?.totalElements : dataFeeAssign?.totalElements) || 0
-  , [isSearching, searchData?.totalElements, dataFeeAssign?.totalElements])
+    , [isSearching, searchData?.totalElements, dataFeeAssign?.totalElements])
 
   const dataSource = useMemo(() => listData.map((item, idx: number) => ({
     ...item,
@@ -207,7 +208,7 @@ const FeeAssignmentManagement = () => {
     <>
 
       {
-        (loadingAll ) ? (
+        (loadingAll) ? (
           <>
             <div className=" mb-3">
               <SkeletonFilterGroup items={2} />
@@ -226,25 +227,29 @@ const FeeAssignmentManagement = () => {
                       isCreate={isCreate}
                     />
                   </form>
-                  <div className='flex justify-between mt-4'>
-                    <div className='flex justify-center items-center gap-2'>
+                  <div className='flex flex-col md:flex-row md:justify-between mt-4'>
+                    <div className='flex flex-col md:flex-row  justify-center items-center gap-2'>
                       <ButtonComponent
                         icon={svg('/icons.svg#hugeicons-search-01')}
                         content='Search'
                         onClick={handleSubmit(handleSearch)}
+                        className='w-full md:w-auto'
                       />
                       <ButtonComponent
                         type='default'
                         icon={svg('/icons.svg#hugeicons-delete-02')}
                         content='Xóa bộ lọc'
                         onClick={handleReset}
+                        className='w-full md:w-auto'
                       />
+
                     </div>
                     <div className='flex justify-center items-center'>
                       <ButtonComponent
                         icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
                         content='Thiết lập phí'
                         onClick={handleOpenModalAdd}
+                        className='w-full md:w-auto'
                       />
                     </div>
                   </div>
@@ -290,7 +295,7 @@ const FeeAssignmentManagement = () => {
       />
       <ModalComponent
         title={'Thêm gán phí'}
-        width='70%'
+        width={{ xs: "100% ", md: "70%" }}
         open={openModalAdd}
         // footer={null}
         okButtonProps={{
@@ -312,11 +317,11 @@ const FeeAssignmentManagement = () => {
       />
       <ModalComponent
         title={'Chọn chính sách phí'}
-        width='70%'
+        width={{ xs: "100% ", md: "70%" }}
         open={openModalSelectPolicy}
         onOk={handleCloseModalSelectPolicy}
         onCancel={handleCloseModalSelectPolicy}
-        modalText={<FormAddAssign onSelect={handleSelectPolicy} />}
+        modalText={<FormAddAssign onSelect={handleSelectPolicy} serviceType={watch('serviceType')} />}
       />
     </>
   )

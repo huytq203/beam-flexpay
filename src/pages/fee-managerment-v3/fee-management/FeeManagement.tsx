@@ -71,7 +71,7 @@ const FeeManagement = () => {
               open={open}
               onOk={handleSubmitAdd(handleSaveAddFee)}
               onCancel={() => setOpen(false)}
-              width='50%'
+              width={{ xs: "100% ", md: "50%" }}
               confirmLoading={loadingNewPolicy}
               modalText={
                 <CardComponent

@@ -1,5 +1,5 @@
 import { ButtonComponent } from '@components/index'
-import { FreezeItem } from '@type/freezeAccount'
+import { FreezeItem } from '@type/freeze.type'
 import { formatCurrency } from '@utils/formatNumber'
 import { Tag } from 'antd'
 import { ColumnType } from 'antd/lib/table'
@@ -27,15 +27,6 @@ export const Column = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeRow>
         key: 'no',
         width: 50,
     },
-    // {
-    //     title: 'Mã đóng băng',
-    //     align: 'center',
-    //     dataIndex: 'id',
-    //     key: 'id',
-    //     render: (id: string) => (
-    //         <span className="font-mono text-xs text-gray-600">{id}</span>
-    //     ),
-    // },
     {
         title: 'Nguồn / Loại GD',
         align: 'center',
@@ -53,8 +44,8 @@ export const Column = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeRow>
         key: 'customer',
         render: (_, record) => (
             <div>
-                <p className="font-medium">{record.account?.ownerUsername ?? '--'}</p>
-                <p className="text-gray-500 text-xs">{record.account?.ownerType ?? '--'}</p>
+                <p className="font-medium">{record.ownerUsername ?? '--'}</p>
+                <p className="text-gray-500 text-xs">{record.ownerType ?? '--'}</p>
             </div>
         ),
     },
@@ -70,15 +61,12 @@ export const Column = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeRow>
         ),
     },
     {
-        title: 'Số dư ví',
-        align: 'right',
-        key: 'balance',
+        title: 'Lý do mở băng',
+        align: 'center',
+        key: 'unfreezeReason',
         render: (_, record) => (
-            <div className="text-right">
-                <p>{formatCurrency(record.account?.balance ?? 0, { symbol: 'VNĐ', position: 'after' })}</p>
-                <p className="text-xs text-gray-500">
-                    Hold: {formatCurrency(record.account?.holdBalance ?? 0, { symbol: 'VNĐ', position: 'after' })}
-                </p>
+            <div className="text-center">
+                <p>{record.unfreezeReason ?? '--'}</p>
             </div>
         ),
     },

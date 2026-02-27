@@ -1,7 +1,7 @@
 import react from '@vitejs/plugin-react'
 import path from 'path'
 import { defineConfig, loadEnv } from 'vite'
-
+import { VitePWA } from 'vite-plugin-pwa'
 
 import svgr from 'vite-plugin-svgr'
 export default defineConfig(({ mode }) => {
@@ -11,27 +11,27 @@ export default defineConfig(({ mode }) => {
 
   const proxyConfig = useProxy
     ? {
-        '/proxy-api': {
-          target: env.VITE_PROXY_API_TARGET || 'https://api.dev.ewallet.flexpay.vn',
-          changeOrigin: true,
-          secure: false,
-          rewrite: (p: string) => p.replace(/^\/proxy-api/, ''),
-          headers: {
-            Origin: env.VITE_PROXY_API_TARGET || 'https://api.dev.ewallet.flexpay.vn',
-            Referer: (env.VITE_PROXY_API_TARGET || 'https://api.dev.ewallet.flexpay.vn') + '/',
-          },
+      '/proxy-api': {
+        target: env.VITE_PROXY_API_TARGET || 'https://api.dev.ewallet.flexpay.vn',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (p: string) => p.replace(/^\/proxy-api/, ''),
+        headers: {
+          Origin: env.VITE_PROXY_API_TARGET || 'https://api.dev.ewallet.flexpay.vn',
+          Referer: (env.VITE_PROXY_API_TARGET || 'https://api.dev.ewallet.flexpay.vn') + '/',
         },
-        '/proxy-cms': {
-          target: env.VITE_PROXY_CMS_TARGET || 'https://cms.ewallet.devops.beamewa.com.vn',
-          changeOrigin: true,
-          secure: false,
-          rewrite: (p: string) => p.replace(/^\/proxy-cms/, ''),
-          headers: {
-            Origin: env.VITE_PROXY_CMS_TARGET || 'https://cms.ewallet.devops.beamewa.com.vn',
-            Referer: (env.VITE_PROXY_CMS_TARGET || 'https://cms.ewallet.devops.beamewa.com.vn') + '/',
-          },
+      },
+      '/proxy-cms': {
+        target: env.VITE_PROXY_CMS_TARGET || 'https://cms.ewallet.devops.beamewa.com.vn',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (p: string) => p.replace(/^\/proxy-cms/, ''),
+        headers: {
+          Origin: env.VITE_PROXY_CMS_TARGET || 'https://cms.ewallet.devops.beamewa.com.vn',
+          Referer: (env.VITE_PROXY_CMS_TARGET || 'https://cms.ewallet.devops.beamewa.com.vn') + '/',
         },
-      }
+      },
+    }
     : undefined
 
   return {
@@ -39,6 +39,30 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       svgr(),
+      VitePWA({
+        registerType: 'autoUpdate',
+        workbox: {
+          maximumFileSizeToCacheInBytes: 6 * 1024 * 1024 // tăng lên 6MB
+        },
+        manifest: {
+          name: 'Beam Ewallet CMS',
+          short_name: 'Beam CMS',
+          description: 'Beam Ewallet CMS Management Web Application',
+          theme_color: '#ffffff',
+          icons: [
+            {
+              src: '/images/BEAM.png',
+              sizes: '192x192',
+              type: 'image/png'
+            },
+            {
+              src: '/images/BEAM.png',
+              sizes: '512x512',
+              type: 'image/png'
+            }
+          ]
+        }
+      }),
     ],
     build: {
       sourcemap: false,

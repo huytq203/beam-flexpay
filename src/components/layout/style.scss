@@ -94,3 +94,9 @@
 // html {
 //   font-size: 0.9vw;
 // }
+
+.mobile-sidebar-drawer {
+  .ant-drawer-body {
+    padding: 0 !important;
+  }
+}
