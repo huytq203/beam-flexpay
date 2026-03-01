@@ -59,6 +59,7 @@ export const feeComponentApi = apiFeeService.injectEndpoints({
 export const {
   useGetFeeComponentPoliciesQuery,
   useGetFeeComponentPoliciesByIdQuery,
+  useLazyGetFeeComponentPoliciesByIdQuery,
   useGetFeeComponentByIdQuery,
   useDeleteFeeComponentPoliciesMutation,
   usePostFeeComponentPoliciesMutation,

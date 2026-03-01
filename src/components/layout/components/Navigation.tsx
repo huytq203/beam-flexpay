@@ -919,19 +919,9 @@ const walletManagement = {
       ),
       label: "Duyệt eKYC"
     },
-    {
-      key: 'refund-management',
-      icon: (
-        <UsersThreeIcon
-          size={size}
-          weight={weight}
-          color={COlOR}
-        />
-      ),
-      label: 'Quản lý hoàn tiền'
-    },
+    
      {
-      key: 'transaction-management',
+      key: 'transaction-wallet',
       icon: (
         <UsersThreeIcon
           size={size}
@@ -968,7 +958,17 @@ const transactionManagement = {
       ),
       label: 'Quản lý giao dịch đóng băng'
     },
-    
+    {
+      key: 'refund-management',
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý hoàn tiền'
+    },
     {
       key: 'system-ledger',
       icon: (
@@ -994,6 +994,7 @@ const transactionManagement = {
     },
   ]
 }
+
 const merchantManagement = {
   key: _MERCHANT,
   icon: (

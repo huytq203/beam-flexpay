@@ -43,7 +43,7 @@ const FormFieldAssign = React.memo(({ control, setValue, isCreate }: FormFieldAs
   }
   return (
     <div>
-      <div className='grid grid-cols-12 gap-3'>
+      <div className='grid grid-cols-1 md:grid-cols-12 gap-3'>
         {!isCreate && (
           <FormSelect
             control={control}

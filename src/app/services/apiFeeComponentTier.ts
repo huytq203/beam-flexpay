@@ -43,6 +43,7 @@ export const apiFeeComponentTier = apiFeeService.injectEndpoints({
 export const {
   usePostFeeComponentTierMutation,
   useGetFeeComponentTierQuery,
+  useLazyGetFeeComponentTierQuery,
   useDeleteFeeComponentTierMutation,
   usePutFeeComponentTierMutation
 } = apiFeeComponentTier

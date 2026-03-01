@@ -41,6 +41,7 @@ export interface TransactionItem {
   transactionTime: string
   processedAt: string
   checksum: string
+  netProfit: number
 }
 
 export interface Pageable {

@@ -67,19 +67,20 @@ const FeeManagementForm = ({
         className='mb-3'
         content={
           <>
-            
+
             <form
               action=''
               onSubmit={handleSubmit(handleSearch)}
               id='feeManagement'
             >
-              <div className='grid grid-cols-12 gap-3'>
+              <div className='grid grid-cols-1 md:grid-cols-12  gap-3'>
                 <FormInput
                   name='keyword'
                   control={control}
                   classNameLable="font-medium"
                   label='Tên chính sách'
                   placeholder='Nhập tên chính sách..'
+                  className='col-span-12 md:col-span-6 flex flex-col'
                 />
 
                 <FormSelect
@@ -89,6 +90,7 @@ const FeeManagementForm = ({
                   label='Loại dịch vụ'
                   placeholder='Chọn loại dịch vụ'
                   options={mapEnumToSelectOptions(serviceType)}
+                  className='col-span-12 md:col-span-6 flex flex-col'
                 />
                 <FormSelect
                   name='status'
@@ -96,6 +98,7 @@ const FeeManagementForm = ({
                   label='Trạng thái'
                   placeholder="Chọn trạng thái"
                   options={mapEnumToSelectOptions(statusType)}
+                  className='col-span-12 md:col-span-6 flex flex-col'
                 />
 
                 <FormSelect
@@ -104,15 +107,17 @@ const FeeManagementForm = ({
                   label='Phí miền'
                   placeholder='Chọn phí miền'
                   options={mapEnumToSelectOptions(feeDomain)}
+                  className='col-span-12 md:col-span-6 flex flex-col'
                 />
 
-                <div className=' col-span-12 flex justify-between gap-3 '>
-                  <div className='flex gap-2'>
+                <div className=' col-span-12 flex flex-col md:flex-row md:justify-between gap-3 '>
+                  <div className='flex gap-2 flex-col md:flex-row'>
                     <ButtonComponent
                       htmlType='submit'
                       form='feeManagement'
                       icon={svg('/icons.svg#hugeicons-search-01')}
                       content='Search'
+                      className='w-full md:w-auto'
                     />
                     <ButtonComponent
                       htmlType='button'
@@ -120,6 +125,7 @@ const FeeManagementForm = ({
                       onClick={onReset}
                       type='default'
                       icon={svg('/icons.svg#hugeicons-delete-02')}
+                      className='w-full md:w-auto'
                     />
                   </div>
                   <div className=''>
@@ -132,7 +138,7 @@ const FeeManagementForm = ({
                       }}
                       type='primary'
                       icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
-
+                      className='w-full md:w-auto'
                     />
                   </div>
                 </div>

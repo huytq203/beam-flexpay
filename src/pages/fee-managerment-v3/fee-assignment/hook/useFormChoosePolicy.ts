@@ -3,7 +3,7 @@ import useDebounce from "@hooks/useDebounce"
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 
-export const useFormChoosePolicy = (defaultSelectedId?: string) => {
+export const useFormChoosePolicy = (defaultSelectedId?: string, serviceType?: string) => {
     // state
     const [searchValue, setSearchValue] = useState<string | null>(null)
     const [selectedId, setSelectedId] = useState<string>(defaultSelectedId || '')
@@ -23,20 +23,23 @@ export const useFormChoosePolicy = (defaultSelectedId?: string) => {
     const [triggerSearch, { data: searchResult, isFetching: isSearching }] = useLazySearchFeePoliciesQuery()
 
     // handle
-    const list = (debouncedSearchValue ? searchResult?.content : dataPolicy?.content) || []
+    const isSearchActive = !!debouncedSearchValue || !!serviceType;
 
-    const total = (debouncedSearchValue ? searchResult?.totalElements : dataPolicy?.totalElements) || 0
+    const list = (isSearchActive ? searchResult?.content : dataPolicy?.content) || []
+    const total = (isSearchActive ? searchResult?.totalElements : dataPolicy?.totalElements) || 0
 
     useEffect(() => {
-        if (debouncedSearchValue) {
+        if (isSearchActive) {
             triggerSearch({
-                keyword: debouncedSearchValue, page: pageListPolicy,
+                keyword: debouncedSearchValue || '',
+                serviceType: serviceType || '',
+                page: pageListPolicy,
                 size: pageSizeListPolicy,
                 sortBy: 'createdAt',
                 sortDirection: 'DESC'
             })
         }
-    }, [debouncedSearchValue])
+    }, [debouncedSearchValue, serviceType, pageListPolicy, pageSizeListPolicy])
 
     useEffect(() => {
         if (defaultSelectedId) {

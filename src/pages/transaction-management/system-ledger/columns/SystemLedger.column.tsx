@@ -123,26 +123,26 @@ const SystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Colum
             )
         },
     },
-    {
-        title: 'Thao tác',
-        align: 'center',
-        width: 80,
-        fixed: 'right',
-        render(value, record) {
-            return (
-                <div className="flex justify-center items-center">
-                    <TooltipComponent title='View Details'>
-                        <ButtonComponent
-                            onClick={() => navigate(`/wallet-administration/system-ledger/${record.id}`)}
-                            size='small'
-                            className='bg-blue-50 !border border-blue-600 text-blue-600 hover:!bg-blue-100 hover:!text-blue-600'
-                            icon={<EyeFilled />}
-                        />
-                    </TooltipComponent>
-                </div>
-            )
-        },
-    },
+    // {
+    //     title: 'Thao tác',
+    //     align: 'center',
+    //     width: 80,
+    //     fixed: 'right',
+    //     render(value, record) {
+    //         return (
+    //             <div className="flex justify-center items-center">
+    //                 <TooltipComponent title='View Details'>
+    //                     <ButtonComponent
+    //                         onClick={() => navigate(`/wallet-administration/system-ledger/${record.id}`)}
+    //                         size='small'
+    //                         className='bg-blue-50 !border border-blue-600 text-blue-600 hover:!bg-blue-100 hover:!text-blue-600'
+    //                         icon={<EyeFilled />}
+    //                     />
+    //                 </TooltipComponent>
+    //             </div>
+    //         )
+    //     },
+    // },
 ]
 
 export default SystemLedgerColumn

@@ -4,9 +4,15 @@ import { ColumnsType } from "antd/lib/table";
 import { Link, useNavigate, NavigateFunction } from "react-router-dom";
 import { ButtonComponent, TooltipComponent } from "@components/index";
 import { ArrowCounterClockwiseIcon, BroadcastIcon, CheckOutlined, CloseOutlined, DollarOutlined, EyeFilled, FireIcon, PencilLineIcon, SnowflakeIcon } from "@components/icons";
-import { StatusConstants, StatusEnum, StatusKey, StatusType, Transaction_Title, TransactionConstants, TransactionKey, TransactionType } from "@pages/transaction-management/transaction-wallet/constants/Transaction.constant";
+import { StatusConstants, StatusEnum, StatusKey, StatusType, Transaction_Title, TransactionConstants, TransactionKey, TransactionType } from "@pages/wallet-administration/transaction-wallet/constants/Transaction.constant";
 import { formatNumber, formatCurrency } from "@utils/index";
-const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<TransactionItem> => [
+interface ColumnProps {
+    navigate: NavigateFunction;
+    onFreeze?: (record: TransactionItem) => void;
+    onUnfreeze?: (record: TransactionItem) => void;
+}
+
+const Column = ({ navigate, onFreeze, onUnfreeze }: ColumnProps): ColumnsType<TransactionItem> => [
     {
         title: '#',
         dataIndex: 'no',
@@ -172,7 +178,7 @@ const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<Trans
                 <div className="flex justify-start items-center gap-1">
                     <TooltipComponent title='Xem chi tiết'>
                         <ButtonComponent onClick={() =>
-                            navigate(`/wallet-administration/transaction-management/${record.id}`)} size='small' className='bg-blue-50 !border border-blue-600 text-blue-600 hover:!bg-blue-100 hover:!text-blue-600 ' icon={<EyeFilled />} />
+                            navigate(`/wallet-administration/transaction-wallet/${record.id}`)} size='small' className='bg-blue-50 !border border-blue-600 text-blue-600 hover:!bg-blue-100 hover:!text-blue-600 ' icon={<EyeFilled />} />
                     </TooltipComponent>
                     {statusKey === StatusConstants.SUCCESS &&
                         <TooltipComponent title='Hoàn tiền'>
@@ -198,12 +204,12 @@ const Column = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<Trans
                     }
                     {statusKey === StatusConstants.SUCCESS &&
                         <TooltipComponent title='Mở băng'>
-                            <ButtonComponent size='small' className='bg-orange-50 !border border-orange-600 text-orange-600 hover:!bg-orange-100 hover:!text-orange-600 ' icon={<FireIcon weight="fill" />} />
+                            <ButtonComponent size='small' className='bg-orange-50 !border border-orange-600 text-orange-600 hover:!bg-orange-100 hover:!text-orange-600 ' icon={<FireIcon weight="fill" />} onClick={() => onUnfreeze?.(record)} />
                         </TooltipComponent>
                     }
                     {statusKey === StatusConstants.SUCCESS &&
                         <TooltipComponent title='Đóng băng'>
-                            <ButtonComponent size='small' className='bg-cyan-50 !border border-cyan-600 text-cyan-600 hover:!bg-cyan-100 hover:!text-cyan-600 ' icon={<SnowflakeIcon />} />
+                            <ButtonComponent size='small' className='bg-cyan-50 !border border-cyan-600 text-cyan-600 hover:!bg-cyan-100 hover:!text-cyan-600 ' icon={<SnowflakeIcon />} onClick={() => onFreeze?.(record)} />
                         </TooltipComponent>
                     }
                     {statusKey === StatusConstants.REVIEW &&

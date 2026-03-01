@@ -9,7 +9,7 @@ const useFrozenTransactions = () => {
     defaultSort: 'createdAt',
   })
 
-  const { data, isFetching } = useGetFreezesQuery({ ...params, ...filter })
+  const { data, isFetching, isLoading } = useGetFreezesQuery({ ...params, ...filter })
 
   const totalElements = data?.totalElements
 
@@ -27,6 +27,19 @@ const useFrozenTransactions = () => {
     setPage(1)
   }
 
+  const [isUnfreezeModalOpen, setIsUnfreezeModalOpen] = useState(false)
+  const [selectedFreezeItem, setSelectedFreezeItem] = useState<any>(null)
+
+  const handleOpenUnfreezeModal = (item: any) => {
+    setSelectedFreezeItem(item)
+    setIsUnfreezeModalOpen(true)
+  }
+
+  const handleCloseUnfreezeModal = () => {
+    setIsUnfreezeModalOpen(false)
+    setSelectedFreezeItem(null)
+  }
+
   return {
     dataSource,
     totalElements,
@@ -36,6 +49,11 @@ const useFrozenTransactions = () => {
     setPageSize,
     isFetching,
     handleSearch,
+    isLoading,
+    isUnfreezeModalOpen,
+    selectedFreezeItem,
+    handleOpenUnfreezeModal,
+    handleCloseUnfreezeModal,
   }
 }
 

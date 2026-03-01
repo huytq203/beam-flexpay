@@ -1,0 +1,91 @@
+import usePagination from '@hooks/usePagination'
+import React, { useMemo, useState } from 'react'
+import { TransactionItem } from '@type/transaction.type'
+import { useNavigate } from 'react-router-dom'
+import { FormSearchValues } from '../types/Transaction.type'
+import { useGetTransactionQuery, useLazyGetTransactionQuery } from '../../../../app/services/apiTransactionV2'
+
+const useTransaction = () => {
+  // state
+  const [filter, setFilter] = useState({})
+
+  // Modal states
+  const [isFreezeModalOpen, setIsFreezeModalOpen] = useState(false)
+  const [isUnfreezeModalOpen, setIsUnfreezeModalOpen] = useState(false)
+  const [selectedTransaction, setSelectedTransaction] = useState<TransactionItem | undefined>(undefined)
+
+  // hook
+  const navigate = useNavigate()
+
+  const { params, page, pageSize, setPage, setPageSize, sortBy } = usePagination({
+    defaultSort: 'createdAt',
+  })
+
+  // constants
+
+  // api
+  const { data: dataTransaction, isLoading: isLoadingGetTransaction } = useGetTransactionQuery({ ...params, ...filter })
+  const [getSearchTransaction] = useLazyGetTransactionQuery()
+
+  // logic
+
+
+  const handleSearch = (data: Partial<FormSearchValues>) => {
+    setFilter(data)
+    setPage(1)
+  }
+
+  const handleOpenFreezeModal = (item: TransactionItem) => {
+    setSelectedTransaction(item)
+    setIsFreezeModalOpen(true)
+  }
+
+  const handleCloseFreezeModal = () => {
+    setIsFreezeModalOpen(false)
+    setSelectedTransaction(undefined)
+  }
+
+  const handleOpenUnfreezeModal = (item: TransactionItem) => {
+    setSelectedTransaction(item)
+    setIsUnfreezeModalOpen(true)
+  }
+
+  const handleCloseUnfreezeModal = () => {
+    setIsUnfreezeModalOpen(false)
+    setSelectedTransaction(undefined)
+  }
+
+  const totalElements = dataTransaction?.totalElements
+  const dataSource = useMemo(() => (
+    dataTransaction?.content?.map((item, idx) => (
+      {
+        no: (page - 1) * pageSize + idx + 1,
+        ...item,
+      }
+
+    ))
+  ), [dataTransaction])
+
+  return {
+    dataSource,
+    totalElements,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+
+    navigate,
+    handleSearch,
+    isLoadingGetTransaction,
+
+    isFreezeModalOpen,
+    isUnfreezeModalOpen,
+    selectedTransaction,
+    handleOpenFreezeModal,
+    handleCloseFreezeModal,
+    handleOpenUnfreezeModal,
+    handleCloseUnfreezeModal
+  }
+}
+
+export default useTransaction

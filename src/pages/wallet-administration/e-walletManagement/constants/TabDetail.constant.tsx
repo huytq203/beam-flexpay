@@ -1,33 +1,32 @@
 import { lazy } from 'react'
 import { TabContentMap, TabContentProps } from '../types/Tabs.type'
-
-const CommonInfor = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/CommonInfor'))
-const CommonInforBusiness = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/business/CommonInfor'))
-const AccountBank = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/AccountBank'))
-const HistoryPayment = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/HistoryPayment'))
-const FreezeBalance = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/FreezeBalance'))
-const Security = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/Security'))
-const FeeSetting = lazy(() => import('@pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/FeeSetting'))
+import CommonInfor from '../components/detail-infor/Personal/CommonInfor'
+import AccountBank from '../components/detail-infor/Personal/AccountBank'
+import HistoryPayment from '../components/detail-infor/Personal/HistoryPayment'
+import FreezeBalance from '../components/detail-infor/Personal/FreezeBalance'
+import FeeSetting from '../components/detail-infor/Personal/FeeSetting'
+import Security from '../components/detail-infor/Personal/Security'
+import CommonInfoBusiness from '../components/detail-infor/business/CommonInfoBusiness'
 
 export const TAB_CONTENT_MAP: TabContentMap = {
   '1': {
     'USER': (props: TabContentProps) => <CommonInfor accountData={props.accountData} />,
-    'SYSTEM': (props: TabContentProps) => <CommonInforBusiness accountData={props.accountData} />
+    'SYSTEM': (props: TabContentProps) => <CommonInfoBusiness accountData={props.accountData} />
   },
   '2': {
     'USER': <AccountBank />,
     'SYSTEM': '123'
   },
   '3': {
-    'USER': <HistoryPayment />
+    'USER': (props: TabContentProps) => <HistoryPayment ownerId={props.accountData?.ownerId || ''} />
   },
-  '4':{
-    'USER':<FreezeBalance/>
+  '4': {
+    'USER': <FreezeBalance />
   },
-  '5':{
-    'USER':<FeeSetting/>
+  '5': {
+    'USER': <FeeSetting />
   },
-  '6':{
-    'USER':<Security/>
+  '6': {
+    'USER': <Security />
   }
 }

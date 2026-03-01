@@ -25,9 +25,10 @@ interface SelectedAccount {
 
 interface ColumnOptions {
   openModal?: (type: ModalType, account: SelectedAccount) => void
+  handleGetFreeze?: () => void
 }
 
-export const Column = ({ openModal }: ColumnOptions = {}): ColumnType<AcountItem>[] => {
+export const Column = ({ openModal, handleGetFreeze }: ColumnOptions = {}): ColumnType<AcountItem>[] => {
   const navigate = useNavigate()
 
   return [
@@ -70,8 +71,8 @@ export const Column = ({ openModal }: ColumnOptions = {}): ColumnType<AcountItem
       title: 'Số dư ví',
       align: 'center',
       render: (_, record) => (
-        <div className={`font-medium ${record.totalCredit > 0 ? 'text-green' : record.totalCredit === 0 ? 'text-gray-500' : 'text-red'}`}>
-          {formatNumber(record.totalCredit)} {record.currency}
+        <div className={`font-medium ${record.balance > 0 ? 'text-green' : record.balance === 0 ? 'text-gray-500' : 'text-red'}`}>
+          {formatNumber(record.balance)} {record.currency}
         </div>
       ),
     },
@@ -110,7 +111,7 @@ export const Column = ({ openModal }: ColumnOptions = {}): ColumnType<AcountItem
           id: record.id,
           ownerId: record.ownerId,
           ownerName: record.ownerUsername,
-          balance: record.totalCredit,
+          balance: record.availableBalance,
           holdBalance: record.holdBalance,
           currency: record.currency,
         }
@@ -131,15 +132,10 @@ export const Column = ({ openModal }: ColumnOptions = {}): ColumnType<AcountItem
             key: '3',
             label: 'Đóng băng số dư',
             onClick: () => openModal?.('freeze', accountPayload),
-            disabled: isSystem || !isActive,
+            disabled: isSystem || (accountPayload.balance ?? 0) === 0,
           },
-          {
-            key: '4',
-            label: 'Mở băng số dư',
-            onClick: () => openModal?.('unfreeze', accountPayload),
-            disabled: isSystem || !isFrozen,
-          },
-          {
+         
+           {
             key: '5',
             label: 'Hủy ví',
             danger: true,

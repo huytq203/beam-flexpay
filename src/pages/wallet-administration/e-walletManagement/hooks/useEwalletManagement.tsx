@@ -3,6 +3,7 @@ import { AcountItem, FormSearchValues } from '@pages/wallet-administration/e-wal
 import { useGetAccountQuery } from '@services/apiWalletAccount.api'
 import { useState } from 'react'
 import { Column } from '../columns/Column'
+import { useLazyGetFreezesQuery } from '@services/apiFreezes'
 
 type ModalType = 'freeze' | 'unfreeze' | 'lock' | 'unlock' | null
 
@@ -21,7 +22,7 @@ const useEwalletManagement = () => {
   const [modalType, setModalType] = useState<ModalType>(null)
   const [selectedAccount, setSelectedAccount] = useState<SelectedAccount | null>(null)
 
-  const { data: getAccount } = useGetAccountQuery({ ...params, ...filter })
+  const { data: getAccount,isLoading:loadingGetAccount } = useGetAccountQuery({ ...params, ...filter })
 
   const handleSearch = (data: FormSearchValues) => {
     setFilter(data)
@@ -43,7 +44,7 @@ const useEwalletManagement = () => {
     no: (page - 1) * size + index + 1,
   }))
 
-  const column = Column({ openModal })
+  const column = Column({ openModal})
 
   return {
     column,
@@ -57,6 +58,7 @@ const useEwalletManagement = () => {
     modalType,
     selectedAccount,
     closeModal,
+    loadingGetAccount
   }
 }
 
