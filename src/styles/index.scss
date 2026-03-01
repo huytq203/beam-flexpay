@@ -95,6 +95,9 @@
   .info-status {
     @apply bg-blue border border-blue text-blue-500 font-medium;
   }
+  .normal-status {
+    @apply bg-gray border border-gray text-gray font-medium;
+  }
 
   @keyframes shimmer {
     0% {

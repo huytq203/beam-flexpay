@@ -1,5 +1,6 @@
 import usePagination from '@hooks/usePagination'
 import React, { useMemo, useState } from 'react'
+import { TransactionItem } from '@type/transaction.type'
 import { useNavigate } from 'react-router-dom'
 import { FormSearchValues } from '../types/Transaction.type'
 import { useGetTransactionQuery, useLazyGetTransactionQuery } from '../../../../app/services/apiTransactionV2'
@@ -7,6 +8,12 @@ import { useGetTransactionQuery, useLazyGetTransactionQuery } from '../../../../
 const useTransaction = () => {
   // state
   const [filter, setFilter] = useState({})
+
+  // Modal states
+  const [isFreezeModalOpen, setIsFreezeModalOpen] = useState(false)
+  const [isUnfreezeModalOpen, setIsUnfreezeModalOpen] = useState(false)
+  const [selectedTransaction, setSelectedTransaction] = useState<TransactionItem | undefined>(undefined)
+
   // hook
   const navigate = useNavigate()
 
@@ -27,6 +34,27 @@ const useTransaction = () => {
     setFilter(data)
     setPage(1)
   }
+
+  const handleOpenFreezeModal = (item: TransactionItem) => {
+    setSelectedTransaction(item)
+    setIsFreezeModalOpen(true)
+  }
+
+  const handleCloseFreezeModal = () => {
+    setIsFreezeModalOpen(false)
+    setSelectedTransaction(undefined)
+  }
+
+  const handleOpenUnfreezeModal = (item: TransactionItem) => {
+    setSelectedTransaction(item)
+    setIsUnfreezeModalOpen(true)
+  }
+
+  const handleCloseUnfreezeModal = () => {
+    setIsUnfreezeModalOpen(false)
+    setSelectedTransaction(undefined)
+  }
+
   const totalElements = dataTransaction?.totalElements
   const dataSource = useMemo(() => (
     dataTransaction?.content?.map((item, idx) => (
@@ -48,7 +76,15 @@ const useTransaction = () => {
 
     navigate,
     handleSearch,
-    isLoadingGetTransaction
+    isLoadingGetTransaction,
+
+    isFreezeModalOpen,
+    isUnfreezeModalOpen,
+    selectedTransaction,
+    handleOpenFreezeModal,
+    handleCloseFreezeModal,
+    handleOpenUnfreezeModal,
+    handleCloseUnfreezeModal
   }
 }
 

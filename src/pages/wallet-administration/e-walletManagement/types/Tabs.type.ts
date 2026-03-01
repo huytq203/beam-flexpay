@@ -1,9 +1,10 @@
+import { TransactionItem } from '@type/transaction.type'
 import { AcountItem } from './ResponseWalletAccount.type'
 
 export interface TabContentProps {
     accountData?: AcountItem
     // Dễ dàng thêm các data sources khác trong tương lai:
-    // transactionData?: any
+    ownerId?: string
     // bankAccountData?: any
     // historyData?: any
     // settingsData?: any

@@ -1,9 +1,13 @@
-import { ButtonComponent, CardComponent, Table } from '@components/index'
+import { ButtonComponent, CardComponent, DialogModal, Table } from '@components/index'
+import { SnowflakeIcon } from '@components/icons'
+import DialogUnfreeze from './components/DialogUnfreeze'
 import React from 'react'
 import { Column } from './configs/FreezeBalance.column'
+import useFetchFreeze from './hooks/useFetchFreeze'
 
 const FreezeBalance = () => {
-    const column = Column()
+    const { dataFreeze, isLoadingGetFreeze, dataSource, page, setPage, setPageSize, size, isUnfreezeModalOpen, selectedFreezeItem, handleOpenUnfreezeModal, handleCloseUnfreezeModal } = useFetchFreeze()
+    const column = Column({ onRelease: handleOpenUnfreezeModal })
     return (
         <div>
             <CardComponent className='mt-3' content={
@@ -13,9 +17,45 @@ const FreezeBalance = () => {
                         <ButtonComponent content='Xuất Excel' />
                     </div>
 
-                    <Table scroll={{ x: 'max-content' }} size='small' bordered columns={column} />
+                    <Table
+                        scroll={{ x: 'max-content' }}
+                        size='small'
+                        bordered
+                        columns={column}
+                        dataSource={dataSource}
+                        loading={isLoadingGetFreeze}
+                        pagination={{
+                            current: page,
+                            pageSize: size,
+                            total: dataFreeze?.totalElements || 0,
+                            onChange: (page, pageSize) => {
+                                setPage(page)
+                                setPageSize(pageSize)
+                            }
+                        }}
+                    />
                 </>} />
-        </div>
+
+            < DialogModal
+                onCancel={handleCloseUnfreezeModal}
+                onOk={() => { }}
+                open={isUnfreezeModalOpen}
+                footer={null}
+                content={
+                    < DialogUnfreeze
+                        freezeItem={selectedFreezeItem}
+                        onSuccess={handleCloseUnfreezeModal}
+                        onCancel={handleCloseUnfreezeModal}
+                    />
+                }
+                title={
+                    < span className="flex items-center gap-2 text-blue-700" >
+                        <SnowflakeIcon size={18} />
+                        Mở băng giao dịch
+                    </span >
+                }
+            />
+        </div >
     )
 }
 

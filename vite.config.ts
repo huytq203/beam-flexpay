@@ -34,7 +34,22 @@ export default defineConfig(({ mode }) => {
     }
     : undefined
 
+  const defineEnv: Record<string, string> = {}
+  if (useProxy) {
+    const apiTarget = env.VITE_PROXY_API_TARGET || 'https://api.dev.ewallet.flexpay.vn'
+    const cmsTarget = env.VITE_PROXY_CMS_TARGET || 'https://cms.ewallet.devops.beamewa.com.vn'
+
+    // Ghi đè các biến môi trường thành dạng /proxy-... thay vì HTTP absolute khi bật proxy
+    defineEnv['import.meta.env.VITE_API_URL'] = JSON.stringify(env.VITE_API_URL?.replace(cmsTarget, '/proxy-cms'))
+    defineEnv['import.meta.env.VITE_IMAGE_URL'] = JSON.stringify(env.VITE_IMAGE_URL?.replace(cmsTarget, '/proxy-cms'))
+    defineEnv['import.meta.env.VITE_FEE_API_URL'] = JSON.stringify(env.VITE_FEE_API_URL?.replace(apiTarget, '/proxy-api'))
+    defineEnv['import.meta.env.VITE_API_LOGIN'] = JSON.stringify(env.VITE_API_LOGIN?.replace(apiTarget, '/proxy-api'))
+    defineEnv['import.meta.env.VITE_API_WALLETCORE'] = JSON.stringify(env.VITE_API_WALLETCORE?.replace(apiTarget, '/proxy-api'))
+    defineEnv['import.meta.env.VITE_API_MERCHANT'] = JSON.stringify(env.VITE_API_MERCHANT?.replace(apiTarget, '/proxy-api'))
+  }
+
   return {
+    define: defineEnv,
     base: '/',
     plugins: [
       react(),
@@ -129,10 +144,12 @@ export default defineConfig(({ mode }) => {
       host: true,
       port: +PORT || 8000,
       proxy: proxyConfig,
+      open: true,
     },
     preview: {
       host: true,
-      port: +PORT || 8000
+      port: +PORT || 8000,
+      open: true,
     },
   }
 })
