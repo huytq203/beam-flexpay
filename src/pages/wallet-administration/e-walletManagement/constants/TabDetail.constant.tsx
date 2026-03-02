@@ -7,6 +7,11 @@ import FreezeBalance from '../components/detail-infor/Personal/FreezeBalance'
 import FeeSetting from '../components/detail-infor/Personal/FeeSetting'
 import Security from '../components/detail-infor/Personal/Security'
 import CommonInfoBusiness from '../components/detail-infor/business/CommonInfoBusiness'
+import AccountBankBusiness from '../components/detail-infor/business/AccountBankBusiness'
+import HistoryPaymentBusiness from '../components/detail-infor/business/HistoryPaymentBusiness'
+import FreezeBalanceBusiness from '../components/detail-infor/business/FreezeBalanceBusiness'
+import FeeSettingBusiness from '../components/detail-infor/business/FeeSettingBusiness'
+import SecurityBusiness from '../components/detail-infor/business/SecurityBusiness'
 
 export const TAB_CONTENT_MAP: TabContentMap = {
   '1': {
@@ -15,18 +20,22 @@ export const TAB_CONTENT_MAP: TabContentMap = {
   },
   '2': {
     'USER': <AccountBank />,
-    'SYSTEM': '123'
+    'SYSTEM': <AccountBankBusiness />
   },
   '3': {
-    'USER': (props: TabContentProps) => <HistoryPayment ownerId={props.accountData?.ownerId || ''} />
+    'USER': (props: TabContentProps) => <HistoryPayment ownerId={props.accountData?.ownerId || ''} />,
+    'SYSTEM': (props: TabContentProps) => <HistoryPaymentBusiness ownerId={props.accountData?.ownerId || ''} />
   },
   '4': {
-    'USER': <FreezeBalance />
+    'USER': <FreezeBalance />,
+    'SYSTEM': <FreezeBalanceBusiness />
   },
   '5': {
-    'USER': <FeeSetting />
+    'USER': <FeeSetting />,
+    'SYSTEM': <FeeSettingBusiness />
   },
   '6': {
-    'USER': <Security />
+    'USER': <Security />,
+    'SYSTEM': <SecurityBusiness />
   }
 }

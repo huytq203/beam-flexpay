@@ -47,7 +47,7 @@ const Column = ({ navigate, onFreeze, onUnfreeze }: ColumnProps): ColumnsType<Tr
                     {record.transactionCode ? (
 
                         <Link
-                            to={`/wallet-administration/transaction-management/${record.id}`}
+                            to={`/wallet-administration/transaction-wallet/${record.id}`}
                             className="text-blue-500 font-bold underline underline-offset-2"
                         >
                             {record.transactionCode}

@@ -14,8 +14,8 @@ export const StatusConstants = {
     SUCCESS: 'SUCCESS',
     ERROR: 'ERROR',
     WAITING: 'WAITING',
-    REVIEW: 'REVIEW',
-    ACTIVE: 'ACTIVE'
+    ACTIVE: 'ACTIVE',
+    LOCKED: 'LOCKED'
 } as const
 
 export type StatusKey = keyof typeof StatusConstants
@@ -24,8 +24,8 @@ export const StatusLabel: Record<string, string> = {
     SUCCESS: 'Thành công',
     ERROR: 'Lỗi',
     WAITING: 'Đang chờ',
-    REVIEW: 'Đang duyệt',
-    ACTIVE: 'Hoạt động'
+    ACTIVE: 'Hoạt động',
+    LOCKED: 'Khóa'
 }
 
 export const GLCodeLabels: Record<string, string> = {

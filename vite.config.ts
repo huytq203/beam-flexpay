@@ -56,6 +56,9 @@ export default defineConfig(({ mode }) => {
       svgr(),
       VitePWA({
         registerType: 'autoUpdate',
+        devOptions: {
+          enabled: true
+        },
         workbox: {
           maximumFileSizeToCacheInBytes: 6 * 1024 * 1024 // tăng lên 6MB
         },
