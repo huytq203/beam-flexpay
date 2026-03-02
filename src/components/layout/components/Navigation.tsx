@@ -70,7 +70,7 @@ import { ItemType } from 'antd/es/menu/interface'
 
 export type ItemTypeCustom = ItemType & {
   link?: string
-  permission?: string
+  permission?: string | string[]
   children?: ItemTypeCustom[]
 }
 
@@ -919,8 +919,8 @@ const walletManagement = {
       ),
       label: "Duyệt eKYC"
     },
-    
-     {
+
+    {
       key: 'transaction-wallet',
       icon: (
         <UsersThreeIcon
@@ -980,7 +980,7 @@ const transactionManagement = {
       ),
       label: 'Sổ cái hệ thống'
     },
-   
+
     {
       key: 'withdraw-history',
       icon: (

@@ -54,7 +54,6 @@ export const PermissionManagementColumn = ({
       title: 'Tên nhóm quyền',
       dataIndex: 'name',
       align: 'left',
-      width: 200,
       render: (text: string) => (
         <TooltipComponent title={RoleName[text]??text}>
           <span className='inline-block max-x-[200px] overflow-hidden text-ellipsis whitespace-nowrap '>
@@ -63,23 +62,23 @@ export const PermissionManagementColumn = ({
         </TooltipComponent>
       ),
     },
-    {
-      title: 'Mô tả',
-      dataIndex: 'description',
-      align: 'center',
-      render: (value) => value ?? '--'
-    },
-    {
-      title: 'Ngày khởi tạo',
-      dataIndex: 'date',
-      align: 'center',
-      render: (value) => value ?? '--'
-    },
+    // {
+    //   title: 'Mô tả',
+    //   dataIndex: 'description',
+    //   align: 'center',
+    //   render: (value) => value ?? '--'
+    // },
+    // {
+    //   title: 'Ngày khởi tạo',
+    //   dataIndex: 'date',
+    //   align: 'center',
+    //   render: (value) => value ?? '--'
+    // },
     {
       title: 'Thao tác',
       dataIndex: 'action',
       align: 'center',
-      width: 100,
+      width: 50,
       // fixed: 'right',
       render: (_, record) => {
         // So sánh role name trong bảng với roles của user hiện tại từ JWT

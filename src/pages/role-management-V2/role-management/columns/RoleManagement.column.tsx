@@ -46,7 +46,7 @@ export const RoleManagementColumn = ({
     {
       title: 'Mô tả',
       dataIndex: 'description',
-      align: 'center',
+      align: 'left',
       render: (value) => value || '--'
     },
     {

@@ -34,7 +34,7 @@ const FormSearch = ({ onSearch }: FormSearchProps) => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <FormInput control={control} name="username" className="col-span-1" label="Tên tài khoản (username)" placeholder='Nhập tên User...' />
                 <FormSelect
                     control={control}

@@ -26,6 +26,7 @@
     "autoprefixer": "^10.4.21",
     "dayjs": "^1.11.7",
     "events": "^3.3.0",
+    "gsap": "^3.14.2",
     "i18next": "^22.0.6",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",

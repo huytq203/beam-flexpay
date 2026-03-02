@@ -13,20 +13,24 @@ const useNavigationEw = () => {
   const permissionMap = useMemo(() => {
     const map = new Set(permissions)
     return {
-      hasPermission: (permission: string | undefined): boolean => {
+      hasPermission: (permission: string | string[] | undefined): boolean => {
         if (!permission) return false
 
-        const checkPermission = (map: Set<string>, permission: string) => {
+        const checkPermission = (map: Set<string>, perm: string) => {
           for (const value of map) {
             if (
-              value === permission ||
-              value.endsWith(`:${permission}`) ||
-              value.includes(`:${permission}:`)
+              value === perm ||
+              value.endsWith(`:${perm}`) ||
+              value.includes(`:${perm}:`)
             ) {
               return true
             }
           }
           return false
+        }
+
+        if (Array.isArray(permission)) {
+          return permission.some(p => checkPermission(map, p))
         }
 
         return checkPermission(map, permission)
