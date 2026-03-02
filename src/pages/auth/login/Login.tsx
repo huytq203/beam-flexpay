@@ -1,6 +1,6 @@
 import { ButtonComponent } from '@components/index'
 import { FormInput } from '@components/form'
-import React, { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { useUserLoginMutation } from '@services/authEndpoints'
@@ -10,29 +10,33 @@ import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import "./style2.scss"
 import { useMessage } from '@hooks/useMessage'
 import { TokenType, setRefreshTokenCookie } from '@configs/fetchBaseQuery.types'
-// Define validation schema
+import gsap from 'gsap'
+
 const loginSchema = z.object({
-    username: z
-        .string()
-        .min(1, 'Vui lòng nhập email')
-        .transform(val => val.trim()),
-    password: z
-        .string()
-        .min(1, 'Vui lòng nhập mật khẩu')
-        .transform(val => val.trim())
+    username: z.string().min(1, 'Vui lòng nhập email').transform(val => val.trim()),
+    password: z.string().min(1, 'Vui lòng nhập mật khẩu').transform(val => val.trim()),
 })
 
 type LoginFormData = z.infer<typeof loginSchema>
+
+const MicrosoftIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 21 21" fill="none" className="shrink-0">
+        <path d="M10 0H0v10h10V0z" fill="#F25022" />
+        <path d="M21 0H11v10h10V0z" fill="#7FBA00" />
+        <path d="M10 11H0v10h10V11z" fill="#00A4EF" />
+        <path d="M21 11H11v10h10V11z" fill="#FFB900" />
+    </svg>
+)
 
 const Login2 = () => {
     const navigate = useNavigate()
     const [login, { isLoading }] = useUserLoginMutation()
     const [getUrlLogin] = useLazyGetUrlLoginQuery()
     const { t } = useTranslation()
-    const { infoMess, successMess, warningMess, errorMess } = useMessage()
+    const { errorMess } = useMessage()
+    const cardRef = useRef<HTMLDivElement>(null)
 
     const {
         control,
@@ -40,10 +44,7 @@ const Login2 = () => {
         formState: { errors }
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
-        defaultValues: {
-            username: '',
-            password: ''
-        }
+        defaultValues: { username: '', password: '' }
     })
 
     useEffect(() => {
@@ -51,26 +52,36 @@ const Login2 = () => {
         window.events.emit('auth-set-description', t`login.description`)
     }, [])
 
+    useEffect(() => {
+        if (!cardRef.current) return
+        const ctx = gsap.context(() => {
+            gsap.fromTo('.login-logo',
+                { scale: 0.5, opacity: 0 },
+                { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.7)' }
+            )
+            gsap.fromTo('.login-heading',
+                { y: 20, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.5, delay: 0.2, ease: 'power2.out' }
+            )
+            gsap.fromTo('.login-form-fields > *',
+                { y: 15, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.4, stagger: 0.08, delay: 0.35, ease: 'power2.out' }
+            )
+        }, cardRef)
+        return () => ctx.revert()
+    }, [])
+
     const onFinish = async (values: LoginFormData) => {
         try {
             const result = await login({ userLoginDto: values })
-            console.log("result:",'error' in result)
             if ('data' in result && result.data) {
                 navigate('/')
-                // Truyền refreshExpiresIn từ API (đơn vị giây) vào setRefreshTokenCookie
                 const refreshToken = result?.data?.[TokenType.REFRESH_TOKEN] || ''
                 const refreshExpiresIn = result?.data?.[TokenType.REFRESH_EXPIRES_IN] || 1800
                 setRefreshTokenCookie(refreshToken, refreshExpiresIn)
-
             } else if ('error' in result) {
-                // const error = result.error as any
-                // const errorMessage = error?.data?.message || t`login.failed`
-                // errorMess(errorMessage)
             }
-        } catch  {
-            // const errorMessage = error?.data?.message || error?.message || t`login.messages.server_error`
-            // errorMess(errorMessage)
-
+        } catch {
         }
     }
 
@@ -86,88 +97,98 @@ const Login2 = () => {
             }
         } catch (error: any) {
             notification.error({ message: t`login.sso-failed` })
-            alert(error?.data?.message)
         }
     }
 
     return (
-        <>
-            <form
-                onSubmit={handleSubmit(onFinish)}
-                className='border px-5 py-10 rounded-md shadow-xl md:border-none md:shadow-none md:px-16 md:w-full md:py-0 overflow-auto'
-            // className="relative w-full max-w-[20rem] px-8 py-10 flex flex-col items-center bg-white/30 backdrop-blur-lg border border-white/30 rounded-xl shadow-2xl transition-all duration-300 ease-out hover:backdrop-blur-xl hover:bg-white/30 hover:shadow-[0_25px_60px_rgba(0,0,0,0.25)]" 
-            >
-                <div className="flex w-full flex-1 justify-center flex-col gap-3 ">
-                    <div className="flex justify-center items-center mb-2">
-                        <div className="rounded-full bg-white p-1 shadow  transition-all duration-300">
-                            <img className='w-16 h-16 object-contain' src="/images/BEAM.png" alt="" />
-                        </div>
-                    </div>
-                    <div className="flex justify-center items-center mb-3">
-                        <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight text-gray-600 italic">
-                            Đăng nhập
-                        </h1>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                        <div className="space-y-1">
-                            <FormInput
-                                inputClassName='w-full !h-9 bg-transparent '
-                                control={control}
-                                name={"username"}
-                                placeholder={'Email của bạn'}
-                                prefix={<UserOutlined className="text-gray-400" />}
-                            />
-                        </div>
-
-                        <div className="space-y-1">
-                            <FormInput
-                                inputClassName='w-full  !h-9 bg-transparent '
-                                type='password'
-                                control={control}
-                                name={"password"}
-                                placeholder={'Mật khẩu'}
-                                prefix={<LockOutlined className="text-gray-400" />}
-                            />
-                        </div>
-
-                        <div className="flex justify-end items-center h- -mt-2">
-                            <Link
-                                className='text-[0.75rem] font-medium text-blue-600 hover:text-blue-700 transition-colors duration-200 hover:underline'
-                                to='/auth/forget-password'
-                            >
-                                Quên mật khẩu?
-                            </Link>
-                        </div>
-                    </div>
-
-                    <div className="flex mt-2">
-                        <ButtonComponent
-                            className="flex-1 !h-10"
-                            content='Đăng nhập'
-                            htmlType='submit'
-                            loading={isLoading}
-                        />
-                    </div>
-
-                    <div className="flex items-center gap-3 my-2">
-                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-                        <span className="text-gray-500 text-sm font-medium px-2">Hoặc</span>
-                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-                    </div>
-
-                    <div className="flex">
-                        <ButtonComponent
-                            className='flex-1 !h-10 md:!border-1 !border-gray-300 hover:!border-blue-400 !bg-white hover:!bg-blue-50 !text-gray-500 hover:!text-blue-600 !font-semibold !transition-all !duration-300 !shadow-sm hover:!shadow-md'
-                            type='default'
-                            content='Đăng nhập với Microsoft'
-                            onClick={ssoLogin}
-                            loading={isLoading}
-                        />
-                    </div>
+        <div ref={cardRef} className="w-full max-w-[420px]">
+            {/* Mobile brand header */}
+            <div className="flex items-center gap-3 mb-6 md:hidden">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-teal-100 to-teal-200 flex items-center justify-center">
+                    <img src="/images/BEAM.png" alt="Beam" className="w-7 h-7 object-contain" />
                 </div>
+                <span className="text-teal-700 font-bold text-base tracking-tight">Beam Ewallet CMS</span>
+            </div>
+
+            {/* Logo */}
+            <div className="login-logo flex justify-center mb-4">
+                <div className="w-[60px] h-[60px] rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 flex items-center justify-center border border-teal-100/60">
+                    <img src="/images/BEAM.png" alt="Beam Logo" className="w-[48px] h-[48px] object-contain" />
+                </div>
+            </div>
+
+            {/* Heading */}
+            <div className="login-heading text-center mb-8">
+                <h1 className="text-[26px] font-extrabold text-gray-900 tracking-tight leading-tight mb-1">
+                    Chào mừng trở lại
+                </h1>
+                <p className="text-gray-400 text-[13px]">Đăng nhập để tiếp tục vào hệ thống quản trị</p>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit(onFinish)} className="login-form-fields flex flex-col gap-4">
+                <FormInput
+                    inputClassName="w-full !h-[42px] !rounded-[10px] !text-[13px] !bg-gray-50/80 hover:!bg-white focus:!bg-white !transition-colors !duration-200 !border-gray-200"
+                    control={control}
+                    name="username"
+                    placeholder="Tên đăng nhập / Email"
+                    prefix={<UserOutlined className="text-gray-400" />}
+                />
+
+                <FormInput
+                    inputClassName="w-full !h-[42px] !rounded-[10px] !text-[13px] !bg-gray-50/80 hover:!bg-white focus:!bg-white !transition-colors !duration-200 !border-gray-200"
+                    type="password"
+                    control={control}
+                    name="password"
+                    placeholder="Mật khẩu"
+                    prefix={<LockOutlined className="text-gray-400" />}
+                />
+
+                <div className="flex justify-end -mt-1">
+                    <Link
+                        to="/auth/forget-password"
+                        className="text-[12px] font-medium text-teal-600 hover:text-teal-800 transition-colors duration-200"
+                    >
+                        Quên mật khẩu?
+                    </Link>
+                </div>
+
+                <ButtonComponent
+                    className="!w-full !h-[42px] !rounded-[10px] !font-semibold !text-[14px]"
+                    content="Đăng nhập"
+                    htmlType="submit"
+                    loading={isLoading}
+                />
+
+                {/* Divider */}
+                <div className="flex items-center gap-3 my-0.5">
+                    <div className="flex-1 h-px bg-gray-100" />
+                    <span className="text-[11px] text-gray-400 font-medium uppercase tracking-wider">Hoặc</span>
+                    <div className="flex-1 h-px bg-gray-100" />
+                </div>
+
+                {/* SSO Button */}
+                <button
+                    type="button"
+                    onClick={ssoLogin}
+                    disabled={isLoading}
+                    className="w-full h-[42px] flex items-center justify-center gap-2.5
+                               rounded-[10px] border border-gray-200 bg-white
+                               text-[13px] font-semibold text-gray-600
+                               transition-all duration-200 ease-out
+                               hover:border-teal-300 hover:text-teal-700 hover:bg-teal-50/40
+                               active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <MicrosoftIcon />
+                    <span>Đăng nhập với Microsoft</span>
+                </button>
             </form>
-        </>
+
+            {/* Footer */}
+            <p className="text-center text-[11px] text-gray-300 mt-8">
+                © {new Date().getFullYear()} Beam Ewallet · Powered by Flexpay
+            </p>
+        </div>
     )
 }
 

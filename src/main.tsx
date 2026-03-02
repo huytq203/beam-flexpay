@@ -1,3 +1,11 @@
+// import { scan } from 'react-scan';
+
+// if (import.meta.env.DEV) {
+//   scan({
+//     enabled: false,
+//   });
+// }
+
 import ScreenLoading from '@components/screen-loading/ScreenLoading'
 import { EventEmitter } from 'events'
 import ReactDOM from 'react-dom/client'
@@ -35,7 +43,7 @@ const theme = {
     colorLinkHover: primaryHoverColor,
     colorPrimaryHover: primaryHoverColor,
     Button: {
-      colorPrimary: primaryColor, 
+      colorPrimary: primaryColor,
       colorPrimaryHover: primaryHoverColor,
     },
   },

@@ -110,14 +110,14 @@ const FeeManagementForm = ({
                   className='col-span-12 md:col-span-6 flex flex-col'
                 />
 
-                <div className=' col-span-12 flex flex-col md:flex-row md:justify-between gap-3 '>
-                  <div className='flex gap-2 flex-col md:flex-row'>
+                <div className='col-span-12 flex flex-col md:flex-row md:justify-between gap-3'>
+                  <div className='flex gap-2 w-full md:w-auto flex-row'>
                     <ButtonComponent
                       htmlType='submit'
                       form='feeManagement'
                       icon={svg('/icons.svg#hugeicons-search-01')}
                       content='Search'
-                      className='w-full md:w-auto'
+                      className='flex-1 md:flex-none'
                     />
                     <ButtonComponent
                       htmlType='button'
@@ -125,10 +125,10 @@ const FeeManagementForm = ({
                       onClick={onReset}
                       type='default'
                       icon={svg('/icons.svg#hugeicons-delete-02')}
-                      className='w-full md:w-auto'
+                      className='flex-1 md:flex-none'
                     />
                   </div>
-                  <div className=''>
+                  <div className='w-full md:w-auto'>
                     <ButtonComponent
                       htmlType='button'
                       content='Thêm chính sách mới'

@@ -19,61 +19,9 @@
   }
 }
 
-.auth-page {
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  background: #ffffff;
-
-  .auth-form {
-    height: inherit;
-    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-
-    .logo {
-      text-align: center;
-      margin-bottom: 30px;
-      background-color: var(--primary-color);
-
-      img {
-        max-width: 100px;
-      }
-    }
-  }
-
-  .auth-bg {
-    height: 100vh;
-    width: 100%;
-    background-color: #d2f8f4 !important;
-    background-image: url('../../styles/assets/capybara/Cappybara_17_Poses-02.png');
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    -webkit-background-size: contain;
-    -moz-background-size: contain;
-    transition: background-image 0.3s ease-in 0.2s;
-  }
-
-  .auth-mask-color {
-    // background-color: #f0eaea !important;
-  }
-
-  .auth-bg-mask {
-    z-index: 1;
-    opacity: 0.8;
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-  }
-
-  .auth-description {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    z-index: 2;
-  }
+/* Mascot background — chỉ cần giữ lại class này vì SCSS reference ảnh từ file system */
+.auth-mascot {
+  background-image: url('../../styles/assets/capybara/Cappybara_17_Poses-02.png');
 }
 
 .ant-btn-default:not(:disabled):not(.ant-btn-disabled):hover {
@@ -81,19 +29,16 @@
   border-color: var(--primary-color) !important;
   background: #ffffff;
 }
+
 :where(.css-dev-only-do-not-override-qnu6hi).ant-btn-primary {
   color: #fff;
   background: var(--primary-color) !important;
   box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
 }
-:where(.css-dev-only-do-not-override-qnu6hi).ant-btn-primary:not(:disabled):not(
-    .ant-btn-disabled
-  ):hover {
+
+:where(.css-dev-only-do-not-override-qnu6hi).ant-btn-primary:not(:disabled):not(.ant-btn-disabled):hover {
   color: #fff;
 }
-// html {
-//   font-size: 0.9vw;
-// }
 
 .mobile-sidebar-drawer {
   .ant-drawer-body {

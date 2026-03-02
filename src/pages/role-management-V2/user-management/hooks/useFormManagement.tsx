@@ -29,7 +29,7 @@ export const useFormManagement = () => {
 
   // hook
   const { errorMess } = useMessage()
-  const {page,size,params}=usePagination()
+  const { page, size, params } = usePagination()
   // api
   const defaultPagination = {
     page: 1,
@@ -37,20 +37,21 @@ export const useFormManagement = () => {
     sortBy: 'id',
     sortDirection: 'DESC'
   }
-  const { data: getUser , isLoading: isLoadingUser} = useGetUserQuery(defaultPagination)
+  const { data: getUser, isLoading: isLoadingUser } = useGetUserQuery(defaultPagination)
   const [getUserById] = useLazyGetUserByIdQuery()
-  const { data: getRole,isLoading: isLoadingRoles  } = useGetRoleQuery({
-    page,size:1000
+  const { data: getRole, isLoading: isLoadingRoles } = useGetRoleQuery({
+    page, size: 1000
   })
   // const [ userRoleData, { isLoading: isLoadingUserRoles }] = useLazyGetUserRoleQuery()
 
-console.log(params)
+  console.log(params)
 
-  const roleOptions =
-    getRole?.content?.map((role) => ({
+  const roleOptions = useMemo(() => {
+    return getRole?.content?.map((role) => ({
       value: role.name,
       label: RoleUserAccount[role.name as keyof typeof RoleUserAccount] ?? role.name,
     })) ?? []
+  }, [getRole?.content])
 
   // logic
 
@@ -158,35 +159,35 @@ console.log(params)
     }
   }, [getUserById])
 
-  const handleOpenDetail = (record: UserInfor) => {
+  const handleOpenDetail = useCallback((record: UserInfor) => {
     getUserInfo(record.id)
     setOpenModalDetail(true)
     setModeAction('add')
-  }
+  }, [getUserInfo])
 
-  const handleCloseDetail = () => {
+  const handleCloseDetail = useCallback(() => {
     setOpenModalDetail(false)
     setModeAction('')
-  }
+  }, [])
 
-  const handleOpenUpdate = (record: UserInfor) => {
+  const handleOpenUpdate = useCallback((record: UserInfor) => {
     getUserInfo(record.id)
     setOpenModalAdd(true)
     setModeAction('update')
-  }
+  }, [getUserInfo])
 
-  const handleCloseUpdate = () => {
+  const handleCloseUpdate = useCallback(() => {
     setOpenModalAdd(false)
     setModeAction('')
-  }
+  }, [])
 
-  const handleOpenRoleAssign = async (record: UserInfor) => {
+  const handleOpenRoleAssign = useCallback(async (record: UserInfor) => {
     setSelectedUser(record)
     setOpenModalRoleAssign(true)
     // userRoleData(record.id)
-  }
+  }, [])
 
-  const column = RoleManagementColumn({
+  const column = useMemo(() => RoleManagementColumn({
     setOpenModalDetail,
     setModeAction,
     setOpenDialog,
@@ -196,8 +197,7 @@ console.log(params)
     setSelectedUser,
     setOpenModalRoleAssign,
     handleOpenRoleAssign
-  })
-
+  }), [handleOpenDetail, handleOpenUpdate, handleOpenRoleAssign])
 
   return {
     openModalAdd,

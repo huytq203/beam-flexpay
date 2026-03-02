@@ -57,7 +57,8 @@ export default defineConfig(({ mode }) => {
       VitePWA({
         registerType: 'autoUpdate',
         devOptions: {
-          enabled: true
+          enabled: true,
+          type: 'module'
         },
         workbox: {
           maximumFileSizeToCacheInBytes: 6 * 1024 * 1024 // tăng lên 6MB
@@ -67,6 +68,9 @@ export default defineConfig(({ mode }) => {
           short_name: 'Beam CMS',
           description: 'Beam Ewallet CMS Management Web Application',
           theme_color: '#ffffff',
+          background_color: '#ffffff',
+          display: 'standalone',
+          start_url: '/',
           icons: [
             {
               src: '/images/BEAM.png',
@@ -76,7 +80,8 @@ export default defineConfig(({ mode }) => {
             {
               src: '/images/BEAM.png',
               sizes: '512x512',
-              type: 'image/png'
+              type: 'image/png',
+              purpose: 'any maskable'
             }
           ]
         }

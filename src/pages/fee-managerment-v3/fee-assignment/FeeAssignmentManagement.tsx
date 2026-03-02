@@ -220,31 +220,31 @@ const FeeAssignmentManagement = () => {
             <CardComponent
               content={
                 <>
-                  <form action='formViewAssign'>
+                  <form action='formViewAssign' className='mb-3'>
                     <FormFieldAssign
                       control={control}
                       setValue={setValue}
                       isCreate={isCreate}
                     />
                   </form>
-                  <div className='flex flex-col md:flex-row md:justify-between mt-4'>
-                    <div className='flex flex-col md:flex-row  justify-center items-center gap-2'>
+                  <div className='col-span-12 flex flex-col md:flex-row md:justify-between gap-3'>
+                    <div className='flex gap-2 w-full md:w-auto flex-row'>
                       <ButtonComponent
                         icon={svg('/icons.svg#hugeicons-search-01')}
                         content='Search'
                         onClick={handleSubmit(handleSearch)}
-                        className='w-full md:w-auto'
+                        className='flex-1 md:flex-none'
                       />
                       <ButtonComponent
                         type='default'
                         icon={svg('/icons.svg#hugeicons-delete-02')}
                         content='Xóa bộ lọc'
                         onClick={handleReset}
-                        className='w-full md:w-auto'
+                       className='flex-1 md:flex-none'
                       />
 
                     </div>
-                    <div className='flex justify-center items-center'>
+                    <div className='w-full md:w-auto'>
                       <ButtonComponent
                         icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
                         content='Thiết lập phí'

@@ -44,7 +44,7 @@ const FormSearch = ({ setOpenModalAdd, setModeAction, onSearch }: Props) => {
         className='flex-1'
         onSubmit={handleSubmit(handleSearch)}
       >
-        <div className='grid grid-cols-3 gap-3 w-full'>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-3 w-full'>
           <FormInput
             label='Mã quyền'
             placeholder='Mã quyền...'

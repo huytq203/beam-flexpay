@@ -33,7 +33,7 @@ const FormPermission = ({
     {
       title: 'Tên quyền',
       dataIndex: 'name',
-      align: 'center',
+      align: 'left',
       render(value, record) {
         return (
           <div className=''>
@@ -45,7 +45,7 @@ const FormPermission = ({
     {
       title: 'Mô tả',
       dataIndex: 'description',
-      align: 'center',
+      align: 'left',
       render: (value) => value || '--'
     }
   ]

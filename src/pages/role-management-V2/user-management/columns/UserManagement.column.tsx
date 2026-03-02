@@ -45,33 +45,39 @@ export const RoleManagementColumn = ({
     {
       title: 'Họ và tên',
       dataIndex: 'firstName',
-      align: 'center',
+      align: 'left',
+      render: (value, record) => `${record.firstName} ${record.lastName ?? ''}`
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      align: 'left',
       render: (value) => value ?? '--'
     },
-    // {
-    //   title: 'Email',
-    //   dataIndex: 'email',
-    //   align: 'center',
-    //   render: (value) => value ?? '--'
-    // },
     // {
     //   title: 'lastName',
     //   dataIndex: 'lastName',
     //   align: 'center',
     //   render: (value) => value ?? '--'
     // },
-    // {
-    //   title: 'emailVerified',
-    //   dataIndex: 'emailVerified',
-    //   align: 'center',
-    //   render: (value) => value || '--'
-    // },
     {
-      title: 'Nhóm quyền',
-      dataIndex: 'groups',
+      title: 'Xác thực email',
+      dataIndex: 'emailVerified',
       align: 'center',
-      render: (value) => value ?? '--'
+     render(value, record, index) {
+        return(
+          <div className="">
+            {record.emailVerified? <p className='text-green bg-green border border-green text-xs rounded-md inline-block px-2 font-medium'>Đã xác thực</p>: <p className='text-red bg-red border border-red text-xs rounded-md inline-block px-2 font-medium'>Chưa xác thực</p>}
+          </div>
+        )
+      },
     },
+    // {
+    //   title: 'Nhóm quyền',
+    //   dataIndex: 'groups',
+    //   align: 'center',
+    //   render: (value) => value ?? '--'
+    // },
     {
       title: 'Trạng thái',
       dataIndex: 'enabled',
