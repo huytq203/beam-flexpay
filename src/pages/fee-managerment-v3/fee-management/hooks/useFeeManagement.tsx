@@ -74,7 +74,7 @@ const useFeeManagement = () => {
     try {
       await patchDeactivateFee(record.key).unwrap()
       successMess('Cập nhật trạng thái thành công')
-      searchFeePolicies(getSearchParams())
+      // searchFeePolicies(getSearchParams())
     } catch {
     }
   }
@@ -83,7 +83,7 @@ const useFeeManagement = () => {
     try {
       await patchActivateFee(record.key).unwrap()
       successMess('Cập nhật trạng thái thành công')
-      searchFeePolicies(getSearchParams())
+      // searchFeePolicies(getSearchParams())
     } catch {
     }
   }

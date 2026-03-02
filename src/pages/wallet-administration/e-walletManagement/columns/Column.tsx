@@ -69,10 +69,28 @@ export const Column = ({ openModal, handleGetFreeze }: ColumnOptions = {}): Colu
     },
     {
       title: 'Số dư ví',
-      align: 'center',
+      align: 'right',
       render: (_, record) => (
         <div className={`font-medium ${record.balance > 0 ? 'text-green' : record.balance === 0 ? 'text-gray-500' : 'text-red'}`}>
           {formatNumber(record.balance)} {record.currency}
+        </div>
+      ),
+    },
+    {
+      title: 'Số dư khả dụng',
+      align: 'right',
+      render: (_, record) => (
+        <div className={`font-medium ${record.availableBalance > 0 ? 'text-blue' : record.availableBalance === 0 ? 'text-gray-500' : 'text-red'}`}>
+          {formatNumber(record.availableBalance)} {record.currency}
+        </div>
+      ),
+    },
+    {
+      title: 'Số tiền đóng băng',
+      align: 'right',
+      render: (_, record) => (
+        <div className={`font-medium ${record.holdBalance > 0 ? 'text-red' : 'text-gray-500'}`}>
+          {formatNumber(record.holdBalance)} {record.currency}
         </div>
       ),
     },

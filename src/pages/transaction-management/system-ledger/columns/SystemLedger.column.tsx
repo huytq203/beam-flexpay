@@ -5,15 +5,15 @@ import { Link, NavigateFunction } from "react-router-dom";
 import { ButtonComponent, TooltipComponent } from "@components/index";
 import { EyeFilled } from "@components/icons";
 import { formatCurrency } from "@utils/formatNumber";
-import { DirectionConstants, DirectionKey, GLCodeLabels, StatusLabel } from "../constants/SystemLedger.constant";
+import { DirectionConstants, DirectionKey, GLCodeLabels, StatusKey, StatusLabel } from "../constants/SystemLedger.constant";
 
 const SystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<LedgerEntry> => [
     {
         title: '#',
         dataIndex: 'no',
         align: 'center',
-        width:50,
-        
+        width: 50,
+
     },
     {
         title: 'Mã giao dịch',
@@ -97,16 +97,17 @@ const SystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Colum
         align: 'center',
         width: 120,
         render(value, record) {
-            const STATUS_CLASS: Record<string, string> = {
+            const STATUS_CLASS: Record<StatusKey, string> = {
                 SUCCESS: 'text-green rounded-md inline-block px-2 font-medium text-xs border border-green bg-green',
                 ERROR: 'text-red rounded-md inline-block px-2 font-medium text-xs border border-red bg-red',
                 WAITING: 'text-blue-600 rounded-md inline-block px-2 font-medium text-xs border border-blue-500 bg-blue-50',
                 ACTIVE: 'text-green rounded-md inline-block px-2 font-medium text-xs border border-green bg-green',
+                LOCKED: 'text-red rounded-md inline-block px-2 font-medium text-xs border border-red bg-red',
             };
-            const status = record.account?.status || record.transaction?.status
+            const status = record.account?.status || record.transaction?.status;
             return (
-                <div className={STATUS_CLASS[status] ?? ''}>
-                    {StatusLabel[status] ?? status}
+                <div className={STATUS_CLASS[status as StatusKey] ?? ''}>
+                    {StatusLabel[status as StatusKey] ?? status}
                 </div>
             )
         },
