@@ -1,36 +1,19 @@
 import {
   ApartmentOutlined,
-  DeleteOutlined,
   EditOutlined,
-  EyeOutlined,
-  KeyOutlined,
-  LockOutlined,
-  UserSwitchOutlined
+  EyeOutlined
 } from '@components/icons'
 import { ButtonComponent, TooltipComponent } from '@components/index'
 import { UserInfor } from '@type/userManagement'
 import { ColumnType } from 'antd/lib/table'
-import { ActionMode } from '../UserManagement'
+import { ModalType, SelectedUser } from '../types/UserManagement.type'
 
 interface Props {
-  setOpenModalDetail: (record: boolean) => void
-  setOpenDialog: (record: boolean) => void
-  setModeAction: (value: ActionMode) => void
-  handleOpenDetail: (record: UserInfor) => void
-  handleOpenUpdate: (record: UserInfor) => void
-  setSelectedUser: (record: UserInfor) => void
-  setOpenModalAdd: (value: boolean) => void
-  setOpenModalRoleAssign: (value: boolean) => void
-  handleOpenRoleAssign: (record: UserInfor) => void
+  openModal: (type: ModalType, user?: SelectedUser | null) => void
 }
 
-export const RoleManagementColumn = ({
-  handleOpenUpdate,
-  setModeAction,
-  setOpenDialog,
-  handleOpenDetail,
-  setSelectedUser,
-  handleOpenRoleAssign
+export const UserManagementColumn = ({
+  openModal
 }: Props): ColumnType<UserInfor>[] => [
     {
       title: 'STT',
@@ -38,12 +21,12 @@ export const RoleManagementColumn = ({
       align: 'center'
     },
     {
-      title: 'Tên đăng nhập',
+      title: 'Ten dang nhap',
       dataIndex: 'username',
       align: 'center'
     },
     {
-      title: 'Họ và tên',
+      title: 'Ho va ten',
       dataIndex: 'firstName',
       align: 'left',
       render: (value, record) => `${record.firstName} ${record.lastName ?? ''}`
@@ -54,44 +37,48 @@ export const RoleManagementColumn = ({
       align: 'left',
       render: (value) => value ?? '--'
     },
-    // {
-    //   title: 'lastName',
-    //   dataIndex: 'lastName',
-    //   align: 'center',
-    //   render: (value) => value ?? '--'
-    // },
     {
-      title: 'Xác thực email',
+      title: 'Xac thuc email',
       dataIndex: 'emailVerified',
       align: 'center',
-     render(value, record, index) {
-        return(
-          <div className="">
-            {record.emailVerified? <p className='text-green bg-green border border-green text-xs rounded-md inline-block px-2 font-medium'>Đã xác thực</p>: <p className='text-red bg-red border border-red text-xs rounded-md inline-block px-2 font-medium'>Chưa xác thực</p>}
+      render(_, record) {
+        return (
+          <div>
+            {record.emailVerified ? (
+              <p className='text-green bg-green border border-green text-xs rounded-md inline-block px-2 font-medium'>
+                Da xac thuc
+              </p>
+            ) : (
+              <p className='text-red bg-red border border-red text-xs rounded-md inline-block px-2 font-medium'>
+                Chua xac thuc
+              </p>
+            )}
           </div>
         )
-      },
+      }
     },
-    // {
-    //   title: 'Nhóm quyền',
-    //   dataIndex: 'groups',
-    //   align: 'center',
-    //   render: (value) => value ?? '--'
-    // },
     {
-      title: 'Trạng thái',
+      title: 'Trang thai',
       dataIndex: 'enabled',
       align: 'center',
-      render(value, record, index) {
-        return(
-          <div className="">
-            {record.enabled? <p className='text-green bg-green border border-green text-xs rounded-md inline-block px-2 font-medium'>Hoạt động</p>: <p className='text-red bg-red border border-red text-xs rounded-md inline-block px-2 font-medium'>Không hoạt động</p>}
+      render(_, record) {
+        return (
+          <div>
+            {record.enabled ? (
+              <p className='text-green bg-green border border-green text-xs rounded-md inline-block px-2 font-medium'>
+                Hoat dong
+              </p>
+            ) : (
+              <p className='text-red bg-red border border-red text-xs rounded-md inline-block px-2 font-medium'>
+                Khong hoat dong
+              </p>
+            )}
           </div>
         )
-      },
+      }
     },
     {
-      title: 'Ngày tạo',
+      title: 'Ngay tao',
       dataIndex: 'createdTimestamp',
       align: 'center',
       render: (value: Date | null) => {
@@ -107,78 +94,38 @@ export const RoleManagementColumn = ({
       }
     },
     {
-      title: 'Thao tác',
+      title: 'Thao tac',
       dataIndex: 'action',
       align: 'center',
       width: 100,
       fixed: 'right',
       render: (_, record) => (
         <div className='flex justify-center items-center gap-1'>
-          <TooltipComponent title='Chỉnh sửa'>
+          <TooltipComponent title='Chinh sua'>
             <ButtonComponent
               size='small'
               type='default'
               icon={<EditOutlined />}
-              onClick={() => handleOpenUpdate(record)}
+              onClick={() => openModal('edit', record)}
               hidden
             />
           </TooltipComponent>
-          <TooltipComponent title='Xem chi tiết'>
-          <ButtonComponent
-            size='small'
-            type='default'
-            className='text-blue-600'
-            icon={<EyeOutlined />}
-            onClick={() => handleOpenDetail(record)}
-          />
-
+          <TooltipComponent title='Xem chi tiet'>
+            <ButtonComponent
+              size='small'
+              type='default'
+              className='text-blue-600'
+              icon={<EyeOutlined />}
+              onClick={() => openModal('viewDetail', record)}
+            />
           </TooltipComponent>
-          {/* <TooltipComponent title='Khóa tài khoản'>
-          <ButtonComponent
-            size='small'
-            type='default'
-            className='text-yellow-600'
-            icon={<LockOutlined />}
-            onClick={() => {
-              setModeAction('lock')
-              setOpenDialog(true)
-              setSelectedUser(record)
-            }}
-          />
-
-          </TooltipComponent>
-          <TooltipComponent title='Xóa tài khoản'>
-          <ButtonComponent
-            size='small'
-            type='default'
-            className='text-red-600'
-            icon={<DeleteOutlined />}
-            onClick={() => {
-              setModeAction('delete')
-              setOpenDialog(true)
-              setSelectedUser(record)
-            }}
-          />
-
-          </TooltipComponent> */}
-          {/* <ButtonComponent
-            size='small'
-            type='default'
-            className='text-violet-600'
-            icon={<KeyOutlined />}
-            onClick={() => {
-              setModeAction('resetPass')
-              setOpenDialog(true)
-              setSelectedUser(record)
-            }}
-          /> */}
-          <TooltipComponent title='Gán nhóm quyền'>
+          <TooltipComponent title='Gan nhom quyen'>
             <ButtonComponent
               size='small'
               type='default'
               className='text-violet-600'
               icon={<ApartmentOutlined />}
-              onClick={() => handleOpenRoleAssign(record)}
+              onClick={() => openModal('assignRoles', record)}
             />
           </TooltipComponent>
         </div>

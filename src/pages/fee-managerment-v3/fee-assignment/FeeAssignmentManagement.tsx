@@ -25,6 +25,7 @@ import { useMessage } from '@hooks/useMessage'
 import { useSVG } from '@hooks/useSVG'
 import { FeeAssignmentManagementColumn } from './configs'
 import usePagination from '@hooks/usePagination'
+import usePermissionCheck from '@hooks/usePermissionCheck'
 import { SkeletonFilterGroup, SkeletonTable } from '@components/ui/skeletons/Skeleton'
 type ModeAction = 'ADD' | 'UPDATE' | ''
 const FeeAssignmentManagement = () => {
@@ -68,6 +69,9 @@ const FeeAssignmentManagement = () => {
   const [isSearching, setIsSearching] = useState(false)
   const [searchParams, setSearchParams] = useState<FeeAssignType | null>(null)
   const { svg } = useSVG()
+  const { hasAnyPermission } = usePermissionCheck()
+  const canCreate = hasAnyPermission(['FEE:CREATE', 'FEE:FULL', 'ADMIN:FULL'])
+  const canUpdate = hasAnyPermission(['FEE:UPDATE', 'FEE:FULL', 'ADMIN:FULL'])
 
   // useEffect để gọi API khi page/pageSize thay đổi
   useEffect(() => {
@@ -166,8 +170,9 @@ const FeeAssignmentManagement = () => {
     setOpenModalDelete,
     setSelectRowId,
     onToggleStatus: handleToggleStatus,
-    navigate
-  }), [handleToggleStatus, navigate])
+    navigate,
+    canUpdate
+  }), [handleToggleStatus, navigate, canUpdate])
 
   const listData: FeeAssignment[] = useMemo(() =>
     (isSearching ? searchData?.content : dataFeeAssign?.content) || []
@@ -240,17 +245,19 @@ const FeeAssignmentManagement = () => {
                         icon={svg('/icons.svg#hugeicons-delete-02')}
                         content='Xóa bộ lọc'
                         onClick={handleReset}
-                       className='flex-1 md:flex-none'
+                        className='flex-1 md:flex-none'
                       />
 
                     </div>
                     <div className='w-full md:w-auto'>
-                      <ButtonComponent
-                        icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
-                        content='Thiết lập phí'
-                        onClick={handleOpenModalAdd}
-                        className='w-full md:w-auto'
-                      />
+                      {canCreate && (
+                        <ButtonComponent
+                          icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
+                          content='Thiết lập phí'
+                          onClick={handleOpenModalAdd}
+                          className='w-full md:w-auto'
+                        />
+                      )}
                     </div>
                   </div>
                 </>
@@ -279,8 +286,6 @@ const FeeAssignmentManagement = () => {
             />
           </>
         )
-
-
       }
 
 

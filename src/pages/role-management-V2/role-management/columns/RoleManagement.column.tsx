@@ -1,23 +1,16 @@
-import { DeleteOutlined, EditOutlined, LockOutlined } from '@components/icons'
+import { DeleteOutlined, EditOutlined } from '@components/icons'
 import { ButtonComponent } from '@components/index'
 import { ColumnType } from 'antd/lib/table'
 import { RoleDataItem } from '@type/roleManagementV2'
-import { ModeAction } from '../hooks/useRoleManagement'
-import { PermissionItem } from '@type/permissionManagement'
 import { translatePermissionName } from '../constants/RoleManagement.config'
+import { ModalType, SelectedPermission } from '../types/RoleManagement.type'
 
 interface Props {
-  setModeAction: (value: ModeAction) => void
-  setOpenModalAdd: (value: boolean) => void
-  setOpenDialog: (value: boolean) => void
-  setSelectedPermission: (value: PermissionItem) => void
+  openModal: (type: ModalType, permission?: SelectedPermission | null) => void
 }
 
 export const RoleManagementColumn = ({
-  setModeAction,
-  setOpenModalAdd,
-  setSelectedPermission,
-  setOpenDialog
+  openModal
 }: Props): ColumnType<RoleDataItem>[] => [
     {
       title: 'STT',
@@ -61,28 +54,14 @@ export const RoleManagementColumn = ({
             size='small'
             type='default'
             icon={<EditOutlined />}
-            onClick={() => {
-              setModeAction('update')
-              setOpenModalAdd(true)
-              setSelectedPermission(record)
-            }}
+            onClick={() => openModal('edit', record)}
           />
-          {/* <ButtonComponent
-          size='small'
-            type='default'
-            className='text-yellow-600'
-            icon={<LockOutlined />}
-          /> */}
           <ButtonComponent
             size='small'
             type='default'
             className='text-red-600'
             icon={<DeleteOutlined />}
-            onClick={() => {
-              setModeAction('delete')
-              setOpenDialog(true)
-              setSelectedPermission(record)
-            }}
+            onClick={() => openModal('delete', record)}
           />
         </div>
       )

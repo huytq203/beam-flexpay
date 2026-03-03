@@ -1,14 +1,13 @@
 import {
   CardComponent,
-  DialogModal,
   ModalComponent,
   Table
 } from '@components/index'
-import FormAdd from '@pages/role-management-V2/role-management/components/FormAdd'
-import FormSearch from '@pages/role-management-V2/role-management/components/FormSearch'
-import { RoleManagementColumn } from '@pages/role-management-V2/role-management/columns/RoleManagement.column'
-import { useRoleManagement } from './hooks/useRoleManagement'
-import { PermissionItem } from '@type/permissionManagement'
+import FormSearch from './components/FormSearch'
+import DialogAddPermission from './components/DialogAddPermission'
+import DialogDeletePermission from './components/DialogDeletePermission'
+import useFetchDataPermission from './hooks/useFetchDataPermission'
+import useHandlePermission from './hooks/useHandlePermission'
 import {
   SkeletonButton,
   SkeletonInput,
@@ -16,85 +15,31 @@ import {
 } from '@components/ui/skeletons/Skeleton'
 
 const RoleManagement = () => {
-  // hook
-  const {
-    loadGetRole,
-    dataSource,
-    totalElements,
-    typeText,
-    typeFooter,
-    page,
-    setPage,
-    pageSize,
-    setPageSize,
-    modeAction,
-    setModeAction,
-    openModalAdd,
-    setOpenModalAdd,
-    selectedPermission,
-    setSelectedPermission,
-    openDialog,
-    setOpenDialog,
-    handleSearch,
-    handlePostPermission,
-    handlePutPermission,
-    handleDeletePermission
-  } = useRoleManagement()
-
-  const column = RoleManagementColumn({
-    setModeAction,
-    setOpenModalAdd,
-    setSelectedPermission,
-    setOpenDialog
-  })
-
-  const onSubmit = async (
-    data: PermissionItem | Omit<PermissionItem, 'id' | 'name'>
-  ) => {
-    if (modeAction === 'add') {
-      await handlePostPermission(data as Omit<PermissionItem, 'id'>)
-    } else {
-      await handlePutPermission(data as PermissionItem)
-    }
-  }
+  const fetchData = useFetchDataPermission()
+  const handle = useHandlePermission(fetchData)
 
   return (
     <div className='flex flex-col gap-2'>
       <CardComponent
         content={
           <>
-            {loadGetRole ? (
-              <>
-                <div
-                  className={`bg-white rounded-xl shadow-md p-6 border border-gray-100`}
-                >
-                  <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-4'>
-                    {Array.from({ length: 2 }).map((_, index) => (
-                      <SkeletonInput key={index} />
-                    ))}
-
-                    <div className=' w-full flex items-end gap-2'>
-                      <SkeletonButton
-                        className='w-full'
-                        size='md'
-                      />
-                      <SkeletonButton
-                        className='w-full'
-                        size='md'
-                      />
-                      <SkeletonButton
-                        className='w-full'
-                        size='md'
-                      />
-                    </div>
+            {fetchData.isLoading ? (
+              <div className='bg-white rounded-xl shadow-md p-6 border border-gray-100'>
+                <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-4'>
+                  {Array.from({ length: 2 }).map((_, index) => (
+                    <SkeletonInput key={index} />
+                  ))}
+                  <div className='w-full flex items-end gap-2'>
+                    <SkeletonButton className='w-full' size='md' />
+                    <SkeletonButton className='w-full' size='md' />
+                    <SkeletonButton className='w-full' size='md' />
                   </div>
                 </div>
-              </>
+              </div>
             ) : (
               <FormSearch
-                setOpenModalAdd={setOpenModalAdd}
-                setModeAction={setModeAction}
-                onSearch={handleSearch}
+                onSearch={handle.handleSearch}
+                onAdd={() => handle.openModal('add', null)}
               />
             )}
           </>
@@ -103,24 +48,24 @@ const RoleManagement = () => {
       <CardComponent
         content={
           <>
-            {loadGetRole ? (
+            {fetchData.isLoading ? (
               <SkeletonTable />
             ) : (
               <Table
                 rowKey='id'
                 scroll={{ x: 'max-content' }}
                 bordered
-                columns={column}
+                columns={handle.column}
                 size='small'
-                dataSource={dataSource}
+                dataSource={fetchData.dataSource}
                 pagination={{
-                  current: page,
-                  pageSize: pageSize,
-                  total: totalElements,
+                  current: fetchData.page,
+                  pageSize: fetchData.pageSize,
+                  total: fetchData.totalElements,
                   showSizeChanger: true,
                   onChange: (newPage, newPageSize) => {
-                    setPage(newPage)
-                    setPageSize(newPageSize)
+                    fetchData.setPage(newPage)
+                    fetchData.setPageSize(newPageSize)
                   }
                 }}
               />
@@ -128,29 +73,39 @@ const RoleManagement = () => {
           </>
         }
       />
+
+      {/* Add/Edit Permission */}
       <ModalComponent
-        title={modeAction === 'update' ? 'Cập nhật quyền' : 'Thêm quyền'}
-        onCancel={() => setOpenModalAdd(false)}
+        title={handle.modalType === 'edit' ? 'Cập nhật quyền' : 'Thêm quyền'}
+        onCancel={() => handle.closeModal()}
         onOk={() => {}}
-        open={openModalAdd}
+        open={handle.modalType === 'add' || handle.modalType === 'edit'}
         width='30%'
         footer={null}
-        loading={loadGetRole}
         modalText={
-          <FormAdd
-            modeAction={modeAction}
-            selectedUser={selectedPermission}
-            onSubmit={onSubmit}
-            onCancel={() => setOpenModalAdd(false)}
+          <DialogAddPermission
+            permission={handle.selectedPermission}
+            onSuccess={handle.closeModal}
+            onCancel={() => handle.closeModal()}
           />
         }
       />
-      <DialogModal
-        onCancel={() => setOpenDialog(false)}
-        onOk={handleDeletePermission}
-        open={openDialog}
-        content={modeAction && typeText[modeAction]}
-        footer={modeAction && typeFooter[modeAction]}
+
+      {/* Delete Permission */}
+      <ModalComponent
+        title='Xóa quyền'
+        onCancel={() => handle.closeModal()}
+        onOk={() => {}}
+        open={handle.modalType === 'delete'}
+        width='30%'
+        footer={null}
+        modalText={
+          <DialogDeletePermission
+            permissionName={handle.selectedPermission?.name}
+            onSuccess={handle.closeModal}
+            onCancel={() => handle.closeModal()}
+          />
+        }
       />
     </div>
   )

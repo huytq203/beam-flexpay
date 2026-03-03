@@ -13,17 +13,15 @@ export interface SearchFormData {
 }
 
 interface Props {
-  setOpenModalAdd: (value: boolean) => void
   onSearch: (data: SearchFormData) => void
+  onAdd: () => void
 }
 
-const FormSearch = ({ setOpenModalAdd, onSearch }: Props) => {
+const FormSearch = ({ onSearch, onAdd }: Props) => {
   const { svg } = useSVG()
 
   const { control, handleSubmit, reset } = useForm<SearchFormData>({
-    defaultValues: {
-      keyword: ''
-    }
+    defaultValues: { keyword: '' }
   })
 
   const handleSearch = (data: SearchFormData) => {
@@ -37,10 +35,7 @@ const FormSearch = ({ setOpenModalAdd, onSearch }: Props) => {
 
   return (
     <div className='block w-full gap-3 md:flex'>
-      <form
-        className='flex-1'
-        onSubmit={handleSubmit(handleSearch)}
-      >
+      <form className='flex-1' onSubmit={handleSubmit(handleSearch)}>
         <div className='grid md:grid-cols-2 grid-cols-1 gap-3 w-full'>
           <FormInput
             label='Tên nhóm quyền'
@@ -57,10 +52,7 @@ const FormSearch = ({ setOpenModalAdd, onSearch }: Props) => {
             className='col-span-1'
           />
         </div>
-        <button
-          type='submit'
-          className='hidden'
-        />
+        <button type='submit' className='hidden' />
       </form>
       <div className='grid grid-cols-3 mt-3 md:flex justify-end gap-3 items-end md:gap-1'>
         <ButtonComponent
@@ -71,10 +63,10 @@ const FormSearch = ({ setOpenModalAdd, onSearch }: Props) => {
         <ButtonComponent
           icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
           content='Thêm mới'
-          onClick={() => setOpenModalAdd(true)}
-          />
+          onClick={onAdd}
+        />
         <ButtonComponent
-          icon={<BroomIcon size={18}/>}
+          icon={<BroomIcon size={18} />}
           type='default'
           content='Xóa lọc'
           onClick={handleClearFilter}

@@ -810,7 +810,7 @@ const feeManagementV3 = {
   children: [
     {
       key: 'fee-management',
-      permission: "FEE:FULL",
+      permission: ['FEE:FULL', 'FEE:VIEW', 'FEE:CREATE', 'FEE:UPDATE', 'FEE:DELETE', 'ADMIN:FULL'],
       icon: (
         <WalletIcon
           size={size}
@@ -822,7 +822,7 @@ const feeManagementV3 = {
     },
     {
       key: 'fee-assignment',
-      permission: "FEE:FULL",
+      permission: ['FEE:FULL', 'FEE:VIEW', 'FEE:CREATE', 'FEE:UPDATE', 'FEE:DELETE', 'ADMIN:FULL'],
       icon: (
         <CurrencyCircleDollarIcon
           size={size}
@@ -835,9 +835,9 @@ const feeManagementV3 = {
   ],
   label: 'Quản lý phí',
 }
+
 const roleManagementV2 = {
   key: _ROLEMANAGEMENT_V2,
-  permission: 'ROLE:FULL',
   icon: (
     <UserGearIcon
       size={size}
@@ -849,7 +849,7 @@ const roleManagementV2 = {
   children: [
     {
       key: 'user-account',
-      permission: 'ROLE:FULL',
+      permission: ['ROLE:FULL', 'ROLE:VIEW', 'ROLE:CREATE', 'ROLE:UPDATE', 'ROLE:DELETE', 'ADMIN:FULL'],
       icon: (
         <UsersThreeIcon
           size={size}
@@ -861,7 +861,7 @@ const roleManagementV2 = {
     },
     {
       key: 'permission-management',
-      permission: 'ROLE:FULL',
+      permission: ['ROLE:FULL', 'ROLE:VIEW', 'ROLE:CREATE', 'ROLE:UPDATE', 'ROLE:DELETE', 'ADMIN:FULL'],
       icon: (
         <UsersThreeIcon
           size={size}
@@ -873,7 +873,7 @@ const roleManagementV2 = {
     },
     {
       key: 'role-management',
-      permission: 'ROLE:FULL',
+      permission: ['ROLE:FULL', 'ROLE:VIEW', 'ROLE:CREATE', 'ROLE:UPDATE', 'ROLE:DELETE', 'ADMIN:FULL'],
       icon: (
         <UsersThreeIcon
           size={size}
@@ -886,6 +886,7 @@ const roleManagementV2 = {
   ]
 
 }
+
 const walletManagement = {
   key: _WALLETADMINISTRATION,
   icon: (
@@ -899,6 +900,8 @@ const walletManagement = {
   children: [
     {
       key: 'e-walletManagement',
+      permission: ['WALLET:FULL', 'WALLET:VIEW', 'WALLET:CREATE', 'WALLET:UPDATE', 'WALLET:DELETE', 'ADMIN:FULL'],
+
       icon: (
         <UsersThreeIcon
           size={size}
@@ -910,6 +913,8 @@ const walletManagement = {
     },
     {
       key: 'confirm-eKYC',
+      permission: ['WALLET:FULL', 'WALLET:VIEW', 'WALLET:CREATE', 'WALLET:UPDATE', 'WALLET:DELETE', 'ADMIN:FULL'],
+
       icon: (
         <UsersThreeIcon
           size={size}
@@ -922,6 +927,7 @@ const walletManagement = {
 
     {
       key: 'transaction-wallet',
+      permission: ['WALLET:FULL', 'WALLET:VIEW', 'WALLET:CREATE', 'WALLET:UPDATE', 'WALLET:DELETE', 'ADMIN:FULL'],
       icon: (
         <UsersThreeIcon
           size={size}
@@ -949,6 +955,7 @@ const transactionManagement = {
   children: [
     {
       key: 'frozen-transactions',
+      permission: ['TRANSACTION:FULL', 'TRANSACTION:VIEW', 'TRANSACTION:CREATE', 'TRANSACTION:UPDATE', 'TRANSACTION:DELETE', 'ADMIN:FULL'],
       icon: (
         <UsersThreeIcon
           size={size}
@@ -960,6 +967,7 @@ const transactionManagement = {
     },
     {
       key: 'refund-management',
+      permission: ['TRANSACTION:FULL', 'TRANSACTION:VIEW', 'TRANSACTION:CREATE', 'TRANSACTION:UPDATE', 'TRANSACTION:DELETE', 'ADMIN:FULL'],
       icon: (
         <UsersThreeIcon
           size={size}
@@ -971,6 +979,7 @@ const transactionManagement = {
     },
     {
       key: 'system-ledger',
+      permission: ['TRANSACTION:FULL', 'TRANSACTION:VIEW', 'TRANSACTION:CREATE', 'TRANSACTION:UPDATE', 'TRANSACTION:DELETE', 'ADMIN:FULL'],
       icon: (
         <UsersThreeIcon
           size={size}
@@ -983,6 +992,7 @@ const transactionManagement = {
 
     {
       key: 'withdraw-history',
+      permission: ['TRANSACTION:FULL', 'TRANSACTION:VIEW', 'TRANSACTION:CREATE', 'TRANSACTION:UPDATE', 'TRANSACTION:DELETE', 'ADMIN:FULL'],
       icon: (
         <UsersThreeIcon
           size={size}
@@ -1007,7 +1017,8 @@ const merchantManagement = {
   label: 'Quản lý merchant ',
   children: [
     {
-      key: 'dashboard-merchant',
+      key: 'dashboard-merchant',  
+      permission: ['MERCHANT:FULL', 'MERCHANT:VIEW', 'MERCHANT:CREATE', 'MERCHANT:UPDATE', 'MERCHANT:DELETE', 'ADMIN:FULL'],
       icon: (
         <ChartBarIcon
           size={size}
@@ -1019,6 +1030,7 @@ const merchantManagement = {
     },
     {
       key: 'merchant-management',
+      permission: ['MERCHANT:FULL', 'MERCHANT:VIEW', 'MERCHANT:CREATE', 'MERCHANT:UPDATE', 'MERCHANT:DELETE', 'ADMIN:FULL'],
       icon: (
         <UsersThreeIcon
           size={size}
@@ -1030,6 +1042,7 @@ const merchantManagement = {
     },
     {
       key: 'merchant-order',
+      permission: ['MERCHANT:FULL', 'MERCHANT:VIEW', 'MERCHANT:CREATE', 'MERCHANT:UPDATE', 'MERCHANT:DELETE', 'ADMIN:FULL'],
       icon: (
         <ClipboardTextIcon
           size={size}
