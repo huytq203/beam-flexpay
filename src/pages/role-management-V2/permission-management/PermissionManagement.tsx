@@ -42,6 +42,7 @@ export const PermissionManagement = () => {
     handleSearch,
     handlePostRole,
     handleDeleteRole,
+    setModeAction,
     // New exports for unified permission flow
     allPermissions,
     assignedPermissionNames,
@@ -65,6 +66,7 @@ export const PermissionManagement = () => {
   const handleCloseAddModal = () => {
     setOpenModalAdd(false)
     setEditRoleData(null)
+    setModeAction('')
   }
 
   return (
@@ -140,7 +142,7 @@ export const PermissionManagement = () => {
             onSubmit={onSubmit}
             onCancel={handleCloseAddModal}
             defaultValues={editRoleData}
-            isEdit={modeAction === 'edit'}
+            isEdit={modeAction==="edit"}
           />
         }
         footer={null}

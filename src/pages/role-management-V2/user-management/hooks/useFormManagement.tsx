@@ -44,8 +44,6 @@ export const useFormManagement = () => {
   })
   // const [ userRoleData, { isLoading: isLoadingUserRoles }] = useLazyGetUserRoleQuery()
 
-  console.log(params)
-
   const roleOptions = useMemo(() => {
     return getRole?.content?.map((role) => ({
       value: role.name,
