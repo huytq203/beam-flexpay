@@ -21,12 +21,12 @@ export const UserManagementColumn = ({
       align: 'center'
     },
     {
-      title: 'Ten dang nhap',
+      title: 'Tên đăng nhập',
       dataIndex: 'username',
       align: 'center'
     },
     {
-      title: 'Ho va ten',
+      title: 'Họ và tên',
       dataIndex: 'firstName',
       align: 'left',
       render: (value, record) => `${record.firstName} ${record.lastName ?? ''}`
@@ -38,7 +38,7 @@ export const UserManagementColumn = ({
       render: (value) => value ?? '--'
     },
     {
-      title: 'Xac thuc email',
+      title: 'Xác thực email',
       dataIndex: 'emailVerified',
       align: 'center',
       render(_, record) {
@@ -46,11 +46,11 @@ export const UserManagementColumn = ({
           <div>
             {record.emailVerified ? (
               <p className='text-green bg-green border border-green text-xs rounded-md inline-block px-2 font-medium'>
-                Da xac thuc
+                Đã xác thực
               </p>
             ) : (
               <p className='text-red bg-red border border-red text-xs rounded-md inline-block px-2 font-medium'>
-                Chua xac thuc
+                Chưa xác thực
               </p>
             )}
           </div>
@@ -58,7 +58,7 @@ export const UserManagementColumn = ({
       }
     },
     {
-      title: 'Trang thai',
+      title: 'Trạng thái',
       dataIndex: 'enabled',
       align: 'center',
       render(_, record) {
@@ -66,11 +66,11 @@ export const UserManagementColumn = ({
           <div>
             {record.enabled ? (
               <p className='text-green bg-green border border-green text-xs rounded-md inline-block px-2 font-medium'>
-                Hoat dong
+                Hoạt động
               </p>
             ) : (
               <p className='text-red bg-red border border-red text-xs rounded-md inline-block px-2 font-medium'>
-                Khong hoat dong
+                Không hoạt động
               </p>
             )}
           </div>
@@ -78,7 +78,7 @@ export const UserManagementColumn = ({
       }
     },
     {
-      title: 'Ngay tao',
+      title: 'Ngày tạo',
       dataIndex: 'createdTimestamp',
       align: 'center',
       render: (value: Date | null) => {
@@ -94,14 +94,14 @@ export const UserManagementColumn = ({
       }
     },
     {
-      title: 'Thao tac',
+      title: 'Thao tác',
       dataIndex: 'action',
       align: 'center',
       width: 100,
       fixed: 'right',
       render: (_, record) => (
         <div className='flex justify-center items-center gap-1'>
-          <TooltipComponent title='Chinh sua'>
+          <TooltipComponent title='Chỉnh sửa'>
             <ButtonComponent
               size='small'
               type='default'
@@ -110,7 +110,7 @@ export const UserManagementColumn = ({
               hidden
             />
           </TooltipComponent>
-          <TooltipComponent title='Xem chi tiet'>
+          <TooltipComponent title='Xem chi tiết'>
             <ButtonComponent
               size='small'
               type='default'
@@ -119,7 +119,7 @@ export const UserManagementColumn = ({
               onClick={() => openModal('viewDetail', record)}
             />
           </TooltipComponent>
-          <TooltipComponent title='Gan nhom quyen'>
+          <TooltipComponent title='Gán nhóm quyền'>
             <ButtonComponent
               size='small'
               type='default'

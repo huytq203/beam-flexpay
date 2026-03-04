@@ -20,21 +20,21 @@ const FormSearch = ({ onSearch, onAdd, roleOptions = [] }: Props) => {
       <form className='flex-1'>
         <div className='grid md:grid-cols-3 grid-cols-1 gap-3 w-full'>
           <FormInput
-            label='Ten dang nhap/ho ten/SDT'
-            placeholder='Ten dang nhap/ho ten/SDT...'
+            label='Tên đăng nhập/họ tên/SDT'
+            placeholder='Tên đăng nhập/họ tên/SDT...'
             control={control}
             name='username'
             className='col-span-1'
           />
           <FormSelect
-            label='Nhom quyen'
+            label='Nhóm quyền'
             control={control}
             name='group'
             options={roleOptions}
             className='col-span-1'
           />
           <FormSelect
-            label='Trang thai'
+            label='Trạng thái'
             control={control}
             name='status'
             options={[]}
@@ -45,18 +45,18 @@ const FormSearch = ({ onSearch, onAdd, roleOptions = [] }: Props) => {
       <div className='grid grid-cols-3 mt-3 md:flex justify-end gap-3 items-end md:gap-1'>
         <ButtonComponent
           icon={svg('/icons.svg#hugeicons-search-01')}
-          content='Tim kiem'
+          content='Tìm kiếm'
         />
         <ButtonComponent
           icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
-          content='Them moi'
+          content='Thêm mới'
           onClick={onAdd}
           hidden
         />
         <ButtonComponent
           type='default'
           icon={<BroomIcon size={18} />}
-          content='Xoa loc'
+          content='Xóa lọc'
         />
       </div>
     </div>

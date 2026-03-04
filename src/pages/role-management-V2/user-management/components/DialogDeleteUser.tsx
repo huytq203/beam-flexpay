@@ -15,24 +15,24 @@ const DialogDeleteUser = ({ user, actionType, onSuccess, onCancel }: Props) => {
   const contentMap: Record<string, JSX.Element> = {
     delete: (
       <span>
-        Ban co chac chan muon <span className='font-bold'>xoa tai khoan</span>{' '}
-        admin <span className='font-bold'>{user?.username}</span> khong?
-        Hanh dong nay khong the hoan tac.
+        Bạn có chắc chắn muốn <span className='font-bold'>xóa tài khoản</span>{' '}
+        admin <span className='font-bold'>{user?.username}</span> không?
+        Hành động này không thể hoàn tác.
       </span>
     ),
     lock: (
       <span>
-        Ban co chac chan muon <span className='font-bold'>khoa tai khoan</span>{' '}
-        admin <span className='font-bold'>{user?.username}</span> khong?
-        Tai khoan se khong the dang nhap cho den khi mo lai.
+        Bạn có chắc chắn muốn <span className='font-bold'>khóa tài khoản</span>{' '}
+        admin <span className='font-bold'>{user?.username}</span> không?
+        Tài khoản sẽ không thể đăng nhập cho đến khi mở lại.
       </span>
     ),
     unlock: (
       <span>
-        Ban co chac chan muon{' '}
-        <span className='font-bold'>mo khoa tai khoan</span> admin{' '}
-        <span className='font-bold'>{user?.username}</span> khong? Tai
-        khoan nay se co the hoat dong tro lai.
+        Bạn có chắc chắn muốn{' '}
+        <span className='font-bold'>mở khóa tài khoản</span> admin{' '}
+        <span className='font-bold'>{user?.username}</span> không? Tài
+        khoản này sẽ có thể hoạt động trở lại.
       </span>
     ),
     resetPass: <FormSendEmail selectedUser={user ?? undefined} />
@@ -41,31 +41,31 @@ const DialogDeleteUser = ({ user, actionType, onSuccess, onCancel }: Props) => {
   const footerMap: Record<string, JSX.Element> = {
     delete: (
       <div className='flex justify-end items-center gap-2'>
-        <ButtonComponent type='default' content='Cancel' onClick={onCancel} />
-        <ButtonComponent type='primary' danger content='Delete' onClick={onSuccess} />
+        <ButtonComponent type='default' content='Hủy' onClick={onCancel} />
+        <ButtonComponent type='primary' danger content='Xóa' onClick={onSuccess} />
       </div>
     ),
     lock: (
       <div className='flex justify-end items-center gap-2'>
-        <ButtonComponent type='default' content='Cancel' onClick={onCancel} />
-        <ButtonComponent type='primary' danger content='Khoa' onClick={onSuccess} />
+        <ButtonComponent type='default' content='Hủy' onClick={onCancel} />
+        <ButtonComponent type='primary' danger content='Khóa' onClick={onSuccess} />
       </div>
     ),
     unlock: (
       <div className='flex justify-end items-center gap-2'>
-        <ButtonComponent type='default' content='Cancel' onClick={onCancel} />
-        <ButtonComponent type='primary' content='Mo khoa' onClick={onSuccess} />
+        <ButtonComponent type='default' content='Hủy' onClick={onCancel} />
+        <ButtonComponent type='primary' content='Mở khóa' onClick={onSuccess} />
       </div>
     ),
     resetPass: (
       <div className='flex justify-end items-center gap-2'>
-        <ButtonComponent type='default' content='Cancel' onClick={onCancel} />
+        <ButtonComponent type='default' content='Hủy' onClick={onCancel} />
         <ButtonComponent
           type='primary'
           className='bg-teal-700 hover:!bg-teal-600'
           content={
             <span>
-              <SendOutlined /> Send email
+              <SendOutlined /> Gửi email
             </span>
           }
           onClick={onSuccess}

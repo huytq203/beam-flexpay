@@ -63,7 +63,7 @@ const UserManagement = () => {
 
       {/* Add/Edit User */}
       <ModalComponent
-        title={handle.modalType === 'edit' ? 'Cap nhat tai khoan Admin' : 'Them moi tai khoan Admin'}
+        title={handle.modalType === 'edit' ? 'Cập nhật tài khoản Admin' : 'Thêm mới tài khoản Admin'}
         onCancel={() => handle.closeModal()}
         onOk={() => {}}
         open={handle.modalType === 'add' || handle.modalType === 'edit'}
@@ -80,7 +80,7 @@ const UserManagement = () => {
 
       {/* View User Detail */}
       <ModalComponent
-        title='Chi tiet tai khoan Admin'
+        title='Chi tiết tài khoản Admin'
         onCancel={() => handle.closeModal()}
         onOk={() => {}}
         open={handle.modalType === 'viewDetail'}
@@ -96,7 +96,7 @@ const UserManagement = () => {
 
       {/* Assign Roles */}
       <ModalComponent
-        title='Gan nhom quyen'
+        title='Gán nhóm quyền'
         onCancel={() => handle.closeModal()}
         onOk={() => {}}
         open={handle.modalType === 'assignRoles'}

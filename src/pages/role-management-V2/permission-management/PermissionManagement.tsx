@@ -130,7 +130,7 @@ export const PermissionManagement = () => {
         onCancel={() => handle.closeModal()}
         onOk={() => {}}
         open={handle.modalType === 'assignPermissions'}
-        width='60%'
+        width={{ xs: '100%', sm: '100%', md: '60%', lg: '60%' }}
         footer={null}
         modalText={
           <DialogAssignPermissions
@@ -147,7 +147,7 @@ export const PermissionManagement = () => {
         onCancel={() => handle.closeModal()}
         onOk={() => {}}
         open={handle.modalType === 'viewMembers'}
-        width='60%'
+        width={{ xs: '100%', sm: '100%', md: '60%', lg: '60%' }}
         footer={null}
         modalText={
           <DialogViewMembers

@@ -42,13 +42,13 @@ const DialogAssignRoles = ({ userId, onSuccess, onCancel }: Props) => {
 
   const columns: ColumnType<DataRoleItem>[] = [
     {
-      title: 'Ten nhom quyen',
+      title: 'Tên nhóm quyền',
       dataIndex: 'name',
       align: 'center',
       render: (value) => RoleName[value] ?? value ?? '--'
     },
     {
-      title: 'Mo ta',
+      title: 'Mô tả',
       dataIndex: 'description',
       align: 'center',
       render: (value) => value || '--'
@@ -91,10 +91,9 @@ const DialogAssignRoles = ({ userId, onSuccess, onCancel }: Props) => {
           body: { roleIds: rolesToRemove }
         }).unwrap()
       }
-      successMess('Cap nhat thanh cong')
+      successMess('Cập nhật thành công')
       onSuccess()
     } catch (error: any) {
-      errorMess(error?.data?.detail)
     } finally {
       setLoading(false)
     }
@@ -112,10 +111,10 @@ const DialogAssignRoles = ({ userId, onSuccess, onCancel }: Props) => {
         pagination={false}
       />
       <div className='flex justify-end items-center gap-2 mt-4'>
-        <ButtonComponent type='default' content='Huy' onClick={onCancel} />
+        <ButtonComponent type='default' content='Hủy' onClick={onCancel} />
         <ButtonComponent
           type='primary'
-          content='Luu'
+          content='Lưu'
           onClick={handleSubmit}
           loading={loading}
         />

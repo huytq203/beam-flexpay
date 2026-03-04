@@ -84,11 +84,11 @@ const DialogUserDetail = ({ userId, onCancel }: Props) => {
               </div>
               <div className='col-span-3 grid grid-cols-2 gap-1'>
                 <div className='col-span-1'>
-                  <h1 className='font-bold'>TEN DANG NHAP</h1>
+                  <h1 className='font-bold'>Tên đăng nhập</h1>
                   <p className='font-medium'>{selectedUser?.username}</p>
                 </div>
                 <div className='col-span-1'>
-                  <h1 className='font-bold'>HO VA TEN</h1>
+                  <h1 className='font-bold'>Họ và tên</h1>
                   <p className='font-medium'>
                     {`${selectedUser?.firstName ?? '--'} ${selectedUser?.lastName ?? '--'}`}
                   </p>
@@ -98,22 +98,22 @@ const DialogUserDetail = ({ userId, onCancel }: Props) => {
                   <p className='font-medium'>{selectedUser?.email ?? '--'}</p>
                 </div>
                 <div className='col-span-1'>
-                  <h1 className='font-bold'>SO DIEN THOAI</h1>
+                  <h1 className='font-bold'>Số điện thoại</h1>
                   <p className='font-medium'>{selectedUser?.emailVerified || '--'}</p>
                 </div>
               </div>
             </div>
             <hr className='mt-3' />
             <div className='flex flex-col gap-2 mt-3'>
-              <h1 className='font-bold'>THONG TIN HE THONG</h1>
+              <h1 className='font-bold'>Thông tin hệ thống</h1>
               <div className='grid grid-cols-3'>
-                <p className='font-medium col-span-1'>Nhom quyen:</p>
+                <p className='font-medium col-span-1'>Nhóm quyền:</p>
                 <div className='flex flex-wrap justify-start items-center gap-2 col-span-2'>
                   {listGroup}
                 </div>
               </div>
               <div className='grid grid-cols-3'>
-                <p className='font-medium col-span-1'>Trang thai:</p>
+                <p className='font-medium col-span-1'>Trạng thái:</p>
                 <p className='col-span-2'>
                   <span className='bg-green-500 p-1 text-white rounded-md'>
                     Hoat dong
@@ -123,9 +123,9 @@ const DialogUserDetail = ({ userId, onCancel }: Props) => {
             </div>
             <hr className='mt-3' />
             <div className='flex flex-col mt-3 gap-2'>
-              <h1 className='font-bold'>THONG TIN NHAT KY (Audit Log)</h1>
+              <h1 className='font-bold'>Thông tin nhật ký (Audit Log)</h1>
               <div className='grid grid-cols-3'>
-                <p className='font-medium col-span-1'>Ngay tao:</p>
+                <p className='font-medium col-span-1'>Ngày tạo:</p>
                 <p className='col-span-2'>
                   <span className='bg-gray-100 p-1 rounded-md'>
                     {selectedUser?.createdTimestamp
