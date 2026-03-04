@@ -17,6 +17,7 @@ import { formatDate, getEnumLabel } from '@pages/fee-managerment-v3/utils/FeeMan
 import { serviceType } from '@pages/fee-managerment-v3/constants/feePoliciesComponent'
 import { statusType } from '@pages/fee-managerment-v3/constants/feePolicies'
 
+
 interface prop {
   setSelectRowId: (value: string) => void
   setOpenModalDelete: (value: boolean) => void
@@ -24,6 +25,7 @@ interface prop {
   onReject?: (record: FeeAssignment) => void
   onToggleStatus?: (record: FeeAssignment) => void
   navigate: (path: string) => void
+  canUpdate?: boolean
 }
 // Approval Popup Content Component
 const ApprovalPopupContent = ({
@@ -142,12 +144,14 @@ const StatusBadge = ({ status }: { status: string }) => (
 const FeeAssignColumn = ({
   onToggleStatus,
   navigate,
+  canUpdate = false,
 }: prop): ColumnsType<FeeAssignment> => {
+
   return [
     {
       title: '#',
       align: 'center' as const,
-      dataIndex:'no',
+      dataIndex: 'no',
       width: 40,
     },
     {
@@ -170,21 +174,21 @@ const FeeAssignColumn = ({
       dataIndex: 'bankCode',
       align: 'center' as const,
 
-      render: (value, record, index: number) => value||'--'
+      render: (value, record, index: number) => value || '--'
     },
     {
       title: 'Loại thẻ',
       dataIndex: 'cardType',
       align: 'center' as const,
 
-      render: (value, record, index: number) => value||'--'
+      render: (value, record, index: number) => value || '--'
     },
     {
       title: 'Nhóm khách hàng',
       dataIndex: 'customerGroup',
       align: 'center' as const,
 
-      render: (value, record, index: number) => value||'--'
+      render: (value, record, index: number) => value || '--'
     },
     {
       title: 'Ngày tạo',
@@ -211,30 +215,34 @@ const FeeAssignColumn = ({
       render: (value, record: FeeAssignment, index: number) => {
         return (
           <div className='flex gap-1 justify-center'>
-            <TooltipComponent title='Cập nhật'>
-              <ButtonComponent
-                size='small'
-                type='default'
-                icon={<EditOutlined />}
-                onClick={() => {
-                  navigate(FEEMANAGEMENT_V3 + `/fee-assignment/edit/${record?.id}`)
-                }}
-              />
-            </TooltipComponent>
-            <TooltipComponent title={record.status === 'ACTIVE' ? 'Khóa' : 'Mở khóa'}>
-              <ButtonComponent
-                size='small'
-                type='default'
-                icon={
-                  record.status === 'ACTIVE' ? (
-                    <UnlockOutlined />
-                  ) : (
-                    <LockOutlined />
-                  )
-                }
-                onClick={() => onToggleStatus?.(record)}
-              />
-            </TooltipComponent>
+            {canUpdate && (
+              <TooltipComponent title='Cập nhật'>
+                <ButtonComponent
+                  size='small'
+                  type='default'
+                  icon={<EditOutlined />}
+                  onClick={() => {
+                    navigate(FEEMANAGEMENT_V3 + `/fee-assignment/edit/${record?.id}`)
+                  }}
+                />
+              </TooltipComponent>
+            )}
+            {canUpdate && (
+              <TooltipComponent title={record.status === 'ACTIVE' ? 'Khóa' : 'Mở khóa'}>
+                <ButtonComponent
+                  size='small'
+                  type='default'
+                  icon={
+                    record.status === 'ACTIVE' ? (
+                      <UnlockOutlined />
+                    ) : (
+                      <LockOutlined />
+                    )
+                  }
+                  onClick={() => onToggleStatus?.(record)}
+                />
+              </TooltipComponent>
+            )}
 
             {/* <ApprovalButton
               record={record}

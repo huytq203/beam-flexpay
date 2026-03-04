@@ -2,7 +2,6 @@ import { ButtonComponent } from '@components/index'
 import { FormInput, FormSelect } from '@components/form'
 import { useSVG } from '@hooks/useSVG'
 import { useForm } from 'react-hook-form'
-import { ModeAction } from '@pages/role-management-V2/role-management/hooks/useRoleManagement'
 import { BroomIcon } from '@components/icons'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import { RoleStatus } from '../constants/RoleManagement.config'
@@ -15,20 +14,16 @@ export interface SearchFormData {
 }
 
 interface Props {
-  setOpenModalAdd: (value: boolean) => void
-  setModeAction: (value: ModeAction) => void
-  onSearch?: (data: SearchFormData) => void
+  onSearch: (data: SearchFormData) => void
+  onAdd: () => void
 }
 
-const FormSearch = ({ setOpenModalAdd, setModeAction, onSearch }: Props) => {
+const FormSearch = ({ onSearch, onAdd }: Props) => {
   const { control, handleSubmit, reset } = useForm<SearchFormData>({
-    defaultValues: {
-      roleCode: '',
-      keyword: '',
-      status: ''
-    }
+    defaultValues: { roleCode: '', keyword: '', status: '' }
   })
   const { svg } = useSVG()
+
   const handleSearch = (data: SearchFormData) => {
     onSearch?.(data)
   }
@@ -40,10 +35,7 @@ const FormSearch = ({ setOpenModalAdd, setModeAction, onSearch }: Props) => {
 
   return (
     <div className='block w-full gap-3 md:flex'>
-      <form
-        className='flex-1'
-        onSubmit={handleSubmit(handleSearch)}
-      >
+      <form className='flex-1' onSubmit={handleSubmit(handleSearch)}>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-3 w-full'>
           <FormInput
             label='Mã quyền'
@@ -67,12 +59,9 @@ const FormSearch = ({ setOpenModalAdd, setModeAction, onSearch }: Props) => {
             className='col-span-1'
           />
         </div>
-        <button
-          type='submit'
-          className='hidden'
-        />
+        <button type='submit' className='hidden' />
       </form>
-      <div className='md:flex grid grid-cols-3   mt-3  justify-end gap-3 items-end md:gap-1'>
+      <div className='md:flex grid grid-cols-3 mt-3 justify-end gap-3 items-end md:gap-1'>
         <ButtonComponent
           icon={svg('/icons.svg#hugeicons-search-01')}
           content='Tìm kiếm'
@@ -81,10 +70,7 @@ const FormSearch = ({ setOpenModalAdd, setModeAction, onSearch }: Props) => {
         <ButtonComponent
           icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
           content='Thêm mới'
-          onClick={() => {
-            setOpenModalAdd(true)
-            setModeAction('add')
-          }}
+          onClick={onAdd}
         />
         <ButtonComponent
           type='default'

@@ -6,6 +6,7 @@ import {
   UnlockOutlined
 } from '@ant-design/icons'
 import { formatDate, getEnumLabel } from '@pages/fee-managerment-v3/utils/FeeManagement.utils'
+import usePermissionCheck from '@hooks/usePermissionCheck'
 import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import { ColumnsType } from 'antd/es/table'
 import { feeDomain, serviceType } from '@pages/fee-managerment-v3/constants/feePoliciesComponent'
@@ -55,42 +56,49 @@ const ActionButtons = ({
   navigate: (path: string) => void
   handleDeActiveFee: (record: PolicyRecord) => void
   handleActiveFee: (record: PolicyRecord) => void
-}) => (
-  <div className='flex gap-2 justify-center'>
-    <TooltipComponent title='Cập nhật'>
+}) => {
+  const { hasAnyPermission } = usePermissionCheck()
+  const canUpdate = hasAnyPermission(['FEE:UPDATE', 'FEE:FULL', 'ADMIN:FULL'])
+  const canDelete = hasAnyPermission(['FEE:DELETE', 'FEE:FULL', 'ADMIN:FULL']) // Assuming lock/unlock could also be delete or update, we use canUpdate for lock/unlock below according to standard flow
 
-      <ButtonComponent
-        type='default'
-        size='small'
-        icon={<EditOutlined />}
-        onClick={() => navigate(`${FEEMANAGEMENT_V3}/fee-management/edit/${record.key}`)}
-      />
+  return (
+    <div className='flex gap-2 justify-center'>
+      {canUpdate && (
+        <TooltipComponent title='Cập nhật'>
+          <ButtonComponent
+            type='default'
+            size='small'
+            icon={<EditOutlined />}
+            onClick={() => navigate(`${FEEMANAGEMENT_V3}/fee-management/edit/${record.key}`)}
+          />
+        </TooltipComponent>
+      )}
 
-    </TooltipComponent>
-    <TooltipComponent title={record.status === 'ACTIVE' ? 'Khóa' : 'Mở khóa'}>
-
-
-      <ButtonComponent
-        type='default'
-        size='small'
-        icon={
-          record.status === 'ACTIVE' ? (
-            <UnlockOutlined />
-          ) : (
-            <LockOutlined />
-          )
-        }
-        onClick={() => {
-          if (record.status === 'ACTIVE') {
-            handleDeActiveFee(record)
-          } else {
-            handleActiveFee(record)
-          }
-        }}
-      />
-    </TooltipComponent>
-  </div>
-)
+      {canUpdate && (
+        <TooltipComponent title={record.status === 'ACTIVE' ? 'Khóa' : 'Mở khóa'}>
+          <ButtonComponent
+            type='default'
+            size='small'
+            icon={
+              record.status === 'ACTIVE' ? (
+                <UnlockOutlined />
+              ) : (
+                <LockOutlined />
+              )
+            }
+            onClick={() => {
+              if (record.status === 'ACTIVE') {
+                handleDeActiveFee(record)
+              } else {
+                handleActiveFee(record)
+              }
+            }}
+          />
+        </TooltipComponent>
+      )}
+    </div>
+  )
+}
 
 export const getPolicyColumns = ({
   navigate,
@@ -159,7 +167,7 @@ export const getPolicyColumns = ({
       title: 'Thao tác',
       key: 'action',
       width: 100,
-      fixed:'right',
+      fixed: 'right',
       align: 'center',
       render: (_, record) => (
         <ActionButtons

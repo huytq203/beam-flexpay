@@ -9,6 +9,8 @@ import { useSVG } from '@hooks/useSVG'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import { is } from 'zod/v4/locales'
 import { SkeletonCard, SkeletonStats, SkeletonTable } from '@components/ui/skeletons/Skeleton'
+import usePermission from '@hooks/usePermission'
+import usePermissionCheck from '@hooks/usePermissionCheck'
 
 interface PolicyRecord {
   key: string
@@ -61,6 +63,9 @@ const FeeManagementForm = ({
   loadingAll
 }: FeeManagementFormProps) => {
   const { svg } = useSVG()
+  const { hasAnyPermission } = usePermissionCheck()
+  const canCreate = hasAnyPermission(['FEE:CREATE', 'FEE:FULL', 'ADMIN:FULL'])
+
   return (
     <>
       <CardComponent
@@ -129,17 +134,19 @@ const FeeManagementForm = ({
                     />
                   </div>
                   <div className='w-full md:w-auto'>
-                    <ButtonComponent
-                      htmlType='button'
-                      content='Thêm chính sách mới'
-                      onClick={() => {
-                        setOpen(true)
-                        setIsCreate(true)
-                      }}
-                      type='primary'
-                      icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
-                      className='w-full md:w-auto'
-                    />
+                    {canCreate && (
+                      <ButtonComponent
+                        htmlType='button'
+                        content='Thêm chính sách mới'
+                        onClick={() => {
+                          setOpen(true)
+                          setIsCreate(true)
+                        }}
+                        type='primary'
+                        icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
+                        className='w-full md:w-auto'
+                      />
+                    )}
                   </div>
                 </div>
               </div>

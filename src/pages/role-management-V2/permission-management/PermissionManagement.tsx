@@ -1,201 +1,160 @@
 import {
   CardComponent,
-  DialogModal,
   ModalComponent,
   Table
 } from '@components/index'
-import { useState } from 'react'
-import FormAdd from './components/FormAdd'
 import FormSearch from './components/FormSearch'
-import FormDetail from '@pages/role-management-V2/permission-management/components/FormDetail'
-import { usePermissionRole } from './hooks/usePermissionRole'
-import FormPermission from './components/FormPermission'
-import { DataRoleItem } from '@type/roleManagement'
+import DialogAddRole from './components/DialogAddRole'
+import DialogDeleteRole from './components/DialogDeleteRole'
+import DialogViewPermissions from './components/DialogViewPermissions'
+import DialogAssignPermissions from './components/DialogAssignPermissions'
+import DialogViewMembers from './components/DialogViewMembers'
+import useFetchDataRole from './hooks/useFetchDataRole'
+import useHandleRole from './hooks/useHandleRole'
 import { SkeletonButton, SkeletonInput, SkeletonTable } from '@components/ui/skeletons/Skeleton'
 
 export const PermissionManagement = () => {
-  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([])
-  const {
-    openModalAdd,
-    setOpenModalAdd,
-    openModalDetail,
-    setOpenModalDetail,
-    modeAction,
-    modalDialog,
-    setModalDialog,
-    openModalPermission,
-    pageSize,
-    setPageSize,
-    page,
-    setPage,
-    selectMember,
-    dataPermission,
-    dataSource,
-    column,
-    getTypeFooter,
-    typeText,
-    isLoadingDetail,
-    totalElements,
-    handlePostPermission,
-    handleDeletePermissionAssign,
-    handleCancel,
-    handleSearch,
-    handlePostRole,
-    handleDeleteRole,
-    // New exports for unified permission flow
-    allPermissions,
-    assignedPermissionNames,
-    handleSubmitPermissionChanges,
-    // Exports for edit role
-    editRoleData,
-    setEditRoleData,
-    handlePutRole,
-    isLoadingRole,
-    isLoadingPermission,
-  } = usePermissionRole()
-
-  const onSubmit = async (data: DataRoleItem | Omit<DataRoleItem, 'id'>) => {
-    if (modeAction === 'edit') {
-      await handlePutRole(data as { name: string; description: string })
-    } else {
-      await handlePostRole(data as DataRoleItem)
-    }
-  }
-
-  const handleCloseAddModal = () => {
-    setOpenModalAdd(false)
-    setEditRoleData(null)
-  }
+  const fetchData = useFetchDataRole()
+  const handle = useHandleRole(fetchData)
 
   return (
     <div className='flex flex-col gap-2'>
       <CardComponent
         content={
-
           <>
-            {isLoadingRole || isLoadingPermission ?
-              <>
-                <div className={`bg-white rounded-xl shadow-md p-6 border border-gray-100`}>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    {Array.from({ length: 2 }).map((_, index) => (
-                      <SkeletonInput key={index} />
-                    ))}
-
-                    <div className=" w-full flex items-end gap-2">
-                      <SkeletonButton className='w-full' size="md" />
-                      <SkeletonButton className='w-full' size="md" />
-                      <SkeletonButton className='w-full' size="md" />
-                    </div>
+            {fetchData.isLoading ? (
+              <div className='bg-white rounded-xl shadow-md p-6 border border-gray-100'>
+                <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-4'>
+                  {Array.from({ length: 2 }).map((_, index) => (
+                    <SkeletonInput key={index} />
+                  ))}
+                  <div className='w-full flex items-end gap-2'>
+                    <SkeletonButton className='w-full' size='md' />
+                    <SkeletonButton className='w-full' size='md' />
+                    <SkeletonButton className='w-full' size='md' />
                   </div>
                 </div>
-              </>
-              :
+              </div>
+            ) : (
               <FormSearch
-                setOpenModalAdd={setOpenModalAdd}
-                onSearch={handleSearch}
+                onSearch={handle.handleSearch}
+                onAdd={() => handle.openModal('add', null)}
               />
-
-            }
-
+            )}
           </>
         }
       />
       <CardComponent
         content={
-
           <>
-            {isLoadingRole || isLoadingPermission ?
+            {fetchData.isLoading ? (
               <SkeletonTable />
-              :
+            ) : (
               <Table
                 rowKey='id'
                 scroll={{ x: 'max-content' }}
                 bordered
                 size='small'
-                columns={column}
-                dataSource={dataSource}
+                columns={handle.column}
+                dataSource={fetchData.dataSource}
                 pagination={{
-                  current: page,
-                  pageSize: pageSize,
-                  total: totalElements,
+                  current: fetchData.page,
+                  pageSize: fetchData.pageSize,
+                  total: fetchData.totalElements,
                   showSizeChanger: true,
                   onChange: (newPage, newPageSize) => {
-                    setPage(newPage)
-                    setPageSize(newPageSize)
+                    fetchData.setPage(newPage)
+                    fetchData.setPageSize(newPageSize)
                   }
                 }}
               />
-            }
+            )}
           </>
         }
       />
+
+      {/* Add/Edit Role */}
       <ModalComponent
-        title={modeAction === 'edit' ? 'Cập nhật nhóm quyền' : 'Thêm nhóm quyền'}
-        onCancel={handleCloseAddModal}
-        onOk={() => { }}
-        open={openModalAdd}
+        title={handle.modalType === 'edit' ? 'Cập nhật nhóm quyền' : 'Thêm nhóm quyền'}
+        onCancel={() => handle.closeModal()}
+        onOk={() => {}}
+        open={handle.modalType === 'add' || handle.modalType === 'edit'}
         width='35%'
+        footer={null}
         modalText={
-          <FormAdd
-            onSubmit={onSubmit}
-            onCancel={handleCloseAddModal}
-            defaultValues={editRoleData}
-            isEdit={modeAction === 'edit'}
+          <DialogAddRole
+            role={handle.selectedRole}
+            onSuccess={handle.closeModal}
+            onCancel={() => handle.closeModal()}
           />
         }
-        footer={null}
       />
+
+      {/* Delete Role */}
       <ModalComponent
-        onCancel={() => setOpenModalDetail(false)}
-        onOk={() => { }}
-        open={openModalDetail}
+        title='Xóa nhóm quyền'
+        onCancel={() => handle.closeModal()}
+        onOk={() => {}}
+        open={handle.modalType === 'delete'}
+        width='30%'
+        footer={null}
+        modalText={
+          <DialogDeleteRole
+            roleId={handle.selectedRole?.id}
+            roleName={handle.selectedRole?.name}
+            onSuccess={handle.closeModal}
+            onCancel={() => handle.closeModal()}
+          />
+        }
+      />
+
+      {/* View Permissions (read-only) */}
+      <ModalComponent
+        title='Xem chi tiết quyền'
+        onCancel={() => handle.closeModal()}
+        onOk={() => {}}
+        open={handle.modalType === 'viewPermissions'}
         width='60%'
+        footer={null}
+        modalText={
+          <DialogViewPermissions
+            roleId={handle.selectedRole?.id}
+            onCancel={() => handle.closeModal()}
+          />
+        }
+      />
+
+      {/* Assign Permissions */}
+      <ModalComponent
+        title='Gán quyền'
+        onCancel={() => handle.closeModal()}
+        onOk={() => {}}
+        open={handle.modalType === 'assignPermissions'}
+        width={{ xs: '100%', sm: '100%', md: '60%', lg: '60%' }}
+        footer={null}
+        modalText={
+          <DialogAssignPermissions
+            roleId={handle.selectedRole?.id}
+            onSuccess={handle.closeModal}
+            onCancel={() => handle.closeModal()}
+          />
+        }
+      />
+
+      {/* View Members */}
+      <ModalComponent
         title='Danh sách tài khoản Admin'
-        modalText={<FormDetail selectMember={selectMember} />}
+        onCancel={() => handle.closeModal()}
+        onOk={() => {}}
+        open={handle.modalType === 'viewMembers'}
+        width={{ xs: '100%', sm: '100%', md: '60%', lg: '60%' }}
         footer={null}
-        loading={isLoadingDetail}
-      />
-      <ModalComponent
-        title={
-          modeAction === 'permission'
-            ? 'Gán quyền'
-            : modeAction === 'edit'
-              ? 'Chỉnh sửa quyền'
-              : 'Xem chi tiết'
-        }
-        onCancel={handleCancel}
-        onOk={() =>
-          modeAction === 'edit'
-            ? handleDeletePermissionAssign(selectedPermissions)
-            : modeAction === 'permission'
-              ? handleSubmitPermissionChanges(selectedPermissions)
-              : {}
-        }
-        open={openModalPermission}
         modalText={
-          <FormPermission
-            modeAction={modeAction}
-            dataSource={modeAction === 'permission' ? allPermissions : dataPermission}
-            onSelectionChange={setSelectedPermissions}
-            assignedPermissionNames={modeAction === 'permission' ? assignedPermissionNames : []}
+          <DialogViewMembers
+            roleId={handle.selectedRole?.id}
+            onCancel={() => handle.closeModal()}
           />
         }
-        loading={isLoadingDetail}
-        width='60%'
-        footer={
-          modeAction === 'edit'
-            ? getTypeFooter(handleCancel, () => handleDeletePermissionAssign(selectedPermissions)).delete
-            : modeAction === 'view'
-              ? getTypeFooter(handleCancel, () => { }).view
-              : undefined
-        }
-      />
-      <DialogModal
-        onCancel={() => setModalDialog(false)}
-        onOk={() => { }}
-        open={modalDialog}
-        content={modeAction && typeText[modeAction]}
-        footer={modeAction && getTypeFooter(() => setModalDialog(false), handleDeleteRole)[modeAction]}
       />
     </div>
   )

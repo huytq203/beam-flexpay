@@ -1,38 +1,44 @@
 import { CardComponent } from '@components/index'
 import { FormInput, FormSelect } from '@components/form'
 import { mapEnumToSelectOptions } from '@pages/role-management-V2/utils/RoleManagement.utils'
-import { useGetRoleQuery } from '@services/apiRoleManagement'
 import { Status, RoleUserAccount } from '@pages/role-management-V2/user-management/constants/userAccount'
 import { UserInfor } from '@type/userManagement'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { ActionMode } from '../UserManagement'
+import { useLazyGetUserByIdQuery } from '@services/apiUserManagement'
 
 interface Props {
-  modeAction: ActionMode
-  selectedUser?: UserInfor | null
+  userId?: string | null
+  roleOptions?: { value: string; label: string }[]
+  onSuccess: () => void
+  onCancel: () => void
 }
 
-const FormAdd = ({ modeAction, selectedUser }: Props) => {
+const DialogAddUser = ({ userId, roleOptions = [], onSuccess, onCancel }: Props) => {
+  const isEdit = !!userId
   const { control, reset } = useForm()
-  const { data: roleData } = useGetRoleQuery({})
-
-  const roleOptions = roleData?.content?.map((role) => ({
-    value: role.name,
-    label: RoleUserAccount[role.name as keyof typeof RoleUserAccount] ?? role.name
-  })) ?? []
+  const [getUserById] = useLazyGetUserByIdQuery()
 
   useEffect(() => {
-    if (modeAction === 'update' && selectedUser) {
-      reset({
-        username: selectedUser.username,
-        email: selectedUser.email,
-        lastName: selectedUser.lastName,
-        firstName: selectedUser.firstName,
-        enabled: selectedUser.enabled ? Status.ACTIVE : Status.INACTIVE,
-        groups: selectedUser.groups || []
-      })
-    } else if (modeAction === 'add') {
+    if (userId) {
+      const fetchUser = async () => {
+        try {
+          const result = await getUserById(userId)
+          const user = result?.data?.data
+          if (user) {
+            reset({
+              username: user.username,
+              email: user.email,
+              lastName: user.lastName,
+              firstName: user.firstName,
+              enabled: user.enabled ? Status.ACTIVE : Status.INACTIVE,
+              groups: user.groups || []
+            })
+          }
+        } catch {}
+      }
+      fetchUser()
+    } else {
       reset({
         username: '',
         email: '',
@@ -42,7 +48,7 @@ const FormAdd = ({ modeAction, selectedUser }: Props) => {
         groups: []
       })
     }
-  }, [modeAction, selectedUser, reset])
+  }, [userId, reset, getUserById])
 
   return (
     <div>
@@ -55,7 +61,7 @@ const FormAdd = ({ modeAction, selectedUser }: Props) => {
                 placeholder='Tên đăng nhập...'
                 control={control}
                 name='username'
-                disabled={modeAction === 'update'}
+                disabled={isEdit}
               />
               <FormInput
                 label={<span>Email <span className='text-red-600'>(*)</span></span>}
@@ -75,7 +81,7 @@ const FormAdd = ({ modeAction, selectedUser }: Props) => {
                 control={control}
                 name='phone'
               />
-              {modeAction === 'update' && (
+              {isEdit && (
                 <FormSelect
                   label={<span>Trạng thái <span className='text-red-600'>(*)</span></span>}
                   options={mapEnumToSelectOptions(Status)}
@@ -91,7 +97,7 @@ const FormAdd = ({ modeAction, selectedUser }: Props) => {
                 mode='multiple'
               />
             </form>
-            {modeAction !== 'update' && (
+            {!isEdit && (
               <p>
                 Link tạo mật khẩu sẽ được gửi tự động về email cho người dùng sau
                 khi tài khoản được tạo thành công
@@ -104,4 +110,4 @@ const FormAdd = ({ modeAction, selectedUser }: Props) => {
   )
 }
 
-export default FormAdd
+export default DialogAddUser
