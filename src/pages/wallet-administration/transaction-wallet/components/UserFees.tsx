@@ -1,9 +1,9 @@
-import { TransactionItem } from '@type/transaction.type'
-import { formatCurrency, formatNumber } from '@utils/formatNumber'
+import { UnifiedContentJournal } from '@type/apiResponseJournal'
+import { formatCurrency } from '@utils/formatNumber'
 import React from 'react'
 
 interface UserFeesProps {
-    data?: TransactionItem
+    data?: UnifiedContentJournal
 }
 
 const UserFees = ({ data }: UserFeesProps) => {
@@ -32,7 +32,7 @@ const UserFees = ({ data }: UserFeesProps) => {
             <hr className='my-3' />
             <div className="flex justify-between items-center ">
                 <p className='font-medium text-lg'>Tổng thực thu/chi:</p>
-                <p className='font-medium text-lg text-blue-700'>{formatCurrency(data?.netAmount??0,{ symbol: 'VNĐ', position: 'after' })}</p>
+                <p className='font-medium text-lg text-blue-700'>{formatCurrency(data?.amount??0,{ symbol: 'VNĐ', position: 'after' })}</p>
             </div>
         </>
     )

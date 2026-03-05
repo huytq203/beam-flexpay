@@ -15,7 +15,7 @@ import SecurityBusiness from '../components/detail-infor/business/SecurityBusine
 
 export const TAB_CONTENT_MAP: TabContentMap = {
   '1': {
-    'USER': (props: TabContentProps) => <CommonInfor accountData={props.accountData} />,
+    'USER': (props: TabContentProps) => <CommonInfor accountData={props.accountData} ekycData={props.ekycData} />,
     'SYSTEM': (props: TabContentProps) => <CommonInfoBusiness accountData={props.accountData} />
   },
   '2': {

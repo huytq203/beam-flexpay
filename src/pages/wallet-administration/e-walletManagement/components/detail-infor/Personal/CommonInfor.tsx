@@ -7,11 +7,21 @@ import { formatCurrency } from '@utils/formatNumber'
 import dayjs from 'dayjs'
 import { TYPEDATE } from '@constants/date.constant'
 import { StatusKey, StatusLabel } from '@pages/wallet-administration/e-walletManagement/constants/Ewallet.constant'
-interface props {
-  data?: AcountItem
-}
-const InforUser = () => {
+import { ContentEKYC } from '@type/apiResponseEKYC'
+import { Tag } from 'antd'
 
+const genderMap: Record<string, string> = { MALE: 'Nam', FEMALE: 'Nữ' }
+const ekycStatusMap: Record<string, { color: string; label: string }> = {
+  VERIFIED: { color: 'success', label: 'Đã xác thực' },
+  PENDING: { color: 'warning', label: 'Chờ duyệt' },
+  REJECTED: { color: 'error', label: 'Từ chối' },
+  INVALIDATED: { color: 'default', label: 'Đã huỷ' },
+}
+
+interface InforEwalletProps { data?: AcountItem; ekyc?: ContentEKYC }
+const InforUser = ({ ekyc }: { ekyc?: ContentEKYC }) => {
+  const v = (val?: string | null) => val ?? '--'
+  const d = (val?: string | null) => val ? dayjs(val).format('DD/MM/YYYY') : '--'
 
   return (
     <>
@@ -24,18 +34,16 @@ const InforUser = () => {
       <hr className='my-3' />
       <div className="space-y-1">
         {[
-          { label: 'Họ và tên', value: '--', bold: true },
-          { label: 'Số điện thoại', value: '--' },
-          { label: 'Email', value: '--' },
-          { label: 'Loại tài khoản', value: '--' },
-          { label: 'Số CCCD', value: '--' },
-          { label: 'Ngày cấp', value: '--' },
-          { label: 'Nơi cấp', value: '--' },
-          { label: 'Ngày sinh', value: '--' },
-          { label: 'Giới tính', value: '--' },
-          { label: 'Quê quán', value: '--' },
-          { label: 'Nghề nghiệp', value: '--' },
-          { label: 'Chức vụ', value: '--' },
+          { label: 'Họ và tên', value: v(ekyc?.fullName), bold: true },
+          { label: 'Số điện thoại', value: v(ekyc?.username) },
+          { label: 'Loại giấy tờ', value: v(ekyc?.cardType) },
+          { label: 'Số CCCD/CMND', value: v(ekyc?.idNumber) },
+          { label: 'Ngày cấp', value: d(ekyc?.issueDate) },
+          { label: 'Nơi cấp', value: v(ekyc?.issuePlace) },
+          { label: 'Ngày hết hạn', value: d(ekyc?.expiryDate) },
+          { label: 'Ngày sinh', value: d(ekyc?.dateOfBirth) },
+          { label: 'Giới tính', value: genderMap[ekyc?.gender ?? ''] ?? v(ekyc?.gender) },
+          { label: 'Quốc tịch', value: v(ekyc?.nationality) },
         ].map((item, index) => (
           <div key={index} className="flex justify-between items-start py-2 hover:bg-gray-100 -mx-2 px-2 rounded transition-colors">
             <span className=" text-gray-600 min-w-[140px]">{item.label}:</span>
@@ -48,21 +56,30 @@ const InforUser = () => {
       <hr className='my-3' />
       <div className="">
         <p className='text-gray-500'>Địa chỉ thường trú</p>
-        <p className='font-medium'>--</p>
+        <p className='font-medium'>{ekyc?.permanentAddress ?? '--'}</p>
       </div>
+      {ekyc?.currentAddress && (
+        <>
+          <hr className='my-3' />
+          <div>
+            <p className='text-gray-500'>Địa chỉ hiện tại</p>
+            <p className='font-medium whitespace-pre-line'>{ekyc.currentAddress}</p>
+          </div>
+        </>
+      )}
     </>
   )
 }
 
-const InforEwallet = ({data}:props) => {
-  if(!data) return null
-    const STATUS_CLASS: Record<string, string> = {
+const InforEwallet = ({ data, ekyc }: InforEwalletProps) => {
+  if (!data) return null
+  const STATUS_CLASS: Record<string, string> = {
     ACTIVE: 'text-green text-[12px]  font-medium bg-green-100',
     LOCKED: 'text-red  text-[12px]  font-medium bg-red-100',
     FROZEN: 'text-blue-600 text-[12px]  font-medium bg-blue-100',
     REVIEW: 'text-yellow text-[12px]  font-medium bg-yellow-100',
   };
-   const typeKeyStatus = data?.status as StatusKey
+  const typeKeyStatus = data?.status as StatusKey
   return (
     <>
       <div className="flex items-center gap-2 mb-4">
@@ -91,7 +108,9 @@ const InforEwallet = ({data}:props) => {
         }
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Trạng thái EKC:</p>
-          <p className="font-medium text-blue-700 bg-blue-100 px-2  rounded-md text-sm">--</p>
+          <p className="font-medium text-blue-700 bg-blue-100 px-2  rounded-md text-sm">
+            {ekyc?.status ? (ekycStatusMap[ekyc.status]?.label ?? ekyc.status) : '--'}
+          </p>
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Ứng lương:</p>
@@ -109,7 +128,7 @@ const InforEwallet = ({data}:props) => {
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Số dư khả dụng:</p>
-          <p className="font-bold text-green-700  ">{formatCurrency(data.availableBalance??(data.balance-data.holdBalance))}</p>
+          <p className="font-bold text-green-700  ">{formatCurrency(data.availableBalance ?? (data.balance - data.holdBalance))}</p>
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Số dư đóng băng:</p>
@@ -122,17 +141,21 @@ const InforEwallet = ({data}:props) => {
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Ngày xác thực:</p>
-          <p className="font-medium">--</p>
+          <p className="font-medium">{ekyc?.verifiedAt ? dayjs(ekyc.verifiedAt).format('DD/MM/YYYY HH:mm') : '--'}</p>
         </div>
         <hr />
         <p className='font-bold'>Thông tin xác thực eKYC</p>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Trạng thái:</p>
-          <p className="font-medium  text-blue-700 bg-blue-100 px-2  rounded-md text-sm">--</p>
+          <p className="font-medium  text-blue-700 bg-blue-100 px-2  rounded-md text-sm">
+            {ekyc?.status ? (ekycStatusMap[ekyc.status]?.label ?? ekyc.status) : '--'}
+          </p>
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Độ chính xác AI:</p>
-          <p className="font-medium text-green-700">--%</p>
+          <p className={`font-medium ${ekyc?.faceMatchScore != null ? (ekyc.faceMatchScore >= 80 ? 'text-green-700' : ekyc.faceMatchScore >= 60 ? 'text-yellow-600' : 'text-red-600') : 'text-green-700'}`}>
+            {ekyc?.faceMatchScore != null ? `${ekyc.faceMatchScore}%` : '--%'}
+          </p>
         </div>
       </div>
       <div className="flex justify-between gap-4 mt-3">
@@ -164,16 +187,16 @@ const InforEwallet = ({data}:props) => {
     </>
   )
 }
-const CommonInfor = ({ accountData }: TabContentProps) => {
+const CommonInfor = ({ accountData, ekycData }: TabContentProps) => {
   return (
     <div className='flex gap-2 mt-3'>
       <CardComponent
         className='flex-1'
-        content={<InforUser />}
+        content={<InforUser ekyc={ekycData} />}
       />
       <CardComponent
         className='flex-1'
-        content={<InforEwallet data={accountData}/>}
+        content={<InforEwallet data={accountData} ekyc={ekycData} />}
       />
     </div>
   )

@@ -10,25 +10,26 @@ import DialogReject from '@pages/wallet-administration/confirm-ekyc/components/D
 import DialogCancel from '@pages/wallet-administration/confirm-ekyc/components/DialogCancel'
 
 const ConfirmEKYC = () => {
-  const { dataEKYC } = useConfirmEKYC()
+  const { dataSource, handleSearch, handleReset } = useConfirmEKYC()
+
   const { svg } = useSVG()
+
   const columns = Column({ svg })
-  console.log(dataEKYC)
   return (
     <div className='flex flex-col gap-3'>
-      <CardComponent content={<FormSearch />} />
-      <CardComponent content={<Table bordered size='small' scroll={{ x: 'max-content' }} columns={columns} dataSource={dataEKYC} />} />
+      <CardComponent content={<FormSearch onSearch={handleSearch} onReset={handleReset} />} />
+      <CardComponent content={<Table bordered size='small' scroll={{ x: 'max-content' }} columns={columns} dataSource={dataSource} />} />
 
       <ModalComponent
         onCancel={() => { }}
         onOk={() => { }}
         open={false}
         width='75%'
-        modalText={<BusinessComfirm/>}
-        
-        />
-        <DialogModal mode='DELETE' okText='Từ chối' onCancel={()=>{}} onOk={()=>{}} open={false} content={<DialogReject/>} title={<span className='text-red-600'>Từ chối hồ sơ</span>}  />
-        <DialogModal mode='DELETE' okText='Hủy xác thực' onCancel={()=>{}} onOk={()=>{}} open={false} content={<DialogCancel/>} title={<span className='text-red-600'>Hủy xác thực</span>}  />
+        modalText={<BusinessComfirm />}
+
+      />
+      <DialogModal mode='DELETE' okText='Từ chối' onCancel={() => { }} onOk={() => { }} open={false} content={<DialogReject />} title={<span className='text-red-600'>Từ chối hồ sơ</span>} />
+      <DialogModal mode='DELETE' okText='Hủy xác thực' onCancel={() => { }} onOk={() => { }} open={false} content={<DialogCancel />} title={<span className='text-red-600'>Hủy xác thực</span>} />
     </div>
   )
 }

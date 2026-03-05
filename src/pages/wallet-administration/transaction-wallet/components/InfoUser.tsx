@@ -1,46 +1,70 @@
-import { ButtonComponent } from '@components/index'
-import { TransactionItem } from '@type/transaction.type'
+import { UnifiedContentJournal, PartyInfo } from '@type/apiResponseJournal'
+import { CounterpartyType, CounterpartyTypeKey } from '../constants/Transaction.constant'
 import React from 'react'
 
 interface InfoUserProps {
-  data?: TransactionItem
+  data?: UnifiedContentJournal
+}
+
+const TYPE_BADGE_CLASS: Record<string, string> = {
+  USER: 'text-violet-700 bg-violet-50 border border-violet-300',
+  MERCHANT: 'text-purple-700 bg-purple-50 border border-purple-300',
+  BANK: 'text-yellow-700 bg-yellow-50 border border-yellow-300',
+  SYSTEM: 'text-gray-600 bg-gray-100 border border-gray-300',
+}
+
+const TYPE_AVATAR_CLASS: Record<string, string> = {
+  USER: 'bg-violet-100 text-violet-700',
+  MERCHANT: 'bg-purple-100 text-purple-700',
+  BANK: 'bg-yellow-100 text-yellow-700',
+  SYSTEM: 'bg-gray-100 text-gray-600',
+}
+
+const PartySection = ({ party, label }: { party?: PartyInfo; label: string }) => {
+  if (!party) return (
+    <div>
+      <p className='text-gray-400 text-xs mb-2'>{label}</p>
+      <p className='text-gray-400'>--</p>
+    </div>
+  )
+  const typeLabel = CounterpartyType[party.type as CounterpartyTypeKey]?.label ?? party.type
+  const initial = (party.displayName || party.username || '?')[0].toUpperCase()
+  return (
+    <div>
+      <p className='text-gray-500 text-xs mb-2 font-medium uppercase tracking-wide'>{label}</p>
+      <div className='flex items-center gap-2 mb-2'>
+        <div className={`flex justify-center items-center w-9 h-9 rounded-full font-bold text-sm ${TYPE_AVATAR_CLASS[party.type] ?? 'bg-gray-100 text-gray-600'}`}>
+          {initial}
+        </div>
+        <div>
+          <p className='font-medium'>{party.displayName || '--'}</p>
+          <p className='text-gray-500 text-xs'>{party.username}</p>
+        </div>
+      </div>
+      <span className={`text-xs px-2 py-0.5 rounded font-medium ${TYPE_BADGE_CLASS[party.type] ?? 'text-gray-500 bg-gray-50 border border-gray-200'}`}>
+        {typeLabel}
+      </span>
+    </div>
+  )
 }
 
 const InfoUser = ({ data }: InfoUserProps) => {
   return (
     <>
-          <div className="">
-            <p className='text-violet-500 font-medium'>5. Người thực hiện</p>
-          </div>
-          <hr className='my-3' />
-          <div className="flex items-center gap-1 mb-3">
-            <div className="flex justify-center items-center w-10 h-10 bg-violet-100 rounded-full">A</div>
-            <div className="">
-              <p className='font-medium text-lg'>{data?.fullName??'--'}</p>
-              <p className='text-gray-500 text-xs'>{data?.phoneNumber??'--'}</p>
-            </div>
-          </div>
-          <div className="flex flex-col gap-3 mb-3">
-            <div className="flex justify-between items-center">
-              <p className='text-gray-500'>Mã ví:</p>
-              <p className='font-medium'>{data?.walletCode??'--'}</p>
-            </div>
-            <hr />
-            <div className="flex justify-between items-center">
-              <p className='text-gray-500'>Trạng thái ví:</p>
-              <p className='text-green-700 font-medium'>{data?.walletStatus??'--'}</p>
-            </div>
-            <hr />
-            <div className="flex justify-between items-center">
-              <p className='text-gray-500'>Cấp độ (Tier):</p>
-              <p className='text-yellow-700 font-medium bg-yellow-50 px-2 rounded-md'>{data?.walletLevel??'--'}</p>
-            </div>
-          </div>
-          <div className="flex">
-
-            <ButtonComponent className='w-full' content='Xem hồ sơ User' />
-          </div>
-        </>
+      <div>
+        <p className='text-violet-500 font-medium'>5. Thông tin bên giao dịch</p>
+      </div>
+      <hr className='my-3' />
+      <div className='flex flex-col gap-4'>
+        <PartySection party={data?.from} label='Người chuyển (FROM)' />
+        <div className='flex items-center gap-2'>
+          <hr className='flex-1' />
+          <span className='text-gray-400 text-sm'>↓</span>
+          <hr className='flex-1' />
+        </div>
+        <PartySection party={data?.to} label='Người nhận (TO)' />
+      </div>
+    </>
   )
 }
 

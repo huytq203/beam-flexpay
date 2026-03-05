@@ -1,49 +1,53 @@
 export const TransactionType = {
-  WALLET_CREDIT: 'Nạp tiền ví',
-  WALLET_TRANSFER: 'Giao dịch ví',
-  DEBIT: 'Rút tiền',
-  CREDIT: 'Nạp tiền',
+  CASH_IN: 'Nạp tiền',
+  CASH_OUT: 'Rút tiền',
+  P2P_TRANSFER: 'Chuyển tiền',
+  MERCHANT_PAYMENT: 'Thanh toán',
+  REVERSAL: 'Hoàn tiền',
 } as const;
 
 export type TransactionKey = keyof typeof TransactionType;
 
 export enum StatusEnum {
-  SUCCESS = 'SUCCESS',
-  ERROR = 'ERROR',
-  WAITTING = 'WAITTING',
-  PROCESSING = 'PROCESSING',
-  REVIEW = 'REVIEW'
-
+  PENDING = 'PENDING',
+  POSTED = 'POSTED',
+  ARCHIVED = 'ARCHIVED',
 }
 
 export const StatusType = {
-  [StatusEnum.SUCCESS]: 'Thành công',
-  [StatusEnum.ERROR]: 'Thất bại',
-  [StatusEnum.WAITTING]: 'Chờ xử lý',
-  [StatusEnum.REVIEW]: 'Review',
-  [StatusEnum.PROCESSING]: 'Đang xử lý',
-
+  [StatusEnum.PENDING]: 'Chờ xử lý',
+  [StatusEnum.POSTED]: 'Thành công',
+  [StatusEnum.ARCHIVED]: 'Đã lưu trữ',
 }
 export type StatusKey = keyof typeof StatusType;
 
 export const StatusConstants = {
-  SUCCESS: 'SUCCESS',
-  ERROR: 'ERROR',
-  WAITTING: 'WAITTING',
-  REVIEW: 'REVIEW',
-  PROCESSING: 'PROCESSING',
+  PENDING: 'PENDING',
+  POSTED: 'POSTED',
+  ARCHIVED: 'ARCHIVED',
 } as const
 
-export enum  TransactionConstants{
-  WALLET_CREDIT= 'WALLET_CREDIT',
-  WALLET_TRANSFER= 'WALLET_TRANSFER',
-  DEBIT= 'DEBIT',
-  CREDIT= 'CREDIT',
-} 
+export enum TransactionConstants {
+  CASH_IN = 'CASH_IN',
+  CASH_OUT = 'CASH_OUT',
+  P2P_TRANSFER = 'P2P_TRANSFER',
+  MERCHANT_PAYMENT = 'MERCHANT_PAYMENT',
+  REVERSAL = 'REVERSAL',
+}
 
-export const Transaction_Title={
-  [TransactionConstants.CREDIT]:'Credit',
-  [TransactionConstants.DEBIT]:'Debit',
-  [TransactionConstants.WALLET_TRANSFER]:'Wallet transfer',
-  [TransactionConstants.WALLET_CREDIT]:'Wallet credit',
-}as const
+export const Transaction_Title = {
+  [TransactionConstants.CASH_IN]: 'Cash In',
+  [TransactionConstants.CASH_OUT]: 'Cash Out',
+  [TransactionConstants.P2P_TRANSFER]: 'P2P Transfer',
+  [TransactionConstants.MERCHANT_PAYMENT]: 'Merchant Payment',
+  [TransactionConstants.REVERSAL]: 'Reversal',
+} as const
+
+export const CounterpartyType = {
+  USER: { label: 'User', color: 'violet' },
+  MERCHANT: { label: 'Merchant', color: 'purple' },
+  BANK: { label: 'Bank', color: 'yellow' },
+  SYSTEM: { label: 'System', color: 'gray' },
+} as const
+
+export type CounterpartyTypeKey = keyof typeof CounterpartyType
