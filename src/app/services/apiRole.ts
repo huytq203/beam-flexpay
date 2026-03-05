@@ -1,7 +1,7 @@
 import { ResponseType } from "@type/api";
 import { RoleData, RoleResponse } from "@type/roleManagementV2";
 import { ResponseUserInfor, UserInfor } from "@type/userManagement";
-import { authApiService } from "./authApiService";
+import { authApiService } from "./apiService";
 
 export const roleApi = authApiService.injectEndpoints({
     endpoints: (build) => ({

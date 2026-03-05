@@ -1,6 +1,6 @@
 import { ResponseType } from "@type/api";
 import { Permission } from "@type/permissionManagement";
-import { authApiService } from "./authApiService";
+import { authApiService } from "./apiService";
 
 export const permissionApi = authApiService.injectEndpoints({
     endpoints: (build) => ({

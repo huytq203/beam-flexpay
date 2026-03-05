@@ -863,7 +863,7 @@ const roleManagementV2 = {
       key: 'permission-management',
       permission: ['ROLE:FULL', 'ROLE:VIEW', 'ROLE:CREATE', 'ROLE:UPDATE', 'ROLE:DELETE', 'ADMIN:FULL'],
       icon: (
-        <UsersThreeIcon
+        <ShieldCheckIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -875,13 +875,13 @@ const roleManagementV2 = {
       key: 'role-management',
       permission: ['ROLE:FULL', 'ROLE:VIEW', 'ROLE:CREATE', 'ROLE:UPDATE', 'ROLE:DELETE', 'ADMIN:FULL'],
       icon: (
-        <UsersThreeIcon
+        <LockKeyOpenIcon
           size={size}
           weight={weight}
           color={COlOR}
         />
       ),
-      label: "Quản lý  quyền"
+      label: "Quản lý quyền"
     }
   ]
 
@@ -890,7 +890,7 @@ const roleManagementV2 = {
 const walletManagement = {
   key: _WALLETADMINISTRATION,
   icon: (
-    <UserGearIcon
+    <WalletIcon
       size={size}
       weight={weight}
       color={COlOR}
@@ -901,9 +901,8 @@ const walletManagement = {
     {
       key: 'e-walletManagement',
       permission: ['WALLET:FULL', 'WALLET:VIEW', 'WALLET:CREATE', 'WALLET:UPDATE', 'WALLET:DELETE', 'ADMIN:FULL'],
-
       icon: (
-        <UsersThreeIcon
+        <WalletIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -914,28 +913,14 @@ const walletManagement = {
     {
       key: 'confirm-eKYC',
       permission: ['WALLET:FULL', 'WALLET:VIEW', 'WALLET:CREATE', 'WALLET:UPDATE', 'WALLET:DELETE', 'ADMIN:FULL'],
-
       icon: (
-        <UsersThreeIcon
+        <FingerprintIcon
           size={size}
           weight={weight}
           color={COlOR}
         />
       ),
       label: "Duyệt eKYC"
-    },
-
-    {
-      key: 'transaction-wallet',
-      permission: ['WALLET:FULL', 'WALLET:VIEW', 'WALLET:CREATE', 'WALLET:UPDATE', 'WALLET:DELETE', 'ADMIN:FULL'],
-      icon: (
-        <UsersThreeIcon
-          size={size}
-          weight={weight}
-          color={COlOR}
-        />
-      ),
-      label: 'Quản lý giao dịch ví'
     },
   ]
 
@@ -954,22 +939,34 @@ const transactionManagement = {
   label: 'Quản lý giao dịch',
   children: [
     {
-      key: 'frozen-transactions',
-      permission: ['TRANSACTION:FULL', 'TRANSACTION:VIEW', 'TRANSACTION:CREATE', 'TRANSACTION:UPDATE', 'TRANSACTION:DELETE', 'ADMIN:FULL'],
+      key: 'transaction-wallet',
+      permission: ['WALLET:FULL', 'WALLET:VIEW', 'WALLET:CREATE', 'WALLET:UPDATE', 'WALLET:DELETE', 'ADMIN:FULL'],
       icon: (
-        <UsersThreeIcon
+        <ArrowsLeftRightIcon
           size={size}
           weight={weight}
           color={COlOR}
         />
       ),
-      label: 'Quản lý giao dịch đóng băng'
+      label: 'Quản lý giao dịch'
+    },
+    {
+      key: 'frozen-transactions',
+      permission: ['TRANSACTION:FULL', 'TRANSACTION:VIEW', 'TRANSACTION:CREATE', 'TRANSACTION:UPDATE', 'TRANSACTION:DELETE', 'ADMIN:FULL'],
+      icon: (
+        <LockIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Giao dịch đóng băng'
     },
     {
       key: 'refund-management',
       permission: ['TRANSACTION:FULL', 'TRANSACTION:VIEW', 'TRANSACTION:CREATE', 'TRANSACTION:UPDATE', 'TRANSACTION:DELETE', 'ADMIN:FULL'],
       icon: (
-        <UsersThreeIcon
+        <ClockCounterClockwiseIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -981,7 +978,7 @@ const transactionManagement = {
       key: 'system-ledger',
       permission: ['TRANSACTION:FULL', 'TRANSACTION:VIEW', 'TRANSACTION:CREATE', 'TRANSACTION:UPDATE', 'TRANSACTION:DELETE', 'ADMIN:FULL'],
       icon: (
-        <UsersThreeIcon
+        <ClipboardTextIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -989,18 +986,17 @@ const transactionManagement = {
       ),
       label: 'Sổ cái hệ thống'
     },
-
     {
       key: 'withdraw-history',
       permission: ['TRANSACTION:FULL', 'TRANSACTION:VIEW', 'TRANSACTION:CREATE', 'TRANSACTION:UPDATE', 'TRANSACTION:DELETE', 'ADMIN:FULL'],
       icon: (
-        <UsersThreeIcon
+        <MoneyIcon
           size={size}
           weight={weight}
           color={COlOR}
         />
       ),
-      label: 'Quản lý lịch sử giao dịch rút tiền'
+      label: 'Lịch sử rút tiền'
     },
   ]
 }
@@ -1008,7 +1004,7 @@ const transactionManagement = {
 const merchantManagement = {
   key: _MERCHANT,
   icon: (
-    <UserGearIcon
+    <StorefrontIcon
       size={size}
       weight={weight}
       color={COlOR}
@@ -1017,7 +1013,7 @@ const merchantManagement = {
   label: 'Quản lý merchant ',
   children: [
     {
-      key: 'dashboard-merchant',  
+      key: 'dashboard-merchant',
       permission: ['MERCHANT:FULL', 'MERCHANT:VIEW', 'MERCHANT:CREATE', 'MERCHANT:UPDATE', 'MERCHANT:DELETE', 'ADMIN:FULL'],
       icon: (
         <ChartBarIcon
@@ -1032,7 +1028,7 @@ const merchantManagement = {
       key: 'merchant-management',
       permission: ['MERCHANT:FULL', 'MERCHANT:VIEW', 'MERCHANT:CREATE', 'MERCHANT:UPDATE', 'MERCHANT:DELETE', 'ADMIN:FULL'],
       icon: (
-        <UsersThreeIcon
+        <StorefrontIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -1059,15 +1055,15 @@ const merchantManagement = {
 export const navigationItems: ItemTypeCustom[] = [
   // roleManagement,
   // personalWallet,
-  feeManagement,
-  feeManagementV2,
-  bankAndConnect,
-  repaymentAndDisburse,
+  // feeManagement,
+  // feeManagementV2,
+  // bankAndConnect,
+  // repaymentAndDisburse,
   // reports,
   // internal_wallet,
-  feeManagementV3,
-  roleManagementV2,
-  walletManagement,
   transactionManagement,
-  merchantManagement
+  walletManagement,
+  roleManagementV2,
+  merchantManagement,
+  feeManagementV3,
 ]

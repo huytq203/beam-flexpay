@@ -11,28 +11,41 @@ import DialigLockAccount from './components/detail-infor/Personal/components/Dia
 import { AcountItem } from './types/ResponseWalletAccount.type'
 import { formatNumber } from '../../../app/utils/formatNumber'
 import DialogFreeze from '@pages/wallet-administration/transaction-wallet/components/DialogFreeze'
+import { ContentEKYC } from '@type/apiResponseEKYC'
 
 
 interface props {
   data?: AcountItem
+  dataEKYC?: ContentEKYC
 }
-const InforUser = ({ data }: props) => {
+const InforUser = ({ data, dataEKYC }: props) => {
   if (!data) return null
+
+  const displayName = dataEKYC?.fullName || data.ownerUsername || 'NA';
+  const displayInitial = displayName.charAt(0).toUpperCase();
 
   return (
     <>
       <div className='flex justify-between'>
         <div className='flex items-center gap-5'>
           <div className='border w-16 h-16 bg-gray-200 flex justify-center items-center rounded-full '>
-            NA
+            <p className='font-bold text-[24px]'>{displayInitial}</p>
           </div>
           <div className='text-gray-600 flex flex-col gap-1' >
-            <p className='font-extrabold text-xl'>{data.ownerUsername}</p>
-            {/* <p>nguyenA@gmail.com - 033333333</p> */}
+            <p className='font-extrabold text-xl'>{displayName}</p>
+            <p>{displayName} - {dataEKYC?.username || data.ownerUsername}</p>
             <p></p>
             <p className='flex gap-2 justify-start items-center font-medium'>
               <span className='bg-gray-200 px-1 rounded text-[12px]'>Hạng bạc</span>
-              <span className='flex gap-1 text-green-700  bg-green-100 px-1 rounded text-[12px]' ><CheckCircleFilled />Đã xác thực KYC</span>
+              {dataEKYC?.status === 'VERIFIED' ? (
+                <span className='flex gap-1 text-green-700 bg-green-100 px-1 rounded text-[12px]'>
+                  <CheckCircleFilled />Đã xác thực KYC
+                </span>
+              ) : (
+                <span className='flex gap-1 text-red-700 bg-red-100 px-1 rounded text-[12px]'>
+                  <CheckCircleFilled />Chưa xác thực KYC
+                </span>
+              )}
             </p>
           </div>
         </div>
@@ -50,8 +63,13 @@ const InforUser = ({ data }: props) => {
 }
 
 const DetailUser = () => {
-  const { setActiveKey, activeKey, getAccountById } = useDetailUser()
+
+
+
+  const { setActiveKey, activeKey, getAccountById, getEKYCById } = useDetailUser()
   const ownerType = getAccountById?.data?.ownerType;
+  const dataEKYC = getEKYCById?.content?.[0]
+
 
   const content = useMemo(() => {
     const tabContent = TAB_CONTENT_MAP[activeKey]?.[ownerType]
@@ -60,18 +78,19 @@ const DetailUser = () => {
       // Truyền nhiều data sources vào đây khi cần
       return tabContent({
         accountData: getAccountById?.data,
+        ekycData: dataEKYC,
         // transactionData: getTransactions?.data,
         // bankAccountData: getBankAccounts?.data,
       })
     }
     return tabContent
-  }, [activeKey, ownerType, getAccountById?.data])
+  }, [activeKey, ownerType, getAccountById?.data, dataEKYC])
 
   return (
     <div>
       <CardComponent
         className='mb-3'
-        content={<InforUser data={getAccountById?.data} />}
+        content={<InforUser data={getAccountById?.data} dataEKYC={dataEKYC} />}
       />
       <div className='px-5  bg-white rounded-md'>
         <TabComponent

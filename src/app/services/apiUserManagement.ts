@@ -1,6 +1,6 @@
 import { ResponseUserInfor } from "@type/userManagement";
 import { ResponseType } from "@type/api";
-import { authApiService } from "./authApiService";
+import { authApiService } from "./apiService";
 
 export const userApi = authApiService.injectEndpoints({
     endpoints: (build) => ({

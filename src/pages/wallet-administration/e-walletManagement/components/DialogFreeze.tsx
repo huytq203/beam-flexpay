@@ -35,7 +35,7 @@ const DialogFreeze = ({
     const { successMess } = useMessage()
 
     const { control, watch, handleSubmit, reset, setValue } = useForm<FreezeFormValues>({
-        defaultValues: { freezeType: 1, amount: balance, reason: '' },
+        defaultValues: { freezeType: 2, amount: balance, reason: '' },
         resolver: zodResolver(FreezeSchema),
     })
     const freezeType = watch('freezeType')
@@ -83,7 +83,7 @@ const DialogFreeze = ({
                         control={control}
                         name="freezeType"
                         options={[
-                            { value: 1, label: 'Đóng băng toàn bộ' },
+                            { value: 1, label: 'Đóng băng toàn bộ' ,disabled:true},
                             { value: 2, label: 'Đóng băng một phần' },
                         ]}
                     />

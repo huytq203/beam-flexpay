@@ -1,10 +1,10 @@
 import { DataLogin, OtpDataDto, UserLoginApiArg, UserLoginApiResponse } from '@type/application'
 import { fnTransformResponse } from '@utils/helperFunctions'
 import { url } from 'inspector';
-import { authApiService as api } from './authApiService'
+import { authApiService } from './apiService';
 
 
-const injectedRtkApi = api
+const injectedRtkApi = authApiService
     .enhanceEndpoints({
         addTagTypes: ['Auth', 'Profile']
     })

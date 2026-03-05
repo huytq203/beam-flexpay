@@ -44,7 +44,8 @@ export const apiWalletCore = createApi({
   tagTypes: [
     'historyTransaction',
     'Wallet',
-    'ledgerEntries'
+    'ledgerEntries',
+    'Journal'
   ],
   endpoints: () => ({}),
   refetchOnMountOrArgChange: true
@@ -58,4 +59,12 @@ export const apiMerchant = createApi({
   ],
   endpoints: () => ({}),
   refetchOnMountOrArgChange: true
+})
+
+export const authApiService = createApi({
+    reducerPath: 'authApi',
+    baseQuery: fetchBaseQueryCustom,
+    tagTypes: ['Auth', 'Profile', 'roleManagement','Permission','PermissionAssign','EKYC'],
+    endpoints: () => ({}),
+    refetchOnMountOrArgChange: true
 })

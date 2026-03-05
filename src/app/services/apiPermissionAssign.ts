@@ -1,4 +1,4 @@
-import { authApiService } from "./authApiService";
+import { authApiService } from "./apiService";
 
 export const apiPermissionAssign = authApiService.injectEndpoints({
     endpoints: (build) => ({

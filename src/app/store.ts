@@ -1,7 +1,6 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
-import { apiFeeService, apiMerchant, apiService, apiWalletCore } from '@services/apiService'
-import { authApiService } from '@services/authApiService'
+import { apiFeeService, apiMerchant, apiService, apiWalletCore, authApiService } from '@services/apiService'
 import authReducer from '@slices/authSlice'
 import { TypedUseSelectorHook, useSelector } from 'react-redux'
 import { errorMiddleware } from './middleware/errorMiddleware'

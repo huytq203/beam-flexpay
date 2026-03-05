@@ -63,7 +63,7 @@ const DetailTransaction = () => {
     <>
       <div className="flex justify-between items-center mb-3 px-2">
         <div className="flex flex-col gap-1">
-          <p className='text-xl font-bold'>Chi tiết giao dịch: <span className='text-blue-700'>{getTransactionById?.transactionCode??'--'}</span></p>
+          <p className='text-xl font-bold'>Chi tiết giao dịch: <span className='text-blue-700'>{getTransactionById?.journalCode??'--'}</span></p>
           <p className="text-sm text-gray-500">{dayjs(getTransactionById?.createdAt).format('DD/MM/YYYY HH:mm:ss')}</p>
         </div>
         <div className="flex justify-center items-center gap-2">
@@ -92,7 +92,7 @@ const DetailTransaction = () => {
         <div className='col-span-1 md:col-span-2  order-6 md:order-6' >
           <div className=" flex flex-col justify-center items-center border border-blue-700 bg-blue-100 rounded-md py-5 ">
             <p className=' text-xl text-gray-500 font-bold'>LỢI NHUẬN RÒNG (NET PROFIT)</p>
-            <p className='text-xl  text-green-600 font-medium'>{formatCurrency(getTransactionById?.netProfit??0,{ symbol: 'VNĐ', position: 'after' })}</p>
+            <p className='text-xl  text-green-600 font-medium'>{formatCurrency(getTransactionById?.amount??0,{ symbol: 'VNĐ', position: 'after' })}</p>
             <p className='text-gray-500 text-sm'>(Tổng thu user - Tổng trả NCC)</p>
           </div>
         </div>

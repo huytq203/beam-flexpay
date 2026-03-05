@@ -1,11 +1,13 @@
 import { CardComponent, Table, DialogModal, ModalComponent, UploadCombined } from '@components/index'
 import { CheckCircleFilled, ClockIcon, InfoCircleFilled } from '@components/icons'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import DialogApproval from './components/DialogApproval'
 import DialogApproveWithdraw from './components/DialogApproveWithdraw'
 import DialogDetailWithdrawHistory from './components/ModalDetailWithdrawHistory'
 import WithdrawHistorySearch from './components/WithdrawHistorySearch'
 import Column from './columns/WithdrawHistory.column'
+import useFetchDataWithdraw from './hooks/useFetchDataWithdraw'
+import useHandle from './hooks/useHandle'
 
 const WithdrawHistory = () => {
     const statusCards = [
@@ -14,22 +16,10 @@ const WithdrawHistory = () => {
         { count: 50, label: 'Thành công', borderClass: 'border-l-teal-500', bgClass: 'bg-teal-100', textClass: 'text-teal-600' },
         { count: 50, label: 'Thất bại/lỗi', borderClass: 'border-l-red-500', bgClass: 'bg-red-100', textClass: 'text-red-600' },
     ]
-    const columns = Column()
+    const { dataWithdraw, isLoadingWithdraw, setPage, setPageSize, sort, sortBy, dataSource, handleSearch } = useFetchDataWithdraw()
+    const { isDetailOpen, detailData, isDetailLoading, openDetail, closeDetail } = useHandle()
+    const columns = Column({ onViewDetail: openDetail })
 
-    const [data, setData] = useState([])
-    const dataSource = data
-    useEffect(() => {
-        const getUser = async () => {
-            try {
-                const res = await fetch('http://localhost:4000/withdrawHistory')
-                const data = await res.json()
-                setData(data.data.content)
-            } catch (error: any) {
-                console.log(error?.data?.detail)
-            }
-        }
-        getUser()
-    }, [])
     return (
         <div className='space-y-3'>
             <div className="grid md:grid-cols-4 gap-3">
@@ -53,45 +43,67 @@ const WithdrawHistory = () => {
 
             </div>
             <div className="">
-                <CardComponent content={<WithdrawHistorySearch />} />
+                <CardComponent content={<WithdrawHistorySearch handleSearch={handleSearch} />} />
             </div>
             <div className="">
-                <CardComponent content={<Table columns={columns} size='small' bordered dataSource={dataSource} />} />
+                <CardComponent content={
+                    <Table
+                        columns={columns}
+                        size='small'
+                        bordered
+                        dataSource={dataSource}
+                        loading={isLoadingWithdraw}
+                        pagination={{
+                            current: dataWithdraw?.pageable?.pageNumber ? dataWithdraw.pageable.pageNumber + 1 : 1,
+                            pageSize: dataWithdraw?.pageable?.pageSize ?? 10,
+                            total: dataWithdraw?.totalElements ?? 0,
+                            showSizeChanger: true,
+                            showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} bản ghi`,
+                            onChange: (page, pageSize) => {
+                                setPage(page)
+                                setPageSize(pageSize)
+                            },
+                        }}
+                    />
+                } />
             </div>
-
 
             <ModalComponent
                 width='65%'
-                onCancel={() => { }}
-                onOk={() => { }}
-                open={false}
-                title={<span className=' flex items-center gap-1'><InfoCircleFilled />Chi tiết giao dịch #TRX-4890328-37849</span>}
-                modalText={<DialogDetailWithdrawHistory />}
+                onCancel={closeDetail}
+                onOk={closeDetail}
+                open={isDetailOpen}
+                title={
+                    <span className='flex items-center gap-1'>
+                        <InfoCircleFilled />Chi tiết giao dịch {detailData?.journalCode ? `#${detailData.journalCode}` : ''}
+                    </span>
+                }
+                modalText={<DialogDetailWithdrawHistory data={detailData} isLoading={isDetailLoading} />}
             />
             <DialogModal
                 onCancel={() => { }}
                 onOk={() => { }}
-                open={false} 
+                open={false}
                 styles={{
-                    content:{
-                         background: '#fafafa'
+                    content: {
+                        background: '#fafafa'
                     }
                 }}
-                title={<span className=' flex items-center gap-1'><CheckCircleFilled/> Duyệt yêu cầu rút tiền</span>}
-                content={<DialogApproval/>}
-                />
+                title={<span className=' flex items-center gap-1'><CheckCircleFilled /> Duyệt yêu cầu rút tiền</span>}
+                content={<DialogApproval />}
+            />
             <DialogModal
                 onCancel={() => { }}
                 onOk={() => { }}
-                open={false} 
+                open={false}
                 styles={{
-                    content:{
-                         background: '#fafafa'
+                    content: {
+                        background: '#fafafa'
                     }
                 }}
-                title={<span className=' flex items-center gap-1 text-blue'><CheckCircleFilled/> Duyệt yêu cầu rút tiền</span>}
-                content={<DialogApproveWithdraw/>}
-                />
+                title={<span className=' flex items-center gap-1 text-blue'><CheckCircleFilled /> Duyệt yêu cầu rút tiền</span>}
+                content={<DialogApproveWithdraw />}
+            />
         </div>
     )
 }

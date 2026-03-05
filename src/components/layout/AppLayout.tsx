@@ -125,6 +125,31 @@ function AppLayout() {
     return selected.filter((n) => n !== '')
   }, [location.pathname])
 
+  const [openKeys, setOpenKeys] = useState<string[]>([])
+  const [hasInitOpenKeys, setHasInitOpenKeys] = useState(false)
+
+  useEffect(() => {
+    if (!hasInitOpenKeys && isAccess && navigation && Array.isArray(navigation) && navigation.length > 0) {
+      const keys: string[] = []
+      const traverse = (items: any[]) => {
+        items.forEach((item: any) => {
+          if (item?.children && item.children.length > 0) {
+            keys.push(item.key)
+            traverse(item.children)
+          }
+        })
+      }
+      traverse(navigation)
+      // Mở tất cả keys hợp lệ và currentKey hiện tại
+      setOpenKeys([...new Set([...keys, ...currentKey])])
+      setHasInitOpenKeys(true)
+    }
+  }, [navigation, currentKey, isAccess, hasInitOpenKeys])
+
+  const handleOpenChange = (keys: string[]) => {
+    setOpenKeys(keys)
+  }
+
   const enable = {
     top: false,
     right: true,
@@ -147,7 +172,8 @@ function AppLayout() {
         items={isAccess ? navigation as MenuProps['items'] : []}
         onClick={handleSelectMenu}
         selectedKeys={currentKey}
-        defaultOpenKeys={currentKey}
+        openKeys={hasInitOpenKeys ? openKeys : currentKey}
+        onOpenChange={handleOpenChange as any}
       />
     </>
   )

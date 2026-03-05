@@ -2,6 +2,7 @@ import { ButtonComponent } from '@components/index'
 import { FormDatePicker, FormInput, FormSelect } from '@components/form'
 import React from 'react'
 import { useForm } from 'react-hook-form'
+import { BroomIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
 
 interface FormSearchValues {
     status?: string
@@ -46,8 +47,8 @@ const FormSearch = ({ onSearch }: FormSearchProps) => {
                 <FormDatePicker isRange showTime control={control} name="dateRange" className="col-span-1" label="Khoảng ngày" />
             </div>
             <div className="flex justify-end mt-3 gap-2">
-                <ButtonComponent type="default" content="Đặt lại" onClick={() => { reset(); onSearch?.({}) }} />
-                <ButtonComponent htmlType="submit" content="Tìm kiếm" />
+                <ButtonComponent icon={<BroomIcon size={18} />} type="default" content="Đặt lại" onClick={() => { reset(); onSearch?.({}) }} />
+                <ButtonComponent icon={<MagnifyingGlassIcon size={18} />} htmlType="submit" content="Tìm kiếm" />
             </div>
         </form>
     )

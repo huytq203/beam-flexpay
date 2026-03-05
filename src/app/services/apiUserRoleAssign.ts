@@ -1,5 +1,5 @@
 import { useGetUserQuery } from "./apiUserManagement";
-import { authApiService } from "./authApiService";
+import { authApiService } from "./apiService";
 
 export const userRoleApi = authApiService.injectEndpoints({
     endpoints: (builder) => ({
