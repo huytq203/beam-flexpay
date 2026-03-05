@@ -3,7 +3,7 @@ import { FormDatePicker, FormInput, FormSelect } from '@components/form'
 import { useForm } from 'react-hook-form'
 import dayjs from 'dayjs'
 import { EKYCFilterType } from '../hooks/useConfirmEKYC'
-
+import { BroomIcon, MagnifyingGlassIcon } from '@components/icons'
 const STATUS_OPTIONS = [
     { label: 'Đã xác thực', value: 'VERIFIED' },
     { label: 'Đã huỷ', value: 'INVALID' },
@@ -66,8 +66,8 @@ const FormSearch = ({ onSearch, onReset }: FormSearchProps) => {
                     />
                 </div>
                 <div className="flex justify-end items-center gap-2 mt-3">
-                    <ButtonComponent content='Đặt lại' type='default' onClick={handleReset} />
-                    <ButtonComponent content='Tìm kiếm' htmlType='submit' />
+                    <ButtonComponent icon={<BroomIcon size={18} />} content='Đặt lại' type='default' onClick={handleReset} />
+                    <ButtonComponent icon={<MagnifyingGlassIcon size={18} />} content='Tìm kiếm' htmlType='submit' />
                 </div>
             </form>
         </div>

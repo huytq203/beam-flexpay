@@ -92,8 +92,8 @@
     "/role-v2/permission-management":"Quản lý nhóm quyền quản trị",
 
     "/wallet-administration/e-walletManagement":"Quản lý ví điện tử",
-    "/wallet-administration/transaction-wallet":"Quản lý giao dịch ví",
-    "/wallet-administration/transaction-wallet/*":"Chi tiết giao dịch ",
+    "/transaction-management/transaction-wallet":"Quản lý giao dịch",
+    "/transaction-management/transaction-wallet/*":"Chi tiết giao dịch ",
     "/wallet-administration/confirm-eKYC":"Duyệt eKYC",
     "/wallet-administration/e-walletManagement/*":"Chi tiết ví điện tử",
 

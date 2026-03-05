@@ -1,6 +1,6 @@
 import { authApiService } from '@services/apiService'
 import { ResponseType } from '@type/api'
-import { DataEKYC } from '@type/apiResponseEKYC'
+import { DataEKYC, ContentEKYC } from '@type/apiResponseEKYC'
 
 
 
@@ -20,7 +20,7 @@ export const apiEKYC = authApiService.injectEndpoints({
                 url: `/verified-kyc-profiles/${id}`,
                 method: 'GET',
             }),
-            transformResponse: (res: ResponseType<DataEKYC>) => res.data,
+            transformResponse: (res: ResponseType<ContentEKYC>) => res.data,
             providesTags: ['EKYC'],
         }),
         getEKYCSearch: build.query({

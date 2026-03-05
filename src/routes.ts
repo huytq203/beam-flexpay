@@ -595,20 +595,7 @@ const walletAministration = {
       ]
     },
 
-    {
-      path: WALLETADMINISTRATION,
-      children: [
-        {
-          path: WALLETADMINISTRATION + '/transaction-wallet',
-          element: createElement(TransactionManagement)
-        },
-        {
-          path: WALLETADMINISTRATION + '/transaction-wallet/:id',
-          element: createElement(DetailTransaction)
-        }
-
-      ]
-    },
+   
     {
       path: WALLETADMINISTRATION,
       children: [
@@ -682,6 +669,20 @@ const transactionManagement = {
   element: createElement(AppLayout),
   errorElement: createElement(NotFound),
   children: [
+     {
+      path: TRANSACTIONMANAGEMENT,
+      children: [
+        {
+          path: TRANSACTIONMANAGEMENT + '/transaction-wallet',
+          element: createElement(TransactionManagement)
+        },
+        {
+          path: TRANSACTIONMANAGEMENT + '/transaction-wallet/:id',
+          element: createElement(DetailTransaction)
+        }
+
+      ]
+    },
 
     {
       path: TRANSACTIONMANAGEMENT,

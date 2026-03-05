@@ -31,7 +31,12 @@ const PartySection = ({ party, label }: { party?: PartyInfo; label: string }) =>
   const initial = (party.displayName || party.username || '?')[0].toUpperCase()
   return (
     <div>
+      <div className='flex items-center justify-between mb-2'>
       <p className='text-gray-500 text-xs mb-2 font-medium uppercase tracking-wide'>{label}</p>
+      <span className={`text-xs px-2 py-0.5 rounded font-medium ${TYPE_BADGE_CLASS[party.type] ?? 'text-gray-500 bg-gray-50 border border-gray-200'}`}>
+        {typeLabel}
+      </span>
+      </div>
       <div className='flex items-center gap-2 mb-2'>
         <div className={`flex justify-center items-center w-9 h-9 rounded-full font-bold text-sm ${TYPE_AVATAR_CLASS[party.type] ?? 'bg-gray-100 text-gray-600'}`}>
           {initial}
@@ -41,9 +46,7 @@ const PartySection = ({ party, label }: { party?: PartyInfo; label: string }) =>
           <p className='text-gray-500 text-xs'>{party.username}</p>
         </div>
       </div>
-      <span className={`text-xs px-2 py-0.5 rounded font-medium ${TYPE_BADGE_CLASS[party.type] ?? 'text-gray-500 bg-gray-50 border border-gray-200'}`}>
-        {typeLabel}
-      </span>
+      
     </div>
   )
 }

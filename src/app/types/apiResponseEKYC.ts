@@ -48,6 +48,7 @@ export interface ContentEKYC {
   updatedAt: string
   createdBy: string
   updatedBy: string
+
 }
 
 export interface Pageable {

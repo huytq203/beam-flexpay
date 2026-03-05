@@ -1,26 +1,36 @@
-import { CheckOutlined, CloseOutlined, DollarOutlined, EyeFilled } from '@components/icons'
-import { ButtonComponent, CopyableText } from '@components/index'
-import { ColumnType } from 'antd/lib/table'
-import React from 'react'
+import { EyeFilled } from '@components/icons'
+import { ButtonComponent, CopyableText, TooltipComponent } from '@components/index'
+import { PaymentMethod, PaymentMethodKey, StatusKey, StatusType } from '@pages/wallet-administration/transaction-wallet/constants/Transaction.constant'
+import { UnifiedContentJournal } from '@type/apiResponseJournal'
+import { formatNumber } from '@utils/index'
+import { ColumnsType } from 'antd/lib/table'
+import dayjs from 'dayjs'
 
-const Column = (): ColumnType[] => [
+const STATUS_CLASS: Record<string, string> = {
+    PENDING: 'text-blue-600 rounded-md inline-block px-2 font-medium text-[12px] border border-blue-500 bg-blue-50',
+    POSTED: 'text-green-700 rounded-md inline-block px-2 font-medium text-[12px] border border-green-500 bg-green-50',
+    ARCHIVED: 'text-red-600 rounded-md inline-block px-2 font-medium text-[12px] border border-red-400 bg-red-50',
+}
+
+interface ColumnProps {
+    onViewDetail: (id: string) => void
+}
+
+const Column = ({ onViewDetail }: ColumnProps): ColumnsType<UnifiedContentJournal> => [
     {
         title: '#',
+        dataIndex: 'no',
         align: 'center',
-        dataIndex: 'id',
+        width: 50,
     },
     {
-        title: 'Mã GD/Loại',
+        title: 'Mã giao dịch',
         align: 'center',
-        render(value, record, index) {
+        render(_, record) {
             return (
-                <div className="">
-                    <p className='flex flex-col items-center'>
-                        <CopyableText
-                            value={record.maGD}
-                        />
-                    </p>
-                    <p> {record.loaiGD}</p>
+                <div className="text-start">
+                    <CopyableText value={record.journalCode} />
+                    <p className="text-gray-500 text-xs mt-0.5">{record.description ?? '--'}</p>
                 </div>
             )
         },
@@ -28,71 +38,103 @@ const Column = (): ColumnType[] => [
     {
         title: 'Người yêu cầu',
         align: 'center',
-        render(value, record, index) {
+        render(_, record) {
+            const from = record.from
             return (
-                <div className="">
-                    <p> {record.nguoiYeuCau.ten}</p>
-                    <p> {record.nguoiYeuCau.soDienThoai}</p>
+                <div className="text-start">
+                    <p className="font-medium">{from?.displayName || from?.username || '--'}</p>
+                    {/* <span className={`text-xs px-1.5 py-0.5 rounded ${from?.type === 'USER' ? 'text-violet-700 bg-violet-50 border border-violet-300' : 'text-gray-500 bg-gray-50 border border-gray-200'}`}>
+                        {from?.type ?? '--'}
+                    </span> */}
+                </div>
+            )
+        },
+    },
+    {
+        title: 'Thụ hưởng',
+        align: 'center',
+        render(_, record) {
+            const to = record.to
+            return (
+                <div className="text-start">
+                    <p className="font-medium">{to?.displayName || '--'}</p>
+                    {/* {record.bankCode && (
+                        <span className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-300 px-1.5 py-0.5 rounded">
+                            {record.bankCode}
+                        </span>
+                    )} */}
                 </div>
             )
         },
     },
     {
         title: 'Số tiền rút',
-        align: 'center',
-        render(value, record, index) {
+        align: 'right',
+        render(_, record) {
             return (
-                <div className="">
-                    <p> {record.soTienRut}</p>
+                <div className="text-right font-medium text-red-600">
+                    <p>-{formatNumber(record.amount)} {record.currency}</p>
                 </div>
             )
         },
     },
     {
-        title: 'Thông tin thụ hưởng',
-        align: 'center',
-        render(value, record, index) {
+        title: 'Phí',
+        align: 'right',
+        render(_, record) {
             return (
-                <div className="">
-                    <p>{record.thongTinThuHuong.tenNganHang + " - " + record.thongTinThuHuong.soTaiKhoan}</p>
-                    <p>{record.thongTinThuHuong.tenThuHuong}</p>
+                <div className="text-right text-gray-500">
+                    <p>{formatNumber(record.feeAmount)} {record.currency}</p>
                 </div>
             )
         },
     },
     {
-        title: 'Thông tin NH chi tiền',
-        align: 'center',
-        dataIndex: 'no',
-        render(value, record, index) {
+        title: 'Tổng',
+        align: 'right',
+        render(_, record) {
             return (
-                <div className="">
-                    <p>{record.thongTinNHChiTien.tenNganHang ?? <span className='italic text-gray-500'>---Chưa chọn---</span>}</p>
-                    <p>{record.thongTinNHChiTien.soTaiKhoan ?? <span className='italic text-gray-500'>---Chưa chọn---</span>}</p>
+                <div className="text-right font-bold text-red-600">
+                    <p>-{formatNumber(record.grossAmount)} {record.currency}</p>
                 </div>
             )
         },
     },
     {
-        title: 'Ngày tạo/Thành công',
+        title: 'Phương thức',
+        dataIndex: 'paymentMethod',
         align: 'center',
-        render(value, record, index) {
+        render(value: string) {
             return (
-                <div className="text-start">
-                    <p>Ngày tạo: {record.ngayTao ?? '--'}</p>
-                    <p>Ngày TC:{record.ngayThanhCong ?? '--'}</p>
+                <span className="text-[12px] px-2 py-0.5 rounded bg-gray-100 border border-gray-300 text-gray-700 font-medium">
+                    {PaymentMethod[value as PaymentMethodKey] ?? '--'}
+                </span>
+            )
+        },
+    },
+    {
+        title: 'Thời gian',
+        align: 'center',
+        render(_, record) {
+            return (
+                <div className="text-start text-[12px]">
+                    <p>Tạo: {dayjs(record.createdAt).format('DD/MM/YYYY HH:mm')}</p>
+                    {record.postedAt && (
+                        <p className="text-green-600">TC: {dayjs(record.postedAt).format('DD/MM/YYYY HH:mm')}</p>
+                    )}
                 </div>
             )
         },
     },
     {
         title: 'Trạng thái',
+        dataIndex: 'status',
         align: 'center',
-        dataIndex: 'no',
-        render(value, record, index) {
+        render(_, record) {
+            const statusKey = record.status as StatusKey
             return (
-                <div className={record.trangThai == 'CHO_DUYET' ? 'text-yellow-500' : record.trangThai == 'THANH_CONG' ? 'text-green-700' : record.trangThai == 'THAT_BAI' ? 'text-red-600' : ''}>
-                    <p>{record.trangThaiLabel}</p>
+                <div className={STATUS_CLASS[statusKey] ?? 'text-gray-500'}>
+                    {StatusType[statusKey] ?? record.status}
                 </div>
             )
         },
@@ -100,14 +142,18 @@ const Column = (): ColumnType[] => [
     {
         title: 'Thao tác',
         align: 'center',
-        width:100,
-        render(value, record, index) {
+        width: 100,
+        render(_, record) {
             return (
-                <div className="flex justify-start items-center gap-1">
-                    <ButtonComponent size='small' className='bg-blue-50 !border border-blue-600 text-blue-600 hover:!bg-blue-100 hover:!text-blue-600 ' icon={<EyeFilled/>} />
-                    <ButtonComponent size='small' className='bg-green-50 !border border-green-600 text-green-600 hover:!bg-green-100 hover:!text-green-600 ' icon={<CheckOutlined/>} />
-                    <ButtonComponent size='small' className='bg-teal-50 !border border-teal-600 text-teal-700 hover:!bg-teal-100 hover:!text-teal-700 ' icon={<DollarOutlined/>} />
-                    <ButtonComponent size='small'  type='default' danger icon={<CloseOutlined/>} />
+                <div className="flex justify-center items-center">
+                    <TooltipComponent title='Xem chi tiết'>
+                        <ButtonComponent
+                            onClick={() => onViewDetail(record.id)}
+                            size='small'
+                            className='bg-blue-50 !border border-blue-600 text-blue-600 hover:!bg-blue-100 hover:!text-blue-600'
+                            icon={<EyeFilled />}
+                        />
+                    </TooltipComponent>
                 </div>
             )
         },

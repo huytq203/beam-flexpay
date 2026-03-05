@@ -4,7 +4,7 @@ import { ColumnsType } from "antd/lib/table";
 import { Link, NavigateFunction } from "react-router-dom";
 import { ButtonComponent, TooltipComponent } from "@components/index";
 import { EyeFilled } from "@components/icons";
-import { CounterpartyType, CounterpartyTypeKey, StatusKey, StatusType, TransactionKey, TransactionType } from "@pages/wallet-administration/transaction-wallet/constants/Transaction.constant";
+import { CounterpartyType, CounterpartyTypeKey, PaymentMethodEnum,PaymentMethod, StatusKey, StatusType, TransactionKey, TransactionType } from "@pages/wallet-administration/transaction-wallet/constants/Transaction.constant";
 import { formatNumber } from "@utils/index";
 
 interface ColumnProps {
@@ -24,10 +24,10 @@ const PartyCell = ({ party }: { party?: UnifiedContentJournal['from'] }) => {
     return (
         <div className="text-start">
             <p className="font-medium">{party.displayName || '--'}</p>
-            <p className="text-gray-500 text-xs">{party.username}</p>
-            <span className={`text-xs px-1.5 py-0.5 rounded ${TYPE_BADGE_CLASS[party.type] ?? 'text-gray-500 bg-gray-50 border border-gray-200'}`}>
+            {/* <p className="text-gray-500 text-xs">{party.username}</p> */}
+            {/* <span className={`text-xs px-1.5 py-0.5 rounded ${TYPE_BADGE_CLASS[party.type] ?? 'text-gray-500 bg-gray-50 border border-gray-200'}`}>
                 {typeLabel}
-            </span>
+            </span> */}
         </div>
     )
 }
@@ -64,7 +64,7 @@ const Column = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal> =
                 <div>
                     {record.journalCode ? (
                         <Link
-                            to={`/wallet-administration/transaction-wallet/${record.id}`}
+                            to={`/transaction-management/transaction-wallet/${record.id}`}
                             className="text-blue-500 font-bold underline underline-offset-2"
                         >
                             {record.journalCode}
@@ -77,13 +77,28 @@ const Column = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal> =
         },
     },
     {
-        title: 'Loại/Phương thức',
+        title: 'Loại/Mô tả',
+        dataIndex: 'transactionType',
+        align: 'center',
         render(value, record) {
             const typeKey = record.transactionType as TransactionKey;
             return (
                 <div className='text-start'>
                     <p className="font-medium">{TransactionType[typeKey] ?? record.transactionType ?? '--'}</p>
-                    <p className="text-gray-500 text-sm">{record.paymentMethod ?? '--'}</p>
+                    <p className="text-gray-500 text-sm">{record.description ?? '--'}</p>
+                </div>
+            )
+        },
+    },
+    {
+        title: 'Phương thức',
+        dataIndex: 'paymentMethod',
+        align: 'center',
+        render(value, record) {
+            const typeKey = record.paymentMethod as PaymentMethodEnum;
+            return (
+                <div className='text-start'>
+                    <p className="font-medium">{PaymentMethod[typeKey] ?? record.paymentMethod ?? '--'}</p>
                 </div>
             )
         },
@@ -108,7 +123,7 @@ const Column = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal> =
         render(value, record) {
             return (
                 <div className="text-right font-medium">
-                    <p>{formatNumber(record.amount)}</p>
+                    <p>{formatNumber(record.amount) + " " + record.currency}</p>
                 </div>
             )
         },
@@ -119,7 +134,7 @@ const Column = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal> =
         render(value, record) {
             return (
                 <div className="text-right text-gray-500">
-                    <p>{formatNumber(record.feeAmount)}</p>
+                    <p>{formatNumber(record.feeAmount)+" "+record.currency}</p>
                 </div>
             )
         },
@@ -131,11 +146,11 @@ const Column = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal> =
             const isDebit = record.transactionType === 'CASH_OUT' || record.transactionType === 'MERCHANT_PAYMENT'
             return isDebit ? (
                 <div className="text-right font-medium text-red">
-                    <p>-{formatNumber(record.grossAmount)}</p>
+                    <p>-{formatNumber(record.grossAmount)+" "+record.currency}</p>
                 </div>
             ) : (
                 <div className="text-right font-medium text-green">
-                    <p>+{formatNumber(record.grossAmount)}</p>
+                    <p>+{formatNumber(record.grossAmount)+" "+record.currency}</p>
                 </div>
             )
         },
@@ -146,9 +161,9 @@ const Column = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal> =
         align: 'center',
         render(value, record) {
             const STATUS_CLASS: Record<string, string> = {
-                PENDING: 'text-blue-600 rounded-md inline-block px-2 font-medium text-xs border border-blue-500 bg-blue-50',
-                POSTED: 'text-green-700 rounded-md inline-block px-2 font-medium text-xs border border-green-500 bg-green-50',
-                ARCHIVED: 'text-red-600 rounded-md inline-block px-2 font-medium text-xs border border-red-400 bg-red-50',
+                PENDING: 'text-blue-600 rounded-md inline-block px-2 font-medium text-[12px] border border-blue-500 bg-blue-50',
+                POSTED: 'text-green-700 rounded-md inline-block px-2 font-medium text-[12px] border border-green-500 bg-green-50',
+                ARCHIVED: 'text-red-600 rounded-md inline-block px-2 font-medium text-[12px] border border-red-400 bg-red-50',
             };
             const typeKeyStatus = record.status as StatusKey
             return (
@@ -167,7 +182,7 @@ const Column = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal> =
                 <div className="flex justify-center items-center gap-1">
                     <TooltipComponent title='Xem chi tiết'>
                         <ButtonComponent
-                            onClick={() => navigate(`/wallet-administration/transaction-wallet/${record.id}`)}
+                            onClick={() => navigate(`/transaction-management/transaction-wallet/${record.id}`)}
                             size='small'
                             className='bg-blue-50 !border border-blue-600 text-blue-600 hover:!bg-blue-100 hover:!text-blue-600'
                             icon={<EyeFilled />}
