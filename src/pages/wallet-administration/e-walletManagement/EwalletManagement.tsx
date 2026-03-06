@@ -24,7 +24,8 @@ const EwalletManagement = () => {
     modalType,
     selectedAccount,
     closeModal,
-    loadingGetAccount
+    loadingGetAccount,
+    isFetching
   } = useEwalletManagement()
 
   return (
@@ -54,6 +55,7 @@ const EwalletManagement = () => {
                 columns={column}
                 bordered
                 dataSource={dataSource}
+                loading={isFetching}
                 pagination={{
                   current: page,
                   showSizeChanger: true,

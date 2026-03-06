@@ -18,6 +18,7 @@ const TransactionManagement = () => {
     setPage,
     pageSize,
     setPageSize,
+    isFetching,
     navigate,
     handleSearch,
     isLoadingGetTransaction,
@@ -58,6 +59,7 @@ const TransactionManagement = () => {
             scroll={{ x: 'max-content' }}
             columns={columns}
             dataSource={dataSource}
+            loading={isFetching}
             pagination={{
               current: page,
               showSizeChanger: true,

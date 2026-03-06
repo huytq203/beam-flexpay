@@ -1,16 +1,16 @@
 export interface TransactionResponse {
-  data: PageResult
+  data: PageResult<TransactionItem>
   message: string
   detail: string
   success: boolean
   status: string
 }
 
-export interface PageResult {
+export interface PageResult<T> {
   totalPages: number
   totalElements: number
   size: number
-  content: TransactionItem[]
+  content: T[]
   number: number
   pageable: Pageable
   numberOfElements: number

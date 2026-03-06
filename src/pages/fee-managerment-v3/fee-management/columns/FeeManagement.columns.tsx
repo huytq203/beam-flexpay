@@ -33,17 +33,42 @@ interface PolicyColumnsOptions {
   handleActiveFee: (record: PolicyRecord) => void
 }
 
+
+const CLASS_STATUS: Record<string, string> = {
+  ACTIVE: 'bg-green-50 border border-green-500 text-green-500',
+  INIT: 'bg-blue-50 border border-blue-500 text-blue-500',
+  INACTIVE: 'bg-red-50 border border-red-500 text-red-500'
+}
+
 // Status badge component
+
 const StatusBadge = ({ status }: { status: string }) => (
   <span
-    className={`px-2  rounded-md  whitespace-nowrap  text-[12px] font-medium ${status === 'ACTIVE'
-      ? 'bg-green-50 border border-green-500 text-green-500'
-      : `${status == 'INIT' ? 'bg-blue-50 border border-blue-400 text-blue-400' : 'bg-red-50 border border-red-500 text-red-500 '}`
-      }`}
+    className={`px-2  rounded-md  whitespace-nowrap  text-[12px] font-medium ${CLASS_STATUS[status]}`}
   >
     {getEnumLabel(status, statusType)}
   </span>
 )
+
+// const StatusBadge = ({ status }: { status: string }) => {
+//   let textColor = 'text-red-600'
+//   let dotColor = 'bg-gradient-to-br from-red-400 via-red-500 to-red-600 shadow-[inset_-1px_-1px_2px_rgba(0,0,0,0.2),_inset_1px_1px_2px_rgba(255,255,255,0.4)] shadow-red-500/40'
+
+//   if (status === 'ACTIVE') {
+//     textColor = 'text-green-600'
+//     dotColor = 'bg-gradient-to-br from-green-400 via-green-500 to-green-600 shadow-[inset_-1px_-1px_2px_rgba(0,0,0,0.2),_inset_1px_1px_2px_rgba(255,255,255,0.4)] shadow-green-500/40'
+//   } else if (status === 'INIT') {
+//     textColor = 'text-blue-600'
+//     dotColor = 'bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 shadow-[inset_-1px_-1px_2px_rgba(0,0,0,0.2),_inset_1px_1px_2px_rgba(255,255,255,0.4)] shadow-blue-500/40'
+//   }
+
+// return (
+//   <div className={`flex items-center justify-start gap-1.5 whitespace-nowrap text-[13px] font-medium ${textColor}`}>
+//     <span className={`w-3 h-3 rounded-full ${dotColor}`}></span>
+//     <span>{getEnumLabel(status, statusType)}</span>
+//   </div>
+// )
+// }
 
 // Action buttons component
 const ActionButtons = ({

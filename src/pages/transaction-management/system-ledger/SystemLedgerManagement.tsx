@@ -19,7 +19,8 @@ const SystemLedgerManagement = () => {
     pageSize,
     setPageSize,
     navigate,
-    handleSearch
+    handleSearch,
+    isFetching
   } = useSystemLedger()
 
   const columns = SystemLedgerColumn({ navigate })
@@ -176,6 +177,7 @@ const SystemLedgerManagement = () => {
             scroll={{ x: 'max-content' }}
             columns={columns}
             dataSource={dataSource}
+            loading={isFetching}
             rowKey="id"
             expandable={{
               expandedRowRender,

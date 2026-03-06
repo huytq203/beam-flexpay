@@ -16,7 +16,7 @@ const WithdrawHistory = () => {
         { count: 50, label: 'Thành công', borderClass: 'border-l-teal-500', bgClass: 'bg-teal-100', textClass: 'text-teal-600' },
         { count: 50, label: 'Thất bại/lỗi', borderClass: 'border-l-red-500', bgClass: 'bg-red-100', textClass: 'text-red-600' },
     ]
-    const { dataWithdraw, isLoadingWithdraw, setPage, setPageSize, sort, sortBy, dataSource, handleSearch } = useFetchDataWithdraw()
+    const { dataWithdraw, isLoadingWithdraw, setPage, setPageSize, sort, sortBy, dataSource, handleSearch, isFetching } = useFetchDataWithdraw()
     const { isDetailOpen, detailData, isDetailLoading, openDetail, closeDetail } = useHandle()
     const columns = Column({ onViewDetail: openDetail })
 
@@ -52,7 +52,7 @@ const WithdrawHistory = () => {
                         size='small'
                         bordered
                         dataSource={dataSource}
-                        loading={isLoadingWithdraw}
+                        loading={isFetching}
                         pagination={{
                             current: dataWithdraw?.pageable?.pageNumber ? dataWithdraw.pageable.pageNumber + 1 : 1,
                             pageSize: dataWithdraw?.pageable?.pageSize ?? 10,

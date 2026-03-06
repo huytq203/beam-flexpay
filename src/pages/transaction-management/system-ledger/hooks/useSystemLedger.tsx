@@ -1,5 +1,5 @@
 import usePagination from '@hooks/usePagination'
-import { useGetLedgerEntriesQuery, useLazyGetLedgerEntriesQuery } from '../services/apiSystemLedger'
+import { useGetLedgerEntriesQuery } from '../services/apiSystemLedger'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FormSearchValues } from '../types/SystemLedger.type'
@@ -8,7 +8,7 @@ const useSystemLedger = () => {
   const [filter, setFilter] = useState({})
   const navigate = useNavigate()
 
-  const { params, page, pageSize, setPage, setPageSize } = usePagination({
+  const { page, pageSize, setPage, setPageSize } = usePagination({
     defaultSort: 'createdAt',
   })
 
@@ -17,8 +17,7 @@ const useSystemLedger = () => {
     size:pageSize,
     ...filter
   }
-  const { data: dataLedger } = useGetLedgerEntriesQuery(payload)
-  const [getSearchLedger] = useLazyGetLedgerEntriesQuery()
+  const { data: dataLedger, isFetching } = useGetLedgerEntriesQuery(payload)
 
   const handleSearch = (data: FormSearchValues) => {
     setFilter(data)
@@ -41,7 +40,8 @@ const useSystemLedger = () => {
     pageSize,
     setPageSize,
     navigate,
-    handleSearch
+    handleSearch,
+    isFetching
   }
 }
 

@@ -1,6 +1,6 @@
 import { apiWalletCore } from "@services/apiService";
 import { ResponseType } from "@type/api";
-import { PageResult, TransactionItem } from "@type/transaction.type";
+import { PageResult, TransactionItem} from "@type/transaction.type";
 
 export const apiTransacjtionV2 = apiWalletCore.injectEndpoints({
     endpoints: (build) => ({
@@ -11,7 +11,7 @@ export const apiTransacjtionV2 = apiWalletCore.injectEndpoints({
                 method: 'GET'
             }),
             providesTags: ['historyTransaction'],
-            transformResponse: (res: ResponseType<PageResult>) => res.data
+            transformResponse: (res: ResponseType<PageResult<TransactionItem>>) => res.data
         }),
         getTransactionById: build.query({
             query: (id) => ({
