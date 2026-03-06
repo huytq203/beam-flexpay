@@ -7,7 +7,10 @@ import { BroomIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
 interface FormSearchValues {
     status?: string
     username?: string
-    dateRange?: [string, string]
+    type?: string
+    releaseType?: string
+    fromDate?: string
+    toDate?: string
 }
 
 interface FormSearchProps {
@@ -15,21 +18,28 @@ interface FormSearchProps {
 }
 
 const STATUS_OPTIONS = [
-    { label: 'Tất cả', value: '' },
     { label: 'Đang đóng băng', value: 'ACTIVE' },
-    { label: 'Đã thu', value: 'CAPTURED' },
     { label: 'Đã giải tỏa', value: 'RELEASED' },
-    { label: 'Đã hủy', value: 'CANCELLED' },
+]
+
+const FREEZE_TYPE = [
+    { label: 'Admin mở thủ công', value: 'MANUAL' },
+    { label: 'Hết hạn tự mở', value: 'EXPIRED' },
+    { label: 'Hệ thống capture', value: 'CAPTURED' },
+]
+
+const RELEASED_TYPE = [
+    { label: 'Thủ công', value: 'ADMIN_LOCK' },
+    { label: 'Hệ thống hold thanh toán', value: 'PAYMENT' },
+    { label: 'Tuân thủ pháp luật', value: 'COMPLIANCE_FREEZE' },
 ]
 
 const FormSearch = ({ onSearch }: FormSearchProps) => {
     const { control, handleSubmit, reset } = useForm<FormSearchValues>()
 
     const onSubmit = (values: FormSearchValues) => {
-        const { dateRange, ...rest } = values
+        const { ...rest } = values
         const params: Record<string, unknown> = { ...rest }
-        if (dateRange?.[0]) params.fromDate = dateRange[0]
-        if (dateRange?.[1]) params.toDate = dateRange[1]
         onSearch?.(params)
     }
 
@@ -44,7 +54,22 @@ const FormSearch = ({ onSearch }: FormSearchProps) => {
                     label="Trạng thái"
                     options={STATUS_OPTIONS}
                 />
-                <FormDatePicker isRange showTime control={control} name="dateRange" className="col-span-1" label="Khoảng ngày" />
+                <FormSelect
+                    control={control}
+                    name="type"
+                    className="col-span-1"
+                    label="Loại đóng băng"
+                    options={RELEASED_TYPE}
+                />
+                <FormSelect
+                    control={control}
+                    name="releaseType"
+                    className="col-span-1"
+                    label="Cách mở băng"
+                    options={FREEZE_TYPE}
+                />
+                <FormDatePicker showTime control={control} name="fromDate" className="col-span-1" label="Từ ngày" />
+                <FormDatePicker showTime control={control} name="toDate" className="col-span-1" label="Đến ngày" />
             </div>
             <div className="flex justify-end mt-3 gap-2">
                 <ButtonComponent icon={<BroomIcon size={18} />} type="default" content="Đặt lại" onClick={() => { reset(); onSearch?.({}) }} />

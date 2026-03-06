@@ -81,6 +81,18 @@ export const Column = ({ svg, onViewDetail }: ColumnProps): ColumnType[] => [
         align: 'left',
         dataIndex: 'issuePlace',
         ellipsis: true,
+        render(value) {
+            if (!value) return '—';
+            const shortValue = value
+                .replace(/CỤC TRƯỞNG CỤC CẢNH SÁT QUẢN LÝ HÀNH CHÍNH VỀ TRẬT TỰ XÃ HỘI/gi, 'Cục CS QLHC về TTXH')
+                .replace(/CỤC TRƯỞNG CỤC CẢNH SÁT\nQUẢN LÝ HÀNH CHÍNH VỀ TRẬT TỰ XÃ HỘI/gi, 'Cục CS QLHC về TTXH');
+
+            return (
+                <TooltipComponent title={value}>
+                    <span className="font-medium">{shortValue}</span>
+                </TooltipComponent>
+            );
+        }
     },
     {
         title: 'Giới tính',
@@ -150,7 +162,7 @@ export const Column = ({ svg, onViewDetail }: ColumnProps): ColumnType[] => [
                 <div className="flex justify-center items-center gap-1">
                     <TooltipComponent title="Duyệt">
                         <ButtonComponent
-                        hidden
+                            hidden
                             size="small"
                             className="text-green-700"
                             icon={svg('/icons.svg#hugeicons-user-check-01', { width: 18, height: 18 })}

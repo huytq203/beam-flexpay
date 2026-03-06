@@ -75,7 +75,7 @@ const Login2 = () => {
         try {
             const result = await login({ userLoginDto: values })
             if ('data' in result && result.data) {
-                navigate('/wallet-administration/transaction-wallet')
+                navigate('/transaction-management/transaction-wallet')
                 const refreshToken = result?.data?.[TokenType.REFRESH_TOKEN] || ''
                 const refreshExpiresIn = result?.data?.[TokenType.REFRESH_EXPIRES_IN] || 1800
                 setRefreshTokenCookie(refreshToken, refreshExpiresIn)

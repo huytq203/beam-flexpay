@@ -83,7 +83,7 @@ const DialogFreeze = ({
                         control={control}
                         name="freezeType"
                         options={[
-                            { value: 1, label: 'Đóng băng toàn bộ' ,disabled:true},
+                            { value: 1, label: 'Đóng băng toàn bộ', disabled: true },
                             { value: 2, label: 'Đóng băng một phần' },
                         ]}
                     />
@@ -101,6 +101,14 @@ const DialogFreeze = ({
                                 Số tiền cần đóng băng <span className="text-red-600">*</span>
                             </span>
                         }
+                        onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                            if (e.key === ' ') {
+                                const target = e.target as HTMLTextAreaElement;
+                                if (target.selectionStart === 0 || target.value.charAt(target.selectionStart - 1) === ' ') {
+                                    e.preventDefault();
+                                }
+                            }
+                        }}
                     />
 
                     {freezeType == 2 && (
@@ -126,6 +134,14 @@ const DialogFreeze = ({
                                 Lý do đóng băng <span className="text-red-600">*</span>
                             </span>
                         }
+                        onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                            if (e.key === ' ') {
+                                const target = e.target as HTMLTextAreaElement;
+                                if (target.selectionStart === 0 || target.value.charAt(target.selectionStart - 1) === ' ') {
+                                    e.preventDefault();
+                                }
+                            }
+                        }}
                     />
                 </div>
 

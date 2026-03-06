@@ -20,9 +20,9 @@ const TimeLineComponent = ({ items }: props) => {
                 color: item.color || 'blue',
                 children: (
                     <div className="flex flex-col">
-                        <span className="font-medium">{item.title}</span>
+                        <span className="font-medium mt-1">{item.title}</span>
                         {item.time && (
-                            <span className="text-xs text-gray-500">
+                            <span className="text-[12px] text-gray-500">
                                 {item.time}
                             </span>
                         )}

@@ -49,7 +49,7 @@ const ConfirmEKYC = () => {
             pageSize: pageSize,
             total: total ?? 0,
             showSizeChanger: true,
-            showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} bản ghi`,
+            showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]} / ${total} bản ghi`,
             onChange: (p, ps) => {
               setPage(p)
               setPageSize(ps)
@@ -59,6 +59,7 @@ const ConfirmEKYC = () => {
       } />
 
       <ModalComponent
+        title='Chi tiết hồ sơ'
         onCancel={closeDetail}
         onOk={closeDetail}
         open={isDetailOpen}

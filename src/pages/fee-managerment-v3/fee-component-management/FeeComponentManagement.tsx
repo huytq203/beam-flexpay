@@ -10,6 +10,7 @@ import { useFeeComponentForm } from '@pages/fee-managerment-v3/fee-component-man
 import { useGetFeePolicyByIdQuery } from '@services/apiFeePoliciesServices'
 import { useEffect, useRef } from 'react'
 import InforPolicy, { InfoPolicyRef } from '../components/InfoPolicy'
+import { FeeComponent } from './types/FeeComponent.types'
 
 const FeeComponentManagement = () => {
   const {
@@ -48,15 +49,15 @@ const FeeComponentManagement = () => {
 
   const infoPolicyRef = useRef<InfoPolicyRef>(null)
 
-  const { data: policyData } = useGetFeePolicyByIdQuery(id!, {
+  const { data: policyDataById } = useGetFeePolicyByIdQuery(id!, {
     skip: !isEdit
   })
 
   useEffect(() => {
-    if (policyData) {
-      reset(policyData)
+    if (policyDataById) {
+      reset(policyDataById)
     }
-  }, [policyData, reset])
+  }, [policyDataById, reset])
 
   const handleSaveAddFee = async () => {
     if (selectedRow) {
@@ -69,7 +70,11 @@ const FeeComponentManagement = () => {
   const handleModalSuccess = () => {
     setOpen(false)
   }
-
+  const arrListBaseOn: string[] = [];
+  dataSource.forEach((item: FeeComponent) => {
+    arrListBaseOn.push(item.componentType)
+  })
+  
   return (
     <div>
       <div>
@@ -94,6 +99,7 @@ const FeeComponentManagement = () => {
                 id={id}
                 handleUpdate={handleUpdate}
                 onSubmit={onSubmit}
+                data={policyDataById}
               />
             </div>
           </div>
@@ -143,7 +149,7 @@ const FeeComponentManagement = () => {
                   setPage(newPage)
                   setPageSize(newPageSize)
                 },
-                showTotal: (total, range) => `hiển thị ${range[0]}-${range[1]} trong ${total} phần tử`
+                showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]} / ${total} bản ghi`
               }}
 
             />
@@ -162,6 +168,7 @@ const FeeComponentManagement = () => {
                   onSubmit={handleFormSubmit}
                   onUpdate={handleUpdateFeeComponent}
                   onSuccess={handleModalSuccess}
+                  arrListBaseOn={arrListBaseOn}
                 />
               }
               loading={loadingFeeComponentById}

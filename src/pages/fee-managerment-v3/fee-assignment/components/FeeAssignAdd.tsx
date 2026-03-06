@@ -158,7 +158,7 @@ export const FormInforAdd = ({
       />
       <ModalComponent
         title={'Chọn chính sách phí'}
-       width={{ xs: "100% ", md: "70%" }}
+        width={{ xs: "100% ", md: "70%" }}
         open={openModal}
         onOk={() => {
           handleLocalPolicySelect
@@ -223,19 +223,17 @@ const FeeAssignAdd = () => {
   const { svg } = useSVG()
   const infoPolicyRef = useRef<InfoPolicyRef>(null)
 
-  const arr: string[] = []
-
   const feePolicyIds = useMemo(() => {
     if (!feeComponentData?.length) return []
+
     return [...new Set(feeComponentData.map((item) => item.feePolicyId))]
   }, [feeComponentData])
-  console.log(feePolicyIds)
   const feePolicyId = feePolicyIds[0]
-  // feeComponentData?.map((item) => arr.push(item.feePolicyId))
-  // const name = [...new Set(arr)]
+
   const { data: policyData } = useGetFeePolicyByIdQuery(
     feePolicyId ?? skipToken
   )
+
 
   return (
     <div>
