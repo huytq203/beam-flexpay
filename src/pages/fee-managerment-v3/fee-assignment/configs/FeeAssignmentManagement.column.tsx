@@ -132,9 +132,9 @@ function handleReject(record: FeeAssignment) {
 
 const StatusBadge = ({ status }: { status: string }) => (
   <span
-    className={`px-2  rounded-md  whitespace-nowrap  text-xs font-medium ${status === 'ACTIVE'
-      ? 'bg-green-50 border border-green-800 text-green-800'
-      : `${status == 'INIT' ? 'bg-blue-50 border border-blue-400 text-blue-800' : 'bg-red-50 border border-red-800 text-red-800 '}`
+    className={`px-2  rounded-md  whitespace-nowrap  text-[12px] font-medium ${status === 'ACTIVE'
+      ? 'bg-green-50 border border-green-500 text-green-500'
+      : `${status == 'INIT' ? 'bg-blue-50 border border-blue-400 text-blue-400' : 'bg-red-50 border border-red-500 text-red-500 '}`
       }`}
   >
     {getEnumLabel(status, statusType)}

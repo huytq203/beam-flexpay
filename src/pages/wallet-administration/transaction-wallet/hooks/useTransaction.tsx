@@ -9,11 +9,16 @@ const useTransaction = () => {
 
   const navigate = useNavigate()
 
-  const { params, page, pageSize, setPage, setPageSize } = usePagination({
+  const { page, pageSize, setPage, setPageSize } = usePagination({
     defaultSort: 'createdAt',
   })
+  const payload={
+    page:page,
+    size:pageSize,
+    ...filter 
+  }
 
-  const { data: dataTransaction, isLoading: isLoadingGetTransaction } = useGetUnifiedQuery({ ...params, ...filter })
+  const { data: dataTransaction, isLoading: isLoadingGetTransaction } = useGetUnifiedQuery(payload)
 
   const handleSearch = (data: Partial<FormSearchValues>) => {
     setFilter(data)

@@ -13,10 +13,11 @@ const useFetchFreeze = () => {
 
     const payload = React.useMemo(() => {
         return {
-            ...params,
+            page: page,
+            size: size,
             accountId: id
         }
-    }, [params, id])
+    }, [page, size, id])
 
     const { data: dataFreeze, isLoading: isLoadingGetFreeze } = useGetFreezesQuery(payload)
 
@@ -28,7 +29,7 @@ const useFetchFreeze = () => {
         }))
     }, [dataFreeze, page, size])
 
-    
+
     const handleOpenUnfreezeModal = (item: FreezeItem) => {
         setIsUnfreezeModalOpen(true)
         setSelectedFreezeItem(item)
