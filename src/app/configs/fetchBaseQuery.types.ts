@@ -248,8 +248,10 @@ export const WHITE_LIST: WhiteListItem[] = [
     { pathname: WALLETADMINISTRATION + '/e-walletManagement', requestUrl: '/wallet/accounts' },
     { pathname: WALLETADMINISTRATION + '/transaction-wallet', requestUrl: '/wallet/transactions' },
 
+    { pathname: TRANSACTIONMANAGEMENT + '/transaction-wallet', requestUrl: '/wallet/journal/unified' },
     { pathname: TRANSACTIONMANAGEMENT + '/frozen-transactions', requestUrl: '/wallet/freezes' },
     { pathname: TRANSACTIONMANAGEMENT + '/system-ledger', requestUrl: '/wallet/entries' },
+    { pathname: TRANSACTIONMANAGEMENT + '/withdraw-history', requestUrl: '/wallet/journal/unified' },
 
 
 

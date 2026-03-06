@@ -4,7 +4,7 @@ import { formatCurrency } from '@utils/formatNumber'
 import { Tag } from 'antd'
 import { ColumnType } from 'antd/lib/table'
 import dayjs from 'dayjs'
-import { FreezeType, FreezeTypeLabel, ReleaseType, ReleaseTypeLabel } from '../types/FrozenTransactions'
+import { FreezeType, FreezeTypeLabel, ReleaseType, ReleaseTypeLabel } from '../types/FrozenTransactions.type'
 
 type FreezeRow = { no: number } & FreezeItem
 

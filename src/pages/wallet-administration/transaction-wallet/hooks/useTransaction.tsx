@@ -18,7 +18,7 @@ const useTransaction = () => {
     ...filter 
   }
 
-  const { data: dataTransaction, isLoading: isLoadingGetTransaction } = useGetUnifiedQuery(payload)
+  const { data: dataTransaction, isFetching, isLoading: isLoadingGetTransaction } = useGetUnifiedQuery(payload)
 
   const handleSearch = (data: Partial<FormSearchValues>) => {
     setFilter(data)
@@ -32,7 +32,7 @@ const useTransaction = () => {
       ...item,
     }))
   ), [dataTransaction])
-console.log(dataSource)
+  
   return {
     dataSource,
     totalElements,
@@ -43,6 +43,7 @@ console.log(dataSource)
     navigate,
     handleSearch,
     isLoadingGetTransaction,
+    isFetching
   }
 }
 

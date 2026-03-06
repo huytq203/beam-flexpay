@@ -27,7 +27,7 @@ const useEwalletManagement = () => {
     size,
     ...filter
   }
-  const { data: getAccount,isLoading:loadingGetAccount } = useGetAccountQuery(payload)
+  const { data: getAccount,isLoading:loadingGetAccount, isFetching } = useGetAccountQuery(payload)
 
   const handleSearch = (data: FormSearchValues) => {
     setFilter(data)
@@ -63,7 +63,9 @@ const useEwalletManagement = () => {
     modalType,
     selectedAccount,
     closeModal,
-    loadingGetAccount
+    loadingGetAccount,
+    isFetching
+    
   }
 }
 
