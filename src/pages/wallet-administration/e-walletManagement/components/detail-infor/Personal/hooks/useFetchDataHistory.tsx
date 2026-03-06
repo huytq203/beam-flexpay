@@ -10,13 +10,14 @@ interface SearchParams {
 }
 
 const useFetchData = (ownerId: string, searchParams?: SearchParams) => {
-    const { params, page, size, setPage, setPageSize } = usePagination()
+    const {  page, size, setPage, setPageSize } = usePagination()
 
     const payload = React.useMemo(() => ({
         ownerId: ownerId,
-        ...params,
+        page:page,
+        size:size,
         ...searchParams,
-    }), [ownerId, params, searchParams])
+    }), [ownerId, page, size, searchParams])
 
     const { data: dataTransaction, isLoading: isLoadingGetTransaction } = useGetTransactionQuery(payload, {
         skip: !ownerId

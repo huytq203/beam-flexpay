@@ -12,7 +12,12 @@ const useSystemLedger = () => {
     defaultSort: 'createdAt',
   })
 
-  const { data: dataLedger } = useGetLedgerEntriesQuery({ ...params, ...filter })
+  const payload={
+    page:page,
+    size:pageSize,
+    ...filter
+  }
+  const { data: dataLedger } = useGetLedgerEntriesQuery(payload)
   const [getSearchLedger] = useLazyGetLedgerEntriesQuery()
 
   const handleSearch = (data: FormSearchValues) => {
