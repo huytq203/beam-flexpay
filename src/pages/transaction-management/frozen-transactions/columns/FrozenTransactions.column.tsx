@@ -4,6 +4,7 @@ import { formatCurrency } from '@utils/formatNumber'
 import { Tag } from 'antd'
 import { ColumnType } from 'antd/lib/table'
 import dayjs from 'dayjs'
+import { FreezeType, FreezeTypeLabel, ReleaseType, ReleaseTypeLabel } from '../types/FrozenTransactions'
 
 type FreezeRow = { no: number } & FreezeItem
 
@@ -33,7 +34,7 @@ export const Column = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeRow>
         key: 'source',
         render: (_, record) => (
             <div>
-                <p className="font-medium">{record.type}</p>
+                <p className="font-medium">{ReleaseTypeLabel[record.type as ReleaseType]}</p>
                 <p className="text-gray-500 text-xs">{record.reason}</p>
             </div>
         ),

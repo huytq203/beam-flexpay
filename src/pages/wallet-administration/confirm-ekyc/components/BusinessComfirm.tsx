@@ -22,7 +22,7 @@ const ContenModalConfirm = ({ data }: { data?: ContentEKYC }) => {
     { label: 'Số điện thoại', value: record?.username },
     { label: 'Số CCCD', value: record?.idNumber },
     { label: 'Ngày cấp', value: record?.issueDate ? dayjs(record.issueDate).format('DD/MM/YYYY') : undefined },
-    { label: 'Nơi cấp', value: record?.issuePlace },
+    { label: 'Nơi cấp', value: (record?.issuePlace.replace(/CỤC TRƯỞNG CỤC CẢNH SÁT\nQUẢN LÝ HÀNH CHÍNH VỀ TRẬT TỰ XÃ HỘI/gi, 'Cục CS QLHC về TTXH')) },
     { label: 'Ngày sinh', value: record?.dateOfBirth ? dayjs(record.dateOfBirth).format('DD/MM/YYYY') : undefined },
     { label: 'Giới tính', value: record?.gender ? genderMap[record.gender as string] ?? record.gender : undefined },
     { label: 'Quốc tịch', value: record?.nationality },

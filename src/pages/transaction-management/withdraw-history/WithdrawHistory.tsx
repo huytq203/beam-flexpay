@@ -75,7 +75,7 @@ const WithdrawHistory = () => {
                 open={isDetailOpen}
                 title={
                     <span className='flex items-center gap-1'>
-                        <InfoCircleFilled />Chi tiết giao dịch {detailData?.journalCode ? `#${detailData.journalCode}` : ''}
+                      <span className='flex items-center gap-1 text-blue-500'><InfoCircleFilled /> Chi tiết giao dịch: </span> <span className='font-bold text-gray-500'> {detailData?.journalCode ? `#${detailData.journalCode}` : ''}</span>
                     </span>
                 }
                 modalText={<DialogDetailWithdrawHistory data={detailData} isLoading={isDetailLoading} />}

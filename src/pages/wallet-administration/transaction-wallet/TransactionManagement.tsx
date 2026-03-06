@@ -7,7 +7,7 @@ import UpdateStatusTransaction from './components/UpdateStatusTransaction'
 import Column from './columns/Transaction.column'
 import useTransaction from './hooks/useTransaction'
 import DialogConfirm from './components/DialogConfirm'
-import { SkeletonFilterGroup, SkeletonTable } from '@components/ui/skeletons/Skeleton'
+import { SkeletonButton, SkeletonFilterGroup, SkeletonInput, SkeletonTable } from '@components/ui/skeletons/Skeleton'
 
 const TransactionManagement = () => {
 
@@ -29,7 +29,21 @@ const TransactionManagement = () => {
     <div className='flex flex-col gap-3'>
       <CardComponent content={
         isLoadingGetTransaction ? (
-          <SkeletonFilterGroup items={3} className='grid grid-cols-1 md:grid-cols-4 gap-4 mb-4' />
+
+          <>
+           <div className={`bg-white rounded-xl shadow-md p-6 border border-gray-100`}>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    {Array.from({ length: 6 }).map((_, index) => (
+                      <SkeletonInput key={index} />
+                    ))}
+                  </div>
+          
+                  <div className="flex justify-end flex-wrap gap-3 items-center">
+                    <SkeletonButton size="md" />
+                    <SkeletonButton size="md" />
+                 
+                  </div>
+                </div></>
         ) : (
           <FormSearch handleSearch={handleSearch} />
         )

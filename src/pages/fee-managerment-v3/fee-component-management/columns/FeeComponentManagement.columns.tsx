@@ -34,28 +34,34 @@ export const feeComponentColumns = ({
       title: 'Loại (Type)',
       dataIndex: 'componentType',
       key: 'componentType',
-      render: (value: string ) =>  getEnumLabel(value,componentType)
+      render: (value: string) => getEnumLabel(value, componentType)
     },
     {
       title: 'Cách tính',
       dataIndex: 'calculationMethod',
       key: 'calculationMethod',
-      render: (value: string ) =>
-         getEnumLabel(value,calculationMethodEnum)
+      render: (value: string) =>
+        getEnumLabel(value, calculationMethodEnum)
     },
     {
       title: 'Người trả',
       dataIndex: 'payerType',
       key: 'payerType',
-      render(value:string) {
-          return getEnumLabel(value,payerType)
+      render(value: string) {
+        return getEnumLabel(value, payerType)
       },
     },
     {
       title: 'Người hưởng',
       dataIndex: 'beneficiaryType',
       key: 'beneficiaryType',
-      render: (value: string) => getEnumLabel(value,beneficiaryType)
+      render: (value: string) => getEnumLabel(value, beneficiaryType)
+    },
+    {
+      title: 'Dựa trên',
+      dataIndex: 'baseOn',
+      key: 'baseOn',
+      render: (value: string) => getEnumLabel(value, componentType)
     },
 
     {
@@ -67,7 +73,7 @@ export const feeComponentColumns = ({
         <div className='flex gap-1 justify-center'>
           <TooltipComponent title='Cập nhật'>
             <ButtonComponent
-            size='small'
+              size='small'
               type='default'
               icon={<EditOutlined />}
               onClick={() => {
@@ -79,10 +85,10 @@ export const feeComponentColumns = ({
           </TooltipComponent>
           <TooltipComponent title='Xóa'>
             <ButtonComponent
-            size='small'
+              size='small'
               danger
               type='default'
-              icon={<DeleteOutlined/>}
+              icon={<DeleteOutlined />}
               onClick={() => {
                 if (record.id) {
                   setDeletingId(record.id)

@@ -45,8 +45,14 @@ export interface FeeComponentResponse {
 export enum componentType {
     TRANSACTION_FEE = 'Phí giao dịch',
     SERVICE_FEE = 'Phí dịch vụ',
-    VAT = 'VAT',
-    SYSTEM_FEE = 'Phí hệ thống'
+    VAT = 'Phí VAT',
+    SYSTEM_FEE = 'Phí hệ thống',
+    MERCHANT_FEE = "Phí merchant",
+    BANK_FEE = "Phí ngân hàng",
+    REFUND_FEE = "Phí hoàn tiền",
+    AMOUNT = 'Số tiền giao dịch',
+    PLATFORM_FEE = 'Phí nền tảng',
+    PROCESSING_FEE = 'Phí xử lý',
 }
 
 export enum baseOn {
@@ -80,6 +86,6 @@ export enum beneficiaryType {
 export enum roundMode {
     UP = 'Làm tròn lên',
     DOWN = 'Làm tròn xuống',
-    NEAREST   = 'Làm gần nhất',
+    NEAREST = 'Làm gần nhất',
     NONE = 'Không làm tròn'
 }

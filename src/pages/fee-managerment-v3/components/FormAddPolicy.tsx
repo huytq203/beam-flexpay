@@ -20,6 +20,7 @@ interface FormAddPolicyProps {
   handleUpdate?: (data: PolicyType) => Promise<void>
   onSubmit: (data: PolicyType) => Promise<void>
   isCreate?: boolean
+  data?: PolicyType
 }
 
 const FormAddPolicy = ({
@@ -28,11 +29,13 @@ const FormAddPolicy = ({
   id,
   handleUpdate,
   onSubmit,
-  isCreate
+  isCreate,
+  data
 }: FormAddPolicyProps) => {
 
 
-  
+  const status = data?.status
+  console.log(status)
 
   return (
     <>
@@ -72,13 +75,13 @@ const FormAddPolicy = ({
             disabledDate={(current: Dayjs) =>
               current && current < dayjs().startOf('day')
             }
-            disabled={!isCreate}
+            disabled={!isCreate && status !== 'INIT'}
           />
           <FormDatePicker
             className='col-span-12 md:col-span-6 flex flex-col'
             name='validTo'
             control={control}
-            label={!isCreate ? 'Hiệu lực đến' : <span>Hiệu lực đến <span className='text-red'>(*)</span></span>}
+            label={!isCreate ? 'Hiệu lực đến' : <span>Hiệu lực đến </span>}
             showTime
           />
 
@@ -92,7 +95,7 @@ const FormAddPolicy = ({
                 mapEnumToSelectOptions(statusType)
 
             }
-            disabled={!isCreate}
+            disabled={!isCreate && status !== 'INIT'}
           />
 
           <FormSelect
@@ -101,7 +104,7 @@ const FormAddPolicy = ({
             control={control}
             label={!isCreate ? "Loại dịch vụ" : <span>Loại dịch vụ <span className='text-red'>(*)</span></span>}
             options={mapEnumToSelectOptions(serviceType)}
-            disabled={!isCreate}
+            disabled={!isCreate && status !== 'INIT'}
           />
           <FormSelect
             className='col-span-12 md:col-span-6'
@@ -110,7 +113,7 @@ const FormAddPolicy = ({
             options={mapEnumToSelectOptions(Currency)}
             label={!isCreate ? "Đơn vị thanh toán" : <span>Đơn vị thanh toán <span className='text-red'>(*)</span></span>}
             placeholder='Nhập đơn vị thanh toán...'
-            disabled={!isCreate}
+            disabled={!isCreate && status !== 'INIT'}
           />
 
           <FormSelect
@@ -119,14 +122,14 @@ const FormAddPolicy = ({
             control={control}
             label={!isCreate ? "Phí miền" : <span>Phí miền <span className='text-red'>(*)</span></span>}
             options={mapEnumToSelectOptions(feeDomain)}
-            disabled={!isCreate}
+            disabled={!isCreate && status !== 'INIT'}
           />
 
           <FormTextArea
             className='col-span-12 md:col-span-12'
             name='description'
             control={control}
-            label={!isCreate ? 'Mô tả' : <span>Mô tả <span className='text-red'>(*)</span></span>}
+            label={!isCreate ? 'Mô tả' : <span>Mô tả </span>}
             placeholder='Nhập mô tả chính sách...'
           />
         </div>
