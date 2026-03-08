@@ -197,7 +197,7 @@ const LoginFormInside = () => {
                 </div>
 
                 {/* SSO Button */}
-                <button
+                {/* <button
                     type="button"
                     onClick={ssoLogin}
                     disabled={isLoading}
@@ -210,7 +210,7 @@ const LoginFormInside = () => {
                 >
                     <MicrosoftIcon />
                     <span>Đăng nhập với Microsoft</span>
-                </button>
+                </button> */}
             </form>
 
             {/* Footer */}
