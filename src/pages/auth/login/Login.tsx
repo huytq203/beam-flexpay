@@ -225,7 +225,7 @@ const LoginFormInside = () => {
 const LoginWrapper = () => {
     return (
         <GoogleReCaptchaProvider
-            reCaptchaKey={(import.meta.env.VITE_RECAPTCHA_SITE_KEY as string) || ''}
+            reCaptchaKey={(import.meta.env.VITE_RECAPTCHA_SITE_KEY as string) || '6Le42oIsAAAAAPHXVw2ss-yNfhvg4dmJB1348wXb'}
             scriptProps={{
                 async: false,
                 defer: false,
