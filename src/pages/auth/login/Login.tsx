@@ -12,8 +12,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useMessage } from '@hooks/useMessage'
 import { TokenType, setRefreshTokenCookie } from '@configs/fetchBaseQuery.types'
+import { GoogleReCaptchaProvider, useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import gsap from 'gsap'
-
 const loginSchema = z.object({
     username: z.string().min(1, 'Vui lòng nhập email').transform(val => val.trim()),
     password: z.string().min(1, 'Vui lòng nhập mật khẩu').transform(val => val.trim()),
@@ -30,13 +30,14 @@ const MicrosoftIcon = () => (
     </svg>
 )
 
-const Login2 = () => {
+const LoginFormInside = () => {
     const navigate = useNavigate()
     const [login, { isLoading }] = useUserLoginMutation()
     const [getUrlLogin] = useLazyGetUrlLoginQuery()
     const { t } = useTranslation()
     const { errorMess } = useMessage()
     const cardRef = useRef<HTMLDivElement>(null)
+    const { executeRecaptcha } = useGoogleReCaptcha()
 
     const {
         control,
@@ -73,15 +74,43 @@ const Login2 = () => {
 
     const onFinish = async (values: LoginFormData) => {
         try {
-            const result = await login({ userLoginDto: values })
+            if (!executeRecaptcha) {
+                errorMess('Hệ thống bảo mật chưa sẵn sàng, vui lòng đợi giây lát')
+                return
+            }
+
+            // Gọi API Sinh ra token ngầm
+            let recaptchaToken = ''
+            try {
+                recaptchaToken = await executeRecaptcha('login')
+            } catch (err) {
+                console.error("Lỗi khi gọi Google ReCAPTCHA:", err)
+                errorMess('Không thể xác thực Captcha, vui lòng kiểm tra kết nối mạng.')
+                return
+            }
+
+            if (!recaptchaToken) {
+                errorMess('Vui lòng xác nhận Captcha')
+                return;
+            }
+
+            // Nếu Backend YÊU CẦU gửi captcha token:
+            const result = await login({ userLoginDto: { ...values, captchaToken: recaptchaToken } })
+
+            // Hiện tại ta vẫn gọi config login mặc định
+            // const result = await login({ userLoginDto: values })
+
             if ('data' in result && result.data) {
                 navigate('/transaction-management/transaction-wallet')
                 const refreshToken = result?.data?.[TokenType.REFRESH_TOKEN] || ''
                 const refreshExpiresIn = result?.data?.[TokenType.REFRESH_EXPIRES_IN] || 1800
                 setRefreshTokenCookie(refreshToken, refreshExpiresIn)
             } else if ('error' in result) {
+                // Xử lý lỗi trả về từ Hook mutation API
             }
-        } catch {
+        } catch (error) {
+            console.error(error)
+            notification.error({ message: 'Đăng nhập có lỗi phát sinh, vui lòng thử lại.' })
         }
     }
 
@@ -173,11 +202,11 @@ const Login2 = () => {
                     onClick={ssoLogin}
                     disabled={isLoading}
                     className="w-full h-[42px] flex items-center justify-center gap-2.5
-                               rounded-[10px] border border-gray-200 bg-white
-                               text-[13px] font-semibold text-gray-600
-                               transition-all duration-200 ease-out
-                               hover:border-teal-300 hover:text-teal-700 hover:bg-teal-50/40
-                               active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                           rounded-[10px] border border-gray-200 bg-white
+                           text-[13px] font-semibold text-gray-600
+                           transition-all duration-200 ease-out
+                           hover:border-teal-300 hover:text-teal-700 hover:bg-teal-50/40
+                           active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <MicrosoftIcon />
                     <span>Đăng nhập với Microsoft</span>
@@ -185,11 +214,34 @@ const Login2 = () => {
             </form>
 
             {/* Footer */}
-            <p className="text-center text-[11px] text-gray-300 mt-8">
+            <p className="text-center text-[11px] text-gray-400 mt-8">
                 © {new Date().getFullYear()} Beam Ewallet · Powered by Flexpay
             </p>
+
         </div>
     )
 }
 
-export default Login2
+const LoginWrapper = () => {
+    return (
+        <GoogleReCaptchaProvider
+            reCaptchaKey={(import.meta.env.VITE_RECAPTCHA_SITE_KEY as string) || ''}
+            scriptProps={{
+                async: false,
+                defer: false,
+                appendTo: "head",
+                nonce: undefined,
+            }}
+            container={{
+                parameters: {
+                    badge: 'bottomright',
+                    theme: 'dark',
+                }
+            }}
+        >
+            <LoginFormInside />
+        </GoogleReCaptchaProvider>
+    )
+}
+
+export default LoginWrapper

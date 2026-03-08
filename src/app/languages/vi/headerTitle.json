@@ -99,7 +99,7 @@
 
     "/transaction-management/refund-management":"Quản lý hoàn tiền",
     "/transaction-management/withdraw-history":"Quản lý lịch sử giao dịch rút tiền",
-    "/transaction-management/frozen-transactions":"Quản lý giao dịch phí đóng băng",
+    "/transaction-management/frozen-transactions":"Quản lý giao dịch đóng băng",
     "/transaction-management/system-ledger":"Sổ cái hệ thống",
     
     "/merchant/merchant-management":"Quản lý Merchant",

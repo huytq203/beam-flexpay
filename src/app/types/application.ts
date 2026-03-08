@@ -159,9 +159,9 @@ export type CustomerGetExportExcelApiArg = {
   active?: boolean
   name?: string
   status?:
-    | accountStatus.LINKED
-    | accountStatus.NOT_VERIFIED
-    | accountStatus.VERIFIED
+  | accountStatus.LINKED
+  | accountStatus.NOT_VERIFIED
+  | accountStatus.VERIFIED
   accountNumber?: string
   hasTransactions?: boolean
   from?: string
@@ -181,9 +181,9 @@ export type CustomerGetExportCsvApiArg = {
   active?: boolean
   name?: string
   status?:
-    | accountStatus.LINKED
-    | accountStatus.NOT_VERIFIED
-    | accountStatus.VERIFIED
+  | accountStatus.LINKED
+  | accountStatus.NOT_VERIFIED
+  | accountStatus.VERIFIED
   accountNumber?: string
   hasTransactions?: boolean
   from?: string
@@ -337,25 +337,25 @@ export type TransactionMainFindAllApiArg = {
   code?: string
   referenceId?: string
   type?:
-    | 'DEPOSIT'
-    | 'TRANSFER'
-    | 'RECEIVAL'
-    | 'RECEIVE'
-    | 'PAYMENT'
-    | 'MERCHANT_PAYMENT_FEE'
-    | 'DISBURSE'
-    | 'WITHDRAWAL'
-    | 'WITHDRAWAL_FEE'
-    | 'REFUND'
-    | 'TOPUP'
-    | 'CASHIN_FEE'
+  | 'DEPOSIT'
+  | 'TRANSFER'
+  | 'RECEIVAL'
+  | 'RECEIVE'
+  | 'PAYMENT'
+  | 'MERCHANT_PAYMENT_FEE'
+  | 'DISBURSE'
+  | 'WITHDRAWAL'
+  | 'WITHDRAWAL_FEE'
+  | 'REFUND'
+  | 'TOPUP'
+  | 'CASHIN_FEE'
   status?:
-    | 'SUCCESS'
-    | 'APPROVED'
-    | 'PENDING'
-    | 'FAILED'
-    | 'ERROR'
-    | 'REFUND_SUCCESS'
+  | 'SUCCESS'
+  | 'APPROVED'
+  | 'PENDING'
+  | 'FAILED'
+  | 'ERROR'
+  | 'REFUND_SUCCESS'
   from?: string
   to?: string
   accountNumber?: string
@@ -371,25 +371,25 @@ export type TransactionFindAllApiArg = {
   code?: string
   referenceId?: string
   type?:
-    | 'DEPOSIT'
-    | 'TRANSFER'
-    | 'RECEIVAL'
-    | 'RECEIVE'
-    | 'PAYMENT'
-    | 'MERCHANT_PAYMENT_FEE'
-    | 'DISBURSE'
-    | 'WITHDRAWAL'
-    | 'WITHDRAWAL_FEE'
-    | 'REFUND'
-    | 'TOPUP'
-    | 'CASHIN_FEE'
+  | 'DEPOSIT'
+  | 'TRANSFER'
+  | 'RECEIVAL'
+  | 'RECEIVE'
+  | 'PAYMENT'
+  | 'MERCHANT_PAYMENT_FEE'
+  | 'DISBURSE'
+  | 'WITHDRAWAL'
+  | 'WITHDRAWAL_FEE'
+  | 'REFUND'
+  | 'TOPUP'
+  | 'CASHIN_FEE'
   status?:
-    | 'SUCCESS'
-    | 'APPROVED'
-    | 'PENDING'
-    | 'FAILED'
-    | 'ERROR'
-    | 'REFUND_SUCCESS'
+  | 'SUCCESS'
+  | 'APPROVED'
+  | 'PENDING'
+  | 'FAILED'
+  | 'ERROR'
+  | 'REFUND_SUCCESS'
   from?: string
   to?: string
   accountNumber?: string
@@ -737,23 +737,23 @@ export type NotificationContextSettingFindAllApiArg = {
   to?: string
   title?: string
   serviceType?:
-    | 'DEPOSIT_LINK_BANK'
-    | 'DEPOSIT_CARD_PHONE'
-    | 'DEPOSIT_FAIL'
-    | 'CHARGE_CARD_PHONE_NUMBER'
-    | 'CHARGE_DATA_3G_4G'
-    | 'PAYMENT_CARD_PHONE'
-    | 'PAYMENT_DATA_3G_4G'
-    | 'TRANSFER_RECEIVE'
-    | 'TRANSFER_MOVER'
-    | 'WITHDRAW_LINK_BANK'
-    | 'WITHDRAW_NOT_LINK_BANK'
-    | 'LINK_BANK'
-    | 'UNLINK_BANK'
-    | 'PAYMENT_BILL'
-    | 'WARNING_LOGIN_NEW_DEVICE'
-    | 'WARNING_CHANGE_PASSWORD'
-    | 'OTHER'
+  | 'DEPOSIT_LINK_BANK'
+  | 'DEPOSIT_CARD_PHONE'
+  | 'DEPOSIT_FAIL'
+  | 'CHARGE_CARD_PHONE_NUMBER'
+  | 'CHARGE_DATA_3G_4G'
+  | 'PAYMENT_CARD_PHONE'
+  | 'PAYMENT_DATA_3G_4G'
+  | 'TRANSFER_RECEIVE'
+  | 'TRANSFER_MOVER'
+  | 'WITHDRAW_LINK_BANK'
+  | 'WITHDRAW_NOT_LINK_BANK'
+  | 'LINK_BANK'
+  | 'UNLINK_BANK'
+  | 'PAYMENT_BILL'
+  | 'WARNING_LOGIN_NEW_DEVICE'
+  | 'WARNING_CHANGE_PASSWORD'
+  | 'OTHER'
   orderBy?: string
 }
 export type NotificationContextSettingFindOneApiResponse =
@@ -860,12 +860,12 @@ export type PaymentOrderFindAllApiArg = {
   partnerId?: number
   customerIdentityNumber?: string
   transactionStatus?:
-    | 'SUCCESS'
-    | 'APPROVED'
-    | 'PENDING'
-    | 'FAILED'
-    | 'ERROR'
-    | 'REFUND_SUCCESS'
+  | 'SUCCESS'
+  | 'APPROVED'
+  | 'PENDING'
+  | 'FAILED'
+  | 'ERROR'
+  | 'REFUND_SUCCESS'
   processedId?: string
   orderBy?: string
 }
@@ -899,12 +899,12 @@ export type PaymentOrderGetExportExcelApiArg = {
   partnerId?: number
   customerIdentityNumber?: string
   transactionStatus?:
-    | 'SUCCESS'
-    | 'APPROVED'
-    | 'PENDING'
-    | 'FAILED'
-    | 'ERROR'
-    | 'REFUND_SUCCESS'
+  | 'SUCCESS'
+  | 'APPROVED'
+  | 'PENDING'
+  | 'FAILED'
+  | 'ERROR'
+  | 'REFUND_SUCCESS'
   processedId?: string
   orderBy?: string
 }
@@ -1082,9 +1082,9 @@ export type ReportGetStateBankOverviewApiArg = PaginationParams & {
   email?: string
   phone?: string
   status?:
-    | accountStatus.LINKED
-    | accountStatus.NOT_VERIFIED
-    | accountStatus.VERIFIED
+  | accountStatus.LINKED
+  | accountStatus.NOT_VERIFIED
+  | accountStatus.VERIFIED
   type?: ReportType
   linkBank?: string
   from?: string
@@ -1307,10 +1307,10 @@ export type FileManager = {
   originalName: string
   ownerId: string
   ownerType:
-    | 'USER'
-    | 'CUSTOMER'
-    | 'CUSTOMER_ENTERPRISE'
-    | 'CUSTOMER_VERIFICATION'
+  | 'USER'
+  | 'CUSTOMER'
+  | 'CUSTOMER_ENTERPRISE'
+  | 'CUSTOMER_VERIFICATION'
 }
 export type CustomerVerification = {
   customer: Customer
@@ -1366,21 +1366,21 @@ export type Notification = {
   status: number
   typeId: string
   type:
-    | 'DEPOSIT'
-    | 'TRANSFER'
-    | 'WITHDRAWAL'
-    | 'RECEIVAL'
-    | 'PAYMENT'
-    | 'REFUND'
-    | 'WARNING_LOGIN'
-    | 'BORROW_MONEY'
-    | 'WARNING_CHANGE_PASSWORD'
-    | 'CHANGE_PASSWORD'
-    | 'PAYMENT_LINK'
-    | 'ORTHER'
-    | 'SALE_FEE'
-    | 'PRODUCT_DISCOUNT'
-    | 'BILL_PAYMENT'
+  | 'DEPOSIT'
+  | 'TRANSFER'
+  | 'WITHDRAWAL'
+  | 'RECEIVAL'
+  | 'PAYMENT'
+  | 'REFUND'
+  | 'WARNING_LOGIN'
+  | 'BORROW_MONEY'
+  | 'WARNING_CHANGE_PASSWORD'
+  | 'CHANGE_PASSWORD'
+  | 'PAYMENT_LINK'
+  | 'ORTHER'
+  | 'SALE_FEE'
+  | 'PRODUCT_DISCOUNT'
+  | 'BILL_PAYMENT'
   subTitle: string
   notificationIcon: string
   filterType: 'TRANSACTION' | 'COUPON' | 'REMIND' | 'UPDATE' | 'ORTHER'
@@ -1420,9 +1420,9 @@ export type Customer = {
   accountGroup: AccountGroup
   reasonLock: string
   status:
-    | accountStatus.LINKED
-    | accountStatus.NOT_VERIFIED
-    | accountStatus.VERIFIED
+  | accountStatus.LINKED
+  | accountStatus.NOT_VERIFIED
+  | accountStatus.VERIFIED
   customerVerification: CustomerVerification
   customerVerificationId: number
   hasTransactions: number
@@ -1509,11 +1509,11 @@ export type SystemFeeManagement = {
   receiverFeeMin: number
   receiverFeeMax: number
   policyManagementType:
-    | 'TRANSFER_INTERNAL'
-    | 'DEPOSIT_FLEXPAY'
-    | 'PAYMENT_FLEXPAY'
-    | 'PAYMENT_BANK_OR_ATM'
-    | 'WITHDRAW'
+  | 'TRANSFER_INTERNAL'
+  | 'DEPOSIT_FLEXPAY'
+  | 'PAYMENT_FLEXPAY'
+  | 'PAYMENT_BANK_OR_ATM'
+  | 'WITHDRAW'
   banks: Bank[]
   type: 'FLEXIBLE' | 'FIXED'
   feeManagementDeposits: FeeManagementDeposit[]
@@ -1566,11 +1566,11 @@ export type CreateUserDto = {
 export type OtpDataDto = {
   trackingId: string
 }
-export interface DataLogin{
-  accessToken:string
-  expiresIn:number|null,
-  refreshToken:string,
-  refreshExpiresIn:number|null,
+export interface DataLogin {
+  accessToken: string
+  expiresIn: number | null,
+  refreshToken: string,
+  refreshExpiresIn: number | null,
 }
 export type AdminGetOtp = {
   email: string
@@ -1590,6 +1590,7 @@ export type UserLoginResponse = {
 export type UserLoginDto = {
   username: string
   password: string
+  captchaToken: string
 }
 export type UserDetailDto = {
   id: number
@@ -1720,9 +1721,9 @@ export type CustomerDto = {
   isTempLocked: boolean
   accountNumber: string
   status:
-    | accountStatus.LINKED
-    | accountStatus.NOT_VERIFIED
-    | accountStatus.VERIFIED
+  | accountStatus.LINKED
+  | accountStatus.NOT_VERIFIED
+  | accountStatus.VERIFIED
   hasTransactions: boolean
   isNotification: boolean
   isMyOffer: boolean
@@ -1920,12 +1921,12 @@ export type TransactionDto = {
   amount: number
   fee: number
   status:
-    | 'SUCCESS'
-    | 'APPROVED'
-    | 'PENDING'
-    | 'FAILED'
-    | 'ERROR'
-    | 'REFUND_SUCCESS'
+  | 'SUCCESS'
+  | 'APPROVED'
+  | 'PENDING'
+  | 'FAILED'
+  | 'ERROR'
+  | 'REFUND_SUCCESS'
   from: string
   to: string
   note: string
@@ -1972,12 +1973,12 @@ export type TransactionReference = {
 }
 export type UpdateTransactionStatusDto = {
   status:
-    | 'SUCCESS'
-    | 'APPROVED'
-    | 'PENDING'
-    | 'FAILED'
-    | 'ERROR'
-    | 'REFUND_SUCCESS'
+  | 'SUCCESS'
+  | 'APPROVED'
+  | 'PENDING'
+  | 'FAILED'
+  | 'ERROR'
+  | 'REFUND_SUCCESS'
 }
 export type CreateGroupProductDto = {
   name: string
@@ -2146,12 +2147,12 @@ export type SaleFeeDetailDto = {
 }
 export type CreateSystemFeeManagementDto = {
   applicableObject:
-    | 'SYSTEM'
-    | 'PERSONAL_ACCOUNT'
-    | 'CORPORATE_ACCOUNT'
-    | 'SPECIFIC_BUSSINESS_ACCOUNT'
-    | 'ACCOUNT_GROUP'
-    | 'SPECIFIC_INDIVIDUALS'
+  | 'SYSTEM'
+  | 'PERSONAL_ACCOUNT'
+  | 'CORPORATE_ACCOUNT'
+  | 'SPECIFIC_BUSSINESS_ACCOUNT'
+  | 'ACCOUNT_GROUP'
+  | 'SPECIFIC_INDIVIDUALS'
   applicableObjectId: number
   transactionFrom: number
   transactionTo: number
@@ -2174,12 +2175,12 @@ export type SystemFeeManagementPageDto = {
 }
 export type UpdateSystemFeeManagementDto = {
   applicableObject?:
-    | 'SYSTEM'
-    | 'PERSONAL_ACCOUNT'
-    | 'CORPORATE_ACCOUNT'
-    | 'SPECIFIC_BUSSINESS_ACCOUNT'
-    | 'ACCOUNT_GROUP'
-    | 'SPECIFIC_INDIVIDUALS'
+  | 'SYSTEM'
+  | 'PERSONAL_ACCOUNT'
+  | 'CORPORATE_ACCOUNT'
+  | 'SPECIFIC_BUSSINESS_ACCOUNT'
+  | 'ACCOUNT_GROUP'
+  | 'SPECIFIC_INDIVIDUALS'
   applicableObjectId?: number
   transactionFrom?: number
   transactionTo?: number
@@ -2227,30 +2228,30 @@ export type HistoryFeeManagementPageDto = {
 }
 export type CreateNotificationContextSettingDto = {
   serviceType:
-    | 'DEPOSIT_LINK_BANK'
-    | 'DEPOSIT_CARD_PHONE'
-    | 'DEPOSIT_FAIL'
-    | 'CHARGE_CARD_PHONE_NUMBER'
-    | 'CHARGE_DATA_3G_4G'
-    | 'PAYMENT_CARD_PHONE'
-    | 'PAYMENT_DATA_3G_4G'
-    | 'TRANSFER_RECEIVE'
-    | 'TRANSFER_MOVER'
-    | 'WITHDRAW_LINK_BANK'
-    | 'WITHDRAW_NOT_LINK_BANK'
-    | 'LINK_BANK'
-    | 'UNLINK_BANK'
-    | 'PAYMENT_BILL'
-    | 'WARNING_LOGIN_NEW_DEVICE'
-    | 'WARNING_CHANGE_PASSWORD'
-    | 'OTHER'
+  | 'DEPOSIT_LINK_BANK'
+  | 'DEPOSIT_CARD_PHONE'
+  | 'DEPOSIT_FAIL'
+  | 'CHARGE_CARD_PHONE_NUMBER'
+  | 'CHARGE_DATA_3G_4G'
+  | 'PAYMENT_CARD_PHONE'
+  | 'PAYMENT_DATA_3G_4G'
+  | 'TRANSFER_RECEIVE'
+  | 'TRANSFER_MOVER'
+  | 'WITHDRAW_LINK_BANK'
+  | 'WITHDRAW_NOT_LINK_BANK'
+  | 'LINK_BANK'
+  | 'UNLINK_BANK'
+  | 'PAYMENT_BILL'
+  | 'WARNING_LOGIN_NEW_DEVICE'
+  | 'WARNING_CHANGE_PASSWORD'
+  | 'OTHER'
   applicableObject:
-    | 'SYSTEM'
-    | 'PERSONAL_ACCOUNT'
-    | 'CORPORATE_ACCOUNT'
-    | 'SPECIFIC_BUSSINESS_ACCOUNT'
-    | 'ACCOUNT_GROUP'
-    | 'SPECIFIC_INDIVIDUALS'
+  | 'SYSTEM'
+  | 'PERSONAL_ACCOUNT'
+  | 'CORPORATE_ACCOUNT'
+  | 'SPECIFIC_BUSSINESS_ACCOUNT'
+  | 'ACCOUNT_GROUP'
+  | 'SPECIFIC_INDIVIDUALS'
   applicableObjectId: number
   title: string
   body: string
@@ -2275,30 +2276,30 @@ export type NotificationContextSettingDetailDto = {
 }
 export type UpdateNotificationContextSettingDto = {
   serviceType?:
-    | 'DEPOSIT_LINK_BANK'
-    | 'DEPOSIT_CARD_PHONE'
-    | 'DEPOSIT_FAIL'
-    | 'CHARGE_CARD_PHONE_NUMBER'
-    | 'CHARGE_DATA_3G_4G'
-    | 'PAYMENT_CARD_PHONE'
-    | 'PAYMENT_DATA_3G_4G'
-    | 'TRANSFER_RECEIVE'
-    | 'TRANSFER_MOVER'
-    | 'WITHDRAW_LINK_BANK'
-    | 'WITHDRAW_NOT_LINK_BANK'
-    | 'LINK_BANK'
-    | 'UNLINK_BANK'
-    | 'PAYMENT_BILL'
-    | 'WARNING_LOGIN_NEW_DEVICE'
-    | 'WARNING_CHANGE_PASSWORD'
-    | 'OTHER'
+  | 'DEPOSIT_LINK_BANK'
+  | 'DEPOSIT_CARD_PHONE'
+  | 'DEPOSIT_FAIL'
+  | 'CHARGE_CARD_PHONE_NUMBER'
+  | 'CHARGE_DATA_3G_4G'
+  | 'PAYMENT_CARD_PHONE'
+  | 'PAYMENT_DATA_3G_4G'
+  | 'TRANSFER_RECEIVE'
+  | 'TRANSFER_MOVER'
+  | 'WITHDRAW_LINK_BANK'
+  | 'WITHDRAW_NOT_LINK_BANK'
+  | 'LINK_BANK'
+  | 'UNLINK_BANK'
+  | 'PAYMENT_BILL'
+  | 'WARNING_LOGIN_NEW_DEVICE'
+  | 'WARNING_CHANGE_PASSWORD'
+  | 'OTHER'
   applicableObject?:
-    | 'SYSTEM'
-    | 'PERSONAL_ACCOUNT'
-    | 'CORPORATE_ACCOUNT'
-    | 'SPECIFIC_BUSSINESS_ACCOUNT'
-    | 'ACCOUNT_GROUP'
-    | 'SPECIFIC_INDIVIDUALS'
+  | 'SYSTEM'
+  | 'PERSONAL_ACCOUNT'
+  | 'CORPORATE_ACCOUNT'
+  | 'SPECIFIC_BUSSINESS_ACCOUNT'
+  | 'ACCOUNT_GROUP'
+  | 'SPECIFIC_INDIVIDUALS'
   applicableObjectId?: number
   title?: string
   body?: string
@@ -2558,12 +2559,12 @@ export type RefundDto = {
   amount: number
   fee: number
   status:
-    | 'SUCCESS'
-    | 'APPROVED'
-    | 'PENDING'
-    | 'FAILED'
-    | 'ERROR'
-    | 'REFUND_SUCCESS'
+  | 'SUCCESS'
+  | 'APPROVED'
+  | 'PENDING'
+  | 'FAILED'
+  | 'ERROR'
+  | 'REFUND_SUCCESS'
   from: string
   to: string
   note: string
@@ -2618,11 +2619,11 @@ export type SystemSetting = {
 }
 export type CreateSystemSettingDto = {
   key:
-    | 'credit-limit-per-day'
-    | 'credit-limit-per-month'
-    | 'credit-limit-per-transaction'
-    | 'deposit-fee-principle'
-    | 'withdraw-fee-principle'
-    | 'link-principle'
+  | 'credit-limit-per-day'
+  | 'credit-limit-per-month'
+  | 'credit-limit-per-transaction'
+  | 'deposit-fee-principle'
+  | 'withdraw-fee-principle'
+  | 'link-principle'
   value: string
 }
