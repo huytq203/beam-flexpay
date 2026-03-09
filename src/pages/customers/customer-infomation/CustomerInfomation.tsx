@@ -10,7 +10,7 @@ import {
   getTagColor
 } from '@utils/helperFunctions'
 import { Col, Row, Tag, Typography } from 'antd'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -84,7 +84,7 @@ function CustomerInformation(props: CustomerInformationProps) {
               title={trans('labels.dateOfBirth').toString()}
               data={
                 customer?.birthDay
-                  ? moment(customer.birthDay, TimeFormat).format(TimeFormat)
+                  ? dayjs(customer.birthDay, TimeFormat).format(TimeFormat)
                   : undefined
               }
             />

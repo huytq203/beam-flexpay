@@ -1,4 +1,4 @@
-import dayjs, { Dayjs } from 'dayjs'
+import { Dayjs } from 'dayjs'
 
 import ButtonSearch from '@components/button-search/ButtonSearch'
 import SearchBar from '@components/search-bar/SearchBar'
@@ -27,7 +27,7 @@ import {
 } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import _ from 'lodash'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -51,16 +51,18 @@ const rangePresets: TimeRangePickerProps['presets'] = [
 
 function InternalWalletTransaction(props: props) {
   const [form] = Form.useForm()
+  const [startDate, setStartDate] = useState<Dayjs>(dayjs().subtract(1, 'year'))
+  const [endDate, setEndDate] = useState<Dayjs>(dayjs())
+
   const [search, setSearch] = useState<InternalWalletTransactionPayload>({
     order: 'DESC',
     page: 1,
     take: 10,
     query: '',
-    orderBy: 'createdAt'
+    orderBy: 'createdAt',
+    startDate: startDate.format('DD/MM/YYYY HH:mm:ss'),
+    endDate: endDate.format('DD/MM/YYYY HH:mm:ss')
   })
-
-  const [startDate, setStartDate] = useState<Dayjs>(dayjs().subtract(1, 'year'))
-  const [endDate, setEndDate] = useState<Dayjs>(dayjs())
 
   const { t } = useTranslation()
 
@@ -82,7 +84,7 @@ function InternalWalletTransaction(props: props) {
       dataIndex: 'transaction',
       key: 'transaction.transactionDate',
       render(value) {
-        return moment(value?.transactionDate).format('DD/MM/YYYY HH:mm:ss')
+        return dayjs(value?.transactionDate).format('DD/MM/YYYY HH:mm:ss')
       }
     },
     {

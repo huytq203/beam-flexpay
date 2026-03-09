@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useVatFeeFindOneQuery } from '@services/vatFeeService'
 import { VatFee, VatFeeApplicationType } from '@type/vat-fee'
 import { convertMiniPercentToPercent } from '@utils/helperFunctions'
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 interface VatFeeDetailModalProps {
   open: boolean
@@ -33,7 +33,7 @@ const VatFeeDetailModal = ({
 
   const formatDateTime = (dateString?: string) => {
     if (!dateString) return 'Không thiết lập'
-    return moment(dateString).format('DD/MM/YYYY HH:mm:ss')
+    return dayjs(dateString).format('DD/MM/YYYY HH:mm:ss')
   }
 
   const getApplicationTypeLabel = (type: VatFeeApplicationType) => {

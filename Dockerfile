@@ -22,6 +22,7 @@ ENV VITE_API_LOGIN=https://api.ewallet.flexpay.vn/identity/api/v1/admin
 ENV VITE_API_WALLETCORE=https://api.ewallet.flexpay.vn/wallet-core/api/v1/admin
 ENV VITE_FEE_API_URL=https://api.ewallet.flexpay.vn/fee/api/v1/admin
 ENV VITE_API_MERCHANT=https://api.ewallet.flexpay.vn/merchant/api/v1/admin
+ENV VITE_ROUTER_BASE_PATH=/secure-panel
 
 ARG DEPLOY_VERSION=1
 ENV VITE_DEPLOY_VERSION=${DEPLOY_VERSION}

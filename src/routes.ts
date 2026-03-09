@@ -595,7 +595,7 @@ const walletAministration = {
       ]
     },
 
-   
+
     {
       path: WALLETADMINISTRATION,
       children: [
@@ -669,7 +669,7 @@ const transactionManagement = {
   element: createElement(AppLayout),
   errorElement: createElement(NotFound),
   children: [
-     {
+    {
       path: TRANSACTIONMANAGEMENT,
       children: [
         {
@@ -728,25 +728,30 @@ const transactionManagement = {
   ]
 }
 
-export const WalletRoutes = createBrowserRouter([
-  authentication,
-  defaultRouter,
-  forbidden,
-  roleManagement,
-  personalWallet,
-  feeManagement,
-  feeManagementV2,
-  bankAndConnect,
-  reports,
-  repaymentAndDisburse,
-  internalWallet,
-  feeManagementV3,
-  roleManagementV2,
-  walletAministration,
-  merchantManagement,
-  transactionManagement,
+export const WalletRoutes = createBrowserRouter(
+  [
+    authentication,
+    defaultRouter,
+    forbidden,
+    roleManagement,
+    personalWallet,
+    feeManagement,
+    feeManagementV2,
+    bankAndConnect,
+    reports,
+    repaymentAndDisburse,
+    internalWallet,
+    feeManagementV3,
+    roleManagementV2,
+    walletAministration,
+    merchantManagement,
+    transactionManagement,
+    {
+      path: '/test',
+      element: createElement(TestPage),
+    }
+  ],
   {
-    path: '/test',
-    element: createElement(TestPage),
+    basename: import.meta.env.VITE_ROUTER_BASE_PATH || '/'
   }
-])
+)

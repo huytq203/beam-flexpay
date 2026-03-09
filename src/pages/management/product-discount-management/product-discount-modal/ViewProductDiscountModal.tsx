@@ -16,7 +16,7 @@ import {
 } from '@utils/helperFunctions'
 import { Button, Col, Form, Input, InputNumber, Row, notification } from 'antd'
 import { useForm } from 'antd/es/form/Form'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -116,8 +116,8 @@ export const ViewProductDiscountModal = (props: ProductDiscountProps) => {
         discount: `${detailData?.data?.discount}`,
         fixedFee: convertNumber(detailData?.data?.fixedFee),
         intoMoney: convertNumber(detailData?.data?.intoMoney),
-        startDate: moment(detailData?.data?.startDate).format(TimeFullFormat),
-        endDate: moment(detailData?.data?.endDate).format(TimeFullFormat)
+        startDate: dayjs(detailData?.data?.startDate).format(TimeFullFormat),
+        endDate: dayjs(detailData?.data?.endDate).format(TimeFullFormat)
       })
     }
   }, [detailData])

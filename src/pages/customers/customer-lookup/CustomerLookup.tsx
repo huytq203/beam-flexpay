@@ -17,14 +17,13 @@ import {
   getTransactionType
 } from '@utils/helperFunctions'
 import { Card, Descriptions, Form, Input, Tag, Typography } from 'antd'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import CellContent from '@components/cell-content/CellContent'
 import TransactionTable from '@components/transaction-table/TransactionTable'
 import { ColumnsType } from 'antd/es/table'
-import dayjs from 'dayjs'
 import '../style.scss'
 
 const { Text } = Typography
@@ -196,7 +195,7 @@ function CustomerLookup() {
         </Descriptions.Item>
         <Descriptions.Item label={trans('labels.dateOfBirth')}>
           {customerInfo?.birthDay ? (
-            moment(customerInfo.birthDay, TimeFormat).format(TimeFormat)
+            dayjs(customerInfo.birthDay, TimeFormat).format(TimeFormat)
           ) : (
             <Text>{trans('labels.nodata')}</Text>
           )}
@@ -288,7 +287,7 @@ function CustomerLookup() {
         </Descriptions.Item>
         <Descriptions.Item label={trans('labels.createdWalletDate')}>
           {customerInfo?.createdAt ? (
-            moment(new Date(customerInfo.createdAt), TimeFormat).format(
+            dayjs(new Date(customerInfo.createdAt), TimeFormat).format(
               TimeFormat
             )
           ) : (
@@ -297,7 +296,7 @@ function CustomerLookup() {
         </Descriptions.Item>
         <Descriptions.Item label={trans('labels.verifiedWalletDate')}>
           {customerInfo?.customerVerification ? (
-            moment(
+            dayjs(
               new Date(customerInfo?.customerVerification?.createdAt),
               TimeFormat
             ).format(TimeFormat)
@@ -308,7 +307,7 @@ function CustomerLookup() {
         {/* ngày khóa ví */}
         <Descriptions.Item label={trans('labels.lockedWalletDate')}>
           {customerInfo?.isLocked && customerInfo?.lockedAt ? (
-            moment(new Date(customerInfo?.lockedAt), TimeFormat).format(
+            dayjs(new Date(customerInfo?.lockedAt), TimeFormat).format(
               TimeFormat
             )
           ) : (
@@ -319,7 +318,7 @@ function CustomerLookup() {
         <Descriptions.Item label={trans('labels.frozenWalletDate')}>
           {customerInfo?.balances[0] &&
           customerInfo?.balances[0]?.freezedMoney ? (
-            moment(
+            dayjs(
               new Date(customerInfo?.balances[0]?.updatedAt),
               TimeFormat
             ).format(TimeFormat)
@@ -349,7 +348,7 @@ function CustomerLookup() {
                 label={trans('customer.linkedDate')}
                 key={index}
               >
-                {moment(new Date(item.createdAt), TimeFormat).format(
+                {dayjs(new Date(item.createdAt), TimeFormat).format(
                   TimeFormat
                 )}
               </Descriptions.Item>
@@ -358,7 +357,7 @@ function CustomerLookup() {
                 key={index}
               >
                 {item.deletedAt ? (
-                  moment(new Date(item.deletedAt), TimeFormat).format(
+                  dayjs(new Date(item.deletedAt), TimeFormat).format(
                     TimeFormat
                   )
                 ) : (
@@ -374,7 +373,7 @@ function CustomerLookup() {
         </Descriptions.Item>
         <Descriptions.Item label={trans('customer.linkedDate')}>
           {customerInfo?.paymentLinks && customerInfo?.paymentLinks?.length > 0
-            ? moment(
+            ? dayjs(
                 new Date(customerInfo?.paymentLinks?.[0].createdAt),
                 TimeFormat
               ).format(TimeFormat)
@@ -382,7 +381,7 @@ function CustomerLookup() {
         </Descriptions.Item>
         <Descriptions.Item label={trans('customer.cancelLinkedDate')}>
           {customerInfo?.paymentLinks && customerInfo?.paymentLinks?.length > 0
-            ? moment(
+            ? dayjs(
               new Date(customerInfo?.paymentLinks?.[0].deletedAt),
                 TimeFormat
               ).format(TimeFormat)
