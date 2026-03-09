@@ -1,4 +1,4 @@
-const DEPLOY_VERSION = 24
+const DEPLOY_VERSION = 25
 
 const ENV_INFO = [
     { key: 'VITE_API_LOGIN', value: import.meta.env.VITE_API_LOGIN },
@@ -6,6 +6,7 @@ const ENV_INFO = [
     { key: 'VITE_FEE_API_URL', value: import.meta.env.VITE_FEE_API_URL },
     { key: 'VITE_API_MERCHANT', value: import.meta.env.VITE_API_MERCHANT },
     { key: 'VITE_API_URL', value: import.meta.env.VITE_API_URL },
+    { key: 'VITE_ROUTER_BASE_PATH', value: import.meta.env.VITE_ROUTER_BASE_PATH },
     { key: 'MODE', value: import.meta.env.MODE },
 ]
 
