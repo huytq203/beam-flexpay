@@ -1,6 +1,6 @@
 import { ButtonComponent } from '@components/index'
 import { FormInput } from '@components/form'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { useUserLoginMutation } from '@services/authEndpoints'
@@ -38,6 +38,12 @@ const LoginFormInside = () => {
     const { errorMess } = useMessage()
     const cardRef = useRef<HTMLDivElement>(null)
     const { executeRecaptcha } = useGoogleReCaptcha()
+
+    // Readonly toggle to prevent autofill when not focused
+    const [readonlyUsername, setReadonlyUsername] = useState(true)
+    const [readonlyPassword, setReadonlyPassword] = useState(true)
+
+
 
     const {
         control,
@@ -156,6 +162,7 @@ const LoginFormInside = () => {
 
             {/* Form */}
             <form onSubmit={handleSubmit(onFinish)} className="login-form-fields flex flex-col gap-4">
+
                 <FormInput
                     inputClassName="w-full !h-[42px] !rounded-[10px] !text-[13px] !bg-gray-50/80 hover:!bg-white focus:!bg-white !transition-colors !duration-200 !border-gray-200"
                     control={control}
@@ -163,16 +170,28 @@ const LoginFormInside = () => {
                     placeholder="Tên đăng nhập "
                     prefix={<UserOutlined className="text-gray-400" />}
                     autoComplete="off"
+                    readOnly={readonlyUsername}
+                    onFocus={() => setReadonlyUsername(false)}
+                    onBlur={() => setReadonlyUsername(true)}
+                    onCopy={(e: ClipboardEvent) => e.preventDefault()}
+                    onPaste={(e: ClipboardEvent) => e.preventDefault()}
+                    onCut={(e: ClipboardEvent) => e.preventDefault()}
                 />
 
                 <FormInput
                     inputClassName="w-full !h-[42px] !rounded-[10px] !text-[13px] !bg-gray-50/80 hover:!bg-white focus:!bg-white !transition-colors !duration-200 !border-gray-200"
-                    type="password"
                     control={control}
+                    type="password"
                     name="password"
                     placeholder="Mật khẩu"
                     prefix={<LockOutlined className="text-gray-400" />}
                     autoComplete="new-password"
+                    readOnly={readonlyPassword}
+                    onFocus={() => setReadonlyPassword(false)}
+                    onBlur={() => setReadonlyPassword(true)}
+                    onCopy={(e: ClipboardEvent) => e.preventDefault()}
+                    onPaste={(e: ClipboardEvent) => e.preventDefault()}
+                    onCut={(e: ClipboardEvent) => e.preventDefault()}
                 />
 
                 <div className="flex justify-end -mt-1">
