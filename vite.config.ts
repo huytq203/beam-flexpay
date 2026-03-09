@@ -92,29 +92,10 @@ export default defineConfig(({ mode }) => {
       manifest: true,
       rollupOptions: {
         output: {
-          manualChunks(id) {
-            if (id.includes('node_modules')) {
-              // Extract the core framework to a separate vendor chunk
-              if (
-                id.includes('react/') ||
-                id.includes('react-dom/') ||
-                id.includes('react-router-dom') ||
-                id.includes('@reduxjs/') ||
-                id.includes('react-redux')
-              ) {
-                return 'react-core';
-              }
-              // Separate UI library into its own chunk to prevent global bloat
-              if (id.includes('antd') || id.includes('@ant-design')) {
-                return 'antd-ui';
-              }
-              // Group all icon libraries to chunk split dynamically by vite (avoid hardcoding them causing AST memory bloat)
-              if (id.includes('lucide-react') || id.includes('@phosphor-icons')) {
-                return 'icons-ui';
-              }
-              // Everything else falls back to common vendor chunk
-              return 'vendor-utils';
-            }
+          manualChunks: {
+            vendor: ['react', 'react-dom', 'react-router-dom'],
+            antd: ['antd'],
+            icons: ['@ant-design/icons', '@phosphor-icons/react', 'lucide-react']
           }
         }
       }
