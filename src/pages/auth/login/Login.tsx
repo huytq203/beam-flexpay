@@ -160,8 +160,9 @@ const LoginFormInside = () => {
                     inputClassName="w-full !h-[42px] !rounded-[10px] !text-[13px] !bg-gray-50/80 hover:!bg-white focus:!bg-white !transition-colors !duration-200 !border-gray-200"
                     control={control}
                     name="username"
-                    placeholder="Tên đăng nhập / Email"
+                    placeholder="Tên đăng nhập "
                     prefix={<UserOutlined className="text-gray-400" />}
+                    autoComplete="off"
                 />
 
                 <FormInput
@@ -171,6 +172,7 @@ const LoginFormInside = () => {
                     name="password"
                     placeholder="Mật khẩu"
                     prefix={<LockOutlined className="text-gray-400" />}
+                    autoComplete="new-password"
                 />
 
                 <div className="flex justify-end -mt-1">
