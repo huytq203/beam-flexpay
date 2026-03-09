@@ -202,7 +202,7 @@ const InforPolicy = forwardRef<InfoPolicyRef, Props>(
                   <FormInputNumber
                     control={control}
                     name='minFee'
-                    label='Phí thiểu (Min)'
+                    label='Phí tối thiểu (Min)'
                     className='col-span-3 flex flex-col gap-2'
                     placeholder='0'
                     formatter={(value: string | undefined) =>
