@@ -1,4 +1,3 @@
-import { DualAxes } from '@ant-design/plots'
 import CardLabel from '@components/dashboard/CardLabel'
 import CardNumber from '@components/dashboard/CardNumber'
 import { GUTTER } from '@constants/appConstant'
@@ -6,7 +5,7 @@ import {
   useDashboardOverviewQuery,
   useDashboardStatisticQuery
 } from '@services/cmsService'
-import { Card, Col, Progress, Row } from 'antd'
+import { Card, Col, Progress, Row, Empty } from 'antd'
 import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
 import { ArrowDown, ArrowUp, CurrencyDollar } from '@phosphor-icons/react'
@@ -85,22 +84,7 @@ const Dashboard = () => {
       >
         <Col span={16}>
           <Card title={t('partner.transactionOverview')}>
-            <DualAxes
-              data={[chartData ?? nullValue, chartData ?? nullValue]}
-              xField='time'
-              yField={['repayment', 'disburse']}
-              geometryOptions={[
-                {
-                  geometry: 'column'
-                },
-                {
-                  geometry: 'line',
-                  lineStyle: {
-                    lineWidth: 2
-                  }
-                }
-              ]}
-            />
+            <Empty description="Biểu đồ đã bị gỡ để tối ưu dung lượng RAM" />
           </Card>
         </Col>
         <Col span={8}>

@@ -29,7 +29,7 @@ import {
   Tag
 } from 'antd'
 import { ColumnsType } from 'antd/es/table'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import DepositRequestModal from './deposit-request-modal/DepositRequestModal'
@@ -76,7 +76,7 @@ function DepositRequest() {
       align: 'center',
       width: 200,
       render: (value, record, index) =>
-        value ? moment(value).format('DD/MM/YYYY HH:mm:ss') : '-'
+        value ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : '-'
     },
     {
       title: 'Id Proposal',

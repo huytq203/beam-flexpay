@@ -31,7 +31,6 @@ import {
 import { useForm } from 'antd/es/form/Form'
 import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
-import moment from 'moment'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Pencil } from '@phosphor-icons/react'
@@ -565,7 +564,7 @@ function ProductDiscountManagement() {
       width: 200,
       render: (record) => {
         return record ? (
-          <CellContent content={moment(record).format(TimeFullFormat)} />
+          <CellContent content={dayjs(record).format(TimeFullFormat)} />
         ) : (
           <Nodata />
         )
@@ -579,7 +578,7 @@ function ProductDiscountManagement() {
       width: 200,
       render: (record) => {
         return record ? (
-          <CellContent content={moment(record).format(TimeFullFormat)} />
+          <CellContent content={dayjs(record).format(TimeFullFormat)} />
         ) : (
           <Nodata />
         )

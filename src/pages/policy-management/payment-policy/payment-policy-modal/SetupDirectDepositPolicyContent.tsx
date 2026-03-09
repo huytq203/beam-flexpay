@@ -57,7 +57,6 @@ import weekYear from 'dayjs/plugin/weekYear'
 import weekday from 'dayjs/plugin/weekday'
 import { GUTTER } from '@constants/appConstant'
 import { TimeFormat, TimeFullFormat } from '@constants/datetime'
-import moment from 'moment'
 
 dayjs.extend(customParseFormat)
 dayjs.extend(advancedFormat)
