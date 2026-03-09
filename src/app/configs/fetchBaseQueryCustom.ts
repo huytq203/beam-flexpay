@@ -213,6 +213,22 @@ const forceLogout = (): void => {
 }
 
 // ============================================================================
+// INACTIVITY TRACKING
+// ============================================================================
+let inactivityTimer: NodeJS.Timeout | null = null
+const INACTIVITY_TIMEOUT = 15 * 60 * 1000 // 15 phút không có hoạt động API
+
+const resetInactivityTimer = () => {
+  if (inactivityTimer) {
+    clearTimeout(inactivityTimer)
+  }
+  inactivityTimer = setTimeout(() => {
+    alert("Đã hết phiên làm việc, vui lòng đăng nhập lại để tiếp tục!")
+    forceLogout()
+  }, INACTIVITY_TIMEOUT)
+}
+
+// ============================================================================
 // FACTORY FUNCTION - Create custom base query with loading & error handling
 // ============================================================================
 
@@ -230,6 +246,11 @@ const createCustomBaseQuery = (
 ): BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> => {
   return async (args, api, extraOptions) => {
     const pathName = normalizePathname(window.location.pathname)
+
+    // Đếm ngược 15 phút không gọi API nào thì auto logout (bỏ qua trang login)
+    if (pathName !== '/auth/login') {
+      resetInactivityTimer()
+    }
 
     const requestArgs = args as RequestArgs
     const isLoading = requestArgs?.params?.isLoading
