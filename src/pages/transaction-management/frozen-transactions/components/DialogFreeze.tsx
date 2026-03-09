@@ -58,7 +58,7 @@ const DialogFreeze = ({
                 accountId,
                 reason: values.reason,
             }).unwrap()
-            successMess('Đóng băng tài khoản thành công')
+            successMess('Đóng băng thành công')
             reset()
             onSuccess?.()
         } catch {

@@ -37,7 +37,7 @@ const DialogUnfreeze = ({
                 freezeId: freezeItem.id,
                 reason: values.reason,
             }).unwrap()
-            successMess('Mở băng tài khoản thành công')
+            successMess('Mở băng thành công')
             reset()
             onSuccess?.()
         } catch {
