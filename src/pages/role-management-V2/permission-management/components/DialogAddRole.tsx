@@ -70,10 +70,10 @@ const DialogAddRole = ({ role, onSuccess, onCancel }: Props) => {
               name='name'
               label={
                 <span>
-                  Tên nhóm quyền<span className='text-red-700'>(*)</span>
+                  Mã nhóm quyền<span className='text-red-700'>(*)</span>
                 </span>
               }
-              placeholder='Tên nhóm quyền...'
+              placeholder='Mã nhóm quyền...'
             />
             <FormTextArea
               control={control}

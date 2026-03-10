@@ -45,12 +45,12 @@ const StepPolicyModal = ({
         newComponentId ?? '',
         { skip: !newComponentId || currentStep !== 2 }
     )
-    console.log(step3ComponentData)
 
     const handleClose = () => {
         setCurrentStep(0)
         setNewPolicyId(undefined)
         setNewComponentId(undefined)
+        setIsTierMode(false)
         resetAdd()
         onClose()
     }
@@ -92,11 +92,7 @@ const StepPolicyModal = ({
     const handleStep2Save = async () => {
         setIsSubmittingComponent(true)
         try {
-            const componentId = await infoPolicyRef.current?.submit()
-            if (componentId && typeof componentId === 'string') {
-                setCurrentStep(2)
-                setNewComponentId(componentId)
-            }
+            await infoPolicyRef.current?.submit()
         } finally {
             setIsSubmittingComponent(false)
         }
@@ -106,9 +102,9 @@ const StepPolicyModal = ({
         setIsSubmittingComponent(true)
         try {
             await infoPolicyRef3.current?.update()
+        } catch {
         } finally {
             setIsSubmittingComponent(false)
-            setCurrentStep(0)
         }
     }
 
