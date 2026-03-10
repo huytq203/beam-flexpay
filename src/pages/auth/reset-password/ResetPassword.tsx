@@ -4,10 +4,10 @@ import { Button, Card, Col, Form, Input, notification, Row } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-
 import { useEffect } from 'react'
 import './style.scss'
 import { useUserNewPasswordMutation, useUserVerifyTokenMutation } from '@services/cmsService'
+import { PATHS } from '@constants/pathConstant'
 
 const ResetPassword = () => {
   const { t } = useTranslation()
@@ -18,7 +18,7 @@ const ResetPassword = () => {
   const [validateResetToken] = useUserVerifyTokenMutation()
 
   const handleCancel = () => {
-    navigate('/auth/forgot-password')
+    navigate(PATHS.AUTH.FORGOT_PASSWORD)
   }
   const handleSubmit = async () => {
     const password = form.getFieldValue('password')
@@ -26,7 +26,7 @@ const ResetPassword = () => {
     const token = searchParams.get('token')
 
     if (!token) {
-      notification.error({ message: t('reset.messages.tokenMissing') }) 
+      notification.error({ message: t('reset.messages.tokenMissing') })
       return
     }
 
@@ -42,7 +42,7 @@ const ResetPassword = () => {
         notification.success({
           message: t('reset.messages.passwordResetSuccess')
         })
-        navigate('/auth/login')
+        navigate(PATHS.AUTH.LOGIN)
       } else {
         notification.error({ message: t('reset.messages.passwordResetFailed') })
       }
@@ -61,14 +61,14 @@ const ResetPassword = () => {
     if (token) {
       validateResetToken({ token })
         .unwrap()
-        .then(() => {})
+        .then(() => { })
         .catch(() => {
           notification.error({ message: t('reset.messages.tokenInvalid') })
-          navigate('/auth/forgot-password')
+          navigate(PATHS.AUTH.FORGOT_PASSWORD)
         })
     } else {
       notification.error({ message: t('reset.messages.tokenMissing') })
-      navigate('/auth/forgot-password')
+      navigate(PATHS.AUTH.FORGOT_PASSWORD)
     }
   }, [searchParams])
 

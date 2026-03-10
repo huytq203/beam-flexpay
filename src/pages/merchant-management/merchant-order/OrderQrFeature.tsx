@@ -6,6 +6,7 @@ import { ButtonComponent, CardComponent } from '@components/index'
 import { useGetMerchantOrderByIdQuery, usePostRefreshQrMutation } from '@services/apiOrderMerchant.api'
 import { MerchanOrderItem } from './types/apiOrder.type'
 import { QRCode } from 'antd'
+import { MERCHANT } from '@constants/routersConstant'
 
 const OrderQrFeature = () => {
   const { id } = useParams<{ id: string }>()
@@ -19,7 +20,7 @@ const OrderQrFeature = () => {
   const [postRefreshQr, { isLoading: isRefreshing }] = usePostRefreshQrMutation()
 
   const order: MerchanOrderItem | undefined = orderData?.data
-console.log(orderData)
+  console.log(orderData)
   const handleRefreshQR = async () => {
     if (!id) return
 
@@ -37,7 +38,7 @@ console.log(orderData)
   }
 
   const handleBackToOrders = () => {
-    navigate('/merchant/merchant-order')
+    navigate(`${MERCHANT}/merchant-order`)
   }
 
   const getStatusBadge = (status?: string) => {

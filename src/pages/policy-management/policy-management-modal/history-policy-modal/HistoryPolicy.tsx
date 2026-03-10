@@ -15,6 +15,7 @@ import { useForm } from 'antd/es/form/Form'
 import Table, { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { isNumber, isString } from 'lodash'
+import DOMPurify from 'dompurify'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -92,7 +93,7 @@ export const HistoryPolicy = ({
                   <h4>{key}:</h4>
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: formatObjectHistory(value, key)
+                      __html: DOMPurify.sanitize(formatObjectHistory(value, key))
                     }}
                     style={{ whiteSpace: 'pre-wrap' }}
                   />
@@ -103,7 +104,7 @@ export const HistoryPolicy = ({
       } catch (error) {
         // if value contain html tag return html
         if (value.includes('<')) {
-          return <div dangerouslySetInnerHTML={{ __html: value }} />
+          return <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(value) }} />
         }
         return formatHistoryData(value);
       }

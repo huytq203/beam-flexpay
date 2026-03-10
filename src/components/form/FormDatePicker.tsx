@@ -66,7 +66,10 @@ export function FormDatePicker<T extends FieldValues>({
                 return;
               }
               if (showTime) {
-                field.onChange([dates[0].toISOString(), dates[1].toISOString()]);
+                field.onChange([
+                  dates[0].format('YYYY-MM-DDTHH:mm:ss.SSS'),
+                  dates[1].format('YYYY-MM-DDTHH:mm:ss.SSS'),
+                ]);
               } else {
                 field.onChange([
                   `${dates[0].format("YYYY-MM-DD")}T00:00:00.000Z`,
@@ -91,7 +94,7 @@ export function FormDatePicker<T extends FieldValues>({
                 return;
               }
               if (showTime) {
-                field.onChange(date.toISOString());
+                field.onChange(date.format('YYYY-MM-DDTHH:mm:ss.SSS'));
               } else {
                 field.onChange(`${date.format("YYYY-MM-DD")}T00:00:00.000Z`);
               }

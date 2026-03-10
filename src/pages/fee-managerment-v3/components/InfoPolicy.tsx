@@ -1,6 +1,6 @@
 import { FormInputNumber, FormSelect } from '@components/form'
 import { CardComponent, DialogModal } from '@components/index'
-import React, { forwardRef, useImperativeHandle, useRef } from 'react'
+import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react'
 import InfoComponents from './InfoComponents'
 import {
   FeeComponent,
@@ -14,18 +14,20 @@ interface Props {
   combinedInitialData: FeeComponent | FeeTier[] | null
   onSubmit?: (data: FeeComponentType) => Promise<string | undefined | void> | void
   onUpdate?: (data: FeeComponentType, componentId?: string) => Promise<void> | void
-  onSuccess?: () => void
+  onSuccess?: (id?: string) => void
   arrListBaseOn?: string[]
+  policyId?: string
+  onTierModeChange?: (isTierMode: boolean) => void
 }
 
 export interface InfoPolicyRef {
-  submit: () => Promise<void>
+  submit: () => Promise<string | undefined | void>
   update: () => Promise<void>
   reset: () => void
 }
 
 const InforPolicy = forwardRef<InfoPolicyRef, Props>(
-  ({ selectedRow, combinedInitialData, onSubmit, onUpdate, onSuccess, arrListBaseOn }, ref) => {
+  ({ selectedRow, combinedInitialData, onSubmit, onUpdate, onSuccess, arrListBaseOn, policyId, onTierModeChange }, ref) => {
     const hookRef = useRef<UseInfoComponentRef>(null)
 
     const {
@@ -47,12 +49,17 @@ const InforPolicy = forwardRef<InfoPolicyRef, Props>(
       onSubmit,
       onUpdate,
       onSuccess,
+      policyId,
       ref: hookRef
     })
 
+    useEffect(() => {
+      onTierModeChange?.(isTierMode)
+    }, [isTierMode, onTierModeChange])
+
     useImperativeHandle(ref, () => ({
       submit: async () => {
-        await hookRef.current?.submit()
+        return await hookRef.current?.submit()
       },
       update: async () => {
         await hookRef.current?.update()

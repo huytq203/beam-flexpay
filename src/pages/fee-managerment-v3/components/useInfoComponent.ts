@@ -45,7 +45,7 @@ const DEFAULT_VALUES: FeeComponentType = {
 }
 
 export interface UseInfoComponentRef {
-    submit: () => Promise<void>
+    submit: () => Promise<string | undefined | void>
     update: () => Promise<void>
     reset: () => void
     submitAllTiers: (feeComponentId?: string) => Promise<void>
@@ -57,7 +57,8 @@ interface UseInfoComponentProps {
     combinedInitialData?: FeeComponent | FeeTier[] | null
     onSubmit?: (data: FeeComponentType) => Promise<string | undefined | void> | void
     onUpdate?: (data: FeeComponentType, componentId?: string) => Promise<void> | void
-    onSuccess?: () => void
+    onSuccess?: (id?: string) => void
+    policyId?: string
     ref?: ForwardedRef<UseInfoComponentRef>
 }
 
@@ -67,6 +68,7 @@ export const useInfoComponent = ({
     onSubmit: onSubmitProp,
     onUpdate: onUpdateProp,
     onSuccess,
+    policyId,
     ref
 }: UseInfoComponentProps) => {
     const { control, reset, watch, getValues, handleSubmit, formState: { errors } } = useForm<FeeComponentType>({
@@ -243,31 +245,27 @@ export const useInfoComponent = ({
     }, [selectedRow, combinedInitialData, reset])
 
     useImperativeHandle(ref, () => ({
-        submit: async () => {
-            await handleSubmit(
+        submit: () => new Promise<string | undefined>((resolve) => {
+            handleSubmit(
                 async (data) => {
                     try {
                         if (onSubmitProp) {
                             const result = await onSubmitProp(data)
-
-                            const currentIsTierMode = ['PROGRESSIVE_TIER', 'FLAT_TIER'].includes(
-                                String(data.calculationMethod)
-                            )
-
-                            if (currentIsTierMode && result) {
-                                await handleSubmitAllTiers(result)
-                            }
-
                             successMess('Thêm thành phần phí thành công')
                             if (onSuccess) {
-                                onSuccess()
+                                onSuccess(typeof result === 'string' ? result : undefined)
                             }
+                            resolve(typeof result === 'string' ? result : undefined)
+                        } else {
+                            resolve(undefined)
                         }
                     } catch {
+                        resolve(undefined)
                     }
-                }
+                },
+                () => resolve(undefined)
             )()
-        },
+        }),
         update: async () => {
             await handleSubmit(
                 async (data) => {
