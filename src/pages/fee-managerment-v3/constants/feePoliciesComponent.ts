@@ -97,7 +97,7 @@ export const roundMode = {
 export const calculationMethodEnum = {
   FLAT_TIER: 'Bậc lũy tiến',
   DIRECT: 'Tính trực tiếp',
-  PROGRESSIVE_TIER: 'Bậc thang thành phần',
+  PROGRESSIVE_TIER: 'Bậc thang toàn phần',
 }
 export const calculationType = {
   FLAT_TIER: 'Flat Tier',

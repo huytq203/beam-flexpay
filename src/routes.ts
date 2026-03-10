@@ -595,7 +595,7 @@ const walletAministration = {
       ]
     },
 
-   
+
     {
       path: WALLETADMINISTRATION,
       children: [
@@ -669,7 +669,7 @@ const transactionManagement = {
   element: createElement(AppLayout),
   errorElement: createElement(NotFound),
   children: [
-     {
+    {
       path: TRANSACTIONMANAGEMENT,
       children: [
         {
@@ -748,5 +748,9 @@ export const WalletRoutes = createBrowserRouter([
   {
     path: '/test',
     element: createElement(TestPage),
+  },
+  {
+    path: '/secure-panel/*',
+    element: createElement(NotFound),
   }
 ])
