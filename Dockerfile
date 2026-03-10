@@ -29,12 +29,17 @@ ENV VITE_DEPLOY_VERSION=${DEPLOY_VERSION}
 
 RUN NODE_OPTIONS="--max-old-space-size=4096" yarn build
 
+# Restructure dist to support /secure-panel base path
+RUN mkdir -p dist_serve/secure-panel && \
+    cp -R dist/* dist_serve/secure-panel/ && \
+    cp dist/index.html dist_serve/index.html
+
 # =============================================================================
 # Stage 2: Serve
 # =============================================================================
 FROM nginx:stable-alpine
 
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist_serve /usr/share/nginx/html
 COPY --from=builder /app/nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 8000
