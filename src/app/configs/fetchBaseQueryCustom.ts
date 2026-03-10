@@ -209,7 +209,7 @@ const refreshAccessToken = async (
 const forceLogout = (): void => {
   Cookies.remove(CookieKey.ACCESS_TOKEN)
   Cookies.remove(CookieKey.REFRESH_TOKEN)
-  window.location.href = '/secure-panel/auth/login'
+  window.location.href = '/auth/login'
 }
 
 // ============================================================================
@@ -248,7 +248,7 @@ const createCustomBaseQuery = (
     const pathName = normalizePathname(window.location.pathname)
 
     // Đếm ngược 15 phút không gọi API nào thì auto logout (bỏ qua trang login)
-    if (pathName !== '/secure-panel/auth/login') {
+    if (pathName !== '/auth/login') {
       resetInactivityTimer()
     }
 

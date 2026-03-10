@@ -18,7 +18,7 @@ const ResetPassword = () => {
   const [validateResetToken] = useUserVerifyTokenMutation()
 
   const handleCancel = () => {
-    navigate('/secure-panel/auth/forgot-password')
+    navigate('/auth/forgot-password')
   }
   const handleSubmit = async () => {
     const password = form.getFieldValue('password')
@@ -42,7 +42,7 @@ const ResetPassword = () => {
         notification.success({
           message: t('reset.messages.passwordResetSuccess')
         })
-        navigate('/secure-panel/auth/login')
+        navigate('/auth/login')
       } else {
         notification.error({ message: t('reset.messages.passwordResetFailed') })
       }
@@ -64,11 +64,11 @@ const ResetPassword = () => {
         .then(() => {})
         .catch(() => {
           notification.error({ message: t('reset.messages.tokenInvalid') })
-          navigate('/secure-panel/auth/forgot-password')
+          navigate('/auth/forgot-password')
         })
     } else {
       notification.error({ message: t('reset.messages.tokenMissing') })
-      navigate('/secure-panel/auth/forgot-password')
+      navigate('/auth/forgot-password')
     }
   }, [searchParams])
 

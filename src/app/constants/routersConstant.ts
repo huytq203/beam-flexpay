@@ -1,4 +1,4 @@
-export const AUTHENTICATION = '/secure-panel/auth'
+export const AUTHENTICATION = '/auth'
 export const ROLEMANAGEMENT = '/role'
 export const REPAYMENTANDDISBURSE = '/repayment-and-disburse'
 export const FORBIDDENERROR = '/forbidden'
@@ -14,11 +14,11 @@ export const BANK = '/bank'
 export const INTERNAL = '/internal'
 export const INTERNAL_WALLET = '/internal-wallet'
 export const STATE_BANK = '/state-bank'
-export const FEEMANAGEMENT_V3 = '/secure-panel/fee-v3'
-export const ROLEMANAGEMENT_V2 = '/secure-panel/role-v2'
-export const WALLETADMINISTRATION = '/secure-panel/wallet-administration'
-export const MERCHANT = '/secure-panel/merchant'
-export const TRANSACTIONMANAGEMENT = '/secure-panel/transaction-management'
+export const FEEMANAGEMENT_V3 = '/fee-v3'
+export const ROLEMANAGEMENT_V2 = '/role-v2'
+export const WALLETADMINISTRATION = '/wallet-administration'
+export const MERCHANT = '/merchant'
+export const TRANSACTIONMANAGEMENT = '/transaction-management'
 
 
 

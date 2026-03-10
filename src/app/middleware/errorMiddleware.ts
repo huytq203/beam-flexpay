@@ -68,7 +68,7 @@ export const errorMiddleware: Middleware = (storeApi) => (next) => (action) => {
         if (!accessToken && !refreshToken) {
           globalMessage.error(errorMessage)
           storeApi.dispatch(logout())
-          window.location.href = '/secure-panel/auth/login'
+          window.location.href = '/auth/login'
         }
         break
       }

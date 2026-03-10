@@ -21,7 +21,7 @@ function AuthLayout() {
 
   useEffect(() => {
     if (location.pathname === '/') {
-      navigate('/secure-panel/auth/login')
+      navigate('/auth/login')
     }
   }, [location])
 

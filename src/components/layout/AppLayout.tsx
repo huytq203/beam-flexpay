@@ -76,7 +76,7 @@ function AppLayout() {
     // Nếu còn refresh token, không redirect vì fetchBaseQueryCustom sẽ tự refresh khi có API call
     const refreshToken = Cookies.get(CookieKey.REFRESH_TOKEN)
     if (!accessToken && !refreshToken) {
-      navigate('/secure-panel/auth/login')
+      navigate('/auth/login')
     }
   }, [accessToken, navigate])
 

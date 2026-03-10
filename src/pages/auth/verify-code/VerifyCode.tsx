@@ -88,7 +88,7 @@ const VerifyCode2 = () => {
   }
 
   const handleCancel = () => {
-    navigate('/secure-panel/auth/login2');
+    navigate('/auth/login2');
   }
 
   const handleCodeChange = (index: number, value: string) => {
