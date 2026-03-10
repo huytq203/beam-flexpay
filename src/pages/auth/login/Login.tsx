@@ -14,6 +14,8 @@ import { useMessage } from '@hooks/useMessage'
 import { TokenType, setRefreshTokenCookie } from '@configs/fetchBaseQuery.types'
 import { GoogleReCaptchaProvider, useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import gsap from 'gsap'
+import { PATHS } from '@constants/pathConstant'
+import { AUTHENTICATION, TRANSACTIONMANAGEMENT } from '@constants/routersConstant'
 const loginSchema = z.object({
     username: z.string().min(1, 'Vui lòng nhập email').transform(val => val.trim()),
     password: z.string().min(1, 'Vui lòng nhập mật khẩu').transform(val => val.trim()),
@@ -107,7 +109,7 @@ const LoginFormInside = () => {
             // const result = await login({ userLoginDto: values })
 
             if ('data' in result && result.data) {
-                navigate('/transaction-management/transaction-wallet')
+                navigate(`${TRANSACTIONMANAGEMENT}/transaction-wallet`)
                 const refreshToken = result?.data?.[TokenType.REFRESH_TOKEN] || ''
                 const refreshExpiresIn = result?.data?.[TokenType.REFRESH_EXPIRES_IN] || 1800
                 setRefreshTokenCookie(refreshToken, refreshExpiresIn)
@@ -196,7 +198,7 @@ const LoginFormInside = () => {
 
                 <div className="flex justify-end -mt-1">
                     <Link
-                        to="/auth/forget-password"
+                        to={`${AUTHENTICATION}/forget-password`}
                         className="text-[12px] font-medium text-teal-600 hover:text-teal-800 transition-colors duration-200"
                     >
                         Quên mật khẩu?

@@ -45,6 +45,7 @@ const StepPolicyModal = ({
         newComponentId ?? '',
         { skip: !newComponentId || currentStep !== 2 }
     )
+    console.log(step3ComponentData)
 
     const handleClose = () => {
         setCurrentStep(0)
@@ -84,15 +85,16 @@ const StepPolicyModal = ({
             beneficiaryObjectId: null
         }
         const response = await postFeeComponent(payload).unwrap()
-        return response?.data?.id ?? response?.id
+
+        return response?.data?.id
     }
 
     const handleStep2Save = async () => {
         setIsSubmittingComponent(true)
         try {
             const componentId = await infoPolicyRef.current?.submit()
-            console.log(componentId)
             if (componentId && typeof componentId === 'string') {
+                setCurrentStep(2)
                 setNewComponentId(componentId)
             }
         } finally {
@@ -106,6 +108,7 @@ const StepPolicyModal = ({
             await infoPolicyRef3.current?.update()
         } finally {
             setIsSubmittingComponent(false)
+            setCurrentStep(0)
         }
     }
 

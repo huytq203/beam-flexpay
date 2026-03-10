@@ -245,34 +245,27 @@ export const useInfoComponent = ({
     }, [selectedRow, combinedInitialData, reset])
 
     useImperativeHandle(ref, () => ({
-        submit: async () => {
-            let idToReturn: string | undefined | void;
-            await handleSubmit(
+        submit: () => new Promise<string | undefined>((resolve) => {
+            handleSubmit(
                 async (data) => {
                     try {
                         if (onSubmitProp) {
                             const result = await onSubmitProp(data)
-
-                            const currentIsTierMode = ['PROGRESSIVE_TIER', 'FLAT_TIER'].includes(
-                                String(data.calculationMethod)
-                            )
-
-                            if (currentIsTierMode && result) {
-                                await handleSubmitAllTiers(result)
-                            }
-
                             successMess('Thêm thành phần phí thành công')
                             if (onSuccess) {
                                 onSuccess(typeof result === 'string' ? result : undefined)
                             }
-                            idToReturn = typeof result === 'string' ? result : undefined
+                            resolve(typeof result === 'string' ? result : undefined)
+                        } else {
+                            resolve(undefined)
                         }
                     } catch {
+                        resolve(undefined)
                     }
-                }
+                },
+                () => resolve(undefined)
             )()
-            return idToReturn
-        },
+        }),
         update: async () => {
             await handleSubmit(
                 async (data) => {

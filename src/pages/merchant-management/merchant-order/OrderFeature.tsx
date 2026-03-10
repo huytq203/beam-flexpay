@@ -6,6 +6,7 @@ import ModalDetailOrder from "./components/ModalDetailOrder";
 import FormAddOrder, { FormAddOrderRef } from "./components/FormAddOrder";
 import { OrderFormValues } from "./schemas/Order.schema";
 import { ButtonComponent, CardComponent, ModalComponent, Table } from "@components/index";
+import { MERCHANT } from '@constants/routersConstant'
 
 const OrderFeature = () => {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const OrderFeature = () => {
   const handleCreateSubmit = async (data: OrderFormValues) => {
     const orderId = await handleCreateOrder(data);
     if (orderId) {
-      navigate(`/merchant/merchant-order/qr/${orderId}`)
+      navigate(`${MERCHANT}/merchant-order/qr/${orderId}`)
 
     }
   };

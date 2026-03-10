@@ -81,33 +81,33 @@
     "/fee-v2/inbound-fee-management/update/*": "Cập nhật phí đầu vào",
 
 
-    "/fee-v3/fee-management":"Quản lý chính sách phí",
-    "/fee-v3/fee-management/edit/*":"Cập nhật chính sách phí",
-    "/fee-v3/fee-assignment/create":"Thiết lập gán phí",
-    "/fee-v3/fee-assignment/edit/*":"Cập nhật gán phí",
-    "/fee-v3/fee-assignment":"Quản lý gán phí",
+    "/secure-panel/fee-v3/fee-management":"Quản lý chính sách phí",
+    "/secure-panel/fee-v3/fee-management/edit/*":"Cập nhật chính sách phí",
+    "/secure-panel/fee-v3/fee-assignment/create":"Thiết lập gán phí",
+    "/secure-panel/fee-v3/fee-assignment/edit/*":"Cập nhật gán phí",
+    "/secure-panel/fee-v3/fee-assignment":"Quản lý gán phí",
 
-    "/role-v2/user-account":"Quản lý phân quyền",
-    "/role-v2/role-management":"Quản lý quyền quản trị",
-    "/role-v2/permission-management":"Quản lý nhóm quyền quản trị",
+    "/secure-panel/role-v2/user-account":"Quản lý phân quyền",
+    "/secure-panel/role-v2/role-management":"Quản lý quyền quản trị",
+    "/secure-panel/role-v2/permission-management":"Quản lý nhóm quyền quản trị",
 
-    "/wallet-administration/e-walletManagement":"Quản lý ví điện tử",
-    "/transaction-management/transaction-wallet":"Quản lý giao dịch",
-    "/transaction-management/transaction-wallet/*":"Chi tiết giao dịch ",
-    "/wallet-administration/confirm-eKYC":"Duyệt eKYC",
-    "/wallet-administration/e-walletManagement/*":"Chi tiết ví điện tử",
+    "/secure-panel/wallet-administration/e-walletManagement":"Quản lý ví điện tử",
+    "/secure-panel/transaction-management/transaction-wallet":"Quản lý giao dịch",
+    "/secure-panel/transaction-management/transaction-wallet/*":"Chi tiết giao dịch ",
+    "/secure-panel/wallet-administration/confirm-eKYC":"Duyệt eKYC",
+    "/secure-panel/wallet-administration/e-walletManagement/*":"Chi tiết ví điện tử",
 
-    "/transaction-management/refund-management":"Quản lý hoàn tiền",
-    "/transaction-management/withdraw-history":"Quản lý lịch sử giao dịch rút tiền",
-    "/transaction-management/frozen-transactions":"Quản lý giao dịch đóng băng",
-    "/transaction-management/system-ledger":"Sổ cái hệ thống",
+    "/secure-panel/transaction-management/refund-management":"Quản lý hoàn tiền",
+    "/secure-panel/transaction-management/withdraw-history":"Quản lý lịch sử giao dịch rút tiền",
+    "/secure-panel/transaction-management/frozen-transactions":"Quản lý giao dịch đóng băng",
+    "/secure-panel/transaction-management/system-ledger":"Sổ cái hệ thống",
     
-    "/merchant/merchant-management":"Quản lý Merchant",
-    "/merchant/merchant-management/create":"Thêm mới Merchant",
-    "/merchant/merchant-management/detail/*":"Chi tiết Merchant",
-    "/merchant/merchant-management/create/*":"Cập nhật Merchant",
-    "/merchant/merchant-order":"Danh sách Order Merchant",
-    "/merchant/merchant-order/qr/*":"QR Code",
-    "/merchant/dashboard-merchant":"Dashboard Merchant"
+    "/secure-panel/merchant/merchant-management":"Quản lý Merchant",
+    "/secure-panel/merchant/merchant-management/create":"Thêm mới Merchant",
+    "/secure-panel/merchant/merchant-management/detail/*":"Chi tiết Merchant",
+    "/secure-panel/merchant/merchant-management/create/*":"Cập nhật Merchant",
+    "/secure-panel/merchant/merchant-order":"Danh sách Order Merchant",
+    "/secure-panel/merchant/merchant-order/qr/*":"QR Code",
+    "/secure-panel/merchant/dashboard-merchant":"Dashboard Merchant"
   }
 }

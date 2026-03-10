@@ -2,7 +2,7 @@ import { useAppSelector } from '@hooks/hook'
 import { useEffect, useRef } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import gsap from 'gsap'
-
+import { PATHS } from '@constants/pathConstant'
 import './style.scss'
 
 function AuthLayout() {
@@ -21,7 +21,7 @@ function AuthLayout() {
 
   useEffect(() => {
     if (location.pathname === '/') {
-      navigate('/auth/login')
+      navigate(PATHS.AUTH.LOGIN)
     }
   }, [location])
 

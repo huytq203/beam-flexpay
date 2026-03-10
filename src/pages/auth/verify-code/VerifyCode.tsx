@@ -8,6 +8,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next'
 import InputComponent from '@components/ui/Input-component/input';
 import { ButtonComponent } from '@components/index';
+import { AUTHENTICATION } from '@constants/routersConstant'
 
 const VerifyCode2 = () => {
   const { t } = useTranslation();
@@ -88,7 +89,7 @@ const VerifyCode2 = () => {
   }
 
   const handleCancel = () => {
-    navigate('/auth/login2');
+    navigate(`${AUTHENTICATION}/login2`);
   }
 
   const handleCodeChange = (index: number, value: string) => {

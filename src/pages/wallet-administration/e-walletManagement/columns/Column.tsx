@@ -11,6 +11,7 @@ import { TYPEDATE } from '@constants/date.constant'
 import { useNavigate } from 'react-router-dom'
 import { StatusKey } from '../types/WalletAccount.type'
 import StatusBadge from '@components/status-badge/StatusBadge'
+import { WALLETADMINISTRATION } from '@constants/routersConstant'
 
 type ModalType = 'freeze' | 'unfreeze' | 'lock' | 'unlock' | null
 
@@ -138,7 +139,7 @@ export const Column = ({ openModal, handleGetFreeze }: ColumnOptions = {}): Colu
           {
             key: '1',
             label: 'Xem chi tiết',
-            onClick: () => navigate(`/wallet-administration/e-walletManagement/${record.id}`),
+            onClick: () => navigate(`${WALLETADMINISTRATION}/e-walletManagement/${record.id}`),
           },
           {
             key: '2',
@@ -152,8 +153,8 @@ export const Column = ({ openModal, handleGetFreeze }: ColumnOptions = {}): Colu
             onClick: () => openModal?.('freeze', accountPayload),
             disabled: isSystem || (accountPayload.balance ?? 0) === 0,
           },
-         
-           {
+
+          {
             key: '5',
             label: 'Hủy ví',
             danger: true,

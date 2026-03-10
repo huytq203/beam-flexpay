@@ -4,6 +4,7 @@ import { Spin, notification } from 'antd'
 import { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import { PATHS } from '@constants/pathConstant'
 
 const VerifyAzure = () => {
     const code = getParamsFromURL('code')
@@ -15,10 +16,10 @@ const VerifyAzure = () => {
         try {
             const res = await ssoLogin(code) as { data: { data: any, statusCode: number } }
             if ([200, 201].includes(res?.data?.statusCode)) {
-                
+
             } else {
                 setTimeout(() => {
-                    navigate('/auth/login')
+                    navigate(PATHS.AUTH.LOGIN)
                 }, 400)
             }
 
