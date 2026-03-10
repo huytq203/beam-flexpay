@@ -57,7 +57,7 @@ export default defineConfig(({ mode }) => {
       VitePWA({
         registerType: 'autoUpdate',
         devOptions: {
-          enabled: false,
+          enabled: true,
           type: 'module'
         },
         workbox: {
@@ -70,15 +70,15 @@ export default defineConfig(({ mode }) => {
           theme_color: '#ffffff',
           background_color: '#ffffff',
           display: 'standalone',
-          start_url: '/secure-panel/',
+          start_url: '/',
           icons: [
             {
-              src: '/secure-panel/images/BEAM.png',
+              src: '/images/BEAM.png',
               sizes: '192x192',
               type: 'image/png'
             },
             {
-              src: '/secure-panel/images/BEAM.png',
+              src: '/images/BEAM.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'any maskable'
