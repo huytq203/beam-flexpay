@@ -31,7 +31,7 @@ import {
   Tooltip
 } from 'antd'
 import Table, { ColumnsType } from 'antd/es/table'
-import dayjs from 'dayjs'
+import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -165,7 +165,7 @@ function InternalGroupWallet() {
       title: t('partner.updatedDate'),
       dataIndex: 'updatedAt',
       render: (value, record, index) =>
-        value ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : '-',
+        value ? moment(value).format('DD/MM/YYYY HH:mm:ss') : '-',
       align: 'center',
       width: 150
     },

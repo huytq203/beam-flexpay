@@ -32,7 +32,7 @@ import {
   Tooltip
 } from 'antd'
 import { ColumnsType } from 'antd/es/table'
-import dayjs from 'dayjs'
+import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -133,7 +133,7 @@ function InternalWalletAccount() {
       title: t('partner.updatedDate'),
       dataIndex: 'updatedAt',
       render: (value, record, index) =>
-        dayjs(value).format(FullFormatTime).toString()
+        moment(value).format(FullFormatTime).toString()
     },
     {
       title: t('labels.action'),

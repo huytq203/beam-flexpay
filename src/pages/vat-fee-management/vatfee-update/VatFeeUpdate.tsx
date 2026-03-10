@@ -4,7 +4,7 @@ import { useVatFeeFindOneQuery, useVatFeeUpdateMutation } from '@services/vatFee
 import { VatFeeForm } from '../vatfee-form'
 import { PATHS } from '@constants/pathConstant'
 import { useTranslation } from 'react-i18next'
-import dayjs from 'dayjs'
+import moment from 'moment'
 
 const VatFeeUpdate = () => {
   const { t } = useTranslation()
@@ -81,8 +81,8 @@ const VatFeeUpdate = () => {
       : 0,
 
     // Convert ISO date strings to moment objects
-    startDate: vatFee.startDate ? dayjs(vatFee.startDate) : undefined,
-    endDate: vatFee.endDate ? dayjs(vatFee.endDate) : undefined
+    startDate: vatFee.startDate ? moment(vatFee.startDate) : undefined,
+    endDate: vatFee.endDate ? moment(vatFee.endDate) : undefined
   }
 
   return (

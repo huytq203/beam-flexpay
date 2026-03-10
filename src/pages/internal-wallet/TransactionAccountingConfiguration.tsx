@@ -35,7 +35,7 @@ import {
 } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import _ from 'lodash'
-import dayjs from 'dayjs'
+import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -193,7 +193,7 @@ function TransactionAccountingConfiguration() {
       dataIndex: 'updatedAt',
       render: (_, record) =>
         record?.updatedAt
-          ? dayjs(new Date(record?.updatedAt)).format(TimeFormat).toString()
+          ? moment(new Date(record?.updatedAt)).format(TimeFormat).toString()
           : '-'
     },
     {

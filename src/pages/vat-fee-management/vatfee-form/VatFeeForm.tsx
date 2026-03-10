@@ -9,7 +9,7 @@ import {
   Typography
 } from 'antd'
 import { useState, useEffect, useMemo, useRef } from 'react'
-import dayjs from 'dayjs'
+import moment from 'moment'
 import { VatFeeApplicationType } from '@type/vat-fee'
 import { parseNumberFromPercentString, validateFutureDatetime } from '@utils/helperFunctions'
 import { useVatFeeGetAccountGroupsQuery, useVatFeeGetAccountsQuery } from '@services/vatFeeService'
@@ -63,8 +63,8 @@ const VatFeeForm = ({
       form.setFieldsValue({
         ...initialValues,
         applicationType: initialValues.applicationType ?? VatFeeApplicationType.SYSTEM,
-        startDate: initialValues.startDate ? dayjs(initialValues.startDate) : undefined,
-        endDate: initialValues.endDate ? dayjs(initialValues.endDate) : undefined,
+        startDate: initialValues.startDate ? moment(initialValues.startDate) : undefined,
+        endDate: initialValues.endDate ? moment(initialValues.endDate) : undefined,
         vatTaxPercent: initialValues.vatTaxPercent ?? 0
       })
       setApplicationType(initialValues.applicationType ?? VatFeeApplicationType.SYSTEM)
