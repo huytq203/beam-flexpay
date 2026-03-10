@@ -1,7 +1,13 @@
 import { Result } from 'antd'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 function NotFound() {
+  const { pathname } = useLocation()
+
+  if (!pathname.startsWith('/secure-panel')) {
+    return null
+  }
+
   return (
     <Result
       status='404'

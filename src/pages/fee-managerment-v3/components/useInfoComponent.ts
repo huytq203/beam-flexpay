@@ -266,8 +266,8 @@ export const useInfoComponent = ({
                 () => resolve(undefined)
             )()
         }),
-        update: async () => {
-            await handleSubmit(
+        update: () => new Promise<void>((resolve, reject) => {
+            handleSubmit(
                 async (data) => {
                     try {
                         const promises: Promise<any>[] = []
@@ -291,11 +291,14 @@ export const useInfoComponent = ({
                         if (onSuccess) {
                             onSuccess()
                         }
-                    } catch {
+                        resolve()
+                    } catch (error) {
+                        reject(error)
                     }
-                }
+                },
+                () => reject(new Error('Validation failed'))
             )()
-        },
+        }),
         reset: () => reset(DEFAULT_VALUES),
         submitAllTiers: handleSubmitAllTiers,
         updateAllTiers: handleUpdateTiers
