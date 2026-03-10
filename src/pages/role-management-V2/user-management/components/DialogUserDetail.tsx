@@ -115,10 +115,10 @@ const DialogUserDetail = ({ userId, onCancel }: Props) => {
               <div className='grid grid-cols-3'>
                 <p className='font-medium col-span-1'>Trạng thái:</p>
                 <p className='col-span-2'>
-                  <span className='bg-green-500 p-1 text-white rounded-md'>
-                    Hoat dong
+                  <span className={`bg-${selectedUser?.enabled ? 'green' : 'red'}-500 p-1 text-white rounded-md`}>
+                    {selectedUser?.enabled ? 'Hoạt động' : 'Không hoạt động'}
                   </span>
-                </p>
+                </p>  
               </div>
             </div>
             <hr className='mt-3' />
