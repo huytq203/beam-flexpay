@@ -50,14 +50,14 @@ export default defineConfig(({ mode }) => {
 
   return {
     define: defineEnv,
-    base: '/',
+    base: '/secure-panel/',
     plugins: [
       react(),
       svgr(),
       VitePWA({
         registerType: 'autoUpdate',
         devOptions: {
-          enabled: true,
+          enabled: false,
           type: 'module'
         },
         workbox: {
@@ -70,15 +70,15 @@ export default defineConfig(({ mode }) => {
           theme_color: '#ffffff',
           background_color: '#ffffff',
           display: 'standalone',
-          start_url: '/',
+          start_url: '/secure-panel/',
           icons: [
             {
-              src: '/images/BEAM.png',
+              src: '/secure-panel/images/BEAM.png',
               sizes: '192x192',
               type: 'image/png'
             },
             {
-              src: '/images/BEAM.png',
+              src: '/secure-panel/images/BEAM.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'any maskable'

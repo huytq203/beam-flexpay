@@ -65,7 +65,7 @@ function AuthLayout() {
         <div className="auth-brand-info absolute bottom-8 left-8 z-10">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 rounded-xl bg-white/80 backdrop-blur-sm flex items-center justify-center">
-              <img src="/images/BEAM.png" alt="Beam" className="w-[40px] h-[40px] object-contain" />
+              <img src="/secure-panel/images/BEAM.png" alt="Beam" className="w-[40px] h-[40px] object-contain" />
             </div>
             <div>
               <h2 className="text-[16px] font-bold text-teal-900 leading-tight">Beam Ewallet</h2>

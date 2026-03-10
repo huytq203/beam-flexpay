@@ -749,4 +749,4 @@ export const WalletRoutes = createBrowserRouter([
     path: '/test',
     element: createElement(TestPage),
   }
-])
+], { basename: '/secure-panel' })

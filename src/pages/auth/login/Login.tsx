@@ -140,7 +140,7 @@ const LoginFormInside = () => {
             {/* Mobile brand header */}
             <div className="flex items-center gap-3 mb-6 md:hidden">
                 <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-teal-100 to-teal-200 flex items-center justify-center">
-                    <img src="/images/BEAM.png" alt="Beam" className="w-7 h-7 object-contain" />
+                    <img src="/secure-panel/images/BEAM.png" alt="Beam" className="w-7 h-7 object-contain" />
                 </div>
                 <span className="text-teal-700 font-bold text-base tracking-tight">Beam Ewallet CMS</span>
             </div>
@@ -148,7 +148,7 @@ const LoginFormInside = () => {
             {/* Logo */}
             <div className="login-logo flex justify-center mb-4">
                 <div className="w-[60px] h-[60px] rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 flex items-center justify-center border border-teal-100/60">
-                    <img src="/images/BEAM.png" alt="Beam Logo" className="w-[48px] h-[48px] object-contain" />
+                    <img src="/secure-panel/images/BEAM.png" alt="Beam Logo" className="w-[48px] h-[48px] object-contain" />
                 </div>
             </div>
 
