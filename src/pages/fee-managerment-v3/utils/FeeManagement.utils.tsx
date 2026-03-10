@@ -13,7 +13,7 @@ export const getServiceTypeLabel = (value: string) => {
 }
 
 export const convertToISO = (dateString: string) => {
-  return new Date(dateString.replace(' ', 'T')).toISOString()
+  return dateString.replace(' ', 'T')
 }
 
 export const formatDate = (date: string) => {

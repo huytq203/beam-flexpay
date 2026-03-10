@@ -88,14 +88,13 @@ const useFeeManagement = () => {
     }
   }
 
-  const handleSaveAddFee = async (data: PolicyType) => {
+  const handleSaveAddFee = async (data: PolicyType): Promise<string | undefined> => {
     try {
-      await postNewPolicy(data).unwrap()
+      const result = await postNewPolicy(data).unwrap()
       successMess('Thêm mới thành công')
-      resetAdd()
-      setOpen(false)
-      // searchFeePolicies(getSearchParams())
+      return result?.data?.id
     } catch {
+      return undefined
     }
   }
 
@@ -199,6 +198,7 @@ const useFeeManagement = () => {
     handleSaveAddFee,
     loadingNewPolicy,
     controlAdd,
+    resetAdd,
     isCreate,
     isSearchMode,
 

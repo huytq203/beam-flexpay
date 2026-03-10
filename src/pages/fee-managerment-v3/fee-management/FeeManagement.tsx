@@ -1,8 +1,7 @@
-import { ModalComponent, CardComponent } from '@components/index'
-import FormAddPolicy from '@pages/fee-managerment-v3/components/FormAddPolicy'
 import FeeManagementForm from './components/FeeManagement.form'
 import useFeeManagement from './hooks/useFeeManagement'
-import { SkeletonCard, SkeletonFilterGroup, SkeletonStats, SkeletonTable, SkeletonText } from '@components/ui/skeletons/Skeleton'
+import { SkeletonFilterGroup, SkeletonTable } from '@components/ui/skeletons/Skeleton'
+import StepPolicyModal from './components/StepPolicyModal'
 
 const FeeManagement = () => {
   const {
@@ -25,68 +24,51 @@ const FeeManagement = () => {
     handleSaveAddFee,
     loadingNewPolicy,
     controlAdd,
-    isCreate,
+    resetAdd,
     loadingSearch,
     loadingAll
-
   } = useFeeManagement()
+
   return (
     <>
       {
-
         (loadingAll) ? (
-
-
-          <>  <div className=" mb-3">
-
-            <SkeletonFilterGroup />
-
-          </div>
+          <>
+            <div className=" mb-3">
+              <SkeletonFilterGroup />
+            </div>
             <SkeletonTable rows={5} columns={3} />
           </>
-        )
-          : <>
-
-            <FeeManagementForm
-              loadingSearch={loadingSearch}
-              loadingAll={loadingAll}
-              control={control}
-              handleSubmit={handleSubmit}
-              handleSearch={handleSearch}
-              reset={reset}
-              onReset={handleReset}
-              setOpen={setOpen}
-              dataSource={dataSource}
-              columns={columns}
-              page={page}
-              pageSize={pageSize}
-              total={total}
-              setPage={setPage}
-              setPageSize={setPageSize}
-              setIsCreate={setIsCreate}
-            />
-
-            <ModalComponent
-              title='Thêm chính sách mới'
-              open={open}
-              onOk={handleSubmitAdd(handleSaveAddFee)}
-              onCancel={() => setOpen(false)}
-              width={{ xs: "100% ", md: "50%" }}
-              confirmLoading={loadingNewPolicy}
-              modalText={
-                <CardComponent
-                  content={
-                    <FormAddPolicy
-                      control={controlAdd}
-                      handleSubmit={handleSubmitAdd}
-                      onSubmit={handleSaveAddFee}
-                      isCreate={isCreate}
-                    />
-                  }
-                />
-              }
-            />
-          </>
+        ) : <>
+          <FeeManagementForm
+            loadingSearch={loadingSearch}
+            loadingAll={loadingAll}
+            control={control}
+            handleSubmit={handleSubmit}
+            handleSearch={handleSearch}
+            reset={reset}
+            onReset={handleReset}
+            setOpen={setOpen}
+            dataSource={dataSource}
+            columns={columns}
+            page={page}
+            pageSize={pageSize}
+            total={total}
+            setPage={setPage}
+            setPageSize={setPageSize}
+            setIsCreate={setIsCreate}
+          />
+            
+          <StepPolicyModal
+            open={open}
+            onClose={() => setOpen(false)}
+            controlAdd={controlAdd}
+            handleSubmitAdd={handleSubmitAdd}
+            handleSaveAddFee={handleSaveAddFee}
+            loadingNewPolicy={loadingNewPolicy}
+            resetAdd={resetAdd}
+          />
+        </>
       }
     </>
   )

@@ -45,7 +45,7 @@ const DEFAULT_VALUES: FeeComponentType = {
 }
 
 export interface UseInfoComponentRef {
-    submit: () => Promise<void>
+    submit: () => Promise<string | undefined | void>
     update: () => Promise<void>
     reset: () => void
     submitAllTiers: (feeComponentId?: string) => Promise<void>
@@ -57,7 +57,8 @@ interface UseInfoComponentProps {
     combinedInitialData?: FeeComponent | FeeTier[] | null
     onSubmit?: (data: FeeComponentType) => Promise<string | undefined | void> | void
     onUpdate?: (data: FeeComponentType, componentId?: string) => Promise<void> | void
-    onSuccess?: () => void
+    onSuccess?: (id?: string) => void
+    policyId?: string
     ref?: ForwardedRef<UseInfoComponentRef>
 }
 
@@ -67,6 +68,7 @@ export const useInfoComponent = ({
     onSubmit: onSubmitProp,
     onUpdate: onUpdateProp,
     onSuccess,
+    policyId,
     ref
 }: UseInfoComponentProps) => {
     const { control, reset, watch, getValues, handleSubmit, formState: { errors } } = useForm<FeeComponentType>({
@@ -244,6 +246,7 @@ export const useInfoComponent = ({
 
     useImperativeHandle(ref, () => ({
         submit: async () => {
+            let idToReturn: string | undefined | void;
             await handleSubmit(
                 async (data) => {
                     try {
@@ -260,13 +263,15 @@ export const useInfoComponent = ({
 
                             successMess('Thêm thành phần phí thành công')
                             if (onSuccess) {
-                                onSuccess()
+                                onSuccess(typeof result === 'string' ? result : undefined)
                             }
+                            idToReturn = typeof result === 'string' ? result : undefined
                         }
                     } catch {
                     }
                 }
             )()
+            return idToReturn
         },
         update: async () => {
             await handleSubmit(
