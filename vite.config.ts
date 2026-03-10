@@ -50,7 +50,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     define: defineEnv,
-    base: '/',
+    base: env.VITE_ROUTER_BASE_PATH || '/',
     plugins: [
       react(),
       svgr(),

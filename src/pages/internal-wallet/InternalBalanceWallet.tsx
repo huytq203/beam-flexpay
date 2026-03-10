@@ -32,7 +32,6 @@ import {
   TimeRangePickerProps
 } from 'antd'
 import Table, { ColumnsType } from 'antd/es/table'
-import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import InternalWalletTransactionModal from './InternalWalletTransactionModal'
@@ -116,9 +115,9 @@ function InternalBalanceWallet() {
       key: 'updatedDate',
       render: (value, record, index) =>
         record?.updatedAt
-          ? moment(new Date(record?.updatedAt))
-              .format(FullFormatTime)
-              .toString()
+          ? dayjs(new Date(record?.updatedAt))
+            .format(FullFormatTime)
+            .toString()
           : '-'
     },
     {

@@ -6,7 +6,7 @@ import { usePaymentLinkUpdateStatusMutation } from '@services/cmsService'
 import { CustomerBalanceDetailDto } from '@type/application'
 import { getStatusPaymentLinkBank } from '@utils/helperFunctions'
 import { Col, message, Modal, Row, Table, Tooltip, Typography } from 'antd'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 const { Text } = Typography
@@ -86,7 +86,7 @@ const CustomerBankTab = (props: CustomerInfo) => {
         dataIndex: 'createdAt',
         key: 'createdAt',
         render: (value: string) =>
-            moment(new Date(value), TimeFormat).format(TimeFormat)
+            dayjs(new Date(value), TimeFormat).format(TimeFormat)
         },
         {
         title: trans('customer.cancelLinkedDate'),
@@ -94,7 +94,7 @@ const CustomerBankTab = (props: CustomerInfo) => {
         key: 'deletedAt',
         render: (value: string | null) =>
             value ? (
-            moment(new Date(value), TimeFormat).format(TimeFormat)
+            dayjs(new Date(value), TimeFormat).format(TimeFormat)
             ) : (
             <Text>{trans('labels.nodata')}</Text>
             )
