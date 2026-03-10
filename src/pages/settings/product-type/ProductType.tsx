@@ -33,7 +33,7 @@ import {
   notification
 } from 'antd'
 import { useForm } from 'antd/es/form/Form'
-import dayjs from 'dayjs'
+import moment from 'moment'
 import { useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Eye } from '@phosphor-icons/react'
@@ -337,7 +337,7 @@ const ProductType = () => {
       align: 'center',
       render: (record) => {
         return record ? (
-          <CellContent content={dayjs(record).format(TimeFullFormat)} />
+          <CellContent content={moment(record).format(TimeFullFormat)} />
         ) : (
           <Nodata />
         )

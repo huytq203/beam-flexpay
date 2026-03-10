@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { VatFeeFindAllApiArg, VatFee, VatFeeApplicationType } from '@type/vat-fee'
 import { PATHS } from '@constants/pathConstant'
 import { EditOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons'
-import dayjs from 'dayjs'
+import moment from 'moment'
 import VatFeeDetailModal from './VatFeeDetailModal'
 import { convertMiniPercentToPercent } from '@utils/helperFunctions'
 import CellContent from '@components/cell-content/CellContent'
@@ -116,9 +116,9 @@ const VatFeeManagementTable = ({ vatFees, search, setSearch, pagination }: VatFe
       width: 360,
       render: (record: VatFee) => (
         <div>
-          <span>{dayjs(record.startDate).format('DD/MM/YYYY HH:mm:ss')}</span>
+          <span>{moment(record.startDate).format('DD/MM/YYYY HH:mm:ss')}</span>
           <span> - </span>
-          <span>{record.endDate ? dayjs(record.endDate).format('DD/MM/YYYY HH:mm:ss') : 'Không giới hạn'}</span>
+          <span>{record.endDate ? moment(record.endDate).format('DD/MM/YYYY HH:mm:ss') : 'Không giới hạn'}</span>
         </div>
       )
     },
@@ -140,7 +140,7 @@ const VatFeeManagementTable = ({ vatFees, search, setSearch, pagination }: VatFe
       key: 'createdAt',
       width: 180,
       render: (date: string) => (
-        <span>{dayjs(date).format('DD/MM/YYYY HH:mm:ss')}</span>
+        <span>{moment(date).format('DD/MM/YYYY HH:mm:ss')}</span>
       )
     },
     {

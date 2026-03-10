@@ -3,7 +3,7 @@ import { useViewDetailProductTypeQuery } from '@services/productTypeService'
 import { renderDisplayOn } from '@utils/helperFunctions'
 
 import { Button, Col, Row, Space, Spin, Typography } from 'antd'
-import dayjs from 'dayjs'
+import moment from 'moment'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -82,7 +82,7 @@ export const ViewProductTypeModal = ({
             <Space direction='vertical'>
               <Text className='fw-600'>{trans('productType.timeUpdate')}:</Text>
               {detailData?.data?.updatedAt
-                ? dayjs(detailData?.data?.updatedAt).format(
+                ? moment(detailData?.data?.updatedAt).format(
                     'HH:mm:ss YYYY/MM/DD'
                   )
                 : trans('labels.nodata')}

@@ -12,7 +12,7 @@ import { useToggle } from 'ahooks'
 import { Card, Col, Empty, Form, Image, Input, Modal, Row, Tooltip } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import Table, { ColumnsType } from 'antd/es/table'
-import dayjs from 'dayjs'
+import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import PartnerContactForm from './PartnerContactForm'
@@ -132,7 +132,7 @@ export default function PartnerContactComponent(props: props) {
       title: t('partner.createdDate'),
       width: 200,
       render: (_, record) =>
-        dayjs(new Date(record?.createdAt)).format(TimeFormat).toString()
+        moment(new Date(record?.createdAt)).format(TimeFormat).toString()
     },
     {
       title: t('partner.createdBy'),
@@ -154,7 +154,7 @@ export default function PartnerContactComponent(props: props) {
       title: t('partner.updatedDate'),
       width: 200,
       render: (_, record) =>
-        dayjs(new Date(record?.updatedAt)).format(TimeFormat).toString()
+        moment(new Date(record?.updatedAt)).format(TimeFormat).toString()
     },
     {
       title: t('labels.status'),

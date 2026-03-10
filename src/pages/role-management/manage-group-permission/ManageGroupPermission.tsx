@@ -9,7 +9,7 @@ import { GroupPermissionData, viewMode } from '@type/permission'
 import { getStatusText, getTagColor } from '@utils/helperFunctions'
 import { Card, Form, Select, Tag } from 'antd'
 import Table, { ColumnsType } from 'antd/es/table'
-import dayjs from 'dayjs'
+import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import GroupPermissionModal from './group-permission-modal/GroupPermissionModal'
@@ -92,7 +92,7 @@ const ManageGroupPermission = () => {
       title: trans('labels.createdDate'),
       dataIndex: 'createdAt',
       ellipsis: true,
-      render: (text: string) => <div>{dayjs(text).format('DD-MM-YYYY')}</div>
+      render: (text: string) => <div>{moment(text).format('DD-MM-YYYY')}</div>
     },
     {
       title: trans('labels.action'),

@@ -169,10 +169,10 @@ const CustomerCancel = () => {
       ...search,
       phoneNumber: value.phoneNumber,
       from: value?.from
-        ? getStringDateFromdayjs(value?.from, TimeFormat)
+        ? getStringDateFromMoment(value?.from, TimeFormat)
         : undefined,
       to: value?.to
-        ? getStringDateFromdayjs(value?.to, TimeFormat)
+        ? getStringDateFromMoment(value?.to, TimeFormat)
         : undefined,
       page: 1
     }

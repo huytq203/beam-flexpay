@@ -22,24 +22,18 @@ ENV VITE_API_LOGIN=https://api.ewallet.flexpay.vn/identity/api/v1/admin
 ENV VITE_API_WALLETCORE=https://api.ewallet.flexpay.vn/wallet-core/api/v1/admin
 ENV VITE_FEE_API_URL=https://api.ewallet.flexpay.vn/fee/api/v1/admin
 ENV VITE_API_MERCHANT=https://api.ewallet.flexpay.vn/merchant/api/v1/admin
-ENV VITE_ROUTER_BASE_PATH=/secure-panel
 
 ARG DEPLOY_VERSION=1
 ENV VITE_DEPLOY_VERSION=${DEPLOY_VERSION}
 
 RUN NODE_OPTIONS="--max-old-space-size=4096" yarn build
 
-# Restructure dist to support /secure-panel base path
-RUN mkdir -p dist_serve/secure-panel && \
-    cp -R dist/* dist_serve/secure-panel/ && \
-    cp dist/index.html dist_serve/index.html
-
 # =============================================================================
 # Stage 2: Serve
 # =============================================================================
 FROM nginx:stable-alpine
 
-COPY --from=builder /app/dist_serve /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 COPY --from=builder /app/nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 8000

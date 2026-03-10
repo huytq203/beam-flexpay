@@ -14,7 +14,7 @@ import { useToggle } from 'ahooks'
 import { Card, Col, Empty, Form, Image, Input, Row, Select } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import Table, { ColumnsType } from 'antd/es/table'
-import dayjs from 'dayjs'
+import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import RepaymentServiceForm from './RepaymentServiceForm'
@@ -84,7 +84,7 @@ function RepaymentService() {
       width: 130,
       align: 'center',
       render: (_, record) =>
-        dayjs(new Date(record?.createdAt)).format(TimeFormat).toString()
+        moment(new Date(record?.createdAt)).format(TimeFormat).toString()
     },
     {
       title: t('partner.createdBy'),
@@ -107,7 +107,7 @@ function RepaymentService() {
       width: 130,
       align: 'center',
       render: (_, record) =>
-        dayjs(new Date(record?.updatedAt)).format(TimeFormat).toString()
+        moment(new Date(record?.updatedAt)).format(TimeFormat).toString()
     },
     {
       title: t('labels.action'),

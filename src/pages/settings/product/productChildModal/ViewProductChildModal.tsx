@@ -12,7 +12,7 @@ import {
   Spin,
   Typography
 } from 'antd'
-import dayjs from 'dayjs'
+import moment from 'moment'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 

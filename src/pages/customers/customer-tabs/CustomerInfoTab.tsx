@@ -34,7 +34,7 @@ const CustomerInfoTab = (props: CustomerInfo) => {
                 </Descriptions.Item>
                 <Descriptions.Item label={trans('labels.dateOfBirth')}>
                     {customerInfo?.birthDay ? (
-                    dayjs(customerInfo.birthDay, TimeFormat).format(TimeFormat)
+                    moment(customerInfo.birthDay, TimeFormat).format(TimeFormat)
                     ) : (
                     <Text>{trans('labels.nodata')}</Text>
                     )}
@@ -125,27 +125,27 @@ const CustomerInfoTab = (props: CustomerInfo) => {
                 : '0'}
             </Descriptions.Item>
             <Descriptions.Item label={trans('labels.createdWalletDate')}>
-                {customerInfo?.createdAt ? dayjs(
+                {customerInfo?.createdAt ? moment(
                 new Date(customerInfo.createdAt),
                 TimeFormat
                 ).format(TimeFormat) : <Text>{trans('labels.nodata')}</Text>}
             </Descriptions.Item>
             <Descriptions.Item label={trans('labels.verifiedWalletDate')}>
-                {customerInfo?.customerVerification ? dayjs(
+                {customerInfo?.customerVerification ? moment(
                 new Date(customerInfo?.customerVerification?.createdAt),
                 TimeFormat
                 ).format(TimeFormat) : <Text>{trans('labels.nodata')}</Text>}
             </Descriptions.Item>
             {/* ngày khóa ví */}
             <Descriptions.Item label={trans('labels.lockedWalletDate')}>
-                {(customerInfo?.isLocked && customerInfo?.lockedAt) ? dayjs(
+                {(customerInfo?.isLocked && customerInfo?.lockedAt) ? moment(
                 new Date(customerInfo?.lockedAt),
                 TimeFormat
                 ).format(TimeFormat) : <Text>{trans('labels.nodata')}</Text>}
             </Descriptions.Item>
             {/* ngày đóng băng */}
             <Descriptions.Item label={trans('labels.frozenWalletDate')}>
-                {(customerInfo?.balances[0] && customerInfo?.balances[0]?.freezedMoney) ? dayjs(
+                {(customerInfo?.balances[0] && customerInfo?.balances[0]?.freezedMoney) ? moment(
                 new Date(customerInfo?.balances[0]?.updatedAt),
                 TimeFormat
                 ).format(TimeFormat

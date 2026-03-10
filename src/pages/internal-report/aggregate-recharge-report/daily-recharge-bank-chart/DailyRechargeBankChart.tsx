@@ -1,10 +1,10 @@
-
-import { Card, Col, Typography } from 'antd'
+import {Pie} from '@ant-design/plots'
+import {Card, Col, Typography} from 'antd'
 import React, { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
+import {useTranslation} from 'react-i18next'
 
 const DailyRechargeBankChart = () => {
-  const { t } = useTranslation()
+  const {t} = useTranslation()
   const trans = useCallback((key: string) => {
     const str = `internal-aggregate-recharge-report.${key}`
     return t(str);
@@ -79,7 +79,7 @@ const DailyRechargeBankChart = () => {
         <Typography.Title level={5}>
           {trans('rechargeByBank')}
         </Typography.Title>
-        {/* <Pie {...config} /> */}
+        <Pie {...config} />
       </Card>
     </Col>
   )
