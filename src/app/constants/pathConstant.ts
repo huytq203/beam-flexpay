@@ -1,124 +1,129 @@
-// Path constants for navigation
+import {
+  AUTHENTICATION,
+  FEEMANAGEMENT,
+  FEEMANAGEMENT_V2,
+  BANKANDCONNECT,
+  REPORTS,
+  REPAYMENTANDDISBURSE,
+  INTERNAL_WALLET,
+  ROLEMANAGEMENT,
+  FORBIDDENERROR,
+  PERSONALWALLET,
+  CUSTOMERS,
+  CUSTOMERTRANSACTION,
+  INTERNAL,
+  STATE_BANK,
+} from './routersConstant'
+
 export const PATHS = {
-  // Authentication paths
   AUTH: {
-    LOGIN: '/auth/login',
-    FORGOT_PASSWORD: '/auth/forgot-password',
-    RESET_PASSWORD: '/auth/reset-password',
-    VERIFY_TOKEN: '/auth/verify-token',
-    VERIFY: '/auth/verify',
-    VERIFY_CODE: '/auth/verify-code'
+    LOGIN: `${AUTHENTICATION}/login`,
+    FORGOT_PASSWORD: `${AUTHENTICATION}/forgot-password`,
+    RESET_PASSWORD: `${AUTHENTICATION}/reset-password`,
+    VERIFY_TOKEN: `${AUTHENTICATION}/verify-token`,
+    VERIFY: `${AUTHENTICATION}/verify`,
+    VERIFY_CODE: `${AUTHENTICATION}/verify-code`
   },
 
-  // Fee Management V2 paths
   FEE_V2: {
     OUTBOUND_FEE: {
-      MANAGEMENT: '/fee-v2/outbound-fee-management',
-      CREATE: '/fee-v2/outbound-fee-management/create',
-      UPDATE: (id: string) => `/fee-v2/outbound-fee-management/update/${id}`
+      MANAGEMENT: `${FEEMANAGEMENT_V2}/outbound-fee-management`,
+      CREATE: `${FEEMANAGEMENT_V2}/outbound-fee-management/create`,
+      UPDATE: (id: string) => `${FEEMANAGEMENT_V2}/outbound-fee-management/update/${id}`
     },
     INBOUND_FEE: {
-      LIST: '/fee-v2/inbound-fee-management',
-      CREATE: '/fee-v2/inbound-fee-management/create',
-      UPDATE: '/fee-v2/inbound-fee-management/update'
+      LIST: `${FEEMANAGEMENT_V2}/inbound-fee-management`,
+      CREATE: `${FEEMANAGEMENT_V2}/inbound-fee-management/create`,
+      UPDATE: `${FEEMANAGEMENT_V2}/inbound-fee-management/update`
     },
     VAT_FEE: {
-      MANAGEMENT: '/fee-v2/vat-fee-management',
-      CREATE: '/fee-v2/vat-fee-management/create',
-      UPDATE: (id: string) => `/fee-v2/vat-fee-management/update/${id}`
+      MANAGEMENT: `${FEEMANAGEMENT_V2}/vat-fee-management`,
+      CREATE: `${FEEMANAGEMENT_V2}/vat-fee-management/create`,
+      UPDATE: (id: string) => `${FEEMANAGEMENT_V2}/vat-fee-management/update/${id}`
     }
   },
 
-  // Personal Wallet paths
   WALLET: {
     CUSTOMERS: {
-      LIST: '/wallet/customers/list',
-      LOOKUP: '/wallet/customers/lookup',
-      CANCEL: '/wallet/customers/cancel',
-      EKYC: '/wallet/customers/ekyc',
-      FREEZE_ACCOUNT: '/wallet/customers/freeze-account',
-      UN_FREEZE_ACCOUNT: '/wallet/customers/un-freeze-account'
+      LIST: `${PERSONALWALLET}${CUSTOMERS}/list`,
+      LOOKUP: `${PERSONALWALLET}${CUSTOMERS}/lookup`,
+      CANCEL: `${PERSONALWALLET}${CUSTOMERS}/cancel`,
+      EKYC: `${PERSONALWALLET}${CUSTOMERS}/ekyc`,
+      FREEZE_ACCOUNT: `${PERSONALWALLET}${CUSTOMERS}/freeze-account`,
+      UN_FREEZE_ACCOUNT: `${PERSONALWALLET}${CUSTOMERS}/un-freeze-account`
     },
     TRANSACTION: {
-      TRANSFER_HISTORY: '/wallet/transaction/transfer-history',
-      NAPAS_TOKEN: '/wallet/transaction/napas-token'
+      TRANSFER_HISTORY: `${PERSONALWALLET}${CUSTOMERTRANSACTION}/transfer-history`,
+      NAPAS_TOKEN: `${PERSONALWALLET}${CUSTOMERTRANSACTION}/napas-token`
     },
-    CUSTOMERS_GROUP: '/wallet/customers-group'
+    CUSTOMERS_GROUP: `${PERSONALWALLET}/customers-group`
   },
 
-  // Fee Management paths
   FEE: {
-    POLICY_MANAGEMENT: '/fee/policy-management',
-    DIRECT_DEPOSIT: '/fee/direct-deposit',
-    PAYMENT: '/fee/payment',
-    ACCOUNT_BANK_PAYMENT: '/fee/account-bank-payment',
-    WITHDRAW_MONEY: '/fee/withdraw-money',
-    LIMIT_REGULATIONS: '/fee/limit-regulations',
-    E_WALLET_TRANSFER_MONEY: '/fee/e-wallet-transfer-money',
-    FORM_SETTING: '/fee/form-setting'
+    POLICY_MANAGEMENT: `${FEEMANAGEMENT}/policy-management`,
+    DIRECT_DEPOSIT: `${FEEMANAGEMENT}/direct-deposit`,
+    PAYMENT: `${FEEMANAGEMENT}/payment`,
+    ACCOUNT_BANK_PAYMENT: `${FEEMANAGEMENT}/account-bank-payment`,
+    WITHDRAW_MONEY: `${FEEMANAGEMENT}/withdraw-money`,
+    LIMIT_REGULATIONS: `${FEEMANAGEMENT}/limit-regulations`,
+    E_WALLET_TRANSFER_MONEY: `${FEEMANAGEMENT}/e-wallet-transfer-money`,
+    FORM_SETTING: `${FEEMANAGEMENT}/form-setting`
   },
 
-  // Bank and Connect paths
   BANK_CONNECT: {
-    BANKS: '/bank-and-connect/banks',
-    NOTIFICATION_MANAGEMENT: '/bank-and-connect/notification-management'
+    BANKS: `${BANKANDCONNECT}/banks`,
+    NOTIFICATION_MANAGEMENT: `${BANKANDCONNECT}/notification-management`
   },
 
-  // Reports paths
   REPORTS: {
     INTERNAL: {
-      ACCOUNTS: '/reports/internal/accounts',
-      DETAIL_ACCOUNT: '/reports/internal/detail-account'
+      ACCOUNTS: `${REPORTS}${INTERNAL}/accounts`,
+      DETAIL_ACCOUNT: `${REPORTS}${INTERNAL}/detail-account`
     },
     STATE_BANK: {
-      OVERVIEW: '/reports/state-bank/overview',
-      ACCOUNT_GUARANTEE: '/reports/state-bank/account-guarantee',
-      TRANSACTION_MANAGEMENT_REPORT: '/reports/state-bank/transaction-management-report'
+      OVERVIEW: `${REPORTS}${STATE_BANK}/overview`,
+      ACCOUNT_GUARANTEE: `${REPORTS}${STATE_BANK}/account-guarantee`,
+      TRANSACTION_MANAGEMENT_REPORT: `${REPORTS}${STATE_BANK}/transaction-management-report`
     }
   },
 
-  // Repayment and Disburse paths
   REPAYMENT_DISBURSE: {
-    DASHBOARD: '/repayment-and-disburse/dashboard',
-    SMS_METRICS: '/repayment-and-disburse/sms-metrics',
+    DASHBOARD: `${REPAYMENTANDDISBURSE}/dashboard`,
+    SMS_METRICS: `${REPAYMENTANDDISBURSE}/sms-metrics`,
     REPAYMENT: {
-      PARTNER_CONTACT: '/repayment-and-disburse/repayment/partner-contact',
-      INVOICE_QUERY: '/repayment-and-disburse/repayment/invoice-query',
-      REPAYMENT_TRANSACTION: '/repayment-and-disburse/repayment/repayment-transaction',
-      PAYMENT_SERVICE: '/repayment-and-disburse/repayment/payment-service'
+      PARTNER_CONTACT: `${REPAYMENTANDDISBURSE}/repayment/partner-contact`,
+      INVOICE_QUERY: `${REPAYMENTANDDISBURSE}/repayment/invoice-query`,
+      REPAYMENT_TRANSACTION: `${REPAYMENTANDDISBURSE}/repayment/repayment-transaction`,
+      PAYMENT_SERVICE: `${REPAYMENTANDDISBURSE}/repayment/payment-service`
     },
     DISBURSE: {
-      DISBURSE_TRANSACTION: '/repayment-and-disburse/disburse/disburse-transaction',
-      DISBURSE_PARTNER_CONTACT: '/repayment-and-disburse/disburse/disburse-partner-contact',
-      DISBURSE_INVOICE_QUERY: '/repayment-and-disburse/disburse/disburse-invoice-query'
+      DISBURSE_TRANSACTION: `${REPAYMENTANDDISBURSE}/disburse/disburse-transaction`,
+      DISBURSE_PARTNER_CONTACT: `${REPAYMENTANDDISBURSE}/disburse/disburse-partner-contact`,
+      DISBURSE_INVOICE_QUERY: `${REPAYMENTANDDISBURSE}/disburse/disburse-invoice-query`
     }
   },
 
-  // Internal Wallet paths
   INTERNAL_WALLET: {
-    GROUP: '/internal-wallet/group',
+    GROUP: `${INTERNAL_WALLET}/group`,
     ACCOUNT: {
-      DETAILS: '/internal-wallet/account/details',
-      TRANSACTIONS: '/internal-wallet/account/transactions'
+      DETAILS: `${INTERNAL_WALLET}/account/details`,
+      TRANSACTIONS: `${INTERNAL_WALLET}/account/transactions`
     },
-    SETTING: '/internal-wallet/setting',
+    SETTING: `${INTERNAL_WALLET}/setting`,
     INTERNAL_ACCOUNTING: {
-      DEPOSIT_REQUEST: '/internal-wallet/internal-accounting/deposit-request',
-      DEPOSIT_APPROVAL: '/internal-wallet/internal-accounting/deposit-approval'
+      DEPOSIT_REQUEST: `${INTERNAL_WALLET}/internal-accounting/deposit-request`,
+      DEPOSIT_APPROVAL: `${INTERNAL_WALLET}/internal-accounting/deposit-approval`
     }
   },
 
-  // Role Management paths
   ROLE: {
-    ADMIN_ACCOUNT: '/role/admin-account',
-    MANAGE_GROUP_PERMISSIONS: '/role/manage-group-permissions'
+    ADMIN_ACCOUNT: `${ROLEMANAGEMENT}/admin-account`,
+    MANAGE_GROUP_PERMISSIONS: `${ROLEMANAGEMENT}/manage-group-permissions`
   },
 
-  // Error paths
-  FORBIDDEN: '/forbidden',
+  FORBIDDEN: FORBIDDENERROR,
   NOT_FOUND: '/404',
 
-  // Default paths
   HOME: '/'
 } as const
 

@@ -4,13 +4,14 @@ import useNavigationEw from '@hooks/useNavigation'
 import { getParamsFromURL } from '@utils/helperFunctions'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { PATHS } from '@constants/pathConstant'
 
 function RedirectRouter() {
   const [navigation] = useNavigationEw()
   const navigate = useNavigate()
 
   const code = getParamsFromURL('code')
-  
+
 
   useEffect(() => {
     if (navigation && navigation.length > 0) {
@@ -22,13 +23,13 @@ function RedirectRouter() {
 
         if (subItem?.length) {
           url = `${url}/${subItem[0].key}`
-         
+
         }
       } else {
         url = `/${firstItem.key}`
       }
       if (url === '') {
-        navigate('/forbidden')
+        navigate(PATHS.FORBIDDEN)
       } else {
         navigate(url)
       }

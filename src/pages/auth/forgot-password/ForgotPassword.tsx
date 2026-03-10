@@ -5,8 +5,8 @@ import { useForm } from 'antd/es/form/Form'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { useUserForgotPasswordMutation } from '@services/cmsService'; // Import mutation
-
+import { useUserForgotPasswordMutation } from '@services/cmsService';
+import { PATHS } from '@constants/pathConstant'
 import './style.scss'
 
 function ForgotPassword() {
@@ -23,7 +23,7 @@ function ForgotPassword() {
     }
 
     try {
-      const result = await forgotPassword({userForgotPassword: {email}}); // Gọi API gửi email
+      const result = await forgotPassword({ userForgotPassword: { email } }); // Gọi API gửi email
 
       if ('data' in result && result.data) {
         notification.success({ message: t('forgot.messages.forgotPasswordSuccess') }); // Thông báo thành công
@@ -34,7 +34,7 @@ function ForgotPassword() {
   }
 
   const handleCancel = () => {
-    navigate('/auth/login')
+    navigate(PATHS.AUTH.LOGIN)
   }
 
   useEffect(() => {

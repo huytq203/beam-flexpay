@@ -18,6 +18,7 @@ import usePermission from '@hooks/usePermission'
 
 import './style.scss'
 import { FORBIDDENERROR } from '@constants/routersConstant'
+import { PATHS } from '@constants/pathConstant'
 import Cookies from 'js-cookie'
 import { CookieKey } from '@configs/fetchBaseQuery.types'
 
@@ -49,14 +50,10 @@ function AppLayout() {
 
   const handleSelectMenu = (event: any) => {
     const keys: string[] = event.keyPath
-    const format = keys.map((r) => {
-      if (!r.includes('/')) {
-        return r
-      } else {
-        return r.replaceAll('/', '')
-      }
-    })
-    const path = '/' + format.reverse().join('/')
+    const segments = [...keys]
+      .reverse()
+      .flatMap((k: string) => k.split('/').filter(Boolean))
+    const path = '/' + segments.join('/')
     navigate(path, {
       replace: true
     })
@@ -76,7 +73,7 @@ function AppLayout() {
     // Nếu còn refresh token, không redirect vì fetchBaseQueryCustom sẽ tự refresh khi có API call
     const refreshToken = Cookies.get(CookieKey.REFRESH_TOKEN)
     if (!accessToken && !refreshToken) {
-      navigate('/auth/login')
+      navigate(PATHS.AUTH.LOGIN)
     }
   }, [accessToken, navigate])
 

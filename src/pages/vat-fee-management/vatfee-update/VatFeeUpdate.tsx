@@ -28,7 +28,7 @@ const VatFeeUpdate = () => {
       }).unwrap()
 
       message.success(t('messages.updateVatFeeSuccess'))
-      navigate(PATHS.FEE_V2?.VAT_FEE?.MANAGEMENT || '/fee-v2/vat-fee-management')
+      navigate(PATHS.FEE_V2.VAT_FEE.MANAGEMENT)
     } catch (error: any) {
       if (error?.data?.message) {
         message.error(error.data.message)
@@ -41,7 +41,7 @@ const VatFeeUpdate = () => {
   }
 
   const handleCancel = () => {
-    navigate(PATHS.FEE_V2?.VAT_FEE?.MANAGEMENT || '/fee-v2/vat-fee-management')
+    navigate(PATHS.FEE_V2.VAT_FEE.MANAGEMENT)
   }
 
   if (isLoadingFee) {

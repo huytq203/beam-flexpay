@@ -13,7 +13,7 @@ interface ModalComponentProps extends Omit<ModalProps, 'width'> {
   onOk?: () => void;
   onCancel: () => void;
   confirmLoading?: boolean;
-  modalText: ReactNode;
+  modalText?: ReactNode;
   width?: string | number | Partial<Record<Breakpoint, string | number>>;
 }
 const ModalComponent = ({
@@ -24,6 +24,7 @@ const ModalComponent = ({
   confirmLoading,
   modalText,
   width,
+  children,
   ...props
 }: ModalComponentProps) => {
   const screens = useBreakpoint();
@@ -70,7 +71,7 @@ const ModalComponent = ({
         }
       }}
     >
-      <div>{modalText}</div>
+      <div>{children || modalText}</div>
     </Modal>
   )
 }

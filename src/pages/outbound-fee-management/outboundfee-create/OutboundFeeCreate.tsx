@@ -14,7 +14,7 @@ const OutboundFeeCreate = () => {
     try {
       await createOutboundFee({ createOutboundFeeDto: values }).unwrap()
       message.success(t('messages.createOutboundFeeSuccess'))
-      navigate(PATHS.FEE_V2?.OUTBOUND_FEE?.MANAGEMENT || '/fee-v2/outbound-fee-management')
+      navigate(PATHS.FEE_V2.OUTBOUND_FEE.MANAGEMENT)
     } catch (error: any) {
       if (error?.data?.message) {
         message.error(error.data.message)
@@ -27,7 +27,7 @@ const OutboundFeeCreate = () => {
   }
 
   const handleCancel = () => {
-    navigate(PATHS.FEE_V2?.OUTBOUND_FEE?.MANAGEMENT || '/fee-v2/outbound-fee-management')
+    navigate(PATHS.FEE_V2.OUTBOUND_FEE.MANAGEMENT)
   }
 
   return (
