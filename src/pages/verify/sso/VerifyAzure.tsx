@@ -18,7 +18,7 @@ const VerifyAzure = () => {
                 
             } else {
                 setTimeout(() => {
-                    navigate('/auth/login')
+                    navigate('/secure-panel/auth/login')
                 }, 400)
             }
 

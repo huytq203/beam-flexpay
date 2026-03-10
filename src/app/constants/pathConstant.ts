@@ -2,12 +2,12 @@
 export const PATHS = {
   // Authentication paths
   AUTH: {
-    LOGIN: '/auth/login',
-    FORGOT_PASSWORD: '/auth/forgot-password',
-    RESET_PASSWORD: '/auth/reset-password',
-    VERIFY_TOKEN: '/auth/verify-token',
-    VERIFY: '/auth/verify',
-    VERIFY_CODE: '/auth/verify-code'
+    LOGIN: '/secure-panel/auth/login',
+    FORGOT_PASSWORD: '/secure-panel/auth/forgot-password',
+    RESET_PASSWORD: '/secure-panel/auth/reset-password',
+    VERIFY_TOKEN: '/secure-panel/auth/verify-token',
+    VERIFY: '/secure-panel/auth/verify',
+    VERIFY_CODE: '/secure-panel/auth/verify-code'
   },
 
   // Fee Management V2 paths

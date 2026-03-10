@@ -34,7 +34,7 @@ function ForgotPassword() {
   }
 
   const handleCancel = () => {
-    navigate('/auth/login')
+    navigate('/secure-panel/auth/login')
   }
 
   useEffect(() => {

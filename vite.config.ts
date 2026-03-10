@@ -50,7 +50,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     define: defineEnv,
-    base: '/secure-panel/',
+    base: '/',
     plugins: [
       react(),
       svgr(),
