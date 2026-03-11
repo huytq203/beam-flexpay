@@ -57,6 +57,7 @@ export function FormDatePicker<T extends FieldValues>({
             style={{ width: "100%" }}
             format={showTime ? "DD/MM/YYYY HH:mm:ss" : "DD/MM/YYYY"}
             showTime={showTime}
+            needConfirm={false}
             value={getRangeValue(field.value)}
             picker={picker}
             placeholder={placeholder}
@@ -86,6 +87,7 @@ export function FormDatePicker<T extends FieldValues>({
             style={{ width: "100%" }}
             format={showTime ? "DD/MM/YYYY HH:mm:ss" : "DD/MM/YYYY"}
             showTime={showTime}
+            needConfirm={false}
             value={getSingleValue(field.value)}
             picker={picker}
             onChange={(date: Dayjs | null, dateString: string) => {

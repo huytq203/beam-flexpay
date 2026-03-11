@@ -16,8 +16,8 @@ const HistoryPaymentBusiness = ({ ownerId }: Props) => {
   const handleSearch = (data: any) => {
     const formattedData = {
       ...data,
-      fromDate: data.fromDate ? dayjs(data.fromDate).startOf('day').toISOString() : undefined,
-      toDate: data.toDate ? dayjs(data.toDate).endOf('day').toISOString() : undefined,
+      fromDate: data.fromDate ? dayjs(data.fromDate).format('YYYY-MM-DDTHH:mm:ss.SSS') : undefined,
+      toDate: data.toDate ? dayjs(data.toDate).format('YYYY-MM-DDTHH:mm:ss.SSS') : undefined,
     }
 
     // Remove undefined/empty values

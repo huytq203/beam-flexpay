@@ -29,7 +29,7 @@ const HistoryFormSearch = ({ onSearch }: HistoryFormSearchProps) => {
                     <FormSelect control={formHistorySearch.control} name='status' className='col-span-1' options={mapEnumToSelectOptions(StatusLabel)} label='Trạng thái giao dịch' />
                     <FormSelect control={formHistorySearch.control} name='type' className='col-span-1' options={mapEnumToSelectOptions(TransactionType)} label='Loại giao dịch' />
                     <FormDatePicker showTime control={formHistorySearch.control} name='fromDate' className='col-span-1' label='Thời gian từ' />
-                    <FormDatePicker control={formHistorySearch.control} name='toDate' className='col-span-1' label='Thời gian thành đến' />
+                    <FormDatePicker showTime control={formHistorySearch.control} name='toDate' className='col-span-1' label='Thời gian đến' />
                 </div>
                 <div className="flex justify-end mt-3">
                     <ButtonComponent type='default' onClick={resetForm} content={'Đặt lại'} />
