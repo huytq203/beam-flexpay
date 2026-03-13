@@ -3,6 +3,7 @@ import { logout } from '@slices/authSlice'
 import { globalMessage } from '@hooks/useMessage'
 import Cookies from 'js-cookie'
 import { CookieKey } from '@configs/fetchBaseQuery.types'
+import { PATHS } from '@constants/pathConstant'
 
 /**
  * Error messages mapping by HTTP status code
@@ -68,7 +69,7 @@ export const errorMiddleware: Middleware = (storeApi) => (next) => (action) => {
         if (!accessToken && !refreshToken) {
           globalMessage.error(errorMessage)
           storeApi.dispatch(logout())
-          window.location.href = '/auth/login'
+          window.location.href = PATHS.AUTH.LOGIN
         }
         break
       }

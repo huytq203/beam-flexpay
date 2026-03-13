@@ -20,7 +20,6 @@ export const TransactionType = {
     WALLET_CREDIT: 'Nạp tiền ví',
     WALLET_TRANSFER: 'Giao dịch ví',
     DEBIT: 'Rút tiền',
-    CREDIT: 'Nạp tiền',
 } as const;
 
 export type TransactionKey = keyof typeof TransactionType;

@@ -23,6 +23,7 @@ import {
   WALLETADMINISTRATION,
   MERCHANT,
   TRANSACTIONMANAGEMENT,
+  FEEMANAGEMENT_V4,
 } from '@constants/routersConstant'
 
 import ForgotPassword from '@pages/auth/forgot-password/ForgotPassword'
@@ -87,10 +88,11 @@ import {
   VatFeeUpdate,
   VatFeeManagement
 } from '@pages/vat-fee-management'
-import FeeComponentManagement from '@pages/fee-managerment-v3/fee-component-management/FeeComponentManagement'
-import FeeManagement from '@pages/fee-managerment-v3/fee-management/FeeManagement'
-import FeeAssignmentManagement from '@pages/fee-managerment-v3/fee-assignment/FeeAssignmentManagement'
-import FeeAssignAdd from '@pages/fee-managerment-v3/fee-assignment/components/FeeAssignAdd'
+import FeeComponentManagement from '@pages/fee-management-v3/fee-component-management/FeeComponentManagement'
+import FeeManagement from '@pages/fee-management-v3/fee-management/FeeManagement'
+import FeeManagementV4 from '@pages/fee-management-v4/fee-management/FeeManagement'
+import FeeAssignmentManagement from '@pages/fee-management-v3/fee-assignment/FeeAssignmentManagement'
+import FeeAssignAdd from '@pages/fee-management-v3/fee-assignment/components/FeeAssignAdd'
 import login2 from '@pages/auth/login/Login'
 import AuthLayout2 from '@components/layout/AuthLayout2'
 import VerifyCode2 from '@pages/auth/verify-code/VerifyCode'
@@ -115,6 +117,7 @@ import DetailSystemLedger from '@pages/transaction-management/system-ledger/Deta
 import WithdrawHistory from '@pages/transaction-management/withdraw-history/WithdrawHistory'
 import RefundManagement from '@pages/transaction-management/refund-management/RefundManagement'
 import DetailTransaction from '@pages/wallet-administration/transaction-wallet/DetailTransaction'
+import AddFeePolicy from '@pages/fee-management-v4/fee-management/AddFeePolicy'
 
 
 const authentication = {
@@ -537,6 +540,49 @@ const feeManagementV3 = {
   ]
 }
 
+const feeManagementV4 = {
+  path: FEEMANAGEMENT_V4,
+  element: createElement(AppLayout),
+  errorElement: createElement(NotFound),
+  children: [
+    {
+      path: FEEMANAGEMENT_V4,
+      children: [
+        {
+          path: FEEMANAGEMENT_V4 + '/fee-managementV4',
+          element: createElement(FeeManagementV4)
+        },
+        {
+          path: FEEMANAGEMENT_V4 + '/fee-managementV4/create',
+          element: createElement(AddFeePolicy)
+        },
+
+        {
+          path: FEEMANAGEMENT_V4 + '/fee-managementV4/create/:id',
+          element: createElement(AddFeePolicy)
+        }
+      ]
+    },
+    {
+      path: FEEMANAGEMENT_V4,
+      children: [
+        {
+          path: FEEMANAGEMENT_V4 + '/fee-assignmentV4',
+          element: createElement(FeeAssignmentManagement)
+        },
+        {
+          path: FEEMANAGEMENT_V4 + '/fee-assignmentV4/create',
+          element: createElement(FeeAssignAdd)
+        },
+        {
+          path: FEEMANAGEMENT_V4 + '/fee-assignmentV4/edit/:id',
+          element: createElement(FeeAssignAdd)
+        },
+      ]
+    }
+  ]
+}
+
 const roleManagementV2 = {
   path: ROLEMANAGEMENT_V2,
   element: createElement(AppLayout),
@@ -741,6 +787,7 @@ export const WalletRoutes = createBrowserRouter([
   repaymentAndDisburse,
   internalWallet,
   feeManagementV3,
+  feeManagementV4,
   roleManagementV2,
   walletAministration,
   merchantManagement,

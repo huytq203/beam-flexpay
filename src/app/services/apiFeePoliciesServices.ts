@@ -1,7 +1,7 @@
 
 import { apiFeeService, apiService } from "./apiService";
 import { ResponseType } from '@type/api'
-import { feePolicies, FeePoliciesResponse } from '@pages/fee-managerment-v3/constants/feePolicies'
+import { feePolicies, FeePoliciesResponse } from '@pages/fee-management-v3/constants/feePolicies'
 export const feePolicyApi = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
     getFeePolicies: build.query({
@@ -65,6 +65,7 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
   })
 });
 export const {
+  useSearchFeePoliciesQuery,
   useLazySearchFeePoliciesQuery,
   useGetFeePoliciesQuery,
   useLazyGetFeePoliciesQuery,

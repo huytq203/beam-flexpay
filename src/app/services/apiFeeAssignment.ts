@@ -1,5 +1,5 @@
 import { apiFeeService, apiService } from './apiService'
-import { FeeAssignment, FeeAssignmentResponse, FeeAssignResponse } from '@pages/fee-managerment-v3/constants/feeAssignment'
+import { FeeAssignment, FeeAssignmentResponse, FeeAssignResponse } from '@pages/fee-management-v3/constants/feeAssignment'
 import { ResponseType } from '@type/api'
 export const feeAssignApi = apiFeeService.injectEndpoints({
   endpoints: (build) => ({

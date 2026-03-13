@@ -4,7 +4,7 @@ import { ResponseType } from '@type/api'
 import {
   feePolicyComponent,
   FeeComponentResponse
-} from '@pages/fee-managerment-v3/constants/feePoliciesComponent'
+} from '@pages/fee-management-v3/constants/feePoliciesComponent'
 export const apiFeeComponentTier = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
     postFeeComponentTier: build.mutation({

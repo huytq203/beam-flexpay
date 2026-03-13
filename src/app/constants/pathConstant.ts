@@ -13,6 +13,7 @@ import {
   CUSTOMERTRANSACTION,
   INTERNAL,
   STATE_BANK,
+  FEEMANAGEMENT_V4,
 } from './routersConstant'
 
 export const PATHS = {
@@ -119,6 +120,11 @@ export const PATHS = {
   ROLE: {
     ADMIN_ACCOUNT: `${ROLEMANAGEMENT}/admin-account`,
     MANAGE_GROUP_PERMISSIONS: `${ROLEMANAGEMENT}/manage-group-permissions`
+  },
+
+FEE_V4: {
+    FEE_MANAGEMENT: `${FEEMANAGEMENT_V4}/fee-managementV4`,
+    ADD_FEE_POLICY: `${FEEMANAGEMENT_V4}/fee-managementV4/create`
   },
 
   FORBIDDEN: FORBIDDENERROR,

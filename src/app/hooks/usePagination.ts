@@ -6,7 +6,15 @@ interface UsePaginationOptions {
   defaultSort?: string
   defaultSortBy?: string
 }
-
+/**
+ * 
+ * @param options 
+ * @defaultPage default page is 1
+ * @defaultPageSize default page size is 10
+ * @defaultSort default sort is createdAt
+ * @defaultSortBy default sort by is DESC
+ * @returns 
+ */
 const usePagination = (options?: UsePaginationOptions) => {
   const {
     defaultPage = 1,
@@ -21,9 +29,25 @@ const usePagination = (options?: UsePaginationOptions) => {
   const [sortBy, setSortBy] = useState(defaultSortBy)
 
   return {
+    /**
+     * @abstract
+     * @returns {number} page
+     */
     page,
+    /**
+     * @abstract
+     * @returns {number} pageSize
+     */
     pageSize,
+    /**
+     * @abstract
+     * @returns {string} sort : createdAt, updatedAt, id, ...
+     */
     sort,
+    /**
+     * @abstract
+     * @returns {string} sortBy : ASC, DESC
+     */
     sortBy,
     size:pageSize,
 

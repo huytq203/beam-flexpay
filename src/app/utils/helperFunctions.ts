@@ -933,6 +933,12 @@ export interface SelectOption {
   label: string;
   value: string | boolean;
 }
+/**
+ * 
+ * @param enumObject 
+ * truyền vào là 1 object có key là string và value là string hoặc boolean
+ * @returns 
+ */
 
 export const mapEnumToSelectOptions = <
   T extends Record<string, string | boolean>

@@ -13,6 +13,7 @@ import {
   _ROLEMANAGEMENT,
   _STATE_BANK,
   _FEEMANAGEMENT_V3,
+  _FEEMANAGEMENT_V4,
   _ROLEMANAGEMENT_V2,
   _WALLETADMINISTRATION,
   _MERCHANT,
@@ -835,6 +836,43 @@ const feeManagementV3 = {
   ],
   label: 'Quản lý phí',
 }
+const feeManagementV4 = {
+  key: _FEEMANAGEMENT_V4,
+  icon: (
+    <GearIcon
+      size={size}
+      weight={weight}
+      color={COlOR}
+    />
+  ),
+  children: [
+    {
+      key: 'fee-managementV4',
+      permission: ['FEE:FULL', 'FEE:VIEW', 'FEE:CREATE', 'FEE:UPDATE', 'FEE:DELETE', 'ADMIN:FULL'],
+      icon: (
+        <WalletIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý chính sách phí',
+    },
+    {
+      key: 'fee-assignmentV4',
+      permission: ['FEE:FULL', 'FEE:VIEW', 'FEE:CREATE', 'FEE:UPDATE', 'FEE:DELETE', 'ADMIN:FULL'],
+      icon: (
+        <CurrencyCircleDollarIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý gán phí',
+    }
+  ],
+  label: 'Quản lý phí',
+}
 
 const roleManagementV2 = {
   key: _ROLEMANAGEMENT_V2,
@@ -1066,4 +1104,5 @@ export const navigationItems: ItemTypeCustom[] = [
   roleManagementV2,
   merchantManagement,
   feeManagementV3,
+  feeManagementV4
 ]

@@ -20,7 +20,7 @@ const ButtonComponent = ({ onClick, content, icon, children, type, variant, colo
       color={color}
       variant={variant}
       form={form}
-      className={className}
+      className={className }
       htmlType={htmlType}
       {...rest}
     >

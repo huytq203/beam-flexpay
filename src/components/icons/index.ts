@@ -32,7 +32,9 @@ export {
   PlusOutlined,
   ArrowLeftOutlined,
   CheckCircleOutlined,
-  CloseCircleOutlined
+  CloseCircleOutlined,
+  PlusCircleOutlined ,
+  SearchOutlined 
 } from '@ant-design/icons'
 
 
