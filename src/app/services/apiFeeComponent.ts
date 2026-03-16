@@ -3,7 +3,7 @@ import { ResponseType } from '@type/api'
 import {
   feePolicyComponent,
   FeeComponentResponse
-} from '@pages/fee-management-v3/constants/feePoliciesComponent'
+} from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
 export const feeComponentApi = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
     getFeeComponentPolicies: build.query({
@@ -46,8 +46,8 @@ export const feeComponentApi = apiFeeService.injectEndpoints({
       }),
       invalidatesTags: ['FeePolicyComponent']
     }),
-     putFeeComponentPolicies: build.mutation({
-      query: ({id,body}) => ({
+    putFeeComponentPolicies: build.mutation({
+      query: ({ id, body }) => ({
         url: `/fee/policy-components/${id}`,
         method: 'PUT',
         body: body

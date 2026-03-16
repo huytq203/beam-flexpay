@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState, useEffect } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FeeComponentSchema, FeeComponentType } from '@pages/fee-management-v3/schemas/FeeManagement.schema'
+import { FeeComponentSchema, FeeComponentType } from '@pages/fee-management-v4/fee-assignment/schemas/FeeManagement.schema'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import {
     baseOnLabel, beneficiaryTypeLabel, calculationMethodEnum, calculationMethodEnumLabel,

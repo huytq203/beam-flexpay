@@ -4,7 +4,7 @@ import { ResponseType } from '@type/api'
 import {
   feePolicyComponent,
   FeeComponentResponse
-} from '@pages/fee-management-v3/constants/feePoliciesComponent'
+} from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
 export const apiFeeComponentTier = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
     postFeeComponentTier: build.mutation({
@@ -23,15 +23,15 @@ export const apiFeeComponentTier = apiFeeService.injectEndpoints({
       transformResponse: (res: ResponseType<any[]>) => res.data,
       providesTags: ['feeComponentTier']
     }),
-   deleteFeeComponentTier: build.mutation({
+    deleteFeeComponentTier: build.mutation({
       query: (id) => ({
         url: `/fee/component-tiers/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['feeComponentTier']
     }),
-   putFeeComponentTier: build.mutation({
-      query: ({body}) => ({
+    putFeeComponentTier: build.mutation({
+      query: ({ body }) => ({
         url: `/fee/component-tiers`,
         method: 'PUT',
         body: body

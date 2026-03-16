@@ -6,7 +6,7 @@ export interface ModalConfirmProps extends ModalProps {
   mode?: ModeAction,
   open: boolean;
   title?: string | React.ReactNode;
-  content: React.ReactNode;
+  content?: React.ReactNode;
   confirmLoading?: boolean;
   onOk: () => void | Promise<void>;
   onCancel: () => void;
@@ -29,6 +29,7 @@ const DialogModal: React.FC<ModalConfirmProps> = ({
   cancelText,
   className,
   footer,
+  children,
   ...props
 }) => {
   const modeConfig = MODE_CONFIG[mode];
@@ -56,7 +57,7 @@ const DialogModal: React.FC<ModalConfirmProps> = ({
       }}
     >
       {icon}
-      {content}
+      {children || content}
     </Modal>
   );
 };

@@ -81,11 +81,12 @@
     "/fee-v2/inbound-fee-management/update/*": "Cập nhật phí đầu vào",
 
 
-    "/secure-panel/fee-v3/fee-management":"Quản lý chính sách phí",
-    "/secure-panel/fee-v3/fee-management/edit/*":"Cập nhật chính sách phí",
-    "/secure-panel/fee-v3/fee-assignment/create":"Thiết lập gán phí",
-    "/secure-panel/fee-v3/fee-assignment/edit/*":"Cập nhật gán phí",
-    "/secure-panel/fee-v3/fee-assignment":"Quản lý gán phí",
+    "/secure-panel/fee-v4/fee-managementV4":"Quản lý chính sách phí",
+    "/secure-panel/fee-v4/fee-managementV4/edit/*":"Cập nhật chính sách phí",
+    "/secure-panel/fee-v4/fee-managementV4/create":"Thêm mới chính sách phí",
+    "/secure-panel/fee-v4/fee-assignmentV4/create":"Thiết lập gán phí",
+    "/secure-panel/fee-v4/fee-assignmentV4/edit/*":"Cập nhật gán phí",
+    "/secure-panel/fee-v4/fee-assignmentV4":"Quản lý gán phí",
 
     "/secure-panel/role-v2/user-account":"Quản lý phân quyền",
     "/secure-panel/role-v2/role-management":"Quản lý quyền quản trị",

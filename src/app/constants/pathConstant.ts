@@ -125,7 +125,9 @@ export const PATHS = {
   FEE_V4: {
     FEE_MANAGEMENT: `${FEEMANAGEMENT_V4}/fee-managementV4`,
     ADD_FEE_POLICY: `${FEEMANAGEMENT_V4}/fee-managementV4/create`,
-    EDIT_FEE_POLICY: (id: string) => `${FEEMANAGEMENT_V4}/fee-managementV4/edit/${id}`
+    EDIT_FEE_POLICY: (id: string) => `${FEEMANAGEMENT_V4}/fee-managementV4/edit/${id}`,
+    FEE_ASSIGNMENT: `${FEEMANAGEMENT_V4}/fee-assignmentV4`,
+    EDIT_FEE_ASSIGNMENT: (id: string) => `${FEEMANAGEMENT_V4}/fee-assignmentV4/edit/${id}`,
   },
 
   FORBIDDEN: FORBIDDENERROR,

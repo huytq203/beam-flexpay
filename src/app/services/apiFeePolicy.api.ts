@@ -1,7 +1,7 @@
 
+import { FeePolicy, FeePolicyResponse } from "@pages/fee-management-v4/fee-management/types/FeeManagement.type";
 import { apiFeeService } from "@services/apiService"
 import { ResponseType } from '@type/api'
-import { FeePolicy, FeePolicyResponse } from '../../pages/fee-management-v3/fee-management/types/FeeManagement.types'
 export const feePolicyApi = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
     getFeePolicies: build.query({

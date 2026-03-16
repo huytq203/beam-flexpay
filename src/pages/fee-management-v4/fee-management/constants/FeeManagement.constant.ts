@@ -1,34 +1,34 @@
-export enum statusType{
-  INIT='INIT',
-  ACTIVE='ACTIVE',
-  INACTIVE='INACTIVE',
-  LOCKED='LOCKED'
+export enum statusType {
+  INIT = 'INIT',
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  LOCKED = 'LOCKED'
 }
 
 export const STATUS_LABEL: Record<statusType, string> = {
-    [statusType.INIT]: 'Khởi tạo',
-    [statusType.ACTIVE]: 'Hoạt động',
-    [statusType.INACTIVE]: 'Không hoạt động',
-    [statusType.LOCKED]: 'Khóa'
+  [statusType.INIT]: 'Khởi tạo',
+  [statusType.ACTIVE]: 'Hoạt động',
+  [statusType.INACTIVE]: 'Không hoạt động',
+  [statusType.LOCKED]: 'Khóa'
 }
 
 export const STATUS_CONFIG: Record<statusType, { label: string; className: string }> = {
-    [statusType.INIT]: {
-        label: 'Khởi tạo',
-        className: 'info-status',
-    },
-    [statusType.ACTIVE]: {
-        label: 'Hoạt động',
-        className: 'success-status',
-    },
-    [statusType.INACTIVE]: {
-        label: 'Không hoạt động',
-        className: 'danger-status',
-    },
-    [statusType.LOCKED]: {
-        label: 'Khóa',
-        className: 'danger-status',
-    }
+  [statusType.INIT]: {
+    label: 'Khởi tạo',
+    className: 'info-status',
+  },
+  [statusType.ACTIVE]: {
+    label: 'Hoạt động',
+    className: 'success-status',
+  },
+  [statusType.INACTIVE]: {
+    label: 'Không hoạt động',
+    className: 'danger-status',
+  },
+  [statusType.LOCKED]: {
+    label: 'Khóa',
+    className: 'danger-status',
+  }
 }
 
 
@@ -63,7 +63,7 @@ export enum componentType {
   PROCESSING_FEE = 'PROCESSING_FEE',
   REFUND_FEE = 'REFUND_FEE',
 
-
+  AMOUNT = 'AMOUNT',
 }
 export const componentTypeLabel = {
   [componentType.TRANSACTION_FEE]: 'Phí giao dịch cơ bản',
@@ -74,20 +74,20 @@ export const componentTypeLabel = {
   [componentType.VAT]: 'Thuế VAT',
   [componentType.PROCESSING_FEE]: 'Phí xử lý',
   [componentType.REFUND_FEE]: 'Phí hoàn tiền',
+  [componentType.AMOUNT]: 'Tính trên số tiền giao dịch',
 }
-
 
 export enum baseOnEnum {
-  AMOUNT = 'AMOUNT',
-  TRANSACTION_FEE = 'TRANSACTION_FEE',
-  SYSTEM_FEE = 'SYSTEM_FEE',
-  MERCHANT_FEE = 'MERCHANT_FEE',
-  BANK_FEE = 'BANK_FEE',
-  PLATFORM_FEE = 'PLATFORM_FEE',
-  VAT = 'VAT',
-  PROCESSING_FEE = 'PROCESSING_FEE',
-  REFUND_FEE = 'REFUND_FEE',
-}
+    AMOUNT = 'AMOUNT',
+    TRANSACTION_FEE = 'TRANSACTION_FEE',
+    SYSTEM_FEE = 'SYSTEM_FEE',
+    MERCHANT_FEE = 'MERCHANT_FEE',
+    BANK_FEE = 'BANK_FEE',
+    PLATFORM_FEE = 'PLATFORM_FEE',
+    VAT = 'VAT',
+    PROCESSING_FEE = 'PROCESSING_FEE',
+    REFUND_FEE = 'REFUND_FEE',
+  }
 
 export const baseOnLabel = {
   [baseOnEnum.AMOUNT]: 'Tính trên số tiền giao dịch',
@@ -147,10 +147,10 @@ export const roundModeLabel = {
   [roundModeEnum.FLOOR]: 'Làm tròn sàn (về phía -∞)',
 }
 
-export enum calculationMethodEnum{
-    FLAT_TIER='FLAT_TIER',
-    DIRECT='DIRECT',
-    PROGRESSIVE_TIER='PROGRESSIVE_TIER',
+export enum calculationMethodEnum {
+  FLAT_TIER = 'FLAT_TIER',
+  DIRECT = 'DIRECT',
+  PROGRESSIVE_TIER = 'PROGRESSIVE_TIER',
 }
 export const calculationMethodEnumLabel = {
   [calculationMethodEnum.FLAT_TIER]: 'Bậc lũy tiến',

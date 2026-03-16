@@ -2,8 +2,8 @@ import { ColumnsType } from 'antd/es/table'
 import { Controller, Control, UseFormGetValues } from 'react-hook-form'
 import { InputNumber, ButtonComponent } from '@components/index'
 import { CheckOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons'
-import { FeeComponentType } from '@pages/fee-management-v3/schemas/FeeManagement.schema'
-import { feePolicyComponent } from '@pages/fee-management-v3/constants/feePoliciesComponent'
+import { FeeComponentType } from '@pages/fee-management-v4/fee-assignment/schemas/FeeManagement.schema'
+import { feePolicyComponent } from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
 
 interface TierColumnsOptions {
     control?: Control<FeeComponentType>
@@ -151,7 +151,7 @@ export const getTierColumns = ({
                             icon={<DeleteOutlined {...({} as any)} />}
                             onClick={() => onDeleteTier?.(index, tierId)}
                         />
-                        
+
                     </div>
                 )
             }

@@ -168,6 +168,7 @@ const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
                   className='col-span-3 flex flex-col gap-2'
                   placeholder='0%'
                   classNameLable='font-medium'
+                  
                 />
                 <FormInputNumber
                   control={control}

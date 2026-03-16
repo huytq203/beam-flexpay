@@ -88,11 +88,10 @@ import {
   VatFeeUpdate,
   VatFeeManagement
 } from '@pages/vat-fee-management'
-import FeeComponentManagement from '@pages/fee-management-v3/fee-component-management/FeeComponentManagement'
-import FeeManagement from '@pages/fee-management-v3/fee-management/FeeManagement'
+// import FeeComponentManagement from '@pages/fee-management-v3/fee-assignment/types/FeeComponentManagement'
+// import FeeManagement from '@pages/fee-management-v3/fee-management/FeeManagement'
 import FeeManagementV4 from '@pages/fee-management-v4/fee-management/FeeManagement'
-import FeeAssignmentManagement from '@pages/fee-management-v3/fee-assignment/FeeAssignmentManagement'
-import FeeAssignAdd from '@pages/fee-management-v3/fee-assignment/components/FeeAssignAdd'
+// import FeeAssignAdd from '@pages/fee-management-v3/fee-assignment/components/FeeAssignAdd'
 import login2 from '@pages/auth/login/Login'
 import AuthLayout2 from '@components/layout/AuthLayout2'
 import VerifyCode2 from '@pages/auth/verify-code/VerifyCode'
@@ -118,6 +117,9 @@ import WithdrawHistory from '@pages/transaction-management/withdraw-history/With
 import RefundManagement from '@pages/transaction-management/refund-management/RefundManagement'
 import DetailTransaction from '@pages/wallet-administration/transaction-wallet/DetailTransaction'
 import AddFeePolicy from '@pages/fee-management-v4/fee-management/AddFeePolicy'
+import FeeAssignmentManagementV4 from '@pages/fee-management-v4/fee-assignment/FeeAssignmentManagement'
+import FeeAssignAdd from '@pages/fee-management-v4/fee-assignment/components/FeeAssignAdd'
+// import FeeAssignmentManagement from '@pages/fee-management-v3/fee-assignment/FeeAssignmentManagement'
 
 
 const authentication = {
@@ -497,48 +499,48 @@ const internalWallet = {
 //   ]
 // }
 
-const feeManagementV3 = {
-  path: FEEMANAGEMENT_V3,
-  element: createElement(AppLayout),
-  errorElement: createElement(NotFound),
-  children: [
-    {
-      path: FEEMANAGEMENT_V3,
-      children: [
-        {
-          path: FEEMANAGEMENT_V3 + '/fee-management',
-          element: createElement(FeeManagement)
-        },
-        {
-          path: FEEMANAGEMENT_V3 + '/fee-management/create',
-          element: createElement(FeeComponentManagement)
-        },
+// const feeManagementV3 = {
+//   path: FEEMANAGEMENT_V3,
+//   element: createElement(AppLayout),
+//   errorElement: createElement(NotFound),
+//   children: [
+//     {
+//       path: FEEMANAGEMENT_V3,
+//       children: [
+//         {
+//           path: FEEMANAGEMENT_V3 + '/fee-management',
+//           element: createElement(FeeManagement)
+//         },
+//         {
+//           path: FEEMANAGEMENT_V3 + '/fee-management/create',
+//           element: createElement(FeeComponentManagement)
+//         },
 
-        {
-          path: FEEMANAGEMENT_V3 + '/fee-management/edit/:id',
-          element: createElement(FeeComponentManagement)
-        }
-      ]
-    },
-    {
-      path: FEEMANAGEMENT_V3,
-      children: [
-        {
-          path: FEEMANAGEMENT_V3 + '/fee-assignment',
-          element: createElement(FeeAssignmentManagement)
-        },
-        {
-          path: FEEMANAGEMENT_V3 + '/fee-assignment/create',
-          element: createElement(FeeAssignAdd)
-        },
-        {
-          path: FEEMANAGEMENT_V3 + '/fee-assignment/edit/:id',
-          element: createElement(FeeAssignAdd)
-        },
-      ]
-    }
-  ]
-}
+//         {
+//           path: FEEMANAGEMENT_V3 + '/fee-management/:mode/:id',
+//           element: createElement(FeeComponentManagement)
+//         }
+//       ]
+//     },
+//     {
+//       path: FEEMANAGEMENT_V3,
+//       children: [
+//         {
+//           path: FEEMANAGEMENT_V3 + '/fee-assignment',
+//           element: createElement(FeeAssignmentManagement)
+//         },
+//         {
+//           path: FEEMANAGEMENT_V3 + '/fee-assignment/create',
+//           element: createElement(FeeAssignAdd)
+//         },
+//         {
+//           path: FEEMANAGEMENT_V3 + '/fee-assignment/:mode/:id',
+//           element: createElement(FeeAssignAdd)
+//         },
+//       ]
+//     }
+//   ]
+// }
 
 const feeManagementV4 = {
   path: FEEMANAGEMENT_V4,
@@ -567,14 +569,14 @@ const feeManagementV4 = {
       children: [
         {
           path: FEEMANAGEMENT_V4 + '/fee-assignmentV4',
-          element: createElement(FeeAssignmentManagement)
+          element: createElement(FeeAssignmentManagementV4)
         },
         {
           path: FEEMANAGEMENT_V4 + '/fee-assignmentV4/create',
           element: createElement(FeeAssignAdd)
         },
         {
-          path: FEEMANAGEMENT_V4 + '/fee-assignmentV4/edit/:id',
+          path: FEEMANAGEMENT_V4 + '/fee-assignmentV4/:mode/:id',
           element: createElement(FeeAssignAdd)
         },
       ]
@@ -785,7 +787,7 @@ export const WalletRoutes = createBrowserRouter([
   reports,
   repaymentAndDisburse,
   internalWallet,
-  feeManagementV3,
+  // feeManagementV3,
   feeManagementV4,
   roleManagementV2,
   walletAministration,

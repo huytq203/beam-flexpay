@@ -1,0 +1,21 @@
+import {
+  serviceType,
+} from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
+export const getEnumLabel = <T extends Record<string, string>>(
+  value: string,
+  typeEnum: T
+): string => {
+  const key = value?.trim() as keyof T
+  return typeEnum[key] ?? value
+}
+export const getServiceTypeLabel = (value: string) => {
+  return serviceType[value.trim() as keyof typeof serviceType] ?? value
+}
+
+export const convertToISO = (dateString: string) => {
+  return dateString.replace(' ', 'T')
+}
+
+export const formatDate = (date: string) => {
+  return date ? new Date(date).toLocaleDateString('vi-VN') : ''
+}
