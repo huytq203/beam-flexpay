@@ -3,24 +3,26 @@ import { ButtonComponent, CardComponent, Table } from '@components/index'
 import { statusType } from '@pages/fee-management-v3/constants/feeAssignment'
 import { feeDomain, serviceType } from '@pages/fee-management-v3/constants/feePoliciesComponent'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useSVG } from '@hooks/useSVG'
 import useFetchDataFee from './hooks/useFetchDataFee'
 import useHandle from './hooks/useHandle'
 import { getColumnFeePolicy } from './columns/FeeManagement.column'
-import { dataSearch } from './types/FeeManagement.type'
+import { dataSearch } from './utils/FeeManagement.type'
 import { useNavigate } from 'react-router-dom'
 import { FEEMANAGEMENT_V4 } from '@constants/routersConstant'
 import { PATHS } from '@constants/pathConstant'
 import * as Icons from '@components/icons'
+import { feePolicies } from '@pages/fee-management-v3/constants/feePolicies'
 const FeeManagement = () => {
   const { dataSource, page, size: pageSize, setPage, setPageSize, total, setFilters, isFetchingFeeManagement } = useFetchDataFee()
   const { svg } = useSVG()
   const { control, handleSubmit, reset } = useForm<dataSearch>()
   const { handleSearch, handleReset } = useHandle({ setFilters, setPage, reset })
-  const columns = useMemo(() => getColumnFeePolicy(), [])
   const navigate = useNavigate()
+  const [selectedRow, setSelectedRow] = useState<feePolicies | null>(null)
+  const columns = useMemo(() => getColumnFeePolicy({navigate}), [navigate])
   return (
     <>
       <CardComponent

@@ -553,14 +553,13 @@ const feeManagementV4 = {
           element: createElement(FeeManagementV4)
         },
         {
-          path: FEEMANAGEMENT_V4 + '/fee-managementV4/create',
+          path: FEEMANAGEMENT_V4 + '/fee-managementV4/:mode',
           element: createElement(AddFeePolicy)
         },
-
         {
-          path: FEEMANAGEMENT_V4 + '/fee-managementV4/create/:id',
+          path: FEEMANAGEMENT_V4 + '/fee-managementV4/:mode/:id',
           element: createElement(AddFeePolicy)
-        }
+        },
       ]
     },
     {

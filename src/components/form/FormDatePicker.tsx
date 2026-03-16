@@ -2,6 +2,8 @@ import { Control, FieldValues, Path } from "react-hook-form";
 import { FormField } from "./FormField";
 import { DateInput } from "@components/ui/dateInput-component";
 import dayjs, { Dayjs } from "dayjs";
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import { ReactNode } from "react";
 
 interface props<T extends FieldValues> {
@@ -29,17 +31,18 @@ export function FormDatePicker<T extends FieldValues>({
 }: props<T> & { [key: string]: any }) {
 
   // Helper to parse value for RangePicker
-  const getRangeValue = (value: any): [Dayjs, Dayjs] | null => {
-    if (!value) return null;
-    if (Array.isArray(value) && value.length === 2) {
-      return [dayjs(value[0]), dayjs(value[1])];
-    }
-    return null;
+  const getRangeValue = (value: Dayjs[]): [Dayjs | null, Dayjs | null] | null => {
+    if (!value || !Array.isArray(value)) return null;
+    return [
+      value[0] ? dayjs.utc(value[0]).utcOffset(7) : null,
+      value[1] ? dayjs.utc(value[1]).utcOffset(7) : null,
+    ];
   };
 
   // Helper to parse value for single DatePicker
-  const getSingleValue = (value: any): Dayjs | null => {
-    return value ? dayjs(value) : null;
+  const getSingleValue = (value: Dayjs | null): Dayjs | null => {
+    if (!value) return null;
+    return dayjs.utc(value).utcOffset(7);
   };
 
   return (
@@ -68,8 +71,8 @@ export function FormDatePicker<T extends FieldValues>({
               }
               if (showTime) {
                 field.onChange([
-                  dates[0].format('YYYY-MM-DDTHH:mm:ss.SSS'),
-                  dates[1].format('YYYY-MM-DDTHH:mm:ss.SSS'),
+                  dates[0].toISOString(),
+                  dates[1].toISOString(),
                 ]);
               } else {
                 field.onChange([
@@ -96,7 +99,7 @@ export function FormDatePicker<T extends FieldValues>({
                 return;
               }
               if (showTime) {
-                field.onChange(date.format('YYYY-MM-DDTHH:mm:ss.SSS'));
+                field.onChange(date.toISOString());
               } else {
                 field.onChange(`${date.format("YYYY-MM-DD")}T00:00:00.000Z`);
               }

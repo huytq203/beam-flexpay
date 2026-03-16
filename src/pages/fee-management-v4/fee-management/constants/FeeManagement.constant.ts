@@ -133,14 +133,18 @@ export const beneficiaryTypeLabel = {
 export enum roundModeEnum {
   UP = 'UP',
   DOWN = 'DOWN',
-  NEAREST = 'NEAREST',
-  NONE = 'NONE',
+  HALF_UP = 'HALF_UP',
+  HALF_DOWN = 'HALF_DOWN',
+  CEILING = 'CEILING',
+  FLOOR = 'FLOOR',
 }
 export const roundModeLabel = {
   [roundModeEnum.UP]: 'Làm tròn lên',
   [roundModeEnum.DOWN]: 'Làm tròn xuống',
-  [roundModeEnum.NEAREST]: 'Làm tròn gần nhất',
-  [roundModeEnum.NONE]: 'Không làm tròn',
+  [roundModeEnum.HALF_UP]: 'Làm tròn gần nhất, nửa lên',
+  [roundModeEnum.HALF_DOWN]: 'Làm tròn gần nhất, nửa xuống',
+  [roundModeEnum.CEILING]: 'Làm tròn trần (về phía +∞)',
+  [roundModeEnum.FLOOR]: 'Làm tròn sàn (về phía -∞)',
 }
 
 export enum calculationMethodEnum{

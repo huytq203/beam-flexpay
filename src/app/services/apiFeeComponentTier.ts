@@ -16,8 +16,8 @@ export const apiFeeComponentTier = apiFeeService.injectEndpoints({
       invalidatesTags: ['feeComponentTier']
     }),
     getFeeComponentTier: build.query({
-      query: (id) => ({
-        url: `/fee/component-tiers/by-component/${id}`,
+      query: (feeComponentId) => ({
+        url: `/fee/component-tiers/by-component/${feeComponentId}`,
         method: 'GET',
       }),
       transformResponse: (res: ResponseType<any[]>) => res.data,

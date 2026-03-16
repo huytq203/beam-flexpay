@@ -5,13 +5,20 @@ import { ColumnsType } from 'antd/es/table'
 import { feeDomain, serviceType } from '@pages/fee-management-v3/constants/feePoliciesComponent'
 import { feePolicies, statusType } from '@pages/fee-management-v3/constants/feePolicies'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+dayjs.extend(utc)
 import { TYPEDATE } from '@constants/date.constant'
 import { getEnumLabel } from '../utils/FeeManagement.utils'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { STATUS_CONFIG } from '../constants/FeeManagement.constant'
 import * as Icons from '@components/icons'
+import { useNavigate } from 'react-router-dom'
+import { PATHS } from '@constants/pathConstant'
+interface Props{
+  navigate: any
+}
 
-export const getColumnFeePolicy = (): ColumnsType<feePolicies> => [
+export const getColumnFeePolicy = ({navigate}: Props): ColumnsType<feePolicies> => [
     {
       title: 'STT',
       dataIndex: 'no',
@@ -50,17 +57,17 @@ export const getColumnFeePolicy = (): ColumnsType<feePolicies> => [
     {
       title: 'Hiệu lực từ',
       dataIndex: 'validFrom',
-      render: (date: string) => dayjs(date).format(TYPEDATE.fullTime)
+      render: (date: string) => dayjs.utc(date).utcOffset(7).format(TYPEDATE.fullTime)
     },
     {
       title: 'Hiệu lực đến',
       dataIndex: 'validTo',
       render: (date: string) => {
-        if (date === null || '' || 0) {
+        if (!date) {
           return 'Vô thời hạn'
         }
         else {
-          return dayjs(date).format(TYPEDATE.fullTime)
+          return dayjs.utc(date).utcOffset(7).format(TYPEDATE.fullTime)
         }
       }
     },
@@ -85,6 +92,9 @@ export const getColumnFeePolicy = (): ColumnsType<feePolicies> => [
               type='default'
               size='small'
               icon={<Icons.EditOutlined />}
+              onClick={()=>{
+                navigate(PATHS.FEE_V4.EDIT_FEE_POLICY(record?.id||''))
+              }}
             />
             <ButtonComponent
               type='default'

@@ -122,9 +122,10 @@ export const PATHS = {
     MANAGE_GROUP_PERMISSIONS: `${ROLEMANAGEMENT}/manage-group-permissions`
   },
 
-FEE_V4: {
+  FEE_V4: {
     FEE_MANAGEMENT: `${FEEMANAGEMENT_V4}/fee-managementV4`,
-    ADD_FEE_POLICY: `${FEEMANAGEMENT_V4}/fee-managementV4/create`
+    ADD_FEE_POLICY: `${FEEMANAGEMENT_V4}/fee-managementV4/create`,
+    EDIT_FEE_POLICY: (id: string) => `${FEEMANAGEMENT_V4}/fee-managementV4/edit/${id}`
   },
 
   FORBIDDEN: FORBIDDENERROR,

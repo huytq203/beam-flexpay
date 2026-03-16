@@ -1,22 +1,25 @@
+import { forwardRef, useImperativeHandle } from 'react'
 import { FormInputNumber, FormSelect } from '@components/form'
 import { ButtonComponent, CardComponent, DialogModal } from '@components/index'
 import InfoComponents from './InfoComponents'
 import { calculationMethodEnum } from '../constants/FeeManagement.constant'
 import useHandleInfoPolicy from '../hooks/useHandleInfoPolicy'
+import { FeeComponent } from '../types/FeeComponent.types'
 
 interface InforPolicyProps {
   policyId?: string
-  selectedRow?: any | null
+  selectedRow?: FeeComponent | null
   onSuccess?: () => void
   onClose?: () => void
 }
 
-const InforPolicy = ({
-  policyId,
-  selectedRow,
-  onSuccess,
-  onClose
-}: InforPolicyProps) => {
+const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
+  const {
+    policyId,
+    selectedRow,
+    onSuccess,
+    onClose
+  } = props
   const {
     control,
     fields,
@@ -35,6 +38,12 @@ const InforPolicy = ({
   } = useHandleInfoPolicy({ policyId, selectedRow, onSuccess, onClose })
 
   const handleSave = isUpdateMode ? handleUpdate : handleAdd
+
+  useImperativeHandle(ref, () => ({
+    handleSave
+  }))
+
+
 
   return (
     <div className='overflow-auto'>
@@ -198,7 +207,7 @@ const InforPolicy = ({
         content='Bạn có xác nhận xóa tier này?'
       />
 
-      <div className='flex justify-end gap-2 mt-4'>
+{/* <div className='flex justify-end gap-2 mt-4'>
         <ButtonComponent
           htmlType='button'
           content='Hủy'
@@ -211,9 +220,9 @@ const InforPolicy = ({
           type='primary'
           onClick={handleSave}
         />
-      </div>
+      </div> */}
     </div>
   )
-}
+})
 
 export default InforPolicy

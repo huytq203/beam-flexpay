@@ -10,6 +10,7 @@ import {
 import { getTierColumns } from '../columns/FormAddFeeComponent.columns'
 import {
     useDeleteFeeComponentTierMutation,
+    useGetFeeComponentTierQuery,
     usePostFeeComponentTierMutation,
     usePutFeeComponentTierMutation
 } from '@services/apiFeeComponentTier'
@@ -19,10 +20,11 @@ import {
 } from '@services/apiFeeComponent'
 import { useMessage } from '@hooks/useMessage'
 import { DEFAULT_TIER, DEFAULT_VALUES } from '../types/InfoPolicy'
+import { FeeComponent } from '../types/FeeComponent.types'
 
 interface UseHandleInfoPolicyProps {
     policyId?: string
-    selectedRow?: any | null
+    selectedRow?: FeeComponent | null
     onSuccess?: () => void
     onClose?: () => void
 }
@@ -48,6 +50,13 @@ const useHandleInfoPolicy = ({ policyId, selectedRow, onSuccess, onClose }: UseH
     const [putFeeComponentTier] = usePutFeeComponentTierMutation()
     const [deleteFeeComponentTier, { isLoading: isDeleteLoading }] = useDeleteFeeComponentTierMutation()
 
+
+    const idComponentTiers = selectedRow?.id
+    const { data: dataFeeComponentTier, isLoading: isLoadingFeeComponentTier, isFetching: isFetchingFeeComponentTier } = useGetFeeComponentTierQuery(idComponentTiers, {
+        skip: !idComponentTiers
+    })
+
+
     const watchComponentType = watch('componentType')
     const watchCalculationMethod = watch('calculationMethod', calculationMethodEnum.DIRECT)
 
@@ -63,16 +72,17 @@ const useHandleInfoPolicy = ({ policyId, selectedRow, onSuccess, onClose }: UseH
     }, [isVATType, watchCalculationMethod, reset])
 
     // Fill form khi selectedRow thay đổi
+
     useEffect(() => {
         if (selectedRow) {
             reset({
                 ...selectedRow,
-                tiers: selectedRow.tiers?.length ? selectedRow.tiers : [DEFAULT_TIER]
+                tiers: dataFeeComponentTier?.length ? dataFeeComponentTier : [DEFAULT_TIER]
             })
         } else {
             reset(DEFAULT_VALUES)
         }
-    }, [selectedRow, reset])
+    }, [selectedRow, dataFeeComponentTier, reset])
 
     const selectOptions = useMemo(() => ({
         componentType: mapEnumToSelectOptions(componentTypeLabel),
@@ -123,8 +133,8 @@ const useHandleInfoPolicy = ({ policyId, selectedRow, onSuccess, onClose }: UseH
 
     const handleAdd = handleSubmit(async (data) => {
         try {
-            const { tiers, ...payloadWithoutTiers } = data; 
-            const payloadData={
+            const { tiers, ...payloadWithoutTiers } = data;
+            const payloadData = {
                 ...payloadWithoutTiers,
                 feePolicyId: policyId,
                 baseComponentType: null,
@@ -135,13 +145,22 @@ const useHandleInfoPolicy = ({ policyId, selectedRow, onSuccess, onClose }: UseH
             }
             const currentIsTierMode = ([calculationMethodEnum.PROGRESSIVE_TIER, calculationMethodEnum.FLAT_TIER] as string[]).includes(String(data.calculationMethod))
             const res = await postFeeComponent(payloadData).unwrap()
-            if (currentIsTierMode && res?.data?.id) {
-                const payload = (getValues('tiers') || []).map((tier) => ({
-                    feeComponentId: res.data.id,
-                    ...tier
+
+            if (currentIsTierMode) {
+                const feeComponentId = res?.data?.id || res?.id;
+                const tierPayload = (tiers || []).map((tier: any) => ({
+                    feeComponentId: feeComponentId,
+                    minValue: Number(tier.minValue) || 0,
+                    maxValue: Number(tier.maxValue) || 0,
+                    roundMode: data.roundMode || "",
+                    minFee: Number(tier.minFee) || 0,
+                    maxFee: Number(tier.maxFee) || 0,
+                    fixedAmount: Number(tier.fixedAmount) || 0,
+                    percentage: Number(tier.percentage) || 0
                 }))
-                await postFeeComponentTier(payload).unwrap()
+                await postFeeComponentTier(tierPayload).unwrap();
             }
+
             successMess('Thêm thành phần phí thành công')
             reset(DEFAULT_VALUES)
             onSuccess?.()
@@ -154,14 +173,23 @@ const useHandleInfoPolicy = ({ policyId, selectedRow, onSuccess, onClose }: UseH
         try {
             const componentId = (selectedRow as any)?.id
             const currentIsTierMode = ([calculationMethodEnum.PROGRESSIVE_TIER, calculationMethodEnum.FLAT_TIER] as string[]).includes(String(data.calculationMethod))
+            const { tiers, ...payloadWithoutTiers } = data
+            const payloadData = {
+                ...payloadWithoutTiers,
+            }
             const promises: Promise<any>[] = [
-                putFeeComponent({ id: componentId, body: data }).unwrap()
+                putFeeComponent({ id: componentId, body: payloadData }).unwrap()
             ]
             if (currentIsTierMode) {
-                const payload = (getValues('tiers') || []).map((tier) => ({
+                const payload = (getValues('tiers') || []).map((tier: any) => ({
                     feeComponentId: componentId,
-                    roundMode: getValues('roundMode'),
-                    ...tier
+                    minValue: Number(tier.minValue) || 0,
+                    maxValue: Number(tier.maxValue) || 0,
+                    roundMode: getValues('roundMode') || "",
+                    minFee: Number(tier.minFee) || 0,
+                    maxFee: Number(tier.maxFee) || 0,
+                    fixedAmount: Number(tier.fixedAmount) || 0,
+                    percentage: Number(tier.percentage) || 0
                 }))
                 promises.push(putFeeComponentTier({ body: payload }).unwrap())
             }
@@ -170,7 +198,6 @@ const useHandleInfoPolicy = ({ policyId, selectedRow, onSuccess, onClose }: UseH
             onSuccess?.()
             onClose?.()
         } catch {
-            errorMess('Cập nhật thất bại')
         }
     })
 
