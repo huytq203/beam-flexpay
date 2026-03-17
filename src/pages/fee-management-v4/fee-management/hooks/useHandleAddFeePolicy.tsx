@@ -12,9 +12,10 @@ interface UseHandleProps {
     setPage?: React.Dispatch<React.SetStateAction<number>>
     reset?: () => void
     id?: string
+    setOpenDialog?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id }: UseHandleProps) => {
+const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id, setOpenDialog }: UseHandleProps) => {
 
     const { successMess } = useMessage()
 
@@ -88,6 +89,7 @@ const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id }: UseHandleProp
             const res = await deleteFeeComponentPolicies(idPolicy).unwrap()
             if (res) {
                 successMess('Xóa chính sách phí thành công')
+                setOpenDialog?.(false)
             }
         } catch (error) {
 

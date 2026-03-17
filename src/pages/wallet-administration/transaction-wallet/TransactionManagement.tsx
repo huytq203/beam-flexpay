@@ -4,7 +4,7 @@ import React from 'react'
 import DialogRefund from './components/DialogRefund'
 import FormSearch from './components/FormSearch'
 import UpdateStatusTransaction from './components/UpdateStatusTransaction'
-import Column from './columns/Transaction.column'
+import getColumn from './columns/Transaction.column'
 import useTransaction from './hooks/useTransaction'
 import DialogConfirm from './components/DialogConfirm'
 import { SkeletonButton, SkeletonFilterGroup, SkeletonInput, SkeletonTable } from '@components/ui/skeletons/Skeleton'
@@ -24,7 +24,7 @@ const TransactionManagement = () => {
     isLoadingGetTransaction,
   } = useTransaction()
 
-  const columns = Column({ navigate })
+  const columns = getColumn({ navigate })
 
   return (
     <div className='flex flex-col gap-3'>

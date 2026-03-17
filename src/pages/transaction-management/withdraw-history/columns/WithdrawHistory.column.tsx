@@ -16,7 +16,7 @@ interface ColumnProps {
     onViewDetail: (id: string) => void
 }
 
-const Column = ({ onViewDetail }: ColumnProps): ColumnsType<UnifiedContentJournal> => [
+const getColumn = ({ onViewDetail }: ColumnProps): ColumnsType<UnifiedContentJournal> => [
     {
         title: '#',
         dataIndex: 'no',
@@ -29,7 +29,7 @@ const Column = ({ onViewDetail }: ColumnProps): ColumnsType<UnifiedContentJourna
         render(_, record) {
             return (
                 <div className="text-start">
-                    <CopyableText value={record.journalCode} />
+                    <CopyableText value={record.transactionCode} />
                     <p className="text-gray-500 text-xs mt-0.5">{record.description ?? '--'}</p>
                 </div>
             )
@@ -160,4 +160,4 @@ const Column = ({ onViewDetail }: ColumnProps): ColumnsType<UnifiedContentJourna
     },
 ]
 
-export default Column
+export default getColumn

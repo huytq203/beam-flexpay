@@ -30,7 +30,7 @@ export const PaymentMethod = {
 }
 
 
-  export enum StatusEnum {
+export enum StatusEnum {
   PENDING = 'PENDING',
   POSTED = 'POSTED',
   ARCHIVED = 'ARCHIVED',
@@ -73,3 +73,12 @@ export const CounterpartyType = {
 } as const
 
 export type CounterpartyTypeKey = keyof typeof CounterpartyType
+export enum BankEnum {
+  VCB = 'VCB',
+  MB = 'MB',
+}
+
+export const BankLabel: Record<BankEnum, string> = {
+  [BankEnum.VCB]: 'Vietcombank',
+  [BankEnum.MB]: 'MB Bank',
+} as const;

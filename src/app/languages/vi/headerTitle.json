@@ -84,6 +84,7 @@
     "/secure-panel/fee-v4/fee-managementV4":"Quản lý chính sách phí",
     "/secure-panel/fee-v4/fee-managementV4/edit/*":"Cập nhật chính sách phí",
     "/secure-panel/fee-v4/fee-managementV4/create":"Thêm mới chính sách phí",
+    "/secure-panel/fee-v4/fee-managementV4/create/*":"Thêm mới chính sách phí",
     "/secure-panel/fee-v4/fee-assignmentV4/create":"Thiết lập gán phí",
     "/secure-panel/fee-v4/fee-assignmentV4/edit/*":"Cập nhật gán phí",
     "/secure-panel/fee-v4/fee-assignmentV4":"Quản lý gán phí",

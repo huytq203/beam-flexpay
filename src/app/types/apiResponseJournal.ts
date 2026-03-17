@@ -8,6 +8,7 @@ export interface PartyInfo {
 export interface UnifiedContentJournal {
   id: string
   journalCode: string
+  transactionCode:string
   status: string
   transactionType: string
   from: PartyInfo

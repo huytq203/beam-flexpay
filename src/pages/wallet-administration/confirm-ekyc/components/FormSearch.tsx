@@ -4,6 +4,8 @@ import { useForm } from 'react-hook-form'
 import dayjs from 'dayjs'
 import { EKYCFilterType } from '../hooks/useConfirmEKYC'
 import { BroomIcon, MagnifyingGlassIcon } from '@components/icons'
+import * as Icons from '@components/icons'
+
 const STATUS_OPTIONS = [
     { label: 'Đã xác thực', value: 'VERIFIED' },
     { label: 'Đã huỷ', value: 'INVALID' },
@@ -34,6 +36,7 @@ const FormSearch = ({ onSearch, onReset }: FormSearchProps) => {
 
     return (
         <div>
+            <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
             <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-4 gap-3">
                     <FormInput

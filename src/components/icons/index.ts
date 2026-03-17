@@ -57,11 +57,11 @@ export {
   BroadcastIcon,
   PencilLineIcon,
   MagnifyingGlassIcon,
-  BroomIcon
+  BroomIcon,
+  FunnelIcon
 } from "@phosphor-icons/react";
 export {
   CornerDownRight,
   Calculator,
   PenTool,
-
 } from 'lucide-react';

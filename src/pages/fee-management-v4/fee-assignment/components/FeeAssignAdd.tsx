@@ -88,8 +88,8 @@ const FeeAssignAdd = () => {
         </div>
       </CardComponent>
       <CardComponent>
-        <div className='flex items-center gap-2 '>
-          <Icons.InfoCircleOutlined className='text-[16px] text-blue-500 bg-blue-50 p-2 rounded' />
+        <div className='flex items-center gap-2 mb-3'>
+          <Icons.InfoCircleOutlined className='text-[16px] text-blue-500 bg-blue-50 p-2 rounded-md' />
           <p className='font-medium text-[16px]'>1. Thông tin chung</p>
         </div>
         <FormInforAdd

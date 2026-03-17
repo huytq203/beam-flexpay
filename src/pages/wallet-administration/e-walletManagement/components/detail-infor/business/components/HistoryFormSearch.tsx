@@ -4,7 +4,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { StatusLabel, TransactionType } from '../types/HistoryPayment.type'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
-
+import * as Icons from '@components/icons'
 interface HistoryFormSearchProps {
     onSearch: (data: any) => void;
 }
@@ -24,7 +24,7 @@ const HistoryFormSearch = ({ onSearch }: HistoryFormSearchProps) => {
     return (
         <div>
             <form onSubmit={formHistorySearch.handleSubmit(onSubmit)}>
-                <p className='mb-3 font-bold '>Bộ lọc tìm kiếm</p>
+                <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                     <FormSelect control={formHistorySearch.control} name='status' className='col-span-1' options={mapEnumToSelectOptions(StatusLabel)} label='Trạng thái giao dịch' />
                     <FormSelect control={formHistorySearch.control} name='type' className='col-span-1' options={mapEnumToSelectOptions(TransactionType)} label='Loại giao dịch' />

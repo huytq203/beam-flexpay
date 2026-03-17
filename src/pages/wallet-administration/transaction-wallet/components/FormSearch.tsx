@@ -6,7 +6,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import { PaymentMethod, StatusType, TransactionType } from '../constants/Transaction.constant'
 import { FormSearchValues } from '../types/Transaction.type'
-
+import * as Icons from '@components/icons'
 interface props {
     handleSearch: (value: Partial<FormSearchValues>) => void
 }
@@ -37,6 +37,7 @@ const FormSearch = ({ handleSearch }: props) => {
     return (
         <div>
             <form>
+                <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                     <FormInput control={formSearch.control} name='journalCode' label='Mã giao dịch' className='col-span-1' placeholder='Nhập mã giao dịch...' />
                     <FormSelect control={formSearch.control} name='transactionType' label='Loại giao dịch' className='col-span-1' options={mapEnumToSelectOptions(TransactionType)} />

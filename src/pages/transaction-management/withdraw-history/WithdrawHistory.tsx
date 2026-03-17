@@ -5,7 +5,7 @@ import DialogApproval from './components/DialogApproval'
 import DialogApproveWithdraw from './components/DialogApproveWithdraw'
 import DialogDetailWithdrawHistory from './components/ModalDetailWithdrawHistory'
 import WithdrawHistorySearch from './components/WithdrawHistorySearch'
-import Column from './columns/WithdrawHistory.column'
+import getColumn from './columns/WithdrawHistory.column'
 import useFetchDataWithdraw from './hooks/useFetchDataWithdraw'
 import useHandle from './hooks/useHandle'
 
@@ -18,7 +18,7 @@ const WithdrawHistory = () => {
     ]
     const { dataWithdraw, isLoadingWithdraw, setPage, setPageSize, sort, sortBy, dataSource, handleSearch, isFetching } = useFetchDataWithdraw()
     const { isDetailOpen, detailData, isDetailLoading, openDetail, closeDetail } = useHandle()
-    const columns = Column({ onViewDetail: openDetail })
+    const columns = getColumn({ onViewDetail: openDetail })
 
     return (
         <div className='space-y-3'>

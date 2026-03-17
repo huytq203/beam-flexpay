@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useMessage } from '@hooks/useMessage'
@@ -6,8 +6,7 @@ import { useSVG } from '@hooks/useSVG'
 import usePagination from '@hooks/usePagination'
 import usePermissionCheck from '@hooks/usePermissionCheck'
 import {
-  useLazyGetAssignQuery,
-  useLazyGetAssignSearchQuery,
+  useGetAssignSearchQuery,
   usePatchAssignActiveMutation,
   usePatchAssignInActiveMutation,
   usePostAssignMutation
@@ -17,10 +16,20 @@ import { FeeAssignType } from '@pages/fee-management-v4/fee-assignment/schemas/f
 import { getFeeAssignColumn } from '../columns/FeeAssignmentManagement.column'
 
 const useHandleFeeAssignment = () => {
-  const [getAllAssign, { data: dataFeeAssign, isLoading: loadingAll }] = useLazyGetAssignQuery()
+  const [filter, setFilter] = useState({})
+
+  const { sortBy, sort, size, page, pageSize, setPage, setPageSize } = usePagination()
+  const payload = {
+    ...filter,
+    sortDirection: sortBy,
+    sortBy: sort,
+    size,
+    page
+  }
+
   const [patchAssignActive] = usePatchAssignActiveMutation()
   const [patchAssignInActive] = usePatchAssignInActiveMutation()
-  const [getAssignSearch, { data: searchData, isLoading: loadingSearch }] = useLazyGetAssignSearchQuery()
+  const { data: searchData, isLoading: loadingSearch } = useGetAssignSearchQuery(payload)
   const [postAssign, { isLoading: isPostAssign }] = usePostAssignMutation()
 
   const [openModalDelete, setOpenModalDelete] = useState(false)
@@ -28,8 +37,6 @@ const useHandleFeeAssignment = () => {
   const [openModalAdd, setOpenModalAdd] = useState(false)
   const [openModalSelectPolicy, setOpenModalSelectPolicy] = useState(false)
   const [isCreate, setIsCreate] = useState(true)
-  const [isSearching, setIsSearching] = useState(false)
-  const [searchParams, setSearchParams] = useState<FeeAssignType | null>(null)
 
   const { successMess, errorMess } = useMessage()
   const navigate = useNavigate()
@@ -55,53 +62,17 @@ const useHandleFeeAssignment = () => {
   const canCreate = hasAnyPermission(['FEE:CREATE', 'FEE:FULL', 'ADMIN:FULL'])
   const canUpdate = hasAnyPermission(['FEE:UPDATE', 'FEE:FULL', 'ADMIN:FULL'])
 
-  const { page, pageSize, setPage, setPageSize } = usePagination()
-
-  useEffect(() => {
-    if (isSearching && searchParams) {
-      getAssignSearch({
-        ...searchParams,
-        page,
-        size: pageSize,
-        sortBy: 'createdAt',
-        sortDirection: 'DESC'
-      }).unwrap().catch(() => { })
-    } else if (!isSearching) {
-      getAllAssign({
-        page,
-        size: pageSize,
-        sortBy: 'createdAt',
-        sortDirection: 'DESC'
-      }).unwrap().catch(() => { })
-    }
-  }, [page, pageSize, isSearching, searchParams, getAssignSearch, getAllAssign])
-
   const handleSearch = useCallback(async (data: FeeAssignType) => {
     setPage(1)
-    setSearchParams(data)
-    setIsSearching(true)
-    await getAssignSearch({
-      ...data,
-      page: 1,
-      size: pageSize,
-      sortBy: 'createdAt',
-      sortDirection: 'DESC'
-    }).unwrap().catch(() => { })
-  }, [pageSize, getAssignSearch, setPage])
+    setFilter(data)
+  }, [setPage])
 
   const handleReset = useCallback(() => {
     reset()
-    setSearchParams(null)
-    setIsSearching(false)
+    setFilter({})
     setPage(1)
     setPageSize(10)
-    getAllAssign({
-      page: 1,
-      size: 10,
-      sortBy: 'createdAt',
-      sortDirection: 'DESC'
-    })
-  }, [reset, setPage, setPageSize, getAllAssign])
+  }, [reset, setPage, setPageSize])
 
   const handleToggleStatus = useCallback(async (record: FeeAssignment) => {
     try {
@@ -156,12 +127,12 @@ const useHandleFeeAssignment = () => {
   }), [handleToggleStatus, navigate, canUpdate])
 
   const listData: FeeAssignment[] = useMemo(() =>
-    (isSearching ? searchData?.content : dataFeeAssign?.content) || []
-    , [isSearching, searchData?.content, dataFeeAssign?.content])
+    searchData?.content || []
+  , [searchData?.content])
 
   const total = useMemo(() =>
-    (isSearching ? searchData?.totalElements : dataFeeAssign?.totalElements) || 0
-    , [isSearching, searchData?.totalElements, dataFeeAssign?.totalElements])
+    searchData?.totalElements || 0
+  , [searchData?.totalElements])
 
   const dataSource = useMemo(() => listData.map((item, idx: number) => ({
     ...item,
@@ -191,7 +162,6 @@ const useHandleFeeAssignment = () => {
   }, [])
 
   return {
-    loadingAll,
     loadingSearch,
     isPostAssign,
     openModalDelete,

@@ -5,7 +5,7 @@ import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import { PaymentMethod, StatusType } from '@pages/wallet-administration/transaction-wallet/constants/Transaction.constant'
-
+import * as Icons from '@components/icons'
 export interface WithdrawSearchValues {
     journalCode: string
     initiatorUsername: string
@@ -59,6 +59,8 @@ const WithdrawHistorySearch = ({ handleSearch }: Props) => {
 
     return (
         <div>
+
+             <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
             <form>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <FormInput control={formSearch.control} name='journalCode' label='Mã giao dịch' className='col-span-1' placeholder='Nhập mã giao dịch...' />

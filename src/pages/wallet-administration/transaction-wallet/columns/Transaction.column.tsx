@@ -2,37 +2,19 @@ import { UnifiedContentJournal } from "@type/apiResponseJournal";
 import dayjs from "dayjs";
 import { ColumnsType } from "antd/lib/table";
 import { Link, NavigateFunction } from "react-router-dom";
-import { ButtonComponent, TooltipComponent } from "@components/index";
+import { ButtonComponent, TooltipComponent, TypographyText } from "@components/index";
 import { EyeFilled } from "@components/icons";
-import { CounterpartyType, CounterpartyTypeKey, PaymentMethodEnum,PaymentMethod, StatusKey, StatusType, TransactionKey, TransactionType } from "@pages/wallet-administration/transaction-wallet/constants/Transaction.constant";
+import { CounterpartyType, CounterpartyTypeKey, PaymentMethodEnum,PaymentMethod, StatusKey, StatusType, TransactionKey, TransactionType, BankLabel, BankEnum } from "@pages/wallet-administration/transaction-wallet/constants/Transaction.constant";
 import { formatNumber } from "@utils/index";
+import { PATHS } from "@constants/pathConstant";
 
 interface ColumnProps {
     navigate: NavigateFunction;
 }
 
-const TYPE_BADGE_CLASS: Record<string, string> = {
-    USER: 'text-violet-700 bg-violet-50 border border-violet-300',
-    MERCHANT: 'text-purple-700 bg-purple-50 border border-purple-300',
-    BANK: 'text-yellow-700 bg-yellow-50 border border-yellow-300',
-    SYSTEM: 'text-gray-600 bg-gray-100 border border-gray-300',
-}
 
-const PartyCell = ({ party }: { party?: UnifiedContentJournal['from'] }) => {
-    if (!party) return <span>--</span>
-    const typeLabel = CounterpartyType[party.type as CounterpartyTypeKey]?.label ?? party.type
-    return (
-        <div className="text-start">
-            <p className="font-medium">{party.displayName || '--'}</p>
-            {/* <p className="text-gray-500 text-xs">{party.username}</p> */}
-            {/* <span className={`text-xs px-1.5 py-0.5 rounded ${TYPE_BADGE_CLASS[party.type] ?? 'text-gray-500 bg-gray-50 border border-gray-200'}`}>
-                {typeLabel}
-            </span> */}
-        </div>
-    )
-}
 
-const Column = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal> => [
+const getColumn = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal> => [
     {
         title: '#',
         dataIndex: 'no',
@@ -57,17 +39,17 @@ const Column = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal> =
     },
     {
         title: 'Mã giao dịch',
-        dataIndex: 'journalCode',
+        dataIndex: 'transactionCode',
         align: 'center',
         render(value, record) {
             return (
                 <div>
-                    {record.journalCode ? (
+                    {record.transactionCode ? (
                         <Link
-                            to={`/transaction-management/transaction-wallet/${record.id}`}
+                            to={PATHS.TRANSACTION_MANAGEMENT.DETAIL_TRANSACTION(record.id)}
                             className="text-blue-500 font-bold underline underline-offset-2"
                         >
-                            {record.journalCode}
+                            {record.transactionCode}
                         </Link>
                     ) : (
                         <span>--</span>
@@ -98,7 +80,7 @@ const Column = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal> =
             const typeKey = record.paymentMethod as PaymentMethodEnum;
             return (
                 <div className='text-start'>
-                    <p className="font-medium">{PaymentMethod[typeKey] ?? record.paymentMethod ?? '--'}</p>
+                    <p className="">{PaymentMethod[typeKey] ?? record.paymentMethod ?? '--'}</p>
                 </div>
             )
         },
@@ -106,15 +88,17 @@ const Column = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal> =
     {
         title: 'Người chuyển',
         align: 'center',
+        dataIndex: 'from',
         render(value, record) {
-            return <PartyCell party={record.from} />
+            return <span className="font-medium text-gray-500">{BankLabel[value?.displayName as BankEnum]||value?.displayName}</span>
         },
     },
     {
         title: 'Người nhận',
         align: 'center',
+        dataIndex: 'to',
         render(value, record) {
-            return <PartyCell party={record.to} />
+            return <span className="font-medium text-gray-500">{BankLabel[value?.displayName as BankEnum]||value?.displayName}</span>
         },
     },
     {
@@ -193,4 +177,4 @@ const Column = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal> =
     //     },
     // },
 ]
-export default Column
+export default getColumn

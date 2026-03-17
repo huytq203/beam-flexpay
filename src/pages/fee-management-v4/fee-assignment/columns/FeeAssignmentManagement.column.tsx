@@ -189,7 +189,7 @@ export const getFeeAssignColumn = ({
       dataIndex: 'createdAt',
       align: 'center' as const,
 
-      render: (date: string) => dayjs.utc(date).local().format(TYPEDATE.fullTime)
+      render: (date: string) => dayjs.utc(date).format(TYPEDATE.fullTime)
     },
     {
       title: 'Trạng thái',

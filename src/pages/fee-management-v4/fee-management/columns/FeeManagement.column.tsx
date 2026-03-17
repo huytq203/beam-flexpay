@@ -26,7 +26,7 @@ interface Props {
 
 export const getColumnFeePolicy = ({ navigate, handleActive, handleInactive, isLoadingPatchActivateFee, isLoadingPatchDeactivateFee, loadingId }: Props): ColumnsType<FeePolicy> => [
   {
-    title: 'STT',
+    title: '#',
     dataIndex: 'no',
     width: 60,
     align: 'center',

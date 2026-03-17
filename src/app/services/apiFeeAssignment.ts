@@ -69,5 +69,6 @@ export const {
   usePutAssignMutation,
   usePatchAssignActiveMutation,
   usePatchAssignInActiveMutation,
-  useLazyGetAssignSearchQuery
+  useLazyGetAssignSearchQuery,
+  useGetAssignSearchQuery
 } = feeAssignApi

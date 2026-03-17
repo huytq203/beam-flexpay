@@ -3,7 +3,7 @@ import { FormDatePicker, FormInput, FormSelect } from '@components/form'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { BroomIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
-
+import * as Icons from '@components/icons'
 interface FormSearchValues {
     status?: string
     username?: string
@@ -45,6 +45,7 @@ const FormSearch = ({ onSearch }: FormSearchProps) => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
+            <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <FormInput control={control} name="username" className="col-span-1" label="Tên tài khoản (username)" placeholder='Nhập tên User...' />
                 <FormSelect

@@ -5,12 +5,15 @@ import InfoComponents from './InfoComponents'
 import { calculationMethodEnum } from '../constants/FeeManagement.constant'
 import useHandleInfoPolicy from '../hooks/useHandleInfoPolicy'
 import { FeeComponent } from '../types/FeeComponent.types'
+import { getEnumLabel } from '../utils/FeeManagement.utils'
+import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 
 interface InforPolicyProps {
   policyId?: string
   selectedRow?: FeeComponent | null
   onSuccess?: () => void
   onClose?: () => void
+  listBaseOn?: Record<string, string | boolean>
 }
 
 const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
@@ -18,7 +21,8 @@ const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
     policyId,
     selectedRow,
     onSuccess,
-    onClose
+    onClose,
+    listBaseOn
   } = props
   const {
     control,
@@ -44,7 +48,6 @@ const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
   }))
 
 
-
   return (
     <div className='overflow-auto'>
       <CardComponent
@@ -57,7 +60,7 @@ const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
               <FormSelect
                 control={control}
                 name='componentType'
-                label='Loại phí'
+                label={<span>Loại phí <span className='text-red-500'>*</span></span>}
                 className='col-span-4 flex flex-col'
                 options={selectOptions.componentType}
                 placeholder='Chọn loại phí'
@@ -66,15 +69,15 @@ const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
               <FormSelect
                 control={control}
                 name='baseOn'
-                label='Tính dựa trên'
+                label={<span>Tính dựa trên <span className='text-red-500'>*</span></span>}
                 className='col-span-4 flex flex-col'
-                options={selectOptions.baseOn}
+                options={mapEnumToSelectOptions(listBaseOn || {})}
                 placeholder='Chọn loại tính phí'
               />
               <FormSelect
                 control={control}
                 name='payerType'
-                label='Người chịu'
+                label={<span>Người chịu <span className='text-red-500'>*</span></span>}
                 className='col-span-4 flex flex-col'
                 options={selectOptions.payerType}
                 placeholder='Chọn người chịu phí'
@@ -83,7 +86,7 @@ const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
               <FormSelect
                 control={control}
                 name='beneficiaryType'
-                label='Người hưởng'
+                label={<span>Người hưởng <span className='text-red-500'>*</span></span>}
                 className='col-span-4 flex flex-col'
                 options={selectOptions.beneficiaryType}
                 placeholder='Chọn người hưởng phí'
@@ -91,7 +94,7 @@ const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
               <FormSelect
                 control={control}
                 name='roundMode'
-                label='Công thức làm tròn'
+                label={<span>Công thức làm tròn <span className='text-red-500'>*</span></span>}
                 className='col-span-4 flex flex-col'
                 options={selectOptions.roundMode}
                 placeholder='Chọn công thức làm tròn'
@@ -100,7 +103,7 @@ const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
                 <FormSelect
                   control={control}
                   name='calculationMethod'
-                  label='Chọn phương thức tính'
+                  label={<span>Chọn phương thức tính <span className='text-red-500'>*</span></span>}
                   className='col-span-4 flex flex-col'
                   options={selectOptions.calculationMethod}
                   defaultValue={calculationMethodEnum.DIRECT}
@@ -122,7 +125,7 @@ const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
               <FormInputNumber
                 control={control}
                 name='percentage'
-                label='Phần trăm (%)'
+                label={<span>Phần trăm (%) <span className='text-red-500'>*</span></span>}
                 className='col-span-3 flex flex-col gap-2'
                 placeholder='0%'
                 classNameLable='font-medium'
@@ -152,7 +155,7 @@ const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
                 <FormInputNumber
                   control={control}
                   name='fixedAmount'
-                  label='Phí cố định (Fixed)'
+                  label={<span>Phí cố định (Fixed) </span>}
                   className='col-span-3 flex flex-col gap-2'
                   placeholder='0'
                   formatter={(value: number) =>

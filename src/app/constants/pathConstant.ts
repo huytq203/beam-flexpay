@@ -14,6 +14,7 @@ import {
   INTERNAL,
   STATE_BANK,
   FEEMANAGEMENT_V4,
+  TRANSACTIONMANAGEMENT,
 } from './routersConstant'
 
 export const PATHS = {
@@ -128,6 +129,11 @@ export const PATHS = {
     EDIT_FEE_POLICY: (id: string) => `${FEEMANAGEMENT_V4}/fee-managementV4/edit/${id}`,
     FEE_ASSIGNMENT: `${FEEMANAGEMENT_V4}/fee-assignmentV4`,
     EDIT_FEE_ASSIGNMENT: (id: string) => `${FEEMANAGEMENT_V4}/fee-assignmentV4/edit/${id}`,
+  },
+
+  TRANSACTION_MANAGEMENT: {
+    TRANSACTION_WALLET: `${TRANSACTIONMANAGEMENT}/transaction-wallet`,
+    DETAIL_TRANSACTION: (id: string) => `${TRANSACTIONMANAGEMENT}/transaction-wallet/${id}`,
   },
 
   FORBIDDEN: FORBIDDENERROR,

@@ -23,7 +23,7 @@ export const TAB_CONTENT_MAP: TabContentMap = {
     'SYSTEM': <AccountBankBusiness />
   },
   '3': {
-    'USER': (props: TabContentProps) => <HistoryPayment ownerId={props.accountData?.ownerId || ''} />,
+    'USER': (props: TabContentProps) => <HistoryPayment ownerId={props.accountData?.ownerId || ''}  initiatorUsername={props.accountData?.ownerUsername || ''}/>,
     'SYSTEM': (props: TabContentProps) => <HistoryPaymentBusiness ownerId={props.accountData?.ownerId || ''} />
   },
   '4': {

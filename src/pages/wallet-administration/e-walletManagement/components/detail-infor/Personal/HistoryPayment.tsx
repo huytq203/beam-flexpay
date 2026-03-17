@@ -1,6 +1,6 @@
 import { CardComponent, Table } from '@components/index'
 import React, { useState } from 'react'
-import { Column } from './configs/HistoryPayment.column'
+import { getColumn } from './configs/HistoryPayment.column'
 import HistoryFormSearch from './components/HistoryFormSearch'
 import useFetchData from './hooks/useFetchDataHistory'
 import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
@@ -8,10 +8,11 @@ import dayjs from 'dayjs'
 
 interface Props {
   ownerId: string
+  initiatorUsername: string
 }
-const HistoryPayment = ({ ownerId }: Props) => {
+const HistoryPayment = ({ ownerId, initiatorUsername }: Props) => {
   const [searchParams, setSearchParams] = useState<any>({})
-  const { dataTransaction, isLoadingGetTransaction, dataSource, page, size, setPage, setPageSize } = useFetchData(ownerId, searchParams)
+  const { dataTransaction, isLoadingGetTransaction, dataSource, page, size, setPage, setPageSize,dataSourceUnified } = useFetchData({ ownerId, initiatorUsername, searchParams })
 
   const handleSearch = (data: any) => {
     const formattedData = {
@@ -27,7 +28,7 @@ const HistoryPayment = ({ ownerId }: Props) => {
     setPage(1)
   }
 
-  const column = Column()
+  const column = getColumn()
   return (
     <div>
 
@@ -39,7 +40,7 @@ const HistoryPayment = ({ ownerId }: Props) => {
           <Table
             scroll={{ x: 'max-content' }} size='small'
             bordered columns={column}
-            dataSource={dataSource}
+            dataSource={dataSourceUnified}
             pagination={{
               current: page,
               showSizeChanger: true,

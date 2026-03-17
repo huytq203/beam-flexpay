@@ -3,7 +3,9 @@ import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import dayjs, { Dayjs } from 'dayjs'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Currency, feeDomain, serviceType, STATUS_LABEL, statusType } from './constants/FeeManagement.constant'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { PolicySchema, PolicyType } from './schemas/FeeManagement.schema'
+import { Currency, feeDomain, serviceType, STATUS_LABEL, statusType, baseOnEnum, baseOnLabel, componentTypeLabel, componentType } from './constants/FeeManagement.constant'
 import { ButtonComponent, CardComponent, DialogModal, ModalComponent, Table } from '@components/index'
 import * as Icons from '@components/icons'
 import { FeePolicyFormValues } from './types/FeeManagement.type'
@@ -18,13 +20,15 @@ import useHandleAddFeePolicy from './hooks/useHandleAddFeePolicy'
 const AddFeePolicy = () => {
     const { mode, id } = useParams()
     const inforPolicyRef = React.useRef<any>(null)
-    const { control, handleSubmit, reset } = useForm<FeePolicyFormValues>()
+    const { control, handleSubmit, reset } = useForm<PolicyType>({
+        resolver: zodResolver(PolicySchema)
+    })
     const [isCreate, setIsCreate] = useState(true)
     const [isEdit, setIsEdit] = useState(false)
-    const [open, setOpen] = useState(false)
-    const { handleAdd, dataFeePolicyById, handleEdit, handleDelete, isLoadingDeleteFeeComponentPolicies } = useHandleAddFeePolicy({ id })
-    const [selectedRow, setSelectedRow] = useState<FeeComponent | null>(null)
     const [openDialog, setOpenDialog] = useState(false)
+    const [open, setOpen] = useState(false)
+    const { handleAdd, dataFeePolicyById, handleEdit, handleDelete, isLoadingDeleteFeeComponentPolicies } = useHandleAddFeePolicy({ id, setOpenDialog })
+    const [selectedRow, setSelectedRow] = useState<FeeComponent | null>(null)
     const navigate = useNavigate()
     const columns = getFeeComponentColumns({
         setOpen,
@@ -32,7 +36,15 @@ const AddFeePolicy = () => {
         setOpenDialog,
     })
     const { dataSource, feeComponentLoading, page, pageSize, setPage, setPageSize, total } = useFetchDataComponent({ id })
+    const status = dataFeePolicyById?.status
 
+    const listBaseOn = dataSource?.reduce((acc, item) => {
+        if (item.componentType) {
+            acc[item.componentType] = componentTypeLabel[item.componentType as componentType] || item.componentType;
+        }
+        return acc;
+    }, { [baseOnEnum.AMOUNT]: baseOnLabel[baseOnEnum.AMOUNT] } as Record<string, string>);
+    console.log(listBaseOn)
     useEffect(() => {
         setIsCreate(mode === "create");
         setIsEdit(mode === "edit");
@@ -108,7 +120,7 @@ const AddFeePolicy = () => {
                     </div>
                     <span className='text-[17px] font-bold text-gray-800'>1. Thông tin chính sách phí</span>
                 </div>
-                <form id='addNewPolicy' onSubmit={handleSubmit((data) => isCreate ? handleAdd(data, isCreate) : handleEdit(data, id))}>
+                <form id='addNewPolicy' onSubmit={handleSubmit((data) => isCreate ? handleAdd(data as any, isCreate) : handleEdit(data as any, id))}>
                     <div className='grid grid-cols-12 gap-2'>
                         <FormInput
                             name='name'
@@ -116,7 +128,7 @@ const AddFeePolicy = () => {
                             label={!isCreate ? 'Tên chính sách phí' : <span>Tên chính sách phí <span className='text-red'>(*)</span> </span>}
                             placeholder='Nhập tên chính sách...'
                             className='col-span-12 md:col-span-6'
-                            disabled={!!id && isCreate || !!id && isEdit}
+                            disabled={!!id && isEdit && status !== statusType.INIT || !!id && isCreate}
 
                         />
                         <FormInputNumber
@@ -125,7 +137,7 @@ const AddFeePolicy = () => {
                             control={control}
                             label={!isCreate ? 'Mức độ ưu tiên' : <span>Mức độ ưu tiên <span className='text-red'>(*)</span></span>}
                             placeholder='Nhập mức độ ưu tiên'
-                            disabled={!!id && !isEdit || !!id && isCreate}
+                            disabled={!!id && isEdit&& status !== statusType.INIT || !!id && isCreate}
 
                         />
 
@@ -138,7 +150,7 @@ const AddFeePolicy = () => {
                             disabledDate={(current: Dayjs) =>
                                 current && current < dayjs().startOf('day')
                             }
-                            disabled={!!id && !isEdit || !!id && isCreate}
+                            disabled={!!id && isEdit&& status !== statusType.INIT || !!id && isCreate}
 
                         />
                         <FormDatePicker
@@ -147,7 +159,7 @@ const AddFeePolicy = () => {
                             control={control}
                             label={!isCreate ? 'Hiệu lực đến' : <span>Hiệu lực đến </span>}
                             showTime
-                            disabled={!!id && !isEdit || !!id && isCreate}
+                            disabled={!!id && isEdit&& status !== statusType.INIT || !!id && isCreate}
                         />
 
                         <FormSelect
@@ -156,11 +168,11 @@ const AddFeePolicy = () => {
                             control={control}
                             label={!isCreate ? 'Trạng thái hoạt động' : <span>Trạng thái hoạt động <span className='text-red'>(*)</span></span>}
                             options={
-                                isCreate ? mapEnumToSelectOptions(STATUS_LABEL).slice(0, 1) :
+                                isCreate||isEdit&& status == statusType.INIT ? mapEnumToSelectOptions(STATUS_LABEL).slice(0, 1) :
                                     mapEnumToSelectOptions(STATUS_LABEL)
 
                             }
-                            disabled={!!id && !isEdit}
+                            disabled={!!id && isEdit&& status !== statusType.INIT|| !!id && isCreate}
 
                         />
 
@@ -170,7 +182,7 @@ const AddFeePolicy = () => {
                             control={control}
                             label={!isCreate ? "Loại dịch vụ" : <span>Loại dịch vụ <span className='text-red'>(*)</span></span>}
                             options={mapEnumToSelectOptions(serviceType)}
-                            disabled={!!id && !isEdit}
+                            disabled={!!id && isEdit&& status !== statusType.INIT|| !!id && isCreate}
 
                         />
                         <FormSelect
@@ -180,7 +192,7 @@ const AddFeePolicy = () => {
                             options={mapEnumToSelectOptions(Currency)}
                             label={!isCreate ? "Đơn vị thanh toán" : <span>Đơn vị thanh toán <span className='text-red'>(*)</span></span>}
                             placeholder='Nhập đơn vị thanh toán...'
-                            disabled={!!id && !isEdit}
+                            disabled={!!id && isEdit&& status !== statusType.INIT|| !!id && isCreate}
 
                         />
 
@@ -190,7 +202,7 @@ const AddFeePolicy = () => {
                             control={control}
                             label={!isCreate ? "Phí miền" : <span>Phí miền <span className='text-red'>(*)</span></span>}
                             options={mapEnumToSelectOptions(feeDomain)}
-                            disabled={!!id && !isEdit}
+                            disabled={!!id && isEdit&& status !== statusType.INIT|| !!id && isCreate}
 
                         />
 
@@ -200,7 +212,7 @@ const AddFeePolicy = () => {
                             control={control}
                             label={!isCreate ? 'Mô tả' : <span>Mô tả </span>}
                             placeholder='Nhập mô tả chính sách...'
-                            disabled={!!id && !isEdit}
+                            disabled={!!id && isEdit&& status !== statusType.INIT|| !!id && isCreate}
                         />
                     </div>
                     {!id && <div className='flex justify-end gap-2 mt-6 '>
@@ -232,7 +244,10 @@ const AddFeePolicy = () => {
                                 htmlType='button'
                                 content='Thêm thành phần phí'
                                 type='primary'
-                                onClick={() => setOpen(true)}
+                                onClick={() => {
+                                    setOpen(true)
+                                    setSelectedRow(null)
+                                }}
                                 icon={
                                     <svg
                                         className='pointer-events-none'
@@ -292,8 +307,10 @@ const AddFeePolicy = () => {
                 title='Thêm thành phần phí'
                 onOk={() => inforPolicyRef.current?.handleSave()}
                 onCancel={handleCloseModal}
+                okText='Xác nhận'
+                cancelText='Hủy'
             >
-                <InforPolicy ref={inforPolicyRef} policyId={id} onClose={handleCloseModal} selectedRow={selectedRow} />
+                <InforPolicy ref={inforPolicyRef} policyId={id} onClose={handleCloseModal} selectedRow={selectedRow} listBaseOn={listBaseOn} />
             </ModalComponent>
 
             <DialogModal

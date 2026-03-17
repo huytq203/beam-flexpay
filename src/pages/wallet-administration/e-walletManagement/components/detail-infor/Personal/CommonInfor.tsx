@@ -21,7 +21,7 @@ const ekycStatusMap: Record<string, { color: string; label: string }> = {
 interface InforEwalletProps { data?: AcountItem; ekyc?: ContentEKYC }
 const InforUser = ({ ekyc }: { ekyc?: ContentEKYC }) => {
   const v = (val?: string | null) => val ?? '--'
-  const d = (val?: string | null) => val ? dayjs(val).format('DD/MM/YYYY') : '--'
+  const d = (val?: string | null) => val ? dayjs.utc(val).local().format('DD/MM/YYYY') : '--'
 
   return (
     <>

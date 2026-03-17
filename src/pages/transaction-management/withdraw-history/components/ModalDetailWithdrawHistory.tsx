@@ -72,10 +72,9 @@ const DialogDetailWithdrawHistory = ({ data, isLoading }: Props) => {
                         <p className='font-medium flex items-center gap-1'><UserIcon weight='fill' />Thông tin giao dịch</p>
                         <hr className='my-3' />
                         <div>
-                            <InfoRow label='Mã giao dịch' value={data.journalCode} />
+                            <InfoRow label='Mã giao dịch' value={data.transactionCode} />
                             <InfoRow label='Mô tả' value={data.description} />
                             <InfoRow label='Người yêu cầu' value={data.from?.displayName || data.from?.username || '--'} />
-                            <InfoRow label='Loại người gửi' value={data.from?.type} />
                             <InfoRow
                                 label='Số tiền rút'
                                 value={`-${formatNumber(data.amount)} ${data.currency}`}
@@ -110,7 +109,6 @@ const DialogDetailWithdrawHistory = ({ data, isLoading }: Props) => {
                             <InfoRow label='Số tài khoản' value={ '--'} />
                             <InfoRow label='Tên chủ TK' value={ '--'} />
                             <InfoRow label='Chi nhánh' value={ '--'} />
-                            <InfoRow label='Loại' value={data.to?.type} />
                             {data.bankRefId && <InfoRow label='Mã tham chiếu NH' value={data.bankRefId} />}
                             {data.transactionId && <InfoRow label='Mã giao dịch gốc' value={
                                 <span className="text-xs break-all">{data.transactionId}</span>

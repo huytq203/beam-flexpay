@@ -44,7 +44,7 @@
   }
 
   .text-yellow {
-    @apply text-yellow-600;
+    @apply text-yellow-800;
   }
 
   .text-orange {
@@ -69,7 +69,7 @@
   }
 
   .border-yellow {
-    @apply border-yellow-500;
+    @apply border-yellow-400;
   }
 
   .border-orange {
@@ -110,7 +110,7 @@
   }
 
   .warning-status {
-    @apply bg-yellow border border-yellow text-yellow font-medium;
+    @apply bg-yellow border border-yellow text-yellow-700 font-medium;
   }
 
   .info-status {

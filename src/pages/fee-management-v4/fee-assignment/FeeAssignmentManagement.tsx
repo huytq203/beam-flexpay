@@ -11,10 +11,11 @@ import FormInforAdd from './components/FormInforAdd'
 import React from 'react'
 import { SkeletonFilterGroup, SkeletonTable } from '@components/ui/skeletons/Skeleton'
 import useHandleFeeAssignment from './hook/useHandleFeeAssignment'
+import FormSearchAssignment from './components/FormSearchAssignment'
 
 const FeeAssignmentManagement = () => {
   const {
-    loadingAll,
+    loadingSearch,
     isPostAssign,
     openModalDelete,
     openModalAdd,
@@ -46,7 +47,7 @@ const FeeAssignmentManagement = () => {
   return (
     <>
       {
-        (loadingAll) ? (
+        (loadingSearch) ? (
           <>
             <div className=" mb-3">
               <SkeletonFilterGroup items={2} />
@@ -59,11 +60,12 @@ const FeeAssignmentManagement = () => {
               content={
                 <>
                   <form action='formViewAssign' className='mb-3'>
-                    <FormFieldAssign
+                    {/* <FormFieldAssign
                       control={control}
                       setValue={setValue}
                       isCreate={isCreate}
-                    />
+                    /> */}
+                    <FormSearchAssignment control={control} />
                   </form>
                   <div className='col-span-12 flex flex-col md:flex-row md:justify-between gap-3'>
                     <div className='flex gap-2 w-full md:w-auto flex-row'>

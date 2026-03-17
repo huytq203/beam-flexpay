@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState, useEffect } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FeeComponentSchema, FeeComponentType } from '@pages/fee-management-v4/fee-assignment/schemas/FeeManagement.schema'
+import { FeeComponentSchema, FeeComponentType } from '../schemas/FeeManagement.schema'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import {
     baseOnLabel, beneficiaryTypeLabel, calculationMethodEnum, calculationMethodEnumLabel,
@@ -143,8 +143,8 @@ const useHandleInfoPolicy = ({ policyId, selectedRow, onSuccess, onClose }: UseH
                 beneficiaryObjectType: null,
                 beneficiaryObjectId: null
             }
+            const res = await postFeeComponent(payloadData).unwrap();
             const currentIsTierMode = ([calculationMethodEnum.PROGRESSIVE_TIER, calculationMethodEnum.FLAT_TIER] as string[]).includes(String(data.calculationMethod))
-            const res = await postFeeComponent(payloadData).unwrap()
 
             if (currentIsTierMode) {
                 const feeComponentId = res?.data?.id || res?.id;
@@ -160,12 +160,14 @@ const useHandleInfoPolicy = ({ policyId, selectedRow, onSuccess, onClose }: UseH
                 }))
                 await postFeeComponentTier(tierPayload).unwrap();
             }
-
             successMess('Thêm thành phần phí thành công')
             reset(DEFAULT_VALUES)
             onSuccess?.()
             onClose?.()
-        } catch {
+        } catch (error) {
+        }
+        finally {
+            onClose?.()
         }
     })
 

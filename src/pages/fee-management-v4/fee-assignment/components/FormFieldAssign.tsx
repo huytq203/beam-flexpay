@@ -1,7 +1,6 @@
 import { FormDatePicker, FormInput, FormSelect } from '@components/form'
 import { useGetBankQuery } from '@services/apiFeeBank'
 import {
-  bankCodeType,
   cardTypeType,
   customerGroupType,
   paymentMethodType,
@@ -44,49 +43,49 @@ const FormFieldAssign = React.memo(({ control, setValue, isCreate }: FormFieldAs
   return (
     <div>
       <div className='grid grid-cols-1 md:grid-cols-12 gap-3'>
-        {!isCreate && (
-          <FormSelect
-            control={control}
-            name='applyType'
-            label='Đối tượng áp dụng'
-            className={isCreate ? 'col-span-12' : 'col-span-3'}
-            allowClear={false}
-            defaultValue={''}
-            options={[
-              { label: 'Hệ thống', value: '' },
-              {
-                label: 'Đối tượng riêng',
-                value: '1'
-              },
-              {
-                label: 'Nhóm khách hàng',
-                value: '2'
-              }
-            ]}
-            onChange={handleChangeApplyType}
-          />
-        )}
-        {!isCreate && (
-          <FormInput
-            type='text'
-            control={control}
-            name='account'
-            placeholder='Nhập tài khoản...'
-            label='Tài khoản'
-            className={isCreate ? 'col-span-6' : 'col-span-3'}
-            disabled={disable == '2' || disable == '' ? true : false}
-          />
-        )}
-        {!isCreate && (
-          <FormSelect
-            control={control}
-            name='customerGroup'
-            options={mapEnumToSelectOptions(customerGroupType)}
-            label='Nhóm khách hàng'
-            className={isCreate ? 'col-span-6' : 'col-span-3'}
-            disabled={disable == '1' || disable == '' ? true : false}
-          />
-        )}
+
+        <FormSelect
+          control={control}
+          name='applyType'
+          label={<span>Đối tượng áp dụng <span className='text-red-500'>*</span></span>}
+          className={isCreate ? 'col-span-12' : 'col-span-3'}
+          allowClear={false}
+          defaultValue={''}
+          options={[
+            { label: 'Hệ thống', value: '' },
+            {
+              label: 'Đối tượng riêng',
+              value: '1'
+            },
+            {
+              label: 'Nhóm khách hàng',
+              value: '2'
+            }
+          ]}
+          onChange={handleChangeApplyType}
+        />
+
+
+        <FormInput
+          type='text'
+          control={control}
+          name='account'
+          placeholder='Nhập tài khoản...'
+          label='Tài khoản'
+          className={isCreate ? 'col-span-6' : 'col-span-3'}
+          disabled={disable == '2' || disable == '' ? true : false}
+        />
+
+
+        <FormSelect
+          control={control}
+          name='customerGroup'
+          options={mapEnumToSelectOptions(customerGroupType)}
+          label='Nhóm khách hàng'
+          className={isCreate ? 'col-span-6' : 'col-span-3'}
+          disabled={disable == '1' || disable == '' ? true : false}
+        />
+
         <FormSelect
           control={control}
           name='bankCode'
@@ -96,43 +95,43 @@ const FormFieldAssign = React.memo(({ control, setValue, isCreate }: FormFieldAs
               value: item.code
             }))
           ]}
-          label='Ngân hàng'
+          label={<span>Ngân hàng <span className='text-red-500'>*</span></span>}
           className={isCreate ? 'col-span-6' : 'col-span-3'}
         />
-        {!isCreate && (
-          <>
-            <FormSelect
-              control={control}
-              name='serviceType'
-              options={mapEnumToSelectOptions(serviceType)}
-              label='Loại giao dịch'
-              className={isCreate ? 'col-span-6' : 'col-span-3'}
-            />
-            <FormSelect
-              control={control}
-              name='paymentMethod'
-              options={mapEnumToSelectOptions(paymentMethodType)}
-              label='Phương thức giao dịch'
-              className={isCreate ? 'col-span-6' : 'col-span-3'}
-            />
-            <FormSelect
-              control={control}
-              name='cardType'
-              options={mapEnumToSelectOptions(cardTypeType)}
-              label='Loại thẻ'
-              className={isCreate ? 'col-span-6' : 'col-span-3'}
-              hidden={isCreate}
-              classNameLable={isCreate ? 'hidden' : 'font-medium'}
-            />
-          </>
-        )}
+
+        <>
+          <FormSelect
+            control={control}
+            name='serviceType'
+            options={mapEnumToSelectOptions(serviceType)}
+            label={<span>Loại giao dịch <span className='text-red-500'>*</span></span>}
+            className={isCreate ? 'col-span-6' : 'col-span-3'}
+          />
+          <FormSelect
+            control={control}
+            name='paymentMethod'
+            options={mapEnumToSelectOptions(paymentMethodType)}
+            label={<span>Phương thức giao dịch </span>}
+            className={isCreate ? 'col-span-6' : 'col-span-3'}
+          />
+          <FormSelect
+            control={control}
+            name='cardType'
+            options={mapEnumToSelectOptions(cardTypeType)}
+            label={<span>Loại thẻ </span>}
+            className={isCreate ? 'col-span-6' : 'col-span-3'}
+            hidden={isCreate}
+            classNameLable={isCreate ? 'hidden' : 'font-medium'}
+          />
+        </>
+
 
 
         <FormSelect
           control={control}
           name='status'
           options={mapEnumToSelectOptions(statusType)}
-          label='Trạng thái'
+          label={<span>Trạng thái <span className='text-red-500'>*</span></span>}
           className={isCreate ? 'col-span-6' : 'col-span-3'}
         />
         {/* <FormDatePicker
