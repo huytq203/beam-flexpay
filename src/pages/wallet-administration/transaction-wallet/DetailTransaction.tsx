@@ -63,7 +63,7 @@ const DetailTransaction = () => {
     <>
       <div className="flex justify-between items-center mb-3 px-2">
         <div className="flex flex-col gap-1">
-          <p className='text-xl font-bold'>Chi tiết giao dịch: <span className='text-blue-700'>{getTransactionById?.journalCode??'--'}</span></p>
+          <p className='text-xl font-bold'>Chi tiết giao dịch: <span className='text-blue-700'>{getTransactionById?.transactionCode??'--'}</span></p>
           <p className="text-sm text-gray-500">{dayjs(getTransactionById?.createdAt).format('DD/MM/YYYY HH:mm:ss')}</p>
         </div>
         <div className="flex justify-center items-center gap-2">

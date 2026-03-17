@@ -138,6 +138,8 @@ const FeeAssignmentManagement = () => {
           htmlType: 'submit',
           form: 'formAssign'
         }}
+        okText='Xác nhận'
+        cancelText='Hủy'
         onCancel={handleCloseModalAdd}
         confirmLoading={isPostAssign}
         modalText={

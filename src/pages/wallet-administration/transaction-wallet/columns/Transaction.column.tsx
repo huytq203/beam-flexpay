@@ -2,7 +2,7 @@ import { UnifiedContentJournal } from "@type/apiResponseJournal";
 import dayjs from "dayjs";
 import { ColumnsType } from "antd/lib/table";
 import { Link, NavigateFunction } from "react-router-dom";
-import { ButtonComponent, TooltipComponent, TypographyText } from "@components/index";
+import { ButtonComponent, MaskText, TooltipComponent, TypographyText } from "@components/index";
 import { EyeFilled } from "@components/icons";
 import { CounterpartyType, CounterpartyTypeKey, PaymentMethodEnum,PaymentMethod, StatusKey, StatusType, TransactionKey, TransactionType, BankLabel, BankEnum } from "@pages/wallet-administration/transaction-wallet/constants/Transaction.constant";
 import { formatNumber } from "@utils/index";
@@ -26,12 +26,12 @@ const getColumn = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal
         render(value, record) {
             return (
                 <div className='text-start'>
-                    <p>Tạo: {dayjs(record.createdAt).format('DD/MM/YYYY HH:mm:ss')}</p>
+                    <p>Tạo: {dayjs.utc(record.createdAt).format('DD/MM/YYYY HH:mm:ss')}</p>
                     {record.postedAt && (
-                        <p className="text-green-600 text-[12px]">TC: {dayjs(record.postedAt).format('DD/MM/YYYY HH:mm:ss')}</p>
+                        <p className="text-green-600 text-[12px]">TC: {dayjs.utc(record.postedAt).format('DD/MM/YYYY HH:mm:ss')}</p>
                     )}
                     {record.archivedAt && (
-                        <p className="text-red-600 text-[12px]">Lưu trữ: {dayjs(record.archivedAt).format('DD/MM/YYYY HH:mm:ss')}</p>
+                        <p className="text-red-600 text-[12px]">Lưu trữ: {dayjs.utc(record.archivedAt).format('DD/MM/YYYY HH:mm:ss')}</p>
                     )}
                 </div>
             )
@@ -90,7 +90,7 @@ const getColumn = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal
         align: 'center',
         dataIndex: 'from',
         render(value, record) {
-            return <span className="font-medium text-gray-500">{BankLabel[value?.displayName as BankEnum]||value?.displayName}</span>
+            return <span className="font-medium text-gray-500">{BankLabel[value?.displayName as BankEnum]|| <MaskText value={value?.displayName} />}</span>
         },
     },
     {
@@ -98,7 +98,7 @@ const getColumn = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal
         align: 'center',
         dataIndex: 'to',
         render(value, record) {
-            return <span className="font-medium text-gray-500">{BankLabel[value?.displayName as BankEnum]||value?.displayName}</span>
+            return <span className="font-medium text-gray-500">{BankLabel[value?.displayName as BankEnum]|| <MaskText value={value?.displayName} />}</span>
         },
     },
     {

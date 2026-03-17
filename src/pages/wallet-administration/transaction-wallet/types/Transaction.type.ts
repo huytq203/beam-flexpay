@@ -7,7 +7,7 @@ export interface FormSearchValues {
     counterpartyUsername?: string
     bankCode?: string
     paymentMethod?: string
-    journalCode?: string
+    transactionCode?: string
     minAmount?: number
     maxAmount?: number
 }

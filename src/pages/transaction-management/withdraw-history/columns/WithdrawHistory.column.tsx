@@ -1,5 +1,5 @@
 import { EyeFilled } from '@components/icons'
-import { ButtonComponent, CopyableText, TooltipComponent } from '@components/index'
+import { ButtonComponent, CopyableText, MaskText, TooltipComponent } from '@components/index'
 import { PaymentMethod, PaymentMethodKey, StatusKey, StatusType } from '@pages/wallet-administration/transaction-wallet/constants/Transaction.constant'
 import { UnifiedContentJournal } from '@type/apiResponseJournal'
 import { formatNumber } from '@utils/index'
@@ -41,8 +41,9 @@ const getColumn = ({ onViewDetail }: ColumnProps): ColumnsType<UnifiedContentJou
         render(_, record) {
             const from = record.from
             return (
-                <div className="text-start">
-                    <p className="font-medium">{from?.displayName || from?.username || '--'}</p>
+                <div className="text-center">
+                    <MaskText value={from?.displayName } />
+                    {/* <p className="font-medium">{from?.displayName || from?.username || '--'}</p> */}
                     {/* <span className={`text-xs px-1.5 py-0.5 rounded ${from?.type === 'USER' ? 'text-violet-700 bg-violet-50 border border-violet-300' : 'text-gray-500 bg-gray-50 border border-gray-200'}`}>
                         {from?.type ?? '--'}
                     </span> */}

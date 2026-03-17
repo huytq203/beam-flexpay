@@ -94,19 +94,19 @@ export const getColumn = (): ColumnType<UnifiedContentJournal>[] => [
         title: 'Thời gian tạo',
         dataIndex: 'createdAt',
         align: 'center',
-        render: (value) => <TypographyText type="secondary">{dayjs.utc(value).local().format('DD/MM/YYYY HH:mm:ss')}</TypographyText>
+        render: (value) => <TypographyText type="secondary">{dayjs.utc(value).format('DD/MM/YYYY HH:mm:ss')}</TypographyText>
     },
-    {
-        title: 'Thời gian giao dịch',
-        dataIndex: 'transactionTime',
-        align: 'center',
-        render: (value) => <TypographyText type="secondary">{dayjs.utc(value).local().format('DD/MM/YYYY HH:mm:ss')}</TypographyText>
-    },
+    // {
+    //     title: 'Thời gian giao dịch',
+    //     dataIndex: 'transactionTime',
+    //     align: 'center',
+    //     render: (value) => <TypographyText type="secondary">{dayjs.utc(value).format('DD/MM/YYYY HH:mm:ss')}</TypographyText>
+    // },
     {
         title: 'Thời gian thành công',
-        dataIndex: 'processedAt',
+        dataIndex: 'postedAt',
         align: 'center',
-        render: (value) => <TypographyText type="secondary">{dayjs.utc(value).local().format('DD/MM/YYYY HH:mm:ss')}</TypographyText>
+        render: (value) => <TypographyText type="secondary">{dayjs.utc(value).format('DD/MM/YYYY HH:mm:ss')}</TypographyText>
     },
     {
         title: 'Trạng thái',

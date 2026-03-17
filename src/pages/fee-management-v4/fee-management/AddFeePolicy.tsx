@@ -237,7 +237,7 @@ const AddFeePolicy = () => {
                                     <Icons.FileDoneOutlined className='text-green-500 text-lg' />
                                 </div>
                                 <span className='text-[17px] font-bold text-gray-800 tracking-tight'>
-                                    2. Danh sách thành phần phí (Components)
+                                    2. Danh sách thành phần phí 
                                 </span>
                             </div>
                             <ButtonComponent

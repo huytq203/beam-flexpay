@@ -116,7 +116,7 @@ const FeeComponentManagement = () => {
         <div className='item3 bg-white rounded p-3'>
           <div className='header flex justify-between items-center'>
             <p className='text-[16px] font-semibold'>
-              2. Danh sách thành phần phí (Components)
+              2. Danh sách thành phần phí 
             </p>
             <ButtonComponent
               htmlType='button'

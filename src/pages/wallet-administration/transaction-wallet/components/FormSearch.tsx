@@ -21,7 +21,7 @@ const FormSearch = ({ handleSearch }: props) => {
             counterpartyUsername: '',
             bankCode: '',
             paymentMethod: '',
-            journalCode: '',
+            transactionCode: '',
             minAmount: undefined,
             maxAmount: undefined,
         }
@@ -39,7 +39,7 @@ const FormSearch = ({ handleSearch }: props) => {
             <form>
                 <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <FormInput control={formSearch.control} name='journalCode' label='Mã giao dịch' className='col-span-1' placeholder='Nhập mã giao dịch...' />
+                    <FormInput control={formSearch.control} name='transactionCode' label='Mã giao dịch' className='col-span-1' placeholder='Nhập mã giao dịch...' />
                     <FormSelect control={formSearch.control} name='transactionType' label='Loại giao dịch' className='col-span-1' options={mapEnumToSelectOptions(TransactionType)} />
                     <FormSelect control={formSearch.control} name='status' label='Trạng thái' className='col-span-1' options={mapEnumToSelectOptions(StatusType)} />
                     <FormInput control={formSearch.control} name='initiatorUsername' label='Người chuyển' className='col-span-1' placeholder='Username người chuyển...' />

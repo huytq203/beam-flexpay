@@ -31,7 +31,7 @@ export const getFeeComponentColumns = ({
       render: (_: any, __: any, index: number) => index + 1 // Assuming 'no' might not be in the data record itself or we can just use index
     },
     {
-      title: 'Loại (Type)',
+      title: 'Loại',
       dataIndex: 'componentType',
       key: 'componentType',
       render: (value: string) => getEnumLabel(value, componentTypeLabel)

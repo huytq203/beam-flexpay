@@ -1,4 +1,4 @@
-import { ButtonComponent } from '@components/index'
+import { ButtonComponent, MaskText } from '@components/index'
 import { FreezeItem } from '@type/freeze.type'
 import { formatCurrency } from '@utils/formatNumber'
 import { Tag } from 'antd'
@@ -45,7 +45,7 @@ export const Column = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeRow>
         key: 'customer',
         render: (_, record) => (
             <div>
-                <p className="font-medium">{record.ownerUsername ?? '--'}</p>
+                <MaskText value={record.ownerUsername} />
                 <p className="text-gray-500 text-xs">{record.ownerType ?? '--'}</p>
             </div>
         ),
