@@ -1,4 +1,5 @@
 import {
+  ButtonComponent,
   CardComponent,
   ModalComponent,
   Table
@@ -12,14 +13,14 @@ import DialogViewMembers from './components/DialogViewMembers'
 import useFetchDataRole from './hooks/useFetchDataRole'
 import useHandleRole from './hooks/useHandleRole'
 import { SkeletonButton, SkeletonInput, SkeletonTable } from '@components/ui/skeletons/Skeleton'
-
+import * as Icons from '@components/icons'
 export const PermissionManagement = () => {
   const fetchData = useFetchDataRole()
   const handle = useHandleRole(fetchData)
 
   return (
     <div className='flex flex-col gap-2'>
-      <CardComponent
+      {/* <CardComponent
         content={
           <>
             {fetchData.isLoading ? (
@@ -43,7 +44,26 @@ export const PermissionManagement = () => {
             )}
           </>
         }
-      />
+      /> */}
+       <CardComponent>
+              <div className='flex items-center gap-4 py-1'>
+                <div className='bg-green-50 p-3 rounded-xl flex items-center justify-center shadow-sm'>
+                  <Icons.ShieldCheckIcon size={28} weight="duotone" className='text-blue' />
+                </div>
+                <div>
+                  <h1 className='text-[16px] font-bold text-gray-800 m-0'>Quản lý nhóm quyền quản trị</h1>
+                  <p className='text-gray-500 text-[12px] m-0 leading-relaxed font-medium'>Quản lý thông tin nhóm quyền quản trị</p>
+                </div>
+                <div className='ml-auto'>
+                  <ButtonComponent 
+                    icon={<Icons.PlusOutlined />} 
+                    type='primary' 
+                    content='Thêm mới tài khoản' 
+                    onClick={() => handle.openModal('add', null)}
+                  />
+                </div>
+              </div>
+            </CardComponent>
       <CardComponent
         content={
           <>

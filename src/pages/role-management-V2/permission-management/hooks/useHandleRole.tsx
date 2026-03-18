@@ -3,7 +3,7 @@ import { useAppSelector } from '@hooks/hook'
 import { useLazyGetRoleByKeyQuery } from '@services/apiRole'
 import { useMessage } from '@hooks/useMessage'
 import { ModalType, SelectedRole } from '../types/PermissionManagement.type'
-import { PermissionManagementColumn } from '../columns/PermissionManagement.column'
+import { getPermissionManagementColumn } from '../columns/PermissionManagement.column'
 import useFetchDataRole from './useFetchDataRole'
 import { SearchFormData } from '../components/FormSearch'
 
@@ -56,7 +56,7 @@ const useHandleRole = (fetchHook: ReturnType<typeof useFetchDataRole>) => {
   )
 
   const column = useMemo(
-    () => PermissionManagementColumn({ openModal, currentUserRoles }),
+    () => getPermissionManagementColumn({ openModal, currentUserRoles }),
     [openModal, currentUserRoles]
   )
 

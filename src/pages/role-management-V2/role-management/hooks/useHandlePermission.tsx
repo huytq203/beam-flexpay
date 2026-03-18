@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react'
 import { useLazyGetPermissionByKeyQuery } from '@services/apiPermission'
 import { useMessage } from '@hooks/useMessage'
 import { ModalType, SelectedPermission } from '../types/RoleManagement.type'
-import { RoleManagementColumn } from '../columns/RoleManagement.column'
+import { getRoleManagementColumn } from '../columns/RoleManagement.column'
 import useFetchDataPermission from './useFetchDataPermission'
 
 type SearchFormData = {
@@ -63,7 +63,7 @@ const useHandlePermission = (fetchHook: ReturnType<typeof useFetchDataPermission
   )
 
   const column = useMemo(
-    () => RoleManagementColumn({ openModal }),
+    () => getRoleManagementColumn({ openModal }),
     [openModal]
   )
 

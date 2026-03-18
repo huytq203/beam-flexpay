@@ -58,7 +58,8 @@ export {
   PencilLineIcon,
   MagnifyingGlassIcon,
   BroomIcon,
-  FunnelIcon
+  FunnelIcon,
+  ShieldCheckIcon
 } from "@phosphor-icons/react";
 export {
   CornerDownRight,

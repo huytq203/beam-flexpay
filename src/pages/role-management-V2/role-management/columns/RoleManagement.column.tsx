@@ -9,7 +9,7 @@ interface Props {
   openModal: (type: ModalType, permission?: SelectedPermission | null) => void
 }
 
-export const RoleManagementColumn = ({
+export const getRoleManagementColumn = ({
   openModal
 }: Props): ColumnType<RoleDataItem>[] => [
     {
@@ -18,24 +18,24 @@ export const RoleManagementColumn = ({
       align: 'center',
       render: (value) => value || '--'
     },
-    {
-      title: 'Tên quyền',
-      dataIndex: 'name',
-      align: 'left',
-      render: (value) => translatePermissionName(value)
-    },
+    // {
+    //   title: 'Tên quyền',
+    //   dataIndex: 'name',
+    //   align: 'left',
+    //   render: (value) => translatePermissionName(value)
+    // },
     {
       title: 'Mã quyền',
       dataIndex: 'name',
       align: 'left',
       render: (value) => value || '--'
     },
-    {
-      title: 'Ngày khởi tạo',
-      dataIndex: 'date',
-      align: 'center',
-      render: (value) => value || '--'
-    },
+    // {
+    //   title: 'Ngày khởi tạo',
+    //   dataIndex: 'date',
+    //   align: 'center',
+    //   render: (value) => value || '--'
+    // },
     {
       title: 'Mô tả',
       dataIndex: 'description',

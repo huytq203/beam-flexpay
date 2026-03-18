@@ -1,13 +1,15 @@
 import {
   CardComponent,
   ModalComponent,
-  Table
+  Table,
+  ButtonComponent
 } from '@components/index'
 import FormSearch from './components/FormSearch'
 import DialogAddUser from './components/DialogAddUser'
 import DialogUserDetail from './components/DialogUserDetail'
 import DialogAssignRoles from './components/DialogAssignRoles'
 import useFetchDataUser from './hooks/useFetchDataUser'
+import * as Icons from '@components/icons'
 import useHandleUser from './hooks/useHandleUser'
 import { SkeletonButton, SkeletonInput, SkeletonTable } from '@components/ui/skeletons/Skeleton'
 
@@ -17,7 +19,7 @@ const UserManagement = () => {
 
   return (
     <div className='flex flex-col gap-2'>
-      <CardComponent
+      {/* <CardComponent
         content={
           <>
             {fetchData.isLoadingUser || fetchData.isLoadingRoles ? (
@@ -41,7 +43,26 @@ const UserManagement = () => {
             )}
           </>
         }
-      />
+      /> */}
+      <CardComponent>
+        <div className='flex items-center gap-4 py-1'>
+          <div className='bg-green-50 p-3 rounded-xl flex items-center justify-center shadow-sm'>
+            <Icons.UserCheckIcon size={28} weight="duotone" className='text-blue' />
+          </div>
+          <div>
+            <h1 className='text-[16px] font-bold text-gray-800 m-0'>Quản lý tài khoản Admin</h1>
+            <p className='text-gray-500 text-[12px] m-0 leading-relaxed font-medium'>Quản lý thông tin tài khoản, nhóm quyền và người dùng quản trị hệ thống</p>
+          </div>
+          <div className='ml-auto'>
+            <ButtonComponent 
+              icon={<Icons.PlusOutlined />} 
+              type='primary' 
+              content='Thêm mới tài khoản' 
+              onClick={() => handle.openModal('add', null)}
+            />
+          </div>
+        </div>
+      </CardComponent>
       <CardComponent
         content={
           <>

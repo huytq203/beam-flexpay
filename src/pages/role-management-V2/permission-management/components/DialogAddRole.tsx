@@ -75,12 +75,12 @@ const DialogAddRole = ({ role, onSuccess, onCancel }: Props) => {
               }
               placeholder='Mã nhóm quyền...'
             />
-            <FormTextArea
+            {/* <FormTextArea
               control={control}
               name='description'
               label='Mô tả'
               placeholder='Mô tả...'
-            />
+            /> */}
             <div className='flex justify-end gap-2 mt-4'>
               <ButtonComponent type='default' content='Hủy' onClick={onCancel} />
               <ButtonComponent

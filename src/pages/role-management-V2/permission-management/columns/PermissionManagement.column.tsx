@@ -16,12 +16,12 @@ interface Props {
   currentUserRoles?: string[]
 }
 
-export const PermissionManagementColumn = ({
+export const getPermissionManagementColumn = ({
   openModal,
   currentUserRoles = []
 }: Props): ColumnType<DataRoleItem>[] => [
     {
-      title: 'STT',
+      title: '#',
       dataIndex: 'no',
       width: 50,
       align: 'center'
@@ -32,8 +32,8 @@ export const PermissionManagementColumn = ({
       align: 'left',
       render: (text: string) => (
         <TooltipComponent title={RoleName[text] ?? text}>
-          <span className='inline-block max-x-[200px] overflow-hidden text-ellipsis whitespace-nowrap '>
-            {RoleName[text] ?? (text ? `${text.substring(0, 20)}...` : '--')}
+          <span className='inline-block max-w-[250px] overflow-hidden text-ellipsis whitespace-nowrap '>
+            {RoleName[text] ?? text ?? '--'}
           </span>
         </TooltipComponent>
       )
