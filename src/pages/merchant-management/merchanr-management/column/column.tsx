@@ -5,6 +5,7 @@ import { ButtonComponent, TooltipComponent } from '@components/index'
 import { EditOutlined, EyeOutlined, LockOutlined } from '@components/icons'
 import { StatusKey } from '@pages/wallet-administration/e-walletManagement/constants/Ewallet.constant'
 import StatusBadge from '@components/status-badge/StatusBadge'
+import { STATUS_CONFIG } from '../constants/Merchant.constant'
 
 interface MerchantColumnProps {
     onEdit: (id: string) => void
@@ -41,7 +42,7 @@ export const MerchantColumn = ({ onEdit, onView }: MerchantColumnProps): ColumnT
         title: 'Trạng thái',
         dataIndex: 'status',
         align: 'center',
-        render: (value: StatusKey) => <StatusBadge status={value} />,
+        render: (value: StatusKey) => <StatusBadge status={value} config={STATUS_CONFIG} />,
     },
     {
         title: 'Ngày tạo',
