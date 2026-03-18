@@ -8,16 +8,17 @@ interface MaskTextProps {
     /** Ký tự thay thế, mặc định '***' */
     mask?: string
     className?: string
+    active?: boolean
 }
 
 const MaskText: React.FC<MaskTextProps> = ({
+    active = true,
     value,
     visibleCount = 4,
     mask = '*******',
     className,
 }) => {
     const [visible, setVisible] = useState(false)
-
     if (!value) return <span className={className}>--</span>
 
     const masked =
@@ -25,6 +26,7 @@ const MaskText: React.FC<MaskTextProps> = ({
             ? `${mask}${value.slice(-visibleCount)}`
             : value
 
+    if (!active) return <span className="font-medium">{masked}</span>
     return (
         <span className={`inline-flex items-center gap-1 ${className ?? ''}`}>
             <span className="font-medium">{visible ? value : masked}</span>

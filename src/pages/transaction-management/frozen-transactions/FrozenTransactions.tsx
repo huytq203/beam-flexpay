@@ -2,7 +2,7 @@ import { CardComponent, DialogModal, Table } from '@components/index'
 import { SnowflakeIcon } from '@components/icons'
 import React from 'react'
 import FormSearch from './components/FormSearch'
-import { Column } from './columns/FrozenTransactions.column'
+import { getColumn } from './columns/FrozenTransactions.column'
 import useFrozenTransactions from './hooks/useFrozenTransactions'
 import DialogFreeze from './components/DialogFreeze'
 import { SkeletonSearchGroup, SkeletonTable } from '@components/ui/skeletons/Skeleton'
@@ -25,7 +25,7 @@ const FrozenTransactions = () => {
         handleCloseUnfreezeModal,
     } = useFrozenTransactions()
 
-    const columns = Column({ onRelease: handleOpenUnfreezeModal })
+    const columns = getColumn({ onRelease: handleOpenUnfreezeModal })
 
     return (
         <>

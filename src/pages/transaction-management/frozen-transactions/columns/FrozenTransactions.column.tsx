@@ -20,7 +20,7 @@ interface ColumnOptions {
     onRelease?: (record: FreezeRow) => void
 }
 
-export const Column = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeRow>[] => [
+export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeRow>[] => [
     {
         title: '#',
         align: 'center',
@@ -45,7 +45,7 @@ export const Column = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeRow>
         key: 'customer',
         render: (_, record) => (
             <div>
-                <MaskText value={record.ownerUsername} />
+                <MaskText active={true} value={record.ownerUsername} />
                 <p className="text-gray-500 text-xs">{record.ownerType ?? '--'}</p>
             </div>
         ),
