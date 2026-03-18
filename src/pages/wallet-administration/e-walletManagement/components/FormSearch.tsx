@@ -15,25 +15,38 @@ interface props {
 const FormSearch = ({ handleSearch }: props) => {
   const formSearch = useForm<FormSearchValues>()
   const { svg } = useSVG()
+
   const onSubmit: SubmitHandler<FormSearchValues> = (data) => {
     handleSearch(data)
   }
+  const handleReset = () => {
+    formSearch.reset()
+    handleSearch({})
+  }
   return (
-    <div>
+    <div className='space-y-3'>
       <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="col-span-1">
-          <FormInput control={formSearch.control} name='keyword' label='Từ khóa' placeholder='Từ khóa...' />
+          <FormInput control={formSearch.control} name='username' label='Người dùng' placeholder='Tên đăng nhập...' />
         </div>
         <div className="col-span-1">
           <FormSelect control={formSearch.control} name='status' options={mapEnumToSelectOptions(StatusLabel)} label='Trạng thái ví' />
         </div>
-        <div className="col-span-1">
+        {/* <div className="col-span-1">
           <FormSelect control={formSearch.control} name='kycStatus' options={[]} label='Trạng thái KYC' />
-        </div>
-        <div className="col-span-1 flex items-end">
+        </div> */}
+
+
+      </div>
+      <div className="flex gap-2 justify-end">
+        <div className="flex items-end justify-end">
           <ButtonComponent onClick={formSearch.handleSubmit(onSubmit)} className='w-full' content='Tìm kiếm' icon={svg('/icons.svg#hugeicons-search-01')} />
         </div>
+        <div className="flex items-end justify-end">
+          <ButtonComponent type='default' onClick={handleReset} className='w-full' content='Xóa bộ lọc' icon={<Icons.BroomIcon size={18} />} />
+        </div>
+
 
       </div>
     </div>

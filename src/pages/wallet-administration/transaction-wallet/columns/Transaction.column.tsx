@@ -26,12 +26,12 @@ const getColumn = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal
         render(value, record) {
             return (
                 <div className='text-start'>
-                    <p>Tạo: {dayjs.utc(record.createdAt).format('DD/MM/YYYY HH:mm:ss')}</p>
+                    <p>Tạo: {dayjs(record.createdAt).local().format('DD/MM/YYYY HH:mm:ss')}</p>
                     {record.postedAt && (
-                        <p className="text-green-600 text-[12px]">TC: {dayjs.utc(record.postedAt).format('DD/MM/YYYY HH:mm:ss')}</p>
+                        <p className="text-green-600 text-[12px]">TC: {dayjs(record.postedAt).local().format('DD/MM/YYYY HH:mm:ss')}</p>
                     )}
                     {record.archivedAt && (
-                        <p className="text-red-600 text-[12px]">Lưu trữ: {dayjs.utc(record.archivedAt).format('DD/MM/YYYY HH:mm:ss')}</p>
+                        <p className="text-red-600 text-[12px]">Lưu trữ: {dayjs(record.archivedAt).local().format('DD/MM/YYYY HH:mm:ss')}</p>
                     )}
                 </div>
             )

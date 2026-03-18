@@ -67,7 +67,7 @@ export interface Sort2 {
 
 
 export interface FormSearchValues {
-  keyword: string
-  status: string
-  kycStatus: string
+  username?: string
+  status?: string
+  kycStatus?: string
 }

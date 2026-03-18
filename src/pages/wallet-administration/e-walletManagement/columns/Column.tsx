@@ -29,7 +29,7 @@ interface ColumnOptions {
   handleGetFreeze?: () => void
 }
 
-export const Column = ({ openModal, handleGetFreeze }: ColumnOptions = {}): ColumnType<AcountItem>[] => {
+export const getColumn = ({ openModal, handleGetFreeze }: ColumnOptions = {}): ColumnType<AcountItem>[] => {
   const navigate = useNavigate()
 
   return [
@@ -52,22 +52,22 @@ export const Column = ({ openModal, handleGetFreeze }: ColumnOptions = {}): Colu
         </div>
       ),
     },
-    {
-      title: 'Thông tin liên hệ',
-      align: 'left',
-      render: (_, record) => (
-        <div>
-          <div className='text-gray-500 flex items-center gap-1'>
-            <EnvelopeIcon />
-            {(record as any).email ?? '--'}
-          </div>
-          <div className='text-gray-500 flex items-center gap-1'>
-            <PhoneIcon />
-            {(record as any).phone ?? '--'}
-          </div>
-        </div>
-      ),
-    },
+    // {
+    //   title: 'Thông tin liên hệ',
+    //   align: 'left',
+    //   render: (_, record) => (
+    //     <div>
+    //       <div className='text-gray-500 flex items-center gap-1'>
+    //         <EnvelopeIcon />
+    //         {(record as any).email ?? '--'}
+    //       </div>
+    //       <div className='text-gray-500 flex items-center gap-1'>
+    //         <PhoneIcon />
+    //         {(record as any).phone ?? '--'}
+    //       </div>
+    //     </div>
+    //   ),
+    // },
     {
       title: 'Số dư ví',
       align: 'right',
@@ -95,16 +95,16 @@ export const Column = ({ openModal, handleGetFreeze }: ColumnOptions = {}): Colu
         </div>
       ),
     },
-    {
-      title: 'Giới tính / CCCD',
-      align: 'center',
-      render: (_, record) => (
-        <div>
-          <div className='text-gray-500'>{(record as any).gioiTinh ?? '--'}</div>
-          <div className='text-gray-500'>{(record as any).cccd ?? '--'}</div>
-        </div>
-      ),
-    },
+    // {
+    //   title: 'Giới tính / CCCD',
+    //   align: 'center',
+    //   render: (_, record) => (
+    //     <div>
+    //       <div className='text-gray-500'>{(record as any).gioiTinh ?? '--'}</div>
+    //       <div className='text-gray-500'>{(record as any).cccd ?? '--'}</div>
+    //     </div>
+    //   ),
+    // },
     {
       title: 'Trạng thái',
       align: 'center',

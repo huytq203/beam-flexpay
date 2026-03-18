@@ -7,7 +7,7 @@ import { ReactNode } from "react";
 interface FormInputProps<T extends FieldValues> {
   name: Path<T>;
   control: Control<T>;
-  label?: string|ReactNode;
+  label?: string | ReactNode;
   placeholder?: string;
   className?: string; // For the wrapper (grid positioning)
   inputClassName?: string; // For the input element itself
@@ -21,6 +21,8 @@ interface FormInputProps<T extends FieldValues> {
     visibilityToggle?: boolean;
   };
   [key: string]: any;
+  trim?: boolean;
+  trimOn?: "change" | "blur";
 }
 
 export function FormInput<T extends FieldValues>({
@@ -35,6 +37,8 @@ export function FormInput<T extends FieldValues>({
   classNameLable = 'font-medium',
   prefix,
   passwordConfig,
+  trim = true,
+  trimOn = "blur",
   ...rest
 }: FormInputProps<T>) {
   return (
@@ -78,9 +82,21 @@ export function FormInput<T extends FieldValues>({
             className={inputClassName} // This goes to Input element
             prefix={prefix}
             onChange={(e: any) => {
-              field.onChange(e);
+              let value = e.target.value;
+
+              if (trim && trimOn === "change") {
+                value = value.trim();
+              }
+
+              field.onChange(value);
+
               if (customOnChange) {
                 customOnChange(e);
+              }
+            }}
+            onBlur={(e: any) => {
+              if (trim && trimOn === "blur") {
+                field.onChange(e.target.value.trim());
               }
             }}
           />

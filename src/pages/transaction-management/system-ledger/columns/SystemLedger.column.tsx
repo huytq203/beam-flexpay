@@ -2,12 +2,12 @@ import { ColumnsType } from "antd/lib/table";
 import { LedgerEntry } from "../types/SystemLedger.type";
 import dayjs from "dayjs";
 import { Link, NavigateFunction } from "react-router-dom";
-import { ButtonComponent, TooltipComponent } from "@components/index";
+import { ButtonComponent, TooltipComponent, TypographyText } from "@components/index";
 import { EyeFilled } from "@components/icons";
 import { formatCurrency } from "@utils/formatNumber";
 import { DirectionConstants, DirectionKey, GLCodeLabels, StatusKey, StatusLabel } from "../constants/SystemLedger.constant";
 
-const SystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<LedgerEntry> => [
+const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<LedgerEntry> => [
     {
         title: '#',
         dataIndex: 'no',
@@ -23,12 +23,11 @@ const SystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Colum
             return (
                 <div>
                     {record.transaction?.transactionCode ? (
-                        <Link
-                            to={`/wallet-administration/system-ledger/${record.id}`}
-                            className="text-blue-500 font-bold underline underline-offset-2"
-                        >
-                            {record.transaction.transactionCode}
-                        </Link>
+                        <p className="font-medium text-orange-600 ">
+                            <TypographyText copyable={{ text: record.transaction.transactionCode }}>
+                                {record.transaction.transactionCode}
+                            </TypographyText>
+                        </p>
                     ) : (
                         <span>--</span>
                     )}
@@ -146,4 +145,4 @@ const SystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Colum
     // },
 ]
 
-export default SystemLedgerColumn
+export default getSystemLedgerColumn

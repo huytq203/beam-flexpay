@@ -50,6 +50,8 @@ const FormAddPolicy = ({
       >
         <div className='grid grid-cols-12 gap-2'>
           <FormInput
+            trim
+            trimOn="blur"
             name='name'
             control={control}
             label={!isCreate ? 'Tên chính sách phí' : <span>Tên chính sách phí <span className='text-red'>(*)</span> </span>}

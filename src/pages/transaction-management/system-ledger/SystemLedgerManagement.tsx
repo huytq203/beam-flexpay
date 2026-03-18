@@ -1,7 +1,7 @@
 import { CardComponent, Table, TooltipComponent } from '@components/index'
 import React from 'react'
 import FormSearch from './components/FormSearch'
-import SystemLedgerColumn from './columns/SystemLedger.column'
+import getSystemLedgerColumn from './columns/SystemLedger.column'
 import useSystemLedger from './hooks/useSystemLedger'
 import { LedgerEntry } from './types/SystemLedger.type'
 import dayjs from 'dayjs'
@@ -23,7 +23,7 @@ const SystemLedgerManagement = () => {
     isFetching
   } = useSystemLedger()
 
-  const columns = SystemLedgerColumn({ navigate })
+  const columns = getSystemLedgerColumn({ navigate })
 
   // Handle expand - chỉ cho phép mở 1 row tại 1 thời điểm
   const handleExpand = (expanded: boolean, record: LedgerEntry) => {

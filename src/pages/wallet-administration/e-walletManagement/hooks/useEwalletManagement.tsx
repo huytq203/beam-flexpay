@@ -2,7 +2,7 @@ import usePagination from '@hooks/usePagination'
 import { AcountItem, FormSearchValues } from '@pages/wallet-administration/e-walletManagement/types/ResponseWalletAccount.type'
 import { useGetAccountQuery } from '@services/apiWalletAccount.api'
 import { useState } from 'react'
-import { Column } from '../columns/Column'
+import { getColumn } from '../columns/Column'
 import { useLazyGetFreezesQuery } from '@services/apiFreezes'
 
 type ModalType = 'freeze' | 'unfreeze' | 'lock' | 'unlock' | null
@@ -49,7 +49,7 @@ const useEwalletManagement = () => {
     no: (page - 1) * size + index + 1,
   }))
 
-  const column = Column({ openModal})
+  const column = getColumn({ openModal})
 
   return {
     column,

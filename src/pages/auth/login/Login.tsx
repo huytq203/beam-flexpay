@@ -166,6 +166,8 @@ const LoginFormInside = () => {
             <form onSubmit={handleSubmit(onFinish)} className="login-form-fields flex flex-col gap-4">
 
                 <FormInput
+                    trim
+                    trimOn="blur"
                     inputClassName="w-full !h-[42px] !rounded-[10px] !text-[13px] !bg-gray-50/80 hover:!bg-white focus:!bg-white !transition-colors !duration-200 !border-gray-200"
                     control={control}
                     name="username"
