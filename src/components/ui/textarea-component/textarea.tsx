@@ -9,7 +9,7 @@ interface Props {
 }
 
 const TextAreaComponent = React.forwardRef(({ ...rest }: Props, ref: any) => {
-  return <TextArea ref={ref} {...rest} />
+  return <TextArea ref={ref} {...rest}  />
 })
 
 export default TextAreaComponent

@@ -12,6 +12,8 @@ interface FormTextAreaProps<T extends FieldValues> {
   className?: string;
   disabled?: boolean;
   [key: string]: any;
+  trim?: boolean;
+  trimOn?: "change" | "blur";
 }
 
 export function FormTextArea<T extends FieldValues>({
@@ -23,6 +25,8 @@ export function FormTextArea<T extends FieldValues>({
   className = "col-span-12 flex flex-col",
   disabled,
   classNameLable = 'font-medium',
+  trim = true,
+  trimOn = "blur",
   ...rest
 }: FormTextAreaProps<T>) {
   return (
@@ -40,6 +44,19 @@ export function FormTextArea<T extends FieldValues>({
           placeholder={placeholder}
           rows={rows}
           disabled={disabled}
+          onChange={(e: any) => {
+            let value = e.target.value;
+
+            if (trim && trimOn === "change") {
+              value = value.trim();
+            }
+            field.onChange(value);
+          }}
+          onBlur={(e: any) => {
+            if (trim && trimOn === "blur") {
+              field.onChange(e.target.value.trim());
+            }
+          }}
         />
       )}
     />
