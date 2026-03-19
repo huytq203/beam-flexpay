@@ -29,6 +29,7 @@ export interface UnifiedContentJournal {
   createdAt: string
   postedAt: string | null
   archivedAt: string | null
+  sourceDomain: string
 }
 
 export interface DataUnifiedJournal {

@@ -10,20 +10,20 @@ const useDetailUser = () => {
 
 
   const { data: getAccountById } = useGetAccountByIdQuery(id)
-  const ownerUsername=getAccountById?.data?.ownerUsername
+  const ownerUsername=getAccountById?.ownerUsername
 
   const payload={
     keyword:ownerUsername,
   }
   const {data:getEKYCById}=useGetEKYCSearchQuery(payload,{skip:!ownerUsername})
-
+  const linkedBanks=getAccountById?.linkedBanks
   
-
   return {
     activeKey,
     setActiveKey,
     getAccountById,
-    getEKYCById
+    getEKYCById,
+    linkedBanks
   }
 }
 

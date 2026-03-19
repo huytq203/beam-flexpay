@@ -66,31 +66,33 @@ const DetailUser = () => {
 
 
 
-  const { setActiveKey, activeKey, getAccountById, getEKYCById } = useDetailUser()
-  const ownerType = getAccountById?.data?.ownerType;
+  const { setActiveKey, activeKey, getAccountById, getEKYCById ,linkedBanks} = useDetailUser()
+  const ownerType = getAccountById?.ownerType;
   const dataEKYC = getEKYCById?.content?.[0]
 
 
   const content = useMemo(() => {
+    if (!ownerType) return null
     const tabContent = TAB_CONTENT_MAP[activeKey]?.[ownerType]
     if (!tabContent) return null
     if (typeof tabContent === 'function') {
       // Truyền nhiều data sources vào đây khi cần
       return tabContent({
-        accountData: getAccountById?.data,
+        accountData: getAccountById,
         ekycData: dataEKYC,
+        linkedBanks:linkedBanks,
         // transactionData: getTransactions?.data,
         // bankAccountData: getBankAccounts?.data,
       })
     }
     return tabContent
-  }, [activeKey, ownerType, getAccountById?.data, dataEKYC])
+  }, [activeKey, ownerType, getAccountById, dataEKYC])
 
   return (
     <div>
       <CardComponent
         className='mb-3'
-        content={<InforUser data={getAccountById?.data} dataEKYC={dataEKYC} />}
+        content={<InforUser data={getAccountById} dataEKYC={dataEKYC} />}
       />
       <div className='px-5  bg-white rounded-md'>
         <TabComponent

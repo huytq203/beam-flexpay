@@ -1,8 +1,12 @@
 import { ButtonComponent, CardComponent, Table } from '@components/index'
 import React from 'react'
 import { Column } from './configs/AccountBank.column'
+import { LinkedBank } from '@type/responseAccountWallet'
 
-const AccountBankBusiness = () => {
+interface Props{
+  linkedBanks?:LinkedBank[]
+}
+const AccountBankBusiness = ( {linkedBanks}: Props ) => {
   const column = Column()
   return (
     <div>

@@ -82,3 +82,13 @@ export const BankLabel: Record<BankEnum, string> = {
   [BankEnum.VCB]: 'Vietcombank',
   [BankEnum.MB]: 'MB Bank',
 } as const;
+
+export enum SourceDomain {
+  EWALLET = 'EWALLET',
+  
+} 
+
+export const SourceDomainLabel: Record<SourceDomain, string> = {
+  [SourceDomain.EWALLET]: 'Ví điện tử',
+
+} as const;

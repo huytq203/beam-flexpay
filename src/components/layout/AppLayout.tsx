@@ -5,8 +5,8 @@ import { useAppDispatch, useAppSelector } from '@hooks/hook'
 import useNavigationEw from '@hooks/useNavigation'
 import { savePermissions } from '@slices/authSlice'
 import { useBoolean, useUpdate } from 'ahooks'
-import { Col, Layout, Menu, MenuProps, Row, Drawer, Grid } from 'antd'
-import React, { useEffect, useMemo, useState } from 'react'
+import { Col, Layout, Menu, MenuProps, Row, Drawer, Grid, Spin } from 'antd'
+import React, { useEffect, useMemo, useState, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import EmployeePassword from './components/EmployeePassword'
@@ -237,7 +237,9 @@ function AppLayout() {
             <NavProfile />
           </Header>
           <Content className='app-content'>
-            <Outlet />
+            <Suspense fallback={<div className="flex w-full h-full justify-center mt-12"><Spin size="large" /></div>}>
+              <Outlet />
+            </Suspense>
           </Content>
         </Layout>
       </Layout>

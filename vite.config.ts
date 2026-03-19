@@ -47,12 +47,20 @@ export default defineConfig(({ mode }) => {
     defineEnv['import.meta.env.VITE_API_WALLETCORE'] = JSON.stringify(env.VITE_API_WALLETCORE?.replace(apiTarget, '/proxy-api'))
     defineEnv['import.meta.env.VITE_API_MERCHANT'] = JSON.stringify(env.VITE_API_MERCHANT?.replace(apiTarget, '/proxy-api'))
   }
-
+  const ReactCompilerConfig = { /* options */ };
   return {
     define: defineEnv,
     base: '/',
     plugins: [
-      react(),
+      react(
+          {
+          babel: {
+            plugins: [
+              ["babel-plugin-react-compiler", ReactCompilerConfig],
+            ],
+          },
+        }
+      ),
       svgr(),
       VitePWA({
         registerType: 'autoUpdate',
@@ -100,7 +108,7 @@ export default defineConfig(({ mode }) => {
         }
       }
     },
-    resolve: {
+    resolve: {  
       alias: [
         {
           find: '@assets',

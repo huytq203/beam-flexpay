@@ -19,12 +19,7 @@ interface Props {
 const useFetchData = ({ ownerId, initiatorUsername, searchParams }: Props) => {
     const {  page, size, setPage, setPageSize } = usePagination()
 
-    const payload = React.useMemo(() => ({
-        ownerId: ownerId,
-        page:page,
-        size:size,
-        ...searchParams,
-    }), [ownerId, page, size, searchParams])
+
     const payload2 = React.useMemo(() => ({
         initiatorUsername: initiatorUsername,
         page:page,
@@ -32,18 +27,8 @@ const useFetchData = ({ ownerId, initiatorUsername, searchParams }: Props) => {
         ...searchParams,
     }), [initiatorUsername, page, size, searchParams])
 
-    const { data: dataTransaction, isLoading: isLoadingGetTransaction } = useGetTransactionQuery(payload, {
-        skip: !ownerId
-    })
 
     const {data:dataUnified,isLoading:isLoadingGetUnified}=useGetUnifiedQuery(payload2)
-    const dataSource = React.useMemo(() => {
-        return dataTransaction?.content?.map((item, index) => ({
-            no: (page - 1) * size + index + 1,
-            ...item,
-            key: item.id,
-        }))
-    }, [dataTransaction])
 
     const dataSourceUnified = React.useMemo(() => {
         return dataUnified?.content?.map((item, index) => ({
@@ -54,10 +39,9 @@ const useFetchData = ({ ownerId, initiatorUsername, searchParams }: Props) => {
     }, [dataUnified])
     console.log(dataSourceUnified)
     return {
-        dataTransaction,
-        isLoadingGetTransaction,
+        isLoadingGetUnified,
+        dataUnified,
         dataSourceUnified,
-        dataSource,
         page,
         size,
         setPage,

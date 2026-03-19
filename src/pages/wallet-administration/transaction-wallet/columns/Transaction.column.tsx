@@ -4,7 +4,7 @@ import { ColumnsType } from "antd/lib/table";
 import { Link, NavigateFunction } from "react-router-dom";
 import { ButtonComponent, MaskText, TooltipComponent, TypographyText } from "@components/index";
 import { EyeFilled } from "@components/icons";
-import { CounterpartyType, CounterpartyTypeKey, PaymentMethodEnum,PaymentMethod, StatusKey, StatusType, TransactionKey, TransactionType, BankLabel, BankEnum } from "@pages/wallet-administration/transaction-wallet/constants/Transaction.constant";
+import { CounterpartyType, CounterpartyTypeKey, PaymentMethodEnum,PaymentMethod, StatusKey, StatusType, TransactionKey, TransactionType, BankLabel, BankEnum, SourceDomain, SourceDomainLabel } from "@pages/wallet-administration/transaction-wallet/constants/Transaction.constant";
 import { formatNumber } from "@utils/index";
 import { PATHS } from "@constants/pathConstant";
 
@@ -81,6 +81,19 @@ const getColumn = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal
             return (
                 <div className='text-start'>
                     <p className="">{PaymentMethod[typeKey] ?? record.paymentMethod ?? '--'}</p>
+                </div>
+            )
+        },
+    },
+    {
+        title: 'Nguồn',
+        dataIndex: 'sourceDomain',
+        align: 'center',
+        render(value, record) {
+            const typeKey = record.sourceDomain as SourceDomain;
+            return (
+                <div className='text-start'>
+                    <p className="">{SourceDomainLabel[typeKey] ?? record.sourceDomain ?? '--'}</p>
                 </div>
             )
         },

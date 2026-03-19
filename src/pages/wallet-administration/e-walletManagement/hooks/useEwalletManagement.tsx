@@ -1,9 +1,10 @@
 import usePagination from '@hooks/usePagination'
 import { AcountItem, FormSearchValues } from '@pages/wallet-administration/e-walletManagement/types/ResponseWalletAccount.type'
 import { useGetAccountQuery } from '@services/apiWalletAccount.api'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { getColumn } from '../columns/Column'
 import { useLazyGetFreezesQuery } from '@services/apiFreezes'
+import { useNavigate } from 'react-router-dom'
 
 type ModalType = 'freeze' | 'unfreeze' | 'lock' | 'unlock' | null
 
@@ -21,6 +22,7 @@ const useEwalletManagement = () => {
   const [filter, setFilter] = useState({})
   const [modalType, setModalType] = useState<ModalType>(null)
   const [selectedAccount, setSelectedAccount] = useState<SelectedAccount | null>(null)
+  const navigate = useNavigate()
 
   const payload={
     page,
@@ -44,12 +46,12 @@ const useEwalletManagement = () => {
     setSelectedAccount(null)
   }
 
-  const dataSource = getAccount?.data?.content.map((item: AcountItem, index: number) => ({
+  const dataSource = useMemo(() => getAccount?.content.map((item: AcountItem, index: number) => ({
     ...item,
     no: (page - 1) * size + index + 1,
-  }))
+  })), [getAccount])
 
-  const column = getColumn({ openModal})
+  const column = getColumn({ openModal, navigate })
 
   return {
     column,

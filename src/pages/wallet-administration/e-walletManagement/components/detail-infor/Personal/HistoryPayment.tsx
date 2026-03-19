@@ -12,7 +12,7 @@ interface Props {
 }
 const HistoryPayment = ({ ownerId, initiatorUsername }: Props) => {
   const [searchParams, setSearchParams] = useState<any>({})
-  const { dataTransaction, isLoadingGetTransaction, dataSource, page, size, setPage, setPageSize,dataSourceUnified } = useFetchData({ ownerId, initiatorUsername, searchParams })
+  const {page, size, setPage, setPageSize,dataSourceUnified,  isLoadingGetUnified,  dataUnified, } = useFetchData({ ownerId, initiatorUsername, searchParams })
 
   const handleSearch = (data: any) => {
     const formattedData = {
@@ -34,7 +34,7 @@ const HistoryPayment = ({ ownerId, initiatorUsername }: Props) => {
 
       <CardComponent className='mt-3' content={<><HistoryFormSearch onSearch={handleSearch} /></>} />
       <CardComponent className='mt-3' content={
-        isLoadingGetTransaction ? (
+        isLoadingGetUnified ? (
           <SkeletonTable columns={column?.length || 5} rows={size || 5} />
         ) : (
           <Table
@@ -45,7 +45,7 @@ const HistoryPayment = ({ ownerId, initiatorUsername }: Props) => {
               current: page,
               showSizeChanger: true,
               pageSize: size,
-              total: dataTransaction?.totalElements,
+              total: dataUnified?.totalElements,
               onChange: (page, pageSize) => {
                 setPage(page)
                 setPageSize(pageSize)

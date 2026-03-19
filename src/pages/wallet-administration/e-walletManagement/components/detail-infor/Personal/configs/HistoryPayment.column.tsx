@@ -4,7 +4,7 @@ import React from 'react'
 import { StatusKey, TransactionType, TransactionKey, TransactionEnum, TransactionLabel, STATUS_CONFIG, BankLabel, BankEnum } from '../types/HistoryPayment.type'
 import dayjs from 'dayjs'
 import { formatNumber } from '@utils/formatNumber'
-import { TagComponent } from '@components/index'
+import { MaskText, TagComponent } from '@components/index'
 import { TypographyText } from '@components/index'
 import { UnifiedContentJournal } from '@type/apiResponseJournal'
 
@@ -49,13 +49,13 @@ export const getColumn = (): ColumnType<UnifiedContentJournal>[] => [
         title: 'Người chuyển',
         dataIndex: 'from',
         align: 'left',
-        render: (value) => <TypographyText strong>{BankLabel[value?.displayName as BankEnum]||value?.displayName}</TypographyText>
+        render: (value) => <TypographyText strong>{BankLabel[value?.displayName as BankEnum]|| <MaskText value={value?.displayName} />}</TypographyText>
     },
     {
         title: 'Người nhận',
         dataIndex: 'to',
         align: 'left',
-        render: (value) => <TypographyText strong >{BankLabel[value?.displayName as BankEnum]||value?.displayName}</TypographyText>
+        render: (value) => <TypographyText strong >{BankLabel[value?.displayName as BankEnum]|| <MaskText value={value?.displayName} />}</TypographyText>
     },
     {
         title: 'Số tiền',

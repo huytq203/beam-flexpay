@@ -35,7 +35,7 @@ import {
 } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import _ from 'lodash'
-import moment from 'moment'
+// import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -187,15 +187,15 @@ function TransactionAccountingConfiguration() {
       dataIndex: 'partnerName',
       render: (_, record) => record?.partner?.name ?? '-'
     },
-    {
-      align: 'center',
-      title: t('partner.updatedDate'),
-      dataIndex: 'updatedAt',
-      render: (_, record) =>
-        record?.updatedAt
-          ? moment(new Date(record?.updatedAt)).format(TimeFormat).toString()
-          : '-'
-    },
+    // {
+    //   align: 'center',
+    //   title: t('partner.updatedDate'),
+    //   dataIndex: 'updatedAt',
+    //   render: (_, record) =>
+    //     record?.updatedAt
+    //       ? moment(new Date(record?.updatedAt)).format(TimeFormat).toString()
+    //       : '-'
+    // },
     {
       align: 'center',
       title: t('partner.status'),

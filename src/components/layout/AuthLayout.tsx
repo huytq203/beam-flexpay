@@ -1,6 +1,7 @@
 import { useAppSelector } from '@hooks/hook'
-import { useEffect, useRef } from 'react'
+import { Suspense, useEffect, useRef } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Spin } from 'antd'
 import gsap from 'gsap'
 import { PATHS } from '@constants/pathConstant'
 import './style.scss'
@@ -83,7 +84,9 @@ function AuthLayout() {
         ref={formRef}
         className="flex-1 min-w-[320px] md:min-w-[420px] flex items-center justify-center overflow-y-auto px-4 py-6 md:px-8 bg-white"
       >
-        <Outlet />
+        <Suspense fallback={<Spin size="large" />}>
+          <Outlet />
+        </Suspense>
       </div>
     </div>
   )

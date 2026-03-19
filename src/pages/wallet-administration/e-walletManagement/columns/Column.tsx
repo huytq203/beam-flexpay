@@ -27,10 +27,10 @@ interface SelectedAccount {
 interface ColumnOptions {
   openModal?: (type: ModalType, account: SelectedAccount) => void
   handleGetFreeze?: () => void
+  navigate: ReturnType<typeof useNavigate>
 }
 
-export const getColumn = ({ openModal, handleGetFreeze }: ColumnOptions = {}): ColumnType<AcountItem>[] => {
-  const navigate = useNavigate()
+export const getColumn = ({ openModal, handleGetFreeze, navigate }: ColumnOptions): ColumnType<AcountItem>[] => {
 
   return [
     {

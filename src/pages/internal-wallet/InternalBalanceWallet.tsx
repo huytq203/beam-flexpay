@@ -32,7 +32,7 @@ import {
   TimeRangePickerProps
 } from 'antd'
 import Table, { ColumnsType } from 'antd/es/table'
-import moment from 'moment'
+// import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import InternalWalletTransactionModal from './InternalWalletTransactionModal'
@@ -111,16 +111,16 @@ function InternalBalanceWallet() {
         return moneyInputFormatter(value)
       }
     },
-    {
-      title: t('partner.updatedDate'),
-      key: 'updatedDate',
-      render: (value, record, index) =>
-        record?.updatedAt
-          ? moment(new Date(record?.updatedAt))
-              .format(FullFormatTime)
-              .toString()
-          : '-'
-    },
+    // {
+    //   title: t('partner.updatedDate'),
+    //   key: 'updatedDate',
+    //   render: (value, record, index) =>
+    //     // record?.updatedAt
+    //     //   ? moment(new Date(record?.updatedAt))
+    //     //       .format(FullFormatTime)
+    //     //       .toString()
+    //     //   : '-'
+    // },
     {
       title: t('internalBalanceWallet.status'),
       dataIndex: 'active',

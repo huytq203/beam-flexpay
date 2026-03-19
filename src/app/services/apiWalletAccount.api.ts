@@ -1,5 +1,6 @@
 import { apiWalletCore } from "@services/apiService"
 import { ResponseType } from "@type/api"
+import { ContentAccountWallet, DataAccountWallet } from "@type/responseAccountWallet"
 
 export const apiEWallet = apiWalletCore.injectEndpoints({
     endpoints: (build) => ({
@@ -9,6 +10,7 @@ export const apiEWallet = apiWalletCore.injectEndpoints({
                 params: params,
                 method: 'GET'
             }),
+            transformResponse: (res: ResponseType<DataAccountWallet>) => res.data,
             providesTags: ['Wallet'],
         }),
         getAccountById: build.query({
@@ -16,6 +18,7 @@ export const apiEWallet = apiWalletCore.injectEndpoints({
                 url: `/wallet/accounts/${id}`,
                 method: 'GET'
             }),
+            transformResponse: (res: ResponseType<ContentAccountWallet>) => res.data,
             providesTags: ['Wallet'],
         }),
          postUnfreeze: build.mutation({

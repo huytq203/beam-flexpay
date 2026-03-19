@@ -10,4 +10,5 @@ export interface FormSearchValues {
     transactionCode?: string
     minAmount?: number
     maxAmount?: number
+    sourceDomain?: string
 }
