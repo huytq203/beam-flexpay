@@ -22,34 +22,34 @@ const FormFieldAssign = React.memo(({ control, setValue, isCreate }: FormFieldAs
   // api database
   const { data: dataBank } = useGetBankQuery({})
 
-  const applyType = useWatch({ control, name: 'applyType' })
-  const customerGroup = useWatch({ control, name: 'customerGroup' })
+  // const applyType = useWatch({ control, name: 'applyType' })
+  // const customerGroup = useWatch({ control, name: 'customerGroup' })
 
-  // logic sync applyType when data is filled
-  useEffect(() => {
-    if (!setValue) return
-    if (customerGroup && applyType !== '1') {
-      setValue('applyType', '1')
-    } 
-  }, [customerGroup, setValue])
+  // // logic sync applyType when data is filled
+  // useEffect(() => {
+  //   if (!setValue) return
+  //   if (customerGroup && applyType !== '1') {
+  //     setValue('applyType', '1')
+  //   } 
+  // }, [customerGroup, setValue])
 
-  // logic clear field when applyType change
-  useEffect(() => {
-    if (!setValue) return
+  // // logic clear field when applyType change
+  // useEffect(() => {
+  //   if (!setValue) return
 
-  if (applyType === '0') {
-      setValue('customerGroup', undefined)
-    }
-  }, [applyType, setValue])
+  // if (applyType === '0') {
+  //     setValue('customerGroup', undefined)
+  //   }
+  // }, [applyType, setValue])
 
-  const handleChangeApplyType = (val: string) => {
-    setValue?.('applyType', val)
-  }
+  // const handleChangeApplyType = (val: string) => {
+  //   setValue?.('applyType', val)
+  // }
   return (
     <div>
-      <div className='grid grid-cols-1 md:grid-cols-12 gap-2'>
+      <div className='grid grid-cols-1 md:grid-cols-5 gap-2'>
 
-        <FormSelect
+        {/* <FormSelect
           control={control}
           name='applyType'
           label={<span>Đối tượng áp dụng <span className='text-red-500'>*</span></span>}
@@ -65,10 +65,10 @@ const FormFieldAssign = React.memo(({ control, setValue, isCreate }: FormFieldAs
           
           ]}
           onChange={handleChangeApplyType}
-        />
+        /> */}
 
 
-        <FormInput
+        {/* <FormInput
           type='text'
           control={control}
           name='customerGroup'
@@ -76,9 +76,9 @@ const FormFieldAssign = React.memo(({ control, setValue, isCreate }: FormFieldAs
           label={<span>Tài khoản/Nhóm khách hàng {applyType == '1' && <span className='text-red-500'>*</span>}</span>}
           className={isCreate ? 'col-span-6' : 'col-span-12'}
           disabled={applyType == '0' || !applyType ? true : false}
-        />
+        /> */}
 
-{/* 
+        {/* 
         <FormSelect
           control={control}
           name='customerGroup'
@@ -98,7 +98,7 @@ const FormFieldAssign = React.memo(({ control, setValue, isCreate }: FormFieldAs
             }))
           ]}
           label={<span>Ngân hàng <span className='text-red-500'>*</span></span>}
-          className={isCreate ? 'col-span-6' : 'col-span-12'}
+          className={'col-span-1'}
         />
 
         <>
@@ -107,21 +107,21 @@ const FormFieldAssign = React.memo(({ control, setValue, isCreate }: FormFieldAs
             name='serviceType'
             options={mapEnumToSelectOptions(serviceType)}
             label={<span>Loại giao dịch <span className='text-red-500'>*</span></span>}
-            className={isCreate ? 'col-span-6' : 'col-span-12'}
+            className={'col-span-1'}
           />
           <FormSelect
             control={control}
             name='paymentMethod'
             options={mapEnumToSelectOptions(paymentMethodType)}
             label={<span>Phương thức giao dịch </span>}
-            className={isCreate ? 'col-span-6' : 'col-span-12'}
+            className={'col-span-1'}
           />
           <FormSelect
             control={control}
             name='cardType'
             options={mapEnumToSelectOptions(cardTypeType)}
             label={<span>Loại thẻ </span>}
-            className={isCreate ? 'col-span-6' : 'col-span-12'}
+            className={'col-span-1'}
             hidden={isCreate}
             classNameLable={isCreate ? 'hidden' : 'font-medium'}
           />
@@ -134,7 +134,7 @@ const FormFieldAssign = React.memo(({ control, setValue, isCreate }: FormFieldAs
           name='status'
           options={mapEnumToSelectOptions(statusType)}
           label={<span>Trạng thái <span className='text-red-500'>*</span></span>}
-          className={isCreate ? 'col-span-6' : 'col-span-12'}
+          className={'col-span-1'}
         />
         {/* <FormDatePicker
           control={control}
