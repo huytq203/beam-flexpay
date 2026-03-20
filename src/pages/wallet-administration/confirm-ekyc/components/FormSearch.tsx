@@ -23,8 +23,8 @@ const FormSearch = ({ onSearch, onReset }: FormSearchProps) => {
         const payload: EKYCFilterType = {
             keyword: data.keyword || undefined,
             status: data.status || undefined,
-            createdFrom: data.createdFrom ? dayjs(data.createdFrom).toISOString() : undefined,
-            createdTo: data.createdTo ? dayjs(data.createdTo).toISOString() : undefined,
+            createdFrom: data.createdFrom ? dayjs.utc(data.createdFrom).format('YYYY-MM-DD HH:mm:ss') : undefined,
+            createdTo: data.createdTo ? dayjs.utc(data.createdTo).format('YYYY-MM-DD HH:mm:ss') : undefined,
         }
         onSearch(payload)
     })
@@ -57,14 +57,14 @@ const FormSearch = ({ onSearch, onReset }: FormSearchProps) => {
                         control={formSearch.control}
                         name='createdFrom'
                         className='col-span-1'
-                        label='Từ ngày'
+                        label='Ngày tạo từ'
                         showTime
                     />
                     <FormDatePicker
                         control={formSearch.control}
                         name='createdTo'
                         className='col-span-1'
-                        label='Đến ngày'
+                        label='Ngày tạo đến'
                         showTime
                     />
                 </div>

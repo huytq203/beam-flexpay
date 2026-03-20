@@ -16,7 +16,7 @@ const FormSearchAssignment = ({ control }: FormSearchAssignmentProps) => {
     return (
         <>
             <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
-            <form className='grid grid-cols-1 md:grid-cols-12 gap-3'>
+            <div className='grid grid-cols-1 md:grid-cols-12 gap-3'>
                 <FormSelect
                     control={control}
                     name='status'
@@ -34,7 +34,7 @@ const FormSearchAssignment = ({ control }: FormSearchAssignmentProps) => {
                     ]}
                     label={<span>Ngân hàng </span>}
                 />
-            </form>
+            </div>
         </>
     )
 }

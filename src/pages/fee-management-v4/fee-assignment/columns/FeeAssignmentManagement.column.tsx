@@ -178,7 +178,7 @@ export const getFeeAssignColumn = ({
       render: (value, record, index: number) => value || '--'
     },
     {
-      title: 'Nhóm khách hàng',
+      title: 'Tài khoản/Nhóm khách hàng',
       dataIndex: 'customerGroup',
       align: 'center' as const,
 

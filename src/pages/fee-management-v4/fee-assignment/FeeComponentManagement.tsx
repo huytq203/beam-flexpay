@@ -154,6 +154,7 @@ const FeeComponentManagement = () => {
 
             />
             <ModalComponent
+              key={selectedRow?.id}
               width="75%"
               title={selectedRow ? 'Sửa thành phần phí' : 'Thêm thành phần phí'}
               open={open}

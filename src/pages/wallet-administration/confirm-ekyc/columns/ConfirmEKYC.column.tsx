@@ -141,6 +141,13 @@ export const getColumn = ({ svg, onViewDetail }: ColumnProps): ColumnType[] => [
         },
     },
     {
+        title: 'Ngày tạo',
+        align: 'center',
+        render(_, record) {
+            return <span className="text-[12px]">{formatDateTime(record.createdAt)}</span>;
+        },
+    },
+    {
         title: 'Trạng thái',
         align: 'center',
         render(_, record) {

@@ -15,24 +15,13 @@ export const feeAssignSchema = z.object({
     createDate: z.string().optional(),
 }).refine(
     (data) => {
-        if (data.applyType === "1" && (!data.account || data.account.trim().length === 0)) {
+        if (data.applyType === "1" && (!data.customerGroup || data.customerGroup.trim().length === 0)) {
             return false;
         }
         return true;
     },
     {
-        message: "Tài khoản không được để trống",
-        path: ["account"],
-    }
-).refine(
-    (data) => {
-        if (data.applyType === "2" && (!data.customerGroup || data.customerGroup.trim().length === 0)) {
-            return false;
-        }
-        return true;
-    },
-    {
-        message: "Nhóm khách hàng không được để trống",
+        message: "Tài khoản/Nhóm khách hàng không được để trống",
         path: ["customerGroup"],
     }
 );
