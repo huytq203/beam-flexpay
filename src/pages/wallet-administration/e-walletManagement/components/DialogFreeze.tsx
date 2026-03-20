@@ -59,7 +59,7 @@ const DialogFreeze = ({
                 amount: values.amount,
                 reason: values.reason,
             }).unwrap()
-            successMess('Đóng băng tài khoản thành công')
+            successMess('Đã đóng băng ' + formatCurrency(values?.amount || 0, { symbol: currency, position: 'after' }))
             reset()
             onSuccess?.()
         } catch {
