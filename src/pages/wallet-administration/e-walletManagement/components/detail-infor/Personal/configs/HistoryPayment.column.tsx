@@ -1,7 +1,7 @@
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { ColumnType } from 'antd/es/table'
 import React from 'react'
-import { StatusKey, TransactionType, TransactionKey, TransactionEnum, TransactionLabel, STATUS_CONFIG, BankLabel, BankEnum } from '../types/HistoryPayment.type'
+import { StatusKey, TransactionType, TransactionKey, TransactionEnum, TransactionLabel, STATUS_CONFIG, BankLabel, BankEnum, PaymentMethodLabel, PaymentMethodEnum, SourceDomainLabel, SourceDomain } from '../types/HistoryPayment.type'
 import dayjs from 'dayjs'
 import { formatNumber } from '@utils/formatNumber'
 import { MaskText, TagComponent } from '@components/index'
@@ -45,6 +45,8 @@ export const getColumn = (): ColumnType<UnifiedContentJournal>[] => [
             );
         },
     },
+   
+
     {
         title: 'Người chuyển',
         dataIndex: 'from',
@@ -56,6 +58,41 @@ export const getColumn = (): ColumnType<UnifiedContentJournal>[] => [
         dataIndex: 'to',
         align: 'left',
         render: (value) => <TypographyText strong >{BankLabel[value?.displayName as BankEnum]|| <MaskText value={value?.displayName} />}</TypographyText>
+    },
+     {
+        title: 'Phương thức thanh toán',
+        dataIndex: 'paymentMethod',
+        align: 'center',
+        render: (value) => {
+            const methodColors: Record<string, string> = {
+                ATM: 'blue',
+                CC: 'purple',
+                VA: 'orange',
+                QR_CODE: 'cyan',
+                WALLET_BALANCE: 'green',
+                LINKED_ACCOUNT: 'geekblue',
+            };
+            return (
+                <TagComponent color={methodColors[value as PaymentMethodEnum] || 'default'} style={{ margin: 0, fontWeight: 500 }}>
+                    {PaymentMethodLabel[value as PaymentMethodEnum] || "--"}
+                </TagComponent>
+            );
+        },
+    },
+    {
+        title: 'Nguồn',
+        dataIndex: 'sourceDomain',
+        align: 'center',
+        render: (value) => {
+            const sourceColors: Record<string, string> = {
+                EWALLET: 'gold',
+            };
+            return (
+                <TagComponent color={sourceColors[value as SourceDomain] || 'default'} style={{ margin: 0, fontWeight: 500 }}>
+                    {SourceDomainLabel[value as SourceDomain] || "--"}
+                </TagComponent>
+            );
+        },
     },
     {
         title: 'Số tiền',
@@ -87,7 +124,7 @@ export const getColumn = (): ColumnType<UnifiedContentJournal>[] => [
             </TypographyText>
         ),
     },
-
+    
 
 
     {

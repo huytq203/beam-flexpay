@@ -73,6 +73,18 @@ const InforUser = ({ ekyc }: { ekyc?: ContentEKYC }) => {
 
 const InforEwallet = ({ data, ekyc }: InforEwalletProps) => {
   if (!data) return null
+  console.log(ekyc)
+  const isLinkedBank = (data?.linkedBanks?.length ?? 0) > 0
+
+  const getStatusLinkedBank = () => {
+    if (isLinkedBank) {
+      return 'Đã liên kết'
+    }
+    else {
+      return 'Chưa liên kết'
+    }
+  }
+
   const STATUS_CLASS: Record<string, string> = {
     ACTIVE: 'text-green text-[12px]  font-medium bg-green-100',
     LOCKED: 'text-red  text-[12px]  font-medium bg-red-100',
@@ -108,8 +120,8 @@ const InforEwallet = ({ data, ekyc }: InforEwalletProps) => {
         }
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Trạng thái EKC:</p>
-          <p className="font-medium text-blue-700 bg-blue-100 px-2  rounded-md text-sm">
-            {ekyc?.status ? (ekycStatusMap[ekyc.status]?.label ?? ekyc.status) : '--'}
+          <p className={`font-medium ${ekyc?.status === 'VERIFIED' ? 'text-blue-700 bg-blue-100' : 'text-red bg-red-100'} px-2  rounded-md text-sm`}>
+            {ekyc?.status ? (ekycStatusMap[ekyc.status]?.label ?? ekyc.status) : "Chưa xác thực"}
           </p>
         </div>
         <div className='flex justify-between items-center'>
@@ -119,7 +131,7 @@ const InforEwallet = ({ data, ekyc }: InforEwalletProps) => {
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Liên kết NH:</p>
-          <p className="font-medium text-blue-700">--</p>
+          <p className={`font-medium text-sm ${isLinkedBank ? 'text-blue-700 bg-blue-100 px-2  rounded-md' : 'text-red bg-red-100 px-2  rounded-md'}`}>{getStatusLinkedBank()}</p>
         </div>
         <hr />
         <div className='flex justify-between items-center'>

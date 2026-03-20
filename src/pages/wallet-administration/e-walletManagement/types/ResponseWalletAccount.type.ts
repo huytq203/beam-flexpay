@@ -42,8 +42,17 @@ export interface AcountItem {
   lockedReason?: string
   lockedAt?: string
   lockedBy?: string
+  linkedBanks?: LinkedBank[]
 }
-
+export interface LinkedBank {
+  id: string
+  bankCode: string
+  linkType: string
+  maskedAccount: string
+  maskedCard: string
+  accountName: string
+  isDefault: string
+}
 export interface Pageable {
   pageNumber: number
   pageSize: number

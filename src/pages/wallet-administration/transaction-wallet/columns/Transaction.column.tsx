@@ -2,7 +2,7 @@ import { UnifiedContentJournal } from "@type/apiResponseJournal";
 import dayjs from "dayjs";
 import { ColumnsType } from "antd/lib/table";
 import { Link, NavigateFunction } from "react-router-dom";
-import { ButtonComponent, MaskText, TooltipComponent, TypographyText } from "@components/index";
+import { ButtonComponent, MaskText, TagComponent, TooltipComponent, TypographyText } from "@components/index";
 import { EyeFilled } from "@components/icons";
 import { CounterpartyType, CounterpartyTypeKey, PaymentMethodEnum,PaymentMethod, StatusKey, StatusType, TransactionKey, TransactionType, BankLabel, BankEnum, SourceDomain, SourceDomainLabel } from "@pages/wallet-administration/transaction-wallet/constants/Transaction.constant";
 import { formatNumber } from "@utils/index";
@@ -72,32 +72,42 @@ const getColumn = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal
             )
         },
     },
-    {
-        title: 'Phương thức',
-        dataIndex: 'paymentMethod',
-        align: 'center',
-        render(value, record) {
-            const typeKey = record.paymentMethod as PaymentMethodEnum;
-            return (
-                <div className='text-start'>
-                    <p className="">{PaymentMethod[typeKey] ?? record.paymentMethod ?? '--'}</p>
-                </div>
-            )
-        },
+   {
+    title: 'Phương thức thanh toán',
+    dataIndex: 'paymentMethod',
+    align: 'center',
+    render: (value) => {
+        const methodColors: Record<string, string> = {
+            ATM: 'blue',
+            CC: 'purple',
+            VA: 'orange',
+            QR_CODE: 'cyan',
+            WALLET_BALANCE: 'green',
+            LINKED_ACCOUNT: 'geekblue',
+        };
+        return (
+            <TagComponent color={methodColors[value as PaymentMethodEnum] || 'default'}>
+                {PaymentMethod[value as PaymentMethodEnum] || "--"}
+            </TagComponent>
+        );
     },
-    {
-        title: 'Nguồn',
-        dataIndex: 'sourceDomain',
-        align: 'center',
-        render(value, record) {
-            const typeKey = record.sourceDomain as SourceDomain;
-            return (
-                <div className='text-start'>
-                    <p className="">{SourceDomainLabel[typeKey] ?? record.sourceDomain ?? '--'}</p>
-                </div>
-            )
-        },
+},
+// Cột Nguồn
+{
+    title: 'Nguồn',
+    dataIndex: 'sourceDomain',
+    align: 'center',
+    render: (value) => {
+        const sourceColors: Record<string, string> = {
+            EWALLET: 'gold',
+        };
+        return (
+            <TagComponent color={sourceColors[value as SourceDomain] || 'default'}>
+                {SourceDomainLabel[value as SourceDomain] || "--"}
+            </TagComponent>
+        );
     },
+},
     {
         title: 'Người chuyển',
         align: 'center',

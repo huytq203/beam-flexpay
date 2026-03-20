@@ -37,7 +37,6 @@ const useFetchData = ({ ownerId, initiatorUsername, searchParams }: Props) => {
             key: item.id,
         }))
     }, [dataUnified])
-    console.log(dataSourceUnified)
     return {
         isLoadingGetUnified,
         dataUnified,

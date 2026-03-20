@@ -14,8 +14,8 @@ export const StatusLabel: Record<StatusKey, string> = {
     [StatusKey.ARCHIVED]: 'Đã lưu trữ',
 } as const
 
-export const STATUS_CONFIG={
-   
+export const STATUS_CONFIG = {
+
     [StatusKey.PENDING]: {
         label: 'Chờ xử lý',
         className: 'warning-status',
@@ -38,10 +38,10 @@ export const TransactionType = {
     WALLET_CREDIT: 'Nạp tiền ví',
     WALLET_TRANSFER: 'Giao dịch ví',
     DEBIT: 'Rút tiền',
-    
+
 } as const;
 
-export enum TransactionEnum{
+export enum TransactionEnum {
     P2P_TRANSFER = 'P2P_TRANSFER',
     CASH_OUT = 'CASH_OUT',
     CASH_IN = 'CASH_IN',
@@ -54,24 +54,39 @@ export const TransactionLabel: Record<TransactionEnum, string> = {
 } as const;
 export type TransactionKey = keyof typeof TransactionType;
 
-export enum BankEnum{
-    VCB='VCB',
+export enum BankEnum {
+    VCB = 'VCB',
 }
 
 export const BankLabel: Record<BankEnum, string> = {
     [BankEnum.VCB]: 'Vietcombank',
 } as const;
 
-export enum PaymentMethodEnum{
-    WALLET_BALANCE='WALLET_BALANCE',
-    BANK_TRANSFER='BANK_TRANSFER',
-    CASH_OUT='CASH_OUT',
-    CASH_IN='CASH_IN',
+export enum PaymentMethodEnum {
+    ATM = 'ATM',
+    CC = 'CC',
+    VA = 'VA',
+    QR_CODE = 'QR_CODE',
+    WALLET_BALANCE = 'WALLET_BALANCE',
+    LINKED_ACCOUNT = 'LINKED_ACCOUNT',
 }
 
 export const PaymentMethodLabel: Record<PaymentMethodEnum, string> = {
-    [PaymentMethodEnum.WALLET_BALANCE]: 'Số dư ví',
-    [PaymentMethodEnum.BANK_TRANSFER]: 'Chuyển khoản ngân hàng',
-    [PaymentMethodEnum.CASH_OUT]: 'Rút tiền',
-    [PaymentMethodEnum.CASH_IN]: 'Nạp tiền',
+    [PaymentMethodEnum.ATM]: 'Thẻ ATM',
+    [PaymentMethodEnum.CC]: 'Thẻ tín dụng',
+    [PaymentMethodEnum.VA]: 'Tài khoản ảo',
+    [PaymentMethodEnum.QR_CODE]: 'QR Code',
+    [PaymentMethodEnum.WALLET_BALANCE]: 'Tài khoản ví',
+    [PaymentMethodEnum.LINKED_ACCOUNT]: 'Tài khoản liên kết'
+} as const;
+
+
+export enum SourceDomain {
+  EWALLET = 'EWALLET',
+  
+} 
+
+export const SourceDomainLabel: Record<SourceDomain, string> = {
+  [SourceDomain.EWALLET]: 'Ví điện tử',
+
 } as const;

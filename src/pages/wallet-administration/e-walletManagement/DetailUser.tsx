@@ -43,7 +43,7 @@ const InforUser = ({ data, dataEKYC }: props) => {
                 </span>
               ) : (
                 <span className='flex gap-1 text-red-700 bg-red-100 px-1 rounded text-[12px]'>
-                  <CheckCircleFilled />Chưa xác thực KYC
+                  <CheckCircleFilled />Chưa xác thực EKYC
                 </span>
               )}
             </p>
