@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import { genderMap, props, statusMap } from "../types/ConfirmEKYC.type";
 
 const formatDateTime = (value?: string | null) =>
-    value ? dayjs.utc(value).local().format('DD/MM/YYYY HH:mm:ss') : '--';
+    value ? dayjs.utc(value).format('DD/MM/YYYY HH:mm:ss') : '--';
 
 const STATUS_CLASS: Record<string, string> = {
     VERIFIED: 'text-green-700 bg-green-50 border border-green-400 px-2 py-0.5 rounded text-[12px] font-medium inline-block',
