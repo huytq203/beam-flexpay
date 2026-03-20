@@ -282,7 +282,8 @@ const TransactionTable = ({ search, setSearch, skip, className }: Props) => {
               ...search,
               page
             })
-          }
+          },
+          showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]}/ ${total} Bản ghi`
         }}
       />
       {selectedId && (

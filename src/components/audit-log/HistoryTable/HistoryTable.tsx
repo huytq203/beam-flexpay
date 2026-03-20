@@ -319,7 +319,8 @@ export const HistoryTable = ({
               ...search,
               page
             })
-          }
+          },
+          showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]}/ ${total} Bản ghi`
         }}
       />
       <div className='text-end mt-10'>

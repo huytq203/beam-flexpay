@@ -194,7 +194,7 @@ const SystemLedgerManagement = () => {
                 setPage(page)
                 setPageSize(pageSize)
               },
-              showTotal: (total, range) => `Showing ${range[0]}-${range[1]} of ${total} entries`
+              showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]}/ ${total} Bản ghi`
             }}
           />
         }

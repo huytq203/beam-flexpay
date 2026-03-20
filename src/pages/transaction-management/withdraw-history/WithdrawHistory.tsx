@@ -58,7 +58,7 @@ const WithdrawHistory = () => {
                             pageSize: dataWithdraw?.pageable?.pageSize ?? 10,
                             total: dataWithdraw?.totalElements ?? 0,
                             showSizeChanger: true,
-                            showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} bản ghi`,
+                            showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]}/ ${total} Bản ghi`,
                             onChange: (page, pageSize) => {
                                 setPage(page)
                                 setPageSize(pageSize)

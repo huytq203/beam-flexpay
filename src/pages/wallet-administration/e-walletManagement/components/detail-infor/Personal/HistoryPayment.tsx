@@ -50,6 +50,7 @@ const HistoryPayment = ({ ownerId, initiatorUsername }: Props) => {
                 setPage(page)
                 setPageSize(pageSize)
               },
+              showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]}/ ${total} Bản ghi`
             }}
 
           />

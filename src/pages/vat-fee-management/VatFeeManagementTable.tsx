@@ -196,8 +196,7 @@ const VatFeeManagementTable = ({ vatFees, search, setSearch, pagination }: VatFe
           total: pagination?.itemCount || 0,
           showSizeChanger: true,
           showQuickJumper: true,
-          showTotal: (total, range) =>
-            `${range[0]}-${range[1]} của ${total} bản ghi`,
+          showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]}/ ${total} Bản ghi`,
           pageSizeOptions: ['10', '20', '50', '100'],
           onChange(page, pageSize) {
             setSearch({

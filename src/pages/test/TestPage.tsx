@@ -1,4 +1,4 @@
-const DEPLOY_VERSION = 32
+const DEPLOY_VERSION = 33
 
 const ENV_INFO = [
     { key: 'VITE_API_LOGIN', value: import.meta.env.VITE_API_LOGIN },

@@ -60,7 +60,7 @@ const EwalletManagement = () => {
                   current: page,
                   showSizeChanger: true,
                   pageSize: size,
-                  total: getAccount?.data?.totalElements,
+                  total: getAccount?.totalElements,
                   onChange: (page, pageSize) => {
                     setPage(page)
                     setPageSize(pageSize)
