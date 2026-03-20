@@ -4,7 +4,7 @@ import { useGetEKYCByIdQuery } from '@services/apiEKYC'
 import React, { useState } from 'react'
 import FormSearch from './components/FormSearch'
 import BusinessComfirm from './components/BusinessComfirm'
-import { Column } from './columns/ConfirmEKYC.column'
+import { getColumn } from './columns/ConfirmEKYC.column'
 import useConfirmEKYC from './hooks/useConfirmEKYC'
 import DialogReject from '@pages/wallet-administration/confirm-ekyc/components/DialogReject'
 import DialogCancel from '@pages/wallet-administration/confirm-ekyc/components/DialogCancel'
@@ -31,7 +31,7 @@ const ConfirmEKYC = () => {
     setSelectedId(undefined)
   }
 
-  const columns = Column({ svg, onViewDetail: openDetail })
+  const columns = getColumn({ svg, onViewDetail: openDetail })
 
   return (
     <div className='flex flex-col gap-3'>

@@ -54,12 +54,12 @@ const UserManagement = () => {
             <p className='text-gray-500 text-[12px] m-0 leading-relaxed font-medium'>Quản lý thông tin tài khoản, nhóm quyền và người dùng quản trị hệ thống</p>
           </div>
           <div className='ml-auto'>
-            <ButtonComponent 
+            {/* <ButtonComponent 
               icon={<Icons.PlusOutlined />} 
               type='primary' 
               content='Thêm mới tài khoản' 
               onClick={() => handle.openModal('add', null)}
-            />
+            /> */}
           </div>
         </div>
       </CardComponent>
