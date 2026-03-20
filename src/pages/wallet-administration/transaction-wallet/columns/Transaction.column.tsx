@@ -45,12 +45,18 @@ const getColumn = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal
             return (
                 <div>
                     {record.transactionCode ? (
-                        <Link
-                            to={PATHS.TRANSACTION_MANAGEMENT.DETAIL_TRANSACTION(record.id)}
-                            className="text-blue-500 font-bold underline underline-offset-2"
+                        // <Link
+                        //     to={PATHS.TRANSACTION_MANAGEMENT.DETAIL_TRANSACTION(record.id)}
+                        //     className="text-blue-500 font-bold underline underline-offset-2"
+                        // >
+                        //     {record.transactionCode}
+                        // </Link>
+                        <span
+                           
+                            className="font-medium"
                         >
-                            {record.transactionCode}
-                        </Link>
+                           <TypographyText copyable >{record.transactionCode}</TypographyText>
+                        </span>
                     ) : (
                         <span>--</span>
                     )}
