@@ -219,7 +219,7 @@ const forceLogout = (): void => {
 // INACTIVITY TRACKING
 // ============================================================================
 let inactivityTimer: NodeJS.Timeout | null = null
-const INACTIVITY_TIMEOUT = 0.3 * 60 * 1000 // 15 phút không có hoạt động API
+const INACTIVITY_TIMEOUT = 15 * 60 * 1000 // 15 phút không có hoạt động API
 
 const resetInactivityTimer = () => {
   if (inactivityTimer) {
