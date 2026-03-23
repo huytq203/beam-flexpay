@@ -58,7 +58,7 @@ const FormFieldAssign = React.memo(({ watch, control, setValue, isCreate, feeDom
   // }
   return (
     <div>
-      <div className='grid grid-cols-1 md:grid-cols-4 gap-2'>
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-2'>
 
         <FormSelect
           control={control}
@@ -73,7 +73,7 @@ const FormFieldAssign = React.memo(({ watch, control, setValue, isCreate, feeDom
           disabled={true}
         />
 
-        <FormInput
+        {/* <FormInput
           type='text'
           control={control}
           name='customerGroup'
@@ -81,7 +81,7 @@ const FormFieldAssign = React.memo(({ watch, control, setValue, isCreate, feeDom
           label={<span>Tài khoản/Nhóm khách hàng</span>}
           className={'col-span-1'}
           disabled={true}
-        />
+        /> */}
 
         
         <FormSelect

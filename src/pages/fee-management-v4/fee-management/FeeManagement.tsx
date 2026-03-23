@@ -21,7 +21,6 @@ const FeeManagement = () => {
   const { control, handleSubmit, reset } = useForm<dataSearch>()
   const { handleSearch, handleReset, handleActive, handleInactive, isLoadingPatchActivateFee, isLoadingPatchDeactivateFee, loadingId } = useHandleAddFeePolicy({ setFilters, setPage, reset })
   const navigate = useNavigate()
-  const [selectedRow, setSelectedRow] = useState<FeePolicy | null>(null)
   const columns = useMemo(() => getColumnFeePolicy({ navigate, handleActive, handleInactive, isLoadingPatchActivateFee, isLoadingPatchDeactivateFee, loadingId }), [navigate, handleActive, handleInactive, isLoadingPatchActivateFee, isLoadingPatchDeactivateFee, loadingId])
   return (
     <>
@@ -29,7 +28,7 @@ const FeeManagement = () => {
         className='mb-3'
         content={
           <>
-           <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
+            <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
             <form
               action=''
               onSubmit={handleSubmit(handleSearch)}

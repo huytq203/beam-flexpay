@@ -2,6 +2,7 @@ import {
     BANKANDCONNECT,
     FEEMANAGEMENT,
     FEEMANAGEMENT_V3,
+    FEEMANAGEMENT_V4,
     INTERNAL_WALLET,
     PERSONALWALLET,
     PRODUCTS,
@@ -234,9 +235,9 @@ export const WHITE_LIST: WhiteListItem[] = [
     { pathname: ROLEMANAGEMENT + '/manage-group-permissions', requestUrl: '/group-permission' },
 
     { pathname: INTERNAL_WALLET + '/account', requestUrl: '/balance-internal-group' },
-    { pathname: FEEMANAGEMENT_V3 + '/fee-management', requestUrl: '/fee/policies' },
-    { pathname: FEEMANAGEMENT_V3 + '/fee-assignment', requestUrl: '/fee/policy-assignments' },
-    { pathname: FEEMANAGEMENT_V3 + '/fee-assignment', requestUrl: '/fee/banks' },
+    { pathname: FEEMANAGEMENT_V4 + '/fee-management', requestUrl: '/fee/policies' },
+    { pathname: FEEMANAGEMENT_V4 + '/fee-assignment', requestUrl: '/fee/policy-assignments' },
+    { pathname: FEEMANAGEMENT_V4 + '/fee-assignment', requestUrl: '/fee/banks' },
 
     { pathname: ROLEMANAGEMENT_V2 + '/user-account', requestUrl: '/roles' },
     { pathname: ROLEMANAGEMENT_V2 + '/user-account', requestUrl: '/users/managers' },

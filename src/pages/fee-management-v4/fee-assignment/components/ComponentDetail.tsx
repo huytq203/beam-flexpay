@@ -122,7 +122,7 @@ export const ComponentDetail = ({ setOpenModalDetail, data, onEdit, onDelete, se
                   }
                 </div>
               </div>
-              <div className=' flex gap-4 px-2 mb-3'>
+              <div className=' grid grid-cols-1 md:grid-cols-4 gap-3 px-2 mb-3'>
                 <span className='border px-2 py-1 rounded bg-gray-200 '>
                   Người trả: <span className='font-medium'>{payerType[data.payerType as keyof typeof payerType]}</span>
                 </span>

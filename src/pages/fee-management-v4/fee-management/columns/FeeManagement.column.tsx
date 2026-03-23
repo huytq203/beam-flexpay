@@ -1,7 +1,6 @@
 import { ButtonComponent, TooltipComponent } from '@components/index'
 
 import usePermissionChek from '@hooks/usePermissionCheck'
-import { ColumnsType } from 'antd/es/table'
 import { feeDomain, serviceType } from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -14,6 +13,7 @@ import * as Icons from '@components/icons'
 import { useNavigate } from 'react-router-dom'
 import { PATHS } from '@constants/pathConstant'
 import { FeePolicy } from '../types/FeeManagement.type'
+import { ColumnsType } from 'antd/es/table'
 interface Props {
   navigate: any
   handleActive: (id: string) => void
@@ -24,7 +24,7 @@ interface Props {
 }
 
 
-export const getColumnFeePolicy = ({ navigate, handleActive, handleInactive, isLoadingPatchActivateFee, isLoadingPatchDeactivateFee, loadingId }: Props): ColumnsType<FeePolicy> => [
+export const getColumnFeePolicy = ({ navigate, handleActive, handleInactive, isLoadingPatchActivateFee, isLoadingPatchDeactivateFee, loadingId }: Props): ColumnsType => [
   {
     title: '#',
     dataIndex: 'no',
