@@ -5,7 +5,7 @@ import {
   ModalComponent,
   Table
 } from '@components/index'
-import FormAddAssign from './components/FormChoosePolicy'
+import FormChoosePolicy from './components/FormChoosePolicy'
 import FormFieldAssign from './components/FormFieldAssign'
 import FormInforAdd from './components/FormInforAdd'
 import React from 'react'
@@ -152,14 +152,16 @@ const FeeAssignmentManagement = () => {
           />
         }
       />
-      <ModalComponent
+      {/* <ModalComponent
         title={'Chọn chính sách phí'}
-        width={{ xs: "100% ", md: "70%" }}
+        width={{ xs: "100% ", md: "100%", lg: "100%" }}
         open={openModalSelectPolicy}
         onOk={handleCloseModalSelectPolicy}
         onCancel={handleCloseModalSelectPolicy}
-        modalText={<FormAddAssign onSelect={handleSelectPolicy} serviceType={watch('serviceType')} />}
-      />
+        okText='Xác nhận'
+        cancelText='Hủy'
+        modalText={<FormChoosePolicy onSelect={handleSelectPolicy} serviceType={watch('serviceType')} />}
+      /> */}
     </>
   )
 }

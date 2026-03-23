@@ -42,7 +42,7 @@ const DEFAULT_FORM_VALUES: FeeAssignType = {
     customerGroup: '',
     status: '',
     applyType: '',
-    account: ''
+    account: '',
 }
 
 export const FormInforAdd = ({
@@ -66,7 +66,7 @@ export const FormInforAdd = ({
         resolver: zodResolver(feeAssignSchema),
         defaultValues: DEFAULT_FORM_VALUES
     })
-    const { handleChoosePolicy, dataFeePolicyComponent } = useHandle()
+    const { handleChoosePolicy, dataFeePolicyComponent,feeDomain } = useHandle()
     const [openModal, setOpenModal] = useState(false)
     const [selectedPolicyId, setSelectedPolicyId] = useState<string>('')
     const [isEdit, setIsEdit] = useState(false)
@@ -145,6 +145,8 @@ export const FormInforAdd = ({
                             <FormFieldAssign
                                 control={control}
                                 setValue={setValue}
+                                feeDomain={feeDomain}
+                                watch={watch}
                             />
                         </form>
 
@@ -186,11 +188,14 @@ export const FormInforAdd = ({
                 onCancel={() => {
                     setOpenModal(false)
                 }}
+                okText='Xác nhận'
+                cancelText='Hủy'
                 modalText={
                     <FormChoosePolicy
                         onSelect={handleLocalPolicySelect}
                         defaultSelectedId={selectedPolicyId}
                         serviceType={watch('serviceType')}
+                        dataFeePolicyComponent={dataFeePolicyComponent}
                     />
                 }
             />

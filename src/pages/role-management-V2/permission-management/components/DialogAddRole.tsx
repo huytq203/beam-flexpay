@@ -70,7 +70,7 @@ const DialogAddRole = ({ role, onSuccess, onCancel }: Props) => {
               name='name'
               label={
                 <span>
-                  Mã nhóm quyền<span className='text-red-700'>(*)</span>
+                  Mã nhóm quyền<span className='text-red-700'>*</span>
                 </span>
               }
               placeholder='Mã nhóm quyền...'

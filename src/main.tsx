@@ -67,7 +67,7 @@ const theme = {
 }
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <Provider store={store}>
       <I18nextProvider i18n={i18next}>
         <ConfigProvider theme={theme}>
@@ -85,5 +85,5 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         </ConfigProvider>
       </I18nextProvider>
     </Provider>
-  </React.StrictMode>
+  // </React.StrictMode>
 )

@@ -106,7 +106,7 @@ export const getColumnFeePolicy = ({ navigate, handleActive, handleInactive, isL
               }}
             />
           </TooltipComponent>
-          <TooltipComponent title={isActive ? 'Khóa' : 'Mở khóa'}>
+          <TooltipComponent title={isActive ? 'Hủy kích hoạt' : 'Kích hoạt'}>
             <ButtonComponent
               disabled={isLocked}
               type="default"

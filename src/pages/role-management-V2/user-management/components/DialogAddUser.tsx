@@ -57,40 +57,40 @@ const DialogAddUser = ({ userId, roleOptions = [], onSuccess, onCancel }: Props)
           <>
             <form>
               <FormInput
-                label={<span>Tên đăng nhập <span className='text-red-600'>(*)</span></span>}
+                label={<span>Tên đăng nhập <span className='text-red-600'>*</span></span>}
                 placeholder='Tên đăng nhập...'
                 control={control}
                 name='username'
                 disabled={isEdit}
               />
               <FormInput
-                label={<span>Email <span className='text-red-600'>(*)</span></span>}
+                label={<span>Email <span className='text-red-600'>*</span></span>}
                 placeholder='Email...'
                 control={control}
                 name='email'
               />
               <FormInput
-                label={<span>Họ và tên <span className='text-red-600'>(*)</span></span>}
+                label={<span>Họ và tên <span className='text-red-600'>*</span></span>}
                 placeholder='Họ và tên...'
                 control={control}
                 name='lastName'
               />
               <FormInput
-                label={<span>Số điện thoại<span className='text-red-600'>(*)</span></span>}
+                label={<span>Số điện thoại<span className='text-red-600'>*</span></span>}
                 placeholder='Số điện thoại...'
                 control={control}
                 name='phone'
               />
               {isEdit && (
                 <FormSelect
-                  label={<span>Trạng thái <span className='text-red-600'>(*)</span></span>}
+                  label={<span>Trạng thái <span className='text-red-600'>*</span></span>}
                   options={mapEnumToSelectOptions(Status)}
                   control={control}
                   name='enabled'
                 />
               )}
               <FormSelect
-                label={<span>Nhóm quyền <span className='text-red-600'>(*)</span></span>}
+                label={<span>Nhóm quyền <span className='text-red-600'>*</span></span>}
                 options={roleOptions}
                 control={control}
                 name='groups'

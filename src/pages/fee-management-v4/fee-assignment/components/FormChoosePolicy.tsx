@@ -11,17 +11,11 @@ interface FormChoosePolicyProps {
   onSelect?: (feePolicyId: string) => void
   defaultSelectedId?: string
   serviceType?: string
+  dataFeePolicyComponent?: feePolicyComponent[]
 }
 
-const FormChoosePolicy = ({ onSelect, defaultSelectedId, serviceType }: FormChoosePolicyProps) => {
+const FormChoosePolicy = ({ onSelect, defaultSelectedId, serviceType, dataFeePolicyComponent }: FormChoosePolicyProps) => {
   const { controlSearch, handleSunmitSearch, resetSearch, dataSource, isSearching, total, pageListPolicy, setPageListPolicy, pageSizeListPolicy, setPageSizeListPolicy, selectedId, setSelectedId, searchValue, setSearchValue } = useFormChoosePolicy(defaultSelectedId, serviceType)
-  const { handleChoosePolicy, dataFeePolicyComponent } = useHandle()
-
-  useEffect(() => {
-    if (selectedId) {
-      handleChoosePolicy(selectedId)
-    }
-  }, [selectedId])
   return (
     <div>
       <CardComponent

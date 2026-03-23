@@ -70,7 +70,7 @@ const DialogAddPermission = ({ permission, onSuccess, onCancel }: Props) => {
               name='name'
               label={
                 <span>
-                  Mã quyền <span className='text-red-700'>(*)</span>
+                  Mã quyền <span className='text-red-700'>*</span>
                 </span>
               }
               placeholder='Mã quyền...'

@@ -1,5 +1,5 @@
 
-import { FeePoliciesContent, FeePoliciesResponse } from "@type/apiResponseFeePolicy.type";
+import { FeePoliciesContent, FeePoliciesData, FeePoliciesResponse } from "@type/apiResponseFeePolicy.type";
 import { apiFeeService, apiService } from "./apiService";
 import { ResponseType } from '@type/api'
 export const feePolicyApi = apiFeeService.injectEndpoints({
@@ -10,7 +10,7 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
         method: "GET",
         params: pagination // { page, size, sortBy, sortDirection }
       }),
-      transformResponse: (res: ResponseType<FeePoliciesResponse>) => res.data,
+      transformResponse: (res: ResponseType<FeePoliciesData>) => res.data,
       providesTags: ['FeePolicy']
     }),
     searchFeePolicies: build.query({
@@ -20,7 +20,7 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
         params: params,
 
       }),
-      transformResponse: (res: ResponseType<FeePoliciesResponse>) => res.data,
+      transformResponse: (res: ResponseType<FeePoliciesData>) => res.data,
       providesTags: ['FeePolicy']
     }),
     getFeePolicyById: build.query({
@@ -70,6 +70,7 @@ export const {
   useGetFeePoliciesQuery,
   useLazyGetFeePoliciesQuery,
   useGetFeePolicyByIdQuery,
+  useLazyGetFeePolicyByIdQuery,
   usePostNewPolicyMutation,
   usePatchDeactivateFeeMutation,
   usePatchActivateFeeMutation,

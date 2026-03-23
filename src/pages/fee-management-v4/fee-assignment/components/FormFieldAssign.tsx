@@ -8,7 +8,7 @@ import {
 } from '@pages/fee-management-v4/fee-assignment/constants/feeAssignment'
 import { serviceType } from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
 import React, { useEffect, useState } from 'react'
-import { Control, UseFormSetValue, useWatch } from 'react-hook-form'
+import { Control, UseFormSetValue, UseFormWatch, useWatch } from 'react-hook-form'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import { FeeAssignType } from '../schemas/feeAssign.schema'
 
@@ -16,11 +16,22 @@ interface FormFieldAssign {
   control: Control<FeeAssignType>
   setValue?: UseFormSetValue<FeeAssignType>
   isCreate?: boolean
+  feeDomain: string
+  watch: UseFormWatch<FeeAssignType>
 }
 
-const FormFieldAssign = React.memo(({ control, setValue, isCreate }: FormFieldAssign) => {
+const FormFieldAssign = React.memo(({ watch, control, setValue, isCreate, feeDomain }: FormFieldAssign) => {
   // api database
   const { data: dataBank } = useGetBankQuery({})
+  console.log( feeDomain)
+
+
+
+  // useEffect(() => {
+  //   if (feeDomain === 'MERCHANT' && setValue) {
+  //     setValue('bankCode', '')
+  //   }
+  // }, [feeDomain, setValue])
 
   // const applyType = useWatch({ control, name: 'applyType' })
   // const customerGroup = useWatch({ control, name: 'customerGroup' })
@@ -47,46 +58,45 @@ const FormFieldAssign = React.memo(({ control, setValue, isCreate }: FormFieldAs
   // }
   return (
     <div>
-      <div className='grid grid-cols-1 md:grid-cols-5 gap-2'>
+      <div className='grid grid-cols-1 md:grid-cols-4 gap-2'>
 
-        {/* <FormSelect
+        <FormSelect
           control={control}
           name='applyType'
           label={<span>Đối tượng áp dụng <span className='text-red-500'>*</span></span>}
-          className={isCreate ? 'col-span-12' : 'col-span-12'}
+          className={'col-span-1'}
           allowClear={false}
           defaultValue={"0"}
           options={[
             { label: 'Hệ thống', value: "0" },
-            {
-              label: 'Đối tượng khách hàng',
-              value: '1'
-            },
-          
           ]}
-          onChange={handleChangeApplyType}
-        /> */}
+          disabled={true}
+        />
 
-
-        {/* <FormInput
+        <FormInput
           type='text'
           control={control}
           name='customerGroup'
-          placeholder='Nhập tài khoản/nhóm khách hàng...'
-          label={<span>Tài khoản/Nhóm khách hàng {applyType == '1' && <span className='text-red-500'>*</span>}</span>}
-          className={isCreate ? 'col-span-6' : 'col-span-12'}
-          disabled={applyType == '0' || !applyType ? true : false}
-        /> */}
+          placeholder='nhóm khách hàng...'
+          label={<span>Tài khoản/Nhóm khách hàng</span>}
+          className={'col-span-1'}
+          disabled={true}
+        />
 
-        {/* 
+        
         <FormSelect
           control={control}
-          name='customerGroup'
-          options={mapEnumToSelectOptions(customerGroupType)}
-          label='Nhóm khách hàng'
-          className={isCreate ? 'col-span-6' : 'col-span-12'}
-          disabled={applyType == '1' || applyType == '0' || !applyType ? true : false}
-        /> */}
+          name='domain'
+          defaultValue={"EWALLET"}
+          disabled={true}
+          options={[
+            { label: 'Ví', value: "EWALLET" },
+            { label: 'Ngân hàng', value: "BANK" },
+            { label: 'Merchant', value: "MERCHANT" },
+          ]}
+          label={<span>Domain <span className='text-red-500'>*</span></span>}
+          className={'col-span-1'}
+        />
 
         <FormSelect
           control={control}
@@ -99,6 +109,7 @@ const FormFieldAssign = React.memo(({ control, setValue, isCreate }: FormFieldAs
           ]}
           label={<span>Ngân hàng <span className='text-red-500'>*</span></span>}
           className={'col-span-1'}
+          disabled={feeDomain === 'MERCHANT'}
         />
 
         <>

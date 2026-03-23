@@ -13,6 +13,7 @@ export const feeAssignSchema = z.object({
     account: z.string().optional(),
     applyDate: z.string().optional(),
     createDate: z.string().optional(),
+    domain: z.string().optional(),
 }).refine(
     (data) => {
         if (data.applyType === "1" && (!data.customerGroup || data.customerGroup.trim().length === 0)) {
