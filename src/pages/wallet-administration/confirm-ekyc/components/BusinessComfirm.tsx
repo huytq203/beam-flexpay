@@ -68,7 +68,7 @@ const ContenModalConfirm = ({ data }: { data?: ContentEKYC }) => {
                   readOnly
                   rows={2}
                   value={item.value ?? '—'}
-                  className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm bg-white resize-none focus:outline-none"
+                  className="w-full border border-gray-300 rounded-md px-3 py-1.5  bg-white resize-none focus:outline-none"
                 />
               </div>
             ))}

@@ -27,6 +27,8 @@ import {
 } from './fetchBaseQuery.types'
 import { updateAccessToken } from '@slices/authActions'
 import { PATHS } from '@constants/pathConstant'
+import Swal from 'sweetalert2'
+import capybaraIcon from '@assets/capybara/Cappybara 17 Poses-10.png'
 
 // ============================================================================
 // STATE - Token Refresh Singleton
@@ -217,15 +219,31 @@ const forceLogout = (): void => {
 // INACTIVITY TRACKING
 // ============================================================================
 let inactivityTimer: NodeJS.Timeout | null = null
-const INACTIVITY_TIMEOUT = 15 * 60 * 1000 // 15 phút không có hoạt động API
+const INACTIVITY_TIMEOUT = 0.3 * 60 * 1000 // 15 phút không có hoạt động API
 
 const resetInactivityTimer = () => {
   if (inactivityTimer) {
     clearTimeout(inactivityTimer)
   }
   inactivityTimer = setTimeout(() => {
-    alert("Đã hết phiên làm việc, vui lòng đăng nhập lại để tiếp tục!")
-    forceLogout()
+    Swal.fire({
+      title: "Đã hết phiên làm việc",
+      text: "Vui lòng đăng nhập lại để tiếp tục!",
+      imageUrl: capybaraIcon,
+      imageWidth: 150,
+      imageHeight: 150,
+      imageAlt: 'Capybara',
+      showCancelButton: false,
+      confirmButtonColor: "#3085d6",
+      confirmButtonText: "Đăng nhập lại",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    }).then((result) => {
+      if (result.isConfirmed) {
+        forceLogout()
+      }
+    })
   }, INACTIVITY_TIMEOUT)
 }
 
