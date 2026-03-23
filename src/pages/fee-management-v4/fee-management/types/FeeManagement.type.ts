@@ -81,7 +81,7 @@ export interface FeePolicy {
     serviceType: string;
     feeDomain: string;
     currency: string;
-    description: string;
+    description?: string;
     validFrom: string;
     validTo: string;
     status: string;
