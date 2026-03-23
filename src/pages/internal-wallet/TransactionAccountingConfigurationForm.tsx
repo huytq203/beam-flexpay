@@ -7,7 +7,7 @@ import {
   fundsOptions,
   walletTypeOptions
 } from '@constants/options'
-import { QueryStatus } from '@reduxjs/toolkit/dist/query'
+import { QueryStatus } from '@reduxjs/toolkit/query'
 import { useCreateAccountingMutation, useUpdateAccountingMutation } from '@services/accountingService'
 import { useGetListWalletsQuery } from '@services/apiInternalWallet'
 import { useLazyPaymentPartnerFindAllQuery } from '@services/cmsPaymentParner'

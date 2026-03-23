@@ -86,5 +86,5 @@ export interface FeePolicy {
     validTo: string;
     status: string;
     priority: number;
-    components: FeeComponentFormValues[];
+    components?: FeeComponentFormValues[];
 }

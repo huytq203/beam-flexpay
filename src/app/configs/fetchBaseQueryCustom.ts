@@ -5,7 +5,7 @@ import {
   FetchBaseQueryError,
   fetchBaseQuery,
   BaseQueryApi
-} from '@reduxjs/toolkit/dist/query'
+} from '@reduxjs/toolkit/query'
 import { hideLoading, showLoading } from '@utils/events'
 import { notification } from 'antd'
 import { t } from 'i18next'

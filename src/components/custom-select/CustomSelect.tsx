@@ -1,10 +1,9 @@
-import { LazyQueryTrigger } from '@reduxjs/toolkit/dist/query/react/buildHooks'
 import { PageMetaDto, PageMetaSearchDto } from '@type/application'
 import { Select, SelectProps } from 'antd'
 import { useEffect, useState } from 'react'
 
 interface CustomSelectType<T extends PageMetaSearchDto> extends SelectProps {
-  trigger: LazyQueryTrigger<any>
+  trigger: any
   search: T
   field: string
   readonly?: boolean

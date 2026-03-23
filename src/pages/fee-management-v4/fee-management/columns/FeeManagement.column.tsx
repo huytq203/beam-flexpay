@@ -24,7 +24,7 @@ interface Props {
 }
 
 
-export const getColumnFeePolicy = ({ navigate, handleActive, handleInactive, isLoadingPatchActivateFee, isLoadingPatchDeactivateFee, loadingId }: Props): ColumnsType => [
+export const getColumnFeePolicy = ({ navigate, handleActive, handleInactive, isLoadingPatchActivateFee, isLoadingPatchDeactivateFee, loadingId }: Props): ColumnsType<FeePolicy> => [
   {
     title: '#',
     dataIndex: 'no',

@@ -100,10 +100,26 @@ export default defineConfig(({ mode }) => {
       manifest: true,
       rollupOptions: {
         output: {
-          manualChunks: {
-            vendor: ['react', 'react-dom', 'react-router-dom'],
-            antd: ['antd'],
-            icons: ['@ant-design/icons', '@phosphor-icons/react', 'lucide-react']
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('antd')) {
+                return 'antd';
+              }
+              if (
+                id.includes('react') ||
+                id.includes('react-dom') ||
+                id.includes('react-router-dom')
+              ) {
+                return 'vendor';
+              }
+              if (
+                id.includes('@ant-design/icons') ||
+                id.includes('@phosphor-icons/react') ||
+                id.includes('lucide-react')
+              ) {
+                return 'icons';
+              }
+            }
           }
         }
       }
