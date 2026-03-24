@@ -58,7 +58,7 @@ export const PermissionManagement = () => {
                   <ButtonComponent 
                     icon={<Icons.PlusOutlined />} 
                     type='primary' 
-                    content='Thêm mới tài khoản' 
+                    content='Thêm mới nhóm quyền' 
                     onClick={() => handle.openModal('add', null)}
                   />
                 </div>
