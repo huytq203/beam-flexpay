@@ -56,7 +56,7 @@ const useHandlePermission = (fetchHook: ReturnType<typeof useFetchDataPermission
         fetchHook.setSearchData(result)
         fetchHook.setIsSearchMode(true)
       } catch (error: any) {
-        errorMess(error?.data?.detail || 'Lỗi tìm kiếm')
+        // errorMess(error?.data?.detail || 'Lỗi tìm kiếm')
       }
     },
     [fetchHook, getPermissionByKey, errorMess]

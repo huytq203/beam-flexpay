@@ -22,7 +22,7 @@ const DialogDeletePermission = ({ permissionName, onSuccess, onCancel }: Props) 
       successMess('Xóa thành công')
       onSuccess()
     } catch (error: any) {
-      errorMess(error?.data?.detail)
+      // errorMess(error?.data?.detail)
     } finally {
       setLoading(false)
     }

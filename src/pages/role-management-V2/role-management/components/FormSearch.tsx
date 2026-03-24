@@ -61,7 +61,7 @@ const FormSearch = ({ onSearch, onAdd }: Props) => {
           /> */}
         </div>
       </form>
-      <div className='md:flex grid grid-cols-3 mt-3 justify-between gap-3 items-end md:gap-1'>
+      <div className='md:flex grid grid-cols-3 mt-3 justify-end gap-3 items-end md:gap-1'>
         <div className="flex gap-2">
           <ButtonComponent
             icon={svg('/icons.svg#hugeicons-search-01')}
@@ -77,11 +77,11 @@ const FormSearch = ({ onSearch, onAdd }: Props) => {
           />
         </div>
 
-        <ButtonComponent
+        {/* <ButtonComponent
           icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
           content='Thêm mới'
           onClick={onAdd}
-        />
+        /> */}
       </div>
     </div>
   )

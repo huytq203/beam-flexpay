@@ -13,7 +13,7 @@ export const getRoleManagementColumn = ({
   openModal
 }: Props): ColumnType<RoleDataItem>[] => [
     {
-      title: 'STT',
+      title: '#',
       dataIndex: 'no',
       align: 'center',
       render: (value) => value || '--'

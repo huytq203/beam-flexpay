@@ -54,7 +54,7 @@ const DialogAddPermission = ({ permission, onSuccess, onCancel }: Props) => {
       }
       onSuccess()
     } catch (error: any) {
-      errorMess(error?.data?.detail)
+      // errorMess(error?.data?.detail)
     } finally {
       setLoading(false)
     }
