@@ -16,16 +16,24 @@ const FeeNCC = ({ data }: FeeNCCProps) => {
       <hr className='my-3' />
       <div className='flex flex-col gap-3 px-3'>
         <div className='flex justify-between items-center'>
-          <p className='text-gray-500'>Phương thức:</p>
-          <p className='font-medium'>{PaymentMethod[data?.paymentMethod as PaymentMethodKey] ?? '--'}</p>
+          <p className='text-gray-500'>Nhà cung cấp:</p>
+          <p className='font-medium'>{ '--'}</p>
         </div>
-        <div className='flex justify-between items-center'>
-          <p className='text-gray-500'>Mã ngân hàng:</p>
-          <p className='font-medium'>{data?.bankCode?? '--'}</p>
-        </div>
-        <div className='flex justify-between items-center p-1 bg-orange-100 rounded-md'>
+        <div className='flex justify-between items-center px-1 py-3 bg-orange-100 rounded-md'>
           <p className='font-medium'>Tổng phí phải trả:</p>
-          <p>{formatCurrency( 0, { symbol: 'VNĐ', position: 'after' })}</p>
+          <p className='text-red-600 font-medium'>{formatCurrency( 0, { symbol: 'VNĐ', position: 'after' })}</p>
+        </div>
+        <div className='flex flex-col gap-2 border-l-2 border-orange-500 pl-2 mx-2'>
+         <ul className=' list-disc text-gray-500 text-[12px] italic'>
+          <li className='flex justify-between'>
+            <p>Phí giao dịch:</p>
+            <p>0 VND</p>
+          </li>
+          <li className='flex justify-between'>
+            <p>% (0.5%):</p>
+            <p>0 VND</p>
+          </li>
+         </ul>
         </div>
       </div>
     </>
