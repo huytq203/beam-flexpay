@@ -220,11 +220,44 @@ const forceLogout = (): void => {
 // ============================================================================
 let inactivityTimer: NodeJS.Timeout | null = null
 const INACTIVITY_TIMEOUT = 15 * 60 * 1000 // 15 phút không có hoạt động API
+const TIME_OLD = 'time_old'
 
 const resetInactivityTimer = () => {
+  const currentTime = Date.now()
+  const lastActivity = localStorage.getItem(TIME_OLD)
+
+  if (lastActivity) {
+    const diff = currentTime - Number(lastActivity)
+    if (diff > INACTIVITY_TIMEOUT) {
+      Swal.fire({
+        title: "Đã hết phiên làm việc",
+        text: "Vui lòng đăng nhập lại để tiếp tục!",
+        imageUrl: capybaraIcon,
+        imageWidth: 150,
+        imageHeight: 150,
+        imageAlt: 'Capybara',
+        showCancelButton: false,
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "Đăng nhập lại",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.removeItem(TIME_OLD)
+          forceLogout()
+        }
+      })
+      return
+    }
+  }
+
+  localStorage.setItem(TIME_OLD, currentTime.toString())
+
   if (inactivityTimer) {
     clearTimeout(inactivityTimer)
   }
+
   inactivityTimer = setTimeout(() => {
     Swal.fire({
       title: "Đã hết phiên làm việc",
@@ -241,6 +274,7 @@ const resetInactivityTimer = () => {
       allowEnterKey: false
     }).then((result) => {
       if (result.isConfirmed) {
+        localStorage.removeItem(TIME_OLD)
         forceLogout()
       }
     })
