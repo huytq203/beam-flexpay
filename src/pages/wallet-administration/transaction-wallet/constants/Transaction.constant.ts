@@ -80,7 +80,7 @@ export enum BankEnum {
 }
 
 export const BankLabel: Record<BankEnum, string> = {
-  [BankEnum.VCB]: 'Vietcombank',
+  [BankEnum.VCB]: 'VietcomBank',
   [BankEnum.MB]: 'MB Bank',
   [BankEnum.VPB]: 'VPBank',
 } as const;
