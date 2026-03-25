@@ -19,46 +19,9 @@ const LazyLog = LazyLogComponent as React.ComponentType<any>
 
 const DetailTransaction = () => {
   const column = Column()
-  const [viewMode, setViewMode] = useState<ViewMode>()
 
   const {id,getTransactionById}=useDetailTransaction()
-  console.log(getTransactionById)
-  const logLines = [
-    "[08:30:00] INFO  Request sent to partner",
-    "[08:30:00] INFO  Endpoint: /api/v1/transfer",
-    "[08:30:00] INFO  Payload: amount=500000 currency=VND",
-    "[08:30:00] INFO  Waiting for response...",
-    "[08:30:00] INFO  Response status: 200",
-    "[08:30:00] INFO  Transaction created. Status=PENDING"
-  ]
-  const rawJson = {
-    requestId: "REQ-20260108-0001",
-    partner: "PAYMENT_GATEWAY",
-    endpoint: "/api/v1/transfer",
-    method: "POST",
-    createdAt: "2026-01-08T08:30:00+07:00",
-    request: {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer ***"
-      },
-      body: {
-        fromAccount: "123456789",
-        toAccount: "987654321",
-        amount: 500000,
-        currency: "VND"
-      }
-    },
-    response: {
-      status: 200,
-      body: {
-        transactionId: "TXN-998877",
-        status: "PENDING",
-        message: "Transaction created"
-      }
-    },
-    durationMs: 342
-  }
+ 
   return (
     <>
       <div className="flex justify-between items-center mb-3 px-2">
@@ -92,20 +55,18 @@ const DetailTransaction = () => {
         <div className='col-span-1 md:col-span-2  order-6 md:order-6' >
           <div className=" flex flex-col justify-center items-center border border-blue-700 bg-blue-100 rounded-md py-5 ">
             <p className=' text-xl text-gray-500 font-bold'>LỢI NHUẬN RÒNG (NET PROFIT)</p>
-            <p className='text-xl  text-green-600 font-medium'>{formatCurrency(getTransactionById?.amount??0,{ symbol: 'VNĐ', position: 'after' })}</p>
+            <p className='text-xl  text-green-600 font-medium'>{formatCurrency(0,{ symbol: 'VNĐ', position: 'after' })}</p>
             <p className='text-gray-500 text-sm'>(Tổng thu user - Tổng trả NCC)</p>
           </div>
         </div>
 
-        <div className="col-span-1 md:col-span-5 order-7 md:order-7">
+        {/* <div className="col-span-1 md:col-span-5 order-7 md:order-7">
           <div className="bg-sky-950 text-white p-3 rounded-md bg-opacity-90">
             <div className="flex justify-between items-center pb-2 mb-3 border-b">
               <span className='flex justify-center items-center gap-1 font-bold'><TerminalIcon weight="bold" size={18} /> Nhật ký hệ thống & API (Logs)</span>
 
               <ButtonComponent className='bg-sky-900 text-white hover:!bg-sky-800 hover:!text-white ' type='default' onClick={() => setViewMode(viewMode === "TEXT" ? "JSON" : "TEXT")} content={viewMode === "TEXT" ? "Xem dạng JSON" : "Xem dạng Text"} />
-              {/* <button onClick={() => setViewMode(viewMode === "TEXT" ? "JSON" : "TEXT")}>
-                {viewMode === "TEXT" ? "Xem dạng JSON" : "Xem dạng Text"}
-              </button> */}
+            
             </div>
 
             <div className="log-body">
@@ -134,7 +95,7 @@ const DetailTransaction = () => {
               )}
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
     </>

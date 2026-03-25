@@ -1,5 +1,5 @@
 import { UnifiedContentJournal, PartyInfo } from '@type/apiResponseJournal'
-import { CounterpartyType, CounterpartyTypeKey } from '../constants/Transaction.constant'
+import { BankEnum, BankLabel, CounterpartyType, CounterpartyTypeKey } from '../constants/Transaction.constant'
 import React from 'react'
 
 interface InfoUserProps {
@@ -42,7 +42,7 @@ const PartySection = ({ party, label }: { party?: PartyInfo; label: string }) =>
           {initial}
         </div>
         <div>
-          <p className='font-medium'>{party.displayName || '--'}</p>
+          <p className='font-medium'>{BankLabel[party.displayName as BankEnum] || party.displayName ||  '--'}</p>
           <p className='text-gray-500 text-xs'>{party.username}</p>
         </div>
       </div>

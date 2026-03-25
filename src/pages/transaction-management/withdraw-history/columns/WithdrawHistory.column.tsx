@@ -1,10 +1,10 @@
 import { EyeFilled } from '@components/icons'
 import { ButtonComponent, CopyableText, MaskText, TooltipComponent } from '@components/index'
-import { PaymentMethod, PaymentMethodKey, StatusKey, StatusType } from '@pages/wallet-administration/transaction-wallet/constants/Transaction.constant'
 import { UnifiedContentJournal } from '@type/apiResponseJournal'
 import { formatNumber } from '@utils/index'
 import { ColumnsType } from 'antd/lib/table'
 import dayjs from 'dayjs'
+import { BankEnum, BankLabel, PaymentMethod, PaymentMethodKey, StatusKey, StatusType } from '../types/WithdrawHistory.type'
 
 const STATUS_CLASS: Record<string, string> = {
     PENDING: 'text-blue-600 rounded-md inline-block px-2 font-medium text-[12px] border border-blue-500 bg-blue-50',
@@ -54,11 +54,11 @@ const getColumn = ({ onViewDetail }: ColumnProps): ColumnsType<UnifiedContentJou
     {
         title: 'Thụ hưởng',
         align: 'center',
-        render(_, record) {
-            const to = record.to
+        dataIndex: 'to',
+        render(value, record) {
             return (
                 <div className="text-start">
-                    <p className="font-medium">{to?.displayName || '--'}</p>
+                    <p className="font-medium">{BankLabel[value?.displayName as BankEnum] ||value?.displayName|| '--'}</p>
                     {/* {record.bankCode && (
                         <span className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-300 px-1.5 py-0.5 rounded">
                             {record.bankCode}
