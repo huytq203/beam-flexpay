@@ -46,6 +46,7 @@ const authSlice = createSlice({
 
       Cookies.remove(CookieKey.ACCESS_TOKEN)
       Cookies.remove(CookieKey.REFRESH_TOKEN)
+      localStorage.removeItem('last_activity_time')
       return {
         ...initialState,
         accessToken: null
