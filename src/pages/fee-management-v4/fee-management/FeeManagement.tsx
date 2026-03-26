@@ -1,6 +1,5 @@
 import { FormInput, FormSelect } from '@components/form'
 import { ButtonComponent, CardComponent, Table } from '@components/index'
-import { statusType } from '@pages/fee-management-v4/fee-assignment/constants/feeAssignment'
 import { feeDomain, serviceType } from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import React, { useMemo, useState } from 'react'
@@ -15,6 +14,7 @@ import { FEEMANAGEMENT_V4 } from '@constants/routersConstant'
 import { PATHS } from '@constants/pathConstant'
 import * as Icons from '@components/icons'
 import { FeePolicy } from '@pages/fee-management-v4/fee-management/types/FeeManagement.type'
+import { STATUS_LABEL } from './constants/FeeManagement.constant'
 const FeeManagement = () => {
   const { dataSource, page, size: pageSize, setPage, setPageSize, total, setFilters, isFetchingFeeManagement } = useFetchDataFee()
   const { svg } = useSVG()
@@ -58,7 +58,7 @@ const FeeManagement = () => {
                   control={control}
                   label='Trạng thái'
                   placeholder="Chọn trạng thái"
-                  options={mapEnumToSelectOptions(statusType)}
+                  options={mapEnumToSelectOptions(STATUS_LABEL)}
                   className='col-span-12 md:col-span-6 flex flex-col'
                 />
 

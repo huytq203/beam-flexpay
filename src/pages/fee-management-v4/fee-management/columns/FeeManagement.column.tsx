@@ -82,12 +82,6 @@ export const getColumnFeePolicy = ({ navigate, handleActive, handleInactive, isL
     dataIndex: 'status',
     align: 'center',
     render(value, record, index) {
-      const now = dayjs()
-      const validFrom = dayjs(record?.validFrom)
-      if (now.isBefore(validFrom) && record?.status === statusType.INIT) {
-        return <StatusBadge status={"WAITING"} config={STATUS_CONFIG} />
-      }
-   
       return <StatusBadge status={value} config={STATUS_CONFIG} />
     },
   },

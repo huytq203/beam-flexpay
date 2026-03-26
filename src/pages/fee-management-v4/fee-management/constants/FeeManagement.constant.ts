@@ -29,10 +29,7 @@ export const STATUS_CONFIG: Record<statusType|'WAITING', { label: string; classN
     label: 'Khóa',
     className: 'danger-status',
   },
-  WAITING: {
-    label: 'Chờ hiệu lực',
-    className: 'warning-status',
-  }
+ 
 }
 
 
