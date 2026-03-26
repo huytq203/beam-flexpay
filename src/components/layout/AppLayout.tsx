@@ -16,6 +16,7 @@ import { Resizable } from 're-resizable'
 import { useUserGetMyInfoQuery } from '@services/cmsService'
 import usePermission from '@hooks/usePermission'
 
+import { initInactivityTracker } from '@configs/fetchBaseQueryCustom'
 import './style.scss'
 import { FORBIDDENERROR } from '@constants/routersConstant'
 import { PATHS } from '@constants/pathConstant'
@@ -67,6 +68,10 @@ function AppLayout() {
       setCollapsed(true)
     }
   }, [isMobile])
+
+  useEffect(() => {
+    initInactivityTracker()
+  }, [])
 
   useEffect(() => {
     // Chỉ redirect về login khi CẢ HAI access token và refresh token đều không còn

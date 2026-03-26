@@ -35,6 +35,7 @@ const DialogModal: React.FC<ModalConfirmProps> = ({
   const modeConfig = MODE_CONFIG[mode];
   return (
     <Modal
+      {...props}
       open={open}
       title={title}
       centered
@@ -42,8 +43,8 @@ const DialogModal: React.FC<ModalConfirmProps> = ({
       destroyOnClose
       confirmLoading={confirmLoading}
       onCancel={onCancel}
-      okText={okText??modeConfig.okText}
-      cancelText={cancelText??modeConfig.cancelText}
+      okText={okText ?? modeConfig.okText}
+      cancelText={cancelText ?? modeConfig.cancelText}
       okButtonProps={modeConfig.okButtonProps}
       className={className}
       footer={footer}

@@ -122,6 +122,7 @@ export default function NavProfile() {
     // })
   }
 
+  console.log(profile)
   return (
     <React.Fragment>
       <Dropdown
@@ -130,9 +131,9 @@ export default function NavProfile() {
         trigger={['click']}
         arrow={{ pointAtCenter: true }}
       >
-        <Row gutter={GUTTER}>
+        <Row gutter={GUTTER} className='cursor-pointer  items-center'>
           <Col>
-            <Text className='fw-500'>{profile.fullName}</Text>
+            <Text className='font-semibold '>{profile.fullName||profile.email}</Text>
           </Col>
           <Col>
             <Avatar

@@ -70,10 +70,24 @@ const getColumn = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal
         align: 'center',
         render(value, record) {
             const typeKey = record.transactionType as TransactionKey;
+            
+            const typeConfig: Record<string, { label: string; bg: string; text: string; dot: string; border: string }> = {
+                CASH_IN: { label: TransactionType.CASH_IN, bg: 'bg-green-50', text: 'text-green-600', dot: 'bg-green-600', border: 'border-green-200' },
+                CASH_OUT: { label: TransactionType.CASH_OUT, bg: 'bg-red-50', text: 'text-red-600', dot: 'bg-red-600', border: 'border-red-200' },
+                P2P_TRANSFER: { label: TransactionType.P2P_TRANSFER, bg: 'bg-blue-50', text: 'text-blue-500', dot: 'bg-blue-600', border: 'border-blue-200' },
+                MERCHANT_PAYMENT: { label: TransactionType.MERCHANT_PAYMENT, bg: 'bg-blue-50', text: 'text-blue-600', dot: 'bg-blue-600', border: 'border-blue-200' },
+                REVERSAL: { label: TransactionType.REVERSAL, bg: 'bg-purple-50', text: 'text-purple-600', dot: 'bg-purple-600', border: 'border-purple-200' },
+            };
+
+            const config = typeConfig[typeKey] || { label: value || '--', bg: 'bg-gray-50', text: 'text-gray-600', dot: 'bg-gray-600', border: 'border-gray-200' };
+
             return (
-                <div className='text-start'>
-                    <p className="font-medium">{TransactionType[typeKey] ?? record.transactionType ?? '--'}</p>
-                    <p className="text-gray-500 text-sm">{record.description ?? '--'}</p>
+                <div className='text-start flex flex-col gap-1 '>
+                    <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full border ${config.bg} ${config.text} ${config.border} font-bold text-[11px] w-fit whitespace-nowrap`}>
+                        <span className={`w-2 h-2 rounded-full ${config.dot}`} />
+                        {config.label}
+                    </div>
+                    <p className="text-gray-500 text-[12px] px-1">{record.description || '--'}</p>
                 </div>
             )
         },

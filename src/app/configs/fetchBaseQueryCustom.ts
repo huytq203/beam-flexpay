@@ -218,68 +218,98 @@ const forceLogout = (): void => {
 // ============================================================================
 // INACTIVITY TRACKING
 // ============================================================================
-let inactivityTimer: NodeJS.Timeout | null = null
-const INACTIVITY_TIMEOUT = 15 * 60 * 1000 // 15 phút không có hoạt động API
-const TIME_OLD = 'time_old'
+let inactivityTimer: NodeJS.Timeout | null = null;
 
-const resetInactivityTimer = () => {
-  const currentTime = Date.now()
-  const lastActivity = localStorage.getItem(TIME_OLD)
+// SỬA LẠI: 15 phút chuẩn là 15 * 60 * 1000
+const INACTIVITY_TIMEOUT = 15 * 60 * 1000; // Đổi lại 1 phút để test cho dễ, hoặc 15 * 60 * 1000 nếu prod
+const RESET_THROTTLE = 2000; // 1 giây (để nhạy hơn khi tương tác)
+const TIME_OLD = 'last_activity_time'; // Đổi tên biến cho rõ nghĩa hơn
 
-  if (lastActivity) {
-    const diff = currentTime - Number(lastActivity)
-    if (diff > INACTIVITY_TIMEOUT) {
-      Swal.fire({
-        title: "Đã hết phiên làm việc",
-        text: "Vui lòng đăng nhập lại để tiếp tục!",
-        imageUrl: capybaraIcon,
-        imageWidth: 150,
-        imageHeight: 150,
-        imageAlt: 'Capybara',
-        showCancelButton: false,
-        confirmButtonColor: "#3085d6",
-        confirmButtonText: "Đăng nhập lại",
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        allowEnterKey: false
-      }).then((result) => {
-        if (result.isConfirmed) {
-          localStorage.removeItem(TIME_OLD)
-          forceLogout()
-        }
-      })
-      return
+let lastResetTime = 0;
+let isExpired = false; // Flag chặn gọi popup/logout nhiều lần
+
+/**
+ * Hàm xử lý khi hết phiên làm việc
+ */
+const handleSessionExpired = () => {
+  if (isExpired) return;
+  isExpired = true;
+
+
+  Swal.fire({
+    title: 'Đã hết phiên làm việc',
+    text: 'Vui lòng đăng nhập lại để tiếp tục!',
+    imageUrl: capybaraIcon,
+    imageWidth: 150,
+    imageHeight: 150,
+    imageAlt: 'Capybara',
+    showCancelButton: false,
+    confirmButtonColor: '#3085d6',
+    confirmButtonText: 'Đăng nhập lại',
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    allowEnterKey: false
+  }).then((result) => {
+    // Tùy chọn: Chuyển hướng hoặc reload nếu forceLogout chưa làm
+    if (result.isConfirmed) {
+      localStorage.removeItem(TIME_OLD);
+      forceLogout();
     }
+  });
+};
+
+
+export const resetInactivityTimer = (isFromEvent = false) => {
+  if (isExpired) return; // Nếu đã out thì không rải event nữa
+
+  const currentTime = Date.now();
+
+  const pathName = normalizePathname(window.location.pathname);
+  if (pathName === PATHS.AUTH.LOGIN) return;
+
+  if (isFromEvent && currentTime - lastResetTime < RESET_THROTTLE) {
+    return;
+  }
+  lastResetTime = currentTime;
+
+  const lastActivity = Number(localStorage.getItem(TIME_OLD) || 0);
+
+  if (lastActivity && currentTime - lastActivity > INACTIVITY_TIMEOUT) {
+    handleSessionExpired();
+    return;
   }
 
-  localStorage.setItem(TIME_OLD, currentTime.toString())
+  localStorage.setItem(TIME_OLD, currentTime.toString());
 
-  if (inactivityTimer) {
-    clearTimeout(inactivityTimer)
-  }
+  if (inactivityTimer) clearTimeout(inactivityTimer);
 
   inactivityTimer = setTimeout(() => {
-    Swal.fire({
-      title: "Đã hết phiên làm việc",
-      text: "Vui lòng đăng nhập lại để tiếp tục!",
-      imageUrl: capybaraIcon,
-      imageWidth: 150,
-      imageHeight: 150,
-      imageAlt: 'Capybara',
-      showCancelButton: false,
-      confirmButtonColor: "#3085d6",
-      confirmButtonText: "Đăng nhập lại",
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      allowEnterKey: false
-    }).then((result) => {
-      if (result.isConfirmed) {
-        localStorage.removeItem(TIME_OLD)
-        forceLogout()
-      }
-    })
-  }, INACTIVITY_TIMEOUT)
-}
+    const latestActivity = Number(localStorage.getItem(TIME_OLD) || 0);
+
+    if (Date.now() - latestActivity >= INACTIVITY_TIMEOUT) {
+      handleSessionExpired();
+    } else {
+      resetInactivityTimer();
+    }
+  }, INACTIVITY_TIMEOUT);
+};
+
+export const initInactivityTracker = () => {
+  if (typeof window === 'undefined') return;
+
+  const interactions = ['mousedown', 'keydown', 'scroll', 'touchstart', 'wheel'];
+  interactions.forEach((event) => {
+    window.addEventListener(event, () => resetInactivityTimer(true), { capture: true, passive: true });
+  });
+
+  window.addEventListener('storage', (event) => {
+    if (event.key === TIME_OLD && !event.newValue) {
+      handleSessionExpired();
+    }
+  });
+
+  resetInactivityTimer();
+};
 
 // ============================================================================
 // FACTORY FUNCTION - Create custom base query with loading & error handling
@@ -300,10 +330,7 @@ const createCustomBaseQuery = (
   return async (args, api, extraOptions) => {
     const pathName = normalizePathname(window.location.pathname)
 
-    // Đếm ngược 15 phút không gọi API nào thì auto logout (bỏ qua trang login)
-    if (pathName !== PATHS.AUTH.LOGIN) {
-      resetInactivityTimer()
-    }
+    resetInactivityTimer()
 
     const requestArgs = args as RequestArgs
     const isLoading = requestArgs?.params?.isLoading

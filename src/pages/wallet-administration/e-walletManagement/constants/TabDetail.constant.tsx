@@ -16,26 +16,33 @@ import SecurityBusiness from '../components/detail-infor/business/SecurityBusine
 export const TAB_CONTENT_MAP: TabContentMap = {
   '1': {
     'USER': (props: TabContentProps) => <CommonInfor accountData={props.accountData} ekycData={props.ekycData} />,
-    'SYSTEM': (props: TabContentProps) => <CommonInfoBusiness accountData={props.accountData} />
+    'SYSTEM': (props: TabContentProps) => <CommonInfor accountData={props.accountData} ekycData={props.ekycData} />,
+    'BUSINESS': (props: TabContentProps) => <CommonInfoBusiness accountData={props.accountData} />
   },
   '2': {
     'USER': (props: TabContentProps) => <AccountBank linkedBanks={props.linkedBanks} />,
-    'SYSTEM': (props: TabContentProps) => <AccountBankBusiness linkedBanks={props.linkedBanks} />
+    'SYSTEM': (props: TabContentProps) => <AccountBank linkedBanks={props.linkedBanks} />,
+    'BUSINESS': (props: TabContentProps) => <AccountBankBusiness linkedBanks={props.linkedBanks} />
   },
   '3': {
     'USER': (props: TabContentProps) => <HistoryPayment ownerId={props.accountData?.ownerId || ''}  initiatorUsername={props.accountData?.ownerUsername || ''}/>,
-    'SYSTEM': (props: TabContentProps) => <HistoryPaymentBusiness ownerId={props.accountData?.ownerId || ''} />
+    'SYSTEM': (props: TabContentProps) => <HistoryPayment ownerId={props.accountData?.ownerId || ''}  initiatorUsername={props.accountData?.ownerUsername || ''}/>,
+    'BUSINESS': (props: TabContentProps) => <HistoryPaymentBusiness ownerId={props.accountData?.ownerId || ''} />
   },
   '4': {
     'USER': <FreezeBalance />,
-    'SYSTEM': <FreezeBalanceBusiness />
+    'SYSTEM': <FreezeBalance />,
+    'BUSINESS': <FreezeBalanceBusiness />
   },
   '5': {
     'USER': <FeeSetting />,
-    'SYSTEM': <FeeSettingBusiness />
+    'SYSTEM': <FeeSetting />,
+    'BUSINESS': <FeeSettingBusiness />
   },
   '6': {
     'USER': <Security />,
-    'SYSTEM': <SecurityBusiness />
+    'SYSTEM': <Security />,
+    'BUSINESS': <SecurityBusiness />
   }
 }
+

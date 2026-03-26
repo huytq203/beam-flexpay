@@ -16,6 +16,7 @@ import useFetchDataComponent from './hooks/useFetchDataComponent'
 import { FeeComponent } from './types/FeeComponent.types'
 import { PATHS } from '@constants/pathConstant'
 import useHandleAddFeePolicy from './hooks/useHandleAddFeePolicy'
+import { TYPEDATE } from '@constants/date.constant'
 
 const AddFeePolicy = () => {
     const { mode, id } = useParams()
@@ -60,8 +61,8 @@ const AddFeePolicy = () => {
                 feeDomain: d.feeDomain,
                 currency: d.currency,
                 description: d.description ?? '',
-                validFrom: d?.validFrom ? dayjs.utc(d.validFrom).local().toISOString() : undefined,
-                validTo: d?.validTo ? dayjs.utc(d.validTo).local().toISOString() : undefined,
+                validFrom: d?.validFrom ? dayjs(d.validFrom).toISOString() : undefined,
+                validTo: d?.validTo ? dayjs(d.validTo).toISOString() : undefined,
                 status: d.status,
                 priority: d.priority,
             })

@@ -2,17 +2,17 @@ export enum statusType {
   INIT = 'INIT',
   ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',
-  LOCKED = 'LOCKED'
+  LOCKED = 'LOCKED',
 }
 
 export const STATUS_LABEL: Record<statusType, string> = {
   [statusType.INIT]: 'Khởi tạo',
   [statusType.ACTIVE]: 'Hoạt động',
   [statusType.INACTIVE]: 'Không hoạt động',
-  [statusType.LOCKED]: 'Khóa'
+  [statusType.LOCKED]: 'Khóa',
 }
 
-export const STATUS_CONFIG: Record<statusType, { label: string; className: string }> = {
+export const STATUS_CONFIG: Record<statusType|'WAITING', { label: string; className: string }> = {
   [statusType.INIT]: {
     label: 'Khởi tạo',
     className: 'info-status',
@@ -28,6 +28,10 @@ export const STATUS_CONFIG: Record<statusType, { label: string; className: strin
   [statusType.LOCKED]: {
     label: 'Khóa',
     className: 'danger-status',
+  },
+  WAITING: {
+    label: 'Chờ hiệu lực',
+    className: 'warning-status',
   }
 }
 

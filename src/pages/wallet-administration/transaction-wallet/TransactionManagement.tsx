@@ -32,19 +32,19 @@ const TransactionManagement = () => {
         isLoadingGetTransaction ? (
 
           <>
-           <div className={`bg-white rounded-xl shadow-md p-6 border border-gray-100`}>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    {Array.from({ length: 9 }).map((_, index) => (
-                      <SkeletonInput key={index} />
-                    ))}
-                  </div>
-          
-                  <div className="flex justify-end flex-wrap gap-3 items-center">
-                    <SkeletonButton size="md" />
-                    <SkeletonButton size="md" />
-                 
-                  </div>
-                </div></>
+            <div className={`bg-white rounded-xl shadow-md p-6 border border-gray-100`}>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                {Array.from({ length: 9 }).map((_, index) => (
+                  <SkeletonInput key={index} />
+                ))}
+              </div>
+
+              <div className="flex justify-end flex-wrap gap-3 items-center">
+                <SkeletonButton size="md" />
+                <SkeletonButton size="md" />
+
+              </div>
+            </div></>
         ) : (
           <FormSearch handleSearch={handleSearch} />
         )

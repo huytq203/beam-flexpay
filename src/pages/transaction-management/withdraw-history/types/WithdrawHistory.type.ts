@@ -34,12 +34,20 @@ export enum StatusEnum {
   PENDING = 'PENDING',
   POSTED = 'POSTED',
   ARCHIVED = 'ARCHIVED',
+  AUTHORIZED = 'AUTHORIZED',
+  SETTLED = 'SETTLED',
+  CANCELLED = 'CANCELLED',
+  FAILED = 'FAILED',
 }
 
-export const StatusType = {
+export const StatusType: Record<StatusEnum, string> = {
   [StatusEnum.PENDING]: 'Chờ xử lý',
   [StatusEnum.POSTED]: 'Thành công',
   [StatusEnum.ARCHIVED]: 'Đã lưu trữ',
+  [StatusEnum.AUTHORIZED]: 'Đã ủy quyền',
+  [StatusEnum.SETTLED]: 'Đã thanh toán',
+  [StatusEnum.CANCELLED]: 'Đã hủy',
+  [StatusEnum.FAILED]: 'Thất bại',
 }
 export type StatusKey = keyof typeof StatusType;
 
@@ -47,6 +55,10 @@ export const StatusConstants = {
   PENDING: 'PENDING',
   POSTED: 'POSTED',
   ARCHIVED: 'ARCHIVED',
+  AUTHORIZED: 'AUTHORIZED',
+  SETTLED: 'SETTLED',
+  CANCELLED: 'CANCELLED',
+  FAILED: 'FAILED',
 } as const
 
 export enum TransactionConstants {

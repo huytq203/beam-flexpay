@@ -63,7 +63,7 @@ export const getColumnFeePolicy = ({ navigate, handleActive, handleInactive, isL
   {
     title: 'Hiệu lực từ',
     dataIndex: 'validFrom',
-    render: (date: string) => dayjs.utc(date).utcOffset(7).format(TYPEDATE.fullTime)
+    render: (date: string) => dayjs(date).format(TYPEDATE.fullTime)
   },
   {
     title: 'Hiệu lực đến',
@@ -73,7 +73,7 @@ export const getColumnFeePolicy = ({ navigate, handleActive, handleInactive, isL
         return 'Vô thời hạn'
       }
       else {
-        return dayjs.utc(date).utcOffset(7).format(TYPEDATE.fullTime)
+        return dayjs(date).format(TYPEDATE.fullTime)
       }
     }
   },
@@ -82,6 +82,12 @@ export const getColumnFeePolicy = ({ navigate, handleActive, handleInactive, isL
     dataIndex: 'status',
     align: 'center',
     render(value, record, index) {
+      const now = dayjs()
+      const validFrom = dayjs(record?.validFrom)
+      if (now.isBefore(validFrom) && record?.status === statusType.INIT) {
+        return <StatusBadge status={"WAITING"} config={STATUS_CONFIG} />
+      }
+   
       return <StatusBadge status={value} config={STATUS_CONFIG} />
     },
   },
