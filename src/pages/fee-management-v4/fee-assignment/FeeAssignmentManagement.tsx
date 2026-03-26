@@ -132,7 +132,7 @@ const FeeAssignmentManagement = () => {
       />
       <ModalComponent
         title={'Thêm gán phí'}
-        width={{ xs: "100% ", md: "95%" }}
+        width={{ xs: "100% ", md: "70%" }}
         open={openModalAdd}
         okButtonProps={{
           htmlType: 'submit',

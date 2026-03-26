@@ -58,9 +58,9 @@ const FormFieldAssign = React.memo(({ watch, control, setValue, isCreate, feeDom
   // }
   return (
     <div>
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-2'>
+      <div className='grid grid-cols-1 md:grid-cols-5 gap-2'>
 
-        <FormSelect
+        {/* <FormSelect
           control={control}
           name='applyType'
           label={<span>Đối tượng áp dụng <span className='text-red-500'>*</span></span>}
@@ -71,7 +71,7 @@ const FormFieldAssign = React.memo(({ watch, control, setValue, isCreate, feeDom
             { label: 'Hệ thống', value: "0" },
           ]}
           disabled={true}
-        />
+        /> */}
 
         {/* <FormInput
           type='text'
@@ -84,7 +84,7 @@ const FormFieldAssign = React.memo(({ watch, control, setValue, isCreate, feeDom
         /> */}
 
         
-        <FormSelect
+        {/* <FormSelect
           control={control}
           name='domain'
           defaultValue={"EWALLET"}
@@ -96,7 +96,7 @@ const FormFieldAssign = React.memo(({ watch, control, setValue, isCreate, feeDom
           ]}
           label={<span>Domain <span className='text-red-500'>*</span></span>}
           className={'col-span-1'}
-        />
+        /> */}
 
         <FormSelect
           control={control}
