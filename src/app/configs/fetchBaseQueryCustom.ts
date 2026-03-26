@@ -209,11 +209,6 @@ const refreshAccessToken = async (
 }
 
 
-const forceLogout = (): void => {
-  Cookies.remove(CookieKey.ACCESS_TOKEN)
-  Cookies.remove(CookieKey.REFRESH_TOKEN)
-  window.location.href = PATHS.AUTH.LOGIN
-}
 
 // ============================================================================
 // INACTIVITY TRACKING
@@ -231,6 +226,15 @@ let isExpired = false; // Flag chặn gọi popup/logout nhiều lần
 /**
  * Hàm xử lý khi hết phiên làm việc
  */
+
+
+const forceLogout = (): void => {
+  Cookies.remove(CookieKey.ACCESS_TOKEN)
+  Cookies.remove(CookieKey.REFRESH_TOKEN)
+  window.location.href = PATHS.AUTH.LOGIN
+  localStorage.removeItem(TIME_OLD);
+}
+
 const handleSessionExpired = () => {
   if (isExpired) return;
   isExpired = true;
