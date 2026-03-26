@@ -4,9 +4,10 @@ import { ColumnsType } from "antd/lib/table";
 import { Link, NavigateFunction } from "react-router-dom";
 import { ButtonComponent, MaskText, TagComponent, TooltipComponent, TypographyText } from "@components/index";
 import { EyeFilled } from "@components/icons";
-import { CounterpartyType, CounterpartyTypeKey, PaymentMethodEnum,PaymentMethod, StatusKey, StatusType, TransactionKey, TransactionType, BankLabel, BankEnum, SourceDomain, SourceDomainLabel } from "@pages/wallet-administration/transaction-wallet/constants/Transaction.constant";
+import { CounterpartyType, CounterpartyTypeKey, PaymentMethodEnum,PaymentMethod, StatusKey, StatusType, TransactionKey, TransactionType, BankLabel, BankEnum, SourceDomain, SourceDomainLabel, CONFIG_STATUS } from "@pages/wallet-administration/transaction-wallet/constants/Transaction.constant";
 import { formatNumber } from "@utils/index";
 import { PATHS } from "@constants/pathConstant";
+import StatusBadge from "@components/status-badge/StatusBadge";
 
 interface ColumnProps {
     navigate: NavigateFunction;
@@ -187,16 +188,10 @@ const getColumn = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal
         dataIndex: 'status',
         align: 'center',
         render(value, record) {
-            const STATUS_CLASS: Record<string, string> = {
-                PENDING: 'text-blue-600 rounded-md inline-block px-2 font-medium text-[12px] border border-blue-500 bg-blue-50',
-                POSTED: 'text-green-700 rounded-md inline-block px-2 font-medium text-[12px] border border-green-500 bg-green-50',
-                ARCHIVED: 'text-red-600 rounded-md inline-block px-2 font-medium text-[12px] border border-red-400 bg-red-50',
-            };
+           
             const typeKeyStatus = record.status as StatusKey
             return (
-                <div className={STATUS_CLASS[typeKeyStatus] ?? 'text-gray-500'}>
-                    {StatusType[typeKeyStatus] ?? record.status}
-                </div>
+                <StatusBadge status={typeKeyStatus} config={CONFIG_STATUS}/>
             )
         },
     },

@@ -49,6 +49,17 @@ export const StatusType :Record<StatusEnum, string> = {
 }
 export type StatusKey = keyof typeof StatusType;
 
+
+export const CONFIG_STATUS:Record<StatusEnum, { label: string, className: string ,shimmerColor: string,}> = {
+  [StatusEnum.PENDING]: { label: 'Chờ xử lý', className: 'info-status', shimmerColor: 'rgba(24, 144, 255, 0.1)' },
+  [StatusEnum.POSTED]: { label: 'Đã ghi sổ', className: 'success-status', shimmerColor: 'rgba(0, 229, 160, 0.1)' },
+  [StatusEnum.AUTHORIZED]: { label: 'Đã phê duyệt', className: 'warning-status', shimmerColor: 'rgba(0, 229, 160, 0.1)' },
+  [StatusEnum.SETTLED]: { label: 'Đã quyết toán', className: 'success-status', shimmerColor: 'rgba(0, 229, 160, 0.1)' },
+  [StatusEnum.CANCELLED]: { label: 'Đã hủy', className: 'error-status', shimmerColor: 'rgba(255, 86, 59, 0.1)' },
+  [StatusEnum.FAILED]: { label: 'Thất bại', className: 'error-status', shimmerColor: 'rgba(255, 86, 59, 0.1)' },
+}
+
+
 export const StatusConstants = {
   PENDING: 'PENDING',
   POSTED: 'POSTED',

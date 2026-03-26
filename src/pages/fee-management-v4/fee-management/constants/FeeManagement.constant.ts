@@ -12,24 +12,27 @@ export const STATUS_LABEL: Record<statusType, string> = {
   [statusType.LOCKED]: 'Khóa',
 }
 
-export const STATUS_CONFIG: Record<statusType|'WAITING', { label: string; className: string }> = {
+export const STATUS_CONFIG: Record<statusType, { label: string; className: string, shimmerColor: string }> = {
   [statusType.INIT]: {
     label: 'Khởi tạo',
     className: 'info-status',
+    shimmerColor: 'rgba(59, 130, 246, 0.1)',
   },
   [statusType.ACTIVE]: {
     label: 'Hoạt động',
     className: 'success-status',
+    shimmerColor: 'rgba(0, 229, 160, 0.1)',
   },
   [statusType.INACTIVE]: {
     label: 'Không hoạt động',
     className: 'danger-status',
+    shimmerColor: 'rgba(239, 68, 68, 0.1)',
   },
   [statusType.LOCKED]: {
     label: 'Khóa',
     className: 'danger-status',
-  },
- 
+    shimmerColor: 'rgba(239, 68, 68, 0.1)',
+  }
 }
 
 

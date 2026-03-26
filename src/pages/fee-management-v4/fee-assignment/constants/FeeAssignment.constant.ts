@@ -76,14 +76,16 @@ export const statusTypeLable={
 }
 
 
-export const STATUS_CONFIG: Record<statusType, { label: string; className: string }> = {
+export const STATUS_CONFIG: Record<statusType, { label: string; className: string, shimmerColor: string }> = {
   [statusType.ACTIVE]: {
     label: 'Hoạt động',
-    className: 'success-status',
+    className: 'success-status ',
+    shimmerColor: 'rgba(0, 229, 160, 0.1)',
   },
   [statusType.INACTIVE]: {
     label: 'Không hoạt động',
     className: 'danger-status',
+    shimmerColor: 'rgba(239, 68, 68, 0.1)',
   }
 }
 

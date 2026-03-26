@@ -29,57 +29,69 @@ export const StatusLabel: Record<StatusKey, string> = {
 } as const
 
 
-const STATUS_CONFIG: Record<StatusKey, { label: string; className: string }> = {
+const STATUS_CONFIG: Record<StatusKey, { label: string; className: string; shimmerColor: string }> = {
     [StatusKey.ACTIVE]: {
         label: 'Hoạt động',
         className: 'success-status',
+        shimmerColor: 'rgba(0, 229, 160, 0.1)',
     },
     [StatusKey.INACTIVE]: {
         label: 'Ngừng hoạt động',
         className: 'danger-status',
+        shimmerColor: 'rgba(239, 68, 68, 0.1)',
     },
     [StatusKey.LOCKED]: {
         label: 'Khóa',
         className: 'danger-status',
+        shimmerColor: 'rgba(239, 68, 68, 0.1)',
     },
     [StatusKey.FROZEN]: {
         label: 'Đóng băng',
         className: 'info-status',
+        shimmerColor: 'rgba(59, 130, 246, 0.1)',
     },
 
     [StatusKey.SUCCESS]: {
         label: 'Thành công',
         className: 'success-status',
+        shimmerColor: 'rgba(0, 229, 160, 0.1)',
     },
     [StatusKey.FAILED]: {
         label: 'Thất bại',
         className: 'danger-status',
+        shimmerColor: 'rgba(239, 68, 68, 0.1)',
     },
     [StatusKey.PENDING]: {
         label: 'Chờ xử lý',
         className: 'warning-status',
+        shimmerColor: 'rgba(245, 158, 11, 0.1)',
     },
     [StatusKey.CANCELLED]: {
         label: 'Đã hủy',
         className: 'danger-status',
+        shimmerColor: 'rgba(239, 68, 68, 0.1)',
     },
     [StatusKey.CAPTURED]: {
         label: 'Đã thu',
         className: 'info-status',
+        shimmerColor: 'rgba(59, 130, 246, 0.1)',
     },
     [StatusKey.RELEASED]: {
         label: 'Đã giải tỏa',
         className: 'normal-status',
+        shimmerColor: 'rgba(107, 114, 128, 0.1)',
     },
     [StatusKey.EXPIRED]: {
         label: 'Hết hạn',
         className: 'warning-status',
+        shimmerColor: 'rgba(245, 158, 11, 0.1)',
     },
 }
 
 interface StatusConfig {
     label: string
     className: string
+    shimmerColor?: string
 }
 
 interface StatusBadgeProps {
@@ -94,7 +106,10 @@ export default function StatusBadge({ status, config }: StatusBadgeProps) {
     if (!currentConfig) return <span>{status}</span>
 
     return (
-        <span className={`inline-flex px-2 text-[12px] w-fit items-center whitespace-nowrap rounded-md ${currentConfig.className}`}>
+        <span
+            className={`inline-flex px-2 text-[12px] w-fit items-center whitespace-nowrap rounded-md relative overflow-hidden ${currentConfig.className} before:absolute before:inset-y-0 before:-left-full before:w-[60%] before:bg-[linear-gradient(90deg,transparent,var(--shimmer-color,rgba(0,229,160,0.15)),transparent)] before:animate-shimmer`}
+            style={{ '--shimmer-color': currentConfig.shimmerColor } as React.CSSProperties}
+        >
             {currentConfig.label}
         </span>
     )
