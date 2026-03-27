@@ -89,7 +89,7 @@ const getColumn = ({ navigate }: ColumnProps): ColumnsType<UnifiedContentJournal
                         <div className='relative flex items-center justify-center'>
                             <span className={`absolute inline-flex h-full w-full rounded-full ${config.dot} opacity-40 animate-ping-slow`} />
                             <span 
-                                className={`relative w-1.5 h-1.5 rounded-full ${config.dot} animate-pulse-soft `} 
+                                className={`relative w-1.5 h-1.5 rounded-full ${config.dot} animate-pulse-dot `} 
                                 style={{ 
                                     boxShadow: `0 0 6px 1px ${config.glowColor}` 
                                 }}

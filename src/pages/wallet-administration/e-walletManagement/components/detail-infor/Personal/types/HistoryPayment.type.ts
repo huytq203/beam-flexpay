@@ -1,17 +1,21 @@
 export enum StatusKey {
     PENDING = 'PENDING',
-    CANCELLED = 'CANCELLED',
     POSTED = 'POSTED',
-    ARCHIVED = 'ARCHIVED',
+    AUTHORIZED = 'AUTHORIZED',
+    SETTLED = 'SETTLED',
+    CANCELLED = 'CANCELLED',
+    FAILED = 'FAILED',
 }
 
 
 
 export const StatusLabel: Record<StatusKey, string> = {
     [StatusKey.PENDING]: 'Chờ xử lý',
+    [StatusKey.POSTED]: 'Đã ghi sổ',
+    [StatusKey.AUTHORIZED]: 'Đã phê duyệt',
+    [StatusKey.SETTLED]: 'Đã quyết toán',
     [StatusKey.CANCELLED]: 'Đã hủy',
-    [StatusKey.POSTED]: 'Thành công',
-    [StatusKey.ARCHIVED]: 'Đã lưu trữ',
+    [StatusKey.FAILED]: 'Thất bại',
 } as const
 
 export const STATUS_CONFIG = {
@@ -19,18 +23,32 @@ export const STATUS_CONFIG = {
     [StatusKey.PENDING]: {
         label: 'Chờ xử lý',
         className: 'warning-status',
+        shimmerColor: 'rgba(252, 186, 3, 0.2)',
     },
     [StatusKey.CANCELLED]: {
         label: 'Đã hủy',
         className: 'danger-status',
+        shimmerColor: 'rgba(255, 86, 59, 0.2)',
     },
     [StatusKey.POSTED]: {
-        label: 'Thành công',
+        label: 'Đã ghi sổ',
         className: 'success-status',
+        shimmerColor: 'rgba(0, 229, 160, 0.2)',
     },
-    [StatusKey.ARCHIVED]: {
-        label: 'Đã lưu trữ',
+    [StatusKey.AUTHORIZED]: {
+        label: 'Đã phê duyệt',
         className: 'info-status',
+        shimmerColor: 'rgba(24, 144, 255, 0.2)',
+    },
+    [StatusKey.SETTLED]: {
+        label: 'Đã quyết toán',
+        className: 'info-status',
+        shimmerColor: 'rgba(24, 144, 255, 0.2)',
+    },
+    [StatusKey.FAILED]: {
+        label: 'Thất bại',
+        className: 'danger-status',
+        shimmerColor: 'rgba(255, 86, 59, 0.2)',
     },
 }
 
@@ -84,11 +102,11 @@ export const PaymentMethodLabel: Record<PaymentMethodEnum, string> = {
 
 
 export enum SourceDomain {
-  EWALLET = 'EWALLET',
-  
-} 
+    EWALLET = 'EWALLET',
+
+}
 
 export const SourceDomainLabel: Record<SourceDomain, string> = {
-  [SourceDomain.EWALLET]: 'Ví điện tử',
+    [SourceDomain.EWALLET]: 'Ví điện tử',
 
 } as const;

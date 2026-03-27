@@ -166,3 +166,44 @@
 html {
   font-size: clamp(12px, 0.9vw, 16px) !important;
 }
+
+/* Custom Scrollbar Global (Extreme 2px) */
+* {
+  scrollbar-width: thin !important;
+  scrollbar-color: #cbd5e1 transparent !important;
+}
+
+::-webkit-scrollbar {
+  width: 2px !important;
+  height: 2px !important;
+  display: block !important;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1 !important;
+  border-radius: 10px !important;
+  border: none !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--primary-color, #2bd9d0) !important;
+}
+
+/* Force for all Ant Design and Custom scrolling components */
+[class^="ant-"]::-webkit-scrollbar,
+[class*=" ant-"]::-webkit-scrollbar,
+.scroll-custom::-webkit-scrollbar,
+.ant-table-body::-webkit-scrollbar,
+.ant-menu-inline::-webkit-scrollbar {
+  width: 2px !important;
+  height: 2px !important;
+}
+
+.scroll-custom {
+  overflow-y: auto;
+  overflow-x: hidden;
+}

@@ -12,7 +12,7 @@ type FreezeRow = { no: number } & FreezeItem
 const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
     ACTIVE: { color: 'blue', label: 'Đang đóng băng' },
     CAPTURED: { color: 'green', label: 'Đã thu' },
-    RELEASED: { color: 'default', label: 'Đã giải tỏa' },
+    RELEASED: { color: 'green', label: 'Đã giải tỏa' },
     EXPIRED: { color: 'orange', label: 'Hết hạn' },
     CANCELLED: { color: 'red', label: 'Đã hủy' },
 }
@@ -73,7 +73,18 @@ export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeR
             </div>
         ),
     },
-  
+    {
+        title: 'Loại đóng băng',
+        align: 'center',
+        dataIndex: 'type',
+        render: (_, record) => (
+            <div>
+                <p className='font-medium text-gray-500'>{typeLockLabel[record.type as typeLock]}</p>
+
+            </div>
+        ),
+    },
+
     {
         title: 'Trạng thái',
         align: 'center',
@@ -84,7 +95,6 @@ export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeR
             return (
                 <div className='space-y-1'>
                     <Tag color={config.color}>{config.label}</Tag>
-                    <p className='text-[12px]'>{typeLockLabel[record.type as typeLock]}</p>
                 </div>
             )
         },

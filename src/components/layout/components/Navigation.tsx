@@ -964,18 +964,18 @@ const transactionManagement = {
       ),
       label: 'Giao dịch đóng băng'
     },
-    {
-      key: 'refund-management',
-      permission: ['TRANSACTION:FULL', 'TRANSACTION:VIEW', 'TRANSACTION:CREATE', 'TRANSACTION:UPDATE', 'TRANSACTION:DELETE', 'ADMIN:FULL'],
-      icon: (
-        <ClockCounterClockwiseIcon
-          size={size}
-          weight={weight}
-          color={COlOR}
-        />
-      ),
-      label: 'Quản lý hoàn tiền'
-    },
+    // {
+    //   key: 'refund-management',
+    //   permission: ['TRANSACTION:FULL', 'TRANSACTION:VIEW', 'TRANSACTION:CREATE', 'TRANSACTION:UPDATE', 'TRANSACTION:DELETE', 'ADMIN:FULL'],
+    //   icon: (
+    //     <ClockCounterClockwiseIcon
+    //       size={size}
+    //       weight={weight}
+    //       color={COlOR}
+    //     />
+    //   ),
+    //   label: 'Quản lý hoàn tiền'
+    // },
     {
       key: 'system-ledger',
       permission: ['TRANSACTION:FULL', 'TRANSACTION:VIEW', 'TRANSACTION:CREATE', 'TRANSACTION:UPDATE', 'TRANSACTION:DELETE', 'ADMIN:FULL'],

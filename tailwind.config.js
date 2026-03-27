@@ -9,7 +9,7 @@ module.exports = {
                 },
                 'pulse-soft': {
                     '0%, 100%': { opacity: '1', transform: 'scale(1)' },
-                    '50%': { opacity: '0.4', transform: 'scale(0.8)' }
+                    '50%': { opacity: '0.6', transform: 'scale(0.9)' }
                 },
                 'pulse-dot': {
                     '0%, 100%': { opacity: '1', transform: 'scale(1)' },

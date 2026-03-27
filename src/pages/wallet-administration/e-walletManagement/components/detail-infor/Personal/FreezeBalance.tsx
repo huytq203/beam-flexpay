@@ -2,12 +2,12 @@ import { ButtonComponent, CardComponent, DialogModal, Table } from '@components/
 import { SnowflakeIcon } from '@components/icons'
 import DialogUnfreeze from './components/DialogUnfreeze'
 import React from 'react'
-import { Column } from './configs/FreezeBalance.column'
+import { getColumn } from './configs/FreezeBalance.column'
 import useFetchFreeze from './hooks/useFetchFreeze'
 
 const FreezeBalance = () => {
     const { dataFreeze, isLoadingGetFreeze, dataSource, page, setPage, setPageSize, size, isUnfreezeModalOpen, selectedFreezeItem, handleOpenUnfreezeModal, handleCloseUnfreezeModal } = useFetchFreeze()
-    const column = Column({ onRelease: handleOpenUnfreezeModal })
+    const column = getColumn({ onRelease: handleOpenUnfreezeModal })
     return (
         <div>
             <CardComponent className='mt-3' content={

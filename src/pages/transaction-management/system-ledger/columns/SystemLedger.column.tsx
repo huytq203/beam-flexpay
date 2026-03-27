@@ -2,10 +2,11 @@ import { ColumnsType } from "antd/lib/table";
 import { LedgerEntry } from "../types/SystemLedger.type";
 import dayjs from "dayjs";
 import { Link, NavigateFunction } from "react-router-dom";
-import { ButtonComponent, TooltipComponent, TypographyText } from "@components/index";
+import { ButtonComponent, MaskText, TooltipComponent, TypographyText } from "@components/index";
 import { EyeFilled } from "@components/icons";
 import { formatCurrency } from "@utils/formatNumber";
-import { DirectionConstants, DirectionKey, GLCodeLabels, StatusKey, StatusLabel } from "../constants/SystemLedger.constant";
+import { CONFIG_STATUS, DirectionConstants, DirectionKey, GLCodeLabels, StatusKey, StatusLabel } from "../constants/SystemLedger.constant";
+import StatusBadge from "@components/status-badge/StatusBadge";
 
 const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): ColumnsType<LedgerEntry> => [
     {
@@ -24,15 +25,12 @@ const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Co
             return (
                 <div>
                     {record.transaction?.transactionCode ? (
-                        <>
-                        <p className="font-medium text-orange-600 ">
-                            <TypographyText copyable={{ text: record.transaction.transactionCode }}>
+                        <div className="flex flex-col ">
+                            <TypographyText strong copyable={{ text: record.transaction.transactionCode }}>
                                 {record.transaction.transactionCode}
                             </TypographyText>
-                        </p>
-                        <span className="text-gray-500 text-[12px]">{value.description}</span>
-                        
-                        </>
+                            <span className="text-gray-500 text-[12px]">{value.description}</span>
+                        </div>
                     ) : (
                         <span>--</span>
                     )}
@@ -43,12 +41,21 @@ const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Co
     {
         title: 'Số tài khoản',
         align: 'center',
+        dataIndex: 'transaction',
         width: 150,
-        render(value, record) {
-            const maskedAccount = record.transaction?.maskedAccount
+        render(value) {
+            const maskedAccount = value?.maskedAccount
+            if (!maskedAccount) return '--'
+
+            const isAlreadyMasked = String(maskedAccount).includes('*')
+
             return (
                 <div className='text-center'>
-                    <p className="font-medium ">{maskedAccount ?? '--'}</p>
+                    {isAlreadyMasked ? (
+                        <p className="font-medium">{maskedAccount}</p>
+                    ) : (
+                        <MaskText value={maskedAccount} />
+                    )}
                 </div>
             )
         },
@@ -136,9 +143,7 @@ const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Co
             };
             const status = record.account?.status || record.transaction?.status;
             return (
-                <div className={STATUS_CLASS[status as StatusKey] ?? ''}>
-                    {StatusLabel[status as StatusKey] ?? status}
-                </div>
+                <StatusBadge status={status as StatusKey}  config={CONFIG_STATUS} />
             )
         },
     },

@@ -7,6 +7,7 @@ import { formatNumber } from '@utils/formatNumber'
 import { MaskText, TagComponent } from '@components/index'
 import { TypographyText } from '@components/index'
 import { UnifiedContentJournal } from '@type/apiResponseJournal'
+import { cn } from '@utils/cn'
 
 export const getColumn = (): ColumnType<UnifiedContentJournal>[] => [
     {
@@ -149,6 +150,6 @@ export const getColumn = (): ColumnType<UnifiedContentJournal>[] => [
         title: 'Trạng thái',
         dataIndex: 'status',
         align: 'center',
-        render: (value) => <StatusBadge status={value as StatusKey}  config={STATUS_CONFIG}/>,
+        render: (value) => <StatusBadge className={cn(value==='PENDING'?'animate-pulse-soft':'')} status={value as StatusKey}  config={STATUS_CONFIG}/>,
     },
 ]

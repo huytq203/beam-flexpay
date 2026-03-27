@@ -12,6 +12,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import EmployeePassword from './components/EmployeePassword'
 import EmployeeProfile from './components/EmployeeProfile'
 import NavProfile from './components/NavProfile'
+import { Breadcrumb, ButtonComponent } from '@components/index'
 import { Resizable } from 're-resizable'
 import { useUserGetMyInfoQuery } from '@services/cmsService'
 import usePermission from '@hooks/usePermission'
@@ -22,6 +23,7 @@ import { FORBIDDENERROR } from '@constants/routersConstant'
 import { PATHS } from '@constants/pathConstant'
 import Cookies from 'js-cookie'
 import { CookieKey } from '@configs/fetchBaseQuery.types'
+import { cn } from '@utils/cn'
 
 const { Header, Sider, Content } = Layout
 const { useBreakpoint } = Grid
@@ -165,7 +167,7 @@ function AppLayout() {
 
   const sidebarContent = (
     <>
-      <div className='logo'>
+      <div className='logo border-b border-gray-200'>
         <Logo collapsed={isMobile ? false : collapsed} />
       </div>
       <Menu
@@ -195,7 +197,7 @@ function AppLayout() {
               collapsible
               collapsed={collapsed}
               theme='light'
-              className='custom-sidebar'
+              className='custom-sidebar border-r border-gray-200'
             >
               {sidebarContent}
             </Sider>
@@ -215,7 +217,7 @@ function AppLayout() {
               collapsible
               collapsed={false}
               theme='light'
-              className='custom-sidebar'
+              className='custom-sidebar border-r border-gray-100'
               width={250}
               style={{ minHeight: '100vh' }}
             >
@@ -224,21 +226,33 @@ function AppLayout() {
           </Drawer>
         )}
         <Layout className='site-layout'>
-          <Header className='app-header'>
-            <div>
-              {React.createElement(
-                collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-                {
-                  className: 'trigger',
-                  onClick: () => setCollapsed(!collapsed)
-                }
-              )}
+          <Header className='app-header flex justify-center items-center'>
+            <div className="flex items-center gap-3 flex-1">
+
+              <div >
+                {/* {React.createElement(
+                  collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+                  {
+                    className: 'trigger',
+                    onClick: () => setCollapsed(!collapsed)
+                  }
+                )} */}
+                <ButtonComponent
+                  type="text"
+                  size="small"
+                  icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                  onClick={() => setCollapsed(!collapsed)}
+                  className="px-1 py-1 border-1 border-gray-200"
+                />
+              </div>
+
+              <div className="flex flex-col flex-1">
+                <b className= {cn(`text-blue`, isMobile ? 'text-[16px]' : 'text-[20px]', 'leading-none')}>{t(`header-title.${title}`)}</b>
+                {!isMobile && <Breadcrumb className="mt-1" />}
+              </div>
             </div>
-            <Row>
-              <Col>
-                <b className={`text-blue ${isMobile ? 'fs-16' : 'fs-22'}`}>{t(`header-title.${title}`)}</b>
-              </Col>
-            </Row>
+
+
             <NavProfile />
           </Header>
           <Content className='app-content'>

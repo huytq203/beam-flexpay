@@ -9,6 +9,7 @@ interface CardComponentProps extends Omit<CardProps, 'content'> {
 const CardComponent = ({children, content, bodyBackground, ...rest }: CardComponentProps) => {
   return (
     <Card
+    className='bg-white/90'
       {...rest}
     >
      {content ?? children}

@@ -122,7 +122,6 @@ export default function NavProfile() {
     // })
   }
 
-  console.log(profile)
   return (
     <React.Fragment>
       <Dropdown

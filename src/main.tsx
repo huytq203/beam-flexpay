@@ -68,22 +68,22 @@ const theme = {
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   // <React.StrictMode>
-    <Provider store={store}>
-      <I18nextProvider i18n={i18next}>
-        <ConfigProvider theme={theme}>
-          <MessageProvider>
-            <App>
-              <React.Suspense fallback={<ScreenLoading />}>
-                <RouterProvider
-                  router={WalletRoutes}
-                  fallbackElement={<ScreenLoading />}
-                />
-              </React.Suspense>
-              <ScreenLoading />
-            </App>
-          </MessageProvider>
-        </ConfigProvider>
-      </I18nextProvider>
-    </Provider>
+  <Provider store={store}>
+    <I18nextProvider i18n={i18next}>
+      <ConfigProvider theme={theme}>
+        <MessageProvider>
+          <App>
+            <React.Suspense fallback={<ScreenLoading />}>
+              <RouterProvider
+                router={WalletRoutes}
+                fallbackElement={<ScreenLoading />}
+              />
+            </React.Suspense>
+            <ScreenLoading />
+          </App>
+        </MessageProvider>
+      </ConfigProvider>
+    </I18nextProvider>
+  </Provider>
   // </React.StrictMode>
 )

@@ -10,7 +10,7 @@ interface ColumnProps {
     onRelease?: (record: any) => void
 }
 
-export const Column = ({ onRelease }: ColumnProps): ColumnType[] => [
+export const getColumn = ({ onRelease }: ColumnProps): ColumnType[] => [
     {
         title: 'STT',
         dataIndex: 'no',
@@ -44,6 +44,7 @@ export const Column = ({ onRelease }: ColumnProps): ColumnType[] => [
         title: 'Số tiền',
         dataIndex: 'amount',
         align: 'right',
+        width: 200,
         render: (value) => (
             <TypographyText strong>
                 {formatNumber(value)} <TypographyText type="secondary" style={{ fontSize: '12px' }}>VND</TypographyText>
@@ -54,36 +55,52 @@ export const Column = ({ onRelease }: ColumnProps): ColumnType[] => [
         title: 'Lý do đóng băng',
         dataIndex: 'reason',
         align: 'left',
-        render: (value) => value || '--'
+        width:250,
+        render: (value) => {
+            if (!value) return '--'
+            return (
+                <span className='inline-block max-w-[250px]'>{value}</span>
+            )
+        }
     },
     {
         title: 'Lý do giải tỏa',
         dataIndex: 'unfreezeReason',
         align: 'left',
-        render: (value) => value || '--'
+        width:250,
+        render: (value) => {
+            if (!value) return '--'
+            return (
+                <span className='inline-block max-w-[250px]'>{value}</span>
+            )
+        }
     },
     {
         title: 'Thời gian tạo',
         dataIndex: 'createdAt',
         align: 'center',
-        render: (value) => value ? <TypographyText type="secondary">{dayjs(value).format('DD/MM/YYYY HH:mm:ss')}</TypographyText> : '--'
+        width: 200,
+        render: (value) => value ? <span className='inline-block max-w-[200px]'>{dayjs(value).format('DD/MM/YYYY HH:mm:ss')}</span> : '--'
     },
     {
         title: 'Thời gian cập nhật',
         dataIndex: 'updatedAt',
+        width: 200,
         align: 'center',
-        render: (value) => value ? <TypographyText type="secondary">{dayjs(value).format('DD/MM/YYYY HH:mm:ss')}</TypographyText> : '--'
+        render: (value) => value ? <span className='inline-block max-w-[200px]'>{dayjs(value).format('DD/MM/YYYY HH:mm:ss')}</span> : '--'
     },
     {
         title: 'Trạng thái',
         dataIndex: 'status',
         align: 'center',
+        width: 100,
         render: (value) => <StatusBadge status={value as FreezeStatus} config={FreezeStatusConfig} />,
     },
     {
         title: 'Thao tác',
         dataIndex: 'action',
         align: 'center',
+        width: 100,
         render: (_, record) => {
             const canRelease = record.status === 'ACTIVE'
             return (

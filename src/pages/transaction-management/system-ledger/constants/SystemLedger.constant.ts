@@ -28,6 +28,14 @@ export const StatusLabel: Record<string, string> = {
     LOCKED: 'Khóa'
 }
 
+export const CONFIG_STATUS: Record<StatusConstants, { label: string, className: string, shimmerColor: string, }> = {
+    [StatusConstants.SUCCESS]: { label: 'Thành công', className: 'success-status', shimmerColor:'rgba(0, 229, 160, 0.2)'  },
+    [StatusConstants.ERROR]: { label: 'Lỗi', className: 'error-status', shimmerColor: 'rgba(255, 86, 59, 0.2)'},
+    [StatusConstants.WAITING]: { label: 'Đang chờ', className: 'warning-status', shimmerColor:'rgba(0, 229, 160, 0.2)' },
+    [StatusConstants.ACTIVE]: { label: 'Hoạt động', className: 'success-status', shimmerColor: 'rgba(0, 229, 160, 0.2)' },
+    [StatusConstants.LOCKED]: { label: 'Khóa', className: 'error-status', shimmerColor: 'rgba(255, 86, 59, 0.2)' },
+}
+
 export const GLCodeLabels: Record<string, string> = {
     'REV_USER_FEE': 'Doanh thu phí người dùng',
     'USER_WALLET_VND': 'Ví người dùng VND',
