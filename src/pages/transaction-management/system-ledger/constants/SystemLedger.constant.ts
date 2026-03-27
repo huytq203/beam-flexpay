@@ -10,13 +10,13 @@ export const DirectionLabel: Record<DirectionKey, string> = {
     DEBIT: 'Debit'
 }
 
-export const StatusConstants = {
-    SUCCESS: 'SUCCESS',
-    ERROR: 'ERROR',
-    WAITING: 'WAITING',
-    ACTIVE: 'ACTIVE',
-    LOCKED: 'LOCKED'
-} as const
+export enum StatusConstants {
+    SUCCESS = 'SUCCESS',
+    ERROR = 'ERROR',
+    WAITING = 'WAITING',
+    ACTIVE = 'ACTIVE',
+    LOCKED = 'LOCKED'
+}
 
 export type StatusKey = keyof typeof StatusConstants
 

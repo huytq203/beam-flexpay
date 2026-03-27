@@ -2,7 +2,7 @@ import { CheckCircleFilled } from '@components/icons'
 import { CopyableText } from '@components/index'
 import { UnifiedContentJournal } from '@type/apiResponseJournal'
 import React from 'react'
-import { StatusKey, StatusType, TransactionKey, TransactionType } from '../constants/Transaction.constant'
+import { PaymentMethod, PaymentMethodKey, StatusKey, StatusType, TransactionKey, TransactionType } from '../constants/Transaction.constant'
 import dayjs from 'dayjs'
 
 interface CommonInfoProps {
@@ -39,7 +39,7 @@ const CommonInfo = ({ data }: CommonInfoProps) => {
             <p className='text-gray-500'>Loại & Phương thức:</p>
             <div className='font-medium'>
               <p>{TransactionType[typesKey] ?? data?.transactionType ?? '--'}</p>
-              <p>{data?.paymentMethod ?? '--'}</p>
+              <p>{PaymentMethod[data?.paymentMethod as PaymentMethodKey] ?? data?.paymentMethod ?? '--'}</p>
             </div>
           </div>
         </div>

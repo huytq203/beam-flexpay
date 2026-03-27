@@ -47,7 +47,7 @@ export const getColumn = ({ openModal, handleGetFreeze, navigate }: ColumnOption
             {record.ownerUsername ?? '--'}
           </div>
           <div className='text-gray-500 text-sm max-w-[17rem] overflow-hidden text-ellipsis whitespace-nowrap'>
-            TK: {record.glCode ?? '--'}
+            TK: {'--'}
           </div>
         </div>
       ),

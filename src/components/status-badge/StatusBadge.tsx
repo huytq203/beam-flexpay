@@ -1,3 +1,4 @@
+import { cn } from "@utils/cn";
 
 export enum StatusKey {
     ACTIVE = 'ACTIVE',
@@ -97,9 +98,10 @@ interface StatusConfig {
 interface StatusBadgeProps {
     status: string | number
     config?: Record<string | number, StatusConfig>
+    className?: string
 }
 
-export default function StatusBadge({ status, config }: StatusBadgeProps) {
+export default function StatusBadge({ status, config, className }: StatusBadgeProps) {
     const defaultStatusConfig = STATUS_CONFIG[status as StatusKey]
     const currentConfig = config?.[status] || defaultStatusConfig
 
@@ -107,7 +109,7 @@ export default function StatusBadge({ status, config }: StatusBadgeProps) {
 
     return (
         <span
-            className={`inline-flex px-2 text-[12px] w-fit items-center whitespace-nowrap rounded-md relative overflow-hidden ${currentConfig.className} before:absolute before:inset-y-0 before:-left-full before:w-[60%] before:bg-[linear-gradient(90deg,transparent,var(--shimmer-color,rgba(0,229,160,0.15)),transparent)] before:animate-shimmer`}
+            className={cn(`inline-flex px-2 text-[12px] w-fit items-center whitespace-nowrap rounded-md relative overflow-hidden ${currentConfig.className} before:absolute before:inset-y-0 before:-left-full before:w-[60%] before:bg-[linear-gradient(90deg,transparent,var(--shimmer-color,rgba(0,229,160,0.15)),transparent)] before:animate-shimmer`, className)}
             style={{ '--shimmer-color': currentConfig.shimmerColor } as React.CSSProperties}
         >
             {currentConfig.label}

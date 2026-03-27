@@ -11,10 +11,10 @@ import useHandle from './hooks/useHandle'
 
 const WithdrawHistory = () => {
     const statusCards = [
-        { count: 50, label: 'Chờ duyệt', borderClass: 'border-l-yellow-500', bgClass: 'bg-yellow-100', textClass: 'text-yellow-600' },
-        { count: 50, label: 'Đã duyệt - Chờ chi', borderClass: 'border-l-blue-500', bgClass: 'bg-blue-100', textClass: 'text-blue-600' },
-        { count: 50, label: 'Thành công', borderClass: 'border-l-teal-500', bgClass: 'bg-teal-100', textClass: 'text-teal-600' },
-        { count: 50, label: 'Thất bại/lỗi', borderClass: 'border-l-red-500', bgClass: 'bg-red-100', textClass: 'text-red-600' },
+        { count: "--", label: 'Chờ duyệt', borderClass: 'border-l-yellow-500', bgClass: 'bg-yellow-100', textClass: 'text-yellow-600' },
+        { count: "--", label: 'Đã duyệt - Chờ chi', borderClass: 'border-l-blue-500', bgClass: 'bg-blue-100', textClass: 'text-blue-600' },
+        { count: "--", label: 'Thành công', borderClass: 'border-l-teal-500', bgClass: 'bg-teal-100', textClass: 'text-teal-600' },
+        { count: "--", label: 'Thất bại/lỗi', borderClass: 'border-l-red-500', bgClass: 'bg-red-100', textClass: 'text-red-600' },
     ]
     const { dataWithdraw, isLoadingWithdraw, setPage, setPageSize, sort, sortBy, dataSource, handleSearch, isFetching } = useFetchDataWithdraw()
     const { isDetailOpen, detailData, isDetailLoading, openDetail, closeDetail } = useHandle()

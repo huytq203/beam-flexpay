@@ -19,6 +19,7 @@ export interface LedgerTransaction {
     transactionTime: string
     processedAt: string
     checksum: string
+    maskedAccount: string
 }
 
 export interface LedgerAccount {
@@ -39,6 +40,7 @@ export interface LedgerAccount {
     version: number
     status: string
     checksum: string
+    ownerUsername?: string
 }
 
 export interface LedgerEntry {

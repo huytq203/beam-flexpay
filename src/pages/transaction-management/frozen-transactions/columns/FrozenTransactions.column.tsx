@@ -5,6 +5,7 @@ import { Tag } from 'antd'
 import { ColumnType } from 'antd/lib/table'
 import dayjs from 'dayjs'
 import { FreezeType, FreezeTypeLabel, ReleaseType, ReleaseTypeLabel } from '../types/FrozenTransactions.type'
+import { typeLock, typeLockLabel } from '../constants/FrozenTransaction.constant'
 
 type FreezeRow = { no: number } & FreezeItem
 
@@ -30,7 +31,7 @@ export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeR
     },
     {
         title: 'Nguồn / Loại GD',
-        align: 'center',
+        align: 'left',
         key: 'source',
         render: (_, record) => (
             <div>
@@ -63,22 +64,29 @@ export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeR
     },
     {
         title: 'Lý do mở băng',
-        align: 'center',
+        align: 'left',
         key: 'unfreezeReason',
+        width: 300,
         render: (_, record) => (
-            <div className="text-center">
+            <div className="max-w-[300px]">
                 <p>{record.unfreezeReason ?? '--'}</p>
             </div>
         ),
     },
+  
     {
         title: 'Trạng thái',
         align: 'center',
         dataIndex: 'status',
         key: 'status',
-        render: (status: string) => {
+        render: (status: string, record: FreezeRow) => {
             const config = STATUS_CONFIG[status] ?? { color: 'default', label: status }
-            return <Tag color={config.color}>{config.label}</Tag>
+            return (
+                <div className='space-y-1'>
+                    <Tag color={config.color}>{config.label}</Tag>
+                    <p className='text-[12px]'>{typeLockLabel[record.type as typeLock]}</p>
+                </div>
+            )
         },
     },
     {
@@ -102,8 +110,8 @@ export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeR
                     disabled={!canRelease}
                     onClick={() => canRelease && onRelease?.(record)}
                     className={`bg-blue-50 border border-blue-600 text-blue-600 ${canRelease
-                            ? 'hover:!bg-blue-100 hover:!text-blue-700'
-                            : 'opacity-50 cursor-not-allowed'
+                        ? 'hover:!bg-blue-100 hover:!text-blue-700'
+                        : 'opacity-50 cursor-not-allowed'
                         }`}
                     content="Mở băng"
                 />

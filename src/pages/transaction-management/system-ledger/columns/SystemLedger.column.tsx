@@ -17,20 +17,38 @@ const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Co
     },
     {
         title: 'Mã giao dịch',
-        align: 'center',
+        align: 'left',
         width: 150,
+        dataIndex: 'transaction',
         render(value, record) {
             return (
                 <div>
                     {record.transaction?.transactionCode ? (
+                        <>
                         <p className="font-medium text-orange-600 ">
                             <TypographyText copyable={{ text: record.transaction.transactionCode }}>
                                 {record.transaction.transactionCode}
                             </TypographyText>
                         </p>
+                        <span className="text-gray-500 text-[12px]">{value.description}</span>
+                        
+                        </>
                     ) : (
                         <span>--</span>
                     )}
+                </div>
+            )
+        },
+    },
+    {
+        title: 'Số tài khoản',
+        align: 'center',
+        width: 150,
+        render(value, record) {
+            const maskedAccount = record.transaction?.maskedAccount
+            return (
+                <div className='text-center'>
+                    <p className="font-medium ">{maskedAccount ?? '--'}</p>
                 </div>
             )
         },
@@ -91,6 +109,19 @@ const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Co
             )
         },
     },
+    // {
+    //     title: 'Mô tả',
+    //     dataIndex: 'transaction',
+    //     align: 'left',
+    //     width: 150,
+    //     render(value) {
+    //         return (
+    //             <div className="font-medium">
+    //                 {value?.description}
+    //             </div>
+    //         )
+    //     },
+    // },
     {
         title: 'Trạng thái',
         align: 'center',

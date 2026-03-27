@@ -51,13 +51,13 @@ export const getColumn = (): ColumnType<UnifiedContentJournal>[] => [
         title: 'Người chuyển',
         dataIndex: 'from',
         align: 'left',
-        render: (value) => <TypographyText strong>{BankLabel[value?.displayName as BankEnum]|| <MaskText value={value?.displayName} />}</TypographyText>
+        render: (value) => <TypographyText strong className='text-gray-500'>{BankLabel[value?.displayName as BankEnum]|| <MaskText value={value?.displayName} />}</TypographyText>
     },
     {
         title: 'Người nhận',
         dataIndex: 'to',
         align: 'left',
-        render: (value) => <TypographyText strong >{BankLabel[value?.displayName as BankEnum]|| <MaskText value={value?.displayName} />}</TypographyText>
+        render: (value) => <TypographyText strong className='text-gray-500'>{BankLabel[value?.displayName as BankEnum]|| <MaskText value={value?.displayName} />}</TypographyText>
     },
      {
         title: 'Phương thức thanh toán',
