@@ -138,7 +138,7 @@ const AddFeePolicy = () => {
                             control={control}
                             label={!isCreate ? 'Mức độ ưu tiên' : <span>Mức độ ưu tiên <span className='text-red'>*</span></span>}
                             placeholder='Nhập mức độ ưu tiên'
-                            // disabled={!!id && isEdit&& status !== statusType.INIT || !!id && isCreate}
+                            disabled={!!id && isCreate}
 
                         />
 
@@ -160,7 +160,7 @@ const AddFeePolicy = () => {
                             control={control}
                             label={!isCreate ? 'Hiệu lực đến' : <span>Hiệu lực đến </span>}
                             showTime
-                            // disabled={!!id && isEdit&& status !== statusType.INIT || !!id && isCreate}
+                            disabled={!!id && isCreate}
                         />
 
                         <FormSelect
@@ -173,7 +173,7 @@ const AddFeePolicy = () => {
                                     mapEnumToSelectOptions(STATUS_LABEL).slice(1)
 
                             }
-                            // disabled={!!id && isEdit&& status !== statusType.INIT|| !!id && isCreate}
+                            disabled={ !!id && isCreate}
 
                         />
 
