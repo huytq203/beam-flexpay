@@ -3,7 +3,7 @@ import React from 'react'
 
 const Column = (): ColumnType[] => [
     {
-        title: 'STT',
+        title: '#',
         dataIndex: 'no',
         align: 'center'
     },

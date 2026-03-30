@@ -20,6 +20,7 @@ import { FEEMANAGEMENT_V3 } from '@constants/routersConstant'
 import { feeAssignSchema, FeeAssignType } from '../schemas/feeAssign.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PATHS } from '@constants/pathConstant'
+import { useGetFeePolicyByIdQuery } from '@services/apiFeePoliciesServices'
 
 // Form type excludes server-generated fields
 export type FeeAssignmentFormData = Omit<FeeAssignment, 'id' | 'createdAt' | 'updatedBy' | 'createdBy' | 'updatedAt'> & {
@@ -70,6 +71,7 @@ export const useFeeAssignmentForm = () => {
         control,
         handleSubmit,
         setValue,
+        watch,
         reset: resetFormAdd,
         formState: { errors }
     } = useForm<FeeAssignType>({
@@ -77,9 +79,11 @@ export const useFeeAssignmentForm = () => {
         defaultValues: DEFAULT_FORM_VALUES
     })
 
-    // API 
     const { data: dataAssignById } = useGetAssignByIdQuery(id!, { skip: !id })
-    const feePolicyId = dataAssignById?.feePolicyId
+    const { watch: watchPolicy } = useForm<FeeAssignType>()
+    // Theo dõi giá trị feePolicyId từ form, fallback về dataAssignById khi mới load
+    const formFeePolicyId = watch('feePolicyId')
+    const feePolicyId = formFeePolicyId || dataAssignById?.feePolicyId
 
     const { data: feeComponentData } = useGetFeeComponentPoliciesByIdQuery(
         feePolicyId!,
@@ -105,6 +109,12 @@ export const useFeeAssignmentForm = () => {
         }
     )
 
+    const { data: policyData } = useGetFeePolicyByIdQuery(
+
+        feePolicyId, {
+        skip: !feePolicyId
+    }
+    )
     const [deleteComponent, { isLoading: loadingDeleteComponent }] =
         useDeleteFeeComponentPoliciesMutation()
     const [postAssign, { isLoading: loadingPostAssign }] = usePostAssignMutation()
@@ -265,6 +275,7 @@ export const useFeeAssignmentForm = () => {
         feeComponentData,
         combinedInitialData,
         dataAssignById,
+        policyData,
 
         // Handlers
         handleNavigateBack,

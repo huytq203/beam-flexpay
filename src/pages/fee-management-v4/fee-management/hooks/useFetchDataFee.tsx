@@ -1,6 +1,5 @@
 import usePagination from '@hooks/usePagination'
 import { useSearchFeePoliciesQuery } from '@services/apiFeePoliciesServices'
-import { useGetFeePolicyByIdQuery } from '@services/apiFeePolicy.api'
 import React, { useMemo, useState } from 'react'
 
 const useFetchDataFee = () => {

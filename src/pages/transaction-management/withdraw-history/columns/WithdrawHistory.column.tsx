@@ -4,7 +4,9 @@ import { UnifiedContentJournal } from '@type/apiResponseJournal'
 import { formatNumber } from '@utils/index'
 import { ColumnsType } from 'antd/lib/table'
 import dayjs from 'dayjs'
-import { BankEnum, BankLabel, PaymentMethod, PaymentMethodKey, StatusKey, StatusType } from '../types/WithdrawHistory.type'
+import StatusBadge from '@components/status-badge/StatusBadge'
+import { cn } from '@utils/cn'
+import { BankEnum, BankLabel, PaymentMethod, PaymentMethodKey, STATUS_CONFIG, StatusKey, StatusLabel } from '../constants/WithdrawHistory.constant'
 
 const STATUS_CLASS: Record<string, string> = {
     PENDING: 'text-blue-600 rounded-md inline-block px-2 font-medium text-[12px] border border-blue-500 bg-blue-50',
@@ -131,11 +133,10 @@ const getColumn = ({ onViewDetail }: ColumnProps): ColumnsType<UnifiedContentJou
         title: 'Trạng thái',
         dataIndex: 'status',
         align: 'center',
-        render(_, record) {
-            const statusKey = record.status as StatusKey
+        render(value) {
             return (
-                <div className={STATUS_CLASS[statusKey] ?? 'text-gray-500'}>
-                    {StatusType[statusKey] ?? record.status}
+                <div>
+                    <StatusBadge className={cn(value == StatusKey.PENDING && 'animate-pulse-soft')} status={value as StatusKey} config={STATUS_CONFIG} />
                 </div>
             )
         },

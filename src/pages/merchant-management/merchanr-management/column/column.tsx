@@ -14,7 +14,7 @@ interface MerchantColumnProps {
 
 export const MerchantColumn = ({ onEdit, onView }: MerchantColumnProps): ColumnType<ContentMerchant>[] => [
     {
-        title: 'STT',
+        title: '#',
         dataIndex: 'stt',
         align: 'center'
     },

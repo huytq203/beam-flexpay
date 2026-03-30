@@ -16,7 +16,7 @@ export const UserManagementColumn = ({
   openModal
 }: Props): ColumnType<UserInfor>[] => [
     {
-      title: 'STT',
+      title: '#',
       dataIndex: 'no',
       align: 'center'
     },

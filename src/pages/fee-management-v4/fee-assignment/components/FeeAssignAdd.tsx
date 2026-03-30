@@ -31,6 +31,7 @@ const FeeAssignAdd = () => {
     feeComponentData,
     combinedInitialData,
     dataAssignById,
+    policyData,
 
     // Handlers
     handleNavigateBack,
@@ -50,16 +51,7 @@ const FeeAssignAdd = () => {
   const { svg } = useSVG()
   const infoPolicyRef = useRef<InfoPolicyRef>(null)
 
-  const feePolicyIds = useMemo(() => {
-    if (!feeComponentData?.length) return []
-
-    return [...new Set(feeComponentData.map((item) => item.feePolicyId))]
-  }, [feeComponentData])
-  const feePolicyId = feePolicyIds[0]
-
-  const { data: policyData } = useGetFeePolicyByIdQuery(
-    feePolicyId ?? skipToken
-  )
+ 
 
 
   return (

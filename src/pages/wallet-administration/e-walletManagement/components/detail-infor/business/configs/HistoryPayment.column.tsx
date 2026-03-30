@@ -9,7 +9,7 @@ import { TypographyText } from '@components/index'
 
 export const Column = (): ColumnType[] => [
     {
-        title: 'STT',
+        title: '#',
         dataIndex: 'no',
         align: 'center',
         width: 60,

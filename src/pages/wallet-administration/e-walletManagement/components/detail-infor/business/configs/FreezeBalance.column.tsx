@@ -12,7 +12,7 @@ interface ColumnProps {
 
 export const Column = ({ onRelease }: ColumnProps): ColumnType[] => [
     {
-        title: 'STT',
+        title: '#',
         dataIndex: 'no',
         align: 'center',
         width: 60,

@@ -5,8 +5,6 @@ import {
   ModalComponent,
   Table
 } from '@components/index'
-import FormChoosePolicy from './components/FormChoosePolicy'
-import FormFieldAssign from './components/FormFieldAssign'
 import FormInforAdd from './components/FormInforAdd'
 import React from 'react'
 import { SkeletonButton, SkeletonFilterGroup, SkeletonInput, SkeletonTable, SkeletonTitle } from '@components/ui/skeletons/Skeleton'
@@ -19,11 +17,8 @@ const FeeAssignmentManagement = () => {
     isPostAssign,
     openModalDelete,
     openModalAdd,
-    openModalSelectPolicy,
     isCreate,
     control,
-    setValue,
-    watch,
     handleSubmit,
     handleSearch,
     handleReset,

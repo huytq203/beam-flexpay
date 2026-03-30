@@ -65,7 +65,7 @@ const VatFeeManagementTable = ({ vatFees, search, setSearch, pagination }: VatFe
 
   const columns = [
     {
-      title: 'STT',
+      title: '#',
       key: 'index',
       width: 60,
       align: 'center' as const,

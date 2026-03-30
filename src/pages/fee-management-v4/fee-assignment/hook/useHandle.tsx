@@ -1,7 +1,7 @@
 import { feePolicyComponent } from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
 import { useLazyGetFeeComponentPoliciesByIdQuery } from '@services/apiFeeComponent'
 import { useLazyGetFeeComponentTierQuery } from '@services/apiFeeComponentTier'
-import { useGetFeePolicyByIdQuery, useLazyGetFeePolicyByIdQuery } from '@services/apiFeePoliciesServices'
+import { useLazyGetFeePolicyByIdQuery } from '@services/apiFeePoliciesServices'
 import { useState, useCallback } from 'react'
 
 const useHandle = () => {
@@ -21,8 +21,8 @@ const useHandle = () => {
             return;
         }
         try {
-            const res = await getFeeComponentPoliciesById(id).unwrap()
-            const resFeePolicy = await getFeePolicyById(id).unwrap()
+            const res = await getFeeComponentPoliciesById(id, true).unwrap()
+            const resFeePolicy = await getFeePolicyById(id, true).unwrap()
             setDataFeePolicyComponent(res)
             const feeDomain = resFeePolicy?.feeDomain
             setFeeDomain(feeDomain)

@@ -80,7 +80,7 @@ export default function PartnerContactComponent(props: props) {
   //#region columns
   const columns: ColumnsType<PaymentPartnerDetailDto> = [
     {
-      title: 'STT',
+      title: '#',
       dataIndex: 'id',
       width: 80,
       fixed: 'left',
