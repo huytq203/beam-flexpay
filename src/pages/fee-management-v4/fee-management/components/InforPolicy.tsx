@@ -120,7 +120,7 @@ const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
           content={
             <>
               <p className='font-bold mb-3'>
-                Phương thức tính (Calculation Method)
+                Phương thức tính
               </p>
               <FormInputNumber
                 control={control}
@@ -149,7 +149,7 @@ const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
           content={
             <>
               <p className='font-bold mb-3'>
-                Phương thức tính (Calculation Method)
+                Phương thức tính
               </p>
               <div className='grid grid-cols-12 gap-3'>
                 <FormInputNumber
