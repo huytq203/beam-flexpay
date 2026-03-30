@@ -237,18 +237,35 @@ const handleSessionExpired = () => {
 
 
   Swal.fire({
-    title: 'Đã hết phiên làm việc',
-    text: 'Vui lòng đăng nhập lại để tiếp tục!',
+    title: 'Phiên đăng nhập hết hạn',
+    text: 'Vui lòng đăng nhập lại để tiếp tục sử dụng dịch vụ.',
     imageUrl: capybaraIcon,
     imageWidth: 150,
     imageHeight: 150,
     imageAlt: 'Capybara',
     showCancelButton: false,
-    confirmButtonColor: '#3085d6',
     confirmButtonText: 'Đăng nhập lại',
     allowOutsideClick: false,
     allowEscapeKey: false,
-    allowEnterKey: false
+    allowEnterKey: false,
+    width: 360,
+    padding: '1.5rem',
+    background: 'rgba(255, 255, 255, 0.95)',
+    backdrop: `
+      rgba(15, 23, 42, 0.4)
+      backdrop-filter
+      backdrop-blur-[4px]
+    `,
+    footer: '<span class="text-[10px] text-gray-500 font-medium">Dữ liệu chưa lưu có thể bị mất. Vui lòng kiểm tra lại sau khi đăng nhập.</span>',
+    customClass: {
+      popup: 'rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-white/60 !backdrop-blur-xl',
+      title: 'text-[18px] font-bold text-slate-800 ',
+      htmlContainer: 'text-[14px] text-slate-500',
+      confirmButton: 'bg-blue-500 hover:bg-blue-300  text-white font-medium text-[14px] w-full py-2 rounded-xl shadow-lg transition-all duration-300 px-3',
+      image: 'drop-shadow-xl mb-1 object-contain',
+      footer: 'border-t-0 pt-0 pb-1 mx-auto text-center'
+    },
+    buttonsStyling: false
   }).then((result) => {
     // Tùy chọn: Chuyển hướng hoặc reload nếu forceLogout chưa làm
     if (result.isConfirmed) {
@@ -353,8 +370,7 @@ const createCustomBaseQuery = (
         case HttpStatus.UNAUTHORIZED: {
           const newAccessToken = await refreshAccessToken(api, extraOptions as Record<string, unknown>)
           if (!newAccessToken) {
-            alert("Đã hết phiên làm việc, vui lòng đăng nhập lại để tiếp tục!")
-            forceLogout()
+            handleSessionExpired()
             break
           }
 
