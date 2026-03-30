@@ -29,7 +29,7 @@ const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Co
                             <TypographyText strong copyable={{ text: record.transaction.transactionCode }}>
                                 {record.transaction.transactionCode}
                             </TypographyText>
-                            <span className="text-gray-500 text-[12px]">{value.description}</span>
+                            <span className="text-gray-500 text-[12px]">{value.description||'--'}</span>
                         </div>
                     ) : (
                         <span>--</span>
