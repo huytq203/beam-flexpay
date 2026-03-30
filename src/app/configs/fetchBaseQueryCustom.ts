@@ -221,11 +221,7 @@ const RESET_THROTTLE = 2000; // 1 giây (để nhạy hơn khi tương tác)
 const TIME_OLD = 'last_activity_time'; // Đổi tên biến cho rõ nghĩa hơn
 
 let lastResetTime = 0;
-let isExpired = false; // Flag chặn gọi popup/logout nhiều lần
-
-/**
- * Hàm xử lý khi hết phiên làm việc
- */
+let isExpired = false;
 
 
 const forceLogout = (): void => {
@@ -269,7 +265,10 @@ export const resetInactivityTimer = (isFromEvent = false) => {
   const currentTime = Date.now();
 
   const pathName = normalizePathname(window.location.pathname);
-  if (pathName === PATHS.AUTH.LOGIN) return;
+  if (pathName === PATHS.AUTH.LOGIN) {
+    localStorage.removeItem(TIME_OLD);
+    return;
+  }
 
   if (isFromEvent && currentTime - lastResetTime < RESET_THROTTLE) {
     return;

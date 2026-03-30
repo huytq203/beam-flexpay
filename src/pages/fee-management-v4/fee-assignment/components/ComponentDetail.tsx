@@ -32,13 +32,13 @@ export const ComponentDetail = ({ setOpenModalDetail, data, onEdit, onDelete, se
           render: (value:number) => (value)+"%"  || 0
         },
         {
-          title: 'Giá trị tối thiểu',
+          title: 'Phí tối thiểu',
           dataIndex: 'minFee',
           className: 'border border-b-0 border-l-0',
           render: (value:number) => formatNumber(value) || 0
         },
         {
-          title: 'Giá trị tối đa',
+          title: 'Phí tối đa',
           dataIndex: 'maxFee',
           className: 'border border-b-0 border-l-0',
           render: (value:number) => formatNumber(value) || 0

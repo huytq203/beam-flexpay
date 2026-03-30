@@ -24,12 +24,12 @@ export const FreezeStatusConfig: Record<FreezeStatus, { label: string; className
     [FreezeStatus.CAPTURED]: {
         label: 'Đã thu',
         className: 'success-status',
-         shimmerColor: 'rgba(0, 229, 160, 0.2)',
+        shimmerColor: 'rgba(0, 229, 160, 0.2)',
     },
     [FreezeStatus.RELEASED]: {
         label: 'Đã giải tỏa',
-        className: 'normal-status',
-        shimmerColor: 'rgba(107, 114, 128, 0.2)',
+        className: 'success-status',
+        shimmerColor: 'rgba(0, 229, 160, 0.2)',
     },
     [FreezeStatus.EXPIRED]: {
         label: 'Hết hạn',

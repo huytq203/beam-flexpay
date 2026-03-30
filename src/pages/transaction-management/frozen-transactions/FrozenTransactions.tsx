@@ -5,7 +5,7 @@ import FormSearch from './components/FormSearch'
 import { getColumn } from './columns/FrozenTransactions.column'
 import useFrozenTransactions from './hooks/useFrozenTransactions'
 import DialogFreeze from './components/DialogFreeze'
-import { SkeletonSearchGroup, SkeletonTable } from '@components/ui/skeletons/Skeleton'
+import { SkeletonButton, SkeletonInput, SkeletonSearchGroup, SkeletonTable, SkeletonTitle } from '@components/ui/skeletons/Skeleton'
 import DialogUnfreeze from './components/DialogUnfreeze'
 
 const FrozenTransactions = () => {
@@ -30,7 +30,22 @@ const FrozenTransactions = () => {
     return (
         <>
             <CardComponent className="mb-3" content={
-                isLoading ? <SkeletonSearchGroup className=' grid grid-cols-1 md:grid-cols-4 gap-4 mb-4' positionButton='end' /> : <FormSearch onSearch={handleSearch} />} />
+                isLoading ?
+                    <>
+                        <div>
+                            <SkeletonTitle />
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                {Array.from({ length: 6 }).map((_, index) => (
+                                    <SkeletonInput key={index} />
+                                ))}
+                            </div>
+
+                            <div className="flex justify-end mt-3 gap-1">
+                                <SkeletonButton size="md" />
+                                <SkeletonButton size="md" />
+                            </div>
+                        </div>
+                    </> : <FormSearch onSearch={handleSearch} />} />
             <CardComponent
                 content={
                     isLoading ? <SkeletonTable columns={8} /> :

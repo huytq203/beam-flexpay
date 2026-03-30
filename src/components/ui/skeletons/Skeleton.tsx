@@ -73,12 +73,13 @@ export const SkeletonCard: React.FC<{ className?: string }> = ({ className = '' 
  * @param columns số lượng cột
  * @returns 
  */
-export const SkeletonTable: React.FC<{ rows?: number; columns?: number }> = ({
+export const SkeletonTable: React.FC<{ rows?: number; columns?: number; noContainer?: boolean }> = ({
   rows = 5,
   columns = 3,
+  noContainer = false,
 }) => {
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+    <div className={noContainer ? '' : "bg-white rounded-xl shadow-md p-6 border border-gray-100"}>
       {/* <Skeleton className="h-6 w-48 mb-4" /> */}
 
       <div className="overflow-x-auto">
@@ -154,12 +155,14 @@ export const SkeletonButton: React.FC<{
 export const SkeletonFilterGroup: React.FC<{
   items?: number;
   className?: string;
+  noContainer?: boolean;
 }> = ({
   items = 4,
   className = '',
+  noContainer = false,
 }) => {
     return (
-      <div className={`bg-white rounded-xl shadow-md p-6 border border-gray-100 ${className}`}>
+      <div className={noContainer ? className : `bg-white rounded-xl shadow-md p-6 border border-gray-100 ${className}`}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           {Array.from({ length: items }).map((_, index) => (
             <SkeletonInput key={index} />
@@ -190,15 +193,17 @@ export const SkeletonSearchGroup: React.FC<{
   itemButton?: number;
   className?: string;
   positionButton?: 'start' | 'end' | 'center';
+  noContainer?: boolean;
 }> = ({
   items = 4,
   itemButton = 2,
   className = '',
   positionButton = '',
+  noContainer = false,
 }) => {
     return (
       <div
-        className={`bg-white rounded-xl shadow-md p-6 border  border-gray-100`}
+        className={noContainer ? '' : `bg-white rounded-xl shadow-md p-6 border border-gray-100`}
       >
         <div className={className || 'grid grid-cols-1 md:grid-cols-4 gap-4 mb-4'}>
           {Array.from({ length: items }).map((_, index) => (
@@ -219,3 +224,12 @@ export const SkeletonSearchGroup: React.FC<{
       </div>
     );
   };
+
+export const SkeletonTitle: React.FC<{ className?: string }> = ({ className = '' }) => {
+  return (
+    <div className={`mb-3 border-b border-gray-200 pb-2 flex items-center gap-2 ${className}`}>
+      <Skeleton className="w-5 h-5 rounded" />
+      <Skeleton className="h-5 w-32" />
+    </div>
+  );
+};

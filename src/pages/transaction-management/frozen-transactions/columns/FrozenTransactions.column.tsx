@@ -5,17 +5,11 @@ import { Tag } from 'antd'
 import { ColumnType } from 'antd/lib/table'
 import dayjs from 'dayjs'
 import { FreezeType, FreezeTypeLabel, ReleaseType, ReleaseTypeLabel } from '../types/FrozenTransactions.type'
-import { typeLock, typeLockLabel } from '../constants/FrozenTransaction.constant'
+import { CONFIG_LABEL_OWNER_TYPE, STATUS_CONFIG, StatusKey, typeLock, typeLockLabel } from '../constants/FrozenTransaction.constant'
+import StatusBadge from '@components/status-badge/StatusBadge'
+import { cn } from '@utils/cn'
 
 type FreezeRow = { no: number } & FreezeItem
-
-const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
-    ACTIVE: { color: 'blue', label: 'Đang đóng băng' },
-    CAPTURED: { color: 'green', label: 'Đã thu' },
-    RELEASED: { color: 'green', label: 'Đã giải tỏa' },
-    EXPIRED: { color: 'orange', label: 'Hết hạn' },
-    CANCELLED: { color: 'red', label: 'Đã hủy' },
-}
 
 interface ColumnOptions {
     onRelease?: (record: FreezeRow) => void
@@ -42,12 +36,12 @@ export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeR
     },
     {
         title: 'Khách hàng',
-        align: 'center',
+        align: 'left',
         key: 'customer',
         render: (_, record) => (
-            <div>
+            <div className='flex flex-col '>
                 <MaskText active={true} value={record.ownerUsername} />
-                <p className="text-gray-500 text-xs">{record.ownerType ?? '--'}</p>
+                <StatusBadge className="text-gray-500 text-[12px]" status={record.ownerType}  config={CONFIG_LABEL_OWNER_TYPE}/>
             </div>
         ),
     },
@@ -62,17 +56,7 @@ export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeR
             </span>
         ),
     },
-    {
-        title: 'Lý do mở băng',
-        align: 'left',
-        key: 'unfreezeReason',
-        width: 300,
-        render: (_, record) => (
-            <div className="max-w-[300px]">
-                <p>{record.unfreezeReason ?? '--'}</p>
-            </div>
-        ),
-    },
+   
     {
         title: 'Loại đóng băng',
         align: 'center',
@@ -91,10 +75,9 @@ export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeR
         dataIndex: 'status',
         key: 'status',
         render: (status: string, record: FreezeRow) => {
-            const config = STATUS_CONFIG[status] ?? { color: 'default', label: status }
             return (
                 <div className='space-y-1'>
-                    <Tag color={config.color}>{config.label}</Tag>
+              <StatusBadge className={cn(status==StatusKey.ACTIVE&&'animate-pulse-soft')} status={status} config={STATUS_CONFIG}/>
                 </div>
             )
         },
@@ -106,6 +89,17 @@ export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeR
         key: 'createdAt',
         render: (createdAt: string) =>
             createdAt ? dayjs(createdAt).format('DD/MM/YYYY HH:mm:ss') : '--',
+    },
+     {
+        title: 'Lý do mở băng',
+        align: 'left',
+        key: 'unfreezeReason',
+        width: 250,
+        render: (_, record) => (
+            <div className="max-w-[250px]">
+                <p>{record.unfreezeReason ?? '--'}</p>
+            </div>
+        ),
     },
     {
         title: 'Hành động',

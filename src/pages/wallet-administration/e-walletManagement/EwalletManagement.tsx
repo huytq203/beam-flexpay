@@ -33,7 +33,7 @@ const EwalletManagement = () => {
       <CardComponent
         content={
           loadingGetAccount ? (
-            <SkeletonSearchGroup items={3}  className='grid grid-cols-1 md:grid-cols-4 gap-4 mb-4'/>
+            <SkeletonSearchGroup items={3}  className='grid grid-cols-1 md:grid-cols-4 gap-4 mb-4' noContainer />
           ) : (
             <>
               <FormSearch handleSearch={handleSearch} />
@@ -45,7 +45,7 @@ const EwalletManagement = () => {
       <CardComponent
         content={
           loadingGetAccount ? (
-            <SkeletonTable columns={column?.length || 5} rows={size || 5} />
+            <SkeletonTable columns={column?.length || 5} rows={size || 5} noContainer />
           ) : (
             <>
               <Table

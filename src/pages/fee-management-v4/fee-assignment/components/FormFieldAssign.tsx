@@ -23,7 +23,7 @@ interface FormFieldAssign {
 const FormFieldAssign = React.memo(({ watch, control, setValue, isCreate, feeDomain }: FormFieldAssign) => {
   // api database
   const { data: dataBank } = useGetBankQuery({})
-  console.log( feeDomain)
+  console.log(feeDomain)
 
 
 
@@ -83,7 +83,7 @@ const FormFieldAssign = React.memo(({ watch, control, setValue, isCreate, feeDom
           disabled={true}
         /> */}
 
-        
+
         {/* <FormSelect
           control={control}
           name='domain'

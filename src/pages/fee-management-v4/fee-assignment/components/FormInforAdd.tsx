@@ -128,7 +128,7 @@ export const FormInforAdd = ({
                                             <span className="text-blue-600 font-medium">Chính sách: {policyData.name}</span>
                                         )}
                                         {errors.feePolicyId && (
-                                            <p className='text-red-500 text-sm mt-1'>
+                                            <p className='text-red-500 text-[12px] mt-1'>
                                                 {errors.feePolicyId.message}
                                             </p>
                                         )}

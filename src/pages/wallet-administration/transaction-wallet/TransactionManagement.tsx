@@ -7,7 +7,7 @@ import UpdateStatusTransaction from './components/UpdateStatusTransaction'
 import getColumn from './columns/Transaction.column'
 import useTransaction from './hooks/useTransaction'
 import DialogConfirm from './components/DialogConfirm'
-import { SkeletonButton, SkeletonFilterGroup, SkeletonInput, SkeletonTable } from '@components/ui/skeletons/Skeleton'
+import { SkeletonButton, SkeletonFilterGroup, SkeletonInput, SkeletonTable, SkeletonTitle } from '@components/ui/skeletons/Skeleton'
 
 const TransactionManagement = () => {
 
@@ -30,30 +30,29 @@ const TransactionManagement = () => {
     <div className='flex flex-col gap-3'>
       <CardComponent content={
         isLoadingGetTransaction ? (
+          <div>
+            <SkeletonTitle />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {Array.from({ length: 9 }).map((_, index) => (
+                <SkeletonInput key={index} />
+              ))}
+            </div>
 
-          <>
-            <div className={`bg-white rounded-xl shadow-md p-6 border border-gray-100`}>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                {Array.from({ length: 9 }).map((_, index) => (
-                  <SkeletonInput key={index} />
-                ))}
-              </div>
-
-              <div className="flex justify-end flex-wrap gap-3 items-center">
-                <SkeletonButton size="md" />
-                <SkeletonButton size="md" />
-
-              </div>
-            </div></>
+            <div className="flex justify-end mt-3 gap-1">
+              <SkeletonButton size="md" />
+              <SkeletonButton size="md" />
+            </div>
+          </div>
         ) : (
           <FormSearch handleSearch={handleSearch} />
         )
       } />
       <CardComponent content={
         isLoadingGetTransaction ? (
-          <SkeletonTable columns={columns?.length || 10} rows={pageSize || 5} />
+          <SkeletonTable columns={columns?.length || 10} rows={pageSize || 5} noContainer />
         ) : (
           <Table
+            rowKey='id'
             bordered
             size='small'
             scroll={{ x: 'max-content' }}

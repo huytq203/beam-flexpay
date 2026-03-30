@@ -9,7 +9,7 @@ import FormChoosePolicy from './components/FormChoosePolicy'
 import FormFieldAssign from './components/FormFieldAssign'
 import FormInforAdd from './components/FormInforAdd'
 import React from 'react'
-import { SkeletonFilterGroup, SkeletonTable } from '@components/ui/skeletons/Skeleton'
+import { SkeletonButton, SkeletonFilterGroup, SkeletonInput, SkeletonTable, SkeletonTitle } from '@components/ui/skeletons/Skeleton'
 import useHandleFeeAssignment from './hook/useHandleFeeAssignment'
 import FormSearchAssignment from './components/FormSearchAssignment'
 
@@ -32,8 +32,6 @@ const FeeAssignmentManagement = () => {
     handleDelete,
     handleCloseModalDelete,
     handlePostAssign,
-    handleCloseModalSelectPolicy,
-    handleSelectPolicy,
     columns,
     dataSource,
     page,
@@ -49,10 +47,30 @@ const FeeAssignmentManagement = () => {
       {
         (loadingSearch) ? (
           <>
-            <div className=" mb-3">
-              <SkeletonFilterGroup items={2} />
-            </div>
-            <SkeletonTable rows={5} columns={3} />
+            <CardComponent
+              className="mb-3"
+              content={
+                <div>
+                  <SkeletonTitle />
+                  <div className='grid grid-cols-1 md:grid-cols-12 gap-3'>
+                    <SkeletonInput className='col-span-12 md:col-span-6' />
+                    <SkeletonInput className='col-span-12 md:col-span-6' />
+                  </div>
+                  <div className='mt-3 flex flex-col md:flex-row md:justify-between gap-3'>
+                    <div className='flex gap-2 w-full md:w-auto flex-row'>
+                      <SkeletonButton size='md' />
+                      <SkeletonButton size='md' />
+                    </div>
+                    <div className='w-full md:w-auto text-right'>
+                      <SkeletonButton size='md' />
+                    </div>
+                  </div>
+                </div>
+              }
+            />
+            <CardComponent
+              content={<SkeletonTable rows={5} columns={3} noContainer />}
+            />
           </>
         ) : (
           <>
@@ -60,11 +78,6 @@ const FeeAssignmentManagement = () => {
               content={
                 <>
                   <form action='formViewAssign' className='mb-3'>
-                    {/* <FormFieldAssign
-                      control={control}
-                      setValue={setValue}
-                      isCreate={isCreate}
-                    /> */}
                     <FormSearchAssignment control={control} />
                   </form>
                   <div className='col-span-12 flex flex-col md:flex-row md:justify-between gap-3'>

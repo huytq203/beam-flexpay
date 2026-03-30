@@ -58,13 +58,13 @@ const CommonInfo = ({ data }: CommonInfoProps) => {
         <div className='col-span-1'>
           <div>
             <p className='text-gray-500'>Thời gian tạo:</p>
-            <p className='font-medium'>{data?.createdAt ? dayjs.utc(data.createdAt).local().format('DD/MM/YYYY HH:mm:ss') : '--'}</p>
+            <p className='font-medium'>{data?.createdAt ? dayjs.utc(data.createdAt).format('DD/MM/YYYY HH:mm:ss') : '--'}</p>
           </div>
         </div>
         <div className='col-span-1'>
           <div>
             <p className='text-gray-500'>Thời gian hoàn thành:</p>
-            <p className='font-medium'>{data?.postedAt ? dayjs.utc(data.postedAt).local().format('DD/MM/YYYY HH:mm:ss') : '--'}</p>
+            <p className='font-medium'>{data?.postedAt ? dayjs.utc(data.postedAt).format('DD/MM/YYYY HH:mm:ss') : '--'}</p>
           </div>
         </div>
         {data?.status === 'ARCHIVED' && data.failureReason && (

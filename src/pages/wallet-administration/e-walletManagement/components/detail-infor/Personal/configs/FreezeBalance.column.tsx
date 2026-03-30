@@ -5,6 +5,7 @@ import { formatNumber } from '@utils/formatNumber'
 import { ButtonComponent, TypographyText } from '@components/index'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { FreezeStatus, FreezeStatusConfig } from '../types/Freeze.type'
+import { cn } from '@utils/cn'
 
 interface ColumnProps {
     onRelease?: (record: any) => void
@@ -94,7 +95,7 @@ export const getColumn = ({ onRelease }: ColumnProps): ColumnType[] => [
         dataIndex: 'status',
         align: 'center',
         width: 100,
-        render: (value) => <StatusBadge status={value as FreezeStatus} config={FreezeStatusConfig} />,
+        render: (value) => <StatusBadge className={cn(value==FreezeStatus.ACTIVE&&'animate-pulse-soft')} status={value as FreezeStatus} config={FreezeStatusConfig} />,
     },
     {
         title: 'Thao tác',

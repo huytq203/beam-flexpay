@@ -109,10 +109,10 @@ export default function StatusBadge({ status, config, className }: StatusBadgePr
 
     return (
         <span
-            className={cn(`inline-flex px-2 text-[12px] w-fit items-center whitespace-nowrap rounded-md relative overflow-hidden ${currentConfig.className} before:absolute before:inset-y-0 before:-left-full before:w-[60%] before:bg-[linear-gradient(90deg,transparent,var(--shimmer-color,rgba(0,229,160,0.15)),transparent)] before:animate-shimmer`, className)}
+            className={cn(`inline-flex px-2 text-[12px] w-fit items-center whitespace-nowrap rounded-md relative overflow-hidden ${currentConfig.className}${!!currentConfig.shimmerColor ? ` before:absolute before:inset-y-0 before:-left-full before:w-[60%] before:bg-[linear-gradient(90deg,transparent,var(--shimmer-color,rgba(0,229,160,0.15)),transparent)] before:animate-shimmer` : ''}`, className)}
             style={{ '--shimmer-color': currentConfig.shimmerColor } as React.CSSProperties}
         >
-            {currentConfig.label}
+            {currentConfig.label || '--'}
         </span>
     )
 }

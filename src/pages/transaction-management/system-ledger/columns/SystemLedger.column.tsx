@@ -39,7 +39,7 @@ const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Co
         },
     },
     {
-        title: 'Số tài khoản',
+        title: 'Tài khoản chuyển',
         align: 'center',
         dataIndex: 'transaction',
         width: 150,
@@ -47,12 +47,34 @@ const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Co
             const maskedAccount = value?.maskedAccount
             if (!maskedAccount) return '--'
 
-            const isAlreadyMasked = String(maskedAccount).includes('*')
+            const isAlreadyMasked = String(maskedAccount).includes('*')||maskedAccount=="SYSTEM"
 
             return (
                 <div className='text-center'>
                     {isAlreadyMasked ? (
-                        <p className="font-medium">{maskedAccount}</p>
+                        <p className="font-medium ">{maskedAccount === "SYSTEM" ? "Hệ thống" : maskedAccount}</p>
+                    ) : (
+                        <MaskText value={maskedAccount} />
+                    )}
+                </div>
+            )
+        },
+    },
+    {
+        title: 'Tài khoản nhận',
+        align: 'center',
+        dataIndex: 'account',
+        width: 150,
+        render(value) {
+            const maskedAccount = value?.ownerUsername
+            if (!maskedAccount) return '--'
+
+            const isAlreadyMasked = String(maskedAccount).includes('*')||maskedAccount=="SYSTEM"
+
+            return (
+                <div className='text-center'>
+                    {isAlreadyMasked ? (
+                        <p className="font-medium">{maskedAccount === "SYSTEM" ? "Hệ thống" : maskedAccount}</p>
                     ) : (
                         <MaskText value={maskedAccount} />
                     )}

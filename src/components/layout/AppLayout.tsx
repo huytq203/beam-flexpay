@@ -197,7 +197,7 @@ function AppLayout() {
               collapsible
               collapsed={collapsed}
               theme='light'
-              className='custom-sidebar border-r border-gray-200'
+              className='custom-sidebar border-r border-gray-200 '
             >
               {sidebarContent}
             </Sider>

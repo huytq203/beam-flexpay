@@ -4,6 +4,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { Spin } from 'antd'
 import gsap from 'gsap'
 import { PATHS } from '@constants/pathConstant'
+import { resetInactivityTimer } from '@configs/fetchBaseQueryCustom'
 import './style.scss'
 
 function AuthLayout() {
@@ -24,6 +25,7 @@ function AuthLayout() {
     if (location.pathname === '/') {
       navigate(PATHS.AUTH.LOGIN)
     }
+    resetInactivityTimer()
   }, [location])
 
   useEffect(() => {
