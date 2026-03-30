@@ -239,10 +239,13 @@ const handleSessionExpired = () => {
   Swal.fire({
     title: 'Phiên đăng nhập hết hạn',
     text: 'Vui lòng đăng nhập lại để tiếp tục sử dụng dịch vụ.',
-    imageUrl: capybaraIcon,
-    imageWidth: 150,
-    imageHeight: 150,
-    imageAlt: 'Capybara',
+    //  imageUrl: capybaraIcon,
+    // imageWidth: 150,
+    // imageHeight: 150,
+    // imageAlt: 'Capybara',
+    icon: 'warning',
+    iconColor: '#F59E0B',
+    
     showCancelButton: false,
     confirmButtonText: 'Đăng nhập lại',
     allowOutsideClick: false,
