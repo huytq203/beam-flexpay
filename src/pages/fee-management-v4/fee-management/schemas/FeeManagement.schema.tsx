@@ -109,10 +109,10 @@ export const FeeComponentSchema = z.object({
         const isNotVAT = data.componentType !== 'VAT';
 
         if (isDirect && isNotVAT) {
-            const hasFixedAmount = data.fixedAmount !== undefined && data.fixedAmount !== null && data.fixedAmount > 0;
-            const hasPercentage = data.percentage !== undefined && data.percentage !== null && data.percentage > 0;
-            const hasMinFee = data.minFee !== undefined && data.minFee !== null && data.minFee > 0;
-            const hasMaxFee = data.maxFee !== undefined && data.maxFee !== null && data.maxFee > 0;
+            const hasFixedAmount = data.fixedAmount !== undefined && data.fixedAmount !== null && data.fixedAmount >= 0;
+            const hasPercentage = data.percentage !== undefined && data.percentage !== null && data.percentage >= 0;
+            const hasMinFee = data.minFee !== undefined && data.minFee !== null && data.minFee >= 0;
+            const hasMaxFee = data.maxFee !== undefined && data.maxFee !== null && data.maxFee >= 0;
 
             return hasFixedAmount || hasPercentage || hasMinFee || hasMaxFee;
         }

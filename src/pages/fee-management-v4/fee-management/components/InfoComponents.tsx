@@ -2,7 +2,7 @@ import { PlusOutlined } from '@components/icons'
 import { ButtonComponent, Table } from '@components/index'
 import { Control, FieldArrayWithId } from 'react-hook-form'
 import { ColumnsType } from 'antd/es/table'
-import { FeeComponentType } from '@pages/fee-management-v4/fee-assignment/schemas/FeeManagement.schema'
+import { FeeComponentType } from '../schemas/FeeManagement.schema'
 
 interface InfoComponentsProps {
   control?: Control<FeeComponentType>
