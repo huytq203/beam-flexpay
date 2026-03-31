@@ -120,18 +120,18 @@ const InforEwallet = ({ data, ekyc }: InforEwalletProps) => {
         }
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Trạng thái EKC:</p>
-          <p className={`font-medium ${ekyc?.status === 'VERIFIED' ? 'text-blue-700 bg-blue-100' : 'text-red bg-red-100'} px-2  rounded-md text-sm`}>
+          <p className={`font-medium ${ekyc?.status === 'VERIFIED' ? 'text-blue-700 bg-blue-100' : 'text-red bg-red-100'} px-2  rounded-md text-[12px]`}>
             {ekyc?.status ? (ekycStatusMap[ekyc.status]?.label ?? ekyc.status) : "Chưa xác thực"}
           </p>
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Ứng lương:</p>
           {/* <p className="font-medium text-green-700 bg-green-100 px-2  rounded-md text-sm"><CheckCircleFilled /> Đang bật</p> */}
-          <p className="font-medium text-green-700 bg-green-100 px-2  rounded-md text-sm">--</p>
+          <p className="font-medium text-green-700 bg-green-100 px-2  rounded-md text-[12px]">--</p>
         </div>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Liên kết NH:</p>
-          <p className={`font-medium text-sm ${isLinkedBank ? 'text-blue-700 bg-blue-100 px-2  rounded-md' : 'text-red bg-red-100 px-2  rounded-md'}`}>{getStatusLinkedBank()}</p>
+          <p className={`font-medium text-[12px] ${isLinkedBank ? 'text-blue-700 bg-blue-100 px-2  rounded-md' : 'text-red bg-red-100 px-2  rounded-md'}`}>{getStatusLinkedBank()}</p>
         </div>
         <hr />
         <div className='flex justify-between items-center'>
@@ -159,7 +159,7 @@ const InforEwallet = ({ data, ekyc }: InforEwalletProps) => {
         <p className='font-bold'>Thông tin xác thực eKYC</p>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Trạng thái:</p>
-          <p className="font-medium  text-blue-700 bg-blue-100 px-2  rounded-md text-sm">
+          <p className="font-medium  text-blue-700 bg-blue-100 px-2  rounded-md text-[12px]">
             {ekyc?.status ? (ekycStatusMap[ekyc.status]?.label ?? ekyc.status) : '--'}
           </p>
         </div>
@@ -174,7 +174,7 @@ const InforEwallet = ({ data, ekyc }: InforEwalletProps) => {
         {/* CCCD Trước */}
 
         <div className="flex flex-1 flex-col items-center gap-2">
-          <div className="w-full h-24 flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-400 text-sm">
+          <div className="w-full h-24 flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-400 text-[12px]">
             Mặt trước
           </div>
           <span className="text-xs text-gray-600">CCCD Trước</span>
@@ -182,7 +182,7 @@ const InforEwallet = ({ data, ekyc }: InforEwalletProps) => {
 
         {/* CCCD Sau */}
         <div className="flex flex-1 flex-col items-center gap-2">
-          <div className="w-full h-24 flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-400 text-sm">
+          <div className="w-full h-24 flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-400 text-[12px]">
             Mặt sau
           </div>
           <span className="text-xs text-gray-600">CCCD Sau</span>
@@ -190,7 +190,7 @@ const InforEwallet = ({ data, ekyc }: InforEwalletProps) => {
 
         {/* Face Match */}
         <div className="flex flex-1 flex-col items-center gap-2">
-          <div className="w-full h-24 flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-400 text-sm">
+          <div className="w-full h-24 flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-400 text-[12px]">
             Chân dung
           </div>
           <span className="text-xs text-gray-600">Face Match</span>
