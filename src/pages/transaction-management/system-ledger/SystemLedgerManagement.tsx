@@ -98,11 +98,9 @@ const SystemLedgerManagement = () => {
 
               <div className="flex justify-between">
                 <span className="text-gray-500">Loại tài khoản:</span>
-                <div className="">
-
+                <div className="flex flex-col items-end">
                   <span className="font-medium">{OwnerTypeLabels[record.account?.ownerType] || record.account?.ownerType} </span>
                   <span className="font-medium text-gray-400">{record.account?.glCode} </span>
-
                 </div>
               </div>
               <div className="flex justify-between">
