@@ -1,15 +1,13 @@
 import { Image } from 'antd'
-import ILogo from '@assets/image/logo.png'
-import SLogo from '@assets/image/short_logo.svg'
 interface LogoProps{
   collapsed: boolean
 }
 export const Logo = (props: LogoProps) => {
   return (
     <Image
-      src={props.collapsed?SLogo:ILogo}
+      src="/images/logo.png"
       preview={false}
-      height={props.collapsed?41:64}
+      height={props.collapsed ? 41 : 64}
     />
     // <div className="flex items-center justify-center mt-1 w-full h-[75px] overflow-hidden">
     //   <img
