@@ -16,12 +16,12 @@ import { useGetFeeComponentTierQuery } from '@services/apiFeeComponentTier'
 import {
   PolicySchema as FeePolicySchema,
   PolicyType as FeePolicyType
-} from '@pages/fee-management-v4/fee-assignment/schemas/FeeManagement.schema'
+} from '@pages/fee-management-v4/fee-management/schemas/FeeManagement.schema'
 import { FeeComponent, FeeTier } from '../types/FeeComponent.types'
 import { convertToISO } from '@pages/fee-management-v4/fee-assignment/utils/FeeManagement.utils'
 import { useSVG } from '@hooks/useSVG'
 import { FEEMANAGEMENT_V4 } from '@constants/routersConstant'
-import { FeeComponentType } from '@pages/fee-management-v4/fee-assignment/schemas/FeeManagement.schema'
+import { FeeComponentType } from '@pages/fee-management-v4/fee-management/schemas/FeeManagement.schema'
 import { usePostNewPolicyMutation, usePutFeePolicyMutation } from '@services/apiFeePoliciesServices'
 import { PATHS } from '@constants/pathConstant'
 import { feeComponentColumns } from '../columns/FeeComponentManagement.columns'

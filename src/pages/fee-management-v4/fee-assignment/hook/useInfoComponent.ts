@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useCallback, useImperativeHandle, ForwardedRef } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
-import { FeeComponentType } from '@pages/fee-management-v4/fee-assignment/schemas/FeeManagement.schema'
+import { FeeComponentType } from '@pages/fee-management-v4/fee-management/schemas/FeeManagement.schema'
 
 import { useMessage } from '@hooks/useMessage'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
@@ -13,7 +13,7 @@ import {
     roundMode
 } from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FeeComponentSchema } from '@pages/fee-management-v4/fee-assignment/schemas/FeeManagement.schema'
+import { FeeComponentSchema } from '@pages/fee-management-v4/fee-management/schemas/FeeManagement.schema'
 import { FeeComponent, FeeTier } from '../types/FeeComponent.types'
 import { useDeleteFeeComponentTierMutation, usePostFeeComponentTierMutation, usePutFeeComponentTierMutation } from '@services/apiFeeComponentTier'
 import { getTierColumns } from '@pages/fee-management-v4/fee-management/columns/FormAddFeeComponent.columns'
