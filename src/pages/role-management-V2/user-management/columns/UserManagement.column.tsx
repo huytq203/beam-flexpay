@@ -29,13 +29,13 @@ export const UserManagementColumn = ({
       title: 'Họ và tên',
       dataIndex: 'firstName',
       align: 'left',
-      render: (value, record) => `${record.firstName} ${record.lastName ?? ''}`
+      render: (value, record) => `${record.firstName} ${record.lastName || '--'}`
     },
     {
       title: 'Email',
       dataIndex: 'email',
       align: 'left',
-      render: (value) => value ?? '--'
+      render: (value) => value || '--'
     },
     {
       title: 'Xác thực email',

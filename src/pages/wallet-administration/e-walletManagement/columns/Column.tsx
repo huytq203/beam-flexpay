@@ -41,16 +41,34 @@ export const getColumn = ({ openModal, handleGetFreeze, navigate }: ColumnOption
     {
       title: 'Khách hàng / Mã TK',
       align: 'left',
-      render: (_, record) => (
-        <div>
-          <div className='font-medium max-w-[17rem] overflow-hidden text-ellipsis whitespace-nowrap'>
-            {record.ownerUsername ?? '--'}
+      render: (_, record) => {
+        const isSystem = record.ownerType === 'SYSTEM';
+        return (
+          <div>
+            <div className='font-medium max-w-[17rem] overflow-hidden text-ellipsis whitespace-nowrap'>
+              {isSystem ? 'Hệ thống' : record.ownerUsername ?? 'Hệ thống'}
+            </div>
+            <div className='text-gray-500 text-sm max-w-[17rem] overflow-hidden text-ellipsis whitespace-nowrap'>
+              TK: {'--'}
+            </div>
           </div>
-          <div className='text-gray-500 text-sm max-w-[17rem] overflow-hidden text-ellipsis whitespace-nowrap'>
-            TK: {'--'}
+        )
+      },
+    },
+    {
+      title: 'Loại tài khoản',
+      align: 'left',
+      width: 200,
+      render(_, record) {
+        const ownerType = record?.ownerType;
+        const glCode = record?.glCode;
+        return (
+          <div className="flex flex-col gap-0.5">
+            <span className="font-medium text-gray-800 text-sm">{ownerType ?? '--'}</span>
+            <span className="text-gray-400 text-xs">{glCode ?? ''}</span>
           </div>
-        </div>
-      ),
+        );
+      },
     },
     // {
     //   title: 'Thông tin liên hệ',
