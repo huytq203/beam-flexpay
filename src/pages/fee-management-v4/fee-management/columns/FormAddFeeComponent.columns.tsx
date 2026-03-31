@@ -55,7 +55,7 @@ export const getTierColumns = ({
             )
         },
         {
-            title: 'Giá trị giao dịch từ  (Min Value)',
+            title: 'Giá trị giao dịch từ',
             dataIndex: 'minFee',
             key: 'minFee',
             render: (_text, _record, index) => (
@@ -75,7 +75,7 @@ export const getTierColumns = ({
             )
         },
         {
-            title: 'Giá trị giao dịch đến (Max Value)',
+            title: 'Giá trị giao dịch đến',
             dataIndex: 'maxFee',
             key: 'maxFee',
             render: (_text, _record, index) => (
@@ -95,7 +95,7 @@ export const getTierColumns = ({
             )
         },
         {
-            title: 'Số tiền phí tối thiểu,',
+            title: 'Số tiền phí tối thiểu',
             dataIndex: 'minValue',
             key: 'minValue',
             render: (_text, _record, index) => (

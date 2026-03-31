@@ -14,7 +14,7 @@ interface InfoComponentsProps {
 const InfoComponents: React.FC<InfoComponentsProps> = ({ columns, fields, append }) => {
   return (
     <div>
-      <p className='font-bold mb-3'>Phương thức tính (Calculation Method)</p>
+      <p className='font-bold mb-3'>Phương thức tính</p>
       <Table
         rowKey={'id'}
         size='small'

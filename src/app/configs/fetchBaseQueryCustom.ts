@@ -279,7 +279,7 @@ const handleSessionExpired = () => {
 };
 
 
-export const resetInactivityTimer = (isFromEvent = false) => {
+export const resetInactivityTimer = (isFromEvent = false, isInitial = false) => {
   if (isExpired) return; // Nếu đã out thì không rải event nữa
 
   const currentTime = Date.now();
@@ -298,7 +298,11 @@ export const resetInactivityTimer = (isFromEvent = false) => {
   const lastActivity = Number(localStorage.getItem(TIME_OLD) || 0);
 
   if (lastActivity && currentTime - lastActivity > INACTIVITY_TIMEOUT) {
-    handleSessionExpired();
+    if (isInitial) {
+      forceLogout();
+    } else {
+      handleSessionExpired();
+    }
     return;
   }
 
@@ -331,7 +335,7 @@ export const initInactivityTracker = () => {
     }
   });
 
-  resetInactivityTimer();
+  resetInactivityTimer(false, true);
 };
 
 // ============================================================================
