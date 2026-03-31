@@ -14,23 +14,22 @@ const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Co
         dataIndex: 'no',
         align: 'center',
         width: 50,
-
     },
     {
-        title: 'Mã giao dịch',
+        title: 'Giao dịch',
         align: 'left',
-        width: 150,
+        width: 250,
         dataIndex: 'transaction',
         render(value, record) {
             return (
-                <div>
+                <div className="flex flex-col gap-1">
                     {record.transaction?.transactionCode ? (
-                        <div className="flex flex-col ">
-                            <TypographyText strong copyable={{ text: record.transaction.transactionCode }}>
+                        <>
+                            <TypographyText strong copyable={{ text: record.transaction.transactionCode }} className="text-blue-600">
                                 {record.transaction.transactionCode}
                             </TypographyText>
-                            <span className="text-gray-500 text-[12px]">{value.description||'--'}</span>
-                        </div>
+                            <span className="text-gray-500 text-[12px] italic">{record.transaction.description || '--'}</span>
+                        </>
                     ) : (
                         <span>--</span>
                     )}
@@ -39,168 +38,89 @@ const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Co
         },
     },
     {
-        title: 'Tài khoản chuyển',
-        align: 'center',
-        dataIndex: 'transaction',
-        width: 150,
-        render(value) {
-            const maskedAccount = value?.maskedAccount
-            if (!maskedAccount) return '--'
-
-            const isAlreadyMasked = String(maskedAccount).includes('*')||maskedAccount=="SYSTEM"
-
-            return (
-                <div className='text-center'>
-                    {isAlreadyMasked ? (
-                        <p className="font-medium ">{maskedAccount === "SYSTEM" ? "Hệ thống" : maskedAccount}</p>
-                    ) : (
-                        <MaskText value={maskedAccount} />
-                    )}
-                </div>
-            )
-        },
-    },
-    {
-        title: 'Tài khoản nhận',
-        align: 'center',
-        dataIndex: 'account',
-        width: 150,
-        render(value) {
-            const maskedAccount = value?.ownerUsername
-            if (!maskedAccount) return '--'
-
-            const isAlreadyMasked = String(maskedAccount).includes('*')||maskedAccount=="SYSTEM"
-
-            return (
-                <div className='text-center'>
-                    {isAlreadyMasked ? (
-                        <p className="font-medium">{maskedAccount === "SYSTEM" ? "Hệ thống" : maskedAccount}</p>
-                    ) : (
-                        <MaskText value={maskedAccount} />
-                    )}
-                </div>
-            )
-        },
-    },
-    {
-        title: 'GL Code',
-        align: 'center',
+        title: 'Ghi nợ (Debit)',
+        align: 'left',
         width: 200,
-        render(value, record) {
-            const glCode = record.account?.glCode
+        render(_, record) {
+            if (record.direction !== DirectionConstants.DEBIT) return <span className="text-gray-300">--</span>;
+            const glCode = record.account?.glCode;
+            const owner = record.account?.ownerUsername || record.account?.ownerType;
             return (
-                <div className='text-start'>
-                    <p className="font-medium ">{glCode ?? '--'}</p>
-                    <p className="text-gray-500 text-xs">{GLCodeLabels[glCode] ?? 'N/A'}</p>
+                <div className="bg-red-50 p-2 rounded-md border border-red-100">
+                    <p className="font-bold text-red-700 m-0">{glCode ?? '--'}</p>
+                    <p className="text-gray-500 text-xs m-0">{GLCodeLabels[glCode] || owner || 'N/A'}</p>
                 </div>
-            )
+            );
         },
     },
     {
-        title: 'Loại giao dịch',
-        dataIndex: 'direction',
-        align: 'center',
-        width: 100,
-        render(value: DirectionKey) {
-            const isCredit = value === DirectionConstants.CREDIT
+        title: 'Ghi có (Credit)',
+        align: 'left',
+        width: 200,
+        render(_, record) {
+            if (record.direction !== DirectionConstants.CREDIT) return <span className="text-gray-300">--</span>;
+            const glCode = record.account?.glCode;
+            const owner = record.account?.ownerUsername || record.account?.ownerType;
             return (
-                <div className={`font-semibold text-sm ${isCredit ? 'text-green-600' : 'text-red-600'}`}>
-                    {value}
+                <div className="bg-green-50 p-2 rounded-md border border-green-100">
+                    <p className="font-bold text-green-700 m-0">{glCode ?? '--'}</p>
+                    <p className="text-gray-500 text-xs m-0">{GLCodeLabels[glCode] || owner || 'N/A'}</p>
                 </div>
-            )
+            );
         },
     },
     {
-        title: 'Tổng tiền',
+        title: 'Số tiền',
         dataIndex: 'amount',
         align: 'right',
         width: 150,
         render(value, record) {
-            const isCredit = record.direction === DirectionConstants.CREDIT
+            const isCredit = record.direction === DirectionConstants.CREDIT;
             return (
-                <div className={`font-bold ${isCredit ? 'text-green-600' : 'text-red-600'}`}>
+                <div className={`font-bold text-base ${isCredit ? 'text-green-600' : 'text-red-600'}`}>
                     <span>{isCredit ? '+' : '-'}</span>
                     {formatCurrency(value)}
                 </div>
-            )
+            );
         },
     },
     {
-        title: 'Số dư sau giao dịch',
+        title: 'Số dư ví',
         dataIndex: 'balanceAfter',
         align: 'right',
         width: 150,
         render(value) {
             return (
-                <div className="font-medium">
+                <div className="font-medium text-gray-700">
                     {formatCurrency(value)}
                 </div>
-            )
+            );
         },
     },
-    // {
-    //     title: 'Mô tả',
-    //     dataIndex: 'transaction',
-    //     align: 'left',
-    //     width: 150,
-    //     render(value) {
-    //         return (
-    //             <div className="font-medium">
-    //                 {value?.description}
-    //             </div>
-    //         )
-    //     },
-    // },
     {
         title: 'Trạng thái',
         align: 'center',
         width: 120,
-        render(value, record) {
-            const STATUS_CLASS: Record<StatusKey, string> = {
-                SUCCESS: 'text-green rounded-md inline-block px-2 font-medium text-xs border border-green bg-green',
-                ERROR: 'text-red rounded-md inline-block px-2 font-medium text-xs border border-red bg-red',
-                WAITING: 'text-blue-600 rounded-md inline-block px-2 font-medium text-xs border border-blue-500 bg-blue-50',
-                ACTIVE: 'text-green rounded-md inline-block px-2 font-medium text-xs border border-green bg-green',
-                LOCKED: 'text-red rounded-md inline-block px-2 font-medium text-xs border border-red bg-red',
-            };
-            const status = record.account?.status || record.transaction?.status;
+        render(_, record) {
+            const status = record.transaction?.status || record.account?.status;
             return (
-                <StatusBadge status={status as StatusKey}  config={CONFIG_STATUS} />
-            )
+                <StatusBadge status={status as StatusKey} config={CONFIG_STATUS} />
+            );
         },
     },
     {
-        title: 'Thời gian tạo',
+        title: 'Thời gian',
         align: 'center',
         width: 180,
-        render(value, record) {
+        render(_, record) {
             return (
-                <div className=''>
-                    <p>{dayjs(record.createdAt).format('DD/MM/YYYY HH:mm:ss')}</p>
+                <div className="text-gray-500">
+                    <p className="m-0 font-medium">{dayjs(record.createdAt).format('DD/MM/YYYY')}</p>
+                    <p className="m-0 text-xs">{dayjs(record.createdAt).format('HH:mm:ss')}</p>
                 </div>
-            )
+            );
         },
     },
-    // {
-    //     title: 'Thao tác',
-    //     align: 'center',
-    //     width: 80,
-    //     fixed: 'right',
-    //     render(value, record) {
-    //         return (
-    //             <div className="flex justify-center items-center">
-    //                 <TooltipComponent title='View Details'>
-    //                     <ButtonComponent
-    //                         onClick={() => navigate(`/wallet-administration/system-ledger/${record.id}`)}
-    //                         size='small'
-    //                         className='bg-blue-50 !border border-blue-600 text-blue-600 hover:!bg-blue-100 hover:!text-blue-600'
-    //                         icon={<EyeFilled />}
-    //                     />
-    //                 </TooltipComponent>
-    //             </div>
-    //         )
-    //     },
-    // },
 ]
 
 export default getSystemLedgerColumn
