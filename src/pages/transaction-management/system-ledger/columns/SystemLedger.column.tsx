@@ -80,7 +80,7 @@ const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Co
             const isCredit = value === DirectionConstants.CREDIT;
             return (
                 <span
-                    className={`inline-block px-3 py-0.5 rounded font-semibold text-xs text-white ${isCredit ? 'text-green-500' : 'text-red-500'}`}
+                    className={` font-semibold ${isCredit ? 'text-green-500' : 'text-red-500'}`}
                 >
                     {value}
                 </span>

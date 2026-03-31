@@ -95,17 +95,19 @@ const SystemLedgerManagement = () => {
                 <span className="text-gray-500">Account ID:</span>
                 <span className="font-medium font-mono">{record.account?.id.substring(0, 13)}...</span>
               </div> */}
-              <div className="flex justify-between">
-                <span className="text-gray-500">GL Code:</span>
-                <span className="font-bold text-blue-600">{record.account?.glCode}</span>
-              </div>
+
               <div className="flex justify-between">
                 <span className="text-gray-500">Loại tài khoản:</span>
-                <span className="font-medium">{OwnerTypeLabels[record.account?.ownerType] || record.account?.ownerType}</span>
+                <div className="">
+
+                  <span className="font-medium">{OwnerTypeLabels[record.account?.ownerType] || record.account?.ownerType} </span>
+                  <span className="font-medium text-gray-400">{record.account?.glCode} </span>
+
+                </div>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Tài khoản:</span>
-                <span className="font-medium">{record.account?.ownerUsername? record.account?.ownerUsername!=='SYSTEM' ?   record.account?.ownerUsername : 'Hệ thống' : '--'}</span>
+                <span className="font-medium">{record.account?.ownerUsername ? record.account?.ownerUsername !== 'SYSTEM' ? record.account?.ownerUsername : 'Hệ thống' : '--'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Số dư:</span>
@@ -121,7 +123,7 @@ const SystemLedgerManagement = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Số dư khả dụng:</span>
-                <span className="font-medium">{formatCurrency(record.account?.balance??0)}</span>
+                <span className="font-medium">{formatCurrency(record.account?.balance ?? 0)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Trạng thái tài khoản:</span>
