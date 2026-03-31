@@ -22,7 +22,7 @@ const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Co
         render(_, record) {
             const code = record.transaction?.transactionCode;
             return code ? (
-                <TypographyText strong className="text-blue-500 cursor-pointer">
+                <TypographyText copyable strong className="text-blue-500 cursor-pointer">
                     {code}
                 </TypographyText>
             ) : (
@@ -80,7 +80,7 @@ const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Co
             const isCredit = value === DirectionConstants.CREDIT;
             return (
                 <span
-                    className={`inline-block px-3 py-0.5 rounded font-semibold text-xs text-white ${isCredit ? 'bg-green-500' : 'bg-red-500'}`}
+                    className={`inline-block px-3 py-0.5 rounded font-semibold text-xs text-white ${isCredit ? 'text-green-500' : 'text-red-500'}`}
                 >
                     {value}
                 </span>
