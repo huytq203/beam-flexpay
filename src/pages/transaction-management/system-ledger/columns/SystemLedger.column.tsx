@@ -22,7 +22,7 @@ const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Co
         render(_, record) {
             const code = record.transaction?.transactionCode;
             return code ? (
-                <TypographyText copyable strong className="text-blue-500 cursor-pointer">
+                <TypographyText copyable strong className=" font-medium cursor-pointer">
                     {code}
                 </TypographyText>
             ) : (
