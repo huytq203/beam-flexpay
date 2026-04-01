@@ -1,11 +1,12 @@
 import { Image } from 'antd'
-interface LogoProps{
+interface LogoProps {
   collapsed: boolean
 }
 export const Logo = (props: LogoProps) => {
+  const logo = props.collapsed ? "/images/short_logo.svg" : "/images/logo.png"
   return (
     <Image
-      src="/images/logo.png"
+      src={logo}
       preview={false}
       height={props.collapsed ? 41 : 64}
     />
