@@ -1,13 +1,14 @@
 import { CopyIcon } from "@components/icons"
 import { useState } from "react"
 import TooltipComponent from "../tooltip-component"
-
+import {cn} from '@utils/cn'
 interface CopyableTextProps {
   value: string
   label?: string
+  className?:string
 }
 
- const CopyableText: React.FC<CopyableTextProps> = ({ value, label }) => {
+ const CopyableText: React.FC<CopyableTextProps> = ({ value, label,className }) => {
   const [titleHover, setTitleHover] = useState('Copy')
 
   const copyToClipboard = async () => {
@@ -30,7 +31,7 @@ interface CopyableTextProps {
         
       </div>
 
-      <div className="font-medium flex items-center gap-1">
+      <div className={cn("font-medium flex items-center gap-1",className)}>
         <span className="truncate" title={value}>{value}</span>
         <TooltipComponent title={titleHover}>
           <CopyIcon

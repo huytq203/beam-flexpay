@@ -23,65 +23,7 @@ const SystemLedgerManagement = () => {
     handleSearch,
     isFetching
   } = useSystemLedger()
-    const dataSource2=[
-      {
-  "id": "48668471-af43-49ef-83e1-56d97e21cef0",
-  "transaction": {
-    "id": "2e5e9c30-6252-47a5-927b-ead8f2755533",
-    "createdAt": "2026-03-31T16:22:00.204816",
-    "updatedAt": "2026-03-31T16:22:00.204816",
-    "createdBy": "internal-service",
-    "updatedBy": "internal-service",
-    "transactionCode": "FW26P6XBM",
-    "ownerId": "539cf5fd-9cf0-4436-862d-93b75a73441c",
-    "type": "DEBIT",
-    "grossAmount": 50000,
-    "netAmount": 50000,
-    "amount": 50000,
-    "feeCalculationId": "fb53435d-e25e-449d-9e71-a49d6379d480",
-    "feeAmount": 0,
-    "currency": "VND",
-    "status": "SUCCESS",
-    "idempotencyKey": "c1a6fdc5-4325-4728-86b1-f8b1ce6fe5ea",
-    "description": "Rut tien ve tai khoan",
-    "maskedAccount": "******1913",
-    "transactionTime": "2026-03-31T16:22:00.204424",
-    "processedAt": "2026-03-31T16:22:00.204434",
-    "checksumSalt": "80828b8b-f4b2-4459-8a95-cf19e0e28b5f",
-    "checksum": "UE1AId0b+11xgvpHUFTbcwhseQlxurfzfjTsc/BFmtk="
-  },
-  "account": {
-    "id": "a837225d-4a16-4c70-a6f9-0f0e13eb7f93",
-    "createdAt": "2026-03-26T18:00:58.50291",
-    "updatedAt": "2026-03-31T16:22:00.207675",
-    "createdBy": "internal-service",
-    "updatedBy": "internal-service",
-    "ownerId": "00000000-0000-0000-0000-000000000000",
-    "ownerType": "SYSTEM",
-    "ownerUsername": null,
-    "glCode": "SYS_BANK_SETTLEMENT_VND",
-    "currency": "VND",
-    "totalDebit": 200000,
-    "totalCredit": 200000,
-    "balance": 0,
-    "holdBalance": 0,
-    "availableBalance": 0,
-    "version": 11,
-    "status": "ACTIVE",
-    "checksum": "1lO6U08yVkPRL3kgqtLoFuIKqTRRl/afYNuhpFr9J1E=",
-    "lockedReason": null,
-    "lockedAt": null,
-    "lockedBy": null
-  },
-  "direction": "CREDIT",
-  "amount": 50000,
-  "balanceAfter": 0,
-  "description": null,
-  "checksum": "VHSxImECcyXafkxWdBnNSbpZnusHdUesA52Ldo1RPYc=",
-  "previousChecksum": "A92fo0EqTJfzdyG2lbt0I/ycxmJ/2VlAQxuGA2DdPHY=",
-  "createdAt": "2026-03-31T16:22:00.269709"
-}
-    ]
+    
   const columns = getSystemLedgerColumn({ navigate })
 
   // Handle expand - chỉ cho phép mở 1 row tại 1 thời điểm

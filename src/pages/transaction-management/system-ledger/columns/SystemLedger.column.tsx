@@ -2,7 +2,7 @@ import { ColumnsType } from "antd/lib/table";
 import { LedgerEntry } from "../types/SystemLedger.type";
 import dayjs from "dayjs";
 import { NavigateFunction } from "react-router-dom";
-import { MaskText, TooltipComponent, TypographyText } from "@components/index";
+import { CopyableText, MaskText, TooltipComponent, TypographyText } from "@components/index";
 import { formatCurrency } from "@utils/formatNumber";
 import { CONFIG_STATUS, DirectionConstants, StatusKey } from "../constants/SystemLedger.constant";
 import StatusBadge from "@components/status-badge/StatusBadge";
@@ -38,9 +38,18 @@ const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Co
         render(_, record) {
             return (
                 <TooltipComponent title={record.id}>
-                    <span className="inline-block max-w-[200px] font-medium cursor-pointer truncate">
+                    {/* <CopyableText
+                        value={record.id}
+                        className=" flex max-w-[200px] font-medium cursor-pointer truncate"
+                    /> */}
+                    <TypographyText 
+                        copyable 
+                        strong 
+                        ellipsis={{ tooltip: false }}
+                        className="font-medium cursor-pointer max-w-[200px] inline-block"
+                    >
                         {record.id}
-                    </span>
+                    </TypographyText>
                 </TooltipComponent>
             )
         },
