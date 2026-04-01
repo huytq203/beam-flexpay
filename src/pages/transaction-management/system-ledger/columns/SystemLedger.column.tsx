@@ -2,7 +2,7 @@ import { ColumnsType } from "antd/lib/table";
 import { LedgerEntry } from "../types/SystemLedger.type";
 import dayjs from "dayjs";
 import { NavigateFunction } from "react-router-dom";
-import { MaskText, TypographyText } from "@components/index";
+import { MaskText, TooltipComponent, TypographyText } from "@components/index";
 import { formatCurrency } from "@utils/formatNumber";
 import { CONFIG_STATUS, DirectionConstants, StatusKey } from "../constants/SystemLedger.constant";
 import StatusBadge from "@components/status-badge/StatusBadge";
@@ -33,6 +33,21 @@ const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Co
     {
         title: 'Mã tài khoản (Ví)',
         align: 'left',
+        dataIndex: 'id',
+        width: 200,
+        render(_, record) {
+            return (
+                <TooltipComponent title={record.id}>
+                    <span className="inline-block max-w-[200px] font-medium cursor-pointer truncate">
+                        {record.id}
+                    </span>
+                </TooltipComponent>
+            )
+        },
+    },
+    {
+        title: 'Chủ sở hữu',
+        align: 'left',
         width: 160,
         render(_, record) {
             const username = record.account?.ownerUsername;
@@ -48,7 +63,7 @@ const getSystemLedgerColumn = ({ navigate }: { navigate: NavigateFunction }): Co
             return (
                 <div className="flex items-center">
                     {isAlreadyMasked ? (
-                         <span className="font-semibold text-gray-800">{username}</span>
+                        <span className="font-semibold text-gray-800">{username}</span>
                     ) : (
                         <MaskText value={username} />
                     )}
