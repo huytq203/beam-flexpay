@@ -76,6 +76,15 @@ const UserManagement = () => {
                 size='small'
                 columns={handle.column}
                 dataSource={fetchData.dataSource}
+                pagination={{
+                  total: fetchData.userData?.totalElements,
+                  current: fetchData.page,
+                  pageSize: fetchData.size,
+                  onChange: (page, pageSize) => {
+                    fetchData.setPage(page)
+                    fetchData.setPageSize(pageSize)
+                  },
+                }}
               />
             )}
           </>
@@ -86,7 +95,7 @@ const UserManagement = () => {
       <ModalComponent
         title={handle.modalType === 'edit' ? 'Cập nhật tài khoản Admin' : 'Thêm mới tài khoản Admin'}
         onCancel={() => handle.closeModal()}
-        onOk={() => {}}
+        onOk={() => { }}
         open={handle.modalType === 'add' || handle.modalType === 'edit'}
         width='35%'
         modalText={
@@ -103,7 +112,7 @@ const UserManagement = () => {
       <ModalComponent
         title='Chi tiết tài khoản Admin'
         onCancel={() => handle.closeModal()}
-        onOk={() => {}}
+        onOk={() => { }}
         open={handle.modalType === 'viewDetail'}
         width='45%'
         footer={null}
@@ -119,7 +128,7 @@ const UserManagement = () => {
       <ModalComponent
         title='Gán nhóm quyền'
         onCancel={() => handle.closeModal()}
-        onOk={() => {}}
+        onOk={() => { }}
         open={handle.modalType === 'assignRoles'}
         width='50%'
         footer={null}

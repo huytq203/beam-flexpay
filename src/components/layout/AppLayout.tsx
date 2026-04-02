@@ -247,7 +247,7 @@ function AppLayout() {
               </div>
 
               <div className="flex flex-col flex-1">
-                <b className= {cn(`text-blue`, isMobile ? 'text-[16px]' : 'text-[20px]', 'leading-none')}>{t(`header-title.${title}`)}</b>
+                <b className={cn(`text-blue`, isMobile ? 'text-[16px]' : 'text-[20px]', 'leading-none')}>{t(`header-title.${title}`)}</b>
                 {!isMobile && <Breadcrumb className="mt-1" />}
               </div>
             </div>

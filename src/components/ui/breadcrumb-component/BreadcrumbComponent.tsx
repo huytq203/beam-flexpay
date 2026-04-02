@@ -16,12 +16,12 @@ const BreadcrumbComponent: React.FC<BreadcrumbComponentProps> = ({ className }) 
 
     const breadcrumbItems = useMemo(() => {
         const pathnames = pathname.split('/').filter((x) => x)
-        
+
         const items: any[] = [
             {
                 title: (
                     <Link to="/" className="flex items-center  text-gray-400 hover:text-blue-500! transition-colors whitespace-nowrap">
-                      
+
                         <span className="text-[11px] font-medium leading-none flex items-center mt-1">  <House size={14} weight="bold" className="mr-1" /> Trang chủ</span>
                     </Link>
                 ),
