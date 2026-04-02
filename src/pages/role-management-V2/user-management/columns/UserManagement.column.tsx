@@ -12,7 +12,7 @@ interface Props {
   openModal: (type: ModalType, user?: SelectedUser | null) => void
 }
 
-export const UserManagementColumn = ({
+export const getUserManagementColumn = ({
   openModal
 }: Props): ColumnType<UserInfor>[] => [
     {
@@ -29,7 +29,10 @@ export const UserManagementColumn = ({
       title: 'Họ và tên',
       dataIndex: 'firstName',
       align: 'left',
-      render: (value, record) => `${record.firstName} ${record.lastName || '--'}`
+      render: (value, record) => {
+        const fullName = `${record.lastName || ''} ${record.firstName || ''}`.trim()
+        return fullName || '--'
+      }
     },
     {
       title: 'Email',

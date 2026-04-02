@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react'
 import { ModalType, SelectedUser } from '../types/UserManagement.type'
-import { UserManagementColumn } from '../columns/UserManagement.column'
+import { getUserManagementColumn } from '../columns/UserManagement.column'
 
 const useHandleUser = () => {
   const [modalType, setModalType] = useState<ModalType>(null)
@@ -17,7 +17,7 @@ const useHandleUser = () => {
   }, [])
 
   const column = useMemo(
-    () => UserManagementColumn({ openModal }),
+    () => getUserManagementColumn({ openModal }),
     [openModal]
   )
 
