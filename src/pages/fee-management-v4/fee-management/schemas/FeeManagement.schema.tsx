@@ -48,10 +48,10 @@ export const FeeComponentSchema = z.object({
     roundMode: z.string({ message: "Chọn công thức làm tròn" }).min(1, "Chọn công thức làm tròn"),
     calculationMethod: z.number().or(z.string()).optional(),
     tiers: z.array(FeeTierSchema).optional(),
-    fixedAmount: z.number().min(0, "Phí cố định phải >= 0").optional(),
-    percentage: z.number().min(0, "Phần trăm phải >= 0").max(100, "Phần trăm phải <= 100").optional(),
-    minFee: z.number().min(0, "Phí tối thiểu phải >= 0").optional(),
-    maxFee: z.number().min(0, "Phí tối đa phải >= 0").optional(),
+    fixedAmount: z.number({ message: "Phí cố định phải >= 0" }).min(0, "Phí cố định phải >= 0").nullable().optional(),
+    percentage: z.number({ message: "Phần trăm phải >= 0" }).min(0, "Phần trăm phải >= 0").max(100, "Phần trăm phải <= 100").nullable().optional(),
+    minFee: z.number({ message: "Phí tối thiểu phải >= 0" }).min(0, "Phí tối thiểu phải >= 0").nullable().optional(),
+    maxFee: z.number({ message: "Phí tối đa phải >= 0" }).min(0, "Phí tối đa phải >= 0").nullable().optional(),
     maxValue: z.number().optional(),
     minValue: z.number().optional(),
 
@@ -102,27 +102,28 @@ export const FeeComponentSchema = z.object({
         message: "Phí tối đa phải >= phí tối thiểu",
         path: ["maxFee"],
     }
-).refine(
-    (data) => {
-        // Validate: Khi DIRECT (không phải tier), ít nhất 1 field phải có giá trị
-        const isDirect = data.calculationMethod === 'DIRECT';
-        const isNotVAT = data.componentType !== 'VAT';
+)
+// .refine(
+//     (data) => {
+//         // Validate: Khi DIRECT (không phải tier), ít nhất 1 field phải có giá trị
+//         const isDirect = data.calculationMethod === 'DIRECT';
+//         const isNotVAT = data.componentType !== 'VAT';
 
-        if (isDirect && isNotVAT) {
-            const hasFixedAmount = data.fixedAmount !== undefined && data.fixedAmount !== null && data.fixedAmount >= 0;
-            const hasPercentage = data.percentage !== undefined && data.percentage !== null && data.percentage >= 0;
-            const hasMinFee = data.minFee !== undefined && data.minFee !== null && data.minFee >= 0;
-            const hasMaxFee = data.maxFee !== undefined && data.maxFee !== null && data.maxFee >= 0;
+//         if (isDirect && isNotVAT) {
+//             const hasFixedAmount = data.fixedAmount !== undefined && data.fixedAmount !== null && data.fixedAmount >= 0;
+//             const hasPercentage = data.percentage !== undefined && data.percentage !== null && data.percentage >= 0;
+//             const hasMinFee = data.minFee !== undefined && data.minFee !== null && data.minFee >= 0;
+//             const hasMaxFee = data.maxFee !== undefined && data.maxFee !== null && data.maxFee >= 0;
 
-            return hasFixedAmount || hasPercentage || hasMinFee || hasMaxFee;
-        }
-        return true;
-    },
-    {
-        message: "Ít nhất một trong các trường phí phải có giá trị",
-        path: ["fixedAmount"],
-    }
-);
+//             return hasFixedAmount || hasPercentage || hasMinFee || hasMaxFee;
+//         }
+//         return true;
+//     },
+//     {
+//         message: "Ít nhất một trong các trường phí phải có giá trị",
+//         path: ["fixedAmount"],
+//     }
+// );
 
 export type FeeComponentType = z.infer<typeof FeeComponentSchema>;
 

@@ -206,6 +206,9 @@ const useHandleInfoPolicy = ({ policyId, selectedRow, onSuccess, onClose }: UseH
     const handleReset = useCallback(() => reset(DEFAULT_VALUES), [reset])
 
     return {
+        reset,
+        getValues,
+        watch,
         control,
         fields,
         isVATType,

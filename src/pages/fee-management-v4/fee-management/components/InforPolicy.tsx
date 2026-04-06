@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle } from 'react'
+import { forwardRef, useEffect, useImperativeHandle } from 'react'
 import { FormInputNumber, FormSelect } from '@components/form'
 import { ButtonComponent, CardComponent, DialogModal } from '@components/index'
 import InfoComponents from './InfoComponents'
@@ -25,6 +25,9 @@ const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
     listBaseOn
   } = props
   const {
+    reset,
+    getValues,
+    watch,
     control,
     fields,
     isVATType,
@@ -46,7 +49,6 @@ const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
   useImperativeHandle(ref, () => ({
     handleSave
   }))
-
 
   return (
     <div className='overflow-auto'>
