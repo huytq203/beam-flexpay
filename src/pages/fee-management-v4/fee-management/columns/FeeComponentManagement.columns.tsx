@@ -7,6 +7,7 @@ import {
 import { ColumnsType } from 'antd/es/table'
 import { FeeComponent } from '../types/FeeComponent.types'
 import { baseOnLabel, beneficiaryTypeLabel, calculationMethodEnumLabel, componentType, componentTypeLabel, payerTypeLabel } from '../constants/FeeManagement.constant'
+import { useMessage } from '@hooks/useMessage'
 
 interface FeeComponentColumnsProps {
   setSelectedRow?: (row: FeeComponent) => void
@@ -14,6 +15,8 @@ interface FeeComponentColumnsProps {
   setUpdateComponentId?: (id: string) => void
   setDeletingId?: (id: string | null) => void
   setOpenDialog?: (open: boolean) => void
+  listBaseOn?: Record<string, string>
+  dataSource?: FeeComponent[]
 }
 
 export const getFeeComponentColumns = ({
@@ -21,7 +24,11 @@ export const getFeeComponentColumns = ({
   setOpen,
   setDeletingId,
   setOpenDialog,
+  listBaseOn,
+  dataSource
 }: FeeComponentColumnsProps): ColumnsType<FeeComponent> => {
+
+  const {errorMess}=useMessage()
   return [
     {
       title: '#',
@@ -91,6 +98,13 @@ export const getFeeComponentColumns = ({
               type='default'
               icon={<DeleteOutlined />}
               onClick={() => {
+                const isReferencedByOther = dataSource?.some(
+                  item => item.baseOn === record.componentType && item.id !== record.id
+                )
+                if (isReferencedByOther) {
+                  errorMess('Không thể xóa thành phần phí đang được tham chiếu bởi thành phần khác')
+                  return
+                }
                 setOpenDialog?.(true)
                 setSelectedRow?.(record)
               }}

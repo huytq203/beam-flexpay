@@ -1,7 +1,7 @@
 import { FormDatePicker, FormInput, FormInputNumber, FormSelect, FormTextArea } from '@components/form'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import dayjs, { Dayjs } from 'dayjs'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PolicySchema, PolicyType } from './schemas/FeeManagement.schema'
@@ -31,21 +31,24 @@ const AddFeePolicy = () => {
     const { handleAdd, dataFeePolicyById, handleEdit, handleDelete, isLoadingDeleteFeeComponentPolicies } = useHandleAddFeePolicy({ id, setOpenDialog })
     const [selectedRow, setSelectedRow] = useState<FeeComponent | null>(null)
     const navigate = useNavigate()
-    const columns = getFeeComponentColumns({
-        setOpen,
-        setSelectedRow,
-        setOpenDialog,
-    })
+
     const { dataSource, feeComponentLoading, page, pageSize, setPage, setPageSize, total } = useFetchDataComponent({ id })
     const status = dataFeePolicyById?.status
 
-    const listBaseOn = dataSource?.reduce((acc, item) => {
+    const listBaseOn = useMemo(() => dataSource?.reduce((acc, item) => {
         if (item.componentType) {
             acc[item.componentType] = componentTypeLabel[item.componentType as componentType] || item.componentType;
         }
         return acc;
-    }, { [baseOnEnum.AMOUNT]: baseOnLabel[baseOnEnum.AMOUNT] } as Record<string, string>);
+    }, { [baseOnEnum.AMOUNT]: baseOnLabel[baseOnEnum.AMOUNT] } as Record<string, string>), [dataSource]);
     console.log(listBaseOn)
+    const columns = getFeeComponentColumns({
+        setOpen,
+        setSelectedRow,
+        setOpenDialog,
+        listBaseOn,
+        dataSource
+    })
     useEffect(() => {
         setIsCreate(mode === "create");
         setIsEdit(mode === "edit");
@@ -151,7 +154,7 @@ const AddFeePolicy = () => {
                             disabledDate={(current: Dayjs) =>
                                 current && current < dayjs().startOf('day')
                             }
-                            disabled={!!id && isEdit&& status !== statusType.INIT || !!id && isCreate}
+                            disabled={!!id && isEdit && status !== statusType.INIT || !!id && isCreate}
 
                         />
                         <FormDatePicker
@@ -169,11 +172,11 @@ const AddFeePolicy = () => {
                             control={control}
                             label={!isCreate ? 'Trạng thái hoạt động' : <span>Trạng thái hoạt động <span className='text-red'>*</span></span>}
                             options={
-                                isCreate||isEdit&& status == statusType.INIT ? mapEnumToSelectOptions(STATUS_LABEL).slice(0, 1) :
+                                isCreate || isEdit && status == statusType.INIT ? mapEnumToSelectOptions(STATUS_LABEL).slice(0, 1) :
                                     mapEnumToSelectOptions(STATUS_LABEL).slice(1)
 
                             }
-                            disabled={ !!id && isCreate}
+                            disabled={!!id && isCreate}
 
                         />
 
@@ -183,7 +186,7 @@ const AddFeePolicy = () => {
                             control={control}
                             label={!isCreate ? "Loại dịch vụ" : <span>Loại dịch vụ <span className='text-red'>*</span></span>}
                             options={mapEnumToSelectOptions(serviceType)}
-                            disabled={!!id && isEdit&& status !== statusType.INIT|| !!id && isCreate}
+                            disabled={!!id && isEdit && status !== statusType.INIT || !!id && isCreate}
 
                         />
                         <FormSelect
@@ -193,7 +196,7 @@ const AddFeePolicy = () => {
                             options={mapEnumToSelectOptions(Currency)}
                             label={!isCreate ? "Đơn vị thanh toán" : <span>Đơn vị thanh toán <span className='text-red'>*</span></span>}
                             placeholder='Nhập đơn vị thanh toán...'
-                            disabled={!!id && isEdit&& status !== statusType.INIT|| !!id && isCreate}
+                            disabled={!!id && isEdit && status !== statusType.INIT || !!id && isCreate}
 
                         />
 
@@ -203,7 +206,7 @@ const AddFeePolicy = () => {
                             control={control}
                             label={!isCreate ? "Phí miền" : <span>Phí miền <span className='text-red'>*</span></span>}
                             options={mapEnumToSelectOptions(feeDomain)}
-                            disabled={!!id && isEdit&& status !== statusType.INIT|| !!id && isCreate}
+                            disabled={!!id && isEdit && status !== statusType.INIT || !!id && isCreate}
 
                         />
 
@@ -213,7 +216,7 @@ const AddFeePolicy = () => {
                             control={control}
                             label={!isCreate ? 'Mô tả' : <span>Mô tả </span>}
                             placeholder='Nhập mô tả chính sách...'
-                            disabled={!!id && isEdit&& status !== statusType.INIT|| !!id && isCreate}
+                            disabled={!!id && isEdit && status !== statusType.INIT || !!id && isCreate}
                         />
                     </div>
                     {!id && <div className='flex justify-end gap-2 mt-6 '>
@@ -238,7 +241,7 @@ const AddFeePolicy = () => {
                                     <Icons.FileDoneOutlined className='text-green-500 text-lg' />
                                 </div>
                                 <span className='text-[17px] font-bold text-gray-800 tracking-tight'>
-                                    2. Danh sách thành phần phí 
+                                    2. Danh sách thành phần phí
                                 </span>
                             </div>
                             <ButtonComponent
