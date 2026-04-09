@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useGetFeePolicyByIdQuery, usePatchActivateFeeMutation, usePatchDeactivateFeeMutation, usePutFeePolicyMutation } from '@services/apiFeePolicy.api'
 import { PATHS } from '@constants/pathConstant'
 import { useDeleteFeeComponentPoliciesMutation } from '@services/apiFeeComponent'
+import { skipToken } from '@reduxjs/toolkit/query/react'
 
 interface UseHandleProps {
     setFilters?: React.Dispatch<React.SetStateAction<dataSearch>>
@@ -18,18 +19,15 @@ interface UseHandleProps {
 const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id, setOpenDialog }: UseHandleProps) => {
 
     const { successMess } = useMessage()
-
     const navigate = useNavigate()
-
+    const [loadingId, setLoadingId] = React.useState<string | null>(null)
 
     const [postNewPolicy, { isLoading: isLoadingPostNewPolicy }] = usePostNewPolicyMutation()
     const [putFeePolicy, { isLoading: isLoadingPutFeePolicy }] = usePutFeePolicyMutation()
     const [patchActivateFee, { isLoading: isLoadingPatchActivateFee }] = usePatchActivateFeeMutation()
     const [patchDeactivateFee, { isLoading: isLoadingPatchDeactivateFee }] = usePatchDeactivateFeeMutation()
     const [deleteFeeComponentPolicies, { isLoading: isLoadingDeleteFeeComponentPolicies }] = useDeleteFeeComponentPoliciesMutation()
-    const { data: dataFeePolicyById, isLoading: isLoadingFeePolicyById, isFetching: isFetchingFeePolicyById } = useGetFeePolicyByIdQuery(id, {
-        skip: !id
-    })
+    const { data: dataFeePolicyById, isLoading: isLoadingFeePolicyById, isFetching: isFetchingFeePolicyById } = useGetFeePolicyByIdQuery(id ?? skipToken)
 
     const handleSearch = (data: dataSearch) => {
         const dataValue = {
@@ -95,7 +93,6 @@ const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id, setOpenDialog }
 
         }
     }
-    const [loadingId, setLoadingId] = React.useState<string | null>(null)
     const handleActive = async (id: string) => {
         try {
             setLoadingId(id)

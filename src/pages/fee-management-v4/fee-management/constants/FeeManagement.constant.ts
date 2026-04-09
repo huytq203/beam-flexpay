@@ -78,7 +78,6 @@ export const componentTypeLabel = {
   [componentType.VAT]: 'Thuế VAT',
   [componentType.PROCESSING_FEE]: 'Phí xử lý',
   [componentType.REFUND_FEE]: 'Phí hoàn tiền',
-  [componentType.AMOUNT]: 'Tính trên số tiền giao dịch',
 }
 
 export enum baseOnEnum {

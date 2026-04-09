@@ -1,8 +1,8 @@
-import { forwardRef, useEffect, useImperativeHandle } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useMemo } from 'react'
 import { FormInputNumber, FormSelect } from '@components/form'
 import { ButtonComponent, CardComponent, DialogModal } from '@components/index'
 import InfoComponents from './InfoComponents'
-import { calculationMethodEnum } from '../constants/FeeManagement.constant'
+import { calculationMethodEnum, componentType, componentTypeLabel } from '../constants/FeeManagement.constant'
 import useHandleInfoPolicy from '../hooks/useHandleInfoPolicy'
 import { FeeComponent } from '../types/FeeComponent.types'
 import { getEnumLabel } from '../utils/FeeManagement.utils'
@@ -14,6 +14,7 @@ interface InforPolicyProps {
   onSuccess?: () => void
   onClose?: () => void
   listBaseOn?: Record<string, string | boolean>
+  arrTypeFee?: Record<string, string | boolean>
 }
 
 const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
@@ -22,7 +23,8 @@ const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
     selectedRow,
     onSuccess,
     onClose,
-    listBaseOn
+    listBaseOn,
+    arrTypeFee
   } = props
   const {
     reset,
@@ -49,6 +51,18 @@ const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
   useImperativeHandle(ref, () => ({
     handleSave
   }))
+const allComponentTypeForDisplay = useMemo(() => {
+    const existingKeys = Object.keys(arrTypeFee || {});
+    const currentValue = selectedRow?.componentType;
+
+    return selectOptions.componentType?.reduce((acc: Record<string, string>, option) => {
+        // Bao gồm: giá trị hiện tại HOẶC những cái không có trong existing keys
+        if (!existingKeys.includes(option.value as string) || option.value === currentValue) {
+            acc[option.value as string] = option.label;
+        }
+        return acc;
+    }, {}) || {};
+}, [selectOptions.componentType, arrTypeFee, selectedRow?.componentType]);
 
   return (
     <div className='overflow-auto'>
@@ -64,7 +78,7 @@ const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
                 name='componentType'
                 label={<span>Loại phí <span className='text-red-500'>*</span></span>}
                 className='col-span-4 flex flex-col'
-                options={selectOptions.componentType}
+                options={mapEnumToSelectOptions(allComponentTypeForDisplay)}
                 placeholder='Chọn loại phí'
                 disabled={isUpdateMode}
               />

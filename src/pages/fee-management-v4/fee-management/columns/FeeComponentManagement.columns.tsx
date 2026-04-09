@@ -7,7 +7,6 @@ import {
 import { ColumnsType } from 'antd/es/table'
 import { FeeComponent } from '../types/FeeComponent.types'
 import { baseOnLabel, beneficiaryTypeLabel, calculationMethodEnumLabel, componentType, componentTypeLabel, payerTypeLabel } from '../constants/FeeManagement.constant'
-import { useMessage } from '@hooks/useMessage'
 
 interface FeeComponentColumnsProps {
   setSelectedRow?: (row: FeeComponent) => void
@@ -17,6 +16,7 @@ interface FeeComponentColumnsProps {
   setOpenDialog?: (open: boolean) => void
   listBaseOn?: Record<string, string>
   dataSource?: FeeComponent[]
+  errorMess: (message: string) => void
 }
 
 export const getFeeComponentColumns = ({
@@ -25,10 +25,10 @@ export const getFeeComponentColumns = ({
   setDeletingId,
   setOpenDialog,
   listBaseOn,
-  dataSource
+  dataSource,
+  errorMess
 }: FeeComponentColumnsProps): ColumnsType<FeeComponent> => {
 
-  const {errorMess}=useMessage()
   return [
     {
       title: '#',

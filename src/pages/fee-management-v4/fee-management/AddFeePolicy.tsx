@@ -17,6 +17,7 @@ import { FeeComponent } from './types/FeeComponent.types'
 import { PATHS } from '@constants/pathConstant'
 import useHandleAddFeePolicy from './hooks/useHandleAddFeePolicy'
 import { TYPEDATE } from '@constants/date.constant'
+import { useMessage } from '@hooks/useMessage'
 
 const AddFeePolicy = () => {
     const { mode, id } = useParams()
@@ -35,19 +36,30 @@ const AddFeePolicy = () => {
     const { dataSource, feeComponentLoading, page, pageSize, setPage, setPageSize, total } = useFetchDataComponent({ id })
     const status = dataFeePolicyById?.status
 
-    const listBaseOn = useMemo(() => dataSource?.reduce((acc, item) => {
+    const listBaseOn = useMemo(() => dataSource?.reduce((acc: Record<string, string>, item) => {
         if (item.componentType) {
-            acc[item.componentType] = componentTypeLabel[item.componentType as componentType] || item.componentType;
+            acc[item.componentType] = (componentTypeLabel as Record<string, string>)[item.componentType as componentType] || item.componentType;
         }
         return acc;
-    }, { [baseOnEnum.AMOUNT]: baseOnLabel[baseOnEnum.AMOUNT] } as Record<string, string>), [dataSource]);
-    console.log(listBaseOn)
+    }, { [baseOnEnum.AMOUNT]: baseOnLabel[baseOnEnum.AMOUNT] }), [dataSource]);
+
+    const arrTypeFee = useMemo(() => {
+        return dataSource?.reduce((acc: Record<string, string>, item) => {
+            if (item.componentType) {
+                acc[item.componentType] = (componentTypeLabel as Record<string, string>)[item.componentType as componentType] || item.componentType;
+            }
+            return acc;
+        }, {} as Record<string, string>)
+    }, [dataSource])    
+    const { errorMess } = useMessage()
+
     const columns = getFeeComponentColumns({
         setOpen,
         setSelectedRow,
         setOpenDialog,
         listBaseOn,
-        dataSource
+        dataSource,
+        errorMess
     })
     useEffect(() => {
         setIsCreate(mode === "create");
@@ -314,7 +326,7 @@ const AddFeePolicy = () => {
                 okText='Xác nhận'
                 cancelText='Hủy'
             >
-                <InforPolicy ref={inforPolicyRef} policyId={id} onClose={handleCloseModal} selectedRow={selectedRow} listBaseOn={listBaseOn} />
+                <InforPolicy ref={inforPolicyRef} policyId={id} onClose={handleCloseModal} selectedRow={selectedRow} listBaseOn={listBaseOn} arrTypeFee={arrTypeFee} />
             </ModalComponent>
 
             <DialogModal
