@@ -66,19 +66,21 @@ export const FeeComponentSchema = z.object({
         message: "Giá trị tối đa phải lớn hơn tối thiểu",
         path: ["minValue"],
     }
-).refine(
-    (data) => {
-        // Validate percentage is required when componentType is VAT
-        if (data.componentType === 'VAT') {
-            return data.percentage !== undefined && data.percentage !== null;
-        }
-        return true;
-    },
-    {
-        message: "Phí phần trăm không được để trống",
-        path: ["percentage"],
-    }
-).refine(
+)
+// .refine(
+//     (data) => {
+//         // Validate percentage is required when componentType is VAT
+//         if (data.componentType === 'VAT') {
+//             return data.percentage !== undefined && data.percentage !== null;
+//         }
+//         return true;
+//     },
+//     {
+//         message: "Phí phần trăm không được để trống",
+//         path: ["percentage"],
+//     }
+// )
+.refine(
     (data) => {
         // calculationMethod bắt buộc khi KHÔNG phải VAT
         if (data.componentType !== 'VAT') {

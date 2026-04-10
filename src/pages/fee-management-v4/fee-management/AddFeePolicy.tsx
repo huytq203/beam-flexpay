@@ -151,7 +151,7 @@ const AddFeePolicy = () => {
                             className='col-span-12 md:col-span-6'
                             name='priority'
                             control={control}
-                            label={!isCreate ? 'Mức độ ưu tiên' : <span>Mức độ ưu tiên <span className='text-red'>*</span></span>}
+                            label={ <span>Mức độ ưu tiên <span className='text-red'>*</span></span>}
                             placeholder='Nhập mức độ ưu tiên'
                             disabled={!!id && isCreate}
 
@@ -182,7 +182,7 @@ const AddFeePolicy = () => {
                             className='col-span-12 md:col-span-6'
                             name='status'
                             control={control}
-                            label={!isCreate ? 'Trạng thái hoạt động' : <span>Trạng thái hoạt động <span className='text-red'>*</span></span>}
+                            label={  <span>Trạng thái hoạt động <span className='text-red'>*</span></span>}
                             options={
                                 isCreate || isEdit && status == statusType.INIT ? mapEnumToSelectOptions(STATUS_LABEL).slice(0, 1) :
                                     mapEnumToSelectOptions(STATUS_LABEL).slice(1)

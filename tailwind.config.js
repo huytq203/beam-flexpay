@@ -4,9 +4,9 @@ module.exports = {
     theme: {
         extend: {
             keyframes: {
-                shimmer: {
-                    '100%': { left: '100%' }
-                },
+                // shimmer: {
+                //     '100%': { left: '100%' }
+                // },
                 'pulse-soft': {
                     '0%, 100%': { opacity: '1', transform: 'scale(1)' },
                     '50%': { opacity: '0.6', transform: 'scale(0.9)' }

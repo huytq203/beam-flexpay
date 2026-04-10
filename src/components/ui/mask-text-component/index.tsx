@@ -29,14 +29,15 @@ const MaskText: React.FC<MaskTextProps> = ({
     if (!active) return <span className="font-medium">{masked}</span>
     return (
         <span className={`inline-flex items-center gap-1 ${className ?? ''}`}>
-            <span className="font-medium">{visible ? value : masked}</span>
+            {/* <span className="font-medium">{visible ? value : masked}</span> */}
+            <span className="font-medium">{value}</span>
             <button
                 type="button"
                 onClick={() => setVisible(v => !v)}
                 className="text-gray-400 hover:text-blue-500 transition-colors leading-none"
                 title={visible ? 'Ẩn' : 'Hiển thị'}
             >
-                {visible ? <EyeFilled style={{ fontSize: 14 }} /> : <EyeOutlined style={{ fontSize: 14 }} />}
+                {/* {visible ? <EyeFilled style={{ fontSize: 14 }} /> : <EyeOutlined style={{ fontSize: 14 }} />} */}
             </button>
         </span>
     )
