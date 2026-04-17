@@ -1,10 +1,11 @@
 import usePagination from '@hooks/usePagination'
 import { AcountItem, FormSearchValues } from '@pages/wallet-administration/e-walletManagement/types/ResponseWalletAccount.type'
-import { useGetAccountQuery } from '@services/apiWalletAccount.api'
+import { useGetAccountQuery, usePostLockMutation, usePostUnlockMutation } from '@services/apiWalletAccount.api'
 import { useMemo, useState } from 'react'
 import { getColumn } from '../columns/Column'
 import { useLazyGetFreezesQuery } from '@services/apiFreezes'
 import { useNavigate } from 'react-router-dom'
+import { dataLockAccount } from '../types/WalletAccount.type'
 
 type ModalType = 'freeze' | 'unfreeze' | 'lock' | 'unlock' | null
 
@@ -29,12 +30,16 @@ const useEwalletManagement = () => {
     size,
     ...filter
   }
+
+  const [postLockAccount] = usePostLockMutation()
+  const [postUnlockAccount] = usePostUnlockMutation()
   const { data: getAccount,isLoading:loadingGetAccount, isFetching } = useGetAccountQuery(payload)
 
   const handleSearch = (data: FormSearchValues) => {
     setFilter(data)
     setPage(1)
   }
+
 
   const openModal = (type: ModalType, account: SelectedAccount) => {
     setSelectedAccount(account)
@@ -66,7 +71,8 @@ const useEwalletManagement = () => {
     selectedAccount,
     closeModal,
     loadingGetAccount,
-    isFetching
+    isFetching,
+  
     
   }
 }

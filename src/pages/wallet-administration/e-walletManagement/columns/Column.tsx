@@ -1,7 +1,7 @@
 import React from 'react'
 import { ColumnType } from 'antd/lib/table'
 import { EnvelopeIcon, MoreOutlined, PhoneIcon } from '@components/icons'
-import { DropDownComponent } from '@components/index'
+import { DropDownComponent, TooltipComponent } from '@components/index'
 import { MenuProps } from 'antd/lib'
 import { ButtonComponent } from '@components/index'
 import { AcountItem } from '@pages/wallet-administration/e-walletManagement/types/ResponseWalletAccount.type'
@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom'
 import { StatusKey } from '../types/WalletAccount.type'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { WALLETADMINISTRATION } from '@constants/routersConstant'
+import * as Icon from '@components/icons'
 
 type ModalType = 'freeze' | 'unfreeze' | 'lock' | 'unlock' | null
 
@@ -48,15 +49,15 @@ export const getColumn = ({ openModal, handleGetFreeze, navigate }: ColumnOption
             <div className='font-medium max-w-[17rem] overflow-hidden text-ellipsis whitespace-nowrap'>
               {isSystem ? 'Hệ thống' : record.ownerUsername ?? 'Hệ thống'}
             </div>
-            <div className='text-gray-500 text-sm max-w-[17rem] overflow-hidden text-ellipsis whitespace-nowrap'>
-              TK: {'--'}
+            <div className='text-gray-500 text-sm max-w-[17rem] truncate'>
+              TK: <TooltipComponent title={record.id}>{record.id}</TooltipComponent>
             </div>
           </div>
         )
       },
     },
     {
-      title: 'Loại tài khoản',
+      title: 'Loại tài khoản / GL Code',
       align: 'left',
       width: 200,
       render(_, record) {
@@ -126,7 +127,31 @@ export const getColumn = ({ openModal, handleGetFreeze, navigate }: ColumnOption
     {
       title: 'Trạng thái',
       align: 'center',
-      render: (_, record) => <StatusBadge status={record.status as StatusKey} />,
+      width: 180,
+      render: (_, record) => (
+        <div className='flex flex-wrap items-center justify-start gap-1'>
+          <StatusBadge status={record.status as StatusKey} />
+          <StatusBadge
+            status={String(record.enabled)}
+            config={{
+              true: { label: <span className='flex items-center gap-1'><Icon.UnlockOutlined />Hoạt động</span>, className: 'info-status' },
+              false: { label: <span className='flex items-center gap-1'><Icon.LockFilled /> Đã khóa</span>, className: 'danger-status' },
+            }}
+          />
+         
+          {record.verificationStatus && (
+            <StatusBadge
+              status={record.verificationStatus}
+              config={{
+                VERIFIED: { label: <span className='flex items-center gap-1'><Icon.CheckCircleFilled /> EKYC</span>, className: 'success-status' },
+                PENDING: { label: <span className='flex items-center gap-1'>Chờ duyệt</span>, className: 'warning-status' },
+                REJECTED: { label: <span className='flex items-center gap-1'>Từ chối</span>, className: 'danger-status' },
+                UNVERIFIED: { label: <span className='flex items-center gap-1'>Chưa xác minh</span>, className: 'normal-status' },
+              }}
+            />
+          )}
+        </div>
+      ),
     },
     {
       title: 'Thời gian tạo',
@@ -162,7 +187,9 @@ export const getColumn = ({ openModal, handleGetFreeze, navigate }: ColumnOption
           {
             key: '2',
             label: isLocked ? 'Mở khóa tài khoản' : 'Khóa tài khoản',
-            onClick: () => openModal?.(isLocked ? 'unlock' : 'lock', accountPayload),
+            onClick: () => {
+              openModal?.(isLocked ? 'unlock' : 'lock', accountPayload)
+            },
             disabled: isSystem || isFrozen,
           },
           {

@@ -4,7 +4,7 @@ import { useSVG } from '@hooks/useSVG'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
-import { StatusLabel } from '../constants/Ewallet.constant'
+import { StatusAccountLabel, StatusLabel, WalletTypeLabel } from '../constants/Ewallet.constant'
 import { FormSearchValues } from '../types/ResponseWalletAccount.type'
 import * as Icons from '@components/icons'
 
@@ -26,12 +26,24 @@ const FormSearch = ({ handleSearch }: props) => {
   return (
     <div className='space-y-3'>
       <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div className="col-span-1">
           <FormInput control={formSearch.control} name='username' label='Người dùng' placeholder='Tên đăng nhập...' />
         </div>
         <div className="col-span-1">
+          <FormInput control={formSearch.control} name='ownerId' label='Mã người dùng' placeholder='Tên đăng nhập...' />
+        </div>
+        <div className="col-span-1">
+          <FormInput control={formSearch.control} name='glCode' label='GL Code' placeholder='Tên đăng nhập...' />
+        </div>
+        <div className="col-span-1">
           <FormSelect control={formSearch.control} name='status' options={mapEnumToSelectOptions(StatusLabel)} label='Trạng thái ví' />
+        </div>
+        <div className="col-span-1">
+          <FormSelect control={formSearch.control} name='enabled' options={mapEnumToSelectOptions(StatusAccountLabel)} label='Trạng thái hoạt động' />
+        </div>
+        <div className="col-span-1">
+          <FormSelect control={formSearch.control} name='walletType' options={mapEnumToSelectOptions(WalletTypeLabel)} label='Loại ví' />
         </div>
         {/* <div className="col-span-1">
           <FormSelect control={formSearch.control} name='kycStatus' options={[]} label='Trạng thái KYC' />

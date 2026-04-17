@@ -38,6 +38,8 @@ export interface AcountItem {
   availableBalance: any
   version: number
   status: string
+  enabled: boolean
+  verificationStatus: string | null
   checksum: string
   lockedReason?: string
   lockedAt?: string
@@ -79,4 +81,8 @@ export interface FormSearchValues {
   username?: string
   status?: string
   kycStatus?: string
+  ownerId?: string
+  glCode?: string
+  enabled?: string
+  walletType?: string
 }

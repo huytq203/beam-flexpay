@@ -11,3 +11,26 @@ export const StatusLabel: Record<StatusKey, string> = {
   [StatusKey.FROZEN]: 'Đóng băng',
   [StatusKey.LOCKED]: 'Khóa',
 } as const
+
+
+export enum StatusAccountKey {
+  TRUE = 'true',
+  FALSE = 'false',
+}
+
+export const StatusAccountLabel: Record<StatusAccountKey, string> = {
+  [StatusAccountKey.TRUE]: 'Đang hoạt động',
+  [StatusAccountKey.FALSE]: 'Ngừng hoạt động',
+} as const
+
+export enum WalletTypeKey {
+  USER = 'USER',
+  BUSINESS = 'BUSINESS',
+  SYSTEM = 'SYSTEM',
+}
+
+export const WalletTypeLabel: Record<WalletTypeKey, string> = {
+  [WalletTypeKey.USER]: 'Cá nhân',
+  [WalletTypeKey.BUSINESS]: 'Doanh nghiệp',
+  [WalletTypeKey.SYSTEM]: 'Hệ thống',
+} as const

@@ -25,7 +25,8 @@ const EwalletManagement = () => {
     selectedAccount,
     closeModal,
     loadingGetAccount,
-    isFetching
+    isFetching,
+
   } = useEwalletManagement()
 
   return (
@@ -135,7 +136,7 @@ const EwalletManagement = () => {
         footer={null}
         content={
           <DialogLock
-            userId={selectedAccount?.ownerId}
+            userId={selectedAccount?.id}
             ownerName={selectedAccount?.ownerName}
             onSuccess={closeModal}
             onCancel={closeModal}

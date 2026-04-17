@@ -33,6 +33,8 @@ export interface ContentAccountWallet {
   availableBalance: number
   version: number
   status: string
+  enabled: boolean
+  verificationStatus: string | null
   checksum: string
   lockedReason: string
   lockedAt: string

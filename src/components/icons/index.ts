@@ -5,6 +5,7 @@ export {
   DeleteOutlined,
   EditOutlined,
   LockOutlined,
+  LockFilled,
   UnlockOutlined,
   EyeOutlined,
   KeyOutlined,

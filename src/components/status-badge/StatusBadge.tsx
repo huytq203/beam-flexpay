@@ -90,7 +90,7 @@ const STATUS_CONFIG: Record<StatusKey, { label: string; className: string; shimm
 }
 
 interface StatusConfig {
-    label: string
+    label: string | React.ReactNode
     className: string
     shimmerColor?: string
 }
