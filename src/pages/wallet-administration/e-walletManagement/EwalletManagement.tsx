@@ -136,7 +136,7 @@ const EwalletManagement = () => {
         footer={null}
         content={
           <DialogLock
-            userId={selectedAccount?.id}
+            userId={selectedAccount?.ownerId}
             ownerName={selectedAccount?.ownerName}
             onSuccess={closeModal}
             onCancel={closeModal}

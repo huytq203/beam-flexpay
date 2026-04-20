@@ -4,7 +4,7 @@ import { useSVG } from '@hooks/useSVG'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
-import { StatusAccountLabel, StatusLabel, WalletTypeLabel } from '../constants/Ewallet.constant'
+import { StatusAccountLabel, StatusLabel, verificationStatusLabel, WalletTypeLabel } from '../constants/Ewallet.constant'
 import { FormSearchValues } from '../types/ResponseWalletAccount.type'
 import * as Icons from '@components/icons'
 
@@ -40,7 +40,7 @@ const FormSearch = ({ handleSearch }: props) => {
           <FormSelect control={formSearch.control} name='status' options={mapEnumToSelectOptions(StatusLabel)} label='Trạng thái ví' />
         </div>
         <div className="col-span-1">
-          <FormSelect control={formSearch.control} name='enabled' options={mapEnumToSelectOptions(StatusAccountLabel)} label='Trạng thái hoạt động' />
+          <FormSelect control={formSearch.control} name='verificationStatus' options={mapEnumToSelectOptions(verificationStatusLabel)} label='Trạng thái xác thực' />
         </div>
         <div className="col-span-1">
           <FormSelect control={formSearch.control} name='walletType' options={mapEnumToSelectOptions(WalletTypeLabel)} label='Loại ví' />

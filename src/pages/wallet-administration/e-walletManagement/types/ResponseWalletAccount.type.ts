@@ -85,4 +85,6 @@ export interface FormSearchValues {
   glCode?: string
   enabled?: string
   walletType?: string
+  currency?: string
+  verificationStatus?: string
 }

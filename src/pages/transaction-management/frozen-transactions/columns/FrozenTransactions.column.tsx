@@ -30,7 +30,7 @@ export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeR
         render: (_, record) => (
             <div>
                 <p className="font-medium">{ReleaseTypeLabel[record.type as ReleaseType]}</p>
-                <p className="text-gray-500 text-xs">{record.reason}</p>
+                <p className="text-gray-500 text-[12px]">{record.reason}</p>
             </div>
         ),
     },

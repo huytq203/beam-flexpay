@@ -1,7 +1,11 @@
 import React from 'react'
 import { ColumnType } from 'antd/lib/table'
 import { EnvelopeIcon, MoreOutlined, PhoneIcon } from '@components/icons'
-import { DropDownComponent, TooltipComponent } from '@components/index'
+import {
+  DropDownComponent,
+  TooltipComponent,
+  TypographyText
+} from '@components/index'
 import { MenuProps } from 'antd/lib'
 import { ButtonComponent } from '@components/index'
 import { AcountItem } from '@pages/wallet-administration/e-walletManagement/types/ResponseWalletAccount.type'
@@ -31,45 +35,60 @@ interface ColumnOptions {
   navigate: ReturnType<typeof useNavigate>
 }
 
-export const getColumn = ({ openModal, handleGetFreeze, navigate }: ColumnOptions): ColumnType<AcountItem>[] => {
-
+export const getColumn = ({
+  openModal,
+  handleGetFreeze,
+  navigate
+}: ColumnOptions): ColumnType<AcountItem>[] => {
   return [
     {
       title: '#',
       align: 'center',
-      dataIndex: 'no',
+      dataIndex: 'no'
     },
     {
       title: 'Khách hàng / Mã TK',
       align: 'left',
+      width: 150,
       render: (_, record) => {
-        const isSystem = record.ownerType === 'SYSTEM';
+        const isSystem = record.ownerType === 'SYSTEM'
         return (
           <div>
             <div className='font-medium max-w-[17rem] overflow-hidden text-ellipsis whitespace-nowrap'>
-              {isSystem ? 'Hệ thống' : record.ownerUsername ?? 'Hệ thống'}
+              {isSystem ? 'Hệ thống' : (record.ownerUsername ?? 'Hệ thống')}
             </div>
-            <div className='text-gray-500 text-sm max-w-[17rem] truncate'>
-              TK: <TooltipComponent title={record.id}>{record.id}</TooltipComponent>
-            </div>
+            {record.ownerId && (
+              <div className='text-gray-500 text-[12px] max-w-[150px] '>
+                <TooltipComponent title={record.ownerId}>
+                  <TypographyText
+                    className=' cursor-pointer inline-flex items-center max-w-[150px]'
+                    copyable={{ text: record.ownerId }}
+                  >
+                    <span className='truncate'>{record.ownerId}</span>
+                  </TypographyText>
+                </TooltipComponent>
+              </div>
+            )}
           </div>
         )
-      },
+      }
     },
     {
       title: 'Loại tài khoản / GL Code',
       align: 'left',
       width: 200,
       render(_, record) {
-        const ownerType = record?.ownerType;
-        const glCode = record?.glCode;
+        const ownerType = record?.ownerType
+        const glCode = record?.glCode
         return (
-          <div className="flex flex-col gap-0.5">
-            <span className="font-medium text-gray-800 text-sm">{ownerType ?? '--'}</span>
-            <span className="text-gray-400 text-xs">{glCode ?? ''}</span>
+          <div className='flex flex-col gap-0.5'>
+            <span className='font-medium text-gray-800 text-[12px]'>
+              {ownerType ?? '--'}
+            </span>
+            <span className='text-gray-400 text-[10px]'>{glCode ?? ''}</span>
           </div>
-        );
-      },
+        )
+      }
     },
     // {
     //   title: 'Thông tin liên hệ',
@@ -91,28 +110,34 @@ export const getColumn = ({ openModal, handleGetFreeze, navigate }: ColumnOption
       title: 'Số dư ví',
       align: 'right',
       render: (_, record) => (
-        <div className={`font-medium ${record.balance > 0 ? 'text-green' : record.balance === 0 ? 'text-gray-500' : 'text-red'}`}>
+        <div
+          className={`font-medium ${record.balance > 0 ? 'text-green' : record.balance === 0 ? 'text-gray-500' : 'text-red'}`}
+        >
           {formatNumber(record.balance)} {record.currency}
         </div>
-      ),
+      )
     },
     {
       title: 'Số dư khả dụng',
       align: 'right',
       render: (_, record) => (
-        <div className={`font-medium ${record.availableBalance > 0 ? 'text-blue' : record.availableBalance === 0 ? 'text-gray-500' : 'text-red'}`}>
+        <div
+          className={`font-medium ${record.availableBalance > 0 ? 'text-blue' : record.availableBalance === 0 ? 'text-gray-500' : 'text-red'}`}
+        >
           {formatNumber(record.availableBalance)} {record.currency}
         </div>
-      ),
+      )
     },
     {
       title: 'Số tiền đóng băng',
       align: 'right',
       render: (_, record) => (
-        <div className={`font-medium ${record.holdBalance > 0 ? 'text-red' : 'text-gray-500'}`}>
+        <div
+          className={`font-medium ${record.holdBalance > 0 ? 'text-red' : 'text-gray-500'}`}
+        >
           {formatNumber(record.holdBalance)} {record.currency}
         </div>
-      ),
+      )
     },
     // {
     //   title: 'Giới tính / CCCD',
@@ -130,34 +155,85 @@ export const getColumn = ({ openModal, handleGetFreeze, navigate }: ColumnOption
       width: 180,
       render: (_, record) => (
         <div className='flex flex-wrap items-center justify-start gap-1'>
-          <StatusBadge status={record.status as StatusKey} />
+          {/* <StatusBadge status={record.status as StatusKey} /> */}
           <StatusBadge
             status={String(record.enabled)}
             config={{
-              true: { label: <span className='flex items-center gap-1'><Icon.UnlockOutlined />Hoạt động</span>, className: 'info-status' },
-              false: { label: <span className='flex items-center gap-1'><Icon.LockFilled /> Đã khóa</span>, className: 'danger-status' },
+              true: {
+                label: (
+                  <span className='flex items-center gap-1'>
+                    <Icon.UnlockOutlined />
+                    Hoạt động
+                  </span>
+                ),
+                className: 'success-status'
+              },
+              false: {
+                label: (
+                  <span className='flex items-center gap-1'>
+                    <Icon.LockFilled /> Đã khóa
+                  </span>
+                ),
+                className: 'danger-status'
+              }
             }}
           />
-         
+
           {record.verificationStatus && (
             <StatusBadge
               status={record.verificationStatus}
               config={{
-                VERIFIED: { label: <span className='flex items-center gap-1'><Icon.CheckCircleFilled /> EKYC</span>, className: 'success-status' },
-                PENDING: { label: <span className='flex items-center gap-1'>Chờ duyệt</span>, className: 'warning-status' },
-                REJECTED: { label: <span className='flex items-center gap-1'>Từ chối</span>, className: 'danger-status' },
-                UNVERIFIED: { label: <span className='flex items-center gap-1'>Chưa xác minh</span>, className: 'normal-status' },
+                VERIFIED: {
+                  label: (
+                    <span className='flex items-center gap-1'>
+                      <Icon.CheckCircleFilled /> EKYC
+                    </span>
+                  ),
+                  className: 'success-status'
+                },
+                PENDING: {
+                  label: (
+                    <span className='flex items-center gap-1'>Chờ duyệt</span>
+                  ),
+                  className: 'warning-status'
+                },
+                REJECTED: {
+                  label: (
+                    <span className='flex items-center gap-1'>Từ chối</span>
+                  ),
+                  className: 'danger-status'
+                },
+                UNVERIFIED: {
+                  label: (
+                    <span className='flex items-center gap-1'>
+                      Chưa xác minh
+                    </span>
+                  ),
+                  className: 'normal-status'
+                }
               }}
             />
           )}
         </div>
-      ),
+      )
     },
     {
       title: 'Thời gian tạo',
       dataIndex: 'createdAt',
       align: 'center',
-      render: (value) => <>{dayjs(value).format(TYPEDATE.fullTime) ?? '--'}</>,
+      render: (value) => {
+        const d = dayjs(value)
+        return <>{d.isValid() ? d.format(TYPEDATE.fullTime) : '--'}</>
+      }
+    },
+    {
+      title: 'Thời gian xác thực',
+      dataIndex: 'verifiedAt',
+      align: 'center',
+      render: (value) => {
+        const d = dayjs(value)
+        return <>{d.isValid() ? d.format(TYPEDATE.fullTime) : '--'}</>
+      }
     },
     {
       title: 'Thao tác',
@@ -175,14 +251,17 @@ export const getColumn = ({ openModal, handleGetFreeze, navigate }: ColumnOption
           ownerName: record.ownerUsername,
           balance: record.availableBalance,
           holdBalance: record.holdBalance,
-          currency: record.currency,
+          currency: record.currency
         }
 
         const items: MenuProps['items'] = [
           {
             key: '1',
             label: 'Xem chi tiết',
-            onClick: () => navigate(`${WALLETADMINISTRATION}/e-walletManagement/${record.id}`),
+            onClick: () =>
+              navigate(
+                `${WALLETADMINISTRATION}/e-walletManagement/${record.id}`
+              )
           },
           {
             key: '2',
@@ -190,31 +269,35 @@ export const getColumn = ({ openModal, handleGetFreeze, navigate }: ColumnOption
             onClick: () => {
               openModal?.(isLocked ? 'unlock' : 'lock', accountPayload)
             },
-            disabled: isSystem || isFrozen,
+            disabled: isSystem || isFrozen
           },
           {
             key: '3',
             label: 'Đóng băng số dư',
             onClick: () => openModal?.('freeze', accountPayload),
-            disabled: isSystem || (accountPayload.balance ?? 0) === 0,
+            disabled: isSystem || (accountPayload.balance ?? 0) === 0
           },
 
           {
             key: '5',
             label: 'Hủy ví',
-            danger: true,
-          },
+            danger: true
+          }
         ]
 
         return (
           <DropDownComponent
             items={items}
             content={
-              <ButtonComponent type='text' size='small' content={<MoreOutlined />} />
+              <ButtonComponent
+                type='text'
+                size='small'
+                content={<MoreOutlined />}
+              />
             }
           />
         )
-      },
-    },
+      }
+    }
   ]
 }
