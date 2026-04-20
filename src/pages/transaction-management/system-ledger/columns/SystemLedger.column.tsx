@@ -35,14 +35,14 @@ const getSystemLedgerColumn = ({
     render(value, record) {
       const code = record.transaction?.transactionCode
       return code ? (
-        <>
+        <div  className="flex flex-col gap-1 ">
           <TypographyText
             strong
             className=' font-medium cursor-pointer'
           >
             {code}
           </TypographyText>
-          <TooltipComponent title={value?.id}>
+          <TooltipComponent title={value?.id}> 
             <span className='inline-flex items-center gap-1 max-w-[180px]'>
               <span className='truncate max-w-[150px] text-gray-500 text-[12px]'>
                 {value?.id}
@@ -50,7 +50,7 @@ const getSystemLedgerColumn = ({
               <TypographyText copyable={{ text: value?.id }} />
             </span>
           </TooltipComponent>
-        </>
+        </div>
       ) : (
         <span>--</span>
       )

@@ -66,7 +66,7 @@ export function FormDatePicker<T extends FieldValues>({
             placeholder={placeholder}
             onChange={((dates: [Dayjs, Dayjs] | null, dateStrings: [string, string]) => {
               if (!dates || !dateStrings[0] || !dateStrings[1]) {
-                field.onChange(null);
+                field.onChange('');
                 return;
               }
               if (showTime) {
@@ -95,7 +95,7 @@ export function FormDatePicker<T extends FieldValues>({
             picker={picker}
             onChange={(date: Dayjs | null, dateString: string) => {
               if (!date) {
-                field.onChange(null);
+                field.onChange('');
                 return;
               }
               if (showTime) {
