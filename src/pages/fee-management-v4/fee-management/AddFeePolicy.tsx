@@ -166,6 +166,19 @@ const AddFeePolicy = () => {
                             disabledDate={(current: Dayjs) =>
                                 current && current < dayjs().startOf('day')
                             }
+                            disabledTime={(current: Dayjs) => {
+                                if (!current || !current.isSame(dayjs(), 'day')) return {}
+                                const now = dayjs()
+                                return {
+                                    disabledHours: () => Array.from({ length: now.hour() }, (_, i) => i),
+                                    disabledMinutes: (hour: number) =>
+                                        hour === now.hour() ? Array.from({ length: now.minute() }, (_, i) => i) : [],
+                                    disabledSeconds: (hour: number, minute: number) =>
+                                        hour === now.hour() && minute === now.minute()
+                                            ? Array.from({ length: now.second() }, (_, i) => i)
+                                            : []
+                                }
+                            }}
                             disabled={!!id && isEdit && status !== statusType.INIT || !!id && isCreate}
 
                         />

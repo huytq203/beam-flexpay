@@ -77,7 +77,7 @@ const useHandleInfoPolicy = ({ policyId, selectedRow, onSuccess, onClose }: UseH
         if (selectedRow) {
             reset({
                 ...selectedRow,
-                tiers: dataFeeComponentTier?.length ? dataFeeComponentTier : [DEFAULT_TIER]
+                tiers: dataFeeComponentTier?.length ? dataFeeComponentTier : []
             })
         } else {
             reset(DEFAULT_VALUES)

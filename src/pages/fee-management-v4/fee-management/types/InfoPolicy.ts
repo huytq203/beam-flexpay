@@ -1,4 +1,4 @@
-import { FeeComponentType } from "@pages/fee-management-v4/fee-assignment/schemas/FeeManagement.schema"
+import { FeeComponentType } from "../schemas/FeeManagement.schema"
 
 export const DEFAULT_TIER = {
     minFee: undefined,
@@ -16,7 +16,7 @@ export const DEFAULT_VALUES: FeeComponentType = {
     beneficiaryType: '',
     roundMode: '',
     calculationMethod: 'DIRECT',
-    tiers: [DEFAULT_TIER],
+    tiers: [],
     fixedAmount: undefined,
     percentage: undefined,
     minFee: undefined,
