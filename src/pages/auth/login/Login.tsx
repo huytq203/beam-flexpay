@@ -12,7 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useMessage } from '@hooks/useMessage'
 import { TokenType, setRefreshTokenCookie } from '@configs/fetchBaseQuery.types'
-import { GoogleReCaptchaProvider, useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { useGoogleReCaptcha } from "@utils/recaptcha";
 import gsap from 'gsap'
 import { PATHS } from '@constants/pathConstant'
 import { AUTHENTICATION, TRANSACTIONMANAGEMENT } from '@constants/routersConstant'
@@ -247,26 +247,4 @@ const LoginFormInside = () => {
     )
 }
 
-const LoginWrapper = () => {
-    return (
-        <GoogleReCaptchaProvider
-            reCaptchaKey={(import.meta.env.VITE_RECAPTCHA_SITE_KEY as string) || '6Le42oIsAAAAAPHXVw2ss-yNfhvg4dmJB1348wXb'}
-            scriptProps={{
-                async: false,
-                defer: false,
-                appendTo: "head",
-                nonce: undefined,
-            }}
-            container={{
-                parameters: {
-                    badge: 'bottomright',
-                    theme: 'dark',
-                }
-            }}
-        >
-            <LoginFormInside />
-        </GoogleReCaptchaProvider>
-    )
-}
-
-export default LoginWrapper
+export default LoginFormInside

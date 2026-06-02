@@ -167,7 +167,7 @@ function AppLayout() {
 
   const sidebarContent = (
     <>
-      <div className='logo border-b border-gray-200'>
+      <div className='logo border-b border-gray-200 flex justify-center items-center bg-white'>
         <Logo collapsed={isMobile ? false : collapsed} />
       </div>
       <Menu

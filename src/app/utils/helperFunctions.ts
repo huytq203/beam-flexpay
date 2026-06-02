@@ -1,16 +1,6 @@
-import { accountingTransactionType, serviceTypes } from '@constants/options'
-import {
-  LIMIT_AND_REGULATIONS,
-  LIMIT_TYPE,
-  TIME_TYPE_APPLY,
-  TRANSACTION_TYPE,
-  VALUE_LIMIT_TYPE
-} from '@pages/policy-management/limit-management/LimitAndRegulationsConst'
-import { BANK_MANAGEMENT, BANK_TYPE } from '@pages/system-management/bank-management/bank-modal/BankManagementConst'
-import {
-  NOTIFICATION_CONTEXT_SETTING,
-  NOTIFICATION_TYPE_SERVICE
-} from '@pages/system-management/notification-management/NotificationManagementConst'
+import { accountingTransactionType } from '@constants/options'
+
+
 import { accountStatus } from '@type/customer'
 import { APPLICABLE_OBJECTS, history_type } from '@type/policyManagement'
 import { TransactionStatus, TransactionSubType, TransactionType } from '@type/transfer'
@@ -123,70 +113,6 @@ export const formatObjectPolicy = (value: string) => {
   }
 }
 
-export const formatTransactionType = (value: string) => {
-  switch (value) {
-    case TRANSACTION_TYPE.DEPOSIT:
-      return i18n.t('policy-management.limitAndRegulations.recharge')
-    case TRANSACTION_TYPE.WITHDRAWAL:
-      return i18n.t('policy-management.limitAndRegulations.withDraw')
-    case TRANSACTION_TYPE.WITHDRAW:
-      return i18n.t('policy-management.limitAndRegulations.withDraw')
-    case TRANSACTION_TYPE.TRANSFER:
-      return i18n.t('policy-management.limitAndRegulations.transferMoney')
-    case TRANSACTION_TYPE.PAYMENT:
-      return i18n.t('policy-management.limitAndRegulations.payment')
-    case TRANSACTION_TYPE.FEE:
-      return i18n.t(`policy-management.limitAndRegulations.fee`)
-    case TRANSACTION_TYPE.VAT:
-      return i18n.t(`policy-management.limitAndRegulations.vat`)
-    case TRANSACTION_TYPE.TOTAL_LIMIT:
-      return i18n.t(
-        'policy-management.limitAndRegulations.totalLimitTransaction'
-      )
-    default:
-      return '-'
-  }
-}
-
-export const formatLimitValueType = (value: string) => {
-  switch (value) {
-    case VALUE_LIMIT_TYPE.VALUE:
-      return i18n.t('policy-management.limitAndRegulations.value')
-    case VALUE_LIMIT_TYPE.TIMES:
-      return i18n.t('policy-management.limitAndRegulations.count')
-    default:
-      return '-'
-  }
-}
-
-export const formatLimitTimeType = (value: string) => {
-  switch (value) {
-    case VALUE_LIMIT_TYPE.TIMES:
-      return i18n.t('policy-management.limitAndRegulations.times')
-    case TIME_TYPE_APPLY.DAY:
-      return i18n.t('policy-management.limitAndRegulations.day')
-    case TIME_TYPE_APPLY.WEEK:
-      return i18n.t('policy-management.limitAndRegulations.week')
-    case TIME_TYPE_APPLY.MONTH:
-      return i18n.t('policy-management.limitAndRegulations.month')
-    case TIME_TYPE_APPLY.YEAR:
-      return i18n.t('policy-management.limitAndRegulations.year')
-    default:
-      return '-'
-  }
-}
-
-export const formatLimitType = (value: string) => {
-  switch (value) {
-    case LIMIT_TYPE.LIMIT_MIN:
-      return i18n.t('policy-management.limitAndRegulations.minLimit')
-    case LIMIT_TYPE.LIMIT_MAX:
-      return i18n.t('policy-management.limitAndRegulations.maxLimit')
-    default:
-      return '-'
-  }
-}
-
 export function formatObjectHistory(obj: any, key?: string): string {
   try {
     if (key && key === 'Chi tiết') {
@@ -239,104 +165,6 @@ export function processValue(value: any, key?: string): string {
   return String(value)
 }
 
-export const formatHistoryData = (value: string | number) => {
-  if (!isNaN(Number(value))) {
-    if (value) {
-      return convertNumber(value)
-    } else return '-'
-  } else {
-    switch (value) {
-      case TRANSACTION_TYPE.DEPOSIT:
-        return i18n.t('policy-management.limitAndRegulations.recharge')
-      case TRANSACTION_TYPE.WITHDRAWAL:
-        return i18n.t('policy-management.limitAndRegulations.withDraw')
-      case TRANSACTION_TYPE.WITHDRAW:
-        return i18n.t('policy-management.limitAndRegulations.withDraw')
-      case TRANSACTION_TYPE.TRANSFER:
-        return i18n.t('policy-management.limitAndRegulations.transferMoney')
-      case TRANSACTION_TYPE.PAYMENT:
-        return i18n.t('policy-management.limitAndRegulations.payment')
-      case TRANSACTION_TYPE.FEE:
-        return i18n.t(`policy-management.limitAndRegulations.fee`)
-      case TRANSACTION_TYPE.VAT:
-        return i18n.t(`policy-management.limitAndRegulations.vat`)
-      case TRANSACTION_TYPE.TOTAL_LIMIT:
-        return i18n.t(
-          'policy-management.limitAndRegulations.totalLimitTransaction'
-        )
-      case VALUE_LIMIT_TYPE.VALUE:
-        return i18n.t('policy-management.limitAndRegulations.value')
-      case VALUE_LIMIT_TYPE.TIMES:
-        return i18n.t('policy-management.limitAndRegulations.count')
-      case LIMIT_TYPE.LIMIT_MIN:
-        return i18n.t('policy-management.limitAndRegulations.minLimit')
-      case LIMIT_TYPE.LIMIT_MAX:
-        return i18n.t('policy-management.limitAndRegulations.maxLimit')
-      case TIME_TYPE_APPLY.DAY:
-        return i18n.t('policy-management.limitAndRegulations.day')
-      case TIME_TYPE_APPLY.WEEK:
-        return i18n.t('policy-management.limitAndRegulations.week')
-      case TIME_TYPE_APPLY.MONTH:
-        return i18n.t('policy-management.limitAndRegulations.month')
-      case TIME_TYPE_APPLY.YEAR:
-        return i18n.t('policy-management.limitAndRegulations.year')
-      case BANK_TYPE.LINK:
-        return i18n.t('system-management.bank.options.LINK')
-      case BANK_TYPE.LINK_DEPOSIT:
-        return i18n.t('system-management.bank.options.LINK_DEPOSIT')
-      case BANK_TYPE.LINK_GATEWAY:
-        return i18n.t('system-management.bank.options.LINK_GATEWAY')
-      case BANK_TYPE.LINK_WITHDRAW:
-        return i18n.t('system-management.bank.options.LINK_WITHDRAW')
-      case APPLICABLE_OBJECTS.SYSTEM:
-        return i18n.t('policy-management.payment.system')
-      case APPLICABLE_OBJECTS.ACCOUNT_GROUP:
-        return i18n.t('policy-management.payment.accountGroup')
-      case APPLICABLE_OBJECTS.PERSONAL_ACCOUNT:
-        return i18n.t('policy-management.payment.personalAccount')
-      case NOTIFICATION_TYPE_SERVICE.DEPOSIT_LINK_BANK:
-        return i18n.t('notification-management.service-type.deposit-link-bank')
-      case NOTIFICATION_TYPE_SERVICE.DEPOSIT_CARD_PHONE:
-        return i18n.t('notification-management.service-type.deposit-card-phone')
-      case NOTIFICATION_TYPE_SERVICE.DEPOSIT_FAIL:
-        return i18n.t('notification-management.service-type.deposit-fail')
-      case NOTIFICATION_TYPE_SERVICE.CHARGE_CARD_PHONE_NUMBER:
-        return i18n.t('notification-management.service-type.charge-card-phone-number')
-      case NOTIFICATION_TYPE_SERVICE.CHARGE_DATA_3G_4G:
-        return i18n.t('notification-management.service-type.charge-data-3g-4g')
-      case NOTIFICATION_TYPE_SERVICE.PAYMENT_CARD_PHONE:
-        return i18n.t('notification-management.service-type.payment-card-phone')
-      case NOTIFICATION_TYPE_SERVICE.PAYMENT_DATA_3G_4G:
-        return i18n.t('notification-management.service-type.payment-data-3g-4g')
-      case NOTIFICATION_TYPE_SERVICE.TRANSFER_MOVER:
-        return i18n.t('notification-management.service-type.transfer-mover')
-      case NOTIFICATION_TYPE_SERVICE.TRANSFER_RECEIVE:
-        return i18n.t('notification-management.service-type.transfer-receive')
-      case NOTIFICATION_TYPE_SERVICE.WITHDRAW_LINK_BANK:
-        return i18n.t('notification-management.service-type.withdraw-link-bank')
-      case NOTIFICATION_TYPE_SERVICE.WITHDRAW_NOT_LINK_BANK:
-        return i18n.t('notification-management.service-type.withdraw-not-link-bank')
-      case NOTIFICATION_TYPE_SERVICE.LINK_BANK:
-        return i18n.t('notification-management.service-type.link-bank')
-      case NOTIFICATION_TYPE_SERVICE.UNLINK_BANK:
-        return i18n.t('notification-management.service-type.un-link-bank')
-      case NOTIFICATION_TYPE_SERVICE.PAYMENT_BILL:
-        return i18n.t('notification-management.service-type.payment-bill')
-      case NOTIFICATION_TYPE_SERVICE.WARNING_LOGIN_NEW_DEVICE:
-        return i18n.t('notification-management.service-type.warning-login-new-device')
-      case NOTIFICATION_TYPE_SERVICE.WARNING_CHANGE_PASSWORD:
-        return i18n.t('notification-management.service-type.warning-change-password')
-      case NOTIFICATION_TYPE_SERVICE.OTHER:
-        return i18n.t('notification-management.service-type.other-service')
-
-      default:
-        // if (typeof JSON.parse(value.toString()) === 'string') return value;
-        // else if (typeof JSON.parse(value.toString()) === 'object') return formatObjectHistory(JSON.parse(value.toString()));
-        // else return '-';
-        return value
-    }
-  }
-}
 
 export const convertNumber = (
   amount: string | number,
@@ -569,20 +397,7 @@ export const getGeneralReportDeviceChartTitle = (title: string) => {
   }
 }
 
-export const getNotificationService = (service: NOTIFICATION_TYPE_SERVICE) => {
-  const services = serviceTypes.concat([
-    {
-      value: NOTIFICATION_TYPE_SERVICE.OTHER,
-      label: i18n.t`notification-management.service-type.other-service`
-    }
-  ])
 
-  const item: { value: string; label: string } | undefined = services.find(
-    (item) => service === item.value
-  )
-  if (item) return item.label
-  else return undefined
-}
 
 export const getVerifyTye = (customerVerificationId: string) => {
   if (customerVerificationId)
@@ -659,54 +474,6 @@ export function parseManually(str: string) {
   return str
 }
 
-export const getNameColumnTypeChange = (title: string) => {
-  switch (title) {
-    case LIMIT_AND_REGULATIONS.APPLICABLE_OBJECT:
-      return i18n.t`policy-management.limitAndRegulations.label.appliableTime`
-    case LIMIT_AND_REGULATIONS.LIMIT_TYPE:
-      return i18n.t`policy-management.limitAndRegulations.label.limitType`
-    case LIMIT_AND_REGULATIONS.LIMIT_VALUE_TYPE:
-      return i18n.t`policy-management.limitAndRegulations.label.limitValueType`
-    case LIMIT_AND_REGULATIONS.LIMIT_VALUE:
-      return i18n.t`policy-management.limitAndRegulations.label.limitValue`
-    case LIMIT_AND_REGULATIONS.TIME_LIMIT:
-      return i18n.t`policy-management.limitAndRegulations.label.timeLimit`
-    case LIMIT_AND_REGULATIONS.APPLICABLE_TIME:
-      return i18n.t`policy-management.limitAndRegulations.label.appliableTime`
-    case LIMIT_AND_REGULATIONS.TRANSACTION_TYPE:
-      return i18n.t`policy-management.limitAndRegulations.label.transactionType`
-    case BANK_MANAGEMENT.TRADING_NAME:
-      return i18n.t`system-management.bank.trading-name`
-    case BANK_MANAGEMENT.ADDRESS:
-      return i18n.t`system-management.bank.address`
-    case BANK_MANAGEMENT.FULL_LOGO:
-      return i18n.t`system-management.bank.full-logo`
-    case BANK_MANAGEMENT.PRIORITY:
-      return i18n.t`system-management.bank.priority`
-    case BANK_MANAGEMENT.TINY_LOGO:
-      return i18n.t`system-management.bank.tiny-logo`
-    case BANK_MANAGEMENT.STATUS:
-      return i18n.t`system-management.bank.status`
-    case BANK_MANAGEMENT.TYPE:
-      return i18n.t`system-management.bank.type`
-    case BANK_MANAGEMENT.WEBSITE:
-      return i18n.t`system-management.bank.website`
-    case NOTIFICATION_CONTEXT_SETTING.OBJECT:
-      return i18n.t`notification-management.object`
-    case NOTIFICATION_CONTEXT_SETTING.SERVICE:
-      return i18n.t`notification-management.service`
-    case NOTIFICATION_CONTEXT_SETTING.STATUS:
-      return i18n.t`notification-management.status`
-    case NOTIFICATION_CONTEXT_SETTING.TEXT_TITLE:
-      return i18n.t`notification-management.text-title`
-    case NOTIFICATION_CONTEXT_SETTING.APPLY_DATE:
-      return i18n.t`notification-management.apply-date`
-    case NOTIFICATION_CONTEXT_SETTING.CONTENT:
-      return i18n.t`notification-management.content`
-    default:
-      return title
-  }
-}
 
 export const getTransactionSubType = (type: string) => {
   switch (type) {

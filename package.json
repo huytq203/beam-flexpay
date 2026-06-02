@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "cross-env NODE_OPTIONS='--max-old-space-size=2048' vite",
     "build": "vite build",
     "lint": "tsc",
     "api": "npx @rtk-query/codegen-openapi openapi-config.js",
@@ -20,7 +20,7 @@
     "@tippyjs/react": "^4.2.6",
     "@types/dompurify": "^3.2.0",
     "ahooks": "^3.7.2",
-    "antd": "5.20.6",
+    "antd": "^5.27.0",
     "antd-table-saveas-excel": "^2.2.1",
     "autoprefixer": "^10.4.21",
     "babel-plugin-react-compiler": "^1.0.0",
@@ -36,15 +36,13 @@
     "node-fetch": "2",
     "postcss": "^8.5.6",
     "re-resizable": "^6.11.2",
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1",
+    "react": "19.1.8",
+    "react-dom": "19.1.8",
     "react-google-recaptcha": "^3.1.0",
     "react-google-recaptcha-v3": "^1.11.0",
     "react-hook-form": "^7.68.0",
     "react-i18next": "^12.0.0",
-    "react-json-view": "^1.21.3",
     "react-lazylog": "^4.5.3",
-    "react-quill": "^2.0.0",
     "react-redux": "^9.1.0",
     "react-router-dom": "^6.4.3",
     "react-scan": "^0.4.3",
@@ -63,8 +61,8 @@
     "@types/jsdom": "^27",
     "@types/lodash": "^4.14.195",
     "@types/node": "^18.11.9",
-    "@types/react": "^18.0.24",
-    "@types/react-dom": "^18.0.8",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "@types/react-google-recaptcha": "^2.1.9",
     "@types/react-lazylog": "^4",
     "@vitejs/plugin-react": "^4.3.4",
@@ -79,6 +77,10 @@
     "vite-plugin-pwa": "^1.2.0",
     "vite-plugin-svgr": "^4.5.0",
     "vitest": "^4.0.17"
+  },
+  "resolutions": {
+    "react": "19.1.8",
+    "react-dom": "19.1.8"
   },
   "engines": {
     "node": ">=18"
