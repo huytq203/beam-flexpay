@@ -3,7 +3,7 @@ import { Suspense, useEffect, useRef } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { Spin } from 'antd'
 import gsap from 'gsap'
-import { PATHS } from '@constants/pathConstant'
+import { TRANSACTIONMANAGEMENT } from '@constants/routersConstant'
 import { resetInactivityTimer } from '@configs/fetchBaseQueryCustom'
 import './style.scss'
 
@@ -15,16 +15,16 @@ function AuthLayout() {
   const brandRef = useRef<HTMLDivElement>(null)
   const formRef = useRef<HTMLDivElement>(null)
 
+  // Đã đăng nhập mà vào trang auth -> đưa thẳng về home thật.
+  // KHÔNG navigate('/') vì route '/' lại redirect về /login -> vòng lặp vô hạn
+  // (Throttling navigation + CSSMotion "Maximum update depth exceeded").
   useEffect(() => {
     if (accessToken) {
-      navigate('/')
+      navigate(`${TRANSACTIONMANAGEMENT}/transaction-wallet`, { replace: true })
     }
   }, [accessToken, navigate])
 
   useEffect(() => {
-    if (location.pathname === '/') {
-      navigate(PATHS.AUTH.LOGIN)
-    }
     resetInactivityTimer()
   }, [location])
 

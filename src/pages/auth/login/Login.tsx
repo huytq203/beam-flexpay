@@ -23,14 +23,6 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>
 
-const MicrosoftIcon = () => (
-    <svg width="18" height="18" viewBox="0 0 21 21" fill="none" className="shrink-0">
-        <path d="M10 0H0v10h10V0z" fill="#F25022" />
-        <path d="M21 0H11v10h10V0z" fill="#7FBA00" />
-        <path d="M10 11H0v10h10V11z" fill="#00A4EF" />
-        <path d="M21 11H11v10h10V11z" fill="#FFB900" />
-    </svg>
-)
 
 const LoginFormInside = () => {
     const navigate = useNavigate()

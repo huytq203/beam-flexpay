@@ -73,8 +73,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <ConfigProvider theme={theme}>
         <MessageProvider>
           <App>
-            {/* reCAPTCHA v3 nạp thủ công trong @utils/recaptcha (không dùng
-                GoogleReCaptchaProvider — provider của lib gây CSSMotion loop với React 19) */}
             <React.Suspense fallback={<ScreenLoading />}>
               <RouterProvider
                 router={WalletRoutes}
