@@ -13,7 +13,7 @@ import { formatNumber } from '@utils/formatNumber'
 import dayjs from 'dayjs'
 import { TYPEDATE } from '@constants/date.constant'
 import { useNavigate } from 'react-router-dom'
-import { StatusKey } from '../types/WalletAccount.type'
+import { StatusKey } from '../types/WalletAccount.enum'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { WALLETADMINISTRATION } from '@constants/routersConstant'
 import * as Icon from '@components/icons'
@@ -49,12 +49,12 @@ export const getColumn = ({
     {
       title: 'Khách hàng / Mã TK',
       align: 'left',
-      width: 150,
+      width: 200,
       render: (_, record) => {
         const isSystem = record.ownerType === 'SYSTEM'
         return (
           <div>
-            <div className='font-medium max-w-[17rem] overflow-hidden text-ellipsis whitespace-nowrap'>
+            <div className='font-medium max-w-[17rem] overflow-hidden text-ellipsis whitespace-nowrap italic font-mono '>
               {isSystem ? 'Hệ thống' : (record.ownerUsername ?? 'Hệ thống')}
             </div>
             {record.ownerId && (
@@ -157,7 +157,7 @@ export const getColumn = ({
         <div className='flex flex-wrap items-center justify-start gap-1'>
           {/* <StatusBadge status={record.status as StatusKey} /> */}
           <StatusBadge
-            status={String(record.enabled)}
+            status={String(record.status)}
             config={{
               true: {
                 label: (

@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react'
 import { getColumn } from '../columns/Column'
 import { useLazyGetFreezesQuery } from '@services/apiFreezes'
 import { useNavigate } from 'react-router-dom'
-import { dataLockAccount } from '../types/WalletAccount.type'
+import { dataLockAccount } from '../types/WalletAccount.enum'
 
 type ModalType = 'freeze' | 'unfreeze' | 'lock' | 'unlock' | null
 
