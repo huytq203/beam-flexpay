@@ -215,12 +215,6 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ['[Admin] Admin User']
       }),
-      ssoLogin: build.query({
-      query: (code) => ({
-        url: `/oauth/authorization-code/exchange?code=${code}`,
-        method: 'GET',
-      }),
-    }),
       getUrlLogin: build.query({
       query: () => ({
         url: `/oauth/authorization-code`,
@@ -250,6 +244,5 @@ export const {
   useUserLockAdminMutation,
   useUserUnlockAdminMutation,
   useUserUpdatePermissionUserMutation,
-  useLazyGetUrlLoginQuery,
-  useLazySsoLoginQuery
+  useLazyGetUrlLoginQuery
 } = injectedRtkApi

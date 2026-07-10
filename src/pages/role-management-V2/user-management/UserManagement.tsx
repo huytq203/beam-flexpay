@@ -46,11 +46,11 @@ const UserManagement = () => {
       /> */}
       <CardComponent>
         <div className='flex items-center gap-4 py-1'>
-          <div className='bg-green-50 p-3 rounded-xl flex items-center justify-center shadow-sm'>
+          <div className='bg-green-50 p-3 rounded-xl flex items-center justify-center shadow-sm text-green-800'>
             <Icons.UserCheckIcon size={28} weight="duotone" className='text-blue' />
           </div>
           <div>
-            <h1 className='text-[16px] font-bold text-gray-800 m-0'>Quản lý tài khoản Admin</h1>
+            <h1 className='text-[16px] font-bold text-green-800 m-0'>Quản lý tài khoản Admin</h1>
             <p className='text-gray-500 text-[12px] m-0 leading-relaxed font-medium'>Quản lý thông tin tài khoản, nhóm quyền và người dùng quản trị hệ thống</p>
           </div>
           <div className='ml-auto'>

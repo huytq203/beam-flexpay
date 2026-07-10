@@ -5,7 +5,7 @@ import { Spin } from 'antd'
 import gsap from 'gsap'
 import { TRANSACTIONMANAGEMENT } from '@constants/routersConstant'
 import { resetInactivityTimer } from '@configs/fetchBaseQueryCustom'
-import './style.scss'
+import './style.css'
 
 function AuthLayout() {
   const { accessToken } = useAppSelector((state) => state.auth)
@@ -62,7 +62,9 @@ function AuthLayout() {
         style={{ background: 'linear-gradient(160deg, #b2fef8 0%, #d2f8f4 40%, #a8f5ef 100%)' }}
       >
         {/* Mascot — hiện full, không có overlay che */}
-        <div className="auth-mascot absolute inset-0 bg-center bg-no-repeat bg-contain pointer-events-none" />
+        <div className="auth-mascot absolute inset-0 bg-center bg-no-repeat bg-contain pointer-events-none" >
+          <img src="/images/assets/capybara/Cappybara_17_Poses-02.png" alt="Mascot" className="object-contain translate-y-20" />
+        </div>
 
         {/* Brand info: nằm ở góc trái dưới */}
         <div className="auth-brand-info absolute bottom-8 left-8 z-10">

@@ -1,0 +1,28 @@
+.screen-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.screen-loading-spinner {
+  width: 56px;
+  height: 56px;
+  animation: screen-loading-spin 1s linear infinite;
+}
+
+.screen-loading-logo {
+  width: 120px;
+  height: auto;
+}
+
+@keyframes screen-loading-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

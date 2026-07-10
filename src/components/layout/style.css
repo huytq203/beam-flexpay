@@ -1,5 +1,3 @@
-@import '../../styles/_variables.scss';
-
 .ant-select-single .ant-select-selector {
   color: rgba(0, 0, 0, 0.88) !important;
 }

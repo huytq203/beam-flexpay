@@ -1,0 +1,21 @@
+/* .ant-picker {
+  width: 100%;
+} */
+
+/* Limit popup size and enable scroll
+.responsive-range-picker.ant-picker-dropdown {
+  max-width: calc(100vw - 80px) !important;
+  max-height: 50vh !important;
+  overflow: auto !important;
+} */
+
+/* Inner container also scrollable
+.responsive-range-picker .ant-picker-panel-container {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+} */
+
+/* Make panels wrap if needed
+.responsive-range-picker .ant-picker-panels {
+  flex-wrap: wrap !important;
+} */

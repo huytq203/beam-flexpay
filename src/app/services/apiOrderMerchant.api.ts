@@ -1,6 +1,6 @@
 import { apiMerchant } from "./apiService"
 
-export const merchantOrder = apiMerchant.injectEndpoints({
+const merchantOrder = apiMerchant.injectEndpoints({
     endpoints: (build) => ({
         getMerchantOrder: build.query({
             query: (params) => ({

@@ -1,7 +1,7 @@
 import { ResponseType } from '@type/api'
 import { apiMerchant } from './apiService'
 import { ContentMerchant, DataMerchant } from '@type/merchant'
-export const merchantService = apiMerchant.injectEndpoints({
+const merchantService = apiMerchant.injectEndpoints({
     endpoints: (builder) => ({
         getMerchant: builder.query({
             query: (payload) => ({

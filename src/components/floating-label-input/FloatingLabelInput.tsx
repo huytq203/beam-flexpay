@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import './style.scss'
+import './style.css'
 import { Input, Tag } from 'antd'
 import { getTransactionStatus } from '@utils/helperFunctions'
 

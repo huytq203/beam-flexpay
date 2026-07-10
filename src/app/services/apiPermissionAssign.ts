@@ -2,13 +2,6 @@ import { authApiService } from "./apiService";
 
 export const apiPermissionAssign = authApiService.injectEndpoints({
     endpoints: (build) => ({
-        getPermissionAvailable: build.query({
-            query: (roleId) => ({
-                url: `roles/${roleId}/permissions/available`,
-                method: "GET",
-            }),
-            providesTags: ['PermissionAssign']
-        }),
         getPermissionAssign: build.query({
             query: (roleId) => ({
                 url: `roles/${roleId}/permissions`,
@@ -35,7 +28,6 @@ export const apiPermissionAssign = authApiService.injectEndpoints({
     })
 })
 export const {
-    useLazyGetPermissionAvailableQuery,
     usePostPermissionAvailableMutation,
     useLazyGetPermissionAssignQuery,
     useDeletePermissionAssignMutation

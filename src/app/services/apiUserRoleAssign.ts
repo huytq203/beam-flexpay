@@ -1,7 +1,7 @@
 import { useGetUserQuery } from "./apiUserManagement";
 import { authApiService } from "./apiService";
 
-export const userRoleApi = authApiService.injectEndpoints({
+const userRoleApi = authApiService.injectEndpoints({
     endpoints: (builder) => ({
         assignRoleUser: builder.mutation({
             query: ({ id, body }) => ({
@@ -28,6 +28,5 @@ export const userRoleApi = authApiService.injectEndpoints({
 export const {
     useAssignRoleUserMutation,
     useDeleteRoleUserMutation,
-    useLazyGetUserRoleQuery,
     useGetUserRoleQuery
 } = userRoleApi

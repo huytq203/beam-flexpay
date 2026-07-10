@@ -21,15 +21,15 @@ import {
 import { useForm } from 'antd/es/form/Form'
 import { useTranslation } from 'react-i18next'
 import { RootState } from 'src/app/store'
-import IAvatarDefault from '@assets/image/avatar_default.webp'
 import {
   User as UserIcon,
   Envelope as EnvelopeIcon,
   ShieldCheck as ShieldIcon,
   IdentificationCard as IdIcon
 } from '@phosphor-icons/react'
-import '../style.scss'
+import '../style.css'
 
+const IAvatarDefault = '/images/assets/image/avatar_default.webp'
 const { Text, Title } = Typography
 
 function EmployeeProfile(props: CustomModalProps) {

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useUserForgotPasswordMutation } from '@services/cmsService';
 import { PATHS } from '@constants/pathConstant'
-import './style.scss'
+import './style.css'
 
 function ForgotPassword() {
   const { t } = useTranslation()

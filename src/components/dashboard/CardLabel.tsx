@@ -2,7 +2,7 @@ import Icon from '@ant-design/icons/lib/components/Icon'
 import { Card, Col, InputNumber, Progress, Row, Space } from 'antd'
 
 import { useEffect, useState } from 'react'
-import './index.scss'
+import './index.css'
 
 type props = {
   label: string

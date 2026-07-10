@@ -5,7 +5,7 @@ import { useForm } from 'antd/es/form/Form'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useEffect } from 'react'
-import './style.scss'
+import './style.css'
 import { useUserNewPasswordMutation, useUserVerifyTokenMutation } from '@services/cmsService'
 import { PATHS } from '@constants/pathConstant'
 

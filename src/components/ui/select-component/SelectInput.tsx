@@ -1,6 +1,6 @@
 import React from 'react';
 import { Select } from 'antd';
-import './style.scss'
+import './style.css'
 import { SelectProps, DefaultOptionType } from 'antd/es/select';
 
 interface props extends SelectProps {

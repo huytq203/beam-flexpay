@@ -1,19 +1,14 @@
-@import '_variables';
-@import '_spacing';
-@import '_helper';
-@import '_layout';
+@import '_variables.css';
+@import '_layout.css';
 
-@import 'color';
-// @import 'override';
-@import 'text';
-// @import 'reset';
+@import '_color.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer utilities {
 
-  // Flex shortcuts
+  /* Flex shortcuts */
   .flex-center {
     @apply flex justify-center items-center;
   }
@@ -34,7 +29,7 @@
     @apply flex flex-col justify-center items-center;
   }
 
-  // Color shortcuts: text-red = text-red-600
+  /* Color shortcuts: text-red = text-red-600 */
   .text-red {
     @apply text-red-600;
   }
@@ -55,7 +50,7 @@
     @apply text-gray-600;
   }
 
-  // border
+  /* border */
   .border-red {
     @apply border-red-500;
   }
@@ -80,7 +75,7 @@
     @apply border-gray-500;
   }
 
-  // Background shortcuts
+  /* Background shortcuts */
   .bg-red {
     @apply bg-red-50;
   }
@@ -131,37 +126,6 @@
     }
   }
 }
-
-// .card-table {
-//   .ant-card .ant-card-body {
-//     height: 600px;
-//   }
-// }
-
-// .input-number {
-//   min-width: 300px;
-//   height: 22px !important;
-// }
-
-// .input-description {
-//   height: 22px !important;
-// }
-
-// .ant-descriptions-item-content {
-//   max-height: 54px;
-// }
-
-// .ant-descriptions-item {
-//   padding: 0px !important;
-// }
-
-// .mb-16 {
-//   margin-bottom: 16px;
-// }
-
-// .box-shadow {
-//   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-// }
 
 html {
   font-size: clamp(12px, 0.9vw, 16px) !important;

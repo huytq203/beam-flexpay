@@ -1,32 +1,4 @@
 import {
-  AccountGroupCreateApiArg,
-  AccountGroupCreateApiResponse,
-  AccountGroupFindAllApiArg,
-  AccountGroupFindAllApiResponse,
-  AccountGroupFindOneApiArg,
-  AccountGroupFindOneApiResponse,
-  AccountGroupRemoveApiArg,
-  AccountGroupRemoveApiResponse,
-  AccountGroupUpdateApiArg,
-  AccountGroupUpdateApiResponse,
-  BankCmsFindAllActiveApiArg,
-  BankCmsFindAllActiveApiResponse,
-  BankCmsFindAllApiArg,
-  BankCmsFindAllApiResponse,
-  BankCmsFindOneApiArg,
-  BankCmsFindOneApiResponse,
-  BankCmsGetExportCsvApiArg,
-  BankCmsGetExportCsvApiResponse,
-  BankCmsGetExportExcelApiArg,
-  BankCmsGetExportExcelApiResponse,
-  BankCmsUpdateApiArg,
-  BankCmsUpdateApiResponse,
-  BillCreateApiArg,
-  BillCreateApiResponse,
-  BillDeleteApiArg,
-  BillDeleteApiResponse,
-  BillFindAllApiArg,
-  BillFindAllApiResponse,
   CustomerChangePasswordApiArg,
   CustomerChangePasswordApiResponse,
   CustomerCreateApiArg,
@@ -71,47 +43,7 @@ import {
   FreezeBalanceHistoryFindAllApiResponse,
   FreezeBalanceHistoryOpenFreezeBalanceApiArg,
   FreezeBalanceHistoryOpenFreezeBalanceApiResponse,
-  GroupFindAllApiArg,
-  GroupFindAllApiResponse,
-  GroupFindOneApiArg,
-  GroupFindOneApiResponse,
-  GroupProductCreateApiArg,
-  GroupProductCreateApiResponse,
-  GroupProductFindAllApiArg,
-  GroupProductFindAllApiResponse,
-  GroupProductFindByIdApiArg,
-  GroupProductFindByIdApiResponse,
-  GroupProductRemoveApiArg,
-  GroupProductRemoveApiResponse,
-  GroupProductUpdateApiArg,
-  GroupProductUpdateApiResponse,
-  GroupRemoveApiArg,
-  GroupRemoveApiResponse,
-  GroupSetPermissionForGroupApiArg,
-  GroupSetPermissionForGroupApiResponse,
-  GroupUpdateApiArg,
-  GroupUpdateApiResponse,
-  HistoryFeeManagementFindAllApiArg,
-  HistoryFeeManagementFindAllApiResponse,
-  NotificationContextSettingCreateApiArg,
-  NotificationContextSettingCreateApiResponse,
-  NotificationContextSettingFindAllApiArg,
-  NotificationContextSettingFindAllApiResponse,
-  NotificationContextSettingFindOneApiArg,
-  NotificationContextSettingFindOneApiResponse,
-  NotificationContextSettingPublishApiArg,
-  NotificationContextSettingPublishApiResponse,
-  NotificationContextSettingRemoveApiArg,
-  NotificationContextSettingRemoveApiResponse,
-  NotificationContextSettingUpdateApiArg,
-  NotificationContextSettingUpdateApiResponse,
   OtpDataDto,
-  PaymentLinkCancelTokenApiArg,
-  PaymentLinkCancelTokenApiResponse,
-  PaymentLinkFindAllApiArg,
-  PaymentLinkFindAllApiResponse,
-  PaymentLinkUpdateStatusApiArg,
-  PaymentLinkUpdateStatusApiResponse,
   PaymentOrderFindAllApiArg,
   PaymentOrderFindAllApiResponse,
   PaymentOrderFindOneApiArg,
@@ -142,26 +74,6 @@ import {
   PaymentServiceFindOneApiResponse,
   PaymentServiceUpdateApiArg,
   PaymentServiceUpdateApiResponse,
-  ProductCreateApiArg,
-  ProductCreateApiResponse,
-  ProductFindAllApiArg,
-  ProductFindAllApiResponse,
-  ProductFindByIdApiArg,
-  ProductFindByIdApiResponse,
-  ProductRemoveApiArg,
-  ProductRemoveApiResponse,
-  ProductTypeCreateApiArg,
-  ProductTypeCreateApiResponse,
-  ProductTypeFindAllApiArg,
-  ProductTypeFindAllApiResponse,
-  ProductTypeFindOneApiArg,
-  ProductTypeFindOneApiResponse,
-  ProductTypeRemoveApiArg,
-  ProductTypeRemoveApiResponse,
-  ProductTypeUpdateApiArg,
-  ProductTypeUpdateApiResponse,
-  ProductUpdateApiArg,
-  ProductUpdateApiResponse,
   RefundFindOneApiArg,
   RefundFindOneApiResponse,
   RefundGetExportCsvApiArg,
@@ -178,30 +90,6 @@ import {
   ReportGetMetricOfAccountApiResponse,
   ReportGetMetricProvinceApiArg,
   ReportGetMetricProvinceApiResponse,
-  SaleFeeCreateApiArg,
-  SaleFeeCreateApiResponse,
-  SaleFeeFindAllApiArg,
-  SaleFeeFindAllApiResponse,
-  SaleFeeFindOneByIdApiArg,
-  SaleFeeFindOneByIdApiResponse,
-  SaleFeeNotifyApiArg,
-  SaleFeeNotifyApiResponse,
-  SaleFeeRemoveApiArg,
-  SaleFeeRemoveApiResponse,
-  SaleFeeUpdateApiArg,
-  SaleFeeUpdateApiResponse,
-  ServiceCreateApiArg,
-  ServiceCreateApiResponse,
-  ServiceFindAllApiArg,
-  ServiceFindAllApiResponse,
-  ServiceFindByIdApiArg,
-  ServiceFindByIdApiResponse,
-  ServiceGetAllServiceApiArg,
-  ServiceGetAllServiceApiResponse,
-  ServiceRemoveApiArg,
-  ServiceRemoveApiResponse,
-  ServiceUpdateApiArg,
-  ServiceUpdateApiResponse,
   SystemFeeManagementCreatePolicyPaymentWithBankCardApiArg,
   SystemFeeManagementCreatePolicyPaymentWithBankCardApiResponse,
   SystemFeeManagementCreatePolicyPaymentWithFlexpayApiArg,
@@ -250,20 +138,8 @@ import {
   TransactionFindOneApiResponse,
   TransactionInfoFindOneApiArg,
   TransactionInfoFindOneApiResponse,
-  TransactionLimitCreateApiArg,
-  TransactionLimitCreateApiResponse,
-  TransactionLimitFindAllApiArg,
-  TransactionLimitFindAllApiResponse,
-  TransactionLimitFindOneByIdApiArg,
-  TransactionLimitFindOneByIdApiResponse,
-  TransactionLimitRemoveApiArg,
-  TransactionLimitRemoveApiResponse,
-  TransactionLimitUpdateApiArg,
-  TransactionLimitUpdateApiResponse,
   TransactionMainFindAllApiArg,
   TransactionMainFindAllApiResponse,
-  TransactionStepFindByReferenceIdApiArg,
-  TransactionStepFindByReferenceIdApiResponse,
   TransactionUpdateStatusApiArg,
   TransactionUpdateStatusApiResponse,
   UserChangePasswordApiArg,
@@ -302,7 +178,6 @@ import {
   UserUploadAvatarApiResponse,
   UserVerifyTokenApiArg,
   UserVerifyTokenApiResponse,
-  VerifyLoginOtp,
   VerifyLoginOtpApiArg
 } from '@type/application'
 import { fnTransformResponse } from '@utils/helperFunctions'
@@ -734,124 +609,6 @@ const injectedRtkApi = api
         transformResponse: fnTransformResponse,
         invalidatesTags: ['[Admin] Admin Customer']
       }),
-      groupFindAll: build.query<GroupFindAllApiResponse, GroupFindAllApiArg>({
-        query: (queryArg) => ({
-          url: `/group-permission`,
-          params: {
-            order: queryArg.order,
-            page: queryArg.page,
-            take: queryArg.take,
-            query: queryArg.query,
-            id: queryArg.id,
-            name: queryArg.name,
-            status: queryArg.status,
-            orderBy: queryArg.orderBy
-          }
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Group']
-      }),
-      groupFindOne: build.query<GroupFindOneApiResponse, GroupFindOneApiArg>({
-        query: (queryArg) => ({
-          url: `/group-permission/${queryArg.id}`
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Group']
-      }),
-      groupUpdate: build.mutation<GroupUpdateApiResponse, GroupUpdateApiArg>({
-        query: (queryArg) => ({
-          url: `/group-permission/${queryArg.id}`,
-          method: 'PATCH',
-          body: queryArg.setPermissionForGroupDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Group']
-      }),
-      groupRemove: build.mutation<GroupRemoveApiResponse, GroupRemoveApiArg>({
-        query: (queryArg) => ({
-          url: `/group-permission/${queryArg.id}`,
-          method: 'DELETE'
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Group']
-      }),
-      groupSetPermissionForGroup: build.mutation<
-        GroupSetPermissionForGroupApiResponse,
-        GroupSetPermissionForGroupApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/group-permission/permission`,
-          method: 'POST',
-          body: queryArg.setPermissionForGroupDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Group']
-      }),
-      accountGroupCreate: build.mutation<
-        AccountGroupCreateApiResponse,
-        AccountGroupCreateApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/account-group`,
-          method: 'POST',
-          body: queryArg.createAccountGroupDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Account Group']
-      }),
-      accountGroupFindAll: build.query<
-        AccountGroupFindAllApiResponse,
-        AccountGroupFindAllApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/account-group`,
-          params: {
-            order: queryArg.order,
-            page: queryArg.page,
-            take: queryArg.take,
-            query: queryArg.query,
-            name: queryArg.name,
-            customerType: queryArg.customerType,
-            customerAccountNumber: queryArg.customerAccountNumber,
-            orderBy: queryArg.orderBy
-          }
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Account Group']
-      }),
-      accountGroupUpdate: build.mutation<
-        AccountGroupUpdateApiResponse,
-        AccountGroupUpdateApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/account-group/${queryArg.id}`,
-          method: 'PATCH',
-          body: queryArg.updateAccountGroupDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Account Group']
-      }),
-      accountGroupRemove: build.mutation<
-        AccountGroupRemoveApiResponse,
-        AccountGroupRemoveApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/account-group/${queryArg.id}`,
-          method: 'DELETE'
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Account Group']
-      }),
-      accountGroupFindOne: build.query<
-        AccountGroupFindOneApiResponse,
-        AccountGroupFindOneApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/account-group/${queryArg.id}`
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Account Group']
-      }),
       customerVerificationFindAll: build.query<
         CustomerVerificationFindAllApiResponse,
         CustomerVerificationFindAllApiArg
@@ -905,78 +662,6 @@ const injectedRtkApi = api
         }),
         transformResponse: fnTransformResponse,
         invalidatesTags: ['[Admin] Admin Customer Verification']
-      }),
-      productTypeCreate: build.mutation<
-        ProductTypeCreateApiResponse,
-        ProductTypeCreateApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/product-type`,
-          method: 'POST',
-          body: queryArg.createProductTypeDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Product Type']
-      }),
-      productTypeFindAll: build.query<
-        ProductTypeFindAllApiResponse,
-        ProductTypeFindAllApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/product-type`,
-          params: {
-            order: queryArg.order,
-            page: queryArg.page,
-            take: queryArg.take,
-            query: queryArg.query,
-            id: queryArg.id,
-            show: queryArg.show,
-            orderBy: queryArg.orderBy
-          }
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Product Type']
-      }),
-      productTypeFindOne: build.query<
-        ProductTypeFindOneApiResponse,
-        ProductTypeFindOneApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/product-type/${queryArg.id}`
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Product Type']
-      }),
-      productTypeUpdate: build.mutation<
-        ProductTypeUpdateApiResponse,
-        ProductTypeUpdateApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/product-type/${queryArg.id}`,
-          method: 'PATCH',
-          body: queryArg.updateProductTypeDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Product Type']
-      }),
-      productTypeRemove: build.mutation<
-        ProductTypeRemoveApiResponse,
-        ProductTypeRemoveApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/product-type/${queryArg.id}`,
-          method: 'DELETE'
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Product Type']
-      }),
-      transactionStepFindByReferenceId: build.query<
-        TransactionStepFindByReferenceIdApiResponse,
-        TransactionStepFindByReferenceIdApiArg
-      >({
-        query: (queryArg) => ({ url: `/transaction-step/${queryArg.referenceId}` }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Transaction Step']
       }),
       transactionInfoFindOne: build.query<
         TransactionInfoFindOneApiResponse,
@@ -1054,267 +739,6 @@ const injectedRtkApi = api
         transformResponse: fnTransformResponse,
         invalidatesTags: ['Transaction']
       }),
-      groupProductCreate: build.mutation<
-        GroupProductCreateApiResponse,
-        GroupProductCreateApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/group-product`,
-          method: 'POST',
-          body: queryArg.createGroupProductDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Group Product ']
-      }),
-      groupProductFindAll: build.query<
-        GroupProductFindAllApiResponse,
-        GroupProductFindAllApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/group-product`,
-          params: {
-            order: queryArg.order,
-            page: queryArg.page,
-            take: queryArg.take,
-            query: queryArg.query,
-            serviceId: queryArg.serviceId,
-            productTypeId: queryArg.productTypeId,
-            featured: queryArg.featured,
-            groupProduct: queryArg.groupProduct,
-            orderBy: queryArg.orderBy
-          }
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Group Product ']
-      }),
-      groupProductUpdate: build.mutation<
-        GroupProductUpdateApiResponse,
-        GroupProductUpdateApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/group-product/${queryArg.id}`,
-          method: 'PUT',
-          body: queryArg.updateGroupProductDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Group Product ']
-      }),
-      groupProductFindById: build.query<
-        GroupProductFindByIdApiResponse,
-        GroupProductFindByIdApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/group-product/${queryArg.id}`
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Group Product ']
-      }),
-      groupProductRemove: build.mutation<
-        GroupProductRemoveApiResponse,
-        GroupProductRemoveApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/group-product/${queryArg.id}`,
-          method: 'DELETE'
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Group Product ']
-      }),
-      productFindAll: build.query<
-        ProductFindAllApiResponse,
-        ProductFindAllApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/product`,
-          params: {
-            order: queryArg.order,
-            page: queryArg.page,
-            take: queryArg.take,
-            query: queryArg.query,
-            orderBy: queryArg.orderBy
-          }
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Product ']
-      }),
-      productCreate: build.mutation<
-        ProductCreateApiResponse,
-        ProductCreateApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/product`,
-          method: 'POST',
-          body: queryArg.createProductDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Product ']
-      }),
-      productUpdate: build.mutation<
-        ProductUpdateApiResponse,
-        ProductUpdateApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/product/${queryArg.id}`,
-          method: 'PATCH',
-          body: queryArg.updateProductDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Product ']
-      }),
-      productRemove: build.mutation<
-        ProductRemoveApiResponse,
-        ProductRemoveApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/product/${queryArg.id}`,
-          method: 'DELETE'
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Product ']
-      }),
-      productFindById: build.query<
-        ProductFindByIdApiResponse,
-        ProductFindByIdApiArg
-      >({
-        query: (queryArg) => ({ url: `/product/${queryArg.id}` }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Product ']
-      }),
-      paymentLinkFindAll: build.query<
-        PaymentLinkFindAllApiResponse,
-        PaymentLinkFindAllApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/payment-link`,
-          params: {
-            order: queryArg.order,
-            page: queryArg.page,
-            take: queryArg.take,
-            query: queryArg.query,
-            status: queryArg.status,
-            from: queryArg['from'],
-            to: queryArg.to,
-            cardNumber: queryArg.cardNumber,
-            bankName: queryArg.bankName,
-            orderBy: queryArg.orderBy
-          }
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Token Management']
-      }),
-      paymentLinkCancelToken: build.mutation<
-        PaymentLinkCancelTokenApiResponse,
-        PaymentLinkCancelTokenApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/payment-link/${queryArg.id}/cancel-token`,
-          method: 'PATCH'
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Token Management']
-      }),
-      paymentLinkUpdateStatus: build.mutation<
-        PaymentLinkUpdateStatusApiResponse,
-        PaymentLinkUpdateStatusApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/payment-link/${queryArg.id}/toggle-active`,
-          method: 'PATCH',
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Customer']
-      }),
-      bankCmsFindAll: build.query<
-        BankCmsFindAllApiResponse,
-        BankCmsFindAllApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/bank`,
-          params: {
-            order: queryArg.order,
-            page: queryArg.page,
-            take: queryArg.take,
-            query: queryArg.query,
-            active: queryArg.active,
-            name: queryArg.name,
-            key: queryArg.key,
-            type: queryArg['type'],
-            orderBy: queryArg.orderBy
-          }
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Bank']
-      }),
-      bankCmsFindAllActive: build.query<
-        BankCmsFindAllActiveApiResponse,
-        BankCmsFindAllActiveApiArg
-      >({
-        query: () => ({ url: `/bank/find-all-active` }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Bank']
-      }),
-      bankCmsUpdate: build.mutation<
-        BankCmsUpdateApiResponse,
-        BankCmsUpdateApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/bank/${queryArg.id}`,
-          method: 'PUT',
-          body: queryArg.updateBankDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Bank']
-      }),
-      bankCmsFindOne: build.query<
-        BankCmsFindOneApiResponse,
-        BankCmsFindOneApiArg
-      >({
-        query: (queryArg) => ({ url: `/bank/${queryArg.id}` }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Bank']
-      }),
-      bankCmsGetExportExcel: build.query<
-        BankCmsGetExportExcelApiResponse,
-        BankCmsGetExportExcelApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/bank/export/excel`,
-          params: {
-            order: queryArg.order,
-            page: queryArg.page,
-            take: queryArg.take,
-            query: queryArg.query,
-            active: queryArg.active,
-            name: queryArg.name,
-            key: queryArg.key,
-            type: queryArg['type'],
-            orderBy: queryArg.orderBy
-          }
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Bank']
-      }),
-      bankCmsGetExportCsv: build.query<
-        BankCmsGetExportCsvApiResponse,
-        BankCmsGetExportCsvApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/bank/export/csv`,
-          params: {
-            order: queryArg.order,
-            page: queryArg.page,
-            take: queryArg.take,
-            query: queryArg.query,
-            active: queryArg.active,
-            name: queryArg.name,
-            key: queryArg.key,
-            type: queryArg['type'],
-            orderBy: queryArg.orderBy
-          }
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Bank']
-      }),
       freezeBalanceHistoryCreate: build.mutation<
         FreezeBalanceHistoryCreateApiResponse,
         FreezeBalanceHistoryCreateApiArg
@@ -1358,79 +782,6 @@ const injectedRtkApi = api
         transformResponse: fnTransformResponse,
         invalidatesTags: ['[Admin] Admin Freeze Money History']
       }),
-      saleFeeCreate: build.mutation<
-        SaleFeeCreateApiResponse,
-        SaleFeeCreateApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/sale-fee`,
-          method: 'POST',
-          body: queryArg.createSaleFeeDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Sale Fee']
-      }),
-      saleFeeFindAll: build.query<
-        SaleFeeFindAllApiResponse,
-        SaleFeeFindAllApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/sale-fee`,
-          params: {
-            order: queryArg.order,
-            page: queryArg.page,
-            take: queryArg.take,
-            query: queryArg.query,
-            serviceId: queryArg.serviceId,
-            productTypeId: queryArg.productTypeId,
-            groupProductId: queryArg.groupProductId,
-            groupProduct: queryArg.groupProduct,
-            orderBy: queryArg.orderBy
-          }
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Sale Fee']
-      }),
-      saleFeeUpdate: build.mutation<
-        SaleFeeUpdateApiResponse,
-        SaleFeeUpdateApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/sale-fee/${queryArg.id}`,
-          method: 'PATCH',
-          body: queryArg.updateSaleFeeDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Sale Fee']
-      }),
-      saleFeeFindOneById: build.query<
-        SaleFeeFindOneByIdApiResponse,
-        SaleFeeFindOneByIdApiArg
-      >({
-        query: (queryArg) => ({ url: `/sale-fee/${queryArg.id}` }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Sale Fee']
-      }),
-      saleFeeRemove: build.mutation<
-        SaleFeeRemoveApiResponse,
-        SaleFeeRemoveApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/sale-fee/${queryArg.id}`,
-          method: 'DELETE'
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Sale Fee']
-      }),
-      saleFeeNotify: build.query<SaleFeeNotifyApiResponse, SaleFeeNotifyApiArg>(
-        {
-          query: (queryArg) => ({
-            url: `/sale-fee/${queryArg.id}/notify`
-          }),
-          transformResponse: fnTransformResponse,
-          providesTags: ['[Admin] Admin Sale Fee']
-        }
-      ),
       systemFeeManagementDirectDeposit: build.mutation<
         SystemFeeManagementDirectDepositApiResponse,
         SystemFeeManagementDirectDepositApiArg
@@ -1672,246 +1023,6 @@ const injectedRtkApi = api
         transformResponse: fnTransformResponse,
         invalidatesTags: ['[Admin] Admin System fee management']
       }),
-      historyFeeManagementFindAll: build.query<
-        HistoryFeeManagementFindAllApiResponse,
-        HistoryFeeManagementFindAllApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/history-audit-log-management`,
-          params: {
-            order: queryArg.order,
-            page: queryArg.page,
-            take: queryArg.take,
-            query: queryArg.query,
-            historyType: queryArg.historyType,
-            updatedAt: queryArg.updatedAt,
-            updater_id: queryArg.updaterId,
-            entityId: queryArg.entityId,
-            entityType: queryArg.entityType,
-            orderBy: queryArg.orderBy
-          }
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin History fee management']
-      }),
-      notificationContextSettingCreate: build.mutation<
-        NotificationContextSettingCreateApiResponse,
-        NotificationContextSettingCreateApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/notification-context-setting-cms`,
-          method: 'POST',
-          body: queryArg.createNotificationContextSettingDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Notification Setting']
-      }),
-      notificationContextSettingFindAll: build.query<
-        NotificationContextSettingFindAllApiResponse,
-        NotificationContextSettingFindAllApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/notification-context-setting-cms`,
-          params: {
-            order: queryArg.order,
-            page: queryArg.page,
-            take: queryArg.take,
-            query: queryArg.query,
-            applicableObject: queryArg.applicableObject,
-            applicableObjectId: queryArg.applicableObjectId,
-            status: queryArg.status,
-            from: queryArg['from'],
-            to: queryArg.to,
-            title: queryArg.title,
-            serviceType: queryArg.serviceType,
-            orderBy: queryArg.orderBy
-          }
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Notification Setting']
-      }),
-      notificationContextSettingFindOne: build.query<
-        NotificationContextSettingFindOneApiResponse,
-        NotificationContextSettingFindOneApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/notification-context-setting-cms/${queryArg.id}`
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Notification Setting']
-      }),
-      notificationContextSettingUpdate: build.mutation<
-        NotificationContextSettingUpdateApiResponse,
-        NotificationContextSettingUpdateApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/notification-context-setting-cms/${queryArg.id}`,
-          method: 'PUT',
-          body: queryArg.updateNotificationContextSettingDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Notification Setting']
-      }),
-      notificationContextSettingRemove: build.mutation<
-        NotificationContextSettingRemoveApiResponse,
-        NotificationContextSettingRemoveApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/notification-context-setting-cms/${queryArg.id}`,
-          method: 'DELETE'
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Notification Setting']
-      }),
-      notificationContextSettingPublish: build.mutation<
-        NotificationContextSettingPublishApiResponse,
-        NotificationContextSettingPublishApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/notification-context-setting-cms/publish/${queryArg.id}`,
-          method: 'PUT',
-          body: queryArg.notificationContextUpDateStatus
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Notification Setting']
-      }),
-      transactionLimitCreate: build.mutation<
-        TransactionLimitCreateApiResponse,
-        TransactionLimitCreateApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/transaction-limit`,
-          method: 'POST',
-          body: queryArg.createTransactionLimitDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Transaction Limit']
-      }),
-      transactionLimitFindAll: build.query<
-        TransactionLimitFindAllApiResponse,
-        TransactionLimitFindAllApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/transaction-limit`,
-          params: {
-            order: queryArg.order,
-            page: queryArg.page,
-            take: queryArg.take,
-            query: queryArg.query,
-            applicableObject: queryArg.applicableObject,
-            account: queryArg.account,
-            accountGroupId: queryArg.accountGroupId,
-            serviceType: queryArg.serviceType,
-            orderBy: queryArg.orderBy
-          }
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Transaction Limit']
-      }),
-      transactionLimitUpdate: build.mutation<
-        TransactionLimitUpdateApiResponse,
-        TransactionLimitUpdateApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/transaction-limit/${queryArg.id}`,
-          method: 'PATCH',
-          body: queryArg.updateTransactionLimitDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Transaction Limit']
-      }),
-      transactionLimitFindOneById: build.query<
-        TransactionLimitFindOneByIdApiResponse,
-        TransactionLimitFindOneByIdApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/transaction-limit/${queryArg.id}`
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Transaction Limit']
-      }),
-      transactionLimitRemove: build.mutation<
-        TransactionLimitRemoveApiResponse,
-        TransactionLimitRemoveApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/transaction-limit/${queryArg.id}`,
-          method: 'DELETE'
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Transaction Limit']
-      }),
-      serviceCreate: build.mutation<
-        ServiceCreateApiResponse,
-        ServiceCreateApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/service`,
-          method: 'POST',
-          body: queryArg.createServiceDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Service']
-      }),
-      serviceFindAll: build.query<
-        ServiceFindAllApiResponse,
-        ServiceFindAllApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/service`,
-          params: {
-            order: queryArg.order,
-            page: queryArg.page,
-            take: queryArg.take,
-            query: queryArg.query,
-            serviceId: queryArg.serviceId,
-            productTypeId: queryArg.productTypeId,
-            featured: queryArg.featured,
-            groupProduct: queryArg.groupProduct,
-            orderBy: queryArg.orderBy
-          }
-        }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Service']
-      }),
-      serviceGetAllService: build.query<
-        ServiceGetAllServiceApiResponse,
-        ServiceGetAllServiceApiArg
-      >({
-        query: () => ({ url: `/service/services` }),
-        providesTags: ['[Admin] Admin Service']
-      }),
-      serviceUpdate: build.mutation<
-        ServiceUpdateApiResponse,
-        ServiceUpdateApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/service/${queryArg.id}`,
-          method: 'PATCH',
-          body: queryArg.updateServiceDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Service']
-      }),
-      serviceRemove: build.mutation<
-        ServiceRemoveApiResponse,
-        ServiceRemoveApiArg
-      >({
-        query: (queryArg) => ({
-          url: `/service/${queryArg.id}`,
-          method: 'DELETE'
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Service']
-      }),
-      serviceFindById: build.query<
-        ServiceFindByIdApiResponse,
-        ServiceFindByIdApiArg
-      >({
-        query: (queryArg) => ({ url: `/service/${queryArg.id}` }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Service']
-      }),
       paymentOrderFindAll: build.query<
         PaymentOrderFindAllApiResponse,
         PaymentOrderFindAllApiArg
@@ -2144,25 +1255,6 @@ const injectedRtkApi = api
         transformResponse: fnTransformResponse,
         invalidatesTags: ['[Admin] Admin Payment Service']
       }),
-      billFindAll: build.query<BillFindAllApiResponse, BillFindAllApiArg>({
-        query: () => ({ url: `/bill` }),
-        transformResponse: fnTransformResponse,
-        providesTags: ['[Admin] Admin Bill']
-      }),
-      billCreate: build.mutation<BillCreateApiResponse, BillCreateApiArg>({
-        query: (queryArg) => ({
-          url: `/bill`,
-          method: 'POST',
-          body: queryArg.createBillDto
-        }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Bill']
-      }),
-      billDelete: build.mutation<BillDeleteApiResponse, BillDeleteApiArg>({
-        query: () => ({ url: `/bill`, method: 'DELETE' }),
-        transformResponse: fnTransformResponse,
-        invalidatesTags: ['[Admin] Admin Bill']
-      }),
       dashboardStatistic: build.query<
         DashboardStatisticApiResponse,
         DashboardStatisticApiArg
@@ -2380,75 +1472,29 @@ export const {
   useUserUnlockAdminMutation,
   useUserUpdatePermissionUserMutation,
   useCustomerFindAllQuery,
-  useLazyCustomerFindAllQuery,
   useCustomerGetSecurityMethodQuery,
   useCustomerFindOneQuery,
-  useLazyCustomerFindOneQuery,
   useCustomerUpdateMutation,
   useCustomerDeleteMutation,
   useCustomerFindOneByAccountNumberQuery,
-  useLazyCustomerFindOneByAccountNumberQuery,
   useCustomerGetCustomerByAccountNumberQuery,
   useCustomerGetExportExcelQuery,
   useCustomerGetExportCsvQuery,
   useCustomerCreateMutation,
   useCustomerToggleActiveMutation,
   useCustomerChangePasswordMutation,
-  useGroupFindAllQuery,
-  useLazyGroupFindAllQuery,
-  useGroupFindOneQuery,
-  useGroupUpdateMutation,
-  useGroupRemoveMutation,
-  useGroupSetPermissionForGroupMutation,
-  useAccountGroupCreateMutation,
-  useAccountGroupFindAllQuery,
-  useAccountGroupUpdateMutation,
-  useAccountGroupRemoveMutation,
-  useAccountGroupFindOneQuery,
   useCustomerVerificationFindAllQuery,
   useCustomerVerificationFindOneByIdQuery,
   useCustomerVerificationUpdateMutation,
   useCustomerVerificationDeleteVerifyMutation,
-  useProductTypeCreateMutation,
-  useProductTypeFindAllQuery,
-  useProductTypeFindOneQuery,
-  useProductTypeUpdateMutation,
-  useProductTypeRemoveMutation,
   useTransactionFindAllQuery,
   useTransactionFindOneQuery,
   useTransactionMainFindAllQuery,
-  useTransactionStepFindByReferenceIdQuery,
   useTransactionInfoFindOneQuery,
-  useLazyTransactionFindOneQuery,
   useTransactionUpdateStatusMutation,
-  useGroupProductCreateMutation,
-  useGroupProductFindAllQuery,
-  useGroupProductUpdateMutation,
-  useGroupProductFindByIdQuery,
-  useGroupProductRemoveMutation,
-  useProductFindAllQuery,
-  useProductCreateMutation,
-  useProductUpdateMutation,
-  useProductRemoveMutation,
-  useProductFindByIdQuery,
-  usePaymentLinkFindAllQuery,
-  usePaymentLinkCancelTokenMutation,
-  usePaymentLinkUpdateStatusMutation,
-  useBankCmsFindAllQuery,
-  useBankCmsFindAllActiveQuery,
-  useBankCmsUpdateMutation,
-  useBankCmsFindOneQuery,
-  useBankCmsGetExportExcelQuery,
-  useBankCmsGetExportCsvQuery,
   useFreezeBalanceHistoryCreateMutation,
   useFreezeBalanceHistoryFindAllQuery,
   useFreezeBalanceHistoryOpenFreezeBalanceMutation,
-  useSaleFeeCreateMutation,
-  useSaleFeeFindAllQuery,
-  useSaleFeeUpdateMutation,
-  useSaleFeeFindOneByIdQuery,
-  useSaleFeeRemoveMutation,
-  useSaleFeeNotifyQuery,
   useSystemFeeManagementDirectDepositMutation,
   useSystemFeeManagementCreatePolicyPaymentWithBankCardMutation,
   useSystemFeeManagementCreatePolicyTransferInternalMutation,
@@ -2466,24 +1512,6 @@ export const {
   useSystemFeeManagementUpdatePolicyWithDrawMutation,
   useSystemFeeManagementFindOneQuery,
   useSystemFeeManagementRemoveMutation,
-  useHistoryFeeManagementFindAllQuery,
-  useNotificationContextSettingCreateMutation,
-  useNotificationContextSettingFindAllQuery,
-  useNotificationContextSettingFindOneQuery,
-  useNotificationContextSettingUpdateMutation,
-  useNotificationContextSettingRemoveMutation,
-  useNotificationContextSettingPublishMutation,
-  useTransactionLimitCreateMutation,
-  useTransactionLimitFindAllQuery,
-  useTransactionLimitUpdateMutation,
-  useTransactionLimitFindOneByIdQuery,
-  useTransactionLimitRemoveMutation,
-  useServiceCreateMutation,
-  useServiceFindAllQuery,
-  useServiceGetAllServiceQuery,
-  useServiceUpdateMutation,
-  useServiceRemoveMutation,
-  useServiceFindByIdQuery,
   usePaymentOrderFindAllQuery,
   usePaymentOrderFindOneQuery,
   usePaymentOrderUpdateMutation,
@@ -2499,9 +1527,6 @@ export const {
   usePaymentServiceUpdateMutation,
   usePaymentServiceDeleteMutation,
   usePaymentServiceCreateMutation,
-  useBillFindAllQuery,
-  useBillCreateMutation,
-  useBillDeleteMutation,
   useDashboardStatisticQuery,
   useDashboardSendSmsQuery,
   useDashboardOverviewQuery,

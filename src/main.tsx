@@ -1,10 +1,3 @@
-// import { scan } from 'react-scan';
-
-// if (import.meta.env.DEV) {
-//   scan({
-//     enabled: false,
-//   });
-// }
 
 import ScreenLoading from '@components/screen-loading/ScreenLoading'
 import { EventEmitter } from 'events'
@@ -18,7 +11,7 @@ import i18next from './app/languages/i18n'
 import { store } from './app/store'
 import { WalletRoutes } from './routes'
 
-import './styles/index.scss'
+import './styles/index.css'
 import React from 'react'
 import { MessageProvider } from '@hooks/useMessage'
 

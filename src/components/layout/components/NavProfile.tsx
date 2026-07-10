@@ -1,13 +1,11 @@
 import { GUTTER, SIZE_ICON } from '@constants/appConstant'
 import { useAppDispatch, useAppSelector } from '@hooks/hook'
-import { authService } from '@services/bankSerice'
 import { logout } from '@slices/authSlice'
 import { showPassword, showProfile } from '@utils/events'
 import { Avatar, Col, Dropdown, MenuProps, Modal, Row, Typography } from 'antd'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import IAvatarDefault from '@assets/image/avatar_default.webp'
 import { COlOR } from './Navigation'
 import {
   LockKeyIcon,
@@ -18,6 +16,8 @@ import {
 import { DialogModal } from '@components/index'
 import { useLogoutMutation } from '@services/authEndpoints'
 import { getRefreshTokenCookie, removeRefreshTokenCookie } from '@configs/fetchBaseQuery.types'
+
+const IAvatarDefault = '/images/assets/image/avatar_default.webp'
 const { Text } = Typography
 
 export default function NavProfile() {

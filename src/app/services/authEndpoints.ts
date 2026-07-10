@@ -18,14 +18,6 @@ const injectedRtkApi = authApiService
                 }),
                 transformResponse: fnTransformResponse
             }),
-            refreshToken: build.mutation<{ accessToken: string; refreshToken?: string }, { refreshToken: string }>({
-                query: (body) => ({
-                    url: `/auth/refresh`,
-                    method: 'POST',
-                    body: body
-                }),
-                transformResponse: fnTransformResponse
-            }),
             logout: build.mutation({
                 query: (body) => ({
                     url: '/auth/logout',
@@ -41,6 +33,5 @@ export { injectedRtkApi as enhancedAuthApi }
 
 export const {
     useUserLoginMutation,
-    useRefreshTokenMutation,
     useLogoutMutation
 } = injectedRtkApi

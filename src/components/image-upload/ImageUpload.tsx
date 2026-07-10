@@ -6,7 +6,7 @@ import type { UploadChangeParam, UploadFile } from 'antd/es/upload/interface'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Trash } from '@phosphor-icons/react'
-import './style.scss'
+import './style.css'
 
 const getBase64 = (img: RcFile, callback: (url: string) => void) => {
   const reader = new FileReader()

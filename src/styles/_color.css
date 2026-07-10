@@ -1,0 +1,175 @@
+:root {
+  --primary: #007fff;
+  --primary-shade: #0070e0;
+  --primary-tint: #1a8cff;
+
+  --secondary: #8806ce;
+  --secondary-shade: #7805b5;
+  --secondary-tint: #941fd3;
+
+  --tertiary: #0d98ba;
+  --tertiary-shade: #0b86a4;
+  --tertiary-tint: #25a2c1;
+
+  --success: #32cd32;
+  --success-shade: #2cb42c;
+  --success-tint: #47d247;
+
+  --warning: #e3ff00;
+  --warning-shade: #c8e000;
+  --warning-tint: #e6ff1a;
+
+  --danger: #ff2400;
+  --danger-shade: #e02000;
+  --danger-tint: #ff3a1a;
+
+  --white: #fff;
+}
+
+.color-primary {
+  color: var(--primary);
+}
+
+.color-secondary {
+  color: var(--secondary);
+}
+
+.color-tertiary {
+  color: var(--tertiary);
+}
+
+.color-success {
+  color: var(--success);
+}
+
+.color-warning {
+  color: var(--warning);
+}
+
+.color-danger {
+  color: var(--danger);
+}
+
+.color-white {
+  color: var(--white);
+}
+
+.color-primary-shade {
+  color: var(--primary-shade);
+}
+
+.color-secondary-shade {
+  color: var(--secondary-shade);
+}
+
+.color-tertiary-shade {
+  color: var(--tertiary-shade);
+}
+
+.color-success-shade {
+  color: var(--success-shade);
+}
+
+.color-warning-shade {
+  color: var(--warning-shade);
+}
+
+.color-danger-shade {
+  color: var(--danger-shade);
+}
+
+.color-primary-tint {
+  color: var(--primary-tint);
+}
+
+.color-secondary-tint {
+  color: var(--secondary-tint);
+}
+
+.color-tertiary-tint {
+  color: var(--tertiary-tint);
+}
+
+.color-success-tint {
+  color: var(--success-tint);
+}
+
+.color-warning-tint {
+  color: var(--warning-tint);
+}
+
+.color-danger-tint {
+  color: var(--danger-tint);
+}
+
+.bg-primary {
+  background: var(--primary);
+}
+
+.bg-secondary {
+  background: var(--secondary);
+}
+
+.bg-tertiary {
+  background: var(--tertiary);
+}
+
+.bg-success {
+  background: var(--success);
+}
+
+.bg-warning {
+  background: var(--warning);
+}
+
+.bg-danger {
+  background: var(--danger);
+}
+
+.bg-primary-shade {
+  background: var(--primary-shade);
+}
+
+.bg-secondary-shade {
+  background: var(--secondary-shade);
+}
+
+.bg-tertiary-shade {
+  background: var(--tertiary-shade);
+}
+
+.bg-success-shade {
+  background: var(--success-shade);
+}
+
+.bg-warning-shade {
+  background: var(--warning-shade);
+}
+
+.bg-danger-shade {
+  background: var(--danger-shade);
+}
+
+.bg-primary-tint {
+  background: var(--primary-tint);
+}
+
+.bg-secondary-tint {
+  background: var(--secondary-tint);
+}
+
+.bg-tertiary-tint {
+  background: var(--tertiary-tint);
+}
+
+.bg-success-tint {
+  background: var(--success-tint);
+}
+
+.bg-warning-tint {
+  background: var(--warning-tint);
+}
+
+.bg-danger-tint {
+  background: var(--danger-tint);
+}

@@ -8,14 +8,8 @@ export const Logo = (props: LogoProps) => {
     <Image
       src={logo}
       preview={false}
-      height={props.collapsed ? 41 : 64}
+      height={props.collapsed ? 41 : 43}
     />
-    // <div className="flex items-center justify-center mt-1 w-full h-[75px] overflow-hidden">
-    //   <img
-    //     src={props.collapsed ? SLogo : ILogo}
-    //     alt="Logo"
-    //     className={`object-contain ${props.collapsed ? 'w-[30px] h-[30px]' : 'w-full h-full scale-[2]'}`}
-    //   />
-    // </div>
+ 
   )
 }

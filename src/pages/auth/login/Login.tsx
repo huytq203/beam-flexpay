@@ -14,7 +14,6 @@ import { useMessage } from '@hooks/useMessage'
 import { TokenType, setRefreshTokenCookie } from '@configs/fetchBaseQuery.types'
 import { useGoogleReCaptcha } from "@utils/recaptcha";
 import gsap from 'gsap'
-import { PATHS } from '@constants/pathConstant'
 import { AUTHENTICATION, TRANSACTIONMANAGEMENT } from '@constants/routersConstant'
 const loginSchema = z.object({
     username: z.string().min(1, 'Vui lòng nhập email').transform(val => val.trim()),
@@ -114,21 +113,6 @@ const LoginFormInside = () => {
         }
     }
 
-    const ssoLogin = async () => {
-        try {
-            const res = (await getUrlLogin({})) as {
-                data: { data: string; statusCode: number }
-            }
-            if ([200, 201].includes(res?.data?.statusCode) && res?.data?.data) {
-                window.location.href = res?.data?.data
-            } else {
-                notification.error({ message: t`login.sso-failed` })
-            }
-        } catch (error: any) {
-            notification.error({ message: t`login.sso-failed` })
-        }
-    }
-
     return (
         <div ref={cardRef} className="w-full max-w-[420px]">
             {/* Mobile brand header */}
@@ -206,30 +190,7 @@ const LoginFormInside = () => {
                     loading={isLoading}
                 />
 
-                {/* Divider */}
-                <div className="flex items-center gap-3 my-0.5">
-                    <div className="flex-1 h-px bg-gray-100" />
-                    <span className="text-[11px] text-gray-400 font-medium uppercase tracking-wider">Hoặc</span>
-                    <div className="flex-1 h-px bg-gray-100" />
-                </div>
-
-                {/* SSO Button */}
-                {/* <button
-                    type="button"
-                    onClick={ssoLogin}
-                    disabled={isLoading}
-                    className="w-full h-[42px] flex items-center justify-center gap-2.5
-                           rounded-[10px] border border-gray-200 bg-white
-                           text-[13px] font-semibold text-gray-600
-                           transition-all duration-200 ease-out
-                           hover:border-teal-300 hover:text-teal-700 hover:bg-teal-50/40
-                           active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    <MicrosoftIcon />
-                    <span>Đăng nhập với Microsoft</span>
-                </button> */}
             </form>
-
             {/* Footer */}
             <p className="text-center text-[11px] text-gray-400 mt-8">
                 © {new Date().getFullYear()} Beam Ewallet · Powered by Flexpay

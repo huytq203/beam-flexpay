@@ -64,22 +64,22 @@
   .verify-button {
     height: 48px;
     font-size: 16px;
-    // background-color: #26c6da;
-    // border-color: #26c6da;
+    /* background-color: #26c6da;
+    border-color: #26c6da; */
     margin-bottom: 16px;
 
-    // &:hover,
-    // &:focus {
-    //   background-color: #00acc1;
-    //   border-color: #00acc1;
-    // }
+    /* &:hover,
+    &:focus {
+      background-color: #00acc1;
+      border-color: #00acc1;
+    }
 
-    // &:disabled {
-    //   background-color: #bdbdbd;
-    //   border-color: #bdbdbd;
-    //   color: #fff;
-    //   cursor: not-allowed;
-    // }
+    &:disabled {
+      background-color: #bdbdbd;
+      border-color: #bdbdbd;
+      color: #fff;
+      cursor: not-allowed;
+    } */
   }
 
   .action-buttons {
@@ -87,27 +87,27 @@
     justify-content: space-between;
     margin-top: 16px;
 
-    // .resend-button {
-    //   background-color: #26c6da;
-    //   border-color: #26c6da;
+    /* .resend-button {
+      background-color: #26c6da;
+      border-color: #26c6da;
 
-    //   &:hover,
-    //   &:focus {
-    //     background-color: #00acc1;
-    //     border-color: #00acc1;
-    //   }
-    // }
+      &:hover,
+      &:focus {
+        background-color: #00acc1;
+        border-color: #00acc1;
+      }
+    }
 
-    // .cancel-button {
-    //   background-color: #fff;
-    //   color: #333;
-    //   border-color: #d9d9d9;
+    .cancel-button {
+      background-color: #fff;
+      color: #333;
+      border-color: #d9d9d9;
 
-    //   &:hover,
-    //   &:focus {
-    //     background-color: #f5f5f5;
-    //     border-color: #d9d9d9;
-    //   }
-    // }
+      &:hover,
+      &:focus {
+        background-color: #f5f5f5;
+        border-color: #d9d9d9;
+      }
+    } */
   }
 }

@@ -1,6 +1,7 @@
 import { useBoolean } from 'ahooks'
-import { Modal, Spin } from 'antd'
+import { Modal } from 'antd'
 import { useEffect, useRef } from 'react'
+import './style.css'
 
 function ScreenLoading() {
   const [isOpen, { setTrue, setFalse }] = useBoolean(false)
@@ -42,8 +43,20 @@ function ScreenLoading() {
       className='modal-loading'
       getContainer={false}
       zIndex={9999}
+      mousePosition={{ x: 0, y: 0 }}
     >
-      <Spin    zIndex={9999} size='large' spinning={isOpen} />
+      <div className='screen-loading-content'>
+        <img
+          src='/images/assets/image/loadingIcon.svg'
+          alt='loading'
+          className='screen-loading-spinner'
+        />
+        <img
+          src='/images/logo.png'
+          alt='flexpay'
+          className='screen-loading-logo'
+        />
+      </div>
     </Modal>
   )
 }

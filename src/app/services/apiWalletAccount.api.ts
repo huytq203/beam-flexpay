@@ -2,7 +2,7 @@ import { apiWalletCore } from "@services/apiService"
 import { ResponseType } from "@type/api"
 import { ContentAccountWallet, DataAccountWallet } from "@type/responseAccountWallet"
 
-export const apiEWallet = apiWalletCore.injectEndpoints({
+const apiEWallet = apiWalletCore.injectEndpoints({
     endpoints: (build) => ({
         getAccount: build.query({
             query: (params) => ({
@@ -57,7 +57,6 @@ export const apiEWallet = apiWalletCore.injectEndpoints({
 })
 export const {
     useGetAccountQuery,
-    useLazyGetAccountQuery,
     useGetAccountByIdQuery,
     usePostUnfreezeMutation,
     usePostFreezeMutation,

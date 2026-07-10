@@ -1,17 +1,8 @@
 import { apiFeeService, apiService } from './apiService'
 import { FeeAssignment, FeeAssignmentResponse, FeeAssignResponse } from '@pages/fee-management-v4/fee-assignment/constants/feeAssignment'
 import { ResponseType } from '@type/api'
-export const feeAssignApi = apiFeeService.injectEndpoints({
+const feeAssignApi = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
-    getAssign: build.query<FeeAssignResponse, any>({
-      query: (params) => ({
-        url: `/fee/policy-assignments`,
-        method: "GET",
-        params: params
-      }),
-      transformResponse: (res: ResponseType<FeeAssignResponse>) => res.data,
-      providesTags: ['feeAssign']
-    }),
     getAssignSearch: build.query<FeeAssignResponse, any>({
       query: (params) => ({
         url: `/fee/policy-assignments/search`,
@@ -62,13 +53,10 @@ export const feeAssignApi = apiFeeService.injectEndpoints({
   })
 })
 export const {
-  useGetAssignQuery,
-  useLazyGetAssignQuery,
   usePostAssignMutation,
   useGetAssignByIdQuery,
   usePutAssignMutation,
   usePatchAssignActiveMutation,
   usePatchAssignInActiveMutation,
-  useLazyGetAssignSearchQuery,
   useGetAssignSearchQuery
 } = feeAssignApi

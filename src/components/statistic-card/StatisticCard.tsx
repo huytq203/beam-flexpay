@@ -1,7 +1,7 @@
 import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons'
 import { Card, Col, Row, Typography } from 'antd'
 import React from 'react'
-import './style.scss'
+import './style.css'
 
 interface Props {
   color: string

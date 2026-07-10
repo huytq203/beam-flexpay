@@ -28,7 +28,7 @@ import {
   ShieldCheckered as ShieldIcon,
   CheckCircle as CheckIcon
 } from '@phosphor-icons/react'
-import '../style.scss'
+import '../style.css'
 
 const { Text } = Typography
 

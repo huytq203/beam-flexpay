@@ -18,7 +18,7 @@ import { useUserGetMyInfoQuery } from '@services/cmsService'
 import usePermission from '@hooks/usePermission'
 
 import { initInactivityTracker } from '@configs/fetchBaseQueryCustom'
-import './style.scss'
+import './style.css'
 import { FORBIDDENERROR } from '@constants/routersConstant'
 import { PATHS } from '@constants/pathConstant'
 import Cookies from 'js-cookie'
@@ -151,6 +151,10 @@ function AppLayout() {
   }, [navigation, currentKey, isAccess, hasInitOpenKeys])
 
   const handleOpenChange = (keys: string[]) => {
+    // Khi Sider collapse, antd tự đóng hết submenu và gọi onOpenChange([]) —
+    // bỏ qua sự kiện này để không mất trạng thái submenu đang mở của user,
+    // vì khi mở lại sidebar Menu là controlled nên sẽ không tự khôi phục được.
+    if (collapsed) return
     setOpenKeys(keys)
   }
 
@@ -167,7 +171,7 @@ function AppLayout() {
 
   const sidebarContent = (
     <>
-      <div className='logo border-b border-gray-200 flex justify-center items-center bg-white'>
+      <div className='logo border-b border-gray-200 flex justify-center items-center bg-white p-3'>
         <Logo collapsed={isMobile ? false : collapsed} />
       </div>
       <Menu
@@ -176,7 +180,13 @@ function AppLayout() {
         items={isAccess ? navigation as MenuProps['items'] : []}
         onClick={handleSelectMenu}
         selectedKeys={currentKey}
-        openKeys={hasInitOpenKeys ? openKeys : currentKey}
+        openKeys={
+          !isMobile && collapsed
+            ? undefined // để Menu tự quản lý flyout hover khi sidebar thu gọn, tránh xung đột với openKeys đã lưu
+            : hasInitOpenKeys
+              ? openKeys
+              : currentKey
+        }
         onOpenChange={handleOpenChange as any}
       />
     </>

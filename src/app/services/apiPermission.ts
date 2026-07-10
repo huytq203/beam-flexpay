@@ -2,7 +2,7 @@ import { ResponseType } from "@type/api";
 import { Permission } from "@type/permissionManagement";
 import { authApiService } from "./apiService";
 
-export const permissionApi = authApiService.injectEndpoints({
+const permissionApi = authApiService.injectEndpoints({
     endpoints: (build) => ({
         getPermission: build.query({
             query: (params) => ({
@@ -49,7 +49,6 @@ export const permissionApi = authApiService.injectEndpoints({
 })
 export const {
     useGetPermissionQuery,
-    useLazyGetPermissionQuery,
     usePutPermissionMutation,
     useDeletePermissionMutation,
     usePostPermissionMutation,

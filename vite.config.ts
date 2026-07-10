@@ -127,10 +127,6 @@ export default defineConfig(({ mode }) => {
     resolve: {  
       alias: [
         {
-          find: '@assets',
-          replacement: path.resolve(__dirname, 'src/styles/assets')
-        },
-        {
           find: '@pages',
           replacement: path.resolve(__dirname, 'src/pages')
         },

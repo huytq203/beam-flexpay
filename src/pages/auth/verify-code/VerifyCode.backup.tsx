@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Button, Card, Input } from 'antd'
-import './style.scss'
+import './style.css'
 import { useUserGetResendOtpMutation, useUserGetUserOtpMutation, useVerifyLoginOtpMutation } from '@services/cmsService';
 import { useNavigate } from 'react-router-dom';
 import { notification } from 'antd';

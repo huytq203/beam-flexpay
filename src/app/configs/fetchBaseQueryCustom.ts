@@ -28,7 +28,8 @@ import {
 import { updateAccessToken } from '@slices/authActions'
 import { PATHS } from '@constants/pathConstant'
 import Swal from 'sweetalert2'
-import capybaraIcon from '@assets/capybara/Cappybara 17 Poses-10.png'
+
+const capybaraIcon = '/images/assets/capybara/Cappybara 17 Poses-10.png'
 
 // ============================================================================
 // STATE - Token Refresh Singleton

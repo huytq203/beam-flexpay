@@ -10,9 +10,8 @@ import { useEffect } from 'react'
  */
 
 const SITE_KEY =
-  (import.meta.env.VITE_RECAPTCHA_SITE_KEY as string) ||
-  '6Le42oIsAAAAAPHXVw2ss-yNfhvg4dmJB1348wXb'
-
+  (import.meta.env.VITE_RECAPTCHA_SITE_KEY as string) 
+  
 const SCRIPT_ID = 'google-recaptcha-v3'
 
 let loadPromise: Promise<void> | null = null
@@ -51,13 +50,27 @@ export async function executeRecaptcha(action: string): Promise<string> {
   return grecaptcha.execute(SITE_KEY, { action })
 }
 
+/** Gỡ script + badge khỏi DOM để reCAPTCHA không còn hiển thị/hoạt động ngoài màn login. */
+function unloadScript(): void {
+  if (typeof window === 'undefined') return
+  document.getElementById(SCRIPT_ID)?.remove()
+  document.querySelectorAll('.grecaptcha-badge').forEach((el) => el.remove())
+  delete (window as any).grecaptcha
+  loadPromise = null
+}
+
 /**
  * Drop-in thay cho useGoogleReCaptcha của lib: tự nạp script khi mount và
  * trả về { executeRecaptcha } cùng chữ ký, để component dùng như cũ.
+ *
+ * Gỡ script + badge khi unmount, vì badge được chèn thẳng vào document.body
+ * (ngoài cây React) nên nếu không dọn, nó sẽ nổi cố định trên mọi trang sau
+ * khi rời khỏi màn login.
  */
 export function useGoogleReCaptcha() {
   useEffect(() => {
     loadScript().catch(() => {})
+    return unloadScript
   }, [])
   return { executeRecaptcha }
 }
