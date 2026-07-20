@@ -21,8 +21,8 @@ const DialogDeletePermission = ({ permissionName, onSuccess, onCancel }: Props) 
       await deletePermission(permissionName).unwrap()
       successMess('Xóa thành công')
       onSuccess()
-    } catch (error: any) {
-      // errorMess(error?.data?.detail)
+    } catch {
+      // errorMess(getApiErrorDetail(error))
     } finally {
       setLoading(false)
     }

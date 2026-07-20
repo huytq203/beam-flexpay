@@ -14,11 +14,23 @@ const SITE_KEY =
   
 const SCRIPT_ID = 'google-recaptcha-v3'
 
+/** Bề mặt API của grecaptcha v3 mà file này sử dụng. */
+interface GrecaptchaV3 {
+  ready: (callback: () => void) => void
+  execute: (siteKey: string, options: { action: string }) => Promise<string>
+}
+
+declare global {
+  interface Window {
+    grecaptcha?: GrecaptchaV3
+  }
+}
+
 let loadPromise: Promise<void> | null = null
 
 function loadScript(): Promise<void> {
   if (typeof window === 'undefined') return Promise.resolve()
-  if ((window as any).grecaptcha?.execute) return Promise.resolve()
+  if (window.grecaptcha?.execute) return Promise.resolve()
   if (loadPromise) return loadPromise
 
   loadPromise = new Promise<void>((resolve, reject) => {
@@ -44,7 +56,7 @@ function loadScript(): Promise<void> {
 /** Sinh token reCAPTCHA cho 1 action. Throw nếu không tải/khởi tạo được. */
 export async function executeRecaptcha(action: string): Promise<string> {
   await loadScript()
-  const grecaptcha = (window as any).grecaptcha
+  const grecaptcha = window.grecaptcha
   if (!grecaptcha?.execute) throw new Error('reCAPTCHA chưa sẵn sàng')
   await new Promise<void>((resolve) => grecaptcha.ready(() => resolve()))
   return grecaptcha.execute(SITE_KEY, { action })
@@ -55,7 +67,7 @@ function unloadScript(): void {
   if (typeof window === 'undefined') return
   document.getElementById(SCRIPT_ID)?.remove()
   document.querySelectorAll('.grecaptcha-badge').forEach((el) => el.remove())
-  delete (window as any).grecaptcha
+  delete window.grecaptcha
   loadPromise = null
 }
 

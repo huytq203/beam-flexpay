@@ -1,4 +1,3 @@
-import { EyeFilled, EyeOutlined } from '@components/icons'
 import React, { useState } from 'react'
 
 interface MaskTextProps {

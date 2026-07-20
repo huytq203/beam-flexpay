@@ -1011,7 +1011,7 @@ export type DashboardSendSmsApiArg = {
   to?: string | Dayjs
   orderBy?: string
 }
-export type DashboardOverviewApiResponse = Record<string, any>[]
+export type DashboardOverviewApiResponse = Record<string, unknown>[]
 export type DashboardOverviewApiArg = {
   year: string
 }
@@ -1125,7 +1125,7 @@ export type PageMetaSearchDto = {
   take: number
 }
 export type UserPageDto = {
-  data: any[]
+  data: unknown[]
   meta: PageMetaDto
 }
 export type GroupPermission = {
@@ -1633,7 +1633,7 @@ export type UpdatePermissionForUserDto = {
   permissionDeleteIds: number[]
 }
 export type CustomerPageDto = {
-  data: any[]
+  data: CustomerDto[]
   meta: PageMetaDto
 }
 export type SettingSecurityDataDto = {
@@ -1750,7 +1750,7 @@ export type CreateCustomerPersonalDto = {
   placeOfIdentityIssuance: string
   email: string
   referralCode: string
-  type: any
+  type: unknown
   address: string
   village: string
   district: string
@@ -1764,7 +1764,7 @@ export type ChangePasswordDto = {
   password: string
 }
 export type GroupPageDto = {
-  data: any[]
+  data: unknown[]
   meta: PageMetaDto
 }
 export type SetPermissionForGroupDto = {
@@ -1778,7 +1778,7 @@ export type CreateAccountGroupDto = {
   customerIds: number[]
 }
 export type AccountGroupPageDto = {
-  data: any[]
+  data: AccountGroupDto[]
   meta: PageMetaDto
 }
 export type UpdateAccountGroupDto = {
@@ -1793,7 +1793,7 @@ export type AccountGroupDto = {
   customers: CustomerDto[]
 }
 export type CustomerVerificationPageDto = {
-  data: any[]
+  data: CustomerVerificationDto[]
   meta: PageMetaDto
 }
 export type FileManagerDto = {
@@ -1838,7 +1838,7 @@ export type CreateProductTypeDto = {
   showWeb: number
 }
 export type ProductTypePageDto = {
-  data: any[]
+  data: unknown[]
   meta: PageMetaDto
 }
 export type ProductDetailDto = {
@@ -1880,11 +1880,11 @@ export type UpdateProductTypeDto = {
   showWeb?: number
 }
 export type TransactionPageDto = {
-  data: any[]
+  data: TransactionDto[]
   meta: PageMetaDto
 }
 export type TransactionMainPageDto = {
-  data: any[]
+  data: TransactionMainDto[]
   meta: PageMetaDto
 }
 export type TransactionStepPageDto = {
@@ -1990,7 +1990,7 @@ export type CreateGroupProductDto = {
   file?: Blob
 }
 export type GroupProductPageDto = {
-  data: any[]
+  data: unknown[]
   meta: PageMetaDto
 }
 export type UpdateGroupProductDto = {
@@ -2004,7 +2004,7 @@ export type UpdateGroupProductDto = {
   image?: string
 }
 export type ProductPageDto = {
-  data: any[]
+  data: unknown[]
   meta: PageMetaDto
 }
 export type CreateProductDto = {
@@ -2020,7 +2020,7 @@ export type UpdateProductDto = {
   isShow?: number
 }
 export type PaymentLinkPageDto = {
-  data: any[]
+  data: unknown[]
   meta: PageMetaDto
 }
 export type BankDto = {
@@ -2064,7 +2064,7 @@ export type PaymentLinkCustomerDto = {
 }
 
 export type BankPageDto = {
-  data: any[]
+  data: BankDto[]
   meta: PageMetaDto
 }
 export type UpdateBankDto = {
@@ -2100,7 +2100,7 @@ export type CreateFreezeBalanceHistoryDto = {
   customerAccountNumber: string
 }
 export type FreezeBalanceHistoryPageDto = {
-  data: any[]
+  data: unknown[]
   meta: PageMetaDto
 }
 export type OpenFreezeBalanceHistoryDto = {
@@ -2119,7 +2119,7 @@ export type CreateSaleFeeDto = {
   endDate?: string
 }
 export type SaleFeePageDto = {
-  data: any[]
+  data: unknown[]
   meta: PageMetaDto
 }
 export type UpdateSaleFeeDto = {
@@ -2170,7 +2170,7 @@ export type CreateSystemFeeManagementDto = {
   type: 'FLEXIBLE' | 'FIXED'
 }
 export type SystemFeeManagementPageDto = {
-  data: any[]
+  data: SystemFeeManagementDto[]
   meta: PageMetaDto
 }
 export type UpdateSystemFeeManagementDto = {
@@ -2223,7 +2223,7 @@ export type SystemFeeManagementDto = {
   depositMethods: string
 }
 export type HistoryFeeManagementPageDto = {
-  data: any[]
+  data: unknown[]
   meta: PageMetaDto
 }
 export type CreateNotificationContextSettingDto = {
@@ -2259,7 +2259,7 @@ export type CreateNotificationContextSettingDto = {
   startDate: string
 }
 export type NotificationContextSettingPageDto = {
-  data: any[]
+  data: unknown[]
   meta: PageMetaDto
 }
 export type NotificationContextSettingDetailDto = {
@@ -2322,7 +2322,7 @@ export type CreateTransactionLimitDto = {
   serviceType: 'DEPOSIT' | 'WITHDRAW' | 'TRANFER' | 'PAYMENT' | 'TOTAL_LIMIT'
 }
 export type TransactionLimitPageDto = {
-  data: any[]
+  data: unknown[]
   meta: PageMetaDto
 }
 export type UpdateTransactionLimitDto = {
@@ -2357,14 +2357,14 @@ export type CreateServiceDto = {
   name: string
 }
 export type ServicePageDto = {
-  data: any[]
+  data: unknown[]
   meta: PageMetaDto
 }
 export type UpdateServiceDto = {
   name?: string
 }
 export type PaymentOrderPageDto = {
-  data: any[]
+  data: unknown[]
   meta: PageMetaDto
 }
 export type PaymentOrderPartnerDto = {
@@ -2396,7 +2396,7 @@ export type UpdatePaymentOrderDto = {
   partnerOrderStatus?: number
 }
 export type PaymentPartnerPageDto = {
-  data: any[]
+  data: PaymentPartnerDto[]
   meta: PageMetaDto
 }
 export type PaymentServiceDto = {
@@ -2455,7 +2455,7 @@ export type PaymentPartnerDetailDto = {
   description: string
 }
 export type PaymentServicePageDto = {
-  data: any[]
+  data: PaymentServiceDto[]
   meta: PageMetaDto
 }
 export type PaymentServiceDetailDto = {
@@ -2547,11 +2547,11 @@ export type CreateBillDto = {
   billDetails?: CreateBillDetailItemDto[]
 }
 export type SmsPaginationDto = {
-  data: any[]
+  data: unknown[]
   meta: PageMetaDto
 }
 export type RefundPageDto = {
-  data: any[]
+  data: RefundDto[]
   meta: PageMetaDto
 }
 export type RefundDto = {
@@ -2590,7 +2590,7 @@ export type AccountMetricDataDto = {
   isTotalAccountPersonal: boolean
 }
 export type ReportPageDto = {
-  data: any[]
+  data: unknown[]
   meta: PageMetaDto
 }
 export type MetricDataDeviceDto = {

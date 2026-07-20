@@ -1,4 +1,3 @@
-import { DollarOutlined } from '@ant-design/icons'
 import {
   _BANKANDCONNECT,
   _CUSTOMERS,
@@ -12,7 +11,6 @@ import {
   _REPORTS,
   _ROLEMANAGEMENT,
   _STATE_BANK,
-  _FEEMANAGEMENT_V3,
   _FEEMANAGEMENT_V4,
   _ROLEMANAGEMENT_V2,
   _WALLETADMINISTRATION,
@@ -32,7 +30,6 @@ import {
   ClipboardTextIcon,
   ClockCounterClockwiseIcon,
   CreditCardIcon,
-  CurrencyCircleDollar,
   CurrencyCircleDollarIcon,
   CurrencyDollarIcon,
   EnvelopeSimpleIcon,

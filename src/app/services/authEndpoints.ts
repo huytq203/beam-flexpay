@@ -1,6 +1,5 @@
-import { DataLogin, OtpDataDto, UserLoginApiArg, UserLoginApiResponse } from '@type/application'
+import { DataLogin, UserLoginApiArg } from '@type/application'
 import { fnTransformResponse } from '@utils/helperFunctions'
-import { url } from 'inspector';
 import { authApiService } from './apiService';
 
 

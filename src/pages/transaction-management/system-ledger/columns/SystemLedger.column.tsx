@@ -3,7 +3,6 @@ import { LedgerEntry } from '../types/SystemLedger.type'
 import dayjs from 'dayjs'
 import { NavigateFunction } from 'react-router-dom'
 import {
-  CopyableText,
   MaskText,
   TooltipComponent,
   TypographyText

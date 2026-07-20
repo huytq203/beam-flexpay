@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useGetAccountByIdQuery } from '../../../../app/services/apiWalletAccount.api'
-import { useGetEKYCByIdQuery, useGetEKYCSearchQuery } from '@services/apiEKYC'
+import { useGetEKYCSearchQuery } from '@services/apiEKYC'
 
 const useDetailUser = () => {
 

@@ -1,6 +1,5 @@
 import { ButtonComponent, TooltipComponent } from '@components/index'
 
-import usePermissionChek from '@hooks/usePermissionCheck'
 import { feeDomain, serviceType } from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -10,12 +9,11 @@ import { getEnumLabel } from '../utils/FeeManagement.utils'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { STATUS_CONFIG, statusType } from '../constants/FeeManagement.constant'
 import * as Icons from '@components/icons'
-import { useNavigate } from 'react-router-dom'
+import { NavigateFunction } from 'react-router-dom'
 import { PATHS } from '@constants/pathConstant'
-import { FeePolicy } from '../types/FeeManagement.type'
 import { ColumnsType } from 'antd/es/table'
 interface Props {
-  navigate: any
+  navigate: NavigateFunction
   handleActive: (id: string) => void
   handleInactive: (id: string) => void
   isLoadingPatchActivateFee: boolean

@@ -2,16 +2,18 @@ import { Control, FieldValues, Path } from "react-hook-form";
 import { FormField } from "./FormField";
 import { TextArea } from "../ui/textarea-component"; // Giả sử bạn có export TextArea
 import { ReactNode } from "react";
+import type { TextAreaProps } from "antd/es/input/TextArea";
 
-interface FormTextAreaProps<T extends FieldValues> {
+interface FormTextAreaProps<T extends FieldValues>
+  extends Omit<TextAreaProps, "name" | "onChange" | "onBlur" | "value" | "ref"> {
   name: Path<T>;
   control: Control<T>;
   label?: string | ReactNode;
   placeholder?: string;
   rows?: number;
   className?: string;
+  classNameLable?: string;
   disabled?: boolean;
-  [key: string]: any;
   trim?: boolean;
   trimOn?: "change" | "blur";
 }
@@ -44,7 +46,7 @@ export function FormTextArea<T extends FieldValues>({
           placeholder={placeholder}
           rows={rows}
           disabled={disabled}
-          onChange={(e: any) => {
+          onChange={(e) => {
             let value = e.target.value;
 
             if (trim && trimOn === "change") {
@@ -52,7 +54,7 @@ export function FormTextArea<T extends FieldValues>({
             }
             field.onChange(value);
           }}
-          onBlur={(e: any) => {
+          onBlur={(e) => {
             if (trim && trimOn === "blur") {
               field.onChange(e.target.value.trim());
             }

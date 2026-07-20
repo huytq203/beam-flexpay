@@ -31,14 +31,14 @@ export interface MerchanOrderItem {
   currency: string
   status: string
   bankCode: string
-  expiredAt: any
+  expiredAt: string | null
   createdAt: string
   updatedAt: string
-  virtualAccount: any
-  qrCode: any
-  qrCodeImage: any
+  virtualAccount: string | null
+  qrCode: string | null
+  qrCodeImage: unknown
   paymentRef: string
-  paymentName: any
+  paymentName: string | null
 }
 
 export interface Pageable {

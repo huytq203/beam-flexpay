@@ -3,7 +3,6 @@ import { RoleUserAccount } from '@pages/role-management-V2/user-management/const
 import { UserInfor } from '@type/userManagement'
 import { useState, useEffect, memo } from 'react'
 import { useLazyGetUserByIdQuery } from '@services/apiUserManagement'
-import { ButtonComponent } from '@components/index'
 import dayjs from 'dayjs'
 
 interface Props {

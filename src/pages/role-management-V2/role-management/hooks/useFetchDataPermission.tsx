@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react'
 import { useGetPermissionQuery } from '@services/apiPermission'
 import usePagination from '@hooks/usePagination'
+import { Permission } from '@type/permissionManagement'
 
 const useFetchDataPermission = () => {
   const { page, setPage, pageSize, setPageSize } = usePagination()
   const [isSearchMode, setIsSearchMode] = useState(false)
-  const [searchData, setSearchData] = useState<any>(null)
+  const [searchData, setSearchData] = useState<Permission | null>(null)
 
   const {
     data: permissionData,
@@ -20,7 +21,7 @@ const useFetchDataPermission = () => {
 
   const dataSource = useMemo(() => {
     return (
-      currentData?.content?.map((item: any, index: number) => ({
+      currentData?.content?.map((item, index) => ({
         ...item,
         no: (page - 1) * pageSize + index + 1
       })) ?? []

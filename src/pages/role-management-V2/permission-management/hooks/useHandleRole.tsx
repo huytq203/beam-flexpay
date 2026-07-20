@@ -6,6 +6,7 @@ import { ModalType, SelectedRole } from '../types/PermissionManagement.type'
 import { getPermissionManagementColumn } from '../columns/PermissionManagement.column'
 import useFetchDataRole from './useFetchDataRole'
 import { SearchFormData } from '../components/FormSearch'
+import { getApiErrorDetail } from '@pages/role-management-V2/utils/RoleManagement.utils'
 
 const useHandleRole = (fetchHook: ReturnType<typeof useFetchDataRole>) => {
   const { profile } = useAppSelector((state) => state.auth)
@@ -48,8 +49,8 @@ const useHandleRole = (fetchHook: ReturnType<typeof useFetchDataRole>) => {
         const result = await searchRole(searchParams).unwrap()
         fetchHook.setSearchData(result)
         fetchHook.setIsSearchMode(true)
-      } catch (error: any) {
-        errorMess(error?.data?.detail)
+      } catch (error) {
+        errorMess(getApiErrorDetail(error) ?? '')
       }
     },
     [fetchHook, searchRole, errorMess]

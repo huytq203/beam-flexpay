@@ -15,6 +15,16 @@ export interface FeeAssignment {
   updatedAt: string
 }
 
+/**
+ * Item of `GET /fee/banks` -> `data.content`.
+ * The endpoint is declared untyped in `@services/apiFeeBank`; only the two
+ * fields below are read by the fee-assignment forms.
+ */
+export interface FeeBank {
+  code: string
+  name: string
+}
+
 export interface Sort {
   empty: boolean
   unsorted: boolean

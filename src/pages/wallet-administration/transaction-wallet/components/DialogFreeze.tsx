@@ -1,4 +1,3 @@
-import { Radio } from '@components/index'
 import { FormDatePicker, FormInputNumber, FormRadio, FormTextArea } from '@components/form'
 import { WarningIcon } from '@components/icons'
 import React from 'react'
@@ -16,6 +15,17 @@ interface DialogFreezeProps {
     currency?: string
     onSuccess?: () => void
     onCancel?: () => void
+}
+
+/**
+ * `unwrap()` ném ra FetchBaseQueryError | SerializedError, không phải Error thường,
+ * nên phải thu hẹp kiểu trước khi đọc `data.message`.
+ */
+const getApiErrorMessage = (err: unknown): string | undefined => {
+    if (typeof err !== 'object' || err === null || !('data' in err)) return undefined
+    const data = err.data
+    if (typeof data !== 'object' || data === null || !('message' in data)) return undefined
+    return typeof data.message === 'string' ? data.message : undefined
 }
 
 interface FreezeFormValues {
@@ -50,10 +60,10 @@ const DialogFreeze = ({
             notification.success({ message: 'Đóng băng tài khoản thành công' })
             reset()
             onSuccess?.()
-        } catch (err: any) {
+        } catch (err) {
             notification.error({
                 message: 'Đóng băng thất bại',
-                description: err?.data?.message ?? 'Đã xảy ra lỗi',
+                description: getApiErrorMessage(err) ?? 'Đã xảy ra lỗi',
             })
         }
     }

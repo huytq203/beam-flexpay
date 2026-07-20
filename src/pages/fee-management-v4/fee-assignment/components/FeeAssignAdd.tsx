@@ -5,10 +5,8 @@ import {
   ModalComponent
 } from '@components/index'
 import { useSVG } from '@hooks/useSVG'
-import { useGetFeePolicyByIdQuery } from '@services/apiFeePoliciesServices'
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useRef } from 'react'
 import { ComponentDetail } from '@pages/fee-management-v4/fee-assignment/components/ComponentDetail'
-import { skipToken } from '@reduxjs/toolkit/query'
 import InforPolicy, { InfoPolicyRef } from './InfoPolicy'
 import FormInforAdd from './FormInforAdd'
 import * as Icons from '@components/icons'

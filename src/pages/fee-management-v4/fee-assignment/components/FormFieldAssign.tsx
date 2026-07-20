@@ -1,14 +1,14 @@
-import { FormDatePicker, FormInput, FormSelect } from '@components/form'
+import { FormSelect } from '@components/form'
 import { useGetBankQuery } from '@services/apiFeeBank'
 import {
   cardTypeType,
-  customerGroupType,
+  FeeBank,
   paymentMethodType,
   statusType
 } from '@pages/fee-management-v4/fee-assignment/constants/feeAssignment'
 import { serviceType } from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
-import React, { useEffect, useState } from 'react'
-import { Control, UseFormSetValue, UseFormWatch, useWatch } from 'react-hook-form'
+import React from 'react'
+import { Control, UseFormSetValue, UseFormWatch } from 'react-hook-form'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import { FeeAssignType } from '../schemas/feeAssign.schema'
 
@@ -23,7 +23,6 @@ interface FormFieldAssign {
 const FormFieldAssign = React.memo(({ watch, control, setValue, isCreate, feeDomain }: FormFieldAssign) => {
   // api database
   const { data: dataBank } = useGetBankQuery({})
-  console.log(feeDomain)
 
 
 
@@ -102,7 +101,7 @@ const FormFieldAssign = React.memo(({ watch, control, setValue, isCreate, feeDom
           control={control}
           name='bankCode'
           options={[
-            ...(dataBank?.data?.content || []).map((item: any) => ({
+            ...(dataBank?.data?.content || []).map((item: FeeBank) => ({
               label: item.name,
               value: item.code
             }))

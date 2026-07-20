@@ -1,5 +1,5 @@
 import { ButtonComponent, CardComponent } from '@components/index'
-import { FormInput, FormTextArea } from '@components/form'
+import { FormInput } from '@components/form'
 import { useEffect, useState, memo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -7,6 +7,7 @@ import { PermissionRoleSchema, PermissionRoleFormData } from '../schemas/Permiss
 import { usePostRoleMutation, usePutRoleMutation } from '@services/apiRole'
 import { useMessage } from '@hooks/useMessage'
 import { SelectedRole } from '../types/PermissionManagement.type'
+import { getApiErrorDetail } from '@pages/role-management-V2/utils/RoleManagement.utils'
 
 interface Props {
   role?: SelectedRole | null
@@ -53,8 +54,8 @@ const DialogAddRole = ({ role, onSuccess, onCancel }: Props) => {
         successMess('Thêm nhóm quyền thành công')
       }
       onSuccess()
-    } catch (error: any) {
-      errorMess(error?.data?.detail)
+    } catch (error) {
+      errorMess(getApiErrorDetail(error) ?? '')
     } finally {
       setLoading(false)
     }

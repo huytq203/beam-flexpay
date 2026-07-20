@@ -153,9 +153,9 @@ const LoginFormInside = () => {
                     readOnly={readonlyUsername}
                     onFocus={() => setReadonlyUsername(false)}
                     onBlur={() => setReadonlyUsername(true)}
-                    onCopy={(e: ClipboardEvent) => e.preventDefault()}
-                    onPaste={(e: ClipboardEvent) => e.preventDefault()}
-                    onCut={(e: ClipboardEvent) => e.preventDefault()}
+                    onCopy={(e) => e.preventDefault()}
+                    onPaste={(e) => e.preventDefault()}
+                    onCut={(e) => e.preventDefault()}
                 />
 
                 <FormInput
@@ -169,9 +169,9 @@ const LoginFormInside = () => {
                     readOnly={readonlyPassword}
                     onFocus={() => setReadonlyPassword(false)}
                     onBlur={() => setReadonlyPassword(true)}
-                    onCopy={(e: ClipboardEvent) => e.preventDefault()}
-                    onPaste={(e: ClipboardEvent) => e.preventDefault()}
-                    onCut={(e: ClipboardEvent) => e.preventDefault()}
+                    onCopy={(e) => e.preventDefault()}
+                    onPaste={(e) => e.preventDefault()}
+                    onCut={(e) => e.preventDefault()}
                 />
 
                 <div className="flex justify-end -mt-1">

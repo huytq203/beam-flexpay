@@ -15,7 +15,7 @@ const DialogFreezeWallet = () => {
       {
         freezeType === '2' && <div className="p-3 bg-gray-100 rounded-md border">
           <FormDatePicker
-            getPopupContainer={(trigger: any) => trigger.parentElement!}
+            getPopupContainer={(trigger: HTMLElement) => trigger.parentElement!}
 
             control={control}
             name=''

@@ -7,9 +7,14 @@ import React, { useState } from 'react'
 import clsx from 'clsx'
 import { FormInputNumber, FormSelect, FormTextArea } from '@components/form'
 import { useForm } from 'react-hook-form'
+import type { Control, FieldValues } from 'react-hook-form'
 type ActionMode = 'APPROVE' | 'REJECT'
 
-const Reason = ({ control }: any) => {
+interface ReasonProps {
+  control: Control<FieldValues>
+}
+
+const Reason = ({ control }: ReasonProps) => {
   return (
     <>
       <div className='flex gap-3 justify-between items-center'>
@@ -34,7 +39,7 @@ const Reason = ({ control }: any) => {
 
 const DialogConfirm = () => {
   const [action, setAction] = useState<ActionMode>()
-  const { control, watch } = useForm({
+  const { control, watch } = useForm<FieldValues>({
     defaultValues: {
       refundType: '1',
       reason: ''

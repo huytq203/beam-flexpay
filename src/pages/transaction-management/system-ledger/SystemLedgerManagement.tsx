@@ -6,7 +6,7 @@ import useSystemLedger from './hooks/useSystemLedger'
 import { LedgerEntry } from './types/SystemLedger.type'
 import dayjs from 'dayjs'
 import { formatCurrency } from '@utils/formatNumber'
-import { OwnerTypeLabels, GLCodeLabels, StatusLabel, StatusConstants } from './constants/SystemLedger.constant'
+import { OwnerTypeLabels, StatusConstants } from './constants/SystemLedger.constant'
 import StatusBadge from '@components/status-badge/StatusBadge'
 
 const SystemLedgerManagement = () => {

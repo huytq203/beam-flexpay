@@ -1,6 +1,6 @@
 
-import { FeePoliciesContent, FeePoliciesData, FeePoliciesResponse } from "@type/apiResponseFeePolicy.type";
-import { apiFeeService, apiService } from "./apiService";
+import { FeePoliciesContent, FeePoliciesData } from "@type/apiResponseFeePolicy.type";
+import { apiFeeService } from "./apiService";
 import { ResponseType } from '@type/api'
 export const feePolicyApi = apiFeeService.injectEndpoints({
   endpoints: (build) => ({

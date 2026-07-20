@@ -10,26 +10,28 @@ import useHandle from './hooks/useHandle'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGetMerchantByIdQuery } from '@services/apiMerchant'
 
-// Các trường mở rộng — chờ backend bổ sung, giữ lại trong form (hidden)
+// Các trường mở rộng — chờ backend bổ sung, giữ lại trong form (hidden).
+// Các trường đính kèm file chưa có control upload nào ghi vào, nên kiểu thực tế
+// của chúng chưa xác định được từ code -> để `unknown`.
 interface MerchantFormData extends CreateMerchantPayload {
-  username: string
-  phoneNumber: string
-  merchantLogo: any
-  merchantName: string
-  merchantType: string
-  taxCode: string
-  businessType: string
-  businessEmail: string
-  adminEmail: string
-  address: string
-  fullName: string
-  position: string
-  idNumber: string
-  issueDate: string
-  issuePlace: string
-  businessLicense: any
-  idCardCCCD: any
-  registrationCertificate: any
+  username?: string
+  phoneNumber?: string
+  merchantLogo?: unknown
+  merchantName?: string
+  merchantType?: string
+  taxCode?: string
+  businessType?: string
+  businessEmail?: string
+  adminEmail?: string
+  address?: string
+  fullName?: string
+  position?: string
+  idNumber?: string
+  issueDate?: string
+  issuePlace?: string
+  businessLicense?: unknown
+  idCardCCCD?: unknown
+  registrationCertificate?: unknown
 }
 
 const CreateMerchant = () => {
@@ -40,7 +42,9 @@ const CreateMerchant = () => {
   const { handleCreateMerchant, isLoadingPostMerchant, handlePutMerchant, isLoadingPutMerchant } = useHandle()
   const { data: merchantDetail } = useGetMerchantByIdQuery(merchantId ?? '', { skip: !merchantId })
 
-  const { control, handleSubmit, reset } = useForm<CreateMerchantSchemaType>({
+  // Form giữ cả các field hidden (MerchantFormData), nhưng resolver chỉ validate
+  // phần schema nên giá trị sau submit là CreateMerchantSchemaType.
+  const { control, handleSubmit, reset } = useForm<MerchantFormData>({
     resolver: zodResolver(CreateMerchantSchema),
   })
 
@@ -82,9 +86,6 @@ const CreateMerchant = () => {
       handleCreateMerchant(data, () => reset())
     }
   }
-
-  // Cast để tránh TS error cho các field hidden (chưa có trong schema, chờ backend bổ sung)
-  const hiddenControl = control as any
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -149,7 +150,7 @@ const CreateMerchant = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <FormInput
-                  control={hiddenControl}
+                  control={control}
                   name="username"
                   label={<span>Email đăng ký (Username) <span className="text-red-500">*</span></span>}
                   placeholder="Email nhân đăng ký mã khẩu"
@@ -163,7 +164,7 @@ const CreateMerchant = () => {
               </div>
               <div>
                 <FormInput
-                  control={hiddenControl}
+                  control={control}
                   name="phoneNumber"
                   label={<span>Số điện thoại đăng ký <span className="text-red-500">*</span></span>}
                   placeholder="Số điện thoại chính"
@@ -195,39 +196,39 @@ const CreateMerchant = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormInput
-                  control={hiddenControl}
+                  control={control}
                   name="merchantName"
                   label={<span>Tên Merchant <span className="text-red-500">*</span></span>}
                   placeholder="Tên thương hiệu/Hộ Bà"
                 />
                 <FormSelect
-                  control={hiddenControl}
+                  control={control}
                   name="merchantType"
                   label={<span>Loại Merchant <span className="text-red-500">*</span></span>}
                   placeholder="Doanh nghiệp"
                   options={merchantTypeOptions}
                 />
                 <FormInput
-                  control={hiddenControl}
+                  control={control}
                   name="taxCode"
                   label={<span>Mã số thuế <span className="text-red-500">*</span></span>}
                   placeholder="Mã số thuế hoặc Mã số DN"
                 />
                 <FormSelect
-                  control={hiddenControl}
+                  control={control}
                   name="businessType"
                   label={<span>Loại hình kinh doanh <span className="text-red-500">*</span></span>}
                   placeholder="F&B (Ăn uống)"
                   options={businessTypeOptions}
                 />
                 <FormInput
-                  control={hiddenControl}
+                  control={control}
                   name="businessEmail"
                   label={<span>Email nhận đối soát <span className="text-red-500">*</span></span>}
                   placeholder="Email nhận đối soát doanh thu"
                 />
                 <FormInput
-                  control={hiddenControl}
+                  control={control}
                   name="adminEmail"
                   label={<span>Email nhận hóa đơn <span className="text-red-500">*</span></span>}
                   placeholder="Email nhận hóa đơn điện tử"
@@ -235,7 +236,7 @@ const CreateMerchant = () => {
               </div>
 
               <FormTextArea
-                control={hiddenControl}
+                control={control}
                 name="address"
                 label={<span>Địa chỉ trụ sở <span className="text-red-500">*</span></span>}
                 placeholder="Địa chỉ chính xác theo GPKD"
@@ -252,32 +253,32 @@ const CreateMerchant = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormInput
-                control={hiddenControl}
+                control={control}
                 name="fullName"
                 label={<span>Họ và tên <span className="text-red-500">*</span></span>}
                 placeholder="Tên người đại diện pháp luật"
               />
               <FormSelect
-                control={hiddenControl}
+                control={control}
                 name="position"
                 label={<span>Chức vụ <span className="text-red-500">*</span></span>}
                 placeholder="Vị dụ: Giám đốc, Chủ hộ"
                 options={positionOptions}
               />
               <FormInput
-                control={hiddenControl}
+                control={control}
                 name="idNumber"
                 label={<span>Số CCCD <span className="text-red-500">*</span></span>}
                 placeholder="Nhập 12 số CCCD"
               />
               <FormDatePicker
-                control={hiddenControl}
+                control={control}
                 name="issueDate"
                 label={<span>Ngày hết hạn CCCD <span className="text-red-500">*</span></span>}
                 placeholder="dd / mm / yyyy"
               />
               <FormInput
-                control={hiddenControl}
+                control={control}
                 name="issuePlace"
                 label={<span>SĐT nhân viên OTP <span className="text-red-500">*</span></span>}
                 placeholder="Số tuyệt hiện giúp dịch"

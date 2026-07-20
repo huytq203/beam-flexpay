@@ -3,9 +3,7 @@ import { AcountItem, FormSearchValues } from '@pages/wallet-administration/e-wal
 import { useGetAccountQuery, usePostLockMutation, usePostUnlockMutation } from '@services/apiWalletAccount.api'
 import { useMemo, useState } from 'react'
 import { getColumn } from '../columns/Column'
-import { useLazyGetFreezesQuery } from '@services/apiFreezes'
 import { useNavigate } from 'react-router-dom'
-import { dataLockAccount } from '../types/WalletAccount.enum'
 
 type ModalType = 'freeze' | 'unfreeze' | 'lock' | 'unlock' | null
 

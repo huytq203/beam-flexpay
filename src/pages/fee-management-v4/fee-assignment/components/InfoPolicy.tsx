@@ -2,7 +2,7 @@ import { FormInputNumber, FormSelect } from '@components/form'
 import { CardComponent, DialogModal } from '@components/index'
 import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react'
 
-import { FeeComponentType } from '@pages/fee-management-v4/fee-assignment/schemas/FeeManagement.schema'
+import { FeeComponentType } from '@pages/fee-management-v4/fee-management/schemas/FeeManagement.schema'
 import useInfoComponent, { UseInfoComponentRef } from '@pages/fee-management-v4/fee-assignment/hook/useInfoComponent'
 import { FeeComponent, FeeTier } from '../types/FeeComponent.types'
 import InfoComponents from '@pages/fee-management-v4/fee-management/components/InfoComponents'
@@ -187,11 +187,11 @@ const InforPolicy = forwardRef<InfoPolicyRef, Props>(
                     label='Phí cố định (Fixed)'
                     className='col-span-3 flex flex-col gap-2'
                     placeholder='0'
-                    formatter={(value: string | undefined) =>
+                    formatter={(value) =>
                       `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                     }
-                    parser={(value: string | undefined) =>
-                      value?.replace(/,/g, '') as any
+                    parser={(value) =>
+                      value?.replace(/,/g, '') ?? ''
                     }
                     classNameLable='font-medium'
                   />
@@ -210,11 +210,11 @@ const InforPolicy = forwardRef<InfoPolicyRef, Props>(
                     label='Phí tối thiểu (Min)'
                     className='col-span-3 flex flex-col gap-2'
                     placeholder='0'
-                    formatter={(value: string | undefined) =>
+                    formatter={(value) =>
                       `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                     }
-                    parser={(value: string | undefined) =>
-                      value?.replace(/,/g, '') as any
+                    parser={(value) =>
+                      value?.replace(/,/g, '') ?? ''
                     }
                     classNameLable='font-medium'
                   />
@@ -224,11 +224,11 @@ const InforPolicy = forwardRef<InfoPolicyRef, Props>(
                     label='Phí tối đa (Max)'
                     className='col-span-3 flex flex-col gap-2'
                     placeholder='0'
-                    formatter={(value: string | undefined) =>
+                    formatter={(value) =>
                       `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                     }
-                    parser={(value: string | undefined) =>
-                      value?.replace(/,/g, '') as any
+                    parser={(value) =>
+                      value?.replace(/,/g, '') ?? ''
                     }
                     classNameLable='font-medium'
                   />

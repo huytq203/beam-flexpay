@@ -1,11 +1,10 @@
-import { PlusCircleOutlined } from '@ant-design/icons'
 import { useOrder } from "./hooks";
 import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ModalDetailOrder from "./components/ModalDetailOrder";
 import FormAddOrder, { FormAddOrderRef } from "./components/FormAddOrder";
 import { OrderFormValues } from "./schemas/Order.schema";
-import { ButtonComponent, CardComponent, ModalComponent, Table } from "@components/index";
+import { CardComponent, ModalComponent, Table } from "@components/index";
 import { MERCHANT } from '@constants/routersConstant'
 
 const OrderFeature = () => {

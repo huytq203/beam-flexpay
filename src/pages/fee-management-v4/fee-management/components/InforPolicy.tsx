@@ -1,12 +1,15 @@
-import { forwardRef, useEffect, useImperativeHandle, useMemo } from 'react'
+import { forwardRef, useImperativeHandle, useMemo } from 'react'
 import { FormInputNumber, FormSelect } from '@components/form'
-import { ButtonComponent, CardComponent, DialogModal } from '@components/index'
+import { CardComponent, DialogModal } from '@components/index'
 import InfoComponents from './InfoComponents'
-import { calculationMethodEnum, componentType, componentTypeLabel } from '../constants/FeeManagement.constant'
+import { calculationMethodEnum } from '../constants/FeeManagement.constant'
 import useHandleInfoPolicy from '../hooks/useHandleInfoPolicy'
 import { FeeComponent } from '../types/FeeComponent.types'
-import { getEnumLabel } from '../utils/FeeManagement.utils'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
+
+export interface InforPolicyRef {
+  handleSave: () => Promise<void>
+}
 
 interface InforPolicyProps {
   policyId?: string
@@ -17,7 +20,7 @@ interface InforPolicyProps {
   arrTypeFee?: Record<string, string | boolean>
 }
 
-const InforPolicy = forwardRef((props: InforPolicyProps, ref) => {
+const InforPolicy = forwardRef<InforPolicyRef, InforPolicyProps>((props, ref) => {
   const {
     policyId,
     selectedRow,
@@ -174,10 +177,10 @@ const allComponentTypeForDisplay = useMemo(() => {
                   label={<span>Phí cố định (Fixed) </span>}
                   className='col-span-3 flex flex-col gap-2'
                   placeholder='0'
-                  formatter={(value: number) =>
+                  formatter={(value) =>
                     `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                   }
-                  parser={(value: string) => value?.replace(/,/g, '') as string}
+                  parser={(value) => value?.replace(/,/g, '') ?? ''}
                   classNameLable='font-medium'
                 />
                 <FormInputNumber
@@ -195,10 +198,10 @@ const allComponentTypeForDisplay = useMemo(() => {
                   label='Phí tối thiểu (Min)'
                   className='col-span-3 flex flex-col gap-2'
                   placeholder='0'
-                  formatter={(value: number) =>
+                  formatter={(value) =>
                     `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                   }
-                  parser={(value: string) => value?.replace(/,/g, '') as string}
+                  parser={(value) => value?.replace(/,/g, '') ?? ''}
                   classNameLable='font-medium'
                 />
                 <FormInputNumber
@@ -207,10 +210,10 @@ const allComponentTypeForDisplay = useMemo(() => {
                   label='Phí tối đa (Max)'
                   className='col-span-3 flex flex-col gap-2'
                   placeholder='0'
-                  formatter={(value: number) =>
+                  formatter={(value) =>
                     `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                   }
-                  parser={(value: string) => value?.replace(/,/g, '') as string}
+                  parser={(value) => value?.replace(/,/g, '') ?? ''}
                   classNameLable='font-medium'
                 />
               </div>

@@ -2,7 +2,6 @@ import { DeleteOutlined, EditOutlined } from '@components/icons'
 import { ButtonComponent } from '@components/index'
 import { ColumnType } from 'antd/es/table'
 import { RoleDataItem } from '@type/roleManagementV2'
-import { translatePermissionName } from '../constants/RoleManagement.config'
 import { ModalType, SelectedPermission } from '../types/RoleManagement.type'
 
 interface Props {

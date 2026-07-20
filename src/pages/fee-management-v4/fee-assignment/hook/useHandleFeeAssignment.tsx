@@ -15,6 +15,15 @@ import { FeeAssignment } from '@pages/fee-management-v4/fee-assignment/constants
 import { FeeAssignType } from '@pages/fee-management-v4/fee-assignment/schemas/feeAssign.schema'
 import { getFeeAssignColumn } from '../columns/FeeAssignmentManagement.column'
 
+/** Pulls `data.detail` out of an RTK Query error without assuming its shape. */
+const getErrorDetail = (error: unknown): string | undefined => {
+  if (typeof error !== 'object' || error === null || !('data' in error)) return undefined
+  const data = (error as { data: unknown }).data
+  if (typeof data !== 'object' || data === null || !('detail' in data)) return undefined
+  const detail = (data as { detail: unknown }).detail
+  return typeof detail === 'string' ? detail : undefined
+}
+
 const useHandleFeeAssignment = () => {
   const [filter, setFilter] = useState({})
 
@@ -83,8 +92,8 @@ const useHandleFeeAssignment = () => {
         await patchAssignActive(record.id).unwrap()
         successMess('Mở khóa thành công!')
       }
-    } catch (error: any) {
-      errorMess(error?.data?.detail || 'Có lỗi xảy ra')
+    } catch (error) {
+      errorMess(getErrorDetail(error) || 'Có lỗi xảy ra')
     }
   }, [patchAssignInActive, patchAssignActive, successMess, errorMess])
 
@@ -109,7 +118,7 @@ const useHandleFeeAssignment = () => {
       successMess('Thêm mới thành công!')
       setOpenModalAdd(false)
       reset()
-    } catch (error: any) {
+    } catch {
     }
   }, [postAssign, successMess, errorMess, reset])
 

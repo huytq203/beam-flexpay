@@ -1,10 +1,10 @@
 import { ButtonComponent } from '@components/index'
-import { FormDatePicker, FormInput, FormInputNumber, FormSelect } from '@components/form'
+import { FormDatePicker, FormInput, FormSelect } from '@components/form'
 import { BroomIcon, MagnifyingGlassIcon } from '@components/icons'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
-import { PaymentMethod, StatusType } from '@pages/wallet-administration/transaction-wallet/constants/Transaction.constant'
+import { StatusType } from '@pages/wallet-administration/transaction-wallet/constants/Transaction.constant'
 import * as Icons from '@components/icons'
 export interface WithdrawSearchValues {
     journalCode: string

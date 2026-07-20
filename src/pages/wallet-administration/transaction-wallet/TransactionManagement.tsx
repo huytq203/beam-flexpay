@@ -7,7 +7,7 @@ import UpdateStatusTransaction from './components/UpdateStatusTransaction'
 import getColumn from './columns/Transaction.column'
 import useTransaction from './hooks/useTransaction'
 import DialogConfirm from './components/DialogConfirm'
-import { SkeletonButton, SkeletonFilterGroup, SkeletonInput, SkeletonTable, SkeletonTitle } from '@components/ui/skeletons/Skeleton'
+import { SkeletonButton, SkeletonInput, SkeletonTable, SkeletonTitle } from '@components/ui/skeletons/Skeleton'
 
 const TransactionManagement = () => {
 

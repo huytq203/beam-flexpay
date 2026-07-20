@@ -1,10 +1,14 @@
 import { Control, FieldValues, Path } from "react-hook-form";
 import { FormField } from "./FormField";
 import { Input } from "../ui/Input-component";
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { ReactNode } from "react";
+import type { InputProps } from "antd";
 
-interface FormInputProps<T extends FieldValues> {
+interface FormInputProps<T extends FieldValues>
+  extends Omit<
+    InputProps,
+    "name" | "value" | "type" | "prefix" | "className" | "ref"
+  > {
   name: Path<T>;
   control: Control<T>;
   label?: string | ReactNode;
@@ -20,7 +24,6 @@ interface FormInputProps<T extends FieldValues> {
     iconRender?: (visible: boolean) => React.ReactNode;
     visibilityToggle?: boolean;
   };
-  [key: string]: any;
   trim?: boolean;
   trimOn?: "change" | "blur";
 }
@@ -49,7 +52,7 @@ export function FormInput<T extends FieldValues>({
       className={className} // This goes to FormField wrapper div
       classNameLable={classNameLable}
       render={(field) => {
-        const { onChange: customOnChange, ...fieldRest } = rest as any;
+        const { onChange: customOnChange, onBlur: customOnBlur, ...fieldRest } = rest;
         if (type === 'password') {
           return (
             <Input.Password
@@ -62,7 +65,7 @@ export function FormInput<T extends FieldValues>({
               prefix={prefix}
               iconRender={passwordConfig?.iconRender}
               visibilityToggle={passwordConfig?.visibilityToggle ?? true}
-              onChange={(e: any) => {
+              onChange={(e) => {
                 field.onChange(e);
                 if (customOnChange) {
                   customOnChange(e);
@@ -81,7 +84,7 @@ export function FormInput<T extends FieldValues>({
             disabled={disabled}
             className={inputClassName} // This goes to Input element
             prefix={prefix}
-            onChange={(e: any) => {
+            onChange={(e) => {
               let value = e.target.value;
 
               if (trim && trimOn === "change") {
@@ -94,10 +97,14 @@ export function FormInput<T extends FieldValues>({
                 customOnChange(e);
               }
             }}
-            onBlur={(e: any) => {
+            onBlur={(e) => {
               if (trim && trimOn === "blur") {
                 field.onChange(e.target.value.trim());
               }
+              // Giữ lại onBlur của react-hook-form (đánh dấu touched) và của
+              // caller — trước đây cả hai đều bị handler này ghi đè mất.
+              field.onBlur();
+              customOnBlur?.(e);
             }}
           />
         );

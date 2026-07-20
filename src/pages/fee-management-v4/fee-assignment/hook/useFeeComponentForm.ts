@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import { useMessage } from '@hooks/useMessage'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
@@ -17,10 +17,9 @@ import {
   PolicySchema as FeePolicySchema,
   PolicyType as FeePolicyType
 } from '@pages/fee-management-v4/fee-management/schemas/FeeManagement.schema'
-import { FeeComponent, FeeTier } from '../types/FeeComponent.types'
+import { FeeComponent } from '../types/FeeComponent.types'
 import { convertToISO } from '@pages/fee-management-v4/fee-assignment/utils/FeeManagement.utils'
 import { useSVG } from '@hooks/useSVG'
-import { FEEMANAGEMENT_V4 } from '@constants/routersConstant'
 import { FeeComponentType } from '@pages/fee-management-v4/fee-management/schemas/FeeManagement.schema'
 import { usePostNewPolicyMutation, usePutFeePolicyMutation } from '@services/apiFeePoliciesServices'
 import { PATHS } from '@constants/pathConstant'

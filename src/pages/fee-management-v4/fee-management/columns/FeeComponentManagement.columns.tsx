@@ -1,12 +1,11 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { ButtonComponent, TooltipComponent } from '@components/index'
-import { Tooltip } from 'antd'
 import {
   getEnumLabel
 } from '@pages/fee-management-v4/fee-assignment/utils/FeeManagement.utils'
 import { ColumnsType } from 'antd/es/table'
 import { FeeComponent } from '../types/FeeComponent.types'
-import { baseOnLabel, beneficiaryTypeLabel, calculationMethodEnumLabel, componentType, componentTypeLabel, payerTypeLabel } from '../constants/FeeManagement.constant'
+import { baseOnLabel, beneficiaryTypeLabel, calculationMethodEnumLabel, componentTypeLabel, payerTypeLabel } from '../constants/FeeManagement.constant'
 
 interface FeeComponentColumnsProps {
   setSelectedRow?: (row: FeeComponent) => void
@@ -35,7 +34,7 @@ export const getFeeComponentColumns = ({
       dataIndex: 'no',
       width: 60,
       align: 'center' as const,
-      render: (_: any, __: any, index: number) => index + 1 // Assuming 'no' might not be in the data record itself or we can just use index
+      render: (_value, _record, index) => index + 1 // Assuming 'no' might not be in the data record itself or we can just use index
     },
     {
       title: 'Loại',
@@ -76,7 +75,7 @@ export const getFeeComponentColumns = ({
       key: 'action',
       width: 100,
       align: 'center' as const,
-      render: (_: any, record: FeeComponent) => (
+      render: (_value, record) => (
         <div className='flex gap-1 justify-center'>
           <TooltipComponent title='Cập nhật'>
             <ButtonComponent

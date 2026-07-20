@@ -1,5 +1,5 @@
 import { ResponseType } from "@type/api";
-import { DataRole, ResponseRole } from "@type/roleManagement";
+import { DataRole } from "@type/roleManagement";
 import { authApiService } from "./apiService";
 
 export const apiRole = authApiService.injectEndpoints({

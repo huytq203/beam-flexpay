@@ -34,7 +34,10 @@ const DialogAssignRoles = ({ userId, onSuccess, onCancel }: Props) => {
 
   useEffect(() => {
     if (userRoleData?.data) {
-      const existingRoleIds = userRoleData.data.map((role: any) => role.id)
+      // `useGetUserRoleQuery` has no typed result (see @services/apiUserRoleAssign),
+      // so the response payload is pinned to its real shape here.
+      const assignedRoles: DataRoleItem[] = userRoleData.data
+      const existingRoleIds = assignedRoles.map((role) => role.id)
       setSelectedRowKeys(existingRoleIds)
       setInitialRoleIds(existingRoleIds)
     }
@@ -93,7 +96,7 @@ const DialogAssignRoles = ({ userId, onSuccess, onCancel }: Props) => {
       }
       successMess('Cập nhật thành công')
       onSuccess()
-    } catch (error: any) {
+    } catch {
     } finally {
       setLoading(false)
     }

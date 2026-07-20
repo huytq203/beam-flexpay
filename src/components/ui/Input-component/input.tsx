@@ -1,13 +1,14 @@
 import { Input as AntdInput } from 'antd'
 import { InputProps } from 'antd'
+import type { InputRef } from 'antd'
 import React from 'react'
 
 interface Props extends InputProps {
   label?: string
 }
 
-const InputComponent = React.forwardRef<HTMLInputElement, Props>(
-  ({ placeholder, value, onChange, ...rest }, ref:any) => {
+const InputComponent = React.forwardRef<InputRef, Props>(
+  ({ placeholder, value, onChange, ...rest }, ref) => {
     return (
       <AntdInput
         {...rest}

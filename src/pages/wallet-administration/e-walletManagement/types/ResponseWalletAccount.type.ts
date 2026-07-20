@@ -35,7 +35,7 @@ export interface AcountItem {
   totalCredit: number
   balance: number
   holdBalance: number
-  availableBalance: any
+  availableBalance: number
   version: number
   status: string
   enabled: boolean

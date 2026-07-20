@@ -77,7 +77,7 @@ export interface CustomerInterface {
   availableBalances: string | null
   lockedBalance: string | null
   accountNumber: string
-  balances: any[]
+  balances: unknown[]
 }
 
 export interface ResultListAccountInterface {

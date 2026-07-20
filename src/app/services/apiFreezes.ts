@@ -1,7 +1,6 @@
 import { apiWalletCore } from '@services/apiService'
 import { ResponseType } from '@type/api'
 import { DataFreeze } from '@type/freeze.type'
-import { FreezeItem, FreezeParams } from '@type/freezeAccount'
 
 
 

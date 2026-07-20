@@ -1,15 +1,13 @@
 import React from 'react'
 import { Input } from 'antd'
+import type { TextAreaProps, TextAreaRef } from 'antd/es/input/TextArea'
 
 const { TextArea } = Input
 
-interface Props {
-  rows?: number
-  placeholder?: string
-}
+type Props = TextAreaProps
 
-const TextAreaComponent = React.forwardRef(({ ...rest }: Props, ref: any) => {
-  return <TextArea ref={ref} {...rest}  />
+const TextAreaComponent = React.forwardRef<TextAreaRef, Props>(({ ...rest }, ref) => {
+  return <TextArea ref={ref} {...rest} />
 })
 
 export default TextAreaComponent

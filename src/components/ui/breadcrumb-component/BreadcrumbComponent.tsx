@@ -1,17 +1,16 @@
 import React, { useMemo } from 'react'
 import { Breadcrumb } from 'antd'
+import type { BreadcrumbProps } from 'antd'
 import { useLocation, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { House } from '@phosphor-icons/react'
 import { cn } from '@utils/cn'
 
 interface BreadcrumbComponentProps {
     className?: string
 }
-interface BreadcrumbItem {
-    title: React.ReactNode
-    key: string
-}
+// Dùng thẳng kiểu item của antd: kiểu cục bộ trước đây thiếu index signature
+// `data-${string}` nên không gán được vào prop `items`.
+type BreadcrumbItem = NonNullable<BreadcrumbProps['items']>[number]
 const BreadcrumbComponent: React.FC<BreadcrumbComponentProps> = ({ className }) => {
     const { t } = useTranslation()
     const location = useLocation()
@@ -37,7 +36,7 @@ const BreadcrumbComponent: React.FC<BreadcrumbComponentProps> = ({ className }) 
             const isLast = index === pathnames.length - 1
 
             // Logic lấy label từ header-title
-            let titleKey = currentPath
+            const titleKey = currentPath
             let label = t(`header-title.${titleKey}`)
 
             // Wildcard matching (support cho các path có ID như /id)

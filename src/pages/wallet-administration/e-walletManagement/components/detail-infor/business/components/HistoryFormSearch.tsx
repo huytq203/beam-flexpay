@@ -1,18 +1,27 @@
 import { ButtonComponent } from '@components/index'
-import { FormInput, FormSelect, FormDatePicker } from '@components/form'
+import { FormSelect, FormDatePicker } from '@components/form'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { StatusLabel, TransactionType } from '../types/HistoryPayment.type'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import * as Icons from '@components/icons'
+import type { Dayjs } from 'dayjs'
+
+export interface HistorySearchFormValues {
+    status?: string
+    type?: string
+    fromDate?: Dayjs | null
+    toDate?: Dayjs | null
+}
+
 interface HistoryFormSearchProps {
-    onSearch: (data: any) => void;
+    onSearch: (data: HistorySearchFormValues) => void;
 }
 
 const HistoryFormSearch = ({ onSearch }: HistoryFormSearchProps) => {
-    const formHistorySearch = useForm()
+    const formHistorySearch = useForm<HistorySearchFormValues>()
 
-    const onSubmit = (data: any) => {
+    const onSubmit = (data: HistorySearchFormValues) => {
         onSearch(data);
     }
 

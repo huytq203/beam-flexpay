@@ -1,6 +1,5 @@
 import usePagination from '@hooks/usePagination'
 import { useGetFeeComponentPoliciesByIdQuery } from '@services/apiFeeComponent'
-import React from 'react'
 import { FeeComponent } from '../types/FeeComponent.types'
 import { skipToken } from '@reduxjs/toolkit/query/react'
 

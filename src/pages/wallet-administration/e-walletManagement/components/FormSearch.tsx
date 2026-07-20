@@ -1,10 +1,10 @@
 import { ButtonComponent } from '@components/index'
-import { FormField, FormInput, FormSelect } from '@components/form'
+import { FormInput, FormSelect } from '@components/form'
 import { useSVG } from '@hooks/useSVG'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
-import { StatusAccountLabel, StatusLabel, verificationStatusLabel, WalletTypeLabel } from '../constants/Ewallet.constant'
+import { StatusLabel, verificationStatusLabel, WalletTypeLabel } from '../constants/Ewallet.constant'
 import { FormSearchValues } from '../types/ResponseWalletAccount.type'
 import * as Icons from '@components/icons'
 

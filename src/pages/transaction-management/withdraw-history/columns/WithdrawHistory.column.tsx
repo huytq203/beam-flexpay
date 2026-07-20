@@ -6,7 +6,7 @@ import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { cn } from '@utils/cn'
-import { BankEnum, BankLabel, PaymentMethod, PaymentMethodKey, STATUS_CONFIG, StatusKey, StatusLabel } from '../constants/WithdrawHistory.constant'
+import { BankEnum, BankLabel, PaymentMethod, PaymentMethodKey, STATUS_CONFIG, StatusKey } from '../constants/WithdrawHistory.constant'
 
 const STATUS_CLASS: Record<string, string> = {
     PENDING: 'text-blue-600 rounded-md inline-block px-2 font-medium text-[12px] border border-blue-500 bg-blue-50',

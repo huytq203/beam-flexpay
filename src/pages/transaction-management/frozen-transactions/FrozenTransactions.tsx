@@ -4,8 +4,7 @@ import React from 'react'
 import FormSearch from './components/FormSearch'
 import { getColumn } from './columns/FrozenTransactions.column'
 import useFrozenTransactions from './hooks/useFrozenTransactions'
-import DialogFreeze from './components/DialogFreeze'
-import { SkeletonButton, SkeletonInput, SkeletonSearchGroup, SkeletonTable, SkeletonTitle } from '@components/ui/skeletons/Skeleton'
+import { SkeletonButton, SkeletonInput, SkeletonTable, SkeletonTitle } from '@components/ui/skeletons/Skeleton'
 import DialogUnfreeze from './components/DialogUnfreeze'
 
 const FrozenTransactions = () => {
@@ -78,7 +77,7 @@ const FrozenTransactions = () => {
                 footer={null}
                 content={
                     <DialogUnfreeze
-                        freezeItem={selectedFreezeItem}
+                        freezeItem={selectedFreezeItem ?? undefined}
                         onSuccess={handleCloseUnfreezeModal}
                         onCancel={handleCloseUnfreezeModal}
                     />

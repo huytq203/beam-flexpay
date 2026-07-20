@@ -2,8 +2,7 @@ import React, { useEffect } from 'react'
 import {
   DialogModal,
   Input,
-  ButtonComponent,
-  SelectInput
+  ButtonComponent
 } from '@components/index'
 import { useAppSelector } from '@hooks/hook'
 import { useUserUpdateMutation } from '@services/cmsService'
@@ -11,9 +10,7 @@ import { CustomModalProps } from '@type/api'
 import { updateLayout } from '@utils/events'
 import {
   Avatar,
-  Col,
   Form,
-  Row,
   notification,
   Divider,
   Typography

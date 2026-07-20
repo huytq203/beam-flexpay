@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeftOutlined, BankFilled } from '@components/icons'
 import { ReloadOutlined } from '@ant-design/icons'
@@ -16,11 +16,9 @@ const OrderQrFeature = () => {
   const { data: orderData, refetch } = useGetMerchantOrderByIdQuery(id || '', {
     skip: !id,
   })
-  console.log(id)
   const [postRefreshQr, { isLoading: isRefreshing }] = usePostRefreshQrMutation()
 
   const order: MerchanOrderItem | undefined = orderData?.data
-  console.log(orderData)
   const handleRefreshQR = async () => {
     if (!id) return
 

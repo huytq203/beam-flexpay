@@ -6,12 +6,13 @@ import { ButtonComponent, TypographyText } from '@components/index'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { FreezeStatus, FreezeStatusConfig } from '../types/Freeze.type'
 import { cn } from '@utils/cn'
+import { FreezeItem } from '@type/freeze.type'
 
 interface ColumnProps {
-    onRelease?: (record: any) => void
+    onRelease?: (record: FreezeItem) => void
 }
 
-export const getColumn = ({ onRelease }: ColumnProps): ColumnType[] => [
+export const getColumn = ({ onRelease }: ColumnProps): ColumnType<FreezeItem>[] => [
     {
         title: '#',
         dataIndex: 'no',

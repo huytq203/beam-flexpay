@@ -2,15 +2,17 @@ import { CardComponent, Table } from '@components/index'
 import { ButtonComponent } from '@components/index'
 import { useState, useEffect, memo } from 'react'
 import { useLazyGetMemberOfRoleQuery } from '@services/apiRole'
-import { FormDetailColumn } from '../columns/FormDetail.column'
+import { FormDetailColumn, UserTableRow } from '../columns/FormDetail.column'
 
 interface Props {
   roleId?: string
   onCancel: () => void
 }
 
+type MemberRow = UserTableRow & { key: string | number }
+
 const DialogViewMembers = ({ roleId, onCancel }: Props) => {
-  const [dataSource, setDataSource] = useState<any[]>([])
+  const [dataSource, setDataSource] = useState<MemberRow[]>([])
   const [loading, setLoading] = useState(false)
   const [getMemberOfRole] = useLazyGetMemberOfRoleQuery()
 
@@ -23,7 +25,7 @@ const DialogViewMembers = ({ roleId, onCancel }: Props) => {
       try {
         const data = await getMemberOfRole(roleId).unwrap()
         setDataSource(
-          data?.content?.map((item: any, index: number) => ({
+          data?.content?.map((item, index) => ({
             key: item.id ?? index,
             username: item.username,
             email: item.email,

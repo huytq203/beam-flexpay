@@ -1,5 +1,4 @@
 import { ColumnsType } from 'antd/es/table'
-import React from 'react'
 
 const Column = ():ColumnsType => [
   {

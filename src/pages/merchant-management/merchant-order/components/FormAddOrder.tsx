@@ -76,8 +76,8 @@ const FormAddOrder = forwardRef<FormAddOrderRef, Props>(({ onSubmit, merchantOpt
                     className="col-span-12 flex flex-col"
                     style={{ width: '100%' }}
                     min={0}
-                    formatter={(value: number) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                    parser={(value: string) => value.replace(/\$\s?|(,*)/g, '')}
+                    formatter={(value) => `${value ?? ''}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                    parser={(value) => (value ?? '').replace(/\$\s?|(,*)/g, '')}
                 />
 
                 <FormTextArea

@@ -32,6 +32,14 @@ import '../style.css'
 
 const { Text } = Typography
 
+/** Các field của form đổi mật khẩu (khớp với `name` của các Form.Item bên dưới). */
+interface ChangePasswordFormValues {
+  currentPassword?: string
+  newPassword?: string
+  confirmPassword?: string
+  otp?: string
+}
+
 function EmployeePassword(props: CustomModalProps) {
   const { onClose, open } = props
   const { t } = useTranslation()
@@ -94,7 +102,10 @@ function EmployeePassword(props: CustomModalProps) {
     }
   }
 
-  const handleValuesChange = (_: any, values: any) => {
+  const handleValuesChange = (
+    _: Partial<ChangePasswordFormValues>,
+    values: ChangePasswordFormValues
+  ) => {
     const isComplete =
       values.currentPassword &&
       values.newPassword &&

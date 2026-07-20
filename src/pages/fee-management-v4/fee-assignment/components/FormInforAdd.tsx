@@ -1,3 +1,4 @@
+import type { JSX } from 'react'
 import { ButtonComponent, CardComponent, ModalComponent } from "@components/index"
 import FormChoosePolicy from "./FormChoosePolicy"
 import { useForm } from "react-hook-form"
@@ -7,7 +8,6 @@ import { FeeAssignment } from "@pages/fee-management-v4/fee-assignment/constants
 import useHandle from "../hook/useHandle"
 import { useEffect, useState, useRef } from "react"
 import FormFieldAssign from "./FormFieldAssign"
-import * as Icons from '@components/icons'
 import { ComponentDetail } from "./ComponentDetail"
 import { feePolicyComponent } from "@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent"
 import { useGetFeePolicyByIdQuery } from "@services/apiFeePoliciesServices"

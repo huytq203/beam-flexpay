@@ -1,9 +1,10 @@
 import { ColumnsType } from 'antd/es/table'
-import { Controller, Control, UseFormGetValues } from 'react-hook-form'
+import { Controller, Control, FieldArrayWithId, UseFormGetValues } from 'react-hook-form'
 import { InputNumber, ButtonComponent } from '@components/index'
-import { CheckOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons'
-import { FeeComponentType } from '@pages/fee-management-v4/fee-assignment/schemas/FeeManagement.schema'
-import { feePolicyComponent } from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
+import { DeleteOutlined } from '@ant-design/icons'
+import { FeeComponentType } from '@pages/fee-management-v4/fee-management/schemas/FeeManagement.schema'
+
+export type TierRow = FieldArrayWithId<FeeComponentType, 'tiers'>
 
 interface TierColumnsOptions {
     control?: Control<FeeComponentType>
@@ -15,7 +16,7 @@ export const getTierColumns = ({
     control,
     getValues,
     onDeleteTier,
-}: TierColumnsOptions): ColumnsType<any> => [
+}: TierColumnsOptions): ColumnsType<TierRow> => [
         {
             title: 'Phí Cố định',
             dataIndex: 'fixedAmount',
@@ -29,7 +30,7 @@ export const getTierColumns = ({
                             {...field}
                             placeholder='0'
                             formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={(value) => value?.replace(/,/g, '') as any}
+                            parser={(value) => value?.replace(/,/g, '') ?? ''}
                             style={{ width: '100%' }}
                         />
                     )}
@@ -67,7 +68,7 @@ export const getTierColumns = ({
                             {...field}
                             placeholder='Min'
                             formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={(value) => value?.replace(/,/g, '') as any}
+                            parser={(value) => value?.replace(/,/g, '') ?? ''}
                             style={{ width: '100%' }}
                         />
                     )}
@@ -87,7 +88,7 @@ export const getTierColumns = ({
                             {...field}
                             placeholder='Max'
                             formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={(value) => value?.replace(/,/g, '') as any}
+                            parser={(value) => value?.replace(/,/g, '') ?? ''}
                             style={{ width: '100%' }}
                         />
                     )}
@@ -107,7 +108,7 @@ export const getTierColumns = ({
                             {...field}
                             placeholder='Min'
                             formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={(value) => value?.replace(/,/g, '') as any}
+                            parser={(value) => value?.replace(/,/g, '') ?? ''}
                             style={{ width: '100%' }}
                         />
                     )}
@@ -127,7 +128,7 @@ export const getTierColumns = ({
                             {...field}
                             placeholder='Max'
                             formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={(value) => value?.replace(/,/g, '') as any}
+                            parser={(value) => value?.replace(/,/g, '') ?? ''}
                             style={{ width: '100%' }}
                         />
                     )}
@@ -141,14 +142,19 @@ export const getTierColumns = ({
             width: 100,
             render: (_, _record, index) => {
                 const currentTier = getValues?.(`tiers.${index}`)
-                const tierId = (currentTier as any)?.id
+                // `id` is present at runtime on tiers loaded from the API, but is not
+                // part of the zod schema, so narrow it explicitly instead of casting.
+                const tierId =
+                    currentTier && 'id' in currentTier && typeof currentTier.id === 'string'
+                        ? currentTier.id
+                        : undefined
 
                 return (
                     <div className='flex justify-center items-center gap-1'>
                         <ButtonComponent
                             type='text'
                             danger
-                            icon={<DeleteOutlined {...({} as any)} />}
+                            icon={<DeleteOutlined />}
                             onClick={() => onDeleteTier?.(index, tierId)}
                         />
 

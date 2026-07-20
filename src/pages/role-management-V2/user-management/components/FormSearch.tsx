@@ -5,8 +5,14 @@ import { BroomIcon } from '@components/icons'
 import { useForm } from 'react-hook-form'
 import { memo } from 'react'
 
+export interface UserSearchFormData {
+  username: string
+  group: string
+  status: string
+}
+
 interface Props {
-  onSearch?: (data: any) => void
+  onSearch?: (data: UserSearchFormData) => void
   onAdd?: () => void
   roleOptions?: { value: string; label: string }[]
 }

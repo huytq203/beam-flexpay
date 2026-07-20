@@ -1,4 +1,4 @@
-import { CreditCardOutlined, HistoryOutlined, InfoCircleOutlined, PercentageOutlined, SafetyOutlined,SnowflakeIcon } from "@components/icons";
+import { CreditCardOutlined, InfoCircleOutlined } from "@components/icons";
 import { TabsProps } from "antd/lib";
 
 export const items: TabsProps['items'] = [

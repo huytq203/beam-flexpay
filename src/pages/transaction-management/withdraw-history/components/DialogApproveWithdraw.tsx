@@ -1,4 +1,4 @@
-import { CardComponent, UploadCombined } from '@components/index'
+import { CardComponent } from '@components/index'
 import { FormInput, FormUploadCombined } from '@components/form'
 import React from 'react'
 import { useForm } from 'react-hook-form'

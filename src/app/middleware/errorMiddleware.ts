@@ -29,16 +29,38 @@ const SILENT_ENDPOINTS: string[] = [
   // 'getStatus'
 ]
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null
+
+/** Đọc một field kiểu string từ object không rõ kiểu. */
+const readString = (
+  source: Record<string, unknown> | undefined,
+  key: string
+): string | undefined => {
+  const value = source?.[key]
+  return typeof value === 'string' && value ? value : undefined
+}
+
+/** Lấy status code (number) từ payload lỗi không rõ kiểu. */
+const readStatus = (error: unknown): number | undefined => {
+  if (!isRecord(error)) return undefined
+  const status = error.status
+  return typeof status === 'number' ? status : undefined
+}
+
 /**
  * Extract error message from API response
  */
-const getErrorMessage = (error: any): string => {
+const getErrorMessage = (error: unknown): string => {
+  const data = isRecord(error) && isRecord(error.data) ? error.data : undefined
+  const status = readStatus(error)
+
   // Priority: detail -> message -> status code message -> default
   return (
-    error?.data?.detail ||
-    error?.data?.message ||
-    error?.data?.error ||
-    ERROR_MESSAGES[error?.status] ||
+    readString(data, 'detail') ||
+    readString(data, 'message') ||
+    readString(data, 'error') ||
+    (status !== undefined ? ERROR_MESSAGES[status] : undefined) ||
     'Có lỗi xảy ra, vui lòng thử lại'
   )
 }
@@ -49,15 +71,21 @@ const getErrorMessage = (error: any): string => {
  */
 export const errorMiddleware: Middleware = (storeApi) => (next) => (action) => {
   if (isRejectedWithValue(action)) {
-    const error = action.payload as any
-    const endpointName = action.meta?.arg?.endpointName
+    const error: unknown = action.payload
+    // action.meta.arg là `{}` ở kiểu của RTK; thu hẹp thay vì ép kiểu.
+    const meta: unknown = action.meta
+    const arg = isRecord(meta) ? meta.arg : undefined
+    const endpointName =
+      isRecord(arg) && typeof arg.endpointName === 'string'
+        ? arg.endpointName
+        : undefined
 
     // Skip silent endpoints
     if (endpointName && SILENT_ENDPOINTS.includes(endpointName)) {
       return next(action)
     }
 
-    const statusCode = error?.status
+    const statusCode = readStatus(error)
     const errorMessage = getErrorMessage(error)
 
     // Handle specific status codes

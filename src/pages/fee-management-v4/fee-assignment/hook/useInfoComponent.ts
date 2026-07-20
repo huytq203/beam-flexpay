@@ -267,11 +267,11 @@ export const useInfoComponent = ({
             handleSubmit(
                 async (data) => {
                     try {
-                        const promises: Promise<any>[] = []
+                        const promises: (void | Promise<unknown>)[] = []
 
                         if (onUpdateProp) {
                             const componentId = (selectedRow as FeeComponent)?.id
-                            promises.push(onUpdateProp(data, componentId) as Promise<any>)
+                            promises.push(onUpdateProp(data, componentId))
                         }
 
                         const currentIsTierMode = ['PROGRESSIVE_TIER', 'FLAT_TIER'].includes(

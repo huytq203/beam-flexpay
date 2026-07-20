@@ -1,17 +1,19 @@
 import { Control, FieldValues, Path } from "react-hook-form";
 import { FormField } from "./FormField";
 import { InputNumber } from "@components/index";
+import type { InputNumberProps } from "antd";
 import { ReactNode } from "react";
 
-interface FormInputNumberProps<T extends FieldValues> {
+interface FormInputNumberProps<T extends FieldValues>
+    extends Omit<InputNumberProps, "name" | "value" | "defaultValue" | "className" | "ref"> {
     name: Path<T>;
     control: Control<T>;
     label?: string|ReactNode;
     placeholder?: string;
     className?: string;
+    classNameLable?: string;
     disabled?: boolean;
     defaultValue?: number | undefined
-    [key: string]: any;
 }
 
 export function FormInputNumber<T extends FieldValues>({

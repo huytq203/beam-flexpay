@@ -1,4 +1,4 @@
-import { baseQueryFee, fetchBaseQueryCustom, fetchBaseQueryFee, fetchBaseQueryMerchant, fetchBaseQueryOld, fetchBaseQueryWalletCore } from '@configs/fetchBaseQueryCustom'
+import { fetchBaseQueryCustom, fetchBaseQueryFee, fetchBaseQueryMerchant, fetchBaseQueryOld, fetchBaseQueryWalletCore } from '@configs/fetchBaseQueryCustom'
 import { createApi } from '@reduxjs/toolkit/query/react'
 
 export const apiService = createApi({

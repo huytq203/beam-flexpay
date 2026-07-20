@@ -91,16 +91,16 @@ export interface ContentJournal {
   feeAmount: number
   currency: string
   paymentMethod: string
-  bankCode: any
-  bankRefId: any
+  bankCode: string | null
+  bankRefId: string | null
   transactionId: string
-  reversesJournalId: any
-  reversedByJournalId: any
+  reversesJournalId: string | null
+  reversedByJournalId: string | null
   description: string
-  failureReason: any
+  failureReason: string | null
   createdAt: string
   postedAt: string
-  archivedAt: any
+  archivedAt: string | null
 }
 
 export interface Pageable {

@@ -28,7 +28,7 @@ export interface FreezeItem {
   ownerUsername: string
   amount: number
   reason?: string
-  unfreezeReason: any
+  unfreezeReason: string | null
   status: string
   type: string
   createdAt: string

@@ -1,4 +1,4 @@
-import { EyeFilled, EyeOutlined } from '@components/icons'
+import { EyeOutlined } from '@components/icons'
 import { ButtonComponent } from '@components/index'
 import { TYPEDATE } from '@constants/date.constant'
 import { MerchanOrderItem } from '../types/apiOrder.type'
@@ -6,7 +6,7 @@ import { MerchanOrderItem } from '../types/apiOrder.type'
 import { ColumnType } from "antd/es/table";
 import dayjs from "dayjs";
 import React from "react";
-import { ModeAction, status } from "../constants/Order.constant";
+import { status } from "../constants/Order.constant";
 import { formatNumber } from "@utils/formatNumber";
 
 interface props {

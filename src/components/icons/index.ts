@@ -1,4 +1,3 @@
-import { FireIcon } from '@components/icons';
 export {
   CheckOutlined,
   CloseOutlined,

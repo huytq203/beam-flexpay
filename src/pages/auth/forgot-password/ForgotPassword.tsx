@@ -1,6 +1,6 @@
 import { MailOutlined } from '@ant-design/icons'
 import { GUTTER } from '@constants/appConstant'
-import { Button, Card, Col, Descriptions, Form, Input, Row, notification } from 'antd'
+import { Button, Col, Form, Input, Row, notification } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'

@@ -22,8 +22,8 @@ const DialogDeleteRole = ({ roleId, roleName, onSuccess, onCancel }: Props) => {
       await deleteRole(roleId).unwrap()
       successMess('Xóa thành công')
       onSuccess()
-    } catch (error: any) {
-      // errorMess(error?.data?.detail)
+    } catch {
+      // errorMess(getApiErrorDetail(error))
     } finally {
       setLoading(false)
     }

@@ -116,7 +116,7 @@ export type SearchType = {
   accountGroup?: string
   depositMethod?: string[]
   applicableObject?: string
-  applicableObjectId?: string[] | number[] | any
+  applicableObjectId?: string[] | number[]
   policyType?: POLICY_MANAGEMENT_TYPE
 }
 

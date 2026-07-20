@@ -6,15 +6,14 @@ interface props extends Omit<ButtonProps, 'content'> {
   icon?: ReactNode,
   type?: "link" | "text" | "default" | "primary" | "dashed" | undefined
   color?: "default" | "primary" | "danger" | "blue" | "purple" | "cyan" | "green" | "magenta" | "pink" | "red" | "orange" | "yellow" | "volcano" | "geekblue" | "lime" | "gold" | undefined
-  variant?: "link" | "text" | "dashed" | "outlined" | "solid" | "filled" | 'warning' | undefined
+  variant?: "link" | "text" | "dashed" | "outlined" | "solid" | "filled" | undefined
   form?: string,
   htmlType?: "button" | "submit" | "reset" | undefined,
   className?: string
 }
 const ButtonComponent = ({ onClick, content, icon, children, type, variant, color, form, className, htmlType, ...rest }: props) => {
-  const AntButton = Button as any;
   return (
-    <AntButton
+    <Button
       type={type ?? 'primary'}
       onClick={onClick}
       color={color}
@@ -26,7 +25,7 @@ const ButtonComponent = ({ onClick, content, icon, children, type, variant, colo
     >
       {icon}
       {children || content}
-    </AntButton>
+    </Button>
   )
 }
 

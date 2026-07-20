@@ -1,4 +1,3 @@
-import { Dayjs } from 'dayjs'
 import { IPageSearch } from './api'
 
 export interface FreezeAccount {

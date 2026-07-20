@@ -6,7 +6,7 @@ import { FeeComponentType } from '../schemas/FeeManagement.schema'
 
 interface InfoComponentsProps {
   control?: Control<FeeComponentType>
-  columns?: ColumnsType<any>
+  columns?: ColumnsType<FieldArrayWithId<FeeComponentType, 'tiers'>>
   fields?: FieldArrayWithId<FeeComponentType, 'tiers'>[]
   append?: () => void
 }

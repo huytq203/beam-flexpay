@@ -1,15 +1,16 @@
 import { Control, FieldValues, Path } from "react-hook-form";
 import { FormField } from "./FormField";
 import { Checkbox } from "antd";
+import type { CheckboxProps } from "antd";
 import { ReactNode } from "react";
 
-interface FormCheckboxProps<T extends FieldValues> {
+interface FormCheckboxProps<T extends FieldValues>
+    extends Omit<CheckboxProps, "name" | "checked" | "onChange" | "className" | "children"> {
     name: Path<T>;
     control: Control<T>;
     label?: string | ReactNode;
     className?: string;
     disabled?: boolean;
-    [key: string]: any;
 }
 
 export function FormCheckbox<T extends FieldValues>({

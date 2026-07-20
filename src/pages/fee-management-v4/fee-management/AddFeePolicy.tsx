@@ -8,20 +8,18 @@ import { PolicySchema, PolicyType } from './schemas/FeeManagement.schema'
 import { Currency, feeDomain, serviceType, STATUS_LABEL, statusType, baseOnEnum, baseOnLabel, componentTypeLabel, componentType } from './constants/FeeManagement.constant'
 import { ButtonComponent, CardComponent, DialogModal, ModalComponent, Table } from '@components/index'
 import * as Icons from '@components/icons'
-import { FeePolicyFormValues } from './types/FeeManagement.type'
 import { useNavigate, useParams } from 'react-router-dom'
-import InforPolicy from './components/InforPolicy'
+import InforPolicy, { InforPolicyRef } from './components/InforPolicy'
 import { getFeeComponentColumns } from './columns/FeeComponentManagement.columns'
 import useFetchDataComponent from './hooks/useFetchDataComponent'
 import { FeeComponent } from './types/FeeComponent.types'
 import { PATHS } from '@constants/pathConstant'
 import useHandleAddFeePolicy from './hooks/useHandleAddFeePolicy'
-import { TYPEDATE } from '@constants/date.constant'
 import { useMessage } from '@hooks/useMessage'
 
 const AddFeePolicy = () => {
     const { mode, id } = useParams()
-    const inforPolicyRef = React.useRef<any>(null)
+    const inforPolicyRef = React.useRef<InforPolicyRef>(null)
     const { control, handleSubmit, reset } = useForm<PolicyType>({
         resolver: zodResolver(PolicySchema)
     })
@@ -136,7 +134,7 @@ const AddFeePolicy = () => {
                     </div>
                     <span className='text-[17px] font-bold text-gray-800'>1. Thông tin chính sách phí</span>
                 </div>
-                <form id='addNewPolicy' onSubmit={handleSubmit((data) => isCreate ? handleAdd(data as any, isCreate) : handleEdit(data as any, id))}>
+                <form id='addNewPolicy' onSubmit={handleSubmit((data) => isCreate ? handleAdd(data, isCreate) : handleEdit(data, id))}>
                     <div className='grid grid-cols-12 gap-2'>
                         <FormInput
                             name='name'

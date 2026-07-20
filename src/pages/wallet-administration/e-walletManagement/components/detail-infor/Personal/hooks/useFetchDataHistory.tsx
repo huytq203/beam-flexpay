@@ -1,6 +1,5 @@
 import usePagination from '@hooks/usePagination'
 import { useGetUnifiedQuery } from '@services/apiJournal'
-import { useGetTransactionQuery } from '@services/apiTransactionV2'
 import React from 'react'
 
 interface SearchParams {

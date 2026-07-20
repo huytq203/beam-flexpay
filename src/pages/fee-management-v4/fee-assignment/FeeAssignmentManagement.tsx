@@ -7,7 +7,7 @@ import {
 } from '@components/index'
 import FormInforAdd from './components/FormInforAdd'
 import React from 'react'
-import { SkeletonButton, SkeletonFilterGroup, SkeletonInput, SkeletonTable, SkeletonTitle } from '@components/ui/skeletons/Skeleton'
+import { SkeletonButton, SkeletonInput, SkeletonTable, SkeletonTitle } from '@components/ui/skeletons/Skeleton'
 import useHandleFeeAssignment from './hook/useHandleFeeAssignment'
 import FormSearchAssignment from './components/FormSearchAssignment'
 

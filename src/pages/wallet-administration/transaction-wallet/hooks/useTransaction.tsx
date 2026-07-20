@@ -1,5 +1,5 @@
 import usePagination from '@hooks/usePagination'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FormSearchValues } from '../types/Transaction.type'
 import { useGetUnifiedQuery } from '../../../../app/services/apiJournal'

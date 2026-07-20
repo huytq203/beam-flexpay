@@ -1,6 +1,6 @@
 import { ColumnType } from 'antd/es/table'
 
-interface UserTableRow {
+export interface UserTableRow {
   username: string
   email: string | null
   emailVerified: boolean

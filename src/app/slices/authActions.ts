@@ -1,7 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
 import { jwtDecode } from 'jwt-decode'
-import Cookies from 'js-cookie'
-import { CookieKey, CookieExpiry } from '@configs/fetchBaseQuery.types'
 
 // Interface cho JWT payload từ Keycloak/OIDC
 interface JwtPayload {

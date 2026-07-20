@@ -62,7 +62,7 @@ const useHandleInfoPolicy = ({ policyId, selectedRow, onSuccess, onClose }: UseH
 
     const isVATType = ([componentType.VAT] as string[]).includes(String(watchComponentType))
     const isTierMode = ([calculationMethodEnum.PROGRESSIVE_TIER, calculationMethodEnum.FLAT_TIER] as string[]).includes(String(watchCalculationMethod))
-    const isUpdateMode = !!(selectedRow as any)?.id
+    const isUpdateMode = !!selectedRow?.id
 
     // Reset calculationMethod về DIRECT khi chọn VAT
     useEffect(() => {
@@ -148,7 +148,7 @@ const useHandleInfoPolicy = ({ policyId, selectedRow, onSuccess, onClose }: UseH
 
             if (currentIsTierMode) {
                 const feeComponentId = res?.data?.id || res?.id;
-                const tierPayload = (tiers || []).map((tier: any) => ({
+                const tierPayload = (tiers || []).map((tier) => ({
                     feeComponentId: feeComponentId,
                     minValue: Number(tier.minValue) || 0,
                     maxValue: Number(tier.maxValue) || 0,
@@ -173,17 +173,17 @@ const useHandleInfoPolicy = ({ policyId, selectedRow, onSuccess, onClose }: UseH
 
     const handleUpdate = handleSubmit(async (data) => {
         try {
-            const componentId = (selectedRow as any)?.id
+            const componentId = selectedRow?.id
             const currentIsTierMode = ([calculationMethodEnum.PROGRESSIVE_TIER, calculationMethodEnum.FLAT_TIER] as string[]).includes(String(data.calculationMethod))
             const { tiers, ...payloadWithoutTiers } = data
             const payloadData = {
                 ...payloadWithoutTiers,
             }
-            const promises: Promise<any>[] = [
+            const promises: Promise<unknown>[] = [
                 putFeeComponent({ id: componentId, body: payloadData }).unwrap()
             ]
             if (currentIsTierMode) {
-                const payload = (getValues('tiers') || []).map((tier: any) => ({
+                const payload = (getValues('tiers') || []).map((tier) => ({
                     feeComponentId: componentId,
                     minValue: Number(tier.minValue) || 0,
                     maxValue: Number(tier.maxValue) || 0,

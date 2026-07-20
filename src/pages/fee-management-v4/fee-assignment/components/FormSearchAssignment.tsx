@@ -1,8 +1,7 @@
 import { FormSelect } from '@components/form'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import React from 'react'
-import { useForm } from 'react-hook-form'
-import { statusType } from '../constants/feeAssignment'
+import { FeeBank, statusType } from '../constants/feeAssignment'
 import { useGetBankQuery } from '@services/apiFeeBank'
 import { Control } from 'react-hook-form'
 import { FeeAssignType } from '../schemas/feeAssign.schema'
@@ -27,7 +26,7 @@ const FormSearchAssignment = ({ control }: FormSearchAssignmentProps) => {
                     control={control}
                     name='bankCode'
                     options={[
-                        ...(dataBank?.data?.content || []).map((item: any) => ({
+                        ...(dataBank?.data?.content || []).map((item: FeeBank) => ({
                             label: item.name,
                             value: item.code
                         }))

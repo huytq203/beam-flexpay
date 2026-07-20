@@ -1,10 +1,8 @@
-import { feeComponentApi } from './apiFeeComponent'
-import { apiFeeService, apiService } from './apiService'
+import { apiFeeService } from './apiService'
 import { ResponseType } from '@type/api'
-import {
-  feePolicyComponent,
-  FeeComponentResponse
-} from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
+
+
+import { FeeTier } from '@pages/fee-management-v4/fee-assignment/types/FeeComponent.types'
 export const apiFeeComponentTier = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
     postFeeComponentTier: build.mutation({
@@ -20,7 +18,7 @@ export const apiFeeComponentTier = apiFeeService.injectEndpoints({
         url: `/fee/component-tiers/by-component/${feeComponentId}`,
         method: 'GET',
       }),
-      transformResponse: (res: ResponseType<any[]>) => res.data,
+      transformResponse: (res: ResponseType<FeeTier[]>) => res.data,
       providesTags: ['feeComponentTier']
     }),
     deleteFeeComponentTier: build.mutation({

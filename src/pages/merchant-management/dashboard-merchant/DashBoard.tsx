@@ -1,6 +1,5 @@
 import { CardComponent, Table } from '@components/index'
 import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
-import { formatCurrencyShort } from '@utils/formatNumber'
 import {
   CheckCircleIcon,
   ClockIcon,

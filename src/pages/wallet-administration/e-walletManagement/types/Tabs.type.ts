@@ -1,4 +1,3 @@
-import { TransactionItem } from '@type/transaction.type'
 import { AcountItem } from './ResponseWalletAccount.type'
 import { ContentEKYC } from '@type/apiResponseEKYC'
 import { LinkedBank } from '@type/responseAccountWallet'

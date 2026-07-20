@@ -1,6 +1,6 @@
 import { SnowflakeIcon, LockOutlined, UnlockOutlined, StopOutlined, WarningIcon } from '@components/icons'
 import { CardComponent, DialogModal, Table } from '@components/index'
-import { SkeletonTable, SkeletonFilterGroup, SkeletonSearchGroup } from '@components/ui/skeletons/Skeleton'
+import { SkeletonTable, SkeletonSearchGroup } from '@components/ui/skeletons/Skeleton'
 import React from 'react'
 import FormSearch from './components/FormSearch'
 import useEwalletManagement from './hooks/useEwalletManagement'

@@ -1,8 +1,10 @@
 import { Control, FieldValues, Path } from "react-hook-form";
 import { FormField } from "./FormField";
 import { RadioGroupComponent, RadioOption } from "@components/ui/radio-component/RadioComponent";
+import type { RadioGroupProps } from "antd";
 
-interface FormRadioProps<T extends FieldValues> {
+interface FormRadioProps<T extends FieldValues>
+    extends Omit<RadioGroupProps, "name" | "value" | "onChange" | "options" | "className"> {
     name: Path<T>;
     control: Control<T>;
     label?: string;
@@ -11,7 +13,6 @@ interface FormRadioProps<T extends FieldValues> {
     className?: string;
     disabled?: boolean;
     classNameLabel?: string;
-    [key: string]: any;
 }
 
 export function FormRadio<T extends FieldValues>({

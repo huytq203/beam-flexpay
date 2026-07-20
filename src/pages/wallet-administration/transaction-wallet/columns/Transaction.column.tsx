@@ -3,20 +3,12 @@ import dayjs from 'dayjs'
 import { ColumnsType } from 'antd/es/table'
 import { Link, NavigateFunction } from 'react-router-dom'
 import {
-  ButtonComponent,
-  MaskText,
-  TagComponent,
-  TooltipComponent,
-  TypographyText
+  TagComponent
 } from '@components/index'
-import { EyeFilled } from '@components/icons'
 import {
-  CounterpartyType,
-  CounterpartyTypeKey,
   PaymentMethodEnum,
   PaymentMethod,
   StatusKey,
-  StatusType,
   TransactionKey,
   TransactionType,
   BankLabel,

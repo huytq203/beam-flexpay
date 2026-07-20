@@ -7,7 +7,9 @@ import { useState, useCallback } from 'react'
 const useHandle = () => {
     // res thực tế trả về là mảng (mảng các policy components)
     const [dataFeePolicyComponent, setDataFeePolicyComponent] = useState<feePolicyComponent[]>([])
-    const [getDataTier, setGetDataTier] = useState<any[]>([])
+    // The component-tier endpoint is untyped (`ResponseType<any[]>`), so keep the
+    // element type opaque rather than asserting a shape we cannot verify.
+    const [getDataTier, setGetDataTier] = useState<unknown[]>([])
     const [isFetchingTier, setIsFetchingTier] = useState<boolean>(false)
     const [feeDomain, setFeeDomain] = useState<string>('')
     const [getFeeComponentPoliciesById] = useLazyGetFeeComponentPoliciesByIdQuery()

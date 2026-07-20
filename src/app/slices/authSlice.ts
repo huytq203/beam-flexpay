@@ -1,7 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { enhancedApi as authService } from '@services/cmsService'
-import { enhancedApi as userApi } from '@services/cmsUser'
-import { enhancedAuthApi, useLogoutMutation } from '@services/authEndpoints'
+import { enhancedAuthApi } from '@services/authEndpoints'
 import { IUserProfile } from '@type/auth'
 import Cookies from 'js-cookie'
 import { CookieKey, CookieExpiry } from '@configs/fetchBaseQuery.types'
@@ -87,7 +85,7 @@ const authSlice = createSlice({
       .addMatcher(
         enhancedAuthApi.endpoints.userLogin.matchFulfilled,
         (state, { payload }) => {
-          const data = payload as any
+          const data = payload
           const token = data.accessToken
           if (token) {
             // Sử dụng expiresIn từ API (đơn vị giây), fallback 300 giây

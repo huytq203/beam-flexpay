@@ -1,6 +1,5 @@
 import usePagination from '@hooks/usePagination'
 import { useGetMerchantQuery } from '@services/apiMerchant'
-import React from 'react'
 
 const useFetchData = () => {
     const { page, pageSize:size, sort:sortBy ,sortBy:sortDirection } = usePagination()

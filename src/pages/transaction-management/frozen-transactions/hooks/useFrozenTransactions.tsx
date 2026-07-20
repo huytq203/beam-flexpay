@@ -1,5 +1,6 @@
 import usePagination from '@hooks/usePagination'
 import { useGetFreezesQuery } from '@services/apiFreezes'
+import { FreezeItem } from '@type/freeze.type'
 import { useMemo, useState } from 'react'
 
 const useFrozenTransactions = () => {
@@ -33,9 +34,9 @@ const useFrozenTransactions = () => {
   }
 
   const [isUnfreezeModalOpen, setIsUnfreezeModalOpen] = useState(false)
-  const [selectedFreezeItem, setSelectedFreezeItem] = useState<any>(null)
+  const [selectedFreezeItem, setSelectedFreezeItem] = useState<FreezeItem | null>(null)
 
-  const handleOpenUnfreezeModal = (item: any) => {
+  const handleOpenUnfreezeModal = (item: FreezeItem) => {
     setSelectedFreezeItem(item)
     setIsUnfreezeModalOpen(true)
   }

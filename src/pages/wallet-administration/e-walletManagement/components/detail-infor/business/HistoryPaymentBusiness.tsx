@@ -1,7 +1,7 @@
 import { CardComponent, Table } from '@components/index'
 import React, { useState } from 'react'
 import { Column } from './configs/HistoryPayment.column'
-import HistoryFormSearch from './components/HistoryFormSearch'
+import HistoryFormSearch, { HistorySearchFormValues } from './components/HistoryFormSearch'
 import useFetchData from './hooks/useFetchDataHistory'
 import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
 import dayjs from 'dayjs'
@@ -9,12 +9,22 @@ import dayjs from 'dayjs'
 interface Props {
   ownerId: string
 }
+
+/** Bộ lọc đã được chuẩn hoá (ngày giờ -> chuỗi ISO) trước khi gửi lên API */
+interface HistorySearchParams {
+  [key: string]: string | number | undefined
+  status?: string
+  type?: string
+  fromDate?: string
+  toDate?: string
+}
+
 const HistoryPaymentBusiness = ({ ownerId }: Props) => {
-  const [searchParams, setSearchParams] = useState<any>({})
+  const [searchParams, setSearchParams] = useState<HistorySearchParams>({})
   const { dataTransaction, isLoadingGetTransaction, dataSource, page, size, setPage, setPageSize } = useFetchData(ownerId, searchParams)
 
-  const handleSearch = (data: any) => {
-    const formattedData = {
+  const handleSearch = (data: HistorySearchFormValues) => {
+    const formattedData: HistorySearchParams = {
       ...data,
       fromDate: data.fromDate ? dayjs(data.fromDate).format('YYYY-MM-DDTHH:mm:ss.SSS') : undefined,
       toDate: data.toDate ? dayjs(data.toDate).format('YYYY-MM-DDTHH:mm:ss.SSS') : undefined,

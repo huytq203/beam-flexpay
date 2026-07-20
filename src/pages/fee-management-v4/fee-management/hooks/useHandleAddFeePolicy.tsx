@@ -1,15 +1,16 @@
 import React from 'react'
-import { dataSearch, FeePolicyFormValues } from '../types/FeeManagement.type'
+import { dataSearch } from '../types/FeeManagement.type'
+import { PolicyType } from '../schemas/FeeManagement.schema'
 import { usePostNewPolicyMutation } from '@services/apiFeePoliciesServices'
 import { useMessage } from '@hooks/useMessage'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useGetFeePolicyByIdQuery, usePatchActivateFeeMutation, usePatchDeactivateFeeMutation, usePutFeePolicyMutation } from '@services/apiFeePolicy.api'
 import { PATHS } from '@constants/pathConstant'
 import { useDeleteFeeComponentPoliciesMutation } from '@services/apiFeeComponent'
 import { skipToken } from '@reduxjs/toolkit/query/react'
 
 interface UseHandleProps {
-    setFilters?: React.Dispatch<React.SetStateAction<dataSearch>>
+    setFilters?: React.Dispatch<React.SetStateAction<Partial<dataSearch>>>
     setPage?: React.Dispatch<React.SetStateAction<number>>
     reset?: () => void
     id?: string
@@ -44,10 +45,9 @@ const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id, setOpenDialog }
         reset?.()
     }
 
-    const handleAdd = async (data: FeePolicyFormValues, mode?: boolean) => {
+    const handleAdd = async (data: PolicyType, mode?: boolean) => {
         try {
             const res = await postNewPolicy(data).unwrap()
-            console.log(res)
             if (res) {
                 successMess('Thêm mới chính sách phí thành công')
                 reset?.()
@@ -62,10 +62,9 @@ const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id, setOpenDialog }
 
     }
 
-    const handleEdit = async (data: FeePolicyFormValues, idPolicy?: string) => {
+    const handleEdit = async (data: PolicyType, idPolicy?: string) => {
         try {
             if (!idPolicy) return
-            console.log(data)
             const res = await putFeePolicy({ id: idPolicy, body: data }).unwrap()
             if (res) {
                 successMess('Cập nhật chính sách phí thành công')

@@ -12,8 +12,7 @@ import Tippy from '@tippyjs/react'
 import { useState } from 'react'
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/themes/light.css'
-import { FEEMANAGEMENT_V3, FEEMANAGEMENT_V4 } from '@constants/routersConstant'
-import { formatDate, getEnumLabel } from '@pages/fee-management-v4/fee-assignment/utils/FeeManagement.utils'
+import { getEnumLabel } from '@pages/fee-management-v4/fee-assignment/utils/FeeManagement.utils'
 import { serviceType } from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { STATUS_CONFIG } from '../constants/FeeAssignment.constant'
@@ -113,12 +112,7 @@ const ApprovalButton = ({
       <span>
         <ButtonComponent
           type='default'
-          icon={
-            <CheckOutlined
-              style={{ color: 'green' }}
-              {...({} as any)}
-            />
-          }
+          icon={<CheckOutlined style={{ color: 'green' }} />}
           onClick={() => setVisible(true)}
         />
       </span>

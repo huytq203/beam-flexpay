@@ -1,6 +1,6 @@
 import React from 'react'
 import { ColumnType } from 'antd/es/table'
-import { EnvelopeIcon, MoreOutlined, PhoneIcon } from '@components/icons'
+import { MoreOutlined } from '@components/icons'
 import {
   DropDownComponent,
   TooltipComponent,

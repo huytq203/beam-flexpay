@@ -1,4 +1,3 @@
-import { useGetUserQuery } from "./apiUserManagement";
 import { authApiService } from "./apiService";
 
 const userRoleApi = authApiService.injectEndpoints({

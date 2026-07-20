@@ -4,7 +4,6 @@ import {
   ModalComponent,
   Table
 } from '@components/index'
-import FormSearch from './components/FormSearch'
 import DialogAddRole from './components/DialogAddRole'
 import DialogDeleteRole from './components/DialogDeleteRole'
 import DialogViewPermissions from './components/DialogViewPermissions'
@@ -12,7 +11,7 @@ import DialogAssignPermissions from './components/DialogAssignPermissions'
 import DialogViewMembers from './components/DialogViewMembers'
 import useFetchDataRole from './hooks/useFetchDataRole'
 import useHandleRole from './hooks/useHandleRole'
-import { SkeletonButton, SkeletonInput, SkeletonTable } from '@components/ui/skeletons/Skeleton'
+import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
 import * as Icons from '@components/icons'
 export const PermissionManagement = () => {
   const fetchData = useFetchDataRole()

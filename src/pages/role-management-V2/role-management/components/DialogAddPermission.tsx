@@ -53,8 +53,8 @@ const DialogAddPermission = ({ permission, onSuccess, onCancel }: Props) => {
         successMess('Thêm thành công')
       }
       onSuccess()
-    } catch (error: any) {
-      // errorMess(error?.data?.detail)
+    } catch {
+      // errorMess(getApiErrorDetail(error))
     } finally {
       setLoading(false)
     }

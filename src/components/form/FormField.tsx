@@ -1,4 +1,10 @@
-import { Controller, Control, FieldValues, Path } from "react-hook-form";
+import {
+  Controller,
+  Control,
+  ControllerRenderProps,
+  FieldValues,
+  Path,
+} from "react-hook-form";
 import React, { ReactNode } from "react";
 
 interface FormFieldProps<T extends FieldValues> {
@@ -7,7 +13,7 @@ interface FormFieldProps<T extends FieldValues> {
   label?: string|ReactNode;
   className?: string;
   classNameLable?:string;
-  render: (field: any) => React.ReactNode;
+  render: (field: ControllerRenderProps<T, Path<T>>) => React.ReactNode;
 }
 
 export function FormField<T extends FieldValues>({

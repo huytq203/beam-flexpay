@@ -1,3 +1,4 @@
+import type { JSX } from 'react'
 export type SvgOptions = {
     size?: number
     width?: number

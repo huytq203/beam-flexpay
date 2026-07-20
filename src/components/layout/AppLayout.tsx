@@ -3,9 +3,8 @@ import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
 import { Logo } from '@components/logo/Logo'
 import { useAppDispatch, useAppSelector } from '@hooks/hook'
 import useNavigationEw from '@hooks/useNavigation'
-import { savePermissions } from '@slices/authSlice'
 import { useBoolean, useUpdate } from 'ahooks'
-import { Col, Layout, Menu, MenuProps, Row, Drawer, Grid, Spin } from 'antd'
+import { Layout, Menu, MenuProps, Drawer, Grid, Spin } from 'antd'
 import React, { useEffect, useMemo, useState, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
@@ -13,8 +12,8 @@ import EmployeePassword from './components/EmployeePassword'
 import EmployeeProfile from './components/EmployeeProfile'
 import NavProfile from './components/NavProfile'
 import { Breadcrumb, ButtonComponent } from '@components/index'
+import type { ItemTypeCustom } from './components/Navigation'
 import { Resizable } from 're-resizable'
-import { useUserGetMyInfoQuery } from '@services/cmsService'
 import usePermission from '@hooks/usePermission'
 
 import { initInactivityTracker } from '@configs/fetchBaseQueryCustom'
@@ -51,7 +50,7 @@ function AppLayout() {
   const isAccess = usePermission()
   const { t } = useTranslation()
 
-  const handleSelectMenu = (event: any) => {
+  const handleSelectMenu: NonNullable<MenuProps['onClick']> = (event) => {
     const keys: string[] = event.keyPath
     const segments = [...keys]
       .reverse()
@@ -135,10 +134,10 @@ function AppLayout() {
   useEffect(() => {
     if (!hasInitOpenKeys && isAccess && navigation && Array.isArray(navigation) && navigation.length > 0) {
       const keys: string[] = []
-      const traverse = (items: any[]) => {
-        items.forEach((item: any) => {
+      const traverse = (items: ItemTypeCustom[]) => {
+        items.forEach((item) => {
           if (item?.children && item.children.length > 0) {
-            keys.push(item.key)
+            if (item.key != null) keys.push(String(item.key))
             traverse(item.children)
           }
         })
@@ -187,7 +186,7 @@ function AppLayout() {
               ? openKeys
               : currentKey
         }
-        onOpenChange={handleOpenChange as any}
+        onOpenChange={handleOpenChange}
       />
     </>
   )

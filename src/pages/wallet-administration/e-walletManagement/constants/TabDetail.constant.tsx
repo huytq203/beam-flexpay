@@ -1,4 +1,3 @@
-import { lazy } from 'react'
 import { TabContentMap, TabContentProps } from '../types/Tabs.type'
 import CommonInfor from '../components/detail-infor/Personal/CommonInfor'
 import AccountBank from '../components/detail-infor/Personal/AccountBank'

@@ -114,7 +114,6 @@ const InforEwallet = ({ data }: props) => {
   )
 }
 const CommonInfor = ({ accountData }: TabContentProps) => {
-  console.log('CommonInforBusiness accountData:', accountData)
   return (
     <div className='flex gap-2 mt-3'>
       <CardComponent

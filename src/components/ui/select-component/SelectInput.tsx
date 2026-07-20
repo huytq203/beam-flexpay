@@ -4,7 +4,9 @@ import './style.css'
 import { SelectProps, DefaultOptionType } from 'antd/es/select';
 
 interface props extends SelectProps {
-    handleChange?: (value: string | number, option: DefaultOptionType | DefaultOptionType[]) => void
+    // antd gọi onChange với `option` có thể vắng mặt, nên khai báo optional
+    // cho khớp; handler nhận đủ 2 tham số vẫn gán được vào chữ ký này.
+    handleChange?: (value: string | number, option?: DefaultOptionType | DefaultOptionType[]) => void
     data?: DefaultOptionType[]
     defaultValue?: string | number
     value?: string | number

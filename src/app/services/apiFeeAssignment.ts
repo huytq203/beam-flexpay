@@ -1,15 +1,15 @@
-import { apiFeeService, apiService } from './apiService'
-import { FeeAssignment, FeeAssignmentResponse, FeeAssignResponse } from '@pages/fee-management-v4/fee-assignment/constants/feeAssignment'
+import { apiFeeService } from './apiService'
+import { FeeAssignment, FeeAssignResponse } from '@pages/fee-management-v4/fee-assignment/constants/feeAssignment'
 import { ResponseType } from '@type/api'
 const feeAssignApi = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
-    getAssignSearch: build.query<FeeAssignResponse, any>({
+    getAssignSearch: build.query<FeeAssignResponse, Record<string, unknown>>({
       query: (params) => ({
         url: `/fee/policy-assignments/search`,
         method: "GET",
         params: params
       }),
-      transformResponse: (res: any) => res.data,
+      transformResponse: (res: ResponseType<FeeAssignResponse>) => res.data,
       providesTags: ['feeAssign']
     }),
     getAssignById: build.query<FeeAssignment, string | undefined>({

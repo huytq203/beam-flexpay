@@ -1,4 +1,4 @@
-import { CheckCircleFilled, KeyIcon } from '@components/icons'
+import { KeyIcon } from '@components/icons'
 import React from 'react'
 
 const AuthMethod = () => {

@@ -11,6 +11,7 @@ import {
 import { useMessage } from '@hooks/useMessage'
 import { translatePermissionName } from '@pages/role-management-V2/role-management/constants/RoleManagement.config'
 import { PermissionItem } from '@type/permissionManagement'
+import { getApiErrorDetail } from '@pages/role-management-V2/utils/RoleManagement.utils'
 
 interface Props {
   roleId?: string
@@ -102,8 +103,8 @@ const DialogAssignPermissions = ({ roleId, onSuccess, onCancel }: Props) => {
       }
       successMess('Cập nhật quyền thành công')
       onSuccess()
-    } catch (error: any) {
-      errorMess(error?.data?.detail || 'Có lỗi xảy ra')
+    } catch (error) {
+      errorMess(getApiErrorDetail(error) || 'Có lỗi xảy ra')
     } finally {
       setLoading(false)
     }

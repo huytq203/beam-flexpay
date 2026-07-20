@@ -1,5 +1,4 @@
-import { apiFeeService, apiService } from './apiService'
-import { ResponseType } from '@type/api'
+import { apiFeeService } from './apiService'
 export const apiFeeBank = apiFeeService.injectEndpoints({
     endpoints: (build) => ({
         getBank: build.query({

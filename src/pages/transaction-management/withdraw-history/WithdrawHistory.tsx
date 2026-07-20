@@ -1,4 +1,4 @@
-import { CardComponent, Table, DialogModal, ModalComponent, UploadCombined } from '@components/index'
+import { CardComponent, Table, DialogModal, ModalComponent } from '@components/index'
 import { CheckCircleFilled, ClockIcon, InfoCircleFilled } from '@components/icons'
 import React from 'react'
 import DialogApproval from './components/DialogApproval'

@@ -1,5 +1,4 @@
 import { ColumnType } from 'antd/es/table'
-import React from 'react'
 
 export const Column = (): ColumnType[] => [
     {

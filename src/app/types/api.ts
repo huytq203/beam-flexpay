@@ -1,3 +1,4 @@
+import type { JSX } from 'react'
 import { LazyExoticComponent } from 'react'
 
 export interface IRoutesCustom {

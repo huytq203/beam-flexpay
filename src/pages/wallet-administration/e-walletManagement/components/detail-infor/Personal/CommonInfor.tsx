@@ -1,5 +1,5 @@
 import { CardComponent } from '@components/index'
-import { CheckCircleFilled, UserIcon, WalletIcon } from '@components/icons'
+import { UserIcon, WalletIcon } from '@components/icons'
 import React from 'react'
 import { TabContentProps } from '../../../types/Tabs.type'
 import { AcountItem } from '@pages/wallet-administration/e-walletManagement/types/ResponseWalletAccount.type'
@@ -8,7 +8,6 @@ import dayjs from 'dayjs'
 import { TYPEDATE } from '@constants/date.constant'
 import { StatusKey, StatusLabel } from '@pages/wallet-administration/e-walletManagement/constants/Ewallet.constant'
 import { ContentEKYC } from '@type/apiResponseEKYC'
-import { Tag } from 'antd'
 
 const genderMap: Record<string, string> = { MALE: 'Nam', FEMALE: 'Nữ' }
 const ekycStatusMap: Record<string, { color: string; label: string }> = {
@@ -73,7 +72,6 @@ const InforUser = ({ ekyc }: { ekyc?: ContentEKYC }) => {
 
 const InforEwallet = ({ data, ekyc }: InforEwalletProps) => {
   if (!data) return null
-  console.log(ekyc)
   const isLinkedBank = (data?.linkedBanks?.length ?? 0) > 0
 
   const getStatusLinkedBank = () => {

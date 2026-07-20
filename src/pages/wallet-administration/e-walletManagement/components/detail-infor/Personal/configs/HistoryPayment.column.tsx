@@ -3,8 +3,6 @@ import { ColumnType } from 'antd/es/table'
 import React from 'react'
 import {
   StatusKey,
-  TransactionType,
-  TransactionKey,
   TransactionEnum,
   TransactionLabel,
   STATUS_CONFIG,
@@ -17,7 +15,7 @@ import {
 } from '../types/HistoryPayment.type'
 import dayjs from 'dayjs'
 import { formatNumber } from '@utils/formatNumber'
-import { MaskText, TagComponent } from '@components/index'
+import { TagComponent } from '@components/index'
 import { TypographyText } from '@components/index'
 import { UnifiedContentJournal } from '@type/apiResponseJournal'
 import { cn } from '@utils/cn'

@@ -1,10 +1,11 @@
 import usePagination from '@hooks/usePagination'
 import { useSearchFeePoliciesQuery } from '@services/apiFeePoliciesServices'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
+import { dataSearch } from '../types/FeeManagement.type'
 
 const useFetchDataFee = () => {
     const { params, page, size, setPage, setPageSize, sort, sortBy } = usePagination()
-    const [filters, setFilters] = useState<any>({})
+    const [filters, setFilters] = useState<Partial<dataSearch>>({})
     const payload = {
         ...filters,
         keyword: filters.keyword || '',

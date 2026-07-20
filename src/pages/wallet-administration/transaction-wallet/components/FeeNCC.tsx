@@ -1,7 +1,6 @@
 import { UnifiedContentJournal } from '@type/apiResponseJournal'
 import { formatCurrency } from '@utils/formatNumber'
 import React from 'react'
-import { BankEnum, BankLabel, PaymentMethod, PaymentMethodKey } from '../constants/Transaction.constant'
 
 interface FeeNCCProps {
   data?: UnifiedContentJournal

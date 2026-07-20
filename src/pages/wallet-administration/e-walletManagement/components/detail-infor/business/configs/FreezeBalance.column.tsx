@@ -5,12 +5,13 @@ import { formatNumber } from '@utils/formatNumber'
 import { ButtonComponent, TypographyText } from '@components/index'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { FreezeStatus, FreezeStatusConfig } from '../../Personal/types/Freeze.type'
+import { FreezeItem } from '@type/freeze.type'
 
 interface ColumnProps {
-    onRelease?: (record: any) => void
+    onRelease?: (record: FreezeItem) => void
 }
 
-export const Column = ({ onRelease }: ColumnProps): ColumnType[] => [
+export const Column = ({ onRelease }: ColumnProps): ColumnType<FreezeItem>[] => [
     {
         title: '#',
         dataIndex: 'no',

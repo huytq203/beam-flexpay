@@ -1,4 +1,4 @@
-import { apiFeeService, apiService } from './apiService'
+import { apiFeeService } from './apiService'
 import { ResponseType } from '@type/api'
 import {
   feePolicyComponent,

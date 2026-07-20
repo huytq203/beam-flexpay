@@ -113,23 +113,24 @@ export const formatObjectPolicy = (value: string) => {
   }
 }
 
-export function formatObjectHistory(obj: any, key?: string): string {
+export function formatObjectHistory(obj: unknown, key?: string): string {
   try {
     if (key && key === 'Chi tiết') {
       if (Array.isArray(obj)) {
-        const array = obj
+        const array: unknown[] = obj
         return array
-          .map((item: string) => {
+          .map((item) => {
+            if (typeof item !== 'object' || item === null) return String(item)
             const formattedEntries = Object.entries(item).map(
               ([key, value]) => {
-                return `<strong>${key.toString()}</strong>: ${value.toString()}`
+                return `<strong>${key.toString()}</strong>: ${String(value)}`
               }
             )
             return formattedEntries.join(', ')
           })
           .join('<br/>')
       } else {
-        return obj
+        return String(obj)
       }
     } else if (typeof obj === 'object' && obj !== null) {
       const formattedEntries = Object.entries(obj).map(([key, value]) => {
@@ -140,7 +141,7 @@ export function formatObjectHistory(obj: any, key?: string): string {
       return processValue(obj)
     }
   } catch (e) {
-    return obj
+    return String(obj)
   }
 }
 
@@ -150,11 +151,11 @@ export function formatKey(key: string): string {
     .replace(/^./, (str) => str.toUpperCase())
 }
 
-export function processValue(value: any, key?: string): string {
+export function processValue(value: unknown, key?: string): string {
   if (typeof value === 'string' && isDate(value)) {
     return dayjs(value).format('DD/MM/YYYY')
   } else if (key === 'DETAILS') {
-    return `${value && value.length > 0
+    return `${typeof value === 'string' && value.length > 0
         ? `<ul>${t(value)
           .split(',')
           .map((item: string) => `<li>${item}</li>`)
@@ -329,7 +330,14 @@ export const getPaymentMethod = (method: string) => {
   }
 }
 
-export const renderDisplayOn = (detailData: any) => {
+interface DisplayOnDetail {
+  data?: {
+    showWeb?: number
+    showApp?: number
+  }
+}
+
+export const renderDisplayOn = (detailData?: DisplayOnDetail) => {
   if (detailData?.data?.showWeb && detailData?.data?.showApp === 1) {
     return t`productType.web-app`
   } else if (detailData?.data?.showApp === 1) {
@@ -405,7 +413,7 @@ export const getVerifyTye = (customerVerificationId: string) => {
   else return i18n.t`internal-account-report.verified.not_ekyc`
 }
 
-export const fnTransformResponse = (response: any) => {
+export const fnTransformResponse = <T,>(response: { data: T }): T => {
   return response.data
 }
 
@@ -444,7 +452,7 @@ export function parseManually(str: string) {
   const trimmedStr = str.trim().slice(1, -1)
 
   // Initialize an empty object to hold the parsed data
-  const result: Record<string, any> = {}
+  const result: Record<string, string | number> = {}
 
   // Split the string by commas, but only those outside of quotes
   const pairs = trimmedStr.match(
@@ -452,18 +460,18 @@ export function parseManually(str: string) {
   )
 
   if (pairs) {
-    pairs.forEach((pair: any) => {
+    pairs.forEach((pair: string) => {
       // Split each pair by the colon
       const [key, value] = pair.split(/:(.+)/).map((s: string) => s.trim())
 
       // Remove quotes from around the key and value
       const cleanedKey = key.replace(/^"(.*)"$/, '$1')
-      let cleanedValue = value.replace(/^"(.*)"$/, '$1')
+      const rawValue = value.replace(/^"(.*)"$/, '$1')
 
       // Convert numeric strings to numbers
-      if (!isNaN(cleanedValue)) {
-        cleanedValue = Number(cleanedValue)
-      }
+      const cleanedValue: string | number = isNaN(Number(rawValue))
+        ? rawValue
+        : Number(rawValue)
 
       // Add the key-value pair to the result object
       result[cleanedKey] = cleanedValue
@@ -506,7 +514,7 @@ export const getStatusPaymentLinkBank = (status: number) => {
 }
 
 export interface Data {
-  [key: string]: any
+  [key: string]: unknown
 }
 
 /**
@@ -550,7 +558,10 @@ export const compareFormData = (formData: FormData, initData: Data): string[] =>
  * @param payload - Đối tượng payload để so sánh với thông báo.
  * @returns Một mảng các khóa nơi các giá trị trong payload khác với các giá trị trong thông báo.
  */
-export const compareData = (notification: any, payload: any) => {
+export const compareData = (
+  notification: Record<string, unknown>,
+  payload: Record<string, unknown>
+) => {
   return reduce(payload, (result: string[], value, key) => {
     if (!isEqual(value, notification[key])) {
       result.push(key)
@@ -567,9 +578,9 @@ export const compareData = (notification: any, payload: any) => {
  * @param message - Một tin nhắn tùy chọn để ghi log cùng với dữ liệu.
  * @param data - Dữ liệu cần ghi log.
  */
-export const logData = (message: string = '', data: any) => {
+export const logData = (message: string = '', data: unknown) => {
   if (data instanceof FormData) {
-    const formDataObject: { [key: string]: any } = {}
+    const formDataObject: { [key: string]: FormDataEntryValue } = {}
     data.forEach((value, key) => {
       formDataObject[key] = value
     })
@@ -679,7 +690,7 @@ export const validateFutureDatetime = (_: unknown, value: unknown): Promise<void
  * isNullOrZero(5) // false
  * isNullOrZero('') // false
  */
-export const isNullOrZero = (value: any): boolean => {
+export const isNullOrZero = (value: unknown): boolean => {
   return value === null || value === undefined || value === 0
 }
 
@@ -698,7 +709,7 @@ export const normalizeText = (text: string): string => {
 
 export interface SelectOption {
   label: string;
-  value: string | boolean;
+  value: string;
 }
 /**
  * 
