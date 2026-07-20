@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { UnfreezeSchema, UnfreezeFormValues } from '../schemas/Freeze.schema'
 import { useMessage } from '@hooks/useMessage'
+import { blockLeadingAndRepeatedSpace } from '@utils/inputHandlers'
 
 interface DialogUnfreezeProps {
     accountId?: string
@@ -71,14 +72,7 @@ const DialogUnfreeze = ({
                                 Lý do mở băng <span className="text-red-600">*</span>
                             </span>
                         }
-                        onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-                            if (e.key === ' ') {
-                                const target = e.target as HTMLTextAreaElement;
-                                if (target.selectionStart === 0 || target.value.charAt(target.selectionStart - 1) === ' ') {
-                                    e.preventDefault();
-                                }
-                            }
-                        }}
+                        onKeyDown={blockLeadingAndRepeatedSpace}
                     />
                 </div>
 

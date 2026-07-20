@@ -3,19 +3,18 @@ import { WarningIcon } from '@components/icons'
 import { ButtonComponent } from '@components/index'
 import { usePostUnfreezeMutation } from '@services/apiFreezes'
 import { formatCurrency } from '@utils/formatNumber'
+import { blockLeadingAndRepeatedSpace } from '@utils/inputHandlers'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMessage } from '@hooks/useMessage'
 import { FreezeItem } from '@type/freeze.type'
-import { UnfreezeFormValues, UnfreezeSchema } from '../schemas/Freeze.schema'
+import { UnfreezeFormValues, UnfreezeSchema } from '../../../schemas/Freeze.schema'
 
 interface DialogUnfreezeProps {
     freezeItem?: FreezeItem
     onSuccess?: () => void
     onCancel?: () => void
 }
-
-
 
 const DialogUnfreeze = ({
     freezeItem,
@@ -41,7 +40,7 @@ const DialogUnfreeze = ({
             reset()
             onSuccess?.()
         } catch {
-
+            /* lỗi đã được xử lý tập trung ở errorMiddleware */
         }
     }
 
@@ -65,6 +64,7 @@ const DialogUnfreeze = ({
                                 Lý do mở băng <span className="text-red-600">*</span>
                             </span>
                         }
+                        onKeyDown={blockLeadingAndRepeatedSpace}
                     />
                 </div>
 

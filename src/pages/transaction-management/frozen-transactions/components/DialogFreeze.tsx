@@ -11,6 +11,7 @@ import { formatCurrency, formatNumber } from '@utils/formatNumber'
 import { ButtonComponent } from '@components/index'
 import { useMessage } from '@hooks/useMessage'
 import { FreezeFormValues, FreezeSchema } from '../schemas/Freeze.schema'
+import { blockLeadingAndRepeatedSpace } from '@utils/inputHandlers'
 
 interface DialogFreezeProps {
     accountId?: string
@@ -125,14 +126,7 @@ const DialogFreeze = ({
                                 Lý do đóng băng <span className="text-red-600">*</span>
                             </span>
                         }
-                        onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-                            if (e.key === ' ') {
-                                const target = e.target as HTMLTextAreaElement;
-                                if (target.selectionStart === 0 || target.value.charAt(target.selectionStart - 1) === ' ') {
-                                    e.preventDefault();
-                                }
-                            }
-                        }}
+                        onKeyDown={blockLeadingAndRepeatedSpace}
                     />
                 </div>
 
