@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 import { Modal, Grid } from 'antd'
-import { ModalProps } from 'antd/lib'
+import { ModalProps } from 'antd'
 
 const { useBreakpoint } = Grid;
 

@@ -1,4 +1,4 @@
-import {  Dropdown, DropdownProps, MenuProps } from 'antd/lib'
+import {  Dropdown, DropdownProps, MenuProps } from 'antd'
 import React from 'react'
 
 interface props extends DropdownProps {

@@ -1,5 +1,5 @@
 import { Table } from 'antd'
-import { ColumnType } from 'antd/lib/table'
+import { ColumnType } from 'antd/es/table'
 import { Key, useEffect, useState, memo } from 'react'
 import { ButtonComponent } from '@components/index'
 import { useGetRoleQuery } from '@services/apiRoleManagement'

@@ -1,12 +1,12 @@
 import React from 'react'
-import { ColumnType } from 'antd/lib/table'
+import { ColumnType } from 'antd/es/table'
 import { EnvelopeIcon, MoreOutlined, PhoneIcon } from '@components/icons'
 import {
   DropDownComponent,
   TooltipComponent,
   TypographyText
 } from '@components/index'
-import { MenuProps } from 'antd/lib'
+import { MenuProps } from 'antd'
 import { ButtonComponent } from '@components/index'
 import { AcountItem } from '@pages/wallet-administration/e-walletManagement/types/ResponseWalletAccount.type'
 import { formatNumber } from '@utils/formatNumber'

@@ -1,4 +1,4 @@
-import { ColumnsType } from 'antd/lib/table'
+import { ColumnsType } from 'antd/es/table'
 import React from 'react'
 
 const Column = ():ColumnsType => [

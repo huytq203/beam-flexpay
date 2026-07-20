@@ -3,7 +3,7 @@ import { useState, useEffect, memo } from 'react'
 import { useLazyGetPermissionAssignQuery } from '@services/apiPermissionAssign'
 import { translatePermissionName } from '@pages/role-management-V2/role-management/constants/RoleManagement.config'
 import { PermissionItem } from '@type/permissionManagement'
-import { ColumnType } from 'antd/lib/table'
+import { ColumnType } from 'antd/es/table'
 import { ButtonComponent } from '@components/index'
 
 interface Props {

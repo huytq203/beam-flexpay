@@ -1,4 +1,4 @@
-import { Timeline, TimelineProps } from 'antd/lib'
+import { Timeline, TimelineProps } from 'antd'
 import React from 'react'
 
 interface TimelineItem {

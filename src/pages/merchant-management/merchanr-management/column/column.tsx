@@ -1,4 +1,4 @@
-import { ColumnType } from 'antd/lib/table'
+import { ColumnType } from 'antd/es/table'
 import { ContentMerchant } from '@type/merchant'
 import dayjs from 'dayjs'
 import { ButtonComponent, TooltipComponent } from '@components/index'

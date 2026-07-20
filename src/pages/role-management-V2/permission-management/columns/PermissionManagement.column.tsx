@@ -6,7 +6,7 @@ import {
   EyeOutlined,
   UserOutlined
 } from '@components/icons'
-import { ColumnType } from 'antd/lib/table'
+import { ColumnType } from 'antd/es/table'
 import { DataRoleItem } from '@type/roleManagement'
 import { RoleName } from '../constants/PermissionManagement.constant'
 import { ModalType, SelectedRole } from '../types/PermissionManagement.type'

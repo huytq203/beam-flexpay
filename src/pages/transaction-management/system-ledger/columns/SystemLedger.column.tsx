@@ -1,4 +1,4 @@
-import { ColumnsType } from 'antd/lib/table'
+import { ColumnsType } from 'antd/es/table'
 import { LedgerEntry } from '../types/SystemLedger.type'
 import dayjs from 'dayjs'
 import { NavigateFunction } from 'react-router-dom'

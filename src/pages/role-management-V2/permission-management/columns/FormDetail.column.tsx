@@ -1,4 +1,4 @@
-import { ColumnType } from 'antd/lib/table'
+import { ColumnType } from 'antd/es/table'
 
 interface UserTableRow {
   username: string

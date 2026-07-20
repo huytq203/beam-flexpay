@@ -1,5 +1,5 @@
 import { Checkbox } from 'antd'
-import { CheckboxProps } from 'antd/lib'
+import { CheckboxProps } from 'antd'
 import React from 'react'
 interface props extends CheckboxProps{
     lable?:string

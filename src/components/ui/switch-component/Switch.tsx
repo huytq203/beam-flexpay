@@ -1,6 +1,6 @@
 import React from 'react'
 import { Switch } from 'antd';
-import { SwitchProps } from 'antd/lib';
+import { SwitchProps } from 'antd';
 interface props extends SwitchProps{
     onChange?:()=>void
 }

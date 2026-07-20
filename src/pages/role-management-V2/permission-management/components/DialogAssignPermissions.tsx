@@ -1,6 +1,6 @@
 import { useState, useEffect, memo, Key } from 'react'
 import { Table } from 'antd'
-import { ColumnType } from 'antd/lib/table'
+import { ColumnType } from 'antd/es/table'
 import { ButtonComponent } from '@components/index'
 import { useGetPermissionQuery } from '@services/apiPermission'
 import {

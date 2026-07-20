@@ -1,5 +1,5 @@
 import { Card } from 'antd'
-import { CardProps } from 'antd/lib'
+import { CardProps } from 'antd'
 import React, { ReactNode } from 'react'
 interface CardComponentProps extends Omit<CardProps, 'content'> {
   content?: ReactNode

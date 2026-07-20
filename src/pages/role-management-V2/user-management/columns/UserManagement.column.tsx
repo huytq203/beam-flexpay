@@ -5,7 +5,7 @@ import {
 } from '@components/icons'
 import { ButtonComponent, TooltipComponent } from '@components/index'
 import { UserInfor } from '@type/userManagement'
-import { ColumnType } from 'antd/lib/table'
+import { ColumnType } from 'antd/es/table'
 import { ModalType, SelectedUser } from '../types/UserManagement.type'
 
 interface Props {

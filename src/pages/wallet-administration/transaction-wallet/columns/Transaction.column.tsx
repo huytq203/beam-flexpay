@@ -1,6 +1,6 @@
 import { UnifiedContentJournal } from '@type/apiResponseJournal'
 import dayjs from 'dayjs'
-import { ColumnsType } from 'antd/lib/table'
+import { ColumnsType } from 'antd/es/table'
 import { Link, NavigateFunction } from 'react-router-dom'
 import {
   ButtonComponent,
