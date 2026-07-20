@@ -1,13 +1,12 @@
-import { Children, createElement } from 'react'
+import { createElement, lazy, Suspense, type ComponentType } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { Spin } from 'antd'
 
 import AppLayout from '@components/layout/AppLayout'
 import AuthLayout from '@components/layout/AuthLayout'
 import {
   AUTHENTICATION,
-  BANKANDCONNECT,
   FORBIDDENERROR,
-  ROLEMANAGEMENT,
   ROLEMANAGEMENT_V2,
   WALLETADMINISTRATION,
   MERCHANT,
@@ -15,38 +14,33 @@ import {
   FEEMANAGEMENT_V4,
 } from '@constants/routersConstant'
 
-import ForgotPassword from '@pages/auth/forgot-password/ForgotPassword'
-import Login from '@pages/auth/login/Login'
 import NotFound from '@pages/auth/not-found/NotFound'
-import ResetPassword from '@pages/auth/reset-password/ResetPassword'
-import VerifyToken from '@pages/auth/verify-token/VerifyToken'
-import ForbiddenError from '@pages/error/ForbiddenError'
-import FeeManagementV4 from '@pages/fee-management-v4/fee-management/FeeManagement'
-import UserManagement from '@pages/role-management-V2/user-management/UserManagement'
-import { PermissionManagement } from '@pages/role-management-V2/permission-management/PermissionManagement'
-import RoleManagement from '@pages/role-management-V2/role-management/RoleManagement'
-import EwalletManagement from '@pages/wallet-administration/e-walletManagement/EwalletManagement'
-import DetailUser from '@pages/wallet-administration/e-walletManagement/DetailUser'
-import ConfirmRKYC from '@pages/wallet-administration/confirm-ekyc/ConfirmEKYC'
-import MerchantManagement from '@pages/merchant-management/merchanr-management/MerchantManagement'
-import MerchantDetail from '@pages/merchant-management/merchanr-management/MerchantDetail'
-import CreateMerchant from '@pages/merchant-management/merchanr-management/CreateMerchant'
-import OrderFeature from '@pages/merchant-management/merchant-order/OrderFeature'
-import OrderQrFeature from '@pages/merchant-management/merchant-order/OrderQrFeature'
-import DashBoardMerchant from '@pages/merchant-management/dashboard-merchant/DashBoard'
-import TestPage from '@pages/test/TestPage'
-import TransactionManagement from '@pages/wallet-administration/transaction-wallet/TransactionManagement'
-import FrozenTransactions from '@pages/transaction-management/frozen-transactions/FrozenTransactions'
-import SystemLedgerManagement from '@pages/transaction-management/system-ledger/SystemLedgerManagement'
-import DetailSystemLedger from '@pages/transaction-management/system-ledger/DetailSystemLedger'
-import WithdrawHistory from '@pages/transaction-management/withdraw-history/WithdrawHistory'
-import RefundManagement from '@pages/transaction-management/refund-management/RefundManagement'
-import DetailTransaction from '@pages/wallet-administration/transaction-wallet/DetailTransaction'
-import AddFeePolicy from '@pages/fee-management-v4/fee-management/AddFeePolicy'
-import FeeAssignmentManagementV4 from '@pages/fee-management-v4/fee-assignment/FeeAssignmentManagement'
-import FeeAssignAdd from '@pages/fee-management-v4/fee-assignment/components/FeeAssignAdd'
-// import FeeAssignmentManagement from '@pages/fee-management-v3/fee-assignment/FeeAssignmentManagement'
 
+/**
+ * Bọc một trang được tải động vào Suspense.
+ * Mỗi lời gọi tạo ra một chunk riêng, nên bundle ban đầu chỉ còn
+ * layout + shell thay vì toàn bộ ứng dụng.
+ */
+const page = (factory: () => Promise<{ default: ComponentType }>) => {
+  const Lazy = lazy(factory)
+  return createElement(
+    Suspense,
+    {
+      fallback: createElement(
+        'div',
+        { className: 'flex items-center justify-center min-h-[60vh]' },
+        createElement(Spin, { size: 'large' }),
+      ),
+    },
+    createElement(Lazy),
+  )
+}
+
+/** Với trang export theo tên thay vì export default. */
+const namedPage = <T extends string>(
+  factory: () => Promise<Record<T, ComponentType>>,
+  name: T,
+) => page(() => factory().then((m) => ({ default: m[name] })))
 
 const authentication = {
   path: AUTHENTICATION,
@@ -55,28 +49,26 @@ const authentication = {
   children: [
     {
       path: AUTHENTICATION + '/login',
-      element: createElement(Login)
+      element: page(() => import('@pages/auth/login/Login')),
     },
     {
       path: AUTHENTICATION + '/forgot-password',
-      element: createElement(ForgotPassword)
+      element: page(() => import('@pages/auth/forgot-password/ForgotPassword')),
     },
     {
       path: AUTHENTICATION + '/reset-password',
-      element: createElement(ResetPassword)
+      element: page(() => import('@pages/auth/reset-password/ResetPassword')),
     },
     {
       path: AUTHENTICATION + '/forget-password',
-      element: createElement(ForgotPassword)
+      element: page(() => import('@pages/auth/forgot-password/ForgotPassword')),
     },
     {
       path: AUTHENTICATION + '/verify-token',
-      element: createElement(VerifyToken)
+      element: page(() => import('@pages/auth/verify-token/VerifyToken')),
     },
-  ]
+  ],
 }
-
-
 
 const forbidden = {
   path: FORBIDDENERROR,
@@ -85,12 +77,10 @@ const forbidden = {
   children: [
     {
       path: FORBIDDENERROR,
-      element: createElement(ForbiddenError)
-    }
-  ]
+      element: page(() => import('@pages/error/ForbiddenError')),
+    },
+  ],
 }
-
-
 
 const feeManagementV4 = {
   path: FEEMANAGEMENT_V4,
@@ -102,36 +92,36 @@ const feeManagementV4 = {
       children: [
         {
           path: FEEMANAGEMENT_V4 + '/fee-managementV4',
-          element: createElement(FeeManagementV4)
+          element: page(() => import('@pages/fee-management-v4/fee-management/FeeManagement')),
         },
         {
           path: FEEMANAGEMENT_V4 + '/fee-managementV4/:mode',
-          element: createElement(AddFeePolicy)
+          element: page(() => import('@pages/fee-management-v4/fee-management/AddFeePolicy')),
         },
         {
           path: FEEMANAGEMENT_V4 + '/fee-managementV4/:mode/:id',
-          element: createElement(AddFeePolicy)
+          element: page(() => import('@pages/fee-management-v4/fee-management/AddFeePolicy')),
         },
-      ]
+      ],
     },
     {
       path: FEEMANAGEMENT_V4,
       children: [
         {
           path: FEEMANAGEMENT_V4 + '/fee-assignmentV4',
-          element: createElement(FeeAssignmentManagementV4)
+          element: page(() => import('@pages/fee-management-v4/fee-assignment/FeeAssignmentManagement')),
         },
         {
           path: FEEMANAGEMENT_V4 + '/fee-assignmentV4/create',
-          element: createElement(FeeAssignAdd)
+          element: page(() => import('@pages/fee-management-v4/fee-assignment/components/FeeAssignAdd')),
         },
         {
           path: FEEMANAGEMENT_V4 + '/fee-assignmentV4/:mode/:id',
-          element: createElement(FeeAssignAdd)
+          element: page(() => import('@pages/fee-management-v4/fee-assignment/components/FeeAssignAdd')),
         },
-      ]
-    }
-  ]
+      ],
+    },
+  ],
 }
 
 const roleManagementV2 = {
@@ -144,35 +134,35 @@ const roleManagementV2 = {
       children: [
         {
           path: ROLEMANAGEMENT_V2 + '/user-account',
-          element: createElement(UserManagement)
-        }
-
-      ]
+          element: page(() => import('@pages/role-management-V2/user-management/UserManagement')),
+        },
+      ],
     },
     {
       path: ROLEMANAGEMENT_V2,
       children: [
         {
           path: ROLEMANAGEMENT_V2 + '/permission-management',
-          element: createElement(PermissionManagement)
-        }
-
-      ]
+          element: namedPage(
+            () => import('@pages/role-management-V2/permission-management/PermissionManagement'),
+            'PermissionManagement',
+          ),
+        },
+      ],
     },
     {
       path: ROLEMANAGEMENT_V2,
       children: [
         {
           path: ROLEMANAGEMENT_V2 + '/role-management',
-          element: createElement(RoleManagement)
-        }
-
-      ]
+          element: page(() => import('@pages/role-management-V2/role-management/RoleManagement')),
+        },
+      ],
     },
-  ]
-
+  ],
 }
-const walletAministration = {
+
+const walletAdministration = {
   path: WALLETADMINISTRATION,
   element: createElement(AppLayout),
   errorElement: createElement(NotFound),
@@ -182,37 +172,33 @@ const walletAministration = {
       children: [
         {
           path: WALLETADMINISTRATION + '/e-walletManagement',
-          element: createElement(EwalletManagement)
+          element: page(() => import('@pages/wallet-administration/e-walletManagement/EwalletManagement')),
         },
         {
           path: WALLETADMINISTRATION + '/e-walletManagement/:id',
-          element: createElement(DetailUser)
-        }
-
-      ]
+          element: page(() => import('@pages/wallet-administration/e-walletManagement/DetailUser')),
+        },
+      ],
     },
-
-
     {
       path: WALLETADMINISTRATION,
       children: [
         {
           path: WALLETADMINISTRATION + '/confirm-eKYC',
-          element: createElement(ConfirmRKYC)
+          element: page(() => import('@pages/wallet-administration/confirm-ekyc/ConfirmEKYC')),
         },
-      ]
+      ],
     },
     {
       path: WALLETADMINISTRATION,
       children: [
         {
           path: WALLETADMINISTRATION + '/transaction-wallet',
-          element: createElement(TransactionManagement),
+          element: page(() => import('@pages/wallet-administration/transaction-wallet/TransactionManagement')),
         },
-      ]
+      ],
     },
-
-  ]
+  ],
 }
 
 const merchantManagement = {
@@ -225,40 +211,39 @@ const merchantManagement = {
       children: [
         {
           path: MERCHANT + '/dashboard-merchant',
-          element: createElement(DashBoardMerchant),
+          element: page(() => import('@pages/merchant-management/dashboard-merchant/DashBoard')),
         },
         {
           path: MERCHANT + '/merchant-management',
-          element: createElement(MerchantManagement),
+          element: page(() => import('@pages/merchant-management/merchanr-management/MerchantManagement')),
         },
         {
           path: MERCHANT + '/merchant-management/create',
-          element: createElement(CreateMerchant),
+          element: page(() => import('@pages/merchant-management/merchanr-management/CreateMerchant')),
         },
         {
           path: MERCHANT + '/merchant-management/create/:id',
-          element: createElement(CreateMerchant),
+          element: page(() => import('@pages/merchant-management/merchanr-management/CreateMerchant')),
         },
         {
           path: MERCHANT + '/merchant-management/detail/:id',
-          element: createElement(MerchantDetail),
+          element: page(() => import('@pages/merchant-management/merchanr-management/MerchantDetail')),
         },
         {
           path: MERCHANT + '/merchant-management/:id',
-          element: createElement(MerchantDetail),
+          element: page(() => import('@pages/merchant-management/merchanr-management/MerchantDetail')),
         },
         {
           path: MERCHANT + '/merchant-order',
-          element: createElement(OrderFeature),
+          element: page(() => import('@pages/merchant-management/merchant-order/OrderFeature')),
         },
         {
           path: MERCHANT + '/merchant-order/qr/:id',
-          element: createElement(OrderQrFeature),
+          element: page(() => import('@pages/merchant-management/merchant-order/OrderQrFeature')),
         },
-      ]
-    }
-  ]
-
+      ],
+    },
+  ],
 }
 
 const transactionManagement = {
@@ -271,78 +256,75 @@ const transactionManagement = {
       children: [
         {
           path: TRANSACTIONMANAGEMENT + '/transaction-wallet',
-          element: createElement(TransactionManagement)
+          element: page(() => import('@pages/wallet-administration/transaction-wallet/TransactionManagement')),
         },
         {
           path: TRANSACTIONMANAGEMENT + '/transaction-wallet/:id',
-          element: createElement(DetailTransaction)
-        }
-
-      ]
+          element: page(() => import('@pages/wallet-administration/transaction-wallet/DetailTransaction')),
+        },
+      ],
     },
-
     {
       path: TRANSACTIONMANAGEMENT,
       children: [
         {
           path: TRANSACTIONMANAGEMENT + '/frozen-transactions',
-          element: createElement(FrozenTransactions)
+          element: page(() => import('@pages/transaction-management/frozen-transactions/FrozenTransactions')),
         },
-      ]
+      ],
     },
     {
       path: TRANSACTIONMANAGEMENT,
       children: [
         {
           path: TRANSACTIONMANAGEMENT + '/refund-management',
-          element: createElement(RefundManagement)
-        }
-
-      ]
+          element: page(() => import('@pages/transaction-management/refund-management/RefundManagement')),
+        },
+      ],
     },
     {
       path: TRANSACTIONMANAGEMENT,
       children: [
         {
           path: TRANSACTIONMANAGEMENT + '/system-ledger',
-          element: createElement(SystemLedgerManagement)
+          element: page(() => import('@pages/transaction-management/system-ledger/SystemLedgerManagement')),
         },
         {
           path: TRANSACTIONMANAGEMENT + '/system-ledger/:id',
-          element: createElement(DetailSystemLedger)
-        }
-      ]
+          element: page(() => import('@pages/transaction-management/system-ledger/DetailSystemLedger')),
+        },
+      ],
     },
     {
       path: TRANSACTIONMANAGEMENT,
       children: [
         {
           path: TRANSACTIONMANAGEMENT + '/withdraw-history',
-          element: createElement(WithdrawHistory)
-        }
-      ]
-    }
-  ]
+          element: page(() => import('@pages/transaction-management/withdraw-history/WithdrawHistory')),
+        },
+      ],
+    },
+  ],
 }
 
 export const WalletRoutes = createBrowserRouter([
   {
     path: '/',
-    element: createElement(Navigate, { to: AUTHENTICATION + '/login', replace: true })
+    element: createElement(Navigate, { to: AUTHENTICATION + '/login', replace: true }),
   },
   authentication,
   forbidden,
   feeManagementV4,
   roleManagementV2,
-  walletAministration,
+  walletAdministration,
   merchantManagement,
   transactionManagement,
   {
     path: '/test',
-    element: createElement(TestPage),
+    element: page(() => import('@pages/test/TestPage')),
   },
   {
     path: '/secure-panel/*',
     element: createElement(NotFound),
-  }
+  },
 ])

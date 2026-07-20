@@ -1,7 +1,6 @@
 import { ButtonComponent, CardComponent, DialogModal, Table } from '@components/index'
 import { SnowflakeIcon } from '@components/icons'
 import DialogUnfreeze from '../components/DialogUnfreeze'
-import React from 'react'
 import { Column } from './configs/FreezeBalance.column'
 import useFetchFreeze from './hooks/useFetchFreeze'
 
