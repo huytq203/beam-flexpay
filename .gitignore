@@ -39,3 +39,5 @@ turbo.json
 CLAUDE.md
 .env.dev
 .env.development
+# PWA dev build output
+dev-dist
