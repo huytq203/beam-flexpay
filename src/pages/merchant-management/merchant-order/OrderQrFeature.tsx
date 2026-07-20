@@ -30,7 +30,7 @@ const OrderQrFeature = () => {
       }
       // Refetch order data để cập nhật thông tin
       refetch()
-    } catch (error) {
+    } catch {
       // Handle error silently
     }
   }

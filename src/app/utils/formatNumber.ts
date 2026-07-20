@@ -100,6 +100,6 @@ export function formatCurrencyShort(
  * @example parseNumber("1,000,000") => 1000000
  */
 export function parseNumber(value: string): number {
-  const cleaned = value.replace(/[,\.]/g, '');
+  const cleaned = value.replace(/[,.]/g, '');
   return parseFloat(cleaned) || 0;
 }

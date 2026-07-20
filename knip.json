@@ -1,12 +1,14 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "entry": ["src/main.tsx", "src/routes.ts"],
+  "entry": ["src/routes.ts"],
   "project": ["src/**/*.{ts,tsx}"],
   "ignore": ["src/vite-env.d.ts"],
+  "_comment_ignoreDependencies": "autoprefixer/postcss/tailwindcss/babel-plugin-react-compiler are used through build config, not imports. 'events' IS imported by src/main.tsx (window.events = new EventEmitter()) but knip treats it as a Node builtin and reports it unused — removing it silently ships a broken bundle, because Vite externalizes it to an empty shim while the build still succeeds.",
   "ignoreDependencies": [
     "autoprefixer",
     "postcss",
     "tailwindcss",
-    "babel-plugin-react-compiler"
+    "babel-plugin-react-compiler",
+    "events"
   ]
 }

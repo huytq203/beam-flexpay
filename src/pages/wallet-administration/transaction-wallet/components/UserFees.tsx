@@ -20,7 +20,7 @@ const UserFees = ({ data }: UserFeesProps) => {
                         { label: 'Tổng phí', value: <span className='font-medium text-lg text-red-700'>{formatCurrency(data?.feeAmount??0,{ symbol: 'VNĐ', position: 'after' })}</span> },
                         // { label: 'Phí cố định', value: <span className='text-gray-500 text-xs'>5000 VND</span> },
                         // { label: 'Phí phần trăm', value: <span className='text-gray-500 text-xs'>5000 VND (0.5%)</span> },
-                    ].map((item, index) => (
+                    ].map((item) => (
                         <div className="flex justify-between items-center">
                             <p className='font-medium text-gray-500'>{item.label}</p>
                             <p>{item.value}</p>

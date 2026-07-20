@@ -28,7 +28,7 @@ function ForgotPassword() {
       if ('data' in result && result.data) {
         notification.success({ message: t('forgot.messages.forgotPasswordSuccess') }); // Thông báo thành công
       }
-    } catch (error) {
+    } catch {
       notification.error({ message: t('forgot.messages.forgotPasswordError') }); // Thông báo lỗi
     }
   }
@@ -58,7 +58,7 @@ function ForgotPassword() {
           rules={[
             { required: true, message: t`forgot.messages.email`.toString() },
             {
-              pattern: new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/),
+              pattern: new RegExp(/^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$/),
               message: t('messages.emailCorrectFormat').toString()
             }
           ]}

@@ -17,7 +17,6 @@ interface FeeComponentColumnsProps {
 export const feeComponentColumns = ({
   setSelectedRow,
   setOpen,
-  setUpdateComponentId,
   setDeletingId,
   setOpenDialog
 }: FeeComponentColumnsProps): ColumnsType<FeeComponent> => {

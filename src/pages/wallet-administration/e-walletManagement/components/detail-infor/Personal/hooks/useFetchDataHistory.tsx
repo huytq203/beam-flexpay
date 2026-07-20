@@ -15,7 +15,7 @@ interface Props {
     initiatorUsername: string
     searchParams?: SearchParams
 }
-const useFetchData = ({ ownerId, initiatorUsername, searchParams }: Props) => {
+const useFetchData = ({ initiatorUsername, searchParams }: Props) => {
     const {  page, size, setPage, setPageSize } = usePagination()
 
 

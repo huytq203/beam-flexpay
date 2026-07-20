@@ -21,13 +21,13 @@ export const useOrder = () => {
     detail: false,
     create: false
   })
-  const [modeAction, SetModeAction] = useState<ModeAction>()
+  const [modeAction] = useState<ModeAction>()
   // hooks
   const { page, size, setPage, setPageSize } = usePagination();
   const { data: getMerchantOrder } = useGetMerchantOrderQuery({ page, size });
-  const [postConFirm, { isLoading: isloadingConFirm }] = usePostMerchantOrderConfirmMutation()
-  const [postMerChantOrder, { isLoading: isloadingPost }] = usePostMerchantOrderMutation()
-  const [postReFreshQr, { isLoading: isloadingPostReFreshQr }] = usePostRefreshQrMutation()
+  const [postConFirm] = usePostMerchantOrderConfirmMutation()
+  const [postMerChantOrder] = usePostMerchantOrderMutation()
+  const [postReFreshQr] = usePostRefreshQrMutation()
   const { data: dataMerchant } = useGetMerchantQuery({});
 
   //   logic

@@ -6,7 +6,7 @@ import { useMemo, useState } from 'react'
 const useFrozenTransactions = () => {
   const [filter, setFilter] = useState({})
 
-  const { params, page, pageSize, setPage, setPageSize } = usePagination({
+  const { page, pageSize, setPage, setPageSize } = usePagination({
     defaultSort: 'createdAt',
   })
 

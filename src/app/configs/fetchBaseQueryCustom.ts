@@ -29,8 +29,6 @@ import { updateAccessToken } from '@slices/authActions'
 import { PATHS } from '@constants/pathConstant'
 import Swal from 'sweetalert2'
 
-const capybaraIcon = '/images/assets/capybara/Cappybara 17 Poses-10.png'
-
 // ============================================================================
 // STATE - Token Refresh Singleton
 // ============================================================================
@@ -96,7 +94,7 @@ const baseRefreshQuery = fetchBaseQuery({
 
 const baseQueryOld = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL,
-  prepareHeaders: (headers, { getState }) => {
+  prepareHeaders: (headers) => {
     const accessToken = Cookies.get(CookieKey.ACCESS_TOKEN)
     if (accessToken) {
       headers.set('authorization', `Bearer ${accessToken}`)

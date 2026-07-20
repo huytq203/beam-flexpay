@@ -17,7 +17,7 @@ export interface FormAddOrderRef {
     reset: () => void
 }
 
-const FormAddOrder = forwardRef<FormAddOrderRef, Props>(({ onSubmit, merchantOptions, isLoading }, ref) => {
+const FormAddOrder = forwardRef<FormAddOrderRef, Props>(({ onSubmit, merchantOptions }, ref) => {
     const { control, handleSubmit, watch, reset } = useForm<OrderFormValues>({
         resolver: zodResolver(orderSchema),
         defaultValues: {

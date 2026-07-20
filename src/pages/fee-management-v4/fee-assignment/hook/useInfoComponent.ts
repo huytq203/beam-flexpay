@@ -65,7 +65,6 @@ export const useInfoComponent = ({
     onSubmit: onSubmitProp,
     onUpdate: onUpdateProp,
     onSuccess,
-    policyId,
     ref
 }: UseInfoComponentProps) => {
     const { control, reset, watch, getValues, handleSubmit, formState: { errors } } = useForm<FeeComponentType>({

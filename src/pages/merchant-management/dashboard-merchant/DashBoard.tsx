@@ -12,8 +12,7 @@ const STAT_ITEMS = (
   totalMerchants: number,
   totalOrders: number,
   totalOrderSuccess: number,
-  totalOrderPending: number,
-  totalAmount: number
+  totalOrderPending: number
 ) => [
   {
     label: 'Tổng Merchant',
@@ -63,10 +62,8 @@ const DashBoard = () => {
     dataMerchantOrder,
     totalOrderSuccess,
     totalOrderPending,
-    totalAmount,
     recentOrders,
     columns,
-    loadingMerchant,
     loadingOrder,
   } = useDashBoard()
 
@@ -74,8 +71,7 @@ const DashBoard = () => {
     dataMerchant?.totalElements ?? 0,
     dataMerchantOrder?.data?.totalElements ?? 0,
     totalOrderSuccess,
-    totalOrderPending,
-    totalAmount
+    totalOrderPending
   )
 
   return (

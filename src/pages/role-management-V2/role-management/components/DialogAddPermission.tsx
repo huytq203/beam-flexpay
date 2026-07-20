@@ -16,7 +16,7 @@ interface Props {
 
 const DialogAddPermission = ({ permission, onSuccess, onCancel }: Props) => {
   const isEdit = !!permission
-  const { successMess, errorMess } = useMessage()
+  const { successMess } = useMessage()
   const [loading, setLoading] = useState(false)
 
   const [postPermission] = usePostPermissionMutation()

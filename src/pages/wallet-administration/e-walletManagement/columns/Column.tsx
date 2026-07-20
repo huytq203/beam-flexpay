@@ -37,7 +37,6 @@ interface ColumnOptions {
 
 export const getColumn = ({
   openModal,
-  handleGetFreeze,
   navigate
 }: ColumnOptions): ColumnType<AcountItem>[] => {
   return [
@@ -242,7 +241,6 @@ export const getColumn = ({
       render: (_, record) => {
         const isLocked = record.status === StatusKey.LOCKED
         const isFrozen = record.status === StatusKey.FROZEN
-        const isActive = record.status === StatusKey.ACTIVE
         const isSystem = record.ownerType === 'SYSTEM'
 
         const accountPayload: SelectedAccount = {

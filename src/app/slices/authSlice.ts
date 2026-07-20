@@ -15,7 +15,7 @@ export interface IAuthState {
 // Lấy token từ cookie và decode permissions khi app khởi tạo
 const storedToken = Cookies.get(CookieKey.ACCESS_TOKEN)
 const initialTokenInfo = storedToken ? decodeToken(storedToken) : { permissions: [], roles: [], email: '', name: '' }
-const refresh = Cookies.get(CookieKey.REFRESH_TOKEN)
+const _refresh = Cookies.get(CookieKey.REFRESH_TOKEN)
 const initialState: IAuthState = {
   accessToken: storedToken ?? null,
   refreshToken: '',

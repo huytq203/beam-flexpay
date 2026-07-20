@@ -10,7 +10,7 @@ interface Props {
   onCancel: () => void
 }
 
-const DialogUserDetail = ({ userId, onCancel }: Props) => {
+const DialogUserDetail = ({ userId }: Props) => {
   const [selectedUser, setSelectedUser] = useState<UserInfor | null>(null)
   const [loading, setLoading] = useState(false)
   const [getUserById] = useLazyGetUserByIdQuery()

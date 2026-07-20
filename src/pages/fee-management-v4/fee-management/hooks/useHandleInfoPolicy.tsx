@@ -52,7 +52,7 @@ const useHandleInfoPolicy = ({ policyId, selectedRow, onSuccess, onClose }: UseH
 
 
     const idComponentTiers = selectedRow?.id
-    const { data: dataFeeComponentTier, isLoading: isLoadingFeeComponentTier, isFetching: isFetchingFeeComponentTier } = useGetFeeComponentTierQuery(idComponentTiers, {
+    const { data: dataFeeComponentTier } = useGetFeeComponentTierQuery(idComponentTiers, {
         skip: !idComponentTiers
     })
 
@@ -164,7 +164,7 @@ const useHandleInfoPolicy = ({ policyId, selectedRow, onSuccess, onClose }: UseH
             reset(DEFAULT_VALUES)
             onSuccess?.()
             onClose?.()
-        } catch (error) {
+        } catch {
         }
         finally {
             onClose?.()
@@ -175,7 +175,7 @@ const useHandleInfoPolicy = ({ policyId, selectedRow, onSuccess, onClose }: UseH
         try {
             const componentId = selectedRow?.id
             const currentIsTierMode = ([calculationMethodEnum.PROGRESSIVE_TIER, calculationMethodEnum.FLAT_TIER] as string[]).includes(String(data.calculationMethod))
-            const { tiers, ...payloadWithoutTiers } = data
+            const { tiers: _tiers, ...payloadWithoutTiers } = data
             const payloadData = {
                 ...payloadWithoutTiers,
             }

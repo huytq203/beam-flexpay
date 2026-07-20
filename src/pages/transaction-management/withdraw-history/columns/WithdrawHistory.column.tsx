@@ -8,12 +8,6 @@ import StatusBadge from '@components/status-badge/StatusBadge'
 import { cn } from '@utils/cn'
 import { BankEnum, BankLabel, PaymentMethod, PaymentMethodKey, STATUS_CONFIG, StatusKey } from '../constants/WithdrawHistory.constant'
 
-const STATUS_CLASS: Record<string, string> = {
-    PENDING: 'text-blue-600 rounded-md inline-block px-2 font-medium text-[12px] border border-blue-500 bg-blue-50',
-    POSTED: 'text-green-700 rounded-md inline-block px-2 font-medium text-[12px] border border-green-500 bg-green-50',
-    ARCHIVED: 'text-red-600 rounded-md inline-block px-2 font-medium text-[12px] border border-red-400 bg-red-50',
-}
-
 interface ColumnProps {
     onViewDetail: (id: string) => void
 }
@@ -57,7 +51,7 @@ const getColumn = ({ onViewDetail }: ColumnProps): ColumnsType<UnifiedContentJou
         title: 'Thụ hưởng',
         align: 'center',
         dataIndex: 'to',
-        render(value, record) {
+        render(value) {
             return (
                 <div className="text-start">
                     <p className="font-medium">{BankLabel[value?.displayName as BankEnum] ||value?.displayName|| '--'}</p>

@@ -32,7 +32,7 @@ export const OrderColumn = ({ handleOpenModalDetail }: props): ColumnType<Mercha
     title: "Số tiền",
     dataIndex: "contactEmail",
     align: "center",
-    render(value, record, index) {
+    render(value, record) {
       return (
         <>
           <span>
@@ -52,7 +52,7 @@ export const OrderColumn = ({ handleOpenModalDetail }: props): ColumnType<Mercha
     title: "Thời gian tạo",
     dataIndex: "createdAt",
     align: "center",
-    render(value, record, index) {
+    render(value, record) {
       return <>{dayjs(record.createdAt).format(TYPEDATE.fullTime)}</>;
     },
   },
@@ -60,7 +60,7 @@ export const OrderColumn = ({ handleOpenModalDetail }: props): ColumnType<Mercha
     title: "Hành động",
     align: "center",
     width: 100,
-    render(value, record, index) {
+    render(value, record) {
       return (
         <>
           <ButtonComponent

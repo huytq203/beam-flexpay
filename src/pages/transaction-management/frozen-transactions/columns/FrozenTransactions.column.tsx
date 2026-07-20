@@ -73,7 +73,7 @@ export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeR
         align: 'center',
         dataIndex: 'status',
         key: 'status',
-        render: (status: string, record: FreezeRow) => {
+        render: (status: string) => {
             return (
                 <div className='space-y-1'>
               <StatusBadge className={cn(status==StatusKey.ACTIVE&&'animate-pulse-soft')} status={status} config={STATUS_CONFIG}/>

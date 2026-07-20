@@ -40,9 +40,9 @@ function AppLayout() {
 
   const [title, setTitle] = useState<string>(import.meta.env.VITE_APP_NAME)
 
-  const dispatch = useAppDispatch()
+  const _dispatch = useAppDispatch()
 
-  const update = useUpdate()
+  const _update = useUpdate()
   const location = useLocation()
   const navigate = useNavigate()
 

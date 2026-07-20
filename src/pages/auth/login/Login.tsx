@@ -26,7 +26,7 @@ type LoginFormData = z.infer<typeof loginSchema>
 const LoginFormInside = () => {
     const navigate = useNavigate()
     const [login, { isLoading }] = useUserLoginMutation()
-    const [getUrlLogin] = useLazyGetUrlLoginQuery()
+    const [_getUrlLogin] = useLazyGetUrlLoginQuery()
     const { t } = useTranslation()
     const { errorMess } = useMessage()
     const cardRef = useRef<HTMLDivElement>(null)
@@ -40,8 +40,7 @@ const LoginFormInside = () => {
 
     const {
         control,
-        handleSubmit,
-        formState: { errors }
+        handleSubmit
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
         defaultValues: { username: '', password: '' }

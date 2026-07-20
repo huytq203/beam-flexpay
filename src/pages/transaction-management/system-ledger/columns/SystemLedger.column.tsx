@@ -16,7 +16,7 @@ import {
 import StatusBadge from '@components/status-badge/StatusBadge'
 
 const getSystemLedgerColumn = ({
-  navigate
+  navigate: _navigate
 }: {
   navigate: NavigateFunction
 }): ColumnsType<LedgerEntry> => [
@@ -60,7 +60,7 @@ const getSystemLedgerColumn = ({
     align: 'left',
     dataIndex: 'account',
     width: 200,
-    render(value, record) {
+    render(value) {
       return (
         <TooltipComponent title={value?.id}>
           {/* <CopyableText

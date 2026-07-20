@@ -194,7 +194,7 @@ const SystemLedgerManagement = () => {
             rowKey="id"
             expandable={{
               expandedRowRender,
-              rowExpandable: (record) => true,
+              rowExpandable: () => true,
               expandedRowKeys: expandedRowKeys,
               onExpand: handleExpand,
             }}

@@ -140,7 +140,7 @@ export function formatObjectHistory(obj: unknown, key?: string): string {
     } else {
       return processValue(obj)
     }
-  } catch (e) {
+  } catch {
     return String(obj)
   }
 }
@@ -221,8 +221,7 @@ export const getAccountType = (type?: string) => {
 }
 
 export const getStringDateFromMoment = (
-  date: string | undefined,
-  formatDate: string
+  date: string | undefined
 ) => {
   if (date) return dayjs(date).toISOString()
   else return undefined
@@ -568,36 +567,6 @@ export const compareData = (
     }
     return result
   }, [] as string[])
-}
-
-/**
- * Ghi log dữ liệu được cung cấp cùng với một tin nhắn tùy chọn.
- * Nếu dữ liệu là một thể hiện của FormData, nó sẽ chuyển đổi thành JSON và ghi log.
- * Nếu dữ liệu không phải là một thể hiện của FormData, nó sẽ ghi log tin nhắn và dữ liệu như vậy.
- *
- * @param message - Một tin nhắn tùy chọn để ghi log cùng với dữ liệu.
- * @param data - Dữ liệu cần ghi log.
- */
-export const logData = (message: string = '', data: unknown) => {
-  if (data instanceof FormData) {
-    const formDataObject: { [key: string]: FormDataEntryValue } = {}
-    data.forEach((value, key) => {
-      formDataObject[key] = value
-    })
-    message = `FormData as JSON: ${message}`
-  } else {
-
-  }
-}
-
-export function removeNullUndefinedFields<T extends object>(obj: T): Partial<T> {
-  const newObj: Partial<T> = {}
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key) && obj[key] !== null && obj[key] !== undefined) {
-      newObj[key] = obj[key]
-    }
-  }
-  return newObj
 }
 
 

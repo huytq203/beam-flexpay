@@ -21,9 +21,7 @@ interface FeeComponentColumnsProps {
 export const getFeeComponentColumns = ({
   setSelectedRow,
   setOpen,
-  setDeletingId,
   setOpenDialog,
-  listBaseOn,
   dataSource,
   errorMess
 }: FeeComponentColumnsProps): ColumnsType<FeeComponent> => {

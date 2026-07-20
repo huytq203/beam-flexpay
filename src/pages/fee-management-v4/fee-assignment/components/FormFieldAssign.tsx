@@ -20,7 +20,7 @@ interface FormFieldAssign {
   watch: UseFormWatch<FeeAssignType>
 }
 
-const FormFieldAssign = React.memo(({ watch, control, setValue, isCreate, feeDomain }: FormFieldAssign) => {
+const FormFieldAssign = React.memo(({ control, isCreate, feeDomain }: FormFieldAssign) => {
   // api database
   const { data: dataBank } = useGetBankQuery({})
 

@@ -6,7 +6,7 @@ interface CardComponentProps extends Omit<CardProps, 'content'> {
   bodyBackground?: string
   children?: ReactNode
 }
-const CardComponent = ({children, content, bodyBackground, ...rest }: CardComponentProps) => {
+const CardComponent = ({children, content, bodyBackground: _bodyBackground, ...rest }: CardComponentProps) => {
   return (
     <Card
     className='bg-white/90'

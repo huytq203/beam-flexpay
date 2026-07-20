@@ -1,6 +1,4 @@
 import {
-  CheckOutlined,
-  CloseOutlined,
   EditOutlined,
   LockOutlined,
   UnlockOutlined
@@ -8,10 +6,6 @@ import {
 import { ButtonComponent, TooltipComponent } from '@components/index'
 import { FeeAssignment, paymentMethodType } from '@pages/fee-management-v4/fee-assignment/constants/feeAssignment'
 import { ColumnsType } from 'antd/es/table'
-import Tippy from '@tippyjs/react'
-import { useState } from 'react'
-import 'tippy.js/dist/tippy.css'
-import 'tippy.js/themes/light.css'
 import { getEnumLabel } from '@pages/fee-management-v4/fee-assignment/utils/FeeManagement.utils'
 import { serviceType } from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
 import StatusBadge from '@components/status-badge/StatusBadge'
@@ -30,105 +24,6 @@ interface prop {
   navigate: (path: string) => void
   canUpdate?: boolean
 }
-// Approval Popup Content Component
-const ApprovalPopupContent = ({
-  record,
-  onApprove,
-  onReject,
-  onCancel
-}: {
-  record: FeeAssignment
-  onApprove?: (record: FeeAssignment) => void
-  onReject?: (record: FeeAssignment) => void
-  onCancel: () => void
-}) => (
-  <div className='p-3'>
-    <h3 className='text-base font-semibold mb-2'>Duyệt phí</h3>
-    <p className='text-sm text-gray-600 mb-4'>
-      Bạn muốn thực hiện hành động gì với cấu hình phí này?
-    </p>
-    <div className='flex gap-2 justify-end'>
-      <ButtonComponent
-        type='default'
-        content='Hủy bỏ'
-        icon={<CloseOutlined />}
-        onClick={onCancel}
-      />
-      <ButtonComponent
-        danger
-        type='primary'
-        content='Từ chối duyệt'
-        icon={<CloseOutlined />}
-        onClick={() => {
-          onReject?.(record)
-          onCancel()
-        }}
-      />
-      <ButtonComponent
-        type='primary'
-        style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
-        content='Duyệt phí'
-        icon={<CheckOutlined />}
-        onClick={() => {
-          onApprove?.(record)
-          onCancel()
-        }}
-      />
-    </div>
-  </div>
-)
-
-// Approval Button with controlled Tippy
-const ApprovalButton = ({
-  record,
-  onApprove,
-  onReject
-}: {
-  record: FeeAssignment
-  onApprove?: (record: FeeAssignment) => void
-  onReject?: (record: FeeAssignment) => void
-}) => {
-  const [visible, setVisible] = useState(false)
-
-  return (
-    <Tippy
-      content={
-        <ApprovalPopupContent
-          record={record}
-          onApprove={onApprove}
-          onReject={onReject}
-          onCancel={() => setVisible(false)}
-        />
-      }
-      visible={visible}
-      onClickOutside={() => setVisible(false)}
-      interactive={true}
-      placement='left'
-      theme='light'
-      arrow={true}
-      appendTo={() => document.body}
-      maxWidth='none'
-    >
-      <span>
-        <ButtonComponent
-          type='default'
-          icon={<CheckOutlined style={{ color: 'green' }} />}
-          onClick={() => setVisible(true)}
-        />
-      </span>
-    </Tippy>
-  )
-}
-
-function handleAccept(record: FeeAssignment) {
-  alert('Approve ID:' + record.id)
-}
-
-function handleReject(record: FeeAssignment) {
-  alert('Reject ID:' + record.id)
-}
-
-
 export const getFeeAssignColumn = ({
   onToggleStatus,
   navigate,
@@ -147,14 +42,14 @@ export const getFeeAssignColumn = ({
       dataIndex: 'serviceType',
       align: 'center' as const,
 
-      render: (value, record, index: number) => getEnumLabel(value, serviceType)
+      render: (value) => getEnumLabel(value, serviceType)
     },
     {
       title: 'Phương thức thanh toán',
       dataIndex: 'paymentMethod',
       align: 'center' as const,
 
-      render: (value, record, index: number) =>
+      render: (value) =>
         (paymentMethodType[value as keyof typeof paymentMethodType] || '--')
     },
     {
@@ -162,21 +57,21 @@ export const getFeeAssignColumn = ({
       dataIndex: 'bankCode',
       align: 'center' as const,
 
-      render: (value, record, index: number) => value || '--'
+      render: (value) => value || '--'
     },
     {
       title: 'Loại thẻ',
       dataIndex: 'cardType',
       align: 'center' as const,
 
-      render: (value, record, index: number) => value || '--'
+      render: (value) => value || '--'
     },
     {
       title: 'Tài khoản/Nhóm khách hàng',
       dataIndex: 'customerGroup',
       align: 'center' as const,
 
-      render: (value, record, index: number) => value || '--'
+      render: (value) => value || '--'
     },
     {
       title: 'Ngày tạo',
@@ -200,7 +95,7 @@ export const getFeeAssignColumn = ({
       width: 100,
       align: 'center' as const,
 
-      render: (value, record: FeeAssignment, index: number) => {
+      render: (value, record: FeeAssignment) => {
         return (
           <div className='flex gap-1 justify-center'>
             {canUpdate && (
@@ -231,12 +126,6 @@ export const getFeeAssignColumn = ({
                 />
               </TooltipComponent>
             )}
-
-            {/* <ApprovalButton
-              record={record}
-              onApprove={handleAccept}
-              onReject={handleReject}
-            /> */}
           </div>
         )
       }

@@ -20,13 +20,6 @@ window.events = new EventEmitter()
 const primaryColor = '#2bd9d0'
 const primaryHoverColor = '#9feeea'
 
-const common = {
-  colorPrimary: primaryColor,
-  colorInfo: primaryColor,
-  colorLink: primaryColor,
-  colorPrimaryHover: primaryHoverColor,
-  algorithm: true
-}
 const theme = {
   hashed: false,
   token: {

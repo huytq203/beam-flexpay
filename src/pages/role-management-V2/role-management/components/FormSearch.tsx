@@ -16,7 +16,7 @@ interface Props {
   onAdd: () => void
 }
 
-const FormSearch = ({ onSearch, onAdd }: Props) => {
+const FormSearch = ({ onSearch }: Props) => {
   const { control, handleSubmit, reset } = useForm<SearchFormData>({
     defaultValues: { roleCode: '', keyword: '', status: '' }
   })

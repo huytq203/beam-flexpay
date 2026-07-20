@@ -17,7 +17,7 @@ interface SelectedAccount {
 }
 
 const useEwalletManagement = () => {
-  const { params, page, size, setPageSize, setPage } = usePagination()
+  const { page, size, setPageSize, setPage } = usePagination()
   const [filter, setFilter] = useState({})
   const [modalType, setModalType] = useState<ModalType>(null)
   const [selectedAccount, setSelectedAccount] = useState<SelectedAccount | null>(null)
@@ -29,8 +29,8 @@ const useEwalletManagement = () => {
     ...filter
   }
 
-  const [postLockAccount] = usePostLockMutation()
-  const [postUnlockAccount] = usePostUnlockMutation()
+  const [_postLockAccount] = usePostLockMutation()
+  const [_postUnlockAccount] = usePostUnlockMutation()
   const { data: getAccount,isLoading:loadingGetAccount, isFetching } = useGetAccountQuery(payload)
 
   const handleSearch = (data: FormSearchValues) => {

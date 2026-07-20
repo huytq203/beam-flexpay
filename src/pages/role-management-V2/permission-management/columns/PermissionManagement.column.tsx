@@ -17,8 +17,7 @@ interface Props {
 }
 
 export const getPermissionManagementColumn = ({
-  openModal,
-  currentUserRoles = []
+  openModal
 }: Props): ColumnType<DataRoleItem>[] => [
     {
       title: '#',

@@ -6,7 +6,7 @@ import { MerchantColumn } from './column/column'
 import { useNavigate } from 'react-router-dom'
 
 const MerchantManagement = () => {
-  const { data, getMerchantLoading } = useFetchData()
+  const { data } = useFetchData()
   const navigate = useNavigate()
 
   return (

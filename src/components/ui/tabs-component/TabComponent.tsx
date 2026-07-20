@@ -11,7 +11,7 @@ interface props extends TabsProps {
     activeKey?: string
 }
 
-const TabComponent: React.FC<props> = ({ items, onChange, className, centered = false, activeKey, ...rest }) => (
+const TabComponent: React.FC<props> = ({ items, onChange, className, centered = false, activeKey: _activeKey, ...rest }) => (
     <Tabs
         items={items}
         onChange={onChange}

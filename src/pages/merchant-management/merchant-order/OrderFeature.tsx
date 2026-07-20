@@ -18,7 +18,6 @@ const OrderFeature = () => {
     getMerchantOrder,
     setPage,
     setPageSize,
-    openModal,
     closeModal,
     modeOpen,
     selectOrder,

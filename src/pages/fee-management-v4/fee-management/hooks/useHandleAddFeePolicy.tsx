@@ -23,8 +23,8 @@ const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id, setOpenDialog }
     const navigate = useNavigate()
     const [loadingId, setLoadingId] = React.useState<string | null>(null)
 
-    const [postNewPolicy, { isLoading: isLoadingPostNewPolicy }] = usePostNewPolicyMutation()
-    const [putFeePolicy, { isLoading: isLoadingPutFeePolicy }] = usePutFeePolicyMutation()
+    const [postNewPolicy] = usePostNewPolicyMutation()
+    const [putFeePolicy] = usePutFeePolicyMutation()
     const [patchActivateFee, { isLoading: isLoadingPatchActivateFee }] = usePatchActivateFeeMutation()
     const [patchDeactivateFee, { isLoading: isLoadingPatchDeactivateFee }] = usePatchDeactivateFeeMutation()
     const [deleteFeeComponentPolicies, { isLoading: isLoadingDeleteFeeComponentPolicies }] = useDeleteFeeComponentPoliciesMutation()
@@ -56,7 +56,7 @@ const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id, setOpenDialog }
                     navigate(`${res?.data?.id}`, { replace: true })
                 }
             }
-        } catch (error) {
+        } catch {
 
         }
 
@@ -75,7 +75,7 @@ const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id, setOpenDialog }
                 //     navigate(`${res?.data?.id}`, { replace: true })
                 // }
             }
-        } catch (error) {
+        } catch {
 
         }
 
@@ -88,7 +88,7 @@ const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id, setOpenDialog }
                 successMess('Xóa chính sách phí thành công')
                 setOpenDialog?.(false)
             }
-        } catch (error) {
+        } catch {
 
         }
     }
@@ -99,7 +99,7 @@ const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id, setOpenDialog }
             if (res) {
                 successMess('Kích hoạt chính sách phí thành công')
             }
-        } catch (error) {
+        } catch {
 
         } finally {
             setLoadingId(null)
@@ -113,7 +113,7 @@ const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id, setOpenDialog }
             if (res) {
                 successMess('Hủy kích hoạt chính sách phí thành công')
             }
-        } catch (error) {
+        } catch {
 
         } finally {
             setLoadingId(null)

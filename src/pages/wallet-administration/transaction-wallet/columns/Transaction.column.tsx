@@ -27,7 +27,7 @@ interface ColumnProps {
 }
 
 const getColumn = ({
-  navigate
+  navigate: _navigate
 }: ColumnProps): ColumnsType<UnifiedContentJournal> => [
   {
     title: '#',

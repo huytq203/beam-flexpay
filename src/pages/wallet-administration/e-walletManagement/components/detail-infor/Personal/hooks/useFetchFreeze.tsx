@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom'
 
 const useFetchFreeze = () => {
     const { id } = useParams()
-    const { params, page, size, setPage, setPageSize } = usePagination()
+    const { page, size, setPage, setPageSize } = usePagination()
     const [isUnfreezeModalOpen, setIsUnfreezeModalOpen] = React.useState(false)
     const [selectedFreezeItem, setSelectedFreezeItem] = React.useState<FreezeItem | undefined>(undefined)
 

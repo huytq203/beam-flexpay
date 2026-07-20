@@ -31,7 +31,7 @@ const AddFeePolicy = () => {
     const [selectedRow, setSelectedRow] = useState<FeeComponent | null>(null)
     const navigate = useNavigate()
 
-    const { dataSource, feeComponentLoading, page, pageSize, setPage, setPageSize, total } = useFetchDataComponent({ id })
+    const { dataSource, page, pageSize, setPage, setPageSize, total } = useFetchDataComponent({ id })
     const status = dataFeePolicyById?.status
 
     const listBaseOn = useMemo(() => dataSource?.reduce((acc: Record<string, string>, item) => {

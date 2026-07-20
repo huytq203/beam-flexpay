@@ -10,7 +10,7 @@ interface Props {
 }
 
 const DialogDeletePermission = ({ permissionName, onSuccess, onCancel }: Props) => {
-  const { successMess, errorMess } = useMessage()
+  const { successMess } = useMessage()
   const [loading, setLoading] = useState(false)
   const [deletePermission] = useDeletePermissionMutation()
 

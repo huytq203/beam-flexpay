@@ -22,7 +22,7 @@ interface Props {
 }
 
 
-export const getColumnFeePolicy = ({ navigate, handleActive, handleInactive, isLoadingPatchActivateFee, isLoadingPatchDeactivateFee, loadingId }: Props): ColumnsType => [
+export const getColumnFeePolicy = ({ navigate, handleActive, handleInactive, loadingId }: Props): ColumnsType => [
   {
     title: '#',
     dataIndex: 'no',
@@ -79,7 +79,7 @@ export const getColumnFeePolicy = ({ navigate, handleActive, handleInactive, isL
     title: 'Trạng thái',
     dataIndex: 'status',
     align: 'center',
-    render(value, record, index) {
+    render(value) {
       return <StatusBadge status={value} config={STATUS_CONFIG} />
     },
   },
@@ -89,7 +89,7 @@ export const getColumnFeePolicy = ({ navigate, handleActive, handleInactive, isL
     width: 100,
     fixed: 'right',
     align: 'center',
-    render(value, record, index) {
+    render(value, record) {
       const isActive = record?.status === statusType.ACTIVE
       const isLocked = record?.status === statusType.LOCKED
       return (

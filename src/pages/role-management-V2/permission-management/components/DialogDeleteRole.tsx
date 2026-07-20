@@ -11,7 +11,7 @@ interface Props {
 }
 
 const DialogDeleteRole = ({ roleId, roleName, onSuccess, onCancel }: Props) => {
-  const { successMess, errorMess } = useMessage()
+  const { successMess } = useMessage()
   const [loading, setLoading] = useState(false)
   const [deleteRole] = useDeleteRoleMutation()
 

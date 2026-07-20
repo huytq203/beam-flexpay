@@ -79,7 +79,7 @@ export const useFeeAssignmentForm = () => {
     })
 
     const { data: dataAssignById } = useGetAssignByIdQuery(id!, { skip: !id })
-    const { watch: watchPolicy } = useForm<FeeAssignType>()
+    const { watch: _watchPolicy } = useForm<FeeAssignType>()
     // Theo dõi giá trị feePolicyId từ form, fallback về dataAssignById khi mới load
     const formFeePolicyId = watch('feePolicyId')
     const feePolicyId = formFeePolicyId || dataAssignById?.feePolicyId
@@ -121,11 +121,9 @@ export const useFeeAssignmentForm = () => {
 
 
     const {
-        updateComponentId,
         setUpdateComponentId,
         handleUpdateFeeComponent,
-        isSubmitting,
-        setSelectedRow
+        isSubmitting
     } = useFeeComponentForm(true)
 
     const combinedInitialData = useMemo(() => {
@@ -214,7 +212,7 @@ export const useFeeAssignmentForm = () => {
             successMess('Xóa thành công!')
             setComponentToDelete(null)
             setOpenDialog(false)
-        } catch (error) {
+        } catch {
             errorMess('Xóa thất bại!')
         }
     }

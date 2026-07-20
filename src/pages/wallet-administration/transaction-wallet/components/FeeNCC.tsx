@@ -6,7 +6,7 @@ interface FeeNCCProps {
   data?: UnifiedContentJournal
 }
 
-const FeeNCC = ({ data }: FeeNCCProps) => {
+const FeeNCC = ({ data: _data }: FeeNCCProps) => {
   return (
     <>
       <div>

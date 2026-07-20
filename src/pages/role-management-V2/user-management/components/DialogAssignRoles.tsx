@@ -19,7 +19,7 @@ interface Props {
 }
 
 const DialogAssignRoles = ({ userId, onSuccess, onCancel }: Props) => {
-  const { successMess, errorMess } = useMessage()
+  const { successMess } = useMessage()
   const [loading, setLoading] = useState(false)
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([])
   const [initialRoleIds, setInitialRoleIds] = useState<string[]>([])

@@ -15,7 +15,7 @@ import * as Icons from '@components/icons'
 import { STATUS_LABEL } from './constants/FeeManagement.constant'
 const FeeManagement = () => {
   const { dataSource, page, size: pageSize, setPage, setPageSize, total, setFilters, isFetchingFeeManagement } = useFetchDataFee()
-  const { svg } = useSVG()
+  const { svg: _svg } = useSVG()
   const { control, handleSubmit, reset } = useForm<dataSearch>()
   const { handleSearch, handleReset, handleActive, handleInactive, isLoadingPatchActivateFee, isLoadingPatchDeactivateFee, loadingId } = useHandleAddFeePolicy({ setFilters, setPage, reset })
   const navigate = useNavigate()
@@ -88,16 +88,14 @@ const FeeManagement = () => {
                     />
                   </div>
                   <div className='w-full md:w-auto'>
-                    {true && (
-                      <ButtonComponent
-                        htmlType='button'
-                        content='Thêm chính sách phí'
-                        onClick={() => navigate(PATHS.FEE_V4.ADD_FEE_POLICY)}
-                        type='primary'
-                        icon={<Icons.PlusCircleOutlined style={{ fontSize: 18 }} />}
-                        className='w-full md:w-auto'
-                      />
-                    )}
+                    <ButtonComponent
+                      htmlType='button'
+                      content='Thêm chính sách phí'
+                      onClick={() => navigate(PATHS.FEE_V4.ADD_FEE_POLICY)}
+                      type='primary'
+                      icon={<Icons.PlusCircleOutlined style={{ fontSize: 18 }} />}
+                      className='w-full md:w-auto'
+                    />
                   </div>
                 </div>
               </div>

@@ -6,7 +6,7 @@ import { LinkedBank } from '@type/responseAccountWallet'
 interface Props{
   linkedBanks?:LinkedBank[]
 }
-const AccountBankBusiness = ( {linkedBanks}: Props ) => {
+const AccountBankBusiness = ( {linkedBanks: _linkedBanks}: Props ) => {
   const column = Column()
   return (
     <div>

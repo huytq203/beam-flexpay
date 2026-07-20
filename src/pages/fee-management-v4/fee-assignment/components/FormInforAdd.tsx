@@ -51,8 +51,7 @@ export const FormInforAdd = ({
     handlePutAssign,
     handlePostAssign,
     onPolicySelected,
-    editData,
-    isCreate
+    editData
 }: FormInforAddProps) => {
     // Create independent form control for this component
     const {

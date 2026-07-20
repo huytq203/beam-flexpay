@@ -56,18 +56,6 @@ export enum CookieKey {
 // ============================================================================
 
 /**
- * Default cookie options với security settings
- * - secure: Chỉ gửi qua HTTPS (production)
- * - sameSite: 'strict' để chống CSRF
- */
-const getCookieOptions = (expiresInHours: number = 1): Cookies.CookieAttributes => ({
-    secure: window.location.protocol === 'https:',
-    sameSite: 'strict',
-    expires: expiresInHours / 24, // js-cookie expects days
-    path: '/'
-})
-
-/**
  * Set access token cookie với security options
  * @param token - Access token string
  * @param expiresInSeconds - Token expiration in seconds (default: 300 = 5 minutes)

@@ -17,11 +17,11 @@ type DateInputProps =
 
 const DateInput: React.FC<DateInputProps> = (props) => {
   if (props.isRange) {
-    const { isRange, ...rangeProps } = props;
+    const { isRange: _isRange, ...rangeProps } = props;
     return <RangePicker popupClassName="responsive-range-picker"  {...rangeProps} />;
   }
 
-  const { isRange, ...dateProps } = props;
+  const { isRange: _isRange, ...dateProps } = props;
   return <DatePicker popupClassName="responsive-range-picker" {...dateProps} />;
 };
 

@@ -13,7 +13,7 @@ interface Props {
   onCancel: () => void
 }
 
-const DialogAddUser = ({ userId, roleOptions = [], onSuccess, onCancel }: Props) => {
+const DialogAddUser = ({ userId, roleOptions = [] }: Props) => {
   const isEdit = !!userId
   const { control, reset } = useForm()
   const [getUserById] = useLazyGetUserByIdQuery()

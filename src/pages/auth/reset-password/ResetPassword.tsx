@@ -46,7 +46,7 @@ const ResetPassword = () => {
       } else {
         notification.error({ message: t('reset.messages.passwordResetFailed') })
       }
-    } catch (error) {
+    } catch {
       notification.error({ message: t('reset.messages.passwordResetError') })
     }
   }

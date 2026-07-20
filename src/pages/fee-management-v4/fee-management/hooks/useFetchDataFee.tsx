@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import { dataSearch } from '../types/FeeManagement.type'
 
 const useFetchDataFee = () => {
-    const { params, page, size, setPage, setPageSize, sort, sortBy } = usePagination()
+    const { page, size, setPage, setPageSize, sort, sortBy } = usePagination()
     const [filters, setFilters] = useState<Partial<dataSearch>>({})
     const payload = {
         ...filters,

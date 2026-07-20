@@ -16,7 +16,7 @@ const WithdrawHistory = () => {
         { count: "--", label: 'Thành công', borderClass: 'border-l-teal-500', bgClass: 'bg-teal-100', textClass: 'text-teal-600' },
         { count: "--", label: 'Thất bại/lỗi', borderClass: 'border-l-red-500', bgClass: 'bg-red-100', textClass: 'text-red-600' },
     ]
-    const { dataWithdraw, isLoadingWithdraw, setPage, setPageSize, sort, sortBy, dataSource, handleSearch, isFetching } = useFetchDataWithdraw()
+    const { dataWithdraw, setPage, setPageSize, dataSource, handleSearch, isFetching } = useFetchDataWithdraw()
     const { isDetailOpen, detailData, isDetailLoading, openDetail, closeDetail } = useHandle()
     const columns = getColumn({ onViewDetail: openDetail })
 

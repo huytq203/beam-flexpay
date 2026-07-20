@@ -32,7 +32,7 @@ function CustomSelect<T extends PageMetaSearchDto>(props: CustomSelectType<T>) {
     take: 10,
     pageCount: 1
   })
-  const { trigger, search, field, readonly, ...selectProps } = props; // Loại bỏ các props không cần thiết
+  const { trigger, search, field, readonly: _readonly, ...selectProps } = props; // Loại bỏ các props không cần thiết
   const [_search, setSearch] = useState<T>(search)
 
   const handleScroll: React.UIEventHandler<HTMLDivElement> = async (e) => {

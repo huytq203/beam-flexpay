@@ -30,9 +30,6 @@ const InforPolicy = forwardRef<InforPolicyRef, InforPolicyProps>((props, ref) =>
     arrTypeFee
   } = props
   const {
-    reset,
-    getValues,
-    watch,
     control,
     fields,
     isVATType,

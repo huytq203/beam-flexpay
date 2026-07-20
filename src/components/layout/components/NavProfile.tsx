@@ -22,7 +22,7 @@ const { Text } = Typography
 
 export default function NavProfile() {
   const dispatch = useAppDispatch()
-  const navigate = useNavigate()
+  const _navigate = useNavigate()
   const [open, setOpen] = useState(false)
 
   const [logoutApi] = useLogoutMutation();
@@ -92,34 +92,13 @@ export default function NavProfile() {
       if (refreshToken) {
         await logoutApi({ refreshToken }).unwrap()
       }
-    } catch (error) {
+    } catch {
 
     } finally {
       removeRefreshTokenCookie()
       dispatch(logout())
       // window.location.href = '/auth/login';
     }
-  }
-
-  const signOut = () => {
-
-
-
-
-    // Modal.confirm({
-    //   title: trans('labels.logout'),
-    //   icon: (
-    //     <WarningCircleIcon
-    //       size={24}
-    //       color='#de831b'
-    //     />
-    //   ),
-    //   content: trans('labels.logoutDescription'),
-    //   okText: trans('buttons.logout'),
-    //   cancelText: trans('buttons.cancel'),
-    //   onOk: handleSignout,
-    //   centered: true
-    // })
   }
 
   return (
