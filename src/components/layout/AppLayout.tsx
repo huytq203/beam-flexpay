@@ -1,10 +1,11 @@
 // AppLayout.tsx
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
 import { Logo } from '@components/logo/Logo'
+import ScreenLoading from '@components/screen-loading/ScreenLoading'
 import { useAppDispatch, useAppSelector } from '@hooks/hook'
 import useNavigationEw from '@hooks/useNavigation'
 import { useBoolean, useUpdate } from 'ahooks'
-import { Layout, Menu, MenuProps, Drawer, Grid, Spin } from 'antd'
+import { Layout, Menu, MenuProps, Drawer, Grid } from 'antd'
 import React, { useEffect, useMemo, useState, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
@@ -266,7 +267,7 @@ function AppLayout() {
             <NavProfile />
           </Header>
           <Content className='app-content'>
-            <Suspense fallback={<div className="flex w-full h-full justify-center mt-12"><Spin size="large" /></div>}>
+            <Suspense fallback={<ScreenLoading />}>
               <Outlet />
             </Suspense>
           </Content>

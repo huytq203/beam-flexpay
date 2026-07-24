@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/proxy-api/:path*",
+      "destination": "https://api.dev.ewallet.flexpay.vn/:path*"
+    },
+    {
+      "source": "/proxy-cms/:path*",
+      "destination": "https://cms.ewallet.devops.beamewa.com.vn/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
