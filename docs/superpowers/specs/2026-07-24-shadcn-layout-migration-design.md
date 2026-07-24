@@ -29,6 +29,8 @@ Bộ `src/components/ui/sidebar/` hiện **chưa nơi nào dùng** và có 2 imp
 1. `SidebarMenu.tsx` import `{ Tooltip, TooltipTrigger, TooltipContent } from '../tooltip/Tooltip'` — **file không tồn tại**.
 2. `SidebarUserMenu.tsx` import `@base-ui/react` (Popover) — **package chưa cài**; barrel `Sidebar.tsx` re-export file này nên kéo theo vào graph build.
 
+Ngoài ra, nhánh **desktop** của `Sidebar` (trong `SidebarLayout.tsx`) render `<aside className="w-full ...">` **không set width** (chỉ nhánh mobile mới set), không có CSS bù → sidebar chiếm full width, vỡ layout. Phải vá: aside dùng `sidebarWidth` khi mở, `SIDEBAR_WIDTH_ICON` khi thu gọn, thêm transition.
+
 Xử lý (không thêm dependency):
 
 - **Tạo `src/components/ui/tooltip/Tooltip.tsx`** self-contained, export `Tooltip`, `TooltipTrigger`, `TooltipContent` đúng API đang dùng:
@@ -36,7 +38,9 @@ Xử lý (không thêm dependency):
   - `<TooltipTrigger render={element} />` — clone element (`React.cloneElement`) gắn ref + handler hover/focus.
   - `<TooltipContent side="right">` — popup absolute hiện khi hover, hỗ trợ `side`.
   - Thuần React + Tailwind, không lib ngoài, không antd. Chỉ cần đủ dùng cho tooltip label khi sidebar thu gọn.
-- **Gỡ dòng re-export `SidebarUserMenu` khỏi barrel `Sidebar.tsx`** (dòng `export { UserMenuPopover, UserMenuItem } from './SidebarUserMenu';`). File `SidebarUserMenu.tsx` giữ nguyên trên đĩa nhưng không vào graph build. Layout mới không dùng nó (dùng `NavProfile`).
+- **Gỡ dòng re-export `SidebarUserMenu` khỏi barrel `Sidebar.tsx`** (dòng `export { UserMenuPopover, UserMenuItem } from './SidebarUserMenu';`) **và xóa file `SidebarUserMenu.tsx`**. Lý do phải xóa (không chỉ gỡ khỏi barrel): `tsc --noEmit` kiểm tra mọi file trong `include` kể cả file không được import, nên nếu để lại file vẫn báo lỗi `@base-ui/react` không tồn tại. File này chết + gãy + không nơi nào dùng (đã verify không có usage của `UserMenuPopover`/`UserMenuItem`/`SidebarProvider` ngoài thư mục sidebar). Layout mới dùng `NavProfile` cho menu user.
+
+**Baseline typecheck:** `npm run typecheck` hiện fail **17 lỗi, tất cả nằm trong 4 file** sẽ được xử lý (`layout/Header.tsx`, `layout/SideBar.tsx`, `ui/sidebar/SidebarMenu.tsx`, `ui/sidebar/SidebarUserMenu.tsx`). Sau migration, gate hoàn thành là `npm run typecheck` → **0 lỗi**.
 
 ## Kiến trúc
 
