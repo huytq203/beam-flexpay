@@ -170,13 +170,13 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       host: true,
-      port: +PORT || 8000,
+      port: +PORT || 3003,
       proxy: proxyConfig,
       open: true,
     },
     preview: {
       host: true,
-      port: +PORT || 8000,
+      port: +PORT || 3003,
       open: true,
     },
   }

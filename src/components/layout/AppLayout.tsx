@@ -23,6 +23,7 @@ import { PATHS } from '@constants/pathConstant'
 import Cookies from 'js-cookie'
 import { CookieKey } from '@configs/fetchBaseQuery.types'
 import { cn } from '@utils/cn'
+import { appName } from '@constants/appConstant'
 
 const { Header, Sider, Content } = Layout
 const { useBreakpoint } = Grid
@@ -38,7 +39,7 @@ function AppLayout() {
   const [modalPassword, { setTrue: showPassword, setFalse: hidePassword }] =
     useBoolean(false)
 
-  const [title, setTitle] = useState<string>(import.meta.env.VITE_APP_NAME)
+  const [title, setTitle] = useState<string>(appName)
 
   const _dispatch = useAppDispatch()
 
