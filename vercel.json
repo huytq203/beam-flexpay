@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/proxy-api/:path*",
-      "destination": "/api/proxy/proxy-api/:path*"
+      "destination": "/api/proxy?__t=api&__p=:path*"
     },
     {
       "source": "/proxy-cms/:path*",
-      "destination": "/api/proxy/proxy-cms/:path*"
+      "destination": "/api/proxy?__t=cms&__p=:path*"
     },
     {
       "source": "/(.*)",
