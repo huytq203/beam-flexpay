@@ -23,7 +23,7 @@ const DetailTransaction = () => {
         </div>
         <div className="flex justify-center items-center gap-2">
           <ButtonComponent icon={<PrinterOutlined />} type='default' content='In phiếu' />
-          <ButtonComponent icon={<ArrowCounterClockwiseIcon size={16} weight={'bold'} />} className='bg-orange-600 text-white hover:!bg-orange-500 hover:!text-white' content='Hoàn tiền' />
+          <ButtonComponent icon={<ArrowCounterClockwiseIcon size={16} weight={'bold'} />} className='bg-orange-600 text-white hover:bg-orange-500! hover:text-white!' content='Hoàn tiền' />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-5 gap-3">

@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import {
-  DialogModal,
-  Input,
-  ButtonComponent
-} from '@components/index'
+import ButtonComponent from '@components/ui/button-component'
+import DialogModal from '@components/ui/dialogModal-component'
+import Input from '@components/ui/Input-component'
 import { useAppSelector } from '@hooks/hook'
 import {
   useUserChangePasswordMutation,

@@ -26,7 +26,7 @@ const InforUser = () => {
           activeKey={activeKey}
           items={businessInfo}
           onChange={setActiveKey}
-          className='!w-full '
+          className='w-full! '
         />
 
         <div className=''>
@@ -117,11 +117,11 @@ const CommonInfor = ({ accountData }: TabContentProps) => {
   return (
     <div className='flex gap-2 mt-3'>
       <CardComponent
-        className='flex-[3]'
+        className='flex-3'
         content={<InforUser />}
       />
       <CardComponent
-        className='flex-[2]'
+        className='flex-2'
         content={<InforEwallet data={accountData} />}
       />
     </div>

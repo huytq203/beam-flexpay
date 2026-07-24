@@ -36,7 +36,7 @@ function ScreenLoading() {
     <Modal
       centered
       closable={false}
-      destroyOnClose
+      destroyOnHidden
       footer={null}
       title={null}
       open={isOpen}
@@ -45,7 +45,7 @@ function ScreenLoading() {
       zIndex={9999}
       mousePosition={{ x: 0, y: 0 }}
     >
-      <div className='screen-loading-content'>
+      <div className='screen-loading-content bg-transparent!'>
         <img
           src='/images/assets/image/loadingIcon.svg'
           alt='loading'

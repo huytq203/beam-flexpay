@@ -81,7 +81,7 @@ const DashBoard = () => {
         {stats.map((item) => (
           <CardComponent
             key={item.label}
-            className={`${item.border} shadow-sm hover:shadow-md transition-shadow`}
+            className={`${item.border} shadow-xs hover:shadow-md transition-shadow`}
             content={
               <div className='flex items-center justify-between'>
                 <div className='space-y-1 min-w-0'>
@@ -91,7 +91,7 @@ const DashBoard = () => {
                   </p>
                   <p className='text-[12px] text-gray-400 truncate'>{item.sub}</p>
                 </div>
-                <div className={`${item.iconBg} p-3 rounded-xl flex-shrink-0 ml-3`}>
+                <div className={`${item.iconBg} p-3 rounded-xl shrink-0 ml-3`}>
                   <item.icon size={22} className='text-white' weight='fill' />
                 </div>
               </div>
@@ -113,7 +113,7 @@ const DashBoard = () => {
                   10 đơn hàng mới nhất
                 </p>
               </div>
-              <span className='text-[12px] text-gray-400 bg-gray-100 px-2 py-1 rounded'>
+              <span className='text-[12px] text-gray-400 bg-gray-100 px-2 py-1 rounded-sm'>
                 {dataMerchantOrder?.data?.totalElements ?? 0} tổng đơn
               </span>
             </div>

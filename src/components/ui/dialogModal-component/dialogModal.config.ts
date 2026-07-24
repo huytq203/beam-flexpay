@@ -21,7 +21,7 @@ export const MODE_CONFIG: Record<ModeAction, {
     okText: 'Đồng ý',
     cancelText: 'Quay lại',
     okButtonProps: { 
-         className: 'bg-yellow-500 border-yellow-500 text-white hover:!bg-yellow-600'
+         className: 'bg-yellow-500 border-yellow-500 text-white hover:bg-yellow-600!'
      }
   }
 };

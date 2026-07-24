@@ -58,7 +58,7 @@ function AuthLayout() {
       {/* Brand panel — ẩn trên mobile */}
       <div
         ref={brandRef}
-        className="relative hidden md:flex flex-[3] overflow-hidden"
+        className="relative hidden md:flex flex-3 overflow-hidden"
         style={{ background: 'linear-gradient(160deg, #b2fef8 0%, #d2f8f4 40%, #a8f5ef 100%)' }}
       >
         {/* Mascot — hiện full, không có overlay che */}
@@ -69,7 +69,7 @@ function AuthLayout() {
         {/* Brand info: nằm ở góc trái dưới */}
         <div className="auth-brand-info absolute bottom-8 left-8 z-10">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-12 h-12 rounded-xl bg-white/80 backdrop-blur-sm flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-white/80 backdrop-blur-xs flex items-center justify-center">
               <img src="/images/BEAM.png" alt="Beam" className="w-[40px] h-[40px] object-contain" />
             </div>
             <div>

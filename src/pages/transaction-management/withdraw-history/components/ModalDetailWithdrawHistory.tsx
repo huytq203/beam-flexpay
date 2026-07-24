@@ -12,9 +12,9 @@ interface Props {
 }
 
 const STATUS_CLASS: Record<string, string> = {
-    PENDING: 'text-blue-600 bg-blue-50 border border-blue-400 px-2 py-0.5 rounded text-[12px] font-medium',
-    POSTED: 'text-green-700 bg-green-50 border border-green-400 px-2 py-0.5 rounded text-[12px] font-medium',
-    ARCHIVED: 'text-red-600 bg-red-50 border border-red-400 px-2 py-0.5 rounded text-[12px] font-medium',
+    PENDING: 'text-blue-600 bg-blue-50 border border-blue-400 px-2 py-0.5 rounded-sm text-[12px] font-medium',
+    POSTED: 'text-green-700 bg-green-50 border border-green-400 px-2 py-0.5 rounded-sm text-[12px] font-medium',
+    ARCHIVED: 'text-red-600 bg-red-50 border border-red-400 px-2 py-0.5 rounded-sm text-[12px] font-medium',
 }
 
 const InfoRow = ({ label, value, className }: { label: string; value: React.ReactNode; className?: string }) => (
@@ -87,7 +87,7 @@ const DialogDetailWithdrawHistory = ({ data, isLoading }: Props) => {
                                 className='text-red-600 font-bold'
                             />
                             <InfoRow label='Phương thức' value={
-                                <span className="text-[12px] px-2 py-0.5 rounded bg-gray-100 border border-gray-300">
+                                <span className="text-[12px] px-2 py-0.5 rounded-sm bg-gray-100 border border-gray-300">
                                     {PaymentMethod[data.paymentMethod as PaymentMethodKey] ?? '--'}
                                 </span>
                             } />

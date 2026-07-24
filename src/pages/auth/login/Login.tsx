@@ -1,4 +1,4 @@
-import { ButtonComponent } from '@components/index'
+import ButtonComponent from '@components/ui/button-component'
 import { FormInput } from '@components/form'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -116,7 +116,7 @@ const LoginFormInside = () => {
         <div ref={cardRef} className="w-full max-w-[420px]">
             {/* Mobile brand header */}
             <div className="flex items-center gap-3 mb-6 md:hidden">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-teal-100 to-teal-200 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg bg-linear-to-br from-teal-100 to-teal-200 flex items-center justify-center">
                     <img src="/images/BEAM.png" alt="Beam" className="w-7 h-7 object-contain" />
                 </div>
                 <span className="text-teal-700 font-bold text-base tracking-tight">Beam Ewallet CMS</span>
@@ -124,7 +124,7 @@ const LoginFormInside = () => {
 
             {/* Logo */}
             <div className="login-logo flex justify-center mb-4">
-                <div className="w-[60px] h-[60px] rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 flex items-center justify-center border border-teal-100/60">
+                <div className="w-[60px] h-[60px] rounded-2xl bg-linear-to-br from-teal-50 to-teal-100 flex items-center justify-center border border-teal-100/60">
                     <img src="/images/BEAM.png" alt="Beam Logo" className="w-[48px] h-[48px] object-contain" />
                 </div>
             </div>
@@ -143,7 +143,7 @@ const LoginFormInside = () => {
                 <FormInput
                     trim
                     trimOn="blur"
-                    inputClassName="w-full !h-[42px] !rounded-[10px] !text-[13px] !bg-gray-50/80 hover:!bg-white focus:!bg-white !transition-colors !duration-200 !border-gray-200"
+                    inputClassName="w-full h-[42px]! rounded-[10px]! text-[13px]! bg-gray-50/80! hover:bg-white! focus:bg-white! transition-colors! duration-200! border-gray-200!"
                     control={control}
                     name="username"
                     placeholder="Tên đăng nhập "
@@ -158,10 +158,10 @@ const LoginFormInside = () => {
                 />
 
                 <FormInput
-                    inputClassName="w-full !h-[42px] !rounded-[10px] !text-[13px] !bg-gray-50/80 hover:!bg-white focus:!bg-white !transition-colors !duration-200 !border-gray-200"
+                    inputClassName="w-full h-[42px]! rounded-[10px]! text-[13px]! bg-gray-50/80! hover:bg-white! focus:bg-white! transition-colors! duration-200! border-gray-200!"
                     control={control}
-                    type="password"
                     name="password"
+                    type='password'
                     placeholder="Mật khẩu"
                     prefix={<LockOutlined className="text-gray-400" />}
                     autoComplete="new-password"
@@ -183,7 +183,7 @@ const LoginFormInside = () => {
                 </div>
 
                 <ButtonComponent
-                    className="!w-full !h-[42px] !rounded-[10px] !font-semibold !text-[14px]"
+                    className="w-full! h-[42px]! rounded-[10px]! font-semibold! text-[14px]!"
                     content="Đăng nhập"
                     htmlType="submit"
                     loading={isLoading}

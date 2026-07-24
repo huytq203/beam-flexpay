@@ -11,6 +11,12 @@
   height: 56px;
   animation: screen-loading-spin 1s linear infinite;
 }
+.modal-loading .ant-modal-content {
+  background: none !important;
+  box-shadow: none !important;
+  text-align: center !important;
+}
+
 
 .screen-loading-logo {
   width: 120px;

@@ -46,7 +46,7 @@ export const OrderColumn = ({ handleOpenModalDetail }: props): ColumnType<Mercha
     title: "Trạng thái",
     dataIndex: "status",
     align: "center",
-    render: (value: keyof typeof status) => <span className={status[value] == status.SUCCESS ? "success-status px-2 rounded text-[12px]" : 'info-status  px-2 rounded text-[12px]'}>{status[value] ?? value}</span>,
+    render: (value: keyof typeof status) => <span className={status[value] == status.SUCCESS ? "success-status px-2 rounded-sm text-[12px]" : 'info-status  px-2 rounded-sm text-[12px]'}>{status[value] ?? value}</span>,
   },
   {
     title: "Thời gian tạo",

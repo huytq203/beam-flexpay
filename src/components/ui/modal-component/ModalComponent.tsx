@@ -50,7 +50,7 @@ const ModalComponent = ({
       open={open}
       onOk={onOk}
       centered
-      destroyOnClose
+      destroyOnHidden
       confirmLoading={confirmLoading}
       onCancel={onCancel}
       width={getResponsiveWidth()}

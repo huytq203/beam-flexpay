@@ -2,8 +2,8 @@ import { CardComponent } from '@components/index'
 import React from 'react'
 import useDetailSystemLedger from './hooks/useDetailSystemLedger'
 import dayjs from 'dayjs'
-import { formatCurrency } from '@utils/formatNumber'
 import { GLCodeLabels, OwnerTypeLabels, StatusLabel } from './constants/SystemLedger.constant'
+import { formatCurrency } from '@/app/utils'
 
 const DetailSystemLedger = () => {
   const { ledgerEntry, isLoading } = useDetailSystemLedger()
@@ -195,11 +195,11 @@ const DetailSystemLedger = () => {
                 <hr />
                 <div className='flex flex-col gap-1'>
                   <span className='text-gray-500 text-xs'>Checksum:</span>
-                  <span className='font-mono text-[10px] bg-gray-100 p-1 rounded break-all'>{ledgerEntry.checksum}</span>
+                  <span className='font-mono text-[10px] bg-gray-100 p-1 rounded-sm break-all'>{ledgerEntry.checksum}</span>
                 </div>
                 <div className='flex flex-col gap-1'>
                   <span className='text-gray-500 text-xs'>Previous Checksum:</span>
-                  <span className='font-mono text-[10px] bg-gray-100 p-1 rounded break-all'>{ledgerEntry.previousChecksum}</span>
+                  <span className='font-mono text-[10px] bg-gray-100 p-1 rounded-sm break-all'>{ledgerEntry.previousChecksum}</span>
                 </div>
               </div>
             </>

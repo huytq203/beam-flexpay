@@ -33,7 +33,7 @@ const MerchantDetail = () => {
 
   return (
     <div className='p-6 bg-gray-50 min-h-screen'>
-      <div className='mb-6 flex items-center justify-between bg-white p-4 rounded-lg shadow-sm'>
+      <div className='mb-6 flex items-center justify-between bg-white p-4 rounded-lg shadow-xs'>
         <div className='flex items-center gap-4'>
           <ButtonComponent
             type='text'

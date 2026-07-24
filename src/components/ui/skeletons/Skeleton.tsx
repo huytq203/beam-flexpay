@@ -7,7 +7,7 @@ interface SkeletonProps {
 export const Skeleton: React.FC<SkeletonProps> = ({ className = '' }) => {
   return (
     <div
-      className={`animate-pulse bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%] rounded ${className}`}
+      className={`animate-pulse bg-linear-to-r from-gray-200 via-gray-300 to-gray-200 bg-size-[200%_100%] rounded-sm ${className}`}
       style={{
         animation: 'shimmer 2s infinite linear',
       }}
@@ -228,7 +228,7 @@ export const SkeletonSearchGroup: React.FC<{
 export const SkeletonTitle: React.FC<{ className?: string }> = ({ className = '' }) => {
   return (
     <div className={`mb-3 border-b border-gray-200 pb-2 flex items-center gap-2 ${className}`}>
-      <Skeleton className="w-5 h-5 rounded" />
+      <Skeleton className="w-5 h-5 rounded-sm" />
       <Skeleton className="h-5 w-32" />
     </div>
   );

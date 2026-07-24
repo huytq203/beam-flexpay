@@ -59,7 +59,7 @@ export const DashBoarColumn = (): ColumnType<MerchanOrderItem>[] => [
         render: (value: string) => {
             const s = orderStatus[value]
             return (
-                <span className={`px-2 py-0.5 rounded text-[12px] font-medium whitespace-nowrap ${s?.className ?? 'bg-gray-100 text-gray-500'}`}>
+                <span className={`px-2 py-0.5 rounded-sm text-[12px] font-medium whitespace-nowrap ${s?.className ?? 'bg-gray-100 text-gray-500'}`}>
                     {s?.label ?? value}
                 </span>
             )

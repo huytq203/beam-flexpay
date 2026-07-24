@@ -1,173 +1,371 @@
-@import '_variables.css';
-@import '_layout.css';
-
-@import '_color.css';
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer utilities {
-
-  /* Flex shortcuts */
-  .flex-center {
-    @apply flex justify-center items-center;
-  }
-
-  .flex-between {
-    @apply flex justify-between items-center;
-  }
-
-  .flex-start {
-    @apply flex justify-start items-center;
-  }
-
-  .flex-end {
-    @apply flex justify-end items-center;
-  }
-
-  .flex-col-center {
-    @apply flex flex-col justify-center items-center;
-  }
-
-  /* Color shortcuts: text-red = text-red-600 */
-  .text-red {
-    @apply text-red-600;
-  }
-
-  .text-green {
-    @apply text-green-600;
-  }
-
-  .text-yellow {
-    @apply text-yellow-800;
-  }
-
-  .text-orange {
-    @apply text-orange-600;
-  }
-
-  .text-gray {
-    @apply text-gray-600;
-  }
-
-  /* border */
-  .border-red {
-    @apply border-red-500;
-  }
-
-  .border-green {
-    @apply border-green-500;
-  }
-
-  .border-blue {
-    @apply border-blue-500;
-  }
-
-  .border-yellow {
-    @apply border-yellow-400;
-  }
-
-  .border-orange {
-    @apply border-orange-500;
-  }
-
-  .border-gray {
-    @apply border-gray-500;
-  }
-
-  /* Background shortcuts */
-  .bg-red {
-    @apply bg-red-50;
-  }
-
-  .bg-yellow {
-    @apply bg-yellow-50;
-  }
-
-  .bg-green {
-    @apply bg-green-50;
-  }
-
-  .bg-blue {
-    @apply bg-blue-50;
-  }
-
-  .bg-gray {
-    @apply bg-gray-50;
-  }
-
-  .success-status {
-    @apply bg-green border border-green text-green font-medium;
-  }
-
-  .danger-status {
-    @apply bg-red border border-red text-red font-medium;
-  }
-
-  .warning-status {
-    @apply bg-yellow border border-yellow text-yellow-700 font-medium;
-  }
-
-  .info-status {
-    @apply bg-blue border border-blue text-blue-500 font-medium;
-  }
-
-  .normal-status {
-    @apply bg-gray border border-gray text-gray font-medium;
-  }
-
-  @keyframes shimmer {
-    0% {
-      background-position: -200% 0;
-    }
-
-    100% {
-      background-position: 200% 0;
-    }
-  }
-}
-
-html {
-  font-size: clamp(12px, 0.9vw, 16px) !important;
-}
-
-/* Custom Scrollbar Global (Extreme 2px) */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+@custom-variant dark (&:where(.dark, .dark *));
+/* Thin scrollbar — auto-hide */
 * {
-  scrollbar-width: thin !important;
-  scrollbar-color: #cbd5e1 transparent !important;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
 }
 
-::-webkit-scrollbar {
-  width: 2px !important;
-  height: 2px !important;
-  display: block !important;
+*:hover {
+    scrollbar-color: var(--border) transparent;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent !important;
+*::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
 }
 
-::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1 !important;
-  border-radius: 10px !important;
-  border: none !important;
+*::-webkit-scrollbar-track {
+    background: transparent;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background-color: var(--primary-color, #2bd9d0) !important;
+*::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 9999px;
 }
 
-/* Force for all Ant Design and Custom scrolling components */
-[class^="ant-"]::-webkit-scrollbar,
-[class*=" ant-"]::-webkit-scrollbar,
-.scroll-custom::-webkit-scrollbar,
-.ant-table-body::-webkit-scrollbar,
-.ant-menu-inline::-webkit-scrollbar {
-  width: 2px !important;
-  height: 2px !important;
+*:hover::-webkit-scrollbar-thumb {
+    background: var(--border);
 }
 
-.scroll-custom {
-  overflow-y: auto;
-  overflow-x: hidden;
+*::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
+}
+
+/*
+  View Transitions API: Tắt animation mặc định (fade cross-dissolve).
+  ThemeToggle sẽ tự định nghĩa clip-path ripple animation thay thế.
+*/
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+    z-index: 1;
+}
+
+::view-transition-new(root) {
+    z-index: 9999;
+}
+
+
+@theme {
+  --animate-ping: ping 1.5s linear infinite; /* Chỉnh cho nó chạy chậm lại */
+
+
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-switch-background: var(--switch-background);
+
+    --color-border: var(--border);
+
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+
+    --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
+
+    --color-destructive: var(--danger);
+    --color-destructive-foreground: var(--danger-foreground);
+
+    --color-danger: var(--danger);
+    --color-danger-foreground: var(--danger-foreground);
+
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-ring: var(--sidebar-ring);
+
+    /* ─── Kraken-inspired radius scale ───────────────────────────────────────── */
+    --radius-sm: 0.375rem;   /* 6px  — badges, tags */
+    --radius-md: 0.5rem;     /* 8px  — tooltips, popovers */
+    --radius-lg: 0.75rem;    /* 12px — buttons, inputs, cards */
+    --radius-xl: 1rem;       /* 16px — modals, large containers */
+
+    /* ─── Shadow tokens ───────────────────────────────────────────────────────── */
+    --shadow-subtle: rgba(0,0,0,0.03) 0px 4px 24px;
+    --shadow-micro:  rgba(16,24,40,0.04) 0px 1px 4px;
+
+    /* ─── Font families ───────────────────────────────────────────────────────── */
+    --font-display: 'IBM Plex Sans', Helvetica, Arial, sans-serif;
+    --font-ui:      'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+    /* Z-index scale */
+    --z-dropdown: 50;
+    --z-sticky: 100;
+    --z-overlay: 200;
+    --z-modal: 300;
+    --z-popover: 400;
+    --z-toast: 500;
+
+    --animate-spin-slow: spin 3s linear infinite;
+    --animate-progress-stripes: progress-stripes 1s linear infinite;
+
+    @keyframes progress-stripes {
+        from { background-position: 1rem 0; }
+        to { background-position: 0 0; }
+    }
+
+    --animate-blink: blink 1s step-end infinite;
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+}
+
+@layer base {
+    :root {
+        /* GENERATED:theme-start */
+        /* Auto-generated from themes.ts — run `npm run theme:sync` to update */
+        --background: #ffffff;
+        --foreground: #101114;
+        --primary: #2bd9d0;
+        --primary-foreground: #062f2d;
+        --secondary: #d7f8f6;
+        --secondary-foreground: #087b75;
+        --muted: #f4fafa;
+        --muted-foreground: #647c7b;
+        --accent: #e9fbfa;
+        --accent-foreground: #101114;
+        --success: #149e61;                 /* Kraken Green */
+        --success-foreground: #ffffff;
+        --warning: #f59e0b;
+        --warning-foreground: #ffffff;
+        --danger: #ef4444;
+        --danger-foreground: #ffffff;
+        --destructive: #ef4444;
+        --destructive-foreground: #ffffff;
+        --border: #c9e9e7;
+        --input: #c9e9e7;
+        --ring: #2bd9d0;
+        --popover: #ffffff;
+        --popover-foreground: #101114;
+        /* GENERATED:theme-end */
+
+        /* Non-theme tokens (not managed by applyTheme) */
+        --switch-background: #9fc9c6;
+
+        --chart-1: #e11d48;
+        --chart-2: #2bd9d0;
+        --chart-3: #149e61;                 /* Kraken Green */
+        --chart-4: #f59e0b;
+        --chart-5: #087b75;
+
+        --sidebar: #f7fcfc;
+        --sidebar-foreground: #101114;
+        --sidebar-border: #c9e9e7;
+        --sidebar-accent: #e5f9f7;
+        --sidebar-accent-foreground: #087b75;
+        --sidebar-ring: #2bd9d0;
+    }
+
+    .dark {
+        /* Dark theme with teal-tinted neutral surfaces */
+        --background: #071514;
+        --foreground: #eaf8f7;
+
+        --primary: #2bd9d0;
+        --primary-foreground: #062f2d;
+
+        --secondary: #103431;
+        --secondary-foreground: #7be8e2;
+
+        --muted: #0d2422;
+        --muted-foreground: #7b9997;
+
+        --accent: #103431;
+        --accent-foreground: #eaf8f7;
+
+        --switch-background: #1e514d;
+
+        --border: #214743;
+        --input: #214743;
+
+        --success: #1acc72;                 /* Brighter Kraken green for dark bg */
+        --success-foreground: #ffffff;
+
+        --warning: #f59e0b;
+        --warning-foreground: #ffffff;
+
+        --danger: #f05555;
+        --danger-foreground: #ffffff;
+
+        --ring: #2bd9d0;
+
+        --chart-1: #fb7185;
+        --chart-2: #2bd9d0;
+        --chart-3: #1acc72;
+        --chart-4: #fbbf24;
+        --chart-5: #7be8e2;
+
+        --popover: #0d2422;
+        --popover-foreground: #eaf8f7;
+
+        --sidebar: #06110f;
+        --sidebar-foreground: #eaf8f7;
+        --sidebar-border: #214743;
+        --sidebar-accent: #103431;
+        --sidebar-accent-foreground: #7be8e2;
+        --sidebar-ring: #2bd9d0;
+    }
+}
+
+
+@layer base {
+    * {
+        border-color: var(--border);
+    }
+
+    html, body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--background);
+        color: var(--foreground);
+        font-family: var(--font-ui);
+        overflow: hidden; /* Khóa scroll tổng để dùng nội bộ */
+        height: 100%;
+        color-scheme: light;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    html.dark {
+        color-scheme: dark;
+    }
+
+    /* Fix dải trắng khi mở modal/dialog trong các thư viện (Base UI, Radix) */
+    body[style*="overflow: hidden"],
+    body[data-scroll-locked] {
+        padding-right: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    /* Đảm bảo Backdrop luôn phủ kín màn hình bất chấp các tính toán của thư viện */
+    [data-base-ui-dialog-backdrop],
+    .base-ui-backdrop,
+    [role="presentation"] > div[style*="fixed"] {
+        width: 100vw !important;
+        height: 100vh !important;
+        left: 0 !important;
+        top: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+    }
+
+}
+
+/* ─── Reduced Motion ─────────────────────────────────────────────────────────
+   Respect prefers-reduced-motion for a11y.
+   Disables all animations and transitions globally when the user's OS
+   requests reduced motion. Individual components can opt-out via
+   motion-reduce:* utilities if an animation is essential.
+*/
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* SweetAlert is rendered outside the React root, so use explicit selectors. */
+.session-expired-container.swal2-backdrop-show {
+    backdrop-filter: blur(4px);
+}
+
+.swal2-popup.session-expired-popup {
+    border: 1px solid rgb(255 255 255 / 60%);
+    border-radius: 40px;
+    box-shadow: 0 20px 50px rgb(0 0 0 / 15%);
+    backdrop-filter: blur(24px);
+}
+
+.swal2-title.session-expired-title {
+    color: #1e293b;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.swal2-html-container.session-expired-message {
+    color: #64748b;
+    font-size: 14px;
+}
+
+.swal2-confirm.session-expired-confirm {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: #ffffff;
+    background: #3b82f6;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 150ms ease;
+}
+
+.swal2-confirm.session-expired-confirm:hover {
+    background: #60a5fa;
+}
+
+.session-expired-image {
+    object-fit: contain;
+    margin-bottom: 4px;
+    filter: drop-shadow(0 9px 7px rgb(0 0 0 / 10%));
+}
+
+.swal2-footer.session-expired-footer {
+    margin-inline: auto;
+    padding: 0 0 4px;
+    border-top: 0;
+    text-align: center;
+}
+
+.session-expired-footer-text {
+    color: #6b7280;
+    font-size: 10px;
+    font-weight: 500;
+}
+
+/* Ensure data-state="checked" always works for background */
+[data-state="checked"] {
+    &.bg-primary {
+        background-color: var(--primary);
+    }
+}
+
+[data-state="indeterminate"] {
+    &.bg-primary {
+        background-color: var(--primary);
+    }
 }

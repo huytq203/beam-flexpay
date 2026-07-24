@@ -318,7 +318,7 @@ const getColumn = ({
   //                     <ButtonComponent
   //                         onClick={() => navigate(`/transaction-management/transaction-wallet/${record.id}`)}
   //                         size='small'
-  //                         className='bg-blue-50 !border border-blue-600 text-blue-600 hover:!bg-blue-100 hover:!text-blue-600'
+  //                         className='bg-blue-50 border! border-blue-600 text-blue-600 hover:bg-blue-100! hover:text-blue-600!'
   //                         icon={<EyeFilled />}
   //                     />
   //                 </TooltipComponent>

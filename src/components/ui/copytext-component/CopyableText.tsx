@@ -35,7 +35,7 @@ interface CopyableTextProps {
         <span className="truncate" title={value}>{value}</span>
         <TooltipComponent title={titleHover}>
           <CopyIcon
-            className="cursor-pointer hover:text-blue-500 text-gray-500 flex-shrink-0"
+            className="cursor-pointer hover:text-blue-500 text-gray-500 shrink-0"
             onClick={copyToClipboard}
             onMouseEnter={handleMouseEnter}
           />

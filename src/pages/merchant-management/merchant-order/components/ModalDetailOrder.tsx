@@ -17,7 +17,7 @@ const ModalDetailOrder = ({ selectOrder, handleConFirm }: props) => {
             <div className="md:flex gap-3 space-y-3 md:space-y-0">
 
                 <CardComponent
-                    className='flex-[2] '
+                    className='flex-2 '
                     content={<>
                         {selectOrder &&
                             <>

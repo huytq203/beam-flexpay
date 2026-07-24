@@ -69,7 +69,7 @@ const CommonInfo = ({ data }: CommonInfoProps) => {
         </div>
         {data?.status === 'ARCHIVED' && data.failureReason && (
           <div className='col-span-3'>
-            <div className='bg-red-50 border border-red-200 rounded p-2'>
+            <div className='bg-red-50 border border-red-200 rounded-sm p-2'>
               <p className='text-gray-500'>Lý do thất bại:</p>
               <p className='font-medium text-red-700'>{data.failureReason}</p>
             </div>

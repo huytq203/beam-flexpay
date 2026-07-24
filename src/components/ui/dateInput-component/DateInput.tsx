@@ -1,6 +1,7 @@
 import React from "react";
 import type { DatePickerProps } from "antd";
 import { DatePicker } from "antd";
+import { cn } from "@/lib/utils/cn";
 import "./style.css";
 
 const { RangePicker } = DatePicker;
@@ -17,12 +18,34 @@ type DateInputProps =
 
 const DateInput: React.FC<DateInputProps> = (props) => {
   if (props.isRange) {
-    const { isRange: _isRange, ...rangeProps } = props;
-    return <RangePicker popupClassName="responsive-range-picker"  {...rangeProps} />;
+    const { isRange: _isRange, classNames, ...rangeProps } = props;
+    return (
+      <RangePicker
+        {...rangeProps}
+        classNames={{
+          ...classNames,
+          popup: {
+            ...classNames?.popup,
+            root: cn("responsive-range-picker", classNames?.popup?.root),
+          },
+        }}
+      />
+    );
   }
 
-  const { isRange: _isRange, ...dateProps } = props;
-  return <DatePicker popupClassName="responsive-range-picker" {...dateProps} />;
+  const { isRange: _isRange, classNames, ...dateProps } = props;
+  return (
+    <DatePicker
+      {...dateProps}
+      classNames={{
+        ...classNames,
+        popup: {
+          ...classNames?.popup,
+          root: cn("responsive-range-picker", classNames?.popup?.root),
+        },
+      }}
+    />
+  );
 };
 
 export default DateInput;

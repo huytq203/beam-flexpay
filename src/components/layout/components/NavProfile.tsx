@@ -13,7 +13,7 @@ import {
   UserIcon,
   WarningCircleIcon
 } from '@phosphor-icons/react/dist/ssr'
-import { DialogModal } from '@components/index'
+import DialogModal from '@components/ui/dialogModal-component'
 import { useLogoutMutation } from '@services/authEndpoints'
 import { getRefreshTokenCookie, removeRefreshTokenCookie } from '@configs/fetchBaseQuery.types'
 

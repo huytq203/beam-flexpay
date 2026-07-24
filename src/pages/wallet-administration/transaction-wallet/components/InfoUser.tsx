@@ -33,7 +33,7 @@ const PartySection = ({ party, label }: { party?: PartyInfo; label: string }) =>
     <div>
       <div className='flex items-center justify-between mb-2'>
       <p className='text-gray-500 text-xs mb-2 font-medium uppercase tracking-wide'>{label}</p>
-      <span className={`text-xs px-2 py-0.5 rounded font-medium ${TYPE_BADGE_CLASS[party.type] ?? 'text-gray-500 bg-gray-50 border border-gray-200'}`}>
+      <span className={`text-xs px-2 py-0.5 rounded-sm font-medium ${TYPE_BADGE_CLASS[party.type] ?? 'text-gray-500 bg-gray-50 border border-gray-200'}`}>
         {typeLabel}
       </span>
       </div>

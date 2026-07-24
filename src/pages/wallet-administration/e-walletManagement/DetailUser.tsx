@@ -35,13 +35,13 @@ const InforUser = ({ data, dataEKYC }: props) => {
             <p>{displayName} - {dataEKYC?.username || data.ownerUsername}</p>
             <p></p>
             <p className='flex gap-2 justify-start items-center font-medium'>
-              <span className='bg-gray-200 px-1 rounded text-[12px]'>Hạng bạc</span>
+              <span className='bg-gray-200 px-1 rounded-sm text-[12px]'>Hạng bạc</span>
               {dataEKYC?.status === 'VERIFIED' ? (
-                <span className='flex gap-1 text-green-700 bg-green-100 px-1 rounded text-[12px]'>
+                <span className='flex gap-1 text-green-700 bg-green-100 px-1 rounded-sm text-[12px]'>
                   <CheckCircleFilled />Đã xác thực KYC
                 </span>
               ) : (
-                <span className='flex gap-1 text-red-700 bg-red-100 px-1 rounded text-[12px]'>
+                <span className='flex gap-1 text-red-700 bg-red-100 px-1 rounded-sm text-[12px]'>
                   <CheckCircleFilled />Chưa xác thực EKYC
                 </span>
               )}

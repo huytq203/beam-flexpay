@@ -123,22 +123,22 @@ export const ComponentDetail = ({ setOpenModalDetail, data, onEdit, onDelete, se
                 </div>
               </div>
               <div className=' grid grid-cols-1 md:grid-cols-4 gap-3 px-2 mb-3 w-fit'>
-                <span className='border px-2 py-1 rounded bg-gray-200 '>
+                <span className='border px-2 py-1 rounded-sm bg-gray-200 '>
                   Người trả: <span className='font-medium'>{payerType[data.payerType as keyof typeof payerType]}</span>
                 </span>
-                <span className='border px-2 py-1 rounded bg-gray-200'>
+                <span className='border px-2 py-1 rounded-sm bg-gray-200'>
                   Người hưởng: <span className='font-medium'>{beneficiaryType[data.beneficiaryType as keyof typeof beneficiaryType]}</span>
                 </span>
-                <span className='border px-2 py-1 rounded bg-gray-200'>
+                <span className='border px-2 py-1 rounded-sm bg-gray-200'>
                   Cách tính: <span className='font-medium'>{calculationMethodEnum[data.calculationMethod as keyof typeof calculationMethodEnum]} </span>
                 </span>
-                <span className='border px-2 py-1 rounded bg-gray-200'>
+                <span className='border px-2 py-1 rounded-sm bg-gray-200'>
                   Dựa trên: <span className='font-medium'>{baseOn[data.componentType as keyof typeof baseOn]}</span>
                 </span>
               </div>
               <div className='px-2'>
                 {data.componentType === 'VAT' ? (
-                  <span className='border px-2 py-1 rounded bg-gray-200'>
+                  <span className='border px-2 py-1 rounded-sm bg-gray-200'>
                     Phần trăm VAT: <span className='font-medium'>{data.percentage}%</span>
                   </span>
                 ) : (

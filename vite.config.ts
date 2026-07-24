@@ -4,8 +4,10 @@ import { defineConfig, loadEnv } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 import svgr from 'vite-plugin-svgr'
+import tailwindcss from '@tailwindcss/vite';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
+  const isProduction = mode === 'production'
   const PORT = env.VITE_PORT
   const useProxy = env.VITE_PROXY === 'true'
 
@@ -47,25 +49,17 @@ export default defineConfig(({ mode }) => {
     defineEnv['import.meta.env.VITE_API_WALLETCORE'] = JSON.stringify(env.VITE_API_WALLETCORE?.replace(apiTarget, '/proxy-api'))
     defineEnv['import.meta.env.VITE_API_MERCHANT'] = JSON.stringify(env.VITE_API_MERCHANT?.replace(apiTarget, '/proxy-api'))
   }
-  const ReactCompilerConfig = { /* options */ };
   return {
     define: defineEnv,
     base: '/',
     plugins: [
-      react(
-          {
-          babel: {
-            plugins: [
-              ["babel-plugin-react-compiler", ReactCompilerConfig],
-            ],
-          },
-        }
-      ),
+      tailwindcss(),
+      react(),
       svgr(),
-      VitePWA({
+      isProduction && VitePWA({
         registerType: 'autoUpdate',
         devOptions: {
-          enabled: true,
+          enabled: false,
           type: 'module'
         },
         workbox: {
@@ -93,8 +87,17 @@ export default defineConfig(({ mode }) => {
             }
           ]
         }
-      }),
-    ],
+      })
+    ].filter(Boolean),
+    optimizeDeps: {
+      include: [
+        '@phosphor-icons/react',
+        '@phosphor-icons/react/dist/ssr',
+        'react-resizable-panels',
+        'sweetalert2',
+        'tailwind-variants'
+      ]
+    },
     build: {
       sourcemap: false,
       manifest: true,
@@ -126,6 +129,10 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {  
       alias: [
+        {
+          find: '@',
+          replacement: path.resolve(__dirname, 'src')
+        },
         {
           find: '@pages',
           replacement: path.resolve(__dirname, 'src/pages')
@@ -171,6 +178,7 @@ export default defineConfig(({ mode }) => {
     server: {
       host: true,
       port: PORT ? +PORT : undefined,
+      strictPort: Boolean(PORT),
       proxy: proxyConfig,
       open: true,
     },

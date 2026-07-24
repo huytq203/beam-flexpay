@@ -57,7 +57,7 @@ const FeeAssignAdd = () => {
       <CardComponent className='' styles={{ body: { padding: '12px 24px' } }}>
         <div className='flex justify-between items-center'>
           <div className='flex items-center gap-2 text-green-600'>
-            <Icons.EditOutlined className='text-[18px] bg-blue-50 p-2 rounded' />
+            <Icons.EditOutlined className='text-[18px] bg-blue-50 p-2 rounded-sm' />
             <p className='font-semibold text-[16px]'>Cập nhật gán phí</p>
           </div>
           <div className="flex gap-2">
@@ -98,7 +98,7 @@ const FeeAssignAdd = () => {
           content={
             <>
               <div className='flex items-center gap-2 mb-3'>
-                <Icons.ApartmentOutlined className='text-[16px] text-blue-500  bg-blue-50 p-2 rounded' />
+                <Icons.ApartmentOutlined className='text-[16px] text-blue-500  bg-blue-50 p-2 rounded-sm' />
                 <p className='font-medium text-[16px]'>
                   2. Thông tin thành phần {policyData?.name && `(${policyData?.name})`}
                 </p>

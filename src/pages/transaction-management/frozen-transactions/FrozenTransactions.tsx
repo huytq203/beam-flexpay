@@ -28,7 +28,7 @@ const FrozenTransactions = () => {
 
     return (
         <>
-            <CardComponent className="mb-3" content={
+            <CardComponent className="mb-3!" content={
                 isLoading ?
                     <>
                         <div>
@@ -46,7 +46,7 @@ const FrozenTransactions = () => {
                         </div>
                     </> : <FormSearch onSearch={handleSearch} />} />
             <CardComponent
-                content={
+                content={   
                     isLoading ? <SkeletonTable columns={8} /> :
                         <Table
                             columns={columns}
@@ -61,7 +61,6 @@ const FrozenTransactions = () => {
                                 pageSize,
                                 total: totalElements,
                                 showSizeChanger: true,
-                                showTotal: (total) => `Tổng ${total} bản ghi`,
                                 onChange: (p, ps) => {
                                     setPage(p)
                                     setPageSize(ps)

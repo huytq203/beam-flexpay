@@ -256,7 +256,7 @@ const AddFeePolicy = () => {
             </CardComponent>
             {id &&
                 <CardComponent >
-                    <div className='bg-white rounded '>
+                    <div className='bg-white rounded-sm '>
                         <div className='header flex justify-between items-center mb-6 pb-3 border-b border-gray-100'>
                             <div className='flex items-center gap-3'>
                                 <div className='w-1 h-6 bg-green-500 rounded-full' />

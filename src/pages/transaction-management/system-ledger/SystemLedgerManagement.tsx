@@ -41,7 +41,7 @@ const SystemLedgerManagement = () => {
       <div className="bg-gray-50 p-4 rounded-md">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Transaction Details */}
-          <div className="bg-white p-3 rounded border">
+          <div className="bg-white p-3 rounded-sm border">
             <h4 className="font-bold text-[12px] mb-2 text-gray-700">Chi tiết giao dịch</h4>
             <div className="space-y-1 text-[12px]">
               {/* <div className="flex justify-between">
@@ -88,7 +88,7 @@ const SystemLedgerManagement = () => {
           </div>
 
           {/* Account Details */}
-          <div className="bg-white p-3 rounded border">
+          <div className="bg-white p-3 rounded-sm border">
             <h4 className="font-bold text-[12px] mb-2 text-gray-700">Chi tiết tài khoản</h4>
             <div className="space-y-1 text-[12px]">
               {/* <div className="flex justify-between">
@@ -131,7 +131,7 @@ const SystemLedgerManagement = () => {
           </div>
 
           {/* Entry Details */}
-          <div className="bg-white p-3 rounded border">
+          <div className="bg-white p-3 rounded-sm border">
             <h4 className="font-bold text-[12px] mb-2 text-gray-700">Chi tiết Entry</h4>
             <div className="space-y-1 text-[12px]">
               {/* <div className="flex justify-between">

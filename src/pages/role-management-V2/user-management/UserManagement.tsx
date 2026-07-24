@@ -44,7 +44,7 @@ const UserManagement = () => {
       /> */}
       <CardComponent>
         <div className='flex items-center gap-4 py-1'>
-          <div className='bg-green-50 p-3 rounded-xl flex items-center justify-center shadow-sm text-green-800'>
+          <div className='bg-green-50 p-3 rounded-xl flex items-center justify-center shadow-xs text-green-800'>
             <Icons.UserCheckIcon size={28} weight="duotone" className='text-blue' />
           </div>
           <div>

@@ -8,10 +8,10 @@ const formatDateTime = (value?: string | null) =>
     value ? dayjs.utc(value).format('DD/MM/YYYY HH:mm:ss') : '--';
 
 const STATUS_CLASS: Record<string, string> = {
-    VERIFIED: 'text-green-700 bg-green-50 border border-green-400 px-2 py-0.5 rounded text-[12px] font-medium inline-block',
-    PENDING: 'text-yellow-600 bg-yellow-50 border border-yellow-400 px-2 py-0.5 rounded text-[12px] font-medium inline-block',
-    REJECTED: 'text-red-600 bg-red-50 border border-red-400 px-2 py-0.5 rounded text-[12px] font-medium inline-block',
-    INVALIDATED: 'text-gray-500 bg-gray-100 border border-gray-300 px-2 py-0.5 rounded text-[12px] font-medium inline-block',
+    VERIFIED: 'text-green-700 bg-green-50 border border-green-400 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block',
+    PENDING: 'text-yellow-600 bg-yellow-50 border border-yellow-400 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block',
+    REJECTED: 'text-red-600 bg-red-50 border border-red-400 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block',
+    INVALIDATED: 'text-gray-500 bg-gray-100 border border-gray-300 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block',
 }
 
 interface ColumnProps extends props {
@@ -127,7 +127,7 @@ export const getColumn = ({ svg, onViewDetail }: ColumnProps): ColumnType[] => [
                     ? 'text-yellow-600'
                     : 'text-red-600';
             return (
-                <span className={`${cls}  px-2 py-0.5 rounded text-[12px] font-bold inline-block`}>
+                <span className={`${cls}  px-2 py-0.5 rounded-sm text-[12px] font-bold inline-block`}>
                     {score}%
                 </span>
             );
@@ -182,7 +182,7 @@ export const getColumn = ({ svg, onViewDetail }: ColumnProps): ColumnType[] => [
                             icon={<EyeOutlined />}
                             type="default"
                             onClick={() => onViewDetail(record.id)}
-                            className="bg-blue-50 !border border-blue-600 text-blue-600 hover:!bg-blue-100 hover:!text-blue-600"
+                            className="bg-blue-50 border! border-blue-600 text-blue-600 hover:bg-blue-100! hover:text-blue-600!"
                         />
                     </TooltipComponent>
                     <TooltipComponent title="Hủy xác thực">

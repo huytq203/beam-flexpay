@@ -14,6 +14,13 @@ import { WalletRoutes } from './routes'
 import './styles/index.css'
 import React from 'react'
 import { MessageProvider } from '@hooks/useMessage'
+import { ThemeProvider } from '@/lib/theme/ThemeProvider';
+
+if (import.meta.env.DEV && 'serviceWorker' in navigator) {
+  void navigator.serviceWorker.getRegistrations().then((registrations) => {
+    registrations.forEach((registration) => void registration.unregister())
+  })
+}
 
 // add events to global
 window.events = new EventEmitter()

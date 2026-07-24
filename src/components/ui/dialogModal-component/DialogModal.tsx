@@ -40,7 +40,7 @@ const DialogModal: React.FC<ModalConfirmProps> = ({
       title={title}
       centered
       onOk={onOk}
-      destroyOnClose
+      destroyOnHidden
       confirmLoading={confirmLoading}
       onCancel={onCancel}
       okText={okText ?? modeConfig.okText}

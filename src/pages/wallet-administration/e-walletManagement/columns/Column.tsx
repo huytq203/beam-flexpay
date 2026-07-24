@@ -53,7 +53,7 @@ export const getColumn = ({
         const isSystem = record.ownerType === 'SYSTEM'
         return (
           <div>
-            <div className='font-medium max-w-[17rem] overflow-hidden text-ellipsis whitespace-nowrap italic font-mono '>
+            <div className='font-medium max-w-68 overflow-hidden text-ellipsis whitespace-nowrap italic font-mono '>
               {isSystem ? 'Hệ thống' : (record.ownerUsername ?? 'Hệ thống')}
             </div>
             {record.ownerId && (

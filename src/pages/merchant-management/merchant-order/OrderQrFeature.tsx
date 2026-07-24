@@ -46,7 +46,7 @@ const OrderQrFeature = () => {
       'EXPIRED': { label: 'EXPIRED', className: 'bg-red-100 text-red-700' }
     }
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig['ACTIVE']
-    return <span className={`px-3 py-1 rounded text-xs font-medium ${config.className}`}>{config.label}</span>
+    return <span className={`px-3 py-1 rounded-sm text-xs font-medium ${config.className}`}>{config.label}</span>
   }
 
   return (

@@ -1,9 +1,9 @@
 import { createElement, lazy, Suspense, type ComponentType } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
-import { Spin } from 'antd'
 
 import AppLayout from '@components/layout/AppLayout'
 import AuthLayout from '@components/layout/AuthLayout'
+import ScreenLoading from '@components/screen-loading/ScreenLoading'
 import {
   AUTHENTICATION,
   FORBIDDENERROR,
@@ -26,11 +26,7 @@ const page = (factory: () => Promise<{ default: ComponentType }>) => {
   return createElement(
     Suspense,
     {
-      fallback: createElement(
-        'div',
-        { className: 'flex items-center justify-center min-h-[60vh]' },
-        createElement(Spin, { size: 'large' }),
-      ),
+      fallback: createElement(ScreenLoading),
     },
     createElement(Lazy),
   )

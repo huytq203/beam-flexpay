@@ -6,10 +6,13 @@
   position: relative;
   background-color: #f0eaea;
   height: 100%;
-  transition: all 0.3s ease-in-out;
+  overflow: hidden;
 }
 
 .resizable {
+  flex: 0 0 auto;
+  overflow: hidden;
+
   aside {
     max-width: none !important;
     min-width: unset !important;
@@ -39,6 +42,13 @@
 }
 
 .mobile-sidebar-drawer {
+  .ant-drawer-content-wrapper,
+  .ant-drawer-content,
+  .ant-drawer-body,
+  .custom-sidebar {
+    overflow-x: hidden;
+  }
+
   .ant-drawer-body {
     padding: 0 !important;
   }

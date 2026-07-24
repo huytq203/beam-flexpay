@@ -93,7 +93,7 @@ export const Column = ({ onRelease }: ColumnProps): ColumnType<FreezeItem>[] => 
                     disabled={!canRelease}
                     onClick={() => canRelease && onRelease?.(record)}
                     className={`bg-blue-50 border border-blue-600 text-blue-600 ${canRelease
-                        ? 'hover:!bg-blue-100 hover:!text-blue-700'
+                        ? 'hover:bg-blue-100! hover:text-blue-700!'
                         : 'opacity-50 cursor-not-allowed'
                         }`}
                     content="Mở băng"

@@ -46,7 +46,7 @@ export const PermissionManagement = () => {
       /> */}
        <CardComponent>
               <div className='flex items-center gap-4 py-1'>
-                <div className='bg-green-50 p-3 rounded-xl flex items-center justify-center shadow-sm'>
+                <div className='bg-green-50 p-3 rounded-xl flex items-center justify-center shadow-xs'>
                   <Icons.ShieldCheckIcon size={28} weight="duotone" className='text-blue' />
                 </div>
                 <div>

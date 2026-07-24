@@ -1,12 +1,12 @@
 import { EyeFilled } from '@components/icons'
 import { ButtonComponent, CopyableText, MaskText, TooltipComponent } from '@components/index'
-import { UnifiedContentJournal } from '@type/apiResponseJournal'
-import { formatNumber } from '@utils/index'
 import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import StatusBadge from '@components/status-badge/StatusBadge'
-import { cn } from '@utils/cn'
 import { BankEnum, BankLabel, PaymentMethod, PaymentMethodKey, STATUS_CONFIG, StatusKey } from '../constants/WithdrawHistory.constant'
+import { UnifiedContentJournal } from '@/app/types/apiResponseJournal'
+import { formatNumber } from '@/app/utils'
+import { cn } from '@/app/utils/cn'
 
 interface ColumnProps {
     onViewDetail: (id: string) => void
@@ -40,7 +40,7 @@ const getColumn = ({ onViewDetail }: ColumnProps): ColumnsType<UnifiedContentJou
                 <div className="text-center">
                     <MaskText value={from?.displayName } />
                     {/* <p className="font-medium">{from?.displayName || from?.username || '--'}</p> */}
-                    {/* <span className={`text-xs px-1.5 py-0.5 rounded ${from?.type === 'USER' ? 'text-violet-700 bg-violet-50 border border-violet-300' : 'text-gray-500 bg-gray-50 border border-gray-200'}`}>
+                    {/* <span className={`text-xs px-1.5 py-0.5 rounded-sm ${from?.type === 'USER' ? 'text-violet-700 bg-violet-50 border border-violet-300' : 'text-gray-500 bg-gray-50 border border-gray-200'}`}>
                         {from?.type ?? '--'}
                     </span> */}
                 </div>
@@ -56,7 +56,7 @@ const getColumn = ({ onViewDetail }: ColumnProps): ColumnsType<UnifiedContentJou
                 <div className="text-start">
                     <p className="font-medium">{BankLabel[value?.displayName as BankEnum] ||value?.displayName|| '--'}</p>
                     {/* {record.bankCode && (
-                        <span className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-300 px-1.5 py-0.5 rounded">
+                        <span className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-300 px-1.5 py-0.5 rounded-sm">
                             {record.bankCode}
                         </span>
                     )} */}
@@ -103,7 +103,7 @@ const getColumn = ({ onViewDetail }: ColumnProps): ColumnsType<UnifiedContentJou
         align: 'center',
         render(value: string) {
             return (
-                <span className="text-[12px] px-2 py-0.5 rounded bg-gray-100 border border-gray-300 text-gray-700 font-medium">
+                <span className="text-[12px] px-2 py-0.5 rounded-sm bg-gray-100 border border-gray-300 text-gray-700 font-medium">
                     {PaymentMethod[value as PaymentMethodKey] ?? '--'}
                 </span>
             )
@@ -146,7 +146,7 @@ const getColumn = ({ onViewDetail }: ColumnProps): ColumnsType<UnifiedContentJou
                         <ButtonComponent
                             onClick={() => onViewDetail(record.id)}
                             size='small'
-                            className='bg-blue-50 !border border-blue-600 text-blue-600 hover:!bg-blue-100 hover:!text-blue-600'
+                            type='default'
                             icon={<EyeFilled />}
                         />
                     </TooltipComponent>

@@ -132,7 +132,7 @@ const UploadControl: React.FC<UploadControlProps> = ({
             </Dragger>
 
             <Upload
-                className='cursor-pointer [&_.ant-upload-list-item]:!text-blue-700'
+                className='cursor-pointer [&_.ant-upload-list-item]:text-blue-700!'
                 listType="text"
                 fileList={fileList}
                 onPreview={handlePreview}

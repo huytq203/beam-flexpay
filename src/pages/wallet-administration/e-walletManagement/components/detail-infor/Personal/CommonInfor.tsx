@@ -44,7 +44,7 @@ const InforUser = ({ ekyc }: { ekyc?: ContentEKYC }) => {
           { label: 'Giới tính', value: genderMap[ekyc?.gender ?? ''] ?? v(ekyc?.gender) },
           { label: 'Quốc tịch', value: v(ekyc?.nationality) },
         ].map((item, index) => (
-          <div key={index} className="flex justify-between items-start py-2 hover:bg-gray-100 -mx-2 px-2 rounded transition-colors">
+          <div key={index} className="flex justify-between items-start py-2 hover:bg-gray-100 -mx-2 px-2 rounded-sm transition-colors">
             <span className=" text-gray-600 min-w-[140px]">{item.label}:</span>
             <span className={` text-right ${item.bold ? 'font-semibold text-gray-900' : 'font-medium text-gray-800'}`}>
               {item.value}

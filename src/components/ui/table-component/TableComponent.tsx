@@ -1,11 +1,39 @@
 import React from 'react'
-import { Table, Empty } from 'antd';
-import type { TableProps } from 'antd';
+import { Empty, Table } from 'antd'
+import type { TablePaginationConfig, TableProps } from 'antd'
+
+const defaultPagination: TablePaginationConfig = {
+  showSizeChanger: true,
+  showTotal: (total, range) =>
+    `Hiển thị ${range[0]}-${range[1]}/ ${total} Bản ghi`
+}
 
 const TableComponent = <T extends object>(props: TableProps<T>) => {
-    return (
-        <Table<T> {...props} locale={{ emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description='Chưa có dữ liệu' />, ...props.locale }} bordered scroll={{x:'max-content'}}/>
-    )
+  const pagination =
+    props.pagination === false
+      ? false
+      : {
+          ...defaultPagination,
+          ...props.pagination
+        }
+
+  return (
+    <Table<T>
+      {...props}
+      bordered
+      locale={{
+        emptyText: (
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description='Chưa có dữ liệu'
+          />
+        ),
+        ...props.locale
+      }}
+      pagination={pagination}
+      scroll={{ x: 'max-content', ...props.scroll }}
+    />
+  )
 }
 
 export default TableComponent
