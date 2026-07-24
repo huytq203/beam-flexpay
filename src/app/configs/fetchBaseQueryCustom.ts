@@ -380,7 +380,13 @@ const createCustomBaseQuery = (
             break
           }
 
-          return await baseQuery(args, api, extraOptions)
+          // Refresh thành công → retry request 1 lần với token mới.
+          const retryResult = await baseQuery(args, api, extraOptions)
+          // Vẫn 401 dù token mới → phiên thật sự không dùng được, buộc hết phiên.
+          if (retryResult.error?.status === HttpStatus.UNAUTHORIZED) {
+            handleSessionExpired()
+          }
+          return retryResult
         }
 
         case HttpStatus.BAD_REQUEST: {
