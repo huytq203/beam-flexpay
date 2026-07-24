@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/proxy-api/:path*",
-      "destination": "https://api.dev.ewallet.flexpay.vn/:path*"
+      "destination": "/api/proxy/proxy-api/:path*"
     },
     {
       "source": "/proxy-cms/:path*",
-      "destination": "https://cms.ewallet.devops.beamewa.com.vn/:path*"
+      "destination": "/api/proxy/proxy-cms/:path*"
     },
     {
       "source": "/(.*)",

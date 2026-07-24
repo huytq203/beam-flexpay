@@ -41,3 +41,4 @@ CLAUDE.md
 .env.development
 # PWA dev build output
 dev-dist
+package-lock.json
