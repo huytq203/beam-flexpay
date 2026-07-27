@@ -17,6 +17,8 @@ import { StatusKey } from '../types/WalletAccount.enum'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { WALLETADMINISTRATION } from '@constants/routersConstant'
 import * as Icon from '@components/icons'
+import { cn } from '@/lib/utils/cn'
+import { statusEKYC } from '../constants/StatusEKYC.constant'
 
 type ModalType = 'freeze' | 'unfreeze' | 'lock' | 'unlock' | null
 
@@ -51,16 +53,47 @@ export const getColumn = ({
       width: 200,
       render: (_, record) => {
         const isSystem = record.ownerType === 'SYSTEM'
+        const ownerName = isSystem
+          ? 'Hệ thống'
+          : (record.ownerUsername ?? '--')
+
+        const renderStatusEKYC = (status: string) => {
+          const statusInfo = statusEKYC.find((item) => item.value === status)
+          if (!statusInfo) return null
+
+          return (
+            <span
+              className={cn(
+                'inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-1 text-[10px] font-semibold leading-none',
+                statusInfo.color
+              )}
+              title={statusInfo.label}
+            >
+              {statusInfo.icon}
+              {statusInfo.label}
+            </span>
+          )
+        }
+
         return (
-          <div>
-            <div className='font-medium max-w-68 overflow-hidden text-ellipsis whitespace-nowrap italic font-mono '>
-              {isSystem ? 'Hệ thống' : (record.ownerUsername ?? 'Hệ thống')}
+          <div className='flex min-w-0 max-w-full flex-col gap-1'>
+            <div className='flex min-w-0 items-center gap-1.5'>
+              <TooltipComponent title={ownerName}>
+                <span className='min-w-0 truncate text-md font-semibold text-foreground'>
+                  {ownerName}
+                </span>
+              </TooltipComponent>
+
+              {!isSystem &&
+                record.verificationStatus &&
+                renderStatusEKYC(record.verificationStatus)}
             </div>
+
             {record.ownerId && (
-              <div className='text-gray-500 text-[12px] max-w-[150px] '>
+              <div className='min-w-0 max-w-full'>
                 <TooltipComponent title={record.ownerId}>
                   <TypographyText
-                    className=' cursor-pointer inline-flex items-center max-w-[150px]'
+                    className='inline-flex max-w-full cursor-pointer items-center font-mono text-[11px]! text-muted-foreground!'
                     copyable={{ text: record.ownerId }}
                   >
                     <span className='truncate'>{record.ownerId}</span>
@@ -153,7 +186,7 @@ export const getColumn = ({
       align: 'center',
       width: 180,
       render: (_, record) => (
-        <div className='flex flex-wrap items-center justify-start gap-1'>
+        <div className='flex flex-wrap items-center justify-center gap-1'>
           {/* <StatusBadge status={record.status as StatusKey} /> */}
           <StatusBadge
             status={String(record.status)}
@@ -242,7 +275,6 @@ export const getColumn = ({
         const isLocked = record.status === StatusKey.LOCKED
         const isFrozen = record.status === StatusKey.FROZEN
         const isSystem = record.ownerType === 'SYSTEM'
-
 
         const items: MenuProps['items'] = [
           {

@@ -1,0 +1,25 @@
+@layer components {
+    /*
+     * Keep these class names stable because status mappings across the app
+     * reference them as runtime strings.
+     */
+    .success-status {
+        @apply px-1 py-0.5  bg-success/10 text-success font-semibold;
+    }
+
+    .danger-status {
+        @apply px-1 py-0.5  bg-danger/10 text-danger font-semibold;
+    }
+
+    .warning-status {
+        @apply px-1 py-0.5  bg-warning/10 text-warning font-semibold;
+    }
+
+    .info-status {
+        @apply px-1 py-0.5 bg-primary/10 text-primary font-semibold;
+    }
+
+    .normal-status {
+        @apply px-1 py-0.5 bg-muted text-muted-foreground font-semibold;
+    }
+}

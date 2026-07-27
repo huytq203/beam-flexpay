@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
+@import "./_status.css";
 @plugin "tailwindcss-animate";
 @custom-variant dark (&:where(.dark, .dark *));
 /* Thin scrollbar — auto-hide */
@@ -241,7 +242,6 @@
         --sidebar-ring: #2bd9d0;
     }
 }
-
 
 @layer base {
     * {

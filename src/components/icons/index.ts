@@ -34,7 +34,7 @@ export {
   CheckCircleOutlined,
   CloseCircleOutlined,
   PlusCircleOutlined ,
-  SearchOutlined 
+  SearchOutlined ,
 } from '@ant-design/icons'
 
 
@@ -59,7 +59,9 @@ export {
   MagnifyingGlassIcon,
   BroomIcon,
   FunnelIcon,
-  ShieldCheckIcon
+  ShieldCheckIcon,
+  XCircleIcon,
+  MinusCircleIcon,
 } from "@phosphor-icons/react";
 export {
   CornerDownRight,
