@@ -180,12 +180,12 @@ export default defineConfig(({ mode }) => {
       port: PORT ? +PORT : undefined,
       strictPort: Boolean(PORT),
       proxy: proxyConfig,
-      open: true,
+      open: false,
     },
     preview: {
       host: true,
       port: PORT ? +PORT : undefined,
-      open: true,
+      open: false,
     },
   }
 })
