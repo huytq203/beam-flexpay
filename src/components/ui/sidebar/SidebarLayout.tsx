@@ -172,14 +172,23 @@ export const SidebarFooter = React.forwardRef<HTMLDivElement, React.HTMLAttribut
 SidebarFooter.displayName = 'SidebarFooter';
 
 export const SidebarContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      data-sidebar="content"
-      className={cn('flex flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden py-2', className)}
-      {...props}
-    />
-  )
+  ({ className, ...props }, ref) => {
+    const { state } = useSidebar();
+
+    return (
+      <div
+        ref={ref}
+        data-sidebar="content"
+        data-state={state}
+        className={cn(
+          'flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden py-2',
+          state === 'collapsed' && '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+          className
+        )}
+        {...props}
+      />
+    );
+  }
 );
 SidebarContent.displayName = 'SidebarContent';
 

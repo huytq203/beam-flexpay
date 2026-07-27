@@ -44,7 +44,7 @@ const SideBar = () => {
       collapsible='icon'
       variant='sidebar'
       side='left'
-      className='h-[100dvh]bg-sidebar'
+      className='h-full bg-sidebar'
     >
       <SidebarHeader className='border-b border-sidebar-border'>
         <div className='flex items-center justify-center '>

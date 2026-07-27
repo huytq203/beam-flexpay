@@ -243,14 +243,6 @@ export const getColumn = ({
         const isFrozen = record.status === StatusKey.FROZEN
         const isSystem = record.ownerType === 'SYSTEM'
 
-        const accountPayload: SelectedAccount = {
-          id: record.id,
-          ownerId: record.ownerId,
-          ownerName: record.ownerUsername,
-          balance: record.availableBalance,
-          holdBalance: record.holdBalance,
-          currency: record.currency
-        }
 
         const items: MenuProps['items'] = [
           {
@@ -265,15 +257,16 @@ export const getColumn = ({
             key: '2',
             label: isLocked ? 'Mở khóa tài khoản' : 'Khóa tài khoản',
             onClick: () => {
-              openModal?.(isLocked ? 'unlock' : 'lock', accountPayload)
+              console.log(record)
+              openModal?.(isLocked ? 'unlock' : 'lock', record)
             },
             disabled: isSystem || isFrozen
           },
           {
             key: '3',
             label: 'Đóng băng số dư',
-            onClick: () => openModal?.('freeze', accountPayload),
-            disabled: isSystem || (accountPayload.balance ?? 0) === 0
+            onClick: () => openModal?.('freeze', record),
+            disabled: isSystem || (record.balance ?? 0) === 0
           },
 
           {

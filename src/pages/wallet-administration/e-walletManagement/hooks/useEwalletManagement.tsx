@@ -10,7 +10,7 @@ type ModalType = 'freeze' | 'unfreeze' | 'lock' | 'unlock' | null
 interface SelectedAccount {
   id: string
   ownerId?: string
-  ownerName?: string
+  ownerUsername?: string
   balance?: number
   holdBalance?: number
   currency?: string

@@ -93,7 +93,7 @@ const EwalletManagement = () => {
         content={
           <DialogFreeze
             accountId={selectedAccount?.id}
-            ownerName={selectedAccount?.ownerName}
+            ownerName={selectedAccount?.ownerUsername}
             balance={selectedAccount?.balance}
             currency={selectedAccount?.currency}
             onSuccess={closeModal}
@@ -115,7 +115,7 @@ const EwalletManagement = () => {
         content={
           <DialogUnfreeze
             accountId={selectedAccount?.id}
-            ownerName={selectedAccount?.ownerName}
+            ownerName={selectedAccount?.ownerUsername}
             holdBalance={selectedAccount?.holdBalance}
             currency={selectedAccount?.currency}
             onSuccess={closeModal}
@@ -136,8 +136,8 @@ const EwalletManagement = () => {
         footer={null}
         content={
           <DialogLock
-            userId={selectedAccount?.ownerId}
-            ownerName={selectedAccount?.ownerName}
+            userId={selectedAccount?.ownerUsername}
+            ownerName={selectedAccount?.ownerUsername}
             onSuccess={closeModal}
             onCancel={closeModal}
           />
@@ -157,7 +157,7 @@ const EwalletManagement = () => {
         content={
           <DialogUnlock
             userId={selectedAccount?.ownerId}
-            ownerName={selectedAccount?.ownerName}
+            ownerName={selectedAccount?.ownerUsername}
             onSuccess={closeModal}
             onCancel={closeModal}
           />
