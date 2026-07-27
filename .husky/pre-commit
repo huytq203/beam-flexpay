@@ -1,0 +1,7 @@
+echo "🔍 ESLint (staged files)..."
+yarn lint-staged || exit 1
+
+echo "🔎 TypeScript (tsc --noEmit)..."
+yarn typecheck || exit 1
+
+echo "✅ Pre-commit OK"
