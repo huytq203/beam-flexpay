@@ -64,6 +64,8 @@ Có route `refund-management` (Quản lý hoàn tiền) nhưng mục menu đã b
 - Xác thực JWT với access token + refresh token, lưu qua `js-cookie`; hết hạn phiên do không hoạt động.
 - Build production đóng gói PWA (`vite-plugin-pwa`, `registerType: 'autoUpdate'`), phục vụ qua nginx trong Docker; CI qua GitLab CI / Jenkins / buildspec.
 - Toàn bộ dữ liệu đến từ backend qua nhiều base URL tách biệt (`VITE_API_URL`, `VITE_API_LOGIN`, `VITE_API_WALLETCORE`, `VITE_FEE_API_URL`, `VITE_API_MERCHANT`).
+- **Được phép sử dụng API bên ngoài** cho dữ liệu bổ trợ không thuộc nghiệp vụ cốt lõi, chẳng hạn thời tiết, bình minh/hoàng hôn hoặc bản đồ. Tích hợp phải có timeout và fallback để CMS vẫn hoạt động khi nhà cung cấp lỗi; không được gửi JWT, thông tin đăng nhập, dữ liệu định danh, giao dịch hoặc tài chính ra bên thứ ba. API key bí mật phải đi qua backend/proxy và biến môi trường server, không nhúng vào bundle frontend. Dữ liệu bên ngoài không được dùng làm nguồn sự thật cho xác thực, số dư, sổ cái hay quyết định nghiệp vụ.
+- **Được phép chủ động tìm kiếm, đánh giá và sử dụng thư viện bên ngoài tối ưu cho bài toán**, bao gồm tra cứu tài liệu chính thức, npm và repository nguồn trước khi triển khai. Ưu tiên thư viện đang được bảo trì, có TypeScript tốt, tương thích React/Vite hiện tại, license phù hợp, không có lỗ hổng bảo mật đã biết và có chi phí bundle/runtime tương xứng với giá trị mang lại. Có thể cài dependency mới khi tốt hơn rõ ràng so với tự xây; phải tận dụng thư viện sẵn có nếu đáp ứng tương đương, tránh các package trùng chức năng và giữ fallback cho phần tích hợp không thiết yếu.
 
 **Chưa chốt — không được tự bịa ra:**
 

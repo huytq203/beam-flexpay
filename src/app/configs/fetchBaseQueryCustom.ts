@@ -27,6 +27,7 @@ import {
 } from './fetchBaseQuery.types'
 import { updateAccessToken } from '@slices/authActions'
 import { PATHS } from '@constants/pathConstant'
+import { AUTHENTICATION } from '@constants/routersConstant'
 import Swal from 'sweetalert2'
 
 // ============================================================================
@@ -232,6 +233,12 @@ const forceLogout = (): void => {
 
 const handleSessionExpired = () => {
   if (isExpired) return;
+
+  // Trong khu vực auth (đăng nhập, quên mật khẩu, đặt lại mật khẩu) chưa có phiên
+  // nào để hết hạn. 401 ở đây là lỗi nghiệp vụ của chính màn đó — ví dụ token đặt
+  // lại mật khẩu đã hết hạn — nên để màn tự hiển thị, đừng chèn modal hết phiên.
+  if (normalizePathname(window.location.pathname).startsWith(AUTHENTICATION)) return;
+
   isExpired = true;
 
 

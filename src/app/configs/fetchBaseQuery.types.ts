@@ -1,4 +1,5 @@
 import {
+    AUTHENTICATION,
     BANKANDCONNECT,
     FEEMANAGEMENT,
     FEEMANAGEMENT_V4,
@@ -179,6 +180,11 @@ export interface RequestArgs {
 
 
 export const WHITE_LIST: WhiteListItem[] = [
+    // Đặt lại mật khẩu tự hiển thị trạng thái của mình (đang kiểm tra liên kết,
+    // nút đang gửi) — overlay loading toàn màn sẽ che mất chính các trạng thái đó.
+    { pathname: AUTHENTICATION + '/reset-password', requestUrl: '/user/verify-token' },
+    { pathname: AUTHENTICATION + '/reset-password', requestUrl: '/user/new-password' },
+
     { pathname: PERSONALWALLET + '/customers-group', requestUrl: '/customer' },
 
     { pathname: PRODUCTS + '/sales-fee', requestUrl: '/service/services' },

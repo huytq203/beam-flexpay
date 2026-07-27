@@ -20,11 +20,6 @@
   }
 }
 
-/* Mascot background — chỉ cần giữ lại class này vì SCSS reference ảnh từ file system */
-.auth-mascot {
-  background-image: url('../../styles/assets/capybara/Cappybara_17_Poses-02.png');
-}
-
 .ant-btn-default:not(:disabled):not(.ant-btn-disabled):hover {
   color: var(--primary-color) !important;
   border-color: var(--primary-color) !important;

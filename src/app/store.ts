@@ -5,7 +5,8 @@ import authReducer from '@slices/authSlice'
 import { TypedUseSelectorHook, useSelector } from 'react-redux'
 import { errorMiddleware } from './middleware/errorMiddleware'
 
-export const store = configureStore({
+/** Factory để test dựng store sạch cho mỗi case, tránh rò cache RTK Query. */
+export const createAppStore = () => configureStore({
   reducer: {
     [apiService.reducerPath]: apiService.reducer,
     [authApiService.reducerPath]: authApiService.reducer,
@@ -24,6 +25,8 @@ export const store = configureStore({
       errorMiddleware
     )
 })
+
+export const store = createAppStore()
 
 setupListeners(store.dispatch)
 
