@@ -6,7 +6,9 @@ import { errorHandlers } from '@/test/mocks/handlers'
 import ResetPassword from '../ResetPassword'
 
 // Kịch bản khi BE đã có API kiểm tra token — bật cờ để chạy trước các trạng thái đó.
-vi.mock('./constants', async (importOriginal) => ({
+// Đường dẫn phải trỏ đúng module `constant/constants` mà hook thật import,
+// nếu lệch thì mock không được áp và cả file test rơi về nhánh vào thẳng form.
+vi.mock('../constant/constants', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../constant/constants')>()),
   IS_TOKEN_VERIFY_ENABLED: true
 }))

@@ -1,0 +1,65 @@
+/* Track rộng 200% chứa hai bản mây giống nhau, dịch -50% để vòng lặp không có mối nối. */
+.auth-cloud-track {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 200%;
+  animation-name: auth-cloud-drift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.auth-cloud {
+  position: absolute;
+}
+
+.auth-cloud > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Nhấp nhô rất nhẹ để dải mây gần không giống một băng chuyền. */
+.auth-cloud--float {
+  animation-name: auth-cloud-float;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  will-change: transform;
+}
+
+/* Đổi màu cùng nhịp 1s với trời và núi khi cảnh mặt trời chuyển. */
+.auth-cloud-fill {
+  transition: fill 1000ms ease;
+}
+
+@keyframes auth-cloud-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes auth-cloud-float {
+  from {
+    transform: translate3d(0, -3px, 0);
+  }
+  to {
+    transform: translate3d(0, 4px, 0);
+  }
+}
+
+.auth-cloudfield[data-paused='true'] .auth-cloud-track,
+.auth-cloudfield[data-paused='true'] .auth-cloud--float {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-cloud-track,
+  .auth-cloud--float {
+    animation: none;
+  }
+}
