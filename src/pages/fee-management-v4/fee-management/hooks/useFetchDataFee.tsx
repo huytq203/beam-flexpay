@@ -14,7 +14,12 @@ const useFetchDataFee = () => {
         sortBy: sort,
         sortDirection: sortBy,
     }
-    const { data: dataFeeManagement, isLoading:isLoadingFeeManagement ,isFetching:isFetchingFeeManagement} = useSearchFeePoliciesQuery(payload)
+    const {
+        data: dataFeeManagement,
+        isLoading: isLoadingFeeManagement,
+        isFetching: isFetchingFeeManagement,
+        refetch
+    } = useSearchFeePoliciesQuery(payload)
 
 
     const dataSource = useMemo(() => dataFeeManagement?.content?.map((item, index) => {
@@ -23,7 +28,7 @@ const useFetchDataFee = () => {
             ...item,
             key: item.id,
         }
-    }),[dataFeeManagement])
+    }), [dataFeeManagement, page, size])
     const total = dataFeeManagement?.totalElements
     return {
         dataFeeManagement,
@@ -37,6 +42,7 @@ const useFetchDataFee = () => {
         sortBy,
         total,
         setFilters,
+        refetch,
         isFetchingFeeManagement
     }
 }

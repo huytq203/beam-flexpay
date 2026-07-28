@@ -10,7 +10,7 @@ import DialogReject from '@pages/wallet-administration/confirm-ekyc/components/D
 import DialogCancel from '@pages/wallet-administration/confirm-ekyc/components/DialogCancel'
 
 const ConfirmEKYC = () => {
-  const { dataSource, isLoading, page, pageSize, setPage, setPageSize, total, handleSearch, handleReset } = useConfirmEKYC()
+  const { dataSource, isFetching, refetch, page, pageSize, setPage, setPageSize, total, handleSearch, handleReset } = useConfirmEKYC()
 
   const { svg } = useSVG()
 
@@ -43,7 +43,8 @@ const ConfirmEKYC = () => {
           scroll={{ x: 'max-content' }}
           columns={columns}
           dataSource={dataSource}
-          loading={isLoading}
+          loading={isFetching}
+          onRefresh={refetch}
           pagination={{
             current: page,
             pageSize: pageSize,

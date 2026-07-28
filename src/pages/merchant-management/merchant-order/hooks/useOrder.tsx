@@ -24,7 +24,11 @@ export const useOrder = () => {
   const [modeAction] = useState<ModeAction>()
   // hooks
   const { page, size, setPage, setPageSize } = usePagination();
-  const { data: getMerchantOrder } = useGetMerchantOrderQuery({ page, size });
+  const {
+    data: getMerchantOrder,
+    isFetching,
+    refetch
+  } = useGetMerchantOrderQuery({ page, size });
   const [postConFirm] = usePostMerchantOrderConfirmMutation()
   const [postMerChantOrder] = usePostMerchantOrderMutation()
   const [postReFreshQr] = usePostRefreshQrMutation()
@@ -114,6 +118,8 @@ export const useOrder = () => {
     page,
     size,
     getMerchantOrder,
+    isFetching,
+    refetch,
     setPage,
     setPageSize,
     openModal,

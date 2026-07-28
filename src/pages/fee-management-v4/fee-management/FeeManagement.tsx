@@ -14,7 +14,7 @@ import { PATHS } from '@constants/pathConstant'
 import * as Icons from '@components/icons'
 import { STATUS_LABEL } from './constants/FeeManagement.constant'
 const FeeManagement = () => {
-  const { dataSource, page, size: pageSize, setPage, setPageSize, total, setFilters, isFetchingFeeManagement } = useFetchDataFee()
+  const { dataSource, page, size: pageSize, setPage, setPageSize, total, setFilters, refetch, isFetchingFeeManagement } = useFetchDataFee()
   const { svg: _svg } = useSVG()
   const { control, handleSubmit, reset } = useForm<dataSearch>()
   const { handleSearch, handleReset, handleActive, handleInactive, isLoadingPatchActivateFee, isLoadingPatchDeactivateFee, loadingId } = useHandleAddFeePolicy({ setFilters, setPage, reset })
@@ -23,7 +23,7 @@ const FeeManagement = () => {
   return (
     <>
       <CardComponent
-        className='mb-3'
+        className='mb-3!'
         content={
           <>
             <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
@@ -115,6 +115,7 @@ const FeeManagement = () => {
                 dataSource={dataSource}
                 columns={columns}
                 loading={isFetchingFeeManagement}
+                onRefresh={refetch}
                 pagination={{
                   current: page,
                   showSizeChanger: true,

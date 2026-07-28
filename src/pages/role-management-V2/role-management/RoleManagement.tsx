@@ -58,6 +58,7 @@ const RoleManagement = () => {
                 columns={handle.column}
                 size='small'
                 dataSource={fetchData.dataSource}
+                onRefresh={handle.handleRefresh}
                 pagination={{
                   current: fetchData.page,
                   pageSize: fetchData.pageSize,

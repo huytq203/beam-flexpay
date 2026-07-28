@@ -21,6 +21,7 @@ const TransactionManagement = () => {
     isFetching,
     navigate,
     handleSearch,
+    refetch,
     isLoadingGetTransaction,
   } = useTransaction()
 
@@ -59,6 +60,7 @@ const TransactionManagement = () => {
             columns={columns}
             dataSource={dataSource}
             loading={isFetching}
+            onRefresh={refetch}
             pagination={{
               current: page,
               showSizeChanger: true,

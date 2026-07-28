@@ -16,6 +16,8 @@ const OrderFeature = () => {
     page,
     size,
     getMerchantOrder,
+    isFetching,
+    refetch,
     setPage,
     setPageSize,
     closeModal,
@@ -63,6 +65,8 @@ const OrderFeature = () => {
               size="small"
               columns={columns}
               dataSource={dataSource}
+              loading={isFetching}
+              onRefresh={refetch}
               pagination={{
                 current: page,
                 showSizeChanger: true,

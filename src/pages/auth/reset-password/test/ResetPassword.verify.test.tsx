@@ -1,17 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/react'
 import { renderWithProviders } from '@/test/render'
 import { server } from '@/test/mocks/server'
 import { errorHandlers } from '@/test/mocks/handlers'
 import ResetPassword from '../ResetPassword'
-
-// Kịch bản khi BE đã có API kiểm tra token — bật cờ để chạy trước các trạng thái đó.
-// Đường dẫn phải trỏ đúng module `constant/constants` mà hook thật import,
-// nếu lệch thì mock không được áp và cả file test rơi về nhánh vào thẳng form.
-vi.mock('../constant/constants', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../constant/constants')>()),
-  IS_TOKEN_VERIFY_ENABLED: true
-}))
 
 const BASE_PATH = '/secure-panel/auth/reset-password'
 
@@ -37,6 +29,7 @@ describe('ResetPassword — bước xác thực liên kết', () => {
     expect(
       await screen.findByRole('heading', { name: 'Đặt lại mật khẩu' })
     ).toBeInTheDocument()
+    expect(screen.getByText('Tài khoản: a***@flexpay.vn')).toBeInTheDocument()
   })
 
   it('token không hợp lệ thì báo liên kết hết hiệu lực', async () => {

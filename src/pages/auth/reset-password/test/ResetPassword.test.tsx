@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import { renderWithProviders } from '@/test/render'
 import { server } from '@/test/mocks/server'
 import { errorHandlers } from '@/test/mocks/handlers'
@@ -11,8 +12,10 @@ const ROUTE = '/secure-panel/auth/reset-password?token=abc123'
 const renderScreen = () =>
   renderWithProviders(<ResetPassword />, { route: ROUTE })
 
-const getPasswordInputs = (): HTMLInputElement[] =>
-  screen.getAllByPlaceholderText(/mật khẩu mới/i) as HTMLInputElement[]
+const findPasswordInputs = async (): Promise<HTMLInputElement[]> =>
+  (await screen.findAllByPlaceholderText(
+    /mật khẩu mới/i
+  )) as HTMLInputElement[]
 
 describe('ResetPassword — form nhập mật khẩu', () => {
   beforeEach(() => {
@@ -21,19 +24,23 @@ describe('ResetPassword — form nhập mật khẩu', () => {
     window.history.replaceState({}, '', ROUTE)
   })
 
-  it('vào thẳng form khi chưa bật bước xác thực token', () => {
+  it('chỉ mở form sau khi token đã được xác thực', async () => {
     renderScreen()
 
     expect(
+      screen.getByRole('heading', { name: 'Đang kiểm tra liên kết' })
+    ).toBeInTheDocument()
+
+    expect(await findPasswordInputs()).toHaveLength(2)
+    expect(
       screen.getByRole('heading', { name: 'Đặt lại mật khẩu' })
     ).toBeInTheDocument()
-    expect(getPasswordInputs()).toHaveLength(2)
   })
 
   it('tick dần từng điều kiện theo mật khẩu người dùng gõ', async () => {
     const user = userEvent.setup()
     renderScreen()
-    const [password] = getPasswordInputs()
+    const [password] = await findPasswordInputs()
 
     await user.type(password, 'beam')
     expect(screen.getByText('(1/5)')).toBeInTheDocument()
@@ -48,7 +55,7 @@ describe('ResetPassword — form nhập mật khẩu', () => {
   it('báo lỗi khi hai lần nhập không khớp', async () => {
     const user = userEvent.setup()
     renderScreen()
-    const [password, confirmPassword] = getPasswordInputs()
+    const [password, confirmPassword] = await findPasswordInputs()
 
     await user.type(password, 'Beam@2026')
     await user.type(confirmPassword, 'Beam@2027')
@@ -62,7 +69,7 @@ describe('ResetPassword — form nhập mật khẩu', () => {
   it('xác nhận khớp thì hiện dấu hiệu khớp', async () => {
     const user = userEvent.setup()
     renderScreen()
-    const [password, confirmPassword] = getPasswordInputs()
+    const [password, confirmPassword] = await findPasswordInputs()
 
     await user.type(password, 'Beam@2026')
     await user.type(confirmPassword, 'Beam@2026')
@@ -71,9 +78,16 @@ describe('ResetPassword — form nhập mật khẩu', () => {
   })
 
   it('gửi thành công thì chuyển sang màn đã đặt lại', async () => {
+    let requestBody: unknown
+    server.use(
+      http.post('*/auth/reset-password', async ({ request }) => {
+        requestBody = await request.json()
+        return HttpResponse.json({ data: null })
+      })
+    )
     const user = userEvent.setup()
     renderScreen()
-    const [password, confirmPassword] = getPasswordInputs()
+    const [password, confirmPassword] = await findPasswordInputs()
 
     await user.type(password, 'Beam@2026')
     await user.type(confirmPassword, 'Beam@2026')
@@ -82,13 +96,18 @@ describe('ResetPassword — form nhập mật khẩu', () => {
     expect(
       await screen.findByRole('heading', { name: 'Đã đặt lại mật khẩu' })
     ).toBeInTheDocument()
+    expect(requestBody).toEqual({
+      token: 'abc123',
+      newPassword: 'Beam@2026',
+      confirmPassword: 'Beam@2026'
+    })
   })
 
   it('hiện message BE trả về khi gửi thất bại, không lộ raw error', async () => {
     server.use(errorHandlers.newPasswordFailed)
     const user = userEvent.setup()
     renderScreen()
-    const [password, confirmPassword] = getPasswordInputs()
+    const [password, confirmPassword] = await findPasswordInputs()
 
     await user.type(password, 'Beam@2026')
     await user.type(confirmPassword, 'Beam@2026')
@@ -102,7 +121,7 @@ describe('ResetPassword — form nhập mật khẩu', () => {
     server.use(errorHandlers.newPasswordExpired)
     const user = userEvent.setup()
     renderScreen()
-    const [password, confirmPassword] = getPasswordInputs()
+    const [password, confirmPassword] = await findPasswordInputs()
 
     await user.type(password, 'Beam@2026')
     await user.type(confirmPassword, 'Beam@2026')

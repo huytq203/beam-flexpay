@@ -65,7 +65,14 @@ const DashBoard = () => {
     recentOrders,
     columns,
     loadingOrder,
+    isFetchingOrders,
+    refetchMerchants,
+    refetchOrders,
   } = useDashBoard()
+
+  const refreshDashboard = async (): Promise<void> => {
+    await Promise.all([refetchMerchants(), refetchOrders()])
+  }
 
   const stats = STAT_ITEMS(
     dataMerchant?.totalElements ?? 0,
@@ -128,6 +135,8 @@ const DashBoard = () => {
                 scroll={{ x: 'max-content' }}
                 columns={columns}
                 dataSource={recentOrders}
+                loading={isFetchingOrders}
+                onRefresh={refreshDashboard}
                 pagination={false}
               />
             )}

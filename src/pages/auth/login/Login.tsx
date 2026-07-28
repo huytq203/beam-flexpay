@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { useUserLoginMutation } from '@services/authEndpoints'
-import { useLazyGetUrlLoginQuery } from '@services/cmsUser'
 import { notification } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
@@ -14,7 +13,8 @@ import { useMessage } from '@hooks/useMessage'
 import { TokenType, setRefreshTokenCookie } from '@configs/fetchBaseQuery.types'
 import { useGoogleReCaptcha } from "@utils/recaptcha";
 import gsap from 'gsap'
-import { AUTHENTICATION, TRANSACTIONMANAGEMENT } from '@constants/routersConstant'
+import { TRANSACTIONMANAGEMENT } from '@constants/routersConstant'
+import { PATHS } from '@constants/pathConstant'
 const loginSchema = z.object({
     username: z.string().min(1, 'Vui lòng nhập email').transform(val => val.trim()),
     password: z.string().min(1, 'Vui lòng nhập mật khẩu').transform(val => val.trim()),
@@ -26,7 +26,6 @@ type LoginFormData = z.infer<typeof loginSchema>
 const LoginFormInside = () => {
     const navigate = useNavigate()
     const [login, { isLoading }] = useUserLoginMutation()
-    const [_getUrlLogin] = useLazyGetUrlLoginQuery()
     const { t } = useTranslation()
     const { errorMess } = useMessage()
     const cardRef = useRef<HTMLDivElement>(null)
@@ -49,7 +48,7 @@ const LoginFormInside = () => {
     useEffect(() => {
         window.events.emit('auth-set-title', t('login.title').toString())
         window.events.emit('auth-set-description', t`login.description`)
-    }, [])
+    }, [t])
 
     useEffect(() => {
         if (!cardRef.current) return
@@ -175,7 +174,7 @@ const LoginFormInside = () => {
 
                 <div className="flex justify-end -mt-1">
                     <Link
-                        to={`${AUTHENTICATION}/forget-password`}
+                        to={PATHS.AUTH.FORGOT_PASSWORD}
                         className="text-[12px] font-medium text-teal-600 hover:text-teal-800 transition-colors duration-200"
                     >
                         Quên mật khẩu?

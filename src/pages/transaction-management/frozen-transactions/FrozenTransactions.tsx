@@ -15,6 +15,7 @@ const FrozenTransactions = () => {
         pageSize,
         setPage,
         setPageSize,
+        refetch,
         isFetching,
         handleSearch,
         isLoading,
@@ -54,6 +55,7 @@ const FrozenTransactions = () => {
                             rowKey="id"
                             bordered
                             loading={isFetching}
+                            onRefresh={refetch}
                             scroll={{ x: 'max-content' }}
                             dataSource={dataSource}
                             pagination={{

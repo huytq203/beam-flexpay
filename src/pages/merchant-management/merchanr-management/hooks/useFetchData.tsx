@@ -10,7 +10,12 @@ const useFetchData = () => {
         sortDirection,
         sortBy
     }
-    const { data: getMerchantData, isLoading: getMerchantLoading } = useGetMerchantQuery(payload)
+    const {
+        data: getMerchantData,
+        isLoading: getMerchantLoading,
+        isFetching,
+        refetch
+    } = useGetMerchantQuery(payload)
 
     const data = getMerchantData?.content?.map((item, index) => ({
         ...item,
@@ -19,7 +24,9 @@ const useFetchData = () => {
     }))
     return {
         data,
-        getMerchantLoading
+        getMerchantLoading,
+        isFetching,
+        refetch
     }
 }
 

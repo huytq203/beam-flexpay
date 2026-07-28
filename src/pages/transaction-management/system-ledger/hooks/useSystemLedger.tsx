@@ -17,7 +17,8 @@ const useSystemLedger = () => {
     size:pageSize,
     ...filter
   }
-  const { data: dataLedger, isFetching } = useGetLedgerEntriesQuery(payload)
+  const { data: dataLedger, isFetching, refetch } =
+    useGetLedgerEntriesQuery(payload)
 
   const handleSearch = (data: FormSearchValues) => {
     setFilter(data)
@@ -41,6 +42,7 @@ const useSystemLedger = () => {
     setPageSize,
     navigate,
     handleSearch,
+    refetch,
     isFetching
   }
 }

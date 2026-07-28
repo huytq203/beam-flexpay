@@ -8,12 +8,21 @@ import { MerchanOrderItem } from '@pages/merchant-management/merchant-order/type
 const useDashBoard = () => {
     const { page } = usePagination()
 
-    const { data: dataMerchant, isLoading: loadingMerchant } = useGetMerchantQuery({
+    const {
+        data: dataMerchant,
+        isLoading: loadingMerchant,
+        refetch: refetchMerchants
+    } = useGetMerchantQuery({
         page,
         size: 1000
     })
 
-    const { data: dataMerchantOrder, isLoading: loadingOrder } = useGetMerchantOrderQuery({
+    const {
+        data: dataMerchantOrder,
+        isLoading: loadingOrder,
+        isFetching: isFetchingOrders,
+        refetch: refetchOrders
+    } = useGetMerchantOrderQuery({
         page,
         size: 1000,
     })
@@ -51,7 +60,10 @@ const useDashBoard = () => {
         recentOrders,
         columns,
         loadingMerchant,
-        loadingOrder
+        loadingOrder,
+        isFetchingOrders,
+        refetchMerchants,
+        refetchOrders
     }
 }
 

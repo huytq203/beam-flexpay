@@ -1,6 +1,18 @@
-import React from 'react'
+import { useState } from 'react'
 import { Empty, Table } from 'antd'
 import type { TablePaginationConfig, TableProps } from 'antd'
+import { ArrowsClockwise as RefreshIcon } from '@phosphor-icons/react'
+import ButtonComponent from '../button-component'
+import TooltipComponent from '../tooltip-component'
+
+interface TableComponentProps<T extends object> extends TableProps<T> {
+  onRefresh?: () => void | Promise<unknown>
+}
+
+interface TableRefreshButtonProps {
+  busy: boolean
+  onClick: () => void
+}
 
 const defaultPagination: TablePaginationConfig = {
   showSizeChanger: true,
@@ -8,7 +20,44 @@ const defaultPagination: TablePaginationConfig = {
     `Hiển thị ${range[0]}-${range[1]}/ ${total} Bản ghi`
 }
 
-const TableComponent = <T extends object>(props: TableProps<T>) => {
+const isLoadingTable = <T extends object>(
+  loading: TableProps<T>['loading']
+): boolean =>
+  typeof loading === 'boolean' ? loading : Boolean(loading?.spinning)
+
+function TableRefreshButton({
+  busy,
+  onClick
+}: TableRefreshButtonProps) {
+  return (
+    <div className='mb-2 flex min-h-8 items-center justify-end'>
+      <TooltipComponent title='Làm mới dữ liệu'>
+        <ButtonComponent
+          type='default'
+          htmlType='button'
+          aria-label='Làm mới dữ liệu'
+          aria-busy={busy}
+          icon={
+            <RefreshIcon
+              aria-hidden
+              size={17}
+              className={busy ? 'animate-[spin_500ms_linear_infinite]' : undefined}
+            />
+          }
+          disabled={busy}
+          onClick={onClick}
+          className='size-8! rounded-full! border-border! p-0! text-foreground! shadow-none!'
+        />
+      </TooltipComponent>
+    </div>
+  )
+}
+
+const TableComponent = <T extends object>({
+  onRefresh,
+  ...props
+}: TableComponentProps<T>) => {
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const pagination =
     props.pagination === false
       ? false
@@ -16,24 +65,44 @@ const TableComponent = <T extends object>(props: TableProps<T>) => {
           ...defaultPagination,
           ...props.pagination
         }
+  const isRefreshBusy = isRefreshing || isLoadingTable(props.loading)
+
+  const handleRefresh = async (): Promise<void> => {
+    if (!onRefresh || isRefreshBusy) return
+    setIsRefreshing(true)
+    try {
+      await onRefresh()
+    } finally {
+      setIsRefreshing(false)
+    }
+  }
 
   return (
-    <Table<T>
-      {...props}
-      bordered
-      locale={{
-        emptyText: (
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description='Chưa có dữ liệu'
-          />
-        ),
-        ...props.locale
-      }}
-      pagination={pagination}
-      scroll={{ x: 'max-content', ...props.scroll }}
-    />
+    <div className='min-w-0'>
+      {onRefresh && (
+        <TableRefreshButton
+          busy={isRefreshBusy}
+          onClick={handleRefresh}
+        />
+      )}
+      <Table<T>
+        {...props}
+        bordered
+        locale={{
+          emptyText: (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description='Chưa có dữ liệu'
+            />
+          ),
+          ...props.locale
+        }}
+        pagination={pagination}
+        scroll={{ x: 'max-content', ...props.scroll }}
+      />
+    </div>
   )
 }
 
+export type { TableComponentProps }
 export default TableComponent

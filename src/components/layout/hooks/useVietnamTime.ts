@@ -1,58 +1,41 @@
 import { useEffect, useRef, useState } from 'react'
 import { readTimeOverride } from './time-override'
 
-const TIME_API_URL =
-  'https://timeapi.io/api/time/current/zone?timeZone=Asia%2FHo_Chi_Minh'
 const REQUEST_TIMEOUT_MS = 5_000
 const RESYNC_INTERVAL_MS = 10 * 60_000
-
-interface TimeApiResponse {
-  year: number
-  month: number
-  day: number
-  hour: number
-  minute: number
-  seconds: number
-  milliSeconds: number
-  timeZone: string
-}
+const MAX_TRUSTED_SERVER_DRIFT_MS = 2 * 60_000
 
 export interface VietnamTime {
   now: Date
   isSynchronized: boolean
 }
 
-function toEpoch(response: TimeApiResponse): number {
-  return Date.UTC(
-    response.year,
-    response.month - 1,
-    response.day,
-    response.hour - 7,
-    response.minute,
-    response.seconds,
-    response.milliSeconds
-  )
-}
+/**
+ * Tính độ lệch từ HTTP Date của chính máy chủ CMS. Header này chỉ chính xác đến
+ * giây nên dùng trung điểm request để giảm sai số mạng.
+ */
+export function calculateServerOffset(
+  serverDate: string | null,
+  requestStartedAt: number,
+  responseReceivedAt: number
+): number | null {
+  if (!serverDate) return null
 
-function isValidResponse(value: unknown): value is TimeApiResponse {
-  if (!value || typeof value !== 'object') return false
-  const response = value as Partial<TimeApiResponse>
+  const serverEpoch = Date.parse(serverDate)
+  if (!Number.isFinite(serverEpoch)) return null
 
-  return (
-    response.timeZone === 'Asia/Ho_Chi_Minh' &&
-    Number.isInteger(response.year) &&
-    Number.isInteger(response.month) &&
-    Number.isInteger(response.day) &&
-    Number.isInteger(response.hour) &&
-    Number.isInteger(response.minute) &&
-    Number.isInteger(response.seconds) &&
-    Number.isInteger(response.milliSeconds)
-  )
+  const requestMidpoint =
+    requestStartedAt + (responseReceivedAt - requestStartedAt) / 2
+  const offset = serverEpoch - requestMidpoint
+
+  // Đồng hồ auth chỉ mang tính hiển thị. Không để một nguồn server sai kéo giờ
+  // thiết bị lệch nhiều phút như sự cố TimeAPI trước đây.
+  return Math.abs(offset) <= MAX_TRUSTED_SERVER_DRIFT_MS ? offset : null
 }
 
 /**
- * Đồng hồ realtime: tick tại client mỗi giây, đồng bộ lại với TimeAPI.io mỗi
- * 10 phút. Khi API không khả dụng, hook tự dùng đồng hồ thiết bị.
+ * Đồng hồ realtime: tick tại client mỗi giây, đồng bộ lại với HTTP Date của
+ * chính origin CMS mỗi 10 phút. Khi không đồng bộ được, hook dùng giờ thiết bị.
  */
 export function useVietnamTime(): VietnamTime {
   const offsetRef = useRef(0)
@@ -85,20 +68,27 @@ export function useVietnamTime(): VietnamTime {
       const requestStartedAt = Date.now()
 
       try {
-        const response = await fetch(TIME_API_URL, {
+        const syncUrl = new URL('/', window.location.origin)
+        syncUrl.searchParams.set('time-sync', String(requestStartedAt))
+        const response = await fetch(syncUrl, {
+          method: 'HEAD',
           signal: controller.signal,
-          cache: 'no-store'
+          cache: 'no-store',
+          credentials: 'same-origin'
         })
-        if (!response.ok) throw new Error(`Time API returned ${response.status}`)
-
-        const data: unknown = await response.json()
-        if (!isValidResponse(data)) throw new Error('Invalid time API response')
+        if (!response.ok) {
+          throw new Error(`Time sync returned ${response.status}`)
+        }
 
         const responseReceivedAt = Date.now()
-        const estimatedNetworkDelay =
-          (responseReceivedAt - requestStartedAt) / 2
-        offsetRef.current =
-          toEpoch(data) + estimatedNetworkDelay - responseReceivedAt
+        const serverOffset = calculateServerOffset(
+          response.headers.get('date'),
+          requestStartedAt,
+          responseReceivedAt
+        )
+        if (serverOffset === null) throw new Error('Untrusted server time')
+
+        offsetRef.current = serverOffset
         hasSynchronizedRef.current = true
 
         if (!disposed) {

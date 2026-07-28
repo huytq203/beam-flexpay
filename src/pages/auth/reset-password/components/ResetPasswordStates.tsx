@@ -83,11 +83,15 @@ export function UnreachableState({ onRetry }: UnreachableStateProps) {
 }
 
 export interface InvalidLinkStateProps {
+  message: string
   onRequestNewLink: () => void
 }
 
 /** Trạng thái empty: không có liên kết dùng được để đặt lại mật khẩu. */
-export function InvalidLinkState({ onRequestNewLink }: InvalidLinkStateProps) {
+export function InvalidLinkState({
+  message,
+  onRequestNewLink
+}: InvalidLinkStateProps) {
   return (
     <AuthColumn>
       <StateDisc>
@@ -96,8 +100,7 @@ export function InvalidLinkState({ onRequestNewLink }: InvalidLinkStateProps) {
       <div className='reset-heading mb-6 text-center'>
         <h1 className={HEADING_CLASS}>Liên kết không còn hiệu lực</h1>
         <p className={SUBTEXT_CLASS}>
-          Liên kết đặt lại mật khẩu chỉ dùng được một lần và sẽ hết hạn sau một
-          khoảng thời gian ngắn. Hãy yêu cầu một liên kết mới để tiếp tục.
+          {message} Hãy yêu cầu một liên kết mới để tiếp tục.
         </p>
       </div>
       <div className='reset-stack flex flex-col gap-3'>

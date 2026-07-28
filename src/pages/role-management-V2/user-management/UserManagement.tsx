@@ -74,6 +74,7 @@ const UserManagement = () => {
                 size='small'
                 columns={handle.column}
                 dataSource={fetchData.dataSource}
+                onRefresh={fetchData.refetch}
                 pagination={{
                   total: fetchData.userData?.totalElements,
                   current: fetchData.page,

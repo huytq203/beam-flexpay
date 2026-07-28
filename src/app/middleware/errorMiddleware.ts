@@ -25,8 +25,10 @@ const ERROR_MESSAGES: Record<number, string> = {
  * Add endpoint names here to suppress error notifications
  */
 const SILENT_ENDPOINTS: string[] = [
-  // 'checkHealth',
-  // 'getStatus'
+  'adminChangePassword',
+  'adminForgotPassword',
+  'validateAdminResetToken',
+  'resetAdminPassword'
 ]
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>

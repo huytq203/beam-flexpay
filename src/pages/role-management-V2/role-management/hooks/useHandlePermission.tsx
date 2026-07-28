@@ -1,6 +1,5 @@
 import { useState, useCallback, useMemo } from 'react'
 import { useLazyGetPermissionByKeyQuery } from '@services/apiPermission'
-import { useMessage } from '@hooks/useMessage'
 import { ModalType, SelectedPermission } from '../types/RoleManagement.type'
 import { getRoleManagementColumn } from '../columns/RoleManagement.column'
 import useFetchDataPermission from './useFetchDataPermission'
@@ -12,10 +11,9 @@ type SearchFormData = {
 }
 
 const useHandlePermission = (fetchHook: ReturnType<typeof useFetchDataPermission>) => {
-  const { errorMess } = useMessage()
-
   const [modalType, setModalType] = useState<ModalType>(null)
   const [selectedPermission, setSelectedPermission] = useState<SelectedPermission | null>(null)
+  const [searchParams, setSearchParams] = useState<SearchFormData | null>(null)
 
   const [getPermissionByKey] = useLazyGetPermissionByKeyQuery()
 
@@ -36,6 +34,7 @@ const useHandlePermission = (fetchHook: ReturnType<typeof useFetchDataPermission
     async (data: SearchFormData) => {
       const isEmpty = !data.roleCode && !data.keyword && !data.status
       if (isEmpty) {
+        setSearchParams(null)
         fetchHook.setIsSearchMode(false)
         fetchHook.setSearchData(null)
         fetchHook.setPage(1)
@@ -43,7 +42,7 @@ const useHandlePermission = (fetchHook: ReturnType<typeof useFetchDataPermission
       }
       try {
         fetchHook.setPage(1)
-        const searchParams = {
+        const queryParams = {
           page: 1,
           size: fetchHook.pageSize,
           sortBy: 'id',
@@ -52,15 +51,24 @@ const useHandlePermission = (fetchHook: ReturnType<typeof useFetchDataPermission
           ...(data.keyword && { keyword: data.keyword }),
           ...(data.status && { status: data.status })
         }
-        const result = await getPermissionByKey(searchParams).unwrap()
+        const result = await getPermissionByKey(queryParams).unwrap()
+        setSearchParams(data)
         fetchHook.setSearchData(result)
         fetchHook.setIsSearchMode(true)
       } catch {
         // errorMess(getApiErrorDetail(error) || 'Lỗi tìm kiếm')
       }
     },
-    [fetchHook, getPermissionByKey, errorMess]
+    [fetchHook, getPermissionByKey]
   )
+
+  const handleRefresh = useCallback(async () => {
+    if (searchParams) {
+      await handleSearch(searchParams)
+      return
+    }
+    await fetchHook.refetch()
+  }, [fetchHook, handleSearch, searchParams])
 
   const column = useMemo(
     () => getRoleManagementColumn({ openModal }),
@@ -73,6 +81,7 @@ const useHandlePermission = (fetchHook: ReturnType<typeof useFetchDataPermission
     openModal,
     closeModal,
     handleSearch,
+    handleRefresh,
     column
   }
 }

@@ -18,7 +18,12 @@ const useFetchDataWithdraw = () => {
         ),
     }
 
-    const { data: dataWithdraw, isLoading: isLoadingWithdraw, isFetching } = useGetUnifiedQuery(payload)
+    const {
+        data: dataWithdraw,
+        isLoading: isLoadingWithdraw,
+        isFetching,
+        refetch
+    } = useGetUnifiedQuery(payload)
 
     const dataSource = dataWithdraw?.content.map((item, index) => ({
         no: (page - 1) * pageSize + index + 1,
@@ -40,6 +45,7 @@ const useFetchDataWithdraw = () => {
         sortBy,
         dataSource,
         handleSearch,
+        refetch,
         isFetching
     }
 }

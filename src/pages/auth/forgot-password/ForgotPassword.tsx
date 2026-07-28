@@ -16,11 +16,15 @@ import {
   MailOutlined
 } from '@ant-design/icons'
 import { PATHS } from '@constants/pathConstant'
-import { useUserForgotPasswordMutation } from '@services/cmsService'
-import { Button, Form, Input, notification } from 'antd'
+import { useAdminForgotPasswordMutation } from '@services/authEndpoints'
+import { Button, Form, Input } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import {
+  toForgotPasswordErrorMessage,
+  type ResetMutationError
+} from '../password-reset-error'
 
 interface ForgotPasswordForm {
   email: string
@@ -41,8 +45,9 @@ function ForgotPassword() {
   const rootRef = useRef<HTMLDivElement>(null)
   const successHeadingRef = useRef<HTMLHeadingElement>(null)
   const [form] = Form.useForm<ForgotPasswordForm>()
-  const [forgotPassword, { isLoading }] = useUserForgotPasswordMutation()
+  const [forgotPassword, { isLoading }] = useAdminForgotPasswordMutation()
   const [submittedEmail, setSubmittedEmail] = useState('')
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   useEffect(() => {
     window.events.emit('auth-set-title', t('forgot.subtitle').toString())
@@ -54,21 +59,16 @@ function ForgotPassword() {
   }, [submittedEmail])
 
   const handleSubmit = async ({ email }: ForgotPasswordForm) => {
-    const normalizedEmail = email.trim()
+    const normalizedEmail = email.trim().toLowerCase()
+    setSubmitError(null)
 
     try {
-      await forgotPassword({
-        userForgotPassword: { email: normalizedEmail }
-      }).unwrap()
+      await forgotPassword({ email: normalizedEmail }).unwrap()
       setSubmittedEmail(normalizedEmail)
-      notification.success({
-        message: t('forgot.messages.forgotPasswordSuccess')
-      })
-    } catch {
-      notification.error({
-        message: t('forgot.messages.forgotPasswordError'),
-        description: 'Vui lòng thử lại sau ít phút.'
-      })
+    } catch (error) {
+      setSubmitError(
+        toForgotPasswordErrorMessage(error as ResetMutationError)
+      )
     }
   }
 
@@ -76,6 +76,7 @@ function ForgotPassword() {
 
   const sendAgain = () => {
     setSubmittedEmail('')
+    setSubmitError(null)
     window.requestAnimationFrame(() => form.getFieldInstance('email')?.focus())
   }
 
@@ -185,7 +186,12 @@ function ForgotPassword() {
                   },
                   {
                     type: 'email',
+                    transform: (value: string) => value.trim(),
                     message: t('messages.emailCorrectFormat').toString()
+                  },
+                  {
+                    max: 255,
+                    message: 'Email không được vượt quá 255 ký tự'
                   }
                 ]}
               >
@@ -194,9 +200,20 @@ function ForgotPassword() {
                   placeholder="tenban@congty.vn"
                   autoComplete="email"
                   inputMode="email"
+                  maxLength={255}
                   disabled={isLoading}
+                  onChange={() => setSubmitError(null)}
                 />
               </Form.Item>
+
+              {submitError && (
+                <p
+                  role="alert"
+                  className="mb-4 rounded-[10px] bg-red-50 px-3 py-2.5 text-xs leading-relaxed text-red-700"
+                >
+                  {submitError}
+                </p>
+              )}
 
               <Button
                 htmlType="submit"

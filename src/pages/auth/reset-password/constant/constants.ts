@@ -1,10 +1,3 @@
-/**
- * TẠM THỜI `false`: BE chưa có API kiểm tra token nên màn vào thẳng form nhập
- * mật khẩu. Đổi thành `true` khi `POST /user/verify-token` sẵn sàng — lúc đó các
- * trạng thái đang kiểm tra / liên kết hết hạn / mất kết nối tự động hoạt động lại.
- */
-export const IS_TOKEN_VERIFY_ENABLED = false
-
 /** Điều kiện mật khẩu — nguồn sự thật duy nhất cho cả validate lẫn checklist UI. */
 export const PASSWORD_RULES = [
   { id: 'length', label: 'Ít nhất 8 ký tự', test: (value: string) => value.length >= 8 },

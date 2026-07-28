@@ -6,6 +6,7 @@ export const resetPasswordSchema = z
     password: z
       .string()
       .min(1, 'Vui lòng nhập mật khẩu mới')
+      .max(100, 'Mật khẩu không được vượt quá 100 ký tự')
       .refine((value) => PASSWORD_RULES.every((rule) => rule.test(value)), {
         message: 'Mật khẩu chưa đạt đủ điều kiện bên dưới'
       }),

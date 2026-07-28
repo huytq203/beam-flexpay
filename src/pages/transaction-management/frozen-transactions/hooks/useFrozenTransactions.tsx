@@ -15,7 +15,8 @@ const useFrozenTransactions = () => {
     size: pageSize,
     ...filter
   }
-  const { data, isFetching, isLoading } = useGetFreezesQuery(payload)
+  const { data, isFetching, isLoading, refetch } =
+    useGetFreezesQuery(payload)
 
   const totalElements = data?.totalElements
 
@@ -53,6 +54,7 @@ const useFrozenTransactions = () => {
     pageSize,
     setPage,
     setPageSize,
+    refetch,
     isFetching,
     handleSearch,
     isLoading,

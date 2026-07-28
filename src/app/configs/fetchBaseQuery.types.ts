@@ -182,8 +182,18 @@ export interface RequestArgs {
 export const WHITE_LIST: WhiteListItem[] = [
     // Đặt lại mật khẩu tự hiển thị trạng thái của mình (đang kiểm tra liên kết,
     // nút đang gửi) — overlay loading toàn màn sẽ che mất chính các trạng thái đó.
-    { pathname: AUTHENTICATION + '/reset-password', requestUrl: '/user/verify-token' },
-    { pathname: AUTHENTICATION + '/reset-password', requestUrl: '/user/new-password' },
+    {
+      pathname: AUTHENTICATION + '/forgot-password',
+      requestUrl: '/auth/forgot-password'
+    },
+    {
+      pathname: AUTHENTICATION + '/forget-password',
+      requestUrl: '/auth/forgot-password'
+    },
+    {
+      pathname: AUTHENTICATION + '/reset-password',
+      requestUrl: '/auth/reset-password'
+    },
 
     { pathname: PERSONALWALLET + '/customers-group', requestUrl: '/customer' },
 
@@ -267,6 +277,21 @@ const normalizeUrl = (url?: string) => {
   if (!url) return ''
   return url.startsWith('/') ? url : `/${url}`
 }
+
+const PASSWORD_RESET_REQUEST_URLS = [
+  '/auth/forgot-password',
+  '/auth/reset-password'
+] as const
+
+export const isPasswordResetRequest = (url?: string): boolean => {
+  const cleanUrl = normalizeUrl(url)
+  return PASSWORD_RESET_REQUEST_URLS.some((requestUrl) =>
+    cleanUrl.startsWith(requestUrl)
+  )
+}
+
+export const isAdminChangePasswordRequest = (url?: string): boolean =>
+  normalizeUrl(url).startsWith('/auth/change-password')
 
 export const isInWhiteList = (
   url?: string,

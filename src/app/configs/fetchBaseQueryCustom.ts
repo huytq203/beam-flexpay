@@ -22,6 +22,8 @@ import {
   ApiErrorResponse,
   RequestArgs,
   isInWhiteList,
+  isAdminChangePasswordRequest,
+  isPasswordResetRequest,
   normalizePathname,
   callApi
 } from './fetchBaseQuery.types'
@@ -365,15 +367,22 @@ const createCustomBaseQuery = (
     const requestArgs = args as RequestArgs
     const isLoading = requestArgs?.params?.isLoading
     const requestUrl = typeof args === 'string' ? args : requestArgs?.url
+    const handlesErrorLocally = isPasswordResetRequest(requestUrl)
+    const isChangePasswordRequest = isAdminChangePasswordRequest(requestUrl)
 
-    if (isLoading !== false && !isInWhiteList(requestUrl, pathName)) {
+    if (
+      isLoading !== false &&
+      !handlesErrorLocally &&
+      !isChangePasswordRequest &&
+      !isInWhiteList(requestUrl, pathName)
+    ) {
       showLoading()
     }
 
     const result = await baseQuery(args, api, extraOptions)
     hideLoading()
 
-    if (result.error && result.error.status) {
+    if (result.error && result.error.status && !handlesErrorLocally) {
       const status = result.error.status
 
       switch (status) {
@@ -395,7 +404,7 @@ const createCustomBaseQuery = (
 
         case HttpStatus.BAD_REQUEST: {
           const errorData = result.error.data as ApiErrorResponse
-          if (errorData?.message) {
+          if (errorData?.message && !isChangePasswordRequest) {
             openNotification(errorData.message)
           }
           break
@@ -406,7 +415,7 @@ const createCustomBaseQuery = (
 
         default: {
           const errorData = result.error.data as ApiErrorResponse
-          if (errorData?.message) {
+          if (errorData?.message && !isChangePasswordRequest) {
             openNotification(errorData.message)
           }
           break

@@ -31,7 +31,12 @@ const useEwalletManagement = () => {
 
   const [_postLockAccount] = usePostLockMutation()
   const [_postUnlockAccount] = usePostUnlockMutation()
-  const { data: getAccount,isLoading:loadingGetAccount, isFetching } = useGetAccountQuery(payload)
+  const {
+    data: getAccount,
+    isLoading: loadingGetAccount,
+    isFetching,
+    refetch
+  } = useGetAccountQuery(payload)
 
   const handleSearch = (data: FormSearchValues) => {
     setFilter(data)
@@ -52,7 +57,7 @@ const useEwalletManagement = () => {
   const dataSource = useMemo(() => getAccount?.content.map((item: AcountItem, index: number) => ({
     ...item,
     no: (page - 1) * size + index + 1,
-  })), [getAccount])
+  })), [getAccount, page, size])
 
   const column = getColumn({ openModal, navigate })
 
@@ -70,6 +75,7 @@ const useEwalletManagement = () => {
     closeModal,
     loadingGetAccount,
     isFetching,
+    refetch,
   
     
   }

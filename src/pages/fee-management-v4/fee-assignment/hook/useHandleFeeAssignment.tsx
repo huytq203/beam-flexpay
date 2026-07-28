@@ -38,7 +38,12 @@ const useHandleFeeAssignment = () => {
 
   const [patchAssignActive] = usePatchAssignActiveMutation()
   const [patchAssignInActive] = usePatchAssignInActiveMutation()
-  const { data: searchData, isLoading: loadingSearch } = useGetAssignSearchQuery(payload)
+  const {
+    data: searchData,
+    isLoading: loadingSearch,
+    isFetching,
+    refetch
+  } = useGetAssignSearchQuery(payload)
   const [postAssign, { isLoading: isPostAssign }] = usePostAssignMutation()
 
   const [openModalDelete, setOpenModalDelete] = useState(false)
@@ -120,7 +125,7 @@ const useHandleFeeAssignment = () => {
       reset()
     } catch {
     }
-  }, [postAssign, successMess, errorMess, reset])
+  }, [postAssign, successMess, reset])
 
   const handleSelectPolicy = useCallback((feePolicyId: string) => {
     setValue('feePolicyId', feePolicyId)
@@ -192,6 +197,8 @@ const useHandleFeeAssignment = () => {
     handleSelectPolicy,
     columns,
     dataSource,
+    isFetching,
+    refetch,
     page,
     pageSize,
     total,

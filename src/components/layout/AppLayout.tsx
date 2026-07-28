@@ -1,6 +1,7 @@
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
 import { useBoolean } from 'ahooks'
 import Cookies from 'js-cookie'
 
@@ -23,7 +24,7 @@ import {
 import type { PanelImperativeHandle } from 'react-resizable-panels'
 import SideBar from './SideBar'
 import Header from './Header'
-import EmployeePassword from './components/EmployeePassword'
+import { EmployeePassword } from './components/EmployeePassword'
 import EmployeeProfile from './components/EmployeeProfile'
 import ScreenLoading from '@components/screen-loading/ScreenLoading'
 
@@ -33,8 +34,23 @@ import { initInactivityTracker } from '@configs/fetchBaseQueryCustom'
 import { FORBIDDENERROR } from '@constants/routersConstant'
 import { PATHS } from '@constants/pathConstant'
 import { CookieKey } from '@configs/fetchBaseQuery.types'
-import { appName } from '@constants/appConstant'
 import './style.css'
+
+function getHeaderTitleKey(pathname: string, t: TFunction): string {
+  if (t(`header-title.${pathname}`) !== `header-title.${pathname}`) {
+    return pathname
+  }
+
+  const wildcardPath = pathname.replace(/\/[^/]+$/, '/*')
+  if (
+    wildcardPath !== pathname &&
+    t(`header-title.${wildcardPath}`) !== `header-title.${wildcardPath}`
+  ) {
+    return wildcardPath
+  }
+
+  return pathname
+}
 
 function LayoutBody({ title }: { title: string }) {
   const { open, setOpen, isMobile, setSidebarWidth } = useSidebar()
@@ -128,7 +144,7 @@ function AppLayout() {
   const { t } = useTranslation()
   const isAccess = usePermission()
 
-  const [title, setTitle] = useState<string>(appName)
+  const title = getHeaderTitleKey(location.pathname, t)
   const [modalProfile, { setTrue: showProfile, setFalse: hideProfile }] =
     useBoolean(false)
   const [modalPassword, { setTrue: showPassword, setFalse: hidePassword }] =
@@ -145,38 +161,23 @@ function AppLayout() {
     }
   }, [accessToken, navigate])
 
-  const getHeaderTitleKey = (pathname: string): string => {
-    if (t(`header-title.${pathname}`) !== `header-title.${pathname}`) {
-      return pathname
-    }
-
-    const wildcardPath = pathname.replace(/\/[^/]+$/, '/*')
-    if (
-      wildcardPath !== pathname &&
-      t(`header-title.${wildcardPath}`) !== `header-title.${wildcardPath}`
-    ) {
-      return wildcardPath
-    }
-
-    return pathname
-  }
-
   useEffect(() => {
-    setTitle(getHeaderTitleKey(location.pathname))
-  }, [location.pathname])
+    if (!accessToken) return
 
-  useEffect(() => {
-    if (accessToken) {
-      window.events.on('show-profile', () => showProfile())
-      window.events.on('show-password', () => showPassword())
+    window.events.on('show-profile', showProfile)
+    window.events.on('show-password', showPassword)
+
+    return () => {
+      window.events.off('show-profile', showProfile)
+      window.events.off('show-password', showPassword)
     }
-  }, [accessToken])
+  }, [accessToken, showPassword, showProfile])
 
   useEffect(() => {
     if (!isAccess && location.pathname !== FORBIDDENERROR) {
       navigate(FORBIDDENERROR)
     }
-  }, [isAccess, location.pathname])
+  }, [isAccess, location.pathname, navigate])
 
   return (
     <React.Fragment>

@@ -18,7 +18,12 @@ const useTransaction = () => {
     ...filter 
   }
 
-  const { data: dataTransaction, isFetching, isLoading: isLoadingGetTransaction } = useGetUnifiedQuery(payload)
+  const {
+    data: dataTransaction,
+    isFetching,
+    isLoading: isLoadingGetTransaction,
+    refetch
+  } = useGetUnifiedQuery(payload)
 
   const handleSearch = (data: Partial<FormSearchValues>) => {
     setFilter(data)
@@ -31,7 +36,7 @@ const useTransaction = () => {
       no: (page - 1) * pageSize + idx + 1,
       ...item,
     }))
-  ), [dataTransaction])
+  ), [dataTransaction, page, pageSize])
   
   return {
     dataSource,
@@ -42,6 +47,7 @@ const useTransaction = () => {
     setPageSize,
     navigate,
     handleSearch,
+    refetch,
     isLoadingGetTransaction,
     isFetching
   }

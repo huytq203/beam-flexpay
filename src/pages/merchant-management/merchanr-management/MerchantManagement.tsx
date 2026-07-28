@@ -6,7 +6,7 @@ import { MerchantColumn } from './column/column'
 import { useNavigate } from 'react-router-dom'
 
 const MerchantManagement = () => {
-  const { data } = useFetchData()
+  const { data, isFetching, refetch } = useFetchData()
   const navigate = useNavigate()
 
   return (
@@ -25,7 +25,17 @@ const MerchantManagement = () => {
           </div>
         </div>
 
-        <Table key='id' size='small' columns={MerchantColumn({ onEdit: (id) => navigate(`create/${id}`), onView: (id) => navigate(`detail/${id}`) })} dataSource={data} />
+        <Table
+          key='id'
+          size='small'
+          columns={MerchantColumn({
+            onEdit: (id) => navigate(`create/${id}`),
+            onView: (id) => navigate(`detail/${id}`)
+          })}
+          dataSource={data}
+          loading={isFetching}
+          onRefresh={refetch}
+        />
       </CardComponent>
 
     </div>

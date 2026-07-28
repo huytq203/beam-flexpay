@@ -21,6 +21,7 @@ const SystemLedgerManagement = () => {
     setPageSize,
     navigate,
     handleSearch,
+    refetch,
     isFetching
   } = useSystemLedger()
     
@@ -191,6 +192,7 @@ const SystemLedgerManagement = () => {
             columns={columns}
             dataSource={dataSource}
             loading={isFetching}
+            onRefresh={refetch}
             rowKey="id"
             expandable={{
               expandedRowRender,

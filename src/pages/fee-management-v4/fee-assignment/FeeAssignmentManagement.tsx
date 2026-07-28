@@ -29,6 +29,8 @@ const FeeAssignmentManagement = () => {
     handlePostAssign,
     columns,
     dataSource,
+    isFetching,
+    refetch,
     page,
     pageSize,
     total,
@@ -43,7 +45,7 @@ const FeeAssignmentManagement = () => {
         (loadingSearch) ? (
           <>
             <CardComponent
-              className="mb-3"
+              className="mb-3!"
               content={
                 <div>
                   <SkeletonTitle />
@@ -70,9 +72,10 @@ const FeeAssignmentManagement = () => {
         ) : (
           <>
             <CardComponent
+              className='mb-3!'
               content={
                 <>
-                  <form action='formViewAssign' className='mb-3'>
+                  <form action='formViewAssign'  className='mb-3'>
                     <FormSearchAssignment control={control} />
                   </form>
                   <div className='col-span-12 flex flex-col md:flex-row md:justify-between gap-3'>
@@ -117,6 +120,8 @@ const FeeAssignmentManagement = () => {
                   columns={columns}
                   dataSource={dataSource}
                   size='small'
+                  loading={isFetching}
+                  onRefresh={refetch}
                   pagination={{
                     current: page,
                     showSizeChanger: true,

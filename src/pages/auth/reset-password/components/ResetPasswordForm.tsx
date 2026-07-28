@@ -24,14 +24,16 @@ import { resetPasswordSchema, type ResetPasswordFormData } from '../schema'
 
 export interface ResetPasswordFormProps {
   isSubmitting: boolean
+  maskedEmail: string | null
   submitError: string | null
-  onSubmit: (newPassword: string) => void
+  onSubmit: (newPassword: string, confirmPassword: string) => void
   onClearError: () => void
 }
 
 /** Trạng thái data: token hợp lệ, người dùng nhập mật khẩu mới. */
 export function ResetPasswordForm({
   isSubmitting,
+  maskedEmail,
   submitError,
   onSubmit,
   onClearError
@@ -74,7 +76,8 @@ export function ResetPasswordForm({
     autoComplete: 'new-password',
     onKeyUp: handleCapsLock,
     onKeyDown: handleCapsLock,
-    onChange: onClearError
+    onChange: onClearError,
+    maxLength: 100
   }
 
   return (
@@ -90,10 +93,17 @@ export function ResetPasswordForm({
         <p className='text-[13px] text-gray-500'>
           Tạo mật khẩu mới cho tài khoản quản trị của bạn
         </p>
+        {maskedEmail && (
+          <p className='mt-1.5 text-[12px] font-medium text-teal-700'>
+            Tài khoản: {maskedEmail}
+          </p>
+        )}
       </div>
 
       <form
-        onSubmit={handleSubmit((values) => onSubmit(values.password))}
+        onSubmit={handleSubmit((values) =>
+          onSubmit(values.password, values.confirmPassword)
+        )}
         className='reset-stack flex flex-col gap-3.5'
       >
         <FormInput

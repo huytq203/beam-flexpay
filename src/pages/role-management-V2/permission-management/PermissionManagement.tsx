@@ -76,6 +76,7 @@ export const PermissionManagement = () => {
                 size='small'
                 columns={handle.column}
                 dataSource={fetchData.dataSource}
+                onRefresh={fetchData.refetch}
                 pagination={{
                   current: fetchData.page,
                   pageSize: fetchData.pageSize,

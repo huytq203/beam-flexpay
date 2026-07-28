@@ -21,7 +21,8 @@ const useConfirmEKYC = () => {
         ...filter
     };
 
-    const { data: dataEKYC, isLoading } = useGetEKYCSearchQuery(payload)
+    const { data: dataEKYC, isLoading, isFetching, refetch } =
+        useGetEKYCSearchQuery(payload)
 
     const dataSource = dataEKYC?.content.map((item, index) => ({
         no: (page - 1) * pageSize + index + 1,
@@ -42,6 +43,8 @@ const useConfirmEKYC = () => {
     return {
         dataSource,
         isLoading,
+        isFetching,
+        refetch,
         page,
         pageSize,
         setPage,

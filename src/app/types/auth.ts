@@ -19,18 +19,17 @@ export interface IUserProfile {
   roles: string[]
 }
 
-export interface IChangePasswordInput {
+export interface AdminForgotPasswordRequest {
   email: string
-  currentPassword: string
-  newPassword: string
-  confirmPassword: string
-  password: string
-  otp: string
 }
 
-export interface IChangePassword {
-  password: string
+export interface AdminResetTokenValidationResponse {
+  valid: boolean
+  maskedEmail: string
+}
+
+export interface AdminResetPasswordRequest {
+  token: string
   newPassword: string
-  otpCode: string
-  trackingId: string
+  confirmPassword: string
 }

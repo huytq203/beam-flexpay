@@ -26,8 +26,16 @@ const REDIRECT_SECONDS = 5
 
 export function ResetPassword() {
   const navigate = useNavigate()
-  const { status, isSubmitting, submitError, submit, clearSubmitError, retryVerify } =
-    useResetPassword()
+  const {
+    status,
+    isSubmitting,
+    maskedEmail,
+    invalidMessage,
+    submitError,
+    submit,
+    clearSubmitError,
+    retryVerify
+  } = useResetPassword()
 
   const rootRef = useRef<HTMLDivElement>(null)
   const [secondsLeft, setSecondsLeft] = useState(REDIRECT_SECONDS)
@@ -67,7 +75,10 @@ export function ResetPassword() {
       )}
 
       {status === ResetPasswordStatus.INVALID && (
-        <InvalidLinkState onRequestNewLink={goToForgotPassword} />
+        <InvalidLinkState
+          message={invalidMessage}
+          onRequestNewLink={goToForgotPassword}
+        />
       )}
 
       {status === ResetPasswordStatus.SUCCESS && (
@@ -77,6 +88,7 @@ export function ResetPassword() {
       {status === ResetPasswordStatus.READY && (
         <ResetPasswordForm
           isSubmitting={isSubmitting}
+          maskedEmail={maskedEmail}
           submitError={submitError}
           onSubmit={submit}
           onClearError={clearSubmitError}
