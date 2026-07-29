@@ -7,7 +7,7 @@ import {
   type CloudShape,
   type CloudShapeName
 } from './cloud-shapes'
-import './cloud-field.css'
+import './style/cloud-field.css'
 
 /** Lớp sáng nhấc lên bấy nhiêu đơn vị viewBox, để lộ viền bóng ở đáy mây. */
 const LIGHT_LIFT = 7

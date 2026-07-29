@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactElement } from 'react'
 import { usePageHidden } from '../hooks/usePageHidden'
 import { RAIN_DROP_COUNT, type RainIntensity } from './weather-scene'
-import './rain-field.css'
+import './style/rain-field.css'
 
 /**
  * Nhiễu tất định theo index. Cố ý không dùng Math.random: mỗi lần poll thời
