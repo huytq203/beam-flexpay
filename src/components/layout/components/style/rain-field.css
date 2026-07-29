@@ -1,0 +1,37 @@
+/* Panel cao đúng 100vh (AuthLayout dùng h-screen), nên quãng rơi tính theo vh. */
+.auth-raindrop {
+  position: absolute;
+  top: -12%;
+  width: 1.4px;
+  border-radius: 1px;
+  background: linear-gradient(
+    to bottom,
+    rgba(226, 245, 255, 0),
+    rgba(226, 245, 255, 0.8)
+  );
+  animation-name: auth-rain-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+@keyframes auth-rain-fall {
+  from {
+    transform: translate3d(0, 0, 0) rotate(12deg);
+  }
+
+  to {
+    transform: translate3d(-5vh, 118vh, 0) rotate(12deg);
+  }
+}
+
+.auth-rainfield[data-paused='true'] .auth-raindrop {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-raindrop {
+    animation: none;
+    opacity: 0.35;
+  }
+}

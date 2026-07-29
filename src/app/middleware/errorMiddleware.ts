@@ -28,7 +28,10 @@ const SILENT_ENDPOINTS: string[] = [
   'adminChangePassword',
   'adminForgotPassword',
   'validateAdminResetToken',
-  'resetAdminPassword'
+  'resetAdminPassword',
+  // Thời tiết panel đăng nhập chỉ là trang trí — lỗi của nó không được hiện
+  // toast lên màn hình người dùng đang đăng nhập.
+  'getCurrentWeather'
 ]
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>

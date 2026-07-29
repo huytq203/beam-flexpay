@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import type { CSSProperties, ReactElement } from 'react'
 import { usePageHidden } from '../hooks/usePageHidden'
 import {
   CLOUD_LAYERS,
@@ -24,7 +24,10 @@ interface CloudSilhouetteProps {
   fill: string
 }
 
-function CloudSilhouette({ shape, fill }: CloudSilhouetteProps) {
+function CloudSilhouette({
+  shape,
+  fill
+}: CloudSilhouetteProps): ReactElement {
   if (shape.kind === 'wisp') {
     return (
       <g className="auth-cloud-fill" fill={fill}>
@@ -50,7 +53,7 @@ interface CloudProps {
   palette: CloudPalette
 }
 
-function Cloud({ shapeName, palette }: CloudProps) {
+function Cloud({ shapeName, palette }: CloudProps): ReactElement {
   const shape = CLOUD_SHAPES[shapeName]
 
   if (shape.kind === 'wisp') {
@@ -74,9 +77,14 @@ function Cloud({ shapeName, palette }: CloudProps) {
 interface CloudTrackProps {
   layer: CloudLayer
   palette: CloudPalette
+  opacityScale: number
 }
 
-function CloudTrack({ layer, palette }: CloudTrackProps) {
+function CloudTrack({
+  layer,
+  palette,
+  opacityScale
+}: CloudTrackProps): ReactElement {
   const instances = [
     ...layer.clouds,
     ...layer.clouds.map((cloud) => ({ ...cloud, left: cloud.left + 50 }))
@@ -95,7 +103,7 @@ function CloudTrack({ layer, palette }: CloudTrackProps) {
           left: `${cloud.left}%`,
           top: cloud.top,
           width: cloud.width,
-          opacity: layer.opacity
+          opacity: layer.opacity * opacityScale
         }
         if (layer.blurPx > 0) style.filter = `blur(${layer.blurPx}px)`
         if (layer.hasFloat) {
@@ -119,10 +127,15 @@ function CloudTrack({ layer, palette }: CloudTrackProps) {
 
 export interface CloudFieldProps {
   palette: CloudPalette
+  /** Hệ số nhân opacity theo độ phủ mây thực tế. Mặc định 1 = giữ nguyên. */
+  opacityScale?: number
 }
 
 /** Dải mây trôi từ phải qua trái, nằm sau dãy núi của cảnh mặt trời. */
-export function CloudField({ palette }: CloudFieldProps) {
+export function CloudField({
+  palette,
+  opacityScale = 1
+}: CloudFieldProps): ReactElement {
   const isPageHidden = usePageHidden()
 
   return (
@@ -132,7 +145,12 @@ export function CloudField({ palette }: CloudFieldProps) {
       aria-hidden="true"
     >
       {CLOUD_LAYERS.map((layer) => (
-        <CloudTrack key={layer.id} layer={layer} palette={palette} />
+        <CloudTrack
+          key={layer.id}
+          layer={layer}
+          palette={palette}
+          opacityScale={opacityScale}
+        />
       ))}
     </div>
   )

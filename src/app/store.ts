@@ -1,6 +1,7 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
 import { apiFeeService, apiMerchant, apiService, apiWalletCore, authApiService } from '@services/apiService'
+import { apiWeather } from '@services/apiWeather'
 import authReducer from '@slices/authSlice'
 import { TypedUseSelectorHook, useSelector } from 'react-redux'
 import { errorMiddleware } from './middleware/errorMiddleware'
@@ -13,6 +14,7 @@ export const createAppStore = () => configureStore({
     [apiFeeService.reducerPath]: apiFeeService.reducer,
     [apiWalletCore.reducerPath]: apiWalletCore.reducer,
     [apiMerchant.reducerPath]: apiMerchant.reducer,
+    [apiWeather.reducerPath]: apiWeather.reducer,
     auth: authReducer
   },
   middleware: (getDefaultMiddleware) =>
@@ -22,6 +24,7 @@ export const createAppStore = () => configureStore({
       apiFeeService.middleware,
       apiWalletCore.middleware,
       apiMerchant.middleware,
+      apiWeather.middleware,
       errorMiddleware
     )
 })
@@ -39,4 +42,3 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   Action<string>
 >
 export const useTypedSelector: TypedUseSelectorHook<RootState> = useSelector
-

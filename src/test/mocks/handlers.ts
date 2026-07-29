@@ -9,7 +9,30 @@ export const handlers = [
   http.get('*/auth/reset-password/validate', () =>
     ok({ valid: true, maskedEmail: 'a***@flexpay.vn' })
   ),
-  http.post('*/auth/reset-password', () => ok(null))
+  http.post('*/auth/reset-password', () => ok(null)),
+  http.get('*/v1/forecast', () =>
+    HttpResponse.json({
+      latitude: 21.03,
+      longitude: 105.83,
+      current: {
+        time: '2026-07-29T09:30',
+        weather_code: 61,
+        temperature_2m: 28.4,
+        precipitation: 1.2,
+        cloud_cover: 87,
+        is_day: 1
+      }
+    })
+  ),
+  http.get(
+    'https://api.bigdatacloud.net/data/reverse-geocode-client',
+    () =>
+      HttpResponse.json({
+        locality: 'Hải Châu',
+        city: 'Đà Nẵng',
+        principalSubdivision: 'Đà Nẵng'
+      })
+  )
 ]
 
 /** Handler dùng lại trong từng test để mô phỏng nhánh lỗi. */
@@ -79,5 +102,12 @@ export const errorHandlers = {
   ),
   forgotPasswordOffline: http.post('*/auth/forgot-password', () =>
     HttpResponse.error()
-  )
+  ),
+  weatherUnavailable: http.get('*/v1/forecast', () =>
+    HttpResponse.json({ error: true, reason: 'busy' }, { status: 503 })
+  ),
+  weatherMalformed: http.get('*/v1/forecast', () =>
+    HttpResponse.json({ latitude: 21.03 })
+  ),
+  weatherOffline: http.get('*/v1/forecast', () => HttpResponse.error())
 }

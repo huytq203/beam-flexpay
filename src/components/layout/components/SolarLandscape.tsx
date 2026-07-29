@@ -1,5 +1,7 @@
+import type { ReactElement } from 'react'
 import { CloudField } from './CloudField'
-import type { SolarScene } from './solar-scene'
+import { RainField } from './RainField'
+import type { AuthScene } from './weather-scene'
 
 /** Toạ độ sao đêm: [left, top, đường kính]. */
 const NIGHT_STARS = [
@@ -18,11 +20,43 @@ const MOUNTAIN_PATHS = [
 ] as const
 
 export interface SolarLandscapeProps {
-  scene: SolarScene
+  scene: AuthScene
 }
 
-/** Nền panel thương hiệu: mặt trời, sao, mây trôi và ba lớp núi. */
-export function SolarLandscape({ scene }: SolarLandscapeProps) {
+function Sun({ scene }: SolarLandscapeProps): ReactElement {
+  return (
+    <div
+      className="absolute size-[clamp(64px,8vw,108px)] -translate-x-1/2 -translate-y-1/2 rounded-full transition-[top,left,opacity,background-color,box-shadow] duration-1000"
+      style={{
+        left: scene.sunLeft,
+        top: scene.sunTop,
+        opacity: scene.sunOpacity,
+        backgroundColor: scene.sunColor,
+        boxShadow: `0 0 55px 16px ${scene.sunColor}55`
+      }}
+    />
+  )
+}
+
+function NightSky({ scene }: SolarLandscapeProps): ReactElement {
+  return (
+    <div
+      className={`absolute inset-0 transition-opacity duration-1000 ${
+        scene.isNight ? 'opacity-100' : 'opacity-0'
+      }`}
+    >
+      {NIGHT_STARS.map(([left, top, size]) => (
+        <span
+          key={`${left}-${top}`}
+          className="absolute rounded-full bg-white/70"
+          style={{ left, top, width: size, height: size }}
+        />
+      ))}
+    </div>
+  )
+}
+
+function Mountains({ scene }: SolarLandscapeProps): ReactElement {
   const mountainFills = [
     scene.farMountain,
     scene.middleMountain,
@@ -30,48 +64,42 @@ export function SolarLandscape({ scene }: SolarLandscapeProps) {
   ]
 
   return (
+    <svg
+      viewBox="0 0 1000 700"
+      preserveAspectRatio="none"
+      className="absolute inset-x-0 bottom-0 h-[78%] w-full"
+    >
+      {MOUNTAIN_PATHS.map((path, index) => (
+        <path
+          key={path.slice(0, 12)}
+          className="auth-mountain-layer transition-[fill] duration-1000"
+          d={path}
+          fill={mountainFills[index]}
+        />
+      ))}
+    </svg>
+  )
+}
+
+/** Nền panel thương hiệu: mặt trời, sao, mây trôi và ba lớp núi. */
+export function SolarLandscape({
+  scene
+}: SolarLandscapeProps): ReactElement {
+  return (
     <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+      <Sun scene={scene} />
+      <NightSky scene={scene} />
+      <CloudField
+        palette={scene.cloud}
+        opacityScale={scene.cloudOpacityScale}
+      />
+      <Mountains scene={scene} />
       <div
-        className="absolute size-[clamp(64px,8vw,108px)] -translate-x-1/2 -translate-y-1/2 rounded-full transition-[top,left,opacity,background-color,box-shadow] duration-1000"
-        style={{
-          left: scene.sunLeft,
-          top: scene.sunTop,
-          opacity: scene.sunOpacity,
-          backgroundColor: scene.sunColor,
-          boxShadow: `0 0 55px 16px ${scene.sunColor}55`
-        }}
+        className="auth-overcast absolute inset-0 bg-slate-700 transition-opacity duration-1000"
+        style={{ opacity: scene.overcast }}
       />
 
-      <div
-        className={`absolute inset-0 transition-opacity duration-1000 ${
-          scene.isNight ? 'opacity-100' : 'opacity-0'
-        }`}
-      >
-        {NIGHT_STARS.map(([left, top, size]) => (
-          <span
-            key={`${left}-${top}`}
-            className="absolute rounded-full bg-white/70"
-            style={{ left, top, width: size, height: size }}
-          />
-        ))}
-      </div>
-
-      <CloudField palette={scene.cloud} />
-
-      <svg
-        viewBox="0 0 1000 700"
-        preserveAspectRatio="none"
-        className="absolute inset-x-0 bottom-0 h-[78%] w-full"
-      >
-        {MOUNTAIN_PATHS.map((path, index) => (
-          <path
-            key={path.slice(0, 12)}
-            className="auth-mountain-layer transition-[fill] duration-1000"
-            d={path}
-            fill={mountainFills[index]}
-          />
-        ))}
-      </svg>
+      <RainField intensity={scene.rain} />
     </div>
   )
 }
