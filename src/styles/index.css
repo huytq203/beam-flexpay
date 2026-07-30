@@ -254,6 +254,8 @@
         background-color: var(--background);
         color: var(--foreground);
         font-family: var(--font-ui);
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
         overflow: hidden; /* Khóa scroll tổng để dùng nội bộ */
         height: 100%;
         color-scheme: light;
@@ -283,6 +285,20 @@
         bottom: 0 !important;
     }
 
+}
+
+/*
+  Mobile Safari zooms the visual viewport when a focused form control renders
+  below 16px. Keep every editable control at the minimum readable size on touch
+  devices so focusing a field does not zoom or horizontally shift the app.
+*/
+@media (hover: none) and (pointer: coarse) {
+    input,
+    textarea,
+    select,
+    [contenteditable="true"] {
+        font-size: 16px !important;
+    }
 }
 
 /* ─── Reduced Motion ─────────────────────────────────────────────────────────

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { readWeatherOverride } from './weather-override'
+import { readWeatherOverride } from '../hooks/weather-override'
 
 const useWeather = (weather: string): void => {
   window.history.replaceState({}, '', `/?weather=${weather}`)

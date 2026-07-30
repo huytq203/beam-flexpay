@@ -1,6 +1,6 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { useWeatherCoords, WEATHER_COORDS_CACHE_KEY } from './useWeatherCoords'
+import { useWeatherCoords, WEATHER_COORDS_CACHE_KEY } from '../hooks/useWeatherCoords'
 
 const PRECISE = { latitude: 16.0544, longitude: 108.2022 }
 

@@ -138,7 +138,7 @@ const EwalletManagement = () => {
         footer={null}
         content={
           <DialogLock
-            userId={selectedAccount?.ownerUsername}
+            ownerId={selectedAccount?.ownerId}
             ownerName={selectedAccount?.ownerUsername}
             onSuccess={closeModal}
             onCancel={closeModal}
@@ -158,7 +158,7 @@ const EwalletManagement = () => {
         footer={null}
         content={
           <DialogUnlock
-            userId={selectedAccount?.ownerId}
+            ownerId={selectedAccount?.ownerId}
             ownerName={selectedAccount?.ownerUsername}
             onSuccess={closeModal}
             onCancel={closeModal}

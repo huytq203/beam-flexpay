@@ -21,10 +21,13 @@ const useSystemLedger = () => {
     useGetLedgerEntriesQuery(payload)
 
   const handleSearch = (data: FormSearchValues) => {
-    setFilter(data)
+    const trimmedData = Object.entries(data).reduce((acc, [key, value]) => {
+      acc[key as keyof FormSearchValues] = typeof value === 'string' ? value.trim() : value
+      return acc
+    }, {} as FormSearchValues)
+    setFilter(trimmedData)
     setPage(1)
   }
-
   const totalElements = dataLedger?.totalElements
   const dataSource = useMemo(() => (
     dataLedger?.content?.map((item, idx) => ({

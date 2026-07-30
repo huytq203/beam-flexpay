@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { calculateServerOffset } from './useVietnamTime'
+import { calculateServerOffset } from '../hooks/useVietnamTime'
 
 describe('calculateServerOffset', () => {
   it('tính offset theo trung điểm request khi giờ server hợp lệ', () => {

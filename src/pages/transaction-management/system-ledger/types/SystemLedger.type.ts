@@ -73,7 +73,7 @@ export interface LedgerResponse {
 }
 
 export interface FormSearchValues {
-    transactionId?: string
+    transactionCode?: string
     accountId?: string
     status?: string
     direction?: string

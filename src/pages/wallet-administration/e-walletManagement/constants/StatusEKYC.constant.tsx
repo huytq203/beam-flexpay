@@ -1,23 +1,35 @@
-import * as Icon from '@components/icons'
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined
+} from '@components/icons'
 
 interface StatusEKYC {
   label?: string
-  value?: string
+  value?: string | null
   color?: string
   icon?: React.ReactNode
 }
 
+const statusEKYCConstant = {
+  INVALID: 'INVALID',
+  VERIFIED: 'VERIFIED',
+
+}
+export const StatusEKYCLabel = {
+  [statusEKYCConstant.INVALID]: 'Chưa eKYC',
+  [statusEKYCConstant.VERIFIED]: 'Đã eKYC',
+}
 export const statusEKYC: StatusEKYC[] = [
   {
-    label: 'Đã eKYC',
-    value: 'VERIFIED',
+    label: StatusEKYCLabel[statusEKYCConstant.VERIFIED],
+    value: statusEKYCConstant.VERIFIED,
     color: 'bg-success/10 text-success',
-    icon: <Icon.CheckCircleOutlined />
+    icon: <CheckCircleOutlined />
   },
   {
-    label: 'Chưa eKYC',
-    value: 'UNVERIFIED',
+    label: StatusEKYCLabel[statusEKYCConstant.INVALID],
+    value: statusEKYCConstant.INVALID,
     color: 'bg-danger/10 text-danger',
-    icon: <Icon.CloseCircleOutlined />
+    icon: <CloseCircleOutlined />
   }
 ]

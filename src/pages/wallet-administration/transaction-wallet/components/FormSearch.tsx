@@ -37,7 +37,7 @@ const FormSearch = ({ handleSearch }: props) => {
     }
     return (
         <div>
-            <form>
+            <form onSubmit={formSearch.handleSubmit(onSubmit)}>
                 <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <FormInput control={formSearch.control} name='transactionCode' label='Mã giao dịch' className='col-span-1' placeholder='Nhập mã giao dịch...' />
@@ -54,7 +54,7 @@ const FormSearch = ({ handleSearch }: props) => {
                     <FormDatePicker showTime control={formSearch.control} name='toDate' label='Thời gian đến' className='col-span-1' />
                 </div>
                 <div className="flex justify-end mt-3 gap-1">
-                    <ButtonComponent onClick={formSearch.handleSubmit(onSubmit)} icon={<MagnifyingGlassIcon size={18} />} content={'Tìm kiếm'} />
+                    <ButtonComponent htmlType='submit' icon={<MagnifyingGlassIcon size={18} />} content={'Tìm kiếm'} />
                     <ButtonComponent onClick={handleReset} type='default' icon={<BroomIcon size={18} />} content={'Xóa lọc'} />
                 </div>
             </form>

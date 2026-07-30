@@ -9,14 +9,14 @@ import { LockSchema, LockFormValues } from '../schemas/Freeze.schema'
 import { useMessage } from '@hooks/useMessage'
 
 interface DialogLockProps {
-  userId?: string
+  ownerId?: string
   ownerName?: string
   onSuccess?: () => void
   onCancel?: () => void
 }
 
 const DialogLock = ({
-  userId,
+  ownerId,
   ownerName,
   onSuccess,
   onCancel
@@ -30,9 +30,9 @@ const DialogLock = ({
   const [postLock, { isLoading }] = usePostLockMutation()
 
   const onSubmit = async (values: LockFormValues) => {
-    if (!userId) return
+    if (!ownerId) return
     try {
-      await postLock({ userId, reason: values.reason }).unwrap()
+      await postLock({ userId:ownerId, reason: values.reason }).unwrap()
       successMess('Khóa tài khoản thành công')
       reset()
       onSuccess?.()

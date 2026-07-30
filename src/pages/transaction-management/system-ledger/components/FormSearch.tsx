@@ -11,7 +11,7 @@ interface Props {
 const FormSearch = ({ handleSearch }: Props) => {
     const formSearch = useForm<FormSearchValues>({
         defaultValues: {
-            transactionId: '',
+            transactionCode: '',
             accountId: '',
             status: '',
             direction: '',
@@ -32,11 +32,11 @@ const FormSearch = ({ handleSearch }: Props) => {
     return (
         <div>
             <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
-            <form>
+            <form onSubmit={formSearch.handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <FormInput
                         control={formSearch.control}
-                        name='transactionId'
+                        name='transactionCode'
                         label='Mã giao dịch'
                         placeholder='Nhập mã giao dịch'
                         className='col-span-1 md:col-span-1'
@@ -88,7 +88,7 @@ const FormSearch = ({ handleSearch }: Props) => {
                 </div>
                 <div className="flex justify-end mt-3 gap-1">
                     <ButtonComponent
-                        onClick={formSearch.handleSubmit(onSubmit)}
+                        htmlType='submit'
                         icon={<MagnifyingGlassIcon size={18} />}
                         content={'Tìm kiếm'}
                     />

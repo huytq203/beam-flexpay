@@ -5,7 +5,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import type { ReactNode } from 'react'
 import { Provider } from 'react-redux'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useAuthWeather } from './useAuthWeather'
+import { useAuthWeather } from '../hooks/useAuthWeather'
 
 const wrapper = ({ children }: { children: ReactNode }) => (
   <Provider store={createAppStore()}>{children}</Provider>

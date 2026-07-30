@@ -9,13 +9,13 @@ import { UnlockSchema, UnlockFormValues } from '../schemas/Freeze.schema'
 import { useMessage } from '@hooks/useMessage'
 
 interface DialogUnlockProps {
-    userId?: string
+    ownerId?: string
     ownerName?: string
     onSuccess?: () => void
     onCancel?: () => void
 }
 
-const DialogUnlock = ({ userId, ownerName, onSuccess, onCancel }: DialogUnlockProps) => {
+const DialogUnlock = ({ ownerId, ownerName, onSuccess, onCancel }: DialogUnlockProps) => {
     const { successMess } = useMessage()
     const { control, handleSubmit, reset } = useForm<UnlockFormValues>({
         defaultValues: { reason: '' },
@@ -25,9 +25,9 @@ const DialogUnlock = ({ userId, ownerName, onSuccess, onCancel }: DialogUnlockPr
     const [postUnlock, { isLoading }] = usePostUnlockMutation()
 
     const onSubmit = async (values: UnlockFormValues) => {
-        if (!userId) return
+        if (!ownerId) return
         try {
-            await postUnlock({ userId, reason: values.reason }).unwrap()
+            await postUnlock({ userId:ownerId, reason: values.reason }).unwrap()
             successMess('Mở khóa tài khoản thành công')
             reset()
             onSuccess?.()

@@ -306,20 +306,20 @@ const getColumn = ({
         />
       )
     }
-  }
+  },
   // {
   //     title: 'Thao tác',
   //     align: 'center',
   //     width: 80,
-  //     render(value, record) {
+  //     render(_, record) {
   //         return (
   //             <div className="flex justify-center items-center gap-1">
   //                 <TooltipComponent title='Xem chi tiết'>
   //                     <ButtonComponent
-  //                         onClick={() => navigate(`/transaction-management/transaction-wallet/${record.id}`)}
+  //                         // onClick={() => navigate(`/transaction-management/transaction-wallet/${record.id}`)}
   //                         size='small'
   //                         className='bg-blue-50 border! border-blue-600 text-blue-600 hover:bg-blue-100! hover:text-blue-600!'
-  //                         icon={<EyeFilled />}
+  //                         // icon={<iconEyeFilled />}
   //                     />
   //                 </TooltipComponent>
   //             </div>

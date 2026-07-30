@@ -57,7 +57,7 @@ export const getColumn = ({
           ? 'Hệ thống'
           : (record.ownerUsername ?? '--')
 
-        const renderStatusEKYC = (status: string) => {
+        const renderStatusEKYC = (status: string|null) => {
           const statusInfo = statusEKYC.find((item) => item.value === status)
           if (!statusInfo) return null
 
@@ -210,42 +210,6 @@ export const getColumn = ({
               }
             }}
           />
-
-          {record.verificationStatus && (
-            <StatusBadge
-              status={record.verificationStatus}
-              config={{
-                VERIFIED: {
-                  label: (
-                    <span className='flex items-center gap-1'>
-                      <Icon.CheckCircleFilled /> EKYC
-                    </span>
-                  ),
-                  className: 'success-status'
-                },
-                PENDING: {
-                  label: (
-                    <span className='flex items-center gap-1'>Chờ duyệt</span>
-                  ),
-                  className: 'warning-status'
-                },
-                REJECTED: {
-                  label: (
-                    <span className='flex items-center gap-1'>Từ chối</span>
-                  ),
-                  className: 'danger-status'
-                },
-                UNVERIFIED: {
-                  label: (
-                    <span className='flex items-center gap-1'>
-                      Chưa xác minh
-                    </span>
-                  ),
-                  className: 'normal-status'
-                }
-              }}
-            />
-          )}
         </div>
       )
     },
@@ -289,7 +253,6 @@ export const getColumn = ({
             key: '2',
             label: isLocked ? 'Mở khóa tài khoản' : 'Khóa tài khoản',
             onClick: () => {
-              console.log(record)
               openModal?.(isLocked ? 'unlock' : 'lock', record)
             },
             disabled: isSystem || isFrozen
