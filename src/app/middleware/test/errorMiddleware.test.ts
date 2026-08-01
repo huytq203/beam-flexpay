@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { globalMessage } from '@hooks/useMessage'
+import Cookies from 'js-cookie'
+import { CookieKey } from '@configs/fetchBaseQuery.types'
 import { errorMiddleware } from '../errorMiddleware'
 
 const rejectedAction = (
@@ -67,5 +69,31 @@ describe('errorMiddleware', () => {
     expect(showGlobalError).toHaveBeenCalledWith(
       'Có lỗi xảy ra, vui lòng thử lại'
     )
+  })
+
+  it('tự động chuyển sang màn forbidden khi API nghiệp vụ trả 403', () => {
+    const previousPath = window.location.pathname
+    Cookies.set(CookieKey.ACCESS_TOKEN, 'access-token')
+    const replaceState = vi.spyOn(window.history, 'replaceState')
+    const dispatchEvent = vi.spyOn(window, 'dispatchEvent')
+    const showGlobalError = vi.spyOn(globalMessage, 'error')
+
+    runMiddleware('getTransactions', 403)
+
+    expect(replaceState).toHaveBeenCalledWith(
+      expect.objectContaining({
+        usr: expect.objectContaining({
+          forbiddenFrom: previousPath,
+          forbiddenEndpoint: 'getTransactions'
+        })
+      }),
+      '',
+      '/secure-panel/forbidden'
+    )
+    expect(dispatchEvent).toHaveBeenCalledWith(expect.any(PopStateEvent))
+    expect(showGlobalError).not.toHaveBeenCalled()
+
+    window.history.replaceState({}, '', previousPath)
+    Cookies.remove(CookieKey.ACCESS_TOKEN)
   })
 })

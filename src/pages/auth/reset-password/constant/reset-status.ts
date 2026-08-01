@@ -8,6 +8,8 @@ export const ResetPasswordStatus = {
   UNREACHABLE: 'unreachable',
   /** Token hợp lệ, cho phép nhập mật khẩu mới. */
   READY: 'ready',
+  /** Mật khẩu đã được tiếp nhận, đang chờ xác thực OTP. */
+  AWAITING_OTP: 'awaiting-otp',
   /** BE đã nhận mật khẩu mới. */
   SUCCESS: 'success'
 } as const

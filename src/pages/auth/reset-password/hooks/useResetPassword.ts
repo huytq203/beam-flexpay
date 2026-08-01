@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useResetAdminPasswordMutation } from '@services/authEndpoints'
+import { useVerifyResetPasswordOtpMutation } from '@services/authEndpoints'
+import type { OtpChallengeResponse, VerifyAdminOtpRequest } from '@type/auth'
 import {
   isExpiredLinkError,
   toInvalidLinkMessage,
@@ -9,6 +11,7 @@ import {
 } from '../../password-reset-error'
 import { ResetPasswordStatus } from '../constant/reset-status'
 import { useVerifyResetToken } from './useVerifyResetToken'
+import { OtpErrorKind, parseOtpError } from '../../shared/otp'
 
 export { ResetPasswordStatus } from '../constant/reset-status'
 
@@ -21,6 +24,11 @@ export interface UseResetPasswordResult {
   submit: (newPassword: string, confirmPassword: string) => void
   clearSubmitError: () => void
   retryVerify: () => void
+  otpChallenge: OtpChallengeResponse | null
+  verifyOtp: (payload: VerifyAdminOtpRequest) => Promise<void>
+  completeOtp: () => void
+  cancelOtp: () => void
+  invalidateOtp: (message: string) => void
 }
 
 /**
@@ -40,6 +48,7 @@ export function useResetPassword(): UseResetPasswordResult {
   } = useVerifyResetToken(token)
   const [sendNewPassword, { isLoading: isSubmitting }] =
     useResetAdminPasswordMutation()
+  const [verifyResetOtp] = useVerifyResetPasswordOtpMutation()
 
   // Kết quả gửi mật khẩu đè lên kết quả verify khi đã có.
   const [submitStatus, setSubmitStatus] = useState<ResetPasswordStatus | null>(
@@ -48,6 +57,8 @@ export function useResetPassword(): UseResetPasswordResult {
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [submitInvalidMessage, setSubmitInvalidMessage] =
     useState<string | null>(null)
+  const [otpChallenge, setOtpChallenge] =
+    useState<OtpChallengeResponse | null>(null)
 
   const submit = useCallback(
     (newPassword: string, confirmPassword: string): void => {
@@ -59,7 +70,12 @@ export function useResetPassword(): UseResetPasswordResult {
 
       sendNewPassword({ token, newPassword, confirmPassword })
         .unwrap()
-        .then(() => {
+        .then((response) => {
+          if (response?.requestId) {
+            setOtpChallenge(response)
+            setSubmitStatus(ResetPasswordStatus.AWAITING_OTP)
+            return
+          }
           setSubmitStatus(ResetPasswordStatus.SUCCESS)
           setSearchParams({}, { replace: true })
         })
@@ -67,6 +83,11 @@ export function useResetPassword(): UseResetPasswordResult {
           if (isExpiredLinkError(error)) {
             setSubmitInvalidMessage(toInvalidLinkMessage(error))
             setSubmitStatus(ResetPasswordStatus.INVALID)
+            return
+          }
+          const otpError = parseOtpError(error)
+          if (otpError.kind === OtpErrorKind.RECIPIENT_UNAVAILABLE) {
+            setSubmitError(otpError.message)
             return
           }
           setSubmitError(toSubmitErrorMessage(error))
@@ -77,6 +98,31 @@ export function useResetPassword(): UseResetPasswordResult {
 
   const clearSubmitError = useCallback((): void => setSubmitError(null), [])
 
+  const verifyOtp = useCallback(
+    async (payload: VerifyAdminOtpRequest): Promise<void> => {
+      await verifyResetOtp(payload).unwrap()
+    },
+    [verifyResetOtp]
+  )
+
+  const completeOtp = useCallback((): void => {
+    setOtpChallenge(null)
+    setSubmitStatus(ResetPasswordStatus.SUCCESS)
+    setSearchParams({}, { replace: true })
+  }, [setSearchParams])
+
+  const cancelOtp = useCallback((): void => {
+    setOtpChallenge(null)
+    setSubmitStatus(null)
+    setSubmitError(null)
+  }, [])
+
+  const invalidateOtp = useCallback((message: string): void => {
+    setOtpChallenge(null)
+    setSubmitInvalidMessage(message)
+    setSubmitStatus(ResetPasswordStatus.INVALID)
+  }, [])
+
   return {
     status: submitStatus ?? verifyStatus,
     isSubmitting,
@@ -85,6 +131,11 @@ export function useResetPassword(): UseResetPasswordResult {
     submitError,
     submit,
     clearSubmitError,
-    retryVerify
+    retryVerify,
+    otpChallenge,
+    verifyOtp,
+    completeOtp,
+    cancelOtp,
+    invalidateOtp
   }
 }

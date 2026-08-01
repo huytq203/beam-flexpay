@@ -34,6 +34,18 @@ const SILENT_ENDPOINTS: string[] = [
   'getCurrentWeather'
 ]
 
+/** Các API tự hiển thị lỗi 403 ngay trong luồng auth, không phải lỗi phân quyền. */
+const LOCAL_403_ENDPOINTS = new Set([
+  'userLogin',
+  'adminForgotPassword',
+  'validateAdminResetToken',
+  'resetAdminPassword',
+  'verifyLoginOtp',
+  'verifyResetPasswordOtp',
+  'resendAdminOtp',
+  'getCurrentWeather'
+])
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null
 
@@ -70,6 +82,35 @@ const getErrorMessage = (error: unknown): string => {
   )
 }
 
+/** Điều hướng SPA tới màn 403 mà không tải lại toàn bộ ứng dụng. */
+export const redirectToForbidden = (endpointName?: string): void => {
+  if (window.location.pathname === PATHS.FORBIDDEN) return
+
+  const currentState = isRecord(window.history.state)
+    ? window.history.state
+    : {}
+  const routerState = isRecord(currentState.usr) ? currentState.usr : {}
+  window.history.replaceState(
+    {
+      ...currentState,
+      usr: {
+        ...routerState,
+        forbiddenFrom: window.location.pathname,
+        forbiddenEndpoint: endpointName
+      }
+    },
+    '',
+    PATHS.FORBIDDEN
+  )
+  window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }))
+}
+
+const redirectToLogin = (): void => {
+  if (window.location.pathname === PATHS.AUTH.LOGIN) return
+  window.history.replaceState(window.history.state, '', PATHS.AUTH.LOGIN)
+  window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }))
+}
+
 /**
  * RTK Query Error Middleware
  * Handles all rejected API calls and shows appropriate error messages
@@ -85,13 +126,29 @@ export const errorMiddleware: Middleware = (storeApi) => (next) => (action) => {
         ? arg.endpointName
         : undefined
 
-    // Skip silent endpoints
-    if (endpointName && SILENT_ENDPOINTS.includes(endpointName)) {
+    const statusCode = readStatus(error)
+    const errorMessage = getErrorMessage(error)
+
+    if (
+      statusCode === 403 &&
+      (!endpointName || !LOCAL_403_ENDPOINTS.has(endpointName))
+    ) {
+      const hasSession = Boolean(
+        Cookies.get(CookieKey.ACCESS_TOKEN) || Cookies.get(CookieKey.REFRESH_TOKEN)
+      )
+      if (hasSession) {
+        redirectToForbidden(endpointName)
+      } else {
+        storeApi.dispatch(logout())
+        redirectToLogin()
+      }
       return next(action)
     }
 
-    const statusCode = readStatus(error)
-    const errorMessage = getErrorMessage(error)
+    // Endpoint tự trình bày lỗi trong UI; chỉ bỏ toast, không làm đổi policy 403.
+    if (endpointName && SILENT_ENDPOINTS.includes(endpointName)) {
+      return next(action)
+    }
 
     // Handle specific status codes
     switch (statusCode) {
@@ -106,10 +163,6 @@ export const errorMiddleware: Middleware = (storeApi) => (next) => (action) => {
         }
         break
       }
-
-      case 403:
-        globalMessage.error(errorMessage)
-        break
 
       case 404:
         // Only show 404 for non-GET requests or important resources

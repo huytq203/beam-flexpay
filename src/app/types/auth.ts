@@ -33,3 +33,38 @@ export interface AdminResetPasswordRequest {
   newPassword: string
   confirmPassword: string
 }
+
+export interface OtpChallengeResponse {
+  requestId: string
+  maskedRecipient: string
+  expiresIn: number
+  canResendAfter: number
+  resendRemaining: number
+}
+
+export interface AdminLoginOtpResponse extends OtpChallengeResponse {
+  otpRequired: true
+}
+
+export interface AuthenticationResponse {
+  accessToken: string
+  expiresIn: number
+  refreshToken: string
+  refreshExpiresIn: number
+}
+
+export interface VerifyAdminOtpRequest {
+  requestId: string
+  otp: string
+}
+
+export interface ResendAdminOtpRequest {
+  requestId: string
+}
+
+export interface OtpErrorBody {
+  status?: string
+  detail?: string
+  message?: string
+  retryAfter?: number
+}

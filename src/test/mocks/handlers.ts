@@ -10,6 +10,24 @@ export const handlers = [
     ok({ valid: true, maskedEmail: 'a***@flexpay.vn' })
   ),
   http.post('*/auth/reset-password', () => ok(null)),
+  http.post('*/auth/reset-password/verify-otp', () => ok(null)),
+  http.post('*/auth/login/verify-otp', () =>
+    ok({
+      accessToken: 'token',
+      expiresIn: 300,
+      refreshToken: 'refresh',
+      refreshExpiresIn: 1800
+    })
+  ),
+  http.post('*/auth/otp/resend', () =>
+    ok({
+      requestId: 'request-1',
+      maskedRecipient: 'a***@flexpay.vn',
+      expiresIn: 180,
+      canResendAfter: 60,
+      resendRemaining: 2
+    })
+  ),
   http.get('*/v1/forecast', () =>
     HttpResponse.json({
       latitude: 21.03,

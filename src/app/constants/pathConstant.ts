@@ -22,9 +22,7 @@ export const PATHS = {
     LOGIN: `${AUTHENTICATION}/login`,
     FORGOT_PASSWORD: `${AUTHENTICATION}/forgot-password`,
     RESET_PASSWORD: `${AUTHENTICATION}/reset-password`,
-    VERIFY_TOKEN: `${AUTHENTICATION}/verify-token`,
-    VERIFY: `${AUTHENTICATION}/verify`,
-    VERIFY_CODE: `${AUTHENTICATION}/verify-code`
+    VERIFY_TOKEN: `${AUTHENTICATION}/verify-token`
   },
 
   FEE_V2: {

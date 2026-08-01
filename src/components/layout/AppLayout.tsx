@@ -175,7 +175,10 @@ function AppLayout() {
 
   useEffect(() => {
     if (!isAccess && location.pathname !== FORBIDDENERROR) {
-      navigate(FORBIDDENERROR)
+      navigate(FORBIDDENERROR, {
+        replace: true,
+        state: { forbiddenFrom: location.pathname }
+      })
     }
   }, [isAccess, location.pathname, navigate])
 

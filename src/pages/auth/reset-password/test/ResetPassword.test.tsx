@@ -103,6 +103,45 @@ describe('ResetPassword — form nhập mật khẩu', () => {
     })
   })
 
+  it('BE mới chuyển sang OTP rồi mới áp dụng mật khẩu', async () => {
+    let verifyBody: unknown
+    server.use(
+      http.post('*/auth/reset-password', () =>
+        HttpResponse.json({
+          data: {
+            requestId: 'reset-request-1',
+            maskedRecipient: 'a***@flexpay.vn',
+            expiresIn: 180,
+            canResendAfter: 60,
+            resendRemaining: 3
+          }
+        })
+      ),
+      http.post('*/auth/reset-password/verify-otp', async ({ request }) => {
+        verifyBody = await request.json()
+        return HttpResponse.json({ data: null })
+      })
+    )
+    const user = userEvent.setup()
+    renderScreen()
+    const [password, confirmPassword] = await findPasswordInputs()
+
+    await user.type(password, 'Beam@2026')
+    await user.type(confirmPassword, 'Beam@2026')
+    await user.click(screen.getByRole('button', { name: /đặt lại mật khẩu/i }))
+
+    const otpInput = await screen.findByLabelText('Mã xác thực')
+    await user.type(otpInput, '123456')
+
+    expect(
+      await screen.findByRole('heading', { name: 'Đã đặt lại mật khẩu' })
+    ).toBeInTheDocument()
+    expect(verifyBody).toEqual({
+      requestId: 'reset-request-1',
+      otp: '123456'
+    })
+  })
+
   it('hiện message BE trả về khi gửi thất bại, không lộ raw error', async () => {
     server.use(errorHandlers.newPasswordFailed)
     const user = userEvent.setup()

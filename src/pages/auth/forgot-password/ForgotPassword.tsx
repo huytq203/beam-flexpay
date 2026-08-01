@@ -101,9 +101,9 @@ function ForgotPassword() {
           <span className="absolute top-0 left-[22px] z-2 grid size-[58px] place-items-center rounded-2xl border border-teal-100/60 bg-linear-to-br from-teal-50 to-teal-100 text-[23px] text-teal-700">
             {submittedEmail ? <CheckOutlined /> : <MailOutlined />}
           </span>
-          <span className="absolute top-[45px] left-0.5 h-px w-[29px] origin-left rotate-25 bg-teal-200" />
-          <span className="absolute right-px bottom-2.5 h-px w-8 origin-left -rotate-24 bg-teal-200" />
-          <span className="absolute right-0 bottom-[7px] size-[7px] rounded-full border-2 border-teal-300 bg-white" />
+          {/* <span className="absolute top-[45px] left-0.5 h-px w-[29px] origin-left rotate-25 bg-teal-200" /> */}
+          {/* <span className="absolute right-px bottom-2.5 h-px w-8 origin-left -rotate-24 bg-teal-200" /> */}
+          {/* <span className="absolute right-0 bottom-[7px] size-[7px] rounded-full border-2 border-teal-300 bg-white" /> */}
         </div>
 
         {submittedEmail ? (

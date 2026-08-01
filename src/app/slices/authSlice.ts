@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { enhancedAuthApi } from '@services/authEndpoints'
-import { IUserProfile } from '@type/auth'
+import { AuthenticationResponse, IUserProfile } from '@type/auth'
+import { DataLogin } from '@type/application'
 import Cookies from 'js-cookie'
 import { CookieKey, CookieExpiry } from '@configs/fetchBaseQuery.types'
 import { updateAccessToken, decodeToken } from './authActions'
@@ -32,6 +33,43 @@ const initialState: IAuthState = {
     avatar: '',
     permissions: initialTokenInfo.permissions,
     roles: initialTokenInfo.roles
+  }
+}
+
+const isAuthenticationResponse = (
+  data: DataLogin | AuthenticationResponse | object
+): data is AuthenticationResponse | DataLogin =>
+  'accessToken' in data && typeof data.accessToken === 'string'
+
+const applyAuthentication = (
+  state: IAuthState,
+  data: AuthenticationResponse | DataLogin
+): IAuthState => {
+  const expiresInSeconds =
+    data.expiresIn || CookieExpiry.ACCESS_TOKEN_SECONDS
+  Cookies.set(CookieKey.ACCESS_TOKEN, data.accessToken, {
+    expires: expiresInSeconds / 86400
+  })
+
+  if (data.refreshToken) {
+    const refreshExpiresInSeconds =
+      data.refreshExpiresIn || CookieExpiry.REFRESH_TOKEN_SECONDS
+    Cookies.set(CookieKey.REFRESH_TOKEN, data.refreshToken, {
+      expires: refreshExpiresInSeconds / 86400
+    })
+  }
+
+  const tokenInfo = decodeToken(data.accessToken)
+  return {
+    ...state,
+    accessToken: data.accessToken,
+    profile: {
+      ...state.profile,
+      permissions: tokenInfo.permissions,
+      roles: tokenInfo.roles,
+      email: tokenInfo.email,
+      fullName: tokenInfo.name
+    }
   }
 }
 
@@ -85,36 +123,15 @@ const authSlice = createSlice({
       .addMatcher(
         enhancedAuthApi.endpoints.userLogin.matchFulfilled,
         (state, { payload }) => {
-          const data = payload
-          const token = data.accessToken
-          if (token) {
-            // Sử dụng expiresIn từ API (đơn vị giây), fallback 300 giây
-            const expiresInSeconds = data.expiresIn || CookieExpiry.ACCESS_TOKEN_SECONDS
-            const expiresInDays = expiresInSeconds / 86400
-            Cookies.set(CookieKey.ACCESS_TOKEN, token, { expires: expiresInDays })
-
-            // Lưu refresh token với refreshExpiresIn từ API
-            if (data.refreshToken) {
-              const refreshExpiresInSeconds = data.refreshExpiresIn || CookieExpiry.REFRESH_TOKEN_SECONDS
-              const refreshExpiresInDays = refreshExpiresInSeconds / 86400
-              Cookies.set(CookieKey.REFRESH_TOKEN, data.refreshToken, { expires: refreshExpiresInDays })
-            }
-
-            // Decode token để lấy permissions
-            const tokenInfo = decodeToken(token)
-            return {
-              ...state,
-              accessToken: token,
-              profile: {
-                ...state.profile,
-                permissions: tokenInfo.permissions,
-                roles: tokenInfo.roles,
-                email: tokenInfo.email,
-                fullName: tokenInfo.name
-              }
-            }
-          }
-          return state
+          return isAuthenticationResponse(payload)
+            ? applyAuthentication(state, payload)
+            : state
+        }
+      )
+      .addMatcher(
+        enhancedAuthApi.endpoints.verifyLoginOtp.matchFulfilled,
+        (state, { payload }) => {
+          return applyAuthentication(state, payload)
         }
       )
   }
@@ -122,5 +139,4 @@ const authSlice = createSlice({
 
 export const { logout, savePermissions, setAccessToken } = authSlice.actions
 export default authSlice.reducer
-
 

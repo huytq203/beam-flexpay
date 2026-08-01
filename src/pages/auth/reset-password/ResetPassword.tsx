@@ -20,6 +20,7 @@ import {
   UnreachableState,
   VerifyingState
 } from './components/ResetPasswordStates'
+import { OtpChallengeStep } from '../shared/otp'
 
 /** Số giây đếm ngược trước khi tự đưa người dùng về trang đăng nhập. */
 const REDIRECT_SECONDS = 5
@@ -34,7 +35,12 @@ export function ResetPassword() {
     submitError,
     submit,
     clearSubmitError,
-    retryVerify
+    retryVerify,
+    otpChallenge,
+    verifyOtp,
+    completeOtp,
+    cancelOtp,
+    invalidateOtp
   } = useResetPassword()
 
   const rootRef = useRef<HTMLDivElement>(null)
@@ -67,7 +73,7 @@ export function ResetPassword() {
   }
 
   return (
-    <div ref={rootRef}>
+    <div ref={rootRef} className='w-full max-w-[420px]'>
       {status === ResetPasswordStatus.VERIFYING && <VerifyingState />}
 
       {status === ResetPasswordStatus.UNREACHABLE && (
@@ -83,6 +89,17 @@ export function ResetPassword() {
 
       {status === ResetPasswordStatus.SUCCESS && (
         <SuccessState secondsLeft={secondsLeft} onGoToLogin={goToLogin} />
+      )}
+
+      {status === ResetPasswordStatus.AWAITING_OTP && otpChallenge && (
+        <OtpChallengeStep
+          challenge={otpChallenge}
+          verifyOtp={verifyOtp}
+          onVerified={completeOtp}
+          onBack={cancelOtp}
+          onResetTokenInvalid={invalidateOtp}
+          backLabel='Quay lại đặt mật khẩu'
+        />
       )}
 
       {status === ResetPasswordStatus.READY && (
