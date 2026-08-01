@@ -1,5 +1,12 @@
-import { RoleDataItem } from '@type/roleManagementV2'
+import { DataRoleItem } from '@type/roleManagement'
 
-export type ModalType = 'add' | 'edit' | 'delete' | null
+export type ModalType =
+  | 'add'
+  | 'edit'
+  | 'delete'
+  | 'viewPermissions'
+  | 'assignPermissions'
+  | 'viewMembers'
+  | null
 
-export type SelectedPermission = RoleDataItem
+export type SelectedRole = DataRoleItem

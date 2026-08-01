@@ -1,26 +1,65 @@
 import {
+  ButtonComponent,
   CardComponent,
   ModalComponent,
   Table
 } from '@components/index'
-import FormSearch from './components/FormSearch'
-import DialogAddPermission from './components/DialogAddPermission'
-import DialogDeletePermission from './components/DialogDeletePermission'
-import useFetchDataPermission from './hooks/useFetchDataPermission'
-import useHandlePermission from './hooks/useHandlePermission'
-import {
-  SkeletonButton,
-  SkeletonInput,
-  SkeletonTable
-} from '@components/ui/skeletons/Skeleton'
+import DialogAddRole from './components/DialogAddRole'
+import DialogDeleteRole from './components/DialogDeleteRole'
+import DialogViewPermissions from './components/DialogViewRole'
+import DialogAssignPermissions from './components/DialogAssignPermissions'
+import DialogViewMembers from './components/DialogViewMembers'
 
-const RoleManagement = () => {
-  const fetchData = useFetchDataPermission()
-  const handle = useHandlePermission(fetchData)
+import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
+import * as Icons from '@components/icons'
+import FormSearchRole from '@/pages/role-management-V2/role-management/components/FormSearchRole'
+import useFetchDataRole from '@/pages/role-management-V2/role-management/hooks/useFetchDataRole'
+import { getRoleManagementColumn } from '@/pages/role-management-V2/role-management/columns/RoleManagement.column'
+import { useCallback, useMemo, useState } from 'react'
+import { ModalType, SelectedRole } from '@/pages/role-management-V2/role-management/types/RoleManagement.type'
+import { ASSIGN_PERMISSIONS_FORM_ID } from './constants/RoleManagement.constant'
+export const RoleManagement = () => {
+  const [openModal, setOpenModal] = useState<ModalType>(null)
+  const [selectedRole, setSelectedRole] = useState<SelectedRole | null>(null)
+  const [isAssigningPermissions, setIsAssigningPermissions] = useState(false)
+  const {
+    handleSearch,
+    roleData,
+    roleOptions,
+    isLoadingRoleData,
+    refetch,
+    page,
+    size,
+    setPage,
+    setPageSize
+  } = useFetchDataRole()
 
+  const openRoleModal = useCallback(
+    (type: ModalType, role: SelectedRole | null) => {
+      setSelectedRole(role)
+      setOpenModal(type)
+    },
+    []
+  )
+
+  const closeModal = useCallback(() => {
+    setOpenModal(null)
+    setSelectedRole(null)
+    setIsAssigningPermissions(false)
+  }, [])
+
+  const handleMutationSuccess = useCallback(() => {
+    closeModal()
+    refetch()
+  }, [closeModal, refetch])
+
+  const column = useMemo(
+    () => getRoleManagementColumn({ openModal: openRoleModal }),
+    [openRoleModal]
+  )
   return (
     <div className='flex flex-col gap-2'>
-      <CardComponent
+      {/* <CardComponent
         content={
           <>
             {fetchData.isLoading ? (
@@ -44,29 +83,49 @@ const RoleManagement = () => {
             )}
           </>
         }
-      />
+      /> */}
+      <CardComponent>
+        <div className='flex flex-col items-start justify-start w-full'>
+          <p className='w-full mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'>
+            <Icons.FunnelIcon /> Bộ lọc tìm kiếm
+          </p>
+          <FormSearchRole
+            onSearch={handleSearch}
+            roleOptions={roleOptions}
+            onAdd={() => openRoleModal('add', null)}
+          />
+          {/* <div className='ml-auto'>
+                  <ButtonComponent
+                    icon={<Icons.PlusOutlined />}
+                    type='primary'
+                    content='Thêm mới nhóm quyền'
+                    onClick={() => handle.openModal('add', null)}
+                  />
+                </div> */}
+        </div>
+      </CardComponent>
       <CardComponent
         content={
           <>
-            {fetchData.isLoading ? (
+            {isLoadingRoleData ? (
               <SkeletonTable />
             ) : (
               <Table
                 rowKey='id'
                 scroll={{ x: 'max-content' }}
                 bordered
-                columns={handle.column}
                 size='small'
-                dataSource={fetchData.dataSource}
-                onRefresh={handle.handleRefresh}
+                columns={column}
+                dataSource={roleData?.content}
+                onRefresh={refetch}
                 pagination={{
-                  current: fetchData.page,
-                  pageSize: fetchData.pageSize,
-                  total: fetchData.totalElements,
+                  current: page,
+                  pageSize: size,
+                  total: roleData?.totalElements,
                   showSizeChanger: true,
                   onChange: (newPage, newPageSize) => {
-                    fetchData.setPage(newPage)
-                    fetchData.setPageSize(newPageSize)
+                    setPage(newPageSize !== size ? 1 : newPage)
+                    setPageSize(newPageSize)
                   }
                 }}
               />
@@ -75,36 +134,107 @@ const RoleManagement = () => {
         }
       />
 
-      {/* Add/Edit Permission */}
+      {/* Add/Edit Role */}
       <ModalComponent
-        title={handle.modalType === 'edit' ? 'Cập nhật quyền' : 'Thêm quyền'}
-        onCancel={() => handle.closeModal()}
+        title={
+          openModal === 'edit'
+            ? 'Cập nhật nhóm quyền'
+            : 'Thêm nhóm quyền'
+        }
+        onCancel={closeModal}
         onOk={() => {}}
-        open={handle.modalType === 'add' || handle.modalType === 'edit'}
-        width='30%'
+        open={openModal === 'add' || openModal === 'edit'}
+        width='35%'
         footer={null}
         modalText={
-          <DialogAddPermission
-            permission={handle.selectedPermission}
-            onSuccess={handle.closeModal}
-            onCancel={() => handle.closeModal()}
+          <DialogAddRole
+            role={selectedRole}
+            onSuccess={handleMutationSuccess}
+            onCancel={closeModal}
           />
         }
       />
 
-      {/* Delete Permission */}
+      {/* Delete Role */}
       <ModalComponent
-        title='Xóa quyền'
-        onCancel={() => handle.closeModal()}
+        title='Xóa nhóm quyền'
+        onCancel={closeModal}
         onOk={() => {}}
-        open={handle.modalType === 'delete'}
+        open={openModal === 'delete'}
         width='30%'
         footer={null}
         modalText={
-          <DialogDeletePermission
-            permissionName={handle.selectedPermission?.name}
-            onSuccess={handle.closeModal}
-            onCancel={() => handle.closeModal()}
+          <DialogDeleteRole
+            roleId={selectedRole?.id}
+            roleName={selectedRole?.name}
+            onSuccess={handleMutationSuccess}
+            onCancel={closeModal}
+          />
+        }
+      />
+
+      {/* View Permissions (read-only) */}
+      <ModalComponent
+        title='Xem chi tiết quyền'
+        onCancel={closeModal}
+        onOk={() => {}}
+        open={openModal === 'viewPermissions'}
+        width='60%'
+        footer={null}
+        modalText={
+          <DialogViewPermissions
+            roleId={selectedRole?.id}
+            onCancel={closeModal}
+          />
+        }
+      />
+
+      {/* Assign Permissions */}
+      <ModalComponent
+        title='Gán quyền'
+        onCancel={closeModal}
+        onOk={() => {}}
+        open={openModal === 'assignPermissions'}
+        width={{ xs: '100%', sm: '100%', md: '60%', lg: '60%' }}
+        confirmLoading={isAssigningPermissions}
+        footer={
+          <div className='flex items-center justify-end gap-2'>
+            <ButtonComponent
+              type='default'
+              content='Hủy'
+              disabled={isAssigningPermissions}
+              onClick={closeModal}
+            />
+            <ButtonComponent
+              type='primary'
+              content='Lưu'
+              htmlType='submit'
+              form={ASSIGN_PERMISSIONS_FORM_ID}
+              loading={isAssigningPermissions}
+            />
+          </div>
+        }
+        modalText={
+          <DialogAssignPermissions
+            roleId={selectedRole?.id}
+            onSuccess={handleMutationSuccess}
+            onLoadingChange={setIsAssigningPermissions}
+          />
+        }
+      />
+
+      {/* View Members */}
+      <ModalComponent
+        title='Danh sách tài khoản Admin'
+        onCancel={closeModal}
+        onOk={() => {}}
+        open={openModal === 'viewMembers'}
+        width={{ xs: '100%', sm: '100%', md: '60%', lg: '60%' }}
+        footer={null}
+        modalText={
+          <DialogViewMembers
+            roleId={selectedRole?.id}
+            onCancel={closeModal}
           />
         }
       />
@@ -112,4 +242,5 @@ const RoleManagement = () => {
   )
 }
 
-export default RoleManagement
+// Keep the existing route export name until the route configuration is renamed.
+export const PermissionManagement = RoleManagement

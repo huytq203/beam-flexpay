@@ -1,7 +1,7 @@
 import { CardComponent, Table } from '@components/index'
 import { useState, useEffect, memo } from 'react'
 import { useLazyGetPermissionAssignQuery } from '@services/apiPermissionAssign'
-import { translatePermissionName } from '@pages/role-management-V2/role-management/constants/RoleManagement.config'
+import { translatePermissionName } from '@/pages/role-management-V2/permission-management/constants/PermissionManagement.constant'
 import { PermissionItem } from '@type/permissionManagement'
 import { ColumnType } from 'antd/es/table'
 import { ButtonComponent } from '@components/index'
@@ -53,7 +53,10 @@ const DialogViewPermissions = ({ roleId, onCancel }: Props) => {
         content={
           <Table
             columns={columns}
-            dataSource={dataSource?.map((item) => ({ ...item, key: item.name }))}
+            dataSource={dataSource?.map((item) => ({
+              ...item,
+              key: item.name
+            }))}
             size='small'
             bordered
             loading={loading}
@@ -62,7 +65,11 @@ const DialogViewPermissions = ({ roleId, onCancel }: Props) => {
         }
       />
       <div className='flex justify-end items-center gap-2 mt-4'>
-        <ButtonComponent type='default' content='Đóng' onClick={onCancel} />
+        <ButtonComponent
+          type='default'
+          content='Đóng'
+          onClick={onCancel}
+        />
       </div>
     </div>
   )

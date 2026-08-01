@@ -10,7 +10,7 @@ interface Props {
 }
 
 const DialogDeletePermission = ({ permissionName, onSuccess, onCancel }: Props) => {
-  const { successMess } = useMessage()
+  const { successMess, errorMess } = useMessage()
   const [loading, setLoading] = useState(false)
   const [deletePermission] = useDeletePermissionMutation()
 
@@ -19,10 +19,10 @@ const DialogDeletePermission = ({ permissionName, onSuccess, onCancel }: Props) 
     setLoading(true)
     try {
       await deletePermission(permissionName).unwrap()
-      successMess('Xóa thành công')
+      successMess('Xóa quyền thành công')
       onSuccess()
     } catch {
-      // errorMess(getApiErrorDetail(error))
+      errorMess('Không thể xóa quyền. Vui lòng thử lại.')
     } finally {
       setLoading(false)
     }
@@ -30,19 +30,21 @@ const DialogDeletePermission = ({ permissionName, onSuccess, onCancel }: Props) 
 
   return (
     <div>
-      <div className='mb-4'>
-        <span>
-          Bạn có chắc chắn muốn <span className='font-bold'>xóa quyền</span>{' '}
-          <span className='font-bold'>{permissionName}</span> không? Hành động này
-          không thể hoàn tác.
-        </span>
-      </div>
-      <div className='flex justify-end items-center gap-2'>
-        <ButtonComponent type='default' content='Cancel' onClick={onCancel} />
+      <p className='mb-4'>
+        Bạn có chắc chắn muốn xóa quyền{' '}
+        <span className='font-semibold'>{permissionName}</span>? Hành động này
+        không thể hoàn tác.
+      </p>
+      <div className='flex items-center justify-end gap-2'>
+        <ButtonComponent
+          type='default'
+          content='Hủy'
+          onClick={onCancel}
+        />
         <ButtonComponent
           type='primary'
           danger
-          content='Delete'
+          content='Xóa'
           onClick={handleDelete}
           loading={loading}
         />

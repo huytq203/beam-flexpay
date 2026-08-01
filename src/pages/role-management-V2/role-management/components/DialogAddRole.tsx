@@ -1,12 +1,15 @@
 import { ButtonComponent, CardComponent } from '@components/index'
-import { FormInput } from '@components/form'
+import { FormInput, FormTextArea } from '@components/form'
 import { useEffect, useState, memo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { PermissionRoleSchema, PermissionRoleFormData } from '../schemas/Permission.schema'
+import {
+  PermissionRoleSchema,
+  PermissionRoleFormData
+} from '../schemas/Permission.schema'
 import { usePostRoleMutation, usePutRoleMutation } from '@services/apiRole'
 import { useMessage } from '@hooks/useMessage'
-import { SelectedRole } from '../types/PermissionManagement.type'
+import { SelectedRole } from '../types/RoleManagement.type'
 import { getApiErrorDetail } from '@pages/role-management-V2/utils/RoleManagement.utils'
 
 interface Props {
@@ -76,14 +79,18 @@ const DialogAddRole = ({ role, onSuccess, onCancel }: Props) => {
               }
               placeholder='Mã nhóm quyền...'
             />
-            {/* <FormTextArea
+            <FormTextArea
               control={control}
               name='description'
               label='Mô tả'
               placeholder='Mô tả...'
-            /> */}
+            />
             <div className='flex justify-end gap-2 mt-4'>
-              <ButtonComponent type='default' content='Hủy' onClick={onCancel} />
+              <ButtonComponent
+                type='default'
+                content='Hủy'
+                onClick={onCancel}
+              />
               <ButtonComponent
                 type='primary'
                 content={isEdit ? 'Cập nhật' : 'Thêm'}

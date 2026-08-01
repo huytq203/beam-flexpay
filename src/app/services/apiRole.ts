@@ -18,7 +18,7 @@ export const roleApi = authApiService.injectEndpoints({
             query: (params) => ({
                 url: `roles/search`,
                 method: "GET",
-                params: params
+                params: params,
             }),
             providesTags: ['roleManagement'],
             transformResponse: (res: ResponseType<RoleData>) => res.data
@@ -58,6 +58,7 @@ export const roleApi = authApiService.injectEndpoints({
 })
 export const {
     useGetRoleQuery,
+    useGetRoleByKeyQuery,
     usePostRoleMutation,
     usePutRoleMutation,
     useLazyGetRoleByKeyQuery,

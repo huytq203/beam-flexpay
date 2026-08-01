@@ -1,7 +1,9 @@
 import {
   ApartmentOutlined,
+  CheckCircleFilled,
   EditOutlined,
-  EyeOutlined
+  EyeOutlined,
+  MinusCircleIcon
 } from '@components/icons'
 import { ButtonComponent, TooltipComponent } from '@components/index'
 import { UserInfor } from '@type/userManagement'
@@ -23,7 +25,8 @@ export const getUserManagementColumn = ({
     {
       title: 'Tên đăng nhập',
       dataIndex: 'username',
-      align: 'center'
+      align: 'center',
+      render: (_, record) => record.username || '--'
     },
     {
       title: 'Họ và tên',
@@ -38,28 +41,49 @@ export const getUserManagementColumn = ({
       title: 'Email',
       dataIndex: 'email',
       align: 'left',
-      render: (value) => value || '--'
+      render: (value, record) => (
+        <div className='flex flex-wrap items-center gap-1.5'>
+          <span>{value || '--'}</span>
+          {value &&(
+             record.emailVerified ? (
+            <span className='success-status inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] leading-4'>
+              <CheckCircleFilled aria-hidden />
+              Xác thực
+            </span>
+          ) : (
+            <span className='warning-status inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] leading-4'>
+              <MinusCircleIcon
+                aria-hidden
+                size={13}
+                weight='fill'
+              />
+              Chưa xác thực
+            </span>
+          )
+          )}
+        </div>
+      )
     },
-    {
-      title: 'Xác thực email',
-      dataIndex: 'emailVerified',
-      align: 'center',
-      render(_, record) {
-        return (
-          <div>
-            {record.emailVerified ? (
-              <p className='text-green bg-green border border-green text-xs rounded-md inline-block px-2 font-medium'>
-                Đã xác thực
-              </p>
-            ) : (
-              <p className='text-red bg-red border border-red text-xs rounded-md inline-block px-2 font-medium'>
-                Chưa xác thực
-              </p>
-            )}
-          </div>
-        )
-      }
-    },
+    // {
+    //   title: 'Xác thực email',
+    //   dataIndex: 'emailVerified',
+    //   align: 'center',
+    //   render(_, record) {
+    //     return (
+    //       <div className='text-center'>
+    //         {record.emailVerified ? (
+    //           <p className='success-status rounded-md inline-flex text-[11px] px-2'>
+    //             Đã xác thực
+    //           </p>
+    //         ) : (
+    //           <p className='danger-status rounded-md inline-flex text-[11px] px-2'>
+    //             Chưa xác thực
+    //           </p>
+    //         )}
+    //       </div>
+    //     )
+    //   }
+    // },
     {
       title: 'Trạng thái',
       dataIndex: 'enabled',
@@ -68,11 +92,11 @@ export const getUserManagementColumn = ({
         return (
           <div>
             {record.enabled ? (
-              <p className='text-green bg-green border border-green text-xs rounded-md inline-block px-2 font-medium'>
+              <p className='success-status rounded-md inline-flex text-[11px] px-2'>
                 Hoạt động
               </p>
             ) : (
-              <p className='text-red bg-red border border-red text-xs rounded-md inline-block px-2 font-medium'>
+              <p className='danger-status rounded-md inline-flex text-[11px] px-2'>
                 Không hoạt động
               </p>
             )}

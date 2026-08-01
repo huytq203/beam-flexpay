@@ -1,7 +1,6 @@
-import { useState, useEffect, memo, Key } from 'react'
+import { useState, useEffect, memo, Key, useMemo } from 'react'
 import { Table } from 'antd'
 import { ColumnType } from 'antd/es/table'
-import { ButtonComponent } from '@components/index'
 import { useGetPermissionQuery } from '@services/apiPermission'
 import {
   useLazyGetPermissionAssignQuery,
@@ -9,31 +8,61 @@ import {
   useDeletePermissionAssignMutation
 } from '@services/apiPermissionAssign'
 import { useMessage } from '@hooks/useMessage'
-import { translatePermissionName } from '@pages/role-management-V2/role-management/constants/RoleManagement.config'
+import { translatePermissionName } from '@/pages/role-management-V2/permission-management/constants/PermissionManagement.constant'
 import { PermissionItem } from '@type/permissionManagement'
 import { getApiErrorDetail } from '@pages/role-management-V2/utils/RoleManagement.utils'
+import { ASSIGN_PERMISSIONS_FORM_ID } from '../constants/RoleManagement.constant'
 
 interface Props {
   roleId?: string
   onSuccess: () => void
-  onCancel: () => void
+  onLoadingChange?: (loading: boolean) => void
 }
 
-const DialogAssignPermissions = ({ roleId, onSuccess, onCancel }: Props) => {
+const DialogAssignPermissions = ({
+  roleId,
+  onSuccess,
+  onLoadingChange
+}: Props) => {
   const { successMess, errorMess } = useMessage()
   const [loading, setLoading] = useState(false)
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([])
-  const [assignedPermissionNames, setAssignedPermissionNames] = useState<string[]>([])
+  const [assignedPermissionNames, setAssignedPermissionNames] = useState<
+    string[]
+  >([])
 
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
 
-  const { data: allPermissionsData } = useGetPermissionQuery({
+  const { data: allPermissionsData, isFetching: isFetchingPage } = useGetPermissionQuery({
     page,
     size: pageSize,
     sortBy: 'id',
     sortDirection: 'DESC'
   })
+  const catalogSize = Math.max(
+    allPermissionsData?.totalElements ?? pageSize,
+    pageSize
+  )
+  const needsPermissionCatalog = catalogSize > pageSize
+  const { data: permissionCatalogData, isFetching: isFetchingCatalog } =
+    useGetPermissionQuery(
+      {
+        page: 1,
+        size: catalogSize,
+        sortBy: 'id',
+        sortDirection: 'DESC'
+      },
+      { skip: !needsPermissionCatalog }
+    )
+
+  const allPermissionNames = useMemo(
+    () =>
+      (permissionCatalogData?.content ?? allPermissionsData?.content)?.map(
+        (permission) => permission.name
+      ) ?? [],
+    [allPermissionsData?.content, permissionCatalogData?.content]
+  )
 
   const [getPermissionAssigned] = useLazyGetPermissionAssignQuery()
   const [postPermission] = usePostPermissionAvailableMutation()
@@ -73,19 +102,30 @@ const DialogAssignPermissions = ({ roleId, onSuccess, onCancel }: Props) => {
   const rowSelection = {
     selectedRowKeys,
     preserveSelectedRowKeys: true,
-    onChange: (newSelectedRowKeys: Key[]) => {
+    onChange: (
+      newSelectedRowKeys: Key[],
+      _selectedRows: PermissionItem[],
+      info: { type: 'all' | 'none' | 'invert' | 'single' | 'multiple' }
+    ) => {
+      if (info.type === 'all') return
       setSelectedRowKeys(newSelectedRowKeys)
+    },
+    onSelectAll: (selected: boolean) => {
+      setSelectedRowKeys(selected ? allPermissionNames : [])
     }
   }
 
   const handleSubmit = async () => {
     if (!roleId) return
     setLoading(true)
+    onLoadingChange?.(true)
 
     const originalAssigned = new Set(assignedPermissionNames)
     const newSelected = new Set(selectedRowKeys as string[])
 
-    const toAdd = (selectedRowKeys as string[]).filter((p) => !originalAssigned.has(p))
+    const toAdd = (selectedRowKeys as string[]).filter(
+      (p) => !originalAssigned.has(p)
+    )
     const toRemove = assignedPermissionNames.filter((p) => !newSelected.has(p))
 
     try {
@@ -107,12 +147,20 @@ const DialogAssignPermissions = ({ roleId, onSuccess, onCancel }: Props) => {
       errorMess(getApiErrorDetail(error) || 'Có lỗi xảy ra')
     } finally {
       setLoading(false)
+      onLoadingChange?.(false)
     }
   }
 
   return (
-    <div>
+    <form
+      id={ASSIGN_PERMISSIONS_FORM_ID}
+      onSubmit={(event) => {
+        event.preventDefault()
+        if (!loading) handleSubmit()
+      }}
+    >
       <Table
+        loading={isFetchingPage || isFetchingCatalog}
         rowSelection={rowSelection}
         columns={columns}
         dataSource={allPermissionsData?.content?.map((item) => ({
@@ -127,21 +175,12 @@ const DialogAssignPermissions = ({ roleId, onSuccess, onCancel }: Props) => {
           total: allPermissionsData?.totalElements ?? 0,
           showSizeChanger: true,
           onChange: (newPage, newPageSize) => {
-            setPage(newPage)
+            setPage(newPageSize !== pageSize ? 1 : newPage)
             setPageSize(newPageSize)
           }
         }}
       />
-      <div className='flex justify-end items-center gap-2 mt-4'>
-        <ButtonComponent type='default' content='Hủy' onClick={onCancel} />
-        <ButtonComponent
-          type='primary'
-          content='Lưu'
-          onClick={handleSubmit}
-          loading={loading}
-        />
-      </div>
-    </div>
+    </form>
   )
 }
 

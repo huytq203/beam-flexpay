@@ -11,7 +11,7 @@ import {
   WALLETADMINISTRATION,
   MERCHANT,
   TRANSACTIONMANAGEMENT,
-  FEEMANAGEMENT_V4,
+  FEEMANAGEMENT_V4
 } from '@constants/routersConstant'
 
 import NotFound from '@pages/auth/not-found/NotFound'
@@ -26,16 +26,16 @@ const page = (factory: () => Promise<{ default: ComponentType }>) => {
   return createElement(
     Suspense,
     {
-      fallback: createElement(ScreenLoading),
+      fallback: createElement(ScreenLoading)
     },
-    createElement(Lazy),
+    createElement(Lazy)
   )
 }
 
 /** Với trang export theo tên thay vì export default. */
 const namedPage = <T extends string>(
   factory: () => Promise<Record<T, ComponentType>>,
-  name: T,
+  name: T
 ) => page(() => factory().then((m) => ({ default: m[name] })))
 
 const authentication = {
@@ -45,25 +45,25 @@ const authentication = {
   children: [
     {
       path: AUTHENTICATION + '/login',
-      element: page(() => import('@pages/auth/login/Login')),
+      element: page(() => import('@pages/auth/login/Login'))
     },
     {
       path: AUTHENTICATION + '/forgot-password',
-      element: page(() => import('@pages/auth/forgot-password/ForgotPassword')),
+      element: page(() => import('@pages/auth/forgot-password/ForgotPassword'))
     },
     {
       path: AUTHENTICATION + '/reset-password',
-      element: page(() => import('@pages/auth/reset-password/ResetPassword')),
+      element: page(() => import('@pages/auth/reset-password/ResetPassword'))
     },
     {
       path: AUTHENTICATION + '/forget-password',
-      element: page(() => import('@pages/auth/forgot-password/ForgotPassword')),
+      element: page(() => import('@pages/auth/forgot-password/ForgotPassword'))
     },
     {
       path: AUTHENTICATION + '/verify-token',
-      element: page(() => import('@pages/auth/verify-token/VerifyToken')),
-    },
-  ],
+      element: page(() => import('@pages/auth/verify-token/VerifyToken'))
+    }
+  ]
 }
 
 const forbidden = {
@@ -73,9 +73,9 @@ const forbidden = {
   children: [
     {
       path: FORBIDDENERROR,
-      element: page(() => import('@pages/error/ForbiddenError')),
-    },
-  ],
+      element: page(() => import('@pages/error/ForbiddenError'))
+    }
+  ]
 }
 
 const feeManagementV4 = {
@@ -88,36 +88,52 @@ const feeManagementV4 = {
       children: [
         {
           path: FEEMANAGEMENT_V4 + '/fee-managementV4',
-          element: page(() => import('@pages/fee-management-v4/fee-management/FeeManagement')),
+          element: page(
+            () =>
+              import('@pages/fee-management-v4/fee-management/FeeManagement')
+          )
         },
         {
           path: FEEMANAGEMENT_V4 + '/fee-managementV4/:mode',
-          element: page(() => import('@pages/fee-management-v4/fee-management/AddFeePolicy')),
+          element: page(
+            () => import('@pages/fee-management-v4/fee-management/AddFeePolicy')
+          )
         },
         {
           path: FEEMANAGEMENT_V4 + '/fee-managementV4/:mode/:id',
-          element: page(() => import('@pages/fee-management-v4/fee-management/AddFeePolicy')),
-        },
-      ],
+          element: page(
+            () => import('@pages/fee-management-v4/fee-management/AddFeePolicy')
+          )
+        }
+      ]
     },
     {
       path: FEEMANAGEMENT_V4,
       children: [
         {
           path: FEEMANAGEMENT_V4 + '/fee-assignmentV4',
-          element: page(() => import('@pages/fee-management-v4/fee-assignment/FeeAssignmentManagement')),
+          element: page(
+            () =>
+              import('@pages/fee-management-v4/fee-assignment/FeeAssignmentManagement')
+          )
         },
         {
           path: FEEMANAGEMENT_V4 + '/fee-assignmentV4/create',
-          element: page(() => import('@pages/fee-management-v4/fee-assignment/components/FeeAssignAdd')),
+          element: page(
+            () =>
+              import('@pages/fee-management-v4/fee-assignment/components/FeeAssignAdd')
+          )
         },
         {
           path: FEEMANAGEMENT_V4 + '/fee-assignmentV4/:mode/:id',
-          element: page(() => import('@pages/fee-management-v4/fee-assignment/components/FeeAssignAdd')),
-        },
-      ],
-    },
-  ],
+          element: page(
+            () =>
+              import('@pages/fee-management-v4/fee-assignment/components/FeeAssignAdd')
+          )
+        }
+      ]
+    }
+  ]
 }
 
 const roleManagementV2 = {
@@ -130,9 +146,12 @@ const roleManagementV2 = {
       children: [
         {
           path: ROLEMANAGEMENT_V2 + '/user-account',
-          element: page(() => import('@pages/role-management-V2/user-management/UserManagement')),
-        },
-      ],
+          element: page(
+            () =>
+              import('@pages/role-management-V2/user-management/UserManagement')
+          )
+        }
+      ]
     },
     {
       path: ROLEMANAGEMENT_V2,
@@ -140,22 +159,26 @@ const roleManagementV2 = {
         {
           path: ROLEMANAGEMENT_V2 + '/permission-management',
           element: namedPage(
-            () => import('@pages/role-management-V2/permission-management/PermissionManagement'),
-            'PermissionManagement',
-          ),
-        },
-      ],
+            () =>
+              import('@/pages/role-management-V2/role-management/RoleManagement'),
+            'PermissionManagement'
+          )
+        }
+      ]
     },
     {
       path: ROLEMANAGEMENT_V2,
       children: [
         {
           path: ROLEMANAGEMENT_V2 + '/role-management',
-          element: page(() => import('@pages/role-management-V2/role-management/RoleManagement')),
-        },
-      ],
-    },
-  ],
+          element: page(
+            () =>
+              import('@/pages/role-management-V2/permission-management/PermissionManagement')
+          )
+        }
+      ]
+    }
+  ]
 }
 
 const walletAdministration = {
@@ -168,33 +191,45 @@ const walletAdministration = {
       children: [
         {
           path: WALLETADMINISTRATION + '/e-walletManagement',
-          element: page(() => import('@pages/wallet-administration/e-walletManagement/EwalletManagement')),
+          element: page(
+            () =>
+              import('@pages/wallet-administration/e-walletManagement/EwalletManagement')
+          )
         },
         {
           path: WALLETADMINISTRATION + '/e-walletManagement/:id',
-          element: page(() => import('@pages/wallet-administration/e-walletManagement/DetailUser')),
-        },
-      ],
+          element: page(
+            () =>
+              import('@pages/wallet-administration/e-walletManagement/DetailUser')
+          )
+        }
+      ]
     },
     {
       path: WALLETADMINISTRATION,
       children: [
         {
           path: WALLETADMINISTRATION + '/confirm-eKYC',
-          element: page(() => import('@pages/wallet-administration/confirm-ekyc/ConfirmEKYC')),
-        },
-      ],
+          element: page(
+            () =>
+              import('@pages/wallet-administration/confirm-ekyc/ConfirmEKYC')
+          )
+        }
+      ]
     },
     {
       path: WALLETADMINISTRATION,
       children: [
         {
           path: WALLETADMINISTRATION + '/transaction-wallet',
-          element: page(() => import('@pages/wallet-administration/transaction-wallet/TransactionManagement')),
-        },
-      ],
-    },
-  ],
+          element: page(
+            () =>
+              import('@pages/wallet-administration/transaction-wallet/TransactionManagement')
+          )
+        }
+      ]
+    }
+  ]
 }
 
 const merchantManagement = {
@@ -207,39 +242,63 @@ const merchantManagement = {
       children: [
         {
           path: MERCHANT + '/dashboard-merchant',
-          element: page(() => import('@pages/merchant-management/dashboard-merchant/DashBoard')),
+          element: page(
+            () =>
+              import('@pages/merchant-management/dashboard-merchant/DashBoard')
+          )
         },
         {
           path: MERCHANT + '/merchant-management',
-          element: page(() => import('@pages/merchant-management/merchanr-management/MerchantManagement')),
+          element: page(
+            () =>
+              import('@pages/merchant-management/merchanr-management/MerchantManagement')
+          )
         },
         {
           path: MERCHANT + '/merchant-management/create',
-          element: page(() => import('@pages/merchant-management/merchanr-management/CreateMerchant')),
+          element: page(
+            () =>
+              import('@pages/merchant-management/merchanr-management/CreateMerchant')
+          )
         },
         {
           path: MERCHANT + '/merchant-management/create/:id',
-          element: page(() => import('@pages/merchant-management/merchanr-management/CreateMerchant')),
+          element: page(
+            () =>
+              import('@pages/merchant-management/merchanr-management/CreateMerchant')
+          )
         },
         {
           path: MERCHANT + '/merchant-management/detail/:id',
-          element: page(() => import('@pages/merchant-management/merchanr-management/MerchantDetail')),
+          element: page(
+            () =>
+              import('@pages/merchant-management/merchanr-management/MerchantDetail')
+          )
         },
         {
           path: MERCHANT + '/merchant-management/:id',
-          element: page(() => import('@pages/merchant-management/merchanr-management/MerchantDetail')),
+          element: page(
+            () =>
+              import('@pages/merchant-management/merchanr-management/MerchantDetail')
+          )
         },
         {
           path: MERCHANT + '/merchant-order',
-          element: page(() => import('@pages/merchant-management/merchant-order/OrderFeature')),
+          element: page(
+            () =>
+              import('@pages/merchant-management/merchant-order/OrderFeature')
+          )
         },
         {
           path: MERCHANT + '/merchant-order/qr/:id',
-          element: page(() => import('@pages/merchant-management/merchant-order/OrderQrFeature')),
-        },
-      ],
-    },
-  ],
+          element: page(
+            () =>
+              import('@pages/merchant-management/merchant-order/OrderQrFeature')
+          )
+        }
+      ]
+    }
+  ]
 }
 
 const transactionManagement = {
@@ -252,61 +311,85 @@ const transactionManagement = {
       children: [
         {
           path: TRANSACTIONMANAGEMENT + '/transaction-wallet',
-          element: page(() => import('@pages/wallet-administration/transaction-wallet/TransactionManagement')),
+          element: page(
+            () =>
+              import('@pages/wallet-administration/transaction-wallet/TransactionManagement')
+          )
         },
         {
           path: TRANSACTIONMANAGEMENT + '/transaction-wallet/:id',
-          element: page(() => import('@pages/wallet-administration/transaction-wallet/DetailTransaction')),
-        },
-      ],
+          element: page(
+            () =>
+              import('@pages/wallet-administration/transaction-wallet/DetailTransaction')
+          )
+        }
+      ]
     },
     {
       path: TRANSACTIONMANAGEMENT,
       children: [
         {
           path: TRANSACTIONMANAGEMENT + '/frozen-transactions',
-          element: page(() => import('@pages/transaction-management/frozen-transactions/FrozenTransactions')),
-        },
-      ],
+          element: page(
+            () =>
+              import('@pages/transaction-management/frozen-transactions/FrozenTransactions')
+          )
+        }
+      ]
     },
     {
       path: TRANSACTIONMANAGEMENT,
       children: [
         {
           path: TRANSACTIONMANAGEMENT + '/refund-management',
-          element: page(() => import('@pages/transaction-management/refund-management/RefundManagement')),
-        },
-      ],
+          element: page(
+            () =>
+              import('@pages/transaction-management/refund-management/RefundManagement')
+          )
+        }
+      ]
     },
     {
       path: TRANSACTIONMANAGEMENT,
       children: [
         {
           path: TRANSACTIONMANAGEMENT + '/system-ledger',
-          element: page(() => import('@pages/transaction-management/system-ledger/SystemLedgerManagement')),
+          element: page(
+            () =>
+              import('@pages/transaction-management/system-ledger/SystemLedgerManagement')
+          )
         },
         {
           path: TRANSACTIONMANAGEMENT + '/system-ledger/:id',
-          element: page(() => import('@pages/transaction-management/system-ledger/DetailSystemLedger')),
-        },
-      ],
+          element: page(
+            () =>
+              import('@pages/transaction-management/system-ledger/DetailSystemLedger')
+          )
+        }
+      ]
     },
     {
       path: TRANSACTIONMANAGEMENT,
       children: [
         {
           path: TRANSACTIONMANAGEMENT + '/withdraw-history',
-          element: page(() => import('@pages/transaction-management/withdraw-history/WithdrawHistory')),
-        },
-      ],
-    },
-  ],
+          element: page(
+            () =>
+              import('@pages/transaction-management/withdraw-history/WithdrawHistory')
+          )
+        }
+      ]
+    }
+  ]
 }
 
 export const WalletRoutes = createBrowserRouter([
   {
     path: '/',
-    element: createElement(Navigate, { to: AUTHENTICATION + '/login', replace: true }),
+    element: createElement(Navigate, {
+      to: AUTHENTICATION + '/login',
+      replace: true
+    })
   },
   authentication,
   forbidden,
@@ -317,10 +400,10 @@ export const WalletRoutes = createBrowserRouter([
   transactionManagement,
   {
     path: '/test',
-    element: page(() => import('@pages/test/TestPage')),
+    element: page(() => import('@pages/test/TestPage'))
   },
   {
     path: '/secure-panel/*',
-    element: createElement(NotFound),
-  },
+    element: createElement(NotFound)
+  }
 ])

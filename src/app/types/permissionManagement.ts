@@ -23,7 +23,8 @@ export interface Permission {
 export interface PermissionItem {
   id: string
   name: string
-  description: string
+  description: string | null
+  no?: number
 }
 
 export interface Pageable {

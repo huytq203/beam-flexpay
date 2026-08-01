@@ -6,22 +6,23 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import { StatusType } from '@pages/wallet-administration/transaction-wallet/constants/Transaction.constant'
 import * as Icons from '@components/icons'
+import { BankLabel } from '../constants/bank.constant'
 export interface WithdrawSearchValues {
-    journalCode: string
-    transactionCode: string
-    initiatorUsername: string
-    counterpartyUsername: string
-    status: string
-    paymentMethod: string
-    bankCode: string
-    fromDate: string
-    toDate: string
-    minAmount: number | undefined
-    maxAmount: number | undefined
+    journalCode?: string
+    transactionCode?: string
+    initiatorUsername?: string
+    counterpartyUsername?: string
+    status?: string
+    paymentMethod?: string
+    bankCode?: string
+    fromDate?: string
+    toDate?: string
+    minAmount?: number | undefined
+    maxAmount?: number | undefined
 }
 
 interface Props {
-    handleSearch: (value: Partial<WithdrawSearchValues>) => void
+    handleSearch: (value: WithdrawSearchValues) => void
 }
 
 const PAYMENT_METHOD_OPTIONS = [
@@ -34,8 +35,7 @@ const PAYMENT_METHOD_OPTIONS = [
 ]
 
 const WithdrawHistorySearch = ({ handleSearch }: Props) => {
-    const formSearch = useForm<WithdrawSearchValues>({
-        defaultValues: {
+    const defaultValues= {
             transactionCode: '',
             initiatorUsername: '',
             counterpartyUsername: '',
@@ -47,6 +47,9 @@ const WithdrawHistorySearch = ({ handleSearch }: Props) => {
             minAmount: undefined,
             maxAmount: undefined,
         }
+
+    const formSearch = useForm<WithdrawSearchValues>({
+        defaultValues: defaultValues
     })
 
     const onSubmit: SubmitHandler<WithdrawSearchValues> = (data) => {
@@ -55,28 +58,28 @@ const WithdrawHistorySearch = ({ handleSearch }: Props) => {
 
     const handleReset = () => {
         formSearch.reset()
-        handleSearch({})
+        handleSearch(defaultValues)
     }
 
     return (
         <div>
 
              <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
-            <form>
+            <form onSubmit={formSearch.handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <FormInput control={formSearch.control} name='transactionCode' label='Mã giao dịch' className='col-span-1' placeholder='Nhập mã giao dịch...' />
                     {/* <FormInput control={formSearch.control} name='initiatorUsername' label='Người yêu cầu' className='col-span-1' placeholder='Username người yêu cầu...' /> */}
                     {/* <FormInput control={formSearch.control} name='counterpartyUsername' label='Thụ hưởng' className='col-span-1' placeholder='Username thụ hưởng...' /> */}
                     <FormSelect control={formSearch.control} name='status' label='Trạng thái' className='col-span-1' options={mapEnumToSelectOptions(StatusType)} />
                     <FormSelect control={formSearch.control} name='paymentMethod' label='Phương thức' className='col-span-1' options={PAYMENT_METHOD_OPTIONS} />
-                    <FormInput control={formSearch.control} name='bankCode' label='Mã ngân hàng' className='col-span-1' placeholder='VD: VCB, TCB...' />
+                    <FormSelect control={formSearch.control} name='bankCode' label='Mã ngân hàng' className='col-span-1' options={mapEnumToSelectOptions(BankLabel)}/>
                     {/* <FormInputNumber control={formSearch.control} name='minAmount' label='Số tiền tối thiểu' className='col-span-1' placeholder='Nhập số tiền...' />
                     <FormInputNumber control={formSearch.control} name='maxAmount' label='Số tiền tối đa' className='col-span-1' placeholder='Nhập số tiền...' /> */}
                     <FormDatePicker showTime control={formSearch.control} name='fromDate' label='Từ ngày' className='col-span-1' />
                     <FormDatePicker showTime control={formSearch.control} name='toDate' label='Đến ngày' className='col-span-1' />
                 </div>
                 <div className="flex justify-end mt-3 gap-1">
-                    <ButtonComponent onClick={formSearch.handleSubmit(onSubmit)} icon={<MagnifyingGlassIcon size={18} />} content={'Tìm kiếm'} />
+                    <ButtonComponent htmlType='submit' icon={<MagnifyingGlassIcon size={18} />} content={'Tìm kiếm'} />
                     <ButtonComponent onClick={handleReset} type='default' icon={<BroomIcon size={18} />} content={'Xóa lọc'} />
                 </div>
             </form>

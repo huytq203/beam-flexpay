@@ -1,12 +1,9 @@
-import { DataRoleItem } from '@type/roleManagement'
+import { PermissionItem } from '@type/permissionManagement'
 
-export type ModalType =
-  | 'add'
-  | 'edit'
-  | 'delete'
-  | 'viewPermissions'
-  | 'assignPermissions'
-  | 'viewMembers'
-  | null
+export type PermissionModalType = 'add' | 'edit' | 'delete' | null
 
-export type SelectedRole = DataRoleItem
+export type SelectedPermission = PermissionItem
+
+export interface SearchPermissionFormData {
+  keyword: string
+}

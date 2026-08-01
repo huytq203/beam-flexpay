@@ -1,96 +1,74 @@
+import { DeleteOutlined, EditOutlined } from '@components/icons'
 import { ButtonComponent, TooltipComponent } from '@components/index'
-import {
-  ApartmentOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  EyeOutlined,
-  UserOutlined
-} from '@components/icons'
 import { ColumnType } from 'antd/es/table'
-import { DataRoleItem } from '@type/roleManagement'
-import { RoleName } from '../constants/PermissionManagement.constant'
-import { ModalType, SelectedRole } from '../types/PermissionManagement.type'
+import { PermissionItem } from '@type/permissionManagement'
+import { translatePermissionName } from '../constants/PermissionManagement.constant'
+import {
+  PermissionModalType,
+  SelectedPermission
+} from '../types/PermissionManagement.type'
 
 interface Props {
-  openModal: (type: ModalType, role: SelectedRole | null) => void
-  currentUserRoles?: string[]
+  openModal: (
+    type: PermissionModalType,
+    permission: SelectedPermission | null
+  ) => void
 }
 
-export const getPermissionManagementColumn = ({
+export const getPermissionManagementColumns = ({
   openModal
-}: Props): ColumnType<DataRoleItem>[] => [
-    {
-      title: '#',
-      dataIndex: 'no',
-      width: 50,
-      align: 'center'
-    },
-    {
-      title: 'Tên nhóm quyền',
-      dataIndex: 'name',
-      align: 'left',
-      render: (text: string) => (
-        <TooltipComponent title={RoleName[text] ?? text}>
-          <span className='inline-block max-w-[250px] overflow-hidden text-ellipsis whitespace-nowrap '>
-            {RoleName[text] ?? text ?? '--'}
-          </span>
+}: Props): ColumnType<PermissionItem>[] => [
+  {
+    title: '#',
+    dataIndex: 'no',
+    width: 56,
+    align: 'center',
+    render: (value: number | undefined) => value ?? '--'
+  },
+  {
+    title: 'Tên quyền',
+    dataIndex: 'name',
+    align: 'left',
+    render: (value: string) => translatePermissionName(value)
+  },
+  {
+    title: 'Mã quyền',
+    dataIndex: 'name',
+    align: 'left',
+    render: (value: string) => value || '--'
+  },
+  {
+    title: 'Mô tả',
+    dataIndex: 'description',
+    align: 'left',
+    render: (value: string | null) => value || '--'
+  },
+  {
+    title: 'Thao tác',
+    key: 'action',
+    align: 'center',
+    width: 96,
+    fixed: 'right',
+    render: (_, record) => (
+      <div className='flex items-center justify-center gap-1'>
+        <TooltipComponent title='Cập nhật'>
+          <ButtonComponent
+            size='small'
+            type='default'
+            icon={<EditOutlined />}
+            onClick={() => openModal('edit', record)}
+          />
         </TooltipComponent>
-      )
-    },
-    {
-      title: 'Thao tác',
-      dataIndex: 'action',
-      align: 'center',
-      width: 50,
-      render: (_, record) => {
-        return (
-          <div className='flex justify-start items-start gap-1'>
-            <TooltipComponent title='Cập nhật'>
-              <ButtonComponent
-                size='small'
-                type='default'
-                icon={<EditOutlined />}
-                onClick={() => openModal('edit', record)}
-              />
-            </TooltipComponent>
-            <TooltipComponent title='Xem các quyền'>
-              <ButtonComponent
-                size='small'
-                type='default'
-                className='text-blue-600'
-                icon={<EyeOutlined />}
-                onClick={() => openModal('viewPermissions', record)}
-              />
-            </TooltipComponent>
-            <TooltipComponent title='Xem người dùng'>
-              <ButtonComponent
-                size='small'
-                type='default'
-                className='text-green-600'
-                icon={<UserOutlined />}
-                onClick={() => openModal('viewMembers', record)}
-              />
-            </TooltipComponent>
-            <TooltipComponent title='Xóa'>
-              <ButtonComponent
-                size='small'
-                type='default'
-                className='text-red-600'
-                icon={<DeleteOutlined />}
-                onClick={() => openModal('delete', record)}
-              />
-            </TooltipComponent>
-            <TooltipComponent title='Phân quyền'>
-              <ButtonComponent
-                size='small'
-                type='default'
-                className='text-violet-600'
-                icon={<ApartmentOutlined />}
-                onClick={() => openModal('assignPermissions', record)}
-              />
-            </TooltipComponent>
-          </div>
-        )
-      }
-    }
-  ]
+        <TooltipComponent title='Xóa'>
+          <ButtonComponent
+            size='small'
+            type='default'
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => openModal('delete', record)}
+          />
+        </TooltipComponent>
+      </div>
+    )
+  }
+]

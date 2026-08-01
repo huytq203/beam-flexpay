@@ -1,6 +1,6 @@
 import { Table } from 'antd'
 import { ColumnType } from 'antd/es/table'
-import { Key, useEffect, useState, memo } from 'react'
+import { Key, useMemo, useState, memo } from 'react'
 import { ButtonComponent } from '@components/index'
 import { useGetRoleQuery } from '@services/apiRoleManagement'
 import {
@@ -10,7 +10,7 @@ import {
 } from '@services/apiUserRoleAssign'
 import { useMessage } from '@hooks/useMessage'
 import { DataRoleItem } from '@type/roleManagement'
-import { RoleName } from '@pages/role-management-V2/permission-management/constants/PermissionManagement.constant'
+import { RoleName } from '@/pages/role-management-V2/role-management/constants/RoleManagement.constant'
 
 interface Props {
   userId?: string
@@ -21,27 +21,28 @@ interface Props {
 const DialogAssignRoles = ({ userId, onSuccess, onCancel }: Props) => {
   const { successMess } = useMessage()
   const [loading, setLoading] = useState(false)
-  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([])
-  const [initialRoleIds, setInitialRoleIds] = useState<string[]>([])
+  const [selection, setSelection] = useState<{
+    userId?: string
+    keys: Key[]
+  } | null>(null)
 
   const { data: roleData } = useGetRoleQuery({ page: 1, size: 1000 })
-  const { data: userRoleData, isLoading: isLoadingUserRoles } = useGetUserRoleQuery(userId!, {
-    skip: !userId
-  })
+  const { data: userRoleData, isLoading: isLoadingUserRoles } =
+    useGetUserRoleQuery(userId!, {
+      skip: !userId
+    })
 
   const [assignRoleUser] = useAssignRoleUserMutation()
   const [deleteRoleUser] = useDeleteRoleUserMutation()
 
-  useEffect(() => {
-    if (userRoleData?.data) {
-      // `useGetUserRoleQuery` has no typed result (see @services/apiUserRoleAssign),
-      // so the response payload is pinned to its real shape here.
-      const assignedRoles: DataRoleItem[] = userRoleData.data
-      const existingRoleIds = assignedRoles.map((role) => role.id)
-      setSelectedRowKeys(existingRoleIds)
-      setInitialRoleIds(existingRoleIds)
-    }
-  }, [userRoleData])
+  const initialRoleIds = useMemo(() => {
+    // `useGetUserRoleQuery` has no typed result (see @services/apiUserRoleAssign),
+    // so the response payload is pinned to its real shape here.
+    const assignedRoles = (userRoleData?.data ?? []) as DataRoleItem[]
+    return assignedRoles.map((role) => role.id)
+  }, [userRoleData?.data])
+  const selectedRowKeys =
+    selection && selection.userId === userId ? selection.keys : initialRoleIds
 
   const columns: ColumnType<DataRoleItem>[] = [
     {
@@ -61,14 +62,15 @@ const DialogAssignRoles = ({ userId, onSuccess, onCancel }: Props) => {
   const rowSelection = {
     selectedRowKeys,
     onChange: (newSelectedRowKeys: Key[]) => {
-      setSelectedRowKeys(newSelectedRowKeys)
+      setSelection({ userId, keys: newSelectedRowKeys })
     }
   }
 
-  const dataSource = roleData?.content?.map((item) => ({
-    ...item,
-    key: item.id
-  })) ?? []
+  const dataSource =
+    roleData?.content?.map((item) => ({
+      ...item,
+      key: item.id
+    })) ?? []
 
   const handleSubmit = async () => {
     if (!userId) return
@@ -114,7 +116,11 @@ const DialogAssignRoles = ({ userId, onSuccess, onCancel }: Props) => {
         pagination={false}
       />
       <div className='flex justify-end items-center gap-2 mt-4'>
-        <ButtonComponent type='default' content='Hủy' onClick={onCancel} />
+        <ButtonComponent
+          type='default'
+          content='Hủy'
+          onClick={onCancel}
+        />
         <ButtonComponent
           type='primary'
           content='Lưu'

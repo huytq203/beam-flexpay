@@ -51,6 +51,8 @@ const usePagination = (options?: UsePaginationOptions) => {
     sortBy,
     size:pageSize,
 
+    sortDirection:sortBy,
+
     setPage,
     setPageSize,
     setSort,

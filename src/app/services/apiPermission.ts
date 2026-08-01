@@ -52,5 +52,6 @@ export const {
     usePutPermissionMutation,
     useDeletePermissionMutation,
     usePostPermissionMutation,
+    useGetPermissionByKeyQuery,
     useLazyGetPermissionByKeyQuery
 } = permissionApi

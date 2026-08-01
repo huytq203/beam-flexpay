@@ -32,19 +32,21 @@ const resolveWith = (coords: {
 }): void =>
   mockGeolocation((success) => {
     const positionCoords = {
-        ...coords,
-        accuracy: 0,
-        altitude: null,
-        altitudeAccuracy: null,
-        heading: null,
-        speed: null,
-        toJSON: () => coords
+      ...coords,
+      accuracy: 0,
+      altitude: null,
+      altitudeAccuracy: null,
+      heading: null,
+      speed: null,
+      toJSON: () => coords
     }
-    success({
+    const position = {
       coords: positionCoords,
       timestamp: Date.now(),
       toJSON: () => ({ coords: positionCoords })
-    })
+    } as unknown as GeolocationPosition
+
+    success(position)
   })
 
 beforeEach(() => {

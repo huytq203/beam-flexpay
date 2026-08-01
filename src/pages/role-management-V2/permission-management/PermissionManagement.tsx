@@ -1,181 +1,133 @@
-import {
-  ButtonComponent,
-  CardComponent,
-  ModalComponent,
-  Table
-} from '@components/index'
-import DialogAddRole from './components/DialogAddRole'
-import DialogDeleteRole from './components/DialogDeleteRole'
-import DialogViewPermissions from './components/DialogViewPermissions'
-import DialogAssignPermissions from './components/DialogAssignPermissions'
-import DialogViewMembers from './components/DialogViewMembers'
-import useFetchDataRole from './hooks/useFetchDataRole'
-import useHandleRole from './hooks/useHandleRole'
-import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
+import { useCallback, useMemo, useState } from 'react'
 import * as Icons from '@components/icons'
-export const PermissionManagement = () => {
-  const fetchData = useFetchDataRole()
-  const handle = useHandleRole(fetchData)
+import { CardComponent, ModalComponent, Table } from '@components/index'
+import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
+import { getPermissionManagementColumns } from './columns/PermissionManagement.column'
+import DialogAddPermission from './components/DialogAddPermission'
+import DialogDeletePermission from './components/DialogDeletePermission'
+import FormSearchPermission from './components/FormSearchPermission'
+import useFetchDataPermission from './hooks/useFetchDataPermission'
+import {
+  PermissionModalType,
+  SelectedPermission
+} from './types/PermissionManagement.type'
+
+const PermissionManagement = () => {
+  const [modalType, setModalType] = useState<PermissionModalType>(null)
+  const [selectedPermission, setSelectedPermission] =
+    useState<SelectedPermission | null>(null)
+  const {
+    handleSearch,
+    permissionData,
+    permissionOptions,
+    isLoadingPermissionData,
+    refetch,
+    page,
+    size,
+    setPage,
+    setPageSize
+  } = useFetchDataPermission()
+
+  const openModal = useCallback(
+    (type: PermissionModalType, permission: SelectedPermission | null) => {
+      setSelectedPermission(permission)
+      setModalType(type)
+    },
+    []
+  )
+
+  const closeModal = useCallback(() => {
+    setModalType(null)
+    setSelectedPermission(null)
+  }, [])
+
+  const handleMutationSuccess = useCallback(() => {
+    closeModal()
+    refetch()
+  }, [closeModal, refetch])
+
+  const columns = useMemo(
+    () => getPermissionManagementColumns({ openModal }),
+    [openModal]
+  )
 
   return (
     <div className='flex flex-col gap-2'>
-      {/* <CardComponent
-        content={
-          <>
-            {fetchData.isLoading ? (
-              <div className='bg-white rounded-xl shadow-md p-6 border border-gray-100'>
-                <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-4'>
-                  {Array.from({ length: 2 }).map((_, index) => (
-                    <SkeletonInput key={index} />
-                  ))}
-                  <div className='w-full flex items-end gap-2'>
-                    <SkeletonButton className='w-full' size='md' />
-                    <SkeletonButton className='w-full' size='md' />
-                    <SkeletonButton className='w-full' size='md' />
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <FormSearch
-                onSearch={handle.handleSearch}
-                onAdd={() => handle.openModal('add', null)}
-              />
-            )}
-          </>
-        }
-      /> */}
-       <CardComponent>
-              <div className='flex items-center gap-4 py-1'>
-                <div className='bg-green-50 p-3 rounded-xl flex items-center justify-center shadow-xs'>
-                  <Icons.ShieldCheckIcon size={28} weight="duotone" className='text-blue' />
-                </div>
-                <div>
-                  <h1 className='text-[16px] font-bold text-gray-800 m-0'>Quản lý nhóm quyền quản trị</h1>
-                  <p className='text-gray-500 text-[12px] m-0 leading-relaxed font-medium'>Quản lý thông tin nhóm quyền quản trị</p>
-                </div>
-                <div className='ml-auto'>
-                  <ButtonComponent 
-                    icon={<Icons.PlusOutlined />} 
-                    type='primary' 
-                    content='Thêm mới nhóm quyền' 
-                    onClick={() => handle.openModal('add', null)}
-                  />
-                </div>
-              </div>
-            </CardComponent>
+      <CardComponent>
+        <div className='flex w-full flex-col items-start justify-start'>
+          <p className='mb-3 flex w-full items-center gap-2 border-b border-gray-200 pb-2 font-bold text-blue'>
+            <Icons.FunnelIcon /> Bộ lọc tìm kiếm
+          </p>
+          <FormSearchPermission
+            onSearch={handleSearch}
+            onAdd={() => openModal('add', null)}
+            permissionOptions={permissionOptions}
+          />
+        </div>
+      </CardComponent>
+
       <CardComponent
         content={
-          <>
-            {fetchData.isLoading ? (
-              <SkeletonTable />
-            ) : (
-              <Table
-                rowKey='id'
-                scroll={{ x: 'max-content' }}
-                bordered
-                size='small'
-                columns={handle.column}
-                dataSource={fetchData.dataSource}
-                onRefresh={fetchData.refetch}
-                pagination={{
-                  current: fetchData.page,
-                  pageSize: fetchData.pageSize,
-                  total: fetchData.totalElements,
-                  showSizeChanger: true,
-                  onChange: (newPage, newPageSize) => {
-                    fetchData.setPage(newPage)
-                    fetchData.setPageSize(newPageSize)
-                  }
-                }}
-              />
-            )}
-          </>
+          isLoadingPermissionData ? (
+            <SkeletonTable />
+          ) : (
+            <Table
+              rowKey='id'
+              scroll={{ x: 'max-content' }}
+              bordered
+              size='small'
+              columns={columns}
+              dataSource={permissionData?.content ?? []}
+              onRefresh={refetch}
+              pagination={{
+                current: page,
+                pageSize: size,
+                total: permissionData?.totalElements ?? 0,
+                showSizeChanger: true,
+                onChange: (newPage, newPageSize) => {
+                  setPage(newPageSize !== size ? 1 : newPage)
+                  setPageSize(newPageSize)
+                }
+              }}
+            />
+          )
         }
       />
 
-      {/* Add/Edit Role */}
       <ModalComponent
-        title={handle.modalType === 'edit' ? 'Cập nhật nhóm quyền' : 'Thêm nhóm quyền'}
-        onCancel={() => handle.closeModal()}
+        title={modalType === 'edit' ? 'Cập nhật quyền' : 'Thêm quyền'}
+        onCancel={closeModal}
         onOk={() => {}}
-        open={handle.modalType === 'add' || handle.modalType === 'edit'}
-        width='35%'
+        open={modalType === 'add' || modalType === 'edit'}
+        width={{ xs: '100%', sm: '90%', md: '50%', lg: '35%' }}
         footer={null}
         modalText={
-          <DialogAddRole
-            role={handle.selectedRole}
-            onSuccess={handle.closeModal}
-            onCancel={() => handle.closeModal()}
+          <DialogAddPermission
+            permission={selectedPermission}
+            onSuccess={handleMutationSuccess}
+            onCancel={closeModal}
           />
         }
       />
 
-      {/* Delete Role */}
       <ModalComponent
-        title='Xóa nhóm quyền'
-        onCancel={() => handle.closeModal()}
+        title='Xóa quyền'
+        onCancel={closeModal}
         onOk={() => {}}
-        open={handle.modalType === 'delete'}
-        width='30%'
+        open={modalType === 'delete'}
+        width={{ xs: '100%', sm: '90%', md: '45%', lg: '30%' }}
         footer={null}
         modalText={
-          <DialogDeleteRole
-            roleId={handle.selectedRole?.id}
-            roleName={handle.selectedRole?.name}
-            onSuccess={handle.closeModal}
-            onCancel={() => handle.closeModal()}
-          />
-        }
-      />
-
-      {/* View Permissions (read-only) */}
-      <ModalComponent
-        title='Xem chi tiết quyền'
-        onCancel={() => handle.closeModal()}
-        onOk={() => {}}
-        open={handle.modalType === 'viewPermissions'}
-        width='60%'
-        footer={null}
-        modalText={
-          <DialogViewPermissions
-            roleId={handle.selectedRole?.id}
-            onCancel={() => handle.closeModal()}
-          />
-        }
-      />
-
-      {/* Assign Permissions */}
-      <ModalComponent
-        title='Gán quyền'
-        onCancel={() => handle.closeModal()}
-        onOk={() => {}}
-        open={handle.modalType === 'assignPermissions'}
-        width={{ xs: '100%', sm: '100%', md: '60%', lg: '60%' }}
-        footer={null}
-        modalText={
-          <DialogAssignPermissions
-            roleId={handle.selectedRole?.id}
-            onSuccess={handle.closeModal}
-            onCancel={() => handle.closeModal()}
-          />
-        }
-      />
-
-      {/* View Members */}
-      <ModalComponent
-        title='Danh sách tài khoản Admin'
-        onCancel={() => handle.closeModal()}
-        onOk={() => {}}
-        open={handle.modalType === 'viewMembers'}
-        width={{ xs: '100%', sm: '100%', md: '60%', lg: '60%' }}
-        footer={null}
-        modalText={
-          <DialogViewMembers
-            roleId={handle.selectedRole?.id}
-            onCancel={() => handle.closeModal()}
+          <DialogDeletePermission
+            permissionName={selectedPermission?.name}
+            onSuccess={handleMutationSuccess}
+            onCancel={closeModal}
           />
         }
       />
     </div>
   )
 }
+
+export { PermissionManagement }
+export default PermissionManagement
