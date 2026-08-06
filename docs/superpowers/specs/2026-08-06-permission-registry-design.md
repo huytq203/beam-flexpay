@@ -153,6 +153,8 @@ export type ScreenActionId<S extends ScreenId> = keyof (typeof SCREENS)[S]['acti
 
 `satisfies` giữ được literal type của từng entry (để suy ra tên action) đồng thời kiểm tra cấu trúc.
 
+**Chống lệch path bằng thiết kế, không bằng test.** `routes.ts` sẽ dùng `SCREENS.<id>.path` thay cho chuỗi ghép tay, ví dụ `path: SCREENS.FEE_POLICY.path + '/:mode'`. Registry chỉ phụ thuộc `routersConstant.ts` nên vẫn nhẹ. Lý do không viết test đối chiếu: đã đo thực tế, `import('@/routes')` trong vitest/jsdom treo quá 5 giây (routes.ts kéo theo cả cây layout), trong khi `import('@components/layout/components/Navigation')` chỉ mất ~1,5 giây.
+
 #### Bảng màn hình đầy đủ (14 màn)
 
 | ScreenId | Path | Module | Actions |
@@ -170,7 +172,7 @@ export type ScreenActionId<S extends ScreenId> = keyof (typeof SCREENS)[S]['acti
 | `MERCHANT_MANAGEMENT` | `/secure-panel/merchant/merchant-management` | MERCHANT | create, edit(U), viewDetail(V) |
 | `MERCHANT_ORDER` | `/secure-panel/merchant/merchant-order` | MERCHANT | viewQr(V) |
 | `FEE_POLICY` | `/secure-panel/fee-v4/fee-managementV4` | FEE | create, edit(U), approve(U), toggleActive(U) |
-| `FEE_ASSIGNMENT` | `/secure-panel/fee-v4/fee-assignmentV4` | FEE | create, edit(U), approve(U) |
+| `FEE_ASSIGNMENT` | `/secure-panel/fee-v4/fee-assignmentV4` | FEE | create, edit(U), approve(U), toggleActive(U) |
 
 Ghi chú:
 
@@ -242,6 +244,7 @@ Khác biệt so với hiện tại: màn **có** trong registry mà thiếu quy�
 | Bước | Việc | Xoá |
 |---|---|---|
 | 1 | Dựng `src/app/permissions/` + test | — |
+| 1b | `routes.ts` dùng `SCREENS.<id>.path` thay chuỗi ghép tay | chuỗi path lặp trong `routes.ts` |
 | 2 | Đấu sidebar | trường `permission` trong `Navigation.tsx`, logic so khớp trong `useNavigation.ts` |
 | 3 | Đấu route guard | `src/app/hooks/usePermission.ts` (cả `MappingRouterPermission`) |
 | 4 | Đấu nút của 3 màn identity | `CREATE_ADMIN_USER_PERMISSION` trong `constants/userAccount.ts` |
@@ -257,13 +260,13 @@ Sau bước 6 không còn chuỗi quyền viết tay nào ngoài `src/app/permis
 | File | Nội dung |
 |---|---|
 | `access.test.ts` | Ma trận: super-admin / `MODULE:FULL` / khớp chính xác / thiếu quyền / module chưa phát hành / mảng rỗng / chuỗi rác không khớp mờ |
-| `registry.test.ts` | Mọi `path` trong `SCREENS` phải tồn tại trong `routes.ts`; `ScreenId` không trùng path |
+| `registry.test.ts` | `path` không trùng nhau giữa các màn; mọi `path`/`aliasPaths` bắt đầu bằng `/secure-panel/`; mỗi sidebar item trong `navigationItems` trỏ tới `ScreenId` có thật và `'/' + parentKey + '/' + childKey` khớp `path` của màn đó |
 | `useScreenAccess.test.tsx` | `canView` / `can()` theo từng bộ quyền |
 | `useRouteAccess.test.tsx` | Khớp tiền tố, path lạ cho qua, thiếu quyền trả `false` |
 | `useNavigation.test.tsx` | Lọc menu con; ẩn menu cha khi không còn con |
 | `Can.test.tsx` | Có quyền → render children; không quyền → không render gì |
 
-Kiểm thử `registry.test.ts` là chốt chặn quan trọng nhất: nó phát hiện lệch giữa registry và `routes.ts` ngay tại CI.
+Lệch giữa registry và `routes.ts` được chặn bằng thiết kế (§3.3, dùng chung hằng path). `registry.test.ts` chặn nốt lệch còn lại giữa registry và sidebar.
 
 ---
 
@@ -272,6 +275,7 @@ Kiểm thử `registry.test.ts` là chốt chặn quan trọng nhất: nó phát
 | Rủi ro | Xử lý |
 |---|---|
 | Siết chặt hơn hiện tại → user đang dùng được bỗng bị chặn | Chỉ 4 module đã phát hành bị siết. Module chưa phát hành giữ nguyên hành vi cho qua |
-| Path trong registry lệch `routes.ts` khi ai đó đổi route | `registry.test.ts` |
+| Path trong registry lệch `routes.ts` khi ai đó đổi route | `routes.ts` dùng chung hằng `SCREENS.<id>.path`, không còn hai bản chuỗi để lệch |
+| Sidebar trỏ sai `ScreenId` hoặc key sinh ra path khác registry | `registry.test.ts` đối chiếu `navigationItems` với `SCREENS` |
 | BE đổi format mã quyền | Chỉ `buildPermissionCode` và `grants` biết format; đổi 2 hàm là xong |
 | `routes.ts` đấu chéo hai màn role/permission | Ghi rõ trong registry theo component thực tế; sửa route tách thành việc riêng |
