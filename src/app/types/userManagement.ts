@@ -8,6 +8,7 @@ export interface UserInfor {
     email: string | null
     firstName: string | null
     lastName: string | null
+    phoneNumber: string | null
     enabled: boolean
     emailVerified: boolean
     createdTimestamp: string | number | Date | null

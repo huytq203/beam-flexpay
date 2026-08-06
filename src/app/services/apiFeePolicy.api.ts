@@ -54,6 +54,22 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
       }),
       invalidatesTags: ['FeePolicy']
     }),
+    patchApproveFeePolicy: build.mutation({
+      query: (id: string) => ({
+        url: `/fee/policies/${id}/approve`,
+        method: "PATCH",
+        params: { isLoading: false }
+      }),
+      invalidatesTags: ['FeePolicy']
+    }),
+    patchRejectFeePolicy: build.mutation({
+      query: (id: string) => ({
+        url: `/fee/policies/${id}/reject`,
+        method: "PATCH",
+        params: { isLoading: false }
+      }),
+      invalidatesTags: ['FeePolicy']
+    }),
     putFeePolicy: build.mutation({
       query: ({ id, body }) => ({
         url: `/fee/policies/${id}`,
@@ -72,5 +88,7 @@ export const {
   usePostNewPolicyMutation,
   usePatchDeactivateFeeMutation,
   usePatchActivateFeeMutation,
+  usePatchApproveFeePolicyMutation,
+  usePatchRejectFeePolicyMutation,
   usePutFeePolicyMutation
 } = feePolicyApi;

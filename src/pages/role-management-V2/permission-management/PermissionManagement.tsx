@@ -11,11 +11,13 @@ import {
   PermissionModalType,
   SelectedPermission
 } from './types/PermissionManagement.type'
+import { useScreenAccess } from '@/app/permissions'
 
 const PermissionManagement = () => {
   const [modalType, setModalType] = useState<PermissionModalType>(null)
   const [selectedPermission, setSelectedPermission] =
     useState<SelectedPermission | null>(null)
+  const { can } = useScreenAccess('PERMISSION_MANAGEMENT')
   const {
     handleSearch,
     permissionData,
@@ -62,6 +64,7 @@ const PermissionManagement = () => {
             onSearch={handleSearch}
             onAdd={() => openModal('add', null)}
             permissionOptions={permissionOptions}
+            canAdd={can('create')}
           />
         </div>
       </CardComponent>

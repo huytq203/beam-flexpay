@@ -66,17 +66,26 @@ export const customerGroupTypeLable={
     [customerGroupType.STANDARD]: 'User thường',
 }
 export enum statusType {
+  INIT ='INIT',
   ACTIVE ='ACTIVE',
   INACTIVE ='INACTIVE',
+  EXPIRED ='EXPIRED'
 }
 
 export const statusTypeLable={
+    [statusType.INIT]: 'Khởi tạo',
     [statusType.ACTIVE]: 'Hoạt động',
     [statusType.INACTIVE]: 'Không hoạt động',
+    [statusType.EXPIRED]: 'Hết hạn',
 }
 
 
 export const STATUS_CONFIG: Record<statusType, { label: string; className: string, shimmerColor: string }> = {
+  [statusType.INIT]: {
+    label: 'Khởi tạo',
+    className: 'info-status',
+    shimmerColor: 'rgba(245, 158, 11, 0.1)',
+  },
   [statusType.ACTIVE]: {
     label: 'Hoạt động',
     className: 'success-status ',
@@ -84,6 +93,11 @@ export const STATUS_CONFIG: Record<statusType, { label: string; className: strin
   },
   [statusType.INACTIVE]: {
     label: 'Không hoạt động',
+    className: 'danger-status',
+    shimmerColor: 'rgba(239, 68, 68, 0.1)',
+  },
+  [statusType.EXPIRED]: {
+    label: 'Hết hạn',
     className: 'danger-status',
     shimmerColor: 'rgba(239, 68, 68, 0.1)',
   }

@@ -50,6 +50,22 @@ const feeAssignApi = apiFeeService.injectEndpoints({
       }),
       invalidatesTags: ['feeAssign']
     }),
+    patchApproveAssign: build.mutation({
+      query: (id: string) => ({
+        url: `/fee/policy-assignments/${id}/approve`,
+        method: "PATCH",
+        params: { isLoading: false }
+      }),
+      invalidatesTags: ['feeAssign']
+    }),
+    patchRejectAssign: build.mutation({
+      query: (id: string) => ({
+        url: `/fee/policy-assignments/${id}/reject`,
+        method: "PATCH",
+        params: { isLoading: false }
+      }),
+      invalidatesTags: ['feeAssign']
+    }),
   })
 })
 export const {
@@ -58,5 +74,7 @@ export const {
   usePutAssignMutation,
   usePatchAssignActiveMutation,
   usePatchAssignInActiveMutation,
+  usePatchApproveAssignMutation,
+  usePatchRejectAssignMutation,
   useGetAssignSearchQuery
 } = feeAssignApi

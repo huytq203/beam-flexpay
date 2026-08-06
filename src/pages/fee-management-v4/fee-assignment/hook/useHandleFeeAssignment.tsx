@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import { useMessage } from '@hooks/useMessage'
 import { useSVG } from '@hooks/useSVG'
 import usePagination from '@hooks/usePagination'
-import usePermissionCheck from '@hooks/usePermissionCheck'
 import {
   useGetAssignSearchQuery,
   usePatchAssignActiveMutation,
@@ -55,7 +54,6 @@ const useHandleFeeAssignment = () => {
   const { successMess, errorMess } = useMessage()
   const navigate = useNavigate()
   const { svg } = useSVG()
-  const { hasAnyPermission } = usePermissionCheck()
 
   const {
     handleSubmit,
@@ -72,9 +70,6 @@ const useHandleFeeAssignment = () => {
       createDate: ''
     }
   })
-
-  const canCreate = hasAnyPermission(['FEE:CREATE', 'FEE:FULL', 'ADMIN:FULL'])
-  const canUpdate = hasAnyPermission(['FEE:UPDATE', 'FEE:FULL', 'ADMIN:FULL'])
 
   const handleSearch = useCallback(async (data: FeeAssignType) => {
     setPage(1)
@@ -136,9 +131,8 @@ const useHandleFeeAssignment = () => {
     setOpenModalDelete,
     setSelectRowId,
     onToggleStatus: handleToggleStatus,
-    navigate,
-    canUpdate
-  }), [handleToggleStatus, navigate, canUpdate])
+    navigate
+  }), [handleToggleStatus, navigate])
 
   const listData: FeeAssignment[] = useMemo(() =>
     searchData?.content || []
@@ -203,7 +197,6 @@ const useHandleFeeAssignment = () => {
     pageSize,
     total,
     handlePaginationChange,
-    canCreate,
     svg
   }
 }

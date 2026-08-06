@@ -10,6 +10,7 @@ import React from 'react'
 import { SkeletonButton, SkeletonInput, SkeletonTable, SkeletonTitle } from '@components/ui/skeletons/Skeleton'
 import useHandleFeeAssignment from './hook/useHandleFeeAssignment'
 import FormSearchAssignment from './components/FormSearchAssignment'
+import { Can } from '@/app/permissions'
 
 const FeeAssignmentManagement = () => {
   const {
@@ -35,7 +36,6 @@ const FeeAssignmentManagement = () => {
     pageSize,
     total,
     handlePaginationChange,
-    canCreate,
     svg
   } = useHandleFeeAssignment()
 
@@ -96,14 +96,14 @@ const FeeAssignmentManagement = () => {
 
                     </div>
                     <div className='w-full md:w-auto'>
-                      {canCreate && (
+                      <Can screen='FEE_ASSIGNMENT' action='create'>
                         <ButtonComponent
                           icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
                           content='Thiết lập phí'
                           onClick={handleOpenModalAdd}
                           className='w-full md:w-auto'
                         />
-                      )}
+                      </Can>
                     </div>
                   </div>
                 </>

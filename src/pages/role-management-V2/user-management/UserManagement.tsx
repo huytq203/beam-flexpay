@@ -1,23 +1,29 @@
 import {
+  ButtonComponent,
   CardComponent,
   ModalComponent,
   Table
 } from '@components/index'
+import { useState } from 'react'
 import DialogAddUser from './components/DialogAddUser'
 import DialogUserDetail from './components/DialogUserDetail'
 import DialogAssignRoles from './components/DialogAssignRoles'
 import useFetchDataUser from './hooks/useFetchDataUser'
-import * as Icons from '@components/icons'
 import useHandleUser from './hooks/useHandleUser'
-import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
-
+import { SkeletonButton, SkeletonInput, SkeletonTable } from '@components/ui/skeletons/Skeleton'
+import FormSearchUser from './components/FormSearchUser'
+import { FunnelIcon } from '@components/icons'
+import { useScreenAccess } from '@/app/permissions'
+import { CREATE_ADMIN_USER_FORM_ID } from './constants/userAccount'
 const UserManagement = () => {
   const fetchData = useFetchDataUser()
   const handle = useHandleUser()
+  const [isCreatingUser, setIsCreatingUser] = useState(false)
+  const { can } = useScreenAccess('USER_ACCOUNT')
 
   return (
     <div className='flex flex-col gap-2'>
-      {/* <CardComponent
+      <CardComponent
         content={
           <>
             {fetchData.isLoadingUser || fetchData.isLoadingRoles ? (
@@ -34,15 +40,20 @@ const UserManagement = () => {
                 </div>
               </div>
             ) : (
-              <FormSearch
-                roleOptions={fetchData.roleOptions}
-                onAdd={() => handle.openModal('add', null)}
-              />
+              <div className="">
+                <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <FunnelIcon /> Bộ lọc tìm kiếm</p>
+                <FormSearchUser
+                  onSearch={fetchData.handleSearch}
+                  onAdd={() => handle.openModal('add', null)}
+                  canAdd={can('create')}
+                />
+
+              </div>
             )}
           </>
         }
-      /> */}
-      <CardComponent>
+      />
+      {/* <CardComponent>
         <div className='flex items-center gap-4 py-1'>
           <div className='bg-green-50 p-3 rounded-xl flex items-center justify-center shadow-xs text-green-800'>
             <Icons.UserCheckIcon size={28} weight="duotone" className='text-blue' />
@@ -52,15 +63,15 @@ const UserManagement = () => {
             <p className='text-gray-500 text-[12px] m-0 leading-relaxed font-medium'>Quản lý thông tin tài khoản, nhóm quyền và người dùng quản trị hệ thống</p>
           </div>
           <div className='ml-auto'>
-            {/* <ButtonComponent 
+            <ButtonComponent
               icon={<Icons.PlusOutlined />} 
               type='primary' 
               content='Thêm mới tài khoản' 
               onClick={() => handle.openModal('add', null)}
-            /> */}
+            />
           </div>
         </div>
-      </CardComponent>
+      </CardComponent> */}
       <CardComponent
         content={
           <>
@@ -92,17 +103,37 @@ const UserManagement = () => {
 
       {/* Add/Edit User */}
       <ModalComponent
-        title={handle.modalType === 'edit' ? 'Cập nhật tài khoản Admin' : 'Thêm mới tài khoản Admin'}
+        title='Thêm mới tài khoản Admin'
         onCancel={() => handle.closeModal()}
-        onOk={() => { }}
-        open={handle.modalType === 'add' || handle.modalType === 'edit'}
-        width='35%'
+        open={handle.modalType === 'add'}
+        confirmLoading={isCreatingUser}
+        footer={
+          <div className='flex flex-wrap items-center justify-end gap-2'>
+            <ButtonComponent
+              type='default'
+              content='Hủy'
+              disabled={isCreatingUser}
+              onClick={() => handle.closeModal()}
+            />
+            <ButtonComponent
+              type='primary'
+              content='Tạo tài khoản'
+              htmlType='submit'
+              form={CREATE_ADMIN_USER_FORM_ID}
+              loading={isCreatingUser}
+              disabled={isCreatingUser}
+            />
+          </div>
+        }
+        width={{ xs: 'calc(100% - 24px)', sm: 560, md: 640 }}
         modalText={
           <DialogAddUser
-            userId={handle.modalType === 'edit' ? handle.selectedUser?.id : null}
             roleOptions={fetchData.roleOptions}
-            onSuccess={handle.closeModal}
-            onCancel={() => handle.closeModal()}
+            onSuccess={() => {
+              handle.closeModal()
+              fetchData.refetch()
+            }}
+            onLoadingChange={setIsCreatingUser}
           />
         }
       />

@@ -1,5 +1,7 @@
 # Thiết kế: Hệ thống phân quyền generic (Access Registry)
 
+> **Trạng thái:** đã hiện thực hoá — xem `docs/superpowers/plans/2026-08-06-permission-registry.md`.
+
 **Ngày:** 2026-08-06
 **Phạm vi:** sidebar, route guard, nút hành động trong table/màn hình
 **Mục tiêu:** đổi quyền của một màn hoặc một nút = sửa đúng **một dòng** trong registry.

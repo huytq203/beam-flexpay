@@ -16,7 +16,6 @@ import {
   useSidebar
 } from '@/components/ui/sidebar/Sidebar'
 import useNavigationEw from '@hooks/useNavigation'
-import type { ItemTypeCustom } from '@components/layout/components/Navigation'
 import { Logo } from '@components/logo/Logo'
 
 const buildPath = (parentKey: React.Key, childKey: React.Key) =>
@@ -30,7 +29,7 @@ const renderIcon = (icon: React.ReactNode): React.ReactNode =>
     : icon
 
 const SideBar = () => {
-  const [navigation] = useNavigationEw() as [ItemTypeCustom[], unknown]
+  const [navigation] = useNavigationEw()
   const { pathname } = useLocation()
   const { state, isMobile, setOpenMobile } = useSidebar()
   const isCollapsed = state === 'collapsed'
@@ -54,21 +53,15 @@ const SideBar = () => {
 
       <SidebarContent className='scroll-custom'>
         {navigation.map((group) => {
-          const groupKey = group.key as React.Key
-          const label = (
-            group as ItemTypeCustom & { label?: React.ReactNode }
-          ).label
-          const children = (group.children ?? []) as ItemTypeCustom[]
+          const groupKey = group.key
+          const label = group.label
+          const children = group.children ?? []
 
           const childLinks = children.map((child) => ({
-            to: buildPath(groupKey, child.key as React.Key),
-            label: (
-              child as ItemTypeCustom & { label?: React.ReactNode }
-            ).label,
-            icon: (
-              child as ItemTypeCustom & { icon?: React.ReactNode }
-            ).icon,
-            key: child.key as React.Key
+            to: buildPath(groupKey, child.key),
+            label: child.label,
+            icon: child.icon,
+            key: child.key
           }))
 
           const isChildActive = childLinks.some(
@@ -85,11 +78,7 @@ const SideBar = () => {
                     <SidebarMenuCollapsible
                       id={String(groupKey)}
                       icon={renderIcon(
-                        (
-                          group as ItemTypeCustom & {
-                            icon?: React.ReactNode
-                          }
-                        ).icon
+                        group.icon
                       )}
                       label={String(label ?? '')}
                       defaultOpen

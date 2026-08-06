@@ -12,6 +12,9 @@ import * as Icons from '@components/icons'
 import { NavigateFunction } from 'react-router-dom'
 import { PATHS } from '@constants/pathConstant'
 import { ColumnsType } from 'antd/es/table'
+import FeePolicyApprovalAction from '../components/FeePolicyApprovalAction'
+import type { FeePolicy } from '../types/FeeManagement.type'
+import { Can } from '@/app/permissions'
 interface Props {
   navigate: NavigateFunction
   handleActive: (id: string) => void
@@ -22,7 +25,12 @@ interface Props {
 }
 
 
-export const getColumnFeePolicy = ({ navigate, handleActive, handleInactive, loadingId }: Props): ColumnsType => [
+export const getColumnFeePolicy = ({
+  navigate,
+  handleActive,
+  handleInactive,
+  loadingId
+}: Props): ColumnsType<FeePolicy> => [
   {
     title: '#',
     dataIndex: 'no',
@@ -86,7 +94,7 @@ export const getColumnFeePolicy = ({ navigate, handleActive, handleInactive, loa
   {
     title: 'Thao tác',
     key: 'action',
-    width: 100,
+    width: 132,
     fixed: 'right',
     align: 'center',
     render(value, record) {
@@ -94,30 +102,39 @@ export const getColumnFeePolicy = ({ navigate, handleActive, handleInactive, loa
       const isLocked = record?.status === statusType.LOCKED
       return (
         <div className='flex gap-2 justify-center'>
-          <TooltipComponent title='Sửa chính sách'>
-            <ButtonComponent
-              type='default'
-              size='small'
-              icon={<Icons.EditOutlined />}
-              onClick={() => {
-                navigate(PATHS.FEE_V4.EDIT_FEE_POLICY(record?.id || ''))
-              }}
-            />
-          </TooltipComponent>
-          <TooltipComponent title={isActive ? 'Hủy kích hoạt' : 'Kích hoạt'}>
-            <ButtonComponent
-              disabled={isLocked}
-              type="default"
-              size="small"
-              icon={isActive ? <Icons.UnlockOutlined /> : <Icons.LockOutlined />}
-              loading={loadingId === record.id}
-              onClick={() =>
-                isActive
-                  ? handleInactive(record?.id || '')
-                  : handleActive(record?.id || '')
-              }
-            />
-          </TooltipComponent>
+          <Can screen='FEE_POLICY' action='edit'>
+            <TooltipComponent title='Sửa chính sách'>
+              <ButtonComponent
+                aria-label='Sửa chính sách'
+                type='default'
+                size='small'
+                icon={<Icons.EditOutlined />}
+                onClick={() => {
+                  navigate(PATHS.FEE_V4.EDIT_FEE_POLICY(record?.id || ''))
+                }}
+              />
+            </TooltipComponent>
+          </Can>
+          <Can screen='FEE_POLICY' action='approve'>
+            <FeePolicyApprovalAction policy={record} />
+          </Can>
+          <Can screen='FEE_POLICY' action='toggleActive'>
+            <TooltipComponent title={isActive ? 'Hủy kích hoạt' : 'Kích hoạt'}>
+              <ButtonComponent
+                aria-label={isActive ? 'Hủy kích hoạt' : 'Kích hoạt'}
+                disabled={isLocked}
+                type="default"
+                size="small"
+                icon={isActive ? <Icons.UnlockOutlined /> : <Icons.LockOutlined />}
+                loading={loadingId === record.id}
+                onClick={() =>
+                  isActive
+                    ? handleInactive(record?.id || '')
+                    : handleActive(record?.id || '')
+                }
+              />
+            </TooltipComponent>
+          </Can>
         </div>
       )
     },

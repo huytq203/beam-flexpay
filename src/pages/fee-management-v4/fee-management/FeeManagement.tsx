@@ -8,18 +8,36 @@ import { useSVG } from '@hooks/useSVG'
 import useFetchDataFee from './hooks/useFetchDataFee'
 import useHandleAddFeePolicy from './hooks/useHandleAddFeePolicy'
 import { getColumnFeePolicy } from './columns/FeeManagement.column'
-import { dataSearch } from './types/FeeManagement.type'
+import type { dataSearch, FeePolicy } from './types/FeeManagement.type'
 import { useNavigate } from 'react-router-dom'
 import { PATHS } from '@constants/pathConstant'
 import * as Icons from '@components/icons'
 import { STATUS_LABEL } from './constants/FeeManagement.constant'
+import { Can } from '@/app/permissions'
 const FeeManagement = () => {
   const { dataSource, page, size: pageSize, setPage, setPageSize, total, setFilters, refetch, isFetchingFeeManagement } = useFetchDataFee()
   const { svg: _svg } = useSVG()
   const { control, handleSubmit, reset } = useForm<dataSearch>()
   const { handleSearch, handleReset, handleActive, handleInactive, isLoadingPatchActivateFee, isLoadingPatchDeactivateFee, loadingId } = useHandleAddFeePolicy({ setFilters, setPage, reset })
   const navigate = useNavigate()
-  const columns = useMemo(() => getColumnFeePolicy({ navigate, handleActive, handleInactive, isLoadingPatchActivateFee, isLoadingPatchDeactivateFee, loadingId }), [navigate, handleActive, handleInactive, isLoadingPatchActivateFee, isLoadingPatchDeactivateFee, loadingId])
+  const columns = useMemo(
+    () => getColumnFeePolicy({
+      navigate,
+      handleActive,
+      handleInactive,
+      isLoadingPatchActivateFee,
+      isLoadingPatchDeactivateFee,
+      loadingId
+    }),
+    [
+      navigate,
+      handleActive,
+      handleInactive,
+      isLoadingPatchActivateFee,
+      isLoadingPatchDeactivateFee,
+      loadingId
+    ]
+  )
   return (
     <>
       <CardComponent
@@ -88,14 +106,16 @@ const FeeManagement = () => {
                     />
                   </div>
                   <div className='w-full md:w-auto'>
-                    <ButtonComponent
-                      htmlType='button'
-                      content='Thêm chính sách phí'
-                      onClick={() => navigate(PATHS.FEE_V4.ADD_FEE_POLICY)}
-                      type='primary'
-                      icon={<Icons.PlusCircleOutlined style={{ fontSize: 18 }} />}
-                      className='w-full md:w-auto'
-                    />
+                    <Can screen='FEE_POLICY' action='create'>
+                      <ButtonComponent
+                        htmlType='button'
+                        content='Thêm chính sách phí'
+                        onClick={() => navigate(PATHS.FEE_V4.ADD_FEE_POLICY)}
+                        type='primary'
+                        icon={<Icons.PlusCircleOutlined style={{ fontSize: 18 }} />}
+                        className='w-full md:w-auto'
+                      />
+                    </Can>
                   </div>
                 </div>
               </div>
@@ -109,7 +129,7 @@ const FeeManagement = () => {
         content={
           <>
             <div className='mt-2'>
-              <Table
+              <Table<FeePolicy>
                 tableLayout="fixed"
                 size='small'
                 dataSource={dataSource}

@@ -14,7 +14,9 @@ import { WalletRoutes } from './routes'
 import './styles/index.css'
 import React from 'react'
 import { MessageProvider } from '@hooks/useMessage'
-import { ThemeProvider } from '@/lib/theme/ThemeProvider';
+import { installChunkReloadGuard } from '@utils/chunkError'
+
+installChunkReloadGuard()
 
 if (import.meta.env.DEV && 'serviceWorker' in navigator) {
   void navigator.serviceWorker.getRegistrations().then((registrations) => {

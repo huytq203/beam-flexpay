@@ -22,6 +22,7 @@ interface FormSelectProps<T extends FieldValues>
   className?: string;
   classNameLable?: string;
   hidden?: boolean;
+  required?:boolean
   onChange?: (value: string | number) => void;
 }
 
@@ -30,6 +31,7 @@ export function FormSelect<T extends FieldValues>({
   control,
   label,
   options,
+  required,
   defaultValue,
   classNameLable = "font-medium",
   className = "col-span-6 flex flex-col",
@@ -40,6 +42,7 @@ export function FormSelect<T extends FieldValues>({
       name={name}
       control={control}
       label={label}
+      required={required}
       classNameLable={classNameLable}
       className={className}
       render={(field) => {

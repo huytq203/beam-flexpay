@@ -72,6 +72,28 @@ export const setAccessTokenCookie = (token: string, expiresInSeconds: number = 3
 }
 
 /**
+ * Lưu access token vào cookie cho suốt phiên đăng nhập.
+ *
+ * Cookie chỉ là nơi CHỨA token để gắn vào header Authorization, không phải nơi
+ * quyết định token còn hiệu lực hay không. Nếu cho cookie hết hạn đúng bằng tuổi
+ * thọ access token (mặc định 300s) thì sau 5 phút cookie biến mất, request bị
+ * gửi đi THIẾU header Authorization và server trả 401. Token hết hạn đã có luồng
+ * refresh trong fetchBaseQueryCustom xử lý, nên cookie sống theo refresh token.
+ *
+ * @param token - Access token string
+ * @param refreshExpiresInSeconds - Tuổi thọ refresh token (giây)
+ */
+export const persistAccessTokenCookie = (
+    token: string,
+    refreshExpiresInSeconds: number = CookieExpiry.REFRESH_TOKEN_SECONDS
+): void => {
+    Cookies.set(CookieKey.ACCESS_TOKEN, token, {
+        expires: refreshExpiresInSeconds / 86400,
+        path: '/'
+    })
+}
+
+/**
  * Get access token from cookie
  */
 export const getAccessTokenCookie = (): string | undefined => {

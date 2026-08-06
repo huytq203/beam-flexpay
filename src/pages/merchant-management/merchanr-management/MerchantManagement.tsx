@@ -4,6 +4,7 @@ import FormSearch from './components/FormSearch'
 import useFetchData from './hooks/useFetchData'
 import { MerchantColumn } from './column/column'
 import { useNavigate } from 'react-router-dom'
+import { Can } from '@/app/permissions'
 
 const MerchantManagement = () => {
   const { data, isFetching, refetch } = useFetchData()
@@ -21,7 +22,13 @@ const MerchantManagement = () => {
           </div>
           <div className="flex gap-3">
             <ButtonComponent content='Xuất excel' type='default' />
-            <ButtonComponent onClick={() => navigate('create')} content='Tạo mới' type='primary' />
+            <Can screen='MERCHANT_MANAGEMENT' action='create'>
+              <ButtonComponent
+                onClick={() => navigate('create')}
+                content='Tạo mới'
+                type='primary'
+              />
+            </Can>
           </div>
         </div>
 

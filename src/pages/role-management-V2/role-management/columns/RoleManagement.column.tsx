@@ -10,6 +10,7 @@ import { ColumnType } from 'antd/es/table'
 import { DataRoleItem } from '@type/roleManagement'
 import { RoleName } from '../constants/RoleManagement.constant'
 import { ModalType, SelectedRole } from '../types/RoleManagement.type'
+import { Can } from '@/app/permissions'
 
 interface Props {
   openModal: (type: ModalType, role: SelectedRole | null) => void
@@ -45,50 +46,65 @@ export const getRoleManagementColumn = ({
     render: (_, record) => {
       return (
         <div className='flex justify-start items-start gap-1'>
-          <TooltipComponent title='Cập nhật'>
-            <ButtonComponent
-              size='small'
-              type='default'
-              icon={<EditOutlined />}
-              onClick={() => openModal('edit', record)}
-            />
-          </TooltipComponent>
-          <TooltipComponent title='Xem các quyền'>
-            <ButtonComponent
-              size='small'
-              type='default'
-              className='text-blue-600'
-              icon={<EyeOutlined />}
-              onClick={() => openModal('viewPermissions', record)}
-            />
-          </TooltipComponent>
-          <TooltipComponent title='Xem người dùng'>
-            <ButtonComponent
-              size='small'
-              type='default'
-              className='text-green-600'
-              icon={<UserOutlined />}
-              onClick={() => openModal('viewMembers', record)}
-            />
-          </TooltipComponent>
-          <TooltipComponent title='Xóa'>
-            <ButtonComponent
-              size='small'
-              type='default'
-              className='text-red-600'
-              icon={<DeleteOutlined />}
-              onClick={() => openModal('delete', record)}
-            />
-          </TooltipComponent>
-          <TooltipComponent title='Phân quyền'>
-            <ButtonComponent
-              size='small'
-              type='default'
-              className='text-violet-600'
-              icon={<ApartmentOutlined />}
-              onClick={() => openModal('assignPermissions', record)}
-            />
-          </TooltipComponent>
+          <Can screen='ROLE_MANAGEMENT' action='edit'>
+            <TooltipComponent title='Cập nhật'>
+              <ButtonComponent
+                aria-label='Sửa nhóm quyền'
+                size='small'
+                type='default'
+                icon={<EditOutlined />}
+                onClick={() => openModal('edit', record)}
+              />
+            </TooltipComponent>
+          </Can>
+          <Can screen='ROLE_MANAGEMENT' action='viewPermissions'>
+            <TooltipComponent title='Xem các quyền'>
+              <ButtonComponent
+                aria-label='Xem quyền của nhóm'
+                size='small'
+                type='default'
+                className='text-blue-600'
+                icon={<EyeOutlined />}
+                onClick={() => openModal('viewPermissions', record)}
+              />
+            </TooltipComponent>
+          </Can>
+          <Can screen='ROLE_MANAGEMENT' action='viewMembers'>
+            <TooltipComponent title='Xem người dùng'>
+              <ButtonComponent
+                aria-label='Xem thành viên'
+                size='small'
+                type='default'
+                className='text-green-600'
+                icon={<UserOutlined />}
+                onClick={() => openModal('viewMembers', record)}
+              />
+            </TooltipComponent>
+          </Can>
+          <Can screen='ROLE_MANAGEMENT' action='delete'>
+            <TooltipComponent title='Xóa'>
+              <ButtonComponent
+                aria-label='Xoá nhóm quyền'
+                size='small'
+                type='default'
+                className='text-red-600'
+                icon={<DeleteOutlined />}
+                onClick={() => openModal('delete', record)}
+              />
+            </TooltipComponent>
+          </Can>
+          <Can screen='ROLE_MANAGEMENT' action='assignPermissions'>
+            <TooltipComponent title='Phân quyền'>
+              <ButtonComponent
+                aria-label='Gán quyền'
+                size='small'
+                type='default'
+                className='text-violet-600'
+                icon={<ApartmentOutlined />}
+                onClick={() => openModal('assignPermissions', record)}
+              />
+            </TooltipComponent>
+          </Can>
         </div>
       )
     }

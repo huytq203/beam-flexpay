@@ -10,12 +10,14 @@ interface Props {
   onSearch: (data: SearchPermissionFormData) => void
   onAdd: () => void
   permissionOptions: Array<{ value: string; label: string }>
+  canAdd: boolean
 }
 
 const FormSearchPermission = ({
   onSearch,
   onAdd,
-  permissionOptions
+  permissionOptions,
+  canAdd
 }: Props) => {
   const { svg } = useSVG()
   const { control, handleSubmit, reset } = useForm<SearchPermissionFormData>({
@@ -45,12 +47,14 @@ const FormSearchPermission = ({
           content='Tìm kiếm'
           htmlType='submit'
         />
-        <ButtonComponent
-          icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
-          content='Thêm mới'
-          htmlType='button'
-          onClick={onAdd}
-        />
+        {canAdd && (
+          <ButtonComponent
+            icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
+            content='Thêm mới'
+            htmlType='button'
+            onClick={onAdd}
+          />
+        )}
         <ButtonComponent
           icon={<BroomIcon size={18} />}
           type='default'

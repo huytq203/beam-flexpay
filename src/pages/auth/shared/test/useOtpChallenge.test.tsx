@@ -3,8 +3,8 @@ import { act, renderHook } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { describe, expect, it, vi } from 'vitest'
 import { createAppStore } from '@/app/store'
-import { OtpFlowStatus } from './types'
-import { useOtpChallenge } from './useOtpChallenge'
+import { OtpFlowStatus } from '../otp/types'
+import { useOtpChallenge } from '../otp/useOtpChallenge'
 
 const challenge = {
   requestId: 'request-1',

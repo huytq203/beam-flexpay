@@ -2,10 +2,11 @@ import { ColumnType } from 'antd/es/table'
 import { ContentMerchant } from '@type/merchant'
 import dayjs from 'dayjs'
 import { ButtonComponent, TooltipComponent } from '@components/index'
-import { EditOutlined, EyeOutlined, LockOutlined } from '@components/icons'
+import { EditOutlined, EyeOutlined } from '@components/icons'
 import { StatusKey } from '@pages/wallet-administration/e-walletManagement/constants/Ewallet.constant'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { STATUS_CONFIG } from '../constants/Merchant.constant'
+import { Can } from '@/app/permissions'
 
 interface MerchantColumnProps {
     onEdit: (id: string) => void
@@ -57,15 +58,16 @@ export const MerchantColumn = ({ onEdit, onView }: MerchantColumnProps): ColumnT
         fixed: 'right',
         render: (_: unknown, record: ContentMerchant) => (
             <div className='flex gap-1 items-center justify-center'>
-                <TooltipComponent title='Xem chi tiết'>
-                    <ButtonComponent size='small' type='default' icon={<EyeOutlined />} onClick={() => onView?.(record.id)} />
-                </TooltipComponent>
-                <TooltipComponent title='Sửa'>
-                    <ButtonComponent size='small' type='default' icon={<EditOutlined />} onClick={() => onEdit(record.id)} />
-                </TooltipComponent>
-                <TooltipComponent title='Khóa'>
-                    <ButtonComponent size='small' type='default' icon={<LockOutlined />} onClick={() => { }} />
-                </TooltipComponent>
+                <Can screen='MERCHANT_MANAGEMENT' action='viewDetail'>
+                    <TooltipComponent title='Xem chi tiết'>
+                        <ButtonComponent aria-label='Xem chi tiết merchant' size='small' type='default' icon={<EyeOutlined />} onClick={() => onView?.(record.id)} />
+                    </TooltipComponent>
+                </Can>
+                <Can screen='MERCHANT_MANAGEMENT' action='edit'>
+                    <TooltipComponent title='Sửa'>
+                        <ButtonComponent aria-label='Sửa merchant' size='small' type='default' icon={<EditOutlined />} onClick={() => onEdit(record.id)} />
+                    </TooltipComponent>
+                </Can>
             </div>
         )
     }

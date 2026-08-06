@@ -1,26 +1,30 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useGetUserQuery } from '@services/apiUserManagement'
-import { useGetRoleQuery } from '@services/apiRole'
+import { useAllRoles } from '@hooks/useAllRoles'
 import { UserInfor } from '@type/userManagement'
 import { RoleUserAccount } from '../constants/userAccount'
+import {
+  SearchUserFormData,
+  UserQueryFilters
+} from '../types/UserManagement.type'
+import { toUserQueryFilters } from '../utils/UserManagement.utils'
 import dayjs from 'dayjs'
 import usePagination from '@hooks/usePagination'
 
 const useFetchDataUser = () => {
 
   const { page, size, sortBy, sort,setPage,setPageSize } = usePagination()
+  const [filters, setFilters] = useState<UserQueryFilters>({})
   const params = {
     page,
     size,
     sortBy: sort || 'id',
-    sortDirection: sortBy || 'DESC'
+    sortDirection: sortBy || 'DESC',
+    ...filters
   }
   const { data: userData, isLoading: isLoadingUser, refetch } = useGetUserQuery(params)
 
-  const { data: roleData, isLoading: isLoadingRoles } = useGetRoleQuery({
-    page: 1,
-    size: 1000
-  })
+  const { roles, isLoading: isLoadingRoles } = useAllRoles()
 
   const dataSource = useMemo(() => {
     return (
@@ -32,19 +36,27 @@ const useFetchDataUser = () => {
           : '--'
       })) ?? []
     )
-  }, [userData?.content])
+  }, [userData?.content, page, size])
 
   const roleOptions = useMemo(() => {
-    return (
-      roleData?.content?.map((role) => ({
-        value: role.name,
-        label: RoleUserAccount[role.name as keyof typeof RoleUserAccount] ?? role.name
-      })) ?? []
-    )
-  }, [roleData?.content])
+    return roles.map((role) => ({
+      value: role.id,
+      label: RoleUserAccount[role.name as keyof typeof RoleUserAccount] ?? role.name
+    }))
+  }, [roles])
+
+  // Đổi filter phải về trang 1, nếu không trang hiện tại có thể vượt tổng số trang mới.
+  const handleSearch = useCallback(
+    (data: SearchUserFormData) => {
+      setFilters(toUserQueryFilters(data))
+      setPage(1)
+    },
+    [setPage]
+  )
 
   return {
     dataSource,
+    handleSearch,
     isLoadingUser,
     isLoadingRoles,
     refetch,

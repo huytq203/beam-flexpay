@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { OtpErrorKind, parseOtpError } from './otp-error'
+import { OtpErrorKind, parseOtpError } from '../otp/otp-error'
 
 const apiError = (status: string, detail = '', retryAfter?: number) => ({
   status: 400,

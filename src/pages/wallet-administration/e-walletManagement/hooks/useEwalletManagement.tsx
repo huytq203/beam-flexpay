@@ -1,27 +1,19 @@
 import usePagination from '@hooks/usePagination'
 import { AcountItem, FormSearchValues } from '@pages/wallet-administration/e-walletManagement/types/ResponseWalletAccount.type'
 import { useGetAccountQuery, usePostLockMutation, usePostUnlockMutation } from '@services/apiWalletAccount.api'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { getColumn } from '../columns/Column'
 import { useNavigate } from 'react-router-dom'
-
-type ModalType = 'freeze' | 'unfreeze' | 'lock' | 'unlock' | null
-
-interface SelectedAccount {
-  id: string
-  ownerId?: string
-  ownerUsername?: string
-  balance?: number
-  holdBalance?: number
-  currency?: string
-}
+import { useScreenAccess } from '@/app/permissions'
+import type { WalletModalType } from '../columns/wallet-row-actions'
 
 const useEwalletManagement = () => {
   const { page, size, setPageSize, setPage } = usePagination()
   const [filter, setFilter] = useState({})
-  const [modalType, setModalType] = useState<ModalType>(null)
-  const [selectedAccount, setSelectedAccount] = useState<SelectedAccount | null>(null)
+  const [modalType, setModalType] = useState<WalletModalType>(null)
+  const [selectedAccount, setSelectedAccount] = useState<AcountItem | null>(null)
   const navigate = useNavigate()
+  const { can } = useScreenAccess('EWALLET_MANAGEMENT')
 
   const payload={
     page,
@@ -44,10 +36,10 @@ const useEwalletManagement = () => {
   }
 
 
-  const openModal = (type: ModalType, account: SelectedAccount) => {
+  const openModal = useCallback((type: WalletModalType, account: AcountItem) => {
     setSelectedAccount(account)
     setModalType(type)
-  }
+  }, [])
 
   const closeModal = () => {
     setModalType(null)
@@ -59,7 +51,10 @@ const useEwalletManagement = () => {
     no: (page - 1) * size + index + 1,
   })), [getAccount, page, size])
 
-  const column = getColumn({ openModal, navigate })
+  const column = useMemo(
+    () => getColumn({ openModal, navigate, can }),
+    [can, navigate, openModal]
+  )
 
   return {
     column,

@@ -37,6 +37,7 @@ export function FormInput<T extends FieldValues>({
   inputClassName = "", // Input default
   disabled,
   type,
+  required,
   classNameLable = 'font-medium',
   prefix,
   passwordConfig,
@@ -49,6 +50,7 @@ export function FormInput<T extends FieldValues>({
       name={name}
       control={control}
       label={label}
+      required={required}
       className={className} // This goes to FormField wrapper div
       classNameLable={classNameLable}
       render={(field) => {

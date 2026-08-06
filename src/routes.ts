@@ -14,7 +14,9 @@ import {
   FEEMANAGEMENT_V4
 } from '@constants/routersConstant'
 
+import RouteErrorBoundary from '@components/error/RouteErrorBoundary'
 import NotFound from '@pages/auth/not-found/NotFound'
+import { SCREENS } from '@/app/permissions'
 
 /**
  * Bọc một trang được tải động vào Suspense.
@@ -41,7 +43,7 @@ const namedPage = <T extends string>(
 const authentication = {
   path: AUTHENTICATION,
   element: createElement(AuthLayout),
-  errorElement: createElement(NotFound),
+  errorElement: createElement(RouteErrorBoundary),
   children: [
     {
       path: AUTHENTICATION + '/login',
@@ -69,7 +71,7 @@ const authentication = {
 const forbidden = {
   path: FORBIDDENERROR,
   element: createElement(AppLayout),
-  errorElement: createElement(NotFound),
+  errorElement: createElement(RouteErrorBoundary),
   children: [
     {
       path: FORBIDDENERROR,
@@ -81,26 +83,26 @@ const forbidden = {
 const feeManagementV4 = {
   path: FEEMANAGEMENT_V4,
   element: createElement(AppLayout),
-  errorElement: createElement(NotFound),
+  errorElement: createElement(RouteErrorBoundary),
   children: [
     {
       path: FEEMANAGEMENT_V4,
       children: [
         {
-          path: FEEMANAGEMENT_V4 + '/fee-managementV4',
+          path: SCREENS.FEE_POLICY.path,
           element: page(
             () =>
               import('@pages/fee-management-v4/fee-management/FeeManagement')
           )
         },
         {
-          path: FEEMANAGEMENT_V4 + '/fee-managementV4/:mode',
+          path: `${SCREENS.FEE_POLICY.path}/:mode`,
           element: page(
             () => import('@pages/fee-management-v4/fee-management/AddFeePolicy')
           )
         },
         {
-          path: FEEMANAGEMENT_V4 + '/fee-managementV4/:mode/:id',
+          path: `${SCREENS.FEE_POLICY.path}/:mode/:id`,
           element: page(
             () => import('@pages/fee-management-v4/fee-management/AddFeePolicy')
           )
@@ -111,21 +113,21 @@ const feeManagementV4 = {
       path: FEEMANAGEMENT_V4,
       children: [
         {
-          path: FEEMANAGEMENT_V4 + '/fee-assignmentV4',
+          path: SCREENS.FEE_ASSIGNMENT.path,
           element: page(
             () =>
               import('@pages/fee-management-v4/fee-assignment/FeeAssignmentManagement')
           )
         },
         {
-          path: FEEMANAGEMENT_V4 + '/fee-assignmentV4/create',
+          path: `${SCREENS.FEE_ASSIGNMENT.path}/create`,
           element: page(
             () =>
               import('@pages/fee-management-v4/fee-assignment/components/FeeAssignAdd')
           )
         },
         {
-          path: FEEMANAGEMENT_V4 + '/fee-assignmentV4/:mode/:id',
+          path: `${SCREENS.FEE_ASSIGNMENT.path}/:mode/:id`,
           element: page(
             () =>
               import('@pages/fee-management-v4/fee-assignment/components/FeeAssignAdd')
@@ -139,13 +141,13 @@ const feeManagementV4 = {
 const roleManagementV2 = {
   path: ROLEMANAGEMENT_V2,
   element: createElement(AppLayout),
-  errorElement: createElement(NotFound),
+  errorElement: createElement(RouteErrorBoundary),
   children: [
     {
       path: ROLEMANAGEMENT_V2,
       children: [
         {
-          path: ROLEMANAGEMENT_V2 + '/user-account',
+          path: SCREENS.USER_ACCOUNT.path,
           element: page(
             () =>
               import('@pages/role-management-V2/user-management/UserManagement')
@@ -157,7 +159,7 @@ const roleManagementV2 = {
       path: ROLEMANAGEMENT_V2,
       children: [
         {
-          path: ROLEMANAGEMENT_V2 + '/permission-management',
+          path: SCREENS.ROLE_MANAGEMENT.path,
           element: namedPage(
             () =>
               import('@/pages/role-management-V2/role-management/RoleManagement'),
@@ -170,7 +172,7 @@ const roleManagementV2 = {
       path: ROLEMANAGEMENT_V2,
       children: [
         {
-          path: ROLEMANAGEMENT_V2 + '/role-management',
+          path: SCREENS.PERMISSION_MANAGEMENT.path,
           element: page(
             () =>
               import('@/pages/role-management-V2/permission-management/PermissionManagement')
@@ -184,20 +186,20 @@ const roleManagementV2 = {
 const walletAdministration = {
   path: WALLETADMINISTRATION,
   element: createElement(AppLayout),
-  errorElement: createElement(NotFound),
+  errorElement: createElement(RouteErrorBoundary),
   children: [
     {
       path: WALLETADMINISTRATION,
       children: [
         {
-          path: WALLETADMINISTRATION + '/e-walletManagement',
+          path: SCREENS.EWALLET_MANAGEMENT.path,
           element: page(
             () =>
               import('@pages/wallet-administration/e-walletManagement/EwalletManagement')
           )
         },
         {
-          path: WALLETADMINISTRATION + '/e-walletManagement/:id',
+          path: `${SCREENS.EWALLET_MANAGEMENT.path}/:id`,
           element: page(
             () =>
               import('@pages/wallet-administration/e-walletManagement/DetailUser')
@@ -209,7 +211,7 @@ const walletAdministration = {
       path: WALLETADMINISTRATION,
       children: [
         {
-          path: WALLETADMINISTRATION + '/confirm-eKYC',
+          path: SCREENS.CONFIRM_EKYC.path,
           element: page(
             () =>
               import('@pages/wallet-administration/confirm-ekyc/ConfirmEKYC')
@@ -221,7 +223,7 @@ const walletAdministration = {
       path: WALLETADMINISTRATION,
       children: [
         {
-          path: WALLETADMINISTRATION + '/transaction-wallet',
+          path: SCREENS.TRANSACTION_WALLET.aliasPaths[0],
           element: page(
             () =>
               import('@pages/wallet-administration/transaction-wallet/TransactionManagement')
@@ -235,62 +237,62 @@ const walletAdministration = {
 const merchantManagement = {
   path: MERCHANT,
   element: createElement(AppLayout),
-  errorElement: createElement(NotFound),
+  errorElement: createElement(RouteErrorBoundary),
   children: [
     {
       path: MERCHANT,
       children: [
         {
-          path: MERCHANT + '/dashboard-merchant',
+          path: SCREENS.MERCHANT_DASHBOARD.path,
           element: page(
             () =>
               import('@pages/merchant-management/dashboard-merchant/DashBoard')
           )
         },
         {
-          path: MERCHANT + '/merchant-management',
+          path: SCREENS.MERCHANT_MANAGEMENT.path,
           element: page(
             () =>
               import('@pages/merchant-management/merchanr-management/MerchantManagement')
           )
         },
         {
-          path: MERCHANT + '/merchant-management/create',
+          path: `${SCREENS.MERCHANT_MANAGEMENT.path}/create`,
           element: page(
             () =>
               import('@pages/merchant-management/merchanr-management/CreateMerchant')
           )
         },
         {
-          path: MERCHANT + '/merchant-management/create/:id',
+          path: `${SCREENS.MERCHANT_MANAGEMENT.path}/create/:id`,
           element: page(
             () =>
               import('@pages/merchant-management/merchanr-management/CreateMerchant')
           )
         },
         {
-          path: MERCHANT + '/merchant-management/detail/:id',
+          path: `${SCREENS.MERCHANT_MANAGEMENT.path}/detail/:id`,
           element: page(
             () =>
               import('@pages/merchant-management/merchanr-management/MerchantDetail')
           )
         },
         {
-          path: MERCHANT + '/merchant-management/:id',
+          path: `${SCREENS.MERCHANT_MANAGEMENT.path}/:id`,
           element: page(
             () =>
               import('@pages/merchant-management/merchanr-management/MerchantDetail')
           )
         },
         {
-          path: MERCHANT + '/merchant-order',
+          path: SCREENS.MERCHANT_ORDER.path,
           element: page(
             () =>
               import('@pages/merchant-management/merchant-order/OrderFeature')
           )
         },
         {
-          path: MERCHANT + '/merchant-order/qr/:id',
+          path: `${SCREENS.MERCHANT_ORDER.path}/qr/:id`,
           element: page(
             () =>
               import('@pages/merchant-management/merchant-order/OrderQrFeature')
@@ -304,20 +306,20 @@ const merchantManagement = {
 const transactionManagement = {
   path: TRANSACTIONMANAGEMENT,
   element: createElement(AppLayout),
-  errorElement: createElement(NotFound),
+  errorElement: createElement(RouteErrorBoundary),
   children: [
     {
       path: TRANSACTIONMANAGEMENT,
       children: [
         {
-          path: TRANSACTIONMANAGEMENT + '/transaction-wallet',
+          path: SCREENS.TRANSACTION_WALLET.path,
           element: page(
             () =>
               import('@pages/wallet-administration/transaction-wallet/TransactionManagement')
           )
         },
         {
-          path: TRANSACTIONMANAGEMENT + '/transaction-wallet/:id',
+          path: `${SCREENS.TRANSACTION_WALLET.path}/:id`,
           element: page(
             () =>
               import('@pages/wallet-administration/transaction-wallet/DetailTransaction')
@@ -329,7 +331,7 @@ const transactionManagement = {
       path: TRANSACTIONMANAGEMENT,
       children: [
         {
-          path: TRANSACTIONMANAGEMENT + '/frozen-transactions',
+          path: SCREENS.FROZEN_TRANSACTIONS.path,
           element: page(
             () =>
               import('@pages/transaction-management/frozen-transactions/FrozenTransactions')
@@ -353,14 +355,14 @@ const transactionManagement = {
       path: TRANSACTIONMANAGEMENT,
       children: [
         {
-          path: TRANSACTIONMANAGEMENT + '/system-ledger',
+          path: SCREENS.SYSTEM_LEDGER.path,
           element: page(
             () =>
               import('@pages/transaction-management/system-ledger/SystemLedgerManagement')
           )
         },
         {
-          path: TRANSACTIONMANAGEMENT + '/system-ledger/:id',
+          path: `${SCREENS.SYSTEM_LEDGER.path}/:id`,
           element: page(
             () =>
               import('@pages/transaction-management/system-ledger/DetailSystemLedger')
@@ -372,7 +374,7 @@ const transactionManagement = {
       path: TRANSACTIONMANAGEMENT,
       children: [
         {
-          path: TRANSACTIONMANAGEMENT + '/withdraw-history',
+          path: SCREENS.WITHDRAW_HISTORY.path,
           element: page(
             () =>
               import('@pages/transaction-management/withdraw-history/WithdrawHistory')

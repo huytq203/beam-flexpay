@@ -7,6 +7,7 @@ import {
   PermissionModalType,
   SelectedPermission
 } from '../types/PermissionManagement.type'
+import { Can } from '@/app/permissions'
 
 interface Props {
   openModal: (
@@ -51,23 +52,29 @@ export const getPermissionManagementColumns = ({
     fixed: 'right',
     render: (_, record) => (
       <div className='flex items-center justify-center gap-1'>
-        <TooltipComponent title='Cập nhật'>
-          <ButtonComponent
-            size='small'
-            type='default'
-            icon={<EditOutlined />}
-            onClick={() => openModal('edit', record)}
-          />
-        </TooltipComponent>
-        <TooltipComponent title='Xóa'>
-          <ButtonComponent
-            size='small'
-            type='default'
-            danger
-            icon={<DeleteOutlined />}
-            onClick={() => openModal('delete', record)}
-          />
-        </TooltipComponent>
+        <Can screen='PERMISSION_MANAGEMENT' action='edit'>
+          <TooltipComponent title='Cập nhật'>
+            <ButtonComponent
+              aria-label='Sửa quyền'
+              size='small'
+              type='default'
+              icon={<EditOutlined />}
+              onClick={() => openModal('edit', record)}
+            />
+          </TooltipComponent>
+        </Can>
+        <Can screen='PERMISSION_MANAGEMENT' action='delete'>
+          <TooltipComponent title='Xóa'>
+            <ButtonComponent
+              aria-label='Xoá quyền'
+              size='small'
+              type='default'
+              danger
+              icon={<DeleteOutlined />}
+              onClick={() => openModal('delete', record)}
+            />
+          </TooltipComponent>
+        </Can>
       </div>
     )
   }

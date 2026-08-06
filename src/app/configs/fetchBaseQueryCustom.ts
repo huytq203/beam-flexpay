@@ -25,8 +25,10 @@ import {
   isAdminChangePasswordRequest,
   isPasswordResetRequest,
   normalizePathname,
-  callApi
+  callApi,
+  persistAccessTokenCookie
 } from './fetchBaseQuery.types'
+import type { RootState } from '../store'
 import { updateAccessToken } from '@slices/authActions'
 import { PATHS } from '@constants/pathConstant'
 import { AUTHENTICATION } from '@constants/routersConstant'
@@ -78,16 +80,30 @@ export const openNotification = (
 // BASE QUERY CONFIGURATIONS
 // ============================================================================
 
+/**
+ * Gắn Authorization cho mọi base query.
+ *
+ * Đọc cookie trước, nếu cookie đã bay (hết hạn sớm hơn phiên) thì lấy token
+ * đang giữ trong Redux. Thiếu bước fallback này request sẽ đi "trần" và server
+ * trả 401 dù phiên vẫn còn refresh token dùng được.
+ */
+const prepareAuthHeaders = (
+  headers: Headers,
+  { getState }: Pick<BaseQueryApi, 'getState'>
+): Headers => {
+  const accessToken =
+    Cookies.get(CookieKey.ACCESS_TOKEN) ?? (getState() as RootState).auth.accessToken
+
+  if (accessToken) {
+    headers.set('authorization', `Bearer ${accessToken}`)
+  }
+  return headers
+}
+
 const baseAuthQuery = fetchBaseQuery({
   baseUrl: ENV.API_LOGIN,
   credentials: 'include',
-  prepareHeaders: (headers) => {
-    const accessToken = Cookies.get(CookieKey.ACCESS_TOKEN)
-    if (accessToken) {
-      headers.set('authorization', `Bearer ${accessToken}`)
-    }
-    return headers
-  }
+  prepareHeaders: prepareAuthHeaders
 })
 
 const baseRefreshQuery = fetchBaseQuery({
@@ -97,49 +113,26 @@ const baseRefreshQuery = fetchBaseQuery({
 
 const baseQueryOld = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL,
-  prepareHeaders: (headers) => {
-    const accessToken = Cookies.get(CookieKey.ACCESS_TOKEN)
-    if (accessToken) {
-      headers.set('authorization', `Bearer ${accessToken}`)
-    }
-    return headers
-  }
+  prepareHeaders: prepareAuthHeaders
 })
 
 
 export const baseQueryFee = fetchBaseQuery({
   baseUrl: ENV.API_FEE,
   credentials: 'include',
-  prepareHeaders: (headers) => {
-    const accessToken = Cookies.get(CookieKey.ACCESS_TOKEN)
-    if (accessToken) {
-      headers.set('authorization', `Bearer ${accessToken}`)
-    }
-    return headers
-  }
+  prepareHeaders: prepareAuthHeaders
 })
+
 export const baseQueryWalletCore = fetchBaseQuery({
   baseUrl: ENV.API_WALLETCORE,
   credentials: 'include',
-  prepareHeaders: (headers) => {
-    const accessToken = Cookies.get(CookieKey.ACCESS_TOKEN)
-    if (accessToken) {
-      headers.set('authorization', `Bearer ${accessToken}`)
-    }
-    return headers
-  }
+  prepareHeaders: prepareAuthHeaders
 })
 
 export const baseQueryMerchant = fetchBaseQuery({
   baseUrl: ENV.API_MERCHANT,
   credentials: 'include',
-  prepareHeaders: (headers) => {
-    const accessToken = Cookies.get(CookieKey.ACCESS_TOKEN)
-    if (accessToken) {
-      headers.set('authorization', `Bearer ${accessToken}`)
-    }
-    return headers
-  }
+  prepareHeaders: prepareAuthHeaders
 })
 
 
@@ -184,15 +177,15 @@ const refreshAccessToken = async (
 
       // Sử dụng expiresIn từ API (đơn vị giây), fallback 300 giây
       const expiresInSeconds = data?.[TokenType.EXPIRES_IN] || CookieExpiry.ACCESS_TOKEN_SECONDS
-      const expiresInDays = expiresInSeconds / 86400
-      Cookies.set(CookieKey.ACCESS_TOKEN, newAccessToken, { expires: expiresInDays })
+      // Sử dụng refreshExpiresIn từ API (đơn vị giây), fallback 1800 giây
+      const refreshExpiresInSeconds = data?.[TokenType.REFRESH_EXPIRES_IN] || CookieExpiry.REFRESH_TOKEN_SECONDS
+
+      persistAccessTokenCookie(newAccessToken, refreshExpiresInSeconds)
 
       // Cập nhật Redux store với access token mới và permissions
       api.dispatch(updateAccessToken({ token: newAccessToken, expiresIn: expiresInSeconds }))
 
       if (data?.[TokenType.REFRESH_TOKEN]) {
-        // Sử dụng refreshExpiresIn từ API (đơn vị giây), fallback 1800 giây
-        const refreshExpiresInSeconds = data?.[TokenType.REFRESH_EXPIRES_IN] || CookieExpiry.REFRESH_TOKEN_SECONDS
         const refreshExpiresInDays = refreshExpiresInSeconds / 86400
         Cookies.set(CookieKey.REFRESH_TOKEN, data[TokenType.REFRESH_TOKEN], { expires: refreshExpiresInDays })
       }

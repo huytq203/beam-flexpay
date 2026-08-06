@@ -27,6 +27,9 @@
       "@/*": [
         "./src/*"
       ],
+      "@icons/*": [
+        "./src/components/icons/*"
+      ],
       "@configs/*": [
         "./src/app/configs/*"
       ],

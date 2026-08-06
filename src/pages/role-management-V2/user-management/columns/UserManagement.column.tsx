@@ -1,14 +1,16 @@
 import {
   ApartmentOutlined,
   CheckCircleFilled,
-  EditOutlined,
   EyeOutlined,
-  MinusCircleIcon
+  MinusCircleIcon,
+  KeyIcon,
+
 } from '@components/icons'
 import { ButtonComponent, TooltipComponent } from '@components/index'
 import { UserInfor } from '@type/userManagement'
 import { ColumnType } from 'antd/es/table'
 import { ModalType, SelectedUser } from '../types/UserManagement.type'
+import { Can } from '@/app/permissions'
 
 interface Props {
   openModal: (type: ModalType, user?: SelectedUser | null) => void
@@ -33,7 +35,7 @@ export const getUserManagementColumn = ({
       dataIndex: 'firstName',
       align: 'left',
       render: (value, record) => {
-        const fullName = `${record.lastName || ''} ${record.firstName || ''}`.trim()
+        const fullName = `${record.firstName || ''} ${record.lastName || ''}`.trim()
         return fullName || '--'
       }
     },
@@ -128,33 +130,42 @@ export const getUserManagementColumn = ({
       fixed: 'right',
       render: (_, record) => (
         <div className='flex justify-center items-center gap-1'>
-          <TooltipComponent title='Chỉnh sửa'>
-            <ButtonComponent
-              size='small'
-              type='default'
-              icon={<EditOutlined />}
-              onClick={() => openModal('edit', record)}
-              hidden
-            />
-          </TooltipComponent>
-          <TooltipComponent title='Xem chi tiết'>
-            <ButtonComponent
-              size='small'
-              type='default'
-              className='text-blue-600'
-              icon={<EyeOutlined />}
-              onClick={() => openModal('viewDetail', record)}
-            />
-          </TooltipComponent>
-          <TooltipComponent title='Gán nhóm quyền'>
-            <ButtonComponent
-              size='small'
-              type='default'
-              className='text-violet-600'
-              icon={<ApartmentOutlined />}
-              onClick={() => openModal('assignRoles', record)}
-            />
-          </TooltipComponent>
+          <Can screen='USER_ACCOUNT' action='viewDetail'>
+            <TooltipComponent title='Xem chi tiết'>
+              <ButtonComponent
+                aria-label='Xem chi tiết'
+                size='small'
+                type='default'
+                className='text-blue-600'
+                icon={<EyeOutlined />}
+                onClick={() => openModal('viewDetail', record)}
+              />
+            </TooltipComponent>
+          </Can>
+          <Can screen='USER_ACCOUNT' action='assignRoles'>
+            <TooltipComponent title='Gán nhóm quyền'>
+              <ButtonComponent
+                aria-label='Gán nhóm quyền'
+                size='small'
+                type='default'
+                className='text-violet-600'
+                icon={<ApartmentOutlined />}
+                onClick={() => openModal('assignRoles', record)}
+              />
+            </TooltipComponent>
+          </Can>
+          <Can screen='USER_ACCOUNT' action='resetPassword'>
+            <TooltipComponent title='Reset mật khẩu'>
+              <ButtonComponent
+                aria-label='Đặt lại mật khẩu'
+                size='small'
+                type='default'
+                className='text-yellow-600'
+                icon={<KeyIcon />}
+                onClick={() => openModal('resetPassword', record)}
+              />
+            </TooltipComponent>
+          </Can>
         </div>
       )
     }

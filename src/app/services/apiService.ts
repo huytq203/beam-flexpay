@@ -64,7 +64,7 @@ export const apiMerchant = createApi({
 export const authApiService = createApi({
     reducerPath: 'authApi',
     baseQuery: fetchBaseQueryCustom,
-    tagTypes: ['Auth', 'Profile', 'roleManagement','Permission','PermissionAssign','EKYC'],
+    tagTypes: ['Auth', 'Profile', 'roleManagement', 'Permission', 'PermissionAssign', 'EKYC', 'UserManagement'],
     endpoints: () => ({}),
     refetchOnMountOrArgChange: true
 })

@@ -29,6 +29,7 @@ const DialogUserDetail = ({ userId }: Props) => {
             email: data.email,
             firstName: data.firstName,
             lastName: data.lastName,
+            phoneNumber: data.phoneNumber,
             enabled: data.enabled,
             emailVerified: data.emailVerified,
             createdTimestamp: data.createdTimestamp ?? null,
@@ -98,7 +99,7 @@ const DialogUserDetail = ({ userId }: Props) => {
                 </div>
                 <div className='col-span-1'>
                   <h1 className='font-bold'>Số điện thoại</h1>
-                  <p className='font-medium'>{selectedUser?.emailVerified || '--'}</p>
+                  <p className='font-medium'>{selectedUser?.phoneNumber || '--'}</p>
                 </div>
               </div>
             </div>

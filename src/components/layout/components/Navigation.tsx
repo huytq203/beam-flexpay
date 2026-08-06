@@ -1,11 +1,12 @@
 import {
   _FEEMANAGEMENT_V4,
-  _ROLEMANAGEMENT_V2,
-  _WALLETADMINISTRATION,
   _MERCHANT,
+  _ROLEMANAGEMENT_V2,
   _TRANSACTIONMANAGEMENT,
-
+  _WALLETADMINISTRATION
 } from '@constants/routersConstant'
+import type { ScreenId } from '@/app/permissions'
+import type { Key, ReactNode } from 'react'
 import i18n from '@languages/i18n'
 import {
   ArrowsLeftRightIcon,
@@ -23,11 +24,12 @@ import {
   UsersThreeIcon,
   WalletIcon
 } from '@phosphor-icons/react'
-import { ItemType } from 'antd/es/menu/interface'
-
-export type ItemTypeCustom = ItemType & {
+export interface ItemTypeCustom {
+  key: Key
+  icon?: ReactNode
+  label?: ReactNode
   link?: string
-  permission?: string | string[]
+  screen?: ScreenId
   children?: ItemTypeCustom[]
 }
 
@@ -35,7 +37,7 @@ export const COlOR = 'rgb(43,217,208)'
 const size = 20
 const weight = 'regular'
 
-const feeManagementV4 = {
+const feeManagementV4: ItemTypeCustom = {
   key: _FEEMANAGEMENT_V4,
   icon: (
     <GearIcon
@@ -47,7 +49,7 @@ const feeManagementV4 = {
   children: [
     {
       key: 'fee-managementV4',
-      permission: ['FEE:FULL', 'FEE:VIEW', 'FEE:CREATE', 'FEE:UPDATE', 'FEE:DELETE', 'ADMIN:FULL'],
+      screen: 'FEE_POLICY',
       icon: (
         <WalletIcon
           size={size}
@@ -59,7 +61,7 @@ const feeManagementV4 = {
     },
     {
       key: 'fee-assignmentV4',
-      permission: ['FEE:FULL', 'FEE:VIEW', 'FEE:CREATE', 'FEE:UPDATE', 'FEE:DELETE', 'ADMIN:FULL'],
+      screen: 'FEE_ASSIGNMENT',
       icon: (
         <CurrencyCircleDollarIcon
           size={size}
@@ -73,7 +75,7 @@ const feeManagementV4 = {
   label: 'Quản lý phí',
 }
 
-const roleManagementV2 = {
+const roleManagementV2: ItemTypeCustom = {
   key: _ROLEMANAGEMENT_V2,
   icon: (
     <UserGearIcon
@@ -86,7 +88,7 @@ const roleManagementV2 = {
   children: [
     {
       key: 'user-account',
-      permission: ['ROLE:FULL', 'ROLE:VIEW', 'ROLE:CREATE', 'ROLE:UPDATE', 'ROLE:DELETE', 'ADMIN:FULL'],
+      screen: 'USER_ACCOUNT',
       icon: (
         <UsersThreeIcon
           size={size}
@@ -98,7 +100,7 @@ const roleManagementV2 = {
     },
     {
       key: 'permission-management',
-      permission: ['ROLE:FULL', 'ROLE:VIEW', 'ROLE:CREATE', 'ROLE:UPDATE', 'ROLE:DELETE', 'ADMIN:FULL'],
+      screen: 'ROLE_MANAGEMENT',
       icon: (
         <ShieldCheckIcon
           size={size}
@@ -110,7 +112,7 @@ const roleManagementV2 = {
     },
     {
       key: 'role-management',
-      permission: ['ROLE:FULL', 'ROLE:VIEW', 'ROLE:CREATE', 'ROLE:UPDATE', 'ROLE:DELETE', 'ADMIN:FULL'],
+      screen: 'PERMISSION_MANAGEMENT',
       icon: (
         <LockKeyOpenIcon
           size={size}
@@ -124,7 +126,7 @@ const roleManagementV2 = {
 
 }
 
-const walletManagement = {
+const walletManagement: ItemTypeCustom = {
   key: _WALLETADMINISTRATION,
   icon: (
     <WalletIcon
@@ -137,7 +139,7 @@ const walletManagement = {
   children: [
     {
       key: 'e-walletManagement',
-      permission: ['WALLET:FULL', 'WALLET:VIEW', 'WALLET:CREATE', 'WALLET:UPDATE', 'WALLET:DELETE', 'ADMIN:FULL'],
+      screen: 'EWALLET_MANAGEMENT',
       icon: (
         <WalletIcon
           size={size}
@@ -149,7 +151,7 @@ const walletManagement = {
     },
     {
       key: 'confirm-eKYC',
-      permission: ['WALLET:FULL', 'WALLET:VIEW', 'WALLET:CREATE', 'WALLET:UPDATE', 'WALLET:DELETE', 'ADMIN:FULL'],
+      screen: 'CONFIRM_EKYC',
       icon: (
         <FingerprintIcon
           size={size}
@@ -164,7 +166,7 @@ const walletManagement = {
 }
 
 
-const transactionManagement = {
+const transactionManagement: ItemTypeCustom = {
   key: _TRANSACTIONMANAGEMENT,
   icon: (
     <ArrowsLeftRightIcon
@@ -177,7 +179,7 @@ const transactionManagement = {
   children: [
     {
       key: 'transaction-wallet',
-      permission: ['WALLET:FULL', 'WALLET:VIEW', 'WALLET:CREATE', 'WALLET:UPDATE', 'WALLET:DELETE', 'ADMIN:FULL'],
+      screen: 'TRANSACTION_WALLET',
       icon: (
         <ArrowsLeftRightIcon
           size={size}
@@ -189,7 +191,7 @@ const transactionManagement = {
     },
     {
       key: 'frozen-transactions',
-      permission: ['TRANSACTION:FULL', 'TRANSACTION:VIEW', 'TRANSACTION:CREATE', 'TRANSACTION:UPDATE', 'TRANSACTION:DELETE', 'ADMIN:FULL'],
+      screen: 'FROZEN_TRANSACTIONS',
       icon: (
         <LockIcon
           size={size}
@@ -199,21 +201,9 @@ const transactionManagement = {
       ),
       label: 'Giao dịch đóng băng'
     },
-    // {
-    //   key: 'refund-management',
-    //   permission: ['TRANSACTION:FULL', 'TRANSACTION:VIEW', 'TRANSACTION:CREATE', 'TRANSACTION:UPDATE', 'TRANSACTION:DELETE', 'ADMIN:FULL'],
-    //   icon: (
-    //     <ClockCounterClockwiseIcon
-    //       size={size}
-    //       weight={weight}
-    //       color={COlOR}
-    //     />
-    //   ),
-    //   label: 'Quản lý hoàn tiền'
-    // },
     {
       key: 'system-ledger',
-      permission: ['TRANSACTION:FULL', 'TRANSACTION:VIEW', 'TRANSACTION:CREATE', 'TRANSACTION:UPDATE', 'TRANSACTION:DELETE', 'ADMIN:FULL'],
+      screen: 'SYSTEM_LEDGER',
       icon: (
         <ClipboardTextIcon
           size={size}
@@ -225,7 +215,7 @@ const transactionManagement = {
     },
     {
       key: 'withdraw-history',
-      permission: ['TRANSACTION:FULL', 'TRANSACTION:VIEW', 'TRANSACTION:CREATE', 'TRANSACTION:UPDATE', 'TRANSACTION:DELETE', 'ADMIN:FULL'],
+      screen: 'WITHDRAW_HISTORY',
       icon: (
         <MoneyIcon
           size={size}
@@ -238,7 +228,7 @@ const transactionManagement = {
   ]
 }
 
-const merchantManagement = {
+const merchantManagement: ItemTypeCustom = {
   key: _MERCHANT,
   icon: (
     <StorefrontIcon
@@ -251,7 +241,7 @@ const merchantManagement = {
   children: [
     {
       key: 'dashboard-merchant',
-      permission: ['MERCHANT:FULL', 'MERCHANT:VIEW', 'MERCHANT:CREATE', 'MERCHANT:UPDATE', 'MERCHANT:DELETE', 'ADMIN:FULL'],
+      screen: 'MERCHANT_DASHBOARD',
       icon: (
         <ChartBarIcon
           size={size}
@@ -263,7 +253,7 @@ const merchantManagement = {
     },
     {
       key: 'merchant-management',
-      permission: ['MERCHANT:FULL', 'MERCHANT:VIEW', 'MERCHANT:CREATE', 'MERCHANT:UPDATE', 'MERCHANT:DELETE', 'ADMIN:FULL'],
+      screen: 'MERCHANT_MANAGEMENT',
       icon: (
         <StorefrontIcon
           size={size}
@@ -275,7 +265,7 @@ const merchantManagement = {
     },
     {
       key: 'merchant-order',
-      permission: ['MERCHANT:FULL', 'MERCHANT:VIEW', 'MERCHANT:CREATE', 'MERCHANT:UPDATE', 'MERCHANT:DELETE', 'ADMIN:FULL'],
+      screen: 'MERCHANT_ORDER',
       icon: (
         <ClipboardTextIcon
           size={size}

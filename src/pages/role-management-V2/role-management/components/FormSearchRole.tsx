@@ -13,9 +13,10 @@ interface Props {
   onSearch: (data: SearchRoleFormData) => void
   roleOptions: Array<{ value: string; label: string }>
   onAdd: () => void
+  canAdd: boolean
 }
 
-const FormSearchRole = ({ onSearch, roleOptions, onAdd }: Props) => {
+const FormSearchRole = ({ onSearch, roleOptions, onAdd, canAdd }: Props) => {
   const { svg } = useSVG()
   const { control, handleSubmit, reset } = useForm<SearchRoleFormData>({
     defaultValues: { keyword: '' }
@@ -52,12 +53,14 @@ const FormSearchRole = ({ onSearch, roleOptions, onAdd }: Props) => {
             content='Tìm kiếm'
             htmlType='submit'
           />
-          <ButtonComponent
-            icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
-            content='Thêm mới'
-            htmlType='button'
-            onClick={onAdd}
-          />
+          {canAdd && (
+            <ButtonComponent
+              icon={svg('/icons.svg#hugeicons-plus-sign-circle')}
+              content='Thêm mới'
+              htmlType='button'
+              onClick={onAdd}
+            />
+          )}
           <ButtonComponent
             icon={<BroomIcon size={18} />}
             type='default'

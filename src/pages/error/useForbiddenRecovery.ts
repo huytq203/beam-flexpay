@@ -26,7 +26,7 @@ export function useForbiddenRecovery() {
   const location = useLocation()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
-  const [navigation] = useNavigationEw() as [ItemTypeCustom[], unknown]
+  const [navigation] = useNavigationEw()
   const email = useAppSelector((state) => state.auth.profile.email)
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle')
   const state = location.state as ForbiddenLocationState | null

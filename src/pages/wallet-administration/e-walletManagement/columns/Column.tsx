@@ -6,40 +6,33 @@ import {
   TooltipComponent,
   TypographyText
 } from '@components/index'
-import { MenuProps } from 'antd'
 import { ButtonComponent } from '@components/index'
 import { AcountItem } from '@pages/wallet-administration/e-walletManagement/types/ResponseWalletAccount.type'
 import { formatNumber } from '@utils/formatNumber'
 import dayjs from 'dayjs'
 import { TYPEDATE } from '@constants/date.constant'
 import { useNavigate } from 'react-router-dom'
-import { StatusKey } from '../types/WalletAccount.enum'
 import StatusBadge from '@components/status-badge/StatusBadge'
-import { WALLETADMINISTRATION } from '@constants/routersConstant'
 import * as Icon from '@components/icons'
 import { cn } from '@/lib/utils/cn'
 import { statusEKYC } from '../constants/StatusEKYC.constant'
-
-type ModalType = 'freeze' | 'unfreeze' | 'lock' | 'unlock' | null
-
-interface SelectedAccount {
-  id: string
-  ownerId?: string
-  ownerName?: string
-  balance?: number
-  holdBalance?: number
-  currency?: string
-}
+import type { ScreenActionId } from '@/app/permissions'
+import {
+  buildWalletRowActions,
+  type WalletModalType
+} from './wallet-row-actions'
 
 interface ColumnOptions {
-  openModal?: (type: ModalType, account: SelectedAccount) => void
+  openModal?: (type: WalletModalType, account: AcountItem) => void
   handleGetFreeze?: () => void
   navigate: ReturnType<typeof useNavigate>
+  can: (action: ScreenActionId<'EWALLET_MANAGEMENT'>) => boolean
 }
 
 export const getColumn = ({
   openModal,
-  navigate
+  navigate,
+  can
 }: ColumnOptions): ColumnType<AcountItem>[] => {
   return [
     {
@@ -122,22 +115,6 @@ export const getColumn = ({
         )
       }
     },
-    // {
-    //   title: 'Thông tin liên hệ',
-    //   align: 'left',
-    //   render: (_, record) => (
-    //     <div>
-    //       <div className='text-gray-500 flex items-center gap-1'>
-    //         <EnvelopeIcon />
-    //         {(record as any).email ?? '--'}
-    //       </div>
-    //       <div className='text-gray-500 flex items-center gap-1'>
-    //         <PhoneIcon />
-    //         {(record as any).phone ?? '--'}
-    //       </div>
-    //     </div>
-    //   ),
-    // },
     {
       title: 'Số dư ví',
       align: 'right',
@@ -171,23 +148,12 @@ export const getColumn = ({
         </div>
       )
     },
-    // {
-    //   title: 'Giới tính / CCCD',
-    //   align: 'center',
-    //   render: (_, record) => (
-    //     <div>
-    //       <div className='text-gray-500'>{(record as any).gioiTinh ?? '--'}</div>
-    //       <div className='text-gray-500'>{(record as any).cccd ?? '--'}</div>
-    //     </div>
-    //   ),
-    // },
     {
       title: 'Trạng thái',
       align: 'center',
       width: 180,
       render: (_, record) => (
         <div className='flex flex-wrap items-center justify-center gap-1'>
-          {/* <StatusBadge status={record.status as StatusKey} /> */}
           <StatusBadge
             status={String(record.status)}
             config={{
@@ -236,40 +202,11 @@ export const getColumn = ({
       align: 'center',
       width: 100,
       render: (_, record) => {
-        const isLocked = record.status === StatusKey.LOCKED
-        const isFrozen = record.status === StatusKey.FROZEN
-        const isSystem = record.ownerType === 'SYSTEM'
-
-        const items: MenuProps['items'] = [
-          {
-            key: '1',
-            label: 'Xem chi tiết',
-            onClick: () =>
-              navigate(
-                `${WALLETADMINISTRATION}/e-walletManagement/${record.id}`
-              )
-          },
-          {
-            key: '2',
-            label: isLocked ? 'Mở khóa tài khoản' : 'Khóa tài khoản',
-            onClick: () => {
-              openModal?.(isLocked ? 'unlock' : 'lock', record)
-            },
-            disabled: isSystem || isFrozen
-          },
-          {
-            key: '3',
-            label: 'Đóng băng số dư',
-            onClick: () => openModal?.('freeze', record),
-            disabled: isSystem || (record.balance ?? 0) === 0
-          },
-
-          {
-            key: '5',
-            label: 'Hủy ví',
-            danger: true
-          }
-        ]
+        const items = buildWalletRowActions(record, {
+          can,
+          navigate,
+          openModal
+        })
 
         return (
           <DropDownComponent

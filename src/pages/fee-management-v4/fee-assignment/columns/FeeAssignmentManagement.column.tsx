@@ -13,6 +13,8 @@ import { STATUS_CONFIG } from '../constants/FeeAssignment.constant'
 import { TYPEDATE } from '@constants/date.constant'
 import dayjs from 'dayjs'
 import { PATHS } from '@constants/pathConstant'
+import FeeAssignmentApprovalAction from '../components/FeeAssignmentApprovalAction'
+import { Can } from '@/app/permissions'
 
 
 interface prop {
@@ -22,12 +24,10 @@ interface prop {
   onReject?: (record: FeeAssignment) => void
   onToggleStatus?: (record: FeeAssignment) => void
   navigate: (path: string) => void
-  canUpdate?: boolean
 }
 export const getFeeAssignColumn = ({
   onToggleStatus,
-  navigate,
-  canUpdate = false,
+  navigate
 }: prop): ColumnsType<FeeAssignment> => {
 
   return [
@@ -92,15 +92,16 @@ export const getFeeAssignColumn = ({
       title: 'Hành động',
       dataIndex: 'Action',
       fixed: 'right',
-      width: 100,
+      width: 132,
       align: 'center' as const,
 
       render: (value, record: FeeAssignment) => {
         return (
           <div className='flex gap-1 justify-center'>
-            {canUpdate && (
+            <Can screen='FEE_ASSIGNMENT' action='edit'>
               <TooltipComponent title='Cập nhật'>
                 <ButtonComponent
+                  aria-label='Cập nhật gán phí'
                   size='small'
                   type='default'
                   icon={<EditOutlined />}
@@ -109,10 +110,14 @@ export const getFeeAssignColumn = ({
                   }}
                 />
               </TooltipComponent>
-            )}
-            {canUpdate && (
+            </Can>
+            <Can screen='FEE_ASSIGNMENT' action='approve'>
+              <FeeAssignmentApprovalAction assignment={record} />
+            </Can>
+            <Can screen='FEE_ASSIGNMENT' action='toggleActive'>
               <TooltipComponent title={record.status === 'ACTIVE' ? 'Khóa' : 'Mở khóa'}>
                 <ButtonComponent
+                  aria-label={record.status === 'ACTIVE' ? 'Khóa gán phí' : 'Mở khóa gán phí'}
                   size='small'
                   type='default'
                   icon={
@@ -125,7 +130,7 @@ export const getFeeAssignColumn = ({
                   onClick={() => onToggleStatus?.(record)}
                 />
               </TooltipComponent>
-            )}
+            </Can>
           </div>
         )
       }

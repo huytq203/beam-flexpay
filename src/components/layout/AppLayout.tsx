@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 import type { TFunction } from 'i18next'
 import { useBoolean } from 'ahooks'
 import Cookies from 'js-cookie'
-
 import {
   SidebarProvider,
   SidebarInset,
@@ -27,9 +26,8 @@ import Header from './Header'
 import { EmployeePassword } from './components/EmployeePassword'
 import EmployeeProfile from './components/EmployeeProfile'
 import ScreenLoading from '@components/screen-loading/ScreenLoading'
-
 import { useAppSelector } from '@hooks/hook'
-import usePermission from '@hooks/usePermission'
+import { useRouteAccess } from '@/app/permissions'
 import { initInactivityTracker } from '@configs/fetchBaseQueryCustom'
 import { FORBIDDENERROR } from '@constants/routersConstant'
 import { PATHS } from '@constants/pathConstant'
@@ -142,7 +140,7 @@ function AppLayout() {
   const location = useLocation()
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const isAccess = usePermission()
+  const isAccess = useRouteAccess()
 
   const title = getHeaderTitleKey(location.pathname, t)
   const [modalProfile, { setTrue: showProfile, setFalse: hideProfile }] =
@@ -198,5 +196,4 @@ function AppLayout() {
     </React.Fragment>
   )
 }
-
 export default AppLayout

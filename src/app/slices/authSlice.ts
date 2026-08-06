@@ -3,7 +3,7 @@ import { enhancedAuthApi } from '@services/authEndpoints'
 import { AuthenticationResponse, IUserProfile } from '@type/auth'
 import { DataLogin } from '@type/application'
 import Cookies from 'js-cookie'
-import { CookieKey, CookieExpiry } from '@configs/fetchBaseQuery.types'
+import { CookieKey, CookieExpiry, persistAccessTokenCookie } from '@configs/fetchBaseQuery.types'
 import { updateAccessToken, decodeToken } from './authActions'
 const name = 'authSlice'
 
@@ -16,7 +16,6 @@ export interface IAuthState {
 // Lấy token từ cookie và decode permissions khi app khởi tạo
 const storedToken = Cookies.get(CookieKey.ACCESS_TOKEN)
 const initialTokenInfo = storedToken ? decodeToken(storedToken) : { permissions: [], roles: [], email: '', name: '' }
-const _refresh = Cookies.get(CookieKey.REFRESH_TOKEN)
 const initialState: IAuthState = {
   accessToken: storedToken ?? null,
   refreshToken: '',
@@ -41,19 +40,28 @@ const isAuthenticationResponse = (
 ): data is AuthenticationResponse | DataLogin =>
   'accessToken' in data && typeof data.accessToken === 'string'
 
+/** Ghi token vào cookie + state và đồng bộ thông tin decode từ token. */
+const applyAccessToken = (state: IAuthState, token: string): void => {
+  persistAccessTokenCookie(token)
+  state.accessToken = token
+
+  const tokenInfo = decodeToken(token)
+  state.profile.permissions = tokenInfo.permissions
+  state.profile.roles = tokenInfo.roles
+  state.profile.email = tokenInfo.email
+  state.profile.fullName = tokenInfo.name
+}
+
 const applyAuthentication = (
   state: IAuthState,
   data: AuthenticationResponse | DataLogin
 ): IAuthState => {
-  const expiresInSeconds =
-    data.expiresIn || CookieExpiry.ACCESS_TOKEN_SECONDS
-  Cookies.set(CookieKey.ACCESS_TOKEN, data.accessToken, {
-    expires: expiresInSeconds / 86400
-  })
+  const refreshExpiresInSeconds =
+    data.refreshExpiresIn || CookieExpiry.REFRESH_TOKEN_SECONDS
+
+  persistAccessTokenCookie(data.accessToken, refreshExpiresInSeconds)
 
   if (data.refreshToken) {
-    const refreshExpiresInSeconds =
-      data.refreshExpiresIn || CookieExpiry.REFRESH_TOKEN_SECONDS
     Cookies.set(CookieKey.REFRESH_TOKEN, data.refreshToken, {
       expires: refreshExpiresInSeconds / 86400
     })
@@ -92,32 +100,14 @@ const authSlice = createSlice({
       state.profile.permissions = action.payload
     },
     setAccessToken: (state, action: PayloadAction<{ token: string; expiresIn?: number }>) => {
-      const { token, expiresIn } = action.payload
-      const expiresInSeconds = expiresIn || CookieExpiry.ACCESS_TOKEN_SECONDS
-      const expiresInDays = expiresInSeconds / 86400
-      Cookies.set(CookieKey.ACCESS_TOKEN, token, { expires: expiresInDays })
-      state.accessToken = token
-      const tokenInfo = decodeToken(token)
-      state.profile.permissions = tokenInfo.permissions
-      state.profile.roles = tokenInfo.roles
-      state.profile.email = tokenInfo.email
-      state.profile.fullName = tokenInfo.name
+      applyAccessToken(state, action.payload.token)
     }
   },
   extraReducers: (builder) => {
     builder
       // Lắng nghe updateAccessToken action từ authActions (được dispatch sau khi refresh token)
       .addCase(updateAccessToken, (state, action) => {
-        const { token, expiresIn } = action.payload
-        const expiresInSeconds = expiresIn || CookieExpiry.ACCESS_TOKEN_SECONDS
-        const expiresInDays = expiresInSeconds / 86400
-        Cookies.set(CookieKey.ACCESS_TOKEN, token, { expires: expiresInDays })
-        state.accessToken = token
-        const tokenInfo = decodeToken(token)
-        state.profile.permissions = tokenInfo.permissions
-        state.profile.roles = tokenInfo.roles
-        state.profile.email = tokenInfo.email
-        state.profile.fullName = tokenInfo.name
+        applyAccessToken(state, action.payload.token)
       })
       // Lắng nghe userLogin từ authEndpoints (API mới - ENV.API_LOGIN)
       .addMatcher(

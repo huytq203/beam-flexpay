@@ -5,49 +5,88 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 import svgr from 'vite-plugin-svgr'
 import tailwindcss from '@tailwindcss/vite';
+
+const DEFAULT_API_TARGET = 'https://api.dev.ewallet.flexpay.vn'
+const DEFAULT_CMS_TARGET = 'https://cms.ewallet.devops.beamewa.com.vn'
+
+// Các biến env chứa base URL service. Mỗi biến TỰ quyết định backend của nó,
+// nên đổi 1 service sang local không kéo theo các service còn lại.
+const SERVICE_ENV_KEYS = [
+  'VITE_API_URL',
+  'VITE_IMAGE_URL',
+  'VITE_FEE_API_URL',
+  'VITE_API_LOGIN',
+  'VITE_API_WALLETCORE',
+  'VITE_API_MERCHANT',
+] as const
+
+const getOrigin = (value?: string): string | undefined => {
+  try {
+    return new URL(value ?? '').origin
+  } catch {
+    return undefined
+  }
+}
+
+// Origin lạ (localhost, staging...) được cấp prefix riêng:
+// http://localhost:8081 -> /proxy-localhost-8081
+const toProxyPrefix = (origin: string): string => {
+  const { hostname, port, protocol } = new URL(origin)
+  const normalizedPort = port || (protocol === 'https:' ? '443' : '80')
+  return `/proxy-${hostname.replace(/[^a-zA-Z0-9]/g, '-')}-${normalizedPort}`
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const isProduction = mode === 'production'
   const PORT = env.VITE_PORT
   const useProxy = env.VITE_PROXY === 'true'
 
-  const proxyConfig = useProxy
-    ? {
-      '/proxy-api': {
-        target: env.VITE_PROXY_API_TARGET || 'https://api.dev.ewallet.flexpay.vn',
-        changeOrigin: true,
-        secure: false,
-        rewrite: (p: string) => p.replace(/^\/proxy-api/, ''),
-        headers: {
-          Origin: env.VITE_PROXY_API_TARGET || 'https://api.dev.ewallet.flexpay.vn',
-          Referer: (env.VITE_PROXY_API_TARGET || 'https://api.dev.ewallet.flexpay.vn') + '/',
-        },
-      },
-      '/proxy-cms': {
-        target: env.VITE_PROXY_CMS_TARGET || 'https://cms.ewallet.devops.beamewa.com.vn',
-        changeOrigin: true,
-        secure: false,
-        rewrite: (p: string) => p.replace(/^\/proxy-cms/, ''),
-        headers: {
-          Origin: env.VITE_PROXY_CMS_TARGET || 'https://cms.ewallet.devops.beamewa.com.vn',
-          Referer: (env.VITE_PROXY_CMS_TARGET || 'https://cms.ewallet.devops.beamewa.com.vn') + '/',
-        },
-      },
+  // Bảng origin -> prefix proxy. Giữ cố định /proxy-api và /proxy-cms để khớp
+  // rewrite phía Vercel (vercel.json + api/proxy.ts).
+  const prefixByOrigin = new Map<string, string>()
+  if (useProxy) {
+    prefixByOrigin.set(getOrigin(env.VITE_PROXY_API_TARGET) ?? DEFAULT_API_TARGET, '/proxy-api')
+    prefixByOrigin.set(getOrigin(env.VITE_PROXY_CMS_TARGET) ?? DEFAULT_CMS_TARGET, '/proxy-cms')
+
+    for (const key of SERVICE_ENV_KEYS) {
+      const origin = getOrigin(env[key])
+      if (!origin || prefixByOrigin.has(origin)) continue
+      prefixByOrigin.set(origin, toProxyPrefix(origin))
     }
+  }
+
+  const proxyConfig = useProxy
+    ? Object.fromEntries(
+      [...prefixByOrigin]
+        // Prefix dài đứng trước để /proxy-api không "nuốt" /proxy-api-dev-...
+        .sort(([, a], [, b]) => b.length - a.length)
+        .map(([origin, prefix]) => [
+          prefix,
+          {
+            target: origin,
+            changeOrigin: true,
+            secure: false,
+            rewrite: (p: string) => p.slice(prefix.length),
+            headers: {
+              Origin: origin,
+              Referer: `${origin}/`,
+            },
+          },
+        ]),
+    )
     : undefined
 
   const defineEnv: Record<string, string> = {}
   if (useProxy) {
-    const apiTarget = env.VITE_PROXY_API_TARGET || 'https://api.dev.ewallet.flexpay.vn'
-    const cmsTarget = env.VITE_PROXY_CMS_TARGET || 'https://cms.ewallet.devops.beamewa.com.vn'
-
-    // Ghi đè các biến môi trường thành dạng /proxy-... thay vì HTTP absolute khi bật proxy
-    defineEnv['import.meta.env.VITE_API_URL'] = JSON.stringify(env.VITE_API_URL?.replace(cmsTarget, '/proxy-cms'))
-    defineEnv['import.meta.env.VITE_IMAGE_URL'] = JSON.stringify(env.VITE_IMAGE_URL?.replace(cmsTarget, '/proxy-cms'))
-    defineEnv['import.meta.env.VITE_FEE_API_URL'] = JSON.stringify(env.VITE_FEE_API_URL?.replace(apiTarget, '/proxy-api'))
-    defineEnv['import.meta.env.VITE_API_LOGIN'] = JSON.stringify(env.VITE_API_LOGIN?.replace(apiTarget, '/proxy-api'))
-    defineEnv['import.meta.env.VITE_API_WALLETCORE'] = JSON.stringify(env.VITE_API_WALLETCORE?.replace(apiTarget, '/proxy-api'))
-    defineEnv['import.meta.env.VITE_API_MERCHANT'] = JSON.stringify(env.VITE_API_MERCHANT?.replace(apiTarget, '/proxy-api'))
+    // Ghi đè base URL thành /proxy-... theo đúng origin của từng service
+    for (const key of SERVICE_ENV_KEYS) {
+      const rawUrl = env[key]
+      const origin = getOrigin(rawUrl)
+      const prefix = origin ? prefixByOrigin.get(origin) : undefined
+      if (!origin || !prefix) continue
+      defineEnv[`import.meta.env.${key}`] = JSON.stringify(prefix + rawUrl.slice(origin.length))
+    }
   }
   return {
     define: defineEnv,
@@ -132,6 +171,10 @@ export default defineConfig(({ mode }) => {
         {
           find: '@',
           replacement: path.resolve(__dirname, 'src')
+        },
+        {
+          find: '@icon',
+          replacement: path.resolve(__dirname, 'src/components/icon')
         },
         {
           find: '@pages',
