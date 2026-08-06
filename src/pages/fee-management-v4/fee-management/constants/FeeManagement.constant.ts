@@ -3,6 +3,7 @@ export enum statusType {
   ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',
   LOCKED = 'LOCKED',
+  REJECTED='REJECTED'
 }
 
 export const STATUS_LABEL: Record<statusType, string> = {
@@ -10,6 +11,7 @@ export const STATUS_LABEL: Record<statusType, string> = {
   [statusType.ACTIVE]: 'Hoạt động',
   [statusType.INACTIVE]: 'Không hoạt động',
   [statusType.LOCKED]: 'Khóa',
+  [statusType.REJECTED]:'Từ chối'
 }
 
 export const STATUS_CONFIG: Record<statusType, { label: string; className: string, shimmerColor: string }> = {
@@ -30,6 +32,11 @@ export const STATUS_CONFIG: Record<statusType, { label: string; className: strin
   },
   [statusType.LOCKED]: {
     label: 'Khóa',
+    className: 'danger-status',
+    shimmerColor: 'rgba(239, 68, 68, 0.1)',
+  },
+  [statusType.REJECTED]: {
+    label: 'Từ chối',
     className: 'danger-status',
     shimmerColor: 'rgba(239, 68, 68, 0.1)',
   }

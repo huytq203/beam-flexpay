@@ -69,7 +69,8 @@ export enum statusType {
   INIT ='INIT',
   ACTIVE ='ACTIVE',
   INACTIVE ='INACTIVE',
-  EXPIRED ='EXPIRED'
+  EXPIRED ='EXPIRED',
+  REJECTED='REJECTED'
 }
 
 export const statusTypeLable={
@@ -77,6 +78,7 @@ export const statusTypeLable={
     [statusType.ACTIVE]: 'Hoạt động',
     [statusType.INACTIVE]: 'Không hoạt động',
     [statusType.EXPIRED]: 'Hết hạn',
+    [statusType.REJECTED]: 'Từ chối',
 }
 
 
@@ -98,6 +100,11 @@ export const STATUS_CONFIG: Record<statusType, { label: string; className: strin
   },
   [statusType.EXPIRED]: {
     label: 'Hết hạn',
+    className: 'danger-status',
+    shimmerColor: 'rgba(239, 68, 68, 0.1)',
+  },
+  [statusType.REJECTED]: {
+    label: 'Từ chối',
     className: 'danger-status',
     shimmerColor: 'rgba(239, 68, 68, 0.1)',
   }
