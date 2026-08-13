@@ -12,7 +12,11 @@ const useFetchDataPermission = () => {
     sortDirection,
     setPage,
     setPageSize
-  } = usePagination({ defaultPageSize: 10 })
+  } = usePagination({
+    defaultPageSize: 10,
+    defaultSort: 'createdAt',
+    defaultSortBy: 'DESC'
+  })
   const [keyword, setKeyword] = useState('')
 
   const query = useGetPermissionByKeyQuery({

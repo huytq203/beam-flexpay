@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildPermissionCode, grants } from '../access'
+import { buildPermissionCode, grants, grantsModuleAccess } from '../access'
 import { ACTION, MODULE, SUPER_ADMIN_PERMISSION } from '../modules'
 
 describe('buildPermissionCode', () => {
@@ -37,10 +37,32 @@ describe('grants', () => {
     expect(grants([], 'EWALLET:ADMIN:FULL')).toBe(false)
   })
 
-  it('module BE chưa phát hành thì tạm cho qua', () => {
-    expect(grants([], 'EWALLET:FEE:UPDATE')).toBe(true)
-    expect(grants([], 'EWALLET:WALLET:VIEW')).toBe(true)
-    expect(grants([], 'EWALLET:TRANSACTION:VIEW')).toBe(true)
-    expect(grants([], 'EWALLET:MERCHANT:CREATE')).toBe(true)
+  it('chặn mọi module khi không có quyền tương ứng', () => {
+    expect(grants([], 'EWALLET:FEE:UPDATE')).toBe(false)
+    expect(grants([], 'EWALLET:WALLET:VIEW')).toBe(false)
+    expect(grants([], 'EWALLET:TRANSACTION:VIEW')).toBe(false)
+    expect(grants([], 'EWALLET:MERCHANT:CREATE')).toBe(false)
+  })
+
+  it('FULL của module mới vẫn bao trùm action cùng module', () => {
+    expect(grants(['EWALLET:FEE:FULL'], 'EWALLET:FEE:UPDATE')).toBe(true)
+    expect(grants(['EWALLET:FEE:FULL'], 'EWALLET:WALLET:VIEW')).toBe(false)
+  })
+})
+
+describe('grantsModuleAccess', () => {
+  it.each(['VIEW', 'CREATE', 'UPDATE', 'DELETE', 'FULL'] as const)(
+    'cho phép mở module khi có action %s',
+    (action) => {
+      expect(
+        grantsModuleAccess([`EWALLET:FEE:${action}`], MODULE.FEE)
+      ).toBe(true)
+    }
+  )
+
+  it('không dùng quyền của module khác', () => {
+    expect(
+      grantsModuleAccess(['EWALLET:WALLET:FULL'], MODULE.FEE)
+    ).toBe(false)
   })
 })

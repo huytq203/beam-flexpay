@@ -19,6 +19,11 @@ interface Props {
   onLoadingChange?: (loading: boolean) => void
 }
 
+const PERMISSION_CATALOG_SORT = {
+  sortBy: 'createdAt',
+  sortDirection: 'DESC'
+} as const
+
 const DialogAssignPermissions = ({
   roleId,
   onSuccess,
@@ -37,8 +42,7 @@ const DialogAssignPermissions = ({
   const { data: allPermissionsData, isFetching: isFetchingPage } = useGetPermissionQuery({
     page,
     size: pageSize,
-    sortBy: 'id',
-    sortDirection: 'DESC'
+    ...PERMISSION_CATALOG_SORT
   })
   const catalogSize = Math.max(
     allPermissionsData?.totalElements ?? pageSize,
@@ -50,8 +54,7 @@ const DialogAssignPermissions = ({
       {
         page: 1,
         size: catalogSize,
-        sortBy: 'id',
-        sortDirection: 'DESC'
+        ...PERMISSION_CATALOG_SORT
       },
       { skip: !needsPermissionCatalog }
     )

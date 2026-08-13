@@ -5,8 +5,8 @@ Mọi quyền của frontend được khai báo tại thư mục này. Không vi
 
 ## Thêm màn mới
 
-1. Thêm entry vào `SCREENS` trong `registry.ts`, gồm `path`, `module`, `view`
-   và `actions`.
+1. Thêm entry vào `SCREENS` trong `registry.ts`, gồm `path`, `module` và
+   `actions`.
 2. Dùng `SCREENS.<id>.path` khi khai báo route trong `routes.ts`.
 3. Trỏ item sidebar tới `screen: '<id>'` trong `Navigation.tsx`.
 
@@ -15,11 +15,18 @@ Mọi quyền của frontend được khai báo tại thư mục này. Không vi
 Sửa action tương ứng trong `SCREENS`. Route, sidebar và component sẽ tiếp tục
 dùng chung quyết định từ registry.
 
-## Khi BE phát hành quyền cho module mới
+Mọi screen luôn có sáu action chuẩn: `view`, `create`, `edit`, `delete`,
+`update`, `full`. Action nghiệp vụ riêng như `approve` hoặc `assignRoles` được
+khai báo bổ sung trên screen tương ứng.
 
-Thêm module vào `RELEASED_MODULES` trong `modules.ts`. Trước thời điểm đó module
-được cho qua; sau khi thêm, toàn bộ màn và hành động của module được kiểm tra
-theo registry.
+Sidebar và route được mở khi tài khoản có ít nhất một action chuẩn của đúng
+module. Quyền hành động trong màn vẫn được kiểm tra riêng bằng `Can`.
+
+## Nguyên tắc mặc định
+
+Mọi module đều bị chặn khi không có quyền tương ứng. Khi thêm module mới vào
+`MODULE` và `SCREENS`, cần bảo đảm BE cấp mã quyền trước khi đưa màn vào sử dụng.
+Không thêm cơ chế mặc định cho qua vì sẽ làm lộ sidebar và route ngoài quyền.
 
 ## Dùng trong component
 

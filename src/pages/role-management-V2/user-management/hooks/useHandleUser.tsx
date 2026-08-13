@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react'
 import { ModalType, SelectedUser } from '../types/UserManagement.type'
 import { getUserManagementColumn } from '../columns/UserManagement.column'
 
-const useHandleUser = () => {
+const useHandleUser = (currentUserId?: string) => {
   const [modalType, setModalType] = useState<ModalType>(null)
   const [selectedUser, setSelectedUser] = useState<SelectedUser | null>(null)
 
@@ -17,8 +17,8 @@ const useHandleUser = () => {
   }, [])
 
   const column = useMemo(
-    () => getUserManagementColumn({ openModal }),
-    [openModal]
+    () => getUserManagementColumn({ openModal, currentUserId }),
+    [currentUserId, openModal]
   )
 
   return {

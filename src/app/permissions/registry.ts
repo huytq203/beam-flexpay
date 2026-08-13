@@ -11,17 +11,25 @@ export interface ScreenAccess {
   readonly path: string
   readonly aliasPaths?: readonly string[]
   readonly module: Module
-  readonly view: Action
   readonly actions: Readonly<Record<string, Action>>
 }
+
+/** Bộ action chuẩn có mặt trên mọi screen trong registry. */
+export const DEFAULT_SCREEN_ACTIONS = {
+  view: ACTION.VIEW,
+  create: ACTION.CREATE,
+  edit: ACTION.UPDATE,
+  delete: ACTION.DELETE,
+  update: ACTION.UPDATE,
+  full: ACTION.FULL
+} as const satisfies Readonly<Record<string, Action>>
 
 export const SCREENS = {
   USER_ACCOUNT: {
     path: `${ROLEMANAGEMENT_V2}/user-account`,
     module: MODULE.USER,
-    view: ACTION.VIEW,
     actions: {
-      create: ACTION.CREATE,
+      ...DEFAULT_SCREEN_ACTIONS,
       viewDetail: ACTION.VIEW,
       assignRoles: ACTION.UPDATE,
       resetPassword: ACTION.UPDATE
@@ -31,11 +39,8 @@ export const SCREENS = {
   ROLE_MANAGEMENT: {
     path: `${ROLEMANAGEMENT_V2}/permission-management`,
     module: MODULE.ROLE,
-    view: ACTION.VIEW,
     actions: {
-      create: ACTION.CREATE,
-      edit: ACTION.UPDATE,
-      delete: ACTION.DELETE,
+      ...DEFAULT_SCREEN_ACTIONS,
       assignPermissions: ACTION.UPDATE,
       viewPermissions: ACTION.VIEW,
       viewMembers: ACTION.VIEW
@@ -44,43 +49,40 @@ export const SCREENS = {
   PERMISSION_MANAGEMENT: {
     path: `${ROLEMANAGEMENT_V2}/role-management`,
     module: MODULE.PERMISSION,
-    view: ACTION.VIEW,
-    actions: {
-      create: ACTION.CREATE,
-      edit: ACTION.UPDATE,
-      delete: ACTION.DELETE
-    }
+    actions: { ...DEFAULT_SCREEN_ACTIONS }
   },
   TRANSACTION_WALLET: {
     path: `${TRANSACTIONMANAGEMENT}/transaction-wallet`,
     aliasPaths: [`${WALLETADMINISTRATION}/transaction-wallet`],
     module: MODULE.TRANSACTION,
-    view: ACTION.VIEW,
-    actions: { viewDetail: ACTION.VIEW }
+    actions: {
+      ...DEFAULT_SCREEN_ACTIONS,
+      viewDetail: ACTION.VIEW
+    }
   },
   FROZEN_TRANSACTIONS: {
     path: `${TRANSACTIONMANAGEMENT}/frozen-transactions`,
     module: MODULE.TRANSACTION,
-    view: ACTION.VIEW,
-    actions: {}
+    actions: { ...DEFAULT_SCREEN_ACTIONS }
   },
   SYSTEM_LEDGER: {
     path: `${TRANSACTIONMANAGEMENT}/system-ledger`,
     module: MODULE.TRANSACTION,
-    view: ACTION.VIEW,
-    actions: { viewDetail: ACTION.VIEW }
+    actions: {
+      ...DEFAULT_SCREEN_ACTIONS,
+      viewDetail: ACTION.VIEW
+    }
   },
   WITHDRAW_HISTORY: {
     path: `${TRANSACTIONMANAGEMENT}/withdraw-history`,
     module: MODULE.TRANSACTION,
-    view: ACTION.VIEW,
-    actions: {}
+    actions: { ...DEFAULT_SCREEN_ACTIONS }
   },
   EWALLET_MANAGEMENT: {
     path: `${WALLETADMINISTRATION}/e-walletManagement`,
     module: MODULE.WALLET,
-    view: ACTION.VIEW,
     actions: {
+      ...DEFAULT_SCREEN_ACTIONS,
       viewDetail: ACTION.VIEW,
       lock: ACTION.UPDATE,
       unlock: ACTION.UPDATE,
@@ -91,38 +93,37 @@ export const SCREENS = {
   CONFIRM_EKYC: {
     path: `${WALLETADMINISTRATION}/confirm-eKYC`,
     module: MODULE.ADMIN,
-    view: ACTION.FULL,
-    actions: { approve: ACTION.FULL }
+    actions: {
+      ...DEFAULT_SCREEN_ACTIONS,
+      approve: ACTION.FULL
+    }
   },
   MERCHANT_DASHBOARD: {
     path: `${MERCHANT}/dashboard-merchant`,
     module: MODULE.MERCHANT,
-    view: ACTION.VIEW,
-    actions: {}
+    actions: { ...DEFAULT_SCREEN_ACTIONS }
   },
   MERCHANT_MANAGEMENT: {
     path: `${MERCHANT}/merchant-management`,
     module: MODULE.MERCHANT,
-    view: ACTION.VIEW,
     actions: {
-      create: ACTION.CREATE,
-      edit: ACTION.UPDATE,
+      ...DEFAULT_SCREEN_ACTIONS,
       viewDetail: ACTION.VIEW
     }
   },
   MERCHANT_ORDER: {
     path: `${MERCHANT}/merchant-order`,
     module: MODULE.MERCHANT,
-    view: ACTION.VIEW,
-    actions: { viewQr: ACTION.VIEW }
+    actions: {
+      ...DEFAULT_SCREEN_ACTIONS,
+      viewQr: ACTION.VIEW
+    }
   },
   FEE_POLICY: {
     path: `${FEEMANAGEMENT_V4}/fee-managementV4`,
     module: MODULE.FEE,
-    view: ACTION.VIEW,
     actions: {
-      create: ACTION.CREATE,
-      edit: ACTION.UPDATE,
+      ...DEFAULT_SCREEN_ACTIONS,
       approve: ACTION.UPDATE,
       toggleActive: ACTION.UPDATE
     }
@@ -130,10 +131,8 @@ export const SCREENS = {
   FEE_ASSIGNMENT: {
     path: `${FEEMANAGEMENT_V4}/fee-assignmentV4`,
     module: MODULE.FEE,
-    view: ACTION.VIEW,
     actions: {
-      create: ACTION.CREATE,
-      edit: ACTION.UPDATE,
+      ...DEFAULT_SCREEN_ACTIONS,
       approve: ACTION.UPDATE,
       toggleActive: ACTION.UPDATE
     }

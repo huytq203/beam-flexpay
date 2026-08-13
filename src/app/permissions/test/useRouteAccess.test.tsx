@@ -48,13 +48,16 @@ describe('useRouteAccess', () => {
     expect(accessTo([], '/')).toBe(true)
   })
 
-  it('module chưa phát hành được cho qua', () => {
-    expect(accessTo([], SCREENS.FEE_POLICY.path)).toBe(true)
+  it('route FEE chấp nhận mọi action chuẩn của đúng module', () => {
+    expect(accessTo([], SCREENS.FEE_POLICY.path)).toBe(false)
+    expect(
+      accessTo(['EWALLET:FEE:CREATE'], SCREENS.FEE_POLICY.path)
+    ).toBe(true)
   })
 
-  it('eKYC chỉ cho super-admin', () => {
+  it('eKYC chấp nhận quyền ADMIN nhưng từ chối module khác', () => {
     expect(
-      accessTo(['EWALLET:ADMIN:FULL'], SCREENS.CONFIRM_EKYC.path)
+      accessTo(['EWALLET:ADMIN:VIEW'], SCREENS.CONFIRM_EKYC.path)
     ).toBe(true)
     expect(
       accessTo(['EWALLET:USER:FULL'], SCREENS.CONFIRM_EKYC.path)

@@ -10,7 +10,11 @@ import { getPermissionManagementColumns } from '../PermissionManagement.column'
 const permission = {
   id: '1',
   name: 'EWALLET:USER:VIEW',
-  description: 'Xem user'
+  description: 'Xem user',
+  createdAt: '2026-08-10 14:30:00',
+  createdBy: 'admin.creator',
+  updatedAt: '2026-08-11 09:05:12',
+  updatedBy: 'admin.editor'
 } as unknown as PermissionItem
 
 const renderColumns = (permissions: string[]) => {
@@ -30,6 +34,15 @@ const renderColumns = (permissions: string[]) => {
 }
 
 describe('cột thao tác màn Quyền', () => {
+  it('hiển thị đầy đủ dấu vết tạo và cập nhật', () => {
+    renderColumns(['EWALLET:PERMISSION:VIEW'])
+
+    expect(screen.getByText('10/08/2026 14:30:00')).toBeInTheDocument()
+    expect(screen.getByText('Bởi admin.creator')).toBeInTheDocument()
+    expect(screen.getByText('11/08/2026 09:05:12')).toBeInTheDocument()
+    expect(screen.getByText('Bởi admin.editor')).toBeInTheDocument()
+  })
+
   it('PERMISSION:VIEW ẩn sửa và xoá', () => {
     renderColumns(['EWALLET:PERMISSION:VIEW'])
     expect(screen.queryByLabelText('Sửa quyền')).toBeNull()

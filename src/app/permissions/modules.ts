@@ -26,14 +26,3 @@ export type PermissionCode = `EWALLET:${Module}:${Action}`
 
 export const SUPER_ADMIN_PERMISSION =
   'EWALLET:ADMIN:FULL' satisfies PermissionCode
-
-/**
- * Module ngoài danh sách này tạm thời không bị chặn. Khi BE phát hành quyền,
- * thêm module tại đây sẽ siết quyền cho toàn bộ màn và hành động đã khai báo.
- */
-export const RELEASED_MODULES: ReadonlySet<Module> = new Set([
-  MODULE.ADMIN,
-  MODULE.PERMISSION,
-  MODULE.ROLE,
-  MODULE.USER
-])

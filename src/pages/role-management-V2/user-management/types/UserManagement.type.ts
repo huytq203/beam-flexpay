@@ -3,6 +3,7 @@ import { BooleanFilter } from '../constants/userAccount'
 
 export type ModalType =
   | 'add'
+  | 'edit'
   | 'viewDetail'
   | 'delete'
   | 'lock'
@@ -22,6 +23,19 @@ export interface CreateAdminUserRequest {
   enabled: boolean
   phoneNumber: string
   roleIds: string[]
+}
+
+export interface UpdateAdminUserRequest {
+  firstName: string
+  lastName: string
+  enabled: boolean
+  phoneNumber: string
+  roleIds: string[]
+}
+
+export interface AdminResetPasswordResponse {
+  maskedEmail: string
+  expiresInHours: number
 }
 
 export interface UserRoleOption {

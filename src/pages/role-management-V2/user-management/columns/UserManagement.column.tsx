@@ -1,6 +1,7 @@
 import {
   ApartmentOutlined,
   CheckCircleFilled,
+  EditOutlined,
   EyeOutlined,
   MinusCircleIcon,
   KeyIcon,
@@ -11,13 +12,16 @@ import { UserInfor } from '@type/userManagement'
 import { ColumnType } from 'antd/es/table'
 import { ModalType, SelectedUser } from '../types/UserManagement.type'
 import { Can } from '@/app/permissions'
+import { formatUserTimestamp } from '../utils/UserManagement.utils'
 
 interface Props {
   openModal: (type: ModalType, user?: SelectedUser | null) => void
+  currentUserId?: string
 }
 
 export const getUserManagementColumn = ({
-  openModal
+  openModal,
+  currentUserId
 }: Props): ColumnType<UserInfor>[] => [
     {
       title: '#',
@@ -109,18 +113,35 @@ export const getUserManagementColumn = ({
     {
       title: 'Ngày tạo',
       dataIndex: 'createdTimestamp',
-      align: 'center',
-      render: (value: Date | null) => {
-        if (!value) return '-'
-        return value.toLocaleString('vi-VN', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        })
-      }
+      align: 'left',
+      render: (_, record) => (
+        <div className='min-w-0 text-xs leading-5'>
+          <p className='m-0 whitespace-nowrap text-slate-700'>
+            {formatUserTimestamp(record.createdAt ?? record.createdTimestamp)}
+          </p>
+          <p
+            className='m-0 max-w-48 truncate text-slate-500'
+            title={record.createdBy ?? undefined}
+          >
+            {record.createdBy ? `Bởi ${record.createdBy}` : 'Không có dữ liệu người tạo'}
+          </p>
+        </div>
+      )
+    },
+    {
+      title: 'Cập nhật gần nhất',
+      dataIndex: 'updatedAt',
+      align: 'left',
+      render: (_, record) => (
+        <div className='min-w-0 text-xs leading-5'>
+          <p className='m-0 whitespace-nowrap text-slate-700'>
+            {formatUserTimestamp(record.updatedAt)}
+          </p>
+          <p className='m-0 max-w-48 truncate text-slate-500' title={record.updatedBy ?? undefined}>
+            {record.updatedBy ? `Bởi ${record.updatedBy}` : 'Chưa có người cập nhật'}
+          </p>
+        </div>
+      )
     },
     {
       title: 'Thao tác',
@@ -142,6 +163,18 @@ export const getUserManagementColumn = ({
               />
             </TooltipComponent>
           </Can>
+          <Can screen='USER_ACCOUNT' action='edit'>
+            <TooltipComponent title='Sửa tài khoản'>
+              <ButtonComponent
+                aria-label='Sửa tài khoản'
+                size='small'
+                type='default'
+                className='text-blue-600'
+                icon={<EditOutlined />}
+                onClick={() => openModal('edit', record)}
+              />
+            </TooltipComponent>
+          </Can>
           <Can screen='USER_ACCOUNT' action='assignRoles'>
             <TooltipComponent title='Gán nhóm quyền'>
               <ButtonComponent
@@ -154,18 +187,20 @@ export const getUserManagementColumn = ({
               />
             </TooltipComponent>
           </Can>
-          <Can screen='USER_ACCOUNT' action='resetPassword'>
-            <TooltipComponent title='Reset mật khẩu'>
-              <ButtonComponent
-                aria-label='Đặt lại mật khẩu'
-                size='small'
-                type='default'
-                className='text-yellow-600'
-                icon={<KeyIcon />}
-                onClick={() => openModal('resetPassword', record)}
-              />
-            </TooltipComponent>
-          </Can>
+          {record.id !== currentUserId && record.enabled && record.email && (
+            <Can screen='USER_ACCOUNT' action='resetPassword'>
+              <TooltipComponent title='Gửi liên kết đặt lại mật khẩu'>
+                <ButtonComponent
+                  aria-label='Đặt lại mật khẩu'
+                  size='small'
+                  type='default'
+                  className='text-yellow-600'
+                  icon={<KeyIcon />}
+                  onClick={() => openModal('resetPassword', record)}
+                />
+              </TooltipComponent>
+            </Can>
+          )}
         </div>
       )
     }

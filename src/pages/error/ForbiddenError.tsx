@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useRef } from 'react'
-import { ArrowRight, Copy, ShieldSlash } from '@phosphor-icons/react'
+import { ArrowRight, ShieldSlash } from '@phosphor-icons/react'
 import gsap from 'gsap'
 import ButtonComponent from '@components/ui/button-component'
 import { useForbiddenRecovery } from './useForbiddenRecovery'
@@ -93,26 +93,6 @@ export function ForbiddenError() {
               onClick={recovery.returnToSafePage}
               className='h-11! rounded-xl! px-5! text-[13px]! font-semibold! text-primary-foreground!'
             />
-            <ButtonComponent
-              htmlType='button'
-              type='default'
-              content={
-                recovery.copyStatus === 'copied'
-                  ? 'Đã sao chép yêu cầu'
-                  : 'Sao chép yêu cầu hỗ trợ'
-              }
-              icon={<Copy aria-hidden size={17} />}
-              onClick={() => void recovery.copySupportRequest()}
-              className='h-11! rounded-xl! border-border! bg-background! px-5! text-[13px]! font-semibold! text-secondary-foreground! shadow-none! hover:bg-accent!'
-            />
-          </div>
-
-          <div className='mx-auto mt-3 min-h-5 max-w-[520px] text-[11px] leading-5 text-muted-foreground'>
-            <span aria-live='polite'>
-              {recovery.copyStatus === 'error'
-                ? 'Không thể sao chép. Vui lòng thử lại trên trình duyệt hỗ trợ.'
-                : 'Gửi nội dung đã sao chép cho quản trị viên để được kiểm tra quyền.'}
-            </span>
           </div>
         </div>
       </div>

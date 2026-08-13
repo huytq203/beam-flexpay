@@ -10,7 +10,11 @@ import { getRoleManagementColumn } from '../RoleManagement.column'
 const role = {
   id: '1',
   name: 'ROLE_ADMIN',
-  description: 'Quản trị'
+  description: 'Quản trị',
+  createdAt: '2026-08-10 14:30:00',
+  createdBy: 'admin.creator',
+  updatedAt: '2026-08-11 09:05:12',
+  updatedBy: 'admin.editor'
 } as unknown as DataRoleItem
 
 const renderColumns = (permissions: string[]) => {
@@ -30,6 +34,15 @@ const renderColumns = (permissions: string[]) => {
 }
 
 describe('cột thao tác màn Nhóm quyền', () => {
+  it('hiển thị đầy đủ dấu vết tạo và cập nhật', () => {
+    renderColumns(['EWALLET:ROLE:VIEW'])
+
+    expect(screen.getByText('10/08/2026 14:30:00')).toBeInTheDocument()
+    expect(screen.getByText('Bởi admin.creator')).toBeInTheDocument()
+    expect(screen.getByText('11/08/2026 09:05:12')).toBeInTheDocument()
+    expect(screen.getByText('Bởi admin.editor')).toBeInTheDocument()
+  })
+
   it('ROLE:VIEW chỉ hiện hai hành động xem', () => {
     renderColumns(['EWALLET:ROLE:VIEW'])
 

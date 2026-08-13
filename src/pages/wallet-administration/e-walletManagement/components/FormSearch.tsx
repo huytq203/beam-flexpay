@@ -25,7 +25,7 @@ const FormSearch = ({ handleSearch }: props) => {
     handleSearch({})
   }
   return (
-    <div className='space-y-3'>
+    <form className='space-y-3' onSubmit={formSearch.handleSubmit(onSubmit)} onReset={handleReset}>
       <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div className="col-span-1">
@@ -54,15 +54,13 @@ const FormSearch = ({ handleSearch }: props) => {
       </div>
       <div className="flex gap-2 justify-end">
         <div className="flex items-end justify-end">
-          <ButtonComponent onClick={formSearch.handleSubmit(onSubmit)} className='w-full' content='Tìm kiếm' icon={svg('/icons.svg#hugeicons-search-01')} />
+          <ButtonComponent htmlType='submit' className='w-full' content='Tìm kiếm' icon={svg('/icons.svg#hugeicons-search-01')} />
         </div>
         <div className="flex items-end justify-end">
-          <ButtonComponent type='default' onClick={handleReset} className='w-full' content='Xóa bộ lọc' icon={<Icons.BroomIcon size={18} />} />
+          <ButtonComponent htmlType='reset' type='default' className='w-full' content='Xóa bộ lọc' icon={<Icons.BroomIcon size={18} />} />
         </div>
-
-
       </div>
-    </div>
+    </form>
   )
 }
 

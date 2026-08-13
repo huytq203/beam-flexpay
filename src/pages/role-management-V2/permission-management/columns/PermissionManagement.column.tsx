@@ -8,6 +8,7 @@ import {
   SelectedPermission
 } from '../types/PermissionManagement.type'
 import { Can } from '@/app/permissions'
+import AuditStamp from '../../components/AuditStamp'
 
 interface Props {
   openModal: (
@@ -43,6 +44,30 @@ export const getPermissionManagementColumns = ({
     dataIndex: 'description',
     align: 'left',
     render: (value: string | null) => value || '--'
+  },
+  {
+    title: 'Ngày tạo',
+    dataIndex: 'createdAt',
+    align: 'left',
+    render: (_, record) => (
+      <AuditStamp
+        timestamp={record.createdAt}
+        actor={record.createdBy}
+        emptyActorLabel='Không có dữ liệu người tạo'
+      />
+    )
+  },
+  {
+    title: 'Cập nhật gần nhất',
+    dataIndex: 'updatedAt',
+    align: 'left',
+    render: (_, record) => (
+      <AuditStamp
+        timestamp={record.updatedAt}
+        actor={record.updatedBy}
+        emptyActorLabel='Chưa có người cập nhật'
+      />
+    )
   },
   {
     title: 'Thao tác',

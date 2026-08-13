@@ -1,5 +1,11 @@
 # Access Registry — Implementation Plan
 
+> **Điều chỉnh sau triển khai (2026-08-06):** mọi module áp dụng deny-by-default.
+> Các bước bên dưới nói module chưa phát hành được “tạm cho qua” đã bị thay thế;
+> tài khoản chỉ có quyền `FEE` chỉ được thấy và truy cập các màn thuộc `FEE`.
+> Route/sidebar cho phép khi có một trong các action chuẩn của module; trường
+> `view` cấp screen đã được thay bằng action `view` trong `actions`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Gộp ba cơ chế phân quyền đang chồng nhau (route guard, sidebar, nút hành động) về một registry tập trung, để đổi quyền một màn hoặc một nút chỉ phải sửa một dòng.
@@ -30,7 +36,7 @@
 
 | File | Trách nhiệm |
 |---|---|
-| `src/app/permissions/modules.ts` | `MODULE`, `ACTION`, `PermissionCode`, `RELEASED_MODULES`, `SUPER_ADMIN_PERMISSION` |
+| `src/app/permissions/modules.ts` | `MODULE`, `ACTION`, `PermissionCode`, `SUPER_ADMIN_PERMISSION` |
 | `src/app/permissions/access.ts` | `buildPermissionCode`, `grants` — hàm thuần, không React |
 | `src/app/permissions/registry.ts` | `ScreenAccess`, `SCREENS` (14 màn), `ScreenId`, `ScreenActionId`, `findScreenByPath` |
 | `src/app/permissions/useAccess.ts` | `useAccess`, `useScreenAccess` |

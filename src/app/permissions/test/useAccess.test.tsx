@@ -4,6 +4,7 @@ import { renderHook } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { createAppStore } from '@/app/store'
 import { savePermissions } from '@slices/authSlice'
+import { MODULE } from '../modules'
 import { useAccess, useScreenAccess } from '../useAccess'
 
 const wrapperWith = (permissions: string[]) => {
@@ -16,7 +17,7 @@ const wrapperWith = (permissions: string[]) => {
 }
 
 describe('useAccess', () => {
-  it('has, hasAny và hasAll dùng cùng logic grants', () => {
+  it('has, hasAny, hasAll và hasModule dùng cùng logic grants', () => {
     const { result } = renderHook(() => useAccess(), {
       wrapper: wrapperWith(['EWALLET:ROLE:VIEW'])
     })
@@ -29,6 +30,8 @@ describe('useAccess', () => {
     expect(
       result.current.hasAll(['EWALLET:ROLE:VIEW', 'EWALLET:ROLE:DELETE'])
     ).toBe(false)
+    expect(result.current.hasModule(MODULE.ROLE)).toBe(true)
+    expect(result.current.hasModule(MODULE.FEE)).toBe(false)
   })
 })
 
@@ -42,6 +45,16 @@ describe('useScreenAccess', () => {
     expect(result.current.can('viewDetail')).toBe(true)
     expect(result.current.can('create')).toBe(false)
     expect(result.current.can('assignRoles')).toBe(false)
+  })
+
+  it('quyền CREATE vẫn cho phép mở screen cùng module', () => {
+    const { result } = renderHook(() => useScreenAccess('USER_ACCOUNT'), {
+      wrapper: wrapperWith(['EWALLET:USER:CREATE'])
+    })
+
+    expect(result.current.canView).toBe(true)
+    expect(result.current.can('create')).toBe(true)
+    expect(result.current.can('edit')).toBe(false)
   })
 
   it('FULL bao trùm mọi hành động của màn', () => {
@@ -63,13 +76,23 @@ describe('useScreenAccess', () => {
     expect(result.current.can('delete')).toBe(false)
   })
 
-  it('module chưa phát hành vẫn dùng được', () => {
+  it('module FEE cũng bị chặn khi thiếu quyền', () => {
     const { result } = renderHook(() => useScreenAccess('FEE_POLICY'), {
       wrapper: wrapperWith([])
     })
 
+    expect(result.current.canView).toBe(false)
+    expect(result.current.can('approve')).toBe(false)
+  })
+
+  it('quyền FEE cụ thể chỉ mở đúng hành động tương ứng', () => {
+    const { result } = renderHook(() => useScreenAccess('FEE_POLICY'), {
+      wrapper: wrapperWith(['EWALLET:FEE:VIEW', 'EWALLET:FEE:UPDATE'])
+    })
+
     expect(result.current.canView).toBe(true)
     expect(result.current.can('approve')).toBe(true)
+    expect(result.current.can('create')).toBe(false)
   })
 
   it('super-admin đi qua mọi màn', () => {

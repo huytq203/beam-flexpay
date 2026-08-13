@@ -15,7 +15,9 @@ export interface IAuthState {
 
 // Lấy token từ cookie và decode permissions khi app khởi tạo
 const storedToken = Cookies.get(CookieKey.ACCESS_TOKEN)
-const initialTokenInfo = storedToken ? decodeToken(storedToken) : { permissions: [], roles: [], email: '', name: '' }
+const initialTokenInfo = storedToken
+  ? decodeToken(storedToken)
+  : { permissions: [], roles: [], email: '', name: '', jwtId: '' }
 const initialState: IAuthState = {
   accessToken: storedToken ?? null,
   refreshToken: '',
@@ -24,7 +26,7 @@ const initialState: IAuthState = {
     email: initialTokenInfo.email,
     fullName: initialTokenInfo.name,
     status: true,
-    jwtId: '',
+    jwtId: initialTokenInfo.jwtId,
     securityMethod: '',
     accountStatus: '',
     type: '',
@@ -50,6 +52,7 @@ const applyAccessToken = (state: IAuthState, token: string): void => {
   state.profile.roles = tokenInfo.roles
   state.profile.email = tokenInfo.email
   state.profile.fullName = tokenInfo.name
+  state.profile.jwtId = tokenInfo.jwtId
 }
 
 const applyAuthentication = (
@@ -76,7 +79,8 @@ const applyAuthentication = (
       permissions: tokenInfo.permissions,
       roles: tokenInfo.roles,
       email: tokenInfo.email,
-      fullName: tokenInfo.name
+      fullName: tokenInfo.name,
+      jwtId: tokenInfo.jwtId
     }
   }
 }
@@ -129,4 +133,3 @@ const authSlice = createSlice({
 
 export const { logout, savePermissions, setAccessToken } = authSlice.actions
 export default authSlice.reducer
-

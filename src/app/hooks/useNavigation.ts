@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import {
-  buildPermissionCode,
-  grants,
+  grantsModuleAccess,
   SCREENS
 } from '@/app/permissions'
 import {
@@ -17,8 +16,7 @@ const isVisible = (
   if (!item.screen) return true
 
   const screen = SCREENS[item.screen]
-  const required = buildPermissionCode(screen.module, screen.view)
-  return grants(permissions, required)
+  return grantsModuleAccess(permissions, screen.module)
 }
 
 const filterNavigation = (

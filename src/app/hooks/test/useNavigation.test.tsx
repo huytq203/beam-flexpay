@@ -51,8 +51,18 @@ describe('useNavigationEw', () => {
     expect(groupKeysOf([])).not.toContain(_ROLEMANAGEMENT_V2)
   })
 
-  it('module chưa phát hành vẫn hiện', () => {
-    expect(groupKeysOf([])).toContain('secure-panel/fee-v4')
+  it('không quyền thì ẩn toàn bộ menu nghiệp vụ', () => {
+    expect(groupKeysOf([])).toEqual([])
+  })
+
+  it('chỉ có FEE thì chỉ hiện nhóm Quản lý phí', () => {
+    const permissions = ['EWALLET:FEE:CREATE']
+
+    expect(groupKeysOf(permissions)).toEqual(['secure-panel/fee-v4'])
+    expect(childKeysOf(permissions, 'secure-panel/fee-v4')).toEqual([
+      'fee-managementV4',
+      'fee-assignmentV4'
+    ])
   })
 
   it('super-admin thấy toàn bộ menu identity', () => {

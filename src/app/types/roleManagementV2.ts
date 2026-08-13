@@ -23,7 +23,11 @@ export interface RoleData {
 export interface RoleDataItem {
   id: string
   name: string
-  description: string
+  description: string | null
+  createdAt: string | null
+  createdBy: string | null
+  updatedAt: string | null
+  updatedBy: string | null
   no?: number
 }
 

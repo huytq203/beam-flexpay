@@ -11,6 +11,7 @@ import { DataRoleItem } from '@type/roleManagement'
 import { RoleName } from '../constants/RoleManagement.constant'
 import { ModalType, SelectedRole } from '../types/RoleManagement.type'
 import { Can } from '@/app/permissions'
+import AuditStamp from '../../components/AuditStamp'
 
 interface Props {
   openModal: (type: ModalType, role: SelectedRole | null) => void
@@ -39,10 +40,41 @@ export const getRoleManagementColumn = ({
     )
   },
   {
+    title: 'Mô tả',
+    dataIndex: 'description',
+    align: 'left',
+    render: (value: string | null) => value || '--'
+  },
+  {
+    title: 'Ngày tạo',
+    dataIndex: 'createdAt',
+    align: 'left',
+    render: (_, record) => (
+      <AuditStamp
+        timestamp={record.createdAt}
+        actor={record.createdBy}
+        emptyActorLabel='Không có dữ liệu người tạo'
+      />
+    )
+  },
+  {
+    title: 'Cập nhật gần nhất',
+    dataIndex: 'updatedAt',
+    align: 'left',
+    render: (_, record) => (
+      <AuditStamp
+        timestamp={record.updatedAt}
+        actor={record.updatedBy}
+        emptyActorLabel='Chưa có người cập nhật'
+      />
+    )
+  },
+  {
     title: 'Thao tác',
     dataIndex: 'action',
     align: 'center',
-    width: 50,
+    width: 220,
+    fixed: 'right',
     render: (_, record) => {
       return (
         <div className='flex justify-start items-start gap-1'>

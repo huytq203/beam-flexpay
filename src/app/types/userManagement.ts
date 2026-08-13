@@ -12,6 +12,10 @@ export interface UserInfor {
     enabled: boolean
     emailVerified: boolean
     createdTimestamp: string | number | Date | null
+    createdAt: string | null
+    createdBy: string | null
+    updatedAt: string | null
+    updatedBy: string | null
     groups: string[] | null
 }
 export interface ResponseUserInfor {

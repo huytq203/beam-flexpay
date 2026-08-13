@@ -1,13 +1,14 @@
 import { useCallback, useMemo } from 'react'
 import { useAppSelector } from '@hooks/hook'
-import { buildPermissionCode, grants } from './access'
-import type { Action, PermissionCode } from './modules'
+import { buildPermissionCode, grants, grantsModuleAccess } from './access'
+import type { Action, Module, PermissionCode } from './modules'
 import { SCREENS, type ScreenActionId, type ScreenId } from './registry'
 
 export interface AccessApi {
   has: (code: PermissionCode) => boolean
   hasAny: (codes: readonly PermissionCode[]) => boolean
   hasAll: (codes: readonly PermissionCode[]) => boolean
+  hasModule: (module: Module) => boolean
 }
 
 export const useAccess = (): AccessApi => {
@@ -19,14 +20,19 @@ export const useAccess = (): AccessApi => {
     (code: PermissionCode) => grants(permissions, code),
     [permissions]
   )
+  const hasModule = useCallback(
+    (module: Module) => grantsModuleAccess(permissions, module),
+    [permissions]
+  )
 
   return useMemo(
     () => ({
       has,
       hasAny: (codes: readonly PermissionCode[]) => codes.some(has),
-      hasAll: (codes: readonly PermissionCode[]) => codes.every(has)
+      hasAll: (codes: readonly PermissionCode[]) => codes.every(has),
+      hasModule
     }),
-    [has]
+    [has, hasModule]
   )
 }
 
@@ -38,7 +44,7 @@ export interface ScreenAccessApi<S extends ScreenId> {
 export const useScreenAccess = <S extends ScreenId>(
   screen: S
 ): ScreenAccessApi<S> => {
-  const { has } = useAccess()
+  const { has, hasModule } = useAccess()
   const config = SCREENS[screen]
 
   const can = useCallback(
@@ -55,9 +61,9 @@ export const useScreenAccess = <S extends ScreenId>(
 
   return useMemo(
     () => ({
-      canView: has(buildPermissionCode(config.module, config.view)),
+      canView: hasModule(config.module),
       can
     }),
-    [can, config, has]
+    [can, config, hasModule]
   )
 }

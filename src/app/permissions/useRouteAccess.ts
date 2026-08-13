@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useAppSelector } from '@hooks/hook'
-import { buildPermissionCode, grants } from './access'
+import { grantsModuleAccess } from './access'
 import { findScreenByPath } from './registry'
 
 /** Path ngoài registry là trang công khai hoặc trang hệ thống và được cho qua. */
@@ -15,7 +15,6 @@ export const useRouteAccess = (): boolean => {
     const screen = findScreenByPath(pathname)
     if (!screen) return true
 
-    const required = buildPermissionCode(screen.module, screen.view)
-    return grants(permissions, required)
+    return grantsModuleAccess(permissions, screen.module)
   }, [pathname, permissions])
 }

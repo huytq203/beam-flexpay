@@ -1,6 +1,5 @@
 import {
   ACTION,
-  RELEASED_MODULES,
   SUPER_ADMIN_PERMISSION,
   type Action,
   type Module,
@@ -11,6 +10,14 @@ export const buildPermissionCode = (
   module: Module,
   action: Action
 ): PermissionCode => `EWALLET:${module}:${action}`
+
+const MODULE_ACCESS_ACTIONS = [
+  ACTION.VIEW,
+  ACTION.CREATE,
+  ACTION.UPDATE,
+  ACTION.DELETE,
+  ACTION.FULL
+] as const
 
 const getPermissionModule = (code: PermissionCode): Module => {
   // PermissionCode bảo đảm phần tử thứ hai luôn thuộc union Module.
@@ -25,10 +32,17 @@ export const grants = (
   if (granted.includes(SUPER_ADMIN_PERMISSION)) return true
 
   const module = getPermissionModule(required)
-  if (!RELEASED_MODULES.has(module)) return true
-
   const fullPermission = buildPermissionCode(module, ACTION.FULL)
   if (granted.includes(fullPermission)) return true
 
   return granted.includes(required)
 }
+
+/** Có bất kỳ action chuẩn nào của module thì được mở screen thuộc module đó. */
+export const grantsModuleAccess = (
+  granted: readonly string[],
+  module: Module
+): boolean =>
+  MODULE_ACCESS_ACTIONS.some((action) =>
+    grants(granted, buildPermissionCode(module, action))
+  )

@@ -40,8 +40,14 @@ const renderColumns = (permissions: string[]) => {
 }
 
 describe('cột thao tác màn Chính sách phí', () => {
-  it('module chưa phát hành nên vẫn hiện hành động khi quyền rỗng', () => {
+  it('ẩn hành động khi không có quyền FEE', () => {
     renderColumns([])
+    expect(screen.queryByLabelText('Sửa chính sách')).toBeNull()
+    expect(screen.queryByLabelText('Phê duyệt chính sách')).toBeNull()
+  })
+
+  it('FEE:UPDATE hiện các hành động cập nhật', () => {
+    renderColumns(['EWALLET:FEE:UPDATE'])
     expect(screen.getByLabelText('Sửa chính sách')).toBeInTheDocument()
     expect(screen.getByLabelText('Phê duyệt chính sách')).toBeInTheDocument()
   })

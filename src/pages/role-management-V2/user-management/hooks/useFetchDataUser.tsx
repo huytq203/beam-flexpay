@@ -2,24 +2,34 @@ import { useCallback, useMemo, useState } from 'react'
 import { useGetUserQuery } from '@services/apiUserManagement'
 import { useAllRoles } from '@hooks/useAllRoles'
 import { UserInfor } from '@type/userManagement'
-import { RoleUserAccount } from '../constants/userAccount'
+// import { RoleUserAccount } from '../constants/userAccount'
 import {
   SearchUserFormData,
   UserQueryFilters
 } from '../types/UserManagement.type'
 import { toUserQueryFilters } from '../utils/UserManagement.utils'
-import dayjs from 'dayjs'
 import usePagination from '@hooks/usePagination'
+import { RoleName } from '../../role-management/constants/RoleManagement.constant'
 
 const useFetchDataUser = () => {
 
-  const { page, size, sortBy, sort,setPage,setPageSize } = usePagination()
+  const {
+    page,
+    size,
+    sort: sortBy,
+    sortDirection,
+    setPage,
+    setPageSize
+  } = usePagination({
+    defaultSort: 'createdTimestamp',
+    defaultSortBy: 'DESC'
+  })
   const [filters, setFilters] = useState<UserQueryFilters>({})
   const params = {
     page,
     size,
-    sortBy: sort || 'id',
-    sortDirection: sortBy || 'DESC',
+    sortBy,
+    sortDirection,
     ...filters
   }
   const { data: userData, isLoading: isLoadingUser, refetch } = useGetUserQuery(params)
@@ -30,10 +40,7 @@ const useFetchDataUser = () => {
     return (
       userData?.content?.map((item: UserInfor, index: number) => ({
         ...item,
-        no: (page - 1) * size + index + 1,
-        createdTimestamp: item.createdTimestamp
-          ? dayjs(item.createdTimestamp).format('DD/MM/YYYY HH:mm:ss')
-          : '--'
+        no: (page - 1) * size + index + 1
       })) ?? []
     )
   }, [userData?.content, page, size])
@@ -41,7 +48,7 @@ const useFetchDataUser = () => {
   const roleOptions = useMemo(() => {
     return roles.map((role) => ({
       value: role.id,
-      label: RoleUserAccount[role.name as keyof typeof RoleUserAccount] ?? role.name
+      label: RoleName[role.name as keyof typeof RoleName] ?? role.name
     }))
   }, [roles])
 
@@ -64,7 +71,7 @@ const useFetchDataUser = () => {
     userData,
     page,
     size,
-    sortBy,
+    sortBy: sortDirection,
     setPage,
     setPageSize
   }

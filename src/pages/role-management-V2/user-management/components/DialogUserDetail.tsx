@@ -1,143 +1,177 @@
-import { CardComponent } from '@components/index'
-import { RoleUserAccount } from '@pages/role-management-V2/user-management/constants/userAccount'
-import { UserInfor } from '@type/userManagement'
-import { useState, useEffect, memo } from 'react'
-import { useLazyGetUserByIdQuery } from '@services/apiUserManagement'
-import dayjs from 'dayjs'
+import { memo } from 'react'
+import { ButtonComponent } from '@components/index'
+import { SkeletonInput } from '@components/ui/skeletons/Skeleton'
+import { useGetUserByIdQuery } from '@services/apiUserManagement'
+import { getApiErrorDetail } from '@pages/role-management-V2/utils/RoleManagement.utils'
+import { formatUserTimestamp } from '../utils/UserManagement.utils'
+import { RoleName } from '../../role-management/constants/RoleManagement.constant'
 
 interface Props {
   userId?: string
-  onCancel: () => void
+}
+
+const getLoadErrorMessage = (error: unknown): string => {
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'status' in error &&
+    error.status === 'FETCH_ERROR'
+  ) {
+    return 'Không kết nối được máy chủ. Kiểm tra kết nối mạng rồi tải lại.'
+  }
+
+  return (
+    getApiErrorDetail(error) ??
+    'Không thể tải thông tin tài khoản. Vui lòng thử lại.'
+  )
 }
 
 const DialogUserDetail = ({ userId }: Props) => {
-  const [selectedUser, setSelectedUser] = useState<UserInfor | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [getUserById] = useLazyGetUserByIdQuery()
+  const {
+    data: response,
+    error,
+    isLoading,
+    isFetching,
+    refetch
+  } = useGetUserByIdQuery(userId ?? '', { skip: !userId })
+  const user = response?.data
 
-  useEffect(() => {
-    if (!userId) return
-    const fetchUser = async () => {
-      setLoading(true)
-      try {
-        const result = await getUserById(userId)
-        const data = result?.data?.data
-        if (data) {
-          setSelectedUser({
-            id: data.id,
-            username: data.username,
-            email: data.email,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            phoneNumber: data.phoneNumber,
-            enabled: data.enabled,
-            emailVerified: data.emailVerified,
-            createdTimestamp: data.createdTimestamp ?? null,
-            groups: Array.isArray(data.groups)
-              ? data.groups
-              : data.groups ? [data.groups] : null
-          })
-        }
-      } catch {
-        setSelectedUser(null)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchUser()
-  }, [userId, getUserById])
-
-  const listGroup =
-    !selectedUser?.groups || selectedUser.groups.length === 0 ? (
-      <p className='col-span-2'>
-        <span className='bg-gray-400 text-white p-1 rounded-md'>
-          Chưa được phân quyền
-        </span>
-      </p>
-    ) : (
-      selectedUser.groups.map((role) => {
-        const label = RoleUserAccount[role as keyof typeof RoleUserAccount]
-        return (
-          <p key={role}>
-            <span className='bg-blue-500 text-white p-1 rounded-md'>
-              {label ?? role}
-            </span>
-          </p>
-        )
-      })
+  if (isLoading || isFetching) {
+    return (
+      <div
+        className='grid grid-cols-1 gap-3 p-3 sm:grid-cols-2'
+        aria-busy='true'
+        aria-label='Đang tải chi tiết tài khoản'
+      >
+        {Array.from({ length: 6 }).map((_, index) => (
+          <SkeletonInput key={index} />
+        ))}
+      </div>
     )
+  }
 
-  if (loading) return <div className='text-center p-4'>Loading...</div>
+  if (!userId || error || !user) {
+    return (
+      <div className='flex flex-col gap-4 p-3'>
+        <p
+          className='m-0 rounded-lg bg-red-50 px-4 py-3 text-sm leading-5 text-red-800'
+          role='alert'
+        >
+          {getLoadErrorMessage(error)}
+        </p>
+        {userId && (
+          <div className='flex justify-end'>
+            <ButtonComponent
+              type='primary'
+              content='Tải lại'
+              onClick={() => void refetch()}
+            />
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  const fullName = `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim()
+  const groups = user.groups ?? []
 
   return (
-    <div>
-      <CardComponent
-        content={
-          <>
-            <div className='grid grid-cols-4'>
-              <div className='col-span-1'>
-                <img
-                  className='w-32 h-32 rounded-full'
-                  src='/images/user.jpg'
-                  alt='User avatar'
-                />
-              </div>
-              <div className='col-span-3 grid grid-cols-2 gap-1'>
-                <div className='col-span-1'>
-                  <h1 className='font-bold'>Tên đăng nhập</h1>
-                  <p className='font-medium'>{selectedUser?.username}</p>
-                </div>
-                <div className='col-span-1'>
-                  <h1 className='font-bold'>Họ và tên</h1>
-                  <p className='font-medium'>
-                    {`${selectedUser?.firstName ?? '--'} ${selectedUser?.lastName ?? '--'}`}
-                  </p>
-                </div>
-                <div className='col-span-1'>
-                  <h1 className='font-bold'>EMAIL</h1>
-                  <p className='font-medium'>{selectedUser?.email ?? '--'}</p>
-                </div>
-                <div className='col-span-1'>
-                  <h1 className='font-bold'>Số điện thoại</h1>
-                  <p className='font-medium'>{selectedUser?.phoneNumber || '--'}</p>
-                </div>
-              </div>
-            </div>
-            <hr className='mt-3' />
-            <div className='flex flex-col gap-2 mt-3'>
-              <h1 className='font-bold'>Thông tin hệ thống</h1>
-              <div className='grid grid-cols-3'>
-                <p className='font-medium col-span-1'>Nhóm quyền:</p>
-                <div className='flex flex-wrap justify-start items-center gap-2 col-span-2'>
-                  {listGroup}
-                </div>
-              </div>
-              <div className='grid grid-cols-3'>
-                <p className='font-medium col-span-1'>Trạng thái:</p>
-                <p className='col-span-2'>
-                  <span className={`bg-${selectedUser?.enabled ? 'green' : 'red'}-500 p-1 text-white rounded-md`}>
-                    {selectedUser?.enabled ? 'Hoạt động' : 'Không hoạt động'}
+    <div className='flex flex-col gap-5 p-1 sm:p-2'>
+      <section className='grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-[6rem_minmax(0,1fr)]'>
+        <img
+          className='size-24 rounded-full object-cover'
+          src='/images/user.jpg'
+          alt='Ảnh đại diện tài khoản'
+        />
+        <dl className='grid min-w-0 grid-cols-1 gap-x-5 gap-y-3 sm:grid-cols-2'>
+          <div className='min-w-0'>
+            <dt className='text-xs font-medium text-slate-500'>Tên đăng nhập</dt>
+            <dd className='mt-1 break-all text-sm font-semibold text-slate-900'>
+              {user.username || '--'}
+            </dd>
+          </div>
+          <div className='min-w-0'>
+            <dt className='text-xs font-medium text-slate-500'>Họ và tên</dt>
+            <dd className='mt-1 break-words text-sm font-semibold text-slate-900'>
+              {fullName || '--'}
+            </dd>
+          </div>
+          <div className='min-w-0'>
+            <dt className='text-xs font-medium text-slate-500'>Email</dt>
+            <dd className='mt-1 break-all text-sm font-semibold text-slate-900'>
+              {user.email || '--'}
+            </dd>
+          </div>
+          <div className='min-w-0'>
+            <dt className='text-xs font-medium text-slate-500'>Số điện thoại</dt>
+            <dd className='mt-1 break-all text-sm font-semibold text-slate-900'>
+              {user.phoneNumber || '--'}
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section className='border-t border-slate-200 pt-4' aria-labelledby='account-system-information'>
+        <h3 id='account-system-information' className='mb-3 text-sm font-semibold text-slate-900'>
+          Thông tin hệ thống
+        </h3>
+        <dl className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+          <div>
+            <dt className='text-xs font-medium text-slate-500'>Trạng thái</dt>
+            <dd className='mt-1'>
+              <span className={user.enabled ? 'success-status inline-flex rounded-md px-2 py-0.5 text-xs' : 'danger-status inline-flex rounded-md px-2 py-0.5 text-xs'}>
+                {user.enabled ? 'Hoạt động' : 'Không hoạt động'}
+              </span>
+            </dd>
+          </div>
+          <div className='min-w-0'>
+            <dt className='text-xs font-medium text-slate-500'>Nhóm quyền</dt>
+            <dd className='mt-1 flex flex-wrap gap-1.5'>
+              {groups.length === 0 ? (
+                <span className='text-sm text-slate-600'>Chưa được phân quyền</span>
+              ) : (
+                groups.map((role) => (
+                  <span key={role} className='rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-800'>
+                    {RoleName[role as keyof typeof RoleName] ?? role}
                   </span>
-                </p>  
-              </div>
-            </div>
-            <hr className='mt-3' />
-            <div className='flex flex-col mt-3 gap-2'>
-              <h1 className='font-bold'>Thông tin nhật ký (Audit Log)</h1>
-              <div className='grid grid-cols-3'>
-                <p className='font-medium col-span-1'>Ngày tạo:</p>
-                <p className='col-span-2'>
-                  <span className='bg-gray-100 p-1 rounded-md'>
-                    {selectedUser?.createdTimestamp
-                      ? dayjs(selectedUser.createdTimestamp).format('DD/MM/YYYY HH:mm:ss')
-                      : '--'}
-                  </span>
-                </p>
-              </div>
-            </div>
-          </>
-        }
-      />
+                ))
+              )}
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section className='border-t border-slate-200 pt-4' aria-labelledby='account-audit-information'>
+        <h3 id='account-audit-information' className='mb-3 text-sm font-semibold text-slate-900'>
+          Dấu vết thao tác
+        </h3>
+        <dl className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+          <div>
+            <dt className='text-xs font-medium text-slate-500'>Ngày tạo</dt>
+            <dd className='mt-1 text-sm font-medium text-slate-900'>
+              {formatUserTimestamp(user.createdAt ?? user.createdTimestamp)}
+            </dd>
+          </div>
+          <div className='min-w-0'>
+            <dt className='text-xs font-medium text-slate-500'>Người tạo</dt>
+            <dd className='mt-1 break-all text-sm font-medium text-slate-900'>
+              {user.createdBy || '--'}
+            </dd>
+          </div>
+          <div>
+            <dt className='text-xs font-medium text-slate-500'>Cập nhật gần nhất</dt>
+            <dd className='mt-1 text-sm font-medium text-slate-900'>
+              {formatUserTimestamp(user.updatedAt)}
+            </dd>
+          </div>
+          <div className='min-w-0'>
+            <dt className='text-xs font-medium text-slate-500'>Người cập nhật</dt>
+            <dd className='mt-1 break-all text-sm font-medium text-slate-900'>
+              {user.updatedBy || '--'}
+            </dd>
+          </div>
+        </dl>
+      </section>
     </div>
   )
 }

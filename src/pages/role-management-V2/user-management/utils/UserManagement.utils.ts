@@ -3,6 +3,16 @@ import {
   SearchUserFormData,
   UserQueryFilters
 } from '../types/UserManagement.type'
+import dayjs from 'dayjs'
+
+export const formatUserTimestamp = (
+  value: string | number | Date | null | undefined
+): string => {
+  if (value === null || value === undefined || value === '') return '--'
+
+  const timestamp = dayjs(value)
+  return timestamp.isValid() ? timestamp.format('DD/MM/YYYY HH:mm:ss') : '--'
+}
 
 /**
  * Chuyển giá trị form sang query param của BE và loại bỏ field rỗng — gửi

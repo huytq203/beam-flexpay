@@ -16,7 +16,9 @@ const useFetchDataRole = () => {
     setPage,
     setPageSize
   } = usePagination({
-    defaultPageSize: 10
+    defaultPageSize: 10,
+    defaultSort: 'createdAt',
+    defaultSortBy: 'DESC'
   })
   const [keyword, setKeyWord] = useState('')
   const payload = {

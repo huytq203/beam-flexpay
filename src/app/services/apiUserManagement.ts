@@ -1,6 +1,10 @@
 import { ResponseType } from '@type/api'
 import { ResponseUserInfor, UserInfor } from '@type/userManagement'
-import { CreateAdminUserRequest } from '@pages/role-management-V2/user-management/types/UserManagement.type'
+import {
+  AdminResetPasswordResponse,
+  CreateAdminUserRequest,
+  UpdateAdminUserRequest
+} from '@pages/role-management-V2/user-management/types/UserManagement.type'
 import { authApiService } from './apiService'
 
 export const userApi = authApiService.injectEndpoints({
@@ -30,12 +34,35 @@ export const userApi = authApiService.injectEndpoints({
         body
       }),
       invalidatesTags: ['UserManagement']
+    }),
+    updateManagerUser: build.mutation<
+      ResponseType<UserInfor>,
+      { userId: string; body: UpdateAdminUserRequest }
+    >({
+      query: ({ userId, body }) => ({
+        url: `users/managers/${userId}`,
+        method: 'PUT',
+        body
+      }),
+      invalidatesTags: ['UserManagement']
+    }),
+    resetManagerPassword: build.mutation<
+      ResponseType<AdminResetPasswordResponse>,
+      string
+    >({
+      query: (userId) => ({
+        url: `users/managers/${userId}/reset-password`,
+        method: 'POST'
+      })
     })
   })
 })
 
 export const {
   useGetUserQuery,
+  useGetUserByIdQuery,
   useLazyGetUserByIdQuery,
-  useCreateManagerUserMutation
+  useCreateManagerUserMutation,
+  useUpdateManagerUserMutation,
+  useResetManagerPasswordMutation
 } = userApi

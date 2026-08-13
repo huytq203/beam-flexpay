@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { navigationItems } from '@components/layout/components/Navigation'
 import { ACTION, MODULE } from '../modules'
-import { findScreenByPath, SCREENS, type ScreenId } from '../registry'
+import {
+  DEFAULT_SCREEN_ACTIONS,
+  findScreenByPath,
+  SCREENS,
+  type ScreenId
+} from '../registry'
 
 const screens = Object.values(SCREENS)
 
@@ -26,7 +31,13 @@ describe('SCREENS', () => {
     expect(SCREENS.USER_ACCOUNT.module).toBe(MODULE.USER)
     expect(SCREENS.USER_ACCOUNT.actions.assignRoles).toBe(ACTION.UPDATE)
     expect(SCREENS.CONFIRM_EKYC.module).toBe(MODULE.ADMIN)
-    expect(SCREENS.CONFIRM_EKYC.view).toBe(ACTION.FULL)
+    expect(SCREENS.CONFIRM_EKYC.actions.approve).toBe(ACTION.FULL)
+  })
+
+  it('mọi screen đều có đủ 6 action chuẩn', () => {
+    for (const screen of screens) {
+      expect(screen.actions).toMatchObject(DEFAULT_SCREEN_ACTIONS)
+    }
   })
 })
 

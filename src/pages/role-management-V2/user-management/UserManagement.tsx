@@ -6,8 +6,10 @@ import {
 } from '@components/index'
 import { useState } from 'react'
 import DialogAddUser from './components/DialogAddUser'
+import DialogEditUser from './components/DialogEditUser'
 import DialogUserDetail from './components/DialogUserDetail'
 import DialogAssignRoles from './components/DialogAssignRoles'
+import AlertResetPassword from './components/AlertResetPassword'
 import useFetchDataUser from './hooks/useFetchDataUser'
 import useHandleUser from './hooks/useHandleUser'
 import { SkeletonButton, SkeletonInput, SkeletonTable } from '@components/ui/skeletons/Skeleton'
@@ -15,10 +17,14 @@ import FormSearchUser from './components/FormSearchUser'
 import { FunnelIcon } from '@components/icons'
 import { useScreenAccess } from '@/app/permissions'
 import { CREATE_ADMIN_USER_FORM_ID } from './constants/userAccount'
+import { useTypedSelector } from '@/app/store'
 const UserManagement = () => {
   const fetchData = useFetchDataUser()
-  const handle = useHandleUser()
+  const currentUserId = useTypedSelector((state) => state.auth.profile.jwtId)
+  const handle = useHandleUser(currentUserId)
   const [isCreatingUser, setIsCreatingUser] = useState(false)
+  const [isUpdatingUser, setIsUpdatingUser] = useState(false)
+  const [isResettingPassword, setIsResettingPassword] = useState(false)
   const { can } = useScreenAccess('USER_ACCOUNT')
 
   return (
@@ -138,6 +144,32 @@ const UserManagement = () => {
         }
       />
 
+      {/* Edit User */}
+      <ModalComponent
+        title='Cập nhật tài khoản Admin'
+        onCancel={() => {
+          if (!isUpdatingUser) handle.closeModal()
+        }}
+        open={handle.modalType === 'edit'}
+        closable={!isUpdatingUser}
+        maskClosable={!isUpdatingUser}
+        keyboard={!isUpdatingUser}
+        footer={null}
+        width={{ xs: 'calc(100% - 24px)', sm: 560, md: 640 }}
+        modalText={
+          <DialogEditUser
+            userId={handle.selectedUser?.id}
+            roleOptions={fetchData.roleOptions}
+            onCancel={() => handle.closeModal()}
+            onSuccess={() => {
+              handle.closeModal()
+              fetchData.refetch()
+            }}
+            onLoadingChange={setIsUpdatingUser}
+          />
+        }
+      />
+
       {/* View User Detail */}
       <ModalComponent
         title='Chi tiết tài khoản Admin'
@@ -149,7 +181,6 @@ const UserManagement = () => {
         modalText={
           <DialogUserDetail
             userId={handle.selectedUser?.id}
-            onCancel={() => handle.closeModal()}
           />
         }
       />
@@ -168,6 +199,30 @@ const UserManagement = () => {
             onSuccess={handle.closeModal}
             onCancel={() => handle.closeModal()}
           />
+        }
+      />
+
+      {/* Reset Password */}
+      <ModalComponent
+        title='Đặt lại mật khẩu tài khoản'
+        onCancel={() => {
+          if (!isResettingPassword) handle.closeModal()
+        }}
+        open={handle.modalType === 'resetPassword'}
+        closable={!isResettingPassword}
+        maskClosable={!isResettingPassword}
+        keyboard={!isResettingPassword}
+        confirmLoading={isResettingPassword}
+        footer={null}
+        width={{ xs: 'calc(100% - 24px)', sm: 520, md: 600 }}
+        modalText={
+          handle.selectedUser ? (
+            <AlertResetPassword
+              user={handle.selectedUser}
+              onCancel={() => handle.closeModal()}
+              onLoadingChange={setIsResettingPassword}
+            />
+          ) : null
         }
       />
     </div>

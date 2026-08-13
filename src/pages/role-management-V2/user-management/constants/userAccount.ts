@@ -36,9 +36,9 @@ export const CREATE_ADMIN_USER_FORM_ID = 'create-admin-user-form';
 /** Trùng ràng buộc @Size(max = 255) của BE. */
 export const KEYWORD_MAX_LENGTH = 255;
 
-export enum RoleUserAccount {
-    ACCOUNTANT = 'Tài khoản kế toán',
-    OPERATOR = 'Tài khoản tổ chức',
-    SUPER_ADMIN = 'Tài khoản admin',
-    TEST = 'Tài khoản test',
-}
+// export enum RoleUserAccount {
+//     ACCOUNTANT = 'Tài khoản kế toán',
+//     OPERATOR = 'Tài khoản tổ chức',
+//     SUPER_ADMIN = 'Tài khoản admin',
+//     TEST = 'Tài khoản test',
+// }
