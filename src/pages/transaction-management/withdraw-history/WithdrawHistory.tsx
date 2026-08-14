@@ -10,8 +10,12 @@ import useHandle from './hooks/useHandle'
 
 const WithdrawHistory = () => {
     const { dataWithdraw, setPage, setPageSize, dataSource, handleSearch, refetch, isFetching } = useFetchDataWithdraw()
-    const { isDetailOpen, detailData, isDetailLoading, openDetail, closeDetail } = useHandle()
-    const columns = getColumn({ onViewDetail: openDetail })
+    const { isDetailOpen, detailData, withdrawalDetail, isDetailLoading, loadingId, openDetail, closeDetail } = useHandle()
+    const columns = getColumn({
+        onViewDetail: openDetail,
+        isDetailLoading,
+        loadingId
+    })
 
     return (
         <div className='space-y-3'>
@@ -44,18 +48,25 @@ const WithdrawHistory = () => {
                 } />
             </div>
 
-            <ModalComponent
-                width='65%'
-                onCancel={closeDetail}
-                onOk={closeDetail}
-                open={isDetailOpen}
-                title={
-                    <span className='flex items-center gap-1'>
-                      <span className='flex items-center gap-1 text-blue-500'><InfoCircleFilled /> Chi tiết giao dịch: </span> <span className='font-bold text-gray-500'> {detailData?.journalCode ? `#${detailData.transactionCode}` : ''}</span>
-                    </span>
-                }
-                modalText={<DialogDetailWithdrawHistory data={detailData} isLoading={isDetailLoading} />}
-            />
+            {isDetailOpen && detailData && withdrawalDetail && (
+                <ModalComponent
+                    width='65%'
+                    onCancel={closeDetail}
+                    onOk={closeDetail}
+                    open
+                    title={
+                        <span className='flex items-center gap-1'>
+                          <span className='flex items-center gap-1 text-blue-500'><InfoCircleFilled /> Chi tiết giao dịch: </span> <span className='font-bold text-gray-500'>#{detailData.transactionCode}</span>
+                        </span>
+                    }
+                    modalText={
+                        <DialogDetailWithdrawHistory
+                            data={detailData}
+                            withdrawalDetail={withdrawalDetail}
+                        />
+                    }
+                />
+            )}
             <DialogModal
                 onCancel={() => { }}
                 onOk={() => { }}

@@ -129,6 +129,12 @@ export const baseQueryWalletCore = fetchBaseQuery({
   prepareHeaders: prepareAuthHeaders
 })
 
+export const baseQueryUserWallet = fetchBaseQuery({
+  baseUrl: import.meta.env.VITE_API_USER_WALLET,
+  credentials: 'include',
+  prepareHeaders: prepareAuthHeaders
+})
+
 export const baseQueryMerchant = fetchBaseQuery({
   baseUrl: ENV.API_MERCHANT,
   credentials: 'include',

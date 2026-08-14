@@ -3,7 +3,7 @@ import CommonInfor from '../components/detail-infor/Personal/CommonInfor'
 import AccountBank from '../components/detail-infor/Personal/AccountBank'
 import HistoryPayment from '../components/detail-infor/Personal/HistoryPayment'
 import FreezeBalance from '../components/detail-infor/Personal/FreezeBalance'
-import FeeSetting from '../components/detail-infor/Personal/FeeSetting'
+import { FeeSetting } from '../components/detail-infor/Personal/FeeSetting'
 import Security from '../components/detail-infor/Personal/Security'
 import CommonInfoBusiness from '../components/detail-infor/business/CommonInfoBusiness'
 import AccountBankBusiness from '../components/detail-infor/business/AccountBankBusiness'
@@ -34,8 +34,18 @@ export const TAB_CONTENT_MAP: TabContentMap = {
     'BUSINESS': <FreezeBalanceBusiness />
   },
   '5': {
-    'USER': <FeeSetting />,
-    'SYSTEM': <FeeSetting />,
+    'USER': (props: TabContentProps) => (
+      <FeeSetting
+        walletId={props.accountData?.id ?? ''}
+        walletLabel={props.accountData?.ownerUsername ?? 'Ví đang xem'}
+      />
+    ),
+    'SYSTEM': (props: TabContentProps) => (
+      <FeeSetting
+        walletId={props.accountData?.id ?? ''}
+        walletLabel={props.accountData?.ownerUsername ?? 'Ví hệ thống'}
+      />
+    ),
     'BUSINESS': <FeeSettingBusiness />
   },
   '6': {
@@ -44,4 +54,3 @@ export const TAB_CONTENT_MAP: TabContentMap = {
     'BUSINESS': <SecurityBusiness />
   }
 }
-

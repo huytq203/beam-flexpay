@@ -1,6 +1,17 @@
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
 import { isDate } from 'lodash'
 import { DateFormat, FullFormatTime } from '@constants/datetime'
+
+dayjs.extend(utc)
+
+export const UTC_OFFSET_HOURS = {
+  UTC: 0,
+  VIETNAM: 7
+} as const
+
+export type UTCOffsetHours =
+  (typeof UTC_OFFSET_HOURS)[keyof typeof UTC_OFFSET_HOURS]
 
 export function getDate(date: string | null | undefined) {
   return date?.split('T')?.[0] ?? null
@@ -19,6 +30,20 @@ export const formatUTCToLocalDate = (time?: string | null) => {
 export const formatUTCToLocalDateTime = (time?: string | null) => {
   if (!time) return ''
   return dayjs(time).format(FullFormatTime)
+}
+
+export const formatUTCDateTimeByOffset = (
+  time: string | null | undefined,
+  utcOffsetHours: UTCOffsetHours
+): string => {
+  if (!time) return ''
+
+  const utcDateTime = dayjs.utc(time)
+  if (!utcDateTime.isValid()) return time
+
+  return utcDateTime
+    .utcOffset(utcOffsetHours * 60)
+    .format(FullFormatTime)
 }
 
 export const getVNDateStringFromUTCTimeString = formatUTCToLocalDate

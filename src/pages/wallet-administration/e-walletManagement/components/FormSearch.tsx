@@ -8,17 +8,21 @@ import { StatusLabel, WalletTypeLabel } from '../constants/Ewallet.constant'
 import { FormSearchValues } from '../types/ResponseWalletAccount.type'
 import * as Icons from '@components/icons'
 import { StatusEKYCLabel } from '@/pages/wallet-administration/e-walletManagement/constants/StatusEKYC.constant'
+import {
+  buildWalletSearchFilters,
+  type WalletSearchInputValues
+} from '../utils/wallet-search'
 
-interface props {
+interface FormSearchProps {
   handleSearch: (value: FormSearchValues) => void
 }
 
-const FormSearch = ({ handleSearch }: props) => {
-  const formSearch = useForm<FormSearchValues>()
+export const FormSearch = ({ handleSearch }: FormSearchProps) => {
+  const formSearch = useForm<WalletSearchInputValues>()
   const { svg } = useSVG()
 
-  const onSubmit: SubmitHandler<FormSearchValues> = (data) => {
-    handleSearch(data)
+  const onSubmit: SubmitHandler<WalletSearchInputValues> = (data) => {
+    handleSearch(buildWalletSearchFilters(data))
   }
   const handleReset = () => {
     formSearch.reset()
@@ -41,7 +45,7 @@ const FormSearch = ({ handleSearch }: props) => {
           <FormSelect control={formSearch.control} name='status' options={mapEnumToSelectOptions(StatusLabel)} label='Trạng thái ví' />
         </div>
         <div className="col-span-1">
-          <FormSelect control={formSearch.control} name='verificationStatus' options={mapEnumToSelectOptions(StatusEKYCLabel)} label='Trạng thái xác thực' />
+          <FormSelect control={formSearch.control} name='verifyEKYC' options={mapEnumToSelectOptions(StatusEKYCLabel)} label='Trạng thái xác thực' />
         </div>
         <div className="col-span-1">
           <FormSelect control={formSearch.control} name='walletType' options={mapEnumToSelectOptions(WalletTypeLabel)} label='Loại ví' />
@@ -63,5 +67,3 @@ const FormSearch = ({ handleSearch }: props) => {
     </form>
   )
 }
-
-export default FormSearch

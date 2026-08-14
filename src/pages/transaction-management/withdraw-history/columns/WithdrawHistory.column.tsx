@@ -10,10 +10,12 @@ import { formatNumber } from '@/app/utils'
 import { cn } from '@/app/utils/cn'
 
 interface ColumnProps {
-    onViewDetail: (id: string) => void
+    onViewDetail: (id: string) => Promise<void>
+    isDetailLoading: boolean
+    loadingId: string | null
 }
 
-const getColumn = ({ onViewDetail }: ColumnProps): ColumnsType<UnifiedContentJournal> => [
+const getColumn = ({ onViewDetail, isDetailLoading, loadingId }: ColumnProps): ColumnsType<UnifiedContentJournal> => [
     {
         title: '#',
         dataIndex: 'no',
@@ -145,7 +147,9 @@ const getColumn = ({ onViewDetail }: ColumnProps): ColumnsType<UnifiedContentJou
                 <div className="flex justify-center items-center">
                     <TooltipComponent title='Xem chi tiết'>
                         <ButtonComponent
-                            onClick={() => onViewDetail(record.id)}
+                            onClick={() => void onViewDetail(record.id)}
+                            loading={loadingId === record.id}
+                            disabled={isDetailLoading}
                             size='small'
                             type='default'
                             icon={<EyeFilled />}

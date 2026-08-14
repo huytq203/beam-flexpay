@@ -1,3 +1,4 @@
+import type { WithdrawalDetail } from '@services/apiJournal'
 import { CardComponent, TimeLineComponent } from '@components/index'
 import { BankFilled, HistoryOutlined, PenTool, UserIcon } from '@components/icons'
 import { UnifiedContentJournal } from '@type/apiResponseJournal'
@@ -8,23 +9,44 @@ import React from 'react'
 
 interface Props {
     data?: UnifiedContentJournal
+    withdrawalDetail?: WithdrawalDetail
     isLoading?: boolean
 }
 
 const STATUS_CLASS: Record<string, string> = {
-    PENDING: 'text-blue-600 bg-blue-50 border border-blue-400 px-2 py-0.5 rounded-sm text-[12px] font-medium',
-    POSTED: 'text-green-700 bg-green-50 border border-green-400 px-2 py-0.5 rounded-sm text-[12px] font-medium',
-    ARCHIVED: 'text-red-600 bg-red-50 border border-red-400 px-2 py-0.5 rounded-sm text-[12px] font-medium',
+    PENDING: 'text-yellow-600 bg-yellow-100   px-2 py-1  rounded-sm text-[12px] font-medium',
+    POSTED: 'text-green-700 bg-green-100   px-2 py-1  rounded-sm text-[12px] font-medium',
+    ARCHIVED: 'text-red-600 bg-red-100   px-2 py-1  rounded-sm text-[12px] font-medium',
 }
 
 const InfoRow = ({ label, value, className }: { label: string; value: React.ReactNode; className?: string }) => (
-    <div className="flex justify-between items-center py-1">
+    <div className="flex justify-between items-center gap-3 py-1">
         <p className="text-gray-500">{label}:</p>
-        <div className={`font-medium ${className ?? ''}`}>{value ?? '--'}</div>
+        <div className={`min-w-0 break-words text-right font-medium ${className ?? ''}`}>{value ?? '--'}</div>
     </div>
 )
 
-const DialogDetailWithdrawHistory = ({ data, isLoading }: Props) => {
+interface BeneficiaryInfoProps {
+    beneficiary: WithdrawalDetail['beneficiary']
+    fallbackBank: string
+}
+
+const BeneficiaryInfo = ({ beneficiary, fallbackBank }: BeneficiaryInfoProps) => {
+    if (!beneficiary) {
+        return <p className='py-3 text-center text-gray-500'>Không có thông tin thụ hưởng.</p>
+    }
+
+    return (
+        <div>
+            <InfoRow label='Ngân hàng' value={beneficiary.bankCode || fallbackBank} />
+            <InfoRow label='Số tài khoản' value={beneficiary.accountNumber || '--'} />
+            <InfoRow label='Tên chủ TK' value={beneficiary.accountName || '--'} />
+            <InfoRow label='Chi nhánh' value={beneficiary.branch || '--'} />
+        </div>
+    )
+}
+
+const DialogDetailWithdrawHistory = ({ data, withdrawalDetail, isLoading }: Props) => {
     if (isLoading) {
         return <div className="flex justify-center items-center h-40 text-gray-400">Đang tải dữ liệu...</div>
     }
@@ -105,10 +127,10 @@ const DialogDetailWithdrawHistory = ({ data, isLoading }: Props) => {
                         <p className='font-medium flex items-center gap-1'><BankFilled />Thông tin thụ hưởng</p>
                         <hr className='my-3' />
                         <div>
-                            <InfoRow label='Ngân hàng' value={data.to?.displayName || '--'} />
-                            <InfoRow label='Số tài khoản' value={ '--'} />
-                            <InfoRow label='Tên chủ TK' value={ '--'} />
-                            <InfoRow label='Chi nhánh' value={ '--'} />
+                            <BeneficiaryInfo
+                                beneficiary={withdrawalDetail?.beneficiary ?? null}
+                                fallbackBank={data.to?.displayName || '--'}
+                            />
                             {data.bankRefId && <InfoRow label='Mã tham chiếu NH' value={data.bankRefId} />}
                             {data.transactionId && <InfoRow label='Mã giao dịch gốc' value={
                                 <span className="text-xs break-all">{data.transactionId}</span>
@@ -133,7 +155,7 @@ const DialogDetailWithdrawHistory = ({ data, isLoading }: Props) => {
             <CardComponent content={
                 <>
                     <p className='font-medium flex items-center gap-1'><PenTool size={16} />Ghi chú nội bộ của admin:</p>
-                    <div className="bg-yellow-50 border rounded-md p-3 text-gray-500 mt-2">
+                    <div className="bg-yellow-50 border rounded-md p-3 text-yellow-800 mt-2">
                         <p>Chưa có ghi chú nội dung nào</p>
                     </div>
                 </>

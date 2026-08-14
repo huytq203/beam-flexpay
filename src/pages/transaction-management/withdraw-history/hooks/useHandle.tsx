@@ -1,29 +1,60 @@
-import { useGetUnifiedByIdQuery } from '@services/apiJournal'
-import { useState } from 'react'
+import {
+    useLazyGetUnifiedByIdQuery,
+    useLazyGetWithdrawalByTransactionCodeQuery,
+    type WithdrawalDetail
+} from '@services/apiJournal'
+import type { UnifiedContentJournal } from '@type/apiResponseJournal'
+import { useRef, useState } from 'react'
 
 const useHandle = () => {
-    const [selectedId, setSelectedId] = useState<string | undefined>(undefined)
     const [isDetailOpen, setIsDetailOpen] = useState(false)
+    const [detailData, setDetailData] = useState<UnifiedContentJournal>()
+    const [withdrawalDetail, setWithdrawalDetail] = useState<WithdrawalDetail>()
+    const [loadingId, setLoadingId] = useState<string | null>(null)
+    const loadingIdRef = useRef<string | null>(null)
+    const [getUnifiedById] = useLazyGetUnifiedByIdQuery()
+    const [getWithdrawalByTransactionCode] = useLazyGetWithdrawalByTransactionCodeQuery()
 
-    const { data: detailData, isLoading: isDetailLoading } = useGetUnifiedByIdQuery(selectedId, {
-        skip: !selectedId,
-    })
+    const openDetail = async (id: string): Promise<void> => {
+        if (loadingIdRef.current) return
 
-    const openDetail = (id: string) => {
-        setSelectedId(id)
-        setIsDetailOpen(true)
+        loadingIdRef.current = id
+        setLoadingId(id)
+        setDetailData(undefined)
+        setWithdrawalDetail(undefined)
+        setIsDetailOpen(false)
+
+        try {
+            const journalResult = await getUnifiedById(id)
+            if (!journalResult.data) return
+
+            const journal = journalResult.data
+            const withdrawalResult = await getWithdrawalByTransactionCode(
+                journal.transactionCode
+            )
+            if (!withdrawalResult.data) return
+
+            setDetailData(journal)
+            setWithdrawalDetail(withdrawalResult.data)
+            setIsDetailOpen(true)
+        } finally {
+            loadingIdRef.current = null
+            setLoadingId(null)
+        }
     }
 
     const closeDetail = () => {
         setIsDetailOpen(false)
-        setSelectedId(undefined)
+        setDetailData(undefined)
+        setWithdrawalDetail(undefined)
     }
 
     return {
-        selectedId,
         isDetailOpen,
         detailData,
-        isDetailLoading,
+        withdrawalDetail,
+        isDetailLoading: loadingId !== null,
+        loadingId,
         openDetail,
         closeDetail,
     }

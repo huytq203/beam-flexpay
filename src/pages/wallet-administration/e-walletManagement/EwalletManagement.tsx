@@ -2,7 +2,7 @@ import { SnowflakeIcon, LockOutlined, UnlockOutlined, StopOutlined, WarningIcon 
 import { CardComponent, DialogModal, Table } from '@components/index'
 import { SkeletonTable, SkeletonSearchGroup } from '@components/ui/skeletons/Skeleton'
 import React from 'react'
-import FormSearch from './components/FormSearch'
+import { FormSearch } from './components/FormSearch'
 import useEwalletManagement from './hooks/useEwalletManagement'
 import DialogFreeze from './components/DialogFreeze'
 import DialogUnfreeze from './components/DialogUnfreeze'

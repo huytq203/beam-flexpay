@@ -9,7 +9,7 @@ import type { WalletModalType } from '../columns/wallet-row-actions'
 
 const useEwalletManagement = () => {
   const { page, size, setPageSize, setPage } = usePagination()
-  const [filter, setFilter] = useState({})
+  const [filter, setFilter] = useState<FormSearchValues>({})
   const [modalType, setModalType] = useState<WalletModalType>(null)
   const [selectedAccount, setSelectedAccount] = useState<AcountItem | null>(null)
   const navigate = useNavigate()
@@ -46,7 +46,7 @@ const useEwalletManagement = () => {
     setSelectedAccount(null)
   }
 
-  const dataSource = useMemo(() => getAccount?.content.map((item: AcountItem, index: number) => ({
+  const dataSource = useMemo(() => getAccount?.content.map((item, index) => ({
     ...item,
     no: (page - 1) * size + index + 1,
   })), [getAccount, page, size])

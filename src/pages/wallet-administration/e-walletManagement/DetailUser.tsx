@@ -85,15 +85,15 @@ const DetailUser = () => {
       })
     }
     return tabContent
-  }, [activeKey, ownerType, getAccountById, dataEKYC])
+  }, [activeKey, ownerType, getAccountById, dataEKYC, linkedBanks])
 
   return (
     <div>
       <CardComponent
-        className='mb-3'
+        className='mb-3!'
         content={<InforUser data={getAccountById} dataEKYC={dataEKYC} />}
       />
-      <div className='px-5  bg-white rounded-md'>
+      <div className='px-5! mb-3! bg-white rounded-md'>
         <TabComponent
           activeKey={activeKey}
           items={items}

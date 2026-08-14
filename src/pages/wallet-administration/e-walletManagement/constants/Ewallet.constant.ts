@@ -34,14 +34,3 @@ export const WalletTypeLabel: Record<WalletTypeKey, string> = {
   [WalletTypeKey.BUSINESS]: 'Doanh nghiệp',
   [WalletTypeKey.SYSTEM]: 'Hệ thống',
 } as const
-
-
-export enum verificationStatusKey {
-  VERIFIED = 'VERIFIED',
-  UNVERIFIED = 'UNVERIFIED',
-}
-
-export const verificationStatusLabel: Record<verificationStatusKey, string> = {
-  [verificationStatusKey.VERIFIED]: 'Đã xác thực',
-  [verificationStatusKey.UNVERIFIED]: 'Chưa xác thực',
-} as const

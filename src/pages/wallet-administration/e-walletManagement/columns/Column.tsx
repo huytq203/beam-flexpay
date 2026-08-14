@@ -50,8 +50,10 @@ export const getColumn = ({
           ? 'Hệ thống'
           : (record.ownerUsername ?? '--')
 
-        const renderStatusEKYC = (status: string|null) => {
-          const statusInfo = statusEKYC.find((item) => item.value === status)
+        const renderStatusEKYC = (isVerified: boolean) => {
+          const statusInfo = statusEKYC.find(
+            (item) => item.value === isVerified
+          )
           if (!statusInfo) return null
 
           return (
@@ -77,9 +79,7 @@ export const getColumn = ({
                 </span>
               </TooltipComponent>
 
-              {!isSystem &&
-                record.verificationStatus &&
-                renderStatusEKYC(record.verificationStatus)}
+              {!isSystem && renderStatusEKYC(record.verifyEKYC)}
             </div>
 
             {record.ownerId && (

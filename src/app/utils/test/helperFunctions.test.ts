@@ -9,6 +9,7 @@ import {
 } from '../helper-functions/data'
 import {
   extractNativeDateFromPicker,
+  formatUTCDateTimeByOffset,
   getDate
 } from '../helper-functions/date'
 import {
@@ -103,6 +104,17 @@ describe('data and date helpers', () => {
     const date = new Date('2026-08-06T00:00:00.000Z')
     expect(getDate('2026-08-06T12:30:00Z')).toBe('2026-08-06')
     expect(extractNativeDateFromPicker({ $d: date })).toBe(date)
+  })
+
+  it('format thời gian UTC theo offset được chọn', () => {
+    const utcTime = '2026-08-14T13:51:39.642204'
+
+    expect(formatUTCDateTimeByOffset(utcTime, 7)).toBe(
+      '14/08/2026 20:51:39'
+    )
+    expect(formatUTCDateTimeByOffset(utcTime, 0)).toBe(
+      '14/08/2026 13:51:39'
+    )
   })
 })
 
