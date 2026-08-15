@@ -1,9 +1,25 @@
 import { renderWithProviders } from '@/test/render'
 import { server } from '@/test/mocks/server'
 import { screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { FeeSetting } from '../FeeSetting'
+
+const mocks = vi.hoisted(() => ({
+  exportFile: vi.fn()
+}))
+
+vi.mock('@services/apiExportCsv', () => ({
+  useExportApplicableFeeRulesMutation: () => [vi.fn(), { reset: vi.fn() }]
+}))
+
+vi.mock('@hooks/useExportCsv', () => ({
+  useExportCsv: () => ({
+    exportFile: mocks.exportFile,
+    isExporting: false
+  })
+}))
 
 const WALLET_ID = '6b1f3c2a-8f4e-4a1b-9c33-7d9a1e5b0f21'
 
@@ -51,6 +67,8 @@ const createPage = (content: typeof rule[]) => ({
 })
 
 describe('FeeSetting', () => {
+  beforeEach(() => vi.clearAllMocks())
+
   it('gửi đúng bộ lọc ví và hiển thị dòng quy tắc đã nở', async () => {
     server.use(
       http.get('*/fee/applicable-rules', ({ request }) => {
@@ -75,6 +93,14 @@ describe('FeeSetting', () => {
     expect(screen.getByText('0 trở lên')).toBeInTheDocument()
     expect(screen.getByText('11/03/2026 16:24:05')).toBeInTheDocument()
     expect(screen.getByText('01/04/2026 07:00:00')).toBeInTheDocument()
+
+    await userEvent.click(
+      screen.getByRole('button', { name: /Xuất CSV/ })
+    )
+    expect(mocks.exportFile).toHaveBeenCalledWith({
+      merchantId: WALLET_ID,
+      feeDomain: 'EWALLET'
+    })
   })
 
   it('hiển thị empty state khi không có quy tắc phù hợp', async () => {
@@ -93,6 +119,9 @@ describe('FeeSetting', () => {
         screen.getByText('Chưa có quy tắc phí đang áp dụng')
       ).toBeInTheDocument()
     )
+    expect(
+      screen.getByRole('button', { name: /Xuất CSV/ })
+    ).toBeDisabled()
   })
 
   it('không gọi API khi mã ví không phải UUID', () => {

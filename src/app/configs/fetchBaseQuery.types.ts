@@ -4,8 +4,6 @@ import {
     FEEMANAGEMENT,
     FEEMANAGEMENT_V4,
     INTERNAL_WALLET,
-    PERSONALWALLET,
-    PRODUCTS,
     ROLEMANAGEMENT,
     ROLEMANAGEMENT_V2,
     TRANSACTIONMANAGEMENT,
@@ -158,10 +156,24 @@ export const FETCH_ERROR = 'FETCH_ERROR' as const
 // ============================================================================
 
 
-export interface WhiteListItem {
+interface WhiteListItemBase {
     pathname: string
-    requestUrl: string
+    includeNestedPaths?: boolean
 }
+
+/** Mỗi whitelist entry bắt buộc chọn chính xác một kiểu so khớp URL. */
+export type WhiteListItem = WhiteListItemBase & (
+  | {
+      /** So khớp theo tiền tố URL. */
+      requestUrl: string
+      requestUrlEndsWith?: never
+    }
+  | {
+      requestUrl?: never
+      /** So khớp theo hậu tố URL — dùng khi id nằm giữa đường dẫn. */
+      requestUrlEndsWith: string
+    }
+)
 
 
 export interface TokenData {
@@ -217,17 +229,6 @@ export const WHITE_LIST: WhiteListItem[] = [
       requestUrl: '/auth/reset-password'
     },
 
-    { pathname: PERSONALWALLET + '/customers-group', requestUrl: '/customer' },
-
-    { pathname: PRODUCTS + '/sales-fee', requestUrl: '/service/services' },
-    { pathname: PRODUCTS + '/sales-fee', requestUrl: '/service' },
-    { pathname: PRODUCTS + '/sales-fee', requestUrl: '/account-group' },
-    { pathname: PRODUCTS + '/sales-fee', requestUrl: '/customer' },
-
-    { pathname: PRODUCTS + '/product-discount', requestUrl: '/service/services' },
-    { pathname: PRODUCTS + '/product-discount', requestUrl: '/service' },
-    { pathname: PRODUCTS + '/product-discount', requestUrl: '/account-group' },
-    { pathname: PRODUCTS + '/product-discount', requestUrl: '/customer' },
 
     { pathname: FEEMANAGEMENT + '/e-wallet-transfer-money', requestUrl: '/account-group' },
     { pathname: FEEMANAGEMENT + '/e-wallet-transfer-money', requestUrl: '/customer' },
@@ -272,6 +273,16 @@ export const WHITE_LIST: WhiteListItem[] = [
     { pathname: ROLEMANAGEMENT_V2 + '/role-management', requestUrl: '/roles' },
 
     { pathname: WALLETADMINISTRATION + '/e-walletManagement', requestUrl: '/wallet/accounts' },
+    {
+      pathname: WALLETADMINISTRATION + '/e-walletManagement',
+      requestUrl: '/bank-links',
+      includeNestedPaths: true
+    },
+    {
+      pathname: WALLETADMINISTRATION + '/e-walletManagement',
+      requestUrl: '/user-wallets/',
+      includeNestedPaths: true
+    },
     { pathname: WALLETADMINISTRATION + '/transaction-wallet', requestUrl: '/wallet/transactions' },
 
     { pathname: TRANSACTIONMANAGEMENT + '/transaction-wallet', requestUrl: '/wallet/journal/unified' },
@@ -280,6 +291,12 @@ export const WHITE_LIST: WhiteListItem[] = [
     { pathname: TRANSACTIONMANAGEMENT + '/withdraw-history', requestUrl: '/wallet/journal/unified' },
 
 
+    // Nút export tự hiển thị spinner nên overlay toàn màn chỉ gây nhấp nháy.
+    {
+      pathname: WALLETADMINISTRATION + '/e-walletManagement',
+      requestUrlEndsWith: '/export',
+      includeNestedPaths: true
+    },
 
     // { pathname: WALLETADMINISTRATION + '/role-management', requestUrl: '/wallet/transactions' },
 ]
@@ -315,6 +332,16 @@ export const isPasswordResetRequest = (url?: string): boolean => {
 export const isAdminChangePasswordRequest = (url?: string): boolean =>
   normalizeUrl(url).startsWith('/auth/change-password')
 
+const matchesRequestUrl = (
+  item: WhiteListItem,
+  cleanUrl: string
+): boolean => {
+  if (item.requestUrl !== undefined) {
+    return cleanUrl.startsWith(item.requestUrl)
+  }
+  return cleanUrl.endsWith(item.requestUrlEndsWith)
+}
+
 export const isInWhiteList = (
   url?: string,
   pathname?: string
@@ -323,8 +350,14 @@ export const isInWhiteList = (
 
   return WHITE_LIST.find(
     (item) =>
-      item.pathname === pathname &&
-      cleanUrl.startsWith(item.requestUrl)
+      (
+        item.pathname === pathname ||
+        (
+          item.includeNestedPaths &&
+          pathname?.startsWith(`${item.pathname}/`)
+        )
+      ) &&
+      matchesRequestUrl(item, cleanUrl)
   )
 }
 

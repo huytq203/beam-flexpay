@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { Table } from 'antd'
-import { MemoryRouter, useNavigate } from 'react-router-dom'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import type { AcountItem } from '../../types/ResponseWalletAccount.type'
 import { getColumn } from '../Column'
 
@@ -33,7 +32,6 @@ const createAccount = (
 })
 
 const WalletTable = () => {
-  const navigate = useNavigate()
   const dataSource = [
     createAccount('verified', 'verified-user', true),
     createAccount('unverified', 'unverified-user', false)
@@ -41,7 +39,7 @@ const WalletTable = () => {
 
   return (
     <Table
-      columns={getColumn({ navigate, can: () => false })}
+      columns={getColumn({ onViewDetail: vi.fn(), can: () => false })}
       dataSource={dataSource}
       pagination={false}
       rowKey='id'
@@ -51,11 +49,7 @@ const WalletTable = () => {
 
 describe('cột trạng thái eKYC', () => {
   it('hiển thị đúng nhãn cho cả hai giá trị boolean', () => {
-    render(
-      <MemoryRouter>
-        <WalletTable />
-      </MemoryRouter>
-    )
+    render(<WalletTable />)
 
     expect(screen.getByText('Đã eKYC')).toBeInTheDocument()
     expect(screen.getByText('Chưa eKYC')).toBeInTheDocument()

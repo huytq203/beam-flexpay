@@ -92,4 +92,11 @@ export type ApplicableFeeRulePage = z.infer<
 export type ApplicableFeeRuleQuery = z.infer<
   typeof applicableFeeRuleQuerySchema
 >
+/** Endpoint export không phân trang — bỏ `page`/`size` khỏi bộ lọc của bảng. */
+export const applicableFeeRuleExportQuerySchema =
+  applicableFeeRuleQuerySchema.omit({ page: true, size: true })
+
+export type ApplicableFeeRuleExportQuery = z.infer<
+  typeof applicableFeeRuleExportQuerySchema
+>
 export type FeeEffectiveStatus = z.infer<typeof feeEffectiveStatusSchema>

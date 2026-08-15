@@ -26,6 +26,7 @@ const EwalletManagement = () => {
     closeModal,
     loadingGetAccount,
     isFetching,
+    isOpeningDetail,
     refetch,
 
   } = useEwalletManagement()
@@ -57,7 +58,7 @@ const EwalletManagement = () => {
                 columns={column}
                 bordered
                 dataSource={dataSource}
-                loading={isFetching}
+                loading={isFetching || isOpeningDetail}
                 onRefresh={refetch}
                 pagination={{
                   current: page,

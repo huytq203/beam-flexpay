@@ -1,69 +1,32 @@
 import {
   applicableFeeRuleQuerySchema,
+  type ApplicableFeeRuleExportQuery,
   type ApplicableFeeRuleQuery
 } from '@/app/schemas/applicable-fee-rule.schema'
 import { useGetApplicableFeeRulesQuery } from '@/app/services/apiApplicableFeeRule'
-import { ButtonComponent, CardComponent, Table } from '@components/index'
+import {
+  ButtonComponent,
+  Table
+} from '@components/index'
 import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
+import { useExportCsv } from '@hooks/useExportCsv'
 import usePagination from '@hooks/usePagination'
-import type { ReactNode } from 'react'
+import { useExportApplicableFeeRulesMutation } from '@services/apiExportCsv'
 import { useMemo } from 'react'
 import {
   applicableFeeRuleColumns,
   type ApplicableFeeRuleTableRow
 } from './configs/FeeSetting.column'
 import { createApplicableFeeRuleRowKey } from './utils/applicable-fee-rule'
+import {
+  FeeRulesEmptyState,
+  FeeSettingCard
+} from './components/FeeSettingCard'
 
 interface FeeSettingProps {
   walletId: string
   walletLabel: string
 }
-
-interface FeeSettingCardProps {
-  children: ReactNode
-  totalRows?: number
-}
-
-const FeeSettingCard = ({
-  children,
-  totalRows
-}: FeeSettingCardProps) => (
-  <CardComponent
-    className='mt-3'
-    content={
-      <section aria-labelledby='applicable-fee-rules-title'>
-        <div className='mb-3 flex flex-wrap items-center justify-between gap-2'>
-          <h2
-            id='applicable-fee-rules-title'
-            className='text-base font-semibold text-foreground'
-          >
-            Quy tắc phí đang áp dụng
-          </h2>
-          {totalRows !== undefined ? (
-            <span className='text-xs text-muted-foreground'>
-              {totalRows} dòng quy tắc
-            </span>
-          ) : null}
-        </div>
-        {children}
-      </section>
-    }
-  />
-)
-
-const FeeRulesEmptyState = () => (
-  <div
-    role='status'
-    className='flex min-h-44 flex-col items-center justify-center gap-1 rounded-xl border border-border bg-muted/30 px-4 text-center'
-  >
-    <p className='font-medium text-foreground'>
-      Chưa có quy tắc phí đang áp dụng
-    </p>
-    <p className='text-sm text-muted-foreground'>
-      Ví này chưa có quy tắc riêng hoặc quy tắc áp dụng chung phù hợp.
-    </p>
-  </div>
-)
 
 export const FeeSetting = ({ walletId, walletLabel }: FeeSettingProps) => {
   const { page, size, setPage, setPageSize } = usePagination()
@@ -88,6 +51,17 @@ export const FeeSetting = ({ walletId, walletLabel }: FeeSettingProps) => {
   } = useGetApplicableFeeRulesQuery(queryArgs, {
     skip: !parsedQuery.success
   })
+  const [triggerExport, { reset: resetExport }] =
+    useExportApplicableFeeRulesMutation()
+  const { exportFile, isExporting } = useExportCsv({
+    trigger: triggerExport,
+    reset: resetExport,
+    filenamePrefix: 'cau-hinh-phi'
+  })
+  const exportParams: ApplicableFeeRuleExportQuery = {
+    merchantId: walletId,
+    feeDomain: 'EWALLET'
+  }
   const dataSource = useMemo<ApplicableFeeRuleTableRow[]>(
     () =>
       (data?.content ?? []).map((rule, index) => ({
@@ -98,6 +72,13 @@ export const FeeSetting = ({ walletId, walletLabel }: FeeSettingProps) => {
       })),
     [data, page, size, walletLabel]
   )
+  // const exportButton = (
+  //   <ExportCsvButton
+  //     onExport={() => exportFile(exportParams)}
+  //     loading={isExporting}
+  //     disabled={!walletId || (data?.totalElements ?? 0) === 0}
+  //   />
+  // )
 
   if (!parsedQuery.success) {
     return (
@@ -148,14 +129,17 @@ export const FeeSetting = ({ walletId, walletLabel }: FeeSettingProps) => {
 
   if (dataSource.length === 0) {
     return (
-      <FeeSettingCard totalRows={data?.totalElements ?? 0}>
+      <FeeSettingCard
+        totalRows={data?.totalElements ?? 0}
+        // action={exportButton}
+      >
         <FeeRulesEmptyState />
       </FeeSettingCard>
     )
   }
 
   return (
-    <FeeSettingCard totalRows={data?.totalElements}>
+    <FeeSettingCard totalRows={data?.totalElements} >
       <Table<ApplicableFeeRuleTableRow>
         rowKey='rowKey'
         size='small'

@@ -1,12 +1,20 @@
-import { ButtonComponent, CardComponent, DialogModal, Table } from '@components/index'
+import { CardComponent, DialogModal, ExportCsvButton, Table } from '@components/index'
 import { SnowflakeIcon } from '@components/icons'
+import { useExportCsv } from '@hooks/useExportCsv'
+import { useExportFreezesMutation } from '@services/apiExportCsv'
 import DialogUnfreeze from '../components/DialogUnfreeze'
 import React from 'react'
 import { getColumn } from './configs/FreezeBalance.column'
 import useFetchFreeze from './hooks/useFetchFreeze'
 
 const FreezeBalance = () => {
-    const { dataFreeze, isLoadingGetFreeze, dataSource, page, setPage, setPageSize, size, isUnfreezeModalOpen, selectedFreezeItem, handleOpenUnfreezeModal, handleCloseUnfreezeModal } = useFetchFreeze()
+    const { accountId, dataFreeze, isLoadingGetFreeze, dataSource, page, setPage, setPageSize, size, isUnfreezeModalOpen, selectedFreezeItem, handleOpenUnfreezeModal, handleCloseUnfreezeModal } = useFetchFreeze()
+    const [triggerExport, { reset: resetExport }] = useExportFreezesMutation()
+    const { exportFile, isExporting } = useExportCsv({
+        trigger: triggerExport,
+        reset: resetExport,
+        filenamePrefix: 'dong-bang-so-du'
+    })
     const column = getColumn({ onRelease: handleOpenUnfreezeModal })
     return (
         <div>
@@ -14,7 +22,11 @@ const FreezeBalance = () => {
                 <>
                     <div className="flex justify-between items-center mb-3">
                         <span className='font-medium text-gray-600 text-lg'>Lịch sử đóng/mở băng</span>
-                        <ButtonComponent content='Xuất Excel' />
+                        <ExportCsvButton
+                            onExport={() => exportFile({ accountId: accountId ?? '' })}
+                            loading={isExporting}
+                            disabled={!accountId}
+                        />
                     </div>
 
                     <Table

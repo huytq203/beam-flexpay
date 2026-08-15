@@ -1,11 +1,17 @@
 import usePagination from '@hooks/usePagination'
 import { AcountItem, FormSearchValues } from '@pages/wallet-administration/e-walletManagement/types/ResponseWalletAccount.type'
-import { useGetAccountQuery, usePostLockMutation, usePostUnlockMutation } from '@services/apiWalletAccount.api'
+import {
+  useGetAccountQuery,
+  useLazyGetAccountByIdQuery,
+  usePostLockMutation,
+  usePostUnlockMutation
+} from '@services/apiWalletAccount.api'
 import { useCallback, useMemo, useState } from 'react'
 import { getColumn } from '../columns/Column'
 import { useNavigate } from 'react-router-dom'
 import { useScreenAccess } from '@/app/permissions'
 import type { WalletModalType } from '../columns/wallet-row-actions'
+import { preloadWalletDetailAndNavigate } from '../columns/wallet-row-actions'
 
 const useEwalletManagement = () => {
   const { page, size, setPageSize, setPage } = usePagination()
@@ -23,6 +29,8 @@ const useEwalletManagement = () => {
 
   const [_postLockAccount] = usePostLockMutation()
   const [_postUnlockAccount] = usePostUnlockMutation()
+  const [getAccountById, { isFetching: isOpeningDetail }] =
+    useLazyGetAccountByIdQuery()
   const {
     data: getAccount,
     isLoading: loadingGetAccount,
@@ -46,14 +54,26 @@ const useEwalletManagement = () => {
     setSelectedAccount(null)
   }
 
+  const handleViewDetail = useCallback(async (account: AcountItem) => {
+    try {
+      // Tải đúng dữ liệu ví vào RTK Query cache trước khi render route chi tiết.
+      await preloadWalletDetailAndNavigate(account, {
+        loadAccountById: getAccountById,
+        navigate
+      })
+    } catch {
+      // Base query đã hiển thị thông báo lỗi; giữ người dùng tại danh sách.
+    }
+  }, [getAccountById, navigate])
+
   const dataSource = useMemo(() => getAccount?.content.map((item, index) => ({
     ...item,
     no: (page - 1) * size + index + 1,
   })), [getAccount, page, size])
 
   const column = useMemo(
-    () => getColumn({ openModal, navigate, can }),
-    [can, navigate, openModal]
+    () => getColumn({ openModal, onViewDetail: handleViewDetail, can }),
+    [can, handleViewDetail, openModal]
   )
 
   return {
@@ -70,6 +90,7 @@ const useEwalletManagement = () => {
     closeModal,
     loadingGetAccount,
     isFetching,
+    isOpeningDetail,
     refetch,
   
     

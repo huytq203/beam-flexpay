@@ -1,10 +1,15 @@
-import { CardComponent, Table } from '@components/index'
-import React, { useState } from 'react'
+import { CardComponent, ExportCsvButton, Table } from '@components/index'
+import React, { useMemo, useState } from 'react'
 import { getColumn } from './configs/HistoryPayment.column'
 import HistoryFormSearch, { HistorySearchFormValues } from './components/HistoryFormSearch'
 import useFetchData from './hooks/useFetchDataHistory'
 import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
 import dayjs from 'dayjs'
+import { useExportCsv } from '@hooks/useExportCsv'
+import {
+  type ExportTransactionsQuery,
+  useExportTransactionsMutation
+} from '@services/apiExportCsv'
 
 interface Props {
   ownerId: string
@@ -27,6 +32,28 @@ interface HistorySearchParams {
 const HistoryPayment = ({ ownerId, initiatorUsername }: Props) => {
   const [searchParams, setSearchParams] = useState<HistorySearchParams>({})
   const {page, size, setPage, setPageSize,dataSourceUnified,  isLoadingGetUnified,  dataUnified, } = useFetchData({ ownerId, initiatorUsername, searchParams })
+  const [triggerExport, { reset: resetExport }] = useExportTransactionsMutation()
+  const { exportFile, isExporting } = useExportCsv({
+    trigger: triggerExport,
+    reset: resetExport,
+    filenamePrefix: 'lich-su-giao-dich'
+  })
+
+  /** `/wallet/transactions/export` chỉ nhận các filter dưới đây. */
+  const exportParams = useMemo<ExportTransactionsQuery>(() => ({
+    ownerId,
+    transactionCode: searchParams.transactionCode,
+    status: searchParams.status,
+    type: searchParams.transactionType,
+    fromDate: searchParams.fromDate,
+    toDate: searchParams.toDate
+  }), [ownerId, searchParams])
+
+  const hasUnsupportedFilter = Boolean(
+    searchParams.sourceDomain ||
+    searchParams.paymentMethod ||
+    searchParams.counterpartyUsername
+  )
 
   const handleSearch = (data: HistorySearchFormValues) => {
     const formattedData: HistorySearchParams = {
@@ -44,32 +71,46 @@ const HistoryPayment = ({ ownerId, initiatorUsername }: Props) => {
 
   const column = getColumn()
   return (
-    <div>
+    <div className='space-y-3!'>
 
-      <CardComponent className='mt-3' content={<><HistoryFormSearch onSearch={handleSearch} /></>} />
-      <CardComponent className='mt-3' content={
-        isLoadingGetUnified ? (
-          <SkeletonTable columns={column?.length || 5} rows={size || 5} />
-        ) : (
-          <Table
-            scroll={{ x: 'max-content' }} size='small'
-            bordered columns={column}
-            dataSource={dataSourceUnified}
-            pagination={{
-              current: page,
-              showSizeChanger: true,
-              pageSize: size,
-              total: dataUnified?.totalElements,
-              onChange: (page, pageSize) => {
-                setPage(page)
-                setPageSize(pageSize)
-              },
-              showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]}/ ${total} Bản ghi`
-            }}
-
-          />
-        )}
-      />
+      <CardComponent content={<><HistoryFormSearch onSearch={handleSearch} /></>} />
+      <CardComponent content={
+        <>
+          <div className='flex justify-between items-center mb-3'>
+            <span className='font-medium text-gray-600 text-lg'>Lịch sử giao dịch</span>
+            <ExportCsvButton
+              onExport={() => exportFile(exportParams)}
+              loading={isExporting}
+              disabled={!ownerId}
+              tooltip={
+                hasUnsupportedFilter
+                  ? 'File xuất không áp dụng bộ lọc Nguồn / Phương thức thanh toán / Người nhận'
+                  : undefined
+              }
+            />
+          </div>
+          {isLoadingGetUnified ? (
+            <SkeletonTable columns={column?.length || 5} rows={size || 5} />
+          ) : (
+            <Table
+              scroll={{ x: 'max-content' }} size='small'
+              bordered columns={column}
+              dataSource={dataSourceUnified}
+              pagination={{
+                current: page,
+                showSizeChanger: true,
+                pageSize: size,
+                total: dataUnified?.totalElements,
+                onChange: (page, pageSize) => {
+                  setPage(page)
+                  setPageSize(pageSize)
+                },
+                showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]}/ ${total} Bản ghi`
+              }}
+            />
+          )}
+        </>
+      } />
 
     </div>
   )

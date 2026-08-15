@@ -33,7 +33,7 @@ export const formatTierRange = (
 
 export const formatFeeLocalDateTime = (value: string | null): string => {
   if (!value) return '—'
-  return formatUTCDateTimeByOffset(value, UTC_OFFSET_HOURS.UTC)
+  return formatUTCDateTimeByOffset(value, UTC_OFFSET_HOURS.VIETNAM)
 }
 
 export const createApplicableFeeRuleRowKey = (

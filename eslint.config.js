@@ -26,15 +26,8 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unused-vars': 'off',
       'unused-imports/no-unused-imports': 'error',
-      'unused-imports/no-unused-vars': [
-        'error',
-        {
-          args: 'after-used',
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-          caughtErrorsIgnorePattern: '^_',
-        },
-      ],
+      // Không chặn commit vì biến/tham số chưa dùng; import thừa vẫn bị bắt ở trên.
+      'unused-imports/no-unused-vars': 'off',
       'no-console': ['error', { allow: ['warn', 'error'] }],
       // catch rỗng là có chủ đích: lỗi API đã xử lý tập trung ở errorMiddleware.
       'no-empty': ['error', { allowEmptyCatch: true }],

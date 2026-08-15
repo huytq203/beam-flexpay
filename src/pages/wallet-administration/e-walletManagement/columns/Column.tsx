@@ -11,7 +11,6 @@ import { AcountItem } from '@pages/wallet-administration/e-walletManagement/type
 import { formatNumber } from '@utils/formatNumber'
 import dayjs from 'dayjs'
 import { TYPEDATE } from '@constants/date.constant'
-import { useNavigate } from 'react-router-dom'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import * as Icon from '@components/icons'
 import { cn } from '@/lib/utils/cn'
@@ -25,13 +24,13 @@ import {
 interface ColumnOptions {
   openModal?: (type: WalletModalType, account: AcountItem) => void
   handleGetFreeze?: () => void
-  navigate: ReturnType<typeof useNavigate>
+  onViewDetail: (account: AcountItem) => void
   can: (action: ScreenActionId<'EWALLET_MANAGEMENT'>) => boolean
 }
 
 export const getColumn = ({
   openModal,
-  navigate,
+  onViewDetail,
   can
 }: ColumnOptions): ColumnType<AcountItem>[] => {
   return [
@@ -204,9 +203,11 @@ export const getColumn = ({
       render: (_, record) => {
         const items = buildWalletRowActions(record, {
           can,
-          navigate,
+          onViewDetail,
           openModal
         })
+
+        if (!items?.length) return null
 
         return (
           <DropDownComponent

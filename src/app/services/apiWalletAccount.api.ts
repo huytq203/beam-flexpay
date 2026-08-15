@@ -58,6 +58,7 @@ const apiEWallet = apiWalletCore.injectEndpoints({
 export const {
     useGetAccountQuery,
     useGetAccountByIdQuery,
+    useLazyGetAccountByIdQuery,
     usePostUnfreezeMutation,
     usePostFreezeMutation,
     usePostUnlockMutation,

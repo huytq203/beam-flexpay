@@ -9,7 +9,12 @@ const useDetailUser = () => {
   const { id } = useParams()
 
 
-  const { data: getAccountById } = useGetAccountByIdQuery(id)
+  // currentData không giữ lại dữ liệu của id trước khi URL đổi.
+  const { currentData: getAccountById } = useGetAccountByIdQuery(id ?? '', {
+    skip: !id,
+    // Danh sách đã chủ động tải mới trước khi điều hướng; dùng cache đó để tránh gọi lặp.
+    refetchOnMountOrArgChange: false
+  })
   const ownerUsername=getAccountById?.ownerUsername
 
   const payload={

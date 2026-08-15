@@ -93,6 +93,12 @@
     --color-ring: var(--ring);
     --color-input: var(--input);
 
+    /* Biến thể chữ đậm của tông trạng thái, dùng khi chữ nằm trực tiếp trên nền
+       (số tiền, chỉ số) thay vì trên nền tint của pill trạng thái. */
+    --color-success-strong: var(--success-strong);
+    --color-warning-strong: var(--warning-strong);
+    --color-danger-strong: var(--danger-strong);
+
     --color-chart-1: var(--chart-1);
     --color-chart-2: var(--chart-2);
     --color-chart-3: var(--chart-3);
@@ -178,6 +184,11 @@
         /* Non-theme tokens (not managed by applyTheme) */
         --switch-background: #9fc9c6;
 
+        /* Tương phản ≥ 4.5:1 trên nền sáng — dành cho chữ, không dùng làm nền. */
+        --success-strong: #0b7a4a;
+        --warning-strong: #a15c07;
+        --danger-strong: #c62828;
+
         --chart-1: #e11d48;
         --chart-2: #2bd9d0;
         --chart-3: #149e61;                 /* Kraken Green */
@@ -222,6 +233,10 @@
 
         --danger: #f05555;
         --danger-foreground: #ffffff;
+
+        --success-strong: #4ade80;
+        --warning-strong: #fbbf24;
+        --danger-strong: #fca5a5;
 
         --ring: #2bd9d0;
 

@@ -19,8 +19,8 @@ export const TAB_CONTENT_MAP: TabContentMap = {
     'BUSINESS': (props: TabContentProps) => <CommonInfoBusiness accountData={props.accountData} />
   },
   '2': {
-    'USER': (props: TabContentProps) => <AccountBank linkedBanks={props.linkedBanks} />,
-    'SYSTEM': (props: TabContentProps) => <AccountBank linkedBanks={props.linkedBanks} />,
+    'USER': (props: TabContentProps) => <AccountBank userId={props.accountData?.ownerId ?? ''} walletAccountId={props.accountData?.id ?? ''} />,
+    'SYSTEM': (props: TabContentProps) => <AccountBank userId={props.accountData?.ownerId ?? ''} walletAccountId={props.accountData?.id ?? ''} />,
     'BUSINESS': (props: TabContentProps) => <AccountBankBusiness linkedBanks={props.linkedBanks} />
   },
   '3': {

@@ -41,6 +41,7 @@ const useFetchFreeze = () => {
     }
 
     return {
+        accountId: id,
         dataFreeze,
         isLoadingGetFreeze,
         dataSource,

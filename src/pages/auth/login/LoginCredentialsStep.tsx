@@ -128,7 +128,6 @@ export function LoginCredentialsStep({
             onFocus={() => setIsUsernameReadonly(false)}
             onBlur={() => setIsUsernameReadonly(true)}
             onCopy={(event) => event.preventDefault()}
-            onPaste={(event) => event.preventDefault()}
             onCut={(event) => event.preventDefault()}
           />
 
@@ -144,7 +143,6 @@ export function LoginCredentialsStep({
             onFocus={() => setIsPasswordReadonly(false)}
             onBlur={() => setIsPasswordReadonly(true)}
             onCopy={(event) => event.preventDefault()}
-            onPaste={(event) => event.preventDefault()}
             onCut={(event) => event.preventDefault()}
           />
 

@@ -12,25 +12,48 @@ export type WalletModalType =
 
 interface WalletRowActionOptions {
   can: (action: ScreenActionId<'EWALLET_MANAGEMENT'>) => boolean
-  navigate: (path: string) => void
+  onViewDetail: (account: AcountItem) => void
   openModal?: (type: WalletModalType, account: AcountItem) => void
+}
+
+interface WalletDetailRequest {
+  unwrap: () => Promise<unknown>
+}
+
+interface OpenWalletDetailOptions {
+  loadAccountById: (
+    id: string,
+    preferCacheValue?: boolean
+  ) => WalletDetailRequest
+  navigate: (path: string) => void
+}
+
+export const preloadWalletDetailAndNavigate = async (
+  account: AcountItem,
+  { loadAccountById, navigate }: OpenWalletDetailOptions
+): Promise<void> => {
+  await loadAccountById(account.id, false).unwrap()
+  navigate(`${SCREENS.EWALLET_MANAGEMENT.path}/${account.id}`)
 }
 
 export const buildWalletRowActions = (
   record: AcountItem,
-  { can, navigate, openModal }: WalletRowActionOptions
+  { can, onViewDetail, openModal }: WalletRowActionOptions
 ): MenuProps['items'] => {
   const items: MenuProps['items'] = []
+  const isSystem = record.ownerType === 'SYSTEM'
+
+  if (isSystem) return items
+
   const isLocked = record.status === StatusKey.LOCKED
   const isFrozen = record.status === StatusKey.FROZEN
-  const isSystem = record.ownerType === 'SYSTEM'
   const lockAction = isLocked ? 'unlock' : 'lock'
 
   if (can('viewDetail')) {
     items.push({
       key: '1',
       label: 'Xem chi tiết',
-      onClick: () => navigate(`${SCREENS.EWALLET_MANAGEMENT.path}/${record.id}`)
+      onClick: () => onViewDetail(record)
     })
   }
 
@@ -39,7 +62,7 @@ export const buildWalletRowActions = (
       key: '2',
       label: isLocked ? 'Mở khóa tài khoản' : 'Khóa tài khoản',
       onClick: () => openModal?.(isLocked ? 'unlock' : 'lock', record),
-      disabled: isSystem || isFrozen
+      disabled: isFrozen
     })
   }
 
@@ -48,7 +71,7 @@ export const buildWalletRowActions = (
       key: '3',
       label: 'Đóng băng số dư',
       onClick: () => openModal?.('freeze', record),
-      disabled: isSystem || (record.balance ?? 0) === 0
+      disabled: (record.balance ?? 0) === 0
     })
   }
 

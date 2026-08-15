@@ -56,7 +56,7 @@ function EmployeeProfile({ open, onClose }: CustomModalProps) {
     <DialogModal
       open={open}
       width={480}
-      title={t('employee.profile')}
+      title={"Thông tin tài khoản"}
       onOk={onClose}
       onCancel={onClose}
       className="[&_.ant-modal-content]:rounded-2xl! [&_.ant-modal-content]:border! [&_.ant-modal-content]:border-border! [&_.ant-modal-content]:shadow-none! [&_.ant-modal-header]:mb-4! [&_.ant-modal-title]:text-lg! [&_.ant-modal-title]:font-bold!"
@@ -95,7 +95,7 @@ function EmployeeProfile({ open, onClose }: CustomModalProps) {
 
         <ProfileField
           icon={<EnvelopeIcon size={18} weight="duotone" />}
-          label={t('employee.email').toString()}
+          label={'Tài khoản đăng nhập'}
         >
           {profile.email || EMPTY_VALUE}
         </ProfileField>

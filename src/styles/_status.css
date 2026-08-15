@@ -22,4 +22,20 @@
     .normal-status {
         @apply px-1 py-0.5 bg-muted text-muted-foreground font-semibold;
     }
+
+    /*
+     * Tông chữ cho số liệu đứng trực tiếp trên nền (số dư, chỉ số) — không có nền
+     * tint đỡ phía sau nên phải dùng biến thể -strong để đạt tương phản ≥ 4.5:1.
+     */
+    .amount-positive {
+        @apply text-success-strong;
+    }
+
+    .amount-negative {
+        @apply text-danger-strong;
+    }
+
+    .amount-caution {
+        @apply text-warning-strong;
+    }
 }

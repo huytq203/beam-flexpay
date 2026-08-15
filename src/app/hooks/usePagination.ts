@@ -1,10 +1,12 @@
 import { useState } from 'react'
 
+type SortDirection = 'ASC' | 'DESC'
+
 interface UsePaginationOptions {
   defaultPage?: number
   defaultPageSize?: number
   defaultSort?: string
-  defaultSortBy?: string
+  defaultSortBy?: SortDirection
 }
 /**
  * 

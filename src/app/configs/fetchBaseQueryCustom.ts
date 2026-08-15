@@ -369,17 +369,18 @@ const createCustomBaseQuery = (
     const handlesErrorLocally = isPasswordResetRequest(requestUrl)
     const isChangePasswordRequest = isAdminChangePasswordRequest(requestUrl)
 
-    if (
+    const shouldShowLoading =
       isLoading !== false &&
       !handlesErrorLocally &&
       !isChangePasswordRequest &&
       !isInWhiteList(requestUrl, pathName)
-    ) {
+
+    if (shouldShowLoading) {
       showLoading()
     }
 
     const result = await baseQuery(args, api, extraOptions)
-    hideLoading()
+    if (shouldShowLoading) hideLoading()
 
     if (result.error && result.error.status && !handlesErrorLocally) {
       const status = result.error.status
@@ -433,5 +434,6 @@ export const fetchBaseQueryCustom = createCustomBaseQuery(baseAuthQuery)
 export const fetchBaseQueryFee = createCustomBaseQuery(baseQueryFee)
 export const fetchBaseQueryOld = createCustomBaseQuery(baseQueryOld)
 export const fetchBaseQueryWalletCore = createCustomBaseQuery(baseQueryWalletCore)
+export const fetchBaseQueryUserWallet = createCustomBaseQuery(baseQueryUserWallet)
 export const fetchBaseQueryMerchant = createCustomBaseQuery(baseQueryMerchant)
 

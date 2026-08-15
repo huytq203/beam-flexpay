@@ -98,7 +98,7 @@ const FeeAssignmentApprovalAction = ({
         />
         <ButtonComponent
           htmlType='button'
-          type='default'
+          type='primary'
           danger
           content='Từ chối duyệt'
           icon={<CloseCircleOutlined />}
