@@ -27,7 +27,7 @@ const RecordPlaceholder = ({
       <div className='flex flex-wrap items-center justify-between gap-2'>
         <h3 className='text-sm font-semibold'>{title}</h3>
         <span className='rounded-md bg-white/70 px-2 py-1 text-[11px] font-medium'>
-          Chưa có tài liệu
+          Chưa có tài liệu - tính năng đang phát triển
         </span>
       </div>
       <p className='mt-2 text-xs font-medium leading-5 opacity-75'>

@@ -216,10 +216,10 @@ const refreshAccessToken = async (
 // ============================================================================
 let inactivityTimer: NodeJS.Timeout | null = null;
 
-// SỬA LẠI: 15 phút chuẩn là 15 * 60 * 1000
-const INACTIVITY_TIMEOUT = 15 * 60 * 1000; // Đổi lại 1 phút để test cho dễ, hoặc 15 * 60 * 1000 nếu prod
-const RESET_THROTTLE = 2000; // 1 giây (để nhạy hơn khi tương tác)
-const TIME_OLD = 'last_activity_time'; // Đổi tên biến cho rõ nghĩa hơn
+const IS_INACTIVITY_TRACKING_ENABLED = import.meta.env.PROD;
+const INACTIVITY_TIMEOUT = 15 * 60 * 1000;
+const RESET_THROTTLE = 2000;
+const TIME_OLD = 'last_activity_time';
 
 let lastResetTime = 0;
 let isExpired = false;
@@ -284,6 +284,7 @@ const handleSessionExpired = () => {
 
 
 export const resetInactivityTimer = (isFromEvent = false, isInitial = false) => {
+  if (!IS_INACTIVITY_TRACKING_ENABLED) return;
   if (isExpired) return; // Nếu đã out thì không rải event nữa
 
   const currentTime = Date.now();
@@ -327,6 +328,11 @@ export const resetInactivityTimer = (isFromEvent = false, isInitial = false) => 
 
 export const initInactivityTracker = () => {
   if (typeof window === 'undefined') return;
+
+  if (!IS_INACTIVITY_TRACKING_ENABLED) {
+    localStorage.removeItem(TIME_OLD);
+    return;
+  }
 
   const interactions = ['mousedown', 'keydown', 'scroll', 'touchstart', 'wheel'];
   interactions.forEach((event) => {

@@ -1,38 +1,68 @@
-import { UnifiedContentJournal } from '@type/apiResponseJournal'
+import type { TransactionProfit, UnifiedContentJournal } from '@type/apiResponseJournal'
 import { formatCurrency } from '@utils/formatNumber'
 import React from 'react'
 
 interface UserFeesProps {
     data?: UnifiedContentJournal
+    profit?: TransactionProfit | null
 }
 
-const UserFees = ({ data }: UserFeesProps) => {
+const UserFees = ({ data, profit }: UserFeesProps) => {
+    const currency = data?.currency ?? 'VND'
+    const formatMoney = (value?: number | null) =>
+        value == null
+            ? '--'
+            : formatCurrency(value, { symbol: currency, position: 'after' })
+    const userFeeTotal = profit?.userFeeTotal ?? data?.feeAmount
+
     return (
         <>
             <div>
-                <p className='text-blue font-medium'>2. Tài chính & phí (User fees)</p>
+                <p className='text-blue font-medium'>Tài chính & phí người dùng</p>
             </div>
             <hr className='my-3' />
-            <div className="bg-teal-50 p-3 rounded-md border ">
-                {
-                    [
-                        { label: 'Số tiền giao dich', value: <span className='font-medium text-xl'>{formatCurrency(data?.grossAmount??0,{ symbol: 'VNĐ', position: 'after' })}</span> },
-                        { label: 'Tổng phí', value: <span className='font-medium text-lg text-red-700'>{formatCurrency(data?.feeAmount??0,{ symbol: 'VNĐ', position: 'after' })}</span> },
-                        // { label: 'Phí cố định', value: <span className='text-gray-500 text-xs'>5000 VND</span> },
-                        // { label: 'Phí phần trăm', value: <span className='text-gray-500 text-xs'>5000 VND (0.5%)</span> },
-                    ].map((item) => (
-                        <div className="flex justify-between items-center">
-                            <p className='font-medium text-gray-500'>{item.label}</p>
-                            <p>{item.value}</p>
-                        </div>
-                    ))
-                }
+            <div className='rounded-md border border-teal-200 bg-teal-50 p-3'>
+                <div className='flex flex-wrap items-baseline justify-between gap-2'>
+                    <p className='font-medium text-teal-900'>Số tiền giao dịch</p>
+                    <p className='text-xl font-semibold text-teal-950'>{formatMoney(data?.grossAmount)}</p>
+                </div>
+                <div className='mt-2 flex flex-wrap items-baseline justify-between gap-2'>
+                    <p className='font-medium text-teal-900'>Tổng phí người dùng</p>
+                    <p className='text-lg font-semibold text-red-700'>{formatMoney(userFeeTotal)}</p>
+                </div>
+            </div>
 
-            </div>
+            
+            {/* <div className='mt-3'>
+                <CopyableText label='Fee calculation ID:' value={data?.feeCalculationId ?? '--'} />
+            </div> */}
+
+            {profit?.feeBreakdownAvailable && profit.userFeeBreakdown.length > 0 && (
+                <div className='mt-3 space-y-2' aria-label='Chi tiết cấu phần phí'>
+                    {profit.userFeeBreakdown.map((item, index) => (
+                        <div
+                            key={`${item.componentType}-${index}`}
+                            className='rounded-md border border-border bg-white p-3'
+                        >
+                            <div className='flex flex-wrap items-center justify-between gap-2'>
+                                <p className='font-medium'>{item.componentType}</p>
+                                <p className='font-semibold text-red-700'>{formatMoney(item.calculatedFee)}</p>
+                            </div>
+                            <div className='mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600 sm:grid-cols-4'>
+                                <p>Phí cố định: {formatMoney(item.fixedAmount)}</p>
+                                <p>Tỷ lệ: {item.percentage == null ? '--' : `${item.percentage}%`}</p>
+                                <p>Giá trị gốc: {formatMoney(item.baseValue)}</p>
+                                <p>Phí theo tỷ lệ: {formatMoney(item.percentageFee)}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
             <hr className='my-3' />
-            <div className="flex justify-between items-center ">
+            <div className='flex flex-wrap items-center justify-between gap-2'>
                 <p className='font-medium text-lg'>Tổng thực thu/chi:</p>
-                <p className='font-medium text-lg text-blue-700'>{formatCurrency(data?.amount??0,{ symbol: 'VNĐ', position: 'after' })}</p>
+                <p className='font-medium text-lg text-blue-700'>{formatMoney(data?.amount)}</p>
             </div>
         </>
     )

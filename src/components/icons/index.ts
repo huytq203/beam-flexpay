@@ -52,6 +52,7 @@ export {
   ArrowsCounterClockwiseIcon,
   ClockIcon,
   KeyIcon,
+  LockKeyOpenIcon,
   DeviceMobileSpeakerIcon,
   PhoneIcon,
   EnvelopeIcon,

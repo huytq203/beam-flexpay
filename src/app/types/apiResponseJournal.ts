@@ -1,8 +1,15 @@
 export interface PartyInfo {
-  id: string
-  username: string
-  displayName: string
+  id: string | null
+  username: string | null
+  displayName: string | null
   type: string
+}
+
+export interface TransactionFreezeSummary {
+  heldAmount: number
+  shortfallAmount: number
+  requestedAmount: number
+  orderCount: number
 }
 
 export interface UnifiedContentJournal {
@@ -17,10 +24,12 @@ export interface UnifiedContentJournal {
   grossAmount: number
   feeAmount: number
   currency: string
+  feeCalculationId?: string | null
   paymentMethod: string
   bankCode: string | null
   bankRefId: string | null
-  transactionId: string
+  maskedAccount?: string | null
+  transactionId: string | null
   reversesJournalId: string | null
   reversedByJournalId: string | null
   description: string
@@ -29,7 +38,59 @@ export interface UnifiedContentJournal {
   createdAt: string
   postedAt: string | null
   archivedAt: string | null
+  completedAt?: string | null
   sourceDomain: string
+  frozen?: boolean
+  freeze?: TransactionFreezeSummary | null
+}
+
+export interface MoneyFlowEntry {
+  sequence: number
+  step: string | null
+  debitAccount: string | null
+  creditAccount: string | null
+  amount: number
+  occurredAt: string | null
+}
+
+export interface UserFeeBreakdownItem {
+  componentType: string
+  fixedAmount: number | null
+  percentage: number | null
+  baseValue: number | null
+  percentageFee: number | null
+  calculatedFee: number
+}
+
+export interface TransactionProfit {
+  userFeeTotal: number
+  userFeeBreakdown: UserFeeBreakdownItem[]
+  feeBreakdownAvailable: boolean
+  feePolicyName: string | null
+  feePolicyValidFrom: string | null
+  providerCost: number | null
+  providerCostAvailable: boolean
+  grossProfit: number
+  grossProfitLabel: string
+}
+
+export interface TransactionCustomer {
+  userId: string | null
+  username: string | null
+  fullName: string | null
+  walletAccountId: string | null
+  walletGlCode: string | null
+  walletStatus: string | null
+  walletEnabled: boolean | null
+  tier: string | null
+  ekycStatus: string | null
+}
+
+export interface TransactionDetail360 {
+  transaction: UnifiedContentJournal
+  profit?: TransactionProfit | null
+  moneyFlow: MoneyFlowEntry[]
+  customer?: TransactionCustomer | null
 }
 
 export interface DataUnifiedJournal {

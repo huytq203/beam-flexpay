@@ -7,22 +7,17 @@ import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import { StatusLabel, WalletTypeLabel } from '../constants/Ewallet.constant'
 import { FormSearchValues } from '../types/ResponseWalletAccount.type'
 import * as Icons from '@components/icons'
-import { StatusEKYCLabel } from '@/pages/wallet-administration/e-walletManagement/constants/StatusEKYC.constant'
-import {
-  buildWalletSearchFilters,
-  type WalletSearchInputValues
-} from '../utils/wallet-search'
 
 interface FormSearchProps {
   handleSearch: (value: FormSearchValues) => void
 }
 
 export const FormSearch = ({ handleSearch }: FormSearchProps) => {
-  const formSearch = useForm<WalletSearchInputValues>()
+  const formSearch = useForm<FormSearchValues>()
   const { svg } = useSVG()
 
-  const onSubmit: SubmitHandler<WalletSearchInputValues> = (data) => {
-    handleSearch(buildWalletSearchFilters(data))
+  const onSubmit: SubmitHandler<FormSearchValues> = (data) => {
+    handleSearch(data)
   }
   const handleReset = () => {
     formSearch.reset()
@@ -31,21 +26,18 @@ export const FormSearch = ({ handleSearch }: FormSearchProps) => {
   return (
     <form className='space-y-3' onSubmit={formSearch.handleSubmit(onSubmit)} onReset={handleReset}>
       <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="col-span-1">
           <FormInput control={formSearch.control} name='username' label='Người dùng' placeholder='Tên đăng nhập...' />
         </div>
         <div className="col-span-1">
           <FormInput control={formSearch.control} name='ownerId' label='Mã người dùng' placeholder='Tên đăng nhập...' />
         </div>
-        <div className="col-span-1">
+        {/* <div className="col-span-1">
           <FormInput control={formSearch.control} name='glCode' label='GL Code' placeholder='Tên đăng nhập...' />
-        </div>
+        </div> */}
         <div className="col-span-1">
           <FormSelect control={formSearch.control} name='status' options={mapEnumToSelectOptions(StatusLabel)} label='Trạng thái ví' />
-        </div>
-        <div className="col-span-1">
-          <FormSelect control={formSearch.control} name='verifyEKYC' options={mapEnumToSelectOptions(StatusEKYCLabel)} label='Trạng thái xác thực' />
         </div>
         <div className="col-span-1">
           <FormSelect control={formSearch.control} name='walletType' options={mapEnumToSelectOptions(WalletTypeLabel)} label='Loại ví' />

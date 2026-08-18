@@ -39,7 +39,6 @@ export interface AcountItem {
   version: number
   status: string
   enabled: boolean
-  verifyEKYC: boolean
   checksum: string
   lockedReason?: string
   lockedAt?: string
@@ -86,5 +85,4 @@ export interface FormSearchValues {
   enabled?: string
   walletType?: string
   currency?: string
-  verifyEKYC?: boolean
 }

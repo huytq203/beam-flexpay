@@ -10,48 +10,92 @@ import dayjs from 'dayjs'
 import { formatCurrency } from '@utils/formatNumber'
 
 const DetailTransaction = () => {
-  const column = Column()
+  const {
+    getTransactionById,
+    profit,
+    moneyFlow,
+    customer,
+    isLoading,
+    isFetching,
+    isError,
+    refetch
+  } = useDetailTransaction()
+  const column = Column(getTransactionById?.currency)
+  const currency = getTransactionById?.currency ?? 'VND'
+  const grossProfit = profit?.grossProfit ?? getTransactionById?.feeAmount
+  const grossProfitLabel =
+    profit?.grossProfitLabel ?? 'Lợi nhuận gộp (chưa trừ chi phí nhà cung cấp)'
 
-  const { getTransactionById } = useDetailTransaction()
+  if (isLoading) {
+    return (
+      <div className='flex min-h-64 items-center justify-center rounded-md border border-border bg-white p-6 text-gray-600'>
+        Đang tải chi tiết giao dịch…
+      </div>
+    )
+  }
+
+  if (isError || !getTransactionById) {
+    return (
+      <div className='flex min-h-64 flex-col items-center justify-center gap-3 rounded-md border border-red-200 bg-red-50 p-6 text-center'>
+        <p className='font-medium text-red-800'>Không tải được chi tiết giao dịch.</p>
+        <p className='text-sm text-red-700'>Vui lòng kiểm tra kết nối hoặc thử tải lại dữ liệu.</p>
+        <ButtonComponent type='default' content='Thử lại' onClick={() => void refetch()} />
+      </div>
+    )
+  }
 
   return (
     <>
-      <div className="flex justify-between items-center mb-3 px-2">
-        <div className="flex flex-col gap-1">
-          <p className='text-xl font-bold'>Chi tiết giao dịch: <span className='text-blue-700'>{getTransactionById?.transactionCode ?? '--'}</span></p>
-          <p className="text-sm text-gray-500">{dayjs(getTransactionById?.createdAt).format('DD/MM/YYYY HH:mm:ss')}</p>
+      <div className='mb-3 flex flex-wrap items-center justify-between gap-3 px-2'>
+        <div className='min-w-0 flex-1'>
+          <p className='break-words text-xl font-bold'>Chi tiết giao dịch: <span className='text-blue-700'>{getTransactionById.transactionCode}</span></p>
+          <p className='text-sm text-gray-500'>{dayjs.utc(getTransactionById.createdAt).format('DD/MM/YYYY HH:mm:ss')}</p>
         </div>
-        <div className="flex justify-center items-center gap-2">
+        <div className='flex flex-wrap items-center gap-2'>
           <ButtonComponent icon={<PrinterOutlined />} type='default' content='In phiếu' />
           <ButtonComponent icon={<ArrowCounterClockwiseIcon size={16} weight={'bold'} />} className='bg-orange-600 text-white hover:bg-orange-500! hover:text-white!' content='Hoàn tiền' />
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+      <div className='grid grid-cols-1 items-start gap-3 lg:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]'>
+        <div className='flex min-w-0 flex-col gap-3'>
+          <CardComponent content={<CommonInfo data={getTransactionById} />} />
 
-        <CardComponent className='col-span-1 md:col-span-3 order-1 md:order-1' content={<CommonInfo data={getTransactionById} />} />
+          <CardComponent content={<UserFees data={getTransactionById} profit={profit} />} />
 
-        <CardComponent className='col-span-1 md:col-span-2 order-4 md:order-2' content={<InfoUser data={getTransactionById} />} />
-
-        <CardComponent className='col-span-1 md:col-span-3 order-2 md:order-3' content={<UserFees data={getTransactionById} />} />
-
-        <CardComponent className='col-span-1 md:col-span-2 order-5 md:order-4' content={<FeeNCC data={getTransactionById} />} />
-
-        <CardComponent className='col-span-1 md:col-span-3 order-3 md:order-5' content={<>
-          <div>
-            <p className='font-medium'>3. Bảng hạch toán luồng tiền</p>
-          </div>
-          <hr className='my-3' />
-          <Table columns={column} bordered size='small' scroll={{ x: 'max-content' }} />
-        </>} />
-
-        <div className='col-span-1 md:col-span-2  order-6 md:order-6' >
-          <div className=" flex flex-col justify-center items-center border border-blue-700 bg-blue-100 rounded-md py-5 ">
-            <p className=' text-xl text-gray-500 font-bold'>LỢI NHUẬN RÒNG (NET PROFIT)</p>
-            <p className='text-xl  text-green-600 font-medium'>{formatCurrency(0, { symbol: 'VNĐ', position: 'after' })}</p>
-            <p className='text-gray-500 text-sm'>(Tổng thu user - Tổng trả NCC)</p>
-          </div>
+          <CardComponent content={<>
+            <div>
+              <p className='font-medium'>Bảng hạch toán luồng tiền</p>
+            </div>
+            <hr className='my-3' />
+            <Table
+              columns={column}
+              dataSource={moneyFlow}
+              rowKey={(row) => `${row.sequence}-${row.debitAccount ?? ''}-${row.creditAccount ?? ''}`}
+              loading={isFetching}
+              pagination={false}
+              size='small'
+              scroll={{ x: 'max-content' }}
+            />
+          </>} />
         </div>
 
+        <div className='flex min-w-0 flex-col gap-3'>
+          <CardComponent content={<InfoUser data={getTransactionById} customer={customer} />} />
+
+          <CardComponent content={<FeeNCC data={getTransactionById} profit={profit} />} />
+
+          <div className='flex min-h-36 flex-col items-center justify-center rounded-md border border-blue-300 bg-blue-50 px-4 py-5 text-center'>
+            <p className='font-semibold text-blue-950'>{grossProfitLabel}</p>
+            <p className='mt-2 text-xl font-semibold text-green-700'>
+              {grossProfit == null
+                ? '--'
+                : formatCurrency(grossProfit, { symbol: currency, position: 'after' })}
+            </p>
+            {!profit?.providerCostAvailable && (
+              <p className='mt-1 text-sm text-blue-800'>Chưa có dữ liệu chi phí nhà cung cấp.</p>
+            )}
+          </div>
+        </div>
       </div>
 
     </>

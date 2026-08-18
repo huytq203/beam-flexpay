@@ -16,7 +16,7 @@ export const apiFreezes = apiWalletCore.injectEndpoints({
             providesTags: ['Wallet'],
         }),
         postUnfreeze: build.mutation({
-            query: (body: { accountId: string; freezeId: string; reason: string }) => ({
+            query: (body: { accountId: string; freezeId: string; amount: number; reason: string }) => ({
                 url: '/wallet/freezes/unfreeze',
                 method: 'POST',
                 body: body,

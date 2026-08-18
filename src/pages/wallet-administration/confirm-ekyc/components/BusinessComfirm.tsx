@@ -1,5 +1,5 @@
-import { CardComponent, Input, TabComponent, Table } from '@components/index'
-import { Column } from '@pages/wallet-administration/confirm-ekyc/columns/BusinessConfirm.column'
+import { CardComponent, Input, TabComponent } from '@components/index'
+import { ClockIcon } from '@components/icons'
 import { items } from '@pages/wallet-administration/confirm-ekyc/columns/TabsConfirmEKYC.config'
 import { TAB_CONTENT_MAP } from '@pages/wallet-administration/confirm-ekyc/constants/TabConfirmEKYC'
 import { genderMap } from '../types/ConfirmEKYC.type'
@@ -14,7 +14,6 @@ interface Props {
 
 const ContenModalConfirm = ({ data }: { data?: ContentEKYC }) => {
   const [activeKey, setActiveKey] = useState('1')
-  const column = Column()
   const record = data
 
   const ocrFields = [
@@ -75,9 +74,25 @@ const ContenModalConfirm = ({ data }: { data?: ContentEKYC }) => {
           </div>
         </div>
       </div>
-      <div className="mt-3 border rounded-md p-3">
-        <p className='font-bold'>Lịch sử xử lý </p>
-        <Table bordered scroll={{ x: 'max-content' }} size='small' columns={column} />
+      <div className='mt-3 overflow-hidden rounded-md border border-slate-200'>
+        <div className='border-b border-slate-200 bg-slate-50 px-3 py-2.5'>
+          <p className='font-medium text-slate-900'>Lịch sử xử lý</p>
+        </div>
+        <div
+          className='flex min-h-36 flex-col items-center justify-center px-4 py-8 text-center'
+          role='status'
+        >
+          <span className='flex size-10 items-center justify-center rounded-full bg-cyan-50 text-cyan-700'>
+            <ClockIcon size={22} weight='regular' aria-hidden />
+          </span>
+          <p className='mt-3 font-semibold text-slate-900'>
+            Tính năng đang phát triển
+          </p>
+          <p className='mt-1 max-w-md text-sm text-slate-600'>
+            Lịch sử xử lý hồ sơ eKYC sẽ được hiển thị tại đây khi tính năng hoàn
+            thiện.
+          </p>
+        </div>
       </div>
     </>
   )

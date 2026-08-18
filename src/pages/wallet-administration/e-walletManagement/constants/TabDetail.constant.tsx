@@ -4,7 +4,7 @@ import AccountBank from '../components/detail-infor/Personal/AccountBank'
 import HistoryPayment from '../components/detail-infor/Personal/HistoryPayment'
 import FreezeBalance from '../components/detail-infor/Personal/FreezeBalance'
 import { FeeSetting } from '../components/detail-infor/Personal/FeeSetting'
-import Security from '../components/detail-infor/Personal/Security'
+import { Security } from '../components/detail-infor/Personal/Security'
 import CommonInfoBusiness from '../components/detail-infor/business/CommonInfoBusiness'
 import AccountBankBusiness from '../components/detail-infor/business/AccountBankBusiness'
 import HistoryPaymentBusiness from '../components/detail-infor/business/HistoryPaymentBusiness'
@@ -49,8 +49,10 @@ export const TAB_CONTENT_MAP: TabContentMap = {
     'BUSINESS': <FeeSettingBusiness />
   },
   '6': {
-    'USER': <Security />,
-    'SYSTEM': <Security />,
+    'USER': (props: TabContentProps) => (
+      <Security userId={props.accountData?.ownerId ?? ''} />
+    ),
+    'SYSTEM': null,
     'BUSINESS': <SecurityBusiness />
   }
 }

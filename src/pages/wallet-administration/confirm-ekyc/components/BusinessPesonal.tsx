@@ -19,7 +19,7 @@ const DocumentPlaceholder = ({
     <div className='flex items-center justify-between gap-3'>
       <span className='text-sm font-semibold'>{title}</span>
       <span className='rounded-md bg-white/70 px-2 py-1 text-[11px] font-medium'>
-        Chưa có ảnh
+        Chưa có ảnh - tính năng đang phát triển
       </span>
     </div>
     <div className='flex flex-1 items-center justify-center py-5'>

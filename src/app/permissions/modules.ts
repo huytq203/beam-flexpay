@@ -6,6 +6,8 @@ export const MODULE = {
   USER: 'USER',
   FEE: 'FEE',
   WALLET: 'WALLET',
+  EWALLET: 'EWALLET',
+  FREEZE: 'FREEZE',
   TRANSACTION: 'TRANSACTION',
   MERCHANT: 'MERCHANT'
 } as const

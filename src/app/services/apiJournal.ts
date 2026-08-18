@@ -2,6 +2,7 @@ import { baseQueryUserWallet } from '@configs/fetchBaseQueryCustom'
 import { apiWalletCore } from '@services/apiService'
 import type {
   DataUnifiedJournal,
+  TransactionDetail360,
   UnifiedContentJournal
 } from '@type/apiResponseJournal'
 import { z } from 'zod'
@@ -44,6 +45,14 @@ export const apiJournal = apiWalletCore.injectEndpoints({
         transformResponse: (res: { data: UnifiedContentJournal }) => res.data,
         providesTags: ['Journal'],
       }),
+      getTransactionDetail360: build.query<TransactionDetail360, string>({
+        query: (id) => ({
+          url: `/wallet/journal/unified/${id}/detail`,
+          method: 'GET'
+        }),
+        transformResponse: (res: { data: TransactionDetail360 }) => res.data,
+        providesTags: ['Journal']
+      }),
       getWithdrawalByTransactionCode: build.query<WithdrawalDetail, string>({
         async queryFn(transactionCode, queryApi, extraOptions) {
           const response = await baseQueryUserWallet(
@@ -81,6 +90,7 @@ export const apiJournal = apiWalletCore.injectEndpoints({
 export const {
   useGetUnifiedQuery,
   useGetUnifiedByIdQuery,
+  useGetTransactionDetail360Query,
   useGetWithdrawalByTransactionCodeQuery,
   useLazyGetUnifiedByIdQuery,
   useLazyGetWithdrawalByTransactionCodeQuery,

@@ -3,13 +3,12 @@ import useDetailUser from '@pages/wallet-administration/e-walletManagement/hooks
 import React, { Suspense, useMemo } from 'react'
 import { items } from './constants/TabBusiness.config'
 import { TAB_CONTENT_MAP } from './constants/TabDetail.constant'
-import { BankFilled, CheckCircleFilled, SnowflakeIcon } from '@components/icons'
+import { BankFilled, CheckCircleFilled } from '@components/icons'
 import DialogAccount from './components/detail-infor/Personal/components/DialogAccount'
 import DialogConfirmLinkAccount from './components/detail-infor/Personal/components/DialogConfirmLinkAccount'
 import DialigLockAccount from './components/detail-infor/Personal/components/DialogLockAccount'
 import { AcountItem } from './types/ResponseWalletAccount.type'
 import { formatNumber } from '../../../app/utils/formatNumber'
-import DialogFreeze from '@pages/wallet-administration/transaction-wallet/components/DialogFreeze'
 import { ContentEKYC } from '@type/apiResponseEKYC'
 
 
@@ -111,7 +110,6 @@ const DetailUser = () => {
       <DialogModal mode='CONFIRM' content={<DialogAccount />} onCancel={() => { }} onOk={() => { }} open={false} title={<span><BankFilled /> Cập nhật thông tin tài khoản</span>} />
 
       <DialogModal mode='CONFIRM' content={<DialogConfirmLinkAccount />} onCancel={() => { }} onOk={() => { }} open={false} title={<span><BankFilled /> Xác thực liên kết thủ công</span>} />
-      <DialogModal mode='WARNING' onCancel={() => { }} onOk={() => { }} open={false} content={<DialogFreeze />} title={<span className='flex items-center gap-2 text-blue-700'><SnowflakeIcon size={18} />Mở băng giao dịch</span>} />
       <DialogModal mode='DELETE' onCancel={() => { }} onOk={() => { }} open={false} content={<DialigLockAccount />} title={<span className='flex items-center gap-2 text-blue-700 text-red '>Khóa tài khoản</span>} />
     </div>
   )

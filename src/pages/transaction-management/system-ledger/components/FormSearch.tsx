@@ -33,7 +33,7 @@ const FormSearch = ({ handleSearch }: Props) => {
         <div>
             <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
             <form onSubmit={formSearch.handleSubmit(onSubmit)}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <FormInput
                         control={formSearch.control}
                         name='transactionCode'
@@ -41,13 +41,13 @@ const FormSearch = ({ handleSearch }: Props) => {
                         placeholder='Nhập mã giao dịch'
                         className='col-span-1 md:col-span-1'
                     />
-                    <FormInput
+                    {/* <FormInput
                         control={formSearch.control}
                         name='accountId'
                         label='Mã tài khoản'
                         placeholder='Nhập mã tài khoản'
                         className='col-span-1 md:col-span-1'
-                    />
+                    /> */}
                     {/* <FormSelect
                         control={formSearch.control}
                         name='status'

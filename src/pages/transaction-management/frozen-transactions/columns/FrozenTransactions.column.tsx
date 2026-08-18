@@ -29,7 +29,7 @@ export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeR
         render: (_, record) => (
             <div>
                 <p className="font-medium">{ReleaseTypeLabel[record.type as ReleaseType]}</p>
-                <p className="text-gray-500 text-[12px]">{record.reason}</p>
+                <p className="text-grayd-500 text-[12px]">{record.reason}</p>
             </div>
         ),
     },
@@ -38,7 +38,7 @@ export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeR
         align: 'left',
         key: 'customer',
         render: (_, record) => (
-            <div className='flex flex-col '>
+            <div className='flex flex-col gap-1 '>
                 <MaskText active={true} value={record.ownerUsername} />
                 <StatusBadge className="text-gray-500 text-[12px]" status={record.ownerType}  config={CONFIG_LABEL_OWNER_TYPE}/>
             </div>

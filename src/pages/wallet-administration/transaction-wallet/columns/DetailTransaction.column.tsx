@@ -1,30 +1,55 @@
+import type { MoneyFlowEntry } from '@type/apiResponseJournal'
+import { formatCurrency } from '@utils/formatNumber'
 import { ColumnType } from 'antd/es/table'
+import dayjs from 'dayjs'
 
-const Column = (): ColumnType[] => [
+const Column = (currency = 'VND'): ColumnType<MoneyFlowEntry>[] => [
     {
         title: '#',
-        dataIndex: 'no',
-        align: 'center'
+        dataIndex: 'sequence',
+        align: 'center',
+        width: 56
     },
     {
         title: 'Bước hạch toán',
-        dataIndex: '',
-        align: 'center'
+        dataIndex: 'step',
+        width: 220,
+        render: (value: string | null) => value || '--'
     },
     {
         title: 'Ví nguồn (DEBIT)',
-        dataIndex: '',
-        align: 'center',
+        dataIndex: 'debitAccount',
+        width: 240,
+        render: (value: string | null) => (
+            <span className='break-words'>{value || '--'}</span>
+        )
     },
     {
         title: 'Ví đích (CREDIT)',
-        dataIndex: '',
-        align: 'center',
+        dataIndex: 'creditAccount',
+        width: 240,
+        render: (value: string | null) => (
+            <span className='break-words'>{value || '--'}</span>
+        )
     },
     {
         title: 'Số tiền',
-        dataIndex: '',
+        dataIndex: 'amount',
+        align: 'right',
+        width: 160,
+        render: (value: number) => (
+            <span className='whitespace-nowrap font-medium'>
+                {formatCurrency(value, { symbol: currency, position: 'after' })}
+            </span>
+        )
+    },
+    {
+        title: 'Thời điểm',
+        dataIndex: 'occurredAt',
         align: 'center',
+        width: 170,
+        render: (value: string | null) =>
+            value ? dayjs.utc(value).format('DD/MM/YYYY HH:mm:ss') : '--'
     },
 ]
 

@@ -2,6 +2,7 @@ import { FormTextArea } from '@components/form'
 import { WarningIcon } from '@components/icons'
 import { ButtonComponent } from '@components/index'
 import { usePostUnfreezeMutation } from '@services/apiFreezes'
+import { usePostUnfreezeTransactionMutation } from '@services/apiWalletAccount.api'
 import { formatCurrency } from '@utils/formatNumber'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -28,16 +29,33 @@ const DialogUnfreeze = ({
         defaultValues: { reason: '' },
         resolver: zodResolver(UnfreezeSchema),
     })
-    const [postUnfreeze, { isLoading }] = usePostUnfreezeMutation()
+    const [postUnfreeze, { isLoading: isUnfreezing }] = usePostUnfreezeMutation()
+    const [postUnfreezeTransaction, { isLoading: isUnfreezingTransaction }] =
+        usePostUnfreezeTransactionMutation()
+    const isLoading = isUnfreezing || isUnfreezingTransaction
 
     const onSubmit = async (values: UnfreezeFormValues) => {
         if (!freezeItem?.accountId || !freezeItem?.id) return
         try {
-            await postUnfreeze({
-                accountId: freezeItem.accountId,
-                freezeId: freezeItem.id,
-                reason: values.reason,
-            }).unwrap()
+            if (
+                freezeItem.sourceTransactionId !== null &&
+                freezeItem.sourceTransactionCode !== null
+            ) {
+                await postUnfreezeTransaction({
+                    accountId: freezeItem.accountId,
+                    freezeId: freezeItem.id,
+                    sourceTransactionId: freezeItem.sourceTransactionId,
+                    amount: freezeItem.amount,
+                    reason: values.reason,
+                }).unwrap()
+            } else {
+                await postUnfreeze({
+                    accountId: freezeItem.accountId,
+                    freezeId: freezeItem.id,
+                    amount: freezeItem.amount,
+                    reason: values.reason,
+                }).unwrap()
+            }
             successMess('Mở băng thành công')
             reset()
             onSuccess?.()

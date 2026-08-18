@@ -13,8 +13,6 @@ import dayjs from 'dayjs'
 import { TYPEDATE } from '@constants/date.constant'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import * as Icon from '@components/icons'
-import { cn } from '@/lib/utils/cn'
-import { statusEKYC } from '../constants/StatusEKYC.constant'
 import type { ScreenActionId } from '@/app/permissions'
 import {
   buildWalletRowActions,
@@ -49,26 +47,6 @@ export const getColumn = ({
           ? 'Hệ thống'
           : (record.ownerUsername ?? '--')
 
-        const renderStatusEKYC = (isVerified: boolean) => {
-          const statusInfo = statusEKYC.find(
-            (item) => item.value === isVerified
-          )
-          if (!statusInfo) return null
-
-          return (
-            <span
-              className={cn(
-                'inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-1 text-[10px] font-semibold leading-none',
-                statusInfo.color
-              )}
-              title={statusInfo.label}
-            >
-              {statusInfo.icon}
-              {statusInfo.label}
-            </span>
-          )
-        }
-
         return (
           <div className='flex min-w-0 max-w-full flex-col gap-1'>
             <div className='flex min-w-0 items-center gap-1.5'>
@@ -77,8 +55,6 @@ export const getColumn = ({
                   {ownerName}
                 </span>
               </TooltipComponent>
-
-              {!isSystem && renderStatusEKYC(record.verifyEKYC)}
             </div>
 
             {record.ownerId && (

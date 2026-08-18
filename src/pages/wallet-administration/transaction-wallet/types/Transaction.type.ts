@@ -12,3 +12,13 @@ export interface FormSearchValues {
     maxAmount?: number
     sourceDomain?: string
 }
+
+export interface TransactionFreezeTarget {
+    accountId: string
+    ownerId: string
+    ownerName: string
+    ownerType: string
+    availableBalance: number
+    currency: string
+    roleLabel: 'Người chuyển' | 'Người nhận'
+}

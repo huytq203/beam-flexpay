@@ -23,11 +23,20 @@ export interface DataFreeze {
 export interface FreezeItem {
   id: string
   accountId: string
+  sourceTransactionId: string | null
+  sourceTransactionCode: string | null
   ownerId: string
   ownerType: string
-  ownerUsername: string
+  ownerUsername: string | null
   amount: number
-  reason?: string
+  requestedAmount: number
+  releasedAmount: number
+  remainingAmount: number
+  shortfallAmount: number
+  parentFreezeId: string | null
+  currency: string
+  displayStatus: string
+  reason?: string | null
   unfreezeReason: string | null
   status: string
   type: string

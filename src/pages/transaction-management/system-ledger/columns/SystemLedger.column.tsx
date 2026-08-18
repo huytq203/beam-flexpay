@@ -55,32 +55,32 @@ const getSystemLedgerColumn = ({
       )
     }
   },
+  // {
+  //   title: 'Mã tài khoản (Ví)',
+  //   align: 'left',
+  //   dataIndex: 'account',
+  //   width: 200,
+  //   render(value) {
+  //     return (
+  //       <TooltipComponent title={value?.id}>
+  //         {/* <CopyableText
+  //                       value={record.id}
+  //                       className=" flex max-w-[200px] font-medium cursor-pointer truncate"
+  //                   /> */}
+  //         <TypographyText
+  //           copyable
+  //           strong
+  //           ellipsis={{ tooltip: false }}
+  //           className='font-medium cursor-pointer max-w-[200px] inline-block'
+  //         >
+  //           {value?.id}
+  //         </TypographyText>
+  //       </TooltipComponent>
+  //     )
+  //   }
+  // },
   {
-    title: 'Mã tài khoản (Ví)',
-    align: 'left',
-    dataIndex: 'account',
-    width: 200,
-    render(value) {
-      return (
-        <TooltipComponent title={value?.id}>
-          {/* <CopyableText
-                        value={record.id}
-                        className=" flex max-w-[200px] font-medium cursor-pointer truncate"
-                    /> */}
-          <TypographyText
-            copyable
-            strong
-            ellipsis={{ tooltip: false }}
-            className='font-medium cursor-pointer max-w-[200px] inline-block'
-          >
-            {value?.id}
-          </TypographyText>
-        </TooltipComponent>
-      )
-    }
-  },
-  {
-    title: 'Chủ sở hữu',
+    title: 'Tài khoản (Ví)',
     align: 'left',
     width: 160,
     render(_, record) {

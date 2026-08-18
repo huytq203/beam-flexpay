@@ -1,37 +1,81 @@
-import { KeyIcon } from '@components/icons'
-import React from 'react'
+import { CheckCircleFilled, KeyIcon } from '@components/icons'
+import type { AdminTrustedDevice } from '../../../../schemas/Security.schema'
 
-const AuthMethod = () => {
-    return (
-        <div className=''>
-            <p className='mb-3 font-bold text-[18px] flex items-center gap-1'><KeyIcon weight='fill' className='text-blue' /> Phương thức Xác thực</p>
-            <hr />
-            <div className="flex flex-col gap-3">
-
-                <div className="flex justify-between items-center">
-                    <div className="">
-                        <p className='font-medium text-[16px]'>Xác thực giao dịch (SoftOTP)</p>
-                        <p className='text-gray-500 text-[12px]'>Sử dụng smart OTP trên thiết bị uy tín</p>
-                    </div>
-                    <div className="flex flex-col items-end">
-                        <p className='flex items-center gap-1 text-green-700 bg-green-100 px-2 rounded-full'>--</p>
-                        <p className='text-[12px] font-medium text-red-500'>--</p>
-                    </div>
-                </div>
-                <hr />
-                <div className="flex justify-between items-center">
-                    <div className="">
-                        <p className='font-medium text-[16px]'>Đăng nhập sinh trắc học</p>
-                        <p className='text-gray-500 text-[12px]'>Vân tay (Touch ID)/Khuôn mặt (Face ID)</p>
-                    </div>
-                    <div className="flex flex-col items-end">
-                        <p className='flex items-center gap-1 text-green-700 bg-green-100 px-2 rounded-full'>--</p>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    )
+interface AuthMethodProps {
+  devices: AdminTrustedDevice[]
 }
 
-export default AuthMethod
+interface MethodRowProps {
+  title: string
+  description: string
+  status: string
+  isActive: boolean
+}
+
+const MethodRow = ({
+  title,
+  description,
+  status,
+  isActive
+}: MethodRowProps) => (
+  <div className='flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between'>
+    <div className='min-w-0'>
+      <p className='font-medium text-slate-900'>{title}</p>
+      <p className='mt-0.5 text-sm leading-5 text-slate-500'>{description}</p>
+    </div>
+    <span
+      className={
+        isActive
+          ? 'inline-flex w-fit shrink-0 items-center gap-1 rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-800'
+          : 'inline-flex w-fit shrink-0 rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600'
+      }
+    >
+      {isActive && <CheckCircleFilled aria-hidden />}
+      {status}
+    </span>
+  </div>
+)
+
+export const AuthMethod = ({ devices }: AuthMethodProps) => {
+  const activeDevices = devices.filter(
+    (device) => device.status === 'ACTIVE' && !device.expired
+  )
+  const registeredFaceIds = devices.filter(
+    (device) => device.faceId.registered
+  )
+  const activeFaceIds = activeDevices.filter(
+    (device) => device.faceId.status === 'ACTIVE'
+  )
+
+  return (
+    <section aria-labelledby='authentication-methods-title'>
+      <h2
+        id='authentication-methods-title'
+        className='mb-3 flex items-center gap-1 text-lg font-bold text-slate-900'
+      >
+        <KeyIcon weight='fill' className='text-blue' aria-hidden />
+        Phương thức xác thực
+      </h2>
+      <div className='divide-y divide-slate-200 border-y border-slate-200'>
+        <MethodRow
+          title='Thiết bị đang tin cậy'
+          description={`${activeDevices.length}/${devices.length} thiết bị có thể xác thực giao dịch`}
+          status={activeDevices.length > 0 ? 'Đang kích hoạt' : 'Chưa kích hoạt'}
+          isActive={activeDevices.length > 0}
+        />
+        <MethodRow
+          title='Đăng nhập sinh trắc học'
+          description={`${registeredFaceIds.length} đăng ký FaceID được lưu trên thiết bị`}
+          status={activeFaceIds.length > 0 ? 'FaceID đang hoạt động' : 'Không hoạt động'}
+          isActive={activeFaceIds.length > 0}
+        />
+      </div>
+      {registeredFaceIds.length > 0 && activeFaceIds.length === 0 && (
+        <p className='mt-3 text-sm leading-5 text-amber-700'>
+          Đăng ký FaceID vẫn được giữ lại, nhưng chỉ dùng được sau khi thiết bị
+          được tin cậy lại.
+        </p>
+      )}
+    </section>
+  )
+}

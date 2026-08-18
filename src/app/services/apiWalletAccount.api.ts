@@ -2,6 +2,21 @@ import { apiWalletCore } from "@services/apiService"
 import { ResponseType } from "@type/api"
 import { ContentAccountWallet, DataAccountWallet } from "@type/responseAccountWallet"
 
+export interface FreezeTransactionRequest {
+    accountId: string
+    sourceTransactionId: string
+    amount: number
+    reason: string
+}
+
+export interface UnfreezeTransactionRequest {
+    accountId: string
+    freezeId: string
+    sourceTransactionId: string
+    amount: number
+    reason: string
+}
+
 const apiEWallet = apiWalletCore.injectEndpoints({
     endpoints: (build) => ({
         getAccount: build.query({
@@ -37,6 +52,22 @@ const apiEWallet = apiWalletCore.injectEndpoints({
             }),
             invalidatesTags: ['Wallet'],
         }),
+        postFreezeTransaction: build.mutation<unknown, FreezeTransactionRequest>({
+            query: (body) => ({
+                url: '/wallet/accounts/freeze-transaction',
+                method: 'POST',
+                body,
+            }),
+            invalidatesTags: ['Wallet', 'Journal'],
+        }),
+        postUnfreezeTransaction: build.mutation<unknown, UnfreezeTransactionRequest>({
+            query: (body) => ({
+                url: '/wallet/accounts/unfreeze-transaction',
+                method: 'POST',
+                body,
+            }),
+            invalidatesTags: ['Wallet', 'Journal'],
+        }),
         postUnlock: build.mutation({
             query: (body) => ({
                 url: '/wallet/accounts/unlock',
@@ -57,10 +88,13 @@ const apiEWallet = apiWalletCore.injectEndpoints({
 })
 export const {
     useGetAccountQuery,
+    useLazyGetAccountQuery,
     useGetAccountByIdQuery,
     useLazyGetAccountByIdQuery,
     usePostUnfreezeMutation,
     usePostFreezeMutation,
+    usePostFreezeTransactionMutation,
+    usePostUnfreezeTransactionMutation,
     usePostUnlockMutation,
     usePostLockMutation
 } = apiEWallet

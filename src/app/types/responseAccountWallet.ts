@@ -34,7 +34,6 @@ export interface ContentAccountWallet {
   version: number
   status: string
   enabled: boolean
-  verifyEKYC: boolean
   checksum: string
   lockedReason: string
   lockedAt: string

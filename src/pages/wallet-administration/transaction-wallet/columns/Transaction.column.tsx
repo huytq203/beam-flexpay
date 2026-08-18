@@ -1,10 +1,12 @@
 import { UnifiedContentJournal } from '@type/apiResponseJournal'
 import dayjs from 'dayjs'
 import { ColumnsType } from 'antd/es/table'
-import { Link, NavigateFunction } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
-  TagComponent
+  ButtonComponent,
+  TooltipComponent
 } from '@components/index'
+import { LockKeyOpenIcon, SnowflakeIcon } from '@components/icons'
 import {
   PaymentMethodEnum,
   PaymentMethod,
@@ -21,13 +23,96 @@ import { formatNumber } from '@utils/index'
 import { PATHS } from '@constants/pathConstant'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { cn } from '@utils/cn'
+import { getFreezeTransactionAction } from './transaction-row-actions'
+
+const TRANSACTION_FREEZE_STATUS = {
+  FROZEN: {
+    label: 'Đang đóng băng',
+    className: 'warning-status',
+    shimmerColor: 'rgba(245, 158, 11, 0.18)'
+  }
+}
+
+const TRANSACTION_TYPE_BADGE_CONFIG: Record<
+  TransactionKey,
+  { label: string; className: string }
+> = {
+  CASH_IN: {
+    label: TransactionType.CASH_IN,
+    className: 'success-status'
+  },
+  CASH_OUT: {
+    label: TransactionType.CASH_OUT,
+    className: 'danger-status'
+  },
+  P2P_TRANSFER: {
+    label: TransactionType.P2P_TRANSFER,
+    className: 'info-status'
+  },
+  MERCHANT_PAYMENT: {
+    label: TransactionType.MERCHANT_PAYMENT,
+    className: 'info-status'
+  },
+  REVERSAL: {
+    label: TransactionType.REVERSAL,
+    className: 'normal-status'
+  }
+}
+
+const SOURCE_DOMAIN_BADGE_CONFIG: Record<
+  SourceDomain,
+  { label: string; className: string }
+> = {
+  [SourceDomain.EWALLET]: {
+    label: SourceDomainLabel[SourceDomain.EWALLET],
+    className: 'normal-status'
+  }
+}
+
+const PAYMENT_METHOD_BADGE_CONFIG: Record<
+  PaymentMethodEnum,
+  { label: string; className: string }
+> = {
+  [PaymentMethodEnum.ATM]: {
+    label: PaymentMethod[PaymentMethodEnum.ATM],
+    className: 'normal-status'
+  },
+  [PaymentMethodEnum.CC]: {
+    label: PaymentMethod[PaymentMethodEnum.CC],
+    className: 'normal-status'
+  },
+  [PaymentMethodEnum.VA]: {
+    label: PaymentMethod[PaymentMethodEnum.VA],
+    className: 'normal-status'
+  },
+  [PaymentMethodEnum.QR_CODE]: {
+    label: PaymentMethod[PaymentMethodEnum.QR_CODE],
+    className: 'normal-status'
+  },
+  [PaymentMethodEnum.WALLET_BALANCE]: {
+    label: PaymentMethod[PaymentMethodEnum.WALLET_BALANCE],
+    className: 'normal-status'
+  },
+  [PaymentMethodEnum.LINKED_ACCOUNT]: {
+    label: PaymentMethod[PaymentMethodEnum.LINKED_ACCOUNT],
+    className: 'normal-status'
+  }
+}
 
 interface ColumnProps {
-  navigate: NavigateFunction
+  canFreeze: boolean
+  onFreeze: (transaction: UnifiedContentJournal) => void
+  onUnfreeze: (transaction: UnifiedContentJournal) => void
+  openingFreezeTransactionId?: string
+  openingUnfreezeTransactionId?: string
 }
 
 const getColumn = ({
-  navigate: _navigate
+  canFreeze,
+  onFreeze,
+  onUnfreeze,
+  openingFreezeTransactionId,
+  openingUnfreezeTransactionId
 }: ColumnProps): ColumnsType<UnifiedContentJournal> => [
   {
     title: '#',
@@ -91,97 +176,23 @@ const getColumn = ({
     align: 'center',
     render(value, record) {
       const typeKey = record.transactionType as TransactionKey
-
-      const typeConfig: Record<
-        string,
-        {
-          label: string
-          bg: string
-          text: string
-          dot: string
-          border: string
-          shimmerColor: string
-          glowColor: string
-        }
-      > = {
-        CASH_IN: {
-          label: TransactionType.CASH_IN,
-          bg: 'bg-green-50/20',
-          text: 'text-green-600',
-          dot: 'bg-green-600',
-          border: 'border-green-200',
-          shimmerColor: 'rgba(0, 229, 160, 0.2)',
-          glowColor: 'rgba(22, 163, 74, 1)'
-        },
-        CASH_OUT: {
-          label: TransactionType.CASH_OUT,
-          bg: 'bg-red-50/20',
-          text: 'text-red-600',
-          dot: 'bg-red-600',
-          border: 'border-red-200',
-          shimmerColor: 'rgba(239, 68, 68, 0.2)',
-          glowColor: 'rgba(219, 15, 15, 1)'
-        },
-        P2P_TRANSFER: {
-          label: TransactionType.P2P_TRANSFER,
-          bg: 'bg-blue-50/20',
-          text: 'text-blue-500',
-          dot: 'bg-blue-600',
-          border: 'border-blue-200',
-          shimmerColor: 'rgba(59, 130, 246, 0.2)',
-          glowColor: 'rgba(37, 99, 235, 1)'
-        },
-        MERCHANT_PAYMENT: {
-          label: TransactionType.MERCHANT_PAYMENT,
-          bg: 'bg-blue-50/20',
-          text: 'text-blue-600',
-          dot: 'bg-blue-600',
-          border: 'border-blue-200',
-          shimmerColor: 'rgba(59, 130, 246, 0.2)',
-          glowColor: 'rgba(37, 99, 235, 1)'
-        },
-        REVERSAL: {
-          label: TransactionType.REVERSAL,
-          bg: 'bg-purple-50/20',
-          text: 'text-purple-600',
-          dot: 'bg-purple-600',
-          border: 'border-purple-200',
-          shimmerColor: 'rgba(168, 85, 247, 0.2)',
-          glowColor: 'rgba(147, 51, 234, 1)'
-        }
-      }
-
-      const config = typeConfig[typeKey] || {
-        label: value || '--',
-        bg: 'bg-gray-50',
-        text: 'text-gray-600',
-        dot: 'bg-gray-600',
-        border: 'border-gray-200',
-        shimmerColor: 'rgba(0,0,0,0.05)',
-        glowColor: 'rgba(75, 85, 99, 1)'
-      }
+      const isKnownType = Boolean(TRANSACTION_TYPE_BADGE_CONFIG[typeKey])
 
       return (
-        <div className='text-start flex flex-col gap-1 '>
-          <div
-            className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full border ${config.bg} ${config.text} ${config.border} font-bold text-[11px] w-fit whitespace-nowrap relative overflow-hidden before:absolute before:inset-y-0 before:-left-full before:w-[60%] before:bg-[linear-gradient(90deg,transparent,var(--shimmer-color,rgba(0,229,160,0.1)),transparent)] before:animate-shimmer`}
-            style={
-              { '--shimmer-color': config.shimmerColor } as React.CSSProperties
+        <div className='flex flex-col gap-1 text-start'>
+          <StatusBadge
+            status={isKnownType ? typeKey : 'UNKNOWN'}
+            config={
+              isKnownType
+                ? TRANSACTION_TYPE_BADGE_CONFIG
+                : {
+                    UNKNOWN: {
+                      label: value || '--',
+                      className: 'normal-status'
+                    }
+                  }
             }
-          >
-            <div className='relative flex items-center justify-center'>
-              <span
-                className={`absolute inline-flex h-full w-full rounded-full ${config.dot} opacity-40 animate-ping-slow`}
-              />
-              <span
-                className={`relative w-1.5 h-1.5 rounded-full ${config.dot} animate-pulse-dot `}
-                style={{
-                  boxShadow: `0 0 6px 1px ${config.glowColor}`
-                }}
-              />
-            </div>
-            {config.label}
-          </div>
+          />
           <p className='text-gray-500 text-[12px] px-1'>
             {record.description || '--'}
           </p>
@@ -194,20 +205,25 @@ const getColumn = ({
     dataIndex: 'paymentMethod',
     align: 'center',
     render: (value) => {
-      const methodColors: Record<string, string> = {
-        ATM: 'blue',
-        CC: 'purple',
-        VA: 'orange',
-        QR_CODE: 'cyan',
-        WALLET_BALANCE: 'green',
-        LINKED_ACCOUNT: 'geekblue'
-      }
+      const paymentMethodKey = value as PaymentMethodEnum
+      const isKnownPaymentMethod = Boolean(
+        PAYMENT_METHOD_BADGE_CONFIG[paymentMethodKey]
+      )
+
       return (
-        <TagComponent
-          color={methodColors[value as PaymentMethodEnum] || 'default'}
-        >
-          {PaymentMethod[value as PaymentMethodEnum] || '--'}
-        </TagComponent>
+        <StatusBadge
+          status={isKnownPaymentMethod ? paymentMethodKey : 'UNKNOWN'}
+          config={
+            isKnownPaymentMethod
+              ? PAYMENT_METHOD_BADGE_CONFIG
+              : {
+                  UNKNOWN: {
+                    label: value || '--',
+                    className: 'normal-status'
+                  }
+                }
+          }
+        />
       )
     }
   },
@@ -217,13 +233,23 @@ const getColumn = ({
     dataIndex: 'sourceDomain',
     align: 'center',
     render: (value) => {
-      const sourceColors: Record<string, string> = {
-        EWALLET: 'gold'
-      }
+      const sourceKey = value as SourceDomain
+      const isKnownSource = Boolean(SOURCE_DOMAIN_BADGE_CONFIG[sourceKey])
+
       return (
-        <TagComponent color={sourceColors[value as SourceDomain] || 'default'}>
-          {SourceDomainLabel[value as SourceDomain] || '--'}
-        </TagComponent>
+        <StatusBadge
+          status={isKnownSource ? sourceKey : 'UNKNOWN'}
+          config={
+            isKnownSource
+              ? SOURCE_DOMAIN_BADGE_CONFIG
+              : {
+                  UNKNOWN: {
+                    label: value || '--',
+                    className: 'normal-status'
+                  }
+                }
+          }
+        />
       )
     }
   },
@@ -291,40 +317,83 @@ const getColumn = ({
     }
   },
   {
-    title: 'Trạng thái',
-    dataIndex: 'status',
-    align: 'center',
-    render(value, record) {
-      const typeKeyStatus = record.status as StatusKey
+    title: 'Số tiền đang giữ',
+    align: 'right',
+    width: 170,
+    render(_, record) {
+      const heldAmount = record.freeze?.heldAmount ?? 0
       return (
-        <StatusBadge
+        <span
           className={cn(
-            record.status === 'PENDING' ? 'animate-pulse-soft' : ''
+            'whitespace-nowrap font-medium tabular-nums',
+            heldAmount > 0 ? 'amount-caution' : 'text-gray-500'
           )}
-          status={typeKeyStatus}
-          config={CONFIG_STATUS}
-        />
+        >
+          {formatNumber(heldAmount)} {record.currency}
+        </span>
       )
     }
   },
-  // {
-  //     title: 'Thao tác',
-  //     align: 'center',
-  //     width: 80,
-  //     render(_, record) {
-  //         return (
-  //             <div className="flex justify-center items-center gap-1">
-  //                 <TooltipComponent title='Xem chi tiết'>
-  //                     <ButtonComponent
-  //                         // onClick={() => navigate(`/transaction-management/transaction-wallet/${record.id}`)}
-  //                         size='small'
-  //                         className='bg-blue-50 border! border-blue-600 text-blue-600 hover:bg-blue-100! hover:text-blue-600!'
-  //                         // icon={<iconEyeFilled />}
-  //                     />
-  //                 </TooltipComponent>
-  //             </div>
-  //         )
-  //     },
-  // },
+  {
+    title: 'Trạng thái',
+    dataIndex: 'status',
+    align: 'center',
+    width: 210,
+    render(value, record) {
+      const typeKeyStatus = record.status as StatusKey
+      return (
+        <div className='flex flex-wrap items-center justify-center gap-1'>
+          <StatusBadge
+            className={cn(
+              record.status === 'PENDING' ? 'animate-pulse-soft' : ''
+            )}
+            status={typeKeyStatus}
+            config={CONFIG_STATUS}
+          />
+          {record.frozen && (
+            <StatusBadge
+              status='FROZEN'
+              config={TRANSACTION_FREEZE_STATUS}
+            />
+          )}
+        </div>
+      )
+    }
+  },
+  {
+    title: 'Thao tác',
+    align: 'center',
+    fixed: 'right',
+    width: 80,
+    render(_, record) {
+      if (!canFreeze) return null
+
+      const action = getFreezeTransactionAction(record)
+      if (!action) return null
+
+      const isUnfreeze = action === 'unfreeze'
+      const label = isUnfreeze
+        ? 'Mở băng giao dịch (Unfreeze)'
+        : 'Đóng băng giao dịch (Freeze)'
+      return (
+        <TooltipComponent title={label}>
+          <ButtonComponent
+            aria-label={label}
+            htmlType='button'
+            type='default'
+            size='small'
+            loading={
+              openingFreezeTransactionId === record.transactionId ||
+              openingUnfreezeTransactionId === record.transactionId
+            }
+            icon={isUnfreeze
+              ? <LockKeyOpenIcon size={17} weight='regular' className='text-emerald-700' aria-hidden />
+              : <SnowflakeIcon size={17} weight='regular' className='text-cyan-700' aria-hidden />}
+            onClick={() => isUnfreeze ? onUnfreeze(record) : onFreeze(record)}
+          />
+        </TooltipComponent>
+      )
+    }
+  },
 ]
 export default getColumn
