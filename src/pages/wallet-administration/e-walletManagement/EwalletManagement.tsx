@@ -97,7 +97,7 @@ const EwalletManagement = () => {
           <DialogFreeze
             accountId={selectedAccount?.id}
             ownerName={selectedAccount?.ownerUsername}
-            balance={selectedAccount?.balance}
+            availableBalance={selectedAccount?.availableBalance}
             currency={selectedAccount?.currency}
             onSuccess={closeModal}
             onCancel={closeModal}

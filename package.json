@@ -2,6 +2,7 @@
   "name": "flexpay",
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "cross-env NODE_OPTIONS='--max-old-space-size=2048' vite --host",
     "build": "vite build",

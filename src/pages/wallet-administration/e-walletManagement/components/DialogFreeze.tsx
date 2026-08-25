@@ -2,7 +2,7 @@ import { FormDatePicker, FormInputNumber, FormRadio, FormTextArea } from '@compo
 import { WarningIcon } from '@components/icons'
 import React from 'react'
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { usePostFreezeMutation } from '@services/apiWalletAccount.api'
 import { formatCurrency } from '@utils/formatNumber'
@@ -14,7 +14,7 @@ import { blockLeadingAndRepeatedSpace } from '@utils/inputHandlers'
 interface DialogFreezeProps {
     accountId?: string
     ownerName?: string
-    balance?: number
+    availableBalance?: number
     currency?: string
     onSuccess?: () => void
     onCancel?: () => void
@@ -25,7 +25,7 @@ interface DialogFreezeProps {
 const DialogFreeze = ({
     accountId,
     ownerName,
-    balance = 0,
+    availableBalance = 0,
     currency = 'VNĐ',
     onSuccess,
     onCancel,
@@ -34,19 +34,19 @@ const DialogFreeze = ({
     const { successMess } = useMessage()
 
     const { control, watch, handleSubmit, reset, setValue } = useForm<FreezeFormValues>({
-        defaultValues: { freezeType: 2, amount: balance, reason: '' },
+        defaultValues: { freezeType: 2, amount: availableBalance, reason: '' },
         resolver: zodResolver(FreezeSchema),
     })
-    const freezeType = watch('freezeType')
+    const freezeType = useWatch({ control, name: 'freezeType' })
 
     useEffect(() => {
         if (freezeType === 1) {
 
-            setValue('amount', balance)
+            setValue('amount', availableBalance)
         } else {
             setValue('amount', 0)
         }
-    }, [freezeType, balance])
+    }, [freezeType, availableBalance, setValue])
 
     const [postFreeze, { isLoading }] = usePostFreezeMutation()
 
@@ -72,7 +72,7 @@ const DialogFreeze = ({
                 <div className="flex-between p-3 bg-blue-50 border rounded-md">
                     <p>Số dư hiện tại:</p>
                     <p className="font-medium">
-                        {formatCurrency(balance, { symbol: currency, position: 'after' })}
+                        {formatCurrency(availableBalance, { symbol: currency, position: 'after' })}
                     </p>
                 </div>
 
@@ -82,7 +82,7 @@ const DialogFreeze = ({
                         control={control}
                         name="freezeType"
                         options={[
-                            { value: 1, label: 'Đóng băng toàn bộ', disabled: true },
+                            { value: 1, label: 'Đóng băng toàn bộ'},
                             { value: 2, label: 'Đóng băng một phần' },
                         ]}
                     />
