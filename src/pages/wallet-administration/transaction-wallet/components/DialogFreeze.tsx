@@ -21,7 +21,7 @@ const freezeTransactionSchema = z.object({
   reason: z
     .string()
     .trim()
-    .min(1, 'Lý do đóng băng không được để trống')
+    .min(10, 'Lý do đóng băng không được để trống')
     .max(255, 'Lý do không được vượt quá 255 ký tự')
 })
 
