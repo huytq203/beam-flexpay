@@ -164,6 +164,7 @@ const useTransaction = () => {
   ), [dataTransaction, page, pageSize])
   
   return {
+    filter,
     dataSource,
     totalElements,
     page,

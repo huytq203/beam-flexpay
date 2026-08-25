@@ -21,7 +21,8 @@ export interface ExportBankLinksQuery {
 }
 
 export interface ExportTransactionsQuery {
-  ownerId: string
+  /** Bỏ trống khi xuất từ màn danh sách giao dịch toàn hệ thống. */
+  ownerId?: string
   type?: string
   status?: string
   transactionCode?: string

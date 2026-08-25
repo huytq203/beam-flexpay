@@ -1,4 +1,4 @@
-import { CardComponent, DialogModal, Table } from '@components/index'
+import { CardComponent, DialogModal, ExportCsvButton, Table } from '@components/index'
 import { ArrowCounterClockwiseIcon, ArrowsCounterClockwiseIcon, FileDoneOutlined } from '@components/icons'
 import React from 'react'
 import DialogRefund from './components/DialogRefund'
@@ -10,10 +10,12 @@ import DialogConfirm from './components/DialogConfirm'
 import { SkeletonButton, SkeletonInput, SkeletonTable, SkeletonTitle } from '@components/ui/skeletons/Skeleton'
 import DialogFreeze from './components/DialogFreeze'
 import DialogUnfreezeTransaction from './components/DialogUnfreezeTransaction'
+import useExportTransactionCsv from './hooks/useExportTransactionCsv'
 
 const TransactionManagement = () => {
 
   const {
+    filter,
     dataSource,
     totalElements,
     page,
@@ -36,6 +38,9 @@ const TransactionManagement = () => {
     refetch,
     isLoadingGetTransaction,
   } = useTransaction()
+
+  const { exportFile, isExporting, exportTooltip } =
+    useExportTransactionCsv(filter)
 
   const columns = getColumn({
     canFreeze,
@@ -67,31 +72,41 @@ const TransactionManagement = () => {
         )
       } />
       <CardComponent content={
-        isLoadingGetTransaction ? (
-          <SkeletonTable columns={columns?.length || 10} rows={pageSize || 5} noContainer />
-        ) : (
-          <Table
-            rowKey='id'
-            bordered
-            size='small'
-            scroll={{ x: 'max-content' }}
-            columns={columns}
-            dataSource={dataSource}
-            loading={isFetching}
-            onRefresh={refetch}
-            pagination={{
-              current: page,
-              showSizeChanger: true,
-              pageSize: pageSize,
-              total: totalElements,
-              onChange: (page, pageSize) => {
-                setPage(page)
-                setPageSize(pageSize)
-              },
-              showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]}/ ${total} Bản ghi`
-            }}
-          />
-        )
+        <>
+          <div className='flex justify-between items-center mb-3'>
+            <span className='font-medium text-gray-600 text-lg'>Danh sách giao dịch</span>
+            <ExportCsvButton
+              onExport={exportFile}
+              loading={isExporting}
+              tooltip={exportTooltip}
+            />
+          </div>
+          {isLoadingGetTransaction ? (
+            <SkeletonTable columns={columns?.length || 10} rows={pageSize || 5} noContainer />
+          ) : (
+            <Table
+              rowKey='id'
+              bordered
+              size='small'
+              scroll={{ x: 'max-content' }}
+              columns={columns}
+              dataSource={dataSource}
+              loading={isFetching}
+              onRefresh={refetch}
+              pagination={{
+                current: page,
+                showSizeChanger: true,
+                pageSize: pageSize,
+                total: totalElements,
+                onChange: (page, pageSize) => {
+                  setPage(page)
+                  setPageSize(pageSize)
+                },
+                showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]}/ ${total} Bản ghi`
+              }}
+            />
+          )}
+        </>
       } />
 
       <DialogModal onCancel={() => { }} onOk={() => { }} open={false} content={<DialogRefund />} title={<span className='flex items-center gap-2 text-orange-700'><ArrowCounterClockwiseIcon size={18} />Hoàn tiền giao dịch</span>} />
