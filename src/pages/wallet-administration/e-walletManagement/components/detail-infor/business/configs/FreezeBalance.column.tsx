@@ -1,104 +1,96 @@
-import { ColumnType } from 'antd/es/table'
-import React from 'react'
-import dayjs from 'dayjs'
-import { formatNumber } from '@utils/formatNumber'
-import { ButtonComponent, TypographyText } from '@components/index'
-import StatusBadge from '@components/status-badge/StatusBadge'
-import { FreezeStatus, FreezeStatusConfig } from '../../Personal/types/Freeze.type'
+import {
+    FreezeAmountCell,
+    FreezeRowActions,
+    FreezeStatusCell
+} from '@components/index'
+import { FREEZE_TYPE_LABEL, type FreezeType } from '@constants/freeze.constant'
+import type { UnfreezeDecision } from '@hooks/useUnfreezeApproval'
 import { FreezeItem } from '@type/freeze.type'
+import { ColumnType } from 'antd/es/table'
+import dayjs from 'dayjs'
 
 interface ColumnProps {
+    canApprove: boolean
     onRelease?: (record: FreezeItem) => void
+    onDecide?: (record: FreezeItem, decision: UnfreezeDecision) => void
 }
 
-export const Column = ({ onRelease }: ColumnProps): ColumnType<FreezeItem>[] => [
+export const Column = ({
+    canApprove,
+    onRelease,
+    onDecide
+}: ColumnProps): ColumnType<FreezeItem>[] => [
     {
         title: '#',
         dataIndex: 'no',
         align: 'center',
         width: 60,
     },
-    // {
-    //     title: 'Mã đóng băng',
-    //     dataIndex: 'id',
-    //     align: 'center',
-    //     render: (value) => (
-    //         <TypographyText copyable={{ text: value }} strong style={{ color: '#595959' }}>
-    //             {value}
-    //         </TypographyText>
-    //     )
-    // },
-    // {
-    //     title: 'Mã GD gốc',
-    //     dataIndex: 'idempotencyKey',
-    //     align: 'center',
-    //     render: (value) => {
-    //         if (!value) return '--'
-    //         return (
-    //             <TypographyText copyable={{ text: value }} strong style={{ color: '#595959' }}>
-    //                 {value}
-    //             </TypographyText>
-    //         )
-    //     }
-    // },
     {
         title: 'Số tiền',
-        dataIndex: 'amount',
+        key: 'amount',
         align: 'right',
-        render: (value) => (
-            <TypographyText strong>
-                {formatNumber(value)} <TypographyText type="secondary" style={{ fontSize: '12px' }}>VND</TypographyText>
-            </TypographyText>
-        ),
+        width: 200,
+        render: (_, record) => <FreezeAmountCell item={record} />,
+    },
+    {
+        title: 'Loại đóng băng',
+        dataIndex: 'type',
+        align: 'left',
+        width: 180,
+        render: (value: string) => FREEZE_TYPE_LABEL[value as FreezeType] ?? value,
     },
     {
         title: 'Lý do đóng băng',
         dataIndex: 'reason',
         align: 'left',
-        render: (value) => value || '--'
+        width: 250,
+        render: (value: string | null) =>
+            value ? <span className="inline-block max-w-[250px]">{value}</span> : '--',
     },
     {
         title: 'Lý do giải tỏa',
         dataIndex: 'unfreezeReason',
         align: 'left',
-        render: (value) => value || '--'
+        width: 250,
+        render: (value: string | null) =>
+            value ? <span className="inline-block max-w-[250px]">{value}</span> : '--',
     },
     {
         title: 'Thời gian tạo',
         dataIndex: 'createdAt',
         align: 'center',
-        render: (value) => value ? <TypographyText type="secondary">{dayjs(value).format('DD/MM/YYYY HH:mm:ss')}</TypographyText> : '--'
+        width: 200,
+        render: (value: string) =>
+            value ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : '--',
     },
     {
         title: 'Thời gian cập nhật',
         dataIndex: 'updatedAt',
         align: 'center',
-        render: (value) => value ? <TypographyText type="secondary">{dayjs(value).format('DD/MM/YYYY HH:mm:ss')}</TypographyText> : '--'
+        width: 200,
+        render: (value: string) =>
+            value ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : '--',
     },
     {
         title: 'Trạng thái',
-        dataIndex: 'status',
+        key: 'displayStatus',
         align: 'center',
-        render: (value) => <StatusBadge status={value as FreezeStatus} config={FreezeStatusConfig} />,
+        width: 160,
+        render: (_, record) => <FreezeStatusCell item={record} />,
     },
     {
         title: 'Thao tác',
-        dataIndex: 'action',
+        key: 'action',
         align: 'center',
-        render: (_, record) => {
-            const canRelease = record.status === 'ACTIVE'
-            return (
-                <ButtonComponent
-                    size="small"
-                    disabled={!canRelease}
-                    onClick={() => canRelease && onRelease?.(record)}
-                    className={`bg-blue-50 border border-blue-600 text-blue-600 ${canRelease
-                        ? 'hover:bg-blue-100! hover:text-blue-700!'
-                        : 'opacity-50 cursor-not-allowed'
-                        }`}
-                    content="Mở băng"
-                />
-            )
-        },
+        width: 160,
+        render: (_, record) => (
+            <FreezeRowActions
+                item={record}
+                canApprove={canApprove}
+                onRequestUnfreeze={onRelease}
+                onDecide={onDecide}
+            />
+        ),
     },
 ]

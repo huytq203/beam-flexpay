@@ -1,46 +1,56 @@
-import { ButtonComponent } from '@components/index'
 import { FormDatePicker, FormInput, FormSelect } from '@components/form'
-import React from 'react'
-import { useForm } from 'react-hook-form'
-import { BroomIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
 import * as Icons from '@components/icons'
-interface FormSearchValues {
-    status?: string
-    username?: string
-    type?: string
-    releaseType?: string
-    fromDate?: string
-    toDate?: string
-}
+import { ButtonComponent } from '@components/index'
+import {
+    FREEZE_STATUS_CONFIG,
+    FREEZE_TYPE_LABEL,
+    FreezeDisplayStatus,
+    RELEASE_TYPE_LABEL
+} from '@constants/freeze.constant'
+import type { FreezeSearchParams } from '@services/apiFreezes'
+import { BroomIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
+import { useForm } from 'react-hook-form'
+
+type FormSearchValues = Pick<
+    FreezeSearchParams,
+    'displayStatus' | 'username' | 'type' | 'releaseType' | 'fromDate' | 'toDate'
+>
 
 interface FormSearchProps {
-    onSearch?: (values: Record<string, unknown>) => void
+    onSearch?: (values: FreezeSearchParams) => void
 }
 
-const STATUS_OPTIONS = [
-    { label: 'Đang đóng băng', value: 'ACTIVE' },
-    { label: 'Đã giải tỏa', value: 'RELEASED' },
-]
+/**
+ * Nhãn lấy thẳng từ bảng cấu hình dùng chung để lựa chọn trong bộ lọc luôn khớp với chữ
+ * hiện trên lưới. Bỏ PENDING_APPROVAL vì đó là trạng thái FE ghép từ lệnh mở băng,
+ * wallet-core chưa lọc được theo nó.
+ */
+const DISPLAY_STATUS_OPTIONS = Object.values(FreezeDisplayStatus).map((value) => ({
+    label: FREEZE_STATUS_CONFIG[value].label,
+    value
+}))
 
-const FREEZE_TYPE = [
-    { label: 'Admin mở thủ công', value: 'MANUAL' },
-    { label: 'Hết hạn tự mở', value: 'EXPIRED' },
-    { label: 'Hệ thống capture', value: 'CAPTURED' },
-]
+const FREEZE_TYPE_OPTIONS = Object.entries(FREEZE_TYPE_LABEL).map(
+    ([value, label]) => ({ label, value })
+)
 
-const RELEASED_TYPE = [
-    { label: 'Thủ công', value: 'ADMIN_LOCK' },
-    { label: 'Hệ thống hold thanh toán', value: 'PAYMENT' },
-    { label: 'Tuân thủ pháp luật', value: 'COMPLIANCE_FREEZE' },
-]
+const RELEASE_TYPE_OPTIONS = Object.entries(RELEASE_TYPE_LABEL).map(
+    ([value, label]) => ({ label, value })
+)
+
+const omitEmpty = (values: FormSearchValues): FreezeSearchParams =>
+    Object.fromEntries(Object.entries(values).filter(([, value]) => Boolean(value)))
 
 const FormSearch = ({ onSearch }: FormSearchProps) => {
     const { control, handleSubmit, reset } = useForm<FormSearchValues>()
 
     const onSubmit = (values: FormSearchValues) => {
-        const { ...rest } = values
-        const params: Record<string, unknown> = { ...rest }
-        onSearch?.(params)
+        onSearch?.(omitEmpty(values))
+    }
+
+    const handleReset = () => {
+        reset()
+        onSearch?.({})
     }
 
     return (
@@ -50,30 +60,30 @@ const FormSearch = ({ onSearch }: FormSearchProps) => {
                 <FormInput control={control} name="username" className="col-span-1" label="Tên tài khoản (username)" placeholder='Nhập tên User...' />
                 <FormSelect
                     control={control}
-                    name="status"
+                    name="displayStatus"
                     className="col-span-1"
                     label="Trạng thái"
-                    options={STATUS_OPTIONS}
+                    options={DISPLAY_STATUS_OPTIONS}
                 />
                 <FormSelect
                     control={control}
                     name="type"
                     className="col-span-1"
                     label="Loại đóng băng"
-                    options={RELEASED_TYPE}
+                    options={FREEZE_TYPE_OPTIONS}
                 />
                 <FormSelect
                     control={control}
                     name="releaseType"
                     className="col-span-1"
                     label="Cách mở băng"
-                    options={FREEZE_TYPE}
+                    options={RELEASE_TYPE_OPTIONS}
                 />
                 <FormDatePicker showTime control={control} name="fromDate" className="col-span-1" label="Từ ngày" />
                 <FormDatePicker showTime control={control} name="toDate" className="col-span-1" label="Đến ngày" />
             </div>
             <div className="flex justify-end mt-3 gap-2">
-                <ButtonComponent icon={<BroomIcon size={18} />} type="default" content="Đặt lại" onClick={() => { reset(); onSearch?.({}) }} />
+                <ButtonComponent icon={<BroomIcon size={18} />} type="default" content="Đặt lại" onClick={handleReset} />
                 <ButtonComponent icon={<MagnifyingGlassIcon size={18} />} htmlType="submit" content="Tìm kiếm" />
             </div>
         </form>

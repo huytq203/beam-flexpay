@@ -19,6 +19,8 @@ export const ACTION = {
   CREATE: 'CREATE',
   UPDATE: 'UPDATE',
   DELETE: 'DELETE',
+  /** Bước checker của maker-checker; wallet-core cấp riêng cho FREEZE, không gộp vào UPDATE. */
+  APPROVE: 'APPROVE',
   FULL: 'FULL'
 } as const
 

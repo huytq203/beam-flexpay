@@ -1,4 +1,5 @@
 import usePagination from '@hooks/usePagination'
+import { useUnfreezeApproval } from '@hooks/useUnfreezeApproval'
 import { useGetFreezesQuery } from '@services/apiFreezes'
 import { FreezeItem } from '@type/freeze.type'
 import React from 'react'
@@ -8,8 +9,7 @@ const useFetchFreeze = () => {
     const { id } = useParams()
     const { page, size, setPage, setPageSize } = usePagination()
     const [isUnfreezeModalOpen, setIsUnfreezeModalOpen] = React.useState(false)
-    const [selectedFreezeItem, setSelectedFreezeItem] = React.useState<FreezeItem | undefined>(undefined)
-
+    const [selectedFreezeItem, setSelectedFreezeItem] = React.useState<FreezeItem | null>(null)
 
     const payload = React.useMemo(() => {
         return {
@@ -29,7 +29,6 @@ const useFetchFreeze = () => {
         }))
     }, [dataFreeze, page, size])
 
-
     const handleOpenUnfreezeModal = (item: FreezeItem) => {
         setIsUnfreezeModalOpen(true)
         setSelectedFreezeItem(item)
@@ -37,8 +36,10 @@ const useFetchFreeze = () => {
 
     const handleCloseUnfreezeModal = () => {
         setIsUnfreezeModalOpen(false)
-        setSelectedFreezeItem(undefined)
+        setSelectedFreezeItem(null)
     }
+
+    const { canApprove, openDecision, dialogState } = useUnfreezeApproval()
 
     return {
         accountId: id,
@@ -52,7 +53,10 @@ const useFetchFreeze = () => {
         isUnfreezeModalOpen,
         selectedFreezeItem,
         handleOpenUnfreezeModal,
-        handleCloseUnfreezeModal
+        handleCloseUnfreezeModal,
+        canApprove,
+        openDecision,
+        decisionDialogState: dialogState
     }
 }
 

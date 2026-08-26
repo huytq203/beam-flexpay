@@ -1,16 +1,17 @@
 import usePagination from '@hooks/usePagination'
-import { useGetFreezesQuery } from '@services/apiFreezes'
+import { useUnfreezeApproval } from '@hooks/useUnfreezeApproval'
+import { useGetFreezesQuery, type FreezeSearchParams } from '@services/apiFreezes'
 import { FreezeItem } from '@type/freeze.type'
 import { useMemo, useState } from 'react'
 
 const useFrozenTransactions = () => {
-  const [filter, setFilter] = useState({})
+  const [filter, setFilter] = useState<FreezeSearchParams>({})
 
   const { page, pageSize, setPage, setPageSize } = usePagination({
     defaultSort: 'createdAt',
   })
 
-  const payload = {
+  const payload: FreezeSearchParams = {
     page: page,
     size: pageSize,
     ...filter
@@ -29,7 +30,7 @@ const useFrozenTransactions = () => {
     [data, page, pageSize]
   )
 
-  const handleSearch = (values: Record<string, unknown>) => {
+  const handleSearch = (values: FreezeSearchParams) => {
     setFilter(values)
     setPage(1)
   }
@@ -47,6 +48,8 @@ const useFrozenTransactions = () => {
     setSelectedFreezeItem(null)
   }
 
+  const { canApprove, openDecision, dialogState } = useUnfreezeApproval()
+
   return {
     dataSource,
     totalElements,
@@ -62,6 +65,9 @@ const useFrozenTransactions = () => {
     selectedFreezeItem,
     handleOpenUnfreezeModal,
     handleCloseUnfreezeModal,
+    canApprove,
+    openDecision,
+    decisionDialogState: dialogState,
   }
 }
 

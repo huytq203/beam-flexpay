@@ -1,11 +1,9 @@
-import { CardComponent, DialogModal, Table } from '@components/index'
-import { SnowflakeIcon } from '@components/icons'
+import { CardComponent, Table, UnfreezeDecisionDialog, UnfreezeRequestDialog } from '@components/index'
 import React from 'react'
 import FormSearch from './components/FormSearch'
 import { getColumn } from './columns/FrozenTransactions.column'
 import useFrozenTransactions from './hooks/useFrozenTransactions'
 import { SkeletonButton, SkeletonInput, SkeletonTable, SkeletonTitle } from '@components/ui/skeletons/Skeleton'
-import DialogUnfreeze from './components/DialogUnfreeze'
 
 const FrozenTransactions = () => {
     const {
@@ -23,9 +21,16 @@ const FrozenTransactions = () => {
         selectedFreezeItem,
         handleOpenUnfreezeModal,
         handleCloseUnfreezeModal,
+        canApprove,
+        openDecision,
+        decisionDialogState,
     } = useFrozenTransactions()
 
-    const columns = getColumn({ onRelease: handleOpenUnfreezeModal })
+    const columns = getColumn({
+        canApprove,
+        onRelease: handleOpenUnfreezeModal,
+        onDecide: openDecision,
+    })
 
     return (
         <>
@@ -71,25 +76,13 @@ const FrozenTransactions = () => {
                         />
                 }
             />
-            <DialogModal
-                onCancel={handleCloseUnfreezeModal}
-                onOk={() => { }}
+            <UnfreezeRequestDialog
                 open={isUnfreezeModalOpen}
-                footer={null}
-                content={
-                    <DialogUnfreeze
-                        freezeItem={selectedFreezeItem ?? undefined}
-                        onSuccess={handleCloseUnfreezeModal}
-                        onCancel={handleCloseUnfreezeModal}
-                    />
-                }
-                title={
-                    <span className="flex items-center gap-2 text-blue-700">
-                        <SnowflakeIcon size={18} />
-                        Mở băng giao dịch
-                    </span>
-                }
+                item={selectedFreezeItem}
+                onSuccess={handleCloseUnfreezeModal}
+                onCancel={handleCloseUnfreezeModal}
             />
+            <UnfreezeDecisionDialog {...decisionDialogState} />
         </>
     )
 }

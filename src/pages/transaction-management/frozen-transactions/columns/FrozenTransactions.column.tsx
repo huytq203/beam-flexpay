@@ -1,20 +1,36 @@
-import { ButtonComponent, MaskText } from '@components/index'
+import {
+    FreezeAmountCell,
+    FreezeRowActions,
+    FreezeStatusCell,
+    MaskText
+} from '@components/index'
+import StatusBadge from '@components/status-badge/StatusBadge'
+import {
+    FREEZE_TYPE_LABEL,
+    OWNER_TYPE_CONFIG,
+    RELEASE_TYPE_LABEL,
+    type FreezeType,
+    type OwnerType,
+    type ReleaseType
+} from '@constants/freeze.constant'
+import type { UnfreezeDecision } from '@hooks/useUnfreezeApproval'
 import { FreezeItem } from '@type/freeze.type'
-import { formatCurrency } from '@utils/formatNumber'
 import { ColumnType } from 'antd/es/table'
 import dayjs from 'dayjs'
-import { ReleaseType, ReleaseTypeLabel } from '../types/FrozenTransactions.type'
-import { CONFIG_LABEL_OWNER_TYPE, STATUS_CONFIG, StatusKey, typeLock, typeLockLabel } from '../constants/FrozenTransaction.constant'
-import StatusBadge from '@components/status-badge/StatusBadge'
-import { cn } from '@utils/cn'
 
 type FreezeRow = { no: number } & FreezeItem
 
 interface ColumnOptions {
+    canApprove: boolean
     onRelease?: (record: FreezeRow) => void
+    onDecide?: (record: FreezeItem, decision: UnfreezeDecision) => void
 }
 
-export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeRow>[] => [
+export const getColumn = ({
+    canApprove,
+    onRelease,
+    onDecide
+}: ColumnOptions): ColumnType<FreezeRow>[] => [
     {
         title: '#',
         align: 'center',
@@ -23,63 +39,62 @@ export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeR
         width: 50,
     },
     {
-        title: 'Nguồn / Loại GD',
-        align: 'left',
-        key: 'source',
-        render: (_, record) => (
-            <div>
-                <p className="font-medium">{ReleaseTypeLabel[record.type as ReleaseType]}</p>
-                <p className="text-grayd-500 text-[12px]">{record.reason}</p>
-            </div>
-        ),
-    },
-    {
         title: 'Khách hàng',
         align: 'left',
         key: 'customer',
         render: (_, record) => (
-            <div className='flex flex-col gap-1 '>
+            <div className="flex flex-col gap-1">
                 <MaskText active={true} value={record.ownerUsername} />
-                <StatusBadge className="text-gray-500 text-[12px]" status={record.ownerType}  config={CONFIG_LABEL_OWNER_TYPE}/>
+                <StatusBadge
+                    className="text-[12px]"
+                    status={record.ownerType as OwnerType}
+                    config={OWNER_TYPE_CONFIG}
+                />
             </div>
         ),
     },
     {
         title: 'Số tiền đóng băng',
         align: 'right',
-        dataIndex: 'amount',
         key: 'amount',
-        render: (amount: number) => (
-            <span className="font-medium text-orange-600">
-                {formatCurrency(amount, { symbol: 'VNĐ', position: 'after' })}
-            </span>
-        ),
+        render: (_, record) => <FreezeAmountCell item={record} />,
     },
-   
     {
-        title: 'Loại đóng băng',
-        align: 'center',
-        dataIndex: 'type',
+        title: 'Nguồn / Loại đóng băng',
+        align: 'left',
+        key: 'type',
+        width: 260,
         render: (_, record) => (
-            <div>
-                <p className='font-medium text-gray-500'>{typeLockLabel[record.type as typeLock]}</p>
-
+            <div className="max-w-[260px]">
+                <p className="font-medium">
+                    {FREEZE_TYPE_LABEL[record.type as FreezeType] ?? record.type}
+                </p>
+                {record.sourceTransactionCode && (
+                    <p className="text-muted-foreground text-[12px]">
+                        GD gốc: {record.sourceTransactionCode}
+                    </p>
+                )}
+                {record.reason && (
+                    <p className="text-muted-foreground text-[12px]">{record.reason}</p>
+                )}
             </div>
         ),
     },
-
     {
         title: 'Trạng thái',
         align: 'center',
-        dataIndex: 'status',
-        key: 'status',
-        render: (status: string) => {
-            return (
-                <div className='space-y-1'>
-              <StatusBadge className={cn(status==StatusKey.ACTIVE&&'animate-pulse-soft')} status={status} config={STATUS_CONFIG}/>
-                </div>
-            )
-        },
+        key: 'displayStatus',
+        render: (_, record) => <FreezeStatusCell item={record} />,
+    },
+    {
+        title: 'Cách mở băng',
+        align: 'center',
+        dataIndex: 'releaseType',
+        key: 'releaseType',
+        render: (releaseType: string | null) =>
+            releaseType
+                ? RELEASE_TYPE_LABEL[releaseType as ReleaseType] ?? releaseType
+                : '--',
     },
     {
         title: 'Thời gian tạo',
@@ -89,7 +104,7 @@ export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeR
         render: (createdAt: string) =>
             createdAt ? dayjs(createdAt).format('DD/MM/YYYY HH:mm:ss') : '--',
     },
-     {
+    {
         title: 'Lý do mở băng',
         align: 'left',
         key: 'unfreezeReason',
@@ -104,21 +119,14 @@ export const getColumn = ({ onRelease }: ColumnOptions = {}): ColumnType<FreezeR
         title: 'Hành động',
         align: 'center',
         key: 'action',
-        width: 110,
-        render: (_, record) => {
-            const canRelease = record.status === 'ACTIVE'
-            return (
-                <ButtonComponent
-                    size="small"
-                    disabled={!canRelease}
-                    onClick={() => canRelease && onRelease?.(record)}
-                    className={`bg-blue-50 border border-blue-600 text-blue-600 ${canRelease
-                        ? 'hover:bg-blue-100! hover:text-blue-700!'
-                        : 'opacity-50 cursor-not-allowed'
-                        }`}
-                    content="Mở băng"
-                />
-            )
-        },
+        width: 160,
+        render: (_, record) => (
+            <FreezeRowActions
+                item={record}
+                canApprove={canApprove}
+                onRequestUnfreeze={() => onRelease?.(record)}
+                onDecide={onDecide}
+            />
+        ),
     },
 ]

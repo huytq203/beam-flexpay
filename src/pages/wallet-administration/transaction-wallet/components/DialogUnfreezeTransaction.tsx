@@ -122,10 +122,10 @@ const DialogUnfreezeTransaction = ({
         reason: values.reason
       }).unwrap()
       successMess(
-        `Đã mở băng ${formatCurrency(values.amount, {
-          symbol: selectedFreeze.currency || currency,
+        `Đã gửi yêu cầu mở băng ${formatCurrency(values.amount, {
+          symbol: currency,
           position: 'after'
-        })}`
+        })}, đang chờ người khác phê duyệt`
       )
       onSuccess?.()
     } catch {
@@ -165,7 +165,7 @@ const DialogUnfreezeTransaction = ({
             htmlType='submit'
             form={UNFREEZE_TRANSACTION_FORM_ID}
             loading={isLoading}
-            content='Xác nhận mở băng'
+            content='Gửi yêu cầu mở băng'
             className='sm:w-auto!'
           />
         </div>
@@ -209,7 +209,7 @@ const DialogUnfreezeTransaction = ({
           <p className='text-xs text-emerald-800'>Số tiền đang giữ</p>
           <p className='font-semibold text-emerald-950'>
             {formatCurrency(maxAmount, {
-              symbol: selectedFreeze?.currency || currency,
+              symbol: currency,
               position: 'after'
             })}
           </p>
@@ -226,7 +226,7 @@ const DialogUnfreezeTransaction = ({
             options={releasableOrders.map((freeze) => ({
               value: freeze.id,
               label: `${getFreezeLabel(freeze)} - ${formatCurrency(freeze.remainingAmount, {
-                symbol: freeze.currency || currency,
+                symbol: currency,
                 position: 'after'
               })}`
             }))}
@@ -258,7 +258,7 @@ const DialogUnfreezeTransaction = ({
           disabled={unfreezeType === 1}
           min={1}
           max={maxAmount}
-          suffix={selectedFreeze?.currency || currency}
+          suffix={currency}
           control={control}
           name='amount'
           placeholder='Nhập số tiền...'
@@ -288,8 +288,9 @@ const DialogUnfreezeTransaction = ({
           Lưu ý
         </p>
         <p className='mt-1 text-sm'>
-          Tiền mở băng sẽ được chuyển từ số dư đóng băng về số dư khả dụng của
-          đúng ví đã giữ tiền trong giao dịch này.
+          Yêu cầu này cần một người khác phê duyệt. Sau khi được duyệt, tiền mới
+          chuyển từ số dư đóng băng về số dư khả dụng của đúng ví đã giữ tiền
+          trong giao dịch này.
         </p>
       </div>
 

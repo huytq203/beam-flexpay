@@ -1,21 +1,47 @@
-import { CardComponent, DialogModal, ExportCsvButton, Table } from '@components/index'
-import { SnowflakeIcon } from '@components/icons'
+import {
+    CardComponent,
+    ExportCsvButton,
+    Table,
+    UnfreezeDecisionDialog,
+    UnfreezeRequestDialog
+} from '@components/index'
 import { useExportCsv } from '@hooks/useExportCsv'
 import { useExportFreezesMutation } from '@services/apiExportCsv'
-import DialogUnfreeze from '../components/DialogUnfreeze'
-import React from 'react'
 import { getColumn } from './configs/FreezeBalance.column'
 import useFetchFreeze from './hooks/useFetchFreeze'
 
 const FreezeBalance = () => {
-    const { accountId, dataFreeze, isLoadingGetFreeze, dataSource, page, setPage, setPageSize, size, isUnfreezeModalOpen, selectedFreezeItem, handleOpenUnfreezeModal, handleCloseUnfreezeModal } = useFetchFreeze()
+    const {
+        accountId,
+        dataFreeze,
+        isLoadingGetFreeze,
+        dataSource,
+        page,
+        setPage,
+        setPageSize,
+        size,
+        isUnfreezeModalOpen,
+        selectedFreezeItem,
+        handleOpenUnfreezeModal,
+        handleCloseUnfreezeModal,
+        canApprove,
+        openDecision,
+        decisionDialogState
+    } = useFetchFreeze()
+
     const [triggerExport, { reset: resetExport }] = useExportFreezesMutation()
     const { exportFile, isExporting } = useExportCsv({
         trigger: triggerExport,
         reset: resetExport,
         filenamePrefix: 'dong-bang-so-du'
     })
-    const column = getColumn({ onRelease: handleOpenUnfreezeModal })
+
+    const column = getColumn({
+        canApprove,
+        onRelease: handleOpenUnfreezeModal,
+        onDecide: openDecision
+    })
+
     return (
         <div>
             <CardComponent className='mt-3' content={
@@ -48,26 +74,14 @@ const FreezeBalance = () => {
                     />
                 </>} />
 
-            < DialogModal
-                onCancel={handleCloseUnfreezeModal}
-                onOk={() => { }}
+            <UnfreezeRequestDialog
                 open={isUnfreezeModalOpen}
-                footer={null}
-                content={
-                    < DialogUnfreeze
-                        freezeItem={selectedFreezeItem}
-                        onSuccess={handleCloseUnfreezeModal}
-                        onCancel={handleCloseUnfreezeModal}
-                    />
-                }
-                title={
-                    < span className="flex items-center gap-2 text-blue-700" >
-                        <SnowflakeIcon size={18} />
-                        Mở băng giao dịch
-                    </span >
-                }
+                item={selectedFreezeItem}
+                onSuccess={handleCloseUnfreezeModal}
+                onCancel={handleCloseUnfreezeModal}
             />
-        </div >
+            <UnfreezeDecisionDialog {...decisionDialogState} />
+        </div>
     )
 }
 

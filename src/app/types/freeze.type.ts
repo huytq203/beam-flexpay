@@ -1,3 +1,8 @@
+import type {
+  FreezeDisplayStatus,
+  UnfreezeCommandStatus
+} from '@constants/freeze.constant'
+
 export interface RootFreeze {
   data: DataFreeze
   message: string
@@ -14,7 +19,7 @@ export interface DataFreeze {
   totalPages: number
   size: number
   number: number
-  sort: Sort2
+  sort: Sort
   first: boolean
   numberOfElements: number
   empty: boolean
@@ -28,22 +33,51 @@ export interface FreezeItem {
   ownerId: string
   ownerType: string
   ownerUsername: string | null
+  /** Số tiền của riêng dòng này. Cả lệnh nằm ở `totalHeldAmount`. */
   amount: number
   requestedAmount: number
   releasedAmount: number
   remainingAmount: number
+  /** Phần chưa giữ được vì ví không đủ tiền; hệ thống bù dần mỗi khi tiền về. */
   shortfallAmount: number
+  /** Tổng đang giữ của cả lệnh: dòng gốc cộng mọi dòng bù. */
+  totalHeldAmount: number
+  /** Tổng đã giải tỏa của cả lệnh, gộp cùng cách với `totalHeldAmount`. */
+  totalReleasedAmount: number
+  /** Số lần hệ thống lấp thêm tiền vào lệnh này. */
+  topUpCount: number
   parentFreezeId: string | null
-  currency: string
-  displayStatus: string
+  displayStatus: FreezeDisplayStatus
   reason?: string | null
   unfreezeReason: string | null
   status: string
+  releaseType: string | null
   type: string
   createdAt: string
   createdBy: string
   updatedAt: string
   updatedBy: string
+  /** Lệnh mở băng đang gắn với bản ghi này; NULL khi chưa ai yêu cầu mở băng. */
+  unfreezeCommandId: string | null
+  unfreezeCommandStatus: UnfreezeCommandStatus | null
+}
+
+/** Phản hồi của các endpoint maker-checker: tạo lệnh mở băng, duyệt và từ chối. */
+export interface ManualMoneyCommand {
+  id: string
+  commandKey: string
+  actionType: string
+  targetId: string
+  targetAccountId: string
+  executionReference: string | null
+  status: UnfreezeCommandStatus
+  makerId: string
+  checkerId: string | null
+  reason: string | null
+  evidenceReference: string | null
+  executedJournalId: string | null
+  approvedAt: string | null
+  executedAt: string | null
 }
 
 export interface Pageable {
@@ -56,12 +90,6 @@ export interface Pageable {
 }
 
 export interface Sort {
-  empty: boolean
-  sorted: boolean
-  unsorted: boolean
-}
-
-export interface Sort2 {
   empty: boolean
   sorted: boolean
   unsorted: boolean

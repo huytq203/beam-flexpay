@@ -43,7 +43,7 @@ const DialogUnfreeze = ({
                 accountId,
                 reason: values.reason,
             }).unwrap()
-            successMess('Mở băng tài khoản thành công')
+            successMess('Đã gửi yêu cầu mở băng, đang chờ người khác phê duyệt')
             reset()
             onSuccess?.()
         } catch {
