@@ -4,7 +4,7 @@ import {
   UnfreezeCommandStatus,
   type FreezeBadgeKey
 } from '@constants/freeze.constant'
-import type { FreezeItem, UnfreezeCommand } from '@type/freeze.type'
+import type { FreezeItem } from '@type/freeze.type'
 
 type FreezeCommandState = Pick<
   FreezeItem,
@@ -18,7 +18,6 @@ type FreezeActionSource = Pick<
   | 'status'
   | 'unfreezeCommandId'
   | 'unfreezeCommandStatus'
-  | 'unfreezeCommands'
   | 'remainingAmount'
   | 'shortfallAmount'
   | 'amount'
@@ -41,21 +40,6 @@ export const resolveFreezeBadgeKey = (
     ? FREEZE_BADGE_PENDING_APPROVAL
     : item.displayStatus
 
-/**
- * Tổng lượng tiền đã được "cam kết" bởi các lệnh mở băng đang active (PENDING_APPROVAL hoặc
- * EXECUTED). Dùng để kiểm tra xem còn có thể tạo thêm lệnh mở băng hay không.
- */
-export const getCommittedUnfreezeAmount = (
-  commands: UnfreezeCommand[]
-): number =>
-  commands
-    .filter(
-      (c) =>
-        c.status === UnfreezeCommandStatus.PENDING_APPROVAL ||
-        c.status === UnfreezeCommandStatus.EXECUTED
-    )
-    .reduce((sum, c) => sum + c.amount, 0)
-
 export const FreezeRowAction = {
   /** Chưa ai yêu cầu mở băng — bước maker. */
   REQUEST_UNFREEZE: 'REQUEST_UNFREEZE',
@@ -68,7 +52,7 @@ export type FreezeRowAction =
   (typeof FreezeRowAction)[keyof typeof FreezeRowAction]
 
 export interface FreezeRowActionFlags {
-  /** Committed chưa cover hết releasable và bản ghi đang ACTIVE → có thể tạo lệnh mở băng mới. */
+  /** Bản ghi ACTIVE còn tiền/phần thiếu có thể giải tỏa → có thể tạo lệnh mở băng mới. */
   canRequestUnfreeze: boolean
   /** Đang có lệnh PENDING_APPROVAL với commandId hợp lệ → checker có thể duyệt/từ chối. */
   canDecideUnfreeze: boolean
@@ -78,9 +62,11 @@ export interface FreezeRowActionFlags {
  * Xác định các hành động khả dụng trên một dòng.
  *
  * - canDecideUnfreeze: có lệnh PENDING_APPROVAL với commandId hợp lệ.
- * - canRequestUnfreeze: ACTIVE + không có lệnh PENDING + tổng committed < releasable.
+ * - canRequestUnfreeze: ACTIVE + không có lệnh PENDING hợp lệ + releasable > 0.
  *   BE hiện chưa hỗ trợ tạo nhiều lệnh đồng thời — phải chờ lệnh PENDING được duyệt/từ chối
  *   trước khi tạo lệnh mới.
+ *
+ * `remainingAmount` đã trừ các lệnh EXECUTED nên không được trừ/cộng lịch sử đó lần nữa.
  */
 export const getFreezeRowActionFlags = (
   item: FreezeActionSource
@@ -99,8 +85,7 @@ export const getFreezeRowActionFlags = (
 
   const releasable =
     (item.remainingAmount ?? item.amount) + (item.shortfallAmount ?? 0)
-  const committed = getCommittedUnfreezeAmount(item.unfreezeCommands ?? [])
-  const canRequestUnfreeze = committed < releasable
+  const canRequestUnfreeze = releasable > 0
 
   return { canRequestUnfreeze, canDecideUnfreeze: false }
 }

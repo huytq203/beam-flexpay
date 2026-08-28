@@ -3,7 +3,7 @@ import { useMessage } from '@hooks/useMessage'
 import { usePostUnfreezeMutation } from '@services/apiFreezes'
 import { usePostUnfreezeTransactionMutation } from '@services/apiWalletAccount.api'
 import type { FreezeItem } from '@type/freeze.type'
-import { getCommittedUnfreezeAmount, getReleasableAmount } from '@utils/freeze'
+import { getReleasableAmount } from '@utils/freeze'
 import { useEffect, useMemo } from 'react'
 import { useForm, useWatch, type Control } from 'react-hook-form'
 import {
@@ -20,8 +20,6 @@ export interface UseUnfreezeRequestFormResult {
   shortfall: number
   /** Trần tuyệt đối của bản ghi (remainingAmount + shortfallAmount). */
   maxAmount: number
-  /** Phần còn có thể yêu cầu sau khi trừ các lệnh đang PENDING/EXECUTED. */
-  availableToRequest: number
   isLoading: boolean
   submit: () => void
 }
@@ -37,8 +35,6 @@ export const useUnfreezeRequestForm = (
   const { successMess } = useMessage()
   const remaining = item.remainingAmount ?? item.amount
   const maxAmount = getReleasableAmount(item)
-  const committed = getCommittedUnfreezeAmount(item.unfreezeCommands ?? [])
-  const availableToRequest = Math.max(0, maxAmount - committed)
 
   const schema = useMemo(
     () => buildUnfreezeRequestSchema(maxAmount),
@@ -102,7 +98,6 @@ export const useUnfreezeRequestForm = (
     remaining,
     shortfall: item.shortfallAmount ?? 0,
     maxAmount,
-    availableToRequest,
     isLoading: isUnfreezing || isUnfreezingTransaction,
     submit: handleSubmit(onSubmit)
   }

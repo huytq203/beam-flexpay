@@ -87,6 +87,28 @@ describe('UnfreezeRequestDialog', () => {
     ).toBeInTheDocument()
   })
 
+  it('dùng đúng 30.000 còn lại dù lịch sử đã EXECUTED 115.000', () => {
+    renderDialog(freeze({
+      amount: 145_000,
+      requestedAmount: 145_000,
+      releasedAmount: 115_000,
+      remainingAmount: 30_000,
+      totalHeldAmount: 30_000,
+      totalReleasedAmount: 115_000,
+      displayStatus: 'PARTIALLY_RELEASED',
+      unfreezeCommandId: 'rejected-command',
+      unfreezeCommandStatus: 'REJECTED',
+      unfreezeCommands: [
+        { id: 'c1', amount: 85_000, status: 'EXECUTED' } as never,
+        { id: 'c2', amount: 30_000, status: 'EXECUTED' } as never,
+        { id: 'rejected-command', amount: 30_000, status: 'REJECTED' } as never
+      ]
+    }))
+
+    expect(amountInput()).toBeDisabled()
+    expect(amountInput()).toHaveValue('30,000')
+  })
+
   it('không cho số tiền vượt trần lọt xuống API', async () => {
     let body: Record<string, unknown> | null = null
     server.use(

@@ -100,7 +100,6 @@ const UnfreezeRequestForm = ({
         remaining,
         shortfall,
         maxAmount,
-        availableToRequest,
         isLoading,
         submit
     } = useUnfreezeRequestForm(item, onSuccess)
