@@ -23,11 +23,18 @@ export interface ExportBankLinksQuery {
 export interface ExportTransactionsQuery {
   /** Bỏ trống khi xuất từ màn danh sách giao dịch toàn hệ thống. */
   ownerId?: string
+  /** Lọc giao dịch khi party là initiator hoặc counterparty. */
+  partyId?: string
   type?: string
   status?: string
   transactionCode?: string
   fromDate?: string
   toDate?: string
+  senderUsername?: string
+  receiverUsername?: string
+  counterpartyUsername?: string
+  sourceDomain?: string
+  paymentMethod?: string
 }
 
 export interface ExportFreezesQuery {

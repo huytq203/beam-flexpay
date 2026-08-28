@@ -6,7 +6,7 @@ import {
   ButtonComponent,
   TooltipComponent
 } from '@components/index'
-import { LockKeyOpenIcon, SnowflakeIcon } from '@components/icons'
+import { SnowflakeIcon } from '@components/icons'
 import {
   PaymentMethodEnum,
   PaymentMethod,
@@ -376,6 +376,7 @@ const getColumn = ({
         ? 'Mở băng giao dịch (Unfreeze)'
         : 'Đóng băng giao dịch (Freeze)'
       return (
+        !isUnfreeze&&
         <TooltipComponent title={label}>
           <ButtonComponent
             aria-label={label}
@@ -386,9 +387,7 @@ const getColumn = ({
               openingFreezeTransactionId === record.transactionId ||
               openingUnfreezeTransactionId === record.transactionId
             }
-            icon={isUnfreeze
-              ? <LockKeyOpenIcon size={17} weight='regular' className='text-emerald-700' aria-hidden />
-              : <SnowflakeIcon size={17} weight='regular' className='text-cyan-700' aria-hidden />}
+            icon={!isUnfreeze&&<SnowflakeIcon size={17} weight='regular' className='text-cyan-700' aria-hidden />}
             onClick={() => isUnfreeze ? onUnfreeze(record) : onFreeze(record)}
           />
         </TooltipComponent>

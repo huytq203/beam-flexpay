@@ -17,7 +17,7 @@ export interface IAuthState {
 const storedToken = Cookies.get(CookieKey.ACCESS_TOKEN)
 const initialTokenInfo = storedToken
   ? decodeToken(storedToken)
-  : { permissions: [], roles: [], email: '', name: '', jwtId: '' }
+  : { permissions: [], roles: [], email: '', name: '', jwtId: '', username: '' }
 const initialState: IAuthState = {
   accessToken: storedToken ?? null,
   refreshToken: '',
@@ -27,6 +27,7 @@ const initialState: IAuthState = {
     fullName: initialTokenInfo.name,
     status: true,
     jwtId: initialTokenInfo.jwtId,
+    username: initialTokenInfo.username,
     securityMethod: '',
     accountStatus: '',
     type: '',
@@ -53,6 +54,7 @@ const applyAccessToken = (state: IAuthState, token: string): void => {
   state.profile.email = tokenInfo.email
   state.profile.fullName = tokenInfo.name
   state.profile.jwtId = tokenInfo.jwtId
+  state.profile.username = tokenInfo.username
 }
 
 const applyAuthentication = (
@@ -80,7 +82,8 @@ const applyAuthentication = (
       roles: tokenInfo.roles,
       email: tokenInfo.email,
       fullName: tokenInfo.name,
-      jwtId: tokenInfo.jwtId
+      jwtId: tokenInfo.jwtId,
+      username: tokenInfo.username
     }
   }
 }

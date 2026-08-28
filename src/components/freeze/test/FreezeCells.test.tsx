@@ -6,6 +6,13 @@ import { FreezeAmountCell } from '../FreezeAmountCell'
 import { FreezeRowActions } from '../FreezeRowActions'
 import { FreezeStatusCell } from '../FreezeStatusCell'
 
+// Mock useAppSelector để tránh phụ thuộc Redux store trong unit test
+vi.mock('@hooks/hook', () => ({
+  useAppSelector: vi.fn((selector: (state: unknown) => unknown) =>
+    selector({ auth: { profile: { username: 'checker_user' } } })
+  )
+}))
+
 const freeze = (overrides: Partial<FreezeItem> = {}): FreezeItem => ({
   id: 'freeze-1',
   accountId: 'account-1',
@@ -33,14 +40,40 @@ const freeze = (overrides: Partial<FreezeItem> = {}): FreezeItem => ({
   createdBy: 'huytq',
   updatedAt: '2026-08-25T15:56:05.326622',
   updatedBy: 'huytq',
+  unfreezeLogs: [],
   unfreezeCommandId: null,
   unfreezeCommandStatus: null,
+  unfreezeCommandAmount: null,
+  unfreezeCommandMakerId: null,
+  unfreezeCommandReason: null,
+  unfreezeCommandCreatedAt: null,
+  unfreezeCommands: [],
   ...overrides
 })
 
 const pendingFreeze = freeze({
   unfreezeCommandId: 'command-1',
-  unfreezeCommandStatus: 'PENDING_APPROVAL'
+  unfreezeCommandStatus: 'PENDING_APPROVAL',
+  unfreezeCommandMakerId: 'maker_user',
+  unfreezeCommands: [{ id: 'command-1', amount: 50_000, status: 'PENDING_APPROVAL' } as never]
+})
+
+// Lệnh pending do chính checker_user tạo (maker === current user)
+const pendingFreezeOwnedByChecker = freeze({
+  unfreezeCommandId: 'command-2',
+  unfreezeCommandStatus: 'PENDING_APPROVAL',
+  unfreezeCommandMakerId: 'checker_user',
+  unfreezeCommands: [{ id: 'command-2', amount: 50_000, status: 'PENDING_APPROVAL' } as never]
+})
+
+// Lệnh pending chỉ 1000/100000 — vừa cần duyệt vừa còn có thể tạo thêm
+const partialPendingFreeze = freeze({
+  amount: 100_000,
+  remainingAmount: 100_000,
+  unfreezeCommandId: 'command-3',
+  unfreezeCommandStatus: 'PENDING_APPROVAL',
+  unfreezeCommandMakerId: 'maker_user',
+  unfreezeCommands: [{ id: 'command-3', amount: 1_000, status: 'PENDING_APPROVAL' } as never]
 })
 
 describe('FreezeStatusCell', () => {
@@ -118,5 +151,30 @@ describe('FreezeRowActions', () => {
   it('bản ghi đã kết thúc thì không còn hành động nào', () => {
     render(<FreezeRowActions item={freeze({ status: 'RELEASED' })} canApprove />)
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
+  })
+
+  it('có quyền duyệt nhưng chính mình là maker thì ẩn nút duyệt/từ chối', () => {
+    render(
+      <FreezeRowActions item={pendingFreezeOwnedByChecker} canApprove />
+    )
+    expect(screen.queryByRole('button', { name: 'Duyệt' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Từ chối' })).not.toBeInTheDocument()
+  })
+
+  it('có lệnh pending (dù partial) thì ẩn nút Mở băng, chỉ hiện Duyệt/Từ chối', async () => {
+    const onRequestUnfreeze = vi.fn()
+    const onDecide = vi.fn()
+    render(
+      <FreezeRowActions
+        item={partialPendingFreeze}
+        canApprove
+        onRequestUnfreeze={onRequestUnfreeze}
+        onDecide={onDecide}
+      />
+    )
+
+    expect(screen.queryByRole('button', { name: 'Mở băng' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Duyệt' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Từ chối' })).toBeInTheDocument()
   })
 })

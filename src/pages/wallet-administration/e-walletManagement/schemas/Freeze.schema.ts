@@ -5,7 +5,7 @@ export const FreezeSchema = z.object({
     amount: z.number().optional(),
     reason: z
         .string()
-        .min(1, 'Lý do đóng băng không được để trống')
+        .min(10, 'Lý do đóng trên 10 ký tự')
         .max(500, 'Lý do không được vượt quá 500 ký tự'),
     expiryTime: z.string().optional(),
 })
@@ -15,7 +15,7 @@ export type FreezeFormValues = z.infer<typeof FreezeSchema>
 export const UnfreezeSchema = z.object({
     reason: z
         .string()
-        .min(1, 'Lý do mở băng không được để trống')
+        .min(10, 'Lý do mở băng trên 10 ký tự')
         .max(500, 'Lý do không được vượt quá 500 ký tự'),
 })
 

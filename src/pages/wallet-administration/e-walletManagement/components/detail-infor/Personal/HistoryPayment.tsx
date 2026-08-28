@@ -12,8 +12,7 @@ import {
 } from '@services/apiExportCsv'
 
 interface Props {
-  ownerId: string
-  initiatorUsername: string
+  partyId: string
 }
 
 /** Bộ lọc đã được chuẩn hoá (ngày giờ -> chuỗi ISO) trước khi gửi lên API */
@@ -29,9 +28,9 @@ interface HistorySearchParams {
   toDate?: string
 }
 
-const HistoryPayment = ({ ownerId, initiatorUsername }: Props) => {
+const HistoryPayment = ({ partyId }: Props) => {
   const [searchParams, setSearchParams] = useState<HistorySearchParams>({})
-  const {page, size, setPage, setPageSize,dataSourceUnified,  isLoadingGetUnified,  dataUnified, } = useFetchData({ ownerId, initiatorUsername, searchParams })
+  const {page, size, setPage, setPageSize,dataSourceUnified,  isLoadingGetUnified,  dataUnified, } = useFetchData({ partyId, searchParams })
   const [triggerExport, { reset: resetExport }] = useExportTransactionsMutation()
   const { exportFile, isExporting } = useExportCsv({
     trigger: triggerExport,
@@ -39,21 +38,17 @@ const HistoryPayment = ({ ownerId, initiatorUsername }: Props) => {
     filenamePrefix: 'lich-su-giao-dich'
   })
 
-  /** `/wallet/transactions/export` chỉ nhận các filter dưới đây. */
   const exportParams = useMemo<ExportTransactionsQuery>(() => ({
-    ownerId,
+    partyId,
     transactionCode: searchParams.transactionCode,
+    counterpartyUsername: searchParams.counterpartyUsername,
+    sourceDomain: searchParams.sourceDomain,
     status: searchParams.status,
     type: searchParams.transactionType,
+    paymentMethod: searchParams.paymentMethod,
     fromDate: searchParams.fromDate,
     toDate: searchParams.toDate
-  }), [ownerId, searchParams])
-
-  const hasUnsupportedFilter = Boolean(
-    searchParams.sourceDomain ||
-    searchParams.paymentMethod ||
-    searchParams.counterpartyUsername
-  )
+  }), [partyId, searchParams])
 
   const handleSearch = (data: HistorySearchFormValues) => {
     const formattedData: HistorySearchParams = {
@@ -81,12 +76,7 @@ const HistoryPayment = ({ ownerId, initiatorUsername }: Props) => {
             <ExportCsvButton
               onExport={() => exportFile(exportParams)}
               loading={isExporting}
-              disabled={!ownerId}
-              tooltip={
-                hasUnsupportedFilter
-                  ? 'File xuất không áp dụng bộ lọc Nguồn / Phương thức thanh toán / Người nhận'
-                  : undefined
-              }
+              disabled={!partyId}
             />
           </div>
           {isLoadingGetUnified ? (

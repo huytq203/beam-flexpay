@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest'
 import type { FreezeItem } from '@type/freeze.type'
 import {
   FreezeRowAction,
+  getCommittedUnfreezeAmount,
   getFreezeAmountSummary,
   getFreezeRowAction,
+  getFreezeRowActionFlags,
   isAwaitingUnfreezeApproval,
   resolveFreezeBadgeKey
 } from '../freeze'
@@ -35,8 +37,14 @@ const freeze = (overrides: Partial<FreezeItem> = {}): FreezeItem => ({
   createdBy: 'huytq',
   updatedAt: '2026-08-25T15:56:05.326622',
   updatedBy: 'huytq',
+  unfreezeLogs: [],
   unfreezeCommandId: null,
   unfreezeCommandStatus: null,
+  unfreezeCommandAmount: null,
+  unfreezeCommandMakerId: null,
+  unfreezeCommandReason: null,
+  unfreezeCommandCreatedAt: null,
+  unfreezeCommands: [],
   ...overrides
 })
 
@@ -81,6 +89,27 @@ describe('resolveFreezeBadgeKey', () => {
   })
 })
 
+describe('getCommittedUnfreezeAmount', () => {
+  it('cộng tổng amount của các lệnh PENDING và EXECUTED', () => {
+    expect(
+      getCommittedUnfreezeAmount([
+        { id: 'c1', amount: 10_000, status: 'PENDING_APPROVAL' } as never,
+        { id: 'c2', amount: 20_000, status: 'EXECUTED' } as never,
+        { id: 'c3', amount: 5_000, status: 'REJECTED' } as never
+      ])
+    ).toBe(30_000)
+  })
+
+  it('trả về 0 khi không có lệnh active', () => {
+    expect(getCommittedUnfreezeAmount([])).toBe(0)
+    expect(
+      getCommittedUnfreezeAmount([
+        { id: 'c1', amount: 15_000, status: 'REJECTED' } as never
+      ])
+    ).toBe(0)
+  })
+})
+
 describe('getFreezeRowAction', () => {
   it('bản ghi ACTIVE chưa có lệnh thì mở bước tạo yêu cầu', () => {
     expect(getFreezeRowAction(freeze())).toBe(FreezeRowAction.REQUEST_UNFREEZE)
@@ -90,10 +119,10 @@ describe('getFreezeRowAction', () => {
     expect(getFreezeRowAction(pending())).toBe(FreezeRowAction.DECIDE_UNFREEZE)
   })
 
-  it('chờ duyệt mà thiếu commandId thì không có hành động nào gọi được', () => {
+  it('chờ duyệt mà thiếu commandId thì canDecide=false nhưng vẫn cho tạo lệnh mới', () => {
     expect(
       getFreezeRowAction(pending({ unfreezeCommandId: null }))
-    ).toBe(FreezeRowAction.NONE)
+    ).toBe(FreezeRowAction.REQUEST_UNFREEZE)
   })
 
   it('bản ghi đã kết thúc thì không còn hành động', () => {
@@ -111,6 +140,89 @@ describe('getFreezeRowAction', () => {
         freeze({ unfreezeCommandId: 'command-1', unfreezeCommandStatus: 'REJECTED' })
       )
     ).toBe(FreezeRowAction.REQUEST_UNFREEZE)
+  })
+
+  it('đã committed một phần thì vẫn cho phép tạo thêm lệnh mở băng', () => {
+    expect(
+      getFreezeRowAction(
+        freeze({
+          remainingAmount: 50_000,
+          unfreezeCommands: [
+            { id: 'c1', amount: 20_000, status: 'EXECUTED' } as never
+          ]
+        })
+      )
+    ).toBe(FreezeRowAction.REQUEST_UNFREEZE)
+  })
+
+  it('tổng committed bằng releasable thì ẩn nút mở băng', () => {
+    expect(
+      getFreezeRowAction(
+        freeze({
+          remainingAmount: 50_000,
+          shortfallAmount: 0,
+          unfreezeCommands: [
+            { id: 'c1', amount: 30_000, status: 'EXECUTED' } as never,
+            { id: 'c2', amount: 20_000, status: 'PENDING_APPROVAL' } as never
+          ]
+        })
+      )
+    ).toBe(FreezeRowAction.NONE)
+  })
+
+  it('lệnh REJECTED không được tính vào committed nên vẫn cho mở băng', () => {
+    expect(
+      getFreezeRowAction(
+        freeze({
+          remainingAmount: 50_000,
+          unfreezeCommands: [
+            { id: 'c1', amount: 50_000, status: 'REJECTED' } as never
+          ]
+        })
+      )
+    ).toBe(FreezeRowAction.REQUEST_UNFREEZE)
+  })
+})
+
+describe('getFreezeRowActionFlags', () => {
+  it('bản ghi kết thúc thì cả hai flag đều false', () => {
+    expect(getFreezeRowActionFlags(freeze({ status: 'RELEASED' }))).toEqual({
+      canRequestUnfreeze: false,
+      canDecideUnfreeze: false
+    })
+  })
+
+  it('ACTIVE chưa có lệnh: chỉ canRequestUnfreeze', () => {
+    expect(getFreezeRowActionFlags(freeze())).toEqual({
+      canRequestUnfreeze: true,
+      canDecideUnfreeze: false
+    })
+  })
+
+  it('pending mà committed đủ releasable: chỉ canDecideUnfreeze', () => {
+    expect(
+      getFreezeRowActionFlags(
+        freeze({
+          remainingAmount: 50_000,
+          unfreezeCommandId: 'c1',
+          unfreezeCommandStatus: 'PENDING_APPROVAL',
+          unfreezeCommands: [{ id: 'c1', amount: 50_000, status: 'PENDING_APPROVAL' } as never]
+        })
+      )
+    ).toEqual({ canRequestUnfreeze: false, canDecideUnfreeze: true })
+  })
+
+  it('pending partial (committed < releasable): canDecide=true nhưng canRequest=false vì BE chưa hỗ trợ parallel', () => {
+    expect(
+      getFreezeRowActionFlags(
+        freeze({
+          remainingAmount: 100_000,
+          unfreezeCommandId: 'c1',
+          unfreezeCommandStatus: 'PENDING_APPROVAL',
+          unfreezeCommands: [{ id: 'c1', amount: 1_000, status: 'PENDING_APPROVAL' } as never]
+        })
+      )
+    ).toEqual({ canRequestUnfreeze: false, canDecideUnfreeze: true })
   })
 })
 

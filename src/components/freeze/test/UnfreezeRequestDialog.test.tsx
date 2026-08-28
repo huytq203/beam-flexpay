@@ -35,8 +35,14 @@ const freeze = (overrides: Partial<FreezeItem> = {}): FreezeItem => ({
   createdBy: 'huytq',
   updatedAt: '2026-08-25T15:56:05.326622',
   updatedBy: 'huytq',
+  unfreezeLogs: [],
   unfreezeCommandId: null,
   unfreezeCommandStatus: null,
+  unfreezeCommandAmount: null,
+  unfreezeCommandMakerId: null,
+  unfreezeCommandReason: null,
+  unfreezeCommandCreatedAt: null,
+  unfreezeCommands: [],
   ...overrides
 })
 
@@ -74,7 +80,8 @@ describe('UnfreezeRequestDialog', () => {
     renderDialog(freeze({ remainingAmount: 50_000, shortfallAmount: 15_000 }))
 
     expect(amountInput()).toHaveValue('65,000')
-    expect(screen.getByText(/Còn thiếu 15,000 VNĐ chưa giữ được/)).toBeInTheDocument()
+    expect(screen.getByText('Còn thiếu chưa giữ được')).toBeInTheDocument()
+    expect(screen.getByText('15,000 VNĐ')).toBeInTheDocument()
     expect(
       screen.getByText(/huỷ đòi phần còn thiếu/)
     ).toBeInTheDocument()

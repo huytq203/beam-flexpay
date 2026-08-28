@@ -24,6 +24,8 @@ interface DecodedToken {
   email: string
   name: string
   jwtId: string
+  /** Keycloak preferred_username — dùng để so sánh với makerId/checkerId trong maker-checker. */
+  username: string
 }
 
 /** Decode thông tin phân quyền và Keycloak user ID từ access token. */
@@ -35,11 +37,12 @@ export const decodeToken = (token: string): DecodedToken => {
       roles: decoded.roles || [],
       email: decoded.email || decoded.preferred_username || decoded.sub || '',
       name: decoded.name || '',
-      jwtId: decoded.sub || ''
+      jwtId: decoded.sub || '',
+      username: decoded.preferred_username || decoded.sub || ''
     }
   } catch (error) {
     console.error('Error decoding token:', error)
-    return { permissions: [], roles: [], email: '', name: '', jwtId: '' }
+    return { permissions: [], roles: [], email: '', name: '', jwtId: '', username: '' }
   }
 }
 

@@ -3,8 +3,8 @@ export interface FormSearchValues {
     fromDate: string
     toDate: string
     transactionType?: string
-    initiatorUsername?: string
-    counterpartyUsername?: string
+    senderUsername?: string
+    receiverUsername?: string
     bankCode?: string
     paymentMethod?: string
     transactionCode?: string

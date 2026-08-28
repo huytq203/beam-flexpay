@@ -17,8 +17,8 @@ const FormSearch = ({ handleSearch }: props) => {
             fromDate: '',
             toDate: '',
             transactionType: '',
-            initiatorUsername: '',
-            counterpartyUsername: '',
+            senderUsername: '',
+            receiverUsername: '',
             bankCode: '',
             paymentMethod: '',
             transactionCode: '',
@@ -44,8 +44,8 @@ const FormSearch = ({ handleSearch }: props) => {
                     <FormSelect control={formSearch.control} name='transactionType' label='Loại giao dịch' className='col-span-1' options={mapEnumToSelectOptions(TransactionType)} />
                     <FormSelect control={formSearch.control} name='status' label='Trạng thái' className='col-span-1' options={mapEnumToSelectOptions(StatusType)} />
                     <FormSelect control={formSearch.control} name='sourceDomain' label='Nguồn' className='col-span-1' options={mapEnumToSelectOptions(SourceDomainLabel)} />
-                    <FormInput control={formSearch.control} name='initiatorUsername' label='Người chuyển' className='col-span-1' placeholder='Username người chuyển...' />
-                    <FormInput control={formSearch.control} name='counterpartyUsername' label='Người nhận' className='col-span-1' placeholder='Username người nhận...' />
+                    <FormInput control={formSearch.control} name='senderUsername' label='Người chuyển' className='col-span-1' placeholder='Username người chuyển...' />
+                    <FormInput control={formSearch.control} name='receiverUsername' label='Người nhận' className='col-span-1' placeholder='Username người nhận...' />
                     {/* <FormInput control={formSearch.control} name='bankCode' label='Mã ngân hàng' className='col-span-1' placeholder='Nhập mã ngân hàng...' /> */}
                     <FormSelect control={formSearch.control} name='paymentMethod' label='Phương thức' className='col-span-1' options={mapEnumToSelectOptions(PaymentMethod)} />
                     {/* <FormInputNumber control={formSearch.control} name='minAmount' label='Số tiền tối thiểu' className='col-span-1' placeholder='Nhập số tiền...' /> */}

@@ -3,6 +3,38 @@ import type {
   UnfreezeCommandStatus
 } from '@constants/freeze.constant'
 
+export interface UnfreezeLog {
+  id: string
+  amount: number
+  shortfallReleased: number
+  releasedAmount: number
+  reason: string | null
+  makerId: string
+  checkerId: string
+  performedBy: string
+  performedAt: string
+}
+
+export interface UnfreezeCommand {
+  id: string
+  commandKey: string
+  actionType: string
+  targetId: string
+  targetAccountId: string
+  executionReference: string | null
+  status: UnfreezeCommandStatus
+  makerId: string
+  checkerId: string | null
+  reason: string | null
+  rejectionReason: string | null
+  evidenceReference: string | null
+  executedJournalId: string | null
+  approvedAt: string | null
+  executedAt: string | null
+  amount: number
+  createdAt: string
+}
+
 export interface RootFreeze {
   data: DataFreeze
   message: string
@@ -57,28 +89,22 @@ export interface FreezeItem {
   createdBy: string
   updatedAt: string
   updatedBy: string
+  /** Lịch sử các lần mở băng đã thực hiện. */
+  unfreezeLogs: UnfreezeLog[]
   /** Lệnh mở băng đang gắn với bản ghi này; NULL khi chưa ai yêu cầu mở băng. */
   unfreezeCommandId: string | null
   unfreezeCommandStatus: UnfreezeCommandStatus | null
+  unfreezeCommandAmount: number | null
+  /** preferred_username của maker tạo lệnh mở băng đang pending. */
+  unfreezeCommandMakerId: string | null
+  unfreezeCommandReason: string | null
+  unfreezeCommandCreatedAt: string | null
+  /** Toàn bộ lệnh mở băng liên quan đến bản ghi này. */
+  unfreezeCommands: UnfreezeCommand[]
 }
 
-/** Phản hồi của các endpoint maker-checker: tạo lệnh mở băng, duyệt và từ chối. */
-export interface ManualMoneyCommand {
-  id: string
-  commandKey: string
-  actionType: string
-  targetId: string
-  targetAccountId: string
-  executionReference: string | null
-  status: UnfreezeCommandStatus
-  makerId: string
-  checkerId: string | null
-  reason: string | null
-  evidenceReference: string | null
-  executedJournalId: string | null
-  approvedAt: string | null
-  executedAt: string | null
-}
+/** @deprecated Dùng UnfreezeCommand thay thế. */
+export type ManualMoneyCommand = UnfreezeCommand
 
 export interface Pageable {
   pageNumber: number

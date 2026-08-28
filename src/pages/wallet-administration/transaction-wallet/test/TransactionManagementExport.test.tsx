@@ -13,10 +13,10 @@ const mocks = vi.hoisted(() => ({
     status: 'POSTED',
     fromDate: '2026-08-01T00:00:00.000',
     toDate: '2026-08-25T23:59:59.999',
-    sourceDomain: 'USER_WALLET',
+    sourceDomain: '',
     paymentMethod: '',
-    initiatorUsername: '',
-    counterpartyUsername: ''
+    senderUsername: '0962341913',
+    receiverUsername: ''
   } as Record<string, string>
 }))
 
@@ -61,7 +61,7 @@ vi.mock('@hooks/useExportCsv', () => ({
 describe('TransactionManagement export', () => {
   beforeEach(() => vi.clearAllMocks())
 
-  it('chỉ gửi filter export được hỗ trợ, không kèm ownerId', async () => {
+  it('gửi cùng bộ filter với lưới, bao gồm senderUsername, không kèm page/size', async () => {
     renderWithProviders(
       <MessageProvider>
         <TransactionManagement />
@@ -75,7 +75,8 @@ describe('TransactionManagement export', () => {
       type: 'CASH_OUT',
       status: 'POSTED',
       fromDate: '2026-08-01T00:00:00.000',
-      toDate: '2026-08-25T23:59:59.999'
+      toDate: '2026-08-25T23:59:59.999',
+      senderUsername: '0962341913'
     })
   })
 })

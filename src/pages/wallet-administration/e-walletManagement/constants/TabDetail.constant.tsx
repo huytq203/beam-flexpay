@@ -24,8 +24,8 @@ export const TAB_CONTENT_MAP: TabContentMap = {
     'BUSINESS': (props: TabContentProps) => <AccountBankBusiness linkedBanks={props.linkedBanks} />
   },
   '3': {
-    'USER': (props: TabContentProps) => <HistoryPayment ownerId={props.accountData?.ownerId || ''}  initiatorUsername={props.accountData?.ownerUsername || ''}/>,
-    'SYSTEM': (props: TabContentProps) => <HistoryPayment ownerId={props.accountData?.ownerId || ''}  initiatorUsername={props.accountData?.ownerUsername || ''}/>,
+    'USER': (props: TabContentProps) => <HistoryPayment partyId={props.accountData?.ownerId || ''} />,
+    'SYSTEM': (props: TabContentProps) => <HistoryPayment partyId={props.accountData?.ownerId || ''} />,
     'BUSINESS': (props: TabContentProps) => <HistoryPaymentBusiness ownerId={props.accountData?.ownerId || ''} />
   },
   '4': {

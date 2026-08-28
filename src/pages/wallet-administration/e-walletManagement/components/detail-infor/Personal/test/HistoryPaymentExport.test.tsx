@@ -57,30 +57,25 @@ vi.mock('@hooks/useExportCsv', () => ({
 describe('HistoryPayment export', () => {
   beforeEach(() => vi.clearAllMocks())
 
-  it('chỉ gửi filter export hỗ trợ và cảnh báo filter bị bỏ qua', async () => {
+  it('gửi partyId và toàn bộ filter của lưới khi export', async () => {
     const user = userEvent.setup()
-    render(<HistoryPayment ownerId='owner-1' initiatorUsername='user-1' />)
+    render(<HistoryPayment partyId='party-1' />)
 
     await user.click(
       screen.getByRole('button', { name: 'Áp dụng bộ lọc test' })
     )
 
     const exportButton = screen.getByRole('button', { name: /Xuất CSV/ })
-    await user.hover(exportButton)
-
-    expect(
-      await screen.findByText(
-        'File xuất không áp dụng bộ lọc Nguồn / Phương thức thanh toán / Người nhận'
-      )
-    ).toBeInTheDocument()
-
     await user.click(exportButton)
 
     expect(mocks.exportFile).toHaveBeenCalledWith({
-      ownerId: 'owner-1',
+      partyId: 'party-1',
       transactionCode: 'TX-1',
+      counterpartyUsername: 'recipient',
+      sourceDomain: 'WALLET',
       status: 'SUCCESS',
       type: 'TRANSFER',
+      paymentMethod: 'BALANCE',
       fromDate: undefined,
       toDate: undefined
     })

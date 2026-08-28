@@ -9,6 +9,8 @@ export interface IUserProfile {
   fullName: string
   status: boolean
   jwtId: string
+  /** Keycloak preferred_username — dùng để so sánh với makerId/checkerId trong maker-checker. */
+  username: string
   securityMethod: string
   accountStatus: string
   type: string

@@ -3,7 +3,7 @@ import { useMessage } from '@hooks/useMessage'
 import { usePostUnfreezeMutation } from '@services/apiFreezes'
 import { usePostUnfreezeTransactionMutation } from '@services/apiWalletAccount.api'
 import type { FreezeItem } from '@type/freeze.type'
-import { getReleasableAmount } from '@utils/freeze'
+import { getCommittedUnfreezeAmount, getReleasableAmount } from '@utils/freeze'
 import { useEffect, useMemo } from 'react'
 import { useForm, useWatch, type Control } from 'react-hook-form'
 import {
@@ -18,7 +18,10 @@ export interface UseUnfreezeRequestFormResult {
   unfreezeType: UnfreezeAmountMode
   remaining: number
   shortfall: number
+  /** Trần tuyệt đối của bản ghi (remainingAmount + shortfallAmount). */
   maxAmount: number
+  /** Phần còn có thể yêu cầu sau khi trừ các lệnh đang PENDING/EXECUTED. */
+  availableToRequest: number
   isLoading: boolean
   submit: () => void
 }
@@ -34,8 +37,13 @@ export const useUnfreezeRequestForm = (
   const { successMess } = useMessage()
   const remaining = item.remainingAmount ?? item.amount
   const maxAmount = getReleasableAmount(item)
+  const committed = getCommittedUnfreezeAmount(item.unfreezeCommands ?? [])
+  const availableToRequest = Math.max(0, maxAmount - committed)
 
-  const schema = useMemo(() => buildUnfreezeRequestSchema(maxAmount), [maxAmount])
+  const schema = useMemo(
+    () => buildUnfreezeRequestSchema(maxAmount),
+    [maxAmount]
+  )
   const { control, handleSubmit, reset, setValue } =
     useForm<UnfreezeRequestFormValues>({
       defaultValues: {
@@ -47,12 +55,14 @@ export const useUnfreezeRequestForm = (
     })
   const unfreezeType = useWatch({ control, name: 'unfreezeType' })
 
-  // "Toàn bộ" khoá số tiền theo trần; chuyển sang "một phần" thì xoá trắng để admin buộc
-  // phải tự gõ, tránh vô tình gửi nguyên số cũ.
+  // "Toàn bộ" khoá số tiền theo maxAmount (toàn bộ phần đang bị giữ + thiếu);
+  // chuyển sang "một phần" thì xoá trắng để admin buộc phải tự gõ.
   useEffect(() => {
-    setValue('amount', unfreezeType === UnfreezeAmountMode.FULL ? maxAmount : 0, {
-      shouldValidate: false
-    })
+    setValue(
+      'amount',
+      unfreezeType === UnfreezeAmountMode.FULL ? maxAmount : 0,
+      { shouldValidate: false }
+    )
   }, [maxAmount, setValue, unfreezeType])
 
   const [postUnfreeze, { isLoading: isUnfreezing }] = usePostUnfreezeMutation()
@@ -92,6 +102,7 @@ export const useUnfreezeRequestForm = (
     remaining,
     shortfall: item.shortfallAmount ?? 0,
     maxAmount,
+    availableToRequest,
     isLoading: isUnfreezing || isUnfreezingTransaction,
     submit: handleSubmit(onSubmit)
   }

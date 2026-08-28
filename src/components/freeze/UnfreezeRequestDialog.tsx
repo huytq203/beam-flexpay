@@ -1,8 +1,11 @@
 import { FormInputNumber, FormRadio, FormTextArea } from '@components/form'
 import { SnowflakeIcon, WarningIcon } from '@components/icons'
 import { ButtonComponent, DialogModal } from '@components/index'
-import type { FreezeItem } from '@type/freeze.type'
+import { UnfreezeCommandStatus } from '@constants/freeze.constant'
+import type { FreezeItem, UnfreezeCommand } from '@type/freeze.type'
 import { blockLeadingAndRepeatedSpace } from '@utils/inputHandlers'
+import { formatCurrency } from '@utils/formatNumber'
+import dayjs from 'dayjs'
 import { toVnd, UnfreezeAmountMode } from './unfreeze-request.schema'
 import { useUnfreezeRequestForm } from './useUnfreezeRequestForm'
 
@@ -17,6 +20,68 @@ interface UnfreezeRequestDialogProps {
     item: FreezeItem | null
     onSuccess?: () => void
     onCancel: () => void
+}
+
+const COMMAND_STATUS_CONFIG: Record<
+    UnfreezeCommand['status'],
+    { label: string; className: string }
+> = {
+    [UnfreezeCommandStatus.PENDING_APPROVAL]: {
+        label: 'Chờ duyệt',
+        className: 'warning-status'
+    },
+    [UnfreezeCommandStatus.EXECUTED]: {
+        label: 'Đã thực hiện',
+        className: 'success-status'
+    },
+    [UnfreezeCommandStatus.REJECTED]: {
+        label: 'Đã từ chối',
+        className: 'normal-status'
+    }
+}
+
+/** Bảng lịch sử các lệnh mở băng đã tạo cho bản ghi này. */
+const UnfreezeCommandList = ({ commands }: { commands: UnfreezeCommand[] }) => {
+    if (commands.length === 0) return null
+
+    return (
+        <div className="mt-3">
+            <p className="mb-1.5 text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
+                Các yêu cầu mở băng trước đó
+            </p>
+            <div className="divide-y divide-border rounded-md border border-border overflow-hidden">
+                {commands.map((cmd, idx) => {
+                    const cfg = COMMAND_STATUS_CONFIG[cmd.status]
+                    return (
+                        <div key={cmd.id} className="flex items-center justify-between gap-3 px-3 py-2 bg-muted/20">
+                            <div className="flex items-center gap-2 min-w-0">
+                                <span className="text-muted-foreground text-[11px] shrink-0">
+                                    #{idx + 1}
+                                </span>
+                                <div className="min-w-0">
+                                    <p className="font-medium tabular-nums text-[13px]">
+                                        {formatCurrency(cmd.amount, { symbol: 'VNĐ', position: 'after' })}
+                                    </p>
+                                    <p className="text-[11px] text-muted-foreground truncate">
+                                        Maker: {cmd.makerId}
+                                        {cmd.reason ? ` · ${cmd.reason}` : ''}
+                                    </p>
+                                    {cmd.createdAt && (
+                                        <p className="text-[11px] text-muted-foreground">
+                                            {dayjs(cmd.createdAt).format('DD/MM/YYYY HH:mm')}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                            <span className={`shrink-0 text-[11px] px-2 py-0.5 rounded-full font-medium ${cfg.className}`}>
+                                {cfg.label}
+                            </span>
+                        </div>
+                    )
+                })}
+            </div>
+        </div>
+    )
 }
 
 /**
@@ -35,9 +100,12 @@ const UnfreezeRequestForm = ({
         remaining,
         shortfall,
         maxAmount,
+        availableToRequest,
         isLoading,
         submit
     } = useUnfreezeRequestForm(item, onSuccess)
+
+    const commands = item.unfreezeCommands ?? []
 
     return (
         <form
@@ -46,17 +114,26 @@ const UnfreezeRequestForm = ({
                 submit()
             }}
         >
-            <div className="rounded-md border border-border bg-muted/40 p-3">
-                <p className="text-muted-foreground">Số tiền đang bị giữ</p>
-                <p className="amount-caution text-2xl font-semibold tabular-nums">
-                    {toVnd(remaining)}
-                </p>
-                {shortfall > 0 && (
-                    <p className="amount-negative mt-1 text-[12px] font-medium tabular-nums">
-                        Còn thiếu {toVnd(shortfall)} chưa giữ được
+            {/* Tổng quan số tiền */}
+            <div className="rounded-md border border-border bg-muted/40 p-3 space-y-1">
+                <div className="flex items-center justify-between">
+                    <p className="text-muted-foreground text-[13px]">Đang bị giữ</p>
+                    <p className="amount-caution text-lg font-semibold tabular-nums">
+                        {toVnd(remaining)}
                     </p>
+                </div>
+                {shortfall > 0 && (
+                    <div className="flex items-center justify-between">
+                        <p className="text-muted-foreground text-[13px]">Còn thiếu chưa giữ được</p>
+                        <p className="amount-negative text-[13px] font-medium tabular-nums">
+                            {toVnd(shortfall)}
+                        </p>
+                    </div>
                 )}
             </div>
+
+            {/* Lịch sử lệnh cũ */}
+            <UnfreezeCommandList commands={commands} />
 
             <div className="mt-3 flex flex-col gap-3">
                 <FormRadio

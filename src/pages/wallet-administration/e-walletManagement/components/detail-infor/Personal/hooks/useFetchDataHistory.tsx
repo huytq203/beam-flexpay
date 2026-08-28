@@ -3,28 +3,31 @@ import { useGetUnifiedQuery } from '@services/apiJournal'
 import React from 'react'
 
 interface SearchParams {
+    [key: string]: string | number | undefined
+    transactionCode?: string
+    counterpartyUsername?: string
+    sourceDomain?: string
     status?: string
-    type?: string
+    transactionType?: string
+    paymentMethod?: string
     fromDate?: string
     toDate?: string
-    initiatorUsername?: string
 }
 
 interface Props {
-    ownerId: string
-    initiatorUsername: string
+    partyId: string
     searchParams?: SearchParams
 }
-const useFetchData = ({ initiatorUsername, searchParams }: Props) => {
+const useFetchData = ({ partyId, searchParams }: Props) => {
     const {  page, size, setPage, setPageSize } = usePagination()
 
 
     const payload2 = React.useMemo(() => ({
-        initiatorUsername: initiatorUsername,
+        partyId,
         page:page,
         size:size,
         ...searchParams,
-    }), [initiatorUsername, page, size, searchParams])
+    }), [partyId, page, size, searchParams])
 
 
     const {data:dataUnified,isLoading:isLoadingGetUnified}=useGetUnifiedQuery(payload2)
@@ -35,7 +38,7 @@ const useFetchData = ({ initiatorUsername, searchParams }: Props) => {
             ...item,
             key: item.id,
         }))
-    }, [dataUnified])
+    }, [dataUnified, page, size])
     return {
         isLoadingGetUnified,
         dataUnified,

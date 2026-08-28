@@ -31,22 +31,32 @@ describe('apiExportCsv', () => {
   })
 
   it('trả filename null khi backend không gửi Content-Disposition', async () => {
+    let calledUrl = ''
     server.use(
-      http.get('*/wallet/transactions/export', () =>
-        HttpResponse.text('ma\nTX1', {
+      http.get('*/wallet/transactions/export', ({ request }) => {
+        calledUrl = request.url
+        return HttpResponse.text('ma\nTX1', {
           headers: { 'content-type': 'text/csv' }
         })
-      )
+      })
     )
     const store = createAppStore()
 
     const result = await store.dispatch(
       apiExportWalletCsv.endpoints.exportTransactions.initiate({
-        ownerId: ACCOUNT_ID
+        partyId: ACCOUNT_ID,
+        counterpartyUsername: '0353585904',
+        sourceDomain: 'EWALLET',
+        paymentMethod: 'LINKED_ACCOUNT'
       })
     )
 
+    const searchParams = new URL(calledUrl).searchParams
     expect(result.data?.filename).toBeNull()
+    expect(searchParams.get('partyId')).toBe(ACCOUNT_ID)
+    expect(searchParams.get('counterpartyUsername')).toBe('0353585904')
+    expect(searchParams.get('sourceDomain')).toBe('EWALLET')
+    expect(searchParams.get('paymentMethod')).toBe('LINKED_ACCOUNT')
   })
 
   it('gắn id ví vào đường dẫn export liên kết ngân hàng', async () => {

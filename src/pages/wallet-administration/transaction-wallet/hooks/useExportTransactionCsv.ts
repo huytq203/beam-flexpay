@@ -6,30 +6,42 @@ import {
 import { useCallback, useMemo } from 'react'
 import type { FormSearchValues } from '../types/Transaction.type'
 
-/** Filter của màn hình nhưng `/wallet/transactions/export` không nhận. */
-const UNSUPPORTED_FILTER_KEYS = [
-  'sourceDomain',
-  'paymentMethod',
-  'initiatorUsername',
-  'counterpartyUsername',
+/**
+ * Các field trong filter lưới mà `/wallet/transactions/export` chưa hỗ trợ.
+ * Khi user đang lọc theo một trong các field này, tooltip cảnh báo file sẽ không
+ * phản ánh đúng bộ lọc.
+ */
+const UNSUPPORTED_EXPORT_KEYS = [
   'bankCode',
   'minAmount',
   'maxAmount'
 ] as const satisfies readonly (keyof FormSearchValues)[]
 
 const UNSUPPORTED_FILTER_TOOLTIP =
-  'File xuất chỉ áp dụng bộ lọc Mã giao dịch / Loại / Trạng thái / Thời gian'
+  'File xuất không hỗ trợ lọc theo Mã ngân hàng / Số tiền — các bộ lọc còn lại vẫn được áp dụng'
 
-/** `/wallet/transactions/export` chỉ nhận các filter dưới đây; bỏ giá trị rỗng. */
+/**
+ * Map filter lưới sang params của `/wallet/transactions/export`.
+ * Dùng chung một object state — thêm field lọc mới vào `FormSearchValues` thì
+ * export tự nhận, không cần cập nhật thêm nơi nào.
+ */
 const buildExportParams = (
   filter: Partial<FormSearchValues>
-): ExportTransactionsQuery => ({
-  transactionCode: filter.transactionCode || undefined,
-  type: filter.transactionType || undefined,
-  status: filter.status || undefined,
-  fromDate: filter.fromDate || undefined,
-  toDate: filter.toDate || undefined
-})
+): ExportTransactionsQuery => {
+  const p: ExportTransactionsQuery = {}
+
+  if (filter.transactionCode)  p.transactionCode  = filter.transactionCode
+  if (filter.transactionType)  p.type             = filter.transactionType
+  if (filter.status)           p.status           = filter.status
+  if (filter.fromDate)         p.fromDate         = filter.fromDate
+  if (filter.toDate)           p.toDate           = filter.toDate
+  if (filter.senderUsername)   p.senderUsername   = filter.senderUsername
+  if (filter.receiverUsername) p.receiverUsername = filter.receiverUsername
+  if (filter.sourceDomain)     p.sourceDomain     = filter.sourceDomain
+  if (filter.paymentMethod)    p.paymentMethod    = filter.paymentMethod
+
+  return p
+}
 
 interface UseExportTransactionCsvResult {
   exportFile: () => void
@@ -39,8 +51,7 @@ interface UseExportTransactionCsvResult {
 
 /**
  * Xuất CSV cho màn Quản lý giao dịch — gọi `/wallet/transactions/export`
- * KHÔNG kèm `ownerId` (spec khai báo `ownerId` bắt buộc, cần xác nhận backend
- * có chấp nhận xuất toàn hệ thống hay không).
+ * với cùng bộ filter đang áp cho lưới (trừ page/size và các field chưa hỗ trợ).
  */
 const useExportTransactionCsv = (
   filter: Partial<FormSearchValues>
@@ -53,7 +64,7 @@ const useExportTransactionCsv = (
   })
 
   const exportParams = useMemo(() => buildExportParams(filter), [filter])
-  const hasUnsupportedFilter = UNSUPPORTED_FILTER_KEYS.some((key) =>
+  const hasUnsupportedFilter = UNSUPPORTED_EXPORT_KEYS.some((key) =>
     Boolean(filter[key])
   )
 

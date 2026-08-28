@@ -1,6 +1,7 @@
 import { ButtonComponent } from '@components/index'
 import { UnfreezeDecision } from '@hooks/useUnfreezeApproval'
-import { FreezeRowAction, getFreezeRowAction } from '@utils/freeze'
+import { useAppSelector } from '@hooks/hook'
+import { getFreezeRowActionFlags } from '@utils/freeze'
 import type { FreezeItem } from '@type/freeze.type'
 
 interface FreezeRowActionsProps {
@@ -19,36 +20,44 @@ export const FreezeRowActions = ({
   onRequestUnfreeze,
   onDecide
 }: FreezeRowActionsProps) => {
-  const action = getFreezeRowAction(item)
+  const currentUsername = useAppSelector((state) => state.auth.profile.username)
+  const { canRequestUnfreeze, canDecideUnfreeze } = getFreezeRowActionFlags(item)
 
-  if (action === FreezeRowAction.REQUEST_UNFREEZE) {
-    return (
-      <ButtonComponent
-        size="small"
-        type="default"
-        onClick={() => onRequestUnfreeze?.(item)}
-        content="Mở băng"
-      />
-    )
-  }
+  // Chính mình là maker của lệnh đang pending → không được duyệt/từ chối.
+  const isMaker =
+    !!item.unfreezeCommandMakerId &&
+    item.unfreezeCommandMakerId === currentUsername
 
-  // Trạng thái đã nói rõ "Đang chờ phê duyệt"; người không có quyền duyệt không cần nút nào.
-  if (action !== FreezeRowAction.DECIDE_UNFREEZE || !canApprove) return EMPTY
+  const showDecide = canDecideUnfreeze && canApprove && !isMaker
+
+  if (!canRequestUnfreeze && !showDecide) return EMPTY
 
   return (
-    <div className="flex items-center justify-center gap-1">
-      <ButtonComponent
-        size="small"
-        onClick={() => onDecide?.(item, UnfreezeDecision.APPROVE)}
-        content="Duyệt"
-      />
-      <ButtonComponent
-        size="small"
-        color="danger"
-        variant="outlined"
-        onClick={() => onDecide?.(item, UnfreezeDecision.REJECT)}
-        content="Từ chối"
-      />
+    <div className="flex items-center justify-center gap-1 flex-wrap">
+      {canRequestUnfreeze && (
+        <ButtonComponent
+          size="small"
+          type="default"
+          onClick={() => onRequestUnfreeze?.(item)}
+          content="Mở băng"
+        />
+      )}
+      {showDecide && (
+        <>
+          <ButtonComponent
+            size="small"
+            onClick={() => onDecide?.(item, UnfreezeDecision.APPROVE)}
+            content="Duyệt"
+          />
+          <ButtonComponent
+            size="small"
+            color="danger"
+            variant="outlined"
+            onClick={() => onDecide?.(item, UnfreezeDecision.REJECT)}
+            content="Từ chối"
+          />
+        </>
+      )}
     </div>
   )
 }
