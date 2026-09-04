@@ -11,6 +11,8 @@ export interface ScreenAccess {
   readonly path: string
   readonly aliasPaths?: readonly string[]
   readonly module: Module
+  /** Nếu có, bắt buộc đúng action này mới được mở route và hiện trên sidebar. */
+  readonly accessAction?: Action
   readonly actions: Readonly<Record<string, Action>>
 }
 
@@ -25,6 +27,12 @@ export const DEFAULT_SCREEN_ACTIONS = {
 } as const satisfies Readonly<Record<string, Action>>
 
 export const SCREENS = {
+  TRANSACTION_MANAGEMENT: {
+    path: TRANSACTIONMANAGEMENT,
+    module: MODULE.TRANSACTION,
+    accessAction: ACTION.FULL,
+    actions: { ...DEFAULT_SCREEN_ACTIONS }
+  },
   USER_ACCOUNT: {
     path: `${ROLEMANAGEMENT_V2}/user-account`,
     module: MODULE.USER,
@@ -55,6 +63,7 @@ export const SCREENS = {
     path: `${TRANSACTIONMANAGEMENT}/transaction-wallet`,
     aliasPaths: [`${WALLETADMINISTRATION}/transaction-wallet`],
     module: MODULE.TRANSACTION,
+    accessAction: ACTION.FULL,
     actions: {
       ...DEFAULT_SCREEN_ACTIONS,
       viewDetail: ACTION.VIEW
@@ -63,11 +72,13 @@ export const SCREENS = {
   FROZEN_TRANSACTIONS: {
     path: `${TRANSACTIONMANAGEMENT}/frozen-transactions`,
     module: MODULE.TRANSACTION,
+    accessAction: ACTION.FULL,
     actions: { ...DEFAULT_SCREEN_ACTIONS }
   },
   SYSTEM_LEDGER: {
     path: `${TRANSACTIONMANAGEMENT}/system-ledger`,
     module: MODULE.TRANSACTION,
+    accessAction: ACTION.FULL,
     actions: {
       ...DEFAULT_SCREEN_ACTIONS,
       viewDetail: ACTION.VIEW
@@ -76,6 +87,7 @@ export const SCREENS = {
   WITHDRAW_HISTORY: {
     path: `${TRANSACTIONMANAGEMENT}/withdraw-history`,
     module: MODULE.TRANSACTION,
+    accessAction: ACTION.FULL,
     actions: { ...DEFAULT_SCREEN_ACTIONS }
   },
   EWALLET_MANAGEMENT: {
@@ -105,6 +117,14 @@ export const SCREENS = {
   },
   MERCHANT_MANAGEMENT: {
     path: `${MERCHANT}/merchant-management`,
+    module: MODULE.MERCHANT,
+    actions: {
+      ...DEFAULT_SCREEN_ACTIONS,
+      viewDetail: ACTION.VIEW
+    }
+  },
+  BUSINESS_WALLET_ACCOUNT: {
+    path: `${MERCHANT}/business-wallet-account`,
     module: MODULE.MERCHANT,
     actions: {
       ...DEFAULT_SCREEN_ACTIONS,

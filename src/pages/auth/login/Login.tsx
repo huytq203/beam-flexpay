@@ -5,7 +5,7 @@ import {
   useUserLoginMutation,
   useVerifyLoginOtpMutation
 } from '@services/authEndpoints'
-import { TRANSACTIONMANAGEMENT } from '@constants/routersConstant'
+import { SECURE_PANEL } from '@constants/routersConstant'
 import type { AdminLoginOtpResponse } from '@type/auth'
 import type { DataLogin } from '@type/application'
 import {
@@ -36,7 +36,7 @@ export function Login() {
   const [verifyLoginOtp] = useVerifyLoginOtpMutation()
 
   const navigateToCms = useCallback((): void => {
-    void navigate(`${TRANSACTIONMANAGEMENT}/transaction-wallet`)
+    void navigate(SECURE_PANEL, { replace: true })
   }, [navigate])
 
   const showOtpStep = (nextChallenge: AdminLoginOtpResponse): void => {

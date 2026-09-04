@@ -4,7 +4,10 @@ import { renderHook } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { createAppStore } from '@/app/store'
 import { savePermissions } from '@slices/authSlice'
-import { _ROLEMANAGEMENT_V2 } from '@constants/routersConstant'
+import {
+  _ROLEMANAGEMENT_V2,
+  _TRANSACTIONMANAGEMENT
+} from '@constants/routersConstant'
 import useNavigationEw from '../useNavigation'
 
 const wrapperWith = (permissions: string[]) => {
@@ -65,9 +68,52 @@ describe('useNavigationEw', () => {
     ])
   })
 
+  it('chỉ hiện nhóm giao dịch khi có TRANSACTION:FULL', () => {
+    expect(
+      groupKeysOf(['EWALLET:TRANSACTION:VIEW'])
+    ).not.toContain(_TRANSACTIONMANAGEMENT)
+    expect(
+      childKeysOf(['EWALLET:TRANSACTION:FULL'], _TRANSACTIONMANAGEMENT)
+    ).toEqual([
+      'transaction-wallet',
+      'frozen-transactions',
+      'system-ledger',
+      'withdraw-history'
+    ])
+  })
+
   it('super-admin thấy toàn bộ menu identity', () => {
     expect(
       childKeysOf(['EWALLET:ADMIN:FULL'], _ROLEMANAGEMENT_V2)
     ).toHaveLength(3)
+  })
+
+  it('tách ví doanh nghiệp thành một nhóm điều hướng riêng', () => {
+    const permissions = ['EWALLET:MERCHANT:VIEW']
+
+    expect(groupKeysOf(permissions)).toEqual([
+      'business-wallet',
+      'secure-panel/merchant'
+    ])
+    expect(childKeysOf(permissions, 'secure-panel/merchant')).not.toContain(
+      'business-wallet-account'
+    )
+    expect(childKeysOf(permissions, 'business-wallet')).toEqual([
+      'business-wallet-account'
+    ])
+  })
+
+  it('dùng chung tiêu đề nhóm cho hai dropdown merchant', () => {
+    const { result } = renderHook(() => useNavigationEw(), {
+      wrapper: wrapperWith(['EWALLET:MERCHANT:VIEW'])
+    })
+    const merchantGroups = result.current[0].filter((item) =>
+      ['secure-panel/merchant', 'business-wallet'].includes(String(item.key))
+    )
+
+    expect(merchantGroups.map((item) => item.groupLabel)).toEqual([
+      'Quản lý merchant',
+      'Quản lý merchant'
+    ])
   })
 })

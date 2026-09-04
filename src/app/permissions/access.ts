@@ -5,6 +5,7 @@ import {
   type Module,
   type PermissionCode
 } from './modules'
+import type { ScreenAccess } from './registry'
 
 export const buildPermissionCode = (
   module: Module,
@@ -46,3 +47,15 @@ export const grantsModuleAccess = (
   MODULE_ACCESS_ACTIONS.some((action) =>
     grants(granted, buildPermissionCode(module, action))
   )
+
+/** Dùng cùng một luật cho route, sidebar và canView của screen. */
+export const grantsScreenAccess = (
+  granted: readonly string[],
+  screen: ScreenAccess
+): boolean =>
+  screen.accessAction
+    ? grants(
+        granted,
+        buildPermissionCode(screen.module, screen.accessAction)
+      )
+    : grantsModuleAccess(granted, screen.module)

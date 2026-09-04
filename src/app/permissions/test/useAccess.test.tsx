@@ -67,6 +67,20 @@ describe('useScreenAccess', () => {
     expect(result.current.can('resetPassword')).toBe(true)
   })
 
+  it('canView của màn giao dịch bắt buộc TRANSACTION:FULL', () => {
+    const viewOnly = renderHook(
+      () => useScreenAccess('TRANSACTION_WALLET'),
+      { wrapper: wrapperWith(['EWALLET:TRANSACTION:VIEW']) }
+    )
+    const fullAccess = renderHook(
+      () => useScreenAccess('TRANSACTION_WALLET'),
+      { wrapper: wrapperWith(['EWALLET:TRANSACTION:FULL']) }
+    )
+
+    expect(viewOnly.result.current.canView).toBe(false)
+    expect(fullAccess.result.current.canView).toBe(true)
+  })
+
   it('không quyền thì chặn module đã phát hành', () => {
     const { result } = renderHook(() => useScreenAccess('ROLE_MANAGEMENT'), {
       wrapper: wrapperWith([])

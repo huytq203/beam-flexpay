@@ -9,7 +9,8 @@ import dayjs from 'dayjs'
 import { toVnd, UnfreezeAmountMode } from './unfreeze-request.schema'
 import { useUnfreezeRequestForm } from './useUnfreezeRequestForm'
 
-interface UnfreezeRequestFormProps {
+interface UnfreezeRequestDialogContentProps {
+    open: boolean
     item: FreezeItem
     onSuccess?: () => void
     onCancel: () => void
@@ -21,6 +22,8 @@ interface UnfreezeRequestDialogProps {
     onSuccess?: () => void
     onCancel: () => void
 }
+
+const UNFREEZE_REQUEST_FORM_ID = 'unfreeze-request-form'
 
 const COMMAND_STATUS_CONFIG: Record<
     UnfreezeCommand['status'],
@@ -89,11 +92,12 @@ const UnfreezeCommandList = ({ commands }: { commands: UnfreezeCommand[] }) => {
  * Nhờ vậy state form tự sạch sau mỗi lần đóng và hook không chạy khi màn hình chỉ đang
  * hiển thị bảng.
  */
-const UnfreezeRequestForm = ({
+const UnfreezeRequestDialogContent = ({
+    open,
     item,
     onSuccess,
     onCancel
-}: UnfreezeRequestFormProps) => {
+}: UnfreezeRequestDialogContentProps) => {
     const {
         control,
         unfreezeType,
@@ -105,14 +109,60 @@ const UnfreezeRequestForm = ({
     } = useUnfreezeRequestForm(item, onSuccess)
 
     const commands = item.unfreezeCommands ?? []
+    const handleCancel = () => {
+        if (!isLoading) onCancel()
+    }
 
     return (
-        <form
-            onSubmit={(event) => {
-                event.preventDefault()
-                submit()
+        <DialogModal
+            open={open}
+            onOk={() => {}}
+            onCancel={handleCancel}
+            closable={!isLoading}
+            keyboard={!isLoading}
+            maskClosable={!isLoading}
+            footer={(
+                <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+                    <ButtonComponent
+                        block
+                        htmlType="button"
+                        type="default"
+                        content="Hủy"
+                        disabled={isLoading}
+                        onClick={handleCancel}
+                        className="sm:w-auto!"
+                    />
+                    <ButtonComponent
+                        block
+                        htmlType="submit"
+                        form={UNFREEZE_REQUEST_FORM_ID}
+                        loading={isLoading}
+                        content="Gửi yêu cầu mở băng"
+                        className="sm:w-auto!"
+                    />
+                </div>
+            )}
+            styles={{
+                footer: {
+                    borderTop: '1px solid var(--border)',
+                    marginTop: 20,
+                    paddingTop: 16
+                }
             }}
+            title={
+                <span className="flex items-center gap-2 text-secondary-foreground">
+                    <SnowflakeIcon size={18} />
+                    Yêu cầu mở băng
+                </span>
+            }
         >
+            <form
+                id={UNFREEZE_REQUEST_FORM_ID}
+                onSubmit={(event) => {
+                    event.preventDefault()
+                    submit()
+                }}
+            >
             {/* Tổng quan số tiền */}
             <div className="rounded-md border border-border bg-muted/40 p-3 space-y-1">
                 <div className="flex items-center justify-between">
@@ -201,15 +251,8 @@ const UnfreezeRequestForm = ({
                 </p>
             </div>
 
-            <div className="mt-4 flex justify-end gap-2">
-                <ButtonComponent type="default" content="Hủy" onClick={onCancel} />
-                <ButtonComponent
-                    htmlType="submit"
-                    loading={isLoading}
-                    content="Gửi yêu cầu mở băng"
-                />
-            </div>
-        </form>
+            </form>
+        </DialogModal>
     )
 }
 
@@ -218,25 +261,15 @@ export const UnfreezeRequestDialog = ({
     item,
     onSuccess,
     onCancel
-}: UnfreezeRequestDialogProps) => (
-    <DialogModal
-        open={open}
-        onOk={onCancel}
-        onCancel={onCancel}
-        footer={null}
-        title={
-            <span className="flex items-center gap-2 text-secondary-foreground">
-                <SnowflakeIcon size={18} />
-                Yêu cầu mở băng
-            </span>
-        }
-    >
-        {item ? (
-            <UnfreezeRequestForm
-                item={item}
-                onSuccess={onSuccess}
-                onCancel={onCancel}
-            />
-        ) : null}
-    </DialogModal>
-)
+}: UnfreezeRequestDialogProps) => {
+    if (!item) return null
+
+    return (
+        <UnfreezeRequestDialogContent
+            open={open}
+            item={item}
+            onSuccess={onSuccess}
+            onCancel={onCancel}
+        />
+    )
+}

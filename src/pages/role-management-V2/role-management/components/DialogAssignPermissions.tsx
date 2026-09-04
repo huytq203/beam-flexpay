@@ -39,11 +39,12 @@ const DialogAssignPermissions = ({
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
 
-  const { data: allPermissionsData, isFetching: isFetchingPage } = useGetPermissionQuery({
-    page,
-    size: pageSize,
-    ...PERMISSION_CATALOG_SORT
-  })
+  const { data: allPermissionsData, isFetching: isFetchingPage } =
+    useGetPermissionQuery({
+      page,
+      size: pageSize,
+      ...PERMISSION_CATALOG_SORT
+    })
   const catalogSize = Math.max(
     allPermissionsData?.totalElements ?? pageSize,
     pageSize
@@ -93,6 +94,11 @@ const DialogAssignPermissions = ({
       dataIndex: 'name',
       align: 'left',
       render: (_, record) => translatePermissionName(record.name)
+    },
+    {
+      title: 'Mã quyền',
+      dataIndex: 'name',
+      align: 'left'
     },
     {
       title: 'Mô tả',

@@ -2,10 +2,12 @@ import { createElement, lazy, Suspense, type ComponentType } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 
 import AppLayout from '@components/layout/AppLayout'
+import PortalLayout from '@components/layout/PortalLayout'
 import AuthLayout from '@components/layout/AuthLayout'
 import ScreenLoading from '@components/screen-loading/ScreenLoading'
 import {
   AUTHENTICATION,
+  SECURE_PANEL,
   FORBIDDENERROR,
   ROLEMANAGEMENT_V2,
   WALLETADMINISTRATION,
@@ -76,6 +78,19 @@ const forbidden = {
     {
       path: FORBIDDENERROR,
       element: page(() => import('@pages/error/ForbiddenError'))
+    }
+  ]
+}
+
+/** Màn khởi động chạy trên layout riêng: không header, không sidebar. */
+const workspaceHome = {
+  path: SECURE_PANEL,
+  element: createElement(PortalLayout),
+  errorElement: createElement(RouteErrorBoundary),
+  children: [
+    {
+      index: true,
+      element: page(() => import('@pages/home/TransitPortal'))
     }
   ]
 }
@@ -243,66 +258,65 @@ const merchantManagement = {
       path: MERCHANT,
       children: [
         {
-          path: SCREENS.MERCHANT_DASHBOARD.path,
-          element: page(
-            () =>
-              import('@pages/merchant-management/dashboard-merchant/DashBoard')
-          )
-        },
-        {
           path: SCREENS.MERCHANT_MANAGEMENT.path,
           element: page(
             () =>
-              import('@pages/merchant-management/merchanr-management/MerchantManagement')
+              import('@/pages/merchant-management/merchant-management/merchant/pages/MerchantManagement')
           )
         },
         {
           path: `${SCREENS.MERCHANT_MANAGEMENT.path}/create`,
           element: page(
             () =>
-              import('@pages/merchant-management/merchanr-management/CreateMerchant')
+              import('@/pages/merchant-management/merchant-management/merchant/pages/CreateMerchant')
           )
         },
         {
           path: `${SCREENS.MERCHANT_MANAGEMENT.path}/create/:id`,
           element: page(
             () =>
-              import('@pages/merchant-management/merchanr-management/CreateMerchant')
+              import('@/pages/merchant-management/merchant-management/merchant/pages/CreateMerchant')
           )
         },
         {
           path: `${SCREENS.MERCHANT_MANAGEMENT.path}/detail/:id`,
           element: page(
             () =>
-              import('@pages/merchant-management/merchanr-management/MerchantDetail')
+              import('@/pages/merchant-management/merchant-management/merchant/pages/MerchantDetail')
           )
         },
         {
           path: `${SCREENS.MERCHANT_MANAGEMENT.path}/:id`,
           element: page(
             () =>
-              import('@pages/merchant-management/merchanr-management/MerchantDetail')
+              import('@/pages/merchant-management/merchant-management/merchant/pages/MerchantDetail')
           )
         },
         {
-          path: SCREENS.MERCHANT_ORDER.path,
+          path: SCREENS.BUSINESS_WALLET_ACCOUNT.path,
           element: page(
             () =>
-              import('@pages/merchant-management/merchant-order/OrderFeature')
+              import('@pages/merchant-management/business-wallet-account/pages/BusinessWallet')
           )
         },
         {
-          path: `${SCREENS.MERCHANT_ORDER.path}/qr/:id`,
+          path: `${SCREENS.BUSINESS_WALLET_ACCOUNT.path}/create`,
           element: page(
             () =>
-              import('@pages/merchant-management/merchant-order/OrderQrFeature')
+              import('@pages/merchant-management/business-wallet-account/pages/BusinessWalletForm')
+          )
+        },
+        {
+          path: `${SCREENS.BUSINESS_WALLET_ACCOUNT.path}/edit/:id`,
+          element: page(
+            () =>
+              import('@pages/merchant-management/business-wallet-account/pages/BusinessWalletForm')
           )
         }
       ]
     }
   ]
 }
-
 const transactionManagement = {
   path: TRANSACTIONMANAGEMENT,
   element: createElement(AppLayout),
@@ -343,7 +357,7 @@ const transactionManagement = {
       path: TRANSACTIONMANAGEMENT,
       children: [
         {
-          path: TRANSACTIONMANAGEMENT + '/refund-management',
+          path: `${SCREENS.TRANSACTION_MANAGEMENT.path}/refund-management`,
           element: page(
             () =>
               import('@pages/transaction-management/refund-management/RefundManagement')
@@ -389,11 +403,12 @@ export const WalletRoutes = createBrowserRouter([
   {
     path: '/',
     element: createElement(Navigate, {
-      to: AUTHENTICATION + '/login',
+      to: SECURE_PANEL,
       replace: true
     })
   },
   authentication,
+  workspaceHome,
   forbidden,
   feeManagementV4,
   roleManagementV2,

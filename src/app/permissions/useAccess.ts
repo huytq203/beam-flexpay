@@ -1,6 +1,11 @@
 import { useCallback, useMemo } from 'react'
 import { useAppSelector } from '@hooks/hook'
-import { buildPermissionCode, grants, grantsModuleAccess } from './access'
+import {
+  buildPermissionCode,
+  grants,
+  grantsModuleAccess,
+  grantsScreenAccess
+} from './access'
 import type { Action, Module, PermissionCode } from './modules'
 import { SCREENS, type ScreenActionId, type ScreenId } from './registry'
 
@@ -44,7 +49,10 @@ export interface ScreenAccessApi<S extends ScreenId> {
 export const useScreenAccess = <S extends ScreenId>(
   screen: S
 ): ScreenAccessApi<S> => {
-  const { has, hasModule } = useAccess()
+  const { has } = useAccess()
+  const permissions = useAppSelector(
+    (state) => state.auth.profile.permissions
+  )
   const config = SCREENS[screen]
 
   const can = useCallback(
@@ -61,9 +69,9 @@ export const useScreenAccess = <S extends ScreenId>(
 
   return useMemo(
     () => ({
-      canView: hasModule(config.module),
+      canView: grantsScreenAccess(permissions, config),
       can
     }),
-    [can, config, hasModule]
+    [can, config, permissions]
   )
 }

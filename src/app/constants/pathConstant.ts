@@ -1,5 +1,6 @@
 import {
   AUTHENTICATION,
+  SECURE_PANEL,
   FEEMANAGEMENT,
   FEEMANAGEMENT_V2,
   BANKANDCONNECT,
@@ -137,7 +138,7 @@ export const PATHS = {
   FORBIDDEN: FORBIDDENERROR,
   NOT_FOUND: '/404',
 
-  HOME: '/'
+  HOME: SECURE_PANEL
 } as const
 
 // Type for path values

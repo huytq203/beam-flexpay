@@ -1,5 +1,6 @@
 import { Result } from 'antd'
 import { Link, useLocation } from 'react-router-dom'
+import { PATHS } from '@constants/pathConstant'
 
 function NotFound() {
   const { pathname } = useLocation()
@@ -13,7 +14,7 @@ function NotFound() {
       status='404'
       title='404'
       subTitle='The requested URL was not found on this server.'
-      extra={<Link to={'/'}>Back Home</Link>}
+      extra={<Link to={PATHS.HOME}>Back Home</Link>}
     />
   )
 }

@@ -2,6 +2,19 @@ import { apiWalletCore } from "@services/apiService"
 import { ResponseType } from "@type/api"
 import { ContentAccountWallet, DataAccountWallet } from "@type/responseAccountWallet"
 
+export interface WalletAccountQueryParams {
+    page?: number
+    size?: number
+    username?: string
+    ownerId?: string
+    ownerType?: string
+    glCode?: string
+    status?: string
+    enabled?: string
+    walletType?: string
+    currency?: string
+}
+
 export interface FreezeTransactionRequest {
     accountId: string
     sourceTransactionId: string
@@ -19,7 +32,7 @@ export interface UnfreezeTransactionRequest {
 
 const apiEWallet = apiWalletCore.injectEndpoints({
     endpoints: (build) => ({
-        getAccount: build.query({
+        getAccount: build.query<DataAccountWallet, WalletAccountQueryParams>({
             query: (params) => ({
                 url: `/wallet/accounts`,
                 params: params,
@@ -28,7 +41,7 @@ const apiEWallet = apiWalletCore.injectEndpoints({
             transformResponse: (res: ResponseType<DataAccountWallet>) => res.data,
             providesTags: ['Wallet'],
         }),
-        getAccountById: build.query({
+        getAccountById: build.query<ContentAccountWallet, string>({
             query: (id) => ({
                 url: `/wallet/accounts/${id}`,
                 method: 'GET'

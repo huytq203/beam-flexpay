@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { buildPermissionCode, grants, grantsModuleAccess } from '../access'
+import {
+  buildPermissionCode,
+  grants,
+  grantsModuleAccess,
+  grantsScreenAccess
+} from '../access'
 import { ACTION, MODULE, SUPER_ADMIN_PERMISSION } from '../modules'
+import { SCREENS } from '../registry'
 
 describe('buildPermissionCode', () => {
   it('ghép đúng định dạng EWALLET:MODULE:ACTION', () => {
@@ -64,5 +70,28 @@ describe('grantsModuleAccess', () => {
     expect(
       grantsModuleAccess(['EWALLET:WALLET:FULL'], MODULE.FEE)
     ).toBe(false)
+  })
+})
+
+describe('grantsScreenAccess', () => {
+  it('màn giao dịch bắt buộc TRANSACTION:FULL', () => {
+    expect(
+      grantsScreenAccess(
+        ['EWALLET:TRANSACTION:VIEW'],
+        SCREENS.TRANSACTION_WALLET
+      )
+    ).toBe(false)
+    expect(
+      grantsScreenAccess(
+        ['EWALLET:TRANSACTION:FULL'],
+        SCREENS.TRANSACTION_WALLET
+      )
+    ).toBe(true)
+  })
+
+  it('màn không đặt accessAction vẫn chấp nhận action cùng module', () => {
+    expect(
+      grantsScreenAccess(['EWALLET:FEE:CREATE'], SCREENS.FEE_POLICY)
+    ).toBe(true)
   })
 })

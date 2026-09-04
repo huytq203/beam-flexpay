@@ -65,6 +65,12 @@ describe('UnfreezeRequestDialog', () => {
     expect(screen.getByRole('radio', { name: 'Mở băng toàn bộ' })).toBeChecked()
     expect(amountInput()).toBeDisabled()
     expect(amountInput()).toHaveValue('50,000')
+
+    const submitButton = screen.getByRole('button', {
+      name: 'Gửi yêu cầu mở băng'
+    })
+    expect(submitButton).toHaveAttribute('form', 'unfreeze-request-form')
+    expect(submitButton.closest('form')).toBeNull()
   })
 
   it('chuyển sang một phần thì mở khoá ô số tiền và xoá trắng', async () => {

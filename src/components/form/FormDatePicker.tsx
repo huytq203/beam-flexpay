@@ -157,6 +157,9 @@ export function FormDatePicker<T extends FieldValues>(props: props<T>) {
             needConfirm={false}
             value={getSingleValue(field.value)}
             picker={picker}
+            placeholder={
+              typeof placeholder === 'string' ? placeholder : placeholder[0]
+            }
             onChange={(date) => {
               if (!date) {
                 field.onChange('');

@@ -1,0 +1,165 @@
+/*
+ * Thế giới thị giác của màn khởi động `/secure-panel`: bản đồ tuyến.
+ * Năm phân hệ = năm tuyến, mỗi tuyến một màu định danh dùng nhất quán ở
+ * chú giải, mô hình 3D và bản đồ SVG dự phòng.
+ *
+ * Mỗi tuyến có hai giá trị: `--line-*` là màu khối (dải đùn, đĩa ga, huy hiệu)
+ * và `--line-*-ink` là biến thể đậm dành cho chữ đứng trên nền sáng, để đạt
+ * tương phản ≥ 4.5:1 — màu khối bão hoà không bao giờ được dùng làm màu chữ.
+ */
+@theme {
+    --color-portal-ground: var(--portal-ground);
+    --color-portal-plate: var(--portal-plate);
+    --color-portal-ink: var(--portal-ink);
+    --color-portal-ink-soft: var(--portal-ink-soft);
+    --color-portal-rule: var(--portal-rule);
+
+    --font-signage: 'Archivo', 'IBM Plex Sans', Helvetica, Arial, sans-serif;
+}
+
+@layer base {
+    :root {
+        --portal-ground: #eceef2;
+        --portal-plate: #ffffff;
+        --portal-ink: #12181f;
+        --portal-ink-soft: #5b6572;
+        --portal-rule: #d5d9e0;
+        /*
+         * Màu của tuyến bị làm câm khi một tuyến khác đang được chọn. Đây là
+         * màu của thanh ray và dải tuyến — thành phần đồ hoạ mang nghĩa, nên
+         * phải giữ ≥ 3:1 với nền signage: câm là lùi lại, không phải biến mất.
+         */
+        --portal-dim: #7f8895;
+
+        --line-transaction: #e0402f;
+        --line-transaction-ink: #a52a1c;
+        --line-wallet: #1f63d6;
+        --line-wallet-ink: #14459c;
+        --line-role: #7a3bc4;
+        --line-role-ink: #5a2795;
+        --line-merchant: #3f9440;
+        --line-merchant-ink: #2c6a2d;
+        --line-fee: #e08700;
+        --line-fee-ink: #8a5200;
+    }
+
+    .dark {
+        --portal-ground: #0c1116;
+        --portal-plate: #151b22;
+        --portal-ink: #e8edf3;
+        --portal-ink-soft: #98a3b0;
+        --portal-rule: #262e38;
+        --portal-dim: #5a6472;
+
+        --line-transaction-ink: #ff8a78;
+        --line-wallet-ink: #7fa9f5;
+        --line-role-ink: #c3a0f0;
+        --line-merchant-ink: #7fc880;
+        --line-fee-ink: #f5b74d;
+    }
+}
+
+@layer components {
+    /*
+     * Nhãn ga treo trên mô hình 3D. Vị trí do scene chiếu ra mỗi khung hình và
+     * ghi vào `transform`, nên `translate` được để riêng cho phần bù cố định —
+     * hai thuộc tính này không đè lên nhau.
+     */
+    .network-label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+        pointer-events: none;
+        padding: 3px 8px;
+        border-radius: 3px;
+        background: var(--portal-plate);
+        color: var(--portal-ink);
+        font-family: var(--font-signage);
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        box-shadow: 0 1px 3px rgb(18 24 31 / 0.18);
+        transition: opacity 240ms ease;
+    }
+
+    .network-label::before {
+        content: '';
+        width: 5px;
+        height: 5px;
+        border-radius: 9999px;
+        background: var(--line);
+    }
+
+    /*
+     * Câm bằng màu, không bằng độ mờ — cùng một luật với dải tuyến và chú giải.
+     * Nhãn lùi lại bằng cách nhạt nền và hạ mực xuống tông phụ, chứ không mờ
+     * đi tới mức không đọc được: mọi ga vẫn phải đeo nhãn in của nó.
+     */
+    .network-label[data-muted='true'] {
+        background: color-mix(in oklab, var(--portal-plate) 72%, transparent);
+        color: var(--portal-ink-soft);
+        box-shadow: none;
+    }
+
+    .network-label[data-muted='true']::before {
+        background: var(--portal-dim);
+    }
+
+    .network-label--hub {
+        background: var(--primary);
+        color: var(--primary-foreground);
+        box-shadow: none;
+    }
+
+    .network-label--hub::before {
+        background: currentColor;
+    }
+
+
+    /* Mặt bàn kẻ ô mà mô hình đứng lên trên. */
+    .network-table {
+        background-image:
+            linear-gradient(to right, var(--portal-rule) 1px, transparent 1px),
+            linear-gradient(to bottom, var(--portal-rule) 1px, transparent 1px);
+        background-size: 44px 44px;
+        -webkit-mask-image: radial-gradient(closest-side at 50% 55%, #000 55%, transparent 100%);
+        mask-image: radial-gradient(closest-side at 50% 55%, #000 55%, transparent 100%);
+        opacity: 0.7;
+    }
+}
+
+/*
+ * antd tiêm `a { color: … }` từ ConfigProvider và rule đó không nằm trong
+ * cascade layer nào, nên mọi utility màu chữ của Tailwind (ở `@layer utilities`)
+ * đều thua bất kể độ đặc hiệu. Ghi đè bằng một rule cũng không-layer, thắng
+ * bằng độ đặc hiệu `a.station-link`.
+ */
+a.station-link {
+    color: var(--portal-ink);
+}
+
+a.station-link:hover,
+a.station-link:focus-visible {
+    color: var(--line-ink);
+}
+
+/*
+ * Thanh cuộn của cột trái mặc định lấy `--border` teal của app shell, lạc hẳn
+ * khỏi thế giới của màn này. Quy tắc gốc trong `index.css` không nằm trong
+ * cascade layer nào, nên bản ghi đè cũng phải để ngoài layer.
+ */
+.portal-scroll,
+.portal-scroll:hover {
+    scrollbar-width: thin;
+    scrollbar-color: var(--portal-rule) transparent;
+}
+
+.portal-scroll::-webkit-scrollbar-thumb,
+.portal-scroll:hover::-webkit-scrollbar-thumb {
+    background: var(--portal-rule);
+}

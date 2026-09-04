@@ -22,6 +22,11 @@ khai báo bổ sung trên screen tương ứng.
 Sidebar và route được mở khi tài khoản có ít nhất một action chuẩn của đúng
 module. Quyền hành động trong màn vẫn được kiểm tra riêng bằng `Can`.
 
+Nếu một screen khai báo `accessAction`, sidebar và route chỉ mở khi tài khoản
+có action đó (hoặc `EWALLET:ADMIN:FULL`). Toàn bộ screen dưới
+`transaction-management` khai báo `accessAction: ACTION.FULL`, vì vậy bắt buộc
+`EWALLET:TRANSACTION:FULL` mới được truy cập.
+
 ## Nguyên tắc mặc định
 
 Mọi module đều bị chặn khi không có quyền tương ứng. Khi thêm module mới vào

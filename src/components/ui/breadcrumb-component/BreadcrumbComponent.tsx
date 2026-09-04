@@ -4,6 +4,7 @@ import type { BreadcrumbProps } from 'antd'
 import { useLocation, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@utils/cn'
+import { PATHS } from '@constants/pathConstant'
 
 interface BreadcrumbComponentProps {
     className?: string
@@ -22,7 +23,7 @@ const BreadcrumbComponent: React.FC<BreadcrumbComponentProps> = ({ className }) 
         const items: BreadcrumbItem[] = [
             {
                 title: (
-                    <Link to="/" className="flex items-center  text-gray-400 hover:text-blue-500! transition-colors whitespace-nowrap">
+                    <Link to={PATHS.HOME} className="flex items-center  text-gray-400 hover:text-blue-500! transition-colors whitespace-nowrap">
                         <span className="text-[11px] font-medium leading-none flex items-center mt-1"> Trang chủ</span>
                     </Link>
                 ),

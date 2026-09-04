@@ -55,6 +55,26 @@ describe('useRouteAccess', () => {
     ).toBe(true)
   })
 
+  it('toàn bộ transaction-management bắt buộc TRANSACTION:FULL', () => {
+    const viewOnly = ['EWALLET:TRANSACTION:VIEW']
+    const fullAccess = ['EWALLET:TRANSACTION:FULL']
+    const transactionRoutes = [
+      SCREENS.TRANSACTION_MANAGEMENT.path,
+      SCREENS.TRANSACTION_WALLET.path,
+      `${SCREENS.TRANSACTION_WALLET.path}/transaction-id`,
+      SCREENS.FROZEN_TRANSACTIONS.path,
+      `${SCREENS.TRANSACTION_MANAGEMENT.path}/refund-management`,
+      SCREENS.SYSTEM_LEDGER.path,
+      `${SCREENS.SYSTEM_LEDGER.path}/ledger-id`,
+      SCREENS.WITHDRAW_HISTORY.path
+    ]
+
+    for (const route of transactionRoutes) {
+      expect(accessTo(viewOnly, route)).toBe(false)
+      expect(accessTo(fullAccess, route)).toBe(true)
+    }
+  })
+
   it('eKYC chấp nhận quyền ADMIN nhưng từ chối module khác', () => {
     expect(
       accessTo(['EWALLET:ADMIN:VIEW'], SCREENS.CONFIRM_EKYC.path)

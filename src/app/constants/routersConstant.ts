@@ -1,4 +1,5 @@
 export const AUTHENTICATION = '/secure-panel/auth'
+export const SECURE_PANEL = '/secure-panel'
 export const ROLEMANAGEMENT = '/secure-panel/role'
 export const REPAYMENTANDDISBURSE = '/secure-panel/repayment-and-disburse'
 export const FORBIDDENERROR = '/secure-panel/forbidden'

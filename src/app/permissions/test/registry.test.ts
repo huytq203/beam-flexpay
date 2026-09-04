@@ -5,10 +5,11 @@ import {
   DEFAULT_SCREEN_ACTIONS,
   findScreenByPath,
   SCREENS,
+  type ScreenAccess,
   type ScreenId
 } from '../registry'
 
-const screens = Object.values(SCREENS)
+const screens: ScreenAccess[] = Object.values(SCREENS)
 
 describe('SCREENS', () => {
   it('không có hai màn trùng path', () => {
@@ -19,7 +20,7 @@ describe('SCREENS', () => {
   it('mọi path và alias đều nằm dưới secure-panel', () => {
     for (const screen of screens) {
       expect(screen.path.startsWith('/secure-panel/')).toBe(true)
-      if (!('aliasPaths' in screen)) continue
+      if (!screen.aliasPaths) continue
 
       for (const alias of screen.aliasPaths) {
         expect(alias.startsWith('/secure-panel/')).toBe(true)
@@ -32,6 +33,25 @@ describe('SCREENS', () => {
     expect(SCREENS.USER_ACCOUNT.actions.assignRoles).toBe(ACTION.UPDATE)
     expect(SCREENS.CONFIRM_EKYC.module).toBe(MODULE.ADMIN)
     expect(SCREENS.CONFIRM_EKYC.actions.approve).toBe(ACTION.FULL)
+  })
+
+  it('mọi route transaction-management yêu cầu TRANSACTION:FULL', () => {
+    const transactionScreens = screens.filter(
+      (screen) =>
+        screen.path === SCREENS.TRANSACTION_MANAGEMENT.path ||
+        screen.path.startsWith(`${SCREENS.TRANSACTION_MANAGEMENT.path}/`)
+    )
+
+    expect(transactionScreens.length).toBeGreaterThan(0)
+    for (const screen of transactionScreens) {
+      expect(screen.module).toBe(MODULE.TRANSACTION)
+      expect(screen.accessAction).toBe(ACTION.FULL)
+    }
+    expect(
+      findScreenByPath(
+        `${SCREENS.TRANSACTION_MANAGEMENT.path}/refund-management`
+      )
+    ).toBe(SCREENS.TRANSACTION_MANAGEMENT)
   })
 
   it('mọi screen đều có đủ 6 action chuẩn', () => {
@@ -79,7 +99,7 @@ describe('sidebar khớp registry', () => {
         expect(screenId).toBeDefined()
         if (!screenId) continue
 
-        expect(`/${String(group.key)}/${String(child.key)}`).toBe(
+        expect(child.link ?? `/${String(group.key)}/${String(child.key)}`).toBe(
           SCREENS[screenId].path
         )
       }

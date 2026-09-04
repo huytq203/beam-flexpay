@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { InboxOutlined } from '@ant-design/icons'
 import { Upload, Image } from 'antd'
 import type { UploadFile, UploadProps } from 'antd'
@@ -81,15 +81,8 @@ const UploadControl: React.FC<UploadControlProps> = ({
     disabled = false,
     dragText = 'Click or drag file to this area to upload',
 }) => {
-    const [fileList, setFileList] = useState<UploadFile[]>(value)
     const [previewOpen, setPreviewOpen] = useState(false)
     const [previewImage, setPreviewImage] = useState('')
-
-    useEffect(() => {
-        if (value !== fileList) {
-            setFileList(value)
-        }
-    }, [value])
 
     const handlePreview = async (file: UploadFile) => {
         if (!file.url && !file.preview) {
@@ -100,13 +93,11 @@ const UploadControl: React.FC<UploadControlProps> = ({
     }
 
     const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
-        setFileList(newFileList)
         onChange?.(newFileList)
     }
 
     const handleRemove = (file: UploadFile) => {
-        const newFileList = fileList.filter(item => item.uid !== file.uid)
-        setFileList(newFileList)
+        const newFileList = value.filter(item => item.uid !== file.uid)
         onChange?.(newFileList)
     }
 
@@ -117,7 +108,7 @@ const UploadControl: React.FC<UploadControlProps> = ({
                 maxCount={maxCount}
                 accept={accept}
                 disabled={disabled}
-                fileList={fileList}
+                fileList={value}
                 beforeUpload={() => false}
                 onChange={handleChange}
                 onPreview={handlePreview}
@@ -134,23 +125,26 @@ const UploadControl: React.FC<UploadControlProps> = ({
             <Upload
                 className='cursor-pointer [&_.ant-upload-list-item]:text-blue-700!'
                 listType="text"
-                fileList={fileList}
+                fileList={value}
                 onPreview={handlePreview}
                 onRemove={handleRemove}
                 showUploadList={{ showRemoveIcon: !disabled }}
             />
 
-            <Image
-                preview={{
-                    visible: previewOpen,
-                    onVisibleChange: setPreviewOpen,
-                }}
-                src={previewImage}
-                style={{ display: 'none' }}
-            />
+            {previewImage && (
+                <Image
+                    preview={{
+                        visible: previewOpen,
+                        onVisibleChange: setPreviewOpen,
+                    }}
+                    src={previewImage}
+                    style={{ display: 'none' }}
+                />
+            )}
         </>
     )
 }
 
 export { UploadControl }
+export type { UploadFile }
 export default FormUploadCombined

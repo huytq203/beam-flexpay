@@ -1,4 +1,5 @@
 import {
+  MERCHANT,
   _FEEMANAGEMENT_V4,
   _MERCHANT,
   _ROLEMANAGEMENT_V2,
@@ -10,7 +11,6 @@ import type { Key, ReactNode } from 'react'
 import i18n from '@languages/i18n'
 import {
   ArrowsLeftRightIcon,
-  ChartBarIcon,
   ClipboardTextIcon,
   CurrencyCircleDollarIcon,
   FingerprintIcon,
@@ -28,6 +28,7 @@ export interface ItemTypeCustom {
   key: Key
   icon?: ReactNode
   label?: ReactNode
+  groupLabel?: ReactNode
   link?: string
   screen?: ScreenId
   children?: ItemTypeCustom[]
@@ -230,6 +231,7 @@ const transactionManagement: ItemTypeCustom = {
 
 const merchantManagement: ItemTypeCustom = {
   key: _MERCHANT,
+  groupLabel: 'Quản lý merchant',
   icon: (
     <StorefrontIcon
       size={size}
@@ -237,20 +239,9 @@ const merchantManagement: ItemTypeCustom = {
       color={COlOR}
     />
   ),
-  label: 'Quản lý merchant ',
+  label: 'Quản lý ĐVCNTT',
   children: [
-    {
-      key: 'dashboard-merchant',
-      screen: 'MERCHANT_DASHBOARD',
-      icon: (
-        <ChartBarIcon
-          size={size}
-          weight={weight}
-          color={COlOR}
-        />
-      ),
-      label: 'Tổng quan'
-    },
+    
     {
       key: 'merchant-management',
       screen: 'MERCHANT_MANAGEMENT',
@@ -262,19 +253,35 @@ const merchantManagement: ItemTypeCustom = {
         />
       ),
       label: 'Quản lý danh sách merchant'
-    },
+    }
+  ]
+}
+
+const businessWalletManagement: ItemTypeCustom = {
+  key: 'business-wallet',
+  groupLabel: 'Quản lý merchant',
+  icon: (
+    <WalletIcon
+      size={size}
+      weight={weight}
+      color={COlOR}
+    />
+  ),
+  label: 'Ví doanh nghiệp',
+  children: [
     {
-      key: 'merchant-order',
-      screen: 'MERCHANT_ORDER',
+      key: 'business-wallet-account',
+      screen: 'BUSINESS_WALLET_ACCOUNT',
+      link: `${MERCHANT}/business-wallet-account`,
       icon: (
-        <ClipboardTextIcon
+        <StorefrontIcon
           size={size}
           weight={weight}
           color={COlOR}
         />
       ),
-      label: 'Quản lý đơn hàng'
-    },
+      label: 'Quản lý ví doanh nghiệp'
+    }
   ]
 }
 
@@ -283,6 +290,7 @@ export const navigationItems: ItemTypeCustom[] = [
   transactionManagement,
   walletManagement,
   roleManagementV2,
+  businessWalletManagement,
   merchantManagement,
   // feeManagementV3,
   feeManagementV4
