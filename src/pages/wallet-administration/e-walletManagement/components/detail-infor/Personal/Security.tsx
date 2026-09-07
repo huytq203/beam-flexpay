@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAccess } from '@/app/permissions'
+import { PERMISSION, useAccess } from '@/app/permissions'
 import { CardComponent } from '@components/index'
 import { ClockIcon } from '@components/icons'
 import { Skeleton } from '@components/ui/skeletons/Skeleton'
@@ -61,10 +61,10 @@ const SecurityDevelopmentState = () => (
 export const Security = ({ userId }: SecurityProps) => {
   const { has, hasAny } = useAccess()
   const canViewDevices = hasAny([
-    'EWALLET:USER:VIEW',
-    'EWALLET:USER:FULL'
+    PERMISSION.USER_VIEW,
+    PERMISSION.USER_FULL
   ])
-  const canLogoutAll = has('EWALLET:USER:FULL')
+  const canLogoutAll = has(PERMISSION.USER_FULL)
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false)
   const { currentData, isLoading, isError } =
     useGetCustomerDevicesQuery(userId, {

@@ -11,6 +11,7 @@ import type { Key, ReactNode } from 'react'
 import i18n from '@languages/i18n'
 import {
   ArrowsLeftRightIcon,
+  BankIcon,
   ClipboardTextIcon,
   CurrencyCircleDollarIcon,
   FingerprintIcon,
@@ -33,6 +34,12 @@ export interface ItemTypeCustom {
   screen?: ScreenId
   children?: ItemTypeCustom[]
 }
+
+/** Đường dẫn thật của item con trên sidebar: ưu tiên `link`, mặc định ghép theo key. */
+export const resolveNavLink = (
+  parent: ItemTypeCustom,
+  child: ItemTypeCustom
+): string => child.link ?? `/${String(parent.key)}/${String(child.key)}`
 
 export const COlOR = 'rgb(43,217,208)'
 const size = 20
@@ -253,6 +260,19 @@ const merchantManagement: ItemTypeCustom = {
         />
       ),
       label: 'Quản lý danh sách merchant'
+    },
+    {
+      key: 'bank-account',
+      screen: 'MERCHANT_BANK_ACCOUNT',
+      link: `${MERCHANT}/bank-account`,
+      icon: (
+        <BankIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Tài khoản ngân hàng'
     }
   ]
 }

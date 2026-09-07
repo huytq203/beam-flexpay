@@ -5,156 +5,227 @@ import {
   TRANSACTIONMANAGEMENT,
   WALLETADMINISTRATION
 } from '@constants/routersConstant'
-import { ACTION, MODULE, type Action, type Module } from './modules'
+import { PERMISSION, type PermissionCode } from './permission-codes'
 
 export interface ScreenAccess {
   readonly path: string
   readonly aliasPaths?: readonly string[]
-  readonly module: Module
-  /** Nếu có, bắt buộc đúng action này mới được mở route và hiện trên sidebar. */
-  readonly accessAction?: Action
-  readonly actions: Readonly<Record<string, Action>>
+  /** Nếu có, bắt buộc đúng mã này mới được mở route và hiện trên sidebar. */
+  readonly accessPermission?: PermissionCode
+  /**
+   * Mã quyền đầy đủ cho từng hành động của màn. Khớp tuyệt đối theo chuỗi —
+   * không ghép tiền tố ở runtime, đổi mã thì sửa tại `permission-codes.ts`.
+   */
+  readonly actions: Readonly<Record<string, PermissionCode>>
 }
 
-/** Bộ action chuẩn có mặt trên mọi screen trong registry. */
-export const DEFAULT_SCREEN_ACTIONS = {
-  view: ACTION.VIEW,
-  create: ACTION.CREATE,
-  edit: ACTION.UPDATE,
-  delete: ACTION.DELETE,
-  update: ACTION.UPDATE,
-  full: ACTION.FULL
-} as const satisfies Readonly<Record<string, Action>>
+/** Sáu hành động chuẩn có mặt trên mọi screen, khai theo từng module. */
+const ADMIN_ACTIONS = {
+  view: PERMISSION.ADMIN_VIEW,
+  create: PERMISSION.ADMIN_CREATE,
+  edit: PERMISSION.ADMIN_UPDATE,
+  delete: PERMISSION.ADMIN_DELETE,
+  update: PERMISSION.ADMIN_UPDATE,
+  full: PERMISSION.ADMIN_FULL
+} as const
+
+const USER_ACTIONS = {
+  view: PERMISSION.USER_VIEW,
+  create: PERMISSION.USER_CREATE,
+  edit: PERMISSION.USER_UPDATE,
+  delete: PERMISSION.USER_DELETE,
+  update: PERMISSION.USER_UPDATE,
+  full: PERMISSION.USER_FULL
+} as const
+
+const ROLE_ACTIONS = {
+  view: PERMISSION.ROLE_VIEW,
+  create: PERMISSION.ROLE_CREATE,
+  edit: PERMISSION.ROLE_UPDATE,
+  delete: PERMISSION.ROLE_DELETE,
+  update: PERMISSION.ROLE_UPDATE,
+  full: PERMISSION.ROLE_FULL
+} as const
+
+const PERMISSION_ACTIONS = {
+  view: PERMISSION.PERMISSION_VIEW,
+  create: PERMISSION.PERMISSION_CREATE,
+  edit: PERMISSION.PERMISSION_UPDATE,
+  delete: PERMISSION.PERMISSION_DELETE,
+  update: PERMISSION.PERMISSION_UPDATE,
+  full: PERMISSION.PERMISSION_FULL
+} as const
+
+const TRANSACTION_ACTIONS = {
+  view: PERMISSION.TRANSACTION_VIEW,
+  create: PERMISSION.TRANSACTION_CREATE,
+  edit: PERMISSION.TRANSACTION_UPDATE,
+  delete: PERMISSION.TRANSACTION_DELETE,
+  update: PERMISSION.TRANSACTION_UPDATE,
+  full: PERMISSION.TRANSACTION_FULL
+} as const
+
+const WALLET_ACTIONS = {
+  view: PERMISSION.WALLET_VIEW,
+  create: PERMISSION.WALLET_CREATE,
+  edit: PERMISSION.WALLET_UPDATE,
+  delete: PERMISSION.WALLET_DELETE,
+  update: PERMISSION.WALLET_UPDATE,
+  full: PERMISSION.WALLET_FULL
+} as const
+
+const MERCHANT_ACTIONS = {
+  view: PERMISSION.MERCHANT_VIEW,
+  create: PERMISSION.MERCHANT_CREATE,
+  edit: PERMISSION.MERCHANT_UPDATE,
+  delete: PERMISSION.MERCHANT_DELETE,
+  update: PERMISSION.MERCHANT_UPDATE,
+  full: PERMISSION.MERCHANT_FULL
+} as const
+
+const FEE_ACTIONS = {
+  view: PERMISSION.FEE_VIEW,
+  create: PERMISSION.FEE_CREATE,
+  edit: PERMISSION.FEE_UPDATE,
+  delete: PERMISSION.FEE_DELETE,
+  update: PERMISSION.FEE_UPDATE,
+  full: PERMISSION.FEE_FULL
+} as const
+
+/** Tên sáu hành động chuẩn, dùng để kiểm tra registry khai đủ. */
+export const DEFAULT_SCREEN_ACTION_IDS = [
+  'view',
+  'create',
+  'edit',
+  'delete',
+  'update',
+  'full'
+] as const
 
 export const SCREENS = {
   TRANSACTION_MANAGEMENT: {
     path: TRANSACTIONMANAGEMENT,
-    module: MODULE.TRANSACTION,
-    accessAction: ACTION.FULL,
-    actions: { ...DEFAULT_SCREEN_ACTIONS }
+    accessPermission: PERMISSION.TRANSACTION_FULL,
+    actions: { ...TRANSACTION_ACTIONS }
   },
   USER_ACCOUNT: {
     path: `${ROLEMANAGEMENT_V2}/user-account`,
-    module: MODULE.USER,
     actions: {
-      ...DEFAULT_SCREEN_ACTIONS,
-      viewDetail: ACTION.VIEW,
-      assignRoles: ACTION.UPDATE,
-      resetPassword: ACTION.UPDATE
+      ...USER_ACTIONS,
+      viewDetail: PERMISSION.USER_VIEW,
+      assignRoles: PERMISSION.USER_UPDATE,
+      resetPassword: PERMISSION.USER_UPDATE
     }
   },
   // Route đang đấu chéo tên path và component; quyền gắn theo màn thực tế.
   ROLE_MANAGEMENT: {
     path: `${ROLEMANAGEMENT_V2}/permission-management`,
-    module: MODULE.ROLE,
     actions: {
-      ...DEFAULT_SCREEN_ACTIONS,
-      assignPermissions: ACTION.UPDATE,
-      viewPermissions: ACTION.VIEW,
-      viewMembers: ACTION.VIEW
+      ...ROLE_ACTIONS,
+      assignPermissions: PERMISSION.ROLE_UPDATE,
+      viewPermissions: PERMISSION.ROLE_VIEW,
+      viewMembers: PERMISSION.ROLE_VIEW
     }
   },
   PERMISSION_MANAGEMENT: {
     path: `${ROLEMANAGEMENT_V2}/role-management`,
-    module: MODULE.PERMISSION,
-    actions: { ...DEFAULT_SCREEN_ACTIONS }
+    actions: { ...PERMISSION_ACTIONS }
   },
   TRANSACTION_WALLET: {
     path: `${TRANSACTIONMANAGEMENT}/transaction-wallet`,
     aliasPaths: [`${WALLETADMINISTRATION}/transaction-wallet`],
-    module: MODULE.TRANSACTION,
-    accessAction: ACTION.FULL,
+    accessPermission: PERMISSION.TRANSACTION_FULL,
     actions: {
-      ...DEFAULT_SCREEN_ACTIONS,
-      viewDetail: ACTION.VIEW
+      ...TRANSACTION_ACTIONS,
+      viewDetail: PERMISSION.TRANSACTION_VIEW
     }
   },
   FROZEN_TRANSACTIONS: {
     path: `${TRANSACTIONMANAGEMENT}/frozen-transactions`,
-    module: MODULE.TRANSACTION,
-    accessAction: ACTION.FULL,
-    actions: { ...DEFAULT_SCREEN_ACTIONS }
+    accessPermission: PERMISSION.TRANSACTION_FULL,
+    actions: { ...TRANSACTION_ACTIONS }
   },
   SYSTEM_LEDGER: {
     path: `${TRANSACTIONMANAGEMENT}/system-ledger`,
-    module: MODULE.TRANSACTION,
-    accessAction: ACTION.FULL,
+    accessPermission: PERMISSION.TRANSACTION_FULL,
     actions: {
-      ...DEFAULT_SCREEN_ACTIONS,
-      viewDetail: ACTION.VIEW
+      ...TRANSACTION_ACTIONS,
+      viewDetail: PERMISSION.TRANSACTION_VIEW
     }
   },
   WITHDRAW_HISTORY: {
     path: `${TRANSACTIONMANAGEMENT}/withdraw-history`,
-    module: MODULE.TRANSACTION,
-    accessAction: ACTION.FULL,
-    actions: { ...DEFAULT_SCREEN_ACTIONS }
+    accessPermission: PERMISSION.TRANSACTION_FULL,
+    actions: { ...TRANSACTION_ACTIONS }
   },
   EWALLET_MANAGEMENT: {
     path: `${WALLETADMINISTRATION}/e-walletManagement`,
-    module: MODULE.WALLET,
     actions: {
-      ...DEFAULT_SCREEN_ACTIONS,
-      viewDetail: ACTION.VIEW,
-      lock: ACTION.UPDATE,
-      unlock: ACTION.UPDATE,
-      freeze: ACTION.UPDATE,
-      cancel: ACTION.DELETE
+      ...WALLET_ACTIONS,
+      viewDetail: PERMISSION.WALLET_VIEW,
+      lock: PERMISSION.WALLET_UPDATE,
+      unlock: PERMISSION.WALLET_UPDATE,
+      freeze: PERMISSION.WALLET_UPDATE,
+      cancel: PERMISSION.WALLET_DELETE
     }
   },
   CONFIRM_EKYC: {
     path: `${WALLETADMINISTRATION}/confirm-eKYC`,
-    module: MODULE.ADMIN,
     actions: {
-      ...DEFAULT_SCREEN_ACTIONS,
-      approve: ACTION.FULL
+      ...ADMIN_ACTIONS,
+      approve: PERMISSION.ADMIN_FULL
     }
   },
   MERCHANT_DASHBOARD: {
     path: `${MERCHANT}/dashboard-merchant`,
-    module: MODULE.MERCHANT,
-    actions: { ...DEFAULT_SCREEN_ACTIONS }
+    actions: { ...MERCHANT_ACTIONS }
   },
   MERCHANT_MANAGEMENT: {
     path: `${MERCHANT}/merchant-management`,
-    module: MODULE.MERCHANT,
     actions: {
-      ...DEFAULT_SCREEN_ACTIONS,
-      viewDetail: ACTION.VIEW
+      ...MERCHANT_ACTIONS,
+      viewDetail: PERMISSION.MERCHANT_VIEW
+    }
+  },
+  MERCHANT_BANK_ACCOUNT: {
+    path: `${MERCHANT}/bank-account`,
+    actions: {
+      ...MERCHANT_ACTIONS,
+      viewDetail: PERMISSION.MERCHANT_VIEW,
+      /** Mở số tài khoản đầy đủ ở cột "Số tài khoản" (NĐ 13/2023). */
+      viewFullNumber: PERMISSION.MERCHANT_VIEW,
+      lock: PERMISSION.MERCHANT_UPDATE,
+      unlock: PERMISSION.MERCHANT_UPDATE
     }
   },
   BUSINESS_WALLET_ACCOUNT: {
     path: `${MERCHANT}/business-wallet-account`,
-    module: MODULE.MERCHANT,
     actions: {
-      ...DEFAULT_SCREEN_ACTIONS,
-      viewDetail: ACTION.VIEW
+      ...MERCHANT_ACTIONS,
+      viewDetail: PERMISSION.MERCHANT_VIEW
     }
   },
   MERCHANT_ORDER: {
     path: `${MERCHANT}/merchant-order`,
-    module: MODULE.MERCHANT,
     actions: {
-      ...DEFAULT_SCREEN_ACTIONS,
-      viewQr: ACTION.VIEW
+      ...MERCHANT_ACTIONS,
+      viewQr: PERMISSION.MERCHANT_VIEW
     }
   },
   FEE_POLICY: {
     path: `${FEEMANAGEMENT_V4}/fee-managementV4`,
-    module: MODULE.FEE,
     actions: {
-      ...DEFAULT_SCREEN_ACTIONS,
-      approve: ACTION.UPDATE,
-      toggleActive: ACTION.UPDATE
+      ...FEE_ACTIONS,
+      approve: PERMISSION.FEE_UPDATE,
+      toggleActive: PERMISSION.FEE_UPDATE
     }
   },
   FEE_ASSIGNMENT: {
     path: `${FEEMANAGEMENT_V4}/fee-assignmentV4`,
-    module: MODULE.FEE,
     actions: {
-      ...DEFAULT_SCREEN_ACTIONS,
-      approve: ACTION.UPDATE,
-      toggleActive: ACTION.UPDATE
+      ...FEE_ACTIONS,
+      approve: PERMISSION.FEE_UPDATE,
+      toggleActive: PERMISSION.FEE_UPDATE
     }
   }
 } as const satisfies Record<string, ScreenAccess>

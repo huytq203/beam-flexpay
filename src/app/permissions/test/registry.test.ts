@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { navigationItems } from '@components/layout/components/Navigation'
-import { ACTION, MODULE } from '../modules'
+import { PERMISSION } from '../permission-codes'
 import {
-  DEFAULT_SCREEN_ACTIONS,
+  DEFAULT_SCREEN_ACTION_IDS,
   findScreenByPath,
   SCREENS,
   type ScreenAccess,
@@ -29,10 +29,22 @@ describe('SCREENS', () => {
   })
 
   it('khai đúng các màn identity đặc biệt', () => {
-    expect(SCREENS.USER_ACCOUNT.module).toBe(MODULE.USER)
-    expect(SCREENS.USER_ACCOUNT.actions.assignRoles).toBe(ACTION.UPDATE)
-    expect(SCREENS.CONFIRM_EKYC.module).toBe(MODULE.ADMIN)
-    expect(SCREENS.CONFIRM_EKYC.actions.approve).toBe(ACTION.FULL)
+    expect(SCREENS.USER_ACCOUNT.actions.view).toBe(PERMISSION.USER_VIEW)
+    expect(SCREENS.USER_ACCOUNT.actions.assignRoles).toBe(PERMISSION.USER_UPDATE)
+    expect(SCREENS.CONFIRM_EKYC.actions.view).toBe(PERMISSION.ADMIN_VIEW)
+    expect(SCREENS.CONFIRM_EKYC.actions.approve).toBe(PERMISSION.ADMIN_FULL)
+  })
+
+  it('mọi mã quyền trong registry đều lấy từ bảng permission-codes', () => {
+    const declared = new Set<string>(Object.values(PERMISSION))
+    for (const screen of screens) {
+      for (const code of Object.values(screen.actions)) {
+        expect(declared.has(code)).toBe(true)
+      }
+      if (screen.accessPermission) {
+        expect(declared.has(screen.accessPermission)).toBe(true)
+      }
+    }
   })
 
   it('mọi route transaction-management yêu cầu TRANSACTION:FULL', () => {
@@ -44,8 +56,7 @@ describe('SCREENS', () => {
 
     expect(transactionScreens.length).toBeGreaterThan(0)
     for (const screen of transactionScreens) {
-      expect(screen.module).toBe(MODULE.TRANSACTION)
-      expect(screen.accessAction).toBe(ACTION.FULL)
+      expect(screen.accessPermission).toBe(PERMISSION.TRANSACTION_FULL)
     }
     expect(
       findScreenByPath(
@@ -56,7 +67,9 @@ describe('SCREENS', () => {
 
   it('mọi screen đều có đủ 6 action chuẩn', () => {
     for (const screen of screens) {
-      expect(screen.actions).toMatchObject(DEFAULT_SCREEN_ACTIONS)
+      for (const actionId of DEFAULT_SCREEN_ACTION_IDS) {
+        expect(screen.actions[actionId]).toBeDefined()
+      }
     }
   })
 })

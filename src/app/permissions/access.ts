@@ -1,61 +1,43 @@
-import {
-  ACTION,
-  SUPER_ADMIN_PERMISSION,
-  type Action,
-  type Module,
-  type PermissionCode
-} from './modules'
+import { SUPER_ADMIN_PERMISSION, type PermissionCode } from './permission-codes'
 import type { ScreenAccess } from './registry'
 
-export const buildPermissionCode = (
-  module: Module,
-  action: Action
-): PermissionCode => `EWALLET:${module}:${action}`
-
-const MODULE_ACCESS_ACTIONS = [
-  ACTION.VIEW,
-  ACTION.CREATE,
-  ACTION.UPDATE,
-  ACTION.DELETE,
-  ACTION.FULL
-] as const
-
-const getPermissionModule = (code: PermissionCode): Module => {
-  // PermissionCode bảo đảm phần tử thứ hai luôn thuộc union Module.
-  return code.split(':')[1] as Module
-}
-
-/** So khớp chính xác theo thứ tự ưu tiên đã chốt trong đặc tả. */
+/**
+ * Khớp tuyệt đối chuỗi mã quyền. Không ghép tiền tố, không suy diễn theo module:
+ * quyền BE cấp thế nào thì so khớp đúng thế. Ngoại lệ duy nhất là super-admin.
+ */
 export const grants = (
   granted: readonly string[],
   required: PermissionCode
-): boolean => {
-  if (granted.includes(SUPER_ADMIN_PERMISSION)) return true
-
-  const module = getPermissionModule(required)
-  const fullPermission = buildPermissionCode(module, ACTION.FULL)
-  if (granted.includes(fullPermission)) return true
-
-  return granted.includes(required)
-}
-
-/** Có bất kỳ action chuẩn nào của module thì được mở screen thuộc module đó. */
-export const grantsModuleAccess = (
-  granted: readonly string[],
-  module: Module
 ): boolean =>
-  MODULE_ACCESS_ACTIONS.some((action) =>
-    grants(granted, buildPermissionCode(module, action))
-  )
+  granted.includes(SUPER_ADMIN_PERMISSION) || granted.includes(required)
+
+export const grantsAny = (
+  granted: readonly string[],
+  required: readonly PermissionCode[]
+): boolean => required.some((code) => grants(granted, code))
+
+/**
+ * Một hành động được mở khi có đúng mã của nó, hoặc có mã toàn quyền mà chính
+ * màn đó khai ở `actions.full`. Cả hai đều là chuỗi khai sẵn, không phải chuỗi ghép.
+ */
+export const grantsScreenAction = (
+  granted: readonly string[],
+  screen: ScreenAccess,
+  action: string
+): boolean => {
+  const required = screen.actions[action]
+  if (required === undefined) return false
+  if (grants(granted, required)) return true
+
+  const full = screen.actions.full
+  return full !== undefined && grants(granted, full)
+}
 
 /** Dùng cùng một luật cho route, sidebar và canView của screen. */
 export const grantsScreenAccess = (
   granted: readonly string[],
   screen: ScreenAccess
 ): boolean =>
-  screen.accessAction
-    ? grants(
-        granted,
-        buildPermissionCode(screen.module, screen.accessAction)
-      )
-    : grantsModuleAccess(granted, screen.module)
+  screen.accessPermission !== undefined
+    ? grants(granted, screen.accessPermission)
+    : grantsAny(granted, Object.values(screen.actions))

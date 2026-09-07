@@ -1,4 +1,4 @@
-import type { PermissionCode } from '@/app/permissions'
+import { PERMISSION, type PermissionCode } from '@/app/permissions'
 
 /**
  * Từ điển trạng thái của nghiệp vụ đóng băng số dư, dùng chung cho cả ba màn đang gọi
@@ -146,6 +146,6 @@ export const OWNER_TYPE_CONFIG: Record<
  * BE cố ý tách khỏi FREEZE:UPDATE để maker và checker không thể là một người.
  */
 export const UNFREEZE_APPROVE_PERMISSIONS = [
-  'EWALLET:FREEZE:APPROVE',
-  'EWALLET:ADMIN:FULL'
+  PERMISSION.FREEZE_APPROVE,
+  PERMISSION.ADMIN_FULL
 ] as const satisfies readonly PermissionCode[]

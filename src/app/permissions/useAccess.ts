@@ -1,19 +1,13 @@
 import { useCallback, useMemo } from 'react'
 import { useAppSelector } from '@hooks/hook'
-import {
-  buildPermissionCode,
-  grants,
-  grantsModuleAccess,
-  grantsScreenAccess
-} from './access'
-import type { Action, Module, PermissionCode } from './modules'
+import { grants, grantsScreenAccess, grantsScreenAction } from './access'
+import type { PermissionCode } from './permission-codes'
 import { SCREENS, type ScreenActionId, type ScreenId } from './registry'
 
 export interface AccessApi {
   has: (code: PermissionCode) => boolean
   hasAny: (codes: readonly PermissionCode[]) => boolean
   hasAll: (codes: readonly PermissionCode[]) => boolean
-  hasModule: (module: Module) => boolean
 }
 
 export const useAccess = (): AccessApi => {
@@ -25,19 +19,14 @@ export const useAccess = (): AccessApi => {
     (code: PermissionCode) => grants(permissions, code),
     [permissions]
   )
-  const hasModule = useCallback(
-    (module: Module) => grantsModuleAccess(permissions, module),
-    [permissions]
-  )
 
   return useMemo(
     () => ({
       has,
       hasAny: (codes: readonly PermissionCode[]) => codes.some(has),
-      hasAll: (codes: readonly PermissionCode[]) => codes.every(has),
-      hasModule
+      hasAll: (codes: readonly PermissionCode[]) => codes.every(has)
     }),
-    [has, hasModule]
+    [has]
   )
 }
 
@@ -49,22 +38,15 @@ export interface ScreenAccessApi<S extends ScreenId> {
 export const useScreenAccess = <S extends ScreenId>(
   screen: S
 ): ScreenAccessApi<S> => {
-  const { has } = useAccess()
   const permissions = useAppSelector(
     (state) => state.auth.profile.permissions
   )
   const config = SCREENS[screen]
 
   const can = useCallback(
-    (action: ScreenActionId<S>): boolean => {
-      const actions = config.actions as Readonly<Record<string, Action>>
-      const requiredAction = actions[action as string]
-
-      return requiredAction === undefined
-        ? false
-        : has(buildPermissionCode(config.module, requiredAction))
-    },
-    [config, has]
+    (action: ScreenActionId<S>): boolean =>
+      grantsScreenAction(permissions, config, action as string),
+    [config, permissions]
   )
 
   return useMemo(

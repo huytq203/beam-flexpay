@@ -4,7 +4,6 @@ import { renderHook } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { createAppStore } from '@/app/store'
 import { savePermissions } from '@slices/authSlice'
-import { MODULE } from '../modules'
 import { useAccess, useScreenAccess } from '../useAccess'
 
 const wrapperWith = (permissions: string[]) => {
@@ -17,7 +16,7 @@ const wrapperWith = (permissions: string[]) => {
 }
 
 describe('useAccess', () => {
-  it('has, hasAny, hasAll và hasModule dùng cùng logic grants', () => {
+  it('has, hasAny và hasAll dùng cùng logic grants', () => {
     const { result } = renderHook(() => useAccess(), {
       wrapper: wrapperWith(['EWALLET:ROLE:VIEW'])
     })
@@ -30,8 +29,6 @@ describe('useAccess', () => {
     expect(
       result.current.hasAll(['EWALLET:ROLE:VIEW', 'EWALLET:ROLE:DELETE'])
     ).toBe(false)
-    expect(result.current.hasModule(MODULE.ROLE)).toBe(true)
-    expect(result.current.hasModule(MODULE.FEE)).toBe(false)
   })
 })
 

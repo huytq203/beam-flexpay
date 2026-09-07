@@ -9,7 +9,7 @@ import { useLazyGetAccountQuery } from '@services/apiWalletAccount.api'
 import type { UnifiedContentJournal } from '@type/apiResponseJournal'
 import { useLazyGetFreezesQuery } from '@services/apiFreezes'
 import type { FreezeItem } from '@type/freeze.type'
-import { ACTION, buildPermissionCode, MODULE, useAccess } from '@/app/permissions'
+import { PERMISSION, useAccess } from '@/app/permissions'
 import { useMessage } from '@hooks/useMessage'
 import {
   canShowFreezeTransactionAction,
@@ -33,8 +33,8 @@ const useTransaction = () => {
   const [getAccounts] = useLazyGetAccountQuery()
   const [getFreezes] = useLazyGetFreezesQuery()
   const canFreeze = hasAny([
-    buildPermissionCode(MODULE.FREEZE, ACTION.UPDATE),
-    buildPermissionCode(MODULE.EWALLET, ACTION.FULL)
+    PERMISSION.FREEZE_UPDATE,
+    PERMISSION.EWALLET_FULL
   ])
 
   const { page, pageSize, setPage, setPageSize } = usePagination({

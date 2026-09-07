@@ -1,97 +1,86 @@
 import { describe, expect, it } from 'vitest'
-import {
-  buildPermissionCode,
-  grants,
-  grantsModuleAccess,
-  grantsScreenAccess
-} from '../access'
-import { ACTION, MODULE, SUPER_ADMIN_PERMISSION } from '../modules'
+import { grants, grantsAny, grantsScreenAccess, grantsScreenAction } from '../access'
+import { PERMISSION, SUPER_ADMIN_PERMISSION } from '../permission-codes'
 import { SCREENS } from '../registry'
-
-describe('buildPermissionCode', () => {
-  it('ghép đúng định dạng EWALLET:MODULE:ACTION', () => {
-    expect(buildPermissionCode(MODULE.ROLE, ACTION.DELETE)).toBe(
-      'EWALLET:ROLE:DELETE'
-    )
-  })
-})
 
 describe('grants', () => {
   it('super-admin đi qua mọi quyền', () => {
-    expect(grants([SUPER_ADMIN_PERMISSION], 'EWALLET:ROLE:DELETE')).toBe(true)
-    expect(grants([SUPER_ADMIN_PERMISSION], 'EWALLET:USER:CREATE')).toBe(true)
+    expect(grants([SUPER_ADMIN_PERMISSION], PERMISSION.ROLE_DELETE)).toBe(true)
+    expect(grants([SUPER_ADMIN_PERMISSION], PERMISSION.USER_CREATE)).toBe(true)
   })
 
-  it('MODULE:FULL bao trùm action cùng module', () => {
-    expect(grants(['EWALLET:ROLE:FULL'], 'EWALLET:ROLE:DELETE')).toBe(true)
-    expect(grants(['EWALLET:ROLE:FULL'], 'EWALLET:USER:CREATE')).toBe(false)
+  it('chỉ chấp nhận quyền khớp chính xác từng ký tự', () => {
+    expect(grants(['EWALLET:USER:CREATE'], PERMISSION.USER_CREATE)).toBe(true)
+    expect(grants(['EWALLET:USER:VIEW'], PERMISSION.USER_CREATE)).toBe(false)
+    expect(grants(['EWALLET:USER:VIEW_ALL'], PERMISSION.USER_VIEW)).toBe(false)
   })
 
-  it('chỉ chấp nhận quyền khớp chính xác', () => {
-    expect(grants(['EWALLET:USER:CREATE'], 'EWALLET:USER:CREATE')).toBe(true)
-    expect(grants(['EWALLET:USER:VIEW'], 'EWALLET:USER:CREATE')).toBe(false)
-    expect(
-      grants(['SOMETHING:ELSE:USER:VIEW'], 'EWALLET:USER:VIEW')
-    ).toBe(false)
-    expect(grants(['EWALLET:USER:VIEW_ALL'], 'EWALLET:USER:VIEW')).toBe(false)
+  it('mã khác tiền tố là quyền khác, không được suy diễn', () => {
+    expect(grants(['PERMISSION_EWALLET:FEE:APPROVE'], PERMISSION.FEE_UPDATE)).toBe(false)
+    expect(grants(['FEE:UPDATE'], PERMISSION.FEE_UPDATE)).toBe(false)
+    expect(grants(['EWALLET:FEE:UPDATE'], PERMISSION.FEE_UPDATE)).toBe(true)
   })
 
-  it('mảng rỗng chặn module đã phát hành', () => {
-    expect(grants([], 'EWALLET:USER:VIEW')).toBe(false)
-    expect(grants([], 'EWALLET:ROLE:VIEW')).toBe(false)
-    expect(grants([], 'EWALLET:PERMISSION:VIEW')).toBe(false)
-    expect(grants([], 'EWALLET:ADMIN:FULL')).toBe(false)
+  it('MODULE:FULL không còn tự bao trùm action rời của module', () => {
+    expect(grants(['EWALLET:ROLE:FULL'], PERMISSION.ROLE_DELETE)).toBe(false)
+    expect(grants(['EWALLET:ROLE:FULL'], PERMISSION.ROLE_FULL)).toBe(true)
   })
 
-  it('chặn mọi module khi không có quyền tương ứng', () => {
-    expect(grants([], 'EWALLET:FEE:UPDATE')).toBe(false)
-    expect(grants([], 'EWALLET:WALLET:VIEW')).toBe(false)
-    expect(grants([], 'EWALLET:TRANSACTION:VIEW')).toBe(false)
-    expect(grants([], 'EWALLET:MERCHANT:CREATE')).toBe(false)
-  })
-
-  it('FULL của module mới vẫn bao trùm action cùng module', () => {
-    expect(grants(['EWALLET:FEE:FULL'], 'EWALLET:FEE:UPDATE')).toBe(true)
-    expect(grants(['EWALLET:FEE:FULL'], 'EWALLET:WALLET:VIEW')).toBe(false)
+  it('mảng rỗng chặn mọi thứ', () => {
+    expect(grants([], PERMISSION.USER_VIEW)).toBe(false)
+    expect(grants([], PERMISSION.ADMIN_FULL)).toBe(false)
   })
 })
 
-describe('grantsModuleAccess', () => {
-  it.each(['VIEW', 'CREATE', 'UPDATE', 'DELETE', 'FULL'] as const)(
-    'cho phép mở module khi có action %s',
-    (action) => {
-      expect(
-        grantsModuleAccess([`EWALLET:FEE:${action}`], MODULE.FEE)
-      ).toBe(true)
-    }
-  )
-
-  it('không dùng quyền của module khác', () => {
+describe('grantsAny', () => {
+  it('đúng khi có bất kỳ mã nào trong danh sách', () => {
     expect(
-      grantsModuleAccess(['EWALLET:WALLET:FULL'], MODULE.FEE)
+      grantsAny(['EWALLET:FREEZE:APPROVE'], [
+        PERMISSION.FREEZE_APPROVE,
+        PERMISSION.ADMIN_FULL
+      ])
+    ).toBe(true)
+    expect(
+      grantsAny(['EWALLET:FREEZE:UPDATE'], [PERMISSION.FREEZE_APPROVE])
+    ).toBe(false)
+  })
+})
+
+describe('grantsScreenAction', () => {
+  it('mã của chính hành động thì mở hành động đó', () => {
+    expect(
+      grantsScreenAction(['EWALLET:MERCHANT:UPDATE'], SCREENS.MERCHANT_BANK_ACCOUNT, 'lock')
+    ).toBe(true)
+    expect(
+      grantsScreenAction(['EWALLET:MERCHANT:VIEW'], SCREENS.MERCHANT_BANK_ACCOUNT, 'lock')
+    ).toBe(false)
+  })
+
+  it('mã full mà màn khai sẵn thì mở mọi hành động của màn', () => {
+    expect(
+      grantsScreenAction(['EWALLET:MERCHANT:FULL'], SCREENS.MERCHANT_BANK_ACCOUNT, 'lock')
+    ).toBe(true)
+  })
+
+  it('hành động không khai trong registry luôn bị chặn', () => {
+    expect(
+      grantsScreenAction([SUPER_ADMIN_PERMISSION], SCREENS.FEE_POLICY, 'khong-ton-tai')
     ).toBe(false)
   })
 })
 
 describe('grantsScreenAccess', () => {
-  it('màn giao dịch bắt buộc TRANSACTION:FULL', () => {
+  it('màn giao dịch bắt buộc đúng mã accessPermission', () => {
     expect(
-      grantsScreenAccess(
-        ['EWALLET:TRANSACTION:VIEW'],
-        SCREENS.TRANSACTION_WALLET
-      )
+      grantsScreenAccess(['EWALLET:TRANSACTION:VIEW'], SCREENS.TRANSACTION_WALLET)
     ).toBe(false)
     expect(
-      grantsScreenAccess(
-        ['EWALLET:TRANSACTION:FULL'],
-        SCREENS.TRANSACTION_WALLET
-      )
+      grantsScreenAccess(['EWALLET:TRANSACTION:FULL'], SCREENS.TRANSACTION_WALLET)
     ).toBe(true)
   })
 
-  it('màn không đặt accessAction vẫn chấp nhận action cùng module', () => {
-    expect(
-      grantsScreenAccess(['EWALLET:FEE:CREATE'], SCREENS.FEE_POLICY)
-    ).toBe(true)
+  it('màn không đặt accessPermission chấp nhận bất kỳ mã nào của màn', () => {
+    expect(grantsScreenAccess(['EWALLET:FEE:CREATE'], SCREENS.FEE_POLICY)).toBe(true)
+    expect(grantsScreenAccess(['EWALLET:WALLET:FULL'], SCREENS.FEE_POLICY)).toBe(false)
   })
 })

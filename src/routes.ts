@@ -2,7 +2,6 @@ import { createElement, lazy, Suspense, type ComponentType } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 
 import AppLayout from '@components/layout/AppLayout'
-import PortalLayout from '@components/layout/PortalLayout'
 import AuthLayout from '@components/layout/AuthLayout'
 import ScreenLoading from '@components/screen-loading/ScreenLoading'
 import {
@@ -82,15 +81,14 @@ const forbidden = {
   ]
 }
 
-/** Màn khởi động chạy trên layout riêng: không header, không sidebar. */
+/** Điểm vào chung: chuyển hướng theo quyền, không dựng UI riêng. */
 const workspaceHome = {
   path: SECURE_PANEL,
-  element: createElement(PortalLayout),
   errorElement: createElement(RouteErrorBoundary),
   children: [
     {
       index: true,
-      element: page(() => import('@pages/home/TransitPortal'))
+      element: page(() => import('@pages/landing/LandingRedirect'))
     }
   ]
 }
@@ -290,6 +288,13 @@ const merchantManagement = {
           element: page(
             () =>
               import('@/pages/merchant-management/merchant-management/merchant/pages/MerchantDetail')
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_BANK_ACCOUNT.path,
+          element: page(
+            () =>
+              import('@pages/merchant-management/merchant-management/bank-account/pages/BankAccount')
           )
         },
         {

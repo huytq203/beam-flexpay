@@ -17,11 +17,8 @@ import {
 } from '@/components/ui/sidebar/Sidebar'
 import useNavigationEw from '@hooks/useNavigation'
 import { Logo } from '@components/logo/Logo'
-import type { ItemTypeCustom } from './components/Navigation'
+import { resolveNavLink, type ItemTypeCustom } from './components/Navigation'
 import { PATHS } from '@constants/pathConstant'
-
-const buildPath = (parentKey: React.Key, childKey: React.Key) =>
-  '/' + String(parentKey) + '/' + String(childKey)
 
 const renderIcon = (icon: React.ReactNode): React.ReactNode =>
   React.isValidElement(icon)
@@ -100,7 +97,7 @@ const SideBar = () => {
                   const groupKey = group.key
                   const label = group.label
                   const childLinks = (group.children ?? []).map((child) => ({
-                    to: child.link ?? buildPath(groupKey, child.key),
+                    to: resolveNavLink(group, child),
                     label: child.label,
                     icon: child.icon,
                     key: child.key

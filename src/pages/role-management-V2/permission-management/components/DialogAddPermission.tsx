@@ -76,7 +76,7 @@ const DialogAddPermission = ({ permission, onSuccess, onCancel }: Props) => {
               Mã quyền <span className='text-red-700'>*</span>
             </span>
           }
-          placeholder='Ví dụ: ROLE:VIEW'
+          placeholder='Ví dụ: EWALLET:ROLE:VIEW'
         />
         <FormTextArea
           control={control}

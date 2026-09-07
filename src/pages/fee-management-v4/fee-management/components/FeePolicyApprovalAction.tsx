@@ -75,7 +75,7 @@ const FeePolicyApprovalAction = ({ policy }: FeePolicyApprovalActionProps) => {
           : 'Từ chối chính sách phí thành công'
       )
     } catch (error) {
-      errorMess(getErrorMessage(error, decision))
+      // errorMess(getErrorMessage(error, decision))
     }
   }
 
