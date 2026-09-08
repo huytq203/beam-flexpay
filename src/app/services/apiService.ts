@@ -45,7 +45,8 @@ export const apiWalletCore = createApi({
     'historyTransaction',
     'Wallet',
     'ledgerEntries',
-    'Journal'
+    'Journal',
+    'Withdrawal'
   ],
   endpoints: () => ({}),
   refetchOnMountOrArgChange: true

@@ -3,7 +3,7 @@ import {
   LockOutlined,
   UnlockOutlined
 } from '@components/icons'
-import { ButtonComponent, TooltipComponent } from '@components/index'
+import { ButtonComponent, FeeDirectionBadge, TooltipComponent } from '@components/index'
 import { FeeAssignment, paymentMethodType } from '@pages/fee-management-v4/fee-assignment/constants/feeAssignment'
 import { ColumnsType } from 'antd/es/table'
 import { getEnumLabel } from '@pages/fee-management-v4/fee-assignment/utils/FeeManagement.utils'
@@ -38,11 +38,15 @@ export const getFeeAssignColumn = ({
       width: 40,
     },
     {
-      title: 'Loại giao dịch',
+      title: 'Chiều tiền / Loại giao dịch',
       dataIndex: 'serviceType',
-      align: 'center' as const,
-
-      render: (value) => getEnumLabel(value, serviceType)
+      width: 200,
+      render: (value) => (
+        <FeeDirectionBadge
+          serviceType={value}
+          caption={getEnumLabel(value, serviceType)}
+        />
+      )
     },
     {
       title: 'Phương thức thanh toán',

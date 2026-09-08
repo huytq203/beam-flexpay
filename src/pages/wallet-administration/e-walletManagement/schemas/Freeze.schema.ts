@@ -2,7 +2,12 @@ import { z } from 'zod'
 
 export const FreezeSchema = z.object({
     freezeType: z.literal(1).or(z.literal(2)),
-    amount: z.number().optional(),
+    // Lệnh đóng băng luôn phải có số tiền: trước đây field này optional nên form
+    // gửi được `amount: undefined` xuống wallet-core.
+    amount: z
+        .number('Vui lòng nhập số tiền cần đóng băng')
+        .positive('Số tiền đóng băng phải lớn hơn 0')
+        .refine(Number.isInteger, 'Số tiền đóng băng phải là số nguyên'),
     reason: z
         .string()
         .min(10, 'Lý do đóng trên 10 ký tự')

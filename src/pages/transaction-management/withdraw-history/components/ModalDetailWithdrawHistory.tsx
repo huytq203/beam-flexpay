@@ -1,6 +1,6 @@
 import type { WithdrawalDetail } from '@services/apiJournal'
-import { CardComponent, TimeLineComponent } from '@components/index'
-import { BankFilled, HistoryOutlined, PenTool, UserIcon } from '@components/icons'
+import { CardComponent, StuckTransactionUpdateAction, TimeLineComponent, WithdrawalDecisionPanel } from '@components/index'
+import { BankFilled, HistoryOutlined, UserIcon } from '@components/icons'
 import { UnifiedContentJournal } from '@type/apiResponseJournal'
 import { PaymentMethod, PaymentMethodKey, StatusKey, StatusType } from '@pages/wallet-administration/transaction-wallet/constants/Transaction.constant'
 import { formatNumber } from '@utils/index'
@@ -88,6 +88,18 @@ const DialogDetailWithdrawHistory = ({ data, withdrawalDetail, isLoading }: Prop
 
     return (
         <div>
+            <WithdrawalDecisionPanel
+                className='mb-3'
+                transactionCode={data.transactionCode}
+                transactionType={data.transactionType}
+                currency={data.currency}
+            />
+            <StuckTransactionUpdateAction
+                className='mb-3'
+                transactionCode={data.transactionCode}
+                transactionType={data.transactionType}
+                journalStatus={data.status}
+            />
             <div className="grid grid-cols-2 h-full gap-3 mb-3">
                 <CardComponent className='col-span-1 flex-1 h-full' content={
                     <div className="h-full">
@@ -113,7 +125,7 @@ const DialogDetailWithdrawHistory = ({ data, withdrawalDetail, isLoading }: Prop
                                     {PaymentMethod[data.paymentMethod as PaymentMethodKey] ?? '--'}
                                 </span>
                             } />
-                            <InfoRow label='Trạng thái' value={
+                            <InfoRow label='Trạng thái bút toán' value={
                                 <span className={STATUS_CLASS[statusKey] ?? 'text-gray-500'}>
                                     {StatusType[statusKey] ?? data.status}
                                 </span>
@@ -151,15 +163,6 @@ const DialogDetailWithdrawHistory = ({ data, withdrawalDetail, isLoading }: Prop
                     </>
                 } />
             </div>
-
-            <CardComponent content={
-                <>
-                    <p className='font-medium flex items-center gap-1'><PenTool size={16} />Ghi chú nội bộ của admin:</p>
-                    <div className="bg-yellow-50 border rounded-md p-3 text-yellow-800 mt-2">
-                        <p>Chưa có ghi chú nội dung nào</p>
-                    </div>
-                </>
-            } />
         </div>
     )
 }

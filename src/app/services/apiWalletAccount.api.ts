@@ -15,6 +15,34 @@ export interface WalletAccountQueryParams {
     currency?: string
 }
 
+/**
+ * Hợp đồng băng / mở băng của wallet-core KHÔNG đối xứng về `idempotencyKey`.
+ * Bảng dưới đây kiểm bằng chính API dev đang chạy, không phải đọc từ source —
+ * source ở repo BE đã lệch so với bản deploy:
+ *
+ * | Endpoint                        | idempotencyKey             |
+ * |---------------------------------|----------------------------|
+ * | `/accounts/freeze`              | chưa kiểm                  |
+ * | `/accounts/freeze-transaction`  | KHÔNG nhận (1006 nếu gửi)  |
+ * | `/accounts/unfreeze`            | chưa kiểm                  |
+ * | `/accounts/unfreeze-transaction`| BẮT BUỘC (3001 nếu thiếu)  |
+ *
+ * Đừng "dọn cho đồng bộ" bằng cách thêm field vào cả bốn — đó là cách làm hỏng
+ * `/freeze-transaction`. Kiểm bằng request thật trước khi đổi dòng nào.
+ */
+export interface FreezeRequest {
+    accountId: string
+    amount: number
+    reason: string
+}
+
+/** Khớp `AdminUnfreezeRequest`. */
+export interface UnfreezeRequest {
+    accountId: string
+    reason: string
+}
+
+/** Khớp `AdminFreezeTransactionRequest` — đúng 4 field, không hơn. */
 export interface FreezeTransactionRequest {
     accountId: string
     sourceTransactionId: string
@@ -28,6 +56,8 @@ export interface UnfreezeTransactionRequest {
     sourceTransactionId: string
     amount: number
     reason: string
+    /** Bắt buộc — thiếu thì wallet-core trả VALIDATION_ERROR 3001. */
+    idempotencyKey: string
 }
 
 const apiEWallet = apiWalletCore.injectEndpoints({
@@ -49,7 +79,7 @@ const apiEWallet = apiWalletCore.injectEndpoints({
             transformResponse: (res: ResponseType<ContentAccountWallet>) => res.data,
             providesTags: ['Wallet'],
         }),
-         postUnfreeze: build.mutation({
+        postUnfreeze: build.mutation<unknown, UnfreezeRequest>({
             query: (body) => ({
                 url: '/wallet/accounts/unfreeze',
                 method: 'POST',
@@ -57,7 +87,7 @@ const apiEWallet = apiWalletCore.injectEndpoints({
             }),
             invalidatesTags: ['Wallet'],
         }),
-        postFreeze: build.mutation({
+        postFreeze: build.mutation<unknown, FreezeRequest>({
             query: (body) => ({
                 url: '/wallet/accounts/freeze',
                 method: 'POST',

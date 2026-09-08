@@ -147,6 +147,44 @@ const feeManagementV4 = {
           )
         }
       ]
+    },
+    {
+      path: FEEMANAGEMENT_V4,
+      children: [
+        {
+          path: SCREENS.FEE_BANK_POLICY.path,
+          element: page(
+            () =>
+              import('@pages/fee-management-v4/fee-bank/BankFeeManagement')
+          )
+        },
+        {
+          path: `${SCREENS.FEE_BANK_POLICY.path}/:mode`,
+          element: page(
+            () =>
+              import('@pages/fee-management-v4/fee-bank/AddBankFeePolicy')
+          )
+        },
+        {
+          path: `${SCREENS.FEE_BANK_POLICY.path}/:mode/:id`,
+          element: page(
+            () =>
+              import('@pages/fee-management-v4/fee-bank/AddBankFeePolicy')
+          )
+        }
+      ]
+    },
+    {
+      path: FEEMANAGEMENT_V4,
+      children: [
+        {
+          path: SCREENS.FEE_SCHEDULE.path,
+          element: page(
+            () =>
+              import('@pages/fee-management-v4/fee-schedule/FeeScheduleManagement')
+          )
+        }
+      ]
     }
   ]
 }

@@ -11,7 +11,7 @@ export enum StatusKey {
 
 export const StatusLabel: Record<StatusKey, string> = {
     [StatusKey.PENDING]: 'Chờ xử lý',
-    [StatusKey.POSTED]: 'Đã ghi sổ',
+    [StatusKey.POSTED]: 'Đã thành công',
     [StatusKey.AUTHORIZED]: 'Đã phê duyệt',
     [StatusKey.SETTLED]: 'Đã quyết toán',
     [StatusKey.CANCELLED]: 'Đã hủy',

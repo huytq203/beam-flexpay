@@ -133,7 +133,7 @@ export const ComponentDetail = ({ setOpenModalDetail, data, onEdit, onDelete, se
                   Cách tính: <span className='font-medium'>{calculationMethodEnum[data.calculationMethod as keyof typeof calculationMethodEnum]} </span>
                 </span>
                 <span className='border px-2 py-1 rounded-sm bg-gray-200'>
-                  Dựa trên: <span className='font-medium'>{baseOn[data.componentType as keyof typeof baseOn]}</span>
+                  Loại phí: <span className='font-medium'>{baseOn[data.componentType as keyof typeof baseOn]}</span>
                 </span>
               </div>
               <div className='px-2'>

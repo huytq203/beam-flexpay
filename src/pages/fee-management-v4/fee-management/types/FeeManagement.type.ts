@@ -77,6 +77,10 @@ export interface FeePolicyResponse {
 }
 export interface FeePolicy {
     id: string;
+    /** Optimistic lock của BE — bắt buộc khi gọi API duyệt. */
+    lockVersion?: number;
+    /** Mã băm nội dung bản ghi tại thời điểm checker xem — bắt buộc khi duyệt. */
+    reviewHash?: string;
     name: string;
     serviceType: string;
     feeDomain: string;

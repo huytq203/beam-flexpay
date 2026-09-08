@@ -128,6 +128,10 @@ export const PATHS = {
     EDIT_FEE_POLICY: (id: string) => `${FEEMANAGEMENT_V4}/fee-managementV4/edit/${id}`,
     FEE_ASSIGNMENT: `${FEEMANAGEMENT_V4}/fee-assignmentV4`,
     EDIT_FEE_ASSIGNMENT: (id: string) => `${FEEMANAGEMENT_V4}/fee-assignmentV4/edit/${id}`,
+    FEE_SCHEDULE: `${FEEMANAGEMENT_V4}/fee-scheduleV4`,
+    BANK_FEE_MANAGEMENT: `${FEEMANAGEMENT_V4}/fee-bankV4`,
+    ADD_BANK_FEE_POLICY: `${FEEMANAGEMENT_V4}/fee-bankV4/create`,
+    EDIT_BANK_FEE_POLICY: (id: string) => `${FEEMANAGEMENT_V4}/fee-bankV4/edit/${id}`,
   },
 
   TRANSACTION_MANAGEMENT: {

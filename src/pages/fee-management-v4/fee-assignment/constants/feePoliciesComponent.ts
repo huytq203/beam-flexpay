@@ -47,7 +47,8 @@ export const serviceType = {
   EWALLET_TRANSFER_INTERNAL: "Chuyển tiền nội bộ",
   EWALLET_TRANSFER_EXTERNAL: "Chuyển tiền liên ngân hàng",
   EWALLET_CASHBACK: "Hoàn tiền",
-  MERCHANT_VA_BILL_COLLECTION: "Thu hộ VA"
+  MERCHANT_VA_BILL_COLLECTION: "Thu hộ VA",
+  PAYOUT_BANK_TRANSFER: "Chi hộ chuyển khoản ngân hàng"
 } as const
 export const componentType = {
   TRANSACTION_FEE: 'Phí giao dịch cơ bản',

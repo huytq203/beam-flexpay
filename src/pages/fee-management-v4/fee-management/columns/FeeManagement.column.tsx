@@ -1,4 +1,4 @@
-import { ButtonComponent, TooltipComponent } from '@components/index'
+import { ButtonComponent, FeeDirectionBadge, TooltipComponent } from '@components/index'
 
 import { feeDomain, serviceType } from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
 import dayjs from 'dayjs'
@@ -10,13 +10,16 @@ import StatusBadge from '@components/status-badge/StatusBadge'
 import { STATUS_CONFIG, statusType } from '../constants/FeeManagement.constant'
 import * as Icons from '@components/icons'
 import { NavigateFunction } from 'react-router-dom'
-import { PATHS } from '@constants/pathConstant'
 import { ColumnsType } from 'antd/es/table'
 import FeePolicyApprovalAction from '../components/FeePolicyApprovalAction'
 import type { FeePolicy } from '../types/FeeManagement.type'
 import { Can } from '@/app/permissions'
+import type { FeePolicyScreenId } from '../constants/feePolicyScope'
 interface Props {
   navigate: NavigateFunction
+  /** Màn đang hiển thị bảng — quyết định quyền và đường dẫn sửa. */
+  screen: FeePolicyScreenId
+  editPath: (id: string) => string
   handleActive: (id: string) => void
   handleInactive: (id: string) => void
   isLoadingPatchActivateFee: boolean
@@ -27,6 +30,8 @@ interface Props {
 
 export const getColumnFeePolicy = ({
   navigate,
+  screen,
+  editPath,
   handleActive,
   handleInactive,
   loadingId
@@ -52,9 +57,15 @@ export const getColumnFeePolicy = ({
     ),
   },
   {
-    title: 'Loại dịch vụ',
+    title: 'Chiều tiền / Loại dịch vụ',
     dataIndex: 'serviceType',
-    render: (value: string) => getEnumLabel(value, serviceType)
+    width: 190,
+    render: (value: string) => (
+      <FeeDirectionBadge
+        serviceType={value}
+        caption={getEnumLabel(value, serviceType)}
+      />
+    )
   },
 
   {
@@ -102,7 +113,7 @@ export const getColumnFeePolicy = ({
       const isLocked = record?.status === statusType.LOCKED
       return (
         <div className='flex gap-2 justify-center'>
-          <Can screen='FEE_POLICY' action='edit'>
+          <Can screen={screen} action='edit'>
             <TooltipComponent title='Sửa chính sách'>
               <ButtonComponent
                 aria-label='Sửa chính sách'
@@ -110,15 +121,15 @@ export const getColumnFeePolicy = ({
                 size='small'
                 icon={<Icons.EditOutlined />}
                 onClick={() => {
-                  navigate(PATHS.FEE_V4.EDIT_FEE_POLICY(record?.id || ''))
+                  navigate(editPath(record?.id || ''))
                 }}
               />
             </TooltipComponent>
           </Can>
-          <Can screen='FEE_POLICY' action='approve'>
+          <Can screen={screen} action='approve'>
             <FeePolicyApprovalAction policy={record} />
           </Can>
-          <Can screen='FEE_POLICY' action='toggleActive'>
+          <Can screen={screen} action='toggleActive'>
             <TooltipComponent title={isActive ? 'Hủy kích hoạt' : 'Kích hoạt'}>
               <ButtonComponent
                 aria-label={isActive ? 'Hủy kích hoạt' : 'Kích hoạt'}

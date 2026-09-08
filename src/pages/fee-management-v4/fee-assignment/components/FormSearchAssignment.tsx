@@ -1,11 +1,16 @@
 import { FormSelect } from '@components/form'
-import { mapEnumToSelectOptions } from '@utils/helperFunctions'
-import React from 'react'
-import { FeeBank, statusType } from '../constants/feeAssignment'
-import { useGetBankQuery } from '@services/apiFeeBank'
-import { Control } from 'react-hook-form'
-import { FeeAssignType } from '../schemas/feeAssign.schema'
 import * as Icons from '@components/icons'
+import { useGetBankQuery } from '@services/apiFeeBank'
+import { mapEnumToSelectOptions } from '@utils/helperFunctions'
+import { Control } from 'react-hook-form'
+import { FeeBank, statusType } from '../constants/feeAssignment'
+import { FeeAssignType } from '../schemas/feeAssign.schema'
+
+/**
+ * Chỉ khai các bộ lọc `/fee/policy-assignments/search` thực sự nhận:
+ * feePolicyId, merchantId, bankCode, status. Không có `serviceType` — muốn lọc
+ * gán phí theo chiều tiền thì BE phải bổ sung tham số đó trước.
+ */
 interface FormSearchAssignmentProps {
     control: Control<FeeAssignType>
 }
@@ -18,12 +23,6 @@ const FormSearchAssignment = ({ control }: FormSearchAssignmentProps) => {
             <div className='grid grid-cols-1 md:grid-cols-12 gap-3'>
                 <FormSelect
                     control={control}
-                    name='status'
-                    options={mapEnumToSelectOptions(statusType)}
-                    label={<span>Trạng thái </span>}
-                />
-                <FormSelect
-                    control={control}
                     name='bankCode'
                     options={[
                         ...(dataBank?.data?.content || []).map((item: FeeBank) => ({
@@ -32,6 +31,16 @@ const FormSearchAssignment = ({ control }: FormSearchAssignmentProps) => {
                         }))
                     ]}
                     label={<span>Ngân hàng </span>}
+                    placeholder='Tất cả ngân hàng'
+                    className='col-span-12 md:col-span-6 flex flex-col'
+                />
+                <FormSelect
+                    control={control}
+                    name='status'
+                    options={mapEnumToSelectOptions(statusType)}
+                    label={<span>Trạng thái </span>}
+                    placeholder='Tất cả trạng thái'
+                    className='col-span-12 md:col-span-6 flex flex-col'
                 />
             </div>
         </>

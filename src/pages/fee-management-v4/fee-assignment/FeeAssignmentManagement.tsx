@@ -3,6 +3,7 @@ import {
   CardComponent,
   DialogModal,
   ModalComponent,
+  ReasonDialog,
   Table
 } from '@components/index'
 import FormInforAdd from './components/FormInforAdd'
@@ -36,6 +37,10 @@ const FeeAssignmentManagement = () => {
     pageSize,
     total,
     handlePaginationChange,
+    activateId,
+    isActivating,
+    handleConfirmActivate,
+    handleCancelActivate,
     svg
   } = useHandleFeeAssignment()
 
@@ -136,6 +141,16 @@ const FeeAssignmentManagement = () => {
         )
       }
 
+      <ReasonDialog
+        open={Boolean(activateId)}
+        title='Kích hoạt gán phí'
+        description='Nhập lý do kích hoạt để lưu vào lịch sử phê duyệt.'
+        label='Lý do kích hoạt'
+        okText='Kích hoạt'
+        confirmLoading={isActivating}
+        onConfirm={handleConfirmActivate}
+        onCancel={handleCancelActivate}
+      />
       <DialogModal
         onOk={handleDelete}
         onCancel={handleCloseModalDelete}

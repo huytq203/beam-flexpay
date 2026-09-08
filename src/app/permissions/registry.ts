@@ -227,6 +227,27 @@ export const SCREENS = {
       approve: PERMISSION.FEE_UPDATE,
       toggleActive: PERMISSION.FEE_UPDATE
     }
+  },
+  /** Chính sách phí phía ngân hàng — tách màn để đối soát, quyền dùng chung họ FEE. */
+  FEE_BANK_POLICY: {
+    path: `${FEEMANAGEMENT_V4}/fee-bankV4`,
+    actions: {
+      ...FEE_ACTIONS,
+      approve: PERMISSION.FEE_UPDATE,
+      toggleActive: PERMISSION.FEE_UPDATE
+    }
+  },
+  /**
+   * Bảng đối soát chỉ đọc — dùng lại mã quyền FEE hiện có, BE không phải cấp mã
+   * mới. Chỉ khai `view`/`full`: màn này không tạo, sửa hay xóa gì, nên quyền
+   * FEE:CREATE một mình không được mở nó ra.
+   */
+  FEE_SCHEDULE: {
+    path: `${FEEMANAGEMENT_V4}/fee-scheduleV4`,
+    actions: {
+      view: PERMISSION.FEE_VIEW,
+      full: PERMISSION.FEE_FULL
+    }
   }
 } as const satisfies Record<string, ScreenAccess>
 

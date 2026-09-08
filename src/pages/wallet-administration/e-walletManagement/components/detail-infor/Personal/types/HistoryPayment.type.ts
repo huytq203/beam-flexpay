@@ -11,7 +11,7 @@ export enum StatusKey {
 
 export const StatusLabel: Record<StatusKey, string> = {
     [StatusKey.PENDING]: 'Chờ xử lý',
-    [StatusKey.POSTED]: 'Đã ghi sổ',
+    [StatusKey.POSTED]: 'Đã thành công',
     [StatusKey.AUTHORIZED]: 'Đã phê duyệt',
     [StatusKey.SETTLED]: 'Đã quyết toán',
     [StatusKey.CANCELLED]: 'Đã hủy',
@@ -31,7 +31,7 @@ export const STATUS_CONFIG = {
         shimmerColor: 'rgba(255, 86, 59, 0.2)',
     },
     [StatusKey.POSTED]: {
-        label: 'Đã ghi sổ',
+        label: 'Đã thành công',
         className: 'success-status',
         shimmerColor: 'rgba(0, 229, 160, 0.2)',
     },

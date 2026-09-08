@@ -4,6 +4,14 @@ import { http, HttpResponse } from 'msw'
 const ok = <T,>(data: T) => HttpResponse.json({ data })
 
 export const handlers = [
+  /*
+   * Màn chi tiết giao dịch tự đọc trạng thái lệnh rút (WithdrawalDecisionPanel).
+   * Mặc định trả bản ghi KHÔNG có `status` để panel render rỗng — test nào cần
+   * trạng thái thật thì `server.use()` đè lên.
+   */
+  http.get('*/withdrawals', () =>
+    ok({ id: 'withdrawal-default', transactionCode: 'TXN-000', beneficiary: null })
+  ),
   http.post('*/auth/change-password', () => ok(null)),
   http.post('*/auth/forgot-password', () => ok(null)),
   http.get('*/auth/reset-password/validate', () =>

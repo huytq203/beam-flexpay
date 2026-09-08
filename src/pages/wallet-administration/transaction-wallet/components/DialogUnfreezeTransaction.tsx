@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ButtonComponent, DialogModal } from '@components/index'
 import { FormInputNumber, FormRadio, FormSelect, FormTextArea } from '@components/form'
 import { LockKeyOpenIcon, WarningIcon } from '@components/icons'
+import { useIdempotencyKey } from '@hooks/useIdempotencyKey'
 import { useMessage } from '@hooks/useMessage'
 import { usePostUnfreezeTransactionMutation } from '@services/apiWalletAccount.api'
 import type { TransactionFreezeSummary } from '@type/apiResponseJournal'
@@ -84,6 +85,7 @@ const DialogUnfreezeTransaction = ({
   const maxAmount = selectedFreeze?.remainingAmount ?? 0
   const [postUnfreezeTransaction, { isLoading }] =
     usePostUnfreezeTransactionMutation()
+  const idempotency = useIdempotencyKey()
 
   const handleCancel = () => {
     if (!isLoading) onCancel?.()
@@ -119,8 +121,10 @@ const DialogUnfreezeTransaction = ({
         freezeId: selectedFreeze.id,
         sourceTransactionId,
         amount: values.amount,
-        reason: values.reason
+        reason: values.reason,
+        idempotencyKey: idempotency.take()
       }).unwrap()
+      idempotency.reset()
       successMess(
         `Đã gửi yêu cầu mở băng ${formatCurrency(values.amount, {
           symbol: currency,

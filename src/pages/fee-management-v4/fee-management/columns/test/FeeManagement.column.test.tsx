@@ -26,7 +26,9 @@ const renderColumns = (permissions: string[]) => {
           dataSource={[policy]}
           pagination={false}
           columns={getColumnFeePolicy({
-            navigate: vi.fn(),
+            screen: 'FEE_POLICY' as const,
+    editPath: (id: string) => `/fee/${id}`,
+    navigate: vi.fn(),
             handleActive: vi.fn(),
             handleInactive: vi.fn(),
             isLoadingPatchActivateFee: false,

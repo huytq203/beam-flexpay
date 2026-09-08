@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useIdempotencyKey } from '@hooks/useIdempotencyKey'
 import { useMessage } from '@hooks/useMessage'
 import { usePostUnfreezeMutation } from '@services/apiFreezes'
 import { usePostUnfreezeTransactionMutation } from '@services/apiWalletAccount.api'
@@ -64,6 +65,7 @@ export const useUnfreezeRequestForm = (
   const [postUnfreeze, { isLoading: isUnfreezing }] = usePostUnfreezeMutation()
   const [postUnfreezeTransaction, { isLoading: isUnfreezingTransaction }] =
     usePostUnfreezeTransactionMutation()
+  const idempotency = useIdempotencyKey()
 
   const onSubmit = async (values: UnfreezeRequestFormValues): Promise<void> => {
     const body = {
@@ -74,14 +76,18 @@ export const useUnfreezeRequestForm = (
     }
 
     try {
+      // Chỉ nhánh theo giao dịch nhận `idempotencyKey`; `/accounts/unfreeze`
+      // chưa được kiểm nên giữ nguyên body cũ đang chạy được.
       if (item.sourceTransactionId && item.sourceTransactionCode) {
         await postUnfreezeTransaction({
           ...body,
-          sourceTransactionId: item.sourceTransactionId
+          sourceTransactionId: item.sourceTransactionId,
+          idempotencyKey: idempotency.take()
         }).unwrap()
       } else {
         await postUnfreeze(body).unwrap()
       }
+      idempotency.reset()
       successMess(
         `Đã gửi yêu cầu mở băng ${toVnd(values.amount)}, đang chờ người khác phê duyệt`
       )

@@ -9,11 +9,10 @@ import {
 } from '@components/index'
 import { formatCurrency } from '@utils/formatNumber'
 import {
-  CONFIG_STATUS,
   DirectionConstants,
-  StatusKey
+  DirectionShortLabel,
+  type DirectionKey
 } from '../constants/SystemLedger.constant'
-import StatusBadge from '@components/status-badge/StatusBadge'
 
 const getSystemLedgerColumn = ({
   navigate: _navigate
@@ -128,6 +127,8 @@ const getSystemLedgerColumn = ({
     }
   },
   {
+    // Nhãn kế toán, khớp với cột "Chiều" trong file CSV — màn hình và file phải
+    // nói cùng một thứ tiếng.
     title: 'Ghi nợ / Có',
     dataIndex: 'direction',
     align: 'center',
@@ -138,7 +139,7 @@ const getSystemLedgerColumn = ({
         <span
           className={` font-semibold ${isCredit ? 'text-green-500' : 'text-red-500'}`}
         >
-          {value}
+          {DirectionShortLabel[value as DirectionKey] ?? value}
         </span>
       )
     }
@@ -173,22 +174,11 @@ const getSystemLedgerColumn = ({
       )
     }
   },
+  // Không có cột Trạng thái: dòng sổ cái chỉ sinh ra khi bút toán đã hạch toán
+  // thành công, nên cột này luôn mang đúng một giá trị. Nó từng rơi về trạng
+  // thái TÀI KHOẢN khi giao dịch không có trạng thái — hai thứ khác hẳn nhau.
   {
-    title: 'Trạng thái',
-    align: 'center',
-    width: 120,
-    render(_, record) {
-      const status = record.transaction?.status || record.account?.status
-      return (
-        <StatusBadge
-          status={status as StatusKey}
-          config={CONFIG_STATUS}
-        />
-      )
-    }
-  },
-  {
-    title: 'Thời gian tạo',
+    title: 'Thời gian ghi sổ',
     align: 'center',
     width: 170,
     render(_, record) {

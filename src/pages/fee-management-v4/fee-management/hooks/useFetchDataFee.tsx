@@ -1,49 +1,60 @@
-import usePagination from '@hooks/usePagination'
 import { useSearchFeePoliciesQuery } from '@services/apiFeePoliciesServices'
-import { useMemo, useState } from 'react'
-import { dataSearch } from '../types/FeeManagement.type'
+import { useMemo } from 'react'
 
-const useFetchDataFee = () => {
-    const { page, size, setPage, setPageSize, sort, sortBy } = usePagination()
-    const [filters, setFilters] = useState<Partial<dataSearch>>({})
-    const payload = {
-        ...filters,
-        keyword: filters.keyword || '',
-        page,
-        size,
-        sortBy: sort,
-        sortDirection: sortBy,
-    }
+export interface FeePolicyFilters {
+    keyword?: string
+    serviceType?: string
+    status?: string
+    feeDomain?: string
+}
+
+interface UseFetchDataFeeArgs {
+    filters: FeePolicyFilters
+    page: number
+    size: number
+}
+
+const useFetchDataFee = ({ filters, page, size }: UseFetchDataFeeArgs) => {
+    const payload = useMemo(
+        () => ({
+            keyword: filters.keyword || '',
+            serviceType: filters.serviceType || undefined,
+            status: filters.status || undefined,
+            feeDomain: filters.feeDomain || undefined,
+            page,
+            size,
+            sortBy: 'createdAt',
+            sortDirection: 'DESC'
+        }),
+        [filters, page, size]
+    )
+
     const {
         data: dataFeeManagement,
         isLoading: isLoadingFeeManagement,
         isFetching: isFetchingFeeManagement,
+        isError: isErrorFeeManagement,
         refetch
     } = useSearchFeePoliciesQuery(payload)
 
+    const dataSource = useMemo(
+        () =>
+            dataFeeManagement?.content?.map((item, index) => ({
+                no: (page - 1) * size + index + 1,
+                ...item,
+                key: item.id
+            })),
+        [dataFeeManagement, page, size]
+    )
 
-    const dataSource = useMemo(() => dataFeeManagement?.content?.map((item, index) => {
-        return {
-            no: (page - 1) * size + index + 1,
-            ...item,
-            key: item.id,
-        }
-    }), [dataFeeManagement, page, size])
-    const total = dataFeeManagement?.totalElements
     return {
         dataFeeManagement,
         dataSource,
         isLoadingFeeManagement,
-        page,
-        size,
-        setPage,
-        setPageSize,
-        sort,
-        sortBy,
-        total,
-        setFilters,
-        refetch,
-        isFetchingFeeManagement
+        isFetchingFeeManagement,
+        isErrorFeeManagement,
+        total: dataFeeManagement?.totalElements,
+        refetch
     }
 }
 

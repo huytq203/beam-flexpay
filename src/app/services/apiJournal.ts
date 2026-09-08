@@ -1,4 +1,4 @@
-import { baseQueryUserWallet } from '@configs/fetchBaseQueryCustom'
+import { fetchBaseQueryUserWallet } from '@configs/fetchBaseQueryCustom'
 import { apiWalletCore } from '@services/apiService'
 import type {
   DataUnifiedJournal,
@@ -14,11 +14,29 @@ const withdrawalBeneficiarySchema = z.object({
   branch: z.string().nullable().optional()
 })
 
+/**
+ * Chỉ `id`, `transactionCode`, `beneficiary` là bắt buộc — phần còn lại để
+ * `nullish` có chủ đích: BE bổ sung trường theo đợt, và một bản deploy chưa có
+ * `status` không được phép làm hỏng khối thông tin thụ hưởng đang chạy.
+ */
 const withdrawalDetailResponseSchema = z.object({
   data: z.object({
     id: z.string(),
     transactionCode: z.string(),
-    beneficiary: withdrawalBeneficiarySchema.nullable()
+    beneficiary: withdrawalBeneficiarySchema.nullish(),
+    /** Trạng thái lệnh rút bên user-wallet — xem `@type/withdrawalApproval.type`. */
+    status: z.string().nullish(),
+    /** Trạng thái bút toán bên wallet-core; KHÁC `status` ở trên. */
+    journalStatus: z.string().nullish(),
+    amount: z.number().nullish(),
+    fee: z.number().nullish(),
+    grossAmount: z.number().nullish(),
+    /** Lý do lệnh dừng: từ chối duyệt, ngân hàng từ chối, hoặc lỗi chi. */
+    failureReason: z.string().nullish(),
+    bankRefId: z.string().nullish(),
+    processedAt: z.string().nullish(),
+    updatedBy: z.string().nullish(),
+    updatedAt: z.string().nullish()
   })
 })
 
@@ -55,7 +73,7 @@ export const apiJournal = apiWalletCore.injectEndpoints({
       }),
       getWithdrawalByTransactionCode: build.query<WithdrawalDetail, string>({
         async queryFn(transactionCode, queryApi, extraOptions) {
-          const response = await baseQueryUserWallet(
+          const response = await fetchBaseQueryUserWallet(
             {
               url: '/withdrawals',
               method: 'GET',
@@ -83,7 +101,10 @@ export const apiJournal = apiWalletCore.injectEndpoints({
 
           return { data: parsedResponse.data.data }
         },
-        providesTags: ['Journal']
+        providesTags: (_result, _error, transactionCode) => [
+          { type: 'Withdrawal' as const, id: transactionCode },
+          'Journal' as const
+        ]
       })
     })
 })

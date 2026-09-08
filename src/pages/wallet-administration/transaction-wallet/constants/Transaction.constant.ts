@@ -41,7 +41,7 @@ export enum StatusEnum {
 
 export const StatusType: Record<StatusEnum, string> = {
   [StatusEnum.PENDING]: 'Chờ xử lý',
-  [StatusEnum.POSTED]: 'Đã ghi sổ',
+  [StatusEnum.POSTED]: 'Đã thành công',
   [StatusEnum.AUTHORIZED]: 'Đã phê duyệt',
   [StatusEnum.SETTLED]: 'Đã quyết toán',
   [StatusEnum.CANCELLED]: 'Đã hủy',
@@ -52,11 +52,11 @@ export type StatusKey = keyof typeof StatusType;
 
 export const CONFIG_STATUS: Record<StatusEnum, { label: string, className: string, shimmerColor: string, }> = {
   [StatusEnum.PENDING]: { label: 'Chờ xử lý', className: 'warning-status', shimmerColor: 'rgba(252, 186, 3, 0.2)' },
-  [StatusEnum.POSTED]: { label: 'Đã ghi sổ', className: 'success-status', shimmerColor: 'rgba(0, 229, 160, 0.2)' },
+  [StatusEnum.POSTED]: { label: 'Đã thành công', className: 'success-status', shimmerColor: 'rgba(0, 229, 160, 0.2)' },
   [StatusEnum.AUTHORIZED]: { label: 'Đã phê duyệt', className: 'info-status', shimmerColor: 'rgba(24, 144, 255, 0.2)' },
   [StatusEnum.SETTLED]: { label: 'Đã quyết toán', className: 'success-status', shimmerColor: 'rgba(0, 229, 160, 0.2)' },
-  [StatusEnum.CANCELLED]: { label: 'Đã hủy', className: 'error-status', shimmerColor: 'rgba(255, 86, 59, 0.2)' },
-  [StatusEnum.FAILED]: { label: 'Thất bại', className: 'error-status', shimmerColor: 'rgba(255, 86, 59, 0.2)' },
+  [StatusEnum.CANCELLED]: { label: 'Đã hủy', className: 'danger-status', shimmerColor: 'rgba(255, 86, 59, 0.2)' },
+  [StatusEnum.FAILED]: { label: 'Thất bại', className: 'danger-status', shimmerColor: 'rgba(255, 86, 59, 0.2)' },
 }
 
 

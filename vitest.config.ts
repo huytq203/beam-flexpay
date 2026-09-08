@@ -21,7 +21,9 @@ export default defineConfig({
       alias('@utils', 'src/app/utils'),
       alias('@hooks', 'src/app/hooks'),
       alias('@languages', 'src/app/languages'),
-      alias('@constants', 'src/app/constants')
+      alias('@constants', 'src/app/constants'),
+      alias('@lib', 'src/lib'),
+      alias('@icons', 'src/components/icons')
     ]
   },
   test: {

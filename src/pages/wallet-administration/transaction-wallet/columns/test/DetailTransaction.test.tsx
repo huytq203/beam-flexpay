@@ -1,4 +1,5 @@
 import { renderWithProviders } from '@/test/render'
+import { MessageProvider } from '@hooks/useMessage'
 import { screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import DetailTransaction from '../../DetailTransaction'
@@ -102,7 +103,11 @@ describe('DetailTransaction', () => {
   })
 
   it('ghép dữ liệu detail 360 vào phí, luồng tiền và hồ sơ khách hàng', () => {
-    renderWithProviders(<DetailTransaction />)
+    renderWithProviders(
+      <MessageProvider>
+        <DetailTransaction />
+      </MessageProvider>
+    )
 
     expect(screen.getByText('Phí rút tiền tiêu chuẩn')).toBeInTheDocument()
     expect(screen.getByText('TRANSACTION_FEE')).toBeInTheDocument()
@@ -126,7 +131,11 @@ describe('DetailTransaction', () => {
       refetch: vi.fn()
     })
 
-    renderWithProviders(<DetailTransaction />)
+    renderWithProviders(
+      <MessageProvider>
+        <DetailTransaction />
+      </MessageProvider>
+    )
 
     expect(screen.getByText(/API chưa cung cấp chi tiết cấu phần phí/)).toBeInTheDocument()
     expect(screen.getByText(/API chưa cung cấp chi phí nhà cung cấp/)).toBeInTheDocument()

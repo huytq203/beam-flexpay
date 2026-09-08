@@ -1,6 +1,10 @@
 // Type cho từng item trong mảng content
 export interface FeeAssignment {
   id: string
+  /** Optimistic lock của BE — bắt buộc khi gọi API duyệt. */
+  lockVersion?: number
+  /** Mã băm nội dung bản ghi tại thời điểm checker xem — bắt buộc khi duyệt. */
+  reviewHash?: string
   feePolicyId: string
   merchantId: string | null
   bankCode: string
@@ -81,7 +85,8 @@ export const serviceType ={
   EWALLET_TRANSFER_INTERNAL : 'Chuyển tiền nội bộ',
   EWALLET_TRANSFER_EXTERNAL : 'Chuyển tiền liên ngân hàng',
   EWALLET_CASHBACK : 'Hoàn tiền',
-  MERCHANT_VA_BILL_COLLECTION : 'Thu hộ VA'
+  MERCHANT_VA_BILL_COLLECTION : 'Thu hộ VA',
+  PAYOUT_BANK_TRANSFER : 'Chi hộ chuyển khoản ngân hàng'
 }as const;
 export const paymentMethodType ={
   ATM : 'ATM',

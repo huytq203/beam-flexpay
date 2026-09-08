@@ -12,6 +12,7 @@ import i18n from '@languages/i18n'
 import {
   ArrowsLeftRightIcon,
   BankIcon,
+  ScalesIcon,
   ClipboardTextIcon,
   CurrencyCircleDollarIcon,
   FingerprintIcon,
@@ -68,6 +69,18 @@ const feeManagementV4: ItemTypeCustom = {
       label: 'Quản lý chính sách phí',
     },
     {
+      key: 'fee-bankV4',
+      screen: 'FEE_BANK_POLICY',
+      icon: (
+        <BankIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Phí ngân hàng',
+    },
+    {
       key: 'fee-assignmentV4',
       screen: 'FEE_ASSIGNMENT',
       icon: (
@@ -78,6 +91,18 @@ const feeManagementV4: ItemTypeCustom = {
         />
       ),
       label: 'Quản lý gán phí',
+    },
+    {
+      key: 'fee-scheduleV4',
+      screen: 'FEE_SCHEDULE',
+      icon: (
+        <ScalesIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Biểu phí hiệu lực',
     }
   ],
   label: 'Quản lý phí',

@@ -89,6 +89,11 @@
     "/secure-panel/fee-v4/fee-assignmentV4/create":"Thiết lập gán phí",
     "/secure-panel/fee-v4/fee-assignmentV4/edit/*":"Cập nhật gán phí",
     "/secure-panel/fee-v4/fee-assignmentV4":"Quản lý gán phí",
+    "/secure-panel/fee-v4/fee-bankV4":"Phí ngân hàng",
+    "/secure-panel/fee-v4/fee-bankV4/create":"Thêm mới chính sách phí ngân hàng",
+    "/secure-panel/fee-v4/fee-bankV4/create/*":"Thêm mới chính sách phí ngân hàng",
+    "/secure-panel/fee-v4/fee-bankV4/edit/*":"Cập nhật chính sách phí ngân hàng",
+    "/secure-panel/fee-v4/fee-scheduleV4":"Biểu phí hiệu lực",
 
     "/secure-panel/role-v2/user-account":"Quản lý phân quyền",
     "/secure-panel/role-v2/role-management":"Quản lý quyền quản trị",

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Popover } from 'antd'
-import { ButtonComponent } from '@components/index'
+import { ButtonComponent, ReasonDialog } from '@components/index'
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
@@ -11,44 +11,23 @@ import {
   usePatchApproveAssignMutation,
   usePatchRejectAssignMutation
 } from '@services/apiFeeAssignment'
+import {
+  getFeeApprovalDecision,
+  MISSING_REVIEW_INFO_MESSAGE
+} from '@utils/fee-approval'
 import type { FeeAssignment } from '../constants/feeAssignment'
 
 interface FeeAssignmentApprovalActionProps {
   assignment: FeeAssignment
 }
 
-type Decision = 'approve' | 'reject'
-
 const APPROVABLE_STATUS = 'INIT'
-
-const getErrorMessage = (error: unknown, decision: Decision): string => {
-  if (typeof error === 'object' && error !== null) {
-    if ('status' in error && error.status === 'FETCH_ERROR') {
-      return 'Không kết nối được máy chủ. Kiểm tra kết nối mạng rồi thử lại.'
-    }
-
-    if ('data' in error) {
-      const data = error.data
-      if (typeof data === 'object' && data !== null) {
-        if ('detail' in data && typeof data.detail === 'string') {
-          return data.detail
-        }
-        if ('message' in data && typeof data.message === 'string') {
-          return data.message
-        }
-      }
-    }
-  }
-
-  return decision === 'approve'
-    ? 'Không thể phê duyệt gán phí. Vui lòng thử lại.'
-    : 'Không thể từ chối gán phí. Vui lòng thử lại.'
-}
 
 const FeeAssignmentApprovalAction = ({
   assignment
 }: FeeAssignmentApprovalActionProps) => {
   const [open, setOpen] = useState(false)
+  const [isRejectOpen, setIsRejectOpen] = useState(false)
   const [hasBeenProcessed, setHasBeenProcessed] = useState(false)
   const { successMess, errorMess } = useMessage()
   const [approveAssignment, { isLoading: isApproving }] =
@@ -59,98 +38,147 @@ const FeeAssignmentApprovalAction = ({
   const isLoading = isApproving || isRejecting
   const isProcessed =
     hasBeenProcessed || assignment.status !== APPROVABLE_STATUS
+  // BE dùng optimistic lock: duyệt phải kèm phiên bản + mã băm bản ghi đang xem.
+  const approvalDecision = getFeeApprovalDecision(assignment)
 
-  const handleDecision = async (decision: Decision): Promise<void> => {
+  const settle = (message: string) => {
+    setHasBeenProcessed(true)
+    setIsRejectOpen(false)
+    setOpen(false)
+    successMess(message)
+  }
+
+  const handleApprove = async (): Promise<void> => {
+    if (isLoading || isProcessed) return
+    if (!approvalDecision) {
+      errorMess(MISSING_REVIEW_INFO_MESSAGE)
+      return
+    }
+
+    try {
+      await approveAssignment({
+        id: assignment.id,
+        ...approvalDecision
+      }).unwrap()
+      settle('Phê duyệt gán phí thành công')
+    } catch {
+      // fetchBaseQueryCustom đã bắn notification lỗi tập trung.
+    }
+  }
+
+  const handleReject = async (reason: string): Promise<void> => {
     if (isLoading || isProcessed) return
 
     try {
-      if (decision === 'approve') {
-        await approveAssignment(assignment.id).unwrap()
-      } else {
-        await rejectAssignment(assignment.id).unwrap()
-      }
-
-      setHasBeenProcessed(true)
-      setOpen(false)
-      successMess(
-        decision === 'approve'
-          ? 'Phê duyệt gán phí thành công'
-          : 'Từ chối gán phí thành công'
-      )
-    } catch (error) {
-      errorMess(getErrorMessage(error, decision))
+      await rejectAssignment({ id: assignment.id, reason }).unwrap()
+      settle('Từ chối gán phí thành công')
+    } catch {
+      // fetchBaseQueryCustom đã bắn notification lỗi tập trung.
     }
   }
 
   const approvalContent = (
-    <div className='flex max-w-[calc(100vw-3rem)] flex-col gap-3'>
-      <p className='m-0 wrap-break-word text-sm leading-5 text-gray-700'>
-        Chọn kết quả xử lý cho thiết lập gán phí này.
-      </p>
-      <div className='flex flex-col gap-2 sm:flex-row sm:flex-nowrap sm:items-center sm:justify-end'>
-        <ButtonComponent
-          htmlType='button'
-          type='default'
-          content='Hủy bỏ'
-          className='w-full sm:w-auto sm:shrink-0'
-          disabled={isLoading}
-          onClick={() => setOpen(false)}
-        />
+    <div className='flex w-80 max-w-full min-w-0 flex-col gap-3'>
+      <div className='flex min-w-0 flex-col gap-1'>
+        <p className='m-0 max-h-25 min-w-0 overflow-y-auto text-[13px] leading-5 break-words text-foreground'>
+          Chọn kết quả xử lý cho thiết lập gán phí này.
+        </p>
+        {approvalDecision ? (
+          <p className='m-0 min-w-0 text-xs leading-4 break-words text-muted-foreground'>
+            Phiên bản{' '}
+            <span className='tabular-nums'>
+              #{approvalDecision.expectedLockVersion}
+            </span>{' '}
+            · Mã kiểm duyệt{' '}
+            <span className='font-mono'>
+              {approvalDecision.expectedReviewHash.slice(0, 8)}
+            </span>
+          </p>
+        ) : (
+          <p className='m-0 min-w-0 text-xs leading-4 break-words text-danger-strong'>
+            {MISSING_REVIEW_INFO_MESSAGE}
+          </p>
+        )}
+      </div>
+      <div className='grid grid-cols-1 gap-2 min-[384px]:grid-cols-2'>
         <ButtonComponent
           htmlType='button'
           type='primary'
           danger
           content='Từ chối duyệt'
           icon={<CloseCircleOutlined />}
-          className='w-full sm:w-auto sm:shrink-0'
+          className='order-2 w-full pointer-coarse:h-11! min-[384px]:order-none'
           loading={isRejecting}
           disabled={isLoading}
-          onClick={() => handleDecision('reject')}
+          onClick={() => setIsRejectOpen(true)}
         />
         <ButtonComponent
           htmlType='button'
           type='primary'
           content='Duyệt gán phí'
           icon={<CheckCircleOutlined />}
-          className='w-full sm:w-auto sm:shrink-0'
+          className='order-1 w-full pointer-coarse:h-11! min-[384px]:order-none'
           loading={isApproving}
-          disabled={isLoading}
-          onClick={() => handleDecision('approve')}
+          disabled={isLoading || !approvalDecision}
+          onClick={handleApprove}
         />
       </div>
+      <ButtonComponent
+        htmlType='button'
+        type='text'
+        content='Hủy bỏ'
+        className='w-full pointer-coarse:h-11! min-[384px]:w-auto min-[384px]:self-center'
+        disabled={isLoading}
+        onClick={() => setOpen(false)}
+      />
     </div>
   )
 
   return (
-    <Popover
-      title='Phê duyệt gán phí'
-      content={approvalContent}
-      trigger='click'
-      placement='bottomRight'
-      open={!isProcessed && open}
-      onOpenChange={(nextOpen) => {
-        if (!isLoading && !isProcessed) setOpen(nextOpen)
-      }}
-    >
-      <span className='inline-flex'>
-        <ButtonComponent
-          aria-label={
-            isProcessed ? 'Gán phí đã được xử lý' : 'Phê duyệt gán phí'
-          }
-          title={
-            isProcessed
-              ? 'Gán phí đã được phê duyệt hoặc từ chối'
-              : 'Phê duyệt gán phí'
-          }
-          htmlType='button'
-          type='default'
-          size='small'
-          icon={<SafetyOutlined />}
-          loading={isLoading}
-          disabled={isProcessed || isLoading}
-        />
-      </span>
-    </Popover>
+    <>
+      <Popover
+        title='Phê duyệt gán phí'
+        content={approvalContent}
+        trigger='click'
+        placement='bottomRight'
+        styles={{ root: { maxWidth: 'calc(100vw - 24px)' } }}
+        open={!isProcessed && !isRejectOpen && open}
+        onOpenChange={(nextOpen) => {
+          if (!isLoading && !isProcessed) setOpen(nextOpen)
+        }}
+      >
+        <span className='inline-flex'>
+          <ButtonComponent
+            aria-label={
+              isProcessed ? 'Gán phí đã được xử lý' : 'Phê duyệt gán phí'
+            }
+            title={
+              isProcessed
+                ? 'Gán phí đã được phê duyệt hoặc từ chối'
+                : 'Phê duyệt gán phí'
+            }
+            htmlType='button'
+            type='default'
+            size='small'
+            icon={<SafetyOutlined />}
+            loading={isLoading}
+            disabled={isProcessed || isLoading}
+          />
+        </span>
+      </Popover>
+      <ReasonDialog
+        open={isRejectOpen}
+        title='Từ chối duyệt gán phí'
+        description='Thiết lập gán phí này sẽ chuyển sang trạng thái bị từ chối.'
+        label='Lý do từ chối'
+        placeholder='Ví dụ: sai ngân hàng áp dụng, trùng với gán phí đang hoạt động'
+        okText='Xác nhận từ chối'
+        danger
+        confirmLoading={isRejecting}
+        onConfirm={handleReject}
+        onCancel={() => setIsRejectOpen(false)}
+      />
+    </>
   )
 }
 

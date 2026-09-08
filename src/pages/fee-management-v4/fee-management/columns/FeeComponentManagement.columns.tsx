@@ -3,9 +3,13 @@ import { ButtonComponent, TooltipComponent } from '@components/index'
 import {
   getEnumLabel
 } from '@pages/fee-management-v4/fee-assignment/utils/FeeManagement.utils'
+import {
+  formatFeeComponentAmount,
+  formatFeeLimit
+} from '@utils/fee-format'
 import { ColumnsType } from 'antd/es/table'
 import { FeeComponent } from '../types/FeeComponent.types'
-import { baseOnLabel, beneficiaryTypeLabel, calculationMethodEnumLabel, componentTypeLabel, payerTypeLabel } from '../constants/FeeManagement.constant'
+import { baseOnLabel, calculationMethodEnumLabel, componentTypeLabel, payerTypeLabel } from '../constants/FeeManagement.constant'
 
 interface FeeComponentColumnsProps {
   setSelectedRow?: (row: FeeComponent) => void
@@ -16,6 +20,8 @@ interface FeeComponentColumnsProps {
   listBaseOn?: Record<string, string>
   dataSource?: FeeComponent[]
   errorMess: (message: string) => void
+  /** Ẩn cột thao tác khi bảng chỉ để xem (chính sách đã duyệt, màn gán phí). */
+  readOnly?: boolean
 }
 
 export const getFeeComponentColumns = ({
@@ -23,73 +29,95 @@ export const getFeeComponentColumns = ({
   setOpen,
   setOpenDialog,
   dataSource,
-  errorMess
+  errorMess,
+  readOnly = false
 }: FeeComponentColumnsProps): ColumnsType<FeeComponent> => {
-
-  return [
+  const columns: ColumnsType<FeeComponent> = [
     {
-      title: '#',
-      dataIndex: 'no',
-      width: 60,
-      align: 'center' as const,
-      render: (_value, _record, index) => index + 1 // Assuming 'no' might not be in the data record itself or we can just use index
-    },
-    {
-      title: 'Loại',
+      title: 'Loại phí',
       dataIndex: 'componentType',
       key: 'componentType',
-      render: (value: string) => getEnumLabel(value, componentTypeLabel)
+      width: 200,
+      render: (value: string) => (
+        <span className='font-medium text-foreground'>
+          {getEnumLabel(value, componentTypeLabel)}
+        </span>
+      )
+    },
+    {
+      title: 'Mức phí',
+      key: 'amount',
+      width: 160,
+      align: 'right' as const,
+      render: (_value, record) => (
+        <span className='whitespace-nowrap font-medium tabular-nums'>
+          {formatFeeComponentAmount(record)}
+        </span>
+      )
+    },
+    {
+      title: 'Tối thiểu / Tối đa',
+      key: 'feeLimit',
+      width: 170,
+      align: 'right' as const,
+      render: (_value, record) => (
+        <div className='flex flex-col whitespace-nowrap text-xs tabular-nums'>
+          <span>Min: {formatFeeLimit(record.minFee)}</span>
+          <span>Max: {formatFeeLimit(record.maxFee)}</span>
+        </div>
+      )
     },
     {
       title: 'Cách tính',
       dataIndex: 'calculationMethod',
       key: 'calculationMethod',
+      width: 150,
       render: (value: string) =>
         getEnumLabel(value, calculationMethodEnumLabel)
+    },
+    {
+      title: 'Tính trên',
+      dataIndex: 'baseOn',
+      key: 'baseOn',
+      width: 190,
+      render: (value: string) => getEnumLabel(value, baseOnLabel)
     },
     {
       title: 'Người trả',
       dataIndex: 'payerType',
       key: 'payerType',
-      render(value: string) {
-        return getEnumLabel(value, payerTypeLabel)
-      },
-    },
-    {
-      title: 'Người hưởng',
-      dataIndex: 'beneficiaryType',
-      key: 'beneficiaryType',
-      render: (value: string) => getEnumLabel(value, beneficiaryTypeLabel)
-    },
-    {
-      title: 'Dựa trên',
-      dataIndex: 'baseOn',
-      key: 'baseOn',
-      render: (value: string) => getEnumLabel(value, baseOnLabel)
-    },
+      width: 130,
+      render: (value: string) => getEnumLabel(value, payerTypeLabel)
+    }
+  ]
 
+  if (readOnly) return columns
+
+  return [
+    ...columns,
     {
       title: 'Thao tác',
       key: 'action',
       width: 100,
       align: 'center' as const,
+      fixed: 'right' as const,
       render: (_value, record) => (
         <div className='flex gap-1 justify-center'>
           <TooltipComponent title='Cập nhật'>
             <ButtonComponent
+              aria-label='Cập nhật thành phần phí'
               size='small'
               type='default'
               icon={<EditOutlined />}
               onClick={() => {
                 setSelectedRow?.(record)
                 setOpen?.(true)
-                // console.log(record)
-                // if (record.id) setUpdateComponentId(record.id)
               }}
             />
           </TooltipComponent>
           <TooltipComponent title='Xóa'>
             <ButtonComponent
+              aria-label='Xóa thành phần phí'
               size='small'
               danger
               type='default'

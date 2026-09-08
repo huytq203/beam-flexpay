@@ -297,6 +297,10 @@ export const WHITE_LIST: WhiteListItem[] = [
       requestUrlEndsWith: '/export',
       includeNestedPaths: true
     },
+    {
+      pathname: WALLETADMINISTRATION + '/confirm-eKYC',
+      requestUrlEndsWith: '/export'
+    },
 
     // { pathname: WALLETADMINISTRATION + '/role-management', requestUrl: '/wallet/transactions' },
 ]
@@ -331,6 +335,25 @@ export const isPasswordResetRequest = (url?: string): boolean => {
 
 export const isAdminChangePasswordRequest = (url?: string): boolean =>
   normalizeUrl(url).startsWith('/auth/change-password')
+
+const OPAQUE_ERROR_URL_PREFIXES = ['/withdrawals'] as const
+const OPAQUE_ERROR_URL_SUFFIXES = ['/update-status'] as const
+
+/**
+ * Endpoint mà `message` của BE là mã máy, không phải câu nói được với người dùng.
+ *
+ * Bộ bắt lỗi chung của user-wallet nuốt mất mô tả cụ thể và luôn trả
+ * `BUSINESS_ERROR`; đổ nguyên chuỗi đó lên notification là hiện raw response.
+ * Những request này vẫn đi qua luồng refresh token 401 như mọi request khác —
+ * chỉ notification tập trung bị tắt để màn tự diễn giải theo trạng thái đọc lại.
+ */
+export const suppressesErrorNotification = (url?: string): boolean => {
+  const cleanUrl = normalizeUrl(url)
+  return (
+    OPAQUE_ERROR_URL_PREFIXES.some((prefix) => cleanUrl.startsWith(prefix)) ||
+    OPAQUE_ERROR_URL_SUFFIXES.some((suffix) => cleanUrl.endsWith(suffix))
+  )
+}
 
 const matchesRequestUrl = (
   item: WhiteListItem,

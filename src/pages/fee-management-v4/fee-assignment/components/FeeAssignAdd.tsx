@@ -2,6 +2,7 @@ import {
   ButtonComponent,
   CardComponent,
   DialogModal,
+  FeeDirectionBadge,
   ModalComponent
 } from '@components/index'
 import { useSVG } from '@hooks/useSVG'
@@ -56,9 +57,19 @@ const FeeAssignAdd = () => {
     <div className='space-y-3'>
       <CardComponent className='' styles={{ body: { padding: '12px 24px' } }}>
         <div className='flex justify-between items-center'>
-          <div className='flex items-center gap-2 text-green-600'>
-            <Icons.EditOutlined className='text-[18px] bg-blue-50 p-2 rounded-sm' />
-            <p className='font-semibold text-[16px]'>Cập nhật gán phí</p>
+          <div className='flex items-center gap-3'>
+            <Icons.EditOutlined className='text-[18px] text-blue-600 bg-blue-50 p-2 rounded-sm' />
+            <div>
+              <p className='font-semibold text-[16px] text-foreground'>Cập nhật gán phí</p>
+              {policyData?.serviceType && (
+                <div className='mt-1 flex items-center gap-2'>
+                  <FeeDirectionBadge serviceType={policyData.serviceType} />
+                  <span className='text-xs text-muted-foreground'>
+                    kế thừa từ chính sách {policyData.name}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
           <div className="flex gap-2">
 

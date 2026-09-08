@@ -1,4 +1,10 @@
-import { ButtonComponent, CardComponent, Table } from '@components/index'
+import {
+  ButtonComponent,
+  CardComponent,
+  StuckTransactionUpdateAction,
+  Table,
+  WithdrawalDecisionPanel
+} from '@components/index'
 import Column from './columns/DetailTransaction.column'
 import { ArrowCounterClockwiseIcon, PrinterOutlined } from '@components/icons'
 import CommonInfo from './components/CommonInfo'
@@ -53,9 +59,21 @@ const DetailTransaction = () => {
         </div>
         <div className='flex flex-wrap items-center gap-2'>
           <ButtonComponent icon={<PrinterOutlined />} type='default' content='In phiếu' />
+          <StuckTransactionUpdateAction
+            transactionCode={getTransactionById.transactionCode}
+            transactionType={getTransactionById.transactionType}
+            journalStatus={getTransactionById.status}
+          />
           <ButtonComponent icon={<ArrowCounterClockwiseIcon size={16} weight={'bold'} />} className='bg-orange-600 text-white hover:bg-orange-500! hover:text-white!' content='Hoàn tiền' />
         </div>
       </div>
+      <WithdrawalDecisionPanel
+        className='mb-3'
+        transactionCode={getTransactionById.transactionCode}
+        transactionType={getTransactionById.transactionType}
+        currency={currency}
+      />
+
       <div className='grid grid-cols-1 items-start gap-3 lg:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]'>
         <div className='flex min-w-0 flex-col gap-3'>
           <CardComponent content={<CommonInfo data={getTransactionById} />} />

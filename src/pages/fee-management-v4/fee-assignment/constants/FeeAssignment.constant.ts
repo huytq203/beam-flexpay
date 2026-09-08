@@ -13,7 +13,8 @@ export enum serviceType {
   EWALLET_TRANSFER_INTERNAL = 'EWALLET_TRANSFER_INTERNAL',
   EWALLET_TRANSFER_EXTERNAL = 'EWALLET_TRANSFER_EXTERNAL',
   EWALLET_CASHBACK = 'EWALLET_CASHBACK',
-  MERCHANT_VA_BILL_COLLECTION = 'MERCHANT_VA_BILL_COLLECTION'
+  MERCHANT_VA_BILL_COLLECTION = 'MERCHANT_VA_BILL_COLLECTION',
+  PAYOUT_BANK_TRANSFER = 'PAYOUT_BANK_TRANSFER'
 }
 
 export const serviceTypeLable={
@@ -22,7 +23,8 @@ export const serviceTypeLable={
     [serviceType.EWALLET_TRANSFER_INTERNAL]: 'Chuyển tiền nội bộ',
     [serviceType.EWALLET_TRANSFER_EXTERNAL]: 'Chuyển tiền liên ngân hàng',
     [serviceType.EWALLET_CASHBACK]: 'Hoàn tiền',
-    [serviceType.MERCHANT_VA_BILL_COLLECTION]: 'Thu hộ VA'
+    [serviceType.MERCHANT_VA_BILL_COLLECTION]: 'Thu hộ VA',
+    [serviceType.PAYOUT_BANK_TRANSFER]: 'Chi hộ chuyển khoản ngân hàng'
 }
 export enum paymentMethodType {
   ATM = 'ATM',

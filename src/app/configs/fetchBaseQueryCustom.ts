@@ -24,6 +24,7 @@ import {
   isInWhiteList,
   isAdminChangePasswordRequest,
   isPasswordResetRequest,
+  suppressesErrorNotification,
   normalizePathname,
   callApi,
   persistAccessTokenCookie
@@ -374,6 +375,9 @@ const createCustomBaseQuery = (
     const requestUrl = typeof args === 'string' ? args : requestArgs?.url
     const handlesErrorLocally = isPasswordResetRequest(requestUrl)
     const isChangePasswordRequest = isAdminChangePasswordRequest(requestUrl)
+    // Tắt notification tập trung nhưng vẫn giữ luồng refresh token 401.
+    const hidesErrorNotification =
+      isChangePasswordRequest || suppressesErrorNotification(requestUrl)
 
     const shouldShowLoading =
       isLoading !== false &&
@@ -410,7 +414,7 @@ const createCustomBaseQuery = (
 
         case HttpStatus.BAD_REQUEST: {
           const errorData = result.error.data as ApiErrorResponse
-          if (errorData?.message && !isChangePasswordRequest) {
+          if (errorData?.message && !hidesErrorNotification) {
             openNotification(errorData.message)
           }
           break
@@ -421,7 +425,7 @@ const createCustomBaseQuery = (
 
         default: {
           const errorData = result.error.data as ApiErrorResponse
-          if (errorData?.message && !isChangePasswordRequest) {
+          if (errorData?.message && !hidesErrorNotification) {
             openNotification(errorData.message)
           }
           break

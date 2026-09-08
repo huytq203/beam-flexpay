@@ -67,7 +67,7 @@ const allComponentTypeForDisplay = useMemo(() => {
   return (
     <div className='overflow-auto'>
       <CardComponent
-        className='mb-3'
+        className='mb-3!'
         style={{ width: '100%' }}
         content={
           <>

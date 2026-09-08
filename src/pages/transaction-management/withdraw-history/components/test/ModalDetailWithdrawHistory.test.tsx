@@ -1,4 +1,5 @@
 import { renderWithProviders } from '@/test/render'
+import { MessageProvider } from '@hooks/useMessage'
 import { server } from '@/test/mocks/server'
 import type { UnifiedContentJournal } from '@type/apiResponseJournal'
 import { fireEvent, screen, waitFor } from '@testing-library/react'
@@ -121,10 +122,12 @@ describe('useHandle withdraw detail', () => {
 describe('ModalDetailWithdrawHistory', () => {
   it('hiển thị thông tin thụ hưởng đã tải trước', () => {
     renderWithProviders(
-      <DialogDetailWithdrawHistory
-        data={journal}
-        withdrawalDetail={withdrawalResponse.data}
-      />
+      <MessageProvider>
+        <DialogDetailWithdrawHistory
+          data={journal}
+          withdrawalDetail={withdrawalResponse.data}
+        />
+      </MessageProvider>
     )
 
     expect(screen.getByText('2020000000011')).toBeInTheDocument()
@@ -133,10 +136,12 @@ describe('ModalDetailWithdrawHistory', () => {
 
   it('hiển thị trạng thái rỗng khi không có người thụ hưởng', () => {
     renderWithProviders(
-      <DialogDetailWithdrawHistory
-        data={journal}
-        withdrawalDetail={{ ...withdrawalResponse.data, beneficiary: null }}
-      />
+      <MessageProvider>
+        <DialogDetailWithdrawHistory
+          data={journal}
+          withdrawalDetail={{ ...withdrawalResponse.data, beneficiary: null }}
+        />
+      </MessageProvider>
     )
 
     expect(

@@ -2,6 +2,14 @@ import type {
   ApplicableFeeRule,
   FeeEffectiveStatus
 } from '@/app/schemas/applicable-fee-rule.schema'
+import {
+  CARD_TYPE_LABELS,
+  COMPONENT_TYPE_LABELS,
+  EFFECTIVE_STATUS_CONFIG,
+  getFeeLabel as getLabel,
+  PAYMENT_METHOD_LABELS,
+  SERVICE_TYPE_LABELS
+} from '@constants/feeLabels'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import type { ColumnsType } from 'antd/es/table'
 import {
@@ -16,63 +24,11 @@ const APPLIED_OBJECT_LABELS: Readonly<Record<string, string>> = {
   ALL: 'Tất cả'
 }
 
-const SERVICE_TYPE_LABELS: Readonly<Record<string, string>> = {
-  EWALLET_DEPOSIT: 'Nạp tiền ví',
-  EWALLET_WITHDRAWAL: 'Rút tiền ví',
-  EWALLET_TRANSFER_INTERNAL: 'Chuyển tiền nội bộ',
-  EWALLET_TRANSFER_EXTERNAL: 'Chuyển tiền liên ngân hàng',
-  EWALLET_CASHBACK: 'Hoàn tiền',
-  MERCHANT_VA_BILL_COLLECTION: 'Thu hộ VA'
-}
-
-const PAYMENT_METHOD_LABELS: Readonly<Record<string, string>> = {
-  ATM: 'ATM',
-  CC: 'Thẻ tín dụng',
-  CREDIT_CARD: 'Thẻ tín dụng',
-  QR_CODE: 'Quét mã QR',
-  BANK_TRANSFER: 'Chuyển khoản ngân hàng',
-  LINKED_ACCOUNT: 'Tài khoản liên kết',
-  WALLET_BALANCE: 'Tài khoản ví',
-  VA: 'Tài khoản ảo'
-}
-
-const CARD_TYPE_LABELS: Readonly<Record<string, string>> = {
-  DOMESTIC: 'Nội địa',
-  INTERNATIONAL: 'Quốc tế'
-}
-
-const COMPONENT_TYPE_LABELS: Readonly<Record<string, string>> = {
-  TRANSACTION_FEE: 'Phí giao dịch cơ bản',
-  SYSTEM_FEE: 'Phí hệ thống',
-  MERCHANT_FEE: 'Phí merchant',
-  BANK_FEE: 'Phí ngân hàng',
-  PLATFORM_FEE: 'Phí nền tảng',
-  VAT: 'Thuế VAT',
-  SERVICE_FEE: 'Phí dịch vụ',
-  PROCESSING_FEE: 'Phí xử lý',
-  REFUND_FEE: 'Phí hoàn tiền'
-}
-
-const EFFECTIVE_STATUS_CONFIG: Record<
-  FeeEffectiveStatus,
-  { label: string; className: string }
-> = {
-  PENDING: { label: 'Chờ áp dụng', className: 'warning-status' },
-  ACTIVE: { label: 'Đang áp dụng', className: 'success-status' },
-  EXPIRED: { label: 'Hết hạn', className: 'danger-status' }
-}
-
 export interface ApplicableFeeRuleTableRow extends ApplicableFeeRule {
   rowKey: string
   no: number
   accountLabel: string
 }
-
-const getLabel = (
-  value: string | null,
-  labels: Readonly<Record<string, string>>,
-  emptyLabel = 'Tất cả'
-): string => (value ? labels[value] ?? value : emptyLabel)
 
 const getAppliedObjectDetail = (
   record: ApplicableFeeRuleTableRow

@@ -1,6 +1,7 @@
 import { apiFeeService } from './apiService'
 import { FeeAssignment, FeeAssignResponse } from '@pages/fee-management-v4/fee-assignment/constants/feeAssignment'
 import { ResponseType } from '@type/api'
+import type { FeeApprovalArg, FeeReasonArg } from '@type/feeApproval.type'
 const feeAssignApi = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
     getAssignSearch: build.query<FeeAssignResponse, Record<string, unknown>>({
@@ -36,33 +37,35 @@ const feeAssignApi = apiFeeService.injectEndpoints({
       }),
       invalidatesTags: ['feeAssign']
     }),
-    patchAssignActive: build.mutation({
-      query: (id) => ({
+    patchAssignActive: build.mutation<ResponseType<FeeAssignment>, FeeReasonArg>({
+      query: ({ id, reason }) => ({
         url: `/fee/policy-assignments/${id}/activate`,
         method: "PATCH",
+        params: { reason }
       }),
       invalidatesTags: ['feeAssign']
     }),
-    patchAssignInActive: build.mutation({
+    patchAssignInActive: build.mutation<ResponseType<FeeAssignment>, string>({
       query: (id) => ({
         url: `/fee/policy-assignments/${id}/deactivate`,
         method: "PATCH",
       }),
       invalidatesTags: ['feeAssign']
     }),
-    patchApproveAssign: build.mutation({
-      query: (id: string) => ({
+    patchApproveAssign: build.mutation<ResponseType<FeeAssignment>, FeeApprovalArg>({
+      query: ({ id, ...body }) => ({
         url: `/fee/policy-assignments/${id}/approve`,
         method: "PATCH",
+        body,
         params: { isLoading: false }
       }),
       invalidatesTags: ['feeAssign']
     }),
-    patchRejectAssign: build.mutation({
-      query: (id: string) => ({
+    patchRejectAssign: build.mutation<ResponseType<FeeAssignment>, FeeReasonArg>({
+      query: ({ id, reason }) => ({
         url: `/fee/policy-assignments/${id}/reject`,
         method: "PATCH",
-        params: { isLoading: false }
+        params: { isLoading: false, reason }
       }),
       invalidatesTags: ['feeAssign']
     }),

@@ -64,6 +64,11 @@ export {
   ShieldCheckIcon,
   XCircleIcon,
   MinusCircleIcon,
+  ArrowDownIcon,
+  ArrowUpIcon,
+  ArrowsLeftRightIcon,
+  BankIcon,
+  ScalesIcon,
 } from "@phosphor-icons/react";
 export {
   CornerDownRight,

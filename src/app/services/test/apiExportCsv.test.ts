@@ -2,7 +2,11 @@ import { createAppStore } from '@/app/store'
 import { server } from '@/test/mocks/server'
 import { http, HttpResponse } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
-import { apiExportFeeCsv, apiExportWalletCsv } from '../apiExportCsv'
+import {
+  apiExportFeeCsv,
+  apiExportIdentityCsv,
+  apiExportWalletCsv
+} from '../apiExportCsv'
 
 const ACCOUNT_ID = 'bc948626-2c8f-4f41-a866-7540d59a7e07'
 
@@ -80,6 +84,76 @@ describe('apiExportCsv', () => {
     expect(calledUrl).toContain(
       `/wallet/accounts/${ACCOUNT_ID}/bank-links/export`
     )
+  })
+
+  it('xuất sổ cái với bộ lọc riêng của bảng bút toán, không gửi phân trang', async () => {
+    let calledUrl = ''
+    server.use(
+      http.get('*/wallet/entries/export', ({ request }) => {
+        calledUrl = request.url
+        return HttpResponse.text('ma_giao_dich\nTX1', {
+          headers: {
+            'content-type': 'text/csv',
+            'content-disposition': 'attachment; filename="So-cai_20260908-101500.csv"'
+          }
+        })
+      })
+    )
+    const store = createAppStore()
+
+    const result = await store.dispatch(
+      apiExportWalletCsv.endpoints.exportLedgerEntries.initiate({
+        ownerUsername: '0962341913',
+        ownerType: 'USER',
+        direction: 'DEBIT',
+        transactionType: 'JOURNAL_REVERSAL',
+        glCode: 'USER_WALLET_VND',
+        minAmount: 1000
+      })
+    )
+
+    const searchParams = new URL(calledUrl).searchParams
+    expect(result.data?.filename).toBe('So-cai_20260908-101500.csv')
+    expect(searchParams.get('ownerUsername')).toBe('0962341913')
+    expect(searchParams.get('ownerType')).toBe('USER')
+    expect(searchParams.get('direction')).toBe('DEBIT')
+    expect(searchParams.get('transactionType')).toBe('JOURNAL_REVERSAL')
+    expect(searchParams.get('glCode')).toBe('USER_WALLET_VND')
+    expect(searchParams.get('minAmount')).toBe('1000')
+    expect(searchParams.get('page')).toBeNull()
+    expect(searchParams.get('size')).toBeNull()
+    // Sổ cái chỉ chứa bút toán đã hạch toán — không có tham số trạng thái.
+    expect(searchParams.get('status')).toBeNull()
+  })
+
+  it('xuất hồ sơ eKYC với bộ lọc hiện tại và không gửi phân trang', async () => {
+    let calledUrl = ''
+    server.use(
+      http.get('*/verified-kyc-profiles/export', ({ request }) => {
+        calledUrl = request.url
+        return HttpResponse.text('ho_ten\nNguyen Van A', {
+          headers: { 'content-type': 'text/csv' }
+        })
+      })
+    )
+    const store = createAppStore()
+
+    await store.dispatch(
+      apiExportIdentityCsv.endpoints.exportVerifiedKycProfiles.initiate({
+        keyword: 'Nguyen Van A',
+        status: 'VERIFIED',
+        createdFrom: '2026-09-01 00:00:00',
+        createdTo: '2026-09-08 23:59:59'
+      })
+    )
+
+    const searchParams = new URL(calledUrl).searchParams
+    expect(searchParams.get('keyword')).toBe('Nguyen Van A')
+    expect(searchParams.get('status')).toBe('VERIFIED')
+    expect(searchParams.get('createdFrom')).toBe('2026-09-01 00:00:00')
+    expect(searchParams.get('createdTo')).toBe('2026-09-08 23:59:59')
+    expect(searchParams.has('page')).toBe(false)
+    expect(searchParams.has('size')).toBe(false)
   })
 
   it('parse body lỗi JSON thay vì để nguyên Blob cho errorMiddleware', async () => {

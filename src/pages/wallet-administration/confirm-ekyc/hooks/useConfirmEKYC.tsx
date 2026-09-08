@@ -1,5 +1,7 @@
 import { useGetEKYCSearchQuery } from '@services/apiEKYC'
+import { useExportCsv } from '@hooks/useExportCsv'
 import usePagination from '@hooks/usePagination'
+import { useExportVerifiedKycProfilesMutation } from '@services/apiExportCsv'
 import { useState } from 'react'
 
 export type EKYCFilterType = {
@@ -24,6 +26,14 @@ const useConfirmEKYC = () => {
     const { data: dataEKYC, isLoading, isFetching, refetch } =
         useGetEKYCSearchQuery(payload)
 
+    const [triggerExport, { reset: resetExport }] =
+        useExportVerifiedKycProfilesMutation()
+    const { exportFile, isExporting } = useExportCsv({
+        trigger: triggerExport,
+        reset: resetExport,
+        filenamePrefix: 'danh-sach-ho-so-ekyc'
+    })
+
     const dataSource = dataEKYC?.content.map((item, index) => ({
         no: (page - 1) * pageSize + index + 1,
         ...item,
@@ -40,6 +50,10 @@ const useConfirmEKYC = () => {
         setPage(1)
     }
 
+    const handleExport = () => {
+        void exportFile(filter)
+    }
+
     return {
         dataSource,
         isLoading,
@@ -51,7 +65,9 @@ const useConfirmEKYC = () => {
         setPageSize,
         total: dataEKYC?.totalElements,
         handleSearch,
-        handleReset
+        handleReset,
+        handleExport,
+        isExporting
     }
 }
 

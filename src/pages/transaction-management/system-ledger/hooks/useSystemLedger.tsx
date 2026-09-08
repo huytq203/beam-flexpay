@@ -1,40 +1,76 @@
+import { useExportCsv } from '@hooks/useExportCsv'
 import usePagination from '@hooks/usePagination'
-import { useGetLedgerEntriesQuery } from '../services/apiSystemLedger'
-import { useMemo, useState } from 'react'
+import {
+  useExportLedgerEntriesMutation,
+  type ExportLedgerEntriesQuery
+} from '@services/apiExportCsv'
+import { useCallback, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useGetLedgerEntriesQuery } from '../services/apiSystemLedger'
 import { FormSearchValues } from '../types/SystemLedger.type'
 
+/** Ô để trống là "không lọc" — gửi chuỗi rỗng xuống API là gửi rác. */
+const dropEmpty = (filter: FormSearchValues): FormSearchValues =>
+  Object.fromEntries(
+    Object.entries(filter).filter(
+      ([, value]) => value !== '' && value !== undefined && value !== null
+    )
+  )
+
 const useSystemLedger = () => {
-  const [filter, setFilter] = useState({})
+  const [filter, setFilter] = useState<FormSearchValues>({})
   const navigate = useNavigate()
 
   const { page, pageSize, setPage, setPageSize } = usePagination({
-    defaultSort: 'createdAt',
+    defaultSort: 'createdAt'
   })
 
-  const payload={
-    page:page,
-    size:pageSize,
+  const payload = {
+    page,
+    size: pageSize,
     ...filter
   }
-  const { data: dataLedger, isFetching, refetch } =
-    useGetLedgerEntriesQuery(payload)
+  const {
+    data: dataLedger,
+    isFetching,
+    refetch
+  } = useGetLedgerEntriesQuery(payload)
+
+  const [triggerExport, { reset: resetExport }] =
+    useExportLedgerEntriesMutation()
+  const { exportFile, isExporting } = useExportCsv({
+    trigger: triggerExport,
+    reset: resetExport,
+    filenamePrefix: 'so-cai'
+  })
+
+  /** Endpoint xuất không nhận page/size — file lấy trọn bộ lọc, không theo trang. */
+  const exportParams = useMemo<ExportLedgerEntriesQuery>(() => filter, [filter])
+
+  const handleExport = useCallback(() => {
+    void exportFile(exportParams)
+  }, [exportFile, exportParams])
 
   const handleSearch = (data: FormSearchValues) => {
-    const trimmedData = Object.entries(data).reduce((acc, [key, value]) => {
-      acc[key as keyof FormSearchValues] = typeof value === 'string' ? value.trim() : value
+    const trimmed = Object.entries(data).reduce((acc, [key, value]) => {
+      acc[key as keyof FormSearchValues] =
+        typeof value === 'string' ? value.trim() : value
       return acc
     }, {} as FormSearchValues)
-    setFilter(trimmedData)
+
+    setFilter(dropEmpty(trimmed))
     setPage(1)
   }
+
   const totalElements = dataLedger?.totalElements
-  const dataSource = useMemo(() => (
-    dataLedger?.content?.map((item, idx) => ({
-      no: (page - 1) * pageSize + idx + 1,
-      ...item,
-    }))
-  ), [dataLedger, page, pageSize])
+  const dataSource = useMemo(
+    () =>
+      dataLedger?.content?.map((item, idx) => ({
+        no: (page - 1) * pageSize + idx + 1,
+        ...item
+      })),
+    [dataLedger, page, pageSize]
+  )
 
   return {
     dataSource,
@@ -46,7 +82,9 @@ const useSystemLedger = () => {
     navigate,
     handleSearch,
     refetch,
-    isFetching
+    isFetching,
+    handleExport,
+    isExporting
   }
 }
 

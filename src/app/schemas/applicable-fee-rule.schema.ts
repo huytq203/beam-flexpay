@@ -77,13 +77,44 @@ export const applicableFeeRulePageSchema = z.object({
   sort: feePageSortSchema
 })
 
+/**
+ * Hai trục lọc khác hẳn nhau trong cùng một bộ tham số:
+ *
+ * - `merchantId` / `customerGroup` trả lời "ví này chịu quy tắc nào", nên **bỏ
+ *   trống là một điều kiện** (ví không thuộc merchant nào, chưa phân nhóm).
+ * - Sáu tham số còn lại chỉ thu hẹp bảng đang hiển thị, nên **bỏ trống là không
+ *   lọc**. Bản gán để trống ô điều kiện nghĩa là "áp dụng cho tất cả" — lọc
+ *   `bankCode=VCB` vẫn phải trả về quy tắc không ghim ngân hàng vì chúng đang
+ *   thực sự có hiệu lực với VCB.
+ */
 export const applicableFeeRuleQuerySchema = z.object({
   merchantId: z.string().uuid().optional(),
   customerGroup: z.string().min(1).optional(),
   feeDomain: feeDomainSchema.optional(),
+  feePolicyId: z.string().uuid().optional(),
+  serviceType: z.string().min(1).optional(),
+  paymentMethod: z.string().min(1).optional(),
+  bankCode: z.string().min(1).optional(),
+  cardType: z.string().min(1).optional(),
+  /** Suy ra tại thời điểm gọi, không phải cột lưu trong DB. */
+  effectiveStatus: feeEffectiveStatusSchema.optional(),
   page: z.number().int().min(1).optional(),
   size: z.number().int().min(1).max(100).optional()
 })
+
+/** Sáu ô lọc thu hẹp bảng — tách riêng để form và query không lệch nhau. */
+export const applicableFeeRuleFilterSchema = applicableFeeRuleQuerySchema.pick({
+  feePolicyId: true,
+  serviceType: true,
+  paymentMethod: true,
+  bankCode: true,
+  cardType: true,
+  effectiveStatus: true
+})
+
+export type ApplicableFeeRuleFilter = z.infer<
+  typeof applicableFeeRuleFilterSchema
+>
 
 export type ApplicableFeeRule = z.infer<typeof applicableFeeRuleSchema>
 export type ApplicableFeeRulePage = z.infer<

@@ -1,7 +1,46 @@
+import { useExportCsv } from '@hooks/useExportCsv'
 import usePagination from '@hooks/usePagination'
+import {
+  useExportTransactionsMutation,
+  type ExportTransactionsQuery
+} from '@services/apiExportCsv'
 import { useGetUnifiedQuery } from '@services/apiJournal'
-import { useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { WithdrawSearchValues } from '../components/WithdrawHistorySearch'
+import { DEFAULT_WITHDRAW_TRANSACTION_TYPE } from '../constants/WithdrawHistory.constant'
+
+const dropEmpty = (
+  filter: Partial<WithdrawSearchValues>
+): Partial<WithdrawSearchValues> =>
+  Object.fromEntries(
+    Object.entries(filter).filter(
+      ([, v]) => v !== '' && v !== undefined && v !== null
+    )
+  )
+
+/**
+ * Map bộ lọc lưới sang params của `/wallet/transactions/export`. Lưới đổ từ
+ * `/journal/unified` nhưng hai bên đi qua chung một object bộ lọc, nên bảng và
+ * file không lệch nhau.
+ */
+const buildExportParams = (
+  filter: Partial<WithdrawSearchValues>,
+  transactionType: string
+): ExportTransactionsQuery => {
+  const p: ExportTransactionsQuery = { type: transactionType }
+
+  if (filter.keyword) p.keyword = filter.keyword
+  if (filter.transactionCode) p.transactionCode = filter.transactionCode
+  if (filter.status) p.status = filter.status
+  if (filter.bankCode) p.bankCode = filter.bankCode
+  if (filter.paymentMethod) p.paymentMethod = filter.paymentMethod
+  if (filter.fromDate) p.fromDate = filter.fromDate
+  if (filter.toDate) p.toDate = filter.toDate
+  if (filter.successFrom) p.successFrom = filter.successFrom
+  if (filter.successTo) p.successTo = filter.successTo
+
+  return p
+}
 
 const useFetchDataWithdraw = () => {
   const { page, pageSize, setPage, setPageSize, sort, sortBy } = usePagination()
@@ -9,17 +48,17 @@ const useFetchDataWithdraw = () => {
     Partial<WithdrawSearchValues>
   >({})
 
+  // Ô "Loại giao dịch rút" để trống thì màn vẫn phải ghim về nhóm rút.
+  const transactionType =
+    searchParams.transactionType || DEFAULT_WITHDRAW_TRANSACTION_TYPE
+
   const payload = {
     page,
     pageSize,
     sortBy: sort,
     sortDirection: sortBy,
-    transactionType: 'CASH_OUT',
-    ...Object.fromEntries(
-      Object.entries(searchParams).filter(
-        ([, v]) => v !== '' && v !== undefined && v !== null
-      )
-    )
+    ...dropEmpty(searchParams),
+    transactionType
   }
 
   const {
@@ -28,6 +67,22 @@ const useFetchDataWithdraw = () => {
     isFetching,
     refetch
   } = useGetUnifiedQuery(payload)
+
+  const [triggerExport, { reset: resetExport }] = useExportTransactionsMutation()
+  const { exportFile, isExporting } = useExportCsv({
+    trigger: triggerExport,
+    reset: resetExport,
+    filenamePrefix: 'lich-su-rut-tien'
+  })
+
+  const exportParams = useMemo(
+    () => buildExportParams(searchParams, transactionType),
+    [searchParams, transactionType]
+  )
+
+  const handleExport = useCallback(() => {
+    void exportFile(exportParams)
+  }, [exportFile, exportParams])
 
   const dataSource = dataWithdraw?.content.map((item, index) => ({
     no: (page - 1) * pageSize + index + 1,
@@ -42,7 +97,7 @@ const useFetchDataWithdraw = () => {
       return acc
     }, {} as WithdrawSearchValues)
 
-    setSearchParams(trimmedData)
+    setSearchParams(dropEmpty(trimmedData))
     setPage(1)
   }
 
@@ -56,7 +111,9 @@ const useFetchDataWithdraw = () => {
     dataSource,
     handleSearch,
     refetch,
-    isFetching
+    isFetching,
+    handleExport,
+    isExporting
   }
 }
 

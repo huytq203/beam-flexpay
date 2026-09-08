@@ -8,8 +8,12 @@ import { server } from '@/test/mocks/server'
 import FeeAssignmentApprovalAction from '../FeeAssignmentApprovalAction'
 import type { FeeAssignment } from '../../constants/feeAssignment'
 
+const REVIEW_HASH = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+
 const assignment: FeeAssignment = {
   id: 'assignment-1',
+  lockVersion: 3,
+  reviewHash: REVIEW_HASH,
   feePolicyId: 'policy-1',
   merchantId: null,
   bankCode: 'VCB',
@@ -41,11 +45,16 @@ const renderAction = (overrides: Partial<FeeAssignment> = {}) => {
 describe('FeeAssignmentApprovalAction', () => {
   it('phê duyệt gán phí, đóng popover và khóa nút sau khi thành công', async () => {
     let approveRequestCount = 0
+    let approveBody: unknown = null
     server.use(
-      http.patch('*/fee/policy-assignments/assignment-1/approve', () => {
-        approveRequestCount += 1
-        return HttpResponse.json({ success: true, data: null })
-      })
+      http.patch(
+        '*/fee/policy-assignments/assignment-1/approve',
+        async ({ request }) => {
+          approveRequestCount += 1
+          approveBody = await request.json()
+          return HttpResponse.json({ success: true, data: null })
+        }
+      )
     )
     const { user } = renderAction()
 
@@ -57,6 +66,10 @@ describe('FeeAssignmentApprovalAction', () => {
     )
 
     await waitFor(() => expect(approveRequestCount).toBe(1))
+    expect(approveBody).toEqual({
+      expectedLockVersion: 3,
+      expectedReviewHash: REVIEW_HASH
+    })
     expect(
       screen.getByRole('button', { name: 'Gán phí đã được xử lý' })
     ).toBeDisabled()
@@ -67,11 +80,16 @@ describe('FeeAssignmentApprovalAction', () => {
 
   it('gọi API từ chối và khóa nút sau khi thành công', async () => {
     let rejectRequestCount = 0
+    let rejectReason: string | null = null
     server.use(
-      http.patch('*/fee/policy-assignments/assignment-1/reject', () => {
-        rejectRequestCount += 1
-        return HttpResponse.json({ success: true, data: null })
-      })
+      http.patch(
+        '*/fee/policy-assignments/assignment-1/reject',
+        ({ request }) => {
+          rejectRequestCount += 1
+          rejectReason = new URL(request.url).searchParams.get('reason')
+          return HttpResponse.json({ success: true, data: null })
+        }
+      )
     )
     const { user } = renderAction()
 
@@ -81,8 +99,16 @@ describe('FeeAssignmentApprovalAction', () => {
     await user.click(
       await screen.findByRole('button', { name: /Từ chối duyệt/ })
     )
+    await user.type(
+      await screen.findByLabelText(/Lý do từ chối/),
+      'Sai ngân hàng'
+    )
+    await user.click(
+      await screen.findByRole('button', { name: 'Xác nhận từ chối' })
+    )
 
     await waitFor(() => expect(rejectRequestCount).toBe(1))
+    expect(rejectReason).toBe('Sai ngân hàng')
     expect(
       screen.getByRole('button', { name: 'Gán phí đã được xử lý' })
     ).toBeDisabled()
@@ -110,6 +136,52 @@ describe('FeeAssignmentApprovalAction', () => {
       screen.getByRole('button', { name: 'Phê duyệt gán phí' })
     ).toBeEnabled()
     expect(decisionRequestCount).toBe(0)
+  })
+
+  it('khóa nút xác nhận từ chối khi chưa nhập lý do', async () => {
+    let rejectRequestCount = 0
+    server.use(
+      http.patch('*/fee/policy-assignments/assignment-1/reject', () => {
+        rejectRequestCount += 1
+        return HttpResponse.json({ success: true, data: null })
+      })
+    )
+    const { user } = renderAction()
+
+    await user.click(
+      screen.getByRole('button', { name: 'Phê duyệt gán phí' })
+    )
+    await user.click(
+      await screen.findByRole('button', { name: /Từ chối duyệt/ })
+    )
+
+    expect(
+      await screen.findByRole('button', { name: 'Xác nhận từ chối' })
+    ).toBeDisabled()
+    expect(rejectRequestCount).toBe(0)
+  })
+
+  it('không gọi API duyệt khi thiếu phiên bản kiểm duyệt', async () => {
+    let approveRequestCount = 0
+    server.use(
+      http.patch('*/fee/policy-assignments/assignment-1/approve', () => {
+        approveRequestCount += 1
+        return HttpResponse.json({ success: true, data: null })
+      })
+    )
+    const { user } = renderAction({
+      lockVersion: undefined,
+      reviewHash: undefined
+    })
+
+    await user.click(
+      screen.getByRole('button', { name: 'Phê duyệt gán phí' })
+    )
+
+    expect(
+      await screen.findByRole('button', { name: /Duyệt gán phí/ })
+    ).toBeDisabled()
+    expect(approveRequestCount).toBe(0)
   })
 
   it.each(['ACTIVE', 'INACTIVE', 'APPROVED', 'REJECTED'])(

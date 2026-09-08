@@ -1,9 +1,8 @@
 import { CardComponent, DialogModal, ExportCsvButton, Table } from '@components/index'
-import { ArrowCounterClockwiseIcon, ArrowsCounterClockwiseIcon, FileDoneOutlined } from '@components/icons'
+import { ArrowCounterClockwiseIcon, FileDoneOutlined } from '@components/icons'
 import React from 'react'
 import DialogRefund from './components/DialogRefund'
 import FormSearch from './components/FormSearch'
-import UpdateStatusTransaction from './components/UpdateStatusTransaction'
 import getColumn from './columns/Transaction.column'
 import useTransaction from './hooks/useTransaction'
 import DialogConfirm from './components/DialogConfirm'
@@ -110,7 +109,6 @@ const TransactionManagement = () => {
       } />
 
       <DialogModal onCancel={() => { }} onOk={() => { }} open={false} content={<DialogRefund />} title={<span className='flex items-center gap-2 text-orange-700'><ArrowCounterClockwiseIcon size={18} />Hoàn tiền giao dịch</span>} />
-      <DialogModal onCancel={() => { }} onOk={() => { }} open={false} content={<UpdateStatusTransaction />} title={<span className='flex items-center gap-2 text-blue'><ArrowsCounterClockwiseIcon size={18} />Cập nhật trạng thái giao dịch</span>} />
       <DialogModal onCancel={() => { }} onOk={() => { }} open={false} content={<DialogConfirm />} title={<span className='flex items-center gap-2'><FileDoneOutlined />Duyệt giao dịch</span>} />
       <DialogFreeze
         open={selectedTransaction !== null}

@@ -43,7 +43,7 @@ const CommonInfo = ({ data }: CommonInfoProps) => {
         </div>
         <div className='col-span-1'>
           <CopyableText
-            label="Mã journal:"
+            label="Mã đối soát:"
             value={data?.journalCode ?? '--'}
           />
         </div>

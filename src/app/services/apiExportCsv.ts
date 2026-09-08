@@ -1,5 +1,6 @@
 import type { ApplicableFeeRuleExportQuery } from '@/app/schemas/applicable-fee-rule.schema'
 import {
+  fetchBaseQueryCustom,
   fetchBaseQueryFee,
   fetchBaseQueryWalletCore
 } from '@configs/fetchBaseQueryCustom'
@@ -7,7 +8,7 @@ import type {
   FetchBaseQueryError,
   FetchBaseQueryMeta
 } from '@reduxjs/toolkit/query'
-import { apiFeeService, apiWalletCore } from '@services/apiService'
+import { apiFeeService, apiWalletCore, authApiService } from '@services/apiService'
 import { parseFilenameFromDisposition } from '@utils/file-download'
 
 export interface ExportedFile {
@@ -30,11 +31,43 @@ export interface ExportTransactionsQuery {
   transactionCode?: string
   fromDate?: string
   toDate?: string
+  /** Thời gian giao dịch chuyển sang thành công — khác `fromDate`/`toDate`. */
+  successFrom?: string
+  successTo?: string
   senderUsername?: string
   receiverUsername?: string
   counterpartyUsername?: string
   sourceDomain?: string
   paymentMethod?: string
+  bankCode?: string
+  /**
+   * Khớp CHỨA, không phân biệt hoa thường, trên mã giao dịch · mã bút toán ·
+   * username người khởi tạo · username đối tác. Khác `transactionCode` và
+   * `journalCode` — hai cái đó khớp BẰNG.
+   */
+  keyword?: string
+}
+
+/**
+ * Sổ cái kép: mỗi giao dịch nở ra ít nhất hai dòng Nợ/Có. Chỉ có dòng của bút
+ * toán đã hạch toán thành công, nên không có tham số lọc trạng thái.
+ */
+export interface ExportLedgerEntriesQuery {
+  /** Bỏ trống là xuất sổ cái mọi ví; màn xem theo ví phải tự truyền. */
+  accountId?: string
+  ownerUsername?: string
+  ownerType?: string
+  glCode?: string
+  direction?: string
+  /** Nhận cả mã giao dịch lẫn UUID của transaction. */
+  transactionCode?: string
+  /** Từ vựng RIÊNG của bảng `transactions`, không dùng chung với màn giao dịch. */
+  transactionType?: string
+  minAmount?: number
+  maxAmount?: number
+  keyword?: string
+  fromDate?: string
+  toDate?: string
 }
 
 export interface ExportFreezesQuery {
@@ -43,6 +76,13 @@ export interface ExportFreezesQuery {
   status?: string
   fromDate?: string
   toDate?: string
+}
+
+export interface ExportVerifiedKycProfilesQuery {
+  keyword?: string
+  status?: string
+  createdFrom?: string
+  createdTo?: string
 }
 
 type ExportBaseQuery = typeof fetchBaseQueryWalletCore
@@ -122,6 +162,15 @@ export const apiExportWalletCsv = apiWalletCore.injectEndpoints({
           queryApi,
           extraOptions
         )
+    }),
+    exportLedgerEntries: build.mutation<ExportedFile, ExportLedgerEntriesQuery>({
+      queryFn: (params, queryApi, extraOptions) =>
+        runExport(
+          fetchBaseQueryWalletCore,
+          { url: '/wallet/entries/export', params: { ...params } },
+          queryApi,
+          extraOptions
+        )
     })
   })
 })
@@ -143,10 +192,30 @@ export const apiExportFeeCsv = apiFeeService.injectEndpoints({
   })
 })
 
+export const apiExportIdentityCsv = authApiService.injectEndpoints({
+  endpoints: (build) => ({
+    exportVerifiedKycProfiles: build.mutation<
+      ExportedFile,
+      ExportVerifiedKycProfilesQuery
+    >({
+      queryFn: (params, queryApi, extraOptions) =>
+        runExport(
+          fetchBaseQueryCustom,
+          { url: '/verified-kyc-profiles/export', params: { ...params } },
+          queryApi,
+          extraOptions
+        )
+    })
+  })
+})
+
 export const {
   useExportBankLinksMutation,
   useExportTransactionsMutation,
-  useExportFreezesMutation
+  useExportFreezesMutation,
+  useExportLedgerEntriesMutation
 } = apiExportWalletCsv
 
 export const { useExportApplicableFeeRulesMutation } = apiExportFeeCsv
+
+export const { useExportVerifiedKycProfilesMutation } = apiExportIdentityCsv

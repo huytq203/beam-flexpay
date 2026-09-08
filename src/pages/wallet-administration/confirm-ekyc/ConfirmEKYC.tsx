@@ -1,4 +1,10 @@
-import { CardComponent, DialogModal, ModalComponent, Table } from '@components/index'
+import {
+  CardComponent,
+  DialogModal,
+  ExportCsvButton,
+  ModalComponent,
+  Table
+} from '@components/index'
 import { useSVG } from '@hooks/useSVG'
 import { useGetEKYCByIdQuery } from '@services/apiEKYC'
 import React, { useState } from 'react'
@@ -10,7 +16,20 @@ import DialogReject from '@pages/wallet-administration/confirm-ekyc/components/D
 import DialogCancel from '@pages/wallet-administration/confirm-ekyc/components/DialogCancel'
 
 const ConfirmEKYC = () => {
-  const { dataSource, isFetching, refetch, page, pageSize, setPage, setPageSize, total, handleSearch, handleReset } = useConfirmEKYC()
+  const {
+    dataSource,
+    isFetching,
+    refetch,
+    page,
+    pageSize,
+    setPage,
+    setPageSize,
+    total,
+    handleSearch,
+    handleReset,
+    handleExport,
+    isExporting
+  } = useConfirmEKYC()
 
   const { svg } = useSVG()
 
@@ -37,26 +56,39 @@ const ConfirmEKYC = () => {
     <div className='flex flex-col gap-3'>
       <CardComponent content={<FormSearch onSearch={handleSearch} onReset={handleReset} />} />
       <CardComponent content={
-        <Table
-          bordered
-          size='small'
-          scroll={{ x: 'max-content' }}
-          columns={columns}
-          dataSource={dataSource}
-          loading={isFetching}
-          onRefresh={refetch}
-          pagination={{
-            current: page,
-            pageSize: pageSize,
-            total: total ?? 0,
-            showSizeChanger: true,
-            showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]} / ${total} bản ghi`,
-            onChange: (p, ps) => {
-              setPage(p)
-              setPageSize(ps)
-            },
-          }}
-        />
+        <>
+          <div className='mb-3 flex items-center justify-between gap-3'>
+            <span className='text-lg font-medium text-gray-600'>
+              Danh sách hồ sơ eKYC
+            </span>
+            <ExportCsvButton
+              onExport={handleExport}
+              loading={isExporting}
+              disabled={(total ?? 0) === 0}
+              tooltip='File tải về áp dụng bộ lọc hiện tại và không giới hạn theo trang.'
+            />
+          </div>
+          <Table
+            bordered
+            size='small'
+            scroll={{ x: 'max-content' }}
+            columns={columns}
+            dataSource={dataSource}
+            loading={isFetching}
+            onRefresh={refetch}
+            pagination={{
+              current: page,
+              pageSize: pageSize,
+              total: total ?? 0,
+              showSizeChanger: true,
+              showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]} / ${total} bản ghi`,
+              onChange: (p, ps) => {
+                setPage(p)
+                setPageSize(ps)
+              },
+            }}
+          />
+        </>
       } />
 
       <ModalComponent

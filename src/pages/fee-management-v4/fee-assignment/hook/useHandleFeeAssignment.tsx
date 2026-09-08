@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useMessage } from '@hooks/useMessage'
 import { useSVG } from '@hooks/useSVG'
-import usePagination from '@hooks/usePagination'
+import { useUrlFilters } from '@hooks/useUrlFilters'
 import {
   useGetAssignSearchQuery,
   usePatchAssignActiveMutation,
@@ -23,19 +23,25 @@ const getErrorDetail = (error: unknown): string | undefined => {
   return typeof detail === 'string' ? detail : undefined
 }
 
+/** Đúng các tham số `/fee/policy-assignments/search` nhận — không thêm khoá ảo. */
+const FILTER_KEYS = ['feePolicyId', 'merchantId', 'bankCode', 'status'] as const
+
 const useHandleFeeAssignment = () => {
-  const [filter, setFilter] = useState({})
+  const { filters, applyFilters, clearFilters, page, size, setPage, setPageSize } =
+    useUrlFilters({ keys: FILTER_KEYS })
 
-  const { sortBy, sort, size, page, pageSize, setPage, setPageSize } = usePagination()
-  const payload = {
-    ...filter,
-    sortDirection: sortBy,
-    sortBy: sort,
-    size,
-    page
-  }
+  const payload = useMemo(
+    () => ({
+      ...filters,
+      sortDirection: 'DESC',
+      sortBy: 'createdAt',
+      size,
+      page
+    }),
+    [filters, page, size]
+  )
 
-  const [patchAssignActive] = usePatchAssignActiveMutation()
+  const [patchAssignActive, { isLoading: isActivating }] = usePatchAssignActiveMutation()
   const [patchAssignInActive] = usePatchAssignInActiveMutation()
   const {
     data: searchData,
@@ -45,6 +51,8 @@ const useHandleFeeAssignment = () => {
   } = useGetAssignSearchQuery(payload)
   const [postAssign, { isLoading: isPostAssign }] = usePostAssignMutation()
 
+  // BE bắt buộc query param `reason` khi kích hoạt → hỏi lý do qua modal.
+  const [activateId, setActivateId] = useState<string | null>(null)
   const [openModalDelete, setOpenModalDelete] = useState(false)
   const [selectRowId, setSelectRowId] = useState('')
   const [openModalAdd, setOpenModalAdd] = useState(false)
@@ -63,6 +71,11 @@ const useHandleFeeAssignment = () => {
     watch
   } = useForm<FeeAssignType>({
     shouldUnregister: true,
+    // URL là nguồn sự thật của bộ lọc; form chỉ phản chiếu lại.
+    values: {
+      bankCode: filters.bankCode ?? '',
+      status: filters.status ?? ''
+    } as FeeAssignType,
     defaultValues: {
       account: '',
       applyDate: '',
@@ -71,31 +84,48 @@ const useHandleFeeAssignment = () => {
     }
   })
 
-  const handleSearch = useCallback(async (data: FeeAssignType) => {
-    setPage(1)
-    setFilter(data)
-  }, [setPage])
+  const handleSearch = useCallback(
+    (data: FeeAssignType) => {
+      applyFilters({
+        bankCode: data.bankCode || null,
+        status: data.status || null
+      })
+    },
+    [applyFilters]
+  )
 
   const handleReset = useCallback(() => {
     reset()
-    setFilter({})
-    setPage(1)
-    setPageSize(10)
-  }, [reset, setPage, setPageSize])
+    clearFilters()
+  }, [reset, clearFilters])
 
   const handleToggleStatus = useCallback(async (record: FeeAssignment) => {
+    if (record.status !== 'ACTIVE') {
+      setActivateId(record.id)
+      return
+    }
+
     try {
-      if (record.status === 'ACTIVE') {
-        await patchAssignInActive(record.id).unwrap()
-        successMess('Khóa thành công!')
-      } else {
-        await patchAssignActive(record.id).unwrap()
-        successMess('Mở khóa thành công!')
-      }
+      await patchAssignInActive(record.id).unwrap()
+      successMess('Khóa thành công!')
     } catch (error) {
       errorMess(getErrorDetail(error) || 'Có lỗi xảy ra')
     }
-  }, [patchAssignInActive, patchAssignActive, successMess, errorMess])
+  }, [patchAssignInActive, successMess, errorMess])
+
+  const handleConfirmActivate = useCallback(async (reason: string) => {
+    if (!activateId) return
+
+    try {
+      await patchAssignActive({ id: activateId, reason }).unwrap()
+      successMess('Mở khóa thành công!')
+      setActivateId(null)
+    } catch (error) {
+      errorMess(getErrorDetail(error) || 'Có lỗi xảy ra')
+    }
+  }, [activateId, patchAssignActive, successMess, errorMess])
+
+  const handleCancelActivate = useCallback(() => setActivateId(null), [])
 
   const handleDelete = useCallback(() => {
     alert('Delete ID:' + selectRowId)
@@ -144,13 +174,17 @@ const useHandleFeeAssignment = () => {
 
   const dataSource = useMemo(() => listData.map((item, idx: number) => ({
     ...item,
-    no: (page - 1) * pageSize + idx + 1
-  })), [listData, page, pageSize])
+    no: (page - 1) * size + idx + 1
+  })), [listData, page, size])
 
-  const handlePaginationChange = useCallback((newPage: number, newPageSize: number) => {
+  const handlePaginationChange = useCallback((newPage: number, newSize: number) => {
+    // Đổi số dòng mỗi trang thì `useUrlFilters` tự đưa về trang 1.
+    if (newSize !== size) {
+      setPageSize(newSize)
+      return
+    }
     setPage(newPage)
-    setPageSize(newPageSize)
-  }, [setPage, setPageSize])
+  }, [size, setPage, setPageSize])
 
   const handleOpenModalAdd = useCallback(() => {
     setIsCreate(true)
@@ -194,9 +228,13 @@ const useHandleFeeAssignment = () => {
     isFetching,
     refetch,
     page,
-    pageSize,
+    pageSize: size,
     total,
     handlePaginationChange,
+    activateId,
+    isActivating,
+    handleConfirmActivate,
+    handleCancelActivate,
     svg
   }
 }

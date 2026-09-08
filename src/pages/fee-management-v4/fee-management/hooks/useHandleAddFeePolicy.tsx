@@ -1,5 +1,4 @@
 import React from 'react'
-import { dataSearch } from '../types/FeeManagement.type'
 import { PolicyType } from '../schemas/FeeManagement.schema'
 import { usePostNewPolicyMutation } from '@services/apiFeePoliciesServices'
 import { useMessage } from '@hooks/useMessage'
@@ -10,14 +9,14 @@ import { useDeleteFeeComponentPoliciesMutation } from '@services/apiFeeComponent
 import { skipToken } from '@reduxjs/toolkit/query/react'
 
 interface UseHandleProps {
-    setFilters?: React.Dispatch<React.SetStateAction<Partial<dataSearch>>>
-    setPage?: React.Dispatch<React.SetStateAction<number>>
     reset?: () => void
     id?: string
     setOpenDialog?: React.Dispatch<React.SetStateAction<boolean>>
+    /** Danh sách để quay về sau khi lưu — mỗi màn phí có đường dẫn riêng. */
+    listPath?: string
 }
 
-const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id, setOpenDialog }: UseHandleProps) => {
+const useHandleAddFeePolicy = ({ reset, id, setOpenDialog, listPath }: UseHandleProps) => {
 
     const { successMess } = useMessage()
     const navigate = useNavigate()
@@ -29,21 +28,6 @@ const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id, setOpenDialog }
     const [patchDeactivateFee, { isLoading: isLoadingPatchDeactivateFee }] = usePatchDeactivateFeeMutation()
     const [deleteFeeComponentPolicies, { isLoading: isLoadingDeleteFeeComponentPolicies }] = useDeleteFeeComponentPoliciesMutation()
     const { data: dataFeePolicyById, isLoading: isLoadingFeePolicyById, isFetching: isFetchingFeePolicyById } = useGetFeePolicyByIdQuery(id ?? skipToken)
-
-    const handleSearch = (data: dataSearch) => {
-        const dataValue = {
-            ...data,
-            keyword: data.keyword || '',
-        }
-        setFilters?.(dataValue)
-        setPage?.(1)
-    }
-
-    const handleReset = () => {
-        setFilters?.({} as dataSearch)
-        setPage?.(1)
-        reset?.()
-    }
 
     const handleAdd = async (data: PolicyType, mode?: boolean) => {
         try {
@@ -69,7 +53,7 @@ const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id, setOpenDialog }
             if (res) {
                 successMess('Cập nhật chính sách phí thành công')
                 reset?.()
-                navigate(PATHS.FEE_V4.FEE_MANAGEMENT)
+                navigate(listPath ?? PATHS.FEE_V4.FEE_MANAGEMENT)
                 // Gán id response lên URL
                 // if (mode) {
                 //     navigate(`${res?.data?.id}`, { replace: true })
@@ -92,10 +76,11 @@ const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id, setOpenDialog }
 
         }
     }
-    const handleActive = async (id: string) => {
+    // BE bắt buộc query param `reason` khi kích hoạt (ghi vào audit history).
+    const handleActive = async (id: string, reason: string) => {
         try {
             setLoadingId(id)
-            const res = await patchActivateFee(id).unwrap()
+            const res = await patchActivateFee({ id, reason }).unwrap()
             if (res) {
                 successMess('Kích hoạt chính sách phí thành công')
             }
@@ -121,8 +106,6 @@ const useHandleAddFeePolicy = ({ setFilters, setPage, reset, id, setOpenDialog }
     }
 
     return {
-        handleSearch,
-        handleReset,
         handleAdd,
         handleEdit,
         handleDelete,

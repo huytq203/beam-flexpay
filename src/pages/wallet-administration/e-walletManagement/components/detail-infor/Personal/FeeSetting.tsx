@@ -1,86 +1,41 @@
-import {
-  applicableFeeRuleQuerySchema,
-  type ApplicableFeeRuleExportQuery,
-  type ApplicableFeeRuleQuery
-} from '@/app/schemas/applicable-fee-rule.schema'
-import { useGetApplicableFeeRulesQuery } from '@/app/services/apiApplicableFeeRule'
-import {
-  ButtonComponent,
-  Table
-} from '@components/index'
+import { ButtonComponent, ExportCsvButton, Table } from '@components/index'
 import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
-import { useExportCsv } from '@hooks/useExportCsv'
-import usePagination from '@hooks/usePagination'
-import { useExportApplicableFeeRulesMutation } from '@services/apiExportCsv'
-import { useMemo } from 'react'
 import {
   applicableFeeRuleColumns,
   type ApplicableFeeRuleTableRow
 } from './configs/FeeSetting.column'
-import { createApplicableFeeRuleRowKey } from './utils/applicable-fee-rule'
-import {
-  FeeRulesEmptyState,
-  FeeSettingCard
-} from './components/FeeSettingCard'
+import { FeeRulesEmptyState, FeeSettingCard } from './components/FeeSettingCard'
+import { useFeeSettingRules } from './hooks/useFeeSettingRules'
 
 interface FeeSettingProps {
   walletId: string
   walletLabel: string
 }
 
+const EXPORT_TOOLTIP =
+  'File lấy trọn bộ lọc đang áp, không giới hạn theo trang, và giữ nguyên các quy tắc áp dụng cho tất cả.'
+
 export const FeeSetting = ({ walletId, walletLabel }: FeeSettingProps) => {
-  const { page, size, setPage, setPageSize } = usePagination()
-  const parsedQuery = applicableFeeRuleQuerySchema.safeParse({
-    merchantId: walletId,
-    feeDomain: 'EWALLET',
-    page,
-    size
-  })
-  const fallbackQuery: ApplicableFeeRuleQuery = {
-    feeDomain: 'EWALLET',
-    page,
-    size
-  }
-  const queryArgs = parsedQuery.success ? parsedQuery.data : fallbackQuery
   const {
-    data,
+    isWalletIdValid,
+    dataSource,
+    totalElements,
+    hasFilter,
+    policyOptions,
     isLoading,
     isFetching,
     isError,
-    refetch
-  } = useGetApplicableFeeRulesQuery(queryArgs, {
-    skip: !parsedQuery.success
-  })
-  const [triggerExport, { reset: resetExport }] =
-    useExportApplicableFeeRulesMutation()
-  const { exportFile, isExporting } = useExportCsv({
-    trigger: triggerExport,
-    reset: resetExport,
-    filenamePrefix: 'cau-hinh-phi'
-  })
-  const exportParams: ApplicableFeeRuleExportQuery = {
-    merchantId: walletId,
-    feeDomain: 'EWALLET'
-  }
-  const dataSource = useMemo<ApplicableFeeRuleTableRow[]>(
-    () =>
-      (data?.content ?? []).map((rule, index) => ({
-        ...rule,
-        rowKey: createApplicableFeeRuleRowKey(rule),
-        no: (page - 1) * size + index + 1,
-        accountLabel: walletLabel
-      })),
-    [data, page, size, walletLabel]
-  )
-  // const exportButton = (
-  //   <ExportCsvButton
-  //     onExport={() => exportFile(exportParams)}
-  //     loading={isExporting}
-  //     disabled={!walletId || (data?.totalElements ?? 0) === 0}
-  //   />
-  // )
+    refetch,
+    page,
+    size,
+    setPage,
+    setPageSize,
+    handleSearch,
+    handleExport,
+    isExporting
+  } = useFeeSettingRules({ walletId, walletLabel })
 
-  if (!parsedQuery.success) {
+  if (!isWalletIdValid) {
     return (
       <FeeSettingCard>
         <p role='alert' className='py-10 text-center text-sm text-danger'>
@@ -90,21 +45,45 @@ export const FeeSetting = ({ walletId, walletLabel }: FeeSettingProps) => {
     )
   }
 
-  if (isLoading) {
-    return (
-      <FeeSettingCard>
+  const exportButton = (
+    <ExportCsvButton
+      onExport={handleExport}
+      loading={isExporting}
+      disabled={totalElements === 0}
+      totalRows={totalElements}
+      tooltip={EXPORT_TOOLTIP}
+    />
+  )
+
+  // const filterCard = (
+  //   <CardComponent
+  //     content={
+  //       <>
+  //         <p className='mb-3 flex items-center gap-2 border-b border-gray-200 pb-2 font-bold text-blue'>
+  //           <Icons.FunnelIcon /> Bộ lọc quy tắc phí
+  //         </p>
+  //         <FeeSettingSearch
+  //           policyOptions={policyOptions}
+  //           onSearch={handleSearch}
+  //         />
+  //       </>
+  //     }
+  //   />
+  // )
+
+  const body = () => {
+    if (isLoading) {
+      return (
         <SkeletonTable
           columns={applicableFeeRuleColumns.length}
           rows={size}
           noContainer
         />
-      </FeeSettingCard>
-    )
-  }
+      )
+    }
 
-  if (isError) {
-    return (
-      <FeeSettingCard>
+    if (isError) {
+      return (
         <div
           role='alert'
           className='flex min-h-44 flex-col items-center justify-center gap-3 text-center'
@@ -123,26 +102,18 @@ export const FeeSetting = ({ walletId, walletLabel }: FeeSettingProps) => {
             onClick={() => refetch()}
           />
         </div>
-      </FeeSettingCard>
-    )
-  }
+      )
+    }
 
-  if (dataSource.length === 0) {
+    if (dataSource.length === 0) {
+      return <FeeRulesEmptyState filtered={hasFilter} />
+    }
+
     return (
-      <FeeSettingCard
-        totalRows={data?.totalElements ?? 0}
-        // action={exportButton}
-      >
-        <FeeRulesEmptyState />
-      </FeeSettingCard>
-    )
-  }
-
-  return (
-    <FeeSettingCard totalRows={data?.totalElements} >
       <Table<ApplicableFeeRuleTableRow>
         rowKey='rowKey'
         size='small'
+        scroll={{ x: 'max-content' }}
         columns={applicableFeeRuleColumns}
         dataSource={dataSource}
         loading={isFetching}
@@ -150,7 +121,7 @@ export const FeeSetting = ({ walletId, walletLabel }: FeeSettingProps) => {
         pagination={{
           current: page,
           pageSize: size,
-          total: data?.totalElements,
+          total: totalElements,
           showSizeChanger: true,
           onChange: (nextPage, nextPageSize) => {
             setPage(nextPage)
@@ -158,6 +129,15 @@ export const FeeSetting = ({ walletId, walletLabel }: FeeSettingProps) => {
           }
         }}
       />
-    </FeeSettingCard>
+    )
+  }
+
+  return (
+    <div className='space-y-3!'>
+      {/* {filterCard} */}
+      <FeeSettingCard totalRows={totalElements} action={exportButton}>
+        {body()}
+      </FeeSettingCard>
+    </div>
   )
 }

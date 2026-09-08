@@ -14,6 +14,12 @@ interface FormInputNumberProps<T extends FieldValues>
     classNameLable?: string;
     disabled?: boolean;
     defaultValue?: number | undefined
+    /**
+     * Ô để trống giữ nguyên trạng rỗng thay vì rơi về 0. Dùng cho ô lọc, nơi
+     * "không nhập" nghĩa là không đặt cận — khác ô nhập số tiền trong form,
+     * nơi 0 là giá trị khởi điểm hợp lệ.
+     */
+    allowEmpty?: boolean
 }
 
 export function FormInputNumber<T extends FieldValues>({
@@ -24,9 +30,11 @@ export function FormInputNumber<T extends FieldValues>({
     className = "col-span-6 flex flex-col",
     disabled,
     defaultValue=0,
+    allowEmpty=false,
     classNameLable='font-medium',
     ...rest
 }: FormInputNumberProps<T>) {
+    const fallback = allowEmpty ? undefined : defaultValue
     return (
         <FormField
             name={name}
@@ -41,8 +49,8 @@ export function FormInputNumber<T extends FieldValues>({
                     id={field.name}
                     placeholder={placeholder}
                     disabled={disabled}
-                    defaultValue={defaultValue}
-                    value={field.value ?? defaultValue}
+                    defaultValue={fallback}
+                    value={field.value ?? fallback}
                 />
             )}
         />

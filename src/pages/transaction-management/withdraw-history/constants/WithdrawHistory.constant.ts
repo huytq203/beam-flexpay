@@ -11,7 +11,7 @@ export enum StatusKey {
 
 export const StatusLabel: Record<StatusKey, string> = {
     [StatusKey.PENDING]: 'Chờ xử lý',
-    [StatusKey.POSTED]: 'Đã ghi sổ',
+    [StatusKey.POSTED]: 'Đã thành công',
     [StatusKey.AUTHORIZED]: 'Đã phê duyệt',
     [StatusKey.SETTLED]: 'Đã quyết toán',
     [StatusKey.CANCELLED]: 'Đã hủy',
@@ -31,7 +31,7 @@ export const STATUS_CONFIG = {
         shimmerColor: 'rgba(255, 86, 59, 0.2)',
     },
     [StatusKey.POSTED]: {
-        label: 'Đã ghi sổ',
+        label: 'Đã thành công',
         className: 'success-status',
         shimmerColor: 'rgba(0, 229, 160, 0.2)',
     },
@@ -118,3 +118,18 @@ export const SourceDomainLabel: Record<SourceDomain, string> = {
     [SourceDomain.EWALLET]: 'Ví điện tử',
 
 } as const;
+
+/**
+ * Hai loại lệnh rút mà lưới này nhận. Lọc rỗng là cả hai — màn luôn ghim
+ * `transactionType` về nhóm rút, không bao giờ mở sang loại giao dịch khác.
+ */
+export const WithdrawTransactionType = {
+    CASH_OUT: 'Khách hàng rút tiền',
+    MERCHANT_CASH_OUT: 'Merchant rút tiền'
+} as const
+
+export type WithdrawTransactionTypeKey = keyof typeof WithdrawTransactionType
+
+/** Giá trị mặc định khi người dùng chưa chọn loại lệnh rút cụ thể. */
+export const DEFAULT_WITHDRAW_TRANSACTION_TYPE =
+    'CASH_OUT' satisfies WithdrawTransactionTypeKey

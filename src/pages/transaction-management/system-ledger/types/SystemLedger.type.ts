@@ -72,12 +72,28 @@ export interface LedgerResponse {
     success?: boolean
 }
 
+/**
+ * Bộ lọc của lưới sổ cái. Không có `status`: bảng `transactions` chỉ nhận đúng
+ * một giá trị khi ghi bút toán, nên lọc theo trạng thái là vô nghĩa ở đây.
+ */
 export interface FormSearchValues {
+    /** Nhận cả mã giao dịch lẫn UUID của transaction. */
     transactionCode?: string
+    /** Bỏ trống là sổ cái mọi ví; màn xem theo một ví phải tự truyền. */
     accountId?: string
-    status?: string
-    direction?: string
+    /** Chủ tài khoản, khớp chứa — đây là đường lọc theo user. */
+    ownerUsername?: string
+    ownerType?: string
+    /** Mã tài khoản kế toán, khớp bằng. */
     glCode?: string
+    direction?: string
+    /** Từ vựng riêng của bảng `transactions` — xem `LedgerTransactionType`. */
+    transactionType?: string
+    minAmount?: number
+    maxAmount?: number
+    /** Khớp chứa trên mã giao dịch và chủ tài khoản. */
+    keyword?: string
+    /** Thời gian ghi sổ của chính dòng sổ cái. */
     fromDate?: string
     toDate?: string
 }

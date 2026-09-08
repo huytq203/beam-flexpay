@@ -1,5 +1,6 @@
-import { CardComponent, Table, DialogModal, ModalComponent } from '@components/index'
+import { CardComponent, Table, DialogModal, ExportCsvButton, ModalComponent } from '@components/index'
 import { CheckCircleFilled, InfoCircleFilled } from '@components/icons'
+import { EXPORT_ORDER_HINT } from '@constants/export'
 import DialogApproval from './components/DialogApproval'
 import DialogApproveWithdraw from './components/DialogApproveWithdraw'
 import DialogDetailWithdrawHistory from './components/ModalDetailWithdrawHistory'
@@ -9,7 +10,8 @@ import useFetchDataWithdraw from './hooks/useFetchDataWithdraw'
 import useHandle from './hooks/useHandle'
 
 const WithdrawHistory = () => {
-    const { dataWithdraw, setPage, setPageSize, dataSource, handleSearch, refetch, isFetching } = useFetchDataWithdraw()
+    const { dataWithdraw, setPage, setPageSize, dataSource, handleSearch, refetch, isFetching, handleExport, isExporting } = useFetchDataWithdraw()
+    const totalElements = dataWithdraw?.totalElements ?? 0
     const { isDetailOpen, detailData, withdrawalDetail, isDetailLoading, loadingId, openDetail, closeDetail } = useHandle()
     const columns = getColumn({
         onViewDetail: openDetail,
@@ -24,6 +26,17 @@ const WithdrawHistory = () => {
             </div>
             <div className="">
                 <CardComponent content={
+                    <>
+                    <div className='mb-3 flex flex-wrap items-center justify-between gap-3'>
+                        <span className='font-medium text-gray-600 text-lg'>Lịch sử rút tiền</span>
+                        <ExportCsvButton
+                            onExport={handleExport}
+                            loading={isExporting}
+                            disabled={totalElements === 0}
+                            totalRows={totalElements}
+                            tooltip={`File tải về có tên bắt đầu bằng "Quan-ly-giao-dich_" vì dùng chung đường xuất với màn Quản lý giao dịch — nội dung vẫn đúng bộ lọc lệnh rút đang áp. ${EXPORT_ORDER_HINT}`}
+                        />
+                    </div>
                     <Table
                         columns={columns}
                         size='small'
@@ -36,7 +49,7 @@ const WithdrawHistory = () => {
                         pagination={{
                             current: dataWithdraw?.pageable?.pageNumber ? dataWithdraw.pageable.pageNumber + 1 : 1,
                             pageSize: dataWithdraw?.pageable?.pageSize ?? 10,
-                            total: dataWithdraw?.totalElements ?? 0,
+                            total: totalElements,
                             showSizeChanger: true,
                             showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]}/ ${total} Bản ghi`,
                             onChange: (page, pageSize) => {
@@ -45,6 +58,7 @@ const WithdrawHistory = () => {
                             },
                         }}
                     />
+                    </>
                 } />
             </div>
 

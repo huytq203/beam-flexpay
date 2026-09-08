@@ -39,16 +39,27 @@ export const FeeSettingCard = ({
   />
 )
 
-export const FeeRulesEmptyState = () => (
+interface FeeRulesEmptyStateProps {
+  /** Rỗng vì bộ lọc, không phải vì ví chưa có quy tắc — hai việc khác nhau. */
+  filtered?: boolean
+}
+
+export const FeeRulesEmptyState = ({
+  filtered = false
+}: FeeRulesEmptyStateProps) => (
   <div
     role='status'
     className='flex min-h-44 flex-col items-center justify-center gap-1 rounded-xl border border-border bg-muted/30 px-4 text-center'
   >
     <p className='font-medium text-foreground'>
-      Chưa có quy tắc phí đang áp dụng
+      {filtered
+        ? 'Không có quy tắc phí khớp bộ lọc'
+        : 'Chưa có quy tắc phí đang áp dụng'}
     </p>
-    <p className='text-sm text-muted-foreground'>
-      Ví này chưa có quy tắc riêng hoặc quy tắc áp dụng chung phù hợp.
+    <p className='max-w-[52ch] text-sm text-muted-foreground'>
+      {filtered
+        ? 'Nới một điều kiện áp dụng hoặc bấm Xóa lọc để xem lại toàn bộ quy tắc của ví.'
+        : 'Ví này chưa có quy tắc riêng hoặc quy tắc áp dụng chung phù hợp.'}
     </p>
   </div>
 )

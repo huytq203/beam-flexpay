@@ -216,6 +216,14 @@ export default defineConfig(({ mode }) => {
         {
           find: '@constants',
           replacement: path.resolve(__dirname, 'src/app/constants')
+        },
+        {
+          find: '@lib',
+          replacement: path.resolve(__dirname, 'src/lib')
+        },
+        {
+          find: '@icons',
+          replacement: path.resolve(__dirname, 'src/components/icons')
         }
       ]
     },
