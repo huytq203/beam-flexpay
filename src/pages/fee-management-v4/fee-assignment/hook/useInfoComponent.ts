@@ -1,5 +1,6 @@
+import { DEFAULT_ROUND_MODE } from '@pages/fee-management-v4/fee-management/constants/FeeManagement.constant'
 import { useMemo, useState, useEffect, useCallback, useImperativeHandle, ForwardedRef } from 'react'
-import { useForm, useFieldArray } from 'react-hook-form'
+import { useForm, useFieldArray, useWatch } from 'react-hook-form'
 import { FeeComponentType } from '@pages/fee-management-v4/fee-management/schemas/FeeManagement.schema'
 
 import { useMessage } from '@hooks/useMessage'
@@ -32,7 +33,7 @@ const DEFAULT_VALUES: FeeComponentType = {
     baseOn: '',
     payerType: '',
     beneficiaryType: '',
-    roundMode: '',
+    roundMode: DEFAULT_ROUND_MODE,
     calculationMethod: 'DIRECT',
     tiers: [DEFAULT_TIER],
     fixedAmount: undefined,
@@ -99,8 +100,8 @@ export const useInfoComponent = ({
         calculationMethod: mapEnumToSelectOptions(calculationMethodEnum)
     }
 
-    const componentTypes = watch('componentType')
-    const calculationMethod = watch('calculationMethod')
+    const componentTypes = useWatch({ control, name: 'componentType' })
+    const calculationMethod = useWatch({ control, name: 'calculationMethod' })
 
     const isVATType = ['VAT'].includes(String(componentTypes))
     const isTierMode = ['PROGRESSIVE_TIER', 'FLAT_TIER'].includes(String(calculationMethod))
@@ -298,7 +299,7 @@ export const useInfoComponent = ({
         reset: () => reset(DEFAULT_VALUES),
         submitAllTiers: handleSubmitAllTiers,
         updateAllTiers: handleUpdateTiers
-    }), [handleSubmit, onSubmitProp, onUpdateProp, onSuccess, handleSubmitAllTiers, handleUpdateTiers, reset, successMess, errorMess])
+    }), [handleSubmit, onSubmitProp, onUpdateProp, onSuccess, handleSubmitAllTiers, handleUpdateTiers, reset, successMess, selectedRow])
 
     return {
         control,

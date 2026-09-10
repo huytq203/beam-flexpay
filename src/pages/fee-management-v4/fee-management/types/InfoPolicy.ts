@@ -1,3 +1,4 @@
+import { DEFAULT_ROUND_MODE } from "../constants/FeeManagement.constant"
 import { FeeComponentType } from "../schemas/FeeManagement.schema"
 
 export const DEFAULT_TIER = {
@@ -14,7 +15,7 @@ export const DEFAULT_VALUES: FeeComponentType = {
     baseOn: '',
     payerType: '',
     beneficiaryType: '',
-    roundMode: '',
+    roundMode: DEFAULT_ROUND_MODE,
     calculationMethod: 'DIRECT',
     tiers: [],
     fixedAmount: undefined,

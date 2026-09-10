@@ -29,17 +29,14 @@ export const OwnerTypeConstants = {
 export type OwnerTypeKey = keyof typeof OwnerTypeConstants
 
 /**
- * Từ vựng `transactionType` RIÊNG của bảng `transactions` mà sổ cái móc vào.
- * KHÁC hẳn bộ mã của màn Quản lý giao dịch (`CASH_IN`, `CASH_OUT`,
- * `P2P_TRANSFER`…) — dùng nhầm bộ mã cho ra bảng rỗng chứ không báo lỗi, nên ô
- * lọc phải là danh sách chọn, không để người dùng tự gõ.
+ * Từ vựng `transactionType` của dòng sổ cái. wallet-core đã bỏ `transaction.type`
+ * và chuyển sang trường này ở cấp bút toán, dùng chung bộ mã với màn Quản lý
+ * giao dịch — nhãn phải khớp `TransactionType` bên đó để hai màn gọi cùng một
+ * loại giao dịch bằng cùng một tên.
  */
 export const LedgerTransactionType = {
-    WALLET_CREDIT: 'Ghi có ví',
-    WALLET_TRANSFER: 'Chuyển tiền ví',
-    MERCHANT_WALLET_CREDIT: 'Ghi có ví merchant',
-    MERCHANT_WALLET_DEBIT: 'Ghi nợ ví merchant',
-    JOURNAL_REVERSAL: 'Bút toán đảo'
+    CASH_IN: 'Nạp tiền',
+    CASH_OUT: 'Rút tiền'
 } as const
 
 export type LedgerTransactionTypeKey = keyof typeof LedgerTransactionType

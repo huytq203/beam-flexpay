@@ -54,6 +54,23 @@ const getSystemLedgerColumn = ({
       )
     }
   },
+  {
+    title: 'Mã bút toán',
+    align: 'left',
+    width: 180,
+    dataIndex: 'journalCode',
+    render(value: string | null | undefined) {
+      if (!value) return <span>--</span>
+      return (
+        <TooltipComponent title={value}>
+          <span className='inline-flex items-center gap-1 max-w-[170px]'>
+            <span className='truncate max-w-[140px] font-medium'>{value}</span>
+            <TypographyText copyable={{ text: value }} />
+          </span>
+        </TooltipComponent>
+      )
+    }
+  },
   // {
   //   title: 'Mã tài khoản (Ví)',
   //   align: 'left',

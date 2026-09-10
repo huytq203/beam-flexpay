@@ -3,6 +3,7 @@ import { useExportCsv } from '@hooks/useExportCsv'
 import usePagination from '@hooks/usePagination'
 import { useExportVerifiedKycProfilesMutation } from '@services/apiExportCsv'
 import { useState } from 'react'
+import type { EKYCGroup, EKYCListItem } from '@type/apiResponseEKYC'
 
 export type EKYCFilterType = {
     keyword?: string
@@ -34,11 +35,9 @@ const useConfirmEKYC = () => {
         filenamePrefix: 'danh-sach-ho-so-ekyc'
     })
 
-    const dataSource = dataEKYC?.content.map((item, index) => ({
-        no: (page - 1) * pageSize + index + 1,
-        ...item,
-        key: item.id
-    }))
+    const dataSource = dataEKYC?.content.map((group, index) =>
+        mapEKYCGroupToListItem(group, (page - 1) * pageSize + index + 1)
+    )
 
     const handleSearch = (values: EKYCFilterType) => {
         setFilter(values)
@@ -68,6 +67,25 @@ const useConfirmEKYC = () => {
         handleReset,
         handleExport,
         isExporting
+    }
+}
+
+export const mapEKYCGroupToListItem = (group: EKYCGroup, no: number): EKYCListItem => {
+    const latestAttempt = group.attempts[0]
+
+    return {
+        ...latestAttempt,
+        userId: group.userId,
+        username: group.username,
+        status: latestAttempt?.status ?? group.latestStatus,
+        createdAt: latestAttempt?.createdAt ?? group.latestAt,
+        groupKey: group.groupKey,
+        attemptCount: group.attemptCount,
+        latestStatus: group.latestStatus,
+        latestAt: group.latestAt,
+        attempts: group.attempts,
+        no,
+        key: group.groupKey
     }
 }
 

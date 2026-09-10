@@ -19,6 +19,10 @@ const CommonInfo = ({ data }: CommonInfoProps) => {
   const typeKeyStatus = data?.status as StatusKey
   const typesKey = data?.transactionType as TransactionKey
   const completedAt = data?.completedAt ?? data?.postedAt ?? data?.archivedAt
+  const isCashIn = data?.transactionType === 'CASH_IN'
+  const beneficiaryAccount = isCashIn
+    ? data?.to?.username || data?.to?.displayName || data?.to?.id || '--'
+    : data?.maskedAccount ?? '--'
   const formatDateTime = (value?: string | null) =>
     value ? dayjs.utc(value).format('DD/MM/YYYY HH:mm:ss') : '--'
   const formatMoney = (value: number) =>
@@ -68,12 +72,7 @@ const CommonInfo = ({ data }: CommonInfoProps) => {
             </div>
           </div>
         </div>
-        <div className='col-span-1'>
-          <div>
-            <p className='text-gray-500'>Nguồn nghiệp vụ:</p>
-            <p className='break-words font-medium'>{data?.sourceDomain ?? '--'}</p>
-          </div>
-        </div>
+
         <div className='col-span-1'>
           <CopyableText
             label="Mã ngân hàng:"
@@ -88,8 +87,8 @@ const CommonInfo = ({ data }: CommonInfoProps) => {
         </div> */}
         <div className='col-span-1'>
           <CopyableText
-            label="Tài khoản thụ hưởng:"
-            value={data?.maskedAccount ?? '--'}
+            label={isCashIn ? 'Ví thụ hưởng:' : 'Tài khoản thụ hưởng:'}
+            value={beneficiaryAccount}
           />
         </div>
         <div className='col-span-1'>

@@ -3,7 +3,12 @@ import { Modal } from 'antd'
 import { useEffect, useRef } from 'react'
 import './style.css'
 
-function ScreenLoading() {
+interface ScreenLoadingProps {
+  /** Hiển thị ngay, dùng cho trạng thái chặn render như khôi phục phiên. */
+  open?: boolean
+}
+
+function ScreenLoading({ open = false }: ScreenLoadingProps) {
   const [isOpen, { setTrue, setFalse }] = useBoolean(false)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
   const startTimeRef = useRef<number>(0)
@@ -30,7 +35,7 @@ function ScreenLoading() {
         clearTimeout(timeoutRef.current)
       }
     }
-  }, [])
+  }, [setFalse, setTrue])
 
   return (
     <Modal
@@ -39,7 +44,7 @@ function ScreenLoading() {
       destroyOnHidden
       footer={null}
       title={null}
-      open={isOpen}
+      open={open || isOpen}
       className='modal-loading'
       getContainer={false}
       zIndex={9999}

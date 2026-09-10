@@ -6,15 +6,15 @@ export const PolicySchema = z.object({
     validFrom: z.string({ message: "Chọn ngày bắt đầu" }).min(1, "Chọn ngày bắt đầu"),
     validTo: z.string().nullable().optional(),
     priority: z.number({
-        message: "Nhập mức độ ưu tiên",
-    }).min(0, "Nhập mức độ ưu tiên").max(9999, 'Tối đa 9999'),
+        message: "Chọn mức độ ưu tiên",
+    }).int().min(1, "Chọn mức độ ưu tiên").max(4, 'Mức độ ưu tiên không hợp lệ'),
     status: z.string({
         message: "Chọn trạng thái",
     }).min(1, "Chọn trạng thái"),
     feeDomain: z.string({
-        message: "Chọn phí miền",
-    }).min(1, "Chọn phí miền"),
-    currency: z.string({ message: "Đơn vị thanh toán không được để trống" }).min(1, "Đơn vị thanh toán không được để trống"),
+        message: "Chọn phí domain",
+    }).min(1, "Chọn phí domain"),
+    currency: z.string({ message: "Đơn vị tiền tệ không được để trống" }).min(1, "Đơn vị tiền tệ không được để trống"),
     serviceType: z.string({
         message: "Chọn loại dịch vụ",
     }).min(1, "Chọn loại dịch vụ"),

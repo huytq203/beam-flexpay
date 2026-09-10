@@ -48,6 +48,7 @@ const weight = 'regular'
 
 const feeManagementV4: ItemTypeCustom = {
   key: _FEEMANAGEMENT_V4,
+  groupLabel: 'Nhóm quản lý giao dịch',
   icon: (
     <GearIcon
       size={size}
@@ -110,6 +111,7 @@ const feeManagementV4: ItemTypeCustom = {
 
 const roleManagementV2: ItemTypeCustom = {
   key: _ROLEMANAGEMENT_V2,
+  groupLabel: 'Nhóm tài khoản và phân quyền',
   icon: (
     <UserGearIcon
       size={size}
@@ -117,7 +119,7 @@ const roleManagementV2: ItemTypeCustom = {
       color={COlOR}
     />
   ),
-  label: i18n.t('navigation.account'),
+  label: 'Quản lý tài khoản',
   children: [
     {
       key: 'user-account',
@@ -161,6 +163,7 @@ const roleManagementV2: ItemTypeCustom = {
 
 const walletManagement: ItemTypeCustom = {
   key: _WALLETADMINISTRATION,
+  groupLabel: 'Nhóm quản lý giao dịch',
   icon: (
     <WalletIcon
       size={size}
@@ -201,6 +204,7 @@ const walletManagement: ItemTypeCustom = {
 
 const transactionManagement: ItemTypeCustom = {
   key: _TRANSACTIONMANAGEMENT,
+  groupLabel: 'Nhóm quản lý giao dịch',
   icon: (
     <ArrowsLeftRightIcon
       size={size}
@@ -263,7 +267,7 @@ const transactionManagement: ItemTypeCustom = {
 
 const merchantManagement: ItemTypeCustom = {
   key: _MERCHANT,
-  groupLabel: 'Quản lý merchant',
+  groupLabel: 'Nhóm quản lý cổng ĐVCNTT',
   icon: (
     <StorefrontIcon
       size={size}
@@ -304,7 +308,7 @@ const merchantManagement: ItemTypeCustom = {
 
 const businessWalletManagement: ItemTypeCustom = {
   key: 'business-wallet',
-  groupLabel: 'Quản lý merchant',
+  groupLabel: 'Nhóm quản lý cổng ĐVCNTT',
   icon: (
     <WalletIcon
       size={size}

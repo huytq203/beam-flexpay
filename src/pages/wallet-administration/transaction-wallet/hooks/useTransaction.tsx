@@ -15,9 +15,12 @@ import {
   canShowFreezeTransactionAction,
   getFreezeTargetParties
 } from '../columns/transaction-row-actions'
+import { SourceDomain } from '../constants/Transaction.constant'
 
 const useTransaction = () => {
-  const [filter, setFilter] = useState<Partial<FormSearchValues>>({})
+  const [filter, setFilter] = useState<Partial<FormSearchValues>>({
+    sourceDomain: SourceDomain.EWALLET
+  })
   const [selectedTransaction, setSelectedTransaction] =
     useState<UnifiedContentJournal | null>(null)
   const [selectedUnfreezeTransaction, setSelectedUnfreezeTransaction] =
@@ -43,20 +46,37 @@ const useTransaction = () => {
   const payload={
     page:page,
     size:pageSize,
-    ...filter 
+    ...filter,
+    sourceDomain: SourceDomain.EWALLET,
+    includeSummary: true
   }
 
   const {
     data: dataTransaction,
     isFetching,
     isLoading: isLoadingGetTransaction,
-    refetch
+    refetch,
   } = useGetUnifiedQuery(payload)
 
   const handleSearch = (data: Partial<FormSearchValues>) => {
-    setFilter(data)
+    setFilter({ ...data, sourceDomain: SourceDomain.EWALLET })
     setPage(1)
   }
+
+  /**
+   * Ô tổng quan chỉ chạm vào `status`, giữ nguyên phần bộ lọc còn lại. Giá trị
+   * này được đồng bộ ngược vào ô "Trạng thái" của form nên lần bấm "Tìm kiếm"
+   * kế tiếp không âm thầm bỏ mất bộ lọc vừa chọn.
+   */
+  const handleSummaryStatusChange = useCallback((status?: string) => {
+    setFilter((current) => {
+      const next = { ...current }
+      if (status) next.status = status
+      else delete next.status
+      return next
+    })
+    setPage(1)
+  }, [setPage])
 
   const handleOpenFreeze = useCallback(async (
     transaction: UnifiedContentJournal
@@ -166,6 +186,9 @@ const useTransaction = () => {
   return {
     filter,
     dataSource,
+    summary: dataTransaction?.summary,
+    activeStatus: filter.status,
+    handleSummaryStatusChange,
     totalElements,
     page,
     setPage,

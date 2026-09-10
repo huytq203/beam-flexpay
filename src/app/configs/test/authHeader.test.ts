@@ -2,7 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { BaseQueryApi } from '@reduxjs/toolkit/query'
 import Cookies from 'js-cookie'
 import { CookieKey } from '@configs/fetchBaseQuery.types'
-import { baseQueryWalletCore } from '@configs/fetchBaseQueryCustom'
+import {
+  baseQueryWalletCore,
+  refreshAccessToken
+} from '@configs/fetchBaseQueryCustom'
+import { updateAccessToken } from '@slices/authActions'
 
 const createApiStub = (accessToken: string | null): BaseQueryApi => ({
   signal: new AbortController().signal,
@@ -29,10 +33,14 @@ const sentAuthorizationHeader = async (
 }
 
 describe('Authorization header của base query', () => {
-  beforeEach(() => Cookies.remove(CookieKey.ACCESS_TOKEN))
+  beforeEach(() => {
+    Cookies.remove(CookieKey.ACCESS_TOKEN)
+    Cookies.remove(CookieKey.REFRESH_TOKEN)
+  })
   afterEach(() => {
     vi.restoreAllMocks()
     Cookies.remove(CookieKey.ACCESS_TOKEN)
+    Cookies.remove(CookieKey.REFRESH_TOKEN)
   })
 
   it('lấy token từ cookie khi cookie còn', async () => {
@@ -53,5 +61,36 @@ describe('Authorization header của base query', () => {
     const header = await sentAuthorizationHeader(createApiStub(null))
 
     expect(header).toBeNull()
+  })
+
+  it('đổi refresh token lấy access token mới và cập nhật Redux', async () => {
+    Cookies.set(CookieKey.REFRESH_TOKEN, 'refresh-token')
+    const dispatch = vi.fn()
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            accessToken: 'new-access-token',
+            expiresIn: 300,
+            refreshToken: 'rotated-refresh-token',
+            refreshExpiresIn: 7200
+          }
+        }),
+        {
+          status: 200,
+          headers: { 'content-type': 'application/json' }
+        }
+      )
+    )
+
+    await expect(refreshAccessToken(dispatch)).resolves.toBe('new-access-token')
+    expect(dispatch).toHaveBeenCalledWith(
+      updateAccessToken({
+        token: 'new-access-token',
+        expiresIn: 300,
+        refreshExpiresIn: 7200
+      })
+    )
+    expect(Cookies.get(CookieKey.REFRESH_TOKEN)).toBe('rotated-refresh-token')
   })
 })

@@ -7,15 +7,28 @@ import SystemLedgerManagement from '../SystemLedgerManagement'
 
 const mocks = vi.hoisted(() => ({
   exportFile: vi.fn(),
+  getLedgerEntries: vi.fn(),
   totalElements: 42
 }))
 
 vi.mock('../services/apiSystemLedger', () => ({
-  useGetLedgerEntriesQuery: () => ({
-    data: { content: [], totalElements: mocks.totalElements },
-    isFetching: false,
-    refetch: vi.fn()
-  })
+  useGetLedgerEntriesQuery: (params: unknown) => {
+    mocks.getLedgerEntries(params)
+
+    return {
+      data: {
+        content: [],
+        totalElements: mocks.totalElements,
+        summary: {
+          totalCount: 863,
+          debitAmount: 157817347,
+          creditAmount: 148001798
+        }
+      },
+      isFetching: false,
+      refetch: vi.fn()
+    }
+  }
 }))
 
 vi.mock('@services/apiExportCsv', () => ({
@@ -47,6 +60,39 @@ describe('Sổ cái — xuất CSV', () => {
     ).toBeInTheDocument()
   })
 
+  it('hiển thị tổng bút toán, tổng Nợ và tổng Có từ API', () => {
+    renderScreen()
+
+    expect(screen.getByText('863')).toBeInTheDocument()
+    expect(screen.getByText('157,817,347 ₫')).toBeInTheDocument()
+    expect(screen.getByText('148,001,798 ₫')).toBeInTheDocument()
+  })
+
+  it('click tổng Nợ/Có để lọc theo chiều bút toán và click Tổng để bỏ lọc', async () => {
+    const user = userEvent.setup()
+    renderScreen()
+
+    await user.click(screen.getByRole('button', { name: /Tổng Nợ/i }))
+    await waitFor(() =>
+      expect(mocks.getLedgerEntries).toHaveBeenLastCalledWith(
+        expect.objectContaining({ direction: 'DEBIT', includeSummary: true })
+      )
+    )
+
+    await user.click(screen.getByRole('button', { name: /Tổng Có/i }))
+    await waitFor(() =>
+      expect(mocks.getLedgerEntries).toHaveBeenLastCalledWith(
+        expect.objectContaining({ direction: 'CREDIT', includeSummary: true })
+      )
+    )
+
+    await user.click(screen.getByRole('button', { name: /Tổng bút toán/i }))
+    await waitFor(() => {
+      const lastPayload = mocks.getLedgerEntries.mock.calls.at(-1)?.[0]
+      expect(lastPayload).not.toHaveProperty('direction')
+    })
+  })
+
   it('gửi đúng bộ lọc đang áp và bỏ các ô để trống, không kèm page/size', async () => {
     const user = userEvent.setup()
     renderScreen()
@@ -68,15 +114,31 @@ describe('Sổ cái — xuất CSV', () => {
     )
   })
 
-  it('chỉ cho chọn loại giao dịch trong từ vựng riêng của sổ cái', async () => {
+  it('chỉ cho chọn loại giao dịch trong bộ mã wallet-core đang trả về', async () => {
     const user = userEvent.setup()
     renderScreen()
 
     await user.click(screen.getByLabelText(/Loại giao dịch/))
 
-    expect(await screen.findByTitle('Bút toán đảo')).toBeInTheDocument()
-    expect(screen.queryByTitle('CASH_OUT')).not.toBeInTheDocument()
-    expect(screen.queryByTitle('P2P_TRANSFER')).not.toBeInTheDocument()
+    expect(await screen.findByTitle('Nạp tiền')).toBeInTheDocument()
+    expect(screen.getByTitle('Rút tiền')).toBeInTheDocument()
+    expect(screen.queryByTitle('Bút toán đảo')).not.toBeInTheDocument()
+    expect(screen.queryByTitle('Ghi có ví')).not.toBeInTheDocument()
+  })
+
+  it('gửi mã CASH_OUT xuống API khi chọn Rút tiền', async () => {
+    const user = userEvent.setup()
+    renderScreen()
+
+    await user.click(screen.getByLabelText(/Loại giao dịch/))
+    await user.click(await screen.findByTitle('Rút tiền'))
+    await user.click(screen.getByRole('button', { name: /Tìm kiếm/ }))
+
+    await waitFor(() =>
+      expect(mocks.getLedgerEntries).toHaveBeenLastCalledWith(
+        expect.objectContaining({ transactionType: 'CASH_OUT' })
+      )
+    )
   })
 
   it('khoá nút Xuất khi bộ lọc vượt trần 100.000 dòng', () => {

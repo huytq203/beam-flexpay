@@ -6,7 +6,7 @@ import {
   Table
 } from '@components/index'
 import { useSVG } from '@hooks/useSVG'
-import { useGetEKYCByIdQuery } from '@services/apiEKYC'
+import type { EKYCListItem } from '@type/apiResponseEKYC'
 import React, { useState } from 'react'
 import FormSearch from './components/FormSearch'
 import BusinessComfirm from './components/BusinessComfirm'
@@ -33,21 +33,17 @@ const ConfirmEKYC = () => {
 
   const { svg } = useSVG()
 
-  const [selectedId, setSelectedId] = useState<string | undefined>(undefined)
+  const [selectedProfile, setSelectedProfile] = useState<EKYCListItem | undefined>()
   const [isDetailOpen, setIsDetailOpen] = useState(false)
 
-  const { data: detailData, isLoading: isDetailLoading } = useGetEKYCByIdQuery(selectedId!, {
-    skip: !selectedId,
-  })
-
-  const openDetail = (id: string) => {
-    setSelectedId(id)
+  const openDetail = (record: EKYCListItem) => {
+    setSelectedProfile(record)
     setIsDetailOpen(true)
   }
 
   const closeDetail = () => {
     setIsDetailOpen(false)
-    setSelectedId(undefined)
+    setSelectedProfile(undefined)
   }
 
   const columns = getColumn({ svg, onViewDetail: openDetail })
@@ -96,8 +92,12 @@ const ConfirmEKYC = () => {
         onCancel={closeDetail}
         onOk={closeDetail}
         open={isDetailOpen}
-        width='75%'
-        modalText={<BusinessComfirm data={detailData} isLoading={isDetailLoading} />}
+        width='min(1120px, calc(100vw - 24px))'
+        modalText={
+          <BusinessComfirm
+            data={selectedProfile}
+          />
+        }
       />
 
       <DialogModal mode='DELETE' okText='Từ chối' onCancel={() => { }} onOk={() => { }} open={false} content={<DialogReject />} title={<span className='text-red-600'>Từ chối hồ sơ</span>} />

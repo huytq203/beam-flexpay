@@ -50,4 +50,5 @@ export const decodeToken = (token: string): DecodedToken => {
 export const updateAccessToken = createAction<{
   token: string
   expiresIn?: number
+  refreshExpiresIn?: number
 }>('auth/updateAccessToken')

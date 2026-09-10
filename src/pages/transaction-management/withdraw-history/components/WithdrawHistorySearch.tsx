@@ -38,8 +38,6 @@ interface Props {
 }
 
 const PAYMENT_METHOD_OPTIONS = [
-    { label: 'Thẻ ATM', value: 'ATM' },
-    { label: 'Thẻ tín dụng', value: 'CC' },
     { label: 'Tài khoản ảo', value: 'VA' },
     { label: 'QR Code', value: 'QR_CODE' },
     { label: 'Tài khoản ví', value: 'WALLET_BALANCE' },
@@ -100,12 +98,11 @@ const WithdrawHistorySearch = ({ handleSearch }: Props) => {
                     <FormInput control={formSearch.control} name='transactionCode' label='Mã giao dịch' className='col-span-1' placeholder='Nhập đúng mã giao dịch...' />
                     <FormSelect control={formSearch.control} name='status' label='Trạng thái' className='col-span-1' options={mapEnumToSelectOptions(StatusType)} placeholder='Tất cả' />
                     <FormSelect control={formSearch.control} name='transactionType' label='Loại giao dịch rút' className='col-span-1' options={mapEnumToSelectOptions(WithdrawTransactionType)} placeholder='Tất cả lệnh rút' />
-                    <FormSelect control={formSearch.control} name='paymentMethod' label='Phương thức' className='col-span-1' options={PAYMENT_METHOD_OPTIONS} placeholder='Tất cả' />
-                    <FormSelect control={formSearch.control} name='bankCode' label='NH chi tiền (Hệ thống)' className='col-span-1' options={mapEnumToSelectOptions(BankLabel)} placeholder='Tất cả' />
-                </div>
+                    <FormSelect control={formSearch.control} name='bankCode' label='NH thụ hưởng' className='col-span-1' options={mapEnumToSelectOptions(BankLabel)} placeholder='Tất cả' />
+                {/* </div> */}
                 {/* Bốn ô ngày đi thành hai cặp; tách khỏi lưới 3 cột ở trên để
                     không cặp nào bị vắt sang dòng khác. */}
-                <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-4">
+                {/* <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-4"> */}
                     <FormDatePicker showTime control={formSearch.control} name='fromDate' label='Ngày tạo từ' className='col-span-1' />
                     <FormDatePicker showTime control={formSearch.control} name='toDate' label='Ngày tạo đến' className='col-span-1' />
                     <FormDatePicker

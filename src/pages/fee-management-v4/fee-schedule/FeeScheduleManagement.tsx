@@ -17,7 +17,7 @@ const DOMAIN_OPTIONS: { value: FeeDomainFilter; label: string }[] = [
 ]
 
 const DOMAIN_HINT: Record<FeeDomainFilter, string> = {
-  BANK: 'Phần phí ngân hàng được hưởng — dùng bảng này để đối soát với ngân hàng.',
+  BANK: 'Phần phí nhà cung cấp đối tác/bankđược hưởng — dùng bảng này để đối soát với ngân hàng.',
   EWALLET: 'Phần phí FlexPay được hưởng trên các giao dịch ví.',
   MERCHANT: 'Phần phí phát sinh trên các giao dịch của merchant.'
 }

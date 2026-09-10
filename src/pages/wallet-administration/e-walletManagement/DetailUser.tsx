@@ -3,7 +3,7 @@ import useDetailUser from '@pages/wallet-administration/e-walletManagement/hooks
 import React, { Suspense, useMemo } from 'react'
 import { items } from './constants/TabBusiness.config'
 import { TAB_CONTENT_MAP } from './constants/TabDetail.constant'
-import { BankFilled, CheckCircleFilled } from '@components/icons'
+import { BankFilled } from '@components/icons'
 import DialogAccount from './components/detail-infor/Personal/components/DialogAccount'
 import DialogConfirmLinkAccount from './components/detail-infor/Personal/components/DialogConfirmLinkAccount'
 import DialigLockAccount from './components/detail-infor/Personal/components/DialogLockAccount'
@@ -32,19 +32,7 @@ const InforUser = ({ data, dataEKYC }: props) => {
           <div className='text-gray-600 flex flex-col gap-1' >
             <p className='font-extrabold text-xl'>{displayName}</p>
             <p>{displayName} - {dataEKYC?.username || data.ownerUsername}</p>
-            <p></p>
-            <p className='flex gap-2 justify-start items-center font-medium'>
-              <span className='bg-gray-200 px-1 rounded-sm text-[12px]'>Hạng bạc</span>
-              {dataEKYC?.status === 'VERIFIED' ? (
-                <span className='flex gap-1 text-green-700 bg-green-100 px-1 rounded-sm text-[12px]'>
-                  <CheckCircleFilled />Đã xác thực KYC
-                </span>
-              ) : (
-                <span className='flex gap-1 text-red-700 bg-red-100 px-1 rounded-sm text-[12px]'>
-                  <CheckCircleFilled />Chưa xác thực EKYC
-                </span>
-              )}
-            </p>
+
           </div>
         </div>
         <div className='flex flex-col items-end text-gray-600 '>
@@ -66,7 +54,15 @@ const DetailUser = () => {
 
   const { setActiveKey, activeKey, getAccountById, getEKYCById ,linkedBanks} = useDetailUser()
   const ownerType = getAccountById?.ownerType;
-  const dataEKYC = getEKYCById?.content?.[0]
+  const firstGroup = getEKYCById?.content?.[0]
+  const dataEKYC = useMemo(() => {
+    const latestAttempt = firstGroup?.attempts?.[0]
+    return latestAttempt ? {
+      ...latestAttempt,
+      userId: firstGroup.userId,
+      username: firstGroup.username
+    } : undefined
+  }, [firstGroup])
 
 
   const content = useMemo(() => {

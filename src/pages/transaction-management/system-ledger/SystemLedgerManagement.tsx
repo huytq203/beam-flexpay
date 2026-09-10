@@ -5,6 +5,7 @@ import React from 'react'
 import getSystemLedgerColumn from './columns/SystemLedger.column'
 import FormSearch from './components/FormSearch'
 import { LedgerEntryDetail } from './components/LedgerEntryDetail'
+import { LedgerSummary } from './components/LedgerSummary'
 import { LEDGER_POSTED_ONLY_NOTE } from './constants/SystemLedger.constant'
 import useSystemLedger from './hooks/useSystemLedger'
 import { LedgerEntry } from './types/SystemLedger.type'
@@ -21,6 +22,9 @@ const SystemLedgerManagement = () => {
     setPageSize,
     navigate,
     handleSearch,
+    summary,
+    activeDirection,
+    handleSummaryDirectionChange,
     refetch,
     isFetching,
     handleExport,
@@ -36,7 +40,14 @@ const SystemLedgerManagement = () => {
 
   return (
     <div className='flex flex-col gap-3'>
-      <CardComponent content={<FormSearch handleSearch={handleSearch} />} />
+      <CardComponent
+        content={
+          <FormSearch
+            handleSearch={handleSearch}
+            direction={activeDirection}
+          />
+        }
+      />
       <CardComponent
         content={
           <>
@@ -58,6 +69,13 @@ const SystemLedgerManagement = () => {
                 <span>{LEDGER_POSTED_ONLY_NOTE}</span>
               </p>
             </div>
+            <LedgerSummary
+              summary={summary}
+              totalFallback={totalElements}
+              isLoading={isFetching && !summary}
+              activeDirection={activeDirection}
+              onDirectionChange={handleSummaryDirectionChange}
+            />
             <Table
               bordered
               size='small'

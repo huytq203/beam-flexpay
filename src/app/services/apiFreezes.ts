@@ -24,6 +24,7 @@ export interface FreezeSearchParams {
      * Nơi gọi phải tự lọc lại `content` phía client sau khi nhận kết quả.
      */
     sourceTransactionId?: string
+    includeSummary?:boolean
 }
 
 export interface UnfreezeRequest {

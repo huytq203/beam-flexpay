@@ -52,13 +52,15 @@ const useFetchDataWithdraw = () => {
   const transactionType =
     searchParams.transactionType || DEFAULT_WITHDRAW_TRANSACTION_TYPE
 
+
   const payload = {
     page,
-    pageSize,
+    size: pageSize,
     sortBy: sort,
     sortDirection: sortBy,
     ...dropEmpty(searchParams),
-    transactionType
+    transactionType,
+    includeSummary: true
   }
 
   const {
@@ -101,6 +103,16 @@ const useFetchDataWithdraw = () => {
     setPage(1)
   }
 
+  const handleSummaryStatusChange = useCallback((status?: string) => {
+    setSearchParams((current) => {
+      const next = { ...current }
+      if (status) next.status = status
+      else delete next.status
+      return next
+    })
+    setPage(1)
+  }, [setPage])
+
   return {
     dataWithdraw,
     isLoadingWithdraw,
@@ -110,6 +122,8 @@ const useFetchDataWithdraw = () => {
     sortBy,
     dataSource,
     handleSearch,
+    activeStatus: searchParams.status,
+    handleSummaryStatusChange,
     refetch,
     isFetching,
     handleExport,

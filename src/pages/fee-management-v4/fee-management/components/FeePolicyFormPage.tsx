@@ -7,7 +7,13 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getFeeComponentColumns } from '../columns/FeeComponentManagement.columns'
-import { baseOnEnum, baseOnLabel, componentType, componentTypeLabel } from '../constants/FeeManagement.constant'
+import {
+    baseOnEnum,
+    baseOnLabel,
+    componentType,
+    componentTypeLabel,
+    statusType
+} from '../constants/FeeManagement.constant'
 import type { FeePolicyScope } from '../constants/feePolicyScope'
 import useFetchDataComponent from '../hooks/useFetchDataComponent'
 import useHandleAddFeePolicy from '../hooks/useHandleAddFeePolicy'
@@ -35,7 +41,10 @@ export const FeePolicyFormPage = ({ scope }: FeePolicyFormPageProps) => {
     const { mode, id } = useParams()
     const inforPolicyRef = React.useRef<InforPolicyRef>(null)
     const { control, handleSubmit, reset, setValue } = useForm<PolicyType>({
-        resolver: zodResolver(PolicySchema)
+        resolver: zodResolver(PolicySchema),
+        defaultValues: {
+            status: statusType.INIT
+        }
     })
     const [openDialog, setOpenDialog] = useState(false)
     const [open, setOpen] = useState(false)
@@ -256,4 +265,3 @@ export const FeePolicyFormPage = ({ scope }: FeePolicyFormPageProps) => {
         </div>
     )
 }
-

@@ -26,6 +26,7 @@ export interface CreateAdminUserRequest {
 }
 
 export interface UpdateAdminUserRequest {
+  email: string
   firstName: string
   lastName: string
   enabled: boolean

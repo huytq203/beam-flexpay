@@ -43,24 +43,10 @@ export const adminUserDeviceListSchema = z.object({
   devices: z.array(adminTrustedDeviceSchema)
 })
 
-export const adminLogoutAllDevicesSchema = z.object({
-  userId: z.string(),
-  revokedDeviceCount: z.number().int().nonnegative(),
-  sessionCleared: z.boolean(),
-  revokedAt: z.string()
-})
-
 export const adminUserDeviceListEnvelopeSchema = z.object({
   data: adminUserDeviceListSchema
-})
-
-export const adminLogoutAllDevicesEnvelopeSchema = z.object({
-  data: adminLogoutAllDevicesSchema
 })
 
 export type DeviceStatus = z.infer<typeof deviceStatusSchema>
 export type AdminTrustedDevice = z.infer<typeof adminTrustedDeviceSchema>
 export type AdminUserDeviceList = z.infer<typeof adminUserDeviceListSchema>
-export type AdminLogoutAllDevices = z.infer<
-  typeof adminLogoutAllDevicesSchema
->

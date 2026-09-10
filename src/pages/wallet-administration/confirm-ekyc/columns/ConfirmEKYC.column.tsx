@@ -2,6 +2,7 @@ import { ArrowCounterClockwiseIcon, EyeOutlined } from "@components/icons";
 import { ButtonComponent, TooltipComponent } from "@components/index";
 import { ColumnType } from "antd/lib/table";
 import dayjs from "dayjs";
+import type { EKYCListItem } from "@type/apiResponseEKYC";
 import { genderMap, props, statusMap } from "../types/ConfirmEKYC.type";
 
 const formatDateTime = (value?: string | null) =>
@@ -10,20 +11,27 @@ const formatDateTime = (value?: string | null) =>
 const STATUS_CLASS: Record<string, string> = {
     VERIFIED: 'text-green-700 bg-green-50 border border-green-400 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block',
     PENDING: 'text-yellow-600 bg-yellow-50 border border-yellow-400 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block',
+    IN_PROGRESS: 'text-blue-700 bg-blue-50 border border-blue-400 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block',
     REJECTED: 'text-red-600 bg-red-50 border border-red-400 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block',
     INVALIDATED: 'text-gray-500 bg-gray-100 border border-gray-300 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block',
 }
 
 interface ColumnProps extends props {
-    onViewDetail: (id: string) => void
+    onViewDetail: (record: EKYCListItem) => void
 }
 
-export const getColumn = ({ svg, onViewDetail }: ColumnProps): ColumnType[] => [
+export const getColumn = ({ svg, onViewDetail }: ColumnProps): ColumnType<EKYCListItem>[] => [
     {
         title: '#',
         align: 'center',
         width: 50,
         dataIndex: 'no',
+    },
+    {
+        title: 'Số lần thực hiện',
+        align: 'center',
+        width: 120,
+        dataIndex: 'attemptCount',
     },
     {
         title: 'Khách hàng',
@@ -99,7 +107,7 @@ export const getColumn = ({ svg, onViewDetail }: ColumnProps): ColumnType[] => [
         align: 'center',
         width: 80,
         render(_, record) {
-            return genderMap[record.gender] ?? record.gender ?? '—';
+            return record.gender ? genderMap[record.gender] ?? record.gender : '—';
         },
     },
     {
@@ -134,10 +142,10 @@ export const getColumn = ({ svg, onViewDetail }: ColumnProps): ColumnType[] => [
         },
     },
     {
-        title: 'Ngày xác thực',
+        title: 'Ngày hoàn tất',
         align: 'center',
         render(_, record) {
-            return <span className="text-[12px]">{formatDateTime(record.verifiedAt)}</span>;
+            return <span className="text-[12px]">{formatDateTime(record.completedAt ?? record.verifiedAt)}</span>;
         },
     },
     {
@@ -152,9 +160,10 @@ export const getColumn = ({ svg, onViewDetail }: ColumnProps): ColumnType[] => [
         align: 'center',
         render(_, record) {
             const status = statusMap[record.status];
+            const statusValue = record.status;
             return (
-                <span className={STATUS_CLASS[record.status] ?? 'text-gray-500'}>
-                    {status?.label ?? record.status}
+                <span className={STATUS_CLASS[statusValue] ?? 'text-gray-500'}>
+                    {status?.label ?? statusValue?.replaceAll('_', ' ') ?? '—'}
                 </span>
             );
         },
@@ -178,10 +187,11 @@ export const getColumn = ({ svg, onViewDetail }: ColumnProps): ColumnType[] => [
                     </TooltipComponent>
                     <TooltipComponent title="Xem chi tiết">
                         <ButtonComponent
+                            aria-label="Xem chi tiết hồ sơ eKYC"
                             size="small"
                             icon={<EyeOutlined />}
                             type="default"
-                            onClick={() => onViewDetail(record.id)}
+                            onClick={() => onViewDetail(record)}
                             className="bg-blue-50 border! border-blue-600 text-blue-600 hover:bg-blue-100! hover:text-blue-600!"
                         />
                     </TooltipComponent>

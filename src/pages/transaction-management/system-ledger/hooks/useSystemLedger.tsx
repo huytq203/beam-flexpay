@@ -28,7 +28,8 @@ const useSystemLedger = () => {
   const payload = {
     page,
     size: pageSize,
-    ...filter
+    ...filter,
+    includeSummary: true
   }
   const {
     data: dataLedger,
@@ -62,6 +63,24 @@ const useSystemLedger = () => {
     setPage(1)
   }
 
+  const handleSummaryDirectionChange = useCallback(
+    (direction?: string) => {
+      setFilter((currentFilter) => {
+        const nextFilter = { ...currentFilter }
+
+        if (direction) {
+          nextFilter.direction = direction
+        } else {
+          delete nextFilter.direction
+        }
+
+        return nextFilter
+      })
+      setPage(1)
+    },
+    [setPage]
+  )
+
   const totalElements = dataLedger?.totalElements
   const dataSource = useMemo(
     () =>
@@ -81,6 +100,9 @@ const useSystemLedger = () => {
     setPageSize,
     navigate,
     handleSearch,
+    summary: dataLedger?.summary,
+    activeDirection: filter.direction,
+    handleSummaryDirectionChange,
     refetch,
     isFetching,
     handleExport,

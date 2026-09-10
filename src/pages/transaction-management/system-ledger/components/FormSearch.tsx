@@ -9,6 +9,7 @@ import {
 import { BroomIcon, MagnifyingGlassIcon } from '@components/icons'
 import * as Icons from '@components/icons'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
+import { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { FormSearchValues } from '../types/SystemLedger.type'
 import {
@@ -19,11 +20,13 @@ import {
 
 interface Props {
     handleSearch: (value: FormSearchValues) => void
+    direction?: string
 }
 
 const DEFAULT_VALUES: FormSearchValues = {
     keyword: '',
     transactionCode: '',
+    journalCode: '',
     ownerUsername: '',
     ownerType: '',
     glCode: '',
@@ -35,19 +38,24 @@ const DEFAULT_VALUES: FormSearchValues = {
     toDate: ''
 }
 
-const TRANSACTION_TYPE_HINT =
-    'Sổ cái dùng bộ mã riêng của bảng bút toán, khác bộ mã của màn Quản lý giao dịch (CASH_IN, CASH_OUT, P2P_TRANSFER…). Chọn trong danh sách này để không ra bảng rỗng.'
-
 const TRANSACTION_CODE_HINT =
     'Nhận cả mã giao dịch lẫn UUID của giao dịch. Khớp bằng — gõ đúng toàn bộ mã.'
+
+const JOURNAL_CODE_HINT =
+    'Mã bút toán của chính dòng sổ cái (VD: JRN-26A2D1D5-D4C). Khớp bằng — gõ đúng toàn bộ mã.'
 
 const KEYWORD_HINT =
     'Khớp chứa trên mã giao dịch và chủ tài khoản. Gõ vài ký tự để lọc dần.'
 
-const FormSearch = ({ handleSearch }: Props) => {
+const FormSearch = ({ handleSearch, direction }: Props) => {
     const formSearch = useForm<FormSearchValues>({
         defaultValues: DEFAULT_VALUES
     })
+    const { setValue } = formSearch
+
+    useEffect(() => {
+        setValue('direction', direction ?? '')
+    }, [direction, setValue])
 
     const onSubmit: SubmitHandler<FormSearchValues> = (data) => {
         handleSearch(data)
@@ -64,7 +72,7 @@ const FormSearch = ({ handleSearch }: Props) => {
                 <Icons.FunnelIcon /> Bộ lọc tìm kiếm
             </p>
             <form onSubmit={formSearch.handleSubmit(onSubmit)}>
-                <div className='grid grid-cols-1 md:grid-cols-3 gap-3'>
+                <div className='grid grid-cols-1 md:grid-cols-4 gap-3'>
                     <FormInput
                         control={formSearch.control}
                         name='keyword'
@@ -88,6 +96,18 @@ const FormSearch = ({ handleSearch }: Props) => {
                     />
                     <FormInput
                         control={formSearch.control}
+                        name='journalCode'
+                        label={
+                            <FormLabelHint
+                                label='Mã bút toán'
+                                hint={JOURNAL_CODE_HINT}
+                            />
+                        }
+                        placeholder='VD: JRN-26A2D1D5-D4C'
+                        className='col-span-1'
+                    />
+                    <FormInput
+                        control={formSearch.control}
                         name='ownerUsername'
                         label='Chủ tài khoản'
                         placeholder='Số điện thoại hoặc username...'
@@ -104,7 +124,7 @@ const FormSearch = ({ handleSearch }: Props) => {
                     <FormSelect
                         control={formSearch.control}
                         name='direction'
-                        label='Chiều bút toán'
+                        label='Loại hạch toán'
                         options={mapEnumToSelectOptions(DirectionLabel)}
                         placeholder='Tất cả'
                         className='col-span-1'
@@ -119,12 +139,7 @@ const FormSearch = ({ handleSearch }: Props) => {
                     <FormSelect
                         control={formSearch.control}
                         name='transactionType'
-                        label={
-                            <FormLabelHint
-                                label='Loại giao dịch'
-                                hint={TRANSACTION_TYPE_HINT}
-                            />
-                        }
+                        label='Loại giao dịch'
                         options={mapEnumToSelectOptions(LedgerTransactionType)}
                         placeholder='Tất cả'
                         className='col-span-1'

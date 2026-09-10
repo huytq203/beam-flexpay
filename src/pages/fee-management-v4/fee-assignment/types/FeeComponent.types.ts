@@ -48,7 +48,7 @@ export enum componentType {
     VAT = 'Phí VAT',
     SYSTEM_FEE = 'Phí hệ thống',
     MERCHANT_FEE = "Phí merchant",
-    BANK_FEE = "Phí ngân hàng",
+    BANK_FEE = "Phí nhà cung cấp đối tác/bank",
     REFUND_FEE = "Phí hoàn tiền",
     AMOUNT = 'Số tiền giao dịch',
     PLATFORM_FEE = 'Phí nền tảng',

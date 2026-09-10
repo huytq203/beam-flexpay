@@ -1,4 +1,4 @@
-import { CardComponent, Table, DialogModal, ExportCsvButton, ModalComponent } from '@components/index'
+import { CardComponent, Table, DialogModal, ExportCsvButton, JournalSummary, ModalComponent } from '@components/index'
 import { CheckCircleFilled, InfoCircleFilled } from '@components/icons'
 import { EXPORT_ORDER_HINT } from '@constants/export'
 import DialogApproval from './components/DialogApproval'
@@ -10,7 +10,7 @@ import useFetchDataWithdraw from './hooks/useFetchDataWithdraw'
 import useHandle from './hooks/useHandle'
 
 const WithdrawHistory = () => {
-    const { dataWithdraw, setPage, setPageSize, dataSource, handleSearch, refetch, isFetching, handleExport, isExporting } = useFetchDataWithdraw()
+    const { dataWithdraw, setPage, setPageSize, dataSource, handleSearch, activeStatus, handleSummaryStatusChange, refetch, isFetching, handleExport, isExporting } = useFetchDataWithdraw()
     const totalElements = dataWithdraw?.totalElements ?? 0
     const { isDetailOpen, detailData, withdrawalDetail, isDetailLoading, loadingId, openDetail, closeDetail } = useHandle()
     const columns = getColumn({
@@ -37,6 +37,14 @@ const WithdrawHistory = () => {
                             tooltip={`File tải về có tên bắt đầu bằng "Quan-ly-giao-dich_" vì dùng chung đường xuất với màn Quản lý giao dịch — nội dung vẫn đúng bộ lọc lệnh rút đang áp. ${EXPORT_ORDER_HINT}`}
                         />
                     </div>
+                    <JournalSummary
+                        ariaLabel='Tổng quan giao dịch rút tiền'
+                        summary={dataWithdraw?.summary}
+                        totalFallback={dataWithdraw?.totalElements}
+                        isLoading={isFetching && !dataWithdraw}
+                        activeStatus={activeStatus}
+                        onStatusChange={handleSummaryStatusChange}
+                    />
                     <Table
                         columns={columns}
                         size='small'

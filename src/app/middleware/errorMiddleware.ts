@@ -29,8 +29,8 @@ const SILENT_ENDPOINTS: string[] = [
   'adminForgotPassword',
   'validateAdminResetToken',
   'resetAdminPassword',
+  // Màn Bảo mật tự dựng trạng thái lỗi ngay trong tab, không cần toast trùng.
   'getCustomerDevices',
-  'logoutAllCustomerDevices',
   // Thời tiết panel đăng nhập chỉ là trang trí — lỗi của nó không được hiện
   // toast lên màn hình người dùng đang đăng nhập.
   'getCurrentWeather'

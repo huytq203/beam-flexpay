@@ -49,6 +49,14 @@ export const Currency = {
   USD: 'USD'
 } as const
 
+/** Số càng lớn thì mức độ ưu tiên càng thấp. */
+export const FEE_PRIORITY_OPTIONS = [
+  { value: 1, label: 'Rất cao' },
+  { value: 2, label: 'Cao' },
+  { value: 3, label: 'Trung bình' },
+  { value: 4, label: 'Thấp' }
+] as const
+
 export const feeDomain = {
   EWALLET: "Ewallet",
   BANK: "Bank",
@@ -81,7 +89,7 @@ export const componentTypeLabel = {
   [componentType.TRANSACTION_FEE]: 'Phí giao dịch cơ bản',
   [componentType.SYSTEM_FEE]: 'Phí hệ thống',
   [componentType.MERCHANT_FEE]: 'Phí merchant',
-  [componentType.BANK_FEE]: 'Phí ngân hàng',
+  [componentType.BANK_FEE]: 'Phí nhà cung cấp đối tác/bank',
   [componentType.PLATFORM_FEE]: 'Phí nền tảng',
   [componentType.VAT]: 'Thuế VAT',
   [componentType.PROCESSING_FEE]: 'Phí xử lý',
@@ -105,7 +113,7 @@ export const baseOnLabel = {
   [baseOnEnum.TRANSACTION_FEE]: 'Phí giao dịch cơ bản',
   [baseOnEnum.SYSTEM_FEE]: 'Phí hệ thống',
   [baseOnEnum.MERCHANT_FEE]: 'Phí merchant',
-  [baseOnEnum.BANK_FEE]: 'Phí ngân hàng',
+  [baseOnEnum.BANK_FEE]: 'Phí nhà cung cấp đối tác/bank',
   [baseOnEnum.PLATFORM_FEE]: 'Phí nền tảng',
   [baseOnEnum.VAT]: 'Thuế VAT',
   [baseOnEnum.PROCESSING_FEE]: 'Phí xử lý',
@@ -149,6 +157,12 @@ export enum roundModeEnum {
   CEILING = 'CEILING',
   FLOOR = 'FLOOR',
 }
+/**
+ * Toàn hệ thống thống nhất làm tròn lên, nên đây không còn là một lựa chọn khi
+ * tạo mới. Vẫn phải gửi lên API vì BE khai `@NotNull` cho `roundMode`.
+ */
+export const DEFAULT_ROUND_MODE = roundModeEnum.UP
+
 export const roundModeLabel = {
   [roundModeEnum.UP]: 'Làm tròn lên',
   [roundModeEnum.DOWN]: 'Làm tròn xuống',

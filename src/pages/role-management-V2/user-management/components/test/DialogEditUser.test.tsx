@@ -82,10 +82,12 @@ describe('DialogEditUser', () => {
       const { onSuccess, onLoadingChange, user } = renderDialog()
 
       expect(await screen.findByText('nguyenvana')).toBeInTheDocument()
-      expect(screen.getByText('vana@beamewa.com.vn')).toBeInTheDocument()
+      expect(screen.getByLabelText(/Email/)).toHaveValue('vana@beamewa.com.vn')
       expect(screen.getByLabelText(/^Họ/)).toHaveValue('Nguyen')
       expect(screen.getByText('Tài khoản kế toán')).toBeInTheDocument()
 
+      await user.clear(screen.getByLabelText(/Email/))
+      await user.type(screen.getByLabelText(/Email/), 'VAN.A@BEAM.VN')
       await user.clear(screen.getByLabelText(/^Họ/))
       await user.type(screen.getByLabelText(/^Họ/), 'Nguyễn')
       await user.click(screen.getByLabelText('Nhóm quyền'))
@@ -94,6 +96,7 @@ describe('DialogEditUser', () => {
 
       await waitFor(() => expect(onSuccess).toHaveBeenCalledTimes(1))
       expect(requestBody).toEqual({
+        email: 'van.a@beam.vn',
         firstName: 'Nguyễn',
         lastName: 'Van A',
         phoneNumber: '0912345678',
@@ -125,6 +128,26 @@ describe('DialogEditUser', () => {
     expect(
       await screen.findByText('Số điện thoại không đúng định dạng')
     ).toBeInTheDocument()
+    expect(requestCount).toBe(0)
+  })
+
+  it('chặn submit khi email không hợp lệ', async () => {
+    registerDetailHandlers()
+    let requestCount = 0
+    server.use(
+      http.put('*/users/managers/user-1', () => {
+        requestCount += 1
+        return HttpResponse.json({ data: null })
+      })
+    )
+    const { user } = renderDialog()
+
+    const emailInput = await screen.findByLabelText(/Email/)
+    await user.clear(emailInput)
+    await user.type(emailInput, 'email-khong-hop-le')
+    await user.click(screen.getByRole('button', { name: 'Lưu thay đổi' }))
+
+    expect(await screen.findByText('Email không đúng định dạng')).toBeInTheDocument()
     expect(requestCount).toBe(0)
   })
 

@@ -1,7 +1,7 @@
 import { createAppStore } from '@/app/store'
 import { savePermissions } from '@slices/authSlice'
 import { MessageProvider } from '@hooks/useMessage'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { HttpResponse, delay, http } from 'msw'
 import { Provider } from 'react-redux'
@@ -93,7 +93,30 @@ describe('Security', () => {
     expect(await screen.findByText('Chưa ghi nhận thiết bị')).toBeInTheDocument()
   })
 
-  it('hiển thị trạng thái đang phát triển khi thông tin chưa khả dụng', async () => {
+  it.each([
+    ['404', 404],
+    ['503', 503],
+    ['500', 500]
+  ])(
+    'báo lỗi thật kèm nút thử lại khi API hỏng (%s), không còn nhánh "đang phát triển"',
+    async (_label, status) => {
+      server.use(
+        http.get('*/users/customers/customer-1/devices', () =>
+          HttpResponse.json({ detail: 'error' }, { status })
+        )
+      )
+      renderSecurity(['EWALLET:USER:VIEW'])
+
+      const alert = await screen.findByRole('alert')
+      expect(alert).toHaveTextContent('Không tải được thông tin bảo mật')
+      expect(
+        screen.getByRole('button', { name: 'Thử lại' })
+      ).toBeInTheDocument()
+      expect(screen.queryByText('Tính năng đang phát triển')).not.toBeInTheDocument()
+    }
+  )
+
+  it('gọi lại API khi bấm thử lại', async () => {
     let requestCount = 0
     server.use(
       http.get('*/users/customers/customer-1/devices', () => {
@@ -103,57 +126,26 @@ describe('Security', () => {
           : HttpResponse.json(deviceResponse([activeDevice]))
       })
     )
-    renderSecurity(['EWALLET:USER:VIEW'])
+    const { user } = renderSecurity(['EWALLET:USER:VIEW'])
 
-    expect(await screen.findByRole('status')).toHaveTextContent(
-      'Tính năng đang phát triển'
-    )
-    expect(
-      screen.queryByRole('button', { name: 'Thử lại' })
-    ).not.toBeInTheDocument()
-    expect(requestCount).toBe(1)
+    await user.click(await screen.findByRole('button', { name: 'Thử lại' }))
+
+    expect(await screen.findByText('iPhone 15 Pro')).toBeInTheDocument()
+    expect(requestCount).toBe(2)
   })
 
-  it('xác nhận trước khi logout-all và làm mới danh sách thiết bị', async () => {
-    let logoutRequestCount = 0
-    let hasLoggedOut = false
+  it('không còn lối đăng xuất tất cả thiết bị kể cả với quyền cao nhất', async () => {
     server.use(
       http.get('*/users/customers/customer-1/devices', () =>
-        HttpResponse.json(
-          deviceResponse(
-            hasLoggedOut
-              ? [{ ...activeDevice, status: 'REVOKED' }]
-              : [activeDevice]
-          )
-        )
-      ),
-      http.post('*/users/customers/customer-1/logout-all', () => {
-        logoutRequestCount += 1
-        hasLoggedOut = true
-        return HttpResponse.json({
-          data: {
-            userId: USER_ID,
-            revokedDeviceCount: 1,
-            sessionCleared: true,
-            revokedAt: '2026-08-17 15:30:00'
-          }
-        })
-      })
+        HttpResponse.json(deviceResponse([activeDevice]))
+      )
     )
-    const { user } = renderSecurity(['EWALLET:USER:FULL'])
+    renderSecurity(['EWALLET:USER:FULL'])
 
     await screen.findByText('iPhone 15 Pro')
-    await user.click(
-      screen.getByRole('button', { name: 'Đăng xuất tất cả thiết bị' })
-    )
-
-    expect(screen.getByText('Xác nhận đăng xuất tất cả thiết bị')).toBeInTheDocument()
-    expect(logoutRequestCount).toBe(0)
-
-    await user.click(screen.getByRole('button', { name: 'Đăng xuất tất cả' }))
-
-    await waitFor(() => expect(logoutRequestCount).toBe(1))
-    expect(await screen.findByText('Đã thu hồi')).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Đăng xuất tất cả thiết bị' })
+    ).not.toBeInTheDocument()
   })
 
   it('không gọi API hoặc hiển thị dữ liệu khi thiếu quyền USER', async () => {

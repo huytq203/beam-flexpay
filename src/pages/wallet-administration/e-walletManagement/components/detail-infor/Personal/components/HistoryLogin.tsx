@@ -1,6 +1,5 @@
 import dayjs from 'dayjs'
 import { DeviceMobileSpeakerIcon, HistoryOutlined } from '@components/icons'
-import { ButtonComponent } from '@components/index'
 import { TYPEDATE } from '@constants/date.constant'
 import type {
   AdminTrustedDevice,
@@ -9,8 +8,6 @@ import type {
 
 interface HistoryLoginProps {
   devices: AdminTrustedDevice[]
-  canLogoutAll: boolean
-  onLogoutAll: () => void
 }
 
 const STATUS_LABEL: Record<DeviceStatus, string> = {
@@ -79,11 +76,8 @@ const DeviceItem = ({ device }: { device: AdminTrustedDevice }) => {
   )
 }
 
-export const HistoryLogin = ({
-  devices,
-  canLogoutAll,
-  onLogoutAll
-}: HistoryLoginProps) => (
+/** Chỉ để xem: màn này không thu hồi phiên hay đăng xuất thiết bị. */
+export const HistoryLogin = ({ devices }: HistoryLoginProps) => (
   <section aria-labelledby='trusted-devices-title'>
     <div className='mb-3 flex items-center justify-between gap-2'>
       <h2
@@ -115,17 +109,6 @@ export const HistoryLogin = ({
           <DeviceItem key={device.id || device.deviceId} device={device} />
         ))}
       </ul>
-    )}
-
-    {canLogoutAll && (
-      <ButtonComponent
-        danger
-        type='default'
-        className='mt-4 w-full'
-        content='Đăng xuất tất cả thiết bị'
-        aria-label='Đăng xuất tất cả thiết bị'
-        onClick={onLogoutAll}
-      />
     )}
   </section>
 )

@@ -197,8 +197,8 @@ export const FeePolicyListPage = ({ scope }: FeePolicyListPageProps) => {
                 <FormSelect
                   name='feeDomain'
                   control={control}
-                  label='Phí miền'
-                  placeholder='Chọn phí miền'
+                  label='Phí domain'
+                  placeholder='Chọn phí domain'
                   allowClear
                   options={mapEnumToSelectOptions(selectableFeeDomains)}
                   className='col-span-12 flex flex-col md:col-span-3'

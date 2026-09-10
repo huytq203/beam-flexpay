@@ -34,11 +34,11 @@ export const WALLET_FEE_SCOPE: FeePolicyScope = {
 export const BANK_FEE_SCOPE: FeePolicyScope = {
   lockedFeeDomain: 'BANK',
   screen: 'FEE_BANK_POLICY',
-  title: 'Phí ngân hàng',
+  title: 'Phí nhà cung cấp đối tác/bank',
   description:
-    'Phần phí ngân hàng được hưởng, tách riêng để đối soát. Miền phí cố định là Ngân hàng.',
+    'Phần Phí nhà cung cấp đối tác/bank được hưởng, tách riêng để đối soát. Miền phí cố định là Ngân hàng.',
   listPath: PATHS.FEE_V4.BANK_FEE_MANAGEMENT,
   createPath: PATHS.FEE_V4.ADD_BANK_FEE_POLICY,
   editPath: PATHS.FEE_V4.EDIT_BANK_FEE_POLICY,
-  createLabel: 'Thêm chính sách phí ngân hàng'
+  createLabel: 'Thêm chính sách Phí nhà cung cấp đối tác/bank'
 }

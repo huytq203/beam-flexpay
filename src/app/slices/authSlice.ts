@@ -44,8 +44,12 @@ const isAuthenticationResponse = (
   'accessToken' in data && typeof data.accessToken === 'string'
 
 /** Ghi token vào cookie + state và đồng bộ thông tin decode từ token. */
-const applyAccessToken = (state: IAuthState, token: string): void => {
-  persistAccessTokenCookie(token)
+const applyAccessToken = (
+  state: IAuthState,
+  token: string,
+  refreshExpiresInSeconds: number = CookieExpiry.REFRESH_TOKEN_SECONDS
+): void => {
+  persistAccessTokenCookie(token, refreshExpiresInSeconds)
   state.accessToken = token
 
   const tokenInfo = decodeToken(token)
@@ -114,7 +118,11 @@ const authSlice = createSlice({
     builder
       // Lắng nghe updateAccessToken action từ authActions (được dispatch sau khi refresh token)
       .addCase(updateAccessToken, (state, action) => {
-        applyAccessToken(state, action.payload.token)
+        applyAccessToken(
+          state,
+          action.payload.token,
+          action.payload.refreshExpiresIn
+        )
       })
       // Lắng nghe userLogin từ authEndpoints (API mới - ENV.API_LOGIN)
       .addMatcher(

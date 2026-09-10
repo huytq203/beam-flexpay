@@ -19,6 +19,7 @@ import {
   CookieExpiry,
   TokenType,
   RefreshResponse,
+  TokenData,
   ApiErrorResponse,
   RequestArgs,
   isInWhiteList,
@@ -26,8 +27,7 @@ import {
   isPasswordResetRequest,
   suppressesErrorNotification,
   normalizePathname,
-  callApi,
-  persistAccessTokenCookie
+  setRefreshTokenCookie
 } from './fetchBaseQuery.types'
 import type { RootState } from '../store'
 import { updateAccessToken } from '@slices/authActions'
@@ -107,11 +107,6 @@ const baseAuthQuery = fetchBaseQuery({
   prepareHeaders: prepareAuthHeaders
 })
 
-const baseRefreshQuery = fetchBaseQuery({
-  baseUrl: ENV.API_LOGIN,
-  credentials: 'include'
-})
-
 const baseQueryOld = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL,
   prepareHeaders: prepareAuthHeaders
@@ -155,9 +150,24 @@ export const baseQueryMerchant = fetchBaseQuery({
 
 
 
-const refreshAccessToken = async (
-  api: BaseQueryApi,
-  extraOptions: Record<string, unknown>
+type AccessTokenDispatch = (
+  action: ReturnType<typeof updateAccessToken>
+) => unknown
+
+const getRefreshData = (
+  response: RefreshResponse | TokenData
+): TokenData | null => {
+  if ('data' in response) return response.data
+  return 'accessToken' in response ? response : null
+}
+
+/**
+ * Dùng chung cho cả bootstrap phiên trong AppLayout và retry request khi gặp
+ * 401. Promise singleton đảm bảo nhiều request hết hạn cùng lúc chỉ refresh một
+ * lần.
+ */
+export const refreshAccessToken = async (
+  dispatch: AccessTokenDispatch
 ): Promise<string | null> => {
   if (isRefreshing && refreshPromise) {
     return refreshPromise
@@ -170,14 +180,21 @@ const refreshAccessToken = async (
       const refreshToken = Cookies.get(CookieKey.REFRESH_TOKEN)
       if (!refreshToken) return null
 
-      const refreshResult = await callApi<RefreshResponse>(
-        baseRefreshQuery,
-        { url: '/auth/refresh', method: 'POST', body: { refreshToken } },
-        api,
-        extraOptions
-      )
+      const refreshUrl = `${ENV.API_LOGIN.replace(/\/$/, '')}/auth/refresh`
+      const response = await fetch(refreshUrl, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ refreshToken })
+      })
 
-      const data = refreshResult?.data
+      if (!response.ok) {
+        console.error(`[Auth] Refresh token failed with HTTP ${response.status}`)
+        return null
+      }
+
+      const refreshResult = (await response.json()) as RefreshResponse | TokenData
+      const data = getRefreshData(refreshResult)
       const newAccessToken = data?.[TokenType.ACCESS_TOKEN]
 
       if (!newAccessToken) return null
@@ -187,14 +204,18 @@ const refreshAccessToken = async (
       // Sử dụng refreshExpiresIn từ API (đơn vị giây), fallback 1800 giây
       const refreshExpiresInSeconds = data?.[TokenType.REFRESH_EXPIRES_IN] || CookieExpiry.REFRESH_TOKEN_SECONDS
 
-      persistAccessTokenCookie(newAccessToken, refreshExpiresInSeconds)
-
       // Cập nhật Redux store với access token mới và permissions
-      api.dispatch(updateAccessToken({ token: newAccessToken, expiresIn: expiresInSeconds }))
+      dispatch(updateAccessToken({
+        token: newAccessToken,
+        expiresIn: expiresInSeconds,
+        refreshExpiresIn: refreshExpiresInSeconds
+      }))
 
       if (data?.[TokenType.REFRESH_TOKEN]) {
-        const refreshExpiresInDays = refreshExpiresInSeconds / 86400
-        Cookies.set(CookieKey.REFRESH_TOKEN, data[TokenType.REFRESH_TOKEN], { expires: refreshExpiresInDays })
+        setRefreshTokenCookie(
+          data[TokenType.REFRESH_TOKEN],
+          refreshExpiresInSeconds
+        )
       }
 
       return newAccessToken
@@ -397,7 +418,7 @@ const createCustomBaseQuery = (
 
       switch (status) {
         case HttpStatus.UNAUTHORIZED: {
-          const newAccessToken = await refreshAccessToken(api, extraOptions as Record<string, unknown>)
+          const newAccessToken = await refreshAccessToken(api.dispatch)
           if (!newAccessToken) {
             handleSessionExpired()
             break
@@ -446,4 +467,3 @@ export const fetchBaseQueryOld = createCustomBaseQuery(baseQueryOld)
 export const fetchBaseQueryWalletCore = createCustomBaseQuery(baseQueryWalletCore)
 export const fetchBaseQueryUserWallet = createCustomBaseQuery(baseQueryUserWallet)
 export const fetchBaseQueryMerchant = createCustomBaseQuery(baseQueryMerchant)
-

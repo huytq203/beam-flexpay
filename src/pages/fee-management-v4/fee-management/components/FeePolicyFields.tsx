@@ -1,4 +1,4 @@
-import { FormDatePicker, FormInput, FormInputNumber, FormSelect, FormTextArea } from '@components/form'
+import { FormDatePicker, FormInput, FormSelect, FormTextArea } from '@components/form'
 import { FeeDirectionFilter, Input } from '@components/index'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import {
@@ -13,6 +13,7 @@ import type { Control, UseFormSetValue } from 'react-hook-form'
 import { useWatch } from 'react-hook-form'
 import {
   Currency,
+  FEE_PRIORITY_OPTIONS,
   feeDomain,
   serviceType,
   STATUS_LABEL,
@@ -113,7 +114,7 @@ export const FeePolicyFields = ({
         </p>
         {isInternalBankMismatch && (
           <p className='mt-1 text-xs font-medium text-warning-strong'>
-            Giao dịch nội bộ không đi qua ngân hàng — kiểm tra lại phí miền
+            Giao dịch nội bộ không đi qua ngân hàng — kiểm tra lại phí domain
             &ldquo;Bank&rdquo;.
           </p>
         )}
@@ -137,7 +138,7 @@ export const FeePolicyFields = ({
         // mã enum, và không cho sửa. Giá trị thật đã được gán vào form ở trên.
         <div className='col-span-12 flex flex-col md:col-span-6'>
           <label htmlFor='feeDomain' className='font-medium inline-flex items-center'>
-            Phí miền
+            Phí domain
           </label>
           <Input
             id='feeDomain'
@@ -153,7 +154,7 @@ export const FeePolicyFields = ({
           className='col-span-12 md:col-span-6'
           name='feeDomain'
           control={control}
-          label={isCreate ? <RequiredLabel text='Phí miền' /> : 'Phí miền'}
+          label={isCreate ? <RequiredLabel text='Phí domain' /> : 'Phí domain'}
           options={mapEnumToSelectOptions(feeDomain)}
           disabled={lockedAfterInit}
         />
@@ -169,12 +170,14 @@ export const FeePolicyFields = ({
         className='col-span-12 md:col-span-6'
         disabled={lockedAfterInit}
       />
-      <FormInputNumber
+      <FormSelect
         className='col-span-12 md:col-span-6'
         name='priority'
         control={control}
         label={<RequiredLabel text='Mức độ ưu tiên' />}
-        placeholder='Nhập mức độ ưu tiên'
+        placeholder='Chọn mức độ ưu tiên'
+        options={[...FEE_PRIORITY_OPTIONS]}
+        allowClear={false}
         disabled={lockedWhileViewing}
       />
 
@@ -182,7 +185,7 @@ export const FeePolicyFields = ({
         className='col-span-12 md:col-span-6 flex flex-col'
         name='validFrom'
         control={control}
-        label={isCreate ? <RequiredLabel text='Hiệu lực từ' /> : 'Hiệu lực từ'}
+        label={isCreate ? <RequiredLabel text='Thời gian áp dụng từ' /> : 'Thời gian áp dụng từ'}
         showTime
         disabledDate={disabledPastDate}
         disabledTime={disabledPastTime}
@@ -192,7 +195,7 @@ export const FeePolicyFields = ({
         className='col-span-12 md:col-span-6 flex flex-col'
         name='validTo'
         control={control}
-        label='Hiệu lực đến'
+        label='Thời gian áp dụng đến'
         showTime
         disabled={lockedWhileViewing}
       />
@@ -207,7 +210,7 @@ export const FeePolicyFields = ({
             ? mapEnumToSelectOptions(STATUS_LABEL).slice(0, 1)
             : mapEnumToSelectOptions(STATUS_LABEL).slice(1)
         }
-        disabled={lockedWhileViewing}
+        disabled={!isEdit}
       />
       <FormSelect
         className='col-span-12 md:col-span-6'
@@ -215,9 +218,9 @@ export const FeePolicyFields = ({
         control={control}
         options={mapEnumToSelectOptions(Currency)}
         label={
-          isCreate ? <RequiredLabel text='Đơn vị thanh toán' /> : 'Đơn vị thanh toán'
+          isCreate ? <RequiredLabel text='Đơn vị tiền tệ' /> : 'Đơn vị tiền tệ'
         }
-        placeholder='Nhập đơn vị thanh toán...'
+        placeholder='Nhập đơn vị tiền tệ...'
         disabled={lockedAfterInit}
       />
 

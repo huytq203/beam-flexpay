@@ -7,7 +7,7 @@ export interface RootDataEKYC {
 }
 
 export interface DataEKYC {
-  content: ContentEKYC[]
+  content: EKYCGroup[]
   pageable: Pageable
   last: boolean
   totalElements: number
@@ -21,33 +21,65 @@ export interface DataEKYC {
 }
 
 export interface ContentEKYC {
-  id: string
+  id?: string
+  userId?: string
+  username?: string
+  sessionId?: string
+  ekycSessionId?: string
+  currentStep?: string | null
+  idNumber?: string | null
+  fullName?: string | null
+  dateOfBirth?: string | null
+  gender?: string | null
+  nationality?: string | null
+  permanentAddress?: string | null
+  currentAddress?: string | null
+  placeOfBirth?: string | null
+  placeOfOrigin?: string | null
+  issueDate?: string | null
+  issuePlace?: string | null
+  expiryDate?: string | null
+  cardType?: string | null
+  oldIdNumber?: string | null
+  faceMatchScore?: number | null
+  verifiedAt?: string | null
+  status: string
+  profileId?: string | null
+  profileStatus?: string | null
+  documentOwnerUsername?: string | null
+  startedAt?: string | null
+  completedAt?: string | null
+  expiresAt?: string | null
+  invalidationReason?: string | null
+  invalidatedAt?: string | null
+  invalidatedBy?: string | null
+  createdAt: string
+  updatedAt?: string | null
+  createdBy?: string | null
+  updatedBy?: string | null
+  features?: string | null
+}
+
+export interface EKYCGroup {
+  groupKey: string
+  username: string
+  userId: string
+  attemptCount: number
+  latestStatus: string
+  latestAt: string
+  attempts: ContentEKYC[]
+}
+
+export interface EKYCListItem extends ContentEKYC {
   userId: string
   username: string
-  ekycSessionId: string
-  idNumber: string
-  fullName: string
-  dateOfBirth: string
-  gender: string
-  nationality: string
-  permanentAddress: string
-  currentAddress: string
-  placeOfBirth: string
-  issueDate: string
-  issuePlace: string
-  expiryDate: string
-  cardType: string
-  oldIdNumber: string
-  faceMatchScore: number
-  verifiedAt: string
-  status: string
-  invalidationReason: string
-  invalidatedAt: string
-  invalidatedBy: string
-  createdAt: string
-  updatedAt: string
-  createdBy: string
-  updatedBy: string
+  groupKey: string
+  attemptCount: number
+  latestStatus: string
+  latestAt: string
+  attempts: ContentEKYC[]
+  no: number
+  key: string
 
 }
 

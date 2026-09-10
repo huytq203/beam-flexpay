@@ -12,6 +12,14 @@ export interface TransactionFreezeSummary {
   orderCount: number
 }
 
+export interface UnifiedJournalSummary {
+  totalCount: number
+  successCount: number
+  processingCount: number
+  pendingCount: number
+  failedCount: number
+}
+
 export interface UnifiedContentJournal {
   id: string
   journalCode: string
@@ -95,6 +103,7 @@ export interface TransactionDetail360 {
 
 export interface DataUnifiedJournal {
   content: UnifiedContentJournal[]
+  summary?: UnifiedJournalSummary
   pageable?: Pageable
   last?: boolean
   totalElements: number

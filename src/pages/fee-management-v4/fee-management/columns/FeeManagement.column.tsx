@@ -69,7 +69,7 @@ export const getColumnFeePolicy = ({
   },
 
   {
-    title: 'Phí miền',
+    title: 'Phí Domain',
     dataIndex: 'feeDomain',
     render: (value: string) => getEnumLabel(value, feeDomain)
   },

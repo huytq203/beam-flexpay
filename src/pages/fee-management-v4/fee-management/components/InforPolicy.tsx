@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useMemo } from 'react'
 import { FormInputNumber, FormSelect } from '@components/form'
-import { CardComponent, DialogModal } from '@components/index'
+import { CardComponent, DialogModal, FeeRoundModeField } from '@components/index'
 import InfoComponents from './InfoComponents'
 import { calculationMethodEnum } from '../constants/FeeManagement.constant'
 import useHandleInfoPolicy from '../hooks/useHandleInfoPolicy'
@@ -107,13 +107,11 @@ const allComponentTypeForDisplay = useMemo(() => {
                 options={selectOptions.beneficiaryType}
                 placeholder='Chọn người hưởng phí'
               />
-              <FormSelect
+              <FeeRoundModeField
                 control={control}
                 name='roundMode'
-                label={<span>Công thức làm tròn <span className='text-red-500'>*</span></span>}
-                className='col-span-4 flex flex-col'
                 options={selectOptions.roundMode}
-                placeholder='Chọn công thức làm tròn'
+                className='col-span-4 flex flex-col'
               />
               {!isVATType && (
                 <FormSelect

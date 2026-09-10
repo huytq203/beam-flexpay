@@ -1,5 +1,5 @@
 import { FormInputNumber, FormSelect } from '@components/form'
-import { CardComponent, DialogModal } from '@components/index'
+import { CardComponent, DialogModal, FeeRoundModeField } from '@components/index'
 import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react'
 
 import { FeeComponentType } from '@pages/fee-management-v4/fee-management/schemas/FeeManagement.schema'
@@ -119,13 +119,11 @@ const InforPolicy = forwardRef<InfoPolicyRef, Props>(
                   options={selectOptions.beneficiaryType}
                   placeholder='Chọn người hưởng phí'
                 />
-                <FormSelect
+                <FeeRoundModeField
                   control={control}
                   name='roundMode'
-                  label='Công thức làm tròn'
-                  className='col-span-4 flex flex-col'
                   options={selectOptions.roundMode}
-                  placeholder='Chọn công thức làm tròn'
+                  className='col-span-4 flex flex-col'
                 />
 
                 {!isVATType && (

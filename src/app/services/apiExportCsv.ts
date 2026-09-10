@@ -61,7 +61,9 @@ export interface ExportLedgerEntriesQuery {
   direction?: string
   /** Nhận cả mã giao dịch lẫn UUID của transaction. */
   transactionCode?: string
-  /** Từ vựng RIÊNG của bảng `transactions`, không dùng chung với màn giao dịch. */
+  /** Mã bút toán của dòng sổ cái. */
+  journalCode?: string
+  /** Bộ mã dùng chung với màn Quản lý giao dịch: `CASH_IN`, `CASH_OUT`. */
   transactionType?: string
   minAmount?: number
   maxAmount?: number

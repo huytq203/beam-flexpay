@@ -1,12 +1,10 @@
-import { useState } from 'react'
 import { PERMISSION, useAccess } from '@/app/permissions'
-import { CardComponent } from '@components/index'
-import { ClockIcon } from '@components/icons'
+import { WarningIcon } from '@components/icons'
+import { ButtonComponent, CardComponent } from '@components/index'
 import { Skeleton } from '@components/ui/skeletons/Skeleton'
 import { useGetCustomerDevicesQuery } from '@services/apiUserDevices'
 import { AuthMethod } from './components/AuthMethod'
 import { HistoryLogin } from './components/HistoryLogin'
-import { LogoutAllDevicesDialog } from './components/LogoutAllDevicesDialog'
 
 interface SecurityProps {
   userId: string
@@ -34,24 +32,30 @@ const SecurityLoading = () => (
   </div>
 )
 
-const SecurityDevelopmentState = () => (
+const SecurityErrorState = ({ onRetry }: { onRetry: () => void }) => (
   <CardComponent
     content={
-      <div className='flex items-start gap-3 py-4' role='status'>
-        <ClockIcon
-          className='mt-0.5 shrink-0 text-cyan-700'
+      <div className='flex items-start gap-3 py-4' role='alert'>
+        <WarningIcon
+          className='mt-0.5 shrink-0 text-red-600'
           size={22}
-          weight='regular'
+          weight='fill'
           aria-hidden
         />
         <div>
           <p className='font-semibold text-slate-900'>
-            Tính năng đang phát triển
+            Không tải được thông tin bảo mật
           </p>
           <p className='mt-1 text-sm text-slate-600'>
-            Thông tin bảo mật và lịch sử đăng nhập hiện chưa khả dụng. Vui lòng
-            quay lại sau.
+            Máy chủ chưa phản hồi được danh sách thiết bị tin cậy. Thử lại sau
+            ít phút, nếu vẫn lỗi thì báo đội kỹ thuật.
           </p>
+          <ButtonComponent
+            type='default'
+            className='mt-3'
+            content='Thử lại'
+            onClick={onRetry}
+          />
         </div>
       </div>
     }
@@ -59,23 +63,20 @@ const SecurityDevelopmentState = () => (
 )
 
 export const Security = ({ userId }: SecurityProps) => {
-  const { has, hasAny } = useAccess()
-  const canViewDevices = hasAny([
-    PERMISSION.USER_VIEW,
-    PERMISSION.USER_FULL
-  ])
-  const canLogoutAll = has(PERMISSION.USER_FULL)
-  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false)
-  const { currentData, isLoading, isError } =
+  const { hasAny } = useAccess()
+  const canViewDevices = hasAny([PERMISSION.USER_VIEW, PERMISSION.USER_FULL])
+  const { currentData, isFetching, isError, refetch } =
     useGetCustomerDevicesQuery(userId, {
       skip: !userId || !canViewDevices
     })
 
   if (!canViewDevices) return null
-  if (isLoading) return <SecurityLoading />
-  if (isError || !currentData) {
-    return <SecurityDevelopmentState />
-  }
+  // `isFetching` chứ không phải `isLoading`: đổi sang ví khác vẫn phải là skeleton,
+  // nếu không sẽ loé trạng thái lỗi trong lúc dữ liệu mới đang về.
+  if (isFetching) return <SecurityLoading />
+  // Endpoint đã lên môi trường dev, nên mọi thất bại giờ đều là sự cố thật —
+  // báo đúng như vậy kèm đường thử lại, không còn nhánh "đang phát triển".
+  if (isError || !currentData) return <SecurityErrorState onRetry={refetch} />
 
   return (
     <div className='grid grid-cols-1 gap-3 xl:grid-cols-2'>
@@ -85,20 +86,7 @@ export const Security = ({ userId }: SecurityProps) => {
       />
       <CardComponent
         className='min-w-0'
-        content={
-          <HistoryLogin
-            devices={currentData.devices}
-            canLogoutAll={canLogoutAll}
-            onLogoutAll={() => setIsLogoutDialogOpen(true)}
-          />
-        }
-      />
-
-      <LogoutAllDevicesDialog
-        userId={userId}
-        devices={currentData.devices}
-        open={isLogoutDialogOpen}
-        onClose={() => setIsLogoutDialogOpen(false)}
+        content={<HistoryLogin devices={currentData.devices} />}
       />
     </div>
   )

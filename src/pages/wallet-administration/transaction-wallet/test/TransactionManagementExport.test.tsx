@@ -13,7 +13,7 @@ const mocks = vi.hoisted(() => ({
     status: 'POSTED',
     fromDate: '2026-08-01T00:00:00.000',
     toDate: '2026-08-25T23:59:59.999',
-    sourceDomain: '',
+    sourceDomain: 'EWALLET',
     paymentMethod: '',
     senderUsername: '0962341913',
     receiverUsername: ''
@@ -76,7 +76,18 @@ describe('TransactionManagement export', () => {
       status: 'POSTED',
       fromDate: '2026-08-01T00:00:00.000',
       toDate: '2026-08-25T23:59:59.999',
-      senderUsername: '0962341913'
+      senderUsername: '0962341913',
+      sourceDomain: 'EWALLET'
     })
+  })
+
+  it('ẩn bộ lọc Nguồn vì màn này luôn dùng ví điện tử', () => {
+    renderWithProviders(
+      <MessageProvider>
+        <TransactionManagement />
+      </MessageProvider>
+    )
+
+    expect(screen.queryByLabelText('Nguồn')).not.toBeInTheDocument()
   })
 })

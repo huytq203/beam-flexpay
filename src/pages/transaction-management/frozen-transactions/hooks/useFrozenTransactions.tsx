@@ -14,7 +14,8 @@ const useFrozenTransactions = () => {
   const payload: FreezeSearchParams = {
     page: page,
     size: pageSize,
-    ...filter
+    ...filter,
+    includeSummary: true
   }
   const { data, isFetching, isLoading, refetch } =
     useGetFreezesQuery(payload)

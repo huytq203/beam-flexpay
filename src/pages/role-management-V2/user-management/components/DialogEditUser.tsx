@@ -31,6 +31,7 @@ interface Props {
 }
 
 const EMPTY_VALUES: UpdateAdminUserFormData = {
+  email: '',
   firstName: '',
   lastName: '',
   phoneNumber: '',
@@ -103,6 +104,7 @@ const DialogEditUser = ({
     if (!user) return EMPTY_VALUES
 
     return {
+      email: user.email ?? '',
       firstName: user.firstName ?? '',
       lastName: user.lastName ?? '',
       phoneNumber: user.phoneNumber ?? '',
@@ -117,11 +119,13 @@ const DialogEditUser = ({
       values: formValues
     })
   const enabled = useWatch({ control, name: 'enabled' })
+  const email = useWatch({ control, name: 'email' })
   const roleIds = useWatch({ control, name: 'roleIds' }) ?? []
 
   const hasSecurityImpact = Boolean(
     user &&
-    ((user.enabled && enabled === 'false') ||
+    ((user.email ?? '').toLowerCase() !== email.trim().toLowerCase() ||
+      (user.enabled && enabled === 'false') ||
       !haveSameIds(assignedRoleIds, roleIds))
   )
   const isLoadingDetails =
@@ -146,6 +150,7 @@ const DialogEditUser = ({
     onLoadingChange?.(true)
 
     const payload: UpdateAdminUserRequest = {
+      email: data.email.trim().toLowerCase(),
       firstName: data.firstName.trim(),
       lastName: data.lastName.trim(),
       phoneNumber: data.phoneNumber.trim(),
@@ -162,6 +167,11 @@ const DialogEditUser = ({
 
       if (/số điện thoại/i.test(message)) {
         setError('phoneNumber', { type: 'server', message })
+        return
+      }
+
+      if (/email/i.test(message)) {
+        setError('email', { type: 'server', message })
         return
       }
 
@@ -228,26 +238,31 @@ const DialogEditUser = ({
         >
           Thông tin định danh
         </h3>
-        <dl className='grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2'>
+        <dl className='grid min-w-0 grid-cols-1 gap-3'>
           <div className='min-w-0'>
             <dt className='text-xs font-medium text-slate-500'>Tên đăng nhập</dt>
             <dd className='mt-0.5 break-all text-sm font-medium text-slate-900'>
               {user.username}
             </dd>
           </div>
-          <div className='min-w-0'>
-            <dt className='text-xs font-medium text-slate-500'>Email</dt>
-            <dd className='mt-0.5 break-all text-sm font-medium text-slate-900'>
-              {user.email ?? '--'}
-            </dd>
-          </div>
         </dl>
         <p className='mt-2 text-xs leading-5 text-slate-600'>
-          Tên đăng nhập và email không thể thay đổi tại màn hình này.
+          Tên đăng nhập không thể thay đổi tại màn hình này.
         </p>
       </section>
 
       <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
+        <FormInput
+          control={control}
+          name='email'
+          label='Email'
+          placeholder='Ví dụ: ten@beam.vn'
+          maxLength={100}
+          type='email'
+          autoComplete='email'
+          required
+          className={FIELD_CLASS}
+        />
         <FormInput
           control={control}
           name='firstName'
@@ -311,8 +326,9 @@ const DialogEditUser = ({
           className='rounded-lg bg-amber-50 px-3 py-2.5 text-sm leading-5 text-amber-900'
           role='note'
         >
-          Thay đổi trạng thái hoặc nhóm quyền có thể kết thúc các phiên đăng nhập
-          hiện tại để quyền mới có hiệu lực ngay.
+          Thay đổi email, trạng thái hoặc nhóm quyền có thể ảnh hưởng đến xác
+          thực và kết thúc các phiên đăng nhập hiện tại để dữ liệu mới có hiệu
+          lực ngay.
         </div>
       )}
 

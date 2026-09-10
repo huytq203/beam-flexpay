@@ -124,8 +124,8 @@ export const SourceDomainLabel: Record<SourceDomain, string> = {
  * `transactionType` về nhóm rút, không bao giờ mở sang loại giao dịch khác.
  */
 export const WithdrawTransactionType = {
-    CASH_OUT: 'Khách hàng rút tiền',
-    MERCHANT_CASH_OUT: 'Merchant rút tiền'
+    CASH_OUT: 'Rút tiền',
+    REFUND:'Hoàn tiền'
 } as const
 
 export type WithdrawTransactionTypeKey = keyof typeof WithdrawTransactionType
@@ -133,3 +133,4 @@ export type WithdrawTransactionTypeKey = keyof typeof WithdrawTransactionType
 /** Giá trị mặc định khi người dùng chưa chọn loại lệnh rút cụ thể. */
 export const DEFAULT_WITHDRAW_TRANSACTION_TYPE =
     'CASH_OUT' satisfies WithdrawTransactionTypeKey
+

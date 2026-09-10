@@ -5,9 +5,11 @@ import dayjs from 'dayjs'
 import type { ReactNode } from 'react'
 import {
   DirectionShortLabel,
+  LedgerTransactionType,
   OwnerTypeLabels,
   StatusConstants,
-  type DirectionKey
+  type DirectionKey,
+  type LedgerTransactionTypeKey
 } from '../constants/SystemLedger.constant'
 import { LedgerEntry } from '../types/SystemLedger.type'
 
@@ -68,7 +70,11 @@ export const LedgerEntryDetail = ({ record }: { record: LedgerEntry }) => {
             </span>
           </Row>
           <Row label='Loại giao dịch'>
-            <span className='font-medium'>{record.transaction?.type}</span>
+            <span className='font-medium'>
+              {LedgerTransactionType[
+                record.transactionType as LedgerTransactionTypeKey
+              ] ?? record.transactionType ?? '--'}
+            </span>
           </Row>
           <Row label='Tổng tiền'>
             <span className='font-bold tabular-nums'>
@@ -171,12 +177,10 @@ export const LedgerEntryDetail = ({ record }: { record: LedgerEntry }) => {
               {dayjs(record.createdAt).format('DD/MM/YYYY HH:mm:ss')}
             </span>
           </Row>
-          <Row label='Checksum'>
-            <TruncatedHash value={record.checksum} />
+          <Row label='Mã bút toán'>
+            <TruncatedHash value={record?.journalCode || '--'} />
           </Row>
-          <Row label='Prev checksum'>
-            <TruncatedHash value={record.previousChecksum} />
-          </Row>
+
         </Panel>
       </div>
     </div>

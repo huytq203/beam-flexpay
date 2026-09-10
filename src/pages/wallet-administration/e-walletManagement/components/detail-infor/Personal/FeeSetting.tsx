@@ -132,7 +132,7 @@ export const FeeSetting = ({ walletId, walletLabel }: FeeSettingProps) => {
     )
   }
 
-  return (
+return (
     <div className='space-y-3!'>
       {/* {filterCard} */}
       <FeeSettingCard totalRows={totalElements} action={exportButton}>

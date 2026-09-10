@@ -1,4 +1,4 @@
-import { CardComponent, DialogModal, ExportCsvButton, Table } from '@components/index'
+import { CardComponent, DialogModal, ExportCsvButton, JournalSummary, Table } from '@components/index'
 import { ArrowCounterClockwiseIcon, FileDoneOutlined } from '@components/icons'
 import React from 'react'
 import DialogRefund from './components/DialogRefund'
@@ -23,6 +23,9 @@ const TransactionManagement = () => {
     setPageSize,
     isFetching,
     handleSearch,
+    summary,
+    activeStatus,
+    handleSummaryStatusChange,
     canFreeze,
     selectedTransaction,
     selectedUnfreezeTransaction,
@@ -67,7 +70,7 @@ const TransactionManagement = () => {
             </div>
           </div>
         ) : (
-          <FormSearch handleSearch={handleSearch} />
+          <FormSearch handleSearch={handleSearch} status={activeStatus} />
         )
       } />
       <CardComponent content={
@@ -80,6 +83,15 @@ const TransactionManagement = () => {
               tooltip={exportTooltip}
             />
           </div>
+          <JournalSummary
+            ariaLabel='Tổng quan giao dịch'
+            summary={summary}
+            totalFallback={totalElements}
+            totalLabel='Tổng giao dịch'
+            isLoading={isLoadingGetTransaction}
+            activeStatus={activeStatus}
+            onStatusChange={handleSummaryStatusChange}
+          />
           {isLoadingGetTransaction ? (
             <SkeletonTable columns={columns?.length || 10} rows={pageSize || 5} noContainer />
           ) : (

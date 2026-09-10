@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import type { TFunction } from 'i18next'
@@ -26,9 +26,12 @@ import Header from './Header'
 import { EmployeePassword } from './components/EmployeePassword'
 import EmployeeProfile from './components/EmployeeProfile'
 import ScreenLoading from '@components/screen-loading/ScreenLoading'
-import { useAppSelector } from '@hooks/hook'
+import { useAppDispatch, useAppSelector } from '@hooks/hook'
 import { useRouteAccess } from '@/app/permissions'
-import { initInactivityTracker } from '@configs/fetchBaseQueryCustom'
+import {
+  initInactivityTracker,
+  refreshAccessToken
+} from '@configs/fetchBaseQueryCustom'
 import { FORBIDDENERROR } from '@constants/routersConstant'
 import { PATHS } from '@constants/pathConstant'
 import { CookieKey } from '@configs/fetchBaseQuery.types'
@@ -137,6 +140,7 @@ function LayoutBody({ title }: { title: string }) {
 
 function AppLayout() {
   const { accessToken } = useAppSelector((state) => state.auth)
+  const dispatch = useAppDispatch()
   const location = useLocation()
   const navigate = useNavigate()
   const { t } = useTranslation()
@@ -147,6 +151,9 @@ function AppLayout() {
     useBoolean(false)
   const [modalPassword, { setTrue: showPassword, setFalse: hidePassword }] =
     useBoolean(false)
+  const [isRestoringSession, setIsRestoringSession] = useState(
+    () => !accessToken && Boolean(Cookies.get(CookieKey.REFRESH_TOKEN))
+  )
 
   useEffect(() => {
     initInactivityTracker()
@@ -154,10 +161,22 @@ function AppLayout() {
 
   useEffect(() => {
     const refreshToken = Cookies.get(CookieKey.REFRESH_TOKEN)
-    if (!accessToken && !refreshToken) {
-      navigate(PATHS.AUTH.LOGIN)
+    if (accessToken) {
+      return
     }
-  }, [accessToken, navigate])
+
+    if (!refreshToken) {
+      navigate(PATHS.AUTH.LOGIN, { replace: true })
+      return
+    }
+
+    void refreshAccessToken(dispatch).then((newAccessToken) => {
+      setIsRestoringSession(false)
+      if (!newAccessToken) {
+        navigate(PATHS.AUTH.LOGIN, { replace: true })
+      }
+    })
+  }, [accessToken, dispatch, navigate])
 
   useEffect(() => {
     if (!accessToken) return
@@ -172,13 +191,22 @@ function AppLayout() {
   }, [accessToken, showPassword, showProfile])
 
   useEffect(() => {
-    if (!isAccess && location.pathname !== FORBIDDENERROR) {
+    if (
+      accessToken &&
+      !isRestoringSession &&
+      !isAccess &&
+      location.pathname !== FORBIDDENERROR
+    ) {
       navigate(FORBIDDENERROR, {
         replace: true,
         state: { forbiddenFrom: location.pathname }
       })
     }
-  }, [isAccess, location.pathname, navigate])
+  }, [accessToken, isAccess, isRestoringSession, location.pathname, navigate])
+
+  if (isRestoringSession) {
+    return <ScreenLoading open />
+  }
 
   return (
     <React.Fragment>

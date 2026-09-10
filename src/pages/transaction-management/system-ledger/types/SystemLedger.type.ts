@@ -6,7 +6,6 @@ export interface LedgerTransaction {
     updatedBy: string
     transactionCode: string
     ownerId: string
-    type: string
     grossAmount: number
     netAmount: number
     amount: number
@@ -45,6 +44,13 @@ export interface LedgerAccount {
 
 export interface LedgerEntry {
     id: string
+    /** Mã bút toán do wallet-core sinh, ví dụ `JRN-26A2D1D5-D4C`. */
+    journalCode?: string | null
+    /**
+     * Loại giao dịch nguồn. Thay cho `transaction.type` mà wallet-core đã bỏ —
+     * để nullish vì bút toán ghi trước đợt đổi có thể chưa có trường này.
+     */
+    transactionType?: string | null
     transaction: LedgerTransaction
     account: LedgerAccount
     direction: 'CREDIT' | 'DEBIT'
@@ -56,9 +62,16 @@ export interface LedgerEntry {
     createdAt: string
 }
 
+export interface LedgerSummary {
+    totalCount: number
+    debitAmount: number
+    creditAmount: number
+}
+
 export interface LedgerResponse {
     data: {
         content: LedgerEntry[]
+        summary?: LedgerSummary
         pageable?: {
             pageNumber: number
             pageSize: number
@@ -79,6 +92,8 @@ export interface LedgerResponse {
 export interface FormSearchValues {
     /** Nhận cả mã giao dịch lẫn UUID của transaction. */
     transactionCode?: string
+    /** Mã bút toán của chính dòng sổ cái, khớp bằng. */
+    journalCode?: string
     /** Bỏ trống là sổ cái mọi ví; màn xem theo một ví phải tự truyền. */
     accountId?: string
     /** Chủ tài khoản, khớp chứa — đây là đường lọc theo user. */
@@ -87,7 +102,7 @@ export interface FormSearchValues {
     /** Mã tài khoản kế toán, khớp bằng. */
     glCode?: string
     direction?: string
-    /** Từ vựng riêng của bảng `transactions` — xem `LedgerTransactionType`. */
+    /** Bộ mã dùng chung với màn Quản lý giao dịch — xem `LedgerTransactionType`. */
     transactionType?: string
     minAmount?: number
     maxAmount?: number

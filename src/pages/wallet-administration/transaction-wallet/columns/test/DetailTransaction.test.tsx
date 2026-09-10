@@ -119,6 +119,39 @@ describe('DetailTransaction', () => {
     expect(screen.getByText('Lợi nhuận gộp (chưa trừ chi phí NCC)')).toBeInTheDocument()
   })
 
+  it('hiển thị ví nhận thay cho tài khoản ngân hàng khi nạp tiền', () => {
+    mocks.useDetailTransaction.mockReturnValue({
+      getTransactionById: {
+        ...transaction,
+        transactionType: 'CASH_IN',
+        maskedAccount: '****0011',
+        to: {
+          id: 'wallet-id',
+          username: '0962341913',
+          displayName: '0962341913',
+          type: 'USER'
+        }
+      },
+      profit: undefined,
+      moneyFlow: [],
+      customer: undefined,
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+      refetch: vi.fn()
+    })
+
+    renderWithProviders(
+      <MessageProvider>
+        <DetailTransaction />
+      </MessageProvider>
+    )
+
+    expect(screen.getByText('Ví thụ hưởng:')).toBeInTheDocument()
+    expect(screen.getAllByText('0962341913')).not.toHaveLength(0)
+    expect(screen.queryByText('****0011')).not.toBeInTheDocument()
+  })
+
   it('không bịa chi phí hoặc hồ sơ khi backend chưa trả profit và customer', () => {
     mocks.useDetailTransaction.mockReturnValue({
       getTransactionById: transaction,
