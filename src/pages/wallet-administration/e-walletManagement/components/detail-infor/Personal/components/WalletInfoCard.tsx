@@ -45,7 +45,7 @@ const WalletInfoCard = ({ data, ekyc }: WalletInfoCardProps) => {
 
   if (!data) return null
 
-  const ekycStatus = ekyc?.status ?? EkycStatusEnum.NOT_VERIFIED
+  const ekycStatus = ekyc?.profileStatus ?? EkycStatusEnum.NOT_VERIFIED
   const availableBalance = data.availableBalance ?? data.balance - data.holdBalance
   const verifiedAt = ekyc?.verifiedAt ? dayjs(ekyc.verifiedAt).format(TYPEDATE.fullTime) : EMPTY
 

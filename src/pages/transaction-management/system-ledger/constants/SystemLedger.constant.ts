@@ -36,7 +36,8 @@ export type OwnerTypeKey = keyof typeof OwnerTypeConstants
  */
 export const LedgerTransactionType = {
     CASH_IN: 'Nạp tiền',
-    CASH_OUT: 'Rút tiền'
+    CASH_OUT: 'Rút tiền',
+    P2P_TRANSFER: 'Chuyển tiền'
 } as const
 
 export type LedgerTransactionTypeKey = keyof typeof LedgerTransactionType

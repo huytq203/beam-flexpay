@@ -35,18 +35,26 @@ export const GenderLabel: Record<GenderEnum, string> = {
 
 export enum EkycStatusEnum {
   VERIFIED = 'VERIFIED',
-  PENDING = 'PENDING',
-  REJECTED = 'REJECTED',
-  INVALIDATED = 'INVALIDATED',
+  INVALID = 'INVALID',
+  INITIATED = 'INITIATED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+  EXPIRED = 'EXPIRED',
+  ABANDONED = 'ABANDONED',
   /** Giá trị nội bộ khi hồ sơ eKYC chưa tồn tại, không phải giá trị của backend. */
   NOT_VERIFIED = 'NOT_VERIFIED',
 }
 
 export const EKYC_STATUS_CONFIG: Record<EkycStatusEnum, StatusDisplayConfig> = {
   [EkycStatusEnum.VERIFIED]: { label: 'Đã xác thực', className: 'success-status' },
-  [EkycStatusEnum.PENDING]: { label: 'Chờ duyệt', className: 'warning-status' },
-  [EkycStatusEnum.REJECTED]: { label: 'Từ chối', className: 'danger-status' },
-  [EkycStatusEnum.INVALIDATED]: { label: 'Đã huỷ', className: 'normal-status' },
+  [EkycStatusEnum.INVALID]: { label: 'Không hợp lệ', className: 'danger-status' },
+  [EkycStatusEnum.INITIATED]: { label: 'Đã khởi tạo', className: 'info-status' },
+  [EkycStatusEnum.IN_PROGRESS]: { label: 'Đang xử lý', className: 'info-status' },
+  [EkycStatusEnum.COMPLETED]: { label: 'Đã hoàn tất', className: 'success-status' },
+  [EkycStatusEnum.FAILED]: { label: 'Thất bại', className: 'danger-status' },
+  [EkycStatusEnum.EXPIRED]: { label: 'Đã hết hạn', className: 'warning-status' },
+  [EkycStatusEnum.ABANDONED]: { label: 'Đã bỏ dở', className: 'normal-status' },
   [EkycStatusEnum.NOT_VERIFIED]: { label: 'Chưa xác thực', className: 'normal-status' },
 } as const
 
