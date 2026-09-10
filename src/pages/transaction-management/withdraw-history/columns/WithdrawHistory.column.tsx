@@ -54,10 +54,15 @@ const getColumn = ({ onViewDetail, isDetailLoading, loadingId }: ColumnProps): C
         title: 'Thụ hưởng',
         align: 'center',
         dataIndex: 'to',
-        render(value) {
+        render(value, record) {
             return (
                 <div className="text-start">
-                    <p className="font-medium">{BankLabel[value?.displayName as BankEnum] ||value?.displayName|| '--'}</p>
+                    <p className="font-medium">{BankLabel[value?.displayName as BankEnum] || value?.displayName || '--'}</p>
+                    {record.maskedAccount && (
+                        <p className="mt-0.5 text-xs text-gray-500">
+                            STK: {record.maskedAccount}
+                        </p>
+                    )}
                     {/* {record.bankCode && (
                         <span className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-300 px-1.5 py-0.5 rounded-sm">
                             {record.bankCode}
