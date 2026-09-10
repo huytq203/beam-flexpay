@@ -29,6 +29,8 @@ export interface AcountItem {
   ownerId: string
   ownerType: string
   ownerUsername: string
+  ownerFullName?: string | null
+  ekycStatus?: 'NOT_VERIFIED' | 'VERIFIED' | null
   glCode: string
   currency: string
   totalDebit: number

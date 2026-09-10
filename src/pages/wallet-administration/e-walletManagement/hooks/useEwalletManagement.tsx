@@ -66,7 +66,7 @@ const useEwalletManagement = () => {
     }
   }, [getAccountById, navigate])
 
-  const dataSource = useMemo(() => getAccount?.content.map((item, index) => ({
+  const dataSource = useMemo<AcountItem[] | undefined>(() => getAccount?.content.map((item, index) => ({
     ...item,
     no: (page - 1) * size + index + 1,
   })), [getAccount, page, size])

@@ -12,7 +12,6 @@ import { formatNumber } from '@utils/formatNumber'
 import dayjs from 'dayjs'
 import { TYPEDATE } from '@constants/date.constant'
 import StatusBadge from '@components/status-badge/StatusBadge'
-import * as Icon from '@components/icons'
 import type { ScreenActionId } from '@/app/permissions'
 import {
   buildWalletRowActions,
@@ -25,6 +24,17 @@ interface ColumnOptions {
   onViewDetail: (account: AcountItem) => void
   can: (action: ScreenActionId<'EWALLET_MANAGEMENT'>) => boolean
 }
+
+const EKYC_STATUS_CONFIG = {
+  VERIFIED: {
+    label: 'Đã EKYC',
+    className: 'success-status'
+  },
+  NOT_VERIFIED: {
+    label: 'Chưa EKYC',
+    className: 'normal-status'
+  }
+} as const
 
 export const getColumn = ({
   openModal,
@@ -45,16 +55,22 @@ export const getColumn = ({
         const isSystem = record.ownerType === 'SYSTEM'
         const ownerName = isSystem
           ? 'Hệ thống'
-          : (record.ownerUsername ?? '--')
+          : (record.ownerFullName || record.ownerUsername || '--')
 
         return (
           <div className='flex min-w-0 max-w-full flex-col gap-1'>
             <div className='flex min-w-0 items-center gap-1.5'>
               <TooltipComponent title={ownerName}>
-                <span className='min-w-0 truncate text-md font-semibold text-foreground'>
+                <span className='min-w-0 truncate text-xs font-semibold text-foreground'>
                   {ownerName}
                 </span>
               </TooltipComponent>
+              
+            {!isSystem && record.ownerFullName && (
+              <span className='text-xs text-muted-foreground font-semibold'>
+               - {record.ownerUsername}
+              </span>
+            )}
             </div>
 
             {record.ownerId && (
@@ -126,31 +142,18 @@ export const getColumn = ({
     {
       title: 'Trạng thái',
       align: 'center',
-      width: 180,
+      width: 120,
       render: (_, record) => (
-        <div className='flex flex-wrap items-center justify-center gap-1'>
-          <StatusBadge
-            status={String(record.status)}
-            config={{
-              true: {
-                label: (
-                  <span className='flex items-center gap-1'>
-                    <Icon.UnlockOutlined />
-                    Hoạt động
-                  </span>
-                ),
-                className: 'success-status'
-              },
-              false: {
-                label: (
-                  <span className='flex items-center gap-1'>
-                    <Icon.LockFilled /> Đã khóa
-                  </span>
-                ),
-                className: 'danger-status'
-              }
-            }}
-          />
+        <div className='flex flex-col items-start gap-1.5'>
+          <div className='flex items-center gap-2'>
+            <StatusBadge status={String(record.status)} />
+          </div>
+          <div className='flex items-center gap-2'>
+            <StatusBadge
+              status={record.ekycStatus ?? 'NOT_VERIFIED'}
+              config={EKYC_STATUS_CONFIG}
+            />
+          </div>
         </div>
       )
     },
