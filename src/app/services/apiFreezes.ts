@@ -13,6 +13,7 @@ export interface FreezeSearchParams {
     displayStatus?: string
     releaseType?: string
     username?: string
+    sourceTransactionCode?: string
     /** TRUE = chỉ lệnh còn thiếu tiền, FALSE = chỉ lệnh đã giữ đủ. */
     shortfall?: boolean
     /** Mặc định chỉ trả lệnh gốc; bật để lấy cả bản ghi bù do hệ thống sinh khi tiền về. */

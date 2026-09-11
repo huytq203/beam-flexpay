@@ -5,7 +5,7 @@ import { http, HttpResponse } from 'msw'
 import { MessageProvider } from '@/app/hooks/useMessage'
 import { renderWithProviders } from '@/test/render'
 import { server } from '@/test/mocks/server'
-import FeePolicyApprovalAction from '../FeePolicyApprovalAction'
+import { FeePolicyApprovalAction } from '@components/fee/FeePolicyApprovalAction'
 import type { FeePolicy } from '../../types/FeeManagement.type'
 
 const REVIEW_HASH = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'

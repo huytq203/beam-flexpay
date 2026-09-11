@@ -50,7 +50,7 @@ export const FeeSettingSearch = ({
   })
   const { data: dataBank } = useGetBankQuery({})
 
-  const bankOptions = (dataBank?.data?.content ?? []).map((bank: FeeBank) => ({
+  const bankOptions = (dataBank?.content ?? []).map((bank: FeeBank) => ({
     value: bank.code,
     label: bank.name
   }))

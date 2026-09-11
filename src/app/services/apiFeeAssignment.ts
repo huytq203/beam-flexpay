@@ -1,5 +1,6 @@
 import { apiFeeService } from './apiService'
-import { FeeAssignment, FeeAssignResponse } from '@pages/fee-management-v4/fee-assignment/constants/feeAssignment'
+import type { FeeAssignment, FeePage } from '@type/fee.type'
+type FeeAssignResponse = FeePage<FeeAssignment>
 import { ResponseType } from '@type/api'
 import type { FeeApprovalArg, FeeReasonArg } from '@type/feeApproval.type'
 const feeAssignApi = apiFeeService.injectEndpoints({
@@ -19,6 +20,20 @@ const feeAssignApi = apiFeeService.injectEndpoints({
         method: "GET",
       }),
       transformResponse: (res: ResponseType<FeeAssignment>) => res.data,
+      providesTags: ['feeAssign']
+    }),
+    /**
+     * Bản gán của một chính sách. Màn danh sách gọi khi người dùng mở rộng đúng
+     * một dòng — tìm kiếm chính sách không trả kèm bản gán, và gọi sẵn cho cả
+     * trang là mỗi lần đổi trang thêm một chục lời gọi không ai đọc.
+     */
+    getAssignmentsByPolicy: build.query<FeeAssignment[], string>({
+      query: (feePolicyId) => ({
+        url: `/fee/policy-assignments/by-policy/${feePolicyId}`,
+        method: 'GET',
+        params: { isLoading: false }
+      }),
+      transformResponse: (res: ResponseType<FeeAssignment[]>) => res.data,
       providesTags: ['feeAssign']
     }),
     postAssign: build.mutation({
@@ -79,5 +94,6 @@ export const {
   usePatchAssignInActiveMutation,
   usePatchApproveAssignMutation,
   usePatchRejectAssignMutation,
-  useGetAssignSearchQuery
+  useGetAssignSearchQuery,
+  useGetAssignmentsByPolicyQuery
 } = feeAssignApi

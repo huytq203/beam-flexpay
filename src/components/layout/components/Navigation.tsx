@@ -12,14 +12,13 @@ import i18n from '@languages/i18n'
 import {
   ArrowsLeftRightIcon,
   BankIcon,
-  ScalesIcon,
   ClipboardTextIcon,
-  CurrencyCircleDollarIcon,
   FingerprintIcon,
   GearIcon,
   LockIcon,
   LockKeyOpenIcon,
   MoneyIcon,
+  ReceiptIcon,
   ShieldCheckIcon,
   StorefrontIcon,
   UserGearIcon,
@@ -58,53 +57,22 @@ const feeManagementV4: ItemTypeCustom = {
   ),
   children: [
     {
-      key: 'fee-managementV4',
-      screen: 'FEE_POLICY',
+      key: 'fee-policy',
+      screen: 'FEE_CONFIG',
       icon: (
-        <WalletIcon
+        <ReceiptIcon
           size={size}
           weight={weight}
           color={COlOR}
         />
       ),
-      label: 'Quản lý chính sách phí',
-    },
-    {
-      key: 'fee-bankV4',
-      screen: 'FEE_BANK_POLICY',
-      icon: (
-        <BankIcon
-          size={size}
-          weight={weight}
-          color={COlOR}
-        />
-      ),
-      label: 'Phí ngân hàng',
-    },
-    {
-      key: 'fee-assignmentV4',
-      screen: 'FEE_ASSIGNMENT',
-      icon: (
-        <CurrencyCircleDollarIcon
-          size={size}
-          weight={weight}
-          color={COlOR}
-        />
-      ),
-      label: 'Quản lý gán phí',
-    },
-    {
-      key: 'fee-scheduleV4',
-      screen: 'FEE_SCHEDULE',
-      icon: (
-        <ScalesIcon
-          size={size}
-          weight={weight}
-          color={COlOR}
-        />
-      ),
-      label: 'Biểu phí hiệu lực',
+      label: 'Cấu hình phí',
     }
+    /*
+     * Bốn mục cũ (Quản lý chính sách phí, Phí ngân hàng, Quản lý gán phí, Biểu
+     * phí hiệu lực) đã gộp vào Cấu hình phí nên rút khỏi menu. Route vẫn còn để
+     * link cũ không gãy trong lúc đối chiếu; xoá hẳn cả màn ở lần dọn sau.
+     */
   ],
   label: 'Quản lý phí',
 }

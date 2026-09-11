@@ -28,6 +28,9 @@ const CustomerInfoCard = ({ ekyc }: CustomerInfoCardProps) => {
     () => [
       { label: 'Họ và tên', value: text(ekyc?.fullName), emphasis: 'strong' as const },
       { label: 'Số điện thoại', value: text(ekyc?.username) },
+      { label: 'Email', value: text(ekyc?.email) },
+      { label: 'Nghề nghiệp', value: text(ekyc?.occupation) },
+      { label: 'Chức vụ', value: text(ekyc?.position) },
       { label: 'Loại giấy tờ', value: text(ekyc?.cardType) },
       { label: 'Số CCCD/CMND', value: text(ekyc?.idNumber) },
       { label: 'Ngày cấp', value: date(ekyc?.issueDate) },

@@ -49,6 +49,30 @@ export const FEE_DOMAIN_LABELS: Readonly<Record<string, string>> = {
   MERCHANT: 'Merchant'
 }
 
+/**
+ * Trạng thái chính sách phí và trạng thái bản gán là hai vòng đời riêng, chỉ
+ * trùng tên ở bốn giá trị đầu. Giữ hai bảng tách nhau để đổi nhãn một bên không
+ * âm thầm đổi nhãn bên kia.
+ */
+export const POLICY_STATUS_CONFIG: Readonly<
+  Record<string, { label: string; className: string }>
+> = {
+  INIT: { label: 'Khởi tạo', className: 'info-status' },
+  ACTIVE: { label: 'Hoạt động', className: 'success-status' },
+  INACTIVE: { label: 'Không hoạt động', className: 'danger-status' },
+  LOCKED: { label: 'Đã khoá', className: 'danger-status' },
+  REJECTED: { label: 'Từ chối', className: 'danger-status' }
+}
+
+export const ASSIGNMENT_STATUS_CONFIG: Readonly<
+  Record<string, { label: string; className: string }>
+> = {
+  INIT: { label: 'Mới tạo', className: 'info-status' },
+  ACTIVE: { label: 'Đang áp dụng', className: 'success-status' },
+  INACTIVE: { label: 'Không hoạt động', className: 'danger-status' },
+  REJECTED: { label: 'Từ chối', className: 'danger-status' }
+}
+
 export const EFFECTIVE_STATUS_CONFIG: Record<
   FeeEffectiveStatus,
   { label: string; className: string }

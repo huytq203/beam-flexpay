@@ -83,6 +83,9 @@ export const mapEKYCGroupToListItem = (group: EKYCGroup, no: number): EKYCListIt
         attemptCount: group.attemptCount,
         latestStatus: group.latestStatus,
         latestAt: group.latestAt,
+        email: group.email,
+        occupation: group.occupation,
+        position: group.position,
         attempts: group.attempts,
         no,
         key: group.groupKey

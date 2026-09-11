@@ -15,14 +15,13 @@ import {
   getFeeApprovalDecision,
   MISSING_REVIEW_INFO_MESSAGE
 } from '@utils/fee-approval'
-import { statusType } from '../constants/FeeManagement.constant'
-import type { FeePolicy } from '../types/FeeManagement.type'
+import type { FeePolicy } from '@type/fee.type'
 
 interface FeePolicyApprovalActionProps {
   policy: FeePolicy
 }
 
-const FeePolicyApprovalAction = ({ policy }: FeePolicyApprovalActionProps) => {
+export const FeePolicyApprovalAction = ({ policy }: FeePolicyApprovalActionProps) => {
   const [open, setOpen] = useState(false)
   const [isRejectOpen, setIsRejectOpen] = useState(false)
   const [hasBeenProcessed, setHasBeenProcessed] = useState(false)
@@ -33,7 +32,7 @@ const FeePolicyApprovalAction = ({ policy }: FeePolicyApprovalActionProps) => {
     usePatchRejectFeePolicyMutation()
 
   const isLoading = isApproving || isRejecting
-  const isProcessed = hasBeenProcessed || policy.status !== statusType.INIT
+  const isProcessed = hasBeenProcessed || policy.status !== 'INIT'
   // BE dùng optimistic lock: duyệt phải kèm phiên bản + mã băm bản ghi đang xem.
   const approvalDecision = getFeeApprovalDecision(policy)
 

@@ -102,6 +102,30 @@ const feeManagementV4 = {
       path: FEEMANAGEMENT_V4,
       children: [
         {
+          path: SCREENS.FEE_CONFIG.path,
+          element: page(
+            () =>
+              import('@pages/fee-management/fee-policy-list/FeePolicyList')
+          )
+        },
+        {
+          path: `${SCREENS.FEE_CONFIG.path}/create`,
+          element: page(
+            () => import('@pages/fee-management/fee-config/FeeConfig')
+          )
+        },
+        {
+          path: `${SCREENS.FEE_CONFIG.path}/edit/:id`,
+          element: page(
+            () => import('@pages/fee-management/fee-config/FeeConfig')
+          )
+        }
+      ]
+    },
+    {
+      path: FEEMANAGEMENT_V4,
+      children: [
+        {
           path: SCREENS.FEE_POLICY.path,
           element: page(
             () =>

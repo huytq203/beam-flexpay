@@ -58,7 +58,11 @@ export function FormSelect<T extends FieldValues>({
             defaultValue={defaultValue}
             data={options}
             handleChange={(value) => {
-              fieldOnChange(value)
+              // Bấm X trên ô chọn antd phát ra `undefined`. Cả dự án mô hình hoá
+              // "chưa chọn" bằng chuỗi rỗng — SelectInput cũng quy '' về undefined
+              // khi hiển thị — nên trả undefined vào form là để lại một giá trị
+              // không schema nào nhận, và ô nhìn như chưa xoá được.
+              fieldOnChange(value ?? '')
               if (customOnChange) {
                 customOnChange(value)
               }

@@ -101,7 +101,7 @@ const FormFieldAssign = React.memo(({ control, isCreate, feeDomain }: FormFieldA
           control={control}
           name='bankCode'
           options={[
-            ...(dataBank?.data?.content || []).map((item: FeeBank) => ({
+            ...(dataBank?.content || []).map((item: FeeBank) => ({
               label: item.name,
               value: item.code
             }))

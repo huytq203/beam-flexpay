@@ -27,6 +27,9 @@ const accountData = {
 const ekycData = {
   fullName: 'NGUYEN VAN A',
   username: '0900000001',
+  email: 'nguyenvana@example.com',
+  occupation: 'Kỹ sư',
+  position: 'Trưởng phòng',
   status: 'VERIFIED',
   faceMatchScore: 92
 } as unknown as ContentEKYC
@@ -58,6 +61,16 @@ const mockDisplayInfo = (
 }
 
 describe('CommonInfor', () => {
+  it('hiển thị email, nghề nghiệp và chức vụ từ hồ sơ eKYC', () => {
+    mockDisplayInfo({ salaryAdvanceEnabled: false, linkedBanks: [] })
+
+    renderWithProviders(<CommonInfor accountData={accountData} ekycData={ekycData} />)
+
+    expect(screen.getByText('nguyenvana@example.com')).toBeInTheDocument()
+    expect(screen.getByText('Kỹ sư')).toBeInTheDocument()
+    expect(screen.getByText('Trưởng phòng')).toBeInTheDocument()
+  })
+
   it('gọi display-info bằng ownerId và hiển thị trạng thái ứng lương, tài khoản nhận lương, liên kết ngân hàng', async () => {
     const onRequest = vi.fn()
     mockDisplayInfo({ salaryAdvanceEnabled: true, linkedBanks: [bankLink()] }, onRequest)

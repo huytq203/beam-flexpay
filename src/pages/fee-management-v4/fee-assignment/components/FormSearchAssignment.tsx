@@ -25,7 +25,7 @@ const FormSearchAssignment = ({ control }: FormSearchAssignmentProps) => {
                     control={control}
                     name='bankCode'
                     options={[
-                        ...(dataBank?.data?.content || []).map((item: FeeBank) => ({
+                        ...(dataBank?.content || []).map((item: FeeBank) => ({
                             label: item.name,
                             value: item.code
                         }))

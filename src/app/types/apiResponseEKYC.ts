@@ -24,6 +24,9 @@ export interface ContentEKYC {
   id?: string
   userId?: string
   username?: string
+  email?: string | null
+  occupation?: string | null
+  position?: string | null
   sessionId?: string
   ekycSessionId?: string
   currentStep?: string | null
@@ -67,6 +70,9 @@ export interface EKYCGroup {
   attemptCount: number
   latestStatus: string
   latestAt: string
+  email: string | null
+  occupation: string | null
+  position: string | null
   attempts: ContentEKYC[]
 }
 
@@ -77,6 +83,9 @@ export interface EKYCListItem extends ContentEKYC {
   attemptCount: number
   latestStatus: string
   latestAt: string
+  email: string | null
+  occupation: string | null
+  position: string | null
   attempts: ContentEKYC[]
   no: number
   key: string

@@ -3,6 +3,10 @@ import { FeePolicy, FeePolicyResponse } from "@pages/fee-management-v4/fee-manag
 import { apiFeeService } from "@services/apiService"
 import { ResponseType } from '@type/api'
 import type { FeeApprovalArg, FeeReasonArg } from '@type/feeApproval.type'
+import type {
+  FeePolicySetupRequest,
+  FeePolicySetupResponse
+} from '@/app/schemas/fee-setup.schema'
 export const feePolicyApi = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
     getFeePolicies: build.query({
@@ -80,11 +84,31 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
         body: body
       }),
       invalidatesTags: ['FeePolicy']
+    }),
+    /**
+     * Thiết lập trọn gói: chính sách, thành phần phí và bậc phí lưu trong MỘT
+     * transaction. Ba lời gọi rời trước đây hỏng ở giữa là để lại một chính sách
+     * rỗng trong DB trong khi người dùng thấy báo lỗi.
+     *
+     * Bản gán đối tượng vẫn là lời gọi riêng — endpoint này chưa nhận nó.
+     */
+    setupFeePolicy: build.mutation<
+      FeePolicySetupResponse,
+      FeePolicySetupRequest
+    >({
+      query: (body) => ({
+        url: `/fee/policies/setup`,
+        method: 'POST',
+        body
+      }),
+      transformResponse: (res: ResponseType<FeePolicySetupResponse>) => res.data,
+      invalidatesTags: ['FeePolicy', 'FeePolicyComponent', 'feeComponentTier']
     })
   })
 });
 export const {
   useLazySearchFeePoliciesQuery,
+  useSearchFeePoliciesQuery,
   useGetFeePoliciesQuery,
   useLazyGetFeePoliciesQuery,
   useGetFeePolicyByIdQuery,
@@ -93,5 +117,6 @@ export const {
   usePatchActivateFeeMutation,
   usePatchApproveFeePolicyMutation,
   usePatchRejectFeePolicyMutation,
-  usePutFeePolicyMutation
+  usePutFeePolicyMutation,
+  useSetupFeePolicyMutation
 } = feePolicyApi;

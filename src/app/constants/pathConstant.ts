@@ -132,6 +132,14 @@ export const PATHS = {
     BANK_FEE_MANAGEMENT: `${FEEMANAGEMENT_V4}/fee-bankV4`,
     ADD_BANK_FEE_POLICY: `${FEEMANAGEMENT_V4}/fee-bankV4/create`,
     EDIT_BANK_FEE_POLICY: (id: string) => `${FEEMANAGEMENT_V4}/fee-bankV4/edit/${id}`,
+
+    /**
+     * Màn gộp: một danh sách và một màn cấu hình cho cả ba miền phí, thay cho
+     * ba cặp danh sách/biểu mẫu phía trên.
+     */
+    POLICY_LIST: `${FEEMANAGEMENT_V4}/fee-policy`,
+    POLICY_CREATE: `${FEEMANAGEMENT_V4}/fee-policy/create`,
+    POLICY_EDIT: (id: string) => `${FEEMANAGEMENT_V4}/fee-policy/edit/${id}`,
   },
 
   TRANSACTION_MANAGEMENT: {

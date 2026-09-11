@@ -1,0 +1,119 @@
+import { FormDatePicker, FormInput, FormSelect, FormTextArea } from '@components/form'
+import { SERVICE_TYPE_LABELS } from '@constants/feeLabels'
+import { FEE_DIRECTION_LABEL, getFeeDirection } from '@utils/fee-direction'
+import dayjs from 'dayjs'
+import type { Control } from 'react-hook-form'
+import { useWatch } from 'react-hook-form'
+import {
+  FEE_PRIORITY_OPTIONS,
+  getDomainFieldRules
+} from '../constants/feeConfigFields'
+import type { FeeConfigFormValues } from '../schemas/feeConfig.schema'
+import { disablePastDate, disablePastTime } from '../utils/futureDateTime'
+import { SectionHeading } from './SectionHeading'
+
+interface PolicyGeneralSectionProps {
+  control: Control<FeeConfigFormValues>
+}
+
+const PRIORITY_OPTIONS = FEE_PRIORITY_OPTIONS.map((option) => ({
+  value: option.value,
+  label: option.label
+}))
+
+/**
+ * Thông tin chính sách.
+ *
+ * Loại giao dịch là ô chọn bắt buộc chứ không phải hàng chip lọc: một chính
+ * sách khớp đúng MỘT loại giao dịch, nên "Tất cả" không phải một lựa chọn hợp
+ * lệ ở đây. Chiều tiền ghép sẵn vào nhãn để người vận hành đọc được ý nghĩa mà
+ * không cần một hàng điều khiển thứ hai.
+ */
+export const PolicyGeneralSection = ({
+  control
+}: PolicyGeneralSectionProps) => {
+  const feeDomain = useWatch({ control, name: 'feeDomain' })
+  const validFrom = useWatch({ control, name: 'validFrom' })
+
+  // Mốc kết thúc không được sớm hơn mốc bắt đầu, cũng không được ở quá khứ.
+  const validToFloor = validFrom ? dayjs(validFrom) : null
+
+  const serviceTypeOptions = getDomainFieldRules(feeDomain).serviceTypes.map(
+    (value) => {
+      const direction = getFeeDirection(value)
+      const name = SERVICE_TYPE_LABELS[value] ?? value
+      return {
+        value,
+        label: direction ? `${FEE_DIRECTION_LABEL[direction]} · ${name}` : name
+      }
+    }
+  )
+
+  return (
+    <section>
+      <SectionHeading>Thông tin chung</SectionHeading>
+
+      <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
+        <FormInput
+          name='name'
+          control={control}
+          required
+          label='Tên chính sách phí'
+          placeholder='Ví dụ: Phí rút tiền ví qua VPBank'
+          className='col-span-12 flex flex-col md:col-span-8'
+        />
+        <FormSelect
+          name='priority'
+          control={control}
+          required
+          label='Mức độ ưu tiên'
+          placeholder='Chọn mức ưu tiên'
+          allowClear={false}
+          options={PRIORITY_OPTIONS}
+          className='col-span-12 flex flex-col md:col-span-4'
+        />
+        <FormTextArea
+          name='description'
+          control={control}
+          label='Mô tả'
+          placeholder='Ghi lại vì sao có chính sách này, để người duyệt hiểu ngữ cảnh'
+          rows={3}
+          className='col-span-12 flex flex-col'
+        />
+      </div>
+
+      <div className='mt-4 grid grid-cols-1 gap-3 border-t border-border pt-4 md:grid-cols-12'>
+        <FormSelect
+          name='serviceType'
+          control={control}
+          required
+          label='Loại giao dịch'
+          placeholder='Chọn đúng một loại giao dịch'
+          allowClear={false}
+          options={serviceTypeOptions}
+          className='col-span-12 flex flex-col md:col-span-4'
+        />
+        <FormDatePicker
+          name='validFrom'
+          control={control}
+          showTime
+          label='Áp dụng từ'
+          placeholder='Chọn thời điểm bắt đầu'
+          disabledDate={disablePastDate()}
+          disabledTime={disablePastTime()}
+          className='col-span-12 flex flex-col md:col-span-4'
+        />
+        <FormDatePicker
+          name='validTo'
+          control={control}
+          showTime
+          label='Áp dụng đến'
+          placeholder='Để trống nếu vô thời hạn'
+          disabledDate={disablePastDate(validToFloor)}
+          disabledTime={disablePastTime(validToFloor)}
+          className='col-span-12 flex flex-col md:col-span-4'
+        />
+      </div>
+    </section>
+  )
+}

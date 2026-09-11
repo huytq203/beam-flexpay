@@ -54,6 +54,9 @@ const profile: EKYCListItem = {
   attemptCount: 2,
   latestStatus: 'VERIFIED',
   latestAt: attempt.createdAt,
+  email: null,
+  occupation: null,
+  position: null,
   attempts: [attempt, olderAttempt],
   no: 1,
   key: 'group-key'

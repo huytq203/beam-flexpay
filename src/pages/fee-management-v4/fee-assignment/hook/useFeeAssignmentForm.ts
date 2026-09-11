@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useMessage } from '@hooks/useMessage'
 import {
@@ -70,7 +70,6 @@ export const useFeeAssignmentForm = () => {
         control,
         handleSubmit,
         setValue,
-        watch,
         reset: resetFormAdd,
         formState: { errors }
     } = useForm<FeeAssignType>({
@@ -79,9 +78,8 @@ export const useFeeAssignmentForm = () => {
     })
 
     const { data: dataAssignById } = useGetAssignByIdQuery(id!, { skip: !id })
-    const { watch: _watchPolicy } = useForm<FeeAssignType>()
     // Theo dõi giá trị feePolicyId từ form, fallback về dataAssignById khi mới load
-    const formFeePolicyId = watch('feePolicyId')
+    const formFeePolicyId = useWatch({ control, name: 'feePolicyId' })
     const feePolicyId = formFeePolicyId || dataAssignById?.feePolicyId
 
     const { data: feeComponentData } = useGetFeeComponentPoliciesByIdQuery(
@@ -144,7 +142,7 @@ export const useFeeAssignmentForm = () => {
             resetFormAdd({
                 feePolicyId: dataAssignById.feePolicyId,
                 merchantId: dataAssignById.merchantId,
-                bankCode: dataAssignById.bankCode,
+                bankCode: dataAssignById.bankCode || '',
                 paymentMethod: dataAssignById.paymentMethod || '',
                 cardType: dataAssignById.cardType || '',
                 serviceType: dataAssignById.serviceType,

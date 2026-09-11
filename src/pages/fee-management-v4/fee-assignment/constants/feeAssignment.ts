@@ -1,23 +1,7 @@
-// Type cho từng item trong mảng content
-export interface FeeAssignment {
-  id: string
-  /** Optimistic lock của BE — bắt buộc khi gọi API duyệt. */
-  lockVersion?: number
-  /** Mã băm nội dung bản ghi tại thời điểm checker xem — bắt buộc khi duyệt. */
-  reviewHash?: string
-  feePolicyId: string
-  merchantId: string | null
-  bankCode: string
-  paymentMethod: string | null
-  cardType: string | null
-  serviceType: string
-  customerGroup: string | null
-  status: string
-  createdAt: string
-  updatedBy: string
-  createdBy: string
-  updatedAt: string
-}
+// Kiểu bản gán đã chuyển lên `src/app/types/fee.type.ts` để tầng service không
+// còn phụ thuộc vào thư mục của một màn. Re-export để màn cũ chưa gỡ vẫn chạy.
+import type { FeeAssignment } from '@type/fee.type'
+export type { FeeAssignment }
 
 /**
  * Item of `GET /fee/banks` -> `data.content`.

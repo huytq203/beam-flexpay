@@ -60,7 +60,10 @@ const DetailUser = () => {
     return latestAttempt ? {
       ...latestAttempt,
       userId: firstGroup.userId,
-      username: firstGroup.username
+      username: firstGroup.username,
+      email: firstGroup.email,
+      occupation: firstGroup.occupation,
+      position: firstGroup.position
     } : undefined
   }, [firstGroup])
 

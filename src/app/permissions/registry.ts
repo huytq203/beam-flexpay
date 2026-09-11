@@ -212,6 +212,19 @@ export const SCREENS = {
       viewQr: PERMISSION.MERCHANT_VIEW
     }
   },
+  /**
+   * Màn gộp cấu hình phí: danh sách, tạo và sửa dùng chung một tiền tố đường
+   * dẫn nên chỉ cần một khai báo. Quyền dùng lại họ FEE hiện có, backend không
+   * phải cấp mã mới.
+   */
+  FEE_CONFIG: {
+    path: `${FEEMANAGEMENT_V4}/fee-policy`,
+    actions: {
+      ...FEE_ACTIONS,
+      approve: PERMISSION.FEE_UPDATE,
+      toggleActive: PERMISSION.FEE_UPDATE
+    }
+  },
   FEE_POLICY: {
     path: `${FEEMANAGEMENT_V4}/fee-managementV4`,
     actions: {

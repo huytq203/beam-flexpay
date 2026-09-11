@@ -1,4 +1,5 @@
 import {
+    CopyableText,
     FreezeAmountCell,
     FreezeRowActions,
     FreezeStatusCell,
@@ -39,6 +40,17 @@ export const getColumn = ({
         width: 50,
     },
     {
+        title: 'Mã giao dịch nguồn',
+        align: 'left',
+        dataIndex: 'sourceTransactionCode',
+        key: 'sourceTransactionCode',
+        width: 170,
+        render: (sourceTransactionCode: string | null) =>
+            sourceTransactionCode
+                ? <CopyableText value={sourceTransactionCode} />
+                : '--',
+    },
+    {
         title: 'Khách hàng',
         align: 'left',
         key: 'customer',
@@ -59,6 +71,7 @@ export const getColumn = ({
         key: 'amount',
         render: (_, record) => <FreezeAmountCell item={record} />,
     },
+    
     {
         title: 'Nguồn / Loại đóng băng',
         align: 'left',
@@ -69,11 +82,6 @@ export const getColumn = ({
                 <p className="font-medium">
                     {FREEZE_TYPE_LABEL[record.type as FreezeType] ?? record.type}
                 </p>
-                {record.sourceTransactionCode && (
-                    <p className="text-muted-foreground text-[12px]">
-                        GD gốc: {record.sourceTransactionCode}
-                    </p>
-                )}
                 {record.reason && (
                     <p className="text-muted-foreground text-[12px]">{record.reason}</p>
                 )}

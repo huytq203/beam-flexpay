@@ -11,6 +11,9 @@ describe('mapEKYCGroupToListItem', () => {
       attemptCount: 2,
       latestStatus: 'IN_PROGRESS',
       latestAt: '2026-08-24T14:21:36.214563',
+      email: 'hung@example.com',
+      occupation: 'Kỹ sư',
+      position: 'Trưởng phòng',
       attempts: [
         {
           userId: 'user-id',
@@ -38,6 +41,9 @@ describe('mapEKYCGroupToListItem', () => {
 
     expect(result.sessionId).toBe('latest-session')
     expect(result.faceMatchScore).toBe(98.82)
+    expect(result.email).toBe('hung@example.com')
+    expect(result.occupation).toBe('Kỹ sư')
+    expect(result.position).toBe('Trưởng phòng')
     expect(result.key).toBe('group-key')
     expect(result.no).toBe(11)
     expect(result.attempts).toHaveLength(2)

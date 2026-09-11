@@ -69,6 +69,14 @@ export {
   ArrowsLeftRightIcon,
   BankIcon,
   ScalesIcon,
+  StorefrontIcon,
+  TrashIcon,
+  NotePencilIcon,
+  CaretRightIcon,
+  CaretDownIcon,
+  WarningCircleIcon,
+  PlusIcon,
+  ReceiptIcon,
 } from "@phosphor-icons/react";
 export {
   CornerDownRight,

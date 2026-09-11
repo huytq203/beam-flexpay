@@ -25,7 +25,9 @@ const assignment: FeeAssignment = {
   createdAt: '2026-08-06T00:00:00Z',
   updatedAt: '2026-08-06T00:00:00Z',
   createdBy: 'admin',
-  updatedBy: 'admin'
+  updatedBy: 'admin',
+  effectiveFromDate: null,
+  effectiveToDate: null
 }
 
 const renderAction = (overrides: Partial<FeeAssignment> = {}) => {

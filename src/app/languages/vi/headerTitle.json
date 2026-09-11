@@ -82,6 +82,9 @@
     "/fee-v2/inbound-fee-management/update/*": "Cập nhật phí đầu vào",
 
 
+    "/secure-panel/fee-v4/fee-policy":"Cấu hình phí",
+    "/secure-panel/fee-v4/fee-policy/create":"Tạo chính sách phí",
+    "/secure-panel/fee-v4/fee-policy/edit/*":"Sửa chính sách phí",
     "/secure-panel/fee-v4/fee-managementV4":"Quản lý chính sách phí",
     "/secure-panel/fee-v4/fee-managementV4/edit/*":"Cập nhật chính sách phí",
     "/secure-panel/fee-v4/fee-managementV4/create":"Thêm mới chính sách phí",

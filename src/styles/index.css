@@ -99,6 +99,11 @@
     --color-warning-strong: var(--warning-strong);
     --color-danger-strong: var(--danger-strong);
 
+    /* Cặp màu tuyến của miền nghiệp vụ Phí — `-ink` là biến thể duy nhất được
+       phép làm màu chữ (The Block-Is-Not-Ink Rule). */
+    --color-line-fee: var(--line-fee);
+    --color-line-fee-ink: var(--line-fee-ink);
+
     --color-chart-1: var(--chart-1);
     --color-chart-2: var(--chart-2);
     --color-chart-3: var(--chart-3);
@@ -188,6 +193,11 @@
         --success-strong: #0b7a4a;
         --warning-strong: #a15c07;
         --danger-strong: #c62828;
+
+        /* Tuyến Phí trên bản đồ nghiệp vụ. Block dùng cho viền và đồ hoạ, ink
+           dùng cho chữ (đo được 7.2:1 trên nền giấy). */
+        --line-fee: #e08700;
+        --line-fee-ink: #8a5200;
 
         --chart-1: #e11d48;
         --chart-2: #2bd9d0;
