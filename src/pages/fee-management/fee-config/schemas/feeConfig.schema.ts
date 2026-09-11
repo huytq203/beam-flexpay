@@ -191,6 +191,8 @@ export const feeConfigFormSchema = z
     bankCode: z.string(),
     paymentMethod: z.string(),
     merchantId: z.string(),
+    /** Mã chủ ví được gán riêng. Rỗng = áp cho mọi người dùng. */
+    subjectId: z.string(),
     validFrom: z.string().min(1, 'Chọn ngày áp dụng từ'),
     validTo: z.string(),
     components: z

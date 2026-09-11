@@ -165,6 +165,7 @@ export const useFeeConfigDetail = (
       bankCode: assignment?.bankCode ?? '',
       paymentMethod: assignment?.paymentMethod ?? '',
       merchantId: assignment?.merchantId ?? '',
+      subjectId: assignment?.subjectId ?? '',
       components: formComponents
     },
     snapshot: {

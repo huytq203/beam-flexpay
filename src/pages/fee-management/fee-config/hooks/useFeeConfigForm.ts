@@ -21,6 +21,7 @@ export const buildEmptyForm = (
   bankCode: '',
   paymentMethod: '',
   merchantId: '',
+  subjectId: '',
   validFrom: '',
   validTo: '',
   components: []
@@ -59,7 +60,10 @@ export const useFeeConfigForm = (
       serviceType: keepServiceType ? current.serviceType : '',
       // ĐVCNTT không hiện ở miền khác, giữ lại là gửi lên một tiêu chí người
       // dùng không còn nhìn thấy để sửa.
-      merchantId: rules.showMerchant ? current.merchantId : ''
+      merchantId: rules.showMerchant ? current.merchantId : '',
+      // Ví được gán riêng chỉ có nghĩa ở miền Ví; giữ lại là gửi lên một tiêu
+      // chí người dùng không còn nhìn thấy để sửa.
+      subjectId: rules.showSubject ? current.subjectId : ''
     })
   }
 

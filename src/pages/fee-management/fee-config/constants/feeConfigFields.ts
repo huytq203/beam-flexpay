@@ -9,15 +9,15 @@ import {
  * và schema đọc chung một nguồn — trường bị ẩn mà schema vẫn bắt nhập là kiểu
  * lỗi người dùng không bao giờ tự gỡ được, vì họ không thấy ô nào để điền.
  */
-/**
- * Không có tiêu chí nào trỏ tới một ví hay một người dùng cụ thể: bảng bản ghi
- * gán của dịch vụ phí không có cột nào cho việc đó. Mức nhỏ nhất áp được là một
- * ĐVCNTT, và chỉ với luồng thu hộ / chi hộ.
- */
 export interface DomainFieldRules {
   /** Ô ngân hàng: bắt buộc với miền Bank, tuỳ chọn với hai miền còn lại. */
   readonly bankRequired: boolean
   readonly showMerchant: boolean
+  /**
+   * Ô gán riêng cho một ví. Chỉ có nghĩa ở miền Ví: luồng thu hộ và chi hộ nhận
+   * chủ thể là ĐVCNTT, và ô đó đã có riêng.
+   */
+  readonly showSubject: boolean
   readonly serviceTypes: readonly string[]
 }
 
@@ -43,16 +43,19 @@ export const DOMAIN_FIELD_RULES: Readonly<Record<FeeDomain, DomainFieldRules>> =
     [FeeDomain.BANK]: {
       bankRequired: true,
       showMerchant: false,
+      showSubject: false,
       serviceTypes: BANK_SERVICE_TYPES
     },
     [FeeDomain.EWALLET]: {
       bankRequired: false,
       showMerchant: false,
+      showSubject: true,
       serviceTypes: WALLET_SERVICE_TYPES
     },
     [FeeDomain.MERCHANT]: {
       bankRequired: false,
       showMerchant: true,
+      showSubject: false,
       serviceTypes: MERCHANT_SERVICE_TYPES
     }
   }
@@ -108,3 +111,11 @@ export const PAYER_TYPE_LABEL: Readonly<Record<string, string>> =
  */
 export const VAT_COMPONENT_TYPE = 'VAT'
 export const VAT_BASE_COMPONENT_TYPE = 'TRANSACTION_FEE'
+
+/**
+ * Loại chủ thể gửi kèm khi bản gán chỉ định đúng một ví.
+ *
+ * Dịch vụ phí chặn ở bước duyệt nếu loại này không khớp luồng, nên chỉ miền Ví
+ * mới gửi — luồng thu hộ và chi hộ dùng ô ĐVCNTT.
+ */
+export const WALLET_SUBJECT_TYPE = 'USER'

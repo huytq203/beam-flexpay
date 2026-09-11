@@ -72,6 +72,10 @@ export interface FeeAssignment {
   cardType: string | null
   serviceType: string
   customerGroup: string | null
+  /** Gán riêng cho một chủ thể: USER hoặc MERCHANT. NULL = mọi chủ thể. */
+  subjectType: string | null
+  /** Mã chủ thể, khớp mã ví gửi lên dịch vụ phí. NULL = mọi chủ thể. */
+  subjectId: string | null
   status: string
   effectiveFromDate: string | null
   effectiveToDate: string | null

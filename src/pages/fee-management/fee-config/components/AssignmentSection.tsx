@@ -9,6 +9,7 @@ import {
 } from '../constants/feeConfigFields'
 import type { FeeConfigFormValues } from '../schemas/feeConfig.schema'
 import { MerchantPickerField } from './MerchantPickerField'
+import { UserPickerField } from './UserPickerField'
 import { SectionHeading } from './SectionHeading'
 
 interface AssignmentSectionProps {
@@ -68,6 +69,12 @@ export const AssignmentSection = ({ control }: AssignmentSectionProps) => {
         />
         {rules.showMerchant && (
           <MerchantPickerField
+            control={control}
+            className='col-span-12 flex flex-col'
+          />
+        )}
+        {rules.showSubject && (
+          <UserPickerField
             control={control}
             className='col-span-12 flex flex-col'
           />

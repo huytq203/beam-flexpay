@@ -10,6 +10,7 @@ import {
   getExecutablePayer
 } from '@utils/fee-execution'
 import dayjs from 'dayjs'
+import { WALLET_SUBJECT_TYPE } from '../constants/feeConfigFields'
 import {
   getTierStart,
   usesTiers,
@@ -110,6 +111,9 @@ export const toAssignmentRequest = (
   bankCode: form.bankCode || undefined,
   paymentMethod: form.paymentMethod || undefined,
   merchantId: form.merchantId || undefined,
+  // Cặp chủ thể phải cùng có hoặc cùng vắng: backend từ chối bản gán khai nửa cặp.
+  subjectType: form.subjectId ? WALLET_SUBJECT_TYPE : undefined,
+  subjectId: form.subjectId || undefined,
   effectiveFromDate: form.validFrom
     ? toAssignmentMoment(form.validFrom)
     : undefined,

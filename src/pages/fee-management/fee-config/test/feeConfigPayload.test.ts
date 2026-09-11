@@ -17,6 +17,7 @@ const baseForm = (
   bankCode: '',
   paymentMethod: '',
   merchantId: '',
+  subjectId: '',
   validFrom: '2026-10-01T08:30:00.000',
   validTo: '',
   components: [
@@ -134,6 +135,22 @@ describe('toAssignmentRequest', () => {
     expect(request.bankCode).toBeUndefined()
     expect(request.merchantId).toBeUndefined()
     expect(request.paymentMethod).toBeUndefined()
+  })
+
+  it('gửi cặp chủ thể khi có chọn ví', () => {
+    const request = toAssignmentRequest(
+      baseForm({ subjectId: 'owner-1' }),
+      'policy-1'
+    )
+    expect(request.subjectType).toBe('USER')
+    expect(request.subjectId).toBe('owner-1')
+  })
+
+  it('bỏ hẳn cả cặp chủ thể khi không chọn ví', () => {
+    const request = toAssignmentRequest(baseForm(), 'policy-1')
+    // Backend từ chối bản gán khai nửa cặp, nên không được gửi lẻ một trường.
+    expect(request.subjectType).toBeUndefined()
+    expect(request.subjectId).toBeUndefined()
   })
 
   it('giữ loại giao dịch trùng với chính sách', () => {

@@ -8,6 +8,7 @@ import {
   TooltipComponent
 } from '@components/index'
 import { SERVICE_TYPE_LABELS, getFeeLabel } from '@constants/feeLabels'
+import { AssignmentScopeCell } from '@pages/fee-management/fee-policy-list/components/AssignmentScopeCell'
 import type { FeePolicyRow } from '@pages/fee-management/fee-policy-list/hooks/useFeePolicyList'
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
@@ -86,6 +87,12 @@ export const getFeePolicyColumns = ({
         </span>
       </span>
     )
+  },
+  {
+    title: 'Đối tượng',
+    dataIndex: 'id',
+    width: 150,
+    render: (id: string) => <AssignmentScopeCell feePolicyId={id} />
   },
   {
     title: 'Hiệu lực',
