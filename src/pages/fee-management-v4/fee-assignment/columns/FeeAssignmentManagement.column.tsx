@@ -3,7 +3,7 @@ import {
   LockOutlined,
   UnlockOutlined
 } from '@components/icons'
-import { ButtonComponent, FeeDirectionBadge, TooltipComponent } from '@components/index'
+import { ButtonComponent, FeeAssignmentApprovalAction, FeeDirectionBadge, TooltipComponent } from '@components/index'
 import { FeeAssignment, paymentMethodType } from '@pages/fee-management-v4/fee-assignment/constants/feeAssignment'
 import { ColumnsType } from 'antd/es/table'
 import { getEnumLabel } from '@pages/fee-management-v4/fee-assignment/utils/FeeManagement.utils'
@@ -13,7 +13,6 @@ import { STATUS_CONFIG } from '../constants/FeeAssignment.constant'
 import { TYPEDATE } from '@constants/date.constant'
 import dayjs from 'dayjs'
 import { PATHS } from '@constants/pathConstant'
-import FeeAssignmentApprovalAction from '../components/FeeAssignmentApprovalAction'
 import { Can } from '@/app/permissions'
 
 
@@ -115,9 +114,11 @@ export const getFeeAssignColumn = ({
                 />
               </TooltipComponent>
             </Can>
-            <Can screen='FEE_ASSIGNMENT' action='approve'>
-              <FeeAssignmentApprovalAction assignment={record} />
-            </Can>
+            {record.status === 'INIT' && (
+              <Can screen='FEE_ASSIGNMENT' action='approve'>
+                <FeeAssignmentApprovalAction assignment={record} />
+              </Can>
+            )}
             <Can screen='FEE_ASSIGNMENT' action='toggleActive'>
               <TooltipComponent title={record.status === 'ACTIVE' ? 'Khóa' : 'Mở khóa'}>
                 <ButtonComponent

@@ -14,6 +14,7 @@ import { SectionHeading } from './SectionHeading'
 
 interface AssignmentSectionProps {
   control: Control<FeeConfigFormValues>
+  readOnly?: boolean
 }
 
 const PAYMENT_METHOD_OPTIONS = PAYMENT_METHOD_VALUES.map((value) => ({
@@ -27,7 +28,10 @@ const PAYMENT_METHOD_OPTIONS = PAYMENT_METHOD_VALUES.map((value) => ({
  * Ô để trống mang nghĩa "áp cho tất cả", nên placeholder phải nói ra điều đó —
  * người vận hành đọc ô rỗng là "chưa điền" chứ không phải "mọi ngân hàng".
  */
-export const AssignmentSection = ({ control }: AssignmentSectionProps) => {
+export const AssignmentSection = ({
+  control,
+  readOnly = false
+}: AssignmentSectionProps) => {
   const feeDomain = useWatch({ control, name: 'feeDomain' })
   const rules = getDomainFieldRules(feeDomain)
 
@@ -57,6 +61,7 @@ export const AssignmentSection = ({ control }: AssignmentSectionProps) => {
           showSearch
           optionFilterProp='label'
           options={bankOptions}
+          disabled={readOnly}
           className='col-span-12 flex flex-col md:col-span-4'
         />
         <FormSelect
@@ -65,17 +70,20 @@ export const AssignmentSection = ({ control }: AssignmentSectionProps) => {
           label='Phương thức giao dịch'
           placeholder='Mọi phương thức'
           options={PAYMENT_METHOD_OPTIONS}
+          disabled={readOnly}
           className='col-span-12 flex flex-col md:col-span-4'
         />
         {rules.showMerchant && (
           <MerchantPickerField
             control={control}
+            readOnly={readOnly}
             className='col-span-12 flex flex-col'
           />
         )}
         {rules.showSubject && (
           <UserPickerField
             control={control}
+            readOnly={readOnly}
             className='col-span-12 flex flex-col'
           />
         )}

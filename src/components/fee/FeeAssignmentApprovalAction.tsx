@@ -1,6 +1,11 @@
 import { useState } from 'react'
 import { Popover } from 'antd'
-import { ButtonComponent, ReasonDialog } from '@components/index'
+import dayjs from 'dayjs'
+import {
+  ButtonComponent,
+  ReasonDialog,
+  TooltipComponent
+} from '@components/index'
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
@@ -15,7 +20,14 @@ import {
   getFeeApprovalDecision,
   MISSING_REVIEW_INFO_MESSAGE
 } from '@utils/fee-approval'
-import type { FeeAssignment } from '../constants/feeAssignment'
+import {
+  CUSTOMER_GROUP_LABELS,
+  PAYMENT_METHOD_LABELS,
+  SERVICE_TYPE_LABELS,
+  getFeeLabel
+} from '@constants/feeLabels'
+import type { FeeAssignment } from '@type/fee.type'
+import { TYPEDATE } from '@constants/date.constant'
 
 interface FeeAssignmentApprovalActionProps {
   assignment: FeeAssignment
@@ -23,7 +35,42 @@ interface FeeAssignmentApprovalActionProps {
 
 const APPROVABLE_STATUS = 'INIT'
 
-const FeeAssignmentApprovalAction = ({
+const EMPTY_VALUE = '—'
+
+const getAssignmentScope = (assignment: FeeAssignment) => {
+  if (assignment.subjectId) {
+    const subjectLabel = assignment.subjectType === 'MERCHANT' ? 'Merchant' : 'Người dùng'
+    return `${subjectLabel} · ${assignment.subjectId}`
+  }
+
+  if (assignment.merchantId) return `Merchant · ${assignment.merchantId}`
+  if (assignment.customerGroup) {
+    return getFeeLabel(assignment.customerGroup, CUSTOMER_GROUP_LABELS)
+  }
+
+  return 'Áp dụng chung'
+}
+
+const formatEffectiveDate = (value: string | null) =>
+  value ? dayjs.utc(value).format(TYPEDATE.fullTime) : EMPTY_VALUE
+
+interface ReviewItemProps {
+  label: string
+  value: string
+}
+
+const ReviewItem = ({ label, value }: ReviewItemProps) => (
+  <div className='min-w-0'>
+    <dt className='text-[11px] leading-4 font-semibold tracking-[0.06em] text-muted-foreground uppercase'>
+      {label}
+    </dt>
+    <dd className='mt-0.5 min-w-0 text-[13px] leading-5 font-medium break-words text-foreground'>
+      {value}
+    </dd>
+  </div>
+)
+
+export const FeeAssignmentApprovalAction = ({
   assignment
 }: FeeAssignmentApprovalActionProps) => {
   const [open, setOpen] = useState(false)
@@ -78,28 +125,63 @@ const FeeAssignmentApprovalAction = ({
   }
 
   const approvalContent = (
-    <div className='flex w-80 max-w-full min-w-0 flex-col gap-3'>
+    <div className='flex max-h-[calc(100dvh-32px)] w-96 max-w-full min-w-0 flex-col gap-4 overflow-y-auto'>
       <div className='flex min-w-0 flex-col gap-1'>
-        <p className='m-0 max-h-25 min-w-0 overflow-y-auto text-[13px] leading-5 break-words text-foreground'>
-          Chọn kết quả xử lý cho thiết lập gán phí này.
+        <p className='m-0 min-w-0 text-[13px] leading-5 break-words text-foreground'>
+          Kiểm tra phạm vi và thời gian hiệu lực trước khi duyệt.
         </p>
-        {approvalDecision ? (
-          <p className='m-0 min-w-0 text-xs leading-4 break-words text-muted-foreground'>
-            Phiên bản{' '}
-            <span className='tabular-nums'>
-              #{approvalDecision.expectedLockVersion}
-            </span>{' '}
-            · Mã kiểm duyệt{' '}
-            <span className='font-mono'>
-              {approvalDecision.expectedReviewHash.slice(0, 8)}
-            </span>
-          </p>
-        ) : (
-          <p className='m-0 min-w-0 text-xs leading-4 break-words text-danger-strong'>
-            {MISSING_REVIEW_INFO_MESSAGE}
-          </p>
-        )}
       </div>
+
+      <dl className='grid min-w-0 grid-cols-1 gap-x-4 gap-y-3 rounded-lg bg-muted/60 p-3 min-[420px]:grid-cols-2'>
+        <ReviewItem
+          label='Loại giao dịch'
+          value={getFeeLabel(assignment.serviceType, SERVICE_TYPE_LABELS)}
+        />
+        <ReviewItem label='Phạm vi áp dụng' value={getAssignmentScope(assignment)} />
+        <ReviewItem
+          label='Phương thức'
+          value={getFeeLabel(
+            assignment.paymentMethod,
+            PAYMENT_METHOD_LABELS,
+            EMPTY_VALUE
+          )}
+        />
+        <ReviewItem label='Ngân hàng' value={assignment.bankCode ?? EMPTY_VALUE} />
+        <ReviewItem
+          label='Hiệu lực từ'
+          value={formatEffectiveDate(assignment.effectiveFromDate)}
+        />
+        <ReviewItem
+          label='Hiệu lực đến'
+          value={formatEffectiveDate(assignment.effectiveToDate)}
+        />
+      </dl>
+
+      {approvalDecision ? (
+        <p className='m-0 min-w-0 border-t border-border pt-3 text-xs leading-4 break-words text-muted-foreground'>
+          Phiên bản{' '}
+          <span className='tabular-nums'>
+            #{approvalDecision.expectedLockVersion}
+          </span>{' '}
+          · Mã kiểm duyệt{' '}
+          <span className='font-mono'>
+            {approvalDecision.expectedReviewHash.slice(0, 8)}
+          </span>
+        </p>
+      ) : (
+        <p
+          role='alert'
+          className='m-0 min-w-0 rounded-lg bg-danger/10 px-3 py-2 text-xs leading-4 break-words text-danger-strong'
+        >
+          {MISSING_REVIEW_INFO_MESSAGE}
+        </p>
+      )}
+
+      <p className='m-0 rounded-lg bg-warning/10 px-3 py-2 text-xs leading-4 text-warning-strong'>
+        Sau khi duyệt, gán phí sẽ tự động áp dụng theo thời gian đã
+        cấu hình.
+      </p>
+
       <div className='grid grid-cols-1 gap-2 min-[384px]:grid-cols-2'>
         <ButtonComponent
           htmlType='button'
@@ -137,7 +219,7 @@ const FeeAssignmentApprovalAction = ({
   return (
     <>
       <Popover
-        title='Phê duyệt gán phí'
+        title='Kiểm tra và duyệt gán phí'
         content={approvalContent}
         trigger='click'
         placement='bottomRight'
@@ -148,22 +230,19 @@ const FeeAssignmentApprovalAction = ({
         }}
       >
         <span className='inline-flex'>
-          <ButtonComponent
-            aria-label={
-              isProcessed ? 'Gán phí đã được xử lý' : 'Phê duyệt gán phí'
-            }
-            title={
-              isProcessed
-                ? 'Gán phí đã được phê duyệt hoặc từ chối'
-                : 'Phê duyệt gán phí'
-            }
-            htmlType='button'
-            type='default'
-            size='small'
-            icon={<SafetyOutlined />}
-            loading={isLoading}
-            disabled={isProcessed || isLoading}
-          />
+          <TooltipComponent title='Kiểm tra và duyệt'>
+            <ButtonComponent
+              aria-label={
+                isProcessed ? 'Gán phí đã được xử lý' : 'Phê duyệt gán phí'
+              }
+              htmlType='button'
+              type='default'
+              size='small'
+              icon={<SafetyOutlined />}
+              loading={isLoading}
+              disabled={isProcessed || isLoading}
+            />
+          </TooltipComponent>
         </span>
       </Popover>
       <ReasonDialog

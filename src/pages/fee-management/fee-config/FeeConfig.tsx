@@ -1,5 +1,5 @@
 import { FeeDomainTabs } from '@components/fee/FeeDomainTabs'
-import { ArrowLeftOutlined, WarningCircleIcon } from '@components/icons'
+import { ArrowLeftOutlined, EyeOutlined, WarningCircleIcon } from '@components/icons'
 import { ButtonComponent, CardComponent, ModalComponent } from '@components/index'
 import { PATHS } from '@constants/pathConstant'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -17,6 +17,7 @@ import type { FeeConfigFormValues } from './schemas/feeConfig.schema'
 interface FeeConfigFormProps {
   defaultValues: FeeConfigFormValues
   snapshot: FeeConfigSnapshot | null
+  readOnly?: boolean
 }
 
 /**
@@ -25,7 +26,11 @@ interface FeeConfigFormProps {
  * Tách ra khỏi màn để `useForm` chỉ khởi tạo một lần với giá trị thật — nạp
  * xong mới reset là mất những gì người dùng vừa gõ trong lúc chờ.
  */
-const FeeConfigForm = ({ defaultValues, snapshot }: FeeConfigFormProps) => {
+const FeeConfigForm = ({
+  defaultValues,
+  snapshot,
+  readOnly = false
+}: FeeConfigFormProps) => {
   const isEdit = Boolean(snapshot)
   const navigate = useNavigate()
   const { form, changeDomain } = useFeeConfigForm(defaultValues)
@@ -36,6 +41,21 @@ const FeeConfigForm = ({ defaultValues, snapshot }: FeeConfigFormProps) => {
 
   return (
     <form onSubmit={handleSubmit(submit)}>
+      {readOnly && (
+        <div className='mb-3 flex items-start gap-3 rounded-lg border border-border bg-muted px-4 py-3'>
+          <EyeOutlined className='mt-0.5 shrink-0 text-secondary-foreground' />
+          <div className='min-w-0'>
+            <p className='text-[13px] font-semibold text-foreground'>
+              Đang xem chi tiết chính sách
+            </p>
+            <p className='mt-0.5 max-w-[70ch] text-[13px] leading-5 text-muted-foreground'>
+              Chính sách đã rời trạng thái cho phép chỉnh sửa. Bạn vẫn có thể
+              kiểm tra đầy đủ cấu hình và các mức phí bên dưới.
+            </p>
+          </div>
+        </div>
+      )}
+
       <CardComponent className='mb-3!'>
         <div className='flex flex-wrap items-start justify-between gap-3 border-b border-border pb-4'>
           <p className='max-w-[70ch] text-[13px] text-muted-foreground'>
@@ -50,7 +70,7 @@ const FeeConfigForm = ({ defaultValues, snapshot }: FeeConfigFormProps) => {
         <FeeDomainTabs
           value={feeDomain}
           onChange={changeDomain}
-          disabled={isEdit}
+          disabled={isEdit || readOnly}
           className='mt-4'
         />
         {isEdit && (
@@ -62,11 +82,11 @@ const FeeConfigForm = ({ defaultValues, snapshot }: FeeConfigFormProps) => {
       </CardComponent>
 
       <CardComponent className='mb-3!'>
-        <PolicyGeneralSection control={control} />
+        <PolicyGeneralSection control={control} readOnly={readOnly} />
       </CardComponent>
 
       <CardComponent className='mb-3!'>
-        <AssignmentSection control={control} />
+        <AssignmentSection control={control} readOnly={readOnly} />
       </CardComponent>
 
       <CardComponent className='mb-3!'>
@@ -75,6 +95,7 @@ const FeeConfigForm = ({ defaultValues, snapshot }: FeeConfigFormProps) => {
           feeDomain={feeDomain}
           serviceType={watch('serviceType')}
           error={formState.errors.components?.message}
+          readOnly={readOnly}
         />
       </CardComponent>
 
@@ -82,15 +103,18 @@ const FeeConfigForm = ({ defaultValues, snapshot }: FeeConfigFormProps) => {
         <ButtonComponent
           htmlType='button'
           type='default'
-          content='Huỷ'
+          content={readOnly ? 'Về danh sách' : 'Huỷ'}
+          icon={readOnly ? <ArrowLeftOutlined /> : undefined}
           onClick={() => navigate(PATHS.FEE_V4.POLICY_LIST)}
         />
-        <ButtonComponent
-          htmlType='submit'
-          type='primary'
-          content='Thiết lập'
-          loading={isSubmitting}
-        />
+        {!readOnly && (
+          <ButtonComponent
+            htmlType='submit'
+            type='primary'
+            content='Thiết lập'
+            loading={isSubmitting}
+          />
+        )}
       </div>
 
       <ModalComponent
@@ -139,31 +163,6 @@ const FeeConfig = () => {
     )
   }
 
-  if (id && values && !isEditable) {
-    return (
-      <CardComponent>
-        <div className='flex flex-col items-start gap-3 py-8'>
-          <p className='flex items-center gap-2 text-[13px] font-semibold text-warning-strong'>
-            <WarningCircleIcon size={18} weight='bold' aria-hidden />
-            Chính sách này không còn sửa được
-          </p>
-          <p className='max-w-[60ch] text-[13px] text-muted-foreground'>
-            Dịch vụ phí khoá cấu hình sau khi chính sách rời trạng thái khởi tạo
-            hoặc bị từ chối. Muốn đổi biểu phí thì tạo chính sách mới rồi ngừng
-            áp dụng chính sách này.
-          </p>
-          <ButtonComponent
-            htmlType='button'
-            type='default'
-            content='Về danh sách'
-            icon={<ArrowLeftOutlined />}
-            onClick={() => navigate(PATHS.FEE_V4.POLICY_LIST)}
-          />
-        </div>
-      </CardComponent>
-    )
-  }
-
   if (id && isError) {
     return (
       <CardComponent>
@@ -194,6 +193,7 @@ const FeeConfig = () => {
       key={id ?? 'create'}
       snapshot={snapshot}
       defaultValues={values ?? buildEmptyForm()}
+      readOnly={Boolean(id && !isEditable)}
     />
   )
 }

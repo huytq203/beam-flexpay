@@ -25,6 +25,13 @@ export const PAYMENT_METHOD_LABELS: Readonly<Record<string, string>> = {
   VA: 'Tài khoản ảo'
 }
 
+export const CUSTOMER_GROUP_LABELS: Readonly<Record<string, string>> = {
+  STANDARD: 'Người dùng thường',
+  PREMIUM: 'Người dùng Premium',
+  VIP: 'Người dùng VIP',
+  MERCHANT: 'Merchant'
+}
+
 export const CARD_TYPE_LABELS: Readonly<Record<string, string>> = {
   DOMESTIC: 'Nội địa',
   INTERNATIONAL: 'Quốc tế'

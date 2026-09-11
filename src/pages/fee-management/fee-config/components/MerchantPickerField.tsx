@@ -11,6 +11,7 @@ import { MerchantPickerDialog } from './MerchantPickerDialog'
 interface MerchantPickerFieldProps {
   control: Control<FeeConfigFormValues>
   className?: string
+  readOnly?: boolean
 }
 
 const HEAD =
@@ -32,7 +33,8 @@ const Fact = ({ label, value }: { label: string; value: string }) => (
  */
 export const MerchantPickerField = ({
   control,
-  className
+  className,
+  readOnly = false
 }: MerchantPickerFieldProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [picked, setPicked] = useState<ContentMerchant | null>(null)
@@ -47,6 +49,7 @@ export const MerchantPickerField = ({
           picked={picked}
           error={fieldState.error?.message}
           className={className}
+          readOnly={readOnly}
           isOpen={isOpen}
           onOpen={() => setIsOpen(true)}
           onClose={() => setIsOpen(false)}
@@ -70,6 +73,7 @@ interface MerchantPickerBodyProps {
   picked: ContentMerchant | null
   error?: string
   className?: string
+  readOnly: boolean
   isOpen: boolean
   onOpen: () => void
   onClose: () => void
@@ -82,6 +86,7 @@ const MerchantPickerBody = ({
   picked,
   error,
   className,
+  readOnly,
   isOpen,
   onOpen,
   onClose,
@@ -109,33 +114,39 @@ const MerchantPickerBody = ({
               <Fact label='Điện thoại' value={merchant.contactPhone} />
               <Fact label='Trạng thái' value={merchant.status} />
             </div>
-            <div className='flex gap-2'>
-              <ButtonComponent
-                htmlType='button'
-                type='default'
-                content='Đổi đơn vị'
-                onClick={onOpen}
-              />
-              <ButtonComponent
-                htmlType='button'
-                type='text'
-                content='Bỏ chọn'
-                onClick={onClear}
-              />
-            </div>
+            {!readOnly && (
+              <div className='flex gap-2'>
+                <ButtonComponent
+                  htmlType='button'
+                  type='default'
+                  content='Đổi đơn vị'
+                  onClick={onOpen}
+                />
+                <ButtonComponent
+                  htmlType='button'
+                  type='text'
+                  content='Bỏ chọn'
+                  onClick={onClear}
+                />
+              </div>
+            )}
           </div>
         </div>
       ) : (
         <div className='mt-2 flex flex-wrap items-center gap-3 rounded-lg border border-dashed border-border px-4 py-3'>
-          <ButtonComponent
-            htmlType='button'
-            type='default'
-            content='Chọn đơn vị'
-            icon={<StorefrontIcon size={16} weight='bold' aria-hidden />}
-            onClick={onOpen}
-          />
+          {!readOnly && (
+            <ButtonComponent
+              htmlType='button'
+              type='default'
+              content='Chọn đơn vị'
+              icon={<StorefrontIcon size={16} weight='bold' aria-hidden />}
+              onClick={onOpen}
+            />
+          )}
           <span className='text-[13px] text-muted-foreground'>
-            Bỏ trống nghĩa là chính sách áp cho mọi đơn vị.
+            {readOnly
+              ? 'Chính sách áp dụng cho mọi đơn vị.'
+              : 'Bỏ trống nghĩa là chính sách áp cho mọi đơn vị.'}
           </span>
         </div>
       )}
@@ -146,12 +157,14 @@ const MerchantPickerBody = ({
         </p>
       )}
 
-      <MerchantPickerDialog
-        open={isOpen}
-        selectedId={merchantId}
-        onSelect={onSelect}
-        onCancel={onClose}
-      />
+      {!readOnly && (
+        <MerchantPickerDialog
+          open={isOpen}
+          selectedId={merchantId}
+          onSelect={onSelect}
+          onCancel={onClose}
+        />
+      )}
     </div>
   )
 }

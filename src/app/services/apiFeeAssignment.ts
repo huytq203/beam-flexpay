@@ -71,17 +71,18 @@ const feeAssignApi = apiFeeService.injectEndpoints({
       query: ({ id, ...body }) => ({
         url: `/fee/policy-assignments/${id}/approve`,
         method: "PATCH",
-        body,
-        params: { isLoading: false }
+        body
       }),
+      extraOptions: { suppressGlobalLoading: true },
       invalidatesTags: ['feeAssign']
     }),
     patchRejectAssign: build.mutation<ResponseType<FeeAssignment>, FeeReasonArg>({
       query: ({ id, reason }) => ({
         url: `/fee/policy-assignments/${id}/reject`,
         method: "PATCH",
-        params: { isLoading: false, reason }
+        params: { reason }
       }),
+      extraOptions: { suppressGlobalLoading: true },
       invalidatesTags: ['feeAssign']
     }),
   })

@@ -1,6 +1,11 @@
 import { Can } from '@/app/permissions'
 import { FeeStatusPill } from '@components/fee/FeeStatusPill'
-import { CheckCircleOutlined, NotePencilIcon, StopOutlined } from '@components/icons'
+import {
+  CheckCircleOutlined,
+  EyeOutlined,
+  NotePencilIcon,
+  StopOutlined
+} from '@components/icons'
 import {
   ButtonComponent,
   FeeDirectionBadge,
@@ -9,6 +14,7 @@ import {
 } from '@components/index'
 import { SERVICE_TYPE_LABELS, getFeeLabel } from '@constants/feeLabels'
 import { AssignmentScopeCell } from '@pages/fee-management/fee-policy-list/components/AssignmentScopeCell'
+import { PolicyAssignmentApprovalAction } from '@pages/fee-management/fee-policy-list/components/PolicyAssignmentApprovalAction'
 import type { FeePolicyRow } from '@pages/fee-management/fee-policy-list/hooks/useFeePolicyList'
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
@@ -133,16 +139,25 @@ export const getFeePolicyColumns = ({
     width: 190,
     fixed: 'right',
     align: 'center',
-    render: (id: string, row) => (
-      <div className='flex items-center justify-center gap-2'>
+    render: (id: string, row) => {
+      const isEditable = row.status === 'INIT' || row.status === 'REJECTED'
+
+      return (
+        <div className='flex items-center justify-center gap-2'>
         <Can screen='FEE_CONFIG' action='edit'>
-          <TooltipComponent title='Mở màn cấu hình'>
+          <TooltipComponent title={isEditable ? 'Sửa cấu hình' : 'Xem chi tiết'}>
             <ButtonComponent
               type='default'
               htmlType='button'
               size='small'
-              aria-label='Mở màn cấu hình'
-              icon={<NotePencilIcon size={16} weight='bold' aria-hidden />}
+              aria-label={isEditable ? 'Sửa cấu hình' : 'Xem chi tiết'}
+              icon={
+                isEditable ? (
+                  <NotePencilIcon size={16} weight='bold' aria-hidden />
+                ) : (
+                  <EyeOutlined />
+                )
+              }
               onClick={() => onEdit(id)}
             />
           </TooltipComponent>
@@ -152,6 +167,15 @@ export const getFeePolicyColumns = ({
         {row.status === 'INIT' && (
           <Can screen='FEE_CONFIG' action='approve'>
             <FeePolicyApprovalAction policy={row} />
+          </Can>
+        )}
+
+        {row.status === 'ACTIVE' && (
+          <Can screen='FEE_CONFIG' action='approve'>
+            <PolicyAssignmentApprovalAction
+              feePolicyId={id}
+              policyStatus={row.status}
+            />
           </Can>
         )}
 
@@ -187,7 +211,8 @@ export const getFeePolicyColumns = ({
             </TooltipComponent>
           </Can>
         )}
-      </div>
-    )
+        </div>
+      )
+    }
   }
 ]

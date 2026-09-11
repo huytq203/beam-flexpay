@@ -18,6 +18,7 @@ interface FeeComponentListProps {
   feeDomain: FeeDomain
   serviceType: string
   error?: string
+  readOnly?: boolean
 }
 
 /**
@@ -31,7 +32,8 @@ export const FeeComponentList = ({
   control,
   feeDomain,
   serviceType,
-  error
+  error,
+  readOnly = false
 }: FeeComponentListProps) => {
   const { fields, append, update, remove } = useFieldArray({
     control,
@@ -81,7 +83,7 @@ export const FeeComponentList = ({
     <section>
       <SectionHeading
         hint='Mỗi thành phần là một khoản phí riêng cộng vào tổng. Thành phần tính dựa trên thành phần khác phải nằm dưới nó.'
-        action={
+        action={!readOnly ? (
           <ButtonComponent
             htmlType='button'
             type='primary'
@@ -89,7 +91,7 @@ export const FeeComponentList = ({
             icon={<PlusIcon size={16} weight='bold' aria-hidden />}
             onClick={() => setIsAdding(true)}
           />
-        }
+        ) : undefined}
       >
         Thiết lập phí
       </SectionHeading>
@@ -112,6 +114,7 @@ export const FeeComponentList = ({
               key={field.id}
               index={index}
               component={field as unknown as FeeComponentFormValues}
+              readOnly={readOnly}
               onEdit={() => setEditingIndex(index)}
               onRemove={() => handleRemove(index)}
             />
@@ -119,13 +122,13 @@ export const FeeComponentList = ({
         </div>
       )}
 
-      {error && (
+      {!readOnly && error && (
         <p className='mt-2 text-[13px] font-medium text-danger-strong'>
           {error}
         </p>
       )}
 
-      {isOpen && (
+      {!readOnly && isOpen && (
         <FeeComponentDialog
           open={isOpen}
           initialValue={editing}

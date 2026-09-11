@@ -14,6 +14,7 @@ import { SectionHeading } from './SectionHeading'
 
 interface PolicyGeneralSectionProps {
   control: Control<FeeConfigFormValues>
+  readOnly?: boolean
 }
 
 const PRIORITY_OPTIONS = FEE_PRIORITY_OPTIONS.map((option) => ({
@@ -30,7 +31,8 @@ const PRIORITY_OPTIONS = FEE_PRIORITY_OPTIONS.map((option) => ({
  * không cần một hàng điều khiển thứ hai.
  */
 export const PolicyGeneralSection = ({
-  control
+  control,
+  readOnly = false
 }: PolicyGeneralSectionProps) => {
   const feeDomain = useWatch({ control, name: 'feeDomain' })
   const validFrom = useWatch({ control, name: 'validFrom' })
@@ -60,6 +62,7 @@ export const PolicyGeneralSection = ({
           required
           label='Tên chính sách phí'
           placeholder='Ví dụ: Phí rút tiền ví qua VPBank'
+          disabled={readOnly}
           className='col-span-12 flex flex-col md:col-span-8'
         />
         <FormSelect
@@ -70,6 +73,7 @@ export const PolicyGeneralSection = ({
           placeholder='Chọn mức ưu tiên'
           allowClear={false}
           options={PRIORITY_OPTIONS}
+          disabled={readOnly}
           className='col-span-12 flex flex-col md:col-span-4'
         />
         <FormTextArea
@@ -78,6 +82,7 @@ export const PolicyGeneralSection = ({
           label='Mô tả'
           placeholder='Ghi lại vì sao có chính sách này, để người duyệt hiểu ngữ cảnh'
           rows={3}
+          disabled={readOnly}
           className='col-span-12 flex flex-col'
         />
       </div>
@@ -91,6 +96,7 @@ export const PolicyGeneralSection = ({
           placeholder='Chọn đúng một loại giao dịch'
           allowClear={false}
           options={serviceTypeOptions}
+          disabled={readOnly}
           className='col-span-12 flex flex-col md:col-span-4'
         />
         <FormDatePicker
@@ -101,6 +107,7 @@ export const PolicyGeneralSection = ({
           placeholder='Chọn thời điểm bắt đầu'
           disabledDate={disablePastDate()}
           disabledTime={disablePastTime()}
+          disabled={readOnly}
           className='col-span-12 flex flex-col md:col-span-4'
         />
         <FormDatePicker
@@ -111,6 +118,7 @@ export const PolicyGeneralSection = ({
           placeholder='Để trống nếu vô thời hạn'
           disabledDate={disablePastDate(validToFloor)}
           disabledTime={disablePastTime(validToFloor)}
+          disabled={readOnly}
           className='col-span-12 flex flex-col md:col-span-4'
         />
       </div>

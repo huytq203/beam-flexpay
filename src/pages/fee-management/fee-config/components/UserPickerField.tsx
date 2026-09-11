@@ -12,6 +12,7 @@ import { UserPickerDialog } from './UserPickerDialog'
 interface UserPickerFieldProps {
   control: Control<FeeConfigFormValues>
   className?: string
+  readOnly?: boolean
 }
 
 const HEAD =
@@ -37,7 +38,11 @@ const Fact = ({
  * giá. Sau khi chọn, khối này đổ lại thông tin ví để người vận hành đối chiếu
  * trước khi gán một mức phí đặc biệt: một mã UUID thì không ai nhìn ra đúng sai.
  */
-export const UserPickerField = ({ control, className }: UserPickerFieldProps) => {
+export const UserPickerField = ({
+  control,
+  className,
+  readOnly = false
+}: UserPickerFieldProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [picked, setPicked] = useState<ContentAccountWallet | null>(null)
 
@@ -51,6 +56,7 @@ export const UserPickerField = ({ control, className }: UserPickerFieldProps) =>
           picked={picked}
           error={fieldState.error?.message}
           className={className}
+          readOnly={readOnly}
           isOpen={isOpen}
           onOpen={() => setIsOpen(true)}
           onClose={() => setIsOpen(false)}
@@ -74,6 +80,7 @@ interface UserPickerBodyProps {
   picked: ContentAccountWallet | null
   error?: string
   className?: string
+  readOnly: boolean
   isOpen: boolean
   onOpen: () => void
   onClose: () => void
@@ -86,6 +93,7 @@ const UserPickerBody = ({
   picked,
   error,
   className,
+  readOnly,
   isOpen,
   onOpen,
   onClose,
@@ -128,34 +136,39 @@ const UserPickerBody = ({
               </Fact>
               <Fact label='Trạng thái'>{account.status}</Fact>
             </div>
-            <div className='flex gap-2'>
-              <ButtonComponent
-                htmlType='button'
-                type='default'
-                content='Đổi ví'
-                onClick={onOpen}
-              />
-              <ButtonComponent
-                htmlType='button'
-                type='text'
-                content='Bỏ chọn'
-                onClick={onClear}
-              />
-            </div>
+            {!readOnly && (
+              <div className='flex gap-2'>
+                <ButtonComponent
+                  htmlType='button'
+                  type='default'
+                  content='Đổi ví'
+                  onClick={onOpen}
+                />
+                <ButtonComponent
+                  htmlType='button'
+                  type='text'
+                  content='Bỏ chọn'
+                  onClick={onClear}
+                />
+              </div>
+            )}
           </div>
         </div>
       ) : (
         <div className='mt-2 flex flex-wrap items-center gap-3 rounded-lg border border-dashed border-border px-4 py-3'>
-          <ButtonComponent
-            htmlType='button'
-            type='default'
-            content='Chọn ví'
-            icon={<WalletIcon size={16} weight='bold' aria-hidden />}
-            onClick={onOpen}
-          />
+          {!readOnly && (
+            <ButtonComponent
+              htmlType='button'
+              type='default'
+              content='Chọn ví'
+              icon={<WalletIcon size={16} weight='bold' aria-hidden />}
+              onClick={onOpen}
+            />
+          )}
           <span className='text-[13px] text-muted-foreground'>
-            Bỏ trống nghĩa là chính sách áp cho mọi người dùng. Chọn một ví thì
-            biểu phí này đè lên mọi biểu phí chung của họ.
+            {readOnly
+              ? 'Chính sách áp dụng cho mọi người dùng.'
+              : 'Bỏ trống nghĩa là chính sách áp cho mọi người dùng. Chọn một ví thì biểu phí này đè lên mọi biểu phí chung của họ.'}
           </span>
         </div>
       )}
@@ -164,12 +177,14 @@ const UserPickerBody = ({
         <p className='mt-1 text-[13px] font-medium text-danger-strong'>{error}</p>
       )}
 
-      <UserPickerDialog
-        open={isOpen}
-        selectedOwnerId={ownerId}
-        onSelect={onSelect}
-        onCancel={onClose}
-      />
+      {!readOnly && (
+        <UserPickerDialog
+          open={isOpen}
+          selectedOwnerId={ownerId}
+          onSelect={onSelect}
+          onCancel={onClose}
+        />
+      )}
     </div>
   )
 }

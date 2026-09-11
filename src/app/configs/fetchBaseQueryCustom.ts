@@ -374,6 +374,11 @@ export const initInactivityTracker = () => {
 // FACTORY FUNCTION - Create custom base query with loading & error handling
 // ============================================================================
 
+export interface CustomBaseQueryExtraOptions {
+  /** Dùng cho thao tác đã có loading cục bộ, không đưa cờ UI vào query string. */
+  suppressGlobalLoading?: boolean
+}
+
 /**
  * Factory function to create custom base query with:
  * - Loading indicator management (with whitelist)
@@ -385,7 +390,12 @@ export const initInactivityTracker = () => {
  */
 const createCustomBaseQuery = (
   baseQuery: ReturnType<typeof fetchBaseQuery>
-): BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> => {
+): BaseQueryFn<
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError,
+  CustomBaseQueryExtraOptions
+> => {
   return async (args, api, extraOptions) => {
     const pathName = normalizePathname(window.location.pathname)
 
@@ -401,6 +411,7 @@ const createCustomBaseQuery = (
       isChangePasswordRequest || suppressesErrorNotification(requestUrl)
 
     const shouldShowLoading =
+      !extraOptions?.suppressGlobalLoading &&
       isLoading !== false &&
       !handlesErrorLocally &&
       !isChangePasswordRequest &&
