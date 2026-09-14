@@ -168,7 +168,7 @@ const UserPickerBody = ({
           <span className='text-[13px] text-muted-foreground'>
             {readOnly
               ? 'Chính sách áp dụng cho mọi người dùng.'
-              : 'Bỏ trống nghĩa là chính sách áp cho mọi người dùng. Chọn một ví thì biểu phí này đè lên mọi biểu phí chung của họ.'}
+              : 'Chọn ví người dùng.'}
           </span>
         </div>
       )}
