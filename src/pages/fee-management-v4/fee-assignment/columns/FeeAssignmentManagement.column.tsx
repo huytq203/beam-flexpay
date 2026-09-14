@@ -14,6 +14,7 @@ import { TYPEDATE } from '@constants/date.constant'
 import dayjs from 'dayjs'
 import { PATHS } from '@constants/pathConstant'
 import { Can } from '@/app/permissions'
+import { getCustomerSegmentName } from '@hooks/useCustomerSegmentNames'
 
 
 interface prop {
@@ -23,10 +24,12 @@ interface prop {
   onReject?: (record: FeeAssignment) => void
   onToggleStatus?: (record: FeeAssignment) => void
   navigate: (path: string) => void
+  customerSegmentNames?: Readonly<Record<string, string>>
 }
 export const getFeeAssignColumn = ({
   onToggleStatus,
-  navigate
+  navigate,
+  customerSegmentNames = {}
 }: prop): ColumnsType<FeeAssignment> => {
 
   return [
@@ -70,11 +73,12 @@ export const getFeeAssignColumn = ({
       render: (value) => value || '--'
     },
     {
-      title: 'Tài khoản/Nhóm khách hàng',
+      title: 'Phân khúc khách hàng',
       dataIndex: 'customerGroup',
       align: 'center' as const,
 
-      render: (value) => value || '--'
+      render: (value: string | null) =>
+        value ? getCustomerSegmentName(value, customerSegmentNames) : 'Tất cả'
     },
     {
       title: 'Ngày tạo',

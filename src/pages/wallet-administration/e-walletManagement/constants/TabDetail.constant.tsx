@@ -38,12 +38,14 @@ export const TAB_CONTENT_MAP: TabContentMap = {
       <FeeSetting
         walletId={props.accountData?.id ?? ''}
         walletLabel={props.accountData?.ownerUsername ?? 'Ví đang xem'}
+        subjectId={props.accountData?.ownerId ?? ''}
       />
     ),
     'SYSTEM': (props: TabContentProps) => (
       <FeeSetting
         walletId={props.accountData?.id ?? ''}
         walletLabel={props.accountData?.ownerUsername ?? 'Ví hệ thống'}
+        subjectId={props.accountData?.ownerId ?? ''}
       />
     ),
     'BUSINESS': <FeeSettingBusiness />

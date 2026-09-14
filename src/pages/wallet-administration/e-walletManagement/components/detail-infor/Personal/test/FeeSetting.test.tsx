@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { FeeSetting } from '../FeeSetting'
+import type { ApplicableFeeRule } from '@/app/schemas/applicable-fee-rule.schema'
 
 const mocks = vi.hoisted(() => ({
   exportFile: vi.fn()
@@ -23,7 +24,7 @@ vi.mock('@hooks/useExportCsv', () => ({
 
 const WALLET_ID = '6b1f3c2a-8f4e-4a1b-9c33-7d9a1e5b0f21'
 
-const rule = {
+const rule: ApplicableFeeRule = {
   assignmentId: '7b1f3c2a-8f4e-4a1b-9c33-7d9a1e5b0f22',
   feePolicyId: '1c9d4e77-2b60-4f0a-b1d8-5a2c9e3f4a10',
   feePolicyName: 'Phí nạp tiền ATM',
@@ -45,7 +46,7 @@ const rule = {
   effectiveStatus: 'ACTIVE'
 }
 
-const createPage = (content: typeof rule[]) => ({
+const createPage = (content: ApplicableFeeRule[]) => ({
   content,
   pageable: {
     pageNumber: 0,
@@ -67,7 +68,14 @@ const createPage = (content: typeof rule[]) => ({
 })
 
 describe('FeeSetting', () => {
-  beforeEach(() => vi.clearAllMocks())
+  beforeEach(() => {
+    vi.clearAllMocks()
+    server.use(
+      http.get('*/fee/customer-segments', () =>
+        HttpResponse.json({ data: [] })
+      )
+    )
+  })
 
   it('gửi đúng bộ lọc ví và hiển thị dòng quy tắc đã nở', async () => {
     server.use(
@@ -76,6 +84,9 @@ describe('FeeSetting', () => {
         expect(url.searchParams.get('merchantId')).toBe(WALLET_ID)
         expect(url.searchParams.get('feeDomain')).toBe('EWALLET')
         expect(url.searchParams.get('page')).toBe('1')
+        if (url.searchParams.get('size') === '100') {
+          return HttpResponse.json({ data: createPage([]) })
+        }
         expect(url.searchParams.get('size')).toBe('10')
 
         return HttpResponse.json({ data: createPage([rule]) })
@@ -88,7 +99,7 @@ describe('FeeSetting', () => {
 
     expect(await screen.findByText('Phí nạp tiền ATM')).toBeInTheDocument()
     expect(screen.getByText('flexpay-user')).toBeInTheDocument()
-    expect(screen.getByText('Tài khoản ví')).toBeInTheDocument()
+    expect(screen.getByText('Số dư ví')).toBeInTheDocument()
     expect(screen.getByText('1% + 5,000')).toBeInTheDocument()
     expect(screen.getByText('0 trở lên')).toBeInTheDocument()
     expect(screen.getByText('11/03/2026 16:24:05')).toBeInTheDocument()
@@ -122,6 +133,42 @@ describe('FeeSetting', () => {
     expect(
       screen.getByRole('button', { name: /Xuất CSV/ })
     ).toBeDisabled()
+  })
+
+  it('hiển thị tên phân khúc từ danh mục trong cột đối tượng áp dụng', async () => {
+    server.use(
+      http.get('*/fee/customer-segments', () =>
+        HttpResponse.json({
+          data: [
+            {
+              code: 'VIP',
+              name: 'Khách hàng thân thiết',
+              description: null,
+              status: 'ACTIVE'
+            }
+          ]
+        })
+      ),
+      http.get('*/fee/applicable-rules', () =>
+        HttpResponse.json({
+          data: createPage([
+            {
+              ...rule,
+              appliedObjectType: 'CUSTOMER_GROUP',
+              customerGroup: 'VIP'
+            }
+          ])
+        })
+      )
+    )
+
+    renderWithProviders(
+      <FeeSetting walletId={WALLET_ID} walletLabel='flexpay-user' />
+    )
+
+    expect(
+      await screen.findByText('Khách hàng thân thiết')
+    ).toBeInTheDocument()
   })
 
   it('không gọi API khi mã ví không phải UUID', () => {

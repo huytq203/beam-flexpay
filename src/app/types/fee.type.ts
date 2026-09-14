@@ -6,6 +6,12 @@
  * thể, nên xoá màn là gãy tầng service.
  */
 
+export interface AppliedTarget {
+  type: 'ALL' | 'CUSTOMER_GROUP' | 'ACCOUNT'
+  code: string | null
+  count: number
+}
+
 export interface FeePolicy {
   id: string
   /** Optimistic lock của BE — bắt buộc khi gọi API duyệt. */
@@ -25,6 +31,8 @@ export interface FeePolicy {
   updatedAt?: string
   createdBy?: string
   updatedBy?: string
+  /** Tổng hợp đối tượng đang được gán; API cũ có thể chưa trả trường này. */
+  appliedTargets?: AppliedTarget[]
 }
 
 export interface FeePolicyComponent {

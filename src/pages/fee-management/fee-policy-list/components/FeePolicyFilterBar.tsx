@@ -11,9 +11,16 @@ import {
 import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 
+const APPLIED_TARGET_OPTIONS = [
+  { label: 'Tất cả', value: 'ALL' },
+  { label: 'Theo nhóm khách hàng', value: 'CUSTOMER_GROUP' },
+  { label: 'Riêng ví', value: 'ACCOUNT' }
+]
+
 export interface FeePolicyFilterValues {
   keyword: string
   status: string
+  appliedTarget: string
 }
 
 interface FeePolicyFilterBarProps {
@@ -47,14 +54,19 @@ export const FeePolicyFilterBar = ({
   onSubmit,
   onReset
 }: FeePolicyFilterBarProps) => {
+
   /**
    * `values` của react-hook-form so sánh theo tham chiếu: truyền thẳng một object
    * dựng tại chỗ là form bị reset sau MỖI render, và giá trị người dùng vừa xoá
-   * bị ghi đè lại ngay. Khoá theo hai chuỗi thật để chỉ đồng bộ khi URL đổi.
+   * bị ghi đè lại ngay. Khoá theo các chuỗi thật để chỉ đồng bộ khi URL đổi.
    */
   const syncedValues = useMemo(
-    () => ({ keyword: values.keyword, status: values.status }),
-    [values.keyword, values.status]
+    () => ({
+      keyword: values.keyword,
+      status: values.status,
+      appliedTarget: values.appliedTarget
+    }),
+    [values.appliedTarget, values.keyword, values.status]
   )
 
   const { control, handleSubmit, reset } = useForm<FeePolicyFilterValues>({
@@ -65,9 +77,12 @@ export const FeePolicyFilterBar = ({
   const labels = Object.fromEntries(
     allowed.map((value) => [value, SERVICE_TYPE_LABELS[value] ?? value])
   )
+  // Lọc theo LOẠI đối tượng, không theo từng phân khúc: người vận hành muốn
+  // gom mọi chính sách cấu hình theo nhóm, tên nhóm cụ thể đã hiện ở cột.
+  const appliedTargetOptions = APPLIED_TARGET_OPTIONS
 
   const handleReset = () => {
-    reset({ keyword: '', status: '' })
+    reset({ keyword: '', status: '', appliedTarget: '' })
     onReset()
   }
 
@@ -96,7 +111,7 @@ export const FeePolicyFilterBar = ({
           control={control}
           label='Tên chính sách'
           placeholder='Nhập tên chính sách'
-          className='col-span-12 flex flex-col md:col-span-6'
+          className='col-span-12 flex flex-col md:col-span-3'
         />
         <FormSelect
           name='status'
@@ -105,6 +120,15 @@ export const FeePolicyFilterBar = ({
           placeholder='Mọi trạng thái'
           allowClear
           options={STATUS_OPTIONS}
+          className='col-span-12 flex flex-col md:col-span-3'
+        />
+        <FormSelect
+          name='appliedTarget'
+          control={control}
+          label='Đối tượng áp dụng'
+          placeholder='Mọi đối tượng'
+          allowClear
+          options={appliedTargetOptions}
           className='col-span-12 flex flex-col md:col-span-3'
         />
         <div className='col-span-12 flex flex-col gap-2 md:col-span-3 md:flex-row md:items-end'>

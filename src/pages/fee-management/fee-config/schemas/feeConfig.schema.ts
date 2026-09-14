@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { isPaymentMethodAllowed } from '../constants/feeConfigFields'
 
 /**
  * Một schema phủ cả ba phần của màn: thông tin chính sách, tiêu chí gán đối
@@ -189,10 +190,16 @@ export const feeConfigFormSchema = z
     priority: z.number().int().min(0),
     serviceType: z.string().min(1, 'Chọn loại giao dịch'),
     bankCode: z.string(),
-    paymentMethod: z.string(),
+    paymentMethod: z
+      .string()
+      .min(1, 'Chọn phương thức giao dịch'),
     merchantId: z.string(),
+    /** Đối tượng áp dụng: tất cả, một nhóm, hay một cá nhân. */
+    assignmentScope: z.enum(['ALL', 'SEGMENT', 'SUBJECT']),
     /** Mã chủ ví được gán riêng. Rỗng = áp cho mọi người dùng. */
     subjectId: z.string(),
+    /** Mã phân khúc khách hàng. Rỗng = áp cho mọi phân khúc. */
+    customerGroup: z.string(),
     validFrom: z.string().min(1, 'Chọn ngày áp dụng từ'),
     validTo: z.string(),
     components: z
@@ -201,6 +208,30 @@ export const feeConfigFormSchema = z
       .max(32, 'Tối đa 32 thành phần phí')
   })
   .superRefine((form, ctx) => {
+    if (!isPaymentMethodAllowed(form.serviceType, form.paymentMethod)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['paymentMethod'],
+        message: 'Phương thức không phù hợp với loại giao dịch đã chọn'
+      })
+    }
+
+    if (form.assignmentScope === 'SEGMENT' && !form.customerGroup) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['customerGroup'],
+        message: 'Chọn nhóm khách hàng được áp dụng'
+      })
+    }
+
+    if (form.assignmentScope === 'SUBJECT' && !form.subjectId) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['subjectId'],
+        message: 'Chọn cá nhân được áp dụng'
+      })
+    }
+
     if (form.feeDomain === 'BANK' && !form.bankCode) {
       ctx.addIssue({
         code: 'custom',

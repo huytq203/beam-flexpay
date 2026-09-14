@@ -30,9 +30,10 @@ const form = (overrides = {}) => ({
   priority: 2,
   serviceType: 'EWALLET_WITHDRAWAL',
   bankCode: '',
-  paymentMethod: '',
+  paymentMethod: 'ATM',
   merchantId: '',
   subjectId: '',
+  customerGroup: '',
   validFrom: '2026-10-01T00:00:00.000',
   validTo: '',
   components: [component()],
@@ -156,6 +157,16 @@ describe('feeComponentFormSchema', () => {
 })
 
 describe('feeConfigFormSchema', () => {
+  it('bắt buộc phương thức phù hợp với loại giao dịch', () => {
+    const missing = feeConfigFormSchema.safeParse(form({ paymentMethod: '' }))
+    const mismatched = feeConfigFormSchema.safeParse(
+      form({ paymentMethod: 'VA' })
+    )
+
+    expect(errorPaths(missing)).toContain('paymentMethod')
+    expect(errorPaths(mismatched)).toContain('paymentMethod')
+  })
+
   it('bắt buộc chọn ngân hàng ở miền Bank', () => {
     const result = feeConfigFormSchema.safeParse(
       form({ feeDomain: 'BANK', bankCode: '' })

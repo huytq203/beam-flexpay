@@ -187,7 +187,7 @@ export const useFeeAssignmentForm = () => {
                 paymentMethod: data.paymentMethod,
                 cardType: data.cardType,
                 serviceType: data.serviceType,
-                customerGroup: data.customerGroup || '',
+                customerGroup: data.customerGroup || undefined,
                 status: data.status,
             }
             await postAssign(payload).unwrap()
@@ -229,7 +229,7 @@ export const useFeeAssignmentForm = () => {
                 paymentMethod: data.paymentMethod,
                 cardType: data.cardType,
                 serviceType: data.serviceType,
-                customerGroup: data.customerGroup || '',
+                customerGroup: data.customerGroup || undefined,
                 status: data.status
             }
             await putAssign({ id, body: payload }).unwrap()

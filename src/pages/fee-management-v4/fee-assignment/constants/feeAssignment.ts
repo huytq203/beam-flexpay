@@ -86,16 +86,9 @@ export const cardTypeType ={
   NAPAS : 'Napas',
 
 }as const;
-export const customerGroupType ={
-  VIP :'VIP',
-  PREMIUM :'User Premium',
-  MERCHANT :'User Premium',
-  STANDARD :'User thường',
-}as const;
 export const statusType ={
   ACTIVE :'Hoạt động',
   INACTIVE :'Không hoạt động',
 }as const;
 export type FeeAssignmentResponse = ApiResponse<FeeAssignResponse>
-
 

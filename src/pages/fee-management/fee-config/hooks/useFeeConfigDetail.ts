@@ -166,6 +166,14 @@ export const useFeeConfigDetail = (
       paymentMethod: assignment?.paymentMethod ?? '',
       merchantId: assignment?.merchantId ?? '',
       subjectId: assignment?.subjectId ?? '',
+      customerGroup: assignment?.customerGroup ?? '',
+      // Bản gán chỉ lưu tiêu chí, không lưu phạm vi; suy ngược ra để ô chọn hiện
+      // đúng thứ người tạo đã chọn. Cá nhân trước vì nó hẹp hơn nhóm.
+      assignmentScope: assignment?.subjectId
+        ? 'SUBJECT'
+        : assignment?.customerGroup
+          ? 'SEGMENT'
+          : 'ALL',
       components: formComponents
     },
     snapshot: {

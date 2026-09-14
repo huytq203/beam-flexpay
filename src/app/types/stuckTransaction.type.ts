@@ -48,9 +48,9 @@ export const STUCK_UPDATE_CODE_MAX_LENGTH = 50
 export interface StuckTransactionUpdateArg {
   transactionCode: string
   newStatus: StuckTransactionOutcome
-  /** Mã chuẩn chi ngân hàng. Bắt buộc khi chốt POSTED. */
+  /** Mã chuẩn chi ngân hàng, không bắt buộc. */
   authCode?: string
-  /** Mã đối soát / ID settlement. Bắt buộc khi chốt POSTED. */
+  /** Mã đối soát / ID settlement, không bắt buộc. */
   settlementId?: string
   note: string
 }

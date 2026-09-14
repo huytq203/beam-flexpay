@@ -261,6 +261,13 @@ export const WHITE_LIST: WhiteListItem[] = [
     { pathname: ROLEMANAGEMENT + '/manage-group-permissions', requestUrl: '/group-permission' },
 
     { pathname: INTERNAL_WALLET + '/account', requestUrl: '/balance-internal-group' },
+    {
+      // Modal chọn ví tự hiển thị loading trong bảng; không phủ global loader
+      // khi mở modal, phân trang hoặc tìm theo số điện thoại.
+      pathname: FEEMANAGEMENT_V4 + '/fee-policy',
+      requestUrl: '/wallet/accounts',
+      includeNestedPaths: true
+    },
     { pathname: FEEMANAGEMENT_V4 + '/fee-management', requestUrl: '/fee/policies' },
     { pathname: FEEMANAGEMENT_V4 + '/fee-assignment', requestUrl: '/fee/policy-assignments' },
     { pathname: FEEMANAGEMENT_V4 + '/fee-assignment', requestUrl: '/fee/banks' },

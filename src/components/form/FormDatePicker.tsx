@@ -20,6 +20,7 @@ type OwnPropKeys =
   | "format"
   | "needConfirm"
   | "placeholder"
+  | "required"
   | "className"
   | "style";
 
@@ -31,6 +32,7 @@ interface BaseProps<T extends FieldValues> {
   className?: string;
   showTime?: boolean;
   classNameLable?: string;
+  required?: boolean;
 }
 
 type SinglePickerProps<T extends FieldValues> = BaseProps<T> &
@@ -57,6 +59,7 @@ export function FormDatePicker<T extends FieldValues>(props: props<T>) {
     picker = "date",
     className = "col-span-6 flex flex-col",
     classNameLable = "font-medium",
+    required = false,
     showTime = false,
     placeholder = 'DD/MM/YYYY',
   } = props;
@@ -83,6 +86,7 @@ export function FormDatePicker<T extends FieldValues>(props: props<T>) {
       name={name}
       control={control}
       label={label}
+      required={required}
       className={className}
       classNameLable={classNameLable}
       render={(field) => {
@@ -94,6 +98,7 @@ export function FormDatePicker<T extends FieldValues>(props: props<T>) {
             picker: _picker,
             className: _className,
             classNameLable: _classNameLable,
+            required: _required,
             showTime: _showTime,
             isRange: _isRange,
             placeholder: _placeholder,
@@ -141,6 +146,7 @@ export function FormDatePicker<T extends FieldValues>(props: props<T>) {
           picker: _picker,
           className: _className,
           classNameLable: _classNameLable,
+          required: _required,
           showTime: _showTime,
           isRange: _isRange,
           placeholder: _placeholder,

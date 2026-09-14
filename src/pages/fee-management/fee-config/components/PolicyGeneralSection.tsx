@@ -103,6 +103,7 @@ export const PolicyGeneralSection = ({
           name='validFrom'
           control={control}
           showTime
+          required
           label='Áp dụng từ'
           placeholder='Chọn thời điểm bắt đầu'
           disabledDate={disablePastDate()}

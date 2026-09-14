@@ -21,7 +21,9 @@ export const buildEmptyForm = (
   bankCode: '',
   paymentMethod: '',
   merchantId: '',
+  assignmentScope: 'ALL',
   subjectId: '',
+  customerGroup: '',
   validFrom: '',
   validTo: '',
   components: []
@@ -63,7 +65,13 @@ export const useFeeConfigForm = (
       merchantId: rules.showMerchant ? current.merchantId : '',
       // Ví được gán riêng chỉ có nghĩa ở miền Ví; giữ lại là gửi lên một tiêu
       // chí người dùng không còn nhìn thấy để sửa.
-      subjectId: rules.showSubject ? current.subjectId : ''
+      subjectId: rules.showSubject ? current.subjectId : '',
+      customerGroup: rules.showSegment ? current.customerGroup : '',
+      // Miền mới có thể không cho chọn đối tượng đặc biệt; giữ lại là gửi lên
+      // một phạm vi người dùng không còn nhìn thấy để sửa.
+      assignmentScope: rules.showSubject || rules.showSegment
+        ? current.assignmentScope
+        : 'ALL'
     })
   }
 

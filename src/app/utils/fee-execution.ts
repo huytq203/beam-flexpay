@@ -61,9 +61,8 @@ export const allowsMerchantCriteria = (
 ): boolean => getExecutablePayer(serviceType) === 'MERCHANT'
 
 /**
- * Loại thẻ và nhóm khách hàng chưa phải ngữ cảnh producer chứng thực được, nên
- * mọi bản gán mang chúng đều bị từ chối khi duyệt. Giữ hằng số này để chỗ nào
- * còn hiển thị hai trường đó cũng đọc chung một nguồn khi backend mở ra.
+ * Loại thẻ chưa phải ngữ cảnh producer chứng thực được, nên mọi bản gán mang
+ * loại thẻ đều bị từ chối khi duyệt. Giữ hằng số này để chỗ nào còn hiển thị
+ * trường đó cũng đọc chung một nguồn khi backend mở ra.
  */
 export const SUPPORTS_CARD_TYPE_CRITERIA = false
-export const SUPPORTS_CUSTOMER_GROUP_CRITERIA = false

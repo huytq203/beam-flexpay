@@ -5,7 +5,7 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined
 } from '@components/icons'
-import { ButtonComponent, CardComponent, DialogModal } from '@components/index'
+import { ButtonComponent, CardComponent, DialogModal, SubjectSegmentCard } from '@components/index'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGetMerchantByIdQuery } from '@services/apiMerchant'
 import { Alert, Skeleton } from 'antd'
@@ -115,6 +115,13 @@ const MerchantDetail = () => {
             <InfoRow label='Người tạo' value={data?.createdBy} />
           </div>
         </CardComponent>
+
+        <div className='mb-6'>
+          <SubjectSegmentCard
+            subjectType='MERCHANT'
+            subjectId={data?.id ?? ''}
+          />
+        </div>
 
         <CardComponent title='Hồ sơ hình ảnh & Pháp lý'>
 

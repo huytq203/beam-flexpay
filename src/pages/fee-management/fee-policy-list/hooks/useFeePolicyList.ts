@@ -8,6 +8,7 @@ export interface FeePolicyListFilters {
   keyword?: string
   serviceType?: string
   status?: string
+  appliedTarget?: string
 }
 
 export interface FeePolicyRow extends FeePolicy {
@@ -48,6 +49,7 @@ export const useFeePolicyList = ({
       feeDomain: filters.feeDomain,
       serviceType: filters.serviceType || undefined,
       status: filters.status || undefined,
+      appliedTarget: filters.appliedTarget || undefined,
       page,
       size,
       sortBy: 'createdAt',

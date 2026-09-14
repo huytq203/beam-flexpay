@@ -1,10 +1,12 @@
 import { FormSelect } from '@components/form'
-import { PAYMENT_METHOD_LABELS, getFeeLabel } from '@constants/feeLabels'
 import { useGetBankQuery } from '@services/apiFeeBank'
+import { useGetCustomerSegmentsQuery } from '@services/apiCustomerSegment'
+import { useEffect } from 'react'
 import type { Control } from 'react-hook-form'
-import { useWatch } from 'react-hook-form'
+import { useController, useWatch } from 'react-hook-form'
 import {
-  PAYMENT_METHOD_VALUES,
+  ASSIGNMENT_SCOPE_OPTIONS,
+  getPaymentMethodOptions,
   getDomainFieldRules
 } from '../constants/feeConfigFields'
 import type { FeeConfigFormValues } from '../schemas/feeConfig.schema'
@@ -17,11 +19,6 @@ interface AssignmentSectionProps {
   readOnly?: boolean
 }
 
-const PAYMENT_METHOD_OPTIONS = PAYMENT_METHOD_VALUES.map((value) => ({
-  value,
-  label: getFeeLabel(value, PAYMENT_METHOD_LABELS)
-}))
-
 /**
  * Tiêu chí khớp lệnh của bản gán.
  *
@@ -33,10 +30,58 @@ export const AssignmentSection = ({
   readOnly = false
 }: AssignmentSectionProps) => {
   const feeDomain = useWatch({ control, name: 'feeDomain' })
+  const serviceType = useWatch({ control, name: 'serviceType' })
+  const { field: paymentMethodField } = useController({
+    control,
+    name: 'paymentMethod'
+  })
+  const { field: scopeField } = useController({
+    control,
+    name: 'assignmentScope'
+  })
+  const { field: segmentField } = useController({
+    control,
+    name: 'customerGroup'
+  })
+  const { field: subjectField } = useController({ control, name: 'subjectId' })
   const rules = getDomainFieldRules(feeDomain)
+  const paymentMethodOptions = getPaymentMethodOptions(serviceType)
+
+  useEffect(() => {
+    if (readOnly) return
+    const isCurrentValueAllowed = paymentMethodOptions.some(
+      (option) => option.value === paymentMethodField.value
+    )
+    if (!isCurrentValueAllowed) {
+      paymentMethodField.onChange(paymentMethodOptions[0]?.value ?? '')
+    }
+  }, [paymentMethodField, paymentMethodOptions, readOnly])
 
   // `PaginationRequest` của service phí chặn size trên 100; gửi hơn là ăn 400.
   const { data: bankData } = useGetBankQuery({ page: 1, size: 100 })
+
+  const scope = scopeField.value
+  const canScope = rules.showSegment || rules.showSubject
+
+  /**
+   * Ba phạm vi loại trừ nhau, nên đổi phạm vi phải xoá tiêu chí của phạm vi cũ ngay. Để lại
+   * giá trị cũ là gửi lên backend một tiêu chí mà màn hình không còn hiện ô nào để sửa.
+   *
+   * `FormSelect` đã tự ghi giá trị vào form trước khi gọi hàm này, nên ở đây chỉ dọn dẹp.
+   */
+  const handleScopeChange = (next: string | number) => {
+    if (next !== 'SEGMENT') segmentField.onChange('')
+    if (next !== 'SUBJECT') subjectField.onChange('')
+  }
+
+  // Danh mục phân khúc nhỏ và hiếm đổi nên lấy trọn, không phân trang.
+  const { data: segments } = useGetCustomerSegmentsQuery(undefined, {
+    skip: !rules.showSegment || scope !== 'SEGMENT'
+  })
+  const segmentOptions = (segments ?? []).map((segment) => ({
+    value: segment.code,
+    label: segment.name ? `${segment.name} (${segment.code})` : segment.code
+  }))
 
   const bankOptions = (bankData?.content ?? []).map((bank) => ({
     value: bank.code,
@@ -67,9 +112,11 @@ export const AssignmentSection = ({
         <FormSelect
           name='paymentMethod'
           control={control}
+          required
           label='Phương thức giao dịch'
-          placeholder='Mọi phương thức'
-          options={PAYMENT_METHOD_OPTIONS}
+          placeholder='Chọn phương thức giao dịch'
+          allowClear={false}
+          options={[...paymentMethodOptions]}
           disabled={readOnly}
           className='col-span-12 flex flex-col md:col-span-4'
         />
@@ -80,7 +127,35 @@ export const AssignmentSection = ({
             className='col-span-12 flex flex-col'
           />
         )}
-        {rules.showSubject && (
+        {canScope && (
+          <FormSelect
+            name='assignmentScope'
+            control={control}
+            required
+            label='Đối tượng áp dụng'
+            placeholder='Chọn đối tượng áp dụng'
+            allowClear={false}
+            options={[...ASSIGNMENT_SCOPE_OPTIONS]}
+            onChange={handleScopeChange}
+            disabled={readOnly}
+            className='col-span-12 flex flex-col md:col-span-4'
+          />
+        )}
+        {canScope && rules.showSegment && scope === 'SEGMENT' && (
+          <FormSelect
+            name='customerGroup'
+            control={control}
+            required
+            label='Nhóm khách hàng'
+            placeholder='Chọn nhóm khách hàng'
+            showSearch
+            optionFilterProp='label'
+            options={segmentOptions}
+            disabled={readOnly}
+            className='col-span-12 flex flex-col md:col-span-4'
+          />
+        )}
+        {canScope && rules.showSubject && scope === 'SUBJECT' && (
           <UserPickerField
             control={control}
             readOnly={readOnly}

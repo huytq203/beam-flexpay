@@ -10,6 +10,7 @@ import {
 } from '@components/index'
 import { PATHS } from '@constants/pathConstant'
 import { useUrlFilters } from '@hooks/useUrlFilters'
+import { useCustomerSegmentNames } from '@hooks/useCustomerSegmentNames'
 import { isFeeDirection } from '@utils/fee-direction'
 import { useNavigate } from 'react-router-dom'
 import { FeePolicyFilterBar } from './components/FeePolicyFilterBar'
@@ -21,6 +22,7 @@ const FILTER_KEYS = [
   'feeDomain',
   'keyword',
   'status',
+  'appliedTarget',
   'direction',
   'serviceType'
 ] as const
@@ -41,12 +43,14 @@ const FeePolicyList = () => {
   const direction = isFeeDirection(filters.direction) ? filters.direction : null
 
   const status = useFeePolicyStatus()
+  const customerSegmentNames = useCustomerSegmentNames()
   const { rows, total, isFetching, isError, refetch } = useFeePolicyList({
     filters: {
       feeDomain,
       keyword: filters.keyword,
       serviceType: filters.serviceType,
-      status: filters.status
+      status: filters.status,
+      appliedTarget: filters.appliedTarget
     },
     page,
     size
@@ -59,6 +63,7 @@ const FeePolicyList = () => {
       feeDomain: next,
       keyword: filters.keyword ?? null,
       status: filters.status ?? null,
+      appliedTarget: filters.appliedTarget ?? null,
       direction: null,
       serviceType: null
     })
@@ -83,13 +88,15 @@ const FeePolicyList = () => {
             serviceType={filters.serviceType}
             values={{
               keyword: filters.keyword ?? '',
-              status: filters.status ?? ''
+              status: filters.status ?? '',
+              appliedTarget: filters.appliedTarget ?? ''
             }}
             onScopeChange={(next) =>
               applyFilters({
                 feeDomain,
                 keyword: filters.keyword ?? null,
                 status: filters.status ?? null,
+                appliedTarget: filters.appliedTarget ?? null,
                 direction: next.direction,
                 serviceType: next.serviceType ?? null
               })
@@ -100,7 +107,8 @@ const FeePolicyList = () => {
                 direction: filters.direction ?? null,
                 serviceType: filters.serviceType ?? null,
                 keyword: values.keyword,
-                status: values.status
+                status: values.status,
+                appliedTarget: values.appliedTarget
               })
             }
             onReset={() => {
@@ -152,7 +160,8 @@ const FeePolicyList = () => {
               onEdit: (id) => navigate(PATHS.FEE_V4.POLICY_EDIT(id)),
               onActivate: status.askActivate,
               onDeactivate: status.deactivate,
-              busyId: status.busyId
+              busyId: status.busyId,
+              customerSegmentNames
             })}
             loading={isFetching}
             onRefresh={refetch}

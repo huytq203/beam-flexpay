@@ -34,12 +34,14 @@ interface RenderOptions {
   permissions?: string[]
   journalStatus?: string
   transactionType?: string
+  compact?: boolean
 }
 
 const renderAction = ({
   permissions = [APPROVER_PERMISSION],
   journalStatus = StatusEnum.PENDING,
-  transactionType = 'CASH_OUT'
+  transactionType = 'CASH_OUT',
+  compact = false
 }: RenderOptions = {}) => {
   const store = createAppStore()
   store.dispatch(savePermissions(permissions))
@@ -52,6 +54,7 @@ const renderAction = ({
           transactionCode={TRANSACTION_CODE}
           transactionType={transactionType}
           journalStatus={journalStatus}
+          compact={compact}
         />
       </MessageProvider>
     </Provider>
@@ -121,7 +124,7 @@ describe('StuckTransactionUpdateAction', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('chốt Thành công gửi đủ mã chuẩn chi và mã đối soát', async () => {
+  it('chốt Thành công gửi Auth Code và Settlement ID khi được nhập', async () => {
     mockWithdrawalStatus(WithdrawalStatus.PAYING)
     let body: unknown = null
     server.use(
@@ -140,8 +143,8 @@ describe('StuckTransactionUpdateAction', () => {
 
     await openForm(user)
     await chooseOutcome(user, 'Thành công')
-    await fill(/Mã chuẩn chi/, 'AUTH123456')
-    await fill(/Mã đối soát/, 'STL20260825001')
+    await fill(/Auth Code/, 'AUTH123456')
+    await fill(/Settlement ID/, 'STL20260825001')
     await fill(/Lý do cập nhật/, NOTE)
     await user.click(screen.getByRole('button', { name: 'Xác nhận cập nhật' }))
 
@@ -182,28 +185,12 @@ describe('StuckTransactionUpdateAction', () => {
     )
   })
 
-  it('chặn chốt Thành công khi thiếu mã chuẩn chi', async () => {
+  it('hiển thị dạng icon ở màn danh sách và vẫn mở được form', async () => {
     mockWithdrawalStatus(WithdrawalStatus.PAYING)
-    let requestCount = 0
-    server.use(
-      http.post(`*/transactions/${TRANSACTION_CODE}/update-status`, () => {
-        requestCount += 1
-        return HttpResponse.json({ data: null })
-      })
-    )
-
-    const { user } = renderAction()
+    const { user } = renderAction({ compact: true })
 
     await openForm(user)
-    await chooseOutcome(user, 'Thành công')
-    await fill(/Mã đối soát/, 'STL20260825001')
-    await fill(/Lý do cập nhật/, NOTE)
-    await user.click(screen.getByRole('button', { name: 'Xác nhận cập nhật' }))
-
-    expect(
-      await screen.findByText('Chốt thành công bắt buộc có mã chuẩn chi')
-    ).toBeInTheDocument()
-    expect(requestCount).toBe(0)
+    expect(await screen.findByLabelText(/Kết quả cuối/)).toBeInTheDocument()
   })
 
   it('nói trước hậu quả của lựa chọn trước khi người dùng bấm', async () => {

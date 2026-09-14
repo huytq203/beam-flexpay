@@ -14,12 +14,14 @@ describe('mapEKYCGroupToListItem', () => {
       email: 'hung@example.com',
       occupation: 'Kỹ sư',
       position: 'Trưởng phòng',
+      currentAddress: 'Cầu Giấy, Hà Nội',
       attempts: [
         {
           userId: 'user-id',
           username: '0967770769',
           sessionId: 'latest-session',
           status: 'IN_PROGRESS',
+          profileStatus: 'VERIFIED',
           currentStep: 'FACE_COMPARE',
           fullName: 'TRƯƠNG VIỆT HÙNG',
           faceMatchScore: 98.82,
@@ -44,8 +46,33 @@ describe('mapEKYCGroupToListItem', () => {
     expect(result.email).toBe('hung@example.com')
     expect(result.occupation).toBe('Kỹ sư')
     expect(result.position).toBe('Trưởng phòng')
+    expect(result.status).toBe('VERIFIED')
     expect(result.key).toBe('group-key')
     expect(result.no).toBe(11)
     expect(result.attempts).toHaveLength(2)
+  })
+
+  it('fallback về latestStatus khi attempts[0].profileStatus là null', () => {
+    const group: EKYCGroup = {
+      groupKey: 'group-key',
+      username: '0967770769',
+      userId: 'user-id',
+      attemptCount: 1,
+      latestStatus: 'COMPLETED',
+      latestAt: '2026-09-10T14:40:15.399621',
+      email: null,
+      occupation: null,
+      position: null,
+      currentAddress: null,
+      attempts: [
+        {
+          status: 'IN_PROGRESS',
+          profileStatus: null,
+          createdAt: '2026-09-10T14:40:15.399621'
+        }
+      ]
+    }
+
+    expect(mapEKYCGroupToListItem(group, 1).status).toBe('COMPLETED')
   })
 })

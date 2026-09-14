@@ -1,9 +1,8 @@
 import { fetchBaseQueryUserWallet } from '@configs/fetchBaseQueryCustom'
 import { apiWalletCore } from '@services/apiService'
-import {
-  StuckTransactionOutcome,
-  type StuckTransactionUpdateArg,
-  type StuckTransactionUpdateResult
+import type {
+  StuckTransactionUpdateArg,
+  StuckTransactionUpdateResult
 } from '@type/stuckTransaction.type'
 import { z } from 'zod'
 
@@ -40,9 +39,6 @@ export const apiStuckTransaction = apiWalletCore.injectEndpoints({
         queryApi,
         extraOptions
       ) {
-        // Hai mã đối soát chỉ tồn tại khi chốt thành công; gửi chuỗi rỗng kèm
-        // FAILED là gửi rác vào audit log.
-        const isSuccess = newStatus === StuckTransactionOutcome.POSTED
         const response = await fetchBaseQueryUserWallet(
           {
             url: `/transactions/${encodeURIComponent(transactionCode)}/update-status`,
@@ -50,7 +46,8 @@ export const apiStuckTransaction = apiWalletCore.injectEndpoints({
             body: {
               newStatus,
               note,
-              ...(isSuccess ? { authCode, settlementId } : {})
+              ...(authCode ? { authCode } : {}),
+              ...(settlementId ? { settlementId } : {})
             }
           },
           queryApi,

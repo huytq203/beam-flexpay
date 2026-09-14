@@ -24,6 +24,7 @@ import {
   collectBaseTypes,
   summariseBaseType
 } from '../utils/feeComponentSummary'
+import { getBaseOnOptions } from '../utils/feeComponentBaseOptions'
 import { BaseTypePreview } from './BaseTypePreview'
 import { FeeTierEditor } from './FeeTierEditor'
 
@@ -43,14 +44,6 @@ interface FeeComponentDialogProps {
 const COMPONENT_TYPE_OPTIONS = Object.entries(COMPONENT_TYPE_LABELS).map(
   ([value, label]) => ({ value, label })
 )
-
-const BASE_ON_OPTIONS = [
-  { value: 'AMOUNT', label: 'Số tiền giao dịch' },
-  { value: 'FEE_COMPONENT', label: 'Một thành phần phí khác' }
-]
-
-/** Miền Bank chỉ tính trên số tiền giao dịch — xem ghi chú trong hộp thoại. */
-const BANK_BASE_ON_OPTIONS = [BASE_ON_OPTIONS[0]]
 
 const CALCULATION_METHOD_VALUES = [
   CalculationMethod.DIRECT,
@@ -113,6 +106,7 @@ export const FeeComponentDialog = ({
   const tiered = usesTiers(calculationMethod)
 
   const baseTypes = collectBaseTypes(precedingComponents)
+  const hasPrecedingComponents = baseTypes.length > 0
   const hasTransactionFeeAbove = baseTypes.includes(VAT_BASE_COMPONENT_TYPE)
 
   /**
@@ -156,6 +150,12 @@ export const FeeComponentDialog = ({
     isVat ? [CalculationMethod.DIRECT] : CALCULATION_METHOD_VALUES
   ).map((value) => ({ value, label: CALCULATION_METHOD_LABEL[value] }))
 
+  const baseOnOptions = getBaseOnOptions({
+    isBank,
+    isVat,
+    hasPrecedingComponents
+  })
+
   const payerMismatch = Boolean(
     executablePayer && payerType && payerType !== executablePayer
   )
@@ -178,7 +178,6 @@ export const FeeComponentDialog = ({
           // Nền modal là #fafafa nên card phải trắng đặc và viền theo hairline của
           // hệ thiết kế, nếu không các khối chìm vào nhau đúng như lúc chưa tách.
           className='border-border! bg-background!'
-          title='Thành phần này là gì'
         >
           <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
             <FormSelect
@@ -202,7 +201,9 @@ export const FeeComponentDialog = ({
               disabled={isVat}
               // Luật thuế giá trị gia tăng thắng giới hạn của miền Bank: nó
               // tính trên một khoản phí, không tính trên số tiền giao dịch.
-              options={isBank && !isVat ? BANK_BASE_ON_OPTIONS : BASE_ON_OPTIONS}
+              // Thành phần thường chỉ được tính trên thành phần khác khi phía
+              // trên thực sự đã có một thành phần để chọn làm cơ sở.
+              options={baseOnOptions}
               className='col-span-12 flex flex-col md:col-span-6'
             />
             {isVat && (
@@ -256,7 +257,6 @@ export const FeeComponentDialog = ({
         <CardComponent
           size='small'
           className='border-border! bg-background!'
-          title='Ai trả, ai hưởng'
         >
           <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
             <FormSelect
@@ -323,7 +323,7 @@ export const FeeComponentDialog = ({
                   name='fixedAmount'
                   control={control}
                   allowEmpty
-                  label='Phí cố định (đồng)'
+                  label='Phí cố định (VNĐ)'
                   placeholder='Để trống nếu không thu phí cố định'
                   className='col-span-12 flex flex-col md:col-span-6'
                 />
@@ -342,7 +342,7 @@ export const FeeComponentDialog = ({
               name='minFee'
               control={control}
               allowEmpty
-              label='Phí tối thiểu (đồng)'
+              label='Phí tối thiểu (VNĐ)'
               placeholder='Để trống nếu không đặt sàn'
               className='col-span-12 flex flex-col md:col-span-6'
             />
@@ -350,7 +350,7 @@ export const FeeComponentDialog = ({
               name='maxFee'
               control={control}
               allowEmpty
-              label='Phí tối đa (đồng)'
+              label='Phí tối đa (VNĐ)'
               placeholder='Để trống nếu không đặt trần'
               className='col-span-12 flex flex-col md:col-span-6'
             />

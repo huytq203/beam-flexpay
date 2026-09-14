@@ -77,7 +77,7 @@ export const mapEKYCGroupToListItem = (group: EKYCGroup, no: number): EKYCListIt
         ...latestAttempt,
         userId: group.userId,
         username: group.username,
-        status: latestAttempt?.status ?? group.latestStatus,
+        status: latestAttempt?.profileStatus ?? group.latestStatus,
         createdAt: latestAttempt?.createdAt ?? group.latestAt,
         groupKey: group.groupKey,
         attemptCount: group.attemptCount,
@@ -86,6 +86,7 @@ export const mapEKYCGroupToListItem = (group: EKYCGroup, no: number): EKYCListIt
         email: group.email,
         occupation: group.occupation,
         position: group.position,
+        currentAddress: group.currentAddress,
         attempts: group.attempts,
         no,
         key: group.groupKey

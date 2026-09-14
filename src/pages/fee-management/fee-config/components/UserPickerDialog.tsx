@@ -14,6 +14,8 @@ interface UserPickerDialogProps {
   onCancel: () => void
 }
 
+const USER_SEARCH_DEBOUNCE_MS = 600
+
 const columns: ColumnsType<ContentAccountWallet> = [
   {
     title: 'Chủ ví',
@@ -21,7 +23,7 @@ const columns: ColumnsType<ContentAccountWallet> = [
     render: (fullName: string | null, row) => (
       <div className='flex flex-col gap-0.5'>
         <span className='font-semibold text-foreground'>
-          {fullName || 'Chưa có tên'}
+          {fullName || row.ownerUsername}
         </span>
         <MaskText
           value={row.ownerUsername}
@@ -78,7 +80,7 @@ export const UserPickerDialog = ({
   const [page, setPage] = useState(1)
   const [size, setSize] = useState(10)
   const [username, setUsername] = useState('')
-  const debouncedUsername = useDebounce(username, 400)
+  const debouncedUsername = useDebounce(username, USER_SEARCH_DEBOUNCE_MS)
 
   const { data, isFetching } = useGetAccountQuery(
     {

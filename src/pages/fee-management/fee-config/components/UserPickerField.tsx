@@ -120,7 +120,7 @@ const UserPickerBody = ({
         <div className='mt-2 rounded-lg border border-border bg-muted px-4 py-3'>
           <div className='flex flex-wrap items-start justify-between gap-3'>
             <div className='flex flex-wrap gap-x-8 gap-y-3'>
-              <Fact label='Chủ ví'>{account.ownerFullName || 'Chưa có tên'}</Fact>
+              <Fact label='Chủ ví'>{account.ownerFullName || account.ownerUsername}</Fact>
               <Fact label='Số điện thoại'>
                 <MaskText value={account.ownerUsername} />
               </Fact>

@@ -13,6 +13,11 @@ import {
 } from '@components/icons'
 import { useMessage } from '@hooks/useMessage'
 import {
+  getCustomerSegmentName,
+  useCustomerSegmentNames,
+  type CustomerSegmentNames
+} from '@hooks/useCustomerSegmentNames'
+import {
   usePatchApproveAssignMutation,
   usePatchRejectAssignMutation
 } from '@services/apiFeeAssignment'
@@ -21,7 +26,6 @@ import {
   MISSING_REVIEW_INFO_MESSAGE
 } from '@utils/fee-approval'
 import {
-  CUSTOMER_GROUP_LABELS,
   PAYMENT_METHOD_LABELS,
   SERVICE_TYPE_LABELS,
   getFeeLabel
@@ -37,7 +41,10 @@ const APPROVABLE_STATUS = 'INIT'
 
 const EMPTY_VALUE = '—'
 
-const getAssignmentScope = (assignment: FeeAssignment) => {
+const getAssignmentScope = (
+  assignment: FeeAssignment,
+  customerSegmentNames: CustomerSegmentNames
+) => {
   if (assignment.subjectId) {
     const subjectLabel = assignment.subjectType === 'MERCHANT' ? 'Merchant' : 'Người dùng'
     return `${subjectLabel} · ${assignment.subjectId}`
@@ -45,7 +52,10 @@ const getAssignmentScope = (assignment: FeeAssignment) => {
 
   if (assignment.merchantId) return `Merchant · ${assignment.merchantId}`
   if (assignment.customerGroup) {
-    return getFeeLabel(assignment.customerGroup, CUSTOMER_GROUP_LABELS)
+    return getCustomerSegmentName(
+      assignment.customerGroup,
+      customerSegmentNames
+    )
   }
 
   return 'Áp dụng chung'
@@ -76,6 +86,7 @@ export const FeeAssignmentApprovalAction = ({
   const [open, setOpen] = useState(false)
   const [isRejectOpen, setIsRejectOpen] = useState(false)
   const [hasBeenProcessed, setHasBeenProcessed] = useState(false)
+  const customerSegmentNames = useCustomerSegmentNames()
   const { successMess, errorMess } = useMessage()
   const [approveAssignment, { isLoading: isApproving }] =
     usePatchApproveAssignMutation()
@@ -137,7 +148,10 @@ export const FeeAssignmentApprovalAction = ({
           label='Loại giao dịch'
           value={getFeeLabel(assignment.serviceType, SERVICE_TYPE_LABELS)}
         />
-        <ReviewItem label='Phạm vi áp dụng' value={getAssignmentScope(assignment)} />
+        <ReviewItem
+          label='Phạm vi áp dụng'
+          value={getAssignmentScope(assignment, customerSegmentNames)}
+        />
         <ReviewItem
           label='Phương thức'
           value={getFeeLabel(

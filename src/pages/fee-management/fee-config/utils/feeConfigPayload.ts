@@ -111,9 +111,19 @@ export const toAssignmentRequest = (
   bankCode: form.bankCode || undefined,
   paymentMethod: form.paymentMethod || undefined,
   merchantId: form.merchantId || undefined,
+  // Phạm vi loại trừ nhau: gửi kèm tiêu chí của phạm vi không được chọn sẽ tạo ra bản gán
+  // hẹp hơn ý người vận hành, mà màn hình lại không hiện ô đó để họ thấy.
   // Cặp chủ thể phải cùng có hoặc cùng vắng: backend từ chối bản gán khai nửa cặp.
-  subjectType: form.subjectId ? WALLET_SUBJECT_TYPE : undefined,
-  subjectId: form.subjectId || undefined,
+  subjectType:
+    form.assignmentScope === 'SUBJECT' && form.subjectId
+      ? WALLET_SUBJECT_TYPE
+      : undefined,
+  subjectId:
+    form.assignmentScope === 'SUBJECT' ? form.subjectId || undefined : undefined,
+  customerGroup:
+    form.assignmentScope === 'SEGMENT'
+      ? form.customerGroup || undefined
+      : undefined,
   effectiveFromDate: form.validFrom
     ? toAssignmentMoment(form.validFrom)
     : undefined,

@@ -2,8 +2,22 @@ import { describe, expect, it } from 'vitest'
 import { isInWhiteList } from '@configs/fetchBaseQuery.types'
 
 const EWALLET_PATH = '/secure-panel/wallet-administration/e-walletManagement'
+const FEE_POLICY_PATH = '/secure-panel/fee-v4/fee-policy'
 
 describe('whitelist của global loading', () => {
+  it.each([
+    `${FEE_POLICY_PATH}/create`,
+    `${FEE_POLICY_PATH}/edit/fee-policy-id`
+  ])('bỏ global loader khi tìm ví ở màn cấu hình phí %s', (pathname) => {
+    expect(isInWhiteList('/wallet/accounts', pathname)).toBeDefined()
+  })
+
+  it('không whitelist danh sách ví ngoài màn cấu hình phí', () => {
+    expect(
+      isInWhiteList('/wallet/accounts', '/secure-panel/fee-v4/fee-assignmentV4')
+    ).toBeUndefined()
+  })
+
   it('bỏ global loader cho bank-links ở màn chi tiết ví', () => {
     expect(
       isInWhiteList(

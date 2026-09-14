@@ -7,6 +7,19 @@ import type {
   FeePolicySetupRequest,
   FeePolicySetupResponse
 } from '@/app/schemas/fee-setup.schema'
+
+export interface SearchFeePoliciesParams {
+  keyword?: string
+  feeDomain: string
+  serviceType?: string
+  status?: string
+  appliedTarget?: string
+  page: number
+  size: number
+  sortBy: string
+  sortDirection: string
+}
+
 export const feePolicyApi = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
     getFeePolicies: build.query({
@@ -18,7 +31,7 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
       transformResponse: (res: ResponseType<FeePolicyResponse>) => res.data,
       providesTags: ['FeePolicy']
     }),
-    searchFeePolicies: build.query({
+    searchFeePolicies: build.query<FeePolicyResponse, SearchFeePoliciesParams>({
       query: (params) => ({
         url: `/fee/policies/search`,
         method: "GET",
@@ -67,7 +80,9 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
         body,
         params: { isLoading: false }
       }),
-      invalidatesTags: ['FeePolicy']
+      // Duyệt chính sách duyệt luôn các bản gán đang chờ của nó, nên cache bản gán
+      // cũng phải bỏ đi, không thì danh sách vẫn hiện trạng thái khởi tạo.
+      invalidatesTags: ['FeePolicy', 'feeAssign']
     }),
     patchRejectFeePolicy: build.mutation<ResponseType<FeePolicy>, FeeReasonArg>({
       query: ({ id, reason }) => ({

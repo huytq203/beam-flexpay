@@ -13,7 +13,7 @@ export const feeAssignSchema = z.object({
     serviceType: z.string({
         message: "Không được để trống trường này"
     }).min(1, "Không được để trống trường này").max(255, "Quá giới hạn ký tự"),
-    customerGroup: z.string().optional(),
+    customerGroup: z.string().transform((value) => value || undefined).optional(),
     status: z.string({
         message: "Không được để trống trường này"
     }).min(1, "Không được để trống trường này").max(255, "Quá giới hạn ký tự"),
@@ -22,17 +22,6 @@ export const feeAssignSchema = z.object({
     applyDate: z.string().optional(),
     createDate: z.string().optional(),
     domain: z.string().optional(),
-}).refine(
-    (data) => {
-        if (data.applyType === "1" && (!data.customerGroup || data.customerGroup.trim().length === 0)) {
-            return false;
-        }
-        return true;
-    },
-    {
-        message: "Tài khoản/Nhóm khách hàng không được để trống",
-        path: ["customerGroup"],
-    }
-);
+});
 
 export type FeeAssignType = z.infer<typeof feeAssignSchema>;

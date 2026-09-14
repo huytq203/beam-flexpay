@@ -81,8 +81,7 @@ export const StuckTransactionUpdateForm = ({
           <FormInput
             control={control}
             name='authCode'
-            label='Mã chuẩn chi (Auth Code)'
-            required
+            label='Auth Code'
             className='flex flex-col gap-1'
             placeholder='VD: AUTH123456'
             maxLength={STUCK_UPDATE_CODE_MAX_LENGTH}
@@ -90,8 +89,7 @@ export const StuckTransactionUpdateForm = ({
           <FormInput
             control={control}
             name='settlementId'
-            label='Mã đối soát (Settlement ID)'
-            required
+            label='Settlement ID'
             className='flex flex-col gap-1'
             placeholder='VD: STL20260825001'
             maxLength={STUCK_UPDATE_CODE_MAX_LENGTH}

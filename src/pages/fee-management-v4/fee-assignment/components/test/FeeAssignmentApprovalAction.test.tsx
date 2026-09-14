@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
@@ -47,6 +47,23 @@ const renderAction = (overrides: Partial<FeeAssignment> = {}) => {
 }
 
 describe('FeeAssignmentApprovalAction', () => {
+  beforeEach(() => {
+    server.use(
+      http.get('*/fee/customer-segments', () =>
+        HttpResponse.json({
+          data: [
+            {
+              code: 'STANDARD',
+              name: 'Khách hàng tiêu chuẩn',
+              description: null,
+              status: 'ACTIVE'
+            }
+          ]
+        })
+      )
+    )
+  })
+
   it('phê duyệt gán phí, đóng popover và khóa nút sau khi thành công', async () => {
     let approveRequestCount = 0
     let approveBody: unknown = null
@@ -98,12 +115,29 @@ describe('FeeAssignmentApprovalAction', () => {
     expect(await screen.findByText('Loại giao dịch')).toBeInTheDocument()
     expect(screen.getByText('Chuyển tiền nội bộ')).toBeInTheDocument()
     expect(screen.getByText('Phạm vi áp dụng')).toBeInTheDocument()
-    expect(screen.getByText('Người dùng thường')).toBeInTheDocument()
+    expect(
+      await screen.findByText('Khách hàng tiêu chuẩn')
+    ).toBeInTheDocument()
     expect(screen.getByText('Chuyển khoản ngân hàng')).toBeInTheDocument()
     expect(screen.getByText('VCB')).toBeInTheDocument()
     expect(
       screen.getByText(/Sau khi duyệt, gán phí sẽ tự động áp dụng/)
     ).toBeInTheDocument()
+  })
+
+  it('giữ nguyên mã phân khúc khi API không có mã tương ứng', async () => {
+    server.use(
+      http.get('*/fee/customer-segments', () =>
+        HttpResponse.json({ data: [] })
+      )
+    )
+    const { user } = renderAction({ customerGroup: 'LEGACY' })
+
+    await user.click(
+      screen.getByRole('button', { name: 'Phê duyệt gán phí' })
+    )
+
+    expect(await screen.findByText('LEGACY')).toBeInTheDocument()
   })
 
   it('gọi API từ chối và khóa nút sau khi thành công', async () => {

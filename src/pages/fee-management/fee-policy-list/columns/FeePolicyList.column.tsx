@@ -13,9 +13,13 @@ import {
   TooltipComponent
 } from '@components/index'
 import { SERVICE_TYPE_LABELS, getFeeLabel } from '@constants/feeLabels'
-import { AssignmentScopeCell } from '@pages/fee-management/fee-policy-list/components/AssignmentScopeCell'
-import { PolicyAssignmentApprovalAction } from '@pages/fee-management/fee-policy-list/components/PolicyAssignmentApprovalAction'
+import {
+  getCustomerSegmentName,
+  type CustomerSegmentNames
+} from '@hooks/useCustomerSegmentNames'
 import type { FeePolicyRow } from '@pages/fee-management/fee-policy-list/hooks/useFeePolicyList'
+import type { AppliedTarget } from '@type/fee.type'
+import { Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 
@@ -25,6 +29,7 @@ interface FeePolicyColumnArgs {
   onDeactivate: (id: string) => void
   /** Dòng đang có lệnh bật/tắt chạy dở. */
   busyId: string | null
+  customerSegmentNames: CustomerSegmentNames
 }
 
 const formatDay = (value: string | null): string =>
@@ -41,11 +46,23 @@ const PRIORITY_LABEL: Readonly<Record<number, string>> = {
   4: 'Mặc định'
 }
 
+const getAppliedTargetLabel = (
+  target: AppliedTarget,
+  customerSegmentNames: CustomerSegmentNames
+): string => {
+  if (target.type === 'ALL') return 'Tất cả'
+  if (target.type === 'ACCOUNT') return `${target.count} ví riêng`
+  return target.code
+    ? getCustomerSegmentName(target.code, customerSegmentNames)
+    : 'Chưa gán'
+}
+
 export const getFeePolicyColumns = ({
   onEdit,
   onActivate,
   onDeactivate,
-  busyId
+  busyId,
+  customerSegmentNames
 }: FeePolicyColumnArgs): ColumnsType<FeePolicyRow> => [
   {
     title: '#',
@@ -82,6 +99,23 @@ export const getFeePolicyColumns = ({
     )
   },
   {
+    title: 'Đối tượng áp dụng',
+    dataIndex: 'appliedTargets',
+    width: 220,
+    render: (appliedTargets: AppliedTarget[] | undefined) =>
+      appliedTargets && appliedTargets.length > 0 ? (
+        <div className='flex flex-wrap gap-1'>
+          {appliedTargets.map((target, index) => (
+            <Tag key={`${target.type}-${target.code ?? index}`} className='m-0!'>
+              {getAppliedTargetLabel(target, customerSegmentNames)}
+            </Tag>
+          ))}
+        </div>
+      ) : (
+        <span className='text-muted-foreground'>Chưa gán</span>
+      )
+  },
+  {
     title: 'Mức ưu tiên',
     dataIndex: 'priority',
     width: 150,
@@ -95,13 +129,7 @@ export const getFeePolicyColumns = ({
     )
   },
   {
-    title: 'Đối tượng',
-    dataIndex: 'id',
-    width: 150,
-    render: (id: string) => <AssignmentScopeCell feePolicyId={id} />
-  },
-  {
-    title: 'Hiệu lực',
+    title: 'Thời gian áp dụng',
     dataIndex: 'validFrom',
     width: 190,
     render: (validFrom: string, row) => (
@@ -112,6 +140,7 @@ export const getFeePolicyColumns = ({
       </span>
     )
   },
+
   {
     title: 'Trạng thái',
     dataIndex: 'status',
@@ -167,15 +196,6 @@ export const getFeePolicyColumns = ({
         {row.status === 'INIT' && (
           <Can screen='FEE_CONFIG' action='approve'>
             <FeePolicyApprovalAction policy={row} />
-          </Can>
-        )}
-
-        {row.status === 'ACTIVE' && (
-          <Can screen='FEE_CONFIG' action='approve'>
-            <PolicyAssignmentApprovalAction
-              feePolicyId={id}
-              policyStatus={row.status}
-            />
           </Can>
         )}
 

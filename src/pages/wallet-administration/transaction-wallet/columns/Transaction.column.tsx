@@ -4,6 +4,7 @@ import { ColumnsType } from 'antd/es/table'
 import { Link } from 'react-router-dom'
 import {
   ButtonComponent,
+  StuckTransactionUpdateAction,
   TooltipComponent
 } from '@components/index'
 import { SnowflakeIcon } from '@components/icons'
@@ -364,33 +365,38 @@ const getColumn = ({
     title: 'Thao tác',
     align: 'center',
     fixed: 'right',
-    width: 80,
+    width: 112,
     render(_, record) {
-      if (!canFreeze) return null
-
       const action = getFreezeTransactionAction(record)
-      if (!action) return null
-
       const isUnfreeze = action === 'unfreeze'
       const label = isUnfreeze
         ? 'Mở băng giao dịch (Unfreeze)'
         : 'Đóng băng giao dịch (Freeze)'
       return (
-        !isUnfreeze&&
-        <TooltipComponent title={label}>
-          <ButtonComponent
-            aria-label={label}
-            htmlType='button'
-            type='default'
-            size='small'
-            loading={
-              openingFreezeTransactionId === record.transactionId ||
-              openingUnfreezeTransactionId === record.transactionId
-            }
-            icon={!isUnfreeze&&<SnowflakeIcon size={17} weight='regular' className='text-cyan-700' aria-hidden />}
-            onClick={() => isUnfreeze ? onUnfreeze(record) : onFreeze(record)}
+        <div className='flex items-center justify-center gap-1'>
+          <StuckTransactionUpdateAction
+            compact
+            transactionCode={record.transactionCode}
+            transactionType={record.transactionType}
+            journalStatus={record.status}
           />
-        </TooltipComponent>
+          {canFreeze && action && !isUnfreeze && (
+            <TooltipComponent title={label}>
+              <ButtonComponent
+                aria-label={label}
+                htmlType='button'
+                type='default'
+                size='small'
+                loading={
+                  openingFreezeTransactionId === record.transactionId ||
+                  openingUnfreezeTransactionId === record.transactionId
+                }
+                icon={<SnowflakeIcon size={17} weight='regular' className='text-cyan-700' aria-hidden />}
+                onClick={() => onFreeze(record)}
+              />
+            </TooltipComponent>
+          )}
+        </div>
       )
     }
   },

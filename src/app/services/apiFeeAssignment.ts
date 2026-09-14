@@ -22,11 +22,7 @@ const feeAssignApi = apiFeeService.injectEndpoints({
       transformResponse: (res: ResponseType<FeeAssignment>) => res.data,
       providesTags: ['feeAssign']
     }),
-    /**
-     * Bản gán của một chính sách. Màn danh sách gọi khi người dùng mở rộng đúng
-     * một dòng — tìm kiếm chính sách không trả kèm bản gán, và gọi sẵn cho cả
-     * trang là mỗi lần đổi trang thêm một chục lời gọi không ai đọc.
-     */
+    /** Bản gán của một chính sách, dùng khi tải màn chi tiết cấu hình. */
     getAssignmentsByPolicy: build.query<FeeAssignment[], string>({
       query: (feePolicyId) => ({
         url: `/fee/policy-assignments/by-policy/${feePolicyId}`,

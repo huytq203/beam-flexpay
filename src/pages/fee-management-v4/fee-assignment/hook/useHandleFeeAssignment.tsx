@@ -12,6 +12,7 @@ import {
 } from '@services/apiFeeAssignment'
 import { FeeAssignment } from '@pages/fee-management-v4/fee-assignment/constants/feeAssignment'
 import { FeeAssignType } from '@pages/fee-management-v4/fee-assignment/schemas/feeAssign.schema'
+import { useCustomerSegmentNames } from '@hooks/useCustomerSegmentNames'
 import { getFeeAssignColumn } from '../columns/FeeAssignmentManagement.column'
 
 /** Pulls `data.detail` out of an RTK Query error without assuming its shape. */
@@ -50,6 +51,7 @@ const useHandleFeeAssignment = () => {
     refetch
   } = useGetAssignSearchQuery(payload)
   const [postAssign, { isLoading: isPostAssign }] = usePostAssignMutation()
+  const customerSegmentNames = useCustomerSegmentNames()
 
   // BE bắt buộc query param `reason` khi kích hoạt → hỏi lý do qua modal.
   const [activateId, setActivateId] = useState<string | null>(null)
@@ -141,7 +143,7 @@ const useHandleFeeAssignment = () => {
         paymentMethod: data.paymentMethod,
         cardType: data.cardType,
         serviceType: data.serviceType,
-        customerGroup: data.customerGroup || '',
+        customerGroup: data.customerGroup || undefined,
         status: data.status
       }
       await postAssign(payload).unwrap()
@@ -161,8 +163,9 @@ const useHandleFeeAssignment = () => {
     setOpenModalDelete,
     setSelectRowId,
     onToggleStatus: handleToggleStatus,
-    navigate
-  }), [handleToggleStatus, navigate])
+    navigate,
+    customerSegmentNames
+  }), [customerSegmentNames, handleToggleStatus, navigate])
 
   const listData: FeeAssignment[] = useMemo(() =>
     searchData?.content || []

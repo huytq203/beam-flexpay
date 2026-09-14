@@ -74,6 +74,8 @@ export const feeAssignmentCreateRequestSchema = z.object({
   /** Gán riêng cho một chủ thể. Hai trường phải cùng có hoặc cùng vắng. */
   subjectType: z.string().optional(),
   subjectId: z.string().optional(),
+  /** Mã phân khúc khách hàng. Vắng = áp cho mọi phân khúc. */
+  customerGroup: z.string().optional(),
   bankCode: z.string().optional(),
   paymentMethod: z.string().optional(),
   effectiveFromDate: z.string().optional(),

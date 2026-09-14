@@ -15,9 +15,11 @@ const baseForm = (
   priority: 2,
   serviceType: 'EWALLET_WITHDRAWAL',
   bankCode: '',
-  paymentMethod: '',
+  paymentMethod: 'ATM',
   merchantId: '',
   subjectId: '',
+  customerGroup: '',
+  assignmentScope: 'ALL',
   validFrom: '2026-10-01T08:30:00.000',
   validTo: '',
   components: [
@@ -130,11 +132,11 @@ describe('toAssignmentRequest', () => {
     expect(request.effectiveFromDate).toBe('2026-10-01 08:30:00')
   })
 
-  it('bỏ hẳn tiêu chí người dùng để trống thay vì gửi chuỗi rỗng', () => {
+  it('luôn gửi phương thức giao dịch đã chọn', () => {
     const request = toAssignmentRequest(baseForm(), 'policy-1')
     expect(request.bankCode).toBeUndefined()
     expect(request.merchantId).toBeUndefined()
-    expect(request.paymentMethod).toBeUndefined()
+    expect(request.paymentMethod).toBe('ATM')
   })
 
   it('gửi cặp chủ thể khi có chọn ví', () => {
@@ -151,6 +153,17 @@ describe('toAssignmentRequest', () => {
     // Backend từ chối bản gán khai nửa cặp, nên không được gửi lẻ một trường.
     expect(request.subjectType).toBeUndefined()
     expect(request.subjectId).toBeUndefined()
+  })
+
+  it('gửi phân khúc khi có chọn, bỏ hẳn trường khi để trống', () => {
+    expect(
+      toAssignmentRequest(baseForm({ customerGroup: 'VIP' }), 'policy-1')
+        .customerGroup
+    ).toBe('VIP')
+    expect(
+      toAssignmentRequest(baseForm({ customerGroup: '' }), 'policy-1')
+        .customerGroup
+    ).toBeUndefined()
   })
 
   it('giữ loại giao dịch trùng với chính sách', () => {

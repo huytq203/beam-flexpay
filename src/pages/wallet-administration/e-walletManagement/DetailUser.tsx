@@ -63,7 +63,8 @@ const DetailUser = () => {
       username: firstGroup.username,
       email: firstGroup.email,
       occupation: firstGroup.occupation,
-      position: firstGroup.position
+      position: firstGroup.position,
+      currentAddress: firstGroup.currentAddress
     } : undefined
   }, [firstGroup])
 

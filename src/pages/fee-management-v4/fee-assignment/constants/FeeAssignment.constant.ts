@@ -54,19 +54,6 @@ export const cardTypeTypeLable={
     [cardTypeType.VISA]: 'VISA',
     [cardTypeType.NAPAS]: 'Napas',
 }
-export enum customerGroupType {
-  VIP ='VIP',
-  PREMIUM ='PREMIUM',
-  MERCHANT ='MERCHANT',
-  STANDARD ='STANDARD',
-}
-
-export const customerGroupTypeLable={
-    [customerGroupType.VIP]: 'VIP',
-    [customerGroupType.PREMIUM]: 'User Premium',
-    [customerGroupType.MERCHANT]: 'User Premium',
-    [customerGroupType.STANDARD]: 'User thường',
-}
 export enum statusType {
   INIT ='INIT',
   ACTIVE ='ACTIVE',
@@ -111,4 +98,3 @@ export const STATUS_CONFIG: Record<statusType, { label: string; className: strin
     shimmerColor: 'rgba(239, 68, 68, 0.1)',
   }
 }
-

@@ -27,6 +27,8 @@ const values: FeeConfigFormValues = {
   paymentMethod: 'ATM',
   merchantId: '',
   subjectId: '',
+  assignmentScope: 'ALL',
+  customerGroup: '',
   components: [
     {
       key: 'component-1',

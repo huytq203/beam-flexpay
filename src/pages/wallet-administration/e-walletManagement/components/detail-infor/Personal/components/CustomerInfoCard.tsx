@@ -60,18 +60,14 @@ const CustomerInfoCard = ({ ekyc }: CustomerInfoCardProps) => {
       <InfoDivider />
       <div>
         <p className='text-muted-foreground'>Địa chỉ thường trú</p>
-        <p className='font-medium text-foreground'>{text(ekyc?.permanentAddress)}</p>
+        <p className='font-medium whitespace-pre-line text-foreground'>{text(ekyc?.placeOfOrigin)}</p>
       </div>
 
-      {ekyc?.currentAddress && (
-        <>
-          <InfoDivider />
-          <div>
-            <p className='text-muted-foreground'>Địa chỉ hiện tại</p>
-            <p className='font-medium whitespace-pre-line text-foreground'>{ekyc.currentAddress}</p>
-          </div>
-        </>
-      )}
+      <InfoDivider />
+      <div>
+        <p className='text-muted-foreground'>Địa chỉ liên hệ</p>
+        <p className='font-medium whitespace-pre-line text-foreground'>{text(ekyc?.currentAddress)}</p>
+      </div>
     </>
   )
 }

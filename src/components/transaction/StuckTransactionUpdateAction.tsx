@@ -1,11 +1,14 @@
 import { useState } from 'react'
-import { ButtonComponent, DialogModal } from '@components/index'
+import { ButtonComponent, DialogModal, TooltipComponent } from '@components/index'
 import { ArrowsCounterClockwiseIcon } from '@components/icons'
 import { PERMISSION, useAccess } from '@/app/permissions'
 import { useMessage } from '@hooks/useMessage'
 import { useUpdateStuckTransactionStatusMutation } from '@services/apiStuckTransaction'
 import { useGetWithdrawalByTransactionCodeQuery } from '@services/apiJournal'
-import { canUpdateStuckTransaction } from '@utils/stuck-transaction'
+import {
+  canUpdateStuckTransaction,
+  isStuckJournalStatus
+} from '@utils/stuck-transaction'
 import { StuckTransactionOutcome } from '@type/stuckTransaction.type'
 import { StuckTransactionUpdateForm } from './StuckTransactionUpdateForm'
 import type { StuckTransactionUpdateFormValues } from './StuckTransaction.schema'
@@ -18,6 +21,8 @@ export interface StuckTransactionUpdateActionProps {
   transactionType?: string | null
   /** Trạng thái bút toán bên wallet-core. */
   journalStatus?: string | null
+  /** Thu gọn thành icon trong cột thao tác của bảng. */
+  compact?: boolean
   className?: string
 }
 
@@ -34,21 +39,27 @@ export const StuckTransactionUpdateAction = ({
   transactionCode,
   transactionType,
   journalStatus,
+  compact = false,
   className
 }: StuckTransactionUpdateActionProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const { has } = useAccess()
   const { successMess, errorMess } = useMessage()
   const code = transactionCode ?? ''
+  const canAccess = has(PERMISSION.EWALLET_FULL)
 
   // Chỉ cần trạng thái, không cần cửa sổ theo dõi như WithdrawalDecisionPanel —
   // hai component đọc chung một cache entry nên đây không phải request thứ hai.
   const { data: withdrawal } = useGetWithdrawalByTransactionCodeQuery(code, {
-    skip: !code || transactionType !== CASH_OUT
+    skip:
+      !code ||
+      !canAccess ||
+      !isStuckJournalStatus(journalStatus) ||
+      transactionType !== CASH_OUT
   })
   const [updateStatus, { isLoading }] = useUpdateStuckTransactionStatusMutation()
 
-  if (!code || !has(PERMISSION.EWALLET_FULL)) return null
+  if (!code || !canAccess) return null
   if (!canUpdateStuckTransaction(journalStatus, withdrawal?.status)) return null
 
   const handleSubmit = async (
@@ -74,16 +85,25 @@ export const StuckTransactionUpdateAction = ({
     }
   }
 
+  const actionLabel = 'Cập nhật giao dịch treo'
+  const trigger = (
+    <ButtonComponent
+      aria-label={actionLabel}
+      htmlType='button'
+      type='default'
+      size={compact ? 'small' : undefined}
+      className={className}
+      content={compact ? undefined : actionLabel}
+      icon={<ArrowsCounterClockwiseIcon size={16} />}
+      onClick={() => setIsOpen(true)}
+    />
+  )
+
   return (
     <>
-      <ButtonComponent
-        htmlType='button'
-        type='default'
-        className={className}
-        content='Cập nhật giao dịch treo'
-        icon={<ArrowsCounterClockwiseIcon size={16} />}
-        onClick={() => setIsOpen(true)}
-      />
+      {compact ? (
+        <TooltipComponent title={actionLabel}>{trigger}</TooltipComponent>
+      ) : trigger}
       <DialogModal
         open={isOpen}
         title='Cập nhật giao dịch treo'

@@ -1,21 +1,33 @@
 import { ButtonComponent, ExportCsvButton, Table } from '@components/index'
 import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
 import {
-  applicableFeeRuleColumns,
+  getApplicableFeeRuleColumns,
   type ApplicableFeeRuleTableRow
 } from './configs/FeeSetting.column'
 import { FeeRulesEmptyState, FeeSettingCard } from './components/FeeSettingCard'
+import { SubjectSegmentCard } from '@components/fee/SubjectSegmentCard'
 import { useFeeSettingRules } from './hooks/useFeeSettingRules'
+import { useCustomerSegmentNames } from '@hooks/useCustomerSegmentNames'
 
 interface FeeSettingProps {
   walletId: string
   walletLabel: string
+  /** Định danh người dùng chủ ví. Phân khúc gắn theo người, không theo ví. */
+  subjectId?: string
 }
 
 const EXPORT_TOOLTIP =
   'File lấy trọn bộ lọc đang áp, không giới hạn theo trang, và giữ nguyên các quy tắc áp dụng cho tất cả.'
 
-export const FeeSetting = ({ walletId, walletLabel }: FeeSettingProps) => {
+export const FeeSetting = ({
+  walletId,
+  walletLabel,
+  subjectId
+}: FeeSettingProps) => {
+  const customerSegmentNames = useCustomerSegmentNames()
+  const applicableFeeRuleColumns = getApplicableFeeRuleColumns(
+    customerSegmentNames
+  )
   const {
     isWalletIdValid,
     dataSource,
@@ -135,6 +147,7 @@ export const FeeSetting = ({ walletId, walletLabel }: FeeSettingProps) => {
 return (
     <div className='space-y-3!'>
       {/* {filterCard} */}
+      <SubjectSegmentCard subjectId={subjectId ?? ''} />
       <FeeSettingCard totalRows={totalElements} action={exportButton}>
         {body()}
       </FeeSettingCard>

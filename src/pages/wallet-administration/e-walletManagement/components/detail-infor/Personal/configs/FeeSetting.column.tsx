@@ -17,6 +17,10 @@ import {
   formatFeeLocalDateTime,
   formatTierRange
 } from '../utils/applicable-fee-rule'
+import {
+  getCustomerSegmentName,
+  type CustomerSegmentNames
+} from '@hooks/useCustomerSegmentNames'
 
 const APPLIED_OBJECT_LABELS: Readonly<Record<string, string>> = {
   ACCOUNT: 'Tài khoản',
@@ -31,11 +35,14 @@ export interface ApplicableFeeRuleTableRow extends ApplicableFeeRule {
 }
 
 const getAppliedObjectDetail = (
-  record: ApplicableFeeRuleTableRow
+  record: ApplicableFeeRuleTableRow,
+  customerSegmentNames: CustomerSegmentNames
 ): string => {
   if (record.appliedObjectType === 'ACCOUNT') return record.accountLabel
   if (record.appliedObjectType === 'CUSTOMER_GROUP') {
-    return record.customerGroup ?? '—'
+    return record.customerGroup
+      ? getCustomerSegmentName(record.customerGroup, customerSegmentNames)
+      : '—'
   }
   return 'Mọi tài khoản'
 }
@@ -51,9 +58,9 @@ const getPaymentDetail = (record: ApplicableFeeRuleTableRow): string => {
   return details.length > 0 ? details.join(' · ') : 'Mọi loại thẻ/ngân hàng'
 }
 
-export const applicableFeeRuleColumns: ColumnsType<
-  ApplicableFeeRuleTableRow
-> = [
+export const getApplicableFeeRuleColumns = (
+  customerSegmentNames: CustomerSegmentNames
+): ColumnsType<ApplicableFeeRuleTableRow> => [
   {
     title: '#',
     dataIndex: 'no',
@@ -70,7 +77,7 @@ export const applicableFeeRuleColumns: ColumnsType<
           {getLabel(record.appliedObjectType, APPLIED_OBJECT_LABELS)}
         </span>
         <span className='text-xs text-muted-foreground'>
-          {getAppliedObjectDetail(record)}
+          {getAppliedObjectDetail(record, customerSegmentNames)}
         </span>
       </div>
     )

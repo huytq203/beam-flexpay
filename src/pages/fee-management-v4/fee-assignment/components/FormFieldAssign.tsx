@@ -1,5 +1,6 @@
 import { FormSelect } from '@components/form'
 import { useGetBankQuery } from '@services/apiFeeBank'
+import { useGetCustomerSegmentsQuery } from '@services/apiCustomerSegment'
 import {
   cardTypeType,
   FeeBank,
@@ -7,7 +8,7 @@ import {
   statusType
 } from '@pages/fee-management-v4/fee-assignment/constants/feeAssignment'
 import { serviceType } from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Control, UseFormSetValue, UseFormWatch } from 'react-hook-form'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import { FeeAssignType } from '../schemas/feeAssign.schema'
@@ -20,9 +21,24 @@ interface FormFieldAssign {
   watch: UseFormWatch<FeeAssignType>
 }
 
-const FormFieldAssign = React.memo(({ control, isCreate, feeDomain }: FormFieldAssign) => {
+const FormFieldAssign = React.memo(({ control, isCreate, feeDomain, watch }: FormFieldAssign) => {
   // api database
   const { data: dataBank } = useGetBankQuery({})
+  const { data: customerSegments, isLoading: isLoadingCustomerSegments } =
+    useGetCustomerSegmentsQuery()
+  const customerGroup = watch('customerGroup')
+  const customerSegmentOptions = useMemo(() => {
+    const options = (customerSegments ?? []).map((segment) => ({
+      label: segment.name,
+      value: segment.code
+    }))
+
+    if (customerGroup && !options.some((option) => option.value === customerGroup)) {
+      options.push({ label: customerGroup, value: customerGroup })
+    }
+
+    return options
+  }, [customerGroup, customerSegments])
 
 
 
@@ -72,15 +88,16 @@ const FormFieldAssign = React.memo(({ control, isCreate, feeDomain }: FormFieldA
           disabled={true}
         /> */}
 
-        {/* <FormInput
-          type='text'
+        <FormSelect
           control={control}
           name='customerGroup'
-          placeholder='nhóm khách hàng...'
-          label={<span>Tài khoản/Nhóm khách hàng</span>}
+          options={customerSegmentOptions}
+          label={<span>Phân khúc khách hàng</span>}
+          placeholder='Tất cả phân khúc'
           className={'col-span-1'}
-          disabled={true}
-        /> */}
+          loading={isLoadingCustomerSegments}
+          allowClear
+        />
 
 
         {/* <FormSelect

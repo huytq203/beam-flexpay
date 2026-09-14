@@ -73,6 +73,7 @@ export interface EKYCGroup {
   email: string | null
   occupation: string | null
   position: string | null
+  currentAddress: string | null
   attempts: ContentEKYC[]
 }
 

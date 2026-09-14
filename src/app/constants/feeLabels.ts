@@ -15,21 +15,12 @@ export const SERVICE_TYPE_LABELS: Readonly<Record<string, string>> = {
 }
 
 export const PAYMENT_METHOD_LABELS: Readonly<Record<string, string>> = {
-  ATM: 'ATM',
+  ATM: 'Thẻ ATM',
   CC: 'Thẻ tín dụng',
-  CREDIT_CARD: 'Thẻ tín dụng',
-  QR_CODE: 'Quét mã QR',
   BANK_TRANSFER: 'Chuyển khoản ngân hàng',
-  LINKED_ACCOUNT: 'Tài khoản liên kết',
-  WALLET_BALANCE: 'Tài khoản ví',
+  LINKED_ACCOUNT: 'Tài khoản ngân hàng liên kết',
+  WALLET_BALANCE: 'Số dư ví',
   VA: 'Tài khoản ảo'
-}
-
-export const CUSTOMER_GROUP_LABELS: Readonly<Record<string, string>> = {
-  STANDARD: 'Người dùng thường',
-  PREMIUM: 'Người dùng Premium',
-  VIP: 'Người dùng VIP',
-  MERCHANT: 'Merchant'
 }
 
 export const CARD_TYPE_LABELS: Readonly<Record<string, string>> = {
