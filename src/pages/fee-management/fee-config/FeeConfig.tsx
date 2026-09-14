@@ -1,5 +1,5 @@
 import { FeeDomainTabs } from '@components/fee/FeeDomainTabs'
-import { ArrowLeftOutlined, EyeOutlined, WarningCircleIcon } from '@components/icons'
+import { ArrowLeftOutlined, WarningCircleIcon } from '@components/icons'
 import { ButtonComponent, CardComponent, ModalComponent } from '@components/index'
 import { PATHS } from '@constants/pathConstant'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -41,21 +41,14 @@ const FeeConfigForm = ({
 
   return (
     <form onSubmit={handleSubmit(submit)}>
-      {readOnly && (
-        <div className='mb-3 flex items-start gap-3 rounded-lg border border-border bg-muted px-4 py-3'>
-          <EyeOutlined className='mt-0.5 shrink-0 text-secondary-foreground' />
-          <div className='min-w-0'>
-            <p className='text-[13px] font-semibold text-foreground'>
-              Đang xem chi tiết chính sách
-            </p>
-            <p className='mt-0.5 max-w-[70ch] text-[13px] leading-5 text-muted-foreground'>
-              Chính sách đã rời trạng thái cho phép chỉnh sửa. Bạn vẫn có thể
-              kiểm tra đầy đủ cấu hình và các mức phí bên dưới.
-            </p>
-          </div>
-        </div>
-      )}
-
+     <ButtonComponent
+            htmlType='button'
+            type='default'
+            className='mb-3!'
+            content='Về danh sách'
+            icon={<ArrowLeftOutlined />}
+            onClick={() => navigate(PATHS.FEE_V4.POLICY_LIST)}
+          />
       <CardComponent className='mb-3!'>
         <div className='flex flex-wrap items-start justify-between gap-3 border-b border-border pb-4'>
           <p className='max-w-[70ch] text-[13px] text-muted-foreground'>
@@ -175,13 +168,7 @@ const FeeConfig = () => {
             Chính sách có thể đã bị xoá, hoặc dịch vụ phí chưa trả lời. Quay lại
             danh sách và mở lại từ đó.
           </p>
-          <ButtonComponent
-            htmlType='button'
-            type='default'
-            content='Về danh sách'
-            icon={<ArrowLeftOutlined />}
-            onClick={() => navigate(PATHS.FEE_V4.POLICY_LIST)}
-          />
+         
         </div>
       </CardComponent>
     )

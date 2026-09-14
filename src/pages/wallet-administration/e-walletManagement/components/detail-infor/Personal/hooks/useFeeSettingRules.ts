@@ -19,20 +19,31 @@ const dropEmpty = (filter: ApplicableFeeRuleFilter): ApplicableFeeRuleFilter =>
   )
 
 interface UseFeeSettingRulesParams {
-  walletId: string
   walletLabel: string
+  subjectId?: string
 }
 
 export const useFeeSettingRules = ({
-  walletId,
-  walletLabel
+  walletLabel,
+  subjectId
 }: UseFeeSettingRulesParams) => {
   const { page, size, setPage, setPageSize } = usePagination()
   const [filter, setFilter] = useState<ApplicableFeeRuleFilter>({})
+  const normalizedSubjectId = subjectId?.trim() ?? ''
+  // Chỉ lấy quy tắc riêng ví + theo nhóm; quy tắc chung không hiện ở tab này.
+  // Backend tự tra nhóm của chủ ví từ subjectId, FE không gửi customerGroup.
+  const subjectScope = useMemo(
+    () => ({
+      subjectType: 'USER' as const,
+      subjectId: normalizedSubjectId,
+      appliedObjectTypes: 'ACCOUNT,CUSTOMER_GROUP',
+      feeDomain: 'EWALLET' as const
+    }),
+    [normalizedSubjectId]
+  )
 
   const parsedQuery = applicableFeeRuleQuerySchema.safeParse({
-    merchantId: walletId,
-    feeDomain: 'EWALLET',
+    ...subjectScope,
     ...filter,
     page,
     size
@@ -45,7 +56,9 @@ export const useFeeSettingRules = ({
   const queryArgs = parsedQuery.success ? parsedQuery.data : fallbackQuery
 
   const { data, isLoading, isFetching, isError, refetch } =
-    useGetApplicableFeeRulesQuery(queryArgs, { skip: !parsedQuery.success })
+    useGetApplicableFeeRulesQuery(queryArgs, {
+      skip: !normalizedSubjectId || !parsedQuery.success
+    })
 
   /**
    * Danh sách chính sách để đổ vào ô lọc lấy từ tập quy tắc của riêng ví này,
@@ -53,8 +66,8 @@ export const useFeeSettingRules = ({
    * áp cho ví thì chỉ nhận về bảng rỗng.
    */
   const { data: policyOptionsData } = useGetApplicableFeeRulesQuery(
-    { merchantId: walletId, feeDomain: 'EWALLET', page: 1, size: 100 },
-    { skip: !walletId }
+    { ...subjectScope, page: 1, size: 100 },
+    { skip: !normalizedSubjectId }
   )
 
   const policyOptions = useMemo(() => {
@@ -75,13 +88,14 @@ export const useFeeSettingRules = ({
 
   /** Endpoint xuất không nhận page/size — file lấy trọn bộ lọc, không theo trang. */
   const exportParams = useMemo<ApplicableFeeRuleExportQuery>(
-    () => ({ merchantId: walletId, feeDomain: 'EWALLET', ...filter }),
-    [walletId, filter]
+    () => ({ ...subjectScope, ...filter }),
+    [subjectScope, filter]
   )
 
   const handleExport = useCallback(() => {
+    if (!normalizedSubjectId) return
     void exportFile(exportParams)
-  }, [exportFile, exportParams])
+  }, [exportFile, exportParams, normalizedSubjectId])
 
   const handleSearch = useCallback(
     (next: ApplicableFeeRuleFilter) => {
@@ -103,7 +117,7 @@ export const useFeeSettingRules = ({
   )
 
   return {
-    isWalletIdValid: parsedQuery.success,
+    hasValidSubject: Boolean(normalizedSubjectId) && parsedQuery.success,
     dataSource,
     totalElements: data?.totalElements ?? 0,
     hasFilter: Object.keys(filter).length > 0,

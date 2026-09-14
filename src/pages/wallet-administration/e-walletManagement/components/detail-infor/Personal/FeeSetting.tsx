@@ -17,7 +17,7 @@ interface FeeSettingProps {
 }
 
 const EXPORT_TOOLTIP =
-  'File lấy trọn bộ lọc đang áp, không giới hạn theo trang, và giữ nguyên các quy tắc áp dụng cho tất cả.'
+  'File lấy trọn bộ lọc đang áp, không giới hạn theo trang, và chỉ gồm quy tắc riêng của ví hoặc nhóm của chủ ví.'
 
 export const FeeSetting = ({
   walletId,
@@ -29,7 +29,7 @@ export const FeeSetting = ({
     customerSegmentNames
   )
   const {
-    isWalletIdValid,
+    hasValidSubject,
     dataSource,
     totalElements,
     hasFilter,
@@ -45,13 +45,13 @@ export const FeeSetting = ({
     handleSearch,
     handleExport,
     isExporting
-  } = useFeeSettingRules({ walletId, walletLabel })
+  } = useFeeSettingRules({ walletLabel, subjectId })
 
-  if (!isWalletIdValid) {
+  if (!hasValidSubject) {
     return (
       <FeeSettingCard>
         <p role='alert' className='py-10 text-center text-sm text-danger'>
-          Không thể tải quy tắc phí vì mã ví không hợp lệ.
+          Không thể tải quy tắc phí vì thiếu mã chủ ví.
         </p>
       </FeeSettingCard>
     )
@@ -144,7 +144,7 @@ export const FeeSetting = ({
     )
   }
 
-return (
+  return (
     <div className='space-y-3!'>
       {/* {filterCard} */}
       <SubjectSegmentCard subjectId={subjectId ?? ''} />

@@ -23,6 +23,7 @@ vi.mock('@hooks/useExportCsv', () => ({
 }))
 
 const WALLET_ID = '6b1f3c2a-8f4e-4a1b-9c33-7d9a1e5b0f21'
+const OWNER_ID = '8c2f4d3b-7a5e-4f10-9b21-6d8e3a1c5f42'
 
 const rule: ApplicableFeeRule = {
   assignmentId: '7b1f3c2a-8f4e-4a1b-9c33-7d9a1e5b0f22',
@@ -81,7 +82,12 @@ describe('FeeSetting', () => {
     server.use(
       http.get('*/fee/applicable-rules', ({ request }) => {
         const url = new URL(request.url)
-        expect(url.searchParams.get('merchantId')).toBe(WALLET_ID)
+        expect(url.searchParams.get('subjectType')).toBe('USER')
+        expect(url.searchParams.get('subjectId')).toBe(OWNER_ID)
+        expect(url.searchParams.get('appliedObjectTypes')).toBe(
+          'ACCOUNT,CUSTOMER_GROUP'
+        )
+        expect(url.searchParams.has('merchantId')).toBe(false)
         expect(url.searchParams.get('feeDomain')).toBe('EWALLET')
         expect(url.searchParams.get('page')).toBe('1')
         if (url.searchParams.get('size') === '100') {
@@ -94,7 +100,11 @@ describe('FeeSetting', () => {
     )
 
     renderWithProviders(
-      <FeeSetting walletId={WALLET_ID} walletLabel='flexpay-user' />
+      <FeeSetting
+        walletId={WALLET_ID}
+        walletLabel='flexpay-user'
+        subjectId={OWNER_ID}
+      />
     )
 
     expect(await screen.findByText('Phí nạp tiền ATM')).toBeInTheDocument()
@@ -109,7 +119,9 @@ describe('FeeSetting', () => {
       screen.getByRole('button', { name: /Xuất CSV/ })
     )
     expect(mocks.exportFile).toHaveBeenCalledWith({
-      merchantId: WALLET_ID,
+      subjectType: 'USER',
+      subjectId: OWNER_ID,
+      appliedObjectTypes: 'ACCOUNT,CUSTOMER_GROUP',
       feeDomain: 'EWALLET'
     })
   })
@@ -122,12 +134,18 @@ describe('FeeSetting', () => {
     )
 
     renderWithProviders(
-      <FeeSetting walletId={WALLET_ID} walletLabel='flexpay-user' />
+      <FeeSetting
+        walletId={WALLET_ID}
+        walletLabel='flexpay-user'
+        subjectId={OWNER_ID}
+      />
     )
 
     await waitFor(() =>
       expect(
-        screen.getByText('Chưa có quy tắc phí đang áp dụng')
+        screen.getByText(
+          'Ví này chưa có quy tắc phí riêng — đang áp dụng biểu phí chung.'
+        )
       ).toBeInTheDocument()
     )
     expect(
@@ -163,7 +181,11 @@ describe('FeeSetting', () => {
     )
 
     renderWithProviders(
-      <FeeSetting walletId={WALLET_ID} walletLabel='flexpay-user' />
+      <FeeSetting
+        walletId={WALLET_ID}
+        walletLabel='flexpay-user'
+        subjectId={OWNER_ID}
+      />
     )
 
     expect(
@@ -171,13 +193,13 @@ describe('FeeSetting', () => {
     ).toBeInTheDocument()
   })
 
-  it('không gọi API khi mã ví không phải UUID', () => {
+  it('không gọi API khi thiếu mã chủ ví', () => {
     renderWithProviders(
-      <FeeSetting walletId='wallet-invalid' walletLabel='flexpay-user' />
+      <FeeSetting walletId={WALLET_ID} walletLabel='flexpay-user' />
     )
 
     expect(
-      screen.getByText('Không thể tải quy tắc phí vì mã ví không hợp lệ.')
+      screen.getByText('Không thể tải quy tắc phí vì thiếu mã chủ ví.')
     ).toBeInTheDocument()
   })
 })

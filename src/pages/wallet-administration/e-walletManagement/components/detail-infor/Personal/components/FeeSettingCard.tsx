@@ -22,7 +22,7 @@ export const FeeSettingCard = ({
             id='applicable-fee-rules-title'
             className='text-base font-semibold text-foreground'
           >
-            Quy tắc phí đang áp dụng
+            Quy tắc phí dành riêng cho ví này
           </h2>
           <div className='flex items-center gap-3'>
             {totalRows !== undefined ? (
@@ -54,12 +54,13 @@ export const FeeRulesEmptyState = ({
     <p className='font-medium text-foreground'>
       {filtered
         ? 'Không có quy tắc phí khớp bộ lọc'
-        : 'Chưa có quy tắc phí đang áp dụng'}
+        : 'Ví này chưa có quy tắc phí riêng — đang áp dụng biểu phí chung.'}
     </p>
-    <p className='max-w-[52ch] text-sm text-muted-foreground'>
-      {filtered
-        ? 'Nới một điều kiện áp dụng hoặc bấm Xóa lọc để xem lại toàn bộ quy tắc của ví.'
-        : 'Ví này chưa có quy tắc riêng hoặc quy tắc áp dụng chung phù hợp.'}
-    </p>
+    {filtered ? (
+      <p className='max-w-[52ch] text-sm text-muted-foreground'>
+        Nới một điều kiện áp dụng hoặc bấm Xóa lọc để xem lại toàn bộ quy tắc
+        của ví.
+      </p>
+    ) : null}
   </div>
 )

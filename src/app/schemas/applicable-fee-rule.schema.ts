@@ -80,8 +80,8 @@ export const applicableFeeRulePageSchema = z.object({
 /**
  * Hai trục lọc khác hẳn nhau trong cùng một bộ tham số:
  *
- * - `merchantId` / `customerGroup` trả lời "ví này chịu quy tắc nào", nên **bỏ
- *   trống là một điều kiện** (ví không thuộc merchant nào, chưa phân nhóm).
+ * - `subjectType` / `subjectId` trả lời "ví này chịu quy tắc nào"; backend tự
+ *   tra phân khúc của chủ thể. `appliedObjectTypes` giới hạn loại quy tắc cần lấy.
  * - Sáu tham số còn lại chỉ thu hẹp bảng đang hiển thị, nên **bỏ trống là không
  *   lọc**. Bản gán để trống ô điều kiện nghĩa là "áp dụng cho tất cả" — lọc
  *   `bankCode=VCB` vẫn phải trả về quy tắc không ghim ngân hàng vì chúng đang
@@ -90,6 +90,9 @@ export const applicableFeeRulePageSchema = z.object({
 export const applicableFeeRuleQuerySchema = z.object({
   merchantId: z.string().uuid().optional(),
   customerGroup: z.string().min(1).optional(),
+  subjectType: z.enum(['USER', 'MERCHANT']).optional(),
+  subjectId: z.string().min(1).optional(),
+  appliedObjectTypes: z.string().min(1).optional(),
   feeDomain: feeDomainSchema.optional(),
   feePolicyId: z.string().uuid().optional(),
   serviceType: z.string().min(1).optional(),

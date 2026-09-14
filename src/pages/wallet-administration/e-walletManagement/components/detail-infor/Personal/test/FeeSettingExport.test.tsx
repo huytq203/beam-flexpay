@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { FeeSetting } from '../FeeSetting'
 
 const WALLET_ID = '6f1a0f7e-6b0b-4a3f-9b2e-9f0d4a4c1b21'
+const OWNER_ID = '9d3e5f4a-8b6c-4a21-8c32-7e9f4b2d6a53'
 const POLICY_ID = 'c0a80101-0000-4000-8000-000000000abc'
 
 const rule = {
@@ -75,7 +76,11 @@ vi.mock('@hooks/useExportCsv', () => ({
 const renderTab = () =>
   renderWithProviders(
     <MessageProvider>
-      <FeeSetting walletId={WALLET_ID} walletLabel='0962341913' />
+      <FeeSetting
+        walletId={WALLET_ID}
+        walletLabel='0962341913'
+        subjectId={OWNER_ID}
+      />
     </MessageProvider>
   )
 
@@ -104,7 +109,9 @@ describe('Tab Cấu hình phí — xuất CSV', () => {
 
     await waitFor(() =>
       expect(mocks.exportFile).toHaveBeenCalledWith({
-        merchantId: WALLET_ID,
+        subjectType: 'USER',
+        subjectId: OWNER_ID,
+        appliedObjectTypes: 'ACCOUNT,CUSTOMER_GROUP',
         feeDomain: 'EWALLET',
         bankCode: 'VCB'
       })
