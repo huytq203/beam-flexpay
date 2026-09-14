@@ -140,7 +140,7 @@ const useHandleFeeAssignment = () => {
         feePolicyId: data.feePolicyId,
         merchantId: data.merchantId,
         bankCode: data.bankCode,
-        paymentMethod: data.paymentMethod,
+        paymentMethod: data.paymentMethod || undefined,
         cardType: data.cardType,
         serviceType: data.serviceType,
         customerGroup: data.customerGroup || undefined,

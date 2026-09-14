@@ -34,6 +34,7 @@ const form = (overrides = {}) => ({
   merchantId: '',
   subjectId: '',
   customerGroup: '',
+  assignmentScope: 'ALL' as const,
   validFrom: '2026-10-01T00:00:00.000',
   validTo: '',
   components: [component()],
@@ -157,13 +158,13 @@ describe('feeComponentFormSchema', () => {
 })
 
 describe('feeConfigFormSchema', () => {
-  it('bắt buộc phương thức phù hợp với loại giao dịch', () => {
-    const missing = feeConfigFormSchema.safeParse(form({ paymentMethod: '' }))
+  it('cho phép tất cả phương thức và từ chối phương thức không phù hợp', () => {
+    const allMethods = feeConfigFormSchema.safeParse(form({ paymentMethod: '' }))
     const mismatched = feeConfigFormSchema.safeParse(
       form({ paymentMethod: 'VA' })
     )
 
-    expect(errorPaths(missing)).toContain('paymentMethod')
+    expect(allMethods.success).toBe(true)
     expect(errorPaths(mismatched)).toContain('paymentMethod')
   })
 

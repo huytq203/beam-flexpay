@@ -94,8 +94,8 @@ export const feeComponentFormSchema = z
     tiers: z.array(feeTierFormSchema)
   })
   .superRefine((component, ctx) => {
-    // Thuế giá trị gia tăng tính trên phí giao dịch, không tính trên số tiền
-    // giao dịch, và chỉ có phần trăm — không có phí cố định.
+    // Thuế giá trị gia tăng tính trên thành phần phí gốc của nhóm, không tính
+    // trực tiếp trên số tiền, và chỉ có phần trăm — không có phí cố định.
     if (component.componentType === 'VAT') {
       if (component.baseOn !== 'FEE_COMPONENT') {
         ctx.addIssue({
@@ -190,9 +190,8 @@ export const feeConfigFormSchema = z
     priority: z.number().int().min(0),
     serviceType: z.string().min(1, 'Chọn loại giao dịch'),
     bankCode: z.string(),
-    paymentMethod: z
-      .string()
-      .min(1, 'Chọn phương thức giao dịch'),
+    /** Chuỗi rỗng = áp dụng cho tất cả phương thức và bị bỏ khỏi payload. */
+    paymentMethod: z.string(),
     merchantId: z.string(),
     /** Đối tượng áp dụng: tất cả, một nhóm, hay một cá nhân. */
     assignmentScope: z.enum(['ALL', 'SEGMENT', 'SUBJECT']),

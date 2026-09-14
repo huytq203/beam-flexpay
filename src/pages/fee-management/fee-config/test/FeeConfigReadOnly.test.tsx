@@ -79,8 +79,11 @@ describe('FeeConfig read-only detail', () => {
     expect(screen.getByDisplayValue('Phí nạp tiền VPBank')).toBeDisabled()
     expect(screen.getByText('1. Phí giao dịch cơ bản')).toBeInTheDocument()
     expect(
-      screen.getByRole('button', { name: /Về danh sách/ })
-    ).toBeEnabled()
+      screen.getAllByRole('button', { name: /Về danh sách/ })
+    ).toHaveLength(2)
+    screen.getAllByRole('button', { name: /Về danh sách/ }).forEach((button) =>
+      expect(button).toBeEnabled()
+    )
     expect(
       screen.queryByRole('button', { name: 'Thiết lập' })
     ).not.toBeInTheDocument()

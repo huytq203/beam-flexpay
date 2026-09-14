@@ -1,6 +1,7 @@
 // Kiểu bản gán đã chuyển lên `src/app/types/fee.type.ts` để tầng service không
 // còn phụ thuộc vào thư mục của một màn. Re-export để màn cũ chưa gỡ vẫn chạy.
 import type { FeeAssignment } from '@type/fee.type'
+import { PAYMENT_METHOD_LABELS } from '@constants/feeLabels'
 export type { FeeAssignment }
 
 /**
@@ -72,15 +73,10 @@ export const serviceType ={
   MERCHANT_VA_BILL_COLLECTION : 'Thu hộ VA',
   PAYOUT_BANK_TRANSFER : 'Chi hộ chuyển khoản ngân hàng'
 }as const;
-export const paymentMethodType ={
-  ATM : 'ATM',
-  QR_CODE : 'Quét mã QR',
-  CREDIT_CARD : 'Thẻ tín dụng',
-  BANK_TRANSFER : 'Chuyển khoản ngân hàng',
-  LINKED_ACCOUNT : 'Tài khoản liên kết ',
-  VA : 'Virtual Account (tài khoản ảo)',
-
-}as const;
+export const paymentMethodType = {
+  '': 'Tất cả phương thức',
+  ...PAYMENT_METHOD_LABELS
+} as const
 export const cardTypeType ={
   VISA : 'VISA',
   NAPAS : 'Napas',
@@ -91,4 +87,3 @@ export const statusType ={
   INACTIVE :'Không hoạt động',
 }as const;
 export type FeeAssignmentResponse = ApiResponse<FeeAssignResponse>
-

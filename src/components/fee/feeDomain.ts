@@ -23,8 +23,8 @@ export interface FeeDomainEntry {
 export const FEE_DOMAIN_ENTRIES: readonly FeeDomainEntry[] = [
   {
     value: FeeDomain.BANK,
-    label: 'Phí bank',
-    hint: 'Biểu phí phía ngân hàng, dùng để đối soát',
+    label: 'Phí Bank/NCC',
+    hint: 'Chi phí đầu vào từ ngân hàng hoặc nhà cung cấp, dùng để đối soát',
     Icon: BankIcon
   },
   {

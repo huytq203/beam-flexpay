@@ -6,13 +6,14 @@ const valuesFor = (serviceType: string) =>
 
 describe('phương thức giao dịch theo loại giao dịch', () => {
   it.each([
-    ['EWALLET_DEPOSIT', ['ATM', 'LINKED_ACCOUNT']],
-    ['EWALLET_WITHDRAWAL', ['ATM', 'BANK_TRANSFER']],
-    ['EWALLET_TRANSFER_INTERNAL', ['WALLET_BALANCE']],
-    ['EWALLET_TRANSFER_EXTERNAL', ['BANK_TRANSFER']],
+    ['EWALLET_DEPOSIT', ['', 'ATM', 'LINKED_ACCOUNT']],
+    ['EWALLET_WITHDRAWAL', ['', 'ATM', 'BANK_TRANSFER']],
+    ['EWALLET_TRANSFER_INTERNAL', ['', 'WALLET_BALANCE']],
+    ['EWALLET_TRANSFER_EXTERNAL', ['', 'BANK_TRANSFER']],
     [
       'EWALLET_CASHBACK',
       [
+        '',
         'WALLET_BALANCE',
         'ATM',
         'LINKED_ACCOUNT',
@@ -20,14 +21,18 @@ describe('phương thức giao dịch theo loại giao dịch', () => {
         'CC'
       ]
     ],
-    ['MERCHANT_VA_BILL_COLLECTION', ['VA']],
-    ['PAYOUT_BANK_TRANSFER', ['BANK_TRANSFER']]
+    ['MERCHANT_VA_BILL_COLLECTION', ['', 'VA']],
+    ['PAYOUT_BANK_TRANSFER', ['', 'BANK_TRANSFER']]
   ])('%s trả đúng tập phương thức', (serviceType, expected) => {
     expect(valuesFor(serviceType)).toEqual(expected)
   })
 
   it('chưa có phương thức khi chưa chọn loại giao dịch', () => {
     expect(valuesFor('')).toEqual([])
+  })
+
+  it('luôn cho phép chọn tất cả phương thức sau khi chọn loại giao dịch', () => {
+    expect(valuesFor('EWALLET_DEPOSIT')[0]).toBe('')
   })
 
   it('không hiển thị mã chưa được backend phí hỗ trợ', () => {

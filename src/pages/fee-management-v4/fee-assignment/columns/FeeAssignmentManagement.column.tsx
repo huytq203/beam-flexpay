@@ -4,12 +4,13 @@ import {
   UnlockOutlined
 } from '@components/icons'
 import { ButtonComponent, FeeAssignmentApprovalAction, FeeDirectionBadge, TooltipComponent } from '@components/index'
-import { FeeAssignment, paymentMethodType } from '@pages/fee-management-v4/fee-assignment/constants/feeAssignment'
+import { FeeAssignment } from '@pages/fee-management-v4/fee-assignment/constants/feeAssignment'
 import { ColumnsType } from 'antd/es/table'
 import { getEnumLabel } from '@pages/fee-management-v4/fee-assignment/utils/FeeManagement.utils'
 import { serviceType } from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { STATUS_CONFIG } from '../constants/FeeAssignment.constant'
+import { getFeeLabel, PAYMENT_METHOD_LABELS } from '@constants/feeLabels'
 import { TYPEDATE } from '@constants/date.constant'
 import dayjs from 'dayjs'
 import { PATHS } from '@constants/pathConstant'
@@ -55,8 +56,8 @@ export const getFeeAssignColumn = ({
       dataIndex: 'paymentMethod',
       align: 'center' as const,
 
-      render: (value) =>
-        (paymentMethodType[value as keyof typeof paymentMethodType] || '--')
+      render: (value: string | null) =>
+        getFeeLabel(value, PAYMENT_METHOD_LABELS, 'Tất cả')
     },
     {
       title: 'Ngân hàng',

@@ -9,6 +9,12 @@ import type {
   FeeComponentFormValues,
   FeeConfigFormValues
 } from '../schemas/feeConfig.schema'
+import {
+  getFeeBusinessCategories,
+  inferFeeBusinessCategory,
+  type FeeBusinessCategory
+} from '../constants/feeConfigFields'
+import { FeeBusinessCategoryTabs } from './FeeBusinessCategoryTabs'
 import { FeeComponentCard } from './FeeComponentCard'
 import { FeeComponentDialog } from './FeeComponentDialog'
 import { SectionHeading } from './SectionHeading'
@@ -42,6 +48,23 @@ export const FeeComponentList = ({
   const { successMess } = useMessage()
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [isAdding, setIsAdding] = useState(false)
+  const [selectedBusinessCategory, setSelectedBusinessCategory] =
+    useState<FeeBusinessCategory>(() =>
+      inferFeeBusinessCategory(
+        feeDomain,
+        fields as unknown as FeeComponentFormValues[]
+      )
+    )
+  const allowedBusinessCategories = getFeeBusinessCategories(feeDomain)
+  const businessCategory =
+    fields.length > 0
+      ? inferFeeBusinessCategory(
+          feeDomain,
+          fields as unknown as FeeComponentFormValues[]
+        )
+      : allowedBusinessCategories.includes(selectedBusinessCategory)
+        ? selectedBusinessCategory
+        : allowedBusinessCategories[0]
 
   const isOpen = isAdding || editingIndex !== null
   const editing =
@@ -81,6 +104,13 @@ export const FeeComponentList = ({
 
   return (
     <section>
+      <FeeBusinessCategoryTabs
+        value={businessCategory}
+        feeDomain={feeDomain}
+        disabled={readOnly || fields.length > 0}
+        onChange={setSelectedBusinessCategory}
+      />
+
       <SectionHeading
         hint='Mỗi thành phần là một khoản phí riêng cộng vào tổng. Thành phần tính dựa trên thành phần khác phải nằm dưới nó.'
         action={!readOnly ? (
@@ -103,8 +133,8 @@ export const FeeComponentList = ({
           </p>
           <p className='mx-auto mt-1 max-w-[52ch] text-[13px] text-muted-foreground'>
             Một chính sách cần ít nhất một thành phần thì mới tính ra được số
-            tiền. Thêm phí giao dịch trước, rồi thêm thuế giá trị gia tăng tính
-            trên nó nếu cần.
+            tiền. Chọn đúng loại phí của nhóm đang cấu hình; nếu có VAT, hãy
+            thêm khoản phí gốc trước rồi thêm VAT phía dưới.
           </p>
         </div>
       ) : (
@@ -134,6 +164,7 @@ export const FeeComponentList = ({
           initialValue={editing}
           precedingComponents={precedingComponents}
           feeDomain={feeDomain}
+          businessCategory={businessCategory}
           serviceType={serviceType}
           onSave={handleSave}
           onCancel={closeDialog}

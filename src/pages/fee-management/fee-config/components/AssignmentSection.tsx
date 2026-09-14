@@ -112,9 +112,8 @@ export const AssignmentSection = ({
         <FormSelect
           name='paymentMethod'
           control={control}
-          required
           label='Phương thức giao dịch'
-          placeholder='Chọn phương thức giao dịch'
+          placeholder='Tất cả phương thức'
           allowClear={false}
           options={[...paymentMethodOptions]}
           disabled={readOnly}

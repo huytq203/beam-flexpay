@@ -141,6 +141,8 @@ const FormFieldAssign = React.memo(({ control, isCreate, feeDomain, watch }: For
             name='paymentMethod'
             options={mapEnumToSelectOptions(paymentMethodType)}
             label={<span>Phương thức giao dịch </span>}
+            placeholder='Tất cả phương thức'
+            allowClear={false}
             className={'col-span-1'}
           />
           <FormSelect

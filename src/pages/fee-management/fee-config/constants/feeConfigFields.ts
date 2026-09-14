@@ -72,6 +72,81 @@ export const getDomainFieldRules = (domain: FeeDomain): DomainFieldRules =>
   DOMAIN_FIELD_RULES[domain]
 
 /**
+ * Nhóm nghiệp vụ chỉ dùng để dẫn dắt form; backend không có và không nhận
+ * trường này. Nó giới hạn enum componentType rộng của backend xuống đúng ba
+ * sản phẩm phí BA đang vận hành.
+ */
+export const FEE_BUSINESS_CATEGORY = {
+  BANK_PROVIDER: 'BANK_PROVIDER',
+  TRANSACTION_PROCESSING: 'TRANSACTION_PROCESSING',
+  PLATFORM: 'PLATFORM'
+} as const
+
+export type FeeBusinessCategory =
+  (typeof FEE_BUSINESS_CATEGORY)[keyof typeof FEE_BUSINESS_CATEGORY]
+
+interface FeeBusinessCategoryRule {
+  readonly label: string
+  readonly hint: string
+  readonly componentTypes: readonly string[]
+  readonly vatBaseComponentType: string | null
+}
+
+export const FEE_BUSINESS_CATEGORY_RULES: Readonly<
+  Record<FeeBusinessCategory, FeeBusinessCategoryRule>
+> = {
+  [FEE_BUSINESS_CATEGORY.BANK_PROVIDER]: {
+    label: 'Phí Bank/NCC',
+    hint: 'Chi phí đầu vào từ ngân hàng hoặc nhà cung cấp.',
+    componentTypes: ['BANK_FEE', 'VAT'],
+    vatBaseComponentType: 'BANK_FEE'
+  },
+  [FEE_BUSINESS_CATEGORY.TRANSACTION_PROCESSING]: {
+    label: 'Phí xử lý giao dịch',
+    hint: 'Phí đầu ra theo giao dịch nạp, rút, chuyển, thu hộ hoặc chi hộ.',
+    componentTypes: ['TRANSACTION_FEE', 'VAT'],
+    vatBaseComponentType: 'TRANSACTION_FEE'
+  },
+  [FEE_BUSINESS_CATEGORY.PLATFORM]: {
+    label: 'Phí nền tảng',
+    hint: 'Phí nền tảng dự kiến thu từ ví hoặc ĐVCNTT.',
+    componentTypes: ['PLATFORM_FEE'],
+    vatBaseComponentType: null
+  }
+}
+
+export const getFeeBusinessCategories = (
+  domain: FeeDomain
+): readonly FeeBusinessCategory[] =>
+  domain === FeeDomain.BANK
+    ? [FEE_BUSINESS_CATEGORY.BANK_PROVIDER]
+    : [
+        FEE_BUSINESS_CATEGORY.TRANSACTION_PROCESSING,
+        FEE_BUSINESS_CATEGORY.PLATFORM
+      ]
+
+export const getComponentTypesForCategory = (
+  category: FeeBusinessCategory
+): readonly string[] => FEE_BUSINESS_CATEGORY_RULES[category].componentTypes
+
+export const getVatBaseForCategory = (
+  category: FeeBusinessCategory
+): string | null =>
+  FEE_BUSINESS_CATEGORY_RULES[category].vatBaseComponentType
+
+/** Suy nhóm khi mở bản ghi cũ mà không cần thêm field vào API backend. */
+export const inferFeeBusinessCategory = (
+  domain: FeeDomain,
+  components: readonly { componentType: string }[]
+): FeeBusinessCategory => {
+  if (domain === FeeDomain.BANK) return FEE_BUSINESS_CATEGORY.BANK_PROVIDER
+  if (components.some(({ componentType }) => componentType === 'PLATFORM_FEE')) {
+    return FEE_BUSINESS_CATEGORY.PLATFORM
+  }
+  return FEE_BUSINESS_CATEGORY.TRANSACTION_PROCESSING
+}
+
+/**
  * Số nhỏ thắng khi hai chính sách cùng phủ một giao dịch. `FeePolicyCreateRequest`
  * mặc định 1000 nếu không gửi, nên form luôn phải điền tường minh.
  */
@@ -120,8 +195,14 @@ export const BACKEND_PAYMENT_METHODS = [
 export type BackendPaymentMethod = (typeof BACKEND_PAYMENT_METHODS)[number]
 
 export interface PaymentMethodOption {
-  readonly value: BackendPaymentMethod
+  /** Chuỗi rỗng được bỏ khỏi payload và mang nghĩa áp dụng cho mọi phương thức. */
+  readonly value: BackendPaymentMethod | ''
   readonly label: string
+}
+
+export const ALL_PAYMENT_METHOD_OPTION: PaymentMethodOption = {
+  value: '',
+  label: 'Tất cả phương thức'
 }
 
 /**
@@ -182,7 +263,12 @@ export const PAYMENT_METHOD_OPTIONS_BY_SERVICE_TYPE: Readonly<
 export const getPaymentMethodOptions = (
   serviceType: string | null | undefined
 ): readonly PaymentMethodOption[] =>
-  (serviceType && PAYMENT_METHOD_OPTIONS_BY_SERVICE_TYPE[serviceType]) || []
+  serviceType && PAYMENT_METHOD_OPTIONS_BY_SERVICE_TYPE[serviceType]
+    ? [
+        ALL_PAYMENT_METHOD_OPTION,
+        ...PAYMENT_METHOD_OPTIONS_BY_SERVICE_TYPE[serviceType]
+      ]
+    : []
 
 export const isPaymentMethodAllowed = (
   serviceType: string | null | undefined,
@@ -211,11 +297,10 @@ export const PAYER_TYPE_LABEL: Readonly<Record<string, string>> =
   Object.fromEntries(PAYER_TYPE_OPTIONS.map((o) => [o.value, o.label]))
 
 /**
- * Thuế giá trị gia tăng luôn tính trên phí giao dịch, không tính trên số tiền
- * giao dịch, và chỉ nhập phần trăm.
+ * Thuế giá trị gia tăng luôn tính trên khoản phí gốc của nhóm (phí Bank/NCC
+ * hoặc phí giao dịch), không tính trực tiếp trên số tiền và chỉ nhập phần trăm.
  */
 export const VAT_COMPONENT_TYPE = 'VAT'
-export const VAT_BASE_COMPONENT_TYPE = 'TRANSACTION_FEE'
 
 /**
  * Loại chủ thể gửi kèm khi bản gán chỉ định đúng một ví.

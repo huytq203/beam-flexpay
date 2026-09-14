@@ -38,22 +38,24 @@ const FeeConfigForm = ({
     useFeeConfigSubmit(snapshot)
   const { control, handleSubmit, watch, formState } = form
   const feeDomain = watch('feeDomain')
+  const hasComponents = watch('components').length > 0
 
   return (
     <form onSubmit={handleSubmit(submit)}>
-     <ButtonComponent
-            htmlType='button'
-            type='default'
-            className='mb-3!'
-            content='Về danh sách'
-            icon={<ArrowLeftOutlined />}
-            onClick={() => navigate(PATHS.FEE_V4.POLICY_LIST)}
-          />
+      <ButtonComponent
+        htmlType='button'
+        type='default'
+        className='mb-3!'
+        content='Về danh sách'
+        icon={<ArrowLeftOutlined />}
+        onClick={() => navigate(PATHS.FEE_V4.POLICY_LIST)}
+      />
       <CardComponent className='mb-3!'>
         <div className='flex flex-wrap items-start justify-between gap-3 border-b border-border pb-4'>
           <p className='max-w-[70ch] text-[13px] text-muted-foreground'>
-            Thông tin chính sách, đối tượng áp dụng và các thành phần phí lưu
-            cùng một lần. Sai một chính sách là sai phí trên toàn hệ thống.
+            {readOnly
+              ? 'Đang xem chi tiết chính sách'
+              : 'Thông tin chính sách, đối tượng áp dụng và các thành phần phí lưu cùng một lần. Sai một chính sách là sai phí trên toàn hệ thống.'}
           </p>
           <span className='inline-flex items-center rounded-[3px] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-line-fee-ink ring-1 ring-inset ring-line-fee'>
             Kiểm soát
@@ -63,13 +65,18 @@ const FeeConfigForm = ({
         <FeeDomainTabs
           value={feeDomain}
           onChange={changeDomain}
-          disabled={isEdit || readOnly}
+          disabled={isEdit || readOnly || hasComponents}
           className='mt-4'
         />
         {isEdit && (
           <p className='mt-2 text-[13px] text-muted-foreground'>
             Miền phí đã chốt khi tạo và không đổi được. Cần miền khác thì tạo
             chính sách mới.
+          </p>
+        )}
+        {!isEdit && !readOnly && hasComponents && (
+          <p className='mt-2 text-[13px] text-muted-foreground'>
+            Xoá hết thành phần phí để đổi miền phí.
           </p>
         )}
       </CardComponent>

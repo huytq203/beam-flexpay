@@ -8,10 +8,12 @@ import { getExecutablePayer } from '@utils/fee-execution'
 import { useMemo } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import {
+  getComponentTypesForCategory,
+  getVatBaseForCategory,
   PAYER_TYPE_LABEL,
   PAYER_TYPE_OPTIONS,
-  VAT_BASE_COMPONENT_TYPE,
-  VAT_COMPONENT_TYPE
+  VAT_COMPONENT_TYPE,
+  type FeeBusinessCategory
 } from '../constants/feeConfigFields'
 import {
   CalculationMethod,
@@ -35,15 +37,12 @@ interface FeeComponentDialogProps {
   /** Các thành phần đứng trước — chỉ chúng làm cơ sở tính được. */
   precedingComponents: readonly FeeComponentFormValues[]
   feeDomain: FeeDomain
+  businessCategory: FeeBusinessCategory
   /** Loại giao dịch của chính sách, dùng để suy người chịu phí mặc định. */
   serviceType: string
   onSave: (value: FeeComponentFormValues) => void
   onCancel: () => void
 }
-
-const COMPONENT_TYPE_OPTIONS = Object.entries(COMPONENT_TYPE_LABELS).map(
-  ([value, label]) => ({ value, label })
-)
 
 const CALCULATION_METHOD_VALUES = [
   CalculationMethod.DIRECT,
@@ -71,6 +70,7 @@ export const FeeComponentDialog = ({
   initialValue,
   precedingComponents,
   feeDomain,
+  businessCategory,
   serviceType,
   onSave,
   onCancel
@@ -104,13 +104,23 @@ export const FeeComponentDialog = ({
   const isVat = componentType === VAT_COMPONENT_TYPE
   const isBank = feeDomain === FeeDomain.BANK
   const tiered = usesTiers(calculationMethod)
+  const vatBaseComponentType = getVatBaseForCategory(businessCategory)
+
+  const componentTypeOptions = getComponentTypesForCategory(
+    businessCategory
+  ).map((value) => ({
+    value,
+    label: COMPONENT_TYPE_LABELS[value] ?? value
+  }))
 
   const baseTypes = collectBaseTypes(precedingComponents)
   const hasPrecedingComponents = baseTypes.length > 0
-  const hasTransactionFeeAbove = baseTypes.includes(VAT_BASE_COMPONENT_TYPE)
+  const hasVatBaseAbove = Boolean(
+    vatBaseComponentType && baseTypes.includes(vatBaseComponentType)
+  )
 
   /**
-   * Thuế giá trị gia tăng luôn tính trên phí giao dịch. Khoá luôn ô cơ sở tính
+   * Thuế giá trị gia tăng luôn tính trên khoản phí gốc của nhóm. Khoá luôn ô cơ sở tính
    * thay vì để người dùng chọn rồi báo lỗi ở bước lưu.
    *
    * Chỉ trỏ sẵn sang phí giao dịch khi nó thật sự đứng phía trên. Gán một tham
@@ -118,11 +128,17 @@ export const FeeComponentDialog = ({
    * người dùng không sửa được.
    */
   const handleComponentTypeChange = (next: string | number) => {
-    if (next !== VAT_COMPONENT_TYPE) return
+    if (next !== VAT_COMPONENT_TYPE) {
+      if (componentType === VAT_COMPONENT_TYPE) {
+        setValue('baseOn', 'AMOUNT', { shouldValidate: true })
+        setValue('baseComponentType', null, { shouldValidate: true })
+      }
+      return
+    }
     setValue('baseOn', 'FEE_COMPONENT', { shouldValidate: true })
     setValue(
       'baseComponentType',
-      hasTransactionFeeAbove ? VAT_BASE_COMPONENT_TYPE : null,
+      hasVatBaseAbove ? vatBaseComponentType : null,
       { shouldValidate: true }
     )
     setValue('calculationMethod', CalculationMethod.DIRECT)
@@ -130,7 +146,7 @@ export const FeeComponentDialog = ({
   }
 
   const allowedBaseTypes = isVat
-    ? baseTypes.filter((type) => type === VAT_BASE_COMPONENT_TYPE)
+    ? baseTypes.filter((type) => type === vatBaseComponentType)
     : baseTypes
 
   const baseTypeOptions = allowedBaseTypes.map((type) => {
@@ -187,7 +203,7 @@ export const FeeComponentDialog = ({
               label='Loại phí'
               placeholder='Chọn loại phí'
               allowClear={false}
-              options={COMPONENT_TYPE_OPTIONS}
+              options={componentTypeOptions}
               onChange={handleComponentTypeChange}
               className='col-span-12 flex flex-col md:col-span-6'
             />
@@ -208,10 +224,13 @@ export const FeeComponentDialog = ({
             />
             {isVat && (
               <p className='col-span-12 text-[13px] text-muted-foreground'>
-                Thuế giá trị gia tăng luôn tính trên phí giao dịch, không tính
-                trên số tiền giao dịch.
-                {!hasTransactionFeeAbove &&
-                  ' Thêm một thành phần phí giao dịch phía trên trước đã.'}
+                Thuế giá trị gia tăng luôn tính trên{' '}
+                {vatBaseComponentType
+                  ? COMPONENT_TYPE_LABELS[vatBaseComponentType]?.toLowerCase()
+                  : 'khoản phí gốc'}
+                , không tính trực tiếp trên số tiền giao dịch.
+                {!hasVatBaseAbove &&
+                  ' Thêm khoản phí gốc phía trên trước đã.'}
               </p>
             )}
             {baseOn === 'FEE_COMPONENT' && (

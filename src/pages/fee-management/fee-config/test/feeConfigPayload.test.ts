@@ -139,9 +139,18 @@ describe('toAssignmentRequest', () => {
     expect(request.paymentMethod).toBe('ATM')
   })
 
+  it('không gửi paymentMethod khi chọn tất cả phương thức', () => {
+    const request = toAssignmentRequest(
+      baseForm({ paymentMethod: '' }),
+      'policy-1'
+    )
+
+    expect(request.paymentMethod).toBeUndefined()
+  })
+
   it('gửi cặp chủ thể khi có chọn ví', () => {
     const request = toAssignmentRequest(
-      baseForm({ subjectId: 'owner-1' }),
+      baseForm({ assignmentScope: 'SUBJECT', subjectId: 'owner-1' }),
       'policy-1'
     )
     expect(request.subjectType).toBe('USER')
@@ -157,7 +166,10 @@ describe('toAssignmentRequest', () => {
 
   it('gửi phân khúc khi có chọn, bỏ hẳn trường khi để trống', () => {
     expect(
-      toAssignmentRequest(baseForm({ customerGroup: 'VIP' }), 'policy-1')
+      toAssignmentRequest(
+        baseForm({ assignmentScope: 'SEGMENT', customerGroup: 'VIP' }),
+        'policy-1'
+      )
         .customerGroup
     ).toBe('VIP')
     expect(
