@@ -68,7 +68,6 @@ export const PolicyGeneralSection = ({
         <FormSelect
           name='priority'
           control={control}
-          required
           label='Mức độ ưu tiên'
           placeholder='Chọn mức ưu tiên'
           allowClear={false}

@@ -12,6 +12,7 @@ export  interface props {
  
 export  const statusMap: Record<string, { color: string; label: string }> = {
     VERIFIED: { color: 'success', label: 'Đã xác thực' },
+    COMPLETED: { color: 'success', label: 'Thành công' },
     PENDING: { color: 'warning', label: 'Chờ duyệt' },
     IN_PROGRESS: { color: 'processing', label: 'Đang xử lý' },
     REJECTED: { color: 'error', label: 'Từ chối' },

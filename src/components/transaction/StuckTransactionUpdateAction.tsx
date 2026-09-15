@@ -4,7 +4,10 @@ import { ArrowsCounterClockwiseIcon } from '@components/icons'
 import { PERMISSION, useAccess } from '@/app/permissions'
 import { useMessage } from '@hooks/useMessage'
 import { useUpdateStuckTransactionStatusMutation } from '@services/apiStuckTransaction'
-import { useGetWithdrawalByTransactionCodeQuery } from '@services/apiJournal'
+import {
+  useGetWithdrawalByTransactionCodeQuery,
+  useLazyGetWithdrawalByTransactionCodeQuery
+} from '@services/apiJournal'
 import {
   canUpdateStuckTransaction,
   isStuckJournalStatus
@@ -47,20 +50,47 @@ export const StuckTransactionUpdateAction = ({
   const { successMess, errorMess } = useMessage()
   const code = transactionCode ?? ''
   const canAccess = has(PERMISSION.EWALLET_FULL)
+  const [readWithdrawal, { isFetching: isCheckingWithdrawal }] =
+    useLazyGetWithdrawalByTransactionCodeQuery()
 
-  // Chỉ cần trạng thái, không cần cửa sổ theo dõi như WithdrawalDecisionPanel —
-  // hai component đọc chung một cache entry nên đây không phải request thứ hai.
+  // Trong detail, đọc cache đã nạp sẵn. Ở bảng compact thì trì hoãn request
+  // đến lúc bấm icon để không gọi `/withdrawals` cho mọi dòng đang hiển thị.
   const { data: withdrawal } = useGetWithdrawalByTransactionCodeQuery(code, {
     skip:
       !code ||
       !canAccess ||
+      compact ||
       !isStuckJournalStatus(journalStatus) ||
-      transactionType !== CASH_OUT
+      transactionType !== CASH_OUT,
+    refetchOnMountOrArgChange: false
   })
   const [updateStatus, { isLoading }] = useUpdateStuckTransactionStatusMutation()
 
   if (!code || !canAccess) return null
-  if (!canUpdateStuckTransaction(journalStatus, withdrawal?.status)) return null
+  if (!isStuckJournalStatus(journalStatus)) return null
+  if (!compact && !canUpdateStuckTransaction(journalStatus, withdrawal?.status)) {
+    return null
+  }
+
+  const handleOpen = async (): Promise<void> => {
+    if (compact && transactionType === CASH_OUT) {
+      const latestWithdrawal = await readWithdrawal(code)
+        .unwrap()
+        .catch(() => null)
+
+      if (!latestWithdrawal) {
+        errorMess('Không đọc được trạng thái lệnh rút. Vui lòng thử lại.')
+        return
+      }
+
+      if (!canUpdateStuckTransaction(journalStatus, latestWithdrawal.status)) {
+        errorMess('Lệnh rút đang chờ phê duyệt, không thể cập nhật giao dịch treo.')
+        return
+      }
+    }
+
+    setIsOpen(true)
+  }
 
   const handleSubmit = async (
     values: StuckTransactionUpdateFormValues
@@ -95,7 +125,8 @@ export const StuckTransactionUpdateAction = ({
       className={className}
       content={compact ? undefined : actionLabel}
       icon={<ArrowsCounterClockwiseIcon size={16} />}
-      onClick={() => setIsOpen(true)}
+      loading={compact && isCheckingWithdrawal}
+      onClick={() => void handleOpen()}
     />
   )
 

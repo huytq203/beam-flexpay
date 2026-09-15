@@ -1,4 +1,4 @@
-import { ButtonComponent, CardComponent, Input } from '@components/index'
+import { ButtonComponent, CardComponent } from '@components/index'
 import { ClockIcon, WarningIcon } from '@components/icons'
 import BusinessPesonal from './BusinessPesonal'
 import { genderMap } from '../types/ConfirmEKYC.type'
@@ -15,6 +15,7 @@ interface Props {
 
 const HISTORY_STATUS_CLASS: Record<string, string> = {
   VERIFIED: 'border-green-300 bg-green-50 text-green-800',
+  COMPLETED: 'border-green-300 bg-green-50 text-green-800',
   IN_PROGRESS: 'border-blue-300 bg-blue-50 text-blue-800',
   PENDING: 'border-amber-300 bg-amber-50 text-amber-800',
   REJECTED: 'border-red-300 bg-red-50 text-red-800',
@@ -24,6 +25,7 @@ const HISTORY_STATUS_CLASS: Record<string, string> = {
 
 const STATUS_LABEL: Record<string, string> = {
   VERIFIED: 'Đã xác thực',
+  COMPLETED: 'Thành công',
   IN_PROGRESS: 'Đang xử lý',
   PENDING: 'Chờ xử lý',
   REJECTED: 'Từ chối',
@@ -148,33 +150,32 @@ const ContenModalConfirm = ({
         <div className='flex min-w-0 flex-col rounded-md border p-2'>
           <BusinessPesonal />
         </div>
-        <div className='min-w-0 rounded-md border'>
-          <div className='bg-gray-100 p-3'>
-            <p className="font-medium">Dữ liệu trích xuất (OCR)</p>
+        <section className='min-w-0 overflow-hidden rounded-md border border-slate-200'>
+          <div className='border-b border-slate-200 bg-slate-50 px-3 py-2.5'>
+            <h2 className='font-medium text-slate-900'>Dữ liệu trích xuất (OCR)</h2>
           </div>
-          <div className='grid grid-cols-1 gap-1 py-5 sm:grid-cols-2'>
-            {ocrFields.map((item, index) => (
-              <div key={index} className='col-span-1 mx-2'>
-                <span className="text-[12px] text-gray-500">{item.label}</span>
-                <Input
-                  readOnly
-                  value={item.value ?? '—'}
-                />
+          <dl className='grid grid-cols-1 gap-x-6 gap-y-4 p-4 sm:grid-cols-2'>
+            {ocrFields.map((item) => (
+              <div key={item.label} className='min-w-0'>
+                <dt className='text-xs text-slate-500'>{item.label}</dt>
+                <dd className='mt-1 break-words text-sm font-medium text-slate-900'>
+                  {item.value ?? '—'}
+                </dd>
               </div>
             ))}
-            {addressFields.map((item, index) => (
-              <div key={`addr-${index}`} className='mx-2 sm:col-span-2'>
-                <span className="text-[12px] text-gray-500">{item.label}</span>
-                <textarea
-                  readOnly
-                  rows={2}
-                  value={item.value ?? '—'}
-                  className="w-full border border-gray-300 rounded-md px-3 py-1.5  bg-white resize-none focus:outline-hidden"
-                />
+            {addressFields.map((item) => (
+              <div
+                key={item.label}
+                className='min-w-0 border-t border-slate-200 pt-4 sm:col-span-2'
+              >
+                <dt className='text-xs text-slate-500'>{item.label}</dt>
+                <dd className='mt-1 whitespace-pre-line break-words text-sm font-medium leading-5 text-slate-900'>
+                  {item.value ?? '—'}
+                </dd>
               </div>
             ))}
-          </div>
-        </div>
+          </dl>
+        </section>
       </div>
       <div className='mt-3 overflow-hidden rounded-md border border-slate-200'>
         <div className='flex items-center justify-between gap-3 border-b border-slate-200 bg-slate-50 px-3 py-2.5'>

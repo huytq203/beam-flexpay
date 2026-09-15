@@ -86,6 +86,7 @@ export const feeComponentFormSchema = z
     baseComponentType: z.string().nullable(),
     calculationMethod: z.string().min(1, 'Chọn công thức tính'),
     payerType: z.string().min(1, 'Chọn người chịu phí'),
+    beneficiaryType: z.string().min(1, 'Chọn người hưởng phí'),
     fixedAmount: money,
     percentage,
     minFee: money,
@@ -175,6 +176,49 @@ export const feeComponentFormSchema = z
           message: `Giá trị đến phải từ ${start} trở lên`
         })
       }
+    })
+  })
+
+export const DUPLICATE_FEE_COMPONENT_MESSAGE =
+  'Tổ hợp Loại phí, Người chịu và Người hưởng đã tồn tại'
+
+type FeeComponentIdentity = Pick<
+  z.infer<typeof feeComponentFormSchema>,
+  'key' | 'componentType' | 'payerType' | 'beneficiaryType'
+>
+
+/**
+ * Từng trường riêng lẻ có thể lặp lại. Một thành phần chỉ bị xem là trùng khi
+ * giống hệt cả Loại phí, Người chịu và Người hưởng. Khi sửa, bỏ qua chính thành
+ * phần đang mở để tổ hợp hiện tại của nó vẫn hợp lệ.
+ */
+export const createFeeComponentFormSchema = (
+  existingComponents: readonly FeeComponentIdentity[] = [],
+  currentComponentKey?: string
+) =>
+  feeComponentFormSchema.superRefine((component, ctx) => {
+    const isDuplicate = existingComponents.some(
+      (existing) =>
+        existing.key !== currentComponentKey &&
+        existing.componentType === component.componentType &&
+        existing.payerType === component.payerType &&
+        existing.beneficiaryType === component.beneficiaryType
+    )
+
+    if (!isDuplicate) return
+
+    const duplicateFields = [
+      'componentType',
+      'payerType',
+      'beneficiaryType'
+    ] as const
+
+    duplicateFields.forEach((path) => {
+      ctx.addIssue({
+        code: 'custom',
+        path: [path],
+        message: DUPLICATE_FEE_COMPONENT_MESSAGE
+      })
     })
   })
 

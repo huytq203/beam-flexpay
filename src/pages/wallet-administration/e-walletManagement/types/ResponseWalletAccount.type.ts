@@ -87,4 +87,7 @@ export interface FormSearchValues {
   enabled?: string
   walletType?: string
   currency?: string
+  /** Lọc theo thời gian tạo ví (createdAt), ISO date-time, bao gồm cả 2 đầu mút. */
+  fromDate?: string
+  toDate?: string
 }

@@ -1,4 +1,4 @@
-import { FormInput, FormSelect } from '@components/form'
+import { FormInput, FormLabelHint, FormSelect } from '@components/form'
 import type { FeeDomain } from '@components/fee/feeDomain'
 import { BroomIcon, MagnifyingGlassIcon } from '@components/icons'
 import { ButtonComponent, FeeServiceTypeTabs } from '@components/index'
@@ -19,6 +19,7 @@ const APPLIED_TARGET_OPTIONS = [
 
 export interface FeePolicyFilterValues {
   keyword: string
+  subjectKeyword: string
   status: string
   appliedTarget: string
 }
@@ -63,10 +64,16 @@ export const FeePolicyFilterBar = ({
   const syncedValues = useMemo(
     () => ({
       keyword: values.keyword,
+      subjectKeyword: values.subjectKeyword,
       status: values.status,
       appliedTarget: values.appliedTarget
     }),
-    [values.appliedTarget, values.keyword, values.status]
+    [
+      values.appliedTarget,
+      values.keyword,
+      values.status,
+      values.subjectKeyword
+    ]
   )
 
   const { control, handleSubmit, reset } = useForm<FeePolicyFilterValues>({
@@ -82,7 +89,7 @@ export const FeePolicyFilterBar = ({
   const appliedTargetOptions = APPLIED_TARGET_OPTIONS
 
   const handleReset = () => {
-    reset({ keyword: '', status: '', appliedTarget: '' })
+    reset({ keyword: '', subjectKeyword: '', status: '', appliedTarget: '' })
     onReset()
   }
 
@@ -113,6 +120,20 @@ export const FeePolicyFilterBar = ({
           placeholder='Nhập tên chính sách'
           className='col-span-12 flex flex-col md:col-span-3'
         />
+        <FormInput
+          name='subjectKeyword'
+          control={control}
+          label={
+            <FormLabelHint
+              label='SĐT người dùng'
+              hint='Khớp ví riêng hoặc phân khúc người đó thuộc về'
+            />
+          }
+          placeholder='Nhập số điện thoại'
+          inputMode='tel'
+          maxLength={100}
+          className='col-span-12 flex flex-col md:col-span-3'
+        />
         <FormSelect
           name='status'
           control={control}
@@ -131,13 +152,15 @@ export const FeePolicyFilterBar = ({
           options={appliedTargetOptions}
           className='col-span-12 flex flex-col md:col-span-3'
         />
-        <div className='col-span-12 flex flex-col gap-2 md:col-span-3 md:flex-row md:items-end'>
+      </form>
+        <div className='col-span-12'>
+          <div className="flex justify-end gap-2 items-end">
           <ButtonComponent
             htmlType='submit'
             form='feePolicyFilter'
             content='Tìm'
             icon={<MagnifyingGlassIcon size={16} weight='bold' aria-hidden />}
-            className='flex-1'
+            // className='flex-1'
           />
           <ButtonComponent
             htmlType='button'
@@ -145,10 +168,10 @@ export const FeePolicyFilterBar = ({
             content='Xoá lọc'
             onClick={handleReset}
             icon={<BroomIcon size={16} weight='bold' aria-hidden />}
-            className='flex-1'
+            // className='flex-1'
           />
+          </div>
         </div>
-      </form>
     </div>
   )
 }

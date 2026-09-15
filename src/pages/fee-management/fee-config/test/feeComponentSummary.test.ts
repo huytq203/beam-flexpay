@@ -18,6 +18,7 @@ const component = (
   baseComponentType: null,
   calculationMethod: CalculationMethod.DIRECT,
   payerType: 'USER',
+  beneficiaryType: 'SYSTEM',
   fixedAmount: 0,
   percentage: 0,
   minFee: 0,

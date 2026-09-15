@@ -12,7 +12,7 @@ import {
   PAYMENT_METHOD_LABELS,
   SERVICE_TYPE_LABELS
 } from '@constants/feeLabels'
-import { formatFeeLimit, formatTierRange } from '@utils/fee-format'
+import { formatFeeLimit } from '@utils/fee-format'
 import { formatUTCDateTimeByOffset, UTC_OFFSET_HOURS } from '@utils/helper-functions/date'
 import type { ColumnsType } from 'antd/es/table'
 
@@ -77,16 +77,7 @@ export const feeScheduleColumns: ColumnsType<FeeScheduleRow> = [
       </div>
     )
   },
-  {
-    title: 'Mức giao dịch (VND)',
-    align: 'right',
-    width: 180,
-    render: (_, record) => (
-      <span className='whitespace-nowrap tabular-nums'>
-        {formatTierRange(record.tierFrom, record.tierTo)}
-      </span>
-    )
-  },
+  
   {
     title: 'Công thức tính',
     dataIndex: 'formula',

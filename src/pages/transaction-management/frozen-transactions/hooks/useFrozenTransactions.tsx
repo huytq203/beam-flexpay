@@ -1,5 +1,10 @@
+import { useExportCsv } from '@hooks/useExportCsv'
 import usePagination from '@hooks/usePagination'
 import { useUnfreezeApproval } from '@hooks/useUnfreezeApproval'
+import {
+  useExportFreezesMutation,
+  type ExportFreezesQuery
+} from '@services/apiExportCsv'
 import { useGetFreezesQuery, type FreezeSearchParams } from '@services/apiFreezes'
 import { FreezeItem } from '@type/freeze.type'
 import { useMemo, useState } from 'react'
@@ -36,6 +41,19 @@ const useFrozenTransactions = () => {
     setPage(1)
   }
 
+  const [triggerExport, { reset: resetExport }] = useExportFreezesMutation()
+  const { exportFile, isExporting } = useExportCsv({
+    trigger: triggerExport,
+    reset: resetExport,
+    filenamePrefix: 'giao-dich-dong-bang'
+  })
+
+  /** Endpoint xuất không nhận page/size — file lấy trọn bộ lọc đang áp, không theo trang. */
+  const handleExport = () => {
+    const exportParams: ExportFreezesQuery = filter
+    void exportFile(exportParams)
+  }
+
   const [isUnfreezeModalOpen, setIsUnfreezeModalOpen] = useState(false)
   const [selectedFreezeItem, setSelectedFreezeItem] = useState<FreezeItem | null>(null)
 
@@ -69,6 +87,8 @@ const useFrozenTransactions = () => {
     canApprove,
     openDecision,
     decisionDialogState: dialogState,
+    handleExport,
+    isExporting,
   }
 }
 

@@ -13,15 +13,12 @@ import {
   TooltipComponent
 } from '@components/index'
 import { SERVICE_TYPE_LABELS, getFeeLabel } from '@constants/feeLabels'
-import {
-  getCustomerSegmentName,
-  type CustomerSegmentNames
-} from '@hooks/useCustomerSegmentNames'
+import type { CustomerSegmentNames } from '@hooks/useCustomerSegmentNames'
 import type { FeePolicyRow } from '@pages/fee-management/fee-policy-list/hooks/useFeePolicyList'
 import type { AppliedTarget } from '@type/fee.type'
-import { Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
+import { AppliedTargetCell } from '../components/AppliedTargetCell'
 
 interface FeePolicyColumnArgs {
   onEdit: (id: string) => void
@@ -44,17 +41,6 @@ const PRIORITY_LABEL: Readonly<Record<number, string>> = {
   2: 'Trung bình',
   3: 'Thấp',
   4: 'Mặc định'
-}
-
-const getAppliedTargetLabel = (
-  target: AppliedTarget,
-  customerSegmentNames: CustomerSegmentNames
-): string => {
-  if (target.type === 'ALL') return 'Tất cả'
-  if (target.type === 'ACCOUNT') return `${target.count} ví riêng`
-  return target.code
-    ? getCustomerSegmentName(target.code, customerSegmentNames)
-    : 'Chưa gán'
 }
 
 export const getFeePolicyColumns = ({
@@ -101,19 +87,13 @@ export const getFeePolicyColumns = ({
   {
     title: 'Đối tượng áp dụng',
     dataIndex: 'appliedTargets',
-    width: 220,
-    render: (appliedTargets: AppliedTarget[] | undefined) =>
-      appliedTargets && appliedTargets.length > 0 ? (
-        <div className='flex flex-wrap gap-1'>
-          {appliedTargets.map((target, index) => (
-            <Tag key={`${target.type}-${target.code ?? index}`} className='m-0!'>
-              {getAppliedTargetLabel(target, customerSegmentNames)}
-            </Tag>
-          ))}
-        </div>
-      ) : (
-        <span className='text-muted-foreground'>Chưa gán</span>
-      )
+    width: 250,
+    render: (appliedTargets: AppliedTarget[] | undefined) => (
+      <AppliedTargetCell
+        targets={appliedTargets}
+        customerSegmentNames={customerSegmentNames}
+      />
+    )
   },
   {
     title: 'Mức ưu tiên',

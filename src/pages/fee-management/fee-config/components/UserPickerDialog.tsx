@@ -18,7 +18,7 @@ const USER_SEARCH_DEBOUNCE_MS = 600
 
 const columns: ColumnsType<ContentAccountWallet> = [
   {
-    title: 'Chủ ví',
+    title: 'Thành viên ví',
     dataIndex: 'ownerFullName',
     render: (fullName: string | null, row) => (
       <div className='flex flex-col gap-0.5'>

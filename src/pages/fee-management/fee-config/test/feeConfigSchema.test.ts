@@ -3,6 +3,8 @@ import { FeeDomain } from '@components/fee/feeDomain'
 import { getDomainFieldRules } from '../constants/feeConfigFields'
 import {
   CalculationMethod,
+  createFeeComponentFormSchema,
+  DUPLICATE_FEE_COMPONENT_MESSAGE,
   feeComponentFormSchema,
   feeConfigFormSchema
 } from '../schemas/feeConfig.schema'
@@ -14,6 +16,7 @@ const component = (overrides = {}) => ({
   baseComponentType: null,
   calculationMethod: CalculationMethod.DIRECT,
   payerType: 'USER',
+  beneficiaryType: 'SYSTEM',
   fixedAmount: 2000,
   percentage: 0,
   minFee: 0,
@@ -45,6 +48,51 @@ const errorPaths = (result: { success: boolean; error?: { issues: { path: Proper
   result.success ? [] : (result.error?.issues ?? []).map((issue) => issue.path.join('.'))
 
 describe('feeComponentFormSchema', () => {
+  describe('kiểm tra trùng tổ hợp định danh', () => {
+    const existingComponent = component({ key: 'existing-component' })
+
+    it('báo lỗi trên cả ba trường khi tổ hợp đã tồn tại', () => {
+      const result = createFeeComponentFormSchema([
+        existingComponent
+      ]).safeParse(component({ key: 'new-component' }))
+
+      expect(result.success).toBe(false)
+      if (result.success) return
+
+      expect(result.error.issues).toEqual(
+        expect.arrayContaining(
+          ['componentType', 'payerType', 'beneficiaryType'].map((field) =>
+            expect.objectContaining({
+              path: [field],
+              message: DUPLICATE_FEE_COMPONENT_MESSAGE
+            })
+          )
+        )
+      )
+    })
+
+    it.each([
+      ['componentType', 'SERVICE_FEE'],
+      ['payerType', 'MERCHANT'],
+      ['beneficiaryType', 'BANK']
+    ])('cho phép khi %s khác', (field, value) => {
+      const result = createFeeComponentFormSchema([
+        existingComponent
+      ]).safeParse(component({ key: 'new-component', [field]: value }))
+
+      expect(result.success).toBe(true)
+    })
+
+    it('bỏ qua chính thành phần đang sửa', () => {
+      const result = createFeeComponentFormSchema(
+        [existingComponent],
+        existingComponent.key
+      ).safeParse(existingComponent)
+
+      expect(result.success).toBe(true)
+    })
+  })
+
   it('bắt buộc có bậc phí khi chọn công thức bậc thang', () => {
     const result = feeComponentFormSchema.safeParse(
       component({ calculationMethod: CalculationMethod.FLAT_TIER })

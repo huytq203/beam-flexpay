@@ -8,35 +8,33 @@ import { useRef, useState } from 'react'
 
 const useHandle = () => {
     const [isDetailOpen, setIsDetailOpen] = useState(false)
-    const [detailData, setDetailData] = useState<UnifiedContentJournal>()
-    const [withdrawalDetail, setWithdrawalDetail] = useState<WithdrawalDetail>()
     const [loadingId, setLoadingId] = useState<string | null>(null)
     const loadingIdRef = useRef<string | null>(null)
-    const [getUnifiedById] = useLazyGetUnifiedByIdQuery()
-    const [getWithdrawalByTransactionCode] = useLazyGetWithdrawalByTransactionCodeQuery()
+    const [getUnifiedById, journalQuery] = useLazyGetUnifiedByIdQuery()
+    const [getWithdrawalByTransactionCode, withdrawalQuery] =
+        useLazyGetWithdrawalByTransactionCodeQuery()
+
+    // Đọc trực tiếp từ cache RTK Query để invalidation sau mutation cập nhật
+    // ngay nội dung modal, thay vì giữ một snapshot cũ trong local state.
+    const detailData: UnifiedContentJournal | undefined = journalQuery.data
+    const withdrawalDetail: WithdrawalDetail | undefined = withdrawalQuery.data
 
     const openDetail = async (id: string): Promise<void> => {
         if (loadingIdRef.current) return
 
         loadingIdRef.current = id
         setLoadingId(id)
-        setDetailData(undefined)
-        setWithdrawalDetail(undefined)
+        journalQuery.reset()
+        withdrawalQuery.reset()
         setIsDetailOpen(false)
 
         try {
-            const journalResult = await getUnifiedById(id)
-            if (!journalResult.data) return
+            const journal = await getUnifiedById(id).unwrap()
+            await getWithdrawalByTransactionCode(journal.transactionCode).unwrap()
 
-            const journal = journalResult.data
-            const withdrawalResult = await getWithdrawalByTransactionCode(
-                journal.transactionCode
-            )
-            if (!withdrawalResult.data) return
-
-            setDetailData(journal)
-            setWithdrawalDetail(withdrawalResult.data)
             setIsDetailOpen(true)
+        } catch {
+            // Giữ modal đóng khi chưa tải đủ hai nguồn dữ liệu chi tiết.
         } finally {
             loadingIdRef.current = null
             setLoadingId(null)
@@ -45,8 +43,8 @@ const useHandle = () => {
 
     const closeDetail = () => {
         setIsDetailOpen(false)
-        setDetailData(undefined)
-        setWithdrawalDetail(undefined)
+        journalQuery.reset()
+        withdrawalQuery.reset()
     }
 
     return {

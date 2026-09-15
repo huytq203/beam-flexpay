@@ -37,7 +37,9 @@ export const useWithdrawalStatus = (
 
   const { data, isLoading, isFetching, isError, refetch } =
     useGetWithdrawalByTransactionCodeQuery(transactionCode, {
-      skip: isDisabled
+      skip: isDisabled,
+      // Detail đã nạp cache trước khi mount panel; không gọi lại cùng endpoint.
+      refetchOnMountOrArgChange: false
     })
 
   const { isWatching } = useSettlementWatch(
@@ -47,6 +49,7 @@ export const useWithdrawalStatus = (
 
   useGetWithdrawalByTransactionCodeQuery(transactionCode, {
     skip: isDisabled || !isWatching,
+    refetchOnMountOrArgChange: false,
     pollingInterval: SETTLEMENT_POLL_INTERVAL_MS,
     skipPollingIfUnfocused: true
   })

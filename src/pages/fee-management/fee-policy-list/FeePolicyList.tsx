@@ -21,6 +21,7 @@ import { useFeePolicyStatus } from './hooks/useFeePolicyStatus'
 const FILTER_KEYS = [
   'feeDomain',
   'keyword',
+  'subjectKeyword',
   'status',
   'appliedTarget',
   'direction',
@@ -48,6 +49,7 @@ const FeePolicyList = () => {
     filters: {
       feeDomain,
       keyword: filters.keyword,
+      subjectKeyword: filters.subjectKeyword,
       serviceType: filters.serviceType,
       status: filters.status,
       appliedTarget: filters.appliedTarget
@@ -62,6 +64,7 @@ const FeePolicyList = () => {
     applyFilters({
       feeDomain: next,
       keyword: filters.keyword ?? null,
+      subjectKeyword: filters.subjectKeyword ?? null,
       status: filters.status ?? null,
       appliedTarget: filters.appliedTarget ?? null,
       direction: null,
@@ -88,6 +91,7 @@ const FeePolicyList = () => {
             serviceType={filters.serviceType}
             values={{
               keyword: filters.keyword ?? '',
+              subjectKeyword: filters.subjectKeyword ?? '',
               status: filters.status ?? '',
               appliedTarget: filters.appliedTarget ?? ''
             }}
@@ -95,6 +99,7 @@ const FeePolicyList = () => {
               applyFilters({
                 feeDomain,
                 keyword: filters.keyword ?? null,
+                subjectKeyword: filters.subjectKeyword ?? null,
                 status: filters.status ?? null,
                 appliedTarget: filters.appliedTarget ?? null,
                 direction: next.direction,
@@ -107,6 +112,7 @@ const FeePolicyList = () => {
                 direction: filters.direction ?? null,
                 serviceType: filters.serviceType ?? null,
                 keyword: values.keyword,
+                subjectKeyword: values.subjectKeyword,
                 status: values.status,
                 appliedTarget: values.appliedTarget
               })

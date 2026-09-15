@@ -4,8 +4,11 @@ import { WarningCircleIcon } from '@components/icons'
 import { CardComponent, ModalComponent } from '@components/index'
 import { COMPONENT_TYPE_LABELS } from '@constants/feeLabels'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { getExecutablePayer } from '@utils/fee-execution'
-import { useMemo } from 'react'
+import {
+  EXECUTABLE_BENEFICIARY,
+  getExecutablePayer
+} from '@utils/fee-execution'
+import { useEffect, useMemo } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import {
   getComponentTypesForCategory,
@@ -17,7 +20,8 @@ import {
 } from '../constants/feeConfigFields'
 import {
   CalculationMethod,
-  feeComponentFormSchema,
+  createFeeComponentFormSchema,
+  DUPLICATE_FEE_COMPONENT_MESSAGE,
   usesTiers,
   type FeeComponentFormValues
 } from '../schemas/feeConfig.schema'
@@ -36,6 +40,8 @@ interface FeeComponentDialogProps {
   initialValue: FeeComponentFormValues | null
   /** Các thành phần đứng trước — chỉ chúng làm cơ sở tính được. */
   precedingComponents: readonly FeeComponentFormValues[]
+  /** Toàn bộ thành phần hiện có, dùng để kiểm tra trùng tổ hợp định danh. */
+  existingComponents: readonly FeeComponentFormValues[]
   feeDomain: FeeDomain
   businessCategory: FeeBusinessCategory
   /** Loại giao dịch của chính sách, dùng để suy người chịu phí mặc định. */
@@ -57,6 +63,7 @@ const emptyComponent = (payerType: string): FeeComponentFormValues => ({
   baseComponentType: null,
   calculationMethod: CalculationMethod.DIRECT,
   payerType,
+  beneficiaryType: EXECUTABLE_BENEFICIARY,
   fixedAmount: null,
   percentage: null,
   minFee: null,
@@ -69,6 +76,7 @@ export const FeeComponentDialog = ({
   open,
   initialValue,
   precedingComponents,
+  existingComponents,
   feeDomain,
   businessCategory,
   serviceType,
@@ -88,9 +96,15 @@ export const FeeComponentDialog = ({
     [initialValue, executablePayer]
   )
 
-  const { control, handleSubmit, setValue, formState } =
+  const componentSchema = useMemo(
+    () =>
+      createFeeComponentFormSchema(existingComponents, initialValue?.key),
+    [existingComponents, initialValue?.key]
+  )
+
+  const { control, handleSubmit, setValue, trigger, formState } =
     useForm<FeeComponentFormValues>({
-      resolver: zodResolver(feeComponentFormSchema),
+      resolver: zodResolver(componentSchema),
       defaultValues,
       mode: 'onTouched'
     })
@@ -100,6 +114,29 @@ export const FeeComponentDialog = ({
   const baseComponentType = useWatch({ control, name: 'baseComponentType' })
   const calculationMethod = useWatch({ control, name: 'calculationMethod' })
   const payerType = useWatch({ control, name: 'payerType' })
+  const beneficiaryType = useWatch({ control, name: 'beneficiaryType' })
+  const hasDuplicateIdentityError = [
+    formState.errors.componentType,
+    formState.errors.payerType,
+    formState.errors.beneficiaryType
+  ].some((error) => error?.message === DUPLICATE_FEE_COMPONENT_MESSAGE)
+
+  /**
+   * Resolver kiểm tra trùng theo một tổ hợp ba trường. Sau lần submit đầu tiên,
+   * đổi một trường phải kiểm tra lại cả nhóm để không giữ lỗi cũ trên hai ô
+   * còn lại dù tổ hợp mới đã hợp lệ.
+   */
+  useEffect(() => {
+    if (!hasDuplicateIdentityError) return
+
+    void trigger(['componentType', 'payerType', 'beneficiaryType'])
+  }, [
+    beneficiaryType,
+    componentType,
+    hasDuplicateIdentityError,
+    payerType,
+    trigger
+  ])
 
   const isVat = componentType === VAT_COMPONENT_TYPE
   const isBank = feeDomain === FeeDomain.BANK
@@ -288,12 +325,21 @@ export const FeeComponentDialog = ({
               options={[...PAYER_TYPE_OPTIONS]}
               className='col-span-12 flex flex-col md:col-span-6'
             />
-            <div className='col-span-12 flex flex-col md:col-span-6'>
-              <p className='font-medium'>Người hưởng</p>
-              <p className='mt-2 text-[13px] font-semibold text-foreground'>
-                Hệ thống FlexPay
-              </p>
-            </div>
+            <FormSelect
+              name='beneficiaryType'
+              control={control}
+              required
+              label='Người hưởng'
+              allowClear={false}
+              disabled
+              options={[
+                {
+                  value: EXECUTABLE_BENEFICIARY,
+                  label: 'Hệ thống FlexPay'
+                }
+              ]}
+              className='col-span-12 flex flex-col md:col-span-6'
+            />
             {payerMismatch && executablePayer && (
               <p className='col-span-12 flex items-start gap-2 text-[13px] font-medium text-warning-strong'>
                 <WarningCircleIcon

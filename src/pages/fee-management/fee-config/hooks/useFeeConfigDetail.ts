@@ -4,6 +4,7 @@ import { useGetFeeComponentPoliciesByIdQuery } from '@services/apiFeeComponent'
 import { useLazyGetFeeComponentTierQuery } from '@services/apiFeeComponentTier'
 import { useGetFeePolicyByIdQuery } from '@services/apiFeePolicy.api'
 import type { FeeComponentTier, FeePolicyComponent } from '@type/fee.type'
+import { EXECUTABLE_BENEFICIARY } from '@utils/fee-execution'
 import { useEffect, useState } from 'react'
 import type {
   FeeComponentFormValues,
@@ -128,6 +129,7 @@ export const useFeeConfigDetail = (
       baseComponentType: component.baseComponentType,
       calculationMethod: component.calculationMethod,
       payerType: component.payerType,
+      beneficiaryType: EXECUTABLE_BENEFICIARY,
       // 0 và ô trống mang cùng một nghĩa với backend, nên nạp lại thành ô trống
       // để bản ghi cũ trông đúng như lúc chưa ai đặt khoản đó.
       fixedAmount: component.fixedAmount || null,

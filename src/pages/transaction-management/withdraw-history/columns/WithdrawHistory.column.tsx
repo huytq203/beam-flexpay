@@ -1,5 +1,5 @@
 import { EyeFilled } from '@components/icons'
-import { ButtonComponent, CopyableText, MaskText, TooltipComponent } from '@components/index'
+import { ButtonComponent, CopyableText, MaskText, StuckTransactionUpdateAction, TooltipComponent } from '@components/index'
 import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import StatusBadge from '@components/status-badge/StatusBadge'
@@ -146,12 +146,19 @@ const getColumn = ({ onViewDetail, isDetailLoading, loadingId }: ColumnProps): C
     {
         title: 'Thao tác',
         align: 'center',
-        width: 100,
+        width: 110,
         render(_, record) {
             return (
-                <div className="flex justify-center items-center">
+                <div className="flex justify-center items-center gap-2">
+                    <StuckTransactionUpdateAction
+                        compact
+                        transactionCode={record.transactionCode}
+                        transactionType={record.transactionType}
+                        journalStatus={record.status}
+                    />
                     <TooltipComponent title='Xem chi tiết'>
                         <ButtonComponent
+                            aria-label='Xem chi tiết'
                             onClick={() => void onViewDetail(record.id)}
                             loading={loadingId === record.id}
                             disabled={isDetailLoading}

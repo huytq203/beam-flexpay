@@ -72,10 +72,19 @@ export interface ExportLedgerEntriesQuery {
   toDate?: string
 }
 
+/** Bộ lọc giống hệt `GET /wallet/freezes`, chỉ bỏ pageable — file lấy trọn bộ lọc. */
 export interface ExportFreezesQuery {
-  accountId: string
+  /** Bỏ trống khi xuất từ màn danh sách toàn hệ thống; màn theo ví phải tự truyền. */
+  accountId?: string
   type?: string
   status?: string
+  displayStatus?: string
+  releaseType?: string
+  username?: string
+  sourceTransactionCode?: string
+  sourceTransactionId?: string
+  shortfall?: boolean
+  includeTopUps?: boolean
   fromDate?: string
   toDate?: string
 }

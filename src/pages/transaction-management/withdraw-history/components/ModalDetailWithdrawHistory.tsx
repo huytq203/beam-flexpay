@@ -1,8 +1,9 @@
 import type { WithdrawalDetail } from '@services/apiJournal'
 import { CardComponent, StuckTransactionUpdateAction, TimeLineComponent, WithdrawalDecisionPanel } from '@components/index'
+import StatusBadge from '@components/status-badge/StatusBadge'
 import { BankFilled, HistoryOutlined, UserIcon } from '@components/icons'
 import { UnifiedContentJournal } from '@type/apiResponseJournal'
-import { PaymentMethod, PaymentMethodKey, StatusKey, StatusType } from '@pages/wallet-administration/transaction-wallet/constants/Transaction.constant'
+import { CONFIG_STATUS, PaymentMethod, PaymentMethodKey } from '@pages/wallet-administration/transaction-wallet/constants/Transaction.constant'
 import { formatNumber } from '@utils/index'
 import dayjs from 'dayjs'
 import React from 'react'
@@ -13,10 +14,13 @@ interface Props {
     isLoading?: boolean
 }
 
-const STATUS_CLASS: Record<string, string> = {
-    PENDING: 'text-yellow-600 bg-yellow-100   px-2 py-1  rounded-sm text-[12px] font-medium',
-    POSTED: 'text-green-700 bg-green-100   px-2 py-1  rounded-sm text-[12px] font-medium',
-    ARCHIVED: 'text-red-600 bg-red-100   px-2 py-1  rounded-sm text-[12px] font-medium',
+const JOURNAL_STATUS_CONFIG = {
+    ...CONFIG_STATUS,
+    ARCHIVED: {
+        label: 'Đã lưu trữ',
+        className: 'danger-status',
+        shimmerColor: 'rgba(255, 86, 59, 0.2)'
+    }
 }
 
 const InfoRow = ({ label, value, className }: { label: string; value: React.ReactNode; className?: string }) => (
@@ -54,8 +58,6 @@ const DialogDetailWithdrawHistory = ({ data, withdrawalDetail, isLoading }: Prop
     if (!data) {
         return <div className="flex justify-center items-center h-40 text-gray-400">Không có dữ liệu</div>
     }
-
-    const statusKey = data.status as StatusKey
 
     const timelineItems = [
         {
@@ -126,9 +128,10 @@ const DialogDetailWithdrawHistory = ({ data, withdrawalDetail, isLoading }: Prop
                                 </span>
                             } />
                             <InfoRow label='Trạng thái bút toán' value={
-                                <span className={STATUS_CLASS[statusKey] ?? 'text-gray-500'}>
-                                    {StatusType[statusKey] ?? data.status}
-                                </span>
+                                <StatusBadge
+                                    status={data.status}
+                                    config={JOURNAL_STATUS_CONFIG}
+                                />
                             } />
                         </div>
                     </div>

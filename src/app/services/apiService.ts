@@ -33,7 +33,8 @@ export const apiFeeService = createApi({
     'feeComponentTier',
     'feeAssign',
     'feeBank',
-    'customerSegment'
+    'customerSegment',
+    'ApplicableFeeRule'
   ],
   endpoints: () => ({}),
   refetchOnMountOrArgChange: true

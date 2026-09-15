@@ -186,10 +186,25 @@ describe('StuckTransactionUpdateAction', () => {
   })
 
   it('hiển thị dạng icon ở màn danh sách và vẫn mở được form', async () => {
-    mockWithdrawalStatus(WithdrawalStatus.PAYING)
+    let readCount = 0
+    server.use(
+      http.get('*/withdrawals', () => {
+        readCount += 1
+        return HttpResponse.json({
+          data: {
+            id: 'withdrawal-1',
+            transactionCode: TRANSACTION_CODE,
+            beneficiary: null,
+            status: WithdrawalStatus.PAYING
+          }
+        })
+      })
+    )
     const { user } = renderAction({ compact: true })
 
+    expect(readCount).toBe(0)
     await openForm(user)
+    expect(readCount).toBe(1)
     expect(await screen.findByLabelText(/Kết quả cuối/)).toBeInTheDocument()
   })
 

@@ -1,5 +1,5 @@
 import { ButtonComponent } from '@components/index'
-import { FormInput, FormSelect } from '@components/form'
+import { FormDatePicker, FormInput, FormSelect } from '@components/form'
 import { useSVG } from '@hooks/useSVG'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -12,12 +12,18 @@ interface FormSearchProps {
   handleSearch: (value: FormSearchValues) => void
 }
 
+/** Ô trống là "không lọc" — DatePicker khi xoá trả `''`, gửi lên BE sẽ lỗi parse date-time. */
+const omitEmpty = (values: FormSearchValues): FormSearchValues =>
+  Object.fromEntries(
+    Object.entries(values).filter(([, value]) => Boolean(value))
+  )
+
 export const FormSearch = ({ handleSearch }: FormSearchProps) => {
   const formSearch = useForm<FormSearchValues>()
   const { svg } = useSVG()
 
   const onSubmit: SubmitHandler<FormSearchValues> = (data) => {
-    handleSearch(data)
+    handleSearch(omitEmpty(data))
   }
   const handleReset = () => {
     formSearch.reset()
@@ -26,7 +32,7 @@ export const FormSearch = ({ handleSearch }: FormSearchProps) => {
   return (
     <form className='space-y-3' onSubmit={formSearch.handleSubmit(onSubmit)} onReset={handleReset}>
       <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div className="col-span-1">
           <FormInput control={formSearch.control} name='username' label='Người dùng' placeholder='Tìm kiếm số điện thoại...' />
         </div>
@@ -42,6 +48,22 @@ export const FormSearch = ({ handleSearch }: FormSearchProps) => {
         <div className="col-span-1">
           <FormSelect control={formSearch.control} name='walletType' options={mapEnumToSelectOptions(WalletTypeLabel)} label='Loại ví' />
         </div>
+        <FormDatePicker
+          showTime
+          control={formSearch.control}
+          name='fromDate'
+          className='col-span-1 flex flex-col'
+          label='Từ ngày'
+          placeholder='DD/MM/YYYY HH:mm:ss'
+        />
+        <FormDatePicker
+          showTime
+          control={formSearch.control}
+          name='toDate'
+          className='col-span-1 flex flex-col'
+          label='Đến ngày'
+          placeholder='DD/MM/YYYY HH:mm:ss'
+        />
         {/* <div className="col-span-1">
           <FormSelect control={formSearch.control} name='kycStatus' options={[]} label='Trạng thái KYC' />
         </div> */}

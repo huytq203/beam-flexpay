@@ -1,5 +1,7 @@
 import { renderWithProviders } from '@/test/render'
+import { createAppStore } from '@/app/store'
 import { MessageProvider } from '@hooks/useMessage'
+import { savePermissions } from '@slices/authSlice'
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -8,6 +10,8 @@ import WithdrawHistory from '../WithdrawHistory'
 const mocks = vi.hoisted(() => ({
   exportFile: vi.fn(),
   getUnified: vi.fn(),
+  openDetail: vi.fn(),
+  hasRow: false,
   totalElements: 12
 }))
 
@@ -16,7 +20,20 @@ vi.mock('@services/apiJournal', () => ({
     mocks.getUnified(params)
     return {
       data: {
-        content: [],
+        content: mocks.hasRow
+          ? [{
+              id: 'withdraw-1',
+              transactionCode: 'FW26XL3DA',
+              description: 'Rút tiền về tài khoản',
+              status: 'PENDING',
+              amount: 50000,
+              feeAmount: 100,
+              grossAmount: 50100,
+              currency: 'VND',
+              paymentMethod: 'LINKED_ACCOUNT',
+              createdAt: '2026-09-15T10:00:00Z'
+            }]
+          : [],
         totalElements: mocks.totalElements,
         summary: {
           totalCount: 144,
@@ -30,7 +47,14 @@ vi.mock('@services/apiJournal', () => ({
       isFetching: false,
       refetch: vi.fn()
     }
-  }
+  },
+  useGetWithdrawalByTransactionCodeQuery: () => ({ data: undefined }),
+  useLazyGetWithdrawalByTransactionCodeQuery: () => [
+    vi.fn(() => ({
+      unwrap: () => Promise.resolve({ status: 'PAYING' })
+    })),
+    { isFetching: false }
+  ]
 }))
 
 vi.mock('@services/apiExportCsv', () => ({
@@ -48,21 +72,27 @@ vi.mock('../hooks/useHandle', () => ({
     withdrawalDetail: null,
     isDetailLoading: false,
     loadingId: undefined,
-    openDetail: vi.fn(),
+    openDetail: mocks.openDetail,
     closeDetail: vi.fn()
   })
 }))
 
-const renderScreen = () =>
-  renderWithProviders(
+const renderScreen = () => {
+  const store = createAppStore()
+  store.dispatch(savePermissions(['EWALLET:EWALLET:FULL']))
+
+  return renderWithProviders(
     <MessageProvider>
       <WithdrawHistory />
-    </MessageProvider>
+    </MessageProvider>,
+    { store }
   )
+}
 
 describe('Lịch sử rút tiền — xuất CSV', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mocks.hasRow = false
     mocks.totalElements = 12
   })
 
@@ -153,5 +183,22 @@ describe('Lịch sử rút tiền — xuất CSV', () => {
     renderScreen()
 
     expect(screen.getByRole('button', { name: /Xuất CSV/i })).toBeDisabled()
+  })
+
+  it('mở thẳng modal cập nhật giao dịch treo từ icon trong cột thao tác', async () => {
+    mocks.hasRow = true
+    const user = userEvent.setup()
+    renderScreen()
+    const action = screen.getByRole('button', {
+      name: 'Cập nhật giao dịch treo'
+    })
+
+    expect(action).toBeEnabled()
+    await user.click(action)
+    expect(
+      await screen.findByText('Cập nhật giao dịch treo')
+    ).toBeInTheDocument()
+    expect(mocks.openDetail).not.toHaveBeenCalled()
+    expect(screen.queryByRole('radio')).not.toBeInTheDocument()
   })
 })

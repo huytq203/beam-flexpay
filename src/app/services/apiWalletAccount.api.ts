@@ -13,6 +13,9 @@ export interface WalletAccountQueryParams {
     enabled?: string
     walletType?: string
     currency?: string
+    /** Khoảng thời gian tạo ví (createdAt), ISO date-time. */
+    fromDate?: string
+    toDate?: string
 }
 
 /**

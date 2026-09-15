@@ -8,6 +8,7 @@ import * as Icons from '@components/icons'
 
 const STATUS_OPTIONS = [
     { label: 'Đã xác thực', value: 'VERIFIED' },
+    { label: 'Thành công', value: 'COMPLETED' },
     { label: 'Đã huỷ', value: 'INVALID' },
 ]
 

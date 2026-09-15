@@ -163,6 +163,7 @@ export const FeeComponentList = ({
           open={isOpen}
           initialValue={editing}
           precedingComponents={precedingComponents}
+          existingComponents={fields as unknown as FeeComponentFormValues[]}
           feeDomain={feeDomain}
           businessCategory={businessCategory}
           serviceType={serviceType}

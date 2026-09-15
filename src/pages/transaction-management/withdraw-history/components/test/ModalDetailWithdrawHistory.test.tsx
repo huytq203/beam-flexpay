@@ -1,5 +1,7 @@
 import { renderWithProviders } from '@/test/render'
+import { createAppStore } from '@/app/store'
 import { MessageProvider } from '@hooks/useMessage'
+import { apiWalletCore } from '@services/apiService'
 import { server } from '@/test/mocks/server'
 import type { UnifiedContentJournal } from '@type/apiResponseJournal'
 import { fireEvent, screen, waitFor } from '@testing-library/react'
@@ -81,8 +83,27 @@ const DetailLoaderProbe = () => {
           ? `${detailData?.transactionCode}-${withdrawalDetail?.beneficiary?.accountNumber}`
           : 'closed'}
       </span>
+      <span data-testid='journal-status'>{detailData?.status ?? 'none'}</span>
       {isDetailLoading && <span>Đang tải đủ dữ liệu</span>}
     </div>
+  )
+}
+
+const FullDetailFlowProbe = () => {
+  const { isDetailOpen, detailData, withdrawalDetail, openDetail } = useHandle()
+
+  return (
+    <MessageProvider>
+      <button type='button' onClick={() => void openDetail(journal.id)}>
+        Mở đầy đủ chi tiết
+      </button>
+      {isDetailOpen && detailData && withdrawalDetail && (
+        <DialogDetailWithdrawHistory
+          data={detailData}
+          withdrawalDetail={withdrawalDetail}
+        />
+      )}
+    </MessageProvider>
   )
 }
 
@@ -117,6 +138,52 @@ describe('useHandle withdraw detail', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Đóng chi tiết' }))
     expect(screen.getByTestId('detail-state')).toHaveTextContent('closed')
   })
+
+  it('cập nhật dữ liệu detail khi mutation invalidate cache', async () => {
+    let journalStatus = 'PENDING'
+    server.use(
+      http.get('*/wallet/journal/unified/:id', () =>
+        HttpResponse.json({ data: { ...journal, status: journalStatus } })
+      ),
+      http.get('*/withdrawals', () => HttpResponse.json(withdrawalResponse))
+    )
+    const store = createAppStore()
+
+    renderWithProviders(<DetailLoaderProbe />, { store })
+    fireEvent.click(screen.getByRole('button', { name: 'Mở chi tiết' }))
+
+    await waitFor(() =>
+      expect(screen.getByTestId('journal-status')).toHaveTextContent('PENDING')
+    )
+
+    journalStatus = 'POSTED'
+    store.dispatch(apiWalletCore.util.invalidateTags(['Journal']))
+
+    await waitFor(() =>
+      expect(screen.getByTestId('journal-status')).toHaveTextContent('POSTED')
+    )
+  })
+
+  it('chỉ gọi API withdrawal một lần khi mở đầy đủ modal', async () => {
+    const withdrawalRequestSpy = vi.fn()
+    server.use(
+      http.get('*/wallet/journal/unified/:id', () =>
+        HttpResponse.json({ data: journal })
+      ),
+      http.get('*/withdrawals', () => {
+        withdrawalRequestSpy()
+        return HttpResponse.json(withdrawalResponse)
+      })
+    )
+
+    renderWithProviders(<FullDetailFlowProbe />)
+    fireEvent.click(screen.getByRole('button', { name: 'Mở đầy đủ chi tiết' }))
+
+    expect(await screen.findByText('2020000000011')).toBeInTheDocument()
+    await waitFor(() =>
+      expect(withdrawalRequestSpy).toHaveBeenCalledTimes(1)
+    )
+  })
 })
 
 describe('ModalDetailWithdrawHistory', () => {
@@ -147,5 +214,18 @@ describe('ModalDetailWithdrawHistory', () => {
     expect(
       screen.getByText('Không có thông tin thụ hưởng.')
     ).toBeInTheDocument()
+  })
+
+  it('hiển thị trạng thái bút toán thất bại bằng màu danger', () => {
+    renderWithProviders(
+      <MessageProvider>
+        <DialogDetailWithdrawHistory
+          data={{ ...journal, status: 'FAILED' }}
+          withdrawalDetail={withdrawalResponse.data}
+        />
+      </MessageProvider>
+    )
+
+    expect(screen.getByText('Thất bại')).toHaveClass('danger-status')
   })
 })

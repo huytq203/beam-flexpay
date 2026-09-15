@@ -6,6 +6,7 @@ import { useMemo } from 'react'
 export interface FeePolicyListFilters {
   feeDomain: FeeDomain
   keyword?: string
+  subjectKeyword?: string
   serviceType?: string
   status?: string
   appliedTarget?: string
@@ -46,6 +47,7 @@ export const useFeePolicyList = ({
   const params = useMemo(
     () => ({
       keyword: filters.keyword || '',
+      subjectKeyword: filters.subjectKeyword || undefined,
       feeDomain: filters.feeDomain,
       serviceType: filters.serviceType || undefined,
       status: filters.status || undefined,

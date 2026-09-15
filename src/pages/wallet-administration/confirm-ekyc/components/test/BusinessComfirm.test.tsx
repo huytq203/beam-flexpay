@@ -66,15 +66,24 @@ describe('BusinessComfirm', () => {
   it('hiển thị dữ liệu hồ sơ và không còn tab Thẻ/TK Ngân hàng', () => {
     render(<BusinessComfirm data={profile} />)
 
-    expect(screen.getByDisplayValue('TRƯƠNG VIỆT HÙNG')).toBeInTheDocument()
-    expect(screen.getByDisplayValue('001200021829')).toBeInTheDocument()
+    expect(screen.getByText('TRƯƠNG VIỆT HÙNG')).toBeInTheDocument()
+    expect(screen.getByText('001200021829')).toBeInTheDocument()
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
     expect(screen.queryByText('Thẻ/TK Ngân hàng')).not.toBeInTheDocument()
   })
 
   it('hiển thị toàn bộ các lần thực hiện trong group attempts', () => {
-    render(<BusinessComfirm data={profile} />)
+    render(
+      <BusinessComfirm
+        data={{
+          ...profile,
+          attempts: [{ ...attempt, status: 'COMPLETED' }, olderAttempt]
+        }}
+      />
+    )
 
     expect(screen.getByText('2 lần thực hiện')).toBeInTheDocument()
+    expect(screen.getByText('Thành công')).toBeInTheDocument()
     expect(screen.getByText(/Session: session-id/)).toBeInTheDocument()
     expect(screen.getByText(/older-session-id/)).toBeInTheDocument()
     expect(screen.getByText('Đối chiếu khuôn mặt')).toBeInTheDocument()

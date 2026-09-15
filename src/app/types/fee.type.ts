@@ -6,10 +6,21 @@
  * thể, nên xoá màn là gãy tầng service.
  */
 
+export interface AppliedSubject {
+  subjectType: 'USER' | 'MERCHANT'
+  subjectId: string
+  fullName: string | null
+  displayName: string | null
+}
+
 export interface AppliedTarget {
   type: 'ALL' | 'CUSTOMER_GROUP' | 'ACCOUNT'
   code: string | null
   count: number
+  /** Tổng chủ thể thật; BE cũ có thể chưa trả. */
+  subjectCount?: number
+  /** Tối đa 5 chủ thể để xem nhanh; BE cũ có thể chưa trả. */
+  subjects?: AppliedSubject[]
 }
 
 export interface FeePolicy {

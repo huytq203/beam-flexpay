@@ -1,4 +1,5 @@
-import { CardComponent, Table, UnfreezeDecisionDialog, UnfreezeRequestDialog } from '@components/index'
+import { CardComponent, ExportCsvButton, Table, UnfreezeDecisionDialog, UnfreezeRequestDialog } from '@components/index'
+import { EXPORT_ORDER_HINT } from '@constants/export'
 import React from 'react'
 import FormSearch from './components/FormSearch'
 import { getColumn } from './columns/FrozenTransactions.column'
@@ -24,6 +25,8 @@ const FrozenTransactions = () => {
         canApprove,
         openDecision,
         decisionDialogState,
+        handleExport,
+        isExporting,
     } = useFrozenTransactions()
 
     const columns = getColumn({
@@ -54,6 +57,19 @@ const FrozenTransactions = () => {
             <CardComponent
                 content={   
                     isLoading ? <SkeletonTable columns={8} /> :
+                        <>
+                            <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                                <span className="font-medium text-gray-600 text-lg">
+                                    Giao dịch đóng băng
+                                </span>
+                                <ExportCsvButton
+                                    onExport={handleExport}
+                                    loading={isExporting}
+                                    disabled={!totalElements}
+                                    totalRows={totalElements}
+                                    tooltip={`File lấy trọn bộ lọc đang áp, không giới hạn theo trang. ${EXPORT_ORDER_HINT}`}
+                                />
+                            </div>
                         <Table
                             columns={columns}
                             size="small"
@@ -74,6 +90,7 @@ const FrozenTransactions = () => {
                                 },
                             }}
                         />
+                        </>
                 }
             />
             <UnfreezeRequestDialog

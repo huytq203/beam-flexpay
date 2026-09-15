@@ -37,6 +37,7 @@ const values: FeeConfigFormValues = {
       baseComponentType: null,
       calculationMethod: 'DIRECT',
       payerType: 'USER',
+      beneficiaryType: 'SYSTEM',
       fixedAmount: 5000,
       percentage: null,
       minFee: null,

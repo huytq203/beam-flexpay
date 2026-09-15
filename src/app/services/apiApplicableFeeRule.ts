@@ -20,7 +20,8 @@ export const applicableFeeRuleApi = apiFeeService.injectEndpoints({
       transformResponse: (
         response: ResponseType<ApplicableFeeRulePage>
       ): ApplicableFeeRulePage =>
-        applicableFeeRulePageSchema.parse(response.data)
+        applicableFeeRulePageSchema.parse(response.data),
+      providesTags: ['ApplicableFeeRule']
     })
   })
 })

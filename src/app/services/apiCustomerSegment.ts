@@ -66,7 +66,12 @@ const customerSegmentApi = apiFeeService.injectEndpoints({
       }),
       transformResponse: (response: ResponseType<SubjectSegment>) =>
         response.data,
-      invalidatesTags: ['customerSegment', 'FeePolicy', 'feeAssign']
+      invalidatesTags: [
+        'customerSegment',
+        'FeePolicy',
+        'feeAssign',
+        'ApplicableFeeRule'
+      ]
     }),
 
     clearSubjectSegment: build.mutation<void, SubjectArg>({
@@ -74,7 +79,12 @@ const customerSegmentApi = apiFeeService.injectEndpoints({
         url: `/fee/customer-segments/subjects/${subjectType}/${subjectId}`,
         method: 'DELETE'
       }),
-      invalidatesTags: ['customerSegment', 'FeePolicy', 'feeAssign']
+      invalidatesTags: [
+        'customerSegment',
+        'FeePolicy',
+        'feeAssign',
+        'ApplicableFeeRule'
+      ]
     })
   })
 })
