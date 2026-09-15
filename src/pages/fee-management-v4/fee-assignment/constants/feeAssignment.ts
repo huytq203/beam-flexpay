@@ -74,7 +74,6 @@ export const serviceType ={
   PAYOUT_BANK_TRANSFER : 'Chi hộ chuyển khoản ngân hàng'
 }as const;
 export const paymentMethodType = {
-  '': 'Tất cả phương thức',
   ...PAYMENT_METHOD_LABELS
 } as const
 export const cardTypeType ={

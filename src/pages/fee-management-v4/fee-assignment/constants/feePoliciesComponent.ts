@@ -56,7 +56,7 @@ export const componentType = {
   MERCHANT_FEE: 'Phí merchant',
   BANK_FEE: 'Phí nhà cung cấp đối tác/bank',
   PLATFORM_FEE: 'Phí nền tảng',
-  VAT: 'Thuế VAT',
+  VAT: 'VAT',
   PROCESSING_FEE: 'Phí xử lý',
   REFUND_FEE: 'Phí hoàn tiền',
 
@@ -69,7 +69,7 @@ export const baseOn = {
   MERCHANT_FEE: 'Phí merchant',
   BANK_FEE: 'Phí nhà cung cấp đối tác/bank',
   PLATFORM_FEE: 'Phí nền tảng',
-  VAT: 'Thuế VAT',
+  VAT: 'VAT',
   PROCESSING_FEE: 'Phí xử lý',
   REFUND_FEE: 'Phí hoàn tiền',
 }

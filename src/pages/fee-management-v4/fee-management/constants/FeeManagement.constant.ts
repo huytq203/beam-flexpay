@@ -91,7 +91,7 @@ export const componentTypeLabel = {
   [componentType.MERCHANT_FEE]: 'Phí merchant',
   [componentType.BANK_FEE]: 'Phí nhà cung cấp đối tác/bank',
   [componentType.PLATFORM_FEE]: 'Phí nền tảng',
-  [componentType.VAT]: 'Thuế VAT',
+  [componentType.VAT]: 'VAT',
   [componentType.PROCESSING_FEE]: 'Phí xử lý',
   [componentType.REFUND_FEE]: 'Phí hoàn tiền',
 }
@@ -115,7 +115,7 @@ export const baseOnLabel = {
   [baseOnEnum.MERCHANT_FEE]: 'Phí merchant',
   [baseOnEnum.BANK_FEE]: 'Phí nhà cung cấp đối tác/bank',
   [baseOnEnum.PLATFORM_FEE]: 'Phí nền tảng',
-  [baseOnEnum.VAT]: 'Thuế VAT',
+  [baseOnEnum.VAT]: 'VAT',
   [baseOnEnum.PROCESSING_FEE]: 'Phí xử lý',
   [baseOnEnum.REFUND_FEE]: 'Phí hoàn tiền',
 }

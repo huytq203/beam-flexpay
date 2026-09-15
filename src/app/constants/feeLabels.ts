@@ -34,7 +34,7 @@ export const COMPONENT_TYPE_LABELS: Readonly<Record<string, string>> = {
   MERCHANT_FEE: 'Phí merchant',
   BANK_FEE: 'Phí nhà cung cấp đối tác/bank',
   PLATFORM_FEE: 'Phí nền tảng',
-  VAT: 'Thuế VAT',
+  VAT: 'VAT',
   SERVICE_FEE: 'Phí dịch vụ',
   PROCESSING_FEE: 'Phí xử lý',
   REFUND_FEE: 'Phí hoàn tiền'

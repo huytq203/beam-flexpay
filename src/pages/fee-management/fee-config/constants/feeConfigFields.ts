@@ -200,10 +200,6 @@ export interface PaymentMethodOption {
   readonly label: string
 }
 
-export const ALL_PAYMENT_METHOD_OPTION: PaymentMethodOption = {
-  value: '',
-  label: 'Tất cả phương thức'
-}
 
 /**
  * Phương thức được phép chọn theo loại giao dịch.
@@ -220,27 +216,27 @@ export const PAYMENT_METHOD_OPTIONS_BY_SERVICE_TYPE: Readonly<
     { value: 'ATM', label: 'Thẻ ATM' },
     {
       value: 'LINKED_ACCOUNT',
-      label: 'Tài khoản ngân hàng liên kết (IB)'
+      label: 'Tài khoản ngân hàng liên kết'
     }
   ],
   EWALLET_WITHDRAWAL: [
-    { value: 'ATM', label: 'Thẻ ATM (IBFT về thẻ ATM)' },
+    { value: 'ATM', label: 'Thẻ ATM' },
     {
       value: 'BANK_TRANSFER',
-      label: 'Tài khoản ngân hàng (IBFT về tài khoản ngân hàng)'
+      label: 'Tài khoản ngân hàng'
     }
   ],
   EWALLET_TRANSFER_INTERNAL: [
     { value: 'WALLET_BALANCE', label: 'Ví điện tử' }
   ],
   EWALLET_TRANSFER_EXTERNAL: [
-    { value: 'BANK_TRANSFER', label: 'Tài khoản ngân hàng (IBFT)' }
+    { value: 'BANK_TRANSFER', label: 'Tài khoản ngân hàng' }
   ],
   EWALLET_CASHBACK: [
     { value: 'WALLET_BALANCE', label: 'Số dư ví' },
     {
       value: 'ATM',
-      label: 'Thẻ ATM (ngân hàng liên kết và trực tiếp)'
+      label: 'Thẻ ATM'
     },
     {
       value: 'LINKED_ACCOUNT',
@@ -265,7 +261,6 @@ export const getPaymentMethodOptions = (
 ): readonly PaymentMethodOption[] =>
   serviceType && PAYMENT_METHOD_OPTIONS_BY_SERVICE_TYPE[serviceType]
     ? [
-        ALL_PAYMENT_METHOD_OPTION,
         ...PAYMENT_METHOD_OPTIONS_BY_SERVICE_TYPE[serviceType]
       ]
     : []
