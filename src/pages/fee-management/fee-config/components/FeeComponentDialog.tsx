@@ -301,12 +301,7 @@ export const FeeComponentDialog = ({
               options={methodOptions}
               className='col-span-12 flex flex-col'
             />
-            {!isVat && (
-              <p className='col-span-12 text-[13px] text-muted-foreground'>
-                Lũy tiến tách số tiền ra, mỗi khúc tính theo bậc của khúc đó.
-                Toàn phần lấy mức của bậc rơi vào rồi áp cho toàn bộ số tiền.
-              </p>
-            )}
+          
           </div>
         </CardComponent>
 
