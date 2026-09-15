@@ -13,8 +13,8 @@ import {
 import StatusBadge from '@components/status-badge/StatusBadge'
 import type { ColumnsType } from 'antd/es/table'
 import {
+  formatDateTimeUTC,
   formatFeeLimit,
-  formatFeeLocalDateTime,
   formatTierRange
 } from '../utils/applicable-fee-rule'
 import {
@@ -154,21 +154,21 @@ export const getApplicableFeeRuleColumns = (
     dataIndex: 'createdAt',
     align: 'center',
     width: 160,
-    render: (value: string | null) => formatFeeLocalDateTime(value)
+    render: (value: string | null) => formatDateTimeUTC(value)
   },
   {
     title: 'Thời gian áp dụng',
     dataIndex: 'validFrom',
     align: 'center',
     width: 160,
-    render: (value: string | null) => formatFeeLocalDateTime(value)
+    render: (value: string | null) => formatDateTimeUTC(value)
   },
   {
     title: 'Thời gian kết thúc',
     dataIndex: 'validTo',
     align: 'center',
     width: 160,
-    render: (value: string | null) => formatFeeLocalDateTime(value)
+    render: (value: string | null) => formatDateTimeUTC(value)
   },
   {
     title: 'Trạng thái',
