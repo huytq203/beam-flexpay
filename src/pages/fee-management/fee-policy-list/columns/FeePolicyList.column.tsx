@@ -148,13 +148,28 @@ export const getFeePolicyColumns = ({
     render: (status: string) => <FeeStatusPill status={status} />
   },
   {
-    title: 'Cập nhật',
+    title: 'Ngày tạo',
+    dataIndex: 'createdAt',
+    width: 170,
+    render: (createdAt: string | undefined, row) => (
+      <div className='flex flex-col gap-0.5'>
+        <span className='tabular-nums text-[13px] text-foreground'>
+          {createdAt ? dayjs(createdAt).format('DD/MM/YYYY HH:mm:ss') : '—'}
+        </span>
+        {row.updatedBy && (
+          <span className='text-xs text-muted-foreground'>{row.createdBy}</span>
+        )}
+      </div>
+    )
+  },
+  {
+    title: 'Ngày cập nhật',
     dataIndex: 'updatedAt',
     width: 170,
     render: (updatedAt: string | undefined, row) => (
       <div className='flex flex-col gap-0.5'>
         <span className='tabular-nums text-[13px] text-foreground'>
-          {updatedAt ? dayjs(updatedAt).format('DD/MM/YYYY HH:mm') : '—'}
+          {updatedAt ? dayjs(updatedAt).format('DD/MM/YYYY HH:mm:ss') : '—'}
         </span>
         {row.updatedBy && (
           <span className='text-xs text-muted-foreground'>{row.updatedBy}</span>
