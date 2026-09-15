@@ -28,10 +28,10 @@ export const FormSearch = ({ handleSearch }: FormSearchProps) => {
       <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <Icons.FunnelIcon /> Bộ lọc tìm kiếm</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="col-span-1">
-          <FormInput control={formSearch.control} name='username' label='Người dùng' placeholder='Tên đăng nhập...' />
+          <FormInput control={formSearch.control} name='username' label='Người dùng' placeholder='Tìm kiếm số điện thoại...' />
         </div>
         <div className="col-span-1">
-          <FormInput control={formSearch.control} name='ownerId' label='Mã người dùng' placeholder='Tên đăng nhập...' />
+          <FormInput control={formSearch.control} name='ownerId' label='Mã người dùng' placeholder='Mã người dùng' />
         </div>
         {/* <div className="col-span-1">
           <FormInput control={formSearch.control} name='glCode' label='GL Code' placeholder='Tên đăng nhập...' />
