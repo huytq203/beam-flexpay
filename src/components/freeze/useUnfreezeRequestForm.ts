@@ -76,8 +76,6 @@ export const useUnfreezeRequestForm = (
     }
 
     try {
-      // Chỉ nhánh theo giao dịch nhận `idempotencyKey`; `/accounts/unfreeze`
-      // chưa được kiểm nên giữ nguyên body cũ đang chạy được.
       if (item.sourceTransactionId && item.sourceTransactionCode) {
         await postUnfreezeTransaction({
           ...body,
@@ -85,7 +83,10 @@ export const useUnfreezeRequestForm = (
           idempotencyKey: idempotency.take()
         }).unwrap()
       } else {
-        await postUnfreeze(body).unwrap()
+        await postUnfreeze({
+          ...body,
+          idempotencyKey: idempotency.take()
+        }).unwrap()
       }
       idempotency.reset()
       successMess(

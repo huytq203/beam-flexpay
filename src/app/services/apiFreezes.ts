@@ -33,6 +33,8 @@ export interface UnfreezeRequest {
     freezeId: string
     amount: number
     reason: string
+    /** Bắt buộc trên wallet-core đang deploy — thiếu thì trả VALIDATION_ERROR 3001. */
+    idempotencyKey: string
 }
 
 export const apiFreezes = apiWalletCore.injectEndpoints({

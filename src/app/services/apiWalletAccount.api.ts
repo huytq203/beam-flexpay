@@ -27,7 +27,7 @@ export interface WalletAccountQueryParams {
  * |---------------------------------|----------------------------|
  * | `/accounts/freeze`              | chưa kiểm                  |
  * | `/accounts/freeze-transaction`  | KHÔNG nhận (1006 nếu gửi)  |
- * | `/accounts/unfreeze`            | chưa kiểm                  |
+ * | `/accounts/unfreeze`            | BẮT BUỘC (3001 nếu thiếu)  |
  * | `/accounts/unfreeze-transaction`| BẮT BUỘC (3001 nếu thiếu)  |
  *
  * Đừng "dọn cho đồng bộ" bằng cách thêm field vào cả bốn — đó là cách làm hỏng
@@ -43,6 +43,8 @@ export interface FreezeRequest {
 export interface UnfreezeRequest {
     accountId: string
     reason: string
+    /** Bắt buộc — thiếu thì wallet-core trả VALIDATION_ERROR 3001. */
+    idempotencyKey: string
 }
 
 /** Khớp `AdminFreezeTransactionRequest` — đúng 4 field, không hơn. */

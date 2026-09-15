@@ -9,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { UnfreezeSchema, UnfreezeFormValues } from '../schemas/Freeze.schema'
 import { useMessage } from '@hooks/useMessage'
 import { blockLeadingAndRepeatedSpace } from '@utils/inputHandlers'
+import { useIdempotencyKey } from '@hooks/useIdempotencyKey'
 
 interface DialogUnfreezeProps {
     accountId?: string
@@ -35,6 +36,7 @@ const DialogUnfreeze = ({
         resolver: zodResolver(UnfreezeSchema),
     })
     const [postUnfreeze, { isLoading }] = usePostUnfreezeMutation()
+    const idempotency = useIdempotencyKey()
 
     const onSubmit = async (values: UnfreezeFormValues) => {
         if (!accountId) return
@@ -42,7 +44,9 @@ const DialogUnfreeze = ({
             await postUnfreeze({
                 accountId,
                 reason: values.reason,
+                idempotencyKey: idempotency.take(),
             }).unwrap()
+            idempotency.reset()
             successMess('Đã gửi yêu cầu mở băng, đang chờ người khác phê duyệt')
             reset()
             onSuccess?.()

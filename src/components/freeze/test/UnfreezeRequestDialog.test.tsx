@@ -160,8 +160,7 @@ describe('UnfreezeRequestDialog', () => {
       amount: 20_000,
       reason: 'Khách khiếu nại'
     })
-    // `/accounts/unfreeze` không khai field này; gửi thừa là INVALID_REQUEST 1006.
-    expect(body).not.toHaveProperty('idempotencyKey')
+    expect(body).toHaveProperty('idempotencyKey', expect.any(String))
   })
 
   it('nhánh theo giao dịch gửi kèm idempotencyKey — thiếu là VALIDATION_ERROR 3001', async () => {
