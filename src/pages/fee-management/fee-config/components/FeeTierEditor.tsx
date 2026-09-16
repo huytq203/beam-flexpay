@@ -163,10 +163,6 @@ export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
           {error}
         </p>
       )}
-      <p className='mt-2 text-[13px] text-muted-foreground'>
-        Cột Từ tự nối tiếp bậc trên nên không thể hở khoảng. Chỉ xoá được bậc
-        cuối. Bỏ trống ô Đến ở bậc cuối để nó chạy tới vô cùng.
-      </p>
     </div>
   )
 }
