@@ -1,5 +1,3 @@
-import { PERMISSION, type PermissionCode } from '@/app/permissions'
-
 /**
  * Từ điển trạng thái của nghiệp vụ đóng băng số dư, dùng chung cho cả ba màn đang gọi
  * `/wallet/freezes`: Giao dịch đóng băng, tab Số dư đóng băng của ví cá nhân và ví doanh nghiệp.
@@ -19,7 +17,7 @@ export const FreezeDisplayStatus = {
 export type FreezeDisplayStatus =
   (typeof FreezeDisplayStatus)[keyof typeof FreezeDisplayStatus]
 
-/** Trạng thái lệnh mở băng trong cơ chế maker-checker của wallet-core. */
+/** Trạng thái lệnh mở băng; giữ PENDING_APPROVAL/REJECTED để đọc dữ liệu lịch sử cũ. */
 export const UnfreezeCommandStatus = {
   PENDING_APPROVAL: 'PENDING_APPROVAL',
   EXECUTED: 'EXECUTED',
@@ -29,16 +27,7 @@ export const UnfreezeCommandStatus = {
 export type UnfreezeCommandStatus =
   (typeof UnfreezeCommandStatus)[keyof typeof UnfreezeCommandStatus]
 
-/**
- * Trạng thái duy nhất FE tự ghép: BE vẫn trả `displayStatus = FROZEN` khi có lệnh mở băng chờ
- * duyệt, vì tiền chưa rời hold. Nhưng với người vận hành thì đây là hàng đã có người xử lý —
- * hiển thị "Đang đóng băng" sẽ khiến hai người cùng tạo lệnh cho một khoản.
- */
-export const FREEZE_BADGE_PENDING_APPROVAL = 'PENDING_APPROVAL'
-
-export type FreezeBadgeKey =
-  | FreezeDisplayStatus
-  | typeof FREEZE_BADGE_PENDING_APPROVAL
+export type FreezeBadgeKey = FreezeDisplayStatus
 
 interface FreezeBadgeConfig {
   label: string
@@ -46,16 +35,7 @@ interface FreezeBadgeConfig {
   shimmerColor?: string
 }
 
-/**
- * Chỉ trạng thái CẦN người xử lý mới được nhận màu cảnh báo và hiệu ứng shimmer. Nếu mọi khoản
- * đang đóng băng đều nhấp nháy thì hiệu ứng không còn chỉ ra được hàng nào cần đụng tới.
- */
 export const FREEZE_STATUS_CONFIG: Record<FreezeBadgeKey, FreezeBadgeConfig> = {
-  [FREEZE_BADGE_PENDING_APPROVAL]: {
-    label: 'Đang chờ phê duyệt',
-    className: 'warning-status',
-    shimmerColor: 'rgba(245, 158, 11, 0.18)'
-  },
   [FreezeDisplayStatus.FROZEN]: {
     label: 'Đang đóng băng',
     className: 'info-status'
@@ -140,12 +120,3 @@ export const OWNER_TYPE_CONFIG: Record<
   [OwnerType.MERCHANT]: { label: 'Merchant', className: 'normal-status' },
   [OwnerType.SYSTEM]: { label: 'System', className: 'normal-status' }
 }
-
-/**
- * Quyền duyệt lệnh mở băng, phản chiếu đúng `FREEZE_APPROVE` của AdminWalletController.
- * BE cố ý tách khỏi FREEZE:UPDATE để maker và checker không thể là một người.
- */
-export const UNFREEZE_APPROVE_PERMISSIONS = [
-  PERMISSION.FREEZE_APPROVE,
-  PERMISSION.ADMIN_FULL
-] as const satisfies readonly PermissionCode[]

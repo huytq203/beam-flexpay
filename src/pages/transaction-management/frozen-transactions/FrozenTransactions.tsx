@@ -1,4 +1,4 @@
-import { CardComponent, ExportCsvButton, Table, UnfreezeDecisionDialog, UnfreezeRequestDialog } from '@components/index'
+import { CardComponent, ExportCsvButton, Table, UnfreezeRequestDialog } from '@components/index'
 import { EXPORT_ORDER_HINT } from '@constants/export'
 import React from 'react'
 import FormSearch from './components/FormSearch'
@@ -22,17 +22,12 @@ const FrozenTransactions = () => {
         selectedFreezeItem,
         handleOpenUnfreezeModal,
         handleCloseUnfreezeModal,
-        canApprove,
-        openDecision,
-        decisionDialogState,
         handleExport,
         isExporting,
     } = useFrozenTransactions()
 
     const columns = getColumn({
-        canApprove,
         onRelease: handleOpenUnfreezeModal,
-        onDecide: openDecision,
     })
 
     return (
@@ -99,7 +94,6 @@ const FrozenTransactions = () => {
                 onSuccess={handleCloseUnfreezeModal}
                 onCancel={handleCloseUnfreezeModal}
             />
-            <UnfreezeDecisionDialog {...decisionDialogState} />
         </>
     )
 }

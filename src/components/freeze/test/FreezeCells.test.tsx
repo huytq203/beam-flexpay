@@ -6,13 +6,6 @@ import { FreezeAmountCell } from '../FreezeAmountCell'
 import { FreezeRowActions } from '../FreezeRowActions'
 import { FreezeStatusCell } from '../FreezeStatusCell'
 
-// Mock useAppSelector để tránh phụ thuộc Redux store trong unit test
-vi.mock('@hooks/hook', () => ({
-  useAppSelector: vi.fn((selector: (state: unknown) => unknown) =>
-    selector({ auth: { profile: { username: 'checker_user' } } })
-  )
-}))
-
 const freeze = (overrides: Partial<FreezeItem> = {}): FreezeItem => ({
   id: 'freeze-1',
   accountId: 'account-1',
@@ -58,28 +51,10 @@ const pendingFreeze = freeze({
   unfreezeCommands: [{ id: 'command-1', amount: 50_000, status: 'PENDING_APPROVAL' } as never]
 })
 
-// Lệnh pending do chính checker_user tạo (maker === current user)
-const pendingFreezeOwnedByChecker = freeze({
-  unfreezeCommandId: 'command-2',
-  unfreezeCommandStatus: 'PENDING_APPROVAL',
-  unfreezeCommandMakerId: 'checker_user',
-  unfreezeCommands: [{ id: 'command-2', amount: 50_000, status: 'PENDING_APPROVAL' } as never]
-})
-
-// Lệnh pending chỉ 1000/100000 — vừa cần duyệt vừa còn có thể tạo thêm
-const partialPendingFreeze = freeze({
-  amount: 100_000,
-  remainingAmount: 100_000,
-  unfreezeCommandId: 'command-3',
-  unfreezeCommandStatus: 'PENDING_APPROVAL',
-  unfreezeCommandMakerId: 'maker_user',
-  unfreezeCommands: [{ id: 'command-3', amount: 1_000, status: 'PENDING_APPROVAL' } as never]
-})
-
 describe('FreezeStatusCell', () => {
-  it('hiện "Đang chờ phê duyệt" khi lệnh mở băng chưa được duyệt', () => {
+  it('không còn ghép trạng thái chờ duyệt từ lệnh maker-checker cũ', () => {
     render(<FreezeStatusCell item={pendingFreeze} />)
-    expect(screen.getByText('Đang chờ phê duyệt')).toBeInTheDocument()
+    expect(screen.getByText('Đang đóng băng')).toBeInTheDocument()
   })
 
   it('hiện nhãn theo displayStatus khi không có lệnh chờ duyệt', () => {
@@ -115,12 +90,11 @@ describe('FreezeAmountCell', () => {
 })
 
 describe('FreezeRowActions', () => {
-  it('bản ghi đang đóng băng thì mở bước tạo yêu cầu mở băng', async () => {
+  it('bản ghi đang đóng băng thì cho mở băng trực tiếp', async () => {
     const onRequestUnfreeze = vi.fn()
     render(
       <FreezeRowActions
         item={freeze()}
-        canApprove={false}
         onRequestUnfreeze={onRequestUnfreeze}
       />
     )
@@ -148,7 +122,6 @@ describe('FreezeRowActions', () => {
             { id: 'rejected-command', amount: 30_000, status: 'REJECTED' } as never
           ]
         })}
-        canApprove
       />
     )
 
@@ -156,52 +129,23 @@ describe('FreezeRowActions', () => {
     expect(screen.queryByRole('button', { name: 'Duyệt' })).not.toBeInTheDocument()
   })
 
-  it('có quyền duyệt thì hiện đúng hai lựa chọn của checker', async () => {
-    const onDecide = vi.fn()
-    render(
-      <FreezeRowActions item={pendingFreeze} canApprove onDecide={onDecide} />
-    )
-
-    expect(screen.queryByRole('button', { name: 'Mở băng' })).not.toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: 'Duyệt' }))
-    expect(onDecide).toHaveBeenCalledWith(pendingFreeze, 'APPROVE')
-
-    await userEvent.click(screen.getByRole('button', { name: 'Từ chối' }))
-    expect(onDecide).toHaveBeenCalledWith(pendingFreeze, 'REJECT')
-  })
-
-  it('thiếu quyền duyệt thì ẩn hẳn hành động, không hiện dạng mờ', () => {
-    render(<FreezeRowActions item={pendingFreeze} canApprove={false} />)
-    expect(screen.queryByRole('button')).not.toBeInTheDocument()
-  })
-
   it('bản ghi đã kết thúc thì không còn hành động nào', () => {
-    render(<FreezeRowActions item={freeze({ status: 'RELEASED' })} canApprove />)
+    render(<FreezeRowActions item={freeze({ status: 'RELEASED' })} />)
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
-  it('có quyền duyệt nhưng chính mình là maker thì ẩn nút duyệt/từ chối', () => {
-    render(
-      <FreezeRowActions item={pendingFreezeOwnedByChecker} canApprove />
-    )
-    expect(screen.queryByRole('button', { name: 'Duyệt' })).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Từ chối' })).not.toBeInTheDocument()
-  })
-
-  it('có lệnh pending (dù partial) thì ẩn nút Mở băng, chỉ hiện Duyệt/Từ chối', async () => {
+  it('không kiểm tra maker-checker kể cả response cũ còn lệnh pending', async () => {
     const onRequestUnfreeze = vi.fn()
-    const onDecide = vi.fn()
     render(
       <FreezeRowActions
-        item={partialPendingFreeze}
-        canApprove
+        item={pendingFreeze}
         onRequestUnfreeze={onRequestUnfreeze}
-        onDecide={onDecide}
       />
     )
 
-    expect(screen.queryByRole('button', { name: 'Mở băng' })).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Duyệt' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Từ chối' })).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Mở băng' }))
+    expect(onRequestUnfreeze).toHaveBeenCalledWith(pendingFreeze)
+    expect(screen.queryByRole('button', { name: 'Duyệt' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Từ chối' })).not.toBeInTheDocument()
   })
 })

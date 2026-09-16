@@ -30,7 +30,7 @@ const COMMAND_STATUS_CONFIG: Record<
     { label: string; className: string }
 > = {
     [UnfreezeCommandStatus.PENDING_APPROVAL]: {
-        label: 'Chờ duyệt',
+        label: 'Chưa thực hiện',
         className: 'warning-status'
     },
     [UnfreezeCommandStatus.EXECUTED]: {
@@ -50,7 +50,7 @@ const UnfreezeCommandList = ({ commands }: { commands: UnfreezeCommand[] }) => {
     return (
         <div className="mt-3">
             <p className="mb-1.5 text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
-                Các yêu cầu mở băng trước đó
+                Các lần mở băng trước đó
             </p>
             <div className="divide-y divide-border rounded-md border border-border overflow-hidden">
                 {commands.map((cmd, idx) => {
@@ -66,7 +66,7 @@ const UnfreezeCommandList = ({ commands }: { commands: UnfreezeCommand[] }) => {
                                         {formatCurrency(cmd.amount, { symbol: 'VNĐ', position: 'after' })}
                                     </p>
                                     <p className="text-[11px] text-muted-foreground truncate">
-                                        Maker: {cmd.makerId}
+                                        Người thực hiện: {cmd.makerId}
                                         {cmd.reason ? ` · ${cmd.reason}` : ''}
                                     </p>
                                     {cmd.createdAt && (
@@ -137,7 +137,7 @@ const UnfreezeRequestDialogContent = ({
                         htmlType="submit"
                         form={UNFREEZE_REQUEST_FORM_ID}
                         loading={isLoading}
-                        content="Gửi yêu cầu mở băng"
+                        content="Xác nhận mở băng"
                         className="sm:w-auto!"
                     />
                 </div>
@@ -152,7 +152,7 @@ const UnfreezeRequestDialogContent = ({
             title={
                 <span className="flex items-center gap-2 text-secondary-foreground">
                     <SnowflakeIcon size={18} />
-                    Yêu cầu mở băng
+                    Mở băng
                 </span>
             }
         >
@@ -243,11 +243,10 @@ const UnfreezeRequestDialogContent = ({
                     Lưu ý:
                 </span>
                 <p>
-                    Yêu cầu này cần một người khác phê duyệt. Tiền chỉ rời{' '}
+                    Tiền sẽ được chuyển trực tiếp từ{' '}
                     <span className="underline">Ví Đóng Băng</span> về{' '}
                     <span className="underline">Ví Khả Dụng</span> của tài khoản{' '}
-                    <span className="font-medium">{item.ownerUsername ?? '--'}</span>{' '}
-                    sau khi lệnh được duyệt.
+                    <span className="font-medium">{item.ownerUsername ?? '--'}</span>.
                 </p>
             </div>
 

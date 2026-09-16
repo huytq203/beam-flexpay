@@ -126,10 +126,10 @@ const DialogUnfreezeTransaction = ({
       }).unwrap()
       idempotency.reset()
       successMess(
-        `Đã gửi yêu cầu mở băng ${formatCurrency(values.amount, {
+        `Đã mở băng ${formatCurrency(values.amount, {
           symbol: currency,
           position: 'after'
-        })}, đang chờ người khác phê duyệt`
+        })} thành công`
       )
       onSuccess?.()
     } catch {
@@ -169,7 +169,7 @@ const DialogUnfreezeTransaction = ({
             htmlType='submit'
             form={UNFREEZE_TRANSACTION_FORM_ID}
             loading={isLoading}
-            content='Gửi yêu cầu mở băng'
+            content='Xác nhận mở băng'
             className='sm:w-auto!'
           />
         </div>
@@ -292,9 +292,8 @@ const DialogUnfreezeTransaction = ({
           Lưu ý
         </p>
         <p className='mt-1 text-sm'>
-          Yêu cầu này cần một người khác phê duyệt. Sau khi được duyệt, tiền mới
-          chuyển từ số dư đóng băng về số dư khả dụng của đúng ví đã giữ tiền
-          trong giao dịch này.
+          Tiền sẽ được chuyển trực tiếp từ số dư đóng băng về số dư khả dụng
+          của đúng ví đã giữ tiền trong giao dịch này.
         </p>
       </div>
 

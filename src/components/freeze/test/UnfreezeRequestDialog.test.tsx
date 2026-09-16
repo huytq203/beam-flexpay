@@ -67,7 +67,7 @@ describe('UnfreezeRequestDialog', () => {
     expect(amountInput()).toHaveValue('50,000')
 
     const submitButton = screen.getByRole('button', {
-      name: 'Gửi yêu cầu mở băng'
+      name: 'Xác nhận mở băng'
     })
     expect(submitButton).toHaveAttribute('form', 'unfreeze-request-form')
     expect(submitButton.closest('form')).toBeNull()
@@ -130,7 +130,7 @@ describe('UnfreezeRequestDialog', () => {
     await user.clear(amountInput())
     await user.type(amountInput(), '60000')
     await user.type(screen.getByRole('textbox'), 'Khách khiếu nại')
-    await user.click(screen.getByRole('button', { name: /Gửi yêu cầu mở băng/ }))
+    await user.click(screen.getByRole('button', { name: /Xác nhận mở băng/ }))
 
     await waitFor(() => expect(body).not.toBeNull())
     expect(body).toMatchObject({ amount: 50_000 })
@@ -151,7 +151,7 @@ describe('UnfreezeRequestDialog', () => {
     await user.clear(amountInput())
     await user.type(amountInput(), '20000')
     await user.type(screen.getByRole('textbox'), 'Khách khiếu nại')
-    await user.click(screen.getByRole('button', { name: /Gửi yêu cầu mở băng/ }))
+    await user.click(screen.getByRole('button', { name: /Xác nhận mở băng/ }))
 
     await waitFor(() => expect(body).not.toBeNull())
     expect(body).toMatchObject({
@@ -179,7 +179,7 @@ describe('UnfreezeRequestDialog', () => {
     )
 
     await user.type(screen.getByRole('textbox'), 'Khách khiếu nại')
-    await user.click(screen.getByRole('button', { name: /Gửi yêu cầu mở băng/ }))
+    await user.click(screen.getByRole('button', { name: /Xác nhận mở băng/ }))
 
     await waitFor(() => expect(body).not.toBeNull())
     expect(body).toMatchObject({

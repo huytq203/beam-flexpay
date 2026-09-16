@@ -14,7 +14,6 @@ import {
     type OwnerType,
     type ReleaseType
 } from '@constants/freeze.constant'
-import type { UnfreezeDecision } from '@hooks/useUnfreezeApproval'
 import { FreezeItem } from '@type/freeze.type'
 import { ColumnType } from 'antd/es/table'
 import dayjs from 'dayjs'
@@ -22,15 +21,11 @@ import dayjs from 'dayjs'
 type FreezeRow = { no: number } & FreezeItem
 
 interface ColumnOptions {
-    canApprove: boolean
     onRelease?: (record: FreezeRow) => void
-    onDecide?: (record: FreezeItem, decision: UnfreezeDecision) => void
 }
 
 export const getColumn = ({
-    canApprove,
-    onRelease,
-    onDecide
+    onRelease
 }: ColumnOptions): ColumnType<FreezeRow>[] => [
     {
         title: '#',
@@ -131,9 +126,7 @@ export const getColumn = ({
         render: (_, record) => (
             <FreezeRowActions
                 item={record}
-                canApprove={canApprove}
                 onRequestUnfreeze={() => onRelease?.(record)}
-                onDecide={onDecide}
             />
         ),
     },

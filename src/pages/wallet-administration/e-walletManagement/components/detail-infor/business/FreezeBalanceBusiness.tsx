@@ -2,7 +2,6 @@ import {
     ButtonComponent,
     CardComponent,
     Table,
-    UnfreezeDecisionDialog,
     UnfreezeRequestDialog
 } from '@components/index'
 import { Column } from './configs/FreezeBalance.column'
@@ -21,15 +20,10 @@ const FreezeBalanceBusiness = () => {
         selectedFreezeItem,
         handleOpenUnfreezeModal,
         handleCloseUnfreezeModal,
-        canApprove,
-        openDecision,
-        decisionDialogState
     } = useFetchFreeze()
 
     const column = Column({
-        canApprove,
-        onRelease: handleOpenUnfreezeModal,
-        onDecide: openDecision
+        onRelease: handleOpenUnfreezeModal
     })
 
     return (
@@ -66,7 +60,6 @@ const FreezeBalanceBusiness = () => {
                 onSuccess={handleCloseUnfreezeModal}
                 onCancel={handleCloseUnfreezeModal}
             />
-            <UnfreezeDecisionDialog {...decisionDialogState} />
         </div>
     )
 }

@@ -4,9 +4,7 @@ import {
   FreezeRowAction,
   getFreezeAmountSummary,
   getFreezeRowAction,
-  getFreezeRowActionFlags,
-  isAwaitingUnfreezeApproval,
-  resolveFreezeBadgeKey
+  getFreezeRowActionFlags
 } from '../freeze'
 
 const freeze = (overrides: Partial<FreezeItem> = {}): FreezeItem => ({
@@ -54,53 +52,13 @@ const pending = (overrides: Partial<FreezeItem> = {}) =>
     ...overrides
   })
 
-describe('isAwaitingUnfreezeApproval', () => {
-  it('chỉ đúng khi lệnh mở băng đang ở PENDING_APPROVAL', () => {
-    expect(isAwaitingUnfreezeApproval(pending())).toBe(true)
-    expect(isAwaitingUnfreezeApproval(freeze())).toBe(false)
-    expect(
-      isAwaitingUnfreezeApproval(
-        freeze({ unfreezeCommandId: 'command-1', unfreezeCommandStatus: 'EXECUTED' })
-      )
-    ).toBe(false)
-  })
-})
-
-describe('resolveFreezeBadgeKey', () => {
-  it('lệnh chờ duyệt được ưu tiên hơn displayStatus của BE', () => {
-    expect(resolveFreezeBadgeKey(pending())).toBe('PENDING_APPROVAL')
-  })
-
-  it('không có lệnh chờ duyệt thì giữ nguyên displayStatus', () => {
-    expect(resolveFreezeBadgeKey(freeze())).toBe('FROZEN')
-    expect(
-      resolveFreezeBadgeKey(freeze({ displayStatus: 'PARTIALLY_RELEASED' }))
-    ).toBe('PARTIALLY_RELEASED')
-    expect(
-      resolveFreezeBadgeKey(
-        freeze({
-          displayStatus: 'RELEASED',
-          unfreezeCommandId: 'command-1',
-          unfreezeCommandStatus: 'EXECUTED'
-        })
-      )
-    ).toBe('RELEASED')
-  })
-})
-
 describe('getFreezeRowAction', () => {
-  it('bản ghi ACTIVE chưa có lệnh thì mở bước tạo yêu cầu', () => {
+  it('bản ghi ACTIVE còn tiền thì cho mở băng', () => {
     expect(getFreezeRowAction(freeze())).toBe(FreezeRowAction.REQUEST_UNFREEZE)
   })
 
-  it('đang chờ duyệt thì chuyển sang bước duyệt / từ chối', () => {
-    expect(getFreezeRowAction(pending())).toBe(FreezeRowAction.DECIDE_UNFREEZE)
-  })
-
-  it('chờ duyệt mà thiếu commandId thì canDecide=false nhưng vẫn cho tạo lệnh mới', () => {
-    expect(
-      getFreezeRowAction(pending({ unfreezeCommandId: null }))
-    ).toBe(FreezeRowAction.REQUEST_UNFREEZE)
+  it('không kiểm tra lệnh maker-checker cũ đang pending', () => {
+    expect(getFreezeRowAction(pending())).toBe(FreezeRowAction.REQUEST_UNFREEZE)
   })
 
   it('bản ghi đã kết thúc thì không còn hành động', () => {
@@ -180,21 +138,19 @@ describe('getFreezeRowAction', () => {
 })
 
 describe('getFreezeRowActionFlags', () => {
-  it('bản ghi kết thúc thì cả hai flag đều false', () => {
+  it('bản ghi kết thúc thì không thể mở băng', () => {
     expect(getFreezeRowActionFlags(freeze({ status: 'RELEASED' }))).toEqual({
-      canRequestUnfreeze: false,
-      canDecideUnfreeze: false
+      canRequestUnfreeze: false
     })
   })
 
-  it('ACTIVE chưa có lệnh: chỉ canRequestUnfreeze', () => {
+  it('ACTIVE còn tiền thì có thể mở băng', () => {
     expect(getFreezeRowActionFlags(freeze())).toEqual({
-      canRequestUnfreeze: true,
-      canDecideUnfreeze: false
+      canRequestUnfreeze: true
     })
   })
 
-  it('pending toàn phần: chỉ canDecideUnfreeze', () => {
+  it('không chặn mở băng bởi trạng thái pending của cơ chế cũ', () => {
     expect(
       getFreezeRowActionFlags(
         freeze({
@@ -204,20 +160,7 @@ describe('getFreezeRowActionFlags', () => {
           unfreezeCommands: [{ id: 'c1', amount: 50_000, status: 'PENDING_APPROVAL' } as never]
         })
       )
-    ).toEqual({ canRequestUnfreeze: false, canDecideUnfreeze: true })
-  })
-
-  it('pending một phần: canDecide=true nhưng canRequest=false vì BE chưa hỗ trợ parallel', () => {
-    expect(
-      getFreezeRowActionFlags(
-        freeze({
-          remainingAmount: 100_000,
-          unfreezeCommandId: 'c1',
-          unfreezeCommandStatus: 'PENDING_APPROVAL',
-          unfreezeCommands: [{ id: 'c1', amount: 1_000, status: 'PENDING_APPROVAL' } as never]
-        })
-      )
-    ).toEqual({ canRequestUnfreeze: false, canDecideUnfreeze: true })
+    ).toEqual({ canRequestUnfreeze: true })
   })
 })
 

@@ -48,31 +48,12 @@ export const apiFreezes = apiWalletCore.injectEndpoints({
             transformResponse: (res: ResponseType<DataFreeze>) => res.data,
             providesTags: ['Wallet'],
         }),
-        /**
-         * Bước maker: tạo lệnh mở băng. Tiền CHƯA rời hold, lệnh về trạng thái PENDING_APPROVAL.
-         * Đường dẫn đúng là /wallet/accounts/unfreeze — wallet-core không có /wallet/freezes/unfreeze.
-         */
+        /** Mở băng trực tiếp ngay khi request thành công. */
         postUnfreeze: build.mutation<ResponseType<ManualMoneyCommand>, UnfreezeRequest>({
             query: (body) => ({
                 url: '/wallet/accounts/unfreeze',
                 method: 'POST',
                 body: body,
-            }),
-            invalidatesTags: ['Wallet'],
-        }),
-        /** Bước checker: duyệt lệnh. Chỉ ở bước này tiền mới rời hold về ví khả dụng. */
-        approveUnfreeze: build.mutation<ResponseType<ManualMoneyCommand>, string>({
-            query: (commandId) => ({
-                url: `/wallet/unfreeze-commands/${commandId}/approve`,
-                method: 'POST',
-            }),
-            invalidatesTags: ['Wallet', 'Journal'],
-        }),
-        /** Bước checker: từ chối lệnh chờ duyệt. Không đồng nào rời hold. */
-        rejectUnfreeze: build.mutation<ResponseType<ManualMoneyCommand>, string>({
-            query: (commandId) => ({
-                url: `/wallet/unfreeze-commands/${commandId}/reject`,
-                method: 'POST',
             }),
             invalidatesTags: ['Wallet'],
         }),
@@ -83,6 +64,4 @@ export const {
     useGetFreezesQuery,
     useLazyGetFreezesQuery,
     usePostUnfreezeMutation,
-    useApproveUnfreezeMutation,
-    useRejectUnfreezeMutation,
 } = apiFreezes

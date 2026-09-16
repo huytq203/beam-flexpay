@@ -1,6 +1,5 @@
 import { useExportCsv } from '@hooks/useExportCsv'
 import usePagination from '@hooks/usePagination'
-import { useUnfreezeApproval } from '@hooks/useUnfreezeApproval'
 import {
   useExportFreezesMutation,
   type ExportFreezesQuery
@@ -67,8 +66,6 @@ const useFrozenTransactions = () => {
     setSelectedFreezeItem(null)
   }
 
-  const { canApprove, openDecision, dialogState } = useUnfreezeApproval()
-
   return {
     dataSource,
     totalElements,
@@ -84,9 +81,6 @@ const useFrozenTransactions = () => {
     selectedFreezeItem,
     handleOpenUnfreezeModal,
     handleCloseUnfreezeModal,
-    canApprove,
-    openDecision,
-    decisionDialogState: dialogState,
     handleExport,
     isExporting,
   }

@@ -47,7 +47,7 @@ const DialogUnfreeze = ({
                 idempotencyKey: idempotency.take(),
             }).unwrap()
             idempotency.reset()
-            successMess('Đã gửi yêu cầu mở băng, đang chờ người khác phê duyệt')
+            successMess('Đã mở băng thành công')
             reset()
             onSuccess?.()
         } catch {

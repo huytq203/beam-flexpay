@@ -91,11 +91,11 @@ export interface FreezeItem {
   updatedBy: string
   /** Lịch sử các lần mở băng đã thực hiện. */
   unfreezeLogs: UnfreezeLog[]
-  /** Lệnh mở băng đang gắn với bản ghi này; NULL khi chưa ai yêu cầu mở băng. */
+  /** Lệnh mở băng gần nhất gắn với bản ghi này. */
   unfreezeCommandId: string | null
   unfreezeCommandStatus: UnfreezeCommandStatus | null
   unfreezeCommandAmount: number | null
-  /** preferred_username của maker tạo lệnh mở băng đang pending. */
+  /** Người tạo lệnh; còn được trả về để tương thích dữ liệu lịch sử. */
   unfreezeCommandMakerId: string | null
   unfreezeCommandReason: string | null
   unfreezeCommandCreatedAt: string | null

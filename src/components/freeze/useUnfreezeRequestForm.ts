@@ -25,10 +25,7 @@ export interface UseUnfreezeRequestFormResult {
   submit: () => void
 }
 
-/**
- * Bước maker của luồng mở băng: dựng lệnh rồi gửi đi. Chọn endpoint theo việc bản ghi có
- * gắn giao dịch gốc hay không — gọi nhầm thì wallet-core trả 4817.
- */
+/** Chọn endpoint mở băng theo việc bản ghi có gắn giao dịch gốc hay không. */
 export const useUnfreezeRequestForm = (
   item: FreezeItem,
   onSuccess?: () => void
@@ -89,9 +86,7 @@ export const useUnfreezeRequestForm = (
         }).unwrap()
       }
       idempotency.reset()
-      successMess(
-        `Đã gửi yêu cầu mở băng ${toVnd(values.amount)}, đang chờ người khác phê duyệt`
-      )
+      successMess(`Đã mở băng ${toVnd(values.amount)} thành công`)
       reset()
       onSuccess?.()
     } catch {

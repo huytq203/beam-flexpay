@@ -1,5 +1,4 @@
 import usePagination from '@hooks/usePagination'
-import { useUnfreezeApproval } from '@hooks/useUnfreezeApproval'
 import { useGetFreezesQuery } from '@services/apiFreezes'
 import { FreezeItem } from '@type/freeze.type'
 import React from 'react'
@@ -39,8 +38,6 @@ const useFetchFreeze = () => {
         setSelectedFreezeItem(null)
     }
 
-    const { canApprove, openDecision, dialogState } = useUnfreezeApproval()
-
     return {
         accountId: id,
         dataFreeze,
@@ -54,9 +51,6 @@ const useFetchFreeze = () => {
         selectedFreezeItem,
         handleOpenUnfreezeModal,
         handleCloseUnfreezeModal,
-        canApprove,
-        openDecision,
-        decisionDialogState: dialogState
     }
 }
 
