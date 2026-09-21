@@ -12,6 +12,16 @@ export const DEFAULT_KEY_CONNECTION_FILTERS: KeyConnectionFilters = {
   status: 'ALL'
 }
 
+export const maskWebhookUrl = (value: string): string => {
+  try {
+    const url = new URL(value)
+    const firstPath = url.pathname.split('/').filter(Boolean)[0]
+    return `${url.origin}${firstPath ? `/${firstPath}/…` : '/…'}`
+  } catch {
+    return 'Webhook không hợp lệ'
+  }
+}
+
 export const filterKeyConnections = (
   rows: KeyConnectionRow[],
   filters: KeyConnectionFilters

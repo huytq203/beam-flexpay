@@ -43,6 +43,16 @@ describe('KeyConnectionPage', () => {
     expect(screen.queryByRole('button', { name: /Sửa key/ })).toBeNull()
   })
 
+  it('chỉ hiển thị số lượng IP và webhook đã rút gọn trên danh sách', async () => {
+    renderPage([PERMISSION.MERCHANT_VIEW])
+
+    expect(await screen.findByText('1 IP')).toBeInTheDocument()
+    expect(screen.getByText('2 IP')).toBeInTheDocument()
+    expect(screen.queryByText('203.113.1.10')).toBeNull()
+    expect(screen.queryByText('https://merchant.highlandscoffee.vn/ipn')).toBeNull()
+    expect(screen.getByText('https://merchant.highlandscoffee.vn/ipn/…')).toBeInTheDocument()
+  })
+
   it('hiển thị bộ lọc theo mẫu danh sách merchant', async () => {
     renderPage([PERMISSION.MERCHANT_VIEW])
 

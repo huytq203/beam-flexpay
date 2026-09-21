@@ -7,6 +7,7 @@ import {
 
 import type { MerchantGatewayTableStateProps } from '../../shared/merchantGateway.types'
 import type { KeyConnectionRow } from '../types/keyConnection.type'
+import { maskWebhookUrl } from '../utils/keyConnection.utils'
 
 export type KeyConnectionColumns = MerchantGatewayTableStateProps<KeyConnectionRow>['columns']
 
@@ -55,7 +56,9 @@ const BASE_COLUMNS: KeyConnectionColumns = [
     width: 180,
     render: (_, row) => (
       <span className='text-sm text-muted-foreground'>
-        {row.ipWhitelist.length === 0 ? 'Không giới hạn' : row.ipWhitelist.join(', ')}
+        {row.ipWhitelist.length === 0
+          ? 'Không giới hạn'
+          : `${row.ipWhitelist.length} IP`}
       </span>
     )
   },
@@ -63,13 +66,14 @@ const BASE_COLUMNS: KeyConnectionColumns = [
     title: 'Webhook URL',
     dataIndex: 'webhookUrl',
     width: 260,
-    render: (webhookUrl: string) => (
-      <TooltipComponent title={webhookUrl}>
+    render: (webhookUrl: string) => {
+      const maskedUrl = maskWebhookUrl(webhookUrl)
+      return <TooltipComponent title={maskedUrl}>
         <span className='block max-w-60 truncate text-sm text-foreground'>
-          {webhookUrl}
+          {maskedUrl}
         </span>
       </TooltipComponent>
-    )
+    }
   },
   {
     title: 'Trạng thái',
