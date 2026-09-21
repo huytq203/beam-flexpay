@@ -51,6 +51,32 @@ describe('PaymentMethodPage', () => {
     expect(within(screen.getByRole('table')).queryByText('Ví điện tử')).toBeNull()
   })
 
+  it('hiển thị cấp áp dụng Master và Sub trong bảng', async () => {
+    renderPage([PERMISSION.MERCHANT_VIEW])
+
+    const table = await screen.findByRole('table')
+    expect(within(table).getByText('Master')).toBeInTheDocument()
+    expect(within(table).getByText('Sub')).toBeInTheDocument()
+  })
+
+  it('chỉ đổi trạng thái sau khi xác nhận', async () => {
+    const user = userEvent.setup()
+    renderPage([PERMISSION.MERCHANT_VIEW, PERMISSION.MERCHANT_UPDATE])
+
+    await user.click((await screen.findAllByRole('button', { name: 'Tắt' }))[0])
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Hủy' }))
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(screen.getAllByRole('button', { name: 'Tắt' })).toHaveLength(3)
+
+    await user.click(screen.getAllByRole('button', { name: 'Tắt' })[0])
+    await user.click(screen.getByRole('button', { name: 'Xác nhận tắt' }))
+
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(screen.getAllByRole('button', { name: 'Bật' })).toHaveLength(2)
+  })
+
   it('báo lỗi các trường bắt buộc khi thêm hình thức thanh toán trống', async () => {
     const user = userEvent.setup()
     renderPage([PERMISSION.MERCHANT_VIEW, PERMISSION.MERCHANT_CREATE])

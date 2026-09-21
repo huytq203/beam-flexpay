@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import type { ListState } from '../../shared/merchantGateway.types'
 import { PAYMENT_METHOD_FIXTURE } from '../constants/paymentMethod.fixture'
@@ -77,7 +77,7 @@ export function usePaymentMethods(initialListState?: ListState) {
   const [filters, setFilterState] = useState<PaymentMethodFilters>(DEFAULT_PAYMENT_METHOD_FILTERS)
   const [page, setPageState] = useState(1)
   const [overrideState, setOverrideState] = useState<ListState | undefined>(initialListState)
-  const filteredRows = useMemo(() => filterRows(records, filters), [filters, records])
+  const filteredRows = filterRows(records, filters)
   const rows = filteredRows.slice((page - 1) * PAYMENT_METHOD_PAGE_SIZE, page * PAYMENT_METHOD_PAGE_SIZE)
   const listState = overrideState ?? (filteredRows.length === 0 ? 'empty' : 'success')
 

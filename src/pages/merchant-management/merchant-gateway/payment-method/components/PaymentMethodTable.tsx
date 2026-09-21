@@ -1,5 +1,7 @@
+import { useState } from 'react'
+
 import { Can } from '@/app/permissions'
-import { ButtonComponent, TagComponent } from '@components/index'
+import { ButtonComponent, DialogModal, TagComponent } from '@components/index'
 
 import { MerchantGatewayTableState } from '../../shared/MerchantGatewayTableState'
 import type { MerchantGatewayTableStateProps } from '../../shared/merchantGateway.types'
@@ -49,6 +51,16 @@ const baseColumns: PaymentMethodColumns = [
     )
   },
   {
+    title: 'Cấp',
+    dataIndex: 'scope',
+    width: 100,
+    render: (scope: PaymentMethodRow['scope']) => (
+      <span className='rounded bg-muted px-1.5 py-0.5 text-xs font-medium text-muted-foreground'>
+        {scope === 'MASTER' ? 'Master' : 'Sub'}
+      </span>
+    )
+  },
+  {
     title: 'Hình thức',
     dataIndex: 'method',
     width: 140,
@@ -84,7 +96,7 @@ const baseColumns: PaymentMethodColumns = [
 
 const getActionColumn = (
   onEdit: (row: PaymentMethodRow) => void,
-  onToggleStatus: (id: string) => void
+  onRequestStatusChange: (row: PaymentMethodRow) => void
 ): PaymentMethodColumns[number] => ({
     title: 'Thao tác',
     align: 'center',
@@ -96,7 +108,7 @@ const getActionColumn = (
           <ButtonComponent aria-label={`Sửa hình thức ${row.merchantName}`} content='Sửa' htmlType='button' onClick={() => onEdit(row)} type='text' />
         </Can>
         <Can screen='MERCHANT_PAYMENT_METHOD' action='update'>
-          <ButtonComponent aria-label={`Đổi trạng thái ${row.merchantName}`} content={row.status === 'ACTIVE' ? 'Tắt' : 'Bật'} htmlType='button' onClick={() => onToggleStatus(row.id)} type='text' />
+          <ButtonComponent aria-label={`Đổi trạng thái ${row.merchantName}`} content={row.status === 'ACTIVE' ? 'Tắt' : 'Bật'} htmlType='button' onClick={() => onRequestStatusChange(row)} type='text' />
         </Can>
       </div>
     )
@@ -104,8 +116,46 @@ const getActionColumn = (
 
 const getColumns = (
   onEdit: (row: PaymentMethodRow) => void,
-  onToggleStatus: (id: string) => void
-): PaymentMethodColumns => [...baseColumns, getActionColumn(onEdit, onToggleStatus)]
+  onRequestStatusChange: (row: PaymentMethodRow) => void
+): PaymentMethodColumns => [...baseColumns, getActionColumn(onEdit, onRequestStatusChange)]
+
+interface PaymentMethodStatusDialogProps {
+  row: PaymentMethodRow | null
+  onCancel: () => void
+  onConfirm: (id: string) => void
+}
+
+function PaymentMethodStatusDialog({
+  row,
+  onCancel,
+  onConfirm
+}: PaymentMethodStatusDialogProps) {
+  if (row === null) return null
+
+  const isActivating = row.status === 'INACTIVE'
+  const action = isActivating ? 'bật' : 'tắt'
+
+  return (
+    <DialogModal
+      destroyOnHidden
+      footer={
+        <div className='flex flex-col gap-2 sm:flex-row sm:justify-end'>
+          <ButtonComponent block className='sm:w-auto!' content='Hủy' htmlType='button' onClick={onCancel} type='default' />
+          <ButtonComponent block className='sm:w-auto!' content={`Xác nhận ${action}`} htmlType='button' onClick={() => onConfirm(row.id)} />
+        </div>
+      }
+      onCancel={onCancel}
+      onOk={() => {}}
+      open
+      title={`${isActivating ? 'Bật' : 'Tắt'} hình thức thanh toán`}
+      width={{ xs: 'calc(100vw - 24px)', sm: 440 }}
+    >
+      <p className='text-sm text-muted-foreground'>
+        Bạn có chắc muốn {action} hình thức thanh toán của {row.merchantName}?
+      </p>
+    </DialogModal>
+  )
+}
 
 export function PaymentMethodTable({
   rows,
@@ -119,7 +169,13 @@ export function PaymentMethodTable({
   onPageChange,
   onRetry
 }: PaymentMethodTableProps) {
-  const columns = getColumns(onEdit, onToggleStatus)
+  const [pendingStatusRow, setPendingStatusRow] = useState<PaymentMethodRow | null>(null)
+  const columns = getColumns(onEdit, setPendingStatusRow)
+
+  const handleStatusConfirmation = (id: string): void => {
+    onToggleStatus(id)
+    setPendingStatusRow(null)
+  }
 
   if (state === 'loading') {
     return <MerchantGatewayTableState columns={columns} rowKey='id' rows={[]} state='loading' />
@@ -133,5 +189,14 @@ export function PaymentMethodTable({
     return <MerchantGatewayTableState columns={columns} emptyKind={filtered ? 'filtered' : 'initial'} onRetry={onRetry} rowKey='id' rows={[]} state='empty' />
   }
 
-  return <MerchantGatewayTableState columns={columns} onRefresh={onRetry} pagination={{ current: page, pageSize, total, showSizeChanger: false, onChange: onPageChange }} rowKey='id' rows={rows} state='success' />
+  return (
+    <>
+      <MerchantGatewayTableState columns={columns} onRefresh={onRetry} pagination={{ current: page, pageSize, total, showSizeChanger: false, onChange: onPageChange }} rowKey='id' rows={rows} state='success' />
+      <PaymentMethodStatusDialog
+        row={pendingStatusRow}
+        onCancel={() => setPendingStatusRow(null)}
+        onConfirm={handleStatusConfirmation}
+      />
+    </>
+  )
 }
