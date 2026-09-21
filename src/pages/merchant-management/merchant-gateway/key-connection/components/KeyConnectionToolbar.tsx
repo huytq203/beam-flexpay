@@ -54,8 +54,8 @@ export function KeyConnectionToolbar({
       </div>
       <div className='grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3'>
         <FormInput className={FIELD_CLASS} classNameLable={LABEL_CLASS} control={form.control} label='Từ khóa' name='query' placeholder='Tên, mã merchant hoặc Client ID' />
-        <FormSelect className={FIELD_CLASS} classNameLable={LABEL_CLASS} control={form.control} label='Cấp áp dụng' name='scope' options={KEY_CONNECTION_FILTER_SCOPE_OPTIONS} />
-        <FormSelect className={FIELD_CLASS} classNameLable={LABEL_CLASS} control={form.control} label='Trạng thái' name='status' options={KEY_CONNECTION_FILTER_STATUS_OPTIONS} />
+        <FormSelect allowClear={false} className={FIELD_CLASS} classNameLable={LABEL_CLASS} control={form.control} label='Cấp áp dụng' name='scope' options={KEY_CONNECTION_FILTER_SCOPE_OPTIONS} />
+        <FormSelect allowClear={false} className={FIELD_CLASS} classNameLable={LABEL_CLASS} control={form.control} label='Trạng thái' name='status' options={KEY_CONNECTION_FILTER_STATUS_OPTIONS} />
       </div>
       <div className='flex flex-col-reverse gap-2 sm:flex-row sm:justify-end'>
         <ButtonComponent className='w-full sm:w-auto' content='Xóa bộ lọc' htmlType='reset' icon={<BroomIcon aria-hidden size={18} />} type='default' />

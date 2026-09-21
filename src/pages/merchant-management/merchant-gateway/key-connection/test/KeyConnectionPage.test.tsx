@@ -8,6 +8,7 @@ import { savePermissions } from '@slices/authSlice'
 import { renderWithProviders } from '@/test/render'
 
 import KeyConnectionPage from '../pages/KeyConnectionPage'
+import { KeyConnectionToolbar } from '../components/KeyConnectionToolbar'
 
 const renderPage = (permissions: string[]) => {
   const store = createAppStore()
@@ -52,5 +53,33 @@ describe('KeyConnectionPage', () => {
     expect(screen.getByLabelText('Trạng thái')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Xóa bộ lọc' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Tìm kiếm' })).toBeInTheDocument()
+  })
+
+  it('không cho xóa lựa chọn scope vì đã có giá trị Tất cả', () => {
+    renderWithProviders(
+      <KeyConnectionToolbar
+        filters={{ query: '', scope: 'MASTER', status: 'ACTIVE' }}
+        onSearch={() => {}}
+      />
+    )
+
+    expect(document.querySelector('.ant-select-clear')).toBeNull()
+  })
+
+  it.each([
+    ['loading', 'Đang tải dữ liệu'],
+    ['error', 'Không tải được danh sách cấu hình merchant'],
+    ['empty', 'Chưa có cấu hình'],
+    ['success', 'Highlands Coffee']
+  ] as const)('hiển thị trạng thái fixture %s', async (initialListState, label) => {
+    const store = createAppStore()
+    store.dispatch(savePermissions([PERMISSION.MERCHANT_VIEW]))
+
+    renderWithProviders(
+      <KeyConnectionPage initialListState={initialListState} />,
+      { store }
+    )
+
+    expect(await screen.findByText(label)).toBeInTheDocument()
   })
 })

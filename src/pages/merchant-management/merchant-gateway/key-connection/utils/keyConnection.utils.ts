@@ -6,6 +6,12 @@ import type {
 
 export const KEY_CONNECTION_PAGE_SIZE = 10
 
+export const DEFAULT_KEY_CONNECTION_FILTERS: KeyConnectionFilters = {
+  query: '',
+  scope: 'ALL',
+  status: 'ALL'
+}
+
 export const filterKeyConnections = (
   rows: KeyConnectionRow[],
   filters: KeyConnectionFilters

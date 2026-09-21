@@ -1,74 +1,39 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import type { ListState } from '../../shared/merchantGateway.types'
-import { KEY_CONNECTION_FIXTURE } from '../constants/keyConnection.fixture'
-import type { KeyConnectionFormValues } from '../schemas/keyConnection.schema'
-import type {
-  KeyConnectionFilters,
-  KeyConnectionRow
-} from '../types/keyConnection.type'
+import { useKeyConnectionActions } from './useKeyConnectionActions'
 import {
   filterKeyConnections,
   KEY_CONNECTION_PAGE_SIZE,
-  paginateKeyConnections,
-  toggleKeyConnectionStatus,
-  upsertKeyConnection
+  paginateKeyConnections
 } from '../utils/keyConnection.utils'
 
-const DEFAULT_FILTERS: KeyConnectionFilters = {
-  query: '',
-  scope: 'ALL',
-  status: 'ALL'
+export interface UseKeyConnectionsOptions {
+  initialListState?: ListState
 }
 
-export function useKeyConnections() {
-  const [records, setRecords] = useState<KeyConnectionRow[]>([
-    ...KEY_CONNECTION_FIXTURE
-  ])
-  const [filters, setFilterState] = useState<KeyConnectionFilters>(
-    DEFAULT_FILTERS
-  )
-  const [page, setCurrentPage] = useState(1)
-
+export function useKeyConnections(
+  { initialListState }: UseKeyConnectionsOptions = {}
+) {
+  const actions = useKeyConnectionActions()
   const filteredRows = useMemo(
-    () => filterKeyConnections(records, filters),
-    [filters, records]
+    () => filterKeyConnections(actions.records, actions.filters),
+    [actions.filters, actions.records]
   )
-  const rows = paginateKeyConnections(filteredRows, page)
-  const listState: ListState = filteredRows.length === 0 ? 'empty' : 'success'
-
-  const setFilters = (nextFilters: KeyConnectionFilters): void => {
-    setFilterState(nextFilters)
-    setCurrentPage(1)
-  }
-
-  const setPage = (nextPage: number): void => {
-    setCurrentPage(Math.max(1, nextPage))
-  }
-
-  const save = (record: KeyConnectionFormValues & { id?: string }): void => {
-    setRecords((current) => upsertKeyConnection(current, record))
-  }
-
-  const toggleStatus = (id: string): void => {
-    setRecords((current) => toggleKeyConnectionStatus(current, id))
-  }
-
-  const retry = (): void => {
-    setRecords((current) => [...current])
-  }
+  const listState =
+    initialListState ?? (filteredRows.length === 0 ? 'empty' : 'success')
 
   return {
-    rows,
+    rows: paginateKeyConnections(filteredRows, actions.page),
     total: filteredRows.length,
-    page,
+    page: actions.page,
     pageSize: KEY_CONNECTION_PAGE_SIZE,
-    filters,
+    filters: actions.filters,
     listState,
-    setFilters,
-    setPage,
-    save,
-    toggleStatus,
-    retry
+    setFilters: actions.setFilters,
+    setPage: actions.setPage,
+    save: actions.save,
+    toggleStatus: actions.toggleStatus,
+    retry: actions.retry
   }
 }

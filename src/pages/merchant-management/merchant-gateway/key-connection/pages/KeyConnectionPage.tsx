@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { KeyIcon } from '@components/icons'
 import { MerchantGatewayPage } from '../../shared/MerchantGatewayPage'
 import { MerchantGatewayToolbar } from '../../shared/MerchantGatewayToolbar'
+import type { ListState } from '../../shared/merchantGateway.types'
 import { KeyConnectionDialog } from '../components/KeyConnectionDialog'
 import { KeyConnectionTable } from '../components/KeyConnectionTable'
 import { KeyConnectionToolbar } from '../components/KeyConnectionToolbar'
@@ -10,11 +11,15 @@ import { useKeyConnections } from '../hooks/useKeyConnections'
 import type { KeyConnectionFormValues } from '../schemas/keyConnection.schema'
 import type { KeyConnectionRow } from '../types/keyConnection.type'
 
-const KeyConnectionPage = () => {
+interface KeyConnectionPageProps {
+  initialListState?: ListState
+}
+
+const KeyConnectionPage = ({ initialListState }: KeyConnectionPageProps) => {
   const [dialogRow, setDialogRow] = useState<KeyConnectionRow | null | undefined>(
     undefined
   )
-  const connections = useKeyConnections()
+  const connections = useKeyConnections({ initialListState })
   const isFiltered =
     connections.filters.query !== '' ||
     connections.filters.scope !== 'ALL' ||
