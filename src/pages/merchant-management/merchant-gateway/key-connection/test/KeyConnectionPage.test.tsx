@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 
 import { createAppStore } from '@/app/store'
+import { PERMISSION } from '@/app/permissions'
 import { savePermissions } from '@slices/authSlice'
 import { renderWithProviders } from '@/test/render'
 
@@ -18,12 +19,13 @@ const renderPage = (permissions: string[]) => {
 describe('KeyConnectionPage', () => {
   it('lọc danh sách fixture theo mã Sub merchant', async () => {
     const user = userEvent.setup()
-    renderPage(['EWALLET:MERCHANT:VIEW'])
+    renderPage([PERMISSION.MERCHANT_VIEW])
 
     await user.type(
-      await screen.findByRole('textbox', { name: 'Tìm kiếm key kết nối' }),
+      await screen.findByRole('textbox', { name: 'Từ khóa' }),
       'SUB-0142-01'
     )
+    await user.click(screen.getByRole('button', { name: 'Tìm kiếm' }))
 
     expect(await screen.findByText('HLC Nguyễn Huệ')).toBeInTheDocument()
     expect(screen.getByText('SUB-0142-01')).toBeInTheDocument()
@@ -32,11 +34,23 @@ describe('KeyConnectionPage', () => {
   })
 
   it('ẩn hành động tạo và sửa với quyền chỉ xem', async () => {
-    renderPage(['EWALLET:MERCHANT:VIEW'])
+    renderPage([PERMISSION.MERCHANT_VIEW])
 
     await screen.findByText('HLC Nguyễn Huệ')
 
     expect(screen.queryByRole('button', { name: 'Thêm mới Key' })).toBeNull()
     expect(screen.queryByRole('button', { name: /Sửa key/ })).toBeNull()
+  })
+
+  it('hiển thị bộ lọc theo mẫu danh sách merchant', async () => {
+    renderPage([PERMISSION.MERCHANT_VIEW])
+
+    expect(
+      await screen.findByRole('heading', { name: 'Bộ lọc tìm kiếm' })
+    ).toBeInTheDocument()
+    expect(screen.getByLabelText('Cấp áp dụng')).toBeInTheDocument()
+    expect(screen.getByLabelText('Trạng thái')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Xóa bộ lọc' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Tìm kiếm' })).toBeInTheDocument()
   })
 })

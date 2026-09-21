@@ -1,7 +1,9 @@
-import { Empty, Result } from 'antd'
+import { Empty } from 'antd'
 import type { Key } from 'react'
 
+import { ArrowsCounterClockwiseIcon, WarningIcon } from '@components/icons'
 import { ButtonComponent, Table } from '@components/index'
+import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
 
 import type { MerchantGatewayTableStateProps } from './merchantGateway.types'
 
@@ -23,34 +25,28 @@ export function MerchantGatewayTableState<T extends object>(
 
   if (props.state === 'loading') {
     return (
-      <div aria-live='polite' className='min-w-0' role='status'>
-        <Table<T>
-          columns={props.columns}
-          dataSource={[]}
-          loading={{ spinning: true, tip: 'Đang tải dữ liệu' }}
-          pagination={false}
-          rowKey={tableRowKey}
-          scroll={{ x: 'max-content' }}
-        />
+      <div aria-label='Đang tải danh sách cấu hình merchant' role='status'>
+        <span className='sr-only'>Đang tải dữ liệu</span>
+        <SkeletonTable columns={props.columns.length} noContainer rows={5} />
       </div>
     )
   }
 
   if (props.state === 'error') {
     return (
-      <div role='alert'>
-        <Result
-          status='error'
-          title='Không thể tải dữ liệu'
-          subTitle='Vui lòng kiểm tra kết nối và thử lại.'
-          extra={
-            <ButtonComponent
-              content='Thử lại'
-              htmlType='button'
-              onClick={props.onRetry}
-            />
-          }
-        />
+      <div className='flex min-h-56 flex-col items-center justify-center gap-3 px-4 text-center' role='alert'>
+        <span className='flex size-10 items-center justify-center rounded-lg bg-danger/10 text-danger'>
+          <WarningIcon aria-hidden size={22} />
+        </span>
+        <div className='space-y-1'>
+          <h3 className='font-display text-base font-semibold text-foreground'>
+            Không tải được danh sách cấu hình merchant
+          </h3>
+          <p className='text-sm text-muted-foreground'>
+            Vui lòng kiểm tra kết nối và thử tải lại dữ liệu.
+          </p>
+        </div>
+        <ButtonComponent content='Thử lại' htmlType='button' icon={<ArrowsCounterClockwiseIcon aria-hidden size={18} />} onClick={props.onRetry} type='default' />
       </div>
     )
   }
@@ -67,7 +63,11 @@ export function MerchantGatewayTableState<T extends object>(
           </div>
         }
         image={Empty.PRESENTED_IMAGE_SIMPLE}
-      />
+      >
+        {props.onRetry && (
+          <ButtonComponent content='Làm mới dữ liệu' htmlType='button' icon={<ArrowsCounterClockwiseIcon aria-hidden size={18} />} onClick={props.onRetry} type='default' />
+        )}
+      </Empty>
     )
   }
 
@@ -75,8 +75,10 @@ export function MerchantGatewayTableState<T extends object>(
     <Table<T>
       columns={props.columns}
       dataSource={[...props.rows]}
+      onRefresh={props.onRefresh}
       pagination={props.pagination}
       rowKey={tableRowKey}
+      size='small'
       scroll={{ x: 'max-content' }}
     />
   )

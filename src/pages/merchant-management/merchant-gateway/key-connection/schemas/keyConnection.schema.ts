@@ -32,6 +32,12 @@ export const keyConnectionSchema = z.object({
 
 export type KeyConnectionFormValues = z.infer<typeof keyConnectionSchema>
 
+export const keyConnectionFilterSchema = z.object({
+  query: z.string().trim().max(100, 'Từ khóa tối đa 100 ký tự'),
+  scope: z.enum(['ALL', 'MASTER', 'SUB']),
+  status: z.enum(['ALL', 'ACTIVE', 'INACTIVE'])
+})
+
 export const keyConnectionDialogSchema = keyConnectionSchema
   .omit({ ipWhitelist: true })
   .extend({
@@ -71,4 +77,14 @@ export const KEY_CONNECTION_STATUS_OPTIONS: Array<{
 }> = [
   { label: 'Hoạt động', value: 'ACTIVE' },
   { label: 'Ngưng hoạt động', value: 'INACTIVE' }
+]
+
+export const KEY_CONNECTION_FILTER_SCOPE_OPTIONS = [
+  { label: 'Tất cả', value: 'ALL' },
+  ...KEY_CONNECTION_SCOPE_OPTIONS
+]
+
+export const KEY_CONNECTION_FILTER_STATUS_OPTIONS = [
+  { label: 'Tất cả', value: 'ALL' },
+  ...KEY_CONNECTION_STATUS_OPTIONS
 ]

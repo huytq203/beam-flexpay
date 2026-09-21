@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import { KeyIcon } from '@components/icons'
 import { MerchantGatewayPage } from '../../shared/MerchantGatewayPage'
 import { MerchantGatewayToolbar } from '../../shared/MerchantGatewayToolbar'
 import { KeyConnectionDialog } from '../components/KeyConnectionDialog'
@@ -32,13 +33,14 @@ const KeyConnectionPage = () => {
         onCreate={() => setDialogRow(null)}
         screen='MERCHANT_KEY_CONNECTION'
         title='Key kết nối'
+        titleIcon={<KeyIcon aria-hidden />}
         total={connections.total}
       >
         <MerchantGatewayToolbar
           search={
             <KeyConnectionToolbar
               filters={connections.filters}
-              onFiltersChange={connections.setFilters}
+              onSearch={connections.setFilters}
             />
           }
         >

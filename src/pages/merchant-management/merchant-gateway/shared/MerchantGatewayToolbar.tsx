@@ -5,7 +5,7 @@ export function MerchantGatewayToolbar({
   search
 }: MerchantGatewayToolbarProps) {
   return (
-    <section aria-label='Tìm kiếm và lọc cấu hình merchant' className='flex flex-wrap gap-2' role='search'>
+    <section aria-label='Tìm kiếm và lọc cấu hình merchant' className='w-full' role='search'>
       {search}
       {children}
     </section>

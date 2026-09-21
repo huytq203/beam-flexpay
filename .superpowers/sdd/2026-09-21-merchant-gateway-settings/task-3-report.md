@@ -55,3 +55,20 @@ Result: Vitest passed 2 files / 4 tests; typecheck and targeted lint exited 0.
 
 - Focused Vitest emits two pre-existing Ant Design/JSDOM pseudo-element `getComputedStyle` notices while rendering its table. They do not fail the run.
 - The existing `Switch` wrapper cannot render a controlled checked state, so the status action is a permission-gated text control which opens the required confirmation modal; no shared wrapper was modified.
+
+## Fix round 1/5
+
+### Findings resolved
+
+- Replaced test-only merchant permission literals with `PERMISSION.MERCHANT_VIEW`.
+- Made `CopyableText` a named native button through the UI wrapper; Client ID now passes contextual label and has a regression test.
+- Split dialog field groups, table columns/body/status confirmation, and fixture data helpers. The former oversized dialog/table/hook are now 100/44/74 lines respectively, with focused child units under the component limit.
+- Aligned the gateway shell and Key Connection list with BankAccount: form filter card with actions, contextual title icon and create icon, and skeleton/error/empty/refresh table treatments.
+
+### Evidence
+
+RED for copy accessibility: `yarn vitest run --pool=threads --maxWorkers=1 --minWorkers=1 src/components/ui/copytext-component/CopyableText.test.tsx` failed because the original `CopyIcon` exposed no button role.
+
+GREEN before the layout follow-up: CopyableText plus Key Connection focused tests passed (3 files / 5 tests), typecheck and targeted lint passed.
+
+After the layout follow-up, the combined focused Vitest command was interrupted after it remained running with only the Vitest banner and no result. This environment has prior serial-worker completion issues. The exact process tree (`bash` 1650010, `yarn` 1650011, Vitest 1650068) was explicitly stopped. No test failure was reported by that run. Fresh `yarn typecheck`, targeted ESLint for the changed key/shared/copy paths, and `git diff --check` passed (exit 0).

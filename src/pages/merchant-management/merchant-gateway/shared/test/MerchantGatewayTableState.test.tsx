@@ -36,6 +36,25 @@ describe('MerchantGatewayTableState', () => {
     expect(screen.getByText(label)).toBeInTheDocument()
   })
 
+  it('cho phép làm mới trạng thái rỗng', async () => {
+    const onRetry = vi.fn()
+    const user = userEvent.setup()
+
+    renderWithProviders(
+      <MerchantGatewayTableState<GatewayRow>
+        state='empty'
+        rows={[]}
+        columns={[]}
+        rowKey='id'
+        onRetry={onRetry}
+      />
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Làm mới dữ liệu' }))
+
+    expect(onRetry).toHaveBeenCalledOnce()
+  })
+
   it('retries an error state', async () => {
     const onRetry = vi.fn()
     const user = userEvent.setup()

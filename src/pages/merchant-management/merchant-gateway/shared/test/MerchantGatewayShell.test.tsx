@@ -22,6 +22,7 @@ const renderPage = (permissions: string[], onCreate = vi.fn()) => {
         onCreate={onCreate}
         screen='MERCHANT_KEY_CONNECTION'
         title='Key kết nối'
+        titleIcon={<span>Key</span>}
         total={1}
       >
         <MerchantGatewayToolbar search={<input aria-label='Tìm kiếm key' />}>

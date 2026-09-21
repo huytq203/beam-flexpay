@@ -15,6 +15,9 @@ export interface MerchantGatewayPageProps {
   createLabel: string
   screen: CreateScreenId
   onCreate: () => void
+  titleIcon: ReactNode
+  isLoading?: boolean
+  isError?: boolean
   children: ReactNode
 }
 
@@ -29,6 +32,7 @@ interface MerchantGatewayTableStateBaseProps<T extends object> {
   rowKey: keyof T | ((row: T) => Key)
   pagination?: false | TablePaginationConfig
   emptyKind?: 'initial' | 'filtered'
+  onRefresh?: () => void
 }
 
 export type MerchantGatewayTableStateProps<T extends object> =
@@ -37,6 +41,10 @@ export type MerchantGatewayTableStateProps<T extends object> =
       onRetry: () => void
     })
   | (MerchantGatewayTableStateBaseProps<T> & {
-      state: Exclude<ListState, 'error'>
+      state: 'empty'
+      onRetry?: () => void
+    })
+  | (MerchantGatewayTableStateBaseProps<T> & {
+      state: Exclude<ListState, 'error' | 'empty'>
       onRetry?: never
     })
