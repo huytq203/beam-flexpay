@@ -119,10 +119,6 @@ export const SubjectSegmentCard = ({
             />
           </div>
 
-          <p className='mt-2 text-xs text-muted-foreground'>
-            Quy tắc phí dành riêng cho một chủ thể vẫn thắng quy tắc theo phân khúc,
-            và phân khúc thắng mọi quy tắc theo ngân hàng hay phương thức giao dịch.
-          </p>
         </section>
       }
     />
