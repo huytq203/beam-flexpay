@@ -55,26 +55,32 @@ describe('PaymentMethodPage', () => {
     renderPage([PERMISSION.MERCHANT_VIEW])
 
     const table = await screen.findByRole('table')
-    expect(within(table).getByText('Master')).toBeInTheDocument()
+    expect(within(table).getAllByText('Master').length).toBeGreaterThan(0)
     expect(within(table).getByText('Sub')).toBeInTheDocument()
   })
 
   it('chỉ đổi trạng thái sau khi xác nhận', async () => {
     const user = userEvent.setup()
     renderPage([PERMISSION.MERCHANT_VIEW, PERMISSION.MERCHANT_UPDATE])
+    await screen.findByRole('table')
+    const row = document.querySelector<HTMLElement>(
+      '[data-row-key="payment-highlands-wallet"]'
+    )
 
-    await user.click((await screen.findAllByRole('button', { name: 'Tắt' }))[0])
+    expect(row).not.toBeNull()
+
+    await user.click(within(row!).getByRole('button', { name: /Đổi trạng thái/ }))
     expect(screen.getByRole('dialog')).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Hủy' }))
     expect(screen.queryByRole('dialog')).toBeNull()
-    expect(screen.getAllByRole('button', { name: 'Tắt' })).toHaveLength(3)
+    expect(within(row!).getByText('Hoạt động')).toBeInTheDocument()
 
-    await user.click(screen.getAllByRole('button', { name: 'Tắt' })[0])
+    await user.click(within(row!).getByRole('button', { name: /Đổi trạng thái/ }))
     await user.click(screen.getByRole('button', { name: 'Xác nhận tắt' }))
 
     expect(screen.queryByRole('dialog')).toBeNull()
-    expect(screen.getAllByRole('button', { name: 'Bật' })).toHaveLength(2)
+    expect(within(row!).getByText('Ngưng hoạt động')).toBeInTheDocument()
   })
 
   it('báo lỗi các trường bắt buộc khi thêm hình thức thanh toán trống', async () => {
