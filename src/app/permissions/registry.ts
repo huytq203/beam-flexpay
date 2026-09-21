@@ -198,6 +198,18 @@ export const SCREENS = {
       unlock: PERMISSION.MERCHANT_UPDATE
     }
   },
+  MERCHANT_KEY_CONNECTION: {
+    path: `${MERCHANT}/key-connection`,
+    actions: { ...MERCHANT_ACTIONS }
+  },
+  MERCHANT_PAYMENT_METHOD: {
+    path: `${MERCHANT}/payment-method`,
+    actions: { ...MERCHANT_ACTIONS }
+  },
+  MERCHANT_NOTIFICATION: {
+    path: `${MERCHANT}/notification`,
+    actions: { ...MERCHANT_ACTIONS }
+  },
   BUSINESS_WALLET_ACCOUNT: {
     path: `${MERCHANT}/business-wallet-account`,
     actions: {

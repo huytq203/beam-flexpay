@@ -35,6 +35,18 @@ describe('SCREENS', () => {
     expect(SCREENS.CONFIRM_EKYC.actions.approve).toBe(PERMISSION.ADMIN_FULL)
   })
 
+  it('khai báo ba màn cấu hình cổng merchant', () => {
+    expect(SCREENS.MERCHANT_KEY_CONNECTION.path).toBe(
+      '/secure-panel/merchant/key-connection'
+    )
+    expect(SCREENS.MERCHANT_PAYMENT_METHOD.path).toBe(
+      '/secure-panel/merchant/payment-method'
+    )
+    expect(SCREENS.MERCHANT_NOTIFICATION.path).toBe(
+      '/secure-panel/merchant/notification'
+    )
+  })
+
   it('mọi mã quyền trong registry đều lấy từ bảng permission-codes', () => {
     const declared = new Set<string>(Object.values(PERMISSION))
     for (const screen of screens) {

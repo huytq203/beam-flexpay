@@ -360,6 +360,27 @@ const merchantManagement = {
           )
         },
         {
+          path: SCREENS.MERCHANT_KEY_CONNECTION.path,
+          element: page(
+            () =>
+              import('@/pages/merchant-management/merchant-gateway/key-connection/pages/KeyConnectionPage')
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_PAYMENT_METHOD.path,
+          element: page(
+            () =>
+              import('@/pages/merchant-management/merchant-gateway/payment-method/pages/PaymentMethodPage')
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_NOTIFICATION.path,
+          element: page(
+            () =>
+              import('@/pages/merchant-management/merchant-gateway/notification/pages/NotificationPage')
+          )
+        },
+        {
           path: SCREENS.BUSINESS_WALLET_ACCOUNT.path,
           element: page(
             () =>

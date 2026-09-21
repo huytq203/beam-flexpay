@@ -12,9 +12,12 @@ import i18n from '@languages/i18n'
 import {
   ArrowsLeftRightIcon,
   BankIcon,
+  BellIcon,
   ClipboardTextIcon,
+  CreditCardIcon,
   FingerprintIcon,
   GearIcon,
+  KeyIcon,
   LockIcon,
   LockKeyOpenIcon,
   MoneyIcon,
@@ -270,6 +273,42 @@ const merchantManagement: ItemTypeCustom = {
         />
       ),
       label: 'Tài khoản ngân hàng'
+    },
+    {
+      key: 'key-connection',
+      screen: 'MERCHANT_KEY_CONNECTION',
+      icon: (
+        <KeyIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Key kết nối'
+    },
+    {
+      key: 'payment-method',
+      screen: 'MERCHANT_PAYMENT_METHOD',
+      icon: (
+        <CreditCardIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Hình thức thanh toán'
+    },
+    {
+      key: 'notification',
+      screen: 'MERCHANT_NOTIFICATION',
+      icon: (
+        <BellIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Thông báo'
     }
   ]
 }
