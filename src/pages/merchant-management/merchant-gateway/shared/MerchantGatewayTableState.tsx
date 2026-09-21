@@ -16,22 +16,16 @@ const emptyCopy = {
   }
 } as const
 
-export function MerchantGatewayTableState<T extends object>({
-  state,
-  rows,
-  columns,
-  rowKey,
-  pagination,
-  onRetry,
-  emptyKind = 'initial'
-}: MerchantGatewayTableStateProps<T>) {
-  const tableRowKey = rowKey as string | ((record: T) => Key)
+export function MerchantGatewayTableState<T extends object>(
+  props: MerchantGatewayTableStateProps<T>
+) {
+  const tableRowKey = props.rowKey as string | ((record: T) => Key)
 
-  if (state === 'loading') {
+  if (props.state === 'loading') {
     return (
       <div aria-live='polite' className='min-w-0' role='status'>
         <Table<T>
-          columns={columns}
+          columns={props.columns}
           dataSource={[]}
           loading={{ spinning: true, tip: 'Đang tải dữ liệu' }}
           pagination={false}
@@ -42,7 +36,7 @@ export function MerchantGatewayTableState<T extends object>({
     )
   }
 
-  if (state === 'error') {
+  if (props.state === 'error') {
     return (
       <div role='alert'>
         <Result
@@ -53,7 +47,7 @@ export function MerchantGatewayTableState<T extends object>({
             <ButtonComponent
               content='Thử lại'
               htmlType='button'
-              onClick={onRetry}
+              onClick={props.onRetry}
             />
           }
         />
@@ -61,8 +55,8 @@ export function MerchantGatewayTableState<T extends object>({
     )
   }
 
-  if (state === 'empty') {
-    const copy = emptyCopy[emptyKind]
+  if (props.state === 'empty') {
+    const copy = emptyCopy[props.emptyKind ?? 'initial']
 
     return (
       <Empty
@@ -79,9 +73,9 @@ export function MerchantGatewayTableState<T extends object>({
 
   return (
     <Table<T>
-      columns={columns}
-      dataSource={[...rows]}
-      pagination={pagination}
+      columns={props.columns}
+      dataSource={[...props.rows]}
+      pagination={props.pagination}
       rowKey={tableRowKey}
       scroll={{ x: 'max-content' }}
     />

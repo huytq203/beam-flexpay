@@ -23,12 +23,20 @@ export interface MerchantGatewayToolbarProps {
   search: ReactNode
 }
 
-export interface MerchantGatewayTableStateProps<T extends object> {
-  state: ListState
+interface MerchantGatewayTableStateBaseProps<T extends object> {
   rows: readonly T[]
   columns: TableColumnsType<T>
   rowKey: keyof T | ((row: T) => Key)
   pagination?: false | TablePaginationConfig
-  onRetry?: () => void
   emptyKind?: 'initial' | 'filtered'
 }
+
+export type MerchantGatewayTableStateProps<T extends object> =
+  | (MerchantGatewayTableStateBaseProps<T> & {
+      state: 'error'
+      onRetry: () => void
+    })
+  | (MerchantGatewayTableStateBaseProps<T> & {
+      state: Exclude<ListState, 'error'>
+      onRetry?: never
+    })
