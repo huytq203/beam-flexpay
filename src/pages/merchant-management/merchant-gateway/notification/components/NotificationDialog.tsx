@@ -17,7 +17,11 @@ function NotificationDialogContent({ row, onCancel, onSave }: Omit<Props, 'open'
   const channel = useWatch({ control: form.control, name: 'channel' })
   useEffect(() => { form.clearErrors('destination') }, [channel, form])
   const submit: SubmitHandler<NotificationFormValues> = (values) => onSave({ ...values, id: row?.id })
-  const destinationMeta = channel === 'EMAIL' ? ['Email nhận thông báo', 'ops@merchant.vn'] : channel === 'SMS' ? ['Số điện thoại nhận SMS', '0909123456'] : ['Webhook URL', 'https://merchant.vn/events']
+  const destinationMeta = channel === 'EMAIL'
+    ? { label: 'Email nhận thông báo', placeholder: 'ops@merchant.vn', inputMode: 'email' as const }
+    : channel === 'SMS'
+      ? { label: 'Số điện thoại nhận SMS', placeholder: '0909123456', inputMode: 'tel' as const }
+      : { label: 'Webhook URL', placeholder: 'https://merchant.vn/events', inputMode: 'url' as const }
 
   return <DialogModal destroyOnHidden footer={<div className='flex justify-end gap-2'><ButtonComponent content='Hủy' htmlType='button' onClick={onCancel} type='default' /><ButtonComponent content={row ? 'Lưu thay đổi' : 'Thêm thông báo'} form={FORM_ID} htmlType='submit' /></div>} onCancel={onCancel} onOk={() => {}} open title={row ? 'Sửa cấu hình thông báo' : 'Thêm cấu hình thông báo'} width={{ xs: 'calc(100vw - 24px)', md: 640 }}>
     <form className='grid grid-cols-1 gap-4 md:grid-cols-2' id={FORM_ID} noValidate onSubmit={form.handleSubmit(submit)}>
@@ -25,7 +29,7 @@ function NotificationDialogContent({ row, onCancel, onSave }: Omit<Props, 'open'
       <FormInput className='flex flex-col gap-1.5' control={form.control} label='Mã merchant' name='merchantCode' required />
       <FormSelect className='flex flex-col gap-1.5' control={form.control} label='Sự kiện' name='event' options={NOTIFICATION_EVENT_OPTIONS} required />
       <FormSelect className='flex flex-col gap-1.5' control={form.control} label='Kênh' name='channel' options={NOTIFICATION_CHANNEL_OPTIONS} required />
-      <FormInput className='flex flex-col gap-1.5 md:col-span-2' control={form.control} label={destinationMeta[0]} name='destination' placeholder={destinationMeta[1]} required />
+      <FormInput className='flex flex-col gap-1.5 md:col-span-2' control={form.control} inputMode={destinationMeta.inputMode} label={destinationMeta.label} name='destination' placeholder={destinationMeta.placeholder} required />
       <FormSelect className='flex flex-col gap-1.5' control={form.control} label='Trạng thái' name='status' options={NOTIFICATION_STATUS_OPTIONS} required />
     </form>
   </DialogModal>

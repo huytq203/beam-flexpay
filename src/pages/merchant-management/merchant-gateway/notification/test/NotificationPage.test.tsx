@@ -47,4 +47,14 @@ describe('NotificationPage', () => {
     renderWithProviders(<NotificationPage initialListState={initialListState} />, { store })
     expect(await screen.findByText(label)).toBeInTheDocument()
   })
+
+  it('thử lại từ trạng thái lỗi và hiển thị dữ liệu fixture', async () => {
+    const user = userEvent.setup()
+    const store = createAppStore()
+    store.dispatch(savePermissions([PERMISSION.MERCHANT_VIEW]))
+    renderWithProviders(<NotificationPage initialListState='error' />, { store })
+
+    await user.click(await screen.findByRole('button', { name: 'Thử lại' }))
+    expect(await screen.findByText('Highlands Coffee')).toBeInTheDocument()
+  })
 })
