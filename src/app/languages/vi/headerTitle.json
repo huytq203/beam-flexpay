@@ -118,6 +118,7 @@
     "/secure-panel/merchant/merchant-management/detail/*":"Chi tiết Merchant",
     "/secure-panel/merchant/merchant-management/create/*":"Cập nhật Merchant",
     "/secure-panel/merchant/bank-account":"Tài khoản ngân hàng",
+    "/secure-panel/merchant/key-connection":"Key kết nối",
     "/secure-panel/merchant/business-wallet-account":"Quản lý ví doanh nghiệp",
     "/secure-panel/merchant/business-wallet-account/create":"Thêm mới ví doanh nghiệp",
     "/secure-panel/merchant/business-wallet-account/edit/*":"Cập nhật ví doanh nghiệp",

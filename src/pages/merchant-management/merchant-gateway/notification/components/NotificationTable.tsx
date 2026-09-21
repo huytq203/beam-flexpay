@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { Can } from '@/app/permissions'
+import { EditOutlined, LockFilled, LockKeyOpenIcon } from '@components/icons'
 import { ButtonComponent, DialogModal, TooltipComponent } from '@components/index'
 
 import { MerchantGatewayTableState } from '../../shared/MerchantGatewayTableState'
@@ -20,7 +21,7 @@ const columns = (onEdit: Props['onEdit'], onStatus: (row: NotificationRow) => vo
   { title: 'Đích nhận', dataIndex: 'maskedDestination', width: 250, render: (value: string) => <TooltipComponent title={value}><span className='block max-w-60 truncate font-mono text-sm'>{value}</span></TooltipComponent> },
   { title: 'Trạng thái', width: 150, render: (_, row) => <span className={row.status === 'ACTIVE' ? 'text-sm font-medium text-success' : 'text-sm font-medium text-muted-foreground'}>{row.status === 'ACTIVE' ? 'Hoạt động' : 'Ngưng hoạt động'}</span> },
   { title: 'Cập nhật', dataIndex: 'updatedAt', width: 150 },
-  { title: 'Thao tác', align: 'center', fixed: 'right', width: 190, render: (_, row) => <div className='flex justify-center gap-1'><Can screen='MERCHANT_NOTIFICATION' action='edit'><ButtonComponent content='Sửa' htmlType='button' onClick={() => onEdit(row)} type='text' /></Can><Can screen='MERCHANT_NOTIFICATION' action='update'><ButtonComponent content={row.status === 'ACTIVE' ? 'Tắt' : 'Bật'} htmlType='button' onClick={() => onStatus(row)} type='text' /></Can></div> }
+  { title: 'Thao tác', align: 'center', fixed: 'right', width: 100, render: (_, row) => <div className='flex justify-center gap-1'><Can screen='MERCHANT_NOTIFICATION' action='edit'><TooltipComponent title='Sửa cấu hình thông báo'><ButtonComponent aria-label={`Sửa thông báo ${row.merchantName}`} htmlType='button' icon={<EditOutlined aria-hidden />} onClick={() => onEdit(row)} type='text' /></TooltipComponent></Can><Can screen='MERCHANT_NOTIFICATION' action='update'><TooltipComponent title={row.status === 'ACTIVE' ? 'Tắt thông báo' : 'Bật thông báo'}><ButtonComponent aria-label={`Đổi trạng thái thông báo ${row.merchantName}`} danger={row.status === 'ACTIVE'} htmlType='button' icon={row.status === 'ACTIVE' ? <LockFilled aria-hidden /> : <LockKeyOpenIcon aria-hidden size={16} />} onClick={() => onStatus(row)} type='text' /></TooltipComponent></Can></div> }
 ]
 
 export function NotificationTable({ rows, state, page, pageSize, total, filtered, onEdit, onToggleStatus, onPageChange, onRetry }: Props) {

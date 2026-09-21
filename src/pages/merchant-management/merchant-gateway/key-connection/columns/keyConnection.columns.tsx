@@ -1,4 +1,5 @@
 import { Can } from '@/app/permissions'
+import { EditOutlined, LockFilled, LockKeyOpenIcon } from '@components/icons'
 import {
   ButtonComponent,
   CopyableText,
@@ -100,26 +101,31 @@ const getActionColumn = (
   title: 'Thao tác',
   align: 'center',
   fixed: 'right',
-  width: 190,
+  width: 100,
   render: (_, row) => (
     <div className='flex items-center justify-center gap-1'>
       <Can screen='MERCHANT_KEY_CONNECTION' action='edit'>
-        <ButtonComponent
-          aria-label={`Sửa key ${row.merchantName}`}
-          content='Sửa key'
-          htmlType='button'
-          onClick={() => onEdit(row)}
-          type='text'
-        />
+        <TooltipComponent title='Sửa key kết nối'>
+          <ButtonComponent
+            aria-label={`Sửa key ${row.merchantName}`}
+            htmlType='button'
+            icon={<EditOutlined aria-hidden />}
+            onClick={() => onEdit(row)}
+            type='text'
+          />
+        </TooltipComponent>
       </Can>
       <Can screen='MERCHANT_KEY_CONNECTION' action='update'>
-        <ButtonComponent
-          aria-label={`Đổi trạng thái key ${row.merchantName}`}
-          content={row.status === 'ACTIVE' ? 'Tắt' : 'Bật'}
-          htmlType='button'
-          onClick={() => onRequestStatusChange(row)}
-          type='text'
-        />
+        <TooltipComponent title={row.status === 'ACTIVE' ? 'Tắt key kết nối' : 'Bật key kết nối'}>
+          <ButtonComponent
+            aria-label={`Đổi trạng thái key ${row.merchantName}`}
+            danger={row.status === 'ACTIVE'}
+            htmlType='button'
+            icon={row.status === 'ACTIVE' ? <LockFilled aria-hidden /> : <LockKeyOpenIcon aria-hidden size={16} />}
+            onClick={() => onRequestStatusChange(row)}
+            type='text'
+          />
+        </TooltipComponent>
       </Can>
     </div>
   )

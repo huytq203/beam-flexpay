@@ -1,7 +1,8 @@
 import { useState } from 'react'
 
 import { Can } from '@/app/permissions'
-import { ButtonComponent, DialogModal, TagComponent } from '@components/index'
+import { EditOutlined, LockFilled, LockKeyOpenIcon } from '@components/icons'
+import { ButtonComponent, DialogModal, TagComponent, TooltipComponent } from '@components/index'
 
 import { MerchantGatewayTableState } from '../../shared/MerchantGatewayTableState'
 import type { MerchantGatewayTableStateProps } from '../../shared/merchantGateway.types'
@@ -101,14 +102,18 @@ const getActionColumn = (
     title: 'Thao tác',
     align: 'center',
     fixed: 'right',
-    width: 175,
+    width: 100,
     render: (_, row) => (
       <div className='flex items-center justify-center gap-1'>
         <Can screen='MERCHANT_PAYMENT_METHOD' action='edit'>
-          <ButtonComponent aria-label={`Sửa hình thức ${row.merchantName}`} content='Sửa' htmlType='button' onClick={() => onEdit(row)} type='text' />
+          <TooltipComponent title='Sửa hình thức thanh toán'>
+            <ButtonComponent aria-label={`Sửa hình thức ${row.merchantName}`} htmlType='button' icon={<EditOutlined aria-hidden />} onClick={() => onEdit(row)} type='text' />
+          </TooltipComponent>
         </Can>
         <Can screen='MERCHANT_PAYMENT_METHOD' action='update'>
-          <ButtonComponent aria-label={`Đổi trạng thái ${row.merchantName}`} content={row.status === 'ACTIVE' ? 'Tắt' : 'Bật'} htmlType='button' onClick={() => onRequestStatusChange(row)} type='text' />
+          <TooltipComponent title={row.status === 'ACTIVE' ? 'Tắt hình thức thanh toán' : 'Bật hình thức thanh toán'}>
+            <ButtonComponent aria-label={`Đổi trạng thái ${row.merchantName}`} danger={row.status === 'ACTIVE'} htmlType='button' icon={row.status === 'ACTIVE' ? <LockFilled aria-hidden /> : <LockKeyOpenIcon aria-hidden size={16} />} onClick={() => onRequestStatusChange(row)} type='text' />
+          </TooltipComponent>
         </Can>
       </div>
     )
