@@ -49,6 +49,29 @@ function SubMerchantNotFound({ onBack }: { onBack: () => void }) {
   )
 }
 
+interface SubMerchantEditBlockedProps {
+  record: NonNullable<ReturnType<typeof useSubMerchantRecord>>
+  onDetail: () => void
+}
+
+function SubMerchantEditBlocked({ record, onDetail }: SubMerchantEditBlockedProps) {
+  return (
+    <main className='mx-0 md:mx-5'>
+      <CardComponent className='border border-border bg-background shadow-none'>
+        <section className='flex min-h-64 flex-col items-center justify-center gap-3 px-4 text-center' role='alert'>
+          <WarningIcon aria-hidden className='text-danger-strong' size={32} />
+          <h1 className='font-display text-lg font-semibold text-foreground'>Không thể chỉnh sửa Sub-merchant</h1>
+          <p className='max-w-2xl text-sm text-muted-foreground'>
+            Merchant cha {record.parentMerchantName} ({record.parentMerchantCode}) hiện không hoạt động.
+            Hãy mở khóa Merchant cha trước khi chỉnh sửa Sub-merchant này.
+          </p>
+          <ButtonComponent content='Về chi tiết Sub-merchant' htmlType='button' onClick={onDetail} type='default' />
+        </section>
+      </CardComponent>
+    </main>
+  )
+}
+
 export default function SubMerchantFormPage() {
   const { id } = useParams<{ id: string }>()
   const location = useLocation()
@@ -64,6 +87,15 @@ export default function SubMerchantFormPage() {
 
   if (mode === 'edit' && !record) {
     return <SubMerchantNotFound onBack={() => void navigate(basePath)} />
+  }
+
+  if (mode === 'edit' && record?.status === 'SUSPENDED_BY_PARENT') {
+    return (
+      <SubMerchantEditBlocked
+        onDetail={() => void navigate(`${basePath}/detail/${record.id}`)}
+        record={record}
+      />
+    )
   }
 
   const handleSubmit = (value: SubMerchantFormValue): void => {

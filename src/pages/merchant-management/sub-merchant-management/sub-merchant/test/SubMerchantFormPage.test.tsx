@@ -171,6 +171,23 @@ describe('SubMerchantFormPage', () => {
     expect(await screen.findByText('Đã về danh sách')).toBeInTheDocument()
   })
 
+  it('chặn route sửa trực tiếp khi Merchant cha không hoạt động', async () => {
+    const user = userEvent.setup()
+    renderForm(
+      '/secure-panel/merchant/sub-merchant/edit/sub-locked',
+      [PERMISSION.MERCHANT_UPDATE]
+    )
+
+    const blockedState = await screen.findByRole('alert')
+    expect(blockedState).toHaveTextContent('Không thể chỉnh sửa Sub-merchant')
+    expect(blockedState).toHaveTextContent('Nhà thuốc An Khang')
+    expect(screen.queryByRole('button', { name: 'Lưu thay đổi' })).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Tên Sub-merchant')).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Về chi tiết Sub-merchant' }))
+    expect(await screen.findByText('Đã chuyển sang chi tiết')).toBeInTheDocument()
+  })
+
   it('chặn mode tạo khi thiếu quyền tạo', () => {
     renderForm(
       '/secure-panel/merchant/sub-merchant/create',
