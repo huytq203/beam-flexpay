@@ -10,6 +10,8 @@ import type {
 
 export interface SearchFeePoliciesParams {
   keyword?: string
+  subjectKeyword?: string
+  includeConfiguration?: boolean
   feeDomain: string
   serviceType?: string
   status?: string
@@ -39,7 +41,12 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
 
       }),
       transformResponse: (res: ResponseType<FeePolicyResponse>) => res.data,
-      providesTags: ['FeePolicy']
+      providesTags: [
+        'FeePolicy',
+        'feeAssign',
+        'FeePolicyComponent',
+        'feeComponentTier'
+      ]
     }),
     getFeePolicyById: build.query({
       query: (id) => ({

@@ -44,6 +44,7 @@ export interface FeePolicy {
   updatedBy?: string
   /** Tổng hợp đối tượng đang được gán; API cũ có thể chưa trả trường này. */
   appliedTargets?: AppliedTarget[]
+  configuration?: FeePolicyConfiguration
 }
 
 export interface FeePolicyComponent {
@@ -102,6 +103,15 @@ export interface FeeAssignment {
   updatedAt?: string
   createdBy?: string
   updatedBy?: string
+}
+
+export interface FeePolicyComponentWithTiers extends FeePolicyComponent {
+  tiers: FeeComponentTier[]
+}
+
+export interface FeePolicyConfiguration {
+  assignments: FeeAssignment[]
+  components: FeePolicyComponentWithTiers[]
 }
 
 /** Một dòng của `GET /fee/banks` → `data.content`. */

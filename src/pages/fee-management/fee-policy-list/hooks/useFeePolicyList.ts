@@ -52,6 +52,7 @@ export const useFeePolicyList = ({
       serviceType: filters.serviceType || undefined,
       status: filters.status || undefined,
       appliedTarget: filters.appliedTarget || undefined,
+      includeConfiguration: true,
       page,
       size,
       sortBy: 'createdAt',
