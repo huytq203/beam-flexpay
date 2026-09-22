@@ -38,11 +38,7 @@ const renderActionButton = (
   </TooltipComponent>
 )
 
-export const createSubMerchantColumns = ({
-  onView,
-  onEdit,
-  onStatus
-}: SubMerchantColumnActions): ColumnType<SubMerchantRow>[] => [
+const BASE_COLUMNS: ColumnType<SubMerchantRow>[] = [
   {
     title: 'Sub-merchant',
     width: 220,
@@ -83,8 +79,14 @@ export const createSubMerchantColumns = ({
     width: 170,
     render: (_, row) => <ManagementStatusTag status={row.status} />
   },
-  { title: 'Ngày tạo', dataIndex: 'createdAt', width: 120 },
-  {
+  { title: 'Ngày tạo', dataIndex: 'createdAt', width: 120 }
+]
+
+const createActionColumn = ({
+  onView,
+  onEdit,
+  onStatus
+}: SubMerchantColumnActions): ColumnType<SubMerchantRow> => ({
     title: 'Thao tác',
     align: 'center',
     fixed: 'right',
@@ -112,5 +114,8 @@ export const createSubMerchantColumns = ({
         </div>
       )
     }
-  }
-]
+  })
+
+export const createSubMerchantColumns = (
+  actions: SubMerchantColumnActions
+): ColumnType<SubMerchantRow>[] => [...BASE_COLUMNS, createActionColumn(actions)]
