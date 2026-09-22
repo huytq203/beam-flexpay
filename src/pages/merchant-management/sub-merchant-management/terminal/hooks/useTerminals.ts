@@ -1,7 +1,6 @@
 import { useState, useSyncExternalStore } from 'react'
 
 import type { ManagementListState } from '../../shared/management.types'
-import { SUB_MERCHANT_FIXTURES } from '../../sub-merchant/constants/subMerchant.fixture'
 import { TERMINAL_FIXTURES } from '../constants/terminal.fixture'
 import type { TerminalFormValue } from '../schemas/terminal.schema'
 import type { TerminalRow } from '../types/terminal.type'
@@ -12,6 +11,10 @@ import {
   TERMINAL_PAGE_SIZE,
   type TerminalFiltersValue
 } from '../utils/terminal.utils'
+import {
+  getCurrentSubMerchant,
+  useCurrentSubMerchants
+} from './useTerminalSubMerchants'
 
 type TerminalListener = () => void
 
@@ -35,8 +38,26 @@ export const resetTerminalRepository = (): void => {
   emitChange()
 }
 
-export const getTerminalById = (id: string): TerminalRow | undefined =>
+const getStoredTerminalById = (id: string): TerminalRow | undefined =>
   records.find((row) => row.id === id)
+
+const withCurrentSubStatus = (record: TerminalRow): TerminalRow => {
+  const subMerchant = getCurrentSubMerchant(record.subMerchantId)
+  if (subMerchant && subMerchant.status !== 'ACTIVE') {
+    return { ...record, status: 'SUSPENDED_BY_SUB' }
+  }
+  return record.status === 'SUSPENDED_BY_SUB'
+    ? { ...record, status: 'ACTIVE' }
+    : record
+}
+
+export const getTerminalById = (id: string): TerminalRow | undefined => {
+  const record = getStoredTerminalById(id)
+  return record ? withCurrentSubStatus(record) : undefined
+}
+
+const hasActiveSubMerchant = (record: TerminalRow): boolean =>
+  getCurrentSubMerchant(record.subMerchantId)?.status === 'ACTIVE'
 
 const getInheritedSettings = (subMerchantId: string) => {
   const source = records.find((row) => row.subMerchantId === subMerchantId)
@@ -50,12 +71,11 @@ const getInheritedSettings = (subMerchantId: string) => {
 }
 
 export const createTerminal = (value: TerminalFormValue): TerminalRow => {
-  const sub = SUB_MERCHANT_FIXTURES.find(
-    (row) => row.id === value.subMerchantId && row.status === 'ACTIVE'
-  )
+  const sub = getCurrentSubMerchant(value.subMerchantId)
   if (!sub || sub.parentMerchantId !== value.parentMerchantId) {
     throw new Error('Sub-merchant không hợp lệ')
   }
+  if (sub.status !== 'ACTIVE') throw new Error('Sub-merchant đang tạm ngưng')
   const sequence = String(records.length + 1).padStart(4, '0')
   const record: TerminalRow = {
     id: `terminal-${Date.now()}-${sequence}`,
@@ -79,8 +99,8 @@ export const updateTerminal = (
   id: string,
   value: TerminalFormValue
 ): TerminalRow | undefined => {
-  const current = getTerminalById(id)
-  if (!current || current.status === 'SUSPENDED_BY_SUB') return undefined
+  const current = getStoredTerminalById(id)
+  if (!current || !hasActiveSubMerchant(current)) return undefined
   const updated = { ...current, ...value, updatedAt: '22/09/2026 09:00' }
   records = records.map((row) => (row.id === id ? updated : row))
   emitChange()
@@ -88,9 +108,11 @@ export const updateTerminal = (
 }
 
 export const changeTerminalStatus = (id: string, reason: string): boolean => {
-  const current = getTerminalById(id)
-  if (!current || current.status === 'SUSPENDED_BY_SUB') return false
-  const status = current.status === 'LOCKED' ? 'ACTIVE' : 'LOCKED'
+  const current = getStoredTerminalById(id)
+  if (!current || !hasActiveSubMerchant(current)) return false
+  const currentStatus =
+    current.status === 'SUSPENDED_BY_SUB' ? 'ACTIVE' : current.status
+  const status = currentStatus === 'LOCKED' ? 'ACTIVE' : 'LOCKED'
   records = records.map((row) =>
     row.id === id
       ? {
@@ -105,8 +127,15 @@ export const changeTerminalStatus = (id: string, reason: string): boolean => {
   return true
 }
 
-export const useTerminalRecords = (): readonly TerminalRow[] =>
-  useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+export const useTerminalRecords = (): readonly TerminalRow[] => {
+  const repositoryRecords = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getSnapshot
+  )
+  useCurrentSubMerchants()
+  return repositoryRecords.map(withCurrentSubStatus)
+}
 
 export const useTerminal = (id?: string): TerminalRow | undefined => {
   const repositoryRecords = useTerminalRecords()
@@ -125,6 +154,11 @@ export function useTerminals({ initialListState }: UseTerminalsOptions = {}) {
   const [page, setPage] = useState(1)
   const [stateOverride, setStateOverride] = useState(initialListState)
   const filteredRows = filterTerminals(repositoryRecords, filters)
+  const maxPage = Math.max(
+    1,
+    Math.ceil(filteredRows.length / TERMINAL_PAGE_SIZE)
+  )
+  const effectivePage = Math.min(page, maxPage)
   const listState =
     stateOverride ?? (filteredRows.length === 0 ? 'empty' : 'success')
 
@@ -136,9 +170,9 @@ export function useTerminals({ initialListState }: UseTerminalsOptions = {}) {
   const retry = (): void => setStateOverride(undefined)
 
   return {
-    rows: paginateTerminals(filteredRows, page),
+    rows: paginateTerminals(filteredRows, effectivePage),
     total: filteredRows.length,
-    page,
+    page: effectivePage,
     pageSize: TERMINAL_PAGE_SIZE,
     filters,
     listState,

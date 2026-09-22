@@ -94,6 +94,8 @@ export default function TerminalFormPage() {
           onCancel={goToList}
           onSubmit={handleSubmit}
           tid={record?.tid}
+          inheritedPaymentMethods={record?.inheritedPaymentMethods}
+          inheritedLimitLabel={record?.inheritedLimitLabel}
         />
       </CardComponent>
     </main>

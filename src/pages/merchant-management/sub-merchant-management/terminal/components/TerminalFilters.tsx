@@ -4,6 +4,7 @@ import { FormInput, FormSelect } from '@components/form'
 import { BroomIcon, FunnelIcon, MagnifyingGlassIcon } from '@components/icons'
 import { ButtonComponent } from '@components/index'
 
+import { useCurrentSubMerchants } from '../hooks/useTerminalSubMerchants'
 import {
   EMPTY_TERMINAL_FILTERS,
   getActiveSubMerchantOptions,
@@ -39,11 +40,15 @@ export function TerminalFilters({
   onReset
 }: TerminalFiltersProps) {
   const form = useForm<TerminalFiltersValue>({ defaultValues: value })
+  const subMerchants = useCurrentSubMerchants()
   const parentMerchantId = useWatch({
     control: form.control,
     name: 'parentMerchantId'
   })
-  const subMerchantOptions = getActiveSubMerchantOptions(parentMerchantId)
+  const subMerchantOptions = getActiveSubMerchantOptions(
+    parentMerchantId,
+    subMerchants
+  )
   const handleSubmit: SubmitHandler<TerminalFiltersValue> = onSearch
 
   const handleMerchantChange = (): void => {
@@ -85,7 +90,7 @@ export function TerminalFilters({
           name='parentMerchantId'
           label='Merchant cha'
           placeholder='Tất cả'
-          options={getMerchantOptions()}
+          options={getMerchantOptions(subMerchants)}
           onChange={handleMerchantChange}
           className={FIELD_CLASS}
           classNameLable={LABEL_CLASS}

@@ -3,6 +3,7 @@ import type { Control } from 'react-hook-form'
 import { FormSelect } from '@components/form'
 import { Input } from '@components/index'
 
+import { useCurrentSubMerchants } from '../hooks/useTerminalSubMerchants'
 import type { TerminalFormValue } from '../schemas/terminal.schema'
 import {
   getActiveSubMerchantOptions,
@@ -28,6 +29,7 @@ export function TerminalParentSection({
   onParentChange
 }: TerminalParentSectionProps) {
   const isEdit = mode === 'edit'
+  const subMerchants = useCurrentSubMerchants()
 
   return (
     <section
@@ -65,7 +67,7 @@ export function TerminalParentSection({
           control={control}
           name='parentMerchantId'
           label='Merchant cha'
-          options={getMerchantOptions()}
+          options={getMerchantOptions(subMerchants)}
           disabled={isEdit}
           onChange={onParentChange}
           required
@@ -76,7 +78,7 @@ export function TerminalParentSection({
           control={control}
           name='subMerchantId'
           label='Sub-merchant'
-          options={getActiveSubMerchantOptions(parentMerchantId)}
+          options={getActiveSubMerchantOptions(parentMerchantId, subMerchants)}
           disabled={isEdit || !parentMerchantId}
           required
           className={FIELD_CLASS}

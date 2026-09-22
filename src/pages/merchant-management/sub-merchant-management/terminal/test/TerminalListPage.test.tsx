@@ -9,6 +9,7 @@ import { createAppStore } from '@/app/store'
 import { savePermissions } from '@slices/authSlice'
 
 import type { ManagementListState } from '../../shared/management.types'
+import { resetSubMerchantRepository } from '../../sub-merchant/hooks/useSubMerchants'
 import { createTerminal, resetTerminalRepository } from '../hooks/useTerminals'
 import TerminalListPage from '../pages/TerminalListPage'
 
@@ -49,7 +50,10 @@ const chooseOption = async (label: string, option: string): Promise<void> => {
   await user.click(await screen.findByTitle(option))
 }
 
-beforeEach(() => resetTerminalRepository())
+beforeEach(() => {
+  resetSubMerchantRepository()
+  resetTerminalRepository()
+})
 
 describe('TerminalListPage', () => {
   it('lọc Terminal theo loại và Sub-merchant', async () => {
@@ -154,4 +158,41 @@ describe('TerminalListPage', () => {
     await user.click(screen.getByTitle('2'))
     expect(await screen.findByText('Terminal bổ sung 8')).toBeInTheDocument()
   })
+
+  it('trở về trang hợp lệ khi mutation làm giảm tổng kết quả lọc', async () => {
+    for (let index = 0; index < 9; index += 1) {
+      createTerminal({
+        parentMerchantId: 'merchant-0142',
+        subMerchantId: 'sub-001',
+        name: `Terminal active ${index + 1}`,
+        type: 'POS',
+        address: '42 Nguyễn Huệ, TP. Hồ Chí Minh',
+        phone: '',
+        note: ''
+      })
+    }
+    const user = userEvent.setup()
+    renderTerminalList([PERMISSION.MERCHANT_UPDATE])
+
+    await chooseOption('Trạng thái', 'Hoạt động')
+    await user.click(screen.getByRole('button', { name: 'Tìm kiếm' }))
+    expect(await screen.findByText('11 bản ghi')).toBeInTheDocument()
+    await user.click(screen.getByTitle('2'))
+    expect(await screen.findByText('Terminal active 9')).toBeInTheDocument()
+
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Khóa Terminal Terminal active 9'
+      })
+    )
+    await user.type(
+      screen.getByLabelText('Lý do khóa'),
+      'Khóa để kiểm tra phân trang'
+    )
+    await user.click(screen.getByRole('button', { name: 'Khóa' }))
+
+    expect(await screen.findByText('10 bản ghi')).toBeInTheDocument()
+    expect(screen.getByText('QR Quầy 02')).toBeInTheDocument()
+    expect(screen.queryByTitle('2')).toBeNull()
+  }, 15_000)
 })

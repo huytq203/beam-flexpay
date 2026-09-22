@@ -1,4 +1,5 @@
 import { SUB_MERCHANT_FIXTURES } from '../../sub-merchant/constants/subMerchant.fixture'
+import type { SubMerchantRow } from '../../sub-merchant/types/subMerchant.type'
 import type {
   TerminalRow,
   TerminalStatus,
@@ -53,21 +54,26 @@ export const paginateTerminals = (
   return rows.slice(start, start + TERMINAL_PAGE_SIZE)
 }
 
-export const getMerchantOptions = (): TerminalSelectOption[] => {
+export const getMerchantOptions = (
+  subMerchants: readonly SubMerchantRow[] = SUB_MERCHANT_FIXTURES
+): TerminalSelectOption[] => {
   const options = new Map<string, string>()
-  SUB_MERCHANT_FIXTURES.forEach((row) => {
+  subMerchants.forEach((row) => {
     options.set(row.parentMerchantId, row.parentMerchantName)
   })
   return Array.from(options, ([value, label]) => ({ value, label }))
 }
 
 export const getActiveSubMerchantOptions = (
-  parentMerchantId?: string
+  parentMerchantId?: string,
+  subMerchants: readonly SubMerchantRow[] = SUB_MERCHANT_FIXTURES
 ): TerminalSelectOption[] =>
-  SUB_MERCHANT_FIXTURES.filter(
-    (row) =>
-      row.status === 'ACTIVE' && row.parentMerchantId === parentMerchantId
-  ).map((row) => ({ value: row.id, label: row.name }))
+  subMerchants
+    .filter(
+      (row) =>
+        row.status === 'ACTIVE' && row.parentMerchantId === parentMerchantId
+    )
+    .map((row) => ({ value: row.id, label: row.name }))
 
 export const getTerminalTypeLabel = (type: TerminalType): string =>
   ({

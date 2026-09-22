@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
@@ -8,7 +8,12 @@ import { PERMISSION } from '@/app/permissions'
 import { createAppStore } from '@/app/store'
 import { savePermissions } from '@slices/authSlice'
 
-import { resetTerminalRepository } from '../hooks/useTerminals'
+import {
+  createFixtureSubMerchant,
+  resetSubMerchantRepository,
+  toggleSubMerchantStatus
+} from '../../sub-merchant/hooks/useSubMerchants'
+import { getTerminalById, resetTerminalRepository } from '../hooks/useTerminals'
 import TerminalDetailPage from '../pages/TerminalDetailPage'
 import TerminalFormPage from '../pages/TerminalFormPage'
 
@@ -50,7 +55,11 @@ const selectOption = async (label: string, option: string): Promise<void> => {
   await user.click(await screen.findByTitle(option))
 }
 
-beforeEach(() => resetTerminalRepository())
+beforeEach(() => {
+  resetSubMerchantRepository()
+  resetTerminalRepository()
+})
+afterEach(() => vi.restoreAllMocks())
 
 describe('TerminalFormPage', () => {
   it('lọc Sub-merchant đang hoạt động theo Merchant cha', async () => {
@@ -64,20 +73,88 @@ describe('TerminalFormPage', () => {
     expect(screen.queryByTitle('GS25 Nguyễn Trãi')).toBeNull()
   }, 10_000)
 
-  it('xóa Sub-merchant đã chọn khi đổi Merchant cha', async () => {
+  it('xóa Sub-merchant cũ, báo thiếu và không tạo bản ghi khi đổi Merchant cha', async () => {
+    vi.spyOn(Date, 'now').mockReturnValue(1_700_000_000_000)
+    const user = userEvent.setup()
     renderTerminalForm(`${BASE_PATH}/create`, [PERMISSION.MERCHANT_CREATE])
 
     await selectOption('Merchant cha', 'Highlands Coffee')
     await selectOption('Sub-merchant', 'HLC Nguyễn Huệ')
     await selectOption('Merchant cha', 'GS25 Việt Nam')
-
-    expect(screen.getByLabelText(/^Sub-merchant/)).toHaveAttribute(
-      'aria-expanded',
-      'false'
+    await user.type(
+      screen.getByLabelText(/^Tên Terminal/),
+      'POS kiểm tra reset'
     )
+    await user.type(screen.getByLabelText(/^Địa chỉ/), '175 Nguyễn Trãi')
+    await user.click(screen.getByRole('button', { name: 'Thêm Terminal' }))
+
+    expect(screen.getByLabelText(/^Sub-merchant/)).toHaveValue('')
     expect(
-      screen.getByText('Chỉ hiển thị Sub-merchant đang hoạt động')
+      await screen.findByText('Vui lòng chọn Sub-merchant')
     ).toBeInTheDocument()
+    expect(getTerminalById('terminal-1700000000000-0005')).toBeUndefined()
+  }, 10_000)
+
+  it('phản ánh Sub-merchant vừa tạo và trạng thái khóa hiện tại trong lựa chọn', async () => {
+    createFixtureSubMerchant({
+      parentMerchantId: 'merchant-0142',
+      name: 'HLC Rooftop',
+      phoneInherited: true,
+      phone: '',
+      addressInherited: true,
+      address: '',
+      businessField: 'F&B'
+    })
+    toggleSubMerchantStatus('sub-001', 'Khóa để đối soát lựa chọn')
+    const user = userEvent.setup()
+    renderTerminalForm(`${BASE_PATH}/create`, [PERMISSION.MERCHANT_CREATE])
+
+    await selectOption('Merchant cha', 'Highlands Coffee')
+    await user.click(screen.getByLabelText(/^Sub-merchant/))
+
+    expect(await screen.findByTitle('HLC Rooftop')).toBeInTheDocument()
+    expect(screen.queryByTitle('HLC Nguyễn Huệ')).toBeNull()
+
+    await user.keyboard('{Escape}')
+    act(() => {
+      toggleSubMerchantStatus('sub-001', 'Mở lại sau đối soát')
+    })
+    await user.click(screen.getByLabelText(/^Sub-merchant/))
+    expect(await screen.findByTitle('HLC Nguyễn Huệ')).toBeInTheDocument()
+  }, 10_000)
+
+  it('hiển thị cùng cấu hình kế thừa của Terminal đang sửa và trang chi tiết', async () => {
+    const formView = renderTerminalForm(`${BASE_PATH}/edit/terminal-locked`, [
+      PERMISSION.MERCHANT_UPDATE
+    ])
+
+    expect(await screen.findByText('Visa')).toBeInTheDocument()
+    expect(screen.getByText('Mastercard')).toBeInTheDocument()
+    formView.unmount()
+
+    renderTerminalForm(`${BASE_PATH}/detail/terminal-locked`, [
+      PERMISSION.MERCHANT_VIEW
+    ])
+    expect(await screen.findByText('Visa')).toBeInTheDocument()
+    expect(screen.getByText('Mastercard')).toBeInTheDocument()
+  })
+
+  it('lưu chỉnh sửa và giữ dữ liệu trên trang chi tiết', async () => {
+    const user = userEvent.setup()
+    renderTerminalForm(`${BASE_PATH}/edit/terminal-001`, [
+      PERMISSION.MERCHANT_UPDATE,
+      PERMISSION.MERCHANT_VIEW
+    ])
+
+    const nameInput = await screen.findByLabelText(/^Tên Terminal/)
+    await user.clear(nameInput)
+    await user.type(nameInput, 'QR Quầy chính')
+    await user.click(screen.getByRole('button', { name: 'Lưu thay đổi' }))
+
+    expect(
+      await screen.findByRole('heading', { name: 'QR Quầy chính' })
+    ).toBeInTheDocument()
+    expect(getTerminalById('terminal-001')?.name).toBe('QR Quầy chính')
   }, 10_000)
 
   it('khóa TID, Merchant và Sub-merchant trong chế độ sửa', async () => {

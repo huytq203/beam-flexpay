@@ -120,7 +120,7 @@ export default function TerminalDetailPage() {
               Lịch sử cập nhật
             </h2>
             <p className='mt-1 text-xs text-muted-foreground'>
-              Mốc fixture phục vụ truy vết thay đổi trên giao diện.
+              Theo dõi các lần khởi tạo và cập nhật thông tin Terminal.
             </p>
           </div>
           <TimeLineComponent

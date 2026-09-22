@@ -19,6 +19,8 @@ interface TerminalFormProps {
   canSubmit: boolean
   onCancel: () => void
   onSubmit: (value: TerminalFormValue) => void
+  inheritedPaymentMethods?: readonly string[]
+  inheritedLimitLabel?: string
 }
 
 const FIELD_CLASS = 'flex flex-col gap-1.5'
@@ -36,7 +38,9 @@ export function TerminalForm({
   defaultValues,
   canSubmit,
   onCancel,
-  onSubmit
+  onSubmit,
+  inheritedPaymentMethods,
+  inheritedLimitLabel
 }: TerminalFormProps) {
   const records = useTerminalRecords()
   const form = useForm<TerminalFormValue>({
@@ -51,7 +55,15 @@ export function TerminalForm({
     control: form.control,
     name: 'subMerchantId'
   })
-  const inherited = records.find((row) => row.subMerchantId === subMerchantId)
+  const subConfiguration = records.find(
+    (row) => row.subMerchantId === subMerchantId
+  )
+  const methods = inheritedPaymentMethods ??
+    subConfiguration?.inheritedPaymentMethods ?? ['Theo cấu hình Sub-merchant']
+  const limit =
+    inheritedLimitLabel ??
+    subConfiguration?.inheritedLimitLabel ??
+    'Áp dụng hạn mức của Sub-merchant'
   const handleSubmit: SubmitHandler<TerminalFormValue> = onSubmit
   const resetSubMerchant = (): void => form.setValue('subMerchantId', '')
 
@@ -121,12 +133,8 @@ export function TerminalForm({
         </div>
       </section>
       <InheritedPaymentSummary
-        methods={
-          inherited?.inheritedPaymentMethods ?? ['Theo cấu hình Sub-merchant']
-        }
-        limit={
-          inherited?.inheritedLimitLabel ?? 'Áp dụng hạn mức của Sub-merchant'
-        }
+        methods={methods}
+        limit={limit}
       />
       <div className='flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end'>
         <ButtonComponent

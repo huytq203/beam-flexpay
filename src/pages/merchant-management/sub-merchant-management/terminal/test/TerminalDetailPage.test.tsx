@@ -8,6 +8,7 @@ import { PERMISSION } from '@/app/permissions'
 import { createAppStore } from '@/app/store'
 import { savePermissions } from '@slices/authSlice'
 
+import { resetSubMerchantRepository } from '../../sub-merchant/hooks/useSubMerchants'
 import { resetTerminalRepository } from '../hooks/useTerminals'
 import TerminalDetailPage from '../pages/TerminalDetailPage'
 
@@ -39,7 +40,10 @@ const renderTerminalDetail = (id: string, permissions: string[]) => {
   )
 }
 
-beforeEach(() => resetTerminalRepository())
+beforeEach(() => {
+  resetSubMerchantRepository()
+  resetTerminalRepository()
+})
 
 describe('TerminalDetailPage', () => {
   it('hiển thị quan hệ cha, cấu hình kế thừa và timeline', async () => {
@@ -103,6 +107,25 @@ describe('TerminalDetailPage', () => {
     expect(await screen.findByText('Đã khóa')).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Mở khóa Terminal' })
+    ).toBeInTheDocument()
+  }, 10_000)
+
+  it('mở khóa Terminal thông thường và cập nhật trạng thái', async () => {
+    const user = userEvent.setup()
+    renderTerminalDetail('terminal-locked', [PERMISSION.MERCHANT_UPDATE])
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Mở khóa Terminal' })
+    )
+    await user.type(
+      screen.getByLabelText('Lý do mở khóa'),
+      'Thiết bị đã kiểm tra xong'
+    )
+    await user.click(screen.getByRole('button', { name: 'Mở khóa' }))
+
+    expect(await screen.findByText('Hoạt động')).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Khóa Terminal' })
     ).toBeInTheDocument()
   }, 10_000)
 
