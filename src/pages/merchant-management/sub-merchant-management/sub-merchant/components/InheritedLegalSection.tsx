@@ -1,9 +1,9 @@
-import { CardComponent, Input } from '@components/index'
+import { CardComponent } from '@components/index'
 
-import type { SubMerchantRow } from '../types/subMerchant.type'
+import type { ParentMerchantSource } from '../types/subMerchant.type'
 
 interface InheritedLegalSectionProps {
-  parent?: SubMerchantRow
+  parent?: ParentMerchantSource
 }
 
 export function InheritedLegalSection({ parent }: InheritedLegalSectionProps) {
@@ -14,16 +14,20 @@ export function InheritedLegalSection({ parent }: InheritedLegalSectionProps) {
           <h2 className='font-display text-base font-semibold text-foreground' id='inherited-legal-title'>Hồ sơ pháp lý kế thừa</h2>
           <p className='mt-1 text-xs text-muted-foreground'>Dữ liệu chỉ đọc, đồng bộ từ Merchant cha đã chọn.</p>
         </header>
-        <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-          <label className='flex flex-col gap-1.5 text-sm font-medium text-foreground'>
-            Mã số thuế
-            <Input aria-label='Mã số thuế' className='bg-muted/50!' readOnly value={parent?.taxCode ?? 'Chọn Merchant cha để xem'} />
-          </label>
-          <label className='flex flex-col gap-1.5 text-sm font-medium text-foreground'>
-            Người đại diện pháp luật
-            <Input aria-label='Người đại diện pháp luật' className='bg-muted/50!' readOnly value={parent?.legalRepresentative ?? 'Chọn Merchant cha để xem'} />
-          </label>
-        </div>
+        <dl className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+          <div className='rounded-lg border border-border bg-muted/30 px-3 py-2.5'>
+            <dt className='text-xs font-medium text-muted-foreground'>Mã số thuế</dt>
+            <dd className='mt-1 text-sm font-medium text-foreground'>
+              {parent?.taxCode ?? 'Chọn Merchant cha để xem'}
+            </dd>
+          </div>
+          <div className='rounded-lg border border-border bg-muted/30 px-3 py-2.5'>
+            <dt className='text-xs font-medium text-muted-foreground'>Người đại diện pháp luật</dt>
+            <dd className='mt-1 text-sm font-medium text-foreground'>
+              {parent?.legalRepresentative ?? 'Chọn Merchant cha để xem'}
+            </dd>
+          </div>
+        </dl>
       </section>
     </CardComponent>
   )

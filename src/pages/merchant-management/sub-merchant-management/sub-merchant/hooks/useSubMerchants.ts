@@ -2,9 +2,17 @@ import { useState, useSyncExternalStore } from 'react'
 import type { Dayjs } from 'dayjs'
 
 import type { ManagementListState } from '../../shared/management.types'
-import { SUB_MERCHANT_FIXTURES } from '../constants/subMerchant.fixture'
+import {
+  PARENT_MERCHANT_FIXTURES,
+  SUB_MERCHANT_FIXTURES
+} from '../constants/subMerchant.fixture'
 import type { SubMerchantFormValue } from '../schemas/subMerchant.schema'
-import type { SubMerchantRow, SubMerchantStatus } from '../types/subMerchant.type'
+import type {
+  ParentMerchantSource,
+  SubMerchantConfigurationSources,
+  SubMerchantRow,
+  SubMerchantStatus
+} from '../types/subMerchant.type'
 import {
   filterSubMerchants,
   paginateSubMerchants,
@@ -38,7 +46,7 @@ const subscribe = (listener: () => void): (() => void) => {
   listeners.add(listener)
   return () => listeners.delete(listener)
 }
-const getSnapshot = (): readonly SubMerchantRow[] => repositoryRows
+export const getSubMerchantSnapshot = (): readonly SubMerchantRow[] => repositoryRows
 
 export const resetSubMerchantRepository = (): void => {
   repositoryRows = SUB_MERCHANT_FIXTURES.map(cloneRow)
@@ -67,32 +75,58 @@ export const toggleSubMerchantStatus = (id: string, reason: string): boolean => 
   return true
 }
 
-const resolveParent = (parentMerchantId: string): SubMerchantRow => {
-  const parent = repositoryRows.find((row) => row.parentMerchantId === parentMerchantId)
+export const getParentMerchantById = (parentMerchantId: string): ParentMerchantSource | undefined =>
+  PARENT_MERCHANT_FIXTURES[parentMerchantId]
+
+const resolveParent = (parentMerchantId: string): ParentMerchantSource => {
+  const parent = getParentMerchantById(parentMerchantId)
   if (!parent) throw new Error('Không tìm thấy Merchant cha')
   return parent
 }
 
+const INHERITED_CONFIGURATION_SOURCES: SubMerchantConfigurationSources = Object.freeze({
+  bank: 'INHERITED',
+  key: 'INHERITED',
+  payment: 'INHERITED',
+  notification: 'INHERITED'
+})
+
 export const createFixtureSubMerchant = (value: SubMerchantFormValue): SubMerchantRow => {
   const parent = resolveParent(value.parentMerchantId)
+  if (parent.status !== 'ACTIVE') {
+    throw new Error('Merchant cha phải đang hoạt động để tạo Sub-merchant')
+  }
   const sequence = String(nextSubMerchantSequence).padStart(2, '0')
-  const parentNumber = parent.parentMerchantCode.replace(/^MC0*/, '').padStart(4, '0')
+  const parentNumber = parent.code.replace(/^MC0*/, '').padStart(4, '0')
+  const defaults = parent.configurationDefaults
   const record: SubMerchantRow = {
-    ...cloneRow(parent),
     id: `sub-local-${sequence}`,
     code: `SUB-${parentNumber}-${sequence}`,
     name: value.name,
     phone: value.phoneInherited ? parent.phone : value.phone,
     address: value.addressInherited ? parent.address : value.address,
+    parentMerchantId: parent.id,
+    parentMerchantCode: parent.code,
+    parentMerchantName: parent.name,
     businessField: value.businessField,
     email: `sub-${sequence}@merchant.example.vn`,
+    taxCode: parent.taxCode,
+    legalRepresentative: parent.legalRepresentative,
     terminalCount: 0,
     availableBalance: 0,
     collectedToday: 0,
     pendingSettlement: 0,
+    settlementMode: defaults.settlementMode,
+    holdbackDays: defaults.holdbackDays,
+    autoApprovalThreshold: defaults.autoApprovalThreshold,
+    minimumWithdrawal: defaults.minimumWithdrawal,
+    dailyWithdrawalLimit: defaults.dailyWithdrawalLimit,
     isDefault: false,
     phoneInherited: value.phoneInherited,
     addressInherited: value.addressInherited,
+    configurationSources: { ...INHERITED_CONFIGURATION_SOURCES },
+    maskedBankAccount: defaults.maskedBankAccount,
+    maskedIntegrationKey: defaults.maskedIntegrationKey,
     status: 'ACTIVE',
     createdAt: '22/09/2026',
     updatedAt: '22/09/2026 09:00',
@@ -109,14 +143,31 @@ export const updateFixtureSubMerchant = (
   value: SubMerchantFormValue
 ): SubMerchantRow => {
   const parent = resolveParent(record.parentMerchantId)
+  const defaults = parent.configurationDefaults
+  const inheritsBank = record.configurationSources.bank === 'INHERITED'
+  const inheritsKey = record.configurationSources.key === 'INHERITED'
+  const inheritsPayment = record.configurationSources.payment === 'INHERITED'
   const updated: SubMerchantRow = {
     ...record,
     name: value.name,
     phone: value.phoneInherited ? parent.phone : value.phone,
     address: value.addressInherited ? parent.address : value.address,
     businessField: value.businessField,
+    taxCode: parent.taxCode,
+    legalRepresentative: parent.legalRepresentative,
     phoneInherited: value.phoneInherited,
     addressInherited: value.addressInherited,
+    maskedBankAccount: inheritsBank ? defaults.maskedBankAccount : record.maskedBankAccount,
+    maskedIntegrationKey: inheritsKey ? defaults.maskedIntegrationKey : record.maskedIntegrationKey,
+    settlementMode: inheritsPayment ? defaults.settlementMode : record.settlementMode,
+    holdbackDays: inheritsPayment ? defaults.holdbackDays : record.holdbackDays,
+    autoApprovalThreshold: inheritsPayment
+      ? defaults.autoApprovalThreshold
+      : record.autoApprovalThreshold,
+    minimumWithdrawal: inheritsPayment ? defaults.minimumWithdrawal : record.minimumWithdrawal,
+    dailyWithdrawalLimit: inheritsPayment
+      ? defaults.dailyWithdrawalLimit
+      : record.dailyWithdrawalLimit,
     updatedAt: '22/09/2026 09:00'
   }
   repositoryRows = repositoryRows.map((row) => (row.id === record.id ? updated : row))
@@ -125,12 +176,20 @@ export const updateFixtureSubMerchant = (
 }
 
 export function useSubMerchantRecord(id?: string): SubMerchantRow | undefined {
-  const rows = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+  const rows = useAllSubMerchants()
   return rows.find((row) => row.id === id)
 }
 
+export function useAllSubMerchants(): readonly SubMerchantRow[] {
+  return useSyncExternalStore(
+    subscribe,
+    getSubMerchantSnapshot,
+    getSubMerchantSnapshot
+  )
+}
+
 export function useSubMerchants({ initialListState }: UseSubMerchantsOptions = {}) {
-  const records = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+  const records = useAllSubMerchants()
   const [filters, setFilterState] = useState(EMPTY_SUB_MERCHANT_FILTERS)
   const [page, setPage] = useState(1)
   const [forcedState, setForcedState] = useState(initialListState)

@@ -6,6 +6,30 @@ export type SettlementMode = 'AUTO' | 'MANUAL'
 
 export type ConfigurationSource = 'INHERITED' | 'OVERRIDDEN'
 
+export type ParentMerchantStatus = 'ACTIVE' | 'LOCKED' | 'SUSPENDED'
+
+export interface ParentMerchantConfigurationDefaults {
+  readonly settlementMode: SettlementMode
+  readonly holdbackDays: number
+  readonly autoApprovalThreshold: number
+  readonly minimumWithdrawal: number
+  readonly dailyWithdrawalLimit: number
+  readonly maskedBankAccount: string
+  readonly maskedIntegrationKey: string
+}
+
+export interface ParentMerchantSource {
+  readonly id: string
+  readonly code: string
+  readonly name: string
+  readonly status: ParentMerchantStatus
+  readonly phone: string
+  readonly address: string
+  readonly taxCode: string
+  readonly legalRepresentative: string
+  readonly configurationDefaults: ParentMerchantConfigurationDefaults
+}
+
 export interface SubMerchantConfigurationSources {
   bank: ConfigurationSource
   key: ConfigurationSource

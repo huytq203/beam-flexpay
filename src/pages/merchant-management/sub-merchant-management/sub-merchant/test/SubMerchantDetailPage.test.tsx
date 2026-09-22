@@ -10,6 +10,9 @@ import { savePermissions } from '@slices/authSlice'
 
 import { resetSubMerchantRepository } from '../hooks/useSubMerchants'
 import SubMerchantDetailPage from '../pages/SubMerchantDetailPage'
+import { suppressAntPseudoElementWarning } from './domTestSetup'
+
+suppressAntPseudoElementWarning()
 
 const renderDetail = (id: string, permissions: string[]) => {
   const store = createAppStore()

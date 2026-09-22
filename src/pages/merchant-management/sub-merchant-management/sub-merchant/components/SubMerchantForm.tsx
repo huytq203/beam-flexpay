@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, useWatch, type SubmitHandler } from 'react-hook-form'
 
-import { SUB_MERCHANT_FIXTURES } from '../constants/subMerchant.fixture'
+import { PARENT_MERCHANT_FIXTURES } from '../constants/subMerchant.fixture'
 import {
   subMerchantFormSchema,
   type SubMerchantFormValue
@@ -34,13 +34,13 @@ export function SubMerchantForm({ mode, record, onSubmit }: SubMerchantFormProps
     resolver: zodResolver(subMerchantFormSchema)
   })
   const parentMerchantId = useWatch({ control: form.control, name: 'parentMerchantId' })
-  const parent = SUB_MERCHANT_FIXTURES.find((row) => row.parentMerchantId === parentMerchantId)
+  const parent = PARENT_MERCHANT_FIXTURES[parentMerchantId]
   const handleSubmit: SubmitHandler<SubMerchantFormValue> = onSubmit
 
   return (
     <form className='flex flex-col gap-3' id='sub-merchant-form' noValidate onSubmit={form.handleSubmit(handleSubmit)}>
       <ParentMerchantSection control={form.control} isEditMode={mode === 'edit'} />
-      <SubMerchantProfileSection control={form.control} />
+      <SubMerchantProfileSection control={form.control} parent={parent} setValue={form.setValue} />
       <InheritedLegalSection parent={parent} />
       <OperatingConfigurationSection />
     </form>

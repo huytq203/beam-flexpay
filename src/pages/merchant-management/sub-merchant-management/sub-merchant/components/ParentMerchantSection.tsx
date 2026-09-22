@@ -4,7 +4,7 @@ import { useWatch } from 'react-hook-form'
 import { FormSelect } from '@components/form'
 import { CardComponent, Input } from '@components/index'
 
-import { SUB_MERCHANT_FIXTURES } from '../constants/subMerchant.fixture'
+import { PARENT_MERCHANT_FIXTURES } from '../constants/subMerchant.fixture'
 import type { SubMerchantFormValue } from '../schemas/subMerchant.schema'
 
 interface ParentMerchantSectionProps {
@@ -12,14 +12,11 @@ interface ParentMerchantSectionProps {
   isEditMode: boolean
 }
 
-const PARENT_OPTIONS = Array.from(
-  new Map(
-    SUB_MERCHANT_FIXTURES.map((row) => [
-      row.parentMerchantId,
-      { label: `${row.parentMerchantName} (${row.parentMerchantCode})`, value: row.parentMerchantId }
-    ])
-  ).values()
-)
+const PARENT_OPTIONS = Object.values(PARENT_MERCHANT_FIXTURES).map((parent) => ({
+  disabled: parent.status !== 'ACTIVE',
+  label: `${parent.name} (${parent.code})${parent.status === 'ACTIVE' ? '' : ' · Không hoạt động'}`,
+  value: parent.id
+}))
 
 export function ParentMerchantSection({ control, isEditMode }: ParentMerchantSectionProps) {
   const parentMerchantId = useWatch({ control, name: 'parentMerchantId' })

@@ -25,9 +25,11 @@ const renderActionButton = (
     <ButtonComponent
       aria-label={label}
       className={
-        tone === 'success'
-          ? 'size-8! border-success-strong/40! bg-background! p-0! text-success-strong! shadow-none!'
-          : 'size-8! border-border! bg-background! p-0! shadow-none!'
+        tone === 'danger'
+          ? 'size-8! border-danger-strong/70! bg-background! p-0! text-danger-strong! shadow-none! hover:bg-danger/10!'
+          : tone === 'success'
+            ? 'size-8! border-success-strong/40! bg-background! p-0! text-success-strong! shadow-none! hover:bg-success-strong/10!'
+            : 'size-8! border-border! bg-background! p-0! text-foreground! shadow-none! hover:bg-muted!'
       }
       danger={tone === 'danger'}
       htmlType='button'

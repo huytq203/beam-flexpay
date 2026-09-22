@@ -50,6 +50,16 @@ describe('subMerchantFormSchema', () => {
     ).toBe(true)
   })
 
+  it('từ chối số điện thoại chỉ gồm dấu câu và khoảng trắng', () => {
+    const result = subMerchantFormSchema.safeParse({
+      ...validValue,
+      phoneInherited: false,
+      phone: '+ (---) ...'
+    })
+
+    expect(result.success).toBe(false)
+  })
+
   it('yêu cầu Merchant cha, tên và lĩnh vực kinh doanh', () => {
     const result = subMerchantFormSchema.safeParse({
       ...validValue,

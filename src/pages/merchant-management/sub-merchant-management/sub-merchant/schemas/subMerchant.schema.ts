@@ -2,6 +2,11 @@ import { z } from 'zod'
 
 const PHONE_PATTERN = /^[0-9 +().-]{9,20}$/
 
+const isValidPhone = (value: string): boolean => {
+  const normalized = value.replace(/\D/g, '')
+  return PHONE_PATTERN.test(value.trim()) && normalized.length >= 9 && normalized.length <= 11
+}
+
 export const subMerchantFormSchema = z
   .object({
     parentMerchantId: z.string().min(1, 'Vui lòng chọn Merchant cha'),
@@ -13,7 +18,7 @@ export const subMerchantFormSchema = z
     businessField: z.string().min(1, 'Vui lòng chọn lĩnh vực kinh doanh')
   })
   .superRefine((value, context) => {
-    if (!value.phoneInherited && !PHONE_PATTERN.test(value.phone.trim())) {
+    if (!value.phoneInherited && !isValidPhone(value.phone)) {
       context.addIssue({
         code: 'custom',
         message: 'Số điện thoại không hợp lệ',

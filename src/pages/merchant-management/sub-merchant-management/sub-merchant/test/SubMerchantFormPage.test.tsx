@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
@@ -14,6 +14,18 @@ import {
   resetSubMerchantRepository
 } from '../hooks/useSubMerchants'
 import SubMerchantFormPage from '../pages/SubMerchantFormPage'
+import { suppressAntPseudoElementWarning } from './domTestSetup'
+
+suppressAntPseudoElementWarning()
+
+const findRenderedOption = async (name: RegExp | string): Promise<HTMLElement> => {
+  const matches = await screen.findAllByText(name)
+  const option = matches.find((element) =>
+    element.classList.contains('ant-select-item-option-content')
+  )
+  if (!option) throw new Error(`Không tìm thấy option hiển thị: ${String(name)}`)
+  return option
+}
 
 const renderForm = (route: string, permissions: string[]) => {
   const store = createAppStore()
@@ -39,15 +51,84 @@ const renderForm = (route: string, permissions: string[]) => {
 describe('SubMerchantFormPage', () => {
   beforeEach(() => resetSubMerchantRepository())
 
-  it('khóa Merchant cha và legal kế thừa ở mode sửa', async () => {
+  it('khóa Merchant cha và hiển thị legal kế thừa bằng text có ngữ nghĩa', async () => {
     renderForm(
       '/secure-panel/merchant/sub-merchant/edit/sub-001',
       [PERMISSION.MERCHANT_VIEW, PERMISSION.MERCHANT_UPDATE]
     )
 
     expect(await screen.findByLabelText('Merchant cha')).toBeDisabled()
-    expect(screen.getByLabelText('Mã số thuế')).toHaveAttribute('readonly')
-    expect(screen.getByLabelText('Người đại diện pháp luật')).toHaveAttribute('readonly')
+    expect(screen.getByText('Mã số thuế')).toHaveRole('term')
+    expect(screen.getByText('0312345678').tagName).toBe('DD')
+    expect(screen.getByText('Người đại diện pháp luật')).toHaveRole('term')
+    expect(screen.getByText('Nguyễn Thị Minh Hằng').tagName).toBe('DD')
+    expect(screen.queryByRole('textbox', { name: 'Mã số thuế' })).not.toBeInTheDocument()
+  })
+
+  it('hiển thị và cập nhật phone/address hiệu lực khi đổi Merchant cha hoặc bật kế thừa', async () => {
+    const user = userEvent.setup()
+    renderForm('/secure-panel/merchant/sub-merchant/create', [PERMISSION.MERCHANT_CREATE])
+
+    const parentSelect = screen.getByRole('combobox', { name: /Merchant cha/ })
+    await user.click(parentSelect)
+    await user.click(await findRenderedOption(/Highlands Coffee \(MC000142\)/))
+    await waitFor(() => {
+      expect(screen.getByLabelText('Số điện thoại')).toHaveValue('028 7300 1122')
+      expect(screen.getByLabelText('Địa chỉ')).toHaveValue(
+        '123 Nguyễn Đình Chiểu, Phường Xuân Hòa, TP. Hồ Chí Minh'
+      )
+    })
+
+    await user.click(screen.getByLabelText('Kế thừa số điện thoại từ Merchant cha'))
+    const phoneInput = screen.getByLabelText(/Số điện thoại/)
+    await user.clear(phoneInput)
+    await user.type(phoneInput, '0901234567')
+    await user.click(screen.getByLabelText('Kế thừa số điện thoại từ Merchant cha'))
+    await waitFor(() => expect(phoneInput).toHaveValue('028 7300 1122'))
+
+    await user.click(parentSelect)
+    await user.click(await findRenderedOption(/FlexPay Mart \(MC000301\)/))
+    await waitFor(() => {
+      expect(screen.getByLabelText('Số điện thoại')).toHaveValue('028 7777 0301')
+      expect(screen.getByLabelText('Địa chỉ')).toHaveValue(
+        '301 Lê Lợi, Phường Bến Thành, TP. Hồ Chí Minh'
+      )
+    })
+  })
+
+  it('vô hiệu hóa Merchant cha không hoạt động trên form tạo', async () => {
+    const user = userEvent.setup()
+    renderForm('/secure-panel/merchant/sub-merchant/create', [PERMISSION.MERCHANT_CREATE])
+
+    await user.click(screen.getByRole('combobox', { name: /Merchant cha/ }))
+    const suspendedParent = await findRenderedOption(/GS25 Việt Nam.*Không hoạt động/)
+    const lockedParent = await findRenderedOption(/Nhà thuốc An Khang.*Không hoạt động/)
+    expect(suspendedParent.closest('.ant-select-item-option')).toHaveClass(
+      'ant-select-item-option-disabled'
+    )
+    expect(lockedParent.closest('.ant-select-item-option')).toHaveClass(
+      'ant-select-item-option-disabled'
+    )
+    await user.click(suspendedParent)
+    await user.click(screen.getByRole('button', { name: 'Thêm Sub-merchant' }))
+
+    expect(await screen.findByText('Vui lòng chọn Merchant cha')).toBeInTheDocument()
+    expect(screen.queryByText('Đã chuyển sang chi tiết')).not.toBeInTheDocument()
+  })
+
+  it('tạo thành công, lưu repository và điều hướng sang chi tiết', async () => {
+    const user = userEvent.setup()
+    renderForm('/secure-panel/merchant/sub-merchant/create', [PERMISSION.MERCHANT_CREATE])
+
+    await user.click(screen.getByRole('combobox', { name: /Merchant cha/ }))
+    await user.click(await findRenderedOption(/Highlands Coffee \(MC000142\)/))
+    await user.type(screen.getByLabelText(/Tên Sub-merchant/), 'HLC Thảo Điền')
+    await user.click(screen.getByRole('combobox', { name: /Lĩnh vực kinh doanh/ }))
+    await user.click(await findRenderedOption('F&B'))
+    await user.click(screen.getByRole('button', { name: 'Thêm Sub-merchant' }))
+
+    expect(await screen.findByText('Đã chuyển sang chi tiết')).toBeInTheDocument()
+    expect(getSubMerchantById('sub-local-05')?.name).toBe('HLC Thảo Điền')
   })
 
   it('cập nhật repository và điều hướng sang chi tiết sau khi lưu', async () => {

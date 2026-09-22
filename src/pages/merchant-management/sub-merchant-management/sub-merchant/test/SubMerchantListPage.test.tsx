@@ -8,7 +8,11 @@ import { PERMISSION } from '@/app/permissions'
 import { createAppStore } from '@/app/store'
 import { savePermissions } from '@slices/authSlice'
 
+import { createFixtureSubMerchant, resetSubMerchantRepository } from '../hooks/useSubMerchants'
 import SubMerchantListPage from '../pages/SubMerchantListPage'
+import { suppressAntPseudoElementWarning } from './domTestSetup'
+
+suppressAntPseudoElementWarning()
 
 type ListState = 'loading' | 'error' | 'empty' | 'success'
 
@@ -43,10 +47,7 @@ const renderList = ({
 }
 
 describe('SubMerchantListPage', () => {
-  beforeEach(async () => {
-    const repository = await import('../hooks/useSubMerchants')
-    repository.resetSubMerchantRepository()
-  })
+  beforeEach(() => resetSubMerchantRepository())
 
   it('lọc theo mã và đặt lại trang về đầu', async () => {
     const user = userEvent.setup()
@@ -57,6 +58,30 @@ describe('SubMerchantListPage', () => {
 
     expect(screen.getByText('SUB-0142-01')).toBeInTheDocument()
     expect(screen.queryByText('SUB-0220-02')).not.toBeInTheDocument()
+  })
+
+  it('đặt lại trang một khi tìm kiếm sau khi đang ở trang hai', async () => {
+    const user = userEvent.setup()
+    for (let index = 1; index <= 12; index += 1) {
+      createFixtureSubMerchant({
+        parentMerchantId: 'merchant-0142',
+        name: `Pagination ${index}`,
+        phoneInherited: true,
+        phone: '',
+        addressInherited: true,
+        address: '',
+        businessField: 'F&B'
+      })
+    }
+    renderList()
+
+    await user.click(screen.getByTitle('2'))
+    expect(await screen.findByText('Pagination 2')).toBeInTheDocument()
+    await user.type(screen.getByRole('textbox', { name: 'Từ khóa' }), 'Pagination')
+    await user.click(screen.getByRole('button', { name: 'Tìm kiếm' }))
+
+    expect(await screen.findByText('Pagination 12')).toBeInTheDocument()
+    expect(screen.queryByText('Pagination 2')).not.toBeInTheDocument()
   })
 
   it('dùng thao tác icon và ẩn quyền thay đổi với người chỉ được xem', async () => {

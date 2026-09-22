@@ -1,4 +1,84 @@
-import type { SubMerchantRow } from '../types/subMerchant.type'
+import type { ParentMerchantSource, SubMerchantRow } from '../types/subMerchant.type'
+
+export const PARENT_MERCHANT_FIXTURES: Readonly<Record<string, ParentMerchantSource>> =
+  Object.freeze({
+    'merchant-0142': {
+      id: 'merchant-0142',
+      code: 'MC000142',
+      name: 'Highlands Coffee',
+      status: 'ACTIVE',
+      phone: '028 7300 1122',
+      address: '123 Nguyễn Đình Chiểu, Phường Xuân Hòa, TP. Hồ Chí Minh',
+      taxCode: '0312345678',
+      legalRepresentative: 'Nguyễn Thị Minh Hằng',
+      configurationDefaults: {
+        settlementMode: 'AUTO',
+        holdbackDays: 1,
+        autoApprovalThreshold: 50_000_000,
+        minimumWithdrawal: 500_000,
+        dailyWithdrawalLimit: 300_000_000,
+        maskedBankAccount: '••••4821',
+        maskedIntegrationKey: '••••A142'
+      }
+    },
+    'merchant-0220': {
+      id: 'merchant-0220',
+      code: 'MC000220',
+      name: 'Nhà thuốc An Khang',
+      status: 'LOCKED',
+      phone: '028 7305 6688',
+      address: '12 Nguyễn Thị Minh Khai, Phường Sài Gòn, TP. Hồ Chí Minh',
+      taxCode: '0305234567',
+      legalRepresentative: 'Trần Minh Quân',
+      configurationDefaults: {
+        settlementMode: 'MANUAL',
+        holdbackDays: 2,
+        autoApprovalThreshold: 20_000_000,
+        minimumWithdrawal: 1_000_000,
+        dailyWithdrawalLimit: 100_000_000,
+        maskedBankAccount: '••••7316',
+        maskedIntegrationKey: '••••B220'
+      }
+    },
+    'merchant-0160': {
+      id: 'merchant-0160',
+      code: 'MC000160',
+      name: 'GS25 Việt Nam',
+      status: 'SUSPENDED',
+      phone: '028 7302 2525',
+      address: '106 Nguyễn Giản Thanh, Phường Hòa Hưng, TP. Hồ Chí Minh',
+      taxCode: '0314567890',
+      legalRepresentative: 'Kim Ji Hoon',
+      configurationDefaults: {
+        settlementMode: 'AUTO',
+        holdbackDays: 1,
+        autoApprovalThreshold: 30_000_000,
+        minimumWithdrawal: 500_000,
+        dailyWithdrawalLimit: 150_000_000,
+        maskedBankAccount: '••••3341',
+        maskedIntegrationKey: '••••C160'
+      }
+    },
+    'merchant-0301': {
+      id: 'merchant-0301',
+      code: 'MC000301',
+      name: 'FlexPay Mart',
+      status: 'ACTIVE',
+      phone: '028 7777 0301',
+      address: '301 Lê Lợi, Phường Bến Thành, TP. Hồ Chí Minh',
+      taxCode: '0318888301',
+      legalRepresentative: 'Lê Minh Anh',
+      configurationDefaults: {
+        settlementMode: 'AUTO',
+        holdbackDays: 1,
+        autoApprovalThreshold: 25_000_000,
+        minimumWithdrawal: 500_000,
+        dailyWithdrawalLimit: 200_000_000,
+        maskedBankAccount: '••••0301',
+        maskedIntegrationKey: '••••D301'
+      }
+    }
+  })
 
 export const SUB_MERCHANT_FIXTURES: readonly SubMerchantRow[] = Object.freeze([
   {
@@ -45,7 +125,7 @@ export const SUB_MERCHANT_FIXTURES: readonly SubMerchantRow[] = Object.freeze([
     parentMerchantId: 'merchant-0142',
     parentMerchantCode: 'MC000142',
     parentMerchantName: 'Highlands Coffee',
-    phone: '028 3636 9988',
+    phone: '028 7300 1122',
     email: 'landmark81@highlands.example.vn',
     address: '720A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. Hồ Chí Minh',
     businessField: 'F&B',
@@ -59,7 +139,7 @@ export const SUB_MERCHANT_FIXTURES: readonly SubMerchantRow[] = Object.freeze([
     holdbackDays: 1,
     autoApprovalThreshold: 50_000_000,
     minimumWithdrawal: 500_000,
-    dailyWithdrawalLimit: 250_000_000,
+    dailyWithdrawalLimit: 300_000_000,
     isDefault: false,
     phoneInherited: true,
     addressInherited: false,
@@ -70,7 +150,7 @@ export const SUB_MERCHANT_FIXTURES: readonly SubMerchantRow[] = Object.freeze([
       notification: 'OVERRIDDEN'
     },
     maskedBankAccount: '••••4821',
-    maskedIntegrationKey: '••••1C8D',
+    maskedIntegrationKey: '••••A142',
     status: 'ACTIVE',
     createdAt: '16/09/2026',
     updatedAt: '20/09/2026 16:45'
@@ -84,7 +164,7 @@ export const SUB_MERCHANT_FIXTURES: readonly SubMerchantRow[] = Object.freeze([
     parentMerchantName: 'Nhà thuốc An Khang',
     phone: '028 3930 2288',
     email: 'quan3@ankhang.example.vn',
-    address: '218 Võ Văn Tần, Phường Xuân Hòa, TP. Hồ Chí Minh',
+    address: '12 Nguyễn Thị Minh Khai, Phường Sài Gòn, TP. Hồ Chí Minh',
     businessField: 'Dược phẩm',
     taxCode: '0305234567',
     legalRepresentative: 'Trần Minh Quân',
@@ -107,7 +187,7 @@ export const SUB_MERCHANT_FIXTURES: readonly SubMerchantRow[] = Object.freeze([
       notification: 'INHERITED'
     },
     maskedBankAccount: '••••7316',
-    maskedIntegrationKey: '••••7B11',
+    maskedIntegrationKey: '••••B220',
     status: 'LOCKED',
     createdAt: '10/09/2026',
     updatedAt: '19/09/2026 10:15',
@@ -120,9 +200,9 @@ export const SUB_MERCHANT_FIXTURES: readonly SubMerchantRow[] = Object.freeze([
     parentMerchantId: 'merchant-0160',
     parentMerchantCode: 'MC000160',
     parentMerchantName: 'GS25 Việt Nam',
-    phone: '028 3925 1188',
+    phone: '028 7302 2525',
     email: 'nguyentrai@gs25.example.vn',
-    address: '175 Nguyễn Trãi, Phường Bến Thành, TP. Hồ Chí Minh',
+    address: '106 Nguyễn Giản Thanh, Phường Hòa Hưng, TP. Hồ Chí Minh',
     businessField: 'Bán lẻ',
     taxCode: '0314567890',
     legalRepresentative: 'Kim Ji Hoon',
@@ -145,7 +225,7 @@ export const SUB_MERCHANT_FIXTURES: readonly SubMerchantRow[] = Object.freeze([
       notification: 'INHERITED'
     },
     maskedBankAccount: '••••3341',
-    maskedIntegrationKey: '••••0D65',
+    maskedIntegrationKey: '••••C160',
     status: 'SUSPENDED_BY_PARENT',
     createdAt: '08/09/2026',
     updatedAt: '18/09/2026 14:10',

@@ -1,13 +1,17 @@
-import type { Control } from 'react-hook-form'
+import { useEffect } from 'react'
+import type { Control, UseFormSetValue } from 'react-hook-form'
 import { useWatch } from 'react-hook-form'
 
 import { FormCheckbox, FormInput, FormSelect, FormTextArea } from '@components/form'
 import { CardComponent } from '@components/index'
 
 import type { SubMerchantFormValue } from '../schemas/subMerchant.schema'
+import type { ParentMerchantSource } from '../types/subMerchant.type'
 
 interface SubMerchantProfileSectionProps {
   control: Control<SubMerchantFormValue>
+  parent?: ParentMerchantSource
+  setValue: UseFormSetValue<SubMerchantFormValue>
 }
 
 const BUSINESS_OPTIONS = ['F&B', 'Bán lẻ', 'Dược phẩm', 'Dịch vụ'].map((value) => ({
@@ -16,9 +20,21 @@ const BUSINESS_OPTIONS = ['F&B', 'Bán lẻ', 'Dược phẩm', 'Dịch vụ'].m
 }))
 const FIELD_CLASS = 'flex flex-col'
 
-export function SubMerchantProfileSection({ control }: SubMerchantProfileSectionProps) {
+export function SubMerchantProfileSection({
+  control,
+  parent,
+  setValue
+}: SubMerchantProfileSectionProps) {
   const phoneInherited = useWatch({ control, name: 'phoneInherited' })
   const addressInherited = useWatch({ control, name: 'addressInherited' })
+
+  useEffect(() => {
+    if (phoneInherited) setValue('phone', parent?.phone ?? '')
+  }, [parent?.phone, phoneInherited, setValue])
+
+  useEffect(() => {
+    if (addressInherited) setValue('address', parent?.address ?? '')
+  }, [addressInherited, parent?.address, setValue])
 
   return (
     <CardComponent className='border border-border bg-background shadow-none'>

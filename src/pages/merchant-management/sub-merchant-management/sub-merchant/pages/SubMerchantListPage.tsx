@@ -51,7 +51,7 @@ export default function SubMerchantListPage({ initialListState }: SubMerchantLis
           </div>
           <div className='mb-3 flex items-center gap-2 text-xs text-muted-foreground'>
             <StorefrontIcon aria-hidden className='text-secondary-foreground' size={17} />
-            Số tiền hiển thị nguyên vẹn theo VND; thao tác trạng thái được ghi Audit Log.
+            Số tiền hiển thị nguyên vẹn theo VND; trạng thái phản ánh tình trạng vận hành hiện tại.
           </div>
           <SubMerchantTable
             filtered={isFiltered}
