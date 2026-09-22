@@ -17,6 +17,7 @@ import {
   CreditCardIcon,
   FingerprintIcon,
   GearIcon,
+  GitBranchIcon,
   KeyIcon,
   LockIcon,
   LockKeyOpenIcon,
@@ -24,6 +25,7 @@ import {
   ReceiptIcon,
   ShieldCheckIcon,
   StorefrontIcon,
+  TerminalIcon,
   UserGearIcon,
   UsersThreeIcon,
   WalletIcon
@@ -341,6 +343,46 @@ const businessWalletManagement: ItemTypeCustom = {
   ]
 }
 
+const subMerchantManagement: ItemTypeCustom = {
+  key: 'sub-merchant-management',
+  groupLabel: 'Nhóm quản lý cổng ĐVCNTT',
+  icon: (
+    <StorefrontIcon
+      size={size}
+      weight={weight}
+      color={COlOR}
+    />
+  ),
+  label: 'Quản lý sub-merchant',
+  children: [
+    {
+      key: 'sub-merchant',
+      screen: 'MERCHANT_SUB_MERCHANT',
+      link: `${MERCHANT}/sub-merchant`,
+      icon: (
+        <GitBranchIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Danh sách sub-merchant'
+    },
+    {
+      key: 'terminal',
+      screen: 'MERCHANT_TERMINAL',
+      link: `${MERCHANT}/terminal`,
+      icon: (
+        <TerminalIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý Terminal'
+    }
+  ]
+}
 
 export const navigationItems: ItemTypeCustom[] = [
   transactionManagement,
@@ -348,6 +390,7 @@ export const navigationItems: ItemTypeCustom[] = [
   roleManagementV2,
   businessWalletManagement,
   merchantManagement,
+  subMerchantManagement,
   // feeManagementV3,
   feeManagementV4
 ]

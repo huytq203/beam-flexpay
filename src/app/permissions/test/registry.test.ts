@@ -47,6 +47,19 @@ describe('SCREENS', () => {
     )
   })
 
+  it('đăng ký hai màn Sub-merchant và Terminal bằng quyền merchant', () => {
+    expect(SCREENS.MERCHANT_SUB_MERCHANT.path).toBe(
+      '/secure-panel/merchant/sub-merchant'
+    )
+    expect(SCREENS.MERCHANT_TERMINAL.path).toBe('/secure-panel/merchant/terminal')
+    expect(SCREENS.MERCHANT_SUB_MERCHANT.actions.view).toBe(
+      PERMISSION.MERCHANT_VIEW
+    )
+    expect(SCREENS.MERCHANT_TERMINAL.actions.update).toBe(
+      PERMISSION.MERCHANT_UPDATE
+    )
+  })
+
   it('mọi mã quyền trong registry đều lấy từ bảng permission-codes', () => {
     const declared = new Set<string>(Object.values(PERMISSION))
     for (const screen of screens) {

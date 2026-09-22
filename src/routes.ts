@@ -400,6 +400,62 @@ const merchantManagement = {
             () =>
               import('@pages/merchant-management/business-wallet-account/pages/BusinessWalletForm')
           )
+        },
+        {
+          path: SCREENS.MERCHANT_SUB_MERCHANT.path,
+          element: page(
+            () =>
+              import('@pages/merchant-management/sub-merchant-management/sub-merchant/pages/SubMerchantListPage')
+          )
+        },
+        {
+          path: `${SCREENS.MERCHANT_SUB_MERCHANT.path}/create`,
+          element: page(
+            () =>
+              import('@pages/merchant-management/sub-merchant-management/sub-merchant/pages/SubMerchantFormPage')
+          )
+        },
+        {
+          path: `${SCREENS.MERCHANT_SUB_MERCHANT.path}/edit/:id`,
+          element: page(
+            () =>
+              import('@pages/merchant-management/sub-merchant-management/sub-merchant/pages/SubMerchantFormPage')
+          )
+        },
+        {
+          path: `${SCREENS.MERCHANT_SUB_MERCHANT.path}/detail/:id`,
+          element: page(
+            () =>
+              import('@pages/merchant-management/sub-merchant-management/sub-merchant/pages/SubMerchantDetailPage')
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_TERMINAL.path,
+          element: page(
+            () =>
+              import('@pages/merchant-management/sub-merchant-management/terminal/pages/TerminalListPage')
+          )
+        },
+        {
+          path: `${SCREENS.MERCHANT_TERMINAL.path}/create`,
+          element: page(
+            () =>
+              import('@pages/merchant-management/sub-merchant-management/terminal/pages/TerminalFormPage')
+          )
+        },
+        {
+          path: `${SCREENS.MERCHANT_TERMINAL.path}/edit/:id`,
+          element: page(
+            () =>
+              import('@pages/merchant-management/sub-merchant-management/terminal/pages/TerminalFormPage')
+          )
+        },
+        {
+          path: `${SCREENS.MERCHANT_TERMINAL.path}/detail/:id`,
+          element: page(
+            () =>
+              import('@pages/merchant-management/sub-merchant-management/terminal/pages/TerminalDetailPage')
+          )
         }
       ]
     }

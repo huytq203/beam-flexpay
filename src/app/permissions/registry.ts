@@ -217,6 +217,24 @@ export const SCREENS = {
       viewDetail: PERMISSION.MERCHANT_VIEW
     }
   },
+  MERCHANT_SUB_MERCHANT: {
+    path: `${MERCHANT}/sub-merchant`,
+    actions: {
+      ...MERCHANT_ACTIONS,
+      viewDetail: PERMISSION.MERCHANT_VIEW,
+      lock: PERMISSION.MERCHANT_UPDATE,
+      unlock: PERMISSION.MERCHANT_UPDATE
+    }
+  },
+  MERCHANT_TERMINAL: {
+    path: `${MERCHANT}/terminal`,
+    actions: {
+      ...MERCHANT_ACTIONS,
+      viewDetail: PERMISSION.MERCHANT_VIEW,
+      lock: PERMISSION.MERCHANT_UPDATE,
+      unlock: PERMISSION.MERCHANT_UPDATE
+    }
+  },
   MERCHANT_ORDER: {
     path: `${MERCHANT}/merchant-order`,
     actions: {

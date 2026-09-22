@@ -124,6 +124,14 @@
     "/secure-panel/merchant/business-wallet-account/edit/*":"Cập nhật ví doanh nghiệp",
     "/secure-panel/merchant/merchant-order":"Danh sách Order Merchant",
     "/secure-panel/merchant/merchant-order/qr/*":"QR Code",
-    "/secure-panel/merchant/dashboard-merchant":"Dashboard Merchant"
+    "/secure-panel/merchant/dashboard-merchant":"Dashboard Merchant",
+    "/secure-panel/merchant/sub-merchant":"Danh sách sub-merchant",
+    "/secure-panel/merchant/sub-merchant/create":"Thêm Sub-merchant",
+    "/secure-panel/merchant/sub-merchant/edit/*":"Cập nhật Sub-merchant",
+    "/secure-panel/merchant/sub-merchant/detail/*":"Chi tiết Sub-merchant",
+    "/secure-panel/merchant/terminal":"Quản lý Terminal",
+    "/secure-panel/merchant/terminal/create":"Thêm Terminal",
+    "/secure-panel/merchant/terminal/edit/*":"Cập nhật Terminal",
+    "/secure-panel/merchant/terminal/detail/*":"Chi tiết Terminal"
   }
 }

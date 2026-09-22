@@ -22,4 +22,16 @@ describe('merchant gateway navigation', () => {
       'MERCHANT_NOTIFICATION'
     )
   })
+
+  it('hiển thị group quản lý sub-merchant với hai mục con', () => {
+    const group = navigationItems.find(
+      (item) => item.key === 'sub-merchant-management'
+    )
+
+    expect(group?.label).toBe('Quản lý sub-merchant')
+    expect(group?.children?.map((item) => item.key)).toEqual([
+      'sub-merchant',
+      'terminal'
+    ])
+  })
 })
