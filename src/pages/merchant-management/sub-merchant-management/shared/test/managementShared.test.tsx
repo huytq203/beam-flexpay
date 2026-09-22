@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import { useState } from 'react'
+
+import { renderWithProviders } from '@/test/render'
 
 import { SUB_MERCHANT_FIXTURES } from '../../sub-merchant/constants/subMerchant.fixture'
 import { TERMINAL_FIXTURES } from '../../terminal/constants/terminal.fixture'
@@ -8,6 +11,38 @@ import { EntityLockDialog } from '../EntityLockDialog'
 import { ManagementPageHeader } from '../ManagementPageHeader'
 import { ManagementStatusTag } from '../ManagementStatusTag'
 import { ManagementTableState } from '../ManagementTableState'
+
+const nativeGetComputedStyle = window.getComputedStyle
+
+beforeAll(() => {
+  vi.spyOn(window, 'getComputedStyle').mockImplementation((element) =>
+    nativeGetComputedStyle(element)
+  )
+})
+
+afterAll(() => vi.restoreAllMocks())
+
+function EntityLockDialogLifecycleHarness({ onConfirm }: { onConfirm: (reason: string) => void }) {
+  const [open, setOpen] = useState(true)
+
+  return (
+    <>
+      <button type='button' onClick={() => setOpen(false)}>
+        Đóng dialog
+      </button>
+      <button type='button' onClick={() => setOpen(true)}>
+        Mở dialog
+      </button>
+      <EntityLockDialog
+        entityLabel='SUB-001'
+        mode='lock'
+        onCancel={() => setOpen(false)}
+        onConfirm={onConfirm}
+        open={open}
+      />
+    </>
+  )
+}
 
 describe('ManagementPageHeader', () => {
   it('announces the record count and renders both action slots', () => {
@@ -41,11 +76,21 @@ describe('ManagementTableState', () => {
       expect(screen.getByRole('status')).toBeInTheDocument()
     }
   )
+
+  it('renders supplied list content for a successful state', () => {
+    render(
+      <ManagementTableState entityName='Sub-merchant' state='success'>
+        <p>SUB-0142-01</p>
+      </ManagementTableState>
+    )
+
+    expect(screen.getByText('SUB-0142-01')).toBeInTheDocument()
+  })
 })
 
 describe('EntityLockDialog', () => {
   it('blocks unlock when parent state controls the entity', () => {
-    render(
+    renderWithProviders(
       <EntityLockDialog
         blockedMessage='Mở Merchant cha trước'
         entityLabel='SUB-001'
@@ -63,7 +108,7 @@ describe('EntityLockDialog', () => {
     const onConfirm = vi.fn()
     const user = userEvent.setup()
 
-    render(
+    renderWithProviders(
       <EntityLockDialog
         entityLabel='SUB-001'
         mode='lock'
@@ -83,6 +128,22 @@ describe('EntityLockDialog', () => {
     await user.click(screen.getByRole('button', { name: 'Khóa' }))
 
     expect(onConfirm).toHaveBeenCalledWith('Kiểm tra định kỳ')
+  })
+
+  it('clears the reason and validation state when the dialog reopens', async () => {
+    const user = userEvent.setup()
+    const onConfirm = vi.fn()
+    renderWithProviders(<EntityLockDialogLifecycleHarness onConfirm={onConfirm} />)
+
+    await user.type(screen.getByLabelText('Lý do khóa'), 'ngắn')
+    await user.click(screen.getByRole('button', { name: 'Khóa' }))
+    expect(screen.getByText('Lý do cần có ít nhất 10 ký tự.')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Đóng dialog' }))
+    await user.click(screen.getByRole('button', { name: 'Mở dialog' }))
+
+    expect(screen.getByLabelText('Lý do khóa')).toHaveValue('')
+    expect(screen.queryByText('Lý do cần có ít nhất 10 ký tự.')).not.toBeInTheDocument()
   })
 })
 
