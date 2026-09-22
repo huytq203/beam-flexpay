@@ -102,9 +102,11 @@ const createActionColumn = ({
           <Can screen='MERCHANT_SUB_MERCHANT' action='viewDetail'>
             {renderActionButton(`Xem Sub-merchant ${row.name}`, <EyeIcon aria-hidden size={18} />, () => onView(row))}
           </Can>
-          <Can screen='MERCHANT_SUB_MERCHANT' action='edit'>
-            {renderActionButton(`Sửa Sub-merchant ${row.name}`, <PencilSimpleIcon aria-hidden size={18} />, () => onEdit(row))}
-          </Can>
+          {row.status !== 'SUSPENDED_BY_PARENT' && (
+            <Can screen='MERCHANT_SUB_MERCHANT' action='edit'>
+              {renderActionButton(`Sửa Sub-merchant ${row.name}`, <PencilSimpleIcon aria-hidden size={18} />, () => onEdit(row))}
+            </Can>
+          )}
           <Can screen='MERCHANT_SUB_MERCHANT' action={isActive ? 'lock' : 'unlock'}>
             {renderActionButton(
               statusLabel,

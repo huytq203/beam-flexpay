@@ -50,6 +50,18 @@ describe('SubMerchantDetailPage', () => {
     expect(screen.getByRole('button', { name: 'Mở khóa' })).toBeDisabled()
   })
 
+  it('chiếu parent cascade cho Sub raw LOCKED và ẩn hành động sửa', async () => {
+    const user = userEvent.setup()
+    renderDetail('sub-locked', [PERMISSION.MERCHANT_UPDATE])
+
+    expect((await screen.findAllByText('Tạm ngưng theo cấp cha')).length).toBeGreaterThan(0)
+    expect(screen.queryByRole('button', { name: 'Sửa Sub-merchant' })).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Mở khóa Sub-merchant' }))
+
+    expect(screen.getByText('Cần mở khóa Merchant cha trước')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Mở khóa' })).toBeDisabled()
+  })
+
   it('ẩn hành động sửa và khóa với người chỉ có quyền xem', async () => {
     renderDetail('sub-001', [PERMISSION.MERCHANT_VIEW])
 

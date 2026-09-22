@@ -46,7 +46,9 @@ function DetailHeader({ record, onBack, onEdit, onStatus }: DetailHeaderProps) {
           </div>
         </div>
         <div className='flex flex-col gap-2 sm:flex-row'>
-          <Can action='edit' screen='MERCHANT_SUB_MERCHANT'><ButtonComponent className='w-full sm:w-auto' content='Sửa Sub-merchant' htmlType='button' icon={<EditOutlined aria-hidden />} onClick={onEdit} type='default' /></Can>
+          {record.status !== 'SUSPENDED_BY_PARENT' && (
+            <Can action='edit' screen='MERCHANT_SUB_MERCHANT'><ButtonComponent className='w-full sm:w-auto' content='Sửa Sub-merchant' htmlType='button' icon={<EditOutlined aria-hidden />} onClick={onEdit} type='default' /></Can>
+          )}
           <Can action={isActive ? 'lock' : 'unlock'} screen='MERCHANT_SUB_MERCHANT'><ButtonComponent className='w-full sm:w-auto' content={`${isActive ? 'Khóa' : 'Mở khóa'} Sub-merchant`} danger={isActive} htmlType='button' icon={isActive ? <LockFilled aria-hidden /> : <LockKeyOpenIcon aria-hidden size={17} />} onClick={onStatus} type='default' /></Can>
         </div>
       </header>

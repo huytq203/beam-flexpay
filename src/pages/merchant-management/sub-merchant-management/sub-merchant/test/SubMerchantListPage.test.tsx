@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
@@ -13,6 +13,15 @@ import SubMerchantListPage from '../pages/SubMerchantListPage'
 import { suppressAntPseudoElementWarning } from './domTestSetup'
 
 suppressAntPseudoElementWarning()
+
+const findRenderedOption = async (name: RegExp | string): Promise<HTMLElement> => {
+  const matches = await screen.findAllByText(name)
+  const option = matches.find((element) =>
+    element.classList.contains('ant-select-item-option-content')
+  )
+  if (!option) throw new Error(`Không tìm thấy option hiển thị: ${String(name)}`)
+  return option
+}
 
 type ListState = 'loading' | 'error' | 'empty' | 'success'
 
@@ -124,6 +133,41 @@ describe('SubMerchantListPage', () => {
     await user.click(await screen.findByRole('button', { name: /Mở khóa Sub-merchant GS25 Nguyễn Trãi/ }))
     expect(screen.getByText('Cần mở khóa Merchant cha trước')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Mở khóa' })).toBeDisabled()
+  })
+
+  it('chiếu cascade và chặn mở khóa Sub raw LOCKED khi Merchant cha bị khóa', async () => {
+    const user = userEvent.setup()
+    renderList({ permissions: [PERMISSION.MERCHANT_UPDATE] })
+
+    const row = (await screen.findByText('SUB-0220-02')).closest('tr')
+    expect(row).not.toBeNull()
+    expect(within(row!).getByText('Tạm ngưng theo cấp cha')).toBeInTheDocument()
+    expect(within(row!).queryByRole('button', { name: /Sửa Sub-merchant/ })).not.toBeInTheDocument()
+    await user.click(within(row!).getByRole('button', { name: /Mở khóa Sub-merchant/ }))
+
+    expect(screen.getByText('Cần mở khóa Merchant cha trước')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Mở khóa' })).toBeDisabled()
+  })
+
+  it('lọc được Sub vừa tạo theo parent FlexPay Mart từ parent source chung', async () => {
+    const user = userEvent.setup()
+    createFixtureSubMerchant({
+      parentMerchantId: 'merchant-0301',
+      name: 'FlexPay Mart Lê Lợi',
+      phoneInherited: true,
+      phone: '',
+      addressInherited: true,
+      address: '',
+      businessField: 'Bán lẻ'
+    })
+    renderList()
+
+    await user.click(screen.getByRole('combobox', { name: 'Merchant cha' }))
+    await user.click(await findRenderedOption(/FlexPay Mart \(MC000301\)/))
+    await user.click(screen.getByRole('button', { name: 'Tìm kiếm' }))
+
+    expect(await screen.findByText('FlexPay Mart Lê Lợi')).toBeInTheDocument()
+    expect(screen.queryByText('HLC Nguyễn Huệ')).not.toBeInTheDocument()
   })
 
   it('điều hướng sang màn tạo khi có quyền', async () => {

@@ -38,15 +38,25 @@ const cloneRow = (row: SubMerchantRow): SubMerchantRow => ({
 })
 
 let repositoryRows: readonly SubMerchantRow[] = SUB_MERCHANT_FIXTURES.map(cloneRow)
+const projectEffectiveStatus = (row: SubMerchantRow): SubMerchantRow => {
+  const parent = PARENT_MERCHANT_FIXTURES[row.parentMerchantId]
+  if (parent?.status === 'ACTIVE' || !parent) return row
+  return { ...row, status: 'SUSPENDED_BY_PARENT' }
+}
+
+let effectiveRows: readonly SubMerchantRow[] = repositoryRows.map(projectEffectiveStatus)
 let nextSubMerchantSequence = SUB_MERCHANT_FIXTURES.length + 1
 const listeners = new Set<() => void>()
 
-const emitChange = (): void => listeners.forEach((listener) => listener())
+const emitChange = (): void => {
+  effectiveRows = repositoryRows.map(projectEffectiveStatus)
+  listeners.forEach((listener) => listener())
+}
 const subscribe = (listener: () => void): (() => void) => {
   listeners.add(listener)
   return () => listeners.delete(listener)
 }
-export const getSubMerchantSnapshot = (): readonly SubMerchantRow[] => repositoryRows
+export const getSubMerchantSnapshot = (): readonly SubMerchantRow[] => effectiveRows
 
 export const resetSubMerchantRepository = (): void => {
   repositoryRows = SUB_MERCHANT_FIXTURES.map(cloneRow)
@@ -55,11 +65,15 @@ export const resetSubMerchantRepository = (): void => {
 }
 
 export const getSubMerchantById = (id: string): SubMerchantRow | undefined =>
+  effectiveRows.find((row) => row.id === id)
+
+const getStoredSubMerchantById = (id: string): SubMerchantRow | undefined =>
   repositoryRows.find((row) => row.id === id)
 
 export const toggleSubMerchantStatus = (id: string, reason: string): boolean => {
-  const record = getSubMerchantById(id)
-  if (!record || record.status === 'SUSPENDED_BY_PARENT') return false
+  const record = getStoredSubMerchantById(id)
+  const parent = record ? PARENT_MERCHANT_FIXTURES[record.parentMerchantId] : undefined
+  if (!record || !parent || parent.status !== 'ACTIVE') return false
 
   repositoryRows = repositoryRows.map((row) =>
     row.id === id
@@ -142,13 +156,18 @@ export const updateFixtureSubMerchant = (
   record: SubMerchantRow,
   value: SubMerchantFormValue
 ): SubMerchantRow => {
-  const parent = resolveParent(record.parentMerchantId)
+  const storedRecord = getStoredSubMerchantById(record.id)
+  if (!storedRecord) throw new Error('Không tìm thấy Sub-merchant')
+  const parent = resolveParent(storedRecord.parentMerchantId)
+  if (parent.status !== 'ACTIVE') {
+    throw new Error('Merchant cha phải đang hoạt động để cập nhật Sub-merchant')
+  }
   const defaults = parent.configurationDefaults
-  const inheritsBank = record.configurationSources.bank === 'INHERITED'
-  const inheritsKey = record.configurationSources.key === 'INHERITED'
-  const inheritsPayment = record.configurationSources.payment === 'INHERITED'
+  const inheritsBank = storedRecord.configurationSources.bank === 'INHERITED'
+  const inheritsKey = storedRecord.configurationSources.key === 'INHERITED'
+  const inheritsPayment = storedRecord.configurationSources.payment === 'INHERITED'
   const updated: SubMerchantRow = {
-    ...record,
+    ...storedRecord,
     name: value.name,
     phone: value.phoneInherited ? parent.phone : value.phone,
     address: value.addressInherited ? parent.address : value.address,
@@ -157,20 +176,22 @@ export const updateFixtureSubMerchant = (
     legalRepresentative: parent.legalRepresentative,
     phoneInherited: value.phoneInherited,
     addressInherited: value.addressInherited,
-    maskedBankAccount: inheritsBank ? defaults.maskedBankAccount : record.maskedBankAccount,
-    maskedIntegrationKey: inheritsKey ? defaults.maskedIntegrationKey : record.maskedIntegrationKey,
-    settlementMode: inheritsPayment ? defaults.settlementMode : record.settlementMode,
-    holdbackDays: inheritsPayment ? defaults.holdbackDays : record.holdbackDays,
+    maskedBankAccount: inheritsBank ? defaults.maskedBankAccount : storedRecord.maskedBankAccount,
+    maskedIntegrationKey: inheritsKey ? defaults.maskedIntegrationKey : storedRecord.maskedIntegrationKey,
+    settlementMode: inheritsPayment ? defaults.settlementMode : storedRecord.settlementMode,
+    holdbackDays: inheritsPayment ? defaults.holdbackDays : storedRecord.holdbackDays,
     autoApprovalThreshold: inheritsPayment
       ? defaults.autoApprovalThreshold
-      : record.autoApprovalThreshold,
-    minimumWithdrawal: inheritsPayment ? defaults.minimumWithdrawal : record.minimumWithdrawal,
+      : storedRecord.autoApprovalThreshold,
+    minimumWithdrawal: inheritsPayment
+      ? defaults.minimumWithdrawal
+      : storedRecord.minimumWithdrawal,
     dailyWithdrawalLimit: inheritsPayment
       ? defaults.dailyWithdrawalLimit
-      : record.dailyWithdrawalLimit,
+      : storedRecord.dailyWithdrawalLimit,
     updatedAt: '22/09/2026 09:00'
   }
-  repositoryRows = repositoryRows.map((row) => (row.id === record.id ? updated : row))
+  repositoryRows = repositoryRows.map((row) => (row.id === storedRecord.id ? updated : row))
   emitChange()
   return updated
 }

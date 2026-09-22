@@ -6,6 +6,7 @@ import {
   getSubMerchantById,
   getSubMerchantSnapshot,
   resetSubMerchantRepository,
+  toggleSubMerchantStatus,
   updateFixtureSubMerchant
 } from '../useSubMerchants'
 
@@ -72,6 +73,29 @@ describe('Sub-merchant repository inheritance', () => {
       phone: '028 7302 2525',
       address: '106 Nguyễn Giản Thanh, Phường Hòa Hưng, TP. Hồ Chí Minh'
     })
+  })
+
+  it('chiếu trạng thái parent cascade trên mọi read API và chặn mở khóa raw Sub', () => {
+    expect(getSubMerchantById('sub-locked')?.status).toBe('SUSPENDED_BY_PARENT')
+    expect(getSubMerchantSnapshot().find((row) => row.id === 'sub-locked')?.status).toBe(
+      'SUSPENDED_BY_PARENT'
+    )
+
+    expect(toggleSubMerchantStatus('sub-locked', 'Không được mở khóa')).toBe(false)
+    expect(getSubMerchantById('sub-locked')).toMatchObject({
+      status: 'SUSPENDED_BY_PARENT',
+      lastLockReason: 'Đối soát hồ sơ điểm bán định kỳ.'
+    })
+  })
+
+  it('chặn cập nhật Sub-merchant khi Merchant cha không hoạt động', () => {
+    const record = getSubMerchantById('sub-locked')
+    expect(record).toBeDefined()
+
+    expect(() => updateFixtureSubMerchant(
+      record!,
+      formValue({ parentMerchantId: 'merchant-0220', name: record!.name })
+    )).toThrow('Merchant cha phải đang hoạt động để cập nhật Sub-merchant')
   })
 
   it.each(['merchant-0160', 'merchant-0220'])(

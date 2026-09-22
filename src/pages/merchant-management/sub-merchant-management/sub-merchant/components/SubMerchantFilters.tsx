@@ -4,7 +4,7 @@ import { FormDatePicker, FormInput, FormSelect } from '@components/form'
 import { BroomIcon, FunnelIcon, MagnifyingGlassIcon } from '@components/icons'
 import { ButtonComponent } from '@components/index'
 
-import { SUB_MERCHANT_FIXTURES } from '../constants/subMerchant.fixture'
+import { PARENT_MERCHANT_FIXTURES } from '../constants/subMerchant.fixture'
 import type { SubMerchantFiltersValue } from '../hooks/useSubMerchants'
 
 interface SubMerchantFiltersProps {
@@ -20,14 +20,10 @@ const STATUS_OPTIONS = [
   { label: 'Đã khóa', value: 'LOCKED' },
   { label: 'Tạm ngưng theo cấp cha', value: 'SUSPENDED_BY_PARENT' }
 ]
-const PARENT_OPTIONS = Array.from(
-  new Map(
-    SUB_MERCHANT_FIXTURES.map((row) => [
-      row.parentMerchantId,
-      { label: `${row.parentMerchantName} (${row.parentMerchantCode})`, value: row.parentMerchantId }
-    ])
-  ).values()
-)
+const PARENT_OPTIONS = Object.values(PARENT_MERCHANT_FIXTURES).map((parent) => ({
+  label: `${parent.name} (${parent.code})`,
+  value: parent.id
+}))
 
 export function SubMerchantFilters({ value, onSearch, onReset }: SubMerchantFiltersProps) {
   const form = useForm<SubMerchantFiltersValue>({ defaultValues: value })
