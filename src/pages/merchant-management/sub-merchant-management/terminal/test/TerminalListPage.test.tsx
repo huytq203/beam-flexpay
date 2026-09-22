@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, renderHook, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
@@ -9,9 +9,14 @@ import { createAppStore } from '@/app/store'
 import { savePermissions } from '@slices/authSlice'
 
 import type { ManagementListState } from '../../shared/management.types'
-import { resetSubMerchantRepository } from '../../sub-merchant/hooks/useSubMerchants'
+import {
+  createFixtureSubMerchant,
+  resetSubMerchantRepository
+} from '../../sub-merchant/hooks/useSubMerchants'
+import { useCurrentSubMerchants } from '../hooks/useTerminalSubMerchants'
 import { createTerminal, resetTerminalRepository } from '../hooks/useTerminals'
 import TerminalListPage from '../pages/TerminalListPage'
+import { getActiveSubMerchantOptions } from '../utils/terminal.utils'
 
 const LIST_PATH = '/secure-panel/merchant/terminal'
 
@@ -195,4 +200,25 @@ describe('TerminalListPage', () => {
     expect(screen.getByText('QR Quầy 02')).toBeInTheDocument()
     expect(screen.queryByTitle('2')).toBeNull()
   }, 15_000)
+
+  it('giữ Sub-merchant active cũ nhất trong bộ lọc sau hơn 10 lần tạo', async () => {
+    for (let index = 1; index <= 11; index += 1) {
+      createFixtureSubMerchant({
+        parentMerchantId: 'merchant-0142',
+        name: `Sub active ${index}`,
+        phoneInherited: true,
+        phone: '',
+        addressInherited: true,
+        address: '',
+        businessField: 'F&B'
+      })
+    }
+    const { result } = renderHook(() => useCurrentSubMerchants())
+    const options = getActiveSubMerchantOptions('merchant-0142', result.current)
+
+    expect(options).toContainEqual({
+      label: 'Sub active 1',
+      value: 'sub-local-05'
+    })
+  }, 10_000)
 })
