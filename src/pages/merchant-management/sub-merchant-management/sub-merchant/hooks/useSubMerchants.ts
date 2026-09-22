@@ -3,6 +3,7 @@ import type { Dayjs } from 'dayjs'
 
 import type { ManagementListState } from '../../shared/management.types'
 import { SUB_MERCHANT_FIXTURES } from '../constants/subMerchant.fixture'
+import type { SubMerchantFormValue } from '../schemas/subMerchant.schema'
 import type { SubMerchantRow, SubMerchantStatus } from '../types/subMerchant.type'
 import {
   filterSubMerchants,
@@ -29,6 +30,7 @@ const cloneRow = (row: SubMerchantRow): SubMerchantRow => ({
 })
 
 let repositoryRows: readonly SubMerchantRow[] = SUB_MERCHANT_FIXTURES.map(cloneRow)
+let nextSubMerchantSequence = SUB_MERCHANT_FIXTURES.length + 1
 const listeners = new Set<() => void>()
 
 const emitChange = (): void => listeners.forEach((listener) => listener())
@@ -40,6 +42,7 @@ const getSnapshot = (): readonly SubMerchantRow[] => repositoryRows
 
 export const resetSubMerchantRepository = (): void => {
   repositoryRows = SUB_MERCHANT_FIXTURES.map(cloneRow)
+  nextSubMerchantSequence = SUB_MERCHANT_FIXTURES.length + 1
   emitChange()
 }
 
@@ -62,6 +65,63 @@ export const toggleSubMerchantStatus = (id: string, reason: string): boolean => 
   )
   emitChange()
   return true
+}
+
+const resolveParent = (parentMerchantId: string): SubMerchantRow => {
+  const parent = repositoryRows.find((row) => row.parentMerchantId === parentMerchantId)
+  if (!parent) throw new Error('Không tìm thấy Merchant cha')
+  return parent
+}
+
+export const createFixtureSubMerchant = (value: SubMerchantFormValue): SubMerchantRow => {
+  const parent = resolveParent(value.parentMerchantId)
+  const sequence = String(nextSubMerchantSequence).padStart(2, '0')
+  const parentNumber = parent.parentMerchantCode.replace(/^MC0*/, '').padStart(4, '0')
+  const record: SubMerchantRow = {
+    ...cloneRow(parent),
+    id: `sub-local-${sequence}`,
+    code: `SUB-${parentNumber}-${sequence}`,
+    name: value.name,
+    phone: value.phoneInherited ? parent.phone : value.phone,
+    address: value.addressInherited ? parent.address : value.address,
+    businessField: value.businessField,
+    email: `sub-${sequence}@merchant.example.vn`,
+    terminalCount: 0,
+    availableBalance: 0,
+    collectedToday: 0,
+    pendingSettlement: 0,
+    isDefault: false,
+    phoneInherited: value.phoneInherited,
+    addressInherited: value.addressInherited,
+    status: 'ACTIVE',
+    createdAt: '22/09/2026',
+    updatedAt: '22/09/2026 09:00',
+    lastLockReason: undefined
+  }
+  nextSubMerchantSequence += 1
+  repositoryRows = [record, ...repositoryRows]
+  emitChange()
+  return record
+}
+
+export const updateFixtureSubMerchant = (
+  record: SubMerchantRow,
+  value: SubMerchantFormValue
+): SubMerchantRow => {
+  const parent = resolveParent(record.parentMerchantId)
+  const updated: SubMerchantRow = {
+    ...record,
+    name: value.name,
+    phone: value.phoneInherited ? parent.phone : value.phone,
+    address: value.addressInherited ? parent.address : value.address,
+    businessField: value.businessField,
+    phoneInherited: value.phoneInherited,
+    addressInherited: value.addressInherited,
+    updatedAt: '22/09/2026 09:00'
+  }
+  repositoryRows = repositoryRows.map((row) => (row.id === record.id ? updated : row))
+  emitChange()
+  return updated
 }
 
 export function useSubMerchantRecord(id?: string): SubMerchantRow | undefined {

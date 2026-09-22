@@ -19,16 +19,21 @@ const renderActionButton = (
   label: string,
   icon: ReactNode,
   onClick: () => void,
-  danger = false
+  tone: 'neutral' | 'danger' | 'success' = 'neutral'
 ) => (
   <TooltipComponent title={label}>
     <ButtonComponent
       aria-label={label}
-      danger={danger}
+      className={
+        tone === 'success'
+          ? 'size-8! border-success-strong/40! bg-background! p-0! text-success-strong! shadow-none!'
+          : 'size-8! border-border! bg-background! p-0! shadow-none!'
+      }
+      danger={tone === 'danger'}
       htmlType='button'
       icon={icon}
       onClick={onClick}
-      type='text'
+      type='default'
     />
   </TooltipComponent>
 )
@@ -83,7 +88,7 @@ export const createSubMerchantColumns = ({
     title: 'Thao tác',
     align: 'center',
     fixed: 'right',
-    width: 140,
+    width: 150,
     render: (_, row) => {
       const isActive = row.status === 'ACTIVE'
       const statusLabel = `${isActive ? 'Khóa' : 'Mở khóa'} Sub-merchant ${row.name}`
@@ -101,7 +106,7 @@ export const createSubMerchantColumns = ({
               statusLabel,
               isActive ? <LockIcon aria-hidden size={18} /> : <LockOpenIcon aria-hidden size={18} />,
               () => onStatus(row),
-              isActive
+              isActive ? 'danger' : 'success'
             )}
           </Can>
         </div>
