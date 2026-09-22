@@ -1,6 +1,7 @@
 import {
   Controller,
   Control,
+  ControllerFieldState,
   ControllerRenderProps,
   FieldValues,
   Path
@@ -14,7 +15,11 @@ interface FormFieldProps<T extends FieldValues> {
   className?: string
   classNameLable?: string
   required?: boolean
-  render: (field: ControllerRenderProps<T, Path<T>>) => React.ReactNode
+  render: (
+    field: ControllerRenderProps<T, Path<T>>,
+    fieldState: ControllerFieldState,
+    errorId?: string
+  ) => React.ReactNode
 }
 
 export function FormField<T extends FieldValues>({
@@ -42,9 +47,19 @@ export function FormField<T extends FieldValues>({
         control={control}
         render={({ field, fieldState }) => (
           <>
-            {render(field)}
+            {render(
+              field,
+              fieldState,
+              fieldState.error ? `${String(name)}-error` : undefined
+            )}
             {fieldState.error && (
-              <p className='text-red-500'>{fieldState.error.message}</p>
+              <p
+                className='text-red-500'
+                id={`${String(name)}-error`}
+                role='alert'
+              >
+                {fieldState.error.message}
+              </p>
             )}
           </>
         )}

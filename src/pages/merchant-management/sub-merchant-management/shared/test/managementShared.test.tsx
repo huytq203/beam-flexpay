@@ -130,6 +130,29 @@ describe('EntityLockDialog', () => {
     expect(onConfirm).toHaveBeenCalledWith('Kiểm tra định kỳ')
   })
 
+  it('connects invalid reason input with its announced validation message', async () => {
+    const user = userEvent.setup()
+
+    renderWithProviders(
+      <EntityLockDialog
+        entityLabel='SUB-001'
+        mode='lock'
+        onCancel={vi.fn()}
+        onConfirm={vi.fn()}
+        open
+      />
+    )
+
+    const reasonInput = screen.getByLabelText('Lý do khóa')
+    await user.type(reasonInput, 'ngắn')
+    await user.click(screen.getByRole('button', { name: 'Khóa' }))
+
+    const error = screen.getByRole('alert')
+    expect(reasonInput).toHaveAttribute('aria-invalid', 'true')
+    expect(reasonInput).toHaveAttribute('aria-describedby', error.id)
+    expect(error).toHaveTextContent('Lý do cần có ít nhất 10 ký tự.')
+  })
+
   it('clears the reason and validation state when the dialog reopens', async () => {
     const user = userEvent.setup()
     const onConfirm = vi.fn()

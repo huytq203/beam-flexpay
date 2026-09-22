@@ -38,10 +38,12 @@ export function FormTextArea<T extends FieldValues>({
       label={label}
       className={className}
       classNameLable={classNameLable}
-      render={(field) => (
+      render={(field, fieldState, errorId) => (
         <TextArea
           {...field}
           {...rest}
+          aria-describedby={[rest['aria-describedby'], errorId].filter(Boolean).join(' ') || undefined}
+          aria-invalid={fieldState.invalid || rest['aria-invalid']}
           id={field.name}
           placeholder={placeholder}
           rows={rows}
