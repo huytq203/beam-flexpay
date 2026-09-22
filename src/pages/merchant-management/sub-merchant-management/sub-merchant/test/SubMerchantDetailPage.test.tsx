@@ -38,7 +38,7 @@ describe('SubMerchantDetailPage', () => {
     renderDetail('sub-001', [PERMISSION.MERCHANT_VIEW])
 
     expect((await screen.findAllByText(/••••/)).length).toBeGreaterThanOrEqual(2)
-    expect(screen.queryByText('9704361234567890')).not.toBeInTheDocument()
+    expect(screen.queryByText(/^\d{16}$/)).not.toBeInTheDocument()
   })
 
   it('không mở khóa Sub-merchant bị tạm ngưng theo Merchant cha', async () => {
