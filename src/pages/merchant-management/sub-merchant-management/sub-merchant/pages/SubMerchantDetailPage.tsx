@@ -5,9 +5,10 @@ import { Can, SCREENS } from '@/app/permissions'
 import { ArrowLeftOutlined, EditOutlined, LockFilled, LockKeyOpenIcon, WarningIcon } from '@components/icons'
 import { ButtonComponent, CardComponent } from '@components/index'
 
-import { EntityLockDialog } from '../../shared/EntityLockDialog'
 import { ManagementStatusTag } from '../../shared/ManagementStatusTag'
 import { SubMerchantConfigurationSummary } from '../components/SubMerchantConfigurationSummary'
+import { SubMerchantHistoryAction } from '../components/SubMerchantHistoryAction'
+import { SubMerchantLockDialog } from '../components/SubMerchantLockDialog'
 import { SubMerchantMetrics } from '../components/SubMerchantMetrics'
 import { SubMerchantOverview } from '../components/SubMerchantOverview'
 import { toggleSubMerchantStatus, useSubMerchantRecord } from '../hooks/useSubMerchants'
@@ -46,6 +47,7 @@ function DetailHeader({ record, onBack, onEdit, onStatus }: DetailHeaderProps) {
           </div>
         </div>
         <div className='flex flex-col gap-2 sm:flex-row'>
+          <SubMerchantHistoryAction />
           {record.status !== 'SUSPENDED_BY_PARENT' && (
             <Can action='edit' screen='MERCHANT_SUB_MERCHANT'><ButtonComponent className='w-full sm:w-auto' content='Sửa Sub-merchant' htmlType='button' icon={<EditOutlined aria-hidden />} onClick={onEdit} type='default' /></Can>
           )}
@@ -77,14 +79,11 @@ export default function SubMerchantDetailPage() {
         <SubMerchantOverview record={record} />
         <SubMerchantConfigurationSummary masked record={record} />
       </div>
-      <EntityLockDialog
-        blockedMessage={record.status === 'SUSPENDED_BY_PARENT' ? 'Cần mở khóa Merchant cha trước' : undefined}
-        entityLabel={`${record.name} (${record.code})`}
-        mode={record.status === 'ACTIVE' ? 'lock' : 'unlock'}
+      <SubMerchantLockDialog
+        record={record}
         onCancel={() => setLockOpen(false)}
         onConfirm={handleStatusChange}
         open={lockOpen}
-        previousReason={record.lastLockReason}
       />
     </main>
   )

@@ -43,6 +43,7 @@ const renderTerminalForm = (route: string, permissions: string[]) => {
             path={BASE_PATH}
             element={<p>Danh sách Terminal</p>}
           />
+          <Route path='/secure-panel/forbidden' element={<p>Không có quyền truy cập</p>} />
         </Routes>
       </MemoryRouter>
     </Provider>
@@ -62,6 +63,16 @@ beforeEach(() => {
 afterEach(() => vi.restoreAllMocks())
 
 describe('TerminalFormPage', () => {
+  it.each(['create', 'edit/terminal-001'])(
+    'chặn route %s trực tiếp với quyền VIEW-only', async (path) => {
+      renderTerminalForm(`${BASE_PATH}/${path}`, [PERMISSION.MERCHANT_VIEW])
+
+      expect(await screen.findByText('Không có quyền truy cập')).toBeInTheDocument()
+      expect(screen.queryByLabelText(/^Tên Terminal/)).not.toBeInTheDocument()
+      expect(getTerminalById('terminal-001')?.name).toBe('QR Quầy 02')
+    }
+  )
+
   it('lọc Sub-merchant đang hoạt động theo Merchant cha', async () => {
     renderTerminalForm(`${BASE_PATH}/create`, [PERMISSION.MERCHANT_CREATE])
 

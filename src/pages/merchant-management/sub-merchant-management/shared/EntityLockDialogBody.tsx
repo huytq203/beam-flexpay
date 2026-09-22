@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 import { EntityLockReasonForm } from './EntityLockReasonForm'
 
 interface EntityLockDialogBodyProps {
@@ -7,6 +9,8 @@ interface EntityLockDialogBodyProps {
   isLock: boolean
   onConfirm: (reason: string) => void
   previousReason?: string
+  context?: ReactNode
+  lockWarning?: string
 }
 
 export function EntityLockDialogBody({
@@ -15,13 +19,21 @@ export function EntityLockDialogBody({
   formId,
   isLock,
   onConfirm,
-  previousReason
+  previousReason,
+  context,
+  lockWarning
 }: EntityLockDialogBodyProps) {
   return (
     <div className='flex flex-col gap-4'>
       <p className='text-sm text-foreground'>
-        Thao tác với <strong className='font-semibold'>{entityLabel}</strong> sẽ được ghi Audit Log.
+        Xác nhận {isLock ? 'khóa' : 'mở khóa'} <strong className='font-semibold'>{entityLabel}</strong>.
       </p>
+      {context}
+      {isLock && lockWarning && (
+        <p className='rounded-lg border border-danger-strong/30 bg-danger/5 p-3 text-sm text-danger-strong' role='alert'>
+          {lockWarning}
+        </p>
+      )}
       {blockedMessage ? (
         <p
           className='rounded-lg border border-warning-strong/30 bg-warning/10 p-3 text-sm text-warning-strong'

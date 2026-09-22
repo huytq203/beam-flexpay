@@ -1,7 +1,8 @@
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 
 import { SCREENS, useScreenAccess } from '@/app/permissions'
 import { CardComponent } from '@components/index'
+import { FORBIDDENERROR } from '@constants/routersConstant'
 
 import { ManagementPageHeader } from '../../shared/ManagementPageHeader'
 import { TerminalForm } from '../components/TerminalForm'
@@ -46,6 +47,8 @@ export default function TerminalFormPage() {
     void navigate(listPath)
   }
 
+  if (!access.can(mode)) return <Navigate replace to={FORBIDDENERROR} />
+
   if (mode === 'edit' && !record) return <TerminalNotFound onBack={goToList} />
 
   if (record?.status === 'SUSPENDED_BY_SUB') {
@@ -71,6 +74,7 @@ export default function TerminalFormPage() {
   }
 
   const handleSubmit = (value: TerminalFormValue): void => {
+    if (!access.can(mode)) return
     const saved =
       mode === 'create'
         ? createTerminal(value)
@@ -94,8 +98,6 @@ export default function TerminalFormPage() {
           onCancel={goToList}
           onSubmit={handleSubmit}
           tid={record?.tid}
-          inheritedPaymentMethods={record?.inheritedPaymentMethods}
-          inheritedLimitLabel={record?.inheritedLimitLabel}
         />
       </CardComponent>
     </main>

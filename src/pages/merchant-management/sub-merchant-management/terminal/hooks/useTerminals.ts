@@ -1,9 +1,10 @@
 import { useState, useSyncExternalStore } from 'react'
 
 import type { ManagementListState } from '../../shared/management.types'
+import { getSubMerchantPaymentConfiguration } from '../../sub-merchant/constants/subMerchantPaymentConfiguration'
 import { TERMINAL_FIXTURES } from '../constants/terminal.fixture'
 import type { TerminalFormValue } from '../schemas/terminal.schema'
-import type { TerminalRow } from '../types/terminal.type'
+import type { StoredTerminalRow, TerminalRow } from '../types/terminal.type'
 import {
   EMPTY_TERMINAL_FILTERS,
   filterTerminals,
@@ -18,11 +19,7 @@ import {
 
 type TerminalListener = () => void
 
-const cloneSeeds = (): TerminalRow[] =>
-  TERMINAL_FIXTURES.map((row) => ({
-    ...row,
-    inheritedPaymentMethods: [...row.inheritedPaymentMethods]
-  }))
+const cloneSeeds = (): StoredTerminalRow[] => TERMINAL_FIXTURES.map((row) => ({ ...row }))
 
 let records = cloneSeeds()
 const listeners = new Set<TerminalListener>()
@@ -31,44 +28,43 @@ const subscribe = (listener: TerminalListener): (() => void) => {
   listeners.add(listener)
   return () => listeners.delete(listener)
 }
-const getSnapshot = (): readonly TerminalRow[] => records
+const getSnapshot = (): readonly StoredTerminalRow[] => records
 
 export const resetTerminalRepository = (): void => {
   records = cloneSeeds()
   emitChange()
 }
 
-const getStoredTerminalById = (id: string): TerminalRow | undefined =>
+const getStoredTerminalById = (id: string): StoredTerminalRow | undefined =>
   records.find((row) => row.id === id)
 
-const withCurrentSubStatus = (record: TerminalRow): TerminalRow => {
-  const subMerchant = getCurrentSubMerchant(record.subMerchantId)
-  if (subMerchant && subMerchant.status !== 'ACTIVE') {
-    return { ...record, status: 'SUSPENDED_BY_SUB' }
+const withCurrentSub = (record: StoredTerminalRow): TerminalRow => {
+  const sub = getCurrentSubMerchant(record.subMerchantId)
+  if (!sub) {
+    return { ...record, status: 'SUSPENDED_BY_SUB', inheritedPaymentMethods: [], inheritedLimitLabel: 'Không tìm thấy Sub-merchant cha' }
   }
-  return record.status === 'SUSPENDED_BY_SUB'
-    ? { ...record, status: 'ACTIVE' }
-    : record
+  const configuration = getSubMerchantPaymentConfiguration(sub)
+  return {
+    ...record,
+    subMerchantCode: sub.code,
+    subMerchantName: sub.name,
+    parentMerchantId: sub.parentMerchantId,
+    parentMerchantCode: sub.parentMerchantCode,
+    parentMerchantName: sub.parentMerchantName,
+    inheritedPaymentMethods: [...configuration.methods],
+    inheritedLimitLabel: configuration.limitLabel,
+    status: sub.status !== 'ACTIVE' ? 'SUSPENDED_BY_SUB'
+      : record.status === 'SUSPENDED_BY_SUB' ? 'ACTIVE' : record.status
+  }
 }
 
 export const getTerminalById = (id: string): TerminalRow | undefined => {
   const record = getStoredTerminalById(id)
-  return record ? withCurrentSubStatus(record) : undefined
+  return record ? withCurrentSub(record) : undefined
 }
 
-const hasActiveSubMerchant = (record: TerminalRow): boolean =>
+const hasActiveSubMerchant = (record: StoredTerminalRow): boolean =>
   getCurrentSubMerchant(record.subMerchantId)?.status === 'ACTIVE'
-
-const getInheritedSettings = (subMerchantId: string) => {
-  const source = records.find((row) => row.subMerchantId === subMerchantId)
-  return {
-    inheritedPaymentMethods: source
-      ? [...source.inheritedPaymentMethods]
-      : ['Theo cấu hình Sub-merchant'],
-    inheritedLimitLabel:
-      source?.inheritedLimitLabel ?? 'Áp dụng hạn mức của Sub-merchant'
-  }
-}
 
 export const createTerminal = (value: TerminalFormValue): TerminalRow => {
   const sub = getCurrentSubMerchant(value.subMerchantId)
@@ -77,7 +73,7 @@ export const createTerminal = (value: TerminalFormValue): TerminalRow => {
   }
   if (sub.status !== 'ACTIVE') throw new Error('Sub-merchant đang tạm ngưng')
   const sequence = String(records.length + 1).padStart(4, '0')
-  const record: TerminalRow = {
+  const record: StoredTerminalRow = {
     id: `terminal-${Date.now()}-${sequence}`,
     tid: `TID-${sub.parentMerchantCode.slice(-4)}-${sequence}`,
     ...value,
@@ -85,14 +81,13 @@ export const createTerminal = (value: TerminalFormValue): TerminalRow => {
     parentMerchantName: sub.parentMerchantName,
     subMerchantCode: sub.code,
     subMerchantName: sub.name,
-    ...getInheritedSettings(sub.id),
     status: 'ACTIVE',
     createdAt: '22/09/2026 09:00',
     updatedAt: '22/09/2026 09:00'
   }
   records = [...records, record]
   emitChange()
-  return record
+  return withCurrentSub(record)
 }
 
 export const updateTerminal = (
@@ -101,10 +96,11 @@ export const updateTerminal = (
 ): TerminalRow | undefined => {
   const current = getStoredTerminalById(id)
   if (!current || !hasActiveSubMerchant(current)) return undefined
-  const updated = { ...current, ...value, updatedAt: '22/09/2026 09:00' }
+  const { name, type, address, phone, note } = value
+  const updated = { ...current, name, type, address, phone, note, updatedAt: '22/09/2026 09:00' }
   records = records.map((row) => (row.id === id ? updated : row))
   emitChange()
-  return updated
+  return withCurrentSub(updated)
 }
 
 export const changeTerminalStatus = (id: string, reason: string): boolean => {
@@ -134,7 +130,7 @@ export const useTerminalRecords = (): readonly TerminalRow[] => {
     getSnapshot
   )
   useCurrentSubMerchants()
-  return repositoryRecords.map(withCurrentSubStatus)
+  return repositoryRecords.map(withCurrentSub)
 }
 
 export const useTerminal = (id?: string): TerminalRow | undefined => {
@@ -151,12 +147,13 @@ export function useTerminals({ initialListState }: UseTerminalsOptions = {}) {
   const [filters, setCurrentFilters] = useState<TerminalFiltersValue>(
     EMPTY_TERMINAL_FILTERS
   )
-  const [page, setPage] = useState(1)
+  const [page, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(TERMINAL_PAGE_SIZE)
   const [stateOverride, setStateOverride] = useState(initialListState)
   const filteredRows = filterTerminals(repositoryRecords, filters)
   const maxPage = Math.max(
     1,
-    Math.ceil(filteredRows.length / TERMINAL_PAGE_SIZE)
+    Math.ceil(filteredRows.length / pageSize)
   )
   const effectivePage = Math.min(page, maxPage)
   const listState =
@@ -164,16 +161,20 @@ export function useTerminals({ initialListState }: UseTerminalsOptions = {}) {
 
   const setFilters = (next: TerminalFiltersValue): void => {
     setCurrentFilters(next)
-    setPage(1)
+    setCurrentPage(1)
   }
   const resetFilters = (): void => setFilters(EMPTY_TERMINAL_FILTERS)
   const retry = (): void => setStateOverride(undefined)
+  const setPage = (nextPage: number, nextSize = pageSize): void => {
+    setCurrentPage(nextSize === pageSize ? nextPage : 1)
+    setPageSize(nextSize)
+  }
 
   return {
-    rows: paginateTerminals(filteredRows, effectivePage),
+    rows: paginateTerminals(filteredRows, effectivePage, pageSize),
     total: filteredRows.length,
     page: effectivePage,
-    pageSize: TERMINAL_PAGE_SIZE,
+    pageSize,
     filters,
     listState,
     setFilters,

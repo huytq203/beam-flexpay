@@ -16,6 +16,8 @@ export interface EntityLockDialogProps {
   entityLabel: string
   blockedMessage?: string
   previousReason?: string
+  context?: ReactNode
+  lockWarning?: string
   onCancel: () => void
   onConfirm: (reason: string) => void
 }

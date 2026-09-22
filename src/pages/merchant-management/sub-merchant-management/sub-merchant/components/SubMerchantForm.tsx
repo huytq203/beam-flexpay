@@ -39,10 +39,10 @@ export function SubMerchantForm({ mode, record, onSubmit }: SubMerchantFormProps
 
   return (
     <form className='flex flex-col gap-3' id='sub-merchant-form' noValidate onSubmit={form.handleSubmit(handleSubmit)}>
-      <ParentMerchantSection control={form.control} isEditMode={mode === 'edit'} />
+      <ParentMerchantSection control={form.control} isEditMode={mode === 'edit'} subMerchantId={record?.id} />
       <SubMerchantProfileSection control={form.control} parent={parent} setValue={form.setValue} />
       <InheritedLegalSection parent={parent} />
-      <OperatingConfigurationSection />
+      <OperatingConfigurationSection sources={record?.configurationSources} />
     </form>
   )
 }

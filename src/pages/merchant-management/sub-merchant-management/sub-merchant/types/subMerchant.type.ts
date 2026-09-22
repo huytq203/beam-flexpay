@@ -50,7 +50,6 @@ export interface SubMerchantRow {
   businessField: string
   taxCode: string
   legalRepresentative: string
-  terminalCount: number
   availableBalance: number
   collectedToday: number
   pendingSettlement: number

@@ -46,10 +46,11 @@ export const filterSubMerchants = (
 
 export const paginateSubMerchants = (
   rows: readonly SubMerchantRow[],
-  page: number
+  page: number,
+  pageSize = SUB_MERCHANT_PAGE_SIZE
 ): SubMerchantRow[] => {
-  const start = (page - 1) * SUB_MERCHANT_PAGE_SIZE
-  return rows.slice(start, start + SUB_MERCHANT_PAGE_SIZE)
+  const start = (page - 1) * pageSize
+  return rows.slice(start, start + pageSize)
 }
 
 export const formatVnd = (value: number): string =>

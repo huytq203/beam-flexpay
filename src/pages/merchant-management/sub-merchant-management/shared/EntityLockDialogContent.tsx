@@ -11,6 +11,8 @@ export function EntityLockDialogContent({
   entityLabel,
   blockedMessage,
   previousReason,
+  context,
+  lockWarning,
   onCancel,
   onConfirm
 }: EntityLockDialogProps) {
@@ -38,6 +40,8 @@ export function EntityLockDialogContent({
       }
     >
       <EntityLockDialogBody
+        context={context}
+        lockWarning={lockWarning}
         blockedMessage={blockedMessage}
         entityLabel={entityLabel}
         formId={ENTITY_LOCK_FORM_ID}

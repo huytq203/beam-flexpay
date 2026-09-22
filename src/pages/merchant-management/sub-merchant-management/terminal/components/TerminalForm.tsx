@@ -4,7 +4,8 @@ import { useForm, useWatch, type SubmitHandler } from 'react-hook-form'
 import { FormInput, FormSelect, FormTextArea } from '@components/form'
 import { ButtonComponent } from '@components/index'
 
-import { useTerminalRecords } from '../hooks/useTerminals'
+import { getSubMerchantPaymentConfiguration } from '../../sub-merchant/constants/subMerchantPaymentConfiguration'
+import { useCurrentSubMerchants } from '../hooks/useTerminalSubMerchants'
 import {
   terminalFormSchema,
   type TerminalFormValue
@@ -19,8 +20,6 @@ interface TerminalFormProps {
   canSubmit: boolean
   onCancel: () => void
   onSubmit: (value: TerminalFormValue) => void
-  inheritedPaymentMethods?: readonly string[]
-  inheritedLimitLabel?: string
 }
 
 const FIELD_CLASS = 'flex flex-col gap-1.5'
@@ -38,11 +37,9 @@ export function TerminalForm({
   defaultValues,
   canSubmit,
   onCancel,
-  onSubmit,
-  inheritedPaymentMethods,
-  inheritedLimitLabel
+  onSubmit
 }: TerminalFormProps) {
-  const records = useTerminalRecords()
+  const subMerchants = useCurrentSubMerchants()
   const form = useForm<TerminalFormValue>({
     resolver: zodResolver(terminalFormSchema),
     defaultValues
@@ -55,16 +52,11 @@ export function TerminalForm({
     control: form.control,
     name: 'subMerchantId'
   })
-  const subConfiguration = records.find(
-    (row) => row.subMerchantId === subMerchantId
-  )
-  const methods = inheritedPaymentMethods ??
-    subConfiguration?.inheritedPaymentMethods ?? ['Theo cấu hình Sub-merchant']
-  const limit =
-    inheritedLimitLabel ??
-    subConfiguration?.inheritedLimitLabel ??
-    'Áp dụng hạn mức của Sub-merchant'
-  const handleSubmit: SubmitHandler<TerminalFormValue> = onSubmit
+  const sub = subMerchants.find((row) => row.id === subMerchantId)
+  const configuration = sub ? getSubMerchantPaymentConfiguration(sub) : undefined
+  const handleSubmit: SubmitHandler<TerminalFormValue> = (value) => {
+    if (canSubmit) onSubmit(value)
+  }
   const resetSubMerchant = (): void => form.setValue('subMerchantId', '')
 
   return (
@@ -133,8 +125,8 @@ export function TerminalForm({
         </div>
       </section>
       <InheritedPaymentSummary
-        methods={methods}
-        limit={limit}
+        methods={configuration?.methods ?? []}
+        limit={configuration?.limitLabel ?? 'Chọn Sub-merchant để xem hạn mức'}
       />
       <div className='flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end'>
         <ButtonComponent

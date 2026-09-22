@@ -3,9 +3,10 @@ import type { ColumnType } from 'antd/es/table'
 import { EyeIcon, LockIcon, LockOpenIcon, PencilSimpleIcon } from '@phosphor-icons/react'
 
 import { Can } from '@/app/permissions'
-import { ButtonComponent, TooltipComponent } from '@components/index'
+import { ButtonComponent, TagComponent, TooltipComponent } from '@components/index'
 
 import { ManagementStatusTag } from '../../shared/ManagementStatusTag'
+import { SubMerchantTerminalCount } from '../components/SubMerchantTerminalCount'
 import type { SubMerchantRow } from '../types/subMerchant.type'
 import { formatVnd } from '../utils/subMerchant.utils'
 
@@ -46,7 +47,10 @@ const BASE_COLUMNS: ColumnType<SubMerchantRow>[] = [
     width: 220,
     render: (_, row) => (
       <div className='flex min-w-0 flex-col gap-0.5'>
-        <span className='truncate font-semibold text-foreground'>{row.name}</span>
+        <span className='flex flex-wrap items-center gap-1'>
+          <span className='truncate font-semibold text-foreground'>{row.name}</span>
+          {row.isDefault && <TagComponent>Mặc định</TagComponent>}
+        </span>
         <span className='text-xs text-muted-foreground tabular-nums'>{row.code}</span>
       </div>
     )
@@ -61,7 +65,15 @@ const BASE_COLUMNS: ColumnType<SubMerchantRow>[] = [
       </div>
     )
   },
-  { title: 'Số điện thoại', dataIndex: 'phone', width: 150 },
+  {
+    title: 'Liên hệ', width: 220,
+    render: (_, row) => (
+      <div className='flex min-w-0 flex-col gap-0.5'>
+        <span>{row.phone}</span>
+        <span className='break-all text-xs text-muted-foreground'>{row.email}</span>
+      </div>
+    )
+  },
   {
     title: 'Số dư khả dụng',
     dataIndex: 'availableBalance',
@@ -71,10 +83,9 @@ const BASE_COLUMNS: ColumnType<SubMerchantRow>[] = [
   },
   {
     title: 'Terminal',
-    dataIndex: 'terminalCount',
     align: 'center',
     width: 90,
-    render: (value: number) => <span className='tabular-nums'>{value}</span>
+    render: (_, row) => <SubMerchantTerminalCount id={row.id} />
   },
   {
     title: 'Trạng thái',

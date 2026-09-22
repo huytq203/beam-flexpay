@@ -48,10 +48,11 @@ export const filterTerminals = (
 
 export const paginateTerminals = (
   rows: readonly TerminalRow[],
-  page: number
+  page: number,
+  pageSize = TERMINAL_PAGE_SIZE
 ): TerminalRow[] => {
-  const start = (page - 1) * TERMINAL_PAGE_SIZE
-  return rows.slice(start, start + TERMINAL_PAGE_SIZE)
+  const start = (page - 1) * pageSize
+  return rows.slice(start, start + pageSize)
 }
 
 export const getMerchantOptions = (
@@ -74,6 +75,13 @@ export const getActiveSubMerchantOptions = (
         row.status === 'ACTIVE' && row.parentMerchantId === parentMerchantId
     )
     .map((row) => ({ value: row.id, label: row.name }))
+
+export const getSubMerchantFilterOptions = (
+  parentMerchantId: string | undefined,
+  subMerchants: readonly SubMerchantRow[]
+): TerminalSelectOption[] => subMerchants
+  .filter((row) => row.parentMerchantId === parentMerchantId)
+  .map((row) => ({ value: row.id, label: row.name }))
 
 export const getTerminalTypeLabel = (type: TerminalType): string =>
   ({

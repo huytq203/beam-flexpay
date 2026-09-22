@@ -2,11 +2,11 @@ import { useState } from 'react'
 
 import { Table } from '@components/index'
 
-import { EntityLockDialog } from '../../shared/EntityLockDialog'
 import { ManagementTableState } from '../../shared/ManagementTableState'
 import type { ManagementListState } from '../../shared/management.types'
 import { createSubMerchantColumns } from '../columns/subMerchant.columns'
 import type { SubMerchantRow } from '../types/subMerchant.type'
+import { SubMerchantLockDialog } from './SubMerchantLockDialog'
 
 interface SubMerchantTableProps {
   rows: SubMerchantRow[]
@@ -17,7 +17,7 @@ interface SubMerchantTableProps {
   filtered: boolean
   onView: (row: SubMerchantRow) => void
   onEdit: (row: SubMerchantRow) => void
-  onPageChange: (page: number) => void
+  onPageChange: (page: number, pageSize: number) => void
   onRetry: () => void
   onToggleStatus: (id: string, reason: string) => boolean
 }
@@ -50,18 +50,16 @@ export function SubMerchantTable({
           columns={columns}
           dataSource={rows}
           onRefresh={onRetry}
-          pagination={{ current: page, pageSize, showSizeChanger: false, total, onChange: onPageChange }}
+          pagination={{ current: page, pageSize, pageSizeOptions: [10, 20, 50], showSizeChanger: true, total, onChange: onPageChange }}
           rowKey='id'
+          size='small'
         />
       </ManagementTableState>
-      <EntityLockDialog
-        blockedMessage={statusRow?.status === 'SUSPENDED_BY_PARENT' ? 'Cần mở khóa Merchant cha trước' : undefined}
-        entityLabel={statusRow ? `${statusRow.name} (${statusRow.code})` : ''}
-        mode={statusRow?.status === 'ACTIVE' ? 'lock' : 'unlock'}
+      <SubMerchantLockDialog
+        record={statusRow}
         onCancel={() => setStatusRow(null)}
         onConfirm={handleConfirm}
         open={Boolean(statusRow)}
-        previousReason={statusRow?.lastLockReason}
       />
     </>
   )

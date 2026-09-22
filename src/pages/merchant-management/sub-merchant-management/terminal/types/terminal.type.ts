@@ -25,3 +25,5 @@ export interface TerminalRow {
   updatedAt: string
   lastLockReason?: string
 }
+
+export type StoredTerminalRow = Omit<TerminalRow, 'inheritedPaymentMethods' | 'inheritedLimitLabel'>

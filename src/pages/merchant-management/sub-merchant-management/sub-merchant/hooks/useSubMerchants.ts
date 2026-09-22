@@ -126,7 +126,6 @@ export const createFixtureSubMerchant = (value: SubMerchantFormValue): SubMercha
     email: `sub-${sequence}@merchant.example.vn`,
     taxCode: parent.taxCode,
     legalRepresentative: parent.legalRepresentative,
-    terminalCount: 0,
     availableBalance: 0,
     collectedToday: 0,
     pendingSettlement: 0,
@@ -212,25 +211,31 @@ export function useAllSubMerchants(): readonly SubMerchantRow[] {
 export function useSubMerchants({ initialListState }: UseSubMerchantsOptions = {}) {
   const records = useAllSubMerchants()
   const [filters, setFilterState] = useState(EMPTY_SUB_MERCHANT_FILTERS)
-  const [page, setPage] = useState(1)
+  const [page, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(SUB_MERCHANT_PAGE_SIZE)
   const [forcedState, setForcedState] = useState(initialListState)
   const filteredRows = filterSubMerchants(records, filters)
+  const effectivePage = Math.min(page, Math.max(1, Math.ceil(filteredRows.length / pageSize)))
   const listState = forcedState ?? (filteredRows.length === 0 ? 'empty' : 'success')
 
   const setFilters = (value: SubMerchantFiltersValue): void => {
     setFilterState(value)
-    setPage(1)
+    setCurrentPage(1)
   }
   const resetFilters = (): void => setFilters(EMPTY_SUB_MERCHANT_FILTERS)
+  const setPage = (nextPage: number, nextSize = pageSize): void => {
+    setCurrentPage(nextSize === pageSize ? nextPage : 1)
+    setPageSize(nextSize)
+  }
 
   return {
-    rows: paginateSubMerchants(filteredRows, page),
+    rows: paginateSubMerchants(filteredRows, effectivePage, pageSize),
     total: filteredRows.length,
     filters,
     setFilters,
     resetFilters,
-    page,
-    pageSize: SUB_MERCHANT_PAGE_SIZE,
+    page: effectivePage,
+    pageSize,
     setPage,
     listState,
     toggleStatus: toggleSubMerchantStatus,

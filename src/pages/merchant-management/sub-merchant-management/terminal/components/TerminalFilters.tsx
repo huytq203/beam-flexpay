@@ -7,7 +7,7 @@ import { ButtonComponent } from '@components/index'
 import { useCurrentSubMerchants } from '../hooks/useTerminalSubMerchants'
 import {
   EMPTY_TERMINAL_FILTERS,
-  getActiveSubMerchantOptions,
+  getSubMerchantFilterOptions,
   getMerchantOptions,
   type TerminalFiltersValue
 } from '../utils/terminal.utils'
@@ -45,7 +45,7 @@ export function TerminalFilters({
     control: form.control,
     name: 'parentMerchantId'
   })
-  const subMerchantOptions = getActiveSubMerchantOptions(
+  const subMerchantOptions = getSubMerchantFilterOptions(
     parentMerchantId,
     subMerchants
   )

@@ -18,7 +18,7 @@ interface TerminalTableProps {
   onView: (row: TerminalRow) => void
   onEdit: (row: TerminalRow) => void
   onStatusChange: (id: string, reason: string) => void
-  onPageChange: (page: number) => void
+  onPageChange: (page: number, pageSize: number) => void
   onRetry: () => void
 }
 
@@ -63,7 +63,8 @@ export function TerminalTable({
             current: page,
             pageSize,
             total,
-            showSizeChanger: false,
+            showSizeChanger: true,
+            pageSizeOptions: [10, 20, 50],
             onChange: onPageChange
           }}
           rowKey='id'

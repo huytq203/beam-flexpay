@@ -10,6 +10,7 @@ import type { SubMerchantFormValue } from '../schemas/subMerchant.schema'
 interface ParentMerchantSectionProps {
   control: Control<SubMerchantFormValue>
   isEditMode: boolean
+  subMerchantId?: string
 }
 
 const PARENT_OPTIONS = Object.values(PARENT_MERCHANT_FIXTURES).map((parent) => ({
@@ -18,7 +19,7 @@ const PARENT_OPTIONS = Object.values(PARENT_MERCHANT_FIXTURES).map((parent) => (
   value: parent.id
 }))
 
-export function ParentMerchantSection({ control, isEditMode }: ParentMerchantSectionProps) {
+export function ParentMerchantSection({ control, isEditMode, subMerchantId }: ParentMerchantSectionProps) {
   const parentMerchantId = useWatch({ control, name: 'parentMerchantId' })
   const parentLabel = PARENT_OPTIONS.find((option) => option.value === parentMerchantId)?.label
 
@@ -29,6 +30,10 @@ export function ParentMerchantSection({ control, isEditMode }: ParentMerchantSec
           <h2 className='font-display text-base font-semibold text-foreground' id='parent-merchant-title'>Thiết lập Merchant cha</h2>
           <p className='mt-1 text-xs text-muted-foreground'>Merchant cha quyết định hồ sơ pháp lý và cấu hình được kế thừa.</p>
         </header>
+        <dl className='space-y-1'>
+          <dt className='text-sm font-medium text-foreground'>Sub-merchant ID</dt>
+          <dd className='text-sm text-muted-foreground'>{subMerchantId ?? 'Hệ thống tự sinh'}</dd>
+        </dl>
         {isEditMode ? (
           <label className='flex flex-col gap-1.5 text-sm font-medium text-foreground md:max-w-xl'>
             Merchant cha

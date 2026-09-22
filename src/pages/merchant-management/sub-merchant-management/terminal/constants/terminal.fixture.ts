@@ -1,6 +1,6 @@
-import type { TerminalRow } from '../types/terminal.type'
+import type { StoredTerminalRow } from '../types/terminal.type'
 
-export const TERMINAL_FIXTURES: readonly TerminalRow[] = Object.freeze([
+export const TERMINAL_FIXTURES: readonly StoredTerminalRow[] = Object.freeze([
   {
     id: 'terminal-001',
     tid: 'TID-0142-0001',
@@ -15,8 +15,6 @@ export const TERMINAL_FIXTURES: readonly TerminalRow[] = Object.freeze([
     address: '42 Nguyễn Huệ, Phường Sài Gòn, TP. Hồ Chí Minh',
     phone: '028 3822 9988',
     note: 'QR tĩnh tại quầy thu ngân số 2.',
-    inheritedPaymentMethods: ['QR động', 'Ví điện tử', 'Thẻ nội địa'],
-    inheritedLimitLabel: 'Tối đa 50.000.000 VND/giao dịch',
     status: 'ACTIVE',
     createdAt: '14/09/2026 08:30',
     updatedAt: '21/09/2026 09:30'
@@ -35,8 +33,6 @@ export const TERMINAL_FIXTURES: readonly TerminalRow[] = Object.freeze([
     address: '720A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. Hồ Chí Minh',
     phone: '028 3636 9988',
     note: 'QR động tích hợp cùng quầy bar.',
-    inheritedPaymentMethods: ['QR động', 'Ví điện tử'],
-    inheritedLimitLabel: 'Tối đa 30.000.000 VND/giao dịch',
     status: 'ACTIVE',
     createdAt: '16/09/2026 10:15',
     updatedAt: '20/09/2026 16:45'
@@ -55,8 +51,6 @@ export const TERMINAL_FIXTURES: readonly TerminalRow[] = Object.freeze([
     address: '42 Nguyễn Huệ, Phường Sài Gòn, TP. Hồ Chí Minh',
     phone: '028 3822 9988',
     note: 'Thiết bị POS tại quầy phục vụ chính.',
-    inheritedPaymentMethods: ['Thẻ nội địa', 'Visa', 'Mastercard'],
-    inheritedLimitLabel: 'Tối đa 50.000.000 VND/giao dịch',
     status: 'LOCKED',
     createdAt: '15/09/2026 13:20',
     updatedAt: '19/09/2026 11:10',
@@ -76,8 +70,6 @@ export const TERMINAL_FIXTURES: readonly TerminalRow[] = Object.freeze([
     address: '175 Nguyễn Trãi, Phường Bến Thành, TP. Hồ Chí Minh',
     phone: '028 3925 1188',
     note: 'Ứng dụng SoftPOS tại điểm bán.',
-    inheritedPaymentMethods: ['Thẻ nội địa', 'Ví điện tử'],
-    inheritedLimitLabel: 'Tối đa 20.000.000 VND/giao dịch',
     status: 'SUSPENDED_BY_SUB',
     createdAt: '08/09/2026 09:00',
     updatedAt: '18/09/2026 14:10',
