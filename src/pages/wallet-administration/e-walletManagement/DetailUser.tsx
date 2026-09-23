@@ -54,19 +54,28 @@ const DetailUser = () => {
 
   const { setActiveKey, activeKey, getAccountById, getEKYCById ,linkedBanks} = useDetailUser()
   const ownerType = getAccountById?.ownerType;
-  const firstGroup = getEKYCById?.content?.[0]
+  // Tìm theo keyword có thể ra nhiều người (cùng SĐT/CCCD) — chỉ lấy đúng tài khoản chủ ví.
+  const ownerGroup = getEKYCById?.content?.find((group) => group.userId === getAccountById?.ownerId)
   const dataEKYC = useMemo(() => {
-    const latestAttempt = firstGroup?.attempts?.[0]
+    const latestAttempt = ownerGroup?.attempts?.[0]
     return latestAttempt ? {
       ...latestAttempt,
-      userId: firstGroup.userId,
-      username: firstGroup.username,
-      email: firstGroup.email,
-      occupation: firstGroup.occupation,
-      position: firstGroup.position,
-      currentAddress: firstGroup.currentAddress
+      userId: ownerGroup.userId,
+      username: ownerGroup.username,
+      email: ownerGroup.email,
+      occupation: ownerGroup.occupation,
+      position: ownerGroup.position,
+      currentAddress: ownerGroup.currentAddress,
+      // Kết quả xác thực là hồ sơ của chính chủ ví, KHÔNG phải hồ sơ đang giữ CCCD của lần mới nhất.
+      profileId: ownerGroup.profileId ?? null,
+      profileStatus: ownerGroup.profileStatus ?? null,
+      verifiedAt: ownerGroup.verifiedAt ?? null,
+      fullName: ownerGroup.fullName ?? latestAttempt.fullName,
+      idNumber: ownerGroup.idNumber ?? latestAttempt.idNumber,
+      dateOfBirth: ownerGroup.dateOfBirth ?? latestAttempt.dateOfBirth,
+      gender: ownerGroup.gender ?? latestAttempt.gender
     } : undefined
-  }, [firstGroup])
+  }, [ownerGroup])
 
 
   const content = useMemo(() => {

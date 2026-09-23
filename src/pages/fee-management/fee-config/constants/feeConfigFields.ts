@@ -220,8 +220,8 @@ export const PAYMENT_METHOD_OPTIONS_BY_SERVICE_TYPE: Readonly<
   EWALLET_WITHDRAWAL: [
     { value: 'ATM', label: 'Thẻ ATM' },
     {
-      value: 'BANK_TRANSFER',
-      label: 'Tài khoản ngân hàng'
+      value: 'LINKED_ACCOUNT',
+      label: 'Tài khoản ngân hàng liên kết'
     }
   ],
   EWALLET_TRANSFER_INTERNAL: [

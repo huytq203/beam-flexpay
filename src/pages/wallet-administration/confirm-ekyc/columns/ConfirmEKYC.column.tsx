@@ -3,7 +3,7 @@ import { ButtonComponent, TooltipComponent } from "@components/index";
 import { ColumnType } from "antd/lib/table";
 import dayjs from "dayjs";
 import type { EKYCListItem } from "@type/apiResponseEKYC";
-import { genderMap, props, statusMap } from "../types/ConfirmEKYC.type";
+import { genderMap, profileStatusMap, props, statusMap } from "../types/ConfirmEKYC.type";
 
 const formatDateTime = (value?: string | null) =>
     value ? dayjs.utc(value).format('DD/MM/YYYY HH:mm:ss') : '--';
@@ -13,6 +13,9 @@ const STATUS_CLASS: Record<string, string> = {
     COMPLETED: 'text-green-700 bg-green-50 border border-green-400 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block',
     PENDING: 'text-yellow-600 bg-yellow-50 border border-yellow-400 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block',
     IN_PROGRESS: 'text-blue-700 bg-blue-50 border border-blue-400 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block',
+    FAILED: 'text-red-600 bg-red-50 border border-red-400 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block',
+    EXPIRED: 'text-gray-500 bg-gray-100 border border-gray-300 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block',
+    ABANDONED: 'text-gray-500 bg-gray-100 border border-gray-300 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block',
     REJECTED: 'text-red-600 bg-red-50 border border-red-400 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block',
     INVALIDATED: 'text-gray-500 bg-gray-100 border border-gray-300 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block',
 }
@@ -29,18 +32,12 @@ export const getColumn = ({ svg, onViewDetail }: ColumnProps): ColumnType<EKYCLi
         dataIndex: 'no',
     },
     {
-        title: 'Số lần thực hiện',
-        align: 'center',
-        width: 120,
-        dataIndex: 'attemptCount',
-    },
-    {
         title: 'Khách hàng',
         render(_, record) {
             return (
                 <div>
                     <p className="font-semibold">{record.fullName}</p>
-                    <p className="text-[12px] text-gray-500">{record.username}</p>
+                    <p className="text-[12px] text-gray-500">{record.username ?? '—'}</p>
                 </div>
             );
         },
@@ -157,7 +154,26 @@ export const getColumn = ({ svg, onViewDetail }: ColumnProps): ColumnType<EKYCLi
         },
     },
     {
-        title: 'Trạng thái',
+        title: 'Xác thực',
+        align: 'center',
+        render(_, record) {
+            const profile = record.profileStatus ? profileStatusMap[record.profileStatus] : undefined;
+            if (!profile) {
+                return (
+                    <span className="text-gray-500 bg-gray-100 border border-gray-300 px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block">
+                        Chưa xác thực
+                    </span>
+                );
+            }
+            return (
+                <span className={`${profile.className} px-2 py-0.5 rounded-sm text-[12px] font-medium inline-block`}>
+                    {profile.label}
+                </span>
+            );
+        },
+    },
+    {
+        title: 'Trạng thái phiên',
         align: 'center',
         render(_, record) {
             const status = statusMap[record.status];

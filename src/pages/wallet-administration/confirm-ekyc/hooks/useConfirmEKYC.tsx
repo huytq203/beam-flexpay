@@ -7,7 +7,8 @@ import type { EKYCGroup, EKYCListItem } from '@type/apiResponseEKYC'
 
 export type EKYCFilterType = {
     keyword?: string
-    status?: string
+    latestStatus?: string
+    verified?: boolean
     createdFrom?: string
     createdTo?: string
 }
@@ -70,6 +71,12 @@ const useConfirmEKYC = () => {
     }
 }
 
+/**
+ * Một dòng lưới = một người. Trạng thái là của PHIÊN mới nhất (latestStatus); kết quả xác thực
+ * chung cuộc là profileStatus của dòng. KHÔNG dùng attempts[0].documentProfileStatus: đó là hồ sơ
+ * đang giữ số CCCD, có thể của tài khoản khác.
+ * Thông tin giấy tờ ưu tiên hồ sơ của người, chưa có hồ sơ thì lấy OCR của lần mới nhất.
+ */
 export const mapEKYCGroupToListItem = (group: EKYCGroup, no: number): EKYCListItem => {
     const latestAttempt = group.attempts[0]
 
@@ -77,7 +84,14 @@ export const mapEKYCGroupToListItem = (group: EKYCGroup, no: number): EKYCListIt
         ...latestAttempt,
         userId: group.userId,
         username: group.username,
-        status: latestAttempt?.profileStatus ?? group.latestStatus,
+        status: group.latestStatus,
+        fullName: group.fullName ?? latestAttempt?.fullName,
+        idNumber: group.idNumber ?? latestAttempt?.idNumber,
+        dateOfBirth: group.dateOfBirth ?? latestAttempt?.dateOfBirth,
+        gender: group.gender ?? latestAttempt?.gender,
+        profileId: group.profileId ?? null,
+        profileStatus: group.profileStatus ?? null,
+        verifiedAt: group.verifiedAt ?? null,
         createdAt: latestAttempt?.createdAt ?? group.latestAt,
         groupKey: group.groupKey,
         attemptCount: group.attemptCount,

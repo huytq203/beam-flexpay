@@ -23,7 +23,7 @@ export interface DataEKYC {
 export interface ContentEKYC {
   id?: string
   userId?: string
-  username?: string
+  username?: string | null
   email?: string | null
   occupation?: string | null
   position?: string | null
@@ -47,9 +47,15 @@ export interface ContentEKYC {
   faceMatchScore?: number | null
   verifiedAt?: string | null
   status: string
+  /** Chỉ có ở response hồ sơ/chi tiết. Trong attempts[] của lưới: xem documentProfile*. */
   profileId?: string | null
   profileStatus?: string | null
+  /** Hồ sơ đang giữ SỐ GIẤY TỜ của lần này — có thể của tài khoản khác, KHÔNG phải kết quả lần này. */
+  documentProfileId?: string | null
+  documentProfileStatus?: string | null
   documentOwnerUsername?: string | null
+  /** true khi số giấy tờ của lần này đã thuộc hồ sơ của một tài khoản khác. */
+  documentOwnedByOtherAccount?: boolean
   startedAt?: string | null
   completedAt?: string | null
   expiresAt?: string | null
@@ -65,21 +71,31 @@ export interface ContentEKYC {
 
 export interface EKYCGroup {
   groupKey: string
-  username: string
+  /** SĐT của chính tài khoản; null khi không tra được. */
+  username: string | null
   userId: string
   attemptCount: number
+  /** Trạng thái PHIÊN của lần mới nhất. */
   latestStatus: string
   latestAt: string
   email: string | null
   occupation: string | null
   position: string | null
   currentAddress: string | null
+  /** Hồ sơ của CHÍNH người này — kết quả chung cuộc. null = chưa xác thực. */
+  profileId?: string | null
+  profileStatus?: string | null
+  fullName?: string | null
+  idNumber?: string | null
+  dateOfBirth?: string | null
+  gender?: string | null
+  verifiedAt?: string | null
   attempts: ContentEKYC[]
 }
 
 export interface EKYCListItem extends ContentEKYC {
   userId: string
-  username: string
+  username: string | null
   groupKey: string
   attemptCount: number
   latestStatus: string

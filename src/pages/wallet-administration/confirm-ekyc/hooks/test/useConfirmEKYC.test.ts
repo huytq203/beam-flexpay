@@ -21,7 +21,8 @@ describe('mapEKYCGroupToListItem', () => {
           username: '0967770769',
           sessionId: 'latest-session',
           status: 'IN_PROGRESS',
-          profileStatus: 'VERIFIED',
+          documentProfileStatus: 'VERIFIED',
+          documentOwnedByOtherAccount: true,
           currentStep: 'FACE_COMPARE',
           fullName: 'TRƯƠNG VIỆT HÙNG',
           faceMatchScore: 98.82,
@@ -46,13 +47,15 @@ describe('mapEKYCGroupToListItem', () => {
     expect(result.email).toBe('hung@example.com')
     expect(result.occupation).toBe('Kỹ sư')
     expect(result.position).toBe('Trưởng phòng')
-    expect(result.status).toBe('VERIFIED')
+    expect(result.status).toBe('IN_PROGRESS')
+    expect(result.profileStatus).toBeNull()
+    expect(result.fullName).toBe('TRƯƠNG VIỆT HÙNG')
     expect(result.key).toBe('group-key')
     expect(result.no).toBe(11)
     expect(result.attempts).toHaveLength(2)
   })
 
-  it('fallback về latestStatus khi attempts[0].profileStatus là null', () => {
+  it('trạng thái luôn là latestStatus, không lấy hồ sơ đang giữ CCCD của attempts[0]', () => {
     const group: EKYCGroup = {
       groupKey: 'group-key',
       username: '0967770769',
@@ -67,12 +70,50 @@ describe('mapEKYCGroupToListItem', () => {
       attempts: [
         {
           status: 'IN_PROGRESS',
-          profileStatus: null,
+          documentProfileStatus: 'VERIFIED',
           createdAt: '2026-09-10T14:40:15.399621'
         }
       ]
     }
 
     expect(mapEKYCGroupToListItem(group, 1).status).toBe('COMPLETED')
+  })
+
+  it('ưu tiên hồ sơ của chính người đó cho thông tin giấy tờ và kết quả xác thực', () => {
+    const group: EKYCGroup = {
+      groupKey: 'user-id',
+      username: '0962341913',
+      userId: 'user-id',
+      attemptCount: 1,
+      latestStatus: 'IN_PROGRESS',
+      latestAt: '2026-09-22T11:57:44.127275',
+      email: null,
+      occupation: null,
+      position: null,
+      currentAddress: null,
+      profileId: 'profile-id',
+      profileStatus: 'VERIFIED',
+      fullName: 'NGUYỄN THU HÀ TRANG',
+      idNumber: '001195009737',
+      dateOfBirth: '1995-06-15',
+      gender: 'FEMALE',
+      verifiedAt: '2026-09-22T12:02:41',
+      attempts: [
+        {
+          status: 'IN_PROGRESS',
+          fullName: 'NGUYEN THU HA TRANG (OCR lỗi)',
+          idNumber: '001195009737',
+          createdAt: '2026-09-22T11:57:44.127275'
+        }
+      ]
+    }
+
+    const result = mapEKYCGroupToListItem(group, 1)
+
+    expect(result.status).toBe('IN_PROGRESS')
+    expect(result.profileStatus).toBe('VERIFIED')
+    expect(result.fullName).toBe('NGUYỄN THU HÀ TRANG')
+    expect(result.gender).toBe('FEMALE')
+    expect(result.verifiedAt).toBe('2026-09-22T12:02:41')
   })
 })
