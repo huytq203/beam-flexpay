@@ -268,6 +268,21 @@ export const WHITE_LIST: WhiteListItem[] = [
       requestUrl: '/wallet/accounts',
       includeNestedPaths: true
     },
+    {
+      pathname: FEEMANAGEMENT_V4 + '/fee-policy',
+      requestUrl: '/fee/policies/search',
+      includeNestedPaths: true
+    },
+    {
+      pathname: FEEMANAGEMENT_V4 + '/fee-policy',
+      requestUrl: '/fee/policies/export',
+      includeNestedPaths: true
+    },
+    {
+      pathname: FEEMANAGEMENT_V4 + '/fee-policy',
+      requestUrl: '/fee/banks',
+      includeNestedPaths: true
+    },
     { pathname: FEEMANAGEMENT_V4 + '/fee-management', requestUrl: '/fee/policies' },
     { pathname: FEEMANAGEMENT_V4 + '/fee-assignment', requestUrl: '/fee/policy-assignments' },
     { pathname: FEEMANAGEMENT_V4 + '/fee-assignment', requestUrl: '/fee/banks' },

@@ -51,8 +51,8 @@ const numberOrZero = (value: number | null | undefined): number => value ?? 0
 /**
  * Bậc phí KHÔNG lưu giá trị bắt đầu.
  *
- * Backend đòi các bậc nối liền nhau theo quy tắc cộng một, nên giá trị bắt đầu
- * luôn suy được từ giá trị kết thúc của bậc trước. Lưu nó thành một trường
+ * Backend đòi các bậc nối liền nhau tại cùng một giá trị biên, nên giá trị bắt
+ * đầu luôn suy được từ giá trị kết thúc của bậc trước. Lưu nó thành một trường
  * riêng chỉ tạo ra cơ hội để hai con số lệch nhau sau khi người dùng sửa lại
  * một bậc phía trên — đúng loại lỗi khoảng cách mà không ai tự nhìn ra.
  */
@@ -166,8 +166,8 @@ export const feeComponentFormSchema = z
       }
       if (tier.maxValue === null) return
 
-      // Giá trị bắt đầu là suy ra nên không thể hở; chỉ còn phải chặn bậc sau
-      // kết thúc trước hoặc ngay tại chỗ bậc trước đã kết thúc.
+      // Khoảng bậc bao gồm cả hai đầu; bậc sau bắt đầu tại max trước + 1 nên
+      // không thể hở hoặc cùng nhận một giá trị với bậc trước.
       const start = getTierStart(component.tiers, index)
       if (tier.maxValue < start) {
         ctx.addIssue({

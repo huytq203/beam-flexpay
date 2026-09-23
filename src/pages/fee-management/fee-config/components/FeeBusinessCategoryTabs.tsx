@@ -56,12 +56,7 @@ export const FeeBusinessCategoryTabs = ({
           )
         })}
       </div>
-      <p className='mt-2 text-[13px] text-muted-foreground'>{active.hint}</p>
-      {disabled && categories.length > 1 && (
-        <p className='mt-1 text-[13px] text-muted-foreground'>
-          Xoá hết thành phần phí để đổi nhóm.
-        </p>
-      )}
+     
     </div>
   )
 }

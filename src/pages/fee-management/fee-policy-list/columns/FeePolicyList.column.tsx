@@ -2,13 +2,11 @@ import { Can } from '@/app/permissions'
 import { FeeStatusPill } from '@components/fee/FeeStatusPill'
 import {
   CheckCircleOutlined,
-  EyeOutlined,
   NotePencilIcon,
   StopOutlined
 } from '@components/icons'
 import {
   ButtonComponent,
-  FeeDirectionBadge,
   FeePolicyApprovalAction,
   TooltipComponent
 } from '@components/index'
@@ -19,6 +17,7 @@ import type { AppliedTarget } from '@type/fee.type'
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { AppliedTargetCell } from '../components/AppliedTargetCell'
+import { formatDateTimeUTC } from '@/pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/utils/applicable-fee-rule'
 
 interface FeePolicyColumnArgs {
   onEdit: (id: string) => void
@@ -30,7 +29,7 @@ interface FeePolicyColumnArgs {
 }
 
 const formatDay = (value: string | null): string =>
-  value ? dayjs(value).format('DD/MM/YYYY') : 'Vô thời hạn'
+  value ? formatDateTimeUTC(value) : 'Vô thời hạn'
 
 /**
  * Mức ưu tiên là số nhỏ thắng, ngược trực giác của phần lớn người đọc bảng.
@@ -74,14 +73,11 @@ export const getFeePolicyColumns = ({
     )
   },
   {
-    title: 'Chiều tiền · Loại giao dịch',
+    title: 'Loại giao dịch',
     dataIndex: 'serviceType',
     width: 200,
     render: (serviceType: string) => (
-      <FeeDirectionBadge
-        serviceType={serviceType}
-        caption={getFeeLabel(serviceType, SERVICE_TYPE_LABELS)}
-      />
+      getFeeLabel(serviceType, SERVICE_TYPE_LABELS)
     )
   },
   {
@@ -111,7 +107,7 @@ export const getFeePolicyColumns = ({
   {
     title: 'Thời gian áp dụng',
     dataIndex: 'validFrom',
-    width: 190,
+    width: 300,
     render: (validFrom: string, row) => (
       <span className='tabular-nums text-[13px] text-foreground'>
         {formatDay(validFrom)}
@@ -168,64 +164,62 @@ export const getFeePolicyColumns = ({
 
       return (
         <div className='flex items-center justify-center gap-2'>
-        <Can screen='FEE_CONFIG' action='edit'>
-          <TooltipComponent title={isEditable ? 'Sửa cấu hình' : 'Xem chi tiết'}>
-            <ButtonComponent
-              type='default'
-              htmlType='button'
-              size='small'
-              aria-label={isEditable ? 'Sửa cấu hình' : 'Xem chi tiết'}
-              icon={
-                isEditable ? (
-                  <NotePencilIcon size={16} weight='bold' aria-hidden />
-                ) : (
-                  <EyeOutlined />
-                )
-              }
-              onClick={() => onEdit(id)}
-            />
-          </TooltipComponent>
-        </Can>
+          {isEditable && (
+            <Can screen='FEE_CONFIG' action='edit'>
+              <TooltipComponent title='Sửa cấu hình'>
+                <ButtonComponent
+                  type='default'
+                  htmlType='button'
+                  size='small'
+                  aria-label='Sửa cấu hình'
+                  icon={
+                    <NotePencilIcon size={16} weight='bold' aria-hidden />
+                  }
+                  onClick={() => onEdit(id)}
+                />
+              </TooltipComponent>
+            </Can>
+          )}
 
-        {/* Chỉ bản ghi chưa qua duyệt mới có gì để duyệt. */}
-        {row.status === 'INIT' && (
-          <Can screen='FEE_CONFIG' action='approve'>
-            <FeePolicyApprovalAction policy={row} />
-          </Can>
-        )}
+          {/* Chỉ bản ghi chưa qua duyệt mới có gì để duyệt. */}
+          {row.status === 'INIT' && (
+            <Can screen='FEE_CONFIG' action='approve'>
+              <FeePolicyApprovalAction policy={row} />
+            </Can>
+          )}
 
-        {row.status === 'INACTIVE' && (
-          <Can screen='FEE_CONFIG' action='toggleActive'>
-            <TooltipComponent title='Kích hoạt chính sách'>
-              <ButtonComponent
-                type='default'
-                htmlType='button'
-                size='small'
-                aria-label='Kích hoạt chính sách'
-                icon={<CheckCircleOutlined />}
-                loading={busyId === id}
-                onClick={() => onActivate(id, row.name)}
-              />
-            </TooltipComponent>
-          </Can>
-        )}
+          {row.status === 'INACTIVE' && (
+            <Can screen='FEE_CONFIG' action='toggleActive'>
+              <TooltipComponent title='Kích hoạt chính sách'>
+                <ButtonComponent
+                  type='default'
+                  htmlType='button'
+                  size='small'
+                  aria-label='Kích hoạt chính sách'
+                  icon={<CheckCircleOutlined />}
+                  loading={busyId === id}
+                  onClick={() => onActivate(id, row.name)}
+                />
+              </TooltipComponent>
+            </Can>
+          )}
 
-        {row.status === 'ACTIVE' && (
-          <Can screen='FEE_CONFIG' action='toggleActive'>
-            <TooltipComponent title='Ngừng áp dụng chính sách'>
-              <ButtonComponent
-                type='default'
-                htmlType='button'
-                size='small'
-                danger
-                aria-label='Ngừng áp dụng chính sách'
-                icon={<StopOutlined />}
-                loading={busyId === id}
-                onClick={() => onDeactivate(id)}
-              />
-            </TooltipComponent>
-          </Can>
-        )}
+          {row.status === 'ACTIVE' && (
+            <Can screen='FEE_CONFIG' action='toggleActive'>
+              <TooltipComponent title='Ngừng áp dụng chính sách'>
+                <ButtonComponent
+                  type='default'
+                  htmlType='button'
+                  size='small'
+                  danger
+                  aria-label='Ngừng áp dụng chính sách'
+                  icon={<StopOutlined />}
+                  loading={busyId === id}
+                  onClick={() => onDeactivate(id)}
+                />
+              </TooltipComponent>
+            </Can>
+          )}
         </div>
       )
     }

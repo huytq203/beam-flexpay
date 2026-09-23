@@ -1,8 +1,6 @@
 import { apiFeeService } from './apiService'
 import { ResponseType } from '@type/api'
-
-
-import { FeeTier } from '@pages/fee-management-v4/fee-assignment/types/FeeComponent.types'
+import type { FeeComponentTier } from '@type/fee.type'
 export const apiFeeComponentTier = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
     postFeeComponentTier: build.mutation({
@@ -13,12 +11,13 @@ export const apiFeeComponentTier = apiFeeService.injectEndpoints({
       }),
       invalidatesTags: ['feeComponentTier']
     }),
-    getFeeComponentTier: build.query({
-      query: (feeComponentId) => ({
+    getFeeComponentTier: build.query<FeeComponentTier[], string>({
+      keepUnusedDataFor: 300,
+      query: (feeComponentId: string) => ({
         url: `/fee/component-tiers/by-component/${feeComponentId}`,
         method: 'GET',
       }),
-      transformResponse: (res: ResponseType<FeeTier[]>) => res.data,
+      transformResponse: (res: ResponseType<FeeComponentTier[]>) => res.data,
       providesTags: ['feeComponentTier']
     }),
     deleteFeeComponentTier: build.mutation({

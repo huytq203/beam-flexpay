@@ -112,7 +112,6 @@ export const FeeComponentList = ({
       />
 
       <SectionHeading
-        hint='Mỗi thành phần là một khoản phí riêng cộng vào tổng. Thành phần tính dựa trên thành phần khác phải nằm dưới nó.'
         action={!readOnly ? (
           <ButtonComponent
             htmlType='button'
@@ -132,9 +131,7 @@ export const FeeComponentList = ({
             Chính sách chưa có thành phần phí nào
           </p>
           <p className='mx-auto mt-1 max-w-[52ch] text-[13px] text-muted-foreground'>
-            Một chính sách cần ít nhất một thành phần thì mới tính ra được số
-            tiền. Chọn đúng loại phí của nhóm đang cấu hình; nếu có VAT, hãy
-            thêm khoản phí gốc trước rồi thêm VAT phía dưới.
+           Vui lòng thêm phí  thành phần.
           </p>
         </div>
       ) : (

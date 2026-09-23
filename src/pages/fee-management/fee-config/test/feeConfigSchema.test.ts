@@ -6,7 +6,8 @@ import {
   createFeeComponentFormSchema,
   DUPLICATE_FEE_COMPONENT_MESSAGE,
   feeComponentFormSchema,
-  feeConfigFormSchema
+  feeConfigFormSchema,
+  getTierStart
 } from '../schemas/feeConfig.schema'
 
 const component = (overrides = {}) => ({
@@ -46,6 +47,15 @@ const form = (overrides = {}) => ({
 
 const errorPaths = (result: { success: boolean; error?: { issues: { path: PropertyKey[] }[] } }) =>
   result.success ? [] : (result.error?.issues ?? []).map((issue) => issue.path.join('.'))
+
+describe('getTierStart', () => {
+  it('bắt đầu bậc sau ngay sau điểm kết thúc của bậc trước', () => {
+    const tiers = [{ maxValue: 1 }, { maxValue: 2 }]
+
+    expect(getTierStart(tiers, 0)).toBe(0)
+    expect(getTierStart(tiers, 1)).toBe(2)
+  })
+})
 
 describe('feeComponentFormSchema', () => {
   describe('kiểm tra trùng tổ hợp định danh', () => {
@@ -306,6 +316,7 @@ describe('getDomainFieldRules', () => {
     const rules = getDomainFieldRules(FeeDomain.BANK)
     expect(rules.serviceTypes).not.toContain('EWALLET_TRANSFER_INTERNAL')
     expect(rules.bankRequired).toBe(true)
+    expect(rules.showMerchant).toBe(true)
   })
 
   it('không miền nào bày loại giao dịch chưa duyệt được', () => {

@@ -1,9 +1,6 @@
 import { apiFeeService } from './apiService'
 import { ResponseType } from '@type/api'
-import {
-  feePolicyComponent,
-  FeeComponentResponse
-} from '@pages/fee-management-v4/fee-assignment/constants/feePoliciesComponent'
+import type { FeePage, FeePolicyComponent } from '@type/fee.type'
 export const feeComponentApi = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
     getFeeComponentPolicies: build.query({
@@ -12,15 +9,16 @@ export const feeComponentApi = apiFeeService.injectEndpoints({
         method: 'GET',
         params: params
       }),
-      transformResponse: (res: ResponseType<FeeComponentResponse>) => res.data,
+      transformResponse: (res: ResponseType<FeePage<FeePolicyComponent>>) => res.data,
       providesTags: ['FeePolicyComponent']
     }),
-    getFeeComponentPoliciesById: build.query({
+    getFeeComponentPoliciesById: build.query<FeePolicyComponent[], string>({
+      keepUnusedDataFor: 300,
       query: (id: string) => ({
         url: `/fee/policy-components/by-policy/${id}`,
         method: 'GET',
       }),
-      transformResponse: (res: ResponseType<feePolicyComponent[]>) => res.data,
+      transformResponse: (res: ResponseType<FeePolicyComponent[]>) => res.data,
       providesTags: ['FeePolicyComponent']
     }),
     getFeeComponentById: build.query({
@@ -28,7 +26,7 @@ export const feeComponentApi = apiFeeService.injectEndpoints({
         url: `/fee/policy-components/${id}`,
         method: 'GET',
       }),
-      transformResponse: (res: ResponseType<feePolicyComponent>) => res.data,
+      transformResponse: (res: ResponseType<FeePolicyComponent>) => res.data,
       providesTags: ['FeePolicyComponent']
     }),
     deleteFeeComponentPolicies: build.mutation({

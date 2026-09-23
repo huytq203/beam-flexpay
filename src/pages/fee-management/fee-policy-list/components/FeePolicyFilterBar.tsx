@@ -1,13 +1,18 @@
-import { FormInput, FormLabelHint, FormSelect } from '@components/form'
+import { FormDatePicker, FormInput, FormLabelHint, FormSelect } from '@components/form'
 import type { FeeDomain } from '@components/fee/feeDomain'
 import { BroomIcon, MagnifyingGlassIcon } from '@components/icons'
 import { ButtonComponent, FeeServiceTypeTabs } from '@components/index'
-import { POLICY_STATUS_CONFIG, SERVICE_TYPE_LABELS } from '@constants/feeLabels'
-import { getDomainFieldRules } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import {
-  BE_SUPPORTS_SERVICE_TYPE_LIST,
-  type FeeDirection
-} from '@utils/fee-direction'
+  PAYMENT_METHOD_LABELS,
+  POLICY_STATUS_CONFIG,
+  SERVICE_TYPE_LABELS
+} from '@constants/feeLabels'
+import {
+  BACKEND_PAYMENT_METHODS,
+  getDomainFieldRules,
+  getPaymentMethodOptions
+} from '@pages/fee-management/fee-config/constants/feeConfigFields'
+import { useGetBankQuery } from '@services/apiFeeBank'
 import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -22,17 +27,19 @@ export interface FeePolicyFilterValues {
   subjectKeyword: string
   status: string
   appliedTarget: string
+  bankCode: string
+  paymentMethod: string
+  validFrom: string
+  validTo: string
+  createdAtFrom: string
+  createdAtTo: string
 }
 
 interface FeePolicyFilterBarProps {
   feeDomain: FeeDomain
-  direction: FeeDirection | null
   serviceType: string | undefined
   values: FeePolicyFilterValues
-  onScopeChange: (next: {
-    direction: FeeDirection | null
-    serviceType: string | undefined
-  }) => void
+  onServiceTypeChange: (serviceType: string | undefined) => void
   onSubmit: (values: FeePolicyFilterValues) => void
   onReset: () => void
 }
@@ -48,31 +55,41 @@ const STATUS_OPTIONS = Object.entries(POLICY_STATUS_CONFIG).map(
  */
 export const FeePolicyFilterBar = ({
   feeDomain,
-  direction,
   serviceType,
   values,
-  onScopeChange,
+  onServiceTypeChange,
   onSubmit,
   onReset
 }: FeePolicyFilterBarProps) => {
-
   /**
    * `values` của react-hook-form so sánh theo tham chiếu: truyền thẳng một object
    * dựng tại chỗ là form bị reset sau MỖI render, và giá trị người dùng vừa xoá
    * bị ghi đè lại ngay. Khoá theo các chuỗi thật để chỉ đồng bộ khi URL đổi.
    */
-  const syncedValues = useMemo(
+  const syncedValues = useMemo<FeePolicyFilterValues>(
     () => ({
       keyword: values.keyword,
       subjectKeyword: values.subjectKeyword,
       status: values.status,
-      appliedTarget: values.appliedTarget
+      appliedTarget: values.appliedTarget,
+      bankCode: values.bankCode,
+      paymentMethod: values.paymentMethod,
+      validFrom: values.validFrom,
+      validTo: values.validTo,
+      createdAtFrom: values.createdAtFrom,
+      createdAtTo: values.createdAtTo
     }),
     [
       values.appliedTarget,
+      values.bankCode,
+      values.createdAtFrom,
+      values.createdAtTo,
       values.keyword,
+      values.paymentMethod,
       values.status,
-      values.subjectKeyword
+      values.subjectKeyword,
+      values.validFrom,
+      values.validTo
     ]
   )
 
@@ -87,38 +104,57 @@ export const FeePolicyFilterBar = ({
   // Lọc theo LOẠI đối tượng, không theo từng phân khúc: người vận hành muốn
   // gom mọi chính sách cấu hình theo nhóm, tên nhóm cụ thể đã hiện ở cột.
   const appliedTargetOptions = APPLIED_TARGET_OPTIONS
+  const paymentMethodOptions = serviceType
+    ? [...getPaymentMethodOptions(serviceType)]
+    : BACKEND_PAYMENT_METHODS.map((value) => ({
+        value,
+        label: PAYMENT_METHOD_LABELS[value] ?? value
+      }))
+  // Danh mục nhỏ, dùng chung cache RTK Query với màn tạo chính sách phí.
+  const { data: bankData, isFetching: isFetchingBanks } = useGetBankQuery({
+    page: 1,
+    size: 100
+  })
+  const bankOptions = (bankData?.content ?? []).map((bank) => ({
+    value: bank.code,
+    label: `${bank.name} (${bank.code})`
+  }))
 
   const handleReset = () => {
-    reset({ keyword: '', subjectKeyword: '', status: '', appliedTarget: '' })
+    reset({
+      keyword: '',
+      subjectKeyword: '',
+      status: '',
+      appliedTarget: '',
+      bankCode: '',
+      paymentMethod: '',
+      validFrom: '',
+      validTo: '',
+      createdAtFrom: '',
+      createdAtTo: ''
+    })
     onReset()
   }
 
   return (
     <div className='space-y-4'>
       <FeeServiceTypeTabs
-        direction={direction}
         serviceType={serviceType}
         labels={labels}
-        supportsMultiServiceType={BE_SUPPORTS_SERVICE_TYPE_LIST}
-        onChange={(next) =>
-          onScopeChange({
-            direction: next.direction,
-            serviceType: next.serviceType
-          })
-        }
+        onChange={onServiceTypeChange}
       />
 
       <form
         id='feePolicyFilter'
         onSubmit={handleSubmit(onSubmit)}
-        className='grid grid-cols-1 gap-3 border-t border-border pt-4 md:grid-cols-12'
+        className='grid grid-cols-1 gap-3 border-t border-border pt-4 md:grid-cols-2 xl:grid-cols-4'
       >
         <FormInput
           name='keyword'
           control={control}
           label='Tên chính sách'
           placeholder='Nhập tên chính sách'
-          className='col-span-12 flex flex-col md:col-span-3'
+          className='flex flex-col'
         />
         <FormInput
           name='subjectKeyword'
@@ -132,7 +168,7 @@ export const FeePolicyFilterBar = ({
           placeholder='Nhập số điện thoại'
           inputMode='tel'
           maxLength={100}
-          className='col-span-12 flex flex-col md:col-span-3'
+          className='flex flex-col'
         />
         <FormSelect
           name='status'
@@ -141,7 +177,7 @@ export const FeePolicyFilterBar = ({
           placeholder='Mọi trạng thái'
           allowClear
           options={STATUS_OPTIONS}
-          className='col-span-12 flex flex-col md:col-span-3'
+          className='flex flex-col'
         />
         <FormSelect
           name='appliedTarget'
@@ -150,17 +186,66 @@ export const FeePolicyFilterBar = ({
           placeholder='Mọi đối tượng'
           allowClear
           options={appliedTargetOptions}
-          className='col-span-12 flex flex-col md:col-span-3'
+          className='flex flex-col'
+        />
+        <FormSelect
+          name='bankCode'
+          control={control}
+          label='Ngân hàng'
+          placeholder='Mọi ngân hàng'
+          allowClear
+          showSearch
+          optionFilterProp='label'
+          loading={isFetchingBanks}
+          options={bankOptions}
+          className='flex flex-col'
+        />
+        <FormSelect
+          name='paymentMethod'
+          control={control}
+          label='Phương thức giao dịch'
+          placeholder='Mọi phương thức'
+          allowClear
+          options={paymentMethodOptions}
+          className='flex flex-col'
+        />
+        <FormDatePicker
+          name='validFrom'
+          control={control}
+          label='Thời gian áp dụng từ'
+          placeholder='Chọn ngày bắt đầu'
+          className='flex flex-col'
+        />
+        <FormDatePicker
+          name='validTo'
+          control={control}
+          label='Thời gian áp dụng đến'
+          placeholder='Chọn ngày kết thúc'
+          className='flex flex-col'
+        />
+        <FormDatePicker
+          name='createdAtFrom'
+          control={control}
+          label='Ngày tạo từ'
+          placeholder='Chọn ngày bắt đầu'
+          className='flex flex-col'
+        />
+        <FormDatePicker
+          name='createdAtTo'
+          control={control}
+          label='Ngày tạo đến'
+          placeholder='Chọn ngày kết thúc'
+          className='flex flex-col'
         />
       </form>
-        <div className='col-span-12'>
-          <div className="flex justify-end gap-2 items-end">
+      <div>
+        <div className='flex flex-col-reverse justify-end gap-2 sm:flex-row sm:items-end'>
           <ButtonComponent
             htmlType='submit'
             form='feePolicyFilter'
             content='Tìm'
             icon={<MagnifyingGlassIcon size={16} weight='bold' aria-hidden />}
-            // className='flex-1'
+            className='w-full sm:w-auto'
           />
           <ButtonComponent
             htmlType='button'
@@ -168,10 +253,10 @@ export const FeePolicyFilterBar = ({
             content='Xoá lọc'
             onClick={handleReset}
             icon={<BroomIcon size={16} weight='bold' aria-hidden />}
-            // className='flex-1'
+            className='w-full sm:w-auto'
           />
-          </div>
         </div>
+      </div>
     </div>
   )
 }

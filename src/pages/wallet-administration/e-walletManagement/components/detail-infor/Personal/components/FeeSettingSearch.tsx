@@ -10,11 +10,14 @@ import {
 } from '@constants/feeLabels'
 import { useGetBankQuery } from '@services/apiFeeBank'
 import { useForm } from 'react-hook-form'
-import type { FeeBank } from '@pages/fee-management-v4/fee-assignment/constants/feeAssignment'
 
 interface FeeSettingSearchProps {
   policyOptions: { value: string; label: string }[]
   onSearch: (filter: ApplicableFeeRuleFilter) => void
+}
+interface Bank {
+  code: string;
+  name: string;
 }
 
 const DEFAULT_VALUES: ApplicableFeeRuleFilter = {
@@ -50,7 +53,7 @@ export const FeeSettingSearch = ({
   })
   const { data: dataBank } = useGetBankQuery({})
 
-  const bankOptions = (dataBank?.content ?? []).map((bank: FeeBank) => ({
+  const bankOptions = (dataBank?.content ?? []).map((bank: Bank) => ({
     value: bank.code,
     label: bank.name
   }))

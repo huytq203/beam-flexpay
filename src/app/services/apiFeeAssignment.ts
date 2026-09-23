@@ -24,6 +24,7 @@ const feeAssignApi = apiFeeService.injectEndpoints({
     }),
     /** Bản gán của một chính sách, dùng khi tải màn chi tiết cấu hình. */
     getAssignmentsByPolicy: build.query<FeeAssignment[], string>({
+      keepUnusedDataFor: 300,
       query: (feePolicyId) => ({
         url: `/fee/policy-assignments/by-policy/${feePolicyId}`,
         method: 'GET',

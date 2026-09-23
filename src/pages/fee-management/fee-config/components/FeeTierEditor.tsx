@@ -21,9 +21,9 @@ const HEAD =
  * Bảng bậc phí.
  *
  * Giá trị bắt đầu của mỗi bậc là suy ra, không nhập và không lưu: backend đòi
- * bậc sau bắt đầu đúng ở giá trị kết thúc của bậc trước cộng một. Vì vậy nút
- * thêm bậc chỉ mở khi bậc cuối đã có giá trị kết thúc — chưa chốt điểm cuối thì
- * chưa có gì để nối tiếp, và bậc mới sẽ bắt đầu sai chỗ.
+ * bậc sau bắt đầu ngay sau giá trị kết thúc của bậc trước. Vì vậy nút thêm bậc
+ * chỉ mở khi bậc cuối đã có giá trị kết thúc — chưa chốt điểm cuối thì chưa có
+ * gì để nối tiếp, và bậc mới sẽ bắt đầu sai chỗ.
  */
 export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
   const { fields, append, remove } = useFieldArray({ control, name: 'tiers' })

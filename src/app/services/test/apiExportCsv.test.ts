@@ -177,6 +177,56 @@ describe('apiExportCsv', () => {
     })
   })
 
+  it('xuất cấu hình phí với bộ lọc của danh sách và không gửi trạng thái giao diện', async () => {
+    let calledUrl = ''
+    server.use(
+      http.get('*/fee/policies/export', ({ request }) => {
+        calledUrl = request.url
+        return HttpResponse.text('ma_chinh_sach\nFEE-001', {
+          headers: {
+            'content-type': 'text/csv',
+            'content-disposition':
+              'attachment; filename="Cau-hinh-phi_20260921-101500.csv"'
+          }
+        })
+      })
+    )
+    const store = createAppStore()
+
+    const result = await store.dispatch(
+      apiExportFeeCsv.endpoints.exportFeePolicies.initiate({
+        feeDomain: 'EWALLET',
+        keyword: 'nạp tiền',
+        subjectKeyword: '0912',
+        serviceType: 'EWALLET_DEPOSIT',
+        status: 'ACTIVE',
+        appliedTarget: 'CUSTOMER_GROUP',
+        paymentMethod: 'ATM',
+        validFrom: '2026-09-01',
+        validTo: '2026-09-30',
+        createdAtFrom: '2026-08-01',
+        createdAtTo: '2026-08-31'
+      })
+    )
+
+    const searchParams = new URL(calledUrl).searchParams
+    expect(result.data?.filename).toBe('Cau-hinh-phi_20260921-101500.csv')
+    expect(searchParams.get('feeDomain')).toBe('EWALLET')
+    expect(searchParams.get('keyword')).toBe('nạp tiền')
+    expect(searchParams.get('subjectKeyword')).toBe('0912')
+    expect(searchParams.get('serviceType')).toBe('EWALLET_DEPOSIT')
+    expect(searchParams.get('status')).toBe('ACTIVE')
+    expect(searchParams.get('appliedTarget')).toBe('CUSTOMER_GROUP')
+    expect(searchParams.get('paymentMethod')).toBe('ATM')
+    expect(searchParams.get('validFrom')).toBe('2026-09-01')
+    expect(searchParams.get('validTo')).toBe('2026-09-30')
+    expect(searchParams.get('createdAtFrom')).toBe('2026-08-01')
+    expect(searchParams.get('createdAtTo')).toBe('2026-08-31')
+    expect(searchParams.has('page')).toBe(false)
+    expect(searchParams.has('size')).toBe(false)
+    expect(searchParams.has('direction')).toBe(false)
+  })
+
   it('giữ nội dung lỗi text khi gateway không trả JSON', async () => {
     server.use(
       http.get('*/wallet/freezes/export', () =>

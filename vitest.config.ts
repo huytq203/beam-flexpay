@@ -31,6 +31,14 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
     css: false,
-    include: ['src/**/*.{test,spec}.{ts,tsx}']
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    
+    // Cấu hình giới hạn worker chuẩn cho Vitest v3:
+    maxWorkers: 2,           // Tối đa 2 worker processes
+    minWorkers: 1,           // Tối thiểu 1 worker
+    fileParallelism: false,  // Tắt tự động nhân bản quá nhiều file test song song nếu muốn tiết kiệm RAM tối đa
+    
+    // Xả rác bộ nhớ giữa các file test
+    isolate: true,
   }
 })

@@ -10,6 +10,12 @@ export interface FeePolicyListFilters {
   serviceType?: string
   status?: string
   appliedTarget?: string
+  bankCode?: string
+  paymentMethod?: string
+  validFrom?: string
+  validTo?: string
+  createdAtFrom?: string
+  createdAtTo?: string
 }
 
 export interface FeePolicyRow extends FeePolicy {
@@ -35,9 +41,8 @@ export interface UseFeePolicyListResult {
 /**
  * Miền phí là tiêu chí lọc có sẵn ở backend nên tab gửi thẳng xuống API.
  *
- * Chiều tiền thì không: `/fee/policies/search` khai `ServiceType` là MỘT giá
- * trị enum, không phải danh sách. Chiều tiền chỉ thu hẹp danh sách loại giao
- * dịch phía trên, còn thứ gửi đi luôn là một loại cụ thể.
+ * Bộ lọc gửi thẳng một `serviceType` cụ thể; chiều tiền chỉ còn là thông tin
+ * hiển thị của giao dịch và không tham gia truy vấn.
  */
 export const useFeePolicyList = ({
   filters,
@@ -52,6 +57,12 @@ export const useFeePolicyList = ({
       serviceType: filters.serviceType || undefined,
       status: filters.status || undefined,
       appliedTarget: filters.appliedTarget || undefined,
+      bankCode: filters.bankCode || undefined,
+      paymentMethod: filters.paymentMethod || undefined,
+      validFrom: filters.validFrom || undefined,
+      validTo: filters.validTo || undefined,
+      createdAtFrom: filters.createdAtFrom || undefined,
+      createdAtTo: filters.createdAtTo || undefined,
       includeConfiguration: true,
       page,
       size,

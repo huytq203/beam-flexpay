@@ -133,9 +133,13 @@ export const useFeeConfigSubmit = (
       )?.data?.id
       if (!componentId) return
 
-      for (const tier of toTierCreateRequests(values, index, componentId)) {
-        const savedTier = await postTier(tier)
-        if ('error' in savedTier) return
+      // POST /component-tiers nhận nguyên một mảng ("tạo hàng loạt") — kể cả
+      // gửi đúng 1 tier vẫn phải bọc trong mảng, gửi object trần sẽ vỡ
+      // deserialize (List<FeeComponentTierCreateRequest>) ở backend.
+      const tiers = toTierCreateRequests(values, index, componentId)
+      if (tiers.length > 0) {
+        const savedTiers = await postTier(tiers)
+        if ('error' in savedTiers) return
       }
     }
 

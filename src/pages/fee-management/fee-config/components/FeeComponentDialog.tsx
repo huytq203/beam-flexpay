@@ -1,20 +1,17 @@
 import { FormInputNumber, FormSelect } from '@components/form'
 import { FeeDomain } from '@components/fee/feeDomain'
-import { WarningCircleIcon } from '@components/icons'
 import { CardComponent, ModalComponent } from '@components/index'
 import { COMPONENT_TYPE_LABELS } from '@constants/feeLabels'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  EXECUTABLE_BENEFICIARY,
-  getExecutablePayer
-} from '@utils/fee-execution'
+import { EXECUTABLE_BENEFICIARY } from '@utils/fee-execution'
 import { useEffect, useMemo } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import {
+  BANK_BENEFICIARY_TYPE_OPTIONS,
   getComponentTypesForCategory,
+  getPayerTypeOptions,
   getVatBaseForCategory,
-  PAYER_TYPE_LABEL,
-  PAYER_TYPE_OPTIONS,
+  SYSTEM_BENEFICIARY_TYPE_OPTIONS,
   VAT_COMPONENT_TYPE,
   type FeeBusinessCategory
 } from '../constants/feeConfigFields'
@@ -56,14 +53,17 @@ const CALCULATION_METHOD_VALUES = [
   CalculationMethod.FLAT_TIER
 ]
 
-const emptyComponent = (payerType: string): FeeComponentFormValues => ({
+const emptyComponent = (
+  payerType: string,
+  beneficiaryType: string
+): FeeComponentFormValues => ({
   key: crypto.randomUUID(),
   componentType: '',
   baseOn: 'AMOUNT',
   baseComponentType: null,
   calculationMethod: CalculationMethod.DIRECT,
   payerType,
-  beneficiaryType: EXECUTABLE_BENEFICIARY,
+  beneficiaryType,
   fixedAmount: null,
   percentage: null,
   minFee: null,
@@ -83,7 +83,20 @@ export const FeeComponentDialog = ({
   onSave,
   onCancel
 }: FeeComponentDialogProps) => {
-  const executablePayer = getExecutablePayer(serviceType)
+  const isBank = feeDomain === FeeDomain.BANK
+  // Chỉ bày đúng payer backend thực thi được cho loại giao dịch; mọi miền dùng chung.
+  const payerTypeOptions = useMemo(
+    () => getPayerTypeOptions(serviceType),
+    [serviceType]
+  )
+  const beneficiaryTypeOptions = isBank
+    ? BANK_BENEFICIARY_TYPE_OPTIONS
+    : SYSTEM_BENEFICIARY_TYPE_OPTIONS
+  // Component cũ mang payer chưa hỗ trợ (SENDER/RECEIVER/SYSTEM) cũng về giá trị này.
+  const defaultPayerType = payerTypeOptions[0].value
+  // Người hưởng phụ thuộc miền: Bank luôn về BANK; Ví và các miền còn lại
+  // khởi tạo bằng SYSTEM.
+  const defaultBeneficiaryType = isBank ? 'BANK' : EXECUTABLE_BENEFICIARY
 
   /**
    * Dựng giá trị mặc định đúng một lần cho mỗi lần mở.
@@ -91,10 +104,33 @@ export const FeeComponentDialog = ({
    * Không dùng `values`: nó reset form mỗi khi tham chiếu đổi, mà `emptyComponent()`
    * sinh object mới sau mỗi render — đủ để React báo vượt độ sâu cập nhật.
    */
-  const defaultValues = useMemo(
-    () => initialValue ?? emptyComponent(executablePayer ?? 'USER'),
-    [initialValue, executablePayer]
-  )
+  const defaultValues = useMemo(() => {
+    if (!initialValue) {
+      return emptyComponent(defaultPayerType, defaultBeneficiaryType)
+    }
+
+    const hasAllowedPayer = payerTypeOptions.some(
+      ({ value }) => value === initialValue.payerType
+    )
+    const hasAllowedBeneficiary = beneficiaryTypeOptions.some(
+      ({ value }) => value === initialValue.beneficiaryType
+    )
+    return {
+      ...initialValue,
+      payerType: hasAllowedPayer
+        ? initialValue.payerType
+        : defaultPayerType,
+      beneficiaryType: hasAllowedBeneficiary
+        ? initialValue.beneficiaryType
+        : defaultBeneficiaryType
+    }
+  }, [
+    beneficiaryTypeOptions,
+    defaultBeneficiaryType,
+    defaultPayerType,
+    initialValue,
+    payerTypeOptions
+  ])
 
   const componentSchema = useMemo(
     () =>
@@ -139,7 +175,6 @@ export const FeeComponentDialog = ({
   ])
 
   const isVat = componentType === VAT_COMPONENT_TYPE
-  const isBank = feeDomain === FeeDomain.BANK
   const tiered = usesTiers(calculationMethod)
   const vatBaseComponentType = getVatBaseForCategory(businessCategory)
 
@@ -209,10 +244,6 @@ export const FeeComponentDialog = ({
     hasPrecedingComponents
   })
 
-  const payerMismatch = Boolean(
-    executablePayer && payerType && payerType !== executablePayer
-  )
-
   return (
     <ModalComponent
       open={open}
@@ -259,17 +290,7 @@ export const FeeComponentDialog = ({
               options={baseOnOptions}
               className='col-span-12 flex flex-col md:col-span-6'
             />
-            {isVat && (
-              <p className='col-span-12 text-[13px] text-muted-foreground'>
-                Thuế giá trị gia tăng luôn tính trên{' '}
-                {vatBaseComponentType
-                  ? COMPONENT_TYPE_LABELS[vatBaseComponentType]?.toLowerCase()
-                  : 'khoản phí gốc'}
-                , không tính trực tiếp trên số tiền giao dịch.
-                {!hasVatBaseAbove &&
-                  ' Thêm khoản phí gốc phía trên trước đã.'}
-              </p>
-            )}
+
             {baseOn === 'FEE_COMPONENT' && (
               <FormSelect
                 name='baseComponentType'
@@ -301,7 +322,7 @@ export const FeeComponentDialog = ({
               options={methodOptions}
               className='col-span-12 flex flex-col'
             />
-          
+
           </div>
         </CardComponent>
 
@@ -317,7 +338,7 @@ export const FeeComponentDialog = ({
               label='Người chịu'
               placeholder='Chọn người chịu phí'
               allowClear={false}
-              options={[...PAYER_TYPE_OPTIONS]}
+              options={[...payerTypeOptions]}
               className='col-span-12 flex flex-col md:col-span-6'
             />
             <FormSelect
@@ -325,36 +346,13 @@ export const FeeComponentDialog = ({
               control={control}
               required
               label='Người hưởng'
+              placeholder='Chọn người hưởng phí'
               allowClear={false}
-              disabled
-              options={[
-                {
-                  value: EXECUTABLE_BENEFICIARY,
-                  label: 'Hệ thống FlexPay'
-                }
-              ]}
+              disabled={true}
+              options={[...beneficiaryTypeOptions]}
               className='col-span-12 flex flex-col md:col-span-6'
             />
-            {payerMismatch && executablePayer && (
-              <p className='col-span-12 flex items-start gap-2 text-[13px] font-medium text-warning-strong'>
-                <WarningCircleIcon
-                  size={16}
-                  weight='bold'
-                  aria-hidden
-                  className='mt-0.5 shrink-0'
-                />
-                Loại giao dịch này chỉ thu được từ{' '}
-                {PAYER_TYPE_LABEL[executablePayer]}. Chọn khác đi thì bước duyệt
-                sẽ từ chối chính sách.
-              </p>
-            )}
-            {isBank && (
-              <p className='col-span-12 text-[13px] text-muted-foreground'>
-                Miền Bank chưa đặt được người chịu và người hưởng là ngân hàng:
-                danh mục người chịu của dịch vụ phí không có giá trị ngân hàng,
-                và người hưởng khác hệ thống bị chặn ở bước duyệt.
-              </p>
-            )}
+
           </div>
         </CardComponent>
 

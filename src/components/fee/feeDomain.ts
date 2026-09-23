@@ -12,7 +12,6 @@ export type FeeDomain = (typeof FeeDomain)[keyof typeof FeeDomain]
 export interface FeeDomainEntry {
   readonly value: FeeDomain
   readonly label: string
-  readonly hint: string
   readonly Icon: ComponentType<{ size?: number; weight?: 'bold' | 'fill' }>
 }
 
@@ -24,22 +23,30 @@ export const FEE_DOMAIN_ENTRIES: readonly FeeDomainEntry[] = [
   {
     value: FeeDomain.BANK,
     label: 'Phí Bank/NCC',
-    hint: 'Chi phí đầu vào từ ngân hàng hoặc nhà cung cấp, dùng để đối soát',
     Icon: BankIcon
   },
   {
     value: FeeDomain.EWALLET,
     label: 'Phí ví',
-    hint: 'Phí thu của người dùng ví: nạp, rút, chuyển nội bộ',
     Icon: WalletIcon
   },
   {
     value: FeeDomain.MERCHANT,
     label: 'Phí ĐVCNTT',
-    hint: 'Phí thu của đơn vị chấp nhận thanh toán: thu hộ, chi hộ',
     Icon: StorefrontIcon
   }
 ]
+
+/** Hai miền còn được phép tạo mới và xuất hiện trên danh sách chính sách. */
+export const CONFIGURABLE_FEE_DOMAINS: readonly FeeDomain[] = [
+  FeeDomain.BANK,
+  FeeDomain.EWALLET
+]
+
+export const isConfigurableFeeDomain = (
+  value: unknown
+): value is FeeDomain =>
+  CONFIGURABLE_FEE_DOMAINS.some((domain) => domain === value)
 
 export const FEE_DOMAIN_LABEL: Readonly<Record<FeeDomain, string>> =
   Object.fromEntries(

@@ -123,7 +123,7 @@ export const AssignmentSection = ({
           <MerchantPickerField
             control={control}
             readOnly={readOnly}
-            className='col-span-12 flex flex-col'
+            className='col-span-12 flex flex-col '
           />
         )}
         {canScope && (

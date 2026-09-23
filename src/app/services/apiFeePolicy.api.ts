@@ -1,8 +1,8 @@
 
-import { FeePolicy, FeePolicyResponse } from "@pages/fee-management-v4/fee-management/types/FeeManagement.type";
 import { apiFeeService } from "@services/apiService"
 import { ResponseType } from '@type/api'
 import type { FeeApprovalArg, FeeReasonArg } from '@type/feeApproval.type'
+import type { FeePage, FeePolicy } from '@type/fee.type'
 import type {
   FeePolicySetupRequest,
   FeePolicySetupResponse
@@ -16,6 +16,12 @@ export interface SearchFeePoliciesParams {
   serviceType?: string
   status?: string
   appliedTarget?: string
+  bankCode?: string
+  paymentMethod?: string
+  validFrom?: string
+  validTo?: string
+  createdAtFrom?: string
+  createdAtTo?: string
   page: number
   size: number
   sortBy: string
@@ -30,17 +36,17 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
         method: "GET",
         params: pagination // { page, size, sortBy, sortDirection }
       }),
-      transformResponse: (res: ResponseType<FeePolicyResponse>) => res.data,
+      transformResponse: (res: ResponseType<FeePage<FeePolicy>>) => res.data,
       providesTags: ['FeePolicy']
     }),
-    searchFeePolicies: build.query<FeePolicyResponse, SearchFeePoliciesParams>({
+    searchFeePolicies: build.query<FeePage<FeePolicy>, SearchFeePoliciesParams>({
       query: (params) => ({
         url: `/fee/policies/search`,
         method: "GET",
         params: params,
 
       }),
-      transformResponse: (res: ResponseType<FeePolicyResponse>) => res.data,
+      transformResponse: (res: ResponseType<FeePage<FeePolicy>>) => res.data,
       providesTags: [
         'FeePolicy',
         'feeAssign',

@@ -1,6 +1,10 @@
 import { COMPONENT_TYPE_LABELS, getFeeLabel } from '@constants/feeLabels'
 import { formatFeeLimit, formatTierRange } from '@utils/fee-format'
 import {
+  BENEFICIARY_TYPE_LABEL,
+  PAYER_TYPE_LABEL
+} from '../constants/feeConfigFields'
+import {
   getTierStart,
   usesTiers,
   type FeeComponentFormValues
@@ -23,6 +27,11 @@ const Fact = ({ label, value }: { label: string; value: string }) => (
     <span className='text-[13px] tabular-nums text-foreground'>{value}</span>
   </div>
 )
+
+const getPartyLabel = (
+  value: string,
+  labelMap: Readonly<Record<string, string>>
+): string => labelMap[value] ?? value ?? '—'
 
 /**
  * Toàn bộ cấu hình của một thành phần phí ở dạng chỉ đọc.
@@ -55,6 +64,17 @@ export const FeeComponentReadout = ({
           }
         />
         <Fact label='Tính trên' value={basis} />
+        <Fact
+          label='Người chịu phí'
+          value={getPartyLabel(component.payerType, PAYER_TYPE_LABEL)}
+        />
+        <Fact
+          label='Người hưởng phí'
+          value={getPartyLabel(
+            component.beneficiaryType,
+            BENEFICIARY_TYPE_LABEL
+          )}
+        />
         {!tiered && <Fact label='Mức phí' value={describeFormula(component)} />}
         <Fact label='Sàn' value={formatFeeLimit(component.minFee)} />
         <Fact label='Trần' value={formatFeeLimit(component.maxFee)} />

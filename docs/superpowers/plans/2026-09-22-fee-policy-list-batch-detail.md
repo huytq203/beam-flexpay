@@ -506,7 +506,49 @@ Stage only Task 5 files and commit:
 git commit -m "feat: support expanding all fee policies"
 ```
 
-### Task 6: Cross-repository verification and handoff
+### Task 6: Filter by payment method, applicable period, and created date
+
+**Files:**
+
+- Modify: `/home/huytq/code/beam/be/flexpay/flexpay.fee/src/main/java/com/flexpay/fee/domain/repository/FeePolicyRepository.java`
+- Modify: `/home/huytq/code/beam/be/flexpay/flexpay.fee/src/main/java/com/flexpay/fee/application/service/fee/IFeePolicyService.java`
+- Modify: `/home/huytq/code/beam/be/flexpay/flexpay.fee/src/main/java/com/flexpay/fee/application/service/impl/fee/FeePolicyService.java`
+- Modify: `/home/huytq/code/beam/be/flexpay/flexpay.fee/src/main/java/com/flexpay/fee/presentation/controller/v1/admin/fee/AdminFeePolicyController.java`
+- Modify: `/home/huytq/code/beam/be/flexpay/flexpay.fee/src/test/java/com/flexpay/fee/application/service/impl/fee/FeePolicyServiceSearchTest.java`
+- Modify: `src/app/services/apiFeePolicy.api.ts`
+- Modify: `src/pages/fee-management/fee-policy-list/components/FeePolicyFilterBar.tsx`
+- Modify: `src/pages/fee-management/fee-policy-list/hooks/useFeePolicyList.ts`
+- Modify: `src/pages/fee-management/fee-policy-list/FeePolicyList.tsx`
+- Create: `src/pages/fee-management/fee-policy-list/test/FeePolicyFilters.test.tsx`
+
+**Interfaces:**
+
+- Produces URL-backed `paymentMethod`, `validFrom`, `validTo`, `createdAtFrom`, and `createdAtTo` filters.
+- Applicable-period filtering uses interval overlap; created-date filtering covers the complete selected days.
+- Combining filters uses AND semantics, resets pagination to page 1, and keeps the existing single aggregate search request.
+- `updatedAt` filtering is explicitly out of scope.
+
+- [ ] **Step 1: Write focused failing backend and frontend tests**
+
+Cover trimmed payment method, interval-overlap boundaries, full-day created boundaries, URL restoration, page reset, request parameters, and reset behavior. Verify the search still sends `includeConfiguration=true` and makes no auxiliary detail requests.
+
+- [ ] **Step 2: Run focused tests to verify RED**
+
+Run the backend service test and the new frontend filter test. Confirm failure is caused by the absent filter contract/UI.
+
+- [ ] **Step 3: Implement backend search filters**
+
+Extend the controller/service/repository contract. Normalize blank payment methods to `null`; translate date-only query parameters to start-of-day and exclusive next-day bounds. Filter payment method through an assignment `EXISTS`, validity by interval overlap, and creation time by the selected inclusive calendar-day range.
+
+- [ ] **Step 4: Implement URL-backed frontend controls**
+
+Add payment-method select and two compact range pickers using the project form wrappers. Restrict payment-method options to the selected service type when possible and otherwise show the unique backend-supported methods. Add all five keys to URL sync, search params, expansion reset, and clear-filter behavior.
+
+- [ ] **Step 5: Verify GREEN and regression scope**
+
+Run focused BE tests, the entire fee-policy-list test directory, targeted ESLint, and `git diff --check` for owned files. Do not stage or commit per the user's explicit instruction.
+
+### Task 7: Cross-repository verification and handoff
 
 **Files:**
 

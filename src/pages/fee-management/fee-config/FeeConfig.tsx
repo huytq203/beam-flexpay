@@ -1,4 +1,8 @@
 import { FeeDomainTabs } from '@components/fee/FeeDomainTabs'
+import {
+  CONFIGURABLE_FEE_DOMAINS,
+  FeeDomain
+} from '@components/fee/feeDomain'
 import { ArrowLeftOutlined, WarningCircleIcon } from '@components/icons'
 import { ButtonComponent, CardComponent, ModalComponent } from '@components/index'
 import { PATHS } from '@constants/pathConstant'
@@ -54,31 +58,24 @@ const FeeConfigForm = ({
         <div className='flex flex-wrap items-start justify-between gap-3 border-b border-border pb-4'>
           <p className='max-w-[70ch] text-[13px] text-muted-foreground'>
             {readOnly
-              ? 'Đang xem chi tiết chính sách'
-              : 'Thông tin chính sách, đối tượng áp dụng và các thành phần phí lưu cùng một lần. Sai một chính sách là sai phí trên toàn hệ thống.'}
+              &&'Đang xem chi tiết chính sách'
+             }
           </p>
-          <span className='inline-flex items-center rounded-[3px] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-line-fee-ink ring-1 ring-inset ring-line-fee'>
-            Kiểm soát
-          </span>
+
         </div>
 
         <FeeDomainTabs
           value={feeDomain}
           onChange={changeDomain}
           disabled={isEdit || readOnly || hasComponents}
+          domains={
+            isEdit && feeDomain === FeeDomain.MERCHANT
+              ? undefined
+              : CONFIGURABLE_FEE_DOMAINS
+          }
           className='mt-4'
         />
-        {isEdit && (
-          <p className='mt-2 text-[13px] text-muted-foreground'>
-            Miền phí đã chốt khi tạo và không đổi được. Cần miền khác thì tạo
-            chính sách mới.
-          </p>
-        )}
-        {!isEdit && !readOnly && hasComponents && (
-          <p className='mt-2 text-[13px] text-muted-foreground'>
-            Xoá hết thành phần phí để đổi miền phí.
-          </p>
-        )}
+ 
       </CardComponent>
 
       <CardComponent className='mb-3!'>

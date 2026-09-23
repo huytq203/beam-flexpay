@@ -187,6 +187,9 @@ describe('đối tượng áp dụng của danh sách chính sách phí', () => 
     expect(screen.getByText(/0912345678/)).toBeInTheDocument()
     expect(screen.getByText('Chưa gán')).toBeInTheDocument()
     expect(screen.getAllByText('Tất cả').length).toBeGreaterThan(0)
+    expect(
+      screen.queryByRole('tab', { name: 'Phí ĐVCNTT' })
+    ).not.toBeInTheDocument()
   })
 
   it('hiện danh sách chủ thể và số chủ thể còn lại khi hover phân khúc', async () => {

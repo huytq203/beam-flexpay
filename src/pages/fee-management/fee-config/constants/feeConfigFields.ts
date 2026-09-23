@@ -1,7 +1,9 @@
 import { FeeDomain } from '@components/fee/feeDomain'
 import {
+  EXECUTABLE_BENEFICIARIES,
   PUBLISHABLE_SERVICE_TYPES,
-  allowsMerchantCriteria
+  allowsMerchantCriteria,
+  getExecutablePayer
 } from '@utils/fee-execution'
 
 /**
@@ -47,7 +49,7 @@ export const DOMAIN_FIELD_RULES: Readonly<Record<FeeDomain, DomainFieldRules>> =
   {
     [FeeDomain.BANK]: {
       bankRequired: true,
-      showMerchant: false,
+      showMerchant: true,
       showSubject: false,
       showSegment: false,
       serviceTypes: BANK_SERVICE_TYPES
@@ -87,7 +89,6 @@ export type FeeBusinessCategory =
 
 interface FeeBusinessCategoryRule {
   readonly label: string
-  readonly hint: string
   readonly componentTypes: readonly string[]
   readonly vatBaseComponentType: string | null
 }
@@ -97,19 +98,16 @@ export const FEE_BUSINESS_CATEGORY_RULES: Readonly<
 > = {
   [FEE_BUSINESS_CATEGORY.BANK_PROVIDER]: {
     label: 'Phí Bank/NCC',
-    hint: 'Chi phí đầu vào từ ngân hàng hoặc nhà cung cấp.',
     componentTypes: ['BANK_FEE', 'VAT'],
     vatBaseComponentType: 'BANK_FEE'
   },
   [FEE_BUSINESS_CATEGORY.TRANSACTION_PROCESSING]: {
     label: 'Phí xử lý giao dịch',
-    hint: 'Phí đầu ra theo giao dịch nạp, rút, chuyển, thu hộ hoặc chi hộ.',
     componentTypes: ['TRANSACTION_FEE', 'VAT'],
     vatBaseComponentType: 'TRANSACTION_FEE'
   },
   [FEE_BUSINESS_CATEGORY.PLATFORM]: {
     label: 'Phí nền tảng',
-    hint: 'Phí nền tảng dự kiến thu từ ví hoặc ĐVCNTT.',
     componentTypes: ['PLATFORM_FEE'],
     vatBaseComponentType: null
   }
@@ -274,22 +272,62 @@ export const isPaymentMethodAllowed = (
   )
 
 /**
- * Người chịu phí. Danh sách đủ theo enum `PayerType` của backend.
- *
- * Lưu được cả năm giá trị, nhưng `FeeExecutionCapabilityRegistry` lúc DUYỆT chỉ
- * chấp nhận đúng giá trị mà loại giao dịch thực thi được. Form vì vậy mở danh
- * sách nhưng cảnh báo ngay khi lệch, thay vì để người dùng biết ở bước duyệt.
+ * Nhãn cho đủ năm giá trị enum `PayerType` của backend. Chỉ dùng để HIỂN THỊ
+ * (kể cả dữ liệu cũ đã lưu SENDER/RECEIVER/SYSTEM); lựa chọn trên form lấy từ
+ * `getPayerTypeOptions`.
  */
-export const PAYER_TYPE_OPTIONS = [
-  { value: 'USER', label: 'Người dùng' },
-  { value: 'MERCHANT', label: 'Merchant' },
-  { value: 'SYSTEM', label: 'Hệ thống/platform' },
-  { value: 'SENDER', label: 'Người gửi' },
-  { value: 'RECEIVER', label: 'Người nhận' }
+export const PAYER_TYPE_LABEL: Readonly<Record<string, string>> = {
+  USER: 'Người dùng',
+  MERCHANT: 'Merchant',
+  SYSTEM: 'Hệ thống/platform',
+  SENDER: 'Người gửi',
+  RECEIVER: 'Người nhận'
+}
+
+/**
+ * Người chịu phí được phép chọn: chỉ đúng payer mà `FeeExecutionCapabilityRegistry`
+ * thực thi được cho loại giao dịch (USER cho luồng ví, MERCHANT cho thu/chi hộ).
+ * SENDER/RECEIVER/SYSTEM chưa có hợp đồng ghi sổ ở wallet-core nên không bày ra.
+ * Chưa chọn loại giao dịch thì mặc định USER.
+ */
+export const getPayerTypeOptions = (
+  serviceType: string | null | undefined
+): readonly { value: string; label: string }[] => {
+  const payer = getExecutablePayer(serviceType) ?? 'USER'
+  return [{ value: payer, label: PAYER_TYPE_LABEL[payer] ?? payer }]
+}
+
+export const BENEFICIARY_TYPE_LABEL: Readonly<Record<string, string>> = {
+  SYSTEM: 'Hệ thống',
+  MERCHANT: 'Merchant',
+  BANK: 'Ngân hàng',
+  PARTNER: 'Đối tác',
+  TAX: 'Cơ quan thuế'
+}
+
+/**
+ * Người hưởng phí mà downstream ghi sổ được. BANK chỉ là nhãn báo cáo — bút
+ * toán vẫn về doanh thu của SYSTEM, chưa có luồng tách sổ hay trả tiền tự
+ * động cho ngân hàng. Đổi ở BE (`FeeExecutionCapabilityRegistry`) thì đổi
+ * `EXECUTABLE_BENEFICIARIES` ở `fee-execution.ts` trước, danh sách này tự
+ * theo.
+ */
+export const BENEFICIARY_TYPE_OPTIONS = EXECUTABLE_BENEFICIARIES.map(
+  (value) => ({
+    value,
+    label: BENEFICIARY_TYPE_LABEL[value] ?? value
+  })
+)
+
+/** Miền phí Bank luôn ghi nhận ngân hàng là người hưởng. */
+export const BANK_BENEFICIARY_TYPE_OPTIONS = [
+  { value: 'BANK', label: BENEFICIARY_TYPE_LABEL.BANK }
 ] as const
 
-export const PAYER_TYPE_LABEL: Readonly<Record<string, string>> =
-  Object.fromEntries(PAYER_TYPE_OPTIONS.map((o) => [o.value, o.label]))
+/** Miền phí Ví luôn ghi nhận hệ thống là người hưởng. */
+export const SYSTEM_BENEFICIARY_TYPE_OPTIONS = [
+  { value: 'SYSTEM', label: BENEFICIARY_TYPE_LABEL.SYSTEM }
+] as const
 
 /**
  * Thuế giá trị gia tăng luôn tính trên khoản phí gốc của nhóm (phí Bank/NCC

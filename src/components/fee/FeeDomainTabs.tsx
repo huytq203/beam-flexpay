@@ -7,6 +7,8 @@ export interface FeeDomainTabsProps {
   /** Khoá tab lại khi miền phí không còn đổi được, ví dụ lúc sửa bản ghi cũ. */
   disabled?: boolean
   className?: string
+  /** Giới hạn miền được thao tác; bỏ trống để đọc được dữ liệu lịch sử. */
+  domains?: readonly FeeDomain[]
 }
 
 /**
@@ -17,14 +19,17 @@ export const FeeDomainTabs = ({
   value,
   onChange,
   disabled = false,
-  className
+  className,
+  domains
 }: FeeDomainTabsProps) => {
-  const active = FEE_DOMAIN_ENTRIES.find((entry) => entry.value === value)
+  const entries = domains
+    ? FEE_DOMAIN_ENTRIES.filter((entry) => domains.includes(entry.value))
+    : FEE_DOMAIN_ENTRIES
 
   return (
     <div className={className}>
       <div role='tablist' aria-label='Miền phí' className='flex flex-wrap gap-2'>
-        {FEE_DOMAIN_ENTRIES.map(({ value: domain, label, Icon }) => {
+        {entries.map(({ value: domain, label, Icon }) => {
           const isActive = domain === value
           return (
             <button
@@ -50,9 +55,6 @@ export const FeeDomainTabs = ({
           )
         })}
       </div>
-      {active && (
-        <p className='mt-2 text-xs text-muted-foreground'>{active.hint}</p>
-      )}
     </div>
   )
 }

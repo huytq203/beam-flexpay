@@ -12,8 +12,8 @@
     "deadcode": "knip",
     "api": "npx @rtk-query/codegen-openapi openapi-config.js",
     "preview": "vite preview",
-    "test": "vitest run",
-    "test:watch": "vitest",
+"test": "vitest run --maxThreads=2",
+    "test:watch": "vitest --maxThreads=2",
     "postinstall": "husky"
   },
   "lint-staged": {

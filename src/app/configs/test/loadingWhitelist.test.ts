@@ -18,6 +18,34 @@ describe('whitelist của global loading', () => {
     ).toBeUndefined()
   })
 
+  it.each([
+    '/fee/policies/search?feeDomain=EWALLET&includeConfiguration=true',
+    '/fee/policies/export?feeDomain=EWALLET',
+    '/fee/banks?page=1&size=100'
+  ])('bỏ global loader cho API có loading cục bộ ở danh sách chính sách phí: %s', (url) => {
+    expect(isInWhiteList(url, FEE_POLICY_PATH)).toBeDefined()
+    expect(
+      isInWhiteList(url, `${FEE_POLICY_PATH}/edit/policy-id`)
+    ).toBeDefined()
+  })
+
+  it('không whitelist API danh sách phí ở màn không liên quan', () => {
+    expect(
+      isInWhiteList(
+        '/fee/policies/search?feeDomain=EWALLET',
+        '/secure-panel/transaction-management'
+      )
+    ).toBeUndefined()
+  })
+
+  it.each([
+    '/fee/policy-assignments/by-policy/policy-id',
+    '/fee/policy-components/by-policy/policy-id',
+    '/fee/component-tiers/by-component/component-id'
+  ])('không giữ whitelist cho API chi tiết cũ không còn dùng ở list: %s', (url) => {
+    expect(isInWhiteList(url, FEE_POLICY_PATH)).toBeUndefined()
+  })
+
   it('bỏ global loader cho bank-links ở màn chi tiết ví', () => {
     expect(
       isInWhiteList(

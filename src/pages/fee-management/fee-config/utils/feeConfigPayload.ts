@@ -5,7 +5,6 @@ import {
   type FeePolicySetupRequest
 } from '@/app/schemas/fee-setup.schema'
 import {
-  EXECUTABLE_BENEFICIARY,
   EXECUTABLE_CURRENCY,
   getExecutablePayer
 } from '@utils/fee-execution'
@@ -32,15 +31,15 @@ const toAssignmentMoment = (value: string): string =>
 /**
  * Form → payload thiết lập trọn gói.
  *
- * Người chịu lấy từ form vì người vận hành được phép chọn; hộp thoại đã cảnh
- * báo khi giá trị lệch hợp đồng thực thi. Người hưởng thì không: mọi giá trị
- * khác hệ thống đều bị bước duyệt từ chối, nên ghi cứng ở đây để không có
- * đường nào gửi lên một giá trị khác.
+ * Người chịu lấy từ form sau khi hộp thoại giới hạn theo hợp đồng thực thi.
+ * Người hưởng của miền Bank luôn được chuẩn hoá thành BANK tại biên API; các
+ * miền còn lại giữ lựa chọn hợp lệ từ form.
  */
 export const toSetupRequest = (
   form: FeeConfigFormValues
 ): FeePolicySetupRequest => {
-  if (!getExecutablePayer(form.serviceType)) {
+  const executablePayer = getExecutablePayer(form.serviceType)
+  if (!executablePayer) {
     throw new Error(
       `Loại giao dịch ${form.serviceType} chưa có hợp đồng thực thi phí`
     )
@@ -76,12 +75,18 @@ export const toSetupRequest = (
       roundMode: ROUND_MODE,
       minFee: orZero(component.minFee),
       maxFee: orZero(component.maxFee),
-      payerType: component.payerType,
-      beneficiaryType: EXECUTABLE_BENEFICIARY,
+      // Chỉ payer thực thi được của loại giao dịch mới qua được bước duyệt. Ép tại
+      // biên API để dữ liệu form cũ (SENDER/RECEIVER/SYSTEM) không lọt lên khi
+      // người dùng lưu mà không mở lại dialog.
+      payerType: executablePayer,
+      // Miền Bank chỉ có ngân hàng là người hưởng. Chuẩn hoá thêm tại biên API
+      // để cả dữ liệu form cũ hoặc caller ngoài dialog cũng không gửi SYSTEM.
+      beneficiaryType:
+        form.feeDomain === 'BANK' ? 'BANK' : component.beneficiaryType,
       tiers: usesTiers(component.calculationMethod)
         ? component.tiers.map((tier, index) => ({
-            // Backend vẫn nhận giá trị bắt đầu; form suy nó ra để hai con số
-            // không bao giờ lệch nhau.
+            // Backend dùng khoảng bao đóng và nhận min bậc sau = max trước + 1;
+            // form suy nó ra để không tạo khoảng hở hoặc chồng lấn.
             minValue: getTierStart(component.tiers, index),
             maxValue: tier.maxValue,
             roundMode: ROUND_MODE,

@@ -1,6 +1,5 @@
 import { FormDatePicker, FormInput, FormSelect, FormTextArea } from '@components/form'
 import { SERVICE_TYPE_LABELS } from '@constants/feeLabels'
-import { FEE_DIRECTION_LABEL, getFeeDirection } from '@utils/fee-direction'
 import dayjs from 'dayjs'
 import type { Control } from 'react-hook-form'
 import { useWatch } from 'react-hook-form'
@@ -42,11 +41,10 @@ export const PolicyGeneralSection = ({
 
   const serviceTypeOptions = getDomainFieldRules(feeDomain).serviceTypes.map(
     (value) => {
-      const direction = getFeeDirection(value)
       const name = SERVICE_TYPE_LABELS[value] ?? value
       return {
         value,
-        label: direction ? `${FEE_DIRECTION_LABEL[direction]} · ${name}` : name
+        label: name
       }
     }
   )

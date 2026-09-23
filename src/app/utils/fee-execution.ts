@@ -20,11 +20,16 @@ const EXECUTABLE_PAYER_BY_SERVICE: Readonly<Record<string, string>> = {
 }
 
 /**
- * Chân phí dương hiện chỉ ghi sổ được về hệ thống. Ngân hàng, merchant, đối tác
- * và cơ quan thuế đều bị từ chối khi duyệt, nên ô chọn người hưởng không còn là
- * một quyết định.
+ * Chân phí dương hiện ghi sổ được với người hưởng SYSTEM hoặc BANK. BANK chỉ là
+ * nhãn báo cáo — bút toán GL vẫn Credit vào doanh thu của SYSTEM y như trước,
+ * chưa có tách sổ hay tự động trả tiền cho ngân hàng. Merchant, đối tác và cơ
+ * quan thuế vẫn bị từ chối khi duyệt.
  */
-export const EXECUTABLE_BENEFICIARY = 'SYSTEM'
+export const EXECUTABLE_BENEFICIARIES = ['SYSTEM', 'BANK'] as const
+
+/** Giá trị mặc định khi thêm thành phần phí mới. */
+export const EXECUTABLE_BENEFICIARY: (typeof EXECUTABLE_BENEFICIARIES)[number] =
+  'SYSTEM'
 
 /** Đơn vị tiền tệ duy nhất fee engine hỗ trợ (minor-unit scale 0). */
 export const EXECUTABLE_CURRENCY = 'VND'

@@ -43,14 +43,44 @@ const baseForm = (
 })
 
 describe('toSetupRequest', () => {
-  it('giữ người chịu do người dùng chọn và ép người hưởng về hệ thống', () => {
+  it('ép người chịu về payer thực thi và người hưởng về hệ thống', () => {
     const form = baseForm()
     form.components[0].payerType = 'RECEIVER'
 
     const request = toSetupRequest(form)
-    expect(request.components[0].payerType).toBe('RECEIVER')
+    // EWALLET_WITHDRAWAL chỉ thực thi được payer USER; RECEIVER chưa có hợp đồng ghi sổ.
+    expect(request.components[0].payerType).toBe('USER')
     // Mọi giá trị người hưởng khác hệ thống đều bị bước duyệt từ chối.
     expect(request.components[0].beneficiaryType).toBe('SYSTEM')
+  })
+
+  it('chuẩn hoá dữ liệu cũ SENDER/SYSTEM của miền Ví về USER', () => {
+    for (const legacy of ['SENDER', 'SYSTEM']) {
+      const form = baseForm({ feeDomain: 'EWALLET' })
+      form.components[0].payerType = legacy
+
+      expect(toSetupRequest(form).components[0].payerType).toBe('USER')
+    }
+  })
+
+  it('luồng thu hộ merchant gửi payer MERCHANT', () => {
+    const form = baseForm({
+      feeDomain: 'MERCHANT',
+      serviceType: 'MERCHANT_VA_BILL_COLLECTION'
+    })
+
+    expect(toSetupRequest(form).components[0].payerType).toBe('MERCHANT')
+  })
+
+  it('miền Bank luôn gửi người hưởng là BANK dù dữ liệu form cũ còn SYSTEM', () => {
+    const request = toSetupRequest(
+      baseForm({
+        feeDomain: 'BANK',
+        bankCode: 'VCB'
+      })
+    )
+
+    expect(request.components[0].beneficiaryType).toBe('BANK')
   })
 
   it('từ chối loại giao dịch chưa có hợp đồng thực thi', () => {
@@ -105,6 +135,32 @@ describe('toSetupRequest', () => {
     expect(request.components[0].fixedAmount).toBe(0)
     expect(request.components[0].percentage).toBe(0)
     expect(request.components[0].tiers).toHaveLength(1)
+  })
+
+  it('gửi điểm bắt đầu bậc sau bằng điểm kết thúc bậc trước cộng một', () => {
+    const form = baseForm()
+    form.components[0].calculationMethod = CalculationMethod.PROGRESSIVE_TIER
+    form.components[0].tiers = [
+      {
+        maxValue: 1,
+        fixedAmount: 1,
+        percentage: 1,
+        minFee: 1,
+        maxFee: 111
+      },
+      {
+        maxValue: null,
+        fixedAmount: 2,
+        percentage: 2,
+        minFee: 2,
+        maxFee: 222
+      }
+    ]
+
+    expect(toSetupRequest(form).components[0].tiers).toEqual([
+      expect.objectContaining({ minValue: 0, maxValue: 1 }),
+      expect.objectContaining({ minValue: 2, maxValue: null })
+    ])
   })
 
   it('quy ô để trống về 0 khi gửi lên', () => {

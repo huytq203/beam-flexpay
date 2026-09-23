@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { ReactNode } from 'react'
 import { Empty, Table } from 'antd'
 import type { TablePaginationConfig, TableProps } from 'antd'
 import { ArrowsClockwise as RefreshIcon } from '@phosphor-icons/react'
@@ -7,6 +8,8 @@ import TooltipComponent from '../tooltip-component'
 
 interface TableComponentProps<T extends object> extends TableProps<T> {
   onRefresh?: () => void | Promise<unknown>
+  /** Hành động của bảng (thêm mới, xuất file...) — nằm cùng hàng, bên trái nút làm mới. */
+  toolbar?: ReactNode
 }
 
 interface TableRefreshButtonProps {
@@ -30,8 +33,7 @@ function TableRefreshButton({
   onClick
 }: TableRefreshButtonProps) {
   return (
-    <div className='mb-2 flex min-h-8 items-center justify-end'>
-      <TooltipComponent title='Làm mới dữ liệu'>
+    <TooltipComponent title='Làm mới dữ liệu'>
         <ButtonComponent
           type='default'
           htmlType='button'
@@ -48,13 +50,13 @@ function TableRefreshButton({
           onClick={onClick}
           className='size-8! rounded-full! border-border! p-0! text-foreground! shadow-none!'
         />
-      </TooltipComponent>
-    </div>
+    </TooltipComponent>
   )
 }
 
 const TableComponent = <T extends object>({
   onRefresh,
+  toolbar,
   ...props
 }: TableComponentProps<T>) => {
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -79,11 +81,16 @@ const TableComponent = <T extends object>({
 
   return (
     <div className='min-w-0'>
-      {onRefresh && (
-        <TableRefreshButton
-          busy={isRefreshBusy}
-          onClick={handleRefresh}
-        />
+      {(onRefresh || toolbar) && (
+        <div className='mb-2 flex min-h-8 flex-wrap items-center justify-end gap-2'>
+          {toolbar}
+          {onRefresh && (
+            <TableRefreshButton
+              busy={isRefreshBusy}
+              onClick={handleRefresh}
+            />
+          )}
+        </div>
       )}
       <Table<T>
         {...props}

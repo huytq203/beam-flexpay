@@ -1,5 +1,6 @@
 import { WalletIcon } from '@components/icons'
 import { ButtonComponent, MaskText } from '@components/index'
+import StatusBadge from '@components/status-badge/StatusBadge'
 import { useGetAccountQuery } from '@services/apiWalletAccount.api'
 import type { ContentAccountWallet } from '@type/responseAccountWallet'
 import { formatFeeNumber } from '@utils/fee-format'
@@ -134,7 +135,9 @@ const UserPickerBody = ({
                   {formatFeeNumber(account.balance ?? 0)} đ
                 </span>
               </Fact>
-              <Fact label='Trạng thái'>{account.status}</Fact>
+              <Fact label='Trạng thái'>
+                <StatusBadge status={account.status} />
+              </Fact>
             </div>
             {!readOnly && (
               <div className='flex gap-2'>

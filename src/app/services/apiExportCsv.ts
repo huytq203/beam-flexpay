@@ -96,6 +96,22 @@ export interface ExportVerifiedKycProfilesQuery {
   createdTo?: string
 }
 
+/** Bộ lọc của màn danh sách chính sách phí; file tự bung bản gán, component và tier. */
+export interface ExportFeePoliciesQuery {
+  keyword?: string
+  feeDomain?: string
+  serviceType?: string
+  status?: string
+  appliedTarget?: string
+  subjectKeyword?: string
+  bankCode?: string
+  paymentMethod?: string
+  validFrom?: string
+  validTo?: string
+  createdAtFrom?: string
+  createdAtTo?: string
+}
+
 type ExportBaseQuery = typeof fetchBaseQueryWalletCore
 type ExportQueryApi = Parameters<ExportBaseQuery>[1]
 type ExportExtraOptions = Parameters<ExportBaseQuery>[2]
@@ -199,6 +215,15 @@ export const apiExportFeeCsv = apiFeeService.injectEndpoints({
           queryApi,
           extraOptions
         )
+    }),
+    exportFeePolicies: build.mutation<ExportedFile, ExportFeePoliciesQuery>({
+      queryFn: (params, queryApi, extraOptions) =>
+        runExport(
+          fetchBaseQueryFee,
+          { url: '/fee/policies/export', params: { ...params } },
+          queryApi,
+          extraOptions
+        )
     })
   })
 })
@@ -227,6 +252,9 @@ export const {
   useExportLedgerEntriesMutation
 } = apiExportWalletCsv
 
-export const { useExportApplicableFeeRulesMutation } = apiExportFeeCsv
+export const {
+  useExportApplicableFeeRulesMutation,
+  useExportFeePoliciesMutation
+} = apiExportFeeCsv
 
 export const { useExportVerifiedKycProfilesMutation } = apiExportIdentityCsv
