@@ -1,6 +1,6 @@
 import { createAppStore } from '@/app/store'
 import { savePermissions } from '@slices/authSlice'
-import { MessageProvider } from '@hooks/useMessage'
+import { MessageProvider } from '@hooks/MessageProvider'
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { HttpResponse, delay, http } from 'msw'

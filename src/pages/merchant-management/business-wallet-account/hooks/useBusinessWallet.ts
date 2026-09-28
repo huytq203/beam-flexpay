@@ -1,31 +1,27 @@
 import { useMemo, useState } from 'react'
 
 import usePagination from '@hooks/usePagination'
-import { useGetAccountQuery } from '@services/apiWalletAccount.api'
+import { useListEnterpriseWalletsQuery } from '@services/merchantEnterpriseWalletApi'
 
 import type { BusinessWalletSearchValues } from '../schemas/business-wallet.schema'
-import {
-  BUSINESS_WALLET_TYPE,
-  type BusinessWalletRow
-} from '../types/business-wallet.type'
+import type { BusinessWalletRow } from '../types/business-wallet.type'
 
 const normalizeFilters = (
   values: BusinessWalletSearchValues
 ): BusinessWalletSearchValues => ({
-  username: values.username?.trim() || undefined,
-  ownerId: values.ownerId?.trim() || undefined,
-  status: values.status
+  query: values.query?.trim() || undefined,
+  taxCode: values.taxCode?.trim() || undefined,
+  verificationStatus: values.verificationStatus
 })
 
 export function useBusinessWallet() {
   const { page, size, setPage, setPageSize } = usePagination()
   const [filters, setFilters] = useState<BusinessWalletSearchValues>({})
 
-  const query = useGetAccountQuery({
+  const query = useListEnterpriseWalletsQuery({
     ...filters,
-    page,
-    size,
-    walletType: BUSINESS_WALLET_TYPE
+    page: page - 1,
+    size
   })
 
   const rows = useMemo<BusinessWalletRow[]>(

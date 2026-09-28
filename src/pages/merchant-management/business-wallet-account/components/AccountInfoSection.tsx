@@ -38,15 +38,6 @@ export function AccountInfoSection({
             : 'Dùng làm Username của tài khoản Master'}
         </span>
       </div>
-
-      <FormInput
-        name='contactPhone'
-        control={control}
-        required
-        label='SĐT liên hệ'
-        placeholder='Chỉ nhập số, 10–11 số'
-        className={fieldClassName}
-      />
     </BusinessWalletFormSection>
   )
 }

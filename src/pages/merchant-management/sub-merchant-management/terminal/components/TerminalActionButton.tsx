@@ -20,10 +20,10 @@ export function TerminalActionButton({
   onClick
 }: TerminalActionButtonProps) {
   const className = danger
-    ? 'size-8! border-danger-strong/70! bg-background! p-0! text-danger-strong! shadow-none! hover:bg-danger/10!'
+    ? 'border-danger-strong/70! bg-background! text-danger-strong! shadow-none! hover:bg-danger/10!'
     : unlock
-      ? 'size-8! border-success-strong/40! bg-background! p-0! text-success-strong! shadow-none! hover:bg-success-strong/10!'
-      : 'size-8! border-border! bg-background! p-0! text-foreground! shadow-none! hover:bg-muted!'
+      ? 'border-success-strong/40! bg-background! text-success-strong! shadow-none! hover:bg-success-strong/10!'
+      : 'border-border! bg-background! text-foreground! shadow-none! hover:bg-muted!'
 
   return (
     <TooltipComponent title={title}>
@@ -34,6 +34,7 @@ export function TerminalActionButton({
         htmlType='button'
         icon={icon}
         onClick={onClick}
+        size='small'
         type='default'
       />
     </TooltipComponent>

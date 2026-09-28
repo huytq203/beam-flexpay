@@ -93,10 +93,7 @@ const BusinessWalletForm = () => {
         >
           <AccountInfoSection control={form.control} isEditMode={form.isEditMode} />
           <BusinessIdentitySection control={form.control} />
-          <WalletManagerSection
-            control={form.control}
-            onCopyContactPhone={form.handleCopyContactPhone}
-          />
+          <WalletManagerSection control={form.control} requiresAdminPassword={form.requiresAdminPassword} />
           <LegalDocsSection control={form.control} />
           <ClassificationSection control={form.control} />
         </form>

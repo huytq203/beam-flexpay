@@ -35,6 +35,11 @@ describe('SCREENS', () => {
     expect(SCREENS.CONFIRM_EKYC.actions.approve).toBe(PERMISSION.ADMIN_FULL)
   })
 
+  it('phân quyền duyệt KYB ví và duyệt Merchant theo hai API riêng', () => {
+    expect(SCREENS.BUSINESS_WALLET_ACCOUNT.actions.approve).toBe(PERMISSION.ENTERPRISE_WALLET_KYB_APPROVE)
+    expect(SCREENS.MERCHANT_MANAGEMENT.actions.approve).toBe(PERMISSION.MERCHANT_API_APPROVE)
+  })
+
   it('khai báo ba màn cấu hình cổng merchant', () => {
     expect(SCREENS.MERCHANT_KEY_CONNECTION.path).toBe(
       '/secure-panel/merchant/key-connection'
@@ -47,16 +52,16 @@ describe('SCREENS', () => {
     )
   })
 
-  it('đăng ký hai màn Sub-merchant và Terminal bằng quyền merchant', () => {
+  it('đăng ký hai màn Sub-merchant và Terminal bằng quyền API riêng', () => {
     expect(SCREENS.MERCHANT_SUB_MERCHANT.path).toBe(
       '/secure-panel/merchant/sub-merchant'
     )
     expect(SCREENS.MERCHANT_TERMINAL.path).toBe('/secure-panel/merchant/terminal')
     expect(SCREENS.MERCHANT_SUB_MERCHANT.actions.view).toBe(
-      PERMISSION.MERCHANT_VIEW
+      PERMISSION.SUB_MERCHANT_VIEW
     )
     expect(SCREENS.MERCHANT_TERMINAL.actions.update).toBe(
-      PERMISSION.MERCHANT_UPDATE
+      PERMISSION.TERMINAL_UPDATE
     )
   })
 
@@ -92,6 +97,7 @@ describe('SCREENS', () => {
 
   it('mọi screen đều có đủ 6 action chuẩn', () => {
     for (const screen of screens) {
+      if (screen === SCREENS.FEE_SCHEDULE) continue // Báo cáo chỉ đọc.
       for (const actionId of DEFAULT_SCREEN_ACTION_IDS) {
         expect(screen.actions[actionId]).toBeDefined()
       }

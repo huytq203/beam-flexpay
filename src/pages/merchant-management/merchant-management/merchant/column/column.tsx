@@ -1,9 +1,9 @@
 import { ColumnType } from 'antd/es/table'
 import { ContentMerchant } from '@type/merchant'
-import dayjs from 'dayjs'
+import { formatUTCToLocalDateTime } from '@utils/helper-functions/date'
 import { ButtonComponent, TooltipComponent } from '@components/index'
-import { EditOutlined, EyeOutlined } from '@components/icons'
-import { StatusKey } from '@pages/wallet-administration/e-walletManagement/constants/Ewallet.constant'
+import { CheckCircleOutlined, EditOutlined, EyeOutlined } from '@components/icons'
+import type { MerchantStatus } from '@type/merchant'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { STATUS_CONFIG } from '../constants/Merchant.constant'
 import { Can } from '@/app/permissions'
@@ -11,9 +11,10 @@ import { Can } from '@/app/permissions'
 interface MerchantColumnProps {
     onEdit: (id: string) => void
     onView?: (id: string) => void
+    onApprove: (merchant: ContentMerchant) => void
 }
 
-export const MerchantColumn = ({ onEdit, onView }: MerchantColumnProps): ColumnType<ContentMerchant>[] => [
+export const MerchantColumn = ({ onEdit, onView, onApprove }: MerchantColumnProps): ColumnType<ContentMerchant>[] => [
     {
         title: '#',
         dataIndex: 'stt',
@@ -43,18 +44,18 @@ export const MerchantColumn = ({ onEdit, onView }: MerchantColumnProps): ColumnT
         title: 'Trạng thái',
         dataIndex: 'status',
         align: 'center',
-        render: (value: StatusKey) => <StatusBadge status={value} config={STATUS_CONFIG} />,
+        render: (value: MerchantStatus) => <StatusBadge status={value} config={STATUS_CONFIG} />,
     },
     {
         title: 'Ngày tạo',
         dataIndex: 'createdAt',
         align: 'center',
-        render: (value: string) => dayjs(value).format('DD/MM/YYYY HH:mm:ss')
+        render: (value?: string) => formatUTCToLocalDateTime(value) || '—'
     },
     {
         title: 'Thao tác',
         align: 'center',
-        width: 50,
+        width: 130,
         fixed: 'right',
         render: (_: unknown, record: ContentMerchant) => (
             <div className='flex gap-1 items-center justify-center'>
@@ -68,6 +69,11 @@ export const MerchantColumn = ({ onEdit, onView }: MerchantColumnProps): ColumnT
                         <ButtonComponent aria-label='Sửa merchant' size='small' type='default' icon={<EditOutlined />} onClick={() => onEdit(record.id)} />
                     </TooltipComponent>
                 </Can>
+                {record.status === 'PENDING_APPROVAL' && <Can screen='MERCHANT_MANAGEMENT' action='approve'>
+                    <TooltipComponent title='Phê duyệt hồ sơ'>
+                        <ButtonComponent htmlType='button' type='default' size='small' icon={<CheckCircleOutlined aria-hidden />} aria-label={`Phê duyệt merchant ${record.name}`} onClick={() => onApprove(record)} />
+                    </TooltipComponent>
+                </Can>}
             </div>
         )
     }

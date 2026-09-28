@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-04T00:00:00Z",
+  "generatedAt": "2026-09-24T02:31:53Z",
   "title": "Design System: FlexPay CMS",
   "extensions": {
     "colorMeta": {
@@ -371,6 +371,10 @@
       {
         "name": "lg",
         "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
       }
     ]
   },
@@ -446,17 +450,26 @@
       "description": "The only chrome the portal admits: floating, transparent, logo left and account right.",
       "html": "<div class=\"ds-topbar\"><span class=\"ds-topbar-logo\">flexpay</span><span class=\"ds-topbar-account\">Trần Huy</span></div>",
       "css": ".ds-topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 40px; background: transparent; border: none; } .ds-topbar-logo { font-family: 'Archivo', 'IBM Plex Sans', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -0.02em; color: #12181f; } .ds-topbar-account { font-family: 'Inter', Helvetica, Arial, sans-serif; font-size: 13px; color: #12181f; }"
+    },
+    {
+      "name": "Merchant Access Count Card",
+      "kind": "card",
+      "refersTo": "access-count-card",
+      "description": "The selectable, compact count card shared by Merchant User and Role lists; selection shortcuts change the table scope.",
+      "html": "<button type=\"button\" class=\"ds-access-count\" aria-pressed=\"true\"><span class=\"ds-access-count-label\">Hoạt động</span><strong class=\"ds-access-count-value\">4</strong></button>",
+      "css": ".ds-access-count { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; min-height: 80px; width: 100%; padding: 16px; border: 1px solid var(--primary, #2bd9d0); border-radius: 12px; background: color-mix(in srgb, var(--primary, #2bd9d0) 5%, var(--background, #ffffff)); color: var(--foreground, #101114); text-align: left; cursor: pointer; transition: border-color 150ms ease; } .ds-access-count:hover { border-color: var(--primary, #2bd9d0); } .ds-access-count:focus-visible { outline: 2px solid var(--primary, #2bd9d0); outline-offset: 2px; } .ds-access-count-label { font: 400 12px/16px Inter, Helvetica, Arial, sans-serif; color: var(--muted-foreground, #647c7b); } .ds-access-count-value { font: 700 24px/32px \"IBM Plex Sans\", Helvetica, Arial, sans-serif; font-variant-numeric: tabular-nums; color: var(--success-strong, #0b7a4a); }"
     }
   ],
   "narrative": {
     "northStar": "The Network Map",
-    "overview": "FlexPay CMS is where BEAM staff touch real money: eKYC approvals, transaction disputes, fee policy, internal permissions. The startup portal at /secure-panel states that job as a transit network — five business domains are five lines, every permitted screen is a station, and the operator's own permission set is the map that gets drawn. Nothing is generic: the map has exactly as many lines and stations as the signed-in account may enter. The material is printed signage rather than software chrome: a cool paper ground (#eceef2), near-black ink, saturated line colours reserved for graphics, and Archivo set uppercase with wide tracking the way an enamel station plate is set.\n\nDensity is a virtue here, not a cost. Every station the account can reach shows its full printed name on first paint — nothing hides behind a hover, nothing is an icon-only affordance, and no decorative empty field pads the composition out. The 3D network is a real extruded model with a real key light and a real cast shadow: depth is modelled, never painted on with a CSS shadow. The rejected alternative is explicit and permanent — a grid of icon/title/description cards and a hero KPI band are not how this product introduces itself.\n\nThe rest of the CMS runs on an incumbent teal shell (#2bd9d0 on white, 12px radii, flat surfaces separated by a 1px #c9e9e7 rule). The portal does not overturn that shell; it sits beside it as a chrome-less full-viewport surface with no header and no sidebar, and it hands the brand teal exactly two jobs — the interchange disc and the focus ring.",
+    "overview": "FlexPay CMS is where BEAM staff touch real money: eKYC approvals, transaction disputes, fee policy, internal permissions. The startup portal at /secure-panel states that job as a transit network — five business domains are five lines, every permitted screen is a station, and the operator's own permission set is the map that gets drawn. Nothing is generic: the map has exactly as many lines and stations as the signed-in account may enter. The material is printed signage rather than software chrome: a cool paper ground (#eceef2), near-black ink, saturated line colours reserved for graphics, and Archivo set uppercase with wide tracking the way an enamel station plate is set.\n\nDensity is a virtue here, not a cost. Every station the account can reach shows its full printed name on first paint — nothing hides behind a hover, nothing is an icon-only affordance, and no decorative empty field pads the composition out. The 3D network is a real extruded model with a real key light and a real cast shadow: depth is modelled, never painted on with a CSS shadow. The rejected alternative is explicit and permanent — a grid of icon/title/description cards and a hero KPI band are not how this product introduces itself.\n\nThe rest of the CMS runs on an incumbent teal shell (#2bd9d0 on white, 12px radii, flat surfaces separated by a 1px #c9e9e7 rule). The portal does not overturn that shell; it sits beside it as a chrome-less full-viewport surface with no header and no sidebar, and it hands the brand teal exactly two jobs — the interchange disc and the focus ring.\n\nMerchant User and Merchant Role lists use the incumbent teal shell as an operating surface. They repeat a compact sequence of title and actions, selectable counts, filters, then a bordered data table. Portal signage remains scoped to the startup surface.",
     "keyCharacteristics": [
       "Signage-light ground with near-black ink; no glass, no gradient, no blur.",
       "Five domain colours as a full palette, each shipped as a block/ink pair.",
       "Archivo uppercase with wide tracking for anything that behaves like a printed plate; Inter for prose.",
       "Real modelled depth in WebGL, flat DOM at rest.",
-      "Every destination is a labelled, keyboard-reachable link."
+      "Every destination is a labelled, keyboard-reachable link.",
+      "Merchant access lists pair selectable counts and filters with a compact, horizontally scrollable table."
     ],
     "rules": [
       {
@@ -509,7 +522,9 @@
       "Do print the full name on every node — station labels, route names, code badges — and make each one a real, tabbable link.",
       "Do derive any second rendering of the map from the shared 2D geometry so the fallback and the model never disagree.",
       "Do keep heavy visual dependencies behind a dynamic import.",
-      "Do separate resting surfaces with a 1px rule (#d5d9e0 in the portal, #c9e9e7 in the shell)."
+      "Do separate resting surfaces with a 1px rule (#d5d9e0 in the portal, #c9e9e7 in the shell).",
+      "Do retain the header, count, filters, then table order on Merchant access lists, and keep the table horizontally operable at narrow widths.",
+      "Do repeat Merchant scope beside permission choices and in access-change confirmations."
     ],
     "donts": [
       "Don't use a saturated line block colour as text colour.",

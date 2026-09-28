@@ -1,5 +1,3 @@
-import { Empty } from 'antd'
-
 import { WarningIcon, ArrowsCounterClockwiseIcon } from '@components/icons'
 import { ButtonComponent, Table } from '@components/index'
 import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
@@ -16,6 +14,7 @@ interface BusinessWalletTableStateProps {
   isFetching: boolean
   isError: boolean
   onEdit: (row: BusinessWalletRow) => void
+  onApprove: (row: BusinessWalletRow) => void
   onRefresh: () => void | Promise<unknown>
   onPageChange: (page: number, pageSize: number) => void
 }
@@ -29,10 +28,11 @@ export function BusinessWalletTableState({
   isFetching,
   isError,
   onEdit,
+  onApprove,
   onRefresh,
   onPageChange
 }: BusinessWalletTableStateProps) {
-  const columns = createBusinessWalletColumns({ onEdit })
+  const columns = createBusinessWalletColumns({ onEdit, onApprove })
   const handleRefresh = (): void => {
     void onRefresh()
   }
@@ -79,17 +79,9 @@ export function BusinessWalletTableState({
 
   if (rows.length === 0) {
     return (
-      <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description={
-          <div className='space-y-1'>
-            <p className='font-medium text-foreground'>Chưa có ví doanh nghiệp</p>
-            <p className='text-sm text-muted-foreground'>
-              Không tìm thấy dữ liệu phù hợp với bộ lọc hiện tại.
-            </p>
-          </div>
-        }
-      >
+      <div className='flex min-h-56 flex-col items-center justify-center gap-3 text-center'>
+        <p className='font-medium text-foreground'>Chưa có ví doanh nghiệp</p>
+        <p className='text-sm text-muted-foreground'>Không tìm thấy dữ liệu phù hợp với bộ lọc hiện tại.</p>
         <ButtonComponent
           htmlType='button'
           type='default'
@@ -97,7 +89,7 @@ export function BusinessWalletTableState({
           icon={<ArrowsCounterClockwiseIcon aria-hidden size={18} />}
           onClick={handleRefresh}
         />
-      </Empty>
+      </div>
     )
   }
 

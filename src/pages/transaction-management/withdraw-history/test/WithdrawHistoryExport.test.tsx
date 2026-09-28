@@ -1,6 +1,6 @@
 import { renderWithProviders } from '@/test/render'
 import { createAppStore } from '@/app/store'
-import { MessageProvider } from '@hooks/useMessage'
+import { MessageProvider } from '@hooks/MessageProvider'
 import { savePermissions } from '@slices/authSlice'
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'

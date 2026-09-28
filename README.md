@@ -1,5 +1,9 @@
 # e-wallet-web-admin
 
+Quy chuẩn tổ chức tính năng frontend, giới hạn 300 dòng/file và bước kiểm tra
+nằm trong [AGENTS.md](AGENTS.md). Lấy
+`src/pages/merchant-management/merchant-access/` làm mẫu tham chiếu.
+
 ## Installation
 
 - Make sure that you have Node.js v16, npm v8, yarn v1, Docker v20,

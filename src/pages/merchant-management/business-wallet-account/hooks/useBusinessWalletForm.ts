@@ -1,85 +1,122 @@
 import { useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 
+import { getDate } from '@/app/utils/helper-functions/date'
 import { useMessage } from '@hooks/useMessage'
+import { useUploadMerchantDocumentMutation } from '@services/apiMerchant'
 import {
-  toBusinessWalletPayload,
-  usePostBusinessWalletMutation,
-  usePutBusinessWalletMutation
-} from '@services/apiBusinessWallet.api'
-import { useGetAccountByIdQuery } from '@services/apiWalletAccount.api'
-
+  useCreateEnterpriseWalletMutation,
+  useGetEnterpriseWalletQuery,
+  useUpdateEnterpriseWalletMutation,
+  type EnterpriseWalletDto,
+  type EnterpriseWalletPayload
+} from '@services/merchantEnterpriseWalletApi'
 import {
   businessWalletFormSchema,
   EMPTY_BUSINESS_WALLET_FORM,
   type BusinessWalletFormValues
 } from '../schemas/business-wallet.schema'
 
+const storedFile = (file?: { id?: string; filename?: string }) =>
+  file?.id ? [{ uid: file.id, name: file.filename || 'Tệp đã tải lên', status: 'done' as const }] : []
+
+const detailToForm = (wallet: EnterpriseWalletDto): BusinessWalletFormValues => ({
+  ...EMPTY_BUSINESS_WALLET_FORM,
+  email: wallet.registeredEmail || '',
+  businessName: wallet.legalName || '',
+  taxCode: wallet.taxCode || '',
+  businessType: wallet.businessType || 'ENTERPRISE',
+  headOfficeAddress: wallet.headOfficeAddress || '',
+  legalRepName: wallet.legalRepresentativeName || '',
+  legalRepIdNumber: wallet.legalRepresentativeIdNumber || '',
+  managerName: wallet.managerName || '',
+  managerPosition: wallet.managerTitle || '',
+  managerIdNumber: wallet.managerIdNumber || '',
+  managerIdExpiry: wallet.managerIdExpiryDate || '',
+  otpPhone: wallet.otpPhone || '',
+  businessLicense: storedFile(wallet.businessLicense),
+  authorizationLetter: storedFile(wallet.authorizationLetter),
+  idCardFront: storedFile(wallet.idCardFront),
+  idCardBack: storedFile(wallet.idCardBack),
+  isInternalWallet: wallet.internalWallet || false
+})
+
 export function useBusinessWalletForm() {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const isEditMode = Boolean(id)
-  const { successMess, warningMess } = useMessage()
-  const detail = useGetAccountByIdQuery(id ?? '', { skip: !id })
-  const [postBusinessWallet, postState] = usePostBusinessWalletMutation()
-  const [putBusinessWallet, putState] = usePutBusinessWalletMutation()
-  const { control, handleSubmit, reset, getValues, setValue } =
-    useForm<BusinessWalletFormValues>({
-      resolver: zodResolver(businessWalletFormSchema),
-      defaultValues: EMPTY_BUSINESS_WALLET_FORM
-    })
+  const { successMess } = useMessage()
+  const detail = useGetEnterpriseWalletQuery(id ?? '', { skip: !id })
+  const [createWallet, createState] = useCreateEnterpriseWalletMutation()
+  const [updateWallet, updateState] = useUpdateEnterpriseWalletMutation()
+  const [uploadDocument, uploadState] = useUploadMerchantDocumentMutation()
+  const { control, handleSubmit, reset, setError } = useForm<BusinessWalletFormValues>({
+    resolver: zodResolver(businessWalletFormSchema),
+    defaultValues: EMPTY_BUSINESS_WALLET_FORM
+  })
+  const currentOtpPhone = useWatch({ control, name: 'otpPhone' })
+  const requiresAdminPassword = Boolean(isEditMode && detail.data && currentOtpPhone?.trim() !== (detail.data.otpPhone ?? ''))
 
   useEffect(() => {
-    if (!isEditMode || !detail.data) return
-    reset({
-      ...EMPTY_BUSINESS_WALLET_FORM,
-      businessName: detail.data.ownerUsername ?? ''
-    })
-  }, [detail.data, isEditMode, reset])
+    if (detail.data) reset(detailToForm(detail.data))
+  }, [detail.data, reset])
 
-  const handleCopyContactPhone = (): void => {
-    const contactPhone = getValues('contactPhone').trim()
+  const upload = async (file: BusinessWalletFormValues['businessLicense'][number] | undefined, documentType: 'BUSINESS_LICENSE' | 'ID_CARD_FRONT' | 'ID_CARD_BACK' | 'AUTHORIZATION_LETTER'): Promise<string | undefined> => {
+    if (!file?.originFileObj) return undefined
+    const result = await uploadDocument({ file: file.originFileObj, documentType }).unwrap()
+    return result.stagingId
+  }
 
-    if (!contactPhone) {
-      warningMess('Vui lòng nhập SĐT liên hệ trước khi sao chép')
+  const onSubmit = async (values: BusinessWalletFormValues): Promise<void> => {
+    const phoneChanged = Boolean(isEditMode && detail.data && values.otpPhone.trim() !== (detail.data.otpPhone ?? ''))
+    if (phoneChanged && !values.adminPassword?.trim()) {
+      setError('adminPassword', { message: 'Vui lòng nhập mật khẩu quản trị khi đổi số OTP' })
       return
     }
-
-    setValue('otpPhone', contactPhone, {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true
-    })
-    successMess('Đã sao chép SĐT liên hệ sang SĐT nhận OTP')
-  }
-  const handleCancel = (): void => {
-    void navigate(-1)
-  }
-  const onSubmit = async (values: BusinessWalletFormValues): Promise<void> => {
-    const body = toBusinessWalletPayload(values)
     try {
+      const body: EnterpriseWalletPayload = {
+        registeredEmail: values.email.trim(),
+        legalName: values.businessName.trim(),
+        taxCode: values.taxCode.trim(),
+        businessType: values.businessType,
+        headOfficeAddress: values.headOfficeAddress.trim(),
+        legalRepresentativeName: values.legalRepName.trim(),
+        legalRepresentativeIdNumber: values.legalRepIdNumber.trim(),
+        managerName: values.managerName.trim(),
+        managerTitle: values.managerPosition.trim(),
+        managerIdNumber: values.managerIdNumber.trim(),
+        managerIdExpiryDate: getDate(values.managerIdExpiry) || undefined,
+        otpPhone: values.otpPhone.trim(),
+        adminPassword: phoneChanged ? values.adminPassword : undefined,
+        businessLicenseStagingId: await upload(values.businessLicense[0], 'BUSINESS_LICENSE'),
+        authorizationLetterStagingId: await upload(values.authorizationLetter[0], 'AUTHORIZATION_LETTER'),
+        idCardFrontStagingId: await upload(values.idCardFront[0], 'ID_CARD_FRONT'),
+        idCardBackStagingId: await upload(values.idCardBack[0], 'ID_CARD_BACK'),
+        internalWallet: values.isInternalWallet
+      }
       if (isEditMode && id) {
-        await putBusinessWallet({ id, body }).unwrap()
+        delete body.registeredEmail
+        await updateWallet({ id, body }).unwrap()
         successMess('Cập nhật ví doanh nghiệp thành công')
       } else {
-        await postBusinessWallet(body).unwrap()
-        successMess('Thêm mới ví doanh nghiệp thành công')
+        await createWallet(body).unwrap()
+        successMess('Tạo ví doanh nghiệp thành công')
       }
-      navigate(-1)
+      void navigate(-1)
     } catch {
-      // Lỗi HTTP đã được fetchBaseQueryCustom xử lý tập trung.
+      // Lỗi API được xử lý tại base query chung.
     }
   }
 
-  const isNotFound = detail.isError && detail.error !== undefined &&
-    'status' in detail.error && detail.error.status === 404
-
+  const isNotFound = detail.isError && detail.error !== undefined && 'status' in detail.error && detail.error.status === 404
   return {
-    control, handleSubmit, onSubmit, handleCopyContactPhone, handleCancel,
+    control, handleSubmit, onSubmit,
+    handleCancel: () => { void navigate(-1) },
     isEditMode,
-    isSubmitting: postState.isLoading || putState.isLoading,
+    requiresAdminPassword,
+    isSubmitting: createState.isLoading || updateState.isLoading || uploadState.isLoading,
     isLoadingDetail: detail.isLoading,
     isDetailError: detail.isError && !isNotFound,
     isNotFound,

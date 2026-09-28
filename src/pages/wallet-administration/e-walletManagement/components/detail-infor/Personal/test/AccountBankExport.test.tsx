@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { MessageProvider } from '@/app/hooks/useMessage'
+import { MessageProvider } from '@/app/hooks/MessageProvider'
 import AccountBank from '../AccountBank'
 
 const mocks = vi.hoisted(() => ({

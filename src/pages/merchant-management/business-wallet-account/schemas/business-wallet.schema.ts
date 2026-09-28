@@ -1,12 +1,11 @@
 import { z } from 'zod'
-import dayjs from 'dayjs'
 
 import type { UploadFile } from '@components/form'
 
 export const businessWalletSearchSchema = z.object({
-  username: z.string().trim().max(100, 'Tên doanh nghiệp tối đa 100 ký tự').optional(),
-  ownerId: z.string().trim().max(100, 'Mã chủ ví tối đa 100 ký tự').optional(),
-  status: z.enum(['ACTIVE', 'INACTIVE', 'FROZEN', 'LOCKED']).optional()
+  query: z.string().trim().max(100, 'Từ khóa tối đa 100 ký tự').optional(),
+  taxCode: z.string().trim().max(13, 'Mã số thuế tối đa 13 ký tự').optional(),
+  verificationStatus: z.enum(['DRAFT', 'PENDING_APPROVAL', 'VERIFIED', 'REJECTED']).optional()
 })
 
 export type BusinessWalletSearchValues = z.infer<
@@ -25,12 +24,12 @@ const uploadFileSchema = z.custom<UploadFile>()
 export const businessWalletFormSchema = z
   .object({
     email: z.email('Email đăng ký không đúng định dạng').max(255, 'Email tối đa 255 ký tự'),
-    contactPhone: z.string().regex(PHONE_REGEX, PHONE_MESSAGE),
     businessName: z
       .string()
       .trim()
       .min(1, 'Vui lòng nhập tên doanh nghiệp')
       .max(255, 'Tên doanh nghiệp tối đa 255 ký tự'),
+    businessType: z.enum(['ENTERPRISE', 'HOUSEHOLD']),
     taxCode: z.string().regex(TAX_CODE_REGEX, 'Mã số thuế gồm 10 hoặc 13 số'),
     headOfficeAddress: z
       .string()
@@ -57,12 +56,9 @@ export const businessWalletFormSchema = z
     managerIdExpiry: z
       .string()
       .min(1, 'Vui lòng chọn ngày hết hạn CCCD')
-      .refine(
-        (value) =>
-          dayjs(value).isValid() && dayjs(value).isAfter(dayjs(), 'day'),
-        'Ngày hết hạn CCCD phải sau hôm nay'
-      ),
+      .refine((value) => !Number.isNaN(Date.parse(value)) && new Date(value).getTime() > Date.now(), 'Ngày hết hạn CCCD phải sau hôm nay'),
     otpPhone: z.string().regex(PHONE_REGEX, PHONE_MESSAGE),
+    adminPassword: z.string().optional(),
     businessLicense: z
       .array(uploadFileSchema)
       .min(1, 'Vui lòng tải lên Giấy phép ĐKKD'),
@@ -95,8 +91,8 @@ export type BusinessWalletFormValues = z.infer<
 
 export const EMPTY_BUSINESS_WALLET_FORM: BusinessWalletFormValues = {
   email: '',
-  contactPhone: '',
   businessName: '',
+  businessType: 'ENTERPRISE',
   taxCode: '',
   headOfficeAddress: '',
   legalRepName: '',
@@ -106,6 +102,7 @@ export const EMPTY_BUSINESS_WALLET_FORM: BusinessWalletFormValues = {
   managerIdNumber: '',
   managerIdExpiry: '',
   otpPhone: '',
+  adminPassword: '',
   businessLicense: [],
   authorizationLetter: [],
   idCardFront: [],

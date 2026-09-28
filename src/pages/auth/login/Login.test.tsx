@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { renderWithProviders } from '@/test/render'
 import { server } from '@/test/mocks/server'
-import { MessageProvider } from '@/app/hooks/useMessage'
+import { MessageProvider } from '@/app/hooks/MessageProvider'
 import Login from './Login'
 
 const LOGIN_ROUTE = '/secure-panel/auth/login'

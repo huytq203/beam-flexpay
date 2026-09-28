@@ -1,6 +1,6 @@
 import type { Control } from 'react-hook-form'
 
-import { FormSwitch } from '@components/form'
+import { FormSelect, FormSwitch } from '@components/form'
 
 import type { BusinessWalletFormValues } from '../schemas/business-wallet.schema'
 import { BusinessWalletFormSection } from './BusinessWalletFormSection'
@@ -16,6 +16,13 @@ export function ClassificationSection({ control }: ClassificationSectionProps) {
       step='V'
       title='Phân loại tài khoản'
     >
+      <FormSelect
+        name='businessType'
+        control={control}
+        label='Loại hình kinh doanh'
+        options={[{ value: 'ENTERPRISE', label: 'Doanh nghiệp' }, { value: 'HOUSEHOLD', label: 'Hộ kinh doanh' }]}
+        className='col-span-12 flex flex-col md:col-span-6'
+      />
       <FormSwitch
         name='isInternalWallet'
         control={control}

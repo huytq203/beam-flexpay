@@ -88,7 +88,9 @@ export const getTerminalTypeLabel = (type: TerminalType): string =>
     STATIC_QR: 'QR tĩnh',
     DYNAMIC_QR: 'QR động',
     POS: 'POS',
-    SOFTPOS: 'SoftPOS'
+    SOFTPOS: 'SoftPOS',
+    ONLINE: 'Trực tuyến',
+    QR: 'QR'
   })[type]
 
 export const hasTerminalFilters = (filters: TerminalFiltersValue): boolean =>

@@ -16,8 +16,6 @@ describe('isStuckJournalStatus', () => {
   it('không coi bút toán đã có kết quả cuối là treo', () => {
     expect(isStuckJournalStatus(StatusEnum.POSTED)).toBe(false)
     expect(isStuckJournalStatus(StatusEnum.FAILED)).toBe(false)
-    expect(isStuckJournalStatus(StatusEnum.CANCELLED)).toBe(false)
-    expect(isStuckJournalStatus(StatusEnum.SETTLED)).toBe(false)
   })
 
   it('đóng với trạng thái lạ và giá trị rỗng, không mở mặc định', () => {
@@ -30,7 +28,6 @@ describe('isStuckJournalStatus', () => {
 describe('isTerminalJournalStatus', () => {
   it('nhận đúng bốn trạng thái đã chốt', () => {
     expect(isTerminalJournalStatus(StatusEnum.POSTED)).toBe(true)
-    expect(isTerminalJournalStatus(StatusEnum.SETTLED)).toBe(true)
     expect(isTerminalJournalStatus(StatusEnum.PENDING)).toBe(false)
     expect(isTerminalJournalStatus(null)).toBe(false)
   })

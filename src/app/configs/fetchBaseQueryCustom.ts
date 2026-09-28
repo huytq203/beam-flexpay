@@ -377,6 +377,11 @@ export const initInactivityTracker = () => {
 export interface CustomBaseQueryExtraOptions {
   /** Dùng cho thao tác đã có loading cục bộ, không đưa cờ UI vào query string. */
   suppressGlobalLoading?: boolean
+  /**
+   * Màn tự báo lỗi trong `catch` → tắt notification tập trung để tránh 2 toast.
+   * Luồng refresh token 401 vẫn giữ nguyên.
+   */
+  suppressErrorNotification?: boolean
 }
 
 /**
@@ -408,7 +413,9 @@ const createCustomBaseQuery = (
     const isChangePasswordRequest = isAdminChangePasswordRequest(requestUrl)
     // Tắt notification tập trung nhưng vẫn giữ luồng refresh token 401.
     const hidesErrorNotification =
-      isChangePasswordRequest || suppressesErrorNotification(requestUrl)
+      Boolean(extraOptions?.suppressErrorNotification) ||
+      isChangePasswordRequest ||
+      suppressesErrorNotification(requestUrl)
 
     const shouldShowLoading =
       !extraOptions?.suppressGlobalLoading &&

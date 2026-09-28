@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import type { UploadFile } from 'antd'
+import type { UploadFile } from '@components/form'
 
 const MAX_CONTRACT_SIZE = 10 * 1024 * 1024
 const MAX_LOGO_SIZE = 2 * 1024 * 1024
@@ -58,6 +58,7 @@ export const CreateMerchantSchema = z.object({
     productDescription: z
         .string()
         .max(1000, 'Mô tả không được vượt quá 1000 ký tự'),
+    adminPassword: z.string().optional(),
 }).superRefine((data, context) => {
     if (!data.signSeparateSubMerchantContract && data.merchantContract.length === 0) {
         context.addIssue({

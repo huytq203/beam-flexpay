@@ -1,14 +1,18 @@
 import usePagination from '@hooks/usePagination'
 import { useGetMerchantQuery } from '@services/apiMerchant'
+import { useState } from 'react'
+import type { MerchantFilters } from '../components/FormSearch'
 
 const useFetchData = () => {
-    const { page, pageSize:size, sort:sortBy ,sortBy:sortDirection } = usePagination()
+    const { page, pageSize:size, sort:sortBy ,sortBy:sortDirection, setPage, setPageSize } = usePagination()
+    const [filters, setFilters] = useState<MerchantFilters>({})
 
     const payload={
         page,
         size,
         sortDirection,
-        sortBy
+        sortBy,
+        ...filters
     }
     const {
         data: getMerchantData,
@@ -24,6 +28,13 @@ const useFetchData = () => {
     }))
     return {
         data,
+        totalElements: getMerchantData?.totalElements ?? 0,
+        page,
+        size,
+        payload,
+        setPage,
+        setPageSize,
+        setFilters: (next: MerchantFilters) => { setPage(1); setFilters(next) },
         getMerchantLoading,
         isFetching,
         refetch

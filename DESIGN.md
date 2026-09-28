@@ -122,6 +122,11 @@ components:
     textColor: "{colors.primary-foreground}"
     rounded: "{rounded.signage}"
     padding: "3px 8px"
+  access-count-card:
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.foreground}"
+    rounded: "{rounded.lg}"
+    padding: "16px"
 ---
 
 # Design System: FlexPay CMS
@@ -135,6 +140,8 @@ FlexPay CMS is where BEAM staff touch real money: eKYC approvals, transaction di
 Density is a virtue here, not a cost. Every station the account can reach shows its full printed name on first paint — nothing hides behind a hover, nothing is an icon-only affordance, and no decorative empty field pads the composition out. The 3D network is a real extruded model with a real key light and a real cast shadow: depth is modelled, never painted on with a CSS shadow. The rejected alternative is explicit and permanent — a grid of icon/title/description cards and a hero KPI band are not how this product introduces itself.
 
 The rest of the CMS runs on an incumbent teal shell (`#2bd9d0` on white, 12px radii, flat surfaces separated by a 1px `#c9e9e7` rule). The portal does not overturn that shell; it sits beside it as a chrome-less full-viewport surface with no header and no sidebar, and it hands the brand teal exactly two jobs — the interchange disc and the focus ring.
+
+Merchant User and Merchant Role lists use that shell as an operating surface. Both pages repeat a compact sequence of title and actions, selectable counts, filters, then a bordered data table. The portal's signage and map rules remain scoped to the startup surface; these lists use the shell's display and body fonts, status text colours, and existing controls.
 
 **Key Characteristics:**
 - Signage-light ground with near-black ink; no glass, no gradient, no blur.
@@ -196,6 +203,8 @@ Both load from Google Fonts alongside the shell's incumbent IBM Plex Sans — a 
 
 **The Full Digit Rule.** Clocks, counts and amounts are `tabular-nums` and never abbreviated.
 
+In shell list pages, the title is a 20px semibold IBM Plex Sans display line; count-card figures are 24px IBM Plex Sans with tabular numerals. Descriptions and controls use the shell's Inter body type. Status figures use the strong success, warning and danger text tokens so their meaning remains legible on white.
+
 ## Layout
 
 The portal is full-bleed: `min-height: 100dvh`, and at `lg` and above exactly `100dvh` with `overflow: hidden`, so the composition never scrolls as a page. There is no header and no sidebar — the layout wrapper deliberately drops both and the screen navigates itself.
@@ -207,6 +216,8 @@ The top bar floats over the ground rather than occupying a row: absolutely posit
 Rhythm is a 4px base stepped 4 · 8 · 12 · 16 · 24 · 32 · 40, with 128px reserved as the desktop top offset. Legend routes sit 12px apart; the status row uses 16px column gaps and 8px row gaps.
 
 Map geometry is one shared source of truth: every segment runs on a multiple of 45° in Beck's diagram grammar, lines fan out from a single interchange on a `[-90, -45, 0, 45, 90]` slot set chosen symmetrically for fewer than five lines, and the same maths drives both the WebGL model and the SVG fallback so the two can never disagree.
+
+Merchant access lists use a different, shared shell rhythm: a 12px vertical gap between the page header, count grid, filter container and table container. Count cards form two columns on narrow screens, then three or four at `xl` (1280px) according to count. Filters form one column by default, two at `sm` (640px), and three at `xl`; the search field spans both columns at `sm`. Tables retain their columns and scroll horizontally on narrow screens, with the action column fixed at the right. The user and role tables set horizontal content widths of 1300px and 1080px respectively; these are table-specific measurements, not spacing tokens.
 
 ## Elevation & Depth
 
@@ -251,6 +262,12 @@ The legend is the menu, not a caption for the model. Character: a strip diagram 
 ### Top Bar
 - **Style:** floating, transparent, no border, no breadcrumb, no page title. Logo at 32px height on the left, account control on the right, 16px vertical padding. It is the only chrome the surface admits.
 
+### Merchant Access List (shell pattern)
+- **Structure:** title and explanatory sentence with actions alongside when space permits; selectable count cards; a separate filter container; then a separate bordered table container. The two Merchant access lists share this order.
+- **Count cards:** white, 12px radius, 1px shell border, 16px inset, and at least 80px high. A selected card takes a teal border and faint teal ground. Hover changes the border; keyboard focus receives a visible teal outline. Counts use tabular numerals and semantic strong text tones.
+- **Filters and data:** search and selects stay in the white filter container, with Apply and Reset aligned to its end. The table uses compact bordered rows, truncates dense labels where necessary, and preserves horizontal scrolling on phones. Merchant identity also appears in the narrow-screen leading cell, where its dedicated table column may be off-screen.
+- **Access decisions:** the affected Merchant is repeated in assignment controls and confirmation copy, especially for changing user status or deleting a role. Context is visible at the action point, not left solely in the table row.
+
 ### Empty State
 - **Style:** centred on the ground, a 52px duotone outline mark, a 24px uppercase Archivo headline, and a 52ch muted paragraph naming the fix (contact an administrator). No illustration panel, no card.
 
@@ -272,6 +289,8 @@ One entrance sequence, ~1.2s, no loops and no scroll animation: top bar drops in
 - **Do** derive any second rendering of the map from the shared 2D geometry so the fallback and the model never disagree.
 - **Do** keep heavy visual dependencies behind a dynamic import.
 - **Do** separate resting surfaces with a 1px rule (`#d5d9e0` in the portal, `#c9e9e7` in the shell).
+- **Do** retain the header → count → filters → table order on Merchant access lists, and keep the table horizontally operable at narrow widths.
+- **Do** repeat Merchant scope beside permission choices and in access-change confirmations.
 
 ### Don't:
 - **Don't** use a saturated line block colour as text colour.

@@ -37,7 +37,7 @@ export function SubMerchantFilters({ value, onSearch, onReset }: SubMerchantFilt
   return (
     <form className='space-y-4' onReset={handleReset} onSubmit={form.handleSubmit(handleSubmit)}>
       <div className='flex items-center gap-2 border-b border-border pb-3'>
-        <FunnelIcon aria-hidden className='text-secondary-foreground' size={18} />
+        <FunnelIcon aria-hidden size={18} className='text-secondary-foreground' />
         <h2 className='font-display text-base font-semibold text-foreground'>Bộ lọc tìm kiếm</h2>
       </div>
       <div className='grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4'>

@@ -1,60 +1,39 @@
-import { screen } from '@testing-library/react'
+import { fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
-
+import { beforeEach, describe, expect, it } from 'vitest'
+import { http, HttpResponse } from 'msw'
+import { server } from '@/test/mocks/server'
 import { PERMISSION } from '@/app/permissions'
 import { createAppStore } from '@/app/store'
 import { renderWithProviders } from '@/test/render'
 import { savePermissions } from '@slices/authSlice'
-
 import NotificationPage from '../pages/NotificationPage'
 
-const renderPage = () => {
+beforeEach(() => server.use(
+  http.get('*/merchants', () => HttpResponse.json({ data: { content: [{ id: 'merchant-1', code: 'M001', name: 'Merchant A' }], totalElements: 1 } })),
+  http.get('*/merchants/merchant-1/notifications', () => HttpResponse.json({ data: { merchantId: 'merchant-1', level: 'MASTER', transactionNotificationEnabled: { value: true, inherited: false }, channels: { value: ['EMAIL'], inherited: false }, notificationEmails: { value: ['ops@example.com'], inherited: false }, reconciliationEmails: { value: [], inherited: false }, invoiceEmails: { value: [], inherited: false }, configured: true, active: true } }))
+))
+
+const renderPage = (permissions = [PERMISSION.MERCHANT_NOTIFICATION_VIEW, PERMISSION.MERCHANT_NOTIFICATION_MANAGE]) => {
   const store = createAppStore()
-  store.dispatch(savePermissions([PERMISSION.MERCHANT_VIEW]))
+  store.dispatch(savePermissions(permissions))
   return renderWithProviders(<NotificationPage />, { store })
 }
 
-describe('NotificationPage', () => {
-  it('chỉ hiển thị đích nhận đã che', async () => {
+describe('NotificationPage API', () => {
+  it('chỉ tải cấu hình sau khi chọn Merchant', async () => {
     renderPage()
-
-    expect(await screen.findByText('o***@highlands.vn')).toBeInTheDocument()
-    expect(screen.queryByText('ops@highlands.vn')).toBeNull()
+    expect(screen.getByText('Chọn Merchant để xem và chỉnh sửa thông báo.')).toBeInTheDocument()
+    fireEvent.mouseDown(screen.getAllByLabelText('Chọn Merchant')[0].querySelector('.ant-select-selector')!)
+    await userEvent.setup().click(await screen.findByText('M001 — Merchant A'))
+    expect(await screen.findByDisplayValue('ops@example.com')).toBeInTheDocument()
   })
 
-  it('lọc danh sách theo kênh Email', async () => {
-    const user = userEvent.setup()
-    renderPage()
-
-    await user.click(await screen.findByLabelText('Kênh'))
-    await user.click(screen.getByText('Email', { selector: '.ant-select-item-option-content' }))
-    await user.click(screen.getByRole('button', { name: 'Tìm kiếm' }))
-
-    expect(await screen.findByText('o***@highlands.vn')).toBeInTheDocument()
-    expect(screen.getByText('f***@gs25.com.vn')).toBeInTheDocument()
-    expect(screen.queryByText('******3456')).toBeNull()
-  })
-
-  it.each([
-    ['loading', 'Đang tải dữ liệu'],
-    ['error', 'Không tải được danh sách cấu hình merchant'],
-    ['empty', 'Chưa có cấu hình'],
-    ['success', 'Highlands Coffee']
-  ] as const)('hiển thị trạng thái %s', async (initialListState, label) => {
-    const store = createAppStore()
-    store.dispatch(savePermissions([PERMISSION.MERCHANT_VIEW]))
-    renderWithProviders(<NotificationPage initialListState={initialListState} />, { store })
-    expect(await screen.findByText(label)).toBeInTheDocument()
-  })
-
-  it('thử lại từ trạng thái lỗi và hiển thị dữ liệu fixture', async () => {
-    const user = userEvent.setup()
-    const store = createAppStore()
-    store.dispatch(savePermissions([PERMISSION.MERCHANT_VIEW]))
-    renderWithProviders(<NotificationPage initialListState='error' />, { store })
-
-    await user.click(await screen.findByRole('button', { name: 'Thử lại' }))
-    expect(await screen.findByText('Highlands Coffee')).toBeInTheDocument()
+  it('không cho quyền chỉ xem lưu cấu hình', async () => {
+    renderPage([PERMISSION.MERCHANT_NOTIFICATION_VIEW])
+    fireEvent.mouseDown(screen.getAllByLabelText('Chọn Merchant')[0].querySelector('.ant-select-selector')!)
+    await userEvent.setup().click(await screen.findByText('M001 — Merchant A'))
+    await screen.findByDisplayValue('ops@example.com')
+    expect(screen.queryByRole('button', { name: 'Lưu cấu hình' })).toBeNull()
   })
 })

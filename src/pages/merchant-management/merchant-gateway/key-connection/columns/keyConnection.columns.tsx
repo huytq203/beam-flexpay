@@ -111,7 +111,8 @@ const getActionColumn = (
             htmlType='button'
             icon={<EditOutlined aria-hidden />}
             onClick={() => onEdit(row)}
-            type='text'
+            size='small'
+            type='default'
           />
         </TooltipComponent>
       </Can>
@@ -123,7 +124,8 @@ const getActionColumn = (
             htmlType='button'
             icon={row.status === 'ACTIVE' ? <LockFilled aria-hidden /> : <LockKeyOpenIcon aria-hidden size={16} />}
             onClick={() => onRequestStatusChange(row)}
-            type='text'
+            size='small'
+            type='default'
           />
         </TooltipComponent>
       </Can>

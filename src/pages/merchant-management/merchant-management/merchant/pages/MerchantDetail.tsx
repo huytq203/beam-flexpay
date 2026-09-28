@@ -1,273 +1,120 @@
-import React from 'react'
-import {
-  ArrowLeftOutlined,
-  MailOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined
-} from '@components/icons'
-import { ButtonComponent, CardComponent, DialogModal, SubjectSegmentCard } from '@components/index'
+import { useState } from 'react'
+import { formatUTCToLocalDateTime } from '@utils/helper-functions/date'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useGetMerchantByIdQuery } from '@services/apiMerchant'
-import { Alert, Skeleton } from 'antd'
-import { FormSelect, FormTextArea } from '@components/form'
-import { useForm } from 'react-hook-form'
-import dayjs from 'dayjs'
+import { Can } from '@/app/permissions'
+import { ArrowLeftOutlined } from '@components/icons'
+import { ButtonComponent, CardComponent, DialogModal, SubjectSegmentCard, TextArea, feedback } from '@components/index'
+import {
+  useApproveMerchantMutation,
+  useGetMerchantByIdQuery,
+  useRejectMerchantMutation,
+  useSetMerchantLockedMutation,
+  useSubmitMerchantMutation
+} from '@services/apiMerchant'
 import StatusBadge from '@components/status-badge/StatusBadge'
-import { StatusKey } from '@pages/wallet-administration/e-walletManagement/constants/Ewallet.constant'
+import { STATUS_CONFIG } from '../constants/Merchant.constant'
 
-const InfoRow = ({ label, value }: { label: string; value?: string | null }) => (
-  <div className='mb-4'>
-    <div className='text-gray-500 text-sm mb-1 uppercase tracking-wide'>{label}</div>
-    <div className={`font-medium ${!value ? 'text-gray-400' : ''}`}>
-      {value ?? 'Chưa cập nhật'}
-    </div>
-  </div>
-)
+type Action = 'submit' | 'approve' | 'reject' | 'lock' | 'unlock'
+
+const ACTION_LABEL: Record<Action, string> = {
+  submit: 'Gửi duyệt hồ sơ',
+  approve: 'Phê duyệt hồ sơ',
+  reject: 'Từ chối hồ sơ',
+  lock: 'Khóa merchant',
+  unlock: 'Mở khóa merchant'
+}
+
+const Field = ({ label, value }: { label: string; value?: string | null }) => <div className='min-w-0'>
+  <dt className='text-xs font-medium text-muted-foreground'>{label}</dt>
+  <dd className='mt-1 break-words text-sm font-medium text-foreground'>{value || '—'}</dd>
+</div>
 
 const MerchantDetail = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { control } = useForm()
+  const { data, isLoading, isError, refetch } = useGetMerchantByIdQuery(id ?? '', { skip: !id })
+  const [submit] = useSubmitMerchantMutation()
+  const [approve] = useApproveMerchantMutation()
+  const [reject] = useRejectMerchantMutation()
+  const [setLocked] = useSetMerchantLockedMutation()
+  const [action, setAction] = useState<Action | null>(null)
+  const [reason, setReason] = useState('')
+  const [isWorking, setIsWorking] = useState(false)
 
-  const { data, isLoading } = useGetMerchantByIdQuery(id ?? '', { skip: !id })
+  const confirm = async () => {
+    if (!id || !action) return
+    if ((action === 'lock' || action === 'unlock') && reason.trim().length < 10) {
+      feedback.warning('Lý do cần tối thiểu 10 ký tự')
+      return
+    }
+    if (action === 'reject' && !reason.trim()) {
+      feedback.warning('Vui lòng nhập lý do từ chối')
+      return
+    }
+    setIsWorking(true)
+    try {
+      if (action === 'submit') await submit(id).unwrap()
+      if (action === 'approve') await approve(id).unwrap()
+      if (action === 'reject') await reject({ id, detail: reason.trim(), reasonCode: 'OTHER' }).unwrap()
+      if (action === 'lock' || action === 'unlock') await setLocked({ id, lock: action === 'lock', reason: reason.trim() }).unwrap()
+      feedback.success(`${ACTION_LABEL[action]} thành công`)
+      setAction(null)
+      setReason('')
+    } catch {
+      feedback.error(`Không thể ${ACTION_LABEL[action].toLocaleLowerCase('vi-VN')}`)
+    } finally {
+      setIsWorking(false)
+    }
+  }
 
-  return (
-    <div className='p-6 bg-gray-50 min-h-screen'>
-      <div className='mb-6 flex items-center justify-between bg-white p-4 rounded-lg shadow-xs'>
-        <div className='flex items-center gap-4'>
-          <ButtonComponent
-            type='text'
-            icon={<ArrowLeftOutlined />}
-            onClick={() => navigate(-1)}
-          />
-          <div>
-            <div className='text-sm text-gray-500'>Mã merchant:</div>
-            <Skeleton loading={isLoading} active paragraph={false} className='w-32'>
-              <div className='text-lg font-semibold'>{data?.code ?? '--'}</div>
-            </Skeleton>
-          </div>
+  return <main className='space-y-3! p-3! sm:p-5!'>
+    <CardComponent className='border border-border bg-background shadow-none'>
+      <div className='flex flex-wrap items-center justify-between gap-3'>
+        <div className='flex items-center gap-2'>
+          <ButtonComponent aria-label='Quay lại' type='default' size='small' icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)} />
+          <div><h1 className='text-lg font-semibold text-foreground'>{data?.name ?? 'Chi tiết merchant'}</h1><p className='text-xs text-muted-foreground'>{data?.code ?? '—'}</p></div>
+          {data?.status && <StatusBadge status={data.status} config={STATUS_CONFIG} />}
         </div>
-
-        <div className='flex gap-3'>
-          <ButtonComponent
-            type='default'
-            icon={<MailOutlined />}
-            content='Gửi thông báo (SMS/Email)'
-          />
-          <ButtonComponent
-            type='primary'
-            icon={<CheckCircleOutlined />}
-            content='Phê duyệt hồ sơ'
-          />
-          <ButtonComponent
-            danger
-            type='default'
-            icon={<CloseCircleOutlined />}
-            content='Từ chối'
-          />
-        </div>
+        {data && <div className='flex flex-wrap items-center gap-2'>
+          {data.status === 'DRAFT' && <Can screen='MERCHANT_MANAGEMENT' action='edit'><ButtonComponent size='small' content='Gửi duyệt' onClick={() => setAction('submit')} /></Can>}
+          {data.status === 'PENDING_APPROVAL' && <Can screen='MERCHANT_MANAGEMENT' action='approve'><ButtonComponent size='small' content='Phê duyệt' onClick={() => setAction('approve')} /><ButtonComponent size='small' type='default' danger content='Từ chối' onClick={() => setAction('reject')} /></Can>}
+          {data.status === 'ACTIVE' && <Can screen='MERCHANT_MANAGEMENT' action='lock'><ButtonComponent size='small' type='default' danger content='Khóa' onClick={() => setAction('lock')} /></Can>}
+          {data.status === 'LOCKED' && <Can screen='MERCHANT_MANAGEMENT' action='unlock'><ButtonComponent size='small' type='default' content='Mở khóa' onClick={() => setAction('unlock')} /></Can>}
+        </div>}
       </div>
-       <Alert
-        type='error'
-        showIcon
-        className='mb-6'
-        message={
-          <div>
-            <strong>Hồ sơ chưa hoàn thiện (Thiếu những tài liệu)</strong>
-          </div>
-        }
-        description={
-          <ul className='list-disc list-inside space-y-1 mt-2'>
-            <li>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit (ưa daanh)
-            </li>
-            <li>Chưa cung cấp thông tin người đại diện và tài kế biz</li>
-            <li>
-              Hệ thống tìm thấy nội dung không hợp lệ (CCCD và ảnh chân dung)
-            </li>
-          </ul>
-        }
-      />
+    </CardComponent>
 
-      <Skeleton loading={isLoading} active>
-        <CardComponent title='Thông tin định danh' className='mb-6'>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-2'>
-            <InfoRow label='Mã định danh (ID)' value={data?.id} />
-            <InfoRow label='Tên Merchant' value={data?.name} />
-            <InfoRow label='Mã Merchant' value={data?.code} />
-            <InfoRow label='Email liên hệ' value={data?.contactEmail} />
-            <InfoRow label='Số điện thoại liên hệ' value={data?.contactPhone} />
-            <div className='mb-4'>
-              <div className='text-gray-500 text-sm mb-1 uppercase tracking-wide'>Trạng thái</div>
-              {data?.status
-                ? <StatusBadge status={data.status as StatusKey} />
-                : <span className='text-gray-400'>Chưa cập nhật</span>
-              }
-            </div>
-            <InfoRow
-              label='Ngày tạo tài khoản'
-              value={data?.createdAt ? dayjs(data.createdAt).format('DD/MM/YYYY HH:mm:ss') : undefined}
-            />
-            <InfoRow
-              label='Ngày cập nhật'
-              value={data?.updatedAt ? dayjs(data.updatedAt).format('DD/MM/YYYY HH:mm:ss') : undefined}
-            />
-            <InfoRow label='Người tạo' value={data?.createdBy} />
-          </div>
-        </CardComponent>
+    {isLoading && <CardComponent><p role='status' className='text-sm text-muted-foreground'>Đang tải hồ sơ merchant…</p></CardComponent>}
+    {isError && <CardComponent><div role='alert' className='flex flex-wrap items-center justify-between gap-3'><p className='text-sm text-danger-strong'>Không thể tải hồ sơ merchant.</p><ButtonComponent type='default' size='small' content='Thử lại' onClick={() => void refetch()} /></div></CardComponent>}
+    {data && <>
+      <CardComponent title='Thông tin Merchant' className='border border-border bg-background shadow-none'>
+        <dl className='grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4'>
+          <Field label='ID' value={data.id} /><Field label='Mã merchant' value={data.code} />
+          <Field label='Tên hiển thị' value={data.name} /><Field label='Tên pháp lý' value={data.legalName} />
+          <Field label='Mã số thuế' value={data.taxCode} /><Field label='Loại merchant' value={data.merchantType} />
+          <Field label='MCC' value={data.mccCode} /><Field label='Ngành nghề' value={data.businessCategory} />
+          <Field label='Email liên hệ' value={data.contactEmail} /><Field label='Điện thoại liên hệ' value={data.contactPhone} />
+          <Field label='Website' value={data.websiteUrl} /><Field label='Liên hệ hỗ trợ' value={data.supportContact} />
+          <Field label='Ngày tạo' value={formatUTCToLocalDateTime(data.createdAt)} />
+          <Field label='Ngày cập nhật' value={formatUTCToLocalDateTime(data.updatedAt)} />
+        </dl>
+      </CardComponent>
+      <CardComponent title='Hồ sơ & tài liệu' className='border border-border bg-background shadow-none'>
+        <dl className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+          <Field label='Mô tả sản phẩm / dịch vụ' value={data.productDescription} />
+          <Field label='Hợp đồng' value={data.contractFile?.filename} />
+          <Field label='Logo' value={data.logoFile?.filename} />
+          <Field label='Ảnh sản phẩm' value={data.productImages?.map((file) => file.filename).join(', ')} />
+        </dl>
+      </CardComponent>
+      <SubjectSegmentCard subjectType='MERCHANT' subjectId={data.id} />
+    </>}
 
-        <div className='mb-6'>
-          <SubjectSegmentCard
-            subjectType='MERCHANT'
-            subjectId={data?.id ?? ''}
-          />
-        </div>
-
-        <CardComponent title='Hồ sơ hình ảnh & Pháp lý'>
-
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4'>
-          <div>
-            <div className='mb-4'>
-              <div className='text-gray-500 text-sm mb-1'>
-                CCCD/Mã số thuế
-              </div>
-              <div className='font-medium text-gray-400'>Chưa cập nhật</div>
-            </div>
-          </div>
-          <div>
-            <div className='mb-4'>
-              <div className='text-gray-500 text-sm mb-1'>
-                Ngày cấp
-              </div>
-              <div className='font-medium text-gray-400'>Chưa cập nhật</div>
-            </div>
-          </div>
-          <div>
-            <div className='mb-4'>
-              <div className='text-gray-500 text-sm mb-1'>
-                Người đại diện
-              </div>
-              <div className='font-medium text-gray-400'>Chưa cập nhật</div>
-            </div>
-          </div>
-            <div className='col-span-3'>
-            <div className='mb-4 '>
-              <div className='text-gray-500 text-sm mb-1'>
-                Nơi cấp
-              </div>
-              <div className='font-medium '>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Porro dolorum assumenda, dolore delectus accusantium quidem corporis ullam itaque molestias libero consectetur esse quibusdam fugiat facere animi saepe ut. Corporis, ut.</div>
-            </div>
-          </div>
-
-
-        </div>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4'>
-          <div>
-            <div className='border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50'>
-              <div className='text-gray-400 mb-2'>
-                <svg
-                  className='mx-auto h-12 w-12'
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12'
-                  />
-                </svg>
-              </div>
-              <div className='text-sm text-gray-500'>Giấy phép kinh doanh</div>
-            </div>
-          </div>
-          <div
-          >
-            <div className='border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50'>
-              <div className='text-gray-400 mb-2'>
-                <svg
-                  className='mx-auto h-12 w-12'
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2'
-                  />
-                </svg>
-              </div>
-              <div className='text-sm text-gray-500'>CCCD đại diện</div>
-            </div>
-          </div>
-          <div
-
-          >
-            <div className='border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50'>
-              <div className='text-gray-400 mb-2'>
-                <svg
-                  className='mx-auto h-12 w-12'
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'
-                  />
-                </svg>
-              </div>
-              <div className='text-sm text-gray-500'>
-                Ảnh chân dung đại diện
-              </div>
-            </div>
-          </div>
-          </div>
-        </CardComponent>
-      </Skeleton>
-
-      <DialogModal
-        title='Xác nhận phê duyệt'
-        content={
-          <>
-            <span>Bạn đang thực hiện phê duyệt cho Merchant <strong>{data?.name ?? '--'}</strong>.</span>
-            <div>
-              <span>Sau khi phê duyệt:</span>
-              <ul className='my-3 pl-3 list-disc list-inside'>
-                <li>Hệ thống sẽ tự động kích hoạt tài khoản Merchant</li>
-                <li>Khởi tạo ví tài khoản và các cấu hình phí mặc định</li>
-                <li>Gửi email thông báo "Chào mừng" tới Merchant</li>
-              </ul>
-            </div>
-          </>
-        }
-        onCancel={() => { }}
-        onOk={() => { }}
-        open={false}
-      />
-
-      <DialogModal
-        title='Từ chối phê duyệt'
-        content={
-          <>
-            <span>Vui lòng nhập lý do từ chối. Thông báo này sẽ gửi trực tiếp đến Merchant để họ cập nhật lại hồ sơ.</span>
-            <div className='my-3'>
-              <FormSelect control={control} name='rejectReason' options={[]} label={<span className='text-gray-400 font-medium'>Lý do từ chối (Bắt buộc):</span>} />
-              <FormTextArea control={control} name='rejectNote' label={<span className='text-gray-400 font-medium'>Ghi chú:</span>} placeholder='Nhập ghi chú...' />
-            </div>
-          </>
-        }
-        onCancel={() => { }}
-        onOk={() => { }}
-        open={false}
-      />
-    </div>
-  )
+    <DialogModal open={action !== null} title={action ? ACTION_LABEL[action] : ''} onCancel={() => { setAction(null); setReason('') }} onOk={() => void confirm()} okButtonProps={{ loading: isWorking }} okText='Xác nhận'>
+      <p className='mb-3 text-sm text-foreground'>Xác nhận {action ? ACTION_LABEL[action].toLocaleLowerCase('vi-VN') : ''} cho <strong>{data?.name}</strong>?</p>
+      {(action === 'reject' || action === 'lock' || action === 'unlock') && <TextArea aria-label='Lý do' maxLength={500} rows={3} value={reason} placeholder='Nhập lý do' onChange={(event) => setReason(event.target.value)} />}
+    </DialogModal>
+  </main>
 }
 
 export default MerchantDetail

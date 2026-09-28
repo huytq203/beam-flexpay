@@ -20,6 +20,8 @@ const STATUS_PRESENTATION: Record<
   { label: string; tone: 'success' | 'warning' | 'danger' }
 > = {
   ACTIVE: { label: 'Hoạt động', tone: 'success' },
+  INACTIVE: { label: 'Đã khóa', tone: 'warning' },
+  TERMINATED: { label: 'Đã chấm dứt', tone: 'danger' },
   LOCKED: { label: 'Đã khóa', tone: 'warning' },
   SUSPENDED_BY_PARENT: { label: 'Tạm ngưng theo cấp cha', tone: 'danger' },
   SUSPENDED_BY_SUB: { label: 'Tạm ngưng theo cấp cha', tone: 'danger' }

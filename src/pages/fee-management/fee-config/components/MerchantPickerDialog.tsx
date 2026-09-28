@@ -67,7 +67,7 @@ export const MerchantPickerDialog = ({
     {
       page,
       size,
-      keyword: debouncedKeyword || undefined,
+      name: debouncedKeyword || undefined,
       sortBy: 'createdAt',
       sortDirection: 'DESC'
     },

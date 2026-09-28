@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 
 import { PERMISSION } from '@/app/permissions'
 import { createAppStore } from '@/app/store'
-import { MessageProvider } from '@hooks/useMessage'
+import { MessageProvider } from '@hooks/MessageProvider'
 import { savePermissions } from '@slices/authSlice'
 
 import {

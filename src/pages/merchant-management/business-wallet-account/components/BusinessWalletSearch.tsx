@@ -10,10 +10,10 @@ import {
 } from '../schemas/business-wallet.schema'
 
 const STATUS_OPTIONS = [
-  { value: 'ACTIVE', label: 'Hoạt động' },
-  { value: 'INACTIVE', label: 'Ngừng hoạt động' },
-  { value: 'FROZEN', label: 'Đóng băng' },
-  { value: 'LOCKED', label: 'Đã khóa' }
+  { value: 'DRAFT', label: 'Bản nháp' },
+  { value: 'PENDING_APPROVAL', label: 'Chờ duyệt' },
+  { value: 'VERIFIED', label: 'Đã xác minh' },
+  { value: 'REJECTED', label: 'Từ chối' }
 ]
 
 interface BusinessWalletSearchProps {
@@ -28,9 +28,9 @@ export function BusinessWalletSearch({
   const form = useForm<BusinessWalletSearchValues>({
     resolver: zodResolver(businessWalletSearchSchema),
     defaultValues: {
-      username: '',
-      ownerId: '',
-      status: undefined
+      query: '',
+      taxCode: '',
+      verificationStatus: undefined
     }
   })
 
@@ -59,26 +59,26 @@ export function BusinessWalletSearch({
       <div className='grid grid-cols-1 gap-3 md:grid-cols-3'>
         <FormInput
           control={form.control}
-          name='username'
-          label='Tên doanh nghiệp'
-          placeholder='Nhập tên doanh nghiệp'
+          name='query'
+          label='Tìm kiếm'
+          placeholder='Tên hoặc email doanh nghiệp'
           disabled={isSubmitting}
           className='flex flex-col gap-1.5'
           classNameLable='text-sm font-medium text-foreground'
         />
         <FormInput
           control={form.control}
-          name='ownerId'
-          label='Mã chủ ví'
-          placeholder='Nhập mã chủ ví'
+          name='taxCode'
+          label='Mã số thuế'
+          placeholder='Nhập mã số thuế'
           disabled={isSubmitting}
           className='flex flex-col gap-1.5'
           classNameLable='text-sm font-medium text-foreground'
         />
         <FormSelect
           control={form.control}
-          name='status'
-          label='Trạng thái ví'
+          name='verificationStatus'
+          label='Trạng thái xác minh'
           placeholder='Chọn trạng thái'
           options={STATUS_OPTIONS}
           disabled={isSubmitting}

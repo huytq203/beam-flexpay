@@ -19,7 +19,7 @@ interface SubMerchantTableProps {
   onEdit: (row: SubMerchantRow) => void
   onPageChange: (page: number, pageSize: number) => void
   onRetry: () => void
-  onToggleStatus: (id: string, reason: string) => boolean
+  onToggleStatus: (id: string, reason: string) => Promise<boolean>
 }
 
 export function SubMerchantTable({
@@ -36,11 +36,11 @@ export function SubMerchantTable({
   onToggleStatus
 }: SubMerchantTableProps) {
   const [statusRow, setStatusRow] = useState<SubMerchantRow | null>(null)
-  const columns = createSubMerchantColumns({ onView, onEdit, onStatus: setStatusRow })
+  const columns = createSubMerchantColumns({ page, pageSize, onView, onEdit, onStatus: setStatusRow })
 
-  const handleConfirm = (reason: string): void => {
+  const handleConfirm = async (reason: string): Promise<void> => {
     if (!statusRow) return
-    if (onToggleStatus(statusRow.id, reason)) setStatusRow(null)
+    if (await onToggleStatus(statusRow.id, reason)) setStatusRow(null)
   }
 
   return (

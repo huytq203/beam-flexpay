@@ -1,40 +1,89 @@
-import { ResponseType } from '@type/api'
 import { apiMerchant } from './apiService'
-import { ContentMerchant, DataMerchant } from '@type/merchant'
-const merchantService = apiMerchant.injectEndpoints({
-    endpoints: (builder) => ({
-        getMerchant: builder.query({
-            query: (payload) => ({
-                url: '/merchants',
-                method: 'GET',
-                params: payload
-            }),
-            transformResponse: (res: ResponseType<DataMerchant>) => res.data
-        }),
-        postMerchant: builder.mutation({
-            query: (payload) => ({
-                url: '/merchants',
-                method: 'POST',
-                body: payload
-            })
-        }),
-        putMerchant: builder.mutation({
-            query: ({ id, payload }) => ({
-                url: `/merchants/${id}`,
-                method: 'PUT',
-                body: payload
-            })
-        }),
-        getMerchantById: builder.query({
-            query: (id: string) => `/merchants/${id}`,
-            transformResponse: (res: ResponseType<ContentMerchant>) => res.data
-        })
+import type {
+  ContentMerchant,
+  CreateMerchantPayload,
+  DataMerchant,
+  MerchantEnvelope,
+  MerchantPage,
+  MerchantSearchParams,
+  SelectableWallet,
+  UpdateMerchantPayload
+} from '@type/merchant'
+
+export const merchantService = apiMerchant.injectEndpoints({
+  endpoints: (builder) => ({
+    getMerchant: builder.query<DataMerchant, MerchantSearchParams>({
+      query: (params) => ({ url: '/merchants', params }),
+      transformResponse: (response: MerchantEnvelope<DataMerchant>) => response.data,
+      providesTags: ['merchant']
+    }),
+    exportMerchants: builder.mutation<Blob, MerchantSearchParams>({
+      query: (params) => ({
+        url: '/merchants/export',
+        params,
+        responseHandler: (response: Response) => response.blob()
+      })
+    }),
+    getSelectableWallets: builder.query<MerchantPage<SelectableWallet>, { query?: string; page?: number; size?: number }>({
+      query: (params) => ({ url: '/merchants/selectable-wallets', params }),
+      transformResponse: (response: MerchantEnvelope<MerchantPage<SelectableWallet>>) => response.data
+    }),
+    uploadMerchantDocument: builder.mutation<{ stagingId: string }, { file: File; documentType: 'BUSINESS_LICENSE' | 'ID_CARD_FRONT' | 'ID_CARD_BACK' | 'AUTHORIZATION_LETTER' | 'MERCHANT_CONTRACT' | 'MERCHANT_LOGO' | 'MERCHANT_PRODUCT_IMAGE' }>({
+      query: ({ file, documentType }) => {
+        const body = new FormData()
+        body.append('file', file)
+        return { url: '/documents', method: 'POST', params: { documentType }, body }
+      },
+      transformResponse: (response: MerchantEnvelope<{ stagingId: string }>) => response.data
+    }),
+    postMerchant: builder.mutation<ContentMerchant, CreateMerchantPayload>({
+      query: (body) => ({ url: '/merchants', method: 'POST', body }),
+      transformResponse: (response: MerchantEnvelope<ContentMerchant>) => response.data,
+      invalidatesTags: ['merchant']
+    }),
+    putMerchant: builder.mutation<ContentMerchant, { id: string; payload: UpdateMerchantPayload }>({
+      query: ({ id, payload }) => ({ url: `/merchants/${id}`, method: 'PUT', body: payload }),
+      transformResponse: (response: MerchantEnvelope<ContentMerchant>) => response.data,
+      invalidatesTags: ['merchant']
+    }),
+    getMerchantById: builder.query<ContentMerchant, string>({
+      query: (id) => `/merchants/${id}`,
+      transformResponse: (response: MerchantEnvelope<ContentMerchant>) => response.data,
+      providesTags: ['merchant']
+    }),
+    submitMerchant: builder.mutation<ContentMerchant, string>({
+      query: (id) => ({ url: `/merchants/${id}/submit`, method: 'POST' }),
+      transformResponse: (response: MerchantEnvelope<ContentMerchant>) => response.data,
+      invalidatesTags: ['merchant']
+    }),
+    approveMerchant: builder.mutation<ContentMerchant, string>({
+      query: (id) => ({ url: `/merchants/${id}/approve`, method: 'POST' }),
+      transformResponse: (response: MerchantEnvelope<ContentMerchant>) => response.data,
+      invalidatesTags: ['merchant']
+    }),
+    rejectMerchant: builder.mutation<ContentMerchant, { id: string; detail: string; reasonCode?: 'BLURRED_IMAGE' | 'INCORRECT_INFORMATION' | 'MISSING_DOCUMENT' | 'OTHER' }>({
+      query: ({ id, ...body }) => ({ url: `/merchants/${id}/reject`, method: 'POST', body }),
+      transformResponse: (response: MerchantEnvelope<ContentMerchant>) => response.data,
+      invalidatesTags: ['merchant']
+    }),
+    setMerchantLocked: builder.mutation<ContentMerchant, { id: string; lock: boolean; reason: string }>({
+      query: ({ id, lock, reason }) => ({ url: `/merchants/${id}/${lock ? 'lock' : 'unlock'}`, method: 'POST', body: { reason } }),
+      transformResponse: (response: MerchantEnvelope<ContentMerchant>) => response.data,
+      invalidatesTags: ['merchant']
     })
+  })
 })
 
 export const {
-    useGetMerchantQuery,
-    usePostMerchantMutation,
-    usePutMerchantMutation,
-    useGetMerchantByIdQuery
+  useGetMerchantQuery,
+  useExportMerchantsMutation,
+  useGetSelectableWalletsQuery,
+  useUploadMerchantDocumentMutation,
+  usePostMerchantMutation,
+  usePutMerchantMutation,
+  useGetMerchantByIdQuery,
+  useSubmitMerchantMutation,
+  useApproveMerchantMutation,
+  useRejectMerchantMutation,
+  useSetMerchantLockedMutation
 } = merchantService

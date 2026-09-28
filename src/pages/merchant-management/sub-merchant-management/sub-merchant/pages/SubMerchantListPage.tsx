@@ -1,15 +1,20 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { useGetSubMerchantPageQuery, useSetSubMerchantLockedMutation } from '@/app/services/merchantHierarchyApi'
 import { Can, SCREENS } from '@/app/permissions'
-import { PlusOutlined, StorefrontIcon } from '@components/icons'
-import { ButtonComponent, CardComponent, ExportCsvButton } from '@components/index'
+import { PlusOutlined } from '@components/icons'
+import { ButtonComponent, CardComponent } from '@components/index'
 
 import { ManagementPageHeader } from '../../shared/ManagementPageHeader'
+import { toSubMerchantRow } from '../../shared/hierarchyAdapter'
 import type { ManagementListState } from '../../shared/management.types'
 import { SubMerchantFilters } from '../components/SubMerchantFilters'
+import { SubMerchantDetailModal } from '../components/SubMerchantDetailModal'
 import { SubMerchantTable } from '../components/SubMerchantTable'
-import { useSubMerchants } from '../hooks/useSubMerchants'
+import { EMPTY_SUB_MERCHANT_FILTERS, type SubMerchantFiltersValue } from '../hooks/useSubMerchants'
 import type { SubMerchantRow } from '../types/subMerchant.type'
+import { globalMessage } from '@hooks/useMessage'
 
 interface SubMerchantListPageProps {
   initialListState?: ManagementListState
@@ -17,13 +22,40 @@ interface SubMerchantListPageProps {
 
 export default function SubMerchantListPage({ initialListState }: SubMerchantListPageProps) {
   const navigate = useNavigate()
-  const list = useSubMerchants({ initialListState })
+  const [filters, setFilters] = useState<SubMerchantFiltersValue>(EMPTY_SUB_MERCHANT_FILTERS)
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+  const [viewingId, setViewingId] = useState<string>()
+  const query = useGetSubMerchantPageQuery({
+    page, size: pageSize, merchantId: filters.parentMerchantId,
+    name: filters.query.trim() || undefined,
+    status: filters.status === 'ACTIVE' || filters.status === 'INACTIVE' || filters.status === 'TERMINATED' ? filters.status : undefined
+  })
+  const [setLocked] = useSetSubMerchantLockedMutation()
+  const rows = query.data?.content.map(toSubMerchantRow) ?? []
+  const total = query.data?.totalElements ?? 0
+  const listState = initialListState ?? (query.isLoading || query.isFetching && !query.data ? 'loading' : query.isError ? 'error' : total === 0 ? 'empty' : 'success')
+  const search = (next: SubMerchantFiltersValue): void => { setFilters(next); setPage(1) }
+  const reset = (): void => search(EMPTY_SUB_MERCHANT_FILTERS)
+  const changePage = (next: number, size: number): void => { setPage(size === pageSize ? next : 1); setPageSize(size) }
+  const toggleStatus = async (id: string, reason: string): Promise<boolean> => {
+    const row = rows.find((item) => item.id === id)
+    if (!row || row.status === 'TERMINATED' || row.status === 'SUSPENDED_BY_PARENT') return false
+    try {
+      await setLocked({ id, lock: row.status === 'ACTIVE', reason }).unwrap()
+      globalMessage.success(row.status === 'ACTIVE' ? 'Đã khóa Sub-merchant' : 'Đã mở khóa Sub-merchant')
+      return true
+    } catch {
+      globalMessage.error('Không thể cập nhật trạng thái Sub-merchant')
+      return false
+    }
+  }
   const basePath = SCREENS.MERCHANT_SUB_MERCHANT.path
   const isFiltered = Boolean(
-    list.filters.query || list.filters.parentMerchantId || list.filters.status || list.filters.createdRange
+    filters.query || filters.parentMerchantId || filters.status
   )
   const openDetail = (row: SubMerchantRow): void => {
-    void navigate(`${basePath}/detail/${row.id}`)
+    setViewingId(row.id)
   }
   const openEdit = (row: SubMerchantRow): void => {
     void navigate(`${basePath}/edit/${row.id}`)
@@ -32,42 +64,37 @@ export default function SubMerchantListPage({ initialListState }: SubMerchantLis
   return (
     <main className='flex min-w-0 flex-col gap-3'>
       <CardComponent className='border border-border bg-background shadow-none'>
-        <SubMerchantFilters onReset={list.resetFilters} onSearch={list.setFilters} value={list.filters} />
+        <SubMerchantFilters onReset={reset} onSearch={search} value={filters} />
       </CardComponent>
       <CardComponent className='border border-border bg-background shadow-none'>
-        <section aria-busy={list.listState === 'loading'} aria-label='Danh sách Sub-merchant'>
+        <section aria-busy={listState === 'loading'} aria-label='Danh sách Sub-merchant'>
           <div className='mb-4'>
             <ManagementPageHeader
-              actions={<ExportCsvButton disabled={list.total === 0} onExport={() => undefined} totalRows={list.total} />}
-              description='Quản lý điểm kinh doanh trực thuộc Merchant cha, trạng thái vận hành và cấu hình kế thừa.'
+              actions={undefined}
               primaryAction={
                 <Can screen='MERCHANT_SUB_MERCHANT' action='create'>
                   <ButtonComponent content='Thêm Sub-merchant' htmlType='button' icon={<PlusOutlined aria-hidden />} onClick={() => navigate(`${basePath}/create`)} />
                 </Can>
               }
               title='Danh sách sub-merchant'
-              total={list.total}
             />
-          </div>
-          <div className='mb-3 flex items-center gap-2 text-xs text-muted-foreground'>
-            <StorefrontIcon aria-hidden className='text-secondary-foreground' size={17} />
-            Số tiền hiển thị nguyên vẹn theo VND; trạng thái phản ánh tình trạng vận hành hiện tại.
           </div>
           <SubMerchantTable
             filtered={isFiltered}
             onEdit={openEdit}
-            onPageChange={list.setPage}
-            onRetry={list.retry}
-            onToggleStatus={list.toggleStatus}
+            onPageChange={changePage}
+            onRetry={() => void query.refetch()}
+            onToggleStatus={toggleStatus}
             onView={openDetail}
-            page={list.page}
-            pageSize={list.pageSize}
-            rows={list.rows}
-            state={list.listState}
-            total={list.total}
+            page={page}
+            pageSize={pageSize}
+            rows={rows}
+            state={listState}
+            total={total}
           />
         </section>
       </CardComponent>
+      <SubMerchantDetailModal subMerchantId={viewingId} onClose={() => setViewingId(undefined)} />
     </main>
   )
 }

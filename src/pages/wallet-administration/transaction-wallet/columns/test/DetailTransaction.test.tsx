@@ -1,5 +1,5 @@
 import { renderWithProviders } from '@/test/render'
-import { MessageProvider } from '@hooks/useMessage'
+import { MessageProvider } from '@hooks/MessageProvider'
 import { screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import DetailTransaction from '../../DetailTransaction'

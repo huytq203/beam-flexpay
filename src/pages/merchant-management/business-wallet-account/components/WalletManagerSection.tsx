@@ -1,21 +1,20 @@
 import type { Control } from 'react-hook-form'
 
 import { FormDatePicker, FormInput } from '@components/form'
-import { ButtonComponent } from '@components/index'
 
 import type { BusinessWalletFormValues } from '../schemas/business-wallet.schema'
 import { BusinessWalletFormSection } from './BusinessWalletFormSection'
 
 interface WalletManagerSectionProps {
   control: Control<BusinessWalletFormValues>
-  onCopyContactPhone: () => void
+  requiresAdminPassword?: boolean
 }
 
 const fieldClassName = 'col-span-12 flex flex-col md:col-span-6'
 
 export function WalletManagerSection({
   control,
-  onCopyContactPhone
+  requiresAdminPassword = false
 }: WalletManagerSectionProps) {
   return (
     <BusinessWalletFormSection
@@ -71,18 +70,12 @@ export function WalletManagerSection({
             placeholder='SĐT nhận OTP của tài khoản Master'
             className='flex min-w-0 flex-1 flex-col'
           />
-          <ButtonComponent
-            htmlType='button'
-            type='default'
-            content='Sao chép từ số liên hệ'
-            className='w-full shrink-0 sm:w-auto'
-            onClick={onCopyContactPhone}
-          />
         </div>
         <span className='mt-1 text-xs text-muted-foreground'>
           Đồng thời là SĐT nhận OTP của tài khoản Master (Người đại diện)
         </span>
       </div>
+      {requiresAdminPassword && <FormInput name='adminPassword' control={control} type='password' autoComplete='current-password' label='Mật khẩu quản trị' placeholder='Xác nhận thay đổi số OTP' className={fieldClassName} required />}
     </BusinessWalletFormSection>
   )
 }

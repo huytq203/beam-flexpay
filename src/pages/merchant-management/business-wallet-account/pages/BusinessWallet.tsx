@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 
 import { Can, SCREENS } from '@/app/permissions'
 import { PlusOutlined, WalletIcon } from '@components/icons'
-import { ButtonComponent, CardComponent } from '@components/index'
+import { ButtonComponent, CardComponent, DialogModal, feedback } from '@components/index'
+import { useApproveEnterpriseWalletMutation } from '@services/merchantEnterpriseWalletApi'
 
 import { BusinessWalletSearch } from '../components/BusinessWalletSearch'
 import { BusinessWalletTableState } from '../components/BusinessWalletTableState'
@@ -23,6 +25,8 @@ const BusinessWallet = () => {
     refetch
   } = useBusinessWallet()
   const navigate = useNavigate()
+  const [walletToApprove, setWalletToApprove] = useState<BusinessWalletRow | null>(null)
+  const [approveWallet, { isLoading: isApproving }] = useApproveEnterpriseWalletMutation()
 
   const handleCreate = (): void => {
     void navigate(`${SCREENS.BUSINESS_WALLET_ACCOUNT.path}/create`)
@@ -30,6 +34,17 @@ const BusinessWallet = () => {
 
   const handleEdit = (row: BusinessWalletRow): void => {
     void navigate(`${SCREENS.BUSINESS_WALLET_ACCOUNT.path}/edit/${row.id}`)
+  }
+
+  const handleApprove = async (): Promise<void> => {
+    if (!walletToApprove) return
+    try {
+      await approveWallet(walletToApprove.id).unwrap()
+      feedback.success('Đã phê duyệt KYB ví doanh nghiệp')
+      setWalletToApprove(null)
+    } catch {
+      feedback.error('Không thể phê duyệt ví. Vui lòng tải lại danh sách và kiểm tra trạng thái hồ sơ.')
+    }
   }
 
   return (
@@ -85,11 +100,27 @@ const BusinessWallet = () => {
             isFetching={isFetching}
             isError={isError}
             onEdit={handleEdit}
+            onApprove={setWalletToApprove}
             onRefresh={refetch}
             onPageChange={handlePageChange}
           />
         </section>
       </CardComponent>
+
+      <DialogModal
+        open={walletToApprove !== null}
+        title='Phê duyệt KYB ví doanh nghiệp'
+        okText='Phê duyệt'
+        confirmLoading={isApproving}
+        okButtonProps={{ disabled: isApproving }}
+        cancelButtonProps={{ disabled: isApproving }}
+        closable={!isApproving}
+        maskClosable={!isApproving}
+        onCancel={() => setWalletToApprove(null)}
+        onOk={() => void handleApprove()}
+      >
+        <p className='text-sm text-foreground'>Xác nhận phê duyệt ví <strong>{walletToApprove?.legalName || walletToApprove?.registeredEmail}</strong>? Sau khi duyệt, ví có thể dùng để đăng ký ĐVCNTT.</p>
+      </DialogModal>
     </main>
   )
 }

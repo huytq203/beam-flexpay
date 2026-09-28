@@ -134,6 +134,8 @@
     "/secure-panel/merchant/terminal":"Quản lý Terminal",
     "/secure-panel/merchant/terminal/create":"Thêm Terminal",
     "/secure-panel/merchant/terminal/edit/*":"Cập nhật Terminal",
-    "/secure-panel/merchant/terminal/detail/*":"Chi tiết Terminal"
+    "/secure-panel/merchant/terminal/detail/*":"Chi tiết Terminal",
+    "/secure-panel/merchant/user":"Danh sách User Merchant",
+    "/secure-panel/merchant/user-role":"Nhóm quyền Merchant"
   }
 }

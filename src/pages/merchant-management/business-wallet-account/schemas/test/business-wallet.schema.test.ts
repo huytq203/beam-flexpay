@@ -20,6 +20,7 @@ const validValues = {
   email: 'finance@highlandscoffee.com.vn',
   contactPhone: '0283822456',
   businessName: 'Công ty CP Việt Thái International',
+  businessType: 'ENTERPRISE',
   taxCode: '0301234567',
   headOfficeAddress: '115 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh',
   legalRepName: 'Nguyễn Văn Hải',
@@ -64,10 +65,7 @@ describe('businessWalletFormSchema', () => {
   })
 
   it('số điện thoại phải bắt đầu bằng 0 và có 10–11 số', () => {
-    expect(errorFor({ ...validValues, contactPhone: '02838224567' }, 'contactPhone')).toBeUndefined()
-    expect(errorFor({ ...validValues, contactPhone: '2838224567' }, 'contactPhone')).toBe(
-      'Số điện thoại gồm 10–11 số và bắt đầu bằng 0'
-    )
+    expect(errorFor({ ...validValues, otpPhone: '02838224567' }, 'otpPhone')).toBeUndefined()
     expect(errorFor({ ...validValues, otpPhone: '090322145' }, 'otpPhone')).toBe(
       'Số điện thoại gồm 10–11 số và bắt đầu bằng 0'
     )

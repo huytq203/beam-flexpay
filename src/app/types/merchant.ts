@@ -1,68 +1,106 @@
+/** Contracts for the Merchant Admin API. Keep server fields intact at this boundary. */
+export interface MerchantPage<T> {
+  content: T[]
+  totalElements: number
+  totalPages: number
+  size: number
+  number: number
+  first: boolean
+  last: boolean
+  empty: boolean
+}
+
+export interface MerchantEnvelope<T> {
+  data: T
+  message?: string
+  detail?: string
+  success: boolean
+  status?: string
+}
+
+export type MerchantStatus = 'DRAFT' | 'PENDING_APPROVAL' | 'ACTIVE' | 'REJECTED' | 'LOCKED' | 'TERMINATED'
+export type MerchantType = 'PERSONAL' | 'ENTERPRISE' | 'HOUSEHOLD'
+
+export interface StoredFile {
+  id: string
+  filename: string
+  contentType: string
+  sizeBytes: number
+}
+
+export interface SelectableWallet {
+  id: string
+  registeredEmail: string
+  legalName: string
+  taxCode?: string
+  businessType: 'ENTERPRISE' | 'HOUSEHOLD'
+  legalRepresentativeName?: string
+}
+
 export interface CreateMerchantPayload {
-    name: string
-    code: string
-    contactEmail: string
-    contactPhone: string
+  enterpriseWalletId: string
+  merchantType?: MerchantType
+  name?: string
+  mccCode?: string
+  businessCategory?: string
+  websiteUrl?: string
+  productDescription?: string
+  supportContact?: string
+  contractSignedWithSub?: boolean
+  contractStagingId?: string
+  logoStagingId?: string
+  productImageStagingIds?: string[]
+  submitForApproval?: boolean
 }
 
-export interface UpdateMerchantPayload {
-    name: string
-    contactEmail: string
-    contactPhone: string
+export interface UpdateMerchantPayload extends Omit<CreateMerchantPayload, 'enterpriseWalletId' | 'submitForApproval'> {
+  name: string
+  mccCode: string
+  removedProductImageIds?: string[]
+  adminPassword?: string
 }
 
-export interface ResponseMerchant {
-    data: DataMerchant
-    message: string
-    detail: string
-    success: boolean
-    status: string
-}
-
-export interface DataMerchant {
-    content: ContentMerchant[]
-    pageable: Pageable
-    last: boolean
-    totalElements: number
-    totalPages: number
-    size: number
-    number: number
-    first: boolean
-    sort: Sort2
-    numberOfElements: number
-    empty: boolean
+export interface MerchantSearchParams {
+  page: number
+  size: number
+  sortBy?: string
+  sortDirection?: 'ASC' | 'DESC'
+  code?: string
+  name?: string
+  status?: MerchantStatus
+  taxCode?: string
+  activationDateFrom?: string
+  activationDateTo?: string
 }
 
 export interface ContentMerchant {
-    id: string
-    name: string
-    code: string
-    contactEmail: string
-    contactPhone: string
-    status: string
-    createdAt: string
-    updatedAt: string
-    createdBy: string
-    updatedBy: string
+  id: string
+  name: string
+  code: string
+  contactEmail?: string
+  contactPhone?: string
+  status: MerchantStatus
+  lockSource?: 'DIRECT' | 'CASCADE'
+  enterpriseWalletId?: string
+  legalName?: string
+  taxCode?: string
+  enterpriseWallet?: SelectableWallet
+  merchantType?: MerchantType
+  mccCode?: string
+  businessCategory?: string
+  websiteUrl?: string
+  productDescription?: string
+  supportContact?: string
+  contractSignedWithSub?: boolean
+  contractFile?: StoredFile
+  logoFile?: StoredFile
+  productImages?: StoredFile[]
+  createdAt?: string
+  updatedAt?: string
+  createdBy?: string
+  updatedBy?: string
+  stt?: number
+  key?: string
 }
 
-export interface Pageable {
-    pageNumber: number
-    pageSize: number
-    sort: Sort
-    offset: number
-    paged: boolean
-    unpaged: boolean
-}
-
-export interface Sort {
-    empty: boolean
-    sorted: boolean
-    unsorted: boolean
-}
-
-export interface Sort2 {
-    empty: boolean
-    sorted: boolean
-    unsorted: boolean
-}
+export type DataMerchant = MerchantPage<ContentMerchant>

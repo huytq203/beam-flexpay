@@ -1,13 +1,13 @@
 import { Checkbox } from 'antd'
-import { CheckboxProps } from 'antd'
-import React from 'react'
-interface props extends CheckboxProps{
-    lable?:string
+import type { CheckboxProps } from 'antd'
+
+interface Props extends CheckboxProps {
+  /** Kept for older callers; prefer children. */
+  lable?: string
 }
-const CheckboxComponent = ({onChange,lable}:props) => {
-  return (
-    <Checkbox onChange={onChange}>{lable}</Checkbox>
-  )
-}
+
+const CheckboxComponent = ({ lable, children, ...props }: Props) => (
+  <Checkbox {...props}>{children ?? lable}</Checkbox>
+)
 
 export default CheckboxComponent

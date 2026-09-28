@@ -1,15 +1,5 @@
-import React from 'react'
-import { Switch } from 'antd';
-import { SwitchProps } from 'antd';
-interface props extends SwitchProps{
-    onChange?:()=>void
-}
-const SwitchComponent = ({onChange}:props) => {
-  return (
-    <div>
-      <Switch size="default" defaultChecked onChange={onChange} />
-    </div>
-  )
-}
+import { Switch as AntSwitch, type SwitchProps } from 'antd'
 
-export default SwitchComponent
+export default function SwitchComponent(props: SwitchProps) {
+  return <AntSwitch {...props} />
+}

@@ -1,5 +1,5 @@
 import { renderWithProviders } from '@/test/render'
-import { MessageProvider } from '@/app/hooks/useMessage'
+import { MessageProvider } from '@/app/hooks/MessageProvider'
 import { server } from '@/test/mocks/server'
 import { FeeDomain } from '@components/fee/feeDomain'
 import { screen } from '@testing-library/react'

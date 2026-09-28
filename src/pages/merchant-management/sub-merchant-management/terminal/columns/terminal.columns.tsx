@@ -28,7 +28,7 @@ const createActionColumn = (
   title: 'Thao tác',
   align: 'center',
   fixed: 'right',
-  width: 144,
+  width: 100,
   render: (_, row) => (
     <div className='flex items-center justify-center gap-1'>
       <Can
@@ -57,7 +57,7 @@ const createActionColumn = (
       )}
       <Can
         screen='MERCHANT_TERMINAL'
-        action='update'
+        action={row.status === 'ACTIVE' ? 'lock' : 'unlock'}
       >
         <TerminalActionButton
           danger={row.status === 'ACTIVE'}

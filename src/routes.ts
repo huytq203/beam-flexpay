@@ -369,6 +369,18 @@ const merchantManagement = {
             () =>
               import('@pages/merchant-management/sub-merchant-management/terminal/pages/TerminalDetailPage')
           )
+        },
+        {
+          path: SCREENS.MERCHANT_USER.path,
+          element: page(
+            () => import('@pages/merchant-management/merchant-access/pages/MerchantUserListPage')
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_ROLE.path,
+          element: page(
+            () => import('@pages/merchant-management/merchant-access/pages/MerchantRoleListPage')
+          )
         }
       ]
     }

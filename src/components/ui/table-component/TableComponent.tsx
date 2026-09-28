@@ -43,7 +43,7 @@ function TableRefreshButton({
             <RefreshIcon
               aria-hidden
               size={17}
-              className={busy ? 'animate-[spin_500ms_linear_infinite]' : undefined}
+              className={busy ? 'animate-spin' : undefined}
             />
           }
           disabled={busy}

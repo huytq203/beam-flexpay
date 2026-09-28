@@ -12,7 +12,9 @@ const useHandle = () => {
             await postMerchant(data).unwrap()
             successMess('Thêm mới merchant thành công')
             onSuccess?.()
+            return true
         } catch {
+            return false
         }
     }
 
@@ -21,7 +23,9 @@ const useHandle = () => {
             await putMerchant({ id, payload: data }).unwrap()
             successMess('Cập nhật merchant thành công')
             onSuccess?.()
+            return true
         } catch {
+            return false
         }
     }
 

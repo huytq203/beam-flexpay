@@ -4,7 +4,7 @@ import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { MessageProvider } from '@/app/hooks/useMessage'
+import { MessageProvider } from '@/app/hooks/MessageProvider'
 import AccountBank from '../AccountBank'
 import { buildBankLinkSearchFilters } from '../utils/bank-link-search'
 

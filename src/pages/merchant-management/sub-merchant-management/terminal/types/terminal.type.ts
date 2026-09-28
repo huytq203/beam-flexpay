@@ -1,6 +1,6 @@
 import type { EntityStatus } from '../../shared/management.types'
 
-export type TerminalType = 'STATIC_QR' | 'DYNAMIC_QR' | 'POS' | 'SOFTPOS'
+export type TerminalType = 'STATIC_QR' | 'DYNAMIC_QR' | 'POS' | 'SOFTPOS' | 'ONLINE' | 'QR'
 
 export type TerminalStatus = Exclude<EntityStatus, 'SUSPENDED_BY_PARENT'>
 

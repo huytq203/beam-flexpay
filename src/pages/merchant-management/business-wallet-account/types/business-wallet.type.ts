@@ -1,7 +1,5 @@
-import type { ContentAccountWallet } from '@type/responseAccountWallet'
+import type { EnterpriseWalletDto } from '@services/merchantEnterpriseWalletApi'
 
-export const BUSINESS_WALLET_TYPE = 'BUSINESS' as const
-
-export interface BusinessWalletRow extends ContentAccountWallet {
+export interface BusinessWalletRow extends EnterpriseWalletDto {
   no: number
 }

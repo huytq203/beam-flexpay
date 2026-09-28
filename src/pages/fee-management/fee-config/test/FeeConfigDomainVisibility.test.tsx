@@ -1,4 +1,4 @@
-import { MessageProvider } from '@/app/hooks/useMessage'
+import { MessageProvider } from '@/app/hooks/MessageProvider'
 import { server } from '@/test/mocks/server'
 import { renderWithProviders } from '@/test/render'
 import { screen } from '@testing-library/react'

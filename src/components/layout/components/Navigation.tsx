@@ -384,6 +384,29 @@ const subMerchantManagement: ItemTypeCustom = {
   ]
 }
 
+const merchantUserManagement: ItemTypeCustom = {
+  key: 'merchant-user-management',
+  groupLabel: 'Nhóm quản lý cổng ĐVCNTT',
+  icon: <UsersThreeIcon size={size} weight={weight} color={COlOR} />,
+  label: 'Quản lý User Merchant',
+  children: [
+    {
+      key: 'user',
+      screen: 'MERCHANT_USER',
+      link: `${MERCHANT}/user`,
+      icon: <UsersThreeIcon size={size} weight={weight} color={COlOR} />,
+      label: 'Danh sách User'
+    },
+    {
+      key: 'user-role',
+      screen: 'MERCHANT_ROLE',
+      link: `${MERCHANT}/user-role`,
+      icon: <ShieldCheckIcon size={size} weight={weight} color={COlOR} />,
+      label: 'Nhóm quyền Merchant'
+    }
+  ]
+}
+
 export const navigationItems: ItemTypeCustom[] = [
   transactionManagement,
   walletManagement,
@@ -391,6 +414,7 @@ export const navigationItems: ItemTypeCustom[] = [
   businessWalletManagement,
   merchantManagement,
   subMerchantManagement,
+  merchantUserManagement,
   // feeManagementV3,
   feeManagementV4
 ]

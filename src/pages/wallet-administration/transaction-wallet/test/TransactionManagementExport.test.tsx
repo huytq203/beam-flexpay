@@ -1,4 +1,4 @@
-import { MessageProvider } from '@hooks/useMessage'
+import { MessageProvider } from '@hooks/MessageProvider'
 import { renderWithProviders } from '@/test/render'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'

@@ -8,8 +8,6 @@ import { isWithdrawalPendingApproval } from './withdrawal-approval'
 const TERMINAL_JOURNAL_STATUSES = new Set<string>([
   StatusEnum.POSTED,
   StatusEnum.FAILED,
-  StatusEnum.CANCELLED,
-  StatusEnum.SETTLED
 ])
 
 /**

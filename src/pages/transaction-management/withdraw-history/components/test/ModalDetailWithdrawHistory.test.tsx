@@ -1,6 +1,6 @@
 import { renderWithProviders } from '@/test/render'
 import { createAppStore } from '@/app/store'
-import { MessageProvider } from '@hooks/useMessage'
+import { MessageProvider } from '@hooks/MessageProvider'
 import { apiWalletCore } from '@services/apiService'
 import { server } from '@/test/mocks/server'
 import type { UnifiedContentJournal } from '@type/apiResponseJournal'

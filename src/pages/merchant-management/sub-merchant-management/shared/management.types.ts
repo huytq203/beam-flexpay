@@ -4,6 +4,8 @@ export type ManagementListState = 'loading' | 'error' | 'empty' | 'success'
 
 export type EntityStatus =
   | 'ACTIVE'
+  | 'INACTIVE'
+  | 'TERMINATED'
   | 'LOCKED'
   | 'SUSPENDED_BY_PARENT'
   | 'SUSPENDED_BY_SUB'

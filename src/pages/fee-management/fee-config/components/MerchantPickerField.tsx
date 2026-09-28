@@ -110,8 +110,8 @@ const MerchantPickerBody = ({
             <div className='flex flex-wrap gap-x-8 gap-y-3'>
               <Fact label='Đơn vị' value={merchant.name} />
               <Fact label='Mã' value={merchant.code} />
-              <Fact label='Email' value={merchant.contactEmail} />
-              <Fact label='Điện thoại' value={merchant.contactPhone} />
+              <Fact label='Email' value={merchant.contactEmail ?? '—'} />
+              <Fact label='Điện thoại' value={merchant.contactPhone ?? '—'} />
               <Fact label='Trạng thái' value={merchant.status} />
             </div>
             {!readOnly && (

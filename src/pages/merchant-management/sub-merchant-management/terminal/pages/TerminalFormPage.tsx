@@ -1,105 +1,225 @@
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-
+import { useEffect } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm, useWatch } from 'react-hook-form'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { SCREENS, useScreenAccess } from '@/app/permissions'
-import { CardComponent } from '@components/index'
-import { FORBIDDENERROR } from '@constants/routersConstant'
-
-import { ManagementPageHeader } from '../../shared/ManagementPageHeader'
-import { TerminalForm } from '../components/TerminalForm'
-import { TerminalNotFound } from '../components/TerminalNotFound'
 import {
-  createTerminal,
-  updateTerminal,
-  useTerminal
-} from '../hooks/useTerminals'
-import type { TerminalFormValue } from '../schemas/terminal.schema'
-
-const EMPTY_FORM: TerminalFormValue = {
-  parentMerchantId: '',
-  subMerchantId: '',
-  name: '',
-  type: 'STATIC_QR',
-  address: '',
-  phone: '',
-  note: ''
-}
-
-const toFormValue = (
-  record: NonNullable<ReturnType<typeof useTerminal>>
-): TerminalFormValue => ({
-  parentMerchantId: record.parentMerchantId,
-  subMerchantId: record.subMerchantId,
-  name: record.name,
-  type: record.type,
-  address: record.address,
-  phone: record.phone,
-  note: record.note
-})
+  useCreateTerminalApiMutation,
+  useGetHierarchyParentsQuery,
+  useGetSubMerchantPageQuery,
+  useGetTerminalDetailQuery,
+  useUpdateTerminalApiMutation
+} from '@/app/services/merchantHierarchyApi'
+import { ArrowLeftOutlined, SaveOutlined } from '@components/icons'
+import { ButtonComponent, CardComponent, feedback } from '@components/index'
+import { FORBIDDENERROR } from '@constants/routersConstant'
+import { TerminalApiFormFields } from '../components/TerminalApiFormFields'
+import {
+  terminalApiSchema,
+  type TerminalApiDraft
+} from '../schemas/terminalApi.schema'
 
 export default function TerminalFormPage() {
+  const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { id } = useParams()
-  const record = useTerminal(id)
+  const edit = Boolean(id)
+  const basePath = SCREENS.MERCHANT_TERMINAL.path
   const access = useScreenAccess('MERCHANT_TERMINAL')
-  const mode = id ? 'edit' : 'create'
-  const listPath = SCREENS.MERCHANT_TERMINAL.path
-  const goToList = (): void => {
-    void navigate(listPath)
-  }
+  const detail = useGetTerminalDetailQuery(id ?? '', { skip: !id })
+  const source = detail.data
+  const parents = useGetHierarchyParentsQuery({ page: 1, size: 100 })
+  const [create, createState] = useCreateTerminalApiMutation()
+  const [update, updateState] = useUpdateTerminalApiMutation()
+  const form = useForm<TerminalApiDraft>({
+    resolver: zodResolver(terminalApiSchema),
+    defaultValues: {
+      merchantId: '',
+      subMerchantId: '',
+      name: '',
+      terminalType: 'QR',
+      address: '',
+      contactPerson: '',
+      inheritContactPhone: true,
+      contactPhone: '',
+      note: ''
+    }
+  })
+  const merchantId = useWatch({ control: form.control, name: 'merchantId' })
+  const subMerchantId = useWatch({
+    control: form.control,
+    name: 'subMerchantId'
+  })
+  const terminalType = useWatch({ control: form.control, name: 'terminalType' })
+  const inheritContactPhone = useWatch({
+    control: form.control,
+    name: 'inheritContactPhone'
+  })
+  const subs = useGetSubMerchantPageQuery(
+    { page: 1, size: 100, merchantId },
+    { skip: !merchantId }
+  )
+  const selectedSub = subs.data?.content.find(
+    (item) => item.id === subMerchantId
+  )
+  const { reset } = form
 
-  if (!access.can(mode)) return <Navigate replace to={FORBIDDENERROR} />
+  useEffect(() => {
+    if (!source) return
+    reset({
+      merchantId: source.merchantId,
+      subMerchantId: source.subMerchantId,
+      name: source.name,
+      terminalType: source.terminalType,
+      address: source.address ?? '',
+      contactPerson: source.contactPerson ?? '',
+      inheritContactPhone: source.contactPhone?.inherited ?? true,
+      contactPhone: source.contactPhone?.value ?? '',
+      note: source.note ?? ''
+    })
+  }, [source, reset])
 
-  if (mode === 'edit' && !record) return <TerminalNotFound onBack={goToList} />
-
-  if (record?.status === 'SUSPENDED_BY_SUB') {
-    return (
-      <section
-        className='space-y-4 rounded-lg border border-danger-strong/30 bg-danger/5 p-5'
-        role='alert'
-      >
-        <h1 className='font-display text-lg font-semibold text-foreground'>
-          Terminal đang tạm ngưng theo Sub-merchant
-        </h1>
-        <p className='text-sm text-muted-foreground'>
-          Cần mở khóa Sub-merchant cha trước khi cập nhật Terminal này.
-        </p>
-        <Link
-          className='inline-flex rounded-md text-sm font-semibold text-secondary-foreground underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-primary'
-          to={`${SCREENS.MERCHANT_SUB_MERCHANT.path}/detail/${record.subMerchantId}`}
-        >
-          Xem Sub-merchant cha
-        </Link>
-      </section>
+  const masterOptions = (parents.data?.content ?? [])
+    .filter(
+      (item) => item.status === 'ACTIVE' || item.id === source?.merchantId
     )
-  }
+    .map((item) => ({ label: `${item.code} — ${item.name}`, value: item.id }))
+  if (
+    edit &&
+    source?.merchantId &&
+    !masterOptions.some((item) => item.value === source.merchantId)
+  )
+    masterOptions.push({
+      label: `${source.merchantCode ?? source.merchantId} — ${source.merchantName ?? 'Master Merchant'}`,
+      value: source.merchantId
+    })
+  const subOptions = (subs.data?.content ?? [])
+    .filter(
+      (item) => item.status === 'ACTIVE' || item.id === source?.subMerchantId
+    )
+    .map((item) => ({ label: `${item.code} — ${item.name}`, value: item.id }))
+  if (
+    edit &&
+    source?.subMerchantId &&
+    !subOptions.some((item) => item.value === source.subMerchantId)
+  )
+    subOptions.push({
+      label: `${source.subMerchantCode ?? source.subMerchantId} — ${source.subMerchantName ?? 'Sub-merchant'}`,
+      value: source.subMerchantId
+    })
 
-  const handleSubmit = (value: TerminalFormValue): void => {
-    if (!access.can(mode)) return
-    const saved =
-      mode === 'create'
-        ? createTerminal(value)
-        : updateTerminal(id ?? '', value)
-    if (saved) navigate(`${listPath}/detail/${saved.id}`)
+  if (!access.can(edit ? 'edit' : 'create'))
+    return (
+      <Navigate
+        replace
+        to={FORBIDDENERROR}
+      />
+    )
+
+  const save = async (value: TerminalApiDraft) => {
+    try {
+      const body = {
+        subMerchantId: value.subMerchantId,
+        name: value.name.trim(),
+        terminalType: value.terminalType,
+        address:
+          value.terminalType === 'ONLINE' && !edit
+            ? undefined
+            : value.address.trim() || undefined,
+        inheritContactPhone: value.inheritContactPhone,
+        contactPhone: value.inheritContactPhone
+          ? undefined
+          : value.contactPhone.trim(),
+        contactPerson: value.contactPerson.trim() || undefined,
+        note: value.note.trim() || undefined
+      }
+      if (edit && id) {
+        const result = await update({ id, body }).unwrap()
+        if (result.typeChangeWarning) feedback.warning(result.typeChangeWarning)
+      } else await create(body).unwrap()
+      feedback.success(edit ? 'Đã cập nhật Terminal' : 'Đã tạo Terminal')
+      navigate(basePath)
+    } catch {
+      feedback.error('Không thể lưu Terminal')
+    }
   }
 
   return (
-    <main className='flex min-w-0 flex-col gap-3'>
-      <ManagementPageHeader
-        title={mode === 'create' ? 'Thêm Terminal' : 'Cập nhật Terminal'}
-        description='Thiết lập điểm chấp nhận thanh toán và quan hệ kế thừa từ Sub-merchant.'
-      />
+    <main className='mx-auto flex w-full max-w-6xl min-w-0 flex-col gap-3'>
       <CardComponent className='border border-border bg-background shadow-none'>
-        <TerminalForm
-          canSubmit={
-            mode === 'create' ? access.can('create') : access.can('edit')
-          }
-          defaultValues={record ? toFormValue(record) : EMPTY_FORM}
-          mode={mode}
-          onCancel={goToList}
-          onSubmit={handleSubmit}
-          tid={record?.tid}
-        />
+        <header className='flex flex-wrap items-center justify-between gap-3'>
+          <div className='flex items-center gap-3'>
+            <ButtonComponent
+              aria-label='Quay lại'
+              type='default'
+              size='small'
+              icon={<ArrowLeftOutlined />}
+              onClick={() => navigate(basePath)}
+            />
+            <div>
+              <h1 className='text-lg font-semibold text-foreground'>
+                {edit ? 'Cập nhật Terminal' : 'Thêm Terminal'}
+              </h1>
+              <p className='mt-1 text-sm text-muted-foreground'>
+                Thiết lập điểm chấp nhận thanh toán trực thuộc Sub-merchant
+              </p>
+            </div>
+          </div>
+          {(!edit || source) && (
+            <ButtonComponent
+              form='terminal-api-form'
+              htmlType='submit'
+              icon={<SaveOutlined />}
+              loading={createState.isLoading || updateState.isLoading}
+              content={edit ? 'Lưu thay đổi' : 'Thêm Terminal'}
+            />
+          )}
+        </header>
       </CardComponent>
+      {edit && detail.isLoading && (
+        <CardComponent>
+          <div
+            role='status'
+            className='text-sm text-muted-foreground'
+          >
+            Đang tải Terminal…
+          </div>
+        </CardComponent>
+      )}
+      {edit && detail.isError && (
+        <CardComponent>
+          <div
+            role='alert'
+            className='flex items-center gap-3 text-sm text-muted-foreground'
+          >
+            Không tải được Terminal.{' '}
+            <ButtonComponent
+              type='default'
+              size='small'
+              content='Thử lại'
+              onClick={() => void detail.refetch()}
+            />
+          </div>
+        </CardComponent>
+      )}
+      {(!edit || source) && (
+        <form
+          id='terminal-api-form'
+          onSubmit={form.handleSubmit(save)}
+          noValidate
+        >
+          <TerminalApiFormFields
+            form={form}
+            edit={edit}
+            source={source}
+            merchantId={merchantId}
+            terminalType={terminalType}
+            inheritContactPhone={inheritContactPhone}
+            selectedSub={selectedSub}
+            masterOptions={masterOptions}
+            subOptions={subOptions}
+          />
+        </form>
+      )}
     </main>
   )
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
-import { MessageProvider } from '@/app/hooks/useMessage'
+import { MessageProvider } from '@/app/hooks/MessageProvider'
 import { renderWithProviders } from '@/test/render'
 import { server } from '@/test/mocks/server'
 import DialogAssignPermissions from '../DialogAssignPermissions'

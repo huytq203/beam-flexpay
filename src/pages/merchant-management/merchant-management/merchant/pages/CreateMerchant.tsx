@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
@@ -14,14 +14,17 @@ import {
   CardComponent,
   ScrollToTopButton
 } from '@components/index'
-import { ArrowLeftOutlined, SaveOutlined } from '@components/icons'
+import { ArrowLeftOutlined, SaveOutlined, WalletIcon } from '@components/icons'
 import {
   CreateMerchantSchema,
   type CreateMerchantSchemaType
 } from '../schemas/Merchant.schema'
 import useHandle from '../hooks/useHandle'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useGetMerchantByIdQuery } from '@services/apiMerchant'
+import { useGetMerchantByIdQuery, useUploadMerchantDocumentMutation } from '@services/apiMerchant'
+import { useGetEnterpriseWalletQuery, type EnterpriseWalletDto } from '@services/merchantEnterpriseWalletApi'
+import type { MerchantType } from '@type/merchant'
+import { EnterpriseWalletPickerDialog } from '../components/EnterpriseWalletPickerDialog'
 
 interface MerchantFormSectionProps {
   id: string
@@ -30,55 +33,23 @@ interface MerchantFormSectionProps {
   children: ReactNode
 }
 
-interface WalletOption {
-  value: string
-  label: string
-  walletType: 'BUSINESS' | 'PERSONAL'
-  ownerInfo: string
-  merchantCode: string
-  contactEmail: string
-  contactPhone: string
-}
-
 const EMPTY_FORM_VALUES: CreateMerchantSchemaType = {
-  walletType: 'BUSINESS',
+  walletType: 'ENTERPRISE',
   walletId: '',
   signSeparateSubMerchantContract: false,
   merchantContract: [],
   mcc: '',
-  merchantType: 'BUSINESS',
+  merchantType: 'ENTERPRISE',
   merchantName: '',
   merchantLogo: [],
   website: '',
-  productDescription: ''
+  productDescription: '',
+  adminPassword: ''
 }
 
-// Dữ liệu lựa chọn tạm thời theo prototype. Thay bằng API tra cứu ví khi
-// backend cung cấp endpoint dành riêng cho luồng đăng ký ĐVCNTT.
-const REFERENCE_WALLETS: WalletOption[] = [
-  {
-    value: 'wallet-vtqt',
-    label: 'Công ty CP Việt Thái Quốc Tế',
-    walletType: 'BUSINESS',
-    ownerInfo: 'Việt Thái Quốc Tế · MST 0304xxxxxx · NĐDPL: Nguyễn Văn Hải',
-    merchantCode: 'VTQT',
-    contactEmail: 'merchant@vtqt.vn',
-    contactPhone: '0900000000'
-  },
-  {
-    value: 'wallet-personal-demo',
-    label: 'Nguyễn Minh Anh',
-    walletType: 'PERSONAL',
-    ownerInfo: 'Nguyễn Minh Anh · CCCD 0792xxxxxxx · Đã xác thực eKYC',
-    merchantCode: 'NMA',
-    contactEmail: 'minhanh@example.com',
-    contactPhone: '0912345678'
-  }
-]
-
 const walletTypeOptions = [
-  { label: 'Doanh nghiệp', value: 'BUSINESS' },
-  { label: 'Cá nhân', value: 'PERSONAL' }
+  { label: 'Doanh nghiệp', value: 'ENTERPRISE' },
+  { label: 'Hộ kinh doanh', value: 'HOUSEHOLD' }
 ]
 
 const mccOptions = [
@@ -90,9 +61,8 @@ const mccOptions = [
 ]
 
 const merchantTypeOptions = [
-  { label: 'Doanh nghiệp', value: 'BUSINESS' },
-  { label: 'Hộ kinh doanh', value: 'HOUSEHOLD_BUSINESS' },
-  { label: 'Cá nhân', value: 'PERSONAL' }
+  { label: 'Doanh nghiệp', value: 'ENTERPRISE' },
+  { label: 'Hộ kinh doanh', value: 'HOUSEHOLD' }
 ]
 
 const uploadFieldClassName =
@@ -154,8 +124,11 @@ const CreateMerchant = () => {
   const { data: merchantDetail } = useGetMerchantByIdQuery(merchantId ?? '', {
     skip: !merchantId
   })
+  const [isWalletPickerOpen, setIsWalletPickerOpen] = useState(false)
+  const [pickedWallet, setPickedWallet] = useState<EnterpriseWalletDto | null>(null)
+  const [uploadDocument, { isLoading: isUploadingDocument }] = useUploadMerchantDocumentMutation()
 
-  const { control, handleSubmit, reset, setValue } =
+  const { control, handleSubmit, reset, setValue, setError, formState: { errors } } =
     useForm<CreateMerchantSchemaType>({
       resolver: zodResolver(CreateMerchantSchema),
       defaultValues: EMPTY_FORM_VALUES
@@ -163,77 +136,123 @@ const CreateMerchant = () => {
 
   const walletType = useWatch({ control, name: 'walletType' })
   const walletId = useWatch({ control, name: 'walletId' })
+  const { data: loadedWallet } = useGetEnterpriseWalletQuery(walletId, {
+    skip: !walletId || pickedWallet?.id === walletId || merchantDetail?.enterpriseWallet?.id === walletId
+  })
   const signsAtSubMerchant = useWatch({
     control,
     name: 'signSeparateSubMerchantContract'
   })
+  const contractFiles = useWatch({ control, name: 'merchantContract' })
+  const mcc = useWatch({ control, name: 'mcc' })
+  const requiresAdminPassword = Boolean(isEditMode && merchantDetail && (
+    mcc !== merchantDetail.mccCode ||
+    signsAtSubMerchant !== Boolean(merchantDetail.contractSignedWithSub) ||
+    contractFiles.some((file) => Boolean(file.originFileObj))
+  ))
 
-  const walletCatalog = useMemo(() => {
-    if (!isEditMode || !merchantDetail) return REFERENCE_WALLETS
-
-    return [
-      ...REFERENCE_WALLETS,
-      {
-        value: merchantDetail.code,
-        label: merchantDetail.name,
-        walletType: 'BUSINESS' as const,
-        ownerInfo: `${merchantDetail.name} · Mã merchant ${merchantDetail.code}`,
-        merchantCode: merchantDetail.code,
-        contactEmail: merchantDetail.contactEmail,
-        contactPhone: merchantDetail.contactPhone
-      }
-    ]
-  }, [isEditMode, merchantDetail])
-
-  const availableWallets = walletCatalog.filter(
-    (wallet) => wallet.walletType === walletType
-  )
-  const selectedWallet = walletCatalog.find(
-    (wallet) => wallet.value === walletId
-  )
+  const selectedWallet = walletId
+    ? pickedWallet?.id === walletId
+      ? pickedWallet
+      : merchantDetail?.enterpriseWallet?.id === walletId
+        ? merchantDetail.enterpriseWallet
+        : loadedWallet
+    : undefined
 
   useEffect(() => {
     if (isEditMode && merchantDetail) {
       reset({
         ...EMPTY_FORM_VALUES,
-        walletType: 'BUSINESS',
-        walletId: merchantDetail.code,
-        merchantName: merchantDetail.name ?? ''
+        walletType: merchantDetail.enterpriseWallet?.businessType ?? 'ENTERPRISE',
+        walletId: merchantDetail.enterpriseWalletId ?? '',
+        merchantType: merchantDetail.merchantType ?? 'ENTERPRISE',
+        merchantName: merchantDetail.name ?? '',
+        mcc: merchantDetail.mccCode ?? '',
+        website: merchantDetail.websiteUrl ?? '',
+        productDescription: merchantDetail.productDescription ?? '',
+        signSeparateSubMerchantContract: merchantDetail.contractSignedWithSub ?? false,
+        merchantContract: merchantDetail.contractFile ? [{
+          uid: merchantDetail.contractFile.id,
+          name: merchantDetail.contractFile.filename,
+          status: 'done',
+          type: merchantDetail.contractFile.contentType,
+          size: merchantDetail.contractFile.sizeBytes
+        }] : [],
+        merchantLogo: merchantDetail.logoFile ? [{
+          uid: merchantDetail.logoFile.id,
+          name: merchantDetail.logoFile.filename,
+          status: 'done',
+          type: merchantDetail.logoFile.contentType,
+          size: merchantDetail.logoFile.sizeBytes
+        }] : []
       })
     }
   }, [merchantDetail, isEditMode, reset])
 
-  const onSubmit = (data: CreateMerchantSchemaType) => {
+  const uploadFile = async (file: typeof EMPTY_FORM_VALUES.merchantLogo[number], documentType: 'MERCHANT_CONTRACT' | 'MERCHANT_LOGO'): Promise<string | undefined> => {
+    if (!file.originFileObj) return undefined
+    const result = await uploadDocument({ file: file.originFileObj, documentType }).unwrap()
+    return result.stagingId
+  }
+
+  const onSubmit = async (data: CreateMerchantSchemaType) => {
+    if (!selectedWallet && !isEditMode) return
+    if (requiresAdminPassword && !data.adminPassword?.trim()) {
+      setError('adminPassword', { message: 'Vui lòng nhập mật khẩu quản trị để xác nhận thay đổi nhạy cảm' })
+      return
+    }
+
+    try {
+      const contractStagingId = data.merchantContract[0]
+        ? await uploadFile(data.merchantContract[0], 'MERCHANT_CONTRACT')
+        : undefined
+      const logoStagingId = data.merchantLogo[0]
+        ? await uploadFile(data.merchantLogo[0], 'MERCHANT_LOGO')
+        : undefined
+
     if (isEditMode && merchantId && merchantDetail) {
-      handlePutMerchant(
+      await handlePutMerchant(
         merchantId,
         {
           name: data.merchantName,
-          contactEmail: merchantDetail.contactEmail,
-          contactPhone: merchantDetail.contactPhone
+          mccCode: data.mcc,
+          websiteUrl: data.website || undefined,
+          productDescription: data.productDescription || undefined,
+          businessCategory: merchantDetail.businessCategory,
+          supportContact: merchantDetail.supportContact,
+          contractSignedWithSub: data.signSeparateSubMerchantContract,
+          contractStagingId,
+          logoStagingId,
+          adminPassword: requiresAdminPassword ? data.adminPassword : undefined
         },
         () => navigate(-1)
       )
       return
     }
-
-    const wallet = walletCatalog.find((item) => item.value === data.walletId)
-    if (!wallet) return
-
-    // Adapter tạm thời cho contract /merchants hiện tại. Các field hồ sơ mới
-    // vẫn nằm trong form và sẽ được chuyển nguyên trạng khi API ĐVCNTT sẵn sàng.
-    handleCreateMerchant(
+    await handleCreateMerchant(
       {
+        enterpriseWalletId: data.walletId,
+        merchantType: data.merchantType as MerchantType,
         name: data.merchantName,
-        code: wallet.merchantCode,
-        contactEmail: wallet.contactEmail,
-        contactPhone: wallet.contactPhone
+        mccCode: data.mcc,
+        websiteUrl: data.website || undefined,
+        productDescription: data.productDescription || undefined,
+        contractSignedWithSub: data.signSeparateSubMerchantContract,
+        contractStagingId,
+        logoStagingId,
+        submitForApproval: true
       },
-      () => reset(EMPTY_FORM_VALUES)
+      () => {
+        reset(EMPTY_FORM_VALUES)
+        setPickedWallet(null)
+      }
     )
+    } catch {
+      // The shared API base query shows the server error; keep the form values.
+    }
   }
 
-  const isSubmitting = isEditMode ? isLoadingPutMerchant : isLoadingPostMerchant
+  const isSubmitting = isUploadingDocument || (isEditMode ? isLoadingPutMerchant : isLoadingPostMerchant)
 
   return (
     <div className='min-h-full bg-muted/30 px-3 py-4 sm:px-5 sm:py-5'>
@@ -279,38 +298,46 @@ const CreateMerchant = () => {
           <MerchantFormSection
             id='merchant-wallet-information'
             step='I'
-            title='Chọn ví điện tử (cá nhân / doanh nghiệp)'
+            title='Chọn ví điện tử doanh nghiệp / hộ kinh doanh'
           >
             <div className='grid grid-cols-1 gap-x-5 gap-y-4 md:grid-cols-2'>
               <FormSelect
                 control={control}
                 name='walletType'
-                className='flex flex-col'
+                className='flex flex-col md:col-span-2'
                 label={requiredLabel('Loại ví')}
                 options={walletTypeOptions}
                 allowClear={false}
                 classNameLable='text-sm font-medium text-foreground'
                 onChange={() => {
+                  setPickedWallet(null)
                   setValue('walletId', '', {
                     shouldDirty: true,
                     shouldValidate: true
                   })
                 }}
               />
-              <FormSelect
-                control={control}
-                name='walletId'
-                className='flex flex-col'
-                label={requiredLabel('Chọn ví điện tử')}
-                placeholder='Tìm theo tên chủ ví'
-                showSearch
-                optionFilterProp='label'
-                options={availableWallets.map(({ label, value }) => ({
-                  label,
-                  value
-                }))}
-                classNameLable='text-sm font-medium text-foreground'
-              />
+              <div className='min-w-0 md:col-span-2'>
+                <label htmlFor='wallet-picker-trigger' className='text-sm font-medium text-foreground'>
+                  {requiredLabel('Chọn ví điện tử')}
+                </label>
+                <div className='mt-2 flex min-h-18 min-w-0 flex-wrap items-center gap-3 rounded-lg border border-dashed border-border px-4 py-3'>
+                  <ButtonComponent
+                    id='wallet-picker-trigger'
+                    htmlType='button'
+                    type='default'
+                    icon={<WalletIcon aria-hidden size={18} />}
+                    content={selectedWallet ? 'Đổi ví' : 'Chọn ví'}
+                    onClick={() => setIsWalletPickerOpen(true)}
+                  />
+                  <span className='min-w-0 text-[13px] text-muted-foreground'>
+                    {selectedWallet
+                      ? `${selectedWallet.legalName || selectedWallet.registeredEmail} · ${selectedWallet.registeredEmail}`
+                      : 'Chọn ví đã xác minh để liên kết với ĐVCNTT.'}
+                  </span>
+                </div>
+                {errors.walletId && <p role='alert' className='mt-1 text-xs text-danger-strong'>{errors.walletId.message}</p>}
+              </div>
 
               <div className='md:col-span-2'>
                 <label className='text-sm font-medium text-foreground'>
@@ -320,7 +347,7 @@ const CreateMerchant = () => {
                   aria-live='polite'
                   className='mt-1 flex min-h-10 items-center rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm text-foreground'
                 >
-                  {selectedWallet?.ownerInfo ?? (
+                  {selectedWallet ? `${selectedWallet.legalName || selectedWallet.registeredEmail} · MST ${selectedWallet.taxCode ?? 'Chưa có'} · ${selectedWallet.registeredEmail}` : (
                     <span className='text-muted-foreground'>
                       Chọn ví điện tử để xem thông tin đã xác thực
                     </span>
@@ -443,7 +470,23 @@ const CreateMerchant = () => {
               </div>
             </div>
           </MerchantFormSection>
+          {requiresAdminPassword && <MerchantFormSection id='merchant-sensitive-confirmation' step='III' title='Xác nhận thay đổi nhạy cảm'>
+            <FormInput control={control} name='adminPassword' type='password' autoComplete='current-password' className='flex max-w-md flex-col' label={requiredLabel('Mật khẩu quản trị')} placeholder='Nhập mật khẩu của bạn' />
+          </MerchantFormSection>}
         </form>
+        <EnterpriseWalletPickerDialog
+          open={isWalletPickerOpen}
+          selectedId={walletId}
+          onCancel={() => setIsWalletPickerOpen(false)}
+          onSelect={(wallet) => {
+            setPickedWallet(wallet)
+            setValue('walletId', wallet.id, { shouldDirty: true, shouldValidate: true })
+            if (wallet.businessType && wallet.businessType !== walletType) {
+              setValue('walletType', wallet.businessType, { shouldDirty: true, shouldValidate: true })
+            }
+            setIsWalletPickerOpen(false)
+          }}
+        />
       </div>
       <ScrollToTopButton />
     </div>

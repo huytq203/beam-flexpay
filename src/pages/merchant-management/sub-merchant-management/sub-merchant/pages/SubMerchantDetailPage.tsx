@@ -1,90 +1,41 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-
 import { Can, SCREENS } from '@/app/permissions'
-import { ArrowLeftOutlined, EditOutlined, LockFilled, LockKeyOpenIcon, WarningIcon } from '@components/icons'
-import { ButtonComponent, CardComponent } from '@components/index'
-
+import { useGetSubMerchantDetailQuery, useSetSubMerchantLockedMutation } from '@/app/services/merchantHierarchyApi'
+import { formatUTCToLocalDateTime } from '@utils/helper-functions/date'
+import { ArrowLeftOutlined, EditOutlined } from '@components/icons'
+import { ButtonComponent, CardComponent, DialogModal, TextArea, feedback } from '@components/index'
 import { ManagementStatusTag } from '../../shared/ManagementStatusTag'
-import { SubMerchantConfigurationSummary } from '../components/SubMerchantConfigurationSummary'
-import { SubMerchantHistoryAction } from '../components/SubMerchantHistoryAction'
-import { SubMerchantLockDialog } from '../components/SubMerchantLockDialog'
-import { SubMerchantMetrics } from '../components/SubMerchantMetrics'
-import { SubMerchantOverview } from '../components/SubMerchantOverview'
-import { toggleSubMerchantStatus, useSubMerchantRecord } from '../hooks/useSubMerchants'
-import type { SubMerchantRow } from '../types/subMerchant.type'
+import { toSubMerchantRow } from '../../shared/hierarchyAdapter'
 
-function DetailNotFound({ onBack }: { onBack: () => void }) {
-  return (
-    <CardComponent className='border border-border bg-background shadow-none'>
-      <section className='flex min-h-64 flex-col items-center justify-center gap-3 text-center' role='alert'>
-        <WarningIcon aria-hidden className='text-warning-strong' size={32} />
-        <h1 className='font-display text-lg font-semibold text-foreground'>Không tìm thấy Sub-merchant</h1>
-        <p className='text-sm text-muted-foreground'>Bản ghi có thể đã bị xóa hoặc đường dẫn không còn hợp lệ.</p>
-        <ButtonComponent content='Về danh sách Sub-merchant' htmlType='button' onClick={onBack} type='default' />
-      </section>
-    </CardComponent>
-  )
-}
-
-interface DetailHeaderProps {
-  record: SubMerchantRow
-  onBack: () => void
-  onEdit: () => void
-  onStatus: () => void
-}
-
-function DetailHeader({ record, onBack, onEdit, onStatus }: DetailHeaderProps) {
-  const isActive = record.status === 'ACTIVE'
-  return (
-    <CardComponent className='border border-border bg-background shadow-none'>
-      <header className='flex flex-col gap-4 md:flex-row md:items-start md:justify-between'>
-        <div className='flex min-w-0 items-start gap-3'>
-          <ButtonComponent aria-label='Quay lại danh sách Sub-merchant' htmlType='button' icon={<ArrowLeftOutlined aria-hidden />} onClick={onBack} type='default' />
-          <div className='min-w-0 space-y-1'>
-            <div className='flex flex-wrap items-center gap-2'><h1 className='font-display text-xl font-semibold text-foreground'>{record.name}</h1><ManagementStatusTag status={record.status} /></div>
-            <p className='text-sm text-muted-foreground'>{record.code} · {record.parentMerchantName}</p>
-          </div>
-        </div>
-        <div className='flex flex-col gap-2 sm:flex-row'>
-          <SubMerchantHistoryAction />
-          {record.status !== 'SUSPENDED_BY_PARENT' && (
-            <Can action='edit' screen='MERCHANT_SUB_MERCHANT'><ButtonComponent className='w-full sm:w-auto' content='Sửa Sub-merchant' htmlType='button' icon={<EditOutlined aria-hidden />} onClick={onEdit} type='default' /></Can>
-          )}
-          <Can action={isActive ? 'lock' : 'unlock'} screen='MERCHANT_SUB_MERCHANT'><ButtonComponent className='w-full sm:w-auto' content={`${isActive ? 'Khóa' : 'Mở khóa'} Sub-merchant`} danger={isActive} htmlType='button' icon={isActive ? <LockFilled aria-hidden /> : <LockKeyOpenIcon aria-hidden size={17} />} onClick={onStatus} type='default' /></Can>
-        </div>
-      </header>
-    </CardComponent>
-  )
-}
+const Field = ({ label, value }: { label: string; value?: string | null }) => <div><dt className='text-xs text-muted-foreground'>{label}</dt><dd className='mt-1 text-sm font-medium text-foreground'>{value || '—'}</dd></div>
 
 export default function SubMerchantDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const record = useSubMerchantRecord(id)
-  const [lockOpen, setLockOpen] = useState(false)
   const basePath = SCREENS.MERCHANT_SUB_MERCHANT.path
+  const query = useGetSubMerchantDetailQuery(id ?? '', { skip: !id })
+  const [setLocked, { isLoading }] = useSetSubMerchantLockedMutation()
+  const [statusOpen, setStatusOpen] = useState(false)
+  const [reason, setReason] = useState('')
+  const data = query.data
+  const row = data ? toSubMerchantRow(data) : undefined
+  const isActive = data?.status === 'ACTIVE'
 
-  if (!record) return <DetailNotFound onBack={() => void navigate(basePath)} />
-
-  const handleStatusChange = (reason: string): void => {
-    if (toggleSubMerchantStatus(record.id, reason)) setLockOpen(false)
+  const changeStatus = async () => {
+    if (!id || reason.trim().length < 10) { feedback.warning('Lý do cần tối thiểu 10 ký tự'); return }
+    try {
+      await setLocked({ id, lock: isActive, reason: reason.trim() }).unwrap()
+      feedback.success(isActive ? 'Đã khóa Sub-merchant' : 'Đã mở khóa Sub-merchant')
+      setStatusOpen(false); setReason('')
+    } catch { feedback.error('Không thể cập nhật trạng thái Sub-merchant') }
   }
 
-  return (
-    <main className='mx-0 flex min-w-0 flex-col gap-3 md:mx-5'>
-      <DetailHeader record={record} onBack={() => void navigate(basePath)} onEdit={() => void navigate(`${basePath}/edit/${record.id}`)} onStatus={() => setLockOpen(true)} />
-      <SubMerchantMetrics record={record} />
-      <div className='grid grid-cols-1 gap-3 2xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]'>
-        <SubMerchantOverview record={record} />
-        <SubMerchantConfigurationSummary masked record={record} />
-      </div>
-      <SubMerchantLockDialog
-        record={record}
-        onCancel={() => setLockOpen(false)}
-        onConfirm={handleStatusChange}
-        open={lockOpen}
-      />
-    </main>
-  )
+  return <main className='mx-0 flex min-w-0 flex-col gap-3 md:mx-5'>
+    <CardComponent className='border border-border bg-background shadow-none'><header className='flex flex-wrap items-center justify-between gap-3'><div className='flex items-center gap-2'><ButtonComponent aria-label='Quay lại' type='default' size='small' icon={<ArrowLeftOutlined />} onClick={() => navigate(basePath)} /><div><h1 className='text-lg font-semibold'>{data?.name ?? 'Chi tiết Sub-merchant'}</h1><p className='text-xs text-muted-foreground'>{data?.code ?? '—'}</p></div>{row && <ManagementStatusTag status={row.status} />}</div>{data && <div className='flex gap-2'><Can screen='MERCHANT_SUB_MERCHANT' action='edit'><ButtonComponent size='small' type='default' icon={<EditOutlined />} content='Sửa' onClick={() => navigate(`${basePath}/edit/${id}`)} /></Can>{data.status !== 'TERMINATED' && data.lockSource !== 'CASCADE' && <Can screen='MERCHANT_SUB_MERCHANT' action={isActive ? 'lock' : 'unlock'}><ButtonComponent size='small' danger={isActive} type='default' content={isActive ? 'Khóa' : 'Mở khóa'} onClick={() => setStatusOpen(true)} /></Can>}</div>}</header></CardComponent>
+    {query.isLoading && <CardComponent><p role='status'>Đang tải Sub-merchant…</p></CardComponent>}
+    {query.isError && <CardComponent><div role='alert' className='flex items-center justify-between gap-2 text-sm text-danger-strong'>Không thể tải Sub-merchant.<ButtonComponent type='default' size='small' content='Thử lại' onClick={() => void query.refetch()} /></div></CardComponent>}
+    {data && <CardComponent title='Thông tin Sub-merchant' className='border border-border bg-background shadow-none'><dl className='grid gap-4 sm:grid-cols-2 xl:grid-cols-4'><Field label='Merchant cha' value={`${data.merchantName ?? ''} · ${data.merchantCode ?? ''}`} /><Field label='Tên pháp lý' value={data.legalName} /><Field label='Mã số thuế' value={data.taxCode} /><Field label='Người đại diện' value={data.legalRepresentativeName} /><Field label='Lĩnh vực kinh doanh' value={data.businessField} /><Field label='Số điện thoại' value={data.phone?.value} /><Field label='Địa chỉ' value={data.address?.value} /><Field label='Ngày tạo' value={formatUTCToLocalDateTime(data.createdAt)} /><Field label='Ngày cập nhật' value={formatUTCToLocalDateTime(data.updatedAt)} /></dl></CardComponent>}
+    <DialogModal open={statusOpen} title={isActive ? 'Khóa Sub-merchant' : 'Mở khóa Sub-merchant'} onCancel={() => { setStatusOpen(false); setReason('') }} onOk={() => void changeStatus()} okButtonProps={{ loading: isLoading }} okText='Xác nhận'><p className='mb-3 text-sm'>Xác nhận thay đổi trạng thái của <strong>{data?.name}</strong>.</p><TextArea aria-label='Lý do' value={reason} onChange={(event) => setReason(event.target.value)} rows={3} maxLength={500} placeholder='Nhập lý do (tối thiểu 10 ký tự)' /></DialogModal>
+  </main>
 }

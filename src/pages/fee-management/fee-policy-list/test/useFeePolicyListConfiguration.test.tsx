@@ -1,6 +1,6 @@
 import { apiFeeService } from '@/app/services/apiService'
 import { createAppStore } from '@/app/store'
-import { MessageProvider } from '@hooks/useMessage'
+import { MessageProvider } from '@hooks/MessageProvider'
 import { server } from '@/test/mocks/server'
 import { renderWithProviders } from '@/test/render'
 import { screen, waitFor } from '@testing-library/react'

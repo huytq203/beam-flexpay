@@ -13,7 +13,7 @@ import { WalletRoutes } from './routes'
 
 import './styles/index.css'
 import React from 'react'
-import { MessageProvider } from '@hooks/useMessage'
+import { MessageProvider } from '@hooks/MessageProvider'
 import { installChunkReloadGuard } from '@utils/chunkError'
 
 installChunkReloadGuard()
