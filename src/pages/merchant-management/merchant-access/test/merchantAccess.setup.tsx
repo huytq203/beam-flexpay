@@ -27,6 +27,16 @@ beforeEach(() => {
         }
       })
     ),
+    http.get('*/merchants/:id', ({ params }) =>
+      HttpResponse.json({
+        data: {
+          id: params.id,
+          code: 'MC000142',
+          name: 'Highlands Coffee',
+          status: 'ACTIVE'
+        }
+      })
+    ),
     http.get('*/sub-merchants', () =>
       HttpResponse.json({
         data: {

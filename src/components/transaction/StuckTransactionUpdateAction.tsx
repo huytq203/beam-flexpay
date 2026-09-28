@@ -1,5 +1,9 @@
 import { useState } from 'react'
-import { ButtonComponent, DialogModal, TooltipComponent } from '@components/index'
+import {
+  ButtonComponent,
+  DialogModal,
+  TooltipComponent
+} from '@components/index'
 import { ArrowsCounterClockwiseIcon } from '@components/icons'
 import { PERMISSION, useAccess } from '@/app/permissions'
 import { useMessage } from '@hooks/useMessage'
@@ -46,6 +50,7 @@ export const StuckTransactionUpdateAction = ({
   className
 }: StuckTransactionUpdateActionProps) => {
   const [isOpen, setIsOpen] = useState(false)
+  const [submissionError, setSubmissionError] = useState<string | null>(null)
   const { has } = useAccess()
   const { successMess, errorMess } = useMessage()
   const code = transactionCode ?? ''
@@ -64,11 +69,15 @@ export const StuckTransactionUpdateAction = ({
       transactionType !== CASH_OUT,
     refetchOnMountOrArgChange: false
   })
-  const [updateStatus, { isLoading }] = useUpdateStuckTransactionStatusMutation()
+  const [updateStatus, { isLoading }] =
+    useUpdateStuckTransactionStatusMutation()
 
   if (!code || !canAccess) return null
   if (!isStuckJournalStatus(journalStatus)) return null
-  if (!compact && !canUpdateStuckTransaction(journalStatus, withdrawal?.status)) {
+  if (
+    !compact &&
+    !canUpdateStuckTransaction(journalStatus, withdrawal?.status)
+  ) {
     return null
   }
 
@@ -84,17 +93,21 @@ export const StuckTransactionUpdateAction = ({
       }
 
       if (!canUpdateStuckTransaction(journalStatus, latestWithdrawal.status)) {
-        errorMess('Lệnh rút đang chờ phê duyệt, không thể cập nhật giao dịch treo.')
+        errorMess(
+          'Lệnh rút đang chờ phê duyệt, không thể cập nhật giao dịch treo.'
+        )
         return
       }
     }
 
+    setSubmissionError(null)
     setIsOpen(true)
   }
 
   const handleSubmit = async (
     values: StuckTransactionUpdateFormValues
   ): Promise<void> => {
+    setSubmissionError(null)
     try {
       const result = await updateStatus({
         transactionCode: code,
@@ -107,11 +120,9 @@ export const StuckTransactionUpdateAction = ({
           : 'Đã chốt giao dịch thất bại. Khoản tiền đang bị giữ đã được giải phóng.'
       )
     } catch {
-      // user-wallet trả cùng một `BUSINESS_ERROR` cho mọi nguyên nhân nên không
-      // suy ra được lý do; nêu các khả năng và cách kiểm chứng thay vì đoán.
-      // errorMess(
-      //   'Không cập nhật được giao dịch. Có thể giao dịch đã có kết quả cuối, hoặc là lệnh rút đang chờ duyệt. Hãy tải lại chi tiết giao dịch để xem trạng thái mới nhất.'
-      // )
+      setSubmissionError(
+        'Không thể chốt giao dịch. Hãy kiểm tra lại trạng thái lệnh, bằng chứng ngân hàng và số tiền có thể giữ, rồi thử lại.'
+      )
     }
   }
 
@@ -134,7 +145,9 @@ export const StuckTransactionUpdateAction = ({
     <>
       {compact ? (
         <TooltipComponent title={actionLabel}>{trigger}</TooltipComponent>
-      ) : trigger}
+      ) : (
+        trigger
+      )}
       <DialogModal
         open={isOpen}
         title='Cập nhật giao dịch treo'
@@ -146,7 +159,9 @@ export const StuckTransactionUpdateAction = ({
         content={
           <StuckTransactionUpdateForm
             transactionCode={code}
+            isCashOut={transactionType === CASH_OUT}
             isSubmitting={isLoading}
+            submissionError={submissionError}
             onSubmit={(values) => void handleSubmit(values)}
             onCancel={() => setIsOpen(false)}
           />

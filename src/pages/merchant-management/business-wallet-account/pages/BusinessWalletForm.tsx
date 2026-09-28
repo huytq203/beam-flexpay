@@ -22,7 +22,12 @@ const BusinessWalletForm = () => {
   const { can } = useScreenAccess('BUSINESS_WALLET_ACCOUNT')
 
   if (!can(form.isEditMode ? 'edit' : 'create')) {
-    return <Navigate to={FORBIDDENERROR} replace />
+    return (
+      <Navigate
+        to={FORBIDDENERROR}
+        replace
+      />
+    )
   }
 
   const title = form.isEditMode
@@ -91,10 +96,19 @@ const BusinessWalletForm = () => {
           className='flex flex-col gap-3'
           onSubmit={form.handleSubmit(form.onSubmit)}
         >
-          <AccountInfoSection control={form.control} isEditMode={form.isEditMode} />
+          <AccountInfoSection
+            control={form.control}
+            isEditMode={form.isEditMode}
+          />
           <BusinessIdentitySection control={form.control} />
-          <WalletManagerSection control={form.control} requiresAdminPassword={form.requiresAdminPassword} />
-          <LegalDocsSection control={form.control} />
+          <WalletManagerSection
+            control={form.control}
+            requiresAdminPassword={form.requiresAdminPassword}
+          />
+          <LegalDocsSection
+            control={form.control}
+            resolveFileUrl={form.resolveFileUrl}
+          />
           <ClassificationSection control={form.control} />
         </form>
       )}

@@ -208,6 +208,28 @@ describe('StuckTransactionUpdateAction', () => {
     expect(await screen.findByLabelText(/Kết quả cuối/)).toBeInTheDocument()
   })
 
+  it('hướng dẫn đối chiếu ngân hàng khi cập nhật lệnh rút, không giả lập nút refresh', async () => {
+    mockWithdrawalStatus(WithdrawalStatus.PAYING)
+    const { user } = renderAction()
+    await openForm(user)
+
+    expect(screen.getByText('Bước 1 · Đối chiếu ngân hàng')).toBeInTheDocument()
+    expect(
+      screen.getByText(/không tự kiểm tra lại ngân hàng/)
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /Check Status/i })
+    ).not.toBeInTheDocument()
+    expect(screen.getByText('Bước 2 · Chốt kết quả')).toBeInTheDocument()
+    await chooseOutcome(user, 'Thành công')
+    expect(
+      screen.getByLabelText(/Auth Code \(không bắt buộc\)/)
+    ).toBeInTheDocument()
+    expect(
+      screen.getByLabelText(/Settlement ID \(không bắt buộc\)/)
+    ).toBeInTheDocument()
+  })
+
   it('nói trước hậu quả của lựa chọn trước khi người dùng bấm', async () => {
     mockWithdrawalStatus(WithdrawalStatus.PAYING)
 
@@ -219,5 +241,25 @@ describe('StuckTransactionUpdateAction', () => {
     expect(
       await screen.findByText(/giải phóng khoản tiền đang bị giữ/i)
     ).toBeInTheDocument()
+  })
+
+  it('giữ modal và báo cách xử lý khi API không chốt được giao dịch', async () => {
+    mockWithdrawalStatus(WithdrawalStatus.PAYING)
+    server.use(
+      http.post(`*/transactions/${TRANSACTION_CODE}/update-status`, () =>
+        HttpResponse.json({ message: 'BUSINESS_ERROR' }, { status: 400 })
+      )
+    )
+    const { user } = renderAction()
+    await openForm(user)
+    await chooseOutcome(user, 'Thành công')
+    await fill(/Lý do cập nhật/, NOTE)
+    await user.click(screen.getByRole('button', { name: 'Xác nhận cập nhật' }))
+
+    expect(
+      await screen.findByText(/Không thể chốt giao dịch/)
+    ).toBeInTheDocument()
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(screen.getByLabelText(/Lý do cập nhật/)).toHaveValue(NOTE)
   })
 })

@@ -4,18 +4,13 @@ import { TagComponent } from '@components/index'
 import type { TableComponentProps } from '@components/ui/table-component/TableComponent'
 
 import { AccessActionButton } from '../components/AccessActionButton'
-import type {
-  AccessMerchant,
-  MerchantRole,
-  MerchantUser
-} from '../types/merchantAccess.types'
-import { formatAccessDate, roleCount } from '../utils/merchantAccess.utils'
+import { MerchantNameText } from '../components/MerchantNameText'
+import type { MerchantRole } from '../types/merchantAccess.types'
+import { formatAccessDate } from '../utils/merchantAccess.utils'
 
 interface MerchantRoleColumnOptions {
   page: number
   pageSize: number
-  users: readonly MerchantUser[]
-  getMerchant: (id: string) => AccessMerchant | undefined
   canManageSystemGroups: boolean
   onView: (role: MerchantRole) => void
   onEdit: (role: MerchantRole) => void
@@ -25,8 +20,6 @@ interface MerchantRoleColumnOptions {
 export const createMerchantRoleColumns = ({
   page,
   pageSize,
-  users,
-  getMerchant,
   canManageSystemGroups,
   onView,
   onEdit,
@@ -59,9 +52,11 @@ export const createMerchantRoleColumns = ({
           {role.description}
         </p>
         <p className='whitespace-normal break-words text-xs font-medium text-primary lg:hidden'>
-          {role.merchantId
-            ? (getMerchant(role.merchantId)?.name ?? 'Merchant không xác định')
-            : 'Dùng chung'}
+          {role.merchantId ? (
+            <MerchantNameText merchantId={role.merchantId} />
+          ) : (
+            'Dùng chung'
+          )}
         </p>
       </div>
     )
@@ -71,14 +66,10 @@ export const createMerchantRoleColumns = ({
     width: 190,
     render: (_, role) =>
       role.merchantId ? (
-        <div>
-          <span className='block truncate font-medium text-foreground'>
-            {getMerchant(role.merchantId)?.name ?? '—'}
-          </span>
-          <span className='text-xs text-muted-foreground'>
-            {getMerchant(role.merchantId)?.code}
-          </span>
-        </div>
+        <MerchantNameText
+          merchantId={role.merchantId}
+          withCode
+        />
       ) : (
         <TagComponent color='gold'>Dùng chung</TagComponent>
       )
@@ -88,13 +79,6 @@ export const createMerchantRoleColumns = ({
     width: 100,
     render: (_, role) => (
       <TagComponent color='cyan'>{role.permissions.length} quyền</TagComponent>
-    )
-  },
-  {
-    title: 'User trong trang',
-    width: 130,
-    render: (_, role) => (
-      <TagComponent>{roleCount(users, role.id)} User</TagComponent>
     )
   },
   { title: 'Mã nhóm', dataIndex: 'code', width: 140 },

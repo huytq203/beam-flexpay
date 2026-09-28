@@ -2,7 +2,6 @@ import { DeleteOutlined, EditOutlined } from '@components/icons'
 import { ButtonComponent, TooltipComponent } from '@components/index'
 import { ColumnType } from 'antd/es/table'
 import { PermissionItem } from '@type/permissionManagement'
-import { translatePermissionName } from '../constants/PermissionManagement.constant'
 import {
   PermissionModalType,
   SelectedPermission
@@ -26,12 +25,6 @@ export const getPermissionManagementColumns = ({
     width: 56,
     align: 'center',
     render: (value: number | undefined) => value ?? '--'
-  },
-  {
-    title: 'Tên quyền',
-    dataIndex: 'name',
-    align: 'left',
-    render: (value: string) => translatePermissionName(value)
   },
   {
     title: 'Mã quyền',
@@ -77,7 +70,10 @@ export const getPermissionManagementColumns = ({
     fixed: 'right',
     render: (_, record) => (
       <div className='flex items-center justify-center gap-1'>
-        <Can screen='PERMISSION_MANAGEMENT' action='edit'>
+        <Can
+          screen='PERMISSION_MANAGEMENT'
+          action='edit'
+        >
           <TooltipComponent title='Cập nhật'>
             <ButtonComponent
               aria-label='Sửa quyền'
@@ -88,7 +84,10 @@ export const getPermissionManagementColumns = ({
             />
           </TooltipComponent>
         </Can>
-        <Can screen='PERMISSION_MANAGEMENT' action='delete'>
+        <Can
+          screen='PERMISSION_MANAGEMENT'
+          action='delete'
+        >
           <TooltipComponent title='Xóa'>
             <ButtonComponent
               aria-label='Xoá quyền'

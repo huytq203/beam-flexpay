@@ -1,4 +1,4 @@
-import { useAccessLookups } from '../hooks/useAccessLookups'
+import { useAccessMerchants } from '../hooks/useAccessMerchants'
 import { DrawerComponent, TagComponent } from '@components/index'
 
 import type { MerchantRole, MerchantUser } from '../types/merchantAccess.types'
@@ -17,7 +17,7 @@ export function UserDetailDrawer({
   roles: readonly MerchantRole[]
   onClose: () => void
 }) {
-  const { getMerchant, getSubMerchant } = useAccessLookups()
+  const { getMerchant, getSubMerchant } = useAccessMerchants()
   return (
     <DrawerComponent
       onClose={onClose}

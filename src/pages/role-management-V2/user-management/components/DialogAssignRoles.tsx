@@ -1,8 +1,8 @@
 import { Table } from 'antd'
 import { ColumnType } from 'antd/es/table'
 import { Key, useMemo, useState, memo } from 'react'
-import { ButtonComponent } from '@components/index'
-import { useGetRoleQuery } from '@services/apiRoleManagement'
+import { ButtonComponent, Input } from '@components/index'
+import { useGetRoleByKeyQuery } from '@services/apiRole'
 import {
   useGetUserRoleQuery,
   useAssignRoleUserMutation,
@@ -10,7 +10,6 @@ import {
 } from '@services/apiUserRoleAssign'
 import { useMessage } from '@hooks/useMessage'
 import { DataRoleItem } from '@type/roleManagement'
-import { RoleName } from '@/pages/role-management-V2/role-management/constants/RoleManagement.constant'
 
 interface Props {
   userId?: string
@@ -21,12 +20,18 @@ interface Props {
 const DialogAssignRoles = ({ userId, onSuccess, onCancel }: Props) => {
   const { successMess } = useMessage()
   const [loading, setLoading] = useState(false)
+  const [searchText, setSearchText] = useState('')
+  const [keyword, setKeyword] = useState('')
   const [selection, setSelection] = useState<{
     userId?: string
     keys: Key[]
   } | null>(null)
 
-  const { data: roleData } = useGetRoleQuery({ page: 1, size: 1000 })
+  const { data: roleData, isFetching: isFetchingRoles } = useGetRoleByKeyQuery({
+    keyword,
+    page: 1,
+    size: 1000
+  })
   const { data: userRoleData, isLoading: isLoadingUserRoles } =
     useGetUserRoleQuery(userId!, {
       skip: !userId
@@ -46,21 +51,16 @@ const DialogAssignRoles = ({ userId, onSuccess, onCancel }: Props) => {
 
   const columns: ColumnType<DataRoleItem>[] = [
     {
-      title: 'Tên nhóm quyền',
-      dataIndex: 'name',
-      align: 'center',
-      render: (value) => RoleName[value] ?? value ?? '--'
-    },
-    {
       title: 'Mô tả',
       dataIndex: 'description',
-      align: 'center',
-      render: (value) => value || '--'
+      align: 'left',
+      render: (_, role) => role.description || role.name
     }
   ]
 
   const rowSelection = {
     selectedRowKeys,
+    preserveSelectedRowKeys: true,
     onChange: (newSelectedRowKeys: Key[]) => {
       setSelection({ userId, keys: newSelectedRowKeys })
     }
@@ -104,15 +104,45 @@ const DialogAssignRoles = ({ userId, onSuccess, onCancel }: Props) => {
     }
   }
 
+  const applySearch = () => {
+    setKeyword(searchText.trim())
+  }
+
   return (
     <div>
+      <div className='mb-3 flex flex-col gap-2 sm:flex-row sm:items-end'>
+        <div className='flex min-w-0 flex-1 flex-col gap-1'>
+          <label
+            htmlFor='assign-role-search'
+            className='text-sm font-medium text-foreground'
+          >
+            Tìm nhóm quyền
+          </label>
+          <Input
+            id='assign-role-search'
+            value={searchText}
+            onChange={(event) => setSearchText(event.target.value)}
+            onPressEnter={(event) => {
+              event.preventDefault()
+              applySearch()
+            }}
+            placeholder='Nhập mã nhóm quyền'
+            allowClear
+          />
+        </div>
+        <ButtonComponent
+          htmlType='button'
+          content='Tìm kiếm'
+          onClick={applySearch}
+        />
+      </div>
       <Table
         rowSelection={rowSelection}
         columns={columns}
         dataSource={dataSource}
         size='small'
         bordered
-        loading={isLoadingUserRoles}
+        loading={isLoadingUserRoles || isFetchingRoles}
         pagination={false}
       />
       <div className='flex justify-end items-center gap-2 mt-4'>

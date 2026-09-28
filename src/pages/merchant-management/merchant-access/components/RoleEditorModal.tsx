@@ -1,9 +1,9 @@
-import { useAccessLookups } from '../hooks/useAccessLookups'
+import { usePermissionCatalog } from '../hooks/usePermissionCatalog'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
-import { FormInput, FormSelect, FormTextArea } from '@components/form'
+import { FormInput, FormTextArea } from '@components/form'
 import {
   ButtonComponent,
   CheckboxComponent,
@@ -23,6 +23,7 @@ import {
   type MerchantRoleForm
 } from '../schemas/merchantAccess.schemas'
 import type { MerchantRole } from '../types/merchantAccess.types'
+import { RoleScopeField } from './RoleScopeField'
 
 const FORM_ID = 'merchant-role-editor'
 
@@ -35,7 +36,7 @@ export function RoleEditorModal({
   existingRoles: readonly MerchantRole[]
   onClose: () => void
 }) {
-  const { merchants, permissions: catalog } = useAccessLookups()
+  const { permissions: catalog } = usePermissionCatalog()
   const canManageSystemGroups = useAccess().has(
     PERMISSION.MERCHANT_SYSTEM_GROUP_MANAGE
   )
@@ -157,22 +158,10 @@ export function RoleEditorModal({
           placeholder='VD: BRANCH_MANAGER'
           required
         />
-        <FormSelect
-          className='flex flex-col gap-1'
+        <RoleScopeField
           control={form.control}
-          disabled={Boolean(role)}
-          label='Phạm vi áp dụng'
-          name='merchantId'
-          options={[
-            ...(canManageSystemGroups
-              ? [{ label: 'Dùng chung toàn hệ thống', value: 'shared' }]
-              : []),
-            ...merchants.map((merchant) => ({
-              label: `${merchant.code} — ${merchant.name}`,
-              value: merchant.id
-            }))
-          ]}
-          required
+          locked={Boolean(role)}
+          canManageSystemGroups={canManageSystemGroups}
         />
         <FormTextArea
           className='flex flex-col gap-1 sm:col-span-2'

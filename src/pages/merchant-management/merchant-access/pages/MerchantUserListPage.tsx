@@ -1,5 +1,5 @@
 import { useMerchantUserListData } from '../hooks/useMerchantUserListData'
-import { useAccessLookups } from '../hooks/useAccessLookups'
+import { useAccessMerchants } from '../hooks/useAccessMerchants'
 import { useState } from 'react'
 import { Can } from '@/app/permissions'
 import { PlusOutlined } from '@components/icons'
@@ -16,8 +16,7 @@ import { UserStatusDialog } from '../components/UserStatusDialog'
 import type { MerchantUser } from '../types/merchantAccess.types'
 
 export default function MerchantUserListPage() {
-  const { merchants, subMerchants, getMerchant, getSubMerchant } =
-    useAccessLookups()
+  const { getMerchant, getSubMerchant } = useAccessMerchants()
   const {
     draft,
     setDraft,
@@ -73,9 +72,9 @@ export default function MerchantUserListPage() {
         toolbar={
           <MerchantUserFilters
             draft={draft}
-            merchants={merchants}
-            subMerchants={subMerchants}
             roles={roles}
+            getMerchant={getMerchant}
+            getSubMerchant={getSubMerchant}
             onChange={setDraft}
             onApply={apply}
             onReset={reset}

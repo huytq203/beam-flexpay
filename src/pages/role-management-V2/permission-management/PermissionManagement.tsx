@@ -21,7 +21,6 @@ const PermissionManagement = () => {
   const {
     handleSearch,
     permissionData,
-    permissionOptions,
     isLoadingPermissionData,
     refetch,
     page,
@@ -63,7 +62,6 @@ const PermissionManagement = () => {
           <FormSearchPermission
             onSearch={handleSearch}
             onAdd={() => openModal('add', null)}
-            permissionOptions={permissionOptions}
             canAdd={can('create')}
           />
         </div>

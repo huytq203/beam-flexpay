@@ -17,13 +17,20 @@ export interface EnterpriseWalletDto {
   managerIdNumber?: string
   managerIdExpiryDate?: string
   otpPhone?: string
-  businessLicense?: { id?: string; filename?: string }
-  idCardFront?: { id?: string; filename?: string }
-  idCardBack?: { id?: string; filename?: string }
-  authorizationLetter?: { id?: string; filename?: string }
+  businessLicense?: EnterpriseWalletDocument
+  idCardFront?: EnterpriseWalletDocument
+  idCardBack?: EnterpriseWalletDocument
+  authorizationLetter?: EnterpriseWalletDocument
   internalWallet?: boolean
   createdAt?: string
   updatedAt?: string
+}
+
+export interface EnterpriseWalletDocument {
+  id?: string
+  filename?: string
+  contentType?: string
+  sizeBytes?: number
 }
 
 export interface EnterpriseWalletQuery {
@@ -57,32 +64,79 @@ export interface EnterpriseWalletPayload {
   adminPassword?: string
 }
 
-export const merchantEnterpriseWalletService = apiMerchant.injectEndpoints({ endpoints: (builder) => ({
-  listEnterpriseWallets: builder.query<MerchantPage<EnterpriseWalletDto>, EnterpriseWalletQuery>({
-    query: (params) => ({ url: '/enterprise-wallets', params }),
-    transformResponse: (response: MerchantEnvelope<MerchantPage<EnterpriseWalletDto>>) => response.data,
-    providesTags: ['merchant']
-  }),
-  getEnterpriseWallet: builder.query<EnterpriseWalletDto, string>({
-    query: (id) => `/enterprise-wallets/${id}`,
-    transformResponse: (response: MerchantEnvelope<EnterpriseWalletDto>) => response.data,
-    providesTags: ['merchant']
-  }),
-  createEnterpriseWallet: builder.mutation<EnterpriseWalletDto, EnterpriseWalletPayload>({
-    query: (body) => ({ url: '/enterprise-wallets', method: 'POST', body }),
-    transformResponse: (response: MerchantEnvelope<EnterpriseWalletDto>) => response.data,
-    invalidatesTags: ['merchant']
-  }),
-  updateEnterpriseWallet: builder.mutation<EnterpriseWalletDto, { id: string; body: EnterpriseWalletPayload }>({
-    query: ({ id, body }) => ({ url: `/enterprise-wallets/${id}`, method: 'PUT', body }),
-    transformResponse: (response: MerchantEnvelope<EnterpriseWalletDto>) => response.data,
-    invalidatesTags: ['merchant']
-  }),
-  approveEnterpriseWallet: builder.mutation<EnterpriseWalletDto, string>({
-    query: (id) => ({ url: `/enterprise-wallets/${id}/approve`, method: 'POST' }),
-    transformResponse: (response: MerchantEnvelope<EnterpriseWalletDto>) => response.data,
-    invalidatesTags: ['merchant']
+export const merchantEnterpriseWalletService = apiMerchant.injectEndpoints({
+  endpoints: (builder) => ({
+    listEnterpriseWallets: builder.query<
+      MerchantPage<EnterpriseWalletDto>,
+      EnterpriseWalletQuery
+    >({
+      query: (params) => ({ url: '/enterprise-wallets', params }),
+      transformResponse: (
+        response: MerchantEnvelope<MerchantPage<EnterpriseWalletDto>>
+      ) => response.data,
+      providesTags: ['merchant']
+    }),
+    getEnterpriseWallet: builder.query<EnterpriseWalletDto, string>({
+      query: (id) => `/enterprise-wallets/${id}`,
+      transformResponse: (response: MerchantEnvelope<EnterpriseWalletDto>) =>
+        response.data,
+      providesTags: ['merchant']
+    }),
+    getEnterpriseWalletDocumentUrl: builder.query<
+      { url: string; contentType: string; originalFilename: string },
+      { walletId: string; documentId: string }
+    >({
+      query: ({ walletId, documentId }) => ({
+        url: `/enterprise-wallets/${walletId}/documents/${documentId}/url`,
+        params: { disposition: 'INLINE' }
+      }),
+      transformResponse: (
+        response: MerchantEnvelope<{
+          url: string
+          contentType: string
+          originalFilename: string
+        }>
+      ) => response.data
+    }),
+    createEnterpriseWallet: builder.mutation<
+      EnterpriseWalletDto,
+      EnterpriseWalletPayload
+    >({
+      query: (body) => ({ url: '/enterprise-wallets', method: 'POST', body }),
+      transformResponse: (response: MerchantEnvelope<EnterpriseWalletDto>) =>
+        response.data,
+      invalidatesTags: ['merchant']
+    }),
+    updateEnterpriseWallet: builder.mutation<
+      EnterpriseWalletDto,
+      { id: string; body: EnterpriseWalletPayload }
+    >({
+      query: ({ id, body }) => ({
+        url: `/enterprise-wallets/${id}`,
+        method: 'PUT',
+        body
+      }),
+      transformResponse: (response: MerchantEnvelope<EnterpriseWalletDto>) =>
+        response.data,
+      invalidatesTags: ['merchant']
+    }),
+    approveEnterpriseWallet: builder.mutation<EnterpriseWalletDto, string>({
+      query: (id) => ({
+        url: `/enterprise-wallets/${id}/approve`,
+        method: 'POST'
+      }),
+      transformResponse: (response: MerchantEnvelope<EnterpriseWalletDto>) =>
+        response.data,
+      invalidatesTags: ['merchant']
+    })
   })
-}) })
+})
 
-export const { useListEnterpriseWalletsQuery, useGetEnterpriseWalletQuery, useCreateEnterpriseWalletMutation, useUpdateEnterpriseWalletMutation, useApproveEnterpriseWalletMutation } = merchantEnterpriseWalletService
+export const {
+  useListEnterpriseWalletsQuery,
+  useGetEnterpriseWalletQuery,
+  useLazyGetEnterpriseWalletDocumentUrlQuery,
+  useCreateEnterpriseWalletMutation,
+  useUpdateEnterpriseWalletMutation,
+  useApproveEnterpriseWalletMutation
+} = merchantEnterpriseWalletService

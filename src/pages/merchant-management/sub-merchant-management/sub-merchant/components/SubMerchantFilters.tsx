@@ -3,12 +3,14 @@ import { useForm, type SubmitHandler } from 'react-hook-form'
 
 import { FormDatePicker, FormInput, FormSelect } from '@components/form'
 import { BroomIcon, FunnelIcon, MagnifyingGlassIcon } from '@components/icons'
-import { ButtonComponent } from '@components/index'
+import {
+  ButtonComponent,
+  MerchantPickerDialog,
+  type PickedEntity,
+  PickerTrigger
+} from '@components/index'
 
-import type { PickedEntity } from '../../shared/management.types'
-import { ParentMerchantPickerDialog } from '../../shared/ParentMerchantPickerDialog'
-import { PickerTrigger } from '../../shared/PickerTrigger'
-import type { SubMerchantFiltersValue } from '../hooks/useSubMerchants'
+import type { SubMerchantFiltersValue } from '../constants/subMerchantFilters'
 
 interface SubMerchantFiltersProps {
   value: SubMerchantFiltersValue
@@ -24,7 +26,11 @@ const STATUS_OPTIONS = [
   { label: 'Tạm ngưng theo cấp cha', value: 'SUSPENDED_BY_PARENT' }
 ]
 
-export function SubMerchantFilters({ value, onSearch, onReset }: SubMerchantFiltersProps) {
+export function SubMerchantFilters({
+  value,
+  onSearch,
+  onReset
+}: SubMerchantFiltersProps) {
   const form = useForm<SubMerchantFiltersValue>({ defaultValues: value })
   const [parent, setParent] = useState<PickedEntity>()
   const [isPickingParent, setIsPickingParent] = useState(false)
@@ -42,13 +48,30 @@ export function SubMerchantFilters({ value, onSearch, onReset }: SubMerchantFilt
   }
 
   return (
-    <form className='space-y-4' onReset={handleReset} onSubmit={form.handleSubmit(handleSubmit)}>
+    <form
+      className='space-y-4'
+      onReset={handleReset}
+      onSubmit={form.handleSubmit(handleSubmit)}
+    >
       <div className='flex items-center gap-2 border-b border-border pb-3'>
-        <FunnelIcon aria-hidden size={18} className='text-secondary-foreground' />
-        <h2 className='font-display text-base font-semibold text-foreground'>Bộ lọc tìm kiếm</h2>
+        <FunnelIcon
+          aria-hidden
+          size={18}
+          className='text-secondary-foreground'
+        />
+        <h2 className='font-display text-base font-semibold text-foreground'>
+          Bộ lọc tìm kiếm
+        </h2>
       </div>
       <div className='grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4'>
-        <FormInput className={FIELD_CLASS} classNameLable={LABEL_CLASS} control={form.control} label='Từ khóa' name='query' placeholder='Mã, tên, Merchant cha hoặc số điện thoại' />
+        <FormInput
+          className={FIELD_CLASS}
+          classNameLable={LABEL_CLASS}
+          control={form.control}
+          label='Từ khóa'
+          name='query'
+          placeholder='Mã, tên, Merchant cha hoặc số điện thoại'
+        />
         <PickerTrigger
           id='sub-merchant-filter-parent'
           label='Merchant cha'
@@ -57,14 +80,51 @@ export function SubMerchantFilters({ value, onSearch, onReset }: SubMerchantFilt
           onOpen={() => setIsPickingParent(true)}
           onClear={() => pickParent(undefined)}
         />
-        <FormSelect className={FIELD_CLASS} classNameLable={LABEL_CLASS} control={form.control} label='Trạng thái' name='status' options={STATUS_OPTIONS} placeholder='Tất cả trạng thái' />
-        <FormDatePicker className={FIELD_CLASS} classNameLable={LABEL_CLASS} control={form.control} isRange label='Ngày tạo' name='createdRange' placeholder={['Từ ngày', 'Đến ngày']} />
+        <FormSelect
+          className={FIELD_CLASS}
+          classNameLable={LABEL_CLASS}
+          control={form.control}
+          label='Trạng thái'
+          name='status'
+          options={STATUS_OPTIONS}
+          placeholder='Tất cả trạng thái'
+        />
+        <FormDatePicker
+          className={FIELD_CLASS}
+          classNameLable={LABEL_CLASS}
+          control={form.control}
+          isRange
+          label='Ngày tạo'
+          name='createdRange'
+          placeholder={['Từ ngày', 'Đến ngày']}
+        />
       </div>
       <div className='flex flex-col-reverse gap-2 sm:flex-row sm:justify-end'>
-        <ButtonComponent className='w-full sm:w-auto' content='Xóa bộ lọc' htmlType='reset' icon={<BroomIcon aria-hidden size={18} />} type='default' />
-        <ButtonComponent className='w-full sm:w-auto' content='Tìm kiếm' htmlType='submit' icon={<MagnifyingGlassIcon aria-hidden size={18} />} />
+        <ButtonComponent
+          className='w-full sm:w-auto'
+          content='Xóa bộ lọc'
+          htmlType='reset'
+          icon={
+            <BroomIcon
+              aria-hidden
+              size={18}
+            />
+          }
+          type='default'
+        />
+        <ButtonComponent
+          className='w-full sm:w-auto'
+          content='Tìm kiếm'
+          htmlType='submit'
+          icon={
+            <MagnifyingGlassIcon
+              aria-hidden
+              size={18}
+            />
+          }
+        />
       </div>
-      <ParentMerchantPickerDialog
+      <MerchantPickerDialog
         open={isPickingParent}
         selectedId={parent?.id}
         onCancel={() => setIsPickingParent(false)}

@@ -26,6 +26,30 @@ export interface MerchantUserDto {
   updatedAt?: string
 }
 
+/** Đề xuất đổi phạm vi User; áp dụng khi một người khác người tạo duyệt. */
+export interface MerchantUserScopeProposalDto {
+  id: string
+  merchantUserId: string
+  status: 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED'
+  makerId?: string
+  checkerId?: string | null
+  merchantIds?: string[] | null
+  subMerchantIds?: string[] | null
+  requestReason?: string
+  decisionReason?: string | null
+  createdAt?: string
+  decidedAt?: string | null
+}
+
+export interface MerchantUserScopeProposalRequest {
+  id: string
+  /** Bỏ trống (undefined) là giữ nguyên phạm vi Merchant hiện tại. */
+  merchantIds?: string[]
+  /** Bỏ trống (undefined) là giữ nguyên phạm vi Sub-merchant hiện tại. */
+  subMerchantIds?: string[]
+  reason: string
+}
+
 export interface MerchantGroupDto {
   id: string
   merchantId?: string | null
@@ -152,30 +176,18 @@ export const accessApi = apiMerchant.injectEndpoints({
         response.data,
       invalidatesTags: ['merchant']
     }),
-    assignMerchantUserMerchants: builder.mutation<
-      MerchantUserDto,
-      { id: string; ids: string[] }
+    createMerchantUserScopeProposal: builder.mutation<
+      MerchantUserScopeProposalDto,
+      MerchantUserScopeProposalRequest
     >({
-      query: ({ id, ids }) => ({
-        url: `/merchant-users/${id}/merchants`,
-        method: 'PUT',
-        body: { ids }
+      query: ({ id, ...body }) => ({
+        url: `/merchant-users/${id}/scope-proposals`,
+        method: 'POST',
+        body
       }),
-      transformResponse: (response: MerchantAccessEnvelope<MerchantUserDto>) =>
-        response.data,
-      invalidatesTags: ['merchant']
-    }),
-    assignMerchantUserSubMerchants: builder.mutation<
-      MerchantUserDto,
-      { id: string; ids: string[] }
-    >({
-      query: ({ id, ids }) => ({
-        url: `/merchant-users/${id}/sub-merchants`,
-        method: 'PUT',
-        body: { ids }
-      }),
-      transformResponse: (response: MerchantAccessEnvelope<MerchantUserDto>) =>
-        response.data,
+      transformResponse: (
+        response: MerchantAccessEnvelope<MerchantUserScopeProposalDto>
+      ) => response.data,
       invalidatesTags: ['merchant']
     }),
     lockMerchantUser: builder.mutation<
@@ -335,8 +347,7 @@ export const {
   useCreateMerchantUserMutation,
   useUpdateMerchantUserMutation,
   useAssignMerchantUserGroupsMutation,
-  useAssignMerchantUserMerchantsMutation,
-  useAssignMerchantUserSubMerchantsMutation,
+  useCreateMerchantUserScopeProposalMutation,
   useLockMerchantUserMutation,
   useUnlockMerchantUserMutation,
   useResetMerchantUserPasswordMutation,

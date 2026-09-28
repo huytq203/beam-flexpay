@@ -34,6 +34,18 @@ const renderColumns = (permissions: string[]) => {
 }
 
 describe('cột thao tác màn Quyền', () => {
+  it('chỉ hiển thị mã và mô tả quyền, không hiển thị tên quyền', () => {
+    renderColumns(['EWALLET:PERMISSION:VIEW'])
+
+    expect(screen.queryByRole('columnheader', { name: 'Tên quyền' })).toBeNull()
+    expect(
+      screen.getByRole('columnheader', { name: 'Mã quyền' })
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('columnheader', { name: 'Mô tả' })
+    ).toBeInTheDocument()
+  })
+
   it('hiển thị đầy đủ dấu vết tạo và cập nhật', () => {
     renderColumns(['EWALLET:PERMISSION:VIEW'])
 

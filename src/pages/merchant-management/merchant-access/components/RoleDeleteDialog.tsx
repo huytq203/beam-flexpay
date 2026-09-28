@@ -4,18 +4,15 @@ import {
 } from '@/app/services/merchantAccessApi'
 import { DialogModal, feedback } from '@components/index'
 
-import type {
-  AccessMerchant,
-  MerchantRole
-} from '../types/merchantAccess.types'
+import type { MerchantRole } from '../types/merchantAccess.types'
+import { MerchantNameText } from './MerchantNameText'
 
 interface Props {
   role: MerchantRole
-  getMerchant: (id: string) => AccessMerchant | undefined
   onClose: () => void
 }
 
-export function RoleDeleteDialog({ role, getMerchant, onClose }: Props) {
+export function RoleDeleteDialog({ role, onClose }: Props) {
   const assignedUsersQuery = useListMerchantGroupUsersQuery({
     id: role.id,
     page: 1,
@@ -49,9 +46,13 @@ export function RoleDeleteDialog({ role, getMerchant, onClose }: Props) {
     >
       <p className='text-sm'>
         Xóa nhóm <strong>{role.name}</strong>{' '}
-        {role.merchantId
-          ? `của ${getMerchant(role.merchantId)?.name}`
-          : 'dùng chung toàn hệ thống'}
+        {role.merchantId ? (
+          <>
+            của <MerchantNameText merchantId={role.merchantId} />
+          </>
+        ) : (
+          'dùng chung toàn hệ thống'
+        )}
         ?
       </p>
       {assignedCount > 0 && (

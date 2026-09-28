@@ -1,87 +1,117 @@
 import { useState } from 'react'
-import {
-  useGetGatewayMerchantsQuery,
-  useGetGatewayNotificationConfigQuery
-} from '@/app/services/merchantGatewayApi'
-import { BroadcastIcon } from '@components/icons'
+import { Can } from '@/app/permissions'
+import type { NotificationListItem } from '@/app/services/merchantNotificationApi'
+import { BroadcastIcon, PlusOutlined } from '@components/icons'
 import {
   ButtonComponent,
   CardComponent,
-  SelectComponent
+  ExportCsvButton,
+  Table
 } from '@components/index'
-import { NotificationConfigForm } from '../components/NotificationConfigForm'
+import { createNotificationColumns } from '../columns/notification.columns'
+import { NotificationEditorDialog } from '../components/NotificationEditorDialog'
+import { NotificationFilters } from '../components/NotificationFilters'
+import { NotificationInheritDialog } from '../components/NotificationInheritDialog'
+import { NOTIFICATION_EXPORT_LIMIT } from '../constants/notification.constants'
+import type { NotificationEditorTarget } from '../hooks/useNotificationEditor'
+import { useNotificationList } from '../hooks/useNotificationList'
 
 const NotificationPage = () => {
-  const [merchantId, setMerchantId] = useState<string>()
-  const merchants = useGetGatewayMerchantsQuery({ page: 1, size: 100 })
-  const query = useGetGatewayNotificationConfigQuery(merchantId ?? '', {
-    skip: !merchantId
-  })
+  const list = useNotificationList()
+  const { query } = list
+  const total = query.data?.totalElements ?? 0
+  const [editing, setEditing] = useState<NotificationEditorTarget | null>(null)
+  const [inheriting, setInheriting] = useState<NotificationListItem | null>(
+    null
+  )
 
   return (
     <main className='flex min-w-0 flex-col gap-3'>
       <CardComponent className='border border-border bg-background shadow-none'>
-        <div className='max-w-xl'>
-          <label className='mb-1 block text-sm font-medium'>Merchant</label>
-          <SelectComponent
-            aria-label='Chọn Merchant'
-            className='w-full'
-            showSearch
-            optionFilterProp='label'
-            placeholder='Chọn Merchant để xem cấu hình'
-            value={merchantId}
-            onChange={setMerchantId}
-            options={(merchants.data?.content ?? []).map((item) => ({
-              label: `${item.code} — ${item.name}`,
-              value: item.id
-            }))}
-          />
-        </div>
+        <NotificationFilters
+          draft={list.draft}
+          onChange={list.setDraft}
+          onApply={list.apply}
+          onReset={list.reset}
+        />
       </CardComponent>
       <CardComponent className='border border-border bg-background shadow-none'>
-        <div className='mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3'>
+        <div className='mb-3 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3'>
           <h1 className='flex items-center gap-2 text-base font-semibold'>
             <BroadcastIcon aria-hidden /> Cấu hình thông báo
           </h1>
-          {merchantId && (
+          <div className='flex flex-wrap gap-2'>
+            <ExportCsvButton
+              onExport={list.exportCsv}
+              loading={list.isExporting}
+              disabled={total === 0 || total > NOTIFICATION_EXPORT_LIMIT}
+              tooltip={
+                total > NOTIFICATION_EXPORT_LIMIT
+                  ? `Tối đa ${NOTIFICATION_EXPORT_LIMIT.toLocaleString('vi-VN')} dòng mỗi lần xuất. Hãy thu hẹp bộ lọc.`
+                  : undefined
+              }
+            />
+            <Can
+              screen='MERCHANT_NOTIFICATION'
+              action='create'
+            >
+              <ButtonComponent
+                content='Thêm cấu hình'
+                icon={<PlusOutlined aria-hidden />}
+                onClick={() => setEditing({ mode: 'create' })}
+              />
+            </Can>
+          </div>
+        </div>
+        {query.isError && (
+          <div
+            role='alert'
+            className='mb-3 flex items-center justify-between gap-2 text-sm text-danger-strong'
+          >
+            Không thể tải cấu hình thông báo.
             <ButtonComponent
               size='small'
               type='default'
-              content='Làm mới'
-              loading={query.isFetching}
+              content='Thử lại'
               onClick={() => void query.refetch()}
             />
-          )}
-        </div>
-        {!merchantId && (
-          <p className='text-sm text-muted-foreground'>
-            Chọn Merchant để xem và chỉnh sửa thông báo.
-          </p>
-        )}
-        {merchantId && query.isLoading && (
-          <p
-            role='status'
-            className='text-sm text-muted-foreground'
-          >
-            Đang tải cấu hình…
-          </p>
-        )}
-        {merchantId && query.isError && (
-          <div
-            role='alert'
-            className='text-sm text-danger-strong'
-          >
-            Không thể tải cấu hình thông báo.
           </div>
         )}
-        {merchantId && query.data && (
-          <NotificationConfigForm
-            key={`${merchantId}:${query.fulfilledTimeStamp}`}
-            merchantId={merchantId}
-            config={query.data}
-          />
-        )}
+        <Table<NotificationListItem>
+          rowKey={(row) => `${row.merchantId}:${row.subMerchantId ?? 'master'}`}
+          size='small'
+          loading={query.isFetching}
+          onRefresh={query.refetch}
+          dataSource={query.data?.content ?? []}
+          scroll={{ x: 1100 }}
+          pagination={{
+            current: list.page,
+            pageSize: list.size,
+            total,
+            showSizeChanger: true,
+            onChange: list.changePage
+          }}
+          columns={createNotificationColumns({
+            page: list.page,
+            size: list.size,
+            onEdit: (row) => setEditing({ mode: 'edit', row }),
+            onSetup: (row) => setEditing({ mode: 'setup', row }),
+            onInherit: setInheriting
+          })}
+        />
       </CardComponent>
+      {editing && (
+        <NotificationEditorDialog
+          target={editing}
+          onClose={() => setEditing(null)}
+        />
+      )}
+      {inheriting && (
+        <NotificationInheritDialog
+          row={inheriting}
+          onClose={() => setInheriting(null)}
+        />
+      )}
     </main>
   )
 }

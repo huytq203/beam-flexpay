@@ -213,21 +213,23 @@ export const createMerchantUserColumns = ({
             onClick={() => onAccess(user)}
           />
         </Can>
-        <Can
-          screen='MERCHANT_USER'
-          action='resetPassword'
-        >
-          <AccessActionButton
-            icon={
-              <KeyIcon
-                aria-hidden
-                size={15}
-              />
-            }
-            label={`Đặt lại mật khẩu User ${user.name}`}
-            onClick={() => onResetPassword(user)}
-          />
-        </Can>
+        {user.status === 'ACTIVE' && (
+          <Can
+            screen='MERCHANT_USER'
+            action='resetPassword'
+          >
+            <AccessActionButton
+              icon={
+                <KeyIcon
+                  aria-hidden
+                  size={15}
+                />
+              }
+              label={`Đặt lại mật khẩu User ${user.name}`}
+              onClick={() => onResetPassword(user)}
+            />
+          </Can>
+        )}
         {user.status !== 'PENDING' && (
           <Can
             screen='MERCHANT_USER'

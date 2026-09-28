@@ -1,4 +1,5 @@
 import type { Control } from 'react-hook-form'
+import type { UploadFile } from 'antd'
 
 import { FormUploadCombined } from '@components/form'
 
@@ -7,11 +8,15 @@ import { BusinessWalletFormSection } from './BusinessWalletFormSection'
 
 interface LegalDocsSectionProps {
   control: Control<BusinessWalletFormValues>
+  resolveFileUrl: (file: UploadFile) => Promise<string>
 }
 
 const uploadClassName = 'col-span-12 flex flex-col md:col-span-6'
 
-export function LegalDocsSection({ control }: LegalDocsSectionProps) {
+export function LegalDocsSection({
+  control,
+  resolveFileUrl
+}: LegalDocsSectionProps) {
   return (
     <BusinessWalletFormSection
       id='business-wallet-legal-docs'
@@ -27,6 +32,8 @@ export function LegalDocsSection({ control }: LegalDocsSectionProps) {
         accept='.pdf,.jpg,.jpeg,.png'
         dragText='Tải lên tệp · PDF / JPG / PNG · tối đa 5MB'
         className={uploadClassName}
+        resolveFileUrl={resolveFileUrl}
+        allowRemoveStored={false}
       />
       <FormUploadCombined
         name='authorizationLetter'
@@ -37,6 +44,8 @@ export function LegalDocsSection({ control }: LegalDocsSectionProps) {
         accept='.pdf,.jpg,.jpeg,.png'
         dragText='Tải lên tệp · Bắt buộc nếu quản lý ví khác ĐDPL'
         className={uploadClassName}
+        resolveFileUrl={resolveFileUrl}
+        allowRemoveStored={false}
       />
       <FormUploadCombined
         name='idCardFront'
@@ -47,6 +56,8 @@ export function LegalDocsSection({ control }: LegalDocsSectionProps) {
         accept='.jpg,.jpeg,.png'
         dragText='Tải lên tệp · JPG / PNG · tối đa 5MB'
         className={uploadClassName}
+        resolveFileUrl={resolveFileUrl}
+        allowRemoveStored={false}
       />
       <FormUploadCombined
         name='idCardBack'
@@ -57,6 +68,8 @@ export function LegalDocsSection({ control }: LegalDocsSectionProps) {
         accept='.jpg,.jpeg,.png'
         dragText='Tải lên tệp · JPG / PNG · tối đa 5MB'
         className={uploadClassName}
+        resolveFileUrl={resolveFileUrl}
+        allowRemoveStored={false}
       />
     </BusinessWalletFormSection>
   )

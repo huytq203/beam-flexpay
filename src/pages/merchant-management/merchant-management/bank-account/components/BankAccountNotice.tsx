@@ -31,7 +31,10 @@ export function BankAccountNotice({
         className
       )}
     >
-      <Icon aria-hidden className='mt-0.5 shrink-0 text-sm' />
+      <Icon
+        aria-hidden
+        className='mt-0.5 shrink-0 text-sm'
+      />
       <span>{children}</span>
     </p>
   )

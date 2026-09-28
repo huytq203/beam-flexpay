@@ -1,3 +1,4 @@
+import type { PickedEntity } from '@components/index'
 import type { MerchantRole, MerchantUser } from '../types/merchantAccess.types'
 
 export const getRole = (roles: readonly MerchantRole[], id: string) =>
@@ -39,7 +40,28 @@ export const roleAvailableToUser = (
   role.merchantId === null ||
   (user.merchantIds.length === 1 && user.merchantIds.includes(role.merchantId))
 
-export const roleCount = (
-  users: readonly MerchantUser[],
-  roleId: string
-): number => users.filter((user) => user.roleIds.includes(roleId)).length
+// Nhãn ưu tiên bản ghi vừa chọn trong dialog; bản ghi nằm ngoài trang tra cứu
+// sẵn vẫn hiện đúng thay vì rơi về id.
+export const resolvePicked = (
+  id: string | undefined,
+  picked: PickedEntity | undefined,
+  lookup: (
+    id: string
+  ) => { id: string; name: string; code?: string } | undefined
+): PickedEntity | undefined => {
+  if (!id) return undefined
+  if (picked?.id === id) return picked
+  const found = lookup(id)
+  return { id, code: found?.code ?? id, name: found?.name ?? '' }
+}
+
+/** So sánh phạm vi không phụ thuộc thứ tự chọn: đổi thứ tự không phải là đổi phạm vi. */
+export const isSameIdSet = (
+  left: readonly string[],
+  right: readonly string[]
+): boolean => {
+  const rightSet = new Set(right)
+  return (
+    new Set(left).size === rightSet.size && left.every((id) => rightSet.has(id))
+  )
+}

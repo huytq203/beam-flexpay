@@ -20,6 +20,17 @@ export interface DataEKYC {
   empty: boolean
 }
 
+export type EvidenceImageType = 'FRONT' | 'BACK' | 'FACE_FAR'
+
+/** Ảnh bằng chứng của một lần eKYC; `url` là link S3 ký sẵn, hết hạn sau vài phút. */
+export interface EvidenceImage {
+  fileId: string
+  /** FRONT | BACK | FACE_FAR; loại khác BE thêm sau sẽ bị bỏ qua khi hiển thị. */
+  type: string
+  expiresAt?: string | null
+  url: string
+}
+
 export interface ContentEKYC {
   id?: string
   userId?: string
@@ -67,6 +78,7 @@ export interface ContentEKYC {
   createdBy?: string | null
   updatedBy?: string | null
   features?: string | null
+  evidenceImages?: EvidenceImage[] | null
 }
 
 export interface EKYCGroup {

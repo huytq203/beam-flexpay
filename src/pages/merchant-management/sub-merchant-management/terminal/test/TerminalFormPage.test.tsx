@@ -55,7 +55,10 @@ beforeEach(() => {
               id: 'sub-1',
               code: 'SUB-1',
               name: 'Chi nhánh 1',
-              status: 'ACTIVE'
+              status: 'ACTIVE',
+              merchantId: 'merchant-1',
+              merchantCode: 'MC001',
+              merchantName: 'Merchant A'
             }
           ],
           totalElements: 1,
@@ -107,14 +110,6 @@ describe('Terminal form API', () => {
     )
     renderPage('/terminal/create')
     expect(screen.getByText('Hệ thống tự sinh khi tạo')).toBeInTheDocument()
-    expect(screen.getByLabelText(/^Sub-merchant/)).toBeDisabled()
-    await user.click(screen.getByLabelText(/^Master Merchant/))
-    await user.click(await screen.findByLabelText('Chọn Merchant Merchant A'))
-    await waitFor(() =>
-      expect(screen.getByLabelText(/^Master Merchant/)).toHaveValue(
-        'MC001 — Merchant A'
-      )
-    )
     await user.click(screen.getByLabelText(/^Sub-merchant/))
     await user.click(
       await screen.findByLabelText('Chọn Sub-merchant Chi nhánh 1')
@@ -123,6 +118,9 @@ describe('Terminal form API', () => {
       expect(screen.getByLabelText(/^Sub-merchant/)).toHaveValue(
         'SUB-1 — Chi nhánh 1'
       )
+    )
+    expect(screen.getByLabelText(/^Master Merchant/)).toHaveValue(
+      'MC001 — Merchant A'
     )
     await user.type(screen.getByLabelText(/Tên Terminal/), 'Quầy thu ngân 1')
     fireEvent.mouseDown(

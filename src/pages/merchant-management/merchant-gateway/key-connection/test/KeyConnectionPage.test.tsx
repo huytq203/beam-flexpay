@@ -66,12 +66,11 @@ describe('KeyConnectionPage API', () => {
     renderPage([PERMISSION.API_CREDENTIAL_VIEW])
     await screen.findByRole('button', { name: 'Tìm kiếm' })
     await waitFor(() => expect(requests.length).toBeGreaterThan(0))
-    fireEvent.mouseDown(
-      screen
-        .getAllByLabelText('Lọc Merchant')[0]
-        .querySelector('.ant-select-selector')!
+    await user.click(screen.getByLabelText('Merchant'))
+    await user.click(await screen.findByLabelText('Chọn Merchant Merchant A'))
+    await waitFor(() =>
+      expect(screen.getByLabelText('Merchant')).toHaveValue('M001 — Merchant A')
     )
-    await user.click(await screen.findByText('M001 — Merchant A'))
     fireEvent.mouseDown(
       screen
         .getAllByLabelText('Lọc trạng thái key')[0]
@@ -88,7 +87,7 @@ describe('KeyConnectionPage API', () => {
       expect(requests.at(-1)?.searchParams.get('merchantId')).toBe('merchant-1')
       expect(requests.at(-1)?.searchParams.get('status')).toBe('REVOKED')
     })
-    await user.click(screen.getByRole('button', { name: 'Xóa lọc' }))
+    await user.click(screen.getByRole('button', { name: 'Xóa bộ lọc' }))
     await waitFor(() => {
       expect(requests.at(-1)?.searchParams.get('merchantId')).toBeNull()
       expect(requests.at(-1)?.searchParams.get('status')).toBeNull()
@@ -199,17 +198,18 @@ describe('KeyConnectionPage API', () => {
     await user.click(screen.getByRole('button', { name: 'Tạo key' }))
     expect(screen.getByText('Sub-merchant · kế thừa')).toBeInTheDocument()
     expect(screen.getByText('Terminal · kế thừa')).toBeInTheDocument()
-    fireEvent.mouseDown(
-      within(screen.getByRole('dialog', { name: 'Tạo key kết nối' }))
-        .getAllByLabelText('Merchant')[0]
-        .querySelector('.ant-select-selector')!
-    )
-    await user.click(await screen.findByText('M001 — Merchant A'))
+    const createDialog = screen.getByRole('dialog', { name: 'Tạo key kết nối' })
     await user.click(
-      within(screen.getByRole('dialog', { name: 'Tạo key kết nối' })).getByRole(
-        'button',
-        { name: 'Tạo key' }
+      within(createDialog).getByLabelText(/Chọn Master Merchant/)
+    )
+    await user.click(await screen.findByLabelText('Chọn Merchant Merchant A'))
+    await waitFor(() =>
+      expect(screen.getByLabelText(/Chọn Master Merchant/)).toHaveValue(
+        'M001 — Merchant A'
       )
+    )
+    await user.click(
+      within(createDialog).getByRole('button', { name: 'Tạo key' })
     )
     expect(await screen.findByText('secret-once')).toBeInTheDocument()
     expect(screen.getByText('new-client')).toBeInTheDocument()

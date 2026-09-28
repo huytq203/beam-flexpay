@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import usePagination from '@hooks/usePagination'
 import { useGetPermissionByKeyQuery } from '@services/apiPermission'
 import { SearchPermissionFormData } from '../types/PermissionManagement.type'
-import { translatePermissionName } from '../constants/PermissionManagement.constant'
 
 const useFetchDataPermission = () => {
   const {
@@ -39,15 +38,6 @@ const useFetchDataPermission = () => {
     }
   }, [page, query.data, size])
 
-  const permissionOptions = useMemo(
-    () =>
-      query.data?.content.map((permission) => ({
-        value: permission.name,
-        label: translatePermissionName(permission.name)
-      })) ?? [],
-    [query.data?.content]
-  )
-
   const handleSearch = ({ keyword: nextKeyword }: SearchPermissionFormData) => {
     setPage(1)
     setKeyword(nextKeyword.trim())
@@ -56,7 +46,6 @@ const useFetchDataPermission = () => {
   return {
     handleSearch,
     permissionData,
-    permissionOptions,
     isLoadingPermissionData: query.isLoading || query.isFetching,
     refetch: query.refetch,
     page,

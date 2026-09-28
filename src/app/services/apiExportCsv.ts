@@ -2,13 +2,20 @@ import type { ApplicableFeeRuleExportQuery } from '@/app/schemas/applicable-fee-
 import {
   fetchBaseQueryCustom,
   fetchBaseQueryFee,
+  fetchBaseQueryMerchant,
   fetchBaseQueryWalletCore
 } from '@configs/fetchBaseQueryCustom'
 import type {
   FetchBaseQueryError,
   FetchBaseQueryMeta
 } from '@reduxjs/toolkit/query'
-import { apiFeeService, apiWalletCore, authApiService } from '@services/apiService'
+import {
+  apiFeeService,
+  apiMerchant,
+  apiWalletCore,
+  authApiService
+} from '@services/apiService'
+import type { NotificationListQuery } from '@services/merchantNotificationApi'
 import { parseFilenameFromDisposition } from '@utils/file-download'
 
 export interface ExportedFile {
@@ -244,6 +251,26 @@ export const apiExportIdentityCsv = authApiService.injectEndpoints({
     })
   })
 })
+
+// Cấu hình thông báo Merchant: BE từ chối quá 50.000 dòng và không cắt bớt.
+export const apiExportMerchantCsv = apiMerchant.injectEndpoints({
+  endpoints: (build) => ({
+    exportMerchantNotifications: build.mutation<
+      ExportedFile,
+      Omit<NotificationListQuery, 'page' | 'size'>
+    >({
+      queryFn: (params, queryApi, extraOptions) =>
+        runExport(
+          fetchBaseQueryMerchant,
+          { url: '/merchants/notifications/export', params: { ...params } },
+          queryApi,
+          extraOptions
+        )
+    })
+  })
+})
+
+export const { useExportMerchantNotificationsMutation } = apiExportMerchantCsv
 
 export const {
   useExportBankLinksMutation,

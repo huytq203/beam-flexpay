@@ -10,9 +10,13 @@ import {
   type ApiSubMerchantSummary
 } from '@/app/services/merchantHierarchyApi'
 import { ArrowLeftOutlined, SaveOutlined } from '@components/icons'
-import { ButtonComponent, CardComponent, feedback } from '@components/index'
+import {
+  ButtonComponent,
+  CardComponent,
+  feedback,
+  type PickedEntity
+} from '@components/index'
 import { FORBIDDENERROR } from '@constants/routersConstant'
-import type { PickedEntity } from '../../shared/management.types'
 import { TerminalApiFormFields } from '../components/TerminalApiFormFields'
 import {
   terminalApiSchema,

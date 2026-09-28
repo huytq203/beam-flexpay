@@ -5,8 +5,6 @@ import { useState } from 'react'
 
 import { renderWithProviders } from '@/test/render'
 
-import { SUB_MERCHANT_FIXTURES } from '../../sub-merchant/constants/subMerchant.fixture'
-import { TERMINAL_FIXTURES } from '../../terminal/constants/terminal.fixture'
 import { EntityLockDialog } from '../EntityLockDialog'
 import { ManagementPageHeader } from '../ManagementPageHeader'
 import { ManagementStatusTag } from '../ManagementStatusTag'
@@ -22,15 +20,25 @@ beforeAll(() => {
 
 afterAll(() => vi.restoreAllMocks())
 
-function EntityLockDialogLifecycleHarness({ onConfirm }: { onConfirm: (reason: string) => void }) {
+function EntityLockDialogLifecycleHarness({
+  onConfirm
+}: {
+  onConfirm: (reason: string) => void
+}) {
   const [open, setOpen] = useState(true)
 
   return (
     <>
-      <button type='button' onClick={() => setOpen(false)}>
+      <button
+        type='button'
+        onClick={() => setOpen(false)}
+      >
         Đóng dialog
       </button>
-      <button type='button' onClick={() => setOpen(true)}>
+      <button
+        type='button'
+        onClick={() => setOpen(true)}
+      >
         Mở dialog
       </button>
       <EntityLockDialog
@@ -56,8 +64,12 @@ describe('ManagementPageHeader', () => {
     )
 
     expect(screen.getByText('4 bản ghi')).toHaveAttribute('aria-live', 'polite')
-    expect(screen.getByRole('button', { name: 'Xuất Excel' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Thêm Sub-merchant' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Xuất Excel' })
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Thêm Sub-merchant' })
+    ).toBeInTheDocument()
   })
 })
 
@@ -79,7 +91,10 @@ describe('ManagementTableState', () => {
 
   it('renders supplied list content for a successful state', () => {
     render(
-      <ManagementTableState entityName='Sub-merchant' state='success'>
+      <ManagementTableState
+        entityName='Sub-merchant'
+        state='success'
+      >
         <p>SUB-0142-01</p>
       </ManagementTableState>
     )
@@ -121,7 +136,9 @@ describe('EntityLockDialog', () => {
     await user.type(screen.getByLabelText('Lý do khóa'), ' ngắn ')
     await user.click(screen.getByRole('button', { name: 'Khóa' }))
     expect(onConfirm).not.toHaveBeenCalled()
-    expect(screen.getByText('Lý do cần có ít nhất 10 ký tự.')).toBeInTheDocument()
+    expect(
+      screen.getByText('Lý do cần có ít nhất 10 ký tự.')
+    ).toBeInTheDocument()
 
     await user.clear(screen.getByLabelText('Lý do khóa'))
     await user.type(screen.getByLabelText('Lý do khóa'), '  Kiểm tra định kỳ  ')
@@ -156,17 +173,23 @@ describe('EntityLockDialog', () => {
   it('clears the reason and validation state when the dialog reopens', async () => {
     const user = userEvent.setup()
     const onConfirm = vi.fn()
-    renderWithProviders(<EntityLockDialogLifecycleHarness onConfirm={onConfirm} />)
+    renderWithProviders(
+      <EntityLockDialogLifecycleHarness onConfirm={onConfirm} />
+    )
 
     await user.type(screen.getByLabelText('Lý do khóa'), 'ngắn')
     await user.click(screen.getByRole('button', { name: 'Khóa' }))
-    expect(screen.getByText('Lý do cần có ít nhất 10 ký tự.')).toBeInTheDocument()
+    expect(
+      screen.getByText('Lý do cần có ít nhất 10 ký tự.')
+    ).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Đóng dialog' }))
     await user.click(screen.getByRole('button', { name: 'Mở dialog' }))
 
     expect(screen.getByLabelText('Lý do khóa')).toHaveValue('')
-    expect(screen.queryByText('Lý do cần có ít nhất 10 ký tự.')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('Lý do cần có ít nhất 10 ký tự.')
+    ).not.toBeInTheDocument()
   })
 })
 
@@ -175,21 +198,5 @@ describe('ManagementStatusTag', () => {
     render(<ManagementStatusTag status='SUSPENDED_BY_PARENT' />)
 
     expect(screen.getByText('Tạm ngưng theo cấp cha')).toBeInTheDocument()
-  })
-})
-
-describe('hierarchy fixture seeds', () => {
-  it('freezes only the exported seed arrays and covers hierarchy states', () => {
-    expect(Object.isFrozen(SUB_MERCHANT_FIXTURES)).toBe(true)
-    expect(Object.isFrozen(TERMINAL_FIXTURES)).toBe(true)
-    expect(SUB_MERCHANT_FIXTURES.map((row) => row.status)).toEqual(
-      expect.arrayContaining(['ACTIVE', 'LOCKED', 'SUSPENDED_BY_PARENT'])
-    )
-    expect(TERMINAL_FIXTURES.map((row) => row.type)).toEqual(
-      expect.arrayContaining(['STATIC_QR', 'DYNAMIC_QR', 'POS', 'SOFTPOS'])
-    )
-    expect(TERMINAL_FIXTURES.map((row) => row.status)).toEqual(
-      expect.arrayContaining(['ACTIVE', 'LOCKED', 'SUSPENDED_BY_SUB'])
-    )
   })
 })

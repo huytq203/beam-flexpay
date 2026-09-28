@@ -23,14 +23,18 @@ const OUTCOME_OPTIONS = [
 
 export interface StuckTransactionUpdateFormProps {
   transactionCode: string
+  isCashOut?: boolean
   isSubmitting?: boolean
+  submissionError?: string | null
   onSubmit: (values: StuckTransactionUpdateFormValues) => void
   onCancel: () => void
 }
 
 export const StuckTransactionUpdateForm = ({
   transactionCode,
+  isCashOut = false,
   isSubmitting,
+  submissionError,
   onSubmit,
   onCancel
 }: StuckTransactionUpdateFormProps) => {
@@ -51,11 +55,33 @@ export const StuckTransactionUpdateForm = ({
       className='flex min-w-0 flex-col gap-4 pt-2'
       onSubmit={handleSubmit(onSubmit)}
     >
-      <p className='m-0 min-w-0 text-[13px] leading-5 break-words text-muted-foreground'>
-        Chốt kết quả cuối cho giao dịch{' '}
-        <span className='font-medium text-foreground'>{transactionCode}</span>.
-        Giao dịch đã có kết quả cuối thì không sửa lại được.
+      <p className='m-0 min-w-0 text-sm leading-5 break-words text-muted-foreground'>
+        Giao dịch{' '}
+        <span className='font-medium text-foreground'>{transactionCode}</span> ·
+        Kết quả cuối không thể sửa sau khi chốt.
       </p>
+
+      {isCashOut && (
+        <section
+          aria-labelledby='bank-check-heading'
+          className='rounded-lg border border-border bg-muted/40 p-3'
+        >
+          <h3
+            id='bank-check-heading'
+            className='m-0 text-sm font-semibold text-foreground'
+          >
+            Bước 1 · Đối chiếu ngân hàng
+          </h3>
+          <p className='mt-1 text-sm leading-5 text-muted-foreground'>
+            Kiểm tra bằng chứng chi tiền và trạng thái tại hệ thống ngân hàng
+            trước khi chốt. Thao tác này không tự kiểm tra lại ngân hàng.
+          </p>
+        </section>
+      )}
+
+      <h3 className='m-0 text-sm font-semibold text-foreground'>
+        {isCashOut ? 'Bước 2 · Chốt kết quả' : 'Chốt kết quả'}
+      </h3>
 
       <FormSelect
         control={control}
@@ -81,7 +107,7 @@ export const StuckTransactionUpdateForm = ({
           <FormInput
             control={control}
             name='authCode'
-            label='Auth Code'
+            label='Auth Code (không bắt buộc)'
             className='flex flex-col gap-1'
             placeholder='VD: AUTH123456'
             maxLength={STUCK_UPDATE_CODE_MAX_LENGTH}
@@ -89,7 +115,7 @@ export const StuckTransactionUpdateForm = ({
           <FormInput
             control={control}
             name='settlementId'
-            label='Settlement ID'
+            label='Settlement ID (không bắt buộc)'
             className='flex flex-col gap-1'
             placeholder='VD: STL20260825001'
             maxLength={STUCK_UPDATE_CODE_MAX_LENGTH}
@@ -107,6 +133,15 @@ export const StuckTransactionUpdateForm = ({
         maxLength={STUCK_UPDATE_NOTE_MAX_LENGTH}
         placeholder='Ví dụ: đối chiếu sao kê ngân hàng, giao dịch đã ghi có cho khách'
       />
+
+      {submissionError && (
+        <p
+          role='alert'
+          className='m-0 rounded-lg border border-danger-strong p-3 text-sm leading-5 text-danger-strong'
+        >
+          {submissionError}
+        </p>
+      )}
 
       <div className='grid grid-cols-1 gap-2 min-[400px]:grid-cols-2'>
         <ButtonComponent

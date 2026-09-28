@@ -1,14 +1,14 @@
 import { useState, useEffect, memo, Key, useMemo } from 'react'
 import { Table } from 'antd'
 import { ColumnType } from 'antd/es/table'
-import { useGetPermissionQuery } from '@services/apiPermission'
+import { useGetPermissionByKeyQuery } from '@services/apiPermission'
+import { ButtonComponent, Input } from '@components/index'
 import {
   useLazyGetPermissionAssignQuery,
   usePostPermissionAvailableMutation,
   useDeletePermissionAssignMutation
 } from '@services/apiPermissionAssign'
 import { useMessage } from '@hooks/useMessage'
-import { translatePermissionName } from '@/pages/role-management-V2/permission-management/constants/PermissionManagement.constant'
 import { PermissionItem } from '@type/permissionManagement'
 import { getApiErrorDetail } from '@pages/role-management-V2/utils/RoleManagement.utils'
 import { ASSIGN_PERMISSIONS_FORM_ID } from '../constants/RoleManagement.constant'
@@ -38,9 +38,12 @@ const DialogAssignPermissions = ({
 
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
+  const [searchText, setSearchText] = useState('')
+  const [keyword, setKeyword] = useState('')
 
   const { data: allPermissionsData, isFetching: isFetchingPage } =
-    useGetPermissionQuery({
+    useGetPermissionByKeyQuery({
+      keyword,
       page,
       size: pageSize,
       ...PERMISSION_CATALOG_SORT
@@ -51,8 +54,9 @@ const DialogAssignPermissions = ({
   )
   const needsPermissionCatalog = catalogSize > pageSize
   const { data: permissionCatalogData, isFetching: isFetchingCatalog } =
-    useGetPermissionQuery(
+    useGetPermissionByKeyQuery(
       {
+        keyword,
         page: 1,
         size: catalogSize,
         ...PERMISSION_CATALOG_SORT
@@ -90,21 +94,15 @@ const DialogAssignPermissions = ({
 
   const columns: ColumnType<PermissionItem>[] = [
     {
-      title: 'Tên quyền',
-      dataIndex: 'name',
+      title: 'Mô tả',
+      dataIndex: 'description',
       align: 'left',
-      render: (_, record) => translatePermissionName(record.name)
+      render: (value: string | null | undefined) => value?.trim() || '—'
     },
     {
       title: 'Mã quyền',
       dataIndex: 'name',
       align: 'left'
-    },
-    {
-      title: 'Mô tả',
-      dataIndex: 'description',
-      align: 'left',
-      render: (value) => value || '--'
     }
   ]
 
@@ -120,8 +118,17 @@ const DialogAssignPermissions = ({
       setSelectedRowKeys(newSelectedRowKeys)
     },
     onSelectAll: (selected: boolean) => {
-      setSelectedRowKeys(selected ? allPermissionNames : [])
+      setSelectedRowKeys((current) =>
+        selected
+          ? [...new Set([...current, ...allPermissionNames])]
+          : current.filter((key) => !allPermissionNames.includes(String(key)))
+      )
     }
+  }
+
+  const applySearch = () => {
+    setKeyword(searchText.trim())
+    setPage(1)
   }
 
   const handleSubmit = async () => {
@@ -168,6 +175,32 @@ const DialogAssignPermissions = ({
         if (!loading) handleSubmit()
       }}
     >
+      <div className='mb-3 flex flex-col gap-2 sm:flex-row sm:items-end'>
+        <div className='flex min-w-0 flex-1 flex-col gap-1'>
+          <label
+            htmlFor='assign-permission-search'
+            className='text-sm font-medium text-foreground'
+          >
+            Tìm quyền
+          </label>
+          <Input
+            id='assign-permission-search'
+            value={searchText}
+            onChange={(event) => setSearchText(event.target.value)}
+            onPressEnter={(event) => {
+              event.preventDefault()
+              applySearch()
+            }}
+            placeholder='Nhập mã quyền'
+            allowClear
+          />
+        </div>
+        <ButtonComponent
+          htmlType='button'
+          content='Tìm kiếm'
+          onClick={applySearch}
+        />
+      </div>
       <Table
         loading={isFetchingPage || isFetchingCatalog}
         rowSelection={rowSelection}

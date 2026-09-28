@@ -10,8 +10,7 @@ import {
   FormSwitch,
   FormTextArea
 } from '@components/form'
-import { CardComponent, Input } from '@components/index'
-import type { PickedEntity } from '../../shared/management.types'
+import { CardComponent, Input, type PickedEntity } from '@components/index'
 import type { TerminalApiDraft } from '../schemas/terminalApi.schema'
 import { TerminalOwnerSection } from './TerminalOwnerSection'
 

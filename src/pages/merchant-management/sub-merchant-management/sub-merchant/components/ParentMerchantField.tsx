@@ -2,8 +2,7 @@ import { useState } from 'react'
 import { Controller, type Control } from 'react-hook-form'
 import type { ApiParentMerchant } from '@/app/services/merchantHierarchyApi'
 import { StorefrontIcon } from '@components/icons'
-import { ButtonComponent } from '@components/index'
-import { ParentMerchantPickerDialog } from '../../shared/ParentMerchantPickerDialog'
+import { ButtonComponent, MerchantPickerDialog } from '@components/index'
 import type { SubMerchantApiDraft } from '../schemas/subMerchantApi.schema'
 
 interface ParentMerchantFieldProps {
@@ -110,8 +109,9 @@ export function ParentMerchantField({
             </p>
           )}
           {!locked && (
-            <ParentMerchantPickerDialog
+            <MerchantPickerDialog
               open={isOpen}
+              title='Chọn Merchant cha'
               selectedId={field.value}
               status='ACTIVE'
               onCancel={() => setIsOpen(false)}

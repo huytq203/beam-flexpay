@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { useMemo, useState } from 'react'
 
 import {
@@ -35,7 +36,7 @@ const saveErrorMessage = (error: unknown): string => {
 interface Props {
   role: MerchantRole
   catalog: readonly MerchantPermission[]
-  merchantName: string
+  merchantName: ReactNode
   canEdit: boolean
   onClose: () => void
 }

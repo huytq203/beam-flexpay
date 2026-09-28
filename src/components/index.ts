@@ -7,6 +7,7 @@ export { feedback } from './ui/feedback-component/feedback'
 export { default as TextArea } from './ui/textarea-component'
 export { default as Input } from './ui/Input-component'
 export { default as ModalComponent } from './ui/modal-component'
+export { default as ImageComponent } from './ui/image-component/ImageComponent'
 export { default as ButtonComponent } from './ui/button-component'
 export { default as InputNumber } from './ui/inputNumber-component'
 export { default as Switch } from './ui/switch-component'
@@ -50,3 +51,15 @@ export { WithdrawalStatusTag } from './withdrawal/WithdrawalStatusTag'
 export type { WithdrawalStatusTagProps } from './withdrawal/WithdrawalStatusTag'
 export { ScrollToTopButton } from './ui/scroll-to-top-button/ScrollToTopButton'
 export type { ScrollToTopButtonProps } from './ui/scroll-to-top-button/ScrollToTopButton'
+export {
+  EntityPickerContent,
+  EntityPickerModal,
+  MerchantPickerDialog,
+  MultiPickerTrigger,
+  PickerTrigger,
+  SubMerchantPickerDialog,
+  describePicked,
+  toPickedEntity,
+  usePickerSearch
+} from './merchant-picker'
+export type { PickedEntity } from './merchant-picker'

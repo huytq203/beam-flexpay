@@ -44,10 +44,3 @@ export interface ManagementStatusTagProps {
   status: EntityStatus
   className?: string
 }
-
-/** Bản ghi đã chọn qua dialog, giữ đủ mã + tên để hiện lại mà không phải gọi API. */
-export interface PickedEntity {
-  id: string
-  code: string
-  name: string
-}

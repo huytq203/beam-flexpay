@@ -88,21 +88,6 @@ export interface PaymentMethodConfig {
   updatedAt?: string
 }
 
-export type NotificationChannel = 'EMAIL' | 'SMS' | 'PUSH' | 'WEBHOOK'
-
-export interface NotificationConfig {
-  merchantId: string
-  level: string
-  transactionNotificationEnabled: InheritedValue<boolean>
-  channels: InheritedValue<NotificationChannel[]>
-  notificationEmails: InheritedValue<string[]>
-  reconciliationEmails: InheritedValue<string[]>
-  invoiceEmails: InheritedValue<string[]>
-  configured: boolean
-  active: boolean
-  updatedAt?: string
-}
-
 export interface WebhookConfig {
   merchantId: string
   url?: string
@@ -165,16 +150,6 @@ export const merchantGatewayApi = apiMerchant.injectEndpoints({
       query: ({ id, ...body }) => ({ url: `/merchants/${id}/payment-methods`, method: 'PUT', body }),
       transformResponse: (response: GatewayResponse<PaymentMethodConfig>) => response.data,
       invalidatesTags: ['merchant']
-    }),
-    getGatewayNotificationConfig: builder.query<NotificationConfig, string>({
-      query: (id) => ({ url: `/merchants/${id}/notifications` }),
-      transformResponse: (response: GatewayResponse<NotificationConfig>) => response.data,
-      providesTags: ['merchant']
-    }),
-    updateGatewayNotificationConfig: builder.mutation<NotificationConfig, { id: string; inherit: boolean; transactionNotificationEnabled?: boolean; channels?: NotificationChannel[]; notificationEmails?: string[]; reconciliationEmails?: string[]; invoiceEmails?: string[]; active?: boolean; reason: string }>({
-      query: ({ id, ...body }) => ({ url: `/merchants/${id}/notifications`, method: 'PUT', body }),
-      transformResponse: (response: GatewayResponse<NotificationConfig>) => response.data,
-      invalidatesTags: ['merchant']
     })
   })
 })
@@ -190,7 +165,5 @@ export const {
   useUpdateGatewayWebhookMutation,
   useGetGatewayPaymentMethodsQuery,
   useGetGatewayPaymentConfigQuery,
-  useUpdateGatewayPaymentConfigMutation,
-  useGetGatewayNotificationConfigQuery,
-  useUpdateGatewayNotificationConfigMutation
+  useUpdateGatewayPaymentConfigMutation
 } = merchantGatewayApi

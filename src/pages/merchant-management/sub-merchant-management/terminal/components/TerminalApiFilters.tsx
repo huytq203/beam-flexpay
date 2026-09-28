@@ -8,12 +8,12 @@ import {
   ButtonComponent,
   CardComponent,
   Input,
-  SelectComponent
+  MerchantPickerDialog,
+  type PickedEntity,
+  PickerTrigger,
+  SelectComponent,
+  SubMerchantPickerDialog
 } from '@components/index'
-import type { PickedEntity } from '../../shared/management.types'
-import { ParentMerchantPickerDialog } from '../../shared/ParentMerchantPickerDialog'
-import { PickerTrigger } from '../../shared/PickerTrigger'
-import { SubMerchantPickerDialog } from '../../shared/SubMerchantPickerDialog'
 import { statusOptions, typeOptions } from '../columns/terminalApi.columns'
 
 interface TerminalApiFiltersProps {
@@ -145,7 +145,7 @@ export function TerminalApiFilters(props: TerminalApiFiltersProps) {
           />
         </div>
       </form>
-      <ParentMerchantPickerDialog
+      <MerchantPickerDialog
         open={picking === 'merchant'}
         selectedId={props.merchant?.id}
         onCancel={() => setPicking(undefined)}
@@ -157,7 +157,6 @@ export function TerminalApiFilters(props: TerminalApiFiltersProps) {
       <SubMerchantPickerDialog
         open={picking === 'sub'}
         selectedId={props.subMerchant?.id}
-        merchantId={props.merchant?.id}
         onCancel={() => setPicking(undefined)}
         onSelect={(sub) => {
           props.onSubChange(toPicked(sub))

@@ -2,8 +2,8 @@ import { memo, useMemo, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, useWatch } from 'react-hook-form'
 import { ButtonComponent } from '@components/index'
-import { FormInput, FormSelect } from '@components/form'
 import { SkeletonInput } from '@components/ui/skeletons/Skeleton'
+import { EditUserFormFields } from './EditUserFormFields'
 import { useMessage } from '@hooks/useMessage'
 import {
   useGetUserByIdQuery,
@@ -12,7 +12,6 @@ import {
 import { useGetUserRoleQuery } from '@services/apiUserRoleAssign'
 import { DataRoleItem } from '@type/roleManagement'
 import { getApiErrorDetail } from '@pages/role-management-V2/utils/RoleManagement.utils'
-import { CREATE_USER_STATUS_OPTIONS } from '../constants/userAccount'
 import {
   UpdateAdminUserFormData,
   UpdateAdminUserSchema
@@ -39,8 +38,6 @@ const EMPTY_VALUES: UpdateAdminUserFormData = {
   roleIds: []
 }
 
-const FIELD_CLASS = 'flex min-w-0 flex-col gap-1.5'
-
 const isFetchError = (error: unknown): boolean =>
   typeof error === 'object' &&
   error !== null &&
@@ -52,7 +49,10 @@ const getUpdateErrorMessage = (error: unknown): string => {
     return 'Không kết nối được máy chủ. Kiểm tra kết nối mạng rồi thử lại.'
   }
 
-  return getApiErrorDetail(error) ?? 'Không thể cập nhật tài khoản. Vui lòng thử lại.'
+  return (
+    getApiErrorDetail(error) ??
+    'Không thể cập nhật tài khoản. Vui lòng thử lại.'
+  )
 }
 
 const getLoadErrorMessage = (error: unknown): string => {
@@ -112,27 +112,23 @@ const DialogEditUser = ({
       roleIds: assignedRoleIds
     }
   }, [assignedRoleIds, user])
-  const { control, handleSubmit, setError } =
-    useForm<UpdateAdminUserFormData>({
-      resolver: zodResolver(UpdateAdminUserSchema),
-      mode: 'onSubmit',
-      values: formValues
-    })
+  const { control, handleSubmit, setError } = useForm<UpdateAdminUserFormData>({
+    resolver: zodResolver(UpdateAdminUserSchema),
+    mode: 'onSubmit',
+    values: formValues
+  })
   const enabled = useWatch({ control, name: 'enabled' })
   const email = useWatch({ control, name: 'email' })
   const roleIds = useWatch({ control, name: 'roleIds' }) ?? []
 
   const hasSecurityImpact = Boolean(
     user &&
-    ((user.email ?? '').toLowerCase() !== email.trim().toLowerCase() ||
-      (user.enabled && enabled === 'false') ||
-      !haveSameIds(assignedRoleIds, roleIds))
+      ((user.email ?? '').toLowerCase() !== email.trim().toLowerCase() ||
+        (user.enabled && enabled === 'false') ||
+        !haveSameIds(assignedRoleIds, roleIds))
   )
   const isLoadingDetails =
-    isLoadingUser ||
-    isFetchingUser ||
-    isLoadingUserRoles ||
-    isFetchingUserRoles
+    isLoadingUser || isFetchingUser || isLoadingUserRoles || isFetchingUserRoles
   const loadError = userError ?? userRoleError
 
   const retryLoad = (): void => {
@@ -228,98 +224,11 @@ const DialogEditUser = ({
       noValidate
       onSubmit={handleSubmit(onSubmit)}
     >
-      <section
-        className='rounded-lg bg-slate-50 px-3 py-3'
-        aria-labelledby='immutable-account-information'
-      >
-        <h3
-          id='immutable-account-information'
-          className='mb-2 text-sm font-semibold text-slate-800'
-        >
-          Thông tin định danh
-        </h3>
-        <dl className='grid min-w-0 grid-cols-1 gap-3'>
-          <div className='min-w-0'>
-            <dt className='text-xs font-medium text-slate-500'>Tên đăng nhập</dt>
-            <dd className='mt-0.5 break-all text-sm font-medium text-slate-900'>
-              {user.username}
-            </dd>
-          </div>
-        </dl>
-        <p className='mt-2 text-xs leading-5 text-slate-600'>
-          Tên đăng nhập không thể thay đổi tại màn hình này.
-        </p>
-      </section>
-
-      <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
-        <FormInput
-          control={control}
-          name='email'
-          label='Email'
-          placeholder='Ví dụ: ten@beam.vn'
-          maxLength={100}
-          type='email'
-          autoComplete='email'
-          required
-          className={FIELD_CLASS}
-        />
-        <FormInput
-          control={control}
-          name='firstName'
-          label='Họ'
-          placeholder='Ví dụ: Nguyễn'
-          maxLength={50}
-          autoComplete='family-name'
-          required
-          className={FIELD_CLASS}
-        />
-        <FormInput
-          control={control}
-          name='lastName'
-          label='Tên đệm và tên'
-          placeholder='Ví dụ: Văn A'
-          maxLength={50}
-          autoComplete='given-name'
-          required
-          className={FIELD_CLASS}
-        />
-        <FormInput
-          control={control}
-          name='phoneNumber'
-          label='Số điện thoại'
-          placeholder='Ví dụ: 0912345678'
-          maxLength={10}
-          inputMode='numeric'
-          autoComplete='tel'
-          required
-          className={FIELD_CLASS}
-        />
-        <FormSelect
-          control={control}
-          name='enabled'
-          label='Trạng thái hoạt động'
-          options={[...CREATE_USER_STATUS_OPTIONS]}
-          allowClear={false}
-          required
-          className={FIELD_CLASS}
-        />
-      </div>
-
-      <FormSelect
+      <EditUserFormFields
         control={control}
-        name='roleIds'
-        label='Nhóm quyền'
-        options={roleOptions}
-        mode='multiple'
-        showSearch
-        optionFilterProp='label'
-        placeholder='Chọn một hoặc nhiều nhóm quyền'
-        className={FIELD_CLASS}
+        username={user.username}
+        roleOptions={roleOptions}
       />
-
-      <p className='text-xs leading-5 text-slate-600'>
-        Bỏ chọn toàn bộ nếu muốn gỡ tất cả nhóm quyền khỏi tài khoản.
-      </p>
 
       {hasSecurityImpact && (
         <div

@@ -12,7 +12,7 @@ describe('Merchant User', () => {
     const user = userEvent.setup()
     renderPage('/secure-panel/merchant/user', [PERMISSION.MERCHANT_USER_VIEW])
 
-    await user.type(screen.getByLabelText('Tìm User'), 'Nguyễn Văn Hải{Enter}')
+    await user.type(screen.getByLabelText('Từ khóa'), 'Nguyễn Văn Hải{Enter}')
 
     expect(await screen.findByText('Nguyễn Văn Hải')).toBeInTheDocument()
     expect(screen.queryByText('Lê Thị Mai')).not.toBeInTheDocument()

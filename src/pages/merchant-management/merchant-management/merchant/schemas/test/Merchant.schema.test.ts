@@ -10,8 +10,9 @@ const validForm = {
   merchantType: 'BUSINESS',
   merchantName: 'Highlands Coffee',
   merchantLogo: [],
+  productImages: [],
   website: 'https://www.highlandscoffee.com.vn',
-  productDescription: 'Chuỗi cửa hàng cà phê và đồ uống.',
+  productDescription: 'Chuỗi cửa hàng cà phê và đồ uống.'
 }
 
 describe('CreateMerchantSchema', () => {
@@ -22,7 +23,7 @@ describe('CreateMerchantSchema', () => {
   it('bắt buộc hợp đồng khi ký ở cấp Master', () => {
     const result = CreateMerchantSchema.safeParse({
       ...validForm,
-      signSeparateSubMerchantContract: false,
+      signSeparateSubMerchantContract: false
     })
 
     expect(result.success).toBe(false)
@@ -36,7 +37,7 @@ describe('CreateMerchantSchema', () => {
   it('từ chối website không dùng giao thức HTTP hoặc HTTPS', () => {
     const result = CreateMerchantSchema.safeParse({
       ...validForm,
-      website: 'highlandscoffee.com.vn',
+      website: 'highlandscoffee.com.vn'
     })
 
     expect(result.success).toBe(false)
@@ -45,5 +46,24 @@ describe('CreateMerchantSchema', () => {
         'Địa chỉ website không đúng định dạng'
       )
     }
+  })
+
+  it('cho phép nhiều ảnh sản phẩm và kiểm tra định dạng từng ảnh', () => {
+    const images = [
+      { uid: 'a', name: 'a.png', type: 'image/png', size: 1024 },
+      { uid: 'b', name: 'b.jpg', type: 'image/jpeg', size: 2048 }
+    ]
+    expect(
+      CreateMerchantSchema.safeParse({ ...validForm, productImages: images })
+        .success
+    ).toBe(true)
+    const invalid = CreateMerchantSchema.safeParse({
+      ...validForm,
+      productImages: [
+        ...images,
+        { uid: 'c', name: 'c.pdf', type: 'application/pdf', size: 1024 }
+      ]
+    })
+    expect(invalid.success).toBe(false)
   })
 })

@@ -1,9 +1,6 @@
 import { useMemo, useState } from 'react'
-import {
-  useListMerchantGroupsQuery,
-  useListMerchantUsersQuery
-} from '@/app/services/merchantAccessApi'
-import { toMerchantRole, toMerchantUser } from '../dto/merchantAccess.api'
+import { useListMerchantGroupsQuery } from '@/app/services/merchantAccessApi'
+import { toMerchantRole } from '../dto/merchantAccess.api'
 import { type RoleFilters } from '../components/MerchantRoleFilters'
 
 const EMPTY_ROLE_FILTERS: RoleFilters = { query: '' }
@@ -12,7 +9,7 @@ export function useMerchantRoleListData() {
   const [draft, setDraft] = useState<RoleFilters>(EMPTY_ROLE_FILTERS)
   const [filters, setFilters] = useState<RoleFilters>(EMPTY_ROLE_FILTERS)
   const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(20)
+  const [pageSize, setPageSize] = useState(10)
   const rolesQuery = useListMerchantGroupsQuery({
     page,
     size: pageSize,
@@ -20,14 +17,9 @@ export function useMerchantRoleListData() {
     merchantId: filters.merchantId,
     systemOnly: filters.scope === 'shared' ? true : undefined
   })
-  const usersQuery = useListMerchantUsersQuery({ page: 1, size: 100 })
   const roles = useMemo(
     () => (rolesQuery.data?.content ?? []).map(toMerchantRole),
     [rolesQuery.data]
-  )
-  const users = useMemo(
-    () => (usersQuery.data?.content ?? []).map(toMerchantUser),
-    [usersQuery.data]
   )
 
   const filteredRoles = useMemo(
@@ -68,7 +60,6 @@ export function useMerchantRoleListData() {
     setPageSize,
     rolesQuery,
     roles,
-    users,
     filteredRoles,
     apply,
     reset

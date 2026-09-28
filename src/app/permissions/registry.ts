@@ -292,6 +292,8 @@ export const SCREENS = {
       full: PERMISSION.ADMIN_FULL,
       lock: PERMISSION.MERCHANT_USER_LOCK,
       resetPassword: PERMISSION.MERCHANT_USER_RESET_PASSWORD,
+      // Đổi phạm vi Merchant/Sub-merchant không áp dụng ngay mà tạo đề xuất chờ duyệt.
+      proposeScope: PERMISSION.MERCHANT_USER_SCOPE_PROPOSAL_CREATE,
       viewDetail: PERMISSION.MERCHANT_USER_VIEW
     }
   },

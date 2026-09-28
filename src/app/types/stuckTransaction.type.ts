@@ -36,7 +36,7 @@ export const STUCK_TRANSACTION_OUTCOME: Record<
   [StuckTransactionOutcome.FAILED]: {
     label: 'Thất bại',
     consequence:
-      'Hủy bút toán và giải tỏa số tiền đóng băng về số dư khả dụng của tài khoản ví.'
+      'Hủy bút toán và giải phóng khoản tiền đang bị giữ về số dư khả dụng của tài khoản ví.'
   }
 }
 

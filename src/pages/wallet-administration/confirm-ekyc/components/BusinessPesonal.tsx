@@ -1,63 +1,125 @@
-import { CreditCardOutlined, UserOutlined } from '@components/icons'
+import { useState } from 'react'
+import type { ContentEKYC, EvidenceImage } from '@type/apiResponseEKYC'
+import { ImageComponent } from '@components/index'
+import { cn } from '@lib/utils/cn'
+import dayjs from 'dayjs'
+import { EvidenceImageCard } from './EvidenceImageCard'
 
-interface DocumentPlaceholderProps {
-  title: string
-  description: string
-  className: string
-  icon: React.ReactNode
+interface BusinessPesonalProps {
+  attempts?: readonly ContentEKYC[]
+  /** Phiên đang hiển thị OCR; ảnh lấy từ lần khác thì ghi rõ để khỏi nhầm. */
+  ocrSessionId?: string
+  onReload?: () => void
 }
 
-const DocumentPlaceholder = ({
-  title,
-  description,
-  className,
-  icon
-}: DocumentPlaceholderProps) => (
-  <div
-    className={`group flex min-h-40 flex-1 flex-col justify-between overflow-hidden rounded-xl border p-4 transition-colors duration-200 ${className}`}
-  >
-    <div className='flex items-center justify-between gap-3'>
-      <span className='text-sm font-semibold'>{title}</span>
-      <span className='rounded-md bg-white/70 px-2 py-1 text-[11px] font-medium'>
-        Chưa có ảnh - tính năng đang phát triển
-      </span>
-    </div>
-    <div className='flex flex-1 items-center justify-center py-5'>
-      <span
-        aria-hidden
-        className='flex size-14 items-center justify-center rounded-xl bg-white/80 text-2xl shadow-xs'
-      >
-        {icon}
-      </span>
-    </div>
-    <p className='text-xs font-medium opacity-75'>{description}</p>
-  </div>
-)
+const findUrl = (images: EvidenceImage[], type: string) =>
+  images.find((image) => image.type === type)?.url
 
-const BusinessPesonal = () => {
+// Lần mới nhất có thể đang dở dang chưa có ảnh; lấy lần mới nhất đã có ảnh.
+const pickEvidenceAttempt = (attempts: readonly ContentEKYC[]) =>
+  attempts.find((attempt) => attempt.evidenceImages?.length)
+
+const EVIDENCE_ITEMS = [
+  {
+    type: 'FRONT',
+    title: 'CCCD mặt trước',
+    description: 'Ảnh chân dung và thông tin định danh'
+  },
+  {
+    type: 'BACK',
+    title: 'CCCD mặt sau',
+    description: 'Ngày cấp và đặc điểm nhận dạng'
+  },
+  {
+    type: 'FACE_FAR',
+    title: 'Ảnh chân dung',
+    description: 'Đối chiếu với giấy tờ'
+  }
+] as const
+
+type EvidenceType = (typeof EVIDENCE_ITEMS)[number]['type']
+
+const BusinessPesonal = ({
+  attempts = [],
+  ocrSessionId,
+  onReload
+}: BusinessPesonalProps) => {
+  const attempt = pickEvidenceAttempt(attempts)
+  const images = attempt?.evidenceImages ?? []
+  const capturedAt = attempt?.completedAt ?? attempt?.createdAt
+  const isOtherAttempt = Boolean(attempt) && attempt?.sessionId !== ocrSessionId
+  const attemptKey = attempt?.sessionId ?? attempt?.createdAt ?? ''
+  const [selection, setSelection] = useState<{
+    attemptKey: string
+    type: EvidenceType
+  } | null>(null)
+  const selectedType =
+    selection?.attemptKey === attemptKey
+      ? selection.type
+      : (EVIDENCE_ITEMS.find((item) => findUrl(images, item.type))?.type ??
+        'FRONT')
+  const selectedImage = EVIDENCE_ITEMS.find(
+    (item) => item.type === selectedType
+  )!
+
   return (
-    <div className='flex flex-1 flex-col gap-3'>
-      <div className='grid flex-1 grid-cols-1 gap-3 md:grid-cols-2'>
-        <DocumentPlaceholder
-          title='CCCD mặt trước'
-          description='Mặt có ảnh chân dung và thông tin định danh'
-          className='border-cyan-200 bg-cyan-50 text-cyan-900'
-          icon={<CreditCardOutlined />}
-        />
-        <DocumentPlaceholder
-          title='CCCD mặt sau'
-          description='Mặt có ngày cấp và đặc điểm nhận dạng'
-          className='border-blue-200 bg-blue-50 text-blue-900'
-          icon={<CreditCardOutlined />}
-        />
-      </div>
-
-      <DocumentPlaceholder
-        title='Ảnh chân dung'
-        description='Ảnh khuôn mặt dùng để đối chiếu với giấy tờ định danh'
-        className='min-h-52 border-violet-200 bg-violet-50 text-violet-900'
-        icon={<UserOutlined />}
+    <div className='flex min-w-0 flex-col gap-3'>
+      {isOtherAttempt && capturedAt && (
+        <p className='text-xs text-muted-foreground'>
+          Ảnh lấy từ lần thực hiện lúc{' '}
+          {dayjs.utc(capturedAt).format('DD/MM/YYYY HH:mm')}.
+        </p>
+      )}
+      <EvidenceImageCard
+        title={selectedImage.title}
+        description={selectedImage.description}
+        url={findUrl(images, selectedType)}
+        onReload={onReload}
       />
+      <div
+        className='grid grid-cols-3 gap-2'
+        aria-label='Chọn ảnh bằng chứng'
+      >
+        {EVIDENCE_ITEMS.map((item) => {
+          const url = findUrl(images, item.type)
+          const isSelected = item.type === selectedType
+
+          return (
+            <button
+              key={item.type}
+              type='button'
+              aria-label={`Xem ${item.title}`}
+              aria-pressed={isSelected}
+              onClick={() => setSelection({ attemptKey, type: item.type })}
+              className={cn(
+                'flex min-w-0 flex-col gap-1 rounded-lg border p-1.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+                isSelected
+                  ? 'border-foreground bg-primary/10'
+                  : 'border-border bg-background hover:border-primary'
+              )}
+            >
+              <span className='flex h-14 w-full items-center justify-center overflow-hidden rounded-md bg-muted'>
+                {url ? (
+                  <ImageComponent
+                    src={url}
+                    alt=''
+                    preview={false}
+                    rootClassName='size-full'
+                    className='size-full object-contain'
+                  />
+                ) : (
+                  <span className='text-center text-xs text-muted-foreground'>
+                    Chưa có ảnh
+                  </span>
+                )}
+              </span>
+              <span className='text-xs font-medium leading-4 text-foreground'>
+                {item.title}
+              </span>
+            </button>
+          )
+        })}
+      </div>
     </div>
   )
 }

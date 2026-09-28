@@ -13,7 +13,7 @@ export function useMerchantUserListData() {
   const [draft, setDraft] = useState<UserFilters>(EMPTY_FILTERS)
   const [filters, setFilters] = useState<UserFilters>(EMPTY_FILTERS)
   const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(20)
+  const [pageSize, setPageSize] = useState(10)
   const usersQuery = useListMerchantUsersQuery({
     page,
     size: pageSize,

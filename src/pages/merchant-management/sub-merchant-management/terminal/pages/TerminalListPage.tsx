@@ -12,11 +12,11 @@ import { PlusOutlined, TerminalIcon } from '@components/icons'
 import {
   ButtonComponent,
   CardComponent,
-  Table,
-  feedback
+  feedback,
+  type PickedEntity,
+  Table
 } from '@components/index'
 import { createTerminalApiColumns } from '../columns/terminalApi.columns'
-import type { PickedEntity } from '../../shared/management.types'
 import { TerminalApiFilters } from '../components/TerminalApiFilters'
 import { TerminalDetailModal } from '../components/TerminalDetailModal'
 import { TerminalLockDialog } from '../components/TerminalLockDialog'
@@ -27,7 +27,7 @@ export default function TerminalListPage(
   const navigate = useNavigate()
   const basePath = SCREENS.MERCHANT_TERMINAL.path
   const [page, setPage] = useState(1)
-  const [size, setSize] = useState(20)
+  const [size, setSize] = useState(10)
   const [merchant, setMerchant] = useState<PickedEntity>()
   const [subMerchant, setSubMerchant] = useState<PickedEntity>()
   const [name, setName] = useState('')
@@ -91,7 +91,6 @@ export default function TerminalListPage(
         onNameChange={setName}
         onMerchantChange={(value) => {
           setMerchant(value)
-          setSubMerchant(undefined)
           setPage(1)
         }}
         onSubChange={(value) => {

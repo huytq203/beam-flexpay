@@ -33,17 +33,22 @@ const ConfirmEKYC = () => {
 
   const { svg } = useSVG()
 
-  const [selectedProfile, setSelectedProfile] = useState<EKYCListItem | undefined>()
+  // Giữ bản chụp để modal không trống nếu dòng rời trang sau khi tải lại, nhưng
+  // ưu tiên dòng mới nhất trong danh sách: link ảnh S3 chỉ sống vài phút.
+  const [selectedSnapshot, setSelectedSnapshot] = useState<EKYCListItem | undefined>()
+  const selectedProfile =
+    dataSource?.find((row) => row.groupKey === selectedSnapshot?.groupKey) ??
+    selectedSnapshot
   const [isDetailOpen, setIsDetailOpen] = useState(false)
 
   const openDetail = (record: EKYCListItem) => {
-    setSelectedProfile(record)
+    setSelectedSnapshot(record)
     setIsDetailOpen(true)
   }
 
   const closeDetail = () => {
     setIsDetailOpen(false)
-    setSelectedProfile(undefined)
+    setSelectedSnapshot(undefined)
   }
 
   const columns = getColumn({ svg, onViewDetail: openDetail })
@@ -96,6 +101,7 @@ const ConfirmEKYC = () => {
         modalText={
           <BusinessComfirm
             data={selectedProfile}
+            onRetry={() => void refetch()}
           />
         }
       />

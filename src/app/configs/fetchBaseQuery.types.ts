@@ -4,6 +4,7 @@ import {
     FEEMANAGEMENT,
     FEEMANAGEMENT_V4,
     INTERNAL_WALLET,
+    MERCHANT,
     ROLEMANAGEMENT,
     ROLEMANAGEMENT_V2,
     TRANSACTIONMANAGEMENT,
@@ -213,6 +214,24 @@ export interface RequestArgs {
 // ============================================================================
 
 
+// Dialog chọn Merchant / Sub-merchant tự hiển thị loading trong bảng; phủ global
+// loader mỗi lần gõ tìm hoặc chuyển trang chỉ làm màn hình nhấp nháy.
+const MERCHANT_PICKER_ROUTES = [
+  '/sub-merchant',
+  '/terminal',
+  '/user',
+  '/user-role',
+  '/key-connection',
+  '/bank-account',
+  '/payment-method'
+] as const
+const MERCHANT_PICKER_WHITE_LIST: WhiteListItem[] = MERCHANT_PICKER_ROUTES.flatMap(
+  (route) => [
+    { pathname: MERCHANT + route, requestUrl: '/merchants', includeNestedPaths: true },
+    { pathname: MERCHANT + route, requestUrl: '/sub-merchants', includeNestedPaths: true }
+  ]
+)
+
 export const WHITE_LIST: WhiteListItem[] = [
     // Đặt lại mật khẩu tự hiển thị trạng thái của mình (đang kiểm tra liên kết,
     // nút đang gửi) — overlay loading toàn màn sẽ che mất chính các trạng thái đó.
@@ -325,6 +344,8 @@ export const WHITE_LIST: WhiteListItem[] = [
     },
 
     // { pathname: WALLETADMINISTRATION + '/role-management', requestUrl: '/wallet/transactions' },
+
+    ...MERCHANT_PICKER_WHITE_LIST
 ]
 
 // ============================================================================

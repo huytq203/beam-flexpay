@@ -123,4 +123,25 @@ describe('whitelist của global loading', () => {
       )
     ).toBeUndefined()
   })
+
+  it.each([
+    ['/merchants', '/secure-panel/merchant/sub-merchant/create'],
+    ['/merchants', '/secure-panel/merchant/user'],
+    ['/merchants', '/secure-panel/merchant/user-role'],
+    ['/merchants', '/secure-panel/merchant/key-connection'],
+    ['/merchants', '/secure-panel/merchant/bank-account'],
+    ['/sub-merchants', '/secure-panel/merchant/terminal/create'],
+    ['/merchants/merchant-1', '/secure-panel/merchant/sub-merchant/edit/sub-1']
+  ])('bỏ global loader cho dialog chọn Merchant: %s tại %s', (url, pathname) => {
+    expect(isInWhiteList(url, pathname)).toBeDefined()
+  })
+
+  it('không whitelist API Merchant ở màn không có dialog chọn', () => {
+    expect(
+      isInWhiteList('/merchants', '/secure-panel/merchant/merchant-management')
+    ).toBeUndefined()
+    expect(
+      isInWhiteList('/merchant-users', '/secure-panel/merchant/user')
+    ).toBeUndefined()
+  })
 })

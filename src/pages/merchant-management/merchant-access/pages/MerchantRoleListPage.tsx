@@ -1,5 +1,5 @@
 import { useMerchantRoleListData } from '../hooks/useMerchantRoleListData'
-import { useAccessLookups } from '../hooks/useAccessLookups'
+import { usePermissionCatalog } from '../hooks/usePermissionCatalog'
 import { useState } from 'react'
 
 import { Can, PERMISSION, useAccess } from '@/app/permissions'
@@ -8,6 +8,7 @@ import { ButtonComponent, Table } from '@components/index'
 
 import { createMerchantRoleColumns } from '../columns/merchantRole.columns'
 import { AccessPageShell } from '../components/AccessPageShell'
+import { MerchantNameText } from '../components/MerchantNameText'
 import { MerchantRoleFilters } from '../components/MerchantRoleFilters'
 import { RoleDeleteDialog } from '../components/RoleDeleteDialog'
 import { RoleEditorModal } from '../components/RoleEditorModal'
@@ -19,7 +20,7 @@ export default function MerchantRoleListPage() {
   const canManageSystemGroups = access.has(
     PERMISSION.MERCHANT_SYSTEM_GROUP_MANAGE
   )
-  const { merchants, permissions, getMerchant } = useAccessLookups()
+  const { permissions } = usePermissionCatalog()
   const {
     draft,
     setDraft,
@@ -29,7 +30,6 @@ export default function MerchantRoleListPage() {
     setPageSize,
     rolesQuery,
     roles,
-    users,
     filteredRoles,
     apply,
     reset
@@ -40,8 +40,6 @@ export default function MerchantRoleListPage() {
   const columns = createMerchantRoleColumns({
     page,
     pageSize,
-    users,
-    getMerchant,
     canManageSystemGroups,
     onView: setDetail,
     onEdit: setEditor,
@@ -69,7 +67,6 @@ export default function MerchantRoleListPage() {
         toolbar={
           <MerchantRoleFilters
             draft={draft}
-            merchants={merchants}
             onChange={setDraft}
             onApply={apply}
             onReset={reset}
@@ -100,7 +97,7 @@ export default function MerchantRoleListPage() {
             pageSize,
             total: rolesQuery.data?.totalElements ?? 0,
             showSizeChanger: true,
-            pageSizeOptions: [20, 50, 100],
+            pageSizeOptions: [10, 20, 50, 100],
             onChange: (nextPage, nextSize) => {
               setPage(nextSize !== pageSize ? 1 : nextPage)
               setPageSize(nextSize)
@@ -125,10 +122,11 @@ export default function MerchantRoleListPage() {
           role={roles.find((row) => row.id === detail.id) ?? detail}
           catalog={permissions}
           merchantName={
-            detail.merchantId
-              ? (getMerchant(detail.merchantId)?.name ??
-                'Merchant không xác định')
-              : 'Dùng chung toàn hệ thống'
+            detail.merchantId ? (
+              <MerchantNameText merchantId={detail.merchantId} />
+            ) : (
+              'Dùng chung toàn hệ thống'
+            )
           }
           canEdit={
             detail.system
@@ -141,7 +139,6 @@ export default function MerchantRoleListPage() {
       {deleting && (
         <RoleDeleteDialog
           role={deleting}
-          getMerchant={getMerchant}
           onClose={() => setDeleting(null)}
         />
       )}

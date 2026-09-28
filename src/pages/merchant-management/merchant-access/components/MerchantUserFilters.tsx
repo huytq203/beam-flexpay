@@ -1,4 +1,14 @@
-import { ButtonComponent, Input, SelectComponent } from '@components/index'
+import { useState } from 'react'
+import {
+  Input,
+  MerchantPickerDialog,
+  PickerTrigger,
+  SelectComponent,
+  SubMerchantPickerDialog,
+  describePicked,
+  toPickedEntity,
+  type PickedEntity
+} from '@components/index'
 
 import type {
   AccessMerchant,
@@ -8,136 +18,170 @@ import type {
 } from '../types/merchantAccess.types'
 import type { UserFilters } from '../constants/merchantUserList.constants'
 import { STATUS_LABELS } from '../constants/merchantUserList.constants'
+import { resolvePicked } from '../utils/merchantAccess.utils'
+import { AccessFilterActions } from './AccessFilterActions'
 
-interface Props {
+interface MerchantUserFiltersProps {
   draft: UserFilters
-  merchants: readonly AccessMerchant[]
-  subMerchants: readonly AccessSubMerchant[]
   roles: readonly MerchantRole[]
+  getMerchant: (id: string) => AccessMerchant | undefined
+  getSubMerchant: (id: string) => AccessSubMerchant | undefined
   onChange: (filters: UserFilters) => void
   onApply: () => void
   onReset: () => void
 }
 
+const labelClass = 'mb-1 block text-sm font-medium text-foreground'
+const statusOptions = Object.entries(STATUS_LABELS).map(([value, label]) => ({
+  label,
+  value
+}))
+const scopeOptions = [
+  { label: '1 Merchant', value: 'single' },
+  { label: 'Nhiều Merchant', value: 'multiple' }
+]
+
 export function MerchantUserFilters({
   draft,
-  merchants,
-  subMerchants,
   roles,
+  getMerchant,
+  getSubMerchant,
   onChange,
   onApply,
   onReset
-}: Props) {
+}: MerchantUserFiltersProps) {
+  const [picking, setPicking] = useState<'merchant' | 'sub'>()
+  const [merchant, setMerchant] = useState<PickedEntity>()
+  const [sub, setSub] = useState<PickedEntity>()
+  const merchantValue = resolvePicked(draft.merchantId, merchant, getMerchant)
+  const subValue = resolvePicked(draft.subMerchantId, sub, getSubMerchant)
+
   return (
-    <div className='space-y-3'>
-      <div className='grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3'>
-        <div className='min-w-0 sm:col-span-2 xl:col-span-1'>
+    <form
+      className='space-y-4'
+      onSubmit={(event) => {
+        event.preventDefault()
+        onApply()
+      }}
+      onReset={onReset}
+    >
+      <div className='grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3'>
+        <div>
           <label
-            className='sr-only'
+            className={labelClass}
             htmlFor='merchant-user-search'
           >
-            Tìm User
+            Từ khóa
           </label>
-          <Input.Search
+          <Input
             id='merchant-user-search'
             maxLength={100}
+            allowClear
+            placeholder='Họ tên, Email hoặc SĐT'
+            value={draft.query}
             onChange={(event) =>
               onChange({ ...draft, query: event.target.value })
             }
-            onSearch={onApply}
-            placeholder='Họ tên, Email hoặc SĐT...'
-            value={draft.query}
           />
         </div>
-        <SelectComponent
-          allowClear
-          aria-label='Lọc Merchant'
-          className='w-full'
-          onChange={(merchantId: string | undefined) =>
-            onChange({ ...draft, merchantId, subMerchantId: undefined })
-          }
-          optionFilterProp='label'
-          options={merchants.map((merchant) => ({
-            label: `${merchant.code} — ${merchant.name}`,
-            value: merchant.id
-          }))}
+        <PickerTrigger
+          id='merchant-user-filter-merchant'
+          label='Merchant'
+          value={describePicked(merchantValue)}
           placeholder='Tất cả Merchant'
-          showSearch
-          value={draft.merchantId}
+          onOpen={() => setPicking('merchant')}
+          onClear={() => onChange({ ...draft, merchantId: undefined })}
         />
-        <SelectComponent
-          allowClear
-          aria-label='Lọc Sub-merchant'
-          className='w-full'
-          disabled={!draft.merchantId}
-          onChange={(subMerchantId: string | undefined) =>
-            onChange({ ...draft, subMerchantId })
-          }
-          optionFilterProp='label'
-          options={subMerchants
-            .filter((sub) => sub.merchantId === draft.merchantId)
-            .map((sub) => ({ label: sub.name, value: sub.id }))}
+        <PickerTrigger
+          id='merchant-user-filter-sub'
+          label='Sub-merchant'
+          value={subValue?.name}
           placeholder='Tất cả Sub-merchant'
-          showSearch
-          value={draft.subMerchantId}
+          onOpen={() => setPicking('sub')}
+          onClear={() => onChange({ ...draft, subMerchantId: undefined })}
         />
-        <SelectComponent<string[]>
-          allowClear
-          aria-label='Lọc nhóm quyền'
-          className='w-full'
-          mode='multiple'
-          onChange={(roleIds: string[]) => onChange({ ...draft, roleIds })}
-          options={roles.map((role) => ({
-            label: role.name,
-            value: role.id
-          }))}
-          placeholder='Tất cả nhóm quyền'
-          value={draft.roleIds}
-        />
-        <SelectComponent
-          allowClear
-          aria-label='Lọc trạng thái'
-          className='w-full'
-          onChange={(status: MerchantUserStatus | undefined) =>
-            onChange({ ...draft, status })
-          }
-          options={Object.entries(STATUS_LABELS).map(([value, label]) => ({
-            label,
-            value
-          }))}
-          placeholder='Tất cả trạng thái'
-          value={draft.status}
-        />
-        <SelectComponent
-          allowClear
-          aria-label='Lọc phạm vi'
-          className='w-full'
-          onChange={(scope: UserFilters['scope']) =>
-            onChange({ ...draft, scope })
-          }
-          options={[
-            { label: '1 Merchant', value: 'single' },
-            { label: 'Nhiều Merchant', value: 'multiple' }
-          ]}
-          placeholder='Mọi phạm vi'
-          value={draft.scope}
-        />
+        <div>
+          <label
+            className={labelClass}
+            htmlFor='merchant-user-filter-roles'
+          >
+            Nhóm quyền
+          </label>
+          <SelectComponent<string[]>
+            id='merchant-user-filter-roles'
+            allowClear
+            className='w-full'
+            mode='multiple'
+            optionFilterProp='label'
+            options={roles.map((role) => ({
+              label: role.name,
+              value: role.id
+            }))}
+            placeholder='Tất cả nhóm quyền'
+            value={draft.roleIds}
+            onChange={(roleIds: string[]) => onChange({ ...draft, roleIds })}
+          />
+        </div>
+        <div>
+          <label
+            className={labelClass}
+            htmlFor='merchant-user-filter-status'
+          >
+            Trạng thái
+          </label>
+          <SelectComponent
+            id='merchant-user-filter-status'
+            allowClear
+            className='w-full'
+            options={statusOptions}
+            placeholder='Tất cả trạng thái'
+            value={draft.status}
+            onChange={(status: MerchantUserStatus | undefined) =>
+              onChange({ ...draft, status })
+            }
+          />
+        </div>
+        <div>
+          <label
+            className={labelClass}
+            htmlFor='merchant-user-filter-scope'
+          >
+            Phạm vi
+          </label>
+          <SelectComponent
+            id='merchant-user-filter-scope'
+            allowClear
+            className='w-full'
+            options={scopeOptions}
+            placeholder='Mọi phạm vi'
+            value={draft.scope}
+            onChange={(scope: UserFilters['scope']) =>
+              onChange({ ...draft, scope })
+            }
+          />
+        </div>
       </div>
-      <div className='flex flex-wrap justify-end gap-2'>
-        <ButtonComponent
-          className='min-w-24'
-          content='Đặt lại'
-          htmlType='button'
-          onClick={onReset}
-          type='default'
-        />
-        <ButtonComponent
-          className='min-w-24'
-          content='Áp dụng'
-          htmlType='button'
-          onClick={onApply}
-        />
-      </div>
-    </div>
+      <AccessFilterActions />
+      <MerchantPickerDialog
+        open={picking === 'merchant'}
+        selectedId={draft.merchantId}
+        onCancel={() => setPicking(undefined)}
+        onSelect={(value) => {
+          setMerchant(toPickedEntity(value))
+          onChange({ ...draft, merchantId: value.id })
+          setPicking(undefined)
+        }}
+      />
+      <SubMerchantPickerDialog
+        open={picking === 'sub'}
+        selectedId={draft.subMerchantId}
+        onCancel={() => setPicking(undefined)}
+        onSelect={(value) => {
+          setSub(toPickedEntity(value))
+          onChange({ ...draft, subMerchantId: value.id })
+          setPicking(undefined)
+        }}
+      />
+    </form>
   )
 }

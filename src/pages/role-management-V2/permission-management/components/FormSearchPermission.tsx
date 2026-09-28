@@ -2,23 +2,17 @@ import { memo } from 'react'
 import { useForm } from 'react-hook-form'
 import { BroomIcon } from '@components/icons'
 import { ButtonComponent } from '@components/index'
-import { FormSelect } from '@components/form'
+import { FormInput } from '@components/form'
 import { useSVG } from '@hooks/useSVG'
 import { SearchPermissionFormData } from '../types/PermissionManagement.type'
 
 interface Props {
   onSearch: (data: SearchPermissionFormData) => void
   onAdd: () => void
-  permissionOptions: Array<{ value: string; label: string }>
   canAdd: boolean
 }
 
-const FormSearchPermission = ({
-  onSearch,
-  onAdd,
-  permissionOptions,
-  canAdd
-}: Props) => {
+const FormSearchPermission = ({ onSearch, onAdd, canAdd }: Props) => {
   const { svg } = useSVG()
   const { control, handleSubmit, reset } = useForm<SearchPermissionFormData>({
     defaultValues: { keyword: '' }
@@ -32,12 +26,11 @@ const FormSearchPermission = ({
   return (
     <form
       className='w-full'
-      onSubmit={handleSubmit(onSearch)}
+      onSubmit={handleSubmit((data) => onSearch(data))}
     >
-      <FormSelect
-        options={permissionOptions}
+      <FormInput
         label='Tìm kiếm quyền'
-        placeholder='Chọn quyền...'
+        placeholder='Nhập mã quyền...'
         control={control}
         name='keyword'
       />

@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useFormState, type UseFormReturn } from 'react-hook-form'
 import type { ApiSubMerchantSummary } from '@/app/services/merchantHierarchyApi'
-import type { PickedEntity } from '../../shared/management.types'
-import { ParentMerchantPickerDialog } from '../../shared/ParentMerchantPickerDialog'
-import { PickerTrigger } from '../../shared/PickerTrigger'
-import { SubMerchantPickerDialog } from '../../shared/SubMerchantPickerDialog'
 import type { TerminalApiDraft } from '../schemas/terminalApi.schema'
+import {
+  PickerTrigger,
+  MerchantPickerDialog,
+  SubMerchantPickerDialog,
+  type PickedEntity
+} from '@components/index'
 
 interface TerminalOwnerSectionProps {
   form: UseFormReturn<TerminalApiDraft>
@@ -37,13 +39,23 @@ export function TerminalOwnerSection({
 
   const pickMaster = (merchant?: PickedEntity) => {
     form.setValue('merchantId', merchant?.id ?? '', { shouldValidate: true })
-    form.setValue('subMerchantId', '')
+    // Sub-merchant đã chọn chỉ giữ lại khi còn thuộc Master mới.
+    if (sub && master?.id !== merchant?.id) {
+      form.setValue('subMerchantId', '')
+      onPickSub(undefined)
+    }
     onPickMaster(merchant)
-    onPickSub(undefined)
     setPicking(undefined)
   }
+  // Chọn thẳng Sub-merchant thì Master suy ra từ chính Sub đó.
   const pickSub = (value: ApiSubMerchantSummary) => {
     form.setValue('subMerchantId', value.id, { shouldValidate: true })
+    form.setValue('merchantId', value.merchantId, { shouldValidate: true })
+    onPickMaster({
+      id: value.merchantId,
+      code: value.merchantCode ?? value.merchantId,
+      name: value.merchantName ?? ''
+    })
     onPickSub(value)
     setPicking(undefined)
   }
@@ -55,8 +67,8 @@ export function TerminalOwnerSection({
           Đơn vị quản lý
         </h2>
         <p className='mt-1 text-sm text-muted-foreground'>
-          Chọn Master để tìm Sub-merchant trực thuộc. Không thể đổi đơn vị quản
-          lý sau khi tạo.
+          Chọn Sub-merchant, Master Merchant sẽ tự điền theo Sub đã chọn. Không
+          thể đổi đơn vị quản lý sau khi tạo.
         </p>
       </div>
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
@@ -75,9 +87,9 @@ export function TerminalOwnerSection({
           id='terminal-sub'
           label='Sub-merchant'
           required
-          disabled={edit || !master}
+          disabled={edit}
           value={describe(sub)}
-          placeholder={master ? 'Chọn Sub-merchant' : 'Chọn Master trước'}
+          placeholder='Chọn Sub-merchant'
           error={errors.subMerchantId?.message}
           onOpen={() => setPicking('sub')}
         />
@@ -90,7 +102,7 @@ export function TerminalOwnerSection({
       </div>
       {!edit && (
         <>
-          <ParentMerchantPickerDialog
+          <MerchantPickerDialog
             open={picking === 'merchant'}
             status='ACTIVE'
             selectedId={master?.id}
@@ -100,7 +112,6 @@ export function TerminalOwnerSection({
           <SubMerchantPickerDialog
             open={picking === 'sub'}
             status='ACTIVE'
-            merchantId={master?.id}
             selectedId={sub?.id}
             onCancel={() => setPicking(undefined)}
             onSelect={pickSub}
