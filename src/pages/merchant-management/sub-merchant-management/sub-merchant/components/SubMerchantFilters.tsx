@@ -1,10 +1,13 @@
+import { useState } from 'react'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 
 import { FormDatePicker, FormInput, FormSelect } from '@components/form'
 import { BroomIcon, FunnelIcon, MagnifyingGlassIcon } from '@components/icons'
 import { ButtonComponent } from '@components/index'
 
-import { PARENT_MERCHANT_FIXTURES } from '../constants/subMerchant.fixture'
+import type { PickedEntity } from '../../shared/management.types'
+import { ParentMerchantPickerDialog } from '../../shared/ParentMerchantPickerDialog'
+import { PickerTrigger } from '../../shared/PickerTrigger'
 import type { SubMerchantFiltersValue } from '../hooks/useSubMerchants'
 
 interface SubMerchantFiltersProps {
@@ -20,17 +23,21 @@ const STATUS_OPTIONS = [
   { label: 'Đã khóa', value: 'LOCKED' },
   { label: 'Tạm ngưng theo cấp cha', value: 'SUSPENDED_BY_PARENT' }
 ]
-const PARENT_OPTIONS = Object.values(PARENT_MERCHANT_FIXTURES).map((parent) => ({
-  label: `${parent.name} (${parent.code})`,
-  value: parent.id
-}))
 
 export function SubMerchantFilters({ value, onSearch, onReset }: SubMerchantFiltersProps) {
   const form = useForm<SubMerchantFiltersValue>({ defaultValues: value })
+  const [parent, setParent] = useState<PickedEntity>()
+  const [isPickingParent, setIsPickingParent] = useState(false)
   const handleSubmit: SubmitHandler<SubMerchantFiltersValue> = onSearch
 
+  const pickParent = (value?: PickedEntity): void => {
+    setParent(value)
+    form.setValue('parentMerchantId', value?.id)
+    setIsPickingParent(false)
+  }
   const handleReset = (): void => {
     form.reset({ query: '' })
+    setParent(undefined)
     onReset()
   }
 
@@ -42,7 +49,14 @@ export function SubMerchantFilters({ value, onSearch, onReset }: SubMerchantFilt
       </div>
       <div className='grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4'>
         <FormInput className={FIELD_CLASS} classNameLable={LABEL_CLASS} control={form.control} label='Từ khóa' name='query' placeholder='Mã, tên, Merchant cha hoặc số điện thoại' />
-        <FormSelect className={FIELD_CLASS} classNameLable={LABEL_CLASS} control={form.control} label='Merchant cha' name='parentMerchantId' options={PARENT_OPTIONS} placeholder='Tất cả Merchant cha' />
+        <PickerTrigger
+          id='sub-merchant-filter-parent'
+          label='Merchant cha'
+          value={parent ? `${parent.code} — ${parent.name}` : undefined}
+          placeholder='Tất cả Merchant cha'
+          onOpen={() => setIsPickingParent(true)}
+          onClear={() => pickParent(undefined)}
+        />
         <FormSelect className={FIELD_CLASS} classNameLable={LABEL_CLASS} control={form.control} label='Trạng thái' name='status' options={STATUS_OPTIONS} placeholder='Tất cả trạng thái' />
         <FormDatePicker className={FIELD_CLASS} classNameLable={LABEL_CLASS} control={form.control} isRange label='Ngày tạo' name='createdRange' placeholder={['Từ ngày', 'Đến ngày']} />
       </div>
@@ -50,6 +64,12 @@ export function SubMerchantFilters({ value, onSearch, onReset }: SubMerchantFilt
         <ButtonComponent className='w-full sm:w-auto' content='Xóa bộ lọc' htmlType='reset' icon={<BroomIcon aria-hidden size={18} />} type='default' />
         <ButtonComponent className='w-full sm:w-auto' content='Tìm kiếm' htmlType='submit' icon={<MagnifyingGlassIcon aria-hidden size={18} />} />
       </div>
+      <ParentMerchantPickerDialog
+        open={isPickingParent}
+        selectedId={parent?.id}
+        onCancel={() => setIsPickingParent(false)}
+        onSelect={({ id, code, name }) => pickParent({ id, code, name })}
+      />
     </form>
   )
 }

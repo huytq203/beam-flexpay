@@ -85,6 +85,14 @@ export interface ApiParentMerchant {
   legalRepresentativeName?: string
 }
 
+export interface ParentMerchantQuery {
+  page?: number
+  size?: number
+  name?: string
+  code?: string
+  status?: string
+}
+
 export interface HierarchyPageQuery {
   page: number
   size: number
@@ -122,9 +130,14 @@ const unwrap = <T>(response: ApiEnvelope<T>): T => response.data
 
 const service = apiMerchant.injectEndpoints({
   endpoints: (builder) => ({
-    getHierarchyParents: builder.query<ApiPage<ApiParentMerchant>, { page?: number; size?: number }>({
-      query: ({ page = 1, size = 100 }) => ({ url: '/merchants', params: { page, size } }),
+    getHierarchyParents: builder.query<ApiPage<ApiParentMerchant>, ParentMerchantQuery>({
+      query: ({ page = 1, size = 100, name, code, status }) => ({ url: '/merchants', params: { page, size, name, code, status } }),
       transformResponse: unwrap<ApiPage<ApiParentMerchant>>,
+      providesTags: ['merchant']
+    }),
+    getHierarchyParentById: builder.query<ApiParentMerchant, string>({
+      query: (id) => `/merchants/${id}`,
+      transformResponse: unwrap<ApiParentMerchant>,
       providesTags: ['merchant']
     }),
     getSubMerchantPage: builder.query<ApiPage<ApiSubMerchantSummary>, HierarchyPageQuery>({
@@ -186,6 +199,7 @@ const service = apiMerchant.injectEndpoints({
 
 export const {
   useGetHierarchyParentsQuery,
+  useGetHierarchyParentByIdQuery,
   useGetSubMerchantPageQuery,
   useGetSubMerchantDetailQuery,
   useCreateSubMerchantMutation,

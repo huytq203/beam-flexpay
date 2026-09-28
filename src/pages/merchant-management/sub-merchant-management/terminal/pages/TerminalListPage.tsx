@@ -2,8 +2,6 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Can, SCREENS } from '@/app/permissions'
 import {
-  useGetHierarchyParentsQuery,
-  useGetSubMerchantPageQuery,
   useGetTerminalPageQuery,
   useSetTerminalLockedMutation,
   type ApiTerminalSummary,
@@ -18,6 +16,7 @@ import {
   feedback
 } from '@components/index'
 import { createTerminalApiColumns } from '../columns/terminalApi.columns'
+import type { PickedEntity } from '../../shared/management.types'
 import { TerminalApiFilters } from '../components/TerminalApiFilters'
 import { TerminalDetailModal } from '../components/TerminalDetailModal'
 import { TerminalLockDialog } from '../components/TerminalLockDialog'
@@ -29,8 +28,8 @@ export default function TerminalListPage(
   const basePath = SCREENS.MERCHANT_TERMINAL.path
   const [page, setPage] = useState(1)
   const [size, setSize] = useState(20)
-  const [merchantId, setMerchantId] = useState<string>()
-  const [subMerchantId, setSubMerchantId] = useState<string>()
+  const [merchant, setMerchant] = useState<PickedEntity>()
+  const [subMerchant, setSubMerchant] = useState<PickedEntity>()
   const [name, setName] = useState('')
   const [searchName, setSearchName] = useState('')
   const [terminalType, setTerminalType] = useState<ApiTerminalType>()
@@ -38,13 +37,11 @@ export default function TerminalListPage(
   const [viewingId, setViewingId] = useState<string>()
   const [locking, setLocking] = useState<ApiTerminalSummary | null>(null)
   const [reason, setReason] = useState('')
-  const parents = useGetHierarchyParentsQuery({ page: 1, size: 100 })
-  const subs = useGetSubMerchantPageQuery({ page: 1, size: 100, merchantId })
   const query = useGetTerminalPageQuery({
     page,
     size,
-    merchantId,
-    subMerchantId,
+    merchantId: merchant?.id,
+    subMerchantId: subMerchant?.id,
     name: searchName || undefined,
     terminalType,
     status
@@ -58,8 +55,8 @@ export default function TerminalListPage(
   const clearFilters = () => {
     setName('')
     setSearchName('')
-    setMerchantId(undefined)
-    setSubMerchantId(undefined)
+    setMerchant(undefined)
+    setSubMerchant(undefined)
     setTerminalType(undefined)
     setStatus(undefined)
     setPage(1)
@@ -87,20 +84,18 @@ export default function TerminalListPage(
     <main className='flex min-w-0 flex-col gap-3'>
       <TerminalApiFilters
         name={name}
-        merchantId={merchantId}
-        subMerchantId={subMerchantId}
+        merchant={merchant}
+        subMerchant={subMerchant}
         terminalType={terminalType}
         status={status}
-        parents={parents.data?.content ?? []}
-        subs={subs.data?.content ?? []}
         onNameChange={setName}
         onMerchantChange={(value) => {
-          setMerchantId(value)
-          setSubMerchantId(undefined)
+          setMerchant(value)
+          setSubMerchant(undefined)
           setPage(1)
         }}
         onSubChange={(value) => {
-          setSubMerchantId(value)
+          setSubMerchant(value)
           setPage(1)
         }}
         onTypeChange={(value) => {

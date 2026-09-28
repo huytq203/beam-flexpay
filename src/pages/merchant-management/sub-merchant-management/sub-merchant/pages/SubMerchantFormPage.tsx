@@ -1,59 +1,26 @@
-import { useEffect } from 'react'
-import { z } from 'zod'
+import { useEffect, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, useWatch } from 'react-hook-form'
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { SCREENS, useScreenAccess } from '@/app/permissions'
 import {
   useCreateSubMerchantMutation,
-  useGetHierarchyParentsQuery,
+  useGetHierarchyParentByIdQuery,
   useGetSubMerchantDetailQuery,
-  useUpdateSubMerchantMutation
+  useUpdateSubMerchantMutation,
+  type ApiParentMerchant
 } from '@/app/services/merchantHierarchyApi'
-import {
-  FormInput,
-  FormSelect,
-  FormSwitch,
-  FormTextArea
-} from '@components/form'
+import { FormInput } from '@components/form'
 import { ArrowLeftOutlined, SaveOutlined } from '@components/icons'
 import { ButtonComponent, CardComponent, feedback } from '@components/index'
 import { FORBIDDENERROR } from '@constants/routersConstant'
-
-const schema = z
-  .object({
-    merchantId: z.string().min(1, 'Vui lòng chọn Merchant cha'),
-    name: z.string().trim().min(1, 'Vui lòng nhập tên Sub-merchant').max(255),
-    businessField: z.string().max(100),
-    inheritPhone: z.boolean(),
-    phone: z.string().max(15),
-    inheritAddress: z.boolean(),
-    address: z.string().max(500)
-  })
-  .superRefine((value, context) => {
-    if (!value.inheritPhone && !value.phone.trim())
-      context.addIssue({
-        code: 'custom',
-        path: ['phone'],
-        message: 'Vui lòng nhập số điện thoại'
-      })
-    if (!value.inheritAddress && !value.address.trim())
-      context.addIssue({
-        code: 'custom',
-        path: ['address'],
-        message: 'Vui lòng nhập địa chỉ'
-      })
-  })
-type Draft = z.infer<typeof schema>
-const empty: Draft = {
-  merchantId: '',
-  name: '',
-  businessField: '',
-  inheritPhone: true,
-  phone: '',
-  inheritAddress: true,
-  address: ''
-}
+import { InheritableContactFields } from '../components/InheritableContactFields'
+import { ParentMerchantField } from '../components/ParentMerchantField'
+import {
+  EMPTY_SUB_MERCHANT_DRAFT,
+  subMerchantApiSchema,
+  type SubMerchantApiDraft
+} from '../schemas/subMerchantApi.schema'
 
 export default function SubMerchantFormPage() {
   const { id } = useParams<{ id: string }>()
@@ -62,25 +29,28 @@ export default function SubMerchantFormPage() {
   const access = useScreenAccess('MERCHANT_SUB_MERCHANT')
   const edit = location.pathname.includes('/edit/')
   const basePath = SCREENS.MERCHANT_SUB_MERCHANT.path
-  const parentQuery = useGetHierarchyParentsQuery({ page: 1, size: 100 })
   const detailQuery = useGetSubMerchantDetailQuery(id ?? '', {
     skip: !edit || !id
   })
   const [create, createState] = useCreateSubMerchantMutation()
   const [update, updateState] = useUpdateSubMerchantMutation()
-  const form = useForm<Draft>({
-    resolver: zodResolver(schema),
-    defaultValues: empty
+  const form = useForm<SubMerchantApiDraft>({
+    resolver: zodResolver(subMerchantApiSchema),
+    defaultValues: EMPTY_SUB_MERCHANT_DRAFT
   })
+  const [pickedParent, setPickedParent] = useState<ApiParentMerchant>()
   const merchantId = useWatch({ control: form.control, name: 'merchantId' })
   const inheritPhone = useWatch({ control: form.control, name: 'inheritPhone' })
   const inheritAddress = useWatch({
     control: form.control,
     name: 'inheritAddress'
   })
-  const parent = parentQuery.data?.content.find(
-    (item) => item.id === merchantId
-  )
+  // Vừa chọn trong dialog thì đã có đủ thông tin; chỉ gọi API khi mở bản ghi cũ.
+  const parentQuery = useGetHierarchyParentByIdQuery(merchantId, {
+    skip: !merchantId || pickedParent?.id === merchantId
+  })
+  const parent =
+    pickedParent?.id === merchantId ? pickedParent : parentQuery.data
 
   useEffect(() => {
     const record = detailQuery.data
@@ -104,7 +74,7 @@ export default function SubMerchantFormPage() {
       />
     )
 
-  const save = async (value: Draft) => {
+  const save = async (value: SubMerchantApiDraft) => {
     try {
       const body = {
         name: value.name.trim(),
@@ -130,7 +100,7 @@ export default function SubMerchantFormPage() {
   return (
     <main className='flex min-w-0 flex-col gap-3'>
       <CardComponent className='border border-border bg-background shadow-none'>
-        <header className='flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3'>
+        <header className='flex flex-wrap items-center justify-between gap-3 '>
           <div className='flex items-center gap-2'>
             <ButtonComponent
               aria-label='Quay lại'
@@ -176,28 +146,13 @@ export default function SubMerchantFormPage() {
             title='Merchant cha'
             className='border border-border bg-background shadow-none'
           >
-            <div className='grid gap-4 md:grid-cols-2'>
-              <FormSelect
-                control={form.control}
-                name='merchantId'
-                label='Merchant cha'
-                disabled={edit}
-                options={(parentQuery.data?.content ?? [])
-                  .filter((item) => item.status === 'ACTIVE')
-                  .map((item) => ({
-                    label: `${item.code} — ${item.name}`,
-                    value: item.id
-                  }))}
-                showSearch
-                optionFilterProp='label'
-                placeholder='Chọn Merchant cha'
-              />
-              <div className='rounded-lg border border-border bg-muted/40 p-3 text-sm text-muted-foreground'>
-                {parent
-                  ? `${parent.name} · ${parent.code}`
-                  : 'Chọn Merchant cha để xem thông tin'}
-              </div>
-            </div>
+            <ParentMerchantField
+              control={form.control}
+              parent={parent}
+              isLoadingParent={parentQuery.isFetching}
+              locked={edit}
+              onPick={setPickedParent}
+            />
           </CardComponent>
           <CardComponent
             title='Hồ sơ Sub-merchant'
@@ -217,38 +172,26 @@ export default function SubMerchantFormPage() {
                 label='Lĩnh vực kinh doanh'
                 maxLength={100}
               />
-              <FormSwitch
-                control={form.control}
-                name='inheritPhone'
-                label='Kế thừa số điện thoại Merchant cha'
-              />
-              <FormSwitch
-                control={form.control}
-                name='inheritAddress'
-                label='Kế thừa địa chỉ Merchant cha'
-              />
-              {!inheritPhone && (
-                <FormInput
-                  control={form.control}
-                  name='phone'
-                  label='Số điện thoại'
-                  maxLength={15}
-                />
-              )}
-              {!inheritAddress && (
-                <FormTextArea
-                  control={form.control}
-                  name='address'
-                  label='Địa chỉ'
-                  maxLength={500}
-                  rows={3}
-                  className='md:col-span-2'
-                />
-              )}
             </div>
           </CardComponent>
+          <CardComponent
+            title='Liên hệ'
+            className='border border-border bg-background shadow-none'
+          >
+            <InheritableContactFields
+              form={form}
+              parent={parent}
+              inheritPhone={inheritPhone}
+              inheritAddress={inheritAddress}
+            />
+          </CardComponent>
           <div className='flex flex-wrap justify-end gap-2'>
-            <ButtonComponent htmlType='button' type='default' content='Hủy' onClick={() => navigate(basePath)} />
+            <ButtonComponent
+              htmlType='button'
+              type='default'
+              content='Hủy'
+              onClick={() => navigate(basePath)}
+            />
             <ButtonComponent
               form='sub-merchant-form'
               htmlType='submit'

@@ -37,14 +37,17 @@ const cloneRow = (row: SubMerchantRow): SubMerchantRow => ({
   configurationSources: { ...row.configurationSources }
 })
 
-let repositoryRows: readonly SubMerchantRow[] = SUB_MERCHANT_FIXTURES.map(cloneRow)
+let repositoryRows: readonly SubMerchantRow[] =
+  SUB_MERCHANT_FIXTURES.map(cloneRow)
 const projectEffectiveStatus = (row: SubMerchantRow): SubMerchantRow => {
   const parent = PARENT_MERCHANT_FIXTURES[row.parentMerchantId]
   if (parent?.status === 'ACTIVE' || !parent) return row
   return { ...row, status: 'SUSPENDED_BY_PARENT' }
 }
 
-let effectiveRows: readonly SubMerchantRow[] = repositoryRows.map(projectEffectiveStatus)
+let effectiveRows: readonly SubMerchantRow[] = repositoryRows.map(
+  projectEffectiveStatus
+)
 let nextSubMerchantSequence = SUB_MERCHANT_FIXTURES.length + 1
 const listeners = new Set<() => void>()
 
@@ -56,7 +59,8 @@ const subscribe = (listener: () => void): (() => void) => {
   listeners.add(listener)
   return () => listeners.delete(listener)
 }
-export const getSubMerchantSnapshot = (): readonly SubMerchantRow[] => effectiveRows
+export const getSubMerchantSnapshot = (): readonly SubMerchantRow[] =>
+  effectiveRows
 
 export const resetSubMerchantRepository = (): void => {
   repositoryRows = SUB_MERCHANT_FIXTURES.map(cloneRow)
@@ -70,9 +74,14 @@ export const getSubMerchantById = (id: string): SubMerchantRow | undefined =>
 const getStoredSubMerchantById = (id: string): SubMerchantRow | undefined =>
   repositoryRows.find((row) => row.id === id)
 
-export const toggleSubMerchantStatus = (id: string, reason: string): boolean => {
+export const toggleSubMerchantStatus = (
+  id: string,
+  reason: string
+): boolean => {
   const record = getStoredSubMerchantById(id)
-  const parent = record ? PARENT_MERCHANT_FIXTURES[record.parentMerchantId] : undefined
+  const parent = record
+    ? PARENT_MERCHANT_FIXTURES[record.parentMerchantId]
+    : undefined
   if (!record || !parent || parent.status !== 'ACTIVE') return false
 
   repositoryRows = repositoryRows.map((row) =>
@@ -89,7 +98,9 @@ export const toggleSubMerchantStatus = (id: string, reason: string): boolean => 
   return true
 }
 
-export const getParentMerchantById = (parentMerchantId: string): ParentMerchantSource | undefined =>
+export const getParentMerchantById = (
+  parentMerchantId: string
+): ParentMerchantSource | undefined =>
   PARENT_MERCHANT_FIXTURES[parentMerchantId]
 
 const resolveParent = (parentMerchantId: string): ParentMerchantSource => {
@@ -98,14 +109,17 @@ const resolveParent = (parentMerchantId: string): ParentMerchantSource => {
   return parent
 }
 
-const INHERITED_CONFIGURATION_SOURCES: SubMerchantConfigurationSources = Object.freeze({
-  bank: 'INHERITED',
-  key: 'INHERITED',
-  payment: 'INHERITED',
-  notification: 'INHERITED'
-})
+const INHERITED_CONFIGURATION_SOURCES: SubMerchantConfigurationSources =
+  Object.freeze({
+    bank: 'INHERITED',
+    key: 'INHERITED',
+    payment: 'INHERITED',
+    notification: 'INHERITED'
+  })
 
-export const createFixtureSubMerchant = (value: SubMerchantFormValue): SubMerchantRow => {
+export const createFixtureSubMerchant = (
+  value: SubMerchantFormValue
+): SubMerchantRow => {
   const parent = resolveParent(value.parentMerchantId)
   if (parent.status !== 'ACTIVE') {
     throw new Error('Merchant cha phải đang hoạt động để tạo Sub-merchant')
@@ -164,7 +178,8 @@ export const updateFixtureSubMerchant = (
   const defaults = parent.configurationDefaults
   const inheritsBank = storedRecord.configurationSources.bank === 'INHERITED'
   const inheritsKey = storedRecord.configurationSources.key === 'INHERITED'
-  const inheritsPayment = storedRecord.configurationSources.payment === 'INHERITED'
+  const inheritsPayment =
+    storedRecord.configurationSources.payment === 'INHERITED'
   const updated: SubMerchantRow = {
     ...storedRecord,
     name: value.name,
@@ -175,10 +190,18 @@ export const updateFixtureSubMerchant = (
     legalRepresentative: parent.legalRepresentative,
     phoneInherited: value.phoneInherited,
     addressInherited: value.addressInherited,
-    maskedBankAccount: inheritsBank ? defaults.maskedBankAccount : storedRecord.maskedBankAccount,
-    maskedIntegrationKey: inheritsKey ? defaults.maskedIntegrationKey : storedRecord.maskedIntegrationKey,
-    settlementMode: inheritsPayment ? defaults.settlementMode : storedRecord.settlementMode,
-    holdbackDays: inheritsPayment ? defaults.holdbackDays : storedRecord.holdbackDays,
+    maskedBankAccount: inheritsBank
+      ? defaults.maskedBankAccount
+      : storedRecord.maskedBankAccount,
+    maskedIntegrationKey: inheritsKey
+      ? defaults.maskedIntegrationKey
+      : storedRecord.maskedIntegrationKey,
+    settlementMode: inheritsPayment
+      ? defaults.settlementMode
+      : storedRecord.settlementMode,
+    holdbackDays: inheritsPayment
+      ? defaults.holdbackDays
+      : storedRecord.holdbackDays,
     autoApprovalThreshold: inheritsPayment
       ? defaults.autoApprovalThreshold
       : storedRecord.autoApprovalThreshold,
@@ -190,7 +213,9 @@ export const updateFixtureSubMerchant = (
       : storedRecord.dailyWithdrawalLimit,
     updatedAt: '22/09/2026 09:00'
   }
-  repositoryRows = repositoryRows.map((row) => (row.id === storedRecord.id ? updated : row))
+  repositoryRows = repositoryRows.map((row) =>
+    row.id === storedRecord.id ? updated : row
+  )
   emitChange()
   return updated
 }
@@ -208,15 +233,21 @@ export function useAllSubMerchants(): readonly SubMerchantRow[] {
   )
 }
 
-export function useSubMerchants({ initialListState }: UseSubMerchantsOptions = {}) {
+export function useSubMerchants({
+  initialListState
+}: UseSubMerchantsOptions = {}) {
   const records = useAllSubMerchants()
   const [filters, setFilterState] = useState(EMPTY_SUB_MERCHANT_FILTERS)
   const [page, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(SUB_MERCHANT_PAGE_SIZE)
   const [forcedState, setForcedState] = useState(initialListState)
   const filteredRows = filterSubMerchants(records, filters)
-  const effectivePage = Math.min(page, Math.max(1, Math.ceil(filteredRows.length / pageSize)))
-  const listState = forcedState ?? (filteredRows.length === 0 ? 'empty' : 'success')
+  const effectivePage = Math.min(
+    page,
+    Math.max(1, Math.ceil(filteredRows.length / pageSize))
+  )
+  const listState =
+    forcedState ?? (filteredRows.length === 0 ? 'empty' : 'success')
 
   const setFilters = (value: SubMerchantFiltersValue): void => {
     setFilterState(value)

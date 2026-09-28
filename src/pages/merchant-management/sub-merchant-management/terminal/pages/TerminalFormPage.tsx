@@ -1,18 +1,18 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, useWatch } from 'react-hook-form'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { SCREENS, useScreenAccess } from '@/app/permissions'
 import {
   useCreateTerminalApiMutation,
-  useGetHierarchyParentsQuery,
-  useGetSubMerchantPageQuery,
   useGetTerminalDetailQuery,
-  useUpdateTerminalApiMutation
+  useUpdateTerminalApiMutation,
+  type ApiSubMerchantSummary
 } from '@/app/services/merchantHierarchyApi'
 import { ArrowLeftOutlined, SaveOutlined } from '@components/icons'
 import { ButtonComponent, CardComponent, feedback } from '@components/index'
 import { FORBIDDENERROR } from '@constants/routersConstant'
+import type { PickedEntity } from '../../shared/management.types'
 import { TerminalApiFormFields } from '../components/TerminalApiFormFields'
 import {
   terminalApiSchema,
@@ -27,7 +27,8 @@ export default function TerminalFormPage() {
   const access = useScreenAccess('MERCHANT_TERMINAL')
   const detail = useGetTerminalDetailQuery(id ?? '', { skip: !id })
   const source = detail.data
-  const parents = useGetHierarchyParentsQuery({ page: 1, size: 100 })
+  const [pickedMaster, setPickedMaster] = useState<PickedEntity>()
+  const [pickedSub, setPickedSub] = useState<ApiSubMerchantSummary>()
   const [create, createState] = useCreateTerminalApiMutation()
   const [update, updateState] = useUpdateTerminalApiMutation()
   const form = useForm<TerminalApiDraft>({
@@ -44,23 +45,11 @@ export default function TerminalFormPage() {
       note: ''
     }
   })
-  const merchantId = useWatch({ control: form.control, name: 'merchantId' })
-  const subMerchantId = useWatch({
-    control: form.control,
-    name: 'subMerchantId'
-  })
   const terminalType = useWatch({ control: form.control, name: 'terminalType' })
   const inheritContactPhone = useWatch({
     control: form.control,
     name: 'inheritContactPhone'
   })
-  const subs = useGetSubMerchantPageQuery(
-    { page: 1, size: 100, merchantId },
-    { skip: !merchantId }
-  )
-  const selectedSub = subs.data?.content.find(
-    (item) => item.id === subMerchantId
-  )
   const { reset } = form
 
   useEffect(() => {
@@ -78,34 +67,21 @@ export default function TerminalFormPage() {
     })
   }, [source, reset])
 
-  const masterOptions = (parents.data?.content ?? [])
-    .filter(
-      (item) => item.status === 'ACTIVE' || item.id === source?.merchantId
-    )
-    .map((item) => ({ label: `${item.code} — ${item.name}`, value: item.id }))
-  if (
-    edit &&
-    source?.merchantId &&
-    !masterOptions.some((item) => item.value === source.merchantId)
-  )
-    masterOptions.push({
-      label: `${source.merchantCode ?? source.merchantId} — ${source.merchantName ?? 'Master Merchant'}`,
-      value: source.merchantId
-    })
-  const subOptions = (subs.data?.content ?? [])
-    .filter(
-      (item) => item.status === 'ACTIVE' || item.id === source?.subMerchantId
-    )
-    .map((item) => ({ label: `${item.code} — ${item.name}`, value: item.id }))
-  if (
-    edit &&
-    source?.subMerchantId &&
-    !subOptions.some((item) => item.value === source.subMerchantId)
-  )
-    subOptions.push({
-      label: `${source.subMerchantCode ?? source.subMerchantId} — ${source.subMerchantName ?? 'Sub-merchant'}`,
-      value: source.subMerchantId
-    })
+  // Sửa không cho đổi đơn vị quản lý, nên nhãn lấy thẳng từ bản ghi đang mở.
+  const master: PickedEntity | undefined = source
+    ? {
+        id: source.merchantId,
+        code: source.merchantCode ?? source.merchantId,
+        name: source.merchantName ?? 'Master Merchant'
+      }
+    : pickedMaster
+  const sub: PickedEntity | undefined = source
+    ? {
+        id: source.subMerchantId,
+        code: source.subMerchantCode ?? source.subMerchantId,
+        name: source.subMerchantName ?? 'Sub-merchant'
+      }
+    : pickedSub
 
   if (!access.can(edit ? 'edit' : 'create'))
     return (
@@ -144,7 +120,7 @@ export default function TerminalFormPage() {
   }
 
   return (
-    <main className='mx-auto flex w-full max-w-6xl min-w-0 flex-col gap-3'>
+    <main className='mx-auto flex w-full  min-w-0 flex-col gap-3'>
       <CardComponent className='border border-border bg-background shadow-none'>
         <header className='flex flex-wrap items-center justify-between gap-3'>
           <div className='flex items-center gap-3'>
@@ -211,12 +187,13 @@ export default function TerminalFormPage() {
             form={form}
             edit={edit}
             source={source}
-            merchantId={merchantId}
             terminalType={terminalType}
             inheritContactPhone={inheritContactPhone}
-            selectedSub={selectedSub}
-            masterOptions={masterOptions}
-            subOptions={subOptions}
+            master={master}
+            sub={sub}
+            inheritedPhone={pickedSub?.phone?.value}
+            onPickMaster={setPickedMaster}
+            onPickSub={setPickedSub}
           />
         </form>
       )}

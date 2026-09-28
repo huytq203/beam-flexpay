@@ -107,6 +107,8 @@ export const createApiCredentialColumns = ({
           </span>
           <span className='text-xs text-muted-foreground'>
             {record.ipWhitelist[0]}
+            {record.ipWhitelist.length > 1 &&
+              ` và ${record.ipWhitelist.length - 1} IP khác`}
           </span>
         </div>
       ) : (

@@ -29,6 +29,7 @@ import {
   feedback
 } from '@components/index'
 import { createApiCredentialColumns } from '../columns/apiCredential.columns'
+import { CredentialExpandIcon } from '../components/CredentialExpandIcon'
 
 type Action = { type: 'rotate' | 'revoke'; credential: ApiCredential }
 
@@ -434,7 +435,7 @@ const KeyConnectionPage = () => {
             expandedRowRender: (record) => (
               <CredentialDetails credential={record} />
             ),
-            expandRowByClick: true
+            expandIcon: (props) => <CredentialExpandIcon {...props} />
           }}
           columns={createApiCredentialColumns({
             page,
