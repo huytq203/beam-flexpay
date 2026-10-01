@@ -144,12 +144,7 @@ export const FeeComponentFields = ({
           className='col-span-12 flex flex-col md:col-span-6'
         />
 
-        {payerType === 'SYSTEM' && (
-          <p className='col-span-12 text-[12px] text-muted-foreground'>
-            Chi phí đầu vào dự kiến do FlexPay chịu, được tính riêng với phí thu
-            khách hàng.
-          </p>
-        )}
+       
       </div>
     </CardComponent>
 
