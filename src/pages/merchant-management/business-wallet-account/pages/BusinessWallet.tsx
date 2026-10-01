@@ -3,10 +3,17 @@ import { useState } from 'react'
 
 import { Can, SCREENS } from '@/app/permissions'
 import { PlusOutlined, WalletIcon } from '@components/icons'
-import { ButtonComponent, CardComponent, DialogModal, feedback } from '@components/index'
+import {
+  ButtonComponent,
+  CardComponent,
+  DialogModal,
+  feedback
+} from '@components/index'
 import { useApproveEnterpriseWalletMutation } from '@services/merchantEnterpriseWalletApi'
 
 import { BusinessWalletSearch } from '../components/BusinessWalletSearch'
+import { KybSubmitDialog } from '../components/KybSubmitDialog'
+import { KybRejectDialog } from '../components/KybRejectDialog'
 import { BusinessWalletTableState } from '../components/BusinessWalletTableState'
 import { useBusinessWallet } from '../hooks/useBusinessWallet'
 import type { BusinessWalletRow } from '../types/business-wallet.type'
@@ -25,8 +32,14 @@ const BusinessWallet = () => {
     refetch
   } = useBusinessWallet()
   const navigate = useNavigate()
-  const [walletToApprove, setWalletToApprove] = useState<BusinessWalletRow | null>(null)
-  const [approveWallet, { isLoading: isApproving }] = useApproveEnterpriseWalletMutation()
+  const [walletToApprove, setWalletToApprove] =
+    useState<BusinessWalletRow | null>(null)
+  const [walletToReject, setWalletToReject] =
+    useState<BusinessWalletRow | null>(null)
+  const [walletToSubmit, setWalletToSubmit] =
+    useState<BusinessWalletRow | null>(null)
+  const [approveWallet, { isLoading: isApproving }] =
+    useApproveEnterpriseWalletMutation()
 
   const handleCreate = (): void => {
     void navigate(`${SCREENS.BUSINESS_WALLET_ACCOUNT.path}/create`)
@@ -43,7 +56,9 @@ const BusinessWallet = () => {
       feedback.success('Đã phê duyệt KYB ví doanh nghiệp')
       setWalletToApprove(null)
     } catch {
-      feedback.error('Không thể phê duyệt ví. Vui lòng tải lại danh sách và kiểm tra trạng thái hồ sơ.')
+      feedback.error(
+        'Không thể phê duyệt ví. Vui lòng tải lại danh sách và kiểm tra trạng thái hồ sơ.'
+      )
     }
   }
 
@@ -63,7 +78,11 @@ const BusinessWallet = () => {
         >
           <header className='mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3'>
             <div className='flex items-center gap-2'>
-              <WalletIcon aria-hidden size={19} className='text-secondary-foreground' />
+              <WalletIcon
+                aria-hidden
+                size={19}
+                className='text-secondary-foreground'
+              />
               <h2
                 id='business-wallet-list-title'
                 className='font-display text-base font-semibold text-foreground'
@@ -80,7 +99,10 @@ const BusinessWallet = () => {
                   {totalElements} bản ghi
                 </span>
               )}
-              <Can screen='BUSINESS_WALLET_ACCOUNT' action='create'>
+              <Can
+                screen='BUSINESS_WALLET_ACCOUNT'
+                action='create'
+              >
                 <ButtonComponent
                   htmlType='button'
                   icon={<PlusOutlined aria-hidden />}
@@ -101,6 +123,8 @@ const BusinessWallet = () => {
             isError={isError}
             onEdit={handleEdit}
             onApprove={setWalletToApprove}
+            onReject={setWalletToReject}
+            onSubmit={setWalletToSubmit}
             onRefresh={refetch}
             onPageChange={handlePageChange}
           />
@@ -119,8 +143,22 @@ const BusinessWallet = () => {
         onCancel={() => setWalletToApprove(null)}
         onOk={() => void handleApprove()}
       >
-        <p className='text-sm text-foreground'>Xác nhận phê duyệt ví <strong>{walletToApprove?.legalName || walletToApprove?.registeredEmail}</strong>? Sau khi duyệt, ví có thể dùng để đăng ký ĐVCNTT.</p>
+        <p className='text-sm text-foreground'>
+          Xác nhận phê duyệt ví{' '}
+          <strong>
+            {walletToApprove?.legalName || walletToApprove?.registeredEmail}
+          </strong>
+          ? Sau khi duyệt, ví có thể dùng để đăng ký ĐVCNTT.
+        </p>
       </DialogModal>
+      <KybSubmitDialog
+        wallet={walletToSubmit}
+        onClose={() => setWalletToSubmit(null)}
+      />
+      <KybRejectDialog
+        wallet={walletToReject}
+        onClose={() => setWalletToReject(null)}
+      />
     </main>
   )
 }

@@ -6,6 +6,7 @@ interface EvidenceImageCardProps {
   title: string
   description: string
   url?: string
+  expired?: boolean
   onReload?: () => void
 }
 
@@ -13,11 +14,12 @@ export function EvidenceImageCard({
   title,
   description,
   url,
+  expired = false,
   onReload
 }: EvidenceImageCardProps) {
   // Link S3 ký sẵn hết hạn sau vài phút; lỗi tải gần như luôn là link đã hết hạn.
   const [failedUrl, setFailedUrl] = useState<string>()
-  const isExpired = Boolean(url) && failedUrl === url
+  const isExpired = expired || (Boolean(url) && failedUrl === url)
 
   return (
     <figure className='flex min-w-0 flex-col gap-2 rounded-xl border border-border bg-background p-3'>

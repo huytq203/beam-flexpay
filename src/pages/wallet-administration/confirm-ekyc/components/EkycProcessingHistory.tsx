@@ -141,9 +141,11 @@ const AttemptStatusCell = ({ attempt }: { attempt: ContentEKYC }) => (
 )
 
 export const ProcessingHistory = ({
-  attempts
+  attempts,
+  onInspect
 }: {
   attempts: ContentEKYC[]
+  onInspect?: (sessionId: string) => void
 }) => {
   const [expanded, setExpanded] = React.useState<Record<string, boolean>>({})
 
@@ -222,6 +224,18 @@ export const ProcessingHistory = ({
                     )}
                     #{attemptNo}
                   </button>
+                  {onInspect &&
+                    (attempt.sessionId || attempt.ekycSessionId) && (
+                      <button
+                        type='button'
+                        className='ml-2 rounded-sm px-2 py-1 text-xs font-medium text-primary-foreground underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-primary'
+                        onClick={() =>
+                          onInspect(attempt.sessionId ?? attempt.ekycSessionId!)
+                        }
+                      >
+                        Xem phiên
+                      </button>
+                    )}
                 </td>
                 <AttemptStatusCell attempt={attempt} />
                 <td className='px-3 py-3'>

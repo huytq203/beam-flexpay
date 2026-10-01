@@ -28,7 +28,7 @@ export interface EvidenceImage {
   /** FRONT | BACK | FACE_FAR; loại khác BE thêm sau sẽ bị bỏ qua khi hiển thị. */
   type: string
   expiresAt?: string | null
-  url: string
+  url?: string | null
 }
 
 export interface ContentEKYC {
@@ -58,9 +58,13 @@ export interface ContentEKYC {
   faceMatchScore?: number | null
   verifiedAt?: string | null
   status: string
+  approvalReady?: boolean
   /** Chỉ có ở response hồ sơ/chi tiết. Trong attempts[] của lưới: xem documentProfile*. */
   profileId?: string | null
   profileStatus?: string | null
+  reviewStatus?: 'VERIFIED' | 'PENDING_REVIEW' | 'NOT_VERIFIED' | string
+  pendingReview?: boolean
+  faceScore?: number | null
   /** Hồ sơ đang giữ SỐ GIẤY TỜ của lần này — có thể của tài khoản khác, KHÔNG phải kết quả lần này. */
   documentProfileId?: string | null
   documentProfileStatus?: string | null
@@ -97,6 +101,9 @@ export interface EKYCGroup {
   /** Hồ sơ của CHÍNH người này — kết quả chung cuộc. null = chưa xác thực. */
   profileId?: string | null
   profileStatus?: string | null
+  reviewStatus?: 'VERIFIED' | 'PENDING_REVIEW' | 'NOT_VERIFIED' | string
+  pendingReview?: boolean
+  faceScore?: number | null
   fullName?: string | null
   idNumber?: string | null
   dateOfBirth?: string | null
@@ -112,13 +119,14 @@ export interface EKYCListItem extends ContentEKYC {
   attemptCount: number
   latestStatus: string
   latestAt: string
+  pendingReview?: boolean
+  faceScore?: number | null
   email: string | null
   occupation: string | null
   position: string | null
   attempts: ContentEKYC[]
   no: number
   key: string
-
 }
 
 export interface Pageable {

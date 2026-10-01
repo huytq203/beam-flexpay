@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { ContentEKYC, EvidenceImage } from '@type/apiResponseEKYC'
 import { ImageComponent } from '@components/index'
 import { cn } from '@lib/utils/cn'
@@ -9,11 +9,16 @@ interface BusinessPesonalProps {
   attempts?: readonly ContentEKYC[]
   /** Phiên đang hiển thị OCR; ảnh lấy từ lần khác thì ghi rõ để khỏi nhầm. */
   ocrSessionId?: string
+  selectedSessionId?: string
   onReload?: () => void
 }
 
-const findUrl = (images: EvidenceImage[], type: string) =>
-  images.find((image) => image.type === type)?.url
+const findUrl = (images: EvidenceImage[], type: string, now: number) =>
+  images.find(
+    (image) =>
+      image.type === type &&
+      (!image.expiresAt || Date.parse(image.expiresAt) > now)
+  )?.url ?? undefined
 
 // Lần mới nhất có thể đang dở dang chưa có ảnh; lấy lần mới nhất đã có ảnh.
 const pickEvidenceAttempt = (attempts: readonly ContentEKYC[]) =>
@@ -42,10 +47,18 @@ type EvidenceType = (typeof EVIDENCE_ITEMS)[number]['type']
 const BusinessPesonal = ({
   attempts = [],
   ocrSessionId,
+  selectedSessionId,
   onReload
 }: BusinessPesonalProps) => {
-  const attempt = pickEvidenceAttempt(attempts)
+  const attempt = selectedSessionId
+    ? attempts.find((item) => item.sessionId === selectedSessionId)
+    : pickEvidenceAttempt(attempts)
   const images = attempt?.evidenceImages ?? []
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 30_000)
+    return () => window.clearInterval(timer)
+  }, [])
   const capturedAt = attempt?.completedAt ?? attempt?.createdAt
   const isOtherAttempt = Boolean(attempt) && attempt?.sessionId !== ocrSessionId
   const attemptKey = attempt?.sessionId ?? attempt?.createdAt ?? ''
@@ -56,11 +69,15 @@ const BusinessPesonal = ({
   const selectedType =
     selection?.attemptKey === attemptKey
       ? selection.type
-      : (EVIDENCE_ITEMS.find((item) => findUrl(images, item.type))?.type ??
+      : (EVIDENCE_ITEMS.find((item) => findUrl(images, item.type, now))?.type ??
         'FRONT')
   const selectedImage = EVIDENCE_ITEMS.find(
     (item) => item.type === selectedType
   )!
+  const selectedEvidence = images.find((image) => image.type === selectedType)
+  const selectedExpired = Boolean(
+    selectedEvidence?.expiresAt && Date.parse(selectedEvidence.expiresAt) <= now
+  )
 
   return (
     <div className='flex min-w-0 flex-col gap-3'>
@@ -73,7 +90,8 @@ const BusinessPesonal = ({
       <EvidenceImageCard
         title={selectedImage.title}
         description={selectedImage.description}
-        url={findUrl(images, selectedType)}
+        url={findUrl(images, selectedType, now)}
+        expired={selectedExpired}
         onReload={onReload}
       />
       <div
@@ -81,7 +99,7 @@ const BusinessPesonal = ({
         aria-label='Chọn ảnh bằng chứng'
       >
         {EVIDENCE_ITEMS.map((item) => {
-          const url = findUrl(images, item.type)
+          const url = findUrl(images, item.type, now)
           const isSelected = item.type === selectedType
 
           return (

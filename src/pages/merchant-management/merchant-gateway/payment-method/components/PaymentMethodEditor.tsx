@@ -11,7 +11,7 @@ import {
   TextArea,
   feedback
 } from '@components/index'
-import { methodOptions } from '../columns/paymentMethod.columns'
+import { methodOptions } from '../constants/paymentMethod.constants'
 
 const METHOD_DESCRIPTIONS: Record<PaymentMethod, string> = {
   QR: 'Thanh toán bằng mã QR',

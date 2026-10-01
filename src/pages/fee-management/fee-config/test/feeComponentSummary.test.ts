@@ -41,8 +41,20 @@ describe('describeFormula', () => {
         component({
           calculationMethod: CalculationMethod.PROGRESSIVE_TIER,
           tiers: [
-            { maxValue: 100, fixedAmount: 0, percentage: 1, minFee: 0, maxFee: 0 },
-            { maxValue: null, fixedAmount: 0, percentage: 2, minFee: 0, maxFee: 0 }
+            {
+              maxValue: 100,
+              fixedAmount: 0,
+              percentage: 1,
+              minFee: 0,
+              maxFee: 0
+            },
+            {
+              maxValue: null,
+              fixedAmount: 0,
+              percentage: 2,
+              minFee: 0,
+              maxFee: 0
+            }
           ]
         })
       )
@@ -61,9 +73,7 @@ describe('describeFormula', () => {
 
   it('nhận biết miễn phí', () => {
     expect(
-      describeFormula(
-        component({ calculationMethod: CalculationMethod.FREE })
-      )
+      describeFormula(component({ calculationMethod: CalculationMethod.FREE }))
     ).toBe('Miễn phí')
   })
 })
@@ -91,6 +101,21 @@ describe('summariseBaseType', () => {
     const summary = summariseBaseType('VAT', [component()])
     expect(summary.formulas).toEqual([])
     expect(summary.isSum).toBe(false)
+  })
+
+  it('chỉ lấy cơ sở tính trong cùng phạm vi đầu vào hoặc đầu ra', () => {
+    const preceding = [
+      component({
+        key: 'cost',
+        componentType: 'BANK_FEE',
+        payerType: 'SYSTEM'
+      }),
+      component({ key: 'fee', componentType: 'BANK_FEE', payerType: 'USER' })
+    ]
+    expect(
+      summariseBaseType('BANK_FEE', preceding, 'USER').components
+    ).toHaveLength(1)
+    expect(collectBaseTypes(preceding, 'SYSTEM')).toEqual(['BANK_FEE'])
   })
 })
 

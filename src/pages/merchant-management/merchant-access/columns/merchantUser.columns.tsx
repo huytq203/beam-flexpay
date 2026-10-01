@@ -5,7 +5,8 @@ import {
   LockFilled,
   LockKeyOpenIcon,
   KeyIcon,
-  ShieldCheckIcon
+  ShieldCheckIcon,
+  EnvelopeIcon
 } from '@components/icons'
 import { TagComponent, TooltipComponent } from '@components/index'
 import type { TableComponentProps } from '@components/ui/table-component/TableComponent'
@@ -39,6 +40,7 @@ interface MerchantUserColumnOptions {
   onEdit: (user: MerchantUser) => void
   onAccess: (user: MerchantUser) => void
   onResetPassword: (user: MerchantUser) => void
+  onResendActivation: (user: MerchantUser) => void
   onStatus: (user: MerchantUser) => void
 }
 
@@ -52,6 +54,7 @@ export const createMerchantUserColumns = ({
   onEdit,
   onAccess,
   onResetPassword,
+  onResendActivation,
   onStatus
 }: MerchantUserColumnOptions): NonNullable<
   TableComponentProps<MerchantUser>['columns']
@@ -175,9 +178,9 @@ export const createMerchantUserColumns = ({
     title: 'Thao tác',
     align: 'center',
     fixed: 'right',
-    width: 155,
+    className: 'whitespace-nowrap',
     render: (_, user) => (
-      <div className='flex items-center justify-center gap-1'>
+      <div className='flex w-max flex-nowrap items-center justify-center gap-1'>
         <Can
           screen='MERCHANT_USER'
           action='viewDetail'
@@ -227,6 +230,23 @@ export const createMerchantUserColumns = ({
               }
               label={`Đặt lại mật khẩu User ${user.name}`}
               onClick={() => onResetPassword(user)}
+            />
+          </Can>
+        )}
+        {user.status === 'PENDING' && (
+          <Can
+            screen='MERCHANT_USER'
+            action='resendActivation'
+          >
+            <AccessActionButton
+              icon={
+                <EnvelopeIcon
+                  aria-hidden
+                  size={15}
+                />
+              }
+              label={`Gửi lại liên kết kích hoạt User ${user.name}`}
+              onClick={() => onResendActivation(user)}
             />
           </Can>
         )}

@@ -1,17 +1,17 @@
-import { FormInputNumber, FormSelect } from '@components/form'
 import { FeeDomain } from '@components/fee/feeDomain'
-import { CardComponent, ModalComponent } from '@components/index'
+import { ModalComponent } from '@components/index'
 import { COMPONENT_TYPE_LABELS } from '@constants/feeLabels'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { EXECUTABLE_BENEFICIARY } from '@utils/fee-execution'
 import { useEffect, useMemo } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import {
-  BANK_BENEFICIARY_TYPE_OPTIONS,
+  BENEFICIARY_TYPE_OPTIONS,
   getComponentTypesForCategory,
   getPayerTypeOptions,
   getVatBaseForCategory,
-  SYSTEM_BENEFICIARY_TYPE_OPTIONS,
+  INPUT_COST_BENEFICIARY_OPTIONS,
+  WALLET_FEE_BENEFICIARY_OPTIONS,
   VAT_COMPONENT_TYPE,
   type FeeBusinessCategory
 } from '../constants/feeConfigFields'
@@ -28,8 +28,7 @@ import {
   summariseBaseType
 } from '../utils/feeComponentSummary'
 import { getBaseOnOptions } from '../utils/feeComponentBaseOptions'
-import { BaseTypePreview } from './BaseTypePreview'
-import { FeeTierEditor } from './FeeTierEditor'
+import { FeeComponentFields } from './FeeComponentFields'
 
 interface FeeComponentDialogProps {
   open: boolean
@@ -84,18 +83,15 @@ export const FeeComponentDialog = ({
   onCancel
 }: FeeComponentDialogProps) => {
   const isBank = feeDomain === FeeDomain.BANK
-  // Chỉ bày đúng payer backend thực thi được cho loại giao dịch; mọi miền dùng chung.
+  const isWallet = feeDomain === FeeDomain.EWALLET
+  // Khoản thu theo payer thực thi; SYSTEM là chi phí đầu vào riêng.
   const payerTypeOptions = useMemo(
     () => getPayerTypeOptions(serviceType),
     [serviceType]
   )
-  const beneficiaryTypeOptions = isBank
-    ? BANK_BENEFICIARY_TYPE_OPTIONS
-    : SYSTEM_BENEFICIARY_TYPE_OPTIONS
-  // Component cũ mang payer chưa hỗ trợ (SENDER/RECEIVER/SYSTEM) cũng về giá trị này.
-  const defaultPayerType = payerTypeOptions[0].value
-  // Người hưởng phụ thuộc miền: Bank luôn về BANK; Ví và các miền còn lại
-  // khởi tạo bằng SYSTEM.
+  // Component cũ mang payer chưa hỗ trợ (SENDER/RECEIVER) về giá trị này.
+  const defaultPayerType = isBank ? 'SYSTEM' : payerTypeOptions[0].value
+  // Bank/NCC mặc định là chi phí đầu vào; phí ví mặc định về SYSTEM.
   const defaultBeneficiaryType = isBank ? 'BANK' : EXECUTABLE_BENEFICIARY
 
   /**
@@ -112,29 +108,35 @@ export const FeeComponentDialog = ({
     const hasAllowedPayer = payerTypeOptions.some(
       ({ value }) => value === initialValue.payerType
     )
-    const hasAllowedBeneficiary = beneficiaryTypeOptions.some(
+    const effectivePayer = hasAllowedPayer
+      ? initialValue.payerType
+      : defaultPayerType
+    const allowedBeneficiaries =
+      effectivePayer === 'SYSTEM'
+        ? INPUT_COST_BENEFICIARY_OPTIONS
+        : isWallet
+          ? WALLET_FEE_BENEFICIARY_OPTIONS
+          : BENEFICIARY_TYPE_OPTIONS
+    const hasAllowedBeneficiary = allowedBeneficiaries.some(
       ({ value }) => value === initialValue.beneficiaryType
     )
     return {
       ...initialValue,
-      payerType: hasAllowedPayer
-        ? initialValue.payerType
-        : defaultPayerType,
+      payerType: effectivePayer,
       beneficiaryType: hasAllowedBeneficiary
         ? initialValue.beneficiaryType
         : defaultBeneficiaryType
     }
   }, [
-    beneficiaryTypeOptions,
     defaultBeneficiaryType,
     defaultPayerType,
     initialValue,
+    isWallet,
     payerTypeOptions
   ])
 
   const componentSchema = useMemo(
-    () =>
-      createFeeComponentFormSchema(existingComponents, initialValue?.key),
+    () => createFeeComponentFormSchema(existingComponents, initialValue?.key),
     [existingComponents, initialValue?.key]
   )
 
@@ -151,6 +153,12 @@ export const FeeComponentDialog = ({
   const calculationMethod = useWatch({ control, name: 'calculationMethod' })
   const payerType = useWatch({ control, name: 'payerType' })
   const beneficiaryType = useWatch({ control, name: 'beneficiaryType' })
+  const beneficiaryTypeOptions =
+    payerType === 'SYSTEM'
+      ? INPUT_COST_BENEFICIARY_OPTIONS
+      : isWallet
+        ? WALLET_FEE_BENEFICIARY_OPTIONS
+        : BENEFICIARY_TYPE_OPTIONS
   const hasDuplicateIdentityError = [
     formState.errors.componentType,
     formState.errors.payerType,
@@ -185,7 +193,7 @@ export const FeeComponentDialog = ({
     label: COMPONENT_TYPE_LABELS[value] ?? value
   }))
 
-  const baseTypes = collectBaseTypes(precedingComponents)
+  const baseTypes = collectBaseTypes(precedingComponents, payerType)
   const hasPrecedingComponents = baseTypes.length > 0
   const hasVatBaseAbove = Boolean(
     vatBaseComponentType && baseTypes.includes(vatBaseComponentType)
@@ -222,7 +230,7 @@ export const FeeComponentDialog = ({
     : baseTypes
 
   const baseTypeOptions = allowedBaseTypes.map((type) => {
-    const summary = summariseBaseType(type, precedingComponents)
+    const summary = summariseBaseType(type, precedingComponents, payerType)
     const detail = summary.isSum
       ? `tổng ${summary.formulas.length} thành phần`
       : summary.formulas[0]
@@ -231,7 +239,7 @@ export const FeeComponentDialog = ({
 
   const selectedBase =
     baseOn === 'FEE_COMPONENT' && baseComponentType
-      ? summariseBaseType(baseComponentType, precedingComponents)
+      ? summariseBaseType(baseComponentType, precedingComponents, payerType)
       : null
 
   const methodOptions = (
@@ -257,163 +265,29 @@ export const FeeComponentDialog = ({
       onCancel={onCancel}
     >
       <div className='flex flex-col gap-3'>
-        <CardComponent
-          size='small'
-          // Nền modal là #fafafa nên card phải trắng đặc và viền theo hairline của
-          // hệ thiết kế, nếu không các khối chìm vào nhau đúng như lúc chưa tách.
-          className='border-border! bg-background!'
-        >
-          <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
-            <FormSelect
-              name='componentType'
-              control={control}
-              required
-              label='Loại phí'
-              placeholder='Chọn loại phí'
-              allowClear={false}
-              options={componentTypeOptions}
-              onChange={handleComponentTypeChange}
-              className='col-span-12 flex flex-col md:col-span-6'
-            />
-            <FormSelect
-              name='baseOn'
-              control={control}
-              required
-              label='Tính dựa trên'
-              placeholder='Chọn cơ sở tính'
-              allowClear={false}
-              disabled={isVat}
-              // Luật thuế giá trị gia tăng thắng giới hạn của miền Bank: nó
-              // tính trên một khoản phí, không tính trên số tiền giao dịch.
-              // Thành phần thường chỉ được tính trên thành phần khác khi phía
-              // trên thực sự đã có một thành phần để chọn làm cơ sở.
-              options={baseOnOptions}
-              className='col-span-12 flex flex-col md:col-span-6'
-            />
-
-            {baseOn === 'FEE_COMPONENT' && (
-              <FormSelect
-                name='baseComponentType'
-                control={control}
-                required
-                label='Thành phần làm cơ sở'
-                placeholder={
-                  baseTypeOptions.length === 0
-                    ? 'Chưa có thành phần nào đứng trước'
-                    : 'Chọn thành phần'
-                }
-                allowClear={false}
-                options={baseTypeOptions}
-                className='col-span-12 flex flex-col'
-              />
-            )}
-            {selectedBase && (
-              <div className='col-span-12'>
-                <BaseTypePreview summary={selectedBase} />
-              </div>
-            )}
-            <FormSelect
-              name='calculationMethod'
-              control={control}
-              required
-              label='Phương thức tính'
-              placeholder='Chọn phương thức'
-              allowClear={false}
-              options={methodOptions}
-              className='col-span-12 flex flex-col'
-            />
-
-          </div>
-        </CardComponent>
-
-        <CardComponent
-          size='small'
-          className='border-border! bg-background!'
-        >
-          <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
-            <FormSelect
-              name='payerType'
-              control={control}
-              required
-              label='Người chịu'
-              placeholder='Chọn người chịu phí'
-              allowClear={false}
-              options={[...payerTypeOptions]}
-              className='col-span-12 flex flex-col md:col-span-6'
-            />
-            <FormSelect
-              name='beneficiaryType'
-              control={control}
-              required
-              label='Người hưởng'
-              placeholder='Chọn người hưởng phí'
-              allowClear={false}
-              disabled={true}
-              options={[...beneficiaryTypeOptions]}
-              className='col-span-12 flex flex-col md:col-span-6'
-            />
-
-          </div>
-        </CardComponent>
-
-        <CardComponent
-          size='small'
-          className='border-border! bg-background!'
-          title='Mức phí'
-        >
-          {tiered ? (
-            <FeeTierEditor
-              control={control}
-              error={formState.errors.tiers?.message}
-            />
-          ) : (
-            <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
-              <FormInputNumber
-                name='percentage'
-                control={control}
-                allowEmpty
-                label='Phí %'
-                placeholder='Để trống nếu không thu theo phần trăm'
-                className='col-span-12 flex flex-col md:col-span-6'
-              />
-              {!isVat && (
-                <FormInputNumber
-                  name='fixedAmount'
-                  control={control}
-                  allowEmpty
-                  label='Phí cố định (VNĐ)'
-                  placeholder='Để trống nếu không thu phí cố định'
-                  className='col-span-12 flex flex-col md:col-span-6'
-                />
-              )}
-            </div>
-          )}
-        </CardComponent>
-
-        <CardComponent
-          size='small'
-          className='border-border! bg-background!'
-          title='Giới hạn'
-        >
-          <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
-            <FormInputNumber
-              name='minFee'
-              control={control}
-              allowEmpty
-              label='Phí tối thiểu (VNĐ)'
-              placeholder='Để trống nếu không đặt sàn'
-              className='col-span-12 flex flex-col md:col-span-6'
-            />
-            <FormInputNumber
-              name='maxFee'
-              control={control}
-              allowEmpty
-              label='Phí tối đa (VNĐ)'
-              placeholder='Để trống nếu không đặt trần'
-              className='col-span-12 flex flex-col md:col-span-6'
-            />
-          </div>
-        </CardComponent>
+        <FeeComponentFields
+          control={control}
+          componentTypeOptions={componentTypeOptions}
+          baseOnOptions={baseOnOptions}
+          baseTypeOptions={baseTypeOptions}
+          methodOptions={methodOptions}
+          payerTypeOptions={payerTypeOptions}
+          beneficiaryTypeOptions={beneficiaryTypeOptions}
+          beneficiaryDisabled={isWallet && payerType !== 'SYSTEM'}
+          payerType={payerType}
+          baseOn={baseOn}
+          selectedBase={selectedBase}
+          isVat={isVat}
+          tiered={tiered}
+          tierError={formState.errors.tiers?.message}
+          onComponentTypeChange={handleComponentTypeChange}
+          onPayerChange={(next) => {
+            setValue('beneficiaryType', next === 'SYSTEM' ? 'BANK' : 'SYSTEM', {
+              shouldValidate: true
+            })
+            setValue('baseComponentType', null, { shouldValidate: true })
+          }}
+        />
       </div>
     </ModalComponent>
   )

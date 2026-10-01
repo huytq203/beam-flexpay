@@ -6,7 +6,7 @@ import BusinessPesonal from '../BusinessPesonal'
 const image = (type: string) => ({
   fileId: `${type}-id`,
   type,
-  expiresAt: '2026-09-28T07:34:24Z',
+  expiresAt: '2099-09-28T07:34:24Z',
   url: `https://s3.test/${type}.jpg`
 })
 
@@ -93,5 +93,18 @@ describe('BusinessPesonal — ảnh bằng chứng eKYC', () => {
     expect(screen.getByText('Liên kết ảnh đã hết hạn.')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /Tải lại ảnh/ }))
     expect(onReload).toHaveBeenCalledTimes(1)
+  })
+
+  it('không hiển thị ảnh của phiên khác khi đang xét duyệt phiên được chọn', () => {
+    render(
+      <BusinessPesonal
+        attempts={[completed, inProgress]}
+        selectedSessionId='session-new'
+      />
+    )
+    expect(screen.queryByAltText('CCCD mặt trước')).not.toBeInTheDocument()
+    expect(
+      screen.getByText('Lần thực hiện này chưa có ảnh.')
+    ).toBeInTheDocument()
   })
 })

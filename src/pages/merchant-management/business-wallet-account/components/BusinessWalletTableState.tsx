@@ -15,6 +15,8 @@ interface BusinessWalletTableStateProps {
   isError: boolean
   onEdit: (row: BusinessWalletRow) => void
   onApprove: (row: BusinessWalletRow) => void
+  onReject: (row: BusinessWalletRow) => void
+  onSubmit: (row: BusinessWalletRow) => void
   onRefresh: () => void | Promise<unknown>
   onPageChange: (page: number, pageSize: number) => void
 }
@@ -29,17 +31,27 @@ export function BusinessWalletTableState({
   isError,
   onEdit,
   onApprove,
+  onReject,
+  onSubmit,
   onRefresh,
   onPageChange
 }: BusinessWalletTableStateProps) {
-  const columns = createBusinessWalletColumns({ onEdit, onApprove })
+  const columns = createBusinessWalletColumns({
+    onEdit,
+    onApprove,
+    onReject,
+    onSubmit
+  })
   const handleRefresh = (): void => {
     void onRefresh()
   }
 
   if (isLoading) {
     return (
-      <div role='status' aria-label='Đang tải danh sách ví doanh nghiệp'>
+      <div
+        role='status'
+        aria-label='Đang tải danh sách ví doanh nghiệp'
+      >
         <SkeletonTable
           rows={size}
           columns={columns.length}
@@ -56,7 +68,10 @@ export function BusinessWalletTableState({
         className='flex min-h-56 flex-col items-center justify-center gap-3 px-4 text-center'
       >
         <span className='flex size-10 items-center justify-center rounded-lg bg-danger/10 text-danger'>
-          <WarningIcon aria-hidden size={22} />
+          <WarningIcon
+            aria-hidden
+            size={22}
+          />
         </span>
         <div className='space-y-1'>
           <h3 className='font-display text-base font-semibold text-foreground'>
@@ -70,7 +85,12 @@ export function BusinessWalletTableState({
           htmlType='button'
           type='default'
           content='Thử lại'
-          icon={<ArrowsCounterClockwiseIcon aria-hidden size={18} />}
+          icon={
+            <ArrowsCounterClockwiseIcon
+              aria-hidden
+              size={18}
+            />
+          }
           onClick={handleRefresh}
         />
       </div>
@@ -81,12 +101,19 @@ export function BusinessWalletTableState({
     return (
       <div className='flex min-h-56 flex-col items-center justify-center gap-3 text-center'>
         <p className='font-medium text-foreground'>Chưa có ví doanh nghiệp</p>
-        <p className='text-sm text-muted-foreground'>Không tìm thấy dữ liệu phù hợp với bộ lọc hiện tại.</p>
+        <p className='text-sm text-muted-foreground'>
+          Không tìm thấy dữ liệu phù hợp với bộ lọc hiện tại.
+        </p>
         <ButtonComponent
           htmlType='button'
           type='default'
           content='Làm mới dữ liệu'
-          icon={<ArrowsCounterClockwiseIcon aria-hidden size={18} />}
+          icon={
+            <ArrowsCounterClockwiseIcon
+              aria-hidden
+              size={18}
+            />
+          }
           onClick={handleRefresh}
         />
       </div>

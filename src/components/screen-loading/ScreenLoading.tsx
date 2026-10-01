@@ -21,7 +21,7 @@ function ScreenLoading({ open = false }: ScreenLoadingProps) {
 
     window.events.on('hide-loading', () => {
       const elapsedTime = Date.now() - startTimeRef.current
-      const minDisplayTime = 300 
+      const minDisplayTime = 300
       if (elapsedTime < minDisplayTime) {
         timeoutRef.current = setTimeout(() => {
           setFalse()
@@ -57,8 +57,8 @@ function ScreenLoading({ open = false }: ScreenLoadingProps) {
           className='screen-loading-spinner'
         />
         <img
-          src='/images/logo.png'
-          alt='flexpay'
+          src='/images/assets/brand/logo-white-yellow.webp'
+          alt='FlexPay'
           className='screen-loading-logo'
         />
       </div>

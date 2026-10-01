@@ -30,14 +30,20 @@ describe('SCREENS', () => {
 
   it('khai đúng các màn identity đặc biệt', () => {
     expect(SCREENS.USER_ACCOUNT.actions.view).toBe(PERMISSION.USER_VIEW)
-    expect(SCREENS.USER_ACCOUNT.actions.assignRoles).toBe(PERMISSION.USER_UPDATE)
-    expect(SCREENS.CONFIRM_EKYC.actions.view).toBe(PERMISSION.ADMIN_VIEW)
+    expect(SCREENS.USER_ACCOUNT.actions.assignRoles).toBe(
+      PERMISSION.USER_UPDATE
+    )
+    expect(SCREENS.CONFIRM_EKYC.actions.view).toBe(PERMISSION.ADMIN_FULL)
     expect(SCREENS.CONFIRM_EKYC.actions.approve).toBe(PERMISSION.ADMIN_FULL)
   })
 
   it('phân quyền duyệt KYB ví và duyệt Merchant theo hai API riêng', () => {
-    expect(SCREENS.BUSINESS_WALLET_ACCOUNT.actions.approve).toBe(PERMISSION.ENTERPRISE_WALLET_KYB_APPROVE)
-    expect(SCREENS.MERCHANT_MANAGEMENT.actions.approve).toBe(PERMISSION.MERCHANT_API_APPROVE)
+    expect(SCREENS.BUSINESS_WALLET_ACCOUNT.actions.approve).toBe(
+      PERMISSION.ENTERPRISE_WALLET_KYB_APPROVE
+    )
+    expect(SCREENS.MERCHANT_MANAGEMENT.actions.approve).toBe(
+      PERMISSION.MERCHANT_API_APPROVE
+    )
   })
 
   it('khai báo ba màn cấu hình cổng merchant', () => {
@@ -56,7 +62,9 @@ describe('SCREENS', () => {
     expect(SCREENS.MERCHANT_SUB_MERCHANT.path).toBe(
       '/secure-panel/merchant/sub-merchant'
     )
-    expect(SCREENS.MERCHANT_TERMINAL.path).toBe('/secure-panel/merchant/terminal')
+    expect(SCREENS.MERCHANT_TERMINAL.path).toBe(
+      '/secure-panel/merchant/terminal'
+    )
     expect(SCREENS.MERCHANT_SUB_MERCHANT.actions.view).toBe(
       PERMISSION.SUB_MERCHANT_VIEW
     )
@@ -123,9 +131,7 @@ describe('findScreenByPath', () => {
 
   it('alias trỏ về đúng màn', () => {
     expect(
-      findScreenByPath(
-        '/secure-panel/wallet-administration/transaction-wallet'
-      )
+      findScreenByPath('/secure-panel/wallet-administration/transaction-wallet')
     ).toBe(SCREENS.TRANSACTION_WALLET)
   })
 

@@ -56,13 +56,24 @@ const BusinessWalletForm = () => {
               <p className='text-sm text-muted-foreground'>{description}</p>
             </div>
           </div>
-          <ButtonComponent
-            htmlType='submit'
-            form='business-wallet-form'
-            loading={form.isSubmitting}
-            icon={<SaveOutlined aria-hidden />}
-            content={form.isEditMode ? 'Lưu thay đổi' : 'Hoàn tất & Tạo'}
-          />
+          <div className='flex flex-wrap items-center gap-2'>
+            {form.canSaveDraft && (
+              <ButtonComponent
+                htmlType='button'
+                type='default'
+                disabled={form.isSubmitting}
+                content='Lưu nháp'
+                onClick={() => void form.onSaveDraft()}
+              />
+            )}
+            <ButtonComponent
+              htmlType='submit'
+              form='business-wallet-form'
+              loading={form.isSubmitting}
+              icon={<SaveOutlined aria-hidden />}
+              content={form.isEditMode ? 'Lưu thay đổi' : 'Hoàn tất & Tạo'}
+            />
+          </div>
         </header>
       </CardComponent>
 

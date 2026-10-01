@@ -31,7 +31,10 @@ const renderCreatePage = () => {
   return renderWithProviders(
     <MessageProvider>
       <Routes>
-        <Route path='/fee/create' element={<FeeConfig />} />
+        <Route
+          path='/fee/create'
+          element={<FeeConfig />}
+        />
       </Routes>
     </MessageProvider>,
     { route: '/fee/create' }
@@ -42,7 +45,9 @@ describe('miền phí của trang tạo chính sách', () => {
   it('chỉ cho tạo phí Bank/NCC hoặc phí ví', () => {
     renderCreatePage()
 
-    expect(screen.getByRole('tab', { name: 'Phí Bank/NCC' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('tab', { name: 'Phí Bank/NCC' })
+    ).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'Phí ví' })).toBeInTheDocument()
     expect(
       screen.queryByRole('tab', { name: 'Phí ĐVCNTT' })
@@ -55,12 +60,10 @@ describe('miền phí của trang tạo chính sách', () => {
 
     await user.click(screen.getByRole('tab', { name: 'Phí Bank/NCC' }))
 
-    expect(
-      screen.getByText('Đơn vị chấp nhận thanh toán')
-    ).toBeInTheDocument()
+    expect(screen.getByText('Đơn vị chấp nhận thanh toán')).toBeInTheDocument()
   })
 
-  it('mở thành phần phí Bank với người hưởng Ngân hàng đã khoá', async () => {
+  it('mở thành phần phí Bank với người hưởng Ngân hàng mặc định', async () => {
     const user = userEvent.setup()
     renderCreatePage()
 
@@ -72,6 +75,6 @@ describe('miền phí của trang tạo chính sách', () => {
     const beneficiary = screen.getByLabelText(/Người hưởng/)
     expect(beneficiary.closest('.ant-select')).toHaveTextContent('Ngân hàng')
     expect(screen.queryByText('Hệ thống')).not.toBeInTheDocument()
-    expect(beneficiary).toBeDisabled()
+    expect(beneficiary).not.toBeDisabled()
   })
 })

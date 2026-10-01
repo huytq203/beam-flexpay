@@ -213,6 +213,16 @@ export const accessApi = apiMerchant.injectEndpoints({
         response.data,
       invalidatesTags: ['merchant']
     }),
+    resendMerchantUserActivation: builder.mutation<MerchantUserDto, string>({
+      query: (id) => ({
+        url: `/merchant-users/${id}/resend-activation`,
+        method: 'POST'
+      }),
+      extraOptions: { suppressErrorNotification: true },
+      transformResponse: (response: MerchantAccessEnvelope<MerchantUserDto>) =>
+        response.data,
+      invalidatesTags: ['merchant']
+    }),
     unlockMerchantUser: builder.mutation<MerchantUserDto, string>({
       query: (id) => ({ url: `/merchant-users/${id}/unlock`, method: 'POST' }),
       transformResponse: (response: MerchantAccessEnvelope<MerchantUserDto>) =>
@@ -351,6 +361,7 @@ export const {
   useLockMerchantUserMutation,
   useUnlockMerchantUserMutation,
   useResetMerchantUserPasswordMutation,
+  useResendMerchantUserActivationMutation,
   useListMerchantGroupsQuery,
   useListMerchantGroupUsersQuery,
   useCreateMerchantGroupMutation,

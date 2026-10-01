@@ -4,10 +4,7 @@ import {
   type FeeAssignmentCreateRequest,
   type FeePolicySetupRequest
 } from '@/app/schemas/fee-setup.schema'
-import {
-  EXECUTABLE_CURRENCY,
-  getExecutablePayer
-} from '@utils/fee-execution'
+import { EXECUTABLE_CURRENCY, getExecutablePayer } from '@utils/fee-execution'
 import dayjs from 'dayjs'
 import { WALLET_SUBJECT_TYPE } from '../constants/feeConfigFields'
 import {
@@ -31,9 +28,9 @@ const toAssignmentMoment = (value: string): string =>
 /**
  * Form → payload thiết lập trọn gói.
  *
- * Người chịu lấy từ form sau khi hộp thoại giới hạn theo hợp đồng thực thi.
- * Người hưởng của miền Bank luôn được chuẩn hoá thành BANK tại biên API; các
- * miền còn lại giữ lựa chọn hợp lệ từ form.
+ * SYSTEM được giữ để BE tách chi phí đầu vào; payer cũ chưa thực thi được
+ * chuẩn hoá về USER/MERCHANT. Phí đầu ra miền Ví luôn về SYSTEM; chi phí đầu
+ * vào và các miền khác giữ người hưởng của từng thành phần.
  */
 export const toSetupRequest = (
   form: FeeConfigFormValues
@@ -75,14 +72,12 @@ export const toSetupRequest = (
       roundMode: ROUND_MODE,
       minFee: orZero(component.minFee),
       maxFee: orZero(component.maxFee),
-      // Chỉ payer thực thi được của loại giao dịch mới qua được bước duyệt. Ép tại
-      // biên API để dữ liệu form cũ (SENDER/RECEIVER/SYSTEM) không lọt lên khi
-      // người dùng lưu mà không mở lại dialog.
-      payerType: executablePayer,
-      // Miền Bank chỉ có ngân hàng là người hưởng. Chuẩn hoá thêm tại biên API
-      // để cả dữ liệu form cũ hoặc caller ngoài dialog cũng không gửi SYSTEM.
+      // Giữ SYSTEM cho cost estimate; chỉ chuẩn hoá payer cũ SENDER/RECEIVER.
+      payerType: component.payerType === 'SYSTEM' ? 'SYSTEM' : executablePayer,
       beneficiaryType:
-        form.feeDomain === 'BANK' ? 'BANK' : component.beneficiaryType,
+        form.feeDomain === 'EWALLET' && component.payerType !== 'SYSTEM'
+          ? 'SYSTEM'
+          : component.beneficiaryType,
       tiers: usesTiers(component.calculationMethod)
         ? component.tiers.map((tier, index) => ({
             // Backend dùng khoảng bao đóng và nhận min bậc sau = max trước + 1;
@@ -124,7 +119,9 @@ export const toAssignmentRequest = (
       ? WALLET_SUBJECT_TYPE
       : undefined,
   subjectId:
-    form.assignmentScope === 'SUBJECT' ? form.subjectId || undefined : undefined,
+    form.assignmentScope === 'SUBJECT'
+      ? form.subjectId || undefined
+      : undefined,
   customerGroup:
     form.assignmentScope === 'SEGMENT'
       ? form.customerGroup || undefined

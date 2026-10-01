@@ -29,7 +29,7 @@ describe('Ảnh sản phẩm merchant', () => {
   })
 
   it('lưu nhiều ảnh mới và danh sách ảnh cũ cần gỡ', async () => {
-    const uploadedTypes: string[] = []
+    let uploadCount = 0
     let savedPayload: Record<string, unknown> | undefined
     server.use(
       http.get('*/merchants/merchant-1', () =>
@@ -66,12 +66,13 @@ describe('Ảnh sản phẩm merchant', () => {
         })
       ),
       http.post('*/documents', ({ request }) => {
-        uploadedTypes.push(
-          new URL(request.url).searchParams.get('documentType') ?? ''
+        expect(new URL(request.url).searchParams.has('documentType')).toBe(
+          false
         )
+        uploadCount += 1
         return HttpResponse.json({
           success: true,
-          data: { stagingId: `stage-${uploadedTypes.length}` }
+          data: { stagingId: `stage-${uploadCount}` }
         })
       }),
       http.put('*/merchants/merchant-1', async ({ request }) => {
@@ -107,10 +108,7 @@ describe('Ảnh sản phẩm merchant', () => {
     await user.click(screen.getByText('Lưu thay đổi').closest('button')!)
 
     await waitFor(() => expect(savedPayload).toBeDefined())
-    expect(uploadedTypes).toEqual([
-      'MERCHANT_PRODUCT_IMAGE',
-      'MERCHANT_PRODUCT_IMAGE'
-    ])
+    expect(uploadCount).toBe(2)
     expect(savedPayload?.productImageStagingIds).toEqual(['stage-1', 'stage-2'])
     expect(savedPayload?.removedProductImageIds).toEqual(['old-1'])
   })

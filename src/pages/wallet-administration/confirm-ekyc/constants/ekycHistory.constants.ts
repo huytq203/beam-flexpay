@@ -7,7 +7,11 @@ export const HISTORY_STATUS_CLASS: Record<string, string> = {
   PENDING: 'border-amber-300 bg-amber-50 text-amber-800',
   REJECTED: 'border-red-300 bg-red-50 text-red-800',
   INVALIDATED: 'border-slate-300 bg-slate-100 text-slate-700',
-  EXPIRED: 'border-slate-300 bg-slate-100 text-slate-700'
+  EXPIRED: 'border-slate-300 bg-slate-100 text-slate-700',
+  PENDING_REVIEW: 'border-amber-300 bg-amber-50 text-amber-800',
+  MANUALLY_APPROVED: 'border-green-300 bg-green-50 text-green-800',
+  MANUALLY_REJECTED: 'border-red-300 bg-red-50 text-red-800',
+  SUPERSEDED: 'border-slate-300 bg-slate-100 text-slate-700'
 }
 
 export const STATUS_LABEL: Record<string, string> = {
@@ -20,7 +24,11 @@ export const STATUS_LABEL: Record<string, string> = {
   PENDING: 'Chờ xử lý',
   REJECTED: 'Từ chối',
   INVALIDATED: 'Đã huỷ',
-  EXPIRED: 'Hết hạn'
+  EXPIRED: 'Hết hạn',
+  PENDING_REVIEW: 'Chờ duyệt thủ công',
+  MANUALLY_APPROVED: 'Đã duyệt thủ công',
+  MANUALLY_REJECTED: 'Đã từ chối thủ công',
+  SUPERSEDED: 'Đã thay thế'
 }
 
 export const STEP_LABEL: Record<string, string> = {

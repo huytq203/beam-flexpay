@@ -10,6 +10,16 @@ import type {
   UpdateMerchantPayload
 } from '@type/merchant'
 
+export const createMerchantDocumentBody = (
+  file: File,
+  documentType: string
+): FormData => {
+  const body = new FormData()
+  body.append('file', file)
+  body.append('documentType', documentType)
+  return body
+}
+
 export const merchantService = apiMerchant.injectEndpoints({
   endpoints: (builder) => ({
     getMerchant: builder.query<DataMerchant, MerchantSearchParams>({
@@ -49,13 +59,10 @@ export const merchantService = apiMerchant.injectEndpoints({
       }
     >({
       query: ({ file, documentType }) => {
-        const body = new FormData()
-        body.append('file', file)
         return {
           url: '/documents',
           method: 'POST',
-          params: { documentType },
-          body
+          body: createMerchantDocumentBody(file, documentType)
         }
       },
       transformResponse: (response: MerchantEnvelope<{ stagingId: string }>) =>
@@ -160,6 +167,7 @@ export const {
   usePostMerchantMutation,
   usePutMerchantMutation,
   useGetMerchantByIdQuery,
+  useLazyGetMerchantByIdQuery,
   useSubmitMerchantMutation,
   useApproveMerchantMutation,
   useRejectMerchantMutation,

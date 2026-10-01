@@ -18,7 +18,13 @@ export interface MerchantEnvelope<T> {
   status?: string
 }
 
-export type MerchantStatus = 'DRAFT' | 'PENDING_APPROVAL' | 'ACTIVE' | 'REJECTED' | 'LOCKED' | 'TERMINATED'
+export type MerchantStatus =
+  | 'DRAFT'
+  | 'PENDING_APPROVAL'
+  | 'ACTIVE'
+  | 'REJECTED'
+  | 'LOCKED'
+  | 'TERMINATED'
 export type MerchantType = 'PERSONAL' | 'ENTERPRISE' | 'HOUSEHOLD'
 
 export interface StoredFile {
@@ -26,6 +32,8 @@ export interface StoredFile {
   filename: string
   contentType: string
   sizeBytes: number
+  url?: string | null
+  urlExpiresAt?: string | null
 }
 
 export interface SelectableWallet {
@@ -53,7 +61,11 @@ export interface CreateMerchantPayload {
   submitForApproval?: boolean
 }
 
-export interface UpdateMerchantPayload extends Omit<CreateMerchantPayload, 'enterpriseWalletId' | 'submitForApproval'> {
+export interface UpdateMerchantPayload
+  extends Omit<
+    CreateMerchantPayload,
+    'enterpriseWalletId' | 'submitForApproval'
+  > {
   name: string
   mccCode: string
   removedProductImageIds?: string[]

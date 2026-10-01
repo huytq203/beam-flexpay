@@ -133,6 +133,7 @@ describe('StuckTransactionUpdateAction', () => {
         async ({ request }) => {
           body = await request.json()
           return HttpResponse.json({
+            success: true,
             data: { transactionCode: TRANSACTION_CODE, newStatus: 'POSTED' }
           })
         }
@@ -167,6 +168,7 @@ describe('StuckTransactionUpdateAction', () => {
         async ({ request }) => {
           body = await request.json()
           return HttpResponse.json({
+            success: true,
             data: { transactionCode: TRANSACTION_CODE, newStatus: 'FAILED' }
           })
         }

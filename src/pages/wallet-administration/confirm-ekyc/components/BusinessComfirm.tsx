@@ -5,6 +5,8 @@ import { ProcessingHistory } from './EkycProcessingHistory'
 import { genderMap } from '../types/ConfirmEKYC.type'
 import dayjs from 'dayjs'
 import type { EKYCListItem } from '@type/apiResponseEKYC'
+import { useState } from 'react'
+import { EkycReviewPanel } from './EkycReviewPanel'
 
 interface Props {
   data?: EKYCListItem
@@ -19,8 +21,13 @@ const ContenModalConfirm = ({
   onRetry
 }: Pick<Props, 'data' | 'isError' | 'onRetry'>) => {
   const record = data
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
+    null
+  )
   // Mục OCR là giấy tờ đọc được ở lần mới nhất, không phải hồ sơ đã chốt của người (dòng lưới).
-  const ocr = data?.attempts?.[0] ?? data
+  const ocr =
+    data?.attempts?.find((attempt) => attempt.sessionId === data.sessionId) ??
+    data
 
   const ocrFields = [
     { label: 'Họ và tên', value: ocr?.fullName },
@@ -90,6 +97,7 @@ const ContenModalConfirm = ({
           <BusinessPesonal
             attempts={record?.attempts}
             ocrSessionId={ocr?.sessionId}
+            selectedSessionId={selectedSessionId ?? undefined}
             onReload={onRetry}
           />
         </div>
@@ -132,8 +140,18 @@ const ContenModalConfirm = ({
             {record?.attemptCount ?? record?.attempts.length ?? 0} lần thực hiện
           </span>
         </div>
-        <ProcessingHistory attempts={record?.attempts ?? []} />
+        <ProcessingHistory
+          attempts={record?.attempts ?? []}
+          onInspect={setSelectedSessionId}
+        />
       </div>
+      {selectedSessionId && (
+        <EkycReviewPanel
+          key={selectedSessionId}
+          sessionId={selectedSessionId}
+          readOnly
+        />
+      )}
     </>
   )
 }

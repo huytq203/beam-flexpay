@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import type { UploadFile } from '@components/form'
 import {
   useGetMerchantByIdQuery,
+  useLazyGetMerchantByIdQuery,
   useLazyGetMerchantDocumentUrlQuery,
   useUploadMerchantDocumentMutation
 } from '@services/apiMerchant'
@@ -13,6 +14,7 @@ import {
   type EnterpriseWalletDto
 } from '@services/merchantEnterpriseWalletApi'
 import type { MerchantType } from '@type/merchant'
+import { getLiveMerchantDocumentUrl } from '@services/merchantDocumentUrl'
 import {
   CreateMerchantSchema,
   type CreateMerchantSchemaType
@@ -55,17 +57,36 @@ export const useMerchantForm = () => {
   const [uploadDocument, { isLoading: isUploadingDocument }] =
     useUploadMerchantDocumentMutation()
   const [getDocumentUrl] = useLazyGetMerchantDocumentUrlQuery()
+  const [getFreshMerchant] = useLazyGetMerchantByIdQuery()
 
   const resolveFileUrl = useCallback(
     async (file: UploadFile) => {
       if (!merchantId) throw new Error('Merchant is not saved')
+      const findFile = (merchant: typeof merchantDetail) =>
+        [
+          merchant?.contractFile,
+          merchant?.logoFile,
+          ...(merchant?.productImages ?? [])
+        ].find((item) => item?.id === file.uid)
+      const currentFile = findFile(merchantDetail)
+      const currentUrl = getLiveMerchantDocumentUrl(currentFile)
+      if (currentUrl) return currentUrl
+      const refreshed = currentFile?.url
+        ? await getFreshMerchant(merchantId, false)
+            .unwrap()
+            .catch(() => null)
+        : null
+      const refreshedUrl = getLiveMerchantDocumentUrl(
+        findFile(refreshed ?? undefined)
+      )
+      if (refreshedUrl) return refreshedUrl
       const result = await getDocumentUrl(
         { merchantId, documentId: file.uid },
         false
       ).unwrap()
       return result.url
     },
-    [getDocumentUrl, merchantId]
+    [getDocumentUrl, getFreshMerchant, merchantDetail, merchantId]
   )
 
   const {
@@ -74,7 +95,7 @@ export const useMerchantForm = () => {
     reset,
     setValue,
     setError,
-    formState: { errors }
+    formState: { errors, isDirty }
   } = useForm<CreateMerchantSchemaType>({
     resolver: zodResolver(CreateMerchantSchema),
     defaultValues: EMPTY_FORM_VALUES
@@ -111,7 +132,7 @@ export const useMerchantForm = () => {
     : undefined
 
   useEffect(() => {
-    if (isEditMode && merchantDetail) {
+    if (isEditMode && merchantDetail && !isDirty) {
       reset({
         ...EMPTY_FORM_VALUES,
         walletType:
@@ -156,7 +177,7 @@ export const useMerchantForm = () => {
           })) ?? []
       })
     }
-  }, [merchantDetail, isEditMode, reset])
+  }, [merchantDetail, isDirty, isEditMode, reset])
 
   const uploadFile = async (
     file: (typeof EMPTY_FORM_VALUES.merchantLogo)[number],

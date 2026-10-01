@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import type { UploadFile } from '@components/form'
 import { ButtonComponent } from '@components/index'
 import {
@@ -7,7 +7,11 @@ import {
   type PreviewState
 } from '@components/form/UploadFilePreview'
 import { isImageFile } from '@components/form/uploadFile.utils'
-import { useLazyGetMerchantDocumentUrlQuery } from '@services/apiMerchant'
+import {
+  useLazyGetMerchantDocumentUrlQuery,
+  useLazyGetMerchantByIdQuery
+} from '@services/apiMerchant'
+import { getLiveMerchantDocumentUrl } from '@services/merchantDocumentUrl'
 import type { StoredFile } from '@type/merchant'
 
 interface Props {
@@ -18,19 +22,41 @@ interface Props {
 
 export function MerchantDocumentList({ merchantId, title, files }: Props) {
   const [getDocumentUrl] = useLazyGetMerchantDocumentUrlQuery()
+  const [getMerchantDetail] = useLazyGetMerchantByIdQuery()
+  const filesById = useMemo(
+    () => new Map(files.map((file) => [file.id, file])),
+    [files]
+  )
   const [preview, setPreview] = useState<PreviewState | null>(null)
   const [error, setError] = useState('')
   const [loadingId, setLoadingId] = useState<string | null>(null)
 
   const resolveFileUrl = useCallback(
     async (file: UploadFile) => {
+      const currentFile = filesById.get(file.uid)
+      const directUrl = getLiveMerchantDocumentUrl(currentFile)
+      if (directUrl) return directUrl
+      const refreshed = currentFile?.url
+        ? await getMerchantDetail(merchantId, false)
+            .unwrap()
+            .catch(() => null)
+        : null
+      const refreshedFile = refreshed
+        ? [
+            refreshed.contractFile,
+            refreshed.logoFile,
+            ...(refreshed.productImages ?? [])
+          ].find((item) => item?.id === file.uid)
+        : undefined
+      const refreshedUrl = getLiveMerchantDocumentUrl(refreshedFile)
+      if (refreshedUrl) return refreshedUrl
       const result = await getDocumentUrl(
         { merchantId, documentId: file.uid },
         false
       ).unwrap()
       return result.url
     },
-    [getDocumentUrl, merchantId]
+    [filesById, getDocumentUrl, getMerchantDetail, merchantId]
   )
 
   const openPreview = async (file: UploadFile) => {

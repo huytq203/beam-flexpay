@@ -5,7 +5,9 @@ import type { UploadFile } from '@components/form'
 export const businessWalletSearchSchema = z.object({
   query: z.string().trim().max(100, 'Từ khóa tối đa 100 ký tự').optional(),
   taxCode: z.string().trim().max(13, 'Mã số thuế tối đa 13 ký tự').optional(),
-  verificationStatus: z.enum(['DRAFT', 'PENDING_APPROVAL', 'VERIFIED', 'REJECTED']).optional()
+  verificationStatus: z
+    .enum(['DRAFT', 'PENDING_APPROVAL', 'VERIFIED', 'REJECTED'])
+    .optional()
 })
 
 export type BusinessWalletSearchValues = z.infer<
@@ -23,7 +25,9 @@ const uploadFileSchema = z.custom<UploadFile>()
 
 export const businessWalletFormSchema = z
   .object({
-    email: z.email('Email đăng ký không đúng định dạng').max(255, 'Email tối đa 255 ký tự'),
+    email: z
+      .email('Email đăng ký không đúng định dạng')
+      .max(255, 'Email tối đa 255 ký tự'),
     businessName: z
       .string()
       .trim()
@@ -56,7 +60,12 @@ export const businessWalletFormSchema = z
     managerIdExpiry: z
       .string()
       .min(1, 'Vui lòng chọn ngày hết hạn CCCD')
-      .refine((value) => !Number.isNaN(Date.parse(value)) && new Date(value).getTime() > Date.now(), 'Ngày hết hạn CCCD phải sau hôm nay'),
+      .refine(
+        (value) =>
+          !Number.isNaN(Date.parse(value)) &&
+          new Date(value).getTime() > Date.now(),
+        'Ngày hết hạn CCCD phải sau hôm nay'
+      ),
     otpPhone: z.string().regex(PHONE_REGEX, PHONE_MESSAGE),
     adminPassword: z.string().optional(),
     businessLicense: z
@@ -85,9 +94,7 @@ export const businessWalletFormSchema = z
     }
   })
 
-export type BusinessWalletFormValues = z.infer<
-  typeof businessWalletFormSchema
->
+export type BusinessWalletFormValues = z.infer<typeof businessWalletFormSchema>
 
 export const EMPTY_BUSINESS_WALLET_FORM: BusinessWalletFormValues = {
   email: '',
@@ -109,3 +116,18 @@ export const EMPTY_BUSINESS_WALLET_FORM: BusinessWalletFormValues = {
   idCardBack: [],
   isInternalWallet: false
 }
+
+export const KYB_REJECT_REASON_MAX_LENGTH = 500
+
+export const kybRejectSchema = z.object({
+  reason: z
+    .string()
+    .trim()
+    .min(1, 'Lý do từ chối là bắt buộc')
+    .max(
+      KYB_REJECT_REASON_MAX_LENGTH,
+      `Lý do từ chối tối đa ${KYB_REJECT_REASON_MAX_LENGTH} ký tự`
+    )
+})
+
+export type KybRejectValues = z.infer<typeof kybRejectSchema>

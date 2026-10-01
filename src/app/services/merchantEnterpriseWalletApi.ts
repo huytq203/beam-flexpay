@@ -22,6 +22,9 @@ export interface EnterpriseWalletDto {
   idCardBack?: EnterpriseWalletDocument
   authorizationLetter?: EnterpriseWalletDocument
   internalWallet?: boolean
+  kybRejectedReason?: string | null
+  kybRejectedAt?: string | null
+  kybRejectedBy?: string | null
   createdAt?: string
   updatedAt?: string
 }
@@ -31,6 +34,8 @@ export interface EnterpriseWalletDocument {
   filename?: string
   contentType?: string
   sizeBytes?: number
+  url?: string | null
+  urlExpiresAt?: string | null
 }
 
 export interface EnterpriseWalletQuery {
@@ -62,6 +67,11 @@ export interface EnterpriseWalletPayload {
   authorizationLetterStagingId?: string
   internalWallet?: boolean
   adminPassword?: string
+}
+
+export interface EnterpriseWalletRejectPayload {
+  id: string
+  reason: string
 }
 
 export const merchantEnterpriseWalletService = apiMerchant.injectEndpoints({
@@ -107,6 +117,28 @@ export const merchantEnterpriseWalletService = apiMerchant.injectEndpoints({
         response.data,
       invalidatesTags: ['merchant']
     }),
+    saveEnterpriseWalletDraft: builder.mutation<
+      EnterpriseWalletDto,
+      EnterpriseWalletPayload
+    >({
+      query: (body) => ({
+        url: '/enterprise-wallets/drafts',
+        method: 'POST',
+        body
+      }),
+      transformResponse: (response: MerchantEnvelope<EnterpriseWalletDto>) =>
+        response.data,
+      invalidatesTags: ['merchant']
+    }),
+    submitEnterpriseWallet: builder.mutation<EnterpriseWalletDto, string>({
+      query: (id) => ({
+        url: `/enterprise-wallets/${id}/submit`,
+        method: 'POST'
+      }),
+      transformResponse: (response: MerchantEnvelope<EnterpriseWalletDto>) =>
+        response.data,
+      invalidatesTags: ['merchant']
+    }),
     updateEnterpriseWallet: builder.mutation<
       EnterpriseWalletDto,
       { id: string; body: EnterpriseWalletPayload }
@@ -128,6 +160,19 @@ export const merchantEnterpriseWalletService = apiMerchant.injectEndpoints({
       transformResponse: (response: MerchantEnvelope<EnterpriseWalletDto>) =>
         response.data,
       invalidatesTags: ['merchant']
+    }),
+    rejectEnterpriseWallet: builder.mutation<
+      EnterpriseWalletDto,
+      EnterpriseWalletRejectPayload
+    >({
+      query: ({ id, reason }) => ({
+        url: `/enterprise-wallets/${id}/reject`,
+        method: 'POST',
+        body: { reason }
+      }),
+      transformResponse: (response: MerchantEnvelope<EnterpriseWalletDto>) =>
+        response.data,
+      invalidatesTags: ['merchant']
     })
   })
 })
@@ -137,6 +182,9 @@ export const {
   useGetEnterpriseWalletQuery,
   useLazyGetEnterpriseWalletDocumentUrlQuery,
   useCreateEnterpriseWalletMutation,
+  useSaveEnterpriseWalletDraftMutation,
+  useSubmitEnterpriseWalletMutation,
   useUpdateEnterpriseWalletMutation,
-  useApproveEnterpriseWalletMutation
+  useApproveEnterpriseWalletMutation,
+  useRejectEnterpriseWalletMutation
 } = merchantEnterpriseWalletService

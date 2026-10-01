@@ -12,6 +12,7 @@ import { UserAccessModal } from '../components/UserAccessModal'
 import { UserDetailDrawer } from '../components/UserDetailDrawer'
 import { UserEditorModal } from '../components/UserEditorModal'
 import { UserResetPasswordDialog } from '../components/UserResetPasswordDialog'
+import { UserResendActivationDialog } from '../components/UserResendActivationDialog'
 import { UserStatusDialog } from '../components/UserStatusDialog'
 import type { MerchantUser } from '../types/merchantAccess.types'
 
@@ -36,6 +37,7 @@ export default function MerchantUserListPage() {
   const [accessUser, setAccessUser] = useState<MerchantUser | null>(null)
   const [statusUser, setStatusUser] = useState<MerchantUser | null>(null)
   const [resetUser, setResetUser] = useState<MerchantUser | null>(null)
+  const [resendUser, setResendUser] = useState<MerchantUser | null>(null)
   const columns = createMerchantUserColumns({
     page,
     pageSize,
@@ -46,6 +48,7 @@ export default function MerchantUserListPage() {
     onEdit: setEditor,
     onAccess: setAccessUser,
     onResetPassword: setResetUser,
+    onResendActivation: setResendUser,
     onStatus: setStatusUser
   })
 
@@ -112,7 +115,7 @@ export default function MerchantUserListPage() {
             }
           }}
           rowKey='id'
-          scroll={{ x: 1300 }}
+          scroll={{ x: 'max-content' }}
           size='small'
         />
       </AccessPageShell>
@@ -143,6 +146,12 @@ export default function MerchantUserListPage() {
           user={resetUser}
           getMerchant={getMerchant}
           onClose={() => setResetUser(null)}
+        />
+      )}
+      {resendUser && (
+        <UserResendActivationDialog
+          user={resendUser}
+          onClose={() => setResendUser(null)}
         />
       )}
       {statusUser && (

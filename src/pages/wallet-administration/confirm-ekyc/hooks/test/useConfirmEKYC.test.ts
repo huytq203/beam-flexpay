@@ -116,4 +116,42 @@ describe('mapEKYCGroupToListItem', () => {
     expect(result.gender).toBe('FEMALE')
     expect(result.verifiedAt).toBe('2026-09-22T12:02:41')
   })
+
+  it('lấy OCR lần mới nhất theo session thay vì attempts[0] khi hồ sơ verified đứng đầu', () => {
+    const group: EKYCGroup = {
+      groupKey: 'user-id',
+      userId: 'user-id',
+      username: '0901234567',
+      attemptCount: 2,
+      latestStatus: 'PENDING_REVIEW',
+      latestAt: '2026-09-28T11:00:00',
+      reviewStatus: 'VERIFIED',
+      pendingReview: true,
+      faceScore: 92.5,
+      email: null,
+      occupation: null,
+      position: null,
+      currentAddress: null,
+      attempts: [
+        {
+          sessionId: 'verified',
+          status: 'COMPLETED',
+          fullName: 'Hồ sơ cũ',
+          createdAt: '2026-09-27T10:00:00'
+        },
+        {
+          sessionId: 'pending',
+          status: 'PENDING_REVIEW',
+          fullName: 'OCR mới',
+          createdAt: '2026-09-28T11:00:00'
+        }
+      ]
+    }
+
+    const result = mapEKYCGroupToListItem(group, 1)
+    expect(result.sessionId).toBe('pending')
+    expect(result.fullName).toBe('OCR mới')
+    expect(result.pendingReview).toBe(true)
+    expect(result.faceScore).toBe(92.5)
+  })
 })

@@ -173,6 +173,7 @@ export const SCREENS = {
     path: `${WALLETADMINISTRATION}/confirm-eKYC`,
     actions: {
       ...ADMIN_ACTIONS,
+      view: PERMISSION.ADMIN_FULL,
       approve: PERMISSION.ADMIN_FULL
     }
   },
@@ -250,6 +251,7 @@ export const SCREENS = {
     actions: {
       ...MERCHANT_ACTIONS,
       approve: PERMISSION.ENTERPRISE_WALLET_KYB_APPROVE,
+      reject: PERMISSION.ENTERPRISE_WALLET_KYB_APPROVE,
       viewDetail: PERMISSION.MERCHANT_VIEW
     }
   },
@@ -292,6 +294,8 @@ export const SCREENS = {
       full: PERMISSION.ADMIN_FULL,
       lock: PERMISSION.MERCHANT_USER_LOCK,
       resetPassword: PERMISSION.MERCHANT_USER_RESET_PASSWORD,
+      // Backend yêu cầu quyền tạo cho thao tác gửi lại liên kết kích hoạt.
+      resendActivation: PERMISSION.MERCHANT_USER_CREATE,
       // Đổi phạm vi Merchant/Sub-merchant không áp dụng ngay mà tạo đề xuất chờ duyệt.
       proposeScope: PERMISSION.MERCHANT_USER_SCOPE_PROPOSAL_CREATE,
       viewDetail: PERMISSION.MERCHANT_USER_VIEW

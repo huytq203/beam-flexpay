@@ -22,6 +22,13 @@ import type { StuckTransactionUpdateFormValues } from './StuckTransaction.schema
 
 const CASH_OUT = 'CASH_OUT'
 
+const getErrorDetail = (error: unknown): string | null => {
+  if (!error || typeof error !== 'object' || !('data' in error)) return null
+  const data = error.data
+  if (!data || typeof data !== 'object' || !('detail' in data)) return null
+  return typeof data.detail === 'string' ? data.detail : null
+}
+
 export interface StuckTransactionUpdateActionProps {
   transactionCode?: string | null
   /** Loại giao dịch của bút toán (`CASH_IN` / `CASH_OUT` / `P2P_TRANSFER`…). */
@@ -119,9 +126,10 @@ export const StuckTransactionUpdateAction = ({
           ? 'Đã chốt giao dịch thành công và ghi bút toán vào sổ cái.'
           : 'Đã chốt giao dịch thất bại. Khoản tiền đang bị giữ đã được giải phóng.'
       )
-    } catch {
+    } catch (error) {
       setSubmissionError(
-        'Không thể chốt giao dịch. Hãy kiểm tra lại trạng thái lệnh, bằng chứng ngân hàng và số tiền có thể giữ, rồi thử lại.'
+        getErrorDetail(error) ??
+          'Không thể chốt giao dịch. Hãy kiểm tra lại trạng thái lệnh, bằng chứng ngân hàng và số tiền có thể giữ, rồi thử lại.'
       )
     }
   }

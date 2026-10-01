@@ -15,9 +15,7 @@ export const CALCULATION_METHOD_LABEL: Readonly<Record<string, string>> = {
 }
 
 /** Công thức của một thành phần, gọn đủ để nằm trong một dòng chọn. */
-export const describeFormula = (
-  component: FeeComponentFormValues
-): string => {
+export const describeFormula = (component: FeeComponentFormValues): string => {
   if (component.calculationMethod === CalculationMethod.FREE) return 'Miễn phí'
   if (usesTiers(component.calculationMethod)) {
     return `${component.tiers.length} bậc`
@@ -53,10 +51,14 @@ export interface BaseTypeSummary {
  */
 export const summariseBaseType = (
   type: string,
-  preceding: readonly FeeComponentFormValues[]
+  preceding: readonly FeeComponentFormValues[],
+  payerType?: string
 ): BaseTypeSummary => {
   const matching = preceding.filter(
-    (component) => component.componentType === type
+    (component) =>
+      component.componentType === type &&
+      (!payerType ||
+        (component.payerType === 'SYSTEM') === (payerType === 'SYSTEM'))
   )
 
   return {
@@ -70,10 +72,16 @@ export const summariseBaseType = (
 
 /** Các loại phí đã xuất hiện phía trên, giữ nguyên thứ tự lần đầu gặp. */
 export const collectBaseTypes = (
-  preceding: readonly FeeComponentFormValues[]
+  preceding: readonly FeeComponentFormValues[],
+  payerType?: string
 ): readonly string[] => [
   ...new Set(
     preceding
+      .filter(
+        (component) =>
+          !payerType ||
+          (component.payerType === 'SYSTEM') === (payerType === 'SYSTEM')
+      )
       .map((component) => component.componentType)
       .filter((type) => type.length > 0)
   )

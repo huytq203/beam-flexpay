@@ -8,6 +8,20 @@ import { isWithdrawalPendingApproval } from './withdrawal-approval'
 const TERMINAL_JOURNAL_STATUSES = new Set<string>([
   StatusEnum.POSTED,
   StatusEnum.FAILED,
+  'SUCCESS',
+  'CANCELLED',
+  'EXPIRED',
+  'REJECTED'
+])
+
+const STUCK_STATUSES = new Set<string>([
+  'PENDING',
+  'AUTHORIZED',
+  'POSTING',
+  'CREDIT_PENDING',
+  'PROCESSING',
+  'CREDIT_FAILED',
+  'RECONCILIATION_REQUIRED'
 ])
 
 /**
@@ -19,8 +33,7 @@ const TERMINAL_JOURNAL_STATUSES = new Set<string>([
 export const isStuckJournalStatus = (
   journalStatus: string | null | undefined
 ): boolean =>
-  journalStatus === StatusEnum.PENDING ||
-  journalStatus === StatusEnum.AUTHORIZED
+  typeof journalStatus === 'string' && STUCK_STATUSES.has(journalStatus)
 
 export const isTerminalJournalStatus = (
   journalStatus: string | null | undefined

@@ -1,10 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { CalculationMethod } from '../schemas/feeConfig.schema'
 import type { FeeConfigFormValues } from '../schemas/feeConfig.schema'
-import {
-  toAssignmentRequest,
-  toSetupRequest
-} from '../utils/feeConfigPayload'
+import { toAssignmentRequest, toSetupRequest } from '../utils/feeConfigPayload'
 
 const baseForm = (
   overrides: Partial<FeeConfigFormValues> = {}
@@ -43,24 +40,65 @@ const baseForm = (
 })
 
 describe('toSetupRequest', () => {
-  it('ép người chịu về payer thực thi và người hưởng về hệ thống', () => {
+  it('chuẩn hoá payer chưa hỗ trợ và giữ người hưởng đã chọn', () => {
     const form = baseForm()
     form.components[0].payerType = 'RECEIVER'
 
     const request = toSetupRequest(form)
     // EWALLET_WITHDRAWAL chỉ thực thi được payer USER; RECEIVER chưa có hợp đồng ghi sổ.
     expect(request.components[0].payerType).toBe('USER')
-    // Mọi giá trị người hưởng khác hệ thống đều bị bước duyệt từ chối.
     expect(request.components[0].beneficiaryType).toBe('SYSTEM')
   })
 
-  it('chuẩn hoá dữ liệu cũ SENDER/SYSTEM của miền Ví về USER', () => {
-    for (const legacy of ['SENDER', 'SYSTEM']) {
+  it('chuẩn hoá payer cũ chưa hỗ trợ của miền Ví về USER', () => {
+    for (const legacy of ['SENDER', 'RECEIVER']) {
       const form = baseForm({ feeDomain: 'EWALLET' })
       form.components[0].payerType = legacy
 
       expect(toSetupRequest(form).components[0].payerType).toBe('USER')
     }
+  })
+
+  it('giữ riêng chi phí SYSTEM → BANK và khoản thu USER → SYSTEM', () => {
+    const form = baseForm()
+    form.components = [
+      {
+        ...form.components[0],
+        key: 'cost',
+        componentType: 'BANK_FEE',
+        payerType: 'SYSTEM',
+        beneficiaryType: 'BANK',
+        fixedAmount: 700
+      },
+      {
+        ...form.components[0],
+        key: 'fee',
+        componentType: 'BANK_FEE',
+        payerType: 'USER',
+        beneficiaryType: 'SYSTEM',
+        fixedAmount: 2000
+      }
+    ]
+
+    expect(
+      toSetupRequest(form).components.map(
+        ({ payerType, beneficiaryType, fixedAmount }) => ({
+          payerType,
+          beneficiaryType,
+          fixedAmount
+        })
+      )
+    ).toEqual([
+      { payerType: 'SYSTEM', beneficiaryType: 'BANK', fixedAmount: 700 },
+      { payerType: 'USER', beneficiaryType: 'SYSTEM', fixedAmount: 2000 }
+    ])
+  })
+
+  it('chuẩn hoá người hưởng phí ví thành SYSTEM dù dữ liệu form cũ là BANK', () => {
+    const form = baseForm()
+    form.components[0].beneficiaryType = 'BANK'
+
+    expect(toSetupRequest(form).components[0].beneficiaryType).toBe('SYSTEM')
   })
 
   it('luồng thu hộ merchant gửi payer MERCHANT', () => {
@@ -72,7 +110,7 @@ describe('toSetupRequest', () => {
     expect(toSetupRequest(form).components[0].payerType).toBe('MERCHANT')
   })
 
-  it('miền Bank luôn gửi người hưởng là BANK dù dữ liệu form cũ còn SYSTEM', () => {
+  it('miền Bank giữ người hưởng đã chọn cho từng khoản', () => {
     const request = toSetupRequest(
       baseForm({
         feeDomain: 'BANK',
@@ -80,7 +118,7 @@ describe('toSetupRequest', () => {
       })
     )
 
-    expect(request.components[0].beneficiaryType).toBe('BANK')
+    expect(request.components[0].beneficiaryType).toBe('SYSTEM')
   })
 
   it('từ chối loại giao dịch chưa có hợp đồng thực thi', () => {
@@ -227,8 +265,7 @@ describe('toAssignmentRequest', () => {
       toAssignmentRequest(
         baseForm({ assignmentScope: 'SEGMENT', customerGroup: 'VIP' }),
         'policy-1'
-      )
-        .customerGroup
+      ).customerGroup
     ).toBe('VIP')
     expect(
       toAssignmentRequest(baseForm({ customerGroup: '' }), 'policy-1')

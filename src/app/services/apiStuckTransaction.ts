@@ -7,11 +7,16 @@ import type {
 import { z } from 'zod'
 
 const updateResponseSchema = z.object({
+  success: z.boolean(),
+  detail: z.string().optional(),
   data: z.object({
     transactionCode: z.string(),
     transactionType: z.string().nullish(),
     previousStatus: z.string().nullish(),
     newStatus: z.string(),
+    requestId: z.string().nullish(),
+    journalId: z.string().nullish(),
+    transactionId: z.string().nullish(),
     authCode: z.string().nullish(),
     settlementId: z.string().nullish(),
     note: z.string().nullish(),
@@ -57,6 +62,20 @@ export const apiStuckTransaction = apiWalletCore.injectEndpoints({
         if (response.error) return { error: response.error }
 
         const parsedResponse = updateResponseSchema.safeParse(response.data)
+        if (
+          response.data &&
+          typeof response.data === 'object' &&
+          'success' in response.data &&
+          response.data.success === false
+        ) {
+          return {
+            error: {
+              status: 'CUSTOM_ERROR',
+              error: 'BUSINESS_ERROR',
+              data: response.data
+            }
+          }
+        }
         if (!parsedResponse.success) {
           return {
             error: {
@@ -75,6 +94,9 @@ export const apiStuckTransaction = apiWalletCore.injectEndpoints({
             transactionType: result.transactionType ?? null,
             previousStatus: result.previousStatus ?? null,
             newStatus: result.newStatus,
+            requestId: result.requestId ?? null,
+            journalId: result.journalId ?? null,
+            transactionId: result.transactionId ?? null,
             authCode: result.authCode ?? null,
             settlementId: result.settlementId ?? null,
             note: result.note ?? null,
@@ -85,7 +107,8 @@ export const apiStuckTransaction = apiWalletCore.injectEndpoints({
       },
       invalidatesTags: (_result, _error, { transactionCode }) => [
         { type: 'Withdrawal' as const, id: transactionCode },
-        'Journal' as const
+        'Journal' as const,
+        'historyTransaction' as const
       ]
     })
   })

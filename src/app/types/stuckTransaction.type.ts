@@ -60,6 +60,9 @@ export interface StuckTransactionUpdateResult {
   transactionType: string | null
   previousStatus: string | null
   newStatus: string
+  requestId: string | null
+  journalId: string | null
+  transactionId: string | null
   authCode: string | null
   settlementId: string | null
   note: string | null
