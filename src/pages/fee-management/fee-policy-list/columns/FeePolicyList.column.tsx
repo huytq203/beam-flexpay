@@ -16,10 +16,18 @@ import type { FeePolicyRow } from '@pages/fee-management/fee-policy-list/hooks/u
 import type { AppliedTarget } from '@type/fee.type'
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
+import {
+  FEE_SCOPE_LABEL,
+  type FeeScope
+} from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import { AppliedTargetCell } from '../components/AppliedTargetCell'
+import { ChannelCell } from '../components/ChannelCell'
+import { ScopeComponentsCell } from '../components/ScopeComponentsCell'
 import { formatDateTimeUTC } from '@/pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/utils/applicable-fee-rule'
 
 interface FeePolicyColumnArgs {
+  /** Luồng phí đang xem; quyết định cột thành phần phí hiện thành phần nào. */
+  feeScope: FeeScope
   onEdit: (id: string) => void
   onActivate: (id: string, name: string) => void
   onDeactivate: (id: string) => void
@@ -43,6 +51,7 @@ const PRIORITY_LABEL: Readonly<Record<number, string>> = {
 }
 
 export const getFeePolicyColumns = ({
+  feeScope,
   onEdit,
   onActivate,
   onDeactivate,
@@ -78,6 +87,30 @@ export const getFeePolicyColumns = ({
     width: 200,
     render: (serviceType: string) => (
       getFeeLabel(serviceType, SERVICE_TYPE_LABELS)
+    )
+  },
+  {
+    title: 'Ngân hàng / Merchant',
+    dataIndex: 'configuration',
+    key: 'channel',
+    width: 190,
+    render: (_configuration, row) => (
+      <ChannelCell
+        serviceType={row.serviceType}
+        assignments={row.configuration?.assignments}
+      />
+    )
+  },
+  {
+    title: FEE_SCOPE_LABEL[feeScope],
+    dataIndex: 'configuration',
+    key: `scope-${feeScope}`,
+    width: 340,
+    render: (_configuration, row) => (
+      <ScopeComponentsCell
+        configuration={row.configuration}
+        feeScope={feeScope}
+      />
     )
   },
   {

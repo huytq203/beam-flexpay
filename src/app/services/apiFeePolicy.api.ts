@@ -12,7 +12,9 @@ export interface SearchFeePoliciesParams {
   keyword?: string
   subjectKeyword?: string
   includeConfiguration?: boolean
-  feeDomain: string
+  feeDomain?: string
+  /** OUTPUT_FEE (phí đầu ra) hoặc INPUT_COST (phí đầu vào). */
+  feeScope?: string
   serviceType?: string
   status?: string
   appliedTarget?: string

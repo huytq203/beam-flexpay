@@ -1,11 +1,16 @@
-import { FormDatePicker, FormInput, FormSelect, FormTextArea } from '@components/form'
+import {
+  FormDatePicker,
+  FormInput,
+  FormSelect,
+  FormTextArea
+} from '@components/form'
 import { SERVICE_TYPE_LABELS } from '@constants/feeLabels'
 import dayjs from 'dayjs'
 import type { Control } from 'react-hook-form'
 import { useWatch } from 'react-hook-form'
 import {
   FEE_PRIORITY_OPTIONS,
-  getDomainFieldRules
+  getFormFieldRules
 } from '../constants/feeConfigFields'
 import type { FeeConfigFormValues } from '../schemas/feeConfig.schema'
 import { disablePastDate, disablePastTime } from '../utils/futureDateTime'
@@ -14,6 +19,8 @@ import { SectionHeading } from './SectionHeading'
 interface PolicyGeneralSectionProps {
   control: Control<FeeConfigFormValues>
   readOnly?: boolean
+  /** Đổi loại giao dịch kéo theo miền phí và các ô gán đối tượng. */
+  onServiceTypeChange: (next: string) => void
 }
 
 const PRIORITY_OPTIONS = FEE_PRIORITY_OPTIONS.map((option) => ({
@@ -31,7 +38,8 @@ const PRIORITY_OPTIONS = FEE_PRIORITY_OPTIONS.map((option) => ({
  */
 export const PolicyGeneralSection = ({
   control,
-  readOnly = false
+  readOnly = false,
+  onServiceTypeChange
 }: PolicyGeneralSectionProps) => {
   const feeDomain = useWatch({ control, name: 'feeDomain' })
   const validFrom = useWatch({ control, name: 'validFrom' })
@@ -39,7 +47,7 @@ export const PolicyGeneralSection = ({
   // Mốc kết thúc không được sớm hơn mốc bắt đầu, cũng không được ở quá khứ.
   const validToFloor = validFrom ? dayjs(validFrom) : null
 
-  const serviceTypeOptions = getDomainFieldRules(feeDomain).serviceTypes.map(
+  const serviceTypeOptions = getFormFieldRules(feeDomain, '').serviceTypes.map(
     (value) => {
       const name = SERVICE_TYPE_LABELS[value] ?? value
       return {
@@ -93,6 +101,7 @@ export const PolicyGeneralSection = ({
           placeholder='Chọn đúng một loại giao dịch'
           allowClear={false}
           options={serviceTypeOptions}
+          onChange={(next) => onServiceTypeChange(String(next))}
           disabled={readOnly}
           className='col-span-12 flex flex-col md:col-span-4'
         />

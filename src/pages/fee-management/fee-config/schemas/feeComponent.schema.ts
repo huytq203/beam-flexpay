@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { getFeeScopeOfPayer } from '../constants/feeConfigFields'
 
 /**
  * Một schema phủ cả ba phần của màn: thông tin chính sách, tiêu chí gán đối
@@ -55,6 +56,10 @@ const numberOrZero = (value: number | null | undefined): number => value ?? 0
  * riêng chỉ tạo ra cơ hội để hai con số lệch nhau sau khi người dùng sửa lại
  * một bậc phía trên — đúng loại lỗi khoảng cách mà không ai tự nhìn ra.
  */
+/** Bậc phí không khai Phí % lẫn Phí cố định: lỗi của cả cặp, đặt trên ô Phí %. */
+export const TIER_RATE_MISSING_MESSAGE =
+  'Nhập 0 vào Phí % hoặc Phí cố định nếu bậc này miễn phí'
+
 export const feeTierFormSchema = z.object({
   /** Bỏ trống là bậc cuối, chạy tới vô cùng. */
   maxValue: money,
@@ -80,6 +85,7 @@ export const feeComponentFormSchema = z
   .object({
     /** Khoá cục bộ để danh sách và form con khớp nhau, không gửi lên API. */
     key: z.string(),
+    feeScope: z.enum(['OUTPUT_FEE', 'INPUT_COST']),
     componentType: z.string().min(1, 'Chọn loại phí'),
     baseOn: z.string().min(1, 'Chọn cơ sở tính'),
     baseComponentType: z.string().nullable(),
@@ -94,6 +100,16 @@ export const feeComponentFormSchema = z
     tiers: z.array(feeTierFormSchema)
   })
   .superRefine((component, ctx) => {
+    if (component.feeScope !== getFeeScopeOfPayer(component.payerType)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['payerType'],
+        message:
+          component.feeScope === 'INPUT_COST'
+            ? 'Phí đầu vào phải do Hệ thống chịu'
+            : 'Phí đầu ra không được do Hệ thống chịu'
+      })
+    }
     const allowedBeneficiaries =
       component.payerType === 'SYSTEM'
         ? ['BANK', 'PARTNER']
@@ -104,7 +120,7 @@ export const feeComponentFormSchema = z
         path: ['beneficiaryType'],
         message:
           component.payerType === 'SYSTEM'
-            ? 'Chi phí đầu vào chỉ trả cho Ngân hàng hoặc Đối tác'
+            ? 'Phí đầu vào chỉ trả cho Ngân hàng hoặc Đối tác'
             : 'Phí đầu ra chỉ hưởng bởi Hệ thống hoặc Ngân hàng'
       })
     }
@@ -138,11 +154,36 @@ export const feeComponentFormSchema = z
 
     const minFee = numberOrZero(component.minFee)
     const maxFee = numberOrZero(component.maxFee)
+    if (component.calculationMethod === CalculationMethod.FREE) {
+      ;(['percentage', 'fixedAmount', 'minFee', 'maxFee'] as const).forEach(
+        (field) => {
+          if (numberOrZero(component[field]) !== 0) {
+            ctx.addIssue({
+              code: 'custom',
+              path: [field],
+              message: 'Miễn phí yêu cầu các mức phí bằng 0 hoặc để trống'
+            })
+          }
+        }
+      )
+    }
     if (maxFee > 0 && minFee > maxFee) {
       ctx.addIssue({
         code: 'custom',
         path: ['maxFee'],
         message: 'Phí tối đa phải lớn hơn hoặc bằng phí tối thiểu'
+      })
+    }
+
+    if (
+      component.calculationMethod === CalculationMethod.DIRECT &&
+      numberOrZero(component.percentage) === 0 &&
+      numberOrZero(component.fixedAmount) === 0
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['calculationMethod'],
+        message: 'Nhập mức phí hoặc chọn Miễn phí'
       })
     }
 
@@ -154,8 +195,6 @@ export const feeComponentFormSchema = z
           message: 'Công thức tính trực tiếp không nhận bậc phí'
         })
       }
-      // Để trống hết nghĩa là thành phần này miễn phí — một cấu hình hợp lệ,
-      // không phải lỗi.
       return
     }
 
@@ -169,6 +208,23 @@ export const feeComponentFormSchema = z
     }
 
     component.tiers.forEach((tier, index) => {
+      if (tier.percentage === null && tier.fixedAmount === null) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['tiers', index, 'percentage'],
+          message: TIER_RATE_MISSING_MESSAGE
+        })
+      } else if (
+        numberOrZero(tier.percentage) === 0 &&
+        numberOrZero(tier.fixedAmount) === 0 &&
+        numberOrZero(tier.minFee) > 0
+      ) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['tiers', index, 'minFee'],
+          message: 'Bậc miễn phí không được đặt sàn phí'
+        })
+      }
       const isLast = index === component.tiers.length - 1
       if (tier.maxValue === null && !isLast) {
         ctx.addIssue({

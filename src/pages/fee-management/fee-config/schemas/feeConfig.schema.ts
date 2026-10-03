@@ -1,6 +1,9 @@
 import { z } from 'zod'
 import { isPaymentMethodAllowed } from '../constants/feeConfigFields'
-import { feeComponentFormSchema } from './feeComponent.schema'
+import {
+  DUPLICATE_FEE_COMPONENT_MESSAGE,
+  feeComponentFormSchema
+} from './feeComponent.schema'
 export {
   CalculationMethod,
   usesTiers,
@@ -8,6 +11,7 @@ export {
   getTierStart,
   feeComponentFormSchema,
   DUPLICATE_FEE_COMPONENT_MESSAGE,
+  TIER_RATE_MISSING_MESSAGE,
   createFeeComponentFormSchema
 } from './feeComponent.schema'
 export type {
@@ -46,13 +50,13 @@ export const feeConfigFormSchema = z
   .superRefine((form, ctx) => {
     if (
       form.components.length > 0 &&
-      form.components.every((component) => component.payerType === 'SYSTEM')
+      form.components.every((component) => component.feeScope === 'INPUT_COST')
     ) {
       ctx.addIssue({
         code: 'custom',
         path: ['components'],
         message:
-          'Chính sách cần ít nhất một khoản phí đầu ra; nếu miễn phí cho khách, thêm thành phần DIRECT bằng 0'
+          'Cần ít nhất một phí đầu ra; nếu không thu khách, thêm phí đầu ra với công thức Miễn phí'
       })
     }
 
@@ -99,9 +103,23 @@ export const feeConfigFormSchema = z
     // Thành phần tính dựa trên thành phần khác chỉ hợp lệ khi thành phần được
     // tham chiếu đã đứng trước nó — backend kiểm theo đúng thứ tự trong mảng.
     const seen = new Set<string>()
+    const identities = new Set<string>()
     form.components.forEach((component, index) => {
-      const scope =
-        component.payerType === 'SYSTEM' ? 'INPUT_COST' : 'OUTPUT_FEE'
+      const identity = `${component.componentType}:${component.payerType}:${component.beneficiaryType}`
+      if (identities.has(identity)) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['components', index, 'componentType'],
+          message: DUPLICATE_FEE_COMPONENT_MESSAGE
+        })
+        ctx.addIssue({
+          code: 'custom',
+          path: ['components'],
+          message: DUPLICATE_FEE_COMPONENT_MESSAGE
+        })
+      }
+      identities.add(identity)
+      const scope = component.feeScope
       if (
         component.baseOn === 'FEE_COMPONENT' &&
         component.baseComponentType &&

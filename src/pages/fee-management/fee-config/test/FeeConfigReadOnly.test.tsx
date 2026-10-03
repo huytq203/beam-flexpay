@@ -32,6 +32,7 @@ const values: FeeConfigFormValues = {
   components: [
     {
       key: 'component-1',
+      feeScope: 'OUTPUT_FEE' as const,
       componentType: 'TRANSACTION_FEE',
       baseOn: 'AMOUNT',
       baseComponentType: null,

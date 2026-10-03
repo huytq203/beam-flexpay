@@ -45,7 +45,18 @@ export const STUCK_UPDATE_NOTE_MIN_LENGTH = 10
 export const STUCK_UPDATE_NOTE_MAX_LENGTH = 500
 export const STUCK_UPDATE_CODE_MAX_LENGTH = 50
 
+export interface BankConfirmation {
+  outcome: StuckTransactionOutcome
+  confirmationChannel: string
+  confirmationReference: string
+  confirmedAt: string
+  bankReference?: string
+  valueDate?: string
+  bankBookedAt?: string
+}
+
 export interface StuckTransactionUpdateArg {
+  bankConfirmation?: BankConfirmation
   transactionCode: string
   newStatus: StuckTransactionOutcome
   /** Mã chuẩn chi ngân hàng, không bắt buộc. */

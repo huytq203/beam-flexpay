@@ -1,7 +1,13 @@
+import { BankConfirmationFields } from '@pages/transaction-management/stuck-transaction/components/BankConfirmationFields'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ButtonComponent } from '@components/index'
-import { FormInput, FormSelect, FormTextArea } from '@components/form'
+import {
+  FormCheckbox,
+  FormInput,
+  FormSelect,
+  FormTextArea
+} from '@components/form'
 import {
   STUCK_TRANSACTION_OUTCOME,
   STUCK_UPDATE_CODE_MAX_LENGTH,
@@ -9,7 +15,7 @@ import {
   StuckTransactionOutcome
 } from '@type/stuckTransaction.type'
 import {
-  stuckTransactionUpdateSchema,
+  createStuckTransactionUpdateSchema,
   type StuckTransactionUpdateFormValues
 } from './StuckTransaction.schema'
 
@@ -24,6 +30,8 @@ const OUTCOME_OPTIONS = [
 export interface StuckTransactionUpdateFormProps {
   transactionCode: string
   isCashOut?: boolean
+  allowBankConfirmation?: boolean
+  requireBankConfirmation?: boolean
   isSubmitting?: boolean
   submissionError?: string | null
   onSubmit: (values: StuckTransactionUpdateFormValues) => void
@@ -33,22 +41,42 @@ export interface StuckTransactionUpdateFormProps {
 export const StuckTransactionUpdateForm = ({
   transactionCode,
   isCashOut = false,
+  allowBankConfirmation = true,
+  requireBankConfirmation = false,
   isSubmitting,
   submissionError,
   onSubmit,
   onCancel
 }: StuckTransactionUpdateFormProps) => {
   const { control, handleSubmit } = useForm<StuckTransactionUpdateFormValues>({
-    resolver: zodResolver(stuckTransactionUpdateSchema),
+    resolver: zodResolver(
+      createStuckTransactionUpdateSchema(
+        requireBankConfirmation && allowBankConfirmation
+      )
+    ),
     mode: 'onSubmit',
-    defaultValues: { authCode: '', settlementId: '', note: '' }
+    defaultValues: {
+      authCode: '',
+      settlementId: '',
+      note: '',
+      includeBankConfirmation: false,
+      bankConfirmation: {
+        confirmationChannel: '',
+        confirmationReference: '',
+        confirmedAt: '',
+        bankReference: '',
+        valueDate: '',
+        bankBookedAt: ''
+      }
+    }
   })
 
+  const includeBankConfirmation = useWatch({
+    control,
+    name: 'includeBankConfirmation'
+  })
   const newStatus = useWatch({ control, name: 'newStatus' })
   const isSuccess = newStatus === StuckTransactionOutcome.POSTED
-  const consequence = newStatus
-    ? STUCK_TRANSACTION_OUTCOME[newStatus].consequence
-    : null
 
   return (
     <form
@@ -93,14 +121,7 @@ export const StuckTransactionUpdateForm = ({
         options={OUTCOME_OPTIONS}
       />
 
-      {consequence && (
-        <p
-          aria-live='polite'
-          className='m-0 min-w-0 rounded-lg border border-border bg-muted/40 p-3 text-[13px] leading-5 break-words text-foreground'
-        >
-          {consequence}
-        </p>
-      )}
+    
 
       {isSuccess && (
         <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
@@ -121,6 +142,25 @@ export const StuckTransactionUpdateForm = ({
             maxLength={STUCK_UPDATE_CODE_MAX_LENGTH}
           />
         </div>
+      )}
+
+      {allowBankConfirmation && (
+        <>
+          {!requireBankConfirmation && (
+            <FormCheckbox
+              control={control}
+              name='includeBankConfirmation'
+              label='Bổ sung xác nhận trực tiếp với ngân hàng'
+              disabled={isSubmitting}
+            />
+          )}
+          {(requireBankConfirmation || includeBankConfirmation) && (
+            <BankConfirmationFields
+              control={control}
+              isSuccess={isSuccess}
+            />
+          )}
+        </>
       )}
 
       <FormTextArea

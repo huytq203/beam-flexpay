@@ -1,5 +1,4 @@
 import { FormDatePicker, FormInput, FormLabelHint, FormSelect } from '@components/form'
-import type { FeeDomain } from '@components/fee/feeDomain'
 import { BroomIcon, MagnifyingGlassIcon } from '@components/icons'
 import { ButtonComponent, FeeServiceTypeTabs } from '@components/index'
 import {
@@ -9,9 +8,9 @@ import {
 } from '@constants/feeLabels'
 import {
   BACKEND_PAYMENT_METHODS,
-  getDomainFieldRules,
   getPaymentMethodOptions
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
+import { PUBLISHABLE_SERVICE_TYPES } from '@utils/fee-execution'
 import { useGetBankQuery } from '@services/apiFeeBank'
 import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
@@ -36,7 +35,6 @@ export interface FeePolicyFilterValues {
 }
 
 interface FeePolicyFilterBarProps {
-  feeDomain: FeeDomain
   serviceType: string | undefined
   values: FeePolicyFilterValues
   onServiceTypeChange: (serviceType: string | undefined) => void
@@ -48,13 +46,8 @@ const STATUS_OPTIONS = Object.entries(POLICY_STATUS_CONFIG).map(
   ([value, config]) => ({ value, label: config.label })
 )
 
-/**
- * Loại giao dịch bày ra khác nhau theo miền phí: miền ví không có thu chi hộ,
- * miền ĐVCNTT không có nạp rút. Lọc bảng nhãn theo miền đang xem để người dùng
- * không chọn được một tổ hợp chắc chắn trả về bảng rỗng.
- */
+/** Bộ lọc dùng chung cho cả hai luồng phí; loại giao dịch là mọi loại đã duyệt được. */
 export const FeePolicyFilterBar = ({
-  feeDomain,
   serviceType,
   values,
   onServiceTypeChange,
@@ -97,9 +90,8 @@ export const FeePolicyFilterBar = ({
     values: syncedValues
   })
 
-  const allowed = getDomainFieldRules(feeDomain).serviceTypes
   const labels = Object.fromEntries(
-    allowed.map((value) => [value, SERVICE_TYPE_LABELS[value] ?? value])
+    PUBLISHABLE_SERVICE_TYPES.map((value) => [value, SERVICE_TYPE_LABELS[value] ?? value])
   )
   // Lọc theo LOẠI đối tượng, không theo từng phân khúc: người vận hành muốn
   // gom mọi chính sách cấu hình theo nhóm, tên nhóm cụ thể đã hiện ở cột.

@@ -27,9 +27,6 @@ export const FeeComponentCard = ({
       <h3 className='text-[15px] font-semibold text-foreground'>
         {index + 1}.{' '}
         {getFeeLabel(component.componentType, COMPONENT_TYPE_LABELS)}
-        <span className='ml-2 text-[12px] font-normal text-muted-foreground'>
-          {component.payerType === 'SYSTEM' ? 'Chi phí đầu vào' : 'Phí đầu ra'}
-        </span>
       </h3>
       {!readOnly && (
         <div className='flex gap-2'>

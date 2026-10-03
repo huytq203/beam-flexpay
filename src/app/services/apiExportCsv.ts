@@ -107,6 +107,7 @@ export interface ExportVerifiedKycProfilesQuery {
 export interface ExportFeePoliciesQuery {
   keyword?: string
   feeDomain?: string
+  feeScope?: string
   serviceType?: string
   status?: string
   appliedTarget?: string

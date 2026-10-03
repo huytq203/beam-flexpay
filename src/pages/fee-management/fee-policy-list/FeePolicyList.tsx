@@ -1,10 +1,10 @@
 import { Can } from '@/app/permissions'
-import { FeeDomainTabs } from '@components/fee/FeeDomainTabs'
+import { FeeScopeTabs } from '@pages/fee-management/fee-config/components/FeeScopeTabs'
 import {
-  CONFIGURABLE_FEE_DOMAINS,
-  FeeDomain,
-  isConfigurableFeeDomain
-} from '@components/fee/feeDomain'
+  FEE_SCOPE,
+  FEE_SCOPES,
+  type FeeScope
+} from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import {
   PlusIcon,
   WarningCircleIcon
@@ -31,7 +31,7 @@ import { useFeePolicyList } from './hooks/useFeePolicyList'
 import { useFeePolicyStatus } from './hooks/useFeePolicyStatus'
 
 const FILTER_KEYS = [
-  'feeDomain',
+  'feeScope',
   'keyword',
   'subjectKeyword',
   'status',
@@ -49,23 +49,27 @@ const FILTER_KEYS = [
 const dateOnly = (value: string | undefined): string | null =>
   value ? value.slice(0, 10) : null
 
+const isFeeScope = (value: unknown): value is FeeScope =>
+  FEE_SCOPES.some((scope) => scope === value)
+
 /**
- * Danh sách chính sách phí của cả ba miền, thay cho ba màn danh sách rời trước
- * đây. Miền phí là tab chứ không phải ô lọc: đổi miền là đổi cả tập loại giao
- * dịch hợp lệ lẫn ý nghĩa của bản ghi.
+ * Danh sách chính sách phí tách theo luồng phí: tab "Phí đầu ra" (đầu ra) chỉ lấy chính
+ * sách có phí thu của khách, tab "Phí đầu vào" (đầu vào) chỉ lấy chính sách có khoản ví
+ * phải trả ngân hàng hoặc đối tác. Một chính sách có cả hai luồng thì có mặt ở cả hai tab và
+ * mỗi tab chỉ hiện các thành phần của luồng đó, để đối soát từng luồng riêng.
  */
 const FeePolicyList = () => {
   const navigate = useNavigate()
   const { filters, applyFilters, clearFilters, page, size, setPage, setPageSize } =
     useUrlFilters({ keys: FILTER_KEYS })
 
-  const feeDomain = isConfigurableFeeDomain(filters.feeDomain)
-    ? filters.feeDomain
-    : FeeDomain.EWALLET
+  const feeScope = isFeeScope(filters.feeScope)
+    ? filters.feeScope
+    : FEE_SCOPE.OUTPUT_FEE
   const status = useFeePolicyStatus()
   const customerSegmentNames = useCustomerSegmentNames()
   const exportFilters = {
-    feeDomain,
+    feeScope,
     keyword: filters.keyword,
     subjectKeyword: filters.subjectKeyword,
     serviceType: filters.serviceType,
@@ -113,19 +117,18 @@ const FeePolicyList = () => {
     filenamePrefix: 'cau-hinh-phi'
   })
 
-  // Đổi miền phí thì loại giao dịch cũ không còn nghĩa. `direction` chỉ được
-  // dọn khỏi các liên kết cũ, không còn tham gia lọc.
-  const handleDomainChange = (next: FeeDomain) =>
+  // Đổi luồng phí giữ nguyên mọi bộ lọc khác: loại giao dịch dùng chung cho cả hai luồng.
+  const handleScopeChange = (next: FeeScope) =>
     applyFilters({
-      feeDomain: next,
+      feeScope: next,
       keyword: filters.keyword ?? null,
       subjectKeyword: filters.subjectKeyword ?? null,
       status: filters.status ?? null,
       appliedTarget: filters.appliedTarget ?? null,
       direction: null,
-      serviceType: null,
+      serviceType: filters.serviceType ?? null,
       bankCode: filters.bankCode ?? null,
-      paymentMethod: null,
+      paymentMethod: filters.paymentMethod ?? null,
       validFrom: filters.validFrom ?? null,
       validTo: filters.validTo ?? null,
       createdAtFrom: filters.createdAtFrom ?? null,
@@ -162,16 +165,14 @@ const FeePolicyList = () => {
   return (
     <>
       <CardComponent className='mb-3!'>
-        <FeeDomainTabs
-          value={feeDomain}
-          onChange={handleDomainChange}
-          domains={CONFIGURABLE_FEE_DOMAINS}
-          className='mt-4'
+        <FeeScopeTabs
+          value={feeScope}
+          onChange={handleScopeChange}
+          withPanels={false}
         />
 
-        <div className='mt-4 border-t border-border pt-4'>
+        <div className='mt-4 '>
           <FeePolicyFilterBar
-            feeDomain={feeDomain}
             serviceType={filters.serviceType}
             values={{
               keyword: filters.keyword ?? '',
@@ -187,7 +188,7 @@ const FeePolicyList = () => {
             }}
             onServiceTypeChange={(serviceType) =>
               applyFilters({
-                feeDomain,
+                feeScope,
                 keyword: filters.keyword ?? null,
                 subjectKeyword: filters.subjectKeyword ?? null,
                 status: filters.status ?? null,
@@ -204,7 +205,7 @@ const FeePolicyList = () => {
             }
             onSubmit={(values) =>
               applyFilters({
-                feeDomain,
+                feeScope,
                 direction: null,
                 serviceType: filters.serviceType ?? null,
                 keyword: values.keyword,
@@ -221,7 +222,7 @@ const FeePolicyList = () => {
             }
             onReset={() => {
               clearFilters()
-              applyFilters({ feeDomain })
+              applyFilters({ feeScope })
             }}
           />
         </div>
@@ -252,6 +253,7 @@ const FeePolicyList = () => {
             rowKey='key'
             dataSource={rows}
             columns={getFeePolicyColumns({
+              feeScope,
               onEdit: (id) => navigate(PATHS.FEE_V4.POLICY_EDIT(id)),
               onActivate: status.askActivate,
               onDeactivate: status.deactivate,
@@ -294,6 +296,7 @@ const FeePolicyList = () => {
               expandedRowRender: (row, _index, _indent, expanded) =>
                 expanded ? (
                   <FeePolicyExpandedDetail
+                    feeScope={feeScope}
                     policyName={row.name}
                     configuration={row.configuration}
                     appliedTargets={row.appliedTargets}

@@ -1,3 +1,4 @@
+import { toStuckTransactionUpdate } from '@pages/transaction-management/stuck-transaction/dto/bankConfirmation.dto'
 import { useState } from 'react'
 import {
   ButtonComponent,
@@ -56,6 +57,9 @@ export const StuckTransactionUpdateAction = ({
   compact = false,
   className
 }: StuckTransactionUpdateActionProps) => {
+  const [requireBankConfirmation, setRequireBankConfirmation] = useState(false)
+  const allowBankConfirmation =
+    transactionType !== 'P2P_TRANSFER' && transactionType !== 'TRANSFER'
   const [isOpen, setIsOpen] = useState(false)
   const [submissionError, setSubmissionError] = useState<string | null>(null)
   const { has } = useAccess()
@@ -108,6 +112,7 @@ export const StuckTransactionUpdateAction = ({
     }
 
     setSubmissionError(null)
+    setRequireBankConfirmation(false)
     setIsOpen(true)
   }
 
@@ -116,10 +121,14 @@ export const StuckTransactionUpdateAction = ({
   ): Promise<void> => {
     setSubmissionError(null)
     try {
-      const result = await updateStatus({
-        transactionCode: code,
-        ...values
-      }).unwrap()
+      const result = await updateStatus(
+        toStuckTransactionUpdate(
+          code,
+          values,
+          requireBankConfirmation,
+          allowBankConfirmation
+        )
+      ).unwrap()
       setIsOpen(false)
       successMess(
         result.newStatus === StuckTransactionOutcome.POSTED
@@ -127,6 +136,17 @@ export const StuckTransactionUpdateAction = ({
           : 'Đã chốt giao dịch thất bại. Khoản tiền đang bị giữ đã được giải phóng.'
       )
     } catch (error) {
+      if (error && typeof error === 'object' && 'data' in error) {
+        const data = error.data
+        if (
+          data &&
+          typeof data === 'object' &&
+          (('message' in data &&
+            data.message === 'RECONCILIATION_EVIDENCE_REQUIRED') ||
+            ('status' in data && String(data.status) === '4101'))
+        )
+          setRequireBankConfirmation(true)
+      }
       setSubmissionError(
         getErrorDetail(error) ??
           'Không thể chốt giao dịch. Hãy kiểm tra lại trạng thái lệnh, bằng chứng ngân hàng và số tiền có thể giữ, rồi thử lại.'
@@ -166,6 +186,8 @@ export const StuckTransactionUpdateAction = ({
         onCancel={() => setIsOpen(false)}
         content={
           <StuckTransactionUpdateForm
+            allowBankConfirmation={allowBankConfirmation}
+            requireBankConfirmation={requireBankConfirmation}
             transactionCode={code}
             isCashOut={transactionType === CASH_OUT}
             isSubmitting={isLoading}

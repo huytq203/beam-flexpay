@@ -1,10 +1,11 @@
-import type { FeeDomain } from '@components/fee/feeDomain'
+import type { FeeScope } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import { useSearchFeePoliciesQuery } from '@services/apiFeePolicy.api'
 import type { FeePolicy } from '@type/fee.type'
 import { useMemo } from 'react'
 
 export interface FeePolicyListFilters {
-  feeDomain: FeeDomain
+  /** Luồng phí đang xem: chỉ lấy chính sách có thành phần thuộc luồng này. */
+  feeScope: FeeScope
   keyword?: string
   subjectKeyword?: string
   serviceType?: string
@@ -39,7 +40,8 @@ export interface UseFeePolicyListResult {
 }
 
 /**
- * Miền phí là tiêu chí lọc có sẵn ở backend nên tab gửi thẳng xuống API.
+ * Luồng phí là tiêu chí lọc ở backend nên tab gửi thẳng xuống API; miền phí chỉ còn
+ * là nhãn phân loại và không tham gia lọc.
  *
  * Bộ lọc gửi thẳng một `serviceType` cụ thể; chiều tiền chỉ còn là thông tin
  * hiển thị của giao dịch và không tham gia truy vấn.
@@ -53,7 +55,7 @@ export const useFeePolicyList = ({
     () => ({
       keyword: filters.keyword || '',
       subjectKeyword: filters.subjectKeyword || undefined,
-      feeDomain: filters.feeDomain,
+      feeScope: filters.feeScope,
       serviceType: filters.serviceType || undefined,
       status: filters.status || undefined,
       appliedTarget: filters.appliedTarget || undefined,

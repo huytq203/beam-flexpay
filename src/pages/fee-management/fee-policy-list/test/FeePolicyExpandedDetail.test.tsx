@@ -231,7 +231,7 @@ describe('chi tiết mở rộng của danh sách chính sách phí', () => {
     ['bộ lọc', 'status=ACTIVE'],
     ['trang', 'page=2'],
     ['số dòng mỗi trang', 'size=20'],
-    ['miền phí', 'feeDomain=BANK']
+    ['luồng phí', 'feeScope=INPUT_COST']
   ])('thu gọn các dòng khi đổi %s hiệu lực', async (_label, nextSearch) => {
     const user = userEvent.setup()
     renderList(nextSearch)
@@ -314,7 +314,7 @@ describe('chi tiết mở rộng của danh sách chính sách phí', () => {
       within(detail).getByText('Chính sách chưa được gán cho đối tượng nào.')
     ).toBeInTheDocument()
     expect(
-      within(detail).getByText('Chính sách chưa có thành phần phí nào.')
+      within(detail).getByText('Chính sách không có phí đầu ra.')
     ).toBeInTheDocument()
   })
 })

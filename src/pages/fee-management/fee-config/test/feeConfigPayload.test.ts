@@ -22,6 +22,7 @@ const baseForm = (
   components: [
     {
       key: 'c1',
+      feeScope: 'OUTPUT_FEE',
       componentType: 'TRANSACTION_FEE',
       baseOn: 'AMOUNT',
       baseComponentType: null,
@@ -145,6 +146,7 @@ describe('toSetupRequest', () => {
         components: [
           {
             key: 'c1',
+            feeScope: 'OUTPUT_FEE',
             componentType: 'TRANSACTION_FEE',
             baseOn: 'AMOUNT',
             baseComponentType: null,

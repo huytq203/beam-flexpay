@@ -43,6 +43,7 @@ const renderColumns = () => {
         dataSource={dataSource}
         pagination={false}
         columns={getFeePolicyColumns({
+          feeScope: 'OUTPUT_FEE',
           onEdit: vi.fn(),
           onActivate: vi.fn(),
           onDeactivate: vi.fn(),

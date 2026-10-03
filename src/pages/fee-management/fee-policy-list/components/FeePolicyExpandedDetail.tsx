@@ -1,11 +1,18 @@
 import { COMPONENT_TYPE_LABELS, PAYMENT_METHOD_LABELS, getFeeLabel } from '@constants/feeLabels'
+import {
+  FEE_SCOPE_LABEL,
+  type FeeScope
+} from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import { FeeComponentReadout } from '@pages/fee-management/fee-config/components/FeeComponentReadout'
 import { SectionHeading } from '@pages/fee-management/fee-config/components/SectionHeading'
 import type { FeeComponentFormValues } from '@pages/fee-management/fee-config/schemas/feeConfig.schema'
-import type { AppliedSubject, AppliedTarget, FeeAssignment, FeePolicyComponentWithTiers, FeePolicyConfiguration } from '@type/fee.type'
+import { toReadoutComponent } from '../utils/toReadoutComponent'
+import type { AppliedSubject, AppliedTarget, FeeAssignment, FeePolicyConfiguration } from '@type/fee.type'
 import type { ReactNode } from 'react'
 
 interface FeePolicyExpandedDetailProps {
+  /** Luồng phí đang xem; dòng mở rộng chỉ đọc đúng các thành phần của luồng này. */
+  feeScope: FeeScope
   policyName: string
   configuration: FeePolicyConfiguration | undefined
   appliedTargets?: AppliedTarget[]
@@ -28,6 +35,7 @@ interface AssignmentListProps {
 
 interface ComponentListProps {
   components: FeeComponentFormValues[]
+  feeScope: FeeScope
 }
 
 const FACT_LABEL =
@@ -97,30 +105,6 @@ const AssignmentRow = ({ assignment, appliedTargets }: AssignmentRowProps) => {
   )
 }
 
-const toReadoutComponent = (
-  component: FeePolicyComponentWithTiers
-): FeeComponentFormValues => ({
-  key: component.id,
-  componentType: component.componentType,
-  baseOn: component.baseOn,
-  baseComponentType: component.baseComponentType,
-  calculationMethod: component.calculationMethod,
-  payerType: component.payerType,
-  beneficiaryType: component.beneficiaryType,
-  fixedAmount: component.fixedAmount || null,
-  percentage: component.percentage || null,
-  minFee: component.minFee || null,
-  maxFee: component.maxFee || null,
-  roundMode: component.roundMode,
-  tiers: component.tiers.map((tier) => ({
-    maxValue: tier.maxValue ?? null,
-    fixedAmount: tier.fixedAmount || null,
-    percentage: tier.percentage || null,
-    minFee: tier.minFee || null,
-    maxFee: tier.maxFee || null
-  }))
-})
-
 const AssignmentList = ({
   assignments,
   appliedTargets
@@ -145,34 +129,40 @@ const AssignmentList = ({
   </div>
 )
 
-const ComponentList = ({ components }: ComponentListProps) => (
-  <div>
-    <SectionHeading>Thiết lập phí</SectionHeading>
-    {components.length === 0 ? (
-      <p className='text-[13px] text-muted-foreground'>
-        Chính sách chưa có thành phần phí nào.
-      </p>
-    ) : (
-      <div className='flex flex-col gap-3'>
-        {components.map((component, index) => (
-          <article
-            key={component.key}
-            className='rounded-lg border border-border bg-background'
-          >
-            <h3 className='border-b border-border px-4 py-3 text-[15px] font-semibold text-foreground'>
-              {index + 1}. {getFeeLabel(component.componentType, COMPONENT_TYPE_LABELS)}
-            </h3>
-            <div className='px-4 py-3'>
-              <FeeComponentReadout component={component} />
-            </div>
-          </article>
-        ))}
-      </div>
-    )}
-  </div>
-)
+/** Chỉ các thành phần của luồng đang xem, để đối soát từng luồng riêng. */
+const ComponentList = ({ components, feeScope }: ComponentListProps) => {
+  const scoped = components.filter((component) => component.feeScope === feeScope)
+  return (
+    <div>
+      <SectionHeading>{FEE_SCOPE_LABEL[feeScope]}</SectionHeading>
+      {scoped.length === 0 ? (
+        <p className='text-[13px] text-muted-foreground'>
+          Chính sách không có {FEE_SCOPE_LABEL[feeScope].toLowerCase()}.
+        </p>
+      ) : (
+        <div className='flex flex-col gap-3'>
+          {scoped.map((component, index) => (
+            <article
+              key={component.key}
+              className='rounded-lg border border-border bg-background'
+            >
+              <h3 className='border-b border-border px-4 py-3 text-[15px] font-semibold text-foreground'>
+                {index + 1}.{' '}
+                {getFeeLabel(component.componentType, COMPONENT_TYPE_LABELS)}
+              </h3>
+              <div className='px-4 py-3'>
+                <FeeComponentReadout component={component} />
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export const FeePolicyExpandedDetail = ({
+  feeScope,
   policyName,
   configuration,
   appliedTargets
@@ -187,7 +177,7 @@ export const FeePolicyExpandedDetail = ({
       className='space-y-6 px-2 py-4'
     >
       <AssignmentList assignments={assignments} appliedTargets={appliedTargets} />
-      <ComponentList components={components} />
+      <ComponentList components={components} feeScope={feeScope} />
     </section>
   )
 }

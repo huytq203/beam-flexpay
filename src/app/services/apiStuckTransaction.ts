@@ -40,7 +40,14 @@ export const apiStuckTransaction = apiWalletCore.injectEndpoints({
       StuckTransactionUpdateArg
     >({
       async queryFn(
-        { transactionCode, newStatus, authCode, settlementId, note },
+        {
+          transactionCode,
+          newStatus,
+          authCode,
+          settlementId,
+          note,
+          bankConfirmation
+        },
         queryApi,
         extraOptions
       ) {
@@ -49,6 +56,7 @@ export const apiStuckTransaction = apiWalletCore.injectEndpoints({
             url: `/transactions/${encodeURIComponent(transactionCode)}/update-status`,
             method: 'POST',
             body: {
+              ...(bankConfirmation ? { bankConfirmation } : {}),
               newStatus,
               note,
               ...(authCode ? { authCode } : {}),

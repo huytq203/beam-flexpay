@@ -1,4 +1,7 @@
 import { apiMerchant } from './apiService'
+import type { ExportedFile } from './apiExportCsv'
+import { parseFilenameFromDisposition } from '@utils/file-download'
+import type { FetchBaseQueryMeta } from '@reduxjs/toolkit/query'
 import type {
   ContentMerchant,
   CreateMerchantPayload,
@@ -28,12 +31,25 @@ export const merchantService = apiMerchant.injectEndpoints({
         response.data,
       providesTags: ['merchant']
     }),
-    exportMerchants: builder.mutation<Blob, MerchantSearchParams>({
-      query: (params) => ({
-        url: '/merchants/export',
-        params,
-        responseHandler: (response: Response) => response.blob()
-      })
+    exportMerchants: builder.mutation<ExportedFile, MerchantSearchParams>({
+      async queryFn(params, _api, _extraOptions, baseQuery) {
+        const response = await baseQuery({
+          url: '/merchants/export',
+          params,
+          responseHandler: (result: Response) => result.blob()
+        })
+        if (response.error) return { error: response.error }
+
+        const meta = response.meta as FetchBaseQueryMeta | undefined
+        return {
+          data: {
+            blob: response.data as Blob,
+            filename: parseFilenameFromDisposition(
+              meta?.response?.headers.get('content-disposition') ?? null
+            )
+          }
+        }
+      }
     }),
     getSelectableWallets: builder.query<
       MerchantPage<SelectableWallet>,

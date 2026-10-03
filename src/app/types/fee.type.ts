@@ -50,6 +50,8 @@ export interface FeePolicy {
 export interface FeePolicyComponent {
   id: string
   feePolicyId: string
+  /** API cũ chưa trả trường này; khi vắng thì suy từ người chịu phí. */
+  feeScope?: string
   componentType: string
   baseOn: string
   baseComponentType: string | null

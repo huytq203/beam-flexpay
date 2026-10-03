@@ -3,8 +3,10 @@ import { PlusIcon, TrashIcon } from '@components/icons'
 import { ButtonComponent, TooltipComponent } from '@components/index'
 import { formatFeeNumber } from '@utils/fee-format'
 import type { Control } from 'react-hook-form'
-import { useFieldArray, useWatch } from 'react-hook-form'
+import { Fragment } from 'react'
+import { useFieldArray, useFormState, useWatch } from 'react-hook-form'
 import {
+  TIER_RATE_MISSING_MESSAGE,
   getTierStart,
   type FeeComponentFormValues
 } from '../schemas/feeConfig.schema'
@@ -13,6 +15,16 @@ interface FeeTierEditorProps {
   control: Control<FeeComponentFormValues>
   error?: string
 }
+
+const COLUMN_COUNT = 7
+
+const TIER_FIELDS = [
+  'maxValue',
+  'percentage',
+  'fixedAmount',
+  'minFee',
+  'maxFee'
+] as const
 
 const HEAD =
   'text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground'
@@ -28,6 +40,25 @@ const HEAD =
 export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
   const { fields, append, remove } = useFieldArray({ control, name: 'tiers' })
   const tiers = useWatch({ control, name: 'tiers' }) ?? []
+  const { errors } = useFormState({ control })
+
+  /**
+   * Lỗi của một bậc gom lại thành một dòng riêng dưới hàng đó, không in vào từng ô: ô hẹp
+   * làm câu lỗi xuống nhiều dòng, kéo cao hàng và đẩy lệch các ô còn lại.
+   */
+  const rowMessages = (index: number): string[] => {
+    const rowErrors = errors.tiers?.[index]
+    if (!rowErrors) return []
+    return [
+      ...new Set(
+        TIER_FIELDS.map((field) => rowErrors[field]?.message)
+          .filter((message): message is string => Boolean(message))
+      )
+    ]
+  }
+  const hasRateMissingError = tiers.some((_, index) =>
+    rowMessages(index).includes(TIER_RATE_MISSING_MESSAGE)
+  )
 
   const lastMax = tiers.at(-1)?.maxValue
   const canAppend =
@@ -47,7 +78,13 @@ export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
       htmlType='button'
       type='default'
       content='Thêm bậc phí'
-      icon={<PlusIcon size={14} weight='bold' aria-hidden />}
+      icon={
+        <PlusIcon
+          size={14}
+          weight='bold'
+          aria-hidden
+        />
+      }
       disabled={!canAppend}
       onClick={handleAppend}
     />
@@ -65,6 +102,13 @@ export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
           </TooltipComponent>
         )}
       </div>
+
+      {/* Lỗi của hàng đã nói đúng câu này, nên gợi ý chỉ hiện khi chưa có lỗi đó. */}
+      {!hasRateMissingError && (
+        <p className='mb-2 text-[13px] text-muted-foreground'>
+          Bậc không thu phí: nhập 0 vào Phí % hoặc Phí cố định, để trống Sàn.
+        </p>
+      )}
 
       {fields.length === 0 ? (
         <p className='rounded-lg border border-dashed border-border px-4 py-6 text-center text-[13px] text-muted-foreground'>
@@ -86,8 +130,12 @@ export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
               </tr>
             </thead>
             <tbody>
-              {fields.map((field, index) => (
-                <tr key={field.id} className='border-t border-border'>
+              {fields.map((field, index) => {
+                const messages = rowMessages(index)
+                const rateInvalid = messages.includes(TIER_RATE_MISSING_MESSAGE)
+                return (
+                <Fragment key={field.id}>
+                <tr className='border-t border-border align-middle'>
                   <td className='whitespace-nowrap px-3 py-2 text-right text-[13px] tabular-nums text-foreground'>
                     {formatFeeNumber(getTierStart(tiers, index))}
                   </td>
@@ -99,6 +147,7 @@ export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
                       // phải giữ trạng rỗng thay vì rơi về 0.
                       allowEmpty
                       placeholder='Trống = vô cùng'
+                      hideError
                       className='flex flex-col'
                     />
                   </td>
@@ -106,8 +155,10 @@ export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
                     <FormInputNumber
                       name={`tiers.${index}.percentage`}
                       control={control}
+                      invalid={rateInvalid}
                       allowEmpty
                       placeholder='0'
+                      hideError
                       className='flex flex-col'
                     />
                   </td>
@@ -115,8 +166,10 @@ export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
                     <FormInputNumber
                       name={`tiers.${index}.fixedAmount`}
                       control={control}
+                      invalid={rateInvalid}
                       allowEmpty
                       placeholder='0'
+                      hideError
                       className='flex flex-col'
                     />
                   </td>
@@ -126,6 +179,7 @@ export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
                       control={control}
                       allowEmpty
                       placeholder='0'
+                      hideError
                       className='flex flex-col'
                     />
                   </td>
@@ -135,6 +189,7 @@ export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
                       control={control}
                       allowEmpty
                       placeholder='0'
+                      hideError
                       className='flex flex-col'
                     />
                   </td>
@@ -145,14 +200,32 @@ export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
                           htmlType='button'
                           type='default'
                           aria-label='Xoá bậc cuối'
-                          icon={<TrashIcon size={14} weight='bold' aria-hidden />}
+                          icon={
+                            <TrashIcon
+                              size={14}
+                              weight='bold'
+                              aria-hidden
+                            />
+                          }
                           onClick={() => remove(index)}
                         />
                       </TooltipComponent>
                     )}
                   </td>
                 </tr>
-              ))}
+                {messages.length > 0 && (
+                  <tr>
+                    <td
+                      colSpan={COLUMN_COUNT}
+                      className='px-3 pb-2 text-[13px] font-medium text-danger-strong'
+                    >
+                      <p role='alert'>{messages.join(' · ')}</p>
+                    </td>
+                  </tr>
+                )}
+                </Fragment>
+                )
+              })}
             </tbody>
           </table>
         </div>

@@ -54,6 +54,7 @@ export const toSetupRequest = (
       priority: form.priority
     },
     components: form.components.map((component) => ({
+      feeScope: component.feeScope,
       componentType: component.componentType,
       baseOn: component.baseOn,
       baseComponentType:

@@ -13,7 +13,9 @@ import {
   INPUT_COST_BENEFICIARY_OPTIONS,
   WALLET_FEE_BENEFICIARY_OPTIONS,
   VAT_COMPONENT_TYPE,
-  type FeeBusinessCategory
+  FEE_SCOPE,
+  type FeeBusinessCategory,
+  type FeeScope
 } from '../constants/feeConfigFields'
 import {
   CalculationMethod,
@@ -28,6 +30,7 @@ import {
   summariseBaseType
 } from '../utils/feeComponentSummary'
 import { getBaseOnOptions } from '../utils/feeComponentBaseOptions'
+import { emptyComponent } from '../utils/feeComponentDefaults'
 import { FeeComponentFields } from './FeeComponentFields'
 
 interface FeeComponentDialogProps {
@@ -39,6 +42,8 @@ interface FeeComponentDialogProps {
   /** Toàn bộ thành phần hiện có, dùng để kiểm tra trùng tổ hợp định danh. */
   existingComponents: readonly FeeComponentFormValues[]
   feeDomain: FeeDomain
+  /** Luồng của thành phần đang thêm hoặc sửa; quyết định loại phí, người chịu và người hưởng được chọn. */
+  feeScope: FeeScope
   businessCategory: FeeBusinessCategory
   /** Loại giao dịch của chính sách, dùng để suy người chịu phí mặc định. */
   serviceType: string
@@ -48,28 +53,10 @@ interface FeeComponentDialogProps {
 
 const CALCULATION_METHOD_VALUES = [
   CalculationMethod.DIRECT,
+  CalculationMethod.FREE,
   CalculationMethod.PROGRESSIVE_TIER,
   CalculationMethod.FLAT_TIER
 ]
-
-const emptyComponent = (
-  payerType: string,
-  beneficiaryType: string
-): FeeComponentFormValues => ({
-  key: crypto.randomUUID(),
-  componentType: '',
-  baseOn: 'AMOUNT',
-  baseComponentType: null,
-  calculationMethod: CalculationMethod.DIRECT,
-  payerType,
-  beneficiaryType,
-  fixedAmount: null,
-  percentage: null,
-  minFee: null,
-  maxFee: null,
-  roundMode: 'UP',
-  tiers: []
-})
 
 export const FeeComponentDialog = ({
   open,
@@ -77,22 +64,26 @@ export const FeeComponentDialog = ({
   precedingComponents,
   existingComponents,
   feeDomain,
+  feeScope,
   businessCategory,
   serviceType,
   onSave,
   onCancel
 }: FeeComponentDialogProps) => {
-  const isBank = feeDomain === FeeDomain.BANK
+  const isInputCost = feeScope === FEE_SCOPE.INPUT_COST
   const isWallet = feeDomain === FeeDomain.EWALLET
-  // Khoản thu theo payer thực thi; SYSTEM là chi phí đầu vào riêng.
+  // Phí đầu ra do payer của giao dịch chịu; phí đầu vào luôn do SYSTEM chịu.
   const payerTypeOptions = useMemo(
-    () => getPayerTypeOptions(serviceType),
-    [serviceType]
+    () =>
+      getPayerTypeOptions(serviceType).filter(({ value }) =>
+        isInputCost ? value === 'SYSTEM' : value !== 'SYSTEM'
+      ),
+    [isInputCost, serviceType]
   )
   // Component cũ mang payer chưa hỗ trợ (SENDER/RECEIVER) về giá trị này.
-  const defaultPayerType = isBank ? 'SYSTEM' : payerTypeOptions[0].value
-  // Bank/NCC mặc định là chi phí đầu vào; phí ví mặc định về SYSTEM.
-  const defaultBeneficiaryType = isBank ? 'BANK' : EXECUTABLE_BENEFICIARY
+  const defaultPayerType = isInputCost ? 'SYSTEM' : payerTypeOptions[0].value
+  // Phí đầu vào mặc định trả ngân hàng; phí đầu ra mặc định về hệ thống.
+  const defaultBeneficiaryType = isInputCost ? 'BANK' : EXECUTABLE_BENEFICIARY
 
   /**
    * Dựng giá trị mặc định đúng một lần cho mỗi lần mở.
@@ -102,7 +93,7 @@ export const FeeComponentDialog = ({
    */
   const defaultValues = useMemo(() => {
     if (!initialValue) {
-      return emptyComponent(defaultPayerType, defaultBeneficiaryType)
+      return emptyComponent(feeScope, defaultPayerType, defaultBeneficiaryType)
     }
 
     const hasAllowedPayer = payerTypeOptions.some(
@@ -111,17 +102,17 @@ export const FeeComponentDialog = ({
     const effectivePayer = hasAllowedPayer
       ? initialValue.payerType
       : defaultPayerType
-    const allowedBeneficiaries =
-      effectivePayer === 'SYSTEM'
-        ? INPUT_COST_BENEFICIARY_OPTIONS
-        : isWallet
-          ? WALLET_FEE_BENEFICIARY_OPTIONS
-          : BENEFICIARY_TYPE_OPTIONS
+    const allowedBeneficiaries = isInputCost
+      ? INPUT_COST_BENEFICIARY_OPTIONS
+      : isWallet
+        ? WALLET_FEE_BENEFICIARY_OPTIONS
+        : BENEFICIARY_TYPE_OPTIONS
     const hasAllowedBeneficiary = allowedBeneficiaries.some(
       ({ value }) => value === initialValue.beneficiaryType
     )
     return {
       ...initialValue,
+      feeScope,
       payerType: effectivePayer,
       beneficiaryType: hasAllowedBeneficiary
         ? initialValue.beneficiaryType
@@ -130,7 +121,9 @@ export const FeeComponentDialog = ({
   }, [
     defaultBeneficiaryType,
     defaultPayerType,
+    feeScope,
     initialValue,
+    isInputCost,
     isWallet,
     payerTypeOptions
   ])
@@ -153,12 +146,11 @@ export const FeeComponentDialog = ({
   const calculationMethod = useWatch({ control, name: 'calculationMethod' })
   const payerType = useWatch({ control, name: 'payerType' })
   const beneficiaryType = useWatch({ control, name: 'beneficiaryType' })
-  const beneficiaryTypeOptions =
-    payerType === 'SYSTEM'
-      ? INPUT_COST_BENEFICIARY_OPTIONS
-      : isWallet
-        ? WALLET_FEE_BENEFICIARY_OPTIONS
-        : BENEFICIARY_TYPE_OPTIONS
+  const beneficiaryTypeOptions = isInputCost
+    ? INPUT_COST_BENEFICIARY_OPTIONS
+    : isWallet
+      ? WALLET_FEE_BENEFICIARY_OPTIONS
+      : BENEFICIARY_TYPE_OPTIONS
   const hasDuplicateIdentityError = [
     formState.errors.componentType,
     formState.errors.payerType,
@@ -185,19 +177,18 @@ export const FeeComponentDialog = ({
   const isVat = componentType === VAT_COMPONENT_TYPE
   const tiered = usesTiers(calculationMethod)
   const vatBaseComponentType = getVatBaseForCategory(businessCategory)
-
-  const componentTypeOptions = getComponentTypesForCategory(
-    businessCategory
-  ).map((value) => ({
-    value,
-    label: COMPONENT_TYPE_LABELS[value] ?? value
-  }))
-
   const baseTypes = collectBaseTypes(precedingComponents, payerType)
   const hasPrecedingComponents = baseTypes.length > 0
   const hasVatBaseAbove = Boolean(
     vatBaseComponentType && baseTypes.includes(vatBaseComponentType)
   )
+
+  const componentTypeOptions = getComponentTypesForCategory(businessCategory)
+    .filter((value) => value !== VAT_COMPONENT_TYPE || hasVatBaseAbove || isVat)
+    .map((value) => ({
+      value,
+      label: COMPONENT_TYPE_LABELS[value] ?? value
+    }))
 
   /**
    * Thuế giá trị gia tăng luôn tính trên khoản phí gốc của nhóm. Khoá luôn ô cơ sở tính
@@ -247,7 +238,7 @@ export const FeeComponentDialog = ({
   ).map((value) => ({ value, label: CALCULATION_METHOD_LABEL[value] }))
 
   const baseOnOptions = getBaseOnOptions({
-    isBank,
+    isBank: isInputCost,
     isVat,
     hasPrecedingComponents
   })
@@ -255,7 +246,9 @@ export const FeeComponentDialog = ({
   return (
     <ModalComponent
       open={open}
-      title={initialValue ? 'Sửa phí thành phần' : 'Thêm phí thành phần'}
+      title={`${initialValue ? 'Sửa' : 'Thêm'} ${
+        isInputCost ? 'phí đầu vào' : 'phí đầu ra'
+      }`}
       okText={initialValue ? 'Lưu thành phần' : 'Thêm'}
       cancelText='Huỷ'
       // antd tự giới hạn về `calc(100vw - 32px)` ở màn hẹp, nên một số cố
@@ -272,15 +265,26 @@ export const FeeComponentDialog = ({
           baseTypeOptions={baseTypeOptions}
           methodOptions={methodOptions}
           payerTypeOptions={payerTypeOptions}
+          payerDisabled={payerTypeOptions.length <= 1}
           beneficiaryTypeOptions={beneficiaryTypeOptions}
-          beneficiaryDisabled={isWallet && payerType !== 'SYSTEM'}
+          beneficiaryDisabled={!isInputCost && isWallet}
           payerType={payerType}
           baseOn={baseOn}
           selectedBase={selectedBase}
           isVat={isVat}
           tiered={tiered}
+          isFree={calculationMethod === CalculationMethod.FREE}
           tierError={formState.errors.tiers?.message}
           onComponentTypeChange={handleComponentTypeChange}
+          onMethodChange={(next) => {
+            setValue('tiers', [])
+            if (next === CalculationMethod.FREE) {
+              setValue('percentage', null)
+              setValue('fixedAmount', null)
+              setValue('minFee', null)
+              setValue('maxFee', null)
+            }
+          }}
           onPayerChange={(next) => {
             setValue('beneficiaryType', next === 'SYSTEM' ? 'BANK' : 'SYSTEM', {
               shouldValidate: true

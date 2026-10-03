@@ -53,6 +53,7 @@ export {
   ClockIcon,
   KeyIcon,
   LockKeyOpenIcon,
+  LockSimpleIcon,
   DeviceMobileSpeakerIcon,
   PhoneIcon,
   EnvelopeIcon,

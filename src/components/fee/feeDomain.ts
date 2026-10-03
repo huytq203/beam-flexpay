@@ -43,11 +43,6 @@ export const CONFIGURABLE_FEE_DOMAINS: readonly FeeDomain[] = [
   FeeDomain.EWALLET
 ]
 
-export const isConfigurableFeeDomain = (
-  value: unknown
-): value is FeeDomain =>
-  CONFIGURABLE_FEE_DOMAINS.some((domain) => domain === value)
-
 export const FEE_DOMAIN_LABEL: Readonly<Record<FeeDomain, string>> =
   Object.fromEntries(
     FEE_DOMAIN_ENTRIES.map((entry) => [entry.value, entry.label])

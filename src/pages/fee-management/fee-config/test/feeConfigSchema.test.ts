@@ -7,8 +7,9 @@ import {
   getTierStart
 } from '../schemas/feeConfig.schema'
 
-const component = (overrides = {}) => ({
+const component = (overrides: Record<string, unknown> = {}) => ({
   key: 'c1',
+  feeScope: overrides.payerType === 'SYSTEM' ? 'INPUT_COST' : 'OUTPUT_FEE',
   componentType: 'TRANSACTION_FEE',
   baseOn: 'AMOUNT',
   baseComponentType: null,
@@ -187,11 +188,11 @@ describe('feeComponentFormSchema', () => {
     expect(errorPaths(result)).toContain('tiers.0.maxValue')
   })
 
-  it('để trống hết mức phí là hợp lệ, thành phần đó miễn phí', () => {
+  it('phí trực tiếp cần mức thu, miễn phí dùng công thức FREE', () => {
     const result = feeComponentFormSchema.safeParse(
       component({ fixedAmount: null, percentage: null })
     )
-    expect(result.success).toBe(true)
+    expect(errorPaths(result)).toContain('calculationMethod')
   })
 
   it('buộc thuế giá trị gia tăng tính trên thành phần khác', () => {
@@ -219,7 +220,14 @@ describe('feeComponentFormSchema', () => {
     expect(errorPaths(result)).toContain('fixedAmount')
   })
 
-  it('cho thuế giá trị gia tăng để trống phần trăm', () => {
+  it('không cho công thức miễn phí có mức thu khác 0', () => {
+    const result = feeComponentFormSchema.safeParse(
+      component({ calculationMethod: CalculationMethod.FREE, fixedAmount: 500 })
+    )
+    expect(errorPaths(result)).toContain('fixedAmount')
+  })
+
+  it('thuế giá trị gia tăng phải có tỷ lệ dương', () => {
     const result = feeComponentFormSchema.safeParse(
       component({
         componentType: 'VAT',
@@ -229,7 +237,7 @@ describe('feeComponentFormSchema', () => {
         fixedAmount: null
       })
     )
-    expect(result.success).toBe(true)
+    expect(errorPaths(result)).toContain('calculationMethod')
   })
 
   it('bắt buộc chọn cơ sở khi tính trên thành phần khác', () => {

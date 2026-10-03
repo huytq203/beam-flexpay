@@ -5,6 +5,7 @@ import { useLazyGetFeeComponentTierQuery } from '@services/apiFeeComponentTier'
 import { useGetFeePolicyByIdQuery } from '@services/apiFeePolicy.api'
 import type { FeeComponentTier, FeePolicyComponent } from '@type/fee.type'
 import { useEffect, useState } from 'react'
+import { resolveFeeScope } from '../constants/feeConfigFields'
 import type {
   FeeComponentFormValues,
   FeeConfigFormValues
@@ -123,6 +124,7 @@ export const useFeeConfigDetail = (
   const formComponents: FeeComponentFormValues[] = (components ?? []).map(
     (component) => ({
       key: component.id,
+      feeScope: resolveFeeScope(component.feeScope, component.payerType),
       componentType: component.componentType,
       baseOn: component.baseOn,
       baseComponentType: component.baseComponentType,

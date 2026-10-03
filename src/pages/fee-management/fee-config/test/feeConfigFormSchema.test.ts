@@ -4,8 +4,9 @@ import {
   feeConfigFormSchema
 } from '../schemas/feeConfig.schema'
 
-const component = (overrides = {}) => ({
+const component = (overrides: Record<string, unknown> = {}) => ({
   key: 'c1',
+  feeScope: overrides.payerType === 'SYSTEM' ? 'INPUT_COST' : 'OUTPUT_FEE',
   componentType: 'TRANSACTION_FEE',
   baseOn: 'AMOUNT',
   baseComponentType: null,
@@ -133,6 +134,40 @@ describe('feeConfigFormSchema', () => {
     expect(errorPaths(result)).toContain('components')
   })
 
+  it('cho phép một chính sách có cả phí đầu ra và phí đầu vào', () => {
+    const result = feeConfigFormSchema.safeParse(
+      form({
+        components: [
+          component(),
+          component({
+            key: 'cost',
+            componentType: 'BANK_FEE',
+            payerType: 'SYSTEM',
+            beneficiaryType: 'BANK'
+          })
+        ]
+      })
+    )
+    expect(result.success).toBe(true)
+  })
+
+  it('chính sách miền Bank cũng phải có ít nhất một phí đầu ra', () => {
+    const result = feeConfigFormSchema.safeParse(
+      form({
+        feeDomain: 'BANK',
+        bankCode: 'VPB',
+        components: [
+          component({
+            componentType: 'BANK_FEE',
+            payerType: 'SYSTEM',
+            beneficiaryType: 'BANK'
+          })
+        ]
+      })
+    )
+    expect(errorPaths(result)).toContain('components')
+  })
+
   it('tham chiếu chỉ được dùng thành phần trong cùng phạm vi', () => {
     const result = feeConfigFormSchema.safeParse(
       form({
@@ -156,4 +191,40 @@ describe('feeConfigFormSchema', () => {
     )
     expect(errorPaths(result)).toContain('components.1.baseComponentType')
   })
+})
+
+it('luồng phí phải khớp người chịu, bất kể miền phí', () => {
+  const costPaidByUser = feeConfigFormSchema.safeParse(
+    form({
+      components: [
+        component(),
+        component({
+          key: 'cost',
+          feeScope: 'INPUT_COST',
+          componentType: 'BANK_FEE',
+          beneficiaryType: 'BANK'
+        })
+      ]
+    })
+  )
+  expect(errorPaths(costPaidByUser)).toContain('components.1.payerType')
+
+  const feeBorneBySystem = feeConfigFormSchema.safeParse(
+    form({
+      components: [
+        component({ feeScope: 'OUTPUT_FEE', payerType: 'SYSTEM', beneficiaryType: 'BANK' })
+      ]
+    })
+  )
+  expect(errorPaths(feeBorneBySystem)).toContain('components.0.payerType')
+})
+
+it('chặn thành phần trùng loại phí, người chịu và người hưởng trong toàn policy', () => {
+  const result = feeConfigFormSchema.safeParse(
+    form({
+      components: [component(), component({ key: 'same' })]
+    })
+  )
+  expect(errorPaths(result)).toContain('components.1.componentType')
+  expect(errorPaths(result)).toContain('components')
 })

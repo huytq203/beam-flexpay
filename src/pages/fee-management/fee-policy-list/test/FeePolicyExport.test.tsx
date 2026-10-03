@@ -75,7 +75,7 @@ describe('danh sách chính sách phí — xuất CSV', () => {
   it('xuất toàn bộ cấu hình theo filter hiện tại, không kèm trạng thái giao diện', async () => {
     const user = userEvent.setup()
     renderList(
-      '/fee?feeDomain=EWALLET&keyword=nap%20tien&subjectKeyword=0912&status=ACTIVE&appliedTarget=CUSTOMER_GROUP&serviceType=EWALLET_DEPOSIT&bankCode=VCB&paymentMethod=ATM&validFrom=2026-09-01&validTo=2026-09-30&createdAtFrom=2026-08-01&createdAtTo=2026-08-31&direction=CASH_IN&page=3&size=50'
+      '/fee?feeScope=INPUT_COST&keyword=nap%20tien&subjectKeyword=0912&status=ACTIVE&appliedTarget=CUSTOMER_GROUP&serviceType=EWALLET_DEPOSIT&bankCode=VCB&paymentMethod=ATM&validFrom=2026-09-01&validTo=2026-09-30&createdAtFrom=2026-08-01&createdAtTo=2026-08-31&direction=CASH_IN&page=3&size=50'
     )
 
     await user.click(
@@ -84,7 +84,7 @@ describe('danh sách chính sách phí — xuất CSV', () => {
 
     await waitFor(() =>
       expect(mocks.exportFile).toHaveBeenCalledWith({
-        feeDomain: 'EWALLET',
+        feeScope: 'INPUT_COST',
         keyword: 'nap tien',
         subjectKeyword: '0912',
         status: 'ACTIVE',

@@ -3,7 +3,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, type UseFormReturn } from 'react-hook-form'
 import {
   DEFAULT_PRIORITY,
-  getDomainFieldRules
+  getDomainFieldRules,
+  getFeeDomainForServiceType,
+  getFormFieldRules
 } from '../constants/feeConfigFields'
 import {
   feeConfigFormSchema,
@@ -33,6 +35,11 @@ export interface UseFeeConfigFormResult {
   form: UseFormReturn<FeeConfigFormValues>
   /** Đổi miền phí và dọn những lựa chọn không còn nghĩa ở miền mới. */
   changeDomain: (next: FeeDomain) => void
+  /**
+   * Đổi loại giao dịch: suy lại miền phí và dọn những ô gán đối tượng không còn nghĩa,
+   * ví dụ Merchant khi chuyển từ thu hộ sang nạp tiền ví.
+   */
+  changeServiceType: (next: string) => void
 }
 
 /**
@@ -75,5 +82,28 @@ export const useFeeConfigForm = (
     })
   }
 
-  return { form, changeDomain }
+  const changeServiceType = (next: string) => {
+    const current = form.getValues()
+    // Chính sách Bank/NCC cũ giữ miền của nó; mọi chính sách khác theo loại giao dịch.
+    const domain =
+      current.feeDomain === FeeDomain.BANK
+        ? FeeDomain.BANK
+        : getFeeDomainForServiceType(next)
+    const rules = getFormFieldRules(domain, next)
+
+    form.reset({
+      ...current,
+      feeDomain: domain,
+      serviceType: next,
+      merchantId: rules.showMerchant ? current.merchantId : '',
+      subjectId: rules.showSubject ? current.subjectId : '',
+      customerGroup: rules.showSegment ? current.customerGroup : '',
+      assignmentScope:
+        rules.showSubject || rules.showSegment
+          ? current.assignmentScope
+          : 'ALL'
+    })
+  }
+
+  return { form, changeDomain, changeServiceType }
 }

@@ -11,13 +11,14 @@ import { FeeComponentDialog } from '../components/FeeComponentDialog'
 
 const existingComponent = {
   key: 'existing-component',
+  feeScope: 'OUTPUT_FEE' as const,
   componentType: 'TRANSACTION_FEE',
   baseOn: 'AMOUNT',
   baseComponentType: null,
   calculationMethod: CalculationMethod.DIRECT,
   payerType: 'MERCHANT',
   beneficiaryType: 'SYSTEM',
-  fixedAmount: null,
+  fixedAmount: 1000,
   percentage: null,
   minFee: null,
   maxFee: null,
@@ -34,6 +35,7 @@ describe('FeeComponentDialog duplicate validation', () => {
         precedingComponents={[existingComponent]}
         existingComponents={[existingComponent]}
         feeDomain={FeeDomain.MERCHANT}
+        feeScope='OUTPUT_FEE'
         businessCategory={FEE_BUSINESS_CATEGORY.TRANSACTION_PROCESSING}
         serviceType='MERCHANT_VA_BILL_COLLECTION'
         onSave={vi.fn()}
@@ -63,7 +65,7 @@ describe('FeeComponentDialog duplicate validation', () => {
   })
 })
 
-describe('FeeComponentDialog payer options', () => {
+describe('FeeComponentDialog phí đầu vào (đầu vào)', () => {
   const renderBankDialog = (
     initialValue: ComponentProps<
       typeof FeeComponentDialog
@@ -77,6 +79,7 @@ describe('FeeComponentDialog payer options', () => {
         precedingComponents={[]}
         existingComponents={[]}
         feeDomain={FeeDomain.BANK}
+        feeScope='INPUT_COST'
         businessCategory={FEE_BUSINESS_CATEGORY.BANK_PROVIDER}
         serviceType='EWALLET_DEPOSIT'
         onSave={onSave}
@@ -86,7 +89,7 @@ describe('FeeComponentDialog payer options', () => {
     return onSave
   }
 
-  it('miền Bank mặc định Hệ thống chịu chi phí và Ngân hàng hưởng', async () => {
+  it('phí đầu vào mặc định Hệ thống chịu và Ngân hàng hưởng', async () => {
     renderBankDialog()
 
     expect(
@@ -95,15 +98,13 @@ describe('FeeComponentDialog payer options', () => {
     expect(
       screen.getByLabelText(/Người hưởng/).closest('.ant-select')
     ).toHaveTextContent('Ngân hàng')
-    await userEvent.click(screen.getByLabelText(/Người chịu/))
-
-    expect(await screen.findAllByText('Người dùng')).toHaveLength(1)
-    expect(screen.getAllByText('Hệ thống/platform')).toHaveLength(2)
+    expect(screen.getByLabelText(/Người chịu/)).toBeDisabled()
+    expect(screen.queryByText('Người dùng')).not.toBeInTheDocument()
     expect(screen.queryByText('Merchant')).not.toBeInTheDocument()
     expect(screen.queryByText('Người gửi')).not.toBeInTheDocument()
   })
 
-  it('chuẩn hoá người chịu không còn hợp lệ của thành phần Bank cũ về SYSTEM', () => {
+  it('chuẩn hoá người chịu không còn hợp lệ của chi phí cũ về SYSTEM', () => {
     // SENDER từng là lựa chọn cho miền Bank nhưng backend chưa từng duyệt —
     // component cũ mang giá trị này về chi phí SYSTEM của miền Bank.
     renderBankDialog({
@@ -115,7 +116,7 @@ describe('FeeComponentDialog payer options', () => {
     expect(screen.queryByText('Người gửi')).not.toBeInTheDocument()
   })
 
-  it('miền Bank mặc định Ngân hàng và cho phép chọn người hưởng khác', () => {
+  it('phí đầu vào mặc định Ngân hàng và cho phép chọn người hưởng khác', () => {
     renderBankDialog()
 
     expect(screen.getByText('Ngân hàng')).toBeInTheDocument()
@@ -136,15 +137,16 @@ describe('FeeComponentDialog payer options', () => {
     )
   })
 
-  it('cho cấu hình chi phí SYSTEM → PARTNER riêng với phí thu khách', async () => {
+  it('cho cấu hình chi phí SYSTEM → PARTNER riêng với phí đầu ra', async () => {
     const onSave = renderBankDialog()
     await userEvent.click(screen.getByLabelText(/Loại phí/))
     await userEvent.click(
       await screen.findByText('Phí nhà cung cấp đối tác/bank')
     )
-    expect(screen.getByText(/Chi phí đầu vào dự kiến/)).toBeInTheDocument()
+    expect(screen.getByText(/Mức chi phí dự kiến/)).toBeInTheDocument()
     await userEvent.click(screen.getByLabelText(/Người hưởng/))
     await userEvent.click(await screen.findByText('Đối tác'))
+    await userEvent.type(screen.getByLabelText(/Chi phí cố định/), '1000')
     await userEvent.click(screen.getByRole('button', { name: 'Thêm' }))
 
     await waitFor(() => expect(onSave).toHaveBeenCalled())
@@ -157,7 +159,7 @@ describe('FeeComponentDialog payer options', () => {
   })
 })
 
-describe('FeeComponentDialog beneficiary defaults', () => {
+describe('FeeComponentDialog phí đầu ra (đầu ra)', () => {
   const renderWalletDialog = (onSave = vi.fn()) => {
     renderWithProviders(
       <FeeComponentDialog
@@ -166,6 +168,7 @@ describe('FeeComponentDialog beneficiary defaults', () => {
         precedingComponents={[]}
         existingComponents={[]}
         feeDomain={FeeDomain.EWALLET}
+        feeScope='OUTPUT_FEE'
         businessCategory={FEE_BUSINESS_CATEGORY.TRANSACTION_PROCESSING}
         serviceType='EWALLET_DEPOSIT'
         onSave={onSave}
@@ -175,15 +178,23 @@ describe('FeeComponentDialog beneficiary defaults', () => {
     return onSave
   }
 
-  it('miền Ví chỉ cho chọn Người dùng chịu phí, không bày payer chưa hỗ trợ', async () => {
+  it('phí đầu ra cố định Người dùng chịu phí', () => {
     renderWalletDialog()
 
-    await userEvent.click(screen.getByLabelText(/Người chịu/))
-
-    expect(await screen.findAllByText('Người dùng')).toHaveLength(2)
+    expect(
+      screen.getByLabelText(/Người chịu/).closest('.ant-select')
+    ).toHaveTextContent('Người dùng')
+    expect(screen.getByLabelText(/Người chịu/)).toBeDisabled()
     expect(screen.queryByText('Người gửi')).not.toBeInTheDocument()
     expect(screen.queryByText('Người nhận')).not.toBeInTheDocument()
-    expect(screen.getByText('Hệ thống/platform')).toBeInTheDocument()
+    expect(screen.queryByText('Hệ thống/platform')).not.toBeInTheDocument()
+  })
+
+  it('chỉ cho chọn VAT sau khi đã tạo phí gốc trong cùng phần', async () => {
+    renderWalletDialog()
+
+    await userEvent.click(screen.getByLabelText(/Loại phí/))
+    expect(screen.queryByTitle('VAT')).not.toBeInTheDocument()
   })
 
   it('miền Ví lưu mặc định Người dùng chịu và Hệ thống hưởng', async () => {
@@ -191,6 +202,7 @@ describe('FeeComponentDialog beneficiary defaults', () => {
 
     await userEvent.click(screen.getByLabelText(/Loại phí/))
     await userEvent.click(await screen.findByText('Phí giao dịch cơ bản'))
+    await userEvent.type(screen.getByLabelText(/Phí cố định/), '1000')
     await userEvent.click(screen.getByRole('button', { name: 'Thêm' }))
 
     await waitFor(() => expect(onSave).toHaveBeenCalled())

@@ -20,6 +20,13 @@ interface FormInputNumberProps<T extends FieldValues>
      * nơi 0 là giá trị khởi điểm hợp lệ.
      */
     allowEmpty?: boolean
+    /**
+     * Không in lỗi dưới ô mà chỉ đổi viền sang đỏ; chỗ hiển thị lỗi do nơi dùng đảm nhiệm
+     * (ví dụ một dòng lỗi chung cho cả hàng của bảng).
+     */
+    hideError?: boolean
+    /** Ép viền lỗi khi lỗi thuộc về một nhóm ô, không riêng ô này. */
+    invalid?: boolean
 }
 
 export function FormInputNumber<T extends FieldValues>({
@@ -31,6 +38,8 @@ export function FormInputNumber<T extends FieldValues>({
     disabled,
     defaultValue=0,
     allowEmpty=false,
+    hideError=false,
+    invalid=false,
     classNameLable='font-medium',
     ...rest
 }: FormInputNumberProps<T>) {
@@ -42,11 +51,14 @@ export function FormInputNumber<T extends FieldValues>({
             label={label}
             className={className}
             classNameLable={classNameLable}
-            render={(field) => (
+            hideError={hideError}
+            render={(field, fieldState) => (
                 <InputNumber
                     {...field}
                     {...rest}
                     id={field.name}
+                    status={invalid || (hideError && fieldState.error) ? 'error' : rest.status}
+                    aria-invalid={invalid || Boolean(fieldState.error) || undefined}
                     placeholder={placeholder}
                     disabled={disabled}
                     defaultValue={fallback}

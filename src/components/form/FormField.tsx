@@ -15,6 +15,11 @@ interface FormFieldProps<T extends FieldValues> {
   className?: string
   classNameLable?: string
   required?: boolean
+  /**
+   * Không in thông báo lỗi ngay dưới ô. Dùng khi chỗ chứa quá hẹp (ô trong bảng) và lỗi được
+   * hiển thị ở nơi khác; ô vẫn nhận `fieldState` để tự đánh dấu viền lỗi.
+   */
+  hideError?: boolean
   render: (
     field: ControllerRenderProps<T, Path<T>>,
     fieldState: ControllerFieldState,
@@ -29,6 +34,7 @@ export function FormField<T extends FieldValues>({
   className = 'col-span-6 flex flex-col ',
   classNameLable,
   required = false,
+  hideError = false,
   render
 }: FormFieldProps<T>) {
   return (
@@ -50,9 +56,9 @@ export function FormField<T extends FieldValues>({
             {render(
               field,
               fieldState,
-              fieldState.error ? `${String(name)}-error` : undefined
+              fieldState.error && !hideError ? `${String(name)}-error` : undefined
             )}
-            {fieldState.error && (
+            {fieldState.error && !hideError && (
               <p
                 className='text-red-500'
                 id={`${String(name)}-error`}

@@ -30,6 +30,8 @@ export const feeSetupTierSchema = z.object({
 })
 
 export const feeSetupComponentSchema = z.object({
+  /** Phí đầu ra (thu khách) hay chi phí đầu vào (trả đối tác). */
+  feeScope: z.enum(['OUTPUT_FEE', 'INPUT_COST']),
   componentType: z.string(),
   /** `AMOUNT` tính trên tiền giao dịch, `FEE_COMPONENT` tính trên thành phần khác. */
   baseOn: z.string(),

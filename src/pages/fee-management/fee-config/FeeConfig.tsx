@@ -1,11 +1,12 @@
-import { FeeDomainTabs } from '@components/fee/FeeDomainTabs'
-import {
-  CONFIGURABLE_FEE_DOMAINS,
-  FeeDomain
-} from '@components/fee/feeDomain'
 import { ArrowLeftOutlined, WarningCircleIcon } from '@components/icons'
-import { ButtonComponent, CardComponent, ModalComponent } from '@components/index'
+import {
+  ButtonComponent,
+  CardComponent,
+  ModalComponent
+} from '@components/index'
 import { PATHS } from '@constants/pathConstant'
+import { CONFIGURABLE_FEE_DOMAINS, FeeDomain } from '@components/fee/feeDomain'
+import { FeeDomainTabs } from '@components/fee/FeeDomainTabs'
 import { useNavigate, useParams } from 'react-router-dom'
 import { AssignmentSection } from './components/AssignmentSection'
 import { FeeComponentList } from './components/FeeComponentList'
@@ -37,12 +38,12 @@ const FeeConfigForm = ({
 }: FeeConfigFormProps) => {
   const isEdit = Boolean(snapshot)
   const navigate = useNavigate()
-  const { form, changeDomain } = useFeeConfigForm(defaultValues)
+  const { form, changeDomain, changeServiceType } =
+    useFeeConfigForm(defaultValues)
   const { submit, isSubmitting, orphan, dismissOrphan } =
     useFeeConfigSubmit(snapshot)
   const { control, handleSubmit, watch, formState } = form
   const feeDomain = watch('feeDomain')
-  const hasComponents = watch('components').length > 0
 
   return (
     <form onSubmit={handleSubmit(submit)}>
@@ -54,36 +55,43 @@ const FeeConfigForm = ({
         icon={<ArrowLeftOutlined />}
         onClick={() => navigate(PATHS.FEE_V4.POLICY_LIST)}
       />
+      {/*
+        Tạo mới luôn là miền Phí ví: phí đầu ra và phí đầu vào nằm chung một
+        chính sách, tách bằng hai tab. Miền chỉ hiện khi mở bản ghi đã có, để đọc
+        được các chính sách Bank/NCC cũ.
+      */}
+      {isEdit && (
+        <CardComponent className='mb-3!'>
+          <FeeDomainTabs
+            value={feeDomain}
+            onChange={changeDomain}
+            disabled
+            domains={
+              feeDomain === FeeDomain.MERCHANT
+                ? undefined
+                : CONFIGURABLE_FEE_DOMAINS
+            }
+          />
+          {readOnly && (
+            <p className='mt-3 text-[13px] text-muted-foreground'>
+              Đang xem chi tiết chính sách
+            </p>
+          )}
+        </CardComponent>
+      )}
       <CardComponent className='mb-3!'>
-        <div className='flex flex-wrap items-start justify-between gap-3 border-b border-border pb-4'>
-          <p className='max-w-[70ch] text-[13px] text-muted-foreground'>
-            {readOnly
-              &&'Đang xem chi tiết chính sách'
-             }
-          </p>
-
-        </div>
-
-        <FeeDomainTabs
-          value={feeDomain}
-          onChange={changeDomain}
-          disabled={isEdit || readOnly || hasComponents}
-          domains={
-            isEdit && feeDomain === FeeDomain.MERCHANT
-              ? undefined
-              : CONFIGURABLE_FEE_DOMAINS
-          }
-          className='mt-4'
+        <PolicyGeneralSection
+          control={control}
+          readOnly={readOnly}
+          onServiceTypeChange={changeServiceType}
         />
- 
       </CardComponent>
 
       <CardComponent className='mb-3!'>
-        <PolicyGeneralSection control={control} readOnly={readOnly} />
-      </CardComponent>
-
-      <CardComponent className='mb-3!'>
-        <AssignmentSection control={control} readOnly={readOnly} />
+        <AssignmentSection
+          control={control}
+          readOnly={readOnly}
+        />
       </CardComponent>
 
       <CardComponent className='mb-3!'>
@@ -165,14 +173,17 @@ const FeeConfig = () => {
       <CardComponent>
         <div className='flex flex-col items-start gap-3 py-8'>
           <p className='flex items-center gap-2 text-[13px] font-semibold text-danger-strong'>
-            <WarningCircleIcon size={18} weight='bold' aria-hidden />
+            <WarningCircleIcon
+              size={18}
+              weight='bold'
+              aria-hidden
+            />
             Không tải được chính sách phí này
           </p>
           <p className='max-w-[60ch] text-[13px] text-muted-foreground'>
             Chính sách có thể đã bị xoá, hoặc dịch vụ phí chưa trả lời. Quay lại
             danh sách và mở lại từ đó.
           </p>
-         
         </div>
       </CardComponent>
     )

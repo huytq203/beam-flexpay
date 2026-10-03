@@ -7,7 +7,7 @@ import { useController, useWatch } from 'react-hook-form'
 import {
   ASSIGNMENT_SCOPE_OPTIONS,
   getPaymentMethodOptions,
-  getDomainFieldRules
+  getFormFieldRules
 } from '../constants/feeConfigFields'
 import type { FeeConfigFormValues } from '../schemas/feeConfig.schema'
 import { MerchantPickerField } from './MerchantPickerField'
@@ -44,16 +44,19 @@ export const AssignmentSection = ({
     name: 'customerGroup'
   })
   const { field: subjectField } = useController({ control, name: 'subjectId' })
-  const rules = getDomainFieldRules(feeDomain)
+  const rules = getFormFieldRules(feeDomain, serviceType)
   const paymentMethodOptions = getPaymentMethodOptions(serviceType)
 
   useEffect(() => {
     if (readOnly) return
-    const isCurrentValueAllowed = paymentMethodOptions.some(
-      (option) => option.value === paymentMethodField.value
-    )
+    // Ô trống nghĩa là mọi phương thức; chỉ dọn giá trị của loại giao dịch cũ không còn hợp lệ.
+    const isCurrentValueAllowed =
+      paymentMethodField.value === '' ||
+      paymentMethodOptions.some(
+        (option) => option.value === paymentMethodField.value
+      )
     if (!isCurrentValueAllowed) {
-      paymentMethodField.onChange(paymentMethodOptions[0]?.value ?? '')
+      paymentMethodField.onChange('')
     }
   }, [paymentMethodField, paymentMethodOptions, readOnly])
 
@@ -114,7 +117,6 @@ export const AssignmentSection = ({
           control={control}
           label='Phương thức giao dịch'
           placeholder='Tất cả phương thức'
-          allowClear={false}
           options={[...paymentMethodOptions]}
           disabled={readOnly}
           className='col-span-12 flex flex-col md:col-span-4'

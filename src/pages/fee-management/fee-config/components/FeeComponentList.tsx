@@ -1,7 +1,8 @@
-import type { FeeDomain } from '@components/fee/feeDomain'
-import { PlusIcon } from '@components/icons'
+import { FeeDomain } from '@components/fee/feeDomain'
+import { LockSimpleIcon, PlusIcon } from '@components/icons'
 import { ButtonComponent } from '@components/index'
 import { useMessage } from '@hooks/useMessage'
+import { getExecutablePayer } from '@utils/fee-execution'
 import { useState } from 'react'
 import type { Control } from 'react-hook-form'
 import { useFieldArray } from 'react-hook-form'
@@ -10,14 +11,22 @@ import type {
   FeeConfigFormValues
 } from '../schemas/feeConfig.schema'
 import {
+  FEE_BUSINESS_CATEGORY,
+  FEE_SCOPE,
+  FEE_SCOPES,
+  PAYER_TYPE_LABEL,
+  feeScopePanelId,
+  feeScopeTabId,
   getFeeBusinessCategories,
   inferFeeBusinessCategory,
-  type FeeBusinessCategory
+  type FeeBusinessCategory,
+  type FeeScope
 } from '../constants/feeConfigFields'
 import { FeeBusinessCategoryTabs } from './FeeBusinessCategoryTabs'
 import { FeeComponentCard } from './FeeComponentCard'
 import { FeeComponentDialog } from './FeeComponentDialog'
 import { SectionHeading } from './SectionHeading'
+import { FeeScopeTabs } from './FeeScopeTabs'
 
 interface FeeComponentListProps {
   control: Control<FeeConfigFormValues>
@@ -27,12 +36,42 @@ interface FeeComponentListProps {
   readOnly?: boolean
 }
 
+const ADD_LABEL: Readonly<Record<FeeScope, string>> = {
+  OUTPUT_FEE: 'Thêm phí đầu ra',
+  INPUT_COST: 'Thêm phí đầu vào'
+}
+
+const EMPTY_LABEL: Readonly<Record<FeeScope, string>> = {
+  OUTPUT_FEE: 'Chưa có phí đầu ra',
+  INPUT_COST: 'Chưa có phí đầu vào'
+}
+
+const Party = ({
+  children,
+  locked = false
+}: {
+  children: string
+  locked?: boolean
+}) => (
+  <span className='inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-0.5 text-[12px] font-medium text-foreground'>
+    {locked && (
+      <LockSimpleIcon
+        size={12}
+        weight='bold'
+        aria-hidden
+      />
+    )}
+    {children}
+  </span>
+)
+
 /**
- * Danh sách thành phần phí của chính sách.
+ * Danh sách thành phần phí, tách hai tab theo luồng.
  *
  * Thứ tự có nghĩa với backend: thành phần tính dựa trên một thành phần khác
- * phải đứng SAU thành phần nó tham chiếu. Vì vậy hộp thoại chỉ cho chọn cơ sở
- * tính trong những thành phần đã có phía trên.
+ * phải đứng SAU thành phần nó tham chiếu, và chỉ tính trong cùng luồng. Vì vậy
+ * hộp thoại chỉ cho chọn cơ sở tính trong những thành phần cùng luồng đã có
+ * phía trên.
  */
 export const FeeComponentList = ({
   control,
@@ -46,34 +85,40 @@ export const FeeComponentList = ({
     name: 'components'
   })
   const { successMess } = useMessage()
+  const components = fields as unknown as FeeComponentFormValues[]
+  const [activeScope, setActiveScope] = useState<FeeScope>(FEE_SCOPE.OUTPUT_FEE)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
-  const [isAdding, setIsAdding] = useState(false)
-  const [selectedBusinessCategory, setSelectedBusinessCategory] =
+  const [addingScope, setAddingScope] = useState<FeeScope | null>(null)
+  const [selectedCategory, setSelectedCategory] =
     useState<FeeBusinessCategory>(() =>
       inferFeeBusinessCategory(
-        feeDomain,
-        fields as unknown as FeeComponentFormValues[]
+        FEE_SCOPE.OUTPUT_FEE,
+        components.filter(({ feeScope }) => feeScope === FEE_SCOPE.OUTPUT_FEE)
       )
     )
-  const allowedBusinessCategories = getFeeBusinessCategories(feeDomain)
-  const businessCategory =
-    fields.length > 0
-      ? inferFeeBusinessCategory(
-          feeDomain,
-          fields as unknown as FeeComponentFormValues[]
-        )
-      : allowedBusinessCategories.includes(selectedBusinessCategory)
-        ? selectedBusinessCategory
-        : allowedBusinessCategories[0]
 
-  const isOpen = isAdding || editingIndex !== null
-  const editing =
-    editingIndex === null
-      ? null
-      : (fields[editingIndex] as unknown as FeeComponentFormValues)
+  const indexesOf = (scope: FeeScope) =>
+    components.flatMap((component, index) =>
+      component.feeScope === scope ? [index] : []
+    )
+  const counts = {
+    OUTPUT_FEE: indexesOf(FEE_SCOPE.OUTPUT_FEE).length,
+    INPUT_COST: indexesOf(FEE_SCOPE.INPUT_COST).length
+  } as const
 
+  const categoryOf = (scope: FeeScope): FeeBusinessCategory => {
+    if (scope === FEE_SCOPE.INPUT_COST) return FEE_BUSINESS_CATEGORY.BANK_PROVIDER
+    const sameScope = indexesOf(scope).map((index) => components[index])
+    if (sameScope.length > 0) return inferFeeBusinessCategory(scope, sameScope)
+    return getFeeBusinessCategories(scope).includes(selectedCategory)
+      ? selectedCategory
+      : getFeeBusinessCategories(scope)[0]
+  }
+
+  const editing = editingIndex === null ? null : components[editingIndex]
+  const dialogScope: FeeScope | null = editing?.feeScope ?? addingScope
   const closeDialog = () => {
-    setIsAdding(false)
+    setAddingScope(null)
     setEditingIndex(null)
   }
 
@@ -84,85 +129,121 @@ export const FeeComponentList = ({
   const handleSave = (value: FeeComponentFormValues) => {
     if (editingIndex === null) {
       append(value)
-      successMess('Đã thêm phí thành phần vào chính sách, bấm Thiết lập để lưu')
+      successMess('Đã thêm thành phần phí, bấm Thiết lập để lưu')
     } else {
       update(editingIndex, value)
-      successMess('Đã sửa phí thành phần, bấm Thiết lập để lưu')
+      successMess('Đã sửa thành phần phí, bấm Thiết lập để lưu')
     }
     closeDialog()
   }
 
   const handleRemove = (index: number) => {
     remove(index)
-    successMess('Đã xoá phí thành phần khỏi chính sách')
+    successMess('Đã xoá thành phần phí khỏi chính sách')
   }
 
-  const precedingComponents = fields.slice(
-    0,
-    editingIndex ?? fields.length
-  ) as unknown as FeeComponentFormValues[]
+  const precedingInScope = (scope: FeeScope) =>
+    components.filter(
+      (component, index) =>
+        component.feeScope === scope &&
+        (editingIndex === null || index < editingIndex)
+    )
+
+  const payer = getExecutablePayer(serviceType) ?? 'USER'
 
   return (
     <section>
-      <FeeBusinessCategoryTabs
-        value={businessCategory}
-        feeDomain={feeDomain}
-        disabled={readOnly || fields.length > 0}
-        onChange={setSelectedBusinessCategory}
+      <SectionHeading>Thành phần phí</SectionHeading>
+
+      <FeeScopeTabs
+        value={activeScope}
+        counts={counts}
+        onChange={setActiveScope}
       />
 
-      <SectionHeading
-        action={!readOnly ? (
-          <ButtonComponent
-            htmlType='button'
-            type='primary'
-            content='Thêm phí thành phần'
-            icon={<PlusIcon size={16} weight='bold' aria-hidden />}
-            onClick={() => setIsAdding(true)}
-          />
-        ) : undefined}
-      >
-        Thiết lập phí
-      </SectionHeading>
+      {FEE_SCOPES.map((scope) => {
+        const isInput = scope === FEE_SCOPE.INPUT_COST
+        const indexes = indexesOf(scope)
+        return (
+          <div
+            key={scope}
+            role='tabpanel'
+            id={feeScopePanelId(scope)}
+            aria-labelledby={feeScopeTabId(scope)}
+            hidden={scope !== activeScope}
+            className='pt-4'
+          >
+            <div className='mb-3 flex flex-wrap items-center justify-between gap-3'>
+              <div className='flex flex-wrap items-center gap-2 text-[12px] text-muted-foreground'>
+                <Party locked={isInput}>
+                  {isInput
+                    ? PAYER_TYPE_LABEL.SYSTEM
+                    : (PAYER_TYPE_LABEL[payer] ?? payer)}
+                </Party>
+                <span aria-hidden>→</span>
+                <Party>{isInput ? 'Ngân hàng / Đối tác' : 'Hệ thống'}</Party>
+              </div>
+              {!readOnly && (
+                <ButtonComponent
+                  htmlType='button'
+                  type={isInput ? 'default' : 'primary'}
+                  content={ADD_LABEL[scope]}
+                  icon={
+                    <PlusIcon
+                      size={16}
+                      weight='bold'
+                      aria-hidden
+                    />
+                  }
+                  onClick={() => setAddingScope(scope)}
+                />
+              )}
+            </div>
 
-      {fields.length === 0 ? (
-        <div className='rounded-lg border border-dashed border-border px-6 py-10 text-center'>
-          <p className='text-[15px] font-semibold text-foreground'>
-            Chính sách chưa có thành phần phí nào
-          </p>
-          <p className='mx-auto mt-1 max-w-[52ch] text-[13px] text-muted-foreground'>
-           Vui lòng thêm phí  thành phần.
-          </p>
-        </div>
-      ) : (
-        <div className='flex flex-col gap-3'>
-          {fields.map((field, index) => (
-            <FeeComponentCard
-              key={field.id}
-              index={index}
-              component={field as unknown as FeeComponentFormValues}
-              readOnly={readOnly}
-              onEdit={() => setEditingIndex(index)}
-              onRemove={() => handleRemove(index)}
+            <FeeBusinessCategoryTabs
+              value={categoryOf(scope)}
+              feeScope={scope}
+              disabled={readOnly || indexes.length > 0}
+              onChange={setSelectedCategory}
             />
-          ))}
-        </div>
-      )}
+
+            {indexes.length === 0 ? (
+              <div className='rounded-lg border border-dashed border-border px-6 py-8 text-center text-[13px] text-muted-foreground'>
+                {EMPTY_LABEL[scope]}
+              </div>
+            ) : (
+              <div className='flex flex-col gap-3'>
+                {indexes.map((index, position) => (
+                  <FeeComponentCard
+                    key={fields[index].id}
+                    index={position}
+                    component={components[index]}
+                    readOnly={readOnly}
+                    onEdit={() => setEditingIndex(index)}
+                    onRemove={() => handleRemove(index)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      })}
 
       {!readOnly && error && (
-        <p className='mt-2 text-[13px] font-medium text-danger-strong'>
+        <p className='mt-3 text-[13px] font-medium text-danger-strong'>
           {error}
         </p>
       )}
 
-      {!readOnly && isOpen && (
+      {!readOnly && dialogScope && (
         <FeeComponentDialog
-          open={isOpen}
+          open
           initialValue={editing}
-          precedingComponents={precedingComponents}
-          existingComponents={fields as unknown as FeeComponentFormValues[]}
+          precedingComponents={precedingInScope(dialogScope)}
+          existingComponents={components}
           feeDomain={feeDomain}
-          businessCategory={businessCategory}
+          feeScope={dialogScope}
+          businessCategory={categoryOf(dialogScope)}
           serviceType={serviceType}
           onSave={handleSave}
           onCancel={closeDialog}

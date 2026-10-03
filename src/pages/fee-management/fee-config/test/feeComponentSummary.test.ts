@@ -13,6 +13,7 @@ const component = (
   overrides: Partial<FeeComponentFormValues> = {}
 ): FeeComponentFormValues => ({
   key: 'c',
+  feeScope: 'OUTPUT_FEE',
   componentType: 'TRANSACTION_FEE',
   baseOn: 'AMOUNT',
   baseComponentType: null,

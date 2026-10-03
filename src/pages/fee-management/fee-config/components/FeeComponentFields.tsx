@@ -17,6 +17,7 @@ interface FeeComponentFieldsProps {
   baseTypeOptions: Option[]
   methodOptions: Option[]
   payerTypeOptions: readonly Option[]
+  payerDisabled?: boolean
   beneficiaryTypeOptions: readonly Option[]
   beneficiaryDisabled: boolean
   payerType: string
@@ -24,8 +25,10 @@ interface FeeComponentFieldsProps {
   selectedBase: BaseTypeSummary | null
   isVat: boolean
   tiered: boolean
+  isFree: boolean
   tierError?: string
   onComponentTypeChange: (next: string | number) => void
+  onMethodChange: (next: string | number) => void
   onPayerChange: (next: string | number) => void
 }
 
@@ -36,6 +39,7 @@ export const FeeComponentFields = ({
   baseTypeOptions,
   methodOptions,
   payerTypeOptions,
+  payerDisabled = false,
   beneficiaryTypeOptions,
   beneficiaryDisabled,
   payerType,
@@ -43,8 +47,10 @@ export const FeeComponentFields = ({
   selectedBase,
   isVat,
   tiered,
+  isFree,
   tierError,
   onComponentTypeChange,
+  onMethodChange,
   onPayerChange
 }: FeeComponentFieldsProps) => (
   <>
@@ -111,6 +117,7 @@ export const FeeComponentFields = ({
           placeholder='Chọn phương thức'
           allowClear={false}
           options={methodOptions}
+          onChange={onMethodChange}
           className='col-span-12 flex flex-col'
         />
       </div>
@@ -129,6 +136,7 @@ export const FeeComponentFields = ({
           placeholder='Chọn người chịu phí'
           allowClear={false}
           options={[...payerTypeOptions]}
+          disabled={payerDisabled}
           onChange={onPayerChange}
           className='col-span-12 flex flex-col md:col-span-6'
         />
@@ -143,8 +151,6 @@ export const FeeComponentFields = ({
           options={[...beneficiaryTypeOptions]}
           className='col-span-12 flex flex-col md:col-span-6'
         />
-
-       
       </div>
     </CardComponent>
 
@@ -153,7 +159,11 @@ export const FeeComponentFields = ({
       className='border-border! bg-background!'
       title={payerType === 'SYSTEM' ? 'Mức chi phí dự kiến' : 'Mức phí'}
     >
-      {tiered ? (
+      {isFree ? (
+        <p className='text-[13px] text-muted-foreground'>
+          Không thu phí cho thành phần này.
+        </p>
+      ) : tiered ? (
         <FeeTierEditor
           control={control}
           error={tierError}
@@ -186,29 +196,31 @@ export const FeeComponentFields = ({
       )}
     </CardComponent>
 
-    <CardComponent
-      size='small'
-      className='border-border! bg-background!'
-      title='Giới hạn'
-    >
-      <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
-        <FormInputNumber
-          name='minFee'
-          control={control}
-          allowEmpty
-          label='Phí tối thiểu (VNĐ)'
-          placeholder='Để trống nếu không đặt sàn'
-          className='col-span-12 flex flex-col md:col-span-6'
-        />
-        <FormInputNumber
-          name='maxFee'
-          control={control}
-          allowEmpty
-          label='Phí tối đa (VNĐ)'
-          placeholder='Để trống nếu không đặt trần'
-          className='col-span-12 flex flex-col md:col-span-6'
-        />
-      </div>
-    </CardComponent>
+    {!isFree && (
+      <CardComponent
+        size='small'
+        className='border-border! bg-background!'
+        title='Giới hạn'
+      >
+        <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
+          <FormInputNumber
+            name='minFee'
+            control={control}
+            allowEmpty
+            label='Phí tối thiểu (VNĐ)'
+            placeholder='Để trống nếu không đặt sàn'
+            className='col-span-12 flex flex-col md:col-span-6'
+          />
+          <FormInputNumber
+            name='maxFee'
+            control={control}
+            allowEmpty
+            label='Phí tối đa (VNĐ)'
+            placeholder='Để trống nếu không đặt trần'
+            className='col-span-12 flex flex-col md:col-span-6'
+          />
+        </div>
+      </CardComponent>
+    )}
   </>
 )
