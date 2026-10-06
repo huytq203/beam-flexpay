@@ -3,6 +3,7 @@ import { Popover } from 'antd'
 import { Can } from '@/app/permissions'
 import { UserCheckIcon } from '@components/icons'
 import { ButtonComponent } from '@components/index'
+import { EkycIconButton } from './EkycIconButton'
 import type { EKYCListItem } from '@type/apiResponseEKYC'
 import { getReviewSessionId } from '../utils/ekycReviewTarget'
 
@@ -51,17 +52,16 @@ export function EkycReviewActions({ record, onReview }: Props) {
         }
       >
         <span className='inline-flex'>
-          <ButtonComponent
+          <EkycIconButton
+            tone='success'
+            label='Xét duyệt'
             aria-label={`Xét duyệt eKYC ${record.fullName ?? record.username ?? ''}`}
-            size='small'
             icon={
               <UserCheckIcon
                 aria-hidden
-                size={17}
+                size={18}
               />
             }
-            type='default'
-            className='text-green-700'
           />
         </span>
       </Popover>

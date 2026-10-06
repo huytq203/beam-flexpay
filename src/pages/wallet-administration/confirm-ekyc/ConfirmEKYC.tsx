@@ -13,7 +13,6 @@ import BusinessComfirm from './components/BusinessComfirm'
 import { getColumn } from './columns/ConfirmEKYC.column'
 import useConfirmEKYC from './hooks/useConfirmEKYC'
 import DialogReject from '@pages/wallet-administration/confirm-ekyc/components/DialogReject'
-import DialogCancel from '@pages/wallet-administration/confirm-ekyc/components/DialogCancel'
 import { EkycReviewPanel } from './components/EkycReviewPanel'
 import { getReviewSessionId } from './utils/ekycReviewTarget'
 
@@ -184,15 +183,6 @@ const ConfirmEKYC = () => {
         open={false}
         content={<DialogReject />}
         title={<span className='text-red-600'>Từ chối hồ sơ</span>}
-      />
-      <DialogModal
-        mode='DELETE'
-        okText='Hủy xác thực'
-        onCancel={() => {}}
-        onOk={() => {}}
-        open={false}
-        content={<DialogCancel />}
-        title={<span className='text-red-600'>Hủy xác thực</span>}
       />
     </div>
   )

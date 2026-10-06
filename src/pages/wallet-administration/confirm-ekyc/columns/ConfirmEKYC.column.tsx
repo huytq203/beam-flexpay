@@ -1,5 +1,5 @@
-import { EyeOutlined } from '@components/icons'
-import { ButtonComponent, TooltipComponent } from '@components/index'
+import { EyeIcon } from '@components/icons'
+import { TooltipComponent } from '@components/index'
 import { ColumnType } from 'antd/lib/table'
 import dayjs from 'dayjs'
 import type { EKYCListItem } from '@type/apiResponseEKYC'
@@ -9,6 +9,8 @@ import {
   statusMap
 } from '../types/ConfirmEKYC.type'
 import { EkycReviewActions } from '../components/EkycReviewActions'
+import { EkycCancelAction } from '../components/EkycCancelAction'
+import { EkycIconButton } from '../components/EkycIconButton'
 
 const formatDateTime = (value?: string | null) =>
   value ? dayjs.utc(value).format('DD/MM/YYYY HH:mm:ss') : '--'
@@ -250,25 +252,27 @@ export const getColumn = ({
   {
     title: 'Thao tác',
     align: 'center',
-    fixed: 'right',
     className: 'whitespace-nowrap',
+    width: 120,
     render(_, record) {
       return (
-        <div className='flex w-max flex-nowrap justify-center items-center gap-1'>
+        <div className='mx-auto flex w-max items-center justify-center gap-1'>
           <EkycReviewActions
             record={record}
             onReview={onReview}
           />
-          <TooltipComponent title='Xem chi tiết'>
-            <ButtonComponent
-              aria-label='Xem chi tiết hồ sơ eKYC'
-              size='small'
-              icon={<EyeOutlined />}
-              type='default'
-              onClick={() => onViewDetail(record)}
-              className='bg-blue-50 border! border-blue-600 text-blue-600 hover:bg-blue-100! hover:text-blue-600!'
-            />
-          </TooltipComponent>
+          <EkycCancelAction record={record} />
+          <EkycIconButton
+            label='Xem chi tiết'
+            aria-label='Xem chi tiết hồ sơ eKYC'
+            icon={
+              <EyeIcon
+                aria-hidden
+                size={18}
+              />
+            }
+            onClick={() => onViewDetail(record)}
+          />
         </div>
       )
     }

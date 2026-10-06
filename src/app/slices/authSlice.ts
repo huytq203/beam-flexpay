@@ -3,8 +3,16 @@ import { enhancedAuthApi } from '@services/authEndpoints'
 import { AuthenticationResponse, IUserProfile } from '@type/auth'
 import { DataLogin } from '@type/application'
 import Cookies from 'js-cookie'
-import { CookieKey, CookieExpiry, persistAccessTokenCookie } from '@configs/fetchBaseQuery.types'
-import { updateAccessToken, decodeToken } from './authActions'
+import {
+  CookieKey,
+  CookieExpiry,
+  persistAccessTokenCookie
+} from '@configs/fetchBaseQuery.types'
+import {
+  updateAccessToken,
+  decodeToken,
+  isAccessTokenExpired
+} from './authActions'
 const name = 'authSlice'
 
 export interface IAuthState {
@@ -14,7 +22,11 @@ export interface IAuthState {
 }
 
 // Lấy token từ cookie và decode permissions khi app khởi tạo
-const storedToken = Cookies.get(CookieKey.ACCESS_TOKEN)
+const accessTokenCookie = Cookies.get(CookieKey.ACCESS_TOKEN)
+const storedToken =
+  accessTokenCookie && !isAccessTokenExpired(accessTokenCookie)
+    ? accessTokenCookie
+    : undefined
 const initialTokenInfo = storedToken
   ? decodeToken(storedToken)
   : { permissions: [], roles: [], email: '', name: '', jwtId: '', username: '' }
@@ -92,13 +104,11 @@ const applyAuthentication = (
   }
 }
 
-
 const authSlice = createSlice({
   name: name,
   initialState: initialState,
   reducers: {
     logout: () => {
-
       Cookies.remove(CookieKey.ACCESS_TOKEN)
       Cookies.remove(CookieKey.REFRESH_TOKEN)
       localStorage.removeItem('last_activity_time')
@@ -110,7 +120,10 @@ const authSlice = createSlice({
     savePermissions: (state, action: PayloadAction<string[]>) => {
       state.profile.permissions = action.payload
     },
-    setAccessToken: (state, action: PayloadAction<{ token: string; expiresIn?: number }>) => {
+    setAccessToken: (
+      state,
+      action: PayloadAction<{ token: string; expiresIn?: number }>
+    ) => {
       applyAccessToken(state, action.payload.token)
     }
   },

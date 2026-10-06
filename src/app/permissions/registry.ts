@@ -174,7 +174,8 @@ export const SCREENS = {
     actions: {
       ...ADMIN_ACTIONS,
       view: PERMISSION.ADMIN_FULL,
-      approve: PERMISSION.ADMIN_FULL
+      approve: PERMISSION.ADMIN_FULL,
+      cancel: PERMISSION.ADMIN_FULL
     }
   },
   MERCHANT_DASHBOARD: {

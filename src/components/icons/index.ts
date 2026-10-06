@@ -79,6 +79,8 @@ export {
   PlusIcon,
   ReceiptIcon,
   ImageBrokenIcon,
+  EyeIcon,
+  ProhibitIcon,
 } from "@phosphor-icons/react";
 export {
   CornerDownRight,

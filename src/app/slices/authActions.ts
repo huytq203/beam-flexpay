@@ -42,7 +42,27 @@ export const decodeToken = (token: string): DecodedToken => {
     }
   } catch (error) {
     console.error('Error decoding token:', error)
-    return { permissions: [], roles: [], email: '', name: '', jwtId: '', username: '' }
+    return {
+      permissions: [],
+      roles: [],
+      email: '',
+      name: '',
+      jwtId: '',
+      username: ''
+    }
+  }
+}
+
+/**
+ * Token không có `exp` hoặc không decode được không được dùng để khôi phục
+ * phiên sau khi reload. BE sẽ xác thực lại phiên qua refresh token.
+ */
+export const isAccessTokenExpired = (token: string): boolean => {
+  try {
+    const { exp } = jwtDecode<Pick<JwtPayload, 'exp'>>(token)
+    return !exp || exp * 1000 <= Date.now()
+  } catch {
+    return true
   }
 }
 
