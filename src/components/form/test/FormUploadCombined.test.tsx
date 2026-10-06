@@ -55,6 +55,74 @@ describe('UploadControl', () => {
     )
   })
 
+  it('không thêm tệp lớn hơn 5 MB vào danh sách để không thể tải lên API', async () => {
+    const onChange = vi.fn()
+    const user = userEvent.setup()
+    const { container } = render(<UploadControl onChange={onChange} />)
+    const input =
+      container.querySelector<HTMLInputElement>('input[type="file"]')
+
+    expect(input).not.toBeNull()
+    await user.upload(
+      input as HTMLInputElement,
+      new File([new Uint8Array(5 * 1024 * 1024 + 1)], 'oversized.png', {
+        type: 'image/png'
+      })
+    )
+
+    expect(onChange).not.toHaveBeenCalled()
+    expect(screen.queryByText('oversized.png')).not.toBeInTheDocument()
+  })
+
+  it('cho phép tệp trên 5 MB khi loại tài liệu có giới hạn 10 MB', async () => {
+    const onChange = vi.fn()
+    const user = userEvent.setup()
+    const { container } = render(
+      <UploadControl
+        onChange={onChange}
+        maxFileSizeInMB={10}
+      />
+    )
+    const input =
+      container.querySelector<HTMLInputElement>('input[type="file"]')
+
+    expect(input).not.toBeNull()
+    await user.upload(
+      input as HTMLInputElement,
+      new File([new Uint8Array(5 * 1024 * 1024 + 1)], 'contract.pdf', {
+        type: 'application/pdf'
+      })
+    )
+
+    expect(onChange).toHaveBeenCalledWith([
+      expect.objectContaining({ name: 'contract.pdf' })
+    ])
+  })
+
+  it('không thêm tệp lớn hơn 2 MB khi loại tài liệu là logo', async () => {
+    const onChange = vi.fn()
+    const user = userEvent.setup()
+    const { container } = render(
+      <UploadControl
+        onChange={onChange}
+        maxFileSizeInMB={2}
+      />
+    )
+    const input =
+      container.querySelector<HTMLInputElement>('input[type="file"]')
+
+    expect(input).not.toBeNull()
+    await user.upload(
+      input as HTMLInputElement,
+      new File([new Uint8Array(2 * 1024 * 1024 + 1)], 'logo.png', {
+        type: 'image/png'
+      })
+    )
+
+    expect(onChange).not.toHaveBeenCalled()
+    expect(screen.queryByText('logo.png')).not.toBeInTheDocument()
+  })
+
   it('không xin lại link thumbnail khi dữ liệu tệp được render thành object mới', async () => {
     const resolveFileUrl = vi
       .fn()

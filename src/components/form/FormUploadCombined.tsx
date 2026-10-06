@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { InboxOutlined } from '@ant-design/icons'
-import { Upload } from 'antd'
+import { message, Upload } from 'antd'
 import type { UploadFile, UploadProps } from 'antd'
 import type { Control, FieldValues, Path } from 'react-hook-form'
 import { ButtonComponent } from '@components/index'
@@ -14,6 +14,7 @@ import {
 import { isImageFile } from './uploadFile.utils'
 
 const { Dragger } = Upload
+const DEFAULT_MAX_FILE_SIZE_IN_MB = 5
 
 interface FormUploadCombinedProps<T extends FieldValues> {
   name: Path<T>
@@ -23,6 +24,7 @@ interface FormUploadCombinedProps<T extends FieldValues> {
   classNameLabel?: string
   multiple?: boolean
   maxCount?: number
+  maxFileSizeInMB?: number
   accept?: string
   disabled?: boolean
   dragText?: string
@@ -38,6 +40,7 @@ export function FormUploadCombined<T extends FieldValues>({
   classNameLabel = 'font-medium',
   multiple = true,
   maxCount,
+  maxFileSizeInMB = DEFAULT_MAX_FILE_SIZE_IN_MB,
   accept,
   disabled = false,
   dragText = 'Kéo thả hoặc chọn tệp',
@@ -57,6 +60,7 @@ export function FormUploadCombined<T extends FieldValues>({
           onChange={field.onChange}
           multiple={multiple}
           maxCount={maxCount}
+          maxFileSizeInMB={maxFileSizeInMB}
           accept={accept}
           disabled={disabled}
           dragText={dragText}
@@ -73,6 +77,7 @@ interface UploadControlProps {
   onChange?: (files: UploadFile[]) => void
   multiple?: boolean
   maxCount?: number
+  maxFileSizeInMB?: number
   accept?: string
   disabled?: boolean
   dragText?: string
@@ -85,6 +90,7 @@ export function UploadControl({
   onChange,
   multiple = true,
   maxCount,
+  maxFileSizeInMB = DEFAULT_MAX_FILE_SIZE_IN_MB,
   accept,
   disabled = false,
   dragText = 'Kéo thả hoặc chọn tệp',
@@ -119,6 +125,17 @@ export function UploadControl({
     onChange?.(fileList)
   }
 
+  const validateFileSize: UploadProps['beforeUpload'] = (file) => {
+    if (file.size > maxFileSizeInMB * 1024 * 1024) {
+      message.error(
+        `Tệp ${file.name} vượt quá dung lượng tối đa ${maxFileSizeInMB} MB.`
+      )
+      return Upload.LIST_IGNORE
+    }
+
+    return false
+  }
+
   return (
     <>
       <Dragger
@@ -127,7 +144,7 @@ export function UploadControl({
         accept={accept}
         disabled={disabled}
         fileList={value}
-        beforeUpload={() => false}
+        beforeUpload={validateFileSize}
         onChange={handleChange}
         showUploadList={false}
       >

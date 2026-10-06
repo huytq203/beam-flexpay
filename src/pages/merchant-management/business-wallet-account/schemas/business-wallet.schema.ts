@@ -20,8 +20,15 @@ const TAX_CODE_REGEX = /^\d{10}(\d{3})?$/
 
 const PHONE_MESSAGE = 'Số điện thoại gồm 10–11 số và bắt đầu bằng 0'
 const ID_NUMBER_MESSAGE = 'Số CCCD/Hộ chiếu gồm 9 hoặc 12 số'
+const MAX_BUSINESS_LICENSE_SIZE = 5 * 1024 * 1024
+const MAX_ID_CARD_SIZE = 5 * 1024 * 1024
+const MAX_AUTHORIZATION_LETTER_SIZE = 10 * 1024 * 1024
 
 const uploadFileSchema = z.custom<UploadFile>()
+const getFileSize = (file: UploadFile) =>
+  file.originFileObj?.size ?? file.size ?? 0
+const filesWithinSize = (maxFileSize: number) => (files: UploadFile[]) =>
+  files.every((file) => getFileSize(file) <= maxFileSize)
 
 export const businessWalletFormSchema = z
   .object({
@@ -70,14 +77,31 @@ export const businessWalletFormSchema = z
     adminPassword: z.string().optional(),
     businessLicense: z
       .array(uploadFileSchema)
-      .min(1, 'Vui lòng tải lên Giấy phép ĐKKD'),
-    authorizationLetter: z.array(uploadFileSchema),
+      .min(1, 'Vui lòng tải lên Giấy phép ĐKKD')
+      .refine(
+        filesWithinSize(MAX_BUSINESS_LICENSE_SIZE),
+        'Giấy phép ĐKKD không được vượt quá 5MB'
+      ),
+    authorizationLetter: z
+      .array(uploadFileSchema)
+      .refine(
+        filesWithinSize(MAX_AUTHORIZATION_LETTER_SIZE),
+        'Giấy ủy quyền không được vượt quá 10MB'
+      ),
     idCardFront: z
       .array(uploadFileSchema)
-      .min(1, 'Vui lòng tải lên ảnh CCCD mặt trước'),
+      .min(1, 'Vui lòng tải lên ảnh CCCD mặt trước')
+      .refine(
+        filesWithinSize(MAX_ID_CARD_SIZE),
+        'Ảnh CCCD mặt trước không được vượt quá 5MB'
+      ),
     idCardBack: z
       .array(uploadFileSchema)
-      .min(1, 'Vui lòng tải lên ảnh CCCD mặt sau'),
+      .min(1, 'Vui lòng tải lên ảnh CCCD mặt sau')
+      .refine(
+        filesWithinSize(MAX_ID_CARD_SIZE),
+        'Ảnh CCCD mặt sau không được vượt quá 5MB'
+      ),
     isInternalWallet: z.boolean()
   })
   .superRefine((values, context) => {

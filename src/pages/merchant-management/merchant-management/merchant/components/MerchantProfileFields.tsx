@@ -60,6 +60,7 @@ export function MerchantProfileFields({
             }
             multiple={false}
             maxCount={1}
+            maxFileSizeInMB={10}
             accept='.pdf,application/pdf'
             dragText='Kéo thả hoặc chọn tệp hợp đồng PDF'
             className={uploadFieldClassName}
@@ -117,6 +118,7 @@ export function MerchantProfileFields({
               label='Logo Merchant'
               multiple={false}
               maxCount={1}
+              maxFileSizeInMB={2}
               accept='image/png,image/jpeg'
               dragText='Tải lên logo thương hiệu'
               className={uploadFieldClassName}
@@ -135,6 +137,7 @@ export function MerchantProfileFields({
               name='productImages'
               label='Ảnh sản phẩm / dịch vụ'
               multiple
+              maxFileSizeInMB={5}
               accept='image/png,image/jpeg'
               dragText='Kéo thả hoặc chọn nhiều ảnh sản phẩm'
               className={uploadFieldClassName}

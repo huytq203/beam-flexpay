@@ -29,6 +29,7 @@ export function LegalDocsSection({
         label='Giấy phép ĐKKD'
         multiple={false}
         maxCount={1}
+        maxFileSizeInMB={5}
         accept='.pdf,.jpg,.jpeg,.png'
         dragText='Tải lên tệp · PDF / JPG / PNG · tối đa 5MB'
         className={uploadClassName}
@@ -41,8 +42,9 @@ export function LegalDocsSection({
         label='Giấy ủy quyền'
         multiple={false}
         maxCount={1}
+        maxFileSizeInMB={10}
         accept='.pdf,.jpg,.jpeg,.png'
-        dragText='Tải lên tệp · Bắt buộc nếu quản lý ví khác ĐDPL'
+        dragText='Tải lên tệp · tối đa 10MB · Bắt buộc nếu quản lý ví khác ĐDPL'
         className={uploadClassName}
         resolveFileUrl={resolveFileUrl}
         allowRemoveStored={false}
@@ -53,6 +55,7 @@ export function LegalDocsSection({
         label='CCCD — Mặt trước'
         multiple={false}
         maxCount={1}
+        maxFileSizeInMB={5}
         accept='.jpg,.jpeg,.png'
         dragText='Tải lên tệp · JPG / PNG · tối đa 5MB'
         className={uploadClassName}
@@ -65,6 +68,7 @@ export function LegalDocsSection({
         label='CCCD — Mặt sau'
         multiple={false}
         maxCount={1}
+        maxFileSizeInMB={5}
         accept='.jpg,.jpeg,.png'
         dragText='Tải lên tệp · JPG / PNG · tối đa 5MB'
         className={uploadClassName}
