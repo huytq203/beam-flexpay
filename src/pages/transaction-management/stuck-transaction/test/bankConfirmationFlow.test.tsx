@@ -34,22 +34,13 @@ const fill = (label: string, value: string) =>
   })
 
 describe('bank confirmation flow', () => {
-  it('preserves note after 4101, validates evidence and sends the complete payload', async () => {
+  it('shows bank evidence fields upfront, validates them and sends the complete payload', async () => {
     const bodies: unknown[] = []
     server.use(
       http.post(
         '*/transactions/FW26CBFW1/update-status',
         async ({ request }) => {
           bodies.push(await request.json())
-          if (bodies.length === 1)
-            return HttpResponse.json(
-              {
-                message: 'RECONCILIATION_EVIDENCE_REQUIRED',
-                status: '4101',
-                detail: 'Cần nhập kết quả đã xác nhận trực tiếp với ngân hàng'
-              },
-              { status: 400 }
-            )
           return HttpResponse.json({
             success: true,
             data: { transactionCode: 'FW26CBFW1', newStatus: 'POSTED' }
@@ -63,17 +54,14 @@ describe('bank confirmation flow', () => {
     )
     await user.click(screen.getByLabelText(/Kết quả cuối/))
     await user.click(await screen.findByTitle('Thành công'))
-    fill('Lý do cập nhật', 'Đã đối chiếu ngân hàng')
-    await user.click(screen.getByRole('button', { name: 'Xác nhận cập nhật' }))
     expect(await screen.findByLabelText(/Kênh xác nhận/)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Lý do cập nhật/)).toHaveValue(
-      'Đã đối chiếu ngân hàng'
-    )
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+    fill('Lý do cập nhật', 'Đã đối chiếu ngân hàng')
     await user.click(screen.getByRole('button', { name: 'Xác nhận cập nhật' }))
     expect(
       await screen.findByText('Vui lòng chọn kênh xác nhận')
     ).toBeInTheDocument()
-    expect(bodies).toHaveLength(1)
+    expect(bodies).toHaveLength(0)
     await user.click(screen.getByLabelText(/Kênh xác nhận/))
     expect(await screen.findByTitle('Hotline')).toBeInTheDocument()
     expect(screen.getByTitle('Tại quầy')).toBeInTheDocument()
@@ -99,8 +87,8 @@ describe('bank confirmation flow', () => {
     })
     fireEvent.blur(screen.getByLabelText(/Thời điểm ngân hàng ghi sổ/))
     await user.click(screen.getByRole('button', { name: 'Xác nhận cập nhật' }))
-    await waitFor(() => expect(bodies).toHaveLength(2))
-    expect(bodies[1]).toEqual({
+    await waitFor(() => expect(bodies).toHaveLength(1))
+    expect(bodies[0]).toEqual({
       newStatus: 'POSTED',
       note: 'Đã đối chiếu ngân hàng',
       bankConfirmation: {

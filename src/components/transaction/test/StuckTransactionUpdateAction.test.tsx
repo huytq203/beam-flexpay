@@ -140,7 +140,7 @@ describe('StuckTransactionUpdateAction', () => {
       )
     )
 
-    const { user } = renderAction()
+    const { user } = renderAction({ transactionType: 'P2P_TRANSFER' })
 
     await openForm(user)
     await chooseOutcome(user, 'Thành công')
@@ -175,7 +175,7 @@ describe('StuckTransactionUpdateAction', () => {
       )
     )
 
-    const { user } = renderAction()
+    const { user } = renderAction({ transactionType: 'P2P_TRANSFER' })
 
     await openForm(user)
     await chooseOutcome(user, 'Thất bại')
@@ -252,7 +252,7 @@ describe('StuckTransactionUpdateAction', () => {
         HttpResponse.json({ message: 'BUSINESS_ERROR' }, { status: 400 })
       )
     )
-    const { user } = renderAction()
+    const { user } = renderAction({ transactionType: 'P2P_TRANSFER' })
     await openForm(user)
     await chooseOutcome(user, 'Thành công')
     await fill(/Lý do cập nhật/, NOTE)

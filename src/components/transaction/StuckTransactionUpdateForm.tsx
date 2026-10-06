@@ -2,12 +2,7 @@ import { BankConfirmationFields } from '@pages/transaction-management/stuck-tran
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ButtonComponent } from '@components/index'
-import {
-  FormCheckbox,
-  FormInput,
-  FormSelect,
-  FormTextArea
-} from '@components/form'
+import { FormInput, FormSelect, FormTextArea } from '@components/form'
 import {
   STUCK_TRANSACTION_OUTCOME,
   STUCK_UPDATE_CODE_MAX_LENGTH,
@@ -31,7 +26,6 @@ export interface StuckTransactionUpdateFormProps {
   transactionCode: string
   isCashOut?: boolean
   allowBankConfirmation?: boolean
-  requireBankConfirmation?: boolean
   isSubmitting?: boolean
   submissionError?: string | null
   onSubmit: (values: StuckTransactionUpdateFormValues) => void
@@ -42,7 +36,6 @@ export const StuckTransactionUpdateForm = ({
   transactionCode,
   isCashOut = false,
   allowBankConfirmation = true,
-  requireBankConfirmation = false,
   isSubmitting,
   submissionError,
   onSubmit,
@@ -50,16 +43,14 @@ export const StuckTransactionUpdateForm = ({
 }: StuckTransactionUpdateFormProps) => {
   const { control, handleSubmit } = useForm<StuckTransactionUpdateFormValues>({
     resolver: zodResolver(
-      createStuckTransactionUpdateSchema(
-        requireBankConfirmation && allowBankConfirmation
-      )
+      createStuckTransactionUpdateSchema(allowBankConfirmation)
     ),
     mode: 'onSubmit',
     defaultValues: {
       authCode: '',
       settlementId: '',
       note: '',
-      includeBankConfirmation: false,
+      includeBankConfirmation: allowBankConfirmation,
       bankConfirmation: {
         confirmationChannel: '',
         confirmationReference: '',
@@ -71,16 +62,12 @@ export const StuckTransactionUpdateForm = ({
     }
   })
 
-  const includeBankConfirmation = useWatch({
-    control,
-    name: 'includeBankConfirmation'
-  })
   const newStatus = useWatch({ control, name: 'newStatus' })
   const isSuccess = newStatus === StuckTransactionOutcome.POSTED
 
   return (
     <form
-      className='flex min-w-0 flex-col gap-4 pt-2'
+      className='flex min-w-0 flex-col gap-5 pt-2'
       onSubmit={handleSubmit(onSubmit)}
     >
       <p className='m-0 min-w-0 text-sm leading-5 break-words text-muted-foreground'>
@@ -121,10 +108,8 @@ export const StuckTransactionUpdateForm = ({
         options={OUTCOME_OPTIONS}
       />
 
-    
-
       {isSuccess && (
-        <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
+        <div className='grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2'>
           <FormInput
             control={control}
             name='authCode'
@@ -145,22 +130,10 @@ export const StuckTransactionUpdateForm = ({
       )}
 
       {allowBankConfirmation && (
-        <>
-          {!requireBankConfirmation && (
-            <FormCheckbox
-              control={control}
-              name='includeBankConfirmation'
-              label='Bổ sung xác nhận trực tiếp với ngân hàng'
-              disabled={isSubmitting}
-            />
-          )}
-          {(requireBankConfirmation || includeBankConfirmation) && (
-            <BankConfirmationFields
-              control={control}
-              isSuccess={isSuccess}
-            />
-          )}
-        </>
+        <BankConfirmationFields
+          control={control}
+          isSuccess={isSuccess}
+        />
       )}
 
       <FormTextArea

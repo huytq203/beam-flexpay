@@ -1,4 +1,5 @@
 import type { Control } from 'react-hook-form'
+import { cn } from '@lib/utils/cn'
 import { FormDatePicker, FormInput, FormSelect } from '@components/form'
 import type { StuckTransactionUpdateFormValues } from '@/components/transaction/StuckTransaction.schema'
 
@@ -10,11 +11,11 @@ interface Props {
 }
 
 export const BankConfirmationFields = ({ control, isSuccess }: Props) => (
-  <fieldset className='min-w-0 border-0 p-0'>
-    <legend className='mb-2 text-sm font-semibold'>
+  <fieldset className='min-w-0 border-0 border-t border-border p-0 pt-5'>
+    <legend className='float-left mb-4 w-full p-0 text-sm font-semibold text-foreground'>
       Xác nhận trực tiếp với ngân hàng
     </legend>
-    <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
+    <div className='clear-both grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2'>
       <FormSelect
         control={control}
         name='bankConfirmation.confirmationChannel'
@@ -41,7 +42,7 @@ export const BankConfirmationFields = ({ control, isSuccess }: Props) => (
         placeholder='DD/MM/YYYY HH:mm:ss'
         showTime
         required
-        className='flex flex-col gap-1'
+        className={cn('flex flex-col gap-1', !isSuccess && 'sm:col-span-2')}
       />
       {isSuccess && (
         <>
