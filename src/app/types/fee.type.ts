@@ -6,6 +6,8 @@
  * thể, nên xoá màn là gãy tầng service.
  */
 
+import type { FeeEffectiveStatus } from '@/app/schemas/applicable-fee-rule.schema'
+
 export interface AppliedSubject {
   subjectType: 'USER' | 'MERCHANT'
   subjectId: string
@@ -37,6 +39,8 @@ export interface FeePolicy {
   validFrom: string
   validTo: string | null
   status: string
+  /** Chờ áp dụng / Hết hạn; BE chỉ trả khi status = ACTIVE. */
+  effectiveStatus?: FeeEffectiveStatus | null
   priority: number
   createdAt?: string
   updatedAt?: string
@@ -99,6 +103,8 @@ export interface FeeAssignment {
   /** Mã chủ thể, khớp mã ví gửi lên dịch vụ phí. NULL = mọi chủ thể. */
   subjectId: string | null
   status: string
+  /** Chờ áp dụng / Hết hạn; BE chỉ trả khi status = ACTIVE. */
+  effectiveStatus?: FeeEffectiveStatus | null
   effectiveFromDate: string | null
   effectiveToDate: string | null
   createdAt?: string

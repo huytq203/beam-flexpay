@@ -1,5 +1,7 @@
+import type { FeeEffectiveStatus } from '@/app/schemas/applicable-fee-rule.schema'
 import {
   ASSIGNMENT_STATUS_CONFIG,
+  EFFECTIVE_STATUS_CONFIG,
   POLICY_STATUS_CONFIG
 } from '@constants/feeLabels'
 import { cn } from '@lib/utils/cn'
@@ -20,8 +22,16 @@ const TONE: Readonly<Record<string, string>> = {
   REJECTED: 'bg-danger/10 text-danger-strong'
 }
 
+/** Tông cho trạng thái hiệu lực; chỉ PENDING/EXPIRED ghi đè nhãn "Đang áp dụng". */
+const EFFECTIVE_TONE: Readonly<Partial<Record<FeeEffectiveStatus, string>>> = {
+  PENDING: 'bg-warning/10 text-warning-strong',
+  EXPIRED: 'bg-danger/10 text-danger-strong'
+}
+
 export interface FeeStatusPillProps {
   status: string | null | undefined
+  /** BE chỉ trả khi status = ACTIVE; PENDING/EXPIRED thay nhãn "Đang áp dụng". */
+  effectiveStatus?: FeeEffectiveStatus | null
   /** Bản gán có vòng đời riêng, nhãn khác chính sách ở trạng thái INIT. */
   kind?: 'policy' | 'assignment'
   className?: string
@@ -29,6 +39,7 @@ export interface FeeStatusPillProps {
 
 export const FeeStatusPill = ({
   status,
+  effectiveStatus,
   kind = 'policy',
   className
 }: FeeStatusPillProps) => {
@@ -39,16 +50,26 @@ export const FeeStatusPill = ({
       ? ASSIGNMENT_STATUS_CONFIG[status]
       : POLICY_STATUS_CONFIG[status]
 
+  const overridden =
+    status === 'ACTIVE' &&
+    (effectiveStatus === 'PENDING' || effectiveStatus === 'EXPIRED')
+      ? effectiveStatus
+      : null
+
   return (
     <span
       className={cn(
         'inline-flex w-fit items-center rounded-md px-2 py-0.5',
         'text-[11px] font-semibold uppercase tracking-wide',
-        TONE[status] ?? 'bg-muted text-muted-foreground',
+        (overridden && EFFECTIVE_TONE[overridden]) ||
+          TONE[status] ||
+          'bg-muted text-muted-foreground',
         className
       )}
     >
-      {config?.label ?? status}
+      {overridden
+        ? EFFECTIVE_STATUS_CONFIG[overridden].label
+        : config?.label ?? status}
     </span>
   )
 }

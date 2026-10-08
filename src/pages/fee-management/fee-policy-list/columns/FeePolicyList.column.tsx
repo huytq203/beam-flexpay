@@ -154,7 +154,9 @@ export const getFeePolicyColumns = ({
     title: 'Trạng thái',
     dataIndex: 'status',
     width: 140,
-    render: (status: string) => <FeeStatusPill status={status} />
+    render: (status: string, row) => (
+      <FeeStatusPill status={status} effectiveStatus={row.effectiveStatus} />
+    )
   },
   {
     title: 'Ngày tạo',
