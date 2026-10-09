@@ -3,13 +3,13 @@ import { BroomIcon, MagnifyingGlassIcon } from '@components/icons'
 import { ButtonComponent, FeeServiceTypeTabs } from '@components/index'
 import {
   PAYMENT_METHOD_LABELS,
-  POLICY_STATUS_CONFIG,
   SERVICE_TYPE_LABELS
 } from '@constants/feeLabels'
 import {
   BACKEND_PAYMENT_METHODS,
   getPaymentMethodOptions
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
+import { POLICY_STATUS_FILTER_OPTIONS } from '../utils/policyStatusFilter'
 import { PUBLISHABLE_SERVICE_TYPES } from '@utils/fee-execution'
 import { useGetBankQuery } from '@services/apiFeeBank'
 import { useMemo } from 'react'
@@ -41,10 +41,6 @@ interface FeePolicyFilterBarProps {
   onSubmit: (values: FeePolicyFilterValues) => void
   onReset: () => void
 }
-
-const STATUS_OPTIONS = Object.entries(POLICY_STATUS_CONFIG).map(
-  ([value, config]) => ({ value, label: config.label })
-)
 
 /** Bộ lọc dùng chung cho cả hai luồng phí; loại giao dịch là mọi loại đã duyệt được. */
 export const FeePolicyFilterBar = ({
@@ -168,7 +164,7 @@ export const FeePolicyFilterBar = ({
           label='Trạng thái'
           placeholder='Mọi trạng thái'
           allowClear
-          options={STATUS_OPTIONS}
+          options={POLICY_STATUS_FILTER_OPTIONS}
           className='flex flex-col'
         />
         <FormSelect

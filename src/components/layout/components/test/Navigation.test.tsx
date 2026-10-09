@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  navigationItems,
-  type ItemTypeCustom
-} from '../Navigation'
+import { navigationItems, type ItemTypeCustom } from '../Navigation'
 
 const findItem = (
   items: ItemTypeCustom[],
@@ -20,6 +17,12 @@ describe('merchant gateway navigation', () => {
     )
     expect(findItem(navigationItems, 'notification')?.screen).toBe(
       'MERCHANT_NOTIFICATION'
+    )
+  })
+
+  it('có mục Giao dịch trong nhóm cổng ĐVCNTT', () => {
+    expect(findItem(navigationItems, 'transaction')?.screen).toBe(
+      'MERCHANT_TRANSACTION'
     )
   })
 

@@ -17,6 +17,8 @@ export interface SearchFeePoliciesParams {
   feeScope?: string
   serviceType?: string
   status?: string
+  /** PENDING | ACTIVE | EXPIRED; chỉ tính trên chính sách đã duyệt và đang bật. */
+  effectiveStatus?: string
   appliedTarget?: string
   bankCode?: string
   paymentMethod?: string

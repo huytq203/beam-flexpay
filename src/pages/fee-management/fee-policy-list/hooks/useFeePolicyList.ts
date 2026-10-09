@@ -2,6 +2,7 @@ import type { FeeScope } from '@pages/fee-management/fee-config/constants/feeCon
 import { useSearchFeePoliciesQuery } from '@services/apiFeePolicy.api'
 import type { FeePolicy } from '@type/fee.type'
 import { useMemo } from 'react'
+import { splitPolicyStatusFilter } from '../utils/policyStatusFilter'
 
 export interface FeePolicyListFilters {
   /** Luồng phí đang xem: chỉ lấy chính sách có thành phần thuộc luồng này. */
@@ -57,7 +58,7 @@ export const useFeePolicyList = ({
       subjectKeyword: filters.subjectKeyword || undefined,
       feeScope: filters.feeScope,
       serviceType: filters.serviceType || undefined,
-      status: filters.status || undefined,
+      ...splitPolicyStatusFilter(filters.status),
       appliedTarget: filters.appliedTarget || undefined,
       bankCode: filters.bankCode || undefined,
       paymentMethod: filters.paymentMethod || undefined,

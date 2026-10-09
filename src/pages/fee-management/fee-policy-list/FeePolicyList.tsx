@@ -29,6 +29,7 @@ import { FeePolicyExpandedDetail } from './components/FeePolicyExpandedDetail'
 import { getFeePolicyColumns } from './columns/FeePolicyList.column'
 import { useFeePolicyList } from './hooks/useFeePolicyList'
 import { useFeePolicyStatus } from './hooks/useFeePolicyStatus'
+import { splitPolicyStatusFilter } from './utils/policyStatusFilter'
 
 const FILTER_KEYS = [
   'feeScope',
@@ -145,7 +146,13 @@ const FeePolicyList = () => {
   const tableActions = (
     <>
       <ExportCsvButton
-        onExport={() => exportFile(exportFilters)}
+        onExport={() =>
+          exportFile({
+            ...exportFilters,
+            status: undefined,
+            ...splitPolicyStatusFilter(exportFilters.status)
+          })
+        }
         loading={isExporting}
         disabled={total === 0 || isError}
         tooltip='File lấy trọn bộ lọc đang áp, không giới hạn theo trang; gồm chính sách phí, bản gán, thành phần phí và các bậc phí.'

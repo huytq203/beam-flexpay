@@ -58,6 +58,15 @@ describe('SCREENS', () => {
     )
   })
 
+  it('khai báo màn Giao dịch merchant dùng chung quyền giao dịch', () => {
+    expect(SCREENS.MERCHANT_TRANSACTION.path).toBe(
+      '/secure-panel/merchant/transaction'
+    )
+    expect(SCREENS.MERCHANT_TRANSACTION.actions.view).toBe(
+      PERMISSION.TRANSACTION_VIEW
+    )
+  })
+
   it('đăng ký hai màn Sub-merchant và Terminal bằng quyền API riêng', () => {
     expect(SCREENS.MERCHANT_SUB_MERCHANT.path).toBe(
       '/secure-panel/merchant/sub-merchant'

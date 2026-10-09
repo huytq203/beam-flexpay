@@ -1,4 +1,4 @@
-import { fetchBaseQueryCustom, fetchBaseQueryFee, fetchBaseQueryMerchant, fetchBaseQueryOld, fetchBaseQueryWalletCore } from '@configs/fetchBaseQueryCustom'
+import { fetchBaseQueryCustom, fetchBaseQueryFee, fetchBaseQueryMerchant, fetchBaseQueryOld, fetchBaseQueryUserWallet, fetchBaseQueryWalletCore } from '@configs/fetchBaseQueryCustom'
 import { createApi } from '@reduxjs/toolkit/query/react'
 
 export const apiService = createApi({
@@ -49,6 +49,13 @@ export const apiWalletCore = createApi({
     'Journal',
     'Withdrawal'
   ],
+  endpoints: () => ({}),
+  refetchOnMountOrArgChange: true
+})
+export const apiUserWallet = createApi({
+  reducerPath: 'userWallet',
+  baseQuery: fetchBaseQueryUserWallet,
+  tagTypes: ['WalletLimitPolicy', 'WalletLimitSpecialMonth'],
   endpoints: () => ({}),
   refetchOnMountOrArgChange: true
 })

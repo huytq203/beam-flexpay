@@ -83,6 +83,12 @@
 
 
     "/secure-panel/fee-v4/fee-policy":"Cấu hình phí",
+    "/secure-panel/fee-v4/wallet-limit":"Hạn mức ví",
+    "/secure-panel/fee-v4/wallet-limit/create":"Thêm hạn mức ví",
+    "/secure-panel/fee-v4/wallet-limit/*/edit":"Cập nhật hạn mức ví",
+    "/secure-panel/fee-v4/wallet-limit/*/history":"Lịch sử hạn mức ví",
+    "/secure-panel/fee-v4/wallet-limit/*":"Chi tiết hạn mức ví",
+    "/secure-panel/fee-v4/wallet-limit-special-month":"Tháng đặc biệt",
     "/secure-panel/fee-v4/fee-policy/create":"Tạo chính sách phí",
     "/secure-panel/fee-v4/fee-policy/edit/*":"Sửa chính sách phí",
     "/secure-panel/fee-v4/fee-managementV4":"Quản lý chính sách phí",
@@ -127,6 +133,7 @@
     "/secure-panel/merchant/dashboard-merchant":"Dashboard Merchant",
     "/secure-panel/merchant/payment-method":"Phương thức thanh toán",
     "/secure-panel/merchant/notification":"Quản lý thông báo",
+    "/secure-panel/merchant/transaction":"Giao dịch merchant",
     "/secure-panel/merchant/sub-merchant":"Danh sách sub-merchant",
     "/secure-panel/merchant/sub-merchant/create":"Thêm Sub-merchant",
     "/secure-panel/merchant/sub-merchant/edit/*":"Cập nhật Sub-merchant",

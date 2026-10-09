@@ -13,6 +13,7 @@ import {
   ArrowsLeftRightIcon,
   BankIcon,
   BellIcon,
+  CalendarStarIcon,
   ClipboardTextIcon,
   CreditCardIcon,
   FingerprintIcon,
@@ -24,6 +25,7 @@ import {
   MoneyIcon,
   ReceiptIcon,
   ShieldCheckIcon,
+  SlidersHorizontalIcon,
   StorefrontIcon,
   TerminalIcon,
   UserGearIcon,
@@ -71,7 +73,31 @@ const feeManagementV4: ItemTypeCustom = {
           color={COlOR}
         />
       ),
-      label: 'Cấu hình phí',
+      label: 'Cấu hình phí'
+    },
+    {
+      key: 'wallet-limit',
+      screen: 'WALLET_LIMIT',
+      icon: (
+        <SlidersHorizontalIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Hạn mức ví'
+    },
+    {
+      key: 'wallet-limit-special-month',
+      screen: 'WALLET_LIMIT_SPECIAL_MONTH',
+      icon: (
+        <CalendarStarIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Tháng đặc biệt'
     }
     /*
      * Bốn mục cũ (Quản lý chính sách phí, Phí ngân hàng, Quản lý gán phí, Biểu
@@ -79,7 +105,7 @@ const feeManagementV4: ItemTypeCustom = {
      * link cũ không gãy trong lúc đối chiếu; xoá hẳn cả màn ở lần dọn sau.
      */
   ],
-  label: 'Quản lý phí',
+  label: 'Quản lý phí'
 }
 
 const roleManagementV2: ItemTypeCustom = {
@@ -116,7 +142,7 @@ const roleManagementV2: ItemTypeCustom = {
           color={COlOR}
         />
       ),
-      label: "Quản lý nhóm quyền"
+      label: 'Quản lý nhóm quyền'
     },
     {
       key: 'role-management',
@@ -128,10 +154,9 @@ const roleManagementV2: ItemTypeCustom = {
           color={COlOR}
         />
       ),
-      label: "Quản lý quyền"
+      label: 'Quản lý quyền'
     }
   ]
-
 }
 
 const walletManagement: ItemTypeCustom = {
@@ -168,12 +193,10 @@ const walletManagement: ItemTypeCustom = {
           color={COlOR}
         />
       ),
-      label: "Duyệt eKYC"
-    },
+      label: 'Duyệt eKYC'
+    }
   ]
-
 }
-
 
 const transactionManagement: ItemTypeCustom = {
   key: _TRANSACTIONMANAGEMENT,
@@ -234,7 +257,7 @@ const transactionManagement: ItemTypeCustom = {
         />
       ),
       label: 'Lịch sử rút tiền'
-    },
+    }
   ]
 }
 
@@ -250,7 +273,6 @@ const merchantManagement: ItemTypeCustom = {
   ),
   label: 'Quản lý ĐVCNTT',
   children: [
-    
     {
       key: 'merchant-management',
       screen: 'MERCHANT_MANAGEMENT',
@@ -311,6 +333,18 @@ const merchantManagement: ItemTypeCustom = {
         />
       ),
       label: 'Thông báo'
+    },
+    {
+      key: 'transaction',
+      screen: 'MERCHANT_TRANSACTION',
+      icon: (
+        <ReceiptIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Giao dịch'
     }
   ]
 }
@@ -387,21 +421,39 @@ const subMerchantManagement: ItemTypeCustom = {
 const merchantUserManagement: ItemTypeCustom = {
   key: 'merchant-user-management',
   groupLabel: 'Nhóm quản lý cổng ĐVCNTT',
-  icon: <UsersThreeIcon size={size} weight={weight} color={COlOR} />,
+  icon: (
+    <UsersThreeIcon
+      size={size}
+      weight={weight}
+      color={COlOR}
+    />
+  ),
   label: 'Quản lý User Merchant',
   children: [
     {
       key: 'user',
       screen: 'MERCHANT_USER',
       link: `${MERCHANT}/user`,
-      icon: <UsersThreeIcon size={size} weight={weight} color={COlOR} />,
+      icon: (
+        <UsersThreeIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
       label: 'Danh sách User'
     },
     {
       key: 'user-role',
       screen: 'MERCHANT_ROLE',
       link: `${MERCHANT}/user-role`,
-      icon: <ShieldCheckIcon size={size} weight={weight} color={COlOR} />,
+      icon: (
+        <ShieldCheckIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
       label: 'Nhóm quyền Merchant'
     }
   ]

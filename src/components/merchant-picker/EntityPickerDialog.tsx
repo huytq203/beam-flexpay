@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import type { ColumnsType } from 'antd/es/table'
 import ButtonComponent from '../ui/button-component'
+import CardComponent from '../ui/card-component'
 import ModalComponent from '../ui/modal-component'
 import Table from '../ui/table-component/TableComponent'
 import { PickerSearchBar } from './PickerSearchBar'
@@ -58,6 +59,8 @@ type EntityPickerContentProps<T extends PickedEntity> = PickerSelection<T> & {
   entityLabel: string
   note?: string
   keywordOnly?: boolean
+  /** Đặt tìm kiếm và bảng vào card viền 1px cho nổi trên nền modal. */
+  framed?: boolean
   columns: ColumnsType<T>
   search: PickerSearchState
   query: PickerQueryResult<T>
@@ -104,7 +107,7 @@ export function EntityPickerContent<T extends PickedEntity>(
     )
   }
 
-  return (
+  const body = (
     <>
       {note && <p className='mb-3 text-sm text-muted-foreground'>{note}</p>}
       <PickerSearchBar
@@ -161,6 +164,18 @@ export function EntityPickerContent<T extends PickedEntity>(
           onChange: search.changePage
         }}
       />
+    </>
+  )
+
+  return (
+    <>
+      {props.framed ? (
+        <CardComponent className='border border-border bg-background shadow-none'>
+          {body}
+        </CardComponent>
+      ) : (
+        body
+      )}
       {props.mode === 'multiple' && (
         <div className='mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4'>
           <span

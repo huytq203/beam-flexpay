@@ -83,6 +83,15 @@ const MERCHANT_ACTIONS = {
   full: PERMISSION.MERCHANT_FULL
 } as const
 
+const WALLET_LIMIT_ACTIONS = {
+  view: PERMISSION.EWALLET_FULL,
+  create: PERMISSION.EWALLET_FULL,
+  edit: PERMISSION.EWALLET_FULL,
+  update: PERMISSION.EWALLET_FULL,
+  delete: PERMISSION.EWALLET_FULL,
+  full: PERMISSION.EWALLET_FULL
+} as const
+
 const FEE_ACTIONS = {
   view: PERMISSION.FEE_VIEW,
   create: PERMISSION.FEE_CREATE,
@@ -247,6 +256,14 @@ export const SCREENS = {
       full: PERMISSION.ADMIN_FULL
     }
   },
+  MERCHANT_TRANSACTION: {
+    path: `${MERCHANT}/transaction`,
+    accessPermission: PERMISSION.TRANSACTION_FULL,
+    actions: {
+      ...TRANSACTION_ACTIONS,
+      viewDetail: PERMISSION.TRANSACTION_VIEW
+    }
+  },
   BUSINESS_WALLET_ACCOUNT: {
     path: `${MERCHANT}/business-wallet-account`,
     actions: {
@@ -333,6 +350,21 @@ export const SCREENS = {
       approve: PERMISSION.FEE_UPDATE,
       toggleActive: PERMISSION.FEE_UPDATE
     }
+  },
+  /**
+   * Hạn mức ví (flexpay.user-wallet): backend gác mọi endpoint quản trị bằng
+   * một mã `EWALLET:EWALLET:FULL`, chưa tách theo hành động, nên mọi action của
+   * hai màn dùng chung mã đó.
+   */
+  WALLET_LIMIT: {
+    path: `${FEEMANAGEMENT_V4}/wallet-limit`,
+    accessPermission: PERMISSION.EWALLET_FULL,
+    actions: WALLET_LIMIT_ACTIONS
+  },
+  WALLET_LIMIT_SPECIAL_MONTH: {
+    path: `${FEEMANAGEMENT_V4}/wallet-limit-special-month`,
+    accessPermission: PERMISSION.EWALLET_FULL,
+    actions: WALLET_LIMIT_ACTIONS
   },
   FEE_POLICY: {
     path: `${FEEMANAGEMENT_V4}/fee-managementV4`,

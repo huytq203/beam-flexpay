@@ -30,7 +30,7 @@ const EFFECTIVE_TONE: Readonly<Partial<Record<FeeEffectiveStatus, string>>> = {
 
 export interface FeeStatusPillProps {
   status: string | null | undefined
-  /** BE chỉ trả khi status = ACTIVE; PENDING/EXPIRED thay nhãn "Đang áp dụng". */
+  /** BE chỉ trả khi status = ACTIVE; thay nhãn "Hoạt động" bằng Chờ áp dụng / Đang áp dụng / Hết hạn. */
   effectiveStatus?: FeeEffectiveStatus | null
   /** Bản gán có vòng đời riêng, nhãn khác chính sách ở trạng thái INIT. */
   kind?: 'policy' | 'assignment'
@@ -51,10 +51,7 @@ export const FeeStatusPill = ({
       : POLICY_STATUS_CONFIG[status]
 
   const overridden =
-    status === 'ACTIVE' &&
-    (effectiveStatus === 'PENDING' || effectiveStatus === 'EXPIRED')
-      ? effectiveStatus
-      : null
+    status === 'ACTIVE' && effectiveStatus ? effectiveStatus : null
 
   return (
     <span

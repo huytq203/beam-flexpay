@@ -104,8 +104,7 @@ const feeManagementV4 = {
         {
           path: SCREENS.FEE_CONFIG.path,
           element: page(
-            () =>
-              import('@pages/fee-management/fee-policy-list/FeePolicyList')
+            () => import('@pages/fee-management/fee-policy-list/FeePolicyList')
           )
         },
         {
@@ -119,10 +118,63 @@ const feeManagementV4 = {
           element: page(
             () => import('@pages/fee-management/fee-config/FeeConfig')
           )
+        },
+        {
+          path: SCREENS.WALLET_LIMIT.path,
+          element: page(
+            () =>
+              import(
+                '@pages/fee-management/wallet-limit/pages/WalletLimitListPage'
+              )
+          )
+        },
+        {
+          path: `${SCREENS.WALLET_LIMIT.path}/create`,
+          element: page(
+            () =>
+              import(
+                '@pages/fee-management/wallet-limit/pages/WalletLimitFormPage'
+              )
+          )
+        },
+        {
+          path: `${SCREENS.WALLET_LIMIT.path}/:id`,
+          element: page(
+            () =>
+              import(
+                '@pages/fee-management/wallet-limit/pages/WalletLimitDetailPage'
+              )
+          )
+        },
+        {
+          path: `${SCREENS.WALLET_LIMIT.path}/:id/edit`,
+          element: page(
+            () =>
+              import(
+                '@pages/fee-management/wallet-limit/pages/WalletLimitFormPage'
+              )
+          )
+        },
+        {
+          path: `${SCREENS.WALLET_LIMIT.path}/:id/history`,
+          element: page(
+            () =>
+              import(
+                '@pages/fee-management/wallet-limit/pages/WalletLimitHistoryPage'
+              )
+          )
+        },
+        {
+          path: SCREENS.WALLET_LIMIT_SPECIAL_MONTH.path,
+          element: page(
+            () =>
+              import(
+                '@pages/fee-management/wallet-limit/pages/WalletLimitSpecialMonthPage'
+              )
+          )
         }
       ]
-    },
-    
+    }
   ]
 }
 
@@ -150,7 +202,9 @@ const roleManagementV2 = {
           path: SCREENS.ROLE_MANAGEMENT.path,
           element: namedPage(
             () =>
-              import('@/pages/role-management-V2/role-management/RoleManagement'),
+              import(
+                '@/pages/role-management-V2/role-management/RoleManagement'
+              ),
             'PermissionManagement'
           )
         }
@@ -163,7 +217,9 @@ const roleManagementV2 = {
           path: SCREENS.PERMISSION_MANAGEMENT.path,
           element: page(
             () =>
-              import('@/pages/role-management-V2/permission-management/PermissionManagement')
+              import(
+                '@/pages/role-management-V2/permission-management/PermissionManagement'
+              )
           )
         }
       ]
@@ -183,14 +239,18 @@ const walletAdministration = {
           path: SCREENS.EWALLET_MANAGEMENT.path,
           element: page(
             () =>
-              import('@pages/wallet-administration/e-walletManagement/EwalletManagement')
+              import(
+                '@pages/wallet-administration/e-walletManagement/EwalletManagement'
+              )
           )
         },
         {
           path: `${SCREENS.EWALLET_MANAGEMENT.path}/:id`,
           element: page(
             () =>
-              import('@pages/wallet-administration/e-walletManagement/DetailUser')
+              import(
+                '@pages/wallet-administration/e-walletManagement/DetailUser'
+              )
           )
         }
       ]
@@ -214,7 +274,9 @@ const walletAdministration = {
           path: SCREENS.TRANSACTION_WALLET.aliasPaths[0],
           element: page(
             () =>
-              import('@pages/wallet-administration/transaction-wallet/TransactionManagement')
+              import(
+                '@pages/wallet-administration/transaction-wallet/TransactionManagement'
+              )
           )
         }
       ]
@@ -234,152 +296,207 @@ const merchantManagement = {
           path: SCREENS.MERCHANT_MANAGEMENT.path,
           element: page(
             () =>
-              import('@/pages/merchant-management/merchant-management/merchant/pages/MerchantManagement')
+              import(
+                '@/pages/merchant-management/merchant-management/merchant/pages/MerchantManagement'
+              )
           )
         },
         {
           path: `${SCREENS.MERCHANT_MANAGEMENT.path}/create`,
           element: page(
             () =>
-              import('@/pages/merchant-management/merchant-management/merchant/pages/CreateMerchant')
+              import(
+                '@/pages/merchant-management/merchant-management/merchant/pages/CreateMerchant'
+              )
           )
         },
         {
           path: `${SCREENS.MERCHANT_MANAGEMENT.path}/create/:id`,
           element: page(
             () =>
-              import('@/pages/merchant-management/merchant-management/merchant/pages/CreateMerchant')
+              import(
+                '@/pages/merchant-management/merchant-management/merchant/pages/CreateMerchant'
+              )
           )
         },
         {
           path: `${SCREENS.MERCHANT_MANAGEMENT.path}/detail/:id`,
           element: page(
             () =>
-              import('@/pages/merchant-management/merchant-management/merchant/pages/MerchantDetail')
+              import(
+                '@/pages/merchant-management/merchant-management/merchant/pages/MerchantDetail'
+              )
           )
         },
         {
           path: `${SCREENS.MERCHANT_MANAGEMENT.path}/:id`,
           element: page(
             () =>
-              import('@/pages/merchant-management/merchant-management/merchant/pages/MerchantDetail')
+              import(
+                '@/pages/merchant-management/merchant-management/merchant/pages/MerchantDetail'
+              )
           )
         },
         {
           path: SCREENS.MERCHANT_BANK_ACCOUNT.path,
           element: page(
             () =>
-              import('@pages/merchant-management/merchant-management/bank-account/pages/BankAccount')
+              import(
+                '@pages/merchant-management/merchant-management/bank-account/pages/BankAccount'
+              )
           )
         },
         {
           path: SCREENS.MERCHANT_KEY_CONNECTION.path,
           element: page(
             () =>
-              import('@/pages/merchant-management/merchant-gateway/key-connection/pages/KeyConnectionPage')
+              import(
+                '@/pages/merchant-management/merchant-gateway/key-connection/pages/KeyConnectionPage'
+              )
           )
         },
         {
           path: SCREENS.MERCHANT_PAYMENT_METHOD.path,
           element: page(
             () =>
-              import('@/pages/merchant-management/merchant-gateway/payment-method/pages/PaymentMethodPage')
+              import(
+                '@/pages/merchant-management/merchant-gateway/payment-method/pages/PaymentMethodPage'
+              )
           )
         },
         {
           path: SCREENS.MERCHANT_NOTIFICATION.path,
           element: page(
             () =>
-              import('@/pages/merchant-management/merchant-gateway/notification/pages/NotificationPage')
+              import(
+                '@/pages/merchant-management/merchant-gateway/notification/pages/NotificationPage'
+              )
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_TRANSACTION.path,
+          element: page(
+            () =>
+              import(
+                '@/pages/merchant-management/merchant-gateway/transactions/pages/MerchantTransactionPage'
+              )
           )
         },
         {
           path: SCREENS.BUSINESS_WALLET_ACCOUNT.path,
           element: page(
             () =>
-              import('@pages/merchant-management/business-wallet-account/pages/BusinessWallet')
+              import(
+                '@pages/merchant-management/business-wallet-account/pages/BusinessWallet'
+              )
           )
         },
         {
           path: `${SCREENS.BUSINESS_WALLET_ACCOUNT.path}/create`,
           element: page(
             () =>
-              import('@pages/merchant-management/business-wallet-account/pages/BusinessWalletForm')
+              import(
+                '@pages/merchant-management/business-wallet-account/pages/BusinessWalletForm'
+              )
           )
         },
         {
           path: `${SCREENS.BUSINESS_WALLET_ACCOUNT.path}/edit/:id`,
           element: page(
             () =>
-              import('@pages/merchant-management/business-wallet-account/pages/BusinessWalletForm')
+              import(
+                '@pages/merchant-management/business-wallet-account/pages/BusinessWalletForm'
+              )
           )
         },
         {
           path: SCREENS.MERCHANT_SUB_MERCHANT.path,
           element: page(
             () =>
-              import('@pages/merchant-management/sub-merchant-management/sub-merchant/pages/SubMerchantListPage')
+              import(
+                '@pages/merchant-management/sub-merchant-management/sub-merchant/pages/SubMerchantListPage'
+              )
           )
         },
         {
           path: `${SCREENS.MERCHANT_SUB_MERCHANT.path}/create`,
           element: page(
             () =>
-              import('@pages/merchant-management/sub-merchant-management/sub-merchant/pages/SubMerchantFormPage')
+              import(
+                '@pages/merchant-management/sub-merchant-management/sub-merchant/pages/SubMerchantFormPage'
+              )
           )
         },
         {
           path: `${SCREENS.MERCHANT_SUB_MERCHANT.path}/edit/:id`,
           element: page(
             () =>
-              import('@pages/merchant-management/sub-merchant-management/sub-merchant/pages/SubMerchantFormPage')
+              import(
+                '@pages/merchant-management/sub-merchant-management/sub-merchant/pages/SubMerchantFormPage'
+              )
           )
         },
         {
           path: `${SCREENS.MERCHANT_SUB_MERCHANT.path}/detail/:id`,
           element: page(
             () =>
-              import('@pages/merchant-management/sub-merchant-management/sub-merchant/pages/SubMerchantDetailPage')
+              import(
+                '@pages/merchant-management/sub-merchant-management/sub-merchant/pages/SubMerchantDetailPage'
+              )
           )
         },
         {
           path: SCREENS.MERCHANT_TERMINAL.path,
           element: page(
             () =>
-              import('@pages/merchant-management/sub-merchant-management/terminal/pages/TerminalListPage')
+              import(
+                '@pages/merchant-management/sub-merchant-management/terminal/pages/TerminalListPage'
+              )
           )
         },
         {
           path: `${SCREENS.MERCHANT_TERMINAL.path}/create`,
           element: page(
             () =>
-              import('@pages/merchant-management/sub-merchant-management/terminal/pages/TerminalFormPage')
+              import(
+                '@pages/merchant-management/sub-merchant-management/terminal/pages/TerminalFormPage'
+              )
           )
         },
         {
           path: `${SCREENS.MERCHANT_TERMINAL.path}/edit/:id`,
           element: page(
             () =>
-              import('@pages/merchant-management/sub-merchant-management/terminal/pages/TerminalFormPage')
+              import(
+                '@pages/merchant-management/sub-merchant-management/terminal/pages/TerminalFormPage'
+              )
           )
         },
         {
           path: `${SCREENS.MERCHANT_TERMINAL.path}/detail/:id`,
           element: page(
             () =>
-              import('@pages/merchant-management/sub-merchant-management/terminal/pages/TerminalDetailPage')
+              import(
+                '@pages/merchant-management/sub-merchant-management/terminal/pages/TerminalDetailPage'
+              )
           )
         },
         {
           path: SCREENS.MERCHANT_USER.path,
           element: page(
-            () => import('@pages/merchant-management/merchant-access/pages/MerchantUserListPage')
+            () =>
+              import(
+                '@pages/merchant-management/merchant-access/pages/MerchantUserListPage'
+              )
           )
         },
         {
           path: SCREENS.MERCHANT_ROLE.path,
           element: page(
-            () => import('@pages/merchant-management/merchant-access/pages/MerchantRoleListPage')
+            () =>
+              import(
+                '@pages/merchant-management/merchant-access/pages/MerchantRoleListPage'
+              )
           )
         }
       ]
@@ -398,14 +515,18 @@ const transactionManagement = {
           path: SCREENS.TRANSACTION_WALLET.path,
           element: page(
             () =>
-              import('@pages/wallet-administration/transaction-wallet/TransactionManagement')
+              import(
+                '@pages/wallet-administration/transaction-wallet/TransactionManagement'
+              )
           )
         },
         {
           path: `${SCREENS.TRANSACTION_WALLET.path}/:id`,
           element: page(
             () =>
-              import('@pages/wallet-administration/transaction-wallet/DetailTransaction')
+              import(
+                '@pages/wallet-administration/transaction-wallet/DetailTransaction'
+              )
           )
         }
       ]
@@ -417,7 +538,9 @@ const transactionManagement = {
           path: SCREENS.FROZEN_TRANSACTIONS.path,
           element: page(
             () =>
-              import('@pages/transaction-management/frozen-transactions/FrozenTransactions')
+              import(
+                '@pages/transaction-management/frozen-transactions/FrozenTransactions'
+              )
           )
         }
       ]
@@ -429,7 +552,9 @@ const transactionManagement = {
           path: `${SCREENS.TRANSACTION_MANAGEMENT.path}/refund-management`,
           element: page(
             () =>
-              import('@pages/transaction-management/refund-management/RefundManagement')
+              import(
+                '@pages/transaction-management/refund-management/RefundManagement'
+              )
           )
         }
       ]
@@ -441,14 +566,18 @@ const transactionManagement = {
           path: SCREENS.SYSTEM_LEDGER.path,
           element: page(
             () =>
-              import('@pages/transaction-management/system-ledger/SystemLedgerManagement')
+              import(
+                '@pages/transaction-management/system-ledger/SystemLedgerManagement'
+              )
           )
         },
         {
           path: `${SCREENS.SYSTEM_LEDGER.path}/:id`,
           element: page(
             () =>
-              import('@pages/transaction-management/system-ledger/DetailSystemLedger')
+              import(
+                '@pages/transaction-management/system-ledger/DetailSystemLedger'
+              )
           )
         }
       ]
@@ -460,7 +589,9 @@ const transactionManagement = {
           path: SCREENS.WITHDRAW_HISTORY.path,
           element: page(
             () =>
-              import('@pages/transaction-management/withdraw-history/WithdrawHistory')
+              import(
+                '@pages/transaction-management/withdraw-history/WithdrawHistory'
+              )
           )
         }
       ]

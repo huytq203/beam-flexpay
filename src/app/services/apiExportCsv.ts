@@ -110,6 +110,7 @@ export interface ExportFeePoliciesQuery {
   feeScope?: string
   serviceType?: string
   status?: string
+  effectiveStatus?: string
   appliedTarget?: string
   subjectKeyword?: string
   bankCode?: string

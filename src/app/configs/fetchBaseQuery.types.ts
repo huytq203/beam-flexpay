@@ -45,10 +45,15 @@ export enum TokenType {
 
 /**
  * Cookie storage keys (snake_case for cookie naming convention)
+ *
+ * Có tiền tố `ewallet_cms_` vì cookie chỉ tách theo host, không tách theo port:
+ * trên localhost, merchant-cms-web (:3000) ghi cookie HttpOnly `access_token` /
+ * `refresh_token`. Dùng chung tên thì CMS này không đọc được cũng không ghi đè
+ * được, và F5 là bị đẩy ra trang đăng nhập.
  */
 export enum CookieKey {
-    ACCESS_TOKEN = 'access_token',
-    REFRESH_TOKEN = 'refresh_token'
+    ACCESS_TOKEN = 'ewallet_cms_access_token',
+    REFRESH_TOKEN = 'ewallet_cms_refresh_token'
 }
 
 // ============================================================================

@@ -1,6 +1,6 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
-import { apiFeeService, apiMerchant, apiService, apiWalletCore, authApiService } from '@services/apiService'
+import { apiFeeService, apiMerchant, apiService, apiUserWallet, apiWalletCore, authApiService } from '@services/apiService'
 import { apiWeather } from '@services/apiWeather'
 import authReducer from '@slices/authSlice'
 import { TypedUseSelectorHook, useSelector } from 'react-redux'
@@ -14,6 +14,7 @@ export const createAppStore = () => configureStore({
     [apiFeeService.reducerPath]: apiFeeService.reducer,
     [apiWalletCore.reducerPath]: apiWalletCore.reducer,
     [apiMerchant.reducerPath]: apiMerchant.reducer,
+    [apiUserWallet.reducerPath]: apiUserWallet.reducer,
     [apiWeather.reducerPath]: apiWeather.reducer,
     auth: authReducer
   },
@@ -24,6 +25,7 @@ export const createAppStore = () => configureStore({
       apiFeeService.middleware,
       apiWalletCore.middleware,
       apiMerchant.middleware,
+      apiUserWallet.middleware,
       apiWeather.middleware,
       errorMiddleware
     )

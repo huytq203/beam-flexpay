@@ -31,6 +31,13 @@ const SILENT_ENDPOINTS: string[] = [
   'resetAdminPassword',
   // Màn Bảo mật tự dựng trạng thái lỗi ngay trong tab, không cần toast trùng.
   'getCustomerDevices',
+  // Form hạn mức tự hiện lỗi từng ô (400 `3001`), lỗi xung đột 409 `19110` và
+  // câu tiếng Việt của BE ngay trên form; toast chung sẽ trùng hoặc chỉ in
+  // "Validation failed".
+  'createWalletLimitPolicy',
+  'updateWalletLimitPolicy',
+  'createWalletLimitSpecialMonth',
+  'renameWalletLimitSpecialMonth',
   // Thời tiết panel đăng nhập chỉ là trang trí — lỗi của nó không được hiện
   // toast lên màn hình người dùng đang đăng nhập.
   'getCurrentWeather'
@@ -104,13 +111,17 @@ export const redirectToForbidden = (endpointName?: string): void => {
     '',
     PATHS.FORBIDDEN
   )
-  window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }))
+  window.dispatchEvent(
+    new PopStateEvent('popstate', { state: window.history.state })
+  )
 }
 
 const redirectToLogin = (): void => {
   if (window.location.pathname === PATHS.AUTH.LOGIN) return
   window.history.replaceState(window.history.state, '', PATHS.AUTH.LOGIN)
-  window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }))
+  window.dispatchEvent(
+    new PopStateEvent('popstate', { state: window.history.state })
+  )
 }
 
 /**
@@ -136,7 +147,8 @@ export const errorMiddleware: Middleware = (storeApi) => (next) => (action) => {
       (!endpointName || !LOCAL_403_ENDPOINTS.has(endpointName))
     ) {
       const hasSession = Boolean(
-        Cookies.get(CookieKey.ACCESS_TOKEN) || Cookies.get(CookieKey.REFRESH_TOKEN)
+        Cookies.get(CookieKey.ACCESS_TOKEN) ||
+          Cookies.get(CookieKey.REFRESH_TOKEN)
       )
       if (hasSession) {
         redirectToForbidden(endpointName)

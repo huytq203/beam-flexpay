@@ -87,7 +87,7 @@ describe('danh sách chính sách phí — xuất CSV', () => {
         feeScope: 'INPUT_COST',
         keyword: 'nap tien',
         subjectKeyword: '0912',
-        status: 'ACTIVE',
+        effectiveStatus: 'ACTIVE',
         appliedTarget: 'CUSTOMER_GROUP',
         serviceType: 'EWALLET_DEPOSIT',
         bankCode: 'VCB',
