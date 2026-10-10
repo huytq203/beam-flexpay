@@ -10,6 +10,7 @@ import type { ScreenId } from '@/app/permissions'
 import type { Key, ReactNode } from 'react'
 import i18n from '@languages/i18n'
 import {
+  ArrowCounterClockwiseIcon,
   ArrowsLeftRightIcon,
   BankIcon,
   BellIcon,
@@ -233,6 +234,18 @@ const transactionManagement: ItemTypeCustom = {
         />
       ),
       label: 'Giao dịch đóng băng'
+    },
+    {
+      key: 'refund-management',
+      screen: 'REFUND_MANAGEMENT',
+      icon: (
+        <ArrowCounterClockwiseIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quản lý hoàn tiền'
     },
     {
       key: 'system-ledger',

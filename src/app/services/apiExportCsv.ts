@@ -47,6 +47,8 @@ export interface ExportTransactionsQuery {
   sourceDomain?: string
   paymentMethod?: string
   bankCode?: string
+  /** Cùng ý nghĩa với tham số của `/wallet/journal/unified`; bỏ trống là không lọc. */
+  hasRefund?: boolean
   /**
    * Khớp CHỨA, không phân biệt hoa thường, trên mã giao dịch · mã bút toán ·
    * username người khởi tạo · username đối tác. Khác `transactionCode` và
@@ -199,15 +201,17 @@ export const apiExportWalletCsv = apiWalletCore.injectEndpoints({
           extraOptions
         )
     }),
-    exportLedgerEntries: build.mutation<ExportedFile, ExportLedgerEntriesQuery>({
-      queryFn: (params, queryApi, extraOptions) =>
-        runExport(
-          fetchBaseQueryWalletCore,
-          { url: '/wallet/entries/export', params: { ...params } },
-          queryApi,
-          extraOptions
-        )
-    })
+    exportLedgerEntries: build.mutation<ExportedFile, ExportLedgerEntriesQuery>(
+      {
+        queryFn: (params, queryApi, extraOptions) =>
+          runExport(
+            fetchBaseQueryWalletCore,
+            { url: '/wallet/entries/export', params: { ...params } },
+            queryApi,
+            extraOptions
+          )
+      }
+    )
   })
 })
 

@@ -13,6 +13,7 @@ import {
   ekycCancelSchema,
   type EkycCancelFormValues
 } from '../schemas/ekycCancel.schema'
+import { getEkycErrorDetail } from '../utils/ekycError'
 import { EkycIconButton } from './EkycIconButton'
 
 interface EkycCancelActionProps {
@@ -21,13 +22,6 @@ interface EkycCancelActionProps {
 
 const DEFAULT_ERROR =
   'Không hủy được eKYC. Vui lòng tải lại danh sách và thử lại.'
-
-const getErrorDetail = (error: unknown): string | null => {
-  if (!error || typeof error !== 'object' || !('data' in error)) return null
-  const data = error.data
-  if (!data || typeof data !== 'object' || !('detail' in data)) return null
-  return typeof data.detail === 'string' ? data.detail : null
-}
 
 export const EkycCancelAction = ({ record }: EkycCancelActionProps) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -59,7 +53,7 @@ export const EkycCancelAction = ({ record }: EkycCancelActionProps) => {
       close()
       successMess('Đã hủy eKYC của hồ sơ.')
     } catch (cause) {
-      setError(getErrorDetail(cause) ?? DEFAULT_ERROR)
+      setError(getEkycErrorDetail(cause) ?? DEFAULT_ERROR)
     }
   }
 

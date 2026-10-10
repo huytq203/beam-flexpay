@@ -1,4 +1,5 @@
-import { toStuckTransactionUpdate } from '@pages/transaction-management/stuck-transaction/dto/bankConfirmation.dto'
+import { toStuckTransactionUpdate } from '@pages/transaction-management/stuck-transaction/dto/stuckTransactionUpdate.dto'
+import { useTransactionSnapshot } from '@pages/wallet-administration/transaction-wallet/hooks/useTransactionSnapshot'
 import { useState } from 'react'
 import {
   ButtonComponent,
@@ -17,18 +18,16 @@ import {
   canUpdateStuckTransaction,
   isStuckJournalStatus
 } from '@utils/stuck-transaction'
-import { StuckTransactionOutcome } from '@type/stuckTransaction.type'
-import { StuckTransactionUpdateForm } from './StuckTransactionUpdateForm'
+import { StuckTransactionDialogContent } from './StuckTransactionDialogContent'
 import type { StuckTransactionUpdateFormValues } from './StuckTransaction.schema'
+import {
+  describeResult,
+  describeSubmitError,
+  getFinalActions,
+  isConflictError
+} from './stuckTransaction.utils'
 
 const CASH_OUT = 'CASH_OUT'
-
-const getErrorDetail = (error: unknown): string | null => {
-  if (!error || typeof error !== 'object' || !('data' in error)) return null
-  const data = error.data
-  if (!data || typeof data !== 'object' || !('detail' in data)) return null
-  return typeof data.detail === 'string' ? data.detail : null
-}
 
 export interface StuckTransactionUpdateActionProps {
   transactionCode?: string | null
@@ -38,6 +37,8 @@ export interface StuckTransactionUpdateActionProps {
   journalStatus?: string | null
   /** Thu gọn thành icon trong cột thao tác của bảng. */
   compact?: boolean
+  /** Ẩn nút khi lệnh nạp đang REVIEW: lúc đó chỉ Duyệt/Từ chối được chốt lệnh. */
+  hidden?: boolean
   className?: string
 }
 
@@ -55,10 +56,9 @@ export const StuckTransactionUpdateAction = ({
   transactionType,
   journalStatus,
   compact = false,
+  hidden = false,
   className
 }: StuckTransactionUpdateActionProps) => {
-  const allowBankConfirmation =
-    transactionType !== 'P2P_TRANSFER' && transactionType !== 'TRANSFER'
   const [isOpen, setIsOpen] = useState(false)
   const [submissionError, setSubmissionError] = useState<string | null>(null)
   const { has } = useAccess()
@@ -81,9 +81,16 @@ export const StuckTransactionUpdateAction = ({
   })
   const [updateStatus, { isLoading }] =
     useUpdateStuckTransactionStatusMutation()
+  const { snapshot, refresh } = useTransactionSnapshot(code)
+  // Chưa có snapshot thì vẫn hiện nút để bấm vào là hỏi `refresh`; kết quả cuối thì
+  // `allowedActions` không còn POSTED/FAILED nên nút biến mất (NFR-DATA-INTEG).
+  const hasNoFinalAction =
+    snapshot !== undefined &&
+    getFinalActions(snapshot.allowedActions).length === 0
 
-  if (!code || !canAccess) return null
+  if (!code || !canAccess || hidden) return null
   if (!isStuckJournalStatus(journalStatus)) return null
+  if (hasNoFinalAction && !isOpen) return null
   if (
     !compact &&
     !canUpdateStuckTransaction(journalStatus, withdrawal?.status)
@@ -112,32 +119,25 @@ export const StuckTransactionUpdateAction = ({
 
     setSubmissionError(null)
     setIsOpen(true)
+    void refresh()
   }
 
   const handleSubmit = async (
-    values: StuckTransactionUpdateFormValues
+    values: StuckTransactionUpdateFormValues,
+    optionalFields: readonly string[]
   ): Promise<void> => {
+    if (isLoading) return
     setSubmissionError(null)
     try {
       const result = await updateStatus(
-        toStuckTransactionUpdate(
-          code,
-          values,
-          allowBankConfirmation,
-          allowBankConfirmation
-        )
+        toStuckTransactionUpdate(code, values, optionalFields)
       ).unwrap()
       setIsOpen(false)
-      successMess(
-        result.newStatus === StuckTransactionOutcome.POSTED
-          ? 'Đã chốt giao dịch thành công và ghi bút toán vào sổ cái.'
-          : 'Đã chốt giao dịch thất bại. Khoản tiền đang bị giữ đã được giải phóng.'
-      )
+      successMess(describeResult(result))
     } catch (error) {
-      setSubmissionError(
-        getErrorDetail(error) ??
-          'Không thể chốt giao dịch. Hãy kiểm tra lại trạng thái lệnh, bằng chứng ngân hàng và số tiền có thể giữ, rồi thử lại.'
-      )
+      setSubmissionError(describeSubmitError(error))
+      // 409: trạng thái đã đổi (kết quả cuối, đang review...) nên tải lại popup theo snapshot mới.
+      if (isConflictError(error)) void refresh()
     }
   }
 
@@ -172,15 +172,17 @@ export const StuckTransactionUpdateAction = ({
         onOk={() => setIsOpen(false)}
         onCancel={() => setIsOpen(false)}
         content={
-          <StuckTransactionUpdateForm
-            allowBankConfirmation={allowBankConfirmation}
-            transactionCode={code}
-            isCashOut={transactionType === CASH_OUT}
-            isSubmitting={isLoading}
-            submissionError={submissionError}
-            onSubmit={(values) => void handleSubmit(values)}
-            onCancel={() => setIsOpen(false)}
-          />
+          isOpen ? (
+            <StuckTransactionDialogContent
+              transactionCode={code}
+              isSubmitting={isLoading}
+              submissionError={submissionError}
+              onSubmit={(values, optionalFields) =>
+                void handleSubmit(values, optionalFields)
+              }
+              onCancel={() => setIsOpen(false)}
+            />
+          ) : null
         }
       />
     </>

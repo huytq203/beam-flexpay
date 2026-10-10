@@ -44,75 +44,89 @@ export type WithdrawalDetail = z.infer<
   typeof withdrawalDetailResponseSchema
 >['data']
 
+const unifiedQuery = (params: object) => ({
+  url: `/wallet/journal/unified`,
+  params,
+  method: 'GET' as const
+})
+
+const unwrapUnified = (res: { data: DataUnifiedJournal }): DataUnifiedJournal =>
+  res.data
+
 export const apiJournal = apiWalletCore.injectEndpoints({
-    endpoints: (build) => ({
-      getUnified: build.query<DataUnifiedJournal, object>({
-        query: (params) => ({
-          url: `/wallet/journal/unified`,
-          params: params,
-          method: 'GET'
-        }),
-        transformResponse: (res: { data: DataUnifiedJournal }) => res.data,
-        providesTags: ['Journal'],
+  endpoints: (build) => ({
+    getUnified: build.query<DataUnifiedJournal, object>({
+      query: unifiedQuery,
+      transformResponse: unwrapUnified,
+      providesTags: ['Journal']
+    }),
+    // Cùng API với `getUnified`; màn Lịch sử giao dịch hiện lỗi inline (TransactionListError)
+    // nên tắt toast, còn các màn khác chưa tự báo lỗi vẫn dùng `getUnified`.
+    getUnifiedInlineError: build.query<DataUnifiedJournal, object>({
+      query: unifiedQuery,
+      extraOptions: { suppressErrorNotification: true },
+      transformResponse: unwrapUnified,
+      providesTags: ['Journal']
+    }),
+    getUnifiedById: build.query<UnifiedContentJournal, string | undefined>({
+      query: (id) => ({
+        url: `/wallet/journal/unified/${id}`,
+        method: 'GET'
       }),
-      getUnifiedById: build.query<UnifiedContentJournal, string | undefined>({
-        query: (id) => ({
-          url: `/wallet/journal/unified/${id}`,
-          method: 'GET'
-        }),
-        transformResponse: (res: { data: UnifiedContentJournal }) => res.data,
-        providesTags: ['Journal'],
+      transformResponse: (res: { data: UnifiedContentJournal }) => res.data,
+      providesTags: ['Journal']
+    }),
+    getTransactionDetail360: build.query<TransactionDetail360, string>({
+      query: (id) => ({
+        url: `/wallet/journal/unified/${id}/detail`,
+        method: 'GET'
       }),
-      getTransactionDetail360: build.query<TransactionDetail360, string>({
-        query: (id) => ({
-          url: `/wallet/journal/unified/${id}/detail`,
-          method: 'GET'
-        }),
-        transformResponse: (res: { data: TransactionDetail360 }) => res.data,
-        providesTags: ['Journal']
-      }),
-      getWithdrawalByTransactionCode: build.query<WithdrawalDetail, string>({
-        async queryFn(transactionCode, queryApi, extraOptions) {
-          const response = await fetchBaseQueryUserWallet(
-            {
-              url: '/withdrawals',
-              method: 'GET',
-              params: { transactionCode }
-            },
-            queryApi,
-            extraOptions
-          )
+      transformResponse: (res: { data: TransactionDetail360 }) => res.data,
+      providesTags: ['Journal']
+    }),
+    getWithdrawalByTransactionCode: build.query<WithdrawalDetail, string>({
+      async queryFn(transactionCode, queryApi, extraOptions) {
+        const response = await fetchBaseQueryUserWallet(
+          {
+            url: '/withdrawals',
+            method: 'GET',
+            params: { transactionCode }
+          },
+          queryApi,
+          extraOptions
+        )
 
-          if (response.error) return { error: response.error }
+        if (response.error) return { error: response.error }
 
-          const parsedResponse = withdrawalDetailResponseSchema.safeParse(
-            response.data
-          )
-          if (!parsedResponse.success) {
-            return {
-              error: {
-                status: 'PARSING_ERROR',
-                originalStatus: 200,
-                data: JSON.stringify(response.data) ?? '',
-                error: parsedResponse.error.message
-              }
+        const parsedResponse = withdrawalDetailResponseSchema.safeParse(
+          response.data
+        )
+        if (!parsedResponse.success) {
+          return {
+            error: {
+              status: 'PARSING_ERROR',
+              originalStatus: 200,
+              data: JSON.stringify(response.data) ?? '',
+              error: parsedResponse.error.message
             }
           }
+        }
 
-          return { data: parsedResponse.data.data }
-        },
-        providesTags: (_result, _error, transactionCode) => [
-          { type: 'Withdrawal' as const, id: transactionCode },
-          'Journal' as const
-        ]
-      })
+        return { data: parsedResponse.data.data }
+      },
+      providesTags: (_result, _error, transactionCode) => [
+        { type: 'Withdrawal' as const, id: transactionCode },
+        'Journal' as const
+      ]
     })
+  })
 })
 export const {
   useGetUnifiedQuery,
+  useGetUnifiedInlineErrorQuery,
   useGetUnifiedByIdQuery,
   useGetTransactionDetail360Query,
   useGetWithdrawalByTransactionCodeQuery,
   useLazyGetUnifiedByIdQuery,
-  useLazyGetWithdrawalByTransactionCodeQuery,
+  useLazyGetWithdrawalByTransactionCodeQuery
 } = apiJournal

@@ -1,4 +1,4 @@
-import { cn } from '@lib/utils/cn'
+import { ChipTab, ChipTabGroup } from '@components/ui/chip-tab-component'
 import {
   FEE_BUSINESS_CATEGORY_RULES,
   getFeeBusinessCategories,
@@ -28,34 +28,24 @@ export const FeeBusinessCategoryTabs = ({
   if (categories.length < 2) return null
 
   return (
-    <div
+    <ChipTabGroup
       role='tablist'
       aria-label='Nhóm phí nghiệp vụ'
-      className='mb-3 flex flex-wrap gap-2'
     >
       {categories.map((category) => {
         const isActive = category === value
         return (
-          <button
+          <ChipTab
             key={category}
-            type='button'
             role='tab'
-            aria-selected={isActive}
+            isActive={isActive}
             disabled={disabled}
             onClick={() => onChange(category)}
-            className={cn(
-              'rounded-lg border px-3 py-1.5 text-[13px] font-semibold transition-colors',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-              'disabled:cursor-not-allowed disabled:opacity-60',
-              isActive
-                ? 'border-primary bg-primary text-primary-foreground'
-                : 'border-border bg-background text-foreground hover:bg-accent'
-            )}
           >
             {FEE_BUSINESS_CATEGORY_RULES[category].label}
-          </button>
+          </ChipTab>
         )
       })}
-    </div>
+    </ChipTabGroup>
   )
 }

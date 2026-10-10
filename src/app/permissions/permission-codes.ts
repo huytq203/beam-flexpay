@@ -94,6 +94,19 @@ export const PERMISSION = {
   FREEZE_UPDATE: 'EWALLET:FREEZE:UPDATE',
   FREEZE_APPROVE: 'EWALLET:FREEZE:APPROVE',
 
+  /**
+   * BE gắn `PERMISSION_` khi kiểm tra; identity chỉ tạo tên `REFUND:APPROVE` rồi tự thêm
+   * tiền tố `EWALLET:` vào claim — cùng quy ước với `EWALLET:FREEZE:APPROVE`.
+   * Duyệt, từ chối, xem hoàn tiền; không tạo, quyết toán hay làm mới lệnh chi được.
+   */
+  REFUND_APPROVE: 'EWALLET:REFUND:APPROVE',
+
+  /**
+   * Cùng quy ước tiền tố với `REFUND:APPROVE`. Chỉ mở đánh dấu Review, duyệt và từ chối
+   * lệnh nạp; không gọi được `refresh` hay `update-status` (cần `EWALLET:FULL`).
+   */
+  TRANSACTION_REVIEW: 'EWALLET:TRANSACTION:REVIEW',
+
   EWALLET_FULL: 'EWALLET:EWALLET:FULL'
 } as const
 

@@ -39,6 +39,10 @@ export const profileStatusMap: Record<
   INVALID: {
     className: 'text-red-600 bg-red-50 border border-red-400',
     label: 'Đã thu hồi'
+  },
+  REVERIFY_REQUIRED: {
+    className: 'text-amber-800 bg-amber-50 border border-amber-400',
+    label: 'Chờ xác thực lại'
   }
 }
 

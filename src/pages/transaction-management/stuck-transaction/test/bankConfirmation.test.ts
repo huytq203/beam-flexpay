@@ -1,125 +1,65 @@
 import { describe, expect, it } from 'vitest'
-import { toStuckTransactionUpdate } from '../dto/bankConfirmation.dto'
-import { createStuckTransactionUpdateSchema } from '@/components/transaction/StuckTransaction.schema'
-import { stuckTransactionUpdateSchema } from '@/components/transaction/StuckTransaction.schema'
+import { z } from 'zod'
+import {
+  bankConfirmationFieldsSchema,
+  validateBankConfirmation
+} from '../schemas/bankConfirmation.schema'
 
-const values = {
-  newStatus: 'POSTED',
-  note: 'Đã đối chiếu ngân hàng',
-  includeBankConfirmation: true,
-  bankConfirmation: {
-    confirmationChannel: 'EMAIL',
-    confirmationReference: 'REF-1',
-    confirmedAt: '2026-01-02T10:00',
-    bankReference: 'BANK-1',
-    valueDate: '2026-01-02',
-    bankBookedAt: '2026-01-02T09:00'
-  }
+/** Khối này còn dùng cho hộp thoại Review (Duyệt / Từ chối), không còn ở form cập nhật treo. */
+const schema = z
+  .object({
+    newStatus: z.string(),
+    includeBankConfirmation: z.boolean().optional(),
+    bankConfirmation: bankConfirmationFieldsSchema.optional()
+  })
+  .superRefine((values, ctx) => validateBankConfirmation(values, ctx, true))
+
+const complete = {
+  confirmationChannel: 'EMAIL',
+  confirmationReference: 'REF-1',
+  confirmedAt: '2026-01-02T10:00',
+  bankReference: 'BANK-1',
+  valueDate: '2026-01-02',
+  bankBookedAt: '2026-01-02T09:00'
 }
 
-describe('bank confirmation validation', () => {
-  it('rejects missing confirmation details when enabled', () => {
+describe('validateBankConfirmation (dùng cho Review)', () => {
+  it('thiếu bằng chứng khi bắt buộc thì lỗi', () => {
+    expect(schema.safeParse({ newStatus: 'POSTED' }).success).toBe(false)
+  })
+
+  it('đủ bằng chứng thì hợp lệ', () => {
     expect(
-      stuckTransactionUpdateSchema.safeParse({
-        ...values,
-        bankConfirmation: undefined
+      schema.safeParse({ newStatus: 'POSTED', bankConfirmation: complete })
+        .success
+    ).toBe(true)
+  })
+
+  it.each([
+    { confirmedAt: '2999-01-01T10:00' },
+    { bankBookedAt: '2026-01-03T10:00' },
+    { bankReference: '' },
+    { valueDate: '2026-02-30' }
+  ])('từ chối khi POSTED mà %o', (override) => {
+    expect(
+      schema.safeParse({
+        newStatus: 'POSTED',
+        bankConfirmation: { ...complete, ...override }
       }).success
     ).toBe(false)
   })
-  it('accepts complete evidence', () => {
-    expect(stuckTransactionUpdateSchema.safeParse(values).success).toBe(true)
-  })
-  it('rejects future confirmation and booking after confirmation', () => {
-    for (const override of [
-      { confirmedAt: '2999-01-01T10:00' },
-      { bankBookedAt: '2026-01-03T10:00' }
-    ]) {
-      expect(
-        stuckTransactionUpdateSchema.safeParse({
-          ...values,
-          bankConfirmation: { ...values.bankConfirmation, ...override }
-        }).success
-      ).toBe(false)
-    }
-  })
-  it('requires bank reference and real value date for success', () => {
-    for (const override of [
-      { bankReference: '' },
-      { valueDate: '2026-02-30' },
-      { bankBookedAt: '' }
-    ]) {
-      expect(
-        stuckTransactionUpdateSchema.safeParse({
-          ...values,
-          bankConfirmation: { ...values.bankConfirmation, ...override }
-        }).success
-      ).toBe(false)
-    }
-  })
-  it('accepts failure without settlement fields and ignores disabled evidence', () => {
+
+  it('FAILED không đòi mã ngân hàng, ngày giá trị, giờ ghi sổ', () => {
     expect(
-      stuckTransactionUpdateSchema.safeParse({
-        ...values,
+      schema.safeParse({
         newStatus: 'FAILED',
         bankConfirmation: {
-          ...values.bankConfirmation,
+          ...complete,
           bankReference: '',
           valueDate: '',
           bankBookedAt: ''
         }
       }).success
     ).toBe(true)
-    expect(
-      stuckTransactionUpdateSchema.safeParse({
-        ...values,
-        includeBankConfirmation: false,
-        bankConfirmation: undefined
-      }).success
-    ).toBe(true)
-  })
-})
-
-describe('bank confirmation payload', () => {
-  it('requires evidence after 4101 even if the checkbox is off', () => {
-    expect(
-      createStuckTransactionUpdateSchema(true).safeParse({
-        ...values,
-        includeBankConfirmation: false,
-        bankConfirmation: undefined
-      }).success
-    ).toBe(false)
-  })
-  it('derives FAILED outcome and omits stale success fields', () => {
-    const parsed = stuckTransactionUpdateSchema.parse({
-      ...values,
-      newStatus: 'FAILED',
-      authCode: 'OLD',
-      settlementId: 'OLD'
-    })
-    expect(toStuckTransactionUpdate('TX-1', parsed, false, true)).toEqual({
-      transactionCode: 'TX-1',
-      newStatus: 'FAILED',
-      note: values.note,
-      bankConfirmation: {
-        outcome: 'FAILED',
-        confirmationChannel: 'EMAIL',
-        confirmationReference: 'REF-1',
-        confirmedAt: new Date(values.bankConfirmation.confirmedAt).toISOString()
-      }
-    })
-  })
-  it('omits evidence for internal transfers or an unchecked section', () => {
-    const parsed = stuckTransactionUpdateSchema.parse(values)
-    expect(
-      toStuckTransactionUpdate('TX-1', parsed, false, false)
-    ).not.toHaveProperty('bankConfirmation')
-    expect(
-      toStuckTransactionUpdate(
-        'TX-1',
-        { ...parsed, includeBankConfirmation: false },
-        false,
-        true
-      )
-    ).not.toHaveProperty('bankConfirmation')
   })
 })

@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { navigationItems, type ItemTypeCustom } from '../Navigation'
+import { SCREENS } from '@/app/permissions'
+import {
+  navigationItems,
+  resolveNavLink,
+  type ItemTypeCustom
+} from '../Navigation'
 
 const findItem = (
   items: ItemTypeCustom[],
@@ -36,5 +41,19 @@ describe('merchant gateway navigation', () => {
       'sub-merchant',
       'terminal'
     ])
+  })
+})
+
+describe('quản lý hoàn tiền navigation', () => {
+  it('trỏ mục Quản lý hoàn tiền tới đúng screen và đường dẫn route', () => {
+    const parent = navigationItems.find((item) =>
+      item.children?.some((child) => child.key === 'refund-management')
+    )
+    const item = findItem(navigationItems, 'refund-management')
+
+    expect(item?.screen).toBe('REFUND_MANAGEMENT')
+    expect(
+      parent && item && `/${resolveNavLink(parent, item).replace(/^\//, '')}`
+    ).toBe(SCREENS.REFUND_MANAGEMENT.path)
   })
 })

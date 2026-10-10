@@ -146,7 +146,16 @@ export const SCREENS = {
     accessPermission: PERMISSION.TRANSACTION_FULL,
     actions: {
       ...TRANSACTION_ACTIONS,
-      viewDetail: PERMISSION.TRANSACTION_VIEW
+      viewDetail: PERMISSION.TRANSACTION_VIEW,
+      /**
+       * BE mở đánh dấu/duyệt/từ chối cho `EWALLET:FULL` hoặc `TRANSACTION:REVIEW`.
+       * Lưu ý `actions.full` của màn này là `TRANSACTION:FULL`, nên `can('review')`
+       * cũng đúng với người chỉ có `TRANSACTION:FULL` (BE sẽ trả 403): UI quyết
+       * định bằng `hasAny([EWALLET_FULL, TRANSACTION_REVIEW])`, xem
+       * `useTransactionPermissions`. Hoàn tiền, cập nhật treo và kiểm tra lại
+       * trạng thái chỉ `EWALLET:FULL`, không khai ở đây vì cùng lý do.
+       */
+      review: PERMISSION.TRANSACTION_REVIEW
     }
   },
   FROZEN_TRANSACTIONS: {
@@ -160,6 +169,28 @@ export const SCREENS = {
     actions: {
       ...TRANSACTION_ACTIONS,
       viewDetail: PERMISSION.TRANSACTION_VIEW
+    }
+  },
+  /**
+   * Hoàn tiền (flexpay.user-wallet): xem, duyệt, từ chối mở cho `REFUND:APPROVE`;
+   * quyết toán và làm mới lệnh chi chỉ `EWALLET:FULL` (BE từ chối 403 với
+   * `REFUND:APPROVE`). `EWALLET:FULL` mở mọi hành động qua `actions.full`.
+   * Màn này tự khai quyền nên không còn đi theo `TRANSACTION:FULL` của cả nhóm.
+   */
+  REFUND_MANAGEMENT: {
+    path: `${TRANSACTIONMANAGEMENT}/refund-management`,
+    actions: {
+      view: PERMISSION.REFUND_APPROVE,
+      create: PERMISSION.EWALLET_FULL,
+      edit: PERMISSION.EWALLET_FULL,
+      delete: PERMISSION.EWALLET_FULL,
+      update: PERMISSION.EWALLET_FULL,
+      full: PERMISSION.EWALLET_FULL,
+      viewDetail: PERMISSION.REFUND_APPROVE,
+      approve: PERMISSION.REFUND_APPROVE,
+      reject: PERMISSION.REFUND_APPROVE,
+      settle: PERMISSION.EWALLET_FULL,
+      payoutRefresh: PERMISSION.EWALLET_FULL
     }
   },
   WITHDRAW_HISTORY: {

@@ -1,4 +1,4 @@
-import { cn } from '@lib/utils/cn'
+import { ChipTab, ChipTabGroup } from '@components/ui/chip-tab-component'
 import { FEE_DOMAIN_ENTRIES, type FeeDomain } from './feeDomain'
 
 export interface FeeDomainTabsProps {
@@ -28,33 +28,32 @@ export const FeeDomainTabs = ({
 
   return (
     <div className={className}>
-      <div role='tablist' aria-label='Miền phí' className='flex flex-wrap gap-2'>
+      <ChipTabGroup
+        role='tablist'
+        aria-label='Miền phí'
+      >
         {entries.map(({ value: domain, label, Icon }) => {
           const isActive = domain === value
           return (
-            <button
+            <ChipTab
               key={domain}
-              type='button'
               role='tab'
-              aria-selected={isActive}
+              isActive={isActive}
               disabled={disabled && !isActive}
               onClick={() => onChange(domain)}
-              className={cn(
-                'inline-flex items-center gap-2 rounded-lg border px-3 py-2',
-                'text-[13px] font-semibold transition-colors',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                'disabled:cursor-not-allowed disabled:opacity-60',
-                isActive
-                  ? 'border-primary bg-primary text-primary-foreground'
-                  : 'border-border bg-background text-foreground hover:bg-accent'
-              )}
+              icon={
+                <Icon
+                  size={16}
+                  weight={isActive ? 'fill' : 'bold'}
+                  aria-hidden
+                />
+              }
             >
-              <Icon size={16} weight={isActive ? 'fill' : 'bold'} aria-hidden />
               {label}
-            </button>
+            </ChipTab>
           )
         })}
-      </div>
+      </ChipTabGroup>
     </div>
   )
 }

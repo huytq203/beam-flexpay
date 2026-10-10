@@ -97,19 +97,41 @@ describe('SCREENS', () => {
   it('mọi route transaction-management yêu cầu TRANSACTION:FULL', () => {
     const transactionScreens = screens.filter(
       (screen) =>
-        screen.path === SCREENS.TRANSACTION_MANAGEMENT.path ||
-        screen.path.startsWith(`${SCREENS.TRANSACTION_MANAGEMENT.path}/`)
+        screen !== SCREENS.REFUND_MANAGEMENT &&
+        (screen.path === SCREENS.TRANSACTION_MANAGEMENT.path ||
+          screen.path.startsWith(`${SCREENS.TRANSACTION_MANAGEMENT.path}/`))
     )
 
     expect(transactionScreens.length).toBeGreaterThan(0)
     for (const screen of transactionScreens) {
       expect(screen.accessPermission).toBe(PERMISSION.TRANSACTION_FULL)
     }
-    expect(
-      findScreenByPath(
-        `${SCREENS.TRANSACTION_MANAGEMENT.path}/refund-management`
-      )
-    ).toBe(SCREENS.TRANSACTION_MANAGEMENT)
+  })
+
+  it('hoàn tiền tự khai quyền: xem/duyệt/từ chối cho REFUND:APPROVE, chi tiền chỉ EWALLET:FULL', () => {
+    const refund = SCREENS.REFUND_MANAGEMENT
+    expect(findScreenByPath(refund.path)).toBe(refund)
+    expect('accessPermission' in refund).toBe(false)
+    for (const action of ['view', 'viewDetail', 'approve', 'reject'] as const) {
+      expect(refund.actions[action]).toBe(PERMISSION.REFUND_APPROVE)
+    }
+    for (const action of [
+      'settle',
+      'payoutRefresh',
+      'create',
+      'full'
+    ] as const) {
+      expect(refund.actions[action]).toBe(PERMISSION.EWALLET_FULL)
+    }
+  })
+
+  it('lịch sử giao dịch thêm action review (TRANSACTION:REVIEW) và giữ nguyên các action cũ', () => {
+    const wallet = SCREENS.TRANSACTION_WALLET
+    expect(wallet.actions.review).toBe(PERMISSION.TRANSACTION_REVIEW)
+    expect(PERMISSION.TRANSACTION_REVIEW).toBe('EWALLET:TRANSACTION:REVIEW')
+    expect(wallet.accessPermission).toBe(PERMISSION.TRANSACTION_FULL)
+    expect(wallet.actions.viewDetail).toBe(PERMISSION.TRANSACTION_VIEW)
+    expect(wallet.actions.full).toBe(PERMISSION.TRANSACTION_FULL)
   })
 
   it('mọi screen đều có đủ 6 action chuẩn', () => {

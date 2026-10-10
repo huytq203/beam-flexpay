@@ -65,4 +65,69 @@ describe('hợp đồng cập nhật giao dịch treo', () => {
       transactionId: 'ledger-1'
     })
   })
+
+  it('gửi body update-status không có trường rỗng và trả các trường mới', async () => {
+    let body: unknown = null
+    server.use(
+      http.post(
+        '*/transactions/CO2609070003/update-status',
+        async ({ request }) => {
+          body = await request.json()
+          return HttpResponse.json({
+            success: true,
+            data: {
+              transactionCode: 'CO2609070003',
+              newStatus: 'POSTED',
+              bankReference: 'FT1',
+              receiptKey: 'txn-receipts/x.png',
+              refundBankReference: null
+            }
+          })
+        }
+      )
+    )
+    const store = createAppStore()
+    const result = await store.dispatch(
+      apiStuckTransaction.endpoints.updateStuckTransactionStatus.initiate({
+        transactionCode: 'CO2609070003',
+        newStatus: 'POSTED',
+        note: 'Đã đối chiếu trạng thái với ngân hàng',
+        authCode: '',
+        bankReference: 'FT1',
+        receiptKey: 'txn-receipts/x.png'
+      })
+    )
+    expect(body).toEqual({
+      newStatus: 'POSTED',
+      note: 'Đã đối chiếu trạng thái với ngân hàng',
+      bankReference: 'FT1',
+      receiptKey: 'txn-receipts/x.png'
+    })
+    expect(result.data).toMatchObject({
+      bankReference: 'FT1',
+      receiptKey: 'txn-receipts/x.png',
+      refundBankReference: null
+    })
+  })
+
+  it('GET receipt trả link, và null khi data là {}', async () => {
+    server.use(
+      http.get('*/transactions/WITH/receipt', () =>
+        HttpResponse.json({ data: { receiptUrl: 'https://s3/x' } })
+      ),
+      http.get('*/transactions/NONE/receipt', () =>
+        HttpResponse.json({ data: {} })
+      )
+    )
+    const store = createAppStore()
+    const { getStuckTransactionReceipt } = apiStuckTransaction.endpoints
+    const withReceipt = await store.dispatch(
+      getStuckTransactionReceipt.initiate('WITH')
+    )
+    const none = await store.dispatch(
+      getStuckTransactionReceipt.initiate('NONE')
+    )
+    expect(withReceipt.data).toEqual({ receiptUrl: 'https://s3/x' })
+    expect(none.data).toEqual({ receiptUrl: null })
+  })
 })

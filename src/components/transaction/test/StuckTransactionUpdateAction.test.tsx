@@ -1,19 +1,21 @@
 import { describe, expect, it } from 'vitest'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { screen, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
-import { Provider } from 'react-redux'
-import { createAppStore } from '@/app/store'
-import { savePermissions } from '@slices/authSlice'
-import { MessageProvider } from '@hooks/MessageProvider'
 import { server } from '@/test/mocks/server'
-import { StatusEnum } from '@pages/wallet-administration/transaction-wallet/constants/Transaction.constant'
 import { WithdrawalStatus } from '@type/withdrawalApproval.type'
-import { StuckTransactionUpdateAction } from '../StuckTransactionUpdateAction'
-
-const TRANSACTION_CODE = 'CO2609070001'
-const APPROVER_PERMISSION = 'EWALLET:EWALLET:FULL'
-const NOTE = 'Da doi chieu sao ke ngan hang, tien da ghi co cho khach'
+import {
+  CODE,
+  FAILED_PLAIN,
+  NOTE,
+  POSTED_FULL,
+  TRIGGER,
+  choose,
+  fill,
+  mockRefresh,
+  openForm,
+  renderAction,
+  submit
+} from './stuck.setup'
 
 const mockWithdrawalStatus = (status: string) => {
   server.use(
@@ -21,7 +23,7 @@ const mockWithdrawalStatus = (status: string) => {
       HttpResponse.json({
         data: {
           id: 'withdrawal-1',
-          transactionCode: TRANSACTION_CODE,
+          transactionCode: CODE,
           beneficiary: null,
           status
         }
@@ -30,238 +32,162 @@ const mockWithdrawalStatus = (status: string) => {
   )
 }
 
-interface RenderOptions {
-  permissions?: string[]
-  journalStatus?: string
-  transactionType?: string
-  compact?: boolean
-}
-
-const renderAction = ({
-  permissions = [APPROVER_PERMISSION],
-  journalStatus = StatusEnum.PENDING,
-  transactionType = 'CASH_OUT',
-  compact = false
-}: RenderOptions = {}) => {
-  const store = createAppStore()
-  store.dispatch(savePermissions(permissions))
-  const user = userEvent.setup({ delay: null })
-
-  render(
-    <Provider store={store}>
-      <MessageProvider>
-        <StuckTransactionUpdateAction
-          transactionCode={TRANSACTION_CODE}
-          transactionType={transactionType}
-          journalStatus={journalStatus}
-          compact={compact}
-        />
-      </MessageProvider>
-    </Provider>
-  )
-
-  return { user }
-}
-
-const openForm = async (user: ReturnType<typeof userEvent.setup>) => {
-  await user.click(
-    await screen.findByRole('button', { name: /Cập nhật giao dịch treo/ })
-  )
-}
-
-const chooseOutcome = async (
-  user: ReturnType<typeof userEvent.setup>,
-  label: string
-) => {
-  await user.click(await screen.findByLabelText(/Kết quả cuối/))
-  await user.click(await screen.findByTitle(label))
-}
-
-const fill = async (label: RegExp, value: string) => {
-  fireEvent.change(await screen.findByLabelText(label), { target: { value } })
-}
-
-describe('StuckTransactionUpdateAction', () => {
+describe('StuckTransactionUpdateAction - hiển thị nút', () => {
   it('ẩn nút khi lệnh rút đang chờ duyệt', async () => {
     mockWithdrawalStatus(WithdrawalStatus.PENDING_APPROVAL)
-
-    renderAction()
+    renderAction({ transactionType: 'CASH_OUT' })
 
     await waitFor(() =>
-      expect(
-        screen.queryByRole('button', { name: /Cập nhật giao dịch treo/ })
-      ).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: TRIGGER })).toBeNull()
     )
   })
 
   it('hiện nút khi lệnh rút đã rời khỏi hàng chờ duyệt', async () => {
     mockWithdrawalStatus(WithdrawalStatus.PAYING)
+    renderAction({ transactionType: 'CASH_OUT' })
 
-    renderAction()
-
-    expect(
-      await screen.findByRole('button', { name: /Cập nhật giao dịch treo/ })
-    ).toBeInTheDocument()
-  })
-
-  it('ẩn nút khi bút toán đã có kết quả cuối', () => {
-    mockWithdrawalStatus(WithdrawalStatus.POSTED)
-
-    renderAction({ journalStatus: StatusEnum.POSTED })
-
-    expect(
-      screen.queryByRole('button', { name: /Cập nhật giao dịch treo/ })
-    ).not.toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: TRIGGER })).toBeVisible()
   })
 
   it('ẩn nút khi tài khoản thiếu quyền', () => {
-    mockWithdrawalStatus(WithdrawalStatus.PAYING)
-
     renderAction({ permissions: ['EWALLET:TRANSACTION:VIEW'] })
 
-    expect(
-      screen.queryByRole('button', { name: /Cập nhật giao dịch treo/ })
-    ).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: TRIGGER })).toBeNull()
   })
 
-  it('chốt Thành công gửi Auth Code và Settlement ID khi được nhập', async () => {
+  it('hiển thị dạng icon ở danh sách, mở form thì mới hỏi refresh', async () => {
     mockWithdrawalStatus(WithdrawalStatus.PAYING)
-    let body: unknown = null
-    server.use(
-      http.post(
-        `*/transactions/${TRANSACTION_CODE}/update-status`,
-        async ({ request }) => {
-          body = await request.json()
-          return HttpResponse.json({
-            success: true,
-            data: { transactionCode: TRANSACTION_CODE, newStatus: 'POSTED' }
-          })
-        }
-      )
-    )
+    const refresh = mockRefresh([POSTED_FULL, FAILED_PLAIN])
+    const user = renderAction({ compact: true, transactionType: 'CASH_OUT' })
 
-    const { user } = renderAction({ transactionType: 'P2P_TRANSFER' })
-
+    expect(refresh.calls).toBe(0)
     await openForm(user)
-    await chooseOutcome(user, 'Thành công')
-    await fill(/Auth Code/, 'AUTH123456')
-    await fill(/Settlement ID/, 'STL20260825001')
-    await fill(/Lý do cập nhật/, NOTE)
-    await user.click(screen.getByRole('button', { name: 'Xác nhận cập nhật' }))
-
-    await waitFor(() =>
-      expect(body).toEqual({
-        newStatus: 'POSTED',
-        note: NOTE,
-        authCode: 'AUTH123456',
-        settlementId: 'STL20260825001'
-      })
-    )
-  })
-
-  it('chốt Thất bại không gửi hai mã đối soát', async () => {
-    mockWithdrawalStatus(WithdrawalStatus.PAYING)
-    let body: unknown = null
-    server.use(
-      http.post(
-        `*/transactions/${TRANSACTION_CODE}/update-status`,
-        async ({ request }) => {
-          body = await request.json()
-          return HttpResponse.json({
-            success: true,
-            data: { transactionCode: TRANSACTION_CODE, newStatus: 'FAILED' }
-          })
-        }
-      )
-    )
-
-    const { user } = renderAction({ transactionType: 'P2P_TRANSFER' })
-
-    await openForm(user)
-    await chooseOutcome(user, 'Thất bại')
-    await fill(/Lý do cập nhật/, NOTE)
-    await user.click(screen.getByRole('button', { name: 'Xác nhận cập nhật' }))
-
-    await waitFor(() =>
-      expect(body).toEqual({ newStatus: 'FAILED', note: NOTE })
-    )
-  })
-
-  it('hiển thị dạng icon ở màn danh sách và vẫn mở được form', async () => {
-    let readCount = 0
-    server.use(
-      http.get('*/withdrawals', () => {
-        readCount += 1
-        return HttpResponse.json({
-          data: {
-            id: 'withdrawal-1',
-            transactionCode: TRANSACTION_CODE,
-            beneficiary: null,
-            status: WithdrawalStatus.PAYING
-          }
-        })
-      })
-    )
-    const { user } = renderAction({ compact: true })
-
-    expect(readCount).toBe(0)
-    await openForm(user)
-    expect(readCount).toBe(1)
     expect(await screen.findByLabelText(/Kết quả cuối/)).toBeInTheDocument()
+    expect(refresh.calls).toBe(1)
   })
 
-  it('hướng dẫn đối chiếu ngân hàng khi cập nhật lệnh rút, không giả lập nút refresh', async () => {
-    mockWithdrawalStatus(WithdrawalStatus.PAYING)
-    const { user } = renderAction()
+  it('snapshot không còn POSTED/FAILED: popup báo hết thao tác, đóng rồi nút biến mất', async () => {
+    mockRefresh([])
+    const user = renderAction()
     await openForm(user)
 
-    expect(screen.getByText('Bước 1 · Đối chiếu ngân hàng')).toBeInTheDocument()
     expect(
-      screen.getByText(/không tự kiểm tra lại ngân hàng/)
+      await screen.findByText(/không còn thao tác cập nhật kết quả/)
     ).toBeInTheDocument()
-    expect(
-      screen.queryByRole('button', { name: /Check Status/i })
-    ).not.toBeInTheDocument()
-    expect(screen.getByText('Bước 2 · Chốt kết quả')).toBeInTheDocument()
-    await chooseOutcome(user, 'Thành công')
-    expect(
-      screen.getByLabelText(/Auth Code \(không bắt buộc\)/)
-    ).toBeInTheDocument()
-    expect(
-      screen.getByLabelText(/Settlement ID \(không bắt buộc\)/)
-    ).toBeInTheDocument()
+    expect(screen.queryByLabelText(/Kết quả cuối/)).toBeNull()
+
+    await user.click(screen.getByRole('button', { name: 'Đóng' }))
+    await waitFor(() =>
+      expect(screen.queryByRole('button', { name: TRIGGER })).toBeNull()
+    )
   })
 
-  it('nói trước hậu quả của lựa chọn trước khi người dùng bấm', async () => {
-    mockWithdrawalStatus(WithdrawalStatus.PAYING)
-
-    const { user } = renderAction()
-
+  it('hiện kết quả kiểm tra của refresh và cho kiểm tra lại', async () => {
+    const refresh = mockRefresh([POSTED_FULL], {
+      source: 'VPBANK',
+      status: 'BANK_UNKNOWN',
+      detail: 'VPBank chưa trả kết quả cuối cho lệnh nạp'
+    })
+    const user = renderAction()
     await openForm(user)
-    await chooseOutcome(user, 'Thất bại')
 
     expect(
-      await screen.findByText(/giải phóng khoản tiền đang bị giữ/i)
+      await screen.findByText('VPBank chưa trả kết quả cuối cho lệnh nạp')
     ).toBeInTheDocument()
+    await user.click(
+      screen.getByRole('button', { name: /Kiểm tra trạng thái/ })
+    )
+    await waitFor(() => expect(refresh.calls).toBe(2))
   })
 
-  it('giữ modal và báo cách xử lý khi API không chốt được giao dịch', async () => {
-    mockWithdrawalStatus(WithdrawalStatus.PAYING)
+  it('refresh lỗi thì báo lỗi nguyên văn, không dựng form', async () => {
     server.use(
-      http.post(`*/transactions/${TRANSACTION_CODE}/update-status`, () =>
+      http.post(`*/transactions/${CODE}/refresh`, () =>
+        HttpResponse.json(
+          { message: 'BUSINESS_ERROR', detail: 'Không kết nối được ngân hàng' },
+          { status: 400 }
+        )
+      )
+    )
+    const user = renderAction()
+    await openForm(user)
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Không kết nối được ngân hàng'
+    )
+    expect(screen.queryByLabelText(/Kết quả cuối/)).toBeNull()
+  })
+})
+
+describe('StuckTransactionUpdateAction - lỗi update-status', () => {
+  it('400: hiện nguyên văn detail, giữ popup và dữ liệu đã nhập, không refresh lại', async () => {
+    const refresh = mockRefresh([POSTED_FULL])
+    server.use(
+      http.post(`*/transactions/${CODE}/update-status`, () =>
+        HttpResponse.json(
+          {
+            success: false,
+            message: 'BUSINESS_ERROR',
+            detail: 'Lệnh rút đang chờ duyệt, hãy dùng chức năng duyệt lệnh rút'
+          },
+          { status: 400 }
+        )
+      )
+    )
+    const user = renderAction()
+    await openForm(user)
+    await choose(user, 'Thành công')
+    fill('Lý do cập nhật', NOTE)
+    await submit(user)
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Lệnh rút đang chờ duyệt, hãy dùng chức năng duyệt lệnh rút'
+    )
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(screen.getByLabelText(/Lý do cập nhật/)).toHaveValue(NOTE)
+    expect(refresh.calls).toBe(1)
+  })
+
+  it('400 chỉ có message mã máy: dùng câu chung thay vì in mã', async () => {
+    mockRefresh([POSTED_FULL])
+    server.use(
+      http.post(`*/transactions/${CODE}/update-status`, () =>
         HttpResponse.json({ message: 'BUSINESS_ERROR' }, { status: 400 })
       )
     )
-    const { user } = renderAction({ transactionType: 'P2P_TRANSFER' })
+    const user = renderAction()
     await openForm(user)
-    await chooseOutcome(user, 'Thành công')
-    await fill(/Lý do cập nhật/, NOTE)
-    await user.click(screen.getByRole('button', { name: 'Xác nhận cập nhật' }))
+    await choose(user, 'Thành công')
+    fill('Lý do cập nhật', NOTE)
+    await submit(user)
 
-    expect(
-      await screen.findByText(/Không thể chốt giao dịch/)
-    ).toBeInTheDocument()
-    expect(screen.getByRole('dialog')).toBeInTheDocument()
-    expect(screen.getByLabelText(/Lý do cập nhật/)).toHaveValue(NOTE)
+    expect(await screen.findByText(/Không thể chốt giao dịch/)).toBeVisible()
+  })
+
+  it('409: hiện nguyên văn lỗi rồi tự refresh lại snapshot', async () => {
+    const refresh = mockRefresh([POSTED_FULL])
+    server.use(
+      http.post(`*/transactions/${CODE}/update-status`, () =>
+        HttpResponse.json(
+          {
+            success: false,
+            message: 'RECONCILIATION_CONFLICT',
+            detail: 'Giao dịch đang chờ review, hãy dùng chức năng duyệt review'
+          },
+          { status: 409 }
+        )
+      )
+    )
+    const user = renderAction()
+    await openForm(user)
+    await choose(user, 'Thành công')
+    fill('Lý do cập nhật', NOTE)
+    await submit(user)
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Giao dịch đang chờ review, hãy dùng chức năng duyệt review'
+    )
+    await waitFor(() => expect(refresh.calls).toBe(2))
+    expect(await screen.findByLabelText(/Kết quả cuối/)).toBeInTheDocument()
   })
 })

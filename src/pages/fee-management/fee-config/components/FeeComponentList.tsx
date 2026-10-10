@@ -1,8 +1,7 @@
 import { FeeDomain } from '@components/fee/feeDomain'
-import { LockSimpleIcon, PlusIcon } from '@components/icons'
+import { PlusIcon } from '@components/icons'
 import { ButtonComponent } from '@components/index'
 import { useMessage } from '@hooks/useMessage'
-import { getExecutablePayer } from '@utils/fee-execution'
 import { useState } from 'react'
 import type { Control } from 'react-hook-form'
 import { useFieldArray } from 'react-hook-form'
@@ -14,7 +13,6 @@ import {
   FEE_BUSINESS_CATEGORY,
   FEE_SCOPE,
   FEE_SCOPES,
-  PAYER_TYPE_LABEL,
   feeScopePanelId,
   feeScopeTabId,
   getFeeBusinessCategories,
@@ -46,25 +44,6 @@ const EMPTY_LABEL: Readonly<Record<FeeScope, string>> = {
   INPUT_COST: 'Chưa có phí đầu vào'
 }
 
-const Party = ({
-  children,
-  locked = false
-}: {
-  children: string
-  locked?: boolean
-}) => (
-  <span className='inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-0.5 text-[12px] font-medium text-foreground'>
-    {locked && (
-      <LockSimpleIcon
-        size={12}
-        weight='bold'
-        aria-hidden
-      />
-    )}
-    {children}
-  </span>
-)
-
 /**
  * Danh sách thành phần phí, tách hai tab theo luồng.
  *
@@ -89,13 +68,13 @@ export const FeeComponentList = ({
   const [activeScope, setActiveScope] = useState<FeeScope>(FEE_SCOPE.OUTPUT_FEE)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [addingScope, setAddingScope] = useState<FeeScope | null>(null)
-  const [selectedCategory, setSelectedCategory] =
-    useState<FeeBusinessCategory>(() =>
+  const [selectedCategory, setSelectedCategory] = useState<FeeBusinessCategory>(
+    () =>
       inferFeeBusinessCategory(
         FEE_SCOPE.OUTPUT_FEE,
         components.filter(({ feeScope }) => feeScope === FEE_SCOPE.OUTPUT_FEE)
       )
-    )
+  )
 
   const indexesOf = (scope: FeeScope) =>
     components.flatMap((component, index) =>
@@ -107,7 +86,8 @@ export const FeeComponentList = ({
   } as const
 
   const categoryOf = (scope: FeeScope): FeeBusinessCategory => {
-    if (scope === FEE_SCOPE.INPUT_COST) return FEE_BUSINESS_CATEGORY.BANK_PROVIDER
+    if (scope === FEE_SCOPE.INPUT_COST)
+      return FEE_BUSINESS_CATEGORY.BANK_PROVIDER
     const sameScope = indexesOf(scope).map((index) => components[index])
     if (sameScope.length > 0) return inferFeeBusinessCategory(scope, sameScope)
     return getFeeBusinessCategories(scope).includes(selectedCategory)
@@ -149,8 +129,6 @@ export const FeeComponentList = ({
         (editingIndex === null || index < editingIndex)
     )
 
-  const payer = getExecutablePayer(serviceType) ?? 'USER'
-
   return (
     <section>
       <SectionHeading>Thành phần phí</SectionHeading>
@@ -174,17 +152,15 @@ export const FeeComponentList = ({
             className='pt-4'
           >
             <div className='mb-3 flex flex-wrap items-center justify-between gap-3'>
-              <div className='flex flex-wrap items-center gap-2 text-[12px] text-muted-foreground'>
-                <Party locked={isInput}>
-                  {isInput
-                    ? PAYER_TYPE_LABEL.SYSTEM
-                    : (PAYER_TYPE_LABEL[payer] ?? payer)}
-                </Party>
-                <span aria-hidden>→</span>
-                <Party>{isInput ? 'Ngân hàng / Đối tác' : 'Hệ thống'}</Party>
-              </div>
+              <FeeBusinessCategoryTabs
+                value={categoryOf(scope)}
+                feeScope={scope}
+                disabled={readOnly || indexes.length > 0}
+                onChange={setSelectedCategory}
+              />
               {!readOnly && (
                 <ButtonComponent
+                  className='ml-auto'
                   htmlType='button'
                   type={isInput ? 'default' : 'primary'}
                   content={ADD_LABEL[scope]}
@@ -199,13 +175,6 @@ export const FeeComponentList = ({
                 />
               )}
             </div>
-
-            <FeeBusinessCategoryTabs
-              value={categoryOf(scope)}
-              feeScope={scope}
-              disabled={readOnly || indexes.length > 0}
-              onChange={setSelectedCategory}
-            />
 
             {indexes.length === 0 ? (
               <div className='rounded-lg border border-dashed border-border px-6 py-8 text-center text-[13px] text-muted-foreground'>

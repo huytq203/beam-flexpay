@@ -93,4 +93,65 @@ describe('eKYC manual review API', () => {
     expect(search).toHaveProperty('error')
     expect(detail).toHaveProperty('error')
   })
+
+  it('mở lại eKYC: POST /restore bằng profileId, không body, trả detail', async () => {
+    const requests: { pathname: string; body: string }[] = []
+    server.use(
+      http.post(
+        '*/verified-kyc-profiles/profile-9/restore',
+        async ({ request }) => {
+          requests.push({
+            pathname: new URL(request.url).pathname,
+            body: await request.text()
+          })
+          return HttpResponse.json({
+            success: true,
+            data: 'profile-9',
+            detail: 'Khôi phục eKYC thành công'
+          })
+        }
+      )
+    )
+    const store = createAppStore()
+    const result = await store.dispatch(
+      apiEKYC.endpoints.restoreVerifiedKycProfile.initiate('profile-9')
+    )
+
+    expect(result).toMatchObject({
+      data: { profileId: 'profile-9', detail: 'Khôi phục eKYC thành công' }
+    })
+    expect(requests).toHaveLength(1)
+    expect(requests[0].pathname).toMatch(
+      /\/verified-kyc-profiles\/profile-9\/restore$/
+    )
+    expect(requests[0].body).toBe('')
+  })
+
+  it('mở lại eKYC: success=false hoặc lỗi 400 là thất bại', async () => {
+    server.use(
+      http.post('*/verified-kyc-profiles/profile-1/restore', () =>
+        HttpResponse.json({ success: false }, { status: 200 })
+      ),
+      http.post('*/verified-kyc-profiles/profile-2/restore', () =>
+        HttpResponse.json(
+          {
+            success: false,
+            detail: 'Chỉ hồ sơ eKYC đã bị hủy mới có thể khôi phục.'
+          },
+          { status: 400 }
+        )
+      )
+    )
+    const store = createAppStore()
+    const first = await store.dispatch(
+      apiEKYC.endpoints.restoreVerifiedKycProfile.initiate('profile-1')
+    )
+    const second = await store.dispatch(
+      apiEKYC.endpoints.restoreVerifiedKycProfile.initiate('profile-2')
+    )
+    expect(first.error).toBeDefined()
+    expect(second.error).toMatchObject({
+      data: { detail: 'Chỉ hồ sơ eKYC đã bị hủy mới có thể khôi phục.' }
+    })
+  })
 })

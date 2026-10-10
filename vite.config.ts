@@ -70,7 +70,6 @@ export default defineConfig(({ mode }) => {
             secure: false,
             rewrite: (p: string) => p.slice(prefix.length),
             headers: {
-              Origin: origin,
               Referer: `${origin}/`,
             },
           },

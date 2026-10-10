@@ -46,5 +46,6 @@ export const STEP_LABEL: Record<string, string> = {
 
 export const DOCUMENT_PROFILE_LABEL: Record<string, string> = {
   VERIFIED: 'Đã xác thực',
-  INVALID: 'Đã thu hồi'
+  INVALID: 'Đã thu hồi',
+  REVERIFY_REQUIRED: 'Chờ xác thực lại'
 }

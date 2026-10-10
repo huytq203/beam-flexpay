@@ -61,7 +61,6 @@ describe('useRouteAccess', () => {
       SCREENS.TRANSACTION_WALLET.path,
       `${SCREENS.TRANSACTION_WALLET.path}/transaction-id`,
       SCREENS.FROZEN_TRANSACTIONS.path,
-      `${SCREENS.TRANSACTION_MANAGEMENT.path}/refund-management`,
       SCREENS.SYSTEM_LEDGER.path,
       `${SCREENS.SYSTEM_LEDGER.path}/ledger-id`,
       SCREENS.WITHDRAW_HISTORY.path
@@ -71,6 +70,14 @@ describe('useRouteAccess', () => {
       expect(accessTo(viewOnly, route)).toBe(false)
       expect(accessTo(fullAccess, route)).toBe(true)
     }
+  })
+
+  it('hoàn tiền mở cho REFUND:APPROVE hoặc EWALLET:FULL, không mở cho TRANSACTION:FULL', () => {
+    const route = SCREENS.REFUND_MANAGEMENT.path
+    expect(accessTo(['EWALLET:REFUND:APPROVE'], route)).toBe(true)
+    expect(accessTo(['EWALLET:EWALLET:FULL'], route)).toBe(true)
+    expect(accessTo(['EWALLET:TRANSACTION:FULL'], route)).toBe(false)
+    expect(accessTo([], route)).toBe(false)
   })
 
   it('eKYC chấp nhận quyền ADMIN nhưng từ chối module khác', () => {

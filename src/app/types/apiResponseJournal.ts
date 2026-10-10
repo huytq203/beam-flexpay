@@ -1,3 +1,5 @@
+import type { UnifiedRefundFields } from '@/app/schemas/unified-refund.schema'
+
 export interface PartyInfo {
   id: string | null
   username: string | null
@@ -20,10 +22,10 @@ export interface UnifiedJournalSummary {
   failedCount: number
 }
 
-export interface UnifiedContentJournal {
+export interface UnifiedContentJournal extends UnifiedRefundFields {
   id: string
   journalCode: string
-  transactionCode:string
+  transactionCode: string
   status: string
   transactionType: string
   from: PartyInfo

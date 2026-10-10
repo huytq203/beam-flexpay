@@ -4,6 +4,8 @@ import {
   useExportTransactionsMutation
 } from '@services/apiExportCsv'
 import { useCallback, useMemo } from 'react'
+import { StatusEnum } from '../constants/Transaction.constant'
+import { toHasRefundParam } from '../dto/transactionRefund.dto'
 import type { FormSearchValues } from '../types/Transaction.type'
 
 /**
@@ -30,18 +32,23 @@ const buildExportParams = (
 ): ExportTransactionsQuery => {
   const p: ExportTransactionsQuery = {}
 
-  if (filter.transactionCode)  p.transactionCode  = filter.transactionCode
-  if (filter.transactionType)  p.type             = filter.transactionType
-  if (filter.status)           p.status           = filter.status
-  if (filter.fromDate)         p.fromDate         = filter.fromDate
-  if (filter.toDate)           p.toDate           = filter.toDate
-  if (filter.senderUsername)   p.senderUsername   = filter.senderUsername
+  if (filter.transactionCode) p.transactionCode = filter.transactionCode
+  if (filter.transactionType) p.type = filter.transactionType
+  if (filter.status) p.status = filter.status
+  if (filter.fromDate) p.fromDate = filter.fromDate
+  if (filter.toDate) p.toDate = filter.toDate
+  if (filter.senderUsername) p.senderUsername = filter.senderUsername
   if (filter.receiverUsername) p.receiverUsername = filter.receiverUsername
-  if (filter.sourceDomain)     p.sourceDomain     = filter.sourceDomain
-  if (filter.paymentMethod)    p.paymentMethod    = filter.paymentMethod
+  if (filter.sourceDomain) p.sourceDomain = filter.sourceDomain
+  if (filter.paymentMethod) p.paymentMethod = filter.paymentMethod
+  const hasRefund = toHasRefundParam(filter.hasRefund)
+  if (hasRefund !== undefined) p.hasRefund = hasRefund
 
   return p
 }
+
+const LEDGER_STATUS_TOOLTIP =
+  'File xuất giữ trạng thái sổ cái (Thất bại), không có nhãn Thất bại hoàn tiền và không có cột số tiền hoàn'
 
 interface UseExportTransactionCsvResult {
   exportFile: () => void
@@ -56,7 +63,8 @@ interface UseExportTransactionCsvResult {
 const useExportTransactionCsv = (
   filter: Partial<FormSearchValues>
 ): UseExportTransactionCsvResult => {
-  const [triggerExport, { reset: resetExport }] = useExportTransactionsMutation()
+  const [triggerExport, { reset: resetExport }] =
+    useExportTransactionsMutation()
   const { exportFile, isExporting } = useExportCsv({
     trigger: triggerExport,
     reset: resetExport,
@@ -68,6 +76,9 @@ const useExportTransactionCsv = (
     Boolean(filter[key])
   )
 
+  const usesRefundFilter =
+    Boolean(filter.hasRefund) || filter.status === StatusEnum.FAILED_REFUND
+
   const handleExport = useCallback(() => {
     void exportFile(exportParams)
   }, [exportFile, exportParams])
@@ -75,7 +86,11 @@ const useExportTransactionCsv = (
   return {
     exportFile: handleExport,
     isExporting,
-    exportTooltip: hasUnsupportedFilter ? UNSUPPORTED_FILTER_TOOLTIP : undefined
+    exportTooltip: hasUnsupportedFilter
+      ? UNSUPPORTED_FILTER_TOOLTIP
+      : usesRefundFilter
+        ? LEDGER_STATUS_TOOLTIP
+        : undefined
   }
 }
 

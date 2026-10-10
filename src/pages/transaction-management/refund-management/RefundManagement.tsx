@@ -1,45 +1,130 @@
-import { CardComponent, DialogModal, ModalComponent, Table } from '@components/index'
-import React from 'react'
-import DetailRefundModal from './components/DetailRefundModal'
-import DialogConfirmRefund from './components/DialogConfirmRefund'
-import Column from './columns/Refund.column'
-import FormSearch from './components/FormSearch'
+import { useState } from 'react'
+import { FunnelIcon } from '@components/icons'
+import { CardComponent } from '@components/index'
+import { createRefundColumns } from './columns/refund.columns'
+import { ApproveRefundDialog } from './components/ApproveRefundDialog'
+import { RefundDetailDrawer } from './components/RefundDetailDrawer'
+import { RefundFilters } from './components/RefundFilters'
+import { RefundListCard } from './components/RefundListCard'
+import { RejectRefundDialog } from './components/RejectRefundDialog'
+import { SettleRefundDialog } from './components/SettleRefundDialog'
+import { useRefundActions } from './hooks/useRefundActions'
+import { useRefundList } from './hooks/useRefundList'
+import { useRefundPermissions } from './hooks/useRefundPermissions'
+import type { RefundTarget } from './schemas/refund.schema'
+
+type RefundDialog = {
+  kind: 'approve' | 'reject' | 'settle'
+  refund: RefundTarget
+} | null
 
 const RefundManagement = () => {
-  const column = Column()
+  const list = useRefundList()
+  const permissions = useRefundPermissions()
+  const { refreshPayoutOrder, isRefreshingPayout } = useRefundActions()
+  const [drawerId, setDrawerId] = useState<string | null>(null)
+  const [dialog, setDialog] = useState<RefundDialog>(null)
+  const [payoutId, setPayoutId] = useState<string>()
+
+  const handlePayoutRefresh = async (refund: RefundTarget): Promise<void> => {
+    setPayoutId(refund.id)
+    await refreshPayoutOrder(refund.id)
+    setPayoutId(undefined)
+  }
+
+  const columns = createRefundColumns({
+    page: list.page,
+    pageSize: list.pageSize,
+    context: permissions,
+    payoutRefreshingId: payoutId,
+    onView: (refund) => setDrawerId(refund.id),
+    onApprove: (refund) => setDialog({ kind: 'approve', refund }),
+    onReject: (refund) => setDialog({ kind: 'reject', refund }),
+    onSettle: (refund) => setDialog({ kind: 'settle', refund }),
+    onPayoutRefresh: handlePayoutRefresh
+  })
+
+  const closeDialog = (): void => setDialog(null)
+  const openFromDrawer =
+    (kind: 'approve' | 'reject' | 'settle') =>
+    (refund: RefundTarget): void =>
+      setDialog({ kind, refund })
+  const filterKey = JSON.stringify([
+    list.filters.keyword,
+    list.filters.channel,
+    list.filters.createdSource,
+    list.filters.createdFrom,
+    list.filters.createdTo
+  ])
+
   return (
-    <>
-      <div className=' flex flex-col gap-3'>
-        <CardComponent content={<FormSearch />} />
-        <CardComponent
-          content={
-            <>
-              <Table
-                size='small'
-                columns={column}
-                bordered
-                scroll={{ x: 'max-content' }}
-              />
-            </>
-          }
+    <main className='flex min-w-0 flex-col gap-3'>
+      <header>
+        <h1 className='font-display text-2xl font-extrabold text-foreground'>
+          Quản lý hoàn tiền
+        </h1>
+        <p className='text-sm text-muted-foreground'>
+          Duyệt, từ chối và theo dõi yêu cầu hoàn tiền. Người tạo yêu cầu không
+          được tự duyệt hoặc từ chối yêu cầu của mình.
+        </p>
+      </header>
+      <CardComponent className='border border-border bg-background shadow-none'>
+        <header className='mb-4 flex items-center gap-2 border-b border-border pb-3'>
+          <FunnelIcon
+            aria-hidden
+            size={18}
+            className='text-secondary-foreground'
+          />
+          <h2 className='font-display text-base font-semibold'>
+            Bộ lọc tìm kiếm
+          </h2>
+        </header>
+        <RefundFilters
+          key={filterKey}
+          filters={list.filters}
+          onStatusChange={list.setStatus}
+          onApply={list.applyFilters}
+          onClear={list.clearFilters}
         />
-        <ModalComponent
-          width='75%'
-          onCancel={() => { }}
-          onOk={() => { }}
-          open={false}
-          modalText={<DetailRefundModal />}
-          title={<div>
-            <p >Chi tiết hoàn: <span className='text-blue-700'> #378-49-802</span></p>
-            <div className="flex items-center gap-2 text-sm ">
-              <p className='font-medium text-gray-500'>Ngày tạo: 25/02/2022</p>
-              <p className='text-yellow-600 bg-yellow-50 px-1 rounded-md border border-yellow-600'>Chờ duyệt</p>
-            </div>
-          </div>}
+      </CardComponent>
+      <RefundListCard
+        list={list}
+        columns={columns}
+        isBusy={isRefreshingPayout}
+      />
+      {drawerId && (
+        <RefundDetailDrawer
+          refundId={drawerId}
+          context={permissions}
+          canViewFullAccountNumber={permissions.canViewFullAccountNumber}
+          isPayoutRefreshing={isRefreshingPayout}
+          onClose={() => setDrawerId(null)}
+          onApprove={openFromDrawer('approve')}
+          onReject={openFromDrawer('reject')}
+          onSettle={openFromDrawer('settle')}
+          onPayoutRefresh={handlePayoutRefresh}
         />
-        <DialogModal content={<DialogConfirmRefund/>} onCancel={()=>{}} onOk={()=>{}} open={false} title={<><p>Xử lý hoàn tiền</p> <p className='text-gray-500 text-sm'>Mã tham chiếu: #7849-0784-39</p> <hr /></>} />
-      </div>
-    </>
+      )}
+      {dialog?.kind === 'approve' && (
+        <ApproveRefundDialog
+          refund={dialog.refund}
+          username={permissions.username}
+          onClose={closeDialog}
+        />
+      )}
+      {dialog?.kind === 'reject' && (
+        <RejectRefundDialog
+          refund={dialog.refund}
+          onClose={closeDialog}
+        />
+      )}
+      {dialog?.kind === 'settle' && (
+        <SettleRefundDialog
+          refund={dialog.refund}
+          onClose={closeDialog}
+        />
+      )}
+    </main>
   )
 }
 

@@ -38,7 +38,16 @@ describe('errorMiddleware', () => {
     'adminForgotPassword',
     'validateAdminResetToken',
     'resetAdminPassword',
-    'getCurrentWeather'
+    'getCurrentWeather',
+    'getRefunds',
+    'getRefundDetail',
+    'approveRefund',
+    'rejectRefund',
+    'settleRefund',
+    'refreshRefundPayout',
+    'updateStuckTransactionStatus',
+    'uploadStuckTransactionReceipt',
+    'getStuckTransactionReceipt'
   ])('để endpoint %s tự hiển thị lỗi trong form', (endpointName) => {
     const showGlobalError = vi.spyOn(globalMessage, 'error')
 
@@ -95,5 +104,56 @@ describe('errorMiddleware', () => {
 
     window.history.replaceState({}, '', previousPath)
     Cookies.remove(CookieKey.ACCESS_TOKEN)
+  })
+
+  it.each([
+    'getRefunds',
+    'getRefundDetail',
+    'createRefund',
+    'approveRefund',
+    'rejectRefund',
+    'settleRefund',
+    'refreshRefundPayout',
+    'refreshTransaction',
+    'markTransactionReview',
+    'approveTransactionReview',
+    'rejectTransactionReview',
+    'updateStuckTransactionStatus',
+    'uploadStuckTransactionReceipt',
+    'getStuckTransactionReceipt'
+  ])(
+    '403 của %s hiện tại chỗ, không đá sang /forbidden và không toast',
+    (name) => {
+      Cookies.set(CookieKey.ACCESS_TOKEN, 'access-token')
+      const replaceState = vi.spyOn(window.history, 'replaceState')
+      const showGlobalError = vi.spyOn(globalMessage, 'error')
+      const { next } = runMiddleware(name, 403)
+
+      expect(replaceState).not.toHaveBeenCalled()
+      expect(showGlobalError).not.toHaveBeenCalled()
+      expect(next).toHaveBeenCalled()
+      Cookies.remove(CookieKey.ACCESS_TOKEN)
+    }
+  )
+
+  it('getUnifiedInlineError tắt toast nhưng 403 vẫn đá sang /forbidden', () => {
+    const previousPath = window.location.pathname
+    Cookies.set(CookieKey.ACCESS_TOKEN, 'access-token')
+    const showGlobalError = vi.spyOn(globalMessage, 'error')
+    runMiddleware('getUnifiedInlineError', 500)
+    expect(showGlobalError).not.toHaveBeenCalled()
+
+    const replaceState = vi.spyOn(window.history, 'replaceState')
+    runMiddleware('getUnifiedInlineError', 403)
+    expect(replaceState).toHaveBeenCalled()
+
+    window.history.replaceState({}, '', previousPath)
+    Cookies.remove(CookieKey.ACCESS_TOKEN)
+  })
+
+  it('getUnified (màn khác chưa tự báo lỗi) vẫn hiện toast', () => {
+    const showGlobalError = vi.spyOn(globalMessage, 'error')
+    runMiddleware('getUnified', 500)
+    expect(showGlobalError).toHaveBeenCalled()
   })
 })

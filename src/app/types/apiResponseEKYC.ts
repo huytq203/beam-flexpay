@@ -20,6 +20,13 @@ export interface DataEKYC {
   empty: boolean
 }
 
+/** Kết quả hồ sơ eKYC của người dùng; null/undefined = chưa có hồ sơ. */
+export type EkycProfileStatus =
+  | 'VERIFIED'
+  | 'INVALID'
+  | 'EXPIRED'
+  | 'REVERIFY_REQUIRED'
+
 export type EvidenceImageType = 'FRONT' | 'BACK' | 'FACE_FAR'
 
 /** Ảnh bằng chứng của một lần eKYC; `url` là link S3 ký sẵn, hết hạn sau vài phút. */
@@ -61,7 +68,7 @@ export interface ContentEKYC {
   approvalReady?: boolean
   /** Chỉ có ở response hồ sơ/chi tiết. Trong attempts[] của lưới: xem documentProfile*. */
   profileId?: string | null
-  profileStatus?: string | null
+  profileStatus?: EkycProfileStatus | string | null
   reviewStatus?: 'VERIFIED' | 'PENDING_REVIEW' | 'NOT_VERIFIED' | string
   pendingReview?: boolean
   faceScore?: number | null
@@ -100,7 +107,7 @@ export interface EKYCGroup {
   currentAddress: string | null
   /** Hồ sơ của CHÍNH người này — kết quả chung cuộc. null = chưa xác thực. */
   profileId?: string | null
-  profileStatus?: string | null
+  profileStatus?: EkycProfileStatus | string | null
   reviewStatus?: 'VERIFIED' | 'PENDING_REVIEW' | 'NOT_VERIFIED' | string
   pendingReview?: boolean
   faceScore?: number | null

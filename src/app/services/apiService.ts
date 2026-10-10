@@ -1,4 +1,11 @@
-import { fetchBaseQueryCustom, fetchBaseQueryFee, fetchBaseQueryMerchant, fetchBaseQueryOld, fetchBaseQueryUserWallet, fetchBaseQueryWalletCore } from '@configs/fetchBaseQueryCustom'
+import {
+  fetchBaseQueryCustom,
+  fetchBaseQueryFee,
+  fetchBaseQueryMerchant,
+  fetchBaseQueryOld,
+  fetchBaseQueryUserWallet,
+  fetchBaseQueryWalletCore
+} from '@configs/fetchBaseQueryCustom'
 import { createApi } from '@reduxjs/toolkit/query/react'
 
 export const apiService = createApi({
@@ -23,7 +30,6 @@ export const apiService = createApi({
   refetchOnMountOrArgChange: true
 })
 
- 
 export const apiFeeService = createApi({
   reducerPath: 'feeApi',
   baseQuery: fetchBaseQueryFee,
@@ -55,25 +61,31 @@ export const apiWalletCore = createApi({
 export const apiUserWallet = createApi({
   reducerPath: 'userWallet',
   baseQuery: fetchBaseQueryUserWallet,
-  tagTypes: ['WalletLimitPolicy', 'WalletLimitSpecialMonth'],
+  tagTypes: ['WalletLimitPolicy', 'WalletLimitSpecialMonth', 'Refund'],
   endpoints: () => ({}),
   refetchOnMountOrArgChange: true
 })
 export const apiMerchant = createApi({
   reducerPath: 'merchant',
   baseQuery: fetchBaseQueryMerchant,
-  tagTypes: [
-    'merchant',
-    'Order'
-  ],
+  tagTypes: ['merchant', 'Order'],
   endpoints: () => ({}),
   refetchOnMountOrArgChange: true
 })
 
 export const authApiService = createApi({
-    reducerPath: 'authApi',
-    baseQuery: fetchBaseQueryCustom,
-    tagTypes: ['Auth', 'Profile', 'roleManagement', 'Permission', 'PermissionAssign', 'EKYC', 'UserManagement', 'UserDevices'],
-    endpoints: () => ({}),
-    refetchOnMountOrArgChange: true
+  reducerPath: 'authApi',
+  baseQuery: fetchBaseQueryCustom,
+  tagTypes: [
+    'Auth',
+    'Profile',
+    'roleManagement',
+    'Permission',
+    'PermissionAssign',
+    'EKYC',
+    'UserManagement',
+    'UserDevices'
+  ],
+  endpoints: () => ({}),
+  refetchOnMountOrArgChange: true
 })

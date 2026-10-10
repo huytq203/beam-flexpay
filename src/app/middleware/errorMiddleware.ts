@@ -38,6 +38,26 @@ const SILENT_ENDPOINTS: string[] = [
   'updateWalletLimitPolicy',
   'createWalletLimitSpecialMonth',
   'renameWalletLimitSpecialMonth',
+  // Màn hoàn tiền hiển thị `detail` (hoặc map lỗi Bean Validation) ngay trong
+  // bảng, drawer và hộp thoại; toast chung chỉ in "Validation failed" cho lỗi 400.
+  'getRefunds',
+  'getRefundDetail',
+  'createRefund',
+  'approveRefund',
+  'rejectRefund',
+  'settleRefund',
+  'refreshRefundPayout',
+  // Review lệnh nạp hiển thị `detail` (400/409) ngay trong hộp thoại và panel.
+  'refreshTransaction',
+  'markTransactionReview',
+  'approveTransactionReview',
+  'rejectTransactionReview',
+  // Cập nhật giao dịch treo: lỗi 400/409 của BE hiện ngay trong form; biên lai hiện tại chỗ.
+  'updateStuckTransactionStatus',
+  'uploadStuckTransactionReceipt',
+  'getStuckTransactionReceipt',
+  // Màn Lịch sử giao dịch hiện lỗi inline (TransactionListError).
+  'getUnifiedInlineError',
   // Thời tiết panel đăng nhập chỉ là trang trí — lỗi của nó không được hiện
   // toast lên màn hình người dùng đang đăng nhập.
   'getCurrentWeather'
@@ -52,7 +72,22 @@ const LOCAL_403_ENDPOINTS = new Set([
   'verifyLoginOtp',
   'verifyResetPasswordOtp',
   'resendAdminOtp',
-  'getCurrentWeather'
+  'getCurrentWeather',
+  // Hoàn tiền và review lệnh nạp hiện `detail` của 403 ngay trong dialog/panel, không đá sang /forbidden.
+  'getRefunds',
+  'getRefundDetail',
+  'createRefund',
+  'approveRefund',
+  'rejectRefund',
+  'settleRefund',
+  'refreshRefundPayout',
+  'refreshTransaction',
+  'markTransactionReview',
+  'approveTransactionReview',
+  'rejectTransactionReview',
+  'updateStuckTransactionStatus',
+  'uploadStuckTransactionReceipt',
+  'getStuckTransactionReceipt'
 ])
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>

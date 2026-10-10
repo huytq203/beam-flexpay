@@ -1,7 +1,4 @@
-
-
-import { cn } from '@lib/utils/cn'
-
+import { ChipTab, ChipTabGroup } from '@components/ui/chip-tab-component'
 
 /**
  * Icon vẽ thật thay cho ký tự mũi tên: `↔` không có trong nhiều font hệ thống
@@ -16,29 +13,6 @@ export interface FeeServiceTypeTabsProps {
   /** Bảng nhãn loại dịch vụ của màn đang dùng. */
   labels: Record<string, string>
 }
-
-interface ChipProps {
-  isActive: boolean
-  onClick: () => void
-  children: React.ReactNode
-}
-
-const Chip = ({ isActive, onClick, children }: ChipProps) => (
-  <button
-    type='button'
-    aria-pressed={isActive}
-    onClick={onClick}
-    className={cn(
-      'rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors',
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
-      isActive
-        ? 'border-primary bg-primary text-primary-foreground'
-        : 'border-border bg-white text-foreground hover:bg-slate-50'
-    )}
-  >
-    {children}
-  </button>
-)
 
 /**
  * Bộ lọc loại giao dịch duy nhất. Chiều tiền chỉ còn là thông tin nhận diện
@@ -56,27 +30,25 @@ export const FeeServiceTypeTabs = ({
       <p className='mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-foreground'>
         Loại giao dịch
       </p>
-      <div className='flex flex-wrap gap-2'>
-        <Chip
+      <ChipTabGroup aria-label='Loại giao dịch'>
+        <ChipTab
           isActive={activeValue === ALL_VALUE}
           onClick={() => onChange(undefined)}
         >
           Tất cả
-        </Chip>
+        </ChipTab>
         {Object.entries(labels).map(([value, label]) => {
           return (
-            <Chip
+            <ChipTab
               key={value}
               isActive={activeValue === value}
               onClick={() => onChange(value)}
             >
-              <span className='inline-flex items-center gap-1.5'>
-                {label}
-              </span>
-            </Chip>
+              <span className='inline-flex items-center gap-1.5'>{label}</span>
+            </ChipTab>
           )
         })}
-      </div>
+      </ChipTabGroup>
     </div>
   )
 }

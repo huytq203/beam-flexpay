@@ -81,6 +81,28 @@ describe('TransactionManagement export', () => {
     })
   })
 
+  it('xuất CSV dùng cùng tham số hoàn tiền (hasRefund boolean, status FAILED_REFUND)', async () => {
+    mocks.filter = {
+      sourceDomain: 'EWALLET',
+      status: 'FAILED_REFUND',
+      hasRefund: 'true'
+    }
+
+    renderWithProviders(
+      <MessageProvider>
+        <TransactionManagement />
+      </MessageProvider>
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: /Xuất CSV/i }))
+
+    expect(mocks.exportFile).toHaveBeenCalledWith({
+      status: 'FAILED_REFUND',
+      hasRefund: true,
+      sourceDomain: 'EWALLET'
+    })
+  })
+
   it('ẩn bộ lọc Nguồn vì màn này luôn dùng ví điện tử', () => {
     renderWithProviders(
       <MessageProvider>

@@ -13,7 +13,7 @@ const mocks = vi.hoisted(() => ({
 }))
 
 vi.mock('../../../../app/services/apiJournal', () => ({
-  useGetUnifiedQuery: (params: Record<string, unknown>) => {
+  useGetUnifiedInlineErrorQuery: (params: Record<string, unknown>) => {
     mocks.getUnified(params)
     return {
       data: { content: [], totalElements: 477, summary: mocks.summary },

@@ -10,6 +10,7 @@ import {
 } from '../types/ConfirmEKYC.type'
 import { EkycReviewActions } from '../components/EkycReviewActions'
 import { EkycCancelAction } from '../components/EkycCancelAction'
+import { EkycRestoreAction } from '../components/EkycRestoreAction'
 import { EkycIconButton } from '../components/EkycIconButton'
 
 const formatDateTime = (value?: string | null) =>
@@ -262,6 +263,7 @@ export const getColumn = ({
             onReview={onReview}
           />
           <EkycCancelAction record={record} />
+          <EkycRestoreAction record={record} />
           <EkycIconButton
             label='Xem chi tiết'
             aria-label='Xem chi tiết hồ sơ eKYC'

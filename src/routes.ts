@@ -549,7 +549,7 @@ const transactionManagement = {
       path: TRANSACTIONMANAGEMENT,
       children: [
         {
-          path: `${SCREENS.TRANSACTION_MANAGEMENT.path}/refund-management`,
+          path: SCREENS.REFUND_MANAGEMENT.path,
           element: page(
             () =>
               import(

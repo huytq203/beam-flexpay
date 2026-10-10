@@ -1,5 +1,6 @@
 import type { UnifiedContentJournal } from '@type/apiResponseJournal'
 import { StatusEnum } from '../constants/Transaction.constant'
+import { getRefundOriginalType } from '../dto/transactionRefund.dto'
 
 export interface FreezeTargetParty {
   ownerId: string
@@ -13,14 +14,27 @@ const isWalletParty = (
 ): party is UnifiedContentJournal['from'] & {
   id: string
   type: 'USER' | 'MERCHANT'
-} =>
-  Boolean(party?.id) && (party.type === 'USER' || party.type === 'MERCHANT')
+} => Boolean(party?.id) && (party.type === 'USER' || party.type === 'MERCHANT')
 
 /** POSTED là trạng thái thành công của journal và luôn phải có GL transaction để đóng băng. */
 export const canShowFreezeTransactionAction = (
   transaction: UnifiedContentJournal
 ): boolean =>
   transaction.status === StatusEnum.POSTED && Boolean(transaction.transactionId)
+
+/**
+ * Ma trận nút Lịch sử giao dịch: Hoàn tiền chỉ với giao dịch thành công, không bị đóng
+ * băng, thuộc loại hoàn được và có `transactionId` (id wallet-core mà BE cần). Số tiền
+ * còn hoàn được do BE kiểm khi gửi yêu cầu, FE không tự tính. Quyền `EWALLET:FULL`
+ * kiểm riêng ở nơi gọi.
+ */
+export const canShowRefundTransactionAction = (
+  transaction: UnifiedContentJournal
+): boolean =>
+  transaction.status === StatusEnum.POSTED &&
+  !transaction.frozen &&
+  Boolean(transaction.transactionId) &&
+  getRefundOriginalType(transaction.transactionType) !== null
 
 export type FreezeTransactionAction = 'freeze' | 'unfreeze'
 
@@ -48,11 +62,13 @@ export const getFreezeTargetParties = (
     if (!isWalletParty(party) || seenOwnerIds.has(party.id)) return []
     seenOwnerIds.add(party.id)
 
-    return [{
-      ownerId: party.id,
-      ownerName: party.username || party.displayName || '--',
-      ownerType: party.type,
-      roleLabel
-    }]
+    return [
+      {
+        ownerId: party.id,
+        ownerName: party.username || party.displayName || '--',
+        ownerType: party.type,
+        roleLabel
+      }
+    ]
   })
 }

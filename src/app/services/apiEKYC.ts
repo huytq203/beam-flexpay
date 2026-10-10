@@ -12,6 +12,11 @@ export interface CancelEkycArg {
   reason: string
 }
 
+export interface RestoreEkycResult {
+  profileId: string
+  detail: string | null
+}
+
 interface EkycSearchParams {
   page?: number
   size?: number
@@ -133,6 +138,29 @@ export const apiEKYC = authApiService.injectEndpoints({
         return { data: result.data }
       },
       invalidatesTags: ['EKYC']
+    }),
+    restoreVerifiedKycProfile: build.mutation<RestoreEkycResult, string>({
+      async queryFn(profileId, _api, _extra, baseQuery) {
+        const response = await baseQuery({
+          url: `/verified-kyc-profiles/${encodeURIComponent(profileId)}/restore`,
+          method: 'POST'
+        })
+        if (response.error) return { error: response.error }
+        const result = response.data as EkycEnvelope<string>
+        if (result?.success !== true) {
+          return {
+            error: {
+              status: 'CUSTOM_ERROR',
+              error: 'BUSINESS_ERROR',
+              data: response.data
+            }
+          }
+        }
+        return {
+          data: { profileId: result.data, detail: result.detail ?? null }
+        }
+      },
+      invalidatesTags: ['EKYC']
     })
   })
 })
@@ -142,5 +170,6 @@ export const {
   useGetEKYCSearchQuery,
   useApproveEKYCMutation,
   useRejectEKYCMutation,
-  useCancelEKYCMutation
+  useCancelEKYCMutation,
+  useRestoreVerifiedKycProfileMutation
 } = apiEKYC

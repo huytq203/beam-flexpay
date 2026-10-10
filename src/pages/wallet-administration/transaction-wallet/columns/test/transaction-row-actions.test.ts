@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { UnifiedContentJournal } from '@type/apiResponseJournal'
 import {
   canShowFreezeTransactionAction,
+  canShowRefundTransactionAction,
   getFreezeTransactionAction,
   getFreezeTargetParties
 } from '../transaction-row-actions'
@@ -50,24 +51,36 @@ const transaction = (
 describe('canShowFreezeTransactionAction', () => {
   it('chỉ cho hiện action khi journal đã POSTED và có GL transaction', () => {
     expect(canShowFreezeTransactionAction(transaction())).toBe(true)
-    expect(canShowFreezeTransactionAction(transaction({ status: 'PENDING' }))).toBe(false)
-    expect(canShowFreezeTransactionAction(transaction({ transactionId: '' }))).toBe(false)
+    expect(
+      canShowFreezeTransactionAction(transaction({ status: 'PENDING' }))
+    ).toBe(false)
+    expect(
+      canShowFreezeTransactionAction(transaction({ transactionId: '' }))
+    ).toBe(false)
   })
 })
 
 describe('getFreezeTransactionAction', () => {
   it('đổi từ đóng băng sang mở băng khi giao dịch đang frozen', () => {
     expect(getFreezeTransactionAction(transaction())).toBe('freeze')
-    expect(getFreezeTransactionAction(transaction({
-      frozen: true,
-      freeze: {
-        heldAmount: 100_000,
-        shortfallAmount: 0,
-        requestedAmount: 100_000,
-        orderCount: 1
-      }
-    }))).toBe('unfreeze')
-    expect(getFreezeTransactionAction(transaction({ status: 'FAILED', frozen: true }))).toBeNull()
+    expect(
+      getFreezeTransactionAction(
+        transaction({
+          frozen: true,
+          freeze: {
+            heldAmount: 100_000,
+            shortfallAmount: 0,
+            requestedAmount: 100_000,
+            orderCount: 1
+          }
+        })
+      )
+    ).toBe('unfreeze')
+    expect(
+      getFreezeTransactionAction(
+        transaction({ status: 'FAILED', frozen: true })
+      )
+    ).toBeNull()
   })
 })
 
@@ -90,20 +103,24 @@ describe('getFreezeTargetParties', () => {
   })
 
   it('loại bên ngân hàng và không lặp cùng một chủ ví', () => {
-    expect(getFreezeTargetParties(transaction({
-      from: {
-        id: 'owner-receiver',
-        username: 'receiver',
-        displayName: 'Người nhận',
-        type: 'USER'
-      },
-      to: {
-        id: '',
-        username: '',
-        displayName: 'VCB',
-        type: 'BANK'
-      }
-    }))).toEqual([
+    expect(
+      getFreezeTargetParties(
+        transaction({
+          from: {
+            id: 'owner-receiver',
+            username: 'receiver',
+            displayName: 'Người nhận',
+            type: 'USER'
+          },
+          to: {
+            id: '',
+            username: '',
+            displayName: 'VCB',
+            type: 'BANK'
+          }
+        })
+      )
+    ).toEqual([
       {
         ownerId: 'owner-receiver',
         ownerName: 'receiver',
@@ -112,13 +129,41 @@ describe('getFreezeTargetParties', () => {
       }
     ])
 
-    expect(getFreezeTargetParties(transaction({
-      to: {
-        id: 'owner-sender',
-        username: 'sender',
-        displayName: 'Người gửi',
-        type: 'USER'
-      }
-    }))).toHaveLength(1)
+    expect(
+      getFreezeTargetParties(
+        transaction({
+          to: {
+            id: 'owner-sender',
+            username: 'sender',
+            displayName: 'Người gửi',
+            type: 'USER'
+          }
+        })
+      )
+    ).toHaveLength(1)
+  })
+})
+
+describe('canShowRefundTransactionAction', () => {
+  it('chỉ hiện với giao dịch thành công, không đóng băng, có transactionId và loại hoàn được', () => {
+    expect(canShowRefundTransactionAction(transaction())).toBe(true)
+    expect(
+      canShowRefundTransactionAction(
+        transaction({ transactionType: 'CASH_IN' })
+      )
+    ).toBe(true)
+  })
+
+  it.each([
+    ['đang đóng băng', { frozen: true }],
+    ['chưa thành công', { status: 'PENDING' }],
+    [
+      'thất bại hoàn tiền (status vẫn là FAILED)',
+      { status: 'FAILED', displayStatus: 'FAILED_REFUND' }
+    ],
+    ['thiếu transactionId', { transactionId: null }],
+    ['loại REVERSAL', { transactionType: 'REVERSAL' }]
+  ])('ẩn khi %s', (_name, overrides) => {
+    expect(canShowRefundTransactionAction(transaction(overrides))).toBe(false)
   })
 })

@@ -44,7 +44,9 @@ export const STUCK_TRANSACTION_OUTCOME: Record<
 export const STUCK_UPDATE_NOTE_MIN_LENGTH = 10
 export const STUCK_UPDATE_NOTE_MAX_LENGTH = 500
 export const STUCK_UPDATE_CODE_MAX_LENGTH = 50
+export const STUCK_RECEIPT_MAX_BYTES = 2 * 1024 * 1024
 
+/** Chỉ còn dùng cho các hộp thoại Review; cập nhật giao dịch treo không gửi nữa. */
 export interface BankConfirmation {
   outcome: StuckTransactionOutcome
   confirmationChannel: string
@@ -56,14 +58,40 @@ export interface BankConfirmation {
 }
 
 export interface StuckTransactionUpdateArg {
-  bankConfirmation?: BankConfirmation
   transactionCode: string
   newStatus: StuckTransactionOutcome
+  note: string
   /** Mã chuẩn chi ngân hàng, không bắt buộc. */
   authCode?: string
   /** Mã đối soát / ID settlement, không bắt buộc. */
   settlementId?: string
-  note: string
+  /** Chỉ khi `POSTED`; BE trả 400 nếu gửi kèm `FAILED`. */
+  bankReference?: string
+  /** Lấy từ API upload biên lai. Chỉ khi `POSTED`. */
+  receiptKey?: string
+  /** Chỉ lệnh nạp + `FAILED`: sinh thêm bản ghi "Thất bại hoàn tiền". */
+  refund?: boolean
+  refundAuthCode?: string
+  refundSettlementId?: string
+  /** Chỉ khi `refund = true`. */
+  refundBankReference?: string
+}
+
+/** `POST /transactions/{code}/receipt`: file chỉ gắn vào giao dịch khi update-status thành công. */
+export interface StuckReceiptUploadArg {
+  transactionCode: string
+  file: File
+}
+
+export interface StuckReceiptUploadResult {
+  receiptKey: string
+  contentType: string | null
+  sizeBytes: number | null
+}
+
+/** `GET /transactions/{code}/receipt`: `receiptUrl` vắng khi giao dịch chưa có biên lai. */
+export interface StuckReceiptLink {
+  receiptUrl: string | null
 }
 
 export interface StuckTransactionUpdateResult {
@@ -76,7 +104,14 @@ export interface StuckTransactionUpdateResult {
   transactionId: string | null
   authCode: string | null
   settlementId: string | null
+  bankReference: string | null
+  receiptKey: string | null
   note: string | null
   updatedBy: string | null
   updatedAt: string | null
+  /** Mã `RF-…` khi có bản ghi hoàn tiền. */
+  refundCode: string | null
+  refundBankReference: string | null
+  /** `FAILED_REFUND` khi sinh bản ghi hoàn; còn lại bằng `newStatus`. */
+  displayStatus: string | null
 }
