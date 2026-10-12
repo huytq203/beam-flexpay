@@ -101,6 +101,9 @@ export interface ExportFreezesQuery {
 export interface ExportVerifiedKycProfilesQuery {
   keyword?: string
   status?: string
+  latestStatus?: string
+  verified?: boolean
+  profileStatus?: string
   createdFrom?: string
   createdTo?: string
 }

@@ -41,31 +41,35 @@ export const useFeeConfigDetail = (
   const skip = !policyId
 
   const policyQuery = useGetFeePolicyByIdQuery(policyId as string, { skip })
-  const componentQuery = useGetFeeComponentPoliciesByIdQuery(policyId as string, { skip })
+  const componentQuery = useGetFeeComponentPoliciesByIdQuery(
+    policyId as string,
+    { skip }
+  )
   const assignmentQuery = useGetAssignmentsByPolicyQuery(policyId as string, {
     skip
   })
   const [fetchTiers] = useLazyGetFeeComponentTierQuery()
 
   /**
-   * Kết quả tải bậc phí kèm khoá của lô thành phần nó thuộc về. Gói chung một
-   * state để trạng thái "đang tải" suy ra được từ việc khoá đã khớp hay chưa,
-   * thay vì đặt cờ ngay trong thân effect — đặt cờ ở đó là một vòng render thừa
-   * mỗi lần effect chạy.
+   * Kết quả tải bậc phí kèm id chính sách nó thuộc về. Chỉ tải đúng một lần cho
+   * mỗi chính sách: khi lưu, các mutation làm query thành phần refetch và đổi id
+   * thành phần liên tục; nếu tải lại bậc theo mỗi lần đổi thì màn quay về trạng
+   * thái "đang tải" và form bị dựng lại, người dùng thấy nháy.
    */
   const [tierResult, setTierResult] = useState<{
-    key: string
+    policyId: string
     data: Record<string, FeeComponentTier[]>
     hasError: boolean
   } | null>(null)
 
   const components = componentQuery.data as FeePolicyComponent[] | undefined
-  const componentKey = (components ?? []).map((item) => item.id).join(',')
+  const hasComponents = (components?.length ?? 0) > 0
+  const loadedPolicyId = tierResult?.policyId
 
   useEffect(() => {
-    if (!components || components.length === 0) return
+    if (!policyId || !components || components.length === 0) return
+    if (loadedPolicyId === policyId) return
 
-    const key = components.map((item) => item.id).join(',')
     let cancelled = false
 
     Promise.all(
@@ -77,24 +81,24 @@ export const useFeeConfigDetail = (
       .then((entries) => {
         if (cancelled) return
         setTierResult({
-          key,
+          policyId,
           data: Object.fromEntries(entries),
           hasError: false
         })
       })
       .catch(() => {
-        if (!cancelled) setTierResult({ key, data: {}, hasError: true })
+        if (!cancelled) setTierResult({ policyId, data: {}, hasError: true })
       })
 
     return () => {
       cancelled = true
     }
-  }, [components, fetchTiers])
+  }, [policyId, components, loadedPolicyId, fetchTiers])
 
-  const isLoadingTiers =
-    componentKey.length > 0 && tierResult?.key !== componentKey
-  const hasTierError = tierResult?.key === componentKey && tierResult.hasError
-  const tiersByComponent = tierResult?.data ?? {}
+  const isTierResultCurrent = tierResult?.policyId === policyId
+  const isLoadingTiers = hasComponents && !isTierResultCurrent
+  const hasTierError = isTierResultCurrent && Boolean(tierResult?.hasError)
+  const tiersByComponent = isTierResultCurrent ? (tierResult?.data ?? {}) : {}
 
   const policy = policyQuery.data
   const assignment = assignmentQuery.data?.[0]

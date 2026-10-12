@@ -12,7 +12,6 @@ import {
   PAYMENT_METHOD_OPTIONS
 } from '../constants/walletLimit.constants'
 import type { WalletLimitFormValues } from '../schemas/walletLimitForm.schema'
-import { formatLimitMoney } from '../utils/walletLimit.format'
 import { WalletLimitFormNumberField } from './WalletLimitFormNumberField'
 
 interface WalletLimitFormOverrideRowProps {
@@ -42,10 +41,7 @@ export function WalletLimitFormOverrideRow({
   const { control, setValue } = useFormContext<WalletLimitFormValues>()
   const row = `bankOverrides.${index}` as const
   const transactionType = useWatch({ control, name: `${row}.transactionType` })
-  const rowMax = useWatch({ control, name: `${row}.maxPerTransaction` })
-  const generalMax = useWatch({ control, name: 'maxPerTransaction' })
   const isTransfer = transactionType === WalletLimitTransactionType.TRANSFER
-  const isLooser = rowMax !== null && generalMax !== null && rowMax > generalMax
 
   const handleTransactionTypeChange = (next: string | number) => {
     setValue(`${row}.paymentMethod`, '')
@@ -124,15 +120,6 @@ export function WalletLimitFormOverrideRow({
         label={LIMIT_FIELD_LABELS.specialMonthlyMaximum}
         placeholder={OPTIONAL_PLACEHOLDER}
       />
-      {isLooser && (
-        <p
-          role='status'
-          className='col-span-full text-xs text-warning-strong'
-        >
-          Dòng này lỏng hơn mức chung: giao dịch vẫn bị chặn ở mức chung{' '}
-          {formatLimitMoney(generalMax)}.
-        </p>
-      )}
     </div>
   )
 }

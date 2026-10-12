@@ -16,7 +16,7 @@ export function WalletLimitFormOverrides() {
   return (
     <WalletLimitFormSection
       title='Theo ngân hàng / phương thức'
-      description='Danh sách này thay toàn bộ dòng hiện có khi lưu. Dòng lỏng hơn mức chung vẫn lưu được nhưng giao dịch vẫn bị chặn ở mức chung.'
+      description='Danh sách này thay toàn bộ dòng hiện có khi lưu.'
     >
       {fields.map((field, index) => (
         <WalletLimitFormOverrideRow

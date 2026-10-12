@@ -34,23 +34,17 @@ import {
 } from '@configs/fetchBaseQueryCustom'
 import { FORBIDDENERROR } from '@constants/routersConstant'
 import { PATHS } from '@constants/pathConstant'
+import { resolveHeaderTitleKey } from '@utils/header-title'
 import { CookieKey } from '@configs/fetchBaseQuery.types'
 import './style.css'
 
 function getHeaderTitleKey(pathname: string, t: TFunction): string {
-  if (t(`header-title.${pathname}`) !== `header-title.${pathname}`) {
-    return pathname
-  }
-
-  const wildcardPath = pathname.replace(/\/[^/]+$/, '/*')
-  if (
-    wildcardPath !== pathname &&
-    t(`header-title.${wildcardPath}`) !== `header-title.${wildcardPath}`
-  ) {
-    return wildcardPath
-  }
-
-  return pathname
+  return (
+    resolveHeaderTitleKey(
+      pathname,
+      (key) => t(`header-title.${key}`) !== `header-title.${key}`
+    ) ?? pathname
+  )
 }
 
 function LayoutBody({ title }: { title: string }) {

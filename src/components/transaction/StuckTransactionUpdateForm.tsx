@@ -120,7 +120,7 @@ export const StuckTransactionUpdateForm = ({
           placeholder='Ví dụ: đối chiếu sao kê ngân hàng, giao dịch đã ghi có cho khách'
         />
 
-        <div className='grid grid-cols-1 gap-2 min-[400px]:grid-cols-2'>
+        <div className='sticky bottom-0 z-10 grid grid-cols-1 gap-2 border-t border-border bg-background pt-3 min-[400px]:grid-cols-2'>
           <ButtonComponent
             htmlType='button'
             type='default'

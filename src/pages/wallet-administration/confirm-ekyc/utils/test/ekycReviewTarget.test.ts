@@ -6,32 +6,47 @@ const record = (attempts: EKYCListItem['attempts']) =>
   ({ attempts }) as EKYCListItem
 
 describe('getReviewSessionId', () => {
-  it('chỉ chọn attempts[1] dù attempts[0] cũng đang chờ duyệt', () => {
+  it('chọn phiên chờ duyệt dù không nằm ở attempts[1]', () => {
     expect(
       getReviewSessionId(
         record([
-          { sessionId: 'other', status: 'PENDING_REVIEW', createdAt: '' },
-          { sessionId: 'target', status: 'PENDING_REVIEW', createdAt: '' }
+          { sessionId: 'a', status: 'IN_PROGRESS', createdAt: '2026-10-07T10' },
+          { sessionId: 'b', status: 'IN_PROGRESS', createdAt: '2026-10-07T09' },
+          {
+            sessionId: 'c',
+            status: 'PENDING_REVIEW',
+            createdAt: '2026-10-07T08'
+          }
         ])
       )
-    ).toBe('target')
+    ).toBe('c')
   })
 
-  it('không chọn attempts[1] khi phiên chưa chờ duyệt', () => {
+  it('chọn phiên chờ duyệt mới nhất khi có nhiều phiên', () => {
     expect(
       getReviewSessionId(
         record([
-          { sessionId: 'other', status: 'PENDING_REVIEW', createdAt: '' },
-          { sessionId: 'target', status: 'IN_PROGRESS', createdAt: '' }
+          {
+            sessionId: 'old',
+            status: 'PENDING_REVIEW',
+            createdAt: '2026-10-07T08'
+          },
+          {
+            sessionId: 'new',
+            status: 'PENDING_REVIEW',
+            createdAt: '2026-10-07T09'
+          }
         ])
       )
-    ).toBeNull()
+    ).toBe('new')
   })
 
-  it('không có session để duyệt khi chưa có attempts[1]', () => {
+  it('trả null khi không có phiên nào chờ duyệt', () => {
     expect(
       getReviewSessionId(
-        record([{ sessionId: 'only', status: 'PENDING_REVIEW', createdAt: '' }])
+        record([
+          { sessionId: 'x', status: 'IN_PROGRESS', createdAt: '2026-10-07T10' }
+        ])
       )
     ).toBeNull()
   })

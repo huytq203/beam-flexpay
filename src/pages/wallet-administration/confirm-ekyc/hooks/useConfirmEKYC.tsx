@@ -9,6 +9,7 @@ export type EKYCFilterType = {
   keyword?: string
   latestStatus?: string
   verified?: boolean
+  profileStatus?: string
   createdFrom?: string
   createdTo?: string
 }

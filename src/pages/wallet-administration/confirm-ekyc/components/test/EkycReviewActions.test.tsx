@@ -10,7 +10,7 @@ const makeRecord = (status: string): EKYCListItem =>
   ({
     fullName: 'Nguyễn Văn A',
     attempts: [
-      { sessionId: 'other', status: 'PENDING_REVIEW', createdAt: '' },
+      { sessionId: 'other', status: 'IN_PROGRESS', createdAt: '' },
       { sessionId: 'target', status, createdAt: '' }
     ]
   }) as EKYCListItem
@@ -32,7 +32,7 @@ const renderActions = (status = 'PENDING_REVIEW') => {
 }
 
 describe('EkycReviewActions', () => {
-  it('mở popover icon và chọn chấp nhận cho attempts[1]', async () => {
+  it('mở popover icon và chọn chấp nhận cho phiên chờ duyệt', async () => {
     const { onReview, record } = renderActions()
     fireEvent.click(
       screen.getByRole('button', { name: 'Xét duyệt eKYC Nguyễn Văn A' })
@@ -41,7 +41,7 @@ describe('EkycReviewActions', () => {
     expect(onReview).toHaveBeenCalledWith(record, 'approve')
   })
 
-  it('ẩn icon khi attempts[1] chưa chờ duyệt', () => {
+  it('ẩn icon khi không có phiên chờ duyệt', () => {
     const { onReview } = renderActions('IN_PROGRESS')
     expect(
       screen.queryByRole('button', { name: 'Xét duyệt eKYC Nguyễn Văn A' })
