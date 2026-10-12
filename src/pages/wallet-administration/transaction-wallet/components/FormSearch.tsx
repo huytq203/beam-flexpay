@@ -9,7 +9,6 @@ import {
   StatusType,
   TransactionType
 } from '../constants/Transaction.constant'
-import { HAS_REFUND_OPTIONS } from '../constants/transactionRefund.constant'
 import { FormSearchValues } from '../types/Transaction.type'
 import * as Icons from '@components/icons'
 interface props {
@@ -17,6 +16,9 @@ interface props {
   /** Trạng thái đang lọc từ dải tổng quan, đổ ngược vào ô select bên dưới. */
   status?: string
 }
+/** Khoá loại giao dịch hoàn tiền trong `TransactionType`. */
+const REFUND_TRANSACTION_TYPE = 'REVERSAL'
+
 const FormSearch = ({ handleSearch, status }: props) => {
   const formSearch = useForm<FormSearchValues>({
     defaultValues: {
@@ -39,7 +41,14 @@ const FormSearch = ({ handleSearch, status }: props) => {
   }, [formSearch, status])
 
   const onSubmit: SubmitHandler<FormSearchValues> = (data) => {
-    handleSearch(data)
+    // Chọn loại "Hoàn tiền" thì lọc theo hasRefund=true và bỏ transactionType: kết hợp
+    // transactionType=REVERSAL với hasRefund=true cho kết quả rỗng.
+    const isRefund = data.transactionType === REFUND_TRANSACTION_TYPE
+    handleSearch({
+      ...data,
+      transactionType: isRefund ? '' : data.transactionType,
+      hasRefund: isRefund ? 'true' : ''
+    })
   }
 
   const handleReset = () => {
@@ -74,14 +83,6 @@ const FormSearch = ({ handleSearch, status }: props) => {
             label='Trạng thái'
             className='col-span-1'
             options={mapEnumToSelectOptions(StatusType)}
-          />
-          <FormSelect
-            control={formSearch.control}
-            name='hasRefund'
-            label='Có hoàn tiền?'
-            className='col-span-1'
-            placeholder='Tất cả'
-            options={HAS_REFUND_OPTIONS}
           />
           <FormInput
             control={formSearch.control}

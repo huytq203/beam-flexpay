@@ -5,16 +5,39 @@ import FormSearch from '../components/FormSearch'
 import { FULL, renderAs } from './transaction.setup'
 
 describe('Form lọc hoàn tiền', () => {
-  it('form tìm kiếm đưa lựa chọn Có hoàn tiền? lên handleSearch', async () => {
+  it('không còn ô Có hoàn tiền? riêng', async () => {
+    renderAs(<FormSearch handleSearch={vi.fn()} />, FULL)
+
+    await screen.findByLabelText('Loại giao dịch')
+    expect(screen.queryByLabelText('Có hoàn tiền?')).not.toBeInTheDocument()
+  })
+
+  it('chọn loại giao dịch Hoàn tiền thì chỉ gửi hasRefund=true, không gửi loại giao dịch', async () => {
     const handleSearch = vi.fn()
     renderAs(<FormSearch handleSearch={handleSearch} />, FULL)
 
-    await userEvent.click(await screen.findByLabelText('Có hoàn tiền?'))
-    await userEvent.click(await screen.findByTitle('Có'))
+    await userEvent.click(await screen.findByLabelText('Loại giao dịch'))
+    await userEvent.click(await screen.findByTitle('Hoàn tiền'))
     await userEvent.click(screen.getByRole('button', { name: /Tìm kiếm/ }))
 
     expect(handleSearch).toHaveBeenCalledWith(
-      expect.objectContaining({ hasRefund: 'true' })
+      expect.objectContaining({
+        transactionType: '',
+        hasRefund: 'true'
+      })
+    )
+  })
+
+  it('loại giao dịch khác không gửi hasRefund', async () => {
+    const handleSearch = vi.fn()
+    renderAs(<FormSearch handleSearch={handleSearch} />, FULL)
+
+    await userEvent.click(await screen.findByLabelText('Loại giao dịch'))
+    await userEvent.click(await screen.findByTitle('Nạp tiền'))
+    await userEvent.click(screen.getByRole('button', { name: /Tìm kiếm/ }))
+
+    expect(handleSearch).toHaveBeenCalledWith(
+      expect.objectContaining({ transactionType: 'CASH_IN', hasRefund: '' })
     )
   })
 

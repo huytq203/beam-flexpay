@@ -32,9 +32,3 @@ export const BENEFICIARY_PLACEHOLDER = {
   beneficiaryAccountNumber: 'N/A',
   beneficiaryAccountName: 'N/A'
 } as const
-
-/** Giá trị là chuỗi `'true'`/`'false'`; rỗng (xoá lựa chọn) là không lọc. */
-export const HAS_REFUND_OPTIONS = [
-  { value: 'true', label: 'Có' },
-  { value: 'false', label: 'Không' }
-]

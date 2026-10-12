@@ -204,6 +204,9 @@ export const accessApi = apiMerchant.injectEndpoints({
         url: `/merchant-users/${id}/scope-proposal`,
         method: 'GET'
       }),
+      // Sau khi duyệt hoặc từ chối, tag bị làm hết hạn nên query tự gọi lại và BE trả 404 vì
+      // không còn đề xuất chờ. Hộp thoại tự báo lỗi, không để base query hiện thông báo thừa.
+      extraOptions: { suppressErrorNotification: true },
       transformResponse: (
         response: MerchantAccessEnvelope<MerchantUserScopeProposalDto>
       ) => response.data,
