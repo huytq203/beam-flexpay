@@ -1,12 +1,20 @@
 import { useState } from 'react'
 import type { WalletLimitSpecialMonth } from '@type/walletLimit.type'
 import { CardComponent } from '@components/index'
+import { SpecialMonthAddModal } from '../components/SpecialMonthAddModal'
+import { SpecialMonthCalendar } from '../components/SpecialMonthCalendar'
 import { SpecialMonthDeleteDialog } from '../components/SpecialMonthDeleteDialog'
-import { SpecialMonthForm } from '../components/SpecialMonthForm'
 import { SpecialMonthList } from '../components/SpecialMonthList'
 import { SpecialMonthRenameModal } from '../components/SpecialMonthRenameModal'
+import { useSpecialMonths } from '../hooks/useSpecialMonths'
+import { getCalendarYear } from '../utils/specialMonth.utils'
+
+/** `''` là thêm không điền sẵn tháng, `null` là đóng modal. */
+type AddingMonth = string | null
 
 const WalletLimitSpecialMonthPage = () => {
+  const state = useSpecialMonths()
+  const [adding, setAdding] = useState<AddingMonth>(null)
   const [renaming, setRenaming] = useState<WalletLimitSpecialMonth | null>(null)
   const [deleting, setDeleting] = useState<WalletLimitSpecialMonth | null>(null)
 
@@ -20,11 +28,24 @@ const WalletLimitSpecialMonthPage = () => {
           chính lớp đó.
         </p>
       </CardComponent>
-      <SpecialMonthForm />
+      <SpecialMonthCalendar
+        year={getCalendarYear(state.year)}
+        months={state.months}
+        isReady={state.query.isSuccess}
+        onAdd={setAdding}
+      />
       <SpecialMonthList
+        state={state}
+        onAdd={() => setAdding('')}
         onRename={setRenaming}
         onDelete={setDeleting}
       />
+      {adding !== null && (
+        <SpecialMonthAddModal
+          initialMonth={adding || undefined}
+          onClose={() => setAdding(null)}
+        />
+      )}
       {renaming && (
         <SpecialMonthRenameModal
           month={renaming}

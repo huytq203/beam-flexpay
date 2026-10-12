@@ -20,18 +20,16 @@ const STATUS_OPTIONS = [
   { label: 'Đã thay thế', value: 'SUPERSEDED' }
 ]
 
-// Kết quả xác thực chung cuộc của người (hồ sơ), tách biệt với trạng thái phiên.
+// Kết quả xác thực chung cuộc của người (profileStatus ở BE), tách biệt với trạng thái phiên.
+// UNVERIFIED là giá trị riêng của FE: gửi hasProfile=false để chỉ lấy người chưa từng có hồ sơ
+// (verified=false còn gồm cả hồ sơ đã thu hồi / chờ xác thực lại).
+const UNVERIFIED = 'UNVERIFIED'
 const VERIFIED_OPTIONS = [
-  { label: 'Đã xác thực', value: 'true' },
-  { label: 'Chưa xác thực', value: 'false' }
-]
-
-// Trạng thái hồ sơ chính xác của người (KycProfileStatus ở BE); người chưa có hồ sơ không thuộc mục nào.
-const PROFILE_STATUS_OPTIONS = [
   { label: 'Đã xác thực', value: 'VERIFIED' },
   { label: 'Hết hạn giấy tờ', value: 'EXPIRED' },
   { label: 'Đã thu hồi', value: 'INVALID' },
-  { label: 'Chờ xác thực lại', value: 'REVERIFY_REQUIRED' }
+  { label: 'Chờ xác thực lại', value: 'REVERIFY_REQUIRED' },
+  { label: 'Chưa xác thực', value: UNVERIFIED }
 ]
 
 interface FormSearchProps {
@@ -46,8 +44,11 @@ const FormSearch = ({ onSearch, onReset }: FormSearchProps) => {
     const payload: EKYCFilterType = {
       keyword: data.keyword || undefined,
       latestStatus: data.latestStatus || undefined,
-      verified: data.verified ? data.verified === 'true' : undefined,
-      profileStatus: data.profileStatus || undefined,
+      hasProfile: data.profileStatus === UNVERIFIED ? false : undefined,
+      profileStatus:
+        data.profileStatus && data.profileStatus !== UNVERIFIED
+          ? data.profileStatus
+          : undefined,
       createdFrom: data.createdFrom
         ? dayjs.utc(data.createdFrom).format('YYYY-MM-DD HH:mm:ss')
         : undefined,
@@ -70,7 +71,7 @@ const FormSearch = ({ onSearch, onReset }: FormSearchProps) => {
         <Icons.FunnelIcon /> Bộ lọc tìm kiếm
       </p>
       <form onSubmit={handleSubmit}>
-        <div className='grid grid-cols-3 gap-3'>
+        <div className='grid grid-cols-5 gap-3'>
           <FormInput
             control={formSearch.control}
             name='keyword'
@@ -87,17 +88,10 @@ const FormSearch = ({ onSearch, onReset }: FormSearchProps) => {
           />
           <FormSelect
             control={formSearch.control}
-            name='verified'
+            name='profileStatus'
             className='col-span-1'
             label='Xác thực'
             options={VERIFIED_OPTIONS}
-          />
-          <FormSelect
-            control={formSearch.control}
-            name='profileStatus'
-            className='col-span-1'
-            label='Trạng thái hồ sơ'
-            options={PROFILE_STATUS_OPTIONS}
           />
           <FormDatePicker
             control={formSearch.control}

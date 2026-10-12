@@ -28,6 +28,7 @@ interface EkycSearchParams {
   createdTo?: string
   verified?: boolean
   profileStatus?: string
+  hasProfile?: boolean
   includeSummary?: boolean
 }
 

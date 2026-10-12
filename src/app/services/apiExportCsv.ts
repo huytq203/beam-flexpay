@@ -104,6 +104,7 @@ export interface ExportVerifiedKycProfilesQuery {
   latestStatus?: string
   verified?: boolean
   profileStatus?: string
+  hasProfile?: boolean
   createdFrom?: string
   createdTo?: string
 }

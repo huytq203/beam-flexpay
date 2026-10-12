@@ -10,6 +10,7 @@ export type EKYCFilterType = {
   latestStatus?: string
   verified?: boolean
   profileStatus?: string
+  hasProfile?: boolean
   createdFrom?: string
   createdTo?: string
 }

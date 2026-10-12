@@ -6,6 +6,9 @@ const YEARS_BEFORE = 1
 const YEARS_AFTER = 3
 
 export const ALL_YEARS = 'ALL'
+export const MIN_YEAR = 2000
+export const MAX_YEAR = 2100
+const MONTHS_PER_YEAR = 12
 
 export interface YearOption {
   value: string
@@ -56,3 +59,39 @@ export const sortSpecialMonths = (
   months: readonly WalletLimitSpecialMonth[]
 ): WalletLimitSpecialMonth[] =>
   [...months].sort((a, b) => a.monthStart.localeCompare(b.monthStart))
+
+export interface CalendarCell {
+  key: string
+  number: number
+  month: WalletLimitSpecialMonth | undefined
+  isPast: boolean
+  isCurrent: boolean
+}
+
+/** Lịch năm đang xem: năm đã lọc, hoặc năm hiện tại khi chọn "Tất cả năm". */
+export const getCalendarYear = (year: string, now?: Date): number =>
+  year === ALL_YEARS
+    ? Number(getCurrentVietnamMonth(now).slice(0, 4))
+    : Number(year)
+
+/** 12 ô tháng của một năm, gắn tháng đặc biệt tương ứng nếu đã có. */
+export const buildCalendarCells = (
+  year: number,
+  months: readonly WalletLimitSpecialMonth[],
+  now?: Date
+): CalendarCell[] => {
+  const byKey = new Map(
+    months.map((month) => [toMonthKey(month.monthStart), month])
+  )
+  return Array.from({ length: MONTHS_PER_YEAR }, (_, index) => {
+    const number = index + 1
+    const key = `${year}-${String(number).padStart(2, '0')}`
+    return {
+      key,
+      number,
+      month: byKey.get(key),
+      isPast: key < getCurrentVietnamMonth(now),
+      isCurrent: key === getCurrentVietnamMonth(now)
+    }
+  })
+}

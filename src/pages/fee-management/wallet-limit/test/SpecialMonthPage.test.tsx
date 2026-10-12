@@ -59,7 +59,7 @@ describe('WalletLimitSpecialMonthPage - danh sách', () => {
     )
   })
 
-  it('danh sách rỗng hiện gợi ý dùng form phía trên', async () => {
+  it('danh sách rỗng hiện gợi ý thêm tháng', async () => {
     mockList([])
     renderPage()
 
@@ -67,7 +67,7 @@ describe('WalletLimitSpecialMonthPage - danh sách', () => {
       await screen.findByText('Chưa có tháng đặc biệt nào')
     ).toBeInTheDocument()
     expect(
-      screen.getByText(/Thêm tháng ở biểu mẫu phía trên/)
+      screen.getByText(/Bấm Thêm tháng đặc biệt hoặc chọn một ô trống/)
     ).toBeInTheDocument()
   })
 
@@ -89,8 +89,51 @@ describe('WalletLimitSpecialMonthPage - danh sách', () => {
   })
 })
 
+const openAddModal = async (user: ReturnType<typeof userEvent.setup>) => {
+  await user.click(screen.getByRole('button', { name: 'Thêm tháng đặc biệt' }))
+  return screen.findByRole('dialog')
+}
+
+const submitAdd = (user: ReturnType<typeof userEvent.setup>) =>
+  user.click(screen.getByRole('button', { name: 'Thêm tháng' }))
+
+describe('WalletLimitSpecialMonthPage - lịch năm', () => {
+  it('tô tháng đặc biệt của năm hiện tại, mở modal điền sẵn từ ô trống', async () => {
+    const user = userEvent.setup()
+    renderPage()
+    await screen.findByText('09/2026')
+
+    expect(screen.getByText('Lịch năm')).toBeInTheDocument()
+    expect(screen.getByText('2 trong 12 tháng')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Thêm tháng 11/2026' }))
+    const dialog = await screen.findByRole('dialog')
+    expect(within(dialog).getByPlaceholderText('Chọn tháng')).toHaveValue(
+      '11/2026'
+    )
+  })
+
+  it('ô trống của tháng đã qua không có nút thêm', async () => {
+    renderPage()
+    await screen.findByText('09/2026')
+
+    expect(
+      screen.queryByRole('button', { name: 'Thêm tháng 08/2026' })
+    ).not.toBeInTheDocument()
+  })
+
+  it('ẩn nút thêm trên lịch khi không có quyền tạo', async () => {
+    renderPage([])
+    await screen.findByText('09/2026')
+
+    expect(
+      screen.queryByRole('button', { name: /^Thêm tháng \d{2}\/\d{4}$/ })
+    ).not.toBeInTheDocument()
+  })
+})
+
 describe('WalletLimitSpecialMonthPage - thêm tháng', () => {
-  it('gửi {month: yyyy-MM, name} và xóa form khi thành công', async () => {
+  it('gửi {month: yyyy-MM, name} và đóng modal khi thành công', async () => {
     const bodies: unknown[] = []
     server.use(
       http.post('*/wallet-limit-special-months', async ({ request }) => {
@@ -102,14 +145,13 @@ describe('WalletLimitSpecialMonthPage - thêm tháng', () => {
     renderPage()
     await screen.findByText('09/2026')
 
+    await openAddModal(user)
     await chooseMonth(user, '02/2027')
     await user.type(
       screen.getByPlaceholderText('Ví dụ: Tết Nguyên đán 2027'),
       '  Tết Nguyên đán 2027 '
     )
-    await user.click(
-      screen.getByRole('button', { name: 'Thêm tháng đặc biệt' })
-    )
+    await submitAdd(user)
 
     await waitFor(() =>
       expect(bodies).toEqual([
@@ -117,9 +159,7 @@ describe('WalletLimitSpecialMonthPage - thêm tháng', () => {
       ])
     )
     await waitFor(() =>
-      expect(
-        screen.getByPlaceholderText('Ví dụ: Tết Nguyên đán 2027')
-      ).toHaveValue('')
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     )
   })
 
@@ -135,9 +175,8 @@ describe('WalletLimitSpecialMonthPage - thêm tháng', () => {
     renderPage()
     await screen.findByText('09/2026')
 
-    await user.click(
-      screen.getByRole('button', { name: 'Thêm tháng đặc biệt' })
-    )
+    await openAddModal(user)
+    await submitAdd(user)
 
     expect(await screen.findByText('Vui lòng chọn tháng.')).toBeInTheDocument()
     expect(
@@ -163,14 +202,13 @@ describe('WalletLimitSpecialMonthPage - thêm tháng', () => {
     renderPage()
     await screen.findByText('09/2026')
 
+    await openAddModal(user)
     await chooseMonth(user, '02/2027')
     await user.type(
       screen.getByPlaceholderText('Ví dụ: Tết Nguyên đán 2027'),
       'Tết'
     )
-    await user.click(
-      screen.getByRole('button', { name: 'Thêm tháng đặc biệt' })
-    )
+    await submitAdd(user)
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'Tháng 02/2027 đã có trong danh mục tháng đặc biệt.'
