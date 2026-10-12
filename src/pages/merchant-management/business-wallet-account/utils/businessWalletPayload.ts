@@ -20,7 +20,7 @@ const requiredText = (value: string): string => value.trim()
 export const buildWalletPayload = (
   values: BusinessWalletFormValues,
   stagingIds: WalletStagingIds,
-  options: { draft: boolean; adminPassword?: string }
+  options: { draft: boolean }
 ): EnterpriseWalletPayload => {
   const text = options.draft ? optionalText : requiredText
   return {
@@ -35,8 +35,6 @@ export const buildWalletPayload = (
     managerTitle: text(values.managerPosition),
     managerIdNumber: text(values.managerIdNumber),
     managerIdExpiryDate: getDate(values.managerIdExpiry) || undefined,
-    otpPhone: text(values.otpPhone),
-    adminPassword: options.adminPassword,
     ...stagingIds,
     internalWallet: values.isInternalWallet
   }

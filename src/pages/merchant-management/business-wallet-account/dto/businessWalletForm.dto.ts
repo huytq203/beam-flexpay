@@ -38,7 +38,6 @@ export const detailToForm = (
   managerPosition: wallet.managerTitle || '',
   managerIdNumber: wallet.managerIdNumber || '',
   managerIdExpiry: wallet.managerIdExpiryDate || '',
-  otpPhone: wallet.otpPhone || '',
   businessLicense: storedFile(wallet.businessLicense),
   authorizationLetter: storedFile(wallet.authorizationLetter),
   idCardFront: storedFile(wallet.idCardFront),

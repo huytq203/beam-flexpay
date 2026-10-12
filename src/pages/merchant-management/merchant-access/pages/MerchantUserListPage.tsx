@@ -13,6 +13,7 @@ import { UserDetailDrawer } from '../components/UserDetailDrawer'
 import { UserEditorModal } from '../components/UserEditorModal'
 import { UserResetPasswordDialog } from '../components/UserResetPasswordDialog'
 import { UserResendActivationDialog } from '../components/UserResendActivationDialog'
+import { UserScopeProposalDialog } from '../components/UserScopeProposalDialog'
 import { UserStatusDialog } from '../components/UserStatusDialog'
 import type { MerchantUser } from '../types/merchantAccess.types'
 
@@ -38,6 +39,7 @@ export default function MerchantUserListPage() {
   const [statusUser, setStatusUser] = useState<MerchantUser | null>(null)
   const [resetUser, setResetUser] = useState<MerchantUser | null>(null)
   const [resendUser, setResendUser] = useState<MerchantUser | null>(null)
+  const [scopeUser, setScopeUser] = useState<MerchantUser | null>(null)
   const columns = createMerchantUserColumns({
     page,
     pageSize,
@@ -49,7 +51,8 @@ export default function MerchantUserListPage() {
     onAccess: setAccessUser,
     onResetPassword: setResetUser,
     onResendActivation: setResendUser,
-    onStatus: setStatusUser
+    onStatus: setStatusUser,
+    onReviewScope: setScopeUser
   })
 
   return (
@@ -117,6 +120,7 @@ export default function MerchantUserListPage() {
           rowKey='id'
           scroll={{ x: 'max-content' }}
           size='small'
+          tableLayout='auto'
         />
       </AccessPageShell>
       {editor !== null && (
@@ -152,6 +156,15 @@ export default function MerchantUserListPage() {
         <UserResendActivationDialog
           user={resendUser}
           onClose={() => setResendUser(null)}
+        />
+      )}
+      {scopeUser && (
+        <UserScopeProposalDialog
+          key={scopeUser.id}
+          user={users.find((row) => row.id === scopeUser.id) ?? scopeUser}
+          getMerchant={getMerchant}
+          getSubMerchant={getSubMerchant}
+          onClose={() => setScopeUser(null)}
         />
       )}
       {statusUser && (

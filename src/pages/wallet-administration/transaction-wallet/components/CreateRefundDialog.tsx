@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { FormCheckbox, FormInputNumber, FormTextArea } from '@components/form'
 import { DialogModal } from '@components/index'
 import { formatNumber } from '@utils/formatNumber'
@@ -19,6 +19,8 @@ import {
 } from '../constants/Transaction.constant'
 import { getRefundOriginalType } from '../dto/transactionRefund.dto'
 import { useCreateRefund } from '../hooks/useCreateRefund'
+import { useRefundFeePreview } from '../hooks/useRefundFeePreview'
+import { RefundFeePreview, RefundableHint } from './RefundFeePreview'
 import {
   REFUND_REASON_MAX,
   createRefundFormSchema,
@@ -48,6 +50,13 @@ export function CreateRefundDialog({
   })
   const originalType = getRefundOriginalType(transaction.transactionType)
   const channel = originalType ? REFUND_CHANNEL_BY_TYPE[originalType] : null
+  const amount = useWatch({ control, name: 'requestedAmount' })
+  const feePreview = useRefundFeePreview({
+    transactionId: transaction.transactionId,
+    channel,
+    bankCode: transaction.bankCode,
+    amount
+  })
 
   const onSubmit = async (values: CreateRefundFormValues): Promise<void> => {
     if (isSubmitting) return
@@ -123,9 +132,7 @@ export function CreateRefundDialog({
           parser={(value) => Number(value?.replace(/,/g, ''))}
           className='flex flex-col gap-1'
         />
-        <p className='-mt-2 text-xs text-muted-foreground'>
-          Hệ thống kiểm tra số còn được hoàn khi gửi yêu cầu.
-        </p>
+        <RefundableHint preview={feePreview.preview} />
 
         <FormTextArea<CreateRefundFormValues>
           control={control}
@@ -150,6 +157,8 @@ export function CreateRefundDialog({
             </span>
           }
         />
+
+        <RefundFeePreview state={feePreview} />
 
         {error && <RefundNote tone='danger'>{error}</RefundNote>}
       </form>

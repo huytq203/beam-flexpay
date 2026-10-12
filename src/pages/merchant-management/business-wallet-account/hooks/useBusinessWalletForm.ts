@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm, useWatch } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { useGetEnterpriseWalletQuery } from '@services/merchantEnterpriseWalletApi'
@@ -31,13 +31,6 @@ export function useBusinessWalletForm() {
     getValues
   })
   const resolveFileUrl = useWalletDocumentUrl(id, detail.data, detail.refetch)
-  const currentOtpPhone = useWatch({ control, name: 'otpPhone' })
-  const requiresAdminPassword = Boolean(
-    isEditMode &&
-      detail.data &&
-      currentOtpPhone?.trim() !== (detail.data.otpPhone ?? '')
-  )
-
   useEffect(() => {
     if (detail.data && !formState.isDirty) reset(detailToForm(detail.data))
   }, [detail.data, formState.isDirty, reset])
@@ -58,7 +51,6 @@ export function useBusinessWalletForm() {
       void navigate(-1)
     },
     isEditMode,
-    requiresAdminPassword,
     isSubmitting: isSaving,
     isLoadingDetail: detail.isLoading,
     isDetailError: detail.isError && !isNotFound,

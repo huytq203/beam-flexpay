@@ -1,4 +1,4 @@
-import { FormSelect } from '@components/form'
+import { FormLabelHint, FormSelect } from '@components/form'
 import { useGetBankQuery } from '@services/apiFeeBank'
 import { useGetCustomerSegmentsQuery } from '@services/apiCustomerSegment'
 import { useEffect } from 'react'
@@ -13,6 +13,9 @@ import type { FeeConfigFormValues } from '../schemas/feeConfig.schema'
 import { MerchantPickerField } from './MerchantPickerField'
 import { UserPickerField } from './UserPickerField'
 import { SectionHeading } from './SectionHeading'
+
+const REFUND_BANK_HINT =
+  'Mã ngân hàng chỉ khớp hoàn tiền về ngân hàng. Hoàn về ví không có mã ngân hàng, nên cần có một bản gán mặc định không ghi ngân hàng.'
 
 interface AssignmentSectionProps {
   control: Control<FeeConfigFormValues>
@@ -102,10 +105,17 @@ export const AssignmentSection = ({
           name='bankCode'
           control={control}
           required={rules.bankRequired}
-          label='Ngân hàng'
-          placeholder={
-            rules.bankRequired ? 'Chọn ngân hàng' : 'Mọi ngân hàng'
+          label={
+            serviceType === 'EWALLET_REFUND' ? (
+              <FormLabelHint
+                label='Ngân hàng'
+                hint={REFUND_BANK_HINT}
+              />
+            ) : (
+              'Ngân hàng'
+            )
           }
+          placeholder={rules.bankRequired ? 'Chọn ngân hàng' : 'Mọi ngân hàng'}
           showSearch
           optionFilterProp='label'
           options={bankOptions}
@@ -164,7 +174,6 @@ export const AssignmentSection = ({
           />
         )}
       </div>
-
     </section>
   )
 }

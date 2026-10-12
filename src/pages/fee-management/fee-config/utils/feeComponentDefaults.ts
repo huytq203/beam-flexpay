@@ -24,3 +24,10 @@ export const emptyComponent = (
   roundMode: 'UP',
   tiers: []
 })
+
+export const CALCULATION_METHOD_VALUES = [
+  CalculationMethod.DIRECT,
+  CalculationMethod.FREE,
+  CalculationMethod.PROGRESSIVE_TIER,
+  CalculationMethod.FLAT_TIER
+]

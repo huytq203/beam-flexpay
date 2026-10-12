@@ -1,6 +1,6 @@
 import {
   EXECUTABLE_BENEFICIARIES,
-  getExecutablePayer
+  getSelectablePayers
 } from '@utils/fee-execution'
 
 /**
@@ -25,9 +25,12 @@ export const PAYER_TYPE_LABEL: Readonly<Record<string, string>> = {
 export const getPayerTypeOptions = (
   serviceType: string | null | undefined
 ): readonly { value: string; label: string }[] => {
-  const payer = getExecutablePayer(serviceType) ?? 'USER'
+  const payers = getSelectablePayers(serviceType)
   return [
-    { value: payer, label: PAYER_TYPE_LABEL[payer] ?? payer },
+    ...(payers.length > 0 ? payers : ['USER']).map((payer) => ({
+      value: payer,
+      label: PAYER_TYPE_LABEL[payer] ?? payer
+    })),
     { value: 'SYSTEM', label: PAYER_TYPE_LABEL.SYSTEM }
   ]
 }

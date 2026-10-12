@@ -12,6 +12,16 @@ export const handlers = [
   http.get('*/withdrawals', () =>
     ok({ id: 'withdrawal-default', transactionCode: 'TXN-000', beneficiary: null })
   ),
+  // Popup tạo hoàn tiền tự gọi xem trước phí khi có số tiền; test cần số liệu thì server.use() đè.
+  http.post('*/refunds/preview', () =>
+    ok({
+      originalTransactionId: 'tx',
+      channel: 'TO_WALLET',
+      requestedAmount: 50000,
+      netCredit: 50000,
+      netDebit: 50000
+    })
+  ),
   http.post('*/auth/change-password', () => ok(null)),
   http.post('*/auth/forgot-password', () => ok(null)),
   http.get('*/auth/reset-password/validate', () =>

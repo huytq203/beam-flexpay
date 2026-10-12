@@ -67,7 +67,7 @@ const componentSegmentSchema = z.object({
   appliedRoundMode: optionalText
 })
 
-const componentAllocationSchema = z.object({
+export const componentAllocationSchema = z.object({
   componentId: z.string(),
   componentType: optionalText,
   payerType: optionalText,
@@ -117,3 +117,34 @@ export interface CreateRefundRequest {
   beneficiaryAccountNumber?: string
   beneficiaryAccountName?: string
 }
+
+/** Body `POST /refunds/preview`; `beneficiaryBankCode` chỉ có nghĩa khi `TO_BANK`. */
+export interface RefundPreviewRequest {
+  originalTransactionId: string
+  requestedAmount: number
+  channel: RefundChannel
+  beneficiaryBankCode: string | null
+}
+
+/** Trường phí trùng tên và ý nghĩa với `refundDetailSchema`; BE tính, FE chỉ hiển thị. */
+export const refundPreviewSchema = z.object({
+  originalTransactionId: z.string(),
+  originalTransactionCode: optionalText,
+  originalType: z.enum(RefundOriginalType).nullish(),
+  channel: z.enum(RefundChannel),
+  originalAmount: z.number().nullish(),
+  alreadyRequestedAmount: z.number().nullish(),
+  frozenAmount: z.number().nullish(),
+  refundableAmount: z.number().nullish(),
+  requestedAmount: z.number(),
+  originalSenderFee: z.number().nullish(),
+  originalReceiverFee: z.number().nullish(),
+  senderFeeReversal: z.number().nullish(),
+  receiverFeeReversal: z.number().nullish(),
+  senderProcessingFee: z.number().nullish(),
+  receiverProcessingFee: z.number().nullish(),
+  netCredit: z.number(),
+  netDebit: z.number(),
+  componentAllocations: z.array(componentAllocationSchema).nullish()
+})
+export type RefundPreview = z.infer<typeof refundPreviewSchema>

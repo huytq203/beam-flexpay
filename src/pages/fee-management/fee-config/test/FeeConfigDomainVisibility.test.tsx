@@ -9,7 +9,9 @@ import { describe, expect, it, vi } from 'vitest'
 import { SERVICE_TYPE_LABELS } from '@constants/feeLabels'
 import FeeConfig from '../FeeConfig'
 
-const MERCHANT_COLLECTION_LABEL = SERVICE_TYPE_LABELS.MERCHANT_VA_BILL_COLLECTION
+const MERCHANT_COLLECTION_LABEL =
+  SERVICE_TYPE_LABELS.MERCHANT_VA_BILL_COLLECTION
+const REFUND_LABEL = SERVICE_TYPE_LABELS.EWALLET_REFUND
 const DEPOSIT_LABEL = SERVICE_TYPE_LABELS.EWALLET_DEPOSIT
 
 const mockUseFeeConfigDetail = vi.hoisted(() => vi.fn())
@@ -58,12 +60,14 @@ describe('trang tạo chính sách', () => {
 
     const scopeTabs = screen.getByRole('tablist', { name: 'Luồng phí' })
     expect(scopeTabs).toBeInTheDocument()
-    expect(
-      screen.getByRole('tab', { name: /Phí đầu ra/ })
-    ).toHaveAttribute('aria-selected', 'true')
-    expect(
-      screen.getByRole('tab', { name: /Phí đầu vào/ })
-    ).toHaveAttribute('aria-selected', 'false')
+    expect(screen.getByRole('tab', { name: /Phí đầu ra/ })).toHaveAttribute(
+      'aria-selected',
+      'true'
+    )
+    expect(screen.getByRole('tab', { name: /Phí đầu vào/ })).toHaveAttribute(
+      'aria-selected',
+      'false'
+    )
   })
 
   it('mở hộp thoại phí đầu ra ở tab thu, người hưởng là Hệ thống', async () => {
@@ -119,5 +123,25 @@ describe('trang tạo chính sách', () => {
     expect(
       screen.queryByText('Đơn vị chấp nhận thanh toán')
     ).not.toBeInTheDocument()
+  })
+
+  it('chọn Hoàn tiền giao dịch ví: không hiện ô Merchant, người chịu chọn được', async () => {
+    const user = userEvent.setup()
+    renderCreatePage()
+
+    await user.click(screen.getByLabelText(/Loại giao dịch/))
+    await user.click(await screen.findByText(REFUND_LABEL))
+
+    expect(
+      screen.queryByText('Đơn vị chấp nhận thanh toán')
+    ).not.toBeInTheDocument()
+    expect(screen.queryByText('Loại thẻ')).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Thêm phí đầu ra' }))
+    await within(await screen.findByRole('dialog')).findByText(
+      'Thêm phí đầu ra'
+    )
+    expect(screen.getByLabelText(/Người chịu/)).not.toBeDisabled()
+    expect(screen.getByLabelText(/Người hưởng/)).toBeDisabled()
   })
 })

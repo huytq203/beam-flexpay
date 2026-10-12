@@ -78,8 +78,9 @@ export const EkycRestoreAction = ({ record }: EkycRestoreActionProps) => {
             </p>
             <p className='m-0'>
               Người dùng sẽ phải eKYC lại và sẽ nhận thông báo (push, và email
-              nếu có). Người dùng phải dùng cùng số CCCD với hồ sơ cũ. Thao tác
-              được ghi lại theo tài khoản của bạn và không thể hoàn tác từ CMS.
+              nếu có). Người dùng phải dùng cùng số thẻ căn cước/CCCD với hồ sơ
+              cũ. Thao tác được ghi lại theo tài khoản của bạn và không thể hoàn
+              tác từ CMS.
             </p>
             {error && (
               <p

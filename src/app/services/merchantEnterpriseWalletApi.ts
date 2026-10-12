@@ -60,7 +60,6 @@ export interface EnterpriseWalletPayload {
   managerTitle?: string
   managerIdNumber?: string
   managerIdExpiryDate?: string
-  otpPhone?: string
   businessLicenseStagingId?: string
   idCardFrontStagingId?: string
   idCardBackStagingId?: string

@@ -15,8 +15,21 @@ const EXECUTABLE_PAYER_BY_SERVICE: Readonly<Record<string, string>> = {
   EWALLET_DEPOSIT: 'USER',
   EWALLET_WITHDRAWAL: 'USER',
   EWALLET_TRANSFER_INTERNAL: 'USER',
+  EWALLET_REFUND: 'USER',
   MERCHANT_VA_BILL_COLLECTION: 'MERCHANT',
   PAYOUT_BANK_TRANSFER: 'MERCHANT'
+}
+
+/**
+ * Loại dịch vụ cho người vận hành CHỌN người chịu phí đầu ra trong một tập, thay
+ * vì suy cố định ra một giá trị. Hoàn tiền: `USER` trừ vào số khách thực nhận,
+ * `MERCHANT` cộng vào số merchant bị trừ. Giá trị đầu tiên là mặc định; chưa
+ * khai ở đây thì chỉ có đúng payer của `EXECUTABLE_PAYER_BY_SERVICE`.
+ */
+const SELECTABLE_PAYERS_BY_SERVICE: Readonly<
+  Record<string, readonly string[]>
+> = {
+  EWALLET_REFUND: ['USER', 'MERCHANT']
 }
 
 /**
@@ -55,7 +68,18 @@ export const isPublishableServiceType = (
 export const getExecutablePayer = (
   serviceType: string | null | undefined
 ): string | null =>
-  serviceType ? EXECUTABLE_PAYER_BY_SERVICE[serviceType] ?? null : null
+  serviceType ? (EXECUTABLE_PAYER_BY_SERVICE[serviceType] ?? null) : null
+
+/** Người chịu phí đầu ra được phép chọn; phần tử đầu là mặc định. */
+export const getSelectablePayers = (
+  serviceType: string | null | undefined
+): readonly string[] => {
+  if (!serviceType) return []
+  return (
+    SELECTABLE_PAYERS_BY_SERVICE[serviceType] ??
+    [EXECUTABLE_PAYER_BY_SERVICE[serviceType]].filter(Boolean)
+  )
+}
 
 /**
  * Bản gán của dịch vụ ví không được mang merchant: fee engine không nhận được
@@ -64,6 +88,8 @@ export const getExecutablePayer = (
 export const allowsMerchantCriteria = (
   serviceType: string | null | undefined
 ): boolean => getExecutablePayer(serviceType) === 'MERCHANT'
+// Cố ý suy từ payer MẶC ĐỊNH: `EWALLET_REFUND` cho chọn payer MERCHANT nhưng bản
+// gán của nó vẫn cấm merchantId (danh sách merchant của fee service chưa có dữ liệu).
 
 /**
  * Loại thẻ chưa phải ngữ cảnh producer chứng thực được, nên mọi bản gán mang

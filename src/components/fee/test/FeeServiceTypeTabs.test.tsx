@@ -8,7 +8,7 @@ const LABELS = {
   EWALLET_WITHDRAWAL: 'Rút tiền ví',
   EWALLET_TRANSFER_INTERNAL: 'Chuyển tiền nội bộ',
   EWALLET_TRANSFER_EXTERNAL: 'Chuyển tiền liên ngân hàng',
-  EWALLET_CASHBACK: 'Hoàn tiền',
+  EWALLET_CASHBACK: 'Hoàn tiền (cashback)',
   MERCHANT_VA_BILL_COLLECTION: 'Thu hộ VA',
   PAYOUT_BANK_TRANSFER: 'Chi hộ chuyển khoản ngân hàng'
 }
@@ -30,8 +30,12 @@ describe('FeeServiceTypeTabs', () => {
     setup()
 
     expect(screen.queryByText('Chiều tiền')).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Đầu vào' })).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Đầu ra' })).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Đầu vào' })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Đầu ra' })
+    ).not.toBeInTheDocument()
     expect(screen.getByText('Nạp tiền ví')).toBeInTheDocument()
     expect(screen.getByText('Rút tiền ví')).toBeInTheDocument()
     expect(screen.getByText('Chuyển tiền nội bộ')).toBeInTheDocument()

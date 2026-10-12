@@ -22,6 +22,8 @@ export interface MerchantUserDto {
   groupIds?: string[]
   merchantIds?: string[]
   subMerchantIds?: string[]
+  /** Có giá trị khi User đang có đề xuất đổi phạm vi chờ duyệt. */
+  pendingScopeProposalId?: string | null
   createdAt?: string
   updatedAt?: string
 }
@@ -39,6 +41,10 @@ export interface MerchantUserScopeProposalDto {
   decisionReason?: string | null
   createdAt?: string
   decidedAt?: string | null
+  /** Phạm vi của User đã đổi sau khi đề xuất được tạo nên BE từ chối duyệt. */
+  outdated?: boolean
+  /** Người đang đăng nhập là người tạo đề xuất nên không được quyết định. */
+  ownProposal?: boolean
 }
 
 export interface MerchantUserScopeProposalRequest {
@@ -184,6 +190,46 @@ export const accessApi = apiMerchant.injectEndpoints({
         url: `/merchant-users/${id}/scope-proposals`,
         method: 'POST',
         body
+      }),
+      transformResponse: (
+        response: MerchantAccessEnvelope<MerchantUserScopeProposalDto>
+      ) => response.data,
+      invalidatesTags: ['merchant']
+    }),
+    getMerchantUserScopeProposal: builder.query<
+      MerchantUserScopeProposalDto,
+      string
+    >({
+      query: (id) => ({
+        url: `/merchant-users/${id}/scope-proposal`,
+        method: 'GET'
+      }),
+      transformResponse: (
+        response: MerchantAccessEnvelope<MerchantUserScopeProposalDto>
+      ) => response.data,
+      providesTags: ['merchant']
+    }),
+    approveMerchantUserScopeProposal: builder.mutation<
+      MerchantUserScopeProposalDto,
+      string
+    >({
+      query: (proposalId) => ({
+        url: `/merchant-users/scope-proposals/${proposalId}/approve`,
+        method: 'POST'
+      }),
+      transformResponse: (
+        response: MerchantAccessEnvelope<MerchantUserScopeProposalDto>
+      ) => response.data,
+      invalidatesTags: ['merchant']
+    }),
+    rejectMerchantUserScopeProposal: builder.mutation<
+      MerchantUserScopeProposalDto,
+      { proposalId: string; reason: string }
+    >({
+      query: ({ proposalId, reason }) => ({
+        url: `/merchant-users/scope-proposals/${proposalId}/reject`,
+        method: 'POST',
+        body: { reason }
       }),
       transformResponse: (
         response: MerchantAccessEnvelope<MerchantUserScopeProposalDto>
@@ -358,6 +404,9 @@ export const {
   useUpdateMerchantUserMutation,
   useAssignMerchantUserGroupsMutation,
   useCreateMerchantUserScopeProposalMutation,
+  useGetMerchantUserScopeProposalQuery,
+  useApproveMerchantUserScopeProposalMutation,
+  useRejectMerchantUserScopeProposalMutation,
   useLockMerchantUserMutation,
   useUnlockMerchantUserMutation,
   useResetMerchantUserPasswordMutation,

@@ -12,6 +12,7 @@ import { TagComponent, TooltipComponent } from '@components/index'
 import type { TableComponentProps } from '@components/ui/table-component/TableComponent'
 
 import { AccessActionButton } from '../components/AccessActionButton'
+import { UserReviewScopeButton } from '../components/UserReviewScopeButton'
 import { CompactTags } from '../components/CompactTags'
 import type {
   AccessMerchant,
@@ -42,6 +43,7 @@ interface MerchantUserColumnOptions {
   onResetPassword: (user: MerchantUser) => void
   onResendActivation: (user: MerchantUser) => void
   onStatus: (user: MerchantUser) => void
+  onReviewScope: (user: MerchantUser) => void
 }
 
 export const createMerchantUserColumns = ({
@@ -55,7 +57,8 @@ export const createMerchantUserColumns = ({
   onAccess,
   onResetPassword,
   onResendActivation,
-  onStatus
+  onStatus,
+  onReviewScope
 }: MerchantUserColumnOptions): NonNullable<
   TableComponentProps<MerchantUser>['columns']
 > => [
@@ -155,6 +158,16 @@ export const createMerchantUserColumns = ({
     )
   },
   {
+    title: 'Phạm vi',
+    width: 120,
+    render: (_, user) =>
+      user.pendingScopeProposalId ? (
+        <TagComponent color='warning'>Chờ duyệt</TagComponent>
+      ) : (
+        <span className='text-xs text-muted-foreground'>Đang áp dụng</span>
+      )
+  },
+  {
     title: 'Trạng thái',
     width: 130,
     render: (_, user) => (
@@ -178,6 +191,7 @@ export const createMerchantUserColumns = ({
     title: 'Thao tác',
     align: 'center',
     fixed: 'right',
+    // Cột co theo số nút của dòng: không đặt width cố định, bảng dùng tableLayout='auto'.
     className: 'whitespace-nowrap',
     render: (_, user) => (
       <div className='flex w-max flex-nowrap items-center justify-center gap-1'>
@@ -216,6 +230,10 @@ export const createMerchantUserColumns = ({
             onClick={() => onAccess(user)}
           />
         </Can>
+        <UserReviewScopeButton
+          user={user}
+          onReview={onReviewScope}
+        />
         {user.status === 'ACTIVE' && (
           <Can
             screen='MERCHANT_USER'

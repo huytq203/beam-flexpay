@@ -14,11 +14,9 @@ export type BusinessWalletSearchValues = z.infer<
   typeof businessWalletSearchSchema
 >
 
-const PHONE_REGEX = /^0\d{9,10}$/
 const ID_NUMBER_REGEX = /^(\d{9}|\d{12})$/
 const TAX_CODE_REGEX = /^\d{10}(\d{3})?$/
 
-const PHONE_MESSAGE = 'Số điện thoại gồm 10–11 số và bắt đầu bằng 0'
 const ID_NUMBER_MESSAGE = 'Số CCCD/Hộ chiếu gồm 9 hoặc 12 số'
 const MAX_BUSINESS_LICENSE_SIZE = 5 * 1024 * 1024
 const MAX_ID_CARD_SIZE = 5 * 1024 * 1024
@@ -73,8 +71,6 @@ export const businessWalletFormSchema = z
           new Date(value).getTime() > Date.now(),
         'Ngày hết hạn CCCD phải sau hôm nay'
       ),
-    otpPhone: z.string().regex(PHONE_REGEX, PHONE_MESSAGE),
-    adminPassword: z.string().optional(),
     businessLicense: z
       .array(uploadFileSchema)
       .min(1, 'Vui lòng tải lên Giấy phép ĐKKD')
@@ -132,8 +128,6 @@ export const EMPTY_BUSINESS_WALLET_FORM: BusinessWalletFormValues = {
   managerPosition: '',
   managerIdNumber: '',
   managerIdExpiry: '',
-  otpPhone: '',
-  adminPassword: '',
   businessLicense: [],
   authorizationLetter: [],
   idCardFront: [],

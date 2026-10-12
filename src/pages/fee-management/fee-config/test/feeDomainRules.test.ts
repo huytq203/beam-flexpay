@@ -1,6 +1,10 @@
 import { FeeDomain } from '@components/fee/feeDomain'
+import { getSelectablePayers } from '@utils/fee-execution'
 import { describe, expect, it } from 'vitest'
 import {
+  FEE_BUSINESS_CATEGORY,
+  getComponentTypesForCategory,
+  getPayerTypeOptions,
   getDomainFieldRules,
   getFeeDomainForServiceType,
   getFormFieldRules
@@ -49,6 +53,38 @@ describe('getDomainFieldRules', () => {
   })
 })
 
+describe('EWALLET_REFUND', () => {
+  it('thuộc miền Ví, có trong danh sách chọn và không bày ô merchant ở bản gán', () => {
+    expect(getFeeDomainForServiceType('EWALLET_REFUND')).toBe(FeeDomain.EWALLET)
+    expect(getDomainFieldRules(FeeDomain.EWALLET).serviceTypes).toContain(
+      'EWALLET_REFUND'
+    )
+    const rules = getFormFieldRules(FeeDomain.EWALLET, 'EWALLET_REFUND')
+    expect(rules.showMerchant).toBe(false)
+    expect(rules.showSubject).toBe(true)
+    expect(rules.bankRequired).toBe(false)
+  })
+
+  it('payer chọn được chỉ USER hoặc MERCHANT, kèm SYSTEM cho chi phí đầu vào', () => {
+    expect(
+      getPayerTypeOptions('EWALLET_REFUND').map(({ value }) => value)
+    ).toEqual(['USER', 'MERCHANT', 'SYSTEM'])
+    expect(getSelectablePayers('EWALLET_REFUND')).toEqual(['USER', 'MERCHANT'])
+    expect(getSelectablePayers('EWALLET_WITHDRAWAL')).toEqual(['USER'])
+  })
+
+  it('REFUND_FEE chỉ xuất hiện cho hoàn tiền, ở nhóm phí xử lý giao dịch', () => {
+    const category = FEE_BUSINESS_CATEGORY.TRANSACTION_PROCESSING
+    expect(getComponentTypesForCategory(category, 'EWALLET_REFUND')[0]).toBe(
+      'REFUND_FEE'
+    )
+    expect(
+      getComponentTypesForCategory(category, 'EWALLET_DEPOSIT')
+    ).not.toContain('REFUND_FEE')
+    expect(getComponentTypesForCategory(category)).not.toContain('REFUND_FEE')
+  })
+})
+
 describe('getFormFieldRules — ô gán đối tượng theo loại giao dịch', () => {
   it('thu hộ và chi hộ mở ô Merchant cùng ô Ngân hàng tuỳ chọn', () => {
     for (const serviceType of [
@@ -77,8 +113,11 @@ describe('getFormFieldRules — ô gán đối tượng theo loại giao dịch'
   })
 
   it('mọi loại giao dịch đã duyệt được đều chọn được khi tạo mới', () => {
-    expect([...getFormFieldRules(FeeDomain.EWALLET, '').serviceTypes].sort()).toEqual([
+    expect(
+      [...getFormFieldRules(FeeDomain.EWALLET, '').serviceTypes].sort()
+    ).toEqual([
       'EWALLET_DEPOSIT',
+      'EWALLET_REFUND',
       'EWALLET_TRANSFER_INTERNAL',
       'EWALLET_WITHDRAWAL',
       'MERCHANT_VA_BILL_COLLECTION',
@@ -93,7 +132,9 @@ describe('getFormFieldRules — ô gán đối tượng theo loại giao dịch'
   })
 
   it('miền phí suy từ loại giao dịch', () => {
-    expect(getFeeDomainForServiceType('EWALLET_DEPOSIT')).toBe(FeeDomain.EWALLET)
+    expect(getFeeDomainForServiceType('EWALLET_DEPOSIT')).toBe(
+      FeeDomain.EWALLET
+    )
     expect(getFeeDomainForServiceType('PAYOUT_BANK_TRANSFER')).toBe(
       FeeDomain.MERCHANT
     )

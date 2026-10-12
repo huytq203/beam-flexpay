@@ -30,7 +30,10 @@ import {
   summariseBaseType
 } from '../utils/feeComponentSummary'
 import { getBaseOnOptions } from '../utils/feeComponentBaseOptions'
-import { emptyComponent } from '../utils/feeComponentDefaults'
+import {
+  CALCULATION_METHOD_VALUES,
+  emptyComponent
+} from '../utils/feeComponentDefaults'
 import { FeeComponentFields } from './FeeComponentFields'
 
 interface FeeComponentDialogProps {
@@ -50,13 +53,6 @@ interface FeeComponentDialogProps {
   onSave: (value: FeeComponentFormValues) => void
   onCancel: () => void
 }
-
-const CALCULATION_METHOD_VALUES = [
-  CalculationMethod.DIRECT,
-  CalculationMethod.FREE,
-  CalculationMethod.PROGRESSIVE_TIER,
-  CalculationMethod.FLAT_TIER
-]
 
 export const FeeComponentDialog = ({
   open,
@@ -82,6 +78,11 @@ export const FeeComponentDialog = ({
   )
   // Component cũ mang payer chưa hỗ trợ (SENDER/RECEIVER) về giá trị này.
   const defaultPayerType = isInputCost ? 'SYSTEM' : payerTypeOptions[0].value
+  const beneficiaryTypeOptions = isInputCost
+    ? INPUT_COST_BENEFICIARY_OPTIONS
+    : isWallet
+      ? WALLET_FEE_BENEFICIARY_OPTIONS
+      : BENEFICIARY_TYPE_OPTIONS
   // Phí đầu vào mặc định trả ngân hàng; phí đầu ra mặc định về hệ thống.
   const defaultBeneficiaryType = isInputCost ? 'BANK' : EXECUTABLE_BENEFICIARY
 
@@ -102,12 +103,7 @@ export const FeeComponentDialog = ({
     const effectivePayer = hasAllowedPayer
       ? initialValue.payerType
       : defaultPayerType
-    const allowedBeneficiaries = isInputCost
-      ? INPUT_COST_BENEFICIARY_OPTIONS
-      : isWallet
-        ? WALLET_FEE_BENEFICIARY_OPTIONS
-        : BENEFICIARY_TYPE_OPTIONS
-    const hasAllowedBeneficiary = allowedBeneficiaries.some(
+    const hasAllowedBeneficiary = beneficiaryTypeOptions.some(
       ({ value }) => value === initialValue.beneficiaryType
     )
     return {
@@ -123,8 +119,7 @@ export const FeeComponentDialog = ({
     defaultPayerType,
     feeScope,
     initialValue,
-    isInputCost,
-    isWallet,
+    beneficiaryTypeOptions,
     payerTypeOptions
   ])
 
@@ -146,11 +141,6 @@ export const FeeComponentDialog = ({
   const calculationMethod = useWatch({ control, name: 'calculationMethod' })
   const payerType = useWatch({ control, name: 'payerType' })
   const beneficiaryType = useWatch({ control, name: 'beneficiaryType' })
-  const beneficiaryTypeOptions = isInputCost
-    ? INPUT_COST_BENEFICIARY_OPTIONS
-    : isWallet
-      ? WALLET_FEE_BENEFICIARY_OPTIONS
-      : BENEFICIARY_TYPE_OPTIONS
   const hasDuplicateIdentityError = [
     formState.errors.componentType,
     formState.errors.payerType,
@@ -183,7 +173,10 @@ export const FeeComponentDialog = ({
     vatBaseComponentType && baseTypes.includes(vatBaseComponentType)
   )
 
-  const componentTypeOptions = getComponentTypesForCategory(businessCategory)
+  const componentTypeOptions = getComponentTypesForCategory(
+    businessCategory,
+    serviceType
+  )
     .filter((value) => value !== VAT_COMPONENT_TYPE || hasVatBaseAbove || isVat)
     .map((value) => ({
       value,

@@ -33,11 +33,10 @@ export {
   ArrowLeftOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
-  PlusCircleOutlined ,
-  SearchOutlined ,
-  DownloadOutlined,
+  PlusCircleOutlined,
+  SearchOutlined,
+  DownloadOutlined
 } from '@ant-design/icons'
-
 
 export {
   SnowflakeIcon,
@@ -63,6 +62,7 @@ export {
   BroomIcon,
   FunnelIcon,
   ShieldCheckIcon,
+  ClipboardTextIcon,
   XCircleIcon,
   MinusCircleIcon,
   ArrowDownIcon,
@@ -80,10 +80,6 @@ export {
   ReceiptIcon,
   ImageBrokenIcon,
   EyeIcon,
-  ProhibitIcon,
-} from "@phosphor-icons/react";
-export {
-  CornerDownRight,
-  Calculator,
-  PenTool,
-} from 'lucide-react';
+  ProhibitIcon
+} from '@phosphor-icons/react'
+export { CornerDownRight, Calculator, PenTool } from 'lucide-react'

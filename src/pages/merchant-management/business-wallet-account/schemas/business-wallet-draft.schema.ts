@@ -2,7 +2,6 @@ import { z } from 'zod'
 
 const TAX_CODE_REGEX = /^\d{10}(\d{3})?$/
 const ID_NUMBER_REGEX = /^(\d{9}|\d{12})$/
-const PHONE_REGEX = /^0\d{9,10}$/
 
 const blankOr = (regex: RegExp, message: string) =>
   z
@@ -30,9 +29,5 @@ export const businessWalletDraftSchema = z.object({
   ),
   managerName: maxText(255, 'Họ tên người quản lý ví tối đa 255 ký tự'),
   managerPosition: maxText(255, 'Chức vụ tối đa 255 ký tự'),
-  managerIdNumber: blankOr(
-    ID_NUMBER_REGEX,
-    'Số CCCD/Hộ chiếu gồm 9 hoặc 12 số'
-  ),
-  otpPhone: blankOr(PHONE_REGEX, 'Số điện thoại gồm 10–11 số và bắt đầu bằng 0')
+  managerIdNumber: blankOr(ID_NUMBER_REGEX, 'Số CCCD/Hộ chiếu gồm 9 hoặc 12 số')
 })

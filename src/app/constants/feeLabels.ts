@@ -9,7 +9,8 @@ export const SERVICE_TYPE_LABELS: Readonly<Record<string, string>> = {
   EWALLET_WITHDRAWAL: 'Rút tiền ví',
   EWALLET_TRANSFER_INTERNAL: 'Chuyển tiền nội bộ',
   EWALLET_TRANSFER_EXTERNAL: 'Chuyển tiền liên ngân hàng',
-  EWALLET_CASHBACK: 'Hoàn tiền',
+  EWALLET_REFUND: 'Hoàn tiền giao dịch ví',
+  EWALLET_CASHBACK: 'Hoàn tiền (cashback)',
   MERCHANT_VA_BILL_COLLECTION: 'Thu hộ VA',
   PAYOUT_BANK_TRANSFER: 'Chi hộ chuyển khoản ngân hàng'
 }
@@ -84,4 +85,4 @@ export const getFeeLabel = (
   value: string | null | undefined,
   labels: Readonly<Record<string, string>>,
   emptyLabel = 'Tất cả'
-): string => (value ? labels[value] ?? value : emptyLabel)
+): string => (value ? (labels[value] ?? value) : emptyLabel)

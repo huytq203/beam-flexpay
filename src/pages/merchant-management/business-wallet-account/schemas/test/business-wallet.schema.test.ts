@@ -29,7 +29,6 @@ const validValues = {
   managerPosition: 'Tổng Giám đốc',
   managerIdNumber: '079090001234',
   managerIdExpiry: futureDate,
-  otpPhone: '0903221456',
   businessLicense: [file],
   authorizationLetter: [],
   idCardFront: [file],
@@ -79,15 +78,6 @@ describe('businessWalletFormSchema', () => {
         'legalRepIdNumber'
       )
     ).toBe('Số CCCD/Hộ chiếu gồm 9 hoặc 12 số')
-  })
-
-  it('số điện thoại phải bắt đầu bằng 0 và có 10–11 số', () => {
-    expect(
-      errorFor({ ...validValues, otpPhone: '02838224567' }, 'otpPhone')
-    ).toBeUndefined()
-    expect(
-      errorFor({ ...validValues, otpPhone: '090322145' }, 'otpPhone')
-    ).toBe('Số điện thoại gồm 10–11 số và bắt đầu bằng 0')
   })
 
   it('từ chối ngày hết hạn CCCD trong quá khứ', () => {

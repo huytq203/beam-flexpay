@@ -11,10 +11,7 @@ import {
 
 import type { BusinessWalletFormValues } from '../schemas/business-wallet.schema'
 import { buildWalletPayload } from '../utils/businessWalletPayload'
-import {
-  isOtpPhoneChanged,
-  validateDraft
-} from '../utils/businessWalletValidation'
+import { validateDraft } from '../utils/businessWalletValidation'
 import { useWalletDocumentUpload } from './useWalletDocumentUpload'
 
 interface PersistOptions {
@@ -43,17 +40,9 @@ export function useBusinessWalletPersist({
     values: BusinessWalletFormValues,
     draft: boolean
   ): Promise<void> => {
-    const phoneChanged = isEditMode && isOtpPhoneChanged(values, detailData)
-    if (phoneChanged && !values.adminPassword?.trim()) {
-      setError('adminPassword', {
-        message: 'Vui lòng nhập mật khẩu quản trị khi đổi số OTP'
-      })
-      return
-    }
     try {
       const body = buildWalletPayload(values, await uploadAll(values), {
-        draft,
-        adminPassword: phoneChanged ? values.adminPassword : undefined
+        draft
       })
       if (isEditMode && id) {
         delete body.registeredEmail

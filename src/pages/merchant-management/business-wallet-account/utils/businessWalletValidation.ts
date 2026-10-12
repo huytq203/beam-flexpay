@@ -1,16 +1,7 @@
 import type { UseFormSetError } from 'react-hook-form'
 
-import type { EnterpriseWalletDto } from '@services/merchantEnterpriseWalletApi'
-
 import { businessWalletDraftSchema } from '../schemas/business-wallet-draft.schema'
 import type { BusinessWalletFormValues } from '../schemas/business-wallet.schema'
-
-/** Đổi số OTP là thao tác nhạy cảm: BE yêu cầu mật khẩu quản trị. */
-export const isOtpPhoneChanged = (
-  values: BusinessWalletFormValues,
-  detail: EnterpriseWalletDto | undefined
-): boolean =>
-  Boolean(detail && values.otpPhone.trim() !== (detail.otpPhone ?? ''))
 
 /** Trả về false (kèm lỗi gắn vào field) khi dữ liệu không đủ điều kiện lưu nháp. */
 export const validateDraft = (

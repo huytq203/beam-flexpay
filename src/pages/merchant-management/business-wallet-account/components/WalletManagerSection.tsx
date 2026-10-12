@@ -7,15 +7,11 @@ import { BusinessWalletFormSection } from './BusinessWalletFormSection'
 
 interface WalletManagerSectionProps {
   control: Control<BusinessWalletFormValues>
-  requiresAdminPassword?: boolean
 }
 
 const fieldClassName = 'col-span-12 flex flex-col md:col-span-6'
 
-export function WalletManagerSection({
-  control,
-  requiresAdminPassword = false
-}: WalletManagerSectionProps) {
+export function WalletManagerSection({ control }: WalletManagerSectionProps) {
   return (
     <BusinessWalletFormSection
       id='business-wallet-manager'
@@ -53,29 +49,6 @@ export function WalletManagerSection({
         placeholder='DD/MM/YYYY'
         className={fieldClassName}
       />
-
-      <div className='col-span-12 flex flex-col'>
-        <label
-          htmlFor='otpPhone'
-          className='inline-flex items-center font-medium'
-        >
-          SĐT nhận OTP
-          <span className='ml-1 text-red-600'>*</span>
-        </label>
-        <div className='flex flex-col gap-2 sm:flex-row sm:items-start'>
-          <FormInput
-            name='otpPhone'
-            control={control}
-            required
-            placeholder='SĐT nhận OTP của tài khoản Master'
-            className='flex min-w-0 flex-1 flex-col'
-          />
-        </div>
-        <span className='mt-1 text-xs text-muted-foreground'>
-          Đồng thời là SĐT nhận OTP của tài khoản Master (Người đại diện)
-        </span>
-      </div>
-      {requiresAdminPassword && <FormInput name='adminPassword' control={control} type='password' autoComplete='current-password' label='Mật khẩu quản trị' placeholder='Xác nhận thay đổi số OTP' className={fieldClassName} required />}
     </BusinessWalletFormSection>
   )
 }

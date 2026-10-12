@@ -83,7 +83,6 @@ describe('BusinessWalletForm Merchant API', () => {
             verificationStatus: 'DRAFT',
             legalRepresentativeName: 'Nguyễn Văn A',
             managerName: 'Nguyễn Văn A',
-            otpPhone: '0903221456',
             internalWallet: true
           },
           success: true

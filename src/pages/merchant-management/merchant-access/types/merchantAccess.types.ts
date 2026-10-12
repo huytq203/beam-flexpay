@@ -43,6 +43,8 @@ export interface MerchantUser {
   lastLogin: string | null
   createdAt: string
   lockReason?: string
+  /** Id đề xuất đổi phạm vi đang chờ duyệt; không có nghĩa là không có đề xuất. */
+  pendingScopeProposalId?: string
 }
 
 export interface MerchantAccessSnapshot {

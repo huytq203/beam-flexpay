@@ -4,7 +4,11 @@ import {
   type FeeAssignmentCreateRequest,
   type FeePolicySetupRequest
 } from '@/app/schemas/fee-setup.schema'
-import { EXECUTABLE_CURRENCY, getExecutablePayer } from '@utils/fee-execution'
+import {
+  EXECUTABLE_CURRENCY,
+  getExecutablePayer,
+  getSelectablePayers
+} from '@utils/fee-execution'
 import dayjs from 'dayjs'
 import { WALLET_SUBJECT_TYPE } from '../constants/feeConfigFields'
 import {
@@ -74,7 +78,13 @@ export const toSetupRequest = (
       minFee: orZero(component.minFee),
       maxFee: orZero(component.maxFee),
       // Giữ SYSTEM cho cost estimate; chỉ chuẩn hoá payer cũ SENDER/RECEIVER.
-      payerType: component.payerType === 'SYSTEM' ? 'SYSTEM' : executablePayer,
+      // Hoàn tiền cho chọn USER/MERCHANT; payer ngoài tập cho phép về mặc định.
+      payerType:
+        component.payerType === 'SYSTEM'
+          ? 'SYSTEM'
+          : getSelectablePayers(form.serviceType).includes(component.payerType)
+            ? component.payerType
+            : executablePayer,
       beneficiaryType:
         form.feeDomain === 'EWALLET' && component.payerType !== 'SYSTEM'
           ? 'SYSTEM'

@@ -112,10 +112,7 @@ const BusinessWalletForm = () => {
             isEditMode={form.isEditMode}
           />
           <BusinessIdentitySection control={form.control} />
-          <WalletManagerSection
-            control={form.control}
-            requiresAdminPassword={form.requiresAdminPassword}
-          />
+          <WalletManagerSection control={form.control} />
           <LegalDocsSection
             control={form.control}
             resolveFileUrl={form.resolveFileUrl}

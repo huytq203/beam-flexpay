@@ -347,6 +347,9 @@ export const SCREENS = {
       resendActivation: PERMISSION.MERCHANT_USER_CREATE,
       // Đổi phạm vi Merchant/Sub-merchant không áp dụng ngay mà tạo đề xuất chờ duyệt.
       proposeScope: PERMISSION.MERCHANT_USER_SCOPE_PROPOSAL_CREATE,
+      // Duyệt/từ chối đề xuất đổi phạm vi do người khác tạo (maker-checker).
+      approveScope: PERMISSION.MERCHANT_USER_SCOPE_PROPOSAL_APPROVE,
+      rejectScope: PERMISSION.MERCHANT_USER_SCOPE_PROPOSAL_REJECT,
       viewDetail: PERMISSION.MERCHANT_USER_VIEW
     }
   },
