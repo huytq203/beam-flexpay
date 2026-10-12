@@ -111,11 +111,11 @@ describe('WalletLimitFormPage - Thêm mới', () => {
       screen.getByText('Hạn mức ngày của ngân hàng phải lớn hơn 0.')
     ).toBeInTheDocument()
     expect(
-      screen.getByText('Vui lòng kiểm tra lại các ô được đánh dấu.')
+      await screen.findByText('Vui lòng kiểm tra lại các ô được đánh dấu.')
     ).toBeInTheDocument()
   })
 
-  it('banner câu lỗi BE khi trùng cấu hình (3006)', async () => {
+  it('toast câu lỗi BE khi trùng cấu hình (3006)', async () => {
     const user = userEvent.setup()
     mockScopes()
     server.use(
@@ -138,8 +138,10 @@ describe('WalletLimitFormPage - Thêm mới', () => {
     await typeInto(user, /^Tối đa\/GD/, '5000000')
     await user.click(screen.getByRole('button', { name: 'Lưu hạn mức' }))
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(
-      'Cấu hình hạn mức cho đối tượng và loại giao dịch này đã tồn tại.'
-    )
+    expect(
+      await screen.findByText(
+        'Cấu hình hạn mức cho đối tượng và loại giao dịch này đã tồn tại.'
+      )
+    ).toBeInTheDocument()
   })
 })

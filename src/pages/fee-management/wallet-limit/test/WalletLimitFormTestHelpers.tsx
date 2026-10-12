@@ -1,3 +1,4 @@
+import { MessageProvider } from '@/app/hooks/MessageProvider'
 import { PERMISSION } from '@/app/permissions'
 import { createAppStore } from '@/app/store'
 import { server } from '@/test/mocks/server'
@@ -88,20 +89,22 @@ export const renderForm = (route: string) => {
   store.dispatch(savePermissions([PERMISSION.EWALLET_FULL]))
   const list = walletLimitPaths.list
   return renderWithProviders(
-    <Routes>
-      <Route
-        path={walletLimitPaths.create}
-        element={<WalletLimitFormPage />}
-      />
-      <Route
-        path={`${list}/:id/edit`}
-        element={<WalletLimitFormPage />}
-      />
-      <Route
-        path={`${list}/:id`}
-        element={<p>Trang chi tiết</p>}
-      />
-    </Routes>,
+    <MessageProvider>
+      <Routes>
+        <Route
+          path={walletLimitPaths.create}
+          element={<WalletLimitFormPage />}
+        />
+        <Route
+          path={`${list}/:id/edit`}
+          element={<WalletLimitFormPage />}
+        />
+        <Route
+          path={`${list}/:id`}
+          element={<p>Trang chi tiết</p>}
+        />
+      </Routes>
+    </MessageProvider>,
     { route, store }
   )
 }

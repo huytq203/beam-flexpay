@@ -29,11 +29,14 @@ interface UseWalletLimitFormSubmitOptions {
   onReload?: () => Promise<WalletLimitPolicy | undefined>
 }
 
-/** Đưa lỗi BE về form: từng ô cạnh ô nhập, phần còn lại lên banner đầu form. */
+/**
+ * Đưa lỗi BE về form: từng ô cạnh ô nhập, câu lỗi chung hiện bằng toast để người dùng thấy ngay.
+ * Riêng xung đột `rowVersion` giữ banner đầu form vì cần nút "Tải lại cấu hình".
+ */
 const applyServerError = (
   form: UseFormReturn<WalletLimitFormValues>,
   error: unknown
-): WalletLimitFormBannerState => {
+): WalletLimitFormBannerState | null => {
   const parsed = parseWalletLimitError(error)
   if (parsed.kind === 'conflict') {
     return { kind: 'conflict', message: parsed.message }
@@ -42,7 +45,8 @@ const applyServerError = (
   errors.forEach(({ name, message }) =>
     form.setError(name, { type: 'server', message })
   )
-  return { kind: 'error', message: [parsed.message, ...unmapped].join(' ') }
+  globalMessage.error([parsed.message, ...unmapped].join(' '))
+  return null
 }
 
 export const useWalletLimitFormSubmit = ({
