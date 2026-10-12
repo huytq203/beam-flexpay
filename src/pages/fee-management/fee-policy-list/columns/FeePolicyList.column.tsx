@@ -85,9 +85,8 @@ export const getFeePolicyColumns = ({
     title: 'Loại giao dịch',
     dataIndex: 'serviceType',
     width: 200,
-    render: (serviceType: string) => (
+    render: (serviceType: string) =>
       getFeeLabel(serviceType, SERVICE_TYPE_LABELS)
-    )
   },
   {
     title: 'Ngân hàng / Merchant',
@@ -155,7 +154,11 @@ export const getFeePolicyColumns = ({
     dataIndex: 'status',
     width: 140,
     render: (status: string, row) => (
-      <FeeStatusPill status={status} effectiveStatus={row.effectiveStatus} />
+      <FeeStatusPill
+        status={status}
+        effectiveStatus={row.effectiveStatus}
+        validTo={row.validTo}
+      />
     )
   },
   {
@@ -200,7 +203,10 @@ export const getFeePolicyColumns = ({
       return (
         <div className='flex items-center justify-center gap-2'>
           {isEditable && (
-            <Can screen='FEE_CONFIG' action='edit'>
+            <Can
+              screen='FEE_CONFIG'
+              action='edit'
+            >
               <TooltipComponent title='Sửa cấu hình'>
                 <ButtonComponent
                   type='default'
@@ -208,7 +214,11 @@ export const getFeePolicyColumns = ({
                   size='small'
                   aria-label='Sửa cấu hình'
                   icon={
-                    <NotePencilIcon size={16} weight='bold' aria-hidden />
+                    <NotePencilIcon
+                      size={16}
+                      weight='bold'
+                      aria-hidden
+                    />
                   }
                   onClick={() => onEdit(id)}
                 />
@@ -218,13 +228,19 @@ export const getFeePolicyColumns = ({
 
           {/* Chỉ bản ghi chưa qua duyệt mới có gì để duyệt. */}
           {row.status === 'INIT' && (
-            <Can screen='FEE_CONFIG' action='approve'>
+            <Can
+              screen='FEE_CONFIG'
+              action='approve'
+            >
               <FeePolicyApprovalAction policy={row} />
             </Can>
           )}
 
           {row.status === 'INACTIVE' && (
-            <Can screen='FEE_CONFIG' action='toggleActive'>
+            <Can
+              screen='FEE_CONFIG'
+              action='toggleActive'
+            >
               <TooltipComponent title='Kích hoạt chính sách'>
                 <ButtonComponent
                   type='default'
@@ -240,7 +256,10 @@ export const getFeePolicyColumns = ({
           )}
 
           {row.status === 'ACTIVE' && (
-            <Can screen='FEE_CONFIG' action='toggleActive'>
+            <Can
+              screen='FEE_CONFIG'
+              action='toggleActive'
+            >
               <TooltipComponent title='Ngừng áp dụng chính sách'>
                 <ButtonComponent
                   type='default'

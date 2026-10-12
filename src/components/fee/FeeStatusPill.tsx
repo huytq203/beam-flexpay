@@ -5,6 +5,7 @@ import {
   POLICY_STATUS_CONFIG
 } from '@constants/feeLabels'
 import { cn } from '@lib/utils/cn'
+import dayjs from 'dayjs'
 
 /**
  * Pill trạng thái cho module phí.
@@ -32,6 +33,8 @@ export interface FeeStatusPillProps {
   status: string | null | undefined
   /** BE chỉ trả khi status = ACTIVE; thay nhãn "Hoạt động" bằng Chờ áp dụng / Đang áp dụng / Hết hạn. */
   effectiveStatus?: FeeEffectiveStatus | null
+  /** Thời điểm hết hiệu lực; chính sách INIT đã quá hạn hiển thị là Hết hạn dù chưa được duyệt. */
+  validTo?: string | null
   /** Bản gán có vòng đời riêng, nhãn khác chính sách ở trạng thái INIT. */
   kind?: 'policy' | 'assignment'
   className?: string
@@ -40,6 +43,7 @@ export interface FeeStatusPillProps {
 export const FeeStatusPill = ({
   status,
   effectiveStatus,
+  validTo,
   kind = 'policy',
   className
 }: FeeStatusPillProps) => {
@@ -50,8 +54,14 @@ export const FeeStatusPill = ({
       ? ASSIGNMENT_STATUS_CONFIG[status]
       : POLICY_STATUS_CONFIG[status]
 
-  const overridden =
-    status === 'ACTIVE' && effectiveStatus ? effectiveStatus : null
+  const isInitExpired =
+    status === 'INIT' && !!validTo && dayjs(validTo).isBefore(dayjs())
+
+  const overridden: FeeEffectiveStatus | null = isInitExpired
+    ? 'EXPIRED'
+    : status === 'ACTIVE' && effectiveStatus
+      ? effectiveStatus
+      : null
 
   return (
     <span
@@ -66,7 +76,7 @@ export const FeeStatusPill = ({
     >
       {overridden
         ? EFFECTIVE_STATUS_CONFIG[overridden].label
-        : config?.label ?? status}
+        : (config?.label ?? status)}
     </span>
   )
 }
