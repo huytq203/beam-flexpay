@@ -36,6 +36,13 @@ const EKYC_STATUS_CONFIG = {
   }
 } as const
 
+const LOGIN_LOCKED_CONFIG = {
+  LOGIN_LOCKED: {
+    label: 'Đăng nhập bị khóa',
+    className: 'danger-status'
+  }
+} as const
+
 export const getColumn = ({
   openModal,
   onViewDetail,
@@ -55,7 +62,7 @@ export const getColumn = ({
         const isSystem = record.ownerType === 'SYSTEM'
         const ownerName = isSystem
           ? 'Hệ thống'
-          : (record.ownerFullName || record.ownerUsername || '--')
+          : record.ownerFullName || record.ownerUsername || '--'
 
         return (
           <div className='flex min-w-0 max-w-full flex-col gap-1'>
@@ -65,12 +72,12 @@ export const getColumn = ({
                   {ownerName}
                 </span>
               </TooltipComponent>
-              
-            {!isSystem && record.ownerFullName && (
-              <span className='text-xs text-muted-foreground font-semibold'>
-               - {record.ownerUsername}
-              </span>
-            )}
+
+              {!isSystem && record.ownerFullName && (
+                <span className='text-xs text-muted-foreground font-semibold'>
+                  - {record.ownerUsername}
+                </span>
+              )}
             </div>
 
             {record.ownerId && (
@@ -154,6 +161,14 @@ export const getColumn = ({
               config={EKYC_STATUS_CONFIG}
             />
           </div>
+          {record.loginLocked === true && (
+            <div className='flex items-center gap-2'>
+              <StatusBadge
+                status='LOGIN_LOCKED'
+                config={LOGIN_LOCKED_CONFIG}
+              />
+            </div>
+          )}
         </div>
       )
     },

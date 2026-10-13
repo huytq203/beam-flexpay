@@ -31,6 +31,8 @@ export interface AcountItem {
   ownerUsername: string
   ownerFullName?: string | null
   ekycStatus?: 'NOT_VERIFIED' | 'VERIFIED' | null
+  /** true: app bị khóa đăng nhập; false: đăng nhập bình thường; null/undefined: chưa rõ. */
+  loginLocked?: boolean | null
   glCode: string
   currency: string
   totalDebit: number
@@ -76,7 +78,6 @@ export interface Sort2 {
   unsorted: boolean
   sorted: boolean
 }
-
 
 export interface FormSearchValues {
   username?: string

@@ -8,6 +8,7 @@ export type WalletModalType =
   | 'unfreeze'
   | 'lock'
   | 'unlock'
+  | 'unlockLogin'
   | null
 
 interface WalletRowActionOptions {
@@ -63,6 +64,15 @@ export const buildWalletRowActions = (
       label: isLocked ? 'Mở khóa tài khoản' : 'Khóa tài khoản',
       onClick: () => openModal?.(isLocked ? 'unlock' : 'lock', record),
       disabled: isFrozen
+    })
+  }
+
+  // Chỉ ẩn khi biết chắc tài khoản đang đăng nhập được (false); null/undefined vẫn cho mở khóa.
+  if (can('unlockLogin') && record.loginLocked !== false) {
+    items.push({
+      key: '4',
+      label: 'Mở khóa đăng nhập',
+      onClick: () => openModal?.('unlockLogin', record)
     })
   }
 

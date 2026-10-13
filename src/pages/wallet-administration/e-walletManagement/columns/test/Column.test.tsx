@@ -38,4 +38,22 @@ describe('wallet account columns', () => {
     expect(screen.getByText('0967770788')).toBeInTheDocument()
     expect(screen.getByText('Đã xác thực')).toBeInTheDocument()
   })
+
+  it.each([
+    [true, 1],
+    [false, 0],
+    [null, 0],
+    [undefined, 0]
+  ])('loginLocked=%s hiển thị %s tag "Đăng nhập bị khóa"', (loginLocked, n) => {
+    render(
+      <Table
+        columns={getColumn({ can: () => false, onViewDetail: vi.fn() })}
+        dataSource={[{ ...account, loginLocked }]}
+        pagination={false}
+        rowKey='id'
+      />
+    )
+
+    expect(screen.queryAllByText('Đăng nhập bị khóa')).toHaveLength(n)
+  })
 })

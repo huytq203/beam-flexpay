@@ -39,6 +39,43 @@ describe('buildWalletRowActions', () => {
     ])
   })
 
+  it('chỉ hiện mở khóa đăng nhập khi có quyền unlockLogin', () => {
+    expect(actionKeys(['viewDetail'])).not.toContain('4')
+    expect(actionKeys(['viewDetail', 'unlockLogin'])).toEqual(['1', '4'])
+  })
+
+  it('hiện mở khóa đăng nhập khi loginLocked là true hoặc chưa rõ, ẩn khi false', () => {
+    const keysFor = (loginLocked?: boolean | null) =>
+      (
+        buildWalletRowActions(
+          { ...account, loginLocked },
+          {
+            can: (action) => action === 'unlockLogin',
+            onViewDetail: vi.fn(),
+            openModal: vi.fn()
+          }
+        ) ?? []
+      ).map((item) => String(item?.key))
+
+    expect(keysFor(true)).toEqual(['4'])
+    expect(keysFor(null)).toEqual(['4'])
+    expect(keysFor(undefined)).toEqual(['4'])
+    expect(keysFor(false)).toEqual([])
+  })
+
+  it('mở modal unlockLogin với đúng bản ghi', () => {
+    const openModal = vi.fn()
+    const actions = buildWalletRowActions(account, {
+      can: (action) => action === 'unlockLogin',
+      onViewDetail: vi.fn(),
+      openModal
+    })
+
+    ;(actions?.[0] as unknown as { onClick: () => void }).onClick()
+
+    expect(openModal).toHaveBeenCalledWith('unlockLogin', account)
+  })
+
   it('không tạo action cho tài khoản hệ thống', () => {
     const actions = buildWalletRowActions(
       { ...account, ownerType: 'SYSTEM' },

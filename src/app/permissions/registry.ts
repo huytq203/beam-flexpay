@@ -222,6 +222,8 @@ export const SCREENS = {
       viewDetail: PERMISSION.EWALLET_FULL,
       lock: PERMISSION.EWALLET_FULL,
       unlock: PERMISSION.EWALLET_FULL,
+      // Mở khóa đăng nhập (identity) khác khóa ví (wallet-core): BE gác bằng USER:FULL.
+      unlockLogin: PERMISSION.USER_FULL,
       freeze: PERMISSION.FREEZE_UPDATE,
       cancel: PERMISSION.EWALLET_FULL
     }

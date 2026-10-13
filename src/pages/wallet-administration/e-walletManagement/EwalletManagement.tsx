@@ -1,6 +1,15 @@
-import { SnowflakeIcon, LockOutlined, UnlockOutlined, StopOutlined, WarningIcon } from '@components/icons'
+import {
+  SnowflakeIcon,
+  LockOutlined,
+  UnlockOutlined,
+  StopOutlined,
+  WarningIcon
+} from '@components/icons'
 import { CardComponent, DialogModal, Table } from '@components/index'
-import { SkeletonTable, SkeletonSearchGroup } from '@components/ui/skeletons/Skeleton'
+import {
+  SkeletonTable,
+  SkeletonSearchGroup
+} from '@components/ui/skeletons/Skeleton'
 import React from 'react'
 import { FormSearch } from './components/FormSearch'
 import useEwalletManagement from './hooks/useEwalletManagement'
@@ -8,6 +17,7 @@ import DialogFreeze from './components/DialogFreeze'
 import DialogUnfreeze from './components/DialogUnfreeze'
 import DialogLock from './components/DialogLock'
 import DialogUnlock from './components/DialogUnlock'
+import DialogUnlockLogin from './components/DialogUnlockLogin'
 import DialogDeleteWallet from './components/detail-infor/Personal/components/DialogDeleteWallet'
 import DialogFreezeWallet from './components/detail-infor/Personal/components/DialogFreezeWallet'
 
@@ -27,8 +37,7 @@ const EwalletManagement = () => {
     loadingGetAccount,
     isFetching,
     isOpeningDetail,
-    refetch,
-
+    refetch
   } = useEwalletManagement()
 
   return (
@@ -36,7 +45,11 @@ const EwalletManagement = () => {
       <CardComponent
         content={
           loadingGetAccount ? (
-            <SkeletonSearchGroup items={3}  className='grid grid-cols-1 md:grid-cols-4 gap-4 mb-4' noContainer />
+            <SkeletonSearchGroup
+              items={3}
+              className='grid grid-cols-1 md:grid-cols-4 gap-4 mb-4'
+              noContainer
+            />
           ) : (
             <>
               <FormSearch handleSearch={handleSearch} />
@@ -48,7 +61,11 @@ const EwalletManagement = () => {
       <CardComponent
         content={
           loadingGetAccount ? (
-            <SkeletonTable columns={column?.length || 5} rows={size || 5} noContainer />
+            <SkeletonTable
+              columns={column?.length || 5}
+              rows={size || 5}
+              noContainer
+            />
           ) : (
             <>
               <Table
@@ -68,7 +85,7 @@ const EwalletManagement = () => {
                   onChange: (page, pageSize) => {
                     setPage(page)
                     setPageSize(pageSize)
-                  },
+                  }
                 }}
               />
             </>
@@ -78,7 +95,7 @@ const EwalletManagement = () => {
 
       <DialogModal
         onCancel={closeModal}
-        onOk={() => { }}
+        onOk={() => {}}
         open={false}
         content={<DialogFreezeWallet />}
         title={
@@ -90,7 +107,7 @@ const EwalletManagement = () => {
 
       <DialogModal
         onCancel={closeModal}
-        onOk={() => { }}
+        onOk={() => {}}
         open={modalType === 'freeze'}
         footer={null}
         content={
@@ -112,7 +129,7 @@ const EwalletManagement = () => {
 
       <DialogModal
         onCancel={closeModal}
-        onOk={() => { }}
+        onOk={() => {}}
         open={modalType === 'unfreeze'}
         footer={null}
         content={
@@ -134,7 +151,7 @@ const EwalletManagement = () => {
 
       <DialogModal
         onCancel={closeModal}
-        onOk={() => { }}
+        onOk={() => {}}
         open={modalType === 'lock'}
         footer={null}
         content={
@@ -154,7 +171,7 @@ const EwalletManagement = () => {
 
       <DialogModal
         onCancel={closeModal}
-        onOk={() => { }}
+        onOk={() => {}}
         open={modalType === 'unlock'}
         footer={null}
         content={
@@ -173,9 +190,32 @@ const EwalletManagement = () => {
       />
 
       <DialogModal
+        onCancel={closeModal}
+        onOk={() => {}}
+        open={modalType === 'unlockLogin'}
+        footer={null}
+        content={
+          <DialogUnlockLogin
+            ownerId={selectedAccount?.ownerId}
+            ownerName={selectedAccount?.ownerUsername}
+            onSuccess={() => {
+              closeModal()
+              refetch()
+            }}
+            onCancel={closeModal}
+          />
+        }
+        title={
+          <span className='flex items-center gap-2 text-green-700'>
+            <UnlockOutlined /> Mở khóa đăng nhập
+          </span>
+        }
+      />
+
+      <DialogModal
         mode='DELETE'
-        onCancel={() => { }}
-        onOk={() => { }}
+        onCancel={() => {}}
+        onOk={() => {}}
         open={false}
         content={<DialogDeleteWallet />}
         title={

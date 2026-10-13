@@ -177,9 +177,9 @@ export const FeeComponentFields = ({
             name='percentage'
             control={control}
             allowEmpty
-            label={payerType === 'SYSTEM' ? 'Chi phí %' : 'Phí %'}
+            label={payerType === 'SYSTEM' ? 'Chi phí (%)' : 'Phí (%)'}
             placeholder='Để trống nếu không thu theo phần trăm'
-            className='col-span-12 flex flex-col md:col-span-6'
+            className='col-span-12 flex flex-col md:col-span-12'
           />
           {!isVat && (
             <FormInputNumber
