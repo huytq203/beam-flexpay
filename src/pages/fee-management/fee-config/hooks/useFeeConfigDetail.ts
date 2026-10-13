@@ -6,9 +6,10 @@ import { useGetFeePolicyByIdQuery } from '@services/apiFeePolicy.api'
 import type { FeeComponentTier, FeePolicyComponent } from '@type/fee.type'
 import { useEffect, useState } from 'react'
 import { resolveFeeScope } from '../constants/feeConfigFields'
-import type {
-  FeeComponentFormValues,
-  FeeConfigFormValues
+import {
+  CalculationMethod,
+  type FeeComponentFormValues,
+  type FeeConfigFormValues
 } from '../schemas/feeConfig.schema'
 import type { FeeConfigSnapshot } from './useFeeConfigSubmit'
 import { buildEmptyForm } from './useFeeConfigForm'
@@ -126,34 +127,45 @@ export const useFeeConfigDetail = (
   }
 
   const formComponents: FeeComponentFormValues[] = (components ?? []).map(
-    (component) => ({
-      key: component.id,
-      feeScope: resolveFeeScope(component.feeScope, component.payerType),
-      componentType: component.componentType,
-      baseOn: component.baseOn,
-      baseComponentType: component.baseComponentType,
-      calculationMethod: component.calculationMethod,
-      payerType: component.payerType,
-      beneficiaryType: component.beneficiaryType,
-      // 0 và ô trống mang cùng một nghĩa với backend, nên nạp lại thành ô trống
-      // để bản ghi cũ trông đúng như lúc chưa ai đặt khoản đó.
-      fixedAmount: component.fixedAmount || null,
-      percentage: component.percentage || null,
-      minFee: component.minFee || null,
-      maxFee: component.maxFee || null,
-      roundMode: component.roundMode,
-      // Giá trị bắt đầu không nạp lại: form suy nó từ bậc trước, và bản ghi cũ
-      // có thể mang một giá trị lệch chuẩn mà form sẽ tự nắn về đúng.
-      tiers: (tiersByComponent[component.id] ?? []).map((tier) => ({
-        // Riêng giá trị kết thúc giữ nguyên: trống ở đây nghĩa là vô cùng, khác
-        // hẳn 0.
-        maxValue: tier.maxValue,
-        fixedAmount: tier.fixedAmount || null,
-        percentage: tier.percentage || null,
-        minFee: tier.minFee || null,
-        maxFee: tier.maxFee || null
-      }))
-    })
+    (component) => {
+      // Form không còn công thức Miễn phí: bản ghi FREE (hoặc DIRECT thu 0 đồng) nạp lại thành
+      // DIRECT với 0 ở cả hai ô, để thấy rõ "đã điền 0" thay vì hai ô trống bị báo thiếu mức phí.
+      const isFreeDirect =
+        (component.calculationMethod === CalculationMethod.FREE ||
+          component.calculationMethod === CalculationMethod.DIRECT) &&
+        !component.fixedAmount &&
+        !component.percentage
+      return {
+        key: component.id,
+        feeScope: resolveFeeScope(component.feeScope, component.payerType),
+        componentType: component.componentType,
+        baseOn: component.baseOn,
+        baseComponentType: component.baseComponentType,
+        calculationMethod: isFreeDirect
+          ? CalculationMethod.DIRECT
+          : component.calculationMethod,
+        payerType: component.payerType,
+        beneficiaryType: component.beneficiaryType,
+        // 0 và ô trống mang cùng một nghĩa với backend, nên nạp lại thành ô trống
+        // để bản ghi cũ trông đúng như lúc chưa ai đặt khoản đó.
+        fixedAmount: isFreeDirect ? 0 : component.fixedAmount || null,
+        percentage: isFreeDirect ? 0 : component.percentage || null,
+        minFee: component.minFee || null,
+        maxFee: component.maxFee || null,
+        roundMode: component.roundMode,
+        // Giá trị bắt đầu không nạp lại: form suy nó từ bậc trước, và bản ghi cũ
+        // có thể mang một giá trị lệch chuẩn mà form sẽ tự nắn về đúng.
+        tiers: (tiersByComponent[component.id] ?? []).map((tier) => ({
+          // Riêng giá trị kết thúc giữ nguyên: trống ở đây nghĩa là vô cùng, khác
+          // hẳn 0.
+          maxValue: tier.maxValue,
+          fixedAmount: tier.fixedAmount || null,
+          percentage: tier.percentage || null,
+          minFee: tier.minFee || null,
+          maxFee: tier.maxFee || null
+        }))
+      }
+    }
   )
 
   const feeDomain = isFeeDomain(policy.feeDomain)

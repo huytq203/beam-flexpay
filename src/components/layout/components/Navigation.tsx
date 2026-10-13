@@ -14,7 +14,7 @@ import {
   ArrowsLeftRightIcon,
   BankIcon,
   BellIcon,
-  CalendarStarIcon,
+  // CalendarStarIcon, // tạm ẩn cùng mục Tháng đặc biệt
   ClipboardTextIcon,
   CreditCardIcon,
   FingerprintIcon,
@@ -87,19 +87,16 @@ const feeManagementV4: ItemTypeCustom = {
         />
       ),
       label: 'Hạn mức ví'
-    },
-    {
-      key: 'wallet-limit-special-month',
-      screen: 'WALLET_LIMIT_SPECIAL_MONTH',
-      icon: (
-        <CalendarStarIcon
-          size={size}
-          weight={weight}
-          color={COlOR}
-        />
-      ),
-      label: 'Tháng đặc biệt'
     }
+    /*
+     * Tạm ẩn mục Tháng đặc biệt (giữ nguyên code, bật lại khi cần):
+     * {
+     *   key: 'wallet-limit-special-month',
+     *   screen: 'WALLET_LIMIT_SPECIAL_MONTH',
+     *   icon: <CalendarStarIcon size={size} weight={weight} color={COlOR} />,
+     *   label: 'Tháng đặc biệt'
+     * }
+     */
     /*
      * Bốn mục cũ (Quản lý chính sách phí, Phí ngân hàng, Quản lý gán phí, Biểu
      * phí hiệu lực) đã gộp vào Cấu hình phí nên rút khỏi menu. Route vẫn còn để

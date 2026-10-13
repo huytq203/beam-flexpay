@@ -12,6 +12,7 @@ import {
 import dayjs from 'dayjs'
 import { WALLET_SUBJECT_TYPE } from '../constants/feeConfigFields'
 import {
+  CalculationMethod,
   getTierStart,
   usesTiers,
   type FeeConfigFormValues
@@ -22,6 +23,20 @@ const ROUND_MODE = 'UP'
 
 /** Ô để trống là "không thu khoản này"; backend khai `@NotNull` nên gửi 0. */
 const orZero = (value: number | null | undefined): number => value ?? 0
+
+/**
+ * Form không còn công thức "Miễn phí": điền 0 vào cả hai ô là miễn phí. Backend vẫn nhận biết miễn
+ * phí bằng công thức FREE nên gửi FREE, còn VAT 0% giữ DIRECT vì thuế suất 0 là cấu hình hợp lệ.
+ */
+const toBackendMethod = (
+  component: FeeConfigFormValues['components'][number]
+): string =>
+  component.calculationMethod === CalculationMethod.DIRECT &&
+  component.componentType !== 'VAT' &&
+  orZero(component.percentage) === 0 &&
+  orZero(component.fixedAmount) === 0
+    ? CalculationMethod.FREE
+    : component.calculationMethod
 
 const toPolicyMoment = (value: string): string =>
   dayjs(value).format(POLICY_DATETIME_FORMAT)
@@ -65,7 +80,7 @@ export const toSetupRequest = (
         component.baseOn === 'FEE_COMPONENT'
           ? component.baseComponentType
           : undefined,
-      calculationMethod: component.calculationMethod,
+      calculationMethod: toBackendMethod(component),
       // Thành phần chia bậc lấy số từ bảng bậc, hai ô này phải về 0 để backend
       // không cộng thêm một lần nữa lên trên kết quả của bậc.
       fixedAmount: usesTiers(component.calculationMethod)
@@ -75,8 +90,12 @@ export const toSetupRequest = (
         ? 0
         : orZero(component.percentage),
       roundMode: ROUND_MODE,
-      minFee: orZero(component.minFee),
-      maxFee: orZero(component.maxFee),
+      minFee: usesTiers(component.calculationMethod)
+        ? 0
+        : orZero(component.minFee),
+      maxFee: usesTiers(component.calculationMethod)
+        ? 0
+        : orZero(component.maxFee),
       // Giữ SYSTEM cho cost estimate; chỉ chuẩn hoá payer cũ SENDER/RECEIVER.
       // Hoàn tiền cho chọn USER/MERCHANT; payer ngoài tập cho phép về mặc định.
       payerType:

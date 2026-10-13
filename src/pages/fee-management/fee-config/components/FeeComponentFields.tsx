@@ -25,7 +25,6 @@ interface FeeComponentFieldsProps {
   selectedBase: BaseTypeSummary | null
   isVat: boolean
   tiered: boolean
-  isFree: boolean
   tierError?: string
   onComponentTypeChange: (next: string | number) => void
   onMethodChange: (next: string | number) => void
@@ -47,7 +46,6 @@ export const FeeComponentFields = ({
   selectedBase,
   isVat,
   tiered,
-  isFree,
   tierError,
   onComponentTypeChange,
   onMethodChange,
@@ -162,11 +160,7 @@ export const FeeComponentFields = ({
       className='border-border! bg-background!'
       title={payerType === 'SYSTEM' ? 'Mức chi phí dự kiến' : 'Mức phí'}
     >
-      {isFree ? (
-        <p className='text-[13px] text-muted-foreground'>
-          Không thu phí cho thành phần này.
-        </p>
-      ) : tiered ? (
+      {tiered ? (
         <FeeTierEditor
           control={control}
           error={tierError}
@@ -178,8 +172,12 @@ export const FeeComponentFields = ({
             control={control}
             allowEmpty
             label={payerType === 'SYSTEM' ? 'Chi phí (%)' : 'Phí (%)'}
-            placeholder='Để trống nếu không thu theo phần trăm'
-            className={isVat ?'col-span-12 flex flex-col md:col-span-12':'col-span-12 flex flex-col md:col-span-6'}
+            placeholder='Nhập 0 nếu miễn phí'
+            className={
+              isVat
+                ? 'col-span-12 flex flex-col md:col-span-12'
+                : 'col-span-12 flex flex-col md:col-span-6'
+            }
           />
           {!isVat && (
             <FormInputNumber
@@ -199,8 +197,8 @@ export const FeeComponentFields = ({
       )}
     </CardComponent>
 
-    {/* VAT không có sàn/trần phí. */}
-    {!isFree && !isVat && (
+    {/* Sàn/trần chỉ áp cho cách tính mặc định: bậc thang đã có sàn/trần riêng ở từng bậc, VAT không có. */}
+    {!tiered && !isVat && (
       <CardComponent
         size='small'
         className='border-border! bg-background!'

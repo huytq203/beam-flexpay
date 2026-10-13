@@ -25,7 +25,7 @@ export const describeApproveOutcome = (refund: RefundDetail): RefundOutcome => {
         kind: 'success',
         text: refund.payoutCode
           ? `Đã duyệt. Lệnh chi ${refund.payoutCode} đang chờ ngân hàng.`
-          : 'Đã duyệt, đang chuyển tiền.'
+          : 'Đã duyệt.'
       }
     case RefundStatus.WAITING_FUNDS:
       return {

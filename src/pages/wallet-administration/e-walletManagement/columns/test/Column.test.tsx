@@ -40,11 +40,11 @@ describe('wallet account columns', () => {
   })
 
   it.each([
-    [true, 1],
-    [false, 0],
-    [null, 0],
-    [undefined, 0]
-  ])('loginLocked=%s hiển thị %s tag "Đăng nhập bị khóa"', (loginLocked, n) => {
+    [true, 'Đăng nhập bị khóa', 'Đăng nhập bình thường'],
+    [false, 'Đăng nhập bình thường', 'Đăng nhập bị khóa'],
+    [null, 'Chưa xác định', 'Đăng nhập bị khóa'],
+    [undefined, 'Chưa xác định', 'Đăng nhập bị khóa']
+  ])('cột Đăng nhập: loginLocked=%s hiện %s', (loginLocked, shown, hidden) => {
     render(
       <Table
         columns={getColumn({ can: () => false, onViewDetail: vi.fn() })}
@@ -54,6 +54,8 @@ describe('wallet account columns', () => {
       />
     )
 
-    expect(screen.queryAllByText('Đăng nhập bị khóa')).toHaveLength(n)
+    expect(screen.getByText('Đăng nhập')).toBeInTheDocument()
+    if (shown) expect(screen.getAllByText(shown)).toHaveLength(1)
+    expect(screen.queryByText(hidden)).not.toBeInTheDocument()
   })
 })

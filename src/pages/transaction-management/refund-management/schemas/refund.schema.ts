@@ -35,6 +35,7 @@ const optionalText = z.string().nullish()
 
 export const refundListItemSchema = z.object({
   id: z.string(),
+  createdBy: optionalText,
   refundCode: z.string(),
   originalTransactionId: z.string(),
   originalTransactionCode: optionalText,
@@ -76,9 +77,8 @@ export const componentAllocationSchema = z.object({
   segments: z.array(componentSegmentSchema).nullish()
 })
 
-/** Chỉ `GET /refunds/{id}` trả `createdBy`, `failureReason`, `originalType`; danh sách thì không. */
+/** Chỉ `GET /refunds/{id}` trả `failureReason`, `originalType`; `createdBy` có cả ở danh sách. */
 export const refundDetailSchema = refundListItemSchema.extend({
-  createdBy: optionalText,
   failureReason: optionalText,
   originalType: z.enum(RefundOriginalType),
   originalSenderFee: z.number().nullish(),
@@ -95,7 +95,7 @@ export type RefundDetail = z.infer<typeof refundDetailSchema>
 
 /** Dòng danh sách hoặc bản chi tiết; ba field của chi tiết chỉ có khi đã gọi `GET /refunds/{id}`. */
 export type RefundTarget = RefundListItem &
-  Partial<Pick<RefundDetail, 'createdBy' | 'failureReason' | 'originalType'>>
+  Partial<Pick<RefundDetail, 'failureReason' | 'originalType'>>
 
 export interface RefundPage {
   content: RefundListItem[]

@@ -67,7 +67,8 @@ export const buildWalletRowActions = (
     })
   }
 
-  // Chỉ ẩn khi biết chắc tài khoản đang đăng nhập được (false); null/undefined vẫn cho mở khóa.
+  // Keycloak trả null khi không xác định được tình trạng khóa, nên null cũng phải cho mở khóa.
+  // Chỉ ẩn khi biết chắc tài khoản đang đăng nhập được (false).
   if (can('unlockLogin') && record.loginLocked !== false) {
     items.push({
       key: '4',

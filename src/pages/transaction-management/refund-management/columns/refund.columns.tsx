@@ -128,14 +128,17 @@ export const createRefundColumns = (
     {
       title: 'Thao tác',
       key: 'actions',
+      // Tối đa 3 icon (xem, từ chối, duyệt) xếp ngang, không xuống dòng.
+      width: 160,
       fixed: 'right',
       align: 'center',
-      // Duyệt/Từ chối chỉ ở drawer: danh sách BE chưa trả `createdBy` nên dòng không so được maker/checker.
+      // Danh sách đã trả `createdBy` nên so được maker/checker; Duyệt/Từ chối mở popover ngay tại dòng.
       render: (_value, record) => (
         <RefundActions
           refund={record}
           flags={getRefundActions(record, context)}
           variant='icon'
+          username={context.username}
           onView={options.onView}
           onApprove={options.onApprove}
           onReject={options.onReject}

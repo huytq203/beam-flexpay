@@ -9,12 +9,16 @@ import {
 import { cn } from '@lib/utils/cn'
 import type { RefundTarget } from '../schemas/refund.schema'
 import { getSettleLabel, type RefundActionFlags } from '../utils/refund.utils'
+import { ApproveRefundPopover } from './ApproveRefundPopover'
 import { RefundActionButton } from './RefundActionButton'
+import { RejectRefundPopover } from './RejectRefundPopover'
 
 interface RefundActionsProps {
   refund: RefundTarget
   flags: RefundActionFlags
   variant: 'icon' | 'text'
+  /** Người đang đăng nhập; popover duyệt ghi vết theo tài khoản này. */
+  username?: string
   onView?: (refund: RefundTarget) => void
   onApprove: (refund: RefundTarget) => void
   onReject: (refund: RefundTarget) => void
@@ -27,6 +31,7 @@ export function RefundActions({
   refund,
   flags,
   variant,
+  username = '',
   onView,
   onApprove,
   onReject,
@@ -37,11 +42,39 @@ export function RefundActions({
   const nameFor = (label: string): string | undefined =>
     variant === 'icon' ? `${label} ${refund.refundCode}` : undefined
 
+  const isInline = variant === 'icon'
+  // Dạng icon mở popover qua phần tử bọc ngoài, nên nút không tự mở dialog.
+  const openOrNothing = (open: (target: RefundTarget) => void) =>
+    isInline ? () => undefined : () => open(refund)
+
+  const rejectButton = (
+    <RefundActionButton
+      variant={variant}
+      tone='danger'
+      label='Từ chối'
+      ariaLabel={nameFor('Từ chối')}
+      icon={<CloseOutlined aria-hidden />}
+      onClick={openOrNothing(onReject)}
+    />
+  )
+  const approveButton = (
+    <RefundActionButton
+      variant={variant}
+      tone='primary'
+      label='Duyệt'
+      ariaLabel={nameFor('Duyệt')}
+      icon={<CheckOutlined aria-hidden />}
+      onClick={openOrNothing(onApprove)}
+    />
+  )
+
   return (
     <div
       className={cn(
-        'flex flex-wrap items-center gap-2',
-        variant === 'icon' ? 'justify-center' : 'justify-end'
+        'flex items-center gap-2',
+        variant === 'icon'
+          ? 'flex-nowrap justify-center'
+          : 'flex-wrap justify-end'
       )}
     >
       {onView && (
@@ -59,22 +92,23 @@ export function RefundActions({
       )}
       {flags.decide && (
         <>
-          <RefundActionButton
-            variant={variant}
-            tone='danger'
-            label='Từ chối'
-            ariaLabel={nameFor('Từ chối')}
-            icon={<CloseOutlined aria-hidden />}
-            onClick={() => onReject(refund)}
-          />
-          <RefundActionButton
-            variant={variant}
-            tone='primary'
-            label='Duyệt'
-            ariaLabel={nameFor('Duyệt')}
-            icon={<CheckOutlined aria-hidden />}
-            onClick={() => onApprove(refund)}
-          />
+          {isInline ? (
+            <RejectRefundPopover refund={refund}>
+              {rejectButton}
+            </RejectRefundPopover>
+          ) : (
+            rejectButton
+          )}
+          {isInline ? (
+            <ApproveRefundPopover
+              refund={refund}
+              username={username}
+            >
+              {approveButton}
+            </ApproveRefundPopover>
+          ) : (
+            approveButton
+          )}
         </>
       )}
       {flags.settle && (

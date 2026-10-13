@@ -163,16 +163,19 @@ const feeManagementV4 = {
                 '@pages/fee-management/wallet-limit/pages/WalletLimitHistoryPage'
               )
           )
-        },
-        {
-          path: SCREENS.WALLET_LIMIT_SPECIAL_MONTH.path,
-          element: page(
-            () =>
-              import(
-                '@pages/fee-management/wallet-limit/pages/WalletLimitSpecialMonthPage'
-              )
-          )
         }
+        /*
+         * Tạm ẩn route Tháng đặc biệt (giữ nguyên code, bật lại khi cần):
+         * {
+         *   path: SCREENS.WALLET_LIMIT_SPECIAL_MONTH.path,
+         *   element: page(
+         *     () =>
+         *       import(
+         *         '@pages/fee-management/wallet-limit/pages/WalletLimitSpecialMonthPage'
+         *       )
+         *   )
+         * }
+         */
       ]
     }
   ]

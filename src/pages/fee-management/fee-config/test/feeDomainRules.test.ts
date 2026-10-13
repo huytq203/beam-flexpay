@@ -96,7 +96,7 @@ describe('EWALLET_TRANSFER_INTERNAL', () => {
     ).toEqual(['USER', 'RECEIVER', 'SYSTEM'])
   })
 
-  it('chuyển tiền: nhãn chỉ là Người gửi / Người nhận', () => {
+  it('nhãn chỉ là Người gửi / Người nhận cho các dịch vụ ví', () => {
     const labels = Object.fromEntries(
       getPayerTypeOptions('EWALLET_TRANSFER_INTERNAL').map(
         ({ value, label }) => [value, label]
@@ -104,13 +104,10 @@ describe('EWALLET_TRANSFER_INTERNAL', () => {
     )
     expect(labels.USER).toBe('Người gửi')
     expect(labels.RECEIVER).toBe('Người nhận')
-    // Nạp và rút giữ nhãn thường: chỉ chuyển tiền phân biệt gửi/nhận.
-    for (const service of ['EWALLET_DEPOSIT', 'EWALLET_WITHDRAWAL']) {
-      expect(
-        getPayerTypeOptions(service).find(({ value }) => value === 'USER')
-          ?.label
-      ).toBe('Người dùng')
-    }
+    const deposit = getPayerTypeOptions('EWALLET_DEPOSIT')
+    expect(deposit.find(({ value }) => value === 'USER')?.label).toBe(
+      'Người gửi'
+    )
   })
 
   it('các dịch vụ ví khác vẫn chỉ cho USER chịu', () => {

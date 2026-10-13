@@ -1,11 +1,8 @@
 import { useState } from 'react'
 import { DialogModal } from '@components/index'
 import { useRefundActions } from '../hooks/useRefundActions'
-import {
-  RefundChannel,
-  RefundOriginalType,
-  type RefundTarget
-} from '../schemas/refund.schema'
+import type { RefundTarget } from '../schemas/refund.schema'
+import { getTypeNote } from '../utils/refundApproveNote'
 import { RefundDialogFooter } from './RefundDialogFooter'
 import { RefundNote } from './RefundNote'
 import { RefundSummary } from './RefundSummary'
@@ -14,19 +11,6 @@ interface ApproveRefundDialogProps {
   refund: RefundTarget
   username: string
   onClose: () => void
-}
-
-const getTypeNote = (refund: RefundTarget): string | undefined => {
-  if (refund.channel === RefundChannel.TO_BANK) {
-    return 'Sau khi duyệt, hệ thống tạo lệnh chi về ngân hàng và chờ ngân hàng xác nhận. Trạng thái chuyển sang Đã duyệt, đang chuyển tiền.'
-  }
-  if (refund.originalType === RefundOriginalType.CASH_OUT) {
-    return 'Hoàn giao dịch rút tiền lấy từ quỹ ví tạm giữ. Nếu quỹ không đủ, yêu cầu chuyển sang Chờ đủ số dư.'
-  }
-  if (refund.originalType === RefundOriginalType.MERCHANT_PAYMENT) {
-    return 'Ví merchant phải đủ số dư. Nếu thiếu, hệ thống báo lỗi và yêu cầu vẫn ở Chờ duyệt, không chuyển sang Chờ đủ số dư.'
-  }
-  return undefined
 }
 
 export function ApproveRefundDialog({
@@ -66,10 +50,7 @@ export function ApproveRefundDialog({
           showAmounts
         />
         {typeNote && <RefundNote tone='info'>{typeNote}</RefundNote>}
-        <RefundNote tone='warning'>
-          Thao tác chạm vào tiền thật và được ghi vết theo tài khoản{' '}
-          <strong>{username}</strong>.
-        </RefundNote>
+
         {error && <RefundNote tone='danger'>{error}</RefundNote>}
       </div>
       <RefundDialogFooter

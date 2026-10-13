@@ -7,7 +7,7 @@ import type { FeeEffectiveStatus } from '@/app/schemas/applicable-fee-rule.schem
 export const SERVICE_TYPE_LABELS: Readonly<Record<string, string>> = {
   EWALLET_DEPOSIT: 'Nạp tiền ví',
   EWALLET_WITHDRAWAL: 'Rút tiền ví',
-  EWALLET_TRANSFER_INTERNAL: 'Chuyển tiền nội bộ',
+  EWALLET_TRANSFER_INTERNAL: 'Chuyển tiền cùng hệ thống',
   EWALLET_TRANSFER_EXTERNAL: 'Chuyển tiền liên ngân hàng',
   EWALLET_REFUND: 'Hoàn tiền giao dịch ví',
   EWALLET_CASHBACK: 'Hoàn tiền (cashback)',

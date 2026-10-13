@@ -269,12 +269,12 @@ export const FeeComponentDialog = ({
           selectedBase={selectedBase}
           isVat={isVat}
           tiered={tiered}
-          isFree={calculationMethod === CalculationMethod.FREE}
           tierError={formState.errors.tiers?.message}
           onComponentTypeChange={handleComponentTypeChange}
           onMethodChange={(next) => {
             setValue('tiers', [])
-            if (next === CalculationMethod.FREE) {
+            // Bậc thang lấy số từ bảng bậc: bỏ các ô của cách tính mặc định để không gửi thừa.
+            if (usesTiers(String(next))) {
               setValue('percentage', null)
               setValue('fixedAmount', null)
               setValue('minFee', null)

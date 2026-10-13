@@ -36,12 +36,29 @@ const EKYC_STATUS_CONFIG = {
   }
 } as const
 
-const LOGIN_LOCKED_CONFIG = {
+const LOGIN_STATE_CONFIG = {
   LOGIN_LOCKED: {
     label: 'Đăng nhập bị khóa',
     className: 'danger-status'
+  },
+  LOGIN_ALLOWED: {
+    label: 'Đăng nhập bình thường',
+    className: 'success-status'
+  },
+  LOGIN_UNKNOWN: {
+    label: 'Chưa xác định',
+    className: 'warning-status'
   }
 } as const
+
+/** Keycloak trả null khi không xác định được tình trạng khóa đăng nhập. */
+const getLoginState = (
+  loginLocked: boolean | null | undefined
+): keyof typeof LOGIN_STATE_CONFIG => {
+  if (loginLocked === true) return 'LOGIN_LOCKED'
+  if (loginLocked === false) return 'LOGIN_ALLOWED'
+  return 'LOGIN_UNKNOWN'
+}
 
 export const getColumn = ({
   openModal,
@@ -161,15 +178,18 @@ export const getColumn = ({
               config={EKYC_STATUS_CONFIG}
             />
           </div>
-          {record.loginLocked === true && (
-            <div className='flex items-center gap-2'>
-              <StatusBadge
-                status='LOGIN_LOCKED'
-                config={LOGIN_LOCKED_CONFIG}
-              />
-            </div>
-          )}
         </div>
+      )
+    },
+    {
+      title: 'Đăng nhập',
+      align: 'center',
+      width: 150,
+      render: (_, record) => (
+        <StatusBadge
+          status={getLoginState(record.loginLocked)}
+          config={LOGIN_STATE_CONFIG}
+        />
       )
     },
     {

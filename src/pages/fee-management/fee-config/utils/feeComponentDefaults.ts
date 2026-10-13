@@ -25,9 +25,9 @@ export const emptyComponent = (
   tiers: []
 })
 
+/** Miễn phí không còn là lựa chọn riêng: nhập 0 ở Phí (%) hoặc Phí cố định. */
 export const CALCULATION_METHOD_VALUES = [
   CalculationMethod.DIRECT,
-  CalculationMethod.FREE,
   CalculationMethod.PROGRESSIVE_TIER,
   CalculationMethod.FLAT_TIER
 ]
