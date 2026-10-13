@@ -1,25 +1,17 @@
 import { PATHS } from '@constants/pathConstant'
 import { useMessage } from '@hooks/useMessage'
-import { usePostAssignMutation, usePutAssignMutation } from '@services/apiFeeAssignment'
 import {
-  useDeleteFeeComponentPoliciesMutation,
-  usePostFeeComponentPoliciesMutation
-} from '@services/apiFeeComponent'
-import { usePostFeeComponentTierMutation } from '@services/apiFeeComponentTier'
+  usePostAssignMutation,
+  usePutAssignMutation
+} from '@services/apiFeeAssignment'
 import {
-  usePutFeePolicyMutation,
-  useSetupFeePolicyMutation
+  useSetupFeePolicyMutation,
+  useUpdateFeePolicyConfigMutation
 } from '@services/apiFeePolicy.api'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { FeeConfigFormValues } from '../schemas/feeConfig.schema'
-import {
-  toAssignmentRequest,
-  toComponentCreateRequest,
-  toPolicyUpdateRequest,
-  toSetupRequest,
-  toTierCreateRequests
-} from '../utils/feeConfigPayload'
+import { toAssignmentRequest, toSetupRequest } from '../utils/feeConfigPayload'
 
 /** Những gì đã có trong cơ sở dữ liệu, cần khi sửa. */
 export interface FeeConfigSnapshot {
@@ -53,9 +45,9 @@ export interface UseFeeConfigSubmitResult {
  * Tạo mới đi qua `POST /fee/policies/setup`: chính sách, thành phần và bậc phí
  * gói trong một transaction, hỏng thì cơ sở dữ liệu sạch.
  *
- * Sửa thì không có đường tương đương — dịch vụ phí chỉ có các endpoint lẻ. Vì
- * vậy màn phải dựng lại toàn bộ thành phần: xoá hết rồi tạo lại theo đúng thứ
- * tự của biểu mẫu, vì thứ tự quyết định thành phần nào tính dựa được trên thành
+ * Sửa thì không có endpoint tương đương — dịch vụ phí chỉ có các endpoint lẻ.
+ * Vì vậy `updateFeePolicyConfig` dựng lại toàn bộ thành phần: xoá hết rồi tạo
+ * lại theo đúng thứ tự của biểu mẫu, vì thứ tự quyết định thành phần nào tính dựa được trên thành
  * phần nào và không có cột nào lưu thứ tự đó. Chỉ an toàn vì backend khoá sửa
  * cấu hình con ở mọi trạng thái khác Khởi tạo và Từ chối: bản ghi đang sửa chưa
  * áp vào giao dịch nào.
@@ -69,14 +61,8 @@ export const useFeeConfigSubmit = (
 
   const [setupFeePolicy, { isLoading: isSettingUp }] =
     useSetupFeePolicyMutation()
-  const [putFeePolicy, { isLoading: isUpdatingPolicy }] =
-    usePutFeePolicyMutation()
-  const [deleteComponent, { isLoading: isDeletingComponent }] =
-    useDeleteFeeComponentPoliciesMutation()
-  const [postComponent, { isLoading: isCreatingComponent }] =
-    usePostFeeComponentPoliciesMutation()
-  const [postTier, { isLoading: isCreatingTier }] =
-    usePostFeeComponentTierMutation()
+  const [updateConfig, { isLoading: isUpdatingConfig }] =
+    useUpdateFeePolicyConfigMutation()
   const [postAssign, { isLoading: isAssigning }] = usePostAssignMutation()
   const [putAssign, { isLoading: isUpdatingAssign }] = usePutAssignMutation()
 
@@ -111,39 +97,16 @@ export const useFeeConfigSubmit = (
     values: FeeConfigFormValues,
     current: FeeConfigSnapshot
   ): Promise<void> => {
-    const policyResult = await putFeePolicy({
-      id: current.policyId,
-      body: toPolicyUpdateRequest(values)
+    const { policy, components } = toSetupRequest(values)
+    const result = await updateConfig({
+      policyId: current.policyId,
+      policy,
+      components,
+      removeComponentIds: current.componentIds,
+      assignmentId: current.assignmentId,
+      assignment: toAssignmentRequest(values, current.policyId)
     })
-    if ('error' in policyResult) return
-
-    for (const componentId of current.componentIds) {
-      const removed = await deleteComponent(componentId)
-      if ('error' in removed) return
-    }
-
-    for (let index = 0; index < values.components.length; index += 1) {
-      const created = await postComponent(
-        toComponentCreateRequest(values, index, current.policyId)
-      )
-      if ('error' in created) return
-
-      const componentId = (
-        created.data as { data?: { id?: string } } | undefined
-      )?.data?.id
-      if (!componentId) return
-
-      // POST /component-tiers nhận nguyên một mảng ("tạo hàng loạt") — kể cả
-      // gửi đúng 1 tier vẫn phải bọc trong mảng, gửi object trần sẽ vỡ
-      // deserialize (List<FeeComponentTierCreateRequest>) ở backend.
-      const tiers = toTierCreateRequests(values, index, componentId)
-      if (tiers.length > 0) {
-        const savedTiers = await postTier(tiers)
-        if ('error' in savedTiers) return
-      }
-    }
-
-    if (!(await saveAssignment(values, current.policyId))) return
+    if ('error' in result) return
 
     successMess('Đã cập nhật chính sách phí')
     navigate(PATHS.FEE_V4.POLICY_LIST)
@@ -161,13 +124,7 @@ export const useFeeConfigSubmit = (
   return {
     submit,
     isSubmitting:
-      isSettingUp ||
-      isUpdatingPolicy ||
-      isDeletingComponent ||
-      isCreatingComponent ||
-      isCreatingTier ||
-      isAssigning ||
-      isUpdatingAssign,
+      isSettingUp || isUpdatingConfig || isAssigning || isUpdatingAssign,
     orphan,
     dismissOrphan: () => setOrphan(null)
   }

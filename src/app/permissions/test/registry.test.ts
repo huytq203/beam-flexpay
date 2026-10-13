@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { navigationItems } from '@components/layout/components/Navigation'
+import { grantsScreenAccess, grantsScreenAction } from '../access'
 import { PERMISSION } from '../permission-codes'
 import {
   DEFAULT_SCREEN_ACTION_IDS,
@@ -94,18 +95,75 @@ describe('SCREENS', () => {
     }
   })
 
-  it('mọi route transaction-management yêu cầu TRANSACTION:FULL', () => {
-    const transactionScreens = screens.filter(
-      (screen) =>
-        screen !== SCREENS.REFUND_MANAGEMENT &&
-        (screen.path === SCREENS.TRANSACTION_MANAGEMENT.path ||
-          screen.path.startsWith(`${SCREENS.TRANSACTION_MANAGEMENT.path}/`))
-    )
-
-    expect(transactionScreens.length).toBeGreaterThan(0)
-    for (const screen of transactionScreens) {
-      expect(screen.accessPermission).toBe(PERMISSION.TRANSACTION_FULL)
+  it('mọi mã quyền đều là mã đầy đủ có tiền tố EWALLET: như claim của BE', () => {
+    for (const code of Object.values(PERMISSION)) {
+      expect(code.startsWith('EWALLET:')).toBe(true)
     }
+  })
+
+  it('màn giao dịch mở theo quyền xem/tổng của BE, không còn đòi riêng TRANSACTION:FULL', () => {
+    const transactionScreens = [
+      SCREENS.TRANSACTION_MANAGEMENT,
+      SCREENS.TRANSACTION_WALLET,
+      SCREENS.SYSTEM_LEDGER,
+      SCREENS.WITHDRAW_HISTORY,
+      SCREENS.MERCHANT_TRANSACTION
+    ]
+    for (const screen of transactionScreens) {
+      expect('accessPermission' in screen).toBe(false)
+      expect(screen.extraFull).toEqual([PERMISSION.EWALLET_FULL])
+      expect(grantsScreenAccess([PERMISSION.TRANSACTION_VIEW], screen)).toBe(
+        true
+      )
+      expect(grantsScreenAccess([PERMISSION.EWALLET_FULL], screen)).toBe(true)
+      expect(grantsScreenAccess([PERMISSION.FEE_VIEW], screen)).toBe(false)
+    }
+  })
+
+  it('EWALLET:FULL mở mọi action của màn giao dịch', () => {
+    expect(
+      grantsScreenAction(
+        [PERMISSION.EWALLET_FULL],
+        SCREENS.TRANSACTION_WALLET,
+        'viewDetail'
+      )
+    ).toBe(true)
+  })
+
+  it('đóng băng: xem cần FREEZE:VIEW, sửa cần FREEZE:UPDATE, EWALLET:FULL qua cả hai', () => {
+    const frozen = SCREENS.FROZEN_TRANSACTIONS
+    expect(frozen.actions.view).toBe(PERMISSION.FREEZE_VIEW)
+    expect(frozen.actions.update).toBe(PERMISSION.FREEZE_UPDATE)
+    expect(grantsScreenAccess([PERMISSION.TRANSACTION_FULL], frozen)).toBe(
+      false
+    )
+    expect(grantsScreenAccess([PERMISSION.FREEZE_VIEW], frozen)).toBe(true)
+    expect(
+      grantsScreenAction([PERMISSION.EWALLET_FULL], frozen, 'update')
+    ).toBe(true)
+  })
+
+  it('chính sách phí: duyệt và kích hoạt cần FEE:APPROVE, ngừng áp dụng cần FEE:UPDATE', () => {
+    const fee = SCREENS.FEE_CONFIG
+    expect(fee.actions.approve).toBe(PERMISSION.FEE_APPROVE)
+    expect(fee.actions.activate).toBe(PERMISSION.FEE_APPROVE)
+    expect(fee.actions.deactivate).toBe(PERMISSION.FEE_UPDATE)
+    expect(grantsScreenAction([PERMISSION.FEE_UPDATE], fee, 'approve')).toBe(
+      false
+    )
+    expect(grantsScreenAction([PERMISSION.FEE_APPROVE], fee, 'approve')).toBe(
+      true
+    )
+  })
+
+  it('ví doanh nghiệp dùng ENTERPRISE_WALLET:* như BE, duyệt KYB giữ quyền riêng', () => {
+    const wallet = SCREENS.BUSINESS_WALLET_ACCOUNT
+    expect(wallet.actions.view).toBe(PERMISSION.ENTERPRISE_WALLET_VIEW)
+    expect(wallet.actions.create).toBe(PERMISSION.ENTERPRISE_WALLET_CREATE)
+    expect(wallet.actions.update).toBe(PERMISSION.ENTERPRISE_WALLET_UPDATE)
+    expect(wallet.actions.approve).toBe(
+      PERMISSION.ENTERPRISE_WALLET_KYB_APPROVE
+    )
   })
 
   it('hoàn tiền tự khai quyền: xem/duyệt/từ chối cho REFUND:APPROVE, chi tiền chỉ EWALLET:FULL', () => {
@@ -129,7 +187,7 @@ describe('SCREENS', () => {
     const wallet = SCREENS.TRANSACTION_WALLET
     expect(wallet.actions.review).toBe(PERMISSION.TRANSACTION_REVIEW)
     expect(PERMISSION.TRANSACTION_REVIEW).toBe('EWALLET:TRANSACTION:REVIEW')
-    expect(wallet.accessPermission).toBe(PERMISSION.TRANSACTION_FULL)
+    expect('accessPermission' in wallet).toBe(false)
     expect(wallet.actions.viewDetail).toBe(PERMISSION.TRANSACTION_VIEW)
     expect(wallet.actions.full).toBe(PERMISSION.TRANSACTION_FULL)
   })

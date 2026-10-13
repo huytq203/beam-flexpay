@@ -43,7 +43,7 @@ export const createRefundColumns = (
       title: '#',
       key: 'index',
       width: 56,
-      align: 'right',
+      align: 'center',
       render: (_value, _record, index) => (
         <span className='tabular-nums'>
           {getRefundRowNumber(page, pageSize, index)}
@@ -129,7 +129,7 @@ export const createRefundColumns = (
       title: 'Thao tác',
       key: 'actions',
       fixed: 'right',
-      align: 'right',
+      align: 'center',
       // Duyệt/Từ chối chỉ ở drawer: danh sách BE chưa trả `createdBy` nên dòng không so được maker/checker.
       render: (_value, record) => (
         <RefundActions

@@ -194,7 +194,8 @@ export const getFeePolicyColumns = ({
   {
     title: 'Hành động',
     dataIndex: 'id',
-    width: 190,
+    // Bảng này giữ bố cục cố định: tối đa 2 nút (Sửa + Duyệt) nên chỉ chừa đúng chỗ đó.
+    width: 96,
     fixed: 'right',
     align: 'center',
     render: (id: string, row) => {
@@ -239,7 +240,7 @@ export const getFeePolicyColumns = ({
           {row.status === 'INACTIVE' && (
             <Can
               screen='FEE_CONFIG'
-              action='toggleActive'
+              action='activate'
             >
               <TooltipComponent title='Kích hoạt chính sách'>
                 <ButtonComponent
@@ -258,7 +259,7 @@ export const getFeePolicyColumns = ({
           {row.status === 'ACTIVE' && (
             <Can
               screen='FEE_CONFIG'
-              action='toggleActive'
+              action='deactivate'
             >
               <TooltipComponent title='Ngừng áp dụng chính sách'>
                 <ButtonComponent

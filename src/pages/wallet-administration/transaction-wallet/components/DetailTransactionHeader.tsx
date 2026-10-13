@@ -8,7 +8,10 @@ import { ArrowCounterClockwiseIcon, PrinterOutlined } from '@components/icons'
 import type { UnifiedContentJournal } from '@type/apiResponseJournal'
 import { REVIEW_STATUS } from '@/app/schemas/transaction-review.schema'
 import { StatusEnum } from '../constants/Transaction.constant'
-import { canShowRefundTransactionAction } from '../columns/transaction-row-actions'
+import {
+  canShowRefundTransactionAction,
+  isPendingApprovalTransaction
+} from '../columns/transaction-row-actions'
 import { useCreateRefundDialog } from '../hooks/useCreateRefundDialog'
 import { useTransactionPermissions } from '../hooks/useTransactionPermissions'
 import { useTransactionSnapshot } from '../hooks/useTransactionSnapshot'
@@ -48,7 +51,10 @@ export function DetailTransactionHeader({
             transactionCode={transaction.transactionCode}
             transactionType={transaction.transactionType}
             journalStatus={transaction.status}
-            hidden={snapshot?.status === REVIEW_STATUS}
+            hidden={
+              snapshot?.status === REVIEW_STATUS ||
+              isPendingApprovalTransaction(transaction)
+            }
           />
           {transaction.status === StatusEnum.POSTED && (
             <StuckReceiptViewButton

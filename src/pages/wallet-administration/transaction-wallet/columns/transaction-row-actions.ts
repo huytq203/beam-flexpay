@@ -1,6 +1,9 @@
 import type { UnifiedContentJournal } from '@type/apiResponseJournal'
 import { StatusEnum } from '../constants/Transaction.constant'
-import { getRefundOriginalType } from '../dto/transactionRefund.dto'
+import {
+  getDisplayStatus,
+  getRefundOriginalType
+} from '../dto/transactionRefund.dto'
 
 export interface FreezeTargetParty {
   ownerId: string
@@ -15,6 +18,16 @@ const isWalletParty = (
   id: string
   type: 'USER' | 'MERCHANT'
 } => Boolean(party?.id) && (party.type === 'USER' || party.type === 'MERCHANT')
+
+/**
+ * Lệnh đang chờ phê duyệt. Sổ cái vẫn ghi `PENDING` nên phải đọc `displayStatus`: ở trạng thái
+ * này chỉ luồng Duyệt/Từ chối được chốt lệnh, nút cập nhật giao dịch treo phải ẩn.
+ */
+export const isPendingApprovalTransaction = (
+  transaction: Pick<UnifiedContentJournal, 'status' | 'displayStatus'>
+): boolean =>
+  getDisplayStatus(transaction) === StatusEnum.PENDING_APPROVAL ||
+  transaction.status === StatusEnum.PENDING_APPROVAL
 
 /** POSTED là trạng thái thành công của journal và luôn phải có GL transaction để đóng băng. */
 export const canShowFreezeTransactionAction = (

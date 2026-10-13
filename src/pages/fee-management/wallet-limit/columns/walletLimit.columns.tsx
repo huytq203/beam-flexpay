@@ -120,7 +120,8 @@ const renderActions = (
     <div className='flex items-center justify-center gap-1'>
       <TooltipComponent title='Xem chi tiết'>
         <ButtonComponent
-          type='text'
+          type='default'
+          size='small'
           htmlType='button'
           aria-label={`Xem chi tiết ${target}`}
           icon={
@@ -138,7 +139,8 @@ const renderActions = (
       >
         <TooltipComponent title='Cập nhật'>
           <ButtonComponent
-            type='text'
+            type='default'
+            size='small'
             htmlType='button'
             aria-label={`Cập nhật ${target}`}
             icon={

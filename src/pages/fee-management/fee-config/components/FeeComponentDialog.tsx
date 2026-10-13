@@ -207,6 +207,9 @@ export const FeeComponentDialog = ({
     )
     setValue('calculationMethod', CalculationMethod.DIRECT)
     setValue('fixedAmount', null)
+    setValue('minFee', null)
+    setValue('maxFee', null)
+    setValue('tiers', [])
   }
 
   const allowedBaseTypes = isVat

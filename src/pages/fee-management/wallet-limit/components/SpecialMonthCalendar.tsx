@@ -11,6 +11,9 @@ interface SpecialMonthCalendarProps {
   year: number
   months: readonly WalletLimitSpecialMonth[]
   isReady: boolean
+  /** `yyyy-MM` của tháng đang lọc danh sách. */
+  selectedKey: string | null
+  onSelect: (monthKey: string) => void
   onAdd: (monthKey: string) => void
 }
 
@@ -18,7 +21,10 @@ const CELL_BASE =
   'flex min-h-16 min-w-0 flex-col justify-between gap-1 rounded-lg border p-2 text-left'
 
 const LEGEND = [
-  { label: 'Tháng đặc biệt', className: 'border-primary bg-primary' },
+  {
+    label: 'Tháng đặc biệt, bấm để lọc',
+    className: 'border-primary bg-primary'
+  },
   { label: 'Đã qua', className: 'border-border bg-muted' },
   { label: 'Còn trống, bấm để thêm', className: 'border-dashed border-border' },
   { label: 'Tháng hiện tại', className: 'border-border ring-2 ring-foreground' }
@@ -26,32 +32,46 @@ const LEGEND = [
 
 interface CellProps {
   cell: CalendarCell
+  selected: boolean
   canAdd: boolean
+  onSelect: (monthKey: string) => void
   onAdd: (monthKey: string) => void
 }
 
-function CalendarCellView({ cell, canAdd, onAdd }: CellProps) {
+function CalendarCellView({
+  cell,
+  selected,
+  canAdd,
+  onSelect,
+  onAdd
+}: CellProps) {
   const { month, isPast, isCurrent, number, key } = cell
   const title = `T${number}`
   const ring = isCurrent && 'ring-2 ring-foreground'
 
   if (month) {
     return (
-      <div
+      <button
+        type='button'
         title={month.name}
+        aria-pressed={selected}
+        aria-label={`Lọc tháng ${String(number).padStart(2, '0')}/${key.slice(0, 4)}: ${month.name}`}
+        onClick={() => onSelect(key)}
         className={cn(
           CELL_BASE,
+          'cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground',
           isPast
             ? 'border-border bg-muted text-muted-foreground'
             : 'border-primary bg-primary text-primary-foreground',
-          ring
+          ring,
+          selected && 'outline-2 outline-offset-2 outline-foreground'
         )}
       >
         <b className='text-[11px] tracking-wider'>{title}</b>
         <span className='line-clamp-2 text-[11px] leading-[14px] break-words'>
           {month.name}
         </span>
-      </div>
+      </button>
     )
   }
   if (isPast || !canAdd) {
@@ -89,6 +109,8 @@ export function SpecialMonthCalendar({
   year,
   months,
   isReady,
+  selectedKey,
+  onSelect,
   onAdd
 }: SpecialMonthCalendarProps) {
   const { can } = useScreenAccess('WALLET_LIMIT_SPECIAL_MONTH')
@@ -112,7 +134,9 @@ export function SpecialMonthCalendar({
           <CalendarCellView
             key={cell.key}
             cell={cell}
+            selected={cell.key === selectedKey}
             canAdd={can('create')}
+            onSelect={onSelect}
             onAdd={onAdd}
           />
         ))}

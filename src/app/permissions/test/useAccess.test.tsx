@@ -64,18 +64,15 @@ describe('useScreenAccess', () => {
     expect(result.current.can('resetPassword')).toBe(true)
   })
 
-  it('canView của màn giao dịch bắt buộc TRANSACTION:FULL', () => {
-    const viewOnly = renderHook(
-      () => useScreenAccess('TRANSACTION_WALLET'),
-      { wrapper: wrapperWith(['EWALLET:TRANSACTION:VIEW']) }
-    )
-    const fullAccess = renderHook(
-      () => useScreenAccess('TRANSACTION_WALLET'),
-      { wrapper: wrapperWith(['EWALLET:TRANSACTION:FULL']) }
-    )
+  it('canView của màn giao dịch mở với quyền xem hoặc EWALLET:FULL, không mở với quyền khác', () => {
+    const open = (code: string) =>
+      renderHook(() => useScreenAccess('TRANSACTION_WALLET'), {
+        wrapper: wrapperWith([code])
+      }).result.current.canView
 
-    expect(viewOnly.result.current.canView).toBe(false)
-    expect(fullAccess.result.current.canView).toBe(true)
+    expect(open('EWALLET:TRANSACTION:VIEW')).toBe(true)
+    expect(open('EWALLET:EWALLET:FULL')).toBe(true)
+    expect(open('EWALLET:FEE:VIEW')).toBe(false)
   })
 
   it('không quyền thì chặn module đã phát hành', () => {
@@ -102,7 +99,9 @@ describe('useScreenAccess', () => {
     })
 
     expect(result.current.canView).toBe(true)
-    expect(result.current.can('approve')).toBe(true)
+    expect(result.current.can('deactivate')).toBe(true)
+    expect(result.current.can('approve')).toBe(false)
+    expect(result.current.can('activate')).toBe(false)
     expect(result.current.can('create')).toBe(false)
   })
 

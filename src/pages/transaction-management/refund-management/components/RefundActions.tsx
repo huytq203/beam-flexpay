@@ -6,6 +6,7 @@ import {
   CloseOutlined,
   EyeOutlined
 } from '@components/icons'
+import { cn } from '@lib/utils/cn'
 import type { RefundTarget } from '../schemas/refund.schema'
 import { getSettleLabel, type RefundActionFlags } from '../utils/refund.utils'
 import { RefundActionButton } from './RefundActionButton'
@@ -37,7 +38,12 @@ export function RefundActions({
     variant === 'icon' ? `${label} ${refund.refundCode}` : undefined
 
   return (
-    <div className='flex flex-wrap items-center justify-end gap-2'>
+    <div
+      className={cn(
+        'flex flex-wrap items-center gap-2',
+        variant === 'icon' ? 'justify-center' : 'justify-end'
+      )}
+    >
       {onView && (
         <Can
           screen='REFUND_MANAGEMENT'

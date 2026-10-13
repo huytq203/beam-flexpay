@@ -13,9 +13,9 @@ import BusinessWallet from '../pages/BusinessWallet'
 import BusinessWalletForm from '../pages/BusinessWalletForm'
 
 const PERMISSIONS = [
-  'EWALLET:MERCHANT:VIEW',
-  'EWALLET:MERCHANT:CREATE',
-  'EWALLET:MERCHANT:UPDATE'
+  'EWALLET:ENTERPRISE_WALLET:VIEW',
+  'EWALLET:ENTERPRISE_WALLET:CREATE',
+  'EWALLET:ENTERPRISE_WALLET:UPDATE'
 ]
 
 const renderRoute = (route: string) => {

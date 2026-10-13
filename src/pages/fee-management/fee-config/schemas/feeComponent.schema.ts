@@ -175,7 +175,9 @@ export const feeComponentFormSchema = z
       })
     }
 
+    // VAT được phép 0%: thuế suất 0 là cấu hình hợp lệ, không phải thiếu mức phí.
     if (
+      component.componentType !== 'VAT' &&
       component.calculationMethod === CalculationMethod.DIRECT &&
       numberOrZero(component.percentage) === 0 &&
       numberOrZero(component.fixedAmount) === 0

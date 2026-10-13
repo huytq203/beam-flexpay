@@ -253,6 +253,7 @@ export const getColumn = ({
   {
     title: 'Thao tác',
     align: 'center',
+    fixed: 'right',
     className: 'whitespace-nowrap',
     width: 120,
     render(_, record) {

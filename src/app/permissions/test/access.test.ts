@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { grants, grantsAny, grantsScreenAccess, grantsScreenAction } from '../access'
+import {
+  grants,
+  grantsAny,
+  grantsScreenAccess,
+  grantsScreenAction
+} from '../access'
 import { PERMISSION, SUPER_ADMIN_PERMISSION } from '../permission-codes'
 import { SCREENS } from '../registry'
 
@@ -16,7 +21,9 @@ describe('grants', () => {
   })
 
   it('mã khác tiền tố là quyền khác, không được suy diễn', () => {
-    expect(grants(['PERMISSION_EWALLET:FEE:APPROVE'], PERMISSION.FEE_UPDATE)).toBe(false)
+    expect(
+      grants(['PERMISSION_EWALLET:FEE:APPROVE'], PERMISSION.FEE_UPDATE)
+    ).toBe(false)
     expect(grants(['FEE:UPDATE'], PERMISSION.FEE_UPDATE)).toBe(false)
     expect(grants(['EWALLET:FEE:UPDATE'], PERMISSION.FEE_UPDATE)).toBe(true)
   })
@@ -35,10 +42,10 @@ describe('grants', () => {
 describe('grantsAny', () => {
   it('đúng khi có bất kỳ mã nào trong danh sách', () => {
     expect(
-      grantsAny(['EWALLET:FREEZE:APPROVE'], [
-        PERMISSION.FREEZE_APPROVE,
-        PERMISSION.ADMIN_FULL
-      ])
+      grantsAny(
+        ['EWALLET:FREEZE:APPROVE'],
+        [PERMISSION.FREEZE_APPROVE, PERMISSION.ADMIN_FULL]
+      )
     ).toBe(true)
     expect(
       grantsAny(['EWALLET:FREEZE:UPDATE'], [PERMISSION.FREEZE_APPROVE])
@@ -49,38 +56,77 @@ describe('grantsAny', () => {
 describe('grantsScreenAction', () => {
   it('mã của chính hành động thì mở hành động đó', () => {
     expect(
-      grantsScreenAction(['EWALLET:MERCHANT:UPDATE'], SCREENS.MERCHANT_BANK_ACCOUNT, 'lock')
+      grantsScreenAction(
+        ['EWALLET:FEE:UPDATE'],
+        SCREENS.FEE_CONFIG,
+        'deactivate'
+      )
     ).toBe(true)
     expect(
-      grantsScreenAction(['EWALLET:MERCHANT:VIEW'], SCREENS.MERCHANT_BANK_ACCOUNT, 'lock')
+      grantsScreenAction(['EWALLET:FEE:VIEW'], SCREENS.FEE_CONFIG, 'deactivate')
     ).toBe(false)
+  })
+
+  it('duyệt và kích hoạt chính sách phí cần FEE:APPROVE, FEE:UPDATE không đủ', () => {
+    expect(
+      grantsScreenAction(['EWALLET:FEE:UPDATE'], SCREENS.FEE_CONFIG, 'approve')
+    ).toBe(false)
+    expect(
+      grantsScreenAction(
+        ['EWALLET:FEE:APPROVE'],
+        SCREENS.FEE_CONFIG,
+        'activate'
+      )
+    ).toBe(true)
   })
 
   it('mã full mà màn khai sẵn thì mở mọi hành động của màn', () => {
     expect(
-      grantsScreenAction(['EWALLET:MERCHANT:FULL'], SCREENS.MERCHANT_BANK_ACCOUNT, 'lock')
+      grantsScreenAction(['EWALLET:USER:FULL'], SCREENS.USER_ACCOUNT, 'delete')
+    ).toBe(true)
+  })
+
+  it('extraFull của màn mở mọi hành động', () => {
+    expect(
+      grantsScreenAction(
+        ['EWALLET:EWALLET:FULL'],
+        SCREENS.TRANSACTION_WALLET,
+        'viewDetail'
+      )
     ).toBe(true)
   })
 
   it('hành động không khai trong registry luôn bị chặn', () => {
     expect(
-      grantsScreenAction([SUPER_ADMIN_PERMISSION], SCREENS.FEE_POLICY, 'khong-ton-tai')
+      grantsScreenAction(
+        [SUPER_ADMIN_PERMISSION],
+        SCREENS.FEE_POLICY,
+        'khong-ton-tai'
+      )
     ).toBe(false)
   })
 })
 
 describe('grantsScreenAccess', () => {
-  it('màn giao dịch bắt buộc đúng mã accessPermission', () => {
+  it('màn giao dịch mở với quyền xem, TRANSACTION:FULL hoặc EWALLET:FULL, đúng như BE', () => {
+    for (const code of [
+      'EWALLET:TRANSACTION:VIEW',
+      'EWALLET:TRANSACTION:FULL',
+      'EWALLET:EWALLET:FULL'
+    ]) {
+      expect(grantsScreenAccess([code], SCREENS.TRANSACTION_WALLET)).toBe(true)
+    }
     expect(
-      grantsScreenAccess(['EWALLET:TRANSACTION:VIEW'], SCREENS.TRANSACTION_WALLET)
+      grantsScreenAccess(['EWALLET:FEE:VIEW'], SCREENS.TRANSACTION_WALLET)
     ).toBe(false)
-    expect(
-      grantsScreenAccess(['EWALLET:TRANSACTION:FULL'], SCREENS.TRANSACTION_WALLET)
-    ).toBe(true)
   })
 
   it('màn không đặt accessPermission chấp nhận bất kỳ mã nào của màn', () => {
-    expect(grantsScreenAccess(['EWALLET:FEE:CREATE'], SCREENS.FEE_POLICY)).toBe(true)
-    expect(grantsScreenAccess(['EWALLET:WALLET:FULL'], SCREENS.FEE_POLICY)).toBe(false)
+    expect(grantsScreenAccess(['EWALLET:FEE:CREATE'], SCREENS.FEE_POLICY)).toBe(
+      true
+    )
+    expect(
+      grantsScreenAccess(['EWALLET:WALLET:FULL'], SCREENS.FEE_POLICY)
+    ).toBe(false)
   })
 })

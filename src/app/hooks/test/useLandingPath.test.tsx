@@ -28,7 +28,7 @@ describe('useLandingPath', () => {
   })
 
   it('bỏ qua nhóm không có quyền và lấy màn được phép kế tiếp', () => {
-    expect(renderLandingPath(['EWALLET:MERCHANT:VIEW'])).toBe(
+    expect(renderLandingPath(['EWALLET:ENTERPRISE_WALLET:VIEW'])).toBe(
       SCREENS.BUSINESS_WALLET_ACCOUNT.path
     )
   })

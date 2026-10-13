@@ -183,18 +183,19 @@ export function UserEditorModal({
             required
           />
         </div>
-        <UserMerchantScopeField
-          control={form.control}
-          getMerchant={getMerchant}
-          onMerchantsChange={handleMerchantsChange}
-          disabled={Boolean(user) && !canProposeScope}
-        />
-        {user && (
+        {/* Sửa User mà không có quyền đề xuất phạm vi thì ẩn hẳn phần phạm vi, không để ô bị khoá. */}
+        {(!user || canProposeScope) && (
+          <UserMerchantScopeField
+            control={form.control}
+            getMerchant={getMerchant}
+            onMerchantsChange={handleMerchantsChange}
+          />
+        )}
+        {user && canProposeScope && (
           <UserSubMerchantField
             id='edit-user-subs'
             merchantIds={selectedMerchantIds}
             selected={scope.subs}
-            disabled={!canProposeScope}
             onChange={scope.setSubs}
           />
         )}

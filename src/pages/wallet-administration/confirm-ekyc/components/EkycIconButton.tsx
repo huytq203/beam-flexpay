@@ -3,12 +3,12 @@ import { tv, type VariantProps } from 'tailwind-variants'
 import { ButtonComponent, TooltipComponent } from '@components/index'
 
 const ekycIconButton = tv({
-  base: 'inline-flex size-8! min-w-0! items-center justify-center rounded-lg! border-0! bg-transparent! p-0! text-muted-foreground! shadow-none! transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary',
+  base: 'inline-flex items-center justify-center transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary',
   variants: {
     tone: {
-      neutral: 'hover:bg-accent! hover:text-foreground!',
-      success: 'hover:bg-success-strong/10! hover:text-success-strong!',
-      danger: 'hover:bg-danger-strong/10! hover:text-danger-strong!'
+      neutral: '',
+      success: 'hover:border-success-strong! hover:text-success-strong!',
+      danger: ''
     }
   },
   defaultVariants: { tone: 'neutral' }
@@ -23,7 +23,7 @@ interface EkycIconButtonProps
   label: string
 }
 
-/** Nút icon ghost 32px dùng chung cho cột thao tác bảng eKYC. */
+/** Nút icon có viền, cùng kiểu với các cột thao tác khác; tone danger dùng nút `danger` của antd. */
 export const EkycIconButton = ({
   label,
   tone,
@@ -33,7 +33,9 @@ export const EkycIconButton = ({
   <TooltipComponent title={label}>
     <ButtonComponent
       {...rest}
-      type='text'
+      type='default'
+      size='small'
+      danger={tone === 'danger'}
       aria-label={rest['aria-label'] ?? label}
       className={ekycIconButton({ tone, className })}
     />

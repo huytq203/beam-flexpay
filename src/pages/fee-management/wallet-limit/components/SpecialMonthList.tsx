@@ -9,7 +9,12 @@ import {
 } from '@components/index'
 import { createSpecialMonthColumns } from '../columns/specialMonth.columns'
 import type { useSpecialMonths } from '../hooks/useSpecialMonths'
-import { ALL_YEARS, MAX_YEAR, MIN_YEAR } from '../utils/specialMonth.utils'
+import {
+  ALL_YEARS,
+  MAX_YEAR,
+  MIN_YEAR,
+  formatMonthLabel
+} from '../utils/specialMonth.utils'
 
 type SpecialMonthsState = ReturnType<typeof useSpecialMonths>
 
@@ -38,7 +43,7 @@ export function SpecialMonthList({
   onRename,
   onDelete
 }: SpecialMonthListProps) {
-  const { year, setYear, query, months } = state
+  const { year, setYear, query, months, monthKey, clearMonth } = state
 
   return (
     <CardComponent className='border border-border bg-background shadow-none'>
@@ -76,9 +81,20 @@ export function SpecialMonthList({
             onChange={(date) => setYear(date ? String(date.year()) : ALL_YEARS)}
           />
         </div>
-        <span className='text-xs text-muted-foreground'>
-          {months.length} tháng · sắp theo thời gian tăng dần
-        </span>
+        <div className='flex flex-wrap items-center gap-3'>
+          {monthKey && (
+            <ButtonComponent
+              size='small'
+              type='default'
+              content={`Đang lọc ${formatMonthLabel(`${monthKey}-01`)} ✕`}
+              aria-label={`Bỏ lọc tháng ${formatMonthLabel(`${monthKey}-01`)}`}
+              onClick={clearMonth}
+            />
+          )}
+          <span className='text-xs text-muted-foreground'>
+            {months.length} tháng · sắp theo thời gian tăng dần
+          </span>
+        </div>
       </div>
       {query.isError ? (
         <div

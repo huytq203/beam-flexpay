@@ -60,7 +60,9 @@ describe('MerchantManagement export', () => {
         downloadedFilename = this.download
       })
     const store = createAppStore()
-    store.dispatch(savePermissions(['MERCHANT:VIEW', 'MERCHANT:EXPORT']))
+    store.dispatch(
+      savePermissions(['EWALLET:MERCHANT:VIEW', 'EWALLET:MERCHANT:EXPORT'])
+    )
 
     render(
       <Provider store={store}>

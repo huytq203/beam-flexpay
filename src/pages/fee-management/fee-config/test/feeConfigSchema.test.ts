@@ -227,17 +227,17 @@ describe('feeComponentFormSchema', () => {
     expect(errorPaths(result)).toContain('fixedAmount')
   })
 
-  it('thuế giá trị gia tăng phải có tỷ lệ dương', () => {
+  it('thuế giá trị gia tăng cho phép tỷ lệ 0%', () => {
     const result = feeComponentFormSchema.safeParse(
       component({
         componentType: 'VAT',
         baseOn: 'FEE_COMPONENT',
         baseComponentType: 'TRANSACTION_FEE',
-        percentage: null,
+        percentage: 0,
         fixedAmount: null
       })
     )
-    expect(errorPaths(result)).toContain('calculationMethod')
+    expect(errorPaths(result)).not.toContain('calculationMethod')
   })
 
   it('bắt buộc chọn cơ sở khi tính trên thành phần khác', () => {

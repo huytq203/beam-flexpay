@@ -53,23 +53,28 @@ describe('useRouteAccess', () => {
     expect(accessTo(['EWALLET:FEE:CREATE'], SCREENS.FEE_POLICY.path)).toBe(true)
   })
 
-  it('toàn bộ transaction-management bắt buộc TRANSACTION:FULL', () => {
-    const viewOnly = ['EWALLET:TRANSACTION:VIEW']
-    const fullAccess = ['EWALLET:TRANSACTION:FULL']
+  it('các route giao dịch mở với TRANSACTION:VIEW hoặc EWALLET:FULL, chặn quyền không liên quan', () => {
     const transactionRoutes = [
       SCREENS.TRANSACTION_MANAGEMENT.path,
       SCREENS.TRANSACTION_WALLET.path,
       `${SCREENS.TRANSACTION_WALLET.path}/transaction-id`,
-      SCREENS.FROZEN_TRANSACTIONS.path,
       SCREENS.SYSTEM_LEDGER.path,
       `${SCREENS.SYSTEM_LEDGER.path}/ledger-id`,
       SCREENS.WITHDRAW_HISTORY.path
     ]
 
     for (const route of transactionRoutes) {
-      expect(accessTo(viewOnly, route)).toBe(false)
-      expect(accessTo(fullAccess, route)).toBe(true)
+      expect(accessTo(['EWALLET:TRANSACTION:VIEW'], route)).toBe(true)
+      expect(accessTo(['EWALLET:EWALLET:FULL'], route)).toBe(true)
+      expect(accessTo(['EWALLET:FEE:VIEW'], route)).toBe(false)
     }
+  })
+
+  it('đóng băng mở với FREEZE:VIEW hoặc EWALLET:FULL, không mở với TRANSACTION:VIEW', () => {
+    const route = SCREENS.FROZEN_TRANSACTIONS.path
+    expect(accessTo(['EWALLET:FREEZE:VIEW'], route)).toBe(true)
+    expect(accessTo(['EWALLET:EWALLET:FULL'], route)).toBe(true)
+    expect(accessTo(['EWALLET:TRANSACTION:VIEW'], route)).toBe(false)
   })
 
   it('hoàn tiền mở cho REFUND:APPROVE hoặc EWALLET:FULL, không mở cho TRANSACTION:FULL', () => {

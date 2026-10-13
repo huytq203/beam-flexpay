@@ -30,7 +30,8 @@ export const grantsScreenAction = (
   if (grants(granted, required)) return true
 
   const full = screen.actions.full
-  return full !== undefined && grants(granted, full)
+  if (full !== undefined && grants(granted, full)) return true
+  return grantsAny(granted, screen.extraFull ?? [])
 }
 
 /** Dùng cùng một luật cho route, sidebar và canView của screen. */
@@ -40,4 +41,7 @@ export const grantsScreenAccess = (
 ): boolean =>
   screen.accessPermission !== undefined
     ? grants(granted, screen.accessPermission)
-    : grantsAny(granted, Object.values(screen.actions))
+    : grantsAny(granted, [
+        ...Object.values(screen.actions),
+        ...(screen.extraFull ?? [])
+      ])

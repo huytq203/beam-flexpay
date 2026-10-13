@@ -191,7 +191,7 @@ export const createMerchantUserColumns = ({
     title: 'Thao tác',
     align: 'center',
     fixed: 'right',
-    // Cột co theo số nút của dòng: không đặt width cố định, bảng dùng tableLayout='auto'.
+    // Không đặt width: TableComponent tự cho cột co theo số nút của dòng.
     className: 'whitespace-nowrap',
     render: (_, user) => (
       <div className='flex w-max flex-nowrap items-center justify-center gap-1'>

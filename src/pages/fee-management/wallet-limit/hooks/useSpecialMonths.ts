@@ -11,6 +11,7 @@ import { parseWalletLimitError } from '../utils/walletLimit.error'
 import {
   ALL_YEARS,
   sortSpecialMonths,
+  toMonthKey,
   toYearParam
 } from '../utils/specialMonth.utils'
 
@@ -23,8 +24,31 @@ const toErrorMessage = (error: unknown): string => {
 
 export const useSpecialMonths = () => {
   const [year, setYear] = useState(ALL_YEARS)
+  /** `yyyy-MM` của tháng đang lọc trên lịch; `null` là hiện mọi tháng của năm. */
+  const [monthKey, setMonthKey] = useState<string | null>(null)
   const query = useGetWalletLimitSpecialMonthsQuery(toYearParam(year))
-  return { year, setYear, query, months: sortSpecialMonths(query.data ?? []) }
+  const allMonths = sortSpecialMonths(query.data ?? [])
+  // Danh sách tải một lần và không phân trang nên lọc tháng ở FE là an toàn.
+  const months = monthKey
+    ? allMonths.filter((month) => toMonthKey(month.monthStart) === monthKey)
+    : allMonths
+  // Đổi năm thì lịch đổi theo, tháng đang chọn của năm cũ không còn ý nghĩa.
+  const changeYear = (next: string): void => {
+    setYear(next)
+    setMonthKey(null)
+  }
+  const toggleMonth = (key: string): void =>
+    setMonthKey((current) => (current === key ? null : key))
+  return {
+    year,
+    setYear: changeYear,
+    query,
+    allMonths,
+    months,
+    monthKey,
+    toggleMonth,
+    clearMonth: () => setMonthKey(null)
+  }
 }
 
 /** Trả `null` khi thành công, ngược lại là câu lỗi để hiện trên form. */

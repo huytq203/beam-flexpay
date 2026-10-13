@@ -30,6 +30,7 @@ export const PaymentMethod = {
 
 export enum StatusEnum {
   PENDING = 'PENDING',
+  PENDING_APPROVAL = 'PENDING_APPROVAL',
   POSTED = 'POSTED',
   AUTHORIZED = 'AUTHORIZED',
   FAILED = 'FAILED',
@@ -42,6 +43,7 @@ export enum StatusEnum {
 
 export const StatusType: Record<StatusEnum, string> = {
   [StatusEnum.PENDING]: 'Chờ xử lý',
+  [StatusEnum.PENDING_APPROVAL]: 'Chờ phê duyệt',
   [StatusEnum.POSTED]: 'Đã thành công',
   [StatusEnum.AUTHORIZED]: 'Đã phê duyệt',
   [StatusEnum.FAILED]: 'Thất bại',
@@ -55,6 +57,11 @@ export const CONFIG_STATUS: Record<
 > = {
   [StatusEnum.PENDING]: {
     label: 'Chờ xử lý',
+    className: 'warning-status',
+    shimmerColor: 'rgba(252, 186, 3, 0.2)'
+  },
+  [StatusEnum.PENDING_APPROVAL]: {
+    label: 'Chờ phê duyệt',
     className: 'warning-status',
     shimmerColor: 'rgba(252, 186, 3, 0.2)'
   },

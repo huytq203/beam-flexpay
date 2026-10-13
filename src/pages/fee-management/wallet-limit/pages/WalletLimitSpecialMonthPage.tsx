@@ -30,8 +30,10 @@ const WalletLimitSpecialMonthPage = () => {
       </CardComponent>
       <SpecialMonthCalendar
         year={getCalendarYear(state.year)}
-        months={state.months}
+        months={state.allMonths}
         isReady={state.query.isSuccess}
+        selectedKey={state.monthKey}
+        onSelect={state.toggleMonth}
         onAdd={setAdding}
       />
       <SpecialMonthList

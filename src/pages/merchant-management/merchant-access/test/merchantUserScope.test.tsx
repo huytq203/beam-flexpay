@@ -115,7 +115,7 @@ describe('Phạm vi User đi qua đề xuất chờ duyệt', () => {
     ).toBeInTheDocument()
   }, 15_000)
 
-  it('không có quyền đề xuất thì khóa phạm vi Merchant khi sửa User', async () => {
+  it('không có quyền đề xuất thì ẩn hẳn phạm vi Merchant khi sửa User', async () => {
     const user = userEvent.setup()
     renderPage('/secure-panel/merchant/user', [
       PERMISSION.MERCHANT_USER_VIEW,
@@ -127,8 +127,8 @@ describe('Phạm vi User đi qua đề xuất chờ duyệt', () => {
     )
     const editor = await findDialogByTitle('Sửa thông tin User')
 
-    expect(getTrigger(editor, 'merchantIds')).toBeDisabled()
-    expect(getTrigger(editor, 'edit-user-subs')).toBeDisabled()
+    expect(editor.querySelector('#merchantIds')).toBeNull()
+    expect(editor.querySelector('#edit-user-subs')).toBeNull()
   })
 
   it('gỡ Sub-merchant trong form sửa gửi đề xuất gồm cả Merchant và Sub-merchant', async () => {

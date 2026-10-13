@@ -57,18 +57,18 @@ export const createSpecialMonthColumns = ({
   },
   {
     title: 'Thao tác',
-    width: 200,
+    align: 'center',
     render: (_, row) => {
       if (isPastMonth(row.monthStart)) {
         return (
-          <span className='text-xs text-muted-foreground'>
+          <span className='block w-40 text-xs whitespace-normal text-muted-foreground'>
             {PAST_MONTH_NOTE}
           </span>
         )
       }
       const label = formatMonthLabel(row.monthStart)
       return (
-        <div className='flex gap-1'>
+        <div className='flex justify-center gap-1'>
           <Can
             screen='WALLET_LIMIT_SPECIAL_MONTH'
             action='edit'

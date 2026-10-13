@@ -31,7 +31,9 @@ const respond = () =>
     },
     success: true
   })
-const renderPage = (permissions: string[] = ['EWALLET:MERCHANT:VIEW']) => {
+const renderPage = (
+  permissions: string[] = ['EWALLET:ENTERPRISE_WALLET:VIEW']
+) => {
   const store = createAppStore()
   store.dispatch(savePermissions(permissions))
   return render(
@@ -118,7 +120,7 @@ describe('BusinessWallet Merchant API', () => {
     )
     const user = userEvent.setup()
     renderPage([
-      'EWALLET:MERCHANT:VIEW',
+      'EWALLET:ENTERPRISE_WALLET:VIEW',
       'EWALLET:ENTERPRISE_WALLET:KYB_APPROVE'
     ])
 
@@ -163,7 +165,7 @@ describe('BusinessWallet Merchant API', () => {
     )
     const user = userEvent.setup()
     renderPage([
-      'EWALLET:MERCHANT:VIEW',
+      'EWALLET:ENTERPRISE_WALLET:VIEW',
       'EWALLET:ENTERPRISE_WALLET:KYB_APPROVE'
     ])
 

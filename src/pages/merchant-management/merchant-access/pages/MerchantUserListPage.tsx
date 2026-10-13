@@ -120,7 +120,6 @@ export default function MerchantUserListPage() {
           rowKey='id'
           scroll={{ x: 'max-content' }}
           size='small'
-          tableLayout='auto'
         />
       </AccessPageShell>
       {editor !== null && (

@@ -59,4 +59,68 @@ describe('TableComponent', () => {
     expect(idleButton).toHaveAttribute('aria-busy', 'false')
     expect(idleButton.querySelector('svg')).not.toHaveClass('animate-spin')
   })
+
+  describe('cột Thao tác', () => {
+    const actionColumns = [
+      { title: 'Tên', dataIndex: 'name', key: 'name' },
+      {
+        title: 'Thao tác',
+        key: 'action',
+        width: 190,
+        fixed: 'right' as const,
+        render: () => <button type='button'>Sửa</button>
+      }
+    ]
+
+    const layoutOf = (container: HTMLElement): string =>
+      container.querySelector('table')?.style.tableLayout ?? ''
+    const colWidths = (container: HTMLElement): string[] =>
+      Array.from(container.querySelectorAll('col')).map(
+        (col) => (col as HTMLElement).style.width
+      )
+
+    it('co theo nội dung: bỏ độ rộng cố định và dùng bố cục auto', () => {
+      const { container } = renderWithProviders(
+        <TableComponent
+          rowKey='id'
+          columns={actionColumns}
+          dataSource={dataSource}
+        />
+      )
+
+      expect(layoutOf(container)).toBe('auto')
+      expect(colWidths(container)).toContain('1px')
+      expect(colWidths(container)).not.toContain('190px')
+    })
+
+    it('bảng có cột ellipsis giữ độ rộng khai báo của cột thao tác', () => {
+      const { container } = renderWithProviders(
+        <TableComponent
+          rowKey='id'
+          columns={[
+            { title: 'Tên', dataIndex: 'name', ellipsis: true, width: 120 },
+            ...actionColumns.slice(1)
+          ]}
+          dataSource={dataSource}
+        />
+      )
+
+      // Giữ độ rộng khai báo thì bảng vẫn ở bố cục cố định như trước khi có quy tắc co cột.
+      expect(colWidths(container)).toContain('190px')
+    })
+
+    it('tôn trọng tableLayout do trang truyền vào', () => {
+      const { container } = renderWithProviders(
+        <TableComponent
+          rowKey='id'
+          tableLayout='fixed'
+          columns={actionColumns}
+          dataSource={dataSource}
+        />
+      )
+
+      expect(layoutOf(container)).toBe('fixed')
+      expect(colWidths(container)).toContain('190px')
+    })
+  })
 })

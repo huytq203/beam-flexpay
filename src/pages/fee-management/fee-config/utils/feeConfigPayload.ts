@@ -142,33 +142,3 @@ export const toAssignmentRequest = (
     : undefined,
   effectiveToDate: form.validTo ? toAssignmentMoment(form.validTo) : undefined
 })
-
-/** Thân request cập nhật chính sách; khác bản tạo ở chỗ không bọc trong `policy`. */
-export const toPolicyUpdateRequest = (form: FeeConfigFormValues) =>
-  toSetupRequest(form).policy
-
-/**
- * Một thành phần phí ở dạng request tạo lẻ.
- *
- * Dùng khi sửa: dịch vụ phí không có endpoint cập nhật trọn gói, nên màn phải
- * dựng lại từng thành phần một.
- */
-export const toComponentCreateRequest = (
-  form: FeeConfigFormValues,
-  index: number,
-  feePolicyId: string
-) => {
-  const component = toSetupRequest(form).components[index]
-  const { tiers: _tiers, ...rest } = component
-  return { ...rest, feePolicyId }
-}
-
-export const toTierCreateRequests = (
-  form: FeeConfigFormValues,
-  index: number,
-  feeComponentId: string
-) =>
-  toSetupRequest(form).components[index].tiers.map((tier) => ({
-    ...tier,
-    feeComponentId
-  }))

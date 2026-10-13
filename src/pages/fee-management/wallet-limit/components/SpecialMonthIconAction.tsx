@@ -15,8 +15,9 @@ export function SpecialMonthIconAction({
   return (
     <TooltipComponent title={label}>
       <ButtonComponent
-        type='text'
+        type='default'
         size='small'
+        htmlType='button'
         aria-label={label}
         icon={icon}
         onClick={onClick}

@@ -15,7 +15,10 @@ import { merchantEnterpriseWalletService } from '@services/merchantEnterpriseWal
 const renderForm = (route: string) => {
   const store = createAppStore()
   store.dispatch(
-    savePermissions(['EWALLET:MERCHANT:CREATE', 'EWALLET:MERCHANT:UPDATE'])
+    savePermissions([
+      'EWALLET:ENTERPRISE_WALLET:CREATE',
+      'EWALLET:ENTERPRISE_WALLET:UPDATE'
+    ])
   )
   const view = render(
     <Provider store={store}>

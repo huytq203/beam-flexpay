@@ -69,15 +69,25 @@ describe('useNavigationEw', () => {
     ])
   })
 
-  it('chỉ hiện nhóm giao dịch khi có TRANSACTION:FULL', () => {
+  it('nhóm giao dịch hiện với TRANSACTION:VIEW, riêng đóng băng cần FREEZE:VIEW', () => {
+    expect(groupKeysOf(['EWALLET:FEE:VIEW'])).not.toContain(
+      _TRANSACTIONMANAGEMENT
+    )
     expect(
-      groupKeysOf(['EWALLET:TRANSACTION:VIEW'])
-    ).not.toContain(_TRANSACTIONMANAGEMENT)
+      childKeysOf(['EWALLET:TRANSACTION:VIEW'], _TRANSACTIONMANAGEMENT)
+    ).toEqual(['transaction-wallet', 'system-ledger', 'withdraw-history'])
     expect(
-      childKeysOf(['EWALLET:TRANSACTION:FULL'], _TRANSACTIONMANAGEMENT)
+      childKeysOf(['EWALLET:FREEZE:VIEW'], _TRANSACTIONMANAGEMENT)
+    ).toEqual(['frozen-transactions'])
+  })
+
+  it('EWALLET:FULL thấy đủ các màn giao dịch', () => {
+    expect(
+      childKeysOf(['EWALLET:EWALLET:FULL'], _TRANSACTIONMANAGEMENT)
     ).toEqual([
       'transaction-wallet',
       'frozen-transactions',
+      'refund-management',
       'system-ledger',
       'withdraw-history'
     ])

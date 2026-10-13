@@ -4,7 +4,8 @@ import {
   canShowFreezeTransactionAction,
   canShowRefundTransactionAction,
   getFreezeTransactionAction,
-  getFreezeTargetParties
+  getFreezeTargetParties,
+  isPendingApprovalTransaction
 } from '../transaction-row-actions'
 
 const transaction = (
@@ -165,5 +166,25 @@ describe('canShowRefundTransactionAction', () => {
     ['loại REVERSAL', { transactionType: 'REVERSAL' }]
   ])('ẩn khi %s', (_name, overrides) => {
     expect(canShowRefundTransactionAction(transaction(overrides))).toBe(false)
+  })
+})
+
+describe('isPendingApprovalTransaction', () => {
+  it.each([
+    [
+      'displayStatus là PENDING_APPROVAL (sổ cái vẫn PENDING)',
+      { status: 'PENDING', displayStatus: 'PENDING_APPROVAL' }
+    ],
+    ['status là PENDING_APPROVAL', { status: 'PENDING_APPROVAL' }]
+  ])('đúng khi %s', (_name, overrides) => {
+    expect(isPendingApprovalTransaction(transaction(overrides))).toBe(true)
+  })
+
+  it.each([
+    ['PENDING thường', { status: 'PENDING' }],
+    ['AUTHORIZED', { status: 'AUTHORIZED' }],
+    ['thất bại hoàn tiền', { status: 'FAILED', displayStatus: 'FAILED_REFUND' }]
+  ])('sai với %s: nút cập nhật giao dịch treo vẫn hiện', (_name, overrides) => {
+    expect(isPendingApprovalTransaction(transaction(overrides))).toBe(false)
   })
 })

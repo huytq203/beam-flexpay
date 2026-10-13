@@ -98,13 +98,55 @@ const submitAdd = (user: ReturnType<typeof userEvent.setup>) =>
   user.click(screen.getByRole('button', { name: 'Thêm tháng' }))
 
 describe('WalletLimitSpecialMonthPage - lịch năm', () => {
-  it('tô tháng đặc biệt của năm hiện tại, mở modal điền sẵn từ ô trống', async () => {
-    const user = userEvent.setup()
+  it('tô tháng đặc biệt của năm hiện tại', async () => {
     renderPage()
     await screen.findByText('09/2026')
 
     expect(screen.getByText('Lịch năm')).toBeInTheDocument()
     expect(screen.getByText('2 trong 12 tháng')).toBeInTheDocument()
+  })
+
+  it('bấm tháng đặc biệt thì lọc danh sách theo tháng đó, bấm lại để bỏ lọc', async () => {
+    const user = userEvent.setup()
+    renderPage()
+    await screen.findByText('09/2026')
+    const tenth = screen.getByRole('button', { name: /^Lọc tháng 10\/2026/ })
+
+    await user.click(tenth)
+    expect(tenth).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.queryByText('09/2026')).not.toBeInTheDocument()
+    expect(screen.queryByText('02/2027')).not.toBeInTheDocument()
+    expect(screen.getByText(/^10\/2026/)).toBeInTheDocument()
+    expect(
+      screen.getByText('1 tháng · sắp theo thời gian tăng dần')
+    ).toBeInTheDocument()
+
+    await user.click(tenth)
+    expect(tenth).toHaveAttribute('aria-pressed', 'false')
+    expect(await screen.findByText('09/2026')).toBeInTheDocument()
+    expect(screen.getByText('02/2027')).toBeInTheDocument()
+  })
+
+  it('thẻ Đang lọc bỏ được bộ lọc tháng', async () => {
+    const user = userEvent.setup()
+    renderPage()
+    await screen.findByText('09/2026')
+
+    await user.click(
+      screen.getByRole('button', { name: /^Lọc tháng 09\/2026/ })
+    )
+    expect(screen.queryByText('02/2027')).not.toBeInTheDocument()
+    await user.click(
+      screen.getByRole('button', { name: 'Bỏ lọc tháng 09/2026' })
+    )
+
+    expect(await screen.findByText('02/2027')).toBeInTheDocument()
+  })
+
+  it('bấm ô trống của tháng sắp tới mở modal thêm, điền sẵn tháng', async () => {
+    const user = userEvent.setup()
+    renderPage()
+    await screen.findByText('09/2026')
 
     await user.click(screen.getByRole('button', { name: 'Thêm tháng 11/2026' }))
     const dialog = await screen.findByRole('dialog')
@@ -113,22 +155,28 @@ describe('WalletLimitSpecialMonthPage - lịch năm', () => {
     )
   })
 
-  it('ô trống của tháng đã qua không có nút thêm', async () => {
+  it('ô trống của tháng đã qua không có nút thêm, ô đã có dữ liệu chỉ để lọc', async () => {
     renderPage()
     await screen.findByText('09/2026')
 
     expect(
       screen.queryByRole('button', { name: 'Thêm tháng 08/2026' })
     ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Thêm tháng 10/2026' })
+    ).not.toBeInTheDocument()
   })
 
-  it('ẩn nút thêm trên lịch khi không có quyền tạo', async () => {
+  it('ẩn nút thêm trên lịch khi không có quyền tạo, ô lọc vẫn dùng được', async () => {
     renderPage([])
     await screen.findByText('09/2026')
 
     expect(
       screen.queryByRole('button', { name: /^Thêm tháng \d{2}\/\d{4}$/ })
     ).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /^Lọc tháng 10\/2026/ })
+    ).toBeInTheDocument()
   })
 })
 

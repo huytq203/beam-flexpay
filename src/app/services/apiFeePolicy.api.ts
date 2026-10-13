@@ -1,12 +1,27 @@
-
-import { apiFeeService } from "@services/apiService"
+import { apiFeeService } from '@services/apiService'
 import { ResponseType } from '@type/api'
 import type { FeeApprovalArg, FeeReasonArg } from '@type/feeApproval.type'
 import type { FeePage, FeePolicy } from '@type/fee.type'
 import type {
+  FeeAssignmentCreateRequest,
   FeePolicySetupRequest,
   FeePolicySetupResponse
 } from '@/app/schemas/fee-setup.schema'
+
+/**
+ * Sửa trọn cấu hình phí. Dịch vụ phí chỉ có endpoint lẻ nên mutation này gọi
+ * lần lượt từng cái bên trong một `queryFn`: cache chỉ bị làm mới một lần ở cuối
+ * thay vì sau từng request, và không bật loader toàn cục chớp liên tục.
+ */
+export interface FeePolicyConfigUpdateArg {
+  policyId: string
+  policy: FeePolicySetupRequest['policy']
+  /** Theo đúng thứ tự form: thứ tự quyết định thành phần nào tính dựa trên thành phần nào. */
+  components: FeePolicySetupRequest['components']
+  removeComponentIds: readonly string[]
+  assignmentId: string | null
+  assignment: FeeAssignmentCreateRequest
+}
 
 export interface SearchFeePoliciesParams {
   keyword?: string
@@ -37,31 +52,32 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
     getFeePolicies: build.query({
       query: (pagination) => ({
         url: `/fee/policies`,
-        method: "GET",
+        method: 'GET',
         params: pagination // { page, size, sortBy, sortDirection }
       }),
       transformResponse: (res: ResponseType<FeePage<FeePolicy>>) => res.data,
       providesTags: ['FeePolicy']
     }),
-    searchFeePolicies: build.query<FeePage<FeePolicy>, SearchFeePoliciesParams>({
-      query: (params) => ({
-        url: `/fee/policies/search`,
-        method: "GET",
-        params: params,
-
-      }),
-      transformResponse: (res: ResponseType<FeePage<FeePolicy>>) => res.data,
-      providesTags: [
-        'FeePolicy',
-        'feeAssign',
-        'FeePolicyComponent',
-        'feeComponentTier'
-      ]
-    }),
+    searchFeePolicies: build.query<FeePage<FeePolicy>, SearchFeePoliciesParams>(
+      {
+        query: (params) => ({
+          url: `/fee/policies/search`,
+          method: 'GET',
+          params: params
+        }),
+        transformResponse: (res: ResponseType<FeePage<FeePolicy>>) => res.data,
+        providesTags: [
+          'FeePolicy',
+          'feeAssign',
+          'FeePolicyComponent',
+          'feeComponentTier'
+        ]
+      }
+    ),
     getFeePolicyById: build.query({
       query: (id) => ({
         url: `/fee/policies/${id}`,
-        method: "GET"
+        method: 'GET'
       }),
       transformResponse: (res: ResponseType<FeePolicy>) => res.data,
       providesTags: ['FeePolicy']
@@ -69,7 +85,7 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
     postNewPolicy: build.mutation({
       query: (body) => ({
         url: `/fee/policies`,
-        method: "POST",
+        method: 'POST',
         body: body,
         params: { isLoading: false }
       }),
@@ -78,22 +94,25 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
     patchDeactivateFee: build.mutation<ResponseType<FeePolicy>, string>({
       query: (id) => ({
         url: `/fee/policies/${id}/deactivate`,
-        method: "PATCH",
+        method: 'PATCH'
       }),
       invalidatesTags: ['FeePolicy']
     }),
     patchActivateFee: build.mutation<ResponseType<FeePolicy>, FeeReasonArg>({
       query: ({ id, reason }) => ({
         url: `/fee/policies/${id}/activate`,
-        method: "PATCH",
+        method: 'PATCH',
         params: { reason }
       }),
       invalidatesTags: ['FeePolicy']
     }),
-    patchApproveFeePolicy: build.mutation<ResponseType<FeePolicy>, FeeApprovalArg>({
+    patchApproveFeePolicy: build.mutation<
+      ResponseType<FeePolicy>,
+      FeeApprovalArg
+    >({
       query: ({ id, ...body }) => ({
         url: `/fee/policies/${id}/approve`,
-        method: "PATCH",
+        method: 'PATCH',
         body,
         params: { isLoading: false }
       }),
@@ -101,18 +120,20 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
       // cũng phải bỏ đi, không thì danh sách vẫn hiện trạng thái khởi tạo.
       invalidatesTags: ['FeePolicy', 'feeAssign']
     }),
-    patchRejectFeePolicy: build.mutation<ResponseType<FeePolicy>, FeeReasonArg>({
-      query: ({ id, reason }) => ({
-        url: `/fee/policies/${id}/reject`,
-        method: "PATCH",
-        params: { isLoading: false, reason }
-      }),
-      invalidatesTags: ['FeePolicy']
-    }),
+    patchRejectFeePolicy: build.mutation<ResponseType<FeePolicy>, FeeReasonArg>(
+      {
+        query: ({ id, reason }) => ({
+          url: `/fee/policies/${id}/reject`,
+          method: 'PATCH',
+          params: { isLoading: false, reason }
+        }),
+        invalidatesTags: ['FeePolicy']
+      }
+    ),
     putFeePolicy: build.mutation({
       query: ({ id, body }) => ({
         url: `/fee/policies/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: body
       }),
       invalidatesTags: ['FeePolicy']
@@ -124,6 +145,83 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
      *
      * Bản gán đối tượng vẫn là lời gọi riêng — endpoint này chưa nhận nó.
      */
+    updateFeePolicyConfig: build.mutation<null, FeePolicyConfigUpdateArg>({
+      async queryFn(arg, _api, _extraOptions, baseQuery) {
+        // Có nút lưu báo trạng thái đang chạy, nên mỗi request con không bật loader toàn cục.
+        const params = { isLoading: false }
+
+        const steps = [
+          () =>
+            baseQuery({
+              url: `/fee/policies/${arg.policyId}`,
+              method: 'PUT',
+              body: arg.policy,
+              params
+            }),
+          ...arg.removeComponentIds.map(
+            (id) => () =>
+              baseQuery({
+                url: `/fee/policy-components/${id}`,
+                method: 'DELETE',
+                params
+              })
+          )
+        ]
+        for (const step of steps) {
+          const { error } = await step()
+          if (error) return { error }
+        }
+
+        for (const { tiers, ...component } of arg.components) {
+          const created = await baseQuery({
+            url: `/fee/policy-components`,
+            method: 'POST',
+            body: { ...component, feePolicyId: arg.policyId },
+            params
+          })
+          if (created.error) return { error: created.error }
+
+          const componentId = (created.data as ResponseType<{ id?: string }>)
+            ?.data?.id
+          if (!componentId) {
+            return {
+              error: { status: 'CUSTOM_ERROR', error: 'Thiếu id thành phần' }
+            }
+          }
+
+          // POST /component-tiers nhận cả mảng, kể cả khi chỉ có một bậc.
+          if (tiers.length === 0) continue
+          const savedTiers = await baseQuery({
+            url: `/fee/component-tiers`,
+            method: 'POST',
+            body: tiers.map((tier) => ({
+              ...tier,
+              feeComponentId: componentId
+            })),
+            params
+          })
+          if (savedTiers.error) return { error: savedTiers.error }
+        }
+
+        const assigned = await baseQuery({
+          url: arg.assignmentId
+            ? `/fee/policy-assignments/${arg.assignmentId}`
+            : `/fee/policy-assignments`,
+          method: arg.assignmentId ? 'PUT' : 'POST',
+          body: arg.assignment,
+          params
+        })
+        if (assigned.error) return { error: assigned.error }
+
+        return { data: null }
+      },
+      invalidatesTags: [
+        'FeePolicy',
+        'FeePolicyComponent',
+        'feeComponentTier',
+        'feeAssign'
+      ]
+    }),
     setupFeePolicy: build.mutation<
       FeePolicySetupResponse,
       FeePolicySetupRequest
@@ -133,11 +231,12 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
         method: 'POST',
         body
       }),
-      transformResponse: (res: ResponseType<FeePolicySetupResponse>) => res.data,
+      transformResponse: (res: ResponseType<FeePolicySetupResponse>) =>
+        res.data,
       invalidatesTags: ['FeePolicy', 'FeePolicyComponent', 'feeComponentTier']
     })
   })
-});
+})
 export const {
   useLazySearchFeePoliciesQuery,
   useSearchFeePoliciesQuery,
@@ -150,5 +249,6 @@ export const {
   usePatchApproveFeePolicyMutation,
   usePatchRejectFeePolicyMutation,
   usePutFeePolicyMutation,
-  useSetupFeePolicyMutation
-} = feePolicyApi;
+  useSetupFeePolicyMutation,
+  useUpdateFeePolicyConfigMutation
+} = feePolicyApi

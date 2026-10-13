@@ -109,17 +109,20 @@ export const FeeComponentFields = ({
             <BaseTypePreview summary={selectedBase} />
           </div>
         )}
-        <FormSelect
-          name='calculationMethod'
-          control={control}
-          required
-          label='Phương thức tính'
-          placeholder='Chọn phương thức'
-          allowClear={false}
-          options={methodOptions}
-          onChange={onMethodChange}
-          className='col-span-12 flex flex-col'
-        />
+        {/* VAT luôn tính trực tiếp theo %, không có lựa chọn công thức. */}
+        {!isVat && (
+          <FormSelect
+            name='calculationMethod'
+            control={control}
+            required
+            label='Phương thức tính'
+            placeholder='Chọn phương thức'
+            allowClear={false}
+            options={methodOptions}
+            onChange={onMethodChange}
+            className='col-span-12 flex flex-col'
+          />
+        )}
       </div>
     </CardComponent>
 
@@ -196,7 +199,8 @@ export const FeeComponentFields = ({
       )}
     </CardComponent>
 
-    {!isFree && (
+    {/* VAT không có sàn/trần phí. */}
+    {!isFree && !isVat && (
       <CardComponent
         size='small'
         className='border-border! bg-background!'

@@ -13,6 +13,11 @@ export interface ScreenAccess {
   /** Nếu có, bắt buộc đúng mã này mới được mở route và hiện trên sidebar. */
   readonly accessPermission?: PermissionCode
   /**
+   * Mã BE chấp nhận như quyền tổng của màn (ví dụ `EWALLET:FULL` ở wallet-core): mở route và mọi
+   * action. Dùng khi một màn có `actions.full` riêng nhưng BE còn nhận thêm một mã tổng khác.
+   */
+  readonly extraFull?: readonly PermissionCode[]
+  /**
    * Mã quyền đầy đủ cho từng hành động của màn. Khớp tuyệt đối theo chuỗi —
    * không ghép tiền tố ở runtime, đổi mã thì sửa tại `permission-codes.ts`.
    */
@@ -65,15 +70,6 @@ const TRANSACTION_ACTIONS = {
   full: PERMISSION.TRANSACTION_FULL
 } as const
 
-const WALLET_ACTIONS = {
-  view: PERMISSION.WALLET_VIEW,
-  create: PERMISSION.WALLET_CREATE,
-  edit: PERMISSION.WALLET_UPDATE,
-  delete: PERMISSION.WALLET_DELETE,
-  update: PERMISSION.WALLET_UPDATE,
-  full: PERMISSION.WALLET_FULL
-} as const
-
 const MERCHANT_ACTIONS = {
   view: PERMISSION.MERCHANT_VIEW,
   create: PERMISSION.MERCHANT_CREATE,
@@ -98,7 +94,11 @@ const FEE_ACTIONS = {
   edit: PERMISSION.FEE_UPDATE,
   delete: PERMISSION.FEE_DELETE,
   update: PERMISSION.FEE_UPDATE,
-  full: PERMISSION.FEE_FULL
+  full: PERMISSION.FEE_FULL,
+  /** BE: approve, reject và activate cần FEE:APPROVE; deactivate cần FEE:UPDATE. */
+  approve: PERMISSION.FEE_APPROVE,
+  activate: PERMISSION.FEE_APPROVE,
+  deactivate: PERMISSION.FEE_UPDATE
 } as const
 
 /** Tên sáu hành động chuẩn, dùng để kiểm tra registry khai đủ. */
@@ -114,7 +114,7 @@ export const DEFAULT_SCREEN_ACTION_IDS = [
 export const SCREENS = {
   TRANSACTION_MANAGEMENT: {
     path: TRANSACTIONMANAGEMENT,
-    accessPermission: PERMISSION.TRANSACTION_FULL,
+    extraFull: [PERMISSION.EWALLET_FULL],
     actions: { ...TRANSACTION_ACTIONS }
   },
   USER_ACCOUNT: {
@@ -143,7 +143,7 @@ export const SCREENS = {
   TRANSACTION_WALLET: {
     path: `${TRANSACTIONMANAGEMENT}/transaction-wallet`,
     aliasPaths: [`${WALLETADMINISTRATION}/transaction-wallet`],
-    accessPermission: PERMISSION.TRANSACTION_FULL,
+    extraFull: [PERMISSION.EWALLET_FULL],
     actions: {
       ...TRANSACTION_ACTIONS,
       viewDetail: PERMISSION.TRANSACTION_VIEW,
@@ -158,14 +158,22 @@ export const SCREENS = {
       review: PERMISSION.TRANSACTION_REVIEW
     }
   },
+  /** wallet-core: xem cần FREEZE:VIEW, mở/đóng băng cần FREEZE:UPDATE; EWALLET:FULL qua cả hai. */
   FROZEN_TRANSACTIONS: {
     path: `${TRANSACTIONMANAGEMENT}/frozen-transactions`,
-    accessPermission: PERMISSION.TRANSACTION_FULL,
-    actions: { ...TRANSACTION_ACTIONS }
+    actions: {
+      view: PERMISSION.FREEZE_VIEW,
+      viewDetail: PERMISSION.FREEZE_VIEW,
+      create: PERMISSION.FREEZE_UPDATE,
+      edit: PERMISSION.FREEZE_UPDATE,
+      update: PERMISSION.FREEZE_UPDATE,
+      delete: PERMISSION.EWALLET_FULL,
+      full: PERMISSION.EWALLET_FULL
+    }
   },
   SYSTEM_LEDGER: {
     path: `${TRANSACTIONMANAGEMENT}/system-ledger`,
-    accessPermission: PERMISSION.TRANSACTION_FULL,
+    extraFull: [PERMISSION.EWALLET_FULL],
     actions: {
       ...TRANSACTION_ACTIONS,
       viewDetail: PERMISSION.TRANSACTION_VIEW
@@ -195,18 +203,27 @@ export const SCREENS = {
   },
   WITHDRAW_HISTORY: {
     path: `${TRANSACTIONMANAGEMENT}/withdraw-history`,
-    accessPermission: PERMISSION.TRANSACTION_FULL,
+    extraFull: [PERMISSION.EWALLET_FULL],
     actions: { ...TRANSACTION_ACTIONS }
   },
+  /**
+   * wallet-core gác nhóm tài khoản ví bằng `EWALLET:EWALLET:FULL` ở mức class; riêng đóng băng
+   * mở thêm cho `FREEZE:UPDATE`. Không có mã `EWALLET:WALLET:*` nào ở BE hay DB.
+   */
   EWALLET_MANAGEMENT: {
     path: `${WALLETADMINISTRATION}/e-walletManagement`,
     actions: {
-      ...WALLET_ACTIONS,
-      viewDetail: PERMISSION.WALLET_VIEW,
-      lock: PERMISSION.WALLET_UPDATE,
-      unlock: PERMISSION.WALLET_UPDATE,
-      freeze: PERMISSION.WALLET_UPDATE,
-      cancel: PERMISSION.WALLET_DELETE
+      view: PERMISSION.EWALLET_FULL,
+      create: PERMISSION.EWALLET_FULL,
+      edit: PERMISSION.EWALLET_FULL,
+      update: PERMISSION.EWALLET_FULL,
+      delete: PERMISSION.EWALLET_FULL,
+      full: PERMISSION.EWALLET_FULL,
+      viewDetail: PERMISSION.EWALLET_FULL,
+      lock: PERMISSION.EWALLET_FULL,
+      unlock: PERMISSION.EWALLET_FULL,
+      freeze: PERMISSION.FREEZE_UPDATE,
+      cancel: PERMISSION.EWALLET_FULL
     }
   },
   CONFIRM_EKYC: {
@@ -289,19 +306,25 @@ export const SCREENS = {
   },
   MERCHANT_TRANSACTION: {
     path: `${MERCHANT}/transaction`,
-    accessPermission: PERMISSION.TRANSACTION_FULL,
+    extraFull: [PERMISSION.EWALLET_FULL],
     actions: {
       ...TRANSACTION_ACTIONS,
       viewDetail: PERMISSION.TRANSACTION_VIEW
     }
   },
+  /** BE flex.merchant gác ví doanh nghiệp bằng `ENTERPRISE_WALLET:*`, không dùng `MERCHANT:*`. */
   BUSINESS_WALLET_ACCOUNT: {
     path: `${MERCHANT}/business-wallet-account`,
     actions: {
-      ...MERCHANT_ACTIONS,
+      view: PERMISSION.ENTERPRISE_WALLET_VIEW,
+      create: PERMISSION.ENTERPRISE_WALLET_CREATE,
+      edit: PERMISSION.ENTERPRISE_WALLET_UPDATE,
+      update: PERMISSION.ENTERPRISE_WALLET_UPDATE,
+      delete: PERMISSION.ADMIN_FULL,
+      full: PERMISSION.ADMIN_FULL,
       approve: PERMISSION.ENTERPRISE_WALLET_KYB_APPROVE,
       reject: PERMISSION.ENTERPRISE_WALLET_KYB_APPROVE,
-      viewDetail: PERMISSION.MERCHANT_VIEW
+      viewDetail: PERMISSION.ENTERPRISE_WALLET_VIEW
     }
   },
   MERCHANT_SUB_MERCHANT: {
@@ -368,8 +391,13 @@ export const SCREENS = {
   MERCHANT_ORDER: {
     path: `${MERCHANT}/merchant-order`,
     actions: {
-      ...MERCHANT_ACTIONS,
-      viewQr: PERMISSION.MERCHANT_VIEW
+      view: PERMISSION.ORDER_VIEW,
+      create: PERMISSION.ORDER_CREATE,
+      edit: PERMISSION.ORDER_UPDATE,
+      update: PERMISSION.ORDER_UPDATE,
+      delete: PERMISSION.ADMIN_FULL,
+      full: PERMISSION.ORDER_FULL,
+      viewQr: PERMISSION.ORDER_VIEW
     }
   },
   /**
@@ -379,11 +407,7 @@ export const SCREENS = {
    */
   FEE_CONFIG: {
     path: `${FEEMANAGEMENT_V4}/fee-policy`,
-    actions: {
-      ...FEE_ACTIONS,
-      approve: PERMISSION.FEE_UPDATE,
-      toggleActive: PERMISSION.FEE_UPDATE
-    }
+    actions: { ...FEE_ACTIONS }
   },
   /**
    * Hạn mức ví (flexpay.user-wallet): backend gác mọi endpoint quản trị bằng
@@ -402,28 +426,16 @@ export const SCREENS = {
   },
   FEE_POLICY: {
     path: `${FEEMANAGEMENT_V4}/fee-managementV4`,
-    actions: {
-      ...FEE_ACTIONS,
-      approve: PERMISSION.FEE_UPDATE,
-      toggleActive: PERMISSION.FEE_UPDATE
-    }
+    actions: { ...FEE_ACTIONS }
   },
   FEE_ASSIGNMENT: {
     path: `${FEEMANAGEMENT_V4}/fee-assignmentV4`,
-    actions: {
-      ...FEE_ACTIONS,
-      approve: PERMISSION.FEE_UPDATE,
-      toggleActive: PERMISSION.FEE_UPDATE
-    }
+    actions: { ...FEE_ACTIONS }
   },
   /** Chính sách phí phía ngân hàng — tách màn để đối soát, quyền dùng chung họ FEE. */
   FEE_BANK_POLICY: {
     path: `${FEEMANAGEMENT_V4}/fee-bankV4`,
-    actions: {
-      ...FEE_ACTIONS,
-      approve: PERMISSION.FEE_UPDATE,
-      toggleActive: PERMISSION.FEE_UPDATE
-    }
+    actions: { ...FEE_ACTIONS }
   },
   /**
    * Bảng đối soát chỉ đọc — dùng lại mã quyền FEE hiện có, BE không phải cấp mã
