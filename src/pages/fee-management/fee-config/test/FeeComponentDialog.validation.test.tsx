@@ -178,14 +178,14 @@ describe('FeeComponentDialog phí đầu ra (đầu ra)', () => {
     return onSave
   }
 
-  it('nạp tiền: phí đầu ra cố định người gửi (bank chuyển) chịu', () => {
+  it('phí đầu ra cố định Người dùng chịu phí', () => {
     renderWalletDialog()
 
     expect(
       screen.getByLabelText(/Người chịu/).closest('.ant-select')
-    ).toHaveTextContent('Người gửi')
+    ).toHaveTextContent('Người dùng')
     expect(screen.getByLabelText(/Người chịu/)).toBeDisabled()
-    expect(screen.queryByText('Người dùng')).not.toBeInTheDocument()
+    expect(screen.queryByText('Người gửi')).not.toBeInTheDocument()
     expect(screen.queryByText('Người nhận')).not.toBeInTheDocument()
     expect(screen.queryByText('Hệ thống/platform')).not.toBeInTheDocument()
   })
@@ -197,7 +197,7 @@ describe('FeeComponentDialog phí đầu ra (đầu ra)', () => {
     expect(screen.queryByTitle('VAT')).not.toBeInTheDocument()
   })
 
-  it('miền Ví lưu mặc định người gửi (USER) chịu và Hệ thống hưởng', async () => {
+  it('miền Ví lưu mặc định Người dùng chịu và Hệ thống hưởng', async () => {
     const onSave = renderWalletDialog()
 
     await userEvent.click(screen.getByLabelText(/Loại phí/))
