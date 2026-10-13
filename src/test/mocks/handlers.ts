@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw'
 
 /** Body thành công của BE luôn bọc trong `{ data }` (xem fnTransformResponse). */
-const ok = <T,>(data: T) => HttpResponse.json({ data })
+const ok = <T>(data: T) => HttpResponse.json({ data })
 
 export const handlers = [
   /*
@@ -10,16 +10,10 @@ export const handlers = [
    * trạng thái thật thì `server.use()` đè lên.
    */
   http.get('*/withdrawals', () =>
-    ok({ id: 'withdrawal-default', transactionCode: 'TXN-000', beneficiary: null })
-  ),
-  // Popup tạo hoàn tiền tự gọi xem trước phí khi có số tiền; test cần số liệu thì server.use() đè.
-  http.post('*/refunds/preview', () =>
     ok({
-      originalTransactionId: 'tx',
-      channel: 'TO_WALLET',
-      requestedAmount: 50000,
-      netCredit: 50000,
-      netDebit: 50000
+      id: 'withdrawal-default',
+      transactionCode: 'TXN-000',
+      beneficiary: null
     })
   ),
   http.post('*/auth/change-password', () => ok(null)),
@@ -60,31 +54,27 @@ export const handlers = [
       }
     })
   ),
-  http.get(
-    'https://api.bigdatacloud.net/data/reverse-geocode-client',
-    () =>
-      HttpResponse.json({
-        locality: 'Hải Châu',
-        city: 'Đà Nẵng',
-        principalSubdivision: 'Đà Nẵng'
-      })
+  http.get('https://api.bigdatacloud.net/data/reverse-geocode-client', () =>
+    HttpResponse.json({
+      locality: 'Hải Châu',
+      city: 'Đà Nẵng',
+      principalSubdivision: 'Đà Nẵng'
+    })
   )
 ]
 
 /** Handler dùng lại trong từng test để mô phỏng nhánh lỗi. */
 export const errorHandlers = {
-  changePasswordCurrentIncorrect: http.post(
-    '*/auth/change-password',
-    () =>
-      HttpResponse.json(
-        {
-          success: false,
-          message: 'CURRENT_PASSWORD_INCORRECT',
-          detail: 'Mật khẩu hiện tại không chính xác',
-          status: '23010'
-        },
-        { status: 400 }
-      )
+  changePasswordCurrentIncorrect: http.post('*/auth/change-password', () =>
+    HttpResponse.json(
+      {
+        success: false,
+        message: 'CURRENT_PASSWORD_INCORRECT',
+        detail: 'Mật khẩu hiện tại không chính xác',
+        status: '23010'
+      },
+      { status: 400 }
+    )
   ),
   changePasswordOffline: http.post('*/auth/change-password', () =>
     HttpResponse.error()

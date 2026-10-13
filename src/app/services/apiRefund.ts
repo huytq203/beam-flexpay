@@ -4,8 +4,6 @@ import type {
   RefundChannel,
   RefundDetail,
   RefundPage,
-  RefundPreview,
-  RefundPreviewRequest,
   RefundSource,
   RefundStatus
 } from '@pages/transaction-management/refund-management/schemas/refund.schema'
@@ -81,17 +79,6 @@ export const apiRefund = apiUserWallet.injectEndpoints({
         unwrap(response),
       invalidatesTags: [LIST_TAG]
     }),
-    /** Không tạo gì ở BE nên dùng query (cache theo body) để RTK tự bỏ response của arg cũ. */
-    previewRefundFee: build.query<RefundPreview, RefundPreviewRequest>({
-      query: (body) => ({
-        url: `${REFUNDS_URL}/preview`,
-        method: 'POST',
-        body
-      }),
-      extraOptions: OWN_ERROR_HANDLING,
-      transformResponse: (response: RefundEnvelope<RefundPreview>) =>
-        unwrap(response)
-    }),
     approveRefund: build.mutation<RefundDetail, string>({
       query: (id) => ({
         url: `${REFUNDS_URL}/${encodeURIComponent(id)}/approve`,
@@ -141,7 +128,6 @@ export const apiRefund = apiUserWallet.injectEndpoints({
 export const {
   useGetRefundsQuery,
   useGetRefundDetailQuery,
-  usePreviewRefundFeeQuery,
   useCreateRefundMutation,
   useApproveRefundMutation,
   useRejectRefundMutation,
