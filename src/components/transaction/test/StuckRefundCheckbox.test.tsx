@@ -31,7 +31,7 @@ describe('Checkbox "Hoàn tiền cho khách hàng" ở cập nhật giao dịch 
     ).toBeInTheDocument()
   })
 
-  it.each(['CASH_OUT', 'P2P_TRANSFER'])(
+  it.each(['CASH_OUT', 'MERCHANT_PAYMENT'])(
     'không hiện với giao dịch %s vì action FAILED không có refund',
     async (type) => {
       mockRefresh([POSTED_FULL, FAILED_PLAIN])

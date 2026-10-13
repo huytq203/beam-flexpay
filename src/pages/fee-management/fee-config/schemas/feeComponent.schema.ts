@@ -176,20 +176,6 @@ export const feeComponentFormSchema = z
     }
 
     // VAT được phép 0%: thuế suất 0 là cấu hình hợp lệ, không phải thiếu mức phí.
-    // Miễn phí = điền 0. Chỉ báo lỗi khi người dùng chưa nhập gì ở cả hai ô.
-    if (
-      component.componentType !== 'VAT' &&
-      component.calculationMethod === CalculationMethod.DIRECT &&
-      component.percentage === null &&
-      component.fixedAmount === null
-    ) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['percentage'],
-        message: 'Nhập mức phí, điền 0 nếu miễn phí'
-      })
-    }
-
     if (!usesTiers(component.calculationMethod)) {
       if (component.tiers.length > 0) {
         ctx.addIssue({

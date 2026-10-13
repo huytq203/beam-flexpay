@@ -35,6 +35,16 @@ export const isStuckJournalStatus = (
 ): boolean =>
   typeof journalStatus === 'string' && STUCK_STATUSES.has(journalStatus)
 
+/**
+ * Loại giao dịch không có nút cập nhật giao dịch treo. Chuyển tiền ví → ví (`P2P_TRANSFER`) do
+ * wallet-core ghi sổ trong một bước nên không có trạng thái treo cần chốt tay.
+ */
+const NON_STUCK_UPDATE_TYPES = new Set<string>(['P2P_TRANSFER'])
+
+export const canShowStuckUpdateForType = (
+  transactionType: string | null | undefined
+): boolean => !(transactionType && NON_STUCK_UPDATE_TYPES.has(transactionType))
+
 export const isTerminalJournalStatus = (
   journalStatus: string | null | undefined
 ): boolean =>

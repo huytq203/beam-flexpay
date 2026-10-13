@@ -33,9 +33,9 @@ describe('StuckTransactionUpdateAction - form theo allowedActions', () => {
     expect(screen.queryByText(/Xác nhận trực tiếp với ngân hàng/)).toBeNull()
   })
 
-  it('chuyển nội bộ: chỉ có Auth Code và Settlement ID', async () => {
+  it('giao dịch không qua ngân hàng: chỉ có Auth Code và Settlement ID', async () => {
     mockRefresh([POSTED_INTERNAL, FAILED_PLAIN])
-    const user = renderAction({ transactionType: 'P2P_TRANSFER' })
+    const user = renderAction({ transactionType: 'MERCHANT_PAYMENT' })
     await openForm(user)
     await choose(user, 'Thành công')
 
@@ -118,10 +118,10 @@ describe('StuckTransactionUpdateAction - payload', () => {
     })
   })
 
-  it('chuyển nội bộ không gửi bankReference/receiptKey', async () => {
+  it('giao dịch không qua ngân hàng không gửi bankReference/receiptKey', async () => {
     mockRefresh([POSTED_INTERNAL])
     const bodies = mockUpdate()
-    const user = renderAction({ transactionType: 'P2P_TRANSFER' })
+    const user = renderAction({ transactionType: 'MERCHANT_PAYMENT' })
     await openForm(user)
     await choose(user, 'Thành công')
     fill(/Auth Code/, 'AUTH-12')

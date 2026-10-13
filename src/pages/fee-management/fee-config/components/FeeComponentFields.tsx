@@ -172,7 +172,7 @@ export const FeeComponentFields = ({
             control={control}
             allowEmpty
             label={payerType === 'SYSTEM' ? 'Chi phí (%)' : 'Phí (%)'}
-            placeholder='Nhập 0 nếu miễn phí'
+            placeholder='Để trống sẽ tự điền 0'
             className={
               isVat
                 ? 'col-span-12 flex flex-col md:col-span-12'
@@ -189,7 +189,7 @@ export const FeeComponentFields = ({
                   ? 'Chi phí cố định (VNĐ)'
                   : 'Phí cố định (VNĐ)'
               }
-              placeholder='Để trống nếu không thu phí cố định'
+              placeholder='Để trống sẽ tự điền 0'
               className='col-span-12 flex flex-col md:col-span-6'
             />
           )}

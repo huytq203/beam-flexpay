@@ -32,7 +32,8 @@ import {
 import { getBaseOnOptions } from '../utils/feeComponentBaseOptions'
 import {
   CALCULATION_METHOD_VALUES,
-  emptyComponent
+  emptyComponent,
+  withZeroRates
 } from '../utils/feeComponentDefaults'
 import { FeeComponentFields } from './FeeComponentFields'
 
@@ -250,7 +251,7 @@ export const FeeComponentDialog = ({
       // antd tự giới hạn về `calc(100vw - 32px)` ở màn hẹp, nên một số cố
       // định là đủ và tránh phụ thuộc thứ tự breakpoint của wrapper.
       width={880}
-      onOk={handleSubmit(onSave)}
+      onOk={handleSubmit((value) => onSave(withZeroRates(value)))}
       onCancel={onCancel}
     >
       <div className='flex flex-col gap-3'>

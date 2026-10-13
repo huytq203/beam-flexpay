@@ -188,18 +188,12 @@ describe('feeComponentFormSchema', () => {
     expect(errorPaths(result)).toContain('tiers.0.maxValue')
   })
 
-  it('phí trực tiếp để trống cả hai ô thì báo thiếu mức phí', () => {
-    const result = feeComponentFormSchema.safeParse(
-      component({ fixedAmount: null, percentage: null })
-    )
-    expect(errorPaths(result)).toContain('percentage')
-  })
-
-  it('điền 0 để miễn phí: 0 ở một hoặc cả hai ô đều hợp lệ', () => {
+  it('miễn phí = để trống hoặc điền 0: mọi tổ hợp ô trống/0 đều hợp lệ', () => {
     for (const overrides of [
       { fixedAmount: 0, percentage: 0 },
       { fixedAmount: 0, percentage: null },
-      { fixedAmount: null, percentage: 0 }
+      { fixedAmount: null, percentage: 0 },
+      { fixedAmount: null, percentage: null }
     ]) {
       expect(
         feeComponentFormSchema.safeParse(component(overrides)).success

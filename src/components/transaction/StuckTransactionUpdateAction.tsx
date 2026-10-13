@@ -15,6 +15,7 @@ import {
   useLazyGetWithdrawalByTransactionCodeQuery
 } from '@services/apiJournal'
 import {
+  canShowStuckUpdateForType,
   canUpdateStuckTransaction,
   isStuckJournalStatus
 } from '@utils/stuck-transaction'
@@ -89,6 +90,7 @@ export const StuckTransactionUpdateAction = ({
     getFinalActions(snapshot.allowedActions).length === 0
 
   if (!code || !canAccess || hidden) return null
+  if (!canShowStuckUpdateForType(transactionType)) return null
   if (!isStuckJournalStatus(journalStatus)) return null
   if (hasNoFinalAction && !isOpen) return null
   if (
