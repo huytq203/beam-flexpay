@@ -85,6 +85,34 @@ describe('EWALLET_REFUND', () => {
   })
 })
 
+describe('EWALLET_TRANSFER_INTERNAL', () => {
+  it('cho chọn người gửi (USER) hoặc người nhận (RECEIVER) chịu phí, kèm SYSTEM cho chi phí đầu vào', () => {
+    expect(getSelectablePayers('EWALLET_TRANSFER_INTERNAL')).toEqual([
+      'USER',
+      'RECEIVER'
+    ])
+    expect(
+      getPayerTypeOptions('EWALLET_TRANSFER_INTERNAL').map(({ value }) => value)
+    ).toEqual(['USER', 'RECEIVER', 'SYSTEM'])
+  })
+
+  it('nhãn nói rõ phí cộng thêm hay trừ vào tiền nhận', () => {
+    const labels = Object.fromEntries(
+      getPayerTypeOptions('EWALLET_TRANSFER_INTERNAL').map(
+        ({ value, label }) => [value, label]
+      )
+    )
+    expect(labels.USER).toContain('Người gửi')
+    expect(labels.RECEIVER).toContain('Người nhận')
+    expect(labels.RECEIVER).toContain('trừ')
+  })
+
+  it('các dịch vụ ví khác vẫn chỉ cho USER chịu', () => {
+    expect(getSelectablePayers('EWALLET_DEPOSIT')).toEqual(['USER'])
+    expect(getSelectablePayers('EWALLET_WITHDRAWAL')).toEqual(['USER'])
+  })
+})
+
 describe('getFormFieldRules — ô gán đối tượng theo loại giao dịch', () => {
   it('thu hộ và chi hộ mở ô Merchant cùng ô Ngân hàng tuỳ chọn', () => {
     for (const serviceType of [

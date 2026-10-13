@@ -16,20 +16,31 @@ export const PAYER_TYPE_LABEL: Readonly<Record<string, string>> = {
   RECEIVER: 'Người nhận'
 }
 
+/** Nhãn riêng cho chuyển tiền: nói rõ phí cộng thêm hay trừ vào tiền nhận. */
+const TRANSFER_PAYER_LABEL: Readonly<Record<string, string>> = {
+  USER: 'Người gửi chịu (cộng thêm vào số tiền chuyển)',
+  RECEIVER: 'Người nhận chịu (trừ vào số tiền nhận)'
+}
+
 /**
  * Người chịu phí được phép chọn: chỉ đúng payer mà `FeeExecutionCapabilityRegistry`
  * thực thi được cho loại giao dịch (USER cho luồng ví, MERCHANT cho thu/chi hộ)
- * cùng SYSTEM cho chi phí đầu vào. SENDER/RECEIVER chưa có hợp đồng ghi sổ.
+ * cùng SYSTEM cho chi phí đầu vào. Chuyển tiền cho chọn USER (người gửi, cộng
+ * thêm vào số tiền chuyển) hoặc RECEIVER (trừ vào tiền người nhận nhận được).
  * Chưa chọn loại giao dịch thì mặc định USER.
  */
 export const getPayerTypeOptions = (
   serviceType: string | null | undefined
 ): readonly { value: string; label: string }[] => {
   const payers = getSelectablePayers(serviceType)
+  const labels =
+    serviceType === 'EWALLET_TRANSFER_INTERNAL'
+      ? { ...PAYER_TYPE_LABEL, ...TRANSFER_PAYER_LABEL }
+      : PAYER_TYPE_LABEL
   return [
     ...(payers.length > 0 ? payers : ['USER']).map((payer) => ({
       value: payer,
-      label: PAYER_TYPE_LABEL[payer] ?? payer
+      label: labels[payer] ?? payer
     })),
     { value: 'SYSTEM', label: PAYER_TYPE_LABEL.SYSTEM }
   ]

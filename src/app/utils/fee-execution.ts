@@ -29,8 +29,23 @@ const EXECUTABLE_PAYER_BY_SERVICE: Readonly<Record<string, string>> = {
 const SELECTABLE_PAYERS_BY_SERVICE: Readonly<
   Record<string, readonly string[]>
 > = {
-  EWALLET_REFUND: ['USER', 'MERCHANT']
+  EWALLET_REFUND: ['USER', 'MERCHANT'],
+  // Chuyển tiền: `USER` = người gửi bị trừ thêm phí, `RECEIVER` = phí trừ vào
+  // tiền người nhận nhận được.
+  EWALLET_TRANSFER_INTERNAL: ['USER', 'RECEIVER']
 }
+
+/**
+ * Dịch vụ mà toàn bộ phí đầu ra của một chính sách phải do cùng một bên chịu.
+ * Sổ cái chỉ có một cặp net/gross cho mỗi lần chuyển, nên không tách phí cho
+ * cả người gửi và người nhận được; backend từ chối lúc duyệt.
+ */
+const SINGLE_BEARER_SERVICES: readonly string[] = ['EWALLET_TRANSFER_INTERNAL']
+
+export const requiresSingleFeeBearer = (
+  serviceType: string | null | undefined
+): boolean =>
+  Boolean(serviceType && SINGLE_BEARER_SERVICES.includes(serviceType))
 
 /**
  * Chân phí dương hiện ghi sổ được với người hưởng SYSTEM hoặc BANK. BANK chỉ là

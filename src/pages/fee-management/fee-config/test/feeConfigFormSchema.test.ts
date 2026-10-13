@@ -82,6 +82,28 @@ describe('feeConfigFormSchema', () => {
     expect(errorPaths(result)).toContain('validTo')
   })
 
+  it('chuyển tiền: cho một bên chịu, chặn trộn người gửi và người nhận', () => {
+    const transfer = (payers: string[]) =>
+      feeConfigFormSchema.safeParse(
+        form({
+          serviceType: 'EWALLET_TRANSFER_INTERNAL',
+          paymentMethod: '',
+          components: payers.map((payerType, index) =>
+            component({
+              key: `c${index}`,
+              componentType: index === 0 ? 'TRANSACTION_FEE' : 'SERVICE_FEE',
+              payerType
+            })
+          )
+        })
+      )
+
+    expect(transfer(['RECEIVER']).success).toBe(true)
+    expect(transfer(['RECEIVER', 'RECEIVER']).success).toBe(true)
+    expect(transfer(['USER', 'USER']).success).toBe(true)
+    expect(errorPaths(transfer(['USER', 'RECEIVER']))).toContain('components')
+  })
+
   it('bắt thành phần tham chiếu phải đứng trước', () => {
     const result = feeConfigFormSchema.safeParse(
       form({
@@ -212,7 +234,11 @@ it('luồng phí phải khớp người chịu, bất kể miền phí', () => {
   const feeBorneBySystem = feeConfigFormSchema.safeParse(
     form({
       components: [
-        component({ feeScope: 'OUTPUT_FEE', payerType: 'SYSTEM', beneficiaryType: 'BANK' })
+        component({
+          feeScope: 'OUTPUT_FEE',
+          payerType: 'SYSTEM',
+          beneficiaryType: 'BANK'
+        })
       ]
     })
   )

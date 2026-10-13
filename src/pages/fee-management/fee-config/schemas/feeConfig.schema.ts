@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { requiresSingleFeeBearer } from '@utils/fee-execution'
 import { isPaymentMethodAllowed } from '../constants/feeConfigFields'
 import {
   DUPLICATE_FEE_COMPONENT_MESSAGE,
@@ -18,6 +19,9 @@ export type {
   FeeTierFormValues,
   FeeComponentFormValues
 } from './feeComponent.schema'
+
+export const SINGLE_FEE_BEARER_MESSAGE =
+  'Chuyển tiền chỉ cho một bên chịu phí: mọi phí đầu ra phải cùng do người gửi hoặc cùng do người nhận chịu'
 
 export const feeConfigFormSchema = z
   .object({
@@ -98,6 +102,22 @@ export const feeConfigFormSchema = z
         path: ['validTo'],
         message: 'Áp dụng đến phải sau áp dụng từ'
       })
+    }
+
+    // Chuyển tiền: một chính sách chỉ do một bên chịu toàn bộ phí đầu ra.
+    if (requiresSingleFeeBearer(form.serviceType)) {
+      const bearers = new Set(
+        form.components
+          .filter((component) => component.feeScope === 'OUTPUT_FEE')
+          .map((component) => component.payerType)
+      )
+      if (bearers.size > 1) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['components'],
+          message: SINGLE_FEE_BEARER_MESSAGE
+        })
+      }
     }
 
     // Thành phần tính dựa trên thành phần khác chỉ hợp lệ khi thành phần được

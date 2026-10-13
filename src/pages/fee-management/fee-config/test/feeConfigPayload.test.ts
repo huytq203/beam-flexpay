@@ -51,6 +51,15 @@ describe('toSetupRequest', () => {
     expect(request.components[0].beneficiaryType).toBe('SYSTEM')
   })
 
+  it('chuyển tiền: giữ RECEIVER (phí trừ vào tiền nhận), payer lạ về USER', () => {
+    const form = baseForm({ serviceType: 'EWALLET_TRANSFER_INTERNAL' })
+    form.components[0].payerType = 'RECEIVER'
+    expect(toSetupRequest(form).components[0].payerType).toBe('RECEIVER')
+
+    form.components[0].payerType = 'MERCHANT'
+    expect(toSetupRequest(form).components[0].payerType).toBe('USER')
+  })
+
   it('chuẩn hoá payer cũ chưa hỗ trợ của miền Ví về USER', () => {
     for (const legacy of ['SENDER', 'RECEIVER']) {
       const form = baseForm({ feeDomain: 'EWALLET' })
