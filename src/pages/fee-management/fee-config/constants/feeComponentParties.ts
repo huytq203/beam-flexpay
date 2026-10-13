@@ -16,11 +16,21 @@ export const PAYER_TYPE_LABEL: Readonly<Record<string, string>> = {
   RECEIVER: 'Người nhận'
 }
 
-/** Nhãn riêng cho chuyển tiền: nói rõ phí cộng thêm hay trừ vào tiền nhận. */
-const TRANSFER_PAYER_LABEL: Readonly<Record<string, string>> = {
-  USER: 'Người gửi chịu (cộng thêm vào số tiền chuyển)',
-  RECEIVER: 'Người nhận chịu (trừ vào số tiền nhận)'
+/**
+ * Dịch vụ ví đều có người chuyển và người nhận (nạp: bank → ví, rút: ví → bank,
+ * chuyển: ví → ví), nên nhãn chỉ cần nói Người gửi / Người nhận. `USER` là cách
+ * gọi cũ của người gửi.
+ */
+const WALLET_FLOW_PAYER_LABEL: Readonly<Record<string, string>> = {
+  USER: 'Người gửi',
+  RECEIVER: 'Người nhận'
 }
+
+const WALLET_FLOW_SERVICES: readonly string[] = [
+  'EWALLET_DEPOSIT',
+  'EWALLET_WITHDRAWAL',
+  'EWALLET_TRANSFER_INTERNAL'
+]
 
 /**
  * Người chịu phí được phép chọn: chỉ đúng payer mà `FeeExecutionCapabilityRegistry`
@@ -34,8 +44,8 @@ export const getPayerTypeOptions = (
 ): readonly { value: string; label: string }[] => {
   const payers = getSelectablePayers(serviceType)
   const labels =
-    serviceType === 'EWALLET_TRANSFER_INTERNAL'
-      ? { ...PAYER_TYPE_LABEL, ...TRANSFER_PAYER_LABEL }
+    serviceType && WALLET_FLOW_SERVICES.includes(serviceType)
+      ? { ...PAYER_TYPE_LABEL, ...WALLET_FLOW_PAYER_LABEL }
       : PAYER_TYPE_LABEL
   return [
     ...(payers.length > 0 ? payers : ['USER']).map((payer) => ({

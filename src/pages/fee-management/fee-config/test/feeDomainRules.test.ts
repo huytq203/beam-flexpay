@@ -96,15 +96,18 @@ describe('EWALLET_TRANSFER_INTERNAL', () => {
     ).toEqual(['USER', 'RECEIVER', 'SYSTEM'])
   })
 
-  it('nhãn nói rõ phí cộng thêm hay trừ vào tiền nhận', () => {
+  it('nhãn chỉ là Người gửi / Người nhận cho các dịch vụ ví', () => {
     const labels = Object.fromEntries(
       getPayerTypeOptions('EWALLET_TRANSFER_INTERNAL').map(
         ({ value, label }) => [value, label]
       )
     )
-    expect(labels.USER).toContain('Người gửi')
-    expect(labels.RECEIVER).toContain('Người nhận')
-    expect(labels.RECEIVER).toContain('trừ')
+    expect(labels.USER).toBe('Người gửi')
+    expect(labels.RECEIVER).toBe('Người nhận')
+    const deposit = getPayerTypeOptions('EWALLET_DEPOSIT')
+    expect(deposit.find(({ value }) => value === 'USER')?.label).toBe(
+      'Người gửi'
+    )
   })
 
   it('các dịch vụ ví khác vẫn chỉ cho USER chịu', () => {
