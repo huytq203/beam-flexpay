@@ -20,7 +20,8 @@ const TONE: Readonly<Record<string, string>> = {
   ACTIVE: 'bg-success/10 text-success-strong',
   INACTIVE: 'bg-muted text-muted-foreground',
   LOCKED: 'bg-warning/10 text-warning-strong',
-  REJECTED: 'bg-danger/10 text-danger-strong'
+  REJECTED: 'bg-danger/10 text-danger-strong',
+  EXPIRED: 'bg-danger/10 text-danger-strong'
 }
 
 /** Tông cho trạng thái hiệu lực; chỉ PENDING/EXPIRED ghi đè nhãn "Đang áp dụng". */

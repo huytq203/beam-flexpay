@@ -60,7 +60,8 @@ export const POLICY_STATUS_CONFIG: Readonly<
   ACTIVE: { label: 'Hoạt động', className: 'success-status' },
   INACTIVE: { label: 'Không hoạt động', className: 'danger-status' },
   LOCKED: { label: 'Đã khoá', className: 'danger-status' },
-  REJECTED: { label: 'Từ chối', className: 'danger-status' }
+  REJECTED: { label: 'Từ chối', className: 'danger-status' },
+  EXPIRED: { label: 'Hết hạn', className: 'danger-status' }
 }
 
 export const ASSIGNMENT_STATUS_CONFIG: Readonly<

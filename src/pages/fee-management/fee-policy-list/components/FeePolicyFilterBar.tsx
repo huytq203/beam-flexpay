@@ -142,7 +142,7 @@ export const FeePolicyFilterBar = ({
           control={control}
           label='Tên chính sách'
           placeholder='Nhập tên chính sách'
-          className='flex flex-col'
+          className='flex flex-col col-span-2'
         />
         <FormInput
           name='subjectKeyword'
@@ -156,7 +156,7 @@ export const FeePolicyFilterBar = ({
           placeholder='Nhập số điện thoại'
           inputMode='tel'
           maxLength={100}
-          className='flex flex-col'
+          className='flex flex-col col-span-2'
         />
         <FormSelect
           name='status'
