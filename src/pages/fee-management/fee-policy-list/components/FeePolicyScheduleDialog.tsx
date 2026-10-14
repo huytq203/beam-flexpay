@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMessage } from '@hooks/useMessage'
 import { useCreateFeePolicyScheduleMutation } from '@services/apiFeePolicy.api'
 import type { FeePolicyScheduleAction } from '@type/fee.type'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import {
   SCHEDULE_ACTION_LABEL,
   SCHEDULE_REASON_MAX_LENGTH
@@ -49,6 +49,8 @@ const ScheduleForm = ({
     resolver: zodResolver(feePolicyScheduleSchema)
   })
 
+  const reason = useWatch({ control, name: 'reason' }) ?? ''
+
   const onSubmit = async (values: FeePolicyScheduleFormValues) => {
     try {
       await createSchedule({
@@ -70,7 +72,6 @@ const ScheduleForm = ({
       className='flex flex-col gap-3 pt-2'
       noValidate
     >
-
       <FormSelect
         control={control}
         name='action'
@@ -98,9 +99,12 @@ const ScheduleForm = ({
         label='Lý do'
         placeholder='Nhập lý do...'
         maxLength={SCHEDULE_REASON_MAX_LENGTH}
-        showCount
         className='flex flex-col'
       />
+      {/* Bộ đếm nằm trong luồng (không dùng showCount tuyệt đối của antd) để không đè lỗi hay nút bên dưới. */}
+      <p className='m-0 -mt-2 mb-1 text-right text-xs tabular-nums text-muted-foreground'>
+        {reason.length} / {SCHEDULE_REASON_MAX_LENGTH}
+      </p>
       <div className='grid grid-cols-1 gap-2 min-[400px]:grid-cols-2'>
         <ButtonComponent
           htmlType='button'
