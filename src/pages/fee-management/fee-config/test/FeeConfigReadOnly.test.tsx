@@ -24,6 +24,7 @@ const values: FeeConfigFormValues = {
   validFrom: '2026-09-11T08:30:00.000',
   validTo: '',
   bankCode: 'VPB',
+  providerCode: '',
   paymentMethod: 'ATM',
   merchantId: '',
   subjectId: '',
@@ -71,7 +72,10 @@ describe('FeeConfig read-only detail', () => {
     renderWithProviders(
       <MessageProvider>
         <Routes>
-          <Route path='/fee/edit/:id' element={<FeeConfig />} />
+          <Route
+            path='/fee/edit/:id'
+            element={<FeeConfig />}
+          />
         </Routes>
       </MessageProvider>,
       { route: '/fee/edit/policy-1' }
@@ -83,9 +87,9 @@ describe('FeeConfig read-only detail', () => {
     expect(
       screen.getAllByRole('button', { name: /Về danh sách/ })
     ).toHaveLength(2)
-    screen.getAllByRole('button', { name: /Về danh sách/ }).forEach((button) =>
-      expect(button).toBeEnabled()
-    )
+    screen
+      .getAllByRole('button', { name: /Về danh sách/ })
+      .forEach((button) => expect(button).toBeEnabled())
     expect(
       screen.queryByRole('button', { name: 'Thiết lập' })
     ).not.toBeInTheDocument()

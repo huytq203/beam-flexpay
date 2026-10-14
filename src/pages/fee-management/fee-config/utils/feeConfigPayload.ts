@@ -139,6 +139,8 @@ export const toAssignmentRequest = (
   feePolicyId,
   serviceType: form.serviceType,
   bankCode: form.bankCode || undefined,
+  // Sửa bản gán phải gửi lại nhà cung cấp đang có, nếu không backend coi là bỏ tiêu chí.
+  providerCode: form.providerCode || undefined,
   paymentMethod: form.paymentMethod || undefined,
   merchantId: form.merchantId || undefined,
   // Phạm vi loại trừ nhau: gửi kèm tiêu chí của phạm vi không được chọn sẽ tạo ra bản gán

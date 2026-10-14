@@ -49,13 +49,13 @@ describe('bộ lọc bổ sung của danh sách chính sách phí', () => {
 
     const user = userEvent.setup()
     renderList(
-      '/fee?page=3&bankCode=VCB&paymentMethod=ATM&validFrom=2026-09-01' +
+      '/fee?page=3&bankCode=VCB&providerCode=NAPAS&paymentMethod=ATM&validFrom=2026-09-01' +
         '&createdAtTo=2026-08-31'
     )
 
     await waitFor(() => expect(requests.length).toBeGreaterThan(0))
     expect(screen.getByLabelText('Phương thức giao dịch')).toBeInTheDocument()
-    expect(screen.getByLabelText('Ngân hàng')).toBeInTheDocument()
+    expect(screen.getByLabelText('Ngân hàng phát hành')).toBeInTheDocument()
     expect(
       screen.getByText('Thời gian áp dụng từ', { selector: 'label' })
     ).toBeInTheDocument()
@@ -74,6 +74,8 @@ describe('bộ lọc bổ sung của danh sách chính sách phí', () => {
 
     const firstRequest = requests.at(-1)
     expect(firstRequest?.searchParams.get('bankCode')).toBe('VCB')
+    expect(firstRequest?.searchParams.get('providerCode')).toBe('NAPAS')
+    expect(screen.getByLabelText('Nhà cung cấp (NCC)')).toBeInTheDocument()
     expect(firstRequest?.searchParams.get('paymentMethod')).toBe('ATM')
     expect(firstRequest?.searchParams.get('validFrom')).toBe('2026-09-01')
     expect(firstRequest?.searchParams.has('validTo')).toBe(false)
@@ -89,6 +91,7 @@ describe('bộ lọc bổ sung của danh sách chính sách phí', () => {
     )
     expect(requests.at(-1)?.searchParams.get('paymentMethod')).toBe('ATM')
     expect(requests.at(-1)?.searchParams.get('bankCode')).toBe('VCB')
+    expect(requests.at(-1)?.searchParams.get('providerCode')).toBe('NAPAS')
     expect(requests.at(-1)?.searchParams.get('validFrom')).toBe('2026-09-01')
     expect(requests.at(-1)?.searchParams.has('validTo')).toBe(false)
     expect(requests.at(-1)?.searchParams.has('createdAtFrom')).toBe(false)

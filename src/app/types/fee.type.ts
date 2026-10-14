@@ -94,6 +94,8 @@ export interface FeeAssignment {
   feePolicyId: string
   merchantId: string | null
   bankCode: string | null
+  /** Nhà cung cấp (cổng thanh toán). NULL = mọi nhà cung cấp. */
+  providerCode?: string | null
   paymentMethod: string | null
   cardType: string | null
   serviceType: string
@@ -126,6 +128,17 @@ export interface FeePolicyConfiguration {
 export interface FeeBank {
   code: string
   name: string
+}
+
+/** Một dòng của `GET /fee/payment-partners`. */
+export interface FeePaymentPartner {
+  code: string
+  name: string
+  /** Cổng/nhà cung cấp thu tiền hộ FlexPay. */
+  provider: boolean
+  /** Ngân hàng phát hành thẻ/tài khoản. */
+  issuer: boolean
+  status: 'ACTIVE' | 'INACTIVE'
 }
 
 /** Trang dữ liệu Spring Data trả về. */

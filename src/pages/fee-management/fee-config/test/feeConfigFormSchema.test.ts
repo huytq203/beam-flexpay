@@ -29,6 +29,7 @@ const form = (overrides = {}) => ({
   priority: 2,
   serviceType: 'EWALLET_WITHDRAWAL',
   bankCode: '',
+  providerCode: '',
   paymentMethod: 'ATM',
   merchantId: '',
   subjectId: '',

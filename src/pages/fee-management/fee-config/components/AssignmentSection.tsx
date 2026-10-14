@@ -1,5 +1,6 @@
 import { FormLabelHint, FormSelect } from '@components/form'
 import { useGetBankQuery } from '@services/apiFeeBank'
+import { useGetPaymentPartnersQuery } from '@services/apiFeePartner'
 import { useGetCustomerSegmentsQuery } from '@services/apiCustomerSegment'
 import { useEffect } from 'react'
 import type { Control } from 'react-hook-form'
@@ -9,6 +10,11 @@ import {
   getPaymentMethodOptions,
   getFormFieldRules
 } from '../constants/feeConfigFields'
+import {
+  PROVIDER_HINT,
+  allowsProviderCriteria,
+  toProviderOptions
+} from '../constants/feeProvider'
 import type { FeeConfigFormValues } from '../schemas/feeConfig.schema'
 import { MerchantPickerField } from './MerchantPickerField'
 import { UserPickerField } from './UserPickerField'
@@ -65,6 +71,11 @@ export const AssignmentSection = ({
 
   // `PaginationRequest` của service phí chặn size trên 100; gửi hơn là ăn 400.
   const { data: bankData } = useGetBankQuery({ page: 1, size: 100 })
+  const showProvider = allowsProviderCriteria(serviceType)
+  const { data: partners } = useGetPaymentPartnersQuery(undefined, {
+    skip: !showProvider
+  })
+  const providerOptions = toProviderOptions(partners)
 
   const scope = scopeField.value
   const canScope = rules.showSegment || rules.showSubject
@@ -101,6 +112,25 @@ export const AssignmentSection = ({
       </SectionHeading>
 
       <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
+        {showProvider && (
+          <FormSelect
+            name='providerCode'
+            control={control}
+            label={
+              <FormLabelHint
+                label='Nhà cung cấp (NCC)'
+                hint={PROVIDER_HINT}
+              />
+            }
+            placeholder='Mọi nhà cung cấp'
+            allowClear
+            showSearch
+            optionFilterProp='label'
+            options={providerOptions}
+            disabled={readOnly}
+            className='col-span-12 flex flex-col md:col-span-4'
+          />
+        )}
         <FormSelect
           name='bankCode'
           control={control}
@@ -108,11 +138,11 @@ export const AssignmentSection = ({
           label={
             serviceType === 'EWALLET_REFUND' ? (
               <FormLabelHint
-                label='Ngân hàng'
+                label='Ngân hàng phát hành'
                 hint={REFUND_BANK_HINT}
               />
             ) : (
-              'Ngân hàng'
+              'Ngân hàng phát hành'
             )
           }
           placeholder={rules.bankRequired ? 'Chọn ngân hàng' : 'Mọi ngân hàng'}

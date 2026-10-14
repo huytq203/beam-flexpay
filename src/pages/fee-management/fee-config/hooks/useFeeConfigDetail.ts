@@ -182,6 +182,7 @@ export const useFeeConfigDetail = (
       validFrom: toIsoOrEmpty(policy.validFrom),
       validTo: toIsoOrEmpty(policy.validTo),
       bankCode: assignment?.bankCode ?? '',
+      providerCode: assignment?.providerCode ?? '',
       paymentMethod: assignment?.paymentMethod ?? '',
       merchantId: assignment?.merchantId ?? '',
       subjectId: assignment?.subjectId ?? '',

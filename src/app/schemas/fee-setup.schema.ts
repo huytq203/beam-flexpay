@@ -79,6 +79,8 @@ export const feeAssignmentCreateRequestSchema = z.object({
   /** Mã phân khúc khách hàng. Vắng = áp cho mọi phân khúc. */
   customerGroup: z.string().optional(),
   bankCode: z.string().optional(),
+  /** Nhà cung cấp (cổng NAPAS, VIETQR). Vắng = áp cho mọi nhà cung cấp. */
+  providerCode: z.string().optional(),
   paymentMethod: z.string().optional(),
   effectiveFromDate: z.string().optional(),
   effectiveToDate: z.string().optional()

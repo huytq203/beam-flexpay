@@ -15,6 +15,7 @@ import {
   getPaymentMethodOptions
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import { FeePolicyPartyFilters } from './FeePolicyPartyFilters'
+import { FeePolicyProviderFilter } from './FeePolicyProviderFilter'
 import { POLICY_STATUS_FILTER_OPTIONS } from '../utils/policyStatusFilter'
 import {
   PUBLISHABLE_SERVICE_TYPES,
@@ -36,6 +37,7 @@ export interface FeePolicyFilterValues {
   status: string
   appliedTarget: string
   bankCode: string
+  providerCode: string
   paymentMethod: string
   payerType: string
   beneficiaryType: string
@@ -74,6 +76,7 @@ export const FeePolicyFilterBar = ({
       status: values.status,
       appliedTarget: values.appliedTarget,
       bankCode: values.bankCode,
+      providerCode: values.providerCode,
       paymentMethod: values.paymentMethod,
       payerType: values.payerType,
       beneficiaryType: values.beneficiaryType,
@@ -86,6 +89,7 @@ export const FeePolicyFilterBar = ({
     [
       values.appliedTarget,
       values.bankCode,
+      values.providerCode,
       values.createdAtFrom,
       values.createdAtTo,
       values.keyword,
@@ -135,6 +139,7 @@ export const FeePolicyFilterBar = ({
       status: '',
       appliedTarget: '',
       bankCode: '',
+      providerCode: '',
       paymentMethod: '',
       payerType: '',
       beneficiaryType: '',
@@ -199,11 +204,12 @@ export const FeePolicyFilterBar = ({
           options={appliedTargetOptions}
           className='flex flex-col'
         />
+        <FeePolicyProviderFilter control={control} />
         <FormSelect
           name='bankCode'
           control={control}
-          label='Ngân hàng'
-          placeholder='Mọi ngân hàng'
+          label='Ngân hàng phát hành'
+          placeholder='Mọi ngân hàng phát hành'
           allowClear
           showSearch
           optionFilterProp='label'

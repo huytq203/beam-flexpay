@@ -92,7 +92,7 @@ export const getFeePolicyColumns = ({
       getFeeLabel(serviceType, SERVICE_TYPE_LABELS)
   },
   {
-    title: 'Ngân hàng / Merchant',
+    title: 'NCC / Ngân hàng phát hành / Merchant',
     dataIndex: 'configuration',
     key: 'channel',
     width: 190,

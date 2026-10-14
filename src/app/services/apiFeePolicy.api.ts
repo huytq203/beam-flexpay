@@ -43,6 +43,8 @@ export interface SearchFeePoliciesParams {
   effectiveStatus?: string
   appliedTarget?: string
   bankCode?: string
+  /** Nhà cung cấp của bản gán. */
+  providerCode?: string
   paymentMethod?: string
   /** Người chịu của một thành phần phí; USER khớp cả người chuyển dạng SENDER. */
   payerType?: string

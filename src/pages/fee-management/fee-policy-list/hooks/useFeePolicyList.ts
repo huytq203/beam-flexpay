@@ -13,6 +13,7 @@ export interface FeePolicyListFilters {
   status?: string
   appliedTarget?: string
   bankCode?: string
+  providerCode?: string
   paymentMethod?: string
   payerType?: string
   beneficiaryType?: string
@@ -64,6 +65,7 @@ export const useFeePolicyList = ({
       ...splitPolicyStatusFilter(filters.status),
       appliedTarget: filters.appliedTarget || undefined,
       bankCode: filters.bankCode || undefined,
+      providerCode: filters.providerCode || undefined,
       paymentMethod: filters.paymentMethod || undefined,
       payerType: filters.payerType || undefined,
       beneficiaryType: filters.beneficiaryType || undefined,

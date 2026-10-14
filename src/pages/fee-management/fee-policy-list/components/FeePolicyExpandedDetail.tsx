@@ -1,4 +1,8 @@
-import { COMPONENT_TYPE_LABELS, PAYMENT_METHOD_LABELS, getFeeLabel } from '@constants/feeLabels'
+import {
+  COMPONENT_TYPE_LABELS,
+  PAYMENT_METHOD_LABELS,
+  getFeeLabel
+} from '@constants/feeLabels'
 import {
   FEE_SCOPE_LABEL,
   type FeeScope
@@ -7,7 +11,12 @@ import { FeeComponentReadout } from '@pages/fee-management/fee-config/components
 import { SectionHeading } from '@pages/fee-management/fee-config/components/SectionHeading'
 import type { FeeComponentFormValues } from '@pages/fee-management/fee-config/schemas/feeConfig.schema'
 import { toReadoutComponent } from '../utils/toReadoutComponent'
-import type { AppliedSubject, AppliedTarget, FeeAssignment, FeePolicyConfiguration } from '@type/fee.type'
+import type {
+  AppliedSubject,
+  AppliedTarget,
+  FeeAssignment,
+  FeePolicyConfiguration
+} from '@type/fee.type'
 import type { ReactNode } from 'react'
 import { FeePolicySchedulesSection } from './FeePolicySchedulesSection'
 
@@ -58,7 +67,10 @@ const assignmentScope = (
   if (assignment.customerGroup)
     return { label: 'Nhóm khách hàng', value: assignment.customerGroup }
   if (assignment.merchantId)
-    return { label: 'Đơn vị chấp nhận thanh toán', value: assignment.merchantId }
+    return {
+      label: 'Đơn vị chấp nhận thanh toán',
+      value: assignment.merchantId
+    }
   return { label: 'Tất cả', value: 'Không giới hạn đối tượng' }
 }
 
@@ -99,7 +111,10 @@ const AssignmentRow = ({ assignment, appliedTargets }: AssignmentRowProps) => {
           scope.value
         )}
       </Fact>
-      <Fact label='Ngân hàng'>{assignment.bankCode || 'Tất cả'}</Fact>
+      <Fact label='Nhà cung cấp (NCC)'>
+        {assignment.providerCode || 'Tất cả'}
+      </Fact>
+      <Fact label='Ngân hàng phát hành'>{assignment.bankCode || 'Tất cả'}</Fact>
       <Fact label='Phương thức giao dịch'>
         {getFeeLabel(assignment.paymentMethod, PAYMENT_METHOD_LABELS)}
       </Fact>
@@ -133,7 +148,9 @@ const AssignmentList = ({
 
 /** Chỉ các thành phần của luồng đang xem, để đối soát từng luồng riêng. */
 const ComponentList = ({ components, feeScope }: ComponentListProps) => {
-  const scoped = components.filter((component) => component.feeScope === feeScope)
+  const scoped = components.filter(
+    (component) => component.feeScope === feeScope
+  )
   return (
     <div>
       <SectionHeading>{FEE_SCOPE_LABEL[feeScope]}</SectionHeading>
@@ -179,8 +196,14 @@ export const FeePolicyExpandedDetail = ({
       aria-label={`Chi tiết ${policyName}`}
       className='space-y-6 px-2 py-4'
     >
-      <AssignmentList assignments={assignments} appliedTargets={appliedTargets} />
-      <ComponentList components={components} feeScope={feeScope} />
+      <AssignmentList
+        assignments={assignments}
+        appliedTargets={appliedTargets}
+      />
+      <ComponentList
+        components={components}
+        feeScope={feeScope}
+      />
       <FeePolicySchedulesSection policyId={policyId} />
     </section>
   )

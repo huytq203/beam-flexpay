@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { isPaymentMethodAllowed } from '../constants/feeConfigFields'
+import { allowsProviderCriteria } from '../constants/feeProvider'
 import { validateTransferBearers } from '../utils/transferBearers'
 import {
   DUPLICATE_FEE_COMPONENT_MESSAGE,
@@ -32,6 +33,8 @@ export const feeConfigFormSchema = z
     priority: z.number().int().min(0),
     serviceType: z.string().min(1, 'Chọn loại giao dịch'),
     bankCode: z.string(),
+    /** Nhà cung cấp (cổng). Rỗng = mọi nhà cung cấp và bị bỏ khỏi payload. */
+    providerCode: z.string(),
     /** Chuỗi rỗng = áp dụng cho tất cả phương thức và bị bỏ khỏi payload. */
     paymentMethod: z.string(),
     merchantId: z.string(),
@@ -66,6 +69,14 @@ export const feeConfigFormSchema = z
         code: 'custom',
         path: ['paymentMethod'],
         message: 'Phương thức không phù hợp với loại giao dịch đã chọn'
+      })
+    }
+
+    if (form.providerCode && !allowsProviderCriteria(form.serviceType)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['providerCode'],
+        message: 'Nhà cung cấp chỉ áp dụng cho nạp và rút ví'
       })
     }
 

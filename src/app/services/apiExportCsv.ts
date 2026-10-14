@@ -120,6 +120,7 @@ export interface ExportFeePoliciesQuery {
   appliedTarget?: string
   subjectKeyword?: string
   bankCode?: string
+  providerCode?: string
   paymentMethod?: string
   payerType?: string
   beneficiaryType?: string

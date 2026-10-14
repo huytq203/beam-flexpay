@@ -39,6 +39,7 @@ export const apiFeeService = createApi({
     'feeComponentTier',
     'feeAssign',
     'feeBank',
+    'feePartner',
     'customerSegment',
     'ApplicableFeeRule',
     'FeePolicySchedule'

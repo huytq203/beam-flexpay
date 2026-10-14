@@ -7,6 +7,7 @@ import {
   getFeeDomainForServiceType,
   getFormFieldRules
 } from '../constants/feeConfigFields'
+import { allowsProviderCriteria } from '../constants/feeProvider'
 import {
   feeConfigFormSchema,
   type FeeConfigFormValues
@@ -21,6 +22,7 @@ export const buildEmptyForm = (
   priority: DEFAULT_PRIORITY,
   serviceType: '',
   bankCode: '',
+  providerCode: '',
   paymentMethod: '',
   merchantId: '',
   assignmentScope: 'ALL',
@@ -67,6 +69,10 @@ export const useFeeConfigForm = (
       // Loại giao dịch của miền cũ có thể không tồn tại ở miền mới; giữ lại là
       // gửi lên một tổ hợp backend không nhận.
       serviceType: keepServiceType ? current.serviceType : '',
+      providerCode:
+        keepServiceType && allowsProviderCriteria(current.serviceType)
+          ? current.providerCode
+          : '',
       // ĐVCNTT không hiện ở miền khác, giữ lại là gửi lên một tiêu chí người
       // dùng không còn nhìn thấy để sửa.
       merchantId: rules.showMerchant ? current.merchantId : '',
@@ -76,9 +82,8 @@ export const useFeeConfigForm = (
       customerGroup: rules.showSegment ? current.customerGroup : '',
       // Miền mới có thể không cho chọn đối tượng đặc biệt; giữ lại là gửi lên
       // một phạm vi người dùng không còn nhìn thấy để sửa.
-      assignmentScope: rules.showSubject || rules.showSegment
-        ? current.assignmentScope
-        : 'ALL'
+      assignmentScope:
+        rules.showSubject || rules.showSegment ? current.assignmentScope : 'ALL'
     })
   }
 
@@ -95,13 +100,13 @@ export const useFeeConfigForm = (
       ...current,
       feeDomain: domain,
       serviceType: next,
+      // Nhà cung cấp chỉ có nghĩa với nạp/rút; đổi sang loại khác phải dọn để khỏi gửi tiêu chí bị ẩn.
+      providerCode: allowsProviderCriteria(next) ? current.providerCode : '',
       merchantId: rules.showMerchant ? current.merchantId : '',
       subjectId: rules.showSubject ? current.subjectId : '',
       customerGroup: rules.showSegment ? current.customerGroup : '',
       assignmentScope:
-        rules.showSubject || rules.showSegment
-          ? current.assignmentScope
-          : 'ALL'
+        rules.showSubject || rules.showSegment ? current.assignmentScope : 'ALL'
     })
   }
 

@@ -13,6 +13,7 @@ export const FILTER_KEYS = [
   'direction',
   'serviceType',
   'bankCode',
+  'providerCode',
   'paymentMethod',
   'payerType',
   'beneficiaryType',
