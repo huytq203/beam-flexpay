@@ -58,7 +58,7 @@ export function RefundAmountSection({ refund }: RefundAmountSectionProps) {
   return (
     <DetailSection
       title='Số tiền'
-      note='Số liệu do hệ thống tính, không tính lại trên màn hình.'
+    // note='Số liệu do hệ thống tính, không tính lại trên màn hình.'
     >
       <DetailRows rows={rows} />
     </DetailSection>

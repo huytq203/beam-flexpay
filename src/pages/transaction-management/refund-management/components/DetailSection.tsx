@@ -2,18 +2,20 @@ import type { ReactNode } from 'react'
 
 interface DetailSectionProps {
   title: string
+  note?: ReactNode
   children: ReactNode
-  note?: string
 }
 
-export function DetailSection({ title, children, note }: DetailSectionProps) {
+export function DetailSection({ title, note, children }: DetailSectionProps) {
   return (
     <section className='flex flex-col gap-2'>
-      <h3 className='font-display text-sm font-semibold text-foreground'>
-        {title}
-      </h3>
+      <div>
+        <h3 className='font-display text-sm font-semibold text-foreground'>
+          {title}
+        </h3>
+        {note && <p className='text-xs text-muted-foreground'>{note}</p>}
+      </div>
       {children}
-      {note && <p className='text-xs text-muted-foreground'>{note}</p>}
     </section>
   )
 }
