@@ -1,5 +1,10 @@
 import { FeeDomain } from '@components/fee/feeDomain'
-import { getSelectablePayers } from '@utils/fee-execution'
+import {
+  getSelectablePayers,
+  isPublishableServiceType,
+  PUBLISHABLE_SERVICE_TYPES,
+  withoutHiddenServiceTypes
+} from '@utils/fee-execution'
 import { describe, expect, it } from 'vitest'
 import {
   FEE_BUSINESS_CATEGORY,
@@ -113,6 +118,46 @@ describe('EWALLET_TRANSFER_INTERNAL', () => {
   it('các dịch vụ ví khác vẫn chỉ cho USER chịu', () => {
     expect(getSelectablePayers('EWALLET_DEPOSIT')).toEqual(['USER'])
     expect(getSelectablePayers('EWALLET_WITHDRAWAL')).toEqual(['USER'])
+  })
+})
+
+describe('loại giao dịch tạm ẩn', () => {
+  const HIDDEN = ['MERCHANT_VA_BILL_COLLECTION', 'PAYOUT_BANK_TRANSFER']
+
+  it('ẩn thu hộ VA và chi hộ khỏi danh sách chọn', () => {
+    const visible = withoutHiddenServiceTypes(PUBLISHABLE_SERVICE_TYPES)
+
+    for (const hidden of HIDDEN) expect(visible).not.toContain(hidden)
+    expect(visible).toEqual(
+      expect.arrayContaining([
+        'EWALLET_DEPOSIT',
+        'EWALLET_WITHDRAWAL',
+        'EWALLET_TRANSFER_INTERNAL',
+        'EWALLET_REFUND'
+      ])
+    )
+  })
+
+  it('chỉ ẩn ở giao diện: luật kiểm tra vẫn nhận đủ các loại', () => {
+    for (const hidden of HIDDEN) {
+      expect(PUBLISHABLE_SERVICE_TYPES).toContain(hidden)
+      expect(isPublishableServiceType(hidden)).toBe(true)
+    }
+  })
+
+  it('chính sách cũ thuộc loại ẩn vẫn thấy đúng loại của nó khi đang mở', () => {
+    expect(
+      withoutHiddenServiceTypes(
+        PUBLISHABLE_SERVICE_TYPES,
+        'MERCHANT_VA_BILL_COLLECTION'
+      )
+    ).toContain('MERCHANT_VA_BILL_COLLECTION')
+    expect(
+      withoutHiddenServiceTypes(
+        PUBLISHABLE_SERVICE_TYPES,
+        'MERCHANT_VA_BILL_COLLECTION'
+      )
+    ).not.toContain('PAYOUT_BANK_TRANSFER')
   })
 })
 

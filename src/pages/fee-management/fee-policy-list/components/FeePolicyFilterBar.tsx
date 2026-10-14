@@ -16,7 +16,10 @@ import {
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import { FeePolicyPartyFilters } from './FeePolicyPartyFilters'
 import { POLICY_STATUS_FILTER_OPTIONS } from '../utils/policyStatusFilter'
-import { PUBLISHABLE_SERVICE_TYPES } from '@utils/fee-execution'
+import {
+  PUBLISHABLE_SERVICE_TYPES,
+  withoutHiddenServiceTypes
+} from '@utils/fee-execution'
 import { useGetBankQuery } from '@services/apiFeeBank'
 import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
@@ -102,10 +105,9 @@ export const FeePolicyFilterBar = ({
   })
 
   const labels = Object.fromEntries(
-    PUBLISHABLE_SERVICE_TYPES.map((value) => [
-      value,
-      SERVICE_TYPE_LABELS[value] ?? value
-    ])
+    withoutHiddenServiceTypes(PUBLISHABLE_SERVICE_TYPES, serviceType).map(
+      (value) => [value, SERVICE_TYPE_LABELS[value] ?? value]
+    )
   )
   // Lọc theo LOẠI đối tượng, không theo từng phân khúc: người vận hành muốn
   // gom mọi chính sách cấu hình theo nhóm, tên nhóm cụ thể đã hiện ở cột.

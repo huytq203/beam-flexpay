@@ -71,6 +71,30 @@ export const PUBLISHABLE_SERVICE_TYPES: readonly string[] = Object.keys(
   EXECUTABLE_PAYER_BY_SERVICE
 )
 
+/**
+ * Loại giao dịch tạm ẩn khỏi các ô chọn và tab lọc của màn cấu hình phí. Chỉ là ẩn giao diện:
+ * `PUBLISHABLE_SERVICE_TYPES` và mọi luật kiểm tra vẫn nhận đủ các loại này nên chính sách đã có
+ * vẫn đọc, sửa và duyệt bình thường. Bật lại chỉ cần bỏ loại khỏi danh sách.
+ */
+export const TEMPORARILY_HIDDEN_SERVICE_TYPES: readonly string[] = [
+  'MERCHANT_VA_BILL_COLLECTION',
+  'PAYOUT_BANK_TRANSFER'
+]
+
+/**
+ * Bỏ các loại tạm ẩn khỏi danh sách để chọn, trừ loại đang được chọn: chính sách cũ thuộc loại ẩn
+ * vẫn hiện đúng nhãn của nó thay vì rơi về mã thô.
+ */
+export const withoutHiddenServiceTypes = (
+  serviceTypes: readonly string[],
+  current?: string | null
+): readonly string[] =>
+  serviceTypes.filter(
+    (serviceType) =>
+      serviceType === current ||
+      !TEMPORARILY_HIDDEN_SERVICE_TYPES.includes(serviceType)
+  )
+
 export const isPublishableServiceType = (
   serviceType: string | null | undefined
 ): boolean => Boolean(serviceType && serviceType in EXECUTABLE_PAYER_BY_SERVICE)

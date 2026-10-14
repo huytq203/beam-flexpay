@@ -100,7 +100,24 @@ describe('trang tạo chính sách', () => {
     expect(beneficiary).not.toBeDisabled()
   })
 
-  it('chỉ hiện ô Merchant khi chọn loại giao dịch thu hộ hoặc chi hộ', async () => {
+  it('tạm ẩn thu hộ VA và chi hộ khỏi danh sách loại giao dịch', async () => {
+    const user = userEvent.setup()
+    renderCreatePage()
+
+    await user.click(screen.getByLabelText(/Loại giao dịch/))
+
+    expect(await screen.findByText(DEPOSIT_LABEL)).toBeInTheDocument()
+    expect(
+      screen.queryByText(MERCHANT_COLLECTION_LABEL)
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('Chi hộ chuyển khoản ngân hàng')
+    ).not.toBeInTheDocument()
+  })
+
+  // Thu hộ VA và chi hộ đang tạm ẩn (TEMPORARILY_HIDDEN_SERVICE_TYPES nên không chọn được từ
+  // form). Bỏ skip khi bật lại hai loại này.
+  it.skip('chỉ hiện ô Merchant khi chọn loại giao dịch thu hộ hoặc chi hộ', async () => {
     const user = userEvent.setup()
     renderCreatePage()
 

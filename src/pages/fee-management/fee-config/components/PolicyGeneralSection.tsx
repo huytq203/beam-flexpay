@@ -5,6 +5,7 @@ import {
   FormTextArea
 } from '@components/form'
 import { SERVICE_TYPE_LABELS } from '@constants/feeLabels'
+import { withoutHiddenServiceTypes } from '@utils/fee-execution'
 import dayjs from 'dayjs'
 import type { Control } from 'react-hook-form'
 import { useWatch } from 'react-hook-form'
@@ -47,15 +48,17 @@ export const PolicyGeneralSection = ({
   // Mốc kết thúc không được sớm hơn mốc bắt đầu, cũng không được ở quá khứ.
   const validToFloor = validFrom ? dayjs(validFrom) : null
 
-  const serviceTypeOptions = getFormFieldRules(feeDomain, '').serviceTypes.map(
-    (value) => {
-      const name = SERVICE_TYPE_LABELS[value] ?? value
-      return {
-        value,
-        label: name
-      }
+  const currentServiceType = useWatch({ control, name: 'serviceType' })
+  const serviceTypeOptions = withoutHiddenServiceTypes(
+    getFormFieldRules(feeDomain, '').serviceTypes,
+    currentServiceType
+  ).map((value) => {
+    const name = SERVICE_TYPE_LABELS[value] ?? value
+    return {
+      value,
+      label: name
     }
-  )
+  })
 
   return (
     <section>
