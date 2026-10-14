@@ -47,6 +47,7 @@ const renderColumns = () => {
           onEdit: vi.fn(),
           onActivate: vi.fn(),
           onDeactivate: vi.fn(),
+          onSchedule: vi.fn(),
           busyId: null,
           customerSegmentNames: {}
         })}

@@ -4,6 +4,8 @@ import { http, HttpResponse } from 'msw'
 const ok = <T>(data: T) => HttpResponse.json({ data })
 
 export const handlers = [
+  /* Dòng chính sách phí mở rộng tự đọc lịch hẹn giờ; mặc định chưa có lịch nào. */
+  http.get('*/fee/policies/:id/schedules', () => ok([])),
   /*
    * Màn chi tiết giao dịch tự đọc trạng thái lệnh rút (WithdrawalDecisionPanel).
    * Mặc định trả bản ghi KHÔNG có `status` để panel render rỗng — test nào cần

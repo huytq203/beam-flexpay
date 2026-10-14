@@ -136,3 +136,41 @@ export interface FeePage<T> {
   size: number
   number: number
 }
+
+export type FeePolicyScheduleAction = 'ACTIVATE' | 'DEACTIVATE'
+
+export type FeePolicyScheduleStatus =
+  | 'PENDING'
+  | 'RUNNING'
+  | 'DONE'
+  | 'SKIPPED'
+  | 'FAILED'
+  | 'CANCELLED'
+
+/** Lịch hẹn giờ khóa / mở một chính sách phí. */
+export interface FeePolicySchedule {
+  id: string
+  feePolicyId: string
+  action: FeePolicyScheduleAction
+  /** Thời điểm chạy, ISO-8601. */
+  runAt: string
+  status: FeePolicyScheduleStatus
+  reason: string
+  scheduledBy: string
+  createdAt: string
+  executedAt: string | null
+  resultMessage: string | null
+}
+
+export interface CreateFeePolicyScheduleArg {
+  policyId: string
+  action: FeePolicyScheduleAction
+  /** ISO-8601 instant, ví dụ 2026-10-20T01:00:00.000Z. */
+  runAt: string
+  reason: string
+}
+
+export interface CancelFeePolicyScheduleArg {
+  policyId: string
+  scheduleId: string
+}

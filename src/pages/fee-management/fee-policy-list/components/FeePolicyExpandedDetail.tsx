@@ -9,10 +9,12 @@ import type { FeeComponentFormValues } from '@pages/fee-management/fee-config/sc
 import { toReadoutComponent } from '../utils/toReadoutComponent'
 import type { AppliedSubject, AppliedTarget, FeeAssignment, FeePolicyConfiguration } from '@type/fee.type'
 import type { ReactNode } from 'react'
+import { FeePolicySchedulesSection } from './FeePolicySchedulesSection'
 
 interface FeePolicyExpandedDetailProps {
   /** Luồng phí đang xem; dòng mở rộng chỉ đọc đúng các thành phần của luồng này. */
   feeScope: FeeScope
+  policyId: string
   policyName: string
   configuration: FeePolicyConfiguration | undefined
   appliedTargets?: AppliedTarget[]
@@ -163,6 +165,7 @@ const ComponentList = ({ components, feeScope }: ComponentListProps) => {
 
 export const FeePolicyExpandedDetail = ({
   feeScope,
+  policyId,
   policyName,
   configuration,
   appliedTargets
@@ -178,6 +181,7 @@ export const FeePolicyExpandedDetail = ({
     >
       <AssignmentList assignments={assignments} appliedTargets={appliedTargets} />
       <ComponentList components={components} feeScope={feeScope} />
+      <FeePolicySchedulesSection policyId={policyId} />
     </section>
   )
 }

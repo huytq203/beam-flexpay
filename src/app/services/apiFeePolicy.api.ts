@@ -1,7 +1,14 @@
 import { apiFeeService } from '@services/apiService'
 import { ResponseType } from '@type/api'
 import type { FeeApprovalArg, FeeReasonArg } from '@type/feeApproval.type'
-import type { FeePage, FeePolicy } from '@type/fee.type'
+import type {
+  CancelFeePolicyScheduleArg,
+  CreateFeePolicyScheduleArg,
+  FeePage,
+  FeePolicy,
+  FeePolicySchedule,
+  FeePolicyScheduleStatus
+} from '@type/fee.type'
 import type {
   FeeAssignmentCreateRequest,
   FeePolicySetupRequest,
@@ -228,6 +235,49 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
         'feeAssign'
       ]
     }),
+    getFeePolicySchedules: build.query<
+      FeePolicySchedule[],
+      { policyId: string; status?: FeePolicyScheduleStatus }
+    >({
+      query: ({ policyId, status }) => ({
+        url: `/fee/policies/${policyId}/schedules`,
+        method: 'GET',
+        params: { status, isLoading: false }
+      }),
+      transformResponse: (res: ResponseType<FeePolicySchedule[]>) => res.data,
+      providesTags: (_result, _error, { policyId }) => [
+        { type: 'FeePolicySchedule', id: policyId }
+      ]
+    }),
+    createFeePolicySchedule: build.mutation<
+      FeePolicySchedule,
+      CreateFeePolicyScheduleArg
+    >({
+      query: ({ policyId, ...body }) => ({
+        url: `/fee/policies/${policyId}/schedules`,
+        method: 'POST',
+        body,
+        params: { isLoading: false }
+      }),
+      transformResponse: (res: ResponseType<FeePolicySchedule>) => res.data,
+      invalidatesTags: (_result, _error, { policyId }) => [
+        { type: 'FeePolicySchedule', id: policyId }
+      ]
+    }),
+    cancelFeePolicySchedule: build.mutation<
+      FeePolicySchedule,
+      CancelFeePolicyScheduleArg
+    >({
+      query: ({ policyId, scheduleId }) => ({
+        url: `/fee/policies/${policyId}/schedules/${scheduleId}`,
+        method: 'DELETE',
+        params: { isLoading: false }
+      }),
+      transformResponse: (res: ResponseType<FeePolicySchedule>) => res.data,
+      invalidatesTags: (_result, _error, { policyId }) => [
+        { type: 'FeePolicySchedule', id: policyId }
+      ]
+    }),
     setupFeePolicy: build.mutation<
       FeePolicySetupResponse,
       FeePolicySetupRequest
@@ -256,5 +306,8 @@ export const {
   usePatchRejectFeePolicyMutation,
   usePutFeePolicyMutation,
   useSetupFeePolicyMutation,
-  useUpdateFeePolicyConfigMutation
+  useUpdateFeePolicyConfigMutation,
+  useGetFeePolicySchedulesQuery,
+  useCreateFeePolicyScheduleMutation,
+  useCancelFeePolicyScheduleMutation
 } = feePolicyApi

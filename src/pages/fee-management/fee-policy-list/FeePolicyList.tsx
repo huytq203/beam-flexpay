@@ -14,11 +14,17 @@ import { useExportCsv } from '@hooks/useExportCsv'
 import { useUrlFilters } from '@hooks/useUrlFilters'
 import { useCustomerSegmentNames } from '@hooks/useCustomerSegmentNames'
 import { useExportFeePoliciesMutation } from '@services/apiExportCsv'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FeePolicyFilterBar } from './components/FeePolicyFilterBar'
 import { FeePolicyListError } from './components/FeePolicyListError'
 import { FeePolicyTableActions } from './components/FeePolicyTableActions'
 import { FeePolicyExpandedDetail } from './components/FeePolicyExpandedDetail'
+import {
+  FeePolicyScheduleDialog,
+  type SchedulingPolicy
+} from './components/FeePolicyScheduleDialog'
+import { useSchedulePermissions } from './hooks/useSchedulePermissions'
 import { getFeePolicyColumns } from './columns/FeePolicyList.column'
 import { useExpandedPolicyIds } from './hooks/useExpandedPolicyIds'
 import { useFeePolicyList } from './hooks/useFeePolicyList'
@@ -53,6 +59,8 @@ const FeePolicyList = () => {
     ? filters.feeScope
     : FEE_SCOPE.OUTPUT_FEE
   const status = useFeePolicyStatus()
+  const { allowedActions } = useSchedulePermissions()
+  const [scheduling, setScheduling] = useState<SchedulingPolicy | null>(null)
   const customerSegmentNames = useCustomerSegmentNames()
   const exportFilters = {
     feeScope,
@@ -193,6 +201,8 @@ const FeePolicyList = () => {
               onEdit: (id) => navigate(PATHS.FEE_V4.POLICY_EDIT(id)),
               onActivate: status.askActivate,
               onDeactivate: status.deactivate,
+              onSchedule: (id, name, policyStatus) =>
+                setScheduling({ id, name, status: policyStatus }),
               busyId: status.busyId,
               customerSegmentNames
             })}
@@ -233,6 +243,7 @@ const FeePolicyList = () => {
                 expanded ? (
                   <FeePolicyExpandedDetail
                     feeScope={feeScope}
+                    policyId={row.id}
                     policyName={row.name}
                     configuration={row.configuration}
                     appliedTargets={row.appliedTargets}
@@ -255,6 +266,12 @@ const FeePolicyList = () => {
           />
         )}
       </CardComponent>
+
+      <FeePolicyScheduleDialog
+        policy={scheduling}
+        allowedActions={allowedActions}
+        onClose={() => setScheduling(null)}
+      />
 
       <ReasonDialog
         open={Boolean(status.activating)}

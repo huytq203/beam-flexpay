@@ -22,6 +22,7 @@ import {
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import { AppliedTargetCell } from '../components/AppliedTargetCell'
 import { ChannelCell } from '../components/ChannelCell'
+import { FeePolicyScheduleRowAction } from '../components/FeePolicyScheduleRowAction'
 import { ScopeComponentsCell } from '../components/ScopeComponentsCell'
 import { formatDateTimeUTC } from '@/pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/utils/applicable-fee-rule'
 
@@ -31,6 +32,7 @@ interface FeePolicyColumnArgs {
   onEdit: (id: string) => void
   onActivate: (id: string, name: string) => void
   onDeactivate: (id: string) => void
+  onSchedule: (id: string, name: string, status: string) => void
   /** Dòng đang có lệnh bật/tắt chạy dở. */
   busyId: string | null
   customerSegmentNames: CustomerSegmentNames
@@ -55,6 +57,7 @@ export const getFeePolicyColumns = ({
   onEdit,
   onActivate,
   onDeactivate,
+  onSchedule,
   busyId,
   customerSegmentNames
 }: FeePolicyColumnArgs): ColumnsType<FeePolicyRow> => [
@@ -194,7 +197,7 @@ export const getFeePolicyColumns = ({
   {
     title: 'Hành động',
     dataIndex: 'id',
-    // Bảng này giữ bố cục cố định: tối đa 2 nút (Sửa + Duyệt) nên chỉ chừa đúng chỗ đó.
+    // Bảng này giữ bố cục cố định: tối đa 2 nút (Sửa + Duyệt, hoặc Bật/Tắt + Hẹn giờ) nên chỉ chừa đúng chỗ đó.
     width: 96,
     fixed: 'right',
     align: 'center',
@@ -275,6 +278,11 @@ export const getFeePolicyColumns = ({
               </TooltipComponent>
             </Can>
           )}
+
+          <FeePolicyScheduleRowAction
+            status={row.status}
+            onClick={() => onSchedule(id, row.name, row.status)}
+          />
         </div>
       )
     }
