@@ -88,3 +88,47 @@ export const OwnerTypeLabels: Record<string, string> = {
  */
 export const LEDGER_POSTED_ONLY_NOTE =
     'Sổ cái chỉ ghi bút toán đã hạch toán thành công. Giao dịch đang chờ, thất bại hoặc đã huỷ không có ở đây — đối chiếu những giao dịch đó ở màn Quản lý giao dịch.'
+
+/**
+ * Vai trò của dòng trong bút toán chuyển tiền ví → ví. wallet-core không trả vai
+ * trò nên suy từ chủ tài khoản + chiều ghi: tài khoản doanh thu là phí, ví bị Nợ
+ * là người gửi, ví được Có là người nhận. Dòng phí ghi rõ bên chịu theo
+ * `feeBearer`; khi hai bên cùng chịu thì ghép theo số tiền từng bên. Loại giao
+ * dịch khác không có vai trò chung theo cách này nên trả `null`.
+ */
+export const getLedgerEntryRole = (entry: {
+    transactionType?: string | null
+    direction: string
+    amount?: number
+    feeBearer?: string
+    senderFeeAmount?: number
+    receiverFeeAmount?: number
+    account?: { ownerType?: string; glCode?: string }
+}): string | null => {
+    if (entry.transactionType !== 'P2P_TRANSFER') return null
+    if (entry.account?.glCode?.startsWith('REV_')) return getFeeRole(entry)
+    return entry.direction === DirectionConstants.DEBIT ? 'Người gửi' : 'Người nhận'
+}
+
+const getFeeRole = (entry: {
+    amount?: number
+    feeBearer?: string
+    senderFeeAmount?: number
+    receiverFeeAmount?: number
+}): string => {
+    switch (entry.feeBearer) {
+        case 'RECEIVER':
+            return 'Phí (bên nhận)'
+        case 'BOTH': {
+            const isSender = entry.amount === entry.senderFeeAmount
+            const isReceiver = entry.amount === entry.receiverFeeAmount
+            if (isSender && !isReceiver) return 'Phí (bên gửi)'
+            if (isReceiver && !isSender) return 'Phí (bên nhận)'
+            return 'Phí (hai bên)'
+        }
+        case 'SENDER':
+            return 'Phí (bên gửi)'
+        default:
+            return 'Phí'
+    }
+}

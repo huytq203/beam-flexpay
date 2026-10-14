@@ -7,7 +7,7 @@ import {
 import { useCallback, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGetLedgerEntriesQuery } from '../services/apiSystemLedger'
-import { FormSearchValues } from '../types/SystemLedger.type'
+import { FormSearchValues, LedgerEntry } from '../types/SystemLedger.type'
 
 /** Ô để trống là "không lọc" — gửi chuỗi rỗng xuống API là gửi rác. */
 const dropEmpty = (filter: FormSearchValues): FormSearchValues =>
@@ -16,6 +16,25 @@ const dropEmpty = (filter: FormSearchValues): FormSearchValues =>
       ([, value]) => value !== '' && value !== undefined && value !== null
     )
   )
+
+/**
+ * Gom các dòng cùng bút toán lại cạnh nhau, Nợ trước Có. API sắp theo thời gian
+ * ghi nên dòng Có (phí, người nhận) ghi sau dòng Nợ lại hiện lên trước. Chỉ xếp
+ * lại trong trang đang xem — không đổi thứ tự giữa các bút toán.
+ */
+const groupByJournal = (entries: LedgerEntry[]): LedgerEntry[] => {
+  const groups = new Map<string, LedgerEntry[]>()
+  entries.forEach((entry) => {
+    const key = entry.journalCode ?? `__${entry.id}`
+    groups.set(key, [...(groups.get(key) ?? []), entry])
+  })
+  return [...groups.values()].flatMap((group) =>
+    [...group].sort(
+      (a, b) =>
+        Number(b.direction === 'DEBIT') - Number(a.direction === 'DEBIT')
+    )
+  )
+}
 
 const useSystemLedger = () => {
   const [filter, setFilter] = useState<FormSearchValues>({})
@@ -84,7 +103,7 @@ const useSystemLedger = () => {
   const totalElements = dataLedger?.totalElements
   const dataSource = useMemo(
     () =>
-      dataLedger?.content?.map((item, idx) => ({
+      dataLedger?.content && groupByJournal(dataLedger.content).map((item, idx) => ({
         no: (page - 1) * pageSize + idx + 1,
         ...item
       })),

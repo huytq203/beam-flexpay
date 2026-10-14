@@ -11,7 +11,11 @@ import { formatCurrency } from '@utils/formatNumber'
 import {
   DirectionConstants,
   DirectionShortLabel,
-  type DirectionKey
+  GLCodeLabels,
+  LedgerTransactionType,
+  getLedgerEntryRole,
+  type DirectionKey,
+  type LedgerTransactionTypeKey
 } from '../constants/SystemLedger.constant'
 
 const getSystemLedgerColumn = ({
@@ -40,6 +44,13 @@ const getSystemLedgerColumn = ({
           >
             {code}
           </TypographyText>
+          {record.transactionType && (
+            <span className='text-[12px] text-cyan-700'>
+              {LedgerTransactionType[
+                record.transactionType as LedgerTransactionTypeKey
+              ] ?? record.transactionType}
+            </span>
+          )}
           <TooltipComponent title={value?.id}> 
             <span className='inline-flex items-center gap-1 max-w-[180px]'>
               <span className='truncate max-w-[150px] text-gray-500 text-[12px]'>
@@ -96,6 +107,21 @@ const getSystemLedgerColumn = ({
   //   }
   // },
   {
+    title: 'Vai trò',
+    align: 'left',
+    width: 110,
+    render(_, record) {
+      const role = getLedgerEntryRole(record)
+      return role ? (
+        <span className='rounded border border-gray-200 px-2 py-0.5 text-[12px] whitespace-nowrap'>
+          {role}
+        </span>
+      ) : (
+        <span>--</span>
+      )
+    }
+  },
+  {
     title: 'Tài khoản (Ví)',
     align: 'left',
     width: 160,
@@ -136,9 +162,11 @@ const getSystemLedgerColumn = ({
       return (
         <div className='flex flex-col gap-0.5'>
           <span className='font-medium text-gray-800 text-[12px]'>
-            {ownerType ?? '--'}
+            {(glCode && GLCodeLabels[glCode]) ?? ownerType ?? '--'}
           </span>
-          <span className='text-gray-400 text-[12px]'>{glCode ?? ''}</span>
+          <span className='text-gray-400 text-[12px]'>
+            {[ownerType, glCode].filter(Boolean).join(' · ')}
+          </span>
         </div>
       )
     }

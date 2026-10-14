@@ -51,6 +51,11 @@ export interface LedgerEntry {
      * để nullish vì bút toán ghi trước đợt đổi có thể chưa có trường này.
      */
     transactionType?: string | null
+    /** Bên chịu phí chuyển tiền của bút toán; vắng ở giao dịch khác và dữ liệu cũ. */
+    feeBearer?: 'SENDER' | 'RECEIVER' | 'BOTH'
+    /** Phần phí bên gửi / bên nhận chịu; vắng khi bút toán không khai báo cách chia. */
+    senderFeeAmount?: number
+    receiverFeeAmount?: number
     transaction: LedgerTransaction
     account: LedgerAccount
     direction: 'CREDIT' | 'DEBIT'
