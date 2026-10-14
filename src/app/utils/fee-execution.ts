@@ -36,16 +36,16 @@ const SELECTABLE_PAYERS_BY_SERVICE: Readonly<
 }
 
 /**
- * Dịch vụ mà toàn bộ phí đầu ra của một chính sách phải do cùng một bên chịu.
- * Sổ cái chỉ có một cặp net/gross cho mỗi lần chuyển, nên không tách phí cho
- * cả người gửi và người nhận được; backend từ chối lúc duyệt.
+ * Chuyển tiền cho người gửi chịu, người nhận chịu hoặc cả hai chịu. Cả hai chịu là hai thành phần
+ * cùng loại phí, mỗi bên một thành phần; riêng phí phụ thuộc (VAT) chỉ khai một dòng và backend
+ * tự tách theo phí của từng bên. Luật kiểm tra nằm ở `validateTransferBearers`.
  */
-const SINGLE_BEARER_SERVICES: readonly string[] = ['EWALLET_TRANSFER_INTERNAL']
+const BEARER_SPLIT_SERVICES: readonly string[] = ['EWALLET_TRANSFER_INTERNAL']
 
-export const requiresSingleFeeBearer = (
+export const supportsBearerSplit = (
   serviceType: string | null | undefined
 ): boolean =>
-  Boolean(serviceType && SINGLE_BEARER_SERVICES.includes(serviceType))
+  Boolean(serviceType && BEARER_SPLIT_SERVICES.includes(serviceType))
 
 /**
  * Chân phí dương hiện ghi sổ được với người hưởng SYSTEM hoặc BANK. BANK chỉ là

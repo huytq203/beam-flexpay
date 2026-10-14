@@ -82,26 +82,69 @@ describe('feeConfigFormSchema', () => {
     expect(errorPaths(result)).toContain('validTo')
   })
 
-  it('chuyển tiền: cho một bên chịu, chặn trộn người gửi và người nhận', () => {
-    const transfer = (payers: string[]) =>
+  describe('chuyển tiền: người gửi, người nhận hoặc cả hai chịu phí', () => {
+    const transfer = (
+      rows: { payerType: string; componentType?: string; vat?: boolean }[]
+    ) =>
       feeConfigFormSchema.safeParse(
         form({
           serviceType: 'EWALLET_TRANSFER_INTERNAL',
           paymentMethod: '',
-          components: payers.map((payerType, index) =>
+          components: rows.map((row, index) =>
             component({
               key: `c${index}`,
-              componentType: index === 0 ? 'TRANSACTION_FEE' : 'SERVICE_FEE',
-              payerType
+              payerType: row.payerType,
+              componentType: row.vat
+                ? 'VAT'
+                : (row.componentType ?? 'TRANSACTION_FEE'),
+              ...(row.vat
+                ? {
+                    baseOn: 'FEE_COMPONENT',
+                    baseComponentType: 'TRANSACTION_FEE',
+                    fixedAmount: 0,
+                    percentage: 10
+                  }
+                : {})
             })
           )
         })
       )
 
-    expect(transfer(['RECEIVER']).success).toBe(true)
-    expect(transfer(['RECEIVER', 'RECEIVER']).success).toBe(true)
-    expect(transfer(['USER', 'USER']).success).toBe(true)
-    expect(errorPaths(transfer(['USER', 'RECEIVER']))).toContain('components')
+    it('một bên chịu thì hợp lệ', () => {
+      expect(transfer([{ payerType: 'RECEIVER' }]).success).toBe(true)
+      expect(transfer([{ payerType: 'USER' }]).success).toBe(true)
+    })
+
+    it('cả hai chịu cùng loại phí là hợp lệ, kèm một dòng VAT', () => {
+      expect(
+        transfer([{ payerType: 'USER' }, { payerType: 'RECEIVER' }]).success
+      ).toBe(true)
+      expect(
+        transfer([
+          { payerType: 'USER' },
+          { payerType: 'RECEIVER' },
+          { payerType: 'USER', vat: true }
+        ]).success
+      ).toBe(true)
+    })
+
+    it('cả hai chịu nhưng khác loại phí thì bị chặn', () => {
+      const result = transfer([
+        { payerType: 'USER', componentType: 'TRANSACTION_FEE' },
+        { payerType: 'RECEIVER', componentType: 'SERVICE_FEE' }
+      ])
+      expect(errorPaths(result)).toContain('components')
+    })
+
+    it('cả hai chịu mà khai hai dòng VAT thì bị chặn', () => {
+      const result = transfer([
+        { payerType: 'USER' },
+        { payerType: 'RECEIVER' },
+        { payerType: 'USER', vat: true },
+        { payerType: 'RECEIVER', vat: true }
+      ])
+      expect(errorPaths(result)).toContain('components')
+    })
   })
 
   it('bắt thành phần tham chiếu phải đứng trước', () => {
