@@ -91,7 +91,7 @@ describe('EWALLET_REFUND', () => {
 })
 
 describe('EWALLET_TRANSFER_INTERNAL', () => {
-  it('cho chọn người gửi (USER) hoặc người nhận (RECEIVER) chịu phí, kèm SYSTEM cho chi phí đầu vào', () => {
+  it('cho chọn người chuyển (USER) hoặc người nhận (RECEIVER) chịu phí, kèm SYSTEM cho chi phí đầu vào', () => {
     expect(getSelectablePayers('EWALLET_TRANSFER_INTERNAL')).toEqual([
       'USER',
       'RECEIVER'
@@ -101,17 +101,17 @@ describe('EWALLET_TRANSFER_INTERNAL', () => {
     ).toEqual(['USER', 'RECEIVER', 'SYSTEM'])
   })
 
-  it('nhãn chỉ là Người gửi / Người nhận cho các dịch vụ ví', () => {
+  it('nhãn chỉ là Người chuyển / Người nhận cho các dịch vụ ví', () => {
     const labels = Object.fromEntries(
       getPayerTypeOptions('EWALLET_TRANSFER_INTERNAL').map(
         ({ value, label }) => [value, label]
       )
     )
-    expect(labels.USER).toBe('Người gửi')
+    expect(labels.USER).toBe('Người chuyển')
     expect(labels.RECEIVER).toBe('Người nhận')
     const deposit = getPayerTypeOptions('EWALLET_DEPOSIT')
     expect(deposit.find(({ value }) => value === 'USER')?.label).toBe(
-      'Người gửi'
+      'Người chuyển'
     )
   })
 

@@ -44,7 +44,7 @@ export interface SearchFeePoliciesParams {
   appliedTarget?: string
   bankCode?: string
   paymentMethod?: string
-  /** Người chịu của một thành phần phí; USER khớp cả người gửi dạng SENDER. */
+  /** Người chịu của một thành phần phí; USER khớp cả người chuyển dạng SENDER. */
   payerType?: string
   /** Người hưởng của một thành phần phí. */
   beneficiaryType?: string

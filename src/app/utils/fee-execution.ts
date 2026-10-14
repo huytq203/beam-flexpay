@@ -30,13 +30,13 @@ const SELECTABLE_PAYERS_BY_SERVICE: Readonly<
   Record<string, readonly string[]>
 > = {
   EWALLET_REFUND: ['USER', 'MERCHANT'],
-  // Chuyển tiền: `USER` = người gửi bị trừ thêm phí, `RECEIVER` = phí trừ vào
+  // Chuyển tiền: `USER` = người chuyển bị trừ thêm phí, `RECEIVER` = phí trừ vào
   // tiền người nhận nhận được.
   EWALLET_TRANSFER_INTERNAL: ['USER', 'RECEIVER']
 }
 
 /**
- * Chuyển tiền cho người gửi chịu, người nhận chịu hoặc cả hai chịu. Cả hai chịu là hai thành phần
+ * Chuyển tiền cho người chuyển chịu, người nhận chịu hoặc cả hai chịu. Cả hai chịu là hai thành phần
  * cùng loại phí, mỗi bên một thành phần; riêng phí phụ thuộc (VAT) chỉ khai một dòng và backend
  * tự tách theo phí của từng bên. Luật kiểm tra nằm ở `validateTransferBearers`.
  */

@@ -9,7 +9,7 @@ interface BearerComponent {
 }
 
 export const TRANSFER_BEARER_TYPES_MESSAGE =
-  'Cả hai bên cùng chịu phí phải cùng loại phí: mỗi loại phí có một thành phần người gửi và một thành phần người nhận'
+  'Cả hai bên cùng chịu phí phải cùng loại phí: mỗi loại phí có một thành phần người chuyển và một thành phần người nhận'
 export const TRANSFER_BEARER_DEPENDENT_MESSAGE =
   'Phí phụ thuộc (ví dụ VAT) chỉ khai một dòng khi cả hai bên cùng chịu phí, hệ thống tự tính theo phí của từng bên'
 export const TRANSFER_BEARER_BASE_MESSAGE =
@@ -18,7 +18,7 @@ export const TRANSFER_BEARER_BASE_MESSAGE =
 const isReceiver = (payerType: string) => payerType === 'RECEIVER'
 
 /**
- * Bản sao phía FE của luật backend cho chuyển tiền. Người gửi chịu hoặc người nhận chịu: không
+ * Bản sao phía FE của luật backend cho chuyển tiền. Người chuyển chịu hoặc người nhận chịu: không
  * ràng buộc thêm. Cả hai bên cùng chịu: phí tính trên số tiền phải cùng loại ở hai bên, phí phụ
  * thuộc chỉ một dòng mỗi loại và phải dựa trên loại phí có ở cả hai bên.
  *

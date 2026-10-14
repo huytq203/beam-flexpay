@@ -17,7 +17,7 @@ export const REFUND_CHANNEL_BY_TYPE: Record<RefundOriginalType, RefundChannel> =
 
 export const REFUND_CHANNEL_HINT: Record<RefundOriginalType, string> = {
   CASH_IN: 'Hoàn nạp tiền chỉ về đúng tài khoản ngân hàng đã nạp.',
-  P2P_TRANSFER: 'Hoàn chuyển tiền chỉ về ví của người gửi.',
+  P2P_TRANSFER: 'Hoàn chuyển tiền chỉ về ví của người chuyển.',
   CASH_OUT: 'Hoàn rút tiền chỉ về ví, lấy từ quỹ ví tạm giữ.',
   MERCHANT_PAYMENT: 'Hoàn thanh toán merchant về ví khách.'
 }

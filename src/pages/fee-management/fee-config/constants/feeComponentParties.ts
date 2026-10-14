@@ -12,17 +12,17 @@ export const PAYER_TYPE_LABEL: Readonly<Record<string, string>> = {
   USER: 'Người dùng',
   MERCHANT: 'Merchant',
   SYSTEM: 'Hệ thống/platform',
-  SENDER: 'Người gửi',
+  SENDER: 'Người chuyển',
   RECEIVER: 'Người nhận'
 }
 
 /**
  * Dịch vụ ví đều có người chuyển và người nhận (nạp: bank → ví, rút: ví → bank,
- * chuyển: ví → ví), nên nhãn chỉ cần nói Người gửi / Người nhận. `USER` là cách
- * gọi cũ của người gửi.
+ * chuyển: ví → ví), nên nhãn chỉ cần nói Người chuyển / Người nhận. `USER` là cách
+ * gọi cũ của người chuyển.
  */
 const WALLET_FLOW_PAYER_LABEL: Readonly<Record<string, string>> = {
-  USER: 'Người gửi',
+  USER: 'Người chuyển',
   RECEIVER: 'Người nhận'
 }
 
@@ -35,7 +35,7 @@ const WALLET_FLOW_SERVICES: readonly string[] = [
 /**
  * Người chịu phí được phép chọn: chỉ đúng payer mà `FeeExecutionCapabilityRegistry`
  * thực thi được cho loại giao dịch (USER cho luồng ví, MERCHANT cho thu/chi hộ)
- * cùng SYSTEM cho chi phí đầu vào. Chuyển tiền cho chọn USER (người gửi, cộng
+ * cùng SYSTEM cho chi phí đầu vào. Chuyển tiền cho chọn USER (người chuyển, cộng
  * thêm vào số tiền chuyển) hoặc RECEIVER (trừ vào tiền người nhận nhận được).
  * Chưa chọn loại giao dịch thì mặc định USER.
  */

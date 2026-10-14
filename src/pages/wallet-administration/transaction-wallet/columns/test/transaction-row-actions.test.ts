@@ -19,7 +19,7 @@ const transaction = (
   from: {
     id: 'owner-sender',
     username: 'sender',
-    displayName: 'Người gửi',
+    displayName: 'Người chuyển',
     type: 'USER'
   },
   to: {
@@ -136,7 +136,7 @@ describe('getFreezeTargetParties', () => {
           to: {
             id: 'owner-sender',
             username: 'sender',
-            displayName: 'Người gửi',
+            displayName: 'Người chuyển',
             type: 'USER'
           }
         })

@@ -82,7 +82,7 @@ describe('feeConfigFormSchema', () => {
     expect(errorPaths(result)).toContain('validTo')
   })
 
-  describe('chuyển tiền: người gửi, người nhận hoặc cả hai chịu phí', () => {
+  describe('chuyển tiền: người chuyển, người nhận hoặc cả hai chịu phí', () => {
     const transfer = (
       rows: { payerType: string; componentType?: string; vat?: boolean }[]
     ) =>
