@@ -1,4 +1,9 @@
-import { FormDatePicker, FormInput, FormLabelHint, FormSelect } from '@components/form'
+import {
+  FormDatePicker,
+  FormInput,
+  FormLabelHint,
+  FormSelect
+} from '@components/form'
 import { BroomIcon, MagnifyingGlassIcon } from '@components/icons'
 import { ButtonComponent, FeeServiceTypeTabs } from '@components/index'
 import {
@@ -9,6 +14,7 @@ import {
   BACKEND_PAYMENT_METHODS,
   getPaymentMethodOptions
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
+import { FeePolicyPartyFilters } from './FeePolicyPartyFilters'
 import { POLICY_STATUS_FILTER_OPTIONS } from '../utils/policyStatusFilter'
 import { PUBLISHABLE_SERVICE_TYPES } from '@utils/fee-execution'
 import { useGetBankQuery } from '@services/apiFeeBank'
@@ -28,6 +34,9 @@ export interface FeePolicyFilterValues {
   appliedTarget: string
   bankCode: string
   paymentMethod: string
+  payerType: string
+  beneficiaryType: string
+  feeBearer: string
   validFrom: string
   validTo: string
   createdAtFrom: string
@@ -63,6 +72,9 @@ export const FeePolicyFilterBar = ({
       appliedTarget: values.appliedTarget,
       bankCode: values.bankCode,
       paymentMethod: values.paymentMethod,
+      payerType: values.payerType,
+      beneficiaryType: values.beneficiaryType,
+      feeBearer: values.feeBearer,
       validFrom: values.validFrom,
       validTo: values.validTo,
       createdAtFrom: values.createdAtFrom,
@@ -75,6 +87,9 @@ export const FeePolicyFilterBar = ({
       values.createdAtTo,
       values.keyword,
       values.paymentMethod,
+      values.payerType,
+      values.beneficiaryType,
+      values.feeBearer,
       values.status,
       values.subjectKeyword,
       values.validFrom,
@@ -87,7 +102,10 @@ export const FeePolicyFilterBar = ({
   })
 
   const labels = Object.fromEntries(
-    PUBLISHABLE_SERVICE_TYPES.map((value) => [value, SERVICE_TYPE_LABELS[value] ?? value])
+    PUBLISHABLE_SERVICE_TYPES.map((value) => [
+      value,
+      SERVICE_TYPE_LABELS[value] ?? value
+    ])
   )
   // Lọc theo LOẠI đối tượng, không theo từng phân khúc: người vận hành muốn
   // gom mọi chính sách cấu hình theo nhóm, tên nhóm cụ thể đã hiện ở cột.
@@ -116,6 +134,9 @@ export const FeePolicyFilterBar = ({
       appliedTarget: '',
       bankCode: '',
       paymentMethod: '',
+      payerType: '',
+      beneficiaryType: '',
+      feeBearer: '',
       validFrom: '',
       validTo: '',
       createdAtFrom: '',
@@ -197,6 +218,10 @@ export const FeePolicyFilterBar = ({
           options={paymentMethodOptions}
           className='flex flex-col'
         />
+        <FeePolicyPartyFilters
+          control={control}
+          serviceType={serviceType}
+        />
         <FormDatePicker
           name='validFrom'
           control={control}
@@ -232,7 +257,13 @@ export const FeePolicyFilterBar = ({
             htmlType='submit'
             form='feePolicyFilter'
             content='Tìm'
-            icon={<MagnifyingGlassIcon size={16} weight='bold' aria-hidden />}
+            icon={
+              <MagnifyingGlassIcon
+                size={16}
+                weight='bold'
+                aria-hidden
+              />
+            }
             className='w-full sm:w-auto'
           />
           <ButtonComponent
@@ -240,7 +271,13 @@ export const FeePolicyFilterBar = ({
             type='default'
             content='Xoá lọc'
             onClick={handleReset}
-            icon={<BroomIcon size={16} weight='bold' aria-hidden />}
+            icon={
+              <BroomIcon
+                size={16}
+                weight='bold'
+                aria-hidden
+              />
+            }
             className='w-full sm:w-auto'
           />
         </div>

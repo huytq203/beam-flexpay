@@ -121,6 +121,9 @@ export interface ExportFeePoliciesQuery {
   subjectKeyword?: string
   bankCode?: string
   paymentMethod?: string
+  payerType?: string
+  beneficiaryType?: string
+  feeBearer?: string
   validFrom?: string
   validTo?: string
   createdAtFrom?: string

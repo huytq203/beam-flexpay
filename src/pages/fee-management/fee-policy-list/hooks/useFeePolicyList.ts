@@ -14,6 +14,9 @@ export interface FeePolicyListFilters {
   appliedTarget?: string
   bankCode?: string
   paymentMethod?: string
+  payerType?: string
+  beneficiaryType?: string
+  feeBearer?: string
   validFrom?: string
   validTo?: string
   createdAtFrom?: string
@@ -62,6 +65,9 @@ export const useFeePolicyList = ({
       appliedTarget: filters.appliedTarget || undefined,
       bankCode: filters.bankCode || undefined,
       paymentMethod: filters.paymentMethod || undefined,
+      payerType: filters.payerType || undefined,
+      beneficiaryType: filters.beneficiaryType || undefined,
+      feeBearer: filters.feeBearer || undefined,
       validFrom: filters.validFrom || undefined,
       validTo: filters.validTo || undefined,
       createdAtFrom: filters.createdAtFrom || undefined,

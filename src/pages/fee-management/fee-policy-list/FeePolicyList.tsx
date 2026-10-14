@@ -1,18 +1,10 @@
-import { Can } from '@/app/permissions'
 import { FeeScopeTabs } from '@pages/fee-management/fee-config/components/FeeScopeTabs'
 import {
   FEE_SCOPE,
-  FEE_SCOPES,
   type FeeScope
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import {
-  PlusIcon,
-  WarningCircleIcon
-} from '@components/icons'
-import {
-  ButtonComponent,
   CardComponent,
-  ExportCsvButton,
   ReasonDialog,
   Table,
   TooltipComponent
@@ -22,36 +14,22 @@ import { useExportCsv } from '@hooks/useExportCsv'
 import { useUrlFilters } from '@hooks/useUrlFilters'
 import { useCustomerSegmentNames } from '@hooks/useCustomerSegmentNames'
 import { useExportFeePoliciesMutation } from '@services/apiExportCsv'
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FeePolicyFilterBar } from './components/FeePolicyFilterBar'
+import { FeePolicyListError } from './components/FeePolicyListError'
+import { FeePolicyTableActions } from './components/FeePolicyTableActions'
 import { FeePolicyExpandedDetail } from './components/FeePolicyExpandedDetail'
 import { getFeePolicyColumns } from './columns/FeePolicyList.column'
+import { useExpandedPolicyIds } from './hooks/useExpandedPolicyIds'
 import { useFeePolicyList } from './hooks/useFeePolicyList'
 import { useFeePolicyStatus } from './hooks/useFeePolicyStatus'
+import {
+  dateOnly,
+  FILTER_KEYS,
+  isFeeScope,
+  keepFilters
+} from './utils/feePolicyUrlFilters'
 import { splitPolicyStatusFilter } from './utils/policyStatusFilter'
-
-const FILTER_KEYS = [
-  'feeScope',
-  'keyword',
-  'subjectKeyword',
-  'status',
-  'appliedTarget',
-  'direction',
-  'serviceType',
-  'bankCode',
-  'paymentMethod',
-  'validFrom',
-  'validTo',
-  'createdAtFrom',
-  'createdAtTo'
-] as const
-
-const dateOnly = (value: string | undefined): string | null =>
-  value ? value.slice(0, 10) : null
-
-const isFeeScope = (value: unknown): value is FeeScope =>
-  FEE_SCOPES.some((scope) => scope === value)
 
 /**
  * Danh sách chính sách phí tách theo luồng phí: tab "Phí đầu ra" (đầu ra) chỉ lấy chính
@@ -61,8 +39,15 @@ const isFeeScope = (value: unknown): value is FeeScope =>
  */
 const FeePolicyList = () => {
   const navigate = useNavigate()
-  const { filters, applyFilters, clearFilters, page, size, setPage, setPageSize } =
-    useUrlFilters({ keys: FILTER_KEYS })
+  const {
+    filters,
+    applyFilters,
+    clearFilters,
+    page,
+    size,
+    setPage,
+    setPageSize
+  } = useUrlFilters({ keys: FILTER_KEYS })
 
   const feeScope = isFeeScope(filters.feeScope)
     ? filters.feeScope
@@ -78,29 +63,17 @@ const FeePolicyList = () => {
     appliedTarget: filters.appliedTarget,
     bankCode: filters.bankCode,
     paymentMethod: filters.paymentMethod,
+    payerType: filters.payerType,
+    beneficiaryType: filters.beneficiaryType,
+    feeBearer: filters.feeBearer,
     validFrom: filters.validFrom,
     validTo: filters.validTo,
     createdAtFrom: filters.createdAtFrom,
     createdAtTo: filters.createdAtTo
   }
   const expansionResetKey = JSON.stringify({ ...exportFilters, page, size })
-  const [expansionState, setExpansionState] = useState<{
-    queryKey: string
-    policyIds: string[]
-  }>({ queryKey: expansionResetKey, policyIds: [] })
-  const expandedPolicyIds =
-    expansionState.queryKey === expansionResetKey
-      ? expansionState.policyIds
-      : []
-  const updateExpandedPolicyIds = (
-    update: (current: string[]) => string[]
-  ) =>
-    setExpansionState((current) => ({
-      queryKey: expansionResetKey,
-      policyIds: update(
-        current.queryKey === expansionResetKey ? current.policyIds : []
-      )
-    }))
+  const { expandedPolicyIds, updateExpandedPolicyIds } =
+    useExpandedPolicyIds(expansionResetKey)
   const { rows, total, isFetching, isError, refetch } = useFeePolicyList({
     filters: exportFilters,
     page,
@@ -110,8 +83,7 @@ const FeePolicyList = () => {
   const allExpanded =
     pagePolicyIds.length > 0 &&
     pagePolicyIds.every((id) => expandedPolicyIds.includes(id))
-  const [triggerExport, { reset: resetExport }] =
-    useExportFeePoliciesMutation()
+  const [triggerExport, { reset: resetExport }] = useExportFeePoliciesMutation()
   const { exportFile, isExporting } = useExportCsv({
     trigger: triggerExport,
     reset: resetExport,
@@ -120,21 +92,7 @@ const FeePolicyList = () => {
 
   // Đổi luồng phí giữ nguyên mọi bộ lọc khác: loại giao dịch dùng chung cho cả hai luồng.
   const handleScopeChange = (next: FeeScope) =>
-    applyFilters({
-      feeScope: next,
-      keyword: filters.keyword ?? null,
-      subjectKeyword: filters.subjectKeyword ?? null,
-      status: filters.status ?? null,
-      appliedTarget: filters.appliedTarget ?? null,
-      direction: null,
-      serviceType: filters.serviceType ?? null,
-      bankCode: filters.bankCode ?? null,
-      paymentMethod: filters.paymentMethod ?? null,
-      validFrom: filters.validFrom ?? null,
-      validTo: filters.validTo ?? null,
-      createdAtFrom: filters.createdAtFrom ?? null,
-      createdAtTo: filters.createdAtTo ?? null
-    })
+    applyFilters(keepFilters(filters, { feeScope: next, direction: null }))
 
   const handleToggleAll = () =>
     updateExpandedPolicyIds((current) =>
@@ -144,29 +102,17 @@ const FeePolicyList = () => {
     )
 
   const tableActions = (
-    <>
-      <ExportCsvButton
-        onExport={() =>
-          exportFile({
-            ...exportFilters,
-            status: undefined,
-            ...splitPolicyStatusFilter(exportFilters.status)
-          })
-        }
-        loading={isExporting}
-        disabled={total === 0 || isError}
-        tooltip='File lấy trọn bộ lọc đang áp, không giới hạn theo trang; gồm chính sách phí, bản gán, thành phần phí và các bậc phí.'
-      />
-      <Can screen='FEE_CONFIG' action='create'>
-        <ButtonComponent
-          htmlType='button'
-          type='primary'
-          content='Thêm chính sách phí'
-          icon={<PlusIcon size={16} weight='bold' aria-hidden />}
-          onClick={() => navigate(PATHS.FEE_V4.POLICY_CREATE)}
-        />
-      </Can>
-    </>
+    <FeePolicyTableActions
+      onExport={() =>
+        exportFile({
+          ...exportFilters,
+          status: undefined,
+          ...splitPolicyStatusFilter(exportFilters.status)
+        })
+      }
+      exporting={isExporting}
+      exportDisabled={total === 0 || isError}
+    />
   )
 
   return (
@@ -188,44 +134,42 @@ const FeePolicyList = () => {
               appliedTarget: filters.appliedTarget ?? '',
               bankCode: filters.bankCode ?? '',
               paymentMethod: filters.paymentMethod ?? '',
+              payerType: filters.payerType ?? '',
+              beneficiaryType: filters.beneficiaryType ?? '',
+              feeBearer: filters.feeBearer ?? '',
               validFrom: filters.validFrom ?? '',
               validTo: filters.validTo ?? '',
               createdAtFrom: filters.createdAtFrom ?? '',
               createdAtTo: filters.createdAtTo ?? ''
             }}
             onServiceTypeChange={(serviceType) =>
-              applyFilters({
-                feeScope,
-                keyword: filters.keyword ?? null,
-                subjectKeyword: filters.subjectKeyword ?? null,
-                status: filters.status ?? null,
-                appliedTarget: filters.appliedTarget ?? null,
-                direction: null,
-                serviceType: serviceType ?? null,
-                bankCode: filters.bankCode ?? null,
-                paymentMethod: null,
-                validFrom: filters.validFrom ?? null,
-                validTo: filters.validTo ?? null,
-                createdAtFrom: filters.createdAtFrom ?? null,
-                createdAtTo: filters.createdAtTo ?? null
-              })
+              applyFilters(
+                keepFilters(filters, {
+                  feeScope,
+                  direction: null,
+                  serviceType: serviceType ?? null,
+                  paymentMethod: null,
+                  // Bên chịu phí chỉ có nghĩa với chuyển tiền: đổi sang loại khác thì bỏ lọc này.
+                  feeBearer:
+                    serviceType === 'EWALLET_TRANSFER_INTERNAL'
+                      ? filters.feeBearer
+                      : null
+                })
+              )
             }
             onSubmit={(values) =>
-              applyFilters({
-                feeScope,
-                direction: null,
-                serviceType: filters.serviceType ?? null,
-                keyword: values.keyword,
-                subjectKeyword: values.subjectKeyword,
-                status: values.status,
-                appliedTarget: values.appliedTarget,
-                bankCode: values.bankCode,
-                paymentMethod: values.paymentMethod,
-                validFrom: dateOnly(values.validFrom),
-                validTo: dateOnly(values.validTo),
-                createdAtFrom: dateOnly(values.createdAtFrom),
-                createdAtTo: dateOnly(values.createdAtTo)
-              })
+              applyFilters(
+                keepFilters(filters, {
+                  ...values,
+                  feeScope,
+                  direction: null,
+                  serviceType: filters.serviceType ?? null,
+                  validFrom: dateOnly(values.validFrom),
+                  validTo: dateOnly(values.validTo),
+                  createdAtFrom: dateOnly(values.createdAtFrom),
+                  createdAtTo: dateOnly(values.createdAtTo)
+                })
+              )
             }
             onReset={() => {
               clearFilters()
@@ -237,22 +181,7 @@ const FeePolicyList = () => {
 
       <CardComponent>
         {isError ? (
-          <div className='flex flex-col items-start gap-3 py-8'>
-            <p className='flex items-center gap-2 text-[13px] font-semibold text-danger-strong'>
-              <WarningCircleIcon size={18} weight='bold' aria-hidden />
-              Không tải được danh sách chính sách phí
-            </p>
-            <p className='max-w-[60ch] text-[13px] text-muted-foreground'>
-              Dịch vụ phí chưa trả lời. Thử lại; nếu vẫn lỗi thì báo đội vận hành
-              hệ thống.
-            </p>
-            <ButtonComponent
-              htmlType='button'
-              type='default'
-              content='Thử lại'
-              onClick={refetch}
-            />
-          </div>
+          <FeePolicyListError onRetry={refetch} />
         ) : (
           <Table
             tableLayout='fixed'
