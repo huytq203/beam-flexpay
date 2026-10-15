@@ -9,16 +9,13 @@ import {
 import { cn } from '@lib/utils/cn'
 import type { RefundTarget } from '../schemas/refund.schema'
 import { getSettleLabel, type RefundActionFlags } from '../utils/refund.utils'
-import { ApproveRefundPopover } from './ApproveRefundPopover'
+import { RefundDecisionPopover } from './RefundDecisionPopover'
 import { RefundActionButton } from './RefundActionButton'
-import { RejectRefundPopover } from './RejectRefundPopover'
 
 interface RefundActionsProps {
   refund: RefundTarget
   flags: RefundActionFlags
   variant: 'icon' | 'text'
-  /** Người đang đăng nhập; popover duyệt ghi vết theo tài khoản này. */
-  username?: string
   onView?: (refund: RefundTarget) => void
   onApprove: (refund: RefundTarget) => void
   onReject: (refund: RefundTarget) => void
@@ -31,7 +28,6 @@ export function RefundActions({
   refund,
   flags,
   variant,
-  username = '',
   onView,
   onApprove,
   onReject,
@@ -54,14 +50,14 @@ export function RefundActions({
       label='Từ chối'
       ariaLabel={nameFor('Từ chối')}
       icon={<CloseOutlined aria-hidden />}
-      onClick={openOrNothing(onReject)}
+      onClick={() => onReject(refund)}
     />
   )
   const approveButton = (
     <RefundActionButton
       variant={variant}
-      tone='primary'
-      label='Duyệt'
+      tone={isInline ? 'default' : 'primary'}
+      label={isInline ? 'Duyệt / Từ chối' : 'Duyệt'}
       ariaLabel={nameFor('Duyệt')}
       icon={<CheckOutlined aria-hidden />}
       onClick={openOrNothing(onApprove)}
@@ -90,27 +86,17 @@ export function RefundActions({
           />
         </Can>
       )}
-      {flags.decide && (
-        <>
-          {isInline ? (
-            <RejectRefundPopover refund={refund}>
-              {rejectButton}
-            </RejectRefundPopover>
-          ) : (
-            rejectButton
-          )}
-          {isInline ? (
-            <ApproveRefundPopover
-              refund={refund}
-              username={username}
-            >
-              {approveButton}
-            </ApproveRefundPopover>
-          ) : (
-            approveButton
-          )}
-        </>
-      )}
+      {flags.decide &&
+        (isInline ? (
+          <RefundDecisionPopover refund={refund}>
+            {approveButton}
+          </RefundDecisionPopover>
+        ) : (
+          <>
+            {rejectButton}
+            {approveButton}
+          </>
+        ))}
       {flags.settle && (
         <RefundActionButton
           variant={variant}

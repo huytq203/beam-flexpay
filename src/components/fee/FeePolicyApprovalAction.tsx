@@ -1,11 +1,7 @@
 import { useState } from 'react'
 import { Popover } from 'antd'
 import { ButtonComponent, ReasonDialog } from '@components/index'
-import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  SafetyOutlined
-} from '@components/icons'
+import { CheckOutlined } from '@components/icons'
 import { useMessage } from '@hooks/useMessage'
 import {
   usePatchApproveFeePolicyMutation,
@@ -21,7 +17,9 @@ interface FeePolicyApprovalActionProps {
   policy: FeePolicy
 }
 
-export const FeePolicyApprovalAction = ({ policy }: FeePolicyApprovalActionProps) => {
+export const FeePolicyApprovalAction = ({
+  policy
+}: FeePolicyApprovalActionProps) => {
   const [open, setOpen] = useState(false)
   const [isRejectOpen, setIsRejectOpen] = useState(false)
   const [hasBeenProcessed, setHasBeenProcessed] = useState(false)
@@ -76,18 +74,7 @@ export const FeePolicyApprovalAction = ({ policy }: FeePolicyApprovalActionProps
           Chọn kết quả xử lý cho chính sách{' '}
           <span className='font-semibold'>“{policy.name}”</span>.
         </p>
-        {approvalDecision ? (
-          <p className='m-0 min-w-0 text-xs leading-4 break-words text-muted-foreground'>
-            Phiên bản{' '}
-            <span className='tabular-nums'>
-              #{approvalDecision.expectedLockVersion}
-            </span>{' '}
-            · Mã kiểm duyệt{' '}
-            <span className='font-mono'>
-              {approvalDecision.expectedReviewHash.slice(0, 8)}
-            </span>
-          </p>
-        ) : (
+        {!approvalDecision && (
           <p className='m-0 min-w-0 text-xs leading-4 break-words text-danger-strong'>
             {MISSING_REVIEW_INFO_MESSAGE}
           </p>
@@ -96,10 +83,9 @@ export const FeePolicyApprovalAction = ({ policy }: FeePolicyApprovalActionProps
       <div className='grid grid-cols-1 gap-2 min-[384px]:grid-cols-2'>
         <ButtonComponent
           htmlType='button'
-          type='primary'
+          type='default'
           danger
-          content='Từ chối duyệt'
-          icon={<CloseCircleOutlined />}
+          content='Từ chối'
           className='order-2 w-full pointer-coarse:h-11! min-[384px]:order-none'
           loading={isRejecting}
           disabled={isLoading}
@@ -107,23 +93,14 @@ export const FeePolicyApprovalAction = ({ policy }: FeePolicyApprovalActionProps
         />
         <ButtonComponent
           htmlType='button'
-          type='primary'
-          content='Duyệt phí'
-          icon={<CheckCircleOutlined />}
+          type='default'
+          content='Duyệt'
           className='order-1 w-full pointer-coarse:h-11! min-[384px]:order-none'
           loading={isApproving}
           disabled={isLoading || !approvalDecision}
           onClick={handleApprove}
         />
       </div>
-      <ButtonComponent
-        htmlType='button'
-        type='text'
-        content='Hủy bỏ'
-        className='w-full pointer-coarse:h-11! min-[384px]:w-auto min-[384px]:self-center'
-        disabled={isLoading}
-        onClick={() => setOpen(false)}
-      />
     </div>
   )
 
@@ -153,7 +130,7 @@ export const FeePolicyApprovalAction = ({ policy }: FeePolicyApprovalActionProps
             htmlType='button'
             type='default'
             size='small'
-            icon={<SafetyOutlined />}
+            icon={<CheckOutlined />}
             loading={isLoading}
             disabled={isProcessed || isLoading}
           />

@@ -99,10 +99,10 @@ describe('AccountBank', () => {
     expect(await screen.findByText('Vietcombank')).toBeInTheDocument()
     expect(
       screen.getAllByText('Tài khoản').find((element) => (
-        element.classList.contains('info-status')
+        element.classList.contains('bg-primary/10')
       ))
     ).toBeInTheDocument()
-    expect(screen.getByText('Đang hoạt động')).toHaveClass('success-status')
+    expect(screen.getByText('Đang hoạt động')).toHaveClass('text-success-strong')
     expect(screen.getByText('******6789')).toBeInTheDocument()
     expect(screen.getByText('************1234')).toBeInTheDocument()
     expect(screen.getByText('NGUYEN VAN A')).toBeInTheDocument()

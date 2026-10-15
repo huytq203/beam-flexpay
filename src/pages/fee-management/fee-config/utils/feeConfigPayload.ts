@@ -10,7 +10,12 @@ import {
   getSelectablePayers
 } from '@utils/fee-execution'
 import dayjs from 'dayjs'
-import { WALLET_SUBJECT_TYPE } from '../constants/feeConfigFields'
+import {
+  allowsBankCriteria,
+  allowsProviderCriteria,
+  WALLET_SUBJECT_TYPE
+} from '../constants/feeConfigFields'
+import { allowsOriginalTypeCriteria } from '../constants/feeRefundOriginalType'
 import {
   CalculationMethod,
   getTierStart,
@@ -138,11 +143,17 @@ export const toAssignmentRequest = (
 ): FeeAssignmentCreateRequest => ({
   feePolicyId,
   serviceType: form.serviceType,
-  bankCode: form.bankCode || undefined,
-  // Sửa bản gán phải gửi lại nhà cung cấp đang có, nếu không backend coi là bỏ tiêu chí.
-  providerCode: form.providerCode || undefined,
-  // Sửa bản gán phải gửi lại loại giao dịch gốc đang có, nếu không backend coi là bỏ tiêu chí.
-  originalTransactionType: form.originalTransactionType || undefined,
+  bankCode: allowsBankCriteria(form.serviceType)
+    ? form.bankCode || undefined
+    : undefined,
+  // Backend chỉ nhận NCC trên nạp/rút ví; ô bị ẩn ở các loại khác nên không gửi để khỏi bị từ chối.
+  providerCode: allowsProviderCriteria(form.serviceType)
+    ? form.providerCode || undefined
+    : undefined,
+  // Backend chỉ nhận loại giao dịch gốc trên phí hoàn tiền; ô bị ẩn ở các loại khác nên không gửi.
+  originalTransactionType: allowsOriginalTypeCriteria(form.serviceType)
+    ? form.originalTransactionType || undefined
+    : undefined,
   paymentMethod: form.paymentMethod || undefined,
   merchantId: form.merchantId || undefined,
   // Phạm vi loại trừ nhau: gửi kèm tiêu chí của phạm vi không được chọn sẽ tạo ra bản gán

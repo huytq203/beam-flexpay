@@ -27,6 +27,8 @@ interface FormInputNumberProps<T extends FieldValues>
     hideError?: boolean
     /** Ép viền lỗi khi lỗi thuộc về một nhóm ô, không riêng ô này. */
     invalid?: boolean
+    /** Xem `FormField.idPrefix`. */
+    idPrefix?: string
 }
 
 export function FormInputNumber<T extends FieldValues>({
@@ -40,6 +42,7 @@ export function FormInputNumber<T extends FieldValues>({
     allowEmpty=false,
     hideError=false,
     invalid=false,
+    idPrefix,
     classNameLable='font-medium',
     ...rest
 }: FormInputNumberProps<T>) {
@@ -52,11 +55,12 @@ export function FormInputNumber<T extends FieldValues>({
             className={className}
             classNameLable={classNameLable}
             hideError={hideError}
+            idPrefix={idPrefix}
             render={(field, fieldState) => (
                 <InputNumber
                     {...field}
                     {...rest}
-                    id={field.name}
+                    id={idPrefix ? `${idPrefix}-${field.name}` : field.name}
                     status={invalid || (hideError && fieldState.error) ? 'error' : rest.status}
                     aria-invalid={invalid || Boolean(fieldState.error) || undefined}
                     placeholder={placeholder}

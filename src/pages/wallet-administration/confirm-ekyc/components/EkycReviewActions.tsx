@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Popover } from 'antd'
 import { Can } from '@/app/permissions'
-import { UserCheckIcon } from '@components/icons'
+import { CheckOutlined } from '@components/icons'
 import { ButtonComponent } from '@components/index'
 import { EkycIconButton } from './EkycIconButton'
 import type { EKYCListItem } from '@type/apiResponseEKYC'
@@ -56,12 +56,7 @@ export function EkycReviewActions({ record, onReview }: Props) {
             tone='success'
             label='Xét duyệt'
             aria-label={`Xét duyệt eKYC ${record.fullName ?? record.username ?? ''}`}
-            icon={
-              <UserCheckIcon
-                aria-hidden
-                size={18}
-              />
-            }
+            icon={<CheckOutlined aria-hidden />}
           />
         </span>
       </Popover>

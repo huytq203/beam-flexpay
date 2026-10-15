@@ -35,16 +35,16 @@ describe('wallet account columns', () => {
     )
 
     expect(screen.getByText('NGUYỄN VĂN A')).toBeInTheDocument()
-    expect(screen.getByText('0967770788')).toBeInTheDocument()
-    expect(screen.getByText('Đã xác thực')).toBeInTheDocument()
+    expect(screen.getByText(/0967770788/)).toBeInTheDocument()
+    expect(screen.getByText('Đã EKYC')).toBeInTheDocument()
   })
 
   it.each([
-    [true, 'Đăng nhập bị khóa', 'Đăng nhập bình thường'],
-    [false, 'Đăng nhập bình thường', 'Đăng nhập bị khóa'],
-    [null, 'Chưa xác định', 'Đăng nhập bị khóa'],
-    [undefined, 'Chưa xác định', 'Đăng nhập bị khóa']
-  ])('cột Đăng nhập: loginLocked=%s hiện %s', (loginLocked, shown, hidden) => {
+    [true, 'Khóa đăng nhập'],
+    [false, null],
+    [null, 'Đăng nhập: ?'],
+    [undefined, 'Đăng nhập: ?']
+  ])('gộp cột Trạng thái: loginLocked=%s hiện %s', (loginLocked, shown) => {
     render(
       <Table
         columns={getColumn({ can: () => false, onViewDetail: vi.fn() })}
@@ -54,8 +54,8 @@ describe('wallet account columns', () => {
       />
     )
 
-    expect(screen.getByText('Đăng nhập')).toBeInTheDocument()
+    expect(screen.queryByText('Đăng nhập')).not.toBeInTheDocument()
     if (shown) expect(screen.getAllByText(shown)).toHaveLength(1)
-    expect(screen.queryByText(hidden)).not.toBeInTheDocument()
+    else expect(screen.queryByText(/đăng nhập/i)).not.toBeInTheDocument()
   })
 })

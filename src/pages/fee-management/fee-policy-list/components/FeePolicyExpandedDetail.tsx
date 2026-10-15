@@ -13,6 +13,7 @@ import {
 } from '@pages/fee-management/fee-config/constants/feeRefundOriginalType'
 import { FeeComponentReadout } from '@pages/fee-management/fee-config/components/FeeComponentReadout'
 import { SectionHeading } from '@pages/fee-management/fee-config/components/SectionHeading'
+import { allowsBankCriteria, allowsProviderCriteria } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import type { FeeComponentFormValues } from '@pages/fee-management/fee-config/schemas/feeConfig.schema'
 import { toReadoutComponent } from '../utils/toReadoutComponent'
 import type {
@@ -115,9 +116,11 @@ const AssignmentRow = ({ assignment, appliedTargets }: AssignmentRowProps) => {
           scope.value
         )}
       </Fact>
-      <Fact label='Nhà cung cấp (NCC)'>
-        {assignment.providerCode || 'Tất cả'}
-      </Fact>
+      {allowsProviderCriteria(assignment.serviceType) && (
+        <Fact label='Nhà cung cấp (NCC)'>
+          {assignment.providerCode || 'Tất cả'}
+        </Fact>
+      )}
       {allowsOriginalTypeCriteria(assignment.serviceType) && (
         <Fact label='Loại giao dịch gốc'>
           {assignment.originalTransactionType
@@ -125,10 +128,16 @@ const AssignmentRow = ({ assignment, appliedTargets }: AssignmentRowProps) => {
             : 'Tất cả'}
         </Fact>
       )}
-      <Fact label='Ngân hàng phát hành'>{assignment.bankCode || 'Tất cả'}</Fact>
-      <Fact label='Phương thức giao dịch'>
-        {getFeeLabel(assignment.paymentMethod, PAYMENT_METHOD_LABELS)}
-      </Fact>
+      {allowsBankCriteria(assignment.serviceType) && (
+        <Fact label='Ngân hàng phát hành'>
+          {assignment.bankCode || 'Tất cả'}
+        </Fact>
+      )}
+      {!allowsOriginalTypeCriteria(assignment.serviceType) && (
+        <Fact label='Phương thức giao dịch'>
+          {getFeeLabel(assignment.paymentMethod, PAYMENT_METHOD_LABELS)}
+        </Fact>
+      )}
     </div>
   )
 }

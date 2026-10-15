@@ -2,7 +2,10 @@ import { FeeDomain } from '@components/fee/feeDomain'
 import { ModalComponent } from '@components/index'
 import { COMPONENT_TYPE_LABELS } from '@constants/feeLabels'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { EXECUTABLE_BENEFICIARY } from '@utils/fee-execution'
+import {
+  EXECUTABLE_BENEFICIARY,
+  supportsBearerSplit
+} from '@utils/fee-execution'
 import { useEffect, useMemo } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import {
@@ -21,6 +24,7 @@ import {
   CalculationMethod,
   createFeeComponentFormSchema,
   DUPLICATE_FEE_COMPONENT_MESSAGE,
+  feeComponentFormSchema,
   usesTiers,
   type FeeComponentFormValues
 } from '../schemas/feeConfig.schema'
@@ -35,12 +39,25 @@ import {
   emptyComponent,
   withZeroRates
 } from '../utils/feeComponentDefaults'
+import {
+  BOTH_BEARERS,
+  BOTH_BEARERS_DUPLICATE_MESSAGE,
+  RECEIVER_PAYER,
+  SENDER_PAYER
+} from '../utils/bearerPairs'
 import { FeeComponentFields } from './FeeComponentFields'
+
+const BOTH_BEARERS_OPTION = {
+  value: BOTH_BEARERS,
+  label: 'Cả hai bên cùng chịu'
+}
 
 interface FeeComponentDialogProps {
   open: boolean
   /** Bỏ trống là thêm mới. */
   initialValue: FeeComponentFormValues | null
+  /** Thành phần người nhận đi cặp với `initialValue` (chuyển tiền, cả hai bên cùng chịu). */
+  initialPartner?: FeeComponentFormValues | null
   /** Các thành phần đứng trước — chỉ chúng làm cơ sở tính được. */
   precedingComponents: readonly FeeComponentFormValues[]
   /** Toàn bộ thành phần hiện có, dùng để kiểm tra trùng tổ hợp định danh. */
@@ -51,13 +68,15 @@ interface FeeComponentDialogProps {
   businessCategory: FeeBusinessCategory
   /** Loại giao dịch của chính sách, dùng để suy người chịu phí mặc định. */
   serviceType: string
-  onSave: (value: FeeComponentFormValues) => void
+  /** Một thành phần, hoặc hai (người chuyển rồi người nhận) khi cả hai bên cùng chịu. */
+  onSave: (values: FeeComponentFormValues[]) => void
   onCancel: () => void
 }
 
 export const FeeComponentDialog = ({
   open,
   initialValue,
+  initialPartner = null,
   precedingComponents,
   existingComponents,
   feeDomain,
@@ -69,6 +88,7 @@ export const FeeComponentDialog = ({
 }: FeeComponentDialogProps) => {
   const isInputCost = feeScope === FEE_SCOPE.INPUT_COST
   const isWallet = feeDomain === FeeDomain.EWALLET
+  const bearerSplit = supportsBearerSplit(serviceType) && !isInputCost
   // Phí đầu ra do payer của giao dịch chịu; phí đầu vào luôn do SYSTEM chịu.
   const payerTypeOptions = useMemo(
     () =>
@@ -110,7 +130,7 @@ export const FeeComponentDialog = ({
     return {
       ...initialValue,
       feeScope,
-      payerType: effectivePayer,
+      payerType: initialPartner ? BOTH_BEARERS : effectivePayer,
       beneficiaryType: hasAllowedBeneficiary
         ? initialValue.beneficiaryType
         : defaultBeneficiaryType
@@ -120,6 +140,7 @@ export const FeeComponentDialog = ({
     defaultPayerType,
     feeScope,
     initialValue,
+    initialPartner,
     beneficiaryTypeOptions,
     payerTypeOptions
   ])
@@ -129,12 +150,29 @@ export const FeeComponentDialog = ({
     [existingComponents, initialValue?.key]
   )
 
-  const { control, handleSubmit, setValue, trigger, formState } =
+  const { control, handleSubmit, setValue, setError, trigger, formState } =
     useForm<FeeComponentFormValues>({
       resolver: zodResolver(componentSchema),
       defaultValues,
       mode: 'onTouched'
     })
+
+  /**
+   * Mức phí người nhận khi cả hai bên cùng chịu. Phần dùng chung (loại phí, cách tính, người hưởng)
+   * lấy từ form chính lúc lưu, nên form này chỉ giữ mức phí và giới hạn.
+   */
+  const receiverDefaults = useMemo(
+    () =>
+      initialPartner ??
+      emptyComponent(feeScope, RECEIVER_PAYER, defaultBeneficiaryType),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- chỉ dựng một lần cho mỗi lần mở
+    []
+  )
+  const receiverForm = useForm<FeeComponentFormValues>({
+    resolver: zodResolver(feeComponentFormSchema),
+    defaultValues: receiverDefaults,
+    mode: 'onTouched'
+  })
 
   const componentType = useWatch({ control, name: 'componentType' })
   const baseOn = useWatch({ control, name: 'baseOn' })
@@ -167,8 +205,24 @@ export const FeeComponentDialog = ({
 
   const isVat = componentType === VAT_COMPONENT_TYPE
   const tiered = usesTiers(calculationMethod)
+  // Phí phụ thuộc (VAT, phí tính trên phí khác) chỉ khai một dòng khi cả hai bên cùng chịu.
+  const canSplit = bearerSplit && baseOn === 'AMOUNT' && !isVat
+  const isBoth = payerType === BOTH_BEARERS
+
+  useEffect(() => {
+    if (isBoth && !canSplit) {
+      setValue('payerType', SENDER_PAYER, { shouldValidate: true })
+    }
+  }, [canSplit, isBoth, setValue])
+
+  const payerSelectOptions = canSplit
+    ? [...payerTypeOptions, BOTH_BEARERS_OPTION]
+    : payerTypeOptions
   const vatBaseComponentType = getVatBaseForCategory(businessCategory)
-  const baseTypes = collectBaseTypes(precedingComponents, payerType)
+  const baseTypes = collectBaseTypes(
+    precedingComponents,
+    isBoth ? SENDER_PAYER : payerType
+  )
   const hasPrecedingComponents = baseTypes.length > 0
   const hasVatBaseAbove = Boolean(
     vatBaseComponentType && baseTypes.includes(vatBaseComponentType)
@@ -218,7 +272,11 @@ export const FeeComponentDialog = ({
     : baseTypes
 
   const baseTypeOptions = allowedBaseTypes.map((type) => {
-    const summary = summariseBaseType(type, precedingComponents, payerType)
+    const summary = summariseBaseType(
+      type,
+      precedingComponents,
+      isBoth ? SENDER_PAYER : payerType
+    )
     const detail = summary.isSum
       ? `tổng ${summary.formulas.length} thành phần`
       : summary.formulas[0]
@@ -240,6 +298,55 @@ export const FeeComponentDialog = ({
     hasPrecedingComponents
   })
 
+  /**
+   * Cả hai bên cùng chịu lưu thành hai thành phần cùng loại phí, như backend vẫn nhận. Trùng tổ
+   * hợp định danh phải tự kiểm ở đây: resolver chỉ thấy giá trị tạm BOTH, không trùng với gì.
+   */
+  const submit = handleSubmit(async (value) => {
+    if (value.payerType !== BOTH_BEARERS) {
+      onSave([withZeroRates(value)])
+      return
+    }
+    const ownKeys = new Set(
+      [initialValue?.key, initialPartner?.key].filter(Boolean)
+    )
+    const clashes = [SENDER_PAYER, RECEIVER_PAYER].some((payer) =>
+      existingComponents.some(
+        (existing) =>
+          !ownKeys.has(existing.key) &&
+          existing.componentType === value.componentType &&
+          existing.payerType === payer &&
+          existing.beneficiaryType === value.beneficiaryType
+      )
+    )
+    if (clashes) {
+      // Câu riêng: câu trùng chung bị hiệu ứng kiểm lại ba ô xoá ngay vì giá trị tạm BOTH không trùng.
+      setError('componentType', {
+        type: 'custom',
+        message: BOTH_BEARERS_DUPLICATE_MESSAGE
+      })
+      return
+    }
+    const shared = {
+      feeScope: value.feeScope,
+      componentType: value.componentType,
+      baseOn: value.baseOn,
+      baseComponentType: value.baseComponentType,
+      calculationMethod: value.calculationMethod,
+      beneficiaryType: value.beneficiaryType,
+      roundMode: value.roundMode,
+      payerType: RECEIVER_PAYER
+    }
+    Object.entries(shared).forEach(([field, next]) =>
+      receiverForm.setValue(field as keyof typeof shared, next as never)
+    )
+    if (!(await receiverForm.trigger())) return
+    onSave([
+      withZeroRates({ ...value, payerType: SENDER_PAYER }),
+      withZeroRates({ ...receiverForm.getValues(), ...shared })
+    ])
+  })
+
   return (
     <ModalComponent
       open={open}
@@ -250,8 +357,9 @@ export const FeeComponentDialog = ({
       cancelText='Huỷ'
       // antd tự giới hạn về `calc(100vw - 32px)` ở màn hẹp, nên một số cố
       // định là đủ và tránh phụ thuộc thứ tự breakpoint của wrapper.
-      width={880}
-      onOk={handleSubmit((value) => onSave(withZeroRates(value)))}
+      // Hai bên cùng chịu đặt hai khối mức phí cạnh nhau nên cần rộng hơn.
+      width={isBoth ? 1080 : 880}
+      onOk={submit}
       onCancel={onCancel}
     >
       <div className='flex flex-col gap-3'>
@@ -261,8 +369,8 @@ export const FeeComponentDialog = ({
           baseOnOptions={baseOnOptions}
           baseTypeOptions={baseTypeOptions}
           methodOptions={methodOptions}
-          payerTypeOptions={payerTypeOptions}
-          payerDisabled={payerTypeOptions.length <= 1}
+          payerTypeOptions={payerSelectOptions}
+          payerDisabled={payerSelectOptions.length <= 1}
           beneficiaryTypeOptions={beneficiaryTypeOptions}
           beneficiaryDisabled={!isInputCost && isWallet}
           payerType={payerType}
@@ -272,14 +380,27 @@ export const FeeComponentDialog = ({
           tiered={tiered}
           tierError={formState.errors.tiers?.message}
           onComponentTypeChange={handleComponentTypeChange}
+          receiver={
+            isBoth
+              ? {
+                  control: receiverForm.control,
+                  tierError: receiverForm.formState.errors.tiers?.message
+                }
+              : undefined
+          }
           onMethodChange={(next) => {
             setValue('tiers', [])
+            receiverForm.setValue('tiers', [])
             // Bậc thang lấy số từ bảng bậc: bỏ các ô của cách tính mặc định để không gửi thừa.
             if (usesTiers(String(next))) {
               setValue('percentage', null)
               setValue('fixedAmount', null)
               setValue('minFee', null)
               setValue('maxFee', null)
+              receiverForm.setValue('percentage', null)
+              receiverForm.setValue('fixedAmount', null)
+              receiverForm.setValue('minFee', null)
+              receiverForm.setValue('maxFee', null)
             }
           }}
           onPayerChange={(next) => {

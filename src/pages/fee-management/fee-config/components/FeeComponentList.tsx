@@ -21,6 +21,7 @@ import {
   type FeeScope
 } from '../constants/feeConfigFields'
 import { FeeBusinessCategoryTabs } from './FeeBusinessCategoryTabs'
+import { findBearerPartner, groupBearerPairs } from '../utils/bearerPairs'
 import { FeeComponentCard } from './FeeComponentCard'
 import { FeeComponentDialog } from './FeeComponentDialog'
 import { SectionHeading } from './SectionHeading'
@@ -59,7 +60,7 @@ export const FeeComponentList = ({
   error,
   readOnly = false
 }: FeeComponentListProps) => {
-  const { fields, append, update, remove } = useFieldArray({
+  const { fields, append, insert, update, remove } = useFieldArray({
     control,
     name: 'components'
   })
@@ -96,6 +97,12 @@ export const FeeComponentList = ({
   }
 
   const editing = editingIndex === null ? null : components[editingIndex]
+  // Chuyển tiền: sửa một bên của cặp là sửa cả cặp, nên mở hộp thoại kèm thành phần bên kia.
+  const partnerIndex =
+    editingIndex === null
+      ? null
+      : findBearerPartner(serviceType, components, editingIndex)
+  const partner = partnerIndex === null ? null : components[partnerIndex]
   const dialogScope: FeeScope | null = editing?.feeScope ?? addingScope
   const closeDialog = () => {
     setAddingScope(null)
@@ -106,19 +113,28 @@ export const FeeComponentList = ({
    * Thông báo nói rõ đây mới là thay đổi trên biểu mẫu. Danh sách thành phần chỉ
    * xuống cơ sở dữ liệu khi bấm Thiết lập, nên một câu "đã lưu" ở đây là nói sai.
    */
-  const handleSave = (value: FeeComponentFormValues) => {
+  const handleSave = (values: FeeComponentFormValues[]) => {
+    const [first, second] = values
     if (editingIndex === null) {
-      append(value)
+      append(values)
       successMess('Đã thêm thành phần phí, bấm Thiết lập để lưu')
+    } else if (partnerIndex !== null) {
+      // `editingIndex` luôn là người chuyển của cặp (thẻ mở bằng thành phần đứng đầu nhóm).
+      update(editingIndex, first)
+      if (second) update(partnerIndex, second)
+      else remove(partnerIndex)
+      successMess('Đã sửa thành phần phí, bấm Thiết lập để lưu')
     } else {
-      update(editingIndex, value)
+      update(editingIndex, first)
+      // Đổi từ một bên sang cả hai bên: chèn bên người nhận ngay sau để giữ thứ tự tính.
+      if (second) insert(editingIndex + 1, second)
       successMess('Đã sửa thành phần phí, bấm Thiết lập để lưu')
     }
     closeDialog()
   }
 
-  const handleRemove = (index: number) => {
-    remove(index)
+  const handleRemove = (index: number, pairedIndex: number | null) => {
+    remove(pairedIndex === null ? index : [index, pairedIndex])
     successMess('Đã xoá thành phần phí khỏi chính sách')
   }
 
@@ -142,6 +158,7 @@ export const FeeComponentList = ({
       {FEE_SCOPES.map((scope) => {
         const isInput = scope === FEE_SCOPE.INPUT_COST
         const indexes = indexesOf(scope)
+        const groups = groupBearerPairs(serviceType, components, indexes)
         return (
           <div
             key={scope}
@@ -182,14 +199,17 @@ export const FeeComponentList = ({
               </div>
             ) : (
               <div className='flex flex-col gap-3'>
-                {indexes.map((index, position) => (
+                {groups.map(({ primary, partner: pairedIndex }, position) => (
                   <FeeComponentCard
-                    key={fields[index].id}
+                    key={fields[primary].id}
                     index={position}
-                    component={components[index]}
+                    component={components[primary]}
+                    partner={
+                      pairedIndex === null ? null : components[pairedIndex]
+                    }
                     readOnly={readOnly}
-                    onEdit={() => setEditingIndex(index)}
-                    onRemove={() => handleRemove(index)}
+                    onEdit={() => setEditingIndex(primary)}
+                    onRemove={() => handleRemove(primary, pairedIndex)}
                   />
                 ))}
               </div>
@@ -208,6 +228,7 @@ export const FeeComponentList = ({
         <FeeComponentDialog
           open
           initialValue={editing}
+          initialPartner={partner}
           precedingComponents={precedingInScope(dialogScope)}
           existingComponents={components}
           feeDomain={feeDomain}

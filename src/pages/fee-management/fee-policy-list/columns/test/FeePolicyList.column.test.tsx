@@ -17,7 +17,7 @@ const policy = {
   currency: 'VND',
   validFrom: '2026-09-01',
   validTo: null,
-  status: 'REJECTED',
+  status: 'INIT',
   priority: 1
 } satisfies FeePolicyRow
 
@@ -33,6 +33,14 @@ const renderColumns = () => {
       no: 2,
       name: 'Biểu phí không thể sửa',
       status: 'INACTIVE'
+    },
+    {
+      ...policy,
+      id: 'policy-rejected',
+      key: 'policy-rejected',
+      no: 3,
+      name: 'Biểu phí bị từ chối',
+      status: 'REJECTED'
     }
   ]
 
@@ -57,7 +65,7 @@ const renderColumns = () => {
 }
 
 describe('cột hành động danh sách chính sách phí', () => {
-  it('chỉ hiện sửa cấu hình cho chính sách có thể sửa', () => {
+  it('chỉ hiện sửa cấu hình cho chính sách chưa duyệt, ẩn với bản bị từ chối', () => {
     renderColumns()
 
     expect(screen.getAllByLabelText('Sửa cấu hình')).toHaveLength(1)

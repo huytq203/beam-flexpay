@@ -9,7 +9,7 @@ import {
  * `getPayerTypeOptions`.
  */
 export const PAYER_TYPE_LABEL: Readonly<Record<string, string>> = {
-  USER: 'Người dùng',
+  USER: 'Người chuyển',
   MERCHANT: 'Merchant',
   SYSTEM: 'Hệ thống/platform',
   SENDER: 'Người chuyển',

@@ -1,18 +1,7 @@
 import type { FeePaymentPartner } from '@type/fee.type'
 
-/**
- * Nạp, rút và hoàn tiền (hoàn một lệnh nạp/rút đã đi qua nhà cung cấp) mới có nhà cung cấp;
- * backend từ chối nhà cung cấp ở loại giao dịch khác.
- */
-export const PROVIDER_SERVICE_TYPES: readonly string[] = [
-  'EWALLET_DEPOSIT',
-  'EWALLET_WITHDRAWAL',
-  'EWALLET_REFUND'
-]
-
-export const allowsProviderCriteria = (
-  serviceType: string | null | undefined
-): boolean => PROVIDER_SERVICE_TYPES.includes(serviceType ?? '')
+/** Một nguồn duy nhất ở `feeConfigFields`; giữ re-export để các chỗ import cũ không phải đổi. */
+export { allowsProviderCriteria } from './feeConfigFields'
 
 /**
  * Nhà cung cấp chọn được: cổng thuần (NAPAS, VIETQR). Ngân hàng liên kết trực tiếp là

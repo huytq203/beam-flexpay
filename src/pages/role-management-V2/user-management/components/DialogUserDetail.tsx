@@ -1,3 +1,4 @@
+import { StatusToneBadge } from '@components/status-badge/StatusToneBadge'
 import { memo } from 'react'
 import { ButtonComponent } from '@components/index'
 import { SkeletonInput } from '@components/ui/skeletons/Skeleton'
@@ -119,9 +120,9 @@ const DialogUserDetail = ({ userId }: Props) => {
           <div>
             <dt className='text-xs font-medium text-slate-500'>Trạng thái</dt>
             <dd className='mt-1'>
-              <span className={user.enabled ? 'success-status inline-flex rounded-md px-2 py-0.5 text-xs' : 'danger-status inline-flex rounded-md px-2 py-0.5 text-xs'}>
+              <StatusToneBadge tone={user.enabled ? 'success' : 'danger'}>
                 {user.enabled ? 'Hoạt động' : 'Không hoạt động'}
-              </span>
+              </StatusToneBadge>
             </dd>
           </div>
           <div className='min-w-0'>

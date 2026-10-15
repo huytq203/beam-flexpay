@@ -14,6 +14,8 @@ import {
 interface FeeTierEditorProps {
   control: Control<FeeComponentFormValues>
   error?: string
+  /** Xem `FormField.idPrefix`; dùng cho bảng bậc của người nhận. */
+  idPrefix?: string
 }
 
 const COLUMN_COUNT = 7
@@ -37,7 +39,11 @@ const HEAD =
  * chỉ mở khi bậc cuối đã có giá trị kết thúc — chưa chốt điểm cuối thì chưa có
  * gì để nối tiếp, và bậc mới sẽ bắt đầu sai chỗ.
  */
-export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
+export const FeeTierEditor = ({
+  control,
+  error,
+  idPrefix
+}: FeeTierEditorProps) => {
   const { fields, append, remove } = useFieldArray({ control, name: 'tiers' })
   const tiers = useWatch({ control, name: 'tiers' }) ?? []
   const { errors } = useFormState({ control })
@@ -143,6 +149,7 @@ export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
                     <FormInputNumber
                       name={`tiers.${index}.maxValue`}
                       control={control}
+                      idPrefix={idPrefix}
                       // Bậc cuối để trống nghĩa là chạy tới vô cùng, nên ô này
                       // phải giữ trạng rỗng thay vì rơi về 0.
                       allowEmpty
@@ -155,6 +162,7 @@ export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
                     <FormInputNumber
                       name={`tiers.${index}.percentage`}
                       control={control}
+                      idPrefix={idPrefix}
                       invalid={rateInvalid}
                       allowEmpty
                       placeholder='0'
@@ -166,6 +174,7 @@ export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
                     <FormInputNumber
                       name={`tiers.${index}.fixedAmount`}
                       control={control}
+                      idPrefix={idPrefix}
                       invalid={rateInvalid}
                       allowEmpty
                       placeholder='0'
@@ -177,6 +186,7 @@ export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
                     <FormInputNumber
                       name={`tiers.${index}.minFee`}
                       control={control}
+                      idPrefix={idPrefix}
                       allowEmpty
                       placeholder='0'
                       hideError
@@ -187,6 +197,7 @@ export const FeeTierEditor = ({ control, error }: FeeTierEditorProps) => {
                     <FormInputNumber
                       name={`tiers.${index}.maxFee`}
                       control={control}
+                      idPrefix={idPrefix}
                       allowEmpty
                       placeholder='0'
                       hideError

@@ -1,20 +1,17 @@
 import { FormLabelHint, FormSelect } from '@components/form'
 import { useGetBankQuery } from '@services/apiFeeBank'
-import { useGetPaymentPartnersQuery } from '@services/apiFeePartner'
+import { useGetPaymentPartnersQuery } from '@services/apiFeePaymentPartner'
 import { useGetCustomerSegmentsQuery } from '@services/apiCustomerSegment'
 import { useEffect } from 'react'
 import type { Control } from 'react-hook-form'
 import { useController, useWatch } from 'react-hook-form'
 import {
   ASSIGNMENT_SCOPE_OPTIONS,
+  allowsBankCriteria,
+  allowsProviderCriteria,
   getPaymentMethodOptions,
   getFormFieldRules
 } from '../constants/feeConfigFields'
-import {
-  PROVIDER_HINT,
-  allowsProviderCriteria,
-  toProviderOptions
-} from '../constants/feeProvider'
 import {
   ORIGINAL_TYPE_HINT,
   ORIGINAL_TYPE_OPTIONS,
@@ -24,6 +21,12 @@ import type { FeeConfigFormValues } from '../schemas/feeConfig.schema'
 import { MerchantPickerField } from './MerchantPickerField'
 import { UserPickerField } from './UserPickerField'
 import { SectionHeading } from './SectionHeading'
+
+const PROVIDER_HINT =
+  'Chỉ chọn cổng trung gian như NAPAS, VietQR. Liên kết trực tiếp với ngân hàng (VCB, VPB) thì để trống ô này và chọn ở Ngân hàng phát hành.'
+
+const ISSUER_BANK_HINT =
+  'Ngân hàng phát hành thẻ/tài khoản của khách. Giao dịch qua NCC thì khớp theo ngân hàng này; giao dịch liên kết trực tiếp thì đây cũng là ngân hàng đối tác.'
 
 const REFUND_BANK_HINT =
   'Mã ngân hàng chỉ khớp hoàn tiền về ngân hàng. Hoàn về ví không có mã ngân hàng, nên cần có một bản gán mặc định không ghi ngân hàng.'
@@ -59,10 +62,29 @@ export const AssignmentSection = ({
   })
   const { field: subjectField } = useController({ control, name: 'subjectId' })
   const rules = getFormFieldRules(feeDomain, serviceType)
+  const showProvider = allowsProviderCriteria(serviceType)
+  const showBank = allowsBankCriteria(serviceType)
+  const showOriginalType = allowsOriginalTypeCriteria(serviceType)
+  // Báo giá hoàn tiền không nêu phương thức thanh toán nên bản gán có phương thức sẽ không bao giờ khớp;
+  // ẩn ô thay vì để một danh sách rỗng. Giá trị cũ (nếu có) đã được hiệu ứng dọn bên dưới xoá về rỗng.
+  const showPaymentMethod = !showOriginalType
+  // Chuyển ví chỉ có hai ô (phương thức, đối tượng); nạp/rút ví có thêm NCC nên đủ bốn ô một hàng.
+  const isInternalTransfer = serviceType === 'EWALLET_TRANSFER_INTERNAL'
+  // Phí hoàn tiền ẩn ô phương thức nên còn đúng bốn ô (NCC, loại giao dịch gốc, ngân hàng, đối tượng): một hàng.
+  const colSpan = showProvider
+    ? 'md:col-span-3'
+    : isInternalTransfer
+      ? 'md:col-span-6'
+      : 'md:col-span-4'
   const paymentMethodOptions = getPaymentMethodOptions(serviceType)
 
   useEffect(() => {
     if (readOnly) return
+    // Chuyển ví chỉ có một phương thức (ví điện tử) nên điền sẵn, khỏi bắt người vận hành chọn.
+    if (isInternalTransfer && paymentMethodField.value === '') {
+      paymentMethodField.onChange(paymentMethodOptions[0]?.value ?? '')
+      return
+    }
     // Ô trống nghĩa là mọi phương thức; chỉ dọn giá trị của loại giao dịch cũ không còn hợp lệ.
     const isCurrentValueAllowed =
       paymentMethodField.value === '' ||
@@ -72,17 +94,10 @@ export const AssignmentSection = ({
     if (!isCurrentValueAllowed) {
       paymentMethodField.onChange('')
     }
-  }, [paymentMethodField, paymentMethodOptions, readOnly])
+  }, [paymentMethodField, paymentMethodOptions, readOnly, isInternalTransfer])
 
   // `PaginationRequest` của service phí chặn size trên 100; gửi hơn là ăn 400.
   const { data: bankData } = useGetBankQuery({ page: 1, size: 100 })
-  const showProvider = allowsProviderCriteria(serviceType)
-  const showOriginalType = allowsOriginalTypeCriteria(serviceType)
-  const { data: partners } = useGetPaymentPartnersQuery(undefined, {
-    skip: !showProvider
-  })
-  const providerOptions = toProviderOptions(partners)
-
   const scope = scopeField.value
   const canScope = rules.showSegment || rules.showSubject
 
@@ -106,6 +121,21 @@ export const AssignmentSection = ({
     label: segment.name ? `${segment.name} (${segment.code})` : segment.code
   }))
 
+  // Ô NCC chỉ liệt kê cổng trung gian (provider, không phải issuer); VCB/VPB là ngân hàng trực tiếp
+  // và backend từ chối chúng ở đây. NCC INACTIVE vẫn được chọn để cấu hình trước khi go-live.
+  const { data: partners } = useGetPaymentPartnersQuery(undefined, {
+    skip: !showProvider
+  })
+  const providerOptions = (partners ?? [])
+    .filter((partner) => partner.provider && !partner.issuer)
+    .map((partner) => ({
+      value: partner.code,
+      label:
+        partner.status === 'INACTIVE'
+          ? `${partner.name} (${partner.code}) · chưa kích hoạt`
+          : `${partner.name} (${partner.code})`
+    }))
+
   const bankOptions = (bankData?.content ?? []).map((bank) => ({
     value: bank.code,
     label: `${bank.name} (${bank.code})`
@@ -128,13 +158,12 @@ export const AssignmentSection = ({
                 hint={PROVIDER_HINT}
               />
             }
-            placeholder='Mọi nhà cung cấp'
-            allowClear
+            placeholder='Mọi NCC'
             showSearch
             optionFilterProp='label'
             options={providerOptions}
             disabled={readOnly}
-            className='col-span-12 flex flex-col md:col-span-4'
+            className={`col-span-12 flex flex-col ${colSpan}`}
           />
         )}
         {showOriginalType && (
@@ -151,39 +180,49 @@ export const AssignmentSection = ({
             allowClear
             options={[...ORIGINAL_TYPE_OPTIONS]}
             disabled={readOnly}
-            className='col-span-12 flex flex-col md:col-span-4'
+            className={`col-span-12 flex flex-col ${colSpan}`}
           />
         )}
-        <FormSelect
-          name='bankCode'
-          control={control}
-          required={rules.bankRequired}
-          label={
-            serviceType === 'EWALLET_REFUND' ? (
-              <FormLabelHint
-                label='Ngân hàng phát hành'
-                hint={REFUND_BANK_HINT}
-              />
-            ) : (
-              'Ngân hàng phát hành'
-            )
-          }
-          placeholder={rules.bankRequired ? 'Chọn ngân hàng' : 'Mọi ngân hàng'}
-          showSearch
-          optionFilterProp='label'
-          options={bankOptions}
-          disabled={readOnly}
-          className='col-span-12 flex flex-col md:col-span-4'
-        />
-        <FormSelect
-          name='paymentMethod'
-          control={control}
-          label='Phương thức giao dịch'
-          placeholder='Tất cả phương thức'
-          options={[...paymentMethodOptions]}
-          disabled={readOnly}
-          className='col-span-12 flex flex-col md:col-span-4'
-        />
+        {showBank && (
+          <FormSelect
+            name='bankCode'
+            control={control}
+            required={rules.bankRequired}
+            label={
+              serviceType === 'EWALLET_REFUND' ? (
+                <FormLabelHint
+                  label='Ngân hàng'
+                  hint={REFUND_BANK_HINT}
+                />
+              ) : showProvider ? (
+                <FormLabelHint
+                  label='Ngân hàng phát hành'
+                  hint={ISSUER_BANK_HINT}
+                />
+              ) : (
+                'Ngân hàng'
+              )
+            }
+            placeholder={rules.bankRequired ? 'Chọn ngân hàng' : 'Mọi ngân hàng'}
+            showSearch
+            optionFilterProp='label'
+            options={bankOptions}
+            disabled={readOnly}
+            className={`col-span-12 flex flex-col ${colSpan}`}
+          />
+        )}
+        {showPaymentMethod && (
+          <FormSelect
+            name='paymentMethod'
+            control={control}
+            label='Phương thức giao dịch'
+            placeholder='Tất cả phương thức'
+            options={[...paymentMethodOptions]}
+            allowClear={!isInternalTransfer}
+            disabled={readOnly || isInternalTransfer}
+            className={`col-span-12 flex flex-col ${colSpan}`}
+          />
+        )}
         {rules.showMerchant && (
           <MerchantPickerField
             control={control}
@@ -202,7 +241,7 @@ export const AssignmentSection = ({
             options={[...ASSIGNMENT_SCOPE_OPTIONS]}
             onChange={handleScopeChange}
             disabled={readOnly}
-            className='col-span-12 flex flex-col md:col-span-4'
+            className={`col-span-12 flex flex-col ${colSpan}`}
           />
         )}
         {canScope && rules.showSegment && scope === 'SEGMENT' && (
@@ -216,7 +255,7 @@ export const AssignmentSection = ({
             optionFilterProp='label'
             options={segmentOptions}
             disabled={readOnly}
-            className='col-span-12 flex flex-col md:col-span-4'
+            className={`col-span-12 flex flex-col ${colSpan}`}
           />
         )}
         {canScope && rules.showSubject && scope === 'SUBJECT' && (

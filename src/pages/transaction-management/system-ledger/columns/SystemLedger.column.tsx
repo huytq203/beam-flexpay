@@ -14,6 +14,7 @@ import {
   GLCodeLabels,
   LedgerTransactionType,
   getLedgerEntryRole,
+  getLedgerFeeSplit,
   type DirectionKey,
   type LedgerTransactionTypeKey
 } from '../constants/SystemLedger.constant'
@@ -109,13 +110,22 @@ const getSystemLedgerColumn = ({
   {
     title: 'Vai trò',
     align: 'left',
-    width: 110,
+    width: 150,
     render(_, record) {
       const role = getLedgerEntryRole(record)
+      const split = getLedgerFeeSplit(record)
       return role ? (
-        <span className='rounded border border-gray-200 px-2 py-0.5 text-[12px] whitespace-nowrap'>
-          {role}
-        </span>
+        <div className='flex flex-col items-start gap-1'>
+          <span className='rounded border border-gray-200 px-2 py-0.5 text-[12px] whitespace-nowrap'>
+            {role}
+          </span>
+          {split && (
+            <span className='text-[12px] text-gray-500 whitespace-nowrap'>
+              Gửi {formatCurrency(split.sender)} · Nhận{' '}
+              {formatCurrency(split.receiver)}
+            </span>
+          )}
+        </div>
       ) : (
         <span>--</span>
       )

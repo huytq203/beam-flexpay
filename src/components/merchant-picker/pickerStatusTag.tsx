@@ -1,23 +1,24 @@
-import { TagComponent } from '../ui/tag-component'
+import {
+  StatusToneBadge,
+  type StatusTone
+} from '../status-badge/StatusToneBadge'
 
-type TagColor = 'success' | 'warning' | 'error' | 'default'
-
-const STATUS: Record<string, { label: string; color: TagColor }> = {
-  DRAFT: { label: 'Nháp', color: 'default' },
-  PENDING_APPROVAL: { label: 'Chờ duyệt', color: 'warning' },
-  ACTIVE: { label: 'Hoạt động', color: 'success' },
-  INACTIVE: { label: 'Đã khóa', color: 'warning' },
-  REJECTED: { label: 'Từ chối', color: 'error' },
-  LOCKED: { label: 'Bị khóa', color: 'error' },
-  TERMINATED: { label: 'Đã kết thúc', color: 'default' }
+const STATUS: Record<string, { label: string; tone: StatusTone }> = {
+  DRAFT: { label: 'Nháp', tone: 'normal' },
+  PENDING_APPROVAL: { label: 'Chờ duyệt', tone: 'warning' },
+  ACTIVE: { label: 'Hoạt động', tone: 'success' },
+  INACTIVE: { label: 'Đã khóa', tone: 'warning' },
+  REJECTED: { label: 'Từ chối', tone: 'danger' },
+  LOCKED: { label: 'Bị khóa', tone: 'danger' },
+  TERMINATED: { label: 'Đã kết thúc', tone: 'normal' }
 }
 
 export function PickerStatusTag({ status }: { status?: string }) {
   if (!status) return <span className='text-muted-foreground'>—</span>
   const preset = STATUS[status]
   return (
-    <TagComponent color={preset?.color ?? 'default'}>
+    <StatusToneBadge tone={preset?.tone}>
       {preset?.label ?? status}
-    </TagComponent>
+    </StatusToneBadge>
   )
 }

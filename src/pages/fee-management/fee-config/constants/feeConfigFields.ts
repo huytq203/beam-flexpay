@@ -26,6 +26,25 @@ export interface DomainFieldRules {
   readonly serviceTypes: readonly string[]
 }
 
+/**
+ * Nạp, rút ví và hoàn tiền (hoàn một lệnh nạp/rút đã đi qua NCC) có NCC; khớp `ProviderScope`
+ * ở dịch vụ phí.
+ */
+const PROVIDER_SERVICE_TYPES: readonly string[] = [
+  'EWALLET_DEPOSIT',
+  'EWALLET_WITHDRAWAL',
+  'EWALLET_REFUND'
+]
+
+/** Chuyển ví sang ví không đi qua ngân hàng nên không có tiêu chí ngân hàng. */
+export const allowsBankCriteria = (
+  serviceType: string | null | undefined
+): boolean => serviceType !== 'EWALLET_TRANSFER_INTERNAL'
+
+export const allowsProviderCriteria = (
+  serviceType: string | null | undefined
+): boolean => !!serviceType && PROVIDER_SERVICE_TYPES.includes(serviceType)
+
 const WALLET_SERVICE_TYPES = PUBLISHABLE_SERVICE_TYPES.filter(
   (serviceType) => !allowsMerchantCriteria(serviceType)
 )

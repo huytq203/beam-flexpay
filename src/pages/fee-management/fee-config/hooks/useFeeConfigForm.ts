@@ -5,9 +5,10 @@ import {
   DEFAULT_PRIORITY,
   getDomainFieldRules,
   getFeeDomainForServiceType,
-  getFormFieldRules
+  getFormFieldRules,
+  allowsBankCriteria,
+  allowsProviderCriteria
 } from '../constants/feeConfigFields'
-import { allowsProviderCriteria } from '../constants/feeProvider'
 import { allowsOriginalTypeCriteria } from '../constants/feeRefundOriginalType'
 import {
   feeConfigFormSchema,
@@ -106,7 +107,9 @@ export const useFeeConfigForm = (
       ...current,
       feeDomain: domain,
       serviceType: next,
-      // Nhà cung cấp chỉ có nghĩa với nạp/rút; đổi sang loại khác phải dọn để khỏi gửi tiêu chí bị ẩn.
+      // Chuyển ví không có ngân hàng; giữ lại là gửi một tiêu chí không còn ô nào để sửa.
+      bankCode: allowsBankCriteria(next) ? current.bankCode : '',
+      // NCC chỉ có nghĩa với nạp/rút ví; giữ lại là gửi một tiêu chí không còn ô nào để sửa.
       providerCode: allowsProviderCriteria(next) ? current.providerCode : '',
       // Loại giao dịch gốc chỉ có ở phí hoàn tiền; giữ lại là gửi một tiêu chí không còn ô nào để sửa.
       originalTransactionType: allowsOriginalTypeCriteria(next)

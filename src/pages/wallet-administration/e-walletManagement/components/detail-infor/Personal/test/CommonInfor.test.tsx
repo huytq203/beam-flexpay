@@ -114,6 +114,6 @@ describe('CommonInfor', () => {
     expect(screen.getByText('1,000,000 ₫')).toBeInTheDocument()
     expect(screen.getByText('800,000 ₫')).toBeInTheDocument()
     expect(screen.getByText('200,000 ₫')).toBeInTheDocument()
-    expect(screen.getByText('Hoạt động')).toHaveClass('success-status')
+    expect(screen.getByText('Hoạt động')).toHaveClass('text-success-strong')
   })
 })

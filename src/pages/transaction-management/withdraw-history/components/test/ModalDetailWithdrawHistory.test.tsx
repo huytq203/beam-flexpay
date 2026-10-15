@@ -226,6 +226,6 @@ describe('ModalDetailWithdrawHistory', () => {
       </MessageProvider>
     )
 
-    expect(screen.getByText('Thất bại')).toHaveClass('danger-status')
+    expect(screen.getByText('Thất bại')).toHaveClass('text-danger-strong')
   })
 })

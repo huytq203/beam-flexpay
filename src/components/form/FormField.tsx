@@ -20,6 +20,11 @@ interface FormFieldProps<T extends FieldValues> {
    * hiển thị ở nơi khác; ô vẫn nhận `fieldState` để tự đánh dấu viền lỗi.
    */
   hideError?: boolean
+  /**
+   * Tiền tố cho id của ô và dòng lỗi. Cần khi một màn có hai form cùng tên trường, để nhãn
+   * không trỏ nhầm sang ô của form kia.
+   */
+  idPrefix?: string
   render: (
     field: ControllerRenderProps<T, Path<T>>,
     fieldState: ControllerFieldState,
@@ -35,13 +40,15 @@ export function FormField<T extends FieldValues>({
   classNameLable,
   required = false,
   hideError = false,
+  idPrefix,
   render
 }: FormFieldProps<T>) {
+  const id = idPrefix ? `${idPrefix}-${String(name)}` : String(name)
   return (
     <div className={className}>
       {label && (
         <label
-          htmlFor={name}
+          htmlFor={id}
           className={`${classNameLable} inline-flex items-center`}
         >
           {label}
@@ -56,12 +63,12 @@ export function FormField<T extends FieldValues>({
             {render(
               field,
               fieldState,
-              fieldState.error && !hideError ? `${String(name)}-error` : undefined
+              fieldState.error && !hideError ? `${id}-error` : undefined
             )}
             {fieldState.error && !hideError && (
               <p
                 className='text-red-500'
-                id={`${String(name)}-error`}
+                id={`${id}-error`}
                 role='alert'
               >
                 {fieldState.error.message}

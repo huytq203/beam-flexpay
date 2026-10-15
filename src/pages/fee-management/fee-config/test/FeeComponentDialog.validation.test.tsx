@@ -132,7 +132,7 @@ describe('FeeComponentDialog phí đầu vào (đầu vào)', () => {
     )
 
     await waitFor(() => expect(onSave).toHaveBeenCalled())
-    expect(onSave.mock.calls[0]?.[0]).toEqual(
+    expect(onSave.mock.calls[0]?.[0]?.[0]).toEqual(
       expect.objectContaining({ payerType: 'SYSTEM', beneficiaryType: 'BANK' })
     )
   })
@@ -150,7 +150,7 @@ describe('FeeComponentDialog phí đầu vào (đầu vào)', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Thêm' }))
 
     await waitFor(() => expect(onSave).toHaveBeenCalled())
-    expect(onSave.mock.calls[0]?.[0]).toEqual(
+    expect(onSave.mock.calls[0]?.[0]?.[0]).toEqual(
       expect.objectContaining({
         payerType: 'SYSTEM',
         beneficiaryType: 'PARTNER'
@@ -206,7 +206,7 @@ describe('FeeComponentDialog phí đầu ra (đầu ra)', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Thêm' }))
 
     await waitFor(() => expect(onSave).toHaveBeenCalled())
-    expect(onSave.mock.calls[0]?.[0]).toEqual(
+    expect(onSave.mock.calls[0]?.[0]?.[0]).toEqual(
       expect.objectContaining({
         payerType: 'USER',
         beneficiaryType: 'SYSTEM'

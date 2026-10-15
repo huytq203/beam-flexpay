@@ -1,41 +1,41 @@
 @layer components {
-    /*
+  /*
      * Keep these class names stable because status mappings across the app
      * reference them as runtime strings.
      */
-    .success-status {
-        @apply px-1 py-0.5  bg-success/10 text-success font-semibold;
-    }
+  .success-status {
+    @apply rounded-md px-2 py-0.5 text-xs whitespace-nowrap bg-success/10 text-success-strong font-semibold;
+  }
 
-    .danger-status {
-        @apply px-1 py-0.5  bg-danger/10 text-danger font-semibold;
-    }
+  .danger-status {
+    @apply rounded-md px-2 py-0.5 text-xs whitespace-nowrap bg-danger/10 text-danger-strong font-semibold;
+  }
 
-    .warning-status {
-        @apply px-1 py-0.5  bg-warning/10 text-warning font-semibold;
-    }
+  .warning-status {
+    @apply rounded-md px-2 py-0.5 text-xs whitespace-nowrap bg-warning/10 text-warning-strong font-semibold;
+  }
 
-    .info-status {
-        @apply px-1 py-0.5 bg-primary/10 text-primary font-semibold;
-    }
+  .info-status {
+    @apply rounded-md px-2 py-0.5 text-xs whitespace-nowrap bg-primary/10 text-secondary-foreground font-semibold;
+  }
 
-    .normal-status {
-        @apply px-1 py-0.5 bg-muted text-muted-foreground font-semibold;
-    }
+  .normal-status {
+    @apply rounded-md px-2 py-0.5 text-xs whitespace-nowrap bg-muted text-muted-foreground font-semibold;
+  }
 
-    /*
+  /*
      * Tông chữ cho số liệu đứng trực tiếp trên nền (số dư, chỉ số) — không có nền
      * tint đỡ phía sau nên phải dùng biến thể -strong để đạt tương phản ≥ 4.5:1.
      */
-    .amount-positive {
-        @apply text-success-strong;
-    }
+  .amount-positive {
+    @apply text-success-strong;
+  }
 
-    .amount-negative {
-        @apply text-danger-strong;
-    }
+  .amount-negative {
+    @apply text-danger-strong;
+  }
 
-    .amount-caution {
-        @apply text-warning-strong;
-    }
+  .amount-caution {
+    @apply text-warning-strong;
+  }
 }

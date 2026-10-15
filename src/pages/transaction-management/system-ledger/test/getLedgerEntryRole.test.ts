@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getLedgerEntryRole } from '../constants/SystemLedger.constant'
+import { getLedgerEntryRole, getLedgerFeeSplit } from '../constants/SystemLedger.constant'
 
 const fee = (extra: object) => ({
   transactionType: 'P2P_TRANSFER',
@@ -27,14 +27,10 @@ describe('getLedgerEntryRole', () => {
     expect(getLedgerEntryRole(fee({}))).toBe('Phí')
   })
 
-  it('hai bên cùng chịu thì ghép theo số tiền từng bên', () => {
-    const both = { feeBearer: 'BOTH', senderFeeAmount: 3000, receiverFeeAmount: 2000 }
-    expect(getLedgerEntryRole(fee({ ...both, amount: 3000 }))).toBe('Phí (bên gửi)')
-    expect(getLedgerEntryRole(fee({ ...both, amount: 2000 }))).toBe('Phí (bên nhận)')
-  })
-
-  it('hai bên chịu bằng nhau thì không ghép được từng dòng', () => {
-    const even = { feeBearer: 'BOTH', senderFeeAmount: 2500, receiverFeeAmount: 2500, amount: 2500 }
-    expect(getLedgerEntryRole(fee(even))).toBe('Phí (hai bên)')
+  it('hai bên cùng chịu: một dòng phí tổng, phần từng bên lấy từ journal', () => {
+    const both = { feeBearer: 'BOTH', senderFeeAmount: 1000, receiverFeeAmount: 4000, amount: 5000 }
+    expect(getLedgerEntryRole(fee(both))).toBe('Phí (hai bên)')
+    expect(getLedgerFeeSplit(fee(both))).toEqual({ sender: 1000, receiver: 4000 })
+    expect(getLedgerFeeSplit(fee({ feeBearer: 'SENDER' }))).toBeNull()
   })
 })

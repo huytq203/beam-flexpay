@@ -122,14 +122,15 @@ export const createRefundColumns = (
     {
       title: 'Trạng thái',
       key: 'status',
-      width: 220,
+      width: 120,
+      align: 'center',
       render: (_value, record) => <RefundStatusBadge status={record.status} />
     },
     {
       title: 'Thao tác',
       key: 'actions',
-      // Tối đa 3 icon (xem, từ chối, duyệt) xếp ngang, không xuống dòng.
-      width: 160,
+      // Tối đa 2 icon (xem, duyệt); Từ chối nằm trong popover của icon duyệt.
+      width: 120,
       fixed: 'right',
       align: 'center',
       // Danh sách đã trả `createdBy` nên so được maker/checker; Duyệt/Từ chối mở popover ngay tại dòng.
@@ -138,7 +139,6 @@ export const createRefundColumns = (
           refund={record}
           flags={getRefundActions(record, context)}
           variant='icon'
-          username={context.username}
           onView={options.onView}
           onApprove={options.onApprove}
           onReject={options.onReject}

@@ -29,6 +29,14 @@ interface FeeComponentFieldsProps {
   onComponentTypeChange: (next: string | number) => void
   onMethodChange: (next: string | number) => void
   onPayerChange: (next: string | number) => void
+  /**
+   * Chuyển tiền "Cả hai bên cùng chịu": form riêng chứa mức phí của người nhận. Loại phí, cách
+   * tính và người hưởng dùng chung với người chuyển nên không lặp lại.
+   */
+  receiver?: {
+    control: Control<FeeComponentFormValues>
+    tierError?: string
+  }
 }
 
 export const FeeComponentFields = ({
@@ -49,7 +57,8 @@ export const FeeComponentFields = ({
   tierError,
   onComponentTypeChange,
   onMethodChange,
-  onPayerChange
+  onPayerChange,
+  receiver
 }: FeeComponentFieldsProps) => (
   <>
     <CardComponent
@@ -155,74 +164,217 @@ export const FeeComponentFields = ({
       </div>
     </CardComponent>
 
+    {receiver ? (
+      <div
+        className={
+          tiered
+            ? 'grid grid-cols-1 gap-3'
+            : 'grid grid-cols-1 gap-3 md:grid-cols-2'
+        }
+      >
+        <FeeSideFields
+          title='Người chuyển chịu'
+          control={control}
+          isVat={isVat}
+          tiered={tiered}
+          tierError={tierError}
+        />
+        <FeeSideFields
+          title='Người nhận chịu'
+          control={receiver.control}
+          isVat={isVat}
+          tiered={tiered}
+          tierError={receiver.tierError}
+          idPrefix='receiver'
+        />
+      </div>
+    ) : (
+      <FeeRateFields
+        control={control}
+        payerType={payerType}
+        isVat={isVat}
+        tiered={tiered}
+        tierError={tierError}
+      />
+    )}
+  </>
+)
+
+interface FeeRateFieldsProps {
+  control: Control<FeeComponentFormValues>
+  payerType: string
+  isVat: boolean
+  tiered: boolean
+  tierError?: string
+  /** Hậu tố tiêu đề để phân biệt hai bên khi cả hai cùng chịu phí. */
+  titleSuffix?: string
+  /** Tiền tố id để ô của người nhận không trùng id với ô người chuyển. */
+  idPrefix?: string
+}
+
+/** Mức phí và giới hạn của một thành phần. */
+const FeeRateFields = ({
+  control,
+  payerType,
+  isVat,
+  tiered,
+  tierError,
+  titleSuffix = '',
+  idPrefix
+}: FeeRateFieldsProps) => (
+  <>
+  <CardComponent
+    size='small'
+    className='border-border! bg-background!'
+    title={`${payerType === 'SYSTEM' ? 'Mức chi phí dự kiến' : 'Mức phí'}${titleSuffix}`}
+  >
+    {tiered ? (
+      <FeeTierEditor
+        control={control}
+        error={tierError}
+        idPrefix={idPrefix}
+      />
+    ) : (
+      <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
+        <FormInputNumber
+          name='percentage'
+          control={control}
+          idPrefix={idPrefix}
+          allowEmpty
+          label={payerType === 'SYSTEM' ? 'Chi phí (%)' : 'Phí (%)'}
+          placeholder='Để trống sẽ tự điền 0'
+          className={
+            isVat
+              ? 'col-span-12 flex flex-col md:col-span-12'
+              : 'col-span-12 flex flex-col md:col-span-6'
+          }
+        />
+        {!isVat && (
+          <FormInputNumber
+            name='fixedAmount'
+            control={control}
+            idPrefix={idPrefix}
+            allowEmpty
+            label={
+              payerType === 'SYSTEM'
+                ? 'Chi phí cố định (VNĐ)'
+                : 'Phí cố định (VNĐ)'
+            }
+            placeholder='Để trống sẽ tự điền 0'
+            className='col-span-12 flex flex-col md:col-span-6'
+          />
+        )}
+      </div>
+    )}
+  </CardComponent>
+
+  {/* Sàn/trần chỉ áp cho cách tính mặc định: bậc thang đã có sàn/trần riêng ở từng bậc, VAT không có. */}
+  {!tiered && !isVat && (
     <CardComponent
       size='small'
       className='border-border! bg-background!'
-      title={payerType === 'SYSTEM' ? 'Mức chi phí dự kiến' : 'Mức phí'}
+      title={`Giới hạn${titleSuffix}`}
     >
-      {tiered ? (
-        <FeeTierEditor
+      <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
+        <FormInputNumber
+          name='minFee'
           control={control}
-          error={tierError}
+          idPrefix={idPrefix}
+          allowEmpty
+          label='Phí tối thiểu (VNĐ)'
+          placeholder='Để trống nếu không đặt sàn'
+          className='col-span-12 flex flex-col md:col-span-6'
         />
-      ) : (
-        <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
-          <FormInputNumber
-            name='percentage'
-            control={control}
-            allowEmpty
-            label={payerType === 'SYSTEM' ? 'Chi phí (%)' : 'Phí (%)'}
-            placeholder='Để trống sẽ tự điền 0'
-            className={
-              isVat
-                ? 'col-span-12 flex flex-col md:col-span-12'
-                : 'col-span-12 flex flex-col md:col-span-6'
-            }
-          />
-          {!isVat && (
+        <FormInputNumber
+          name='maxFee'
+          control={control}
+          idPrefix={idPrefix}
+          allowEmpty
+          label='Phí tối đa (VNĐ)'
+          placeholder='Để trống nếu không đặt trần'
+          className='col-span-12 flex flex-col md:col-span-6'
+        />
+      </div>
+    </CardComponent>
+  )}
+  </>
+)
+
+interface FeeSideFieldsProps {
+  title: string
+  control: Control<FeeComponentFormValues>
+  isVat: boolean
+  tiered: boolean
+  tierError?: string
+  idPrefix?: string
+}
+
+/**
+ * Mức phí và giới hạn của một bên khi cả hai bên cùng chịu: gọn trong một khối để hai bên đứng
+ * cạnh nhau và đối chiếu được theo hàng.
+ */
+const FeeSideFields = ({
+  title,
+  control,
+  isVat,
+  tiered,
+  tierError,
+  idPrefix
+}: FeeSideFieldsProps) => (
+  <CardComponent
+    size='small'
+    className='border-border! bg-background!'
+    title={title}
+  >
+    {tiered ? (
+      <FeeTierEditor
+        control={control}
+        error={tierError}
+        idPrefix={idPrefix}
+      />
+    ) : (
+      <div className='grid grid-cols-2 gap-3'>
+        <FormInputNumber
+          name='percentage'
+          control={control}
+          idPrefix={idPrefix}
+          allowEmpty
+          label='Phí (%)'
+          placeholder='Trống = 0'
+          className='col-span-1 flex flex-col'
+        />
+        {!isVat && (
+          <>
             <FormInputNumber
               name='fixedAmount'
               control={control}
+              idPrefix={idPrefix}
               allowEmpty
-              label={
-                payerType === 'SYSTEM'
-                  ? 'Chi phí cố định (VNĐ)'
-                  : 'Phí cố định (VNĐ)'
-              }
-              placeholder='Để trống sẽ tự điền 0'
-              className='col-span-12 flex flex-col md:col-span-6'
+              label='Phí cố định (VNĐ)'
+              placeholder='Trống = 0'
+              className='col-span-1 flex flex-col'
             />
-          )}
-        </div>
-      )}
-    </CardComponent>
-
-    {/* Sàn/trần chỉ áp cho cách tính mặc định: bậc thang đã có sàn/trần riêng ở từng bậc, VAT không có. */}
-    {!tiered && !isVat && (
-      <CardComponent
-        size='small'
-        className='border-border! bg-background!'
-        title='Giới hạn'
-      >
-        <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
-          <FormInputNumber
-            name='minFee'
-            control={control}
-            allowEmpty
-            label='Phí tối thiểu (VNĐ)'
-            placeholder='Để trống nếu không đặt sàn'
-            className='col-span-12 flex flex-col md:col-span-6'
-          />
-          <FormInputNumber
-            name='maxFee'
-            control={control}
-            allowEmpty
-            label='Phí tối đa (VNĐ)'
-            placeholder='Để trống nếu không đặt trần'
-            className='col-span-12 flex flex-col md:col-span-6'
-          />
-        </div>
-      </CardComponent>
+            <FormInputNumber
+              name='minFee'
+              control={control}
+              idPrefix={idPrefix}
+              allowEmpty
+              label='Phí tối thiểu (VNĐ)'
+              placeholder='Không đặt sàn'
+              className='col-span-1 flex flex-col'
+            />
+            <FormInputNumber
+              name='maxFee'
+              control={control}
+              idPrefix={idPrefix}
+              allowEmpty
+              label='Phí tối đa (VNĐ)'
+              placeholder='Không đặt trần'
+              className='col-span-1 flex flex-col'
+            />
+          </>
+        )}
+      </div>
     )}
-  </>
+  </CardComponent>
 )

@@ -38,15 +38,15 @@ const EKYC_STATUS_CONFIG = {
 
 const LOGIN_STATE_CONFIG = {
   LOGIN_LOCKED: {
-    label: 'Đăng nhập bị khóa',
+    label: 'Khóa đăng nhập',
     className: 'danger-status'
   },
   LOGIN_ALLOWED: {
-    label: 'Đăng nhập bình thường',
+    label: 'Đăng nhập được',
     className: 'success-status'
   },
   LOGIN_UNKNOWN: {
-    label: 'Chưa xác định',
+    label: 'Đăng nhập: ?',
     className: 'warning-status'
   }
 } as const
@@ -165,32 +165,26 @@ export const getColumn = ({
     },
     {
       title: 'Trạng thái',
-      align: 'center',
-      width: 120,
-      render: (_, record) => (
-        <div className='flex flex-col items-start gap-1.5'>
-          <div className='flex items-center gap-2'>
+      align: 'left',
+      width: 150,
+      render: (_, record) => {
+        const loginState = getLoginState(record.loginLocked)
+        return (
+          <div className='flex flex-col items-start gap-1.5'>
             <StatusBadge status={String(record.status)} />
-          </div>
-          <div className='flex items-center gap-2'>
             <StatusBadge
               status={record.ekycStatus ?? 'NOT_VERIFIED'}
               config={EKYC_STATUS_CONFIG}
             />
+            {loginState !== 'LOGIN_ALLOWED' && (
+              <StatusBadge
+                status={loginState}
+                config={LOGIN_STATE_CONFIG}
+              />
+            )}
           </div>
-        </div>
-      )
-    },
-    {
-      title: 'Đăng nhập',
-      align: 'center',
-      width: 150,
-      render: (_, record) => (
-        <StatusBadge
-          status={getLoginState(record.loginLocked)}
-          config={LOGIN_STATE_CONFIG}
-        />
-      )
+        )
+      }
     },
     {
       title: 'Thời gian tạo',

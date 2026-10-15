@@ -20,6 +20,12 @@ export const DirectionShortLabel: Record<DirectionKey, string> = {
     DEBIT: 'Nợ'
 }
 
+export const FeeBearerLabel = {
+    SENDER: 'Bên gửi',
+    RECEIVER: 'Bên nhận',
+    BOTH: 'Hai bên'
+} as const
+
 export const OwnerTypeConstants = {
     USER: 'USER',
     MERCHANT: 'MERCHANT',
@@ -99,10 +105,7 @@ export const LEDGER_POSTED_ONLY_NOTE =
 export const getLedgerEntryRole = (entry: {
     transactionType?: string | null
     direction: string
-    amount?: number
     feeBearer?: string
-    senderFeeAmount?: number
-    receiverFeeAmount?: number
     account?: { ownerType?: string; glCode?: string }
 }): string | null => {
     if (entry.transactionType !== 'P2P_TRANSFER') return null
@@ -110,25 +113,30 @@ export const getLedgerEntryRole = (entry: {
     return entry.direction === DirectionConstants.DEBIT ? 'Người gửi' : 'Người nhận'
 }
 
-const getFeeRole = (entry: {
-    amount?: number
-    feeBearer?: string
-    senderFeeAmount?: number
-    receiverFeeAmount?: number
-}): string => {
+const getFeeRole = (entry: { feeBearer?: string }): string => {
     switch (entry.feeBearer) {
         case 'RECEIVER':
             return 'Phí (bên nhận)'
-        case 'BOTH': {
-            const isSender = entry.amount === entry.senderFeeAmount
-            const isReceiver = entry.amount === entry.receiverFeeAmount
-            if (isSender && !isReceiver) return 'Phí (bên gửi)'
-            if (isReceiver && !isSender) return 'Phí (bên nhận)'
+        case 'BOTH':
             return 'Phí (hai bên)'
-        }
         case 'SENDER':
             return 'Phí (bên gửi)'
         default:
             return 'Phí'
     }
+}
+
+/**
+ * Hai bên cùng chịu phí thì wallet-core ghi MỘT dòng phí tổng (gửi + nhận), nên
+ * phần của từng bên chỉ có ở journal. Trả `null` ở mọi trường hợp còn lại.
+ */
+export const getLedgerFeeSplit = (entry: {
+    feeBearer?: string
+    senderFeeAmount?: number
+    receiverFeeAmount?: number
+    account?: { glCode?: string }
+}): { sender: number; receiver: number } | null => {
+    if (entry.feeBearer !== 'BOTH' || !entry.account?.glCode?.startsWith('REV_')) return null
+    if (entry.senderFeeAmount == null || entry.receiverFeeAmount == null) return null
+    return { sender: entry.senderFeeAmount, receiver: entry.receiverFeeAmount }
 }

@@ -1,6 +1,8 @@
 import { z } from 'zod'
-import { isPaymentMethodAllowed } from '../constants/feeConfigFields'
-import { allowsProviderCriteria } from '../constants/feeProvider'
+import {
+  allowsProviderCriteria,
+  isPaymentMethodAllowed
+} from '../constants/feeConfigFields'
 import { allowsOriginalTypeCriteria } from '../constants/feeRefundOriginalType'
 import { validateTransferBearers } from '../utils/transferBearers'
 import {
@@ -34,8 +36,8 @@ export const feeConfigFormSchema = z
     priority: z.number().int().min(0),
     serviceType: z.string().min(1, 'Chọn loại giao dịch'),
     bankCode: z.string(),
-    /** Nhà cung cấp (cổng). Rỗng = mọi nhà cung cấp và bị bỏ khỏi payload. */
-    providerCode: z.string(),
+    /** NCC (cổng trung gian). Rỗng = mọi NCC và bị bỏ khỏi payload. */
+    providerCode: z.string().optional(),
     /** Loại giao dịch gốc của hoàn tiền. Rỗng = mọi loại và bị bỏ khỏi payload. */
     originalTransactionType: z.string().optional(),
     /** Chuỗi rỗng = áp dụng cho tất cả phương thức và bị bỏ khỏi payload. */

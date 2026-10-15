@@ -35,17 +35,20 @@ export const getColumn = ({
     width: 50
   },
   {
-    title: 'Mã giao dịch nguồn',
+    title: 'Mã giao dịch gốc/Mã đóng băng',
     align: 'left',
-    dataIndex: 'sourceTransactionCode',
     key: 'sourceTransactionCode',
     width: 170,
-    render: (sourceTransactionCode: string | null) =>
-      sourceTransactionCode ? (
-        <CopyableText value={sourceTransactionCode} />
-      ) : (
-        '--'
+    render: (_, record) => {
+      // Đóng băng số dư không gắn giao dịch nên không có mã giao dịch gốc, dùng id bản ghi.
+      const code = record.sourceTransactionCode ?? record.id
+      return (
+        <CopyableText
+          className='max-w-[150px]'
+          value={code}
+        />
       )
+    }
   },
   {
     title: 'Khách hàng',
@@ -81,6 +84,11 @@ export const getColumn = ({
       <div className='max-w-[260px]'>
         <p className='font-medium'>
           {FREEZE_TYPE_LABEL[record.type as FreezeType] ?? record.type}
+        </p>
+        <p className='text-[12px] text-muted-foreground'>
+          {record.sourceTransactionId === null
+            ? 'Đóng băng số dư'
+            : 'Đóng băng giao dịch'}
         </p>
         {record.reason && (
           <p className='text-muted-foreground text-[12px]'>{record.reason}</p>

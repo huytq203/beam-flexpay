@@ -6,6 +6,8 @@ import { FeeComponentReadout } from './FeeComponentReadout'
 
 interface FeeComponentCardProps {
   component: FeeComponentFormValues
+  /** Thành phần người nhận khi cả hai bên cùng chịu; hiện chung một thẻ. */
+  partner?: FeeComponentFormValues | null
   index: number
   onEdit: () => void
   onRemove: () => void
@@ -17,6 +19,7 @@ interface FeeComponentCardProps {
  */
 export const FeeComponentCard = ({
   component,
+  partner = null,
   index,
   onEdit,
   onRemove,
@@ -27,6 +30,11 @@ export const FeeComponentCard = ({
       <h3 className='text-[15px] font-semibold text-foreground'>
         {index + 1}.{' '}
         {getFeeLabel(component.componentType, COMPONENT_TYPE_LABELS)}
+        {partner && (
+          <span className='ml-2 rounded-full bg-muted px-2 py-0.5 align-middle text-[12px] font-medium text-muted-foreground'>
+            Hai bên cùng chịu
+          </span>
+        )}
       </h3>
       {!readOnly && (
         <div className='flex gap-2'>
@@ -67,5 +75,10 @@ export const FeeComponentCard = ({
     <div className='px-4 py-3'>
       <FeeComponentReadout component={component} />
     </div>
+    {partner && (
+      <div className='border-t border-dashed border-border px-4 py-3'>
+        <FeeComponentReadout component={partner} />
+      </div>
+    )}
   </article>
 )

@@ -1,4 +1,5 @@
-import { ButtonComponent } from '@components/index'
+import { FireIcon } from '@components/icons'
+import { ButtonComponent, TooltipComponent } from '@components/index'
 import { getFreezeRowActionFlags } from '@utils/freeze'
 import type { FreezeItem } from '@type/freeze.type'
 
@@ -7,7 +8,7 @@ interface FreezeRowActionsProps {
   onRequestUnfreeze?: (item: FreezeItem) => void
 }
 
-const EMPTY = <span className="text-muted-foreground">--</span>
+const EMPTY = <span className='text-muted-foreground'>--</span>
 
 export const FreezeRowActions = ({
   item,
@@ -18,13 +19,22 @@ export const FreezeRowActions = ({
   if (!canRequestUnfreeze) return EMPTY
 
   return (
-    <div className="flex items-center justify-center gap-1 flex-wrap">
-      <ButtonComponent
-        size="small"
-        type="default"
-        onClick={() => onRequestUnfreeze?.(item)}
-        content="Mở băng"
-      />
+    <div className='flex flex-wrap items-center justify-center gap-1'>
+      <TooltipComponent title='Mở băng'>
+        <ButtonComponent
+          htmlType='button'
+          size='small'
+          type='default'
+          aria-label='Mở băng'
+          icon={
+            <FireIcon
+              aria-hidden
+              size={16}
+            />
+          }
+          onClick={() => onRequestUnfreeze?.(item)}
+        />
+      </TooltipComponent>
     </div>
   )
 }

@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import type { ReactNode } from 'react'
 import {
   DirectionShortLabel,
+  FeeBearerLabel,
   LedgerTransactionType,
   OwnerTypeLabels,
   StatusConstants,
@@ -91,6 +92,29 @@ export const LedgerEntryDetail = ({ record }: { record: LedgerEntry }) => {
               {formatCurrency(record.transaction?.feeAmount)}
             </span>
           </Row>
+          {record.feeBearer && (
+            <Row label='Bên chịu phí'>
+              <span className='font-medium'>
+                {FeeBearerLabel[record.feeBearer]}
+              </span>
+            </Row>
+          )}
+          {record.feeBearer === 'BOTH' &&
+            record.senderFeeAmount != null &&
+            record.receiverFeeAmount != null && (
+              <>
+                <Row label='Phí bên gửi'>
+                  <span className='font-medium tabular-nums'>
+                    {formatCurrency(record.senderFeeAmount)}
+                  </span>
+                </Row>
+                <Row label='Phí bên nhận'>
+                  <span className='font-medium tabular-nums'>
+                    {formatCurrency(record.receiverFeeAmount)}
+                  </span>
+                </Row>
+              </>
+            )}
           <Row label='Mô tả'>
             <span className='font-medium'>
               {record.transaction?.description || '--'}
@@ -120,7 +144,7 @@ export const LedgerEntryDetail = ({ record }: { record: LedgerEntry }) => {
           <Row label='Tài khoản'>
             <span className='font-medium'>{ownerLabel}</span>
           </Row>
-          <Row label='Số dư'>
+          <Row label='Số dư hiện tại'>
             <span className='font-bold tabular-nums text-green-600'>
               {formatCurrency(record.account?.balance)}
             </span>
@@ -137,7 +161,7 @@ export const LedgerEntryDetail = ({ record }: { record: LedgerEntry }) => {
           </Row>
           <Row label='Số dư khả dụng'>
             <span className='font-medium tabular-nums'>
-              {formatCurrency(record.account?.balance ?? 0)}
+              {formatCurrency(record.account?.availableBalance)}
             </span>
           </Row>
           <Row label='Trạng thái tài khoản'>
@@ -167,7 +191,7 @@ export const LedgerEntryDetail = ({ record }: { record: LedgerEntry }) => {
               {formatCurrency(record.balanceAfter)}
             </span>
           </Row>
-          <Row label='Số dư bị giữ'>
+          <Row label='Số dư bị giữ hiện tại'>
             <span className='font-medium tabular-nums'>
               {formatCurrency(record.account?.holdBalance)}
             </span>

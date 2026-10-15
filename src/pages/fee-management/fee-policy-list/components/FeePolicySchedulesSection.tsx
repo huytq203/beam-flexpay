@@ -48,7 +48,7 @@ const ScheduleItem = ({ schedule, canCancel, onCancel }: ScheduleItemProps) => {
     Boolean(schedule.resultMessage)
 
   return (
-    <li className='flex flex-wrap items-start justify-between gap-3 rounded-lg border border-border px-3 py-2'>
+    <li className='flex flex-wrap items-start justify-between gap-3 px-3 py-2.5'>
       <div className='flex min-w-0 flex-col gap-1 text-[13px] text-foreground'>
         <div className='flex flex-wrap items-center gap-2'>
           <span className='font-semibold'>
@@ -134,7 +134,9 @@ export const FeePolicySchedulesSection = ({
         </div>
       )
     }
-    if (!data || data.length === 0) {
+    // Lịch đã chạy xong không còn việc gì để làm nên không cần liệt kê.
+    const visible = data?.filter(({ status }) => status !== 'DONE') ?? []
+    if (visible.length === 0) {
       return (
         <p className='text-[13px] text-muted-foreground'>
           Chính sách chưa có lịch hẹn giờ nào.
@@ -142,8 +144,8 @@ export const FeePolicySchedulesSection = ({
       )
     }
     return (
-      <ul className='m-0 flex list-none flex-col gap-2 p-0'>
-        {data.map((schedule) => (
+      <ul className='m-0 list-none divide-y divide-border overflow-hidden rounded-lg border border-border p-0'>
+        {visible.map((schedule) => (
           <ScheduleItem
             key={schedule.id}
             schedule={schedule}

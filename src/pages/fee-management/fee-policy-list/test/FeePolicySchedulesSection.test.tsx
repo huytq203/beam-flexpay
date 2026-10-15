@@ -32,6 +32,13 @@ const schedules = [
     runAt: '2026-10-10T01:00:00Z',
     status: 'FAILED',
     resultMessage: 'Chính sách đã bị khóa'
+  },
+  {
+    ...base,
+    id: 's-done',
+    action: 'ACTIVATE',
+    runAt: '2026-10-09T01:00:00Z',
+    status: 'DONE'
   }
 ]
 
@@ -67,6 +74,7 @@ describe('mục Lịch hẹn giờ của chính sách phí', () => {
     expect(screen.getByText('20/10/2026 08:00:00')).toBeInTheDocument()
     expect(screen.getByText('Chờ chạy')).toBeInTheDocument()
     expect(screen.getByText('Lỗi')).toBeInTheDocument()
+    expect(screen.queryByText('Đã chạy')).toBeNull()
     expect(screen.getByText(/Chính sách đã bị khóa/)).toBeInTheDocument()
     expect(screen.getAllByRole('button', { name: /^Huỷ lịch/ })).toHaveLength(1)
 

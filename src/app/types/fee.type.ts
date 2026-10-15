@@ -94,7 +94,7 @@ export interface FeeAssignment {
   feePolicyId: string
   merchantId: string | null
   bankCode: string | null
-  /** Nhà cung cấp (cổng thanh toán). NULL = mọi nhà cung cấp. */
+  /** NCC (cổng trung gian như NAPAS). NULL = mọi NCC. */
   providerCode?: string | null
   /** Loại giao dịch gốc của hoàn tiền. NULL = mọi loại hoàn. */
   originalTransactionType?: string | null
@@ -124,6 +124,15 @@ export interface FeePolicyComponentWithTiers extends FeePolicyComponent {
 export interface FeePolicyConfiguration {
   assignments: FeeAssignment[]
   components: FeePolicyComponentWithTiers[]
+}
+
+/** Một dòng của `GET /fee/payment-partners`. */
+export interface FeePaymentPartner {
+  code: string
+  name: string
+  provider: boolean
+  issuer: boolean
+  status: 'ACTIVE' | 'INACTIVE'
 }
 
 /** Một dòng của `GET /fee/banks` → `data.content`. */

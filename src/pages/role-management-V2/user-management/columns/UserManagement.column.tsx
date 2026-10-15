@@ -1,3 +1,4 @@
+import { StatusToneBadge } from '@components/status-badge/StatusToneBadge'
 import {
   ApartmentOutlined,
   CheckCircleFilled,
@@ -52,19 +53,19 @@ export const getUserManagementColumn = ({
           <span>{value || '--'}</span>
           {value &&(
              record.emailVerified ? (
-            <span className='success-status inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] leading-4'>
+            <StatusToneBadge tone='success' className='gap-1'>
               <CheckCircleFilled aria-hidden />
               Xác thực
-            </span>
+            </StatusToneBadge>
           ) : (
-            <span className='warning-status inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] leading-4'>
+            <StatusToneBadge tone='warning' className='gap-1'>
               <MinusCircleIcon
                 aria-hidden
                 size={13}
                 weight='fill'
               />
               Chưa xác thực
-            </span>
+            </StatusToneBadge>
           )
           )}
         </div>
@@ -98,13 +99,9 @@ export const getUserManagementColumn = ({
         return (
           <div>
             {record.enabled ? (
-              <p className='success-status rounded-md inline-flex text-[11px] px-2'>
-                Hoạt động
-              </p>
+              <StatusToneBadge tone='success'>Hoạt động</StatusToneBadge>
             ) : (
-              <p className='danger-status rounded-md inline-flex text-[11px] px-2'>
-                Không hoạt động
-              </p>
+              <StatusToneBadge tone='danger'>Không hoạt động</StatusToneBadge>
             )}
           </div>
         )

@@ -6,11 +6,7 @@ import {
   ReasonDialog,
   TooltipComponent
 } from '@components/index'
-import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  SafetyOutlined
-} from '@components/icons'
+import { CheckOutlined } from '@components/icons'
 import { useMessage } from '@hooks/useMessage'
 import {
   getCustomerSegmentName,
@@ -46,7 +42,8 @@ const getAssignmentScope = (
   customerSegmentNames: CustomerSegmentNames
 ) => {
   if (assignment.subjectId) {
-    const subjectLabel = assignment.subjectType === 'MERCHANT' ? 'Merchant' : 'Người dùng'
+    const subjectLabel =
+      assignment.subjectType === 'MERCHANT' ? 'Merchant' : 'Người dùng'
     return `${subjectLabel} · ${assignment.subjectId}`
   }
 
@@ -160,7 +157,10 @@ export const FeeAssignmentApprovalAction = ({
             EMPTY_VALUE
           )}
         />
-        <ReviewItem label='Ngân hàng' value={assignment.bankCode ?? EMPTY_VALUE} />
+        <ReviewItem
+          label='Ngân hàng'
+          value={assignment.bankCode ?? EMPTY_VALUE}
+        />
         <ReviewItem
           label='Hiệu lực từ'
           value={formatEffectiveDate(assignment.effectiveFromDate)}
@@ -171,18 +171,7 @@ export const FeeAssignmentApprovalAction = ({
         />
       </dl>
 
-      {approvalDecision ? (
-        <p className='m-0 min-w-0 border-t border-border pt-3 text-xs leading-4 break-words text-muted-foreground'>
-          Phiên bản{' '}
-          <span className='tabular-nums'>
-            #{approvalDecision.expectedLockVersion}
-          </span>{' '}
-          · Mã kiểm duyệt{' '}
-          <span className='font-mono'>
-            {approvalDecision.expectedReviewHash.slice(0, 8)}
-          </span>
-        </p>
-      ) : (
+      {!approvalDecision && (
         <p
           role='alert'
           className='m-0 min-w-0 rounded-lg bg-danger/10 px-3 py-2 text-xs leading-4 break-words text-danger-strong'
@@ -191,18 +180,12 @@ export const FeeAssignmentApprovalAction = ({
         </p>
       )}
 
-      <p className='m-0 rounded-lg bg-warning/10 px-3 py-2 text-xs leading-4 text-warning-strong'>
-        Sau khi duyệt, gán phí sẽ tự động áp dụng theo thời gian đã
-        cấu hình.
-      </p>
-
       <div className='grid grid-cols-1 gap-2 min-[384px]:grid-cols-2'>
         <ButtonComponent
           htmlType='button'
-          type='primary'
+          type='default'
           danger
-          content='Từ chối duyệt'
-          icon={<CloseCircleOutlined />}
+          content='Từ chối'
           className='order-2 w-full pointer-coarse:h-11! min-[384px]:order-none'
           loading={isRejecting}
           disabled={isLoading}
@@ -210,23 +193,14 @@ export const FeeAssignmentApprovalAction = ({
         />
         <ButtonComponent
           htmlType='button'
-          type='primary'
-          content='Duyệt gán phí'
-          icon={<CheckCircleOutlined />}
+          type='default'
+          content='Duyệt'
           className='order-1 w-full pointer-coarse:h-11! min-[384px]:order-none'
           loading={isApproving}
           disabled={isLoading || !approvalDecision}
           onClick={handleApprove}
         />
       </div>
-      <ButtonComponent
-        htmlType='button'
-        type='text'
-        content='Hủy bỏ'
-        className='w-full pointer-coarse:h-11! min-[384px]:w-auto min-[384px]:self-center'
-        disabled={isLoading}
-        onClick={() => setOpen(false)}
-      />
     </div>
   )
 
@@ -252,7 +226,7 @@ export const FeeAssignmentApprovalAction = ({
               htmlType='button'
               type='default'
               size='small'
-              icon={<SafetyOutlined />}
+              icon={<CheckOutlined />}
               loading={isLoading}
               disabled={isProcessed || isLoading}
             />

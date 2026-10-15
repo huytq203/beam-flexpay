@@ -1,10 +1,6 @@
 import { Can } from '@/app/permissions'
 import { FeeStatusPill } from '@components/fee/FeeStatusPill'
-import {
-  CheckCircleOutlined,
-  NotePencilIcon,
-  StopOutlined
-} from '@components/icons'
+import { NotePencilIcon } from '@components/icons'
 import {
   ButtonComponent,
   FeePolicyApprovalAction,
@@ -22,7 +18,7 @@ import {
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import { AppliedTargetCell } from '../components/AppliedTargetCell'
 import { ChannelCell } from '../components/ChannelCell'
-import { FeePolicyScheduleRowAction } from '../components/FeePolicyScheduleRowAction'
+import { FeePolicyStatusMenu } from '../components/FeePolicyStatusMenu'
 import { ScopeComponentsCell } from '../components/ScopeComponentsCell'
 import { formatDateTimeUTC } from '@/pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/utils/applicable-fee-rule'
 
@@ -197,12 +193,12 @@ export const getFeePolicyColumns = ({
   {
     title: 'Hành động',
     dataIndex: 'id',
-    // Bảng này giữ bố cục cố định: tối đa 2 nút (Sửa + Duyệt, hoặc Bật/Tắt + Hẹn giờ) nên chỉ chừa đúng chỗ đó.
+    // Bảng này giữ bố cục cố định: tối đa 1 nút (Sửa, Duyệt, hoặc menu Bật/Tắt/Hẹn giờ) nên chỉ chừa đúng chỗ đó.
     width: 96,
     fixed: 'right',
     align: 'center',
     render: (id: string, row) => {
-      const isEditable = row.status === 'INIT' || row.status === 'REJECTED'
+      const isEditable = row.status === 'INIT'
 
       return (
         <div className='flex items-center justify-center gap-2'>
@@ -240,48 +236,12 @@ export const getFeePolicyColumns = ({
             </Can>
           )}
 
-          {row.status === 'INACTIVE' && (
-            <Can
-              screen='FEE_CONFIG'
-              action='activate'
-            >
-              <TooltipComponent title='Kích hoạt chính sách'>
-                <ButtonComponent
-                  type='default'
-                  htmlType='button'
-                  size='small'
-                  aria-label='Kích hoạt chính sách'
-                  icon={<CheckCircleOutlined />}
-                  loading={busyId === id}
-                  onClick={() => onActivate(id, row.name)}
-                />
-              </TooltipComponent>
-            </Can>
-          )}
-
-          {row.status === 'ACTIVE' && (
-            <Can
-              screen='FEE_CONFIG'
-              action='deactivate'
-            >
-              <TooltipComponent title='Ngừng áp dụng chính sách'>
-                <ButtonComponent
-                  type='default'
-                  htmlType='button'
-                  size='small'
-                  danger
-                  aria-label='Ngừng áp dụng chính sách'
-                  icon={<StopOutlined />}
-                  loading={busyId === id}
-                  onClick={() => onDeactivate(id)}
-                />
-              </TooltipComponent>
-            </Can>
-          )}
-
-          <FeePolicyScheduleRowAction
+          <FeePolicyStatusMenu
             status={row.status}
-            onClick={() => onSchedule(id, row.name, row.status)}
+            busy={busyId === id}
+            onActivate={() => onActivate(id, row.name)}
+            onDeactivate={() => onDeactivate(id)}
+            onSchedule={() => onSchedule(id, row.name, row.status)}
           />
         </div>
       )

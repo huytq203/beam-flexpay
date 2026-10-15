@@ -4,7 +4,7 @@ import { Can } from '@/app/permissions'
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
-  SafetyOutlined
+  CheckOutlined
 } from '@components/icons'
 import {
   ButtonComponent,
@@ -82,7 +82,7 @@ export function KybReviewAction({
             htmlType='button'
             type='default'
             size='small'
-            icon={<SafetyOutlined aria-hidden />}
+            icon={<CheckOutlined aria-hidden />}
             aria-label={`Phê duyệt KYB ví ${name}`}
           />
         </TooltipComponent>
