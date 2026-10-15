@@ -5,6 +5,7 @@ import {
   buildUpdateBody,
   isDraftValid,
   isIdentityChanged,
+  isLockReasonMissing,
   maskAccountNumber,
   toDraft
 } from '../bankAccount.utils'
@@ -88,5 +89,22 @@ describe('bankAccount.utils', () => {
         otp
       )
     ).toMatchObject({ merchantId: 'merchant-1' })
+  })
+})
+
+describe('isLockReasonMissing', () => {
+  it('khóa tài khoản đang hoạt động cần lý do tối thiểu 10 ký tự', () => {
+    const draft = { ...toDraft(row), status: 'INACTIVE' as const }
+    expect(isLockReasonMissing(row, { ...draft, reason: 'ngắn' })).toBe(true)
+    expect(isLockReasonMissing(row, { ...draft, reason: '  ngắn     ' })).toBe(
+      true
+    )
+    expect(
+      isLockReasonMissing(row, { ...draft, reason: 'Nghi ngờ gian lận' })
+    ).toBe(false)
+  })
+  it('không áp dụng khi không phải thao tác khóa', () => {
+    expect(isLockReasonMissing(row, toDraft(row))).toBe(false)
+    expect(isLockReasonMissing(null, toDraft(null))).toBe(false)
   })
 })

@@ -7,6 +7,7 @@ import type {
 } from '@/app/services/merchantHierarchyApi'
 import { formatUTCToLocalDateTime } from '@utils/helper-functions/date'
 import {
+  DeleteOutlined,
   EditOutlined,
   EyeOutlined,
   LockFilled,
@@ -34,6 +35,7 @@ interface TerminalColumnOptions {
   onView: (row: ApiTerminalSummary) => void
   onEdit: (row: ApiTerminalSummary) => void
   onLock: (row: ApiTerminalSummary) => void
+  onDelete: (row: ApiTerminalSummary) => void
 }
 
 export const createTerminalApiColumns = ({
@@ -41,7 +43,8 @@ export const createTerminalApiColumns = ({
   size,
   onView,
   onEdit,
-  onLock
+  onLock,
+  onDelete
 }: TerminalColumnOptions): Columns => [
   {
     title: '#',
@@ -87,7 +90,7 @@ export const createTerminalApiColumns = ({
   {
     title: 'Thao tác',
     fixed: 'right',
-    width: 124,
+    width: 160,
     align: 'center',
     render: (_, row) => (
       <div className='flex justify-center gap-1'>
@@ -102,17 +105,19 @@ export const createTerminalApiColumns = ({
             onClick={() => onView(row)}
           />
         </Can>
-        <Can
-          screen='MERCHANT_TERMINAL'
-          action='edit'
-        >
-          <TerminalActionButton
-            label={`Sửa Terminal ${row.name}`}
-            title='Sửa Terminal'
-            icon={<EditOutlined aria-hidden />}
-            onClick={() => onEdit(row)}
-          />
-        </Can>
+        {row.status === 'ACTIVE' && (
+          <Can
+            screen='MERCHANT_TERMINAL'
+            action='edit'
+          >
+            <TerminalActionButton
+              label={`Sửa Terminal ${row.name}`}
+              title='Sửa Terminal'
+              icon={<EditOutlined aria-hidden />}
+              onClick={() => onEdit(row)}
+            />
+          </Can>
+        )}
         {row.status !== 'TERMINATED' && row.lockSource !== 'CASCADE' && (
           <Can
             screen='MERCHANT_TERMINAL'
@@ -139,6 +144,18 @@ export const createTerminalApiColumns = ({
             />
           </Can>
         )}
+        <Can
+          screen='MERCHANT_TERMINAL'
+          action='delete'
+        >
+          <TerminalActionButton
+            label={`Xóa Terminal ${row.name}`}
+            title='Xóa Terminal'
+            icon={<DeleteOutlined aria-hidden />}
+            danger
+            onClick={() => onDelete(row)}
+          />
+        </Can>
       </div>
     )
   }

@@ -33,7 +33,8 @@ describe('cột thao tác màn Merchant', () => {
           columns={MerchantColumn({
             onEdit: vi.fn(),
             onView: vi.fn(),
-            onApprove
+            onApprove,
+            onTerminate: vi.fn()
           })}
         />
       </Provider>

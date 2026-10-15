@@ -91,6 +91,8 @@ export default function SubMerchantFormPage() {
       feedback.success(
         edit ? 'Đã cập nhật Sub-merchant' : 'Đã tạo Sub-merchant'
       )
+      if (result.settlementBankAccountWarning)
+        feedback.warning(result.settlementBankAccountWarning)
       navigate(`${basePath}/detail/${result.id}`)
     } catch {
       feedback.error('Không thể lưu Sub-merchant')

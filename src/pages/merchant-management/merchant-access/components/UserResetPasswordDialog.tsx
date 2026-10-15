@@ -11,17 +11,6 @@ interface Props {
   onClose: () => void
 }
 
-const isInactiveUserError = (error: unknown): boolean => {
-  if (!error || typeof error !== 'object' || !('data' in error)) return false
-  const data = error.data
-  return Boolean(
-    data &&
-      typeof data === 'object' &&
-      'detail' in data &&
-      data.detail === 'Merchant user must be active'
-  )
-}
-
 export function UserResetPasswordDialog({ user, getMerchant, onClose }: Props) {
   const [resetPassword, { isLoading: isResetting }] =
     useResetMerchantUserPasswordMutation()
@@ -30,12 +19,8 @@ export function UserResetPasswordDialog({ user, getMerchant, onClose }: Props) {
       await resetPassword(user.id).unwrap()
       feedback.success('Đã gửi hướng dẫn đặt lại mật khẩu cho User')
       onClose()
-    } catch (error) {
-      feedback.error(
-        isInactiveUserError(error)
-          ? 'Trạng thái User đã thay đổi: chỉ có thể đặt lại mật khẩu cho User đang hoạt động. Hãy làm mới danh sách.'
-          : 'Không thể đặt lại mật khẩu User. Vui lòng thử lại.'
-      )
+    } catch {
+      feedback.error('Không thể đặt lại mật khẩu User. Vui lòng thử lại.')
     }
   }
   return (

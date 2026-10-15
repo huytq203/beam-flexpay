@@ -24,6 +24,12 @@ export interface MerchantUserDto {
   subMerchantIds?: string[]
   /** Có giá trị khi User đang có đề xuất đổi phạm vi chờ duyệt. */
   pendingScopeProposalId?: string | null
+  /** Mã Merchant bị loại khỏi phạm vi khi tạo User; chỉ có ở response tạo. */
+  droppedMerchantCodes?: string[]
+  /** Cùng thứ tự với `droppedMerchantCodes`, dùng để nêu tên trong cảnh báo. */
+  droppedMerchantNames?: string[]
+  /** User không còn Merchant hoặc Sub nào trong phạm vi. */
+  noMerchantScope?: boolean
   createdAt?: string
   updatedAt?: string
 }
@@ -46,6 +52,12 @@ export interface MerchantUserScopeProposalDto {
   /** Người đang đăng nhập là người tạo đề xuất nên không được quyết định. */
   ownProposal?: boolean
 }
+
+/** Kết quả gửi đổi phạm vi: `id` là `null` khi chỉ thu hẹp, BE áp dụng ngay và không tạo đề xuất. */
+export type MerchantUserScopeChangeResult = Omit<
+  MerchantUserScopeProposalDto,
+  'id'
+> & { id: string | null }
 
 export interface MerchantUserScopeProposalRequest {
   id: string
@@ -183,7 +195,7 @@ export const accessApi = apiMerchant.injectEndpoints({
       invalidatesTags: ['merchant']
     }),
     createMerchantUserScopeProposal: builder.mutation<
-      MerchantUserScopeProposalDto,
+      MerchantUserScopeChangeResult,
       MerchantUserScopeProposalRequest
     >({
       query: ({ id, ...body }) => ({
@@ -192,7 +204,7 @@ export const accessApi = apiMerchant.injectEndpoints({
         body
       }),
       transformResponse: (
-        response: MerchantAccessEnvelope<MerchantUserScopeProposalDto>
+        response: MerchantAccessEnvelope<MerchantUserScopeChangeResult>
       ) => response.data,
       invalidatesTags: ['merchant']
     }),

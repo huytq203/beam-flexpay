@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Can, SCREENS } from '@/app/permissions'
 import {
   useGetTerminalPageQuery,
+  useDeleteTerminalMutation,
   useSetTerminalLockedMutation,
   type ApiTerminalSummary,
   type ApiTerminalType,
@@ -19,6 +20,8 @@ import {
 import { createTerminalApiColumns } from '../columns/terminalApi.columns'
 import { TerminalApiFilters } from '../components/TerminalApiFilters'
 import { TerminalDetailModal } from '../components/TerminalDetailModal'
+import { getApiErrorDetail } from '@/app/utils/api-error'
+import { TerminalDeleteDialog } from '../components/TerminalDeleteDialog'
 import { TerminalLockDialog } from '../components/TerminalLockDialog'
 
 export default function TerminalListPage(
@@ -37,6 +40,8 @@ export default function TerminalListPage(
   const [viewingId, setViewingId] = useState<string>()
   const [locking, setLocking] = useState<ApiTerminalSummary | null>(null)
   const [reason, setReason] = useState('')
+  const [deleting, setDeleting] = useState<ApiTerminalSummary | null>(null)
+  const [deleteReason, setDeleteReason] = useState('')
   const query = useGetTerminalPageQuery({
     page,
     size,
@@ -47,6 +52,27 @@ export default function TerminalListPage(
     status
   })
   const [setLocked, lockState] = useSetTerminalLockedMutation()
+  const [deleteTerminal, deleteState] = useDeleteTerminalMutation()
+
+  const closeDelete = () => {
+    setDeleting(null)
+    setDeleteReason('')
+  }
+  const confirmDelete = async () => {
+    if (!deleting) return
+    const text = deleteReason.trim()
+    if (text.length < 10) {
+      feedback.warning('Lý do cần tối thiểu 10 ký tự')
+      return
+    }
+    try {
+      await deleteTerminal({ id: deleting.id, reason: text }).unwrap()
+      feedback.success('Đã xóa Terminal')
+      closeDelete()
+    } catch (error) {
+      feedback.error(getApiErrorDetail(error, 'Không thể xóa Terminal'))
+    }
+  }
 
   const closeLock = () => {
     setLocking(null)
@@ -162,13 +188,22 @@ export default function TerminalListPage(
             onView: (row) => setViewingId(row.id),
             onEdit: (row) =>
               navigate(`${basePath}/edit/${row.id}`, { state: row }),
-            onLock: setLocking
+            onLock: setLocking,
+            onDelete: setDeleting
           })}
         />
       </CardComponent>
       <TerminalDetailModal
         terminalId={viewingId}
         onClose={() => setViewingId(undefined)}
+      />
+      <TerminalDeleteDialog
+        terminal={deleting}
+        reason={deleteReason}
+        loading={deleteState.isLoading}
+        onReasonChange={setDeleteReason}
+        onClose={closeDelete}
+        onConfirm={() => void confirmDelete()}
       />
       <TerminalLockDialog
         terminal={locking}

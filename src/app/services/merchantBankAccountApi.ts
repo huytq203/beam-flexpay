@@ -42,6 +42,8 @@ export interface BankAccountCreate {
   otp: SensitiveOtpConfirmation
 }
 
+export type SensitiveOperation = 'BANK_ACCOUNT_CHANGE' | 'MERCHANT_TERMINATION'
+
 export interface SensitiveOtpConfirmation {
   otpSessionId: string
   otp: string
@@ -65,9 +67,17 @@ export interface BankAccountUpdate {
   otp?: SensitiveOtpConfirmation
 }
 
+export interface BankAccountUpdateResult {
+  account: BankAccountDto
+  applied: boolean
+  /** Chỉ có giá trị khi thao tác là khóa tài khoản. */
+  inFlightWithdrawalCount?: number | null
+}
+
 const service = apiMerchant.injectEndpoints({ endpoints: (builder) => ({
-  challengeBankAccountOtp: builder.mutation<SensitiveOtpChallenge, { targetId?: string }>({
-    query: ({ targetId }) => ({ url: '/sensitive-operations/otp-challenge', method: 'POST', body: { operation: 'BANK_ACCOUNT_CHANGE', targetId } }),
+  challengeBankAccountOtp: builder.mutation<SensitiveOtpChallenge, { targetId?: string; operation?: SensitiveOperation }>({
+    query: ({ targetId, operation = 'BANK_ACCOUNT_CHANGE' }) => ({ url: '/sensitive-operations/otp-challenge', method: 'POST', body: { operation, targetId } }),
+    extraOptions: { suppressErrorNotification: true },
     transformResponse: (response: MerchantEnvelope<SensitiveOtpChallenge>) => response.data
   }),
   listBankAccounts: builder.query<MerchantPage<BankAccountDto>, BankAccountQuery>({
@@ -80,7 +90,7 @@ const service = apiMerchant.injectEndpoints({ endpoints: (builder) => ({
     transformResponse: (response: MerchantEnvelope<BankAccountDto>) => response.data,
     invalidatesTags: ['merchant']
   }),
-  updateBankAccount: builder.mutation<{ account: BankAccountDto; applied: boolean }, { id: string; body: BankAccountUpdate }>({
+  updateBankAccount: builder.mutation<BankAccountUpdateResult, { id: string; body: BankAccountUpdate }>({
     query: ({ id, body }) => ({ url: `/merchant-bank-accounts/${id}`, method: 'PUT', body }),
     transformResponse: (response: MerchantEnvelope<{ account: BankAccountDto; applied: boolean }>) => response.data,
     invalidatesTags: ['merchant']
@@ -90,6 +100,12 @@ const service = apiMerchant.injectEndpoints({ endpoints: (builder) => ({
     transformResponse: (response: MerchantEnvelope<{ account: BankAccountDto; applied: boolean }>) => response.data,
     invalidatesTags: ['merchant']
   }),
+  verifyBankAccountLink: builder.mutation<BankAccountDto, { id: string; linked: boolean; reason?: string; failureReason?: string }>({
+    query: ({ id, ...params }) => ({ url: `/merchant-bank-accounts/${id}/link-verification`, method: 'POST', params }),
+    extraOptions: { suppressErrorNotification: true },
+    transformResponse: (response: MerchantEnvelope<BankAccountDto>) => response.data,
+    invalidatesTags: ['merchant']
+  }),
   setBankAccountHoldMode: builder.mutation<BankAccountDto, { id: string; enabled: boolean; reason: string }>({
     query: ({ id, ...body }) => ({ url: `/merchant-bank-accounts/${id}/hold-mode`, method: 'POST', body }),
     transformResponse: (response: MerchantEnvelope<BankAccountDto>) => response.data,
@@ -97,4 +113,4 @@ const service = apiMerchant.injectEndpoints({ endpoints: (builder) => ({
   })
 }) })
 
-export const { useChallengeBankAccountOtpMutation, useListBankAccountsQuery, useCreateBankAccountMutation, useUpdateBankAccountMutation, useMakeBankAccountDefaultMutation, useSetBankAccountHoldModeMutation } = service
+export const { useChallengeBankAccountOtpMutation, useListBankAccountsQuery, useCreateBankAccountMutation, useUpdateBankAccountMutation, useMakeBankAccountDefaultMutation, useSetBankAccountHoldModeMutation, useVerifyBankAccountLinkMutation } = service

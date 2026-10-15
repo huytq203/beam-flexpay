@@ -16,7 +16,8 @@ export const toMerchantUser = (item: MerchantUserDto): MerchantUser => ({
   status: item.status,
   lastLogin: null,
   createdAt: item.createdAt ?? '',
-  pendingScopeProposalId: item.pendingScopeProposalId ?? undefined
+  pendingScopeProposalId: item.pendingScopeProposalId ?? undefined,
+  noMerchantScope: item.noMerchantScope ?? false
 })
 
 export const toMerchantRole = (item: MerchantGroupDto): MerchantRole => ({

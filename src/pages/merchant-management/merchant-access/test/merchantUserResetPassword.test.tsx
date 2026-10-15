@@ -1,10 +1,8 @@
-import { screen, waitFor, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { screen } from '@testing-library/react'
+import { describe, expect, it } from 'vitest'
 import { http, HttpResponse } from 'msw'
 import { server } from '@/test/mocks/server'
 import { PERMISSION } from '@/app/permissions'
-import { feedback } from '@components/index'
 import { renderPage } from './merchantAccess.setup'
 
 const permissions = [
@@ -13,7 +11,7 @@ const permissions = [
 ]
 
 describe('đặt lại mật khẩu Merchant User', () => {
-  it('chỉ hiện thao tác cho User đang hoạt động', async () => {
+  it('hiện thao tác cho User ở mọi trạng thái (BE nhận reset cả khi khóa hoặc chờ kích hoạt)', async () => {
     server.use(
       http.get('*/merchant-users', () =>
         HttpResponse.json({
@@ -54,53 +52,14 @@ describe('đặt lại mật khẩu Merchant User', () => {
       screen.getByRole('button', { name: 'Đặt lại mật khẩu User User Active' })
     ).toBeInTheDocument()
     expect(
-      screen.queryByRole('button', {
+      screen.getByRole('button', {
         name: 'Đặt lại mật khẩu User User Locked'
       })
-    ).not.toBeInTheDocument()
+    ).toBeInTheDocument()
     expect(
-      screen.queryByRole('button', {
+      screen.getByRole('button', {
         name: 'Đặt lại mật khẩu User User Pending'
       })
-    ).not.toBeInTheDocument()
-  })
-
-  it('báo đúng nguyên nhân khi User vừa chuyển khỏi trạng thái hoạt động', async () => {
-    const feedbackSpy = vi.spyOn(feedback, 'error').mockImplementation(() => {})
-    server.use(
-      http.post('*/merchant-users/user-1/reset-password', () =>
-        HttpResponse.json(
-          {
-            message: 'DUPLICATE_FIELD_VALUE',
-            detail: 'Merchant user must be active',
-            success: false,
-            status: '3006'
-          },
-          { status: 400 }
-        )
-      )
-    )
-    const user = userEvent.setup()
-    renderPage('/secure-panel/merchant/user', permissions)
-    await user.click(
-      await screen.findByRole('button', {
-        name: 'Đặt lại mật khẩu User Nguyễn Văn Hải'
-      })
-    )
-    const dialog = screen.getByRole('dialog', {
-      name: 'Xác nhận đặt lại mật khẩu'
-    })
-    await user.click(
-      within(dialog).getByRole('button', { name: 'Gửi hướng dẫn' })
-    )
-    await waitFor(() =>
-      expect(feedbackSpy).toHaveBeenCalledWith(
-        expect.stringContaining(
-          'chỉ có thể đặt lại mật khẩu cho User đang hoạt động'
-        )
-      )
-    )
-    expect(dialog).toBeInTheDocument()
-    feedbackSpy.mockRestore()
+    ).toBeInTheDocument()
   })
 })

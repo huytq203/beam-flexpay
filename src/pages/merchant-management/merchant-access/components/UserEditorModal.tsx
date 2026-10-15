@@ -1,7 +1,6 @@
 import { useAccessMerchants } from '../hooks/useAccessMerchants'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, useWatch } from 'react-hook-form'
-import { useState } from 'react'
 
 import { FormInput } from '@components/form'
 import { ButtonComponent, DialogModal, feedback } from '@components/index'
@@ -20,8 +19,6 @@ import type { MerchantUser } from '../types/merchantAccess.types'
 import { ScopeChangeReasonField } from './ScopeChangeReasonField'
 import { UserSubMerchantField } from './UserSubMerchantField'
 import { useUserScopeDraft } from '../hooks/useUserScopeDraft'
-import type { PickedGroup } from './MerchantGroupPickerDialog'
-import { UserInitialAccessFields } from './UserInitialAccessFields'
 import { UserMerchantScopeField } from './UserMerchantScopeField'
 
 const FORM_ID = 'merchant-user-editor'
@@ -35,7 +32,6 @@ export function UserEditorModal({
   onClose: () => void
 }) {
   const { getMerchant, getSubMerchant } = useAccessMerchants()
-  const [groups, setGroups] = useState<PickedGroup[]>([])
   const scope = useUserScopeDraft(user, getSubMerchant)
   const [createUser, { isLoading: isCreating }] =
     useCreateMerchantUserMutation()
@@ -56,17 +52,8 @@ export function UserEditorModal({
   const selectedMerchantIds =
     useWatch({ control: form.control, name: 'merchantIds' }) ?? EMPTY_IDS
   const isScopeChanged = scope.isChanged(selectedMerchantIds)
-  // Nhóm riêng chỉ hợp lệ khi User thuộc đúng Merchant sở hữu nhóm đó.
-  const handleMerchantsChange = (merchantIds: string[]) => {
+  const handleMerchantsChange = (merchantIds: string[]) =>
     scope.syncWithMerchants(merchantIds)
-    setGroups((current) =>
-      current.filter(
-        (group) =>
-          group.merchantId === null ||
-          (merchantIds.length === 1 && group.merchantId === merchantIds[0])
-      )
-    )
-  }
 
   const submit = async (values: MerchantUserForm): Promise<void> => {
     if (user) {
@@ -74,16 +61,21 @@ export function UserEditorModal({
       return
     }
     try {
-      await createUser({
+      // Gán nhóm quyền và Sub-merchant thực hiện ở chức năng Phân quyền User.
+      const created = await createUser({
         email: values.email.trim().toLowerCase(),
         fullName: values.name.trim(),
         phone: values.phone,
         merchantIds: values.merchantIds,
-        groupIds: groups.map((group) => group.id),
-        subMerchantIds:
-          values.merchantIds.length === 1 ? scope.subs.map((sub) => sub.id) : []
+        groupIds: [],
+        subMerchantIds: []
       }).unwrap()
       feedback.success('Đã tạo User ở trạng thái Chờ kích hoạt')
+      const dropped = created.droppedMerchantNames ?? []
+      if (dropped.length > 0)
+        feedback.warning(
+          `Không gán được cho: ${dropped.join(', ')} (chỉ Merchant Hoạt động hoặc Bị khóa mới được gán)`
+        )
       onClose()
     } catch {
       feedback.error('Không thể lưu User')
@@ -101,19 +93,25 @@ export function UserEditorModal({
         id: current.id,
         body: { fullName: values.name.trim(), phone: values.phone }
       }).unwrap()
+      let scopeApplied = false
       if (isScopeChanged) {
-        await proposeScope({
+        const proposal = await proposeScope({
           id: current.id,
           merchantIds: values.merchantIds,
           subMerchantIds: scope.subs.map((sub) => sub.id),
           reason: scope.reason.trim()
         }).unwrap()
+        scopeApplied = proposal.status === 'APPROVED'
       }
-      feedback.success(
-        isScopeChanged
-          ? 'Đã lưu thông tin User. Thay đổi phạm vi đã được gửi duyệt.'
-          : 'Đã cập nhật User'
-      )
+      if (!isScopeChanged) feedback.success('Đã cập nhật User')
+      else if (scopeApplied)
+        feedback.success(
+          'Đã lưu thông tin User. Phạm vi đã được cập nhật ngay.'
+        )
+      else
+        feedback.success(
+          'Đã lưu thông tin User. Thay đổi phạm vi đã được gửi duyệt.'
+        )
       onClose()
     } catch {
       feedback.error('Không thể lưu User')
@@ -208,14 +206,10 @@ export function UserEditorModal({
           />
         )}
         {!user && (
-          <UserInitialAccessFields
-            merchantIds={selectedMerchantIds}
-            groups={groups}
-            subMerchants={scope.subs}
-            getMerchant={getMerchant}
-            onGroupsChange={setGroups}
-            onSubMerchantsChange={scope.setSubs}
-          />
+          <p className='text-xs text-muted-foreground'>
+            Gán nhóm quyền và Sub-merchant tại chức năng Phân quyền User sau khi
+            tạo.
+          </p>
         )}
       </form>
     </DialogModal>

@@ -21,8 +21,8 @@ export function UserStatusDialog({ user, getMerchant, onClose }: Props) {
   const [unlockUser, { isLoading: isUnlocking }] =
     useUnlockMerchantUserMutation()
   const confirmStatus = async (): Promise<void> => {
-    if (user.status === 'ACTIVE' && !lockReason.trim()) {
-      feedback.warning('Vui lòng nhập lý do khóa')
+    if (user.status === 'ACTIVE' && lockReason.trim().length < 10) {
+      feedback.warning('Lý do khóa cần tối thiểu 10 ký tự')
       return
     }
     try {

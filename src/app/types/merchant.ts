@@ -116,3 +116,15 @@ export interface ContentMerchant {
 }
 
 export type DataMerchant = MerchantPage<ContentMerchant>
+
+export interface TerminationAffectedUser {
+  id: string
+  email: string
+  leftWithoutScope: boolean
+}
+
+export interface TerminationResult {
+  usersScopeShrunk: number
+  usersLeftWithoutScope: number
+  affectedUsers: TerminationAffectedUser[]
+}

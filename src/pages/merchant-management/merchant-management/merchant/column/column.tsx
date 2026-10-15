@@ -2,7 +2,7 @@ import { ColumnType } from 'antd/es/table'
 import { ContentMerchant } from '@type/merchant'
 import { formatUTCToLocalDateTime } from '@utils/helper-functions/date'
 import { ButtonComponent, TooltipComponent } from '@components/index'
-import { CheckCircleOutlined, EditOutlined, EyeOutlined } from '@components/icons'
+import { CheckCircleOutlined, EditOutlined, EyeOutlined, ProhibitIcon } from '@components/icons'
 import type { MerchantStatus } from '@type/merchant'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { STATUS_CONFIG } from '../constants/Merchant.constant'
@@ -12,9 +12,10 @@ interface MerchantColumnProps {
     onEdit: (id: string) => void
     onView?: (id: string) => void
     onApprove: (merchant: ContentMerchant) => void
+    onTerminate: (merchant: ContentMerchant) => void
 }
 
-export const MerchantColumn = ({ onEdit, onView, onApprove }: MerchantColumnProps): ColumnType<ContentMerchant>[] => [
+export const MerchantColumn = ({ onEdit, onView, onApprove, onTerminate }: MerchantColumnProps): ColumnType<ContentMerchant>[] => [
     {
         title: '#',
         dataIndex: 'stt',
@@ -55,7 +56,7 @@ export const MerchantColumn = ({ onEdit, onView, onApprove }: MerchantColumnProp
     {
         title: 'Thao tác',
         align: 'center',
-        width: 130,
+        width: 160,
         fixed: 'right',
         render: (_: unknown, record: ContentMerchant) => (
             <div className='flex gap-1 items-center justify-center'>
@@ -72,6 +73,11 @@ export const MerchantColumn = ({ onEdit, onView, onApprove }: MerchantColumnProp
                 {record.status === 'PENDING_APPROVAL' && <Can screen='MERCHANT_MANAGEMENT' action='approve'>
                     <TooltipComponent title='Phê duyệt hồ sơ'>
                         <ButtonComponent htmlType='button' type='default' size='small' icon={<CheckCircleOutlined aria-hidden />} aria-label={`Phê duyệt merchant ${record.name}`} onClick={() => onApprove(record)} />
+                    </TooltipComponent>
+                </Can>}
+                {(record.status === 'ACTIVE' || record.status === 'LOCKED') && <Can screen='MERCHANT_MANAGEMENT' action='terminate'>
+                    <TooltipComponent title='Chấm dứt hợp tác'>
+                        <ButtonComponent htmlType='button' type='default' size='small' danger icon={<ProhibitIcon aria-hidden />} aria-label={`Chấm dứt hợp tác ${record.name}`} onClick={() => onTerminate(record)} />
                     </TooltipComponent>
                 </Can>}
             </div>

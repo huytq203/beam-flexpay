@@ -12,6 +12,7 @@ import { MerchantColumn } from '../column/column'
 import { useNavigate } from 'react-router-dom'
 import { Can } from '@/app/permissions'
 import CardTotal from '../components/CardTotal'
+import { TerminateMerchantDialog } from '../components/TerminateMerchantDialog'
 import {
   useApproveMerchantMutation,
   useExportMerchantsMutation
@@ -36,6 +37,8 @@ const MerchantManagement = () => {
   const [approveMerchant, { isLoading: isApproving }] =
     useApproveMerchantMutation()
   const [merchantToApprove, setMerchantToApprove] =
+    useState<ContentMerchant | null>(null)
+  const [merchantToTerminate, setMerchantToTerminate] =
     useState<ContentMerchant | null>(null)
   const navigate = useNavigate()
 
@@ -109,7 +112,8 @@ const MerchantManagement = () => {
           columns={MerchantColumn({
             onEdit: (id) => navigate(`create/${id}`),
             onView: (id) => navigate(`detail/${id}`),
-            onApprove: setMerchantToApprove
+            onApprove: setMerchantToApprove,
+            onTerminate: setMerchantToTerminate
           })}
           dataSource={data}
           loading={isFetching}
@@ -125,6 +129,10 @@ const MerchantManagement = () => {
           }}
         />
       </CardComponent>
+      <TerminateMerchantDialog
+        merchant={merchantToTerminate}
+        onClose={() => setMerchantToTerminate(null)}
+      />
       <DialogModal
         open={merchantToApprove !== null}
         title='Phê duyệt hồ sơ ĐVCNTT'

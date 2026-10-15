@@ -1,7 +1,8 @@
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { feedback } from '@components/index'
 import { PERMISSION } from '@/app/permissions'
 import { server } from '@/test/mocks/server'
 import { renderPage } from './merchantAccess.setup'
@@ -114,6 +115,43 @@ describe('Phạm vi User đi qua đề xuất chờ duyệt', () => {
       )
     ).toBeInTheDocument()
   }, 15_000)
+
+  it('thu hẹp phạm vi trả 200 APPROVED thì báo áp dụng ngay, không nói đã gửi duyệt', async () => {
+    const user = userEvent.setup()
+    const success = vi.spyOn(feedback, 'success').mockImplementation(() => {})
+    server.use(
+      http.post('*/merchant-users/:id/scope-proposals', () =>
+        HttpResponse.json({ data: { id: null, status: 'APPROVED' } })
+      )
+    )
+    renderPage('/secure-panel/merchant/user', MANAGER_PERMISSIONS)
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Sửa User Nguyễn Văn Hải' })
+    )
+    const editor = await findDialogByTitle('Sửa thông tin User')
+    await user.click(getTrigger(editor, 'merchantIds'))
+    const picker = await findDialogByTitle('Chọn Merchant quản lý')
+    await within(picker).findByText('Phúc Long')
+    await user.click(within(picker).getAllByRole('checkbox')[2])
+    await user.click(within(picker).getByRole('button', { name: 'Xác nhận' }))
+    await user.type(
+      within(editor).getByLabelText(/Lý do thay đổi phạm vi/),
+      'Mở rộng quản lý chuỗi'
+    )
+    await user.click(
+      within(editor).getByRole('button', { name: 'Lưu thay đổi' })
+    )
+    await waitFor(() =>
+      expect(success).toHaveBeenCalledWith(
+        expect.stringContaining('cập nhật ngay')
+      )
+    )
+    expect(success).not.toHaveBeenCalledWith(
+      expect.stringContaining('gửi duyệt')
+    )
+    success.mockRestore()
+  })
 
   it('không có quyền đề xuất thì ẩn hẳn phạm vi Merchant khi sửa User', async () => {
     const user = userEvent.setup()

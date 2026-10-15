@@ -6,7 +6,7 @@ import { ButtonComponent, TagComponent } from '@components/index'
 import { LINK_STATUS } from '../constants/bankAccount.constants'
 import { maskAccountNumber } from '../utils/bankAccount.utils'
 
-export type BankAccountActionType = 'default' | 'hold'
+export type BankAccountActionType = 'default' | 'hold' | 'verify'
 
 interface BankAccountColumnOptions {
   page: number
@@ -70,7 +70,7 @@ export const createBankAccountColumns = ({
     title: 'Thao tác',
     fixed: 'right',
     align: 'center',
-    width: 240,
+    width: 300,
     render: (_, row) => (
       <Can
         screen='MERCHANT_BANK_ACCOUNT'
@@ -83,6 +83,14 @@ export const createBankAccountColumns = ({
             content='Sửa'
             onClick={() => onEdit(row)}
           />
+          {row.linkStatus === 'PENDING_VERIFICATION' && (
+            <ButtonComponent
+              size='small'
+              type='default'
+              content='Xác minh'
+              onClick={() => onAction('verify', row)}
+            />
+          )}
           {!row.isDefault && (
             <ButtonComponent
               size='small'

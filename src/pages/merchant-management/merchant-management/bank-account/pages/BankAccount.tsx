@@ -8,6 +8,7 @@ import {
   type BankAccountActionType
 } from '../columns/bankAccount.columns'
 import { BankAccountActionDialog } from '../components/BankAccountActionDialog'
+import { BankAccountVerifyDialog } from '../components/BankAccountVerifyDialog'
 import { BankAccountEditorDialog } from '../components/BankAccountEditorDialog'
 import { BankAccountFilters } from '../components/BankAccountFilters'
 import { useBankAccountList } from '../hooks/useBankAccountList'
@@ -92,7 +93,13 @@ const BankAccount = () => {
           onClose={() => setEditing(null)}
         />
       )}
-      {action && (
+      {action?.type === 'verify' && (
+        <BankAccountVerifyDialog
+          row={action.row}
+          onClose={() => setAction(null)}
+        />
+      )}
+      {action && action.type !== 'verify' && (
         <BankAccountActionDialog
           type={action.type}
           row={action.row}

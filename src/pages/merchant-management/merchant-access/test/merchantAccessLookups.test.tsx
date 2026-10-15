@@ -37,7 +37,7 @@ describe('Tra cứu dùng chung của màn quyền Merchant', () => {
     expect(counts.subMerchants).toBe(1)
 
     await user.click(screen.getByRole('button', { name: 'Thêm mới User' }))
-    await screen.findByText('Phân quyền ban đầu')
+    await screen.findByText('Thêm mới User', { selector: '.ant-modal-title' })
 
     expect(counts.merchants).toBe(1)
     expect(counts.subMerchants).toBe(1)

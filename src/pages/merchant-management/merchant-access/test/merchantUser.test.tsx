@@ -71,6 +71,35 @@ describe('Merchant User', () => {
   })
 })
 
+describe('cờ phạm vi User', () => {
+  it('hiện cảnh báo khi User không còn Merchant nào trong phạm vi', async () => {
+    server.use(
+      http.get('*/merchant-users', () =>
+        HttpResponse.json({
+          data: {
+            content: [
+              {
+                id: 'user-9',
+                fullName: 'User Mồ Côi',
+                email: 'orphan@example.com',
+                status: 'ACTIVE',
+                merchantIds: [],
+                noMerchantScope: true
+              }
+            ],
+            totalElements: 1,
+            number: 0,
+            size: 20
+          }
+        })
+      )
+    )
+    renderPage('/secure-panel/merchant/user')
+    expect(await screen.findByText('User Mồ Côi')).toBeInTheDocument()
+    expect(screen.getByText('Không còn phạm vi')).toBeInTheDocument()
+  })
+})
+
 describe('quy tắc dữ liệu phân quyền', () => {
   it('chỉ cho User nhiều Merchant dùng nhóm chung', () => {
     const user = {

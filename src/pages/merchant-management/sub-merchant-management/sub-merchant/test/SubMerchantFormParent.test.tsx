@@ -156,4 +156,42 @@ describe('SubMerchantFormPage — chọn Merchant cha', () => {
     ).not.toBeInTheDocument()
     expect(screen.getByLabelText('Địa chỉ')).toHaveValue(PARENT.address)
   })
+
+  it('tạo Sub có settlementBankAccountWarning vẫn thành công và hiện cảnh báo', async () => {
+    const user = userEvent.setup()
+    const warning =
+      'Master chưa có tài khoản nhận doanh thu mặc định. Sub-merchant này chưa tạo được lệnh rút.'
+    server.use(
+      http.post('*/sub-merchants', () =>
+        HttpResponse.json(
+          {
+            success: true,
+            data: {
+              id: 'sub-new',
+              code: 'SUB-NEW',
+              settlementBankAccountId: null,
+              settlementBankAccountWarning: warning
+            }
+          },
+          { status: 201 }
+        )
+      )
+    )
+    renderForm('/sub-merchant/create')
+    await user.click(screen.getByRole('button', { name: 'Chọn Merchant cha' }))
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Chọn Merchant cha'
+    })
+    await user.click(
+      await within(dialog).findByRole('button', {
+        name: 'Chọn Merchant Highlands Coffee'
+      })
+    )
+    await user.type(screen.getByLabelText(/Tên Sub-merchant/), 'Chi nhánh mới')
+    await user.click(
+      document.querySelector('button[form="sub-merchant-form"]')!
+    )
+    expect(await screen.findByText(warning)).toBeInTheDocument()
+    expect(screen.queryByText('Không thể lưu Sub-merchant')).toBeNull()
+  })
 })

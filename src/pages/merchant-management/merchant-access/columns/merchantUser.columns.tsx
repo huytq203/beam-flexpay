@@ -90,6 +90,9 @@ export const createMerchantUserColumns = ({
           <span className='block truncate text-xs text-muted-foreground'>
             {user.email}
           </span>
+          {user.noMerchantScope && (
+            <TagComponent color='warning'>Không còn phạm vi</TagComponent>
+          )}
           <span className='block whitespace-normal break-words text-xs font-medium text-primary lg:hidden'>
             {user.merchantIds
               .map((id) => getMerchant(id)?.name)
@@ -234,23 +237,21 @@ export const createMerchantUserColumns = ({
           user={user}
           onReview={onReviewScope}
         />
-        {user.status === 'ACTIVE' && (
-          <Can
-            screen='MERCHANT_USER'
-            action='resetPassword'
-          >
-            <AccessActionButton
-              icon={
-                <KeyIcon
-                  aria-hidden
-                  size={15}
-                />
-              }
-              label={`Đặt lại mật khẩu User ${user.name}`}
-              onClick={() => onResetPassword(user)}
-            />
-          </Can>
-        )}
+        <Can
+          screen='MERCHANT_USER'
+          action='resetPassword'
+        >
+          <AccessActionButton
+            icon={
+              <KeyIcon
+                aria-hidden
+                size={15}
+              />
+            }
+            label={`Đặt lại mật khẩu User ${user.name}`}
+            onClick={() => onResetPassword(user)}
+          />
+        </Can>
         {user.status === 'PENDING' && (
           <Can
             screen='MERCHANT_USER'

@@ -37,6 +37,9 @@ export const useBankAccountPersist = (row: BankAccountDto | null) => {
     }
     const body = buildUpdateBody(row, input.draft, input.otp)
     const result = await update({ id: row.id, body }).unwrap()
+    if (result.inFlightWithdrawalCount) {
+      return `Đã khóa tài khoản. Còn ${result.inFlightWithdrawalCount} lệnh rút đang chạy, vẫn chi theo tài khoản đã chụp lúc tạo lệnh.`
+    }
     return result.applied
       ? 'Đã cập nhật tài khoản ngân hàng'
       : 'Đã gửi yêu cầu thay đổi để chờ duyệt'

@@ -40,6 +40,9 @@ export interface ApiSubMerchantSummary {
 }
 
 export interface ApiSubMerchant extends ApiSubMerchantSummary {
+  settlementBankAccountId?: string | null
+  /** Chỉ có ở response của thao tác tạo; cảnh báo, không phải lỗi. */
+  settlementBankAccountWarning?: string | null
   businessField?: string
   legalName?: string
   taxCode?: string
@@ -193,6 +196,12 @@ const service = apiMerchant.injectEndpoints({
       query: ({ id, lock, reason }) => ({ url: `/terminals/${id}/${lock ? 'lock' : 'unlock'}`, method: 'POST', body: { reason } }),
       transformResponse: unwrap<ApiTerminal>,
       invalidatesTags: ['merchant']
+    }),
+    deleteTerminal: builder.mutation<void, { id: string; reason: string }>({
+      query: ({ id, reason }) => ({ url: `/terminals/${id}`, method: 'DELETE', body: { reason } }),
+      // BE trả `message` là tên enum; trang tự hiện câu `detail` tiếng Việt.
+      extraOptions: { suppressErrorNotification: true },
+      invalidatesTags: ['merchant']
     })
   })
 })
@@ -209,5 +218,6 @@ export const {
   useGetTerminalDetailQuery,
   useCreateTerminalApiMutation,
   useUpdateTerminalApiMutation,
-  useSetTerminalLockedMutation
+  useSetTerminalLockedMutation,
+  useDeleteTerminalMutation
 } = service

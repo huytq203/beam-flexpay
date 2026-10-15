@@ -45,6 +45,8 @@ export interface MerchantUser {
   lockReason?: string
   /** Id đề xuất đổi phạm vi đang chờ duyệt; không có nghĩa là không có đề xuất. */
   pendingScopeProposalId?: string
+  /** User không còn Merchant hoặc Sub nào trong phạm vi. */
+  noMerchantScope?: boolean
 }
 
 export interface MerchantAccessSnapshot {

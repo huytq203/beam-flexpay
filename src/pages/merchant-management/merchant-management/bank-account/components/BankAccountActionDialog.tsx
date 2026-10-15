@@ -11,12 +11,15 @@ import { useSensitiveOtp } from '../hooks/useSensitiveOtp'
 import { BankAccountOtpDialog } from './BankAccountOtpDialog'
 
 interface BankAccountActionDialogProps {
-  type: BankAccountActionType
+  type: Exclude<BankAccountActionType, 'verify'>
   row: BankAccountDto
   onClose: () => void
 }
 
-const titleOf = (type: BankAccountActionType, row: BankAccountDto): string => {
+const titleOf = (
+  type: BankAccountActionDialogProps['type'],
+  row: BankAccountDto
+): string => {
   if (type === 'default') return 'Đặt tài khoản mặc định'
   return row.holdMode ? 'Bỏ tạm giữ' : 'Tạm giữ tài khoản'
 }

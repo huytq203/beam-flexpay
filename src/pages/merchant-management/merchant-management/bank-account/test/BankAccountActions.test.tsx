@@ -138,4 +138,48 @@ describe('BankAccount — thao tác trên dòng', () => {
       })
     )
   })
+
+  it('TK chờ xác minh có nút Xác minh và gọi link-verification?linked=true', async () => {
+    const user = userEvent.setup()
+    let url: URL | undefined
+    server.use(
+      http.get('*/merchant-bank-accounts', () =>
+        HttpResponse.json({
+          data: {
+            content: [{ ...account, linkStatus: 'PENDING_VERIFICATION' }],
+            totalElements: 1,
+            number: 0,
+            size: 20
+          }
+        })
+      ),
+      http.post(
+        '*/merchant-bank-accounts/bank-2/link-verification',
+        ({ request }) => {
+          url = new URL(request.url)
+          return HttpResponse.json({ data: account })
+        }
+      )
+    )
+    renderPage()
+    await user.click(await screen.findByRole('button', { name: 'Xác minh' }))
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Xác minh liên kết'
+    })
+    await user.type(
+      within(dialog).getByLabelText('Lý do'),
+      'Đã đối chiếu sao kê'
+    )
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Xác minh thành công' })
+    )
+    await waitFor(() => expect(url?.searchParams.get('linked')).toBe('true'))
+    expect(url?.searchParams.get('reason')).toBe('Đã đối chiếu sao kê')
+  })
+
+  it('TK đã liên kết không có nút Xác minh', async () => {
+    renderPage()
+    await screen.findByRole('button', { name: 'Tạm giữ' })
+    expect(screen.queryByRole('button', { name: 'Xác minh' })).toBeNull()
+  })
 })

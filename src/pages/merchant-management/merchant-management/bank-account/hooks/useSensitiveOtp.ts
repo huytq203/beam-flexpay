@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import {
   useChallengeBankAccountOtpMutation,
+  type SensitiveOperation,
   type SensitiveOtpChallenge,
   type SensitiveOtpConfirmation
 } from '@/app/services/merchantBankAccountApi'
+import { getApiErrorDetail } from '@/app/utils/api-error'
 import { feedback } from '@components/index'
 
 export interface SensitiveOtpState {
@@ -16,7 +18,9 @@ export interface SensitiveOtpState {
   reset: () => void
 }
 
-export const useSensitiveOtp = (): SensitiveOtpState => {
+export const useSensitiveOtp = (
+  operation: SensitiveOperation = 'BANK_ACCOUNT_CHANGE'
+): SensitiveOtpState => {
   const [challenge, setChallenge] = useState<SensitiveOtpChallenge | null>(null)
   const [code, setCode] = useState('')
   const [challengeOtp, challengeState] = useChallengeBankAccountOtpMutation()
@@ -28,10 +32,10 @@ export const useSensitiveOtp = (): SensitiveOtpState => {
     setCode,
     request: async (targetId) => {
       try {
-        setChallenge(await challengeOtp({ targetId }).unwrap())
+        setChallenge(await challengeOtp({ targetId, operation }).unwrap())
         setCode('')
-      } catch {
-        feedback.error('Không thể gửi mã OTP')
+      } catch (error) {
+        feedback.error(getApiErrorDetail(error, 'Không thể gửi mã OTP'))
       }
     },
     toConfirmation: () => {

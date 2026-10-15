@@ -10,8 +10,10 @@ import type {
   MerchantPage,
   MerchantSearchParams,
   SelectableWallet,
+  TerminationResult,
   UpdateMerchantPayload
 } from '@type/merchant'
+import type { SensitiveOtpConfirmation } from './merchantBankAccountApi'
 
 export const createMerchantDocumentBody = (
   file: File,
@@ -131,6 +133,27 @@ export const merchantService = apiMerchant.injectEndpoints({
         response.data,
       invalidatesTags: ['merchant']
     }),
+    terminateMerchant: builder.mutation<
+      TerminationResult,
+      {
+        id: string
+        body: {
+          reason: string
+          confirmation: string
+          otp: SensitiveOtpConfirmation
+        }
+      }
+    >({
+      query: ({ id, body }) => ({
+        url: `/merchants/${id}/terminate`,
+        method: 'POST',
+        body
+      }),
+      extraOptions: { suppressErrorNotification: true },
+      transformResponse: (response: MerchantEnvelope<TerminationResult>) =>
+        response.data,
+      invalidatesTags: ['merchant']
+    }),
     approveMerchant: builder.mutation<ContentMerchant, string>({
       query: (id) => ({ url: `/merchants/${id}/approve`, method: 'POST' }),
       transformResponse: (response: MerchantEnvelope<ContentMerchant>) =>
@@ -186,6 +209,7 @@ export const {
   useLazyGetMerchantByIdQuery,
   useSubmitMerchantMutation,
   useApproveMerchantMutation,
+  useTerminateMerchantMutation,
   useRejectMerchantMutation,
   useSetMerchantLockedMutation
 } = merchantService

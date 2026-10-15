@@ -7,6 +7,7 @@ import { feedback, type PickedEntity } from '@components/index'
 import {
   isDraftValid,
   isIdentityChanged,
+  isLockReasonMissing,
   toDraft,
   type BankAccountDraft
 } from '../utils/bankAccount.utils'
@@ -31,6 +32,10 @@ export const useBankAccountEditor = (
       feedback.warning(
         'Vui lòng kiểm tra ngân hàng, số tài khoản và tên chủ tài khoản'
       )
+      return
+    }
+    if (isLockReasonMissing(row, draft)) {
+      feedback.warning('Khóa tài khoản cần lý do tối thiểu 10 ký tự')
       return
     }
     if (!row && !merchant) {
