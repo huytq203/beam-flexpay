@@ -3,6 +3,7 @@ import {
   fetchBaseQueryCustom,
   fetchBaseQueryFee,
   fetchBaseQueryMerchant,
+  fetchBaseQueryUserWallet,
   fetchBaseQueryWalletCore
 } from '@configs/fetchBaseQueryCustom'
 import type {
@@ -13,8 +14,10 @@ import {
   apiFeeService,
   apiMerchant,
   apiWalletCore,
+  apiUserWallet,
   authApiService
 } from '@services/apiService'
+import type { RefundListParams } from '@services/apiRefund'
 import type { NotificationListQuery } from '@services/merchantNotificationApi'
 import { parseFilenameFromDisposition } from '@utils/file-download'
 
@@ -130,6 +133,12 @@ export interface ExportFeePoliciesQuery {
   createdAtFrom?: string
   createdAtTo?: string
 }
+
+/** Bộ lọc của lưới hoàn tiền, bỏ phân trang và sắp xếp: BE luôn xuất toàn bộ, mới nhất trước. */
+export type ExportRefundsQuery = Omit<
+  RefundListParams,
+  'page' | 'size' | 'sort'
+>
 
 type ExportBaseQuery = typeof fetchBaseQueryWalletCore
 type ExportQueryApi = Parameters<ExportBaseQuery>[1]
@@ -283,6 +292,23 @@ export const apiExportMerchantCsv = apiMerchant.injectEndpoints({
     })
   })
 })
+
+// Quản lý giao dịch hoàn tiền: BE từ chối quá 100.000 dòng (400) và không cắt bớt.
+export const apiExportUserWalletCsv = apiUserWallet.injectEndpoints({
+  endpoints: (build) => ({
+    exportRefunds: build.mutation<ExportedFile, ExportRefundsQuery>({
+      queryFn: (params, queryApi, extraOptions) =>
+        runExport(
+          fetchBaseQueryUserWallet,
+          { url: '/refunds/export', params: { ...params } },
+          queryApi,
+          extraOptions
+        )
+    })
+  })
+})
+
+export const { useExportRefundsMutation } = apiExportUserWalletCsv
 
 export const { useExportMerchantNotificationsMutation } = apiExportMerchantCsv
 

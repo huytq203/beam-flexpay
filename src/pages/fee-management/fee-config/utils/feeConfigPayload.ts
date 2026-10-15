@@ -102,7 +102,7 @@ export const toSetupRequest = (
         ? 0
         : orZero(component.maxFee),
       // Giữ SYSTEM cho cost estimate; chỉ chuẩn hoá payer cũ SENDER/RECEIVER.
-      // Hoàn tiền cho chọn USER/MERCHANT; payer ngoài tập cho phép về mặc định.
+      // Payer ngoài tập cho phép (hoàn tiền chỉ còn USER) về mặc định.
       payerType:
         component.payerType === 'SYSTEM'
           ? 'SYSTEM'

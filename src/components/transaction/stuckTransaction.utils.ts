@@ -13,11 +13,10 @@ export const describeResult = (
   if (result.newStatus === StuckTransactionOutcome.POSTED) {
     return 'Đã chốt giao dịch thành công và ghi bút toán vào sổ cái.'
   }
-  const released =
-    'Đã chốt giao dịch thất bại. Khoản tiền đang bị giữ đã được giải phóng.'
-  return result.refundCode
-    ? `${released} Đã sinh bản ghi hoàn tiền ${result.refundCode} (Thất bại hoàn tiền).`
-    : released
+  if (result.refundCode) {
+    return `Đã chốt giao dịch Thất bại hoàn tiền. Hệ thống đang chi tiền về tài khoản ngân hàng đã nạp, mã hoàn tiền ${result.refundCode}.`
+  }
+  return 'Đã chốt giao dịch thất bại. Khoản tiền đang bị giữ đã được giải phóng.'
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>

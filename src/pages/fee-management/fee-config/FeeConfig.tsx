@@ -5,8 +5,6 @@ import {
   ModalComponent
 } from '@components/index'
 import { PATHS } from '@constants/pathConstant'
-import { CONFIGURABLE_FEE_DOMAINS, FeeDomain } from '@components/fee/feeDomain'
-import { FeeDomainTabs } from '@components/fee/FeeDomainTabs'
 import { useNavigate, useParams } from 'react-router-dom'
 import { AssignmentSection } from './components/AssignmentSection'
 import { FeeComponentList } from './components/FeeComponentList'
@@ -36,10 +34,8 @@ const FeeConfigForm = ({
   snapshot,
   readOnly = false
 }: FeeConfigFormProps) => {
-  const isEdit = Boolean(snapshot)
   const navigate = useNavigate()
-  const { form, changeDomain, changeServiceType } =
-    useFeeConfigForm(defaultValues)
+  const { form, changeServiceType } = useFeeConfigForm(defaultValues)
   const { submit, isSubmitting, orphan, dismissOrphan } =
     useFeeConfigSubmit(snapshot)
   const { control, handleSubmit, watch, formState } = form
@@ -55,29 +51,11 @@ const FeeConfigForm = ({
         icon={<ArrowLeftOutlined />}
         onClick={() => navigate(PATHS.FEE_V4.POLICY_LIST)}
       />
-      {/*
-        Tạo mới luôn là miền Phí ví: phí đầu ra và phí đầu vào nằm chung một
-        chính sách, tách bằng hai tab. Miền chỉ hiện khi mở bản ghi đã có, để đọc
-        được các chính sách Bank/NCC cũ.
-      */}
-      {isEdit && (
-        <CardComponent className='mb-3!'>
-          <FeeDomainTabs
-            value={feeDomain}
-            onChange={changeDomain}
-            disabled
-            domains={
-              feeDomain === FeeDomain.MERCHANT
-                ? undefined
-                : CONFIGURABLE_FEE_DOMAINS
-            }
-          />
-          {readOnly && (
-            <p className='mt-3 text-[13px] text-muted-foreground'>
-              Đang xem chi tiết chính sách
-            </p>
-          )}
-        </CardComponent>
+      {/* Miền phí suy ra từ loại giao dịch nên không còn hàng chọn miền ở màn sửa và chi tiết. */}
+      {readOnly && (
+        <p className='mb-3 text-[13px] text-muted-foreground'>
+          Đang xem chi tiết chính sách
+        </p>
       )}
       <CardComponent className='mb-3!'>
         <PolicyGeneralSection

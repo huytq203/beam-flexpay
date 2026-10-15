@@ -13,7 +13,7 @@ export const REFUND_STATUS_LABELS: Record<
 > = {
   PENDING_APPROVAL: { label: 'Chờ duyệt', tone: 'warning' },
   WAITING_FUNDS: { label: 'Chờ đủ số dư', tone: 'warning' },
-  PROCESSING: { label: 'Đã duyệt', tone: 'info' },
+  PROCESSING: { label: 'Đang xử lý', tone: 'info' },
   SUCCESS: { label: 'Hoàn thành', tone: 'success' },
   REJECTED: { label: 'Đã từ chối', tone: 'danger' }
 }

@@ -10,14 +10,26 @@ interface StuckRefundFieldsProps {
 }
 
 const REFUND_CODE_FIELDS = [
-  { name: 'refundAuthCode', label: 'Mã chuẩn chi (hoàn)' },
-  { name: 'refundSettlementId', label: 'Mã đối soát (hoàn)' },
-  { name: 'refundBankReference', label: 'Mã tham chiếu (hoàn)' }
+  {
+    name: 'refundAuthCode',
+    label: 'Mã chuẩn chi (hoàn)',
+    placeholder: 'VD: AUTH123456'
+  },
+  {
+    name: 'refundSettlementId',
+    label: 'Mã đối soát (hoàn)',
+    placeholder: 'VD: STL20260825001'
+  },
+  {
+    name: 'refundBankReference',
+    label: 'Mã tham chiếu (hoàn)',
+    placeholder: 'VD: FT26282ABCDE'
+  }
 ] as const
 
 /**
- * Tạo thêm bản ghi "Thất bại hoàn tiền" chỉ để đối soát, số dư ví không đổi. Các mã
- * hoàn đều không bắt buộc.
+ * Chi tiền thật về tài khoản ngân hàng khách đã dùng để nạp, không cộng số dư ví. Các
+ * mã hoàn đều không bắt buộc.
  */
 export const StuckRefundFields = ({
   control,
@@ -37,21 +49,24 @@ export const StuckRefundFields = ({
         name='refund'
         label={
           <span>
-            Hoàn tiền cho khách hàng
+            Hoàn tiền cho khách hàng (chi tiền về tài khoản ngân hàng đã nạp)
             <span className='block text-xs text-muted-foreground'>
-              Sinh bản ghi Thất bại hoàn tiền để đối soát, số dư ví không đổi.
+              Hệ thống sẽ chi tiền về tài khoản ngân hàng khách đã dùng để nạp.
+              Không cộng số dư ví. Chỉ nên chọn khi đã xác nhận ngân hàng đã trừ
+              tiền khách.
             </span>
           </span>
         }
       />
       {refund && codeFields.length > 0 && (
-        <div className='grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2'>
-          {codeFields.map(({ name, label }) => (
+        <div className='grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-3'>
+          {codeFields.map(({ name, label, placeholder }) => (
             <FormInput
               key={name}
               control={control}
               name={name}
               label={label}
+              placeholder={placeholder}
               className='flex flex-col gap-1'
               maxLength={STUCK_UPDATE_CODE_MAX_LENGTH}
             />

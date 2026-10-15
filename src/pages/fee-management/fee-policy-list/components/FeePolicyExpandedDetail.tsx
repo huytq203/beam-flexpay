@@ -13,9 +13,14 @@ import {
 } from '@pages/fee-management/fee-config/constants/feeRefundOriginalType'
 import { FeeComponentReadout } from '@pages/fee-management/fee-config/components/FeeComponentReadout'
 import { SectionHeading } from '@pages/fee-management/fee-config/components/SectionHeading'
-import { allowsBankCriteria, allowsProviderCriteria } from '@pages/fee-management/fee-config/constants/feeConfigFields'
+import {
+  allowsBankCriteria,
+  allowsProviderCriteria
+} from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import type { FeeComponentFormValues } from '@pages/fee-management/fee-config/schemas/feeConfig.schema'
+import { groupReadoutComponents } from '../utils/groupReadoutComponents'
 import { toReadoutComponent } from '../utils/toReadoutComponent'
+import { FeeComponentGroupReadout } from './FeeComponentGroupReadout'
 import type {
   AppliedSubject,
   AppliedTarget,
@@ -180,17 +185,21 @@ const ComponentList = ({ components, feeScope }: ComponentListProps) => {
         </p>
       ) : (
         <div className='flex flex-col gap-3'>
-          {scoped.map((component, index) => (
+          {groupReadoutComponents(scoped).map((group, index) => (
             <article
-              key={component.key}
+              key={group.key}
               className='rounded-lg border border-border bg-background'
             >
               <h3 className='border-b border-border px-4 py-3 text-[15px] font-semibold text-foreground'>
                 {index + 1}.{' '}
-                {getFeeLabel(component.componentType, COMPONENT_TYPE_LABELS)}
+                {getFeeLabel(group.componentType, COMPONENT_TYPE_LABELS)}
               </h3>
               <div className='px-4 py-3'>
-                <FeeComponentReadout component={component} />
+                {group.members.length === 1 ? (
+                  <FeeComponentReadout component={group.members[0]} />
+                ) : (
+                  <FeeComponentGroupReadout members={group.members} />
+                )}
               </div>
             </article>
           ))}

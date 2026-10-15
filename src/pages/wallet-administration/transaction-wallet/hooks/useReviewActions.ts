@@ -75,7 +75,7 @@ export const useReviewActions = (
       const result = await rejectReview({ transactionCode, ...arg }).unwrap()
       globalMessage.success(
         arg.option === ReviewRejectOption.REFUND && result.refundCode
-          ? `Đã hủy giao dịch, sinh bản ghi Thất bại hoàn tiền ${result.refundCode}.`
+          ? `Đã hủy giao dịch Thất bại hoàn tiền. Hệ thống đang chi tiền về tài khoản ngân hàng đã nạp, mã hoàn tiền ${result.refundCode}.`
           : 'Đã hủy giao dịch.'
       )
       return { ok: true }

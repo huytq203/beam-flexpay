@@ -90,10 +90,18 @@ describe('danh sách chính sách phí tách theo luồng phí', () => {
   beforeEach(() => {
     requests.length = 0
     server.use(
-      http.get('*/fee/customer-segments', () => HttpResponse.json({ data: [] })),
+      http.get('*/fee/customer-segments', () =>
+        HttpResponse.json({ data: [] })
+      ),
       http.get('*/fee/banks', () =>
         HttpResponse.json({
-          data: { content: [], totalElements: 0, totalPages: 0, size: 100, number: 0 }
+          data: {
+            content: [],
+            totalElements: 0,
+            totalPages: 0,
+            size: 100,
+            number: 0
+          }
         })
       ),
       http.get('*/fee/policies/search', ({ request }) => {
@@ -131,7 +139,7 @@ describe('danh sách chính sách phí tách theo luồng phí', () => {
 
     const row = screen.getByText('Chính sách A – Nạp ví VCB').closest('tr')!
     expect(within(row).getByText('Phí giao dịch cơ bản')).toBeInTheDocument()
-    expect(within(row).getByText(/Người dùng → Hệ thống/)).toBeInTheDocument()
+    expect(within(row).getByText(/Người chuyển → Hệ thống/)).toBeInTheDocument()
     expect(
       within(row).queryByText('Phí nhà cung cấp đối tác/bank')
     ).not.toBeInTheDocument()
@@ -147,15 +155,21 @@ describe('danh sách chính sách phí tách theo luồng phí', () => {
 
     await waitFor(() =>
       expect(
-        requests.some((url) => url.searchParams.get('feeScope') === 'INPUT_COST')
+        requests.some(
+          (url) => url.searchParams.get('feeScope') === 'INPUT_COST'
+        )
       ).toBe(true)
     )
-    const row = (await screen.findByText('Chính sách A – Nạp ví VCB')).closest('tr')!
+    const row = (await screen.findByText('Chính sách A – Nạp ví VCB')).closest(
+      'tr'
+    )!
     expect(
       within(row).getByText('Phí nhà cung cấp đối tác/bank')
     ).toBeInTheDocument()
     expect(within(row).getByText(/Hệ thống → Ngân hàng/)).toBeInTheDocument()
-    expect(within(row).queryByText('Phí giao dịch cơ bản')).not.toBeInTheDocument()
+    expect(
+      within(row).queryByText('Phí giao dịch cơ bản')
+    ).not.toBeInTheDocument()
   })
 
   it('dòng mở rộng chỉ đọc các thành phần của luồng đang xem', async () => {
@@ -163,7 +177,9 @@ describe('danh sách chính sách phí tách theo luồng phí', () => {
     renderList('/fee?feeScope=INPUT_COST')
     await screen.findByText('Chính sách A – Nạp ví VCB')
 
-    await user.click((await screen.findAllByRole('button', { name: 'Expand row' }))[0])
+    await user.click(
+      (await screen.findAllByRole('button', { name: 'Expand row' }))[0]
+    )
     const detail = await screen.findByRole('region', {
       name: 'Chi tiết Chính sách A – Nạp ví VCB'
     })

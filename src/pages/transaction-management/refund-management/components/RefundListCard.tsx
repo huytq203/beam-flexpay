@@ -1,6 +1,15 @@
-import { CardComponent, ButtonComponent, Table } from '@components/index'
+import {
+  ButtonComponent,
+  CardComponent,
+  ExportCsvButton,
+  Table
+} from '@components/index'
 import type { TableComponentProps } from '@components/ui/table-component/TableComponent'
 import { REFUND_PAGE_SIZE_OPTIONS } from '../constants/refund.constants'
+import {
+  REFUND_EXPORT_TOOLTIP,
+  useRefundExport
+} from '../hooks/useRefundExport'
 import type { useRefundList } from '../hooks/useRefundList'
 import type { RefundListItem } from '../schemas/refund.schema'
 import { getRefundErrorText } from '../utils/refund.utils'
@@ -13,6 +22,8 @@ interface RefundListCardProps {
 }
 
 export function RefundListCard({ list, columns, isBusy }: RefundListCardProps) {
+  const { exportFile, isExporting } = useRefundExport(list.filters)
+
   return (
     <CardComponent className='border border-border bg-background shadow-none'>
       <section aria-labelledby='refund-list-title'>
@@ -23,12 +34,21 @@ export function RefundListCard({ list, columns, isBusy }: RefundListCardProps) {
           >
             Danh sách yêu cầu
           </h2>
-          <span
-            aria-live='polite'
-            className='rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground tabular-nums'
-          >
-            {list.isError ? 0 : list.total} bản ghi
-          </span>
+          <div className='flex items-center gap-2'>
+            <span
+              aria-live='polite'
+              className='rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground tabular-nums'
+            >
+              {list.isError ? 0 : list.total} bản ghi
+            </span>
+            <ExportCsvButton
+              onExport={exportFile}
+              loading={isExporting}
+              disabled={list.isError || list.total === 0}
+              totalRows={list.total}
+              tooltip={REFUND_EXPORT_TOOLTIP}
+            />
+          </div>
         </header>
         {list.isError && (
           <RefundNote

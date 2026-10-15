@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ButtonComponent } from '@components/index'
@@ -9,6 +10,7 @@ import {
   STUCK_UPDATE_NOTE_MAX_LENGTH,
   StuckTransactionOutcome
 } from '@type/stuckTransaction.type'
+import { StuckRefundConfirmDialog } from './StuckRefundConfirmDialog'
 import { StuckRefundFields } from './StuckRefundFields'
 import { StuckSuccessFields } from './StuckSuccessFields'
 import { receiptUploadCacheKey } from './stuckReceipt.utils'
@@ -59,6 +61,9 @@ export const StuckTransactionUpdateForm = ({
       fixedCacheKey: receiptUploadCacheKey(transactionCode)
     })
 
+  const [pendingRefund, setPendingRefund] =
+    useState<StuckTransactionUpdateFormValues | null>(null)
+
   const { control, handleSubmit } = form
   const newStatus = useWatch({ control, name: 'newStatus' })
   const selected = actions.find((action) => action.status === newStatus)
@@ -75,7 +80,10 @@ export const StuckTransactionUpdateForm = ({
     <FormProvider {...form}>
       <form
         className='flex min-w-0 flex-col gap-5'
-        onSubmit={handleSubmit((values) => onSubmit(values, optionalFields))}
+        onSubmit={handleSubmit((values) => {
+          if (values.refund) setPendingRefund(values)
+          else onSubmit(values, optionalFields)
+        })}
       >
         <FormSelect
           control={control}
@@ -140,6 +148,16 @@ export const StuckTransactionUpdateForm = ({
           />
         </div>
       </form>
+      <StuckRefundConfirmDialog
+        open={pendingRefund !== null}
+        isSubmitting={isSubmitting}
+        onCancel={() => setPendingRefund(null)}
+        onConfirm={() => {
+          if (!pendingRefund) return
+          onSubmit(pendingRefund, optionalFields)
+          setPendingRefund(null)
+        }}
+      />
     </FormProvider>
   )
 }

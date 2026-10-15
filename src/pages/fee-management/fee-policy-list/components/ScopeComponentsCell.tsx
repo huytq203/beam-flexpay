@@ -7,6 +7,7 @@ import {
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import { describeFormula } from '@pages/fee-management/fee-config/utils/feeComponentSummary'
 import type { FeePolicyConfiguration } from '@type/fee.type'
+import { groupReadoutComponents } from '../utils/groupReadoutComponents'
 import { toReadoutComponent } from '../utils/toReadoutComponent'
 
 interface ScopeComponentsCellProps {
@@ -36,25 +37,33 @@ export const ScopeComponentsCell = ({
 
   return (
     <ul className='flex flex-col gap-2'>
-      {components.map((component) => (
+      {groupReadoutComponents(components).map((group) => (
         <li
-          key={component.key}
+          key={group.key}
           className='flex flex-col gap-0.5'
         >
-          <span className='text-[13px] text-foreground'>
-            <span className='font-semibold'>
-              {getFeeLabel(component.componentType, COMPONENT_TYPE_LABELS)}
+          <span className='text-[13px] font-semibold text-foreground'>
+            {getFeeLabel(group.componentType, COMPONENT_TYPE_LABELS)}
+          </span>
+          {group.members.map((component) => (
+            <span
+              key={component.key}
+              className='text-xs text-muted-foreground'
+            >
+              <span className='text-[13px] tabular-nums text-foreground'>
+                {describeFormula(component)}
+              </span>
+              <span className='ml-2'>
+                {component.payerType === 'SYSTEM'
+                  ? BENEFICIARY_TYPE_LABEL.SYSTEM
+                  : (PAYER_TYPE_LABEL[component.payerType] ??
+                    component.payerType)}{' '}
+                →{' '}
+                {BENEFICIARY_TYPE_LABEL[component.beneficiaryType] ??
+                  component.beneficiaryType}
+              </span>
             </span>
-            <span className='ml-2 tabular-nums'>{describeFormula(component)}</span>
-          </span>
-          <span className='text-xs text-muted-foreground'>
-            {component.payerType === 'SYSTEM'
-              ? BENEFICIARY_TYPE_LABEL.SYSTEM
-              : (PAYER_TYPE_LABEL[component.payerType] ?? component.payerType)}{' '}
-            →{' '}
-            {BENEFICIARY_TYPE_LABEL[component.beneficiaryType] ??
-              component.beneficiaryType}
-          </span>
+          ))}
         </li>
       ))}
     </ul>

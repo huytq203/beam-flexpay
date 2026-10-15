@@ -16,6 +16,9 @@ import {
 
 const REFUND_BOX = /Hoàn tiền cho khách hàng/
 
+const confirmRefund = async (user: ReturnType<typeof renderAction>) =>
+  user.click(await screen.findByRole('button', { name: 'Xác nhận hoàn tiền' }))
+
 describe('Checkbox "Hoàn tiền cho khách hàng" ở cập nhật giao dịch treo', () => {
   it('chỉ hiện khi chọn Thất bại và optionalFields có refund (lệnh nạp)', async () => {
     mockRefresh([POSTED_FULL, FAILED_DEPOSIT])
@@ -60,9 +63,27 @@ describe('Checkbox "Hoàn tiền cho khách hàng" ở cập nhật giao dịch 
     }
     fill('Lý do cập nhật', NOTE)
     await submit(user)
+    await confirmRefund(user)
 
     await waitFor(() => expect(bodies).toHaveLength(1))
     expect(bodies[0]).toEqual({ newStatus: 'FAILED', note: NOTE, refund: true })
+  })
+
+  it('tích hoàn thì hỏi xác nhận chi tiền trước khi gửi; Quay lại thì chưa gọi API', async () => {
+    mockRefresh([FAILED_DEPOSIT])
+    const bodies = mockUpdate('FAILED')
+    const user = renderAction()
+    await openForm(user)
+    await choose(user, 'Thất bại')
+    await user.click(await screen.findByRole('checkbox', { name: REFUND_BOX }))
+    fill('Lý do cập nhật', NOTE)
+    await submit(user)
+
+    expect(
+      await screen.findByText(/chi tiền về tài khoản ngân hàng khách/)
+    ).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Quay lại' }))
+    expect(bodies).toHaveLength(0)
   })
 
   it('gửi các mã hoàn đã nhập, kể cả mã tham chiếu hoàn', async () => {
@@ -77,6 +98,7 @@ describe('Checkbox "Hoàn tiền cho khách hàng" ở cập nhật giao dịch 
     fill(/Mã tham chiếu \(hoàn\)/, 'FT-REFUND-1')
     fill('Lý do cập nhật', NOTE)
     await submit(user)
+    await confirmRefund(user)
 
     await waitFor(() => expect(bodies).toHaveLength(1))
     expect(bodies[0]).toEqual({

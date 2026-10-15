@@ -115,8 +115,9 @@ export function RejectReviewDialog({
                 />
               </div>
               <RefundNote tone='info'>
-                Tạo bản ghi Thất bại hoàn tiền chỉ để đối soát. Số dư ví không
-                đổi.
+                Hệ thống sẽ chi tiền về tài khoản ngân hàng khách đã dùng để
+                nạp. Không cộng số dư ví. Chỉ nên chọn khi đã xác nhận ngân hàng
+                đã trừ tiền khách.
               </RefundNote>
             </div>
           )}

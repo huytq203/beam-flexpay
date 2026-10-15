@@ -142,7 +142,7 @@ describe('trang tạo chính sách', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('chọn Hoàn tiền giao dịch ví: không hiện ô Merchant, người chịu chọn được', async () => {
+  it('chọn Hoàn tiền giao dịch ví: không hiện ô Merchant, người chịu cố định là người chuyển', async () => {
     const user = userEvent.setup()
     renderCreatePage()
 
@@ -158,7 +158,8 @@ describe('trang tạo chính sách', () => {
     await within(await screen.findByRole('dialog')).findByText(
       'Thêm phí đầu ra'
     )
-    expect(screen.getByLabelText(/Người chịu/)).not.toBeDisabled()
+    // Phí hoàn luôn trừ vào số khách nhận nên chỉ còn một người chịu, không còn Merchant để chọn.
+    expect(screen.getByLabelText(/Người chịu/)).toBeDisabled()
     expect(screen.getByLabelText(/Người hưởng/)).toBeDisabled()
   })
 })

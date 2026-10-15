@@ -54,7 +54,11 @@ export const getRefundErrorText = (error: unknown): string => {
     const messages = readValidationMessages(body.data)
     if (messages.length > 0) return messages.join(' ')
   }
-  return readText(body.detail) ?? GENERIC_ERROR
+  const message = readText(body.message)
+  return (
+    readText(body.detail) ??
+    (message && !/^[A-Z0-9_]+$/.test(message) ? message : GENERIC_ERROR)
+  )
 }
 
 export interface RefundActionContext {

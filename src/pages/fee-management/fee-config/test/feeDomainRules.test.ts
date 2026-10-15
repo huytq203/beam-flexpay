@@ -70,11 +70,11 @@ describe('EWALLET_REFUND', () => {
     expect(rules.bankRequired).toBe(false)
   })
 
-  it('payer chọn được chỉ USER hoặc MERCHANT, kèm SYSTEM cho chi phí đầu vào', () => {
+  it('phí hoàn tiền chỉ chọn USER, kèm SYSTEM cho chi phí đầu vào; không còn MERCHANT', () => {
     expect(
       getPayerTypeOptions('EWALLET_REFUND').map(({ value }) => value)
-    ).toEqual(['USER', 'MERCHANT', 'SYSTEM'])
-    expect(getSelectablePayers('EWALLET_REFUND')).toEqual(['USER', 'MERCHANT'])
+    ).toEqual(['USER', 'SYSTEM'])
+    expect(getSelectablePayers('EWALLET_REFUND')).toEqual(['USER'])
     expect(getSelectablePayers('EWALLET_WITHDRAWAL')).toEqual(['USER'])
   })
 

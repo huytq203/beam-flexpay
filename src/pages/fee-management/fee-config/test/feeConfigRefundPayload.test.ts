@@ -56,22 +56,24 @@ describe('toSetupRequest — EWALLET_REFUND', () => {
     return form
   }
 
-  it('giữ payer MERCHANT, người hưởng luôn là SYSTEM, miền EWALLET', () => {
-    const request = toSetupRequest(refundForm('MERCHANT', 'BANK'))
+  it('giữ payer USER, người hưởng luôn là SYSTEM, miền EWALLET', () => {
+    const request = toSetupRequest(refundForm('USER', 'BANK'))
     expect(request.policy.serviceType).toBe('EWALLET_REFUND')
     expect(request.policy.feeDomain).toBe('EWALLET')
     expect(request.components[0]).toMatchObject({
       feeScope: 'OUTPUT_FEE',
       componentType: 'REFUND_FEE',
-      payerType: 'MERCHANT',
+      payerType: 'USER',
       beneficiaryType: 'SYSTEM'
     })
   })
 
-  it('payer ngoài USER/MERCHANT về USER', () => {
-    expect(
-      toSetupRequest(refundForm('SENDER', 'SYSTEM')).components[0].payerType
-    ).toBe('USER')
+  it('payer ngoài USER (kể cả MERCHANT của chính sách cũ) về USER', () => {
+    for (const payer of ['SENDER', 'MERCHANT']) {
+      expect(
+        toSetupRequest(refundForm(payer, 'SYSTEM')).components[0].payerType
+      ).toBe('USER')
+    }
   })
 
   it('bản gán không mang merchant, thẻ hay chủ thể khi để Tất cả', () => {
