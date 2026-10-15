@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { isPaymentMethodAllowed } from '../constants/feeConfigFields'
 import { allowsProviderCriteria } from '../constants/feeProvider'
+import { allowsOriginalTypeCriteria } from '../constants/feeRefundOriginalType'
 import { validateTransferBearers } from '../utils/transferBearers'
 import {
   DUPLICATE_FEE_COMPONENT_MESSAGE,
@@ -35,6 +36,8 @@ export const feeConfigFormSchema = z
     bankCode: z.string(),
     /** Nhà cung cấp (cổng). Rỗng = mọi nhà cung cấp và bị bỏ khỏi payload. */
     providerCode: z.string(),
+    /** Loại giao dịch gốc của hoàn tiền. Rỗng = mọi loại và bị bỏ khỏi payload. */
+    originalTransactionType: z.string().optional(),
     /** Chuỗi rỗng = áp dụng cho tất cả phương thức và bị bỏ khỏi payload. */
     paymentMethod: z.string(),
     merchantId: z.string(),
@@ -76,7 +79,18 @@ export const feeConfigFormSchema = z
       ctx.addIssue({
         code: 'custom',
         path: ['providerCode'],
-        message: 'Nhà cung cấp chỉ áp dụng cho nạp và rút ví'
+        message: 'Nhà cung cấp chỉ áp dụng cho nạp, rút ví và hoàn tiền'
+      })
+    }
+
+    if (
+      form.originalTransactionType &&
+      !allowsOriginalTypeCriteria(form.serviceType)
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['originalTransactionType'],
+        message: 'Loại giao dịch gốc chỉ áp dụng cho phí hoàn tiền'
       })
     }
 

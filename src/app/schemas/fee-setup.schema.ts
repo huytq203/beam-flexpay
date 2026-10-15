@@ -81,6 +81,8 @@ export const feeAssignmentCreateRequestSchema = z.object({
   bankCode: z.string().optional(),
   /** Nhà cung cấp (cổng NAPAS, VIETQR). Vắng = áp cho mọi nhà cung cấp. */
   providerCode: z.string().optional(),
+  /** Loại giao dịch gốc của hoàn tiền (CASH_IN, CASH_OUT, P2P_TRANSFER, MERCHANT_PAYMENT). Vắng = mọi loại hoàn. */
+  originalTransactionType: z.string().optional(),
   paymentMethod: z.string().optional(),
   effectiveFromDate: z.string().optional(),
   effectiveToDate: z.string().optional()

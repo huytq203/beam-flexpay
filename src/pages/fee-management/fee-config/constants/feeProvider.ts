@@ -1,9 +1,13 @@
 import type { FeePaymentPartner } from '@type/fee.type'
 
-/** Chỉ nạp và rút đi qua nhà cung cấp; backend từ chối nhà cung cấp ở loại giao dịch khác. */
+/**
+ * Nạp, rút và hoàn tiền (hoàn một lệnh nạp/rút đã đi qua nhà cung cấp) mới có nhà cung cấp;
+ * backend từ chối nhà cung cấp ở loại giao dịch khác.
+ */
 export const PROVIDER_SERVICE_TYPES: readonly string[] = [
   'EWALLET_DEPOSIT',
-  'EWALLET_WITHDRAWAL'
+  'EWALLET_WITHDRAWAL',
+  'EWALLET_REFUND'
 ]
 
 export const allowsProviderCriteria = (

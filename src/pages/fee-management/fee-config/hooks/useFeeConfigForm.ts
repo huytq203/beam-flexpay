@@ -8,6 +8,7 @@ import {
   getFormFieldRules
 } from '../constants/feeConfigFields'
 import { allowsProviderCriteria } from '../constants/feeProvider'
+import { allowsOriginalTypeCriteria } from '../constants/feeRefundOriginalType'
 import {
   feeConfigFormSchema,
   type FeeConfigFormValues
@@ -23,6 +24,7 @@ export const buildEmptyForm = (
   serviceType: '',
   bankCode: '',
   providerCode: '',
+  originalTransactionType: '',
   paymentMethod: '',
   merchantId: '',
   assignmentScope: 'ALL',
@@ -73,6 +75,10 @@ export const useFeeConfigForm = (
         keepServiceType && allowsProviderCriteria(current.serviceType)
           ? current.providerCode
           : '',
+      originalTransactionType:
+        keepServiceType && allowsOriginalTypeCriteria(current.serviceType)
+          ? current.originalTransactionType
+          : '',
       // ĐVCNTT không hiện ở miền khác, giữ lại là gửi lên một tiêu chí người
       // dùng không còn nhìn thấy để sửa.
       merchantId: rules.showMerchant ? current.merchantId : '',
@@ -102,6 +108,10 @@ export const useFeeConfigForm = (
       serviceType: next,
       // Nhà cung cấp chỉ có nghĩa với nạp/rút; đổi sang loại khác phải dọn để khỏi gửi tiêu chí bị ẩn.
       providerCode: allowsProviderCriteria(next) ? current.providerCode : '',
+      // Loại giao dịch gốc chỉ có ở phí hoàn tiền; giữ lại là gửi một tiêu chí không còn ô nào để sửa.
+      originalTransactionType: allowsOriginalTypeCriteria(next)
+        ? current.originalTransactionType
+        : '',
       merchantId: rules.showMerchant ? current.merchantId : '',
       subjectId: rules.showSubject ? current.subjectId : '',
       customerGroup: rules.showSegment ? current.customerGroup : '',

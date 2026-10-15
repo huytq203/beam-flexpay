@@ -96,6 +96,8 @@ export interface FeeAssignment {
   bankCode: string | null
   /** Nhà cung cấp (cổng thanh toán). NULL = mọi nhà cung cấp. */
   providerCode?: string | null
+  /** Loại giao dịch gốc của hoàn tiền. NULL = mọi loại hoàn. */
+  originalTransactionType?: string | null
   paymentMethod: string | null
   cardType: string | null
   serviceType: string

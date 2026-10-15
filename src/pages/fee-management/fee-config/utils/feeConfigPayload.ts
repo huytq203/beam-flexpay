@@ -141,6 +141,8 @@ export const toAssignmentRequest = (
   bankCode: form.bankCode || undefined,
   // Sửa bản gán phải gửi lại nhà cung cấp đang có, nếu không backend coi là bỏ tiêu chí.
   providerCode: form.providerCode || undefined,
+  // Sửa bản gán phải gửi lại loại giao dịch gốc đang có, nếu không backend coi là bỏ tiêu chí.
+  originalTransactionType: form.originalTransactionType || undefined,
   paymentMethod: form.paymentMethod || undefined,
   merchantId: form.merchantId || undefined,
   // Phạm vi loại trừ nhau: gửi kèm tiêu chí của phạm vi không được chọn sẽ tạo ra bản gán

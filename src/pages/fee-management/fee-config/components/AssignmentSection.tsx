@@ -15,6 +15,11 @@ import {
   allowsProviderCriteria,
   toProviderOptions
 } from '../constants/feeProvider'
+import {
+  ORIGINAL_TYPE_HINT,
+  ORIGINAL_TYPE_OPTIONS,
+  allowsOriginalTypeCriteria
+} from '../constants/feeRefundOriginalType'
 import type { FeeConfigFormValues } from '../schemas/feeConfig.schema'
 import { MerchantPickerField } from './MerchantPickerField'
 import { UserPickerField } from './UserPickerField'
@@ -72,6 +77,7 @@ export const AssignmentSection = ({
   // `PaginationRequest` của service phí chặn size trên 100; gửi hơn là ăn 400.
   const { data: bankData } = useGetBankQuery({ page: 1, size: 100 })
   const showProvider = allowsProviderCriteria(serviceType)
+  const showOriginalType = allowsOriginalTypeCriteria(serviceType)
   const { data: partners } = useGetPaymentPartnersQuery(undefined, {
     skip: !showProvider
   })
@@ -127,6 +133,23 @@ export const AssignmentSection = ({
             showSearch
             optionFilterProp='label'
             options={providerOptions}
+            disabled={readOnly}
+            className='col-span-12 flex flex-col md:col-span-4'
+          />
+        )}
+        {showOriginalType && (
+          <FormSelect
+            name='originalTransactionType'
+            control={control}
+            label={
+              <FormLabelHint
+                label='Loại giao dịch gốc'
+                hint={ORIGINAL_TYPE_HINT}
+              />
+            }
+            placeholder='Mọi loại giao dịch'
+            allowClear
+            options={[...ORIGINAL_TYPE_OPTIONS]}
             disabled={readOnly}
             className='col-span-12 flex flex-col md:col-span-4'
           />

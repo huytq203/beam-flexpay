@@ -7,6 +7,10 @@ import {
   FEE_SCOPE_LABEL,
   type FeeScope
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
+import {
+  allowsOriginalTypeCriteria,
+  getOriginalTypeLabel
+} from '@pages/fee-management/fee-config/constants/feeRefundOriginalType'
 import { FeeComponentReadout } from '@pages/fee-management/fee-config/components/FeeComponentReadout'
 import { SectionHeading } from '@pages/fee-management/fee-config/components/SectionHeading'
 import type { FeeComponentFormValues } from '@pages/fee-management/fee-config/schemas/feeConfig.schema'
@@ -114,6 +118,13 @@ const AssignmentRow = ({ assignment, appliedTargets }: AssignmentRowProps) => {
       <Fact label='Nhà cung cấp (NCC)'>
         {assignment.providerCode || 'Tất cả'}
       </Fact>
+      {allowsOriginalTypeCriteria(assignment.serviceType) && (
+        <Fact label='Loại giao dịch gốc'>
+          {assignment.originalTransactionType
+            ? getOriginalTypeLabel(assignment.originalTransactionType)
+            : 'Tất cả'}
+        </Fact>
+      )}
       <Fact label='Ngân hàng phát hành'>{assignment.bankCode || 'Tất cả'}</Fact>
       <Fact label='Phương thức giao dịch'>
         {getFeeLabel(assignment.paymentMethod, PAYMENT_METHOD_LABELS)}
