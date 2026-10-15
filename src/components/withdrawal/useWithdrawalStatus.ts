@@ -2,11 +2,6 @@ import {
   useGetWithdrawalByTransactionCodeQuery,
   type WithdrawalDetail
 } from '@services/apiJournal'
-import { isWithdrawalSettling } from '@utils/withdrawal-approval'
-import {
-  SETTLEMENT_POLL_INTERVAL_MS,
-  useSettlementWatch
-} from './useSettlementWatch'
 
 export interface WithdrawalStatusApi {
   withdrawal?: WithdrawalDetail
@@ -14,20 +9,12 @@ export interface WithdrawalStatusApi {
   isLoading: boolean
   isFetching: boolean
   isError: boolean
-  /** Đang trong cửa sổ tự kiểm tra lại sau khi lệnh được duyệt. */
-  isWatching: boolean
   refetch: () => void
 }
 
 /**
- * Đọc trạng thái lệnh rút từ user-wallet và tự theo dõi tiếp khi lệnh đã duyệt
- * nhưng chưa ghi sổ.
- *
- * Chỉ biết có cần poll hay không **sau** khi đã đọc được trạng thái, nên việc
- * bật poll nằm ở một subscription thứ hai vào đúng endpoint đó. RTK Query gộp
- * hai subscription về cùng một cache entry, nên đây là bật/tắt poll chứ không
- * phải gọi API hai lần. Poll dừng khi tab mất focus — ca vận hành mở hàng chục
- * tab, không có lý do để tab nền vẫn gọi API.
+ * Đọc trạng thái lệnh rút từ user-wallet. Không tự poll: người dùng bấm Tải lại
+ * để lấy trạng thái mới nhất.
  */
 export const useWithdrawalStatus = (
   transactionCode: string,
@@ -42,25 +29,12 @@ export const useWithdrawalStatus = (
       refetchOnMountOrArgChange: false
     })
 
-  const { isWatching } = useSettlementWatch(
-    isWithdrawalSettling(data?.status),
-    transactionCode
-  )
-
-  useGetWithdrawalByTransactionCodeQuery(transactionCode, {
-    skip: isDisabled || !isWatching,
-    refetchOnMountOrArgChange: false,
-    pollingInterval: SETTLEMENT_POLL_INTERVAL_MS,
-    skipPollingIfUnfocused: true
-  })
-
   return {
     withdrawal: data,
     status: data?.status ?? null,
     isLoading,
     isFetching,
     isError,
-    isWatching,
     refetch: () => void refetch()
   }
 }

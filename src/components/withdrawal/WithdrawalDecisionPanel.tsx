@@ -56,7 +56,7 @@ export const WithdrawalDecisionPanel = ({
   const code = transactionCode ?? ''
   const isWithdrawal = transactionType === CASH_OUT
 
-  const { withdrawal, status, isLoading, isFetching, isError, isWatching, refetch } =
+  const { withdrawal, status, isLoading, isFetching, isError, refetch } =
     useWithdrawalStatus(code, !isWithdrawal)
   const { approve, reject, isApproving, isRejecting, isDeciding } =
     useWithdrawalDecision(code)
@@ -74,9 +74,16 @@ export const WithdrawalDecisionPanel = ({
 
   if (isError) {
     return (
-      <div className={cn(SHELL, 'flex flex-wrap items-center justify-between gap-3', className)}>
+      <div
+        className={cn(
+          SHELL,
+          'flex flex-wrap items-center justify-between gap-3',
+          className
+        )}
+      >
         <p className='m-0 min-w-0 text-[13px] leading-5 break-words text-danger-strong'>
-          Không đọc được trạng thái lệnh rút. Chưa thể biết lệnh có đang chờ duyệt hay không.
+          Không đọc được trạng thái lệnh rút. Chưa thể biết lệnh có đang chờ
+          duyệt hay không.
         </p>
         <ButtonComponent
           htmlType='button'
@@ -162,16 +169,17 @@ export const WithdrawalDecisionPanel = ({
           </div>
         </div>
 
-        <WithdrawalSummary withdrawal={withdrawal} currency={currency} />
+        <WithdrawalSummary
+          withdrawal={withdrawal}
+          currency={currency}
+        />
 
         {isWithdrawalSettling(status) && (
           <p
             aria-live='polite'
             className='m-0 min-w-0 border-t border-border pt-3 text-xs leading-4 break-words text-muted-foreground'
           >
-            {isWatching
-              ? 'Đang tự kiểm tra lại trạng thái mỗi 5 giây.'
-              : 'Đã dừng tự kiểm tra. Bấm Tải lại để xem trạng thái mới nhất.'}
+            Bấm Tải lại để xem trạng thái mới nhất.
           </p>
         )}
       </section>
