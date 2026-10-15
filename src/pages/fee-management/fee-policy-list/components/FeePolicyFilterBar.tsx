@@ -264,7 +264,7 @@ export const FeePolicyFilterBar = ({
           <ButtonComponent
             htmlType='submit'
             form='feePolicyFilter'
-            content='Tìm'
+            content='Tìm kiếm'
             icon={
               <MagnifyingGlassIcon
                 size={16}
