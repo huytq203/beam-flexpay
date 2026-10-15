@@ -218,7 +218,10 @@ export const FeeComponentDialog = ({
   const payerSelectOptions = canSplit
     ? [...payerTypeOptions, BOTH_BEARERS_OPTION]
     : payerTypeOptions
-  const vatBaseComponentType = getVatBaseForCategory(businessCategory)
+  const vatBaseComponentType = getVatBaseForCategory(
+    businessCategory,
+    serviceType
+  )
   const baseTypes = collectBaseTypes(
     precedingComponents,
     isBoth ? SENDER_PAYER : payerType
@@ -237,6 +240,22 @@ export const FeeComponentDialog = ({
       value,
       label: COMPONENT_TYPE_LABELS[value] ?? value
     }))
+  // Thành phần cũ đã lưu loại không còn trong danh sách (ví dụ Phí giao dịch cơ bản của chính
+  // sách hoàn tiền) vẫn phải hiện đúng tên khi mở sửa, nhưng không cho chọn cho thành phần mới.
+  if (
+    initialValue &&
+    initialValue.componentType &&
+    !componentTypeOptions.some(
+      ({ value }) => value === initialValue.componentType
+    )
+  ) {
+    componentTypeOptions.unshift({
+      value: initialValue.componentType,
+      label:
+        COMPONENT_TYPE_LABELS[initialValue.componentType] ??
+        initialValue.componentType
+    })
+  }
 
   /**
    * Thuế giá trị gia tăng luôn tính trên khoản phí gốc của nhóm. Khoá luôn ô cơ sở tính

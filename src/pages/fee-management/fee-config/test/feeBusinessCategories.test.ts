@@ -39,6 +39,30 @@ describe('nhóm phí nghiệp vụ trên form', () => {
     ).toBe('TRANSACTION_FEE')
   })
 
+  it('hoàn tiền chỉ có Phí hoàn tiền và VAT, VAT tính trên Phí hoàn tiền', () => {
+    expect(
+      getComponentTypesForCategory(
+        FEE_BUSINESS_CATEGORY.TRANSACTION_PROCESSING,
+        'EWALLET_REFUND'
+      )
+    ).toEqual(['REFUND_FEE', 'VAT'])
+    expect(
+      getVatBaseForCategory(
+        FEE_BUSINESS_CATEGORY.TRANSACTION_PROCESSING,
+        'EWALLET_REFUND'
+      )
+    ).toBe('REFUND_FEE')
+  })
+
+  it('loại giao dịch khác không bị ảnh hưởng bởi luật của hoàn tiền', () => {
+    expect(
+      getComponentTypesForCategory(
+        FEE_BUSINESS_CATEGORY.TRANSACTION_PROCESSING,
+        'EWALLET_DEPOSIT'
+      )
+    ).toEqual(['TRANSACTION_FEE', 'VAT'])
+  })
+
   it('phí nền tảng cho VAT tính trên PLATFORM_FEE', () => {
     expect(
       getComponentTypesForCategory(FEE_BUSINESS_CATEGORY.PLATFORM)

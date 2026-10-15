@@ -184,7 +184,7 @@ export const FeePolicyFilterBar = ({
           placeholder='Nhập số điện thoại'
           inputMode='tel'
           maxLength={100}
-          className='flex flex-col col-span-2'
+          className='flex flex-col col-span-1'
         />
         <FormSelect
           name='status'

@@ -44,7 +44,7 @@ export const StuckSuccessFields = ({
       <legend className='px-1 text-sm font-semibold text-foreground'>
         Thông tin đối soát (không bắt buộc)
       </legend>
-      <div className='grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2'>
+      <div className='grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-3'>
         {codeFields.map(({ name, label, placeholder }) => (
           <FormInput
             key={name}

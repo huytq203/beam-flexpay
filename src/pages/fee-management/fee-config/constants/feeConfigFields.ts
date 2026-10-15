@@ -208,23 +208,35 @@ export const getFeeBusinessCategories = (
         FEE_BUSINESS_CATEGORY.PLATFORM
       ]
 
-/** Hoàn tiền thu bằng phí riêng `REFUND_FEE` (khuyến nghị), xếp đầu danh sách. */
+/** Hoàn tiền thu bằng phí riêng `REFUND_FEE`; không dùng "Phí giao dịch cơ bản". */
 const REFUND_COMPONENT_TYPE = 'REFUND_FEE'
 
+const isRefundProcessing = (
+  category: FeeBusinessCategory,
+  serviceType?: string | null
+): boolean =>
+  serviceType === 'EWALLET_REFUND' &&
+  category === FEE_BUSINESS_CATEGORY.TRANSACTION_PROCESSING
+
+/**
+ * Chính sách hoàn tiền chỉ có Phí hoàn tiền và VAT của nó, không còn Phí giao dịch cơ bản.
+ */
 export const getComponentTypesForCategory = (
   category: FeeBusinessCategory,
   serviceType?: string | null
-): readonly string[] => {
-  const types = FEE_BUSINESS_CATEGORY_RULES[category].componentTypes
-  return serviceType === 'EWALLET_REFUND' &&
-    category === FEE_BUSINESS_CATEGORY.TRANSACTION_PROCESSING
-    ? [REFUND_COMPONENT_TYPE, ...types]
-    : types
-}
+): readonly string[] =>
+  isRefundProcessing(category, serviceType)
+    ? [REFUND_COMPONENT_TYPE, 'VAT']
+    : FEE_BUSINESS_CATEGORY_RULES[category].componentTypes
 
+/** VAT tính trên khoản phí gốc của nhóm; với hoàn tiền khoản đó là Phí hoàn tiền. */
 export const getVatBaseForCategory = (
-  category: FeeBusinessCategory
-): string | null => FEE_BUSINESS_CATEGORY_RULES[category].vatBaseComponentType
+  category: FeeBusinessCategory,
+  serviceType?: string | null
+): string | null =>
+  isRefundProcessing(category, serviceType)
+    ? REFUND_COMPONENT_TYPE
+    : FEE_BUSINESS_CATEGORY_RULES[category].vatBaseComponentType
 
 /** Suy nhóm khi mở bản ghi cũ mà không cần thêm field vào API backend. */
 export const inferFeeBusinessCategory = (

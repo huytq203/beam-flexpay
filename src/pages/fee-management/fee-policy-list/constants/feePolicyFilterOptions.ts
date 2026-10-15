@@ -5,7 +5,7 @@ import {
 
 /** Người chịu của một thành phần phí; "Người dùng" cũng là cách gọi cũ của người chuyển. */
 export const PAYER_TYPE_FILTER_OPTIONS = [
-  { value: 'USER', label: 'Người chuyển / Người dùng' },
+  { value: 'USER', label: PAYER_TYPE_LABEL.USER },
   { value: 'RECEIVER', label: PAYER_TYPE_LABEL.RECEIVER },
   { value: 'MERCHANT', label: PAYER_TYPE_LABEL.MERCHANT },
   { value: 'SYSTEM', label: PAYER_TYPE_LABEL.SYSTEM }

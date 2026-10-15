@@ -62,7 +62,7 @@ export const StuckReceiptField = ({
   }
 
   return (
-    <div className='flex flex-col gap-1 sm:col-span-2'>
+    <div className='flex flex-col gap-1 sm:col-span-3'>
       <span className='text-sm font-medium text-foreground'>Ảnh biên lai</span>
       <input
         ref={inputRef}
