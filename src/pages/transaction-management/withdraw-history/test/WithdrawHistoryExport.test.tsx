@@ -185,18 +185,18 @@ describe('Lịch sử rút tiền — xuất CSV', () => {
     expect(screen.getByRole('button', { name: /Xuất CSV/i })).toBeDisabled()
   })
 
-  it('mở thẳng modal cập nhật giao dịch treo từ icon trong cột thao tác', async () => {
+  it('mở thẳng modal Xác nhận chi tiền từ icon trong cột thao tác', async () => {
     mocks.hasRow = true
     const user = userEvent.setup()
     renderScreen()
     const action = screen.getByRole('button', {
-      name: 'Cập nhật giao dịch treo'
+      name: 'Xác nhận chi tiền'
     })
 
     expect(action).toBeEnabled()
     await user.click(action)
     expect(
-      await screen.findByText('Cập nhật giao dịch treo')
+      await screen.findByText('Xác nhận chi tiền')
     ).toBeInTheDocument()
     expect(mocks.openDetail).not.toHaveBeenCalled()
     expect(screen.queryByRole('radio')).not.toBeInTheDocument()

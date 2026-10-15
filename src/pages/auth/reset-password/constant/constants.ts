@@ -1,9 +1,25 @@
 /** Điều kiện mật khẩu — nguồn sự thật duy nhất cho cả validate lẫn checklist UI. */
 export const PASSWORD_RULES = [
-  { id: 'length', label: 'Ít nhất 8 ký tự', test: (value: string) => value.length >= 8 },
-  { id: 'upper', label: 'Có chữ in hoa (A–Z)', test: (value: string) => /[A-Z]/.test(value) },
-  { id: 'lower', label: 'Có chữ thường (a–z)', test: (value: string) => /[a-z]/.test(value) },
-  { id: 'digit', label: 'Có chữ số (0–9)', test: (value: string) => /\d/.test(value) },
+  {
+    id: 'length',
+    label: 'ít nhất 10 ký tự',
+    test: (value: string) => value.length >= 8
+  },
+  {
+    id: 'upper',
+    label: 'Có chữ in hoa (A–Z)',
+    test: (value: string) => /[A-Z]/.test(value)
+  },
+  {
+    id: 'lower',
+    label: 'Có chữ thường (a–z)',
+    test: (value: string) => /[a-z]/.test(value)
+  },
+  {
+    id: 'digit',
+    label: 'Có chữ số (0–9)',
+    test: (value: string) => /\d/.test(value)
+  },
   {
     id: 'special',
     label: 'Có ký tự đặc biệt (!@#$…)',

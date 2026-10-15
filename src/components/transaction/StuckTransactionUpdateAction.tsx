@@ -44,7 +44,7 @@ export interface StuckTransactionUpdateActionProps {
 }
 
 /**
- * Nút "Cập nhật giao dịch treo" và form chốt kết quả.
+ * Nút "Xác nhận chi tiền" và form chốt kết quả.
  *
  * Nút **biến mất** khi lệnh rút đang ở `PENDING_APPROVAL`: BE từ chối những lệnh
  * đó ở endpoint này, và quan trọng hơn, cùng chữ "Thành công" ở đây nghĩa là
@@ -113,7 +113,7 @@ export const StuckTransactionUpdateAction = ({
 
       if (!canUpdateStuckTransaction(journalStatus, latestWithdrawal.status)) {
         errorMess(
-          'Lệnh rút đang chờ phê duyệt, không thể cập nhật giao dịch treo.'
+          'Lệnh rút đang chờ phê duyệt, không thể xác nhận chi tiền.'
         )
         return
       }
@@ -143,7 +143,7 @@ export const StuckTransactionUpdateAction = ({
     }
   }
 
-  const actionLabel = 'Cập nhật giao dịch treo'
+  const actionLabel = 'Xác nhận chi tiền'
   const trigger = (
     <ButtonComponent
       aria-label={actionLabel}
@@ -167,7 +167,7 @@ export const StuckTransactionUpdateAction = ({
       )}
       <DialogModal
         open={isOpen}
-        title='Cập nhật giao dịch treo'
+        title='Xác nhận chi tiền'
         footer={null}
         width={{ xs: '100%', sm: 640 }}
         closable={{ 'aria-label': 'Đóng' }}

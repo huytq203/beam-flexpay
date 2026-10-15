@@ -413,6 +413,24 @@ const merchantManagement = {
           )
         },
         {
+          path: SCREENS.MERCHANT_SETTLEMENT_CONFIG.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-settlement/pages/SettlementConfigPage'
+              )
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_WITHDRAWAL_LIMIT.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-settlement/pages/WithdrawalLimitPage'
+              )
+          )
+        },
+        {
           path: SCREENS.MERCHANT_SUB_MERCHANT.path,
           element: page(
             () =>

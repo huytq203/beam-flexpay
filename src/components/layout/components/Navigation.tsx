@@ -14,6 +14,7 @@ import {
   ArrowsLeftRightIcon,
   BankIcon,
   BellIcon,
+  ClockCountdownIcon,
   // CalendarStarIcon, // tạm ẩn cùng mục Tháng đặc biệt
   ClipboardTextIcon,
   CreditCardIcon,
@@ -424,6 +425,32 @@ const subMerchantManagement: ItemTypeCustom = {
         />
       ),
       label: 'Quản lý Terminal'
+    },
+    {
+      key: 'settlement-config',
+      screen: 'MERCHANT_SETTLEMENT_CONFIG',
+      link: `${MERCHANT}/settlement-config`,
+      icon: (
+        <ClockCountdownIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Cấu hình quyết toán'
+    },
+    {
+      key: 'withdrawal-limit',
+      screen: 'MERCHANT_WITHDRAWAL_LIMIT',
+      link: `${MERCHANT}/withdrawal-limit`,
+      icon: (
+        <SlidersHorizontalIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Hạn mức rút'
     }
   ]
 }

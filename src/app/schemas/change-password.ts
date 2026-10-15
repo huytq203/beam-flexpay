@@ -6,7 +6,7 @@ const ALLOWED_PASSWORD_CHARACTERS = /^[A-Za-z\d@$!%*?&]+$/
 export const CHANGE_PASSWORD_RULES = [
   {
     id: 'length',
-    label: 'Từ 10 đến 128 ký tự',
+    label: 'Ít nhất 10 ký tự',
     test: (value: string) =>
       value.length >= 10 && value.length <= PASSWORD_MAX_LENGTH
   },
@@ -75,6 +75,4 @@ export const adminChangePasswordSchema = z
     }
   })
 
-export type AdminChangePasswordInput = z.infer<
-  typeof adminChangePasswordSchema
->
+export type AdminChangePasswordInput = z.infer<typeof adminChangePasswordSchema>

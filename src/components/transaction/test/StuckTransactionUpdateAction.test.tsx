@@ -55,7 +55,7 @@ describe('StuckTransactionUpdateAction - hiển thị nút', () => {
 
     renderAction({ transactionType: 'P2P_TRANSFER', compact: true })
     expect(
-      screen.queryByRole('button', { name: /Cập nhật giao dịch treo/ })
+      screen.queryByRole('button', { name: /Xác nhận chi tiền/ })
     ).toBeNull()
   })
 

@@ -7,10 +7,8 @@ import {
 } from '@components/index'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import {
-  FREEZE_TYPE_LABEL,
   OWNER_TYPE_CONFIG,
   RELEASE_TYPE_LABEL,
-  type FreezeType,
   type OwnerType,
   type ReleaseType
 } from '@constants/freeze.constant'
@@ -35,20 +33,16 @@ export const getColumn = ({
     width: 50
   },
   {
-    title: 'Mã giao dịch gốc/Mã đóng băng',
+    title: 'Mã đóng băng',
     align: 'left',
-    key: 'sourceTransactionCode',
+    key: 'id',
     width: 170,
-    render: (_, record) => {
-      // Đóng băng số dư không gắn giao dịch nên không có mã giao dịch gốc, dùng id bản ghi.
-      const code = record.sourceTransactionCode ?? record.id
-      return (
-        <CopyableText
-          className='max-w-[150px]'
-          value={code}
-        />
-      )
-    }
+    render: (_, record) => (
+      <CopyableText
+        className='max-w-[150px]'
+        value={record.id}
+      />
+    )
   },
   {
     title: 'Khách hàng',
@@ -83,15 +77,17 @@ export const getColumn = ({
     render: (_, record) => (
       <div className='max-w-[260px]'>
         <p className='font-medium'>
-          {FREEZE_TYPE_LABEL[record.type as FreezeType] ?? record.type}
-        </p>
-        <p className='text-[12px] text-muted-foreground'>
           {record.sourceTransactionId === null
             ? 'Đóng băng số dư'
             : 'Đóng băng giao dịch'}
         </p>
+        {record.sourceTransactionCode && (
+          <p className='text-[12px] text-muted-foreground'>
+            Mã giao dịch gốc: {record.sourceTransactionCode}
+          </p>
+        )}
         {record.reason && (
-          <p className='text-muted-foreground text-[12px]'>{record.reason}</p>
+          <p className='text-muted-foreground text-[12px]'>Lý do:{record.reason}</p>
         )}
       </div>
     )
