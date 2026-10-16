@@ -122,7 +122,7 @@ const AssignmentRow = ({ assignment, appliedTargets }: AssignmentRowProps) => {
         )}
       </Fact>
       {allowsProviderCriteria(assignment.serviceType) && (
-        <Fact label='Nhà cung cấp (NCC)'>
+        <Fact label='Nhà cung cấp  '>
           {assignment.providerCode || 'Tất cả'}
         </Fact>
       )}

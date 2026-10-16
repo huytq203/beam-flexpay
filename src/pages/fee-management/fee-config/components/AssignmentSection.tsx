@@ -143,7 +143,7 @@ export const AssignmentSection = ({
           <FormSelect
             name='providerCode'
             control={control}
-            label='Nhà cung cấp (NCC)'
+            label='Nhà cung cấp  '
             placeholder='Mọi NCC'
             showSearch
             optionFilterProp='label'
@@ -179,7 +179,9 @@ export const AssignmentSection = ({
                 ? 'Ngân hàng phát hành'
                 : 'Ngân hàng'
             }
-            placeholder={rules.bankRequired ? 'Chọn ngân hàng' : 'Mọi ngân hàng'}
+            placeholder={
+              rules.bankRequired ? 'Chọn ngân hàng' : 'Mọi ngân hàng'
+            }
             showSearch
             optionFilterProp='label'
             options={bankOptions}

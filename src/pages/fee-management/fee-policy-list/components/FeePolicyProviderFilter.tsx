@@ -18,7 +18,7 @@ export const FeePolicyProviderFilter = ({
     <FormSelect
       name='providerCode'
       control={control}
-      label='Nhà cung cấp (NCC)'
+      label='Nhà cung cấp  '
       placeholder='Mọi nhà cung cấp'
       allowClear
       showSearch
