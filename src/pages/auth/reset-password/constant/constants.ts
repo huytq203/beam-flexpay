@@ -1,9 +1,11 @@
+import { PASSWORD_MIN_LENGTH } from '@/app/schemas/change-password'
+
 /** Điều kiện mật khẩu — nguồn sự thật duy nhất cho cả validate lẫn checklist UI. */
 export const PASSWORD_RULES = [
   {
     id: 'length',
-    label: 'ít nhất 10 ký tự',
-    test: (value: string) => value.length >= 8
+    label: `Có ít nhất ${PASSWORD_MIN_LENGTH} ký tự`,
+    test: (value: string) => value.length >= PASSWORD_MIN_LENGTH
   },
   {
     id: 'upper',

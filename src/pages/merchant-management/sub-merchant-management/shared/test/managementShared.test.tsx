@@ -137,7 +137,7 @@ describe('EntityLockDialog', () => {
     await user.click(screen.getByRole('button', { name: 'Khóa' }))
     expect(onConfirm).not.toHaveBeenCalled()
     expect(
-      screen.getByText('Lý do cần có ít nhất 10 ký tự.')
+      screen.getByText('Lý do cần có ít nhất 8 ký tự.')
     ).toBeInTheDocument()
 
     await user.clear(screen.getByLabelText('Lý do khóa'))
@@ -167,7 +167,7 @@ describe('EntityLockDialog', () => {
     const error = screen.getByRole('alert')
     expect(reasonInput).toHaveAttribute('aria-invalid', 'true')
     expect(reasonInput).toHaveAttribute('aria-describedby', error.id)
-    expect(error).toHaveTextContent('Lý do cần có ít nhất 10 ký tự.')
+    expect(error).toHaveTextContent('Lý do cần có ít nhất 8 ký tự.')
   })
 
   it('clears the reason and validation state when the dialog reopens', async () => {
@@ -180,7 +180,7 @@ describe('EntityLockDialog', () => {
     await user.type(screen.getByLabelText('Lý do khóa'), 'ngắn')
     await user.click(screen.getByRole('button', { name: 'Khóa' }))
     expect(
-      screen.getByText('Lý do cần có ít nhất 10 ký tự.')
+      screen.getByText('Lý do cần có ít nhất 8 ký tự.')
     ).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Đóng dialog' }))
@@ -188,7 +188,7 @@ describe('EntityLockDialog', () => {
 
     expect(screen.getByLabelText('Lý do khóa')).toHaveValue('')
     expect(
-      screen.queryByText('Lý do cần có ít nhất 10 ký tự.')
+      screen.queryByText('Lý do cần có ít nhất 8 ký tự.')
     ).not.toBeInTheDocument()
   })
 })

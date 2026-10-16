@@ -1,14 +1,16 @@
 import { z } from 'zod'
 
+/** Theo identity: `AdminChangePasswordRequest` và `AdminResetPasswordRequest` đều `@Size(min = 10)`. */
+export const PASSWORD_MIN_LENGTH = 10
 const PASSWORD_MAX_LENGTH = 128
 const ALLOWED_PASSWORD_CHARACTERS = /^[A-Za-z\d@$!%*?&]+$/
 
 export const CHANGE_PASSWORD_RULES = [
   {
     id: 'length',
-    label: 'Ít nhất 10 ký tự',
+    label: `Có ít nhất ${PASSWORD_MIN_LENGTH} ký tự`,
     test: (value: string) =>
-      value.length >= 10 && value.length <= PASSWORD_MAX_LENGTH
+      value.length >= PASSWORD_MIN_LENGTH && value.length <= PASSWORD_MAX_LENGTH
   },
   {
     id: 'uppercase',
@@ -40,7 +42,10 @@ const currentPasswordSchema = z
 const newPasswordSchema = z
   .string()
   .min(1, 'Vui lòng nhập mật khẩu mới')
-  .min(10, 'Mật khẩu mới phải có ít nhất 10 ký tự')
+  .min(
+    PASSWORD_MIN_LENGTH,
+    `Mật khẩu mới phải có ít nhất ${PASSWORD_MIN_LENGTH} ký tự`
+  )
   .max(PASSWORD_MAX_LENGTH, 'Mật khẩu mới không được vượt quá 128 ký tự')
   .regex(ALLOWED_PASSWORD_CHARACTERS, 'Mật khẩu chứa ký tự không được hỗ trợ')
   .regex(/[A-Z]/, 'Mật khẩu phải có ít nhất 1 chữ hoa')

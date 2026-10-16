@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -27,8 +27,6 @@ export function LoginCredentialsStep({
   const { t } = useTranslation()
   const { executeRecaptcha } = useGoogleReCaptcha()
   const rootRef = useRef<HTMLDivElement>(null)
-  const [isUsernameReadonly, setIsUsernameReadonly] = useState(true)
-  const [isPasswordReadonly, setIsPasswordReadonly] = useState(true)
   const { control, handleSubmit } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: { username: '', password: '' }
@@ -36,7 +34,10 @@ export function LoginCredentialsStep({
 
   useEffect(() => {
     window.events.emit('auth-set-title', t('login.title').toString())
-    window.events.emit('auth-set-description', t('login.description').toString())
+    window.events.emit(
+      'auth-set-description',
+      t('login.description').toString()
+    )
   }, [t])
 
   useEffect(() => {
@@ -81,10 +82,17 @@ export function LoginCredentialsStep({
   }
 
   return (
-    <div ref={rootRef} className='w-full max-w-[420px]'>
+    <div
+      ref={rootRef}
+      className='w-full max-w-[420px]'
+    >
       <div className='mb-6 flex items-center gap-3 md:hidden'>
         <div className='flex size-10 items-center justify-center rounded-lg bg-linear-to-br from-teal-100 to-teal-200'>
-          <img src='/images/BEAM.png' alt='' className='size-7 object-contain' />
+          <img
+            src='/images/BEAM.png'
+            alt=''
+            className='size-7 object-contain'
+          />
         </div>
         <span className='text-base font-bold tracking-tight text-teal-700'>
           Beam Ewallet CMS
@@ -124,9 +132,6 @@ export function LoginCredentialsStep({
             placeholder='Tên đăng nhập'
             prefix={<UserOutlined className='text-gray-400' />}
             autoComplete='off'
-            readOnly={isUsernameReadonly}
-            onFocus={() => setIsUsernameReadonly(false)}
-            onBlur={() => setIsUsernameReadonly(true)}
             onCopy={(event) => event.preventDefault()}
             onCut={(event) => event.preventDefault()}
           />
@@ -139,9 +144,6 @@ export function LoginCredentialsStep({
             placeholder='Mật khẩu'
             prefix={<LockOutlined className='text-gray-400' />}
             autoComplete='new-password'
-            readOnly={isPasswordReadonly}
-            onFocus={() => setIsPasswordReadonly(false)}
-            onBlur={() => setIsPasswordReadonly(true)}
             onCopy={(event) => event.preventDefault()}
             onCut={(event) => event.preventDefault()}
           />

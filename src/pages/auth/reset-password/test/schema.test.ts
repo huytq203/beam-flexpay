@@ -12,7 +12,7 @@ const firstError = (
 
 describe('PASSWORD_RULES', () => {
   it('mật khẩu đủ mạnh thì đạt cả 5 điều kiện', () => {
-    const met = PASSWORD_RULES.filter((rule) => rule.test('Beam@2026'))
+    const met = PASSWORD_RULES.filter((rule) => rule.test('Beam@20260'))
     expect(met).toHaveLength(PASSWORD_RULES.length)
   })
 
@@ -32,8 +32,8 @@ describe('resetPasswordSchema', () => {
   it('chấp nhận mật khẩu hợp lệ và khớp nhau', () => {
     expect(
       resetPasswordSchema.safeParse({
-        password: 'Beam@2026',
-        confirmPassword: 'Beam@2026'
+        password: 'Beam@20260',
+        confirmPassword: 'Beam@20260'
       }).success
     ).toBe(true)
   })
@@ -49,13 +49,13 @@ describe('resetPasswordSchema', () => {
   })
 
   it('nhập lại lệch thì báo không khớp', () => {
-    expect(firstError('Beam@2026', 'Beam@2027')).toBe(
+    expect(firstError('Beam@20260', 'Beam@20270')).toBe(
       'Mật khẩu nhập lại không khớp'
     )
   })
 
   it('phân biệt hoa thường khi so khớp (edge case)', () => {
-    expect(firstError('Beam@2026', 'beam@2026')).toBe(
+    expect(firstError('Beam@20260', 'beam@20260')).toBe(
       'Mật khẩu nhập lại không khớp'
     )
   })

@@ -46,7 +46,7 @@ describe('ResetPassword — form nhập mật khẩu', () => {
     expect(screen.getByText('(1/5)')).toBeInTheDocument()
 
     await user.clear(password)
-    await user.type(password, 'Beam@2026')
+    await user.type(password, 'Beam@20260')
     expect(screen.getByText('(5/5)')).toBeInTheDocument()
     // Chưa nhập ô xác nhận thì chưa được báo khớp.
     expect(screen.queryByText(/hai lần nhập đã khớp/i)).not.toBeInTheDocument()
@@ -57,8 +57,8 @@ describe('ResetPassword — form nhập mật khẩu', () => {
     renderScreen()
     const [password, confirmPassword] = await findPasswordInputs()
 
-    await user.type(password, 'Beam@2026')
-    await user.type(confirmPassword, 'Beam@2027')
+    await user.type(password, 'Beam@20260')
+    await user.type(confirmPassword, 'Beam@20270')
     await user.click(screen.getByRole('button', { name: /đặt lại mật khẩu/i }))
 
     expect(
@@ -71,8 +71,8 @@ describe('ResetPassword — form nhập mật khẩu', () => {
     renderScreen()
     const [password, confirmPassword] = await findPasswordInputs()
 
-    await user.type(password, 'Beam@2026')
-    await user.type(confirmPassword, 'Beam@2026')
+    await user.type(password, 'Beam@20260')
+    await user.type(confirmPassword, 'Beam@20260')
 
     expect(await screen.findByText(/hai lần nhập đã khớp/i)).toBeInTheDocument()
   })
@@ -89,8 +89,8 @@ describe('ResetPassword — form nhập mật khẩu', () => {
     renderScreen()
     const [password, confirmPassword] = await findPasswordInputs()
 
-    await user.type(password, 'Beam@2026')
-    await user.type(confirmPassword, 'Beam@2026')
+    await user.type(password, 'Beam@20260')
+    await user.type(confirmPassword, 'Beam@20260')
     await user.click(screen.getByRole('button', { name: /đặt lại mật khẩu/i }))
 
     expect(
@@ -98,8 +98,8 @@ describe('ResetPassword — form nhập mật khẩu', () => {
     ).toBeInTheDocument()
     expect(requestBody).toEqual({
       token: 'abc123',
-      newPassword: 'Beam@2026',
-      confirmPassword: 'Beam@2026'
+      newPassword: 'Beam@20260',
+      confirmPassword: 'Beam@20260'
     })
   })
 
@@ -126,8 +126,8 @@ describe('ResetPassword — form nhập mật khẩu', () => {
     renderScreen()
     const [password, confirmPassword] = await findPasswordInputs()
 
-    await user.type(password, 'Beam@2026')
-    await user.type(confirmPassword, 'Beam@2026')
+    await user.type(password, 'Beam@20260')
+    await user.type(confirmPassword, 'Beam@20260')
     await user.click(screen.getByRole('button', { name: /đặt lại mật khẩu/i }))
 
     const otpInput = await screen.findByLabelText('Mã xác thực')
@@ -148,8 +148,8 @@ describe('ResetPassword — form nhập mật khẩu', () => {
     renderScreen()
     const [password, confirmPassword] = await findPasswordInputs()
 
-    await user.type(password, 'Beam@2026')
-    await user.type(confirmPassword, 'Beam@2026')
+    await user.type(password, 'Beam@20260')
+    await user.type(confirmPassword, 'Beam@20260')
     await user.click(screen.getByRole('button', { name: /đặt lại mật khẩu/i }))
 
     const alert = await screen.findByRole('alert')
@@ -162,8 +162,8 @@ describe('ResetPassword — form nhập mật khẩu', () => {
     renderScreen()
     const [password, confirmPassword] = await findPasswordInputs()
 
-    await user.type(password, 'Beam@2026')
-    await user.type(confirmPassword, 'Beam@2026')
+    await user.type(password, 'Beam@20260')
+    await user.type(confirmPassword, 'Beam@20260')
     await user.click(screen.getByRole('button', { name: /đặt lại mật khẩu/i }))
 
     await waitFor(() =>
