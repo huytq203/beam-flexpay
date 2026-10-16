@@ -32,7 +32,6 @@ export enum StatusEnum {
   PENDING = 'PENDING',
   PENDING_APPROVAL = 'PENDING_APPROVAL',
   POSTED = 'POSTED',
-  AUTHORIZED = 'AUTHORIZED',
   FAILED = 'FAILED',
   /**
    * Chỉ là `displayStatus` / giá trị lọc: sổ cái vẫn ghi `FAILED`. Màu, lọc nhanh và
@@ -45,7 +44,6 @@ export const StatusType: Record<StatusEnum, string> = {
   [StatusEnum.PENDING]: 'Chờ xử lý',
   [StatusEnum.PENDING_APPROVAL]: 'Chờ phê duyệt',
   [StatusEnum.POSTED]: 'Đã thành công',
-  [StatusEnum.AUTHORIZED]: 'Đã phê duyệt',
   [StatusEnum.FAILED]: 'Thất bại',
   [StatusEnum.FAILED_REFUND]: 'Thất bại hoàn tiền'
 }
@@ -69,11 +67,6 @@ export const CONFIG_STATUS: Record<
     label: 'Đã thành công',
     className: 'success-status',
     shimmerColor: 'rgba(0, 229, 160, 0.2)'
-  },
-  [StatusEnum.AUTHORIZED]: {
-    label: 'Đã phê duyệt',
-    className: 'info-status',
-    shimmerColor: 'rgba(24, 144, 255, 0.2)'
   },
   [StatusEnum.FAILED]: {
     label: 'Thất bại',

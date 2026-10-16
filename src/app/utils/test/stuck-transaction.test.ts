@@ -10,7 +10,6 @@ import {
 describe('isStuckJournalStatus', () => {
   it('coi PENDING và AUTHORIZED là giao dịch treo', () => {
     expect(isStuckJournalStatus(StatusEnum.PENDING)).toBe(true)
-    expect(isStuckJournalStatus(StatusEnum.AUTHORIZED)).toBe(true)
   })
 
   it('không coi bút toán đã có kết quả cuối là treo', () => {
@@ -45,9 +44,7 @@ describe('canUpdateStuckTransaction', () => {
 
   it('cho phép với giao dịch treo thông thường', () => {
     expect(canUpdateStuckTransaction(StatusEnum.PENDING, null)).toBe(true)
-    expect(canUpdateStuckTransaction(StatusEnum.AUTHORIZED, undefined)).toBe(
-      true
-    )
+   
     expect(
       canUpdateStuckTransaction(StatusEnum.PENDING, WithdrawalStatus.PAYING)
     ).toBe(true)

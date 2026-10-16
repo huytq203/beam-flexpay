@@ -1,7 +1,6 @@
 export enum StatusKey {
     PENDING = 'PENDING',
     POSTED = 'POSTED',
-    AUTHORIZED = 'AUTHORIZED',
     CANCELLED = 'CANCELLED',
     FAILED = 'FAILED',
 }
@@ -11,7 +10,6 @@ export enum StatusKey {
 export const StatusLabel: Record<StatusKey, string> = {
     [StatusKey.PENDING]: 'Chờ xử lý',
     [StatusKey.POSTED]: 'Đã thành công',
-    [StatusKey.AUTHORIZED]: 'Đã phê duyệt',
     [StatusKey.CANCELLED]: 'Đã hủy',
     [StatusKey.FAILED]: 'Thất bại',
 } as const
@@ -32,11 +30,6 @@ export const STATUS_CONFIG = {
         label: 'Đã thành công',
         className: 'success-status',
         shimmerColor: 'rgba(0, 229, 160, 0.2)',
-    },
-    [StatusKey.AUTHORIZED]: {
-        label: 'Đã phê duyệt',
-        className: 'info-status',
-        shimmerColor: 'rgba(24, 144, 255, 0.2)',
     },
 
     [StatusKey.FAILED]: {

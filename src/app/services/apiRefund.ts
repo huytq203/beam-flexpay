@@ -48,13 +48,19 @@ const refundTag = (id: string) => ({ type: 'Refund' as const, id })
  */
 const OWN_ERROR_HANDLING = { suppressErrorNotification: true } as const
 
+/** Danh sách và chi tiết tự hiện skeleton tại chỗ, không bật loader toàn màn hình. */
+const LOCAL_LOADING = {
+  ...OWN_ERROR_HANDLING,
+  suppressGlobalLoading: true
+} as const
+
 const unwrap = <T>(response: RefundEnvelope<T>): T => response.data
 
 export const apiRefund = apiUserWallet.injectEndpoints({
   endpoints: (build) => ({
     getRefunds: build.query<RefundPage, RefundListParams>({
       query: (params) => ({ url: REFUNDS_URL, method: 'GET', params }),
-      extraOptions: OWN_ERROR_HANDLING,
+      extraOptions: LOCAL_LOADING,
       transformResponse: (response: RefundEnvelope<RefundPage>) =>
         unwrap(response),
       providesTags: (result) => [
@@ -67,7 +73,7 @@ export const apiRefund = apiUserWallet.injectEndpoints({
         url: `${REFUNDS_URL}/${encodeURIComponent(id)}`,
         method: 'GET'
       }),
-      extraOptions: OWN_ERROR_HANDLING,
+      extraOptions: LOCAL_LOADING,
       transformResponse: (response: RefundEnvelope<RefundDetail>) =>
         unwrap(response),
       providesTags: (_result, _error, id) => [refundTag(id)]

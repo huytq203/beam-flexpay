@@ -16,7 +16,7 @@ import {
   getFreezeTargetParties
 } from '../columns/transaction-row-actions'
 import { SourceDomain } from '../constants/Transaction.constant'
-import { toHasRefundParam } from '../dto/transactionRefund.dto'
+import { resolveHasRefundParam } from '../dto/transactionRefund.dto'
 
 const useTransaction = () => {
   const [filter, setFilter] = useState<Partial<FormSearchValues>>({
@@ -47,7 +47,7 @@ const useTransaction = () => {
     page: page,
     size: pageSize,
     ...filter,
-    hasRefund: toHasRefundParam(filter.hasRefund),
+    hasRefund: resolveHasRefundParam(filter),
     sourceDomain: SourceDomain.EWALLET,
     includeSummary: true
   }

@@ -5,7 +5,7 @@ import {
 } from '@services/apiExportCsv'
 import { useCallback, useMemo } from 'react'
 import { StatusEnum } from '../constants/Transaction.constant'
-import { toHasRefundParam } from '../dto/transactionRefund.dto'
+import { resolveHasRefundParam } from '../dto/transactionRefund.dto'
 import type { FormSearchValues } from '../types/Transaction.type'
 
 /**
@@ -41,7 +41,7 @@ const buildExportParams = (
   if (filter.receiverUsername) p.receiverUsername = filter.receiverUsername
   if (filter.sourceDomain) p.sourceDomain = filter.sourceDomain
   if (filter.paymentMethod) p.paymentMethod = filter.paymentMethod
-  const hasRefund = toHasRefundParam(filter.hasRefund)
+  const hasRefund = resolveHasRefundParam(filter)
   if (hasRefund !== undefined) p.hasRefund = hasRefund
 
   return p

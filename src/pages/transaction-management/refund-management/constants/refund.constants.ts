@@ -40,7 +40,7 @@ export const REFUND_DEBTOR_LABELS: Record<RefundOriginalType, string> = {
   MERCHANT_PAYMENT: 'Ví merchant bị trừ',
   P2P_TRANSFER: 'Ví người nhận bị trừ',
   CASH_OUT: 'Quỹ tạm giữ hệ thống bị trừ',
-  CASH_IN: 'Ví khách bị trừ (rồi chi ngân hàng)'
+  CASH_IN: 'Ví khách bị trừ'
 }
 
 export const REFUND_STATUS_OPTIONS = Object.values(RefundStatus).map(

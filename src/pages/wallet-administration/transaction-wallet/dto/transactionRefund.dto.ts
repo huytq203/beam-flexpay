@@ -1,4 +1,5 @@
 import { formatNumber } from '@utils/formatNumber'
+import { StatusEnum } from '../constants/Transaction.constant'
 import {
   unifiedRefundFieldsSchema,
   type UnifiedRefundFields
@@ -48,6 +49,20 @@ export const toHasRefundParam = (value?: string): boolean | undefined => {
   if (value === 'true') return true
   if (value === 'false') return false
   return undefined
+}
+
+/**
+ * "Thất bại" phải tách khỏi "Thất bại hoàn tiền": sổ cái ghi cả hai là FAILED, nên khi lọc
+ * Thất bại mà người dùng chưa chọn "Có hoàn tiền?" thì gửi `hasRefund=false` để loại các
+ * lệnh đã sinh bản ghi hoàn.
+ */
+export const resolveHasRefundParam = (filter: {
+  status?: string
+  hasRefund?: string
+}): boolean | undefined => {
+  const hasRefund = toHasRefundParam(filter.hasRefund)
+  if (hasRefund !== undefined) return hasRefund
+  return filter.status === StatusEnum.FAILED ? false : undefined
 }
 
 export const getRefundOriginalType = (

@@ -5,6 +5,7 @@ import {
   getDisplayStatus,
   getPendingRefundAmount,
   readRefundFields,
+  resolveHasRefundParam,
   toHasRefundParam
 } from '../dto/transactionRefund.dto'
 
@@ -66,6 +67,27 @@ describe('toHasRefundParam', () => {
     expect(toHasRefundParam('false')).toBe(false)
     expect(toHasRefundParam('')).toBeUndefined()
     expect(toHasRefundParam(undefined)).toBeUndefined()
+  })
+})
+
+describe('resolveHasRefundParam', () => {
+  it('lọc Thất bại mà chưa chọn "Có hoàn tiền?" thì loại lệnh đã hoàn', () => {
+    expect(resolveHasRefundParam({ status: 'FAILED' })).toBe(false)
+    expect(resolveHasRefundParam({ status: 'FAILED', hasRefund: '' })).toBe(
+      false
+    )
+  })
+
+  it('giữ lựa chọn "Có hoàn tiền?" của người dùng', () => {
+    expect(resolveHasRefundParam({ status: 'FAILED', hasRefund: 'true' })).toBe(
+      true
+    )
+  })
+
+  it('trạng thái khác, kể cả Thất bại hoàn tiền, không tự thêm điều kiện', () => {
+    expect(resolveHasRefundParam({ status: 'FAILED_REFUND' })).toBeUndefined()
+    expect(resolveHasRefundParam({ status: 'POSTED' })).toBeUndefined()
+    expect(resolveHasRefundParam({})).toBeUndefined()
   })
 })
 

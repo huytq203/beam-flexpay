@@ -5,6 +5,7 @@ import {
   Table
 } from '@components/index'
 import type { TableComponentProps } from '@components/ui/table-component/TableComponent'
+import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
 import { REFUND_PAGE_SIZE_OPTIONS } from '../constants/refund.constants'
 import {
   REFUND_EXPORT_TOOLTIP,
@@ -69,27 +70,35 @@ export function RefundListCard({ list, columns, isBusy }: RefundListCardProps) {
             </div>
           </RefundNote>
         )}
-        <Table<RefundListItem>
-          columns={columns}
-          dataSource={list.isError ? [] : list.rows}
-          rowKey='id'
-          size='small'
-          loading={list.isLoading || list.isFetching || isBusy}
-          onRefresh={list.refetch}
-          locale={{
-            emptyText: 'Chưa có yêu cầu hoàn tiền nào khớp điều kiện'
-          }}
-          pagination={{
-            current: list.page,
-            pageSize: list.pageSize,
-            total: list.total,
-            pageSizeOptions: REFUND_PAGE_SIZE_OPTIONS,
-            onChange: (nextPage, nextSize) => {
-              if (nextSize !== list.pageSize) list.setPageSize(nextSize)
-              else list.setPage(nextPage)
-            }
-          }}
-        />
+        {list.isLoading ? (
+          <SkeletonTable
+            columns={columns.length}
+            rows={list.pageSize}
+            noContainer
+          />
+        ) : (
+          <Table<RefundListItem>
+            columns={columns}
+            dataSource={list.isError ? [] : list.rows}
+            rowKey='id'
+            size='small'
+            loading={list.isFetching || isBusy}
+            onRefresh={list.refetch}
+            locale={{
+              emptyText: 'Chưa có yêu cầu hoàn tiền nào khớp điều kiện'
+            }}
+            pagination={{
+              current: list.page,
+              pageSize: list.pageSize,
+              total: list.total,
+              pageSizeOptions: REFUND_PAGE_SIZE_OPTIONS,
+              onChange: (nextPage, nextSize) => {
+                if (nextSize !== list.pageSize) list.setPageSize(nextSize)
+                else list.setPage(nextPage)
+              }
+            }}
+          />
+        )}
       </section>
     </CardComponent>
   )
