@@ -52,7 +52,7 @@ const STATUS_CONFIG: Record<
     shimmerColor: 'rgba(59, 130, 246, 0.1)'
   },
   [StatusKey.RELEASED]: {
-    label: 'Đã giải tỏa',
+    label: 'Đã mở băng',
     className: 'normal-status',
     shimmerColor: 'rgba(107, 114, 128, 0.1)'
   },

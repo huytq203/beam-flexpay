@@ -23,6 +23,6 @@ export const StatusLabel: Record<StatusKey, string> = {
   [StatusKey.PENDING]: 'Chờ xử lý',
   [StatusKey.CANCELLED]: 'Đã hủy',
   [StatusKey.CAPTURED]: 'Đã thu',
-  [StatusKey.RELEASED]: 'Đã giải tỏa',
+  [StatusKey.RELEASED]: 'Đã mở băng',
   [StatusKey.EXPIRED]: 'Hết hạn'
 } as const

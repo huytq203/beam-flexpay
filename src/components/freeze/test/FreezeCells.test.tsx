@@ -48,7 +48,9 @@ const pendingFreeze = freeze({
   unfreezeCommandId: 'command-1',
   unfreezeCommandStatus: 'PENDING_APPROVAL',
   unfreezeCommandMakerId: 'maker_user',
-  unfreezeCommands: [{ id: 'command-1', amount: 50_000, status: 'PENDING_APPROVAL' } as never]
+  unfreezeCommands: [
+    { id: 'command-1', amount: 50_000, status: 'PENDING_APPROVAL' } as never
+  ]
 })
 
 describe('FreezeStatusCell', () => {
@@ -58,7 +60,11 @@ describe('FreezeStatusCell', () => {
   })
 
   it('hiện nhãn theo displayStatus khi không có lệnh chờ duyệt', () => {
-    render(<FreezeStatusCell item={freeze({ displayStatus: 'PARTIALLY_RELEASED' })} />)
+    render(
+      <FreezeStatusCell
+        item={freeze({ displayStatus: 'PARTIALLY_RELEASED' })}
+      />
+    )
     expect(screen.getByText('Giải tỏa một phần')).toBeInTheDocument()
   })
 })
@@ -67,11 +73,11 @@ describe('FreezeAmountCell', () => {
   it('chỉ hiện một dòng khi lệnh chưa giải tỏa và không thiếu tiền', () => {
     render(<FreezeAmountCell item={freeze()} />)
     expect(screen.getByText('50,000 VNĐ')).toBeInTheDocument()
-    expect(screen.queryByText(/Đã giải tỏa/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Đã mở băng/)).not.toBeInTheDocument()
     expect(screen.queryByText(/Còn thiếu/)).not.toBeInTheDocument()
   })
 
-  it('không giấu phần đã giải tỏa, phần còn thiếu và số lần bù', () => {
+  it('không giấu phần Đã mở băng, phần còn thiếu và số lần bù', () => {
     render(
       <FreezeAmountCell
         item={freeze({
@@ -83,7 +89,7 @@ describe('FreezeAmountCell', () => {
       />
     )
     expect(screen.getByText('80,000 VNĐ')).toBeInTheDocument()
-    expect(screen.getByText(/Đã giải tỏa/)).toHaveTextContent('20,000 VNĐ')
+    expect(screen.getByText(/Đã mở băng/)).toHaveTextContent('20,000 VNĐ')
     expect(screen.getByText(/Còn thiếu/)).toHaveTextContent('15,000 VNĐ')
     expect(screen.getByText('Đã bù 2 lần')).toBeInTheDocument()
   })
@@ -119,14 +125,20 @@ describe('FreezeRowActions', () => {
           unfreezeCommands: [
             { id: 'c1', amount: 85_000, status: 'EXECUTED' } as never,
             { id: 'c2', amount: 30_000, status: 'EXECUTED' } as never,
-            { id: 'rejected-command', amount: 30_000, status: 'REJECTED' } as never
+            {
+              id: 'rejected-command',
+              amount: 30_000,
+              status: 'REJECTED'
+            } as never
           ]
         })}
       />
     )
 
     expect(screen.getByRole('button', { name: 'Mở băng' })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Duyệt' })).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Duyệt' })
+    ).not.toBeInTheDocument()
   })
 
   it('bản ghi đã kết thúc thì không còn hành động nào', () => {
@@ -145,7 +157,11 @@ describe('FreezeRowActions', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Mở băng' }))
     expect(onRequestUnfreeze).toHaveBeenCalledWith(pendingFreeze)
-    expect(screen.queryByRole('button', { name: 'Duyệt' })).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Từ chối' })).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Duyệt' })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Từ chối' })
+    ).not.toBeInTheDocument()
   })
 })

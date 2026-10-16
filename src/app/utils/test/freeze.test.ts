@@ -73,7 +73,10 @@ describe('getFreezeRowAction', () => {
   it('lệnh đã bị từ chối thì quay lại bước tạo yêu cầu mới', () => {
     expect(
       getFreezeRowAction(
-        freeze({ unfreezeCommandId: 'command-1', unfreezeCommandStatus: 'REJECTED' })
+        freeze({
+          unfreezeCommandId: 'command-1',
+          unfreezeCommandStatus: 'REJECTED'
+        })
       )
     ).toBe(FreezeRowAction.REQUEST_UNFREEZE)
   })
@@ -91,7 +94,7 @@ describe('getFreezeRowAction', () => {
     ).toBe(FreezeRowAction.REQUEST_UNFREEZE)
   })
 
-  it('hiện mở băng khi đã giải tỏa 115.000, lệnh mới nhất bị từ chối và còn 30.000', () => {
+  it('hiện mở băng khi Đã mở băng 115.000, lệnh mới nhất bị từ chối và còn 30.000', () => {
     expect(
       getFreezeRowAction(
         freeze({
@@ -108,7 +111,11 @@ describe('getFreezeRowAction', () => {
           unfreezeCommands: [
             { id: 'c1', amount: 85_000, status: 'EXECUTED' } as never,
             { id: 'c2', amount: 30_000, status: 'EXECUTED' } as never,
-            { id: 'rejected-command', amount: 30_000, status: 'REJECTED' } as never
+            {
+              id: 'rejected-command',
+              amount: 30_000,
+              status: 'REJECTED'
+            } as never
           ]
         })
       )
@@ -130,9 +137,7 @@ describe('getFreezeRowAction', () => {
 
   it('không hiện mở băng khi không còn khoản nào có thể giải tỏa', () => {
     expect(
-      getFreezeRowAction(
-        freeze({ remainingAmount: 0, shortfallAmount: 0 })
-      )
+      getFreezeRowAction(freeze({ remainingAmount: 0, shortfallAmount: 0 }))
     ).toBe(FreezeRowAction.NONE)
   })
 })
@@ -157,7 +162,9 @@ describe('getFreezeRowActionFlags', () => {
           remainingAmount: 50_000,
           unfreezeCommandId: 'c1',
           unfreezeCommandStatus: 'PENDING_APPROVAL',
-          unfreezeCommands: [{ id: 'c1', amount: 50_000, status: 'PENDING_APPROVAL' } as never]
+          unfreezeCommands: [
+            { id: 'c1', amount: 50_000, status: 'PENDING_APPROVAL' } as never
+          ]
         })
       )
     ).toEqual({ canRequestUnfreeze: true })
@@ -181,8 +188,8 @@ describe('getFreezeAmountSummary', () => {
   })
 
   it('giữ nguyên phần còn thiếu để không giấu việc ví chưa đủ tiền', () => {
-    expect(getFreezeAmountSummary(freeze({ shortfallAmount: 15_000 })).shortfall).toBe(
-      15_000
-    )
+    expect(
+      getFreezeAmountSummary(freeze({ shortfallAmount: 15_000 })).shortfall
+    ).toBe(15_000)
   })
 })

@@ -54,7 +54,7 @@ export const getFreezeRowAction = (
  * Trần một lệnh mở băng được phép xin, đúng theo `requireReleasableAmount` của wallet-core:
  * phần còn giữ CỘNG phần còn thiếu. Admin được bỏ đòi phần chưa giữ được rồi nhả tiếp tiền
  * đang giữ, tối đa là toàn bộ những gì lệnh đang đòi. Gửi `amount` gốc sẽ vượt trần ngay khi
- * lệnh đã giải tỏa một phần và BE trả UNFREEZE_AMOUNT_EXCEEDS_REMAINING.
+ * lệnh đã giải  một phần và BE trả UNFREEZE_AMOUNT_EXCEEDS_REMAINING.
  */
 export const getReleasableAmount = (item: FreezeItem): number =>
   (item.remainingAmount ?? item.amount) + (item.shortfallAmount ?? 0)

@@ -15,27 +15,27 @@ export const FreezeAmountCell = ({ item }: FreezeAmountCellProps) => {
   const { held, released, shortfall, topUpCount } = getFreezeAmountSummary(item)
 
   return (
-    <div className="flex flex-col items-end gap-0.5">
-      <span className="amount-caution font-semibold tabular-nums">
+    <div className='flex flex-col items-end gap-0.5'>
+      <span className='amount-caution font-semibold tabular-nums'>
         {formatCurrency(held, { symbol: 'VNĐ', position: 'after' })}
       </span>
 
       {released > 0 && (
-        <span className="text-[12px] text-muted-foreground tabular-nums">
-          Đã giải tỏa{' '}
+        <span className='text-[12px] text-muted-foreground tabular-nums'>
+          Đã mở băng{' '}
           {formatCurrency(released, { symbol: 'VNĐ', position: 'after' })}
         </span>
       )}
 
       {shortfall > 0 && (
-        <span className="amount-negative text-[12px] font-medium tabular-nums">
+        <span className='amount-negative text-[12px] font-medium tabular-nums'>
           Còn thiếu{' '}
           {formatCurrency(shortfall, { symbol: 'VNĐ', position: 'after' })}
         </span>
       )}
 
       {topUpCount > 0 && (
-        <span className="text-[12px] text-muted-foreground">
+        <span className='text-[12px] text-muted-foreground'>
           Đã bù {topUpCount} lần
         </span>
       )}

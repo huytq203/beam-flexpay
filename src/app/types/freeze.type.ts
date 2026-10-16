@@ -74,7 +74,7 @@ export interface FreezeItem {
   shortfallAmount: number
   /** Tổng đang giữ của cả lệnh: dòng gốc cộng mọi dòng bù. */
   totalHeldAmount: number
-  /** Tổng đã giải tỏa của cả lệnh, gộp cùng cách với `totalHeldAmount`. */
+  /** Tổng đã giải  của cả lệnh, gộp cùng cách với `totalHeldAmount`. */
   totalReleasedAmount: number
   /** Số lần hệ thống lấp thêm tiền vào lệnh này. */
   topUpCount: number

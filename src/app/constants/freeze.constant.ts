@@ -45,7 +45,7 @@ export const FREEZE_STATUS_CONFIG: Record<FreezeBadgeKey, FreezeBadgeConfig> = {
     className: 'info-status'
   },
   [FreezeDisplayStatus.RELEASED]: {
-    label: 'Đã giải tỏa',
+    label: 'Đã mở băng',
     className: 'success-status'
   },
   [FreezeDisplayStatus.CAPTURED]: {
@@ -89,7 +89,7 @@ export const FREEZE_TYPE_LABEL: Record<FreezeType, string> = {
   [FreezeType.COMPLIANCE_FREEZE]: 'Tuân thủ pháp luật'
 }
 
-/** Cách khoản tiền rời hold, chỉ có giá trị sau khi đã giải tỏa. */
+/** Cách khoản tiền rời hold, chỉ có giá trị sau khi Đã mở băng. */
 export const ReleaseType = {
   MANUAL: 'MANUAL',
   EXPIRED: 'EXPIRED',
