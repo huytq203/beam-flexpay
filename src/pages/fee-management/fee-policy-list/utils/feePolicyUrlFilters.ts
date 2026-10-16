@@ -7,7 +7,6 @@ import {
 export const FILTER_KEYS = [
   'feeScope',
   'keyword',
-  'subjectKeyword',
   'status',
   'appliedTarget',
   'direction',

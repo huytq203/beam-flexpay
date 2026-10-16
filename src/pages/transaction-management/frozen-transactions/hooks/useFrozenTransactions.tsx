@@ -1,5 +1,5 @@
 import { useExportCsv } from '@hooks/useExportCsv'
-import usePagination from '@hooks/usePagination'
+import { useUrlFilters } from '@hooks/useUrlFilters'
 import {
   useExportFreezesMutation,
   type ExportFreezesQuery
@@ -8,11 +8,33 @@ import { useGetFreezesQuery, type FreezeSearchParams } from '@services/apiFreeze
 import { FreezeItem } from '@type/freeze.type'
 import { useMemo, useState } from 'react'
 
-const useFrozenTransactions = () => {
-  const [filter, setFilter] = useState<FreezeSearchParams>({})
+export const FROZEN_FILTER_KEYS = [
+  'username',
+  'sourceTransactionCode',
+  'displayStatus',
+  'type',
+  'releaseType',
+  'fromDate',
+  'toDate'
+] as const
 
-  const { page, pageSize, setPage, setPageSize } = usePagination({
-    defaultSort: 'createdAt',
+export type FrozenFilterKey = (typeof FROZEN_FILTER_KEYS)[number]
+export type FrozenFilters = Partial<Record<FrozenFilterKey, string>>
+// Username của ví chính là SĐT nên không đưa lên URL (rule 05).
+const FROZEN_SENSITIVE_KEYS: readonly FrozenFilterKey[] = ['username']
+
+const useFrozenTransactions = () => {
+  const {
+    filters: filter,
+    applyFilters,
+    clearFilters,
+    page,
+    size: pageSize,
+    setPage,
+    setPageSize
+  } = useUrlFilters<FrozenFilterKey>({
+    keys: FROZEN_FILTER_KEYS,
+    sensitiveKeys: FROZEN_SENSITIVE_KEYS
   })
 
   const payload: FreezeSearchParams = {
@@ -35,9 +57,12 @@ const useFrozenTransactions = () => {
     [data, page, pageSize]
   )
 
-  const handleSearch = (values: FreezeSearchParams) => {
-    setFilter(values)
-    setPage(1)
+  /** Bộ lọc nằm trên URL (kèm bản sao sessionStorage) nên quay lại màn vẫn giữ trang cũ. */
+  const handleSearch = (values: FrozenFilters) => applyFilters(values)
+
+  const handleChangePage = (nextPage: number, nextSize: number) => {
+    if (nextSize !== pageSize) setPageSize(nextSize)
+    else setPage(nextPage)
   }
 
   const [triggerExport, { reset: resetExport }] = useExportFreezesMutation()
@@ -71,11 +96,12 @@ const useFrozenTransactions = () => {
     totalElements,
     page,
     pageSize,
-    setPage,
-    setPageSize,
+    filter,
+    handleChangePage,
     refetch,
     isFetching,
     handleSearch,
+    clearFilters,
     isLoading,
     isUnfreezeModalOpen,
     selectedFreezeItem,

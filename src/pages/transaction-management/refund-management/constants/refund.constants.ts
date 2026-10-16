@@ -33,11 +33,9 @@ export const REFUND_TYPE_LABELS: Record<RefundOriginalType, string> = {
   CASH_IN: 'Nạp tiền',
   CASH_OUT: 'Rút tiền',
   P2P_TRANSFER: 'Chuyển tiền',
-  MERCHANT_PAYMENT: 'Thanh toán merchant'
 }
 
 export const REFUND_DEBTOR_LABELS: Record<RefundOriginalType, string> = {
-  MERCHANT_PAYMENT: 'Ví merchant bị trừ',
   P2P_TRANSFER: 'Ví người nhận bị trừ',
   CASH_OUT: 'Quỹ tạm giữ hệ thống bị trừ',
   CASH_IN: 'Ví khách bị trừ'

@@ -22,15 +22,6 @@ import { MerchantPickerField } from './MerchantPickerField'
 import { UserPickerField } from './UserPickerField'
 import { SectionHeading } from './SectionHeading'
 
-const PROVIDER_HINT =
-  'Chỉ chọn cổng trung gian như NAPAS, VietQR. Liên kết trực tiếp với ngân hàng (VCB, VPB) thì để trống ô này và chọn ở Ngân hàng phát hành.'
-
-const ISSUER_BANK_HINT =
-  'Ngân hàng phát hành thẻ/tài khoản của khách. Giao dịch qua NCC thì khớp theo ngân hàng này; giao dịch liên kết trực tiếp thì đây cũng là ngân hàng đối tác.'
-
-const REFUND_BANK_HINT =
-  'Mã ngân hàng chỉ khớp hoàn tiền về ngân hàng. Hoàn về ví không có mã ngân hàng, nên cần có một bản gán mặc định không ghi ngân hàng.'
-
 interface AssignmentSectionProps {
   control: Control<FeeConfigFormValues>
   readOnly?: boolean
@@ -152,12 +143,7 @@ export const AssignmentSection = ({
           <FormSelect
             name='providerCode'
             control={control}
-            label={
-              <FormLabelHint
-                label='Nhà cung cấp (NCC)'
-                hint={PROVIDER_HINT}
-              />
-            }
+            label='Nhà cung cấp (NCC)'
             placeholder='Mọi NCC'
             showSearch
             optionFilterProp='label'
@@ -189,19 +175,9 @@ export const AssignmentSection = ({
             control={control}
             required={rules.bankRequired}
             label={
-              serviceType === 'EWALLET_REFUND' ? (
-                <FormLabelHint
-                  label='Ngân hàng'
-                  hint={REFUND_BANK_HINT}
-                />
-              ) : showProvider ? (
-                <FormLabelHint
-                  label='Ngân hàng phát hành'
-                  hint={ISSUER_BANK_HINT}
-                />
-              ) : (
-                'Ngân hàng'
-              )
+              serviceType !== 'EWALLET_REFUND' && showProvider
+                ? 'Ngân hàng phát hành'
+                : 'Ngân hàng'
             }
             placeholder={rules.bankRequired ? 'Chọn ngân hàng' : 'Mọi ngân hàng'}
             showSearch

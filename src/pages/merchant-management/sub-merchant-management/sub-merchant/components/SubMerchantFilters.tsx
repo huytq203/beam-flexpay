@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useForm, type SubmitHandler } from 'react-hook-form'
+import { useForm, useWatch, type SubmitHandler } from 'react-hook-form'
 
 import { FormDatePicker, FormInput, FormSelect } from '@components/form'
 import { BroomIcon, FunnelIcon, MagnifyingGlassIcon } from '@components/icons'
@@ -10,7 +10,10 @@ import {
   PickerTrigger
 } from '@components/index'
 
-import type { SubMerchantFiltersValue } from '../constants/subMerchantFilters'
+import {
+  EMPTY_SUB_MERCHANT_FILTERS,
+  type SubMerchantFiltersValue
+} from '../constants/subMerchantFilters'
 
 interface SubMerchantFiltersProps {
   value: SubMerchantFiltersValue
@@ -31,19 +34,18 @@ export function SubMerchantFilters({
   onSearch,
   onReset
 }: SubMerchantFiltersProps) {
+  // Quay lại màn thì ô lọc hiện lại đúng bộ lọc đang áp dụng trên URL.
   const form = useForm<SubMerchantFiltersValue>({ defaultValues: value })
-  const [parent, setParent] = useState<PickedEntity>()
+  const parent = useWatch({ control: form.control, name: 'parentMerchant' })
   const [isPickingParent, setIsPickingParent] = useState(false)
   const handleSubmit: SubmitHandler<SubMerchantFiltersValue> = onSearch
 
   const pickParent = (value?: PickedEntity): void => {
-    setParent(value)
-    form.setValue('parentMerchantId', value?.id)
+    form.setValue('parentMerchant', value)
     setIsPickingParent(false)
   }
   const handleReset = (): void => {
-    form.reset({ query: '' })
-    setParent(undefined)
+    form.reset(EMPTY_SUB_MERCHANT_FILTERS)
     onReset()
   }
 

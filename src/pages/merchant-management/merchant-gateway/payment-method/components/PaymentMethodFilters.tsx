@@ -20,12 +20,19 @@ const fieldClass = 'min-w-0 flex flex-col gap-1.5'
 const labelClass = 'text-sm font-medium text-foreground'
 
 interface PaymentMethodFiltersProps {
+  /** Bộ lọc đang áp, để hiện lại khi quay lại màn. */
+  initialValues: PaymentMethodFilterValues
   onSearch: (filters: PaymentMethodFilterValues) => void
+  onClear: () => void
 }
 
-export function PaymentMethodFilters({ onSearch }: PaymentMethodFiltersProps) {
+export function PaymentMethodFilters({
+  initialValues,
+  onSearch,
+  onClear
+}: PaymentMethodFiltersProps) {
   const { control, handleSubmit, reset } = useForm<PaymentMethodFilterValues>({
-    defaultValues: emptyFilters
+    defaultValues: initialValues
   })
 
   return (
@@ -106,7 +113,7 @@ export function PaymentMethodFilters({ onSearch }: PaymentMethodFiltersProps) {
               className='w-full sm:w-auto'
               onClick={() => {
                 reset(emptyFilters)
-                onSearch(emptyFilters)
+                onClear()
               }}
             />
             <ButtonComponent

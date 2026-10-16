@@ -10,7 +10,7 @@ import useFetchDataWithdraw from './hooks/useFetchDataWithdraw'
 import useHandle from './hooks/useHandle'
 
 const WithdrawHistory = () => {
-    const { dataWithdraw, setPage, setPageSize, dataSource, handleSearch, activeStatus, handleSummaryStatusChange, refetch, isFetching, handleExport, isExporting } = useFetchDataWithdraw()
+    const { dataWithdraw, page, pageSize, handleChangePage, filters, dataSource, handleSearch, clearFilters, activeStatus, handleSummaryStatusChange, refetch, isFetching, handleExport, isExporting } = useFetchDataWithdraw()
     const totalElements = dataWithdraw?.totalElements ?? 0
     const { isDetailOpen, detailData, withdrawalDetail, isDetailLoading, loadingId, openDetail, closeDetail } = useHandle()
     const columns = getColumn({
@@ -22,7 +22,7 @@ const WithdrawHistory = () => {
     return (
         <div className='space-y-3'>
             <div className="">
-                <CardComponent content={<WithdrawHistorySearch handleSearch={handleSearch} />} />
+                <CardComponent content={<WithdrawHistorySearch key={JSON.stringify(filters)} defaultValues={filters} handleSearch={handleSearch} onReset={clearFilters} />} />
             </div>
             <div className="">
                 <CardComponent content={
@@ -55,15 +55,12 @@ const WithdrawHistory = () => {
                             refetch()
                         }}
                         pagination={{
-                            current: dataWithdraw?.pageable?.pageNumber ? dataWithdraw.pageable.pageNumber + 1 : 1,
-                            pageSize: dataWithdraw?.pageable?.pageSize ?? 10,
+                            current: page,
+                            pageSize,
                             total: totalElements,
                             showSizeChanger: true,
                             showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]}/ ${total} Bản ghi`,
-                            onChange: (page, pageSize) => {
-                                setPage(page)
-                                setPageSize(pageSize)
-                            },
+                            onChange: handleChangePage,
                         }}
                     />
                     </>

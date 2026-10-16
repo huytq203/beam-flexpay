@@ -31,7 +31,7 @@ describe('merchant gateway navigation', () => {
     )
   })
 
-  it('hiển thị group quản lý sub-merchant với hai mục con', () => {
+  it('hiển thị group quản lý sub-merchant kèm cấu hình quyết toán và hạn mức rút', () => {
     const group = navigationItems.find(
       (item) => item.key === 'sub-merchant-management'
     )
@@ -39,7 +39,9 @@ describe('merchant gateway navigation', () => {
     expect(group?.label).toBe('Quản lý sub-merchant')
     expect(group?.children?.map((item) => item.key)).toEqual([
       'sub-merchant',
-      'terminal'
+      'terminal',
+      'settlement-config',
+      'withdrawal-limit'
     ])
   })
 })

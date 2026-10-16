@@ -1,5 +1,6 @@
 import { act, renderHook } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { MemoryRouter } from 'react-router-dom'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mocks = vi.hoisted(() => ({ getUnified: vi.fn() }))
 
@@ -26,6 +27,7 @@ vi.mock('@services/apiFreezes', () => ({
 
 vi.mock('@/app/permissions', () => ({
   PERMISSION: { FREEZE_UPDATE: 'FREEZE_UPDATE', EWALLET_FULL: 'EWALLET_FULL' },
+  SCREENS: { TRANSACTION_WALLET: { path: '/transaction-wallet' } },
   useAccess: () => ({ hasAny: () => false })
 }))
 
@@ -40,9 +42,12 @@ const lastPayload = (): Record<string, unknown> =>
 
 describe('Bộ lọc hoàn tiền', () => {
   beforeEach(() => vi.clearAllMocks())
+  afterEach(() => sessionStorage.clear())
 
   it('hasRefund "true"/"false" gửi boolean, status FAILED_REFUND gửi nguyên giá trị', () => {
-    const { result } = renderHook(() => useTransaction())
+    const { result } = renderHook(() => useTransaction(), {
+      wrapper: MemoryRouter
+    })
 
     act(() =>
       result.current.handleSearch({
@@ -63,7 +68,9 @@ describe('Bộ lọc hoàn tiền', () => {
   })
 
   it('bỏ trống "Có hoàn tiền?" thì không gửi hasRefund', () => {
-    const { result } = renderHook(() => useTransaction())
+    const { result } = renderHook(() => useTransaction(), {
+      wrapper: MemoryRouter
+    })
 
     act(() => result.current.handleSearch({ hasRefund: '' }))
 

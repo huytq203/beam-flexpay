@@ -1,5 +1,8 @@
 import type { FeeEffectiveStatus } from '@/app/schemas/applicable-fee-rule.schema'
-import { EFFECTIVE_STATUS_CONFIG, POLICY_STATUS_CONFIG } from '@constants/feeLabels'
+import {
+  EFFECTIVE_STATUS_CONFIG,
+  POLICY_STATUS_CONFIG
+} from '@constants/feeLabels'
 
 /**
  * Bộ lọc "Trạng thái" gộp vòng đời duyệt và thời hạn hiệu lực vào một ô chọn.

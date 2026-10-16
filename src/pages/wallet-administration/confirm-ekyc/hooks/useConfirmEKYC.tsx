@@ -1,29 +1,38 @@
 import { useGetEKYCSearchQuery } from '@services/apiEKYC'
 import { useExportCsv } from '@hooks/useExportCsv'
-import usePagination from '@hooks/usePagination'
+import { useUrlFilters } from '@hooks/useUrlFilters'
 import { useExportVerifiedKycProfilesMutation } from '@services/apiExportCsv'
-import { useState } from 'react'
 import type { EKYCGroup, EKYCListItem } from '@type/apiResponseEKYC'
+import {
+  EKYC_FILTER_KEYS,
+  EKYC_SENSITIVE_KEYS,
+  type EkycFilterKey
+} from '../constants/ekycFilter.constants'
+import { toEkycApiFilter } from '../utils/ekycFilters'
 
-export type EKYCFilterType = {
-  keyword?: string
-  latestStatus?: string
-  verified?: boolean
-  profileStatus?: string
-  hasProfile?: boolean
-  createdFrom?: string
-  createdTo?: string
-}
+const SORT_BY = 'createdAt'
+const SORT_DIRECTION = 'DESC'
 
 const useConfirmEKYC = () => {
-  const { page, pageSize, setPage, setPageSize, sort, sortBy } = usePagination()
-  const [filter, setFilter] = useState<EKYCFilterType>({})
+  const {
+    filters,
+    applyFilters,
+    clearFilters,
+    page,
+    size: pageSize,
+    setPage,
+    setPageSize
+  } = useUrlFilters<EkycFilterKey>({
+    keys: EKYC_FILTER_KEYS,
+    sensitiveKeys: EKYC_SENSITIVE_KEYS
+  })
+  const filter = toEkycApiFilter(filters)
 
   const payload = {
     page: page,
     size: pageSize,
-    sortBy: sort,
-    sortDirection: sortBy,
+    sortBy: SORT_BY,
+    sortDirection: SORT_DIRECTION,
     ...filter
   }
 
@@ -47,21 +56,15 @@ const useConfirmEKYC = () => {
     mapEKYCGroupToListItem(group, (page - 1) * pageSize + index + 1)
   )
 
-  const handleSearch = (values: EKYCFilterType) => {
-    setFilter(values)
-    setPage(1)
-  }
-
-  const handleReset = () => {
-    setFilter({})
-    setPage(1)
-  }
+  const handleSearch = applyFilters
+  const handleReset = clearFilters
 
   const handleExport = () => {
     void exportFile(filter)
   }
 
   return {
+    filters,
     dataSource,
     isLoading,
     isFetching,

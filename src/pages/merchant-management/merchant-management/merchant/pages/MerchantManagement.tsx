@@ -28,9 +28,10 @@ const MerchantManagement = () => {
     page,
     size,
     payload,
-    setPage,
-    setPageSize,
-    setFilters
+    filters,
+    changePage,
+    applyFilters,
+    clearFilters
   } = useFetchData()
   const [exportMerchants, { isLoading: isExporting }] =
     useExportMerchantsMutation()
@@ -74,7 +75,11 @@ const MerchantManagement = () => {
     <div className='space-y-3!'>
       <CardTotal />
       <CardComponent>
-        <FormSearch onSearch={setFilters} />
+        <FormSearch
+          filters={filters}
+          onSearch={applyFilters}
+          onClear={clearFilters}
+        />
       </CardComponent>
       <CardComponent>
         <div className='flex justify-between items-center gap-3 mb-3'>
@@ -122,10 +127,7 @@ const MerchantManagement = () => {
             current: page,
             pageSize: size,
             total: totalElements,
-            onChange: (nextPage, nextSize) => {
-              setPage(nextPage)
-              setPageSize(nextSize)
-            }
+            onChange: changePage
           }}
         />
       </CardComponent>

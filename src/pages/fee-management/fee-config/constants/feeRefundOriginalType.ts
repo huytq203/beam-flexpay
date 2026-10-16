@@ -10,7 +10,6 @@ export const ORIGINAL_TYPE_OPTIONS = [
   { value: 'CASH_IN', label: 'Hoàn nạp tiền' },
   { value: 'CASH_OUT', label: 'Hoàn rút tiền' },
   { value: 'P2P_TRANSFER', label: 'Hoàn chuyển tiền' },
-  { value: 'MERCHANT_PAYMENT', label: 'Hoàn thanh toán merchant' }
 ] as const
 
 export const getOriginalTypeLabel = (

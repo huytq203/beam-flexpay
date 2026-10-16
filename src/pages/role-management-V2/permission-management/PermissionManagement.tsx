@@ -19,7 +19,9 @@ const PermissionManagement = () => {
     useState<SelectedPermission | null>(null)
   const { can } = useScreenAccess('PERMISSION_MANAGEMENT')
   const {
+    keyword,
     handleSearch,
+    clearFilters,
     permissionData,
     isLoadingPermissionData,
     refetch,
@@ -60,7 +62,9 @@ const PermissionManagement = () => {
             <Icons.FunnelIcon /> Bộ lọc tìm kiếm
           </p>
           <FormSearchPermission
+            keyword={keyword}
             onSearch={handleSearch}
+            onClear={clearFilters}
             onAdd={() => openModal('add', null)}
             canAdd={can('create')}
           />
@@ -86,8 +90,9 @@ const PermissionManagement = () => {
                 total: permissionData?.totalElements ?? 0,
                 showSizeChanger: true,
                 onChange: (newPage, newPageSize) => {
-                  setPage(newPageSize !== size ? 1 : newPage)
-                  setPageSize(newPageSize)
+                  // Đổi số dòng đã tự về trang 1; gọi cả hai sẽ ghi đè lẫn nhau.
+                  if (newPageSize !== size) setPageSize(newPageSize)
+                  else setPage(newPage)
                 }
               }}
             />

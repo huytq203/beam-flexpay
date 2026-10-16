@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
 import { http, HttpResponse } from 'msw'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 
 import { createAppStore } from '@/app/store'
 import { savePermissions } from '@slices/authSlice'
@@ -46,6 +46,9 @@ const renderPage = (
 }
 
 describe('BusinessWallet Merchant API', () => {
+  // Bộ lọc được lưu vào sessionStorage, xóa để test sau không bị khôi phục.
+  afterEach(() => sessionStorage.clear())
+
   it('loads enterprise wallets with zero based API pagination and real columns', async () => {
     let requested = ''
     server.use(

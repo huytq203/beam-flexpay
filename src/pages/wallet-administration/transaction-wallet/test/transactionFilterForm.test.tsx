@@ -6,7 +6,14 @@ import { FULL, renderAs } from './transaction.setup'
 
 describe('Form lọc hoàn tiền', () => {
   it('không còn ô Có hoàn tiền? riêng', async () => {
-    renderAs(<FormSearch handleSearch={vi.fn()} />, FULL)
+    renderAs(
+      <FormSearch
+        filters={{}}
+        handleSearch={vi.fn()}
+        onReset={vi.fn()}
+      />,
+      FULL
+    )
 
     await screen.findByLabelText('Loại giao dịch')
     expect(screen.queryByLabelText('Có hoàn tiền?')).not.toBeInTheDocument()
@@ -14,7 +21,14 @@ describe('Form lọc hoàn tiền', () => {
 
   it('chọn loại giao dịch Hoàn tiền thì chỉ gửi hasRefund=true, không gửi loại giao dịch', async () => {
     const handleSearch = vi.fn()
-    renderAs(<FormSearch handleSearch={handleSearch} />, FULL)
+    renderAs(
+      <FormSearch
+        filters={{}}
+        handleSearch={handleSearch}
+        onReset={vi.fn()}
+      />,
+      FULL
+    )
 
     await userEvent.click(await screen.findByLabelText('Loại giao dịch'))
     await userEvent.click(await screen.findByTitle('Hoàn tiền'))
@@ -30,7 +44,14 @@ describe('Form lọc hoàn tiền', () => {
 
   it('loại giao dịch khác không gửi hasRefund', async () => {
     const handleSearch = vi.fn()
-    renderAs(<FormSearch handleSearch={handleSearch} />, FULL)
+    renderAs(
+      <FormSearch
+        filters={{}}
+        handleSearch={handleSearch}
+        onReset={vi.fn()}
+      />,
+      FULL
+    )
 
     await userEvent.click(await screen.findByLabelText('Loại giao dịch'))
     await userEvent.click(await screen.findByTitle('Nạp tiền'))
@@ -42,7 +63,14 @@ describe('Form lọc hoàn tiền', () => {
   })
 
   it('trạng thái lọc có lựa chọn "Thất bại hoàn tiền"', async () => {
-    renderAs(<FormSearch handleSearch={vi.fn()} />, FULL)
+    renderAs(
+      <FormSearch
+        filters={{}}
+        handleSearch={vi.fn()}
+        onReset={vi.fn()}
+      />,
+      FULL
+    )
 
     await userEvent.click(await screen.findByLabelText('Trạng thái'))
 

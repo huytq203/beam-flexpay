@@ -7,12 +7,7 @@ import {
   type CredentialSecret
 } from '@/app/services/merchantGatewayApi'
 import { KeyIcon, PlusOutlined } from '@components/icons'
-import {
-  ButtonComponent,
-  CardComponent,
-  Table,
-  type PickedEntity
-} from '@components/index'
+import { ButtonComponent, CardComponent, Table } from '@components/index'
 import { createApiCredentialColumns } from '../columns/apiCredential.columns'
 import { CreateCredentialDialog } from '../components/CreateCredentialDialog'
 import {
@@ -23,14 +18,22 @@ import { CredentialDetails } from '../components/CredentialDetails'
 import { CredentialExpandIcon } from '../components/CredentialExpandIcon'
 import { CredentialSecretDialog } from '../components/CredentialSecretDialog'
 import { KeyConnectionFilters } from '../components/KeyConnectionFilters'
+import { useKeyConnectionFilters } from '../hooks/useKeyConnectionFilters'
 
 const KeyConnectionPage = () => {
-  const [page, setPage] = useState(1)
-  const [size, setSize] = useState(10)
-  const [merchant, setMerchant] = useState<PickedEntity>()
-  const [status, setStatus] = useState<ApiCredential['status']>()
-  const [draftMerchant, setDraftMerchant] = useState<PickedEntity>()
-  const [draftStatus, setDraftStatus] = useState<ApiCredential['status']>()
+  const {
+    merchant,
+    status,
+    draftMerchant,
+    draftStatus,
+    setDraftMerchant,
+    setDraftStatus,
+    page,
+    size,
+    search,
+    clearSearch,
+    changePage
+  } = useKeyConnectionFilters()
   const [isCreating, setIsCreating] = useState(false)
   const [action, setAction] = useState<CredentialAction | null>(null)
   const [secret, setSecret] = useState<CredentialSecret | null>(null)
@@ -45,18 +48,6 @@ const KeyConnectionPage = () => {
 
   const merchantName = (id: string) =>
     merchants.data?.content.find((item) => item.id === id)?.name ?? id
-  const search = () => {
-    setMerchant(draftMerchant)
-    setStatus(draftStatus)
-    setPage(1)
-  }
-  const clearSearch = () => {
-    setDraftMerchant(undefined)
-    setDraftStatus(undefined)
-    setMerchant(undefined)
-    setStatus(undefined)
-    setPage(1)
-  }
 
   return (
     <main className='flex min-w-0 flex-col gap-3'>
@@ -118,10 +109,7 @@ const KeyConnectionPage = () => {
             current: page,
             pageSize: size,
             total: query.data?.totalElements ?? 0,
-            onChange: (nextPage, nextSize) => {
-              setPage(nextSize !== size ? 1 : nextPage)
-              setSize(nextSize)
-            }
+            onChange: changePage
           }}
           expandable={{
             expandedRowRender: (record) => (

@@ -180,7 +180,9 @@ describe('đối tượng áp dụng của danh sách chính sách phí', () => 
 
     renderList()
 
-    expect(await screen.findByText('Chính sách mọi đối tượng')).toBeInTheDocument()
+    expect(
+      await screen.findByText('Chính sách mọi đối tượng')
+    ).toBeInTheDocument()
     expect(screen.getByText('Khách hàng VIP')).toBeInTheDocument()
     expect(screen.getByText('2 ví riêng')).toBeInTheDocument()
     expect(screen.getByText('Nguyễn Văn A')).toBeInTheDocument()
@@ -229,7 +231,9 @@ describe('đối tượng áp dụng của danh sách chính sách phí', () => 
     renderList('/fee?appliedTarget=CUSTOMER_GROUP')
 
     await waitFor(() =>
-      expect(requests.at(-1)?.searchParams.get('appliedTarget')).toBe('CUSTOMER_GROUP')
+      expect(requests.at(-1)?.searchParams.get('appliedTarget')).toBe(
+        'CUSTOMER_GROUP'
+      )
     )
 
     const select = screen.getByLabelText('Đối tượng áp dụng')
@@ -245,29 +249,13 @@ describe('đối tượng áp dụng của danh sách chính sách phí', () => 
     )
   })
 
-  it('gửi từ khoá chủ thể và xoá từ khoá khi đặt lại bộ lọc', async () => {
+  it('không còn lọc theo SĐT người dùng, kể cả khi URL cũ còn subjectKeyword', async () => {
     const requests: URL[] = []
     useListHandlers(requests)
-    const user = userEvent.setup()
-    renderList()
+    renderList('/fee?subjectKeyword=0912')
 
     await waitFor(() => expect(requests.length).toBeGreaterThan(0))
-    await user.type(
-      screen.getByRole('textbox', {
-        name: 'SĐT người dùng. Khớp ví riêng hoặc phân khúc người đó thuộc về'
-      }),
-      '0912'
-    )
-    await user.click(screen.getByRole('button', { name: 'Tìm' }))
-
-    await waitFor(() =>
-      expect(requests.at(-1)?.searchParams.get('subjectKeyword')).toBe('0912')
-    )
-
-    await user.click(screen.getByRole('button', { name: 'Xoá lọc' }))
-
-    await waitFor(() =>
-      expect(requests.at(-1)?.searchParams.has('subjectKeyword')).toBe(false)
-    )
+    expect(screen.queryByText('SĐT người dùng')).toBeNull()
+    expect(requests.at(-1)?.searchParams.has('subjectKeyword')).toBe(false)
   })
 })

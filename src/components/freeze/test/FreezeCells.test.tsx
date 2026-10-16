@@ -65,7 +65,7 @@ describe('FreezeStatusCell', () => {
         item={freeze({ displayStatus: 'PARTIALLY_RELEASED' })}
       />
     )
-    expect(screen.getByText('Giải tỏa một phần')).toBeInTheDocument()
+    expect(screen.getByText('Đã mở băng một phần')).toBeInTheDocument()
   })
 })
 

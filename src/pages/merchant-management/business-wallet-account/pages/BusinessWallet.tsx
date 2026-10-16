@@ -27,7 +27,9 @@ const BusinessWallet = () => {
     isLoading,
     isFetching,
     isError,
+    filters,
     handleSearch,
+    handleClear,
     handlePageChange,
     refetch
   } = useBusinessWallet()
@@ -66,8 +68,10 @@ const BusinessWallet = () => {
     <main className='flex min-w-0 flex-col gap-3'>
       <CardComponent className='border border-border bg-background shadow-none'>
         <BusinessWalletSearch
+          filters={filters}
           isSubmitting={isFetching && !isLoading}
           onSearch={handleSearch}
+          onClear={handleClear}
         />
       </CardComponent>
 

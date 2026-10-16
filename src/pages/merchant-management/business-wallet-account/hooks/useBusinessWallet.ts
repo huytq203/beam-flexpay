@@ -1,10 +1,20 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
-import usePagination from '@hooks/usePagination'
+import { useUrlFilters } from '@hooks/useUrlFilters'
 import { useListEnterpriseWalletsQuery } from '@services/merchantEnterpriseWalletApi'
 
-import type { BusinessWalletSearchValues } from '../schemas/business-wallet.schema'
+import {
+  BUSINESS_WALLET_FILTER_KEYS,
+  BUSINESS_WALLET_SENSITIVE_KEYS,
+  type BusinessWalletFilterKey
+} from '../constants/businessWallet.constants'
+import {
+  businessWalletSearchSchema,
+  type BusinessWalletSearchValues
+} from '../schemas/business-wallet.schema'
 import type { BusinessWalletRow } from '../types/business-wallet.type'
+
+type UrlValues = Partial<Record<BusinessWalletFilterKey, string>>
 
 const normalizeFilters = (
   values: BusinessWalletSearchValues
@@ -14,9 +24,25 @@ const normalizeFilters = (
   verificationStatus: values.verificationStatus
 })
 
+// Giá trị trên URL người dùng sửa được: trạng thái lạ thì bỏ, không gửi xuống API.
+const toSearchValues = (values: UrlValues): BusinessWalletSearchValues => {
+  const status = businessWalletSearchSchema.shape.verificationStatus.safeParse(
+    values.verificationStatus
+  )
+  return {
+    query: values.query,
+    taxCode: values.taxCode,
+    verificationStatus: status.success ? status.data : undefined
+  }
+}
+
 export function useBusinessWallet() {
-  const { page, size, setPage, setPageSize } = usePagination()
-  const [filters, setFilters] = useState<BusinessWalletSearchValues>({})
+  const url = useUrlFilters<BusinessWalletFilterKey>({
+    keys: BUSINESS_WALLET_FILTER_KEYS,
+    sensitiveKeys: BUSINESS_WALLET_SENSITIVE_KEYS
+  })
+  const { page, size } = url
+  const filters = toSearchValues(url.filters)
 
   const query = useListEnterpriseWalletsQuery({
     ...filters,
@@ -34,13 +60,13 @@ export function useBusinessWallet() {
   )
 
   const handleSearch = (values: BusinessWalletSearchValues): void => {
-    setFilters(normalizeFilters(values))
-    setPage(1)
+    url.applyFilters(normalizeFilters(values))
   }
 
+  // Gọi cả setPage lẫn setPageSize trong cùng một lần đổi sẽ ghi đè lẫn nhau.
   const handlePageChange = (nextPage: number, nextPageSize: number): void => {
-    setPage(nextPage)
-    setPageSize(nextPageSize)
+    if (nextPageSize !== size) url.setPageSize(nextPageSize)
+    else url.setPage(nextPage)
   }
 
   return {
@@ -48,10 +74,12 @@ export function useBusinessWallet() {
     totalElements: query.data?.totalElements ?? 0,
     page,
     size,
+    filters,
     isLoading: query.isLoading,
     isFetching: query.isFetching,
     isError: query.isError,
     handleSearch,
+    handleClear: url.clearFilters,
     handlePageChange,
     refetch: query.refetch
   }

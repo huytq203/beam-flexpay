@@ -12,11 +12,12 @@ const FrozenTransactions = () => {
         totalElements,
         page,
         pageSize,
-        setPage,
-        setPageSize,
+        filter,
+        handleChangePage,
         refetch,
         isFetching,
         handleSearch,
+        clearFilters,
         isLoading,
         isUnfreezeModalOpen,
         selectedFreezeItem,
@@ -48,7 +49,14 @@ const FrozenTransactions = () => {
                                 <SkeletonButton size="md" />
                             </div>
                         </div>
-                    </> : <FormSearch onSearch={handleSearch} />} />
+                    </> : (
+                        <FormSearch
+                            key={JSON.stringify(filter)}
+                            defaultValues={filter}
+                            onSearch={handleSearch}
+                            onReset={clearFilters}
+                        />
+                    )} />
             <CardComponent
                 content={   
                     isLoading ? <SkeletonTable columns={8} /> :
@@ -79,10 +87,7 @@ const FrozenTransactions = () => {
                                 pageSize,
                                 total: totalElements,
                                 showSizeChanger: true,
-                                onChange: (p, ps) => {
-                                    setPage(p)
-                                    setPageSize(ps)
-                                },
+                                onChange: handleChangePage,
                             }}
                         />
                         </>

@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { http, HttpResponse } from 'msw'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 
 import { PERMISSION } from '@/app/permissions'
 import { createAppStore } from '@/app/store'
@@ -31,6 +31,9 @@ function CurrentPath() {
 }
 
 describe('Sub-merchant API list', () => {
+  // Bộ lọc được lưu vào sessionStorage, xóa để test sau không bị khôi phục.
+  afterEach(() => sessionStorage.clear())
+
   it('hiển thị bộ lọc, cột # và xem chi tiết trong modal trên cùng route', async () => {
     const user = userEvent.setup()
     server.use(

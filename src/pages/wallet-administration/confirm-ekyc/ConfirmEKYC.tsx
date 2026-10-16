@@ -18,6 +18,7 @@ import { getReviewSessionId } from './utils/ekycReviewTarget'
 
 const ConfirmEKYC = () => {
   const {
+    filters,
     dataSource,
     isFetching,
     isError,
@@ -73,6 +74,7 @@ const ConfirmEKYC = () => {
       <CardComponent
         content={
           <FormSearch
+            filters={filters}
             onSearch={(values) => {
               closeDetail()
               setReview(null)
@@ -131,8 +133,9 @@ const ConfirmEKYC = () => {
                 onChange: (p, ps) => {
                   closeDetail()
                   setReview(null)
-                  setPage(p)
-                  setPageSize(ps)
+                  // Hai setter cùng ghi URL từ một bản cũ: chỉ gọi đúng cái thay đổi.
+                  if (ps !== pageSize) setPageSize(ps)
+                  else setPage(p)
                 }
               }}
             />

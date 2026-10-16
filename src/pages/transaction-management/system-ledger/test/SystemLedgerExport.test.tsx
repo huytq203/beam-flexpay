@@ -2,7 +2,7 @@ import { renderWithProviders } from '@/test/render'
 import { MessageProvider } from '@hooks/MessageProvider'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import SystemLedgerManagement from '../SystemLedgerManagement'
 
 const mocks = vi.hoisted(() => ({
@@ -50,6 +50,10 @@ describe('Sổ cái — xuất CSV', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mocks.totalElements = 42
+  })
+
+  afterEach(() => {
+    sessionStorage.clear()
   })
 
   it('nói trước rằng sổ cái chỉ có bút toán đã hạch toán thành công', () => {

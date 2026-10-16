@@ -1,5 +1,6 @@
 import { act, renderHook } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { MemoryRouter } from 'react-router-dom'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mocks = vi.hoisted(() => ({
   getUnified: vi.fn(),
@@ -34,6 +35,7 @@ vi.mock('@services/apiFreezes', () => ({
 
 vi.mock('@/app/permissions', () => ({
   PERMISSION: { FREEZE_UPDATE: 'FREEZE_UPDATE', EWALLET_FULL: 'EWALLET_FULL' },
+  SCREENS: { TRANSACTION_WALLET: { path: '/transaction-wallet' } },
   useAccess: () => ({ hasAny: () => false })
 }))
 
@@ -48,9 +50,12 @@ const lastPayload = () =>
 
 describe('useTransaction — dải tổng quan', () => {
   beforeEach(() => vi.clearAllMocks())
+  afterEach(() => sessionStorage.clear())
 
   it('xin khối summary và trả thẳng ra cho màn', () => {
-    const { result } = renderHook(() => useTransaction())
+    const { result } = renderHook(() => useTransaction(), {
+      wrapper: MemoryRouter
+    })
 
     expect(lastPayload()).toEqual(
       expect.objectContaining({ includeSummary: true })
@@ -59,7 +64,9 @@ describe('useTransaction — dải tổng quan', () => {
   })
 
   it('bấm một ô thì lọc theo status đó và giữ nguyên phần bộ lọc còn lại', () => {
-    const { result } = renderHook(() => useTransaction())
+    const { result } = renderHook(() => useTransaction(), {
+      wrapper: MemoryRouter
+    })
 
     act(() => result.current.handleSummaryStatusChange('FAILED'))
 
@@ -74,7 +81,9 @@ describe('useTransaction — dải tổng quan', () => {
   })
 
   it('bỏ chọn thì gỡ hẳn status khỏi payload chứ không gửi chuỗi rỗng', () => {
-    const { result } = renderHook(() => useTransaction())
+    const { result } = renderHook(() => useTransaction(), {
+      wrapper: MemoryRouter
+    })
 
     act(() => result.current.handleSummaryStatusChange('PENDING'))
     act(() => result.current.handleSummaryStatusChange())

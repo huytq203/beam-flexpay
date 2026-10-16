@@ -26,7 +26,6 @@ export const RefundOriginalType = {
   CASH_IN: 'CASH_IN',
   CASH_OUT: 'CASH_OUT',
   P2P_TRANSFER: 'P2P_TRANSFER',
-  MERCHANT_PAYMENT: 'MERCHANT_PAYMENT'
 } as const
 export type RefundOriginalType =
   (typeof RefundOriginalType)[keyof typeof RefundOriginalType]

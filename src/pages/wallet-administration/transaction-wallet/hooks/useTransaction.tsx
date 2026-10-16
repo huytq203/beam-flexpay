@@ -1,4 +1,4 @@
-import usePagination from '@hooks/usePagination'
+import { useUrlFilters } from '@hooks/useUrlFilters'
 import { useCallback, useMemo, useState } from 'react'
 import {
   FormSearchValues,
@@ -9,7 +9,7 @@ import { useLazyGetAccountQuery } from '@services/apiWalletAccount.api'
 import type { UnifiedContentJournal } from '@type/apiResponseJournal'
 import { useLazyGetFreezesQuery } from '@services/apiFreezes'
 import type { FreezeItem } from '@type/freeze.type'
-import { PERMISSION, useAccess } from '@/app/permissions'
+import { PERMISSION, SCREENS, useAccess } from '@/app/permissions'
 import { useMessage } from '@hooks/useMessage'
 import {
   canShowFreezeTransactionAction,
@@ -17,11 +17,14 @@ import {
 } from '../columns/transaction-row-actions'
 import { SourceDomain } from '../constants/Transaction.constant'
 import { resolveHasRefundParam } from '../dto/transactionRefund.dto'
+import {
+  TRANSACTION_FILTER_KEYS,
+  TRANSACTION_SENSITIVE_KEYS,
+  type TransactionFilterKey
+} from '../constants/transactionFilter.constants'
+import { toTransactionUrlFilters } from '../utils/transactionUrlFilters'
 
 const useTransaction = () => {
-  const [filter, setFilter] = useState<Partial<FormSearchValues>>({
-    sourceDomain: SourceDomain.EWALLET
-  })
   const [selectedTransaction, setSelectedTransaction] =
     useState<UnifiedContentJournal | null>(null)
   const [selectedUnfreezeTransaction, setSelectedUnfreezeTransaction] =
@@ -39,10 +42,25 @@ const useTransaction = () => {
   const [getAccounts] = useLazyGetAccountQuery()
   const [getFreezes] = useLazyGetFreezesQuery()
   const canFreeze = hasAny([PERMISSION.FREEZE_UPDATE, PERMISSION.EWALLET_FULL])
-
-  const { page, pageSize, setPage, setPageSize } = usePagination({
-    defaultSort: 'createdAt'
+  const {
+    filters,
+    applyFilters,
+    clearFilters,
+    page,
+    size: pageSize,
+    setPage,
+    setPageSize
+  } = useUrlFilters<TransactionFilterKey>({
+    keys: TRANSACTION_FILTER_KEYS,
+    sensitiveKeys: TRANSACTION_SENSITIVE_KEYS,
+    // Màn có hai đường dẫn (chính và alias cũ): dùng chung một bản sao.
+    storageKey: SCREENS.TRANSACTION_WALLET.path
   })
+  const filter: Partial<FormSearchValues> = {
+    ...filters,
+    sourceDomain: SourceDomain.EWALLET
+  }
+
   const payload = {
     page: page,
     size: pageSize,
@@ -61,28 +79,16 @@ const useTransaction = () => {
     refetch
   } = useGetUnifiedInlineErrorQuery(payload)
 
-  const handleSearch = (data: Partial<FormSearchValues>) => {
-    setFilter({ ...data, sourceDomain: SourceDomain.EWALLET })
-    setPage(1)
-  }
+  const handleSearch = (data: Partial<FormSearchValues>) =>
+    applyFilters(toTransactionUrlFilters(data))
 
   /**
    * Ô tổng quan chỉ chạm vào `status`, giữ nguyên phần bộ lọc còn lại. Giá trị
    * này được đồng bộ ngược vào ô "Trạng thái" của form nên lần bấm "Tìm kiếm"
    * kế tiếp không âm thầm bỏ mất bộ lọc vừa chọn.
    */
-  const handleSummaryStatusChange = useCallback(
-    (status?: string) => {
-      setFilter((current) => {
-        const next = { ...current }
-        if (status) next.status = status
-        else delete next.status
-        return next
-      })
-      setPage(1)
-    },
-    [setPage]
-  )
+  const handleSummaryStatusChange = (status?: string) =>
+    applyFilters({ ...filters, status })
 
   const handleOpenFreeze = useCallback(
     async (transaction: UnifiedContentJournal) => {
@@ -214,6 +220,8 @@ const useTransaction = () => {
 
   return {
     filter,
+    filters,
+    clearFilters,
     dataSource,
     summary: dataTransaction?.summary,
     activeStatus: filter.status,

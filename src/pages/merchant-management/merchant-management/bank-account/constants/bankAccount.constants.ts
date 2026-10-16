@@ -27,3 +27,17 @@ export const LINK_STATUS: Record<
   LINK_FAILED: { label: 'Lỗi liên kết', color: 'error' },
   PENDING_VERIFICATION: { label: 'Chờ xác minh', color: 'warning' }
 }
+
+export const BANK_ACCOUNT_FILTER_KEYS = [
+  'query',
+  'merchantId',
+  'merchantCode',
+  'merchantName',
+  'level',
+  'status'
+] as const
+export type BankAccountFilterKey = (typeof BANK_ACCOUNT_FILTER_KEYS)[number]
+// Ô từ khóa gợi ý nhập số tài khoản nên không được lên URL.
+export const BANK_ACCOUNT_SENSITIVE_KEYS: readonly BankAccountFilterKey[] = [
+  'query'
+]

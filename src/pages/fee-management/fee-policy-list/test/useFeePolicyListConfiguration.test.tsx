@@ -53,18 +53,24 @@ describe('cấu hình gộp của danh sách chính sách phí', () => {
         searchRequests.push(request)
         return HttpResponse.json({ data: page })
       }),
-      http.get('*/fee/policy-assignments/by-policy/:policyId', ({ request }) => {
-        detailRequests.push(request.url)
-        return HttpResponse.json({ data: [] })
-      }),
+      http.get(
+        '*/fee/policy-assignments/by-policy/:policyId',
+        ({ request }) => {
+          detailRequests.push(request.url)
+          return HttpResponse.json({ data: [] })
+        }
+      ),
       http.get('*/fee/policy-components/by-policy/:policyId', ({ request }) => {
         detailRequests.push(request.url)
         return HttpResponse.json({ data: [] })
       }),
-      http.get('*/fee/component-tiers/by-component/:componentId', ({ request }) => {
-        detailRequests.push(request.url)
-        return HttpResponse.json({ data: [] })
-      })
+      http.get(
+        '*/fee/component-tiers/by-component/:componentId',
+        ({ request }) => {
+          detailRequests.push(request.url)
+          return HttpResponse.json({ data: [] })
+        }
+      )
     )
 
     renderList()

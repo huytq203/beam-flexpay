@@ -69,3 +69,15 @@ export const BUSINESS_TYPE_CONFIG: Record<
     shimmerColor: NEUTRAL
   }
 }
+
+export const BUSINESS_WALLET_FILTER_KEYS = [
+  'query',
+  'taxCode',
+  'verificationStatus'
+] as const
+export type BusinessWalletFilterKey =
+  (typeof BUSINESS_WALLET_FILTER_KEYS)[number]
+// Ô tìm kiếm gợi ý nhập email doanh nghiệp, còn MST của hộ kinh doanh cá thể
+// chính là số CCCD, nên cả hai không được lên URL.
+export const BUSINESS_WALLET_SENSITIVE_KEYS: readonly BusinessWalletFilterKey[] =
+  ['query', 'taxCode']

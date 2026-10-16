@@ -8,6 +8,7 @@ import {
   RELEASE_TYPE_LABEL
 } from '@constants/freeze.constant'
 import type { FreezeSearchParams } from '@services/apiFreezes'
+import type { FrozenFilters } from '../hooks/useFrozenTransactions'
 import { BroomIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
 import { useForm } from 'react-hook-form'
 
@@ -23,7 +24,20 @@ type FormSearchValues = Pick<
 >
 
 interface FormSearchProps {
-  onSearch?: (values: FreezeSearchParams) => void
+  /** Bộ lọc đang áp (đọc từ URL/bản sao) để ô nhập hiện lại khi quay về màn. */
+  defaultValues?: FrozenFilters
+  onSearch?: (values: FrozenFilters) => void
+  onReset?: () => void
+}
+
+const EMPTY_VALUES: FormSearchValues = {
+  username: '',
+  sourceTransactionCode: '',
+  displayStatus: undefined,
+  type: undefined,
+  releaseType: undefined,
+  fromDate: '',
+  toDate: ''
 }
 
 /**
@@ -46,21 +60,26 @@ const RELEASE_TYPE_OPTIONS = Object.entries(RELEASE_TYPE_LABEL).map(
   ([value, label]) => ({ label, value })
 )
 
-const omitEmpty = (values: FormSearchValues): FreezeSearchParams =>
+const omitEmpty = (values: FormSearchValues): FrozenFilters =>
   Object.fromEntries(
-    Object.entries(values).filter(([, value]) => Boolean(value))
+    Object.entries(values).filter(
+      (entry): entry is [string, string] =>
+        typeof entry[1] === 'string' && entry[1] !== ''
+    )
   )
 
-const FormSearch = ({ onSearch }: FormSearchProps) => {
-  const { control, handleSubmit, reset } = useForm<FormSearchValues>()
+const FormSearch = ({ defaultValues, onSearch, onReset }: FormSearchProps) => {
+  const { control, handleSubmit, reset } = useForm<FormSearchValues>({
+    defaultValues: { ...EMPTY_VALUES, ...defaultValues }
+  })
 
   const onSubmit = (values: FormSearchValues) => {
     onSearch?.(omitEmpty(values))
   }
 
   const handleReset = () => {
-    reset()
-    onSearch?.({})
+    reset(EMPTY_VALUES)
+    onReset?.()
   }
 
   return (

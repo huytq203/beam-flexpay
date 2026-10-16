@@ -10,24 +10,34 @@ interface SearchRoleFormData {
 }
 
 interface Props {
+  /** Nhóm quyền đang lọc (URL/bản sao) để ô chọn hiện lại khi quay về màn. */
+  keyword: string
   onSearch: (data: SearchRoleFormData) => void
+  onClear: () => void
   roleOptions: Array<{ value: string; label: string }>
   onAdd: () => void
   canAdd: boolean
 }
 
-const FormSearchRole = ({ onSearch, roleOptions, onAdd, canAdd }: Props) => {
+const FormSearchRole = ({
+  keyword,
+  onSearch,
+  onClear,
+  roleOptions,
+  onAdd,
+  canAdd
+}: Props) => {
   const { svg } = useSVG()
   const { control, handleSubmit, reset } = useForm<SearchRoleFormData>({
-    defaultValues: { keyword: '' }
+    defaultValues: { keyword }
   })
 
   const handleSearch = (data: SearchRoleFormData) => {
-    onSearch?.(data)
+    onSearch(data)
   }
   const handleClearFilter = () => {
-    reset()
-    onSearch?.({ keyword: '' })
+    reset({ keyword: '' })
+    onClear()
   }
 
   return (

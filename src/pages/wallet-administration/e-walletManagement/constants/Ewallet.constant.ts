@@ -25,12 +25,10 @@ export const StatusAccountLabel: Record<StatusAccountKey, string> = {
 
 export enum WalletTypeKey {
   USER = 'USER',
-  BUSINESS = 'BUSINESS',
   SYSTEM = 'SYSTEM',
 }
 
 export const WalletTypeLabel: Record<WalletTypeKey, string> = {
   [WalletTypeKey.USER]: 'Cá nhân',
-  [WalletTypeKey.BUSINESS]: 'Doanh nghiệp',
   [WalletTypeKey.SYSTEM]: 'Hệ thống',
 } as const

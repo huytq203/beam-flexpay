@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { server } from '@/test/mocks/server'
 import { renderWithProviders } from '@/test/render'
 import MerchantTransactionPage from '../pages/MerchantTransactionPage'
@@ -38,6 +38,8 @@ const journal = {
   archivedAt: null,
   sourceDomain: 'EWALLET'
 }
+
+afterEach(() => sessionStorage.clear())
 
 beforeEach(() => {
   journalRequests.length = 0

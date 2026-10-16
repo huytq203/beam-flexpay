@@ -1,3 +1,5 @@
+import { clearListStates } from '@utils/list-state-storage'
+import { broadcastLogout, LOGOUT_SIGNAL_KEY } from '@utils/session-signal'
 import { ENV } from './env'
 import {
   BaseQueryFn,
@@ -30,7 +32,7 @@ import {
   setRefreshTokenCookie
 } from './fetchBaseQuery.types'
 import type { RootState } from '../store'
-import { updateAccessToken } from '@slices/authActions'
+import { isAccessTokenExpired, updateAccessToken } from '@slices/authActions'
 import { PATHS } from '@constants/pathConstant'
 import { AUTHENTICATION } from '@constants/routersConstant'
 import Swal from 'sweetalert2'
@@ -166,8 +168,27 @@ const getRefreshData = (
  * 401. Promise singleton đảm bảo nhiều request hết hạn cùng lúc chỉ refresh một
  * lần.
  */
+const REFRESH_LOCK = 'flexpay-auth-refresh'
+
+/**
+ * Khóa dùng chung giữa các tab (Web Locks): refresh token bị xoay vòng nên hai
+ * tab cùng refresh bằng một refresh token thì tab sau bị từ chối và bật popup
+ * hết phiên. Trình duyệt không có Web Locks thì chạy thẳng như trước.
+ */
+const runExclusive = async <T>(task: () => Promise<T>): Promise<T> => {
+  if (typeof navigator !== 'undefined' && navigator.locks?.request)
+    return await navigator.locks.request(REFRESH_LOCK, task)
+  return task()
+}
+
+/**
+ * @param failedToken access token vừa bị BE trả 401. Cookie dùng chung giữa các
+ * tab: nếu cookie đang giữ token khác, còn hạn (tab khác vừa refresh, hoặc tab
+ * mới mở khi phiên còn hiệu lực) thì dùng lại thay vì refresh thêm lần nữa.
+ */
 export const refreshAccessToken = async (
-  dispatch: AccessTokenDispatch
+  dispatch: AccessTokenDispatch,
+  failedToken?: string | null
 ): Promise<string | null> => {
   if (isRefreshing && refreshPromise) {
     return refreshPromise
@@ -175,8 +196,14 @@ export const refreshAccessToken = async (
 
   isRefreshing = true
 
-  refreshPromise = (async () => {
+  refreshPromise = runExclusive(async () => {
     try {
+      const current = Cookies.get(CookieKey.ACCESS_TOKEN)
+      if (current && current !== failedToken && !isAccessTokenExpired(current)) {
+        dispatch(updateAccessToken({ token: current }))
+        return current
+      }
+
       const refreshToken = Cookies.get(CookieKey.REFRESH_TOKEN)
       if (!refreshToken) return null
 
@@ -226,7 +253,7 @@ export const refreshAccessToken = async (
       isRefreshing = false
       refreshPromise = null
     }
-  })()
+  })
 
   return refreshPromise
 }
@@ -247,9 +274,12 @@ let lastResetTime = 0;
 let isExpired = false;
 
 
-const forceLogout = (): void => {
+export const forceLogout = (): void => {
   Cookies.remove(CookieKey.ACCESS_TOKEN)
   Cookies.remove(CookieKey.REFRESH_TOKEN)
+  // Bản sao bộ lọc có thể chứa SĐT/CCCD; người đăng nhập sau trên cùng tab không được thấy.
+  clearListStates()
+  broadcastLogout()
   window.location.href = PATHS.AUTH.LOGIN
   localStorage.removeItem(TIME_OLD);
 }
@@ -348,24 +378,36 @@ export const resetInactivityTimer = (isFromEvent = false, isInitial = false) => 
   }, INACTIVITY_TIMEOUT);
 };
 
+export { LOGOUT_SIGNAL_KEY }
+
+let isTrackerInitialized = false;
+
 export const initInactivityTracker = () => {
   if (typeof window === 'undefined') return;
+
+  if (!isTrackerInitialized) {
+    isTrackerInitialized = true;
+    // Cho phép nhiều tab: chỉ đăng xuất thật ở tab khác mới làm tab này hết phiên.
+    // Trước đây tab nào vào trang đăng nhập (xóa mốc hoạt động) cũng làm các tab
+    // còn lại bật popup dây chuyền.
+    window.addEventListener('storage', (event) => {
+      if (event.key === LOGOUT_SIGNAL_KEY && event.newValue) {
+        handleSessionExpired();
+      }
+    });
+
+    if (IS_INACTIVITY_TRACKING_ENABLED) {
+      const interactions = ['mousedown', 'keydown', 'scroll', 'touchstart', 'wheel'];
+      interactions.forEach((event) => {
+        window.addEventListener(event, () => resetInactivityTimer(true), { capture: true, passive: true });
+      });
+    }
+  }
 
   if (!IS_INACTIVITY_TRACKING_ENABLED) {
     localStorage.removeItem(TIME_OLD);
     return;
   }
-
-  const interactions = ['mousedown', 'keydown', 'scroll', 'touchstart', 'wheel'];
-  interactions.forEach((event) => {
-    window.addEventListener(event, () => resetInactivityTimer(true), { capture: true, passive: true });
-  });
-
-  window.addEventListener('storage', (event) => {
-    if (event.key === TIME_OLD && !event.newValue) {
-      handleSessionExpired();
-    }
-  });
 
   resetInactivityTimer(false, true);
 };
@@ -428,6 +470,10 @@ const createCustomBaseQuery = (
       showLoading()
     }
 
+    // Ghi lại token đã gửi để khi 401, phân biệt được tab khác đã refresh xong chưa.
+    const sentToken =
+      Cookies.get(CookieKey.ACCESS_TOKEN) ??
+      (api.getState() as RootState).auth.accessToken
     const result = await baseQuery(args, api, extraOptions)
     if (shouldShowLoading) hideLoading()
 
@@ -436,7 +482,10 @@ const createCustomBaseQuery = (
 
       switch (status) {
         case HttpStatus.UNAUTHORIZED: {
-          const newAccessToken = await refreshAccessToken(api.dispatch)
+          const newAccessToken = await refreshAccessToken(
+            api.dispatch,
+            sentToken
+          )
           if (!newAccessToken) {
             handleSessionExpired()
             break

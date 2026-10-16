@@ -17,6 +17,3 @@ export const toProviderOptions = (
       value: partner.code,
       label: `${partner.name} (${partner.code})${partner.status === 'INACTIVE' ? ' · chưa tích hợp' : ''}`
     }))
-
-export const PROVIDER_HINT =
-  'Cổng thanh toán trung gian (NAPAS, VietQR). Để trống là mọi nhà cung cấp. Ngân hàng liên kết trực tiếp (VCB, VPBank) chọn ở ô Ngân hàng phát hành.'

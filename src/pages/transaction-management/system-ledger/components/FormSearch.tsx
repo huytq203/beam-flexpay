@@ -19,7 +19,10 @@ import {
 } from '../constants/SystemLedger.constant'
 
 interface Props {
+    /** Bộ lọc đang áp (đọc từ URL/bản sao) để ô nhập hiện lại khi quay về màn. */
+    defaultValues?: FormSearchValues
     handleSearch: (value: FormSearchValues) => void
+    onReset: () => void
     direction?: string
 }
 
@@ -47,9 +50,14 @@ const JOURNAL_CODE_HINT =
 const KEYWORD_HINT =
     'Khớp chứa trên mã giao dịch và chủ tài khoản. Gõ vài ký tự để lọc dần.'
 
-const FormSearch = ({ handleSearch, direction }: Props) => {
+const FormSearch = ({
+    defaultValues,
+    handleSearch,
+    onReset,
+    direction
+}: Props) => {
     const formSearch = useForm<FormSearchValues>({
-        defaultValues: DEFAULT_VALUES
+        defaultValues: { ...DEFAULT_VALUES, ...defaultValues }
     })
     const { setValue } = formSearch
 
@@ -63,7 +71,7 @@ const FormSearch = ({ handleSearch, direction }: Props) => {
 
     const handleReset = () => {
         formSearch.reset(DEFAULT_VALUES)
-        handleSearch({})
+        onReset()
     }
 
     return (

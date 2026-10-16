@@ -20,20 +20,29 @@ const DEFAULT_FILTERS: SearchUserFormData = {
 const FIELD_CLASS = 'col-span-1 flex flex-col'
 
 interface FormSearchUserProps {
+  /** Bộ lọc đang áp dụng (URL/bản sao) để ô nhập hiện lại khi quay về màn. */
+  defaultValues?: SearchUserFormData
   onSearch: (data: SearchUserFormData) => void
+  onClear: () => void
   onAdd: () => void
   canAdd: boolean
 }
 
-const FormSearchUser = ({ onSearch, onAdd, canAdd }: FormSearchUserProps) => {
+const FormSearchUser = ({
+  defaultValues = DEFAULT_FILTERS,
+  onSearch,
+  onClear,
+  onAdd,
+  canAdd
+}: FormSearchUserProps) => {
   const { svg } = useSVG()
   const { control, handleSubmit, reset } = useForm<SearchUserFormData>({
-    defaultValues: DEFAULT_FILTERS
+    defaultValues
   })
 
   const handleClearFilter = (): void => {
     reset(DEFAULT_FILTERS)
-    onSearch(DEFAULT_FILTERS)
+    onClear()
   }
 
   return (

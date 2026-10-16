@@ -7,20 +7,29 @@ import { useSVG } from '@hooks/useSVG'
 import { SearchPermissionFormData } from '../types/PermissionManagement.type'
 
 interface Props {
+  /** Từ khoá đang áp dụng (URL/bản sao) để ô nhập hiện lại khi quay về màn. */
+  keyword: string
   onSearch: (data: SearchPermissionFormData) => void
+  onClear: () => void
   onAdd: () => void
   canAdd: boolean
 }
 
-const FormSearchPermission = ({ onSearch, onAdd, canAdd }: Props) => {
+const FormSearchPermission = ({
+  keyword,
+  onSearch,
+  onClear,
+  onAdd,
+  canAdd
+}: Props) => {
   const { svg } = useSVG()
   const { control, handleSubmit, reset } = useForm<SearchPermissionFormData>({
-    defaultValues: { keyword: '' }
+    defaultValues: { keyword }
   })
 
   const handleClearFilter = () => {
     reset({ keyword: '' })
-    onSearch({ keyword: '' })
+    onClear()
   }
 
   return (

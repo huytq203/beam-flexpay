@@ -172,9 +172,7 @@ export const AppliedTargetCell = ({
   customerSegmentNames
 }: AppliedTargetCellProps) => {
   if (!targets?.length) {
-    return (
-      <span className='text-[13px] text-muted-foreground'>Chưa gán</span>
-    )
+    return <span className='text-[13px] text-muted-foreground'>Chưa gán</span>
   }
 
   return (
@@ -186,7 +184,10 @@ export const AppliedTargetCell = ({
 
         if (!hasSubjects) {
           return (
-            <div key={key} className='px-1 py-1.5'>
+            <div
+              key={key}
+              className='px-1 py-1.5'
+            >
               <TargetSummary
                 target={target}
                 customerSegmentNames={customerSegmentNames}

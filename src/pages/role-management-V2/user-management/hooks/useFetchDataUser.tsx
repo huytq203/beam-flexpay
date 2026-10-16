@@ -1,36 +1,42 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useGetUserQuery } from '@services/apiUserManagement'
 import { useAllRoles } from '@hooks/useAllRoles'
 import { UserInfor } from '@type/userManagement'
 // import { RoleUserAccount } from '../constants/userAccount'
-import {
-  SearchUserFormData,
-  UserQueryFilters
-} from '../types/UserManagement.type'
+import { SearchUserFormData } from '../types/UserManagement.type'
 import { toUserQueryFilters } from '../utils/UserManagement.utils'
-import usePagination from '@hooks/usePagination'
+import {
+  USER_FILTER_KEYS,
+  USER_SENSITIVE_KEYS,
+  toSearchUserFormData,
+  type UserFilterKey
+} from '../utils/userUrlFilters'
+import { useUrlFilters } from '@hooks/useUrlFilters'
 import { RoleName } from '../../role-management/constants/RoleManagement.constant'
 
-const useFetchDataUser = () => {
+const SORT_BY = 'createdTimestamp'
+const SORT_DIRECTION = 'DESC'
 
+const useFetchDataUser = () => {
   const {
+    filters,
+    applyFilters,
+    clearFilters,
     page,
     size,
-    sort: sortBy,
-    sortDirection,
     setPage,
     setPageSize
-  } = usePagination({
-    defaultSort: 'createdTimestamp',
-    defaultSortBy: 'DESC'
+  } = useUrlFilters<UserFilterKey>({
+    keys: USER_FILTER_KEYS,
+    sensitiveKeys: USER_SENSITIVE_KEYS
   })
-  const [filters, setFilters] = useState<UserQueryFilters>({})
+  const formValues = toSearchUserFormData(filters)
   const params = {
     page,
     size,
-    sortBy,
-    sortDirection,
-    ...filters
+    sortBy: SORT_BY,
+    sortDirection: SORT_DIRECTION,
+    ...toUserQueryFilters(formValues)
   }
   const { data: userData, isLoading: isLoadingUser, refetch } = useGetUserQuery(params)
 
@@ -52,18 +58,19 @@ const useFetchDataUser = () => {
     }))
   }, [roles])
 
-  // Đổi filter phải về trang 1, nếu không trang hiện tại có thể vượt tổng số trang mới.
-  const handleSearch = useCallback(
-    (data: SearchUserFormData) => {
-      setFilters(toUserQueryFilters(data))
-      setPage(1)
-    },
-    [setPage]
-  )
+  // applyFilters tự đưa về trang 1: trang cũ có thể vượt tổng số trang mới.
+  const handleSearch = (data: SearchUserFormData) =>
+    applyFilters({
+      keyword: data.keyword?.trim(),
+      emailVerified: data.emailVerified,
+      status: data.status
+    })
 
   return {
+    formValues,
     dataSource,
     handleSearch,
+    clearFilters,
     isLoadingUser,
     isLoadingRoles,
     refetch,
@@ -71,7 +78,7 @@ const useFetchDataUser = () => {
     userData,
     page,
     size,
-    sortBy: sortDirection,
+    sortBy: SORT_DIRECTION,
     setPage,
     setPageSize
   }

@@ -80,7 +80,6 @@ describe('danh sách chính sách phí — xuất CSV', () => {
       expect(mocks.exportFile).toHaveBeenCalledWith({
         feeScope: 'INPUT_COST',
         keyword: 'nap tien',
-        subjectKeyword: '0912',
         effectiveStatus: 'ACTIVE',
         appliedTarget: 'CUSTOMER_GROUP',
         serviceType: 'EWALLET_DEPOSIT',

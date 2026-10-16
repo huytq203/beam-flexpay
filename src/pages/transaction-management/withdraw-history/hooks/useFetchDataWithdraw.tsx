@@ -1,22 +1,42 @@
 import { useExportCsv } from '@hooks/useExportCsv'
-import usePagination from '@hooks/usePagination'
+import { useUrlFilters } from '@hooks/useUrlFilters'
 import {
   useExportTransactionsMutation,
   type ExportTransactionsQuery
 } from '@services/apiExportCsv'
 import { useGetUnifiedQuery } from '@services/apiJournal'
-import { useCallback, useMemo, useState } from 'react'
 import { WithdrawSearchValues } from '../components/WithdrawHistorySearch'
 import { DEFAULT_WITHDRAW_TRANSACTION_TYPE } from '../constants/WithdrawHistory.constant'
 
-const dropEmpty = (
-  filter: Partial<WithdrawSearchValues>
-): Partial<WithdrawSearchValues> =>
-  Object.fromEntries(
-    Object.entries(filter).filter(
-      ([, v]) => v !== '' && v !== undefined && v !== null
-    )
-  )
+export const WITHDRAW_FILTER_KEYS = [
+  'keyword',
+  'transactionCode',
+  'status',
+  'transactionType',
+  'bankCode',
+  'paymentMethod',
+  'fromDate',
+  'toDate',
+  'successFrom',
+  'successTo'
+] as const
+
+export type WithdrawFilterKey = (typeof WITHDRAW_FILTER_KEYS)[number]
+// Ô từ khóa nhận cả SĐT khách hàng nên không đưa lên URL (rule 05).
+const WITHDRAW_SENSITIVE_KEYS: readonly WithdrawFilterKey[] = ['keyword']
+export type WithdrawFilters = Partial<Record<WithdrawFilterKey, string>>
+
+/** Sắp theo ngày tạo mới nhất, như mặc định cũ của usePagination. */
+const DEFAULT_SORT = { sortBy: 'createdAt', sortDirection: 'DESC' } as const
+
+const trimFilters = (data: WithdrawSearchValues): WithdrawFilters => {
+  const result: WithdrawFilters = {}
+  for (const key of WITHDRAW_FILTER_KEYS) {
+    const value = data[key]
+    if (typeof value === 'string') result[key] = value.trim()
+  }
+  return result
+}
 
 /**
  * Map bộ lọc lưới sang params của `/wallet/transactions/export`. Lưới đổ từ
@@ -24,7 +44,7 @@ const dropEmpty = (
  * file không lệch nhau.
  */
 const buildExportParams = (
-  filter: Partial<WithdrawSearchValues>,
+  filter: WithdrawFilters,
   transactionType: string
 ): ExportTransactionsQuery => {
   const p: ExportTransactionsQuery = { type: transactionType }
@@ -43,10 +63,18 @@ const buildExportParams = (
 }
 
 const useFetchDataWithdraw = () => {
-  const { page, pageSize, setPage, setPageSize, sort, sortBy } = usePagination()
-  const [searchParams, setSearchParams] = useState<
-    Partial<WithdrawSearchValues>
-  >({})
+  const {
+    filters: searchParams,
+    applyFilters,
+    clearFilters,
+    page,
+    size: pageSize,
+    setPage,
+    setPageSize
+  } = useUrlFilters<WithdrawFilterKey>({
+    keys: WITHDRAW_FILTER_KEYS,
+    sensitiveKeys: WITHDRAW_SENSITIVE_KEYS
+  })
 
   // Ô "Loại giao dịch rút" để trống thì màn vẫn phải ghim về nhóm rút.
   const transactionType =
@@ -56,9 +84,8 @@ const useFetchDataWithdraw = () => {
   const payload = {
     page,
     size: pageSize,
-    sortBy: sort,
-    sortDirection: sortBy,
-    ...dropEmpty(searchParams),
+    ...DEFAULT_SORT,
+    ...searchParams,
     transactionType,
     includeSummary: true
   }
@@ -77,14 +104,9 @@ const useFetchDataWithdraw = () => {
     filenamePrefix: 'lich-su-rut-tien'
   })
 
-  const exportParams = useMemo(
-    () => buildExportParams(searchParams, transactionType),
-    [searchParams, transactionType]
-  )
-
-  const handleExport = useCallback(() => {
-    void exportFile(exportParams)
-  }, [exportFile, exportParams])
+  const handleExport = () => {
+    void exportFile(buildExportParams(searchParams, transactionType))
+  }
 
   const dataSource = dataWithdraw?.content.map((item, index) => ({
     no: (page - 1) * pageSize + index + 1,
@@ -92,36 +114,27 @@ const useFetchDataWithdraw = () => {
     key: item.id
   }))
 
-  const handleSearch = (data: WithdrawSearchValues) => {
-    const trimmedData = Object.entries(data).reduce((acc, [key, value]) => {
-      acc[key as keyof WithdrawSearchValues] =
-        typeof value === 'string' ? value.trim() : value
-      return acc
-    }, {} as WithdrawSearchValues)
+  const handleSearch = (data: WithdrawSearchValues) =>
+    applyFilters(trimFilters(data))
 
-    setSearchParams(dropEmpty(trimmedData))
-    setPage(1)
+  const handleSummaryStatusChange = (status?: string) =>
+    applyFilters({ ...searchParams, status })
+
+  const handleChangePage = (nextPage: number, nextSize: number) => {
+    if (nextSize !== pageSize) setPageSize(nextSize)
+    else setPage(nextPage)
   }
-
-  const handleSummaryStatusChange = useCallback((status?: string) => {
-    setSearchParams((current) => {
-      const next = { ...current }
-      if (status) next.status = status
-      else delete next.status
-      return next
-    })
-    setPage(1)
-  }, [setPage])
 
   return {
     dataWithdraw,
     isLoadingWithdraw,
-    setPage,
-    setPageSize,
-    sort,
-    sortBy,
+    page,
+    pageSize,
+    handleChangePage,
+    filters: searchParams,
     dataSource,
     handleSearch,
+    clearFilters,
     activeStatus: searchParams.status,
     handleSummaryStatusChange,
     refetch,

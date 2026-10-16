@@ -1,44 +1,51 @@
 import { useState } from 'react'
 import { useGetUnifiedQuery } from '@services/apiJournal'
+import { useUrlFilters } from '@hooks/useUrlFilters'
+import {
+  MERCHANT_TRANSACTION_FILTER_KEYS,
+  MERCHANT_TRANSACTION_SENSITIVE_KEYS,
+  type MerchantTransactionFilterKey
+} from '../constants/merchantTransaction.constants'
 import type { MerchantTransactionFilters } from '../types/merchantTransaction.types'
-import { buildMerchantTransactionParams } from '../utils/merchantTransaction.utils'
+import {
+  buildMerchantTransactionParams,
+  fromUrlFilters,
+  toUrlFilters
+} from '../utils/merchantTransaction.utils'
 
 const EMPTY_FILTERS: MerchantTransactionFilters = { keyword: '' }
 
 // Bộ lọc nháp chỉ áp dụng khi bấm Tìm kiếm, trừ ô tóm tắt trạng thái áp ngay.
 export const useMerchantTransactionList = () => {
-  const [draft, setDraft] = useState(EMPTY_FILTERS)
-  const [filters, setFilters] = useState(EMPTY_FILTERS)
-  const [page, setPage] = useState(1)
-  const [size, setSize] = useState(10)
+  const url = useUrlFilters<MerchantTransactionFilterKey>({
+    keys: MERCHANT_TRANSACTION_FILTER_KEYS,
+    sensitiveKeys: MERCHANT_TRANSACTION_SENSITIVE_KEYS
+  })
+  const filters = fromUrlFilters(url.filters)
+  const [draft, setDraft] = useState(filters)
   const query = useGetUnifiedQuery(
-    buildMerchantTransactionParams(filters, page, size)
+    buildMerchantTransactionParams(filters, url.page, url.size)
   )
 
   return {
     draft,
     setDraft,
     filters,
-    page,
-    size,
+    page: url.page,
+    size: url.size,
     query,
-    apply: () => {
-      setFilters(draft)
-      setPage(1)
-    },
+    apply: () => url.applyFilters(toUrlFilters(draft)),
     reset: () => {
       setDraft(EMPTY_FILTERS)
-      setFilters(EMPTY_FILTERS)
-      setPage(1)
+      url.clearFilters()
     },
     changeStatus: (status?: string) => {
       setDraft((current) => ({ ...current, status }))
-      setFilters((current) => ({ ...current, status }))
-      setPage(1)
+      url.applyFilters(toUrlFilters({ ...filters, status }))
     },
     changePage: (nextPage: number, nextSize: number) => {
-      setPage(nextSize !== size ? 1 : nextPage)
-      setSize(nextSize)
+      if (nextSize !== url.size) url.setPageSize(nextSize)
+      else url.setPage(nextPage)
     }
   }
 }

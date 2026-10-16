@@ -4,7 +4,6 @@ import {
   REFUND_TYPE_LABELS
 } from '../constants/refund.constants'
 import {
-  RefundOriginalType,
   RefundStatus,
   type RefundDetail
 } from '../schemas/refund.schema'
@@ -42,22 +41,6 @@ export function RefundInfoSection({ refund }: RefundInfoSectionProps) {
     },
     ...(refund.payoutCode
       ? [{ label: 'Mã lệnh chi', value: refund.payoutCode }]
-      : []),
-    ...(refund.originalType === RefundOriginalType.MERCHANT_PAYMENT
-      ? [
-          {
-            label: 'Merchant',
-            value: (
-              <>
-                {refund.merchantId ?? EMPTY_VALUE}
-                <br />
-                <span className='text-muted-foreground'>
-                  Tên merchant sẽ hiển thị khi có API tra cứu.
-                </span>
-              </>
-            )
-          }
-        ]
       : []),
     { label: 'Lý do', value: refund.reason ?? EMPTY_VALUE }
   ]

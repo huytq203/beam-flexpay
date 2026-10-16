@@ -1,32 +1,33 @@
-import usePagination from '@/app/hooks/usePagination'
+import { useUrlFilters } from '@hooks/useUrlFilters'
 import { useGetRoleByKeyQuery } from '@/app/services/apiRole'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { RoleName } from '../constants/RoleManagement.constant'
 
 export interface PayloadType {
   keyword: string
 }
 
+const FILTER_KEYS = ['keyword'] as const
+const SORT_BY = 'createdAt'
+const SORT_DIRECTION = 'DESC'
+
 const useFetchDataRole = () => {
   const {
+    filters,
+    applyFilters,
+    clearFilters,
     page,
     size,
-    sort: sortBy,
-    sortDirection,
     setPage,
     setPageSize
-  } = usePagination({
-    defaultPageSize: 10,
-    defaultSort: 'createdAt',
-    defaultSortBy: 'DESC'
-  })
-  const [keyword, setKeyWord] = useState('')
+  } = useUrlFilters({ keys: FILTER_KEYS })
+  const keyword = filters.keyword ?? ''
   const payload = {
     keyword,
     page,
     size,
-    sortDirection,
-    sortBy
+    sortDirection: SORT_DIRECTION,
+    sortBy: SORT_BY
   }
   const {
     data: roleData,
@@ -55,21 +56,21 @@ const useFetchDataRole = () => {
     [roleData?.content]
   )
 
-  const handleSearch = async (payload: PayloadType) => {
-    setKeyWord(payload.keyword)
-    setPage(1)
-  }
+  const handleSearch = (payload: PayloadType) =>
+    applyFilters({ keyword: payload.keyword })
 
   return {
+    keyword,
     handleSearch,
+    clearFilters,
     roleData: convertedRoleData,
     roleOptions,
     isLoadingRoleData,
     refetch,
     page,
     size,
-    sort: sortBy,
-    sortDirection,
+    sort: SORT_BY,
+    sortDirection: SORT_DIRECTION,
     setPage,
     setPageSize
   }

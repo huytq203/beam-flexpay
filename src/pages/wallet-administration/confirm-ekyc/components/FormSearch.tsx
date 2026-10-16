@@ -2,7 +2,12 @@ import { ButtonComponent } from '@components/index'
 import { FormDatePicker, FormInput, FormSelect } from '@components/form'
 import { useForm } from 'react-hook-form'
 import dayjs from 'dayjs'
-import { EKYCFilterType } from '../hooks/useConfirmEKYC'
+import {
+  EKYC_DATETIME_FORMAT,
+  PICKER_VALUE_FORMAT,
+  UNVERIFIED,
+  type EkycUrlFilters
+} from '../constants/ekycFilter.constants'
 import { BroomIcon, MagnifyingGlassIcon } from '@components/icons'
 import * as Icons from '@components/icons'
 
@@ -21,9 +26,6 @@ const STATUS_OPTIONS = [
 ]
 
 // Kết quả xác thực chung cuộc của người (profileStatus ở BE), tách biệt với trạng thái phiên.
-// UNVERIFIED là giá trị riêng của FE: gửi hasProfile=false để chỉ lấy người chưa từng có hồ sơ
-// (verified=false còn gồm cả hồ sơ đã thu hồi / chờ xác thực lại).
-const UNVERIFIED = 'UNVERIFIED'
 const VERIFIED_OPTIONS = [
   { label: 'Đã xác thực', value: 'VERIFIED' },
   { label: 'Hết hạn giấy tờ', value: 'EXPIRED' },
@@ -32,35 +34,53 @@ const VERIFIED_OPTIONS = [
   { label: 'Chưa xác thực', value: UNVERIFIED }
 ]
 
+interface EkycSearchValues {
+  keyword?: string
+  latestStatus?: string
+  profileStatus?: string
+  createdFrom?: string
+  createdTo?: string
+}
+
+// Lưu đúng chuỗi BE nhận (giữ nguyên chữ số giờ đã chọn, như trước khi lên URL).
+const toApiText = (value?: string): string | undefined =>
+  value ? dayjs.utc(value).format(EKYC_DATETIME_FORMAT) : undefined
+
+const toPickerText = (value?: string): string =>
+  value ? dayjs(value).format(PICKER_VALUE_FORMAT) : ''
+
+const toFormValues = (filters: EkycUrlFilters): EkycSearchValues => ({
+  keyword: filters.keyword ?? '',
+  latestStatus: filters.latestStatus,
+  profileStatus: filters.profileStatus,
+  createdFrom: toPickerText(filters.createdFrom),
+  createdTo: toPickerText(filters.createdTo)
+})
+
 interface FormSearchProps {
-  onSearch: (values: EKYCFilterType) => void
+  /** Bộ lọc đang áp dụng (URL/bản sao) để ô nhập hiện lại khi quay về màn. */
+  filters: EkycUrlFilters
+  onSearch: (values: EkycUrlFilters) => void
   onReset: () => void
 }
 
-const FormSearch = ({ onSearch, onReset }: FormSearchProps) => {
-  const formSearch = useForm()
+const FormSearch = ({ filters, onSearch, onReset }: FormSearchProps) => {
+  const formSearch = useForm<EkycSearchValues>({
+    defaultValues: toFormValues(filters)
+  })
 
   const handleSubmit = formSearch.handleSubmit((data) => {
-    const payload: EKYCFilterType = {
+    onSearch({
       keyword: data.keyword || undefined,
       latestStatus: data.latestStatus || undefined,
-      hasProfile: data.profileStatus === UNVERIFIED ? false : undefined,
-      profileStatus:
-        data.profileStatus && data.profileStatus !== UNVERIFIED
-          ? data.profileStatus
-          : undefined,
-      createdFrom: data.createdFrom
-        ? dayjs.utc(data.createdFrom).format('YYYY-MM-DD HH:mm:ss')
-        : undefined,
-      createdTo: data.createdTo
-        ? dayjs.utc(data.createdTo).format('YYYY-MM-DD HH:mm:ss')
-        : undefined
-    }
-    onSearch(payload)
+      profileStatus: data.profileStatus || undefined,
+      createdFrom: toApiText(data.createdFrom),
+      createdTo: toApiText(data.createdTo)
+    })
   })
 
   const handleReset = () => {
-    formSearch.reset()
+    formSearch.reset(toFormValues({}))
     onReset()
   }
 

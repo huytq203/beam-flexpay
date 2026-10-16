@@ -1,21 +1,20 @@
 import { useExportCsv } from '@hooks/useExportCsv'
-import usePagination from '@hooks/usePagination'
+import { useUrlFilters } from '@hooks/useUrlFilters'
 import {
   useExportLedgerEntriesMutation,
   type ExportLedgerEntriesQuery
 } from '@services/apiExportCsv'
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGetLedgerEntriesQuery } from '../services/apiSystemLedger'
 import { FormSearchValues, LedgerEntry } from '../types/SystemLedger.type'
-
-/** Ô để trống là "không lọc" — gửi chuỗi rỗng xuống API là gửi rác. */
-const dropEmpty = (filter: FormSearchValues): FormSearchValues =>
-  Object.fromEntries(
-    Object.entries(filter).filter(
-      ([, value]) => value !== '' && value !== undefined && value !== null
-    )
-  )
+import {
+  LEDGER_FILTER_KEYS,
+  LEDGER_SENSITIVE_KEYS,
+  toLedgerFilter,
+  toLedgerUrlFilters,
+  type LedgerFilterKey
+} from '../utils/systemLedgerFilters'
 
 /**
  * Gom các dòng cùng bút toán lại cạnh nhau, Nợ trước Có. API sắp theo thời gian
@@ -37,12 +36,20 @@ const groupByJournal = (entries: LedgerEntry[]): LedgerEntry[] => {
 }
 
 const useSystemLedger = () => {
-  const [filter, setFilter] = useState<FormSearchValues>({})
   const navigate = useNavigate()
-
-  const { page, pageSize, setPage, setPageSize } = usePagination({
-    defaultSort: 'createdAt'
+  const {
+    filters: urlFilters,
+    applyFilters,
+    clearFilters,
+    page,
+    size: pageSize,
+    setPage,
+    setPageSize
+  } = useUrlFilters<LedgerFilterKey>({
+    keys: LEDGER_FILTER_KEYS,
+    sensitiveKeys: LEDGER_SENSITIVE_KEYS
   })
+  const filter = toLedgerFilter(urlFilters)
 
   const payload = {
     page,
@@ -65,40 +72,21 @@ const useSystemLedger = () => {
   })
 
   /** Endpoint xuất không nhận page/size — file lấy trọn bộ lọc, không theo trang. */
-  const exportParams = useMemo<ExportLedgerEntriesQuery>(() => filter, [filter])
-
-  const handleExport = useCallback(() => {
+  const handleExport = () => {
+    const exportParams: ExportLedgerEntriesQuery = filter
     void exportFile(exportParams)
-  }, [exportFile, exportParams])
-
-  const handleSearch = (data: FormSearchValues) => {
-    const trimmed = Object.entries(data).reduce((acc, [key, value]) => {
-      acc[key as keyof FormSearchValues] =
-        typeof value === 'string' ? value.trim() : value
-      return acc
-    }, {} as FormSearchValues)
-
-    setFilter(dropEmpty(trimmed))
-    setPage(1)
   }
 
-  const handleSummaryDirectionChange = useCallback(
-    (direction?: string) => {
-      setFilter((currentFilter) => {
-        const nextFilter = { ...currentFilter }
+  const handleSearch = (data: FormSearchValues) =>
+    applyFilters(toLedgerUrlFilters(data))
 
-        if (direction) {
-          nextFilter.direction = direction
-        } else {
-          delete nextFilter.direction
-        }
+  const handleSummaryDirectionChange = (direction?: string) =>
+    applyFilters({ ...urlFilters, direction })
 
-        return nextFilter
-      })
-      setPage(1)
-    },
-    [setPage]
-  )
+  const handleChangePage = (nextPage: number, nextSize: number) => {
+    if (nextSize !== pageSize) setPageSize(nextSize)
+    else setPage(nextPage)
+  }
 
   const totalElements = dataLedger?.totalElements
   const dataSource = useMemo(
@@ -114,11 +102,12 @@ const useSystemLedger = () => {
     dataSource,
     totalElements,
     page,
-    setPage,
     pageSize,
-    setPageSize,
+    handleChangePage,
+    filter,
     navigate,
     handleSearch,
+    clearFilters,
     summary: dataLedger?.summary,
     activeDirection: filter.direction,
     handleSummaryDirectionChange,

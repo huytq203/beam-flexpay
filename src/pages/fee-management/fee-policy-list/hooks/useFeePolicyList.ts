@@ -8,7 +8,6 @@ export interface FeePolicyListFilters {
   /** Luồng phí đang xem: chỉ lấy chính sách có thành phần thuộc luồng này. */
   feeScope: FeeScope
   keyword?: string
-  subjectKeyword?: string
   serviceType?: string
   status?: string
   appliedTarget?: string
@@ -59,7 +58,6 @@ export const useFeePolicyList = ({
   const params = useMemo(
     () => ({
       keyword: filters.keyword || '',
-      subjectKeyword: filters.subjectKeyword || undefined,
       feeScope: filters.feeScope,
       serviceType: filters.serviceType || undefined,
       ...splitPolicyStatusFilter(filters.status),

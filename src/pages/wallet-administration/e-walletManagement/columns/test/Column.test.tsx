@@ -58,4 +58,27 @@ describe('wallet account columns', () => {
     if (shown) expect(screen.getAllByText(shown)).toHaveLength(1)
     else expect(screen.queryByText(/đăng nhập/i)).not.toBeInTheDocument()
   })
+
+  it.each([null, undefined, true, false])(
+    'ví hệ thống không có tài khoản đăng nhập nên không hiện badge đăng nhập (loginLocked=%s)',
+    (loginLocked) => {
+      render(
+        <Table
+          columns={getColumn({ can: () => false, onViewDetail: vi.fn() })}
+          dataSource={[
+            {
+              ...account,
+              ownerType: 'SYSTEM',
+              glCode: 'SYS_CASH_IN_SUSPENSE_VND',
+              loginLocked
+            }
+          ]}
+          pagination={false}
+          rowKey='id'
+        />
+      )
+
+      expect(screen.queryByText(/đăng nhập/i)).not.toBeInTheDocument()
+    }
+  )
 })

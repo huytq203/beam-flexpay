@@ -23,6 +23,8 @@ const mocks = vi.hoisted(() => ({
 vi.mock('../hooks/useTransaction', () => ({
   default: () => ({
     filter: mocks.filter,
+    filters: {},
+    clearFilters: vi.fn(),
     dataSource: [],
     totalElements: 0,
     page: 1,

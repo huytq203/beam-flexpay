@@ -37,19 +37,19 @@ export const ChannelCell = ({ serviceType, assignments }: ChannelCellProps) => {
         <span>
           NCC: {providers.join(', ')}
           {providers.length > 0 && anyProvider ? ' · ' : ''}
-          {anyProvider ? 'Mọi NCC' : ''}
+          {anyProvider ? 'Tất cả NCC' : ''}
         </span>
       )}
       <span>
         {banks.join(', ')}
         {banks.length > 0 && anyBank ? ' · ' : ''}
-        {anyBank ? 'Mọi ngân hàng phát hành' : ''}
+        {anyBank ? 'Tất cả ngân hàng phát hành ' : ''}
       </span>
       {allowsMerchantCriteria(serviceType) && (
         <span className='text-xs text-muted-foreground'>
           {merchants.length > 0 &&
             `${merchants.length} merchant riêng${anyMerchant ? ' · ' : ''}`}
-          {anyMerchant ? 'Mọi merchant' : ''}
+          {anyMerchant ? 'Tất cả merchant' : ''}
         </span>
       )}
     </div>

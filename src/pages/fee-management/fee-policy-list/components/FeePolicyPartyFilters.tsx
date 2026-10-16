@@ -22,7 +22,7 @@ export const FeePolicyPartyFilters = ({
       name='payerType'
       control={control}
       label='Người chịu phí'
-      placeholder='Mọi người chịu'
+      placeholder='Tất cả người chịu'
       allowClear
       options={[...PAYER_TYPE_FILTER_OPTIONS]}
       className='flex flex-col'
@@ -31,7 +31,7 @@ export const FeePolicyPartyFilters = ({
       name='beneficiaryType'
       control={control}
       label='Người hưởng phí'
-      placeholder='Mọi người hưởng'
+      placeholder='Tất cả người hưởng'
       allowClear
       options={BENEFICIARY_TYPE_FILTER_OPTIONS}
       className='flex flex-col'
@@ -45,7 +45,7 @@ export const FeePolicyPartyFilters = ({
           hint='Chỉ áp dụng cho chuyển tiền: chọn là chỉ còn chính sách chuyển tiền'
         />
       }
-      placeholder='Mọi bên'
+      placeholder='Tất cả bên'
       allowClear
       disabled={
         Boolean(serviceType) && serviceType !== 'EWALLET_TRANSFER_INTERNAL'

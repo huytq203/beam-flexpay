@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { beforeEach } from 'vitest'
+import { afterEach, beforeEach } from 'vitest'
 import { http, HttpResponse } from 'msw'
 import { server } from '@/test/mocks/server'
 import { PERMISSION } from '@/app/permissions'
@@ -13,6 +13,8 @@ import MerchantUserListPage from '../pages/MerchantUserListPage'
 import { suppressAntPseudoElementWarning } from '../../sub-merchant-management/sub-merchant/test/domTestSetup'
 
 suppressAntPseudoElementWarning()
+// Bộ lọc được lưu theo đường dẫn màn; không xoá thì lọc của test trước rò sang test sau.
+afterEach(() => sessionStorage.clear())
 beforeEach(() => {
   server.use(
     http.get('*/merchants', () =>

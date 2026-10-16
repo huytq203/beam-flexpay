@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { PERMISSION } from '@/app/permissions'
 import { createAppStore } from '@/app/store'
 import { savePermissions } from '@slices/authSlice'
@@ -77,6 +77,10 @@ const respondWithRows = () =>
 beforeEach(() => {
   requests.length = 0
   server.use(respondWithRows())
+})
+
+afterEach(() => {
+  sessionStorage.clear()
 })
 
 const renderPage = (permissions: string[] = [PERMISSION.EWALLET_FULL]) => {

@@ -65,7 +65,6 @@ const FeePolicyList = () => {
   const exportFilters = {
     feeScope,
     keyword: filters.keyword,
-    subjectKeyword: filters.subjectKeyword,
     serviceType: filters.serviceType,
     status: filters.status,
     appliedTarget: filters.appliedTarget,
@@ -138,7 +137,6 @@ const FeePolicyList = () => {
             serviceType={filters.serviceType}
             values={{
               keyword: filters.keyword ?? '',
-              subjectKeyword: filters.subjectKeyword ?? '',
               status: filters.status ?? '',
               appliedTarget: filters.appliedTarget ?? '',
               bankCode: filters.bankCode ?? '',

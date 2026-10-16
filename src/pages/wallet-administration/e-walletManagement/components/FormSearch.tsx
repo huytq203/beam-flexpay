@@ -6,28 +6,45 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
 import { StatusLabel, WalletTypeLabel } from '../constants/Ewallet.constant'
 import { FormSearchValues } from '../types/ResponseWalletAccount.type'
+import type { EwalletFilterKey } from '../constants/ewalletFilter.constants'
 import * as Icons from '@components/icons'
 
+type EwalletFilters = Partial<Record<EwalletFilterKey, string>>
+
 interface FormSearchProps {
-  handleSearch: (value: FormSearchValues) => void
+  /** Bộ lọc đang áp dụng (URL/bản sao) để ô nhập hiện lại khi quay về màn. */
+  filters: EwalletFilters
+  handleSearch: (value: EwalletFilters) => void
+  onReset: () => void
+}
+
+const EMPTY_FORM: FormSearchValues = {
+  username: '',
+  ownerId: '',
+  status: undefined,
+  walletType: undefined,
+  fromDate: '',
+  toDate: ''
 }
 
 /** Ô trống là "không lọc" — DatePicker khi xoá trả `''`, gửi lên BE sẽ lỗi parse date-time. */
-const omitEmpty = (values: FormSearchValues): FormSearchValues =>
+const omitEmpty = (values: FormSearchValues): EwalletFilters =>
   Object.fromEntries(
     Object.entries(values).filter(([, value]) => Boolean(value))
   )
 
-export const FormSearch = ({ handleSearch }: FormSearchProps) => {
-  const formSearch = useForm<FormSearchValues>()
+export const FormSearch = ({ filters, handleSearch, onReset }: FormSearchProps) => {
+  const formSearch = useForm<FormSearchValues>({
+    defaultValues: { ...EMPTY_FORM, ...filters }
+  })
   const { svg } = useSVG()
 
   const onSubmit: SubmitHandler<FormSearchValues> = (data) => {
     handleSearch(omitEmpty(data))
   }
   const handleReset = () => {
-    formSearch.reset()
-    handleSearch({})
+    formSearch.reset(EMPTY_FORM)
+    onReset()
   }
   return (
     <form className='space-y-3' onSubmit={formSearch.handleSubmit(onSubmit)} onReset={handleReset}>

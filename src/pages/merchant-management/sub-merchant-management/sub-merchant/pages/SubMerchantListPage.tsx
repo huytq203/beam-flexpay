@@ -15,10 +15,7 @@ import type { ManagementListState } from '../../shared/management.types'
 import { SubMerchantFilters } from '../components/SubMerchantFilters'
 import { SubMerchantDetailModal } from '../components/SubMerchantDetailModal'
 import { SubMerchantTable } from '../components/SubMerchantTable'
-import {
-  EMPTY_SUB_MERCHANT_FILTERS,
-  type SubMerchantFiltersValue
-} from '../constants/subMerchantFilters'
+import { useSubMerchantListFilters } from '../hooks/useSubMerchantListFilters'
 import type { SubMerchantRow } from '../types/subMerchant.type'
 import { globalMessage } from '@hooks/useMessage'
 
@@ -30,16 +27,13 @@ export default function SubMerchantListPage({
   initialListState
 }: SubMerchantListPageProps) {
   const navigate = useNavigate()
-  const [filters, setFilters] = useState<SubMerchantFiltersValue>(
-    EMPTY_SUB_MERCHANT_FILTERS
-  )
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
+  const { filters, page, pageSize, search, reset, changePage } =
+    useSubMerchantListFilters()
   const [viewingId, setViewingId] = useState<string>()
   const query = useGetSubMerchantPageQuery({
     page,
     size: pageSize,
-    merchantId: filters.parentMerchantId,
+    merchantId: filters.parentMerchant?.id,
     name: filters.query.trim() || undefined,
     status:
       filters.status === 'ACTIVE' ||
@@ -60,15 +54,6 @@ export default function SubMerchantListPage({
         : total === 0
           ? 'empty'
           : 'success')
-  const search = (next: SubMerchantFiltersValue): void => {
-    setFilters(next)
-    setPage(1)
-  }
-  const reset = (): void => search(EMPTY_SUB_MERCHANT_FILTERS)
-  const changePage = (next: number, size: number): void => {
-    setPage(size === pageSize ? next : 1)
-    setPageSize(size)
-  }
   const toggleStatus = async (id: string, reason: string): Promise<boolean> => {
     const row = rows.find((item) => item.id === id)
     if (
@@ -92,7 +77,7 @@ export default function SubMerchantListPage({
   }
   const basePath = SCREENS.MERCHANT_SUB_MERCHANT.path
   const isFiltered = Boolean(
-    filters.query || filters.parentMerchantId || filters.status
+    filters.query || filters.parentMerchant || filters.status
   )
   const openDetail = (row: SubMerchantRow): void => {
     setViewingId(row.id)

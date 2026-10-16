@@ -1,5 +1,5 @@
-import usePagination from '@hooks/usePagination'
-import { AcountItem, FormSearchValues } from '@pages/wallet-administration/e-walletManagement/types/ResponseWalletAccount.type'
+import { useUrlFilters } from '@hooks/useUrlFilters'
+import { AcountItem } from '@pages/wallet-administration/e-walletManagement/types/ResponseWalletAccount.type'
 import {
   useGetAccountQuery,
   useLazyGetAccountByIdQuery,
@@ -12,10 +12,18 @@ import { useNavigate } from 'react-router-dom'
 import { useScreenAccess } from '@/app/permissions'
 import type { WalletModalType } from '../columns/wallet-row-actions'
 import { preloadWalletDetailAndNavigate } from '../columns/wallet-row-actions'
+import {
+  EWALLET_FILTER_KEYS,
+  EWALLET_SENSITIVE_KEYS,
+  type EwalletFilterKey
+} from '../constants/ewalletFilter.constants'
 
 const useEwalletManagement = () => {
-  const { page, size, setPageSize, setPage } = usePagination()
-  const [filter, setFilter] = useState<FormSearchValues>({})
+  const { filters, applyFilters, clearFilters, page, size, setPageSize, setPage } =
+    useUrlFilters<EwalletFilterKey>({
+      keys: EWALLET_FILTER_KEYS,
+      sensitiveKeys: EWALLET_SENSITIVE_KEYS
+    })
   const [modalType, setModalType] = useState<WalletModalType>(null)
   const [selectedAccount, setSelectedAccount] = useState<AcountItem | null>(null)
   const navigate = useNavigate()
@@ -24,7 +32,7 @@ const useEwalletManagement = () => {
   const payload={
     page,
     size,
-    ...filter
+    ...filters
   }
 
   const [_postLockAccount] = usePostLockMutation()
@@ -38,10 +46,7 @@ const useEwalletManagement = () => {
     refetch
   } = useGetAccountQuery(payload)
 
-  const handleSearch = (data: FormSearchValues) => {
-    setFilter(data)
-    setPage(1)
-  }
+  const handleSearch = applyFilters
 
 
   const openModal = useCallback((type: WalletModalType, account: AcountItem) => {
@@ -77,6 +82,8 @@ const useEwalletManagement = () => {
   )
 
   return {
+    filters,
+    clearFilters,
     column,
     dataSource,
     getAccount,

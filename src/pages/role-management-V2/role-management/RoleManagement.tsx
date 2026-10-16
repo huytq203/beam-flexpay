@@ -24,7 +24,9 @@ export const RoleManagement = () => {
   const [isAssigningPermissions, setIsAssigningPermissions] = useState(false)
   const { can } = useScreenAccess('ROLE_MANAGEMENT')
   const {
+    keyword,
     handleSearch,
+    clearFilters,
     roleData,
     roleOptions,
     isLoadingRoleData,
@@ -66,7 +68,9 @@ export const RoleManagement = () => {
             <Icons.FunnelIcon /> Bộ lọc tìm kiếm
           </p>
           <FormSearchRole
+            keyword={keyword}
             onSearch={handleSearch}
+            onClear={clearFilters}
             roleOptions={roleOptions}
             onAdd={() => openRoleModal('add', null)}
             canAdd={can('create')}
@@ -92,8 +96,9 @@ export const RoleManagement = () => {
                 total: roleData?.totalElements,
                 showSizeChanger: true,
                 onChange: (newPage, newPageSize) => {
-                  setPage(newPageSize !== size ? 1 : newPage)
-                  setPageSize(newPageSize)
+                  // Đổi số dòng đã tự về trang 1; gọi cả hai sẽ ghi đè lẫn nhau.
+                  if (newPageSize !== size) setPageSize(newPageSize)
+                  else setPage(newPage)
                 }
               }}
             />

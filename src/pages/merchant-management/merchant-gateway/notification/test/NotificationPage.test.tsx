@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { PERMISSION } from '@/app/permissions'
 import { createAppStore } from '@/app/store'
 import { savePermissions } from '@slices/authSlice'
@@ -47,6 +47,8 @@ const ownSubRow = {
 }
 
 const listRequests: URL[] = []
+
+afterEach(() => sessionStorage.clear())
 
 beforeEach(() => {
   listRequests.length = 0

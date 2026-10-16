@@ -26,6 +26,8 @@ import { useTransactionPermissions } from './hooks/useTransactionPermissions'
 const TransactionManagement = () => {
   const {
     filter,
+    filters,
+    clearFilters,
     dataSource,
     totalElements,
     page,
@@ -89,7 +91,9 @@ const TransactionManagement = () => {
             </div>
           ) : (
             <FormSearch
+              filters={filters}
               handleSearch={handleSearch}
+              onReset={clearFilters}
               status={activeStatus}
             />
           )
@@ -145,9 +149,10 @@ const TransactionManagement = () => {
                       showSizeChanger: true,
                       pageSize: pageSize,
                       total: totalElements,
-                      onChange: (page, pageSize) => {
-                        setPage(page)
-                        setPageSize(pageSize)
+                      onChange: (nextPage, nextSize) => {
+                        // Hai setter cùng ghi URL từ một bản cũ: chỉ gọi cái thay đổi.
+                        if (nextSize !== pageSize) setPageSize(nextSize)
+                        else setPage(nextPage)
                       },
                       showTotal: (total, range) =>
                         `Hiển thị ${range[0]}-${range[1]}/ ${total} Bản ghi`

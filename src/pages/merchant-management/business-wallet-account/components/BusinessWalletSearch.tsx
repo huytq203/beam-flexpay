@@ -17,21 +17,28 @@ const STATUS_OPTIONS = [
 ]
 
 interface BusinessWalletSearchProps {
+  filters: BusinessWalletSearchValues
   isSubmitting?: boolean
   onSearch: (values: BusinessWalletSearchValues) => void
+  onClear: () => void
+}
+
+const EMPTY_VALUES: BusinessWalletSearchValues = {
+  query: '',
+  taxCode: '',
+  verificationStatus: undefined
 }
 
 export function BusinessWalletSearch({
+  filters,
   isSubmitting = false,
-  onSearch
+  onSearch,
+  onClear
 }: BusinessWalletSearchProps) {
+  // Quay lại màn thì ô lọc hiện lại đúng bộ lọc đang áp dụng.
   const form = useForm<BusinessWalletSearchValues>({
     resolver: zodResolver(businessWalletSearchSchema),
-    defaultValues: {
-      query: '',
-      taxCode: '',
-      verificationStatus: undefined
-    }
+    defaultValues: { ...EMPTY_VALUES, ...filters }
   })
 
   const handleSubmit: SubmitHandler<BusinessWalletSearchValues> = (values) => {
@@ -39,8 +46,8 @@ export function BusinessWalletSearch({
   }
 
   const handleReset = (): void => {
-    form.reset()
-    onSearch({})
+    form.reset(EMPTY_VALUES)
+    onClear()
   }
 
   return (

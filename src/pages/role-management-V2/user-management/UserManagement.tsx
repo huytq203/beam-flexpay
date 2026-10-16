@@ -49,7 +49,9 @@ const UserManagement = () => {
               <div className="">
                 <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <FunnelIcon /> Bộ lọc tìm kiếm</p>
                 <FormSearchUser
+                  defaultValues={fetchData.formValues}
                   onSearch={fetchData.handleSearch}
+                  onClear={fetchData.clearFilters}
                   onAdd={() => handle.openModal('add', null)}
                   canAdd={can('create')}
                 />
@@ -97,8 +99,9 @@ const UserManagement = () => {
                   current: fetchData.page,
                   pageSize: fetchData.size,
                   onChange: (page, pageSize) => {
-                    fetchData.setPage(page)
-                    fetchData.setPageSize(pageSize)
+                    // Hai setter cùng ghi URL từ một bản cũ: chỉ gọi cái thay đổi.
+                    if (pageSize !== fetchData.size) fetchData.setPageSize(pageSize)
+                    else fetchData.setPage(page)
                   },
                 }}
               />

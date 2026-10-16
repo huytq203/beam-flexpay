@@ -11,8 +11,6 @@ export const getTypeNote = (refund: RefundTarget): string | undefined => {
   if (refund.originalType === RefundOriginalType.CASH_OUT) {
     return 'Hoàn giao dịch rút tiền lấy từ quỹ ví tạm giữ. Nếu quỹ không đủ, yêu cầu chuyển sang Chờ đủ số dư.'
   }
-  if (refund.originalType === RefundOriginalType.MERCHANT_PAYMENT) {
-    return 'Ví merchant phải đủ số dư. Nếu thiếu, hệ thống báo lỗi và yêu cầu vẫn ở Chờ duyệt, không chuyển sang Chờ đủ số dư.'
-  }
+
   return undefined
 }

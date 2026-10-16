@@ -1,5 +1,5 @@
 import { REFUND_DEBTOR_LABELS } from '../constants/refund.constants'
-import { RefundOriginalType, type RefundDetail } from '../schemas/refund.schema'
+import { type RefundDetail } from '../schemas/refund.schema'
 import { formatVnd } from '../utils/refund.utils'
 import { DetailRows, DetailSection } from './DetailSection'
 
@@ -8,7 +8,6 @@ interface RefundAmountSectionProps {
 }
 
 export function RefundAmountSection({ refund }: RefundAmountSectionProps) {
-  const isMerchant = refund.originalType === RefundOriginalType.MERCHANT_PAYMENT
   const rows = [
     {
       label: 'Giao dịch gốc',
@@ -25,15 +24,7 @@ export function RefundAmountSection({ refund }: RefundAmountSectionProps) {
       value: formatVnd(refund.senderFeeReversal),
       numeric: true
     },
-    ...(isMerchant
-      ? [
-          {
-            label: 'Phí gốc hoàn cho merchant',
-            value: formatVnd(refund.receiverFeeReversal),
-            numeric: true
-          }
-        ]
-      : []),
+    
     {
       label: 'Phí xử lý bên gửi',
       value: formatVnd(refund.senderProcessingFee),

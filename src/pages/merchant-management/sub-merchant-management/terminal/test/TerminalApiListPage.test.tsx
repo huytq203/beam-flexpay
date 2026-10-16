@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { http, HttpResponse } from 'msw'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { createAppStore } from '@/app/store'
 import { PERMISSION } from '@/app/permissions'
 import { savePermissions } from '@slices/authSlice'
@@ -25,6 +25,9 @@ function CurrentPath() {
 }
 
 describe('Terminal API list', () => {
+  // Bộ lọc được lưu vào sessionStorage, xóa để test sau không bị khôi phục.
+  afterEach(() => sessionStorage.clear())
+
   it('hiển thị icon action nhỏ và xem chi tiết trong modal, giữ nguyên route', async () => {
     const user = userEvent.setup()
     let detailRequests = 0

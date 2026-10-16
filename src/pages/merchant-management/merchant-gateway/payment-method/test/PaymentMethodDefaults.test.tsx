@@ -89,6 +89,10 @@ describe('PaymentMethodEditor mặc định hệ thống', () => {
     await user.click(
       await screen.findByRole('button', { name: 'Cập nhật Merchant A' })
     )
+    // Chi tiết cấu hình tải bất đồng bộ sau khi mở editor.
+    expect(
+      await screen.findByText('Theo mặc định hệ thống')
+    ).toBeInTheDocument()
     expect(screen.getByRole('switch', { name: 'QR' })).toBeChecked()
     expect(screen.getByRole('switch', { name: 'Thẻ nội địa' })).toBeChecked()
     expect(screen.getByRole('switch', { name: 'Thẻ quốc tế' })).toBeChecked()
@@ -113,7 +117,7 @@ describe('PaymentMethodEditor mặc định hệ thống', () => {
     await user.click(
       await screen.findByRole('button', { name: 'Cập nhật Merchant A' })
     )
-    const inheritSwitch = screen.getByRole('switch', {
+    const inheritSwitch = await screen.findByRole('switch', {
       name: 'Dùng mặc định hệ thống'
     })
     expect(

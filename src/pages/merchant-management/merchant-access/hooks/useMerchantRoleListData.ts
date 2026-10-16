@@ -1,15 +1,27 @@
 import { useMemo, useState } from 'react'
 import { useListMerchantGroupsQuery } from '@/app/services/merchantAccessApi'
+import { useUrlFilters } from '@hooks/useUrlFilters'
 import { toMerchantRole } from '../dto/merchantAccess.api'
 import { type RoleFilters } from '../components/MerchantRoleFilters'
 
 const EMPTY_ROLE_FILTERS: RoleFilters = { query: '' }
+const ROLE_FILTER_KEYS = ['query', 'merchantId', 'scope'] as const
+type RoleFilterKey = (typeof ROLE_FILTER_KEYS)[number]
+
+const toRoleFilters = (
+  raw: Partial<Record<RoleFilterKey, string>>
+): RoleFilters => ({
+  query: raw.query ?? '',
+  merchantId: raw.merchantId,
+  scope:
+    raw.scope === 'shared' || raw.scope === 'custom' ? raw.scope : undefined
+})
 
 export function useMerchantRoleListData() {
-  const [draft, setDraft] = useState<RoleFilters>(EMPTY_ROLE_FILTERS)
-  const [filters, setFilters] = useState<RoleFilters>(EMPTY_ROLE_FILTERS)
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
+  const url = useUrlFilters<RoleFilterKey>({ keys: ROLE_FILTER_KEYS })
+  const filters = toRoleFilters(url.filters)
+  const { page, size: pageSize } = url
+  const [draft, setDraft] = useState<RoleFilters>(filters)
   const rolesQuery = useListMerchantGroupsQuery({
     page,
     size: pageSize,
@@ -42,22 +54,19 @@ export function useMerchantRoleListData() {
       }),
     [roles, filters]
   )
-  const apply = (): void => {
-    setFilters({ ...draft, query: draft.query.trim() })
-    setPage(1)
-  }
+  const apply = (): void =>
+    url.applyFilters({ ...draft, query: draft.query.trim() })
   const reset = (): void => {
     setDraft(EMPTY_ROLE_FILTERS)
-    setFilters(EMPTY_ROLE_FILTERS)
-    setPage(1)
+    url.clearFilters()
   }
   return {
     draft,
     setDraft,
     page,
-    setPage,
+    setPage: url.setPage,
     pageSize,
-    setPageSize,
+    setPageSize: url.setPageSize,
     rolesQuery,
     roles,
     filteredRoles,

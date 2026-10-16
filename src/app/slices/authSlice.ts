@@ -13,6 +13,8 @@ import {
   decodeToken,
   isAccessTokenExpired
 } from './authActions'
+import { clearListStates } from '@utils/list-state-storage'
+import { broadcastLogout } from '@utils/session-signal'
 const name = 'authSlice'
 
 export interface IAuthState {
@@ -112,6 +114,8 @@ const authSlice = createSlice({
       Cookies.remove(CookieKey.ACCESS_TOKEN)
       Cookies.remove(CookieKey.REFRESH_TOKEN)
       localStorage.removeItem('last_activity_time')
+      clearListStates()
+      broadcastLogout()
       return {
         ...initialState,
         accessToken: null

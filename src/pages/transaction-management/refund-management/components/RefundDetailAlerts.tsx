@@ -4,7 +4,6 @@ import {
 } from '../constants/refund.constants'
 import {
   RefundChannel,
-  RefundOriginalType,
   RefundStatus,
   type RefundDetail
 } from '../schemas/refund.schema'
@@ -20,7 +19,6 @@ interface RefundDetailAlertsProps {
 const RETRY_HINT = 'duyệt lại, tiền không bị trừ hai lần.'
 
 const getRetryHint = (refund: RefundDetail): string =>
-  refund.originalType === RefundOriginalType.MERCHANT_PAYMENT &&
   refund.failureReason === WALLET_FAILURE_HINT
     ? `Kiểm tra số dư ví merchant rồi ${RETRY_HINT}`
     : `Kiểm tra nguyên nhân rồi ${RETRY_HINT}`

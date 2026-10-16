@@ -1,29 +1,30 @@
-import { useMemo, useState } from 'react'
-import usePagination from '@hooks/usePagination'
+import { useMemo } from 'react'
+import { useUrlFilters } from '@hooks/useUrlFilters'
 import { useGetPermissionByKeyQuery } from '@services/apiPermission'
 import { SearchPermissionFormData } from '../types/PermissionManagement.type'
 
+const FILTER_KEYS = ['keyword'] as const
+const SORT_BY = 'createdAt'
+const SORT_DIRECTION = 'DESC'
+
 const useFetchDataPermission = () => {
   const {
+    filters,
+    applyFilters,
+    clearFilters,
     page,
     size,
-    sort: sortBy,
-    sortDirection,
     setPage,
     setPageSize
-  } = usePagination({
-    defaultPageSize: 10,
-    defaultSort: 'createdAt',
-    defaultSortBy: 'DESC'
-  })
-  const [keyword, setKeyword] = useState('')
+  } = useUrlFilters({ keys: FILTER_KEYS })
+  const keyword = filters.keyword ?? ''
 
   const query = useGetPermissionByKeyQuery({
     keyword,
     page,
     size,
-    sortBy,
-    sortDirection
+    sortBy: SORT_BY,
+    sortDirection: SORT_DIRECTION
   })
 
   const permissionData = useMemo(() => {
@@ -38,13 +39,13 @@ const useFetchDataPermission = () => {
     }
   }, [page, query.data, size])
 
-  const handleSearch = ({ keyword: nextKeyword }: SearchPermissionFormData) => {
-    setPage(1)
-    setKeyword(nextKeyword.trim())
-  }
+  const handleSearch = ({ keyword: nextKeyword }: SearchPermissionFormData) =>
+    applyFilters({ keyword: nextKeyword.trim() })
 
   return {
+    keyword,
     handleSearch,
+    clearFilters,
     permissionData,
     isLoadingPermissionData: query.isLoading || query.isFetching,
     refetch: query.refetch,

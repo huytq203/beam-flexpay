@@ -22,3 +22,21 @@ export const MERCHANT_TRANSACTION_METHOD_LABELS: Readonly<
   ...PaymentMethod,
   BANK_TRANSFER: 'Chuyển khoản ngân hàng'
 }
+
+/** Merchant lưu kèm mã + tên (không nhạy cảm) để hiện lại nhãn khi quay lại màn. */
+export const MERCHANT_TRANSACTION_FILTER_KEYS = [
+  'merchantId',
+  'merchantCode',
+  'merchantName',
+  'keyword',
+  'transactionType',
+  'status',
+  'fromDate',
+  'toDate'
+] as const
+export type MerchantTransactionFilterKey =
+  (typeof MERCHANT_TRANSACTION_FILTER_KEYS)[number]
+
+/** Từ khóa nhận cả SĐT nên không được lên URL. */
+export const MERCHANT_TRANSACTION_SENSITIVE_KEYS: readonly MerchantTransactionFilterKey[] =
+  ['keyword']

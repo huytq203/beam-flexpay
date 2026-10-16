@@ -11,6 +11,20 @@ export interface UserFilters {
 
 export const EMPTY_FILTERS: UserFilters = { query: '', roleIds: [] }
 
+/** `roleIds` lưu dạng danh sách id nối bằng dấu phẩy. */
+export const USER_FILTER_KEYS = [
+  'query',
+  'merchantId',
+  'subMerchantId',
+  'roleIds',
+  'status',
+  'scope'
+] as const
+export type UserFilterKey = (typeof USER_FILTER_KEYS)[number]
+
+/** Từ khóa nhận cả SĐT/Email nên không được lên URL. */
+export const USER_SENSITIVE_KEYS: readonly UserFilterKey[] = ['query']
+
 export const STATUS_LABELS: Record<MerchantUserStatus, string> = {
   ACTIVE: 'Hoạt động',
   LOCKED: 'Bị khóa',

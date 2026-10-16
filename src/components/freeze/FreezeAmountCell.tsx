@@ -8,7 +8,7 @@ interface FreezeAmountCellProps {
 
 /**
  * Số tiền của một lệnh đóng băng không phải một con số. Chỉ hiện `amount` sẽ giấu mất việc
- * lệnh đã được giải tỏa một phần, hoặc ví không đủ tiền nên hệ thống chưa giữ đủ.
+ * lệnh đã được Đã mở băng một phần, hoặc ví không đủ tiền nên hệ thống chưa giữ đủ.
  * Các dòng phụ chỉ xuất hiện khi thực sự khác 0, để hàng bình thường vẫn gọn đúng một dòng.
  */
 export const FreezeAmountCell = ({ item }: FreezeAmountCellProps) => {

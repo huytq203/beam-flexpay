@@ -9,6 +9,7 @@ import {
   type PickedEntity
 } from '@components/index'
 
+import { useMerchantById } from '../hooks/useMerchantById'
 import { AccessFilterActions } from './AccessFilterActions'
 
 export interface RoleFilters {
@@ -38,9 +39,17 @@ export function MerchantRoleFilters({
 }: MerchantRoleFiltersProps) {
   const [isPicking, setIsPicking] = useState(false)
   const [merchant, setMerchant] = useState<PickedEntity>()
-  // Merchant lọc chỉ có thể chọn qua dialog nên luôn có bản ghi vừa chọn.
-  const merchantValue =
-    merchant && merchant.id === draft.merchantId ? merchant : undefined
+  // Quay lại màn chỉ còn id trên URL: tra tên qua API chi tiết Merchant.
+  const isPicked =
+    Boolean(draft.merchantId) && merchant?.id === draft.merchantId
+  const { merchant: detail } = useMerchantById(
+    isPicked ? undefined : draft.merchantId
+  )
+  const fetched =
+    detail && detail.id === draft.merchantId
+      ? toPickedEntity(detail)
+      : undefined
+  const merchantValue = isPicked ? merchant : fetched
 
   return (
     <form

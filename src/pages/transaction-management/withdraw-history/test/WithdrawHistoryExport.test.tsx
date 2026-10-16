@@ -4,7 +4,7 @@ import { MessageProvider } from '@hooks/MessageProvider'
 import { savePermissions } from '@slices/authSlice'
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import WithdrawHistory from '../WithdrawHistory'
 
 const mocks = vi.hoisted(() => ({
@@ -94,6 +94,10 @@ describe('Lịch sử rút tiền — xuất CSV', () => {
     vi.clearAllMocks()
     mocks.hasRow = false
     mocks.totalElements = 12
+  })
+
+  afterEach(() => {
+    sessionStorage.clear()
   })
 
   it('luôn ghim lưới về nhóm lệnh rút kể cả khi chưa chọn loại', () => {

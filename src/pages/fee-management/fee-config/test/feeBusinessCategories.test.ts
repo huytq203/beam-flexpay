@@ -92,7 +92,7 @@ describe('nhóm phí nghiệp vụ trên form', () => {
 })
 
 describe('luồng phí', () => {
-  it('Hệ thống chịu là phí đầu vào, mọi người chịu khác là phí đầu ra', () => {
+  it('Hệ thống chịu là phí đầu vào, Tất cả người chịu khác là phí đầu ra', () => {
     expect(getFeeScopeOfPayer('SYSTEM')).toBe(FEE_SCOPE.INPUT_COST)
     for (const payer of ['USER', 'MERCHANT', 'SENDER', 'RECEIVER']) {
       expect(getFeeScopeOfPayer(payer)).toBe(FEE_SCOPE.OUTPUT_FEE)

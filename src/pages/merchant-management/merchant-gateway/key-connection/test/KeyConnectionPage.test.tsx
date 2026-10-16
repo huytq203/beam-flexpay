@@ -1,6 +1,6 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { http, HttpResponse } from 'msw'
 
 import { createAppStore } from '@/app/store'
@@ -10,6 +10,8 @@ import { renderWithProviders } from '@/test/render'
 import { server } from '@/test/mocks/server'
 
 import KeyConnectionPage from '../pages/KeyConnectionPage'
+
+afterEach(() => sessionStorage.clear())
 
 beforeEach(() => {
   server.use(

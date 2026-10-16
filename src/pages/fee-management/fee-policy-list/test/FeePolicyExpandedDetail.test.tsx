@@ -151,7 +151,10 @@ const QueryStateNavigation = ({ search }: { search: string }) => {
   const navigate = useNavigate()
 
   return (
-    <button type='button' onClick={() => navigate(`/fee?${search}`)}>
+    <button
+      type='button'
+      onClick={() => navigate(`/fee?${search}`)}
+    >
       Đổi truy vấn
     </button>
   )
@@ -172,9 +175,7 @@ describe('chi tiết mở rộng của danh sách chính sách phí', () => {
       http.get('*/fee/customer-segments', () =>
         HttpResponse.json({ data: [] })
       ),
-      http.get('*/fee/policies/search', () =>
-        HttpResponse.json({ data: page })
-      )
+      http.get('*/fee/policies/search', () => HttpResponse.json({ data: page }))
     )
   })
 
@@ -186,9 +187,7 @@ describe('chi tiết mở rộng của danh sách chính sách phí', () => {
     })
     await user.click(expandButtons[0])
     await user.click(expandButtons[1])
-    expect(
-      screen.getAllByRole('region', { name: /Chi tiết/ })
-    ).toHaveLength(2)
+    expect(screen.getAllByRole('region', { name: /Chi tiết/ })).toHaveLength(2)
   })
 
   it('mở và thu gọn toàn bộ dòng của trang hiện tại', async () => {
@@ -210,9 +209,7 @@ describe('chi tiết mở rộng của danh sách chính sách phí', () => {
       'justify-center'
     )
     await user.click(expandAllButton)
-    expect(
-      screen.getAllByRole('region', { name: /Chi tiết/ })
-    ).toHaveLength(2)
+    expect(screen.getAllByRole('region', { name: /Chi tiết/ })).toHaveLength(2)
     const collapseAllButton = screen.getByRole('button', {
       name: 'Thu gọn tất cả'
     })
@@ -222,9 +219,9 @@ describe('chi tiết mở rộng của danh sách chính sách phí', () => {
       'ant-table-row-expand-icon-expanded'
     )
     await user.click(collapseAllButton)
-    expect(
-      screen.queryAllByRole('region', { name: /Chi tiết/ })
-    ).toHaveLength(0)
+    expect(screen.queryAllByRole('region', { name: /Chi tiết/ })).toHaveLength(
+      0
+    )
   })
 
   it.each([
@@ -254,18 +251,24 @@ describe('chi tiết mở rộng của danh sách chính sách phí', () => {
     const user = userEvent.setup()
 
     server.use(
-      http.get('*/fee/policy-assignments/by-policy/:policyId', ({ request }) => {
-        detailRequests.push(request.url)
-        return HttpResponse.json({ data: [] })
-      }),
+      http.get(
+        '*/fee/policy-assignments/by-policy/:policyId',
+        ({ request }) => {
+          detailRequests.push(request.url)
+          return HttpResponse.json({ data: [] })
+        }
+      ),
       http.get('*/fee/policy-components/by-policy/:policyId', ({ request }) => {
         detailRequests.push(request.url)
         return HttpResponse.json({ data: [] })
       }),
-      http.get('*/fee/component-tiers/by-component/:componentId', ({ request }) => {
-        detailRequests.push(request.url)
-        return HttpResponse.json({ data: [] })
-      })
+      http.get(
+        '*/fee/component-tiers/by-component/:componentId',
+        ({ request }) => {
+          detailRequests.push(request.url)
+          return HttpResponse.json({ data: [] })
+        }
+      )
     )
 
     renderList()

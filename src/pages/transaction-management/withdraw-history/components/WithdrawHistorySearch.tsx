@@ -34,7 +34,10 @@ export interface WithdrawSearchValues {
 }
 
 interface Props {
+    /** Bộ lọc đang áp (đọc từ URL/bản sao) để ô nhập hiện lại khi quay về màn. */
+    defaultValues?: WithdrawSearchValues
     handleSearch: (value: WithdrawSearchValues) => void
+    onReset: () => void
 }
 
 const PAYMENT_METHOD_OPTIONS = [
@@ -67,9 +70,9 @@ const KEYWORD_HINT =
 const SUCCESS_DATE_HINT =
     'Thời điểm lệnh rút chuyển sang thành công, khác ngày tạo lệnh ở trên. Lệnh tạo cuối tháng nhưng chi sang đầu tháng sau sẽ rơi vào hai khoảng khác nhau.'
 
-const WithdrawHistorySearch = ({ handleSearch }: Props) => {
+const WithdrawHistorySearch = ({ defaultValues, handleSearch, onReset }: Props) => {
     const formSearch = useForm<WithdrawSearchValues>({
-        defaultValues: DEFAULT_VALUES
+        defaultValues: { ...DEFAULT_VALUES, ...defaultValues }
     })
 
     const onSubmit: SubmitHandler<WithdrawSearchValues> = (data) => {
@@ -78,7 +81,7 @@ const WithdrawHistorySearch = ({ handleSearch }: Props) => {
 
     const handleReset = () => {
         formSearch.reset(DEFAULT_VALUES)
-        handleSearch(DEFAULT_VALUES)
+        onReset()
     }
 
     return (

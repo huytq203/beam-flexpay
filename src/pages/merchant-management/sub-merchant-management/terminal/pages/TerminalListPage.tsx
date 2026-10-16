@@ -5,16 +5,13 @@ import {
   useGetTerminalPageQuery,
   useDeleteTerminalMutation,
   useSetTerminalLockedMutation,
-  type ApiTerminalSummary,
-  type ApiTerminalType,
-  type HierarchyStatus
+  type ApiTerminalSummary
 } from '@/app/services/merchantHierarchyApi'
 import { PlusOutlined, TerminalIcon } from '@components/icons'
 import {
   ButtonComponent,
   CardComponent,
   feedback,
-  type PickedEntity,
   Table
 } from '@components/index'
 import { createTerminalApiColumns } from '../columns/terminalApi.columns'
@@ -23,20 +20,15 @@ import { TerminalDetailModal } from '../components/TerminalDetailModal'
 import { getApiErrorDetail } from '@/app/utils/api-error'
 import { TerminalDeleteDialog } from '../components/TerminalDeleteDialog'
 import { TerminalLockDialog } from '../components/TerminalLockDialog'
+import { useTerminalListFilters } from '../hooks/useTerminalListFilters'
 
 export default function TerminalListPage(
   _props: { initialListState?: 'loading' | 'error' | 'empty' | 'success' } = {}
 ) {
   const navigate = useNavigate()
   const basePath = SCREENS.MERCHANT_TERMINAL.path
-  const [page, setPage] = useState(1)
-  const [size, setSize] = useState(10)
-  const [merchant, setMerchant] = useState<PickedEntity>()
-  const [subMerchant, setSubMerchant] = useState<PickedEntity>()
-  const [name, setName] = useState('')
-  const [searchName, setSearchName] = useState('')
-  const [terminalType, setTerminalType] = useState<ApiTerminalType>()
-  const [status, setStatus] = useState<HierarchyStatus>()
+  const list = useTerminalListFilters()
+  const { page, size } = list
   const [viewingId, setViewingId] = useState<string>()
   const [locking, setLocking] = useState<ApiTerminalSummary | null>(null)
   const [reason, setReason] = useState('')
@@ -45,11 +37,11 @@ export default function TerminalListPage(
   const query = useGetTerminalPageQuery({
     page,
     size,
-    merchantId: merchant?.id,
-    subMerchantId: subMerchant?.id,
-    name: searchName || undefined,
-    terminalType,
-    status
+    merchantId: list.merchant?.id,
+    subMerchantId: list.subMerchant?.id,
+    name: list.searchName,
+    terminalType: list.terminalType,
+    status: list.status
   })
   const [setLocked, lockState] = useSetTerminalLockedMutation()
   const [deleteTerminal, deleteState] = useDeleteTerminalMutation()
@@ -78,15 +70,6 @@ export default function TerminalListPage(
     setLocking(null)
     setReason('')
   }
-  const clearFilters = () => {
-    setName('')
-    setSearchName('')
-    setMerchant(undefined)
-    setSubMerchant(undefined)
-    setTerminalType(undefined)
-    setStatus(undefined)
-    setPage(1)
-  }
   const confirmLock = async () => {
     if (!locking) return
     if (reason.trim().length < 10) {
@@ -109,33 +92,18 @@ export default function TerminalListPage(
   return (
     <main className='flex min-w-0 flex-col gap-3'>
       <TerminalApiFilters
-        name={name}
-        merchant={merchant}
-        subMerchant={subMerchant}
-        terminalType={terminalType}
-        status={status}
-        onNameChange={setName}
-        onMerchantChange={(value) => {
-          setMerchant(value)
-          setPage(1)
-        }}
-        onSubChange={(value) => {
-          setSubMerchant(value)
-          setPage(1)
-        }}
-        onTypeChange={(value) => {
-          setTerminalType(value)
-          setPage(1)
-        }}
-        onStatusChange={(value) => {
-          setStatus(value)
-          setPage(1)
-        }}
-        onClear={clearFilters}
-        onSearch={() => {
-          setSearchName(name.trim())
-          setPage(1)
-        }}
+        name={list.name}
+        merchant={list.merchant}
+        subMerchant={list.subMerchant}
+        terminalType={list.terminalType}
+        status={list.status}
+        onNameChange={list.setName}
+        onMerchantChange={list.setMerchant}
+        onSubChange={list.setSubMerchant}
+        onTypeChange={list.setTerminalType}
+        onStatusChange={list.setStatus}
+        onClear={list.clear}
+        onSearch={list.search}
       />
       <CardComponent className='border border-border bg-background shadow-none'>
         <div className='mb-3 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3'>
@@ -177,10 +145,7 @@ export default function TerminalListPage(
             current: page,
             pageSize: size,
             total: query.data?.totalElements ?? 0,
-            onChange: (nextPage, nextSize) => {
-              setPage(nextSize !== size ? 1 : nextPage)
-              setSize(nextSize)
-            }
+            onChange: list.changePage
           }}
           columns={createTerminalApiColumns({
             page,

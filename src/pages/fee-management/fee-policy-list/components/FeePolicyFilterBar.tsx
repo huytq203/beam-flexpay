@@ -1,9 +1,4 @@
-import {
-  FormDatePicker,
-  FormInput,
-  FormLabelHint,
-  FormSelect
-} from '@components/form'
+import { FormDatePicker, FormInput, FormSelect } from '@components/form'
 import { BroomIcon, MagnifyingGlassIcon } from '@components/icons'
 import { ButtonComponent, FeeServiceTypeTabs } from '@components/index'
 import {
@@ -33,7 +28,6 @@ const APPLIED_TARGET_OPTIONS = [
 
 export interface FeePolicyFilterValues {
   keyword: string
-  subjectKeyword: string
   status: string
   appliedTarget: string
   bankCode: string
@@ -56,7 +50,7 @@ interface FeePolicyFilterBarProps {
   onReset: () => void
 }
 
-/** Bộ lọc dùng chung cho cả hai luồng phí; loại giao dịch là mọi loại đã duyệt được. */
+/** Bộ lọc dùng chung cho cả hai luồng phí; loại giao dịch là Tất cả loại đã duyệt được. */
 export const FeePolicyFilterBar = ({
   serviceType,
   values,
@@ -72,7 +66,6 @@ export const FeePolicyFilterBar = ({
   const syncedValues = useMemo<FeePolicyFilterValues>(
     () => ({
       keyword: values.keyword,
-      subjectKeyword: values.subjectKeyword,
       status: values.status,
       appliedTarget: values.appliedTarget,
       bankCode: values.bankCode,
@@ -98,7 +91,6 @@ export const FeePolicyFilterBar = ({
       values.beneficiaryType,
       values.feeBearer,
       values.status,
-      values.subjectKeyword,
       values.validFrom,
       values.validTo
     ]
@@ -114,7 +106,7 @@ export const FeePolicyFilterBar = ({
     )
   )
   // Lọc theo LOẠI đối tượng, không theo từng phân khúc: người vận hành muốn
-  // gom mọi chính sách cấu hình theo nhóm, tên nhóm cụ thể đã hiện ở cột.
+  // gom Tất cả chính sách cấu hình theo nhóm, tên nhóm cụ thể đã hiện ở cột.
   const appliedTargetOptions = APPLIED_TARGET_OPTIONS
   const paymentMethodOptions = serviceType
     ? [...getPaymentMethodOptions(serviceType)]
@@ -135,7 +127,6 @@ export const FeePolicyFilterBar = ({
   const handleReset = () => {
     reset({
       keyword: '',
-      subjectKeyword: '',
       status: '',
       appliedTarget: '',
       bankCode: '',
@@ -170,27 +161,13 @@ export const FeePolicyFilterBar = ({
           control={control}
           label='Tên chính sách'
           placeholder='Nhập tên chính sách'
-          className='flex flex-col col-span-2'
-        />
-        <FormInput
-          name='subjectKeyword'
-          control={control}
-          label={
-            <FormLabelHint
-              label='SĐT người dùng'
-              hint='Khớp ví riêng hoặc phân khúc người đó thuộc về'
-            />
-          }
-          placeholder='Nhập số điện thoại'
-          inputMode='tel'
-          maxLength={100}
-          className='flex flex-col col-span-1'
+          className='flex flex-col md:col-span-2 xl:col-span-3'
         />
         <FormSelect
           name='status'
           control={control}
           label='Trạng thái'
-          placeholder='Mọi trạng thái'
+          placeholder='Tất cả trạng thái'
           allowClear
           options={POLICY_STATUS_FILTER_OPTIONS}
           className='flex flex-col'
@@ -199,7 +176,7 @@ export const FeePolicyFilterBar = ({
           name='appliedTarget'
           control={control}
           label='Đối tượng áp dụng'
-          placeholder='Mọi đối tượng'
+          placeholder='Tất cả đối tượng'
           allowClear
           options={appliedTargetOptions}
           className='flex flex-col'
@@ -209,7 +186,7 @@ export const FeePolicyFilterBar = ({
           name='bankCode'
           control={control}
           label='Ngân hàng phát hành'
-          placeholder='Mọi ngân hàng phát hành'
+          placeholder='Tất cả ngân hàng phát hành'
           allowClear
           showSearch
           optionFilterProp='label'
@@ -221,7 +198,7 @@ export const FeePolicyFilterBar = ({
           name='paymentMethod'
           control={control}
           label='Phương thức giao dịch'
-          placeholder='Mọi phương thức'
+          placeholder='Tất cả phương thức'
           allowClear
           options={paymentMethodOptions}
           className='flex flex-col'

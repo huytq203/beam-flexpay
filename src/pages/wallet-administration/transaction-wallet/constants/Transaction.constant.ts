@@ -68,6 +68,7 @@ export const CONFIG_STATUS: Record<
     className: 'success-status',
     shimmerColor: 'rgba(0, 229, 160, 0.2)'
   },
+
   [StatusEnum.FAILED]: {
     label: 'Thất bại',
     className: 'danger-status',

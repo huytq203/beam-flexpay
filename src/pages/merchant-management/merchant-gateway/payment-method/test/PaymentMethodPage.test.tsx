@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { http, HttpResponse } from 'msw'
 import { server } from '@/test/mocks/server'
 import { PERMISSION } from '@/app/permissions'
@@ -8,6 +8,8 @@ import { createAppStore } from '@/app/store'
 import { savePermissions } from '@slices/authSlice'
 import { renderWithProviders } from '@/test/render'
 import PaymentMethodPage from '../pages/PaymentMethodPage'
+
+afterEach(() => sessionStorage.clear())
 
 beforeEach(() =>
   server.use(

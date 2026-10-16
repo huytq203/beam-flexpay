@@ -8,14 +8,16 @@ import { SearchUserFormData } from '../../types/UserManagement.type'
 const renderForm = (canAdd = true) => {
   const onSearch = vi.fn<(data: SearchUserFormData) => void>()
   const onAdd = vi.fn()
+  const onClear = vi.fn()
   render(
     <FormSearchUser
       onSearch={onSearch}
+      onClear={onClear}
       onAdd={onAdd}
       canAdd={canAdd}
     />
   )
-  return { onSearch, onAdd, user: userEvent.setup() }
+  return { onSearch, onAdd, onClear, user: userEvent.setup() }
 }
 
 /**
@@ -56,18 +58,30 @@ describe('FormSearchUser', () => {
     )
   })
 
-  it('reset về rỗng và tìm lại khi bấm Xóa lọc', async () => {
-    const { onSearch, user } = renderForm()
+  it('reset về rỗng và gọi onClear khi bấm Xóa lọc', async () => {
+    const { onClear, onSearch, user } = renderForm()
 
     await user.type(screen.getByLabelText('Từ khóa'), 'nguyen')
     await user.click(screen.getByRole('button', { name: /Xóa lọc/ }))
 
     expect(screen.getByLabelText('Từ khóa')).toHaveValue('')
-    expect(onSearch).toHaveBeenCalledWith({
-      keyword: '',
-      emailVerified: undefined,
-      status: undefined
-    })
+    expect(onClear).toHaveBeenCalledTimes(1)
+    expect(onSearch).not.toHaveBeenCalled()
+  })
+
+  it('hiện lại bộ lọc đang áp dụng khi quay về màn', () => {
+    render(
+      <FormSearchUser
+        defaultValues={{ keyword: 'nguyen', status: 'true' }}
+        onSearch={vi.fn()}
+        onClear={vi.fn()}
+        onAdd={vi.fn()}
+        canAdd={false}
+      />
+    )
+
+    expect(screen.getByLabelText('Từ khóa')).toHaveValue('nguyen')
+    expect(screen.getByTitle('Hoạt động')).toBeInTheDocument()
   })
 
   it('gọi onAdd khi bấm Thêm mới, không submit form', async () => {

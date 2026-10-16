@@ -3,17 +3,28 @@ import {
   useListMerchantGroupsQuery,
   useListMerchantUsersQuery
 } from '@/app/services/merchantAccessApi'
+import { useUrlFilters } from '@hooks/useUrlFilters'
 import { toMerchantRole, toMerchantUser } from '../dto/merchantAccess.api'
 import {
   EMPTY_FILTERS,
+  USER_FILTER_KEYS,
+  USER_SENSITIVE_KEYS,
+  type UserFilterKey,
   type UserFilters
 } from '../constants/merchantUserList.constants'
+import {
+  fromUserUrlFilters,
+  toUserUrlFilters
+} from '../utils/merchantUserFilters.utils'
 
 export function useMerchantUserListData() {
-  const [draft, setDraft] = useState<UserFilters>(EMPTY_FILTERS)
-  const [filters, setFilters] = useState<UserFilters>(EMPTY_FILTERS)
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
+  const url = useUrlFilters<UserFilterKey>({
+    keys: USER_FILTER_KEYS,
+    sensitiveKeys: USER_SENSITIVE_KEYS
+  })
+  const filters = fromUserUrlFilters(url.filters)
+  const { page, size: pageSize } = url
+  const [draft, setDraft] = useState<UserFilters>(filters)
   const usersQuery = useListMerchantUsersQuery({
     page,
     size: pageSize,
@@ -56,22 +67,18 @@ export function useMerchantUserListData() {
     [users, filters]
   )
 
-  const apply = (): void => {
-    setFilters({ ...draft, query: draft.query.trim() })
-    setPage(1)
-  }
+  const apply = (): void => url.applyFilters(toUserUrlFilters(draft))
   const reset = (): void => {
     setDraft(EMPTY_FILTERS)
-    setFilters(EMPTY_FILTERS)
-    setPage(1)
+    url.clearFilters()
   }
   return {
     draft,
     setDraft,
     page,
-    setPage,
+    setPage: url.setPage,
     pageSize,
-    setPageSize,
+    setPageSize: url.setPageSize,
     usersQuery,
     users,
     roles,

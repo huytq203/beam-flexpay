@@ -168,6 +168,8 @@ export const getColumn = ({
       align: 'left',
       width: 150,
       render: (_, record) => {
+        // Ví hệ thống không gắn tài khoản đăng nhập nào, nên không có trạng thái đăng nhập để hiện.
+        const isSystem = record.ownerType === 'SYSTEM'
         const loginState = getLoginState(record.loginLocked)
         return (
           <div className='flex flex-col items-start gap-1.5'>
@@ -176,7 +178,7 @@ export const getColumn = ({
               status={record.ekycStatus ?? 'NOT_VERIFIED'}
               config={EKYC_STATUS_CONFIG}
             />
-            {loginState !== 'LOGIN_ALLOWED' && (
+            {!isSystem && loginState !== 'LOGIN_ALLOWED' && (
               <StatusBadge
                 status={loginState}
                 config={LOGIN_STATE_CONFIG}

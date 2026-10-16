@@ -10,31 +10,24 @@ import {
   TransactionType
 } from '../constants/Transaction.constant'
 import { FormSearchValues } from '../types/Transaction.type'
+import {
+  REFUND_TRANSACTION_TYPE,
+  type TransactionUrlFilters
+} from '../constants/transactionFilter.constants'
+import { toTransactionFormValues } from '../utils/transactionUrlFilters'
 import * as Icons from '@components/icons'
 interface props {
+  /** Bộ lọc đang áp dụng (URL/bản sao) để ô nhập hiện lại khi quay về màn. */
+  filters: TransactionUrlFilters
   handleSearch: (value: Partial<FormSearchValues>) => void
+  onReset: () => void
   /** Trạng thái đang lọc từ dải tổng quan, đổ ngược vào ô select bên dưới. */
   status?: string
 }
-/** Khoá loại giao dịch hoàn tiền trong `TransactionType`. */
-const REFUND_TRANSACTION_TYPE = 'REVERSAL'
 
-const FormSearch = ({ handleSearch, status }: props) => {
+const FormSearch = ({ filters, handleSearch, onReset, status }: props) => {
   const formSearch = useForm<FormSearchValues>({
-    defaultValues: {
-      status: '',
-      fromDate: '',
-      toDate: '',
-      transactionType: '',
-      senderUsername: '',
-      receiverUsername: '',
-      bankCode: '',
-      paymentMethod: '',
-      transactionCode: '',
-      hasRefund: '',
-      minAmount: undefined,
-      maxAmount: undefined
-    }
+    defaultValues: toTransactionFormValues(filters)
   })
   React.useEffect(() => {
     formSearch.setValue('status', status ?? '')
@@ -52,8 +45,8 @@ const FormSearch = ({ handleSearch, status }: props) => {
   }
 
   const handleReset = () => {
-    formSearch.reset()
-    handleSearch({})
+    formSearch.reset(toTransactionFormValues({}))
+    onReset()
   }
   return (
     <div>

@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import {
   useGetGatewayPaymentMethodsQuery,
   type GatewayMerchant
 } from '@/app/services/merchantGatewayApi'
+import { useUrlFilters } from '@hooks/useUrlFilters'
 import { PaymentMethodEditor } from '../components/PaymentMethodEditor'
 import { PaymentMerchantPickerDialog } from '../components/PaymentMerchantPickerDialog'
 import {
@@ -11,34 +12,28 @@ import {
 } from '../components/PaymentMethodFilters'
 import { PaymentMethodListCard } from '../components/PaymentMethodListCard'
 
-const emptyFilters: PaymentMethodFilterValues = {
-  name: '',
-  code: '',
-  level: '',
-  status: ''
-}
+const FILTER_KEYS = ['name', 'code', 'level', 'status'] as const
 
 const PaymentMethodPage = () => {
-  const [page, setPage] = useState(1)
-  const [size, setSize] = useState(10)
+  const url = useUrlFilters({ keys: FILTER_KEYS })
+  const { page, size } = url
   const [pickerOpen, setPickerOpen] = useState(false)
   const [editing, setEditing] = useState<{ id: string; name: string }>()
-  const [filters, setFilters] =
-    useState<PaymentMethodFilterValues>(emptyFilters)
+  const filters: PaymentMethodFilterValues = {
+    name: url.filters.name ?? '',
+    code: url.filters.code ?? '',
+    level: url.filters.level ?? '',
+    status: url.filters.status ?? ''
+  }
   const query = useGetGatewayPaymentMethodsQuery({ page, size })
-  const rows = useMemo(
-    () =>
-      (query.data?.content ?? []).filter((row) => {
-        const name = filters.name.trim().toLocaleLowerCase('vi')
-        const code = filters.code.trim().toLocaleLowerCase('vi')
-        return (
-          (!name || row.merchantName.toLocaleLowerCase('vi').includes(name)) &&
-          (!code || row.merchantCode.toLocaleLowerCase('vi').includes(code)) &&
-          (!filters.level || row.appliedLevel === filters.level) &&
-          (!filters.status || row.active === (filters.status === 'ACTIVE'))
-        )
-      }),
-    [query.data?.content, filters]
+  const name = filters.name.trim().toLocaleLowerCase('vi')
+  const code = filters.code.trim().toLocaleLowerCase('vi')
+  const rows = (query.data?.content ?? []).filter(
+    (row) =>
+      (!name || row.merchantName.toLocaleLowerCase('vi').includes(name)) &&
+      (!code || row.merchantCode.toLocaleLowerCase('vi').includes(code)) &&
+      (!filters.level || row.appliedLevel === filters.level) &&
+      (!filters.status || row.active === (filters.status === 'ACTIVE'))
   )
   const editFromTable = (merchantId: string) => {
     const row = query.data?.content.find(
@@ -63,7 +58,11 @@ const PaymentMethodPage = () => {
           </p>
         </div>
       </div>
-      <PaymentMethodFilters onSearch={setFilters} />
+      <PaymentMethodFilters
+        initialValues={filters}
+        onSearch={url.applyFilters}
+        onClear={url.clearFilters}
+      />
       <PaymentMethodListCard
         rows={rows}
         total={query.data?.totalElements ?? 0}
@@ -73,8 +72,8 @@ const PaymentMethodPage = () => {
         error={query.isError}
         onRefresh={() => void query.refetch()}
         onPageChange={(nextPage, nextSize) => {
-          setPage(nextSize !== size ? 1 : nextPage)
-          setSize(nextSize)
+          if (nextSize !== size) url.setPageSize(nextSize)
+          else url.setPage(nextPage)
         }}
         onEdit={editFromTable}
         onCreate={() => setPickerOpen(true)}

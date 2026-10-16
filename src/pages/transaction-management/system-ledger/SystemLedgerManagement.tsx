@@ -17,11 +17,12 @@ const SystemLedgerManagement = () => {
     dataSource,
     totalElements,
     page,
-    setPage,
     pageSize,
-    setPageSize,
+    handleChangePage,
+    filter,
     navigate,
     handleSearch,
+    clearFilters,
     summary,
     activeDirection,
     handleSummaryDirectionChange,
@@ -43,7 +44,10 @@ const SystemLedgerManagement = () => {
       <CardComponent
         content={
           <FormSearch
+            key={JSON.stringify(filter)}
+            defaultValues={filter}
             handleSearch={handleSearch}
+            onReset={clearFilters}
             direction={activeDirection}
           />
         }
@@ -98,10 +102,7 @@ const SystemLedgerManagement = () => {
                 showSizeChanger: true,
                 pageSize,
                 total: totalElements,
-                onChange: (page, pageSize) => {
-                  setPage(page)
-                  setPageSize(pageSize)
-                },
+                onChange: handleChangePage,
                 showTotal: (total, range) =>
                   `Hiển thị ${range[0]}-${range[1]}/ ${total} Bản ghi`
               }}

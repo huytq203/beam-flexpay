@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useUrlFilters } from '@hooks/useUrlFilters'
 import { useGetWalletLimitPoliciesQuery } from '@services/apiWalletLimit'
 import { WALLET_LIMIT_DEFAULT_PAGE_SIZE } from '../constants/walletLimit.constants'
 import {
@@ -6,39 +7,44 @@ import {
   type WalletLimitListFilters
 } from '../types/walletLimitList.types'
 import { buildWalletLimitListParams } from '../utils/walletLimit.listParams'
+import {
+  toWalletLimitFilters,
+  toWalletLimitUrlFilters,
+  WALLET_LIMIT_FILTER_KEYS,
+  WALLET_LIMIT_SENSITIVE_KEYS,
+  type WalletLimitFilterKey
+} from '../utils/walletLimit.urlFilters'
 
-// Bộ lọc nháp chỉ áp dụng khi bấm Tìm kiếm.
+/**
+ * Bộ lọc đang áp, trang và cỡ trang sống trên URL (kèm bản sao sessionStorage)
+ * nên quay lại màn vẫn ra đúng bảng cũ. Bộ lọc nháp chỉ áp khi bấm Tìm kiếm.
+ */
 export const useWalletLimitList = () => {
-  const [draft, setDraft] = useState<WalletLimitListFilters>(
-    EMPTY_WALLET_LIMIT_FILTERS
-  )
-  const [filters, setFilters] = useState<WalletLimitListFilters>(
-    EMPTY_WALLET_LIMIT_FILTERS
-  )
-  const [page, setPage] = useState(1)
-  const [size, setSize] = useState(WALLET_LIMIT_DEFAULT_PAGE_SIZE)
+  const url = useUrlFilters<WalletLimitFilterKey>({
+    keys: WALLET_LIMIT_FILTER_KEYS,
+    sensitiveKeys: WALLET_LIMIT_SENSITIVE_KEYS,
+    defaultSize: WALLET_LIMIT_DEFAULT_PAGE_SIZE
+  })
+  const filters = toWalletLimitFilters(url.filters)
+  const [draft, setDraft] = useState<WalletLimitListFilters>(filters)
   const query = useGetWalletLimitPoliciesQuery(
-    buildWalletLimitListParams(filters, page, size)
+    buildWalletLimitListParams(filters, url.page, url.size)
   )
 
   return {
     draft,
     setDraft,
-    page,
-    size,
+    page: url.page,
+    size: url.size,
     query,
-    apply: () => {
-      setFilters(draft)
-      setPage(1)
-    },
+    apply: () => url.applyFilters(toWalletLimitUrlFilters(draft)),
     reset: () => {
       setDraft(EMPTY_WALLET_LIMIT_FILTERS)
-      setFilters(EMPTY_WALLET_LIMIT_FILTERS)
-      setPage(1)
+      url.clearFilters()
     },
     changePage: (nextPage: number, nextSize: number) => {
-      setPage(nextSize !== size ? 1 : nextPage)
-      setSize(nextSize)
+      if (nextSize !== url.size) url.setPageSize(nextSize)
+      else url.setPage(nextPage)
     }
   }
 }

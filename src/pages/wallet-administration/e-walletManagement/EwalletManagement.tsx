@@ -23,6 +23,8 @@ import DialogFreezeWallet from './components/detail-infor/Personal/components/Di
 
 const EwalletManagement = () => {
   const {
+    filters,
+    clearFilters,
     column,
     dataSource,
     getAccount,
@@ -52,7 +54,11 @@ const EwalletManagement = () => {
             />
           ) : (
             <>
-              <FormSearch handleSearch={handleSearch} />
+              <FormSearch
+                filters={filters}
+                handleSearch={handleSearch}
+                onReset={clearFilters}
+              />
             </>
           )
         }
@@ -83,8 +89,9 @@ const EwalletManagement = () => {
                   pageSize: size,
                   total: getAccount?.totalElements,
                   onChange: (page, pageSize) => {
-                    setPage(page)
-                    setPageSize(pageSize)
+                    // Hai setter cùng ghi URL từ một bản cũ: chỉ gọi đúng cái thay đổi.
+                    if (pageSize !== size) setPageSize(pageSize)
+                    else setPage(page)
                   }
                 }}
               />

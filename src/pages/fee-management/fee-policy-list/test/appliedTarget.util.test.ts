@@ -76,7 +76,9 @@ describe('helper đối tượng áp dụng', () => {
       ]
     }
 
-    expect(getAppliedTargetLabel(target, customerSegmentNames)).toBe('1 ví riêng')
+    expect(getAppliedTargetLabel(target, customerSegmentNames)).toBe(
+      '1 ví riêng'
+    )
   })
 
   it('giữ nhãn theo số ví khi có nhiều chủ thể', () => {
@@ -100,7 +102,9 @@ describe('helper đối tượng áp dụng', () => {
       ]
     }
 
-    expect(getAppliedTargetLabel(target, customerSegmentNames)).toBe('2 ví riêng')
+    expect(getAppliedTargetLabel(target, customerSegmentNames)).toBe(
+      '2 ví riêng'
+    )
   })
 
   it('dựng các dòng USER, fallback subjectId, MERCHANT và phần còn lại', () => {
