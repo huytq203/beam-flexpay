@@ -103,28 +103,53 @@ describe('BusinessComfirm', () => {
         data={{
           ...profile,
           attempts: [
-            { ...attempt, sessionId: 'latest', fullName: 'NGUYỄN THU HÀ TRANG', idNumber: '001195009737',
-              features: 'Sẹo chấm C: 0,5cm dưới trước cánh mũi trái', documentProfileStatus: 'VERIFIED',
-              documentOwnerUsername: '0962341913', documentOwnedByOtherAccount: true },
+            {
+              ...attempt,
+              sessionId: 'latest',
+              fullName: 'NGUYỄN THU HÀ TRANG',
+              idNumber: '001195009737',
+              features: 'Sẹo chấm C: 0,5cm dưới trước cánh mũi trái',
+              documentProfileStatus: 'VERIFIED',
+              documentOwnerUsername: '0962341913',
+              documentOwnedByOtherAccount: true
+            },
             olderAttempt
           ]
         }}
       />
     )
 
-    expect(screen.queryByText('Sẹo chấm C: 0,5cm dưới trước cánh mũi trái')).not.toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Xem chi tiết lần 2' }))
+    expect(
+      screen.queryByText('Sẹo chấm C: 0,5cm dưới trước cánh mũi trái')
+    ).not.toBeInTheDocument()
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Xem chi tiết phiên áp dụng' })
+    )
 
-    expect(screen.getByRole('button', { name: 'Thu gọn lần 2' })).toHaveAttribute('aria-expanded', 'true')
-    expect(screen.getByText('Sẹo chấm C: 0,5cm dưới trước cánh mũi trái')).toBeInTheDocument()
-    expect(screen.getByText('Đã xác thực · 0962341913 (tài khoản khác)')).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Thu gọn phiên áp dụng' })
+    ).toHaveAttribute('aria-expanded', 'true')
+    expect(
+      screen.getByText('Sẹo chấm C: 0,5cm dưới trước cánh mũi trái')
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText('Đã xác thực · 0962341913 (tài khoản khác)')
+    ).toBeInTheDocument()
   })
 
   it('giữ dữ liệu danh sách và cho phép thử lại khi API detail lỗi', () => {
     const onRetry = vi.fn()
-    render(<BusinessComfirm data={profile} isError onRetry={onRetry} />)
+    render(
+      <BusinessComfirm
+        data={profile}
+        isError
+        onRetry={onRetry}
+      />
+    )
 
-    expect(screen.getByText(/Đang hiển thị dữ liệu từ danh sách/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Đang hiển thị dữ liệu từ danh sách/)
+    ).toBeInTheDocument()
     screen.getByRole('button', { name: 'Thử lại' }).click()
     expect(onRetry).toHaveBeenCalledOnce()
   })
@@ -169,6 +194,8 @@ describe('BusinessComfirm', () => {
     expect(
       await screen.findByRole('button', { name: 'Duyệt EKYC' })
     ).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Từ chối EKYC' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Từ chối EKYC' })
+    ).toBeInTheDocument()
   })
 })

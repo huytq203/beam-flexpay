@@ -4,94 +4,19 @@ import {
   ClockIcon,
   WarningIcon
 } from '@components/icons'
-import { genderMap } from '../types/ConfirmEKYC.type'
 import React from 'react'
 import type { ContentEKYC } from '@type/apiResponseEKYC'
 import {
   HISTORY_STATUS_CLASS,
   STATUS_LABEL,
-  STEP_LABEL,
-  DOCUMENT_PROFILE_LABEL
+  STEP_LABEL
 } from '../constants/ekycHistory.constants'
-import {
-  formatDateTime,
-  formatCode,
-  formatDate,
-  shortIssuePlace
-} from '../utils/ekycFormat'
-
-// Toàn bộ giấy tờ đọc được ở CHÍNH lần đó (OCR của phiên), không phải hồ sơ đã chốt.
-const AttemptDetail = ({ attempt }: { attempt: ContentEKYC }) => {
-  const fields = [
-    { label: 'Họ và tên', value: attempt.fullName },
-    { label: 'Số CCCD', value: attempt.idNumber },
-    { label: 'Số CMND cũ', value: attempt.oldIdNumber || undefined },
-    { label: 'Loại giấy tờ', value: attempt.cardType },
-    {
-      label: 'Ngày sinh',
-      value: attempt.dateOfBirth ? formatDate(attempt.dateOfBirth) : undefined
-    },
-    {
-      label: 'Giới tính',
-      value: attempt.gender
-        ? (genderMap[attempt.gender] ?? attempt.gender)
-        : undefined
-    },
-    { label: 'Quốc tịch', value: attempt.nationality },
-    { label: 'Nơi sinh', value: attempt.placeOfBirth },
-    {
-      label: 'Ngày cấp',
-      value: attempt.issueDate ? formatDate(attempt.issueDate) : undefined
-    },
-    { label: 'Nơi cấp', value: shortIssuePlace(attempt.issuePlace) },
-    {
-      label: 'Ngày hết hạn',
-      value: attempt.expiryDate ? formatDate(attempt.expiryDate) : undefined
-    },
-    { label: 'Tạo lúc', value: formatDateTime(attempt.createdAt) },
-    { label: 'Quê quán', value: attempt.placeOfOrigin, wide: true },
-    { label: 'Nơi thường trú', value: attempt.permanentAddress, wide: true },
-    { label: 'Đặc điểm nhận dạng', value: attempt.features, wide: true },
-    {
-      label: 'Hồ sơ đang giữ số CCCD này',
-      value: attempt.documentProfileStatus
-        ? `${DOCUMENT_PROFILE_LABEL[attempt.documentProfileStatus] ?? attempt.documentProfileStatus}` +
-          (attempt.documentOwnerUsername
-            ? ` · ${attempt.documentOwnerUsername}`
-            : '') +
-          (attempt.documentOwnedByOtherAccount ? ' (tài khoản khác)' : '')
-        : 'Chưa có hồ sơ nào',
-      wide: true
-    }
-  ]
-
-  if (!attempt.idNumber && !attempt.fullName) {
-    return (
-      <p className='text-xs text-slate-500'>
-        Lần này chưa qua bước OCR nên chưa đọc được giấy tờ.
-      </p>
-    )
-  }
-
-  return (
-    <dl className='grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4'>
-      {fields.map((field) => (
-        <div
-          key={field.label}
-          className={`min-w-0 ${field.wide ? 'col-span-2' : ''}`}
-        >
-          <dt className='text-xs text-slate-500'>{field.label}</dt>
-          <dd className='mt-0.5 whitespace-pre-line break-words text-sm font-medium text-slate-900'>
-            {field.value || '—'}
-          </dd>
-        </div>
-      ))}
-    </dl>
-  )
-}
+import { formatDateTime, formatCode } from '../utils/ekycFormat'
+import { findAppliedAttempt, isStalledAttempt } from '../utils/ekycAttempt'
+import { AttemptDetail } from './EkycAttemptDetail'
 
 const HISTORY_COLUMNS = [
-  'Lần',
+  'Phiên',
   'Trạng thái / bước',
   'Thông tin cá nhân',
   'Bắt đầu',
@@ -100,45 +25,52 @@ const HISTORY_COLUMNS = [
   'Face score'
 ]
 
-const AttemptStatusCell = ({ attempt }: { attempt: ContentEKYC }) => (
-  <td className='px-3 py-3'>
-    <span
-      className={`inline-flex rounded-sm border px-2 py-0.5 text-xs font-semibold ${HISTORY_STATUS_CLASS[attempt.status] ?? 'border-slate-300 bg-slate-50 text-slate-700'}`}
-    >
-      {STATUS_LABEL[attempt.status] ?? formatCode(attempt.status)}
-    </span>
-    <p className='mt-1 text-xs text-slate-600'>
-      {attempt.currentStep
-        ? (STEP_LABEL[attempt.currentStep] ?? formatCode(attempt.currentStep))
-        : 'Không có bước xử lý'}
-    </p>
-    <p className='mt-1 max-w-64 break-all text-xs text-slate-500'>
-      Session: {attempt.sessionId ?? attempt.ekycSessionId ?? '—'}
-    </p>
-    {attempt.documentOwnedByOtherAccount && (
-      <p className='mt-2 flex items-center gap-1 text-xs font-medium text-amber-700'>
-        <WarningIcon
-          size={14}
-          className='shrink-0'
-          aria-hidden
-        />
-        CCCD đã xác thực ở tài khoản khác
-        {attempt.documentOwnerUsername
-          ? ` (${attempt.documentOwnerUsername})`
-          : ''}
+const AttemptStatusCell = ({ attempt }: { attempt: ContentEKYC }) => {
+  const isStalled = isStalledAttempt(attempt)
+  const status = isStalled ? 'EXPIRED' : attempt.status
+  const step = attempt.currentStep
+    ? (STEP_LABEL[attempt.currentStep] ?? formatCode(attempt.currentStep))
+    : null
+  return (
+    <td className='px-3 py-3'>
+      <span
+        className={`inline-flex rounded-sm border px-2 py-0.5 text-xs font-semibold ${HISTORY_STATUS_CLASS[status] ?? 'border-slate-300 bg-slate-50 text-slate-700'}`}
+      >
+        {STATUS_LABEL[status] ?? formatCode(status)}
+      </span>
+      <p className='mt-1 text-xs text-slate-600'>
+        {step && isStalled
+          ? `Dừng ở: ${step}`
+          : (step ?? 'Không có bước xử lý')}
       </p>
-    )}
-    {attempt.invalidationReason && (
-      <div className='mt-2 text-xs text-red-700'>
-        <p>Lý do huỷ: {attempt.invalidationReason}</p>
-        <p>
-          {formatDateTime(attempt.invalidatedAt)}
-          {attempt.invalidatedBy ? ` · ${attempt.invalidatedBy}` : ''}
+      <p className='mt-1 max-w-64 break-all text-xs text-slate-500'>
+        Session: {attempt.sessionId ?? attempt.ekycSessionId ?? '—'}
+      </p>
+      {attempt.documentOwnedByOtherAccount && (
+        <p className='mt-2 flex items-center gap-1 text-xs font-medium text-amber-700'>
+          <WarningIcon
+            size={14}
+            className='shrink-0'
+            aria-hidden
+          />
+          CCCD đã xác thực ở tài khoản khác
+          {attempt.documentOwnerUsername
+            ? ` (${attempt.documentOwnerUsername})`
+            : ''}
         </p>
-      </div>
-    )}
-  </td>
-)
+      )}
+      {attempt.invalidationReason && (
+        <div className='mt-2 text-xs text-red-700'>
+          <p>Lý do huỷ: {attempt.invalidationReason}</p>
+          <p>
+            {formatDateTime(attempt.invalidatedAt)}
+            {attempt.invalidatedBy ? ` · ${attempt.invalidatedBy}` : ''}
+          </p>
+        </div>
+      )}
+    </td>
+  )
+}
 
 export const ProcessingHistory = ({
   attempts,
@@ -167,6 +99,7 @@ export const ProcessingHistory = ({
     )
   }
 
+  const appliedAttempt = findAppliedAttempt(attempts)
   const toggle = (key: string) =>
     setExpanded((prev) => ({ ...prev, [key]: !prev[key] }))
 
@@ -196,7 +129,10 @@ export const ProcessingHistory = ({
             attempt.ekycSessionId ??
             `${attempt.createdAt}-${index}`
           const isOpen = !!expanded[key]
-          const attemptNo = attempts.length - index
+          const isApplied = attempt === appliedAttempt
+          const attemptLabel = isApplied
+            ? 'phiên áp dụng'
+            : `lần ${attempts.length - index}`
           return (
             <tbody
               key={key}
@@ -204,38 +140,42 @@ export const ProcessingHistory = ({
             >
               <tr className='align-top'>
                 <td className='px-3 py-3 font-semibold text-slate-900'>
-                  <button
-                    type='button'
-                    onClick={() => toggle(key)}
-                    aria-expanded={isOpen}
-                    aria-label={`${isOpen ? 'Thu gọn' : 'Xem chi tiết'} lần ${attemptNo}`}
-                    className='inline-flex items-center gap-1 rounded-sm px-1 py-0.5 hover:bg-slate-100'
-                  >
-                    {isOpen ? (
-                      <CaretDownIcon
-                        size={14}
-                        aria-hidden
-                      />
-                    ) : (
-                      <CaretRightIcon
-                        size={14}
-                        aria-hidden
-                      />
-                    )}
-                    #{attemptNo}
-                  </button>
-                  {onInspect &&
-                    (attempt.sessionId || attempt.ekycSessionId) && (
-                      <button
-                        type='button'
-                        className='ml-2 rounded-sm px-2 py-1 text-xs font-medium text-primary-foreground underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-primary'
-                        onClick={() =>
-                          onInspect(attempt.sessionId ?? attempt.ekycSessionId!)
-                        }
-                      >
-                        Xem phiên
-                      </button>
-                    )}
+                  <div className='flex flex-col items-start gap-1'>
+                    <button
+                      type='button'
+                      onClick={() => toggle(key)}
+                      aria-expanded={isOpen}
+                      aria-label={`${isOpen ? 'Thu gọn' : 'Xem chi tiết'} ${attemptLabel}`}
+                      className='inline-flex items-center gap-1 whitespace-nowrap rounded-sm px-1 py-0.5 hover:bg-slate-100'
+                    >
+                      {isOpen ? (
+                        <CaretDownIcon
+                          size={14}
+                          aria-hidden
+                        />
+                      ) : (
+                        <CaretRightIcon
+                          size={14}
+                          aria-hidden
+                        />
+                      )}
+                      {isApplied ? 'Áp dụng' : `#${attempts.length - index}`}
+                    </button>
+                    {onInspect &&
+                      (attempt.sessionId || attempt.ekycSessionId) && (
+                        <button
+                          type='button'
+                          className='ml-4 whitespace-nowrap rounded-sm px-1 py-0.5 text-xs font-medium text-primary-foreground underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-primary'
+                          onClick={() =>
+                            onInspect(
+                              attempt.sessionId ?? attempt.ekycSessionId!
+                            )
+                          }
+                        >
+                          Xem phiên
+                        </button>
+                      )}
+                  </div>
                 </td>
                 <AttemptStatusCell attempt={attempt} />
                 <td className='px-3 py-3'>
