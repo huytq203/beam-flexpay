@@ -26,7 +26,11 @@ interface CustomerInfoCardProps {
 const CustomerInfoCard = ({ ekyc }: CustomerInfoCardProps) => {
   const rows = useMemo(
     () => [
-      { label: 'Họ và tên', value: text(ekyc?.fullName), emphasis: 'strong' as const },
+      {
+        label: 'Họ và tên',
+        value: text(ekyc?.fullName),
+        emphasis: 'strong' as const
+      },
       { label: 'Số điện thoại', value: text(ekyc?.username) },
       { label: 'Email', value: text(ekyc?.email) },
       { label: 'Nghề nghiệp', value: text(ekyc?.occupation) },
@@ -48,25 +52,42 @@ const CustomerInfoCard = ({ ekyc }: CustomerInfoCardProps) => {
 
   return (
     <>
-      <InfoSectionHeader icon={<UserIcon weight='fill' size={20} />} title='Thông tin khách hàng' />
+      <InfoSectionHeader
+        icon={
+          <UserIcon
+            weight='fill'
+            size={20}
+          />
+        }
+        title='Thông tin khách hàng'
+      />
       <InfoDivider />
 
       <InfoList>
         {rows.map((row) => (
-          <InfoRow key={row.label} label={row.label} value={row.value} emphasis={row.emphasis} />
+          <InfoRow
+            key={row.label}
+            label={row.label}
+            value={row.value}
+            emphasis={row.emphasis}
+          />
         ))}
       </InfoList>
 
       <InfoDivider />
       <div>
-        <p className='text-muted-foreground'>Địa chỉ thường trú</p>
-        <p className='font-medium whitespace-pre-line text-foreground'>{text(ekyc?.placeOfOrigin)}</p>
+        <p className='text-muted-foreground'>Địa chỉ trên CCCD</p>
+        <p className='font-medium whitespace-pre-line text-foreground'>
+          {text(ekyc?.placeOfOrigin)}
+        </p>
       </div>
 
       <InfoDivider />
       <div>
-        <p className='text-muted-foreground'>Địa chỉ liên hệ</p>
-        <p className='font-medium whitespace-pre-line text-foreground'>{text(ekyc?.currentAddress)}</p>
+        <p className='text-muted-foreground'>Địa chỉ thường trú</p>
+        <p className='font-medium whitespace-pre-line text-foreground'>
+          {text(ekyc?.currentAddress)}
+        </p>
       </div>
     </>
   )

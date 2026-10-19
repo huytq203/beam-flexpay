@@ -33,10 +33,16 @@ export interface UnifiedContentJournal extends UnifiedRefundFields {
   amount: number
   grossAmount: number
   feeAmount: number
+  /** Bên chịu phí (SENDER | RECEIVER | BOTH); thiếu thì suy theo loại giao dịch. */
+  feeBearer?: string | null
+  senderFeeAmount?: number | null
+  receiverFeeAmount?: number | null
   currency: string
   feeCalculationId?: string | null
   paymentMethod: string
   bankCode: string | null
+  /** Cổng trung gian (NCC), ví dụ NAPAS; null = liên kết trực tiếp hoặc nội ví. */
+  providerCode?: string | null
   bankRefId: string | null
   maskedAccount?: string | null
   transactionId: string | null
@@ -70,6 +76,8 @@ export interface UserFeeBreakdownItem {
   baseValue: number | null
   percentageFee: number | null
   calculatedFee: number
+  /** Bên trả cấu phần (USER/SENDER = người chuyển, RECEIVER = người nhận). */
+  payerType?: string | null
 }
 
 export interface TransactionProfit {
@@ -96,9 +104,47 @@ export interface TransactionCustomer {
   ekycStatus: string | null
 }
 
+/** Một cấu phần phí từ fee service (phí đầu ra hoặc phí đầu vào NCC). */
+export interface TransactionFeeComponent {
+  componentType: string | null
+  label: string | null
+  payerType: string | null
+  percentage: number | null
+  fixedAmount: number | null
+  baseValue: number | null
+  amount: number | null
+  formula: string | null
+}
+
+/** Phí theo từng bên chịu phí; payerType là SENDER hoặc RECEIVER. */
+export interface TransactionFeeSide {
+  payerType: string | null
+  payerLabel: string | null
+  amount: number
+  formula: string
+}
+
+/**
+ * Khối `fee` của detail 360: công thức phí đã áp (vd "Phí 0,5% + 200 đ + VAT 8%") và phí đầu vào NCC,
+ * wallet-core đọc từ fee service theo feeCalculationId. null khi không có phí hoặc fee service lỗi.
+ */
+export interface TransactionFeeDetail {
+  feeCalculationId: string | null
+  /** Mã đối soát dễ đọc của báo giá phí, ví dụ FF26BH44R; null khi fee bản cũ chưa trả. */
+  feeCode?: string | null
+  policyName: string | null
+  totalFee: number | null
+  formula: string | null
+  sides: TransactionFeeSide[]
+  components: TransactionFeeComponent[]
+  totalInputCost: number | null
+  inputCosts: TransactionFeeComponent[]
+}
+
 export interface TransactionDetail360 {
   transaction: UnifiedContentJournal
   profit?: TransactionProfit | null
+  fee?: TransactionFeeDetail | null
   moneyFlow: MoneyFlowEntry[]
   customer?: TransactionCustomer | null
 }

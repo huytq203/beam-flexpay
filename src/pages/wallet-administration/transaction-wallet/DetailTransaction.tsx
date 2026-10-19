@@ -19,6 +19,7 @@ const DetailTransaction = () => {
   const {
     getTransactionById,
     profit,
+    fee,
     moneyFlow,
     customer,
     isLoading,
@@ -30,6 +31,8 @@ const DetailTransaction = () => {
   const column = Column(getTransactionById?.currency)
   const currency = getTransactionById?.currency ?? 'VND'
   const grossProfit = profit?.grossProfit ?? getTransactionById?.feeAmount
+  const providerCostAvailable =
+    fee?.totalInputCost != null || !!profit?.providerCostAvailable
   const grossProfitLabel =
     profit?.grossProfitLabel ?? 'Lợi nhuận gộp (chưa trừ chi phí nhà cung cấp)'
 
@@ -77,13 +80,21 @@ const DetailTransaction = () => {
 
       <div className='grid grid-cols-1 items-start gap-3 lg:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]'>
         <div className='flex min-w-0 flex-col gap-3'>
-          <CardComponent content={<CommonInfo data={getTransactionById} />} />
+          <CardComponent
+            content={
+              <CommonInfo
+                data={getTransactionById}
+                feeCode={fee?.feeCode}
+              />
+            }
+          />
 
           <CardComponent
             content={
               <UserFees
                 data={getTransactionById}
                 profit={profit}
+                fee={fee}
               />
             }
           />
@@ -126,6 +137,7 @@ const DetailTransaction = () => {
               <FeeNCC
                 data={getTransactionById}
                 profit={profit}
+                fee={fee}
               />
             }
           />
@@ -140,7 +152,7 @@ const DetailTransaction = () => {
                     position: 'after'
                   })}
             </p>
-            {!profit?.providerCostAvailable && (
+            {!providerCostAvailable && (
               <p className='mt-1 text-sm text-blue-800'>
                 Chưa có dữ liệu chi phí nhà cung cấp.
               </p>

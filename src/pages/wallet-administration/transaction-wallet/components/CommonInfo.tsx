@@ -21,9 +21,11 @@ import {
 
 interface CommonInfoProps {
   data?: UnifiedContentJournal
+  /** Mã đối soát của báo giá phí (FF26BH44R), lấy từ khối fee của detail 360. */
+  feeCode?: string | null
 }
 
-const CommonInfo = ({ data }: CommonInfoProps) => {
+const CommonInfo = ({ data, feeCode }: CommonInfoProps) => {
   const STATUS_CLASS: Record<string, string> = {
     PENDING: 'text-blue-600 border border-blue-500 font-medium bg-blue-50',
     POSTED: 'text-green-700 border border-green-500 font-medium bg-green-50',
@@ -82,6 +84,12 @@ const CommonInfo = ({ data }: CommonInfoProps) => {
           <CopyableText
             label='Fee calculation ID:'
             value={data?.feeCalculationId ?? '--'}
+          />
+        </div>
+        <div className='col-span-1'>
+          <CopyableText
+            label='Mã phí:'
+            value={feeCode ?? '--'}
           />
         </div>
         <div className='col-span-1'>

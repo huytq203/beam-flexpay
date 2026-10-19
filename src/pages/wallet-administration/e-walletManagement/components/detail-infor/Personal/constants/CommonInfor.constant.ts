@@ -132,7 +132,7 @@ export const SALARY_ADVANCE_STATE_CONFIG: Record<
     className: 'success-status'
   },
   [SalaryAdvanceStateEnum.NOT_LINKED]: {
-    label: 'Chưa liên kết',
+    label: 'Đang tắt',
     className: 'normal-status'
   }
 } as const
@@ -146,5 +146,5 @@ export const FACE_MATCH_THRESHOLD = {
 export const EKYC_DOCUMENT_SLOTS = [
   { key: 'FRONT', boxLabel: 'Mặt trước', caption: 'CCCD Trước' },
   { key: 'BACK', boxLabel: 'Mặt sau', caption: 'CCCD Sau' },
-  { key: 'PORTRAIT', boxLabel: 'Chân dung', caption: 'Face Match' }
+  { key: 'FACE_FAR', boxLabel: 'Chân dung', caption: 'Chân dung' }
 ] as const

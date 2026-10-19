@@ -8,7 +8,7 @@ import {
   StatusToneBadge,
   type StatusTone
 } from '@components/status-badge/StatusToneBadge'
-import dayjs from 'dayjs'
+import { isPolicyExpired } from './feeExpiry'
 
 const TONE: Readonly<Record<string, StatusTone>> = {
   INIT: 'info',
@@ -52,10 +52,11 @@ export const FeeStatusPill = ({
       ? ASSIGNMENT_STATUS_CONFIG[status]
       : POLICY_STATUS_CONFIG[status]
 
-  const isInitExpired =
-    status === 'INIT' && !!validTo && dayjs(validTo).isBefore(dayjs())
-
-  const overridden: FeeEffectiveStatus | null = isInitExpired
+  const overridden: FeeEffectiveStatus | null = isPolicyExpired({
+    status,
+    effectiveStatus,
+    validTo
+  })
     ? 'EXPIRED'
     : status === 'ACTIVE' && effectiveStatus
       ? effectiveStatus

@@ -68,4 +68,44 @@ describe('cột hành động danh sách chính sách phí', () => {
     expect(screen.getAllByLabelText('Sửa cấu hình')).toHaveLength(1)
     expect(screen.queryByLabelText('Xem chi tiết')).toBeNull()
   })
+
+  it('biểu phí hết hạn ẩn mọi thao tác, kể cả bản đang ACTIVE mà BE báo EXPIRED', () => {
+    const store = createAppStore()
+    store.dispatch(
+      savePermissions(['EWALLET:FEE:UPDATE', 'EWALLET:FEE:APPROVE'])
+    )
+    const expiredActive: FeePolicyRow = {
+      ...policy,
+      id: 'policy-expired-active',
+      key: 'policy-expired-active',
+      name: 'Hết hạn đang ACTIVE',
+      status: 'ACTIVE',
+      effectiveStatus: 'EXPIRED'
+    }
+    const expiredInit: FeePolicyRow = {
+      ...policy,
+      id: 'policy-expired-init',
+      key: 'policy-expired-init',
+      name: 'Hết hạn chưa duyệt',
+      validTo: '2020-01-01'
+    }
+    const { container } = render(
+      <Provider store={store}>
+        <Table
+          rowKey='id'
+          dataSource={[expiredActive, expiredInit]}
+          pagination={false}
+          columns={getFeePolicyColumns({
+            feeScope: 'OUTPUT_FEE',
+            onEdit: vi.fn(),
+            onChangeStatus: vi.fn(),
+            customerSegmentNames: {}
+          })}
+        />
+      </Provider>
+    )
+
+    expect(screen.getAllByText('Hết hạn')).toHaveLength(2)
+    expect(container.querySelectorAll('tbody td button')).toHaveLength(0)
+  })
 })

@@ -18,7 +18,14 @@ import {
 } from '../constants/CommonInfor.constant'
 import useWalletDisplayInfo from '../hooks/useWalletDisplayInfo'
 import AsyncStatusValue from './AsyncStatusValue'
-import { InfoDivider, InfoList, InfoRow, InfoSectionHeader, InfoSubHeading } from './InfoPanel'
+import { EkycEvidenceThumb } from './EkycEvidenceThumb'
+import {
+  InfoDivider,
+  InfoList,
+  InfoRow,
+  InfoSectionHeader,
+  InfoSubHeading
+} from './InfoPanel'
 
 const EMPTY = '--'
 
@@ -46,8 +53,11 @@ const WalletInfoCard = ({ data, ekyc }: WalletInfoCardProps) => {
   if (!data) return null
 
   const ekycStatus = ekyc?.profileStatus ?? EkycStatusEnum.NOT_VERIFIED
-  const availableBalance = data.availableBalance ?? data.balance - data.holdBalance
-  const verifiedAt = ekyc?.verifiedAt ? dayjs(ekyc.verifiedAt).format(TYPEDATE.fullTime) : EMPTY
+  const availableBalance =
+    data.availableBalance ?? data.balance - data.holdBalance
+  const verifiedAt = ekyc?.verifiedAt
+    ? dayjs(ekyc.verifiedAt).format(TYPEDATE.fullTime)
+    : EMPTY
 
   const asyncRows: AsyncStatusRow[] = [
     {
@@ -69,14 +79,30 @@ const WalletInfoCard = ({ data, ekyc }: WalletInfoCardProps) => {
 
   return (
     <>
-      <InfoSectionHeader icon={<WalletIcon weight='fill' size={20} />} title='Thông tin ví' />
+      <InfoSectionHeader
+        icon={
+          <WalletIcon
+            weight='fill'
+            size={20}
+          />
+        }
+        title='Thông tin ví'
+      />
       <InfoDivider />
 
       <InfoList>
-        <InfoRow label='Mã ví' value={data.id} />
+        <InfoRow
+          label='Mã ví'
+          value={data.id}
+        />
         <InfoRow
           label='Trạng thái ví'
-          value={<StatusBadge status={data.status} config={WALLET_STATUS_CONFIG} />}
+          value={
+            <StatusBadge
+              status={data.status}
+              config={WALLET_STATUS_CONFIG}
+            />
+          }
         />
         {data.status === StatusKey.LOCKED && (
           <InfoRow
@@ -87,7 +113,12 @@ const WalletInfoCard = ({ data, ekyc }: WalletInfoCardProps) => {
         )}
         <InfoRow
           label='Trạng thái eKYC'
-          value={<StatusBadge status={ekycStatus} config={EKYC_STATUS_CONFIG} />}
+          value={
+            <StatusBadge
+              status={ekycStatus}
+              config={EKYC_STATUS_CONFIG}
+            />
+          }
         />
 
         {asyncRows.map((row) => (
@@ -110,7 +141,11 @@ const WalletInfoCard = ({ data, ekyc }: WalletInfoCardProps) => {
 
         <InfoDivider />
 
-        <InfoRow label='Tổng số dư' value={formatCurrency(data.balance)} emphasis='amount' />
+        <InfoRow
+          label='Tổng số dư'
+          value={formatCurrency(data.balance)}
+          emphasis='amount'
+        />
         <InfoRow
           label='Số dư khả dụng'
           value={formatCurrency(availableBalance)}
@@ -126,19 +161,32 @@ const WalletInfoCard = ({ data, ekyc }: WalletInfoCardProps) => {
 
         <InfoDivider />
 
-        <InfoRow label='Ngày mở ví' value={dayjs(data.createdAt).format(TYPEDATE.fullTime)} />
-        <InfoRow label='Ngày xác thực' value={verifiedAt} />
+        <InfoRow
+          label='Ngày mở ví'
+          value={dayjs(data.createdAt).format(TYPEDATE.fullTime)}
+        />
+        <InfoRow
+          label='Ngày xác thực'
+          value={verifiedAt}
+        />
 
         <InfoDivider />
         <InfoSubHeading>Thông tin xác thực eKYC</InfoSubHeading>
 
         <InfoRow
           label='Trạng thái'
-          value={<StatusBadge status={ekycStatus} config={EKYC_STATUS_CONFIG} />}
+          value={
+            <StatusBadge
+              status={ekycStatus}
+              config={EKYC_STATUS_CONFIG}
+            />
+          }
         />
         <InfoRow
-          label='Độ chính xác AI'
-          value={ekyc?.faceMatchScore != null ? `${ekyc.faceMatchScore}%` : EMPTY}
+          label='Độ chính xác khuôn mặt'
+          value={
+            ekyc?.faceMatchScore != null ? `${ekyc.faceMatchScore}%` : EMPTY
+          }
           emphasis='amount'
           valueClassName={faceMatchClass(ekyc?.faceMatchScore)}
         />
@@ -146,12 +194,12 @@ const WalletInfoCard = ({ data, ekyc }: WalletInfoCardProps) => {
 
       <div className='mt-4 flex justify-between gap-4'>
         {EKYC_DOCUMENT_SLOTS.map((slot) => (
-          <div key={slot.key} className='flex flex-1 flex-col items-center gap-2'>
-            <div className='flex h-24 w-full items-center justify-center rounded-md border border-border bg-muted text-[12px] text-muted-foreground'>
-              {slot.boxLabel}
-            </div>
-            <span className='text-xs text-muted-foreground'>{slot.caption}</span>
-          </div>
+          <EkycEvidenceThumb
+            key={slot.key}
+            label={slot.boxLabel}
+            caption={slot.caption}
+            image={ekyc?.evidenceImages?.find((item) => item.type === slot.key)}
+          />
         ))}
       </div>
     </>

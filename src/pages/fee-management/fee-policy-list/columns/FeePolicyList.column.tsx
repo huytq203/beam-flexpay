@@ -1,3 +1,4 @@
+import { isPolicyExpired } from '@components/fee/feeExpiry'
 import { Can } from '@/app/permissions'
 import { FeeStatusPill } from '@components/fee/FeeStatusPill'
 import { NotePencilIcon } from '@components/icons'
@@ -208,6 +209,9 @@ export const getFeePolicyColumns = ({
     fixed: 'right',
     align: 'center',
     render: (id: string, row) => {
+      // Biểu phí đã hết hạn (đúng như nhãn "Hết hạn") không còn thao tác nào để làm.
+      if (isPolicyExpired(row)) return null
+
       const isEditable = row.status === 'INIT'
 
       return (

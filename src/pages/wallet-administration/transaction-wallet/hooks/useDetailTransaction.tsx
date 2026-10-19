@@ -16,6 +16,7 @@ const useDetailTransaction = () => {
         detail,
         getTransactionById: detail?.transaction,
         profit: detail?.profit,
+        fee: detail?.fee,
         moneyFlow: detail?.moneyFlow ?? [],
         customer: detail?.customer,
         isLoading,

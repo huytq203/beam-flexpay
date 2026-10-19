@@ -52,7 +52,7 @@ const Representative = () => {
         </div>
         <div className="col-span-1">
             <div className="">
-                <p className="text-gray-500">Địa chỉ thường trú:</p>
+                <p className="text-gray-500">Địa chỉ trên CCCD:</p>
                 <p className="font-medium">XXX, Đường YYY, TP ZZZ</p>
             </div>
         </div>

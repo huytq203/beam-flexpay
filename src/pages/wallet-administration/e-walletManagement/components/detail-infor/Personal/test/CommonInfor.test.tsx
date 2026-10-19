@@ -64,7 +64,12 @@ describe('CommonInfor', () => {
   it('hiển thị email, nghề nghiệp và chức vụ từ hồ sơ eKYC', () => {
     mockDisplayInfo({ salaryAdvanceEnabled: false, linkedBanks: [] })
 
-    renderWithProviders(<CommonInfor accountData={accountData} ekycData={ekycData} />)
+    renderWithProviders(
+      <CommonInfor
+        accountData={accountData}
+        ekycData={ekycData}
+      />
+    )
 
     expect(screen.getByText('nguyenvana@example.com')).toBeInTheDocument()
     expect(screen.getByText('Kỹ sư')).toBeInTheDocument()
@@ -73,9 +78,17 @@ describe('CommonInfor', () => {
 
   it('gọi display-info bằng ownerId và hiển thị trạng thái ứng lương, tài khoản nhận lương, liên kết ngân hàng', async () => {
     const onRequest = vi.fn()
-    mockDisplayInfo({ salaryAdvanceEnabled: true, linkedBanks: [bankLink()] }, onRequest)
+    mockDisplayInfo(
+      { salaryAdvanceEnabled: true, linkedBanks: [bankLink()] },
+      onRequest
+    )
 
-    renderWithProviders(<CommonInfor accountData={accountData} ekycData={ekycData} />)
+    renderWithProviders(
+      <CommonInfor
+        accountData={accountData}
+        ekycData={ekycData}
+      />
+    )
 
     expect(await screen.findByText('Đang bật')).toBeInTheDocument()
     expect(await screen.findAllByText('Đã liên kết')).toHaveLength(2)
@@ -88,7 +101,12 @@ describe('CommonInfor', () => {
       linkedBanks: [bankLink({ status: 'UNLINKED' })]
     })
 
-    renderWithProviders(<CommonInfor accountData={accountData} ekycData={ekycData} />)
+    renderWithProviders(
+      <CommonInfor
+        accountData={accountData}
+        ekycData={ekycData}
+      />
+    )
 
     expect(await screen.findAllByText('Chưa liên kết')).toHaveLength(3)
   })
@@ -96,24 +114,73 @@ describe('CommonInfor', () => {
   it('hiện lối thử lại cho từng trường khi display-info lỗi', async () => {
     server.use(
       http.get('*/user-wallets/:userId/display-info', () =>
-        HttpResponse.json({ success: false, message: 'INTERNAL_ERROR' }, { status: 500 })
+        HttpResponse.json(
+          { success: false, message: 'INTERNAL_ERROR' },
+          { status: 500 }
+        )
       )
     )
 
-    renderWithProviders(<CommonInfor accountData={accountData} ekycData={ekycData} />)
+    renderWithProviders(
+      <CommonInfor
+        accountData={accountData}
+        ekycData={ekycData}
+      />
+    )
 
-    expect(await screen.findByRole('button', { name: 'Tải lại Ứng lương' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Tải lại Liên kết NH' })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('button', { name: 'Tải lại Ứng lương' })
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Tải lại Liên kết NH' })
+    ).toBeInTheDocument()
   })
 
   it('hiển thị số dư đầy đủ và trạng thái ví theo tông dùng chung', async () => {
     mockDisplayInfo({ salaryAdvanceEnabled: true, linkedBanks: [bankLink()] })
 
-    renderWithProviders(<CommonInfor accountData={accountData} ekycData={ekycData} />)
+    renderWithProviders(
+      <CommonInfor
+        accountData={accountData}
+        ekycData={ekycData}
+      />
+    )
 
     expect(screen.getByText('1,000,000 ₫')).toBeInTheDocument()
     expect(screen.getByText('800,000 ₫')).toBeInTheDocument()
     expect(screen.getByText('200,000 ₫')).toBeInTheDocument()
     expect(screen.getByText('Hoạt động')).toHaveClass('text-success-strong')
+  })
+
+  it('ghép ảnh eKYC vào đúng ô và dùng nhãn độ chính xác khuôn mặt', () => {
+    mockDisplayInfo({ salaryAdvanceEnabled: false, linkedBanks: [] })
+    const evidenceImages = ['FRONT', 'BACK', 'FACE_FAR'].map((type) => ({
+      fileId: type,
+      type,
+      expiresAt: '2999-01-01T00:00:00Z',
+      url: `https://example.com/${type}.jpg`
+    }))
+
+    renderWithProviders(
+      <CommonInfor
+        accountData={accountData}
+        ekycData={{ ...ekycData, evidenceImages }}
+      />
+    )
+
+    expect(screen.getByText('Độ chính xác khuôn mặt')).toBeInTheDocument()
+    expect(screen.queryByText('Face Match')).not.toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'CCCD Trước' })).toHaveAttribute(
+      'src',
+      'https://example.com/FRONT.jpg'
+    )
+    expect(screen.getByRole('img', { name: 'CCCD Sau' })).toHaveAttribute(
+      'src',
+      'https://example.com/BACK.jpg'
+    )
+    expect(screen.getByRole('img', { name: 'Chân dung' })).toHaveAttribute(
+      'src',
+      'https://example.com/FACE_FAR.jpg'
+    )
   })
 })

@@ -110,7 +110,7 @@ describe('DetailTransaction', () => {
     )
 
     expect(screen.getByText('Phí rút tiền tiêu chuẩn')).toBeInTheDocument()
-    expect(screen.getByText('TRANSACTION_FEE')).toBeInTheDocument()
+    expect(screen.getByText(/Phí giao dịch cơ bản/)).toBeInTheDocument()
     expect(screen.getByText('USER_WALLET_VND (0901234567)')).toBeInTheDocument()
     expect(screen.getByText('SYS_BANK_SETTLEMENT_VND')).toBeInTheDocument()
     expect(screen.getAllByText('Nguyễn Văn A')).toHaveLength(2)

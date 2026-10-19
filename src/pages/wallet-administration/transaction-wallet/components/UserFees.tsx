@@ -1,71 +1,103 @@
-import type { TransactionProfit, UnifiedContentJournal } from '@type/apiResponseJournal'
+import type {
+  TransactionFeeDetail,
+  TransactionProfit,
+  UnifiedContentJournal
+} from '@type/apiResponseJournal'
 import { formatCurrency } from '@utils/formatNumber'
-import React from 'react'
+import { cn } from '@lib/utils/cn'
+import { buildUserFeeSummary, type UserFeeRow } from '../utils/userFeeSummary'
 
 interface UserFeesProps {
-    data?: UnifiedContentJournal
-    profit?: TransactionProfit | null
+  data?: UnifiedContentJournal
+  profit?: TransactionProfit | null
+  fee?: TransactionFeeDetail | null
 }
 
-const UserFees = ({ data, profit }: UserFeesProps) => {
-    const currency = data?.currency ?? 'VND'
-    const formatMoney = (value?: number | null) =>
-        value == null
-            ? '--'
-            : formatCurrency(value, { symbol: currency, position: 'after' })
-    const userFeeTotal = profit?.userFeeTotal ?? data?.feeAmount
+interface FeeRowProps {
+  row: UserFeeRow
+  formatMoney: (value: number) => string
+}
 
+const FeeRow = ({ row, formatMoney }: FeeRowProps) => (
+  <div
+    className={cn(
+      'py-2',
+      row.isTotal && 'border-t border-border font-semibold'
+    )}
+  >
+    <div className='flex flex-wrap items-baseline justify-between gap-2'>
+      <p className={cn(row.isTotal ? 'text-teal-950' : 'text-teal-900')}>
+        {row.label}
+      </p>
+      <p
+        className={cn(
+          'text-right tabular-nums',
+          row.isFee ? 'text-red-700' : 'text-teal-950',
+          row.isTotal && 'text-lg'
+        )}
+      >
+        {formatMoney(row.amount)}
+      </p>
+    </div>
+    {row.formula && (
+      <p className='mt-1 text-xs text-gray-600 tabular-nums'>{row.formula}</p>
+    )}
+  </div>
+)
+
+const UserFees = ({ data, profit, fee }: UserFeesProps) => {
+  const currency = data?.currency ?? 'VND'
+  const formatMoney = (value: number): string =>
+    formatCurrency(value, { symbol: currency, position: 'after' })
+
+  const header = (
+    <>
+      <p className='text-blue font-medium'>Tài chính & phí người dùng</p>
+      <hr className='my-3' />
+    </>
+  )
+  if (!data) {
     return (
-        <>
-            <div>
-                <p className='text-blue font-medium'>Tài chính & phí người dùng</p>
-            </div>
-            <hr className='my-3' />
-            <div className='rounded-md border border-teal-200 bg-teal-50 p-3'>
-                <div className='flex flex-wrap items-baseline justify-between gap-2'>
-                    <p className='font-medium text-teal-900'>Số tiền giao dịch</p>
-                    <p className='text-xl font-semibold text-teal-950'>{formatMoney(data?.grossAmount)}</p>
-                </div>
-                <div className='mt-2 flex flex-wrap items-baseline justify-between gap-2'>
-                    <p className='font-medium text-teal-900'>Tổng phí người dùng</p>
-                    <p className='text-lg font-semibold text-red-700'>{formatMoney(userFeeTotal)}</p>
-                </div>
-            </div>
-
-            
-            {/* <div className='mt-3'>
-                <CopyableText label='Fee calculation ID:' value={data?.feeCalculationId ?? '--'} />
-            </div> */}
-
-            {profit?.feeBreakdownAvailable && profit.userFeeBreakdown.length > 0 && (
-                <div className='mt-3 space-y-2' aria-label='Chi tiết cấu phần phí'>
-                    {profit.userFeeBreakdown.map((item, index) => (
-                        <div
-                            key={`${item.componentType}-${index}`}
-                            className='rounded-md border border-border bg-white p-3'
-                        >
-                            <div className='flex flex-wrap items-center justify-between gap-2'>
-                                <p className='font-medium'>{item.componentType}</p>
-                                <p className='font-semibold text-red-700'>{formatMoney(item.calculatedFee)}</p>
-                            </div>
-                            <div className='mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600 sm:grid-cols-4'>
-                                <p>Phí cố định: {formatMoney(item.fixedAmount)}</p>
-                                <p>Tỷ lệ: {item.percentage == null ? '--' : `${item.percentage}%`}</p>
-                                <p>Giá trị gốc: {formatMoney(item.baseValue)}</p>
-                                <p>Phí theo tỷ lệ: {formatMoney(item.percentageFee)}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            <hr className='my-3' />
-            <div className='flex flex-wrap items-center justify-between gap-2'>
-                <p className='font-medium text-lg'>Tổng thực thu/chi:</p>
-                <p className='font-medium text-lg text-blue-700'>{formatMoney(data?.amount)}</p>
-            </div>
-        </>
+      <>
+        {header}
+        <p className='text-gray-500'>--</p>
+      </>
     )
+  }
+
+  const summary = buildUserFeeSummary(data, profit, fee)
+
+  return (
+    <>
+      {header}
+      {summary.badge && (
+        <span className='mb-3 inline-block rounded-md bg-violet-50 px-2 py-0.5 text-xs font-semibold tracking-wide text-violet-700 uppercase'>
+          {summary.badge}
+        </span>
+      )}
+      <div
+        className='rounded-xl border border-border bg-teal-50 px-3 py-1'
+        aria-label='Tóm tắt tiền và phí'
+      >
+        {summary.rows.map((row) => (
+          <FeeRow
+            key={row.label}
+            row={row}
+            formatMoney={formatMoney}
+          />
+        ))}
+      </div>
+      {summary.mismatch && (
+        <p
+          className='mt-2 text-xs text-warning-strong'
+          role='alert'
+        >
+          Số liệu tiền và phí từ hệ thống không khớp nhau, vui lòng đối chiếu
+          bút toán.
+        </p>
+      )}
+    </>
+  )
 }
 
 export default UserFees
