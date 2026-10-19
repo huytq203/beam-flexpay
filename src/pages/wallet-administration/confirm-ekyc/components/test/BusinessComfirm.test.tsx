@@ -123,11 +123,13 @@ describe('BusinessComfirm', () => {
       screen.queryByText('Sẹo chấm C: 0,5cm dưới trước cánh mũi trái')
     ).not.toBeInTheDocument()
     fireEvent.click(
-      screen.getByRole('button', { name: 'Xem chi tiết phiên áp dụng' })
+      screen.getByRole('button', {
+        name: 'Xem chi tiết phiên áp dụng gần nhất'
+      })
     )
 
     expect(
-      screen.getByRole('button', { name: 'Thu gọn phiên áp dụng' })
+      screen.getByRole('button', { name: 'Thu gọn phiên áp dụng gần nhất' })
     ).toHaveAttribute('aria-expanded', 'true')
     expect(
       screen.getByText('Sẹo chấm C: 0,5cm dưới trước cánh mũi trái')

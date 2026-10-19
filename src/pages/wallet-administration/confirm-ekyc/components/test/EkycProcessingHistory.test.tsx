@@ -47,14 +47,14 @@ describe('ProcessingHistory', () => {
     vi.useRealTimers()
   })
 
-  it('gắn nhãn phiên áp dụng, các phiên còn lại giữ số thứ tự', () => {
+  it('gắn nhãn phiên áp dụng gần nhất, các phiên còn lại giữ số thứ tự', () => {
     render(<ProcessingHistory attempts={attempts} />)
 
     expect(
       screen.getByRole('button', {
-        name: 'Xem chi tiết phiên áp dụng'
+        name: 'Xem chi tiết phiên áp dụng gần nhất'
       })
-    ).toHaveTextContent('Áp dụng')
+    ).toHaveTextContent('Áp dụng gần nhất')
     expect(
       screen.getByRole('button', { name: 'Xem chi tiết lần 2' })
     ).toHaveTextContent('#2')

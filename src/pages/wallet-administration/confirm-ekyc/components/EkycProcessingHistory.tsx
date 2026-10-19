@@ -104,9 +104,15 @@ export const ProcessingHistory = ({
     setExpanded((prev) => ({ ...prev, [key]: !prev[key] }))
 
   return (
-    <div className='overflow-x-auto'>
+    // Giới hạn chiều cao để nút xét duyệt bên dưới vẫn nằm trong tầm nhìn khi có nhiều phiên.
+    <div
+      className='max-h-96 overflow-auto'
+      role='region'
+      aria-label='Danh sách phiên eKYC'
+      tabIndex={0}
+    >
       <table className='w-full min-w-200 border-collapse text-left text-sm'>
-        <thead className='bg-slate-50 text-xs font-semibold text-slate-600'>
+        <thead className='sticky top-0 z-10 bg-slate-50 text-xs font-semibold text-slate-600'>
           <tr>
             {HISTORY_COLUMNS.map((title) => (
               <th
@@ -131,7 +137,7 @@ export const ProcessingHistory = ({
           const isOpen = !!expanded[key]
           const isApplied = attempt === appliedAttempt
           const attemptLabel = isApplied
-            ? 'phiên áp dụng'
+            ? 'phiên áp dụng gần nhất'
             : `lần ${attempts.length - index}`
           return (
             <tbody
@@ -159,7 +165,9 @@ export const ProcessingHistory = ({
                           aria-hidden
                         />
                       )}
-                      {isApplied ? 'Áp dụng' : `#${attempts.length - index}`}
+                      {isApplied
+                        ? 'Áp dụng gần nhất'
+                        : `#${attempts.length - index}`}
                     </button>
                     {onInspect &&
                       (attempt.sessionId || attempt.ekycSessionId) && (

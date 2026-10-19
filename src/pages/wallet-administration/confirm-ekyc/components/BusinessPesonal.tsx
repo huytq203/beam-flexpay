@@ -75,6 +75,13 @@ const BusinessPesonal = ({
     (item) => item.type === selectedType
   )!
   const selectedEvidence = images.find((image) => image.type === selectedType)
+  const selectedIndex = EVIDENCE_ITEMS.indexOf(selectedImage)
+  // Vòng tròn: ảnh cuối bấm "tiếp" quay về ảnh đầu.
+  const handleStep = (offset: number) => {
+    const total = EVIDENCE_ITEMS.length
+    const next = EVIDENCE_ITEMS[(selectedIndex + offset + total) % total]
+    setSelection({ attemptKey, type: next.type })
+  }
   const selectedExpired = Boolean(
     selectedEvidence?.expiresAt && Date.parse(selectedEvidence.expiresAt) <= now
   )
@@ -93,6 +100,8 @@ const BusinessPesonal = ({
         url={findUrl(images, selectedType, now)}
         expired={selectedExpired}
         onReload={onReload}
+        onPrev={() => handleStep(-1)}
+        onNext={() => handleStep(1)}
       />
       <div
         className='grid grid-cols-3 gap-2'

@@ -1,5 +1,10 @@
 import { useState } from 'react'
-import { ArrowsCounterClockwiseIcon, ImageBrokenIcon } from '@components/icons'
+import {
+  ArrowsCounterClockwiseIcon,
+  CaretLeftIcon,
+  CaretRightIcon,
+  ImageBrokenIcon
+} from '@components/icons'
 import { ButtonComponent, ImageComponent } from '@components/index'
 
 interface EvidenceImageCardProps {
@@ -8,14 +13,22 @@ interface EvidenceImageCardProps {
   url?: string
   expired?: boolean
   onReload?: () => void
+  /** Có truyền thì hiện nút chuyển sang ảnh trước/sau ngay trên khung ảnh. */
+  onPrev?: () => void
+  onNext?: () => void
 }
+
+const NAV_BUTTON_CLASS =
+  'absolute top-1/2 z-10 flex size-8 -translate-y-1/2 items-center justify-center rounded-xl border border-border bg-background/90 text-foreground transition-colors hover:border-primary hover:bg-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary'
 
 export function EvidenceImageCard({
   title,
   description,
   url,
   expired = false,
-  onReload
+  onReload,
+  onPrev,
+  onNext
 }: EvidenceImageCardProps) {
   // Link S3 ký sẵn hết hạn sau vài phút; lỗi tải gần như luôn là link đã hết hạn.
   const [failedUrl, setFailedUrl] = useState<string>()
@@ -65,6 +78,32 @@ export function EvidenceImageCard({
               />
             )}
           </div>
+        )}
+        {onPrev && (
+          <button
+            type='button'
+            aria-label='Ảnh trước'
+            onClick={onPrev}
+            className={`${NAV_BUTTON_CLASS} left-2`}
+          >
+            <CaretLeftIcon
+              aria-hidden
+              size={16}
+            />
+          </button>
+        )}
+        {onNext && (
+          <button
+            type='button'
+            aria-label='Ảnh tiếp theo'
+            onClick={onNext}
+            className={`${NAV_BUTTON_CLASS} right-2`}
+          >
+            <CaretRightIcon
+              aria-hidden
+              size={16}
+            />
+          </button>
         )}
       </div>
     </figure>

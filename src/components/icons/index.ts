@@ -73,6 +73,7 @@ export {
   StorefrontIcon,
   TrashIcon,
   NotePencilIcon,
+  CaretLeftIcon,
   CaretRightIcon,
   CaretDownIcon,
   WarningCircleIcon,

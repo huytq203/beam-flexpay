@@ -55,6 +55,23 @@ describe('BusinessPesonal — ảnh bằng chứng eKYC', () => {
     expect(screen.queryByText(/Ảnh lấy từ lần thực hiện/)).toBeNull()
   })
 
+  it('nút trước/tiếp theo chuyển ảnh và quay vòng ở hai đầu', () => {
+    render(
+      <BusinessPesonal
+        attempts={[completed]}
+        ocrSessionId='session-done'
+      />
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Ảnh tiếp theo' }))
+    expect(screen.getByAltText('CCCD mặt sau')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Ảnh tiếp theo' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Ảnh tiếp theo' }))
+    expect(screen.getByAltText('CCCD mặt trước')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Ảnh trước' }))
+    expect(screen.getByAltText('Ảnh chân dung')).toBeInTheDocument()
+  })
+
   it('lần mới nhất chưa có ảnh thì lấy lần gần nhất có ảnh và ghi rõ thời điểm', () => {
     render(
       <BusinessPesonal
