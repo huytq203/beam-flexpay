@@ -8,8 +8,10 @@ import dayjs from 'dayjs'
 import { http, HttpResponse } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
 import { FeePolicyStatusChangeDialog } from '../components/FeePolicyStatusChangeDialog'
+import { RUN_AT_REQUIRED_MESSAGE } from '../schemas/feePolicySchedule.schema'
 
 const URL = '*/fee/policies/policy-1/status-changes'
+const PICKER = 'DD/MM/YYYY HH:mm:ss'
 
 const renderDialog = (
   status = 'ACTIVE',
@@ -40,22 +42,32 @@ const captureBody = () => {
   return sent
 }
 
+const pickRunAt = async (user: ReturnType<typeof userEvent.setup>, runAt: dayjs.Dayjs) => {
+  const picker = screen.getByPlaceholderText(PICKER)
+  await user.click(picker)
+  await user.type(picker, `${runAt.format('DD/MM/YYYY HH:mm:ss')}{Enter}`)
+}
+
 describe('dialog khóa / mở chính sách phí', () => {
-  it('mặc định làm ngay: chính sách đang bật thì ngừng áp dụng, không gửi runAt', async () => {
+  it('không có lựa chọn ngay / hẹn giờ: chỉ một ô thời điểm không bắt buộc', async () => {
+    renderDialog()
+    expect(await screen.findByPlaceholderText(PICKER)).toBeInTheDocument()
+    expect(screen.queryByRole('radio')).toBeNull()
+  })
+
+  it('bỏ trống thời điểm: chính sách đang bật thì ngừng áp dụng ngay, không gửi runAt', async () => {
     const sent = captureBody()
     const user = userEvent.setup()
     const onClose = renderDialog()
 
-    expect(await screen.findByRole('radio', { name: 'Thực hiện ngay' })).toBeChecked()
-    expect(screen.queryByPlaceholderText('DD/MM/YYYY HH:mm:ss')).toBeNull()
-    await user.type(screen.getByRole('textbox', { name: /Lý do/ }), ' Tạm dừng khuyến mãi ')
+    await user.type(await screen.findByRole('textbox', { name: /Lý do/ }), ' Tạm dừng khuyến mãi ')
     await user.click(screen.getByRole('button', { name: 'Ngừng áp dụng ngay' }))
 
     await waitFor(() => expect(onClose).toHaveBeenCalled())
     expect(sent.body).toEqual({ action: 'DEACTIVATE', reason: 'Tạm dừng khuyến mãi' })
   })
 
-  it('làm ngay với chính sách đang tắt là kích hoạt', async () => {
+  it('bỏ trống thời điểm: chính sách đang tắt thì kích hoạt ngay', async () => {
     const sent = captureBody()
     const user = userEvent.setup()
     const onClose = renderDialog('INACTIVE')
@@ -78,21 +90,15 @@ describe('dialog khóa / mở chính sách phí', () => {
     expect(sent.calls).toBe(0)
   })
 
-  it('hẹn giờ: bắt buộc thời điểm, gửi runAt dạng ISO instant', async () => {
+  it('chọn thời điểm thì hẹn giờ, gửi runAt dạng ISO instant', async () => {
     const sent = captureBody()
     const user = userEvent.setup()
     const onClose = renderDialog()
 
-    await user.click(await screen.findByRole('radio', { name: 'Hẹn giờ' }))
-    await user.type(screen.getByRole('textbox', { name: /Lý do/ }), '  Hết khuyến mãi ')
-    await user.click(screen.getByRole('button', { name: 'Hẹn giờ' }))
-    expect(await screen.findByText('Vui lòng chọn thời điểm chạy')).toBeInTheDocument()
-    expect(sent.calls).toBe(0)
-
     const runAt = dayjs().add(2, 'day').second(0).millisecond(0)
-    const picker = screen.getByPlaceholderText('DD/MM/YYYY HH:mm:ss')
-    await user.click(picker)
-    await user.type(picker, `${runAt.format('DD/MM/YYYY HH:mm:ss')}{Enter}`)
+    await screen.findByPlaceholderText(PICKER)
+    await pickRunAt(user, runAt)
+    await user.type(screen.getByRole('textbox', { name: /Lý do/ }), '  Hết khuyến mãi ')
     await user.click(screen.getByRole('button', { name: 'Hẹn giờ' }))
 
     await waitFor(() => expect(onClose).toHaveBeenCalled())
@@ -103,11 +109,15 @@ describe('dialog khóa / mở chính sách phí', () => {
     })
   })
 
-  it('không có quyền làm hành động ngay thì chỉ cho hẹn giờ', async () => {
+  it('hành động không làm ngay được (mở chính sách đang bật) thì bắt chọn thời điểm', async () => {
+    const sent = captureBody()
+    const user = userEvent.setup()
     renderDialog('ACTIVE', ['ACTIVATE'])
 
-    expect(await screen.findByRole('radio', { name: 'Thực hiện ngay' })).toBeDisabled()
-    expect(screen.getByRole('radio', { name: 'Hẹn giờ' })).toBeChecked()
-    expect(screen.getByPlaceholderText('DD/MM/YYYY HH:mm:ss')).toBeInTheDocument()
+    await user.type(await screen.findByRole('textbox', { name: /Lý do/ }), 'Mở lại sáng mai')
+    await user.click(screen.getByRole('button', { name: 'Hẹn giờ' }))
+
+    expect(await screen.findByText(RUN_AT_REQUIRED_MESSAGE)).toBeInTheDocument()
+    expect(sent.calls).toBe(0)
   })
 })

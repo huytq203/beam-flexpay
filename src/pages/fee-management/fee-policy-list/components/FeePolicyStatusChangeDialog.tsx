@@ -1,24 +1,17 @@
-import {
-  FormDatePicker,
-  FormRadio,
-  FormSelect,
-  FormTextArea
-} from '@components/form'
+import { FormDatePicker, FormSelect, FormTextArea } from '@components/form'
 import { ButtonComponent, DialogModal } from '@components/index'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMessage } from '@hooks/useMessage'
 import { useChangeFeePolicyStatusMutation } from '@services/apiFeePolicy.api'
 import type { FeePolicyScheduleAction } from '@type/fee.type'
-import { useEffect } from 'react'
+import { useMemo } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import {
   SCHEDULE_ACTION_LABEL,
-  SCHEDULE_REASON_MAX_LENGTH,
-  STATUS_CHANGE_TIMING,
-  STATUS_CHANGE_TIMING_OPTIONS
+  SCHEDULE_REASON_MAX_LENGTH
 } from '../constants/feePolicySchedule'
 import {
-  feePolicyStatusChangeSchema,
+  buildStatusChangeSchema,
   type FeePolicyStatusChangeFormValues
 } from '../schemas/feePolicySchedule.schema'
 import {
@@ -70,44 +63,32 @@ const StatusChangeForm = ({
 
   // Làm ngay chỉ có một hành động hợp lệ: đảo trạng thái hiện tại (BE từ chối bật một chính sách đang bật).
   const immediateAction = immediateActionFor(policy.status)
-  const canActNow = allowedActions.includes(immediateAction)
+  const schema = useMemo(() => buildStatusChangeSchema(immediateAction), [immediateAction])
 
-  const { control, handleSubmit, setValue } =
-    useForm<FeePolicyStatusChangeFormValues>({
-      defaultValues: {
-        action: canActNow
-          ? immediateAction
-          : defaultScheduleAction(policy.status, allowedActions),
-        timing: canActNow
-          ? STATUS_CHANGE_TIMING.NOW
-          : STATUS_CHANGE_TIMING.SCHEDULE,
-        runAt: '',
-        reason: ''
-      },
-      resolver: zodResolver(feePolicyStatusChangeSchema)
-    })
+  const { control, handleSubmit } = useForm<FeePolicyStatusChangeFormValues>({
+    defaultValues: {
+      action: allowedActions.includes(immediateAction)
+        ? immediateAction
+        : defaultScheduleAction(policy.status, allowedActions),
+      runAt: '',
+      reason: ''
+    },
+    resolver: zodResolver(schema)
+  })
 
-  const timing = useWatch({ control, name: 'timing' })
   const action = useWatch({ control, name: 'action' })
+  const runAt = useWatch({ control, name: 'runAt' })
   const reason = useWatch({ control, name: 'reason' }) ?? ''
-  const isNow = timing === STATUS_CHANGE_TIMING.NOW
-
-  // Chuyển sang "Thực hiện ngay" thì hành động về đúng hành động làm ngay được.
-  useEffect(() => {
-    if (isNow) setValue('action', immediateAction)
-  }, [isNow, immediateAction, setValue])
-
-  const actionOptions = (isNow ? [immediateAction] : allowedActions).map(
-    (value) => ({ value, label: SCHEDULE_ACTION_LABEL[value] })
-  )
+  // Không chọn thời điểm = làm ngay; chỉ đúng khi hành động là hành động làm ngay được.
+  const isNow = !runAt && action === immediateAction
 
   const onSubmit = async (values: FeePolicyStatusChangeFormValues) => {
-    const now = values.timing === STATUS_CHANGE_TIMING.NOW
+    const now = !values.runAt
     try {
       await changeStatus({
         policyId: policy.id,
         action: values.action,
-        runAt: now || !values.runAt ? undefined : toRunAtIso(values.runAt),
+        runAt: now ? undefined : toRunAtIso(values.runAt as string),
         reason: values.reason.trim()
       }).unwrap()
       successMess(now ? IMMEDIATE_SUCCESS[values.action] : 'Đã tạo lịch hẹn giờ')
@@ -123,41 +104,31 @@ const StatusChangeForm = ({
       className='flex flex-col gap-3 pt-2'
       noValidate
     >
-      <FormRadio
-        control={control}
-        name='timing'
-        label='Thời điểm'
-        className='flex flex-col'
-        options={STATUS_CHANGE_TIMING_OPTIONS.map((option) => ({
-          ...option,
-          disabled: option.value === STATUS_CHANGE_TIMING.NOW && !canActNow
-        }))}
-      />
       <FormSelect
         control={control}
         name='action'
         label='Hành động'
         required
         allowClear={false}
-        disabled={isNow}
         className='flex flex-col'
-        options={actionOptions}
+        options={allowedActions.map((value) => ({
+          value,
+          label: SCHEDULE_ACTION_LABEL[value]
+        }))}
       />
-      {isNow ? (
-        <p className='m-0 text-sm text-muted-foreground'>
-          Chính sách “{policy.name}” {IMMEDIATE_EFFECT[action ?? immediateAction]}
-        </p>
-      ) : (
-        <FormDatePicker
-          control={control}
-          name='runAt'
-          label='Thời điểm chạy'
-          required
-          showTime
-          className='flex flex-col'
-          placeholder='DD/MM/YYYY HH:mm:ss'
-        />
-      )}
+      <FormDatePicker
+        control={control}
+        name='runAt'
+        label='Thời điểm chạy'
+        showTime
+        className='flex flex-col'
+        placeholder='DD/MM/YYYY HH:mm:ss'
+      />
+      <p className='m-0 -mt-2 text-xs text-muted-foreground'>
+        {isNow
+          ? `Bỏ trống để thực hiện ngay: chính sách “${policy.name}” ${IMMEDIATE_EFFECT[immediateAction]}`
+          : 'Thao tác chạy đúng thời điểm đã chọn. Bỏ trống để thực hiện ngay.'}
+      </p>
       <FormTextArea
         control={control}
         name='reason'
@@ -183,7 +154,7 @@ const StatusChangeForm = ({
           htmlType='submit'
           type='primary'
           danger={isNow && action === 'DEACTIVATE'}
-          content={isNow ? IMMEDIATE_BUTTON[action ?? immediateAction] : 'Hẹn giờ'}
+          content={isNow ? IMMEDIATE_BUTTON[immediateAction] : 'Hẹn giờ'}
           className='w-full'
           loading={isLoading}
         />

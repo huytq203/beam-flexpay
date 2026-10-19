@@ -1,6 +1,9 @@
 import dayjs from 'dayjs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { feePolicyStatusChangeSchema } from '../schemas/feePolicySchedule.schema'
+import {
+  buildStatusChangeSchema,
+  RUN_AT_REQUIRED_MESSAGE
+} from '../schemas/feePolicySchedule.schema'
 import { toRunAtIso } from '../utils/feePolicySchedule'
 
 const NOW = new Date('2026-10-14T03:00:00.000Z')
@@ -8,21 +11,14 @@ const FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSS'
 const at = (offset: (d: dayjs.Dayjs) => dayjs.Dayjs) =>
   offset(dayjs(NOW)).format(FORMAT)
 
-const parse = (runAt: string, reason = 'Hết chương trình khuyến mãi') =>
-  feePolicyStatusChangeSchema.safeParse({
-    action: 'DEACTIVATE',
-    timing: 'SCHEDULE',
-    runAt,
-    reason
-  })
+// Chính sách đang bật: làm ngay chỉ được khóa.
+const schema = buildStatusChangeSchema('DEACTIVATE')
 
-const parseNow = (reason = 'Tạm dừng khuyến mãi', runAt?: string) =>
-  feePolicyStatusChangeSchema.safeParse({
-    action: 'DEACTIVATE',
-    timing: 'NOW',
-    runAt,
-    reason
-  })
+const parse = (runAt: string, reason = 'Hết chương trình khuyến mãi') =>
+  schema.safeParse({ action: 'DEACTIVATE', runAt, reason })
+
+const parseNow = (reason = 'Tạm dừng khuyến mãi', action = 'DEACTIVATE') =>
+  schema.safeParse({ action, runAt: '', reason })
 
 const messageOf = (result: ReturnType<typeof parse>, path: string) =>
   result.success
@@ -60,18 +56,23 @@ describe('schema khóa / mở chính sách phí', () => {
     expect(parse(at((d) => d.add(364, 'day'))).success).toBe(true)
   })
 
-  it('thực hiện ngay: không cần thời điểm, bỏ qua giá trị cũ còn sót', () => {
+  it('bỏ trống thời điểm là làm ngay, hợp lệ với hành động làm ngay được', () => {
     expect(parseNow().success).toBe(true)
-    expect(parseNow('Tạm dừng', 'không-phải-ngày').success).toBe(true)
+  })
+
+  it('bỏ trống thời điểm với hành động không làm ngay được thì bắt chọn thời điểm', () => {
+    expect(messageOf(parseNow('Mở lại sau', 'ACTIVATE'), 'runAt')).toBe(
+      RUN_AT_REQUIRED_MESSAGE
+    )
+    expect(
+      schema.safeParse({ action: 'ACTIVATE', runAt: at((d) => d.add(2, 'hour')), reason: 'Mở lại sau' }).success
+    ).toBe(true)
   })
 
   it('thực hiện ngay vẫn bắt buộc lý do', () => {
     expect(messageOf(parseNow('  '), 'reason')).toBe('Vui lòng nhập lý do')
   })
 
-  it('từ chối thiếu thời điểm khi hẹn giờ', () => {
-    expect(messageOf(parse(''), 'runAt')).toBe('Vui lòng chọn thời điểm chạy')
-  })
 
   it('từ chối lý do rỗng, toàn khoảng trắng hoặc quá 500 ký tự', () => {
     const runAt = at((d) => d.add(2, 'hour'))
