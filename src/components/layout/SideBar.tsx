@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/sidebar/Sidebar'
 import useNavigationEw from '@hooks/useNavigation'
 import { Logo } from '@components/logo/Logo'
+import { FRESH_LIST_STATE } from '@utils/list-state-storage'
 import { resolveNavLink, type ItemTypeCustom } from './components/Navigation'
 import { PATHS } from '@constants/pathConstant'
 
@@ -121,6 +122,7 @@ const SideBar = () => {
                           <SidebarMenuSubItem key={String(child.key)}>
                             <SidebarNavLink
                               to={child.to}
+                              state={FRESH_LIST_STATE}
                               icon={renderIcon(child.icon)}
                               label={String(child.label ?? '')}
                               size='sm'

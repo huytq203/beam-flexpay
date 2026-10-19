@@ -13,6 +13,18 @@ export interface ListState {
 
 const EMPTY: ListState = { query: '', sensitive: {} }
 
+/**
+ * Router state của link trên sidebar: bấm menu là mở màn từ đầu, không khôi phục
+ * bộ lọc cũ. Các đường đi khác (Back, breadcrumb, nút "Quay lại") vẫn khôi phục.
+ */
+export const FRESH_LIST_STATE = { freshList: true } as const
+
+export const isFreshListNavigation = (state: unknown): boolean =>
+  typeof state === 'object' &&
+  state !== null &&
+  'freshList' in state &&
+  state.freshList === true
+
 const isRecordOfStrings = (value: unknown): value is Record<string, string> =>
   typeof value === 'object' &&
   value !== null &&

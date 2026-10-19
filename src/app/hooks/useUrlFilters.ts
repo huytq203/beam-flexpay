@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
 import {
+  isFreshListNavigation,
   readListState,
   writeListState,
   type ListState
@@ -63,6 +64,8 @@ const mergeQuery = (base: URLSearchParams, saved: string): URLSearchParams => {
   return params
 }
 
+const EMPTY_STATE: ListState = { query: '', sensitive: {} }
+
 const isEmpty = (value: string | null | undefined): boolean =>
   value === null || value === undefined || value === ''
 
@@ -83,11 +86,18 @@ export const useUrlFilters = <K extends string>({
   storageKey
 }: UseUrlFiltersOptions<K>): UseUrlFiltersResult<K> => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const { pathname } = useLocation()
-  const key = storageKey ?? pathname
-  const [stored, setStored] = useState<ListState>(() => readListState(key))
+  const location = useLocation()
+  const key = storageKey ?? location.pathname
+  const isFresh = isFreshListNavigation(location.state)
+  const [stored, setStored] = useState<ListState>(() =>
+    isFresh ? EMPTY_STATE : readListState(key)
+  )
+  // Bấm lại menu của chính màn đang mở thì component không mount lại: lần điều
+  // hướng mới (key mới) vẫn phải bỏ bản sao, nên so theo `location.key`.
+  const [freshKey, setFreshKey] = useState(isFresh ? location.key : null)
   const [sensitive, setSensitive] = useState<Partial<Record<K, string>>>(() => {
     const result: Partial<Record<K, string>> = {}
+    if (isFresh) return result
     // URL mang bộ lọc khác bản sao (vd. mở link đồng nghiệp gửi) thì URL thắng:
     // không gắn ô nhạy cảm của lần lọc trước vào bộ lọc mới.
     const tracked = [...keys, PAGE_PARAM, SIZE_PARAM]
@@ -103,6 +113,16 @@ export const useUrlFilters = <K extends string>({
     }
     return result
   })
+
+  if (isFresh && freshKey !== location.key) {
+    setFreshKey(location.key)
+    setStored(EMPTY_STATE)
+    setSensitive({})
+  }
+
+  useEffect(() => {
+    if (isFresh) writeListState(key, EMPTY_STATE)
+  }, [isFresh, key, location.key])
 
   // Nơi gọi thường truyền mảng literal mới mỗi render; ghim theo nội dung để
   // `filters` giữ tham chiếu ổn định và dùng được làm dependency.

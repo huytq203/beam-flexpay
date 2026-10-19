@@ -43,7 +43,7 @@ describe('ChannelCell — nhà cung cấp', () => {
     )
 
     expect(screen.getByText(/Tất cả NCC/)).toBeInTheDocument()
-    expect(screen.getByText(/Tất cả NH phát hành/)).toBeInTheDocument()
+    expect(screen.getByText(/Tất cả NH/)).toBeInTheDocument()
   })
 
   it('không hiện NCC ở loại giao dịch không đi qua nhà cung cấp', () => {

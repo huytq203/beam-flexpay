@@ -34,4 +34,13 @@ describe('nhãn người chịu phí theo loại giao dịch', () => {
     )
     expect(getPayerLabel('UNKNOWN_PAYER')).toBe('UNKNOWN_PAYER')
   })
+
+  it('hoàn tiền ví: giá trị USER/SENDER cũng hiển thị là Người nhận', () => {
+    expect(getPayerLabel('USER', 'EWALLET_REFUND')).toBe('Người nhận')
+    expect(getPayerLabel('SENDER', 'EWALLET_REFUND')).toBe('Người nhận')
+    expect(getPayerTypeOptions('EWALLET_REFUND')).toContainEqual({
+      value: 'USER',
+      label: 'Người nhận'
+    })
+  })
 })

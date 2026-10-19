@@ -186,7 +186,7 @@ export const FeePolicyFilterBar = ({
           name='bankCode'
           control={control}
           label='Ngân hàng phát hành'
-          placeholder='Tất cả ngân hàng phát hành'
+          placeholder='Tất cả ngân hàng'
           allowClear
           showSearch
           optionFilterProp='label'
