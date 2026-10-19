@@ -18,7 +18,6 @@ const STATUS_OPTIONS = [
   { label: 'Thành công', value: 'COMPLETED' },
   { label: 'Thất bại', value: 'FAILED' },
   { label: 'Hết hạn', value: 'EXPIRED' },
-  { label: 'Bỏ dở', value: 'ABANDONED' },
   { label: 'Chờ duyệt thủ công', value: 'PENDING_REVIEW' },
   { label: 'Đã duyệt thủ công', value: 'MANUALLY_APPROVED' },
   { label: 'Đã từ chối thủ công', value: 'MANUALLY_REJECTED' },
