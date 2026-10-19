@@ -1,7 +1,9 @@
 import { createAppStore } from '@/app/store'
 import { savePermissions } from '@slices/authSlice'
 import type { EKYCListItem } from '@type/apiResponseEKYC'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
+import { server } from '@/test/mocks/server'
 import { Provider } from 'react-redux'
 import { describe, expect, it, vi } from 'vitest'
 import { EkycReviewActions } from '../EkycReviewActions'
@@ -15,7 +17,18 @@ const makeRecord = (status: string): EKYCListItem =>
     ]
   }) as EKYCListItem
 
-const renderActions = (status = 'PENDING_REVIEW') => {
+const mockDetail = (approvalReady: boolean, status = 'PENDING_REVIEW') =>
+  server.use(
+    http.get('*/verified-kyc-profiles/target', () =>
+      HttpResponse.json({
+        success: true,
+        data: { sessionId: 'target', status, approvalReady, createdAt: '' }
+      })
+    )
+  )
+
+const renderActions = (status = 'PENDING_REVIEW', approvalReady = true) => {
+  mockDetail(approvalReady, status)
   const store = createAppStore()
   store.dispatch(savePermissions(['EWALLET:ADMIN:FULL']))
   const onReview = vi.fn()
@@ -35,7 +48,7 @@ describe('EkycReviewActions', () => {
   it('mở popover icon và chọn chấp nhận cho phiên chờ duyệt', async () => {
     const { onReview, record } = renderActions()
     fireEvent.click(
-      screen.getByRole('button', { name: 'Xét duyệt eKYC Nguyễn Văn A' })
+      await screen.findByRole('button', { name: 'Xét duyệt eKYC Nguyễn Văn A' })
     )
     fireEvent.click(await screen.findByRole('button', { name: 'Chấp nhận' }))
     expect(onReview).toHaveBeenCalledWith(record, 'approve')
@@ -47,5 +60,28 @@ describe('EkycReviewActions', () => {
       screen.queryByRole('button', { name: 'Xét duyệt eKYC Nguyễn Văn A' })
     ).toBeNull()
     expect(onReview).not.toHaveBeenCalled()
+  })
+
+  it('có phiên chờ duyệt nhưng chưa đủ điều kiện duyệt thì không hiện nút', async () => {
+    let requested = false
+    server.use(
+      http.get('*/verified-kyc-profiles/target', () => {
+        requested = true
+        return HttpResponse.json({
+          success: true,
+          data: {
+            sessionId: 'target',
+            status: 'PENDING_REVIEW',
+            approvalReady: false,
+            createdAt: ''
+          }
+        })
+      })
+    )
+    renderActions('PENDING_REVIEW', false)
+    await waitFor(() => expect(requested).toBe(true))
+    expect(
+      screen.queryByRole('button', { name: 'Xét duyệt eKYC Nguyễn Văn A' })
+    ).toBeNull()
   })
 })

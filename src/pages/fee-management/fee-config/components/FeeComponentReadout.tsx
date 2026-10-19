@@ -2,7 +2,7 @@ import { COMPONENT_TYPE_LABELS, getFeeLabel } from '@constants/feeLabels'
 import { formatFeeLimit, formatTierRange } from '@utils/fee-format'
 import {
   BENEFICIARY_TYPE_LABEL,
-  PAYER_TYPE_LABEL
+  getPayerLabel
 } from '../constants/feeConfigFields'
 import {
   getTierStart,
@@ -18,6 +18,8 @@ interface FeeComponentReadoutProps {
   component: FeeComponentFormValues
   /** Ẩn ô "Tính trên" khi nơi dùng đã có dòng công thức riêng nêu cơ sở tính. */
   hideBasis?: boolean
+  /** Loại giao dịch của chính sách; quyết định nhãn bên chịu phí (vd. rút tiền gọi là Người nhận). */
+  serviceType?: string
 }
 
 const HEAD =
@@ -43,7 +45,8 @@ const getPartyLabel = (
  */
 export const FeeComponentReadout = ({
   component,
-  hideBasis = false
+  hideBasis = false,
+  serviceType
 }: FeeComponentReadoutProps) => {
   const tiered = usesTiers(component.calculationMethod)
 
@@ -69,7 +72,7 @@ export const FeeComponentReadout = ({
         {!hideBasis && <Fact label='Tính trên' value={basis} />}
         <Fact
           label='Người chịu phí'
-          value={getPartyLabel(component.payerType, PAYER_TYPE_LABEL)}
+          value={getPayerLabel(component.payerType, serviceType)}
         />
         <Fact
           label='Người hưởng phí'

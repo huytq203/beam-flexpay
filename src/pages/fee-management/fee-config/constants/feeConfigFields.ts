@@ -299,6 +299,7 @@ export {
 
 export {
   PAYER_TYPE_LABEL,
+  getPayerLabel,
   getPayerTypeOptions,
   BENEFICIARY_TYPE_LABEL,
   BENEFICIARY_TYPE_OPTIONS,

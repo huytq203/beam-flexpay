@@ -123,24 +123,22 @@ export function EkycReviewPanel({
               phiên.
             </p>
           )}
-          {!readOnly && !initialDecision && can('approve') && (
+          {!readOnly && !initialDecision && can('approve') && isPending && (
             <div className='mt-3 flex flex-wrap gap-2'>
-              <ButtonComponent
-                type='primary'
-                content='Duyệt phiên'
-                disabled={!canApprove || isSubmitting}
-                onClick={() => setDecision('approve')}
-              />
+              {/* Không duyệt được thì không hiện nút duyệt, chỉ còn từ chối. */}
+              {canApprove && (
+                <ButtonComponent
+                  type='primary'
+                  content='Duyệt phiên'
+                  disabled={isSubmitting}
+                  onClick={() => setDecision('approve')}
+                />
+              )}
               <ButtonComponent
                 type='default'
                 danger
                 content='Từ chối phiên'
-                disabled={
-                  !isPending ||
-                  detail.isFetching ||
-                  detail.isError ||
-                  isSubmitting
-                }
+                disabled={detail.isFetching || detail.isError || isSubmitting}
                 onClick={() => setDecision('reject')}
               />
             </div>

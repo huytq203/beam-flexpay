@@ -7,6 +7,7 @@ import dayjs from 'dayjs'
 import type { EKYCListItem } from '@type/apiResponseEKYC'
 import { useState } from 'react'
 import { EkycReviewPanel } from './EkycReviewPanel'
+import { getReviewSessionId } from '../utils/ekycReviewTarget'
 
 interface Props {
   data?: EKYCListItem
@@ -21,8 +22,9 @@ const ContenModalConfirm = ({
   onRetry
 }: Pick<Props, 'data' | 'isError' | 'onRetry'>) => {
   const record = data
+  // Mở sẵn phiên đang chờ duyệt để xét duyệt ngay trong chi tiết hồ sơ.
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
-    null
+    () => (record ? getReviewSessionId(record) : null)
   )
   // Mục OCR là giấy tờ đọc được ở lần mới nhất, không phải hồ sơ đã chốt của người (dòng lưới).
   const ocr =
@@ -149,7 +151,7 @@ const ContenModalConfirm = ({
         <EkycReviewPanel
           key={selectedSessionId}
           sessionId={selectedSessionId}
-          readOnly
+          onUpdated={onRetry}
         />
       )}
     </>

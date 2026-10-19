@@ -2,7 +2,7 @@ import { COMPONENT_TYPE_LABELS, getFeeLabel } from '@constants/feeLabels'
 import {
   BENEFICIARY_TYPE_LABEL,
   FEE_SCOPE_LABEL,
-  PAYER_TYPE_LABEL,
+  getPayerLabel,
   type FeeScope
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import { describeFormula } from '@pages/fee-management/fee-config/utils/feeComponentSummary'
@@ -13,6 +13,8 @@ import { toReadoutComponent } from '../utils/toReadoutComponent'
 interface ScopeComponentsCellProps {
   configuration: FeePolicyConfiguration | undefined
   feeScope: FeeScope
+  /** Loại giao dịch của chính sách; quyết định nhãn bên chịu phí. */
+  serviceType?: string
 }
 
 /**
@@ -21,7 +23,8 @@ interface ScopeComponentsCellProps {
  */
 export const ScopeComponentsCell = ({
   configuration,
-  feeScope
+  feeScope,
+  serviceType
 }: ScopeComponentsCellProps) => {
   const components = (configuration?.components ?? [])
     .map(toReadoutComponent)
@@ -56,8 +59,7 @@ export const ScopeComponentsCell = ({
               <span className='ml-2'>
                 {component.payerType === 'SYSTEM'
                   ? BENEFICIARY_TYPE_LABEL.SYSTEM
-                  : (PAYER_TYPE_LABEL[component.payerType] ??
-                    component.payerType)}{' '}
+                  : getPayerLabel(component.payerType, serviceType)}{' '}
                 →{' '}
                 {BENEFICIARY_TYPE_LABEL[component.beneficiaryType] ??
                   component.beneficiaryType}

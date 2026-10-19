@@ -67,4 +67,17 @@ describe('FeeComponentList — cơ sở tính', () => {
     renderList()
     expect(screen.queryByText('Tính trên')).toBeNull()
   })
+
+  it('rút tiền ví: bên chịu phí hiển thị là Người nhận', () => {
+    render(
+      <FeeComponentList
+        components={[base]}
+        feeScope='OUTPUT_FEE'
+        policyId='p1'
+        serviceType='EWALLET_WITHDRAWAL'
+      />
+    )
+    expect(screen.getByText('Người nhận')).toBeInTheDocument()
+    expect(screen.queryByText('Người chuyển')).toBeNull()
+  })
 })

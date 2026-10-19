@@ -16,13 +16,16 @@ interface FeeComponentListProps {
   feeScope: FeeScope
   /** Ghép vào id neo của thẻ vì nhiều dòng chính sách có thể cùng mở trên một màn. */
   policyId: string
+  /** Loại giao dịch của chính sách; quyết định nhãn bên chịu phí. */
+  serviceType?: string
 }
 
 /** Chỉ các thành phần của luồng đang xem, để đối soát từng luồng riêng. */
 export const FeeComponentList = ({
   components,
   feeScope,
-  policyId
+  policyId,
+  serviceType
 }: FeeComponentListProps) => {
   const scoped = components.filter(
     (component) => component.feeScope === feeScope
@@ -68,11 +71,13 @@ export const FeeComponentList = ({
                     <FeeComponentReadout
                       component={group.members[0]}
                       hideBasis
+                      serviceType={serviceType}
                     />
                   ) : (
                     <FeeComponentGroupReadout
                       hideBasis
                       members={group.members}
+                      serviceType={serviceType}
                     />
                   )}
                 </div>

@@ -208,6 +208,7 @@ export const FeeComponentList = ({
                       pairedIndex === null ? null : components[pairedIndex]
                     }
                     readOnly={readOnly}
+                    serviceType={serviceType}
                     onEdit={() => setEditingIndex(primary)}
                     onRemove={() => handleRemove(primary, pairedIndex)}
                   />

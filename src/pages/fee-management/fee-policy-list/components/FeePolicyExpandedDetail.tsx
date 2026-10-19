@@ -32,6 +32,8 @@ interface FeePolicyExpandedDetailProps {
   policyName: string
   configuration: FeePolicyConfiguration | undefined
   appliedTargets?: AppliedTarget[]
+  /** Loại giao dịch của chính sách; quyết định nhãn bên chịu phí. */
+  serviceType?: string
 }
 
 interface FactProps {
@@ -166,7 +168,8 @@ export const FeePolicyExpandedDetail = ({
   policyId,
   policyName,
   configuration,
-  appliedTargets
+  appliedTargets,
+  serviceType
 }: FeePolicyExpandedDetailProps) => {
   const assignments = configuration?.assignments ?? []
   const components = (configuration?.components ?? []).map(toReadoutComponent)
@@ -185,6 +188,7 @@ export const FeePolicyExpandedDetail = ({
         components={components}
         feeScope={feeScope}
         policyId={policyId}
+        serviceType={serviceType}
       />
       <FeePolicySchedulesSection policyId={policyId} />
     </section>

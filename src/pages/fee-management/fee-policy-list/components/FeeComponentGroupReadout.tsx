@@ -1,7 +1,7 @@
 import { COMPONENT_TYPE_LABELS, getFeeLabel } from '@constants/feeLabels'
 import {
   BENEFICIARY_TYPE_LABEL,
-  PAYER_TYPE_LABEL
+  getPayerLabel
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import type { FeeComponentFormValues } from '@pages/fee-management/fee-config/schemas/feeConfig.schema'
 import {
@@ -15,6 +15,8 @@ interface FeeComponentGroupReadoutProps {
   members: readonly FeeComponentFormValues[]
   /** Ẩn ô "Tính trên" khi nơi dùng đã có dòng công thức riêng nêu cơ sở tính. */
   hideBasis?: boolean
+  /** Loại giao dịch của chính sách; quyết định nhãn bên chịu phí. */
+  serviceType?: string
 }
 
 const HEAD =
@@ -29,7 +31,8 @@ const label = (value: string, map: Readonly<Record<string, string>>): string =>
  */
 export const FeeComponentGroupReadout = ({
   members,
-  hideBasis = false
+  hideBasis = false,
+  serviceType
 }: FeeComponentGroupReadoutProps) => {
   const [first] = members
   const basis =
@@ -85,7 +88,7 @@ export const FeeComponentGroupReadout = ({
                 className='border-t border-border'
               >
                 <td className='py-1.5 pr-6'>
-                  {label(member.payerType, PAYER_TYPE_LABEL)}
+                  {getPayerLabel(member.payerType, serviceType)}
                 </td>
                 <td className='py-1.5 pr-6'>
                   {label(member.beneficiaryType, BENEFICIARY_TYPE_LABEL)}

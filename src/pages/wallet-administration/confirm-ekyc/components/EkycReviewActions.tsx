@@ -3,6 +3,7 @@ import { Popover } from 'antd'
 import { Can } from '@/app/permissions'
 import { CheckOutlined } from '@components/icons'
 import { ButtonComponent } from '@components/index'
+import { useGetEKYCByIdQuery } from '@services/apiEKYC'
 import { EkycIconButton } from './EkycIconButton'
 import type { EKYCListItem } from '@type/apiResponseEKYC'
 import { getReviewSessionId } from '../utils/ekycReviewTarget'
@@ -15,7 +16,13 @@ interface Props {
 export function EkycReviewActions({ record, onReview }: Props) {
   const [open, setOpen] = useState(false)
   const sessionId = getReviewSessionId(record)
-  if (!sessionId) return null
+  // Lưới không mang cờ `approvalReady`; đọc chi tiết phiên (dùng chung cache với dialog) để
+  // chỉ hiện nút xét duyệt khi phiên thật sự duyệt được.
+  const detail = useGetEKYCByIdQuery(sessionId ?? '', { skip: !sessionId })
+  const approvable =
+    detail.data?.status === 'PENDING_REVIEW' &&
+    detail.data.approvalReady === true
+  if (!sessionId || !approvable) return null
 
   const choose = (decision: 'approve' | 'reject') => {
     setOpen(false)

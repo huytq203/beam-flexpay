@@ -1,4 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
+import { Provider } from 'react-redux'
+import { createAppStore } from '@/app/store'
+import { MessageProvider } from '@hooks/MessageProvider'
+import { savePermissions } from '@slices/authSlice'
+import { server } from '@/test/mocks/server'
 import type { ContentEKYC, EKYCListItem } from '@type/apiResponseEKYC'
 import { describe, expect, it, vi } from 'vitest'
 import BusinessComfirm from '../BusinessComfirm'
@@ -121,5 +127,48 @@ describe('BusinessComfirm', () => {
     expect(screen.getByText(/Đang hiển thị dữ liệu từ danh sách/)).toBeInTheDocument()
     screen.getByRole('button', { name: 'Thử lại' }).click()
     expect(onRetry).toHaveBeenCalledOnce()
+  })
+
+  it('mở sẵn phiên chờ duyệt và cho duyệt ngay trong chi tiết hồ sơ', async () => {
+    server.use(
+      http.get('*/verified-kyc-profiles/pending-session', () =>
+        HttpResponse.json({
+          success: true,
+          data: {
+            sessionId: 'pending-session',
+            status: 'PENDING_REVIEW',
+            approvalReady: true,
+            createdAt: '2026-09-30T09:00:00Z'
+          }
+        })
+      )
+    )
+    const store = createAppStore()
+    store.dispatch(savePermissions(['EWALLET:ADMIN:FULL']))
+    render(
+      <Provider store={store}>
+        <MessageProvider>
+          <BusinessComfirm
+            data={{
+              ...profile,
+              attempts: [
+                {
+                  ...attempt,
+                  sessionId: 'pending-session',
+                  status: 'PENDING_REVIEW',
+                  createdAt: '2026-09-30T09:00:00Z'
+                },
+                olderAttempt
+              ]
+            }}
+          />
+        </MessageProvider>
+      </Provider>
+    )
+
+    expect(
+      await screen.findByRole('button', { name: 'Duyệt phiên' })
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Từ chối phiên' })).toBeInTheDocument()
   })
 })

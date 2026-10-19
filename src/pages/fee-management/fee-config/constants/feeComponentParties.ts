@@ -33,6 +33,34 @@ const WALLET_FLOW_SERVICES: readonly string[] = [
 ]
 
 /**
+ * Nhãn riêng theo loại giao dịch, chỉ để HIỂN THỊ — giá trị gửi backend không đổi.
+ * Rút tiền: khách rút từ ví ra ngân hàng và phí trừ vào số tiền ngân hàng nhận được
+ * (rút 1.000.000 thì nhận 999.000, phí 1.000), nên người vận hành gọi bên chịu phí là
+ * "Người nhận" dù backend vẫn lưu `USER`/`SENDER`.
+ */
+const SERVICE_PAYER_LABEL: Readonly<
+  Record<string, Readonly<Record<string, string>>>
+> = {
+  EWALLET_WITHDRAWAL: { USER: 'Người nhận', SENDER: 'Người nhận' }
+}
+
+/** Nhãn người chịu phí của một thành phần, theo đúng loại giao dịch của chính sách. */
+export const getPayerLabel = (
+  payerType: string,
+  serviceType?: string | null
+): string => {
+  const override = serviceType
+    ? SERVICE_PAYER_LABEL[serviceType]?.[payerType]
+    : undefined
+  if (override) return override
+  const labels =
+    serviceType && WALLET_FLOW_SERVICES.includes(serviceType)
+      ? { ...PAYER_TYPE_LABEL, ...WALLET_FLOW_PAYER_LABEL }
+      : PAYER_TYPE_LABEL
+  return labels[payerType] ?? payerType
+}
+
+/**
  * Người chịu phí được phép chọn: chỉ đúng payer mà `FeeExecutionCapabilityRegistry`
  * thực thi được cho loại giao dịch (USER cho luồng ví, MERCHANT cho thu/chi hộ)
  * cùng SYSTEM cho chi phí đầu vào. Chuyển tiền cho chọn USER (người chuyển, cộng
@@ -43,14 +71,10 @@ export const getPayerTypeOptions = (
   serviceType: string | null | undefined
 ): readonly { value: string; label: string }[] => {
   const payers = getSelectablePayers(serviceType)
-  const labels =
-    serviceType && WALLET_FLOW_SERVICES.includes(serviceType)
-      ? { ...PAYER_TYPE_LABEL, ...WALLET_FLOW_PAYER_LABEL }
-      : PAYER_TYPE_LABEL
   return [
     ...(payers.length > 0 ? payers : ['USER']).map((payer) => ({
       value: payer,
-      label: labels[payer] ?? payer
+      label: getPayerLabel(payer, serviceType)
     })),
     { value: 'SYSTEM', label: PAYER_TYPE_LABEL.SYSTEM }
   ]

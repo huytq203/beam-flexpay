@@ -48,7 +48,9 @@ describe('EkycReviewPanel', () => {
     expect(
       await screen.findByText(/chưa đủ điều kiện duyệt/)
     ).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Duyệt phiên' })).toBeDisabled()
+    // Không duyệt được thì không hiện nút duyệt; vẫn từ chối được.
+    await screen.findByRole('button', { name: 'Từ chối phiên' })
+    expect(screen.queryByRole('button', { name: 'Duyệt phiên' })).toBeNull()
   })
 
   it('duyệt đúng sessionId sau khi xác nhận rồi tải lại lưới', async () => {

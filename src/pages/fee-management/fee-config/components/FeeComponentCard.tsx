@@ -12,6 +12,7 @@ interface FeeComponentCardProps {
   onEdit: () => void
   onRemove: () => void
   readOnly?: boolean
+  serviceType?: string
 }
 
 /**
@@ -23,7 +24,8 @@ export const FeeComponentCard = ({
   index,
   onEdit,
   onRemove,
-  readOnly = false
+  readOnly = false,
+  serviceType
 }: FeeComponentCardProps) => (
   <article className='rounded-lg border border-border bg-background'>
     <header className='flex flex-wrap items-start justify-between gap-3 border-b border-border px-4 py-3'>
@@ -73,11 +75,17 @@ export const FeeComponentCard = ({
     </header>
 
     <div className='px-4 py-3'>
-      <FeeComponentReadout component={component} />
+      <FeeComponentReadout
+        component={component}
+        serviceType={serviceType}
+      />
     </div>
     {partner && (
       <div className='border-t border-dashed border-border px-4 py-3'>
-        <FeeComponentReadout component={partner} />
+        <FeeComponentReadout
+          component={partner}
+          serviceType={serviceType}
+        />
       </div>
     )}
   </article>

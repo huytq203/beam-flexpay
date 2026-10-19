@@ -108,6 +108,7 @@ export const getFeePolicyColumns = ({
       <ScopeComponentsCell
         configuration={row.configuration}
         feeScope={feeScope}
+        serviceType={row.serviceType}
       />
     )
   },

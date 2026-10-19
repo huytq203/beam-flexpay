@@ -238,7 +238,7 @@ export const getColumn = ({
     }
   },
   {
-    title: 'Trạng thái phiên',
+    title: 'Trạng thái phiên ekyc gần nhất',
     align: 'center',
     render(_, record) {
       const status = statusMap[record.status]

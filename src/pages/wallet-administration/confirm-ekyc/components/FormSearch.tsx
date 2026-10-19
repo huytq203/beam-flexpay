@@ -13,7 +13,6 @@ import * as Icons from '@components/icons'
 
 // Trạng thái PHIÊN eKYC mới nhất (latestStatus), đủ 10 giá trị của EkycSessionStatus ở BE — không nhận VERIFIED/INVALID.
 const STATUS_OPTIONS = [
-  { label: 'Khởi tạo', value: 'INITIATED' },
   { label: 'Đang xử lý', value: 'IN_PROGRESS' },
   { label: 'Thành công', value: 'COMPLETED' },
   { label: 'Thất bại', value: 'FAILED' },
@@ -21,7 +20,6 @@ const STATUS_OPTIONS = [
   { label: 'Chờ duyệt thủ công', value: 'PENDING_REVIEW' },
   { label: 'Đã duyệt thủ công', value: 'MANUALLY_APPROVED' },
   { label: 'Đã từ chối thủ công', value: 'MANUALLY_REJECTED' },
-  { label: 'Đã thay thế', value: 'SUPERSEDED' }
 ]
 
 // Kết quả xác thực chung cuộc của người (profileStatus ở BE), tách biệt với trạng thái phiên.
@@ -102,7 +100,7 @@ const FormSearch = ({ filters, onSearch, onReset }: FormSearchProps) => {
             control={formSearch.control}
             name='latestStatus'
             className='col-span-1'
-            label='Trạng thái phiên'
+            label='Trạng thái phiên ekyc gần nhất'
             options={STATUS_OPTIONS}
           />
           <FormSelect

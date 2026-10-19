@@ -247,6 +247,7 @@ const FeePolicyList = () => {
                     policyName={row.name}
                     configuration={row.configuration}
                     appliedTargets={row.appliedTargets}
+                    serviceType={row.serviceType}
                   />
                 ) : null
             }}
