@@ -9,8 +9,8 @@ export const FreezeDisplayStatus = {
   FROZEN: 'FROZEN',
   PARTIALLY_RELEASED: 'PARTIALLY_RELEASED',
   RELEASED: 'RELEASED',
-  CAPTURED: 'CAPTURED',
-  PARTIALLY_CAPTURED: 'PARTIALLY_CAPTURED',
+  // CAPTURED: 'CAPTURED',
+  // PARTIALLY_CAPTURED: 'PARTIALLY_CAPTURED',
 } as const
 
 export type FreezeDisplayStatus =
@@ -46,23 +46,15 @@ export const FREEZE_STATUS_CONFIG: Record<FreezeBadgeKey, FreezeBadgeConfig> = {
   [FreezeDisplayStatus.RELEASED]: {
     label: 'Đã mở băng',
     className: 'success-status'
-  },
-  [FreezeDisplayStatus.CAPTURED]: {
-    label: 'Đã thu',
-    className: 'normal-status'
-  },
-  [FreezeDisplayStatus.PARTIALLY_CAPTURED]: {
-    label: 'Đã thu một phần',
-    className: 'normal-status'
-  },
+  }
 
 }
 
 /** Trạng thái gốc trong DB của bản ghi đóng băng. */
 export const FreezeStatus = {
   ACTIVE: 'ACTIVE',
-  CAPTURED: 'CAPTURED',
-  PARTIALLY_CAPTURED: 'PARTIALLY_CAPTURED',
+  // CAPTURED: 'CAPTURED',
+  // PARTIALLY_CAPTURED: 'PARTIALLY_CAPTURED',
   RELEASED: 'RELEASED',
   EXPIRED: 'EXPIRED',
   CANCELLED: 'CANCELLED'
