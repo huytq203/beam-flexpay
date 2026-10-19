@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ButtonComponent } from '@components/index'
+import { ButtonComponent, TextArea } from '@components/index'
 import { useMessage } from '@hooks/useMessage'
 import { useScreenAccess } from '@/app/permissions'
 import {
@@ -42,6 +42,8 @@ export function EkycReviewPanel({
     initialDecision ?? null
   )
   const [error, setError] = useState<string | null>(null)
+  const [rejectReason, setRejectReason] = useState('')
+  const trimmedReason = rejectReason.trim()
   const isPending = detail.data?.status === 'PENDING_REVIEW'
   const canApprove =
     isPending &&
@@ -56,8 +58,8 @@ export function EkycReviewPanel({
     try {
       if (decision === 'approve' && canApprove) {
         await approve(sessionId).unwrap()
-      } else if (decision === 'reject' && isPending) {
-        await reject(sessionId).unwrap()
+      } else if (decision === 'reject' && isPending && trimmedReason) {
+        await reject({ sessionId, reason: trimmedReason }).unwrap()
       } else {
         return
       }
@@ -65,6 +67,7 @@ export function EkycReviewPanel({
         decision === 'approve' ? 'Đã duyệt phiên eKYC' : 'Đã từ chối phiên eKYC'
       )
       setDecision(null)
+      setRejectReason('')
       onUpdated?.()
       onSuccess?.()
     } catch (cause) {
@@ -129,7 +132,7 @@ export function EkycReviewPanel({
               {canApprove && (
                 <ButtonComponent
                   type='primary'
-                  content='Duyệt phiên'
+                  content='Duyệt EKYC'
                   disabled={isSubmitting}
                   onClick={() => setDecision('approve')}
                 />
@@ -137,7 +140,7 @@ export function EkycReviewPanel({
               <ButtonComponent
                 type='default'
                 danger
-                content='Từ chối phiên'
+                content='Từ chối EKYC'
                 disabled={detail.isFetching || detail.isError || isSubmitting}
                 onClick={() => setDecision('reject')}
               />
@@ -151,6 +154,25 @@ export function EkycReviewPanel({
             Xác nhận {decision === 'approve' ? 'duyệt' : 'từ chối'} phiên{' '}
             {sessionId}?
           </p>
+          {decision === 'reject' && (
+            <div className='mt-2'>
+              <label
+                className='mb-1 block text-sm font-medium text-foreground'
+                htmlFor={`ekyc-reject-reason-${sessionId}`}
+              >
+                Lý do từ chối <span className='text-danger-strong'>*</span>
+              </label>
+              <TextArea
+                id={`ekyc-reject-reason-${sessionId}`}
+                aria-label='Lý do từ chối'
+                maxLength={500}
+                onChange={(event) => setRejectReason(event.target.value)}
+                placeholder='Nhập lý do từ chối'
+                rows={3}
+                value={rejectReason}
+              />
+            </div>
+          )}
           <div className='mt-2 flex flex-wrap gap-2'>
             <ButtonComponent
               type='primary'
@@ -162,6 +184,7 @@ export function EkycReviewPanel({
                 decision === 'approve'
                   ? !canApprove || isSubmitting
                   : !isPending ||
+                    !trimmedReason ||
                     detail.isFetching ||
                     detail.isError ||
                     isSubmitting
@@ -175,6 +198,7 @@ export function EkycReviewPanel({
               disabled={isSubmitting}
               onClick={() => {
                 setDecision(null)
+                setRejectReason('')
                 onCancel?.()
               }}
             />

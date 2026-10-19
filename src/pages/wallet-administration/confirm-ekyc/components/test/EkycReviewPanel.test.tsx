@@ -49,8 +49,8 @@ describe('EkycReviewPanel', () => {
       await screen.findByText(/chưa đủ điều kiện duyệt/)
     ).toBeInTheDocument()
     // Không duyệt được thì không hiện nút duyệt; vẫn từ chối được.
-    await screen.findByRole('button', { name: 'Từ chối phiên' })
-    expect(screen.queryByRole('button', { name: 'Duyệt phiên' })).toBeNull()
+    await screen.findByRole('button', { name: 'Từ chối EKYC' })
+    expect(screen.queryByRole('button', { name: 'Duyệt EKYC' })).toBeNull()
   })
 
   it('duyệt đúng sessionId sau khi xác nhận rồi tải lại lưới', async () => {
@@ -65,7 +65,7 @@ describe('EkycReviewPanel', () => {
       })
     )
     const { onUpdated } = renderPanel(true)
-    fireEvent.click(await screen.findByRole('button', { name: 'Duyệt phiên' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Duyệt EKYC' }))
     fireEvent.click(screen.getByRole('button', { name: 'Xác nhận duyệt' }))
     await waitFor(() => expect(called).toBe(1))
     await waitFor(() => expect(onUpdated).toHaveBeenCalledOnce())
@@ -78,13 +78,40 @@ describe('EkycReviewPanel', () => {
         screen.getByRole('button', { name: 'Xác nhận duyệt' })
       ).toBeEnabled()
     )
-    expect(screen.queryByRole('button', { name: 'Duyệt phiên' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Duyệt EKYC' })).toBeNull()
   })
 
   it('chỉ xem chi tiết phiên trong lịch sử, không có nút xét duyệt', async () => {
     renderPanel(true, { readOnly: true })
     expect(await screen.findByText(/Trạng thái:/)).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Duyệt phiên' })).toBeNull()
-    expect(screen.queryByRole('button', { name: 'Từ chối phiên' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Duyệt EKYC' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Từ chối EKYC' })).toBeNull()
+  })
+
+  it('từ chối bắt buộc nhập lý do và gửi { reason } lên BE', async () => {
+    let body: unknown
+    server.use(
+      http.post(
+        '*/verified-kyc-profiles/session-123/reject',
+        async ({ request }) => {
+          body = await request.json()
+          return HttpResponse.json({
+            success: true,
+            data: { status: 'MANUALLY_REJECTED' }
+          })
+        }
+      )
+    )
+    const { onUpdated } = renderPanel(true)
+    fireEvent.click(await screen.findByRole('button', { name: 'Từ chối EKYC' }))
+    const confirm = screen.getByRole('button', { name: 'Xác nhận từ chối' })
+    expect(confirm).toBeDisabled()
+    fireEvent.change(screen.getByLabelText('Lý do từ chối'), {
+      target: { value: '  Ảnh chân dung mờ  ' }
+    })
+    expect(confirm).toBeEnabled()
+    fireEvent.click(confirm)
+    await waitFor(() => expect(body).toEqual({ reason: 'Ảnh chân dung mờ' }))
+    await waitFor(() => expect(onUpdated).toHaveBeenCalledOnce())
   })
 })

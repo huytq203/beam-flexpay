@@ -112,7 +112,7 @@ export const FeeTierEditor = ({
       {/* Lỗi của hàng đã nói đúng câu này, nên gợi ý chỉ hiện khi chưa có lỗi đó. */}
       {!hasRateMissingError && (
         <p className='mb-2 text-[13px] text-muted-foreground'>
-          Bậc không thu phí: nhập 0 vào Phí % hoặc Phí cố định, để trống Sàn.
+          Bậc không thu phí: nhập 0 vào Phí linh hoạt hoặc Phí cố định, để trống Sàn.
         </p>
       )}
 

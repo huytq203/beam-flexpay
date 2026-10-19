@@ -167,8 +167,8 @@ describe('BusinessComfirm', () => {
     )
 
     expect(
-      await screen.findByRole('button', { name: 'Duyệt phiên' })
+      await screen.findByRole('button', { name: 'Duyệt EKYC' })
     ).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Từ chối phiên' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Từ chối EKYC' })).toBeInTheDocument()
   })
 })

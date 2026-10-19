@@ -58,7 +58,7 @@ const numberOrZero = (value: number | null | undefined): number => value ?? 0
  */
 /** Bậc phí không khai Phí % lẫn Phí cố định: lỗi của cả cặp, đặt trên ô Phí %. */
 export const TIER_RATE_MISSING_MESSAGE =
-  'Nhập 0 vào Phí % hoặc Phí cố định nếu bậc này miễn phí'
+  'Nhập 0 vào Phí linh hoạt hoặc Phí cố định nếu bậc này miễn phí'
 
 export const feeTierFormSchema = z.object({
   /** Bỏ trống là bậc cuối, chạy tới vô cùng. */

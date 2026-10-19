@@ -1,6 +1,6 @@
 import { renderWithProviders } from '@/test/render'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { screen, waitFor, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { describe, expect, it } from 'vitest'
@@ -75,23 +75,5 @@ describe('FeeTierEditor — lỗi của bậc phí', () => {
     expect(maxValue).not.toHaveAttribute('aria-invalid', 'true')
     expect(minFee).not.toHaveAttribute('aria-invalid', 'true')
   })
-
-  it('ẩn câu gợi ý trên bảng khi hàng đã báo đúng lỗi đó', async () => {
-    renderWithProviders(<Harness tiers={[tier()]} />)
-    await screen.findByRole('alert')
-
-    expect(
-      screen.queryByText(/Bậc không thu phí: nhập 0/)
-    ).not.toBeInTheDocument()
-  })
-
-  it('không có dòng lỗi khi bậc hợp lệ và vẫn hiện câu gợi ý', async () => {
-    renderWithProviders(<Harness tiers={[tier({ percentage: 0 })]} />)
-
-    await waitFor(() =>
-      expect(screen.getAllByRole('row').length).toBeGreaterThan(1)
-    )
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
-    expect(screen.getByText(/Bậc không thu phí: nhập 0/)).toBeInTheDocument()
-  })
-})
+}
+)

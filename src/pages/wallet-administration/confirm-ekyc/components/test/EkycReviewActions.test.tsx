@@ -17,15 +17,20 @@ const makeRecord = (status: string): EKYCListItem =>
     ]
   }) as EKYCListItem
 
-const mockDetail = (approvalReady: boolean, status = 'PENDING_REVIEW') =>
+let detailRequests = 0
+
+const mockDetail = (approvalReady: boolean, status = 'PENDING_REVIEW') => {
+  detailRequests = 0
   server.use(
-    http.get('*/verified-kyc-profiles/target', () =>
-      HttpResponse.json({
+    http.get('*/verified-kyc-profiles/target', () => {
+      detailRequests += 1
+      return HttpResponse.json({
         success: true,
         data: { sessionId: 'target', status, approvalReady, createdAt: '' }
       })
-    )
+    })
   )
+}
 
 const renderActions = (status = 'PENDING_REVIEW', approvalReady = true) => {
   mockDetail(approvalReady, status)
@@ -63,23 +68,8 @@ describe('EkycReviewActions', () => {
   })
 
   it('có phiên chờ duyệt nhưng chưa đủ điều kiện duyệt thì không hiện nút', async () => {
-    let requested = false
-    server.use(
-      http.get('*/verified-kyc-profiles/target', () => {
-        requested = true
-        return HttpResponse.json({
-          success: true,
-          data: {
-            sessionId: 'target',
-            status: 'PENDING_REVIEW',
-            approvalReady: false,
-            createdAt: ''
-          }
-        })
-      })
-    )
     renderActions('PENDING_REVIEW', false)
-    await waitFor(() => expect(requested).toBe(true))
+    await waitFor(() => expect(detailRequests).toBeGreaterThan(0))
     expect(
       screen.queryByRole('button', { name: 'Xét duyệt eKYC Nguyễn Văn A' })
     ).toBeNull()

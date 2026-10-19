@@ -98,11 +98,15 @@ export const apiEKYC = authApiService.injectEndpoints({
       },
       invalidatesTags: ['EKYC']
     }),
-    rejectEKYC: build.mutation<ContentEKYC, string>({
-      async queryFn(sessionId, _api, _extra, baseQuery) {
+    rejectEKYC: build.mutation<
+      ContentEKYC,
+      { sessionId: string; reason: string }
+    >({
+      async queryFn({ sessionId, reason }, _api, _extra, baseQuery) {
         const response = await baseQuery({
           url: `/verified-kyc-profiles/${encodeURIComponent(sessionId)}/reject`,
-          method: 'POST'
+          method: 'POST',
+          body: { reason }
         })
         if (response.error) return { error: response.error }
         const result = response.data as EkycEnvelope<ContentEKYC>
