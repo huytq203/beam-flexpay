@@ -20,6 +20,7 @@ import type { FeeConfigFormValues } from './schemas/feeConfig.schema'
 interface FeeConfigFormProps {
   defaultValues: FeeConfigFormValues
   snapshot: FeeConfigSnapshot | null
+  feeCode?: string | null
   readOnly?: boolean
 }
 
@@ -32,6 +33,7 @@ interface FeeConfigFormProps {
 const FeeConfigForm = ({
   defaultValues,
   snapshot,
+  feeCode,
   readOnly = false
 }: FeeConfigFormProps) => {
   const navigate = useNavigate()
@@ -61,6 +63,7 @@ const FeeConfigForm = ({
         <PolicyGeneralSection
           control={control}
           readOnly={readOnly}
+          feeCode={feeCode}
           onServiceTypeChange={changeServiceType}
         />
       </CardComponent>
@@ -131,7 +134,7 @@ const FeeConfigForm = ({
 const FeeConfig = () => {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
-  const { values, snapshot, isEditable, isLoading, isError } =
+  const { values, snapshot, feeCode, isEditable, isLoading, isError } =
     useFeeConfigDetail(id)
 
   if (id && isLoading) {
@@ -172,6 +175,7 @@ const FeeConfig = () => {
       // Khoá theo id để đổi bản ghi là dựng lại form với giá trị mới.
       key={id ?? 'create'}
       snapshot={snapshot}
+      feeCode={feeCode}
       defaultValues={values ?? buildEmptyForm()}
       readOnly={Boolean(id && !isEditable)}
     />

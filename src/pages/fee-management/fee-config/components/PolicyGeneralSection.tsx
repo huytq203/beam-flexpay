@@ -4,6 +4,7 @@ import {
   FormSelect,
   FormTextArea
 } from '@components/form'
+import { CopyableText } from '@components/index'
 import { SERVICE_TYPE_LABELS } from '@constants/feeLabels'
 import { withoutHiddenServiceTypes } from '@utils/fee-execution'
 import dayjs from 'dayjs'
@@ -20,6 +21,8 @@ import { SectionHeading } from './SectionHeading'
 interface PolicyGeneralSectionProps {
   control: Control<FeeConfigFormValues>
   readOnly?: boolean
+  /** Mã đối soát do BE sinh; chỉ có khi xem hoặc sửa chính sách đã lưu. */
+  feeCode?: string | null
   /** Đổi loại giao dịch kéo theo miền phí và các ô gán đối tượng. */
   onServiceTypeChange: (next: string) => void
 }
@@ -40,6 +43,7 @@ const PRIORITY_OPTIONS = FEE_PRIORITY_OPTIONS.map((option) => ({
 export const PolicyGeneralSection = ({
   control,
   readOnly = false,
+  feeCode,
   onServiceTypeChange
 }: PolicyGeneralSectionProps) => {
   const feeDomain = useWatch({ control, name: 'feeDomain' })
@@ -62,7 +66,19 @@ export const PolicyGeneralSection = ({
 
   return (
     <section>
-      <SectionHeading>Thông tin chung</SectionHeading>
+      <SectionHeading
+        action={
+          feeCode ? (
+            <CopyableText
+              label='Mã phí'
+              value={feeCode}
+              className='tabular-nums'
+            />
+          ) : undefined
+        }
+      >
+        Thông tin chung
+      </SectionHeading>
 
       <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
         <FormInput

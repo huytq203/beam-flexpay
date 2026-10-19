@@ -18,6 +18,8 @@ export interface UseFeeConfigDetailResult {
   values: FeeConfigFormValues | null
   /** Id của bản ghi đang có, để luồng lưu biết là cập nhật chứ không tạo mới. */
   snapshot: FeeConfigSnapshot | null
+  /** Mã đối soát của chính sách đang xem; null khi tạo mới hoặc BE cũ chưa trả. */
+  feeCode: string | null
   /** Backend khoá sửa cấu hình con ở mọi trạng thái khác Khởi tạo và Từ chối. */
   isEditable: boolean
   isLoading: boolean
@@ -120,6 +122,7 @@ export const useFeeConfigDetail = (
     return {
       values: null,
       snapshot: null,
+      feeCode: null,
       isEditable: true,
       isLoading: skip ? false : isLoading,
       isError
@@ -202,6 +205,7 @@ export const useFeeConfigDetail = (
       componentIds: (components ?? []).map((component) => component.id),
       assignmentId: assignment?.id ?? null
     },
+    feeCode: policy.feeCode ?? null,
     isEditable: EDITABLE_STATUSES.includes(policy.status),
     isLoading: false,
     isError: false

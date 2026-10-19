@@ -3,6 +3,7 @@ import { FeeStatusPill } from '@components/fee/FeeStatusPill'
 import { NotePencilIcon } from '@components/icons'
 import {
   ButtonComponent,
+  CopyableText,
   FeePolicyApprovalAction,
   TooltipComponent
 } from '@components/index'
@@ -56,6 +57,20 @@ export const getFeePolicyColumns = ({
     dataIndex: 'no',
     width: 56,
     align: 'center'
+  },
+  {
+    title: 'Mã phí',
+    dataIndex: 'feeCode',
+    width: 140,
+    render: (feeCode: string | null | undefined) =>
+      feeCode ? (
+        <CopyableText
+          value={feeCode}
+          className='tabular-nums'
+        />
+      ) : (
+        '--'
+      )
   },
   {
     title: 'Tên chính sách',

@@ -159,8 +159,8 @@ export const FeePolicyFilterBar = ({
         <FormInput
           name='keyword'
           control={control}
-          label='Tên chính sách'
-          placeholder='Nhập tên chính sách'
+          label='Tên chính sách / Mã phí'
+          placeholder='Nhập tên chính sách hoặc mã phí (FF...)'
           className='flex flex-col md:col-span-2 xl:col-span-3'
         />
         <FormSelect

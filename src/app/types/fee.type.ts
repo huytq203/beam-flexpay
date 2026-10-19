@@ -27,6 +27,8 @@ export interface AppliedTarget {
 
 export interface FeePolicy {
   id: string
+  /** Mã đối soát dễ đọc do BE sinh, ví dụ FF26BH44R; BE cũ có thể chưa trả. */
+  feeCode?: string | null
   /** Optimistic lock của BE — bắt buộc khi gọi API duyệt. */
   lockVersion?: number
   /** Mã băm nội dung bản ghi tại thời điểm checker xem — bắt buộc khi duyệt. */
