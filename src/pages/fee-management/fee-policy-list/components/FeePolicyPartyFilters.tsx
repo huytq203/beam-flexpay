@@ -45,7 +45,7 @@ export const FeePolicyPartyFilters = ({
           hint='Chỉ áp dụng cho chuyển tiền: chọn là chỉ còn chính sách chuyển tiền'
         />
       }
-      placeholder='Tất cả bên'
+      placeholder='Tất cả'
       allowClear
       disabled={
         Boolean(serviceType) && serviceType !== 'EWALLET_TRANSFER_INTERNAL'

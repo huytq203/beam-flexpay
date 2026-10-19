@@ -1,26 +1,21 @@
 import {
-  COMPONENT_TYPE_LABELS,
   PAYMENT_METHOD_LABELS,
   getFeeLabel
 } from '@constants/feeLabels'
 import {
-  FEE_SCOPE_LABEL,
   type FeeScope
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import {
   allowsOriginalTypeCriteria,
   getOriginalTypeLabel
 } from '@pages/fee-management/fee-config/constants/feeRefundOriginalType'
-import { FeeComponentReadout } from '@pages/fee-management/fee-config/components/FeeComponentReadout'
 import { SectionHeading } from '@pages/fee-management/fee-config/components/SectionHeading'
 import {
   allowsBankCriteria,
   allowsProviderCriteria
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
-import type { FeeComponentFormValues } from '@pages/fee-management/fee-config/schemas/feeConfig.schema'
-import { groupReadoutComponents } from '../utils/groupReadoutComponents'
 import { toReadoutComponent } from '../utils/toReadoutComponent'
-import { FeeComponentGroupReadout } from './FeeComponentGroupReadout'
+import { FeeComponentList } from './FeeComponentList'
 import type {
   AppliedSubject,
   AppliedTarget,
@@ -52,11 +47,6 @@ interface AssignmentRowProps {
 interface AssignmentListProps {
   assignments: FeeAssignment[]
   appliedTargets?: AppliedTarget[]
-}
-
-interface ComponentListProps {
-  components: FeeComponentFormValues[]
-  feeScope: FeeScope
 }
 
 const FACT_LABEL =
@@ -171,44 +161,6 @@ const AssignmentList = ({
   </div>
 )
 
-/** Chỉ các thành phần của luồng đang xem, để đối soát từng luồng riêng. */
-const ComponentList = ({ components, feeScope }: ComponentListProps) => {
-  const scoped = components.filter(
-    (component) => component.feeScope === feeScope
-  )
-  return (
-    <div>
-      <SectionHeading>{FEE_SCOPE_LABEL[feeScope]}</SectionHeading>
-      {scoped.length === 0 ? (
-        <p className='text-[13px] text-muted-foreground'>
-          Chính sách không có {FEE_SCOPE_LABEL[feeScope].toLowerCase()}.
-        </p>
-      ) : (
-        <div className='flex flex-col gap-3'>
-          {groupReadoutComponents(scoped).map((group, index) => (
-            <article
-              key={group.key}
-              className='rounded-lg border border-border bg-background'
-            >
-              <h3 className='border-b border-border px-4 py-3 text-[15px] font-semibold text-foreground'>
-                {index + 1}.{' '}
-                {getFeeLabel(group.componentType, COMPONENT_TYPE_LABELS)}
-              </h3>
-              <div className='px-4 py-3'>
-                {group.members.length === 1 ? (
-                  <FeeComponentReadout component={group.members[0]} />
-                ) : (
-                  <FeeComponentGroupReadout members={group.members} />
-                )}
-              </div>
-            </article>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
 export const FeePolicyExpandedDetail = ({
   feeScope,
   policyId,
@@ -229,9 +181,10 @@ export const FeePolicyExpandedDetail = ({
         assignments={assignments}
         appliedTargets={appliedTargets}
       />
-      <ComponentList
+      <FeeComponentList
         components={components}
         feeScope={feeScope}
+        policyId={policyId}
       />
       <FeePolicySchedulesSection policyId={policyId} />
     </section>

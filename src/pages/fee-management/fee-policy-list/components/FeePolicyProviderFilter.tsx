@@ -19,7 +19,7 @@ export const FeePolicyProviderFilter = ({
       name='providerCode'
       control={control}
       label='Nhà cung cấp  '
-      placeholder='Mọi nhà cung cấp'
+      placeholder='Tất cả nhà cung cấp'
       allowClear
       showSearch
       optionFilterProp='label'

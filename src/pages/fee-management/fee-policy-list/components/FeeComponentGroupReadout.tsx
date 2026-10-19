@@ -13,6 +13,8 @@ import { formatFeeLimit } from '@utils/fee-format'
 interface FeeComponentGroupReadoutProps {
   /** Từ hai thành phần trở lên, cùng loại phí, công thức và cơ sở tính. */
   members: readonly FeeComponentFormValues[]
+  /** Ẩn ô "Tính trên" khi nơi dùng đã có dòng công thức riêng nêu cơ sở tính. */
+  hideBasis?: boolean
 }
 
 const HEAD =
@@ -26,7 +28,8 @@ const label = (value: string, map: Readonly<Record<string, string>>): string =>
  * với mức phí, sàn và trần riêng.
  */
 export const FeeComponentGroupReadout = ({
-  members
+  members,
+  hideBasis = false
 }: FeeComponentGroupReadoutProps) => {
   const [first] = members
   const basis =
@@ -48,10 +51,12 @@ export const FeeComponentGroupReadout = ({
               first.calculationMethod}
           </span>
         </div>
-        <div className='flex flex-col gap-0.5'>
-          <span className={HEAD}>Tính trên</span>
-          <span className='text-[13px] text-foreground'>{basis}</span>
-        </div>
+        {!hideBasis && (
+          <div className='flex flex-col gap-0.5'>
+            <span className={HEAD}>Tính trên</span>
+            <span className='text-[13px] text-foreground'>{basis}</span>
+          </div>
+        )}
       </div>
       <div className='overflow-x-auto'>
         <table className='w-full border-collapse text-[13px]'>

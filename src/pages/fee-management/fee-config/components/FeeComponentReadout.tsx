@@ -16,6 +16,8 @@ import {
 
 interface FeeComponentReadoutProps {
   component: FeeComponentFormValues
+  /** Ẩn ô "Tính trên" khi nơi dùng đã có dòng công thức riêng nêu cơ sở tính. */
+  hideBasis?: boolean
 }
 
 const HEAD =
@@ -40,7 +42,8 @@ const getPartyLabel = (
  * chỗ không bao giờ mô tả cùng một thành phần theo hai kiểu khác nhau.
  */
 export const FeeComponentReadout = ({
-  component
+  component,
+  hideBasis = false
 }: FeeComponentReadoutProps) => {
   const tiered = usesTiers(component.calculationMethod)
 
@@ -63,7 +66,7 @@ export const FeeComponentReadout = ({
             component.calculationMethod
           }
         />
-        <Fact label='Tính trên' value={basis} />
+        {!hideBasis && <Fact label='Tính trên' value={basis} />}
         <Fact
           label='Người chịu phí'
           value={getPartyLabel(component.payerType, PAYER_TYPE_LABEL)}
