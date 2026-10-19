@@ -32,3 +32,9 @@ export const defaultScheduleAction = (
     policyStatus === 'ACTIVE' ? 'DEACTIVATE' : 'ACTIVATE'
   return allowed.includes(preferred) ? preferred : allowed[0]
 }
+
+/** Hành động duy nhất làm ngay được: đảo trạng thái hiện tại (đang bật thì khóa, còn lại thì mở). */
+export const immediateActionFor = (
+  policyStatus: string
+): FeePolicyScheduleAction =>
+  policyStatus === 'ACTIVE' ? 'DEACTIVATE' : 'ACTIVATE'

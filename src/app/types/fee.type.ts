@@ -186,12 +186,21 @@ export interface FeePolicySchedule {
   resultMessage: string | null
 }
 
-export interface CreateFeePolicyScheduleArg {
+/** Khóa / mở chính sách: không có `runAt` là làm ngay, có `runAt` là hẹn giờ. */
+export interface ChangeFeePolicyStatusArg {
   policyId: string
   action: FeePolicyScheduleAction
-  /** ISO-8601 instant, ví dụ 2026-10-20T01:00:00.000Z. */
-  runAt: string
+  /** ISO-8601 instant, ví dụ 2026-10-20T01:00:00.000Z; bỏ trống = thực hiện ngay. */
+  runAt?: string
   reason: string
+}
+
+export interface FeePolicyStatusChangeResult {
+  mode: 'IMMEDIATE' | 'SCHEDULED'
+  /** Có khi `IMMEDIATE`: chính sách sau khi đổi trạng thái. */
+  policy?: unknown
+  /** Có khi `SCHEDULED`: lịch vừa tạo. */
+  schedule?: FeePolicySchedule | null
 }
 
 export interface CancelFeePolicyScheduleArg {

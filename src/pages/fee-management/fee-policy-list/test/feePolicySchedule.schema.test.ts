@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { feePolicyScheduleSchema } from '../schemas/feePolicySchedule.schema'
+import { feePolicyStatusChangeSchema } from '../schemas/feePolicySchedule.schema'
 import { toRunAtIso } from '../utils/feePolicySchedule'
 
 const NOW = new Date('2026-10-14T03:00:00.000Z')
@@ -9,14 +9,27 @@ const at = (offset: (d: dayjs.Dayjs) => dayjs.Dayjs) =>
   offset(dayjs(NOW)).format(FORMAT)
 
 const parse = (runAt: string, reason = 'Hết chương trình khuyến mãi') =>
-  feePolicyScheduleSchema.safeParse({ action: 'DEACTIVATE', runAt, reason })
+  feePolicyStatusChangeSchema.safeParse({
+    action: 'DEACTIVATE',
+    timing: 'SCHEDULE',
+    runAt,
+    reason
+  })
+
+const parseNow = (reason = 'Tạm dừng khuyến mãi', runAt?: string) =>
+  feePolicyStatusChangeSchema.safeParse({
+    action: 'DEACTIVATE',
+    timing: 'NOW',
+    runAt,
+    reason
+  })
 
 const messageOf = (result: ReturnType<typeof parse>, path: string) =>
   result.success
     ? undefined
     : result.error.issues.find((i) => i.path[0] === path)?.message
 
-describe('schema hẹn giờ khóa / mở chính sách phí', () => {
+describe('schema khóa / mở chính sách phí', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     vi.setSystemTime(NOW)
@@ -47,7 +60,16 @@ describe('schema hẹn giờ khóa / mở chính sách phí', () => {
     expect(parse(at((d) => d.add(364, 'day'))).success).toBe(true)
   })
 
-  it('từ chối thiếu thời điểm', () => {
+  it('thực hiện ngay: không cần thời điểm, bỏ qua giá trị cũ còn sót', () => {
+    expect(parseNow().success).toBe(true)
+    expect(parseNow('Tạm dừng', 'không-phải-ngày').success).toBe(true)
+  })
+
+  it('thực hiện ngay vẫn bắt buộc lý do', () => {
+    expect(messageOf(parseNow('  '), 'reason')).toBe('Vui lòng nhập lý do')
+  })
+
+  it('từ chối thiếu thời điểm khi hẹn giờ', () => {
     expect(messageOf(parse(''), 'runAt')).toBe('Vui lòng chọn thời điểm chạy')
   })
 

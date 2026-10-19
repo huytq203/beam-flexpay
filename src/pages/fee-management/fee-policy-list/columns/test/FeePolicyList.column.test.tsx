@@ -53,10 +53,7 @@ const renderColumns = () => {
         columns={getFeePolicyColumns({
           feeScope: 'OUTPUT_FEE',
           onEdit: vi.fn(),
-          onActivate: vi.fn(),
-          onDeactivate: vi.fn(),
-          onSchedule: vi.fn(),
-          busyId: null,
+          onChangeStatus: vi.fn(),
           customerSegmentNames: {}
         })}
       />
