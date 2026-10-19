@@ -3,12 +3,7 @@ import {
   FEE_SCOPE,
   type FeeScope
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
-import {
-  CardComponent,
-  ReasonDialog,
-  Table,
-  TooltipComponent
-} from '@components/index'
+import { CardComponent, Table, TooltipComponent } from '@components/index'
 import { PATHS } from '@constants/pathConstant'
 import { useExportCsv } from '@hooks/useExportCsv'
 import { useUrlFilters } from '@hooks/useUrlFilters'
@@ -21,14 +16,13 @@ import { FeePolicyListError } from './components/FeePolicyListError'
 import { FeePolicyTableActions } from './components/FeePolicyTableActions'
 import { FeePolicyExpandedDetail } from './components/FeePolicyExpandedDetail'
 import {
-  FeePolicyScheduleDialog,
-  type SchedulingPolicy
-} from './components/FeePolicyScheduleDialog'
+  FeePolicyStatusChangeDialog,
+  type StatusChangePolicy
+} from './components/FeePolicyStatusChangeDialog'
 import { useSchedulePermissions } from './hooks/useSchedulePermissions'
 import { getFeePolicyColumns } from './columns/FeePolicyList.column'
 import { useExpandedPolicyIds } from './hooks/useExpandedPolicyIds'
 import { useFeePolicyList } from './hooks/useFeePolicyList'
-import { useFeePolicyStatus } from './hooks/useFeePolicyStatus'
 import {
   dateOnly,
   FILTER_KEYS,
@@ -58,9 +52,8 @@ const FeePolicyList = () => {
   const feeScope = isFeeScope(filters.feeScope)
     ? filters.feeScope
     : FEE_SCOPE.OUTPUT_FEE
-  const status = useFeePolicyStatus()
   const { allowedActions } = useSchedulePermissions()
-  const [scheduling, setScheduling] = useState<SchedulingPolicy | null>(null)
+  const [changing, setChanging] = useState<StatusChangePolicy | null>(null)
   const customerSegmentNames = useCustomerSegmentNames()
   const exportFilters = {
     feeScope,
@@ -201,11 +194,8 @@ const FeePolicyList = () => {
             columns={getFeePolicyColumns({
               feeScope,
               onEdit: (id) => navigate(PATHS.FEE_V4.POLICY_EDIT(id)),
-              onActivate: status.askActivate,
-              onDeactivate: status.deactivate,
-              onSchedule: (id, name, policyStatus) =>
-                setScheduling({ id, name, status: policyStatus }),
-              busyId: status.busyId,
+              onChangeStatus: (id, name, policyStatus) =>
+                setChanging({ id, name, status: policyStatus }),
               customerSegmentNames
             })}
             loading={isFetching}
@@ -269,26 +259,10 @@ const FeePolicyList = () => {
         )}
       </CardComponent>
 
-      <FeePolicyScheduleDialog
-        policy={scheduling}
+      <FeePolicyStatusChangeDialog
+        policy={changing}
         allowedActions={allowedActions}
-        onClose={() => setScheduling(null)}
-      />
-
-      <ReasonDialog
-        open={Boolean(status.activating)}
-        title='Kích hoạt chính sách phí'
-        description={
-          status.activating
-            ? `Chính sách “${status.activating.name}” sẽ bắt đầu áp vào giao dịch thật.`
-            : ''
-        }
-        label='Lý do kích hoạt'
-        placeholder='Ví dụ: áp dụng biểu phí mới từ đầu quý'
-        okText='Kích hoạt'
-        confirmLoading={status.isActivating}
-        onConfirm={status.confirmActivate}
-        onCancel={status.cancelActivate}
+        onClose={() => setChanging(null)}
       />
     </>
   )

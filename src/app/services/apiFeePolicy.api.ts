@@ -3,7 +3,8 @@ import { ResponseType } from '@type/api'
 import type { FeeApprovalArg, FeeReasonArg } from '@type/feeApproval.type'
 import type {
   CancelFeePolicyScheduleArg,
-  CreateFeePolicyScheduleArg,
+  ChangeFeePolicyStatusArg,
+  FeePolicyStatusChangeResult,
   FeePage,
   FeePolicy,
   FeePolicySchedule,
@@ -103,21 +104,6 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
         method: 'POST',
         body: body,
         params: { isLoading: false }
-      }),
-      invalidatesTags: ['FeePolicy']
-    }),
-    patchDeactivateFee: build.mutation<ResponseType<FeePolicy>, string>({
-      query: (id) => ({
-        url: `/fee/policies/${id}/deactivate`,
-        method: 'PATCH'
-      }),
-      invalidatesTags: ['FeePolicy']
-    }),
-    patchActivateFee: build.mutation<ResponseType<FeePolicy>, FeeReasonArg>({
-      query: ({ id, reason }) => ({
-        url: `/fee/policies/${id}/activate`,
-        method: 'PATCH',
-        params: { reason }
       }),
       invalidatesTags: ['FeePolicy']
     }),
@@ -251,18 +237,24 @@ export const feePolicyApi = apiFeeService.injectEndpoints({
         { type: 'FeePolicySchedule', id: policyId }
       ]
     }),
-    createFeePolicySchedule: build.mutation<
-      FeePolicySchedule,
-      CreateFeePolicyScheduleArg
+    /**
+     * Khóa / mở chính sách phí: không gửi `runAt` là làm ngay, có `runAt` là hẹn giờ.
+     * Thay cho PATCH /activate, PATCH /deactivate và POST /schedules (đã deprecated ở BE).
+     */
+    changeFeePolicyStatus: build.mutation<
+      FeePolicyStatusChangeResult,
+      ChangeFeePolicyStatusArg
     >({
       query: ({ policyId, ...body }) => ({
-        url: `/fee/policies/${policyId}/schedules`,
+        url: `/fee/policies/${policyId}/status-changes`,
         method: 'POST',
         body,
         params: { isLoading: false }
       }),
-      transformResponse: (res: ResponseType<FeePolicySchedule>) => res.data,
+      transformResponse: (res: ResponseType<FeePolicyStatusChangeResult>) =>
+        res.data,
       invalidatesTags: (_result, _error, { policyId }) => [
+        'FeePolicy',
         { type: 'FeePolicySchedule', id: policyId }
       ]
     }),
@@ -302,14 +294,12 @@ export const {
   useLazyGetFeePoliciesQuery,
   useGetFeePolicyByIdQuery,
   usePostNewPolicyMutation,
-  usePatchDeactivateFeeMutation,
-  usePatchActivateFeeMutation,
   usePatchApproveFeePolicyMutation,
   usePatchRejectFeePolicyMutation,
   usePutFeePolicyMutation,
   useSetupFeePolicyMutation,
   useUpdateFeePolicyConfigMutation,
   useGetFeePolicySchedulesQuery,
-  useCreateFeePolicyScheduleMutation,
+  useChangeFeePolicyStatusMutation,
   useCancelFeePolicyScheduleMutation
 } = feePolicyApi

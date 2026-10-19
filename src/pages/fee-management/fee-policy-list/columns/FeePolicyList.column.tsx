@@ -18,7 +18,7 @@ import {
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import { AppliedTargetCell } from '../components/AppliedTargetCell'
 import { ChannelCell } from '../components/ChannelCell'
-import { FeePolicyStatusMenu } from '../components/FeePolicyStatusMenu'
+import { FeePolicyStatusButton } from '../components/FeePolicyStatusButton'
 import { ScopeComponentsCell } from '../components/ScopeComponentsCell'
 import { formatDateTimeUTC } from '@/pages/wallet-administration/e-walletManagement/components/detail-infor/Personal/utils/applicable-fee-rule'
 
@@ -26,11 +26,8 @@ interface FeePolicyColumnArgs {
   /** Luồng phí đang xem; quyết định cột thành phần phí hiện thành phần nào. */
   feeScope: FeeScope
   onEdit: (id: string) => void
-  onActivate: (id: string, name: string) => void
-  onDeactivate: (id: string) => void
-  onSchedule: (id: string, name: string, status: string) => void
-  /** Dòng đang có lệnh bật/tắt chạy dở. */
-  busyId: string | null
+  /** Mở dialog khóa / mở (ngay hoặc hẹn giờ) cho một chính sách. */
+  onChangeStatus: (id: string, name: string, status: string) => void
   customerSegmentNames: CustomerSegmentNames
 }
 
@@ -51,10 +48,7 @@ const PRIORITY_LABEL: Readonly<Record<number, string>> = {
 export const getFeePolicyColumns = ({
   feeScope,
   onEdit,
-  onActivate,
-  onDeactivate,
-  onSchedule,
-  busyId,
+  onChangeStatus,
   customerSegmentNames
 }: FeePolicyColumnArgs): ColumnsType<FeePolicyRow> => [
   {
@@ -236,12 +230,9 @@ export const getFeePolicyColumns = ({
             </Can>
           )}
 
-          <FeePolicyStatusMenu
+          <FeePolicyStatusButton
             status={row.status}
-            busy={busyId === id}
-            onActivate={() => onActivate(id, row.name)}
-            onDeactivate={() => onDeactivate(id)}
-            onSchedule={() => onSchedule(id, row.name, row.status)}
+            onChangeStatus={() => onChangeStatus(id, row.name, row.status)}
           />
         </div>
       )

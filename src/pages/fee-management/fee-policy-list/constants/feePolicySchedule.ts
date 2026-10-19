@@ -39,6 +39,23 @@ export const SCHEDULABLE_POLICY_STATUSES: readonly string[] = [
   'INACTIVE'
 ]
 
+/** Nhãn (và aria-label) của nút khóa / mở ở dòng chính sách. */
+export const STATUS_BUTTON_LABEL = 'Khóa / mở chính sách'
+
+/** Khóa / mở: làm ngay hoặc hẹn giờ. */
+export const STATUS_CHANGE_TIMING = {
+  NOW: 'NOW',
+  SCHEDULE: 'SCHEDULE'
+} as const
+
+export type StatusChangeTiming =
+  (typeof STATUS_CHANGE_TIMING)[keyof typeof STATUS_CHANGE_TIMING]
+
+export const STATUS_CHANGE_TIMING_OPTIONS = [
+  { value: STATUS_CHANGE_TIMING.NOW, label: 'Thực hiện ngay' },
+  { value: STATUS_CHANGE_TIMING.SCHEDULE, label: 'Hẹn giờ' }
+]
+
 export const SCHEDULE_MIN_LEAD_MS = 60_000
 export const SCHEDULE_MAX_LEAD_DAYS = 365
 export const SCHEDULE_REASON_MAX_LENGTH = 500
