@@ -143,7 +143,7 @@ describe('danh sách chính sách phí tách theo luồng phí', () => {
     expect(
       within(row).queryByText('Phí nhà cung cấp đối tác/bank')
     ).not.toBeInTheDocument()
-    expect(within(row).getByText('VCB')).toBeInTheDocument()
+    expect(within(row).getByText(/NH:VCB/)).toBeInTheDocument()
   })
 
   it('đổi sang phí đầu vào thì gọi lại với INPUT_COST và chỉ hiện khoản chi', async () => {

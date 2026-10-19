@@ -32,7 +32,7 @@ export const isIdentityChanged = (
   draft.accountNumber !== row.accountNumber ||
   draft.accountName.trim() !== row.accountName
 
-/** BE từ chối khóa tài khoản nếu lý do dưới 10 ký tự (mã 5730). */
+/** Khóa tài khoản bắt buộc có lý do. */
 export const isLockReasonMissing = (
   row: BankAccountDto | null,
   draft: BankAccountDraft
@@ -40,7 +40,7 @@ export const isLockReasonMissing = (
   row !== null &&
   row.status !== 'INACTIVE' &&
   draft.status === 'INACTIVE' &&
-  draft.reason.trim().length < 10
+  !draft.reason.trim()
 
 // Chỉ gửi field thực sự đổi để BE xác định đúng loại thay đổi cần duyệt.
 export const buildUpdateBody = (

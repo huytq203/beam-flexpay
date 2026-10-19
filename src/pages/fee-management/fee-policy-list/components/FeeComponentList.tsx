@@ -40,7 +40,10 @@ export const FeeComponentList = ({
       ) : (
         <div className='flex flex-col gap-3'>
           {groups.map((group, index) => {
-            const title = getFeeLabel(group.componentType, COMPONENT_TYPE_LABELS)
+            const title = getFeeLabel(
+              group.componentType,
+              COMPONENT_TYPE_LABELS
+            )
             const headingId = `${anchorOf(index + 1)}-title`
             return (
               <article

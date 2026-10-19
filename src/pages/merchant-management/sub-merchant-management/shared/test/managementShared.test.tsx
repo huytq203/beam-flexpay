@@ -119,7 +119,7 @@ describe('EntityLockDialog', () => {
     expect(screen.getByRole('button', { name: 'Mở khóa' })).toBeDisabled()
   })
 
-  it('submits a trimmed reason of at least ten characters', async () => {
+  it('chặn lý do trống, lý do ngắn vẫn gửi được (không giới hạn tối thiểu)', async () => {
     const onConfirm = vi.fn()
     const user = userEvent.setup()
 
@@ -133,18 +133,15 @@ describe('EntityLockDialog', () => {
       />
     )
 
-    await user.type(screen.getByLabelText('Lý do khóa'), ' ngắn ')
+    await user.type(screen.getByLabelText('Lý do khóa'), '   ')
     await user.click(screen.getByRole('button', { name: 'Khóa' }))
     expect(onConfirm).not.toHaveBeenCalled()
-    expect(
-      screen.getByText('Lý do cần có ít nhất 8 ký tự.')
-    ).toBeInTheDocument()
 
     await user.clear(screen.getByLabelText('Lý do khóa'))
-    await user.type(screen.getByLabelText('Lý do khóa'), '  Kiểm tra định kỳ  ')
+    await user.type(screen.getByLabelText('Lý do khóa'), ' ngắn ')
     await user.click(screen.getByRole('button', { name: 'Khóa' }))
 
-    expect(onConfirm).toHaveBeenCalledWith('Kiểm tra định kỳ')
+    expect(onConfirm).toHaveBeenCalledWith('ngắn')
   })
 
   it('connects invalid reason input with its announced validation message', async () => {
@@ -161,13 +158,13 @@ describe('EntityLockDialog', () => {
     )
 
     const reasonInput = screen.getByLabelText('Lý do khóa')
-    await user.type(reasonInput, 'ngắn')
+    await user.type(reasonInput, '   ')
     await user.click(screen.getByRole('button', { name: 'Khóa' }))
 
     const error = screen.getByRole('alert')
     expect(reasonInput).toHaveAttribute('aria-invalid', 'true')
     expect(reasonInput).toHaveAttribute('aria-describedby', error.id)
-    expect(error).toHaveTextContent('Lý do cần có ít nhất 8 ký tự.')
+    expect(error).toHaveTextContent('Vui lòng nhập lý do.')
   })
 
   it('clears the reason and validation state when the dialog reopens', async () => {
@@ -177,19 +174,15 @@ describe('EntityLockDialog', () => {
       <EntityLockDialogLifecycleHarness onConfirm={onConfirm} />
     )
 
-    await user.type(screen.getByLabelText('Lý do khóa'), 'ngắn')
+    await user.type(screen.getByLabelText('Lý do khóa'), '   ')
     await user.click(screen.getByRole('button', { name: 'Khóa' }))
-    expect(
-      screen.getByText('Lý do cần có ít nhất 8 ký tự.')
-    ).toBeInTheDocument()
+    expect(screen.getByText('Vui lòng nhập lý do.')).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Đóng dialog' }))
     await user.click(screen.getByRole('button', { name: 'Mở dialog' }))
 
     expect(screen.getByLabelText('Lý do khóa')).toHaveValue('')
-    expect(
-      screen.queryByText('Lý do cần có ít nhất 8 ký tự.')
-    ).not.toBeInTheDocument()
+    expect(screen.queryByText('Vui lòng nhập lý do.')).not.toBeInTheDocument()
   })
 })
 

@@ -3,6 +3,7 @@ import { FormField } from "./FormField";
 import { InputNumber } from "@components/index";
 import type { InputNumberProps } from "antd";
 import { ReactNode } from "react";
+import { formatThousands, parseThousands } from "@utils/format-number-input";
 
 interface FormInputNumberProps<T extends FieldValues>
     extends Omit<InputNumberProps, "name" | "value" | "defaultValue" | "className" | "ref"> {
@@ -29,6 +30,8 @@ interface FormInputNumberProps<T extends FieldValues>
     invalid?: boolean
     /** Xem `FormField.idPrefix`. */
     idPrefix?: string
+    /** Hiển thị dấu phẩy phân cách hàng nghìn; giá trị lưu trong form vẫn là số. */
+    thousandSeparator?: boolean
 }
 
 export function FormInputNumber<T extends FieldValues>({
@@ -44,6 +47,7 @@ export function FormInputNumber<T extends FieldValues>({
     invalid=false,
     idPrefix,
     classNameLable='font-medium',
+    thousandSeparator=false,
     ...rest
 }: FormInputNumberProps<T>) {
     const fallback = allowEmpty ? undefined : defaultValue
@@ -59,6 +63,9 @@ export function FormInputNumber<T extends FieldValues>({
             render={(field, fieldState) => (
                 <InputNumber
                     {...field}
+                    {...(thousandSeparator
+                        ? { formatter: formatThousands, parser: parseThousands }
+                        : {})}
                     {...rest}
                     id={idPrefix ? `${idPrefix}-${field.name}` : field.name}
                     status={invalid || (hideError && fieldState.error) ? 'error' : rest.status}

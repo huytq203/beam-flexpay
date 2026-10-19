@@ -14,7 +14,6 @@ export const REVIEW_ELIGIBLE_STATUSES: readonly string[] = [
   'RECONCILIATION_REQUIRED'
 ]
 
-export const REVIEW_REASON_MIN = 10
 export const REVIEW_REASON_MAX = 500
 export const REVIEW_NOTE_MAX = 500
 export const REVIEW_CODE_MAX = 50

@@ -42,8 +42,8 @@ export default function TerminalDetailPage() {
 
   const confirm = async () => {
     if (!row) return
-    if (reason.trim().length < 10) {
-      feedback.warning('Lý do cần tối thiểu 10 ký tự')
+    if (!reason.trim()) {
+      feedback.warning('Vui lòng nhập lý do')
       return
     }
     try {
@@ -215,7 +215,7 @@ export default function TerminalDetailPage() {
           onChange={(event) => setReason(event.target.value)}
           rows={3}
           maxLength={500}
-          placeholder='Nhập lý do (tối thiểu 10 ký tự)'
+          placeholder='Nhập lý do'
         />
       </DialogModal>
     </main>

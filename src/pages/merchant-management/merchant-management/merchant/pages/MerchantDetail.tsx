@@ -48,11 +48,8 @@ const MerchantDetail = () => {
 
   const confirm = async () => {
     if (!id || !action) return
-    if (
-      (action === 'lock' || action === 'unlock') &&
-      reason.trim().length < 10
-    ) {
-      feedback.warning('Lý do cần tối thiểu 10 ký tự')
+    if ((action === 'lock' || action === 'unlock') && !reason.trim()) {
+      feedback.warning('Vui lòng nhập lý do')
       return
     }
     if (action === 'reject' && !reason.trim()) {

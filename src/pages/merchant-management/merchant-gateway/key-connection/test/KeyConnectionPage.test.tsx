@@ -115,20 +115,15 @@ describe('KeyConnectionPage API', () => {
     await screen.findByText('client-public')
     await user.click(screen.getByRole('button', { name: 'Thu hồi' }))
     const dialog = screen.getByRole('dialog', { name: 'Thu hồi key' })
-    await user.type(
-      within(dialog).getByRole('textbox', { name: 'Lý do thu hồi' }),
-      'Ngắn'
-    )
+    // Chỉ bắt buộc nhập lý do, không còn giới hạn độ dài tối thiểu.
     await user.click(
       within(dialog).getByRole('button', { name: 'Xác nhận thu hồi' })
     )
-    expect(within(dialog).getByRole('alert')).toHaveTextContent(
-      'tối thiểu 10 ký tự'
-    )
+    expect(within(dialog).getByRole('alert')).toBeInTheDocument()
     expect(revokedBody).toBeUndefined()
     await user.type(
       within(dialog).getByRole('textbox', { name: 'Lý do thu hồi' }),
-      ' do key bị lộ'
+      'Ngắn do key bị lộ'
     )
     await user.click(
       within(dialog).getByRole('button', { name: 'Xác nhận thu hồi' })

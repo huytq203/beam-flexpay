@@ -43,7 +43,7 @@ export function EntityLockReasonForm({
           }
           maxLength={500}
           name='reason'
-          placeholder={`Nêu lý do ${isLock ? 'khóa' : 'mở khóa'} (tối thiểu 10 ký tự)`}
+          placeholder={`Nêu lý do ${isLock ? 'khóa' : 'mở khóa'}`}
           rows={4}
         />
       </div>

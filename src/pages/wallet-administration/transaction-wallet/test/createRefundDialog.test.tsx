@@ -130,18 +130,16 @@ describe('CreateRefundDialog', () => {
     expect(calls).toBe(1)
   })
 
-  it('chặn số tiền không dương và lý do dưới 10 ký tự, không gọi API', async () => {
+  it('chặn số tiền không dương và lý do trống, không gọi API', async () => {
     const captured = captureCreate()
     renderDialog(makeTransaction())
-    await fillForm('0', 'ngắn')
+    await fillForm('0', '   ')
     await userEvent.click(screen.getByRole('button', { name: 'Gửi yêu cầu' }))
 
     expect(
       await screen.findByText('Số tiền hoàn phải lớn hơn 0')
     ).toBeInTheDocument()
-    expect(
-      screen.getByText('Lý do hoàn tiền phải có từ 10 đến 500 ký tự')
-    ).toBeInTheDocument()
+    expect(screen.getByText('Lý do hoàn tiền là bắt buộc')).toBeInTheDocument()
     expect(captured.body).toBeNull()
   })
 

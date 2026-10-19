@@ -12,7 +12,7 @@ const permissions = [
 ]
 
 describe('khóa Merchant User', () => {
-  it('lý do dưới 10 ký tự không gọi API', async () => {
+  it('lý do trống không gọi API', async () => {
     const user = userEvent.setup()
     let called = false
     server.use(
@@ -26,7 +26,7 @@ describe('khóa Merchant User', () => {
       await screen.findByRole('button', { name: 'Khóa User Nguyễn Văn Hải' })
     )
     const dialog = await screen.findByRole('dialog', { name: 'Khóa User' })
-    await user.type(within(dialog).getByLabelText('Lý do khóa User'), 'ngắn')
+    await user.type(within(dialog).getByLabelText('Lý do khóa User'), '   ')
     await user.click(within(dialog).getByRole('button', { name: 'Khóa User' }))
     expect(called).toBe(false)
   })

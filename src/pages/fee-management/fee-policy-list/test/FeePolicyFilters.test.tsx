@@ -75,7 +75,7 @@ describe('bộ lọc bổ sung của danh sách chính sách phí', () => {
     const firstRequest = requests.at(-1)
     expect(firstRequest?.searchParams.get('bankCode')).toBe('VCB')
     expect(firstRequest?.searchParams.get('providerCode')).toBe('NAPAS')
-    expect(screen.getByLabelText('Nhà cung cấp  ')).toBeInTheDocument()
+    expect(screen.getByLabelText('Nhà cung cấp')).toBeInTheDocument()
     expect(firstRequest?.searchParams.get('paymentMethod')).toBe('ATM')
     expect(firstRequest?.searchParams.get('validFrom')).toBe('2026-09-01')
     expect(firstRequest?.searchParams.has('validTo')).toBe(false)
@@ -84,7 +84,7 @@ describe('bộ lọc bổ sung của danh sách chính sách phí', () => {
     expect(firstRequest?.searchParams.get('includeConfiguration')).toBe('true')
     expect(firstRequest?.searchParams.get('page')).toBe('3')
 
-    await user.click(screen.getByRole('button', { name: 'Tìm' }))
+    await user.click(screen.getByRole('button', { name: 'Tìm kiếm' }))
 
     await waitFor(() =>
       expect(requests.at(-1)?.searchParams.get('page')).toBe('1')

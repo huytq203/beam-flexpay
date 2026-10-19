@@ -42,14 +42,13 @@ describe('FeeComponentList — cơ sở tính', () => {
     renderList()
     const card = screen.getByRole('article', { name: /1\. VAT/ })
     const formula = within(card).getByRole('group', { name: 'Cách tính VAT' })
-    expect(formula).toHaveTextContent('VAT=2%×2Phí hoàn tiền')
+    expect(formula).toHaveTextContent('VAT=2%×Phí hoàn tiền')
     const link = within(formula).getByRole('link', {
       name: 'Tới thành phần 2: Phí hoàn tiền'
     })
     expect(link).toHaveAttribute('href', '#fee-p1-OUTPUT_FEE-2')
-    expect(card).toHaveTextContent(
-      'Tính trên số tiền của Phí hoàn tiền, không tính trên số tiền giao dịch.'
-    )
+    // Chip chỉ ghi tên phí, không kèm số thứ tự.
+    expect(link.textContent).toBe('Phí hoàn tiền')
   })
 
   it('thẻ Phí hoàn tiền tính trên số tiền giao dịch và báo là cơ sở của VAT', () => {
@@ -59,7 +58,6 @@ describe('FeeComponentList — cơ sở tính', () => {
     expect(
       within(card).getByRole('group', { name: 'Cách tính Phí hoàn tiền' })
     ).toHaveTextContent('Phí hoàn tiền=1%×Số tiền giao dịch')
-    expect(card).toHaveTextContent('Là cơ sở tính của')
     expect(
       within(card).getByRole('link', { name: 'Tới thành phần 1: VAT' })
     ).toBeInTheDocument()

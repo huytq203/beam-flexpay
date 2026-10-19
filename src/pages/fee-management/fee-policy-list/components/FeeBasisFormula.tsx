@@ -20,16 +20,10 @@ const ComponentChip = ({
   link: BasisLink
   anchorOf: (index: number) => string
 }) => {
-  const body = (
-    <>
-      {link.index !== undefined && (
-        <span className='tabular-nums text-muted-foreground'>{link.index}</span>
-      )}
-      <span>{link.label}</span>
-    </>
-  )
+  const body = <span>{link.label}</span>
+  // `!` thắng màu link toàn cục của antd: chữ teal trên nền trắng không đủ tương phản.
   const className =
-    'inline-flex items-center gap-1.5 rounded-[3px] border border-border bg-background px-1.5 py-0.5 text-[13px] font-semibold text-foreground'
+    'inline-flex items-center rounded-[3px] border border-border bg-background px-1.5 py-0.5 text-[13px] font-semibold text-foreground!'
   if (link.index === undefined) return <span className={className}>{body}</span>
   return (
     <a
@@ -99,7 +93,7 @@ export const FeeBasisFormula = ({
       </div>
       {!free && rate && onComponent && (
         <p className='text-xs text-muted-foreground'>
-          Tính trên số tiền của {base.label}, không tính trên số tiền giao dịch.
+          Tính trên số tiền của {base.label}.
         </p>
       )}
       {dependents.length > 0 && (

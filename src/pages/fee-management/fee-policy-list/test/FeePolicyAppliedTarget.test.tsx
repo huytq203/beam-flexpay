@@ -171,7 +171,7 @@ const selectAppliedTarget = async (
       selector: '.ant-select-item-option-content'
     })
   )
-  await user.click(screen.getByRole('button', { name: 'Tìm' }))
+  await user.click(screen.getByRole('button', { name: 'Tìm kiếm' }))
 }
 
 describe('đối tượng áp dụng của danh sách chính sách phí', () => {
@@ -242,7 +242,7 @@ describe('đối tượng áp dụng của danh sách chính sách phí', () => 
     const clearButton = selectRoot?.querySelector('.ant-select-clear')
     expect(clearButton).not.toBeNull()
     await user.click(clearButton as Element)
-    await user.click(screen.getByRole('button', { name: 'Tìm' }))
+    await user.click(screen.getByRole('button', { name: 'Tìm kiếm' }))
 
     await waitFor(() =>
       expect(requests.at(-1)?.searchParams.has('appliedTarget')).toBe(false)

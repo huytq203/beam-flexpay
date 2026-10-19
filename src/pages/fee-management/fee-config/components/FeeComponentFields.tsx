@@ -237,11 +237,12 @@ const FeeRateFields = ({
     ) : (
       <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
         <FormInputNumber
+          thousandSeparator
           name='percentage'
           control={control}
           idPrefix={idPrefix}
           allowEmpty
-          label={payerType === 'SYSTEM' ? 'Chi phí (%)' : 'Phí (%)'}
+          label={'Phí linh hoạt (%)'}
           placeholder='Để trống sẽ tự điền 0'
           className={
             isVat
@@ -251,14 +252,13 @@ const FeeRateFields = ({
         />
         {!isVat && (
           <FormInputNumber
+            thousandSeparator
             name='fixedAmount'
             control={control}
             idPrefix={idPrefix}
             allowEmpty
             label={
-              payerType === 'SYSTEM'
-                ? 'Chi phí cố định (VNĐ)'
-                : 'Phí cố định (VNĐ)'
+             'Phí cố định (VNĐ)'
             }
             placeholder='Để trống sẽ tự điền 0'
             className='col-span-12 flex flex-col md:col-span-6'
@@ -277,6 +277,7 @@ const FeeRateFields = ({
     >
       <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
         <FormInputNumber
+          thousandSeparator
           name='minFee'
           control={control}
           idPrefix={idPrefix}
@@ -286,6 +287,7 @@ const FeeRateFields = ({
           className='col-span-12 flex flex-col md:col-span-6'
         />
         <FormInputNumber
+          thousandSeparator
           name='maxFee'
           control={control}
           idPrefix={idPrefix}
@@ -335,6 +337,7 @@ const FeeSideFields = ({
     ) : (
       <div className='grid grid-cols-2 gap-3'>
         <FormInputNumber
+          thousandSeparator
           name='percentage'
           control={control}
           idPrefix={idPrefix}
@@ -346,6 +349,7 @@ const FeeSideFields = ({
         {!isVat && (
           <>
             <FormInputNumber
+              thousandSeparator
               name='fixedAmount'
               control={control}
               idPrefix={idPrefix}
@@ -355,6 +359,7 @@ const FeeSideFields = ({
               className='col-span-1 flex flex-col'
             />
             <FormInputNumber
+              thousandSeparator
               name='minFee'
               control={control}
               idPrefix={idPrefix}
@@ -364,6 +369,7 @@ const FeeSideFields = ({
               className='col-span-1 flex flex-col'
             />
             <FormInputNumber
+              thousandSeparator
               name='maxFee'
               control={control}
               idPrefix={idPrefix}

@@ -138,7 +138,7 @@ describe('WithdrawalDecisionPanel', () => {
     await waitFor(() => expect(rejectBody).toEqual({ reason: REASON }))
   })
 
-  it('chặn lý do ngắn hơn giới hạn của BE trước khi gọi API', async () => {
+  it('chặn lý do trống trước khi gọi API', async () => {
     mockWithdrawal(WithdrawalStatus.PENDING_APPROVAL)
     let rejectCount = 0
     server.use(
@@ -151,12 +151,10 @@ describe('WithdrawalDecisionPanel', () => {
     const { user } = renderPanel()
 
     await user.click(await screen.findByRole('button', { name: /Từ chối/ }))
-    await fillReason(/Lý do từ chối/, 'Sai TK')
-    await user.click(screen.getByRole('button', { name: 'Xác nhận từ chối' }))
-
+    // Lý do trống thì nút xác nhận bị khóa; không còn giới hạn độ dài tối thiểu.
     expect(
-      await screen.findByText('Lý do phải từ 10 ký tự trở lên.')
-    ).toBeInTheDocument()
+      screen.getByRole('button', { name: 'Xác nhận từ chối' })
+    ).toBeDisabled()
     expect(rejectCount).toBe(0)
   })
 

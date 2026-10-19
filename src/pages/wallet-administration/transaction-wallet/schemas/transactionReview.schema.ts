@@ -7,8 +7,7 @@ import { ReviewRejectOption } from '@/app/schemas/transaction-review.schema'
 import {
   REVIEW_CODE_MAX,
   REVIEW_NOTE_MAX,
-  REVIEW_REASON_MAX,
-  REVIEW_REASON_MIN
+  REVIEW_REASON_MAX
 } from '../constants/transactionReview.constant'
 
 const MISSING_RECONCILIATION = 'Vui lòng nhập đầy đủ thông tin đối soát'
@@ -23,17 +22,12 @@ const requiredCode = (label: string) =>
   reconciliationCode(label).min(1, MISSING_RECONCILIATION)
 
 const reasonField = (emptyMessage: string, rangeMessage: string) =>
-  z
-    .string()
-    .trim()
-    .min(1, emptyMessage)
-    .min(REVIEW_REASON_MIN, rangeMessage)
-    .max(REVIEW_REASON_MAX, rangeMessage)
+  z.string().trim().min(1, emptyMessage).max(REVIEW_REASON_MAX, rangeMessage)
 
 export const markReviewSchema = z.object({
   reason: reasonField(
     'Lý do review là bắt buộc',
-    `Lý do review phải từ ${REVIEW_REASON_MIN} đến ${REVIEW_REASON_MAX} ký tự`
+    `Lý do review tối đa ${REVIEW_REASON_MAX} ký tự`
   )
 })
 export type MarkReviewValues = z.infer<typeof markReviewSchema>
@@ -68,7 +62,7 @@ export const createRejectReviewSchema = (requireBankConfirmation: boolean) =>
       option: z.enum(ReviewRejectOption, 'Vui lòng chọn hình thức từ chối'),
       reason: reasonField(
         'Nhập lý do gửi khách hàng',
-        `Lý do gửi khách hàng phải từ ${REVIEW_REASON_MIN} đến ${REVIEW_REASON_MAX} ký tự`
+        `Lý do gửi khách hàng tối đa ${REVIEW_REASON_MAX} ký tự`
       ),
       refundAuthCode: reconciliationCode('Mã chuẩn chi (hoàn)'),
       refundSettlementId: reconciliationCode('Mã đối soát (hoàn)'),

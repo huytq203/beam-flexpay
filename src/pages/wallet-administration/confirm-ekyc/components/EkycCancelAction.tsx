@@ -100,7 +100,7 @@ export const EkycCancelAction = ({ record }: EkycCancelActionProps) => {
               rows={3}
               maxLength={EKYC_CANCEL_REASON_MAX_LENGTH}
               showCount
-              placeholder='Nhập lý do hủy (tối thiểu 10 ký tự)'
+              placeholder='Nhập lý do hủy'
             />
             {error && (
               <p

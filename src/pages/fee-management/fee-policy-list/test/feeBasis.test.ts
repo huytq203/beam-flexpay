@@ -96,8 +96,20 @@ describe('buildFeeBasis', () => {
         calculationMethod: 'FLAT_TIER',
         percentage: null,
         tiers: [
-          { maxValue: 100, fixedAmount: null, percentage: 1, minFee: null, maxFee: null },
-          { maxValue: null, fixedAmount: null, percentage: 2, minFee: null, maxFee: null }
+          {
+            maxValue: 100,
+            fixedAmount: null,
+            percentage: 1,
+            minFee: null,
+            maxFee: null
+          },
+          {
+            maxValue: null,
+            fixedAmount: null,
+            percentage: 2,
+            minFee: null,
+            maxFee: null
+          }
         ]
       })
     ])

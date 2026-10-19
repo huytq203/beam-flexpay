@@ -71,7 +71,7 @@ describe('SettlementConfigForm', { timeout: 20000 }, () => {
     success.mockRestore()
   })
 
-  it('HOLD với lý do ngắn không gọi API', async () => {
+  it('HOLD không nhập lý do thì không gọi API', async () => {
     const user = userEvent.setup()
     let putCalled = false
     server.use(
@@ -84,13 +84,10 @@ describe('SettlementConfigForm', { timeout: 20000 }, () => {
     renderWithStore(<SettlementConfigForm subId='sub-1' />, CAN_EDIT)
     await screen.findByLabelText('Lý do thay đổi')
     await chooseMode(user, 'Tạm dừng')
-    await user.type(screen.getByLabelText('Lý do tạm dừng'), 'ngắn')
     await user.type(screen.getByLabelText('Lý do thay đổi'), 'Rủi ro cao')
     await user.click(screen.getByRole('button', { name: 'Lưu cấu hình' }))
     expect(
-      await screen.findByText(
-        'Tạm dừng quyết toán phải nhập lý do tối thiểu 10 ký tự'
-      )
+      await screen.findByText('Tạm dừng quyết toán phải nhập lý do')
     ).toBeInTheDocument()
     expect(putCalled).toBe(false)
   })

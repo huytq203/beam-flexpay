@@ -144,7 +144,7 @@ export const AssignmentSection = ({
             name='providerCode'
             control={control}
             label='Nhà cung cấp  '
-            placeholder='Mọi NCC'
+            placeholder='Tất cả NCC'
             showSearch
             optionFilterProp='label'
             options={providerOptions}
@@ -162,7 +162,7 @@ export const AssignmentSection = ({
                 hint={ORIGINAL_TYPE_HINT}
               />
             }
-            placeholder='Mọi loại giao dịch'
+            placeholder='Tất cả giao dịch'
             allowClear
             options={[...ORIGINAL_TYPE_OPTIONS]}
             disabled={readOnly}

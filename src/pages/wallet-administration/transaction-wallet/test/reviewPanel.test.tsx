@@ -145,7 +145,7 @@ describe('TransactionReviewPanel — maker khác checker', () => {
     expect(screen.getByRole('button', { name: /Từ chối$/ })).toBeInTheDocument()
   })
 
-  it('lý do dưới 10 ký tự bị chặn và không gọi API', async () => {
+  it('lý do trống bị chặn và không gọi API', async () => {
     refreshWith(snapshot('PENDING', [MARK]))
     const mark = record('review', () => json(result()))
     renderPanel(FULL)
@@ -154,7 +154,7 @@ describe('TransactionReviewPanel — maker khác checker', () => {
     await userEvent.click(
       await screen.findByRole('button', { name: 'Đánh dấu Review' })
     )
-    fill(/Lý do review/, 'ngắn')
+    fill(/Lý do review/, '   ')
     await userEvent.click(
       within(await screen.findByRole('dialog')).getByRole('button', {
         name: 'Đánh dấu Review'
@@ -162,7 +162,7 @@ describe('TransactionReviewPanel — maker khác checker', () => {
     )
 
     expect(
-      await screen.findByText('Lý do review phải từ 10 đến 500 ký tự')
+      await screen.findByText('Lý do review là bắt buộc')
     ).toBeInTheDocument()
     expect(mark.calls.count).toBe(0)
   })

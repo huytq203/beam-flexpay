@@ -53,8 +53,8 @@ export default function TerminalListPage(
   const confirmDelete = async () => {
     if (!deleting) return
     const text = deleteReason.trim()
-    if (text.length < 10) {
-      feedback.warning('Lý do cần tối thiểu 10 ký tự')
+    if (!text) {
+      feedback.warning('Vui lòng nhập lý do')
       return
     }
     try {
@@ -72,8 +72,8 @@ export default function TerminalListPage(
   }
   const confirmLock = async () => {
     if (!locking) return
-    if (reason.trim().length < 10) {
-      feedback.warning('Lý do cần tối thiểu 10 ký tự')
+    if (!reason.trim()) {
+      feedback.warning('Vui lòng nhập lý do')
       return
     }
     try {

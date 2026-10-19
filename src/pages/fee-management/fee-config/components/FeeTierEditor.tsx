@@ -147,6 +147,7 @@ export const FeeTierEditor = ({
                   </td>
                   <td className='px-3 py-2'>
                     <FormInputNumber
+                      thousandSeparator
                       name={`tiers.${index}.maxValue`}
                       control={control}
                       idPrefix={idPrefix}
@@ -160,6 +161,7 @@ export const FeeTierEditor = ({
                   </td>
                   <td className='px-3 py-2'>
                     <FormInputNumber
+                      thousandSeparator
                       name={`tiers.${index}.percentage`}
                       control={control}
                       idPrefix={idPrefix}
@@ -172,6 +174,7 @@ export const FeeTierEditor = ({
                   </td>
                   <td className='px-3 py-2'>
                     <FormInputNumber
+                      thousandSeparator
                       name={`tiers.${index}.fixedAmount`}
                       control={control}
                       idPrefix={idPrefix}
@@ -184,6 +187,7 @@ export const FeeTierEditor = ({
                   </td>
                   <td className='px-3 py-2'>
                     <FormInputNumber
+                      thousandSeparator
                       name={`tiers.${index}.minFee`}
                       control={control}
                       idPrefix={idPrefix}
@@ -195,6 +199,7 @@ export const FeeTierEditor = ({
                   </td>
                   <td className='px-3 py-2'>
                     <FormInputNumber
+                      thousandSeparator
                       name={`tiers.${index}.maxFee`}
                       control={control}
                       idPrefix={idPrefix}

@@ -30,12 +30,12 @@ export const settlementConfigSchema = z
     if (
       !value.inherit &&
       value.settlementMode === 'HOLD' &&
-      value.holdReason.trim().length < 10
+      !value.holdReason.trim()
     )
       ctx.addIssue({
         code: 'custom',
         path: ['holdReason'],
-        message: 'Tạm dừng quyết toán phải nhập lý do tối thiểu 10 ký tự'
+        message: 'Tạm dừng quyết toán phải nhập lý do'
       })
   })
 

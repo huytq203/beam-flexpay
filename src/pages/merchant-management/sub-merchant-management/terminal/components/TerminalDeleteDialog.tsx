@@ -37,7 +37,7 @@ export function TerminalDeleteDialog({
         onChange={(event) => onReasonChange(event.target.value)}
         rows={3}
         maxLength={500}
-        placeholder='Nhập lý do (10–500 ký tự)'
+        placeholder='Nhập lý do'
       />
     </DialogModal>
   )

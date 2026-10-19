@@ -4,7 +4,7 @@ export const entityLockReasonSchema = z.object({
   reason: z
     .string()
     .trim()
-    .min(10, 'Lý do cần có ít nhất 8 ký tự.')
+    .min(1, 'Vui lòng nhập lý do.')
     .max(500, 'Lý do không được vượt quá 500 ký tự.')
 })
 

@@ -12,18 +12,18 @@ const base = {
 }
 
 describe('settlementConfigSchema', () => {
-  it('HOLD cần lý do tối thiểu 10 ký tự', () => {
-    const short = settlementConfigSchema.safeParse({
+  it('HOLD bắt buộc có lý do, không giới hạn độ dài tối thiểu', () => {
+    const blank = settlementConfigSchema.safeParse({
       ...base,
       settlementMode: 'HOLD',
-      holdReason: 'ngắn'
+      holdReason: '   '
     })
-    expect(short.success).toBe(false)
+    expect(blank.success).toBe(false)
     expect(
       settlementConfigSchema.safeParse({
         ...base,
         settlementMode: 'HOLD',
-        holdReason: 'Nghi ngờ rủi ro cao'
+        holdReason: 'ngắn'
       }).success
     ).toBe(true)
   })

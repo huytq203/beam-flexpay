@@ -283,15 +283,15 @@ describe('Từ chối', () => {
     })
   })
 
-  it('lý do dưới 10 ký tự bị chặn', async () => {
+  it('lý do trống bị chặn', async () => {
     const reject = record('review/reject', () => json(result()))
     const dialog = await openWith([rejectAction(false)], /Từ chối$/)
 
-    fill(/Lý do gửi khách hàng/, 'ngắn')
+    fill(/Lý do gửi khách hàng/, '   ')
     await submit(dialog)
 
     expect(
-      await screen.findByText('Lý do gửi khách hàng phải từ 10 đến 500 ký tự')
+      await screen.findByText('Nhập lý do gửi khách hàng')
     ).toBeInTheDocument()
     expect(reject.calls.count).toBe(0)
   })

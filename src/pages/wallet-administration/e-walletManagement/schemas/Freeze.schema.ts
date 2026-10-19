@@ -10,7 +10,8 @@ export const FreezeSchema = z.object({
         .refine(Number.isInteger, 'Số tiền đóng băng phải là số nguyên'),
     reason: z
         .string()
-        .min(10, 'Lý do đóng trên 10 ký tự')
+        .trim()
+        .min(1, 'Vui lòng nhập lý do đóng băng')
         .max(500, 'Lý do không được vượt quá 500 ký tự'),
     expiryTime: z.string().optional(),
 })
@@ -20,7 +21,8 @@ export type FreezeFormValues = z.infer<typeof FreezeSchema>
 export const UnfreezeSchema = z.object({
     reason: z
         .string()
-        .min(10, 'Lý do mở băng trên 10 ký tự')
+        .trim()
+        .min(1, 'Vui lòng nhập lý do mở băng')
         .max(500, 'Lý do không được vượt quá 500 ký tự'),
 })
 

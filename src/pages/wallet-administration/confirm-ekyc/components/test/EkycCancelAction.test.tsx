@@ -55,7 +55,7 @@ describe('EkycCancelAction', () => {
     fireEvent.click(cancelButton()!)
     fireEvent.click(await screen.findByRole('button', { name: 'Hủy eKYC' }))
     expect(
-      await screen.findByText('Lý do phải từ 10 ký tự trở lên')
+      await screen.findByText('Vui lòng nhập lý do hủy')
     ).toBeInTheDocument()
     expect(calls).toHaveLength(0)
     fireEvent.change(screen.getByLabelText(/Lý do hủy/), {

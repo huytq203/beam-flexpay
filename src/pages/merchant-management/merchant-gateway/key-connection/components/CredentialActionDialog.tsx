@@ -22,8 +22,7 @@ const validateReason = (
   type: CredentialAction['type'],
   reason: string
 ): string => {
-  if (type === 'revoke' && reason.length < 10)
-    return 'Lý do thu hồi cần tối thiểu 10 ký tự'
+  if (type === 'revoke' && !reason) return 'Vui lòng nhập lý do thu hồi'
   if (type === 'rotate' && !reason) return 'Vui lòng nhập lý do xoay key'
   return ''
 }
@@ -105,7 +104,7 @@ export function CredentialActionDialog({
         }}
         placeholder={
           action.type === 'revoke'
-            ? 'Nhập tối thiểu 10 ký tự'
+            ? 'Nhập lý do thu hồi'
             : 'Nhập lý do xoay key'
         }
         rows={3}

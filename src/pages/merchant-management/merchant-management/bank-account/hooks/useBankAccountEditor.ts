@@ -35,7 +35,7 @@ export const useBankAccountEditor = (
       return
     }
     if (isLockReasonMissing(row, draft)) {
-      feedback.warning('Khóa tài khoản cần lý do tối thiểu 10 ký tự')
+      feedback.warning('Khóa tài khoản cần nhập lý do')
       return
     }
     if (!row && !merchant) {

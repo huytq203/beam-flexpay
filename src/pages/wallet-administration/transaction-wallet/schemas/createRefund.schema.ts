@@ -1,8 +1,7 @@
 import { z } from 'zod'
 
-export const REFUND_REASON_MIN = 10
 export const REFUND_REASON_MAX = 500
-const REASON_RANGE = `Lý do hoàn tiền phải có từ ${REFUND_REASON_MIN} đến ${REFUND_REASON_MAX} ký tự`
+const REASON_RANGE = `Lý do hoàn tiền tối đa ${REFUND_REASON_MAX} ký tự`
 
 /**
  * Chỉ những gì người vận hành nhập. Kênh, loại giao dịch gốc, nguồn tạo và
@@ -17,7 +16,6 @@ export const createRefundFormSchema = z.object({
     .string()
     .trim()
     .min(1, 'Lý do hoàn tiền là bắt buộc')
-    .min(REFUND_REASON_MIN, REASON_RANGE)
     .max(REFUND_REASON_MAX, REASON_RANGE),
   sendNotification: z.boolean()
 })

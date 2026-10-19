@@ -206,7 +206,7 @@ export const WithdrawalDecisionPanel = ({
         title='Từ chối lệnh rút'
         description='Toàn bộ tiền bị giữ, gồm cả phí, sẽ được trả về ví khách ngay.'
         label='Lý do từ chối'
-        hint={`${WITHDRAWAL_REASON_MIN_LENGTH}–${WITHDRAWAL_REASON_MAX_LENGTH} ký tự, hiển thị được với khách`}
+        hint={`Tối đa ${WITHDRAWAL_REASON_MAX_LENGTH} ký tự, hiển thị được với khách`}
         placeholder='Ví dụ: tài khoản nhận không khớp tên chủ thẻ'
         okText='Xác nhận từ chối'
         danger

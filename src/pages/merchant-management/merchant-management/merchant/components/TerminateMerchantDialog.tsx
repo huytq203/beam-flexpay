@@ -78,7 +78,7 @@ export function TerminateMerchantDialog({
             onChange={(event) => setReason(event.target.value)}
             rows={3}
             maxLength={500}
-            placeholder='Nhập lý do (10–500 ký tự)'
+            placeholder='Nhập lý do'
           />
           <Input
             aria-label='Nhập lại mã hoặc tên merchant'

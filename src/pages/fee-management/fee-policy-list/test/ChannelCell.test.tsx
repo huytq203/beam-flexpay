@@ -31,7 +31,7 @@ describe('ChannelCell — nhà cung cấp', () => {
     )
 
     expect(screen.getByText(/NCC: NAPAS/)).toBeInTheDocument()
-    expect(screen.getByText('TCB')).toBeInTheDocument()
+    expect(screen.getByText(/NH:TCB/)).toBeInTheDocument()
   })
 
   it('bản gán không ghi NCC nói rõ là mọi NCC', () => {
@@ -42,8 +42,8 @@ describe('ChannelCell — nhà cung cấp', () => {
       />
     )
 
-    expect(screen.getByText(/Mọi NCC/)).toBeInTheDocument()
-    expect(screen.getByText(/Tất cả ngân hàng phát hành /)).toBeInTheDocument()
+    expect(screen.getByText(/Tất cả NCC/)).toBeInTheDocument()
+    expect(screen.getByText(/Tất cả NH phát hành/)).toBeInTheDocument()
   })
 
   it('không hiện NCC ở loại giao dịch không đi qua nhà cung cấp', () => {
