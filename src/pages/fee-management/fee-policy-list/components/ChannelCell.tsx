@@ -41,9 +41,9 @@ export const ChannelCell = ({ serviceType, assignments }: ChannelCellProps) => {
         </span>
       )}
       <span>
-        {banks.join(', ')}
+        NH:{banks.join(', ')}
         {banks.length > 0 && anyBank ? ' · ' : ''}
-        {anyBank ? 'Tất cả ngân hàng phát hành ' : ''}
+        {anyBank ? 'Tất cả NH phát hành ' : ''}
       </span>
       {allowsMerchantCriteria(serviceType) && (
         <span className='text-xs text-muted-foreground'>
