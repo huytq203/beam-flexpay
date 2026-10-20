@@ -12,6 +12,12 @@ interface FeeNCCProps {
   fee?: TransactionFeeDetail | null
 }
 
+/** "Tên (MÃ)", chỉ mã khi danh mục chưa có tên, rỗng khi không có mã. */
+const partnerText = (code?: string | null, name?: string | null): string => {
+  if (!code) return ''
+  return name ? `${name} (${code})` : code
+}
+
 const FeeNCC = ({ data, profit, fee }: FeeNCCProps) => {
   const currency = data?.currency ?? 'VND'
   const formatMoney = (value: number) =>
@@ -23,6 +29,11 @@ const FeeNCC = ({ data, profit, fee }: FeeNCCProps) => {
       ? profit.providerCost
       : null
   const items = (fee?.inputCosts ?? []).filter((item) => item.amount != null)
+  // NCC theo báo giá phí (có tên); fee bản cũ chưa trả thì lấy mã NCC ghi trên journal.
+  const provider = fee?.providerCode
+    ? partnerText(fee.providerCode, fee.providerName)
+    : partnerText(data?.providerCode)
+  const bank = partnerText(fee?.bankCode, fee?.bankName)
 
   return (
     <>
@@ -33,8 +44,14 @@ const FeeNCC = ({ data, profit, fee }: FeeNCCProps) => {
       <div className='flex flex-col gap-3 px-3'>
         <div className='flex justify-between items-center'>
           <p className='text-gray-500'>Nhà cung cấp:</p>
-          <p className='font-medium'>{data?.providerCode ?? ''}</p>
+          <p className='font-medium text-right'>{provider}</p>
         </div>
+        {bank && (
+          <div className='flex justify-between items-center gap-2'>
+            <p className='text-gray-500'>Ngân hàng:</p>
+            <p className='font-medium text-right'>{bank}</p>
+          </div>
+        )}
         {items.map((item, index) => (
           <div
             key={`${item.componentType ?? ''}-${index}`}

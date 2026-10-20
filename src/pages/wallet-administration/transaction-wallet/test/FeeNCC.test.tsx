@@ -65,6 +65,27 @@ describe('FeeNCC', () => {
 
     expect(screen.queryByText('VCB')).not.toBeInTheDocument()
     expect(screen.queryByText('NAPAS')).not.toBeInTheDocument()
+    expect(screen.queryByText('Ngân hàng:')).not.toBeInTheDocument()
+  })
+
+  it('NCC và ngân hàng theo báo giá: hiện tên kèm mã, chưa có tên thì chỉ hiện mã', () => {
+    render(
+      <FeeNCC
+        data={{ ...withdrawal, providerCode: null }}
+        fee={fee({
+          providerCode: 'NAPAS',
+          providerName: 'Công ty Cổ phần Thanh toán Quốc gia Việt Nam',
+          bankCode: 'VCB',
+          bankName: null
+        })}
+      />
+    )
+
+    expect(
+      screen.getByText('Công ty Cổ phần Thanh toán Quốc gia Việt Nam (NAPAS)')
+    ).toBeInTheDocument()
+    expect(screen.getByText('Ngân hàng:')).toBeInTheDocument()
+    expect(screen.getByText('VCB')).toBeInTheDocument()
   })
 
   it('không có khối fee thì dùng profit cũ', () => {

@@ -1,18 +1,20 @@
-import { COMPONENT_TYPE_LABELS, getFeeLabel } from '@constants/feeLabels'
 import type {
   TransactionFeeDetail,
   TransactionProfit,
-  UnifiedContentJournal,
-  UserFeeBreakdownItem
+  UnifiedContentJournal
 } from '@type/apiResponseJournal'
+import {
+  sideFeeFormulas,
+  totalFeeFormula,
+  type FeeBearer
+} from './userFeeFormula'
 
 export type UserFeeKind = 'DEPOSIT' | 'WITHDRAWAL' | 'TRANSFER' | 'OTHER'
-type FeeBearer = 'SENDER' | 'RECEIVER' | 'BOTH'
 
 export interface UserFeeRow {
   label: string
   amount: number
-  /** Dòng tổng (Tổng giá trị / Tổng thực nhận / Tổng tiền chuyển…). */
+  /** Dòng tiền thực đi/đến ví hoặc bank — in đậm, có vạch phân nhóm phía trên. */
   isTotal?: boolean
   isFee?: boolean
   formula?: string
@@ -38,8 +40,6 @@ const BEARER_LABEL: Readonly<Record<FeeBearer, string>> = {
   BOTH: 'Cả hai chịu phí'
 }
 
-const SENDER_PAYERS = new Set(['USER', 'SENDER'])
-
 const resolveBearer = (
   feeBearer: string | null | undefined,
   kind: UserFeeKind
@@ -49,76 +49,20 @@ const resolveBearer = (
   return kind === 'WITHDRAWAL' ? 'RECEIVER' : 'SENDER'
 }
 
-const money = (value: number): string => value.toLocaleString('en-US')
-
-const formatItem = (item: UserFeeBreakdownItem): string => {
-  const parts: string[] = []
-  if (item.percentage) {
-    parts.push(
-      item.baseValue == null
-        ? `${item.percentage}%`
-        : `${item.percentage}% × ${money(item.baseValue)}`
-    )
-  }
-  if (item.fixedAmount) parts.push(money(item.fixedAmount))
-  const label = getFeeLabel(item.componentType, COMPONENT_TYPE_LABELS, '')
-  const expression = parts.length > 0 ? parts.join(' + ') : '0'
-  return `${label} ${expression} = ${money(item.calculatedFee)}`
+interface FeeAmounts {
+  principal: number
+  senderFee: number
+  receiverFee: number
+  /** Số bị trừ ở nguồn tiền (ví người chuyển / bank khi nạp / ví khi rút). */
+  debited: number
+  /** Số thực đến đích (ví người nhận / ví khi nạp / bank khi rút). */
+  credited: number
 }
 
-const formulaOf = (items: UserFeeBreakdownItem[]): string | undefined =>
-  items.length > 0 ? items.map(formatItem).join(' · ') : undefined
-
-/** Công thức theo từng phía chỉ khi quy được cấu phần về đúng bên trả. */
-const sideFormulas = (
-  items: UserFeeBreakdownItem[],
-  bearer: FeeBearer
-): { sender?: string; receiver?: string } => {
-  if (items.length === 0) return {}
-  if (bearer !== 'BOTH') {
-    return bearer === 'SENDER'
-      ? { sender: formulaOf(items) }
-      : { receiver: formulaOf(items) }
-  }
-  if (items.some((item) => !item.payerType)) return {}
-  const isSender = (item: UserFeeBreakdownItem): boolean =>
-    SENDER_PAYERS.has(item.payerType ?? '')
-  return {
-    sender: formulaOf(items.filter(isSender)),
-    receiver: formulaOf(items.filter((item) => !isSender(item)))
-  }
-}
-
-/** Công thức backend dựng sẵn từ fee service, theo đúng phía chịu phí. */
-const feeSideFormula = (
-  fee: TransactionFeeDetail,
-  side: 'SENDER' | 'RECEIVER'
-): string | undefined =>
-  fee.sides.find((item) => item.payerType === side)?.formula ?? undefined
-
-const feeFormulas = (
-  fee: TransactionFeeDetail
-): { sender?: string; receiver?: string } => ({
-  sender: feeSideFormula(fee, 'SENDER'),
-  receiver: feeSideFormula(fee, 'RECEIVER')
-})
-
-const breakdownOf = (
-  profit?: TransactionProfit | null
-): UserFeeBreakdownItem[] =>
-  profit?.feeBreakdownAvailable ? profit.userFeeBreakdown : []
-
-/**
- * Công thức phí ưu tiên khối `fee` (wallet-core đọc từ fee service); không có thì mới dựng từ
- * `profit` cũ. Phí NCC hiển thị ở thẻ "Chi phí nhà cung cấp" (FeeNCC), không nằm ở đây.
- */
-export const buildUserFeeSummary = (
+const resolveAmounts = (
   data: UnifiedContentJournal,
-  profit?: TransactionProfit | null,
-  feeDetail?: TransactionFeeDetail | null
-): UserFeeSummary => {
-  const kind = KIND_BY_TYPE[data.transactionType] ?? 'OTHER'
-  const bearer = resolveBearer(data.feeBearer, kind)
+  bearer: FeeBearer
+): FeeAmounts => {
   const fee = data.feeAmount
   const senderFee =
     bearer === 'BOTH'
@@ -133,58 +77,111 @@ export const buildUserFeeSummary = (
         ? fee
         : 0
   const principal = data.grossAmount - senderFee
-  const mismatch = principal - receiverFee !== data.amount
-  const items = breakdownOf(profit)
-  const base = { kind, mismatch }
-  const principalRow: UserFeeRow = {
-    label: 'Số tiền giao dịch',
-    amount: principal
+  return {
+    principal,
+    senderFee,
+    receiverFee,
+    debited: principal + senderFee,
+    credited: principal - receiverFee
   }
+}
+
+const transferRows = (
+  amounts: FeeAmounts,
+  formulas: { sender: string; receiver: string }
+): UserFeeRow[] => [
+  { label: 'Số tiền giao dịch', amount: amounts.principal },
+  {
+    label: 'Số tiền trừ trên ví người chuyển',
+    amount: amounts.debited,
+    isTotal: true
+  },
+  {
+    label: 'Phí người chuyển',
+    amount: amounts.senderFee,
+    isFee: true,
+    formula: formulas.sender
+  },
+  {
+    label: 'Số tiền cộng vào ví người nhận',
+    amount: amounts.credited,
+    isTotal: true
+  },
+  {
+    label: 'Phí người nhận',
+    amount: amounts.receiverFee,
+    isFee: true,
+    formula: formulas.receiver
+  }
+]
+
+/** Nhãn đầu bị trừ và đầu nhận tiền theo loại giao dịch. */
+const ENDPOINT_LABELS: Readonly<
+  Record<
+    Exclude<UserFeeKind, 'TRANSFER'>,
+    { credited: string; debited: string }
+  >
+> = {
+  DEPOSIT: {
+    credited: 'Số tiền cộng vào ví',
+    debited: 'Số tiền thực trừ trên bank'
+  },
+  WITHDRAWAL: {
+    debited: 'Số tiền trừ trên ví',
+    credited: 'Số tiền thực nhận trên bank'
+  },
+  OTHER: { credited: 'Số tiền thực nhận', debited: 'Tổng giá trị' }
+}
+
+/** Nạp: ví được cộng rồi mới tới số bank bị trừ; rút: ví bị trừ rồi mới tới số bank nhận. */
+const singleSideRows = (
+  kind: Exclude<UserFeeKind, 'TRANSFER'>,
+  amounts: FeeAmounts,
+  fee: number,
+  formula: string
+): UserFeeRow[] => {
+  const labels = ENDPOINT_LABELS[kind]
+  const isWithdrawal = kind === 'WITHDRAWAL'
+  const before = isWithdrawal ? 'debited' : 'credited'
+  const after = isWithdrawal ? 'credited' : 'debited'
+  return [
+    { label: 'Số tiền giao dịch', amount: amounts.principal },
+    { label: labels[before], amount: amounts[before] },
+    { label: 'Phí giao dịch', amount: fee, isFee: true, formula },
+    { label: labels[after], amount: amounts[after], isTotal: true }
+  ]
+}
+
+/**
+ * Mỗi loại giao dịch nói rõ tiền đi đâu: nguồn bị trừ bao nhiêu, đích nhận bao nhiêu, phí bao nhiêu.
+ * Phí NCC hiển thị ở thẻ "Chi phí nhà cung cấp" (FeeNCC), không nằm ở đây.
+ */
+export const buildUserFeeSummary = (
+  data: UnifiedContentJournal,
+  profit?: TransactionProfit | null,
+  feeDetail?: TransactionFeeDetail | null
+): UserFeeSummary => {
+  const kind = KIND_BY_TYPE[data.transactionType] ?? 'OTHER'
+  const bearer = resolveBearer(data.feeBearer, kind)
+  const amounts = resolveAmounts(data, bearer)
+  const base = { kind, mismatch: amounts.credited !== data.amount }
+  const formulaInput = { profit, feeDetail, currency: data.currency ?? 'VND' }
 
   if (kind === 'TRANSFER') {
-    const formulas = feeDetail
-      ? feeFormulas(feeDetail)
-      : sideFormulas(items, bearer)
+    const formulas = sideFeeFormulas(
+      bearer,
+      { sender: amounts.senderFee, receiver: amounts.receiverFee },
+      formulaInput
+    )
     return {
       ...base,
       badge: `Chuyển tiền · ${BEARER_LABEL[bearer]}`,
-      rows: [
-        principalRow,
-        {
-          label: 'Phí người chuyển',
-          amount: senderFee,
-          isFee: true,
-          formula: formulas.sender
-        },
-        {
-          label: 'Tổng tiền chuyển',
-          amount: principal + senderFee,
-          isTotal: true
-        },
-        {
-          label: 'Phí người nhận',
-          amount: receiverFee,
-          isFee: true,
-          formula: formulas.receiver
-        },
-        {
-          label: 'Tổng tiền nhận',
-          amount: principal - receiverFee,
-          isTotal: true
-        }
-      ]
+      rows: transferRows(amounts, formulas)
     }
   }
-
-  const feeRow: UserFeeRow = {
-    label: 'Tổng phí',
-    amount: fee,
-    isFee: true,
-    formula: feeDetail ? (feeDetail.formula ?? undefined) : formulaOf(items)
+  const fee = data.feeAmount
+  return {
+    ...base,
+    rows: singleSideRows(kind, amounts, fee, totalFeeFormula(fee, formulaInput))
   }
-  const totalRow: UserFeeRow =
-    kind === 'WITHDRAWAL'
-      ? { label: 'Tổng thực nhận', amount: principal - fee, isTotal: true }
-      : { label: 'Tổng giá trị', amount: principal + fee, isTotal: true }
-  return { ...base, rows: [principalRow, feeRow, totalRow] }
 }

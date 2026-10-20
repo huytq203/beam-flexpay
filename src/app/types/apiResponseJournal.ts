@@ -133,6 +133,11 @@ export interface TransactionFeeDetail {
   /** Mã đối soát dễ đọc của báo giá phí, ví dụ FF26BH44R; null khi fee bản cũ chưa trả. */
   feeCode?: string | null
   policyName: string | null
+  /** NCC và ngân hàng của báo giá; tên lấy từ danh mục đối tác của fee, null khi không có. */
+  providerCode?: string | null
+  providerName?: string | null
+  bankCode?: string | null
+  bankName?: string | null
   totalFee: number | null
   formula: string | null
   sides: TransactionFeeSide[]

@@ -41,7 +41,7 @@ export const ChannelCell = ({ serviceType, assignments }: ChannelCellProps) => {
         </span>
       )}
       <span>
-        NH:{banks.join(', ')}
+        NH: {banks.join(', ')}
         {banks.length > 0 && anyBank ? ' · ' : ''}
         {anyBank ? 'Tất cả NH ' : ''}
       </span>

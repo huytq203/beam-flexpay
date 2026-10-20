@@ -15,7 +15,7 @@ const p2p = {
 } as UnifiedContentJournal
 
 describe('UserFees', () => {
-  it('chuyển tiền cả hai bên chịu phí: badge và các dòng tổng', () => {
+  it('chuyển tiền cả hai bên chịu phí: badge và tiền trừ/cộng ở hai ví', () => {
     render(
       <UserFees
         data={p2p}
@@ -39,6 +39,12 @@ describe('UserFees', () => {
     expect(screen.getByText('10,000 VND')).toBeInTheDocument()
     expect(screen.getByText('10,100 VND')).toBeInTheDocument()
     expect(screen.getByText('9,600 VND')).toBeInTheDocument()
+    expect(
+      screen.getByText('Số tiền trừ trên ví người chuyển')
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText('Số tiền cộng vào ví người nhận')
+    ).toBeInTheDocument()
     // Phí NCC nằm ở thẻ "Chi phí nhà cung cấp" (FeeNCC), không lặp lại ở đây.
     expect(screen.queryByText(/Phí đầu vào/)).not.toBeInTheDocument()
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
