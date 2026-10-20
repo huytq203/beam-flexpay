@@ -2,12 +2,12 @@ import {
   WAITING_FUNDS_HINT,
   WALLET_FAILURE_HINT
 } from '../constants/refund.constants'
+import { RefundDisplayStatus } from '@constants/refund.constant'
+import { RefundStatus, type RefundDetail } from '../schemas/refund.schema'
 import {
-  RefundChannel,
-  RefundStatus,
-  type RefundDetail
-} from '../schemas/refund.schema'
-import type { RefundActionFlags } from '../utils/refund.utils'
+  getDisplayStatus,
+  type RefundActionFlags
+} from '../utils/refund.utils'
 import { RefundNote } from './RefundNote'
 
 interface RefundDetailAlertsProps {
@@ -24,11 +24,7 @@ const getRetryHint = (refund: RefundDetail): string =>
     : `Kiểm tra nguyên nhân rồi ${RETRY_HINT}`
 
 const isFailureRecord = (refund: RefundDetail): boolean =>
-  refund.status === RefundStatus.SUCCESS &&
-  refund.channel === RefundChannel.TO_BANK &&
-  !refund.approvedBy &&
-  !refund.approvedAt &&
-  !refund.payoutCode
+  getDisplayStatus(refund) === RefundDisplayStatus.FAILED_REFUND
 
 export function RefundDetailAlerts({
   refund,

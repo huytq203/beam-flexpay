@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { FormDatePicker, FormInput, FormSelect } from '@components/form'
 import { BroomIcon, MagnifyingGlassIcon } from '@components/icons'
 import { ButtonComponent } from '@components/index'
+import { REFUND_TYPE_OPTIONS } from '@constants/refund.constant'
 import {
   REFUND_CHANNEL_OPTIONS,
   REFUND_SOURCE_OPTIONS,
@@ -24,6 +25,7 @@ interface RefundFiltersProps {
 
 const EMPTY_VALUES: RefundFilterValues = {
   keyword: '',
+  refundType: '',
   channel: '',
   createdSource: '',
   createdFrom: '',
@@ -42,6 +44,7 @@ export function RefundFilters({
     resolver: zodResolver(refundFilterSchema),
     defaultValues: {
       keyword: filters.keyword ?? '',
+      refundType: filters.refundType ?? '',
       channel: filters.channel ?? '',
       createdSource: filters.createdSource ?? '',
       createdFrom: filters.createdFrom ?? '',
@@ -52,7 +55,9 @@ export function RefundFilters({
   const handleApply = (values: RefundFilterValues): void =>
     onApply({
       status: filters.status,
+      displayStatus: filters.displayStatus,
       keyword: values.keyword,
+      refundType: values.refundType,
       channel: values.channel,
       createdSource: values.createdSource,
       createdFrom: values.createdFrom.slice(0, 10),
@@ -67,7 +72,7 @@ export function RefundFilters({
   return (
     <section aria-label='Bộ lọc hoàn tiền'>
       <RefundStatusChips
-        value={filters.status}
+        value={filters.displayStatus}
         onChange={onStatusChange}
       />
       <form
@@ -80,10 +85,18 @@ export function RefundFilters({
             control={control}
             name='keyword'
             label='Từ khóa'
-            className={`${FIELD_CLASS} sm:col-span-2`}
+            className={`${FIELD_CLASS} sm:col-span-2 xl:col-span-1`}
             placeholder='Mã hoàn, mã GD gốc, mã lệnh chi'
             maxLength={100}
             allowClear
+          />
+          <FormSelect<RefundFilterValues>
+            control={control}
+            name='refundType'
+            label='Loại hoàn'
+            className={FIELD_CLASS}
+            placeholder='Tất cả loại'
+            options={REFUND_TYPE_OPTIONS}
           />
           <FormSelect<RefundFilterValues>
             control={control}

@@ -1,7 +1,8 @@
+import { REFUND_TYPE_LABELS } from '@constants/refund.constant'
 import {
   REFUND_CHANNEL_LABELS,
   REFUND_SOURCE_LABELS,
-  REFUND_TYPE_LABELS
+  REFUND_ORIGINAL_TYPE_LABELS
 } from '../constants/refund.constants'
 import {
   RefundStatus,
@@ -25,8 +26,11 @@ export function RefundInfoSection({ refund }: RefundInfoSectionProps) {
     { label: 'Khách hàng', value: customer || EMPTY_VALUE },
     {
       label: 'Loại giao dịch gốc',
-      value: REFUND_TYPE_LABELS[refund.originalType] ?? refund.originalType
+      value: REFUND_ORIGINAL_TYPE_LABELS[refund.originalType] ?? refund.originalType
     },
+    ...(refund.refundType
+      ? [{ label: 'Loại hoàn', value: REFUND_TYPE_LABELS[refund.refundType] }]
+      : []),
     {
       label: 'Mã giao dịch gốc',
       value: refund.originalTransactionCode ?? EMPTY_VALUE

@@ -1,0 +1,89 @@
+import { EXECUTABLE_BENEFICIARY } from '@utils/fee-execution'
+import {
+  BENEFICIARY_TYPE_OPTIONS,
+  getOutputPayerOptions,
+  INPUT_COST_BENEFICIARY_OPTIONS,
+  PAYER_TYPE_LABEL,
+  type FeeScope
+} from '../constants/feeConfigFields'
+import type { FeeComponentFormValues } from '../schemas/feeConfig.schema'
+import { BOTH_BEARERS } from './bearerPairs'
+import { emptyComponent } from './feeComponentDefaults'
+
+interface PartyOption {
+  value: string
+  label: string
+}
+
+export interface ComponentPartyOptions {
+  payerTypeOptions: PartyOption[]
+  defaultPayerType: string
+  beneficiaryTypeOptions: readonly PartyOption[]
+  defaultBeneficiaryType: string
+}
+
+/**
+ * Người chịu và người hưởng trên hộp thoại. Giá trị đầu tiên suy theo loại giao dịch chỉ là mặc
+ * định; người vận hành vẫn đổi được sang mọi giá trị hợp lệ của luồng phí. Phí đầu vào luôn do
+ * SYSTEM chịu và trả cho ngân hàng/đối tác, phí đầu ra không do SYSTEM chịu — khớp schema.
+ */
+export const getComponentPartyOptions = (
+  isInputCost: boolean,
+  serviceType: string
+): ComponentPartyOptions => {
+  if (isInputCost) {
+    return {
+      payerTypeOptions: [{ value: 'SYSTEM', label: PAYER_TYPE_LABEL.SYSTEM }],
+      defaultPayerType: 'SYSTEM',
+      beneficiaryTypeOptions: INPUT_COST_BENEFICIARY_OPTIONS,
+      defaultBeneficiaryType: 'BANK'
+    }
+  }
+  const payerTypeOptions = getOutputPayerOptions(serviceType)
+  return {
+    payerTypeOptions,
+    defaultPayerType: payerTypeOptions[0].value,
+    beneficiaryTypeOptions: BENEFICIARY_TYPE_OPTIONS,
+    defaultBeneficiaryType: EXECUTABLE_BENEFICIARY
+  }
+}
+
+interface DialogDefaultsInput {
+  parties: ComponentPartyOptions
+  feeScope: FeeScope
+  initialValue: FeeComponentFormValues | null
+  hasPartner: boolean
+}
+
+/** Giá trị mở hộp thoại; payer/người hưởng cũ không còn hợp lệ thì về mặc định của luồng. */
+export const buildDialogDefaults = ({
+  parties,
+  feeScope,
+  initialValue,
+  hasPartner
+}: DialogDefaultsInput): FeeComponentFormValues => {
+  const {
+    payerTypeOptions,
+    defaultPayerType,
+    beneficiaryTypeOptions,
+    defaultBeneficiaryType
+  } = parties
+  if (!initialValue) {
+    return emptyComponent(feeScope, defaultPayerType, defaultBeneficiaryType)
+  }
+  const hasAllowedPayer = payerTypeOptions.some(
+    ({ value }) => value === initialValue.payerType
+  )
+  const hasAllowedBeneficiary = beneficiaryTypeOptions.some(
+    ({ value }) => value === initialValue.beneficiaryType
+  )
+  const payerType = hasAllowedPayer ? initialValue.payerType : defaultPayerType
+  return {
+    ...initialValue,
+    feeScope,
+    payerType: hasPartner ? BOTH_BEARERS : payerType,
+    beneficiaryType: hasAllowedBeneficiary
+      ? initialValue.beneficiaryType
+      : defaultBeneficiaryType
+  }
+}

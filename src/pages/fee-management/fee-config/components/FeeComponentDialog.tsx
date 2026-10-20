@@ -1,27 +1,16 @@
-import { FeeDomain } from '@components/fee/feeDomain'
 import { ModalComponent } from '@components/index'
-import { COMPONENT_TYPE_LABELS } from '@constants/feeLabels'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  EXECUTABLE_BENEFICIARY,
-  supportsBearerSplit
-} from '@utils/fee-execution'
+import { supportsBearerSplit } from '@utils/fee-execution'
 import { useEffect, useMemo } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import {
-  BENEFICIARY_TYPE_OPTIONS,
-  getComponentTypesForCategory,
-  getPayerTypeOptions,
   getVatBaseForCategory,
-  INPUT_COST_BENEFICIARY_OPTIONS,
-  WALLET_FEE_BENEFICIARY_OPTIONS,
   VAT_COMPONENT_TYPE,
   FEE_SCOPE,
   type FeeBusinessCategory,
   type FeeScope
 } from '../constants/feeConfigFields'
 import {
-  CalculationMethod,
   createFeeComponentFormSchema,
   DUPLICATE_FEE_COMPONENT_MESSAGE,
   feeComponentFormSchema,
@@ -29,22 +18,27 @@ import {
   type FeeComponentFormValues
 } from '../schemas/feeConfig.schema'
 import {
-  CALCULATION_METHOD_LABEL,
   collectBaseTypes,
   summariseBaseType
 } from '../utils/feeComponentSummary'
-import { getBaseOnOptions } from '../utils/feeComponentBaseOptions'
 import {
-  CALCULATION_METHOD_VALUES,
-  emptyComponent,
-  withZeroRates
-} from '../utils/feeComponentDefaults'
+  buildBaseTypeOptions,
+  buildComponentTypeOptions,
+  buildMethodOptions
+} from '../utils/feeComponentFieldOptions'
+import { getBaseOnOptions } from '../utils/feeComponentBaseOptions'
+import { emptyComponent } from '../utils/feeComponentDefaults'
 import {
   BOTH_BEARERS,
-  BOTH_BEARERS_DUPLICATE_MESSAGE,
   RECEIVER_PAYER,
   SENDER_PAYER
 } from '../utils/bearerPairs'
+import {
+  buildDialogDefaults,
+  getComponentPartyOptions
+} from '../utils/feeComponentParties'
+import { useFeeComponentFieldHandlers } from '../hooks/useFeeComponentFieldHandlers'
+import { useFeeComponentSubmit } from '../hooks/useFeeComponentSubmit'
 import { FeeComponentFields } from './FeeComponentFields'
 
 const BOTH_BEARERS_OPTION = {
@@ -62,7 +56,6 @@ interface FeeComponentDialogProps {
   precedingComponents: readonly FeeComponentFormValues[]
   /** Toàn bộ thành phần hiện có, dùng để kiểm tra trùng tổ hợp định danh. */
   existingComponents: readonly FeeComponentFormValues[]
-  feeDomain: FeeDomain
   /** Luồng của thành phần đang thêm hoặc sửa; quyết định loại phí, người chịu và người hưởng được chọn. */
   feeScope: FeeScope
   businessCategory: FeeBusinessCategory
@@ -79,7 +72,6 @@ export const FeeComponentDialog = ({
   initialPartner = null,
   precedingComponents,
   existingComponents,
-  feeDomain,
   feeScope,
   businessCategory,
   serviceType,
@@ -87,25 +79,13 @@ export const FeeComponentDialog = ({
   onCancel
 }: FeeComponentDialogProps) => {
   const isInputCost = feeScope === FEE_SCOPE.INPUT_COST
-  const isWallet = feeDomain === FeeDomain.EWALLET
   const bearerSplit = supportsBearerSplit(serviceType) && !isInputCost
-  // Phí đầu ra do payer của giao dịch chịu; phí đầu vào luôn do SYSTEM chịu.
-  const payerTypeOptions = useMemo(
-    () =>
-      getPayerTypeOptions(serviceType).filter(({ value }) =>
-        isInputCost ? value === 'SYSTEM' : value !== 'SYSTEM'
-      ),
+  const parties = useMemo(
+    () => getComponentPartyOptions(isInputCost, serviceType),
     [isInputCost, serviceType]
   )
-  // Component cũ mang payer chưa hỗ trợ (SENDER/RECEIVER) về giá trị này.
-  const defaultPayerType = isInputCost ? 'SYSTEM' : payerTypeOptions[0].value
-  const beneficiaryTypeOptions = isInputCost
-    ? INPUT_COST_BENEFICIARY_OPTIONS
-    : isWallet
-      ? WALLET_FEE_BENEFICIARY_OPTIONS
-      : BENEFICIARY_TYPE_OPTIONS
-  // Phí đầu vào mặc định trả ngân hàng; phí đầu ra mặc định về hệ thống.
-  const defaultBeneficiaryType = isInputCost ? 'BANK' : EXECUTABLE_BENEFICIARY
+  const { payerTypeOptions, beneficiaryTypeOptions, defaultBeneficiaryType } =
+    parties
 
   /**
    * Dựng giá trị mặc định đúng một lần cho mỗi lần mở.
@@ -113,49 +93,28 @@ export const FeeComponentDialog = ({
    * Không dùng `values`: nó reset form mỗi khi tham chiếu đổi, mà `emptyComponent()`
    * sinh object mới sau mỗi render — đủ để React báo vượt độ sâu cập nhật.
    */
-  const defaultValues = useMemo(() => {
-    if (!initialValue) {
-      return emptyComponent(feeScope, defaultPayerType, defaultBeneficiaryType)
-    }
-
-    const hasAllowedPayer = payerTypeOptions.some(
-      ({ value }) => value === initialValue.payerType
-    )
-    const effectivePayer = hasAllowedPayer
-      ? initialValue.payerType
-      : defaultPayerType
-    const hasAllowedBeneficiary = beneficiaryTypeOptions.some(
-      ({ value }) => value === initialValue.beneficiaryType
-    )
-    return {
-      ...initialValue,
-      feeScope,
-      payerType: initialPartner ? BOTH_BEARERS : effectivePayer,
-      beneficiaryType: hasAllowedBeneficiary
-        ? initialValue.beneficiaryType
-        : defaultBeneficiaryType
-    }
-  }, [
-    defaultBeneficiaryType,
-    defaultPayerType,
-    feeScope,
-    initialValue,
-    initialPartner,
-    beneficiaryTypeOptions,
-    payerTypeOptions
-  ])
+  const defaultValues = useMemo(
+    () =>
+      buildDialogDefaults({
+        parties,
+        feeScope,
+        initialValue,
+        hasPartner: Boolean(initialPartner)
+      }),
+    [feeScope, initialPartner, initialValue, parties]
+  )
 
   const componentSchema = useMemo(
     () => createFeeComponentFormSchema(existingComponents, initialValue?.key),
     [existingComponents, initialValue?.key]
   )
 
-  const { control, handleSubmit, setValue, setError, trigger, formState } =
-    useForm<FeeComponentFormValues>({
-      resolver: zodResolver(componentSchema),
-      defaultValues,
-      mode: 'onTouched'
-    })
+  const form = useForm<FeeComponentFormValues>({
+    resolver: zodResolver(componentSchema),
+    defaultValues,
+    mode: 'onTouched'
+  })
+  const { control, setValue, trigger, formState } = form
 
   /**
    * Mức phí người nhận khi cả hai bên cùng chịu. Phần dùng chung (loại phí, cách tính, người hưởng)
@@ -231,85 +190,37 @@ export const FeeComponentDialog = ({
     vatBaseComponentType && baseTypes.includes(vatBaseComponentType)
   )
 
-  const componentTypeOptions = getComponentTypesForCategory(
+  const componentTypeOptions = buildComponentTypeOptions({
     businessCategory,
-    serviceType
-  )
-    .filter((value) => value !== VAT_COMPONENT_TYPE || hasVatBaseAbove || isVat)
-    .map((value) => ({
-      value,
-      label: COMPONENT_TYPE_LABELS[value] ?? value
-    }))
-  // Thành phần cũ đã lưu loại không còn trong danh sách (ví dụ Phí giao dịch cơ bản của chính
-  // sách hoàn tiền) vẫn phải hiện đúng tên khi mở sửa, nhưng không cho chọn cho thành phần mới.
-  if (
-    initialValue &&
-    initialValue.componentType &&
-    !componentTypeOptions.some(
-      ({ value }) => value === initialValue.componentType
-    )
-  ) {
-    componentTypeOptions.unshift({
-      value: initialValue.componentType,
-      label:
-        COMPONENT_TYPE_LABELS[initialValue.componentType] ??
-        initialValue.componentType
-    })
-  }
+    serviceType,
+    allowVat: hasVatBaseAbove || isVat,
+    initialComponentType: initialValue?.componentType
+  })
 
-  /**
-   * Thuế giá trị gia tăng luôn tính trên khoản phí gốc của nhóm. Khoá luôn ô cơ sở tính
-   * thay vì để người dùng chọn rồi báo lỗi ở bước lưu.
-   *
-   * Chỉ trỏ sẵn sang phí giao dịch khi nó thật sự đứng phía trên. Gán một tham
-   * chiếu tới thành phần chưa tồn tại chỉ tạo ra một ô hiển thị mã enum thô mà
-   * người dùng không sửa được.
-   */
-  const handleComponentTypeChange = (next: string | number) => {
-    if (next !== VAT_COMPONENT_TYPE) {
-      if (componentType === VAT_COMPONENT_TYPE) {
-        setValue('baseOn', 'AMOUNT', { shouldValidate: true })
-        setValue('baseComponentType', null, { shouldValidate: true })
-      }
-      return
-    }
-    setValue('baseOn', 'FEE_COMPONENT', { shouldValidate: true })
-    setValue(
-      'baseComponentType',
-      hasVatBaseAbove ? vatBaseComponentType : null,
-      { shouldValidate: true }
-    )
-    setValue('calculationMethod', CalculationMethod.DIRECT)
-    setValue('fixedAmount', null)
-    setValue('minFee', null)
-    setValue('maxFee', null)
-    setValue('tiers', [])
-  }
+  const { handleComponentTypeChange, handleMethodChange, handlePayerChange } =
+    useFeeComponentFieldHandlers({
+      setValue,
+      receiverSetValue: receiverForm.setValue,
+      componentType,
+      vatBaseAbove: hasVatBaseAbove ? vatBaseComponentType : null
+    })
 
   const allowedBaseTypes = isVat
     ? baseTypes.filter((type) => type === vatBaseComponentType)
     : baseTypes
 
-  const baseTypeOptions = allowedBaseTypes.map((type) => {
-    const summary = summariseBaseType(
-      type,
-      precedingComponents,
-      isBoth ? SENDER_PAYER : payerType
-    )
-    const detail = summary.isSum
-      ? `tổng ${summary.formulas.length} thành phần`
-      : summary.formulas[0]
-    return { value: type, label: `${summary.label} — ${detail}` }
-  })
+  const baseTypeOptions = buildBaseTypeOptions(
+    allowedBaseTypes,
+    precedingComponents,
+    isBoth ? SENDER_PAYER : payerType
+  )
 
   const selectedBase =
     baseOn === 'FEE_COMPONENT' && baseComponentType
       ? summariseBaseType(baseComponentType, precedingComponents, payerType)
       : null
 
-  const methodOptions = (
-    isVat ? [CalculationMethod.DIRECT] : CALCULATION_METHOD_VALUES
-  ).map((value) => ({ value, label: CALCULATION_METHOD_LABEL[value] }))
+  const methodOptions = buildMethodOptions(isVat)
 
   const baseOnOptions = getBaseOnOptions({
     isBank: isInputCost,
@@ -317,53 +228,13 @@ export const FeeComponentDialog = ({
     hasPrecedingComponents
   })
 
-  /**
-   * Cả hai bên cùng chịu lưu thành hai thành phần cùng loại phí, như backend vẫn nhận. Trùng tổ
-   * hợp định danh phải tự kiểm ở đây: resolver chỉ thấy giá trị tạm BOTH, không trùng với gì.
-   */
-  const submit = handleSubmit(async (value) => {
-    if (value.payerType !== BOTH_BEARERS) {
-      onSave([withZeroRates(value)])
-      return
-    }
-    const ownKeys = new Set(
-      [initialValue?.key, initialPartner?.key].filter(Boolean)
-    )
-    const clashes = [SENDER_PAYER, RECEIVER_PAYER].some((payer) =>
-      existingComponents.some(
-        (existing) =>
-          !ownKeys.has(existing.key) &&
-          existing.componentType === value.componentType &&
-          existing.payerType === payer &&
-          existing.beneficiaryType === value.beneficiaryType
-      )
-    )
-    if (clashes) {
-      // Câu riêng: câu trùng chung bị hiệu ứng kiểm lại ba ô xoá ngay vì giá trị tạm BOTH không trùng.
-      setError('componentType', {
-        type: 'custom',
-        message: BOTH_BEARERS_DUPLICATE_MESSAGE
-      })
-      return
-    }
-    const shared = {
-      feeScope: value.feeScope,
-      componentType: value.componentType,
-      baseOn: value.baseOn,
-      baseComponentType: value.baseComponentType,
-      calculationMethod: value.calculationMethod,
-      beneficiaryType: value.beneficiaryType,
-      roundMode: value.roundMode,
-      payerType: RECEIVER_PAYER
-    }
-    Object.entries(shared).forEach(([field, next]) =>
-      receiverForm.setValue(field as keyof typeof shared, next as never)
-    )
-    if (!(await receiverForm.trigger())) return
-    onSave([
-      withZeroRates({ ...value, payerType: SENDER_PAYER }),
-      withZeroRates({ ...receiverForm.getValues(), ...shared })
-    ])
+  const submit = useFeeComponentSubmit({
+    form,
+    receiverForm,
+    initialValue,
+    initialPartner,
+    existingComponents,
+    onSave
   })
 
   return (
@@ -389,9 +260,7 @@ export const FeeComponentDialog = ({
           baseTypeOptions={baseTypeOptions}
           methodOptions={methodOptions}
           payerTypeOptions={payerSelectOptions}
-          payerDisabled={payerSelectOptions.length <= 1}
           beneficiaryTypeOptions={beneficiaryTypeOptions}
-          beneficiaryDisabled={!isInputCost && isWallet}
           payerType={payerType}
           baseOn={baseOn}
           selectedBase={selectedBase}
@@ -407,27 +276,8 @@ export const FeeComponentDialog = ({
                 }
               : undefined
           }
-          onMethodChange={(next) => {
-            setValue('tiers', [])
-            receiverForm.setValue('tiers', [])
-            // Bậc thang lấy số từ bảng bậc: bỏ các ô của cách tính mặc định để không gửi thừa.
-            if (usesTiers(String(next))) {
-              setValue('percentage', null)
-              setValue('fixedAmount', null)
-              setValue('minFee', null)
-              setValue('maxFee', null)
-              receiverForm.setValue('percentage', null)
-              receiverForm.setValue('fixedAmount', null)
-              receiverForm.setValue('minFee', null)
-              receiverForm.setValue('maxFee', null)
-            }
-          }}
-          onPayerChange={(next) => {
-            setValue('beneficiaryType', next === 'SYSTEM' ? 'BANK' : 'SYSTEM', {
-              shouldValidate: true
-            })
-            setValue('baseComponentType', null, { shouldValidate: true })
-          }}
+          onMethodChange={handleMethodChange}
+          onPayerChange={handlePayerChange}
         />
       </div>
     </ModalComponent>

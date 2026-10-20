@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  getOutputPayerOptions,
   getPayerLabel,
   getPayerTypeOptions
 } from '../constants/feeComponentParties'
@@ -42,5 +43,27 @@ describe('nhãn người chịu phí theo loại giao dịch', () => {
       value: 'USER',
       label: 'Người nhận'
     })
+  })
+})
+
+describe('người chịu phí đầu ra sửa được trên hộp thoại', () => {
+  it('payer theo loại giao dịch đứng đầu làm mặc định, vẫn cho chọn bên còn lại', () => {
+    expect(getOutputPayerOptions('EWALLET_DEPOSIT')).toEqual([
+      { value: 'USER', label: 'Người chuyển' },
+      { value: 'RECEIVER', label: 'Người nhận' }
+    ])
+  })
+
+  it('bỏ payer trùng nhãn: rút tiền gọi cả USER lẫn RECEIVER là Người nhận', () => {
+    expect(getOutputPayerOptions('EWALLET_WITHDRAWAL')).toEqual([
+      { value: 'USER', label: 'Người nhận' }
+    ])
+  })
+
+  it('tạm chưa cho chọn Merchant hay Hệ thống', () => {
+    const values = getOutputPayerOptions('EWALLET_TRANSFER_INTERNAL').map(
+      ({ value }) => value
+    )
+    expect(values).toEqual(['USER', 'RECEIVER'])
   })
 })

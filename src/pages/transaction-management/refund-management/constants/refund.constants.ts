@@ -1,22 +1,8 @@
 import {
   RefundChannel,
   RefundOriginalType,
-  RefundSource,
-  RefundStatus
+  RefundSource
 } from '../schemas/refund.schema'
-
-export type RefundTone = 'success' | 'warning' | 'danger' | 'info' | 'normal'
-
-export const REFUND_STATUS_LABELS: Record<
-  RefundStatus,
-  { label: string; tone: RefundTone }
-> = {
-  PENDING_APPROVAL: { label: 'Chờ duyệt', tone: 'warning' },
-  WAITING_FUNDS: { label: 'Chờ đủ số dư', tone: 'warning' },
-  PROCESSING: { label: 'Đang xử lý', tone: 'info' },
-  SUCCESS: { label: 'Thành công', tone: 'success' },
-  REJECTED: { label: 'Đã từ chối', tone: 'danger' }
-}
 
 export const REFUND_CHANNEL_LABELS: Record<RefundChannel, string> = {
   TO_WALLET: 'Về ví',
@@ -29,7 +15,7 @@ export const REFUND_SOURCE_LABELS: Record<RefundSource, string> = {
   API: 'API'
 }
 
-export const REFUND_TYPE_LABELS: Record<RefundOriginalType, string> = {
+export const REFUND_ORIGINAL_TYPE_LABELS: Record<RefundOriginalType, string> = {
   CASH_IN: 'Nạp tiền',
   CASH_OUT: 'Rút tiền',
   P2P_TRANSFER: 'Chuyển tiền',
@@ -41,10 +27,6 @@ export const REFUND_DEBTOR_LABELS: Record<RefundOriginalType, string> = {
   CASH_IN: 'Ví khách bị trừ'
 }
 
-export const REFUND_STATUS_OPTIONS = Object.values(RefundStatus).map(
-  (value) => ({ value, label: REFUND_STATUS_LABELS[value].label })
-)
-
 export const REFUND_CHANNEL_OPTIONS = Object.values(RefundChannel).map(
   (value) => ({ value, label: REFUND_CHANNEL_LABELS[value] })
 )
@@ -53,8 +35,11 @@ export const REFUND_SOURCE_OPTIONS = Object.values(RefundSource).map(
   (value) => ({ value, label: REFUND_SOURCE_LABELS[value] })
 )
 
+/** `status` giữ lại cho link cũ; chip trạng thái nay lọc theo `displayStatus`. */
 export const REFUND_FILTER_KEYS = [
   'status',
+  'displayStatus',
+  'refundType',
   'keyword',
   'channel',
   'createdSource',

@@ -48,6 +48,7 @@ const datePart = (value: string): string => value.slice(0, 10)
 export const refundFilterSchema = z
   .object({
     keyword: z.string().trim().max(100, 'Từ khóa tối đa 100 ký tự'),
+    refundType: z.string(),
     channel: z.string(),
     createdSource: z.string(),
     createdFrom: z.string(),

@@ -10,6 +10,7 @@ import InfoUser from './components/InfoUser'
 import UserFees from './components/UserFees'
 import FeeNCC from './components/FeeNCC'
 import { DetailTransactionHeader } from './components/DetailTransactionHeader'
+import { TransactionRefundList } from './components/TransactionRefundList'
 import { TransactionReviewPanel } from './components/TransactionReviewPanel'
 import useDetailTransaction from './hooks/useDetailTransaction'
 import { useResetTransactionSnapshot } from './hooks/useTransactionSnapshot'
@@ -118,6 +119,15 @@ const DetailTransaction = () => {
                   scroll={{ x: 'max-content' }}
                 />
               </>
+            }
+          />
+
+          <CardComponent
+            content={
+              <TransactionRefundList
+                refunds={getTransactionById.refunds}
+                currency={currency}
+              />
             }
           />
         </div>

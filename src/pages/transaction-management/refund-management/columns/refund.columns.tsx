@@ -1,7 +1,8 @@
+import { RefundStatusBadge } from '@components/status-badge/RefundStatusBadge'
 import type { TableComponentProps } from '@components/ui/table-component/TableComponent'
+import { REFUND_TYPE_LABELS } from '@constants/refund.constant'
 import { CellLines } from '../components/CellLines'
 import { RefundActions } from '../components/RefundActions'
-import { RefundStatusBadge } from '../components/RefundStatusBadge'
 import {
   REFUND_CHANNEL_LABELS,
   REFUND_SOURCE_LABELS
@@ -10,6 +11,7 @@ import type { RefundListItem } from '../schemas/refund.schema'
 import {
   formatDateTime,
   formatVnd,
+  getDisplayStatus,
   getRefundActions,
   type RefundActionContext
 } from '../utils/refund.utils'
@@ -107,6 +109,7 @@ export const createRefundColumns = (
         <CellLines
           primary={REFUND_CHANNEL_LABELS[record.channel] ?? record.channel}
           secondary={[
+            record.refundType && REFUND_TYPE_LABELS[record.refundType],
             REFUND_SOURCE_LABELS[record.createdSource] ?? record.createdSource
           ]}
         />
@@ -122,9 +125,12 @@ export const createRefundColumns = (
     {
       title: 'Trạng thái',
       key: 'status',
-      width: 120,
+      width: 140,
       align: 'center',
-      render: (_value, record) => <RefundStatusBadge status={record.status} />
+      // Nhãn theo displayStatus (có "Thất bại hoàn tiền"); nút thao tác vẫn theo status.
+      render: (_value, record) => (
+        <RefundStatusBadge status={getDisplayStatus(record)} />
+      )
     },
     {
       title: 'Thao tác',

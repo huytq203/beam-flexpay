@@ -1,4 +1,3 @@
-import { FeeDomain } from '@components/fee/feeDomain'
 import { renderWithProviders } from '@/test/render'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -47,7 +46,6 @@ const renderTransferDialog = (
       initialValue={null}
       precedingComponents={[]}
       existingComponents={[]}
-      feeDomain={FeeDomain.EWALLET}
       feeScope='OUTPUT_FEE'
       businessCategory={FEE_BUSINESS_CATEGORY.TRANSACTION_PROCESSING}
       serviceType={TRANSFER}

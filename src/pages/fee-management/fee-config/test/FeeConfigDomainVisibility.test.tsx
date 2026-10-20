@@ -79,7 +79,7 @@ describe('trang tạo chính sách', () => {
     expect(
       within(await screen.findByRole('dialog')).getByText('Thêm phí đầu ra')
     ).toBeInTheDocument()
-    expect(screen.getByLabelText(/Người chịu/)).toBeDisabled()
+    expect(screen.getByLabelText(/Người chịu/)).not.toBeDisabled()
   })
 
   it('mở hộp thoại chi phí ở tab chi phí, Hệ thống chịu và Ngân hàng hưởng', async () => {
@@ -142,7 +142,7 @@ describe('trang tạo chính sách', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('chọn Hoàn tiền giao dịch ví: không hiện ô Merchant, người chịu cố định là người chuyển', async () => {
+  it('chọn Hoàn tiền giao dịch ví: không hiện ô Merchant, người chịu và người hưởng vẫn sửa được', async () => {
     const user = userEvent.setup()
     renderCreatePage()
 
@@ -158,8 +158,8 @@ describe('trang tạo chính sách', () => {
     await within(await screen.findByRole('dialog')).findByText(
       'Thêm phí đầu ra'
     )
-    // Phí hoàn luôn trừ vào số khách nhận nên chỉ còn một người chịu, không còn Merchant để chọn.
-    expect(screen.getByLabelText(/Người chịu/)).toBeDisabled()
-    expect(screen.getByLabelText(/Người hưởng/)).toBeDisabled()
+    // Người chịu suy theo loại giao dịch chỉ là mặc định; người vận hành vẫn sửa được.
+    expect(screen.getByLabelText(/Người chịu/)).not.toBeDisabled()
+    expect(screen.getByLabelText(/Người hưởng/)).not.toBeDisabled()
   })
 })

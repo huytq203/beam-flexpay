@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { RefundDisplayStatus, RefundType } from '@constants/refund.constant'
 
 export const RefundStatus = {
   PENDING_APPROVAL: 'PENDING_APPROVAL',
@@ -45,6 +46,11 @@ export const refundListItemSchema = z.object({
   requestedAmount: z.number(),
   netCredit: z.number(),
   status: z.enum(RefundStatus),
+  /** Bản deploy cũ chưa trả hai trường này: đọc qua `getDisplayStatus`, không giả định. */
+  displayStatus: z.enum(RefundDisplayStatus).nullish(),
+  refundType: z.enum(RefundType).nullish(),
+  originalType: z.enum(RefundOriginalType).nullish(),
+  refundKind: optionalText,
   createdAt: z.string(),
   approvedAt: optionalText,
   originalAmount: z.number().nullish(),
@@ -76,7 +82,7 @@ export const componentAllocationSchema = z.object({
   segments: z.array(componentSegmentSchema).nullish()
 })
 
-/** Chỉ `GET /refunds/{id}` trả `failureReason`, `originalType`; `createdBy` có cả ở danh sách. */
+/** Chỉ `GET /refunds/{id}` trả `failureReason`; ở chi tiết `originalType` luôn có. */
 export const refundDetailSchema = refundListItemSchema.extend({
   failureReason: optionalText,
   originalType: z.enum(RefundOriginalType),
@@ -92,9 +98,9 @@ export const refundDetailSchema = refundListItemSchema.extend({
 })
 export type RefundDetail = z.infer<typeof refundDetailSchema>
 
-/** Dòng danh sách hoặc bản chi tiết; ba field của chi tiết chỉ có khi đã gọi `GET /refunds/{id}`. */
+/** Dòng danh sách hoặc bản chi tiết; `failureReason` chỉ có khi đã gọi `GET /refunds/{id}`. */
 export type RefundTarget = RefundListItem &
-  Partial<Pick<RefundDetail, 'failureReason' | 'originalType'>>
+  Partial<Pick<RefundDetail, 'failureReason'>>
 
 export interface RefundPage {
   content: RefundListItem[]

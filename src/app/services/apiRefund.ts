@@ -1,3 +1,7 @@
+import type {
+  RefundDisplayStatus,
+  RefundType
+} from '@constants/refund.constant'
 import { apiUserWallet } from '@services/apiService'
 import type {
   CreateRefundRequest,
@@ -18,7 +22,11 @@ export interface RefundListParams {
   sort?: string
   keyword?: string
   customerPhone?: string
+  /** Trạng thái thật; nút duyệt/từ chối vẫn dựa vào nó. */
   status?: RefundStatus
+  /** Lọc đúng nhãn đang hiện: `SUCCESS` không gồm bản ghi `FAILED_REFUND`. */
+  displayStatus?: RefundDisplayStatus
+  refundType?: RefundType
   channel?: RefundChannel
   createdSource?: RefundSource
   createdFrom?: string

@@ -41,7 +41,6 @@ const FeeConfigForm = ({
   const { submit, isSubmitting, orphan, dismissOrphan } =
     useFeeConfigSubmit(snapshot)
   const { control, handleSubmit, watch, formState } = form
-  const feeDomain = watch('feeDomain')
 
   return (
     <form onSubmit={handleSubmit(submit)}>
@@ -78,7 +77,6 @@ const FeeConfigForm = ({
       <CardComponent className='mb-3!'>
         <FeeComponentList
           control={control}
-          feeDomain={feeDomain}
           serviceType={watch('serviceType')}
           error={formState.errors.components?.message}
           readOnly={readOnly}

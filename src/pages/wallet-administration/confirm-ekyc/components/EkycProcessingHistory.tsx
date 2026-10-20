@@ -166,7 +166,7 @@ export const ProcessingHistory = ({
                         />
                       )}
                       {isApplied
-                        ? 'Áp dụng gần nhất'
+                        ? 'Phiên gần nhất'
                         : `#${attempts.length - index}`}
                     </button>
                     {onInspect &&

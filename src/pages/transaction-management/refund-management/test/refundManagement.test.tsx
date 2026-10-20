@@ -58,7 +58,9 @@ describe('danh sách hoàn tiền', () => {
     const seen: string[] = []
     server.use(
       http.get('*/refunds', ({ request }) => {
-        seen.push(new URL(request.url).searchParams.get('status') ?? '')
+        seen.push(
+          new URL(request.url).searchParams.get('displayStatus') ?? ''
+        )
         return HttpResponse.json({ data: { content: [], totalElements: 0 } })
       })
     )

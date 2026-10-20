@@ -17,8 +17,9 @@ export const useRefundList = () => {
     buildRefundParams(filters, url.page, url.size)
   )
 
-  const setStatus = (status: string): void =>
-    url.applyFilters({ ...filters, status })
+  // Chip ghi `displayStatus`; xoá `status` của link cũ để hai bộ lọc không chồng nhau.
+  const setStatus = (displayStatus: string): void =>
+    url.applyFilters({ ...filters, status: undefined, displayStatus })
 
   return {
     filters,

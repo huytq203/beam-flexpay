@@ -1,3 +1,7 @@
+import {
+  RefundDisplayStatus,
+  RefundType
+} from '@constants/refund.constant'
 import type { RefundListParams } from '@services/apiRefund'
 import { formatCurrency } from '@utils/formatNumber'
 import { isSameUsername } from '@utils/username'
@@ -60,6 +64,11 @@ export const getRefundErrorText = (error: unknown): string => {
     (message && !/^[A-Z0-9_]+$/.test(message) ? message : GENERIC_ERROR)
   )
 }
+
+/** Nhãn trạng thái theo `displayStatus`; BE chưa trả thì dùng `status` (cùng giá trị trừ FAILED_REFUND). */
+export const getDisplayStatus = (
+  refund: Pick<RefundListItem, 'status' | 'displayStatus'>
+): RefundDisplayStatus => refund.displayStatus ?? refund.status
 
 export interface RefundActionContext {
   username: string
@@ -150,6 +159,12 @@ export const buildRefundParams = (
     sort: 'createdAt,desc',
     keyword: keyword || undefined,
     status: isOneOf(RefundStatus, filters.status) ? filters.status : undefined,
+    displayStatus: isOneOf(RefundDisplayStatus, filters.displayStatus)
+      ? filters.displayStatus
+      : undefined,
+    refundType: isOneOf(RefundType, filters.refundType)
+      ? filters.refundType
+      : undefined,
     channel: isOneOf(RefundChannel, filters.channel)
       ? filters.channel
       : undefined,

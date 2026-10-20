@@ -2,11 +2,7 @@ import { ColumnsType } from 'antd/es/table'
 import { LedgerEntry } from '../types/SystemLedger.type'
 import dayjs from 'dayjs'
 import { NavigateFunction } from 'react-router-dom'
-import {
-  MaskText,
-  TooltipComponent,
-  TypographyText
-} from '@components/index'
+import { MaskText, TooltipComponent, TypographyText } from '@components/index'
 import { formatCurrency } from '@utils/formatNumber'
 import {
   DirectionConstants,
@@ -14,7 +10,6 @@ import {
   GLCodeLabels,
   LedgerTransactionType,
   getLedgerEntryRole,
-  getLedgerFeeSplit,
   type DirectionKey,
   type LedgerTransactionTypeKey
 } from '../constants/SystemLedger.constant'
@@ -38,7 +33,7 @@ const getSystemLedgerColumn = ({
     render(value, record) {
       const code = record.transaction?.transactionCode
       return code ? (
-        <div  className="flex flex-col gap-1 ">
+        <div className='flex flex-col gap-1 '>
           <TypographyText
             strong
             className=' font-medium cursor-pointer'
@@ -52,7 +47,7 @@ const getSystemLedgerColumn = ({
               ] ?? record.transactionType}
             </span>
           )}
-          <TooltipComponent title={value?.id}> 
+          <TooltipComponent title={value?.id}>
             <span className='inline-flex items-center gap-1 max-w-[180px]'>
               <span className='truncate max-w-[150px] text-gray-500 text-[12px]'>
                 {value?.id}
@@ -113,19 +108,10 @@ const getSystemLedgerColumn = ({
     width: 150,
     render(_, record) {
       const role = getLedgerEntryRole(record)
-      const split = getLedgerFeeSplit(record)
       return role ? (
-        <div className='flex flex-col items-start gap-1'>
-          <span className='rounded border border-gray-200 px-2 py-0.5 text-[12px] whitespace-nowrap'>
-            {role}
-          </span>
-          {split && (
-            <span className='text-[12px] text-gray-500 whitespace-nowrap'>
-              Gửi {formatCurrency(split.sender)} · Nhận{' '}
-              {formatCurrency(split.receiver)}
-            </span>
-          )}
-        </div>
+        <span className='rounded border border-gray-200 px-2 py-0.5 text-[12px] whitespace-nowrap'>
+          {role}
+        </span>
       ) : (
         <span>--</span>
       )

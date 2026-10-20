@@ -76,12 +76,6 @@ export const EkycRestoreAction = ({ record }: EkycRestoreActionProps) => {
               chuyển từ <span className='font-medium'>Đã thu hồi</span> sang{' '}
               <span className='font-medium'>Chờ xác thực lại</span>.
             </p>
-            <p className='m-0'>
-              Người dùng sẽ phải eKYC lại và sẽ nhận thông báo (push, và email
-              nếu có). Người dùng phải dùng cùng số thẻ căn cước/CCCD với hồ sơ
-              cũ. Thao tác được ghi lại theo tài khoản của bạn và không thể hoàn
-              tác từ CMS.
-            </p>
             {error && (
               <p
                 role='alert'

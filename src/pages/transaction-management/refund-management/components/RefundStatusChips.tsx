@@ -1,5 +1,5 @@
 import { ChipTab, ChipTabGroup } from '@components/index'
-import { REFUND_STATUS_OPTIONS } from '../constants/refund.constants'
+import { REFUND_DISPLAY_STATUS_OPTIONS } from '@constants/refund.constant'
 
 interface RefundStatusChipsProps {
   value?: string
@@ -7,7 +7,7 @@ interface RefundStatusChipsProps {
 }
 
 const ALL_OPTION = { value: '', label: 'Tất cả' }
-const OPTIONS = [ALL_OPTION, ...REFUND_STATUS_OPTIONS]
+const OPTIONS = [ALL_OPTION, ...REFUND_DISPLAY_STATUS_OPTIONS]
 
 export function RefundStatusChips({ value, onChange }: RefundStatusChipsProps) {
   const current = value ?? ''

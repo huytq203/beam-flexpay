@@ -1,8 +1,10 @@
 import { DrawerComponent, ButtonComponent } from '@components/index'
+import { RefundStatusBadge } from '@components/status-badge/RefundStatusBadge'
 import { SkeletonText } from '@components/ui/skeletons/Skeleton'
 import { useGetRefundDetailQuery } from '@services/apiRefund'
 import type { RefundTarget } from '../schemas/refund.schema'
 import {
+  getDisplayStatus,
   getRefundActions,
   getRefundErrorText,
   type RefundActionContext
@@ -16,7 +18,6 @@ import {
   RefundInfoSection
 } from './RefundInfoSections'
 import { RefundNote } from './RefundNote'
-import { RefundStatusBadge } from './RefundStatusBadge'
 
 interface RefundDetailDrawerProps {
   refundId: string
@@ -94,7 +95,7 @@ export function RefundDetailDrawer({
       title={
         <div className='flex flex-col items-start gap-1'>
           <span>{data?.refundCode ?? 'Chi tiết hoàn tiền'}</span>
-          {data && <RefundStatusBadge status={data.status} />}
+          {data && <RefundStatusBadge status={getDisplayStatus(data)} />}
         </div>
       }
       footer={

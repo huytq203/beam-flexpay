@@ -1,4 +1,3 @@
-import { FeeDomain } from '@components/fee/feeDomain'
 import { PlusIcon } from '@components/icons'
 import { ButtonComponent } from '@components/index'
 import { useMessage } from '@hooks/useMessage'
@@ -29,7 +28,6 @@ import { FeeScopeTabs } from './FeeScopeTabs'
 
 interface FeeComponentListProps {
   control: Control<FeeConfigFormValues>
-  feeDomain: FeeDomain
   serviceType: string
   error?: string
   readOnly?: boolean
@@ -55,7 +53,6 @@ const EMPTY_LABEL: Readonly<Record<FeeScope, string>> = {
  */
 export const FeeComponentList = ({
   control,
-  feeDomain,
   serviceType,
   error,
   readOnly = false
@@ -232,7 +229,6 @@ export const FeeComponentList = ({
           initialPartner={partner}
           precedingComponents={precedingInScope(dialogScope)}
           existingComponents={components}
-          feeDomain={feeDomain}
           feeScope={dialogScope}
           businessCategory={categoryOf(dialogScope)}
           serviceType={serviceType}

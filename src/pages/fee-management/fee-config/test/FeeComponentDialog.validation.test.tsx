@@ -1,4 +1,3 @@
-import { FeeDomain } from '@components/fee/feeDomain'
 import { renderWithProviders } from '@/test/render'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -34,7 +33,6 @@ describe('FeeComponentDialog duplicate validation', () => {
         initialValue={null}
         precedingComponents={[existingComponent]}
         existingComponents={[existingComponent]}
-        feeDomain={FeeDomain.MERCHANT}
         feeScope='OUTPUT_FEE'
         businessCategory={FEE_BUSINESS_CATEGORY.TRANSACTION_PROCESSING}
         serviceType='MERCHANT_VA_BILL_COLLECTION'
@@ -78,7 +76,6 @@ describe('FeeComponentDialog phí đầu vào (đầu vào)', () => {
         initialValue={initialValue}
         precedingComponents={[]}
         existingComponents={[]}
-        feeDomain={FeeDomain.BANK}
         feeScope='INPUT_COST'
         businessCategory={FEE_BUSINESS_CATEGORY.BANK_PROVIDER}
         serviceType='EWALLET_DEPOSIT'
@@ -98,7 +95,7 @@ describe('FeeComponentDialog phí đầu vào (đầu vào)', () => {
     expect(
       screen.getByLabelText(/Người hưởng/).closest('.ant-select')
     ).toHaveTextContent('Ngân hàng')
-    expect(screen.getByLabelText(/Người chịu/)).toBeDisabled()
+    expect(screen.getByLabelText(/Người chịu/)).not.toBeDisabled()
     expect(screen.queryByText('Người dùng')).not.toBeInTheDocument()
     expect(screen.queryByText('Merchant')).not.toBeInTheDocument()
     expect(screen.queryByText('Người gửi')).not.toBeInTheDocument()
@@ -167,7 +164,6 @@ describe('FeeComponentDialog phí đầu ra (đầu ra)', () => {
         initialValue={null}
         precedingComponents={[]}
         existingComponents={[]}
-        feeDomain={FeeDomain.EWALLET}
         feeScope='OUTPUT_FEE'
         businessCategory={FEE_BUSINESS_CATEGORY.TRANSACTION_PROCESSING}
         serviceType='EWALLET_DEPOSIT'
@@ -178,16 +174,17 @@ describe('FeeComponentDialog phí đầu ra (đầu ra)', () => {
     return onSave
   }
 
-  it('nạp tiền: phí đầu ra cố định người gửi (bank chuyển) chịu', () => {
+  it('nạp tiền: mặc định người chuyển chịu nhưng vẫn đổi được sang người nhận', async () => {
     renderWalletDialog()
 
-    expect(
-      screen.getByLabelText(/Người chịu/).closest('.ant-select')
-    ).toHaveTextContent('Người gửi')
-    expect(screen.getByLabelText(/Người chịu/)).toBeDisabled()
-    expect(screen.queryByText('Người dùng')).not.toBeInTheDocument()
-    expect(screen.queryByText('Người nhận')).not.toBeInTheDocument()
-    expect(screen.queryByText('Hệ thống/platform')).not.toBeInTheDocument()
+    const payer = screen.getByLabelText(/Người chịu/)
+    expect(payer.closest('.ant-select')).toHaveTextContent('Người chuyển')
+    expect(payer).not.toBeDisabled()
+
+    await userEvent.click(payer)
+    expect(await screen.findByTitle('Người nhận')).toBeInTheDocument()
+    expect(screen.queryByTitle('Merchant')).not.toBeInTheDocument()
+    expect(screen.queryByTitle('Hệ thống/platform')).not.toBeInTheDocument()
   })
 
   it('chỉ cho chọn VAT sau khi đã tạo phí gốc trong cùng phần', async () => {
@@ -214,12 +211,23 @@ describe('FeeComponentDialog phí đầu ra (đầu ra)', () => {
     )
   })
 
-  it('miền Ví cố định người hưởng là Hệ thống, không có lựa chọn Ngân hàng', async () => {
-    renderWalletDialog()
+  it('miền Ví mặc định Hệ thống hưởng nhưng vẫn chọn được Ngân hàng', async () => {
+    const onSave = renderWalletDialog()
 
     const beneficiary = screen.getByLabelText(/Người hưởng/)
     expect(beneficiary.closest('.ant-select')).toHaveTextContent('Hệ thống')
-    expect(beneficiary).toBeDisabled()
-    expect(screen.queryByText('Ngân hàng')).not.toBeInTheDocument()
+    expect(beneficiary).not.toBeDisabled()
+
+    await userEvent.click(screen.getByLabelText(/Loại phí/))
+    await userEvent.click(await screen.findByText('Phí giao dịch cơ bản'))
+    await userEvent.click(beneficiary)
+    await userEvent.click(await screen.findByTitle('Ngân hàng'))
+    await userEvent.type(screen.getByLabelText(/Phí cố định/), '1000')
+    await userEvent.click(screen.getByRole('button', { name: 'Thêm' }))
+
+    await waitFor(() => expect(onSave).toHaveBeenCalled())
+    expect(onSave.mock.calls[0]?.[0]?.[0]).toEqual(
+      expect.objectContaining({ payerType: 'USER', beneficiaryType: 'BANK' })
+    )
   })
 })

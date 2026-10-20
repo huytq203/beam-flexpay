@@ -1,6 +1,6 @@
 export const DirectionConstants = {
-    CREDIT: 'CREDIT',
-    DEBIT: 'DEBIT'
+  CREDIT: 'CREDIT',
+  DEBIT: 'DEBIT'
 } as const
 
 export type DirectionKey = keyof typeof DirectionConstants
@@ -10,26 +10,26 @@ export type DirectionKey = keyof typeof DirectionConstants
  * toán đọc — màn hình phải nói cùng một thứ tiếng với file.
  */
 export const DirectionLabel: Record<DirectionKey, string> = {
-    CREDIT: 'Có (CREDIT)',
-    DEBIT: 'Nợ (DEBIT)'
+  CREDIT: 'Có (CREDIT)',
+  DEBIT: 'Nợ (DEBIT)'
 }
 
 /** Nhãn ngắn dùng trong ô bảng, không kèm mã. */
 export const DirectionShortLabel: Record<DirectionKey, string> = {
-    CREDIT: 'Có',
-    DEBIT: 'Nợ'
+  CREDIT: 'Có',
+  DEBIT: 'Nợ'
 }
 
 export const FeeBearerLabel = {
-    SENDER: 'Bên gửi',
-    RECEIVER: 'Bên nhận',
-    BOTH: 'Hai bên'
+  SENDER: 'Bên gửi',
+  RECEIVER: 'Bên nhận',
+  BOTH: 'Hai bên'
 } as const
 
 export const OwnerTypeConstants = {
-    USER: 'USER',
-    MERCHANT: 'MERCHANT',
-    SYSTEM: 'SYSTEM'
+  USER: 'USER',
+  MERCHANT: 'MERCHANT',
+  SYSTEM: 'SYSTEM'
 } as const
 
 export type OwnerTypeKey = keyof typeof OwnerTypeConstants
@@ -41,50 +41,73 @@ export type OwnerTypeKey = keyof typeof OwnerTypeConstants
  * loại giao dịch bằng cùng một tên.
  */
 export const LedgerTransactionType = {
-    CASH_IN: 'Nạp tiền',
-    CASH_OUT: 'Rút tiền',
-    P2P_TRANSFER: 'Chuyển tiền'
+  CASH_IN: 'Nạp tiền',
+  CASH_OUT: 'Rút tiền',
+  P2P_TRANSFER: 'Chuyển tiền'
 } as const
 
 export type LedgerTransactionTypeKey = keyof typeof LedgerTransactionType
 
 export enum StatusConstants {
-    SUCCESS = 'SUCCESS',
-    ERROR = 'ERROR',
-    WAITING = 'WAITING',
-    ACTIVE = 'ACTIVE',
-    LOCKED = 'LOCKED'
+  SUCCESS = 'SUCCESS',
+  ERROR = 'ERROR',
+  WAITING = 'WAITING',
+  ACTIVE = 'ACTIVE',
+  LOCKED = 'LOCKED'
 }
 
 export type StatusKey = keyof typeof StatusConstants
 
 export const StatusLabel: Record<string, string> = {
-    SUCCESS: 'Thành công',
-    ERROR: 'Lỗi',
-    WAITING: 'Đang chờ',
-    ACTIVE: 'Hoạt động',
-    LOCKED: 'Khóa'
+  SUCCESS: 'Thành công',
+  ERROR: 'Lỗi',
+  WAITING: 'Đang chờ',
+  ACTIVE: 'Hoạt động',
+  LOCKED: 'Khóa'
 }
 
-export const CONFIG_STATUS: Record<StatusConstants, { label: string, className: string, shimmerColor: string, }> = {
-    [StatusConstants.SUCCESS]: { label: 'Thành công', className: 'success-status', shimmerColor:'rgba(0, 229, 160, 0.2)'  },
-    [StatusConstants.ERROR]: { label: 'Lỗi', className: 'error-status', shimmerColor: 'rgba(255, 86, 59, 0.2)'},
-    [StatusConstants.WAITING]: { label: 'Đang chờ', className: 'warning-status', shimmerColor:'rgba(0, 229, 160, 0.2)' },
-    [StatusConstants.ACTIVE]: { label: 'Hoạt động', className: 'success-status', shimmerColor: 'rgba(0, 229, 160, 0.2)' },
-    [StatusConstants.LOCKED]: { label: 'Khóa', className: 'error-status', shimmerColor: 'rgba(255, 86, 59, 0.2)' },
+export const CONFIG_STATUS: Record<
+  StatusConstants,
+  { label: string; className: string; shimmerColor: string }
+> = {
+  [StatusConstants.SUCCESS]: {
+    label: 'Thành công',
+    className: 'success-status',
+    shimmerColor: 'rgba(0, 229, 160, 0.2)'
+  },
+  [StatusConstants.ERROR]: {
+    label: 'Lỗi',
+    className: 'error-status',
+    shimmerColor: 'rgba(255, 86, 59, 0.2)'
+  },
+  [StatusConstants.WAITING]: {
+    label: 'Đang chờ',
+    className: 'warning-status',
+    shimmerColor: 'rgba(0, 229, 160, 0.2)'
+  },
+  [StatusConstants.ACTIVE]: {
+    label: 'Hoạt động',
+    className: 'success-status',
+    shimmerColor: 'rgba(0, 229, 160, 0.2)'
+  },
+  [StatusConstants.LOCKED]: {
+    label: 'Khóa',
+    className: 'error-status',
+    shimmerColor: 'rgba(255, 86, 59, 0.2)'
+  }
 }
 
 export const GLCodeLabels: Record<string, string> = {
-    'REV_USER_FEE': 'Doanh thu phí người dùng',
-    'USER_WALLET_VND': 'Ví người dùng VND',
-    'SYS_BANK_SETTLEMENT_VND': 'Tài khoản thanh toán ngân hàng VND',
-    'SYSTEM': 'Hệ thống'
+  REV_USER_FEE: 'Doanh thu phí người dùng',
+  USER_WALLET_VND: 'Ví người dùng VND',
+  SYS_BANK_SETTLEMENT_VND: 'Tài khoản thanh toán ngân hàng VND',
+  SYSTEM: 'Hệ thống'
 }
 
 export const OwnerTypeLabels: Record<string, string> = {
-    'SYSTEM': 'Hệ thống',
-    'USER': 'Người dùng',
-    'MERCHANT': 'Merchant'
+  SYSTEM: 'Hệ thống',
+  USER: 'Người dùng',
+  MERCHANT: 'Merchant'
 }
 
 /**
@@ -93,50 +116,35 @@ export const OwnerTypeLabels: Record<string, string> = {
  * mất dữ liệu khi không thấy giao dịch đang chờ hoặc đã hỏng.
  */
 export const LEDGER_POSTED_ONLY_NOTE =
-    'Sổ cái chỉ ghi bút toán đã hạch toán thành công. Giao dịch đang chờ, thất bại hoặc đã huỷ không có ở đây — đối chiếu những giao dịch đó ở màn Quản lý giao dịch.'
+  'Sổ cái chỉ ghi bút toán đã hạch toán thành công. Giao dịch đang chờ, thất bại hoặc đã huỷ không có ở đây — đối chiếu những giao dịch đó ở màn Quản lý giao dịch.'
 
 /**
  * Vai trò của dòng trong bút toán chuyển tiền ví → ví. wallet-core không trả vai
  * trò nên suy từ chủ tài khoản + chiều ghi: tài khoản doanh thu là phí, ví bị Nợ
  * là người gửi, ví được Có là người nhận. Dòng phí ghi rõ bên chịu theo
- * `feeBearer`; khi hai bên cùng chịu thì ghép theo số tiền từng bên. Loại giao
- * dịch khác không có vai trò chung theo cách này nên trả `null`.
+ * `feeBearer` (hai bên cùng chịu thì chỉ ghi "Phí"). Loại giao dịch khác không
+ * có vai trò chung theo cách này nên trả `null`.
  */
 export const getLedgerEntryRole = (entry: {
-    transactionType?: string | null
-    direction: string
-    feeBearer?: string
-    account?: { ownerType?: string; glCode?: string }
+  transactionType?: string | null
+  direction: string
+  feeBearer?: string
+  account?: { ownerType?: string; glCode?: string }
 }): string | null => {
-    if (entry.transactionType !== 'P2P_TRANSFER') return null
-    if (entry.account?.glCode?.startsWith('REV_')) return getFeeRole(entry)
-    return entry.direction === DirectionConstants.DEBIT ? 'Người gửi' : 'Người nhận'
+  if (entry.transactionType !== 'P2P_TRANSFER') return null
+  if (entry.account?.glCode?.startsWith('REV_')) return getFeeRole(entry)
+  return entry.direction === DirectionConstants.DEBIT
+    ? 'Người gửi'
+    : 'Người nhận'
 }
 
 const getFeeRole = (entry: { feeBearer?: string }): string => {
-    switch (entry.feeBearer) {
-        case 'RECEIVER':
-            return 'Phí (bên nhận)'
-        case 'BOTH':
-            return 'Phí (hai bên)'
-        case 'SENDER':
-            return 'Phí (bên gửi)'
-        default:
-            return 'Phí'
-    }
-}
-
-/**
- * Hai bên cùng chịu phí thì wallet-core ghi MỘT dòng phí tổng (gửi + nhận), nên
- * phần của từng bên chỉ có ở journal. Trả `null` ở mọi trường hợp còn lại.
- */
-export const getLedgerFeeSplit = (entry: {
-    feeBearer?: string
-    senderFeeAmount?: number
-    receiverFeeAmount?: number
-    account?: { glCode?: string }
-}): { sender: number; receiver: number } | null => {
-    if (entry.feeBearer !== 'BOTH' || !entry.account?.glCode?.startsWith('REV_')) return null
-    if (entry.senderFeeAmount == null || entry.receiverFeeAmount == null) return null
-    return { sender: entry.senderFeeAmount, receiver: entry.receiverFeeAmount }
+  switch (entry.feeBearer) {
+    case 'RECEIVER':
+      return 'Phí (bên nhận)'
+    case 'SENDER':
+      return 'Phí (bên gửi)'
+    default:
+      return 'Phí'
+  }
 }

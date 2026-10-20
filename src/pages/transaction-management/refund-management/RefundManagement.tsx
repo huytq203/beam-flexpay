@@ -51,6 +51,7 @@ const RefundManagement = () => {
       setDialog({ kind, refund })
   const filterKey = JSON.stringify([
     list.filters.keyword,
+    list.filters.refundType,
     list.filters.channel,
     list.filters.createdSource,
     list.filters.createdFrom,

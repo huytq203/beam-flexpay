@@ -82,6 +82,31 @@ export const getPayerTypeOptions = (
   ]
 }
 
+// Tạm chưa mở Merchant cho chọn tay; dịch vụ merchant vẫn có MERCHANT làm mặc định.
+const OUTPUT_PAYERS: readonly string[] = ['USER', 'RECEIVER']
+
+/**
+ * Người chịu phí đầu ra trên hộp thoại: payer theo loại giao dịch đứng đầu làm giá trị mặc định,
+ * các payer còn lại vẫn cho chọn để người vận hành tự sửa. Bỏ payer trùng nhãn (rút tiền gọi cả
+ * USER lẫn RECEIVER là "Người nhận") để danh sách không có hai dòng giống hệt nhau.
+ */
+export const getOutputPayerOptions = (
+  serviceType: string | null | undefined
+): { value: string; label: string }[] => {
+  const defaults = getSelectablePayers(serviceType)
+  const ordered = [...(defaults.length > 0 ? defaults : ['USER'])]
+  OUTPUT_PAYERS.forEach((payer) => {
+    if (!ordered.includes(payer)) ordered.push(payer)
+  })
+  const seenLabels = new Set<string>()
+  return ordered.flatMap((payer) => {
+    const label = getPayerLabel(payer, serviceType)
+    if (seenLabels.has(label)) return []
+    seenLabels.add(label)
+    return [{ value: payer, label }]
+  })
+}
+
 export const BENEFICIARY_TYPE_LABEL: Readonly<Record<string, string>> = {
   SYSTEM: 'Hệ thống',
   MERCHANT: 'Merchant',
@@ -103,10 +128,6 @@ export const BENEFICIARY_TYPE_OPTIONS = EXECUTABLE_BENEFICIARIES.map(
     label: BENEFICIARY_TYPE_LABEL[value] ?? value
   })
 )
-
-export const WALLET_FEE_BENEFICIARY_OPTIONS = [
-  { value: 'SYSTEM', label: BENEFICIARY_TYPE_LABEL.SYSTEM }
-] as const
 
 export const INPUT_COST_BENEFICIARY_OPTIONS = [
   { value: 'BANK', label: BENEFICIARY_TYPE_LABEL.BANK },
