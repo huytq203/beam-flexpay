@@ -76,8 +76,8 @@ const SideBar = () => {
       side='left'
       className='h-full bg-sidebar'
     >
-      <SidebarHeader className='border-b border-sidebar-border'>
-        <div className='flex items-center justify-center '>
+      <SidebarHeader className='h-[60px] justify-center border-b border-sidebar-border px-4 py-0'>
+        <div className='flex items-center justify-center'>
           <Link
             to={PATHS.HOME}
             aria-label='Về trang khởi động'

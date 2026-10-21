@@ -29,9 +29,9 @@ export const SidebarGroupLabel = React.forwardRef<
       ref={ref}
       data-sidebar='group-label'
       className={cn(
-        'flex h-8 shrink-0 items-center rounded-md px-2',
-        'text-xs font-bold text-sidebar-foreground/50 uppercase tracking-wider',
-        'motion-safe:transition-all motion-safe:duration-200 overflow-hidden whitespace-nowrap select-none',
+        'flex min-h-8 shrink-0 items-center rounded-md px-2 py-1',
+        'text-xs font-bold leading-tight text-sidebar-foreground/50 uppercase tracking-wide',
+        'motion-safe:transition-all motion-safe:duration-200 overflow-hidden select-none',
         state === 'collapsed' ? 'opacity-0 h-0 mb-0 hidden' : 'opacity-100',
         className
       )}
