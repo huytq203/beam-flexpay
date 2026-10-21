@@ -90,7 +90,7 @@ function ForgotPassword() {
             className="size-7 object-contain"
           />
         </span>
-        <span>Beam Ewallet CMS</span>
+        <span>Flexpay Ewallet CMS</span>
       </header>
 
       <section className="w-full">
@@ -240,7 +240,7 @@ function ForgotPassword() {
       </section>
 
       <footer className="mt-8 text-center text-[11px] text-gray-400">
-        © {new Date().getFullYear()} Beam Ewallet · Powered by Flexpay
+        © {new Date().getFullYear()} Flexpay E-wallet · Powered by BEAM
       </footer>
     </main>
   )

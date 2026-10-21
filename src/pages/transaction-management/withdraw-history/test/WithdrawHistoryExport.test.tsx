@@ -21,18 +21,20 @@ vi.mock('@services/apiJournal', () => ({
     return {
       data: {
         content: mocks.hasRow
-          ? [{
-              id: 'withdraw-1',
-              transactionCode: 'FW26XL3DA',
-              description: 'Rút tiền về tài khoản',
-              status: 'PENDING',
-              amount: 50000,
-              feeAmount: 100,
-              grossAmount: 50100,
-              currency: 'VND',
-              paymentMethod: 'LINKED_ACCOUNT',
-              createdAt: '2026-09-15T10:00:00Z'
-            }]
+          ? [
+              {
+                id: 'withdraw-1',
+                transactionCode: 'FW26XL3DA',
+                description: 'Rút tiền về tài khoản',
+                status: 'PENDING',
+                amount: 50000,
+                feeAmount: 100,
+                grossAmount: 50100,
+                currency: 'VND',
+                paymentMethod: 'LINKED_ACCOUNT',
+                createdAt: '2026-09-15T10:00:00Z'
+              }
+            ]
           : [],
         totalElements: mocks.totalElements,
         summary: {
@@ -137,7 +139,9 @@ describe('Lịch sử rút tiền — xuất CSV', () => {
         expect.objectContaining({ status: 'PENDING' })
       )
     )
-    expect(screen.queryByText('Đang xử lý (Chờ duyệt + Đã phê duyệt)')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('Đang xử lý (Chờ duyệt + Đã phê duyệt)')
+    ).not.toBeInTheDocument()
     expect(screen.queryByText('Thất bại / Đã hủy')).not.toBeInTheDocument()
   })
 
@@ -189,19 +193,17 @@ describe('Lịch sử rút tiền — xuất CSV', () => {
     expect(screen.getByRole('button', { name: /Xuất CSV/i })).toBeDisabled()
   })
 
-  it('mở thẳng modal Xác nhận chi tiền từ icon trong cột thao tác', async () => {
+  it('mở thẳng modal Xử lý chi tiền từ icon trong cột thao tác', async () => {
     mocks.hasRow = true
     const user = userEvent.setup()
     renderScreen()
     const action = screen.getByRole('button', {
-      name: 'Xác nhận chi tiền'
+      name: 'Xử lý chi tiền'
     })
 
     expect(action).toBeEnabled()
     await user.click(action)
-    expect(
-      await screen.findByText('Xác nhận chi tiền')
-    ).toBeInTheDocument()
+    expect(await screen.findByText('Xử lý chi tiền')).toBeInTheDocument()
     expect(mocks.openDetail).not.toHaveBeenCalled()
     expect(screen.queryByRole('radio')).not.toBeInTheDocument()
   })

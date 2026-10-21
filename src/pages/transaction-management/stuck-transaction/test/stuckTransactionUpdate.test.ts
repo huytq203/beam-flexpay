@@ -34,7 +34,7 @@ describe('schema cập nhật giao dịch treo', () => {
   })
 
   it.each([
-    ['9 ký tự', 'a'.repeat(9), false],
+    ['1 ký tự', 'a', true],
     ['10 ký tự', 'a'.repeat(10), true],
     ['500 ký tự', 'a'.repeat(500), true],
     ['501 ký tự', 'a'.repeat(501), false]

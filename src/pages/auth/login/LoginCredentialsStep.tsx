@@ -95,7 +95,7 @@ export function LoginCredentialsStep({
           />
         </div>
         <span className='text-base font-bold tracking-tight text-teal-700'>
-          Beam Ewallet CMS
+          Flexpay Ewallet CMS
         </span>
       </div>
 
@@ -176,7 +176,7 @@ export function LoginCredentialsStep({
       </div>
 
       <p className='mt-8 text-center text-[11px] text-gray-500'>
-        © {new Date().getFullYear()} Beam Ewallet · Powered by Flexpay
+        © {new Date().getFullYear()} Flexpay E-wallet · Powered by BEAM
       </p>
     </div>
   )

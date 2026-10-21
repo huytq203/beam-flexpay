@@ -192,7 +192,7 @@ describe('walletLimitFormSchema', () => {
         'Không được bỏ trống Hạn mức ngày của cấu hình Hệ thống.'
       )
       expect(errors.walletBalanceMaximum).toBe(
-        'Không được bỏ trống Sức chứa ví của cấu hình Hệ thống.'
+        'Không được bỏ trống Số dư tối đa của ví của cấu hình Hệ thống.'
       )
     })
 

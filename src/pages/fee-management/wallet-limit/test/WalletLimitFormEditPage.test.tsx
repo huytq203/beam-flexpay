@@ -137,12 +137,12 @@ describe('WalletLimitFormPage - Cập nhật', () => {
     renderForm(editRoute('sys-1'))
 
     await screen.findByText(/Đang sửa phiên bản dữ liệu 3/)
-    await user.clear(screen.getByLabelText('Sức chứa ví'))
+    await user.clear(screen.getByLabelText('Số dư tối đa của ví'))
     await user.click(screen.getByRole('button', { name: 'Lưu thay đổi' }))
 
     expect(
       await screen.findByText(
-        'Không được bỏ trống Sức chứa ví của cấu hình Hệ thống.'
+        'Không được bỏ trống Số dư tối đa của ví của cấu hình Hệ thống.'
       )
     ).toBeInTheDocument()
   })

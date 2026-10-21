@@ -69,7 +69,7 @@ describe('Checkbox "Hoàn tiền cho khách hàng" ở cập nhật giao dịch 
     expect(bodies[0]).toEqual({ newStatus: 'FAILED', note: NOTE, refund: true })
   })
 
-  it('tích hoàn thì hỏi xác nhận chi tiền trước khi gửi; Quay lại thì chưa gọi API', async () => {
+  it('tích hoàn thì hỏi Xử lý chi tiền trước khi gửi; Quay lại thì chưa gọi API', async () => {
     mockRefresh([FAILED_DEPOSIT])
     const bodies = mockUpdate('FAILED')
     const user = renderAction()

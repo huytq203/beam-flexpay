@@ -105,9 +105,9 @@ export default defineConfig(({ mode }) => {
           maximumFileSizeToCacheInBytes: 6 * 1024 * 1024 // tăng lên 6MB
         },
         manifest: {
-          name: 'Beam Ewallet CMS',
-          short_name: 'Beam CMS',
-          description: 'Beam Ewallet CMS Management Web Application',
+          name: 'Flexpay Ewallet CMS',
+          short_name: 'Flexpay CMS',
+          description: 'Flexpay Ewallet CMS Management Web Application',
           theme_color: '#ffffff',
           background_color: '#ffffff',
           display: 'standalone',

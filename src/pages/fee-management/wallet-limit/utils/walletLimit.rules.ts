@@ -4,7 +4,7 @@ import {
 } from '@type/walletLimit.type'
 
 export interface LimitApplicability {
-  /** Sức chứa ví: chỉ khi loại giao dịch là Tất cả. */
+  /** Số dư tối đa của ví: chỉ khi loại giao dịch là Tất cả. */
   walletBalance: boolean
   /** Ba ô chi (ngày, tháng, số lần): không dùng cho Nạp tiền. */
   outflow: boolean

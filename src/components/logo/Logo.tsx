@@ -9,7 +9,7 @@ export const Logo = ({ collapsed }: LogoProps) => (
         ? '/images/short_logo.svg'
         : '/images/assets/brand/logo-teal-yellow.webp'
     }
-    alt='FlexPay'
+    alt='Flexay'
     height={32}
     className='block h-8 w-auto'
     draggable={false}

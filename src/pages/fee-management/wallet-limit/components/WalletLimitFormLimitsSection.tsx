@@ -1,4 +1,3 @@
-import { WalletLimitTransactionType } from '@type/walletLimit.type'
 import { useFormContext, useWatch } from 'react-hook-form'
 import {
   LIMIT_FIELD_LABELS,
@@ -28,7 +27,6 @@ export function WalletLimitFormTransactionLimits() {
   return (
     <WalletLimitFormSection
       title='Hạn mức giao dịch'
-      description='Ô để trống nghĩa là không giới hạn chiều đó; giới hạn của lớp rộng hơn vẫn áp dụng. Thứ tự: 0 < tối thiểu ≤ tối đa ≤ ngày ≤ tháng.'
     >
       <div className={GRID}>
         {TRANSACTION_LIMIT_KEYS.map((key) => {
@@ -50,15 +48,6 @@ export function WalletLimitFormTransactionLimits() {
   )
 }
 
-const describeOutflow = (transactionType: WalletLimitTransactionType) => {
-  if (transactionType === WalletLimitTransactionType.ALL) {
-    return 'Áp dụng cho loại giao dịch Tất cả.'
-  }
-  if (transactionType === WalletLimitTransactionType.DEPOSIT) {
-    return 'Nạp tiền không dùng các ô chi; sức chứa ví chỉ mở khi loại giao dịch là Tất cả.'
-  }
-  return 'Sức chứa ví chỉ mở khi loại giao dịch là Tất cả.'
-}
 
 export function WalletLimitFormOutflowLimits() {
   const { control } = useFormContext<WalletLimitFormValues>()
@@ -74,8 +63,7 @@ export function WalletLimitFormOutflowLimits() {
 
   return (
     <WalletLimitFormSection
-      title='Giới hạn chi và sức chứa'
-      description={describeOutflow(transactionType)}
+      title='Giới hạn chi'
     >
       <div className={GRID}>
         {OUTFLOW_LIMIT_KEYS.map((key) => (

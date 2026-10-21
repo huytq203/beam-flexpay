@@ -2,7 +2,6 @@ import { z } from 'zod'
 import {
   STUCK_UPDATE_CODE_MAX_LENGTH,
   STUCK_UPDATE_NOTE_MAX_LENGTH,
-  STUCK_UPDATE_NOTE_MIN_LENGTH,
   StuckTransactionOutcome
 } from '@type/stuckTransaction.type'
 
@@ -43,10 +42,6 @@ export const stuckTransactionUpdateSchema = z.object({
   note: z
     .string()
     .trim()
-    .min(
-      STUCK_UPDATE_NOTE_MIN_LENGTH,
-      `Lý do phải từ ${STUCK_UPDATE_NOTE_MIN_LENGTH} ký tự trở lên`
-    )
     .max(
       STUCK_UPDATE_NOTE_MAX_LENGTH,
       `Lý do tối đa ${STUCK_UPDATE_NOTE_MAX_LENGTH} ký tự`

@@ -13,14 +13,14 @@ export function AuthColumn({ children }: AuthColumnProps) {
           <img src="/images/BEAM.png" alt="" className="h-7 w-7 object-contain" />
         </div>
         <span className="text-base font-bold tracking-tight text-teal-700">
-          Beam Ewallet CMS
+          Flexpay Ewallet CMS
         </span>
       </div>
 
       {children}
 
       <p className="mt-6 text-center text-[11px] text-gray-500">
-        © {new Date().getFullYear()} Beam Ewallet · Powered by Flexpay
+        © {new Date().getFullYear()} Flexpay E-wallet · Powered by BEAM
       </p>
     </div>
   )

@@ -81,7 +81,7 @@ describe('StuckTransactionUpdateAction - payload', () => {
     expect(bodies[0]).toEqual({ newStatus: 'POSTED', note: NOTE })
   })
 
-  it('Lý do 10-500 ký tự: ngắn hơn 10 bị chặn, không gửi request', async () => {
+  it('Lý do ngắn vẫn được gửi, không bị chặn theo độ dài tối thiểu', async () => {
     mockRefresh([POSTED_FULL])
     const bodies = mockUpdate()
     const user = renderAction()
@@ -90,10 +90,7 @@ describe('StuckTransactionUpdateAction - payload', () => {
     fill('Lý do cập nhật', 'quá ngắn')
     await submit(user)
 
-    expect(
-      await screen.findByText('Lý do phải từ 10 ký tự trở lên')
-    ).toBeInTheDocument()
-    expect(bodies).toHaveLength(0)
+    expect(bodies).toHaveLength(1)
   })
 
   it('Thành công gửi authCode, settlementId, bankReference đã nhập', async () => {

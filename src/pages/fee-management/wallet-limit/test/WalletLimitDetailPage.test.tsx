@@ -97,21 +97,21 @@ describe('WalletLimitDetailPage', () => {
     expect(screen.getByText(/^admin\.risk · /)).toBeInTheDocument()
   })
 
-  it('chỉ hiện các ô hạn mức áp dụng cho Rút tiền, ẩn Sức chứa ví', async () => {
+  it('chỉ hiện các ô hạn mức áp dụng cho Rút tiền, ẩn Số dư tối đa của ví', async () => {
     renderPage()
     await screen.findByText('Ngưỡng duyệt lệnh rút')
 
     expect(screen.getByText('Tổng chi trong ngày')).toBeInTheDocument()
     expect(screen.getByText('Số lần chi trong ngày')).toBeInTheDocument()
-    expect(screen.queryByText('Sức chứa ví')).not.toBeInTheDocument()
+    expect(screen.queryByText('Số dư tối đa của ví')).not.toBeInTheDocument()
     expect(screen.queryByText('999,000,000 ₫')).not.toBeInTheDocument()
     expect(screen.getAllByText('Không giới hạn').length).toBeGreaterThan(0)
   })
 
-  it('loại giao dịch Tất cả hiện Sức chứa ví, Nạp tiền ẩn các ô chi', async () => {
+  it('loại giao dịch Tất cả hiện Số dư tối đa của ví, Nạp tiền ẩn các ô chi', async () => {
     mockPolicy({ ...policy, transactionType: 'ALL' })
     const { unmount } = renderPage()
-    expect(await screen.findByText('Sức chứa ví')).toBeInTheDocument()
+    expect(await screen.findByText('Số dư tối đa của ví')).toBeInTheDocument()
     unmount()
 
     mockPolicy({ ...policy, transactionType: 'DEPOSIT' })

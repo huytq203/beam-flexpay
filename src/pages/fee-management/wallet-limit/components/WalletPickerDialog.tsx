@@ -119,7 +119,6 @@ function WalletPickerBody({
     <EntityPickerContent<WalletRow>
       framed
       entityLabel='ví'
-      note='Tìm theo một phần số điện thoại.'
       keywordOnly
       columns={columns}
       search={search}

@@ -178,12 +178,12 @@ function BrandCopy(): ReactElement {
       <div className="mb-3 flex items-center gap-3">
         <span className="h-px w-8 bg-teal-50/65" />
         <p className="text-[10px] font-bold tracking-[0.14em] text-teal-50/80">
-          BEAM EWALLET
+          FLEXPAY EWALLET
         </p>
         <span className="h-px w-8 bg-teal-50/65" />
       </div>
       <h2 className="mb-2 text-xl font-extrabold tracking-tight text-[#c9fff9] drop-shadow-[0_1px_2px_rgba(5,47,50,0.25)]">
-        Vận hành FlexPay trong một nhịp
+        Vận hành Flexay trong một nhịp
       </h2>
       <p className="max-w-[280px] text-xs leading-relaxed text-teal-50/80">
         Hệ thống quản trị ví điện tử chuyên nghiệp, an toàn và hiệu quả.

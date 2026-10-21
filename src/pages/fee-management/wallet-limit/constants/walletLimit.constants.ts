@@ -57,7 +57,7 @@ export const LIMIT_FIELD_LABELS = {
   dailyMaximum: 'Hạn mức ngày',
   normalMonthlyMaximum: 'Hạn mức tháng (thường)',
   specialMonthlyMaximum: 'Hạn mức tháng (đặc biệt)',
-  walletBalanceMaximum: 'Sức chứa ví',
+  walletBalanceMaximum: 'Số dư tối đa của ví',
   outflowDailyMaximum: 'Tổng chi trong ngày',
   outflowMonthlyMaximum: 'Tổng chi trong tháng',
   outboundMaxTimesPerDay: 'Số lần chi trong ngày',

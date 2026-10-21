@@ -58,7 +58,7 @@ function ScreenLoading({ open = false }: ScreenLoadingProps) {
         />
         <img
           src='/images/assets/brand/logo-white-yellow.webp'
-          alt='FlexPay'
+          alt='Flexay'
           className='screen-loading-logo'
         />
       </div>

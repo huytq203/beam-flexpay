@@ -41,7 +41,6 @@ export const STUCK_TRANSACTION_OUTCOME: Record<
 }
 
 /** Ràng buộc theo `AdminUpdateTransactionRequest` của user-wallet. */
-export const STUCK_UPDATE_NOTE_MIN_LENGTH = 10
 export const STUCK_UPDATE_NOTE_MAX_LENGTH = 500
 export const STUCK_UPDATE_CODE_MAX_LENGTH = 50
 export const STUCK_RECEIPT_MAX_BYTES = 2 * 1024 * 1024
