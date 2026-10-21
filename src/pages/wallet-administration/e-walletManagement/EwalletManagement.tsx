@@ -5,7 +5,12 @@ import {
   StopOutlined,
   WarningIcon
 } from '@components/icons'
-import { CardComponent, DialogModal, Table } from '@components/index'
+import {
+  CardComponent,
+  DialogModal,
+  ExportCsvButton,
+  Table
+} from '@components/index'
 import {
   SkeletonTable,
   SkeletonSearchGroup
@@ -39,7 +44,9 @@ const EwalletManagement = () => {
     loadingGetAccount,
     isFetching,
     isOpeningDetail,
-    refetch
+    refetch,
+    exportFile,
+    isExporting
   } = useEwalletManagement()
 
   return (
@@ -74,6 +81,17 @@ const EwalletManagement = () => {
             />
           ) : (
             <>
+              <div className='flex justify-between items-center mb-3'>
+                <span className='font-medium text-gray-600 text-lg'>
+                  Danh sách ví điện tử
+                </span>
+                <ExportCsvButton
+                  onExport={exportFile}
+                  loading={isExporting}
+                  // tooltip={WALLET_ACCOUNT_EXPORT_TOOLTIP}
+                  totalRows={getAccount?.totalElements}
+                />
+              </div>
               <Table
                 rowKey='id'
                 scroll={{ x: 'max-content' }}

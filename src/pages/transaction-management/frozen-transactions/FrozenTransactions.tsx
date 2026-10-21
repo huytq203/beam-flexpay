@@ -1,5 +1,4 @@
 import { CardComponent, ExportCsvButton, Table, UnfreezeRequestDialog } from '@components/index'
-import { EXPORT_ORDER_HINT } from '@constants/export'
 import React from 'react'
 import FormSearch from './components/FormSearch'
 import { getColumn } from './columns/FrozenTransactions.column'
@@ -70,7 +69,7 @@ const FrozenTransactions = () => {
                                     loading={isExporting}
                                     disabled={!totalElements}
                                     totalRows={totalElements}
-                                    tooltip={`File lấy trọn bộ lọc đang áp, không giới hạn theo trang. ${EXPORT_ORDER_HINT}`}
+                                    // tooltip={`File lấy trọn bộ lọc đang áp, không giới hạn theo trang. ${EXPORT_ORDER_HINT}`}
                                 />
                             </div>
                         <Table

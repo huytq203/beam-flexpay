@@ -84,6 +84,25 @@ export interface ExportLedgerEntriesQuery {
   toDate?: string
 }
 
+/**
+ * Bộ lọc của lưới `GET /admin/wallet/accounts`, bỏ page/size/sort/includeSummary:
+ * BE luôn xuất toàn bộ, mới nhất trước, và từ chối quá 100.000 dòng (400).
+ */
+export interface ExportWalletAccountsQuery {
+  ownerId?: string
+  ownerType?: string
+  /** Tên gọi khác của `ownerType`; có cả hai thì `ownerType` thắng. */
+  walletType?: string
+  glCode?: string
+  currency?: string
+  status?: string
+  /** Số điện thoại chủ ví. */
+  username?: string
+  enabled?: boolean
+  fromDate?: string
+  toDate?: string
+}
+
 /** Bộ lọc giống hệt `GET /wallet/freezes`, chỉ bỏ pageable — file lấy trọn bộ lọc. */
 export interface ExportFreezesQuery {
   /** Bỏ trống khi xuất từ màn danh sách toàn hệ thống; màn theo ví phải tự truyền. */
@@ -209,6 +228,18 @@ export const apiExportWalletCsv = apiWalletCore.injectEndpoints({
           extraOptions
         )
     }),
+    exportWalletAccounts: build.mutation<
+      ExportedFile,
+      ExportWalletAccountsQuery
+    >({
+      queryFn: (params, queryApi, extraOptions) =>
+        runExport(
+          fetchBaseQueryWalletCore,
+          { url: '/wallet/accounts/export', params: { ...params } },
+          queryApi,
+          extraOptions
+        )
+    }),
     exportFreezes: build.mutation<ExportedFile, ExportFreezesQuery>({
       queryFn: (params, queryApi, extraOptions) =>
         runExport(
@@ -316,6 +347,7 @@ export const {
   useExportBankLinksMutation,
   useExportTransactionsMutation,
   useExportFreezesMutation,
+  useExportWalletAccountsMutation,
   useExportLedgerEntriesMutation
 } = apiExportWalletCsv
 

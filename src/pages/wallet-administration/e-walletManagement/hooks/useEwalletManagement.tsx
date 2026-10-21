@@ -6,6 +6,7 @@ import {
   usePostLockMutation,
   usePostUnlockMutation
 } from '@services/apiWalletAccount.api'
+import { useExportWalletAccounts } from './useExportWalletAccounts'
 import { useCallback, useMemo, useState } from 'react'
 import { getColumn } from '../columns/Column'
 import { useNavigate } from 'react-router-dom'
@@ -47,6 +48,7 @@ const useEwalletManagement = () => {
   } = useGetAccountQuery(payload)
 
   const handleSearch = applyFilters
+  const { exportFile, isExporting } = useExportWalletAccounts(filters)
 
 
   const openModal = useCallback((type: WalletModalType, account: AcountItem) => {
@@ -99,8 +101,8 @@ const useEwalletManagement = () => {
     isFetching,
     isOpeningDetail,
     refetch,
-  
-    
+    exportFile,
+    isExporting
   }
 }
 
