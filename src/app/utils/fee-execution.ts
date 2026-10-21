@@ -34,7 +34,8 @@ const SELECTABLE_PAYERS_BY_SERVICE: Readonly<
   // Chuyển tiền: `USER` = người chuyển bị trừ thêm phí, `RECEIVER` = phí trừ vào
   // tiền người nhận nhận được.
   EWALLET_TRANSFER_INTERNAL: ['USER', 'RECEIVER'],
-  // Rút và hoàn tiền: `RECEIVER` = phí trừ vào số tiền bên nhận nhận được.
+  // Nạp, rút và hoàn tiền: `RECEIVER` = phí trừ vào số tiền bên nhận nhận được.
+  EWALLET_DEPOSIT: ['USER', 'RECEIVER'],
   EWALLET_WITHDRAWAL: ['USER', 'RECEIVER'],
   EWALLET_REFUND: ['USER', 'RECEIVER']
 }

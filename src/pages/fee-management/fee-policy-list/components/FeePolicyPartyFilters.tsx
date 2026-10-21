@@ -1,4 +1,4 @@
-import { FormLabelHint, FormSelect } from '@components/form'
+import { FormSelect } from '@components/form'
 import type { Control } from 'react-hook-form'
 import {
   BENEFICIARY_TYPE_FILTER_OPTIONS,
@@ -40,10 +40,7 @@ export const FeePolicyPartyFilters = ({
       name='feeBearer'
       control={control}
       label={
-        <FormLabelHint
-          label='Bên chịu phí chuyển tiền'
-          hint='Chỉ áp dụng cho chuyển tiền: chọn là chỉ còn chính sách chuyển tiền'
-        />
+          'Bên chịu phí'
       }
       placeholder='Tất cả'
       allowClear

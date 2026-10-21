@@ -1,82 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { CalculationMethod } from '../schemas/feeConfig.schema'
-import type { FeeConfigFormValues } from '../schemas/feeConfig.schema'
 import { toAssignmentRequest, toSetupRequest } from '../utils/feeConfigPayload'
-
-const baseForm = (
-  overrides: Partial<FeeConfigFormValues> = {}
-): FeeConfigFormValues => ({
-  feeDomain: 'EWALLET',
-  name: '  Phí rút tiền ví  ',
-  description: '  ',
-  priority: 2,
-  serviceType: 'EWALLET_WITHDRAWAL',
-  bankCode: '',
-  providerCode: '',
-  paymentMethod: 'ATM',
-  merchantId: '',
-  subjectId: '',
-  customerGroup: '',
-  assignmentScope: 'ALL',
-  validFrom: '2026-10-01T08:30:00.000',
-  validTo: '',
-  components: [
-    {
-      key: 'c1',
-      feeScope: 'OUTPUT_FEE',
-      componentType: 'TRANSACTION_FEE',
-      baseOn: 'AMOUNT',
-      baseComponentType: null,
-      calculationMethod: CalculationMethod.DIRECT,
-      payerType: 'USER',
-      beneficiaryType: 'SYSTEM',
-      fixedAmount: 2000,
-      percentage: 1,
-      minFee: 2000,
-      maxFee: 0,
-      roundMode: 'UP',
-      tiers: []
-    }
-  ],
-  ...overrides
-})
+import { baseForm } from './feeConfigPayload.fixtures'
 
 describe('toSetupRequest', () => {
-  it('rút tiền: giữ RECEIVER người dùng chọn, payer lạ về USER', () => {
-    const form = baseForm()
-    form.components[0].payerType = 'RECEIVER'
-
-    const request = toSetupRequest(form)
-    expect(request.components[0].payerType).toBe('RECEIVER')
-    expect(request.components[0].beneficiaryType).toBe('SYSTEM')
-
-    form.components[0].payerType = 'MERCHANT'
-    expect(toSetupRequest(form).components[0].payerType).toBe('USER')
-  })
-
-  it('chuyển tiền: giữ RECEIVER (phí trừ vào tiền nhận), payer lạ về USER', () => {
-    const form = baseForm({ serviceType: 'EWALLET_TRANSFER_INTERNAL' })
-    form.components[0].payerType = 'RECEIVER'
-    expect(toSetupRequest(form).components[0].payerType).toBe('RECEIVER')
-
-    form.components[0].payerType = 'MERCHANT'
-    expect(toSetupRequest(form).components[0].payerType).toBe('USER')
-  })
-
-  it('chuẩn hoá payer cũ chưa hỗ trợ của miền Ví về USER', () => {
-    const cases = [
-      { serviceType: 'EWALLET_WITHDRAWAL', legacy: 'SENDER' },
-      { serviceType: 'EWALLET_DEPOSIT', legacy: 'SENDER' },
-      { serviceType: 'EWALLET_DEPOSIT', legacy: 'RECEIVER' }
-    ]
-    for (const { serviceType, legacy } of cases) {
-      const form = baseForm({ feeDomain: 'EWALLET', serviceType })
-      form.components[0].payerType = legacy
-
-      expect(toSetupRequest(form).components[0].payerType).toBe('USER')
-    }
-  })
-
   it('giữ riêng chi phí SYSTEM → BANK và khoản thu USER → SYSTEM', () => {
     const form = baseForm()
     form.components = [

@@ -118,8 +118,8 @@ describe('EWALLET_TRANSFER_INTERNAL', () => {
     )
   })
 
-  it('nạp tiền vẫn chỉ cho USER chịu', () => {
-    expect(getSelectablePayers('EWALLET_DEPOSIT')).toEqual(['USER'])
+  it('nạp tiền cho chọn USER hoặc RECEIVER chịu', () => {
+    expect(getSelectablePayers('EWALLET_DEPOSIT')).toEqual(['USER', 'RECEIVER'])
   })
 })
 
