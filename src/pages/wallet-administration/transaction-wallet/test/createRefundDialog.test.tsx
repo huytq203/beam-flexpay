@@ -49,8 +49,7 @@ describe('CreateRefundDialog', () => {
   it.each([
     ['CASH_IN', 'Về ngân hàng', 'TO_BANK'],
     ['P2P_TRANSFER', 'Về ví', 'TO_WALLET'],
-    ['CASH_OUT', 'Về ví', 'TO_WALLET'],
-    ['MERCHANT_PAYMENT', 'Về ví', 'TO_WALLET']
+    ['CASH_OUT', 'Về ví', 'TO_WALLET']
   ])(
     'khoá kênh theo loại %s: hiện %s và gửi %s',
     async (transactionType, label, channel) => {

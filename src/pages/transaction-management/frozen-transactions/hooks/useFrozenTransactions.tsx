@@ -4,7 +4,10 @@ import {
   useExportFreezesMutation,
   type ExportFreezesQuery
 } from '@services/apiExportCsv'
-import { useGetFreezesQuery, type FreezeSearchParams } from '@services/apiFreezes'
+import {
+  useGetFreezesQuery,
+  type FreezeSearchParams
+} from '@services/apiFreezes'
 import { FreezeItem } from '@type/freeze.type'
 import { useMemo, useState } from 'react'
 
@@ -13,13 +16,14 @@ export const FROZEN_FILTER_KEYS = [
   'sourceTransactionCode',
   'displayStatus',
   'type',
-  'releaseType',
   'fromDate',
   'toDate'
 ] as const
 
 export type FrozenFilterKey = (typeof FROZEN_FILTER_KEYS)[number]
 export type FrozenFilters = Partial<Record<FrozenFilterKey, string>>
+/** Màn này chỉ quản lý lệnh đóng băng thủ công nên luôn gửi cố định, không cho lọc. */
+const RELEASE_TYPE = 'MANUAL'
 // Username của ví chính là SĐT nên không đưa lên URL (rule 05).
 const FROZEN_SENSITIVE_KEYS: readonly FrozenFilterKey[] = ['username']
 
@@ -41,10 +45,10 @@ const useFrozenTransactions = () => {
     page: page,
     size: pageSize,
     ...filter,
+    releaseType: RELEASE_TYPE,
     includeSummary: true
   }
-  const { data, isFetching, isLoading, refetch } =
-    useGetFreezesQuery(payload)
+  const { data, isFetching, isLoading, refetch } = useGetFreezesQuery(payload)
 
   const totalElements = data?.totalElements
 
@@ -52,7 +56,7 @@ const useFrozenTransactions = () => {
     () =>
       data?.content?.map((item, idx) => ({
         no: (page - 1) * pageSize + idx + 1,
-        ...item,
+        ...item
       })),
     [data, page, pageSize]
   )
@@ -74,12 +78,16 @@ const useFrozenTransactions = () => {
 
   /** Endpoint xuất không nhận page/size — file lấy trọn bộ lọc đang áp, không theo trang. */
   const handleExport = () => {
-    const exportParams: ExportFreezesQuery = filter
+    const exportParams: ExportFreezesQuery = {
+      ...filter,
+      releaseType: RELEASE_TYPE
+    }
     void exportFile(exportParams)
   }
 
   const [isUnfreezeModalOpen, setIsUnfreezeModalOpen] = useState(false)
-  const [selectedFreezeItem, setSelectedFreezeItem] = useState<FreezeItem | null>(null)
+  const [selectedFreezeItem, setSelectedFreezeItem] =
+    useState<FreezeItem | null>(null)
 
   const handleOpenUnfreezeModal = (item: FreezeItem) => {
     setSelectedFreezeItem(item)
@@ -108,7 +116,7 @@ const useFrozenTransactions = () => {
     handleOpenUnfreezeModal,
     handleCloseUnfreezeModal,
     handleExport,
-    isExporting,
+    isExporting
   }
 }
 

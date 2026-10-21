@@ -18,7 +18,7 @@ describe('useExportWalletAccounts', () => {
   it('gửi bộ lọc đang áp, bỏ ô trống và không kèm page/size', () => {
     const { result } = renderHook(() =>
       useExportWalletAccounts({
-        username: '0962341913',
+        keyword: '0962341913',
         status: 'ACTIVE',
         walletType: '',
         fromDate: '2026-08-01T00:00:00.000'
@@ -28,7 +28,7 @@ describe('useExportWalletAccounts', () => {
     result.current.exportFile()
 
     expect(mocks.exportFile).toHaveBeenCalledWith({
-      username: '0962341913',
+      keyword: '0962341913',
       status: 'ACTIVE',
       fromDate: '2026-08-01T00:00:00.000'
     })

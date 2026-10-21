@@ -93,6 +93,32 @@ export const createRefundColumns = (
       )
     },
     {
+      title: 'Phí xử lý',
+      key: 'processingFee',
+      align: 'right',
+      render: (_value, record) => (
+        <CellLines
+          numeric
+          align='right'
+          primary={`Bên chuyển ${formatVnd(record.senderProcessingFee)}`}
+          secondary={[`Bên nhận ${formatVnd(record.receiverProcessingFee)}`]}
+        />
+      )
+    },
+    {
+      title: 'Phí GD hoàn lại',
+      key: 'feeReversal',
+      align: 'right',
+      render: (_value, record) => (
+        <CellLines
+          numeric
+          align='right'
+          primary={`Bên chuyển ${formatVnd(record.senderFeeReversal)}`}
+          secondary={[`Bên nhận ${formatVnd(record.receiverFeeReversal)}`]}
+        />
+      )
+    },
+    {
       title: 'Khách thực nhận',
       key: 'netCredit',
       align: 'right',

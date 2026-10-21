@@ -48,19 +48,18 @@ describe('EwalletManagement — giữ bộ lọc khi quay lại từ màn chi ti
       `${LIST_STATE_PREFIX}${ROUTE}`,
       JSON.stringify({
         query: 'ownerId=OWN-1&fromDate=2026-10-01T08%3A00%3A00.000&page=2',
-        sensitive: { username: PHONE }
+        sensitive: { keyword: PHONE }
       })
     )
 
     renderAt()
 
     expect(
-      await screen.findByPlaceholderText('Tìm kiếm số điện thoại...')
+      await screen.findByPlaceholderText('Tìm kiếm số điện thoại, mã ví...')
     ).toHaveValue(PHONE)
-    expect(screen.getByPlaceholderText('Mã người dùng')).toHaveValue('OWN-1')
     expect(screen.getByDisplayValue('01/10/2026 08:00:00')).toBeInTheDocument()
     expect(lastRequest().get('page')).toBe('2')
-    expect(lastRequest().get('username')).toBe(PHONE)
+    expect(lastRequest().get('keyword')).toBe(PHONE)
     expect(lastRequest().get('ownerId')).toBe('OWN-1')
     expect(lastRequest().get('fromDate')).toBe('2026-10-01T08:00:00.000')
     await waitFor(() =>
@@ -73,22 +72,22 @@ describe('EwalletManagement — giữ bộ lọc khi quay lại từ màn chi ti
     mockAccounts()
     renderAt(`${ROUTE}?page=3`)
     const phone = await screen.findByPlaceholderText(
-      'Tìm kiếm số điện thoại...'
+      'Tìm kiếm số điện thoại, mã ví...'
     )
     expect(lastRequest().get('page')).toBe('3')
 
     fireEvent.change(phone, { target: { value: PHONE } })
     fireEvent.click(screen.getByRole('button', { name: /Tìm kiếm/ }))
     await waitFor(() => {
-      expect(lastRequest().get('username')).toBe(PHONE)
+      expect(lastRequest().get('keyword')).toBe(PHONE)
       expect(lastRequest().get('page')).toBe('1')
     })
     expect(screen.getByTestId('search')).not.toHaveTextContent(PHONE)
 
     fireEvent.click(screen.getByRole('button', { name: /Xóa bộ lọc/ }))
-    await waitFor(() => expect(lastRequest().has('username')).toBe(false))
+    await waitFor(() => expect(lastRequest().has('keyword')).toBe(false))
     expect(
-      screen.getByPlaceholderText('Tìm kiếm số điện thoại...')
+      screen.getByPlaceholderText('Tìm kiếm số điện thoại, mã ví...')
     ).toHaveValue('')
     expect(sessionStorage.getItem(`${LIST_STATE_PREFIX}${ROUTE}`)).toBeNull()
   })

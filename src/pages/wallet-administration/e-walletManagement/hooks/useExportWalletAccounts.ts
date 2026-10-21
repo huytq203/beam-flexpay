@@ -18,7 +18,7 @@ const buildExportParams = (
   filters: Partial<Record<EwalletFilterKey, string>>
 ): ExportWalletAccountsQuery => {
   const params: ExportWalletAccountsQuery = {}
-  if (filters.username) params.username = filters.username
+  if (filters.keyword) params.keyword = filters.keyword
   if (filters.ownerId) params.ownerId = filters.ownerId
   if (filters.status) params.status = filters.status
   if (filters.walletType) params.walletType = filters.walletType

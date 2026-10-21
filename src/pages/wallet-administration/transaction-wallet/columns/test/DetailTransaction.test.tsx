@@ -60,14 +60,16 @@ describe('DetailTransaction', () => {
       getTransactionById: transaction,
       profit: {
         userFeeTotal: 5_000,
-        userFeeBreakdown: [{
-          componentType: 'TRANSACTION_FEE',
-          fixedAmount: 2_000,
-          percentage: 3,
-          baseValue: 100_000,
-          percentageFee: 3_000,
-          calculatedFee: 5_000
-        }],
+        userFeeBreakdown: [
+          {
+            componentType: 'TRANSACTION_FEE',
+            fixedAmount: 2_000,
+            percentage: 3,
+            baseValue: 100_000,
+            percentageFee: 3_000,
+            calculatedFee: 5_000
+          }
+        ],
         feeBreakdownAvailable: true,
         feePolicyName: 'Phí rút tiền tiêu chuẩn',
         feePolicyValidFrom: '2026-08-01T00:00:00',
@@ -76,14 +78,16 @@ describe('DetailTransaction', () => {
         grossProfit: 5_000,
         grossProfitLabel: 'Lợi nhuận gộp (chưa trừ chi phí NCC)'
       },
-      moneyFlow: [{
-        sequence: 1,
-        step: 'Ghi nhận số tiền giao dịch',
-        debitAccount: 'USER_WALLET_VND (0901234567)',
-        creditAccount: 'SYS_BANK_SETTLEMENT_VND',
-        amount: 100_000,
-        occurredAt: '2026-08-18T10:00:04'
-      }],
+      moneyFlow: [
+        {
+          sequence: 1,
+          step: 'Ghi nhận số tiền giao dịch',
+          debitAccount: 'USER_WALLET_VND (0901234567)',
+          creditAccount: 'SYS_BANK_SETTLEMENT_VND',
+          amount: 100_000,
+          occurredAt: '2026-08-18T10:00:04'
+        }
+      ],
       customer: {
         userId: 'user-id',
         username: '0901234567',
@@ -109,14 +113,17 @@ describe('DetailTransaction', () => {
       </MessageProvider>
     )
 
-    expect(screen.getByText('Phí rút tiền tiêu chuẩn')).toBeInTheDocument()
-    expect(screen.getByText(/Phí giao dịch cơ bản/)).toBeInTheDocument()
+    expect(
+      screen.getByText('Phí 3% + Phí cố định 2,000 VND + VAT 0%')
+    ).toBeInTheDocument()
     expect(screen.getByText('USER_WALLET_VND (0901234567)')).toBeInTheDocument()
     expect(screen.getByText('SYS_BANK_SETTLEMENT_VND')).toBeInTheDocument()
     expect(screen.getAllByText('Nguyễn Văn A')).toHaveLength(2)
     expect(screen.getByText('VERIFIED')).toBeInTheDocument()
     expect(screen.getByText('****0011')).toBeInTheDocument()
-    expect(screen.getByText('Lợi nhuận gộp (chưa trừ chi phí NCC)')).toBeInTheDocument()
+    expect(
+      screen.getByText('Lợi nhuận gộp (chưa trừ chi phí NCC)')
+    ).toBeInTheDocument()
   })
 
   it('hiển thị ví nhận thay cho tài khoản ngân hàng khi nạp tiền', () => {
@@ -170,8 +177,12 @@ describe('DetailTransaction', () => {
       </MessageProvider>
     )
 
-    expect(screen.getByText(/API chưa cung cấp chi tiết cấu phần phí/)).toBeInTheDocument()
-    expect(screen.getByText(/API chưa cung cấp chi phí nhà cung cấp/)).toBeInTheDocument()
-    expect(screen.getByText(/API chưa cung cấp hồ sơ khách hàng tổng hợp/)).toBeInTheDocument()
+    expect(
+      screen.getByText('Chưa có chi tiết cấu phần phí')
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText('Chưa có dữ liệu chi phí nhà cung cấp.')
+    ).toBeInTheDocument()
+    expect(screen.queryByText('VERIFIED')).not.toBeInTheDocument()
   })
 })

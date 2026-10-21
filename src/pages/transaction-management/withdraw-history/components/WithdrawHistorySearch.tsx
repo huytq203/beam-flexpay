@@ -2,7 +2,6 @@ import { ButtonComponent } from '@components/index'
 import {
     FormDatePicker,
     FormInput,
-    FormLabelHint,
     FormSelect
 } from '@components/form'
 import { BroomIcon, MagnifyingGlassIcon } from '@components/icons'
@@ -64,12 +63,6 @@ const DEFAULT_VALUES: WithdrawSearchValues = {
     maxAmount: undefined,
 }
 
-const KEYWORD_HINT =
-    'Khớp chứa, không phân biệt hoa thường, trên mã giao dịch · mã bút toán · số điện thoại người rút · số điện thoại đối tác. Gõ vài ký tự để lọc dần, khác ô Mã giao dịch vốn khớp bằng.'
-
-const SUCCESS_DATE_HINT =
-    'Thời điểm lệnh rút chuyển sang thành công, khác ngày tạo lệnh ở trên. Lệnh tạo cuối tháng nhưng chi sang đầu tháng sau sẽ rơi vào hai khoảng khác nhau.'
-
 const WithdrawHistorySearch = ({ defaultValues, handleSearch, onReset }: Props) => {
     const formSearch = useForm<WithdrawSearchValues>({
         defaultValues: { ...DEFAULT_VALUES, ...defaultValues }
@@ -94,7 +87,7 @@ const WithdrawHistorySearch = ({ defaultValues, handleSearch, onReset }: Props) 
                     <FormInput
                         control={formSearch.control}
                         name='keyword'
-                        label={<FormLabelHint label='Từ khóa' hint={KEYWORD_HINT} />}
+                        label='Từ khóa'  
                         className='col-span-1'
                         placeholder='Mã GD, khách hàng, số điện thoại...'
                     />
@@ -112,14 +105,14 @@ const WithdrawHistorySearch = ({ defaultValues, handleSearch, onReset }: Props) 
                         showTime
                         control={formSearch.control}
                         name='successFrom'
-                        label={<FormLabelHint label='Ngày thành công từ' hint={SUCCESS_DATE_HINT} />}
+                        label={'Ngày thành công từ'}
                         className='col-span-1'
                     />
                     <FormDatePicker
                         showTime
                         control={formSearch.control}
                         name='successTo'
-                        label={<FormLabelHint label='Ngày thành công đến' hint={SUCCESS_DATE_HINT} />}
+                        label={'Ngày thành công đến'}
                         className='col-span-1'
                     />
                 </div>

@@ -24,22 +24,16 @@ export interface FeeAmounts {
   credited: number
 }
 
-/** Thiếu `feeBearer` thì suy theo loại: rút tiền do phía nhận chịu, còn lại người chuyển chịu. */
+/** BE để trống `feeBearer` khi người chuyển chịu phí, kể cả nạp/rút. */
 export const resolveBearer = (
-  feeBearer: string | null | undefined,
-  transactionType: string
-): FeeBearer => {
-  if (
-    feeBearer === 'SENDER' ||
-    feeBearer === 'RECEIVER' ||
-    feeBearer === 'BOTH'
-  ) {
-    return feeBearer
-  }
-  return transactionType === 'CASH_OUT' ? 'RECEIVER' : 'SENDER'
-}
+  feeBearer: string | null | undefined
+): FeeBearer =>
+  feeBearer === 'RECEIVER' || feeBearer === 'BOTH' ? feeBearer : 'SENDER'
 
-/** `grossAmount` là số bị trừ ở nguồn nên gốc giao dịch = gross − phí người chuyển. */
+/**
+ * API không có field "số tiền yêu cầu"; field mang số này tuỳ bên chịu phí:
+ * SENDER → `amount`, RECEIVER → `grossAmount`, BOTH → `grossAmount − senderFeeAmount`.
+ */
 export const resolveAmounts = (
   data: FeeSource,
   bearer: FeeBearer
@@ -57,7 +51,8 @@ export const resolveAmounts = (
       : bearer === 'RECEIVER'
         ? fee
         : 0
-  const principal = data.grossAmount - senderFee
+  const principal =
+    bearer === 'SENDER' ? data.amount : data.grossAmount - senderFee
   return {
     principal,
     senderFee,
@@ -109,20 +104,15 @@ export interface TransactionFlow {
 }
 
 export const buildTransactionFlow = (record: FlowSource): TransactionFlow => {
-  const bearer = resolveBearer(record.feeBearer, record.transactionType)
-  const amounts = resolveAmounts(record, bearer)
+  const amounts = resolveAmounts(record, resolveBearer(record.feeBearer))
   const route = FLOW_BY_TYPE[record.transactionType]
   const amountAt = (
     side: 'debited' | 'credited',
     endpoint: FlowEndpoint
   ): number => (route?.[side] === endpoint ? amounts[side] : 0)
 
-  // Lệnh rút: `grossAmount` đã gồm phí cộng thêm, số khách yêu cầu rút nằm ở `amount`.
-  const principal =
-    record.transactionType === 'CASH_OUT' ? record.amount : amounts.principal
-
   return {
-    principal,
+    principal: amounts.principal,
     senderFee: amounts.senderFee,
     receiverFee: amounts.receiverFee,
     totals: route
@@ -155,8 +145,7 @@ export const buildPersonalFlow = (
   if (record.transactionType !== 'P2P_TRANSFER') {
     return { ...rest, fee: senderFee + receiverFee }
   }
-  const bearer = resolveBearer(record.feeBearer, record.transactionType)
-  const amounts = resolveAmounts(record, bearer)
+  const amounts = resolveAmounts(record, resolveBearer(record.feeBearer))
   const isReceiver = Boolean(viewerId) && record.to?.id === viewerId
   return {
     principal: flow.principal,

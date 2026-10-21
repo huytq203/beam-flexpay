@@ -24,9 +24,9 @@ export function RefundAmountSection({ refund }: RefundAmountSectionProps) {
       value: formatVnd(refund.senderFeeReversal),
       numeric: true
     },
-    
+
     {
-      label: 'Phí xử lý bên gửi',
+      label: 'Phí xử lý bên chuyển',
       value: formatVnd(refund.senderProcessingFee),
       numeric: true
     },
@@ -49,7 +49,7 @@ export function RefundAmountSection({ refund }: RefundAmountSectionProps) {
   return (
     <DetailSection
       title='Số tiền'
-    // note='Số liệu do hệ thống tính, không tính lại trên màn hình.'
+      // note='Số liệu do hệ thống tính, không tính lại trên màn hình.'
     >
       <DetailRows rows={rows} />
     </DetailSection>

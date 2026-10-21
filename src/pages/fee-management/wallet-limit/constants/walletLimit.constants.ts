@@ -50,17 +50,17 @@ export const OVERRIDE_TRANSACTION_TYPE_OPTIONS =
 export const STATUS_OPTIONS = toOptions(STATUS_LABELS)
 export const PAYMENT_METHOD_OPTIONS = toOptions(PAYMENT_METHOD_LABELS)
 
-/** Nhãn BE dùng trong thông báo lỗi và màn Lịch sử; FE giữ đúng nhãn đó. */
+/** Nhãn hiển thị trên form/chi tiết. Thông báo lỗi do BE trả về vẫn dùng nhãn SRS cũ của BE. */
 export const LIMIT_FIELD_LABELS = {
-  minPerTransaction: 'Tối thiểu/GD',
-  maxPerTransaction: 'Tối đa/GD',
-  dailyMaximum: 'Hạn mức ngày',
-  normalMonthlyMaximum: 'Hạn mức tháng (thường)',
-  specialMonthlyMaximum: 'Hạn mức tháng (đặc biệt)',
-  walletBalanceMaximum: 'Số dư tối đa của ví',
-  outflowDailyMaximum: 'Tổng chi trong ngày',
-  outflowMonthlyMaximum: 'Tổng chi trong tháng',
-  outboundMaxTimesPerDay: 'Số lần chi trong ngày',
+  minPerTransaction: 'Số tiền tối thiểu mỗi giao dịch',
+  maxPerTransaction: 'Số tiền tối đa mỗi giao dịch',
+  dailyMaximum: 'Hạn mức trong ngày (theo loại giao dịch)',
+  normalMonthlyMaximum: 'Hạn mức tháng – dịch vụ thường',
+  specialMonthlyMaximum: 'Hạn mức tháng – dịch vụ đặc biệt',
+  walletBalanceMaximum: 'Số dư tối đa được giữ trong ví',
+  outflowDailyMaximum: 'Tổng tiền chi ra trong ngày (mọi loại GD)',
+  outflowMonthlyMaximum: 'Tổng tiền chi ra trong tháng (mọi loại GD)',
+  outboundMaxTimesPerDay: 'Số lệnh chi tối đa trong ngày',
   approvalThreshold: 'Ngưỡng duyệt lệnh rút'
 } as const
 

@@ -128,6 +128,16 @@ export function RefundFilters({
           />
         </div>
         <div className='flex flex-col-reverse gap-2 sm:flex-row sm:justify-end'>
+           <ButtonComponent
+            htmlType='submit'
+            content='Tìm kiếm'
+            icon={
+              <MagnifyingGlassIcon
+                aria-hidden
+                size={18}
+              />
+            }
+          />
           <ButtonComponent
             type='default'
             htmlType='button'
@@ -140,16 +150,7 @@ export function RefundFilters({
             }
             onClick={handleClear}
           />
-          <ButtonComponent
-            htmlType='submit'
-            content='Tìm kiếm'
-            icon={
-              <MagnifyingGlassIcon
-                aria-hidden
-                size={18}
-              />
-            }
-          />
+         
         </div>
       </form>
     </section>

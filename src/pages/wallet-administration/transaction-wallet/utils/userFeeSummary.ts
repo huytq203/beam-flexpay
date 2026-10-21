@@ -118,9 +118,11 @@ export const buildUserFeeSummary = (
   feeDetail?: TransactionFeeDetail | null
 ): UserFeeSummary => {
   const kind = KIND_BY_TYPE[data.transactionType] ?? 'OTHER'
-  const bearer = resolveBearer(data.feeBearer, data.transactionType)
+  const bearer = resolveBearer(data.feeBearer)
   const amounts = resolveAmounts(data, bearer)
-  const base = { kind, mismatch: amounts.credited !== data.amount }
+  const mismatch =
+    amounts.debited !== data.grossAmount || amounts.credited !== data.amount
+  const base = { kind, mismatch }
   const formulaInput = { profit, feeDetail, currency: data.currency ?? 'VND' }
 
   if (kind === 'TRANSFER') {

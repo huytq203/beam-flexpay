@@ -93,7 +93,7 @@ const WalletInfoCard = ({ data, ekyc }: WalletInfoCardProps) => {
       <InfoList>
         <InfoRow
           label='Mã ví'
-          value={data.id}
+          value={data.walletCode}
         />
         <InfoRow
           label='Trạng thái ví'

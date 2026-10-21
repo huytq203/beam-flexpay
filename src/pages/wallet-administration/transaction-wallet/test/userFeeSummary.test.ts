@@ -26,10 +26,29 @@ describe('buildUserFeeSummary — dòng tiền theo loại giao dịch', () => {
     ])
   })
 
-  it('rút: ví bị trừ đủ gốc, bank nhận gốc − phí', () => {
+  it('rút, người chuyển chịu (feeBearer null): yêu cầu = amount, ví trừ thêm phí', () => {
     const summary = buildUserFeeSummary(
       journal({
         transactionType: 'CASH_OUT',
+        amount: 50000,
+        grossAmount: 51000,
+        feeAmount: 1000
+      })
+    )
+    expect(summary.mismatch).toBe(false)
+    expect(rowsOf(summary)).toEqual([
+      ['Số tiền giao dịch', 50000],
+      ['Số tiền trừ trên ví', 51000],
+      ['Phí giao dịch', 1000],
+      ['Số tiền thực nhận trên bank', 50000]
+    ])
+  })
+
+  it('rút, người nhận chịu: yêu cầu = grossAmount, bank nhận gốc − phí', () => {
+    const summary = buildUserFeeSummary(
+      journal({
+        transactionType: 'CASH_OUT',
+        feeBearer: 'RECEIVER',
         amount: 49000,
         grossAmount: 50000,
         feeAmount: 1000

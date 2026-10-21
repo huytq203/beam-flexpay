@@ -21,6 +21,7 @@ describe('buildTransactionFlow — 7 cột số tiền của danh sách giao d�
     const flow = buildTransactionFlow(
       record({
         transactionType: 'CASH_IN',
+        amount: 1_000_000,
         grossAmount: 1_100_000,
         feeAmount: 100_000
       })
@@ -33,7 +34,7 @@ describe('buildTransactionFlow — 7 cột số tiền của danh sách giao d�
     })
   })
 
-  it('rút tiền: gốc là số khách rút, ví trừ gốc + phí, bank nhận đúng gốc', () => {
+  it('rút tiền, feeBearer null (người chuyển chịu): yêu cầu = amount, ví trừ thêm phí', () => {
     const flow = buildTransactionFlow(
       record({
         transactionType: 'CASH_OUT',
@@ -44,9 +45,47 @@ describe('buildTransactionFlow — 7 cột số tiền của danh sách giao d�
     )
     expect(flow).toEqual({
       principal: 100_000,
+      senderFee: 2_000,
+      receiverFee: 0,
+      totals: { ...NO_FLOW, walletDebit: 102_000, bankCredit: 100_000 }
+    })
+  })
+
+  it('rút tiền, người nhận chịu: yêu cầu = grossAmount, bank nhận gốc − phí', () => {
+    const flow = buildTransactionFlow(
+      record({
+        transactionType: 'CASH_OUT',
+        feeBearer: 'RECEIVER',
+        amount: 98_000,
+        grossAmount: 100_000,
+        feeAmount: 2_000
+      })
+    )
+    expect(flow).toEqual({
+      principal: 100_000,
       senderFee: 0,
       receiverFee: 2_000,
-      totals: { ...NO_FLOW, walletDebit: 102_000, bankCredit: 100_000 }
+      totals: { ...NO_FLOW, walletDebit: 100_000, bankCredit: 98_000 }
+    })
+  })
+
+  it('rút tiền, cả hai chịu: yêu cầu = amount + phí người nhận', () => {
+    const flow = buildTransactionFlow(
+      record({
+        transactionType: 'CASH_OUT',
+        feeBearer: 'BOTH',
+        amount: 97_000,
+        grossAmount: 101_000,
+        feeAmount: 4_000,
+        senderFeeAmount: 1_000,
+        receiverFeeAmount: 3_000
+      })
+    )
+    expect(flow).toEqual({
+      principal: 100_000,
+      senderFee: 1_000,
+      receiverFee: 3_000,
+      totals: { ...NO_FLOW, walletDebit: 101_000, bankCredit: 97_000 }
     })
   })
 
@@ -73,6 +112,7 @@ describe('buildTransactionFlow — 7 cột số tiền của danh sách giao d�
     const flow = buildTransactionFlow(
       record({
         transactionType: 'MERCHANT_PAYMENT',
+        amount: 1_000_000,
         grossAmount: 1_100_000,
         feeAmount: 100_000
       })
@@ -83,7 +123,11 @@ describe('buildTransactionFlow — 7 cột số tiền của danh sách giao d�
 
   it('loại giao dịch chưa có quy tắc: không đoán dòng tiền', () => {
     const flow = buildTransactionFlow(
-      record({ transactionType: 'UNKNOWN_TYPE', grossAmount: 5_000 })
+      record({
+        transactionType: 'UNKNOWN_TYPE',
+        amount: 5_000,
+        grossAmount: 5_000
+      })
     )
     expect(flow.totals).toBeNull()
     expect(flow.principal).toBe(5_000)

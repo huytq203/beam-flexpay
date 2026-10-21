@@ -74,10 +74,18 @@ const DetailLoaderProbe = () => {
 
   return (
     <div>
-      <button type='button' onClick={() => void openDetail(journal.id)}>
+      <button
+        type='button'
+        onClick={() => void openDetail(journal.id)}
+      >
         Mở chi tiết
       </button>
-      <button type='button' onClick={closeDetail}>Đóng chi tiết</button>
+      <button
+        type='button'
+        onClick={closeDetail}
+      >
+        Đóng chi tiết
+      </button>
       <span data-testid='detail-state'>
         {isDetailOpen
           ? `${detailData?.transactionCode}-${withdrawalDetail?.beneficiary?.accountNumber}`
@@ -94,7 +102,10 @@ const FullDetailFlowProbe = () => {
 
   return (
     <MessageProvider>
-      <button type='button' onClick={() => void openDetail(journal.id)}>
+      <button
+        type='button'
+        onClick={() => void openDetail(journal.id)}
+      >
         Mở đầy đủ chi tiết
       </button>
       {isDetailOpen && detailData && withdrawalDetail && (
@@ -180,9 +191,7 @@ describe('useHandle withdraw detail', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Mở đầy đủ chi tiết' }))
 
     expect(await screen.findByText('2020000000011')).toBeInTheDocument()
-    await waitFor(() =>
-      expect(withdrawalRequestSpy).toHaveBeenCalledTimes(1)
-    )
+    await waitFor(() => expect(withdrawalRequestSpy).toHaveBeenCalledTimes(1))
   })
 })
 
@@ -199,6 +208,42 @@ describe('ModalDetailWithdrawHistory', () => {
 
     expect(screen.getByText('2020000000011')).toBeInTheDocument()
     expect(screen.getByText('NGUYỄN THU HÀ TRANG')).toBeInTheDocument()
+  })
+
+  it('người nhận chịu phí: số rút = grossAmount, bank nhận gốc − phí', () => {
+    renderWithProviders(
+      <MessageProvider>
+        <DialogDetailWithdrawHistory
+          data={{
+            ...journal,
+            feeBearer: 'RECEIVER',
+            amount: 97000,
+            grossAmount: 100000,
+            feeAmount: 3000
+          }}
+          withdrawalDetail={withdrawalResponse.data}
+        />
+      </MessageProvider>
+    )
+
+    expect(screen.getAllByText('-100,000 VND')).toHaveLength(2)
+    expect(screen.getByText('3,000 VND')).toBeInTheDocument()
+    expect(screen.getByText('+97,000 VND')).toBeInTheDocument()
+  })
+
+  it('lệnh chưa thành công: Tổng tiền cộng bank hiện —', () => {
+    renderWithProviders(
+      <MessageProvider>
+        <DialogDetailWithdrawHistory
+          data={{ ...journal, status: 'PENDING' }}
+          withdrawalDetail={withdrawalResponse.data}
+        />
+      </MessageProvider>
+    )
+
+    expect(
+      screen.getByText('Tổng tiền cộng bank:').nextSibling
+    ).toHaveTextContent('—')
   })
 
   it('hiển thị trạng thái rỗng khi không có người thụ hưởng', () => {

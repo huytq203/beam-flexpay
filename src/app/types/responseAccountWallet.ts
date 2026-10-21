@@ -26,6 +26,7 @@ export interface ContentAccountWallet {
   ownerUsername: string
   ownerFullName?: string | null
   ekycStatus?: 'NOT_VERIFIED' | 'VERIFIED' | null
+  walletCode?: string | null
   glCode: string
   currency: string
   totalDebit: number

@@ -6,7 +6,6 @@ import { useWalletLimitFormSubmit } from '../hooks/useWalletLimitFormSubmit'
 import { walletLimitPaths } from '../utils/walletLimit.paths'
 import { WalletLimitFormActions } from './WalletLimitFormActions'
 import { WalletLimitFormBanner } from './WalletLimitFormBanner'
-import { WalletLimitFormBreadcrumb } from './WalletLimitFormBreadcrumb'
 import { WalletLimitFormLockConfirm } from './WalletLimitFormLockConfirm'
 import {
   WalletLimitFormOutflowLimits,
@@ -31,7 +30,6 @@ export function WalletLimitFormView({
 
   return (
     <main className='flex min-w-0 flex-col gap-3'>
-      <WalletLimitFormBreadcrumb policy={policy} />
       <FormProvider {...form}>
         <form
           noValidate

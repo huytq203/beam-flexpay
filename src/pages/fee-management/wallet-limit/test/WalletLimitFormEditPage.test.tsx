@@ -67,7 +67,9 @@ describe('WalletLimitFormPage - Cập nhật', () => {
       await screen.findByText(/Đang sửa phiên bản dữ liệu 4/)
     ).toBeInTheDocument()
     expect(screen.queryByText(CONFLICT_MESSAGE)).not.toBeInTheDocument()
-    expect(screen.getAllByLabelText(/^Tối đa\/GD/)[0]).toHaveValue('6,000,000')
+    expect(
+      screen.getAllByLabelText(/^Số tiền tối đa mỗi giao dịch/)[0]
+    ).toHaveValue('6,000,000')
 
     await user.click(screen.getByRole('button', { name: 'Lưu thay đổi' }))
     expect(await screen.findByText('Trang chi tiết')).toBeInTheDocument()
@@ -137,12 +139,12 @@ describe('WalletLimitFormPage - Cập nhật', () => {
     renderForm(editRoute('sys-1'))
 
     await screen.findByText(/Đang sửa phiên bản dữ liệu 3/)
-    await user.clear(screen.getByLabelText('Số dư tối đa của ví'))
+    await user.clear(screen.getByLabelText('Số dư tối đa được giữ trong ví'))
     await user.click(screen.getByRole('button', { name: 'Lưu thay đổi' }))
 
     expect(
       await screen.findByText(
-        'Không được bỏ trống Số dư tối đa của ví của cấu hình Hệ thống.'
+        'Không được bỏ trống Số dư tối đa được giữ trong ví của cấu hình Hệ thống.'
       )
     ).toBeInTheDocument()
   })

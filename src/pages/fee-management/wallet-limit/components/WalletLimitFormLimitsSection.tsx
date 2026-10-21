@@ -25,9 +25,7 @@ const LOCKED_PLACEHOLDERS: Partial<Record<LimitFieldKey, string>> = {
 
 export function WalletLimitFormTransactionLimits() {
   return (
-    <WalletLimitFormSection
-      title='Hạn mức giao dịch'
-    >
+    <WalletLimitFormSection title='Hạn mức giao dịch'>
       <div className={GRID}>
         {TRANSACTION_LIMIT_KEYS.map((key) => {
           const required = REQUIRED_LIMIT_KEYS.includes(key)
@@ -48,7 +46,6 @@ export function WalletLimitFormTransactionLimits() {
   )
 }
 
-
 export function WalletLimitFormOutflowLimits() {
   const { control } = useFormContext<WalletLimitFormValues>()
   const transactionType = useWatch({ control, name: 'transactionType' })
@@ -62,9 +59,7 @@ export function WalletLimitFormOutflowLimits() {
   }
 
   return (
-    <WalletLimitFormSection
-      title='Giới hạn chi'
-    >
+    <WalletLimitFormSection title='Giới hạn chi & số dư ví'>
       <div className={GRID}>
         {OUTFLOW_LIMIT_KEYS.map((key) => (
           <WalletLimitFormNumberField

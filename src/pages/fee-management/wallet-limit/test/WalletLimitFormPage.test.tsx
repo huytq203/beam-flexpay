@@ -30,8 +30,8 @@ describe('WalletLimitFormPage - Thêm mới', () => {
     expect(
       screen.getByPlaceholderText('Chọn ví theo số điện thoại')
     ).toHaveValue('0912345678')
-    await typeInto(user, /^Tối thiểu\/GD/, '10000')
-    await typeInto(user, /^Tối đa\/GD/, '5000000')
+    await typeInto(user, /^Số tiền tối thiểu mỗi giao dịch/, '10000')
+    await typeInto(user, /^Số tiền tối đa mỗi giao dịch/, '5000000')
     await user.click(screen.getByRole('button', { name: 'Lưu hạn mức' }))
 
     expect(await screen.findByText('Trang chi tiết')).toBeInTheDocument()
@@ -64,7 +64,7 @@ describe('WalletLimitFormPage - Thêm mới', () => {
       await screen.findByText('Vui lòng chọn mã định danh.')
     ).toBeInTheDocument()
     expect(
-      screen.getByText('Số tiền tối thiểu/GD phải lớn hơn 0.')
+      screen.getByText('Số tiền tối thiểu mỗi giao dịch phải lớn hơn 0.')
     ).toBeInTheDocument()
   })
 
@@ -92,16 +92,16 @@ describe('WalletLimitFormPage - Thêm mới', () => {
     renderForm(walletLimitPaths.create)
 
     await pickWallet(user)
-    await typeInto(user, /^Tối thiểu\/GD/, '10000')
-    await typeInto(user, /^Tối đa\/GD/, '5000000')
+    await typeInto(user, /^Số tiền tối thiểu mỗi giao dịch/, '10000')
+    await typeInto(user, /^Số tiền tối đa mỗi giao dịch/, '5000000')
     await user.click(
       screen.getByRole('button', { name: 'Thêm dòng ngân hàng / phương thức' })
     )
     await user.click(screen.getByLabelText('Ngân hàng'))
     await user.click(await screen.findByTitle('VCB'))
-    await typeInto(user, /^Tối thiểu\/GD/, '10000', 1)
-    await typeInto(user, /^Tối đa\/GD/, '5000000', 1)
-    await typeInto(user, /^Hạn mức ngày/, '5000000', 1)
+    await typeInto(user, /^Số tiền tối thiểu mỗi giao dịch/, '10000', 1)
+    await typeInto(user, /^Số tiền tối đa mỗi giao dịch/, '5000000', 1)
+    await typeInto(user, /^Hạn mức trong ngày/, '5000000', 1)
     await user.click(screen.getByRole('button', { name: 'Lưu hạn mức' }))
 
     expect(
@@ -134,8 +134,8 @@ describe('WalletLimitFormPage - Thêm mới', () => {
     renderForm(walletLimitPaths.create)
 
     await pickWallet(user)
-    await typeInto(user, /^Tối thiểu\/GD/, '10000')
-    await typeInto(user, /^Tối đa\/GD/, '5000000')
+    await typeInto(user, /^Số tiền tối thiểu mỗi giao dịch/, '10000')
+    await typeInto(user, /^Số tiền tối đa mỗi giao dịch/, '5000000')
     await user.click(screen.getByRole('button', { name: 'Lưu hạn mức' }))
 
     expect(

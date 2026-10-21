@@ -1,5 +1,4 @@
 import { CardComponent, ExportCsvButton, Table } from '@components/index'
-import { InfoCircleOutlined } from '@components/icons'
 import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
 import { useState } from 'react'
 import { systemLedgerColumns } from './columns/SystemLedger.column'
@@ -7,7 +6,6 @@ import FormSearch from './components/FormSearch'
 import { LedgerEntryDetail } from './components/LedgerEntryDetail'
 import { LedgerLoadError } from './components/LedgerLoadError'
 import { LedgerSummary } from './components/LedgerSummary'
-import { LEDGER_POSTED_ONLY_NOTE } from './constants/SystemLedger.constant'
 import useSystemLedger from './hooks/useSystemLedger'
 import type { LedgerRow } from './utils/groupLedgerByJournal'
 
@@ -80,10 +78,7 @@ const SystemLedgerManagement = () => {
                   // tooltip={`File lấy trọn bộ lọc đang áp, không giới hạn theo trang. ${EXPORT_ORDER_HINT}`}
                 />
               </div>
-              <p className='mt-1 flex max-w-[74ch] items-start gap-1.5 text-xs text-muted-foreground'>
-                <InfoCircleOutlined className='mt-0.5 shrink-0' />
-                <span>{LEDGER_POSTED_ONLY_NOTE}</span>
-              </p>
+           
             </div>
             <LedgerSummary
               summary={summary}

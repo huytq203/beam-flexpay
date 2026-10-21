@@ -1,21 +1,26 @@
-import { apiWalletCore } from "@services/apiService"
-import { ResponseType } from "@type/api"
-import { ContentAccountWallet, DataAccountWallet } from "@type/responseAccountWallet"
+import { apiWalletCore } from '@services/apiService'
+import { ResponseType } from '@type/api'
+import {
+  ContentAccountWallet,
+  DataAccountWallet
+} from '@type/responseAccountWallet'
 
 export interface WalletAccountQueryParams {
-    page?: number
-    size?: number
-    username?: string
-    ownerId?: string
-    ownerType?: string
-    glCode?: string
-    status?: string
-    enabled?: string
-    walletType?: string
-    currency?: string
-    /** Khoảng thời gian tạo ví (createdAt), ISO date-time. */
-    fromDate?: string
-    toDate?: string
+  page?: number
+  size?: number
+  /** Ô tìm chung: SĐT, mã ví… (wallet-core khớp theo keyword). */
+  keyword?: string
+  username?: string
+  ownerId?: string
+  ownerType?: string
+  glCode?: string
+  status?: string
+  enabled?: string
+  walletType?: string
+  currency?: string
+  /** Khoảng thời gian tạo ví (createdAt), ISO date-time. */
+  fromDate?: string
+  toDate?: string
 }
 
 /**
@@ -34,115 +39,118 @@ export interface WalletAccountQueryParams {
  * `/freeze-transaction`. Kiểm bằng request thật trước khi đổi dòng nào.
  */
 export interface FreezeRequest {
-    accountId: string
-    amount: number
-    reason: string
+  accountId: string
+  amount: number
+  reason: string
 }
 
 /** Khớp `AdminUnfreezeRequest`. */
 export interface UnfreezeRequest {
-    accountId: string
-    reason: string
-    /** Bắt buộc — thiếu thì wallet-core trả VALIDATION_ERROR 3001. */
-    idempotencyKey: string
+  accountId: string
+  reason: string
+  /** Bắt buộc — thiếu thì wallet-core trả VALIDATION_ERROR 3001. */
+  idempotencyKey: string
 }
 
 /** Khớp `AdminFreezeTransactionRequest` — đúng 4 field, không hơn. */
 export interface FreezeTransactionRequest {
-    accountId: string
-    sourceTransactionId: string
-    amount: number
-    reason: string
+  accountId: string
+  sourceTransactionId: string
+  amount: number
+  reason: string
 }
 
 export interface UnfreezeTransactionRequest {
-    accountId: string
-    freezeId: string
-    sourceTransactionId: string
-    amount: number
-    reason: string
-    /** Bắt buộc — thiếu thì wallet-core trả VALIDATION_ERROR 3001. */
-    idempotencyKey: string
+  accountId: string
+  freezeId: string
+  sourceTransactionId: string
+  amount: number
+  reason: string
+  /** Bắt buộc — thiếu thì wallet-core trả VALIDATION_ERROR 3001. */
+  idempotencyKey: string
 }
 
 const apiEWallet = apiWalletCore.injectEndpoints({
-    endpoints: (build) => ({
-        getAccount: build.query<DataAccountWallet, WalletAccountQueryParams>({
-            query: (params) => ({
-                url: `/wallet/accounts`,
-                params: params,
-                method: 'GET'
-            }),
-            transformResponse: (res: ResponseType<DataAccountWallet>) => res.data,
-            providesTags: ['Wallet'],
-        }),
-        getAccountById: build.query<ContentAccountWallet, string>({
-            query: (id) => ({
-                url: `/wallet/accounts/${id}`,
-                method: 'GET'
-            }),
-            transformResponse: (res: ResponseType<ContentAccountWallet>) => res.data,
-            providesTags: ['Wallet'],
-        }),
-        postUnfreeze: build.mutation<unknown, UnfreezeRequest>({
-            query: (body) => ({
-                url: '/wallet/accounts/unfreeze',
-                method: 'POST',
-                body: body,
-            }),
-            invalidatesTags: ['Wallet'],
-        }),
-        postFreeze: build.mutation<unknown, FreezeRequest>({
-            query: (body) => ({
-                url: '/wallet/accounts/freeze',
-                method: 'POST',
-                body: body,
-            }),
-            invalidatesTags: ['Wallet'],
-        }),
-        postFreezeTransaction: build.mutation<unknown, FreezeTransactionRequest>({
-            query: (body) => ({
-                url: '/wallet/accounts/freeze-transaction',
-                method: 'POST',
-                body,
-            }),
-            invalidatesTags: ['Wallet', 'Journal'],
-        }),
-        postUnfreezeTransaction: build.mutation<unknown, UnfreezeTransactionRequest>({
-            query: (body) => ({
-                url: '/wallet/accounts/unfreeze-transaction',
-                method: 'POST',
-                body,
-            }),
-            invalidatesTags: ['Wallet', 'Journal'],
-        }),
-        postUnlock: build.mutation({
-            query: (body) => ({
-                url: '/wallet/accounts/unlock',
-                method: 'POST',
-                body: body,
-            }),
-            invalidatesTags: ['Wallet'],
-        }),
-        postLock: build.mutation({
-            query: (body) => ({
-                url: '/wallet/accounts/lock',
-                method: 'POST',
-                body: body,
-            }),
-            invalidatesTags: ['Wallet'],
-        }),
+  endpoints: (build) => ({
+    getAccount: build.query<DataAccountWallet, WalletAccountQueryParams>({
+      query: (params) => ({
+        url: `/wallet/accounts`,
+        params: params,
+        method: 'GET'
+      }),
+      transformResponse: (res: ResponseType<DataAccountWallet>) => res.data,
+      providesTags: ['Wallet']
+    }),
+    getAccountById: build.query<ContentAccountWallet, string>({
+      query: (id) => ({
+        url: `/wallet/accounts/${id}`,
+        method: 'GET'
+      }),
+      transformResponse: (res: ResponseType<ContentAccountWallet>) => res.data,
+      providesTags: ['Wallet']
+    }),
+    postUnfreeze: build.mutation<unknown, UnfreezeRequest>({
+      query: (body) => ({
+        url: '/wallet/accounts/unfreeze',
+        method: 'POST',
+        body: body
+      }),
+      invalidatesTags: ['Wallet']
+    }),
+    postFreeze: build.mutation<unknown, FreezeRequest>({
+      query: (body) => ({
+        url: '/wallet/accounts/freeze',
+        method: 'POST',
+        body: body
+      }),
+      invalidatesTags: ['Wallet']
+    }),
+    postFreezeTransaction: build.mutation<unknown, FreezeTransactionRequest>({
+      query: (body) => ({
+        url: '/wallet/accounts/freeze-transaction',
+        method: 'POST',
+        body
+      }),
+      invalidatesTags: ['Wallet', 'Journal']
+    }),
+    postUnfreezeTransaction: build.mutation<
+      unknown,
+      UnfreezeTransactionRequest
+    >({
+      query: (body) => ({
+        url: '/wallet/accounts/unfreeze-transaction',
+        method: 'POST',
+        body
+      }),
+      invalidatesTags: ['Wallet', 'Journal']
+    }),
+    postUnlock: build.mutation({
+      query: (body) => ({
+        url: '/wallet/accounts/unlock',
+        method: 'POST',
+        body: body
+      }),
+      invalidatesTags: ['Wallet']
+    }),
+    postLock: build.mutation({
+      query: (body) => ({
+        url: '/wallet/accounts/lock',
+        method: 'POST',
+        body: body
+      }),
+      invalidatesTags: ['Wallet']
     })
+  })
 })
 export const {
-    useGetAccountQuery,
-    useLazyGetAccountQuery,
-    useGetAccountByIdQuery,
-    useLazyGetAccountByIdQuery,
-    usePostUnfreezeMutation,
-    usePostFreezeMutation,
-    usePostFreezeTransactionMutation,
-    usePostUnfreezeTransactionMutation,
-    usePostUnlockMutation,
-    usePostLockMutation
+  useGetAccountQuery,
+  useLazyGetAccountQuery,
+  useGetAccountByIdQuery,
+  useLazyGetAccountByIdQuery,
+  usePostUnfreezeMutation,
+  usePostFreezeMutation,
+  usePostFreezeTransactionMutation,
+  usePostUnfreezeTransactionMutation,
+  usePostUnlockMutation,
+  usePostLockMutation
 } = apiEWallet

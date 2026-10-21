@@ -37,7 +37,7 @@ function ReadonlyFact({ label, value }: { label: string; value: string }) {
   )
 }
 
-const RequiredMark = () => <span className='ml-1 text-danger-strong'>*</span>
+const RequiredMark = () => <span className='ml-1 text-danger-strong!'>*</span>
 
 export function WalletLimitFormObjectSection({
   isEdit
@@ -87,7 +87,7 @@ export function WalletLimitFormObjectSection({
           <FormRadio<WalletLimitFormValues>
             control={control}
             name='scopeType'
-            label='Đối tượng *'
+            label='Đối tượng'
             options={SCOPE_RADIO_OPTIONS}
             className='flex flex-col gap-1.5'
             classNameLabel='text-sm font-medium'

@@ -56,6 +56,8 @@ export const refundListItemSchema = z.object({
   originalAmount: z.number().nullish(),
   senderProcessingFee: z.number().nullish(),
   receiverProcessingFee: z.number().nullish(),
+  senderFeeReversal: z.number().nullish(),
+  receiverFeeReversal: z.number().nullish(),
   createdSource: z.enum(RefundSource),
   beneficiaryBankCode: optionalText,
   beneficiaryAccountNumber: optionalText,

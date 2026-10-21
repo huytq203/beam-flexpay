@@ -22,6 +22,7 @@ export interface Account {
 
 export interface AcountItem {
   id: string
+  walletCode?: string | null
   createdAt: string
   updatedAt: string
   createdBy: string
@@ -80,6 +81,7 @@ export interface Sort2 {
 }
 
 export interface FormSearchValues {
+  keyword?: string
   username?: string
   status?: string
   kycStatus?: string

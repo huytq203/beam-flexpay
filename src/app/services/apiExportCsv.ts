@@ -96,8 +96,8 @@ export interface ExportWalletAccountsQuery {
   glCode?: string
   currency?: string
   status?: string
-  /** Số điện thoại chủ ví. */
-  username?: string
+  /** Ô tìm chung: SĐT, mã ví… */
+  keyword?: string
   enabled?: boolean
   fromDate?: string
   toDate?: string

@@ -3,7 +3,6 @@ import {
   FormDatePicker,
   FormInput,
   FormInputNumber,
-  FormLabelHint,
   FormSelect
 } from '@components/form'
 import { BroomIcon, MagnifyingGlassIcon } from '@components/icons'
@@ -41,15 +40,6 @@ const DEFAULT_VALUES: FormSearchValues = {
   toDate: ''
 }
 
-const TRANSACTION_CODE_HINT =
-  'Nhận cả mã giao dịch lẫn UUID của giao dịch. Khớp bằng — gõ đúng toàn bộ mã.'
-
-const JOURNAL_CODE_HINT =
-  'Mã bút toán của chính dòng sổ cái (VD: JRN-26A2D1D5-D4C). Khớp bằng — gõ đúng toàn bộ mã.'
-
-const KEYWORD_HINT =
-  'Khớp chứa trên mã giao dịch và chủ tài khoản. Gõ vài ký tự để lọc dần.'
-
 const FormSearch = ({
   defaultValues,
   handleSearch,
@@ -85,10 +75,7 @@ const FormSearch = ({
             control={formSearch.control}
             name='keyword'
             label={
-              <FormLabelHint
-                label='Từ khóa'
-                hint={KEYWORD_HINT}
-              />
+                'Từ khóa'
             }
             placeholder='Mã giao dịch hoặc chủ tài khoản...'
             className='col-span-1'
@@ -97,10 +84,8 @@ const FormSearch = ({
             control={formSearch.control}
             name='transactionCode'
             label={
-              <FormLabelHint
-                label='Mã giao dịch'
-                hint={TRANSACTION_CODE_HINT}
-              />
+              
+                'Mã giao dịch'
             }
             placeholder='Nhập mã giao dịch hoặc UUID'
             className='col-span-1'
@@ -109,10 +94,7 @@ const FormSearch = ({
             control={formSearch.control}
             name='journalCode'
             label={
-              <FormLabelHint
-                label='Mã bút toán'
-                hint={JOURNAL_CODE_HINT}
-              />
+                'Mã bút toán'
             }
             placeholder='VD: JRN-26A2D1D5-D4C'
             className='col-span-1'

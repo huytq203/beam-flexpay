@@ -1,5 +1,5 @@
 export const EWALLET_FILTER_KEYS = [
-  'username',
+  'keyword',
   'ownerId',
   'status',
   'walletType',
@@ -11,5 +11,5 @@ export type EwalletFilterKey = (typeof EWALLET_FILTER_KEYS)[number]
 
 /** Ô "Người dùng" nhập số điện thoại: chỉ giữ trong sessionStorage, không lên URL. */
 export const EWALLET_SENSITIVE_KEYS = [
-  'username'
+  'keyword'
 ] as const satisfies readonly EwalletFilterKey[]

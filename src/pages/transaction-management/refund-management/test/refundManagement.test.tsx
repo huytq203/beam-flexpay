@@ -27,7 +27,11 @@ const OTHER = makeRefund({
   createdBy: 'admin.b',
   requestedAmount: 1250000,
   netCredit: 1250000,
-  originalAmount: 1500000
+  originalAmount: 1500000,
+  senderProcessingFee: 12000,
+  receiverProcessingFee: 0,
+  senderFeeReversal: 100,
+  receiverFeeReversal: 0
 })
 
 const rowOf = async (code: string): Promise<HTMLElement> => {
@@ -50,6 +54,9 @@ describe('danh sách hoàn tiền', () => {
     expect(within(row).getByText('Nguyễn Văn An')).toBeInTheDocument()
     expect(within(row).getAllByText('1.250.000 đ')).toHaveLength(2)
     expect(within(row).getByText('GD gốc 1.500.000 đ')).toBeInTheDocument()
+    expect(within(row).getByText('Bên chuyển 12.000 đ')).toBeInTheDocument()
+    expect(within(row).getAllByText('Bên nhận 0 đ')).toHaveLength(2)
+    expect(within(row).getByText('Bên chuyển 100 đ')).toBeInTheDocument()
     expect(within(row).getByText('Chờ duyệt')).toBeInTheDocument()
     expect(within(await rowOf('RF-OWN')).getByText('2')).toBeInTheDocument()
   })
@@ -58,9 +65,7 @@ describe('danh sách hoàn tiền', () => {
     const seen: string[] = []
     server.use(
       http.get('*/refunds', ({ request }) => {
-        seen.push(
-          new URL(request.url).searchParams.get('displayStatus') ?? ''
-        )
+        seen.push(new URL(request.url).searchParams.get('displayStatus') ?? '')
         return HttpResponse.json({ data: { content: [], totalElements: 0 } })
       })
     )

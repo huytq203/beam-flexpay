@@ -72,7 +72,7 @@ export const getColumn = ({
       dataIndex: 'no'
     },
     {
-      title: 'Khách hàng / Mã TK',
+      title: 'Khách hàng / Mã ví',
       align: 'left',
       width: 200,
       render: (_, record) => {
@@ -97,16 +97,14 @@ export const getColumn = ({
               )}
             </div>
 
-            {record.ownerId && (
+            {record.walletCode && (
               <div className='min-w-0 max-w-full'>
-                <TooltipComponent title={record.ownerId}>
                   <TypographyText
                     className='inline-flex max-w-full cursor-pointer items-center font-mono text-[11px]! text-muted-foreground!'
-                    copyable={{ text: record.ownerId }}
+                    copyable={{ text: record.walletCode }}
                   >
-                    <span className='truncate'>{record.ownerId}</span>
+                    <span className='truncate'>{record.walletCode}</span>
                   </TypographyText>
-                </TooltipComponent>
               </div>
             )}
           </div>

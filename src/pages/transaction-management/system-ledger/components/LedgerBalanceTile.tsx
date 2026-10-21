@@ -29,11 +29,6 @@ export const LedgerBalanceTile = ({
       <div className={TILE}>
         <span className={LABEL}>{TITLE}</span>
         <span className={cn(VALUE, 'text-muted-foreground')}>--</span>
-        {isFilteredByDirection && (
-          <span className='mt-0.5 block text-xs text-muted-foreground'>
-            Bỏ lọc chiều để so hai bên
-          </span>
-        )}
       </div>
     )
   }
@@ -47,9 +42,7 @@ export const LedgerBalanceTile = ({
         <span className={cn(VALUE, 'text-success-strong')}>
           {formatCurrency(0)}
         </span>
-        <span className='mt-0.5 block text-xs font-medium text-success-strong'>
-          Cân
-        </span>
+      
       </div>
     )
   }
@@ -63,9 +56,7 @@ export const LedgerBalanceTile = ({
       <span className={cn(VALUE, 'text-danger-strong')}>
         {formatCurrency(Math.abs(diff))}
       </span>
-      <span className='mt-0.5 block text-xs font-medium text-danger-strong'>
-        {diff > 0 ? 'Nợ lớn hơn Có' : 'Có lớn hơn Nợ'}, cần đối soát
-      </span>
+     
     </div>
   )
 }

@@ -48,41 +48,78 @@ describe('walletLimitFormSchema', () => {
       valid({ minPerTransaction: null, maxPerTransaction: 0 })
     )
     expect(errors.minPerTransaction).toBe(
-      'Số tiền tối thiểu/GD phải lớn hơn 0.'
+      'Số tiền tối thiểu mỗi giao dịch phải lớn hơn 0.'
     )
-    expect(errors.maxPerTransaction).toBe('Số tiền tối đa/GD phải lớn hơn 0.')
+    expect(errors.maxPerTransaction).toBe(
+      'Số tiền tối đa mỗi giao dịch phải lớn hơn 0.'
+    )
   })
 
-  it('kiểm thứ tự max >= min, ngày >= max, tháng >= ngày', () => {
+  it('kiểm thứ tự max >= min, ngày >= max', () => {
     const errors = errorsOf(
       valid({
         minPerTransaction: 60000,
         maxPerTransaction: 50000,
-        dailyMaximum: 40000,
-        normalMonthlyMaximum: 30000,
-        specialMonthlyMaximum: 10000
+        dailyMaximum: 40000
       })
     )
     expect(errors.maxPerTransaction).toBe(
-      'Tối đa/GD phải lớn hơn hoặc bằng tối thiểu/GD.'
+      'Số tiền tối đa mỗi giao dịch phải lớn hơn hoặc bằng số tiền tối thiểu.'
     )
     expect(errors.dailyMaximum).toBe(
-      'Hạn mức ngày phải lớn hơn hoặc bằng hạn mức tối đa/GD.'
+      'Hạn mức trong ngày phải lớn hơn hoặc bằng số tiền tối đa mỗi giao dịch.'
     )
-    expect(errors.normalMonthlyMaximum).toBe(
-      'Hạn mức tháng (thường) phải lớn hơn hoặc bằng hạn mức ngày.'
-    )
-    expect(errors.specialMonthlyMaximum).toContain('Hạn mức tháng (đặc biệt)')
+    expect(errors.normalMonthlyMaximum).toBeUndefined()
   })
 
-  it('khi ngày trống thì hai trần tháng so với max', () => {
+  it('trần tháng được nhỏ hơn trần ngày, đặc biệt = 0 để khóa nhóm', () => {
+    expect(
+      errorsOf(
+        valid({
+          dailyMaximum: 100000,
+          normalMonthlyMaximum: 60000,
+          specialMonthlyMaximum: 0
+        })
+      )
+    ).toEqual({})
+  })
+
+  it('ô tùy chọn nhập 0 thì báo phải lớn hơn 0, trừ tháng đặc biệt', () => {
     const errors = errorsOf(
-      valid({ dailyMaximum: null, normalMonthlyMaximum: 40000 })
+      valid({
+        dailyMaximum: 0,
+        normalMonthlyMaximum: 0,
+        walletBalanceMaximum: 0,
+        outflowDailyMaximum: 0,
+        outflowMonthlyMaximum: 0,
+        outboundMaxTimesPerDay: 0,
+        approvalThreshold: 0
+      })
     )
-    expect(errors.normalMonthlyMaximum).toBe(
-      'Hạn mức tháng (thường) phải lớn hơn hoặc bằng hạn mức tối đa/GD.'
+    expect(errors.dailyMaximum).toBe(
+      'Hạn mức trong ngày (theo loại giao dịch) phải lớn hơn 0.'
     )
-    expect(errors.dailyMaximum).toBeUndefined()
+    expect(errors.walletBalanceMaximum).toBe(
+      'Số dư tối đa được giữ trong ví phải lớn hơn 0.'
+    )
+    expect(errors.approvalThreshold).toBe(
+      'Ngưỡng duyệt lệnh rút phải lớn hơn 0.'
+    )
+    expect(Object.keys(errors)).not.toContain('specialMonthlyMaximum')
+  })
+
+  it('tổng chi tháng không được nhỏ hơn tổng chi ngày', () => {
+    const errors = errorsOf(
+      valid({ outflowDailyMaximum: 90000, outflowMonthlyMaximum: 80000 })
+    )
+    expect(errors.outflowMonthlyMaximum).toBe(
+      'Tổng tiền chi ra trong tháng không được nhỏ hơn tổng tiền chi ra trong ngày.'
+    )
+    expect(
+      errorsOf(
+        valid({ outflowDailyMaximum: 90000, outflowMonthlyMaximum: 90000 })
+      )
+    ).toEqual({})
   })
 
   it('hai trần tháng không bị ràng buộc với nhau', () => {
@@ -189,10 +226,10 @@ describe('walletLimitFormSchema', () => {
         schema
       )
       expect(errors.dailyMaximum).toBe(
-        'Không được bỏ trống Hạn mức ngày của cấu hình Hệ thống.'
+        'Không được bỏ trống Hạn mức trong ngày (theo loại giao dịch) của cấu hình Hệ thống.'
       )
       expect(errors.walletBalanceMaximum).toBe(
-        'Không được bỏ trống Số dư tối đa của ví của cấu hình Hệ thống.'
+        'Không được bỏ trống Số dư tối đa được giữ trong ví của cấu hình Hệ thống.'
       )
     })
 

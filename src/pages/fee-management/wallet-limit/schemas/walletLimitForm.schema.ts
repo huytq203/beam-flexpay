@@ -75,41 +75,63 @@ const validateTarget = (values: BaseValues, ctx: RefinementCtx) => {
   fail(ctx, ['targetId'], MISSING_TARGET_MESSAGE)
 }
 
-/** Thứ tự BE kiểm: `0 < min ≤ max ≤ ngày ≤ tháng` (hai trần tháng độc lập nhau). */
+/** Thứ tự BE kiểm: `0 < min ≤ max ≤ ngày`; hai trần tháng độc lập, không so với ngày. */
 const validateLimitOrder = (values: BaseValues, ctx: RefinementCtx) => {
   const { minPerTransaction: min, maxPerTransaction: max } = values
   const { dailyMaximum: daily } = values
   if (!isPositive(min)) {
-    fail(ctx, ['minPerTransaction'], 'Số tiền tối thiểu/GD phải lớn hơn 0.')
+    fail(
+      ctx,
+      ['minPerTransaction'],
+      'Số tiền tối thiểu mỗi giao dịch phải lớn hơn 0.'
+    )
   }
   if (!isPositive(max)) {
-    fail(ctx, ['maxPerTransaction'], 'Số tiền tối đa/GD phải lớn hơn 0.')
+    fail(
+      ctx,
+      ['maxPerTransaction'],
+      'Số tiền tối đa mỗi giao dịch phải lớn hơn 0.'
+    )
   } else if (isPositive(min) && max < min) {
     fail(
       ctx,
       ['maxPerTransaction'],
-      'Tối đa/GD phải lớn hơn hoặc bằng tối thiểu/GD.'
+      'Số tiền tối đa mỗi giao dịch phải lớn hơn hoặc bằng số tiền tối thiểu.'
     )
   }
   if (daily !== null && isPositive(max) && daily < max) {
     fail(
       ctx,
       ['dailyMaximum'],
-      'Hạn mức ngày phải lớn hơn hoặc bằng hạn mức tối đa/GD.'
+      'Hạn mức trong ngày phải lớn hơn hoặc bằng số tiền tối đa mỗi giao dịch.'
     )
   }
-  const floor = daily ?? max
-  const floorName = daily === null ? 'hạn mức tối đa/GD' : 'hạn mức ngày'
-  const monthlyKeys = ['normalMonthlyMaximum', 'specialMonthlyMaximum'] as const
-  monthlyKeys.forEach((key) => {
-    const value = values[key]
-    if (value === null || floor === null || value >= floor) return
+}
+
+/** Ô tùy chọn: để trống được, có số thì phải > 0 (riêng tháng đặc biệt cho phép 0 để khóa nhóm). */
+const POSITIVE_WHEN_FILLED = [
+  'dailyMaximum',
+  'normalMonthlyMaximum',
+  'walletBalanceMaximum',
+  'outflowDailyMaximum',
+  'outflowMonthlyMaximum',
+  'outboundMaxTimesPerDay',
+  'approvalThreshold'
+] as const satisfies readonly LimitFieldKey[]
+
+const validateOptionalLimits = (values: BaseValues, ctx: RefinementCtx) => {
+  POSITIVE_WHEN_FILLED.forEach((key) => {
+    if (values[key] !== 0) return
+    fail(ctx, [key], `${LIMIT_FIELD_LABELS[key]} phải lớn hơn 0.`)
+  })
+  const { outflowDailyMaximum: daily, outflowMonthlyMaximum: monthly } = values
+  if (daily !== null && monthly !== null && monthly < daily) {
     fail(
       ctx,
-      [key],
-      `${LIMIT_FIELD_LABELS[key]} phải lớn hơn hoặc bằng ${floorName}.`
+      ['outflowMonthlyMaximum'],
+      'Tổng tiền chi ra trong tháng không được nhỏ hơn tổng tiền chi ra trong ngày.'
     )
-  })
+  }
 }
 
 const validateRequiredKeys = (
@@ -184,6 +206,7 @@ export const createWalletLimitFormSchema = ({
   baseSchema.superRefine((values, ctx) => {
     validateTarget(values, ctx)
     validateLimitOrder(values, ctx)
+    validateOptionalLimits(values, ctx)
     validateRequiredKeys(values, requiredKeys, ctx)
     values.bankOverrides.forEach((row, index) =>
       validateOverride(row, index, ctx)

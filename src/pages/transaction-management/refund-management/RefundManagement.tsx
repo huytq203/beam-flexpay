@@ -60,15 +60,6 @@ const RefundManagement = () => {
 
   return (
     <main className='flex min-w-0 flex-col gap-3'>
-      <header>
-        <h1 className='font-display text-2xl font-extrabold text-foreground'>
-          Quản lý hoàn tiền
-        </h1>
-        <p className='text-sm text-muted-foreground'>
-          Duyệt, từ chối và theo dõi yêu cầu hoàn tiền. Người tạo yêu cầu không
-          được tự duyệt hoặc từ chối yêu cầu của mình.
-        </p>
-      </header>
       <CardComponent className='border border-border bg-background shadow-none'>
         <header className='mb-4 flex items-center gap-2 border-b border-border pb-3'>
           <FunnelIcon
