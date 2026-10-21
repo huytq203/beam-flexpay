@@ -6,15 +6,11 @@ import {
 } from '../constants/feeComponentParties'
 
 describe('nhãn người chịu phí theo loại giao dịch', () => {
-  it('rút tiền ví: giá trị USER/SENDER hiển thị là Người nhận', () => {
-    expect(getPayerLabel('USER', 'EWALLET_WITHDRAWAL')).toBe('Người nhận')
-    expect(getPayerLabel('SENDER', 'EWALLET_WITHDRAWAL')).toBe('Người nhận')
-  })
-
-  it('ô chọn của rút tiền giữ value USER nhưng nhãn là Người nhận', () => {
+  it('rút tiền ví: giữ nhãn gốc, USER là Người chuyển', () => {
+    expect(getPayerLabel('USER', 'EWALLET_WITHDRAWAL')).toBe('Người chuyển')
     expect(getPayerTypeOptions('EWALLET_WITHDRAWAL')).toContainEqual({
       value: 'USER',
-      label: 'Người nhận'
+      label: 'Người chuyển'
     })
   })
 
@@ -35,15 +31,6 @@ describe('nhãn người chịu phí theo loại giao dịch', () => {
     )
     expect(getPayerLabel('UNKNOWN_PAYER')).toBe('UNKNOWN_PAYER')
   })
-
-  it('hoàn tiền ví: giá trị USER/SENDER cũng hiển thị là Người nhận', () => {
-    expect(getPayerLabel('USER', 'EWALLET_REFUND')).toBe('Người nhận')
-    expect(getPayerLabel('SENDER', 'EWALLET_REFUND')).toBe('Người nhận')
-    expect(getPayerTypeOptions('EWALLET_REFUND')).toContainEqual({
-      value: 'USER',
-      label: 'Người nhận'
-    })
-  })
 })
 
 describe('người chịu phí đầu ra sửa được trên hộp thoại', () => {
@@ -54,9 +41,10 @@ describe('người chịu phí đầu ra sửa được trên hộp thoại', ()
     ])
   })
 
-  it('bỏ payer trùng nhãn: rút tiền gọi cả USER lẫn RECEIVER là Người nhận', () => {
+  it('rút tiền ví: cho chọn cả Người chuyển lẫn Người nhận', () => {
     expect(getOutputPayerOptions('EWALLET_WITHDRAWAL')).toEqual([
-      { value: 'USER', label: 'Người nhận' }
+      { value: 'USER', label: 'Người chuyển' },
+      { value: 'RECEIVER', label: 'Người nhận' }
     ])
   })
 

@@ -18,7 +18,7 @@ interface FeeComponentReadoutProps {
   component: FeeComponentFormValues
   /** Ẩn ô "Tính trên" khi nơi dùng đã có dòng công thức riêng nêu cơ sở tính. */
   hideBasis?: boolean
-  /** Loại giao dịch của chính sách; quyết định nhãn bên chịu phí (vd. rút tiền gọi là Người nhận). */
+  /** Loại giao dịch của chính sách; quyết định nhãn bên chịu phí. */
   serviceType?: string
 }
 
@@ -69,7 +69,12 @@ export const FeeComponentReadout = ({
             component.calculationMethod
           }
         />
-        {!hideBasis && <Fact label='Tính trên' value={basis} />}
+        {!hideBasis && (
+          <Fact
+            label='Tính trên'
+            value={basis}
+          />
+        )}
         <Fact
           label='Người chịu phí'
           value={getPayerLabel(component.payerType, serviceType)}
@@ -81,9 +86,20 @@ export const FeeComponentReadout = ({
             BENEFICIARY_TYPE_LABEL
           )}
         />
-        {!tiered && <Fact label='Mức phí' value={describeFormula(component)} />}
-        <Fact label='Sàn' value={formatFeeLimit(component.minFee)} />
-        <Fact label='Trần' value={formatFeeLimit(component.maxFee)} />
+        {!tiered && (
+          <Fact
+            label='Mức phí'
+            value={describeFormula(component)}
+          />
+        )}
+        <Fact
+          label='Sàn'
+          value={formatFeeLimit(component.minFee)}
+        />
+        <Fact
+          label='Trần'
+          value={formatFeeLimit(component.maxFee)}
+        />
       </div>
 
       {tiered && (
@@ -98,7 +114,10 @@ export const FeeComponentReadout = ({
             </thead>
             <tbody>
               {component.tiers.map((tier, index) => (
-                <tr key={index} className='border-t border-border'>
+                <tr
+                  key={index}
+                  className='border-t border-border'
+                >
                   <td className='whitespace-nowrap px-3 py-2 text-[13px] tabular-nums text-foreground'>
                     {formatTierRange(
                       getTierStart(component.tiers, index),
@@ -115,7 +134,8 @@ export const FeeComponentReadout = ({
                     })}
                   </td>
                   <td className='px-3 py-2 text-[13px] tabular-nums text-muted-foreground'>
-                    {formatFeeLimit(tier.minFee)} · {formatFeeLimit(tier.maxFee)}
+                    {formatFeeLimit(tier.minFee)} ·{' '}
+                    {formatFeeLimit(tier.maxFee)}
                   </td>
                 </tr>
               ))}

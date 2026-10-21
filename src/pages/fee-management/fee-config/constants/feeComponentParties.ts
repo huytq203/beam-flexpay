@@ -32,29 +32,11 @@ const WALLET_FLOW_SERVICES: readonly string[] = [
   'EWALLET_TRANSFER_INTERNAL'
 ]
 
-/**
- * Nhãn riêng theo loại giao dịch, chỉ để HIỂN THỊ — giá trị gửi backend không đổi.
- * Rút tiền và hoàn tiền: phí trừ vào số tiền bên nhận nhận được (rút 1.000.000 thì
- * ngân hàng nhận 999.000, phí 1.000), nên người vận hành gọi bên chịu phí là
- * "Người nhận" dù backend vẫn lưu `USER`/`SENDER`.
- */
-const SERVICE_PAYER_LABEL: Readonly<
-  Record<string, Readonly<Record<string, string>>>
-> = {
-  EWALLET_WITHDRAWAL: { USER: 'Người nhận', SENDER: 'Người nhận' },
-  // Hoàn tiền: phí trừ vào số tiền khách thực nhận được hoàn về.
-  EWALLET_REFUND: { USER: 'Người nhận', SENDER: 'Người nhận' }
-}
-
 /** Nhãn người chịu phí của một thành phần, theo đúng loại giao dịch của chính sách. */
 export const getPayerLabel = (
   payerType: string,
   serviceType?: string | null
 ): string => {
-  const override = serviceType
-    ? SERVICE_PAYER_LABEL[serviceType]?.[payerType]
-    : undefined
-  if (override) return override
   const labels =
     serviceType && WALLET_FLOW_SERVICES.includes(serviceType)
       ? { ...PAYER_TYPE_LABEL, ...WALLET_FLOW_PAYER_LABEL }
