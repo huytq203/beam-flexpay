@@ -2,8 +2,7 @@ import type {
   TransactionFeeDetail,
   TransactionProfit
 } from '@type/apiResponseJournal'
-
-export type FeeBearer = 'SENDER' | 'RECEIVER' | 'BOTH'
+import type { FeeBearer } from '@utils/transaction-flow'
 
 /** Phần chung giữa cấu phần của fee service và breakdown cũ của profit. */
 interface FeePart {

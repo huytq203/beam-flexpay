@@ -64,7 +64,7 @@ const HistoryPayment = ({ partyId }: Props) => {
     setPage(1)
   }
 
-  const column = getColumn()
+  const column = getColumn(partyId)
   return (
     <div className='space-y-3!'>
 

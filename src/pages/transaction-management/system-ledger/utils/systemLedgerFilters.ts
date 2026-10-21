@@ -1,4 +1,4 @@
-import type { FormSearchValues } from '../types/SystemLedger.type'
+import type { FormSearchValues } from '@type/systemLedger'
 
 export const LEDGER_FILTER_KEYS = [
   'keyword',

@@ -116,7 +116,7 @@ export const OwnerTypeLabels: Record<string, string> = {
  * mất dữ liệu khi không thấy giao dịch đang chờ hoặc đã hỏng.
  */
 export const LEDGER_POSTED_ONLY_NOTE =
-  'Sổ cái chỉ ghi bút toán đã hạch toán thành công. Giao dịch đang chờ, thất bại hoặc đã huỷ không có ở đây — đối chiếu những giao dịch đó ở màn Quản lý giao dịch.'
+  'Sổ cái chỉ ghi bút toán đã hạch toán thành công. Giao dịch đang chờ, thất bại hoặc đã huỷ không có ở đây, hãy đối chiếu ở màn Quản lý giao dịch.'
 
 /**
  * Vai trò của dòng trong bút toán chuyển tiền ví → ví. wallet-core không trả vai

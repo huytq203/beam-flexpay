@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom"
-import { useGetLedgerEntryByIdQuery } from "../services/apiSystemLedger"
+import { useGetLedgerEntryByIdQuery } from '@services/apiSystemLedger'
 
 const useDetailSystemLedger = () => {
   const { id } = useParams<{ id: string }>()

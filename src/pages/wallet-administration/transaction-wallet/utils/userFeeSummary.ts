@@ -4,10 +4,12 @@ import type {
   UnifiedContentJournal
 } from '@type/apiResponseJournal'
 import {
-  sideFeeFormulas,
-  totalFeeFormula,
+  resolveAmounts,
+  resolveBearer,
+  type FeeAmounts,
   type FeeBearer
-} from './userFeeFormula'
+} from '@utils/transaction-flow'
+import { sideFeeFormulas, totalFeeFormula } from './userFeeFormula'
 
 export type UserFeeKind = 'DEPOSIT' | 'WITHDRAWAL' | 'TRANSFER' | 'OTHER'
 
@@ -38,52 +40,6 @@ const BEARER_LABEL: Readonly<Record<FeeBearer, string>> = {
   SENDER: 'Người chuyển chịu phí',
   RECEIVER: 'Người nhận chịu phí',
   BOTH: 'Cả hai chịu phí'
-}
-
-const resolveBearer = (
-  feeBearer: string | null | undefined,
-  kind: UserFeeKind
-): FeeBearer => {
-  if (feeBearer === 'SENDER' || feeBearer === 'RECEIVER') return feeBearer
-  if (feeBearer === 'BOTH') return 'BOTH'
-  return kind === 'WITHDRAWAL' ? 'RECEIVER' : 'SENDER'
-}
-
-interface FeeAmounts {
-  principal: number
-  senderFee: number
-  receiverFee: number
-  /** Số bị trừ ở nguồn tiền (ví người chuyển / bank khi nạp / ví khi rút). */
-  debited: number
-  /** Số thực đến đích (ví người nhận / ví khi nạp / bank khi rút). */
-  credited: number
-}
-
-const resolveAmounts = (
-  data: UnifiedContentJournal,
-  bearer: FeeBearer
-): FeeAmounts => {
-  const fee = data.feeAmount
-  const senderFee =
-    bearer === 'BOTH'
-      ? (data.senderFeeAmount ?? 0)
-      : bearer === 'SENDER'
-        ? fee
-        : 0
-  const receiverFee =
-    bearer === 'BOTH'
-      ? (data.receiverFeeAmount ?? 0)
-      : bearer === 'RECEIVER'
-        ? fee
-        : 0
-  const principal = data.grossAmount - senderFee
-  return {
-    principal,
-    senderFee,
-    receiverFee,
-    debited: principal + senderFee,
-    credited: principal - receiverFee
-  }
 }
 
 const transferRows = (
@@ -162,7 +118,7 @@ export const buildUserFeeSummary = (
   feeDetail?: TransactionFeeDetail | null
 ): UserFeeSummary => {
   const kind = KIND_BY_TYPE[data.transactionType] ?? 'OTHER'
-  const bearer = resolveBearer(data.feeBearer, kind)
+  const bearer = resolveBearer(data.feeBearer, data.transactionType)
   const amounts = resolveAmounts(data, bearer)
   const base = { kind, mismatch: amounts.credited !== data.amount }
   const formulaInput = { profit, feeDetail, currency: data.currency ?? 'VND' }

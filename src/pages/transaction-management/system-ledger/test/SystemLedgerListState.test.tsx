@@ -11,7 +11,7 @@ const STORAGE_KEY = `${LIST_STATE_PREFIX}${ROUTE}`
 
 const mocks = vi.hoisted(() => ({ getLedgerEntries: vi.fn() }))
 
-vi.mock('../services/apiSystemLedger', () => ({
+vi.mock('@services/apiSystemLedger', () => ({
   useGetLedgerEntriesQuery: (params: unknown) => {
     mocks.getLedgerEntries(params)
     return {

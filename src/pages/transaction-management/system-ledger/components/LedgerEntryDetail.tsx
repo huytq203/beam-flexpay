@@ -1,4 +1,3 @@
-import { TooltipComponent } from '@components/index'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { formatCurrency } from '@utils/formatNumber'
 import dayjs from 'dayjs'
@@ -12,7 +11,7 @@ import {
   type DirectionKey,
   type LedgerTransactionTypeKey
 } from '../constants/SystemLedger.constant'
-import { LedgerEntry } from '../types/SystemLedger.type'
+import { LedgerEntry } from '@type/systemLedger'
 
 interface RowProps {
   label: string
@@ -21,7 +20,7 @@ interface RowProps {
 
 const Row = ({ label, children }: RowProps) => (
   <div className='flex justify-between gap-3'>
-    <span className='text-gray-500'>{label}:</span>
+    <span className='text-muted-foreground'>{label}:</span>
     {children}
   </div>
 )
@@ -32,23 +31,14 @@ interface PanelProps {
 }
 
 const Panel = ({ title, children }: PanelProps) => (
-  <section className='bg-white p-3 rounded-sm border border-border'>
-    <h4 className='font-bold text-[12px] mb-2 text-gray-700'>{title}</h4>
-    <div className='space-y-1 text-[12px]'>{children}</div>
+  <section className='rounded-lg border border-border bg-background p-3'>
+    <h4 className='mb-2 text-xs font-semibold'>{title}</h4>
+    <div className='space-y-1 text-xs'>{children}</div>
   </section>
-)
-
-const TruncatedHash = ({ value }: { value: string }) => (
-  <TooltipComponent title={value}>
-    <span className='font-mono text-[10px] tabular-nums'>
-      {value.substring(0, 20)}…
-    </span>
-  </TooltipComponent>
 )
 
 /** Ba khối của một dòng sổ cái: giao dịch nguồn, tài khoản, và chính bút toán. */
 export const LedgerEntryDetail = ({ record }: { record: LedgerEntry }) => {
-  const isCredit = record.direction === 'CREDIT'
   const ownerUsername = record.account?.ownerUsername
   const ownerLabel = ownerUsername
     ? ownerUsername === 'SYSTEM'
@@ -57,7 +47,7 @@ export const LedgerEntryDetail = ({ record }: { record: LedgerEntry }) => {
     : '--'
 
   return (
-    <div className='bg-gray-50 p-4 rounded-md'>
+    <div className='rounded-lg bg-muted p-4'>
       <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
         <Panel title='Chi tiết giao dịch'>
           <Row label='Mã giao dịch'>
@@ -74,7 +64,9 @@ export const LedgerEntryDetail = ({ record }: { record: LedgerEntry }) => {
             <span className='font-medium'>
               {LedgerTransactionType[
                 record.transactionType as LedgerTransactionTypeKey
-              ] ?? record.transactionType ?? '--'}
+              ] ??
+                record.transactionType ??
+                '--'}
             </span>
           </Row>
           <Row label='Tổng tiền'>
@@ -88,7 +80,7 @@ export const LedgerEntryDetail = ({ record }: { record: LedgerEntry }) => {
             </span>
           </Row>
           <Row label='Phí'>
-            <span className='font-medium tabular-nums text-red-600'>
+            <span className='font-medium tabular-nums'>
               {formatCurrency(record.transaction?.feeAmount)}
             </span>
           </Row>
@@ -136,7 +128,7 @@ export const LedgerEntryDetail = ({ record }: { record: LedgerEntry }) => {
                 {OwnerTypeLabels[record.account?.ownerType] ??
                   record.account?.ownerType}
               </span>
-              <span className='font-medium text-gray-400'>
+              <span className='text-muted-foreground'>
                 {record.account?.glCode}
               </span>
             </span>
@@ -145,7 +137,7 @@ export const LedgerEntryDetail = ({ record }: { record: LedgerEntry }) => {
             <span className='font-medium'>{ownerLabel}</span>
           </Row>
           <Row label='Số dư hiện tại'>
-            <span className='font-bold tabular-nums text-green-600'>
+            <span className='font-bold tabular-nums'>
               {formatCurrency(record.account?.balance)}
             </span>
           </Row>
@@ -166,7 +158,7 @@ export const LedgerEntryDetail = ({ record }: { record: LedgerEntry }) => {
           </Row>
           <Row label='Trạng thái tài khoản'>
             <StatusBadge
-              className='text-[10px]'
+              className='text-xs'
               status={record.account?.status as StatusConstants}
             />
           </Row>
@@ -174,9 +166,7 @@ export const LedgerEntryDetail = ({ record }: { record: LedgerEntry }) => {
 
         <Panel title='Chi tiết bút toán'>
           <Row label='Chiều'>
-            <span
-              className={`font-bold ${isCredit ? 'text-green-600' : 'text-red-600'}`}
-            >
+            <span className='font-bold'>
               {DirectionShortLabel[record.direction as DirectionKey]} (
               {record.direction})
             </span>
@@ -187,7 +177,7 @@ export const LedgerEntryDetail = ({ record }: { record: LedgerEntry }) => {
             </span>
           </Row>
           <Row label='Số dư sau'>
-            <span className='font-bold tabular-nums text-blue-600'>
+            <span className='font-bold tabular-nums'>
               {formatCurrency(record.balanceAfter)}
             </span>
           </Row>
@@ -202,9 +192,8 @@ export const LedgerEntryDetail = ({ record }: { record: LedgerEntry }) => {
             </span>
           </Row>
           <Row label='Mã bút toán'>
-            <TruncatedHash value={record?.journalCode || '--'} />
+            <span className='font-medium'>{record.journalCode || '--'}</span>
           </Row>
-
         </Panel>
       </div>
     </div>

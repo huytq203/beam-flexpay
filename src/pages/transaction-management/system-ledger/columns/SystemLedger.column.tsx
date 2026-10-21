@@ -1,235 +1,168 @@
-import { ColumnsType } from 'antd/es/table'
-import { LedgerEntry } from '../types/SystemLedger.type'
+import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
-import { NavigateFunction } from 'react-router-dom'
 import { MaskText, TooltipComponent, TypographyText } from '@components/index'
-import { formatCurrency } from '@utils/formatNumber'
+import { formatNumber } from '@utils/formatNumber'
 import {
   DirectionConstants,
-  DirectionShortLabel,
   GLCodeLabels,
   LedgerTransactionType,
   getLedgerEntryRole,
-  type DirectionKey,
   type LedgerTransactionTypeKey
 } from '../constants/SystemLedger.constant'
+import type { LedgerRow } from '../utils/groupLedgerByJournal'
 
-const getSystemLedgerColumn = ({
-  navigate: _navigate
-}: {
-  navigate: NavigateFunction
-}): ColumnsType<LedgerEntry> => [
+const EMPTY = <span className='text-muted-foreground'>--</span>
+
+const renderTransaction = (record: LedgerRow) => {
+  if (!record.isJournalStart) return null
+  const code = record.transaction?.transactionCode
+  if (!code) return EMPTY
+  const id = record.transaction?.id
+  const type = record.transactionType
+
+  return (
+    <div className='flex flex-col gap-0.5'>
+      <span className='font-semibold text-foreground'>{code}</span>
+      {type && (
+        <span className='text-xs text-secondary-foreground'>
+          {LedgerTransactionType[type as LedgerTransactionTypeKey] ?? type}
+        </span>
+      )}
+      {id && (
+        <TooltipComponent title={id}>
+          <span className='inline-flex max-w-45 items-center gap-1 text-xs text-muted-foreground'>
+            <span className='truncate'>{id}</span>
+            <TypographyText copyable={{ text: id }} />
+          </span>
+        </TooltipComponent>
+      )}
+    </div>
+  )
+}
+
+const renderJournalCode = (record: LedgerRow) => {
+  if (!record.isJournalStart) return null
+  const value = record.journalCode
+  if (!value) return EMPTY
+  return (
+    <span className='inline-flex items-center gap-1 font-medium whitespace-nowrap'>
+      {value}
+      <TypographyText copyable={{ text: value }} />
+    </span>
+  )
+}
+
+const renderAccount = (record: LedgerRow) => {
+  if (record.account?.ownerType === 'SYSTEM') {
+    return <span className='font-semibold'>Hệ thống</span>
+  }
+  const username = record.account?.ownerUsername
+  if (!username) return EMPTY
+  // BE có lúc đã che sẵn; che thêm lần nữa sẽ làm hỏng chuỗi.
+  if (username.includes('*')) {
+    return <span className='font-medium tabular-nums'>{username}</span>
+  }
+  return (
+    <MaskText
+      value={username}
+      className='tabular-nums'
+    />
+  )
+}
+
+/** Một cột cho mỗi chiều, như sổ kế toán: không dấu +/-, không tô màu theo chiều. */
+const amountColumn = (
+  title: string,
+  direction: LedgerRow['direction']
+): ColumnsType<LedgerRow>[number] => ({
+  title,
+  key: direction,
+  align: 'right',
+  width: 140,
+  render: (_, record) =>
+    record.direction === direction ? (
+      <span className='font-semibold whitespace-nowrap tabular-nums'>
+        {formatNumber(record.amount)}
+      </span>
+    ) : null
+})
+
+export const systemLedgerColumns: ColumnsType<LedgerRow> = [
+  { title: '#', dataIndex: 'no', align: 'center', width: 50 },
   {
-    title: '#',
-    dataIndex: 'no',
-    align: 'center',
-    width: 50
-  },
-  {
-    title: 'Mã giao dịch',
-    align: 'left',
+    title: 'Giao dịch',
+    key: 'transaction',
     width: 200,
-    dataIndex: 'transaction',
-    render(value, record) {
-      const code = record.transaction?.transactionCode
-      return code ? (
-        <div className='flex flex-col gap-1 '>
-          <TypographyText
-            strong
-            className=' font-medium cursor-pointer'
-          >
-            {code}
-          </TypographyText>
-          {record.transactionType && (
-            <span className='text-[12px] text-cyan-700'>
-              {LedgerTransactionType[
-                record.transactionType as LedgerTransactionTypeKey
-              ] ?? record.transactionType}
-            </span>
-          )}
-          <TooltipComponent title={value?.id}>
-            <span className='inline-flex items-center gap-1 max-w-[180px]'>
-              <span className='truncate max-w-[150px] text-gray-500 text-[12px]'>
-                {value?.id}
-              </span>
-              <TypographyText copyable={{ text: value?.id }} />
-            </span>
-          </TooltipComponent>
-        </div>
-      ) : (
-        <span>--</span>
-      )
-    }
+    render: (_, record) => renderTransaction(record)
   },
   {
     title: 'Mã bút toán',
-    align: 'left',
-    width: 180,
-    dataIndex: 'journalCode',
-    render(value: string | null | undefined) {
-      if (!value) return <span>--</span>
-      return (
-        <TooltipComponent title={value}>
-          <span className='inline-flex items-center gap-1 max-w-[170px]'>
-            <span className='truncate max-w-[140px] font-medium'>{value}</span>
-            <TypographyText copyable={{ text: value }} />
-          </span>
-        </TooltipComponent>
-      )
-    }
+    key: 'journalCode',
+    width: 190,
+    render: (_, record) => renderJournalCode(record)
   },
-  // {
-  //   title: 'Mã tài khoản (Ví)',
-  //   align: 'left',
-  //   dataIndex: 'account',
-  //   width: 200,
-  //   render(value) {
-  //     return (
-  //       <TooltipComponent title={value?.id}>
-  //         {/* <CopyableText
-  //                       value={record.id}
-  //                       className=" flex max-w-[200px] font-medium cursor-pointer truncate"
-  //                   /> */}
-  //         <TypographyText
-  //           copyable
-  //           strong
-  //           ellipsis={{ tooltip: false }}
-  //           className='font-medium cursor-pointer max-w-[200px] inline-block'
-  //         >
-  //           {value?.id}
-  //         </TypographyText>
-  //       </TooltipComponent>
-  //     )
-  //   }
-  // },
   {
     title: 'Vai trò',
-    align: 'left',
-    width: 150,
+    key: 'role',
+    width: 130,
     render(_, record) {
       const role = getLedgerEntryRole(record)
-      return role ? (
-        <span className='rounded border border-gray-200 px-2 py-0.5 text-[12px] whitespace-nowrap'>
+      if (!role) return EMPTY
+      return (
+        <span className='rounded-sm border border-border px-2 py-0.5 text-xs whitespace-nowrap'>
           {role}
         </span>
-      ) : (
-        <span>--</span>
       )
     }
   },
   {
     title: 'Tài khoản (Ví)',
-    align: 'left',
-    width: 160,
-    render(_, record) {
-      const username = record.account?.ownerUsername
-      const isSystem = record.account?.ownerType === 'SYSTEM'
-      const isAlreadyMasked = username?.includes('*')
-
-      if (isSystem) {
-        return (
-          <span className='font-semibold text-gray-800 text-center'>
-            Hệ thống
-          </span>
-        )
-      }
-
-      if (!username)
-        return <span className='font-semibold text-gray-800'>--</span>
-
-      return (
-        <div className='flex items-center'>
-          {isAlreadyMasked ? (
-            <span className='font-semibold text-gray-800'>{username}</span>
-          ) : (
-            <MaskText value={username} />
-          )}
-        </div>
-      )
-    }
+    key: 'account',
+    width: 150,
+    render: (_, record) => renderAccount(record)
   },
   {
     title: 'Loại tài khoản',
-    align: 'left',
-    width: 200,
+    key: 'glCode',
+    width: 220,
     render(_, record) {
       const ownerType = record.account?.ownerType
       const glCode = record.account?.glCode
       return (
-        <div className='flex flex-col gap-0.5'>
-          <span className='font-medium text-gray-800 text-[12px]'>
+        <div className='flex flex-col gap-0.5 text-xs'>
+          <span className='font-medium'>
             {(glCode && GLCodeLabels[glCode]) ?? ownerType ?? '--'}
           </span>
-          <span className='text-gray-400 text-[12px]'>
+          <span className='text-muted-foreground'>
             {[ownerType, glCode].filter(Boolean).join(' · ')}
           </span>
         </div>
       )
     }
   },
+  amountColumn('Nợ (₫)', DirectionConstants.DEBIT),
+  amountColumn('Có (₫)', DirectionConstants.CREDIT),
   {
-    // Nhãn kế toán, khớp với cột "Chiều" trong file CSV — màn hình và file phải
-    // nói cùng một thứ tiếng.
-    title: 'Ghi nợ / Có',
-    dataIndex: 'direction',
-    align: 'center',
-    width: 110,
-    render(value: string) {
-      const isCredit = value === DirectionConstants.CREDIT
-      return (
-        <span
-          className={` font-semibold ${isCredit ? 'text-green-500' : 'text-red-500'}`}
-        >
-          {DirectionShortLabel[value as DirectionKey] ?? value}
-        </span>
-      )
-    }
-  },
-  {
-    title: 'Số tiền',
-    dataIndex: 'amount',
-    align: 'right',
-    width: 130,
-    render(value, record) {
-      const isCredit = record.direction === DirectionConstants.CREDIT
-      return (
-        <span
-          className={`font-bold ${isCredit ? 'text-green-600' : 'text-red-500'}`}
-        >
-          {isCredit ? '+' : '-'}
-          {formatCurrency(value)}
-        </span>
-      )
-    }
-  },
-  {
-    title: 'Số dư sau GD',
+    title: 'Số dư sau GD (₫)',
     dataIndex: 'balanceAfter',
     align: 'right',
-    width: 130,
-    render(value) {
-      return (
-        <span className='text-gray-700 font-medium'>
-          {formatCurrency(value)}
-        </span>
-      )
-    }
+    width: 150,
+    render: (value: number) => (
+      <span className='whitespace-nowrap tabular-nums'>
+        {formatNumber(value)}
+      </span>
+    )
   },
   // Không có cột Trạng thái: dòng sổ cái chỉ sinh ra khi bút toán đã hạch toán
-  // thành công, nên cột này luôn mang đúng một giá trị. Nó từng rơi về trạng
-  // thái TÀI KHOẢN khi giao dịch không có trạng thái — hai thứ khác hẳn nhau.
+  // thành công, nên cột này luôn mang đúng một giá trị.
   {
     title: 'Thời gian ghi sổ',
-    align: 'center',
-    width: 170,
-    render(_, record) {
-      return (
-        <span className='text-gray-600 text-[12px]'>
-          {dayjs(record.createdAt).format('DD/MM/YYYY HH:mm:ss')}
-        </span>
-      )
-    }
+    key: 'createdAt',
+    width: 160,
+    render: (_, record) => (
+      <span className='text-xs whitespace-nowrap text-muted-foreground tabular-nums'>
+        {dayjs(record.createdAt).format('DD/MM/YYYY HH:mm:ss')}
+      </span>
+    )
   }
 ]
-
-export default getSystemLedgerColumn

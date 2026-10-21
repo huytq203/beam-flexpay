@@ -8,6 +8,7 @@ import { BankEnum, BankLabel } from '../constants/bank.constant'
 import { UnifiedContentJournal } from '@/app/types/apiResponseJournal'
 import { formatNumber } from '@/app/utils'
 import { cn } from '@/app/utils/cn'
+import { buildTransactionFlow } from '@utils/transaction-flow'
 
 interface ColumnProps {
     onViewDetail: (id: string) => Promise<void>
@@ -77,31 +78,46 @@ const getColumn = ({ onViewDetail, isDetailLoading, loadingId }: ColumnProps): C
         align: 'right',
         render(_, record) {
             return (
-                <div className="text-right font-medium text-red-600">
-                    <p>-{formatNumber(record.amount)} {record.currency}</p>
-                </div>
+                <span className="whitespace-nowrap font-medium tabular-nums">
+                    {formatNumber(buildTransactionFlow(record).principal)} {record.currency}
+                </span>
             )
         },
     },
     {
-        title: 'Phí',
+        title: 'Phí người nhận',
         align: 'right',
         render(_, record) {
             return (
-                <div className="text-right text-gray-500">
-                    <p>{formatNumber(record.feeAmount)} {record.currency}</p>
-                </div>
+                <span className="whitespace-nowrap font-medium tabular-nums amount-negative">
+                    {formatNumber(buildTransactionFlow(record).receiverFee)} {record.currency}
+                </span>
             )
         },
     },
     {
-        title: 'Tổng',
+        title: 'Tổng tiền trừ ví',
         align: 'right',
         render(_, record) {
+            const walletDebit = buildTransactionFlow(record).totals?.walletDebit ?? 0
             return (
-                <div className="text-right font-bold text-red-600">
-                    <p>-{formatNumber(record.grossAmount)} {record.currency}</p>
-                </div>
+                <span className="whitespace-nowrap font-medium tabular-nums amount-negative">
+                    -{formatNumber(walletDebit)} {record.currency}
+                </span>
+            )
+        },
+    },
+    {
+        title: 'Tổng tiền cộng bank',
+        align: 'right',
+        render(_, record) {
+            // Chỉ có tiền về bank khi lệnh đã thành công; lệnh chờ/thất bại hiện "—".
+            if (record.status !== StatusKey.POSTED) return <span className="text-gray-500">—</span>
+            const bankCredit = buildTransactionFlow(record).totals?.bankCredit ?? 0
+            return (
+                <span className="whitespace-nowrap font-medium tabular-nums amount-positive">
+                    +{formatNumber(bankCredit)} {record.currency}
+                </span>
             )
         },
     },

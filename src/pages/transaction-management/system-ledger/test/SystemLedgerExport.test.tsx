@@ -11,7 +11,7 @@ const mocks = vi.hoisted(() => ({
   totalElements: 42
 }))
 
-vi.mock('../services/apiSystemLedger', () => ({
+vi.mock('@services/apiSystemLedger', () => ({
   useGetLedgerEntriesQuery: (params: unknown) => {
     mocks.getLedgerEntries(params)
 
@@ -101,11 +101,11 @@ describe('Sổ cái — xuất CSV', () => {
     const user = userEvent.setup()
     renderScreen()
 
+    await user.type(screen.getByLabelText(/Chủ tài khoản/), '  0962341913  ')
     await user.type(
-      screen.getByLabelText(/Chủ tài khoản/),
-      '  0962341913  '
+      screen.getByLabelText(/Mã tài khoản kế toán/),
+      'USER_WALLET_VND'
     )
-    await user.type(screen.getByLabelText(/Mã tài khoản kế toán/), 'USER_WALLET_VND')
     await user.click(screen.getByRole('button', { name: /Tìm kiếm/ }))
 
     await user.click(screen.getByRole('button', { name: /Xuất CSV/i }))

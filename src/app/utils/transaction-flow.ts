@@ -1,0 +1,170 @@
+import type { UnifiedContentJournal } from '@type/apiResponseJournal'
+
+export type FeeBearer = 'SENDER' | 'RECEIVER' | 'BOTH'
+
+type FeeSource = Pick<
+  UnifiedContentJournal,
+  | 'amount'
+  | 'feeAmount'
+  | 'grossAmount'
+  | 'senderFeeAmount'
+  | 'receiverFeeAmount'
+>
+
+type FlowSource = FeeSource &
+  Pick<UnifiedContentJournal, 'feeBearer' | 'transactionType'>
+
+export interface FeeAmounts {
+  principal: number
+  senderFee: number
+  receiverFee: number
+  /** Số bị trừ ở nguồn tiền (ví người chuyển / bank khi nạp / ví khi rút). */
+  debited: number
+  /** Số thực đến đích (ví người nhận / ví khi nạp / bank khi rút). */
+  credited: number
+}
+
+/** Thiếu `feeBearer` thì suy theo loại: rút tiền do phía nhận chịu, còn lại người chuyển chịu. */
+export const resolveBearer = (
+  feeBearer: string | null | undefined,
+  transactionType: string
+): FeeBearer => {
+  if (
+    feeBearer === 'SENDER' ||
+    feeBearer === 'RECEIVER' ||
+    feeBearer === 'BOTH'
+  ) {
+    return feeBearer
+  }
+  return transactionType === 'CASH_OUT' ? 'RECEIVER' : 'SENDER'
+}
+
+/** `grossAmount` là số bị trừ ở nguồn nên gốc giao dịch = gross − phí người chuyển. */
+export const resolveAmounts = (
+  data: FeeSource,
+  bearer: FeeBearer
+): FeeAmounts => {
+  const fee = data.feeAmount
+  const senderFee =
+    bearer === 'BOTH'
+      ? (data.senderFeeAmount ?? 0)
+      : bearer === 'SENDER'
+        ? fee
+        : 0
+  const receiverFee =
+    bearer === 'BOTH'
+      ? (data.receiverFeeAmount ?? 0)
+      : bearer === 'RECEIVER'
+        ? fee
+        : 0
+  const principal = data.grossAmount - senderFee
+  return {
+    principal,
+    senderFee,
+    receiverFee,
+    debited: principal + senderFee,
+    credited: principal - receiverFee
+  }
+}
+
+type FlowEndpoint = 'WALLET' | 'BANK'
+
+interface FlowRoute {
+  debited?: FlowEndpoint
+  credited?: FlowEndpoint
+}
+
+/**
+ * Theo bảng nghiệp vụ "Lịch sử chung": chuyển tiền và thanh toán ví chỉ ghi phía ví bị trừ,
+ * không ghi phía nhận; hoàn tiền là tiền quay về ví khách.
+ */
+const FLOW_BY_TYPE: Readonly<Record<string, FlowRoute>> = {
+  CASH_IN: { debited: 'BANK', credited: 'WALLET' },
+  CASH_OUT: { debited: 'WALLET', credited: 'BANK' },
+  P2P_TRANSFER: { debited: 'WALLET' },
+  MERCHANT_PAYMENT: { debited: 'WALLET' },
+  REVERSAL: { credited: 'WALLET' }
+}
+
+const NO_TOTALS = {
+  walletDebit: 0,
+  walletCredit: 0,
+  bankDebit: 0,
+  bankCredit: 0
+}
+
+interface FlowTotals {
+  walletDebit: number
+  walletCredit: number
+  bankDebit: number
+  bankCredit: number
+}
+
+export interface TransactionFlow {
+  principal: number
+  senderFee: number
+  receiverFee: number
+  /** null khi loại giao dịch chưa có quy tắc dòng tiền — hiện "--" thay vì đoán. */
+  totals: FlowTotals | null
+}
+
+export const buildTransactionFlow = (record: FlowSource): TransactionFlow => {
+  const bearer = resolveBearer(record.feeBearer, record.transactionType)
+  const amounts = resolveAmounts(record, bearer)
+  const route = FLOW_BY_TYPE[record.transactionType]
+  const amountAt = (
+    side: 'debited' | 'credited',
+    endpoint: FlowEndpoint
+  ): number => (route?.[side] === endpoint ? amounts[side] : 0)
+
+  // Lệnh rút: `grossAmount` đã gồm phí cộng thêm, số khách yêu cầu rút nằm ở `amount`.
+  const principal =
+    record.transactionType === 'CASH_OUT' ? record.amount : amounts.principal
+
+  return {
+    principal,
+    senderFee: amounts.senderFee,
+    receiverFee: amounts.receiverFee,
+    totals: route
+      ? {
+          walletDebit: amountAt('debited', 'WALLET'),
+          walletCredit: amountAt('credited', 'WALLET'),
+          bankDebit: amountAt('debited', 'BANK'),
+          bankCredit: amountAt('credited', 'BANK')
+        }
+      : null
+  }
+}
+
+export interface PersonalFlow
+  extends Omit<TransactionFlow, 'senderFee' | 'receiverFee'> {
+  /** Phí của chính chủ ví đang xem (người chuyển hoặc người nhận). */
+  fee: number
+}
+
+/**
+ * Góc nhìn "ví riêng": chuyển tiền chỉ hiện phần của ví đang xem
+ * (người nhận: phí nhận + số cộng ví; người chuyển: phí chuyển + số trừ ví).
+ */
+export const buildPersonalFlow = (
+  record: FlowSource & Pick<UnifiedContentJournal, 'to'>,
+  viewerId: string | null | undefined
+): PersonalFlow => {
+  const flow = buildTransactionFlow(record)
+  const { senderFee, receiverFee, ...rest } = flow
+  if (record.transactionType !== 'P2P_TRANSFER') {
+    return { ...rest, fee: senderFee + receiverFee }
+  }
+  const bearer = resolveBearer(record.feeBearer, record.transactionType)
+  const amounts = resolveAmounts(record, bearer)
+  const isReceiver = Boolean(viewerId) && record.to?.id === viewerId
+  return {
+    principal: flow.principal,
+    fee: isReceiver ? receiverFee : senderFee,
+    totals: {
+      ...NO_TOTALS,
+      walletCredit: isReceiver ? amounts.credited : 0,
+      walletDebit: isReceiver ? 0 : amounts.debited
+    }
+  }
+}

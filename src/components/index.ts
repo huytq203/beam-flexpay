@@ -52,6 +52,10 @@ export type {
   JournalSummaryItem
 } from './transaction/JournalSummary'
 export { JOURNAL_STATUS_ITEMS } from './transaction/journal-summary-items'
+export {
+  transactionFlowColumns,
+  personalFlowColumns
+} from './transaction/transaction-flow-columns'
 export { WithdrawalDecisionPanel } from './withdrawal/WithdrawalDecisionPanel'
 export type { WithdrawalDecisionPanelProps } from './withdrawal/WithdrawalDecisionPanel'
 export { WithdrawalStatusTag } from './withdrawal/WithdrawalStatusTag'

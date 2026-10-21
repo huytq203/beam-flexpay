@@ -1,17 +1,28 @@
 import { CardComponent, ExportCsvButton, Table } from '@components/index'
 import { InfoCircleOutlined } from '@components/icons'
+import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
 import { EXPORT_ORDER_HINT } from '@constants/export'
-import React from 'react'
-import getSystemLedgerColumn from './columns/SystemLedger.column'
+import { useState } from 'react'
+import { systemLedgerColumns } from './columns/SystemLedger.column'
 import FormSearch from './components/FormSearch'
 import { LedgerEntryDetail } from './components/LedgerEntryDetail'
+import { LedgerLoadError } from './components/LedgerLoadError'
 import { LedgerSummary } from './components/LedgerSummary'
 import { LEDGER_POSTED_ONLY_NOTE } from './constants/SystemLedger.constant'
 import useSystemLedger from './hooks/useSystemLedger'
-import { LedgerEntry } from './types/SystemLedger.type'
+import type { LedgerRow } from './utils/groupLedgerByJournal'
+
+/**
+ * Tách từng bút toán bằng vạch trên đậm hơn ở dòng đầu. Phải `!` vì antd gắn viền
+ * thẳng vào `td` với độ ưu tiên cao hơn utility.
+ */
+const getJournalRowClassName = (row: LedgerRow, index: number) =>
+  row.isJournalStart && index > 0
+    ? '*:border-t! *:border-t-secondary-foreground/30!'
+    : ''
 
 const SystemLedgerManagement = () => {
-  const [expandedRowKeys, setExpandedRowKeys] = React.useState<string[]>([])
+  const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([])
 
   const {
     dataSource,
@@ -20,22 +31,21 @@ const SystemLedgerManagement = () => {
     pageSize,
     handleChangePage,
     filter,
-    navigate,
     handleSearch,
     clearFilters,
     summary,
     activeDirection,
     handleSummaryDirectionChange,
     refetch,
+    isLoading,
     isFetching,
+    isError,
     handleExport,
     isExporting
   } = useSystemLedger()
 
-  const columns = getSystemLedgerColumn({ navigate })
-
-  // Mở một dòng tại một thời điểm — sổ cái đọc theo từng bút toán, không đối chiếu chéo.
-  const handleExpand = (expanded: boolean, record: LedgerEntry) => {
+  // Mở một dòng tại một thời điểm: sổ cái đọc theo từng bút toán, không đối chiếu chéo.
+  const handleExpand = (expanded: boolean, record: LedgerRow) => {
     setExpandedRowKeys(expanded ? [record.id] : [])
   }
 
@@ -54,16 +64,19 @@ const SystemLedgerManagement = () => {
       />
       <CardComponent
         content={
-          <>
+          <section aria-labelledby='system-ledger-title'>
             <div className='mb-3'>
               <div className='flex flex-wrap items-center justify-between gap-3'>
-                <span className='font-medium text-gray-600 text-lg'>
+                <h2
+                  id='system-ledger-title'
+                  className='m-0 font-display text-lg font-semibold'
+                >
                   Sổ cái hệ thống
-                </span>
+                </h2>
                 <ExportCsvButton
                   onExport={handleExport}
                   loading={isExporting}
-                  disabled={totalElements === 0}
+                  disabled={isError || !totalElements}
                   totalRows={totalElements}
                   tooltip={`File lấy trọn bộ lọc đang áp, không giới hạn theo trang. ${EXPORT_ORDER_HINT}`}
                 />
@@ -76,38 +89,53 @@ const SystemLedgerManagement = () => {
             <LedgerSummary
               summary={summary}
               totalFallback={totalElements}
-              isLoading={isFetching && !summary}
+              isLoading={isLoading}
+              isError={isError}
               activeDirection={activeDirection}
               onDirectionChange={handleSummaryDirectionChange}
             />
-            <Table
-              bordered
-              size='small'
-              scroll={{ x: 'max-content' }}
-              columns={columns}
-              dataSource={dataSource}
-              loading={isFetching}
-              onRefresh={refetch}
-              rowKey='id'
-              expandable={{
-                expandedRowRender: (record: LedgerEntry) => (
-                  <LedgerEntryDetail record={record} />
-                ),
-                rowExpandable: () => true,
-                expandedRowKeys,
-                onExpand: handleExpand
-              }}
-              pagination={{
-                current: page,
-                showSizeChanger: true,
-                pageSize,
-                total: totalElements,
-                onChange: handleChangePage,
-                showTotal: (total, range) =>
-                  `Hiển thị ${range[0]}-${range[1]}/ ${total} Bản ghi`
-              }}
-            />
-          </>
+            {isError && (
+              <LedgerLoadError
+                onRetry={() => void refetch()}
+                isRetrying={isFetching}
+              />
+            )}
+            {isLoading ? (
+              <SkeletonTable
+                columns={systemLedgerColumns.length}
+                rows={pageSize}
+                noContainer
+              />
+            ) : (
+              <Table<LedgerRow>
+                size='small'
+                columns={systemLedgerColumns}
+                dataSource={dataSource}
+                loading={isFetching}
+                onRefresh={refetch}
+                rowKey='id'
+                rowClassName={getJournalRowClassName}
+                locale={{
+                  emptyText: isError
+                    ? 'Chưa có dữ liệu do tải sổ cái thất bại'
+                    : 'Không có bút toán nào khớp bộ lọc'
+                }}
+                expandable={{
+                  expandedRowRender: (record) => (
+                    <LedgerEntryDetail record={record} />
+                  ),
+                  expandedRowKeys,
+                  onExpand: handleExpand
+                }}
+                pagination={{
+                  current: page,
+                  pageSize,
+                  total: totalElements,
+                  onChange: handleChangePage
+                }}
+              />
+            )}
+          </section>
         }
       />
     </div>

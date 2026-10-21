@@ -9,18 +9,17 @@ import {
   BankLabel,
   BankEnum,
   PaymentMethodLabel,
-  PaymentMethodEnum,
-  SourceDomainLabel,
-  SourceDomain
+  PaymentMethodEnum
 } from '../types/HistoryPayment.type'
 import dayjs from 'dayjs'
-import { formatNumber } from '@utils/formatNumber'
 import { TagComponent } from '@components/index'
-import { TypographyText } from '@components/index'
+import { TypographyText, personalFlowColumns } from '@components/index'
 import { UnifiedContentJournal } from '@type/apiResponseJournal'
 import { cn } from '@utils/cn'
 
-export const getColumn = (): ColumnType<UnifiedContentJournal>[] => [
+export const getColumn = (
+  partyId?: string
+): ColumnType<UnifiedContentJournal>[] => [
   {
     title: '#',
     dataIndex: 'no',
@@ -78,17 +77,6 @@ export const getColumn = (): ColumnType<UnifiedContentJournal>[] => [
     )
   },
   {
-    title: 'Số tiền gốc',
-    align: 'right',
-    render(value, record) {
-      return (
-        <div className='text-right font-medium'>
-          <p>{formatNumber(record.amount) + ' ' + record.currency}</p>
-        </div>
-      )
-    }
-  },
-  {
     title: 'Phương thức thanh toán',
     dataIndex: 'paymentMethod',
     align: 'center',
@@ -111,103 +99,21 @@ export const getColumn = (): ColumnType<UnifiedContentJournal>[] => [
       )
     }
   },
+  ...personalFlowColumns<UnifiedContentJournal>(partyId),
   {
-    title: 'Nguồn',
-    dataIndex: 'sourceDomain',
+    title: 'Thời gian',
     align: 'center',
-    render: (value) => {
-      const sourceColors: Record<string, string> = {
-        EWALLET: 'gold'
-      }
-      return (
-        <TagComponent
-          color={sourceColors[value as SourceDomain] || 'default'}
-          style={{ margin: 0, fontWeight: 500 }}
-        >
-          {SourceDomainLabel[value as SourceDomain] || '--'}
-        </TagComponent>
-      )
-    }
-  },
-  {
-    title: 'Số tiền',
-    dataIndex: 'amount',
-    align: 'right',
-    render: (value, record) => (
-      <TypographyText
-        strong
-        style={{ color: '#2bd9d0', fontSize: '15px' }}
-      >
-        {formatNumber(value)}{' '}
-        <TypographyText
-          type='secondary'
-          style={{ fontSize: '12px' }}
-        >
-          {record?.currency || 'VND'}
-        </TypographyText>
-      </TypographyText>
-    )
-  },
-  {
-    title: 'Phí giao dịch',
-    dataIndex: 'feeAmount',
-    align: 'right',
-    render: (value, record) => (
-      <TypographyText
-        type='danger'
-        strong
-      >
-        {formatNumber(value)}{' '}
-        <TypographyText
-          type='secondary'
-          style={{ fontSize: '12px' }}
-        >
-          {record?.currency || 'VND'}
-        </TypographyText>
-      </TypographyText>
-    )
-  },
-  {
-    title: 'Tổng số tiền',
-    dataIndex: 'grossAmount',
-    align: 'right',
-    render: (value, record) => (
-      <TypographyText strong>
-        {formatNumber(value)}{' '}
-        <TypographyText
-          type='secondary'
-          style={{ fontSize: '12px' }}
-        >
-          {record?.currency || 'VND'}
-        </TypographyText>
-      </TypographyText>
-    )
-  },
-
-  {
-    title: 'Thời gian tạo',
-    dataIndex: 'createdAt',
-    align: 'center',
-    render: (value) => (
-      <TypographyText type='secondary'>
-        {dayjs.utc(value).format('DD/MM/YYYY HH:mm:ss')}
-      </TypographyText>
-    )
-  },
-  // {
-  //     title: 'Thời gian giao dịch',
-  //     dataIndex: 'transactionTime',
-  //     align: 'center',
-  //     render: (value) => <TypographyText type="secondary">{dayjs.utc(value).format('DD/MM/YYYY HH:mm:ss')}</TypographyText>
-  // },
-  {
-    title: 'Thời gian thành công',
-    dataIndex: 'postedAt',
-    align: 'center',
-    render: (value) => (
-      <TypographyText type='secondary'>
-        {dayjs.utc(value).format('DD/MM/YYYY HH:mm:ss')}
-      </TypographyText>
+    render: (_, record) => (
+      <div className='text-start'>
+        <p className='text-gray-500'>
+          Tạo: {dayjs.utc(record.createdAt).format('DD/MM/YYYY HH:mm:ss')}
+        </p>
+        {record.postedAt && (
+          <p className='text-[12px] text-green-600'>
+            TC: {dayjs.utc(record.postedAt).format('DD/MM/YYYY HH:mm:ss')}
+          </p>
+        )}
+      </div>
     )
   },
   {
