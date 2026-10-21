@@ -70,12 +70,15 @@ describe('EWALLET_REFUND', () => {
     expect(rules.bankRequired).toBe(false)
   })
 
-  it('phí hoàn tiền chỉ chọn USER, kèm SYSTEM cho chi phí đầu vào; không còn MERCHANT', () => {
+  it('phí hoàn tiền chọn USER hoặc RECEIVER, kèm SYSTEM cho chi phí đầu vào; không còn MERCHANT', () => {
     expect(
       getPayerTypeOptions('EWALLET_REFUND').map(({ value }) => value)
-    ).toEqual(['USER', 'SYSTEM'])
-    expect(getSelectablePayers('EWALLET_REFUND')).toEqual(['USER'])
-    expect(getSelectablePayers('EWALLET_WITHDRAWAL')).toEqual(['USER'])
+    ).toEqual(['USER', 'RECEIVER', 'SYSTEM'])
+    expect(getSelectablePayers('EWALLET_REFUND')).toEqual(['USER', 'RECEIVER'])
+    expect(getSelectablePayers('EWALLET_WITHDRAWAL')).toEqual([
+      'USER',
+      'RECEIVER'
+    ])
   })
 
   it('REFUND_FEE chỉ xuất hiện cho hoàn tiền, ở nhóm phí xử lý giao dịch', () => {
@@ -115,9 +118,8 @@ describe('EWALLET_TRANSFER_INTERNAL', () => {
     )
   })
 
-  it('các dịch vụ ví khác vẫn chỉ cho USER chịu', () => {
+  it('nạp tiền vẫn chỉ cho USER chịu', () => {
     expect(getSelectablePayers('EWALLET_DEPOSIT')).toEqual(['USER'])
-    expect(getSelectablePayers('EWALLET_WITHDRAWAL')).toEqual(['USER'])
   })
 })
 

@@ -25,8 +25,7 @@ const EXECUTABLE_PAYER_BY_SERVICE: Readonly<Record<string, string>> = {
  * vì suy cố định ra một giá trị. Giá trị đầu tiên là mặc định; chưa khai ở đây thì
  * chỉ có đúng payer của `EXECUTABLE_PAYER_BY_SERVICE`.
  *
- * Hoàn tiền không khai ở đây: phí hoàn luôn trừ vào số khách thực nhận (`USER`).
- * Backend vẫn nhận `MERCHANT` cho `EWALLET_REFUND` nhưng màn hình không còn cho chọn;
+ * Backend vẫn nhận `MERCHANT` cho `EWALLET_REFUND` nhưng màn hình không cho chọn;
  * chính sách cũ đang mang `MERCHANT` sẽ về `USER` khi lưu lại.
  */
 const SELECTABLE_PAYERS_BY_SERVICE: Readonly<
@@ -34,7 +33,10 @@ const SELECTABLE_PAYERS_BY_SERVICE: Readonly<
 > = {
   // Chuyển tiền: `USER` = người chuyển bị trừ thêm phí, `RECEIVER` = phí trừ vào
   // tiền người nhận nhận được.
-  EWALLET_TRANSFER_INTERNAL: ['USER', 'RECEIVER']
+  EWALLET_TRANSFER_INTERNAL: ['USER', 'RECEIVER'],
+  // Rút và hoàn tiền: `RECEIVER` = phí trừ vào số tiền bên nhận nhận được.
+  EWALLET_WITHDRAWAL: ['USER', 'RECEIVER'],
+  EWALLET_REFUND: ['USER', 'RECEIVER']
 }
 
 /**

@@ -42,14 +42,16 @@ const baseForm = (
 })
 
 describe('toSetupRequest', () => {
-  it('chuẩn hoá payer chưa hỗ trợ và giữ người hưởng đã chọn', () => {
+  it('rút tiền: giữ RECEIVER người dùng chọn, payer lạ về USER', () => {
     const form = baseForm()
     form.components[0].payerType = 'RECEIVER'
 
     const request = toSetupRequest(form)
-    // EWALLET_WITHDRAWAL chỉ thực thi được payer USER; RECEIVER chưa có hợp đồng ghi sổ.
-    expect(request.components[0].payerType).toBe('USER')
+    expect(request.components[0].payerType).toBe('RECEIVER')
     expect(request.components[0].beneficiaryType).toBe('SYSTEM')
+
+    form.components[0].payerType = 'MERCHANT'
+    expect(toSetupRequest(form).components[0].payerType).toBe('USER')
   })
 
   it('chuyển tiền: giữ RECEIVER (phí trừ vào tiền nhận), payer lạ về USER', () => {
@@ -62,8 +64,13 @@ describe('toSetupRequest', () => {
   })
 
   it('chuẩn hoá payer cũ chưa hỗ trợ của miền Ví về USER', () => {
-    for (const legacy of ['SENDER', 'RECEIVER']) {
-      const form = baseForm({ feeDomain: 'EWALLET' })
+    const cases = [
+      { serviceType: 'EWALLET_WITHDRAWAL', legacy: 'SENDER' },
+      { serviceType: 'EWALLET_DEPOSIT', legacy: 'SENDER' },
+      { serviceType: 'EWALLET_DEPOSIT', legacy: 'RECEIVER' }
+    ]
+    for (const { serviceType, legacy } of cases) {
+      const form = baseForm({ feeDomain: 'EWALLET', serviceType })
       form.components[0].payerType = legacy
 
       expect(toSetupRequest(form).components[0].payerType).toBe('USER')
