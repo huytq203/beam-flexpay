@@ -115,3 +115,19 @@ export const INPUT_COST_BENEFICIARY_OPTIONS = [
   { value: 'BANK', label: BENEFICIARY_TYPE_LABEL.BANK },
   { value: 'PARTNER', label: BENEFICIARY_TYPE_LABEL.PARTNER }
 ] as const
+
+/**
+ * Người hưởng của phí đầu ra theo loại phí: VAT về Ngân hàng, mọi loại phí khác về Hệ thống. Chỉ một
+ * lựa chọn nên form tự điền, không bày ô chọn khác. ('VAT' viết thẳng vì `feeConfigFields` re-export
+ * file này, import ngược lại sẽ thành vòng.)
+ */
+export const outputBeneficiaryFor = (
+  componentType: string | null | undefined
+): string => (componentType === 'VAT' ? 'BANK' : 'SYSTEM')
+
+export const getOutputBeneficiaryOptions = (
+  componentType: string | null | undefined
+): { value: string; label: string }[] => {
+  const value = outputBeneficiaryFor(componentType)
+  return [{ value, label: BENEFICIARY_TYPE_LABEL[value] ?? value }]
+}

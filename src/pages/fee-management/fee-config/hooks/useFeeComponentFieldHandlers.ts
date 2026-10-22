@@ -1,4 +1,5 @@
 import type { UseFormSetValue } from 'react-hook-form'
+import { outputBeneficiaryFor } from '../constants/feeComponentParties'
 import { VAT_COMPONENT_TYPE } from '../constants/feeConfigFields'
 import {
   CalculationMethod,
@@ -14,6 +15,8 @@ interface UseFeeComponentFieldHandlersInput {
   componentType: string
   /** Phí gốc của nhóm mà VAT trỏ sẵn tới, hoặc null khi nó chưa đứng phía trên. */
   vatBaseAbove: string | null
+  /** Phí đầu vào giữ người hưởng người dùng chọn; phí đầu ra suy theo loại phí. */
+  isInputCost: boolean
 }
 
 interface FeeComponentFieldHandlers {
@@ -26,7 +29,8 @@ export const useFeeComponentFieldHandlers = ({
   setValue,
   receiverSetValue,
   componentType,
-  vatBaseAbove
+  vatBaseAbove,
+  isInputCost
 }: UseFeeComponentFieldHandlersInput): FeeComponentFieldHandlers => {
   /**
    * Thuế giá trị gia tăng luôn tính trên khoản phí gốc của nhóm. Khoá luôn ô cơ sở tính
@@ -37,6 +41,11 @@ export const useFeeComponentFieldHandlers = ({
    * người dùng không sửa được.
    */
   const handleComponentTypeChange = (next: string | number) => {
+    if (!isInputCost) {
+      setValue('beneficiaryType', outputBeneficiaryFor(String(next)), {
+        shouldValidate: true
+      })
+    }
     if (next !== VAT_COMPONENT_TYPE) {
       if (componentType === VAT_COMPONENT_TYPE) {
         setValue('baseOn', 'AMOUNT', { shouldValidate: true })
@@ -66,11 +75,13 @@ export const useFeeComponentFieldHandlers = ({
     }
   }
 
-  // Đổi người chịu chỉ gợi ý lại người hưởng mặc định; người dùng vẫn sửa được sau đó.
+  // Đổi người chịu đặt lại người hưởng: phí đầu vào gợi ý Ngân hàng, phí đầu ra theo loại phí.
   const handlePayerChange = (next: string | number) => {
-    setValue('beneficiaryType', next === 'SYSTEM' ? 'BANK' : 'SYSTEM', {
-      shouldValidate: true
-    })
+    setValue(
+      'beneficiaryType',
+      next === 'SYSTEM' ? 'BANK' : outputBeneficiaryFor(componentType),
+      { shouldValidate: true }
+    )
     setValue('baseComponentType', null, { shouldValidate: true })
   }
 

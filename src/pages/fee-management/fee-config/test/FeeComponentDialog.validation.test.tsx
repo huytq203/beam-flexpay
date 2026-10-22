@@ -211,23 +211,22 @@ describe('FeeComponentDialog phí đầu ra (đầu ra)', () => {
     )
   })
 
-  it('miền Ví mặc định Hệ thống hưởng nhưng vẫn chọn được Ngân hàng', async () => {
+  it('phí đầu ra không phải VAT chỉ cho Hệ thống hưởng', async () => {
     const onSave = renderWalletDialog()
 
     const beneficiary = screen.getByLabelText(/Người hưởng/)
     expect(beneficiary.closest('.ant-select')).toHaveTextContent('Hệ thống')
-    expect(beneficiary).not.toBeDisabled()
 
     await userEvent.click(screen.getByLabelText(/Loại phí/))
     await userEvent.click(await screen.findByText('Phí giao dịch cơ bản'))
     await userEvent.click(beneficiary)
-    await userEvent.click(await screen.findByTitle('Ngân hàng'))
+    expect(screen.queryByTitle('Ngân hàng')).toBeNull()
     await userEvent.type(screen.getByLabelText(/Phí cố định/), '1000')
     await userEvent.click(screen.getByRole('button', { name: 'Thêm' }))
 
     await waitFor(() => expect(onSave).toHaveBeenCalled())
     expect(onSave.mock.calls[0]?.[0]?.[0]).toEqual(
-      expect.objectContaining({ payerType: 'USER', beneficiaryType: 'BANK' })
+      expect.objectContaining({ payerType: 'USER', beneficiaryType: 'SYSTEM' })
     )
   })
 })

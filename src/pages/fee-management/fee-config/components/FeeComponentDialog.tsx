@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { supportsBearerSplit } from '@utils/fee-execution'
 import { useEffect, useMemo } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
+import { getOutputBeneficiaryOptions } from '../constants/feeComponentParties'
 import {
   getVatBaseForCategory,
   VAT_COMPONENT_TYPE,
@@ -210,7 +211,8 @@ export const FeeComponentDialog = ({
       setValue,
       receiverSetValue: receiverForm.setValue,
       componentType,
-      vatBaseAbove: hasVatBaseAbove ? vatBaseComponentType : null
+      vatBaseAbove: hasVatBaseAbove ? vatBaseComponentType : null,
+      isInputCost
     })
 
   const allowedBaseTypes = isVat
@@ -268,7 +270,11 @@ export const FeeComponentDialog = ({
           baseTypeOptions={baseTypeOptions}
           methodOptions={methodOptions}
           payerTypeOptions={payerSelectOptions}
-          beneficiaryTypeOptions={beneficiaryTypeOptions}
+          beneficiaryTypeOptions={
+            isInputCost
+              ? beneficiaryTypeOptions
+              : getOutputBeneficiaryOptions(componentType)
+          }
           payerType={payerType}
           baseOn={baseOn}
           selectedBase={selectedBase}

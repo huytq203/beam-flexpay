@@ -1,3 +1,4 @@
+import { outputBeneficiaryFor } from '../constants/feeComponentParties'
 import {
   ASSIGNMENT_DATETIME_FORMAT,
   POLICY_DATETIME_FORMAT,
@@ -109,9 +110,10 @@ export const toSetupRequest = (
           : getSelectablePayers(form.serviceType).includes(component.payerType)
             ? component.payerType
             : executablePayer,
+      // Phí đầu ra: VAT về Ngân hàng, loại phí khác về Hệ thống; phí đầu vào giữ lựa chọn.
       beneficiaryType:
-        form.feeDomain === 'EWALLET' && component.payerType !== 'SYSTEM'
-          ? 'SYSTEM'
+        component.payerType !== 'SYSTEM'
+          ? outputBeneficiaryFor(component.componentType)
           : component.beneficiaryType,
       tiers: usesTiers(component.calculationMethod)
         ? component.tiers.map((tier, index) => ({

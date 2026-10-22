@@ -9,6 +9,7 @@ import {
   PAYER_TYPE_LABEL,
   type FeeScope
 } from '../constants/feeConfigFields'
+import { outputBeneficiaryFor } from '../constants/feeComponentParties'
 import type { FeeComponentFormValues } from '../schemas/feeConfig.schema'
 import { BOTH_BEARERS } from './bearerPairs'
 import { emptyComponent } from './feeComponentDefaults'
@@ -91,8 +92,12 @@ export const buildDialogDefaults = ({
     ...initialValue,
     feeScope,
     payerType: hasPartner ? BOTH_BEARERS : payerType,
-    beneficiaryType: hasAllowedBeneficiary
-      ? initialValue.beneficiaryType
-      : defaultBeneficiaryType
+    // Phí đầu ra: người hưởng suy theo loại phí (VAT → Ngân hàng), kể cả bản ghi cũ lưu khác.
+    beneficiaryType:
+      feeScope === 'OUTPUT_FEE'
+        ? outputBeneficiaryFor(initialValue.componentType)
+        : hasAllowedBeneficiary
+          ? initialValue.beneficiaryType
+          : defaultBeneficiaryType
   }
 }
