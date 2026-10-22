@@ -1,4 +1,4 @@
-import { FormLabelHint, FormSelect } from '@components/form'
+import { FormSelect } from '@components/form'
 import { useGetBankQuery } from '@services/apiFeeBank'
 import { useGetPaymentPartnersQuery } from '@services/apiFeePaymentPartner'
 import { useGetCustomerSegmentsQuery } from '@services/apiCustomerSegment'
@@ -13,7 +13,6 @@ import {
   getFormFieldRules
 } from '../constants/feeConfigFields'
 import {
-  ORIGINAL_TYPE_HINT,
   ORIGINAL_TYPE_OPTIONS,
   allowsOriginalTypeCriteria
 } from '../constants/feeRefundOriginalType'
@@ -157,10 +156,7 @@ export const AssignmentSection = ({
             name='originalTransactionType'
             control={control}
             label={
-              <FormLabelHint
-                label='Loại giao dịch gốc'
-                hint={ORIGINAL_TYPE_HINT}
-              />
+            'Loại giao dịch gốc'
             }
             placeholder='Tất cả giao dịch'
             allowClear

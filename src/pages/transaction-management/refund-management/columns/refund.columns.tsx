@@ -2,6 +2,7 @@ import { RefundStatusBadge } from '@components/status-badge/RefundStatusBadge'
 import type { TableComponentProps } from '@components/ui/table-component/TableComponent'
 import { REFUND_TYPE_LABELS } from '@constants/refund.constant'
 import { CellLines } from '../components/CellLines'
+import { PartyAmountLines } from '../components/PartyAmountLines'
 import { RefundActions } from '../components/RefundActions'
 import {
   REFUND_CHANNEL_LABELS,
@@ -97,11 +98,9 @@ export const createRefundColumns = (
       key: 'processingFee',
       align: 'right',
       render: (_value, record) => (
-        <CellLines
-          numeric
-          align='right'
-          primary={`Bên chuyển ${formatVnd(record.senderProcessingFee)}`}
-          secondary={[`Bên nhận ${formatVnd(record.receiverProcessingFee)}`]}
+        <PartyAmountLines
+          sender={record.senderProcessingFee}
+          receiver={record.receiverProcessingFee}
         />
       )
     },
@@ -110,11 +109,9 @@ export const createRefundColumns = (
       key: 'feeReversal',
       align: 'right',
       render: (_value, record) => (
-        <CellLines
-          numeric
-          align='right'
-          primary={`Bên chuyển ${formatVnd(record.senderFeeReversal)}`}
-          secondary={[`Bên nhận ${formatVnd(record.receiverFeeReversal)}`]}
+        <PartyAmountLines
+          sender={record.senderFeeReversal}
+          receiver={record.receiverFeeReversal}
         />
       )
     },
@@ -129,14 +126,14 @@ export const createRefundColumns = (
       )
     },
     {
-      title: 'Kênh và nguồn',
+      title: 'Hoàn về và nguồn',
       key: 'channelSource',
       render: (_value, record) => (
         <CellLines
           primary={REFUND_CHANNEL_LABELS[record.channel] ?? record.channel}
           secondary={[
             record.refundType && REFUND_TYPE_LABELS[record.refundType],
-            REFUND_SOURCE_LABELS[record.createdSource] ?? record.createdSource
+            `Nguồn: ${REFUND_SOURCE_LABELS[record.createdSource] ?? record.createdSource}`
           ]}
         />
       )

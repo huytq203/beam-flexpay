@@ -134,7 +134,7 @@ describe('duyệt', () => {
       .find(Boolean)
     expect(row).not.toBeNull()
     expect(
-      await within(row as HTMLElement).findByText('Hoàn thành')
+      await within(row as HTMLElement).findByText('Thành công')
     ).toBeInTheDocument()
   })
 

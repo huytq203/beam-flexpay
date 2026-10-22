@@ -62,7 +62,7 @@ export function RejectRefundDialog({
           required
           rows={3}
           maxLength={REASON_MAX}
-          placeholder='Nhập lý do (5 đến 500 ký tự)'
+          placeholder='Nhập lý do ...'
           className='flex flex-col gap-1'
         />
         <p className='text-xs text-muted-foreground'>

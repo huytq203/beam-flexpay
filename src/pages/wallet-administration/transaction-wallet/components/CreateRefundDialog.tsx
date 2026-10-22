@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { FormCheckbox, FormInputNumber, FormTextArea } from '@components/form'
 import { DialogModal } from '@components/index'
 import { formatNumber } from '@utils/formatNumber'
+import { buildTransactionFlow } from '@utils/transaction-flow'
 import type { UnifiedContentJournal } from '@type/apiResponseJournal'
 import { RefundChannel } from '@pages/transaction-management/refund-management/schemas/refund.schema'
 import { REFUND_CHANNEL_LABELS } from '@pages/transaction-management/refund-management/constants/refund.constants'
@@ -80,9 +81,10 @@ export function CreateRefundDialog({
             {TransactionType[transaction.transactionType as TransactionKey] ??
               transaction.transactionType}
           </dd>
-          <dt className='text-muted-foreground'>Số tiền gốc</dt>
+          <dt className='text-muted-foreground'>Giá trị giao dịch</dt>
           <dd className='tabular-nums'>
-            {formatNumber(transaction.amount)} {transaction.currency}
+            {formatNumber(buildTransactionFlow(transaction).principal)}{' '}
+            {transaction.currency}
           </dd>
         </dl>
 

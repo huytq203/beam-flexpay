@@ -18,6 +18,3 @@ export const getOriginalTypeLabel = (
   ORIGINAL_TYPE_OPTIONS.find((option) => option.value === value)?.label ??
   value ??
   ''
-
-export const ORIGINAL_TYPE_HINT =
-  'Loại giao dịch được hoàn. Để trống là mọi loại hoàn. Bản gán chọn loại cụ thể được ưu tiên hơn bản gán chỉ chọn ngân hàng.'

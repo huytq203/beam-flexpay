@@ -1,7 +1,4 @@
-import {
-  RefundDisplayStatus,
-  RefundType
-} from '@constants/refund.constant'
+import { RefundDisplayStatus, RefundType } from '@constants/refund.constant'
 import type { RefundListParams } from '@services/apiRefund'
 import { formatCurrency } from '@utils/formatNumber'
 import { isSameUsername } from '@utils/username'

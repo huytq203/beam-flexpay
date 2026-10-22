@@ -39,8 +39,9 @@ export const SCHEDULABLE_POLICY_STATUSES: readonly string[] = [
   'INACTIVE'
 ]
 
-/** Nhãn (và aria-label) của nút khóa / mở ở dòng chính sách. */
-export const STATUS_BUTTON_LABEL = 'Khóa / mở chính sách'
+/** Nhãn (và aria-label) của nút ở dòng chính sách: đang bật thì khóa, đang tắt thì mở khóa. */
+export const LOCK_BUTTON_LABEL = 'Khóa chính sách'
+export const UNLOCK_BUTTON_LABEL = 'Mở khóa chính sách'
 
 export const SCHEDULE_MIN_LEAD_MS = 60_000
 export const SCHEDULE_MAX_LEAD_DAYS = 365

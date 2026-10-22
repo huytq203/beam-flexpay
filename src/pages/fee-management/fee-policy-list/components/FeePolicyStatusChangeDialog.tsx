@@ -53,6 +53,11 @@ const IMMEDIATE_SUCCESS: Readonly<Record<FeePolicyScheduleAction, string>> = {
   DEACTIVATE: 'Đã ngừng áp dụng chính sách phí'
 }
 
+const SCHEDULED_SUCCESS: Readonly<Record<FeePolicyScheduleAction, string>> = {
+  ACTIVATE: 'Đã hẹn giờ mở khóa chính sách phí',
+  DEACTIVATE: 'Đã hẹn giờ khóa chính sách phí'
+}
+
 const StatusChangeForm = ({
   policy,
   allowedActions,
@@ -63,7 +68,10 @@ const StatusChangeForm = ({
 
   // Làm ngay chỉ có một hành động hợp lệ: đảo trạng thái hiện tại (BE từ chối bật một chính sách đang bật).
   const immediateAction = immediateActionFor(policy.status)
-  const schema = useMemo(() => buildStatusChangeSchema(immediateAction), [immediateAction])
+  const schema = useMemo(
+    () => buildStatusChangeSchema(immediateAction),
+    [immediateAction]
+  )
 
   const { control, handleSubmit } = useForm<FeePolicyStatusChangeFormValues>({
     defaultValues: {
@@ -91,7 +99,11 @@ const StatusChangeForm = ({
         runAt: now ? undefined : toRunAtIso(values.runAt as string),
         reason: values.reason.trim()
       }).unwrap()
-      successMess(now ? IMMEDIATE_SUCCESS[values.action] : 'Đã tạo lịch hẹn giờ')
+      successMess(
+        now
+          ? IMMEDIATE_SUCCESS[values.action]
+          : SCHEDULED_SUCCESS[values.action]
+      )
       onClose()
     } catch {
       // fetchBaseQueryCustom đã bắn notification lỗi tập trung.

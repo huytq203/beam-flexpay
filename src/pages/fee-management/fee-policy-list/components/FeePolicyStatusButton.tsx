@@ -1,6 +1,9 @@
-import { CheckCircleOutlined, StopOutlined } from '@components/icons'
+import { LockOutlined, UnlockOutlined } from '@components/icons'
 import { ButtonComponent, TooltipComponent } from '@components/index'
-import { STATUS_BUTTON_LABEL } from '../constants/feePolicySchedule'
+import {
+  LOCK_BUTTON_LABEL,
+  UNLOCK_BUTTON_LABEL
+} from '../constants/feePolicySchedule'
 import { useSchedulePermissions } from '../hooks/useSchedulePermissions'
 import { isSchedulablePolicy } from '../utils/feePolicySchedule'
 
@@ -20,15 +23,18 @@ export const FeePolicyStatusButton = ({
   const { canSchedule } = useSchedulePermissions()
   if (!canSchedule || !isSchedulablePolicy(status)) return null
 
+  const isActive = status === 'ACTIVE'
+  const label = isActive ? LOCK_BUTTON_LABEL : UNLOCK_BUTTON_LABEL
+
   return (
-    <TooltipComponent title={STATUS_BUTTON_LABEL}>
+    <TooltipComponent title={label}>
       <ButtonComponent
         type='default'
         htmlType='button'
         size='small'
-        aria-label={STATUS_BUTTON_LABEL}
-        danger={status === 'ACTIVE'}
-        icon={status === 'ACTIVE' ? <StopOutlined /> : <CheckCircleOutlined />}
+        aria-label={label}
+        danger={isActive}
+        icon={isActive ? <LockOutlined /> : <UnlockOutlined />}
         onClick={onChangeStatus}
       />
     </TooltipComponent>

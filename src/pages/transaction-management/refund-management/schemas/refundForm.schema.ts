@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const REASON_MIN = 5
+export const REASON_MIN = 1
 export const REASON_MAX = 500
 const REASON_RANGE_MESSAGE = `Lý do phải có từ ${REASON_MIN} đến ${REASON_MAX} ký tự`
 

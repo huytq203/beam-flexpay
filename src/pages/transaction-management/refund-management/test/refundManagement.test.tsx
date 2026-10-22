@@ -54,11 +54,30 @@ describe('danh sách hoàn tiền', () => {
     expect(within(row).getByText('Nguyễn Văn An')).toBeInTheDocument()
     expect(within(row).getAllByText('1.250.000 đ')).toHaveLength(2)
     expect(within(row).getByText('GD gốc 1.500.000 đ')).toBeInTheDocument()
-    expect(within(row).getByText('Bên chuyển 12.000 đ')).toBeInTheDocument()
-    expect(within(row).getAllByText('Bên nhận 0 đ')).toHaveLength(2)
-    expect(within(row).getByText('Bên chuyển 100 đ')).toBeInTheDocument()
+    expect(within(row).getAllByText('Chuyển')[0].nextSibling).toHaveTextContent(
+      '12.000 đ'
+    )
+    expect(within(row).queryByText('Nhận')).not.toBeInTheDocument()
+    expect(within(row).getByText('100 đ')).toBeInTheDocument()
     expect(within(row).getByText('Chờ duyệt')).toBeInTheDocument()
     expect(within(await rowOf('RF-OWN')).getByText('2')).toBeInTheDocument()
+  })
+
+  it('hiện dòng Nhận chỉ khi khác 0', async () => {
+    const withReceiverFee = makeRefund({
+      id: 'r-fee',
+      refundCode: 'RF-FEE',
+      receiverFeeReversal: 3000
+    })
+    mockList(() => [withReceiverFee, OTHER])
+    renderRefundPage(APPROVER)
+
+    const row = await rowOf('RF-FEE')
+    expect(within(row).getByText('Nhận').nextSibling).toHaveTextContent(
+      '3.000 đ'
+    )
+    const other = await rowOf('RF-OTHER')
+    expect(within(other).queryByText('Nhận')).not.toBeInTheDocument()
   })
 
   it('gửi bộ lọc trạng thái lên API', async () => {

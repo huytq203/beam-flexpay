@@ -47,6 +47,35 @@ const fillForm = async (amount = '50000', reason = 'Khách báo chuyển nhầm'
 
 describe('CreateRefundDialog', () => {
   it.each([
+    ['null (người chuyển chịu)', {}, '97,000 VND'],
+    ['RECEIVER', { feeBearer: 'RECEIVER' as const }, '100,000 VND'],
+    [
+      'BOTH',
+      {
+        feeBearer: 'BOTH' as const,
+        amount: 97000,
+        grossAmount: 101000,
+        feeAmount: 4000,
+        senderFeeAmount: 1000,
+        receiverFeeAmount: 3000
+      },
+      '100,000 VND'
+    ]
+  ])('Số tiền gốc theo feeBearer %s', async (_name, overrides, expected) => {
+    renderDialog(
+      makeTransaction({
+        transactionType: 'CASH_OUT',
+        amount: 97000,
+        grossAmount: 100000,
+        feeAmount: 3000,
+        ...overrides
+      })
+    )
+    const label = await screen.findByText('Số tiền gốc')
+    expect(label.nextElementSibling).toHaveTextContent(expected)
+  })
+
+  it.each([
     ['CASH_IN', 'Về ngân hàng', 'TO_BANK'],
     ['P2P_TRANSFER', 'Về ví', 'TO_WALLET'],
     ['CASH_OUT', 'Về ví', 'TO_WALLET']

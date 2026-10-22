@@ -10,7 +10,8 @@ export interface LedgerRow extends LedgerEntry {
 /**
  * Gom các dòng cùng bút toán lại cạnh nhau, Nợ trước Có. API sắp theo thời gian
  * ghi nên dòng Có (phí, người nhận) ghi sau dòng Nợ lại hiện lên trước. Chỉ xếp
- * lại trong trang đang xem: không đổi thứ tự giữa các bút toán.
+ * lại trong trang đang xem: không đổi thứ tự giữa các bút toán. Bút toán thiếu
+ * `journalCode` (wallet-core chưa ghi cho hoàn tiền) gom tạm theo giao dịch.
  */
 export const groupLedgerByJournal = (
   entries: LedgerEntry[],
@@ -18,7 +19,7 @@ export const groupLedgerByJournal = (
 ): LedgerRow[] => {
   const groups = new Map<string, LedgerEntry[]>()
   entries.forEach((entry) => {
-    const key = entry.journalCode ?? `__${entry.id}`
+    const key = entry.journalCode ?? `__tx_${entry.transaction.id}`
     groups.set(key, [...(groups.get(key) ?? []), entry])
   })
 
