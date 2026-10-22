@@ -185,7 +185,7 @@ export const FeePolicyFilterBar = ({
         <FormSelect
           name='bankCode'
           control={control}
-          label='Ngân hàng phát hành'
+          label='Ngân hàng'
           placeholder='Tất cả ngân hàng'
           allowClear
           showSearch

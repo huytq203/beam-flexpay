@@ -16,7 +16,7 @@ const unique = (values: readonly (string | null | undefined)[]): string[] => [
 ]
 
 /**
- * Nhà cung cấp (nạp/rút), ngân hàng phát hành (và merchant với luồng thu hộ, chi hộ) mà chính sách áp vào. Ô trống ở bản gán là
+ * Nhà cung cấp (nạp/rút), Ngân hàng (và merchant với luồng thu hộ, chi hộ) mà chính sách áp vào. Ô trống ở bản gán là
  * "áp cho tất cả", nên nói ra là "Mọi ngân hàng" thay vì để một ô rỗng gây hiểu nhầm.
  */
 export const ChannelCell = ({ serviceType, assignments }: ChannelCellProps) => {

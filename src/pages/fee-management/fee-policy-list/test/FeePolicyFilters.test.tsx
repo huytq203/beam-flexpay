@@ -55,7 +55,7 @@ describe('bộ lọc bổ sung của danh sách chính sách phí', () => {
 
     await waitFor(() => expect(requests.length).toBeGreaterThan(0))
     expect(screen.getByLabelText('Phương thức giao dịch')).toBeInTheDocument()
-    expect(screen.getByLabelText('Ngân hàng phát hành')).toBeInTheDocument()
+    expect(screen.getByLabelText('Ngân hàng')).toBeInTheDocument()
     expect(
       screen.getByText('Thời gian áp dụng từ', { selector: 'label' })
     ).toBeInTheDocument()

@@ -1,10 +1,5 @@
-import {
-  PAYMENT_METHOD_LABELS,
-  getFeeLabel
-} from '@constants/feeLabels'
-import {
-  type FeeScope
-} from '@pages/fee-management/fee-config/constants/feeConfigFields'
+import { PAYMENT_METHOD_LABELS, getFeeLabel } from '@constants/feeLabels'
+import { type FeeScope } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import {
   allowsOriginalTypeCriteria,
   getOriginalTypeLabel
@@ -126,9 +121,7 @@ const AssignmentRow = ({ assignment, appliedTargets }: AssignmentRowProps) => {
         </Fact>
       )}
       {allowsBankCriteria(assignment.serviceType) && (
-        <Fact label='Ngân hàng phát hành'>
-          {assignment.bankCode || 'Tất cả'}
-        </Fact>
+        <Fact label='Ngân hàng'>{assignment.bankCode || 'Tất cả'}</Fact>
       )}
       {!allowsOriginalTypeCriteria(assignment.serviceType) && (
         <Fact label='Phương thức giao dịch'>

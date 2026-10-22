@@ -155,9 +155,7 @@ export const AssignmentSection = ({
           <FormSelect
             name='originalTransactionType'
             control={control}
-            label={
-            'Loại giao dịch gốc'
-            }
+            label={'Loại giao dịch gốc'}
             placeholder='Tất cả giao dịch'
             allowClear
             options={[...ORIGINAL_TYPE_OPTIONS]}
@@ -172,7 +170,7 @@ export const AssignmentSection = ({
             required={rules.bankRequired}
             label={
               serviceType !== 'EWALLET_REFUND' && showProvider
-                ? 'Ngân hàng phát hành'
+                ? 'Ngân hàng'
                 : 'Ngân hàng'
             }
             placeholder={

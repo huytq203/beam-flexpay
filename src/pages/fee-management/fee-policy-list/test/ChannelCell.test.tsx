@@ -22,7 +22,7 @@ const assignment = (overrides: Partial<FeeAssignment>): FeeAssignment => ({
 })
 
 describe('ChannelCell — nhà cung cấp', () => {
-  it('hiện NCC và ngân hàng phát hành của bản gán nạp tiền', () => {
+  it('hiện NCC và Ngân hàng của bản gán nạp tiền', () => {
     render(
       <ChannelCell
         serviceType='EWALLET_DEPOSIT'

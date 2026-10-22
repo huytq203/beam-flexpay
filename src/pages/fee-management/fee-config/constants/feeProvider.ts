@@ -5,7 +5,7 @@ export { allowsProviderCriteria } from './feeConfigFields'
 
 /**
  * Nhà cung cấp chọn được: cổng thuần (NAPAS, VIETQR). Ngân hàng liên kết trực tiếp là
- * nhà cung cấp kiêm phát hành nên cấu hình ở ô Ngân hàng phát hành; backend từ chối ở đây.
+ * nhà cung cấp kiêm phát hành nên cấu hình ở ô Ngân hàng; backend từ chối ở đây.
  * Đối tác chưa tích hợp (INACTIVE) vẫn chọn được để cấu hình sẵn.
  */
 export const toProviderOptions = (

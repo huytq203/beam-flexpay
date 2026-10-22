@@ -149,7 +149,7 @@ export interface FeePaymentPartner {
   name: string
   /** Cổng/nhà cung cấp thu tiền hộ FlexPay. */
   provider: boolean
-  /** Ngân hàng phát hành thẻ/tài khoản. */
+  /** Ngân hàng thẻ/tài khoản. */
   issuer: boolean
   status: 'ACTIVE' | 'INACTIVE'
 }
