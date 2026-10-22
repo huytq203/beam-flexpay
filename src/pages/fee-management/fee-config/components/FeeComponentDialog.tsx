@@ -61,6 +61,8 @@ interface FeeComponentDialogProps {
   businessCategory: FeeBusinessCategory
   /** Loại giao dịch của chính sách, dùng để suy người chịu phí mặc định. */
   serviceType: string
+  /** Loại giao dịch gốc của bản gán phí hoàn; quyết định có cho chọn "Người nhận" không. */
+  originalTransactionType?: string
   /** Một thành phần, hoặc hai (người chuyển rồi người nhận) khi cả hai bên cùng chịu. */
   onSave: (values: FeeComponentFormValues[]) => void
   onCancel: () => void
@@ -75,14 +77,20 @@ export const FeeComponentDialog = ({
   feeScope,
   businessCategory,
   serviceType,
+  originalTransactionType,
   onSave,
   onCancel
 }: FeeComponentDialogProps) => {
   const isInputCost = feeScope === FEE_SCOPE.INPUT_COST
   const bearerSplit = supportsBearerSplit(serviceType) && !isInputCost
   const parties = useMemo(
-    () => getComponentPartyOptions(isInputCost, serviceType),
-    [isInputCost, serviceType]
+    () =>
+      getComponentPartyOptions(
+        isInputCost,
+        serviceType,
+        originalTransactionType
+      ),
+    [isInputCost, serviceType, originalTransactionType]
   )
   const { payerTypeOptions, beneficiaryTypeOptions, defaultBeneficiaryType } =
     parties

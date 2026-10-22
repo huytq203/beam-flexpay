@@ -34,11 +34,57 @@ const SELECTABLE_PAYERS_BY_SERVICE: Readonly<
   // Chuyển tiền: `USER` = người chuyển bị trừ thêm phí, `RECEIVER` = phí trừ vào
   // tiền người nhận nhận được.
   EWALLET_TRANSFER_INTERNAL: ['USER', 'RECEIVER'],
-  // Nạp, rút và hoàn tiền: `RECEIVER` = phí trừ vào số tiền bên nhận nhận được.
+  // Nạp, rút: `RECEIVER` = phí trừ vào số tiền bên nhận nhận được.
   EWALLET_DEPOSIT: ['USER', 'RECEIVER'],
   EWALLET_WITHDRAWAL: ['USER', 'RECEIVER'],
+  // Hoàn tiền chạy ngược giao dịch gốc: `USER` = người chuyển gốc (được hoàn) nhận lại ít hơn,
+  // `RECEIVER` = người nhận gốc (bị trừ) bị trừ thêm. Người nhận chỉ chịu được ở các loại gốc
+  // trong `REFUND_DEBITED_SIDE_TYPES`.
   EWALLET_REFUND: ['USER', 'RECEIVER']
 }
+
+/**
+ * Bản sao `RefundOriginalTypeScope.RECEIVER_BEARING_TYPES`: loại giao dịch gốc mà người nhận gốc (bên
+ * bị trừ của lệnh hoàn) là người thật (ví người nhận, merchant, ví chính khách khi hoàn nạp). Hoàn rút tiền
+ * trừ tài khoản quyết toán của hệ thống nên không có trong danh sách.
+ */
+export const REFUND_DEBITED_SIDE_TYPES: readonly string[] = [
+  'P2P_TRANSFER',
+  'CASH_IN',
+  'MERCHANT_PAYMENT'
+]
+
+export const REFUND_DEBITED_SIDE_MESSAGE =
+  'Người nhận chỉ chịu phí hoàn ở hoàn chuyển tiền, hoàn nạp hoặc hoàn merchant: chọn một trong ba loại giao dịch gốc này'
+
+/**
+ * Người nhận có được chịu phí không: chỉ phí hoàn bị giới hạn, theo loại giao dịch gốc của bản gán.
+ * Để trống loại gốc là khớp cả hoàn rút tiền, nên cũng không cho.
+ */
+export const allowsReceiverPayer = (
+  serviceType: string | null | undefined,
+  originalTransactionType: string | null | undefined
+): boolean =>
+  serviceType !== 'EWALLET_REFUND' ||
+  Boolean(
+    originalTransactionType &&
+      REFUND_DEBITED_SIDE_TYPES.includes(originalTransactionType)
+  )
+
+/**
+ * Phí hoàn có thành phần người nhận chịu mà loại gốc không cho (để trống hoặc hoàn rút tiền) thì
+ * backend từ chối lúc duyệt; trả thông báo để form chặn ngay lúc lưu. Dropdown đã ẩn "Người nhận"
+ * trong trường hợp này, luật này bắt thành phần đã thêm trước khi đổi loại gốc.
+ */
+export const validateRefundDebitedSide = (
+  serviceType: string | null | undefined,
+  originalTransactionType: string | null | undefined,
+  components: readonly { payerType: string }[]
+): string | null =>
+  components.some((component) => component.payerType === 'RECEIVER') &&
+  !allowsReceiverPayer(serviceType, originalTransactionType)
+    ? REFUND_DEBITED_SIDE_MESSAGE
+    : null
 
 /**
  * Chuyển tiền cho người chuyển chịu, người nhận chịu hoặc cả hai chịu. Cả hai chịu là hai thành phần

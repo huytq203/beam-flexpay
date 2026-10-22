@@ -1,3 +1,4 @@
+import { validateRefundDebitedSide } from '@utils/fee-execution'
 import { z } from 'zod'
 import {
   allowsProviderCriteria,
@@ -93,6 +94,19 @@ export const feeConfigFormSchema = z
         code: 'custom',
         path: ['originalTransactionType'],
         message: 'Loại giao dịch gốc chỉ áp dụng cho phí hoàn tiền'
+      })
+    }
+
+    const debitedSideError = validateRefundDebitedSide(
+      form.serviceType,
+      form.originalTransactionType,
+      form.components
+    )
+    if (debitedSideError) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['originalTransactionType'],
+        message: debitedSideError
       })
     }
 

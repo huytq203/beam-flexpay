@@ -1,4 +1,7 @@
-import { EXECUTABLE_BENEFICIARY } from '@utils/fee-execution'
+import {
+  EXECUTABLE_BENEFICIARY,
+  allowsReceiverPayer
+} from '@utils/fee-execution'
 import {
   BENEFICIARY_TYPE_OPTIONS,
   getOutputPayerOptions,
@@ -26,10 +29,12 @@ export interface ComponentPartyOptions {
  * Người chịu và người hưởng trên hộp thoại. Giá trị đầu tiên suy theo loại giao dịch chỉ là mặc
  * định; người vận hành vẫn đổi được sang mọi giá trị hợp lệ của luồng phí. Phí đầu vào luôn do
  * SYSTEM chịu và trả cho ngân hàng/đối tác, phí đầu ra không do SYSTEM chịu — khớp schema.
+ * Phí hoàn không bày "Người nhận" khi loại giao dịch gốc không cho người nhận chịu.
  */
 export const getComponentPartyOptions = (
   isInputCost: boolean,
-  serviceType: string
+  serviceType: string,
+  originalTransactionType?: string | null
 ): ComponentPartyOptions => {
   if (isInputCost) {
     return {
@@ -39,7 +44,11 @@ export const getComponentPartyOptions = (
       defaultBeneficiaryType: 'BANK'
     }
   }
-  const payerTypeOptions = getOutputPayerOptions(serviceType)
+  const payerTypeOptions = getOutputPayerOptions(serviceType).filter(
+    ({ value }) =>
+      value !== 'RECEIVER' ||
+      allowsReceiverPayer(serviceType, originalTransactionType)
+  )
   return {
     payerTypeOptions,
     defaultPayerType: payerTypeOptions[0].value,

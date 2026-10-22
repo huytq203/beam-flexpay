@@ -3,7 +3,7 @@ import { ButtonComponent } from '@components/index'
 import { useMessage } from '@hooks/useMessage'
 import { useState } from 'react'
 import type { Control } from 'react-hook-form'
-import { useFieldArray } from 'react-hook-form'
+import { useFieldArray, useWatch } from 'react-hook-form'
 import type {
   FeeComponentFormValues,
   FeeConfigFormValues
@@ -60,6 +60,10 @@ export const FeeComponentList = ({
   const { fields, append, insert, update, remove } = useFieldArray({
     control,
     name: 'components'
+  })
+  const originalTransactionType = useWatch({
+    control,
+    name: 'originalTransactionType'
   })
   const { successMess } = useMessage()
   const components = fields as unknown as FeeComponentFormValues[]
@@ -232,6 +236,7 @@ export const FeeComponentList = ({
           feeScope={dialogScope}
           businessCategory={categoryOf(dialogScope)}
           serviceType={serviceType}
+          originalTransactionType={originalTransactionType}
           onSave={handleSave}
           onCancel={closeDialog}
         />
