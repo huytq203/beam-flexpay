@@ -174,7 +174,7 @@ export const AssignmentSection = ({
                 : 'Ngân hàng'
             }
             placeholder={
-              rules.bankRequired ? 'Chọn ngân hàng' : 'Mọi ngân hàng'
+              rules.bankRequired ? 'Chọn ngân hàng' : 'Tất cả ngân hàng'
             }
             showSearch
             optionFilterProp='label'
