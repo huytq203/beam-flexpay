@@ -58,6 +58,11 @@ const ScheduleItem = ({ schedule, canCancel, onCancel }: ScheduleItemProps) => {
             {formatScheduleTime(schedule.runAt)}
           </span>
           <ScheduleStatusTag status={schedule.status} />
+          {schedule.dependsOnScheduleId && (
+            <span className='rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground'>
+              Kết thúc khoảng
+            </span>
+          )}
         </div>
         <span className='break-words text-muted-foreground'>
           Lý do: {schedule.reason}
@@ -98,6 +103,17 @@ export const FeePolicySchedulesSection = ({
   const [cancelSchedule, { isLoading: isCancelling }] =
     useCancelFeePolicyScheduleMutation()
   const [cancelling, setCancelling] = useState<FeePolicySchedule | null>(null)
+
+  /** Huỷ bước bắt đầu của khoảng thì BE huỷ luôn bước kết thúc: báo trước trong câu xác nhận. */
+  const windowEndNote = (start: FeePolicySchedule): string => {
+    const end = data?.find(
+      (item) =>
+        item.dependsOnScheduleId === start.id && item.status === 'PENDING'
+    )
+    return end
+      ? ` Lịch “${SCHEDULE_ACTION_LABEL[end.action]}” lúc ${formatScheduleTime(end.runAt)} (kết thúc khoảng) cũng bị huỷ theo.`
+      : ''
+  }
 
   const confirmCancel = async () => {
     if (!cancelling) return
@@ -171,7 +187,7 @@ export const FeePolicySchedulesSection = ({
         onCancel={() => setCancelling(null)}
         content={
           cancelling
-            ? `Huỷ lịch “${SCHEDULE_ACTION_LABEL[cancelling.action]}” lúc ${formatScheduleTime(cancelling.runAt)}?`
+            ? `Huỷ lịch “${SCHEDULE_ACTION_LABEL[cancelling.action]}” lúc ${formatScheduleTime(cancelling.runAt)}?${windowEndNote(cancelling)}`
             : null
         }
       />

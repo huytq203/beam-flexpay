@@ -186,6 +186,8 @@ export interface FeePolicySchedule {
   createdAt: string
   executedAt: string | null
   resultMessage: string | null
+  /** Bước bắt đầu của khoảng mà lịch này kết thúc; null với lịch đơn lẻ. */
+  dependsOnScheduleId?: string | null
 }
 
 /** Khóa / mở chính sách: không có `runAt` là làm ngay, có `runAt` là hẹn giờ. */
@@ -194,6 +196,8 @@ export interface ChangeFeePolicyStatusArg {
   action: FeePolicyScheduleAction
   /** ISO-8601 instant, ví dụ 2026-10-20T01:00:00.000Z; bỏ trống = thực hiện ngay. */
   runAt?: string
+  /** Kết thúc khoảng: tới lúc này tự làm hành động ngược lại; bỏ trống = không tự đảo. */
+  endAt?: string
   reason: string
 }
 
@@ -203,6 +207,8 @@ export interface FeePolicyStatusChangeResult {
   policy?: unknown
   /** Có khi `SCHEDULED`: lịch vừa tạo. */
   schedule?: FeePolicySchedule | null
+  /** Bước kết thúc khoảng khi có `endAt`. */
+  endSchedule?: FeePolicySchedule | null
 }
 
 export interface CancelFeePolicyScheduleArg {

@@ -8,10 +8,14 @@ import dayjs from 'dayjs'
 import { http, HttpResponse } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
 import { FeePolicyStatusChangeDialog } from '../components/FeePolicyStatusChangeDialog'
-import { RUN_AT_REQUIRED_MESSAGE } from '../schemas/feePolicySchedule.schema'
+import {
+  END_AT_AFTER_START_MESSAGE,
+  RUN_AT_REQUIRED_MESSAGE
+} from '../schemas/feePolicySchedule.schema'
 
 const URL = '*/fee/policies/policy-1/status-changes'
-const PICKER = 'DD/MM/YYYY HH:mm:ss'
+const PICKER = 'Ngay khi xác nhận'
+const END_PICKER = 'Không tự đảo lại'
 
 const renderDialog = (
   status = 'ACTIVE',
@@ -42,16 +46,21 @@ const captureBody = () => {
   return sent
 }
 
-const pickRunAt = async (user: ReturnType<typeof userEvent.setup>, runAt: dayjs.Dayjs) => {
-  const picker = screen.getByPlaceholderText(PICKER)
+const pickRunAt = async (
+  user: ReturnType<typeof userEvent.setup>,
+  runAt: dayjs.Dayjs,
+  placeholder = PICKER
+) => {
+  const picker = screen.getByPlaceholderText(placeholder)
   await user.click(picker)
   await user.type(picker, `${runAt.format('DD/MM/YYYY HH:mm:ss')}{Enter}`)
 }
 
 describe('dialog khóa / mở chính sách phí', () => {
-  it('không có lựa chọn ngay / hẹn giờ: chỉ một ô thời điểm không bắt buộc', async () => {
+  it('không có lựa chọn ngay / hẹn giờ: hai ô bắt đầu và kết thúc đều không bắt buộc', async () => {
     renderDialog()
     expect(await screen.findByPlaceholderText(PICKER)).toBeInTheDocument()
+    expect(screen.getByPlaceholderText(END_PICKER)).toBeInTheDocument()
     expect(screen.queryByRole('radio')).toBeNull()
   })
 
@@ -60,11 +69,17 @@ describe('dialog khóa / mở chính sách phí', () => {
     const user = userEvent.setup()
     const onClose = renderDialog()
 
-    await user.type(await screen.findByRole('textbox', { name: /Lý do/ }), ' Tạm dừng khuyến mãi ')
+    await user.type(
+      await screen.findByRole('textbox', { name: /Lý do/ }),
+      ' Tạm dừng khuyến mãi '
+    )
     await user.click(screen.getByRole('button', { name: 'Ngừng áp dụng ngay' }))
 
     await waitFor(() => expect(onClose).toHaveBeenCalled())
-    expect(sent.body).toEqual({ action: 'DEACTIVATE', reason: 'Tạm dừng khuyến mãi' })
+    expect(sent.body).toEqual({
+      action: 'DEACTIVATE',
+      reason: 'Tạm dừng khuyến mãi'
+    })
   })
 
   it('bỏ trống thời điểm: chính sách đang tắt thì kích hoạt ngay', async () => {
@@ -72,7 +87,10 @@ describe('dialog khóa / mở chính sách phí', () => {
     const user = userEvent.setup()
     const onClose = renderDialog('INACTIVE')
 
-    await user.type(await screen.findByRole('textbox', { name: /Lý do/ }), 'Áp dụng lại')
+    await user.type(
+      await screen.findByRole('textbox', { name: /Lý do/ }),
+      'Áp dụng lại'
+    )
     await user.click(screen.getByRole('button', { name: 'Kích hoạt ngay' }))
 
     await waitFor(() => expect(onClose).toHaveBeenCalled())
@@ -84,7 +102,9 @@ describe('dialog khóa / mở chính sách phí', () => {
     const user = userEvent.setup()
     renderDialog()
 
-    await user.click(await screen.findByRole('button', { name: 'Ngừng áp dụng ngay' }))
+    await user.click(
+      await screen.findByRole('button', { name: 'Ngừng áp dụng ngay' })
+    )
 
     expect(await screen.findByText('Vui lòng nhập lý do')).toBeInTheDocument()
     expect(sent.calls).toBe(0)
@@ -98,7 +118,10 @@ describe('dialog khóa / mở chính sách phí', () => {
     const runAt = dayjs().add(2, 'day').second(0).millisecond(0)
     await screen.findByPlaceholderText(PICKER)
     await pickRunAt(user, runAt)
-    await user.type(screen.getByRole('textbox', { name: /Lý do/ }), '  Hết khuyến mãi ')
+    await user.type(
+      screen.getByRole('textbox', { name: /Lý do/ }),
+      '  Hết khuyến mãi '
+    )
     await user.click(screen.getByRole('button', { name: 'Hẹn giờ' }))
 
     await waitFor(() => expect(onClose).toHaveBeenCalled())
@@ -114,10 +137,77 @@ describe('dialog khóa / mở chính sách phí', () => {
     const user = userEvent.setup()
     renderDialog('ACTIVE', ['ACTIVATE'])
 
-    await user.type(await screen.findByRole('textbox', { name: /Lý do/ }), 'Mở lại sáng mai')
+    await user.type(
+      await screen.findByRole('textbox', { name: /Lý do/ }),
+      'Mở lại sáng mai'
+    )
     await user.click(screen.getByRole('button', { name: 'Hẹn giờ' }))
 
     expect(await screen.findByText(RUN_AT_REQUIRED_MESSAGE)).toBeInTheDocument()
+    expect(sent.calls).toBe(0)
+  })
+
+  it('đặt khoảng: một lần gửi cả runAt và endAt, BE tự đảo lại khi hết khoảng', async () => {
+    const sent = captureBody()
+    const user = userEvent.setup()
+    const onClose = renderDialog()
+
+    const runAt = dayjs().add(1, 'day').second(0).millisecond(0)
+    const endAt = runAt.add(3, 'hour')
+    await screen.findByPlaceholderText(PICKER)
+    await pickRunAt(user, runAt)
+    await pickRunAt(user, endAt, END_PICKER)
+    expect(screen.getByText(/Hết khoảng tự mở lại/)).toBeInTheDocument()
+    await user.type(
+      screen.getByRole('textbox', { name: /Lý do/ }),
+      'Bảo trì cổng'
+    )
+    await user.click(screen.getByRole('button', { name: 'Hẹn giờ' }))
+
+    await waitFor(() => expect(onClose).toHaveBeenCalled())
+    expect(sent.calls).toBe(1)
+    expect(sent.body).toEqual({
+      action: 'DEACTIVATE',
+      runAt: runAt.toDate().toISOString(),
+      endAt: endAt.toDate().toISOString(),
+      reason: 'Bảo trì cổng'
+    })
+  })
+
+  it('bắt đầu ngay, chỉ chọn kết thúc: gửi endAt mà không gửi runAt', async () => {
+    const sent = captureBody()
+    const user = userEvent.setup()
+    const onClose = renderDialog()
+
+    const endAt = dayjs().add(2, 'hour').second(0).millisecond(0)
+    await screen.findByPlaceholderText(END_PICKER)
+    await pickRunAt(user, endAt, END_PICKER)
+    await user.type(screen.getByRole('textbox', { name: /Lý do/ }), 'Khóa tạm')
+    await user.click(screen.getByRole('button', { name: 'Ngừng áp dụng ngay' }))
+
+    await waitFor(() => expect(onClose).toHaveBeenCalled())
+    expect(sent.body).toEqual({
+      action: 'DEACTIVATE',
+      endAt: endAt.toDate().toISOString(),
+      reason: 'Khóa tạm'
+    })
+  })
+
+  it('kết thúc không sau bắt đầu: báo lỗi và không gọi API', async () => {
+    const sent = captureBody()
+    const user = userEvent.setup()
+    renderDialog()
+
+    const runAt = dayjs().add(1, 'day').second(0).millisecond(0)
+    await screen.findByPlaceholderText(PICKER)
+    await pickRunAt(user, runAt)
+    await pickRunAt(user, runAt.subtract(1, 'hour'), END_PICKER)
+    await user.type(screen.getByRole('textbox', { name: /Lý do/ }), 'Sai giờ')
+    await user.click(screen.getByRole('button', { name: 'Hẹn giờ' }))
+
+    expect(
+      await screen.findByText(END_AT_AFTER_START_MESSAGE)
+    ).toBeInTheDocument()
     expect(sent.calls).toBe(0)
   })
 })

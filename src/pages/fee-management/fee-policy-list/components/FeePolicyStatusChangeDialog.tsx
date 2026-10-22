@@ -58,6 +58,17 @@ const SCHEDULED_SUCCESS: Readonly<Record<FeePolicyScheduleAction, string>> = {
   DEACTIVATE: 'Đã hẹn giờ khóa chính sách phí'
 }
 
+const WINDOW_SUCCESS: Readonly<Record<FeePolicyScheduleAction, string>> = {
+  ACTIVATE: 'Đã đặt khoảng mở chính sách phí, hết khoảng sẽ tự khóa lại',
+  DEACTIVATE: 'Đã đặt khoảng khóa chính sách phí, hết khoảng sẽ tự mở lại'
+}
+
+/** Việc hệ thống tự làm khi hết khoảng: đảo hành động đã chọn. */
+const WINDOW_END_EFFECT: Readonly<Record<FeePolicyScheduleAction, string>> = {
+  ACTIVATE: 'Hết khoảng tự khóa lại.',
+  DEACTIVATE: 'Hết khoảng tự mở lại.'
+}
+
 const StatusChangeForm = ({
   policy,
   allowedActions,
@@ -79,6 +90,7 @@ const StatusChangeForm = ({
         ? immediateAction
         : defaultScheduleAction(policy.status, allowedActions),
       runAt: '',
+      endAt: '',
       reason: ''
     },
     resolver: zodResolver(schema)
@@ -86,6 +98,7 @@ const StatusChangeForm = ({
 
   const action = useWatch({ control, name: 'action' })
   const runAt = useWatch({ control, name: 'runAt' })
+  const endAt = useWatch({ control, name: 'endAt' })
   const reason = useWatch({ control, name: 'reason' }) ?? ''
   // Không chọn thời điểm = làm ngay; chỉ đúng khi hành động là hành động làm ngay được.
   const isNow = !runAt && action === immediateAction
@@ -97,12 +110,15 @@ const StatusChangeForm = ({
         policyId: policy.id,
         action: values.action,
         runAt: now ? undefined : toRunAtIso(values.runAt as string),
+        endAt: values.endAt ? toRunAtIso(values.endAt) : undefined,
         reason: values.reason.trim()
       }).unwrap()
       successMess(
-        now
-          ? IMMEDIATE_SUCCESS[values.action]
-          : SCHEDULED_SUCCESS[values.action]
+        values.endAt
+          ? WINDOW_SUCCESS[values.action]
+          : now
+            ? IMMEDIATE_SUCCESS[values.action]
+            : SCHEDULED_SUCCESS[values.action]
       )
       onClose()
     } catch {
@@ -128,18 +144,32 @@ const StatusChangeForm = ({
           label: SCHEDULE_ACTION_LABEL[value]
         }))}
       />
-      <FormDatePicker
-        control={control}
-        name='runAt'
-        label='Thời điểm chạy'
-        showTime
-        className='flex flex-col'
-        placeholder='DD/MM/YYYY HH:mm:ss'
-      />
+      {/* Khoảng thời gian: một lần đặt, BE tạo cả bước bắt đầu và bước tự đảo lại khi kết thúc. */}
+      <div className='grid grid-cols-1 gap-3 min-[400px]:grid-cols-2'>
+        <FormDatePicker
+          control={control}
+          name='runAt'
+          label='Bắt đầu'
+          showTime
+          className='flex flex-col'
+          placeholder='Ngay khi xác nhận'
+        />
+        <FormDatePicker
+          control={control}
+          name='endAt'
+          label='Kết thúc'
+          showTime
+          className='flex flex-col'
+          placeholder='Không tự đảo lại'
+        />
+      </div>
       <p className='m-0 -mt-2 text-xs text-muted-foreground'>
         {isNow
-          ? `Bỏ trống để thực hiện ngay: chính sách “${policy.name}” ${IMMEDIATE_EFFECT[immediateAction]}`
-          : 'Thao tác chạy đúng thời điểm đã chọn. Bỏ trống để thực hiện ngay.'}
+          ? `Bỏ trống bắt đầu để thực hiện ngay: chính sách “${policy.name}” ${IMMEDIATE_EFFECT[immediateAction]}`
+          : 'Thao tác chạy đúng thời điểm bắt đầu đã chọn.'}{' '}
+        {endAt
+          ? WINDOW_END_EFFECT[action]
+          : 'Bỏ trống kết thúc nếu không muốn tự đảo lại.'}
       </p>
       <FormTextArea
         control={control}
