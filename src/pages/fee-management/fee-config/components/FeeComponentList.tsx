@@ -11,9 +11,6 @@ import type {
 import {
   FEE_BUSINESS_CATEGORY,
   FEE_SCOPE,
-  FEE_SCOPES,
-  feeScopePanelId,
-  feeScopeTabId,
   getFeeBusinessCategories,
   inferFeeBusinessCategory,
   type FeeBusinessCategory,
@@ -24,10 +21,14 @@ import { findBearerPartner, groupBearerPairs } from '../utils/bearerPairs'
 import { FeeComponentCard } from './FeeComponentCard'
 import { FeeComponentDialog } from './FeeComponentDialog'
 import { SectionHeading } from './SectionHeading'
-import { FeeScopeTabs } from './FeeScopeTabs'
 
 interface FeeComponentListProps {
   control: Control<FeeConfigFormValues>
+  /**
+   * Luồng cố định của danh sách: chính sách phí khách chỉ có phí đầu ra, chính sách phí đầu vào
+   * chỉ có chi phí đầu vào. Hai luồng không còn chung một form nên không có tab chuyển luồng.
+   */
+  feeScope?: FeeScope
   serviceType: string
   error?: string
   readOnly?: boolean
@@ -44,7 +45,7 @@ const EMPTY_LABEL: Readonly<Record<FeeScope, string>> = {
 }
 
 /**
- * Danh sách thành phần phí, tách hai tab theo luồng.
+ * Danh sách thành phần phí của một luồng (đầu ra hoặc đầu vào).
  *
  * Thứ tự có nghĩa với backend: thành phần tính dựa trên một thành phần khác
  * phải đứng SAU thành phần nó tham chiếu, và chỉ tính trong cùng luồng. Vì vậy
@@ -53,6 +54,7 @@ const EMPTY_LABEL: Readonly<Record<FeeScope, string>> = {
  */
 export const FeeComponentList = ({
   control,
+  feeScope: scope = FEE_SCOPE.OUTPUT_FEE,
   serviceType,
   error,
   readOnly = false
@@ -67,35 +69,29 @@ export const FeeComponentList = ({
   })
   const { successMess } = useMessage()
   const components = fields as unknown as FeeComponentFormValues[]
-  const [activeScope, setActiveScope] = useState<FeeScope>(FEE_SCOPE.OUTPUT_FEE)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
-  const [addingScope, setAddingScope] = useState<FeeScope | null>(null)
+  const [adding, setAdding] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<FeeBusinessCategory>(
     () =>
       inferFeeBusinessCategory(
-        FEE_SCOPE.OUTPUT_FEE,
-        components.filter(({ feeScope }) => feeScope === FEE_SCOPE.OUTPUT_FEE)
+        scope,
+        components.filter(({ feeScope }) => feeScope === scope)
       )
   )
 
-  const indexesOf = (scope: FeeScope) =>
-    components.flatMap((component, index) =>
-      component.feeScope === scope ? [index] : []
-    )
-  const counts = {
-    OUTPUT_FEE: indexesOf(FEE_SCOPE.OUTPUT_FEE).length,
-    INPUT_COST: indexesOf(FEE_SCOPE.INPUT_COST).length
-  } as const
+  const indexes = components.flatMap((component, index) =>
+    component.feeScope === scope ? [index] : []
+  )
 
-  const categoryOf = (scope: FeeScope): FeeBusinessCategory => {
+  const category = ((): FeeBusinessCategory => {
     if (scope === FEE_SCOPE.INPUT_COST)
       return FEE_BUSINESS_CATEGORY.BANK_PROVIDER
-    const sameScope = indexesOf(scope).map((index) => components[index])
+    const sameScope = indexes.map((index) => components[index])
     if (sameScope.length > 0) return inferFeeBusinessCategory(scope, sameScope)
     return getFeeBusinessCategories(scope).includes(selectedCategory)
       ? selectedCategory
       : getFeeBusinessCategories(scope)[0]
-  }
+  })()
 
   const editing = editingIndex === null ? null : components[editingIndex]
   // Cả hai bên cùng chịu: sửa một bên của cặp là sửa cả cặp, nên mở hộp thoại kèm thành phần bên kia.
@@ -109,9 +105,9 @@ export const FeeComponentList = ({
           originalTransactionType
         )
   const partner = partnerIndex === null ? null : components[partnerIndex]
-  const dialogScope: FeeScope | null = editing?.feeScope ?? addingScope
+  const dialogOpen = adding || editing !== null
   const closeDialog = () => {
-    setAddingScope(null)
+    setAdding(false)
     setEditingIndex(null)
   }
 
@@ -144,91 +140,72 @@ export const FeeComponentList = ({
     successMess('Đã xoá thành phần phí khỏi chính sách')
   }
 
-  const precedingInScope = (scope: FeeScope) =>
-    components.filter(
-      (component, index) =>
-        component.feeScope === scope &&
-        (editingIndex === null || index < editingIndex)
-    )
+  const precedingInScope = components.filter(
+    (component, index) =>
+      component.feeScope === scope &&
+      (editingIndex === null || index < editingIndex)
+  )
+  const isInput = scope === FEE_SCOPE.INPUT_COST
+  const groups = groupBearerPairs(
+    serviceType,
+    components,
+    indexes,
+    originalTransactionType
+  )
 
   return (
     <section>
-      <SectionHeading>Thành phần phí</SectionHeading>
+      <SectionHeading>
+        {isInput ? 'Chi phí đầu vào' : 'Thành phần phí'}
+      </SectionHeading>
 
-      <FeeScopeTabs
-        value={activeScope}
-        counts={counts}
-        onChange={setActiveScope}
-      />
-
-      {FEE_SCOPES.map((scope) => {
-        const isInput = scope === FEE_SCOPE.INPUT_COST
-        const indexes = indexesOf(scope)
-        const groups = groupBearerPairs(
-          serviceType,
-          components,
-          indexes,
-          originalTransactionType
-        )
-        return (
-          <div
-            key={scope}
-            role='tabpanel'
-            id={feeScopePanelId(scope)}
-            aria-labelledby={feeScopeTabId(scope)}
-            hidden={scope !== activeScope}
-            className='pt-4'
-          >
-            <div className='mb-3 flex flex-wrap items-center justify-between gap-3'>
-              <FeeBusinessCategoryTabs
-                value={categoryOf(scope)}
-                feeScope={scope}
-                disabled={readOnly || indexes.length > 0}
-                onChange={setSelectedCategory}
-              />
-              {!readOnly && (
-                <ButtonComponent
-                  className='ml-auto'
-                  htmlType='button'
-                  type={isInput ? 'default' : 'primary'}
-                  content={ADD_LABEL[scope]}
-                  icon={
-                    <PlusIcon
-                      size={16}
-                      weight='bold'
-                      aria-hidden
-                    />
-                  }
-                  onClick={() => setAddingScope(scope)}
+      <div className='pt-4'>
+        <div className='mb-3 flex flex-wrap items-center justify-between gap-3'>
+          <FeeBusinessCategoryTabs
+            value={category}
+            feeScope={scope}
+            disabled={readOnly || indexes.length > 0}
+            onChange={setSelectedCategory}
+          />
+          {!readOnly && (
+            <ButtonComponent
+              className='ml-auto'
+              htmlType='button'
+              type={isInput ? 'default' : 'primary'}
+              content={ADD_LABEL[scope]}
+              icon={
+                <PlusIcon
+                  size={16}
+                  weight='bold'
+                  aria-hidden
                 />
-              )}
-            </div>
+              }
+              onClick={() => setAdding(true)}
+            />
+          )}
+        </div>
 
-            {indexes.length === 0 ? (
-              <div className='rounded-lg border border-dashed border-border px-6 py-8 text-center text-[13px] text-muted-foreground'>
-                {EMPTY_LABEL[scope]}
-              </div>
-            ) : (
-              <div className='flex flex-col gap-3'>
-                {groups.map(({ primary, partner: pairedIndex }, position) => (
-                  <FeeComponentCard
-                    key={fields[primary].id}
-                    index={position}
-                    component={components[primary]}
-                    partner={
-                      pairedIndex === null ? null : components[pairedIndex]
-                    }
-                    readOnly={readOnly}
-                    serviceType={serviceType}
-                    onEdit={() => setEditingIndex(primary)}
-                    onRemove={() => handleRemove(primary, pairedIndex)}
-                  />
-                ))}
-              </div>
-            )}
+        {indexes.length === 0 ? (
+          <div className='rounded-lg border border-dashed border-border px-6 py-8 text-center text-[13px] text-muted-foreground'>
+            {EMPTY_LABEL[scope]}
           </div>
-        )
-      })}
+        ) : (
+          <div className='flex flex-col gap-3'>
+            {groups.map(({ primary, partner: pairedIndex }, position) => (
+              <FeeComponentCard
+                key={fields[primary].id}
+                index={position}
+                component={components[primary]}
+                partner={pairedIndex === null ? null : components[pairedIndex]}
+                readOnly={readOnly}
+                serviceType={serviceType}
+                onEdit={() => setEditingIndex(primary)}
+                onRemove={() => handleRemove(primary, pairedIndex)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       {!readOnly && error && (
         <p className='mt-3 text-[13px] font-medium text-danger-strong'>
@@ -236,15 +213,15 @@ export const FeeComponentList = ({
         </p>
       )}
 
-      {!readOnly && dialogScope && (
+      {!readOnly && dialogOpen && (
         <FeeComponentDialog
           open
           initialValue={editing}
           initialPartner={partner}
-          precedingComponents={precedingInScope(dialogScope)}
+          precedingComponents={precedingInScope}
           existingComponents={components}
-          feeScope={dialogScope}
-          businessCategory={categoryOf(dialogScope)}
+          feeScope={scope}
+          businessCategory={category}
           serviceType={serviceType}
           originalTransactionType={originalTransactionType}
           onSave={handleSave}

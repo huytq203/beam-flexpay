@@ -7,7 +7,9 @@ import { http, HttpResponse } from 'msw'
 import { Route, Routes } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
 import { SERVICE_TYPE_LABELS } from '@constants/feeLabels'
+import type { ComponentType } from 'react'
 import FeeConfig from '../FeeConfig'
+import InputCostConfig from '../InputCostConfig'
 
 const MERCHANT_COLLECTION_LABEL =
   SERVICE_TYPE_LABELS.MERCHANT_VA_BILL_COLLECTION
@@ -20,7 +22,7 @@ vi.mock('../hooks/useFeeConfigDetail', () => ({
   useFeeConfigDetail: mockUseFeeConfigDetail
 }))
 
-const renderCreatePage = () => {
+const renderCreatePage = (Page: ComponentType = FeeConfig) => {
   mockUseFeeConfigDetail.mockReturnValue({
     values: null,
     snapshot: null,
@@ -39,7 +41,7 @@ const renderCreatePage = () => {
       <Routes>
         <Route
           path='/fee/create'
-          element={<FeeConfig />}
+          element={<Page />}
         />
       </Routes>
     </MessageProvider>,
@@ -48,7 +50,7 @@ const renderCreatePage = () => {
 }
 
 describe('trang tạo chính sách', () => {
-  it('không còn chọn miền phí; phí đầu ra và phí đầu vào là hai tab', () => {
+  it('không còn chọn miền phí và không có tab phí đầu vào trong form phí khách', () => {
     renderCreatePage()
 
     expect(
@@ -58,16 +60,15 @@ describe('trang tạo chính sách', () => {
       screen.queryByRole('tab', { name: 'Phí Bank/NCC' })
     ).not.toBeInTheDocument()
 
-    const scopeTabs = screen.getByRole('tablist', { name: 'Luồng phí' })
-    expect(scopeTabs).toBeInTheDocument()
-    expect(screen.getByRole('tab', { name: /Phí đầu ra/ })).toHaveAttribute(
-      'aria-selected',
-      'true'
-    )
-    expect(screen.getByRole('tab', { name: /Phí đầu vào/ })).toHaveAttribute(
-      'aria-selected',
-      'false'
-    )
+    expect(
+      screen.queryByRole('tablist', { name: 'Luồng phí' })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Thêm phí đầu vào' })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Thêm phí đầu ra' })
+    ).toBeInTheDocument()
   })
 
   it('mở hộp thoại phí đầu ra ở tab thu, người hưởng là Hệ thống', async () => {
@@ -82,11 +83,17 @@ describe('trang tạo chính sách', () => {
     expect(screen.getByLabelText(/Người chịu/)).not.toBeDisabled()
   })
 
-  it('mở hộp thoại chi phí ở tab chi phí, Hệ thống chịu và Ngân hàng hưởng', async () => {
+  it('form phí đầu vào: hộp thoại chi phí có Hệ thống chịu và Ngân hàng hưởng, không có ô đối tượng khách', async () => {
     const user = userEvent.setup()
-    renderCreatePage()
+    renderCreatePage(InputCostConfig)
 
-    await user.click(screen.getByRole('tab', { name: /Phí đầu vào/ }))
+    expect(screen.queryByText('Đối tượng áp dụng')).not.toBeInTheDocument()
+    expect(screen.queryByText('Nhóm khách hàng')).not.toBeInTheDocument()
+    expect(screen.queryByText('Loại thẻ')).not.toBeInTheDocument()
+    expect(screen.getByText('Tuyến thanh toán')).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Thêm phí đầu ra' })
+    ).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Thêm phí đầu vào' }))
 
     expect(

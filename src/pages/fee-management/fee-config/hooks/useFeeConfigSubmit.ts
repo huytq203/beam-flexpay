@@ -11,7 +11,12 @@ import {
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { FeeConfigFormValues } from '../schemas/feeConfig.schema'
-import { toAssignmentRequest, toSetupRequest } from '../utils/feeConfigPayload'
+import { POLICY_KIND, type PolicyKind } from '../constants/feeConfigFields'
+import {
+  toAssignmentRequest,
+  toInputCostAssignmentRequest,
+  toSetupRequest
+} from '../utils/feeConfigPayload'
 
 /** Những gì đã có trong cơ sở dữ liệu, cần khi sửa. */
 export interface FeeConfigSnapshot {
@@ -53,8 +58,16 @@ export interface UseFeeConfigSubmitResult {
  * áp vào giao dịch nào.
  */
 export const useFeeConfigSubmit = (
-  snapshot: FeeConfigSnapshot | null
+  snapshot: FeeConfigSnapshot | null,
+  policyKind: PolicyKind = POLICY_KIND.CUSTOMER_FEE
 ): UseFeeConfigSubmitResult => {
+  const isInputCost = policyKind === POLICY_KIND.INPUT_COST
+  const listPath = isInputCost
+    ? PATHS.FEE_V4.INPUT_COST_LIST
+    : PATHS.FEE_V4.POLICY_LIST
+  const toAssignment = isInputCost
+    ? toInputCostAssignmentRequest
+    : toAssignmentRequest
   const navigate = useNavigate()
   const { successMess } = useMessage()
   const [orphan, setOrphan] = useState<OrphanPolicy | null>(null)
@@ -70,7 +83,7 @@ export const useFeeConfigSubmit = (
     values: FeeConfigFormValues,
     policyId: string
   ): Promise<boolean> => {
-    const body = toAssignmentRequest(values, policyId)
+    const body = toAssignment(values, policyId)
     const result = snapshot?.assignmentId
       ? await putAssign({ id: snapshot.assignmentId, body })
       : await postAssign(body)
@@ -78,7 +91,7 @@ export const useFeeConfigSubmit = (
   }
 
   const create = async (values: FeeConfigFormValues): Promise<void> => {
-    const setupResult = await setupFeePolicy(toSetupRequest(values))
+    const setupResult = await setupFeePolicy(toSetupRequest(values, policyKind))
     if ('error' in setupResult) return
 
     const policyId = setupResult.data?.policy?.id
@@ -89,27 +102,31 @@ export const useFeeConfigSubmit = (
       return
     }
 
-    successMess('Đã tạo chính sách phí và gán đối tượng')
-    navigate(PATHS.FEE_V4.POLICY_LIST)
+    successMess(
+      isInputCost
+        ? 'Đã tạo chính sách phí đầu vào và gán tuyến thanh toán'
+        : 'Đã tạo chính sách phí và gán đối tượng'
+    )
+    navigate(listPath)
   }
 
   const update = async (
     values: FeeConfigFormValues,
     current: FeeConfigSnapshot
   ): Promise<void> => {
-    const { policy, components } = toSetupRequest(values)
+    const { policy, components } = toSetupRequest(values, policyKind)
     const result = await updateConfig({
       policyId: current.policyId,
       policy,
       components,
       removeComponentIds: current.componentIds,
       assignmentId: current.assignmentId,
-      assignment: toAssignmentRequest(values, current.policyId)
+      assignment: toAssignment(values, current.policyId)
     })
     if ('error' in result) return
 
     successMess('Đã cập nhật chính sách phí')
-    navigate(PATHS.FEE_V4.POLICY_LIST)
+    navigate(listPath)
   }
 
   const submit = async (values: FeeConfigFormValues): Promise<void> => {

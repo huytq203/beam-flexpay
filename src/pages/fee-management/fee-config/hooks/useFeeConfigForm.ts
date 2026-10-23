@@ -14,6 +14,7 @@ import {
   feeConfigFormSchema,
   type FeeConfigFormValues
 } from '../schemas/feeConfig.schema'
+import type { inputCostFormSchema } from '../schemas/inputCostConfig.schema'
 
 export const buildEmptyForm = (
   feeDomain: FeeDomain = FeeDomain.EWALLET
@@ -53,10 +54,14 @@ export interface UseFeeConfigFormResult {
  * khi lời gọi thứ nhất chạy.
  */
 export const useFeeConfigForm = (
-  defaultValues: FeeConfigFormValues
+  defaultValues: FeeConfigFormValues,
+  /** Schema theo loại chính sách; mặc định là chính sách phí khách. */
+  schema:
+    | typeof feeConfigFormSchema
+    | typeof inputCostFormSchema = feeConfigFormSchema
 ): UseFeeConfigFormResult => {
   const form = useForm<FeeConfigFormValues>({
-    resolver: zodResolver(feeConfigFormSchema),
+    resolver: zodResolver(schema),
     defaultValues,
     mode: 'onTouched'
   })
