@@ -28,7 +28,6 @@ export const FeePolicyTableActions = ({
         onExport={onExport}
         loading={exporting}
         disabled={exportDisabled}
-        tooltip='File lấy trọn bộ lọc đang áp, không giới hạn theo trang; gồm chính sách phí, bản gán, thành phần phí và các bậc phí.'
       />
       <Can
         screen={screen}

@@ -11,6 +11,7 @@ import { UnfreezeRequestDialog } from '../UnfreezeRequestDialog'
 const freeze = (overrides: Partial<FreezeItem> = {}): FreezeItem => ({
   id: 'freeze-1',
   accountId: 'account-1',
+  freezeCode: 'FZ7K4M9Q2H',
   sourceTransactionId: null,
   sourceTransactionCode: null,
   ownerId: 'owner-1',
@@ -50,7 +51,11 @@ const renderDialog = (item: FreezeItem = freeze()) => {
   const user = userEvent.setup()
   renderWithProviders(
     <MessageProvider>
-      <UnfreezeRequestDialog open item={item} onCancel={() => {}} />
+      <UnfreezeRequestDialog
+        open
+        item={item}
+        onCancel={() => {}}
+      />
     </MessageProvider>
   )
   return { user }
@@ -59,6 +64,16 @@ const renderDialog = (item: FreezeItem = freeze()) => {
 const amountInput = () => screen.getByRole('spinbutton')
 
 describe('UnfreezeRequestDialog', () => {
+  it('hiện mã đóng băng của lệnh đang mở', () => {
+    renderDialog()
+    expect(screen.getByText('FZ7K4M9Q2H')).toBeInTheDocument()
+  })
+
+  it('lệnh không có mã đóng băng thì hiện —', () => {
+    renderDialog(freeze({ freezeCode: null }))
+    expect(screen.getByText('—')).toBeInTheDocument()
+  })
+
   it('mặc định mở toàn bộ: số tiền khoá theo trần, không cho sửa', () => {
     renderDialog()
 
@@ -88,28 +103,32 @@ describe('UnfreezeRequestDialog', () => {
     expect(amountInput()).toHaveValue('65,000')
     expect(screen.getByText('Còn thiếu chưa giữ được')).toBeInTheDocument()
     expect(screen.getByText('15,000 VNĐ')).toBeInTheDocument()
-    expect(
-      screen.getByText(/huỷ đòi phần còn thiếu/)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/huỷ đòi phần còn thiếu/)).toBeInTheDocument()
   })
 
   it('dùng đúng 30.000 còn lại dù lịch sử đã EXECUTED 115.000', () => {
-    renderDialog(freeze({
-      amount: 145_000,
-      requestedAmount: 145_000,
-      releasedAmount: 115_000,
-      remainingAmount: 30_000,
-      totalHeldAmount: 30_000,
-      totalReleasedAmount: 115_000,
-      displayStatus: 'PARTIALLY_RELEASED',
-      unfreezeCommandId: 'rejected-command',
-      unfreezeCommandStatus: 'REJECTED',
-      unfreezeCommands: [
-        { id: 'c1', amount: 85_000, status: 'EXECUTED' } as never,
-        { id: 'c2', amount: 30_000, status: 'EXECUTED' } as never,
-        { id: 'rejected-command', amount: 30_000, status: 'REJECTED' } as never
-      ]
-    }))
+    renderDialog(
+      freeze({
+        amount: 145_000,
+        requestedAmount: 145_000,
+        releasedAmount: 115_000,
+        remainingAmount: 30_000,
+        totalHeldAmount: 30_000,
+        totalReleasedAmount: 115_000,
+        displayStatus: 'PARTIALLY_RELEASED',
+        unfreezeCommandId: 'rejected-command',
+        unfreezeCommandStatus: 'REJECTED',
+        unfreezeCommands: [
+          { id: 'c1', amount: 85_000, status: 'EXECUTED' } as never,
+          { id: 'c2', amount: 30_000, status: 'EXECUTED' } as never,
+          {
+            id: 'rejected-command',
+            amount: 30_000,
+            status: 'REJECTED'
+          } as never
+        ]
+      })
+    )
 
     expect(amountInput()).toBeDisabled()
     expect(amountInput()).toHaveValue('30,000')
@@ -166,10 +185,13 @@ describe('UnfreezeRequestDialog', () => {
   it('nhánh theo giao dịch gửi kèm idempotencyKey — thiếu là VALIDATION_ERROR 3001', async () => {
     let body: Record<string, unknown> | null = null
     server.use(
-      http.post('*/wallet/accounts/unfreeze-transaction', async ({ request }) => {
-        body = (await request.json()) as Record<string, unknown>
-        return HttpResponse.json({ success: true, data: null })
-      })
+      http.post(
+        '*/wallet/accounts/unfreeze-transaction',
+        async ({ request }) => {
+          body = (await request.json()) as Record<string, unknown>
+          return HttpResponse.json({ success: true, data: null })
+        }
+      )
     )
     const { user } = renderDialog(
       freeze({

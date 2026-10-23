@@ -35,14 +35,17 @@ export const getColumn = ({
   {
     title: 'Mã đóng băng',
     align: 'left',
-    key: 'id',
+    key: 'freezeCode',
     width: 170,
-    render: (_, record) => (
-      <CopyableText
-        className='max-w-[150px]'
-        value={record.id}
-      />
-    )
+    render: (_, record) =>
+      record.freezeCode ? (
+        <CopyableText
+          className='max-w-[150px]'
+          value={record.freezeCode}
+        />
+      ) : (
+        '—'
+      )
   },
   {
     title: 'Khách hàng',
@@ -87,7 +90,9 @@ export const getColumn = ({
           </p>
         )}
         {record.reason && (
-          <p className='text-muted-foreground text-[12px]'>Lý do:{record.reason}</p>
+          <p className='text-muted-foreground text-[12px]'>
+            Lý do:{record.reason}
+          </p>
         )}
       </div>
     )

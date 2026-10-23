@@ -77,7 +77,7 @@ const feeManagementV4: ItemTypeCustom = {
           color={COlOR}
         />
       ),
-      label: 'Cấu hình phí'
+      label: 'Cấu hình phí dầu ra'
     },
     {
       key: 'fee-input-cost',

@@ -199,7 +199,7 @@ export const toAssignmentRequest = (
 /**
  * Form phí đầu vào → payload gán tuyến thanh toán.
  *
- * Chỉ khai NCC, ngân hàng phát hành, phương thức và ngày hiệu lực. Backend từ chối bản gán phí đầu
+ * Chỉ khai NCC, Ngân hàng, phương thức và ngày hiệu lực. Backend từ chối bản gán phí đầu
  * vào có merchant, loại thẻ, nhóm khách, chủ thể hay loại giao dịch gốc, nên các trường đó không
  * bao giờ có mặt ở đây dù form có giữ giá trị cũ. Loại giao dịch là `serviceType` của chính sách.
  */

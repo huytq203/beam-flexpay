@@ -42,8 +42,8 @@ describe('wallet account columns', () => {
   it.each([
     [true, 'Khóa đăng nhập'],
     [false, null],
-    [null, 'Đăng nhập: ?'],
-    [undefined, 'Đăng nhập: ?']
+    [null, null],
+    [undefined, null]
   ])('gộp cột Trạng thái: loginLocked=%s hiện %s', (loginLocked, shown) => {
     render(
       <Table

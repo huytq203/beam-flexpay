@@ -17,7 +17,7 @@ const Column = (currency = 'VND'): ColumnType<MoneyFlowEntry>[] => [
         render: (value: string | null) => value || '--'
     },
     {
-        title: 'Ví nguồn (DEBIT)',
+        title: 'Tài khoản ghi nợ',
         dataIndex: 'debitAccount',
         width: 240,
         render: (value: string | null) => (
@@ -25,7 +25,7 @@ const Column = (currency = 'VND'): ColumnType<MoneyFlowEntry>[] => [
         )
     },
     {
-        title: 'Ví đích (CREDIT)',
+        title: 'Tài khoản ghi có',
         dataIndex: 'creditAccount',
         width: 240,
         render: (value: string | null) => (

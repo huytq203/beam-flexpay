@@ -116,6 +116,7 @@ export interface ExportFreezesQuery {
   releaseType?: string
   username?: string
   sourceTransactionCode?: string
+  freezeCode?: string
   sourceTransactionId?: string
   shortfall?: boolean
   includeTopUps?: boolean

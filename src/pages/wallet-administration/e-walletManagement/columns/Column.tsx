@@ -40,25 +40,8 @@ const LOGIN_STATE_CONFIG = {
   LOGIN_LOCKED: {
     label: 'Khóa đăng nhập',
     className: 'danger-status'
-  },
-  LOGIN_ALLOWED: {
-    label: 'Đăng nhập được',
-    className: 'success-status'
-  },
-  LOGIN_UNKNOWN: {
-    label: 'Đăng nhập: ?',
-    className: 'warning-status'
   }
 } as const
-
-/** Keycloak trả null khi không xác định được tình trạng khóa đăng nhập. */
-const getLoginState = (
-  loginLocked: boolean | null | undefined
-): keyof typeof LOGIN_STATE_CONFIG => {
-  if (loginLocked === true) return 'LOGIN_LOCKED'
-  if (loginLocked === false) return 'LOGIN_ALLOWED'
-  return 'LOGIN_UNKNOWN'
-}
 
 export const getColumn = ({
   openModal,
@@ -99,12 +82,12 @@ export const getColumn = ({
 
             {record.walletCode && (
               <div className='min-w-0 max-w-full'>
-                  <TypographyText
-                    className='inline-flex max-w-full cursor-pointer items-center font-mono text-[11px]! text-muted-foreground!'
-                    copyable={{ text: record.walletCode }}
-                  >
-                    <span className='truncate'>{record.walletCode}</span>
-                  </TypographyText>
+                <TypographyText
+                  className='inline-flex max-w-full cursor-pointer items-center font-mono text-[11px]! text-muted-foreground!'
+                  copyable={{ text: record.walletCode }}
+                >
+                  <span className='truncate'>{record.walletCode}</span>
+                </TypographyText>
               </div>
             )}
           </div>
@@ -166,9 +149,9 @@ export const getColumn = ({
       align: 'left',
       width: 150,
       render: (_, record) => {
-        // Ví hệ thống không gắn tài khoản đăng nhập nào, nên không có trạng thái đăng nhập để hiện.
-        const isSystem = record.ownerType === 'SYSTEM'
-        const loginState = getLoginState(record.loginLocked)
+        // Ví hệ thống không gắn tài khoản đăng nhập; loginLocked null là Keycloak không xác định → không hiện.
+        const isLoginLocked =
+          record.ownerType !== 'SYSTEM' && record.loginLocked === true
         return (
           <div className='flex flex-col items-start gap-1.5'>
             <StatusBadge status={String(record.status)} />
@@ -176,9 +159,9 @@ export const getColumn = ({
               status={record.ekycStatus ?? 'NOT_VERIFIED'}
               config={EKYC_STATUS_CONFIG}
             />
-            {!isSystem && loginState !== 'LOGIN_ALLOWED' && (
+            {isLoginLocked && (
               <StatusBadge
-                status={loginState}
+                status='LOGIN_LOCKED'
                 config={LOGIN_STATE_CONFIG}
               />
             )}

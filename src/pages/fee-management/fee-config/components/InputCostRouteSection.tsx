@@ -21,7 +21,7 @@ interface InputCostRouteSectionProps {
 /**
  * Tuyến thanh toán mà chính sách phí đầu vào áp dụng.
  *
- * Giá đối tác ký chung cho cả tuyến nên chỉ có bốn tiêu chí: NCC, ngân hàng phát hành, phương
+ * Giá đối tác ký chung cho cả tuyến nên chỉ có bốn tiêu chí: NCC, Ngân hàng, phương
  * thức và loại giao dịch (chọn ở phần thông tin chung). Không có merchant, ví, nhóm khách, loại
  * thẻ hay loại giao dịch gốc: backend từ chối các tiêu chí đó trên chính sách phí đầu vào.
  * Ô để trống nghĩa là mọi giá trị.
@@ -64,9 +64,7 @@ export const InputCostRouteSection = ({
 
   return (
     <section>
-      <SectionHeading >
-        Tuyến thanh toán
-      </SectionHeading>
+      <SectionHeading>Tuyến thanh toán</SectionHeading>
 
       <div className='grid grid-cols-1 gap-3 md:grid-cols-12'>
         {showProvider && (
@@ -87,7 +85,7 @@ export const InputCostRouteSection = ({
           <FormSelect
             name='bankCode'
             control={control}
-            label='Ngân hàng phát hành'
+            label='Ngân hàng'
             placeholder='Tất cả ngân hàng'
             allowClear
             showSearch

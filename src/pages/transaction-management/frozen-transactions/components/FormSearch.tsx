@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form'
 
 type FormSearchValues = Pick<
   FreezeSearchParams,
+  | 'freezeCode'
   | 'displayStatus'
   | 'username'
   | 'sourceTransactionCode'
@@ -29,6 +30,7 @@ interface FormSearchProps {
 }
 
 const EMPTY_VALUES: FormSearchValues = {
+  freezeCode: '',
   username: '',
   sourceTransactionCode: '',
   displayStatus: undefined,
@@ -67,7 +69,9 @@ const FormSearch = ({ defaultValues, onSearch, onReset }: FormSearchProps) => {
   })
 
   const onSubmit = (values: FormSearchValues) => {
-    onSearch?.(omitEmpty(values))
+    // BE khớp tuyệt đối, không phân biệt hoa/thường; chuẩn hoá để URL hiện đúng dạng mã.
+    const freezeCode = values.freezeCode?.trim().toUpperCase()
+    onSearch?.(omitEmpty({ ...values, freezeCode }))
   }
 
   const handleReset = () => {
@@ -81,7 +85,14 @@ const FormSearch = ({ defaultValues, onSearch, onReset }: FormSearchProps) => {
         {' '}
         <Icons.FunnelIcon /> Bộ lọc tìm kiếm
       </p>
-      <div className=' grid grid-cols-1  md:grid-cols-3 xl:grid-cols-5 gap-3'>
+      <div className='grid grid-cols-1 gap-3 md:grid-cols-3'>
+        <FormInput
+          control={control}
+          name='freezeCode'
+          className='col-span-1'
+          label='Mã đóng băng'
+          placeholder='VD: FZ7K4M9Q2H'
+        />
         <FormInput
           control={control}
           name='username'
@@ -93,8 +104,8 @@ const FormSearch = ({ defaultValues, onSearch, onReset }: FormSearchProps) => {
           control={control}
           name='sourceTransactionCode'
           className='col-span-1'
-          label='Mã giao dịch nguồn'
-          placeholder='Nhập mã giao dịch nguồn...'
+          label='Mã giao dịch gốc'
+          placeholder='Nhập mã giao dịch gốc...'
         />
         <FormSelect
           control={control}

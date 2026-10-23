@@ -12,6 +12,7 @@ import { FreezeItem } from '@type/freeze.type'
 import { useMemo, useState } from 'react'
 
 export const FROZEN_FILTER_KEYS = [
+  'freezeCode',
   'username',
   'sourceTransactionCode',
   'displayStatus',

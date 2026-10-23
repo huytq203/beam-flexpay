@@ -5,6 +5,8 @@ import type {
 
 export interface UnfreezeLog {
   id: string
+  /** Lệnh đóng băng mà lần mở này thuộc về. */
+  freezeCode: string | null
   amount: number
   shortfallReleased: number
   releasedAmount: number
@@ -60,6 +62,8 @@ export interface DataFreeze {
 export interface FreezeItem {
   id: string
   accountId: string
+  /** Chỉ lệnh admin đóng băng thủ công mới có mã (FZ + 8 ký tự); hold hệ thống và dòng bù là null. */
+  freezeCode: string | null
   sourceTransactionId: string | null
   sourceTransactionCode: string | null
   ownerId: string

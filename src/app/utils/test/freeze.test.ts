@@ -10,6 +10,7 @@ import {
 const freeze = (overrides: Partial<FreezeItem> = {}): FreezeItem => ({
   id: 'freeze-1',
   accountId: 'account-1',
+  freezeCode: 'FZ7K4M9Q2H',
   sourceTransactionId: null,
   sourceTransactionCode: null,
   ownerId: 'owner-1',

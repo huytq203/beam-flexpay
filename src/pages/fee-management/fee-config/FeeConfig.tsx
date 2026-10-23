@@ -84,12 +84,6 @@ const FeeConfigForm = ({
           Đang xem chi tiết chính sách
         </p>
       )}
-      {isInputCost && (
-        <p className='mb-3 text-[13px] text-muted-foreground'>
-          Chính sách phí đầu vào: chi phí Beam trả đối tác, khai một lần cho một
-          tuyến thanh toán và tự áp cho mọi giao dịch đi tuyến đó.
-        </p>
-      )}
       <CardComponent className='mb-3!'>
         <PolicyGeneralSection
           control={control}

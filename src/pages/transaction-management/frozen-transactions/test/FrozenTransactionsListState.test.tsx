@@ -12,18 +12,31 @@ import FrozenTransactions from '../FrozenTransactions'
 
 const ROUTE = '/secure-panel/transaction-management/frozen-transactions'
 
-const captureRequests = (): URLSearchParams[] => {
+const captureRequests = (content: unknown[] = []): URLSearchParams[] => {
   const seen: URLSearchParams[] = []
   server.use(
     http.get('*/wallet/freezes', ({ request }) => {
       seen.push(new URL(request.url).searchParams)
       return HttpResponse.json({
-        data: { content: [], totalElements: 0 }
+        data: { content, totalElements: content.length }
       })
     })
   )
   return seen
 }
+
+const freezeRow = (id: string, freezeCode: string | null) => ({
+  id,
+  freezeCode,
+  ownerUsername: '0967770788',
+  ownerType: 'USER',
+  sourceTransactionId: null,
+  displayStatus: 'FROZEN',
+  releaseType: 'MANUAL',
+  createdAt: '2026-10-22T12:17:15',
+  unfreezeLogs: [],
+  unfreezeCommands: []
+})
 
 const renderScreen = (route = ROUTE) => {
   const store = createAppStore()
@@ -52,7 +65,7 @@ describe('Giao dịch đóng băng — giữ bộ lọc khi quay lại màn', ()
     const seen = captureRequests()
     renderScreen()
 
-    expect(await screen.findByLabelText(/Mã giao dịch nguồn/)).toHaveValue(
+    expect(await screen.findByLabelText(/Mã giao dịch gốc/)).toHaveValue(
       'TXN-001'
     )
     await waitFor(() => expect(seen.length).toBeGreaterThan(0))
@@ -92,5 +105,30 @@ describe('Giao dịch đóng băng — giữ bộ lọc khi quay lại màn', ()
     await waitFor(() => expect(seen.at(-1)?.has('username')).toBe(false))
     expect(screen.getByLabelText(/Tên tài khoản/)).toHaveValue('')
     expect(sessionStorage.getItem(`${LIST_STATE_PREFIX}${ROUTE}`)).toBeNull()
+  })
+
+  it('lọc theo mã đóng băng: đọc từ URL và chuẩn hoá chữ hoa khi tìm', async () => {
+    const user = userEvent.setup()
+    const seen = captureRequests()
+    renderScreen(`${ROUTE}?freezeCode=FZ7K4M9Q2H`)
+
+    const input = await screen.findByLabelText(/Mã đóng băng/)
+    expect(input).toHaveValue('FZ7K4M9Q2H')
+    await waitFor(() => expect(seen[0]?.get('freezeCode')).toBe('FZ7K4M9Q2H'))
+
+    await user.clear(input)
+    await user.type(input, '  fz111aaaaa ')
+    await user.click(screen.getByRole('button', { name: /Tìm kiếm/ }))
+    await waitFor(() =>
+      expect(seen.at(-1)?.get('freezeCode')).toBe('FZ111AAAAA')
+    )
+  })
+
+  it('hiện mã đóng băng ở lưới, lệnh không có mã thì hiện —', async () => {
+    captureRequests([freezeRow('f-1', 'FZ7K4M9Q2H'), freezeRow('f-2', null)])
+    renderScreen()
+
+    expect(await screen.findByText('FZ7K4M9Q2H')).toBeInTheDocument()
+    expect(screen.getByText('—')).toBeInTheDocument()
   })
 })

@@ -61,11 +61,6 @@ export function WalletLimitFormObjectSection({
   return (
     <WalletLimitFormSection
       title='Đối tượng áp dụng'
-      description={
-        isEdit
-          ? `Đối tượng, mã định danh và loại ví bị khóa khi cập nhật${isSystem ? '; với Hệ thống, loại giao dịch cũng bị khóa' : ''}. Khóa hoặc mở khóa được lưu chung với các thay đổi khác trong một lần lưu.`
-          : undefined
-      }
     >
       {isEdit ? (
         <dl className='grid grid-cols-1 gap-x-6 gap-y-3 md:grid-cols-3'>

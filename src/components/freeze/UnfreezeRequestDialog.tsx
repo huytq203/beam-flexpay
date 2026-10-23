@@ -10,81 +10,89 @@ import { toVnd, UnfreezeAmountMode } from './unfreeze-request.schema'
 import { useUnfreezeRequestForm } from './useUnfreezeRequestForm'
 
 interface UnfreezeRequestDialogContentProps {
-    open: boolean
-    item: FreezeItem
-    onSuccess?: () => void
-    onCancel: () => void
+  open: boolean
+  item: FreezeItem
+  onSuccess?: () => void
+  onCancel: () => void
 }
 
 interface UnfreezeRequestDialogProps {
-    open: boolean
-    item: FreezeItem | null
-    onSuccess?: () => void
-    onCancel: () => void
+  open: boolean
+  item: FreezeItem | null
+  onSuccess?: () => void
+  onCancel: () => void
 }
 
 const UNFREEZE_REQUEST_FORM_ID = 'unfreeze-request-form'
 
 const COMMAND_STATUS_CONFIG: Record<
-    UnfreezeCommand['status'],
-    { label: string; className: string }
+  UnfreezeCommand['status'],
+  { label: string; className: string }
 > = {
-    [UnfreezeCommandStatus.PENDING_APPROVAL]: {
-        label: 'Chưa thực hiện',
-        className: 'warning-status'
-    },
-    [UnfreezeCommandStatus.EXECUTED]: {
-        label: 'Đã thực hiện',
-        className: 'success-status'
-    },
-    [UnfreezeCommandStatus.REJECTED]: {
-        label: 'Đã từ chối',
-        className: 'normal-status'
-    }
+  [UnfreezeCommandStatus.PENDING_APPROVAL]: {
+    label: 'Chưa thực hiện',
+    className: 'warning-status'
+  },
+  [UnfreezeCommandStatus.EXECUTED]: {
+    label: 'Đã thực hiện',
+    className: 'success-status'
+  },
+  [UnfreezeCommandStatus.REJECTED]: {
+    label: 'Đã từ chối',
+    className: 'normal-status'
+  }
 }
 
 /** Bảng lịch sử các lệnh mở băng đã tạo cho bản ghi này. */
 const UnfreezeCommandList = ({ commands }: { commands: UnfreezeCommand[] }) => {
-    if (commands.length === 0) return null
+  if (commands.length === 0) return null
 
-    return (
-        <div className="mt-3">
-            <p className="mb-1.5 text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
-                Các lần mở băng trước đó
-            </p>
-            <div className="divide-y divide-border rounded-md border border-border overflow-hidden">
-                {commands.map((cmd, idx) => {
-                    const cfg = COMMAND_STATUS_CONFIG[cmd.status]
-                    return (
-                        <div key={cmd.id} className="flex items-center justify-between gap-3 px-3 py-2 bg-muted/20">
-                            <div className="flex items-center gap-2 min-w-0">
-                                <span className="text-muted-foreground text-[11px] shrink-0">
-                                    #{idx + 1}
-                                </span>
-                                <div className="min-w-0">
-                                    <p className="font-medium tabular-nums text-[13px]">
-                                        {formatCurrency(cmd.amount, { symbol: 'VNĐ', position: 'after' })}
-                                    </p>
-                                    <p className="text-[11px] text-muted-foreground truncate">
-                                        Người thực hiện: {cmd.makerId}
-                                        {cmd.reason ? ` · ${cmd.reason}` : ''}
-                                    </p>
-                                    {cmd.createdAt && (
-                                        <p className="text-[11px] text-muted-foreground">
-                                            {dayjs(cmd.createdAt).format('DD/MM/YYYY HH:mm')}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-                            <span className={`shrink-0 text-[11px] px-2 py-0.5 rounded-full font-medium ${cfg.className}`}>
-                                {cfg.label}
-                            </span>
-                        </div>
-                    )
-                })}
+  return (
+    <div className='mt-3'>
+      <p className='mb-1.5 text-[12px] font-medium text-muted-foreground uppercase tracking-wide'>
+        Các lần mở băng trước đó
+      </p>
+      <div className='divide-y divide-border rounded-md border border-border overflow-hidden'>
+        {commands.map((cmd, idx) => {
+          const cfg = COMMAND_STATUS_CONFIG[cmd.status]
+          return (
+            <div
+              key={cmd.id}
+              className='flex items-center justify-between gap-3 px-3 py-2 bg-muted/20'
+            >
+              <div className='flex items-center gap-2 min-w-0'>
+                <span className='text-muted-foreground text-[11px] shrink-0'>
+                  #{idx + 1}
+                </span>
+                <div className='min-w-0'>
+                  <p className='font-medium tabular-nums text-[13px]'>
+                    {formatCurrency(cmd.amount, {
+                      symbol: 'VNĐ',
+                      position: 'after'
+                    })}
+                  </p>
+                  <p className='text-[11px] text-muted-foreground truncate'>
+                    Người thực hiện: {cmd.makerId}
+                    {cmd.reason ? ` · ${cmd.reason}` : ''}
+                  </p>
+                  {cmd.createdAt && (
+                    <p className='text-[11px] text-muted-foreground'>
+                      {dayjs(cmd.createdAt).format('DD/MM/YYYY HH:mm')}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <span
+                className={`shrink-0 text-[11px] px-2 py-0.5 rounded-full font-medium ${cfg.className}`}
+              >
+                {cfg.label}
+              </span>
             </div>
-        </div>
-    )
+          )
+        })}
+      </div>
+    </div>
+  )
 }
 
 /**
@@ -93,182 +101,188 @@ const UnfreezeCommandList = ({ commands }: { commands: UnfreezeCommand[] }) => {
  * hiển thị bảng.
  */
 const UnfreezeRequestDialogContent = ({
-    open,
-    item,
-    onSuccess,
-    onCancel
+  open,
+  item,
+  onSuccess,
+  onCancel
 }: UnfreezeRequestDialogContentProps) => {
-    const {
-        control,
-        unfreezeType,
-        remaining,
-        shortfall,
-        maxAmount,
-        isLoading,
-        submit
-    } = useUnfreezeRequestForm(item, onSuccess)
+  const {
+    control,
+    unfreezeType,
+    remaining,
+    shortfall,
+    maxAmount,
+    isLoading,
+    submit
+  } = useUnfreezeRequestForm(item, onSuccess)
 
-    const commands = item.unfreezeCommands ?? []
-    const handleCancel = () => {
-        if (!isLoading) onCancel()
-    }
+  const commands = item.unfreezeCommands ?? []
+  const handleCancel = () => {
+    if (!isLoading) onCancel()
+  }
 
-    return (
-        <DialogModal
-            open={open}
-            onOk={() => {}}
-            onCancel={handleCancel}
-            closable={!isLoading}
-            keyboard={!isLoading}
-            maskClosable={!isLoading}
-            footer={(
-                <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
-                    <ButtonComponent
-                        block
-                        htmlType="button"
-                        type="default"
-                        content="Hủy"
-                        disabled={isLoading}
-                        onClick={handleCancel}
-                        className="sm:w-auto!"
-                    />
-                    <ButtonComponent
-                        block
-                        htmlType="submit"
-                        form={UNFREEZE_REQUEST_FORM_ID}
-                        loading={isLoading}
-                        content="Xác nhận mở băng"
-                        className="sm:w-auto!"
-                    />
-                </div>
-            )}
-            styles={{
-                footer: {
-                    borderTop: '1px solid var(--border)',
-                    marginTop: 20,
-                    paddingTop: 16
-                }
-            }}
-            title={
-                <span className="flex items-center gap-2 text-secondary-foreground">
-                    <SnowflakeIcon size={18} />
-                    Mở băng
+  return (
+    <DialogModal
+      open={open}
+      onOk={() => {}}
+      onCancel={handleCancel}
+      closable={!isLoading}
+      keyboard={!isLoading}
+      maskClosable={!isLoading}
+      footer={
+        <div className='flex flex-col gap-2 sm:flex-row sm:justify-end'>
+          <ButtonComponent
+            block
+            htmlType='button'
+            type='default'
+            content='Hủy'
+            disabled={isLoading}
+            onClick={handleCancel}
+            className='sm:w-auto!'
+          />
+          <ButtonComponent
+            block
+            htmlType='submit'
+            form={UNFREEZE_REQUEST_FORM_ID}
+            loading={isLoading}
+            content='Xác nhận mở băng'
+            className='sm:w-auto!'
+          />
+        </div>
+      }
+      styles={{
+        footer: {
+          borderTop: '1px solid var(--border)',
+          marginTop: 20,
+          paddingTop: 16
+        }
+      }}
+      title={
+        <span className='flex items-center gap-2 text-secondary-foreground'>
+          <SnowflakeIcon size={18} />
+          Mở băng
+        </span>
+      }
+    >
+      <form
+        id={UNFREEZE_REQUEST_FORM_ID}
+        onSubmit={(event) => {
+          event.preventDefault()
+          submit()
+        }}
+      >
+        {/* Tổng quan số tiền */}
+        <div className='rounded-md border border-border bg-muted/40 p-3 space-y-1'>
+          <div className='flex items-center justify-between'>
+            <p className='text-muted-foreground text-[13px]'>Mã đóng băng</p>
+            <p className='font-medium'>{item.freezeCode ?? '—'}</p>
+          </div>
+          <div className='flex items-center justify-between'>
+            <p className='text-muted-foreground text-[13px]'>Đang bị giữ</p>
+            <p className='amount-caution text-lg font-semibold tabular-nums'>
+              {toVnd(remaining)}
+            </p>
+          </div>
+          {shortfall > 0 && (
+            <div className='flex items-center justify-between'>
+              <p className='text-muted-foreground text-[13px]'>
+                Còn thiếu chưa giữ được
+              </p>
+              <p className='amount-negative text-[13px] font-medium tabular-nums'>
+                {toVnd(shortfall)}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Lịch sử lệnh cũ */}
+        <UnfreezeCommandList commands={commands} />
+
+        <div className='mt-3 flex flex-col gap-3'>
+          <FormRadio
+            label='Hình thức mở băng'
+            control={control}
+            name='unfreezeType'
+            options={[
+              { value: UnfreezeAmountMode.FULL, label: 'Mở băng toàn bộ' },
+              { value: UnfreezeAmountMode.PARTIAL, label: 'Mở băng một phần' }
+            ]}
+          />
+
+          <div>
+            <FormInputNumber
+              disabled={unfreezeType === UnfreezeAmountMode.FULL}
+              min={1}
+              max={maxAmount}
+              suffix='VNĐ'
+              control={control}
+              name='amount'
+              placeholder='Nhập số tiền...'
+              formatter={(value: string | number | undefined): string =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              }
+              parser={(value: string | undefined): number =>
+                Number(value?.replace(/,/g, ''))
+              }
+              label={
+                <span>
+                  Số tiền cần mở băng{' '}
+                  <span className='text-danger-strong'>*</span>
                 </span>
+              }
+              onKeyDown={blockLeadingAndRepeatedSpace}
+            />
+            <p className='mt-1 text-[12px] text-muted-foreground'>
+              {shortfall > 0
+                ? `Tối đa ${toVnd(maxAmount)} — mở quá ${toVnd(remaining)} đồng nghĩa huỷ đòi phần còn thiếu.`
+                : `Tối đa ${toVnd(maxAmount)}. Mở một phần thì phần còn lại vẫn bị giữ.`}
+            </p>
+          </div>
+
+          <FormTextArea
+            control={control}
+            name='reason'
+            placeholder='Nhập lý do mở băng...'
+            label={
+              <span>
+                Lý do mở băng <span className='text-danger-strong'>*</span>
+              </span>
             }
-        >
-            <form
-                id={UNFREEZE_REQUEST_FORM_ID}
-                onSubmit={(event) => {
-                    event.preventDefault()
-                    submit()
-                }}
-            >
-            {/* Tổng quan số tiền */}
-            <div className="rounded-md border border-border bg-muted/40 p-3 space-y-1">
-                <div className="flex items-center justify-between">
-                    <p className="text-muted-foreground text-[13px]">Đang bị giữ</p>
-                    <p className="amount-caution text-lg font-semibold tabular-nums">
-                        {toVnd(remaining)}
-                    </p>
-                </div>
-                {shortfall > 0 && (
-                    <div className="flex items-center justify-between">
-                        <p className="text-muted-foreground text-[13px]">Còn thiếu chưa giữ được</p>
-                        <p className="amount-negative text-[13px] font-medium tabular-nums">
-                            {toVnd(shortfall)}
-                        </p>
-                    </div>
-                )}
-            </div>
+            onKeyDown={blockLeadingAndRepeatedSpace}
+          />
+        </div>
 
-            {/* Lịch sử lệnh cũ */}
-            <UnfreezeCommandList commands={commands} />
-
-            <div className="mt-3 flex flex-col gap-3">
-                <FormRadio
-                    label="Hình thức mở băng"
-                    control={control}
-                    name="unfreezeType"
-                    options={[
-                        { value: UnfreezeAmountMode.FULL, label: 'Mở băng toàn bộ' },
-                        { value: UnfreezeAmountMode.PARTIAL, label: 'Mở băng một phần' }
-                    ]}
-                />
-
-                <div>
-                    <FormInputNumber
-                        disabled={unfreezeType === UnfreezeAmountMode.FULL}
-                        min={1}
-                        max={maxAmount}
-                        suffix="VNĐ"
-                        control={control}
-                        name="amount"
-                        placeholder="Nhập số tiền..."
-                        formatter={(value: string | number | undefined): string =>
-                            `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                        }
-                        parser={(value: string | undefined): number =>
-                            Number(value?.replace(/,/g, ''))
-                        }
-                        label={
-                            <span>
-                                Số tiền cần mở băng <span className="text-danger-strong">*</span>
-                            </span>
-                        }
-                        onKeyDown={blockLeadingAndRepeatedSpace}
-                    />
-                    <p className="mt-1 text-[12px] text-muted-foreground">
-                        {shortfall > 0
-                            ? `Tối đa ${toVnd(maxAmount)} — mở quá ${toVnd(remaining)} đồng nghĩa huỷ đòi phần còn thiếu.`
-                            : `Tối đa ${toVnd(maxAmount)}. Mở một phần thì phần còn lại vẫn bị giữ.`}
-                    </p>
-                </div>
-
-                <FormTextArea
-                    control={control}
-                    name="reason"
-                    placeholder="Nhập lý do mở băng..."
-                    label={
-                        <span>
-                            Lý do mở băng <span className="text-danger-strong">*</span>
-                        </span>
-                    }
-                    onKeyDown={blockLeadingAndRepeatedSpace}
-                />
-            </div>
-
-            <div className="mt-3 rounded-md bg-warning/10 p-3 text-warning-strong">
-                <span className="font-medium flex items-center gap-1">
-                    <WarningIcon />
-                    Lưu ý:
-                </span>
-                <p>
-                    Tiền sẽ được chuyển trực tiếp từ{' '}
-                    <span className="underline">Ví Đóng Băng</span> về{' '}
-                    <span className="underline">Ví Khả Dụng</span> của tài khoản{' '}
-                    <span className="font-medium">{item.ownerUsername ?? '--'}</span>.
-                </p>
-            </div>
-
-            </form>
-        </DialogModal>
-    )
+        <div className='mt-3 rounded-md bg-warning/10 p-3 text-warning-strong'>
+          <span className='font-medium flex items-center gap-1'>
+            <WarningIcon />
+            Lưu ý:
+          </span>
+          <p>
+            Tiền sẽ được chuyển trực tiếp từ{' '}
+            <span className='underline'>Ví Đóng Băng</span> về{' '}
+            <span className='underline'>Ví Khả Dụng</span> của tài khoản{' '}
+            <span className='font-medium'>{item.ownerUsername ?? '--'}</span>.
+          </p>
+        </div>
+      </form>
+    </DialogModal>
+  )
 }
 
 export const UnfreezeRequestDialog = ({
-    open,
-    item,
-    onSuccess,
-    onCancel
+  open,
+  item,
+  onSuccess,
+  onCancel
 }: UnfreezeRequestDialogProps) => {
-    if (!item) return null
+  if (!item) return null
 
-    return (
-        <UnfreezeRequestDialogContent
-            open={open}
-            item={item}
-            onSuccess={onSuccess}
-            onCancel={onCancel}
-        />
-    )
+  return (
+    <UnfreezeRequestDialogContent
+      open={open}
+      item={item}
+      onSuccess={onSuccess}
+      onCancel={onCancel}
+    />
+  )
 }
