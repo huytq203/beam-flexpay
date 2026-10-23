@@ -245,3 +245,16 @@ describe('sidebar khớp registry', () => {
     }
   })
 })
+
+describe('màn Cấu hình phí đầu vào', () => {
+  it('có đường dẫn riêng, cùng họ quyền FEE với Cấu hình phí, và route con kế thừa màn', () => {
+    expect(SCREENS.FEE_INPUT_COST.path).not.toBe(SCREENS.FEE_CONFIG.path)
+    expect(SCREENS.FEE_INPUT_COST.actions).toEqual(SCREENS.FEE_CONFIG.actions)
+    expect(
+      findScreenByPath(`${SCREENS.FEE_INPUT_COST.path}/edit/abc`)
+    ).toBe(SCREENS.FEE_INPUT_COST)
+    expect(findScreenByPath(`${SCREENS.FEE_CONFIG.path}/edit/abc`)).toBe(
+      SCREENS.FEE_CONFIG
+    )
+  })
+})

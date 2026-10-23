@@ -5,7 +5,6 @@ import {
 
 /** Mọi khoá bộ lọc của màn danh sách chính sách phí nằm trên URL. */
 export const FILTER_KEYS = [
-  'feeScope',
   'keyword',
   'status',
   'appliedTarget',

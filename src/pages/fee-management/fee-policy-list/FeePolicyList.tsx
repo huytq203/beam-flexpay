@@ -1,8 +1,7 @@
-import { FeeScopeTabs } from '@pages/fee-management/fee-config/components/FeeScopeTabs'
 import {
   FEE_SCOPE,
-  policyKindOfScope,
-  type FeeScope
+  POLICY_KIND,
+  type PolicyKind
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import { CardComponent, Table, TooltipComponent } from '@components/index'
 import { PATHS } from '@constants/pathConstant'
@@ -23,21 +22,19 @@ import {
 import { getFeePolicyColumns } from './columns/FeePolicyList.column'
 import { useExpandedPolicyIds } from './hooks/useExpandedPolicyIds'
 import { useFeePolicyList } from './hooks/useFeePolicyList'
-import {
-  dateOnly,
-  FILTER_KEYS,
-  isFeeScope,
-  keepFilters
-} from './utils/feePolicyUrlFilters'
+import { dateOnly, FILTER_KEYS, keepFilters } from './utils/feePolicyUrlFilters'
 import { splitPolicyStatusFilter } from './utils/policyStatusFilter'
 
-/**
- * Danh sách chính sách phí tách theo loại chính sách: tab "Phí đầu ra" lấy chính sách phí
- * khách (`CUSTOMER_FEE`), tab "Phí đầu vào" lấy chính sách chi phí đầu vào (`INPUT_COST`,
- * khai riêng theo tuyến thanh toán). Hai loại không chung chính sách nên không còn bản ghi
- * nào xuất hiện ở cả hai tab.
- */
-const FeePolicyList = () => {
+interface FeePolicyListPageProps {
+  /**
+   * Loại chính sách của màn: Cấu hình phí chỉ có chính sách phí khách (`CUSTOMER_FEE`), Cấu hình
+   * phí đầu vào chỉ có chính sách chi phí đầu vào (`INPUT_COST`). Hai loại là hai màn riêng, mỗi
+   * màn luôn gửi đúng một `policyKind` xuống API.
+   */
+  policyKind: PolicyKind
+}
+
+export const FeePolicyListPage = ({ policyKind }: FeePolicyListPageProps) => {
   const navigate = useNavigate()
   const {
     filters,
@@ -49,14 +46,12 @@ const FeePolicyList = () => {
     setPageSize
   } = useUrlFilters({ keys: FILTER_KEYS })
 
-  const feeScope = isFeeScope(filters.feeScope)
-    ? filters.feeScope
-    : FEE_SCOPE.OUTPUT_FEE
+  const isInputCost = policyKind === POLICY_KIND.INPUT_COST
+  const feeScope = isInputCost ? FEE_SCOPE.INPUT_COST : FEE_SCOPE.OUTPUT_FEE
   const [changing, setChanging] = useState<StatusChangePolicy | null>(null)
   const customerSegmentNames = useCustomerSegmentNames()
-  const isInputCost = feeScope === FEE_SCOPE.INPUT_COST
   const exportFilters = {
-    policyKind: policyKindOfScope(feeScope),
+    policyKind,
     keyword: filters.keyword,
     serviceType: filters.serviceType,
     status: filters.status,
@@ -92,23 +87,6 @@ const FeePolicyList = () => {
     filenamePrefix: 'cau-hinh-phi'
   })
 
-  // Đổi luồng phí giữ nguyên mọi bộ lọc khác: loại giao dịch dùng chung cho cả hai luồng.
-  const handleScopeChange = (next: FeeScope) =>
-    applyFilters(
-      keepFilters(
-        filters,
-        next === FEE_SCOPE.INPUT_COST
-          ? {
-              feeScope: next,
-              direction: null,
-              appliedTarget: null,
-              payerType: null,
-              feeBearer: null
-            }
-          : { feeScope: next, direction: null }
-      )
-    )
-
   const handleToggleAll = () =>
     updateExpandedPolicyIds((current) =>
       allExpanded
@@ -127,6 +105,7 @@ const FeePolicyList = () => {
       }
       exporting={isExporting}
       exportDisabled={total === 0 || isError}
+      screen={isInputCost ? 'FEE_INPUT_COST' : 'FEE_CONFIG'}
       createPath={
         isInputCost
           ? PATHS.FEE_V4.INPUT_COST_CREATE
@@ -138,13 +117,7 @@ const FeePolicyList = () => {
   return (
     <>
       <CardComponent className='mb-3!'>
-        <FeeScopeTabs
-          value={feeScope}
-          onChange={handleScopeChange}
-          withPanels={false}
-        />
-
-        <div className='mt-4 '>
+        <div>
           <FeePolicyFilterBar
             inputCost={isInputCost}
             serviceType={filters.serviceType}
@@ -166,7 +139,6 @@ const FeePolicyList = () => {
             onServiceTypeChange={(serviceType) =>
               applyFilters(
                 keepFilters(filters, {
-                  feeScope,
                   direction: null,
                   serviceType: serviceType ?? null,
                   paymentMethod: null,
@@ -182,7 +154,6 @@ const FeePolicyList = () => {
               applyFilters(
                 keepFilters(filters, {
                   ...values,
-                  feeScope,
                   direction: null,
                   serviceType: filters.serviceType ?? null,
                   validFrom: dateOnly(values.validFrom),
@@ -192,10 +163,7 @@ const FeePolicyList = () => {
                 })
               )
             }
-            onReset={() => {
-              clearFilters()
-              applyFilters({ feeScope })
-            }}
+            onReset={clearFilters}
           />
         </div>
       </CardComponent>
@@ -211,6 +179,7 @@ const FeePolicyList = () => {
             dataSource={rows}
             columns={getFeePolicyColumns({
               feeScope,
+              screen: isInputCost ? 'FEE_INPUT_COST' : 'FEE_CONFIG',
               onEdit: (id) =>
                 navigate(
                   isInputCost
@@ -290,5 +259,10 @@ const FeePolicyList = () => {
     </>
   )
 }
+
+/** Màn Cấu hình phí: chính sách phí khách (phí đầu ra). */
+const FeePolicyList = () => (
+  <FeePolicyListPage policyKind={POLICY_KIND.CUSTOMER_FEE} />
+)
 
 export default FeePolicyList

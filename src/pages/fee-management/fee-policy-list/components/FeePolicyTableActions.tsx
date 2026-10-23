@@ -9,6 +9,8 @@ interface FeePolicyTableActionsProps {
   exportDisabled: boolean
   /** Màn tạo chính sách: phí đầu ra và phí đầu vào dùng hai form khác nhau. */
   createPath: string
+  /** Màn cấp quyền thao tác: Cấu hình phí hoặc Cấu hình phí đầu vào. */
+  screen: 'FEE_CONFIG' | 'FEE_INPUT_COST'
 }
 
 /** Nút xuất CSV theo bộ lọc đang áp và nút thêm chính sách phí trên thanh công cụ của bảng. */
@@ -16,7 +18,8 @@ export const FeePolicyTableActions = ({
   onExport,
   exporting,
   exportDisabled,
-  createPath
+  createPath,
+  screen
 }: FeePolicyTableActionsProps) => {
   const navigate = useNavigate()
   return (
@@ -28,7 +31,7 @@ export const FeePolicyTableActions = ({
         tooltip='File lấy trọn bộ lọc đang áp, không giới hạn theo trang; gồm chính sách phí, bản gán, thành phần phí và các bậc phí.'
       />
       <Can
-        screen='FEE_CONFIG'
+        screen={screen}
         action='create'
       >
         <ButtonComponent

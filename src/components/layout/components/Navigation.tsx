@@ -78,6 +78,18 @@ const feeManagementV4: ItemTypeCustom = {
       label: 'Cấu hình phí'
     },
     {
+      key: 'fee-input-cost',
+      screen: 'FEE_INPUT_COST',
+      icon: (
+        <ReceiptIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Cấu hình phí đầu vào'
+    },
+    {
       key: 'wallet-limit',
       screen: 'WALLET_LIMIT',
       icon: (

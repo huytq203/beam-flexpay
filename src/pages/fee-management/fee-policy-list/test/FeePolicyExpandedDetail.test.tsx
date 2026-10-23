@@ -90,8 +90,7 @@ describe('chi tiết mở rộng của danh sách chính sách phí', () => {
   it.each([
     ['bộ lọc', 'status=ACTIVE'],
     ['trang', 'page=2'],
-    ['số dòng mỗi trang', 'size=20'],
-    ['luồng phí', 'feeScope=INPUT_COST']
+    ['số dòng mỗi trang', 'size=20']
   ])('thu gọn các dòng khi đổi %s hiệu lực', async (_label, nextSearch) => {
     const user = userEvent.setup()
     renderList(nextSearch)
