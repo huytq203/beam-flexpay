@@ -113,11 +113,8 @@ export const getOutputPayerOptions = (
 }
 
 export const BENEFICIARY_TYPE_LABEL: Readonly<Record<string, string>> = {
-  SYSTEM: 'Hệ thống',
-  MERCHANT: 'Merchant',
   BANK: 'Ngân hàng',
   PARTNER: 'Đối tác',
-  TAX: 'Cơ quan thuế'
 }
 
 /**

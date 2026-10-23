@@ -1,7 +1,5 @@
 export const GROSS_AMOUNT_BASE = 'GROSS_AMOUNT'
 export const GROSS_AMOUNT_LABEL = 'Số tiền qua đối tác'
-export const GROSS_AMOUNT_HELPER =
-  'Nạp: số tiền bị trừ của khách (gồm phí nếu người gửi chịu). Rút: số tiền đối tác chuyển về thẻ.'
 
 const BASE_ON_LABELS: Readonly<Record<string, string>> = {
   AMOUNT: 'Số tiền giao dịch',
