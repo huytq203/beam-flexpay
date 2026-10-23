@@ -1,20 +1,22 @@
 import { Can } from '@/app/permissions'
 import { PlusIcon } from '@components/icons'
 import { ButtonComponent, ExportCsvButton } from '@components/index'
-import { PATHS } from '@constants/pathConstant'
 import { useNavigate } from 'react-router-dom'
 
 interface FeePolicyTableActionsProps {
   onExport: () => void
   exporting: boolean
   exportDisabled: boolean
+  /** Màn tạo chính sách: phí đầu ra và phí đầu vào dùng hai form khác nhau. */
+  createPath: string
 }
 
 /** Nút xuất CSV theo bộ lọc đang áp và nút thêm chính sách phí trên thanh công cụ của bảng. */
 export const FeePolicyTableActions = ({
   onExport,
   exporting,
-  exportDisabled
+  exportDisabled,
+  createPath
 }: FeePolicyTableActionsProps) => {
   const navigate = useNavigate()
   return (
@@ -40,7 +42,7 @@ export const FeePolicyTableActions = ({
               aria-hidden
             />
           }
-          onClick={() => navigate(PATHS.FEE_V4.POLICY_CREATE)}
+          onClick={() => navigate(createPath)}
         />
       </Can>
     </>
