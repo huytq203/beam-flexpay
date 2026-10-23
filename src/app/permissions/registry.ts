@@ -432,6 +432,14 @@ export const SCREENS = {
     actions: { ...FEE_ACTIONS }
   },
   /**
+   * Màn cấu hình phí đầu vào (chính sách `INPUT_COST`): danh sách, tạo và sửa riêng, tách khỏi
+   * Cấu hình phí. Cùng họ quyền FEE: backend không phân biệt loại chính sách ở quyền.
+   */
+  FEE_INPUT_COST: {
+    path: `${FEEMANAGEMENT_V4}/fee-input-cost`,
+    actions: { ...FEE_ACTIONS }
+  },
+  /**
    * Hạn mức ví (flexpay.user-wallet): backend gác mọi endpoint quản trị bằng
    * một mã `EWALLET:EWALLET:FULL`, chưa tách theo hành động, nên mọi action của
    * hai màn dùng chung mã đó.

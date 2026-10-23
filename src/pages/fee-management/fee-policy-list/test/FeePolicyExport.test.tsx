@@ -71,16 +71,17 @@ describe('danh sách chính sách phí — xuất CSV', () => {
   it('xuất toàn bộ cấu hình theo filter hiện tại, không kèm trạng thái giao diện', async () => {
     const user = userEvent.setup()
     renderList(
-      '/fee?feeScope=INPUT_COST&keyword=nap%20tien&subjectKeyword=0912&status=ACTIVE&appliedTarget=CUSTOMER_GROUP&serviceType=EWALLET_DEPOSIT&bankCode=VCB&providerCode=NAPAS&paymentMethod=ATM&validFrom=2026-09-01&validTo=2026-09-30&createdAtFrom=2026-08-01&createdAtTo=2026-08-31&direction=CASH_IN&page=3&size=50'
+      '/fee?keyword=nap%20tien&subjectKeyword=0912&status=ACTIVE&appliedTarget=CUSTOMER_GROUP&serviceType=EWALLET_DEPOSIT&bankCode=VCB&providerCode=NAPAS&paymentMethod=ATM&validFrom=2026-09-01&validTo=2026-09-30&createdAtFrom=2026-08-01&createdAtTo=2026-08-31&direction=CASH_IN&page=3&size=50'
     )
 
     await user.click(await screen.findByRole('button', { name: /Xuất CSV/i }))
 
     await waitFor(() =>
       expect(mocks.exportFile).toHaveBeenCalledWith({
-        policyKind: 'INPUT_COST',
+        policyKind: 'CUSTOMER_FEE',
         keyword: 'nap tien',
         effectiveStatus: 'ACTIVE',
+        appliedTarget: 'CUSTOMER_GROUP',
         serviceType: 'EWALLET_DEPOSIT',
         bankCode: 'VCB',
         providerCode: 'NAPAS',

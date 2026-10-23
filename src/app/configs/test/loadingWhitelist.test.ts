@@ -145,3 +145,15 @@ describe('whitelist của global loading', () => {
     ).toBeUndefined()
   })
 })
+
+describe('whitelist global loading của màn Cấu hình phí đầu vào', () => {
+  it.each([
+    '/fee/policies/search?policyKind=INPUT_COST&includeConfiguration=true',
+    '/fee/policies/export?policyKind=INPUT_COST',
+    '/fee/banks?page=1&size=100'
+  ])('bỏ global loader cho API có loading cục bộ: %s', (url) => {
+    expect(
+      isInWhiteList(url, '/secure-panel/fee-v4/fee-input-cost')
+    ).toBeDefined()
+  })
+})

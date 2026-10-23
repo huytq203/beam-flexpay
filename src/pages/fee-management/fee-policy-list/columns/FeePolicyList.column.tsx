@@ -15,6 +15,7 @@ import type { AppliedTarget } from '@type/fee.type'
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import {
+  FEE_SCOPE,
   FEE_SCOPE_LABEL,
   type FeeScope
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
@@ -27,6 +28,8 @@ import { formatDateTimeUTC } from '@/pages/wallet-administration/e-walletManagem
 interface FeePolicyColumnArgs {
   /** Luồng phí đang xem; quyết định cột thành phần phí hiện thành phần nào. */
   feeScope: FeeScope
+  /** Màn cấp quyền thao tác: Cấu hình phí hoặc Cấu hình phí đầu vào. */
+  screen?: 'FEE_CONFIG' | 'FEE_INPUT_COST'
   onEdit: (id: string) => void
   /** Mở dialog khóa / mở (ngay hoặc hẹn giờ) cho một chính sách. */
   onChangeStatus: (id: string, name: string, status: string) => void
@@ -47,8 +50,9 @@ const PRIORITY_LABEL: Readonly<Record<number, string>> = {
   4: 'Mặc định'
 }
 
-export const getFeePolicyColumns = ({
+const buildColumns = ({
   feeScope,
+  screen = 'FEE_CONFIG',
   onEdit,
   onChangeStatus,
   customerSegmentNames
@@ -218,7 +222,7 @@ export const getFeePolicyColumns = ({
         <div className='flex items-center justify-center gap-2'>
           {isEditable && (
             <Can
-              screen='FEE_CONFIG'
+              screen={screen}
               action='edit'
             >
               <TooltipComponent title='Sửa cấu hình'>
@@ -243,7 +247,7 @@ export const getFeePolicyColumns = ({
           {/* Chỉ bản ghi chưa qua duyệt mới có gì để duyệt. */}
           {row.status === 'INIT' && (
             <Can
-              screen='FEE_CONFIG'
+              screen={screen}
               action='approve'
             >
               <FeePolicyApprovalAction policy={row} />
@@ -259,3 +263,13 @@ export const getFeePolicyColumns = ({
     }
   }
 ]
+
+/** Chính sách phí đầu vào không gán theo đối tượng khách nên bỏ cột Đối tượng áp dụng. */
+export const getFeePolicyColumns = (
+  args: FeePolicyColumnArgs
+): ColumnsType<FeePolicyRow> => {
+  const columns = buildColumns(args)
+  return args.feeScope === FEE_SCOPE.INPUT_COST
+    ? columns.filter(({ title }) => title !== 'Đối tượng áp dụng')
+    : columns
+}

@@ -120,6 +120,25 @@ const feeManagementV4 = {
           )
         },
         {
+          path: SCREENS.FEE_INPUT_COST.path,
+          element: page(
+            () =>
+              import('@pages/fee-management/fee-policy-list/InputCostPolicyList')
+          )
+        },
+        {
+          path: `${SCREENS.FEE_INPUT_COST.path}/create`,
+          element: page(
+            () => import('@pages/fee-management/fee-config/InputCostConfig')
+          )
+        },
+        {
+          path: `${SCREENS.FEE_INPUT_COST.path}/edit/:id`,
+          element: page(
+            () => import('@pages/fee-management/fee-config/InputCostConfig')
+          )
+        },
+        {
           path: SCREENS.WALLET_LIMIT.path,
           element: page(
             () =>
