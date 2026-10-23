@@ -141,6 +141,12 @@ export const PERMISSION = {
    */
   REFUND_APPROVE: 'EWALLET:REFUND:APPROVE', // CẦN TẠO TRONG DB: DB chưa có; user-wallet BE đã nhận mã này
 
+  /**
+   * Cùng quy ước tiền tố. Quyền của Kế toán: duyệt chi hoặc từ chối chi hoàn tiền ra ngân hàng (trước khi gọi
+   * ngân hàng), kèm xem danh sách/chi tiết hoàn tiền. Không duyệt hoàn, không tạo, không quyết toán.
+   */
+  PAYOUT_APPROVE: 'EWALLET:PAYOUT:APPROVE', // CẦN TẠO TRONG DB: DB chưa có; user-wallet BE đã nhận mã này
+
   EWALLET_FULL: 'EWALLET:EWALLET:FULL'
 } as const
 

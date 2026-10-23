@@ -16,6 +16,7 @@ import { makeRefund, toListItem } from './refund.setup'
 const ctx = {
   username: 'me',
   canApprove: true,
+  canPayoutApprove: false,
   canSettle: false,
   canPayoutRefresh: false
 }

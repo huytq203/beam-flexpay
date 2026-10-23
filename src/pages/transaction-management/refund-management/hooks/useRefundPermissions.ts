@@ -13,6 +13,7 @@ export const useRefundPermissions = (): RefundPermissions => {
   return {
     username: username ?? '',
     canApprove: can('approve') && can('reject'),
+    canPayoutApprove: can('payoutApprove') && can('payoutReject'),
     canSettle: can('settle'),
     canPayoutRefresh: can('payoutRefresh'),
     canViewFullAccountNumber: can('full')

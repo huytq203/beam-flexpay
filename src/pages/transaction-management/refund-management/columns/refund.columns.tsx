@@ -27,6 +27,8 @@ export interface RefundColumnOptions {
   onReject: (refund: RefundListItem) => void
   onSettle: (refund: RefundListItem) => void
   onPayoutRefresh: (refund: RefundListItem) => void
+  onPayoutApprove: (refund: RefundListItem) => void
+  onPayoutReject: (refund: RefundListItem) => void
 }
 
 type RefundColumns = NonNullable<TableComponentProps<RefundListItem>['columns']>
@@ -158,8 +160,8 @@ export const createRefundColumns = (
     {
       title: 'Thao tác',
       key: 'actions',
-      // Tối đa 2 icon (xem, duyệt); Từ chối nằm trong popover của icon duyệt.
-      width: 120,
+      // Tối đa 3 icon: xem, duyệt (Từ chối nằm trong popover) hoặc xem, từ chối chi, duyệt chi.
+      width: 140,
       fixed: 'right',
       align: 'center',
       // Danh sách đã trả `createdBy` nên so được maker/checker; Duyệt/Từ chối mở popover ngay tại dòng.
@@ -173,6 +175,8 @@ export const createRefundColumns = (
           onReject={options.onReject}
           onSettle={options.onSettle}
           onPayoutRefresh={options.onPayoutRefresh}
+          onPayoutApprove={options.onPayoutApprove}
+          onPayoutReject={options.onPayoutReject}
           isPayoutRefreshing={payoutRefreshingId === record.id}
         />
       )

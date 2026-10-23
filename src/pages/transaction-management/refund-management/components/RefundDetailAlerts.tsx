@@ -4,10 +4,7 @@ import {
 } from '../constants/refund.constants'
 import { RefundDisplayStatus } from '@constants/refund.constant'
 import { RefundStatus, type RefundDetail } from '../schemas/refund.schema'
-import {
-  getDisplayStatus,
-  type RefundActionFlags
-} from '../utils/refund.utils'
+import { getDisplayStatus, type RefundActionFlags } from '../utils/refund.utils'
 import { RefundNote } from './RefundNote'
 
 interface RefundDetailAlertsProps {
@@ -69,6 +66,15 @@ export function RefundDetailAlerts({
             từ chối.
           </RefundNote>
         )}
+      {refund.status === RefundStatus.PENDING_PAYOUT_APPROVAL && (
+        <RefundNote
+          tone='info'
+          title='Chờ Kế toán duyệt chi.'
+        >
+          Tiền đã được giữ. Lệnh chi chưa được gửi sang ngân hàng cho tới khi Kế
+          toán duyệt chi; từ chối chi sẽ đóng yêu cầu và nhả tiền giữ.
+        </RefundNote>
+      )}
       {isFailureRecord(refund) && (
         <RefundNote tone='info'>
           Bản ghi Thất bại hoàn tiền, chỉ để đối soát. Số dư ví không đổi.

@@ -234,7 +234,10 @@ export const SCREENS = {
       approve: PERMISSION.REFUND_APPROVE,
       reject: PERMISSION.REFUND_APPROVE,
       settle: PERMISSION.EWALLET_FULL,
-      payoutRefresh: PERMISSION.EWALLET_FULL
+      payoutRefresh: PERMISSION.EWALLET_FULL,
+      // Kế toán duyệt chi / từ chối chi trước khi hoàn tiền ra ngân hàng được gửi đi.
+      payoutApprove: PERMISSION.PAYOUT_APPROVE,
+      payoutReject: PERMISSION.PAYOUT_APPROVE
     }
   },
   WITHDRAW_HISTORY: {

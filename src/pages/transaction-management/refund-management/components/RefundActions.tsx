@@ -1,4 +1,4 @@
-import { Can } from '@/app/permissions'
+import { useScreenAccess } from '@/app/permissions'
 import {
   ArrowsCounterClockwiseIcon,
   BankIcon,
@@ -21,6 +21,8 @@ interface RefundActionsProps {
   onReject: (refund: RefundTarget) => void
   onSettle: (refund: RefundTarget) => void
   onPayoutRefresh: (refund: RefundTarget) => void
+  onPayoutApprove: (refund: RefundTarget) => void
+  onPayoutReject: (refund: RefundTarget) => void
   isPayoutRefreshing?: boolean
 }
 
@@ -33,8 +35,13 @@ export function RefundActions({
   onReject,
   onSettle,
   onPayoutRefresh,
+  onPayoutApprove,
+  onPayoutReject,
   isPayoutRefreshing
 }: RefundActionsProps) {
+  const { can } = useScreenAccess('REFUND_MANAGEMENT')
+  // Kế toán chỉ có quyền duyệt chi vẫn được xem chi tiết hoàn tiền (BE cho phép).
+  const canViewDetail = can('viewDetail') || can('payoutApprove')
   const nameFor = (label: string): string | undefined =>
     variant === 'icon' ? `${label} ${refund.refundCode}` : undefined
 
@@ -73,18 +80,13 @@ export function RefundActions({
           : 'flex-wrap justify-end'
       )}
     >
-      {onView && (
-        <Can
-          screen='REFUND_MANAGEMENT'
-          action='viewDetail'
-        >
-          <RefundActionButton
-            variant='icon'
-            label={`Xem chi tiết ${refund.refundCode}`}
-            icon={<EyeOutlined aria-hidden />}
-            onClick={() => onView(refund)}
-          />
-        </Can>
+      {onView && canViewDetail && (
+        <RefundActionButton
+          variant='icon'
+          label={`Xem chi tiết ${refund.refundCode}`}
+          icon={<EyeOutlined aria-hidden />}
+          onClick={() => onView(refund)}
+        />
       )}
       {flags.decide &&
         (isInline ? (
@@ -97,6 +99,26 @@ export function RefundActions({
             {approveButton}
           </>
         ))}
+      {flags.payoutDecide && (
+        <>
+          <RefundActionButton
+            variant={variant}
+            tone='danger'
+            label='Từ chối chi'
+            ariaLabel={nameFor('Từ chối chi')}
+            icon={<CloseOutlined aria-hidden />}
+            onClick={() => onPayoutReject(refund)}
+          />
+          <RefundActionButton
+            variant={variant}
+            tone={isInline ? 'default' : 'primary'}
+            label='Duyệt chi'
+            ariaLabel={nameFor('Duyệt chi')}
+            icon={<BankIcon aria-hidden />}
+            onClick={() => onPayoutApprove(refund)}
+          />
+        </>
+      )}
       {flags.settle && (
         <RefundActionButton
           variant={variant}

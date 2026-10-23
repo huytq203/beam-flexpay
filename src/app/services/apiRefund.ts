@@ -115,6 +115,27 @@ export const apiRefund = apiUserWallet.injectEndpoints({
         unwrap(response),
       invalidatesTags: (_result, _error, { id }) => [refundTag(id), LIST_TAG]
     }),
+    approveRefundPayout: build.mutation<RefundDetail, string>({
+      query: (id) => ({
+        url: `${REFUNDS_URL}/${encodeURIComponent(id)}/payout-approve`,
+        method: 'POST'
+      }),
+      extraOptions: OWN_ERROR_HANDLING,
+      transformResponse: (response: RefundEnvelope<RefundDetail>) =>
+        unwrap(response),
+      invalidatesTags: (_result, _error, id) => [refundTag(id), LIST_TAG]
+    }),
+    rejectRefundPayout: build.mutation<RefundDetail, RejectRefundArg>({
+      query: ({ id, reason }) => ({
+        url: `${REFUNDS_URL}/${encodeURIComponent(id)}/payout-reject`,
+        method: 'POST',
+        body: { reason }
+      }),
+      extraOptions: OWN_ERROR_HANDLING,
+      transformResponse: (response: RefundEnvelope<RefundDetail>) =>
+        unwrap(response),
+      invalidatesTags: (_result, _error, { id }) => [refundTag(id), LIST_TAG]
+    }),
     settleRefund: build.mutation<RefundDetail, SettleRefundArg>({
       query: ({ id, success, failureReason }) => ({
         url: `${REFUNDS_URL}/${encodeURIComponent(id)}/settle`,
@@ -145,6 +166,8 @@ export const {
   useCreateRefundMutation,
   useApproveRefundMutation,
   useRejectRefundMutation,
+  useApproveRefundPayoutMutation,
+  useRejectRefundPayoutMutation,
   useSettleRefundMutation,
   useRefreshRefundPayoutMutation
 } = apiRefund
