@@ -35,6 +35,8 @@ const FeeNCC = ({ data, profit, fee }: FeeNCCProps) => {
     ? partnerText(fee.providerCode, fee.providerName)
     : partnerText(data?.providerCode)
   const bank = partnerText(fee?.bankCode, fee?.bankName)
+  // Tên chính sách đọc từ fee service; chỉ hiện khi wallet-core đã trả, thiếu thì giữ nguyên như cũ.
+  const inputCostPolicyName = fee?.inputCostPolicyName?.trim() || null
 
   return (
     <>
@@ -49,6 +51,12 @@ const FeeNCC = ({ data, profit, fee }: FeeNCCProps) => {
           <div className='flex justify-between items-center gap-2'>
             <p className='text-gray-500'>Ngân hàng:</p>
             <p className='font-medium text-right'>{bank}</p>
+          </div>
+        )}
+        {inputCostPolicyName && (
+          <div className='flex justify-between items-center gap-2'>
+            <p className='text-gray-500'>Chính sách phí đầu vào:</p>
+            <p className='font-medium text-right'>{inputCostPolicyName}</p>
           </div>
         )}
         {items.map((item, index) => (
