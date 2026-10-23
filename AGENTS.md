@@ -69,3 +69,9 @@ Chạy Prettier `--write` và `--check`, ESLint và test liên quan. Chạy ki�
 TypeScript; nếu repo có lỗi không liên quan đã tồn tại, nêu rõ lỗi đó. Kiểm tra
 số dòng sau format bằng script trên và không báo hoàn tất khi file thuộc tính
 năng còn vượt 300 dòng.
+
+## Nhánh làm việc
+
+Từ 23/10/2026 chỉ làm việc trên nhánh `main` (`origin/main`), không làm trên
+`dev`. Trước khi sửa code, `git fetch` và kéo `main` mới nhất; nếu cây làm việc
+đang có thay đổi chưa commit thì stash rồi pop, không để pull đè lên.

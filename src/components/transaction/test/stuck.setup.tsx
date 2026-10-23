@@ -42,7 +42,8 @@ export const FAILED_PLAIN = action('FAILED', [])
 /** Mock `POST /refresh`; trả về mảng đếm số lần gọi. */
 export const mockRefresh = (
   allowedActions: object[],
-  bankCheck?: object
+  bankCheck?: object,
+  status = 'RECONCILIATION_REQUIRED'
 ): { calls: number } => {
   const counter = { calls: 0 }
   server.use(
@@ -52,7 +53,7 @@ export const mockRefresh = (
         success: true,
         data: {
           transactionCode: CODE,
-          status: 'RECONCILIATION_REQUIRED',
+          status,
           ...(bankCheck ? { bankCheck } : {}),
           allowedActions
         }

@@ -1,5 +1,8 @@
 export const CASH_IN_TYPE = 'CASH_IN'
 
+/** Neo để nơi khác cuộn tới panel Review. */
+export const REVIEW_PANEL_ID = 'transaction-review-panel'
+
 /**
  * Nhóm giao dịch treo được đưa vào Review (không gồm `PROCESSING`: lệnh đang ghi sổ
  * thì chờ rồi kiểm tra lại). Lệnh đang REVIEW vẫn hiện theo trạng thái bút toán ở

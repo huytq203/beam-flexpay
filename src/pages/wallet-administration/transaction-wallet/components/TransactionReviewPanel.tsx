@@ -7,6 +7,7 @@ import {
   ShieldCheckIcon
 } from '@components/icons'
 import { RefundNote } from '@pages/transaction-management/refund-management/components/RefundNote'
+import { REVIEW_PANEL_ID } from '../constants/transactionReview.constant'
 import { useTransactionPermissions } from '../hooks/useTransactionPermissions'
 import { useTransactionSnapshot } from '../hooks/useTransactionSnapshot'
 import {
@@ -57,6 +58,7 @@ export function TransactionReviewPanel({
 
   return (
     <section
+      id={REVIEW_PANEL_ID}
       aria-label='Review lệnh nạp'
       className={className}
     >

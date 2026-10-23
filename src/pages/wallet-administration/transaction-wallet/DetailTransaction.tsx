@@ -14,7 +14,10 @@ import { DetailSectionTitle } from './components/DetailSectionTitle'
 import { TransactionRefundList } from './components/TransactionRefundList'
 import { TransactionReviewPanel } from './components/TransactionReviewPanel'
 import useDetailTransaction from './hooks/useDetailTransaction'
-import { useResetTransactionSnapshot } from './hooks/useTransactionSnapshot'
+import {
+  useAutoRefreshTransactionSnapshot,
+  useResetTransactionSnapshot
+} from './hooks/useTransactionSnapshot'
 import { formatCurrency } from '@utils/formatNumber'
 
 const DetailTransaction = () => {
@@ -30,6 +33,7 @@ const DetailTransaction = () => {
     refetch
   } = useDetailTransaction()
   useResetTransactionSnapshot(getTransactionById?.transactionCode)
+  useAutoRefreshTransactionSnapshot(getTransactionById)
   const column = Column(getTransactionById?.currency)
   const currency = getTransactionById?.currency ?? 'VND'
   const grossProfit = profit?.grossProfit ?? getTransactionById?.feeAmount

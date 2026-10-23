@@ -3,6 +3,8 @@ import {
   useMarkTransactionReviewMutation,
   useRefreshTransactionMutation
 } from '@services/apiTransactionReview'
+import { isStuckJournalStatus } from '@utils/stuck-transaction'
+import { useTransactionPermissions } from './useTransactionPermissions'
 import { getRefundErrorText } from '@pages/transaction-management/refund-management/utils/refund.utils'
 
 /**
@@ -58,4 +60,38 @@ export const useResetTransactionSnapshot = (
     resetRefresh()
     resetMark()
   }, [code, resetRefresh, resetMark])
+}
+
+const AUTO_REFRESH_TYPES: readonly string[] = ['CASH_IN', 'CASH_OUT']
+
+interface AutoRefreshTarget {
+  transactionCode?: string | null
+  transactionType?: string | null
+  status?: string | null
+}
+
+/**
+ * Hỏi snapshot một lần khi mở chi tiết lệnh nạp/rút đang treo, để các nút (Cập nhật,
+ * Duyệt, Từ chối) hiện theo `allowedActions` ngay, không chờ ai bấm "Kiểm tra trạng
+ * thái". Màn lịch sử chỉ thấy `PENDING`/`AUTHORIZED` cho cả lệnh đang REVIEW. Chỉ
+ * `EWALLET:FULL` gọi được `refresh`. Khai báo sau `useResetTransactionSnapshot` để
+ * effect xoá cache chạy trước.
+ */
+export const useAutoRefreshTransactionSnapshot = (
+  target: AutoRefreshTarget | undefined
+): void => {
+  const { canFull } = useTransactionPermissions()
+  const code = target?.transactionCode ?? ''
+  const [refresh] = useRefreshTransactionMutation({
+    fixedCacheKey: snapshotCacheKey(code)
+  })
+  const eligible =
+    canFull &&
+    code !== '' &&
+    AUTO_REFRESH_TYPES.includes(target?.transactionType ?? '') &&
+    isStuckJournalStatus(target?.status)
+
+  useEffect(() => {
+    if (eligible) void refresh(code)
+  }, [eligible, code, refresh])
 }

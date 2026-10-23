@@ -1,4 +1,7 @@
-import type { AllowedAction } from '@/app/schemas/transaction-review.schema'
+import {
+  ReviewMode,
+  type AllowedAction
+} from '@/app/schemas/transaction-review.schema'
 import {
   StuckTransactionOutcome,
   type StuckTransactionUpdateResult
@@ -47,10 +50,20 @@ const isFinalAction = (action: AllowedAction): boolean =>
   action.status === StuckTransactionOutcome.POSTED ||
   action.status === StuckTransactionOutcome.FAILED
 
-/** Chỉ POSTED/FAILED là thao tác của popup; action Review thuộc panel Review. */
+/**
+ * `REVIEW_APPROVE`/`REVIEW_REJECT` cũng mang status POSTED/FAILED nhưng thuộc panel
+ * Review (API riêng); lọc theo `mode` để lệnh đang REVIEW không dựng form cập nhật treo.
+ */
+const isReviewMode = (action: AllowedAction): boolean =>
+  action.mode === ReviewMode.MARK_REVIEW || action.mode.startsWith('REVIEW_')
+
+/** Chỉ POSTED/FAILED không thuộc Review là thao tác của popup cập nhật treo. */
 export const getFinalActions = (
   actions: readonly AllowedAction[] | null | undefined
-): AllowedAction[] => (actions ?? []).filter(isFinalAction)
+): AllowedAction[] =>
+  (actions ?? []).filter(
+    (action) => isFinalAction(action) && !isReviewMode(action)
+  )
 
 export const BANK_CHECK_LABELS: Record<string, string> = {
   BANK_ACCEPTED: 'Ngân hàng đã chấp nhận',
