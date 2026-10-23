@@ -3,7 +3,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { supportsBearerSplit } from '@utils/fee-execution'
 import { useEffect, useMemo } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
-import { getOutputBeneficiaryOptions } from '../constants/feeComponentParties'
+import {
+  getBearerSideTitles,
+  getOutputBeneficiaryOptions
+} from '../constants/feeComponentParties'
 import {
   getVatBaseForCategory,
   VAT_COMPONENT_TYPE,
@@ -283,7 +286,8 @@ export const FeeComponentDialog = ({
             isBoth
               ? {
                   control: receiverForm.control,
-                  tierError: receiverForm.formState.errors.tiers?.message
+                  tierError: receiverForm.formState.errors.tiers?.message,
+                  titles: getBearerSideTitles(serviceType)
                 }
               : undefined
           }

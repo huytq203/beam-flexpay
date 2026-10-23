@@ -4,6 +4,7 @@ import {
 } from '@utils/fee-execution'
 import { describe, expect, it } from 'vitest'
 import {
+  getBearerSideTitles,
   getOutputPayerOptions,
   getPayerLabel
 } from '../constants/feeComponentParties'
@@ -65,13 +66,28 @@ const originalTypeErrors = (values: FeeConfigFormValues) => {
 }
 
 describe('phí hoàn: người chuyển và người nhận chịu phí', () => {
-  it('giữ nhãn Người chuyển / Người nhận như các dịch vụ ví', () => {
-    expect(getPayerLabel('USER', 'EWALLET_REFUND')).toBe('Người chuyển')
-    expect(getPayerLabel('RECEIVER', 'EWALLET_REFUND')).toBe('Người nhận')
+  it('nhãn nói rõ bên của giao dịch gốc: người chuyển gốc được hoàn, người nhận gốc bị trừ', () => {
+    expect(getPayerLabel('USER', 'EWALLET_REFUND')).toBe(
+      'Người chuyển gốc (được hoàn tiền)'
+    )
+    expect(getPayerLabel('RECEIVER', 'EWALLET_REFUND')).toBe(
+      'Người nhận gốc (bị trừ tiền hoàn)'
+    )
     expect(getOutputPayerOptions('EWALLET_REFUND')).toEqual([
-      { value: 'USER', label: 'Người chuyển' },
-      { value: 'RECEIVER', label: 'Người nhận' }
+      { value: 'USER', label: 'Người chuyển gốc (được hoàn tiền)' },
+      { value: 'RECEIVER', label: 'Người nhận gốc (bị trừ tiền hoàn)' }
     ])
+  })
+
+  it('tiêu đề hai khối mức phí của hoàn tiền cũng theo giao dịch gốc', () => {
+    expect(getBearerSideTitles('EWALLET_REFUND')).toEqual({
+      sender: 'Người chuyển gốc chịu',
+      receiver: 'Người nhận gốc chịu'
+    })
+    expect(getBearerSideTitles('EWALLET_DEPOSIT')).toEqual({
+      sender: 'Người chuyển chịu',
+      receiver: 'Người nhận chịu'
+    })
   })
 
   it.each(['P2P_TRANSFER', 'CASH_IN', 'MERCHANT_PAYMENT'])(

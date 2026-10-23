@@ -32,17 +32,40 @@ const WALLET_FLOW_SERVICES: readonly string[] = [
   'EWALLET_TRANSFER_INTERNAL'
 ]
 
+/**
+ * Lệnh hoàn chạy ngược giao dịch gốc nên "người chuyển / người nhận" luôn là của giao dịch gốc:
+ * người chuyển gốc là bên được hoàn (phí trừ vào tiền hoàn nhận về), người nhận gốc là bên bị trừ
+ * tiền hoàn (phí trừ thêm). Hoàn rút tiền: người chuyển gốc là ví khách đã rút.
+ */
+const REFUND_PAYER_LABEL: Readonly<Record<string, string>> = {
+  USER: 'Người chuyển gốc (được hoàn tiền)',
+  RECEIVER: 'Người nhận gốc (bị trừ tiền hoàn)'
+}
+
+const payerLabelsFor = (
+  serviceType?: string | null
+): Readonly<Record<string, string>> => {
+  if (serviceType === 'EWALLET_REFUND') {
+    return { ...PAYER_TYPE_LABEL, ...REFUND_PAYER_LABEL }
+  }
+  return serviceType && WALLET_FLOW_SERVICES.includes(serviceType)
+    ? { ...PAYER_TYPE_LABEL, ...WALLET_FLOW_PAYER_LABEL }
+    : PAYER_TYPE_LABEL
+}
+
 /** Nhãn người chịu phí của một thành phần, theo đúng loại giao dịch của chính sách. */
 export const getPayerLabel = (
   payerType: string,
   serviceType?: string | null
-): string => {
-  const labels =
-    serviceType && WALLET_FLOW_SERVICES.includes(serviceType)
-      ? { ...PAYER_TYPE_LABEL, ...WALLET_FLOW_PAYER_LABEL }
-      : PAYER_TYPE_LABEL
-  return labels[payerType] ?? payerType
-}
+): string => payerLabelsFor(serviceType)[payerType] ?? payerType
+
+/** Tiêu đề hai khối mức phí khi cả hai bên cùng chịu. */
+export const getBearerSideTitles = (
+  serviceType?: string | null
+): { sender: string; receiver: string } =>
+  serviceType === 'EWALLET_REFUND'
+    ? { sender: 'Người chuyển gốc chịu', receiver: 'Người nhận gốc chịu' }
+    : { sender: 'Người chuyển chịu', receiver: 'Người nhận chịu' }
 
 /**
  * Người chịu phí được phép chọn: chỉ đúng payer mà `FeeExecutionCapabilityRegistry`

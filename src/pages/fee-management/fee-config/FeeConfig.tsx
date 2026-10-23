@@ -58,6 +58,7 @@ const FeeConfigForm = ({
           Đang xem chi tiết chính sách
         </p>
       )}
+
       <CardComponent className='mb-3!'>
         <PolicyGeneralSection
           control={control}
