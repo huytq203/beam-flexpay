@@ -27,6 +27,11 @@ export const describeApproveOutcome = (refund: RefundDetail): RefundOutcome => {
           ? `Đã duyệt. Lệnh chi ${refund.payoutCode} đang chờ ngân hàng.`
           : 'Đã duyệt.'
       }
+    case RefundStatus.PENDING_PAYOUT_APPROVAL:
+      return {
+        kind: 'success',
+        text: 'Đã duyệt. Yêu cầu chờ Kế toán duyệt chi trước khi gửi lệnh chi sang ngân hàng.'
+      }
     case RefundStatus.WAITING_FUNDS:
       return {
         kind: 'warning',

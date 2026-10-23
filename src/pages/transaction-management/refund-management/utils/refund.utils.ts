@@ -70,12 +70,16 @@ export const getDisplayStatus = (
 export interface RefundActionContext {
   username: string
   canApprove: boolean
+  /** Quyền Kế toán duyệt chi / từ chối chi hoàn tiền ra ngân hàng. */
+  canPayoutApprove: boolean
   canSettle: boolean
   canPayoutRefresh: boolean
 }
 
 export interface RefundActionFlags {
   decide: boolean
+  /** Duyệt chi / từ chối chi: không chặn người tạo (chốt 23/10/2026), chỉ cần đúng trạng thái và quyền. */
+  payoutDecide: boolean
   settle: boolean
   payoutRefresh: boolean
   isOwnRequest: boolean
@@ -105,6 +109,9 @@ export const getRefundActions = (
   const inFlight = IN_FLIGHT_STATUSES.includes(refund.status)
   return {
     isOwnRequest,
+    payoutDecide:
+      refund.status === RefundStatus.PENDING_PAYOUT_APPROVAL &&
+      context.canPayoutApprove,
     decide:
       refund.status === RefundStatus.PENDING_APPROVAL &&
       context.canApprove &&

@@ -181,6 +181,11 @@ describe('SCREENS', () => {
     ] as const) {
       expect(refund.actions[action]).toBe(PERMISSION.EWALLET_FULL)
     }
+    // Kế toán duyệt chi bằng quyền riêng, không dùng chung quyền duyệt hoàn.
+    expect(PERMISSION.PAYOUT_APPROVE).toBe('EWALLET:PAYOUT:APPROVE')
+    for (const action of ['payoutApprove', 'payoutReject'] as const) {
+      expect(refund.actions[action]).toBe(PERMISSION.PAYOUT_APPROVE)
+    }
   })
 
   it('lịch sử giao dịch thêm action review (TRANSACTION:REVIEW) và giữ nguyên các action cũ', () => {
