@@ -1,3 +1,4 @@
+import type { FeePolicyKind } from '@type/fee.type'
 import type { ApplicableFeeRuleExportQuery } from '@/app/schemas/applicable-fee-rule.schema'
 import {
   fetchBaseQueryCustom,
@@ -136,6 +137,8 @@ export interface ExportFeePoliciesQuery {
   keyword?: string
   feeDomain?: string
   feeScope?: string
+  /** Loại chính sách; vắng = CUSTOMER_FEE. */
+  policyKind?: FeePolicyKind
   serviceType?: string
   status?: string
   effectiveStatus?: string

@@ -140,6 +140,11 @@ export const PATHS = {
     POLICY_LIST: `${FEEMANAGEMENT_V4}/fee-policy`,
     POLICY_CREATE: `${FEEMANAGEMENT_V4}/fee-policy/create`,
     POLICY_EDIT: (id: string) => `${FEEMANAGEMENT_V4}/fee-policy/edit/${id}`,
+
+    /** Chính sách phí đầu vào (`INPUT_COST`): khai riêng theo tuyến thanh toán. */
+    INPUT_COST_CREATE: `${FEEMANAGEMENT_V4}/fee-policy/input-cost/create`,
+    INPUT_COST_EDIT: (id: string) =>
+      `${FEEMANAGEMENT_V4}/fee-policy/input-cost/edit/${id}`,
   },
 
   TRANSACTION_MANAGEMENT: {

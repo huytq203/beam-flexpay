@@ -1,11 +1,14 @@
 import { apiFeeService } from './apiService'
-import type { FeeAssignment, FeePage } from '@type/fee.type'
+import type { FeeAssignment, FeePage, FeePolicyKind } from '@type/fee.type'
 type FeeAssignResponse = FeePage<FeeAssignment>
 import { ResponseType } from '@type/api'
 import type { FeeApprovalArg, FeeReasonArg } from '@type/feeApproval.type'
 const feeAssignApi = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
-    getAssignSearch: build.query<FeeAssignResponse, Record<string, unknown>>({
+    getAssignSearch: build.query<
+      FeeAssignResponse,
+      Record<string, unknown> & { policyKind?: FeePolicyKind }
+    >({
       query: (params) => ({
         url: `/fee/policy-assignments/search`,
         method: "GET",

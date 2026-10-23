@@ -7,6 +7,7 @@ import type {
   FeePolicyStatusChangeResult,
   FeePage,
   FeePolicy,
+  FeePolicyKind,
   FeePolicySchedule,
   FeePolicyScheduleStatus
 } from '@type/fee.type'
@@ -38,6 +39,8 @@ export interface SearchFeePoliciesParams {
   feeDomain?: string
   /** OUTPUT_FEE (phí đầu ra) hoặc INPUT_COST (phí đầu vào). */
   feeScope?: string
+  /** Loại chính sách; vắng = CUSTOMER_FEE. Màn phí đầu vào gửi INPUT_COST tường minh. */
+  policyKind?: FeePolicyKind
   serviceType?: string
   status?: string
   /** PENDING | ACTIVE | EXPIRED; chỉ tính trên chính sách đã duyệt và đang bật. */

@@ -25,6 +25,9 @@ export interface AppliedTarget {
   subjects?: AppliedSubject[]
 }
 
+/** Loại chính sách phí, bất biến sau khi tạo. */
+export type FeePolicyKind = 'CUSTOMER_FEE' | 'INPUT_COST'
+
 export interface FeePolicy {
   id: string
   /** Mã đối soát dễ đọc do BE sinh, ví dụ FF26BH44R; BE cũ có thể chưa trả. */
@@ -36,6 +39,8 @@ export interface FeePolicy {
   name: string
   serviceType: string
   feeDomain: string
+  /** BE cũ có thể chưa trả; vắng = CUSTOMER_FEE. */
+  policyKind?: FeePolicyKind
   currency: string
   description?: string
   validFrom: string
