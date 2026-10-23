@@ -183,6 +183,23 @@ export const FEE_SCOPES: readonly FeeScope[] = [
   FEE_SCOPE.INPUT_COST
 ]
 
+/**
+ * Loại chính sách (cột `policy_kind`, bất biến sau khi tạo). Chính sách phí khách chỉ chứa
+ * thành phần phí đầu ra; chính sách phí đầu vào chỉ chứa chi phí trả đối tác.
+ */
+export const POLICY_KIND = {
+  CUSTOMER_FEE: 'CUSTOMER_FEE',
+  INPUT_COST: 'INPUT_COST'
+} as const
+
+export type PolicyKind = (typeof POLICY_KIND)[keyof typeof POLICY_KIND]
+
+/** Tab Phí đầu ra xem chính sách phí khách, tab Phí đầu vào xem chính sách chi phí đầu vào. */
+export const policyKindOfScope = (scope: FeeScope): PolicyKind =>
+  scope === FEE_SCOPE.INPUT_COST
+    ? POLICY_KIND.INPUT_COST
+    : POLICY_KIND.CUSTOMER_FEE
+
 export const feeScopeTabId = (scope: FeeScope) => `fee-scope-tab-${scope}`
 export const feeScopePanelId = (scope: FeeScope) => `fee-scope-panel-${scope}`
 

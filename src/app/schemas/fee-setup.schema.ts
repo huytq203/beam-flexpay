@@ -59,8 +59,12 @@ export const feeSetupPolicySchema = z.object({
   priority: z.number().int().min(0)
 })
 
+export const feePolicyKindSchema = z.enum(['CUSTOMER_FEE', 'INPUT_COST'])
+
 export const feePolicySetupRequestSchema = z.object({
   policy: feeSetupPolicySchema,
+  /** Loại chính sách; vắng = CUSTOMER_FEE. Không đổi được sau khi tạo. */
+  policyKind: feePolicyKindSchema.optional(),
   /**
    * Thứ tự có nghĩa: thành phần tính dựa trên một thành phần khác phải đứng sau
    * thành phần nó tham chiếu.
@@ -103,6 +107,7 @@ export interface FeePolicySetupResponse {
     name: string
     serviceType: string
     feeDomain: string
+    policyKind?: string
     status: string
     priority: number
     validFrom: string
