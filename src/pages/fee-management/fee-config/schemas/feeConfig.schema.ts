@@ -5,6 +5,10 @@ import {
   isPaymentMethodAllowed
 } from '../constants/feeConfigFields'
 import { allowsOriginalTypeCriteria } from '../constants/feeRefundOriginalType'
+import {
+  allowsGrossAmountBase,
+  GROSS_AMOUNT_BASE
+} from '../utils/feeComponentBaseOptions'
 import { validateTransferBearers } from '../utils/transferBearers'
 import {
   DUPLICATE_FEE_COMPONENT_MESSAGE,
@@ -172,6 +176,17 @@ export const checkFeeConfigCommonRules = (
       })
     }
     identities.add(identity)
+    if (
+      component.baseOn === GROSS_AMOUNT_BASE &&
+      !allowsGrossAmountBase(form.serviceType, component.feeScope)
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['components', index, 'baseOn'],
+        message:
+          'Số tiền qua đối tác chỉ dùng cho phí đầu vào của nạp hoặc rút tiền ví'
+      })
+    }
     const scope = component.feeScope
     if (
       component.baseOn === 'FEE_COMPONENT' &&

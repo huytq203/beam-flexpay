@@ -12,8 +12,13 @@ import {
 import { allowsOriginalTypeCriteria } from '../constants/feeRefundOriginalType'
 import {
   feeConfigFormSchema,
+  type FeeComponentFormValues,
   type FeeConfigFormValues
 } from '../schemas/feeConfig.schema'
+import {
+  allowsGrossAmountBase,
+  GROSS_AMOUNT_BASE
+} from '../utils/feeComponentBaseOptions'
 import type { inputCostFormSchema } from '../schemas/inputCostConfig.schema'
 
 export const buildEmptyForm = (
@@ -66,6 +71,18 @@ export const useFeeConfigForm = (
     mode: 'onTouched'
   })
 
+  /** Số tiền qua đối tác chỉ hợp lệ với nạp/rút ví; đổi loại giao dịch thì trả về số tiền giao dịch. */
+  const resetGrossBase = (
+    components: FeeComponentFormValues[],
+    serviceType: string
+  ): FeeComponentFormValues[] =>
+    components.map((component) =>
+      component.baseOn === GROSS_AMOUNT_BASE &&
+      !allowsGrossAmountBase(serviceType, component.feeScope)
+        ? { ...component, baseOn: 'AMOUNT', baseComponentType: null }
+        : component
+    )
+
   const changeDomain = (next: FeeDomain) => {
     const current = form.getValues()
     const rules = getDomainFieldRules(next)
@@ -74,6 +91,10 @@ export const useFeeConfigForm = (
     form.reset({
       ...current,
       feeDomain: next,
+      components: resetGrossBase(
+        current.components,
+        keepServiceType ? current.serviceType : ''
+      ),
       // Loại giao dịch của miền cũ có thể không tồn tại ở miền mới; giữ lại là
       // gửi lên một tổ hợp backend không nhận.
       serviceType: keepServiceType ? current.serviceType : '',
@@ -112,6 +133,7 @@ export const useFeeConfigForm = (
       ...current,
       feeDomain: domain,
       serviceType: next,
+      components: resetGrossBase(current.components, next),
       // Chuyển ví không có ngân hàng; giữ lại là gửi một tiêu chí không còn ô nào để sửa.
       bankCode: allowsBankCriteria(next) ? current.bankCode : '',
       // NCC chỉ có nghĩa với nạp/rút ví; giữ lại là gửi một tiêu chí không còn ô nào để sửa.

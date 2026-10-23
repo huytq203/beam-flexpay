@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { getFeeScopeOfPayer } from '../constants/feeConfigFields'
+import { GROSS_AMOUNT_BASE } from '../utils/feeComponentBaseOptions'
 import { addFeeBoundIssues } from './feeBounds'
 
 /**
@@ -143,6 +144,18 @@ export const feeComponentFormSchema = z
           message: 'Thuế giá trị gia tăng không có phần phí cố định'
         })
       }
+    }
+
+    // Số tiền qua đối tác chỉ có ở chi phí đầu vào (loại giao dịch kiểm ở cấp chính sách).
+    if (
+      component.baseOn === GROSS_AMOUNT_BASE &&
+      component.feeScope !== 'INPUT_COST'
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['baseOn'],
+        message: 'Số tiền qua đối tác chỉ dùng cho phí đầu vào'
+      })
     }
 
     if (component.baseOn === 'FEE_COMPONENT' && !component.baseComponentType) {

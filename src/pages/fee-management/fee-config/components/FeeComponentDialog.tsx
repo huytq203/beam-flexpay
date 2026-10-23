@@ -30,7 +30,11 @@ import {
   buildComponentTypeOptions,
   buildMethodOptions
 } from '../utils/feeComponentFieldOptions'
-import { getBaseOnOptions } from '../utils/feeComponentBaseOptions'
+import {
+  allowsGrossAmountBase,
+  getBaseOnOptions,
+  isAmountBase
+} from '../utils/feeComponentBaseOptions'
 import { emptyComponent } from '../utils/feeComponentDefaults'
 import {
   BOTH_BEARERS,
@@ -174,7 +178,7 @@ export const FeeComponentDialog = ({
   const isVat = componentType === VAT_COMPONENT_TYPE
   const tiered = usesTiers(calculationMethod)
   // Phí phụ thuộc (VAT, phí tính trên phí khác) chỉ khai một dòng khi cả hai bên cùng chịu.
-  const canSplit = bearerSplit && baseOn === 'AMOUNT' && !isVat
+  const canSplit = bearerSplit && isAmountBase(baseOn) && !isVat
   const isBoth = payerType === BOTH_BEARERS
 
   const payerSelectOptions = usePayerSelectOptions({
@@ -235,7 +239,8 @@ export const FeeComponentDialog = ({
   const baseOnOptions = getBaseOnOptions({
     isBank: isInputCost,
     isVat,
-    hasPrecedingComponents
+    hasPrecedingComponents,
+    allowGrossAmount: allowsGrossAmountBase(serviceType, feeScope)
   })
 
   const submit = useFeeComponentSubmit({
