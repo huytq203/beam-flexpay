@@ -42,6 +42,7 @@ export const stuckTransactionUpdateSchema = z.object({
   note: z
     .string()
     .trim()
+    .min(1, 'Vui lòng nhập lý do cập nhật')
     .max(
       STUCK_UPDATE_NOTE_MAX_LENGTH,
       `Lý do tối đa ${STUCK_UPDATE_NOTE_MAX_LENGTH} ký tự`

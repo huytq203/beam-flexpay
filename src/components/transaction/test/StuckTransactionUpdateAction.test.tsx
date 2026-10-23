@@ -12,6 +12,7 @@ import {
   choose,
   fill,
   mockRefresh,
+  mockUpdate,
   openForm,
   renderAction,
   submit
@@ -180,7 +181,7 @@ describe('StuckTransactionUpdateAction - lỗi update-status', () => {
           {
             success: false,
             message: 'RECONCILIATION_CONFLICT',
-            detail: 'Giao dịch đang chờ review, hãy dùng chức năng duyệt review'
+            detail: 'Giao dịch đã có kết quả cuối, không thể cập nhật lại'
           },
           { status: 409 }
         )
@@ -193,9 +194,22 @@ describe('StuckTransactionUpdateAction - lỗi update-status', () => {
     await submit(user)
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
-      'Giao dịch đang chờ review, hãy dùng chức năng duyệt review'
+      'Giao dịch đã có kết quả cuối, không thể cập nhật lại'
     )
     await waitFor(() => expect(refresh.calls).toBe(2))
     expect(await screen.findByLabelText(/Kết quả cuối/)).toBeInTheDocument()
+  })
+
+  it('để trống lý do: ô lý do không hợp lệ và không gọi update-status', async () => {
+    mockRefresh([POSTED_FULL])
+    const bodies = mockUpdate()
+    const user = renderAction()
+    await openForm(user)
+    await choose(user, 'Thành công')
+    await submit(user)
+
+    // Ô lý do có thuộc tính required: trình duyệt chặn gửi trước cả schema zod.
+    expect(screen.getByLabelText('Lý do cập nhật')).toBeInvalid()
+    expect(bodies).toHaveLength(0)
   })
 })

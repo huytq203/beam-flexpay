@@ -3,7 +3,7 @@ import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ButtonComponent } from '@components/index'
 import { FormSelect, FormTextArea } from '@components/form'
-import type { AllowedAction } from '@/app/schemas/transaction-review.schema'
+import type { AllowedAction } from '@/app/schemas/transaction-snapshot.schema'
 import { useUploadStuckTransactionReceiptMutation } from '@services/apiStuckTransaction'
 import {
   STUCK_TRANSACTION_OUTCOME,

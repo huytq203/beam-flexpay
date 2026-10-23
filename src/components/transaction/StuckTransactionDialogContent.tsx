@@ -1,7 +1,7 @@
 import { ButtonComponent } from '@components/index'
 import { MagnifyingGlassIcon } from '@components/icons'
 import { useTransactionSnapshot } from '@pages/wallet-administration/transaction-wallet/hooks/useTransactionSnapshot'
-import type { BankCheck } from '@/app/schemas/transaction-review.schema'
+import type { BankCheck } from '@/app/schemas/transaction-snapshot.schema'
 import { StuckTransactionUpdateForm } from './StuckTransactionUpdateForm'
 import type { StuckTransactionUpdateFormValues } from './StuckTransaction.schema'
 import { BANK_CHECK_LABELS, getFinalActions } from './stuckTransaction.utils'
@@ -39,7 +39,7 @@ const Note = ({ children }: { children: string }) => (
 
 /**
  * Nội dung popup: hỏi snapshot (`refresh`) rồi dựng form theo `allowedActions`. Snapshot
- * dùng chung khoá cache với panel Review nên không phải truyền qua props.
+ * dùng chung khoá cache với nút Cập nhật nên không phải truyền qua props.
  */
 export const StuckTransactionDialogContent = ({
   transactionCode,

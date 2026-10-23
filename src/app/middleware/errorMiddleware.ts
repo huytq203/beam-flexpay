@@ -47,11 +47,7 @@ const SILENT_ENDPOINTS: string[] = [
   'rejectRefund',
   'settleRefund',
   'refreshRefundPayout',
-  // Review lệnh nạp hiển thị `detail` (400/409) ngay trong hộp thoại và panel.
   'refreshTransaction',
-  'markTransactionReview',
-  'approveTransactionReview',
-  'rejectTransactionReview',
   // Cập nhật giao dịch treo: lỗi 400/409 của BE hiện ngay trong form; biên lai hiện tại chỗ.
   'updateStuckTransactionStatus',
   'uploadStuckTransactionReceipt',
@@ -73,7 +69,7 @@ const LOCAL_403_ENDPOINTS = new Set([
   'verifyResetPasswordOtp',
   'resendAdminOtp',
   'getCurrentWeather',
-  // Hoàn tiền và review lệnh nạp hiện `detail` của 403 ngay trong dialog/panel, không đá sang /forbidden.
+  // Hoàn tiền và cập nhật giao dịch treo hiện `detail` của 403 ngay trong dialog/panel, không đá sang /forbidden.
   'getRefunds',
   'getRefundDetail',
   'createRefund',
@@ -82,9 +78,6 @@ const LOCAL_403_ENDPOINTS = new Set([
   'settleRefund',
   'refreshRefundPayout',
   'refreshTransaction',
-  'markTransactionReview',
-  'approveTransactionReview',
-  'rejectTransactionReview',
   'updateStuckTransactionStatus',
   'uploadStuckTransactionReceipt',
   'getStuckTransactionReceipt'

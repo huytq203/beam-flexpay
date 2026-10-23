@@ -45,17 +45,6 @@ export const STUCK_UPDATE_NOTE_MAX_LENGTH = 500
 export const STUCK_UPDATE_CODE_MAX_LENGTH = 50
 export const STUCK_RECEIPT_MAX_BYTES = 2 * 1024 * 1024
 
-/** Chỉ còn dùng cho các hộp thoại Review; cập nhật giao dịch treo không gửi nữa. */
-export interface BankConfirmation {
-  outcome: StuckTransactionOutcome
-  confirmationChannel: string
-  confirmationReference: string
-  confirmedAt: string
-  bankReference?: string
-  valueDate?: string
-  bankBookedAt?: string
-}
-
 export interface StuckTransactionUpdateArg {
   transactionCode: string
   newStatus: StuckTransactionOutcome

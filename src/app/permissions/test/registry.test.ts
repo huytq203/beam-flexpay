@@ -183,10 +183,9 @@ describe('SCREENS', () => {
     }
   })
 
-  it('lịch sử giao dịch thêm action review (TRANSACTION:REVIEW) và giữ nguyên các action cũ', () => {
+  it('lịch sử giao dịch không còn action review và giữ nguyên các action cũ', () => {
     const wallet = SCREENS.TRANSACTION_WALLET
-    expect(wallet.actions.review).toBe(PERMISSION.TRANSACTION_REVIEW)
-    expect(PERMISSION.TRANSACTION_REVIEW).toBe('EWALLET:TRANSACTION:REVIEW')
+    expect('review' in wallet.actions).toBe(false)
     expect('accessPermission' in wallet).toBe(false)
     expect(wallet.actions.viewDetail).toBe(PERMISSION.TRANSACTION_VIEW)
     expect(wallet.actions.full).toBe(PERMISSION.TRANSACTION_FULL)

@@ -115,9 +115,6 @@ describe('errorMiddleware', () => {
     'settleRefund',
     'refreshRefundPayout',
     'refreshTransaction',
-    'markTransactionReview',
-    'approveTransactionReview',
-    'rejectTransactionReview',
     'updateStuckTransactionStatus',
     'uploadStuckTransactionReceipt',
     'getStuckTransactionReceipt'
