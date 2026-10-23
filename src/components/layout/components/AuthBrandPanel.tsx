@@ -23,15 +23,15 @@ interface BrandHeaderProps {
 
 function BrandHeader({ usesLightText }: BrandHeaderProps): ReactElement {
   return (
-    <div className="absolute top-8 left-8 z-30 flex items-center gap-2.5">
-      <div className="grid size-10 place-items-center rounded-md bg-white/80 shadow-[0_8px_24px_rgba(13,148,136,0.12)] backdrop-blur-xs">
+    <div className='absolute top-8 left-8 z-30 flex items-center gap-2.5'>
+      <div className='grid size-10 place-items-center rounded-md bg-white/80 shadow-[0_8px_24px_rgba(13,148,136,0.12)] backdrop-blur-xs'>
         <img
-          src="/images/BEAM.png"
-          alt="Beam"
-          className="size-8 object-contain"
+          src='/images/BEAM.png'
+          alt='Beam'
+          className='size-8 object-contain'
         />
       </div>
-      <div className="leading-tight">
+      <div className='leading-tight'>
         <p
           className={`text-sm font-extrabold tracking-tight transition-colors duration-1000 ${
             usesLightText ? 'text-teal-50' : 'text-teal-950'
@@ -109,7 +109,7 @@ function StatusBadges({
   usesLightText
 }: StatusBadgesProps): ReactElement {
   return (
-    <div className="absolute top-9 right-8 z-30 flex flex-col items-end gap-1.5">
+    <div className='absolute top-9 right-8 z-30 flex flex-col items-end gap-1.5'>
       <VietnamTimeBadge
         scene={scene}
         isSynchronized={isSynchronized}
@@ -153,18 +153,18 @@ function MascotScene({
   return (
     <div
       ref={sceneRef}
-      className="pointer-events-none absolute inset-[12%_3%_13%] z-10 will-change-transform"
-      aria-hidden="true"
+      className='pointer-events-none absolute inset-[12%_3%_13%] z-10 will-change-transform'
+      aria-hidden='true'
     >
-      <div className="absolute inset-x-[10%] bottom-[10%] h-3 rounded-[50%] bg-black/30 blur-[8px]" />
+      <div className='absolute inset-x-[10%] bottom-[10%] h-3 rounded-[50%] bg-black/30 blur-[8px]' />
       <div
         ref={mascotRef}
-        className="absolute inset-[6%_0_2%] z-10 flex items-center justify-center will-change-transform"
+        className='absolute inset-[6%_0_2%] z-10 flex items-center justify-center will-change-transform'
       >
         <img
           src={imageSource}
-          alt=""
-          className="h-full w-full object-contain drop-shadow-[0_20px_22px_rgba(9,51,55,0.2)] transition-[filter] duration-1000"
+          alt=''
+          className='h-full w-full object-contain drop-shadow-[0_20px_22px_rgba(9,51,55,0.2)] transition-[filter] duration-1000'
           style={{ filter }}
         />
       </div>
@@ -174,18 +174,18 @@ function MascotScene({
 
 function BrandCopy(): ReactElement {
   return (
-    <div className="auth-brand-copy absolute bottom-8 left-8 z-30 max-w-[390px]">
-      <div className="mb-3 flex items-center gap-3">
-        <span className="h-px w-8 bg-teal-50/65" />
-        <p className="text-[10px] font-bold tracking-[0.14em] text-teal-50/80">
+    <div className='auth-brand-copy absolute bottom-8 left-8 z-30 max-w-[390px]'>
+      <div className='mb-3 flex items-center gap-3'>
+        <span className='h-px w-8 bg-teal-50/65' />
+        <p className='text-[10px] font-bold tracking-[0.14em] text-teal-50/80'>
           FLEXPAY EWALLET
         </p>
-        <span className="h-px w-8 bg-teal-50/65" />
+        <span className='h-px w-8 bg-teal-50/65' />
       </div>
-      <h2 className="mb-2 text-xl font-extrabold tracking-tight text-[#c9fff9] drop-shadow-[0_1px_2px_rgba(5,47,50,0.25)]">
-        Vận hành Flexay trong một nhịp
+      <h2 className='mb-2 text-xl font-extrabold tracking-tight text-[#c9fff9] drop-shadow-[0_1px_2px_rgba(5,47,50,0.25)]'>
+        Vận hành Flexpay trong một nhịp
       </h2>
-      <p className="max-w-[280px] text-xs leading-relaxed text-teal-50/80">
+      <p className='max-w-[280px] text-xs leading-relaxed text-teal-50/80'>
         Hệ thống quản trị ví điện tử chuyên nghiệp, an toàn và hiệu quả.
       </p>
     </div>
@@ -204,13 +204,12 @@ export function AuthBrandPanel({
   sceneRef,
   mascotRef
 }: AuthBrandPanelProps): ReactElement {
-  const usesLightText =
-    scene.isNight || (scene.isTwilight && scene.isSunset)
+  const usesLightText = scene.isNight || (scene.isTwilight && scene.isSunset)
 
   return (
     <div
       ref={brandRef}
-      className="relative hidden flex-3 overflow-hidden transition-[background] duration-1000 md:flex"
+      className='relative hidden flex-3 overflow-hidden transition-[background] duration-1000 md:flex'
       style={{ background: scene.sky }}
     >
       <SolarLandscape scene={scene} />

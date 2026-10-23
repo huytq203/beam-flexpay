@@ -3,7 +3,6 @@ import { CardComponent } from '@components/index'
 import type { Control } from 'react-hook-form'
 import type { FeeComponentFormValues } from '../schemas/feeConfig.schema'
 import type { BaseTypeSummary } from '../utils/feeComponentSummary'
-import { GROSS_AMOUNT_BASE, GROSS_AMOUNT_HELPER } from '../utils/feeComponentBaseOptions'
 import { BaseTypePreview } from './BaseTypePreview'
 import { FeeRateFields, FeeSideFields } from './FeeRateFields'
 
@@ -93,11 +92,7 @@ export const FeeComponentFields = ({
           className='col-span-12 flex flex-col md:col-span-6'
         />
 
-        {baseOn === GROSS_AMOUNT_BASE && (
-          <p className='col-span-12 -mt-1 text-[12px] text-muted-foreground'>
-            {GROSS_AMOUNT_HELPER}
-          </p>
-        )}
+   
         {baseOn === 'FEE_COMPONENT' && (
           <FormSelect
             name='baseComponentType'
