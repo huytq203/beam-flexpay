@@ -1,6 +1,7 @@
 import { FeeScopeTabs } from '@pages/fee-management/fee-config/components/FeeScopeTabs'
 import {
   FEE_SCOPE,
+  policyKindOfScope,
   type FeeScope
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import { CardComponent, Table, TooltipComponent } from '@components/index'
@@ -31,10 +32,10 @@ import {
 import { splitPolicyStatusFilter } from './utils/policyStatusFilter'
 
 /**
- * Danh sách chính sách phí tách theo luồng phí: tab "Phí đầu ra" (đầu ra) chỉ lấy chính
- * sách có phí thu của khách, tab "Phí đầu vào" (đầu vào) chỉ lấy chính sách có khoản ví
- * phải trả ngân hàng hoặc đối tác. Một chính sách có cả hai luồng thì có mặt ở cả hai tab và
- * mỗi tab chỉ hiện các thành phần của luồng đó, để đối soát từng luồng riêng.
+ * Danh sách chính sách phí tách theo loại chính sách: tab "Phí đầu ra" lấy chính sách phí
+ * khách (`CUSTOMER_FEE`), tab "Phí đầu vào" lấy chính sách chi phí đầu vào (`INPUT_COST`,
+ * khai riêng theo tuyến thanh toán). Hai loại không chung chính sách nên không còn bản ghi
+ * nào xuất hiện ở cả hai tab.
  */
 const FeePolicyList = () => {
   const navigate = useNavigate()
@@ -53,18 +54,20 @@ const FeePolicyList = () => {
     : FEE_SCOPE.OUTPUT_FEE
   const [changing, setChanging] = useState<StatusChangePolicy | null>(null)
   const customerSegmentNames = useCustomerSegmentNames()
+  const isInputCost = feeScope === FEE_SCOPE.INPUT_COST
   const exportFilters = {
-    feeScope,
+    policyKind: policyKindOfScope(feeScope),
     keyword: filters.keyword,
     serviceType: filters.serviceType,
     status: filters.status,
-    appliedTarget: filters.appliedTarget,
+    // Phí đầu vào không có đối tượng khách, người chịu luôn là Hệ thống và không có bên chịu phí chuyển tiền.
+    appliedTarget: isInputCost ? undefined : filters.appliedTarget,
     bankCode: filters.bankCode,
     providerCode: filters.providerCode,
     paymentMethod: filters.paymentMethod,
-    payerType: filters.payerType,
+    payerType: isInputCost ? undefined : filters.payerType,
     beneficiaryType: filters.beneficiaryType,
-    feeBearer: filters.feeBearer,
+    feeBearer: isInputCost ? undefined : filters.feeBearer,
     validFrom: filters.validFrom,
     validTo: filters.validTo,
     createdAtFrom: filters.createdAtFrom,
@@ -91,7 +94,20 @@ const FeePolicyList = () => {
 
   // Đổi luồng phí giữ nguyên mọi bộ lọc khác: loại giao dịch dùng chung cho cả hai luồng.
   const handleScopeChange = (next: FeeScope) =>
-    applyFilters(keepFilters(filters, { feeScope: next, direction: null }))
+    applyFilters(
+      keepFilters(
+        filters,
+        next === FEE_SCOPE.INPUT_COST
+          ? {
+              feeScope: next,
+              direction: null,
+              appliedTarget: null,
+              payerType: null,
+              feeBearer: null
+            }
+          : { feeScope: next, direction: null }
+      )
+    )
 
   const handleToggleAll = () =>
     updateExpandedPolicyIds((current) =>
@@ -111,6 +127,11 @@ const FeePolicyList = () => {
       }
       exporting={isExporting}
       exportDisabled={total === 0 || isError}
+      createPath={
+        isInputCost
+          ? PATHS.FEE_V4.INPUT_COST_CREATE
+          : PATHS.FEE_V4.POLICY_CREATE
+      }
     />
   )
 
@@ -125,6 +146,7 @@ const FeePolicyList = () => {
 
         <div className='mt-4 '>
           <FeePolicyFilterBar
+            inputCost={isInputCost}
             serviceType={filters.serviceType}
             values={{
               keyword: filters.keyword ?? '',
@@ -189,7 +211,12 @@ const FeePolicyList = () => {
             dataSource={rows}
             columns={getFeePolicyColumns({
               feeScope,
-              onEdit: (id) => navigate(PATHS.FEE_V4.POLICY_EDIT(id)),
+              onEdit: (id) =>
+                navigate(
+                  isInputCost
+                    ? PATHS.FEE_V4.INPUT_COST_EDIT(id)
+                    : PATHS.FEE_V4.POLICY_EDIT(id)
+                ),
               onChangeStatus: (id, name, policyStatus) =>
                 setChanging({ id, name, status: policyStatus }),
               customerSegmentNames

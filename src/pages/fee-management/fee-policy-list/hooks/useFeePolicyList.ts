@@ -1,12 +1,12 @@
-import type { FeeScope } from '@pages/fee-management/fee-config/constants/feeConfigFields'
+import type { PolicyKind } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import { useSearchFeePoliciesQuery } from '@services/apiFeePolicy.api'
 import type { FeePolicy } from '@type/fee.type'
 import { useMemo } from 'react'
 import { splitPolicyStatusFilter } from '../utils/policyStatusFilter'
 
 export interface FeePolicyListFilters {
-  /** Luồng phí đang xem: chỉ lấy chính sách có thành phần thuộc luồng này. */
-  feeScope: FeeScope
+  /** Loại chính sách đang xem: tab đầu ra = CUSTOMER_FEE, tab đầu vào = INPUT_COST. */
+  policyKind: PolicyKind
   keyword?: string
   serviceType?: string
   status?: string
@@ -44,7 +44,7 @@ export interface UseFeePolicyListResult {
 }
 
 /**
- * Luồng phí là tiêu chí lọc ở backend nên tab gửi thẳng xuống API; miền phí chỉ còn
+ * Tab luồng phí chọn `policyKind` và gửi thẳng xuống API (backend lọc theo loại chính sách); miền phí chỉ còn
  * là nhãn phân loại và không tham gia lọc.
  *
  * Bộ lọc gửi thẳng một `serviceType` cụ thể; chiều tiền chỉ còn là thông tin
@@ -58,7 +58,7 @@ export const useFeePolicyList = ({
   const params = useMemo(
     () => ({
       keyword: filters.keyword || '',
-      feeScope: filters.feeScope,
+      policyKind: filters.policyKind,
       serviceType: filters.serviceType || undefined,
       ...splitPolicyStatusFilter(filters.status),
       appliedTarget: filters.appliedTarget || undefined,

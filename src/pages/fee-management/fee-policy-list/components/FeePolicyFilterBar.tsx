@@ -43,6 +43,8 @@ export interface FeePolicyFilterValues {
 }
 
 interface FeePolicyFilterBarProps {
+  /** Tab Phí đầu vào: ẩn bộ lọc đối tượng khách, người chịu phí và bên chịu phí chuyển tiền. */
+  inputCost?: boolean
   serviceType: string | undefined
   values: FeePolicyFilterValues
   onServiceTypeChange: (serviceType: string | undefined) => void
@@ -52,6 +54,7 @@ interface FeePolicyFilterBarProps {
 
 /** Bộ lọc dùng chung cho cả hai luồng phí; loại giao dịch là Tất cả loại đã duyệt được. */
 export const FeePolicyFilterBar = ({
+  inputCost = false,
   serviceType,
   values,
   onServiceTypeChange,
@@ -172,15 +175,17 @@ export const FeePolicyFilterBar = ({
           options={POLICY_STATUS_FILTER_OPTIONS}
           className='flex flex-col'
         />
-        <FormSelect
-          name='appliedTarget'
-          control={control}
-          label='Đối tượng áp dụng'
-          placeholder='Tất cả đối tượng'
-          allowClear
-          options={appliedTargetOptions}
-          className='flex flex-col'
-        />
+        {!inputCost && (
+          <FormSelect
+            name='appliedTarget'
+            control={control}
+            label='Đối tượng áp dụng'
+            placeholder='Tất cả đối tượng'
+            allowClear
+            options={appliedTargetOptions}
+            className='flex flex-col'
+          />
+        )}
         <FeePolicyProviderFilter control={control} />
         <FormSelect
           name='bankCode'
@@ -206,6 +211,7 @@ export const FeePolicyFilterBar = ({
         <FeePolicyPartyFilters
           control={control}
           serviceType={serviceType}
+          inputCost={inputCost}
         />
         <FormDatePicker
           name='validFrom'
