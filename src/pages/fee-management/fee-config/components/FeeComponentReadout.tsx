@@ -1,5 +1,6 @@
 import { COMPONENT_TYPE_LABELS, getFeeLabel } from '@constants/feeLabels'
 import { formatFeeLimit, formatTierRange } from '@utils/fee-format'
+import { getAmountBaseLabel } from '../utils/feeComponentBaseOptions'
 import {
   BENEFICIARY_TYPE_LABEL,
   getPayerLabel
@@ -51,9 +52,8 @@ export const FeeComponentReadout = ({
   const tiered = usesTiers(component.calculationMethod)
 
   const basis =
-    component.baseOn === 'AMOUNT'
-      ? 'Số tiền giao dịch'
-      : getFeeLabel(
+    getAmountBaseLabel(component.baseOn) ??
+    getFeeLabel(
           component.baseComponentType,
           COMPONENT_TYPE_LABELS,
           'Thành phần khác'

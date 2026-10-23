@@ -4,6 +4,10 @@ import {
   usesTiers,
   type FeeComponentFormValues
 } from '@pages/fee-management/fee-config/schemas/feeConfig.schema'
+import {
+  getAmountBaseLabel,
+  isAmountBase
+} from '@pages/fee-management/fee-config/utils/feeComponentBaseOptions'
 import { formatFeeNumber } from '@utils/fee-format'
 import type { ReadoutGroup } from './groupReadoutComponents'
 
@@ -76,8 +80,8 @@ export const buildFeeBasis = (
 ): FeeBasisModel => {
   const [first] = group.members
   const base: FeeBasisBase =
-    first.baseOn === 'AMOUNT'
-      ? { kind: 'AMOUNT', label: AMOUNT_LABEL }
+    isAmountBase(first.baseOn)
+      ? { kind: 'AMOUNT', label: getAmountBaseLabel(first.baseOn) ?? AMOUNT_LABEL }
       : {
           kind: 'COMPONENT',
           label: labelOf(first.baseComponentType),
@@ -90,7 +94,7 @@ export const buildFeeBasis = (
     .filter(
       ({ other }) =>
         other !== group &&
-        other.members[0].baseOn !== 'AMOUNT' &&
+        !isAmountBase(other.members[0].baseOn) &&
         other.members[0].baseComponentType === group.componentType
     )
     .map(({ other, index }) => ({ label: labelOf(other.componentType), index }))

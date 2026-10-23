@@ -4,6 +4,7 @@ import {
   getPayerLabel
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import type { FeeComponentFormValues } from '@pages/fee-management/fee-config/schemas/feeConfig.schema'
+import { getAmountBaseLabel } from '@pages/fee-management/fee-config/utils/feeComponentBaseOptions'
 import {
   CALCULATION_METHOD_LABEL,
   describeFormula
@@ -36,9 +37,8 @@ export const FeeComponentGroupReadout = ({
 }: FeeComponentGroupReadoutProps) => {
   const [first] = members
   const basis =
-    first.baseOn === 'AMOUNT'
-      ? 'Số tiền giao dịch'
-      : getFeeLabel(
+    getAmountBaseLabel(first.baseOn) ??
+    getFeeLabel(
           first.baseComponentType,
           COMPONENT_TYPE_LABELS,
           'Thành phần khác'
