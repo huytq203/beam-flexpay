@@ -7,18 +7,24 @@ import {
   type CredentialSecret
 } from '@/app/services/merchantGatewayApi'
 import { KeyIcon, PlusOutlined } from '@components/icons'
-import { ButtonComponent, CardComponent, Table } from '@components/index'
-import { createApiCredentialColumns } from '../columns/apiCredential.columns'
-import { CreateCredentialDialog } from '../components/CreateCredentialDialog'
 import {
-  CredentialActionDialog,
-  type CredentialAction
-} from '../components/CredentialActionDialog'
+  ButtonComponent,
+  CardComponent,
+  ExportCsvButton,
+  Table
+} from '@components/index'
+import { createApiCredentialColumns } from '../columns/apiCredential.columns'
+import { BeamPublicKeysDialog } from '../components/BeamPublicKeysDialog'
+import { CreateCredentialDialog } from '../components/CreateCredentialDialog'
+import { CredentialActionHost } from '../components/CredentialActionHost'
+import { CredentialDetailDrawer } from '../components/CredentialDetailDrawer'
 import { CredentialDetails } from '../components/CredentialDetails'
 import { CredentialExpandIcon } from '../components/CredentialExpandIcon'
 import { CredentialSecretDialog } from '../components/CredentialSecretDialog'
 import { KeyConnectionFilters } from '../components/KeyConnectionFilters'
+import { useKeyConnectionExport } from '../hooks/useKeyConnectionExport'
 import { useKeyConnectionFilters } from '../hooks/useKeyConnectionFilters'
+import type { CredentialAction } from '../types/credential.types'
 
 const KeyConnectionPage = () => {
   const {
@@ -35,19 +41,22 @@ const KeyConnectionPage = () => {
     changePage
   } = useKeyConnectionFilters()
   const [isCreating, setIsCreating] = useState(false)
+  const [isViewingBeamKeys, setIsViewingBeamKeys] = useState(false)
+  const [detailId, setDetailId] = useState<string | null>(null)
   const [action, setAction] = useState<CredentialAction | null>(null)
   const [secret, setSecret] = useState<CredentialSecret | null>(null)
 
   const merchants = useGetGatewayMerchantsQuery({ page: 1, size: 100 })
-  const query = useGetGatewayCredentialsQuery({
-    page,
-    size,
-    merchantId: merchant?.id,
-    status
-  })
+  const filters = { merchantId: merchant?.id, status }
+  const query = useGetGatewayCredentialsQuery({ page, size, ...filters })
+  const { exportCsv, isExporting } = useKeyConnectionExport(filters)
+  const total = query.data?.totalElements ?? 0
 
   const merchantName = (id: string) =>
     merchants.data?.content.find((item) => item.id === id)?.name ?? id
+  const openAction =
+    (type: CredentialAction['type']) => (credential: ApiCredential) =>
+      setAction({ type, credential })
 
   return (
     <main className='flex min-w-0 flex-col gap-3'>
@@ -69,21 +78,39 @@ const KeyConnectionPage = () => {
               <KeyIcon aria-hidden /> Danh sách key kết nối
             </h1>
             <p className='mt-1 text-xs text-muted-foreground'>
-              {query.data?.totalElements ?? 0} key · Cấp tại Master,
-              Sub-merchant và Terminal sử dụng kế thừa
+              {total} key · Cấp tại Master, Sub-merchant và Terminal sử dụng kế
+              thừa
             </p>
           </div>
-          <Can
-            screen='MERCHANT_KEY_CONNECTION'
-            action='create'
-          >
+          <div className='flex flex-wrap gap-2'>
             <ButtonComponent
-              content='Tạo key'
+              type='default'
+              content='Public key BEAM'
               htmlType='button'
-              icon={<PlusOutlined aria-hidden />}
-              onClick={() => setIsCreating(true)}
+              onClick={() => setIsViewingBeamKeys(true)}
             />
-          </Can>
+            <Can
+              screen='MERCHANT_KEY_CONNECTION'
+              action='view'
+            >
+              <ExportCsvButton
+                onExport={exportCsv}
+                loading={isExporting}
+                disabled={total === 0}
+              />
+            </Can>
+            <Can
+              screen='MERCHANT_KEY_CONNECTION'
+              action='create'
+            >
+              <ButtonComponent
+                content='Tạo key'
+                htmlType='button'
+                icon={<PlusOutlined aria-hidden />}
+                onClick={() => setIsCreating(true)}
+              />
+            </Can>
+          </div>
         </div>
         {query.isError && (
           <div
@@ -108,7 +135,7 @@ const KeyConnectionPage = () => {
           pagination={{
             current: page,
             pageSize: size,
-            total: query.data?.totalElements ?? 0,
+            total,
             onChange: changePage
           }}
           expandable={{
@@ -121,8 +148,9 @@ const KeyConnectionPage = () => {
             page,
             size,
             merchantName,
-            onRotate: (credential) => setAction({ type: 'rotate', credential }),
-            onRevoke: (credential) => setAction({ type: 'revoke', credential })
+            onRotate: openAction('rotate'),
+            onRevoke: openAction('revoke'),
+            onView: (credential) => setDetailId(credential.id)
           })}
         />
       </CardComponent>
@@ -136,13 +164,19 @@ const KeyConnectionPage = () => {
           }}
         />
       )}
-      {action && (
-        <CredentialActionDialog
-          action={action}
-          onClose={() => setAction(null)}
-          onRotated={setSecret}
-        />
+      {isViewingBeamKeys && (
+        <BeamPublicKeysDialog onClose={() => setIsViewingBeamKeys(false)} />
       )}
+      <CredentialDetailDrawer
+        credentialId={detailId}
+        onClose={() => setDetailId(null)}
+        onAction={(type, credential) => setAction({ type, credential })}
+      />
+      <CredentialActionHost
+        action={action}
+        onClose={() => setAction(null)}
+        onSecret={setSecret}
+      />
       <CredentialSecretDialog
         secret={secret}
         onClose={() => setSecret(null)}

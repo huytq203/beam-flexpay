@@ -9,10 +9,16 @@ import DialogAddUser from './components/DialogAddUser'
 import DialogEditUser from './components/DialogEditUser'
 import DialogUserDetail from './components/DialogUserDetail'
 import DialogAssignRoles from './components/DialogAssignRoles'
+import { UserAssignmentDialog } from '../../merchant-management/merchant-assignment/components/UserAssignmentDialog'
+import { toAdminUserName } from '../../merchant-management/merchant-assignment/utils/merchantAssignment.utils'
 import AlertResetPassword from './components/AlertResetPassword'
 import useFetchDataUser from './hooks/useFetchDataUser'
 import useHandleUser from './hooks/useHandleUser'
-import { SkeletonButton, SkeletonInput, SkeletonTable } from '@components/ui/skeletons/Skeleton'
+import {
+  SkeletonButton,
+  SkeletonInput,
+  SkeletonTable
+} from '@components/ui/skeletons/Skeleton'
 import FormSearchUser from './components/FormSearchUser'
 import { FunnelIcon } from '@components/icons'
 import { useScreenAccess } from '@/app/permissions'
@@ -46,8 +52,11 @@ const UserManagement = () => {
                 </div>
               </div>
             ) : (
-              <div className="">
-                <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'> <FunnelIcon /> Bộ lọc tìm kiếm</p>
+              <div className=''>
+                <p className='mb-3 font-bold border-b border-gray-200 pb-2 flex items-center gap-2 text-blue'>
+                  {' '}
+                  <FunnelIcon /> Bộ lọc tìm kiếm
+                </p>
                 <FormSearchUser
                   defaultValues={fetchData.formValues}
                   onSearch={fetchData.handleSearch}
@@ -55,7 +64,6 @@ const UserManagement = () => {
                   onAdd={() => handle.openModal('add', null)}
                   canAdd={can('create')}
                 />
-
               </div>
             )}
           </>
@@ -100,9 +108,10 @@ const UserManagement = () => {
                   pageSize: fetchData.size,
                   onChange: (page, pageSize) => {
                     // Hai setter cùng ghi URL từ một bản cũ: chỉ gọi cái thay đổi.
-                    if (pageSize !== fetchData.size) fetchData.setPageSize(pageSize)
+                    if (pageSize !== fetchData.size)
+                      fetchData.setPageSize(pageSize)
                     else fetchData.setPage(page)
-                  },
+                  }
                 }}
               />
             )}
@@ -177,22 +186,18 @@ const UserManagement = () => {
       <ModalComponent
         title='Chi tiết tài khoản Admin'
         onCancel={() => handle.closeModal()}
-        onOk={() => { }}
+        onOk={() => {}}
         open={handle.modalType === 'viewDetail'}
         width='45%'
         footer={null}
-        modalText={
-          <DialogUserDetail
-            userId={handle.selectedUser?.id}
-          />
-        }
+        modalText={<DialogUserDetail userId={handle.selectedUser?.id} />}
       />
 
       {/* Assign Roles */}
       <ModalComponent
         title='Gán nhóm quyền'
         onCancel={() => handle.closeModal()}
-        onOk={() => { }}
+        onOk={() => {}}
         open={handle.modalType === 'assignRoles'}
         width='50%'
         footer={null}
@@ -204,6 +209,17 @@ const UserManagement = () => {
           />
         }
       />
+
+      {handle.modalType === 'assignMerchant' && handle.selectedUser && (
+        <UserAssignmentDialog
+          key={handle.selectedUser.id}
+          user={{
+            id: handle.selectedUser.id,
+            label: `${toAdminUserName(handle.selectedUser)} (${handle.selectedUser.username})`
+          }}
+          onClose={handle.closeModal}
+        />
+      )}
 
       {/* Reset Password */}
       <ModalComponent

@@ -3,7 +3,7 @@ import { useAccessMerchants } from '../hooks/useAccessMerchants'
 import { useState } from 'react'
 import { Can } from '@/app/permissions'
 import { PlusOutlined } from '@components/icons'
-import { ButtonComponent, Table } from '@components/index'
+import { ButtonComponent, ExportCsvButton, Table } from '@components/index'
 
 import { createMerchantUserColumns } from '../columns/merchantUser.columns'
 import { AccessPageShell } from '../components/AccessPageShell'
@@ -31,7 +31,9 @@ export default function MerchantUserListPage() {
     roles,
     filteredUsers,
     apply,
-    reset
+    reset,
+    isExporting,
+    exportCsv
   } = useMerchantUserListData()
   const [editor, setEditor] = useState<MerchantUser | 'create' | null>(null)
   const [detail, setDetail] = useState<MerchantUser | null>(null)
@@ -62,6 +64,16 @@ export default function MerchantUserListPage() {
         count={usersQuery.data?.totalElements}
         actions={
           <>
+            <Can
+              screen='MERCHANT_USER'
+              action='export'
+            >
+              <ExportCsvButton
+                onExport={exportCsv}
+                loading={isExporting}
+                disabled={!usersQuery.data?.totalElements}
+              />
+            </Can>
             <Can
               screen='MERCHANT_USER'
               action='create'

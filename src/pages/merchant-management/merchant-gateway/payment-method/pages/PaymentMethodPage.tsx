@@ -1,46 +1,36 @@
 import { useState } from 'react'
-import {
-  useGetGatewayPaymentMethodsQuery,
-  type GatewayMerchant
-} from '@/app/services/merchantGatewayApi'
-import { useUrlFilters } from '@hooks/useUrlFilters'
+import type { GatewayMerchant } from '@/app/services/merchantGatewayApi'
+import type { PaymentMethodListRow } from '@/app/services/merchantPaymentMethodApi'
+import type { PickedEntity } from '@components/index'
 import { PaymentMethodEditor } from '../components/PaymentMethodEditor'
 import { PaymentMerchantPickerDialog } from '../components/PaymentMerchantPickerDialog'
-import {
-  PaymentMethodFilters,
-  type PaymentMethodFilterValues
-} from '../components/PaymentMethodFilters'
+import { PaymentMethodFilters } from '../components/PaymentMethodFilters'
 import { PaymentMethodListCard } from '../components/PaymentMethodListCard'
+import { usePaymentMethodListData } from '../hooks/usePaymentMethodListData'
 
-const FILTER_KEYS = ['name', 'code', 'level', 'status'] as const
+interface EditingTarget {
+  id: string
+  name: string
+  sub?: PickedEntity
+}
+
+const toEditingTarget = (row: PaymentMethodListRow): EditingTarget => ({
+  id: row.merchantId,
+  name: row.merchantName,
+  sub: row.subMerchantId
+    ? {
+        id: row.subMerchantId,
+        code: row.subMerchantCode ?? '',
+        name: row.subMerchantName ?? row.subMerchantId
+      }
+    : undefined
+})
 
 const PaymentMethodPage = () => {
-  const url = useUrlFilters({ keys: FILTER_KEYS })
-  const { page, size } = url
+  const list = usePaymentMethodListData()
+  const { url, page, size, query } = list
   const [pickerOpen, setPickerOpen] = useState(false)
-  const [editing, setEditing] = useState<{ id: string; name: string }>()
-  const filters: PaymentMethodFilterValues = {
-    name: url.filters.name ?? '',
-    code: url.filters.code ?? '',
-    level: url.filters.level ?? '',
-    status: url.filters.status ?? ''
-  }
-  const query = useGetGatewayPaymentMethodsQuery({ page, size })
-  const name = filters.name.trim().toLocaleLowerCase('vi')
-  const code = filters.code.trim().toLocaleLowerCase('vi')
-  const rows = (query.data?.content ?? []).filter(
-    (row) =>
-      (!name || row.merchantName.toLocaleLowerCase('vi').includes(name)) &&
-      (!code || row.merchantCode.toLocaleLowerCase('vi').includes(code)) &&
-      (!filters.level || row.appliedLevel === filters.level) &&
-      (!filters.status || row.active === (filters.status === 'ACTIVE'))
-  )
-  const editFromTable = (merchantId: string) => {
-    const row = query.data?.content.find(
-      (item) => item.merchantId === merchantId
-    )
-    setEditing({ id: merchantId, name: row?.merchantName ?? merchantId })
-  }
+  const [editing, setEditing] = useState<EditingTarget>()
   const createForMerchant = (merchant: GatewayMerchant) => {
     setPickerOpen(false)
     setEditing({ id: merchant.id, name: merchant.name })
@@ -54,17 +44,17 @@ const PaymentMethodPage = () => {
             Hình thức chấp nhận thanh toán
           </h1>
           <p className='mt-1 text-sm text-muted-foreground'>
-            Cấu hình các kênh thanh toán theo Merchant.
+            Cấu hình các kênh thanh toán theo Merchant và Sub-merchant.
           </p>
         </div>
       </div>
       <PaymentMethodFilters
-        initialValues={filters}
+        initialValues={list.filters}
         onSearch={url.applyFilters}
         onClear={url.clearFilters}
       />
       <PaymentMethodListCard
-        rows={rows}
+        rows={list.rows}
         total={query.data?.totalElements ?? 0}
         page={page}
         size={size}
@@ -75,8 +65,10 @@ const PaymentMethodPage = () => {
           if (nextSize !== size) url.setPageSize(nextSize)
           else url.setPage(nextPage)
         }}
-        onEdit={editFromTable}
+        onEdit={(row) => setEditing(toEditingTarget(row))}
         onCreate={() => setPickerOpen(true)}
+        onExport={list.exportCsv}
+        exporting={list.isExporting}
       />
       <PaymentMerchantPickerDialog
         open={pickerOpen}
@@ -87,6 +79,7 @@ const PaymentMethodPage = () => {
         <PaymentMethodEditor
           merchantId={editing.id}
           merchantName={editing.name}
+          initialSub={editing.sub}
           onClose={() => setEditing(undefined)}
         />
       )}

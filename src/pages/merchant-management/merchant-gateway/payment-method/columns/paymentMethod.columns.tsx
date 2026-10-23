@@ -1,6 +1,6 @@
 import type { TableProps } from 'antd'
 import { Can } from '@/app/permissions'
-import type { PaymentMethodSummary } from '@/app/services/merchantGatewayApi'
+import type { PaymentMethodListRow } from '@/app/services/merchantPaymentMethodApi'
 import { formatUTCToLocalDateTime } from '@utils/helper-functions/date'
 import { ButtonComponent } from '@components/index'
 import { EditOutlined } from '@components/icons'
@@ -14,8 +14,8 @@ import {
 export const createPaymentMethodColumns = (
   page: number,
   size: number,
-  onEdit: (merchantId: string) => void
-): NonNullable<TableProps<PaymentMethodSummary>['columns']> => [
+  onEdit: (row: PaymentMethodListRow) => void
+): NonNullable<TableProps<PaymentMethodListRow>['columns']> => [
   {
     title: '#',
     align: 'center',
@@ -64,12 +64,12 @@ export const createPaymentMethodColumns = (
         action='edit'
       >
         <ButtonComponent
-          aria-label={`${row.configured ? 'Cập nhật' : 'Thiết lập'} ${row.merchantName}`}
+          aria-label={`${row.configured ? 'Cập nhật' : 'Thiết lập'} ${row.subMerchantName ?? row.merchantName}`}
           size='small'
           type='default'
           content={row.configured ? 'Cập nhật' : 'Thiết lập'}
           icon={<EditOutlined aria-hidden />}
-          onClick={() => onEdit(row.merchantId)}
+          onClick={() => onEdit(row)}
         />
       </Can>
     )

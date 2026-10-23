@@ -41,4 +41,32 @@ describe('quyền merchant mới', () => {
     expect(screens).toContain('MERCHANT_SETTLEMENT_CONFIG')
     expect(screens).toContain('MERCHANT_WITHDRAWAL_LIMIT')
   })
+  it('đơn hàng merchant: xem cần ORDER:VIEW, mọi thao tác xử lý cần ORDER:UPDATE', () => {
+    const order = SCREENS.MERCHANT_ORDER
+    expect(order.actions.view).toBe(PERMISSION.ORDER_VIEW)
+    expect(order.actions.create).toBe(PERMISSION.ORDER_CREATE)
+    for (const action of [
+      'confirm',
+      'retryCredit',
+      'refreshQr',
+      'cancel'
+    ] as const) {
+      expect(order.actions[action]).toBe(PERMISSION.ORDER_UPDATE)
+    }
+  })
+  it('gán Sales phụ trách: xem cần ASSIGNMENT:VIEW, gán/gỡ cần ASSIGNMENT:MANAGE', () => {
+    const assignment = SCREENS.MERCHANT_ASSIGNMENT
+    expect(assignment.actions.view).toBe(PERMISSION.MERCHANT_ASSIGNMENT_VIEW)
+    for (const action of ['create', 'edit', 'update', 'delete'] as const) {
+      expect(assignment.actions[action]).toBe(
+        PERMISSION.MERCHANT_ASSIGNMENT_MANAGE
+      )
+    }
+  })
+  it('menu có mục Đơn hàng merchant', () => {
+    const screens = navigationItems.flatMap((group) =>
+      (group.children ?? []).map((item) => item.screen)
+    )
+    expect(screens).toContain('MERCHANT_ORDER')
+  })
 })

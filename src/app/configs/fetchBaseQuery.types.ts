@@ -228,7 +228,11 @@ const MERCHANT_PICKER_ROUTES = [
   '/user-role',
   '/key-connection',
   '/bank-account',
-  '/payment-method'
+  '/payment-method',
+  '/merchant-order',
+  '/sales-assignment',
+  '/settlement-scope',
+  '/settlement-item'
 ] as const
 const MERCHANT_PICKER_WHITE_LIST: WhiteListItem[] = MERCHANT_PICKER_ROUTES.flatMap(
   (route) => [
@@ -367,7 +371,15 @@ export const WHITE_LIST: WhiteListItem[] = [
 
     // { pathname: WALLETADMINISTRATION + '/role-management', requestUrl: '/wallet/transactions' },
 
-    ...MERCHANT_PICKER_WHITE_LIST
+    ...MERCHANT_PICKER_WHITE_LIST,
+
+    // Ngăn "Sales phụ trách" mở từ danh sách Merchant/Sub-merchant và hộp thoại gán
+    // theo người dùng tự hiển thị loading; overlay toàn màn sẽ che các ngăn/hộp thoại đó.
+    { pathname: MERCHANT + '/merchant-management', requestUrlEndsWith: '/assignments' },
+    { pathname: MERCHANT + '/merchant-management', requestUrl: '/users/managers' },
+    { pathname: MERCHANT + '/sub-merchant', requestUrl: '/users/managers' },
+    { pathname: ROLEMANAGEMENT_V2 + '/user-account', requestUrl: '/merchants' },
+    { pathname: ROLEMANAGEMENT_V2 + '/user-account', requestUrl: '/sub-merchants' }
 ]
 
 // ============================================================================

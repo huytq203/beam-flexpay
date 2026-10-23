@@ -326,9 +326,48 @@ export const apiExportIdentityCsv = authApiService.injectEndpoints({
   })
 })
 
+/** Bộ lọc của màn danh sách, bỏ `page`/`size`: BE xuất mọi dòng khớp lọc. */
+export type MerchantListExportFilters = Record<
+  string,
+  string | number | boolean | null | undefined
+>
+
+const merchantExport =
+  (url: string) =>
+  (
+    params: MerchantListExportFilters,
+    queryApi: ExportQueryApi,
+    extraOptions: ExportExtraOptions
+  ) =>
+    runExport(
+      fetchBaseQueryMerchant,
+      { url, params: { ...params } },
+      queryApi,
+      extraOptions
+    )
+
 // Cấu hình thông báo Merchant: BE từ chối quá 50.000 dòng và không cắt bớt.
 export const apiExportMerchantCsv = apiMerchant.injectEndpoints({
   endpoints: (build) => ({
+    exportMerchantApiCredentials: build.mutation<
+      ExportedFile,
+      MerchantListExportFilters
+    >({ queryFn: merchantExport('/merchant-api-credentials/export') }),
+    exportMerchantBankAccounts: build.mutation<
+      ExportedFile,
+      MerchantListExportFilters
+    >({ queryFn: merchantExport('/merchant-bank-accounts/export') }),
+    exportMerchantPaymentMethods: build.mutation<
+      ExportedFile,
+      MerchantListExportFilters
+    >({ queryFn: merchantExport('/merchants/payment-methods/export') }),
+    exportMerchantUsers: build.mutation<
+      ExportedFile,
+      MerchantListExportFilters
+    >({ queryFn: merchantExport('/merchant-users/export') }),
+    exportSubMerchants: build.mutation<ExportedFile, MerchantListExportFilters>(
+      { queryFn: merchantExport('/sub-merchants/export') }
+    ),
     exportMerchantNotifications: build.mutation<
       ExportedFile,
       Omit<NotificationListQuery, 'page' | 'size'>
@@ -361,7 +400,14 @@ export const apiExportUserWalletCsv = apiUserWallet.injectEndpoints({
 
 export const { useExportRefundsMutation } = apiExportUserWalletCsv
 
-export const { useExportMerchantNotificationsMutation } = apiExportMerchantCsv
+export const {
+  useExportMerchantNotificationsMutation,
+  useExportMerchantApiCredentialsMutation,
+  useExportMerchantBankAccountsMutation,
+  useExportMerchantPaymentMethodsMutation,
+  useExportMerchantUsersMutation,
+  useExportSubMerchantsMutation
+} = apiExportMerchantCsv
 
 export const {
   useExportBankLinksMutation,

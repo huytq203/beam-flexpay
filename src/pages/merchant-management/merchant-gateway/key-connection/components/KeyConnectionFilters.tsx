@@ -10,6 +10,7 @@ import {
   toPickedEntity,
   type PickedEntity
 } from '@components/index'
+import { CREDENTIAL_STATUS_OPTIONS } from '../constants/credential.constants'
 
 interface KeyConnectionFiltersProps {
   merchant?: PickedEntity
@@ -20,12 +21,6 @@ interface KeyConnectionFiltersProps {
   onClear: () => void
   onSearch: () => void
 }
-
-const statusOptions = [
-  { label: 'Hoạt động', value: 'ACTIVE' },
-  { label: 'Đã thu hồi', value: 'REVOKED' },
-  { label: 'Hết hạn', value: 'EXPIRED' }
-]
 
 export function KeyConnectionFilters({
   merchant,
@@ -78,7 +73,7 @@ export function KeyConnectionFilters({
             aria-label='Lọc trạng thái key'
             className='w-full'
             onChange={onStatusChange}
-            options={statusOptions}
+            options={CREDENTIAL_STATUS_OPTIONS}
             placeholder='Tất cả trạng thái'
             value={status}
           />

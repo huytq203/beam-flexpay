@@ -7,18 +7,30 @@ import { server } from '@/test/mocks/server'
 import { MerchantDocumentList } from '../components/MerchantDocumentList'
 
 describe('MerchantDocumentList', () => {
-  it('chỉ xin một link thumbnail cho một ảnh đã lưu', async () => {
-    let requests = 0
+  it('làm mới hồ sơ một lần để lấy link thumbnail khi file chưa có URL', async () => {
+    let detailRequests = 0
     server.use(
-      http.get('*/merchants/merchant-1/documents/file-1/url', () => {
-        requests += 1
+      http.get('*/merchants/merchant-1', () => {
+        detailRequests += 1
         return HttpResponse.json({
           success: true,
-          data: { url: 'https://files.test/photo.jpg' }
+          data: {
+            id: 'merchant-1',
+            productImages: [
+              {
+                id: 'file-1',
+                filename: 'photo.jpg',
+                contentType: 'image/jpeg',
+                sizeBytes: 1024,
+                url: 'https://files.test/fresh.jpg',
+                urlExpiresAt: '2099-01-01T00:00:00Z'
+              }
+            ]
+          }
         })
       })
     )
-    render(
+    const { container } = render(
       <Provider store={createAppStore()}>
         <MerchantDocumentList
           merchantId='merchant-1'
@@ -28,27 +40,31 @@ describe('MerchantDocumentList', () => {
               id: 'file-1',
               filename: 'photo.jpg',
               contentType: 'image/jpeg',
-              sizeBytes: 1024
+              sizeBytes: 1024,
+              url: 'https://files.test/expired.jpg',
+              urlExpiresAt: '2020-01-01T00:00:00Z'
             }
           ]}
         />
       </Provider>
     )
 
-    await waitFor(() => expect(requests).toBe(1))
+    await waitFor(() =>
+      expect(container.querySelector('img')).toHaveAttribute(
+        'src',
+        'https://files.test/fresh.jpg'
+      )
+    )
     await new Promise((resolve) => setTimeout(resolve, 100))
-    expect(requests).toBe(1)
+    expect(detailRequests).toBe(1)
   })
 
   it('ưu tiên URL còn hạn đã gắn vào response hồ sơ', async () => {
-    let legacyRequests = 0
+    let detailRequests = 0
     server.use(
-      http.get('*/merchants/merchant-1/documents/file-1/url', () => {
-        legacyRequests += 1
-        return HttpResponse.json({
-          success: true,
-          data: { url: 'https://files.test/legacy.jpg' }
-        })
+      http.get('*/merchants/merchant-1', () => {
+        detailRequests += 1
+        return HttpResponse.json({ success: true, data: { id: 'merchant-1' } })
       })
     )
     const { container } = render(
@@ -75,6 +91,6 @@ describe('MerchantDocumentList', () => {
         'https://files.test/direct.jpg'
       )
     )
-    expect(legacyRequests).toBe(0)
+    expect(detailRequests).toBe(0)
   })
 })

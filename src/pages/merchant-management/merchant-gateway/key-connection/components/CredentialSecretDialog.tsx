@@ -40,14 +40,15 @@ export function CredentialSecretDialog({
   return (
     <DialogModal
       open={secret !== null}
-      title='Key kết nối đã tạo'
+      title='Thông tin key kết nối'
       onCancel={onClose}
       onOk={onClose}
       okText='Đã lưu thông tin'
     >
       <p className='mb-4 text-sm text-warning-strong'>
-        Secret Key chỉ hiển thị một lần. Hãy sao chép và lưu vào nơi an toàn
-        trước khi đóng.
+        {secret?.secretKey
+          ? 'Secret Key chỉ hiển thị một lần. Hãy sao chép và lưu vào nơi an toàn trước khi đóng.'
+          : 'Key RSA không có Secret Key: merchant ký request bằng khóa riêng tương ứng với public key đã nộp.'}
       </p>
       {secret && (
         <div className='space-y-4'>
@@ -55,10 +56,12 @@ export function CredentialSecretDialog({
             label='Client ID / Merchant Key'
             value={secret.credential.clientId}
           />
-          <CredentialCopyField
-            label='Secret Key'
-            value={secret.secretKey}
-          />
+          {secret.secretKey && (
+            <CredentialCopyField
+              label='Secret Key'
+              value={secret.secretKey}
+            />
+          )}
         </div>
       )}
     </DialogModal>

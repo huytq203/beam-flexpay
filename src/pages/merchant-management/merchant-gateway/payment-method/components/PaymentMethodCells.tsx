@@ -2,6 +2,7 @@ import type {
   PaymentMethod,
   PaymentMethodSummary
 } from '@/app/services/merchantGatewayApi'
+import type { PaymentMethodListRow } from '@/app/services/merchantPaymentMethodApi'
 import { cn } from '@lib/utils/cn'
 import { methodOptions } from '../constants/paymentMethod.constants'
 
@@ -18,7 +19,7 @@ const methodLabel = (code: PaymentMethod) =>
 const chipBase =
   'inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium leading-5'
 
-export function MerchantCell({ row }: { row: PaymentMethodSummary }) {
+export function MerchantCell({ row }: { row: PaymentMethodListRow }) {
   return (
     <div className='min-w-0'>
       <div className='truncate text-sm font-semibold text-foreground'>
@@ -27,6 +28,16 @@ export function MerchantCell({ row }: { row: PaymentMethodSummary }) {
       <div className='font-mono text-xs text-muted-foreground'>
         {row.merchantCode}
       </div>
+      {row.subMerchantId && (
+        <div className='mt-1 truncate text-xs text-foreground'>
+          Sub: {row.subMerchantName ?? row.subMerchantId}
+          {row.subMerchantCode && (
+            <span className='ml-1 font-mono text-muted-foreground'>
+              {row.subMerchantCode}
+            </span>
+          )}
+        </div>
+      )}
     </div>
   )
 }

@@ -1,242 +1,104 @@
 import { useState } from 'react'
 import {
-  useGetGatewayPaymentConfigQuery,
-  useUpdateGatewayPaymentConfigMutation,
-  type PaymentMethod
-} from '@/app/services/merchantGatewayApi'
-import {
   ButtonComponent,
   DialogModal,
-  Switch,
-  TextArea,
-  feedback
+  type PickedEntity
 } from '@components/index'
-import { methodOptions } from '../constants/paymentMethod.constants'
-
-const METHOD_DESCRIPTIONS: Record<PaymentMethod, string> = {
-  QR: 'Thanh toán bằng mã QR',
-  DOMESTIC_CARD: 'Thẻ ATM nội địa',
-  INTERNATIONAL_CARD: 'Visa, Mastercard, JCB',
-  LINKED_WALLET: 'Thanh toán qua ví liên kết',
-  VIRTUAL_ACCOUNT: 'Nhận tiền qua tài khoản định danh'
-}
-
-const SYSTEM_DEFAULT_METHODS: PaymentMethod[] = [
-  'QR',
-  'DOMESTIC_CARD',
-  'INTERNATIONAL_CARD',
-  'LINKED_WALLET',
-  'VIRTUAL_ACCOUNT'
-]
+import { usePaymentMethodEditor } from '../hooks/usePaymentMethodEditor'
+import { PaymentMethodConfigBody } from './PaymentMethodConfigBody'
+import { PaymentMethodScopeField } from './PaymentMethodScopeField'
 
 interface PaymentMethodEditorProps {
   merchantId: string
   merchantName: string
+  /** Mở thẳng cấp Sub (khi sửa dòng Sub trong danh sách). */
+  initialSub?: PickedEntity
   onClose: () => void
 }
 
 export function PaymentMethodEditor({
   merchantId,
   merchantName,
+  initialSub,
   onClose
 }: PaymentMethodEditorProps) {
-  const query = useGetGatewayPaymentConfigQuery(merchantId)
-  const [update, { isLoading }] = useUpdateGatewayPaymentConfigMutation()
-  const [inheritOverride, setInherit] = useState<boolean>()
-  const [methodsOverride, setEnabledMethods] = useState<PaymentMethod[]>()
-  const [activeOverride, setActive] = useState<boolean>()
-  const [reason, setReason] = useState('')
-  const [reasonError, setReasonError] = useState('')
-  const inherit =
-    inheritOverride ?? query.data?.enabledMethods.inherited ?? false
-  const enabledMethods =
-    methodsOverride ?? query.data?.enabledMethods.value ?? []
-  const displayedMethods = inherit ? SYSTEM_DEFAULT_METHODS : enabledMethods
-  const active =
-    activeOverride ?? (query.data?.configured ? query.data.active : true)
-  const actionLabel = query.data?.configured ? 'Cập nhật' : 'Thiết lập'
-
-  const toggleMethod = (method: PaymentMethod, checked: boolean) => {
-    setEnabledMethods(
-      checked
-        ? [...enabledMethods, method]
-        : enabledMethods.filter((item) => item !== method)
-    )
-  }
-
-  const save = async () => {
-    if (!reason.trim()) {
-      setReasonError('Vui lòng nhập lý do thay đổi')
-      return
-    }
-    setReasonError('')
-    if (!inherit && enabledMethods.length === 0) {
-      feedback.warning('Cần bật ít nhất một hình thức thanh toán')
-      return
-    }
-    try {
-      await update({
-        id: merchantId,
-        inherit,
-        enabledMethods: inherit ? undefined : enabledMethods,
-        methodLimits: inherit
-          ? undefined
-          : (query.data?.methodLimits.value ?? []),
-        active: inherit ? undefined : active,
-        reason: reason.trim()
-      }).unwrap()
-      feedback.success(
-        `Đã ${query.data?.configured ? 'cập nhật' : 'thiết lập'} hình thức thanh toán`
-      )
-      onClose()
-    } catch {
-      feedback.error('Không thể cập nhật hình thức thanh toán')
-    }
-  }
+  const [level, setLevel] = useState<'MASTER' | 'SUB'>(
+    initialSub ? 'SUB' : 'MASTER'
+  )
+  const [sub, setSub] = useState<PickedEntity | undefined>(initialSub)
+  const subMerchantId = level === 'SUB' ? sub?.id : undefined
+  const waitingForSub = level === 'SUB' && !sub
+  const editor = usePaymentMethodEditor({
+    masterId: merchantId,
+    subMerchantId,
+    skip: waitingForSub,
+    onSaved: onClose
+  })
+  const { query, config } = editor
+  const configured = config?.configured ?? false
+  const actionLabel = configured ? 'Cập nhật' : 'Thiết lập'
+  const scopeName = subMerchantId && sub ? sub.name : merchantName
 
   return (
     <DialogModal
       open
-      title={`${actionLabel} hình thức thanh toán · ${merchantName}`}
+      title={`${actionLabel} hình thức thanh toán · ${scopeName}`}
       width={{ xs: 'calc(100vw - 24px)', md: 600 }}
       onCancel={onClose}
-      onOk={() => void save()}
+      onOk={() => void editor.save()}
       okButtonProps={{
-        loading: isLoading,
-        disabled: query.isLoading || query.isError
+        loading: editor.saving,
+        disabled: waitingForSub || !config || query.isFetching
       }}
       okText={actionLabel}
     >
-      {query.isLoading && (
-        <p
-          role='status'
-          className='py-4 text-sm text-muted-foreground'
-        >
-          Đang tải cấu hình…
-        </p>
-      )}
-      {query.isError && (
-        <div
-          role='alert'
-          className='flex items-center justify-between gap-2 text-sm text-danger-strong'
-        >
-          Không thể tải cấu hình.
-          <ButtonComponent
-            type='default'
-            size='small'
-            content='Thử lại'
-            onClick={() => void query.refetch()}
-          />
-        </div>
-      )}
-      {query.data && (
-        <div className='space-y-4 pt-2'>
-          <div className='border-b border-border pb-3'>
-            <h3 className='text-sm font-semibold text-foreground'>
-              Phạm vi áp dụng
-            </h3>
-            <p className='mt-1 text-sm text-muted-foreground'>
-              {merchantName} ·{' '}
-              {query.data.level === 'MASTER'
-                ? 'Master'
-                : query.data.level === 'SUB'
-                  ? 'Sub-merchant'
-                  : query.data.level}
-            </p>
-          </div>
-          <div className='flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2.5'>
-            <div>
-              <p className='text-sm font-medium text-foreground'>
-                Dùng mặc định hệ thống
-              </p>
-              <p className='text-xs text-muted-foreground'>
-                Bật để dùng các hình thức thanh toán mặc định.
-              </p>
-            </div>
-            <Switch
-              aria-label='Dùng mặc định hệ thống'
-              checked={inherit}
-              onChange={setInherit}
-            />
-          </div>
-          <div>
-            <h3 className='mb-2 text-sm font-semibold text-foreground'>
-              Danh mục hình thức thanh toán
-            </h3>
-            {inherit && (
-              <p className='mb-2 text-xs font-medium text-primary'>
-                Theo mặc định hệ thống
-              </p>
-            )}
-            <div className='divide-y divide-border rounded-lg border border-border'>
-              {methodOptions.map(({ value, label }) => (
-                <div
-                  key={value}
-                  className='flex items-center justify-between gap-3 px-3 py-2.5'
-                >
-                  <div className='min-w-0'>
-                    <p className='text-sm font-medium text-foreground'>
-                      {label}
-                    </p>
-                    <p className='text-xs text-muted-foreground'>
-                      {METHOD_DESCRIPTIONS[value]}
-                    </p>
-                  </div>
-                  <Switch
-                    aria-label={label}
-                    className={inherit ? 'opacity-100!' : undefined}
-                    checked={displayedMethods.includes(value)}
-                    disabled={inherit}
-                    onChange={(checked) => toggleMethod(value, checked)}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className='flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2.5'>
-            <span className='text-sm font-medium text-foreground'>
-              Cấu hình đang hoạt động
-            </span>
-            <Switch
-              aria-label='Cấu hình đang hoạt động'
-              checked={active}
-              onChange={setActive}
-            />
-          </div>
-          <div>
-            <label
-              className='mb-1 block text-sm font-medium text-foreground'
-              htmlFor='payment-reason'
-            >
-              Lý do thay đổi <span className='text-danger-strong'>*</span>
-            </label>
-            <TextArea
-              id='payment-reason'
-              rows={2}
-              maxLength={500}
-              value={reason}
-              aria-invalid={Boolean(reasonError)}
-              aria-describedby={
-                reasonError ? 'payment-reason-error' : undefined
-              }
-              onChange={(event) => {
-                setReason(event.target.value)
-                if (reasonError) setReasonError('')
-              }}
-              placeholder='Nhập lý do cập nhật'
-            />
-            {reasonError && (
+      <div className='space-y-4 pt-2'>
+        <PaymentMethodScopeField
+          masterId={merchantId}
+          masterName={merchantName}
+          level={level}
+          sub={sub}
+          disabled={editor.saving}
+          onLevelChange={setLevel}
+          onSubChange={setSub}
+        />
+        {waitingForSub ? (
+          <p className='text-sm text-muted-foreground'>
+            Chọn Sub-merchant để xem và cấu hình riêng.
+          </p>
+        ) : (
+          <>
+            {query.isFetching && !config && (
               <p
-                id='payment-reason-error'
-                role='alert'
-                className='mt-1 text-xs text-danger-strong'
+                role='status'
+                className='py-4 text-sm text-muted-foreground'
               >
-                {reasonError}
+                Đang tải cấu hình…
               </p>
             )}
-          </div>
-        </div>
-      )}
+            {query.isError && !query.isFetching && (
+              <div
+                role='alert'
+                className='flex items-center justify-between gap-2 text-sm text-danger-strong'
+              >
+                Không thể tải cấu hình.
+                <ButtonComponent
+                  type='default'
+                  size='small'
+                  content='Thử lại'
+                  onClick={() => void query.refetch()}
+                />
+              </div>
+            )}
+            {config && (
+              <PaymentMethodConfigBody
+                editor={editor}
+                config={config}
+              />
+            )}
+          </>
+        )}
+      </div>
     </DialogModal>
   )
 }

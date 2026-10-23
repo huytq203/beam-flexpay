@@ -124,7 +124,93 @@ export interface TerminationAffectedUser {
 }
 
 export interface TerminationResult {
+  merchant?: ContentMerchant
+  subMerchantsClosed: number
+  terminalsClosed: number
+  credentialsRevoked: number
+  escrowRefundNote?: string
   usersScopeShrunk: number
   usersLeftWithoutScope: number
   affectedUsers: TerminationAffectedUser[]
+}
+
+export type MerchantRejectionReasonCode =
+  | 'BLURRED_IMAGE'
+  | 'INCORRECT_INFORMATION'
+  | 'MISSING_DOCUMENT'
+  | 'OTHER'
+
+/** GET /merchants/rejection-reasons — danh mục lý do mẫu do BE cấp. */
+export interface MerchantRejectionReason {
+  code: MerchantRejectionReasonCode
+  label: string
+  defaultNote: string
+}
+
+/** Body POST /merchants/{id}/reject: chỉ nhận `reasonCode` và `detail`. */
+export interface RejectMerchantBody {
+  reasonCode?: MerchantRejectionReasonCode
+  detail: string
+}
+
+export interface MerchantHistoryParams {
+  id: string
+  page: number
+  size: number
+}
+
+export interface MerchantStatusHistoryItem {
+  auditLogId: string
+  fromStatus: MerchantStatus | null
+  toStatus: MerchantStatus | null
+  reason: string | null
+  rejectedReasonCode: MerchantRejectionReasonCode | null
+  rejectedReasonDetail: string | null
+  actorType: string | null
+  actorId: string | null
+  actorUsername: string | null
+  ipAddress: string | null
+  occurredAt: string
+}
+
+export type MerchantAuditLogAction =
+  | 'INSERT'
+  | 'UPDATE'
+  | 'DELETE'
+  | 'APPROVE'
+  | 'REJECT'
+  | 'LOCK'
+  | 'UNLOCK'
+  | 'TERMINATE'
+  | 'VIEW_DOCUMENT'
+  | 'RESET_PASSWORD'
+  | 'GRANT_PERMISSION'
+  | 'EXPORT'
+
+export interface MerchantAuditLog {
+  id: string
+  entityName: string
+  entityId: string
+  action: MerchantAuditLogAction
+  actorType: string | null
+  actorId: string | null
+  actorUsername: string | null
+  source: string | null
+  ipAddress: string | null
+  requestId: string | null
+  reason: string | null
+  /** Chuỗi JSON thô. */
+  oldData: string | null
+  newData: string | null
+  occurredAt: string
+}
+
+/** GET /merchants/{id}/termination-obligations; `amount` là VND với SUB_*, là số lượng với mã còn lại. */
+export interface TerminationObligation {
+  code: string
+  subMerchantId: string | null
+  subCode: string | null
+  amount: number
+  message: string
+  guidance: string
 }

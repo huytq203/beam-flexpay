@@ -6,14 +6,23 @@ import type {
   ContentMerchant,
   CreateMerchantPayload,
   DataMerchant,
+  MerchantAuditLog,
   MerchantEnvelope,
+  MerchantHistoryParams,
   MerchantPage,
+  MerchantRejectionReason,
   MerchantSearchParams,
+  MerchantStatusHistoryItem,
+  RejectMerchantBody,
   SelectableWallet,
+  TerminationObligation,
   TerminationResult,
   UpdateMerchantPayload
 } from '@type/merchant'
 import type { SensitiveOtpConfirmation } from './merchantBankAccountApi'
+
+/** Màn tự hiển thị lỗi (inline hoặc toast từ `detail`), tắt toast tập trung. */
+const OWN_ERROR_HANDLING = { suppressErrorNotification: true } as const
 
 export const createMerchantDocumentBody = (
   file: File,
@@ -58,6 +67,7 @@ export const merchantService = apiMerchant.injectEndpoints({
       { query?: string; page?: number; size?: number }
     >({
       query: (params) => ({ url: '/merchants/selectable-wallets', params }),
+      extraOptions: OWN_ERROR_HANDLING,
       transformResponse: (
         response: MerchantEnvelope<MerchantPage<SelectableWallet>>
       ) => response.data
@@ -85,22 +95,6 @@ export const merchantService = apiMerchant.injectEndpoints({
       },
       transformResponse: (response: MerchantEnvelope<{ stagingId: string }>) =>
         response.data
-    }),
-    getMerchantDocumentUrl: builder.query<
-      { url: string; contentType: string; originalFilename: string },
-      { merchantId: string; documentId: string }
-    >({
-      query: ({ merchantId, documentId }) => ({
-        url: `/merchants/${merchantId}/documents/${documentId}/url`,
-        params: { disposition: 'INLINE' }
-      }),
-      transformResponse: (
-        response: MerchantEnvelope<{
-          url: string
-          contentType: string
-          originalFilename: string
-        }>
-      ) => response.data
     }),
     postMerchant: builder.mutation<ContentMerchant, CreateMerchantPayload>({
       query: (body) => ({ url: '/merchants', method: 'POST', body }),
@@ -162,24 +156,63 @@ export const merchantService = apiMerchant.injectEndpoints({
     }),
     rejectMerchant: builder.mutation<
       ContentMerchant,
-      {
-        id: string
-        detail: string
-        reasonCode?:
-          | 'BLURRED_IMAGE'
-          | 'INCORRECT_INFORMATION'
-          | 'MISSING_DOCUMENT'
-          | 'OTHER'
-      }
+      { id: string } & RejectMerchantBody
     >({
-      query: ({ id, ...body }) => ({
+      query: ({ id, reasonCode, detail }) => ({
         url: `/merchants/${id}/reject`,
         method: 'POST',
-        body
+        body: reasonCode ? { reasonCode, detail } : { detail }
       }),
+      extraOptions: OWN_ERROR_HANDLING,
       transformResponse: (response: MerchantEnvelope<ContentMerchant>) =>
         response.data,
       invalidatesTags: ['merchant']
+    }),
+    getMerchantRejectionReasons: builder.query<MerchantRejectionReason[], void>(
+      {
+        query: () => '/merchants/rejection-reasons',
+        extraOptions: OWN_ERROR_HANDLING,
+        transformResponse: (
+          response: MerchantEnvelope<MerchantRejectionReason[]>
+        ) => response.data ?? []
+      }
+    ),
+    getMerchantStatusHistory: builder.query<
+      MerchantPage<MerchantStatusHistoryItem>,
+      MerchantHistoryParams
+    >({
+      // BE luôn sắp occurredAt DESC, bỏ qua sortBy/sortDirection.
+      query: ({ id, page, size }) => ({
+        url: `/merchants/${id}/status-history`,
+        params: { page, size }
+      }),
+      extraOptions: OWN_ERROR_HANDLING,
+      transformResponse: (
+        response: MerchantEnvelope<MerchantPage<MerchantStatusHistoryItem>>
+      ) => response.data,
+      providesTags: ['merchant']
+    }),
+    getMerchantAuditLogs: builder.query<
+      MerchantPage<MerchantAuditLog>,
+      MerchantHistoryParams
+    >({
+      // Bắt buộc sortBy=occurredAt: mặc định createdAt không có trên AuditLog -> 400.
+      query: ({ id, page, size }) => ({
+        url: `/merchants/${id}/audit-logs`,
+        params: { page, size, sortBy: 'occurredAt', sortDirection: 'DESC' }
+      }),
+      extraOptions: OWN_ERROR_HANDLING,
+      transformResponse: (
+        response: MerchantEnvelope<MerchantPage<MerchantAuditLog>>
+      ) => response.data,
+      providesTags: ['merchant']
+    }),
+    getTerminationObligations: builder.query<TerminationObligation[], string>({
+      query: (id) => `/merchants/${id}/termination-obligations`,
+      extraOptions: OWN_ERROR_HANDLING,
+      transformResponse: (
+        response: MerchantEnvelope<TerminationObligation[]>
+      ) => response.data ?? []
     }),
     setMerchantLocked: builder.mutation<
       ContentMerchant,
@@ -202,7 +235,6 @@ export const {
   useExportMerchantsMutation,
   useGetSelectableWalletsQuery,
   useUploadMerchantDocumentMutation,
-  useLazyGetMerchantDocumentUrlQuery,
   usePostMerchantMutation,
   usePutMerchantMutation,
   useGetMerchantByIdQuery,
@@ -211,5 +243,9 @@ export const {
   useApproveMerchantMutation,
   useTerminateMerchantMutation,
   useRejectMerchantMutation,
+  useGetMerchantRejectionReasonsQuery,
+  useGetMerchantStatusHistoryQuery,
+  useGetMerchantAuditLogsQuery,
+  useGetTerminationObligationsQuery,
   useSetMerchantLockedMutation
 } = merchantService

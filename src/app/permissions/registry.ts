@@ -257,7 +257,9 @@ export const SCREENS = {
       lock: PERMISSION.MERCHANT_API_LOCK,
       unlock: PERMISSION.MERCHANT_API_UNLOCK,
       terminate: PERMISSION.MERCHANT_API_TERMINATE,
-      viewDetail: PERMISSION.MERCHANT_API_VIEW
+      viewDetail: PERMISSION.MERCHANT_API_VIEW,
+      /** Tab Lịch sử trạng thái và Nhật ký trong chi tiết merchant. */
+      viewHistory: PERMISSION.AUDIT_VIEW
     }
   },
   MERCHANT_BANK_ACCOUNT: {
@@ -273,7 +275,10 @@ export const SCREENS = {
       /** Mở số tài khoản đầy đủ ở cột "Số tài khoản" (NĐ 13/2023). */
       viewFullNumber: PERMISSION.MERCHANT_BANK_ACCOUNT_VIEW,
       lock: PERMISSION.MERCHANT_BANK_ACCOUNT_MANAGE,
-      unlock: PERMISSION.MERCHANT_BANK_ACCOUNT_MANAGE
+      unlock: PERMISSION.MERCHANT_BANK_ACCOUNT_MANAGE,
+      /** Duyệt hoặc từ chối yêu cầu đổi tài khoản (maker-checker). */
+      approve: PERMISSION.MERCHANT_BANK_ACCOUNT_APPROVE,
+      export: PERMISSION.MERCHANT_BANK_ACCOUNT_VIEW
     }
   },
   MERCHANT_KEY_CONNECTION: {
@@ -287,10 +292,22 @@ export const SCREENS = {
       full: PERMISSION.ADMIN_FULL
     }
   },
+  MERCHANT_WEBHOOK: {
+    path: `${MERCHANT}/webhook`,
+    actions: {
+      view: PERMISSION.API_CREDENTIAL_VIEW,
+      create: PERMISSION.API_CREDENTIAL_MANAGE,
+      edit: PERMISSION.API_CREDENTIAL_MANAGE,
+      update: PERMISSION.API_CREDENTIAL_MANAGE,
+      delete: PERMISSION.API_CREDENTIAL_MANAGE,
+      full: PERMISSION.ADMIN_FULL
+    }
+  },
   MERCHANT_PAYMENT_METHOD: {
     path: `${MERCHANT}/payment-method`,
     actions: {
       view: PERMISSION.MERCHANT_PAYMENT_METHOD_VIEW,
+      export: PERMISSION.MERCHANT_PAYMENT_METHOD_VIEW,
       create: PERMISSION.MERCHANT_PAYMENT_METHOD_MANAGE,
       edit: PERMISSION.MERCHANT_PAYMENT_METHOD_MANAGE,
       update: PERMISSION.MERCHANT_PAYMENT_METHOD_MANAGE,
@@ -342,6 +359,7 @@ export const SCREENS = {
       delete: PERMISSION.ADMIN_FULL,
       full: PERMISSION.ADMIN_FULL,
       viewDetail: PERMISSION.SUB_MERCHANT_VIEW,
+      export: PERMISSION.SUB_MERCHANT_VIEW,
       lock: PERMISSION.MERCHANT_API_LOCK,
       unlock: PERMISSION.MERCHANT_API_UNLOCK
     }
@@ -362,6 +380,10 @@ export const SCREENS = {
   },
   MERCHANT_SETTLEMENT_CONFIG: {
     path: `${MERCHANT}/settlement-config`,
+    actions: { ...SETTLEMENT_CONFIG_ACTIONS }
+  },
+  MERCHANT_SETTLEMENT_SCOPE: {
+    path: `${MERCHANT}/settlement-scope`,
     actions: { ...SETTLEMENT_CONFIG_ACTIONS }
   },
   MERCHANT_WITHDRAWAL_LIMIT: {
@@ -386,7 +408,8 @@ export const SCREENS = {
       // Duyệt/từ chối đề xuất đổi phạm vi do người khác tạo (maker-checker).
       approveScope: PERMISSION.MERCHANT_USER_SCOPE_PROPOSAL_APPROVE,
       rejectScope: PERMISSION.MERCHANT_USER_SCOPE_PROPOSAL_REJECT,
-      viewDetail: PERMISSION.MERCHANT_USER_VIEW
+      viewDetail: PERMISSION.MERCHANT_USER_VIEW,
+      export: PERMISSION.MERCHANT_USER_EXPORT
     }
   },
   MERCHANT_ROLE: {
@@ -401,6 +424,30 @@ export const SCREENS = {
       viewDetail: PERMISSION.MERCHANT_PERMISSION_GROUP_VIEW
     }
   },
+  MERCHANT_SETTLEMENT_ITEM: {
+    path: `${MERCHANT}/settlement-item`,
+    actions: {
+      view: PERMISSION.SETTLEMENT_VIEW,
+      viewDetail: PERMISSION.SETTLEMENT_VIEW,
+      // Màn chỉ đọc: không có thao tác ghi nào, các hành động ghi chỉ dành cho quyền tổng.
+      create: PERMISSION.ADMIN_FULL,
+      edit: PERMISSION.ADMIN_FULL,
+      update: PERMISSION.ADMIN_FULL,
+      delete: PERMISSION.ADMIN_FULL,
+      full: PERMISSION.ADMIN_FULL
+    }
+  },
+  MERCHANT_ASSIGNMENT: {
+    path: `${MERCHANT}/sales-assignment`,
+    actions: {
+      view: PERMISSION.MERCHANT_ASSIGNMENT_VIEW,
+      create: PERMISSION.MERCHANT_ASSIGNMENT_MANAGE,
+      edit: PERMISSION.MERCHANT_ASSIGNMENT_MANAGE,
+      update: PERMISSION.MERCHANT_ASSIGNMENT_MANAGE,
+      delete: PERMISSION.MERCHANT_ASSIGNMENT_MANAGE,
+      full: PERMISSION.ADMIN_FULL
+    }
+  },
   MERCHANT_ORDER: {
     path: `${MERCHANT}/merchant-order`,
     actions: {
@@ -410,7 +457,13 @@ export const SCREENS = {
       update: PERMISSION.ORDER_UPDATE,
       delete: PERMISSION.ADMIN_FULL,
       full: PERMISSION.ORDER_FULL,
-      viewQr: PERMISSION.ORDER_VIEW
+      viewQr: PERMISSION.ORDER_VIEW,
+      viewDetail: PERMISSION.ORDER_VIEW,
+      // BE dùng ORDER:UPDATE cho cả bốn thao tác xử lý đơn (admin chưa có quyền hủy riêng).
+      confirm: PERMISSION.ORDER_UPDATE,
+      retryCredit: PERMISSION.ORDER_UPDATE,
+      refreshQr: PERMISSION.ORDER_UPDATE,
+      cancel: PERMISSION.ORDER_UPDATE
     }
   },
   /**

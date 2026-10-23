@@ -32,6 +32,7 @@ import {
   SlidersHorizontalIcon,
   StorefrontIcon,
   TerminalIcon,
+  UserCheckIcon,
   UserGearIcon,
   UsersThreeIcon,
   WalletIcon
@@ -348,6 +349,18 @@ const merchantManagement: ItemTypeCustom = {
       label: 'Key kết nối'
     },
     {
+      key: 'webhook',
+      screen: 'MERCHANT_WEBHOOK',
+      icon: (
+        <KeyIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Webhook (IPN)'
+    },
+    {
       key: 'payment-method',
       screen: 'MERCHANT_PAYMENT_METHOD',
       icon: (
@@ -382,6 +395,31 @@ const merchantManagement: ItemTypeCustom = {
         />
       ),
       label: 'Giao dịch'
+    },
+    {
+      key: 'merchant-order',
+      screen: 'MERCHANT_ORDER',
+      icon: (
+        <ClipboardTextIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Đơn hàng merchant'
+    },
+    {
+      key: 'sales-assignment',
+      screen: 'MERCHANT_ASSIGNMENT',
+      link: `${MERCHANT}/sales-assignment`,
+      icon: (
+        <UserCheckIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Gán Sales phụ trách'
     }
   ]
 }
@@ -464,6 +502,32 @@ const subMerchantManagement: ItemTypeCustom = {
         />
       ),
       label: 'Cấu hình quyết toán'
+    },
+    {
+      key: 'settlement-scope',
+      screen: 'MERCHANT_SETTLEMENT_SCOPE',
+      link: `${MERCHANT}/settlement-scope`,
+      icon: (
+        <GitBranchIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quyết toán Master/Hệ thống'
+    },
+    {
+      key: 'settlement-item',
+      screen: 'MERCHANT_SETTLEMENT_ITEM',
+      link: `${MERCHANT}/settlement-item`,
+      icon: (
+        <MoneyIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Mục quyết toán'
     },
     {
       key: 'withdrawal-limit',

@@ -1,13 +1,25 @@
 import { useState } from 'react'
 import { Can } from '@/app/permissions'
+import { useTypedSelector } from '@/app/store'
 import type { BankAccountDto } from '@/app/services/merchantBankAccountApi'
 import { BankFilled, PlusOutlined } from '@components/icons'
-import { ButtonComponent, CardComponent, Table } from '@components/index'
+import {
+  ButtonComponent,
+  CardComponent,
+  ExportCsvButton,
+  Table
+} from '@components/index'
 import {
   createBankAccountColumns,
   type BankAccountActionType
 } from '../columns/bankAccount.columns'
 import { BankAccountActionDialog } from '../components/BankAccountActionDialog'
+import { BankAccountDeleteDialog } from '../components/BankAccountDeleteDialog'
+import { BankAccountDetailDialog } from '../components/BankAccountDetailDialog'
+import {
+  BankAccountDecisionDialog,
+  type BankAccountDecisionType
+} from '../components/BankAccountDecisionDialog'
 import { BankAccountVerifyDialog } from '../components/BankAccountVerifyDialog'
 import { BankAccountEditorDialog } from '../components/BankAccountEditorDialog'
 import { BankAccountFilters } from '../components/BankAccountFilters'
@@ -15,12 +27,17 @@ import { useBankAccountList } from '../hooks/useBankAccountList'
 
 type Editing = { row: BankAccountDto | null }
 type Action = { type: BankAccountActionType; row: BankAccountDto }
+type Decision = { type: BankAccountDecisionType; row: BankAccountDto }
 
 const BankAccount = () => {
   const list = useBankAccountList()
   const { query } = list
+  const currentUserId = useTypedSelector((state) => state.auth.profile.jwtId)
   const [editing, setEditing] = useState<Editing | null>(null)
   const [action, setAction] = useState<Action | null>(null)
+  const [decision, setDecision] = useState<Decision | null>(null)
+  const [viewingId, setViewingId] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState<BankAccountDto | null>(null)
 
   return (
     <main className='flex min-w-0 flex-col gap-3'>
@@ -40,16 +57,28 @@ const BankAccount = () => {
           <h1 className='flex items-center gap-2 text-base font-semibold'>
             <BankFilled aria-hidden /> Tài khoản ngân hàng
           </h1>
-          <Can
-            screen='MERCHANT_BANK_ACCOUNT'
-            action='create'
-          >
-            <ButtonComponent
-              content='Thêm tài khoản'
-              icon={<PlusOutlined />}
-              onClick={() => setEditing({ row: null })}
-            />
-          </Can>
+          <div className='flex flex-wrap gap-2'>
+            <Can
+              screen='MERCHANT_BANK_ACCOUNT'
+              action='export'
+            >
+              <ExportCsvButton
+                onExport={list.exportCsv}
+                loading={list.isExporting}
+                disabled={!query.data?.totalElements}
+              />
+            </Can>
+            <Can
+              screen='MERCHANT_BANK_ACCOUNT'
+              action='create'
+            >
+              <ButtonComponent
+                content='Thêm tài khoản'
+                icon={<PlusOutlined />}
+                onClick={() => setEditing({ row: null })}
+              />
+            </Can>
+          </div>
         </div>
         {query.isError && (
           <div
@@ -82,10 +111,27 @@ const BankAccount = () => {
             size: list.size,
             merchantName: list.merchantName,
             onEdit: (row) => setEditing({ row }),
-            onAction: (type, row) => setAction({ type, row })
+            onView: (row) => setViewingId(row.id),
+            onDelete: setDeleting,
+            onAction: (type, row) => setAction({ type, row }),
+            onDecide: (type, row) => setDecision({ type, row }),
+            currentUserId
           })}
         />
       </CardComponent>
+      {viewingId && (
+        <BankAccountDetailDialog
+          id={viewingId}
+          merchantName={list.merchantName}
+          onClose={() => setViewingId(null)}
+        />
+      )}
+      {deleting && (
+        <BankAccountDeleteDialog
+          row={deleting}
+          onClose={() => setDeleting(null)}
+        />
+      )}
       {editing && (
         <BankAccountEditorDialog
           row={editing.row}
@@ -97,6 +143,13 @@ const BankAccount = () => {
         <BankAccountVerifyDialog
           row={action.row}
           onClose={() => setAction(null)}
+        />
+      )}
+      {decision && (
+        <BankAccountDecisionDialog
+          type={decision.type}
+          row={decision.row}
+          onClose={() => setDecision(null)}
         />
       )}
       {action && action.type !== 'verify' && (

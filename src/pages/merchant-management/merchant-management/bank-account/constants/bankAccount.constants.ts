@@ -1,4 +1,7 @@
-import type { BankAccountDto } from '@/app/services/merchantBankAccountApi'
+import type {
+  BankAccountChangeType,
+  BankAccountDto
+} from '@/app/services/merchantBankAccountApi'
 
 export const LEVEL_OPTIONS: {
   label: string
@@ -27,6 +30,17 @@ export const LINK_STATUS: Record<
   LINK_FAILED: { label: 'Lỗi liên kết', color: 'error' },
   PENDING_VERIFICATION: { label: 'Chờ xác minh', color: 'warning' }
 }
+
+export const CHANGE_TYPE_LABEL: Record<BankAccountChangeType, string> = {
+  UPDATE_ACCOUNT: 'Đổi thông tin tài khoản',
+  SET_DEFAULT: 'Đặt làm tài khoản mặc định'
+}
+
+// BE từ chối lý do tạm giữ ngắn hơn 10 ký tự (MIN_HOLD_REASON_LENGTH).
+export const MIN_HOLD_REASON_LENGTH = 10
+
+export const levelLabel = (level: BankAccountDto['level']): string =>
+  LEVEL_OPTIONS.find((option) => option.value === level)?.label ?? level
 
 export const BANK_ACCOUNT_FILTER_KEYS = [
   'query',

@@ -17,6 +17,7 @@ interface SubMerchantTableProps {
   filtered: boolean
   onView: (row: SubMerchantRow) => void
   onEdit: (row: SubMerchantRow) => void
+  onAssignment: (row: SubMerchantRow) => void
   onPageChange: (page: number, pageSize: number) => void
   onRetry: () => void
   onToggleStatus: (id: string, reason: string) => Promise<boolean>
@@ -31,12 +32,20 @@ export function SubMerchantTable({
   filtered,
   onView,
   onEdit,
+  onAssignment,
   onPageChange,
   onRetry,
   onToggleStatus
 }: SubMerchantTableProps) {
   const [statusRow, setStatusRow] = useState<SubMerchantRow | null>(null)
-  const columns = createSubMerchantColumns({ page, pageSize, onView, onEdit, onStatus: setStatusRow })
+  const columns = createSubMerchantColumns({
+    page,
+    pageSize,
+    onView,
+    onEdit,
+    onAssignment,
+    onStatus: setStatusRow
+  })
 
   const handleConfirm = async (reason: string): Promise<void> => {
     if (!statusRow) return
@@ -45,12 +54,24 @@ export function SubMerchantTable({
 
   return (
     <>
-      <ManagementTableState emptyKind={filtered ? 'filtered' : 'initial'} entityName='Sub-merchant' onRetry={onRetry} state={state}>
+      <ManagementTableState
+        emptyKind={filtered ? 'filtered' : 'initial'}
+        entityName='Sub-merchant'
+        onRetry={onRetry}
+        state={state}
+      >
         <Table<SubMerchantRow>
           columns={columns}
           dataSource={rows}
           onRefresh={onRetry}
-          pagination={{ current: page, pageSize, pageSizeOptions: [10, 20, 50], showSizeChanger: true, total, onChange: onPageChange }}
+          pagination={{
+            current: page,
+            pageSize,
+            pageSizeOptions: [10, 20, 50],
+            showSizeChanger: true,
+            total,
+            onChange: onPageChange
+          }}
           rowKey='id'
           size='small'
         />

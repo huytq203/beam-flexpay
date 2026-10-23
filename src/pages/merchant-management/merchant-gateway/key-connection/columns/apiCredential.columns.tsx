@@ -1,14 +1,19 @@
 import type { TableProps } from 'antd'
 import { Can } from '@/app/permissions'
 import type { ApiCredential } from '@/app/services/merchantGatewayApi'
-import { formatUTCToLocalDateTime } from '@utils/helper-functions/date'
-import { ArrowsCounterClockwiseIcon, StopOutlined } from '@components/icons'
+import {
+  ArrowsCounterClockwiseIcon,
+  EyeOutlined,
+  StopOutlined
+} from '@components/icons'
 import {
   ButtonComponent,
   TagComponent,
   TooltipComponent,
   TypographyText
 } from '@components/index'
+import { CREDENTIAL_STATUS } from '../constants/credential.constants'
+import { dateLabel } from '../utils/credential.utils'
 
 type Columns = NonNullable<TableProps<ApiCredential>['columns']>
 
@@ -18,17 +23,16 @@ interface CredentialColumnOptions {
   merchantName: (id: string) => string
   onRotate: (credential: ApiCredential) => void
   onRevoke: (credential: ApiCredential) => void
+  onView: (credential: ApiCredential) => void
 }
-
-const dateLabel = (value?: string | null) =>
-  value ? formatUTCToLocalDateTime(value) : 'Chưa có'
 
 export const createApiCredentialColumns = ({
   page,
   size,
   merchantName,
   onRotate,
-  onRevoke
+  onRevoke,
+  onView
 }: CredentialColumnOptions): Columns => [
   {
     title: '#',
@@ -65,7 +69,9 @@ export const createApiCredentialColumns = ({
           {merchantName(record.merchantId)}
         </span>
         <span className='text-xs text-muted-foreground'>
-          Master · Sub / Terminal kế thừa
+          {record.subMerchantId
+            ? 'Riêng Sub-merchant'
+            : 'Master · Sub / Terminal kế thừa'}
         </span>
       </div>
     )
@@ -75,20 +81,8 @@ export const createApiCredentialColumns = ({
     width: 125,
     render: (_, record) => (
       <div className='flex flex-col items-start gap-1'>
-        <TagComponent
-          color={
-            record.status === 'ACTIVE'
-              ? 'success'
-              : record.status === 'REVOKED'
-                ? 'error'
-                : 'default'
-          }
-        >
-          {record.status === 'ACTIVE'
-            ? 'Hoạt động'
-            : record.status === 'REVOKED'
-              ? 'Đã thu hồi'
-              : 'Hết hạn'}
+        <TagComponent color={CREDENTIAL_STATUS[record.status]?.color}>
+          {CREDENTIAL_STATUS[record.status]?.label ?? record.status}
         </TagComponent>
         <span className='text-xs text-muted-foreground'>
           Phiên bản v{record.version ?? 1}
@@ -141,42 +135,57 @@ export const createApiCredentialColumns = ({
     title: 'Thao tác',
     align: 'center',
     fixed: 'right',
-    width: 100,
-    render: (_, record) =>
-      record.status === 'ACTIVE' ? (
-        <Can
-          screen='MERCHANT_KEY_CONNECTION'
-          action='edit'
-        >
-          <div className='flex justify-center gap-1'>
-            <TooltipComponent title='Xoay key'>
-              <ButtonComponent
-                aria-label='Xoay key'
-                size='small'
-                type='default'
-                icon={
-                  <ArrowsCounterClockwiseIcon
-                    aria-hidden
-                    size={16}
+    width: 130,
+    render: (_, record) => {
+      const isOpen = record.status === 'ACTIVE' || record.status === 'SUSPENDED'
+      return (
+        <div className='flex items-center justify-center gap-1'>
+          <TooltipComponent title='Xem chi tiết'>
+            <ButtonComponent
+              aria-label='Xem chi tiết'
+              size='small'
+              type='default'
+              icon={<EyeOutlined aria-hidden />}
+              onClick={() => onView(record)}
+            />
+          </TooltipComponent>
+          {isOpen ? (
+            <Can
+              screen='MERCHANT_KEY_CONNECTION'
+              action='edit'
+            >
+              {record.status === 'ACTIVE' && (
+                <TooltipComponent title='Xoay key'>
+                  <ButtonComponent
+                    aria-label='Xoay key'
+                    size='small'
+                    type='default'
+                    icon={
+                      <ArrowsCounterClockwiseIcon
+                        aria-hidden
+                        size={16}
+                      />
+                    }
+                    onClick={() => onRotate(record)}
                   />
-                }
-                onClick={() => onRotate(record)}
-              />
-            </TooltipComponent>
-            <TooltipComponent title='Thu hồi'>
-              <ButtonComponent
-                aria-label='Thu hồi'
-                size='small'
-                type='default'
-                danger
-                icon={<StopOutlined aria-hidden />}
-                onClick={() => onRevoke(record)}
-              />
-            </TooltipComponent>
-          </div>
-        </Can>
-      ) : (
-        <span className='text-xs text-muted-foreground'>Đã kết thúc</span>
+                </TooltipComponent>
+              )}
+              <TooltipComponent title='Thu hồi'>
+                <ButtonComponent
+                  aria-label='Thu hồi'
+                  size='small'
+                  type='default'
+                  danger
+                  icon={<StopOutlined aria-hidden />}
+                  onClick={() => onRevoke(record)}
+                />
+              </TooltipComponent>
+            </Can>
+          ) : (
+            <span className='text-xs text-muted-foreground'>Đã kết thúc</span>
+          )}
+        </div>
       )
+    }
   }
 ]

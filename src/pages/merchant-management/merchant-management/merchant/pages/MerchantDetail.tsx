@@ -1,35 +1,18 @@
-import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Can } from '@/app/permissions'
 import { ArrowLeftOutlined } from '@components/icons'
 import {
   ButtonComponent,
   CardComponent,
-  DialogModal,
-  SubjectSegmentCard,
-  TextArea,
-  feedback
+  SubjectSegmentCard
 } from '@components/index'
-import {
-  useApproveMerchantMutation,
-  useGetMerchantByIdQuery,
-  useRejectMerchantMutation,
-  useSetMerchantLockedMutation,
-  useSubmitMerchantMutation
-} from '@services/apiMerchant'
+import { useGetMerchantByIdQuery } from '@services/apiMerchant'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { STATUS_CONFIG } from '../constants/Merchant.constant'
 import { MerchantDetailsSections } from '../components/MerchantDetailsSections'
-
-type Action = 'submit' | 'approve' | 'reject' | 'lock' | 'unlock'
-
-const ACTION_LABEL: Record<Action, string> = {
-  submit: 'Gửi duyệt hồ sơ',
-  approve: 'Phê duyệt hồ sơ',
-  reject: 'Từ chối hồ sơ',
-  lock: 'Khóa merchant',
-  unlock: 'Mở khóa merchant'
-}
+import { MerchantActionDialog } from '../components/MerchantActionDialog'
+import { MerchantHistoryTabs } from '../components/MerchantHistoryTabs'
+import { useMerchantDetailActions } from '../hooks/useMerchantDetailActions'
 
 const MerchantDetail = () => {
   const { id } = useParams<{ id: string }>()
@@ -38,51 +21,8 @@ const MerchantDetail = () => {
     id ?? '',
     { skip: !id }
   )
-  const [submit] = useSubmitMerchantMutation()
-  const [approve] = useApproveMerchantMutation()
-  const [reject] = useRejectMerchantMutation()
-  const [setLocked] = useSetMerchantLockedMutation()
-  const [action, setAction] = useState<Action | null>(null)
-  const [reason, setReason] = useState('')
-  const [isWorking, setIsWorking] = useState(false)
-
-  const confirm = async () => {
-    if (!id || !action) return
-    if ((action === 'lock' || action === 'unlock') && !reason.trim()) {
-      feedback.warning('Vui lòng nhập lý do')
-      return
-    }
-    if (action === 'reject' && !reason.trim()) {
-      feedback.warning('Vui lòng nhập lý do từ chối')
-      return
-    }
-    setIsWorking(true)
-    try {
-      if (action === 'submit') await submit(id).unwrap()
-      if (action === 'approve') await approve(id).unwrap()
-      if (action === 'reject')
-        await reject({
-          id,
-          detail: reason.trim(),
-          reasonCode: 'OTHER'
-        }).unwrap()
-      if (action === 'lock' || action === 'unlock')
-        await setLocked({
-          id,
-          lock: action === 'lock',
-          reason: reason.trim()
-        }).unwrap()
-      feedback.success(`${ACTION_LABEL[action]} thành công`)
-      setAction(null)
-      setReason('')
-    } catch {
-      feedback.error(
-        `Không thể ${ACTION_LABEL[action].toLocaleLowerCase('vi-VN')}`
-      )
-    } finally {
-      setIsWorking(false)
-    }
-  }
+  const actions = useMerchantDetailActions(id)
+  const setAction = actions.open
 
   return (
     <main className='space-y-3! p-3! sm:p-5!'>
@@ -211,36 +151,19 @@ const MerchantDetail = () => {
             subjectType='MERCHANT'
             subjectId={data.id}
           />
+          <Can
+            screen='MERCHANT_MANAGEMENT'
+            action='viewHistory'
+          >
+            <MerchantHistoryTabs merchantId={data.id} />
+          </Can>
         </>
       )}
 
-      <DialogModal
-        open={action !== null}
-        title={action ? ACTION_LABEL[action] : ''}
-        onCancel={() => {
-          setAction(null)
-          setReason('')
-        }}
-        onOk={() => void confirm()}
-        okButtonProps={{ loading: isWorking }}
-        okText='Xác nhận'
-      >
-        <p className='mb-3 text-sm text-foreground'>
-          Xác nhận{' '}
-          {action ? ACTION_LABEL[action].toLocaleLowerCase('vi-VN') : ''} cho{' '}
-          <strong>{data?.name}</strong>?
-        </p>
-        {(action === 'reject' || action === 'lock' || action === 'unlock') && (
-          <TextArea
-            aria-label='Lý do'
-            maxLength={500}
-            rows={3}
-            value={reason}
-            placeholder='Nhập lý do'
-            onChange={(event) => setReason(event.target.value)}
-          />
-        )}
-      </DialogModal>
+      <MerchantActionDialog
+        merchantName={data?.name}
+        actions={actions}
+      />
     </main>
   )
 }

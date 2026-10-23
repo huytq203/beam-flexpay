@@ -385,6 +385,15 @@ const merchantManagement = {
           )
         },
         {
+          path: SCREENS.MERCHANT_WEBHOOK.path,
+          element: page(
+            () =>
+              import(
+                '@/pages/merchant-management/merchant-gateway/webhook/pages/WebhookPage'
+              )
+          )
+        },
+        {
           path: SCREENS.MERCHANT_PAYMENT_METHOD.path,
           element: page(
             () =>
@@ -444,6 +453,15 @@ const merchantManagement = {
             () =>
               import(
                 '@pages/merchant-management/merchant-settlement/pages/SettlementConfigPage'
+              )
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_SETTLEMENT_SCOPE.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-settlement-scope/pages/SettlementScopePage'
               )
           )
         },
@@ -543,6 +561,33 @@ const merchantManagement = {
             () =>
               import(
                 '@pages/merchant-management/merchant-access/pages/MerchantRoleListPage'
+              )
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_ORDER.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-order/pages/MerchantOrderListPage'
+              )
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_SETTLEMENT_ITEM.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-settlement-item/pages/SettlementItemListPage'
+              )
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_ASSIGNMENT.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-assignment/pages/MerchantAssignmentPage'
               )
           )
         }

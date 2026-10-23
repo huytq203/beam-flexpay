@@ -12,7 +12,7 @@ import { MerchantNameText } from '../components/MerchantNameText'
 import { MerchantRoleFilters } from '../components/MerchantRoleFilters'
 import { RoleDeleteDialog } from '../components/RoleDeleteDialog'
 import { RoleEditorModal } from '../components/RoleEditorModal'
-import { RolePermissionsModal } from '../components/RolePermissionsModal'
+import { RoleDetailModal } from '../components/RoleDetailModal'
 import type { MerchantRole } from '../types/merchantAccess.types'
 
 export default function MerchantRoleListPage() {
@@ -117,9 +117,9 @@ export default function MerchantRoleListPage() {
         />
       )}
       {detail && (
-        <RolePermissionsModal
+        <RoleDetailModal
           key={detail.id}
-          role={roles.find((row) => row.id === detail.id) ?? detail}
+          roleId={detail.id}
           catalog={permissions}
           merchantName={
             detail.merchantId ? (

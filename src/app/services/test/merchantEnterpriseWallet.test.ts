@@ -5,38 +5,6 @@ import { describe, expect, it } from 'vitest'
 import { merchantEnterpriseWalletService } from '../merchantEnterpriseWalletApi'
 
 describe('Enterprise wallet source contract', () => {
-  it('gets an inline URL for a document belonging to the enterprise wallet', async () => {
-    let requestedUrl = ''
-    server.use(
-      http.get(
-        '*/enterprise-wallets/wallet-1/documents/document-1/url',
-        ({ request }) => {
-          requestedUrl = request.url
-          return HttpResponse.json({
-            data: {
-              url: 'https://storage.example/document-1',
-              contentType: 'image/png',
-              originalFilename: 'license.png'
-            },
-            success: true
-          })
-        }
-      )
-    )
-    const store = createAppStore()
-    const result = await store.dispatch(
-      merchantEnterpriseWalletService.endpoints.getEnterpriseWalletDocumentUrl.initiate(
-        {
-          walletId: 'wallet-1',
-          documentId: 'document-1'
-        }
-      )
-    )
-
-    expect(new URL(requestedUrl).searchParams.get('disposition')).toBe('INLINE')
-    expect(result.data?.url).toBe('https://storage.example/document-1')
-  })
-
   it('creates the dossier through Merchant Admin API', async () => {
     let submitted: unknown
     server.use(

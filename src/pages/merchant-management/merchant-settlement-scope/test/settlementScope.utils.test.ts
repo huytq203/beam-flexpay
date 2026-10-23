@@ -1,0 +1,162 @@
+import { describe, expect, it } from 'vitest'
+import {
+  buildScopeBody,
+  diffSnapshot,
+  getScopeErrorMessage,
+  removalNeedsApprover,
+  toHistoryRow
+} from '../utils/settlementScope.utils'
+import { masterView, systemView } from './scopeConfig.setup'
+
+const base = {
+  settlementMode: 'MANUAL_ONLY' as const,
+  autoFrequency: 'DAILY' as const,
+  holdbackDays: 2,
+  holdReason: '',
+  active: true,
+  reason: '  Điều chỉnh theo phụ lục  '
+}
+
+describe('buildScopeBody', () => {
+  it('Master: chỉ gửi trường Master tự đặt hoặc vừa đổi, không gửi hạn mức', () => {
+    const body = buildScopeBody(base, masterView(), false)
+    expect(body).toEqual({
+      settlementMode: 'MANUAL_ONLY',
+      holdbackDays: 2,
+      reason: 'Điều chỉnh theo phụ lục'
+    })
+  })
+
+  it('Master chỉ đổi T+N khi các trường khác đang kế thừa Hệ thống', () => {
+    const view = masterView({
+      settlementMode: { value: 'MANUAL_ONLY', source: 'SYSTEM' }
+    })
+    const body = buildScopeBody({ ...base, holdbackDays: 5 }, view, false)
+    expect(body).toEqual({ holdbackDays: 5, reason: 'Điều chỉnh theo phụ lục' })
+  })
+
+  it('Master HOLD gửi holdReason đã trim và autoFrequency chỉ khi AUTOMATIC', () => {
+    const hold = buildScopeBody(
+      { ...base, settlementMode: 'HOLD', holdReason: ' Rà soát gian lận ' },
+      masterView(),
+      false
+    )
+    expect(hold.holdReason).toBe('Rà soát gian lận')
+    expect(hold).not.toHaveProperty('autoFrequency')
+    const auto = buildScopeBody(
+      { ...base, settlementMode: 'AUTOMATIC', autoFrequency: 'WEEKLY' },
+      masterView(),
+      false
+    )
+    expect(auto.autoFrequency).toBe('WEEKLY')
+  })
+
+  it('Hệ thống: luôn gửi đủ ba trường canonical, không có active/holdReason', () => {
+    const body = buildScopeBody(
+      { ...base, settlementMode: 'AUTOMATIC', holdbackDays: 4 },
+      systemView(),
+      true
+    )
+    expect(body).toEqual({
+      settlementMode: 'AUTOMATIC',
+      autoFrequency: 'DAILY',
+      holdbackDays: 4,
+      reason: 'Điều chỉnh theo phụ lục'
+    })
+  })
+})
+
+describe('toHistoryRow', () => {
+  it('parse snapshot JSON dạng chuỗi và đổi khóa snake_case', () => {
+    const row = toHistoryRow({
+      id: 'h1',
+      level: 'MASTER',
+      target_id: 'm-1',
+      changed_at: '2026-10-22T10:15:30.123+07:00',
+      changed_by: null,
+      reason: null,
+      snapshot: '{"settlementMode":"AUTOMATIC","holdbackDays":3,"active":true}'
+    })
+    expect(row.targetId).toBe('m-1')
+    expect(row.snapshot?.holdbackDays).toBe(3)
+    expect(row.corrupted).toBe(false)
+  })
+
+  it('snapshot null là "kế thừa", chuỗi hỏng chỉ đánh dấu corrupted', () => {
+    const raw = {
+      id: 'h',
+      level: 'SUB' as const,
+      target_id: 's',
+      changed_at: null,
+      changed_by: null,
+      reason: null
+    }
+    expect(toHistoryRow({ ...raw, snapshot: null })).toMatchObject({
+      snapshot: null,
+      corrupted: false
+    })
+    expect(toHistoryRow({ ...raw, snapshot: '{oops' })).toMatchObject({
+      snapshot: null,
+      corrupted: true
+    })
+  })
+})
+
+describe('diffSnapshot / removalNeedsApprover / getScopeErrorMessage', () => {
+  it('diff liệt kê trường đổi, bỏ trường giống nhau', () => {
+    const changes = diffSnapshot(
+      { settlementMode: 'MANUAL_ONLY', holdbackDays: 2 },
+      { settlementMode: 'AUTOMATIC', holdbackDays: 2 }
+    )
+    expect(changes).toEqual([
+      { key: 'settlementMode', before: 'MANUAL_ONLY', after: 'AUTOMATIC' }
+    ])
+  })
+
+  it('gỡ khối làm Hệ thống tự động thì cần người duyệt, T+N dài hơn thì không', () => {
+    const current = masterView()
+    expect(
+      removalNeedsApprover({
+        current,
+        afterRemoval: systemView({
+          settlementMode: { value: 'AUTOMATIC', source: 'SYSTEM' }
+        })
+      })
+    ).toBe(true)
+    expect(
+      removalNeedsApprover({
+        current,
+        afterRemoval: systemView({
+          holdbackDays: { value: 5, source: 'SYSTEM' }
+        })
+      })
+    ).toBe(false)
+  })
+
+  it('map lỗi theo message, VALIDATION_ERROR lấy câu của trường', () => {
+    expect(
+      getScopeErrorMessage(
+        { data: { message: 'MERCHANT_SETTLEMENT_LOOSENING_NEEDS_APPROVER' } },
+        'x'
+      )
+    ).toContain('cần quyền phê duyệt')
+    expect(
+      getScopeErrorMessage(
+        {
+          data: {
+            message: 'VALIDATION_ERROR',
+            data: { reason: 'Lý do thay đổi là bắt buộc' }
+          }
+        },
+        'x'
+      )
+    ).toBe('Lý do thay đổi là bắt buộc')
+    expect(
+      getScopeErrorMessage(
+        { data: { message: 'BUSINESS_ERROR', detail: 'Câu từ BE' } },
+        'x'
+      )
+    ).toBe('Câu từ BE')
+    expect(getScopeErrorMessage(undefined, 'dự phòng')).toBe('dự phòng')
+  })
+})

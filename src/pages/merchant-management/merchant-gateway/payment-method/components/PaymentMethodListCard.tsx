@@ -1,11 +1,16 @@
-import type { PaymentMethodSummary } from '@/app/services/merchantGatewayApi'
 import { Can } from '@/app/permissions'
+import type { PaymentMethodListRow } from '@/app/services/merchantPaymentMethodApi'
 import { CreditCardOutlined, PlusOutlined } from '@components/icons'
-import { ButtonComponent, CardComponent, Table } from '@components/index'
+import {
+  ButtonComponent,
+  CardComponent,
+  ExportCsvButton,
+  Table
+} from '@components/index'
 import { createPaymentMethodColumns } from '../columns/paymentMethod.columns'
 
 interface PaymentMethodListCardProps {
-  rows: PaymentMethodSummary[]
+  rows: PaymentMethodListRow[]
   total: number
   page: number
   size: number
@@ -13,9 +18,15 @@ interface PaymentMethodListCardProps {
   error: boolean
   onRefresh: () => void
   onPageChange: (page: number, size: number) => void
-  onEdit: (merchantId: string) => void
+  onEdit: (row: PaymentMethodListRow) => void
   onCreate: () => void
+  onExport: () => void
+  exporting: boolean
 }
+
+/** Dòng Sub dùng chung `merchantId` với Master nên khoá phải gồm cả Sub. */
+const rowKey = (row: PaymentMethodListRow) =>
+  `${row.merchantId}:${row.subMerchantId ?? 'MASTER'}`
 
 export function PaymentMethodListCard({
   rows,
@@ -27,7 +38,9 @@ export function PaymentMethodListCard({
   onRefresh,
   onPageChange,
   onEdit,
-  onCreate
+  onCreate,
+  onExport,
+  exporting
 }: PaymentMethodListCardProps) {
   return (
     <CardComponent className='border border-border bg-background shadow-none'>
@@ -49,16 +62,28 @@ export function PaymentMethodListCard({
             </span>
           )}
         </div>
-        <Can
-          screen='MERCHANT_PAYMENT_METHOD'
-          action='edit'
-        >
-          <ButtonComponent
-            content='Thêm mới cấu hình'
-            icon={<PlusOutlined aria-hidden />}
-            onClick={onCreate}
-          />
-        </Can>
+        <div className='flex flex-wrap items-center gap-2'>
+          <Can
+            screen='MERCHANT_PAYMENT_METHOD'
+            action='export'
+          >
+            <ExportCsvButton
+              onExport={onExport}
+              loading={exporting}
+              tooltip='Xuất toàn bộ cấu hình khớp từ khoá tên/mã Merchant, không theo trang đang xem.'
+            />
+          </Can>
+          <Can
+            screen='MERCHANT_PAYMENT_METHOD'
+            action='edit'
+          >
+            <ButtonComponent
+              content='Thêm mới cấu hình'
+              icon={<PlusOutlined aria-hidden />}
+              onClick={onCreate}
+            />
+          </Can>
+        </div>
       </div>
       {error && (
         <div
@@ -74,8 +99,8 @@ export function PaymentMethodListCard({
           />
         </div>
       )}
-      <Table<PaymentMethodSummary>
-        rowKey='merchantId'
+      <Table<PaymentMethodListRow>
+        rowKey={rowKey}
         onRefresh={onRefresh}
         loading={loading}
         dataSource={error ? [] : rows}

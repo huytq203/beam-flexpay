@@ -51,6 +51,7 @@ describe('SCREENS', () => {
     expect(SCREENS.MERCHANT_KEY_CONNECTION.path).toBe(
       '/secure-panel/merchant/key-connection'
     )
+    expect(SCREENS.MERCHANT_WEBHOOK.path).toBe('/secure-panel/merchant/webhook')
     expect(SCREENS.MERCHANT_PAYMENT_METHOD.path).toBe(
       '/secure-panel/merchant/payment-method'
     )
@@ -249,9 +250,9 @@ describe('màn Cấu hình phí đầu vào', () => {
   it('có đường dẫn riêng, cùng họ quyền FEE với Cấu hình phí, và route con kế thừa màn', () => {
     expect(SCREENS.FEE_INPUT_COST.path).not.toBe(SCREENS.FEE_CONFIG.path)
     expect(SCREENS.FEE_INPUT_COST.actions).toEqual(SCREENS.FEE_CONFIG.actions)
-    expect(
-      findScreenByPath(`${SCREENS.FEE_INPUT_COST.path}/edit/abc`)
-    ).toBe(SCREENS.FEE_INPUT_COST)
+    expect(findScreenByPath(`${SCREENS.FEE_INPUT_COST.path}/edit/abc`)).toBe(
+      SCREENS.FEE_INPUT_COST
+    )
     expect(findScreenByPath(`${SCREENS.FEE_CONFIG.path}/edit/abc`)).toBe(
       SCREENS.FEE_CONFIG
     )

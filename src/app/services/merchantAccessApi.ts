@@ -300,6 +300,12 @@ export const accessApi = apiMerchant.injectEndpoints({
       ) => response.data,
       providesTags: ['merchant']
     }),
+    getMerchantGroup: builder.query<MerchantGroupDto, string>({
+      query: (id) => `/merchant-permission-groups/${id}`,
+      transformResponse: (response: MerchantAccessEnvelope<MerchantGroupDto>) =>
+        response.data,
+      providesTags: ['merchant']
+    }),
     listMerchantGroupUsers: builder.query<
       MerchantAccessPage<MerchantGroupUserDto>,
       { id: string; page: number; size: number }
@@ -427,6 +433,7 @@ export const {
   useResetMerchantUserPasswordMutation,
   useResendMerchantUserActivationMutation,
   useListMerchantGroupsQuery,
+  useGetMerchantGroupQuery,
   useListMerchantGroupUsersQuery,
   useCreateMerchantGroupMutation,
   useCreateMerchantSystemGroupMutation,
