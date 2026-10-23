@@ -17,7 +17,8 @@ const ctx = {
   username: 'me',
   canApprove: true,
   canSettle: false,
-  canPayoutRefresh: false
+  canPayoutRefresh: false,
+  canPayoutApprove: false
 }
 
 describe('getRefundErrorText', () => {
@@ -104,6 +105,24 @@ describe('getRefundActions', () => {
     expect(
       getRefundActions(makeRefund({ status: 'PENDING_APPROVAL' }), full)
     ).toMatchObject({ settle: false, payoutRefresh: false })
+  })
+
+  it('duyệt chi chỉ khi Chờ duyệt chi và có quyền, không chặn người tạo', () => {
+    const accountant = { ...ctx, canApprove: false, canPayoutApprove: true }
+    const waiting = makeRefund({
+      status: 'PENDING_PAYOUT_APPROVAL',
+      channel: 'TO_BANK',
+      createdBy: 'me'
+    })
+    expect(getRefundActions(waiting, accountant)).toMatchObject({
+      payoutDecide: true,
+      decide: false
+    })
+    expect(getRefundActions(waiting, ctx).payoutDecide).toBe(false)
+    expect(
+      getRefundActions(makeRefund({ status: 'PROCESSING' }), accountant)
+        .payoutDecide
+    ).toBe(false)
   })
 
   it('đổi nhãn Quyết toán lại khi đang PROCESSING kèm lỗi', () => {

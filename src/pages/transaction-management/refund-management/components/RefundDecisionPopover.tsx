@@ -12,19 +12,56 @@ import { RefundNote } from './RefundNote'
 
 interface RefundDecisionPopoverProps {
   refund: RefundTarget
+  /** `payout` là bước Kế toán duyệt chi sau khi hoàn tiền đã được duyệt. */
+  mode?: 'refund' | 'payout'
   children: ReactNode
 }
 
+const POPOVER_TEXT = {
+  refund: {
+    title: 'Phê duyệt hoàn tiền',
+    approve: 'Duyệt',
+    reject: 'Từ chối',
+    dialogTitle: 'Từ chối yêu cầu hoàn tiền',
+    dialogOk: 'Xác nhận từ chối',
+    placeholder: `Nhập lý do (${REASON_MIN} đến ${REASON_MAX} ký tự)`,
+    consequence: 'sẽ chuyển sang trạng thái bị từ chối.'
+  },
+  payout: {
+    title: 'Duyệt chi hoàn tiền',
+    approve: 'Duyệt chi',
+    reject: 'Từ chối chi',
+    dialogTitle: 'Từ chối chi hoàn tiền',
+    dialogOk: 'Xác nhận từ chối chi',
+    placeholder: `Nhập lý do (tối đa ${REASON_MAX} ký tự)`,
+    consequence: 'sẽ chuyển sang bị từ chối và nhả khoản tiền đang giữ.'
+  }
+} as const
+
 export function RefundDecisionPopover({
   refund,
+  mode = 'refund',
   children
 }: RefundDecisionPopoverProps) {
-  const { approve, reject, isApproving, isRejecting } = useRefundActions()
+  const {
+    approve,
+    reject,
+    approveRefundPayout,
+    rejectRefundPayout,
+    isApproving,
+    isRejecting,
+    isApprovingPayout,
+    isRejectingPayout
+  } = useRefundActions()
+  const text = POPOVER_TEXT[mode]
+  const isPayout = mode === 'payout'
+  const approving = isPayout ? isApprovingPayout : isApproving
+  const rejecting = isPayout ? isRejectingPayout : isRejecting
   const { errorMess } = useMessage()
   const [open, setOpen] = useState(false)
   const [isRejectOpen, setIsRejectOpen] = useState(false)
   const [error, setError] = useState('')
-  const isLoading = isApproving || isRejecting
+  const isLoading = approving || rejecting
 
   const handleOpenChange = (next: boolean): void => {
     if (isLoading) return
@@ -35,14 +72,17 @@ export function RefundDecisionPopover({
   const handleApprove = async (): Promise<void> => {
     if (isLoading) return
     setError('')
-    const result = await approve(refund.id)
+    const result = await (isPayout ? approveRefundPayout : approve)(refund.id)
     if (result.ok) setOpen(false)
     else setError(result.message)
   }
 
   const handleReject = async (reason: string): Promise<void> => {
     if (isLoading) return
-    const result = await reject(refund.id, reason)
+    const result = await (isPayout ? rejectRefundPayout : reject)(
+      refund.id,
+      reason
+    )
     if (result.ok) {
       setIsRejectOpen(false)
       setOpen(false)
@@ -61,7 +101,7 @@ export function RefundDecisionPopover({
           htmlType='button'
           type='default'
           danger
-          content='Từ chối'
+          content={text.reject}
           className='order-2 w-full pointer-coarse:h-11! min-[384px]:order-none'
           disabled={isLoading}
           onClick={() => setIsRejectOpen(true)}
@@ -69,9 +109,9 @@ export function RefundDecisionPopover({
         <ButtonComponent
           htmlType='button'
           type='default'
-          content='Duyệt'
+          content={text.approve}
           className='order-1 w-full pointer-coarse:h-11! min-[384px]:order-none'
-          loading={isApproving}
+          loading={approving}
           disabled={isLoading}
           onClick={handleApprove}
         />
@@ -87,7 +127,7 @@ export function RefundDecisionPopover({
         placement='bottomRight'
         destroyOnHidden
         styles={{ root: { maxWidth: 'calc(100vw - 24px)' } }}
-        title='Phê duyệt hoàn tiền'
+        title={text.title}
         content={content}
         onOpenChange={handleOpenChange}
       >
@@ -96,15 +136,15 @@ export function RefundDecisionPopover({
       </PopoverComponent>
       <ReasonDialog
         open={isRejectOpen}
-        title='Từ chối yêu cầu hoàn tiền'
-        description={`Yêu cầu “${refund.refundCode}” sẽ chuyển sang trạng thái bị từ chối.`}
+        title={text.dialogTitle}
+        description={`Yêu cầu “${refund.refundCode}” ${text.consequence}`}
         label='Lý do từ chối'
-        placeholder='Nhập lý do (5 đến 500 ký tự)'
+        placeholder={text.placeholder}
         minLength={REASON_MIN}
         maxLength={REASON_MAX}
-        okText='Xác nhận từ chối'
+        okText={text.dialogOk}
         danger
-        confirmLoading={isRejecting}
+        confirmLoading={rejecting}
         onConfirm={handleReject}
         onCancel={() => setIsRejectOpen(false)}
       />

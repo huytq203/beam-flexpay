@@ -3,6 +3,7 @@ import { FunnelIcon } from '@components/icons'
 import { CardComponent } from '@components/index'
 import { createRefundColumns } from './columns/refund.columns'
 import { ApproveRefundDialog } from './components/ApproveRefundDialog'
+import { PayoutApproveDialog } from './components/PayoutApproveDialog'
 import { RefundDetailDrawer } from './components/RefundDetailDrawer'
 import { RefundFilters } from './components/RefundFilters'
 import { RefundListCard } from './components/RefundListCard'
@@ -13,10 +14,14 @@ import { useRefundList } from './hooks/useRefundList'
 import { useRefundPermissions } from './hooks/useRefundPermissions'
 import type { RefundTarget } from './schemas/refund.schema'
 
-type RefundDialog = {
-  kind: 'approve' | 'reject' | 'settle'
-  refund: RefundTarget
-} | null
+type RefundDialogKind =
+  | 'approve'
+  | 'reject'
+  | 'payoutApprove'
+  | 'payoutReject'
+  | 'settle'
+
+type RefundDialog = { kind: RefundDialogKind; refund: RefundTarget } | null
 
 const RefundManagement = () => {
   const list = useRefundList()
@@ -37,16 +42,20 @@ const RefundManagement = () => {
     pageSize: list.pageSize,
     context: permissions,
     payoutRefreshingId: payoutId,
-    onView: (refund) => setDrawerId(refund.id),
+    onView: permissions.canViewDetail
+      ? (refund) => setDrawerId(refund.id)
+      : undefined,
     onApprove: (refund) => setDialog({ kind: 'approve', refund }),
     onReject: (refund) => setDialog({ kind: 'reject', refund }),
     onSettle: (refund) => setDialog({ kind: 'settle', refund }),
+    onPayoutApprove: (refund) => setDialog({ kind: 'payoutApprove', refund }),
+    onPayoutReject: (refund) => setDialog({ kind: 'payoutReject', refund }),
     onPayoutRefresh: handlePayoutRefresh
   })
 
   const closeDialog = (): void => setDialog(null)
   const openFromDrawer =
-    (kind: 'approve' | 'reject' | 'settle') =>
+    (kind: RefundDialogKind) =>
     (refund: RefundTarget): void =>
       setDialog({ kind, refund })
   const filterKey = JSON.stringify([
@@ -94,6 +103,8 @@ const RefundManagement = () => {
           onApprove={openFromDrawer('approve')}
           onReject={openFromDrawer('reject')}
           onSettle={openFromDrawer('settle')}
+          onPayoutApprove={openFromDrawer('payoutApprove')}
+          onPayoutReject={openFromDrawer('payoutReject')}
           onPayoutRefresh={handlePayoutRefresh}
         />
       )}
@@ -106,6 +117,19 @@ const RefundManagement = () => {
       )}
       {dialog?.kind === 'reject' && (
         <RejectRefundDialog
+          refund={dialog.refund}
+          onClose={closeDialog}
+        />
+      )}
+      {dialog?.kind === 'payoutApprove' && (
+        <PayoutApproveDialog
+          refund={dialog.refund}
+          onClose={closeDialog}
+        />
+      )}
+      {dialog?.kind === 'payoutReject' && (
+        <RejectRefundDialog
+          payout
           refund={dialog.refund}
           onClose={closeDialog}
         />

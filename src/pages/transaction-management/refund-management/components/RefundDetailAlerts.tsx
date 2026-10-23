@@ -4,10 +4,7 @@ import {
 } from '../constants/refund.constants'
 import { RefundDisplayStatus } from '@constants/refund.constant'
 import { RefundStatus, type RefundDetail } from '../schemas/refund.schema'
-import {
-  getDisplayStatus,
-  type RefundActionFlags
-} from '../utils/refund.utils'
+import { getDisplayStatus, type RefundActionFlags } from '../utils/refund.utils'
 import { RefundNote } from './RefundNote'
 
 interface RefundDetailAlertsProps {
@@ -59,6 +56,12 @@ export function RefundDetailAlerts({
           title='Lần duyệt gần nhất lỗi.'
         >
           {failure}. {getRetryHint(refund)}
+        </RefundNote>
+      )}
+      {refund.status === RefundStatus.PENDING_PAYOUT_APPROVAL && (
+        <RefundNote tone='info'>
+          Đã duyệt hoàn, đang chờ Kế toán duyệt chi. Chưa có lệnh nào gửi sang
+          ngân hàng.
         </RefundNote>
       )}
       {flags.isOwnRequest &&

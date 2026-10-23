@@ -174,6 +174,7 @@ describe('SCREENS', () => {
     for (const action of ['view', 'viewDetail', 'approve', 'reject'] as const) {
       expect(refund.actions[action]).toBe(PERMISSION.REFUND_APPROVE)
     }
+    expect(refund.actions.payoutApprove).toBe(PERMISSION.PAYOUT_APPROVE)
     for (const action of [
       'settle',
       'payoutRefresh',

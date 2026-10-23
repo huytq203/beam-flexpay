@@ -4,6 +4,8 @@ import type { RefundActionContext } from '../utils/refund.utils'
 
 export interface RefundPermissions extends RefundActionContext {
   canViewFullAccountNumber: boolean
+  /** Kế toán chỉ có `PAYOUT:APPROVE` vẫn xem được chi tiết. */
+  canViewDetail: boolean
 }
 
 export const useRefundPermissions = (): RefundPermissions => {
@@ -15,6 +17,8 @@ export const useRefundPermissions = (): RefundPermissions => {
     canApprove: can('approve') && can('reject'),
     canSettle: can('settle'),
     canPayoutRefresh: can('payoutRefresh'),
+    canPayoutApprove: can('payoutApprove'),
+    canViewDetail: can('viewDetail') || can('payoutApprove'),
     canViewFullAccountNumber: can('full')
   }
 }

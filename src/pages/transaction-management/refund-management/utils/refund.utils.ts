@@ -72,10 +72,12 @@ export interface RefundActionContext {
   canApprove: boolean
   canSettle: boolean
   canPayoutRefresh: boolean
+  canPayoutApprove: boolean
 }
 
 export interface RefundActionFlags {
   decide: boolean
+  payoutDecide: boolean
   settle: boolean
   payoutRefresh: boolean
   isOwnRequest: boolean
@@ -110,6 +112,10 @@ export const getRefundActions = (
       context.canApprove &&
       canCompare &&
       !isOwnRequest,
+    // Duyệt chi không chặn người tạo/duyệt hoàn tự duyệt chi (chốt 23/10), nên không so createdBy.
+    payoutDecide:
+      refund.status === RefundStatus.PENDING_PAYOUT_APPROVAL &&
+      context.canPayoutApprove,
     settle:
       inFlight &&
       refund.channel === RefundChannel.TO_WALLET &&

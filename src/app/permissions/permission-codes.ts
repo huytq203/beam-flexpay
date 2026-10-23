@@ -127,6 +127,11 @@ export const PERMISSION = {
    * Duyệt, từ chối, xem hoàn tiền; không tạo, quyết toán hay làm mới lệnh chi được.
    */
   REFUND_APPROVE: 'EWALLET:REFUND:APPROVE', // CẦN TẠO TRONG DB: DB chưa có; user-wallet BE đã nhận mã này
+  /**
+   * Kế toán duyệt hoặc từ chối chi hoàn tiền ra ngân hàng; cùng quy ước tiền tố với
+   * `REFUND:APPROVE`. Không đủ để duyệt/từ chối hoàn thường, nhưng mở được màn xem hoàn tiền.
+   */
+  PAYOUT_APPROVE: 'EWALLET:PAYOUT:APPROVE', // CẦN TẠO TRONG DB: identity tạo tên `PAYOUT:APPROVE` rồi gán nhóm Kế toán
 
   EWALLET_FULL: 'EWALLET:EWALLET:FULL'
 } as const

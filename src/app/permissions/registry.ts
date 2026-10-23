@@ -184,7 +184,8 @@ export const SCREENS = {
   /**
    * Hoàn tiền (flexpay.user-wallet): xem, duyệt, từ chối mở cho `REFUND:APPROVE`;
    * quyết toán và làm mới lệnh chi chỉ `EWALLET:FULL` (BE từ chối 403 với
-   * `REFUND:APPROVE`). `EWALLET:FULL` mở mọi hành động qua `actions.full`.
+   * `REFUND:APPROVE`). Duyệt chi / từ chối chi (Kế toán) mở cho `PAYOUT:APPROVE`, mã này
+   * cũng đủ để vào màn và xem chi tiết. `EWALLET:FULL` mở mọi hành động qua `actions.full`.
    * Màn này tự khai quyền nên không còn đi theo `TRANSACTION:FULL` của cả nhóm.
    */
   REFUND_MANAGEMENT: {
@@ -200,7 +201,8 @@ export const SCREENS = {
       approve: PERMISSION.REFUND_APPROVE,
       reject: PERMISSION.REFUND_APPROVE,
       settle: PERMISSION.EWALLET_FULL,
-      payoutRefresh: PERMISSION.EWALLET_FULL
+      payoutRefresh: PERMISSION.EWALLET_FULL,
+      payoutApprove: PERMISSION.PAYOUT_APPROVE
     }
   },
   WITHDRAW_HISTORY: {

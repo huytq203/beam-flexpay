@@ -1,14 +1,17 @@
 import { globalMessage } from '@hooks/useMessage'
 import {
   useApproveRefundMutation,
+  useApproveRefundPayoutMutation,
   useRefreshRefundPayoutMutation,
   useRejectRefundMutation,
+  useRejectRefundPayoutMutation,
   useSettleRefundMutation
 } from '@services/apiRefund'
 import type { RefundDetail } from '../schemas/refund.schema'
 import { getRefundErrorText } from '../utils/refund.utils'
 import {
   describeApproveOutcome,
+  describePayoutApproveOutcome,
   describePayoutOutcome,
   describeSettleOutcome
 } from '../utils/refundOutcome'
@@ -29,6 +32,8 @@ const failure = (error: unknown): RefundActionResult => ({
 export const useRefundActions = () => {
   const [approveRefund, approving] = useApproveRefundMutation()
   const [rejectRefund, rejecting] = useRejectRefundMutation()
+  const [approvePayout, approvingPayout] = useApproveRefundPayoutMutation()
+  const [rejectPayout, rejectingPayout] = useRejectRefundPayoutMutation()
   const [settleRefund, settling] = useSettleRefundMutation()
   const [refreshPayout, refreshing] = useRefreshRefundPayoutMutation()
 
@@ -52,6 +57,31 @@ export const useRefundActions = () => {
     try {
       const refund = await rejectRefund({ id, reason }).unwrap()
       globalMessage.success(`Đã từ chối ${refund.refundCode}`)
+      return { ok: true, refund }
+    } catch (error) {
+      return failure(error)
+    }
+  }
+
+  const approveRefundPayout = async (
+    id: string
+  ): Promise<RefundActionResult> => {
+    try {
+      const refund = await approvePayout(id).unwrap()
+      globalMessage.success(describePayoutApproveOutcome(refund))
+      return { ok: true, refund }
+    } catch (error) {
+      return failure(error)
+    }
+  }
+
+  const rejectRefundPayout = async (
+    id: string,
+    reason: string
+  ): Promise<RefundActionResult> => {
+    try {
+      const refund = await rejectPayout({ id, reason }).unwrap()
+      globalMessage.success(`Đã từ chối chi ${refund.refundCode}`)
       return { ok: true, refund }
     } catch (error) {
       return failure(error)
@@ -90,10 +120,14 @@ export const useRefundActions = () => {
     approve,
     reject,
     settle,
+    approveRefundPayout,
+    rejectRefundPayout,
     refreshPayoutOrder,
     isApproving: approving.isLoading,
     isRejecting: rejecting.isLoading,
     isSettling: settling.isLoading,
+    isApprovingPayout: approvingPayout.isLoading,
+    isRejectingPayout: rejectingPayout.isLoading,
     isRefreshingPayout: refreshing.isLoading
   }
 }

@@ -20,6 +20,7 @@ export type RefundType = (typeof RefundType)[keyof typeof RefundType]
 export const RefundDisplayStatus = {
   PENDING_APPROVAL: 'PENDING_APPROVAL',
   WAITING_FUNDS: 'WAITING_FUNDS',
+  PENDING_PAYOUT_APPROVAL: 'PENDING_PAYOUT_APPROVAL',
   PROCESSING: 'PROCESSING',
   SUCCESS: 'SUCCESS',
   REJECTED: 'REJECTED',
@@ -49,6 +50,7 @@ export const REFUND_DISPLAY_STATUS_LABELS: Record<
 > = {
   PENDING_APPROVAL: { label: 'Chờ duyệt', tone: 'warning' },
   WAITING_FUNDS: { label: 'Chờ đủ số dư', tone: 'warning' },
+  PENDING_PAYOUT_APPROVAL: { label: 'Chờ duyệt chi', tone: 'warning' },
   PROCESSING: { label: 'Đang xử lý', tone: 'info' },
   SUCCESS: { label: 'Thành công', tone: 'success' },
   REJECTED: { label: 'Đã từ chối', tone: 'danger' },

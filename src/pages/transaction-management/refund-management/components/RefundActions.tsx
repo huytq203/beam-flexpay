@@ -1,4 +1,3 @@
-import { Can } from '@/app/permissions'
 import {
   ArrowsCounterClockwiseIcon,
   BankIcon,
@@ -20,6 +19,8 @@ interface RefundActionsProps {
   onApprove: (refund: RefundTarget) => void
   onReject: (refund: RefundTarget) => void
   onSettle: (refund: RefundTarget) => void
+  onPayoutApprove: (refund: RefundTarget) => void
+  onPayoutReject: (refund: RefundTarget) => void
   onPayoutRefresh: (refund: RefundTarget) => void
   isPayoutRefreshing?: boolean
 }
@@ -32,6 +33,8 @@ export function RefundActions({
   onApprove,
   onReject,
   onSettle,
+  onPayoutApprove,
+  onPayoutReject,
   onPayoutRefresh,
   isPayoutRefreshing
 }: RefundActionsProps) {
@@ -64,6 +67,27 @@ export function RefundActions({
     />
   )
 
+  const payoutRejectButton = (
+    <RefundActionButton
+      variant={variant}
+      tone='danger'
+      label='Từ chối chi'
+      ariaLabel={nameFor('Từ chối chi')}
+      icon={<CloseOutlined aria-hidden />}
+      onClick={() => onPayoutReject(refund)}
+    />
+  )
+  const payoutApproveButton = (
+    <RefundActionButton
+      variant={variant}
+      tone={isInline ? 'default' : 'primary'}
+      label={isInline ? 'Duyệt chi / Từ chối chi' : 'Duyệt chi'}
+      ariaLabel={nameFor('Duyệt chi')}
+      icon={<BankIcon aria-hidden />}
+      onClick={isInline ? () => undefined : () => onPayoutApprove(refund)}
+    />
+  )
+
   return (
     <div
       className={cn(
@@ -74,17 +98,12 @@ export function RefundActions({
       )}
     >
       {onView && (
-        <Can
-          screen='REFUND_MANAGEMENT'
-          action='viewDetail'
-        >
-          <RefundActionButton
-            variant='icon'
-            label={`Xem chi tiết ${refund.refundCode}`}
-            icon={<EyeOutlined aria-hidden />}
-            onClick={() => onView(refund)}
-          />
-        </Can>
+        <RefundActionButton
+          variant='icon'
+          label={`Xem chi tiết ${refund.refundCode}`}
+          icon={<EyeOutlined aria-hidden />}
+          onClick={() => onView(refund)}
+        />
       )}
       {flags.decide &&
         (isInline ? (
@@ -95,6 +114,20 @@ export function RefundActions({
           <>
             {rejectButton}
             {approveButton}
+          </>
+        ))}
+      {flags.payoutDecide &&
+        (isInline ? (
+          <RefundDecisionPopover
+            mode='payout'
+            refund={refund}
+          >
+            {payoutApproveButton}
+          </RefundDecisionPopover>
+        ) : (
+          <>
+            {payoutRejectButton}
+            {payoutApproveButton}
           </>
         ))}
       {flags.settle && (

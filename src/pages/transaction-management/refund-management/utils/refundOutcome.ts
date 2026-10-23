@@ -44,6 +44,12 @@ export const describeApproveOutcome = (refund: RefundDetail): RefundOutcome => {
   }
 }
 
+/** Duyệt chi xong BE chuyển sang PROCESSING; job chi mới gửi lệnh sang ngân hàng. */
+export const describePayoutApproveOutcome = (refund: RefundDetail): string =>
+  refund.status === RefundStatus.SUCCESS
+    ? 'Đã duyệt chi. Hoàn tiền hoàn thành.'
+    : 'Đã duyệt chi. Lệnh chi sẽ được gửi sang ngân hàng.'
+
 export const describeSettleOutcome = (success: boolean): string =>
   success
     ? 'Đã quyết toán, hoàn tiền hoàn thành.'

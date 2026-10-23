@@ -22,10 +22,13 @@ export interface RefundColumnOptions {
   pageSize: number
   context: RefundActionContext
   payoutRefreshingId?: string
-  onView: (refund: RefundListItem) => void
+  /** Bỏ trống khi người dùng không có quyền xem chi tiết. */
+  onView?: (refund: RefundListItem) => void
   onApprove: (refund: RefundListItem) => void
   onReject: (refund: RefundListItem) => void
   onSettle: (refund: RefundListItem) => void
+  onPayoutApprove: (refund: RefundListItem) => void
+  onPayoutReject: (refund: RefundListItem) => void
   onPayoutRefresh: (refund: RefundListItem) => void
 }
 
@@ -158,7 +161,7 @@ export const createRefundColumns = (
     {
       title: 'Thao tác',
       key: 'actions',
-      // Tối đa 2 icon (xem, duyệt); Từ chối nằm trong popover của icon duyệt.
+      // Tối đa 2 icon (xem, duyệt/duyệt chi); Từ chối nằm trong popover của icon duyệt.
       width: 120,
       fixed: 'right',
       align: 'center',
@@ -172,6 +175,8 @@ export const createRefundColumns = (
           onApprove={options.onApprove}
           onReject={options.onReject}
           onSettle={options.onSettle}
+          onPayoutApprove={options.onPayoutApprove}
+          onPayoutReject={options.onPayoutReject}
           onPayoutRefresh={options.onPayoutRefresh}
           isPayoutRefreshing={payoutRefreshingId === record.id}
         />

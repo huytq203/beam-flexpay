@@ -4,6 +4,7 @@ import { RefundDisplayStatus, RefundType } from '@constants/refund.constant'
 export const RefundStatus = {
   PENDING_APPROVAL: 'PENDING_APPROVAL',
   WAITING_FUNDS: 'WAITING_FUNDS',
+  PENDING_PAYOUT_APPROVAL: 'PENDING_PAYOUT_APPROVAL',
   PROCESSING: 'PROCESSING',
   SUCCESS: 'SUCCESS',
   REJECTED: 'REJECTED'
@@ -26,7 +27,7 @@ export type RefundSource = (typeof RefundSource)[keyof typeof RefundSource]
 export const RefundOriginalType = {
   CASH_IN: 'CASH_IN',
   CASH_OUT: 'CASH_OUT',
-  P2P_TRANSFER: 'P2P_TRANSFER',
+  P2P_TRANSFER: 'P2P_TRANSFER'
 } as const
 export type RefundOriginalType =
   (typeof RefundOriginalType)[keyof typeof RefundOriginalType]
