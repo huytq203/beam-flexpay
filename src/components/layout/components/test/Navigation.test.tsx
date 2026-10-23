@@ -41,6 +41,8 @@ describe('merchant gateway navigation', () => {
       'sub-merchant',
       'terminal',
       'settlement-config',
+      'settlement-scope',
+      'settlement-item',
       'withdrawal-limit'
     ])
   })
