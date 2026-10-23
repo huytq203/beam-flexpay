@@ -1,0 +1,114 @@
+import { describe, expect, it } from 'vitest'
+import {
+  MAX_FEE_BELOW_FIXED_MESSAGE,
+  MAX_FEE_BELOW_MIN_MESSAGE,
+  MIN_FEE_BELOW_FIXED_MESSAGE
+} from '../schemas/feeBounds'
+import {
+  CalculationMethod,
+  feeComponentFormSchema
+} from '../schemas/feeConfig.schema'
+
+const component = (overrides: Record<string, unknown> = {}) => ({
+  key: 'c1',
+  feeScope: 'OUTPUT_FEE',
+  componentType: 'TRANSACTION_FEE',
+  baseOn: 'AMOUNT',
+  baseComponentType: null,
+  calculationMethod: CalculationMethod.DIRECT,
+  payerType: 'USER',
+  beneficiaryType: 'SYSTEM',
+  fixedAmount: null,
+  percentage: 1,
+  minFee: null,
+  maxFee: null,
+  roundMode: 'UP',
+  tiers: [],
+  ...overrides
+})
+
+const tier = (overrides: Record<string, unknown> = {}) => ({
+  maxValue: null,
+  fixedAmount: null,
+  percentage: 1,
+  minFee: null,
+  maxFee: null,
+  ...overrides
+})
+
+const issuesOf = (value: unknown) => {
+  const result = feeComponentFormSchema.safeParse(value)
+  return result.success
+    ? []
+    : result.error.issues.map((issue) => ({
+        path: issue.path.join('.'),
+        message: issue.message
+      }))
+}
+
+describe('sàn / trần phí so với phí cố định', () => {
+  it('phí tối thiểu nhỏ hơn phí cố định thì báo lỗi ở ô tối thiểu', () => {
+    expect(issuesOf(component({ fixedAmount: 5000, minFee: 3000 }))).toEqual([
+      { path: 'minFee', message: MIN_FEE_BELOW_FIXED_MESSAGE }
+    ])
+  })
+
+  it('phí tối đa nhỏ hơn phí cố định thì báo lỗi ở ô tối đa', () => {
+    expect(issuesOf(component({ fixedAmount: 5000, maxFee: 4000 }))).toEqual([
+      { path: 'maxFee', message: MAX_FEE_BELOW_FIXED_MESSAGE }
+    ])
+  })
+
+  it('tối thiểu và tối đa bằng phí cố định là hợp lệ', () => {
+    expect(
+      issuesOf(component({ fixedAmount: 5000, minFee: 5000, maxFee: 5000 }))
+    ).toEqual([])
+  })
+
+  it('không đặt phí cố định thì không ràng buộc sàn / trần theo nó', () => {
+    expect(issuesOf(component({ minFee: 1000, maxFee: 2000 }))).toEqual([])
+  })
+
+  it('để trống sàn / trần thì không so với phí cố định', () => {
+    expect(issuesOf(component({ fixedAmount: 5000 }))).toEqual([])
+  })
+})
+
+describe('phí tối đa so với phí tối thiểu', () => {
+  it('phí tối đa nhỏ hơn phí tối thiểu thì báo lỗi ở ô tối đa', () => {
+    expect(issuesOf(component({ minFee: 8000, maxFee: 6000 }))).toEqual([
+      { path: 'maxFee', message: MAX_FEE_BELOW_MIN_MESSAGE }
+    ])
+  })
+})
+
+describe('áp cùng luật cho từng bậc phí', () => {
+  const tiered = (tiers: unknown[]) =>
+    component({
+      calculationMethod: CalculationMethod.FLAT_TIER,
+      percentage: null,
+      tiers
+    })
+
+  it('báo lỗi đúng ô của bậc vi phạm', () => {
+    expect(
+      issuesOf(
+        tiered([
+          tier({ maxValue: 1_000_000, fixedAmount: 2000, minFee: 1000 }),
+          tier({ minFee: 9000, maxFee: 7000 })
+        ])
+      )
+    ).toEqual([
+      { path: 'tiers.0.minFee', message: MIN_FEE_BELOW_FIXED_MESSAGE },
+      { path: 'tiers.1.maxFee', message: MAX_FEE_BELOW_MIN_MESSAGE }
+    ])
+  })
+
+  it('bậc có tối đa nhỏ hơn phí cố định bị chặn', () => {
+    expect(
+      issuesOf(tiered([tier({ fixedAmount: 3000, maxFee: 2000 })]))
+    ).toEqual([
+      { path: 'tiers.0.maxFee', message: MAX_FEE_BELOW_FIXED_MESSAGE }
+    ])
+  })
+})

@@ -34,6 +34,7 @@ interface FeeComponentFieldsProps {
   receiver?: {
     control: Control<FeeComponentFormValues>
     tierError?: string
+    titles: { sender: string; receiver: string }
   }
 }
 
@@ -167,14 +168,14 @@ export const FeeComponentFields = ({
         }
       >
         <FeeSideFields
-          title='Người chuyển chịu'
+          title={receiver.titles.sender}
           control={control}
           isVat={isVat}
           tiered={tiered}
           tierError={tierError}
         />
         <FeeSideFields
-          title='Người nhận chịu'
+          title={receiver.titles.receiver}
           control={receiver.control}
           isVat={isVat}
           tiered={tiered}
