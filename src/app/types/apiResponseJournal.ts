@@ -144,6 +144,9 @@ export interface TransactionFeeDetail {
   components: TransactionFeeComponent[]
   totalInputCost: number | null
   inputCosts: TransactionFeeComponent[]
+  /** Chính sách phí đầu vào khớp báo giá; wallet-core bản cũ chưa trả, vắng = không hiện. */
+  inputCostPolicyId?: string | null
+  inputCostPolicyName?: string | null
 }
 
 export interface TransactionDetail360 {

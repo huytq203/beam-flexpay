@@ -108,4 +108,27 @@ describe('FeeNCC', () => {
 
     expect(screen.getByText('250 VND')).toBeInTheDocument()
   })
+
+  it('có inputCostPolicyName thì hiện chính sách phí đầu vào đã khớp', () => {
+    render(
+      <FeeNCC
+        data={withdrawal}
+        fee={fee({
+          inputCostPolicyId: 'p1',
+          inputCostPolicyName: 'Phí NAPAS nạp ví'
+        })}
+      />
+    )
+
+    expect(screen.getByText('Chính sách phí đầu vào:')).toBeInTheDocument()
+    expect(screen.getByText('Phí NAPAS nạp ví')).toBeInTheDocument()
+  })
+
+  it('không có inputCostPolicyName thì không hiện dòng chính sách', () => {
+    render(<FeeNCC data={withdrawal} fee={fee()} />)
+
+    expect(
+      screen.queryByText('Chính sách phí đầu vào:')
+    ).not.toBeInTheDocument()
+  })
 })
