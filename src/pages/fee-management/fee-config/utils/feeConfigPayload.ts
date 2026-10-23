@@ -14,7 +14,10 @@ import dayjs from 'dayjs'
 import {
   allowsBankCriteria,
   allowsProviderCriteria,
-  WALLET_SUBJECT_TYPE
+  FEE_SCOPE,
+  POLICY_KIND,
+  WALLET_SUBJECT_TYPE,
+  type PolicyKind
 } from '../constants/feeConfigFields'
 import { allowsOriginalTypeCriteria } from '../constants/feeRefundOriginalType'
 import {
@@ -56,9 +59,13 @@ const toAssignmentMoment = (value: string): string =>
  * SYSTEM được giữ để BE tách chi phí đầu vào; payer cũ chưa thực thi được
  * chuẩn hoá về USER/MERCHANT. Phí đầu ra miền Ví luôn về SYSTEM; chi phí đầu
  * vào và các miền khác giữ người hưởng của từng thành phần.
+ *
+ * Loại chính sách quyết định luồng thành phần được gửi: phí khách chỉ gửi phí đầu ra, phí đầu
+ * vào chỉ gửi chi phí đầu vào, để không bao giờ trộn hai luồng vào một chính sách.
  */
 export const toSetupRequest = (
-  form: FeeConfigFormValues
+  form: FeeConfigFormValues,
+  policyKind: PolicyKind = POLICY_KIND.CUSTOMER_FEE
 ): FeePolicySetupRequest => {
   const executablePayer = getExecutablePayer(form.serviceType)
   if (!executablePayer) {
@@ -67,7 +74,13 @@ export const toSetupRequest = (
     )
   }
 
+  const scope =
+    policyKind === POLICY_KIND.INPUT_COST
+      ? FEE_SCOPE.INPUT_COST
+      : FEE_SCOPE.OUTPUT_FEE
+
   return {
+    policyKind,
     policy: {
       name: form.name.trim(),
       serviceType: form.serviceType,
@@ -78,57 +91,61 @@ export const toSetupRequest = (
       validTo: form.validTo ? toPolicyMoment(form.validTo) : undefined,
       priority: form.priority
     },
-    components: form.components.map((component) => ({
-      feeScope: component.feeScope,
-      componentType: component.componentType,
-      baseOn: component.baseOn,
-      baseComponentType:
-        component.baseOn === 'FEE_COMPONENT'
-          ? component.baseComponentType
-          : undefined,
-      calculationMethod: toBackendMethod(component),
-      // Thành phần chia bậc lấy số từ bảng bậc, hai ô này phải về 0 để backend
-      // không cộng thêm một lần nữa lên trên kết quả của bậc.
-      fixedAmount: usesTiers(component.calculationMethod)
-        ? 0
-        : orZero(component.fixedAmount),
-      percentage: usesTiers(component.calculationMethod)
-        ? 0
-        : orZero(component.percentage),
-      roundMode: ROUND_MODE,
-      minFee: usesTiers(component.calculationMethod)
-        ? 0
-        : orZero(component.minFee),
-      maxFee: usesTiers(component.calculationMethod)
-        ? 0
-        : orZero(component.maxFee),
-      // Giữ SYSTEM cho cost estimate; chỉ chuẩn hoá payer cũ SENDER/RECEIVER.
-      // Payer ngoài tập cho phép (hoàn tiền chỉ còn USER) về mặc định.
-      payerType:
-        component.payerType === 'SYSTEM'
-          ? 'SYSTEM'
-          : getSelectablePayers(form.serviceType).includes(component.payerType)
-            ? component.payerType
-            : executablePayer,
-      // Phí đầu ra: VAT về Ngân hàng, loại phí khác về Hệ thống; phí đầu vào giữ lựa chọn.
-      beneficiaryType:
-        component.payerType !== 'SYSTEM'
-          ? outputBeneficiaryFor(component.componentType)
-          : component.beneficiaryType,
-      tiers: usesTiers(component.calculationMethod)
-        ? component.tiers.map((tier, index) => ({
-            // Backend dùng khoảng bao đóng và nhận min bậc sau = max trước + 1;
-            // form suy nó ra để không tạo khoảng hở hoặc chồng lấn.
-            minValue: getTierStart(component.tiers, index),
-            maxValue: tier.maxValue,
-            roundMode: ROUND_MODE,
-            minFee: orZero(tier.minFee),
-            maxFee: orZero(tier.maxFee),
-            fixedAmount: orZero(tier.fixedAmount),
-            percentage: orZero(tier.percentage)
-          }))
-        : []
-    }))
+    components: form.components
+      .filter((component) => component.feeScope === scope)
+      .map((component) => ({
+        feeScope: component.feeScope,
+        componentType: component.componentType,
+        baseOn: component.baseOn,
+        baseComponentType:
+          component.baseOn === 'FEE_COMPONENT'
+            ? component.baseComponentType
+            : undefined,
+        calculationMethod: toBackendMethod(component),
+        // Thành phần chia bậc lấy số từ bảng bậc, hai ô này phải về 0 để backend
+        // không cộng thêm một lần nữa lên trên kết quả của bậc.
+        fixedAmount: usesTiers(component.calculationMethod)
+          ? 0
+          : orZero(component.fixedAmount),
+        percentage: usesTiers(component.calculationMethod)
+          ? 0
+          : orZero(component.percentage),
+        roundMode: ROUND_MODE,
+        minFee: usesTiers(component.calculationMethod)
+          ? 0
+          : orZero(component.minFee),
+        maxFee: usesTiers(component.calculationMethod)
+          ? 0
+          : orZero(component.maxFee),
+        // Giữ SYSTEM cho cost estimate; chỉ chuẩn hoá payer cũ SENDER/RECEIVER.
+        // Payer ngoài tập cho phép (hoàn tiền chỉ còn USER) về mặc định.
+        payerType:
+          component.payerType === 'SYSTEM'
+            ? 'SYSTEM'
+            : getSelectablePayers(form.serviceType).includes(
+                  component.payerType
+                )
+              ? component.payerType
+              : executablePayer,
+        // Phí đầu ra: VAT về Ngân hàng, loại phí khác về Hệ thống; phí đầu vào giữ lựa chọn.
+        beneficiaryType:
+          component.payerType !== 'SYSTEM'
+            ? outputBeneficiaryFor(component.componentType)
+            : component.beneficiaryType,
+        tiers: usesTiers(component.calculationMethod)
+          ? component.tiers.map((tier, index) => ({
+              // Backend dùng khoảng bao đóng và nhận min bậc sau = max trước + 1;
+              // form suy nó ra để không tạo khoảng hở hoặc chồng lấn.
+              minValue: getTierStart(component.tiers, index),
+              maxValue: tier.maxValue,
+              roundMode: ROUND_MODE,
+              minFee: orZero(tier.minFee),
+              maxFee: orZero(tier.maxFee),
+              fixedAmount: orZero(tier.fixedAmount),
+              percentage: orZero(tier.percentage)
+            }))
+          : []
+      }))
   }
 }
 
@@ -173,6 +190,32 @@ export const toAssignmentRequest = (
     form.assignmentScope === 'SEGMENT'
       ? form.customerGroup || undefined
       : undefined,
+  effectiveFromDate: form.validFrom
+    ? toAssignmentMoment(form.validFrom)
+    : undefined,
+  effectiveToDate: form.validTo ? toAssignmentMoment(form.validTo) : undefined
+})
+
+/**
+ * Form phí đầu vào → payload gán tuyến thanh toán.
+ *
+ * Chỉ khai NCC, ngân hàng phát hành, phương thức và ngày hiệu lực. Backend từ chối bản gán phí đầu
+ * vào có merchant, loại thẻ, nhóm khách, chủ thể hay loại giao dịch gốc, nên các trường đó không
+ * bao giờ có mặt ở đây dù form có giữ giá trị cũ. Loại giao dịch là `serviceType` của chính sách.
+ */
+export const toInputCostAssignmentRequest = (
+  form: FeeConfigFormValues,
+  feePolicyId: string
+): FeeAssignmentCreateRequest => ({
+  feePolicyId,
+  serviceType: form.serviceType,
+  providerCode: allowsProviderCriteria(form.serviceType)
+    ? form.providerCode || undefined
+    : undefined,
+  bankCode: allowsBankCriteria(form.serviceType)
+    ? form.bankCode || undefined
+    : undefined,
+  paymentMethod: form.paymentMethod || undefined,
   effectiveFromDate: form.validFrom
     ? toAssignmentMoment(form.validFrom)
     : undefined,

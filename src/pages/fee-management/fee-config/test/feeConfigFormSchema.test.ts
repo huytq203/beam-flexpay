@@ -200,7 +200,7 @@ describe('feeConfigFormSchema', () => {
     expect(errorPaths(result)).toContain('components')
   })
 
-  it('cho phép một chính sách có cả phí đầu ra và phí đầu vào', () => {
+  it('từ chối chính sách phí khách có thành phần phí đầu vào', () => {
     const result = feeConfigFormSchema.safeParse(
       form({
         components: [
@@ -214,7 +214,8 @@ describe('feeConfigFormSchema', () => {
         ]
       })
     )
-    expect(result.success).toBe(true)
+    expect(result.success).toBe(false)
+    expect(errorPaths(result)).toContain('components')
   })
 
   it('chính sách miền Bank cũng phải có ít nhất một phí đầu ra', () => {

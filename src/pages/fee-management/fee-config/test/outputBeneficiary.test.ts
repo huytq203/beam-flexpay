@@ -38,7 +38,7 @@ describe('người hưởng phí đầu ra theo loại phí', () => {
     expect(open('TRANSACTION_FEE', 'BANK')).toBe('SYSTEM')
   })
 
-  it('payload gửi đúng người hưởng theo loại phí, phí đầu vào giữ lựa chọn', () => {
+  it('payload gửi đúng người hưởng theo loại phí; chính sách phí khách không gửi phí đầu vào, chính sách phí đầu vào giữ lựa chọn', () => {
     const form = baseForm()
     const [fee] = form.components
     form.components = [
@@ -67,8 +67,12 @@ describe('người hưởng phí đầu ra theo loại phí', () => {
       )
     ).toEqual([
       ['TRANSACTION_FEE', 'SYSTEM'],
-      ['VAT', 'BANK'],
-      ['BANK_FEE', 'PARTNER']
+      ['VAT', 'BANK']
     ])
+    expect(
+      toSetupRequest(form, 'INPUT_COST').components.map(
+        ({ componentType, beneficiaryType }) => [componentType, beneficiaryType]
+      )
+    ).toEqual([['BANK_FEE', 'PARTNER']])
   })
 })

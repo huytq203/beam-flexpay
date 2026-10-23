@@ -5,7 +5,13 @@ import { useLazyGetFeeComponentTierQuery } from '@services/apiFeeComponentTier'
 import { useGetFeePolicyByIdQuery } from '@services/apiFeePolicy.api'
 import type { FeeComponentTier, FeePolicyComponent } from '@type/fee.type'
 import { useEffect, useState } from 'react'
-import { resolveFeeScope } from '../constants/feeConfigFields'
+import {
+  FEE_SCOPE,
+  POLICY_KIND,
+  resolveFeeScope,
+  type FeeScope,
+  type PolicyKind
+} from '../constants/feeConfigFields'
 import {
   CalculationMethod,
   type FeeComponentFormValues,
@@ -22,6 +28,8 @@ export interface UseFeeConfigDetailResult {
   feeCode: string | null
   /** Backend khoá sửa cấu hình con ở mọi trạng thái khác Khởi tạo và Từ chối. */
   isEditable: boolean
+  /** Loại chính sách đã lưu; null khi tạo mới hoặc chưa tải xong. BE cũ chưa trả = phí khách. */
+  policyKind: PolicyKind | null
   isLoading: boolean
   isError: boolean
 }
@@ -39,7 +47,13 @@ const toIsoOrEmpty = (value: string | null | undefined): string =>
  * là không gọi được hook trong vòng lặp.
  */
 export const useFeeConfigDetail = (
-  policyId: string | undefined
+  policyId: string | undefined,
+  /**
+   * Luồng thành phần đưa vào form. Chính sách phí khách chỉ có phí đầu ra, chính sách phí đầu vào
+   * chỉ có chi phí đầu vào; thành phần lạc luồng (dữ liệu trước khi tách) bị bỏ khỏi form, và vì
+   * lúc lưu form dựng lại toàn bộ thành phần nên chúng cũng bị xoá khỏi chính sách.
+   */
+  scope: FeeScope = FEE_SCOPE.OUTPUT_FEE
 ): UseFeeConfigDetailResult => {
   const skip = !policyId
 
@@ -124,13 +138,18 @@ export const useFeeConfigDetail = (
       snapshot: null,
       feeCode: null,
       isEditable: true,
+      policyKind: null,
       isLoading: skip ? false : isLoading,
       isError
     }
   }
 
-  const formComponents: FeeComponentFormValues[] = (components ?? []).map(
-    (component) => {
+  const formComponents: FeeComponentFormValues[] = (components ?? [])
+    .filter(
+      (component) =>
+        resolveFeeScope(component.feeScope, component.payerType) === scope
+    )
+    .map((component) => {
       // Form không còn công thức Miễn phí: bản ghi FREE (hoặc DIRECT thu 0 đồng) nạp lại thành
       // DIRECT với 0 ở cả hai ô, để thấy rõ "đã điền 0" thay vì hai ô trống bị báo thiếu mức phí.
       const isFreeDirect =
@@ -168,8 +187,7 @@ export const useFeeConfigDetail = (
           maxFee: tier.maxFee || null
         }))
       }
-    }
-  )
+    })
 
   const feeDomain = isFeeDomain(policy.feeDomain)
     ? policy.feeDomain
@@ -207,6 +225,7 @@ export const useFeeConfigDetail = (
     },
     feeCode: policy.feeCode ?? null,
     isEditable: EDITABLE_STATUSES.includes(policy.status),
+    policyKind: policy.policyKind ?? POLICY_KIND.CUSTOMER_FEE,
     isLoading: false,
     isError: false
   }
