@@ -5,6 +5,7 @@ import type {
 } from '@type/apiResponseJournal'
 import { formatCurrency } from '@utils/formatNumber'
 import React from 'react'
+import { DetailSectionTitle } from './DetailSectionTitle'
 
 interface FeeNCCProps {
   data?: UnifiedContentJournal
@@ -37,9 +38,7 @@ const FeeNCC = ({ data, profit, fee }: FeeNCCProps) => {
 
   return (
     <>
-      <div>
-        <p className='font-medium text-yellow-700'>Chi phí nhà cung cấp</p>
-      </div>
+      <DetailSectionTitle>Chi phí nhà cung cấp</DetailSectionTitle>
       <hr className='my-3' />
       <div className='flex flex-col gap-3 px-3'>
         <div className='flex justify-between items-center'>
@@ -63,7 +62,9 @@ const FeeNCC = ({ data, profit, fee }: FeeNCCProps) => {
                 <p className='text-xs text-gray-500'>{item.formula}</p>
               )}
             </div>
-            <p className='font-medium tabular-nums'>{formatMoney(item.amount ?? 0)}</p>
+            <p className='font-medium tabular-nums'>
+              {formatMoney(item.amount ?? 0)}
+            </p>
           </div>
         ))}
         <div className='flex flex-wrap items-center justify-between gap-2 rounded-md bg-orange-100 px-3 py-3'>

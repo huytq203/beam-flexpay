@@ -3,30 +3,21 @@ import { renderWithProviders } from '@/test/render'
 import { MessageProvider } from '@hooks/MessageProvider'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import type { FeePolicyScheduleAction } from '@type/fee.type'
 import dayjs from 'dayjs'
 import { http, HttpResponse } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
 import { FeePolicyStatusChangeDialog } from '../components/FeePolicyStatusChangeDialog'
-import {
-  END_AT_AFTER_START_MESSAGE,
-  RUN_AT_REQUIRED_MESSAGE
-} from '../schemas/feePolicySchedule.schema'
+import { END_AT_AFTER_START_MESSAGE } from '../schemas/feePolicySchedule.schema'
 
 const URL = '*/fee/policies/policy-1/status-changes'
 const PICKER = 'Ngay khi xác nhận'
 const END_PICKER = 'Không tự đảo lại'
 
-const renderDialog = (
-  status = 'ACTIVE',
-  allowedActions: FeePolicyScheduleAction[] = ['ACTIVATE', 'DEACTIVATE'],
-  onClose = vi.fn()
-) => {
+const renderDialog = (status = 'ACTIVE', onClose = vi.fn()) => {
   renderWithProviders(
     <MessageProvider>
       <FeePolicyStatusChangeDialog
         policy={{ id: 'policy-1', name: 'Biểu phí A', status }}
-        allowedActions={allowedActions}
         onClose={onClose}
       />
     </MessageProvider>
@@ -62,6 +53,15 @@ describe('dialog khóa / mở chính sách phí', () => {
     expect(await screen.findByPlaceholderText(PICKER)).toBeInTheDocument()
     expect(screen.getByPlaceholderText(END_PICKER)).toBeInTheDocument()
     expect(screen.queryByRole('radio')).toBeNull()
+  })
+
+  it('không còn ô chọn hành động, tiêu đề theo thao tác đảo trạng thái', async () => {
+    renderDialog('INACTIVE')
+    expect(
+      await screen.findByText('Mở khóa chính sách phí')
+    ).toBeInTheDocument()
+    expect(screen.queryByText('Hành động')).toBeNull()
+    expect(screen.queryByRole('combobox')).toBeNull()
   })
 
   it('bỏ trống thời điểm: chính sách đang bật thì ngừng áp dụng ngay, không gửi runAt', async () => {
@@ -132,21 +132,6 @@ describe('dialog khóa / mở chính sách phí', () => {
     })
   })
 
-  it('hành động không làm ngay được (mở chính sách đang bật) thì bắt chọn thời điểm', async () => {
-    const sent = captureBody()
-    const user = userEvent.setup()
-    renderDialog('ACTIVE', ['ACTIVATE'])
-
-    await user.type(
-      await screen.findByRole('textbox', { name: /Lý do/ }),
-      'Mở lại sáng mai'
-    )
-    await user.click(screen.getByRole('button', { name: 'Hẹn giờ' }))
-
-    expect(await screen.findByText(RUN_AT_REQUIRED_MESSAGE)).toBeInTheDocument()
-    expect(sent.calls).toBe(0)
-  })
-
   it('đặt khoảng: một lần gửi cả runAt và endAt, BE tự đảo lại khi hết khoảng', async () => {
     const sent = captureBody()
     const user = userEvent.setup()
@@ -157,7 +142,6 @@ describe('dialog khóa / mở chính sách phí', () => {
     await screen.findByPlaceholderText(PICKER)
     await pickRunAt(user, runAt)
     await pickRunAt(user, endAt, END_PICKER)
-    expect(screen.getByText(/Hết khoảng tự mở lại/)).toBeInTheDocument()
     await user.type(
       screen.getByRole('textbox', { name: /Lý do/ }),
       'Bảo trì cổng'

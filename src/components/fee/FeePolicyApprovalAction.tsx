@@ -1,6 +1,10 @@
 import { useState } from 'react'
 import { Popover } from 'antd'
-import { ButtonComponent, ReasonDialog } from '@components/index'
+import {
+  ButtonComponent,
+  ReasonDialog,
+  TooltipComponent
+} from '@components/index'
 import { CheckOutlined } from '@components/icons'
 import { useMessage } from '@hooks/useMessage'
 import {
@@ -118,22 +122,29 @@ export const FeePolicyApprovalAction = ({
         }}
       >
         <span className='inline-flex'>
-          <ButtonComponent
-            aria-label={
-              isProcessed ? 'Chính sách đã được xử lý' : 'Phê duyệt chính sách'
-            }
+          {/* Ẩn tooltip khi popover đang mở để hai lớp nổi không chồng lên nhau. */}
+          <TooltipComponent
             title={
               isProcessed
                 ? 'Chính sách đã được phê duyệt hoặc từ chối'
                 : 'Phê duyệt chính sách'
             }
-            htmlType='button'
-            type='default'
-            size='small'
-            icon={<CheckOutlined />}
-            loading={isLoading}
-            disabled={isProcessed || isLoading}
-          />
+            open={open ? false : undefined}
+          >
+            <ButtonComponent
+              aria-label={
+                isProcessed
+                  ? 'Chính sách đã được xử lý'
+                  : 'Phê duyệt chính sách'
+              }
+              htmlType='button'
+              type='default'
+              size='small'
+              icon={<CheckOutlined />}
+              loading={isLoading}
+              disabled={isProcessed || isLoading}
+            />
+          </TooltipComponent>
         </span>
       </Popover>
       <ReasonDialog

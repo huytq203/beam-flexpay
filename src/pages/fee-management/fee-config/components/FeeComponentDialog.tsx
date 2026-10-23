@@ -40,18 +40,14 @@ import {
 } from '../utils/feeComponentParties'
 import { useFeeComponentFieldHandlers } from '../hooks/useFeeComponentFieldHandlers'
 import { useFeeComponentSubmit } from '../hooks/useFeeComponentSubmit'
+import { usePayerSelectOptions } from '../hooks/usePayerSelectOptions'
 import { FeeComponentFields } from './FeeComponentFields'
-
-const BOTH_BEARERS_OPTION = {
-  value: BOTH_BEARERS,
-  label: 'Cả hai bên cùng chịu'
-}
 
 interface FeeComponentDialogProps {
   open: boolean
   /** Bỏ trống là thêm mới. */
   initialValue: FeeComponentFormValues | null
-  /** Thành phần người nhận đi cặp với `initialValue` (chuyển tiền, cả hai bên cùng chịu). */
+  /** Thành phần người nhận đi cặp với `initialValue` khi cả hai bên cùng chịu. */
   initialPartner?: FeeComponentFormValues | null
   /** Các thành phần đứng trước — chỉ chúng làm cơ sở tính được. */
   precedingComponents: readonly FeeComponentFormValues[]
@@ -83,7 +79,8 @@ export const FeeComponentDialog = ({
   onCancel
 }: FeeComponentDialogProps) => {
   const isInputCost = feeScope === FEE_SCOPE.INPUT_COST
-  const bearerSplit = supportsBearerSplit(serviceType) && !isInputCost
+  const bearerSplit =
+    supportsBearerSplit(serviceType, originalTransactionType) && !isInputCost
   const parties = useMemo(
     () =>
       getComponentPartyOptions(
@@ -177,15 +174,15 @@ export const FeeComponentDialog = ({
   const canSplit = bearerSplit && baseOn === 'AMOUNT' && !isVat
   const isBoth = payerType === BOTH_BEARERS
 
-  useEffect(() => {
-    if (isBoth && !canSplit) {
-      setValue('payerType', SENDER_PAYER, { shouldValidate: true })
-    }
-  }, [canSplit, isBoth, setValue])
-
-  const payerSelectOptions = canSplit
-    ? [...payerTypeOptions, BOTH_BEARERS_OPTION]
-    : payerTypeOptions
+  const payerSelectOptions = usePayerSelectOptions({
+    payerTypeOptions,
+    canSplit,
+    isVat,
+    baseComponentType,
+    precedingComponents,
+    payerType,
+    setValue
+  })
   const vatBaseComponentType = getVatBaseForCategory(
     businessCategory,
     serviceType

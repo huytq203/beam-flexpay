@@ -6,6 +6,7 @@ import type {
 import { formatCurrency } from '@utils/formatNumber'
 import { cn } from '@lib/utils/cn'
 import { buildUserFeeSummary, type UserFeeRow } from '../utils/userFeeSummary'
+import { DetailSectionTitle } from './DetailSectionTitle'
 
 interface UserFeesProps {
   data?: UnifiedContentJournal
@@ -52,7 +53,7 @@ const UserFees = ({ data, profit, fee }: UserFeesProps) => {
 
   const header = (
     <>
-      <p className='text-blue font-medium'>Tài chính & phí người dùng</p>
+      <DetailSectionTitle>Tài chính & phí người dùng</DetailSectionTitle>
       <hr className='my-3' />
     </>
   )

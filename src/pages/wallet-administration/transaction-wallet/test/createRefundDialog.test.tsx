@@ -61,19 +61,22 @@ describe('CreateRefundDialog', () => {
       },
       '100,000 VND'
     ]
-  ])('Số tiền gốc theo feeBearer %s', async (_name, overrides, expected) => {
-    renderDialog(
-      makeTransaction({
-        transactionType: 'CASH_OUT',
-        amount: 97000,
-        grossAmount: 100000,
-        feeAmount: 3000,
-        ...overrides
-      })
-    )
-    const label = await screen.findByText('Số tiền gốc')
-    expect(label.nextElementSibling).toHaveTextContent(expected)
-  })
+  ])(
+    'Giá trị giao dịch theo feeBearer %s',
+    async (_name, overrides, expected) => {
+      renderDialog(
+        makeTransaction({
+          transactionType: 'CASH_OUT',
+          amount: 97000,
+          grossAmount: 100000,
+          feeAmount: 3000,
+          ...overrides
+        })
+      )
+      const label = await screen.findByText('Giá trị giao dịch')
+      expect(label.nextElementSibling).toHaveTextContent(expected)
+    }
+  )
 
   it.each([
     ['CASH_IN', 'Về ngân hàng', 'TO_BANK'],

@@ -23,16 +23,6 @@ export const formatScheduleTime = (value: string | null): string =>
 export const isSchedulablePolicy = (status: string): boolean =>
   SCHEDULABLE_POLICY_STATUSES.includes(status)
 
-/** Hành động mặc định: chính sách đang bật thì hẹn khóa, ngược lại hẹn mở. */
-export const defaultScheduleAction = (
-  policyStatus: string,
-  allowed: readonly FeePolicyScheduleAction[]
-): FeePolicyScheduleAction | undefined => {
-  const preferred: FeePolicyScheduleAction =
-    policyStatus === 'ACTIVE' ? 'DEACTIVATE' : 'ACTIVATE'
-  return allowed.includes(preferred) ? preferred : allowed[0]
-}
-
 /** Hành động duy nhất làm ngay được: đảo trạng thái hiện tại (đang bật thì khóa, còn lại thì mở). */
 export const immediateActionFor = (
   policyStatus: string

@@ -73,9 +73,9 @@ describe('ghép cặp người chuyển / người nhận', () => {
     ])
   })
 
-  it('không ghép ngoài chuyển tiền, phí đầu vào hay phí tính trên phí khác', () => {
+  it('không ghép ở hoàn rút tiền, phí đầu vào hay phí tính trên phí khác', () => {
     const pair = [component({}), component({ payerType: 'RECEIVER' })]
-    expect(findBearerPartner('EWALLET_DEPOSIT', pair, 0)).toBeNull()
+    expect(findBearerPartner('EWALLET_REFUND', pair, 0, 'CASH_OUT')).toBeNull()
 
     const vat = [
       component({ componentType: 'VAT', baseOn: 'FEE_COMPONENT' }),

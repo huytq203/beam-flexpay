@@ -17,9 +17,10 @@ const isSender = (payerType: string) =>
  */
 export const canSplitBearers = (
   serviceType: string | null | undefined,
-  component: Pick<FeeComponentFormValues, 'feeScope' | 'baseOn'>
+  component: Pick<FeeComponentFormValues, 'feeScope' | 'baseOn'>,
+  originalTransactionType?: string | null
 ): boolean =>
-  supportsBearerSplit(serviceType) &&
+  supportsBearerSplit(serviceType, originalTransactionType) &&
   component.feeScope === 'OUTPUT_FEE' &&
   component.baseOn === 'AMOUNT'
 
@@ -30,16 +31,19 @@ export const canSplitBearers = (
 export const findBearerPartner = (
   serviceType: string | null | undefined,
   components: readonly FeeComponentFormValues[],
-  index: number
+  index: number,
+  originalTransactionType?: string | null
 ): number | null => {
   const current = components[index]
-  if (!current || !canSplitBearers(serviceType, current)) return null
+  const canSplit = (component: FeeComponentFormValues) =>
+    canSplitBearers(serviceType, component, originalTransactionType)
+  if (!current || !canSplit(current)) return null
   const wantSender = current.payerType === RECEIVER_PAYER
   if (!wantSender && !isSender(current.payerType)) return null
   const partner = components.findIndex(
     (other, otherIndex) =>
       otherIndex !== index &&
-      canSplitBearers(serviceType, other) &&
+      canSplit(other) &&
       other.componentType === current.componentType &&
       other.beneficiaryType === current.beneficiaryType &&
       (wantSender
@@ -60,13 +64,19 @@ export interface ComponentGroup {
 export const groupBearerPairs = (
   serviceType: string | null | undefined,
   components: readonly FeeComponentFormValues[],
-  indexes: readonly number[]
+  indexes: readonly number[],
+  originalTransactionType?: string | null
 ): ComponentGroup[] => {
   const used = new Set<number>()
   const groups: ComponentGroup[] = []
   for (const index of indexes) {
     if (used.has(index)) continue
-    const partner = findBearerPartner(serviceType, components, index)
+    const partner = findBearerPartner(
+      serviceType,
+      components,
+      index,
+      originalTransactionType
+    )
     used.add(index)
     if (partner === null || used.has(partner)) {
       groups.push({ primary: index, partner: null })

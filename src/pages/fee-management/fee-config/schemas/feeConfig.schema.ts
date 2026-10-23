@@ -142,10 +142,11 @@ export const feeConfigFormSchema = z
       })
     }
 
-    // Chuyển tiền: cả hai bên cùng chịu phải cùng loại phí, VAT chỉ một dòng.
+    // Cả hai bên cùng chịu (chuyển, nạp, rút, hoàn nạp/chuyển): cùng loại phí, VAT chỉ một dòng.
     const bearerError = validateTransferBearers(
       form.serviceType,
-      form.components
+      form.components,
+      form.originalTransactionType
     )
     if (bearerError) {
       ctx.addIssue({

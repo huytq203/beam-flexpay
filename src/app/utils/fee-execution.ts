@@ -87,16 +87,34 @@ export const validateRefundDebitedSide = (
     : null
 
 /**
- * Chuyển tiền cho người chuyển chịu, người nhận chịu hoặc cả hai chịu. Cả hai chịu là hai thành phần
- * cùng loại phí, mỗi bên một thành phần; riêng phí phụ thuộc (VAT) chỉ khai một dòng và backend
- * tự tách theo phí của từng bên. Luật kiểm tra nằm ở `validateTransferBearers`.
+ * Chuyển tiền, nạp và rút cho người chuyển chịu, người nhận chịu hoặc cả hai chịu. Cả hai chịu là hai
+ * thành phần cùng loại phí, mỗi bên một thành phần; riêng phí phụ thuộc (VAT) chỉ khai một dòng và
+ * backend tự tách theo phí của từng bên. Luật kiểm tra nằm ở `validateTransferBearers`.
  */
-const BEARER_SPLIT_SERVICES: readonly string[] = ['EWALLET_TRANSFER_INTERNAL']
+const BEARER_SPLIT_SERVICES: readonly string[] = [
+  'EWALLET_TRANSFER_INTERNAL',
+  'EWALLET_DEPOSIT',
+  'EWALLET_WITHDRAWAL'
+]
+
+/** Phí hoàn chỉ cho cả hai chịu khi bản gán nêu rõ hoàn nạp tiền hoặc hoàn chuyển tiền. */
+const BEARER_SPLIT_REFUND_ORIGINAL_TYPES: readonly string[] = [
+  'CASH_IN',
+  'P2P_TRANSFER'
+]
 
 export const supportsBearerSplit = (
-  serviceType: string | null | undefined
-): boolean =>
-  Boolean(serviceType && BEARER_SPLIT_SERVICES.includes(serviceType))
+  serviceType: string | null | undefined,
+  originalTransactionType?: string | null
+): boolean => {
+  if (!serviceType) return false
+  if (serviceType === 'EWALLET_REFUND') {
+    return BEARER_SPLIT_REFUND_ORIGINAL_TYPES.includes(
+      originalTransactionType ?? ''
+    )
+  }
+  return BEARER_SPLIT_SERVICES.includes(serviceType)
+}
 
 /**
  * Chân phí dương hiện ghi sổ được với người hưởng SYSTEM hoặc BANK. BANK chỉ là

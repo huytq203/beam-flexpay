@@ -98,11 +98,16 @@ export const FeeComponentList = ({
   }
 
   const editing = editingIndex === null ? null : components[editingIndex]
-  // Chuyển tiền: sửa một bên của cặp là sửa cả cặp, nên mở hộp thoại kèm thành phần bên kia.
+  // Cả hai bên cùng chịu: sửa một bên của cặp là sửa cả cặp, nên mở hộp thoại kèm thành phần bên kia.
   const partnerIndex =
     editingIndex === null
       ? null
-      : findBearerPartner(serviceType, components, editingIndex)
+      : findBearerPartner(
+          serviceType,
+          components,
+          editingIndex,
+          originalTransactionType
+        )
   const partner = partnerIndex === null ? null : components[partnerIndex]
   const dialogScope: FeeScope | null = editing?.feeScope ?? addingScope
   const closeDialog = () => {
@@ -159,7 +164,12 @@ export const FeeComponentList = ({
       {FEE_SCOPES.map((scope) => {
         const isInput = scope === FEE_SCOPE.INPUT_COST
         const indexes = indexesOf(scope)
-        const groups = groupBearerPairs(serviceType, components, indexes)
+        const groups = groupBearerPairs(
+          serviceType,
+          components,
+          indexes,
+          originalTransactionType
+        )
         return (
           <div
             key={scope}

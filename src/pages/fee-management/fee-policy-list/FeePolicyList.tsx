@@ -19,7 +19,6 @@ import {
   FeePolicyStatusChangeDialog,
   type StatusChangePolicy
 } from './components/FeePolicyStatusChangeDialog'
-import { useSchedulePermissions } from './hooks/useSchedulePermissions'
 import { getFeePolicyColumns } from './columns/FeePolicyList.column'
 import { useExpandedPolicyIds } from './hooks/useExpandedPolicyIds'
 import { useFeePolicyList } from './hooks/useFeePolicyList'
@@ -52,7 +51,6 @@ const FeePolicyList = () => {
   const feeScope = isFeeScope(filters.feeScope)
     ? filters.feeScope
     : FEE_SCOPE.OUTPUT_FEE
-  const { allowedActions } = useSchedulePermissions()
   const [changing, setChanging] = useState<StatusChangePolicy | null>(null)
   const customerSegmentNames = useCustomerSegmentNames()
   const exportFilters = {
@@ -260,7 +258,6 @@ const FeePolicyList = () => {
 
       <FeePolicyStatusChangeDialog
         policy={changing}
-        allowedActions={allowedActions}
         onClose={() => setChanging(null)}
       />
     </>

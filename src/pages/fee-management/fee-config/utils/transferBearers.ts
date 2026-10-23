@@ -14,21 +14,24 @@ export const TRANSFER_BEARER_DEPENDENT_MESSAGE =
   'Phí phụ thuộc (ví dụ VAT) chỉ khai một dòng khi cả hai bên cùng chịu phí, hệ thống tự tính theo phí của từng bên'
 export const TRANSFER_BEARER_BASE_MESSAGE =
   'Phí phụ thuộc phải tính trên loại phí có ở cả hai bên'
+export const TRANSFER_BEARER_DEPENDENT_SIDE_MESSAGE =
+  'VAT (phí phụ thuộc) phải cùng người chịu với phí gốc: phí gốc chỉ một bên chịu thì VAT cũng do đúng bên đó chịu'
 
 const isReceiver = (payerType: string) => payerType === 'RECEIVER'
 
 /**
- * Bản sao phía FE của luật backend cho chuyển tiền. Người chuyển chịu hoặc người nhận chịu: không
- * ràng buộc thêm. Cả hai bên cùng chịu: phí tính trên số tiền phải cùng loại ở hai bên, phí phụ
+ * Bản sao phía FE của luật backend cho các luồng cho cả hai bên cùng chịu (`supportsBearerSplit`).
+ * Người chuyển chịu hoặc người nhận chịu: không ràng buộc thêm. Cả hai bên cùng chịu: phí tính trên số tiền phải cùng loại ở hai bên, phí phụ
  * thuộc chỉ một dòng mỗi loại và phải dựa trên loại phí có ở cả hai bên.
  *
  * @returns thông báo lỗi, hoặc null nếu hợp lệ
  */
 export const validateTransferBearers = (
   serviceType: string | null | undefined,
-  components: readonly BearerComponent[]
+  components: readonly BearerComponent[],
+  originalTransactionType?: string | null
 ): string | null => {
-  if (!supportsBearerSplit(serviceType)) return null
+  if (!supportsBearerSplit(serviceType, originalTransactionType)) return null
   const output = components.filter((item) => item.feeScope === 'OUTPUT_FEE')
   const hasReceiver = output.some((item) => isReceiver(item.payerType))
   const hasSender = output.some((item) => !isReceiver(item.payerType))
@@ -46,6 +49,10 @@ export const validateTransferBearers = (
     } else {
       ;(isReceiver(item.payerType) ? receiver : sender).add(item.componentType)
     }
+  }
+  // Một bên chỉ có VAT mà không có phí gốc: VAT khai sai bên, không phải cả hai bên cùng chịu.
+  if (sender.size === 0 || receiver.size === 0) {
+    return TRANSFER_BEARER_DEPENDENT_SIDE_MESSAGE
   }
   const sameTypes =
     sender.size === receiver.size &&

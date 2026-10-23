@@ -10,6 +10,7 @@ import InfoUser from './components/InfoUser'
 import UserFees from './components/UserFees'
 import FeeNCC from './components/FeeNCC'
 import { DetailTransactionHeader } from './components/DetailTransactionHeader'
+import { DetailSectionTitle } from './components/DetailSectionTitle'
 import { TransactionRefundList } from './components/TransactionRefundList'
 import { TransactionReviewPanel } from './components/TransactionReviewPanel'
 import useDetailTransaction from './hooks/useDetailTransaction'
@@ -103,9 +104,9 @@ const DetailTransaction = () => {
           <CardComponent
             content={
               <>
-                <div>
-                  <p className='font-medium'>Bảng hạch toán luồng tiền</p>
-                </div>
+                <DetailSectionTitle>
+                  Bảng hạch toán luồng tiền
+                </DetailSectionTitle>
                 <hr className='my-3' />
                 <Table
                   columns={column}

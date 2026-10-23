@@ -39,9 +39,7 @@ export const FeePolicyPartyFilters = ({
     <FormSelect
       name='feeBearer'
       control={control}
-      label={
-          'Bên chịu phí'
-      }
+      label={'Bên chịu phí'}
       placeholder='Tất cả'
       allowClear
       disabled={

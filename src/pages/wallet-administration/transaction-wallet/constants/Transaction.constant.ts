@@ -49,8 +49,26 @@ export const StatusType: Record<StatusEnum, string> = {
 }
 export type StatusKey = keyof typeof StatusType
 
+/**
+ * Trạng thái trung gian của wallet-core (giao dịch treo). Chỉ để hiển thị badge, không
+ * đưa vào `StatusType` vì đó là option lọc gửi BE.
+ */
+export const JournalProgressStatus = {
+  AUTHORIZED: 'AUTHORIZED',
+  POSTING: 'POSTING',
+  CREDIT_PENDING: 'CREDIT_PENDING',
+  PROCESSING: 'PROCESSING',
+  CREDIT_FAILED: 'CREDIT_FAILED',
+  RECONCILIATION_REQUIRED: 'RECONCILIATION_REQUIRED'
+} as const
+export type JournalProgressStatus =
+  (typeof JournalProgressStatus)[keyof typeof JournalProgressStatus]
+
+const WARNING_SHIMMER = 'rgba(252, 186, 3, 0.2)'
+const DANGER_SHIMMER = 'rgba(255, 86, 59, 0.2)'
+
 export const CONFIG_STATUS: Record<
-  StatusEnum,
+  StatusEnum | JournalProgressStatus,
   { label: string; className: string; shimmerColor: string }
 > = {
   [StatusEnum.PENDING]: {
@@ -78,6 +96,36 @@ export const CONFIG_STATUS: Record<
     label: 'Thất bại hoàn tiền',
     className: 'danger-status',
     shimmerColor: 'rgba(255, 86, 59, 0.2)'
+  },
+  [JournalProgressStatus.AUTHORIZED]: {
+    label: 'Đã cấp phép',
+    className: 'warning-status',
+    shimmerColor: WARNING_SHIMMER
+  },
+  [JournalProgressStatus.POSTING]: {
+    label: 'Đang ghi sổ',
+    className: 'warning-status',
+    shimmerColor: WARNING_SHIMMER
+  },
+  [JournalProgressStatus.CREDIT_PENDING]: {
+    label: 'Chờ ghi có',
+    className: 'warning-status',
+    shimmerColor: WARNING_SHIMMER
+  },
+  [JournalProgressStatus.PROCESSING]: {
+    label: 'Đang xử lý',
+    className: 'warning-status',
+    shimmerColor: WARNING_SHIMMER
+  },
+  [JournalProgressStatus.RECONCILIATION_REQUIRED]: {
+    label: 'Cần đối soát',
+    className: 'warning-status',
+    shimmerColor: WARNING_SHIMMER
+  },
+  [JournalProgressStatus.CREDIT_FAILED]: {
+    label: 'Ghi có thất bại',
+    className: 'danger-status',
+    shimmerColor: DANGER_SHIMMER
   }
 }
 

@@ -1,18 +1,18 @@
-import { CheckCircleFilled } from '@components/icons'
 import { CopyableText } from '@components/index'
+import StatusBadge from '@components/status-badge/StatusBadge'
 import { UnifiedContentJournal } from '@type/apiResponseJournal'
 import React from 'react'
 import {
+  CONFIG_STATUS,
   PaymentMethod,
   PaymentMethodKey,
-  StatusKey,
-  StatusType,
   TransactionKey,
   TransactionType
 } from '../constants/Transaction.constant'
 import dayjs from 'dayjs'
 import { formatCurrency } from '@utils/formatNumber'
 import { FreezeNotice, RefundedAmountInfo } from './CommonInfoBlocks'
+import { DetailSectionTitle } from './DetailSectionTitle'
 import {
   getDisplayStatus,
   getPendingRefundAmount,
@@ -26,13 +26,6 @@ interface CommonInfoProps {
 }
 
 const CommonInfo = ({ data, feeCode }: CommonInfoProps) => {
-  const STATUS_CLASS: Record<string, string> = {
-    PENDING: 'text-blue-600 border border-blue-500 font-medium bg-blue-50',
-    POSTED: 'text-green-700 border border-green-500 font-medium bg-green-50',
-    ARCHIVED: 'text-red-600 border border-red-400 font-medium bg-red-50'
-  }
-  const typeKeyStatus = data?.status as StatusKey
-  const displayStatus = data ? getDisplayStatus(data) : undefined
   const refundFields = data ? readRefundFields(data) : {}
   const pendingRefund = getPendingRefundAmount(refundFields)
   const typesKey = data?.transactionType as TransactionKey
@@ -51,14 +44,15 @@ const CommonInfo = ({ data, feeCode }: CommonInfoProps) => {
 
   return (
     <>
-      <div className='flex justify-between'>
-        <span className='text-blue-700 font-medium'>Thông tin chung</span>
-        <span
-          className={`flex justify-center items-center gap-1 rounded-full px-2 text-[12px] ${STATUS_CLASS[typeKeyStatus] ?? ''}`}
-        >
-          <CheckCircleFilled />
-          {StatusType[displayStatus as StatusKey] ?? displayStatus}
-        </span>
+      <div className='flex items-center justify-between gap-2'>
+        <DetailSectionTitle>Thông tin chung</DetailSectionTitle>
+        {/* Cùng badge với cột trạng thái ở danh sách: nhãn theo displayStatus, màu theo CONFIG_STATUS. */}
+        {data && (
+          <StatusBadge
+            status={getDisplayStatus(data)}
+            config={CONFIG_STATUS}
+          />
+        )}
       </div>
       <hr className='my-3' />
       <div className='grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3'>

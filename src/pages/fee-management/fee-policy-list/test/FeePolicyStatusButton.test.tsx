@@ -39,6 +39,11 @@ describe('nút khóa / mở ở dòng chính sách phí', () => {
     expect(onChangeStatus).toHaveBeenCalledTimes(1)
   })
 
+  it('ẩn khi chỉ có quyền của thao tác ngược lại', () => {
+    renderButton('ACTIVE', ['EWALLET:FEE:APPROVE'])
+    expect(screen.queryByRole('button')).toBeNull()
+  })
+
   it('ẩn khi không có quyền nào', () => {
     renderButton('ACTIVE', ['EWALLET:FEE:VIEW'])
     expect(screen.queryByRole('button')).toBeNull()

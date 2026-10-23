@@ -65,14 +65,17 @@ describe('schema khóa / mở chính sách phí', () => {
       RUN_AT_REQUIRED_MESSAGE
     )
     expect(
-      schema.safeParse({ action: 'ACTIVATE', runAt: at((d) => d.add(2, 'hour')), reason: 'Mở lại sau' }).success
+      schema.safeParse({
+        action: 'ACTIVATE',
+        runAt: at((d) => d.add(2, 'hour')),
+        reason: 'Mở lại sau'
+      }).success
     ).toBe(true)
   })
 
   it('thực hiện ngay vẫn bắt buộc lý do', () => {
     expect(messageOf(parseNow('  '), 'reason')).toBe('Vui lòng nhập lý do')
   })
-
 
   it('từ chối lý do rỗng, toàn khoảng trắng hoặc quá 500 ký tự', () => {
     const runAt = at((d) => d.add(2, 'hour'))

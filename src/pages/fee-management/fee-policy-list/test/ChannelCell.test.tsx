@@ -31,7 +31,7 @@ describe('ChannelCell — nhà cung cấp', () => {
     )
 
     expect(screen.getByText(/NCC: NAPAS/)).toBeInTheDocument()
-    expect(screen.getByText(/NH:TCB/)).toBeInTheDocument()
+    expect(screen.getByText(/NH: TCB/)).toBeInTheDocument()
   })
 
   it('bản gán không ghi NCC nói rõ là mọi NCC', () => {

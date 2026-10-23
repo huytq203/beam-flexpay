@@ -1,6 +1,7 @@
 import { Table } from '@components/index'
 import type { RefundItemInfo } from '@/app/schemas/unified-refund.schema'
 import { createTransactionRefundColumns } from '../columns/TransactionRefundList.column'
+import { DetailSectionTitle } from './DetailSectionTitle'
 
 interface TransactionRefundListProps {
   /** `null`/`undefined`: chưa tra được (user-wallet lỗi); `[]`: chưa có yêu cầu hoàn. */
@@ -44,8 +45,8 @@ export function TransactionRefundList({
 }: TransactionRefundListProps) {
   return (
     <section aria-label='Yêu cầu hoàn tiền'>
-      <div className='flex items-baseline justify-between gap-3'>
-        <p className='font-medium'>Yêu cầu hoàn tiền</p>
+      <div className='flex items-center justify-between gap-3'>
+        <DetailSectionTitle>Yêu cầu hoàn tiền</DetailSectionTitle>
         {refunds && refunds.length > 0 && (
           <span className='text-sm text-muted-foreground'>
             {refunds.length} yêu cầu, mới nhất trước

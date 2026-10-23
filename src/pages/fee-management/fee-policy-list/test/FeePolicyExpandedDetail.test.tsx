@@ -143,7 +143,9 @@ describe('chi tiết mở rộng của danh sách chính sách phí', () => {
     const detail = await screen.findByRole('region', {
       name: 'Chi tiết Chính sách one'
     })
-    expect(within(detail).getAllByText('Nhóm đối tượng áp dụng')).toHaveLength(2)
+    expect(within(detail).getAllByText('Nhóm đối tượng áp dụng')).toHaveLength(
+      2
+    )
     expect(within(detail).getByText('NGUYEN THI YEN NHI')).toBeInTheDocument()
     expect(within(detail).getByText('VIP')).toBeInTheDocument()
     expect(within(detail).getByText('Người chuyển')).toBeInTheDocument()
