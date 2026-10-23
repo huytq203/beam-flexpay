@@ -1,4 +1,6 @@
 import type { FeePolicyKind } from '@type/fee.type'
+import type { InputCostReportFilters } from '@/app/schemas/fee-input-cost-report.schema'
+import { toInputCostReportParams } from '@/app/schemas/fee-input-cost-report.schema'
 import type { ApplicableFeeRuleExportQuery } from '@/app/schemas/applicable-fee-rule.schema'
 import {
   fetchBaseQueryCustom,
@@ -280,6 +282,20 @@ export const apiExportFeeCsv = apiFeeService.injectEndpoints({
           extraOptions
         )
     }),
+    exportInputCostReport: build.mutation<ExportedFile, InputCostReportFilters>(
+      {
+        queryFn: (filters, queryApi, extraOptions) =>
+          runExport(
+            fetchBaseQueryFee,
+            {
+              url: '/fee/input-cost-report/export',
+              params: toInputCostReportParams(filters)
+            },
+            queryApi,
+            extraOptions
+          )
+      }
+    ),
     exportFeePolicies: build.mutation<ExportedFile, ExportFeePoliciesQuery>({
       queryFn: (params, queryApi, extraOptions) =>
         runExport(
@@ -356,7 +372,8 @@ export const {
 
 export const {
   useExportApplicableFeeRulesMutation,
-  useExportFeePoliciesMutation
+  useExportFeePoliciesMutation,
+  useExportInputCostReportMutation
 } = apiExportFeeCsv
 
 export const { useExportVerifiedKycProfilesMutation } = apiExportIdentityCsv
