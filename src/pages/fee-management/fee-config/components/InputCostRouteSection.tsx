@@ -64,7 +64,7 @@ export const InputCostRouteSection = ({
 
   return (
     <section>
-      <SectionHeading hint='Bỏ trống một tiêu chí nghĩa là giá áp cho mọi giá trị của tiêu chí đó. Giá này tự áp cho mọi giao dịch đi tuyến này, không phụ thuộc khách là ai.'>
+      <SectionHeading >
         Tuyến thanh toán
       </SectionHeading>
 

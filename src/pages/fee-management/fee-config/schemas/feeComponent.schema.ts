@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { getFeeScopeOfPayer } from '../constants/feeConfigFields'
+import { addFeeBoundIssues } from './feeBounds'
 
 /**
  * Một schema phủ cả ba phần của màn: thông tin chính sách, tiêu chí gán đối
@@ -152,8 +153,6 @@ export const feeComponentFormSchema = z
       })
     }
 
-    const minFee = numberOrZero(component.minFee)
-    const maxFee = numberOrZero(component.maxFee)
     if (component.calculationMethod === CalculationMethod.FREE) {
       ;(['percentage', 'fixedAmount', 'minFee', 'maxFee'] as const).forEach(
         (field) => {
@@ -167,13 +166,7 @@ export const feeComponentFormSchema = z
         }
       )
     }
-    if (maxFee > 0 && minFee > maxFee) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['maxFee'],
-        message: 'Phí tối đa phải lớn hơn hoặc bằng phí tối thiểu'
-      })
-    }
+    addFeeBoundIssues(component, ctx)
 
     // VAT được phép 0%: thuế suất 0 là cấu hình hợp lệ, không phải thiếu mức phí.
     if (!usesTiers(component.calculationMethod)) {
@@ -197,6 +190,7 @@ export const feeComponentFormSchema = z
     }
 
     component.tiers.forEach((tier, index) => {
+      addFeeBoundIssues(tier, ctx, ['tiers', index])
       if (tier.percentage === null && tier.fixedAmount === null) {
         ctx.addIssue({
           code: 'custom',

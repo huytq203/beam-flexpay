@@ -108,7 +108,9 @@ describe('FeeComponentDialog ô Người chịu', () => {
   it('hoàn rút tiền không có lựa chọn cả hai bên', async () => {
     renderDialog('EWALLET_REFUND', 'CASH_OUT')
     await openPayerSelect('EWALLET_REFUND')
-    expect(await screen.findAllByTitle('Người chuyển')).not.toHaveLength(0)
+    expect(
+      await screen.findAllByTitle('Người chuyển gốc (được hoàn tiền)')
+    ).not.toHaveLength(0)
     expect(screen.queryByTitle(BOTH_LABEL)).toBeNull()
   })
 
