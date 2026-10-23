@@ -146,6 +146,8 @@ export const PATHS = {
     INPUT_COST_CREATE: `${FEEMANAGEMENT_V4}/fee-input-cost/create`,
     INPUT_COST_EDIT: (id: string) =>
       `${FEEMANAGEMENT_V4}/fee-input-cost/edit/${id}`,
+    /** Báo cáo phí đầu vào (chỉ đọc) để đối soát cuối tháng. */
+    INPUT_COST_REPORT: `${FEEMANAGEMENT_V4}/fee-input-cost-report`,
   },
 
   TRANSACTION_MANAGEMENT: {

@@ -258,3 +258,19 @@ describe('màn Cấu hình phí đầu vào', () => {
     )
   })
 })
+
+describe('màn Báo cáo phí đầu vào', () => {
+  it('có đường dẫn riêng, cùng họ quyền FEE và nằm trong sidebar', () => {
+    expect(SCREENS.FEE_INPUT_COST_REPORT.path).not.toBe(
+      SCREENS.FEE_INPUT_COST.path
+    )
+    expect(SCREENS.FEE_INPUT_COST_REPORT.actions).toEqual(
+      SCREENS.FEE_CONFIG.actions
+    )
+    expect(findScreenByPath(SCREENS.FEE_INPUT_COST_REPORT.path)).toBe(
+      SCREENS.FEE_INPUT_COST_REPORT
+    )
+    const children = navigationItems.flatMap((g) => g.children ?? [])
+    expect(children.map((c) => c.screen)).toContain('FEE_INPUT_COST_REPORT')
+  })
+})

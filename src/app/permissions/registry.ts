@@ -439,6 +439,11 @@ export const SCREENS = {
     path: `${FEEMANAGEMENT_V4}/fee-input-cost`,
     actions: { ...FEE_ACTIONS }
   },
+  /** Báo cáo phí đầu vào (chỉ đọc): cùng họ quyền FEE, chỉ dùng hành động xem. */
+  FEE_INPUT_COST_REPORT: {
+    path: `${FEEMANAGEMENT_V4}/fee-input-cost-report`,
+    actions: { ...FEE_ACTIONS }
+  },
   /**
    * Hạn mức ví (flexpay.user-wallet): backend gác mọi endpoint quản trị bằng
    * một mã `EWALLET:EWALLET:FULL`, chưa tách theo hành động, nên mọi action của

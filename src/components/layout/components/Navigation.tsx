@@ -90,6 +90,18 @@ const feeManagementV4: ItemTypeCustom = {
       label: 'Cấu hình phí đầu vào'
     },
     {
+      key: 'fee-input-cost-report',
+      screen: 'FEE_INPUT_COST_REPORT',
+      icon: (
+        <ReceiptIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Báo cáo phí đầu vào'
+    },
+    {
       key: 'wallet-limit',
       screen: 'WALLET_LIMIT',
       icon: (

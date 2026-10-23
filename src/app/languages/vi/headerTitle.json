@@ -94,6 +94,7 @@
     "/secure-panel/fee-v4/fee-input-cost":"Cấu hình phí đầu vào",
     "/secure-panel/fee-v4/fee-input-cost/create":"Tạo chính sách phí đầu vào",
     "/secure-panel/fee-v4/fee-input-cost/edit/*":"Sửa chính sách phí đầu vào",
+    "/secure-panel/fee-v4/fee-input-cost-report":"Báo cáo phí đầu vào",
     "/secure-panel/fee-v4/fee-managementV4":"Quản lý chính sách phí",
     "/secure-panel/fee-v4/fee-managementV4/edit/*":"Cập nhật chính sách phí",
     "/secure-panel/fee-v4/fee-managementV4/create":"Thêm mới chính sách phí",

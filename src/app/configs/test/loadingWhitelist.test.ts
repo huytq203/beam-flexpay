@@ -157,3 +157,16 @@ describe('whitelist global loading của màn Cấu hình phí đầu vào', () 
     ).toBeDefined()
   })
 })
+
+describe('whitelist global loading của màn Báo cáo phí đầu vào', () => {
+  it.each([
+    '/fee/input-cost-report/summary?from=2026-10-01&to=2026-10-23',
+    '/fee/input-cost-report/transactions?from=2026-10-01&to=2026-10-23&page=1&size=20',
+    '/fee/input-cost-report/export?from=2026-10-01&to=2026-10-23',
+    '/fee/banks?page=1&size=100'
+  ])('bỏ global loader cho API có loading cục bộ: %s', (url) => {
+    expect(
+      isInWhiteList(url, '/secure-panel/fee-v4/fee-input-cost-report')
+    ).toBeDefined()
+  })
+})
