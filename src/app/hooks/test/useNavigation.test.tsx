@@ -64,7 +64,8 @@ describe('useNavigationEw', () => {
     expect(groupKeysOf(permissions)).toEqual(['secure-panel/fee-v4'])
     expect(childKeysOf(permissions, 'secure-panel/fee-v4')).toEqual([
       'fee-policy',
-      'fee-input-cost'
+      'fee-input-cost',
+      'fee-input-cost-report'
     ])
   })
 

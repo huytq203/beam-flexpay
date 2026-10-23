@@ -139,6 +139,13 @@ const feeManagementV4 = {
           )
         },
         {
+          path: SCREENS.FEE_INPUT_COST_REPORT.path,
+          element: page(
+            () =>
+              import('@pages/fee-management/fee-input-cost-report/FeeInputCostReport')
+          )
+        },
+        {
           path: SCREENS.WALLET_LIMIT.path,
           element: page(
             () =>

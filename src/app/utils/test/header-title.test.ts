@@ -32,3 +32,11 @@ describe('resolveHeaderTitleKey', () => {
     expect(resolveHeaderTitleKey('/khong/co', has)).toBeNull()
   })
 })
+
+describe('tiêu đề màn Báo cáo phí đầu vào', () => {
+  it('có trong headerTitle.json', async () => {
+    const titles = (await import('@/app/languages/vi/headerTitle.json')).default as Record<string, unknown>
+    const flat = JSON.stringify(titles)
+    expect(flat).toContain('"/secure-panel/fee-v4/fee-input-cost-report":"Báo cáo phí đầu vào"')
+  })
+})
