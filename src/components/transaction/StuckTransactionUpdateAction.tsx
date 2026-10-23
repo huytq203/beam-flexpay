@@ -8,8 +8,6 @@ import {
 } from '@components/index'
 import { ArrowsCounterClockwiseIcon } from '@components/icons'
 import { PERMISSION, useAccess } from '@/app/permissions'
-import { REVIEW_STATUS } from '@/app/schemas/transaction-review.schema'
-import { REVIEW_PANEL_ID } from '@pages/wallet-administration/transaction-wallet/constants/transactionReview.constant'
 import { useMessage } from '@hooks/useMessage'
 import { useUpdateStuckTransactionStatusMutation } from '@services/apiStuckTransaction'
 import {
@@ -31,13 +29,6 @@ import {
 } from './stuckTransaction.utils'
 
 const CASH_OUT = 'CASH_OUT'
-const UNDER_REVIEW_MESSAGE =
-  'Giao dịch đang chờ review, không cập nhật qua Xử lý chi tiền. Dùng Duyệt hoặc Từ chối ở mục Review lệnh nạp.'
-
-const goToReviewPanel = (): void =>
-  document
-    .getElementById(REVIEW_PANEL_ID)
-    ?.scrollIntoView?.({ behavior: 'smooth', block: 'center' })
 
 export interface StuckTransactionUpdateActionProps {
   transactionCode?: string | null
@@ -47,7 +38,7 @@ export interface StuckTransactionUpdateActionProps {
   journalStatus?: string | null
   /** Thu gọn thành icon trong cột thao tác của bảng. */
   compact?: boolean
-  /** Ẩn nút khi lệnh nạp đang REVIEW: lúc đó chỉ Duyệt/Từ chối được chốt lệnh. */
+  /** Ẩn nút khi lệnh chưa thuộc diện cập nhật treo (ví dụ lệnh rút đang chờ phê duyệt). */
   hidden?: boolean
   className?: string
 }
@@ -98,9 +89,7 @@ export const StuckTransactionUpdateAction = ({
     snapshot !== undefined &&
     getFinalActions(snapshot.allowedActions).length === 0
 
-  const isUnderReview = snapshot?.status === REVIEW_STATUS
-
-  if (!code || !canAccess || hidden || isUnderReview) return null
+  if (!code || !canAccess || hidden) return null
   if (!canShowStuckUpdateForType(transactionType)) return null
   if (!isStuckJournalStatus(journalStatus)) return null
   if (hasNoFinalAction && !isOpen) return null
@@ -129,16 +118,8 @@ export const StuckTransactionUpdateAction = ({
     }
 
     setSubmissionError(null)
-    // Hỏi snapshot trước khi mở: lệnh đã sang REVIEW thì chỉ Duyệt/Từ chối được chốt.
-    const latest = await refresh()
-      .unwrap()
-      .catch(() => null)
-    if (latest?.status === REVIEW_STATUS) {
-      errorMess(UNDER_REVIEW_MESSAGE)
-      goToReviewPanel()
-      return
-    }
     setIsOpen(true)
+    void refresh()
   }
 
   const handleSubmit = async (
@@ -155,17 +136,8 @@ export const StuckTransactionUpdateAction = ({
       successMess(describeResult(result))
     } catch (error) {
       setSubmissionError(describeSubmitError(error))
-      // 409: trạng thái đã đổi (kết quả cuối, đang review...) nên tải lại popup theo snapshot mới.
-      if (isConflictError(error)) {
-        const latest = await refresh()
-          .unwrap()
-          .catch(() => null)
-        if (latest?.status === REVIEW_STATUS) {
-          setIsOpen(false)
-          errorMess(UNDER_REVIEW_MESSAGE)
-          goToReviewPanel()
-        }
-      }
+      // 409: trạng thái đã đổi (đã có kết quả cuối...) nên tải lại popup theo snapshot mới.
+      if (isConflictError(error)) void refresh()
     }
   }
 

@@ -157,16 +157,7 @@ export const SCREENS = {
     extraFull: [PERMISSION.EWALLET_FULL],
     actions: {
       ...TRANSACTION_ACTIONS,
-      viewDetail: PERMISSION.TRANSACTION_VIEW,
-      /**
-       * BE mở đánh dấu/duyệt/từ chối cho `EWALLET:FULL` hoặc `TRANSACTION:REVIEW`.
-       * Lưu ý `actions.full` của màn này là `TRANSACTION:FULL`, nên `can('review')`
-       * cũng đúng với người chỉ có `TRANSACTION:FULL` (BE sẽ trả 403): UI quyết
-       * định bằng `hasAny([EWALLET_FULL, TRANSACTION_REVIEW])`, xem
-       * `useTransactionPermissions`. Hoàn tiền, cập nhật treo và kiểm tra lại
-       * trạng thái chỉ `EWALLET:FULL`, không khai ở đây vì cùng lý do.
-       */
-      review: PERMISSION.TRANSACTION_REVIEW
+      viewDetail: PERMISSION.TRANSACTION_VIEW
     }
   },
   /** wallet-core: xem cần FREEZE:VIEW, mở/đóng băng cần FREEZE:UPDATE; EWALLET:FULL qua cả hai. */

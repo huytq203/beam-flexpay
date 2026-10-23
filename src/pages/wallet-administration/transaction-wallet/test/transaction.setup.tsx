@@ -22,10 +22,6 @@ const tokenFor = (permissions: string[], username: string): string =>
   ].join('.')
 
 export const FULL = [PERMISSION.EWALLET_FULL]
-export const REVIEW_ONLY = [
-  PERMISSION.TRANSACTION_FULL,
-  PERMISSION.TRANSACTION_REVIEW
-]
 export const FULL_ONLY_TRANSACTION = [PERMISSION.TRANSACTION_FULL]
 
 export const renderAs = (

@@ -118,11 +118,6 @@ export const PERMISSION = {
    */
   REFUND_APPROVE: 'EWALLET:REFUND:APPROVE', // CẦN TẠO TRONG DB: DB chưa có; user-wallet BE đã nhận mã này
 
-  /**
-   * Cùng quy ước tiền tố với `REFUND:APPROVE`. Chỉ mở đánh dấu Review, duyệt và từ chối
-   * lệnh nạp; không gọi được `refresh` hay `update-status` (cần `EWALLET:FULL`).
-   */
-  TRANSACTION_REVIEW: 'EWALLET:TRANSACTION:REVIEW', // CẦN TẠO TRONG DB: DB chưa có; user-wallet BE đã nhận mã này
 
   EWALLET_FULL: 'EWALLET:EWALLET:FULL'
 } as const
