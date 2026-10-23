@@ -16,11 +16,13 @@ import {
   BellIcon,
   ClockCountdownIcon,
   // CalendarStarIcon, // tạm ẩn cùng mục Tháng đặc biệt
+  ChartBarIcon,
   ClipboardTextIcon,
   CreditCardIcon,
   FingerprintIcon,
   GearIcon,
   GitBranchIcon,
+  HandCoinsIcon,
   KeyIcon,
   LockIcon,
   LockKeyOpenIcon,
@@ -81,7 +83,7 @@ const feeManagementV4: ItemTypeCustom = {
       key: 'fee-input-cost',
       screen: 'FEE_INPUT_COST',
       icon: (
-        <ReceiptIcon
+        <HandCoinsIcon
           size={size}
           weight={weight}
           color={COlOR}
@@ -93,7 +95,7 @@ const feeManagementV4: ItemTypeCustom = {
       key: 'fee-input-cost-report',
       screen: 'FEE_INPUT_COST_REPORT',
       icon: (
-        <ReceiptIcon
+        <ChartBarIcon
           size={size}
           weight={weight}
           color={COlOR}
