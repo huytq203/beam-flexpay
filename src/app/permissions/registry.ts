@@ -151,6 +151,40 @@ export const SCREENS = {
     path: `${ROLEMANAGEMENT_V2}/role-management`,
     actions: { ...PERMISSION_ACTIONS }
   },
+  /**
+   * Ma trận phân quyền admin nội bộ: BE cho xem với VIEW và sửa/đồng bộ với MANAGE
+   * (SUPER_ADMIN luôn qua). Mọi thao tác ghi dùng chung một mã MANAGE.
+   */
+  ROLE_PERMISSION_MATRIX: {
+    path: `${ROLEMANAGEMENT_V2}/role-permission-matrix`,
+    // BE đọc ma trận bằng VIEW; chỉ có MANAGE thì màn không tải được dữ liệu.
+    accessPermission: PERMISSION.ROLE_PERMISSION_VIEW,
+    actions: {
+      view: PERMISSION.ROLE_PERMISSION_VIEW,
+      create: PERMISSION.ROLE_PERMISSION_MANAGE,
+      edit: PERMISSION.ROLE_PERMISSION_MANAGE,
+      update: PERMISSION.ROLE_PERMISSION_MANAGE,
+      delete: PERMISSION.ROLE_PERMISSION_MANAGE,
+      full: PERMISSION.ADMIN_FULL
+    }
+  },
+  /**
+   * Nhật ký hệ thống Admin (SRS §2.9), chỉ đọc: xem bằng AUDIT:VIEW, xuất CSV bằng AUDIT:EXPORT.
+   * Màn không có thao tác ghi nên create/edit/update/delete chỉ mở cho quyền tổng.
+   */
+  AUDIT_LOG: {
+    path: `${ROLEMANAGEMENT_V2}/audit-log`,
+    accessPermission: PERMISSION.AUDIT_VIEW,
+    actions: {
+      view: PERMISSION.AUDIT_VIEW,
+      create: PERMISSION.ADMIN_FULL,
+      edit: PERMISSION.ADMIN_FULL,
+      update: PERMISSION.ADMIN_FULL,
+      delete: PERMISSION.ADMIN_FULL,
+      full: PERMISSION.ADMIN_FULL,
+      export: PERMISSION.AUDIT_EXPORT
+    }
+  },
   TRANSACTION_WALLET: {
     path: `${TRANSACTIONMANAGEMENT}/transaction-wallet`,
     aliasPaths: [`${WALLETADMINISTRATION}/transaction-wallet`],
@@ -389,6 +423,52 @@ export const SCREENS = {
   MERCHANT_WITHDRAWAL_LIMIT: {
     path: `${MERCHANT}/withdrawal-limit`,
     actions: { ...SETTLEMENT_CONFIG_ACTIONS }
+  },
+  /**
+   * BE nhận MANAGE (đề xuất) hoặc APPROVE (duyệt) để xem; màn mở `view` bằng MANAGE
+   * và trang cho vào khi có `view` hoặc `approve`. "Gỡ quy tắc riêng" dùng `delete`.
+   */
+  MERCHANT_HOLD_RULE: {
+    path: `${MERCHANT}/hold-rule`,
+    actions: {
+      view: PERMISSION.MERCHANT_HOLD_RULE_MANAGE,
+      create: PERMISSION.MERCHANT_HOLD_RULE_MANAGE,
+      edit: PERMISSION.MERCHANT_HOLD_RULE_MANAGE,
+      update: PERMISSION.MERCHANT_HOLD_RULE_MANAGE,
+      delete: PERMISSION.MERCHANT_HOLD_RULE_MANAGE,
+      full: PERMISSION.ADMIN_FULL,
+      approve: PERMISSION.MERCHANT_HOLD_RULE_APPROVE
+    }
+  },
+  /**
+   * Đối soát số dư Sub: BE nhận một trong VIEW/RUN/CONFIRM để xem nên trang cho vào khi có
+   * một trong ba. `create` ứng với chạy đối soát (RUN), `edit/update` ứng với xác nhận đã
+   * xử lý (CONFIRM); màn không có thao tác xóa.
+   */
+  MERCHANT_RECONCILIATION: {
+    path: `${MERCHANT}/reconciliation`,
+    actions: {
+      view: PERMISSION.MERCHANT_RECONCILIATION_VIEW,
+      create: PERMISSION.MERCHANT_RECONCILIATION_RUN,
+      edit: PERMISSION.MERCHANT_RECONCILIATION_CONFIRM,
+      update: PERMISSION.MERCHANT_RECONCILIATION_CONFIRM,
+      delete: PERMISSION.ADMIN_FULL,
+      full: PERMISSION.ADMIN_FULL,
+      run: PERMISSION.MERCHANT_RECONCILIATION_RUN,
+      confirm: PERMISSION.MERCHANT_RECONCILIATION_CONFIRM
+    }
+  },
+  /** Chỉ đọc; trang cho vào thêm khi có một trong ba quyền đối soát (BE cũng nhận). */
+  MERCHANT_BALANCE_REPORT: {
+    path: `${MERCHANT}/balance-report`,
+    actions: {
+      view: PERMISSION.MERCHANT_BALANCE_REPORT_VIEW,
+      create: PERMISSION.ADMIN_FULL,
+      edit: PERMISSION.ADMIN_FULL,
+      update: PERMISSION.ADMIN_FULL,
+      delete: PERMISSION.ADMIN_FULL,
+      full: PERMISSION.ADMIN_FULL
+    }
   },
   MERCHANT_USER: {
     path: `${MERCHANT}/user`,

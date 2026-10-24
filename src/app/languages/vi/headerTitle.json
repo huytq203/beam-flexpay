@@ -111,6 +111,8 @@
     "/secure-panel/role-v2/user-account":"Quản lý phân quyền",
     "/secure-panel/role-v2/role-management":"Quản lý quyền quản trị",
     "/secure-panel/role-v2/permission-management":"Quản lý nhóm quyền quản trị",
+    "/secure-panel/role-v2/role-permission-matrix":"Ma trận phân quyền",
+    "/secure-panel/role-v2/audit-log":"Nhật ký hệ thống",
 
     "/secure-panel/wallet-administration/e-walletManagement":"Quản lý ví điện tử",
     "/secure-panel/transaction-management/transaction-wallet":"Quản lý giao dịch",
@@ -131,6 +133,9 @@
     "/secure-panel/merchant/settlement-config":"Cấu hình quyết toán",
     "/secure-panel/merchant/settlement-scope":"Quyết toán Master/Hệ thống",
     "/secure-panel/merchant/withdrawal-limit":"Hạn mức rút",
+    "/secure-panel/merchant/hold-rule":"Quy tắc tạm giữ",
+    "/secure-panel/merchant/reconciliation":"Đối soát số dư",
+    "/secure-panel/merchant/balance-report":"Báo cáo số dư",
     "/secure-panel/merchant/settlement-item":"Mục quyết toán",
     "/secure-panel/merchant/key-connection":"Quản lý kết nối",
     "/secure-panel/merchant/webhook":"Webhook (IPN)",

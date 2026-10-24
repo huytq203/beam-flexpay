@@ -63,6 +63,26 @@ describe('quyền merchant mới', () => {
       )
     }
   })
+  it('quy tắc tạm giữ: xem/đề xuất cần HOLD_RULE:MANAGE, duyệt cần HOLD_RULE:APPROVE', () => {
+    const rule = SCREENS.MERCHANT_HOLD_RULE
+    expect(PERMISSION.MERCHANT_HOLD_RULE_APPROVE).toBe(
+      'EWALLET:MERCHANT_HOLD_RULE:APPROVE'
+    )
+    for (const action of [
+      'view',
+      'create',
+      'edit',
+      'update',
+      'delete'
+    ] as const)
+      expect(rule.actions[action]).toBe(PERMISSION.MERCHANT_HOLD_RULE_MANAGE)
+    expect(rule.actions.approve).toBe(PERMISSION.MERCHANT_HOLD_RULE_APPROVE)
+    expect(rule.actions.full).toBe(PERMISSION.ADMIN_FULL)
+    const screens = navigationItems.flatMap((group) =>
+      (group.children ?? []).map((item) => item.screen)
+    )
+    expect(screens).toContain('MERCHANT_HOLD_RULE')
+  })
   it('menu có mục Đơn hàng merchant', () => {
     const screens = navigationItems.flatMap((group) =>
       (group.children ?? []).map((item) => item.screen)

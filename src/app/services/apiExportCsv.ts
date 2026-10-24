@@ -361,6 +361,10 @@ export const apiExportMerchantCsv = apiMerchant.injectEndpoints({
       ExportedFile,
       MerchantListExportFilters
     >({ queryFn: merchantExport('/merchants/payment-methods/export') }),
+    // Nhật ký hệ thống: BE từ chối quá 50.000 dòng (400 AUDIT_LOG_EXPORT_TOO_LARGE), cần AUDIT:EXPORT.
+    exportAuditLogs: build.mutation<ExportedFile, MerchantListExportFilters>({
+      queryFn: merchantExport('/audit-logs/export')
+    }),
     exportMerchantUsers: build.mutation<
       ExportedFile,
       MerchantListExportFilters
@@ -406,6 +410,7 @@ export const {
   useExportMerchantBankAccountsMutation,
   useExportMerchantPaymentMethodsMutation,
   useExportMerchantUsersMutation,
+  useExportAuditLogsMutation,
   useExportSubMerchantsMutation
 } = apiExportMerchantCsv
 

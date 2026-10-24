@@ -232,7 +232,10 @@ const MERCHANT_PICKER_ROUTES = [
   '/merchant-order',
   '/sales-assignment',
   '/settlement-scope',
-  '/settlement-item'
+  '/settlement-item',
+  '/hold-rule',
+  '/reconciliation',
+  '/balance-report'
 ] as const
 const MERCHANT_PICKER_WHITE_LIST: WhiteListItem[] = MERCHANT_PICKER_ROUTES.flatMap(
   (route) => [

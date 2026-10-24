@@ -25,6 +25,7 @@ import {
   HandCoinsIcon,
   KeyIcon,
   LockIcon,
+  LockKeyIcon,
   LockKeyOpenIcon,
   MoneyIcon,
   ReceiptIcon,
@@ -181,6 +182,30 @@ const roleManagementV2: ItemTypeCustom = {
         />
       ),
       label: 'Quản lý quyền'
+    },
+    {
+      key: 'role-permission-matrix',
+      screen: 'ROLE_PERMISSION_MATRIX',
+      icon: (
+        <SlidersHorizontalIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Ma trận phân quyền'
+    },
+    {
+      key: 'audit-log',
+      screen: 'AUDIT_LOG',
+      icon: (
+        <ClipboardTextIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Nhật ký hệ thống'
     }
   ]
 }
@@ -541,6 +566,45 @@ const subMerchantManagement: ItemTypeCustom = {
         />
       ),
       label: 'Hạn mức rút'
+    },
+    {
+      key: 'hold-rule',
+      screen: 'MERCHANT_HOLD_RULE',
+      link: `${MERCHANT}/hold-rule`,
+      icon: (
+        <LockKeyIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quy tắc tạm giữ'
+    },
+    {
+      key: 'reconciliation',
+      screen: 'MERCHANT_RECONCILIATION',
+      link: `${MERCHANT}/reconciliation`,
+      icon: (
+        <ClipboardTextIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Đối soát số dư'
+    },
+    {
+      key: 'balance-report',
+      screen: 'MERCHANT_BALANCE_REPORT',
+      link: `${MERCHANT}/balance-report`,
+      icon: (
+        <ChartBarIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Báo cáo số dư'
     }
   ]
 }

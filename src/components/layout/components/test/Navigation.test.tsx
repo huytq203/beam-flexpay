@@ -43,7 +43,10 @@ describe('merchant gateway navigation', () => {
       'settlement-config',
       'settlement-scope',
       'settlement-item',
-      'withdrawal-limit'
+      'withdrawal-limit',
+      'hold-rule',
+      'reconciliation',
+      'balance-report'
     ])
   })
 })

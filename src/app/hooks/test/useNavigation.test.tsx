@@ -96,7 +96,7 @@ describe('useNavigationEw', () => {
   it('super-admin thấy toàn bộ menu identity', () => {
     expect(
       childKeysOf(['EWALLET:ADMIN:FULL'], _ROLEMANAGEMENT_V2)
-    ).toHaveLength(3)
+    ).toHaveLength(5)
   })
 
   it('tách ví doanh nghiệp thành một nhóm điều hướng riêng', () => {

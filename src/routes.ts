@@ -252,6 +252,32 @@ const roleManagementV2 = {
           )
         }
       ]
+    },
+    {
+      path: ROLEMANAGEMENT_V2,
+      children: [
+        {
+          path: SCREENS.ROLE_PERMISSION_MATRIX.path,
+          element: page(
+            () =>
+              import(
+                '@/pages/role-management-V2/role-permission-matrix/pages/RolePermissionMatrixPage'
+              )
+          )
+        }
+      ]
+    },
+    {
+      path: ROLEMANAGEMENT_V2,
+      children: [
+        {
+          path: SCREENS.AUDIT_LOG.path,
+          element: page(
+            () =>
+              import('@/pages/role-management-V2/audit-log/pages/AuditLogPage')
+          )
+        }
+      ]
     }
   ]
 }
@@ -471,6 +497,33 @@ const merchantManagement = {
             () =>
               import(
                 '@pages/merchant-management/merchant-settlement/pages/WithdrawalLimitPage'
+              )
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_HOLD_RULE.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-hold-rule/pages/MerchantHoldRulePage'
+              )
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_RECONCILIATION.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-reconciliation/pages/MerchantReconciliationPage'
+              )
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_BALANCE_REPORT.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-reconciliation/pages/MerchantBalanceReportPage'
               )
           )
         },
