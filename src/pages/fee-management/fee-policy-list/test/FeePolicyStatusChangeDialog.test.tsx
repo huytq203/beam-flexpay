@@ -10,8 +10,12 @@ import { FeePolicyStatusChangeDialog } from '../components/FeePolicyStatusChange
 import { END_AT_AFTER_START_MESSAGE } from '../schemas/feePolicySchedule.schema'
 
 const URL = '*/fee/policies/policy-1/status-changes'
-const PICKER = 'Ngay khi xác nhận'
-const END_PICKER = 'Không tự đảo lại'
+const PLACEHOLDER = 'DD/MM/YYYY HH:mm:ss'
+const PICKER = 0
+const END_PICKER = 1
+
+const getPicker = (index: number) =>
+  screen.getAllByPlaceholderText(PLACEHOLDER)[index]
 
 const renderDialog = (status = 'ACTIVE', onClose = vi.fn()) => {
   renderWithProviders(
@@ -40,9 +44,9 @@ const captureBody = () => {
 const pickRunAt = async (
   user: ReturnType<typeof userEvent.setup>,
   runAt: dayjs.Dayjs,
-  placeholder = PICKER
+  index = PICKER
 ) => {
-  const picker = screen.getByPlaceholderText(placeholder)
+  const picker = getPicker(index)
   await user.click(picker)
   await user.type(picker, `${runAt.format('DD/MM/YYYY HH:mm:ss')}{Enter}`)
 }
@@ -50,8 +54,7 @@ const pickRunAt = async (
 describe('dialog khóa / mở chính sách phí', () => {
   it('không có lựa chọn ngay / hẹn giờ: hai ô bắt đầu và kết thúc đều không bắt buộc', async () => {
     renderDialog()
-    expect(await screen.findByPlaceholderText(PICKER)).toBeInTheDocument()
-    expect(screen.getByPlaceholderText(END_PICKER)).toBeInTheDocument()
+    expect(await screen.findAllByPlaceholderText(PLACEHOLDER)).toHaveLength(2)
     expect(screen.queryByRole('radio')).toBeNull()
   })
 
@@ -116,7 +119,7 @@ describe('dialog khóa / mở chính sách phí', () => {
     const onClose = renderDialog()
 
     const runAt = dayjs().add(2, 'day').second(0).millisecond(0)
-    await screen.findByPlaceholderText(PICKER)
+    await screen.findAllByPlaceholderText(PLACEHOLDER)
     await pickRunAt(user, runAt)
     await user.type(
       screen.getByRole('textbox', { name: /Lý do/ }),
@@ -139,7 +142,7 @@ describe('dialog khóa / mở chính sách phí', () => {
 
     const runAt = dayjs().add(1, 'day').second(0).millisecond(0)
     const endAt = runAt.add(3, 'hour')
-    await screen.findByPlaceholderText(PICKER)
+    await screen.findAllByPlaceholderText(PLACEHOLDER)
     await pickRunAt(user, runAt)
     await pickRunAt(user, endAt, END_PICKER)
     await user.type(
@@ -164,7 +167,7 @@ describe('dialog khóa / mở chính sách phí', () => {
     const onClose = renderDialog()
 
     const endAt = dayjs().add(2, 'hour').second(0).millisecond(0)
-    await screen.findByPlaceholderText(END_PICKER)
+    await screen.findAllByPlaceholderText(PLACEHOLDER)
     await pickRunAt(user, endAt, END_PICKER)
     await user.type(screen.getByRole('textbox', { name: /Lý do/ }), 'Khóa tạm')
     await user.click(screen.getByRole('button', { name: 'Ngừng áp dụng ngay' }))
@@ -183,7 +186,7 @@ describe('dialog khóa / mở chính sách phí', () => {
     renderDialog()
 
     const runAt = dayjs().add(1, 'day').second(0).millisecond(0)
-    await screen.findByPlaceholderText(PICKER)
+    await screen.findAllByPlaceholderText(PLACEHOLDER)
     await pickRunAt(user, runAt)
     await pickRunAt(user, runAt.subtract(1, 'hour'), END_PICKER)
     await user.type(screen.getByRole('textbox', { name: /Lý do/ }), 'Sai giờ')

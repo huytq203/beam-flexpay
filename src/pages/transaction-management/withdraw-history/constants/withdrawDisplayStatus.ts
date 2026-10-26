@@ -30,7 +30,10 @@ const stepConfig = Object.fromEntries(
     const { label, tone } = WITHDRAWAL_STATUS_PRESENTATION[step]
     return [step, { label, className: TONE_CLASS[tone] }]
   })
-)
+) as Record<
+  (typeof WITHDRAWAL_STEPS)[number],
+  { label: string; className: string }
+>
 
 /** Cấu hình huy hiệu cho `displayStatus`: các giá trị sổ cái giữ nhãn cũ của màn, các bước rút thêm nhãn riêng. */
 export const WITHDRAW_DISPLAY_STATUS_CONFIG = {

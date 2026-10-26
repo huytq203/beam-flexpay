@@ -118,7 +118,7 @@ const StatusChangeForm = ({ policy, onClose }: StatusChangeFormProps) => {
           label='Bắt đầu'
           showTime
           className='flex flex-col'
-          placeholder='Ngay khi xác nhận'
+          placeholder='DD/MM/YYYY HH:mm:ss'
         />
         <FormDatePicker
           control={control}
@@ -126,7 +126,7 @@ const StatusChangeForm = ({ policy, onClose }: StatusChangeFormProps) => {
           label='Kết thúc'
           showTime
           className='flex flex-col'
-          placeholder='Không tự đảo lại'
+          placeholder='DD/MM/YYYY HH:mm:ss'
         />
       </div>
       <FormTextArea
