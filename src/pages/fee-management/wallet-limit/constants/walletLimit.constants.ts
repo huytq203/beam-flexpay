@@ -66,6 +66,33 @@ export const LIMIT_FIELD_LABELS = {
 
 export type LimitFieldKey = keyof typeof LIMIT_FIELD_LABELS
 
+/**
+ * Ở dòng loại "Tất cả", `normalMonthlyMaximum` là trần nhóm Dịch vụ thông
+ * thường: chỉ cộng Chuyển tiền + Thanh toán thường, không chặn nạp/rút.
+ */
+export const REGULAR_GROUP_MONTHLY_LABEL =
+  'Hạn mức tháng – dịch vụ thông thường'
+export const REGULAR_GROUP_MONTHLY_HINT =
+  'Chỉ tính Chuyển tiền + Thanh toán, không chặn Nạp/Rút.'
+
+export const getLimitLabel = (
+  key: LimitFieldKey,
+  transactionType: string | undefined
+): string =>
+  key === 'normalMonthlyMaximum' &&
+  transactionType === WalletLimitTransactionType.ALL
+    ? REGULAR_GROUP_MONTHLY_LABEL
+    : LIMIT_FIELD_LABELS[key]
+
+export const getLimitHint = (
+  key: LimitFieldKey,
+  transactionType: string | undefined
+): string | undefined =>
+  key === 'normalMonthlyMaximum' &&
+  transactionType === WalletLimitTransactionType.ALL
+    ? REGULAR_GROUP_MONTHLY_HINT
+    : undefined
+
 /** Hai khối ô số của form: hạn mức giao dịch, rồi giới hạn chi và sức chứa. */
 export const TRANSACTION_LIMIT_KEYS = [
   'minPerTransaction',

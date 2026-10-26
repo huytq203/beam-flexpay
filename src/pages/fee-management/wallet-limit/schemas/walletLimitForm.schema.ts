@@ -31,9 +31,7 @@ const overrideSchema = z.object({
   paymentMethod: z.union([z.literal(''), z.enum(WalletLimitPaymentMethod)]),
   minPerTransaction: amount,
   maxPerTransaction: amount,
-  dailyMaximum: amount,
-  normalMonthlyMaximum: amount,
-  specialMonthlyMaximum: amount
+  dailyMaximum: amount
 })
 
 const baseSchema = z.object({

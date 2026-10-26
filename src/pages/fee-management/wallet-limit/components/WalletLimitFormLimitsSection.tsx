@@ -1,5 +1,7 @@
 import { useFormContext, useWatch } from 'react-hook-form'
 import {
+  getLimitHint,
+  getLimitLabel,
   LIMIT_FIELD_LABELS,
   OUTFLOW_LIMIT_KEYS,
   TRANSACTION_LIMIT_KEYS,
@@ -24,6 +26,8 @@ const LOCKED_PLACEHOLDERS: Partial<Record<LimitFieldKey, string>> = {
 }
 
 export function WalletLimitFormTransactionLimits() {
+  const { control } = useFormContext<WalletLimitFormValues>()
+  const transactionType = useWatch({ control, name: 'transactionType' })
   return (
     <WalletLimitFormSection title='Hạn mức giao dịch'>
       <div className={GRID}>
@@ -33,7 +37,8 @@ export function WalletLimitFormTransactionLimits() {
             <WalletLimitFormNumberField
               key={key}
               name={key}
-              label={LIMIT_FIELD_LABELS[key]}
+              label={getLimitLabel(key, transactionType)}
+              hint={getLimitHint(key, transactionType)}
               required={required}
               placeholder={
                 required ? REQUIRED_PLACEHOLDER : OPTIONAL_PLACEHOLDER

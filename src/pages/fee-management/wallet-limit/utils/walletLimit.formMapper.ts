@@ -34,9 +34,7 @@ const OVERRIDE_KEYS: readonly OverrideKey[] = [
   'paymentMethod',
   'minPerTransaction',
   'maxPerTransaction',
-  'dailyMaximum',
-  'normalMonthlyMaximum',
-  'specialMonthlyMaximum'
+  'dailyMaximum'
 ]
 const TOP_LEVEL_FIELDS: readonly FormPath[] = [
   ...ALL_LIMIT_KEYS,
@@ -86,9 +84,7 @@ export const buildEmptyOverride = (
   paymentMethod: '',
   minPerTransaction: null,
   maxPerTransaction: null,
-  dailyMaximum: null,
-  normalMonthlyMaximum: null,
-  specialMonthlyMaximum: null
+  dailyMaximum: null
 })
 
 const overrideToFormValues = (
@@ -99,9 +95,7 @@ const overrideToFormValues = (
   paymentMethod: row.paymentMethod ?? '',
   minPerTransaction: toNumberOrNull(row.minPerTransaction),
   maxPerTransaction: toNumberOrNull(row.maxPerTransaction),
-  dailyMaximum: toNumberOrNull(row.dailyMaximum),
-  normalMonthlyMaximum: toNumberOrNull(row.normalMonthlyMaximum),
-  specialMonthlyMaximum: toNumberOrNull(row.specialMonthlyMaximum)
+  dailyMaximum: toNumberOrNull(row.dailyMaximum)
 })
 
 const pickLimits = (
@@ -165,8 +159,9 @@ const toApiOverride = (row: WalletLimitOverrideValues): ApiOverride => ({
   minPerTransaction: row.minPerTransaction ?? 0,
   maxPerTransaction: row.maxPerTransaction ?? 0,
   dailyMaximum: row.dailyMaximum ?? 0,
-  normalMonthlyMaximum: toNumberOrNull(row.normalMonthlyMaximum),
-  specialMonthlyMaximum: toNumberOrNull(row.specialMonthlyMaximum)
+  // Hạn mức tháng thường/đặc biệt chỉ cấu hình cho ví, không cho từng ngân hàng.
+  normalMonthlyMaximum: null,
+  specialMonthlyMaximum: null
 })
 
 /** Giá trị đã qua schema: ô bắt buộc luôn có số, ô không áp dụng bị đưa về `null`. */

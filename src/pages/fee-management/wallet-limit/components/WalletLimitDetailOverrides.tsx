@@ -14,19 +14,12 @@ interface WalletLimitDetailOverridesProps {
   overrides: WalletLimitBankOverride[]
 }
 
-type MoneyKey =
-  | 'minPerTransaction'
-  | 'maxPerTransaction'
-  | 'dailyMaximum'
-  | 'normalMonthlyMaximum'
-  | 'specialMonthlyMaximum'
+type MoneyKey = 'minPerTransaction' | 'maxPerTransaction' | 'dailyMaximum'
 
 const MONEY_KEYS: MoneyKey[] = [
   'minPerTransaction',
   'maxPerTransaction',
-  'dailyMaximum',
-  'normalMonthlyMaximum',
-  'specialMonthlyMaximum'
+  'dailyMaximum'
 ]
 
 const COLUMNS: Columns = [

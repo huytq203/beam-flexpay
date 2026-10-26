@@ -8,6 +8,8 @@ interface WalletLimitFormNumberFieldProps {
   placeholder: string
   required?: boolean
   disabled?: boolean
+  /** Ghi chú ngắn dưới ô, dùng khi ý nghĩa của hạn mức cần giải thích. */
+  hint?: string
 }
 
 const formatThousands = (value: string | number | undefined): string =>
@@ -25,10 +27,11 @@ export function WalletLimitFormNumberField({
   label,
   placeholder,
   required,
-  disabled
+  disabled,
+  hint
 }: WalletLimitFormNumberFieldProps) {
   const { control } = useFormContext<WalletLimitFormValues>()
-  return (
+  const input = (
     <FormInputNumber<WalletLimitFormValues>
       control={control}
       name={name}
@@ -48,5 +51,12 @@ export function WalletLimitFormNumberField({
       formatter={formatThousands}
       parser={parseDigits}
     />
+  )
+  if (!hint) return input
+  return (
+    <div className='flex min-w-0 flex-col gap-1.5'>
+      {input}
+      <p className='text-xs text-muted-foreground'>{hint}</p>
+    </div>
   )
 }
