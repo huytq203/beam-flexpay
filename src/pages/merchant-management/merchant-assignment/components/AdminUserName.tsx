@@ -1,16 +1,21 @@
 import { useGetUserByIdQuery } from '@services/apiUserManagement'
 import { toAdminUserName } from '../utils/merchantAssignment.utils'
 
+/** BE ghi UUID toàn số 0 cho thao tác do hệ thống (seed, job) thực hiện. */
+const SYSTEM_USER_ID = '00000000-0000-0000-0000-000000000000'
+
 /**
  * BE chỉ trả UUID (Keycloak subject), không trả tên, nên tra danh bạ admin.
  * Tra không ra (user đã xóa, không đủ quyền xem) thì hiện UUID để không mất dấu.
  */
 export function AdminUserName({ userId }: { userId?: string | null }) {
+  const isSystem = userId === SYSTEM_USER_ID
   const { data, isLoading } = useGetUserByIdQuery(userId ?? '', {
-    skip: !userId
+    skip: !userId || isSystem
   })
   if (!userId)
     return <span className='text-muted-foreground'>Không xác định</span>
+  if (isSystem) return <span className='text-sm font-medium'>Hệ thống</span>
   if (isLoading) return <span className='text-muted-foreground'>Đang tải…</span>
   const user = data?.data
   if (!user)

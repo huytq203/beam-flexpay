@@ -1,6 +1,6 @@
 import type { WalletLimitPolicy } from '@type/walletLimit.type'
 import {
-  LIMIT_FIELD_LABELS,
+  getLimitLabel,
   OUTFLOW_LIMIT_KEYS,
   TRANSACTION_LIMIT_KEYS,
   type LimitFieldKey
@@ -60,7 +60,7 @@ export function WalletLimitDetailLimits({
         return (
           <WalletLimitDetailField
             key={key}
-            label={LIMIT_FIELD_LABELS[key]}
+            label={getLimitLabel(key, policy.transactionType)}
           >
             {text === UNLIMITED_LABEL ? (
               <span className='font-normal text-muted-foreground'>{text}</span>

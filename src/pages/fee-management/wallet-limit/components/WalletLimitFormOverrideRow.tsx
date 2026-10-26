@@ -110,16 +110,6 @@ export function WalletLimitFormOverrideRow({
         placeholder={REQUIRED_PLACEHOLDER}
         required
       />
-      <WalletLimitFormNumberField
-        name={`${row}.normalMonthlyMaximum`}
-        label={LIMIT_FIELD_LABELS.normalMonthlyMaximum}
-        placeholder={OPTIONAL_PLACEHOLDER}
-      />
-      <WalletLimitFormNumberField
-        name={`${row}.specialMonthlyMaximum`}
-        label={LIMIT_FIELD_LABELS.specialMonthlyMaximum}
-        placeholder={OPTIONAL_PLACEHOLDER}
-      />
     </div>
   )
 }

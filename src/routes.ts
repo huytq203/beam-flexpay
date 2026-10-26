@@ -123,7 +123,9 @@ const feeManagementV4 = {
           path: SCREENS.FEE_INPUT_COST.path,
           element: page(
             () =>
-              import('@pages/fee-management/fee-policy-list/InputCostPolicyList')
+              import(
+                '@pages/fee-management/fee-policy-list/InputCostPolicyList'
+              )
           )
         },
         {
@@ -142,7 +144,9 @@ const feeManagementV4 = {
           path: SCREENS.FEE_INPUT_COST_REPORT.path,
           element: page(
             () =>
-              import('@pages/fee-management/fee-input-cost-report/FeeInputCostReport')
+              import(
+                '@pages/fee-management/fee-input-cost-report/FeeInputCostReport'
+              )
           )
         },
         {
@@ -412,12 +416,10 @@ const merchantManagement = {
         },
         {
           path: SCREENS.MERCHANT_WEBHOOK.path,
-          element: page(
-            () =>
-              import(
-                '@/pages/merchant-management/merchant-gateway/webhook/pages/WebhookPage'
-              )
-          )
+          element: createElement(Navigate, {
+            to: `${SCREENS.MERCHANT_KEY_CONNECTION.path}?tab=webhook`,
+            replace: true
+          })
         },
         {
           path: SCREENS.MERCHANT_PAYMENT_METHOD.path,
