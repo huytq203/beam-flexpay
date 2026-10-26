@@ -30,6 +30,12 @@ export enum WalletTypeKey {
   SYSTEM = 'SYSTEM',
 }
 
+/** Giá trị gửi lên `frozen`; "Tất cả" = bỏ trống, không gửi tham số. */
+export const FROZEN_FILTER_OPTIONS = [
+  { value: 'true', label: 'Có' },
+  { value: 'false', label: 'Không' }
+]
+
 export const WalletTypeLabel: Record<WalletTypeKey, string> = {
   [WalletTypeKey.USER]: 'Cá nhân',
   [WalletTypeKey.MERCHANT]: 'Thu hộ merchant',

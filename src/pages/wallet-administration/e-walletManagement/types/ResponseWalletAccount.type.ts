@@ -89,6 +89,8 @@ export interface FormSearchValues {
   glCode?: string
   enabled?: string
   walletType?: string
+  /** 'true' | 'false'; bỏ trống = Tất cả. Độc lập với `status`. */
+  frozen?: string
   currency?: string
   /** Lọc theo thời gian tạo ví (createdAt), ISO date-time, bao gồm cả 2 đầu mút. */
   fromDate?: string

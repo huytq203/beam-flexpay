@@ -4,7 +4,11 @@ import { useSVG } from '@hooks/useSVG'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { mapEnumToSelectOptions } from '@utils/helperFunctions'
-import { StatusLabel, WalletTypeLabel } from '../constants/Ewallet.constant'
+import {
+  FROZEN_FILTER_OPTIONS,
+  StatusLabel,
+  WalletTypeLabel
+} from '../constants/Ewallet.constant'
 import { FormSearchValues } from '../types/ResponseWalletAccount.type'
 import type { EwalletFilterKey } from '../constants/ewalletFilter.constants'
 import * as Icons from '@components/icons'
@@ -23,6 +27,7 @@ const EMPTY_FORM: FormSearchValues = {
   ownerId: '',
   status: undefined,
   walletType: undefined,
+  frozen: undefined,
   fromDate: '',
   toDate: ''
 }
@@ -79,6 +84,14 @@ export const FormSearch = ({
             name='status'
             options={mapEnumToSelectOptions(StatusLabel)}
             label='Trạng thái ví'
+          />
+        </div>
+        <div className='col-span-1'>
+          <FormSelect
+            control={formSearch.control}
+            name='frozen'
+            options={FROZEN_FILTER_OPTIONS}
+            label='Trạng thái đóng băng'
           />
         </div>
         <div className='col-span-1'>

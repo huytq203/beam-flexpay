@@ -91,4 +91,14 @@ describe('EwalletManagement — giữ bộ lọc khi quay lại từ màn chi ti
     ).toHaveValue('')
     expect(sessionStorage.getItem(`${LIST_STATE_PREFIX}${ROUTE}`)).toBeNull()
   })
+
+  it('frozen trên URL được gửi nguyên cho lưới; không chọn thì không gửi', async () => {
+    mockAccounts()
+    renderAt(`${ROUTE}?frozen=false&status=ACTIVE`)
+    await waitFor(() => expect(lastRequest().get('frozen')).toBe('false'))
+    expect(lastRequest().get('status')).toBe('ACTIVE')
+
+    fireEvent.click(screen.getByRole('button', { name: /Xóa bộ lọc/ }))
+    await waitFor(() => expect(lastRequest().has('frozen')).toBe(false))
+  })
 })
