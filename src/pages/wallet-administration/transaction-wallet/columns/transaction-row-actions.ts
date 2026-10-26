@@ -2,7 +2,8 @@ import type { UnifiedContentJournal } from '@type/apiResponseJournal'
 import { StatusEnum } from '../constants/Transaction.constant'
 import {
   getDisplayStatus,
-  getRefundOriginalType
+  getRefundOriginalType,
+  readRefundFields
 } from '../dto/transactionRefund.dto'
 
 export interface FreezeTargetParty {
@@ -45,17 +46,28 @@ export const canShowFreezeTransactionAction = (
 ): boolean =>
   transaction.status === StatusEnum.POSTED && Boolean(transaction.transactionId)
 
+/** Đã hoàn đủ số tiền giao dịch: không còn gì để hoàn nên không hiện nút. */
+const isFullyRefunded = (transaction: UnifiedContentJournal): boolean => {
+  const { refundedAmount } = readRefundFields(transaction)
+  return (
+    refundedAmount != null &&
+    transaction.amount > 0 &&
+    refundedAmount >= transaction.amount
+  )
+}
+
 /**
  * Ma trận nút Lịch sử giao dịch: Hoàn tiền chỉ với giao dịch thành công, không bị đóng
- * băng, thuộc loại hoàn được và có `transactionId` (id wallet-core mà BE cần). Số tiền
- * còn hoàn được do BE kiểm khi gửi yêu cầu, FE không tự tính. Quyền `EWALLET:FULL`
- * kiểm riêng ở nơi gọi.
+ * băng, chưa hoàn toàn bộ, thuộc loại hoàn được và có `transactionId` (id wallet-core mà
+ * BE cần). Hoàn một phần vẫn hiện nút; số tiền còn hoàn được do BE kiểm khi gửi yêu cầu.
+ * Quyền `EWALLET:FULL` kiểm riêng ở nơi gọi.
  */
 export const canShowRefundTransactionAction = (
   transaction: UnifiedContentJournal
 ): boolean =>
   transaction.status === StatusEnum.POSTED &&
   !transaction.frozen &&
+  !isFullyRefunded(transaction) &&
   Boolean(transaction.transactionId) &&
   getRefundOriginalType(transaction.transactionType) !== null
 

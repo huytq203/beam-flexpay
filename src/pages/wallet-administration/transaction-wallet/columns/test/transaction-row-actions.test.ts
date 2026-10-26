@@ -164,9 +164,18 @@ describe('canShowRefundTransactionAction', () => {
       { status: 'FAILED', displayStatus: 'FAILED_REFUND' }
     ],
     ['thiếu transactionId', { transactionId: null }],
-    ['loại REVERSAL', { transactionType: 'REVERSAL' }]
+    ['loại REVERSAL', { transactionType: 'REVERSAL' }],
+    ['đã hoàn toàn bộ', { refundedAmount: 100_000, refunded: true }]
   ])('ẩn khi %s', (_name, overrides) => {
     expect(canShowRefundTransactionAction(transaction(overrides))).toBe(false)
+  })
+
+  it('vẫn hiện khi mới hoàn một phần', () => {
+    expect(
+      canShowRefundTransactionAction(
+        transaction({ refundedAmount: 40_000, refunded: true })
+      )
+    ).toBe(true)
   })
 })
 
