@@ -23,7 +23,7 @@ const Header = ({ titleKey }: HeaderProps) => {
         <Breadcrumb className='mt-0.5' />
       </div>
 
-      <div className='ml-auto shrink-0'>
+      <div className='ml-auto flex shrink-0 items-center gap-3'>
         <NavProfile />
       </div>
     </header>

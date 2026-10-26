@@ -1,0 +1,47 @@
+{
+  "capy": {
+    "period": {
+      "morning": "buổi sáng",
+      "noon": "buổi trưa",
+      "afternoon": "buổi chiều",
+      "evening": "buổi tối"
+    },
+    "greet": {
+      "timed": "Chào {{period}}, {{name}}!",
+      "plain": "Chào {{name}}!",
+      "cheer": "{{name}} ơi, làm việc vui nhé!",
+      "anonTimed": "Chào {{period}}!",
+      "anonPlain": "Chào bạn!",
+      "anonCheer": "Làm việc vui nhé!"
+    },
+    "toggle": {
+      "label": "Linh vật Capy",
+      "switch": "Hiện linh vật Capy",
+      "idleOnly": "Chỉ đứng yên, không đi lại"
+    },
+    "menu": {
+      "greet": "Chào",
+      "sleep": "Ngủ",
+      "hide": "Ẩn"
+    },
+    "settings": {
+      "speed": {
+        "label": "Tốc độ",
+        "slow": "Chậm",
+        "normal": "Vừa",
+        "fast": "Nhanh"
+      },
+      "activity": {
+        "label": "Độ hiếu động",
+        "low": "Ít",
+        "normal": "Vừa",
+        "high": "Nhiều"
+      },
+      "sleep": {
+        "label": "Ngủ khi không ai động vào",
+        "never": "Không ngủ",
+        "minutes": "Sau {{count}} phút"
+      }
+    }
+  }
+}

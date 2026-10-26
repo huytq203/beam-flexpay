@@ -23,6 +23,9 @@ export interface TransactionRowActionsProps {
 
 const REFUND_LABEL = 'Hoàn tiền'
 
+/** Giao dịch rút tiền chỉ còn nút xử lý lệnh treo: không đóng băng, không hoàn tiền. */
+const WITHDRAW_TRANSACTION_TYPE = 'CASH_OUT'
+
 export function TransactionRowActions({
   record,
   canFreeze,
@@ -31,6 +34,7 @@ export function TransactionRowActions({
   onRefund,
   isFreezeBusy
 }: TransactionRowActionsProps) {
+  const isWithdrawal = record.transactionType === WITHDRAW_TRANSACTION_TYPE
   const action = getFreezeTransactionAction(record)
   const freezeLabel = 'Đóng băng giao dịch (Freeze)'
 
@@ -43,7 +47,7 @@ export function TransactionRowActions({
         journalStatus={record.status}
         hidden={isPendingApprovalTransaction(record)}
       />
-      {canRefund && canShowRefundTransactionAction(record) && (
+      {!isWithdrawal && canRefund && canShowRefundTransactionAction(record) && (
         <TooltipComponent title={REFUND_LABEL}>
           <ButtonComponent
             aria-label={REFUND_LABEL}
@@ -60,7 +64,7 @@ export function TransactionRowActions({
           />
         </TooltipComponent>
       )}
-      {canFreeze && action === 'freeze' && (
+      {!isWithdrawal && canFreeze && action === 'freeze' && (
         <TooltipComponent title={freezeLabel}>
           <ButtonComponent
             aria-label={freezeLabel}

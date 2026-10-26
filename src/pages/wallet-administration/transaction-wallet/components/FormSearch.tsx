@@ -60,7 +60,7 @@ const FormSearch = ({ filters, handleSearch, onReset, status }: props) => {
             control={formSearch.control}
             name='transactionCode'
             label='Mã giao dịch'
-            className='col-span-1'
+            className='col-span-2'
             placeholder='Nhập mã giao dịch...'
           />
           <FormSelect
@@ -79,17 +79,10 @@ const FormSearch = ({ filters, handleSearch, onReset, status }: props) => {
           />
           <FormInput
             control={formSearch.control}
-            name='senderUsername'
-            label='Người chuyển'
+            name='partyUsername'
+            label='Tài khoản'
             className='col-span-1'
-            placeholder='Username người chuyển...'
-          />
-          <FormInput
-            control={formSearch.control}
-            name='receiverUsername'
-            label='Người nhận'
-            className='col-span-1'
-            placeholder='Username người nhận...'
+            placeholder='Username tài khoản...'
           />
           {/* <FormInput control={formSearch.control} name='bankCode' label='Mã ngân hàng' className='col-span-1' placeholder='Nhập mã ngân hàng...' /> */}
           <FormSelect

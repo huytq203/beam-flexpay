@@ -89,6 +89,7 @@ const FeeConfigForm = ({
           control={control}
           readOnly={readOnly}
           feeCode={feeCode}
+          policyKind={policyKind}
           onServiceTypeChange={changeServiceType}
         />
       </CardComponent>

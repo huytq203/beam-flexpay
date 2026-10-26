@@ -30,8 +30,7 @@ export const toTransactionFormValues = (
   transactionType:
     filters.transactionType ??
     (filters.hasRefund === 'true' ? REFUND_TRANSACTION_TYPE : ''),
-  senderUsername: filters.senderUsername ?? '',
-  receiverUsername: filters.receiverUsername ?? '',
+  partyUsername: filters.partyUsername ?? '',
   bankCode: '',
   paymentMethod: filters.paymentMethod ?? '',
   transactionCode: filters.transactionCode ?? '',

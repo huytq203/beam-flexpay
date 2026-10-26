@@ -22,7 +22,7 @@ describe('buildUserFeeSummary — dòng tiền theo loại giao dịch', () => {
       ['Số tiền giao dịch', 50000],
       ['Số tiền cộng vào ví', 50000],
       ['Phí giao dịch', 1000],
-      ['Số tiền thực trừ trên bank', 51000]
+      ['Số tiền thực trừ trên ngân hàng', 51000]
     ])
   })
 
@@ -40,7 +40,7 @@ describe('buildUserFeeSummary — dòng tiền theo loại giao dịch', () => {
       ['Số tiền giao dịch', 50000],
       ['Số tiền trừ trên ví', 51000],
       ['Phí giao dịch', 1000],
-      ['Số tiền thực nhận trên bank', 50000]
+      ['Số tiền thực nhận trên ngân hàng', 50000]
     ])
   })
 
@@ -60,7 +60,7 @@ describe('buildUserFeeSummary — dòng tiền theo loại giao dịch', () => {
       ['Số tiền giao dịch', 50000],
       ['Số tiền trừ trên ví', 50000],
       ['Phí giao dịch', 1000],
-      ['Số tiền thực nhận trên bank', 49000]
+      ['Số tiền thực nhận trên ngân hàng', 49000]
     ])
   })
 

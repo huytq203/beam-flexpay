@@ -12,7 +12,7 @@ import TransactionManagement from '../TransactionManagement'
 const ROUTE = SCREENS.TRANSACTION_WALLET.path
 const ALIAS = SCREENS.TRANSACTION_WALLET.aliasPaths[0]
 const PHONE = '0962341913'
-const SENDER = 'Username người chuyển...'
+const ACCOUNT = 'Username tài khoản...'
 
 const requests: URLSearchParams[] = []
 
@@ -45,25 +45,25 @@ afterEach(() => {
 })
 
 describe('TransactionManagement — giữ bộ lọc khi quay lại màn', () => {
-  it('khôi phục bộ lọc + trang từ bản sao, username người chuyển không lên URL', async () => {
+  it('khôi phục bộ lọc + trang từ bản sao, username tài khoản không lên URL', async () => {
     mockJournal()
     sessionStorage.setItem(
       `${LIST_STATE_PREFIX}${ROUTE}`,
       JSON.stringify({
         query: 'transactionCode=TXN-001&hasRefund=true&page=2',
-        sensitive: { senderUsername: PHONE }
+        sensitive: { partyUsername: PHONE }
       })
     )
 
     renderAt(ROUTE)
 
-    expect(await screen.findByPlaceholderText(SENDER)).toHaveValue(PHONE)
+    expect(await screen.findByPlaceholderText(ACCOUNT)).toHaveValue(PHONE)
     expect(screen.getByPlaceholderText('Nhập mã giao dịch...')).toHaveValue(
       'TXN-001'
     )
     expect(screen.getByTitle('Hoàn tiền')).toBeInTheDocument()
     expect(lastRequest().get('page')).toBe('2')
-    expect(lastRequest().get('senderUsername')).toBe(PHONE)
+    expect(lastRequest().get('partyUsername')).toBe(PHONE)
     expect(lastRequest().get('transactionCode')).toBe('TXN-001')
     expect(lastRequest().get('hasRefund')).toBe('true')
     expect(lastRequest().get('sourceDomain')).toBe('EWALLET')
@@ -89,20 +89,20 @@ describe('TransactionManagement — giữ bộ lọc khi quay lại màn', () =>
   it('Tìm kiếm về trang 1, Xóa lọc xoá bộ lọc và bản sao', async () => {
     mockJournal()
     renderAt(`${ROUTE}?page=3`)
-    const sender = await screen.findByPlaceholderText(SENDER)
+    const account = await screen.findByPlaceholderText(ACCOUNT)
     expect(lastRequest().get('page')).toBe('3')
 
-    fireEvent.change(sender, { target: { value: PHONE } })
+    fireEvent.change(account, { target: { value: PHONE } })
     fireEvent.click(screen.getByRole('button', { name: /Tìm kiếm/ }))
     await waitFor(() => {
-      expect(lastRequest().get('senderUsername')).toBe(PHONE)
+      expect(lastRequest().get('partyUsername')).toBe(PHONE)
       expect(lastRequest().get('page')).toBe('1')
     })
     expect(screen.getByTestId('search')).not.toHaveTextContent(PHONE)
 
     fireEvent.click(screen.getByRole('button', { name: /Xóa lọc/ }))
-    await waitFor(() => expect(lastRequest().has('senderUsername')).toBe(false))
-    expect(screen.getByPlaceholderText(SENDER)).toHaveValue('')
+    await waitFor(() => expect(lastRequest().has('partyUsername')).toBe(false))
+    expect(screen.getByPlaceholderText(ACCOUNT)).toHaveValue('')
     expect(sessionStorage.getItem(`${LIST_STATE_PREFIX}${ROUTE}`)).toBeNull()
   })
 })

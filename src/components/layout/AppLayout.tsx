@@ -25,6 +25,7 @@ import SideBar from './SideBar'
 import Header from './Header'
 import { EmployeePassword } from './components/EmployeePassword'
 import EmployeeProfile from './components/EmployeeProfile'
+import { Capy } from '@components/capy/Capy'
 import ScreenLoading from '@components/screen-loading/ScreenLoading'
 import { useAppDispatch, useAppSelector } from '@hooks/hook'
 import { useRouteAccess } from '@/app/permissions'
@@ -215,6 +216,7 @@ function AppLayout() {
         open={modalProfile}
         onClose={hideProfile}
       />
+      <Capy />
     </React.Fragment>
   )
 }

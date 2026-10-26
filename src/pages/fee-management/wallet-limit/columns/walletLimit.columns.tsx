@@ -6,6 +6,7 @@ import {
   TagComponent,
   TooltipComponent
 } from '@components/index'
+import StatusBadge from '@components/status-badge/StatusBadge'
 import type {
   WalletLimitBankOverride,
   WalletLimitPolicy,
@@ -15,7 +16,6 @@ import { formatUTCToLocalDateTime } from '@utils/helper-functions/date'
 import {
   PAYMENT_METHOD_LABELS,
   SCOPE_LABELS,
-  STATUS_LABELS,
   TRANSACTION_TYPE_LABELS
 } from '../constants/walletLimit.constants'
 import { formatLimitMoney, getRowNumber } from '../utils/walletLimit.format'
@@ -75,22 +75,9 @@ const overrideLabel = (override: WalletLimitBankOverride): string => {
 const overrideKey = (override: WalletLimitBankOverride, index: number) =>
   override.id ?? `${override.transactionType}-${override.bankCode}-${index}`
 
-const renderStatus = (record: WalletLimitPolicy) => {
-  const isActive = record.status === 'ACTIVE'
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 font-medium ${
-        isActive ? 'text-success-strong' : 'text-danger-strong'
-      }`}
-    >
-      <span
-        aria-hidden
-        className='size-2 rounded-full bg-current'
-      />
-      {STATUS_LABELS[record.status]}
-    </span>
-  )
-}
+const renderStatus = (record: WalletLimitPolicy) => (
+  <StatusBadge status={record.status} />
+)
 
 const renderUpdated = (record: WalletLimitPolicy) => {
   const hasUpdate = Boolean(record.updatedAt)
@@ -203,12 +190,8 @@ export const createWalletLimitColumns = ({
   moneyColumn('Tối thiểu/GD', (record) => record.minPerTransaction, 140),
   moneyColumn('Tối đa/GD', (record) => record.maxPerTransaction, 150),
   moneyColumn('Hạn mức ngày', (record) => record.dailyMaximum, 160),
-  moneyColumn('Tháng (thường)', (record) => record.normalMonthlyMaximum, 160),
-  moneyColumn(
-    'Tháng (đặc biệt)',
-    (record) => record.specialMonthlyMaximum,
-    160
-  ),
+  moneyColumn('Tháng thường', (record) => record.normalMonthlyMaximum, 160),
+  moneyColumn('Tháng đặc biệt', (record) => record.specialMonthlyMaximum, 160),
   {
     title: 'Theo ngân hàng / phương thức',
     width: 260,

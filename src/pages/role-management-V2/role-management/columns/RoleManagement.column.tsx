@@ -77,8 +77,14 @@ export const getRoleManagementColumn = ({
     fixed: 'right',
     render: (_, record) => {
       return (
-        <div className='flex justify-start items-start gap-1'>
-          <Can screen='ROLE_MANAGEMENT' action='edit'>
+        <div
+          data-capy='no'
+          className='flex justify-start items-start gap-1'
+        >
+          <Can
+            screen='ROLE_MANAGEMENT'
+            action='edit'
+          >
             <TooltipComponent title='Cập nhật'>
               <ButtonComponent
                 aria-label='Sửa nhóm quyền'
@@ -89,7 +95,10 @@ export const getRoleManagementColumn = ({
               />
             </TooltipComponent>
           </Can>
-          <Can screen='ROLE_MANAGEMENT' action='viewPermissions'>
+          <Can
+            screen='ROLE_MANAGEMENT'
+            action='viewPermissions'
+          >
             <TooltipComponent title='Xem các quyền'>
               <ButtonComponent
                 aria-label='Xem quyền của nhóm'
@@ -101,7 +110,10 @@ export const getRoleManagementColumn = ({
               />
             </TooltipComponent>
           </Can>
-          <Can screen='ROLE_MANAGEMENT' action='viewMembers'>
+          <Can
+            screen='ROLE_MANAGEMENT'
+            action='viewMembers'
+          >
             <TooltipComponent title='Xem người dùng'>
               <ButtonComponent
                 aria-label='Xem thành viên'
@@ -113,7 +125,10 @@ export const getRoleManagementColumn = ({
               />
             </TooltipComponent>
           </Can>
-          <Can screen='ROLE_MANAGEMENT' action='delete'>
+          <Can
+            screen='ROLE_MANAGEMENT'
+            action='delete'
+          >
             <TooltipComponent title='Xóa'>
               <ButtonComponent
                 aria-label='Xoá nhóm quyền'
@@ -125,7 +140,10 @@ export const getRoleManagementColumn = ({
               />
             </TooltipComponent>
           </Can>
-          <Can screen='ROLE_MANAGEMENT' action='assignPermissions'>
+          <Can
+            screen='ROLE_MANAGEMENT'
+            action='assignPermissions'
+          >
             <TooltipComponent title='Phân quyền'>
               <ButtonComponent
                 aria-label='Gán quyền'

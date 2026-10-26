@@ -2,6 +2,7 @@ import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 
 import translationEN from './en/translation.json'
+import capy from './vi/capy.json'
 import customer from './vi/customer.json'
 import headerTitle from './vi/headerTitle.json'
 import internal from './vi/internal.json'
@@ -20,7 +21,8 @@ const resources = {
       ...invoice,
       ...sms,
       ...headerTitle,
-      ...customer
+      ...customer,
+      ...capy
     }
   }
 }

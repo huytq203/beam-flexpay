@@ -2,8 +2,7 @@ export const TRANSACTION_FILTER_KEYS = [
   'transactionCode',
   'transactionType',
   'status',
-  'senderUsername',
-  'receiverUsername',
+  'partyUsername',
   'paymentMethod',
   'fromDate',
   'toDate',
@@ -16,10 +15,9 @@ export type TransactionUrlFilters = Partial<
   Record<TransactionFilterKey, string>
 >
 
-/** Username người chuyển/nhận là số điện thoại: không đưa lên URL. */
+/** Username tài khoản là số điện thoại: không đưa lên URL. */
 export const TRANSACTION_SENSITIVE_KEYS = [
-  'senderUsername',
-  'receiverUsername'
+  'partyUsername'
 ] as const satisfies readonly TransactionFilterKey[]
 
 /** Khoá loại giao dịch hoàn tiền trong `TransactionType`. */

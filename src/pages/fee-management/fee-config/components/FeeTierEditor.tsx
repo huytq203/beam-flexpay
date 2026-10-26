@@ -112,7 +112,7 @@ export const FeeTierEditor = ({
       {/* Lỗi của hàng đã nói đúng câu này, nên gợi ý chỉ hiện khi chưa có lỗi đó. */}
       {!hasRateMissingError && (
         <p className='mb-2 text-[13px] text-muted-foreground'>
-          Bậc không thu phí: nhập 0 vào Phí linh hoạt hoặc Phí cố định, để trống Sàn.
+          Bậc không thu phí: nhập 0 vào Phí linh hoạt (%) hoặc Phí cố định, để trống Sàn.
         </p>
       )}
 
@@ -128,7 +128,7 @@ export const FeeTierEditor = ({
               <tr className='bg-muted'>
                 <th className={`${HEAD} px-3 py-2 text-right`}>Từ</th>
                 <th className={`${HEAD} px-3 py-2 text-left`}>Đến</th>
-                <th className={`${HEAD} px-3 py-2 text-left`}>Phí linh hoạt</th>
+                <th className={`${HEAD} px-3 py-2 text-left`}>Phí linh hoạt (%)</th>
                 <th className={`${HEAD} px-3 py-2 text-left`}>Phí cố định</th>
                 <th className={`${HEAD} px-3 py-2 text-left`}>Sàn</th>
                 <th className={`${HEAD} px-3 py-2 text-left`}>Trần</th>

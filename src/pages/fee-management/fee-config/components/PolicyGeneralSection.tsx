@@ -12,8 +12,11 @@ import type { Control } from 'react-hook-form'
 import { useWatch } from 'react-hook-form'
 import {
   FEE_PRIORITY_OPTIONS,
+  POLICY_KIND,
+  type PolicyKind,
   getFormFieldRules
 } from '../constants/feeConfigFields'
+import { HIDDEN_SERVICE_TYPES_BY_POLICY_KIND } from '../constants/policyKindServiceTypes'
 import type { FeeConfigFormValues } from '../schemas/feeConfig.schema'
 import { disablePastDate, disablePastTime } from '../utils/futureDateTime'
 import { SectionHeading } from './SectionHeading'
@@ -23,6 +26,7 @@ interface PolicyGeneralSectionProps {
   readOnly?: boolean
   /** Mã đối soát do BE sinh; chỉ có khi xem hoặc sửa chính sách đã lưu. */
   feeCode?: string | null
+  policyKind?: PolicyKind
   /** Đổi loại giao dịch kéo theo miền phí và các ô gán đối tượng. */
   onServiceTypeChange: (next: string) => void
 }
@@ -44,6 +48,7 @@ export const PolicyGeneralSection = ({
   control,
   readOnly = false,
   feeCode,
+  policyKind = POLICY_KIND.CUSTOMER_FEE,
   onServiceTypeChange
 }: PolicyGeneralSectionProps) => {
   const feeDomain = useWatch({ control, name: 'feeDomain' })
@@ -55,7 +60,8 @@ export const PolicyGeneralSection = ({
   const currentServiceType = useWatch({ control, name: 'serviceType' })
   const serviceTypeOptions = withoutHiddenServiceTypes(
     getFormFieldRules(feeDomain, '').serviceTypes,
-    currentServiceType
+    currentServiceType,
+    HIDDEN_SERVICE_TYPES_BY_POLICY_KIND[policyKind]
   ).map((value) => {
     const name = SERVICE_TYPE_LABELS[value] ?? value
     return {

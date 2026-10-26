@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import {
+  FIXED_FEE_ABOVE_MAX_MESSAGE,
+  FIXED_FEE_BELOW_MIN_MESSAGE,
+  MAX_FEE_BELOW_BOTH_MESSAGE,
   MAX_FEE_BELOW_FIXED_MESSAGE,
-  MAX_FEE_BELOW_MIN_MESSAGE,
-  MIN_FEE_BELOW_FIXED_MESSAGE
+  MAX_FEE_BELOW_MIN_MESSAGE
 } from '../schemas/feeBounds'
 import {
   CalculationMethod,
@@ -46,16 +48,17 @@ const issuesOf = (value: unknown) => {
       }))
 }
 
-describe('sàn / trần phí so với phí cố định', () => {
-  it('phí tối thiểu nhỏ hơn phí cố định thì báo lỗi ở ô tối thiểu', () => {
-    expect(issuesOf(component({ fixedAmount: 5000, minFee: 3000 }))).toEqual([
-      { path: 'minFee', message: MIN_FEE_BELOW_FIXED_MESSAGE }
+describe('phí cố định so với sàn / trần', () => {
+  it('phí cố định nhỏ hơn phí tối thiểu thì báo lỗi ở ô cố định', () => {
+    expect(issuesOf(component({ fixedAmount: 3000, minFee: 5000 }))).toEqual([
+      { path: 'fixedAmount', message: FIXED_FEE_BELOW_MIN_MESSAGE }
     ])
   })
 
-  it('phí tối đa nhỏ hơn phí cố định thì báo lỗi ở ô tối đa', () => {
+  it('phí tối đa nhỏ hơn phí cố định thì báo lỗi ở cả hai ô', () => {
     expect(issuesOf(component({ fixedAmount: 5000, maxFee: 4000 }))).toEqual([
-      { path: 'maxFee', message: MAX_FEE_BELOW_FIXED_MESSAGE }
+      { path: 'maxFee', message: MAX_FEE_BELOW_FIXED_MESSAGE },
+      { path: 'fixedAmount', message: FIXED_FEE_ABOVE_MAX_MESSAGE }
     ])
   })
 
@@ -80,6 +83,15 @@ describe('phí tối đa so với phí tối thiểu', () => {
       { path: 'maxFee', message: MAX_FEE_BELOW_MIN_MESSAGE }
     ])
   })
+
+  it('phí tối đa nhỏ hơn cả phí cố định và tối thiểu thì gộp một thông báo', () => {
+    expect(
+      issuesOf(component({ fixedAmount: 1000, minFee: 1000, maxFee: 500 }))
+    ).toEqual([
+      { path: 'maxFee', message: MAX_FEE_BELOW_BOTH_MESSAGE },
+      { path: 'fixedAmount', message: FIXED_FEE_ABOVE_MAX_MESSAGE }
+    ])
+  })
 })
 
 describe('áp cùng luật cho từng bậc phí', () => {
@@ -94,12 +106,12 @@ describe('áp cùng luật cho từng bậc phí', () => {
     expect(
       issuesOf(
         tiered([
-          tier({ maxValue: 1_000_000, fixedAmount: 2000, minFee: 1000 }),
+          tier({ maxValue: 1_000_000, fixedAmount: 1000, minFee: 2000 }),
           tier({ minFee: 9000, maxFee: 7000 })
         ])
       )
     ).toEqual([
-      { path: 'tiers.0.minFee', message: MIN_FEE_BELOW_FIXED_MESSAGE },
+      { path: 'tiers.0.fixedAmount', message: FIXED_FEE_BELOW_MIN_MESSAGE },
       { path: 'tiers.1.maxFee', message: MAX_FEE_BELOW_MIN_MESSAGE }
     ])
   })
@@ -108,7 +120,8 @@ describe('áp cùng luật cho từng bậc phí', () => {
     expect(
       issuesOf(tiered([tier({ fixedAmount: 3000, maxFee: 2000 })]))
     ).toEqual([
-      { path: 'tiers.0.maxFee', message: MAX_FEE_BELOW_FIXED_MESSAGE }
+      { path: 'tiers.0.maxFee', message: MAX_FEE_BELOW_FIXED_MESSAGE },
+      { path: 'tiers.0.fixedAmount', message: FIXED_FEE_ABOVE_MAX_MESSAGE }
     ])
   })
 })

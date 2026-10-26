@@ -8,14 +8,20 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { COlOR } from './Navigation'
 import {
+  GearSixIcon,
   LockKeyIcon,
   SignOutIcon,
   UserIcon,
   WarningCircleIcon
 } from '@phosphor-icons/react/dist/ssr'
+import { CapySettingsDialog } from '@components/capy/CapySettingsDialog'
+import { useCapySettings } from '@components/capy/hooks/useCapySettings'
 import DialogModal from '@components/ui/dialogModal-component'
 import { useLogoutMutation } from '@services/authEndpoints'
-import { getRefreshTokenCookie, removeRefreshTokenCookie } from '@configs/fetchBaseQuery.types'
+import {
+  getRefreshTokenCookie,
+  removeRefreshTokenCookie
+} from '@configs/fetchBaseQuery.types'
 
 const IAvatarDefault = '/images/assets/image/avatar_default.webp'
 const { Text } = Typography
@@ -24,8 +30,10 @@ export default function NavProfile() {
   const dispatch = useAppDispatch()
   const _navigate = useNavigate()
   const [open, setOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const { available: canOpenSettings } = useCapySettings()
 
-  const [logoutApi] = useLogoutMutation();
+  const [logoutApi] = useLogoutMutation()
 
   const { t: trans } = useTranslation()
 
@@ -52,6 +60,20 @@ export default function NavProfile() {
       ),
       key: 'changePassword'
     },
+    ...(canOpenSettings
+      ? [
+          {
+            label: trans('navigation.settings'),
+            icon: (
+              <GearSixIcon
+                size={SIZE_ICON}
+                color={COlOR}
+              />
+            ),
+            key: 'settings'
+          }
+        ]
+      : []),
     {
       type: 'divider'
     },
@@ -75,6 +97,9 @@ export default function NavProfile() {
       case 'changePassword':
         showPassword()
         break
+      case 'settings':
+        setSettingsOpen(true)
+        break
       case 'logout':
         setOpen(true)
         break
@@ -93,7 +118,6 @@ export default function NavProfile() {
         await logoutApi({ refreshToken }).unwrap()
       }
     } catch {
-
     } finally {
       removeRefreshTokenCookie()
       dispatch(logout())
@@ -103,18 +127,24 @@ export default function NavProfile() {
 
   return (
     <React.Fragment>
-      <Dropdown
-        placement='bottomLeft'
-        menu={menuProps}
-        trigger={['click']}
-        arrow={{ pointAtCenter: true }}
+      <Row
+        gutter={GUTTER}
+        className='items-center'
       >
-        <Row gutter={GUTTER} className='cursor-pointer  items-center'>
-          <Col>
-            <Text className='font-semibold '>{profile.fullName||profile.email}</Text>
-          </Col>
-          <Col>
+        <Col>
+          <Text className='font-semibold '>
+            {profile.fullName || profile.email}
+          </Text>
+        </Col>
+        <Col>
+          <Dropdown
+            placement='bottomRight'
+            menu={menuProps}
+            trigger={['click']}
+            arrow={{ pointAtCenter: true }}
+          >
             <Avatar
+              className='cursor-pointer'
               src={
                 <img
                   src={IAvatarDefault}
@@ -125,13 +155,20 @@ export default function NavProfile() {
             >
               {profile.fullName?.charAt(0)}
             </Avatar>
-          </Col>
-        </Row>
-      </Dropdown>
+          </Dropdown>
+        </Col>
+      </Row>
+      <CapySettingsDialog
+        open={settingsOpen}
+        onCancel={() => setSettingsOpen(false)}
+      />
       <DialogModal
         title={
-          <div className="flex items-center gap-2">
-            <WarningCircleIcon size={24} color='#de831b' />
+          <div className='flex items-center gap-2'>
+            <WarningCircleIcon
+              size={24}
+              color='#de831b'
+            />
             <span>{trans('labels.logout')}</span>
           </div>
         }
@@ -143,6 +180,5 @@ export default function NavProfile() {
         onCancel={() => setOpen(false)}
       />
     </React.Fragment>
-
   )
 }

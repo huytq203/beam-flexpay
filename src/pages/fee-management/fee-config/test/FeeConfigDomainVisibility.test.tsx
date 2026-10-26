@@ -149,24 +149,13 @@ describe('trang tạo chính sách', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('chọn Hoàn tiền giao dịch ví: không hiện ô Merchant, người chịu và người hưởng vẫn sửa được', async () => {
+  it('phí đầu ra tạm ẩn Hoàn tiền giao dịch ví khỏi ô Loại giao dịch', async () => {
     const user = userEvent.setup()
     renderCreatePage()
 
     await user.click(screen.getByLabelText(/Loại giao dịch/))
-    await user.click(await screen.findByText(REFUND_LABEL))
+    await screen.findByText(DEPOSIT_LABEL)
 
-    expect(
-      screen.queryByText('Đơn vị chấp nhận thanh toán')
-    ).not.toBeInTheDocument()
-    expect(screen.queryByText('Loại thẻ')).not.toBeInTheDocument()
-
-    await user.click(screen.getByRole('button', { name: 'Thêm phí đầu ra' }))
-    await within(await screen.findByRole('dialog')).findByText(
-      'Thêm phí đầu ra'
-    )
-    // Người chịu suy theo loại giao dịch chỉ là mặc định; người vận hành vẫn sửa được.
-    expect(screen.getByLabelText(/Người chịu/)).not.toBeDisabled()
-    expect(screen.getByLabelText(/Người hưởng/)).not.toBeDisabled()
+    expect(screen.queryByText(REFUND_LABEL)).not.toBeInTheDocument()
   })
 })

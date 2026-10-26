@@ -93,5 +93,50 @@
     "updateOutboundFeeFailed": "Failed to update outbound fee",
     "updateVatFeeSuccess": "Update VAT fee successfully",
     "updateVatFeeFailed": "Failed to update VAT fee"
+  },
+  "capy": {
+    "period": {
+      "morning": "morning",
+      "noon": "afternoon",
+      "afternoon": "afternoon",
+      "evening": "evening"
+    },
+    "greet": {
+      "timed": "Good {{period}}, {{name}}!",
+      "plain": "Hi {{name}}!",
+      "cheer": "{{name}}, have a great day at work!",
+      "anonTimed": "Good {{period}}!",
+      "anonPlain": "Hi there!",
+      "anonCheer": "Have a great day at work!"
+    },
+    "toggle": {
+      "label": "Capy mascot",
+      "switch": "Show the Capy mascot",
+      "idleOnly": "Stay still, no walking"
+    },
+    "menu": {
+      "greet": "Say hi",
+      "sleep": "Sleep",
+      "hide": "Hide"
+    },
+    "settings": {
+      "speed": {
+        "label": "Speed",
+        "slow": "Slow",
+        "normal": "Normal",
+        "fast": "Fast"
+      },
+      "activity": {
+        "label": "Activity",
+        "low": "Low",
+        "normal": "Normal",
+        "high": "High"
+      },
+      "sleep": {
+        "label": "Sleep when untouched",
+        "never": "Never sleep",
+        "minutes": "After {{count}} min"
+      }
+    }
   }
 }

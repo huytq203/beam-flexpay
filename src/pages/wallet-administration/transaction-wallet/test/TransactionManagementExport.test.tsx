@@ -15,8 +15,7 @@ const mocks = vi.hoisted(() => ({
     toDate: '2026-08-25T23:59:59.999',
     sourceDomain: 'EWALLET',
     paymentMethod: '',
-    senderUsername: '0962341913',
-    receiverUsername: ''
+    partyUsername: '0962341913'
   } as Record<string, string>
 }))
 
@@ -63,7 +62,7 @@ vi.mock('@hooks/useExportCsv', () => ({
 describe('TransactionManagement export', () => {
   beforeEach(() => vi.clearAllMocks())
 
-  it('gửi cùng bộ filter với lưới, bao gồm senderUsername, không kèm page/size', async () => {
+  it('gửi cùng bộ filter với lưới, bao gồm partyUsername, không kèm page/size', async () => {
     renderWithProviders(
       <MessageProvider>
         <TransactionManagement />
@@ -78,7 +77,7 @@ describe('TransactionManagement export', () => {
       status: 'POSTED',
       fromDate: '2026-08-01T00:00:00.000',
       toDate: '2026-08-25T23:59:59.999',
-      senderUsername: '0962341913',
+      partyUsername: '0962341913',
       sourceDomain: 'EWALLET'
     })
   })

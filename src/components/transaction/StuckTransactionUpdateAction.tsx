@@ -159,7 +159,7 @@ export const StuckTransactionUpdateAction = ({
   return (
     <>
       {compact ? (
-        <TooltipComponent title={actionLabel}>{trigger}</TooltipComponent>
+        <TooltipComponent title='Xử lý'>{trigger}</TooltipComponent>
       ) : (
         trigger
       )}

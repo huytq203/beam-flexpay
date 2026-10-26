@@ -47,8 +47,8 @@ export interface ExportTransactionsQuery {
   /** Thời gian giao dịch chuyển sang thành công — khác `fromDate`/`toDate`. */
   successFrom?: string
   successTo?: string
-  senderUsername?: string
-  receiverUsername?: string
+  /** Username ở MỘT TRONG HAI vai (người chuyển hoặc người nhận). */
+  partyUsername?: string
   counterpartyUsername?: string
   sourceDomain?: string
   paymentMethod?: string

@@ -116,8 +116,8 @@ describe('DetailTransaction', () => {
     expect(
       screen.getByText('Phí 3% + Phí cố định 2,000 VND + VAT 0%')
     ).toBeInTheDocument()
-    expect(screen.getByText('USER_WALLET_VND (0901234567)')).toBeInTheDocument()
-    expect(screen.getByText('SYS_BANK_SETTLEMENT_VND')).toBeInTheDocument()
+    expect(screen.getByText('Ví người dùng (0901234567)')).toBeInTheDocument()
+    expect(screen.getByText('Tài khoản thanh toán ngân hàng')).toBeInTheDocument()
     expect(screen.getAllByText('Nguyễn Văn A')).toHaveLength(2)
     expect(screen.getByText('VERIFIED')).toBeInTheDocument()
     expect(screen.getByText('****0011')).toBeInTheDocument()

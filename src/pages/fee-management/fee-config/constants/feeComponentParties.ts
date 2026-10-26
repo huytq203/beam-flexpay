@@ -38,8 +38,9 @@ const WALLET_FLOW_SERVICES: readonly string[] = [
  * tiền hoàn (phí trừ thêm). Hoàn rút tiền: người chuyển gốc là ví khách đã rút.
  */
 const REFUND_PAYER_LABEL: Readonly<Record<string, string>> = {
-  USER: 'Người chuyển gốc (được hoàn tiền)',
-  RECEIVER: 'Người nhận gốc (bị trừ tiền hoàn)'
+  USER: 'Người nhận',
+  SENDER:'Người nhận',    
+  RECEIVER: 'Người chuyển'
 }
 
 const payerLabelsFor = (
@@ -64,7 +65,7 @@ export const getBearerSideTitles = (
   serviceType?: string | null
 ): { sender: string; receiver: string } =>
   serviceType === 'EWALLET_REFUND'
-    ? { sender: 'Người chuyển gốc chịu', receiver: 'Người nhận gốc chịu' }
+    ? { sender: 'Người nhận chịu', receiver: 'Người chuyển chịu' }
     : { sender: 'Người chuyển chịu', receiver: 'Người nhận chịu' }
 
 /**
@@ -115,6 +116,7 @@ export const getOutputPayerOptions = (
 export const BENEFICIARY_TYPE_LABEL: Readonly<Record<string, string>> = {
   BANK: 'Ngân hàng',
   PARTNER: 'Đối tác',
+  SYSTEM:'Hệ thống'
 }
 
 /**

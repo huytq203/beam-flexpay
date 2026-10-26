@@ -69,7 +69,10 @@ export const getPermissionManagementColumns = ({
     width: 96,
     fixed: 'right',
     render: (_, record) => (
-      <div className='flex items-center justify-center gap-1'>
+      <div
+        data-capy='no'
+        className='flex items-center justify-center gap-1'
+      >
         <Can
           screen='PERMISSION_MANAGEMENT'
           action='edit'

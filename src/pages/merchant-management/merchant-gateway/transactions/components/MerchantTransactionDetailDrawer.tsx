@@ -7,6 +7,7 @@ import type {
   UnifiedContentJournal
 } from '@type/apiResponseJournal'
 import { CONFIG_STATUS } from '@pages/wallet-administration/transaction-wallet/constants/Transaction.constant'
+import { formatAccountingAccount } from '@pages/wallet-administration/transaction-wallet/utils/accountingAccountLabel'
 import { formatUTCToLocalDateTime } from '@utils/helper-functions/date'
 import { formatNumber } from '@utils/index'
 import { MERCHANT_TRANSACTION_METHOD_LABELS } from '../constants/merchantTransaction.constants'
@@ -26,8 +27,14 @@ const money = (value: number, currency: string): string =>
 
 const flowColumns: NonNullable<TableProps<MoneyFlowEntry>['columns']> = [
   { title: 'Bước', dataIndex: 'sequence', width: 64 },
-  { title: 'Nợ', render: (_v, row) => row.debitAccount || '--' },
-  { title: 'Có', render: (_v, row) => row.creditAccount || '--' },
+  {
+    title: 'Nợ',
+    render: (_v, row) => formatAccountingAccount(row.debitAccount)
+  },
+  {
+    title: 'Có',
+    render: (_v, row) => formatAccountingAccount(row.creditAccount)
+  },
   {
     title: 'Số tiền',
     align: 'right',

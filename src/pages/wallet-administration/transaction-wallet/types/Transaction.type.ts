@@ -3,8 +3,8 @@ export interface FormSearchValues {
   fromDate: string
   toDate: string
   transactionType?: string
-  senderUsername?: string
-  receiverUsername?: string
+  /** Ô "Tài khoản": khớp ví ở MỘT TRONG HAI vai, nên ra cả giao dịch chuyển lẫn nhận. */
+  partyUsername?: string
   bankCode?: string
   paymentMethod?: string
   transactionCode?: string

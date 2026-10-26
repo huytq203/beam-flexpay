@@ -156,12 +156,16 @@ export const TEMPORARILY_HIDDEN_SERVICE_TYPES: readonly string[] = [
  */
 export const withoutHiddenServiceTypes = (
   serviceTypes: readonly string[],
-  current?: string | null
+  current?: string | null,
+  extraHidden: readonly string[] = []
 ): readonly string[] =>
   serviceTypes.filter(
     (serviceType) =>
       serviceType === current ||
-      !TEMPORARILY_HIDDEN_SERVICE_TYPES.includes(serviceType)
+      !(
+        TEMPORARILY_HIDDEN_SERVICE_TYPES.includes(serviceType) ||
+        extraHidden.includes(serviceType)
+      )
   )
 
 export const isPublishableServiceType = (

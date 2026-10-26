@@ -1,4 +1,5 @@
 import type { MoneyFlowEntry } from '@type/apiResponseJournal'
+import { formatAccountingAccount } from '@pages/wallet-administration/transaction-wallet/utils/accountingAccountLabel'
 import { formatCurrency } from '@utils/formatNumber'
 import { ColumnType } from 'antd/es/table'
 import dayjs from 'dayjs'
@@ -21,7 +22,7 @@ const Column = (currency = 'VND'): ColumnType<MoneyFlowEntry>[] => [
         dataIndex: 'debitAccount',
         width: 240,
         render: (value: string | null) => (
-            <span className='break-words'>{value || '--'}</span>
+            <span className='break-words'>{formatAccountingAccount(value)}</span>
         )
     },
     {
@@ -29,7 +30,7 @@ const Column = (currency = 'VND'): ColumnType<MoneyFlowEntry>[] => [
         dataIndex: 'creditAccount',
         width: 240,
         render: (value: string | null) => (
-            <span className='break-words'>{value || '--'}</span>
+            <span className='break-words'>{formatAccountingAccount(value)}</span>
         )
     },
     {

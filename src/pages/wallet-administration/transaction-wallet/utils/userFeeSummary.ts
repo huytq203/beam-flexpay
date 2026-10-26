@@ -80,11 +80,11 @@ const ENDPOINT_LABELS: Readonly<
 > = {
   DEPOSIT: {
     credited: 'Số tiền cộng vào ví',
-    debited: 'Số tiền thực trừ trên bank'
+    debited: 'Số tiền thực trừ trên ngân hàng'
   },
   WITHDRAWAL: {
     debited: 'Số tiền trừ trên ví',
-    credited: 'Số tiền thực nhận trên bank'
+    credited: 'Số tiền thực nhận trên ngân hàng'
   },
   OTHER: { credited: 'Số tiền thực nhận', debited: 'Tổng giá trị' }
 }
