@@ -9,7 +9,7 @@ import type { UnifiedContentJournal } from '@type/apiResponseJournal'
 import { StatusEnum } from '../constants/Transaction.constant'
 import {
   canShowRefundTransactionAction,
-  isPendingApprovalTransaction
+  shouldHideStuckUpdateAction
 } from '../columns/transaction-row-actions'
 import { useCreateRefundDialog } from '../hooks/useCreateRefundDialog'
 import { useTransactionPermissions } from '../hooks/useTransactionPermissions'
@@ -48,7 +48,7 @@ export function DetailTransactionHeader({
             transactionCode={transaction.transactionCode}
             transactionType={transaction.transactionType}
             journalStatus={transaction.status}
-            hidden={isPendingApprovalTransaction(transaction)}
+            hidden={shouldHideStuckUpdateAction(transaction)}
           />
           {transaction.status === StatusEnum.POSTED && (
             <StuckReceiptViewButton

@@ -22,6 +22,21 @@ export const getDisplayStatus = (
   row: Pick<UnifiedContentJournal, 'status' | 'displayStatus'>
 ): string => row.displayStatus || row.status
 
+/**
+ * Chỉ nhấp nháy khi dòng thật sự còn chờ: journal còn PENDING nhưng lệnh rút đã FAILED/POSTED thì nhãn
+ * đã là kết quả cuối, nhấp nháy sẽ báo sai là đang xử lý.
+ */
+export const isTransactionInProgress = (
+  row: Pick<UnifiedContentJournal, 'status' | 'displayStatus'>
+): boolean => {
+  const display = getDisplayStatus(row)
+  return (
+    row.status === StatusEnum.PENDING &&
+    display !== StatusEnum.FAILED &&
+    display !== StatusEnum.POSTED
+  )
+}
+
 /** Đọc lại 4 trường hoàn tiền qua Zod; trường lạ kiểu thì coi như chưa biết (`null`). */
 export const readRefundFields = (row: object): UnifiedRefundFields => {
   const parsed = unifiedRefundFieldsSchema.safeParse(row)

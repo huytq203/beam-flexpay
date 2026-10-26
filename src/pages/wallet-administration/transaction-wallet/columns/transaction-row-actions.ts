@@ -29,6 +29,16 @@ export const isPendingApprovalTransaction = (
   getDisplayStatus(transaction) === StatusEnum.PENDING_APPROVAL ||
   transaction.status === StatusEnum.PENDING_APPROVAL
 
+/**
+ * Ẩn nút cập nhật giao dịch treo: lệnh chờ duyệt (chỉ Duyệt/Từ chối được chốt) hoặc lệnh rút đã
+ * `FAILED` ở user-wallet dù sổ cái còn PENDING/AUTHORIZED, vì không còn gì để xử lý.
+ */
+export const shouldHideStuckUpdateAction = (
+  transaction: Pick<UnifiedContentJournal, 'status' | 'displayStatus'>
+): boolean =>
+  isPendingApprovalTransaction(transaction) ||
+  getDisplayStatus(transaction) === StatusEnum.FAILED
+
 /** POSTED là trạng thái thành công của journal và luôn phải có GL transaction để đóng băng. */
 export const canShowFreezeTransactionAction = (
   transaction: UnifiedContentJournal

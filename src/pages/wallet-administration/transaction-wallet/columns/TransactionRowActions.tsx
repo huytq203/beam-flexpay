@@ -8,7 +8,7 @@ import { ArrowCounterClockwiseIcon, SnowflakeIcon } from '@components/icons'
 import {
   canShowRefundTransactionAction,
   getFreezeTransactionAction,
-  isPendingApprovalTransaction
+  shouldHideStuckUpdateAction
 } from './transaction-row-actions'
 
 export interface TransactionRowActionsProps {
@@ -45,7 +45,7 @@ export function TransactionRowActions({
         transactionCode={record.transactionCode}
         transactionType={record.transactionType}
         journalStatus={record.status}
-        hidden={isPendingApprovalTransaction(record)}
+        hidden={shouldHideStuckUpdateAction(record)}
       />
       {!isWithdrawal && canRefund && canShowRefundTransactionAction(record) && (
         <TooltipComponent title={REFUND_LABEL}>

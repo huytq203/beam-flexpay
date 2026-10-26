@@ -41,4 +41,15 @@ describe('badge trạng thái ở thông tin chung giao dịch', () => {
       'text-danger-strong'
     )
   })
+
+  it.each([
+    ['APPROVED', 'Đã duyệt — đang chi'],
+    ['PAYING', 'Đang chi']
+  ])('nhãn theo displayStatus %s khi sổ cái còn PENDING', (display, label) => {
+    renderWithProviders(
+      <CommonInfo data={transactionWith('PENDING', display)} />
+    )
+
+    expect(screen.getByText(label)).toHaveClass('text-warning-strong')
+  })
 })

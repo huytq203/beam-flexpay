@@ -5,7 +5,8 @@ import {
   canShowRefundTransactionAction,
   getFreezeTransactionAction,
   getFreezeTargetParties,
-  isPendingApprovalTransaction
+  isPendingApprovalTransaction,
+  shouldHideStuckUpdateAction
 } from '../transaction-row-actions'
 
 const transaction = (
@@ -186,5 +187,24 @@ describe('isPendingApprovalTransaction', () => {
     ['thất bại hoàn tiền', { status: 'FAILED', displayStatus: 'FAILED_REFUND' }]
   ])('sai với %s: nút cập nhật giao dịch treo vẫn hiện', (_name, overrides) => {
     expect(isPendingApprovalTransaction(transaction(overrides))).toBe(false)
+  })
+})
+
+describe('shouldHideStuckUpdateAction', () => {
+  it.each([
+    [
+      'displayStatus FAILED (sổ cái còn PENDING)',
+      { status: 'PENDING', displayStatus: 'FAILED' }
+    ],
+    ['chờ phê duyệt', { status: 'PENDING', displayStatus: 'PENDING_APPROVAL' }]
+  ])('ẩn khi %s', (_name, overrides) => {
+    expect(shouldHideStuckUpdateAction(transaction(overrides))).toBe(true)
+  })
+
+  it.each([
+    ['PENDING thường', { status: 'PENDING' }],
+    ['đang chi', { status: 'PENDING', displayStatus: 'PAYING' }]
+  ])('hiện khi %s', (_name, overrides) => {
+    expect(shouldHideStuckUpdateAction(transaction(overrides))).toBe(false)
   })
 })
