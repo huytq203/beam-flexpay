@@ -45,17 +45,13 @@ export enum StatusEnum {
 
 /**
  * Bộ lọc `status` của BE hiểu theo `displayStatus`: dòng rút tiền còn dang dở mang trạng thái của lệnh rút
- * (chờ duyệt, đã duyệt, đang chi, cần đối soát...), các dòng còn lại mang trạng thái sổ cái.
+ * (chờ duyệt, đã duyệt, đang chi...), các dòng còn lại mang trạng thái sổ cái.
  */
-export const StatusType: Record<
-  StatusEnum | 'RECONCILIATION_REQUIRED',
-  string
-> = {
+export const StatusType: Record<StatusEnum, string> = {
   [StatusEnum.PENDING]: 'Chờ xử lý',
   [StatusEnum.PENDING_APPROVAL]: 'Chờ duyệt',
   // [StatusEnum.APPROVED]: 'Đã duyệt — đang chi',
   // [StatusEnum.PAYING]: 'Đang chi',
-  RECONCILIATION_REQUIRED: 'Cần đối soát',
   [StatusEnum.POSTED]: 'Đã thành công',
   [StatusEnum.FAILED]: 'Thất bại',
   [StatusEnum.FAILED_REFUND]: 'Thất bại hoàn tiền'
