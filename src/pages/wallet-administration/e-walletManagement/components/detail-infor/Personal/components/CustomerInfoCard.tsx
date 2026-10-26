@@ -76,7 +76,7 @@ const CustomerInfoCard = ({ ekyc }: CustomerInfoCardProps) => {
 
       <InfoDivider />
       <div>
-        <p className='text-muted-foreground'>Địa chỉ trên CCCD</p>
+        <p className='text-muted-foreground'>Quê quán</p>
         <p className='font-medium whitespace-pre-line text-foreground'>
           {text(ekyc?.placeOfOrigin)}
         </p>
