@@ -33,4 +33,16 @@ describe('useExportWalletAccounts', () => {
       fromDate: '2026-08-01T00:00:00.000'
     })
   })
+
+  it.each([
+    ['true', { frozen: true }],
+    ['false', { frozen: false }],
+    ['', {}]
+  ])('frozen=%j chuyển thành boolean, rỗng thì bỏ', (frozen, expected) => {
+    const { result } = renderHook(() => useExportWalletAccounts({ frozen }))
+
+    result.current.exportFile()
+
+    expect(mocks.exportFile).toHaveBeenCalledWith(expected)
+  })
 })

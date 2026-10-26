@@ -17,6 +17,8 @@ export interface WalletAccountQueryParams {
   status?: string
   enabled?: string
   walletType?: string
+  /** 'true' | 'false'; bỏ trống = Tất cả. */
+  frozen?: string
   currency?: string
   /** Khoảng thời gian tạo ví (createdAt), ISO date-time. */
   fromDate?: string

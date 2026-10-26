@@ -3,6 +3,7 @@ export const EWALLET_FILTER_KEYS = [
   'ownerId',
   'status',
   'walletType',
+  'frozen',
   'fromDate',
   'toDate'
 ] as const

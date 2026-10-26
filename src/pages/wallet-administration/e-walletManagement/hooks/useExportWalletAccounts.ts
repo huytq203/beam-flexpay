@@ -22,6 +22,7 @@ const buildExportParams = (
   if (filters.ownerId) params.ownerId = filters.ownerId
   if (filters.status) params.status = filters.status
   if (filters.walletType) params.walletType = filters.walletType
+  if (filters.frozen) params.frozen = filters.frozen === 'true'
   if (filters.fromDate) params.fromDate = filters.fromDate
   if (filters.toDate) params.toDate = filters.toDate
   return params

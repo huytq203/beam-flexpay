@@ -102,6 +102,8 @@ export interface ExportWalletAccountsQuery {
   /** Ô tìm chung: SĐT, mã ví… */
   keyword?: string
   enabled?: boolean
+  /** Chỉ gửi true/false; bỏ trống = Tất cả. */
+  frozen?: boolean
   fromDate?: string
   toDate?: string
 }
