@@ -44,15 +44,22 @@ export interface ScopeUpdateBody {
 
 export type HistoryLevel = 'SYSTEM' | 'MASTER' | 'SUB'
 
-/** Dòng lịch sử thô từ BE: snake_case, `snapshot` là chuỗi JSON. */
+/**
+ * Dòng lịch sử thô từ BE `GET /settlement-config/history` (bản phân trang): camelCase, `snapshot` là object
+ * (null = cấp đó quay về kế thừa). Vẫn nhận `snapshot` dạng chuỗi JSON để không vỡ nếu gặp BE bản cũ.
+ */
 export interface HistoryRowRaw {
   id: string
   level: HistoryLevel
-  target_id: string | null
-  changed_at: string | null
-  changed_by: string | null
+  targetId: string | null
+  targetCode?: string | null
+  targetName?: string | null
+  changedAt: string | null
+  changedBy: string | null
+  /** Tên đăng nhập lấy từ nhật ký audit; null khi người đó chưa có dòng audit nào. */
+  changedByName?: string | null
   reason: string | null
-  snapshot: string | null
+  snapshot: HistorySnapshot | string | null
 }
 
 export interface HistorySnapshot {
@@ -67,8 +74,10 @@ export interface HistoryRow {
   id: string
   level: HistoryLevel
   targetId: string | null
+  targetName: string | null
   changedAt: string | null
   changedBy: string | null
+  changedByName: string | null
   reason: string | null
   /** `null` = không còn cấu hình riêng (kế thừa), hợp lệ chứ không phải lỗi. */
   snapshot: HistorySnapshot | null
@@ -91,4 +100,7 @@ export interface EffectiveAtDto {
 export interface HistoryQuery {
   level: HistoryLevel
   targetId?: string
+  /** Trang bắt đầu từ 1 (quy ước `PaginationRequest` của flex.merchant). */
+  page: number
+  size: number
 }

@@ -67,28 +67,37 @@ describe('buildScopeBody', () => {
 })
 
 describe('toHistoryRow', () => {
-  it('parse snapshot JSON dạng chuỗi và đổi khóa snake_case', () => {
+  it('nhận dòng camelCase, snapshot là object, giữ tên đối tượng và người thực hiện', () => {
     const row = toHistoryRow({
       id: 'h1',
       level: 'MASTER',
-      target_id: 'm-1',
-      changed_at: '2026-10-22T10:15:30.123+07:00',
-      changed_by: null,
+      targetId: 'm-1',
+      targetCode: 'M1',
+      targetName: 'Master 1',
+      changedAt: '2026-10-22T03:15:30.123Z',
+      changedBy: 'u-1',
+      changedByName: 'admin95',
       reason: null,
-      snapshot: '{"settlementMode":"AUTOMATIC","holdbackDays":3,"active":true}'
+      snapshot: { settlementMode: 'AUTOMATIC', holdbackDays: 3, active: true }
     })
-    expect(row.targetId).toBe('m-1')
+    expect(row).toMatchObject({
+      targetId: 'm-1',
+      targetName: 'Master 1',
+      changedAt: '2026-10-22T03:15:30.123Z',
+      changedBy: 'u-1',
+      changedByName: 'admin95',
+      corrupted: false
+    })
     expect(row.snapshot?.holdbackDays).toBe(3)
-    expect(row.corrupted).toBe(false)
   })
 
   it('snapshot null là "kế thừa", chuỗi hỏng chỉ đánh dấu corrupted', () => {
     const raw = {
       id: 'h',
       level: 'SUB' as const,
-      target_id: 's',
-      changed_at: null,
-      changed_by: null,
+      targetId: 's',
+      changedAt: null,
+      changedBy: null,
       reason: null
     }
     expect(toHistoryRow({ ...raw, snapshot: null })).toMatchObject({

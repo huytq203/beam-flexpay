@@ -1,4 +1,4 @@
-import type { MerchantEnvelope } from '@type/merchant'
+import type { MerchantEnvelope, MerchantPage } from '@type/merchant'
 import type {
   EffectiveAtDto,
   HistoryQuery,
@@ -81,13 +81,17 @@ const service = apiMerchant.injectEndpoints({
       transformResponse: unwrap<ScopeConfigView>,
       invalidatesTags: [SYSTEM_TAG, HISTORY_TAG]
     }),
-    getSettlementConfigHistory: builder.query<HistoryRowRaw[], HistoryQuery>({
-      query: ({ level, targetId }) => ({
+    // BE phân trang ở server (Page, trang từ 1), mới nhất trước.
+    getSettlementConfigHistory: builder.query<
+      MerchantPage<HistoryRowRaw>,
+      HistoryQuery
+    >({
+      query: ({ level, targetId, page, size }) => ({
         url: '/settlement-config/history',
-        params: { level, targetId }
+        params: { level, targetId, page, size }
       }),
       extraOptions: OWN_ERROR_HANDLING,
-      transformResponse: unwrap<HistoryRowRaw[]>,
+      transformResponse: unwrap<MerchantPage<HistoryRowRaw>>,
       providesTags: [HISTORY_TAG]
     }),
     getSubSettlementConfigAt: builder.query<

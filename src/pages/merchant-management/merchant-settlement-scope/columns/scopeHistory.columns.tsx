@@ -46,10 +46,15 @@ export const describeChange = (
   )
 }
 
+/**
+ * `rows` là một trang BE trả. `olderBeyondPage` là dòng đầu của trang kế tiếp: dòng cuối trang cần nó để
+ * so với lần thay đổi liền trước, nếu không sẽ bị hiện sai thành "Kế thừa → …".
+ */
 export const createScopeHistoryColumns = (
   rows: HistoryRow[],
   page: number,
-  pageSize: number
+  pageSize: number,
+  olderBeyondPage?: HistoryRow
 ): Columns => [
   {
     title: '#',
@@ -65,7 +70,9 @@ export const createScopeHistoryColumns = (
   {
     title: 'Thay đổi',
     render: (_, row) => {
-      const previous = rows[rows.indexOf(row) + 1]
+      const index = rows.indexOf(row)
+      const previous =
+        index === rows.length - 1 ? olderBeyondPage : rows[index + 1]
       return (
         <ul className='m-0 list-none p-0'>
           {describeChange(row, previous).map((line) => (
@@ -83,6 +90,8 @@ export const createScopeHistoryColumns = (
   {
     title: 'Người thực hiện',
     dataIndex: 'changedBy',
-    render: (value: string | null) => value ?? 'Hệ thống (bản ghi nền)'
+    // Ưu tiên tên đăng nhập BE tra từ nhật ký audit; chưa có tên thì hiện ID như trước.
+    render: (value: string | null, row) =>
+      row.changedByName ?? value ?? 'Hệ thống (bản ghi nền)'
   }
 ]

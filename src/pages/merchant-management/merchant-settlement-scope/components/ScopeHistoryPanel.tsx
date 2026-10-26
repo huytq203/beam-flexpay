@@ -26,11 +26,28 @@ export function ScopeHistoryPanel({
   const [page, setPage] = useState(1)
   const needsTarget = level !== 'SYSTEM'
   const ready = !needsTarget || Boolean(target)
+  const targetId = needsTarget ? target?.id : undefined
+  // BE phân trang ở server (trang từ 1).
   const query = useGetSettlementConfigHistoryQuery(
-    { level, targetId: needsTarget ? target?.id : undefined },
+    { level, targetId, page, size: PAGE_SIZE },
     { skip: !ready }
   )
-  const rows = useMemo(() => toHistoryRows(query.data), [query.data])
+  const total = query.data?.totalElements ?? 0
+  const hasOlder = page * PAGE_SIZE < total
+  // Dòng đầu của trang sau (size=1 nên page = vị trí tuyệt đối): để dòng cuối trang này so được với lần thay đổi liền trước.
+  const olderQuery = useGetSettlementConfigHistoryQuery(
+    { level, targetId, page: page * PAGE_SIZE + 1, size: 1 },
+    { skip: !ready || !hasOlder }
+  )
+  const rows = useMemo(
+    () => toHistoryRows(query.data?.content),
+    [query.data]
+  )
+  const olderBeyondPage = useMemo(
+    () =>
+      hasOlder ? toHistoryRows(olderQuery.data?.content)[0] : undefined,
+    [hasOlder, olderQuery.data]
+  )
 
   return (
     <section
@@ -93,8 +110,8 @@ export function ScopeHistoryPanel({
       {ready && !query.isError && (
         <>
           <p className='text-xs text-muted-foreground'>
-            Tối đa 500 thay đổi gần nhất, mới nhất trước. So sánh với lần thay
-            đổi liền trước của cùng đối tượng.
+            Mới nhất trước. So sánh với lần thay đổi liền trước của cùng đối
+            tượng.
           </p>
           <Table
             rowKey='id'
@@ -102,11 +119,16 @@ export function ScopeHistoryPanel({
             loading={query.isFetching}
             dataSource={rows}
             locale={{ emptyText: 'Chưa có lịch sử thay đổi' }}
-            columns={createScopeHistoryColumns(rows, page, PAGE_SIZE)}
+            columns={createScopeHistoryColumns(
+              rows,
+              page,
+              PAGE_SIZE,
+              olderBeyondPage
+            )}
             pagination={{
               current: page,
               pageSize: PAGE_SIZE,
-              total: rows.length,
+              total,
               showSizeChanger: false,
               onChange: setPage
             }}

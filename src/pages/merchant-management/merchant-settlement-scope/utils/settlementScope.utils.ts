@@ -108,9 +108,11 @@ const parseSnapshot = (
 export const toHistoryRow = (raw: HistoryRowRaw): HistoryRow => ({
   id: raw.id,
   level: raw.level,
-  targetId: raw.target_id ?? null,
-  changedAt: raw.changed_at ?? null,
-  changedBy: raw.changed_by ?? null,
+  targetId: raw.targetId ?? null,
+  targetName: raw.targetName ?? null,
+  changedAt: raw.changedAt ?? null,
+  changedBy: raw.changedBy ?? null,
+  changedByName: raw.changedByName ?? null,
   reason: raw.reason ?? null,
   ...parseSnapshot(raw.snapshot)
 })
