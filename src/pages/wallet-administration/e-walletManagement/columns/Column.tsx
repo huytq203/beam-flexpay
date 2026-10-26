@@ -14,6 +14,10 @@ import { TYPEDATE } from '@constants/date.constant'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import type { ScreenActionId } from '@/app/permissions'
 import {
+  OWNER_TYPE_LABELS,
+  SYSTEM_GL_LABELS
+} from '@pages/wallet-administration/e-walletManagement/constants/walletAccountType.constants'
+import {
   buildWalletRowActions,
   type WalletModalType
 } from './wallet-row-actions'
@@ -100,13 +104,21 @@ export const getColumn = ({
       width: 200,
       render(_, record) {
         const ownerType = record?.ownerType
-        const glCode = record?.glCode
+        const ownerTypeLabel = ownerType
+          ? (OWNER_TYPE_LABELS[ownerType] ?? ownerType)
+          : '--'
+        const glLabel =
+          ownerType === 'SYSTEM' && record?.glCode
+            ? (SYSTEM_GL_LABELS[record.glCode] ?? record.glCode)
+            : ''
         return (
           <div className='flex flex-col gap-0.5'>
             <span className='font-medium text-gray-800 text-[12px]'>
-              {ownerType ?? '--'}
+              {ownerTypeLabel}
             </span>
-            <span className='text-gray-400 text-[10px]'>{glCode ?? ''}</span>
+            {glLabel && (
+              <span className='text-gray-400 text-[10px]'>{glLabel}</span>
+            )}
           </div>
         )
       }
