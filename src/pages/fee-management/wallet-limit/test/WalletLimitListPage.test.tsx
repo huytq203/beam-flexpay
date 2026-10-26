@@ -100,7 +100,7 @@ describe('WalletLimitListPage - danh sách hạn mức ví', () => {
     expect(screen.getAllByText('Loại ví: Tất cả')).toHaveLength(2)
     expect(screen.getByText('Hoạt động')).toBeInTheDocument()
     expect(screen.getByText('Khóa')).toBeInTheDocument()
-    expect(screen.getAllByText('5,000,000 ₫').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('5.000.000 ₫').length).toBeGreaterThan(0)
     expect(requests.at(-1)?.searchParams.get('page')).toBe('1')
     expect(requests.at(-1)?.searchParams.get('size')).toBe('20')
   })

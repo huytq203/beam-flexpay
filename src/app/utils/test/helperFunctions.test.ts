@@ -68,12 +68,12 @@ describe('form helpers', () => {
 
 describe('number helpers', () => {
   it('giữ nguyên quy tắc format và parse số', () => {
-    expect(convertNumber(1234567, ' VND')).toBe('1,234,567 VND')
-    expect(parseNumberFromCommaString('1,234,567')).toBe(1234567)
+    expect(convertNumber(1234567, ' VND')).toBe('1.234.567 VND')
+    expect(parseNumberFromCommaString('1.234.567')).toBe(1234567)
   })
 
   it('chuyển đổi mini-percent hai chiều', () => {
-    expect(convertMiniPercentToPercent(10500)).toBe('10.5%')
+    expect(convertMiniPercentToPercent(10500)).toBe('10,5%')
     expect(convertMiniPercentToPercentNumber(10500)).toBe(10.5)
     expect(convertPercentToMiniPercent(10.5)).toBe(10500)
   })
@@ -109,12 +109,8 @@ describe('data and date helpers', () => {
   it('format thời gian UTC theo offset được chọn', () => {
     const utcTime = '2026-08-14T13:51:39.642204'
 
-    expect(formatUTCDateTimeByOffset(utcTime, 7)).toBe(
-      '14/08/2026 20:51:39'
-    )
-    expect(formatUTCDateTimeByOffset(utcTime, 0)).toBe(
-      '14/08/2026 13:51:39'
-    )
+    expect(formatUTCDateTimeByOffset(utcTime, 7)).toBe('14/08/2026 20:51:39')
+    expect(formatUTCDateTimeByOffset(utcTime, 0)).toBe('14/08/2026 13:51:39')
   })
 })
 

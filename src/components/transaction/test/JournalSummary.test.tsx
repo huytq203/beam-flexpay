@@ -43,7 +43,7 @@ describe('JournalSummary', () => {
   it('không rút gọn số lớn', () => {
     renderSummary({ summary: { ...summary, totalCount: 1284000 } })
 
-    expect(screen.getByText('1,284,000')).toBeInTheDocument()
+    expect(screen.getByText('1.284.000')).toBeInTheDocument()
     expect(screen.queryByText(/1\.2M|1,3tr/)).not.toBeInTheDocument()
   })
 

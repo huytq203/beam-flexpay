@@ -154,7 +154,7 @@ const StatusChangeForm = ({ policy, onClose }: StatusChangeFormProps) => {
           htmlType='submit'
           type='primary'
           danger={isNow && immediateAction === 'DEACTIVATE'}
-          content={isNow ? IMMEDIATE_BUTTON[immediateAction] : 'Hẹn giờ'}
+          content={isNow ? IMMEDIATE_BUTTON[immediateAction] : 'Xác nhận'}
           className='w-full'
           loading={isLoading}
         />

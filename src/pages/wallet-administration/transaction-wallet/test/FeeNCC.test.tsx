@@ -51,7 +51,7 @@ describe('FeeNCC', () => {
     expect(screen.getByText('NAPAS')).toBeInTheDocument()
     expect(screen.getByText('Phí NCC')).toBeInTheDocument()
     expect(screen.getByText('Phí 1.000 đ')).toBeInTheDocument()
-    expect(screen.getAllByText('1,000 VND')).toHaveLength(2)
+    expect(screen.getAllByText('1.000 VND')).toHaveLength(2)
   })
 
   it('fee service không trả phí đầu vào thì để trống, không ghi 0', () => {

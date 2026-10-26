@@ -16,10 +16,8 @@ import {
 import { formatNumber } from '@utils/index'
 import { buildTransactionFlow } from '@utils/transaction-flow'
 import { StatusKey } from '../constants/WithdrawHistory.constant'
-import {
-  resolveDisplayStatus,
-  WITHDRAW_DISPLAY_STATUS_CONFIG
-} from '../constants/withdrawDisplayStatus'
+
+
 import { BeneficiaryInfo, InfoRow } from './WithdrawDetailParts'
 import dayjs from 'dayjs'
 import React from 'react'
@@ -170,7 +168,7 @@ const DialogDetailWithdrawHistory = ({
                     </span>
                   }
                 />
-                {resolveDisplayStatus(data) !== data.status && (
+                {/* {resolveDisplayStatus(data) !== data.status && (
                   <InfoRow
                     label='Trạng thái'
                     value={
@@ -180,9 +178,9 @@ const DialogDetailWithdrawHistory = ({
                       />
                     }
                   />
-                )}
+                )} */}
                 <InfoRow
-                  label='Trạng thái bút toán'
+                  label='Trạng thái'
                   value={
                     <StatusBadge
                       status={data.status}

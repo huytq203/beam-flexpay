@@ -1,70 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { CapyEngine } from '../engine/CapyEngine'
-import { buildTuning, DEFAULT_LEVELS } from '../engine/tuning'
-import type { Canvas2dLike } from '../engine/player'
-
-const ctx: Canvas2dLike = {
-  setTransform: () => undefined,
-  clearRect: () => undefined,
-  translate: () => undefined,
-  rotate: () => undefined,
-  scale: () => undefined,
-  drawImage: () => undefined
-}
-
-/** Phần tử giả có hình chữ nhật cố định qua `data-rect="trái,trên,rộng,cao"`. */
-function mockRects(): void {
-  vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(
-    function (this: Element) {
-      const raw = this.getAttribute('data-rect')
-      const [left, top, width, height] = raw
-        ? raw.split(',').map(Number)
-        : [0, 0, 0, 0]
-      return {
-        left,
-        top,
-        width,
-        height,
-        right: left + width,
-        bottom: top + height,
-        x: left,
-        y: top,
-        toJSON: () => ({})
-      }
-    }
-  )
-}
-
-function addBlock(html: string): HTMLElement {
-  const holder = document.createElement('div')
-  holder.innerHTML = html
-  const el = holder.firstElementChild as HTMLElement
-  document.body.append(el)
-  return el
-}
-
-function makeEngine(greeting = () => 'Chào Huy!') {
-  const bubbles: (string | null)[] = []
-  const box = document.createElement('div')
-  const engine = new CapyEngine({
-    ctx,
-    images: new Map(),
-    box,
-    canvasSize: 170,
-    dpr: 1,
-    greeting,
-    onBubble: (text) => bubbles.push(text)
-  })
-  return { engine, bubbles, box }
-}
+import type { CapyEngine } from '../engine/CapyEngine'
+import { addBlock, makeEngine, mockRects } from './engineHelpers'
+import { buildTuning, DEFAULT_LEVELS, SAFETY, STAGE } from '../engine/tuning'
 
 describe('CapyEngine', () => {
   beforeEach(() => {
+    STAGE.pagePlatforms = true
     vi.useFakeTimers()
     document.body.innerHTML = ''
     mockRects()
   })
   afterEach(() => {
+    STAGE.pagePlatforms = false
+    SAFETY.forbiddenZones = false
     vi.useRealTimers()
     vi.restoreAllMocks()
   })
@@ -99,15 +47,15 @@ describe('CapyEngine', () => {
     engine.stop()
   })
 
-  it('có hộp thoại mở thì Capy xuống đáy, về góc và ngồi chờ', async () => {
+  it('có hộp thoại mở thì Capy không dịch chỗ, đứng yên vẫn đứng yên', async () => {
     const { engine } = makeEngine()
     engine.start()
+    engine.setIdleOnly(true)
+    const before = engine.state
     addBlock('<div role="dialog" data-rect="300,200,400,300"></div>')
     await vi.advanceTimersByTimeAsync(40000)
-    const { sheltered, anim, y } = engine.state
-    expect(sheltered).toBe(true)
-    expect(anim).toBe('sit')
-    expect(y).toBeCloseTo(window.innerHeight - 8 - 37, 0)
+    expect(engine.state.x).toBe(before.x)
+    expect(engine.state.y).toBe(before.y)
     engine.stop()
   })
 
@@ -138,7 +86,8 @@ describe('CapyEngine', () => {
     engine.stop()
   })
 
-  it('mờ đi khi đang chồng lên vùng cấm và rõ lại khi ra khỏi', async () => {
+  it('mờ đi khi đang chồng lên vùng cấm (khi công tắc bật) và rõ lại khi ra khỏi', async () => {
+    SAFETY.forbiddenZones = true
     const { engine, box } = makeEngine()
     addBlock('<div class="ant-card" data-rect="100,300,600,120"></div>')
     addBlock('<div data-capy="no" data-rect="250,230,100,70"></div>')
@@ -147,6 +96,18 @@ describe('CapyEngine', () => {
     await vi.advanceTimersByTimeAsync(60)
     expect(box.style.opacity).toBe('0.35')
     engine.teleport(0, 600)
+    await vi.advanceTimersByTimeAsync(60)
+    expect(box.style.opacity).toBe('')
+    engine.stop()
+    SAFETY.forbiddenZones = false
+  })
+
+  it('công tắc vùng cấm tắt thì không mờ dù đứng trên ô nhạy cảm', async () => {
+    const { engine, box } = makeEngine()
+    addBlock('<div class="ant-card" data-rect="100,300,600,120"></div>')
+    addBlock('<div data-capy="no" data-rect="250,230,100,70"></div>')
+    engine.start()
+    engine.teleport(0, 300)
     await vi.advanceTimersByTimeAsync(60)
     expect(box.style.opacity).toBe('')
     engine.stop()

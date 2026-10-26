@@ -4,15 +4,6 @@ import type { World } from './world'
 
 export class Cancelled extends Error {}
 
-/** Trạng thái một lần nắm kéo Capy: độ lệch con trỏ so với tâm, vận tốc ngang, đã kéo thật chưa. */
-export interface DragState {
-  readonly dx: number
-  readonly dy: number
-  lastX: number
-  velocity: number
-  moved: boolean
-}
-
 /** Những gì một hành động cần từ bộ máy. `epoch` đổi thì mọi hành động đang chạy bị huỷ. */
 export interface Runtime {
   readonly player: FramePlayer

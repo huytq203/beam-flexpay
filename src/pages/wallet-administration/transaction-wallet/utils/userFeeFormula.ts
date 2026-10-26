@@ -19,7 +19,7 @@ const sum = (values: (number | null)[]): number =>
   values.reduce<number>((total, value) => total + (value ?? 0), 0)
 
 const number = (value: number): string =>
-  value.toLocaleString('en-US', { maximumFractionDigits: 4 })
+  value.toLocaleString('vi-VN', { maximumFractionDigits: 4 })
 
 /** Luôn đủ ba vế "Phí % + Phí cố định + VAT", vế nào không có thì ghi 0. */
 const composeFormula = (parts: readonly FeePart[], currency: string) => {

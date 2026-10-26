@@ -1,4 +1,4 @@
-import { deepSleep, hopTo, playOnce, safeX, standY, walkTo } from './actions'
+import { deepSleep, hopTo, playOnce, safeX, standY } from './actions'
 import { pickPlatformBelow } from './platforms'
 import type { Runtime } from './runtime'
 
@@ -69,17 +69,4 @@ export async function fall(rt: Runtime, epoch: number): Promise<void> {
   }
   rt.player.play('idle', { flip: false })
   await rt.wait(700, epoch)
-}
-
-/** Có hộp thoại mở: xuống đáy màn hình, về góc trái và ngồi chờ. */
-export async function shelter(rt: Runtime, epoch: number): Promise<void> {
-  const world = rt.world()
-  const last = world.platforms.length - 1
-  if (rt.platform !== last) {
-    const toY = standY(rt, world.platforms[last].y)
-    await hopTo(rt, epoch, rt.x, toY, 20)
-    rt.platform = last
-  }
-  await walkTo(rt, epoch, world.platforms[last].lo, { look: false, run: true })
-  rt.player.play('sit')
 }

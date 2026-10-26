@@ -30,7 +30,7 @@ describe('FormInputNumber — dấu phẩy phân cách hàng nghìn', () => {
     const user = userEvent.setup()
     render(<Harness thousandSeparator />)
     await user.type(screen.getByLabelText('Số tiền'), '222222222')
-    expect(screen.getByLabelText('Số tiền')).toHaveValue('222,222,222')
+    expect(screen.getByLabelText('Số tiền')).toHaveValue('222.222.222')
     expect(screen.getByTestId('value')).toHaveTextContent('number:222222222')
   })
 

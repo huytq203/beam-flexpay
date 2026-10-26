@@ -71,7 +71,7 @@ describe('buildUserFeeSummary — dòng công thức phí', () => {
       })
     )
     expect(formulaOf(summary, 'Phí giao dịch')).toBe(
-      'Phí 0.5% + Phí cố định 200 VND + VAT 8%'
+      'Phí 0,5% + Phí cố định 200 VND + VAT 8%'
     )
   })
 
@@ -106,7 +106,7 @@ describe('buildUserFeeSummary — dòng công thức phí', () => {
       })
     )
     expect(formulaOf(summary, 'Phí người chuyển')).toBe(
-      'Phí 0% + Phí cố định 1,000 VND + VAT 0%'
+      'Phí 0% + Phí cố định 1.000 VND + VAT 0%'
     )
     expect(formulaOf(summary, 'Phí người nhận')).toBe(
       'Phí 2% + Phí cố định 0 VND + VAT 10%'

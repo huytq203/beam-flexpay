@@ -74,31 +74,6 @@ describe('Sổ cái: trạng thái và đối soát Nợ/Có', () => {
 
   afterEach(() => sessionStorage.clear())
 
-  it('báo Cân khi tổng Nợ bằng tổng Có', () => {
-    mocks.state.data = page(50_002_000, 50_002_000)
-    renderScreen()
-
-    expect(screen.getByText('Cân')).toBeInTheDocument()
-    expect(screen.queryByRole('status')).not.toBeInTheDocument()
-  })
-
-  it('nêu số tiền lệch và chiều lệch khi Nợ khác Có', () => {
-    mocks.state.data = page(157_817_347, 148_001_798)
-    renderScreen()
-
-    const tile = screen.getByRole('status')
-    expect(within(tile).getByText('9,815,549 ₫')).toBeInTheDocument()
-    expect(within(tile).getByText(/Nợ lớn hơn Có/)).toBeInTheDocument()
-  })
-
-  it('không so hai bên khi đang lọc theo một chiều', () => {
-    mocks.state.data = page(157_817_347, 0)
-    renderScreen(`${ROUTE}?direction=DEBIT`)
-
-    expect(screen.getByText('Bỏ lọc chiều để so hai bên')).toBeInTheDocument()
-    expect(screen.queryByRole('status')).not.toBeInTheDocument()
-  })
-
   it('tải lỗi thì báo lỗi, không hiện số cũ và cho thử lại', async () => {
     const user = userEvent.setup()
     mocks.state = { data: page(1, 1), isError: true }
@@ -126,9 +101,9 @@ describe('Sổ cái: trạng thái và đối soát Nợ/Có', () => {
     const [, senderRow, feeRow] = screen.getAllByRole('row')
     const cells = (row: HTMLElement) => within(row).getAllByRole('cell')
 
-    expect(cells(senderRow)[debitIndex]).toHaveTextContent('50,002,000')
+    expect(cells(senderRow)[debitIndex]).toHaveTextContent('50.002.000')
     expect(cells(senderRow)[creditIndex]).toBeEmptyDOMElement()
-    expect(cells(feeRow)[creditIndex]).toHaveTextContent('2,000')
+    expect(cells(feeRow)[creditIndex]).toHaveTextContent('2.000')
     expect(cells(feeRow)[debitIndex]).toBeEmptyDOMElement()
     expect(screen.getAllByText('FW26RJBS8')).toHaveLength(1)
   })

@@ -8,6 +8,7 @@ import { formatCurrency } from '@utils/formatNumber'
 import dayjs from 'dayjs'
 import { toVnd, UnfreezeAmountMode } from './unfreeze-request.schema'
 import { useUnfreezeRequestForm } from './useUnfreezeRequestForm'
+import { formatThousands, parseThousands } from '@utils/format-number-input'
 
 interface UnfreezeRequestDialogContentProps {
   open: boolean
@@ -218,12 +219,8 @@ const UnfreezeRequestDialogContent = ({
               control={control}
               name='amount'
               placeholder='Nhập số tiền...'
-              formatter={(value: string | number | undefined): string =>
-                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-              }
-              parser={(value: string | undefined): number =>
-                Number(value?.replace(/,/g, ''))
-              }
+              formatter={formatThousands}
+              parser={(value) => Number(parseThousands(value))}
               label={
                 <span>
                   Số tiền cần mở băng{' '}

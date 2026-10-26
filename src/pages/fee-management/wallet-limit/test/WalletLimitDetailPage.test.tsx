@@ -86,8 +86,8 @@ describe('WalletLimitDetailPage', () => {
       })
     ).toBeInTheDocument()
     expect(screen.getByText('Hoạt động')).toBeInTheDocument()
-    expect(screen.getByText('10,000,000 ₫')).toBeInTheDocument()
-    expect(screen.getByText('50,000,000 ₫')).toBeInTheDocument()
+    expect(screen.getByText('10.000.000 ₫')).toBeInTheDocument()
+    expect(screen.getByText('50.000.000 ₫')).toBeInTheDocument()
     expect(screen.getByText('3 lần')).toBeInTheDocument()
     expect(
       screen.getByText('Phiên bản dữ liệu (rowVersion)')
@@ -110,7 +110,7 @@ describe('WalletLimitDetailPage', () => {
     expect(
       screen.queryByText('Số dư tối đa được giữ trong ví')
     ).not.toBeInTheDocument()
-    expect(screen.queryByText('999,000,000 ₫')).not.toBeInTheDocument()
+    expect(screen.queryByText('999.000.000 ₫')).not.toBeInTheDocument()
     expect(screen.getAllByText('Không giới hạn').length).toBeGreaterThan(0)
   })
 
@@ -136,7 +136,7 @@ describe('WalletLimitDetailPage', () => {
     const table = await screen.findByRole('table')
 
     expect(within(table).getByText('VCB')).toBeInTheDocument()
-    expect(within(table).getByText('4,000,000 ₫')).toBeInTheDocument()
+    expect(within(table).getByText('4.000.000 ₫')).toBeInTheDocument()
   })
 
   it('không có override thì hiện câu giải thích thay cho bảng', async () => {

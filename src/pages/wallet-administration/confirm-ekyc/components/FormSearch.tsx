@@ -94,7 +94,7 @@ const FormSearch = ({ filters, onSearch, onReset }: FormSearchProps) => {
             name='keyword'
             className='col-span-1'
             label='Từ khoá tìm kiếm'
-            placeholder='Nhập từ khóa ...'
+            placeholder='Nhập tên/sđt/cccd...'
           />
           <FormSelect
             control={formSearch.control}

@@ -10,6 +10,7 @@ import type { FreezeItem } from '@type/freeze.type'
 import { blockLeadingAndRepeatedSpace } from '@utils/inputHandlers'
 import { formatCurrency } from '@utils/formatNumber'
 import type { UnfreezeTransactionFormValues } from '../schemas/unfreezeTransaction.schema'
+import { formatThousands, parseThousands } from '@utils/format-number-input'
 
 interface UnfreezeTransactionFieldsProps {
   control: Control<UnfreezeTransactionFormValues>
@@ -108,10 +109,8 @@ export function UnfreezeTransactionFields({
           control={control}
           name='amount'
           placeholder='Nhập số tiền...'
-          formatter={(value) =>
-            `${value ?? ''}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-          }
-          parser={(value) => Number(value?.replace(/,/g, ''))}
+          formatter={formatThousands}
+          parser={(value) => Number(parseThousands(value))}
           label='Số tiền cần mở băng'
           onKeyDown={blockLeadingAndRepeatedSpace}
         />

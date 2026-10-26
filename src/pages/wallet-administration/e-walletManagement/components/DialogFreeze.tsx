@@ -1,4 +1,9 @@
-import { FormDatePicker, FormInputNumber, FormRadio, FormTextArea } from '@components/form'
+import {
+  FormDatePicker,
+  FormInputNumber,
+  FormRadio,
+  FormTextArea
+} from '@components/form'
 import { WarningIcon } from '@components/icons'
 import React from 'react'
 import { useEffect } from 'react'
@@ -10,150 +15,160 @@ import { ButtonComponent } from '@components/index'
 import { useMessage } from '@hooks/useMessage'
 import { FreezeSchema, FreezeFormValues } from '../schemas/Freeze.schema'
 import { blockLeadingAndRepeatedSpace } from '@utils/inputHandlers'
+import { formatThousands, parseThousands } from '@utils/format-number-input'
 
 interface DialogFreezeProps {
-    accountId?: string
-    ownerName?: string
-    availableBalance?: number
-    currency?: string
-    onSuccess?: () => void
-    onCancel?: () => void
+  accountId?: string
+  ownerName?: string
+  availableBalance?: number
+  currency?: string
+  onSuccess?: () => void
+  onCancel?: () => void
 }
 
-
-
 const DialogFreeze = ({
-    accountId,
-    ownerName,
-    availableBalance = 0,
-    currency = 'VNĐ',
-    onSuccess,
-    onCancel,
+  accountId,
+  ownerName,
+  availableBalance = 0,
+  currency = 'VNĐ',
+  onSuccess,
+  onCancel
 }: DialogFreezeProps) => {
+  const { successMess } = useMessage()
 
-    const { successMess } = useMessage()
-
-    const { control, watch, handleSubmit, reset, setValue } = useForm<FreezeFormValues>({
-        defaultValues: { freezeType: 2, amount: availableBalance, reason: '' },
-        resolver: zodResolver(FreezeSchema),
+  const { control, watch, handleSubmit, reset, setValue } =
+    useForm<FreezeFormValues>({
+      defaultValues: { freezeType: 2, amount: availableBalance, reason: '' },
+      resolver: zodResolver(FreezeSchema)
     })
-    const freezeType = useWatch({ control, name: 'freezeType' })
+  const freezeType = useWatch({ control, name: 'freezeType' })
 
-    useEffect(() => {
-        if (freezeType === 1) {
-
-            setValue('amount', availableBalance)
-        } else {
-            setValue('amount', 0)
-        }
-    }, [freezeType, availableBalance, setValue])
-
-    const [postFreeze, { isLoading }] = usePostFreezeMutation()
-
-    const onSubmit = async (values: FreezeFormValues) => {
-        if (!accountId) return
-        try {
-            await postFreeze({
-                accountId,
-                amount: values.amount,
-                reason: values.reason,
-            }).unwrap()
-            successMess('Đã đóng băng ' + formatCurrency(values?.amount || 0, { symbol: currency, position: 'after' }))
-            reset()
-            onSuccess?.()
-        } catch {
-
-        }
+  useEffect(() => {
+    if (freezeType === 1) {
+      setValue('amount', availableBalance)
+    } else {
+      setValue('amount', 0)
     }
+  }, [freezeType, availableBalance, setValue])
 
-    return (
-        <div>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="flex-between p-3 bg-blue-50 border rounded-md">
-                    <p>Số dư hiện tại:</p>
-                    <p className="font-medium">
-                        {formatCurrency(availableBalance, { symbol: currency, position: 'after' })}
-                    </p>
-                </div>
+  const [postFreeze, { isLoading }] = usePostFreezeMutation()
 
-                <div className="mt-3 flex flex-col gap-3">
-                    <FormRadio
-                        label="Hình thức đóng băng"
-                        control={control}
-                        name="freezeType"
-                        options={[
-                            { value: 1, label: 'Đóng băng toàn bộ'},
-                            { value: 2, label: 'Đóng băng một phần' },
-                        ]}
-                    />
+  const onSubmit = async (values: FreezeFormValues) => {
+    if (!accountId) return
+    try {
+      await postFreeze({
+        accountId,
+        amount: values.amount,
+        reason: values.reason
+      }).unwrap()
+      successMess(
+        'Đã đóng băng ' +
+          formatCurrency(values?.amount || 0, {
+            symbol: currency,
+            position: 'after'
+          })
+      )
+      reset()
+      onSuccess?.()
+    } catch {}
+  }
 
-                    <FormInputNumber
-                        disabled={freezeType == 1}
-                        suffix="VNĐ"
-                        control={control}
-                        name="amount"
-                        placeholder="Nhập số tiền..."
-                        formatter={(value: string | number | undefined): string => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                        parser={(value: string | undefined): number => Number(value?.replace(/,/g, ''))}
-                        label={
-                            <span>
-                                Số tiền cần đóng băng <span className="text-red-600">*</span>
-                            </span>
-                        }
-                        onKeyDown={blockLeadingAndRepeatedSpace}
-                    />
-
-                    {freezeType == 2 && (
-                        <div>
-                            <FormDatePicker
-                                showTime
-                                control={control}
-                                name="expiryTime"
-                                label="Thời gian đóng băng (Tự động)"
-                            />
-                            <span className="text-gray-500 text-sm">
-                                <span className="text-red-600">*</span>Để trống sẽ băng vô thời hạn
-                            </span>
-                        </div>
-                    )}
-
-                    <FormTextArea
-                        control={control}
-                        name="reason"
-                        placeholder="Nhập lý do..."
-                        label={
-                            <span>
-                                Lý do đóng băng <span className="text-red-600">*</span>
-                            </span>
-                        }
-                        onKeyDown={blockLeadingAndRepeatedSpace}
-                    />
-                </div>
-
-                <div className="bg-orange-50 mt-3 p-3 text-yellow-700 rounded-md">
-                    <p>
-                        <span className="font-medium flex items-center gap-1">
-                            <WarningIcon />
-                            Lưu ý:
-                        </span>{' '}
-                        Hệ thống sẽ trừ tiền từ{' '}
-                        <span className="underline">Ví Khả Dụng</span> và chuyển sang{' '}
-                        <span className="underline">Ví Đóng Băng</span> của tài khoản
-                        <span className="font-medium"> {ownerName ?? '--'}</span>
-                    </p>
-                </div>
-
-                <div className="flex justify-end gap-2 mt-4">
-                    <ButtonComponent type="default" content="Hủy" onClick={onCancel} />
-                    <ButtonComponent
-                        htmlType="submit"
-                        loading={isLoading}
-                        content="Xác nhận"
-                    />
-                </div>
-            </form>
+  return (
+    <div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className='flex-between p-3 bg-blue-50 border rounded-md'>
+          <p>Số dư hiện tại:</p>
+          <p className='font-medium'>
+            {formatCurrency(availableBalance, {
+              symbol: currency,
+              position: 'after'
+            })}
+          </p>
         </div>
-    )
+
+        <div className='mt-3 flex flex-col gap-3'>
+          <FormRadio
+            label='Hình thức đóng băng'
+            control={control}
+            name='freezeType'
+            options={[
+              { value: 1, label: 'Đóng băng toàn bộ' },
+              { value: 2, label: 'Đóng băng một phần' }
+            ]}
+          />
+
+          <FormInputNumber
+            disabled={freezeType == 1}
+            suffix='VNĐ'
+            control={control}
+            name='amount'
+            placeholder='Nhập số tiền...'
+            formatter={formatThousands}
+            parser={(value) => Number(parseThousands(value))}
+            label={
+              <span>
+                Số tiền cần đóng băng <span className='text-red-600'>*</span>
+              </span>
+            }
+            onKeyDown={blockLeadingAndRepeatedSpace}
+          />
+
+          {freezeType == 2 && (
+            <div>
+              <FormDatePicker
+                showTime
+                control={control}
+                name='expiryTime'
+                label='Thời gian đóng băng (Tự động)'
+              />
+              <span className='text-gray-500 text-sm'>
+                <span className='text-red-600'>*</span>Để trống sẽ băng vô thời
+                hạn
+              </span>
+            </div>
+          )}
+
+          <FormTextArea
+            control={control}
+            name='reason'
+            placeholder='Nhập lý do...'
+            label={
+              <span>
+                Lý do đóng băng <span className='text-red-600'>*</span>
+              </span>
+            }
+            onKeyDown={blockLeadingAndRepeatedSpace}
+          />
+        </div>
+
+        <div className='bg-orange-50 mt-3 p-3 text-yellow-700 rounded-md'>
+          <p>
+            <span className='font-medium flex items-center gap-1'>
+              <WarningIcon />
+              Lưu ý:
+            </span>{' '}
+            Hệ thống sẽ trừ tiền từ{' '}
+            <span className='underline'>Ví Khả Dụng</span> và chuyển sang{' '}
+            <span className='underline'>Ví Đóng Băng</span> của tài khoản
+            <span className='font-medium'> {ownerName ?? '--'}</span>
+          </p>
+        </div>
+
+        <div className='flex justify-end gap-2 mt-4'>
+          <ButtonComponent
+            type='default'
+            content='Hủy'
+            onClick={onCancel}
+          />
+          <ButtonComponent
+            htmlType='submit'
+            loading={isLoading}
+            content='Xác nhận'
+          />
+        </div>
+      </form>
+    </div>
+  )
 }
 
 export default DialogFreeze

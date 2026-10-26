@@ -36,9 +36,9 @@ describe('UserFees', () => {
     expect(
       screen.getByText('Chuyển tiền · Cả hai chịu phí')
     ).toBeInTheDocument()
-    expect(screen.getByText('10,000 VND')).toBeInTheDocument()
-    expect(screen.getByText('10,100 VND')).toBeInTheDocument()
-    expect(screen.getByText('9,600 VND')).toBeInTheDocument()
+    expect(screen.getByText('10.000 VND')).toBeInTheDocument()
+    expect(screen.getByText('10.100 VND')).toBeInTheDocument()
+    expect(screen.getByText('9.600 VND')).toBeInTheDocument()
     expect(
       screen.getByText('Số tiền trừ trên ví người chuyển')
     ).toBeInTheDocument()

@@ -17,7 +17,7 @@ const validRule = {
   componentType: 'TRANSACTION_FEE',
   tierFrom: 0,
   tierTo: null,
-  formula: '1% + 5,000',
+  formula: '1% + 5.000',
   minFee: 0,
   maxFee: 50000,
   createdAt: '2026-03-11T09:24:05',

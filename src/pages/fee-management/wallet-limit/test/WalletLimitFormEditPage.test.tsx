@@ -69,7 +69,7 @@ describe('WalletLimitFormPage - Cập nhật', () => {
     expect(screen.queryByText(CONFLICT_MESSAGE)).not.toBeInTheDocument()
     expect(
       screen.getAllByLabelText(/^Số tiền tối đa mỗi giao dịch/)[0]
-    ).toHaveValue('6,000,000')
+    ).toHaveValue('6.000.000')
 
     await user.click(screen.getByRole('button', { name: 'Lưu thay đổi' }))
     expect(await screen.findByText('Trang chi tiết')).toBeInTheDocument()

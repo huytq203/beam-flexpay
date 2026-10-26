@@ -125,7 +125,7 @@ describe('dialog khóa / mở chính sách phí', () => {
       screen.getByRole('textbox', { name: /Lý do/ }),
       '  Hết khuyến mãi '
     )
-    await user.click(screen.getByRole('button', { name: 'Hẹn giờ' }))
+    await user.click(screen.getByRole('button', { name: 'Xác nhận' }))
 
     await waitFor(() => expect(onClose).toHaveBeenCalled())
     expect(sent.body).toEqual({
@@ -149,7 +149,7 @@ describe('dialog khóa / mở chính sách phí', () => {
       screen.getByRole('textbox', { name: /Lý do/ }),
       'Bảo trì cổng'
     )
-    await user.click(screen.getByRole('button', { name: 'Hẹn giờ' }))
+    await user.click(screen.getByRole('button', { name: 'Xác nhận' }))
 
     await waitFor(() => expect(onClose).toHaveBeenCalled())
     expect(sent.calls).toBe(1)
@@ -190,7 +190,7 @@ describe('dialog khóa / mở chính sách phí', () => {
     await pickRunAt(user, runAt)
     await pickRunAt(user, runAt.subtract(1, 'hour'), END_PICKER)
     await user.type(screen.getByRole('textbox', { name: /Lý do/ }), 'Sai giờ')
-    await user.click(screen.getByRole('button', { name: 'Hẹn giờ' }))
+    await user.click(screen.getByRole('button', { name: 'Xác nhận' }))
 
     expect(
       await screen.findByText(END_AT_AFTER_START_MESSAGE)

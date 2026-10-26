@@ -138,8 +138,8 @@ describe('FeeComponentDialog cả hai bên cùng chịu', () => {
       screen.getByLabelText(/Người chịu/).closest('.ant-select')
     ).toHaveTextContent('Cả hai bên cùng chịu')
     const fixed = screen.getAllByLabelText(/Phí cố định/)
-    expect(fixed[0]).toHaveValue('1,000')
-    expect(fixed[1]).toHaveValue('2,000')
+    expect(fixed[0]).toHaveValue('1.000')
+    expect(fixed[1]).toHaveValue('2.000')
   })
 
   it('báo trùng khi bên người nhận đã có thành phần cùng loại phí', async () => {

@@ -1,5 +1,6 @@
 import type { Platform } from './platforms'
 import { findSensitiveElements } from './sensitive'
+import { SAFETY, STAGE } from './tuning'
 import { FORBIDDEN_SELECTOR, type Box } from './zones'
 
 /** Các phần tử có mép trên Capy đứng được. Có thể chỉ định thêm bằng `data-capy="platform"`. */
@@ -12,8 +13,6 @@ export const PLATFORM_SELECTOR = [
   '.ant-select',
   'input'
 ].join(',')
-
-export const DIALOG_SELECTOR = '[role="dialog"], .ant-modal'
 
 export interface World {
   /** Sắp theo y tăng dần; phần tử cuối là đáy viewport nên luôn có chỗ đứng. */
@@ -33,20 +32,8 @@ const toBox = (rect: DOMRect): Box => ({
   bottom: rect.bottom
 })
 
-export function hasDialog(doc: Document = document): boolean {
-  return doc.querySelector(DIALOG_SELECTOR) !== null
-}
-
-/** Đo nền đứng được và vùng cấm đang nằm trong khung nhìn. `bodyWidth` là bề rộng hộp Capy. */
-export function measureWorld(
-  bodyWidth: number,
-  doc: Document = document
-): World {
-  const width = window.innerWidth
-  const height = window.innerHeight
-  const half = bodyWidth / 2
-
-  const zones = [
+function measureZones(doc: Document, height: number): Box[] {
+  return [
     ...Array.from(doc.querySelectorAll(FORBIDDEN_SELECTOR)),
     ...findSensitiveElements(doc)
   ]
@@ -58,10 +45,25 @@ export function measureWorld(
         box.bottom > 0 &&
         box.top < height
     )
+}
+
+/** Đo nền đứng được và vùng cấm đang nằm trong khung nhìn. `bodyWidth` là bề rộng hộp Capy. */
+export function measureWorld(
+  bodyWidth: number,
+  doc: Document = document
+): World {
+  const width = window.innerWidth
+  const height = window.innerHeight
+  const half = bodyWidth / 2
+
+  const zones = SAFETY.forbiddenZones ? measureZones(doc, height) : []
 
   const seen = new Set<string>()
   const found: Platform[] = []
-  for (const el of Array.from(doc.querySelectorAll(PLATFORM_SELECTOR))) {
+  const candidates = STAGE.pagePlatforms
+    ? Array.from(doc.querySelectorAll(PLATFORM_SELECTOR))
+    : []
+  for (const el of candidates) {
     if (found.length >= MAX_PLATFORMS) break
     const rect = el.getBoundingClientRect()
     if (

@@ -85,8 +85,8 @@ describe('Lịch sử giao dịch — hoàn tiền', () => {
     expect(nullRow?.textContent).not.toMatch(/Đang chờ hoàn/)
     expect(zeroRow).toHaveTextContent('0 VND')
     expect(zeroRow?.textContent).not.toMatch(/Đang chờ hoàn/)
-    expect(pendingRow).toHaveTextContent('50,000 VND')
-    expect(pendingRow).toHaveTextContent('Đang chờ hoàn 30,000 VND')
+    expect(pendingRow).toHaveTextContent('50.000 VND')
+    expect(pendingRow).toHaveTextContent('Đang chờ hoàn 30.000 VND')
   })
 
   it('hiển thị nhãn theo displayStatus: FAILED_REFUND là "Thất bại hoàn tiền"', async () => {

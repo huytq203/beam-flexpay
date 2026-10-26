@@ -4,7 +4,6 @@ import {
   formatRefundedAmount,
   getDisplayStatus,
   getPendingRefundAmount,
-  isTransactionInProgress,
   readRefundFields,
   resolveHasRefundParam,
   toHasRefundParam
@@ -48,7 +47,7 @@ describe('hiển thị hoàn tiền', () => {
         { currency: 'VND' },
         readRefundFields({ refundedAmount: 1500000 })
       )
-    ).toBe('1,500,000 VND')
+    ).toBe('1.500.000 VND')
   })
 
   it('chỉ báo Đang chờ hoàn khi lớn hơn 0', () => {
@@ -135,29 +134,5 @@ describe('buildCreateRefundRequest', () => {
         values
       )
     ).toBeNull()
-  })
-})
-
-describe('isTransactionInProgress', () => {
-  it.each([
-    ['PENDING thường', { status: 'PENDING' }],
-    ['chờ duyệt', { status: 'PENDING', displayStatus: 'PENDING_APPROVAL' }],
-    ['đang chi', { status: 'PENDING', displayStatus: 'PAYING' }]
-  ])('nhấp nháy khi %s', (_name, row) => {
-    expect(isTransactionInProgress(row)).toBe(true)
-  })
-
-  it.each([
-    [
-      'lệnh rút FAILED, sổ cái còn PENDING',
-      { status: 'PENDING', displayStatus: 'FAILED' }
-    ],
-    [
-      'lệnh rút POSTED, sổ cái còn PENDING',
-      { status: 'PENDING', displayStatus: 'POSTED' }
-    ],
-    ['sổ cái đã POSTED', { status: 'POSTED' }]
-  ])('không nhấp nháy khi %s', (_name, row) => {
-    expect(isTransactionInProgress(row)).toBe(false)
   })
 })

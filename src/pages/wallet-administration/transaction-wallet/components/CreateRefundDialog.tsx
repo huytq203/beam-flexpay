@@ -25,6 +25,7 @@ import {
   createRefundFormSchema,
   type CreateRefundFormValues
 } from '../schemas/createRefund.schema'
+import { formatThousands, parseThousands } from '@utils/format-number-input'
 
 interface CreateRefundDialogProps {
   transaction: UnifiedContentJournal
@@ -119,10 +120,8 @@ export function CreateRefundDialog({
           allowEmpty
           suffix={transaction.currency}
           placeholder='Nhập số tiền, không rút gọn'
-          formatter={(value) =>
-            `${value ?? ''}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-          }
-          parser={(value) => Number(value?.replace(/,/g, ''))}
+          formatter={formatThousands}
+          parser={(value) => Number(parseThousands(value))}
           className='flex flex-col gap-1'
         />
 

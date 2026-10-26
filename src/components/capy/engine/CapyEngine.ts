@@ -5,8 +5,9 @@ import { trackActivity } from './activity'
 import { Clock } from './clock'
 import * as react from './interactions'
 import { FramePlayer, type Canvas2dLike } from './player'
-import { Cancelled, clamp, rand, type DragState, type Runtime } from './runtime'
-import { findSnapPlatform, hasDialog, measureWorld, type World } from './world'
+import { Drag } from './drag'
+import { Cancelled, clamp, rand, type Runtime } from './runtime'
+import { findSnapPlatform, measureWorld, type World } from './world'
 import { buildTuning, DEFAULT_LEVELS, type CapyTuning } from './tuning'
 import { overlapsBody } from './zones'
 
@@ -41,17 +42,15 @@ export class CapyEngine implements Runtime {
   private epoch = 0
   private running = false
   private idleOnly = false
-  private sheltered = false
   private raf = 0
   private lastGreet = -Infinity
-  private drag: DragState | null = null
+  private drag: Drag | null = null
   private spin = 0
   private cached: { world: World; at: number } | null = null
   private readonly clock = new Clock(() => this.epoch)
   private lastActive = performance.now()
   private stopTracking: (() => void) | null = null
   tuning: CapyTuning = buildTuning(DEFAULT_LEVELS)
-  private observer: MutationObserver | null = null
   private pendingScroll = false
 
   constructor(private readonly o: CapyEngineOptions) {
@@ -64,13 +63,8 @@ export class CapyEngine implements Runtime {
     )
   }
 
-  get state(): { x: number; y: number; anim: string; sheltered: boolean } {
-    return {
-      x: this.x,
-      y: this.y,
-      anim: this.player.current,
-      sheltered: this.sheltered
-    }
+  get state(): { x: number; y: number; anim: string } {
+    return { x: this.x, y: this.y, anim: this.player.current }
   }
 
   world(): World {
@@ -124,11 +118,8 @@ export class CapyEngine implements Runtime {
     this.player.play('idle', { flip: false })
     document.addEventListener('scroll', this.onScroll, true)
     window.addEventListener('resize', this.onScroll)
-    this.observer = new MutationObserver(this.onMutation)
-    this.observer.observe(document.body, { childList: true, subtree: true })
     this.raf = requestAnimationFrame(this.renderLoop)
-    this.sheltered = hasDialog()
-    this.launch(this.sheltered ? (e) => react.shelter(this, e) : null)
+    this.launch(null)
   }
 
   stop(): void {
@@ -140,23 +131,33 @@ export class CapyEngine implements Runtime {
     cancelAnimationFrame(this.raf)
     document.removeEventListener('scroll', this.onScroll, true)
     window.removeEventListener('resize', this.onScroll)
-    this.observer?.disconnect()
-    this.observer = null
     this.o.onBubble(null)
   }
 
+  /** Bật đứng yên thì dừng ngay tại chỗ, không đi nốt quãng đang dở. Đang nhảy hoặc rơi thì để hạ xuống xong. */
   setIdleOnly(value: boolean): void {
+    const turnedOn = value && !this.idleOnly
     this.idleOnly = value
+    if (
+      !turnedOn ||
+      !this.running ||
+      this.drag ||
+      BUSY.includes(this.player.current)
+    )
+      return
+    this.launch(() =>
+      Promise.resolve(this.player.play('idle', { flip: false }))
+    )
   }
 
   setTuning(tuning: CapyTuning): void {
     this.tuning = tuning
   }
 
-  /** Chào khi rê chuột. Trả false nếu đang bận, có hộp thoại, đang nắm hay còn trong thời gian nghỉ. */
+  /** Chào khi rê chuột. Trả false nếu đang bận, đang nắm hay còn trong thời gian nghỉ. */
   greet(): boolean {
     const now = performance.now()
-    if (!this.running || this.drag || this.sheltered) return false
+    if (!this.running || this.drag) return false
     if (
       BUSY.includes(this.player.current) ||
       now - this.lastGreet < GREET_COOLDOWN
@@ -169,7 +170,7 @@ export class CapyEngine implements Runtime {
 
   /** Việc do người dùng chọn từ menu của Capy. */
   perform(kind: react.PerformKind): void {
-    if (!this.running || this.drag || this.sheltered) return
+    if (!this.running || this.drag) return
     this.launch((e) => react.perform(this, e, kind, this.o.greeting()))
   }
 
@@ -178,13 +179,7 @@ export class CapyEngine implements Runtime {
     this.epoch += 1
     this.o.onBubble(null)
     this.phoneOut = false
-    this.drag = {
-      dx: clientX - this.x,
-      dy: clientY - this.y,
-      lastX: clientX,
-      velocity: 0,
-      moved: false
-    }
+    this.drag = new Drag(clientX, clientY, this.x, this.y)
     this.player.play('held', { flip: false })
   }
 
@@ -192,14 +187,9 @@ export class CapyEngine implements Runtime {
     const drag = this.drag
     if (!drag) return
     const { width, height } = this.world()
-    this.put(
-      clamp(clientX - drag.dx, BODY_WIDTH / 2, width - BODY_WIDTH / 2),
-      clamp(clientY - drag.dy, 0, height)
-    )
-    drag.velocity = drag.velocity * 0.7 + (clientX - drag.lastX) * 0.3
-    drag.lastX = clientX
-    drag.moved = true
-    this.spin = clamp(drag.velocity * 0.04, -0.4, 0.4)
+    const next = drag.move(clientX, clientY, width, height)
+    this.put(next.x, next.y)
+    this.spin = next.spin
   }
 
   pointerUp(): 'click' | 'drag' | null {
@@ -241,17 +231,9 @@ export class CapyEngine implements Runtime {
     })
   }
 
-  private readonly onMutation = (): void => {
-    const dialog = hasDialog()
-    if (dialog === this.sheltered || !this.running) return
-    this.sheltered = dialog
-    this.launch(dialog ? (e) => react.shelter(this, e) : null)
-  }
-
   /** Nền dưới chân đã dịch chuyển hay biến mất (cuộn trang): dính theo nếu gần, không thì rơi. */
   private reconcile(): void {
-    if (this.drag || this.sheltered || BUSY.includes(this.player.current))
-      return
+    if (this.drag || BUSY.includes(this.player.current)) return
     const world = this.world()
     const feet = this.y + FEET
     const near = findSnapPlatform(world, this.x, feet)
@@ -272,7 +254,6 @@ export class CapyEngine implements Runtime {
     const run = async (): Promise<void> => {
       try {
         if (action) await action(epoch)
-        if (this.sheltered) return
         while (this.running && epoch === this.epoch) {
           await this.wait(rand(...this.tuning.gap), epoch)
           await this.nextAction(epoch)

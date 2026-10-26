@@ -68,8 +68,8 @@ describe('Sổ cái — xuất CSV', () => {
     renderScreen()
 
     expect(screen.getByText('863')).toBeInTheDocument()
-    expect(screen.getByText('157,817,347 ₫')).toBeInTheDocument()
-    expect(screen.getByText('148,001,798 ₫')).toBeInTheDocument()
+    expect(screen.getByText('157.817.347 ₫')).toBeInTheDocument()
+    expect(screen.getByText('148.001.798 ₫')).toBeInTheDocument()
   })
 
   it('click tổng Nợ/Có để lọc theo chiều bút toán và click Tổng để bỏ lọc', async () => {

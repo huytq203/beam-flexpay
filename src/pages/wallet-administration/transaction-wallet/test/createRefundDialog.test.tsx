@@ -47,8 +47,8 @@ const fillForm = async (amount = '50000', reason = 'Khách báo chuyển nhầm'
 
 describe('CreateRefundDialog', () => {
   it.each([
-    ['null (người chuyển chịu)', {}, '97,000 VND'],
-    ['RECEIVER', { feeBearer: 'RECEIVER' as const }, '100,000 VND'],
+    ['null (người chuyển chịu)', {}, '97.000 VND'],
+    ['RECEIVER', { feeBearer: 'RECEIVER' as const }, '100.000 VND'],
     [
       'BOTH',
       {
@@ -59,7 +59,7 @@ describe('CreateRefundDialog', () => {
         senderFeeAmount: 1000,
         receiverFeeAmount: 3000
       },
-      '100,000 VND'
+      '100.000 VND'
     ]
   ])(
     'Giá trị giao dịch theo feeBearer %s',

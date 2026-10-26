@@ -73,7 +73,7 @@ describe('FreezeStatusCell', () => {
 describe('FreezeAmountCell', () => {
   it('chỉ hiện một dòng khi lệnh chưa giải tỏa và không thiếu tiền', () => {
     render(<FreezeAmountCell item={freeze()} />)
-    expect(screen.getByText('50,000 VNĐ')).toBeInTheDocument()
+    expect(screen.getByText('50.000 VNĐ')).toBeInTheDocument()
     expect(screen.queryByText(/Đã mở băng/)).not.toBeInTheDocument()
     expect(screen.queryByText(/Còn thiếu/)).not.toBeInTheDocument()
   })
@@ -89,9 +89,9 @@ describe('FreezeAmountCell', () => {
         })}
       />
     )
-    expect(screen.getByText('80,000 VNĐ')).toBeInTheDocument()
-    expect(screen.getByText(/Đã mở băng/)).toHaveTextContent('20,000 VNĐ')
-    expect(screen.getByText(/Còn thiếu/)).toHaveTextContent('15,000 VNĐ')
+    expect(screen.getByText('80.000 VNĐ')).toBeInTheDocument()
+    expect(screen.getByText(/Đã mở băng/)).toHaveTextContent('20.000 VNĐ')
+    expect(screen.getByText(/Còn thiếu/)).toHaveTextContent('15.000 VNĐ')
     expect(screen.getByText('Đã bù 2 lần')).toBeInTheDocument()
   })
 })

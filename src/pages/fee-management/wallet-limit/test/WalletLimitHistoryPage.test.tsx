@@ -122,8 +122,8 @@ describe('WalletLimitHistoryPage', () => {
     expect(screen.getAllByText('admin.ops · IP 10.0.1.23')).toHaveLength(2)
     expect(screen.getByText('Cập nhật')).toBeInTheDocument()
     expect(screen.getByText('Tạo mới')).toBeInTheDocument()
-    expect(screen.getByText('20,000,000')).toBeInTheDocument()
-    expect(screen.getByText('30,000,000')).toBeInTheDocument()
+    expect(screen.getByText('20.000.000')).toBeInTheDocument()
+    expect(screen.getByText('30.000.000')).toBeInTheDocument()
     expect(screen.getByText('VCB · Rút tiền · Tối đa/GD')).toBeInTheDocument()
   })
 
@@ -131,8 +131,8 @@ describe('WalletLimitHistoryPage', () => {
     renderPage()
     await screen.findByText('Hạn mức ngày')
 
-    expect(screen.getByText('20,000,000').tagName).toBe('DEL')
-    expect(screen.getByText('30,000,000').tagName).toBe('STRONG')
+    expect(screen.getByText('20.000.000').tagName).toBe('DEL')
+    expect(screen.getByText('30.000.000').tagName).toBe('STRONG')
     expect(screen.getByText('Hoạt động').tagName).toBe('DEL')
     expect(screen.getByText('Khóa').tagName).toBe('STRONG')
     // Override bị bỏ trống: mới = Trống; INSERT: cũ = Trống.

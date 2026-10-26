@@ -226,9 +226,9 @@ describe('ModalDetailWithdrawHistory', () => {
       </MessageProvider>
     )
 
-    expect(screen.getAllByText('-100,000 VND')).toHaveLength(2)
-    expect(screen.getByText('3,000 VND')).toBeInTheDocument()
-    expect(screen.getByText('+97,000 VND')).toBeInTheDocument()
+    expect(screen.getAllByText('-100.000 VND')).toHaveLength(2)
+    expect(screen.getByText('3.000 VND')).toBeInTheDocument()
+    expect(screen.getByText('+97.000 VND')).toBeInTheDocument()
   })
 
   it('lệnh chưa thành công: Tổng tiền cộng bank hiện —', () => {

@@ -158,3 +158,19 @@ hoặc bản độ phân giải cao hơn chỉ cần thay file và cập nhật 
   được giấc ngủ 1 đến 2 phút.
 - Số cụ thể của từng mức nằm ở một file duy nhất: `src/components/capy/engine/tuning.ts`.
 
+## Vùng cấm: tạm tắt
+
+Vì hiện không có tương tác nào chạm vào chữ trên trang, vùng cấm đang **tắt** (`SAFETY.forbiddenZones = false`
+trong `engine/tuning.ts`): Capy không né, không mờ đi và không dừng trước ô số tiền, số tài khoản hay nút
+thao tác. Mã né vùng cấm (`zones.ts`, `sensitive.ts`, nhãn `data-capy="no"` trên ba màn quản lý tài khoản và quyền)
+vẫn còn nguyên; bật lại bằng cách đổi công tắc thành `true`. Hộp thoại mở thì Capy vẫn ngồi ở góc, độc lập với
+công tắc này. Phần "Vùng cấm" ở trên mô tả hành vi khi công tắc bật.
+
+## Sân khấu: chỉ đi dọc đáy khung màn hình
+
+Capy chỉ đi lại dọc đáy khung màn hình (`STAGE.pagePlatforms = false` trong `engine/tuning.ts`), không đứng
+trên mép thẻ, hàng bảng, nút hay ô nhập ("bậc thang"), và hành động nhảy bậc đã bỏ khỏi danh sách. Kéo Capy lên
+giữa trang rồi thả thì Capy rơi xuống đáy (lộn nhào nếu rơi cao). Phần mô tả "Nền đứng được" ở trên chỉ áp dụng khi
+công tắc bật. Đi dọc cạnh trái, phải hoặc trên của khung màn hình cần khung hình leo tường và treo trần mà bộ ảnh
+hiện chưa có.
+

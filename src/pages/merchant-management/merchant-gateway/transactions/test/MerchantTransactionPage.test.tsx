@@ -72,7 +72,7 @@ describe('MerchantTransactionPage', () => {
 
     expect(await screen.findByText('FW26100900184')).toBeInTheDocument()
     expect(screen.getByText('Hoàng Long')).toBeInTheDocument()
-    expect(screen.getByText('12,500,000 VND')).toBeInTheDocument()
+    expect(screen.getByText('12.500.000 VND')).toBeInTheDocument()
 
     const request = journalRequests[0]
     expect(request.searchParams.get('sourceDomain')).toBe('MERCHANT')

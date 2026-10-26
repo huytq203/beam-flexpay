@@ -114,7 +114,7 @@ describe('DetailTransaction', () => {
     )
 
     expect(
-      screen.getByText('Phí 3% + Phí cố định 2,000 VND + VAT 0%')
+      screen.getByText('Phí 3% + Phí cố định 2.000 VND + VAT 0%')
     ).toBeInTheDocument()
     expect(screen.getByText('Ví người dùng (0901234567)')).toBeInTheDocument()
     expect(screen.getByText('Tài khoản thanh toán ngân hàng')).toBeInTheDocument()

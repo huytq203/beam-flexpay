@@ -79,7 +79,7 @@ describe('UnfreezeRequestDialog', () => {
 
     expect(screen.getByRole('radio', { name: 'Mở băng toàn bộ' })).toBeChecked()
     expect(amountInput()).toBeDisabled()
-    expect(amountInput()).toHaveValue('50,000')
+    expect(amountInput()).toHaveValue('50.000')
 
     const submitButton = screen.getByRole('button', {
       name: 'Xác nhận mở băng'
@@ -100,9 +100,9 @@ describe('UnfreezeRequestDialog', () => {
   it('trần gồm cả phần còn thiếu và nói rõ hệ quả huỷ đòi', () => {
     renderDialog(freeze({ remainingAmount: 50_000, shortfallAmount: 15_000 }))
 
-    expect(amountInput()).toHaveValue('65,000')
+    expect(amountInput()).toHaveValue('65.000')
     expect(screen.getByText('Còn thiếu chưa giữ được')).toBeInTheDocument()
-    expect(screen.getByText('15,000 VNĐ')).toBeInTheDocument()
+    expect(screen.getByText('15.000 VNĐ')).toBeInTheDocument()
     expect(screen.getByText(/huỷ đòi phần còn thiếu/)).toBeInTheDocument()
   })
 
@@ -131,7 +131,7 @@ describe('UnfreezeRequestDialog', () => {
     )
 
     expect(amountInput()).toBeDisabled()
-    expect(amountInput()).toHaveValue('30,000')
+    expect(amountInput()).toHaveValue('30.000')
   })
 
   it('không cho số tiền vượt trần lọt xuống API', async () => {

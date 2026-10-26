@@ -32,8 +32,8 @@ export enum StatusEnum {
   PENDING = 'PENDING',
   PENDING_APPROVAL = 'PENDING_APPROVAL',
   /** Chỉ là `displayStatus` / giá trị lọc của lệnh rút: sổ cái lúc đó vẫn PENDING. */
-  APPROVED = 'APPROVED',
-  PAYING = 'PAYING',
+  // APPROVED = 'APPROVED',
+  // PAYING = 'PAYING',
   POSTED = 'POSTED',
   FAILED = 'FAILED',
   /**
@@ -52,9 +52,9 @@ export const StatusType: Record<
   string
 > = {
   [StatusEnum.PENDING]: 'Chờ xử lý',
-  [StatusEnum.PENDING_APPROVAL]: 'Chờ phê duyệt',
-  [StatusEnum.APPROVED]: 'Đã duyệt — đang chi',
-  [StatusEnum.PAYING]: 'Đang chi',
+  [StatusEnum.PENDING_APPROVAL]: 'Chờ duyệt',
+  // [StatusEnum.APPROVED]: 'Đã duyệt — đang chi',
+  // [StatusEnum.PAYING]: 'Đang chi',
   RECONCILIATION_REQUIRED: 'Cần đối soát',
   [StatusEnum.POSTED]: 'Đã thành công',
   [StatusEnum.FAILED]: 'Thất bại',
@@ -90,20 +90,20 @@ export const CONFIG_STATUS: Record<
     shimmerColor: 'rgba(252, 186, 3, 0.2)'
   },
   [StatusEnum.PENDING_APPROVAL]: {
-    label: 'Chờ phê duyệt',
+    label: 'Chờ duyệt',
     className: 'warning-status',
     shimmerColor: 'rgba(252, 186, 3, 0.2)'
   },
-  [StatusEnum.APPROVED]: {
-    label: 'Đã duyệt — đang chi',
-    className: 'warning-status',
-    shimmerColor: 'rgba(252, 186, 3, 0.2)'
-  },
-  [StatusEnum.PAYING]: {
-    label: 'Đang chi',
-    className: 'warning-status',
-    shimmerColor: 'rgba(252, 186, 3, 0.2)'
-  },
+  // [StatusEnum.APPROVED]: {
+  //   label: 'Đã duyệt — đang chi',
+  //   className: 'warning-status',
+  //   shimmerColor: 'rgba(252, 186, 3, 0.2)'
+  // },
+  // [StatusEnum.PAYING]: {
+  //   label: 'Đang chi',
+  //   className: 'warning-status',
+  //   shimmerColor: 'rgba(252, 186, 3, 0.2)'
+  // },
   [StatusEnum.POSTED]: {
     label: 'Đã thành công',
     className: 'success-status',

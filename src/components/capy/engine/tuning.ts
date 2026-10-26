@@ -63,22 +63,12 @@ const ACTIVITY: Record<
   normal: {
     gap: [6000, 12_000],
     lookChance: 0.5,
-    weighted: ['roam', 'roam', 'run', 'climb', 'rest', 'rest', 'selfie']
+    weighted: ['roam', 'roam', 'run', 'rest', 'rest', 'selfie']
   },
   high: {
     gap: [2200, 4500],
     lookChance: 0.5,
-    weighted: [
-      'roam',
-      'roam',
-      'roam',
-      'run',
-      'run',
-      'climb',
-      'climb',
-      'rest',
-      'selfie'
-    ]
+    weighted: ['roam', 'roam', 'roam', 'run', 'run', 'rest', 'selfie']
   }
 }
 
@@ -99,3 +89,18 @@ export const IDLE_ONLY_ACTIONS: readonly ActionName[] = ['rest', 'selfie']
 
 /** Mỗi giấc ngủ dài kéo dài ngẫu nhiên trong khoảng này, mili giây. */
 export const DEEP_SLEEP_MS: readonly [number, number] = [60_000, 120_000]
+
+/**
+ * Công tắc an toàn. `forbiddenZones` đang **tắt**: Capy không né, không mờ đi và không dừng trước các ô
+ * có số tiền, số tài khoản hay nút thao tác (vì hiện chưa có tương tác nào chạm vào chữ). Bật lại bằng cách
+ * đổi thành `true`: toàn bộ logic né vùng cấm (`zones.ts`, `sensitive.ts`) vẫn còn nguyên. Có hộp thoại mở
+ * thì Capy vẫn ngồi ở góc, việc đó độc lập với công tắc này.
+ */
+export const SAFETY = { forbiddenZones: false }
+
+/**
+ * Sân khấu của Capy. `pagePlatforms` đang **tắt**: Capy chỉ đi lại dọc đáy khung màn hình, không đứng trên
+ * mép thẻ, hàng bảng, nút hay ô nhập ("bậc thang"), và không còn hành động nhảy bậc. Bật lại bằng cách đổi
+ * thành `true` và thêm `'climb'` vào danh sách hành động của từng mức ở trên.
+ */
+export const STAGE = { pagePlatforms: false }

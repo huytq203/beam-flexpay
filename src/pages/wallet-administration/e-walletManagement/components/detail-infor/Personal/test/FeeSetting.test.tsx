@@ -38,7 +38,7 @@ const rule: ApplicableFeeRule = {
   componentType: 'TRANSACTION_FEE',
   tierFrom: 0,
   tierTo: null,
-  formula: '1% + 5,000',
+  formula: '1% + 5.000',
   minFee: 0,
   maxFee: 50000,
   createdAt: '2026-03-11T09:24:05',
@@ -110,7 +110,7 @@ describe('FeeSetting', () => {
     expect(await screen.findByText('Phí nạp tiền ATM')).toBeInTheDocument()
     expect(screen.getByText('flexpay-user')).toBeInTheDocument()
     expect(screen.getByText('Số dư ví')).toBeInTheDocument()
-    expect(screen.getByText('1% + 5,000')).toBeInTheDocument()
+    expect(screen.getByText('1% + 5.000')).toBeInTheDocument()
     expect(screen.getByText('0 trở lên')).toBeInTheDocument()
     expect(screen.getByText('11/03/2026 16:24:05')).toBeInTheDocument()
     expect(screen.getByText('01/04/2026 07:00:00')).toBeInTheDocument()

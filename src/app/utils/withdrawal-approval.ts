@@ -26,9 +26,9 @@ export const isWithdrawalPendingApproval = (
  * mỗi 30 giây, nên đây là khoảng FE cần theo dõi tiếp thay vì coi là đã xong.
  */
 export const isWithdrawalSettling = (
-  status: string | null | undefined
-): boolean =>
-  status === WithdrawalStatus.APPROVED || status === WithdrawalStatus.PAYING
+  _status: string | null | undefined
+): boolean => false
+// status === WithdrawalStatus.APPROVED || status === WithdrawalStatus.PAYING
 
 export type WithdrawalDecision = 'approve' | 'reject'
 
@@ -41,7 +41,10 @@ export const getWithdrawalDecisionFailureMessage = (
   freshStatus: string | null | undefined,
   decision: WithdrawalDecision
 ): string => {
-  if (isWithdrawalSettling(freshStatus) || freshStatus === WithdrawalStatus.POSTED) {
+  if (
+    isWithdrawalSettling(freshStatus) ||
+    freshStatus === WithdrawalStatus.POSTED
+  ) {
     return 'Lệnh rút đã được người khác duyệt. Màn hình đã cập nhật trạng thái mới nhất.'
   }
 

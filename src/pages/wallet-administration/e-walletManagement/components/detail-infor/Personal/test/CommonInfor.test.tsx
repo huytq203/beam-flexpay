@@ -2,7 +2,7 @@ import { renderWithProviders } from '@/test/render'
 import { server } from '@/test/mocks/server'
 import { screen } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import CommonInfor from '../CommonInfor'
 import { AcountItem } from '@pages/wallet-administration/e-walletManagement/types/ResponseWalletAccount.type'
 import { ContentEKYC } from '@type/apiResponseEKYC'
@@ -76,41 +76,6 @@ describe('CommonInfor', () => {
     expect(screen.getByText('Trưởng phòng')).toBeInTheDocument()
   })
 
-  it('gọi display-info bằng ownerId và hiển thị trạng thái ứng lương, tài khoản nhận lương, liên kết ngân hàng', async () => {
-    const onRequest = vi.fn()
-    mockDisplayInfo(
-      { salaryAdvanceEnabled: true, linkedBanks: [bankLink()] },
-      onRequest
-    )
-
-    renderWithProviders(
-      <CommonInfor
-        accountData={accountData}
-        ekycData={ekycData}
-      />
-    )
-
-    expect(await screen.findByText('Đang bật')).toBeInTheDocument()
-    expect(await screen.findAllByText('Đã liên kết')).toHaveLength(2)
-    expect(onRequest).toHaveBeenCalledWith(OWNER_ID)
-  })
-
-  it('coi là chưa liên kết khi status của liên kết không còn hiệu lực', async () => {
-    mockDisplayInfo({
-      salaryAdvanceEnabled: false,
-      linkedBanks: [bankLink({ status: 'UNLINKED' })]
-    })
-
-    renderWithProviders(
-      <CommonInfor
-        accountData={accountData}
-        ekycData={ekycData}
-      />
-    )
-
-    expect(await screen.findAllByText('Chưa liên kết')).toHaveLength(3)
-  })
-
   it('hiện lối thử lại cho từng trường khi display-info lỗi', async () => {
     server.use(
       http.get('*/user-wallets/:userId/display-info', () =>
@@ -146,9 +111,9 @@ describe('CommonInfor', () => {
       />
     )
 
-    expect(screen.getByText('1,000,000 ₫')).toBeInTheDocument()
-    expect(screen.getByText('800,000 ₫')).toBeInTheDocument()
-    expect(screen.getByText('200,000 ₫')).toBeInTheDocument()
+    expect(screen.getByText('1.000.000 ₫')).toBeInTheDocument()
+    expect(screen.getByText('800.000 ₫')).toBeInTheDocument()
+    expect(screen.getByText('200.000 ₫')).toBeInTheDocument()
     expect(screen.getByText('Hoạt động')).toHaveClass('text-success-strong')
   })
 

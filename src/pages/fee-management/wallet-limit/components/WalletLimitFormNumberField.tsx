@@ -1,6 +1,7 @@
 import { FormInputNumber } from '@components/form'
 import { useFormContext, type Path } from 'react-hook-form'
 import type { WalletLimitFormValues } from '../schemas/walletLimitForm.schema'
+import { formatThousands } from '@utils/format-number-input'
 
 interface WalletLimitFormNumberFieldProps {
   name: Path<WalletLimitFormValues>
@@ -9,9 +10,6 @@ interface WalletLimitFormNumberFieldProps {
   required?: boolean
   disabled?: boolean
 }
-
-const formatThousands = (value: string | number | undefined): string =>
-  `${value ?? ''}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 
 // Ô trống phải ra `null` (không phải 0): trống nghĩa là không giới hạn.
 const parseDigits = (value: string | undefined): string | number => {

@@ -7,7 +7,6 @@ import {
   formatRefundedAmount,
   getDisplayStatus,
   getPendingRefundAmount,
-  isTransactionInProgress,
   readRefundFields
 } from '../dto/transactionRefund.dto'
 import { TRANSACTION_FREEZE_STATUS } from './transactionBadgeConfig'
@@ -32,7 +31,7 @@ export function RefundedAmountCell({
   )
 }
 
-/** Nhãn theo `displayStatus`; nhấp nháy khi còn chờ xử lý (sổ cái PENDING và chưa có kết quả cuối). */
+/** Nhãn theo `displayStatus`; hiệu ứng nhấp nháy dựa trên `status` sổ cái. */
 export function TransactionStatusCell({
   record
 }: {
@@ -41,7 +40,7 @@ export function TransactionStatusCell({
   return (
     <div className='flex flex-wrap items-center justify-center gap-1'>
       <StatusBadge
-        className={cn(isTransactionInProgress(record) && 'animate-pulse-soft')}
+        className={cn(record.status === 'PENDING' ? 'animate-pulse-soft' : '')}
         status={getDisplayStatus(record)}
         config={CONFIG_STATUS}
       />
