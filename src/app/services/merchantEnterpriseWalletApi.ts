@@ -91,22 +91,6 @@ export const merchantEnterpriseWalletService = apiMerchant.injectEndpoints({
         response.data,
       providesTags: ['merchant']
     }),
-    getEnterpriseWalletDocumentUrl: builder.query<
-      { url: string; contentType: string; originalFilename: string },
-      { walletId: string; documentId: string }
-    >({
-      query: ({ walletId, documentId }) => ({
-        url: `/enterprise-wallets/${walletId}/documents/${documentId}/url`,
-        params: { disposition: 'INLINE' }
-      }),
-      transformResponse: (
-        response: MerchantEnvelope<{
-          url: string
-          contentType: string
-          originalFilename: string
-        }>
-      ) => response.data
-    }),
     createEnterpriseWallet: builder.mutation<
       EnterpriseWalletDto,
       EnterpriseWalletPayload
@@ -179,7 +163,6 @@ export const merchantEnterpriseWalletService = apiMerchant.injectEndpoints({
 export const {
   useListEnterpriseWalletsQuery,
   useGetEnterpriseWalletQuery,
-  useLazyGetEnterpriseWalletDocumentUrlQuery,
   useCreateEnterpriseWalletMutation,
   useSaveEnterpriseWalletDraftMutation,
   useSubmitEnterpriseWalletMutation,

@@ -4,7 +4,7 @@ export const terminateSchema = z.object({
   reason: z
     .string()
     .trim()
-    .min(1, 'Vui lòng nhập lý do chấm dứt hợp tác')
+    .min(10, 'Lý do phải từ 10 đến 500 ký tự')
     .max(500, 'Lý do tối đa 500 ký tự'),
   confirmation: z
     .string()

@@ -1,8 +1,9 @@
 import type { ApiCredential } from '@/app/services/merchantGatewayApi'
-import { formatUTCToLocalDateTime } from '@utils/helper-functions/date'
-
-const dateLabel = (value?: string | null) =>
-  value ? formatUTCToLocalDateTime(value) : 'Chưa có'
+import {
+  AUTH_MODE_LABEL,
+  CREDENTIAL_STATUS
+} from '../constants/credential.constants'
+import { dateLabel } from '../utils/credential.utils'
 
 function DetailItem({
   label,
@@ -40,7 +41,25 @@ export function CredentialDetails({
             value={credential.merchantId}
           />
           <DetailItem
-            label='Phiên bản secret'
+            label='Phạm vi'
+            value={
+              credential.subMerchantId
+                ? `Sub-merchant ${credential.subMerchantId}`
+                : 'Master (Sub / Terminal kế thừa)'
+            }
+          />
+          <DetailItem
+            label='Trạng thái'
+            value={
+              CREDENTIAL_STATUS[credential.status]?.label ?? credential.status
+            }
+          />
+          <DetailItem
+            label='Cơ chế xác thực'
+            value={AUTH_MODE_LABEL[credential.authMode ?? 'HMAC_SHA256']}
+          />
+          <DetailItem
+            label='Phiên bản khóa'
             value={`v${credential.version ?? 1}`}
           />
           <DetailItem
@@ -88,10 +107,6 @@ export function CredentialDetails({
           <DetailItem
             label='Xoay key lần cuối'
             value={dateLabel(credential.rotatedAt)}
-          />
-          <DetailItem
-            label='Secret cũ còn hiệu lực đến'
-            value={dateLabel(credential.previousSecretExpiresAt)}
           />
           <DetailItem
             label='Thu hồi lúc'

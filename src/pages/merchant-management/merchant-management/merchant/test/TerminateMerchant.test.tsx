@@ -34,6 +34,9 @@ const mockList = (status = 'ACTIVE') =>
         },
         success: true
       })
+    ),
+    http.get('*/merchants/m1/termination-obligations', () =>
+      HttpResponse.json({ data: [], success: true })
     )
   )
 
@@ -72,6 +75,7 @@ const fillForm = async (
       name: 'Chấm dứt hợp tác Công ty A'
     })
   )
+  await screen.findByText('Không còn nghĩa vụ tồn đọng.')
   await user.type(screen.getByLabelText('Lý do'), reason)
   await user.type(
     screen.getByLabelText('Nhập lại mã hoặc tên merchant'),
@@ -91,6 +95,9 @@ describe('Chấm dứt hợp tác Merchant', { timeout: 20000 }, () => {
         terminateBody = await request.json()
         return HttpResponse.json({
           data: {
+            subMerchantsClosed: 3,
+            terminalsClosed: 4,
+            credentialsRevoked: 5,
             usersScopeShrunk: 2,
             usersLeftWithoutScope: 1,
             affectedUsers: [
@@ -121,6 +128,7 @@ describe('Chấm dứt hợp tác Merchant', { timeout: 20000 }, () => {
       })
     )
     expect(await screen.findByText('a@x.vn')).toBeInTheDocument()
+    expect(screen.getByText('Đã đóng 3 Sub-merchant')).toBeInTheDocument()
   })
 
   it('chuỗi xác nhận không khớp mã hoặc tên thì không xin OTP', async () => {

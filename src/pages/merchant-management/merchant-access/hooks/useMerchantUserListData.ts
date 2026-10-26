@@ -4,6 +4,8 @@ import {
   useListMerchantUsersQuery
 } from '@/app/services/merchantAccessApi'
 import { useUrlFilters } from '@hooks/useUrlFilters'
+import { useExportCsv } from '@hooks/useExportCsv'
+import { useExportMerchantUsersMutation } from '@services/apiExportCsv'
 import { toMerchantRole, toMerchantUser } from '../dto/merchantAccess.api'
 import {
   EMPTY_FILTERS,
@@ -25,12 +27,23 @@ export function useMerchantUserListData() {
   const filters = fromUserUrlFilters(url.filters)
   const { page, size: pageSize } = url
   const [draft, setDraft] = useState<UserFilters>(filters)
-  const usersQuery = useListMerchantUsersQuery({
-    page,
-    size: pageSize,
+  // BE chỉ lọc theo query, merchantId, status; export dùng đúng bộ này.
+  const params = {
     query: filters.query || undefined,
     merchantId: filters.merchantId,
     status: filters.status
+  }
+  const usersQuery = useListMerchantUsersQuery({
+    page,
+    size: pageSize,
+    ...params
+  })
+  const [triggerExport, { reset: resetExport }] =
+    useExportMerchantUsersMutation()
+  const exporter = useExportCsv({
+    trigger: triggerExport,
+    reset: resetExport,
+    filenamePrefix: 'merchant-users'
   })
   const rolesQuery = useListMerchantGroupsQuery({ page: 1, size: 100 })
   const users = useMemo(
@@ -84,6 +97,8 @@ export function useMerchantUserListData() {
     roles,
     filteredUsers,
     apply,
-    reset
+    reset,
+    isExporting: exporter.isExporting,
+    exportCsv: () => void exporter.exportFile(params)
   }
 }

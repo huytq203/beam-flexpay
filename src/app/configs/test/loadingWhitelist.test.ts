@@ -130,6 +130,7 @@ describe('whitelist của global loading', () => {
     ['/merchants', '/secure-panel/merchant/user-role'],
     ['/merchants', '/secure-panel/merchant/key-connection'],
     ['/merchants', '/secure-panel/merchant/bank-account'],
+    ['/merchants', '/secure-panel/merchant/merchant-order'],
     ['/sub-merchants', '/secure-panel/merchant/terminal/create'],
     ['/merchants/merchant-1', '/secure-panel/merchant/sub-merchant/edit/sub-1']
   ])('bỏ global loader cho dialog chọn Merchant: %s tại %s', (url, pathname) => {

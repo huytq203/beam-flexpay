@@ -25,6 +25,7 @@ import {
   HandCoinsIcon,
   KeyIcon,
   LockIcon,
+  LockKeyIcon,
   LockKeyOpenIcon,
   MoneyIcon,
   ReceiptIcon,
@@ -32,6 +33,7 @@ import {
   SlidersHorizontalIcon,
   StorefrontIcon,
   TerminalIcon,
+  UserCheckIcon,
   UserGearIcon,
   UsersThreeIcon,
   WalletIcon
@@ -180,6 +182,30 @@ const roleManagementV2: ItemTypeCustom = {
         />
       ),
       label: 'Quản lý quyền'
+    },
+    {
+      key: 'role-permission-matrix',
+      screen: 'ROLE_PERMISSION_MATRIX',
+      icon: (
+        <SlidersHorizontalIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Ma trận phân quyền'
+    },
+    {
+      key: 'audit-log',
+      screen: 'AUDIT_LOG',
+      icon: (
+        <ClipboardTextIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Nhật ký hệ thống'
     }
   ]
 }
@@ -348,6 +374,18 @@ const merchantManagement: ItemTypeCustom = {
       label: 'Key kết nối'
     },
     {
+      key: 'webhook',
+      screen: 'MERCHANT_WEBHOOK',
+      icon: (
+        <KeyIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Webhook (IPN)'
+    },
+    {
       key: 'payment-method',
       screen: 'MERCHANT_PAYMENT_METHOD',
       icon: (
@@ -382,6 +420,31 @@ const merchantManagement: ItemTypeCustom = {
         />
       ),
       label: 'Giao dịch'
+    },
+    {
+      key: 'merchant-order',
+      screen: 'MERCHANT_ORDER',
+      icon: (
+        <ClipboardTextIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Đơn hàng merchant'
+    },
+    {
+      key: 'sales-assignment',
+      screen: 'MERCHANT_ASSIGNMENT',
+      link: `${MERCHANT}/sales-assignment`,
+      icon: (
+        <UserCheckIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Gán Sales phụ trách'
     }
   ]
 }
@@ -466,6 +529,32 @@ const subMerchantManagement: ItemTypeCustom = {
       label: 'Cấu hình quyết toán'
     },
     {
+      key: 'settlement-scope',
+      screen: 'MERCHANT_SETTLEMENT_SCOPE',
+      link: `${MERCHANT}/settlement-scope`,
+      icon: (
+        <GitBranchIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quyết toán Master/Hệ thống'
+    },
+    {
+      key: 'settlement-item',
+      screen: 'MERCHANT_SETTLEMENT_ITEM',
+      link: `${MERCHANT}/settlement-item`,
+      icon: (
+        <MoneyIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Mục quyết toán'
+    },
+    {
       key: 'withdrawal-limit',
       screen: 'MERCHANT_WITHDRAWAL_LIMIT',
       link: `${MERCHANT}/withdrawal-limit`,
@@ -477,6 +566,45 @@ const subMerchantManagement: ItemTypeCustom = {
         />
       ),
       label: 'Hạn mức rút'
+    },
+    {
+      key: 'hold-rule',
+      screen: 'MERCHANT_HOLD_RULE',
+      link: `${MERCHANT}/hold-rule`,
+      icon: (
+        <LockKeyIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Quy tắc tạm giữ'
+    },
+    {
+      key: 'reconciliation',
+      screen: 'MERCHANT_RECONCILIATION',
+      link: `${MERCHANT}/reconciliation`,
+      icon: (
+        <ClipboardTextIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Đối soát số dư'
+    },
+    {
+      key: 'balance-report',
+      screen: 'MERCHANT_BALANCE_REPORT',
+      link: `${MERCHANT}/balance-report`,
+      icon: (
+        <ChartBarIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Báo cáo số dư'
     }
   ]
 }

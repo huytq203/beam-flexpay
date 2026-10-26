@@ -7,7 +7,11 @@ import {
 } from '@/app/services/merchantHierarchyApi'
 import { Can, SCREENS } from '@/app/permissions'
 import { PlusOutlined } from '@components/icons'
-import { ButtonComponent, CardComponent } from '@components/index'
+import {
+  ButtonComponent,
+  CardComponent,
+  ExportCsvButton
+} from '@components/index'
 
 import { ManagementPageHeader } from '../../shared/ManagementPageHeader'
 import { toSubMerchantRow } from '../../shared/hierarchyAdapter'
@@ -16,8 +20,14 @@ import { SubMerchantFilters } from '../components/SubMerchantFilters'
 import { SubMerchantDetailModal } from '../components/SubMerchantDetailModal'
 import { SubMerchantTable } from '../components/SubMerchantTable'
 import { useSubMerchantListFilters } from '../hooks/useSubMerchantListFilters'
+import {
+  useSubMerchantExport,
+  type SubMerchantExportParams
+} from '../hooks/useSubMerchantExport'
 import type { SubMerchantRow } from '../types/subMerchant.type'
 import { globalMessage } from '@hooks/useMessage'
+import { AssignmentScopeDrawer } from '../../../merchant-assignment/components/AssignmentScopeDrawer'
+import { toSubScope } from '../../../merchant-assignment/utils/merchantAssignment.utils'
 
 interface SubMerchantListPageProps {
   initialListState?: ManagementListState
@@ -30,9 +40,8 @@ export default function SubMerchantListPage({
   const { filters, page, pageSize, search, reset, changePage } =
     useSubMerchantListFilters()
   const [viewingId, setViewingId] = useState<string>()
-  const query = useGetSubMerchantPageQuery({
-    page,
-    size: pageSize,
+  const [assigningRow, setAssigningRow] = useState<SubMerchantRow>()
+  const listParams: SubMerchantExportParams = {
     merchantId: filters.parentMerchant?.id,
     name: filters.query.trim() || undefined,
     status:
@@ -41,7 +50,13 @@ export default function SubMerchantListPage({
       filters.status === 'TERMINATED'
         ? filters.status
         : undefined
+  }
+  const query = useGetSubMerchantPageQuery({
+    page,
+    size: pageSize,
+    ...listParams
   })
+  const exporter = useSubMerchantExport(listParams)
   const [setLocked] = useSetSubMerchantLockedMutation()
   const rows = query.data?.content.map(toSubMerchantRow) ?? []
   const total = query.data?.totalElements ?? 0
@@ -102,7 +117,18 @@ export default function SubMerchantListPage({
         >
           <div className='mb-4'>
             <ManagementPageHeader
-              actions={undefined}
+              actions={
+                <Can
+                  screen='MERCHANT_SUB_MERCHANT'
+                  action='export'
+                >
+                  <ExportCsvButton
+                    onExport={exporter.exportCsv}
+                    loading={exporter.isExporting}
+                    disabled={total === 0}
+                  />
+                </Can>
+              }
               primaryAction={
                 <Can
                   screen='MERCHANT_SUB_MERCHANT'
@@ -121,6 +147,7 @@ export default function SubMerchantListPage({
           </div>
           <SubMerchantTable
             filtered={isFiltered}
+            onAssignment={setAssigningRow}
             onEdit={openEdit}
             onPageChange={changePage}
             onRetry={() => void query.refetch()}
@@ -134,6 +161,10 @@ export default function SubMerchantListPage({
           />
         </section>
       </CardComponent>
+      <AssignmentScopeDrawer
+        scope={assigningRow ? toSubScope(assigningRow) : undefined}
+        onClose={() => setAssigningRow(undefined)}
+      />
       <SubMerchantDetailModal
         subMerchantId={viewingId}
         onClose={() => setViewingId(undefined)}

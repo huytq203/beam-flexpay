@@ -252,6 +252,32 @@ const roleManagementV2 = {
           )
         }
       ]
+    },
+    {
+      path: ROLEMANAGEMENT_V2,
+      children: [
+        {
+          path: SCREENS.ROLE_PERMISSION_MATRIX.path,
+          element: page(
+            () =>
+              import(
+                '@/pages/role-management-V2/role-permission-matrix/pages/RolePermissionMatrixPage'
+              )
+          )
+        }
+      ]
+    },
+    {
+      path: ROLEMANAGEMENT_V2,
+      children: [
+        {
+          path: SCREENS.AUDIT_LOG.path,
+          element: page(
+            () =>
+              import('@/pages/role-management-V2/audit-log/pages/AuditLogPage')
+          )
+        }
+      ]
     }
   ]
 }
@@ -385,6 +411,15 @@ const merchantManagement = {
           )
         },
         {
+          path: SCREENS.MERCHANT_WEBHOOK.path,
+          element: page(
+            () =>
+              import(
+                '@/pages/merchant-management/merchant-gateway/webhook/pages/WebhookPage'
+              )
+          )
+        },
+        {
           path: SCREENS.MERCHANT_PAYMENT_METHOD.path,
           element: page(
             () =>
@@ -448,11 +483,47 @@ const merchantManagement = {
           )
         },
         {
+          path: SCREENS.MERCHANT_SETTLEMENT_SCOPE.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-settlement-scope/pages/SettlementScopePage'
+              )
+          )
+        },
+        {
           path: SCREENS.MERCHANT_WITHDRAWAL_LIMIT.path,
           element: page(
             () =>
               import(
                 '@pages/merchant-management/merchant-settlement/pages/WithdrawalLimitPage'
+              )
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_HOLD_RULE.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-hold-rule/pages/MerchantHoldRulePage'
+              )
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_RECONCILIATION.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-reconciliation/pages/MerchantReconciliationPage'
+              )
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_BALANCE_REPORT.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-reconciliation/pages/MerchantBalanceReportPage'
               )
           )
         },
@@ -543,6 +614,33 @@ const merchantManagement = {
             () =>
               import(
                 '@pages/merchant-management/merchant-access/pages/MerchantRoleListPage'
+              )
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_ORDER.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-order/pages/MerchantOrderListPage'
+              )
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_SETTLEMENT_ITEM.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-settlement-item/pages/SettlementItemListPage'
+              )
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_ASSIGNMENT.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-assignment/pages/MerchantAssignmentPage'
               )
           )
         }

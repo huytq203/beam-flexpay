@@ -70,6 +70,36 @@ TypeScript; nếu repo có lỗi không liên quan đã tồn tại, nêu rõ l�
 số dòng sau format bằng script trên và không báo hoàn tất khi file thuộc tính
 năng còn vượt 300 dòng.
 
+### Phạm vi test: chỉ test phần vừa sửa
+
+Máy dev chậm, chạy cả thư mục hoặc cả bộ test mất hàng chục phút. Vì vậy:
+
+- Chỉ chạy các file test trực tiếp liên quan đến phần vừa sửa: file test của
+  component, hook, service hoặc util đã đổi, kèm file test viết mới cho thay đổi
+  đó. Chạy đúng đường dẫn file hoặc dùng `-t '<tên test>'`; không chạy cả thư
+  mục tính năng, `src/app/services` hay toàn bộ `src/pages` chỉ để cho chắc.
+- Dùng `npx vitest run --maxWorkers=2 <file test>`, không bật watch mode.
+- Chỉ viết thêm test cho hành vi mới hoặc hành vi đã đổi (luồng chính, quyền,
+  lỗi BE quan trọng). Không viết test lặp lại điều các test sẵn có đã bảo đảm.
+- Nếu một test ngoài phạm vi đang lỗi, chạy lại đúng file đó trên mã gốc để xác
+  định có phải lỗi có sẵn không; chỉ báo, không sửa lan phạm vi.
+- Không chạy test song song với dev server hoặc việc nặng khác.
+
+### Verify giao diện sau khi ghép
+
+Test tự động không thay cho việc nhìn giao diện. Sau khi ghép xong một màn hoặc
+một API vào UI, bắt buộc kiểm tra trên giao diện thật trước khi báo hoàn tất:
+
+- Chạy local (`npm run dev`) và mở đúng màn đã sửa; đăng nhập bằng tài khoản dev
+  được người dùng cung cấp, không ghi tài khoản vào repo.
+- Đi qua luồng chính vừa ghép: dữ liệu hiển thị đúng, nút hiện hoặc ẩn đúng
+  quyền, loading, empty, error, dialog và thông báo thành công hoặc thất bại.
+- Với thao tác ghi dữ liệu trên môi trường dev, báo người dùng trước khi thực
+  hiện và chỉ làm khi được đồng ý.
+- Báo rõ trong kết quả: đã mở màn nào, đã kiểm những gì, phần nào chưa kiểm được
+  (thiếu dữ liệu, thiếu quyền, BE chưa sẵn sàng) và vì sao.
+- Sau khi xong, để local chạy sẵn cho người dùng tự kiểm tra.
+
 ## Nhánh làm việc
 
 Từ 23/10/2026 chỉ làm việc trên nhánh `main` (`origin/main`), không làm trên

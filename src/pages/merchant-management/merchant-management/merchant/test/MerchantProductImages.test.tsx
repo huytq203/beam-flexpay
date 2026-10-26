@@ -59,12 +59,6 @@ describe('Ảnh sản phẩm merchant', () => {
           }
         })
       ),
-      http.get('*/merchants/merchant-1/documents/old-1/url', () =>
-        HttpResponse.json({
-          success: true,
-          data: { url: 'https://files.test/old.jpg' }
-        })
-      ),
       http.post('*/documents', ({ request }) => {
         expect(new URL(request.url).searchParams.has('documentType')).toBe(
           false

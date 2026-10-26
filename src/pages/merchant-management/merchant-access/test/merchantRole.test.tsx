@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { http, HttpResponse } from 'msw'
 import { server } from '@/test/mocks/server'
 import { PERMISSION } from '@/app/permissions'
-import { renderPage } from './merchantAccess.setup'
+import { openRoleDetail, renderPage } from './merchantAccess.setup'
 
 describe('Nhóm quyền Merchant', () => {
   it('chọn và bỏ chọn toàn bộ quyền trong nhóm', async () => {
@@ -55,12 +55,7 @@ describe('Nhóm quyền Merchant', () => {
     renderPage('/secure-panel/merchant/user-role')
 
     expect(screen.queryByRole('button', { name: 'Danh sách User' })).toBeNull()
-    await user.click(
-      await screen.findByRole('button', { name: 'Quản trị Merchant' })
-    )
-    const dialog = screen.getByRole('dialog', {
-      name: 'Quản lý quyền trong nhóm'
-    })
+    const dialog = await openRoleDetail(user, 'Quản trị Merchant')
     const checkbox = within(dialog).getByRole('checkbox', {
       name: 'Xem giao dịch'
     })
@@ -98,12 +93,7 @@ describe('Nhóm quyền Merchant', () => {
       )
     )
     renderPage('/secure-panel/merchant/user-role')
-    await user.click(
-      await screen.findByRole('button', { name: 'Quản trị Merchant' })
-    )
-    const dialog = screen.getByRole('dialog', {
-      name: 'Quản lý quyền trong nhóm'
-    })
+    const dialog = await openRoleDetail(user, 'Quản trị Merchant')
     await user.click(
       within(dialog).getByRole('checkbox', { name: 'Xuất Excel giao dịch' })
     )
@@ -140,12 +130,7 @@ describe('Nhóm quyền Merchant', () => {
       )
     )
     renderPage('/secure-panel/merchant/user-role')
-    await user.click(
-      await screen.findByRole('button', { name: 'Quản trị Merchant' })
-    )
-    const dialog = screen.getByRole('dialog', {
-      name: 'Quản lý quyền trong nhóm'
-    })
+    const dialog = await openRoleDetail(user, 'Quản trị Merchant')
     const transactions = within(dialog).getByRole('group', {
       name: 'Giao dịch'
     })

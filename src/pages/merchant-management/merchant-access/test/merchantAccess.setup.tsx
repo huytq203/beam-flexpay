@@ -1,7 +1,8 @@
-import { render } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { afterEach, beforeEach } from 'vitest'
+import { afterEach, beforeEach, expect } from 'vitest'
 import { http, HttpResponse } from 'msw'
 import { server } from '@/test/mocks/server'
 import { PERMISSION } from '@/app/permissions'
@@ -13,6 +14,29 @@ import MerchantUserListPage from '../pages/MerchantUserListPage'
 import { suppressAntPseudoElementWarning } from '../../sub-merchant-management/sub-merchant/test/domTestSetup'
 
 suppressAntPseudoElementWarning()
+
+export const GROUPS = [
+  {
+    id: 'role-admin',
+    code: 'ADMIN',
+    name: 'Quản trị Merchant',
+    description: 'Quản trị',
+    merchantId: 'merchant-0142',
+    permissions: ['VIEW_TRANSACTION'],
+    system: false,
+    createdAt: '2026-03-01T09:30:00'
+  },
+  {
+    id: 'role-viewer',
+    code: 'VIEWER',
+    name: 'Chỉ xem báo cáo',
+    description: 'Chỉ xem',
+    merchantId: null,
+    permissions: ['VIEW_TRANSACTION'],
+    system: true,
+    createdAt: '2026-03-01T09:30:00'
+  }
+]
 // Bộ lọc được lưu theo đường dẫn màn; không xoá thì lọc của test trước rò sang test sau.
 afterEach(() => sessionStorage.clear())
 beforeEach(() => {
@@ -103,34 +127,25 @@ beforeEach(() => {
     http.get('*/merchant-permission-groups', () =>
       HttpResponse.json({
         data: {
-          content: [
-            {
-              id: 'role-admin',
-              code: 'ADMIN',
-              name: 'Quản trị Merchant',
-              description: 'Quản trị',
-              merchantId: 'merchant-0142',
-              permissions: ['VIEW_TRANSACTION'],
-              system: false,
-              createdAt: '2026-03-01T09:30:00'
-            },
-            {
-              id: 'role-viewer',
-              code: 'VIEWER',
-              name: 'Chỉ xem báo cáo',
-              description: 'Chỉ xem',
-              merchantId: null,
-              permissions: ['VIEW_TRANSACTION'],
-              system: true,
-              createdAt: '2026-03-01T09:30:00'
-            }
-          ],
-          totalElements: 2,
+          content: GROUPS,
+          totalElements: GROUPS.length,
           number: 0,
           size: 20
         }
       })
     ),
+    http.get('*/merchant-permission-groups/:id', ({ params }) => {
+      const group = GROUPS.find((item) => item.id === params.id)
+      return group
+        ? HttpResponse.json({ data: group })
+        : HttpResponse.json(
+            {
+              message: 'RESOURCE_NOT_FOUND',
+              detail: 'Không tìm thấy nhóm quyền'
+            },
+            { status: 404 }
+          )
+    }),
     http.get('*/merchant-permission-groups/:id/users', () =>
       HttpResponse.json({
         data: { content: [], totalElements: 1, number: 0, size: 1 }
@@ -170,4 +185,16 @@ export const renderPage = (
       </MessageProvider>
     </Provider>
   )
+}
+
+/** Mở chi tiết nhóm quyền và đợi API chi tiết trả về trước khi thao tác. */
+export const openRoleDetail = async (
+  user: ReturnType<typeof userEvent.setup>,
+  roleName: string
+) => {
+  await user.click(await screen.findByRole('button', { name: roleName }))
+  await waitFor(() =>
+    expect(screen.getByText(/^\d+\/\d+ quyền$/)).toBeInTheDocument()
+  )
+  return screen.getByRole('dialog', { name: 'Quản lý quyền trong nhóm' })
 }

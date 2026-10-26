@@ -12,9 +12,12 @@ import StatusBadge from '@components/status-badge/StatusBadge'
 import {
   PaymentMethod,
   PaymentMethodKey,
-  STATUS_CONFIG,
   StatusKey
 } from '../constants/WithdrawHistory.constant'
+import {
+  resolveDisplayStatus,
+  WITHDRAW_DISPLAY_STATUS_CONFIG
+} from '../constants/withdrawDisplayStatus'
 import { BankEnum, BankLabel } from '../constants/bank.constant'
 import { UnifiedContentJournal } from '@/app/types/apiResponseJournal'
 import { formatNumber } from '@/app/utils'
@@ -177,13 +180,16 @@ const getColumn = ({
     title: 'Trạng thái',
     dataIndex: 'status',
     align: 'center',
-    render(value) {
+    render(_, record) {
+      const displayStatus = resolveDisplayStatus(record)
       return (
         <div>
           <StatusBadge
-            className={cn(value == StatusKey.PENDING && 'animate-pulse-soft')}
-            status={value as StatusKey}
-            config={STATUS_CONFIG}
+            className={cn(
+              displayStatus == StatusKey.PENDING && 'animate-pulse-soft'
+            )}
+            status={displayStatus}
+            config={WITHDRAW_DISPLAY_STATUS_CONFIG}
           />
         </div>
       )

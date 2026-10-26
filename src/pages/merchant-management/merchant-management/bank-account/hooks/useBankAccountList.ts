@@ -5,6 +5,8 @@ import {
   type BankAccountDto
 } from '@/app/services/merchantBankAccountApi'
 import { useGetMerchantQuery } from '@services/apiMerchant'
+import { useExportMerchantBankAccountsMutation } from '@services/apiExportCsv'
+import { useExportCsv } from '@hooks/useExportCsv'
 import { toPickedEntity, type PickedEntity } from '@components/index'
 import {
   BANK_ACCOUNT_FILTER_KEYS,
@@ -45,13 +47,19 @@ export const useBankAccountList = () => {
   const [keyword, setKeyword] = useState(filters.query ?? '')
   // Chỉ để tra tên Merchant cho cột bảng; chọn Merchant đi qua dialog phân trang.
   const merchants = useGetMerchantQuery({ page: 1, size: 100 })
-  const query = useListBankAccountsQuery({
-    page,
-    size,
+  // Export dùng đúng bộ lọc của danh sách, bỏ page/size.
+  const params = {
     merchantId: merchant?.id,
     level,
     status,
-    query: filters.query
+    query: filters.query || undefined
+  }
+  const query = useListBankAccountsQuery({ page, size, ...params })
+  const [triggerExport, { reset }] = useExportMerchantBankAccountsMutation()
+  const exporter = useExportCsv({
+    trigger: triggerExport,
+    reset,
+    filenamePrefix: 'merchant-bank-accounts'
   })
   const apply = (next: Filters): void =>
     url.applyFilters({ ...filters, ...next })
@@ -60,6 +68,8 @@ export const useBankAccountList = () => {
     page,
     size,
     query,
+    isExporting: exporter.isExporting,
+    exportCsv: () => void exporter.exportFile(params),
     filters: { keyword, merchant, level, status },
     // Tài khoản chỉ quản lý 1 Merchant thì form tạo điền sẵn Merchant đó.
     defaultMerchant:

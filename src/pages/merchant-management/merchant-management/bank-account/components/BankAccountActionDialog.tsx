@@ -7,7 +7,13 @@ import {
 } from '@/app/services/merchantBankAccountApi'
 import { DialogModal, TextArea, feedback } from '@components/index'
 import type { BankAccountActionType } from '../columns/bankAccount.columns'
+import { MIN_HOLD_REASON_LENGTH } from '../constants/bankAccount.constants'
 import { useSensitiveOtp } from '../hooks/useSensitiveOtp'
+import {
+  PENDING_APPROVAL_MESSAGE,
+  changeErrorMessage
+} from '../utils/bankAccountErrors'
+import { BankAccountActionInfo } from './BankAccountActionInfo'
 import { BankAccountOtpDialog } from './BankAccountOtpDialog'
 
 interface BankAccountActionDialogProps {
@@ -36,8 +42,19 @@ export function BankAccountActionDialog({
   const [setHold, holdState] = useSetBankAccountHoldModeMutation()
 
   const confirm = async (confirmation?: SensitiveOtpConfirmation) => {
-    if (!reason.trim()) {
+    const text = reason.trim()
+    if (!text) {
       feedback.warning('Vui lòng nhập lý do')
+      return
+    }
+    if (
+      type === 'hold' &&
+      !row.holdMode &&
+      text.length < MIN_HOLD_REASON_LENGTH
+    ) {
+      feedback.warning(
+        `Lý do tạm giữ cần tối thiểu ${MIN_HOLD_REASON_LENGTH} ký tự`
+      )
       return
     }
     if (type === 'default' && !confirmation) {
@@ -45,23 +62,31 @@ export function BankAccountActionDialog({
       return
     }
     try {
-      if (type === 'default' && confirmation)
-        await makeDefault({
+      if (type === 'default' && confirmation) {
+        const result = await makeDefault({
           id: row.id,
-          reason: reason.trim(),
+          reason: text,
           otp: confirmation
         }).unwrap()
-      else
+        feedback.success(
+          result.applied || !result.pendingChangeRequest
+            ? 'Đã đặt tài khoản mặc định'
+            : PENDING_APPROVAL_MESSAGE
+        )
+      } else {
         await setHold({
           id: row.id,
           enabled: !row.holdMode,
-          reason: reason.trim()
+          reason: text
         }).unwrap()
-      feedback.success('Đã cập nhật tài khoản ngân hàng')
+        feedback.success('Đã cập nhật tài khoản ngân hàng')
+      }
       otp.reset()
       onClose()
-    } catch {
-      feedback.error('Không thể cập nhật tài khoản ngân hàng')
+    } catch (error) {
+      feedback.error(
+        changeErrorMessage(error, 'Không thể cập nhật tài khoản ngân hàng')
+      )
     }
   }
 
@@ -77,6 +102,10 @@ export function BankAccountActionDialog({
         }}
         okText='Xác nhận'
       >
+        <BankAccountActionInfo
+          type={type}
+          row={row}
+        />
         <TextArea
           aria-label='Lý do'
           value={reason}

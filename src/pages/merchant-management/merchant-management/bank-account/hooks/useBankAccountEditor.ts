@@ -11,6 +11,7 @@ import {
   toDraft,
   type BankAccountDraft
 } from '../utils/bankAccount.utils'
+import { changeErrorMessage } from '../utils/bankAccountErrors'
 import { useBankAccountPersist } from './useBankAccountPersist'
 import { useSensitiveOtp } from './useSensitiveOtp'
 
@@ -52,8 +53,10 @@ export const useBankAccountEditor = (
       if (message) feedback.success(message)
       otp.reset()
       onDone()
-    } catch {
-      feedback.error('Không thể lưu tài khoản ngân hàng')
+    } catch (error) {
+      feedback.error(
+        changeErrorMessage(error, 'Không thể lưu tài khoản ngân hàng')
+      )
     }
   }
 

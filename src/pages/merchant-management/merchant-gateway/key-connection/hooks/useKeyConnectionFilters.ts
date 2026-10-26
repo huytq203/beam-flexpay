@@ -11,6 +11,7 @@ type Filters = Partial<Record<KeyConnectionFilterKey, string>>
 
 const STATUSES: readonly ApiCredential['status'][] = [
   'ACTIVE',
+  'SUSPENDED',
   'REVOKED',
   'EXPIRED'
 ]

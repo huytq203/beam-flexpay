@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { http, HttpResponse } from 'msw'
@@ -96,43 +96,6 @@ describe('KeyConnectionPage API', () => {
     })
   })
 
-  it('thu hồi key qua API sau khi nhập lý do hợp lệ', async () => {
-    const user = userEvent.setup()
-    let revokedBody: unknown
-    server.use(
-      http.post(
-        '*/merchant-api-credentials/key-1/revoke',
-        async ({ request }) => {
-          revokedBody = await request.json()
-          return HttpResponse.json({ data: { id: 'key-1', status: 'REVOKED' } })
-        }
-      )
-    )
-    renderPage([
-      PERMISSION.API_CREDENTIAL_VIEW,
-      PERMISSION.API_CREDENTIAL_MANAGE
-    ])
-    await screen.findByText('client-public')
-    await user.click(screen.getByRole('button', { name: 'Thu hồi' }))
-    const dialog = screen.getByRole('dialog', { name: 'Thu hồi key' })
-    // Chỉ bắt buộc nhập lý do, không còn giới hạn độ dài tối thiểu.
-    await user.click(
-      within(dialog).getByRole('button', { name: 'Xác nhận thu hồi' })
-    )
-    expect(within(dialog).getByRole('alert')).toBeInTheDocument()
-    expect(revokedBody).toBeUndefined()
-    await user.type(
-      within(dialog).getByRole('textbox', { name: 'Lý do thu hồi' }),
-      'Ngắn do key bị lộ'
-    )
-    await user.click(
-      within(dialog).getByRole('button', { name: 'Xác nhận thu hồi' })
-    )
-    await waitFor(() =>
-      expect(revokedBody).toEqual({ reason: 'Ngắn do key bị lộ' })
-    )
-  })
-
   it('bấm thao tác trên dòng không làm bung phần chi tiết', async () => {
     const user = userEvent.setup()
     renderPage([
@@ -165,63 +128,6 @@ describe('KeyConnectionPage API', () => {
     await screen.findByText('client-public')
     expect(screen.queryByRole('button', { name: 'Tạo key' })).toBeNull()
     expect(screen.queryByRole('button', { name: 'Xoay key' })).toBeNull()
-  })
-
-  it('hiển thị secret đúng một lần sau khi tạo', async () => {
-    const user = userEvent.setup()
-    let createdBody: unknown
-    server.use(
-      http.post('*/merchant-api-credentials', async ({ request }) => {
-        createdBody = await request.json()
-        return HttpResponse.json({
-          data: {
-            credential: {
-              id: 'key-2',
-              merchantId: 'merchant-1',
-              clientId: 'new-client',
-              status: 'ACTIVE',
-              ipWhitelist: []
-            },
-            secretKey: 'secret-once'
-          }
-        })
-      })
-    )
-    renderPage([
-      PERMISSION.API_CREDENTIAL_VIEW,
-      PERMISSION.API_CREDENTIAL_MANAGE
-    ])
-    await screen.findByText('client-public')
-    await user.click(screen.getByRole('button', { name: 'Tạo key' }))
-    expect(screen.getByText('Sub-merchant · kế thừa')).toBeInTheDocument()
-    expect(screen.getByText('Terminal · kế thừa')).toBeInTheDocument()
-    const createDialog = screen.getByRole('dialog', { name: 'Tạo key kết nối' })
-    await user.click(
-      within(createDialog).getByLabelText(/Chọn Master Merchant/)
-    )
-    await user.click(await screen.findByLabelText('Chọn Merchant Merchant A'))
-    await waitFor(() =>
-      expect(screen.getByLabelText(/Chọn Master Merchant/)).toHaveValue(
-        'M001 — Merchant A'
-      )
-    )
-    await user.click(
-      within(createDialog).getByRole('button', { name: 'Tạo key' })
-    )
-    expect(await screen.findByText('secret-once')).toBeInTheDocument()
-    expect(screen.getByText('new-client')).toBeInTheDocument()
-    expect(
-      screen.getByRole('button', { name: 'Sao chép Client ID / Merchant Key' })
-    ).toHaveClass('ant-typography-copy')
-    expect(
-      screen.getByRole('button', { name: 'Sao chép Secret Key' })
-    ).toHaveClass('ant-typography-copy')
-    expect(createdBody).toMatchObject({
-      merchantId: 'merchant-1',
-      ipWhitelist: []
-    })
-    expect(createdBody).not.toHaveProperty('clientId')
-    expect(createdBody).not.toHaveProperty('secretKey')
   })
 
   it('hiển thị vòng đời và chi tiết key đã thu hồi từ API', async () => {

@@ -6,15 +6,11 @@ import type { UploadFile } from '@components/form'
 import {
   useGetMerchantByIdQuery,
   useLazyGetMerchantByIdQuery,
-  useLazyGetMerchantDocumentUrlQuery,
   useUploadMerchantDocumentMutation
 } from '@services/apiMerchant'
-import {
-  useGetEnterpriseWalletQuery,
-  type EnterpriseWalletDto
-} from '@services/merchantEnterpriseWalletApi'
-import type { MerchantType } from '@type/merchant'
-import { getLiveMerchantDocumentUrl } from '@services/merchantDocumentUrl'
+import { useGetEnterpriseWalletQuery } from '@services/merchantEnterpriseWalletApi'
+import type { MerchantType, SelectableWallet } from '@type/merchant'
+import { resolveLiveDocumentUrl } from '@services/merchantDocumentUrl'
 import {
   CreateMerchantSchema,
   type CreateMerchantSchemaType
@@ -51,12 +47,11 @@ export const useMerchantForm = () => {
     skip: !merchantId
   })
   const [isWalletPickerOpen, setIsWalletPickerOpen] = useState(false)
-  const [pickedWallet, setPickedWallet] = useState<EnterpriseWalletDto | null>(
+  const [pickedWallet, setPickedWallet] = useState<SelectableWallet | null>(
     null
   )
   const [uploadDocument, { isLoading: isUploadingDocument }] =
     useUploadMerchantDocumentMutation()
-  const [getDocumentUrl] = useLazyGetMerchantDocumentUrlQuery()
   const [getFreshMerchant] = useLazyGetMerchantByIdQuery()
 
   const resolveFileUrl = useCallback(
@@ -68,25 +63,15 @@ export const useMerchantForm = () => {
           merchant?.logoFile,
           ...(merchant?.productImages ?? [])
         ].find((item) => item?.id === file.uid)
-      const currentFile = findFile(merchantDetail)
-      const currentUrl = getLiveMerchantDocumentUrl(currentFile)
-      if (currentUrl) return currentUrl
-      const refreshed = currentFile?.url
-        ? await getFreshMerchant(merchantId, false)
+      return resolveLiveDocumentUrl(findFile(merchantDetail), async () =>
+        findFile(
+          (await getFreshMerchant(merchantId, false)
             .unwrap()
-            .catch(() => null)
-        : null
-      const refreshedUrl = getLiveMerchantDocumentUrl(
-        findFile(refreshed ?? undefined)
+            .catch(() => null)) ?? undefined
+        )
       )
-      if (refreshedUrl) return refreshedUrl
-      const result = await getDocumentUrl(
-        { merchantId, documentId: file.uid },
-        false
-      ).unwrap()
-      return result.url
     },
-    [getDocumentUrl, getFreshMerchant, merchantDetail, merchantId]
+    [getFreshMerchant, merchantDetail, merchantId]
   )
 
   const {
