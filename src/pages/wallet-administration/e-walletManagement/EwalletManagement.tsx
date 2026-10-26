@@ -23,7 +23,7 @@ import DialogUnfreeze from './components/DialogUnfreeze'
 import DialogLock from './components/DialogLock'
 import DialogUnlock from './components/DialogUnlock'
 import DialogUnlockLogin from './components/DialogUnlockLogin'
-import DialogDeleteWallet from './components/detail-infor/Personal/components/DialogDeleteWallet'
+import DialogCloseWallet from './components/DialogCloseWallet'
 import DialogFreezeWallet from './components/detail-infor/Personal/components/DialogFreezeWallet'
 
 const EwalletManagement = () => {
@@ -238,14 +238,21 @@ const EwalletManagement = () => {
       />
 
       <DialogModal
-        mode='DELETE'
-        onCancel={() => {}}
+        onCancel={closeModal}
         onOk={() => {}}
-        open={false}
-        content={<DialogDeleteWallet />}
+        open={modalType === 'close'}
+        footer={null}
+        maskClosable={false}
+        content={
+          <DialogCloseWallet
+            userId={selectedAccount?.ownerId}
+            onSuccess={closeModal}
+            onCancel={closeModal}
+          />
+        }
         title={
           <span className='flex-start gap-2 text-red'>
-            <WarningIcon weight='fill' /> Yêu cầu hủy/xóa ví
+            <WarningIcon weight='fill' /> Yêu cầu Xóa Ví điện tử
           </span>
         }
       />

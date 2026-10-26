@@ -20,6 +20,11 @@ const STATUS_CONFIG: Record<
     className: 'danger-status',
     shimmerColor: 'rgba(239, 68, 68, 0.1)'
   },
+  [StatusKey.CLOSED]: {
+    label: 'Đã hủy',
+    className: 'normal-status',
+    shimmerColor: 'rgba(107, 114, 128, 0.1)'
+  },
   [StatusKey.FROZEN]: {
     label: 'Đóng băng',
     className: 'info-status',

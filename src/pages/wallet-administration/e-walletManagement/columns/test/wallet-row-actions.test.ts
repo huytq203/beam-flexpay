@@ -39,6 +39,35 @@ describe('buildWalletRowActions', () => {
     ])
   })
 
+  it.each(['MERCHANT', 'ENTERPRISE'])(
+    'ví %s không có nút Xóa ví (API hủy ví chỉ dành cho ví cá nhân)',
+    (ownerType) => {
+      const items =
+        buildWalletRowActions({ ...account, ownerType } as AcountItem, {
+          can: () => true,
+          onViewDetail: vi.fn(),
+          openModal: vi.fn()
+        }) ?? []
+
+      expect(items.map((item) => String(item?.key))).not.toContain('5')
+    }
+  )
+
+  it('ví đã hủy chỉ còn xem chi tiết và xóa (để hoàn tất khóa đăng nhập)', () => {
+    const closed = { ...account, status: 'CLOSED' } as AcountItem
+    const openModal = vi.fn()
+    const items =
+      buildWalletRowActions(closed, {
+        can: () => true,
+        onViewDetail: vi.fn(),
+        openModal
+      }) ?? []
+
+    expect(items.map((item) => String(item?.key))).toEqual(['1', '5'])
+    ;(items[1] as unknown as { onClick: () => void }).onClick()
+    expect(openModal).toHaveBeenCalledWith('close', closed)
+  })
+
   it('chỉ hiện mở khóa đăng nhập khi có quyền unlockLogin', () => {
     expect(actionKeys(['viewDetail'])).not.toContain('4')
     expect(actionKeys(['viewDetail', 'unlockLogin'])).toEqual(['1', '4'])

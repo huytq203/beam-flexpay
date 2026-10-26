@@ -33,6 +33,10 @@ export const WALLET_STATUS_CONFIG: Record<StatusKey, StatusDisplayConfig> = {
   [StatusKey.LOCKED]: {
     label: StatusLabel[StatusKey.LOCKED],
     className: 'danger-status'
+  },
+  [StatusKey.CLOSED]: {
+    label: StatusLabel[StatusKey.CLOSED],
+    className: 'normal-status'
   }
 } as const
 

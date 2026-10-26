@@ -9,6 +9,7 @@ export type WalletModalType =
   | 'lock'
   | 'unlock'
   | 'unlockLogin'
+  | 'close'
   | null
 
 interface WalletRowActionOptions {
@@ -48,6 +49,7 @@ export const buildWalletRowActions = (
 
   const isLocked = record.status === StatusKey.LOCKED
   const isFrozen = record.status === StatusKey.FROZEN
+  const isClosed = record.status === StatusKey.CLOSED
   const lockAction = isLocked ? 'unlock' : 'lock'
 
   if (can('viewDetail')) {
@@ -58,7 +60,7 @@ export const buildWalletRowActions = (
     })
   }
 
-  if (can(lockAction)) {
+  if (can(lockAction) && !isClosed) {
     items.push({
       key: '2',
       label: isLocked ? 'Mở khóa tài khoản' : 'Khóa tài khoản',
@@ -69,7 +71,7 @@ export const buildWalletRowActions = (
 
   // Keycloak trả null khi không xác định được tình trạng khóa, nên null cũng phải cho mở khóa.
   // Chỉ ẩn khi biết chắc tài khoản đang đăng nhập được (false).
-  if (can('unlockLogin') && record.loginLocked !== false) {
+  if (can('unlockLogin') && !isClosed && record.loginLocked !== false) {
     items.push({
       key: '4',
       label: 'Mở khóa đăng nhập',
@@ -77,7 +79,7 @@ export const buildWalletRowActions = (
     })
   }
 
-  if (can('freeze')) {
+  if (can('freeze') && !isClosed) {
     items.push({
       key: '3',
       label: 'Đóng băng số dư',
@@ -86,8 +88,14 @@ export const buildWalletRowActions = (
     })
   }
 
-  if (can('cancel')) {
-    items.push({ key: '5', label: 'Hủy ví', danger: true })
+  // API hủy ví (`/user-wallets/{ownerId}/close`) chỉ nhận ví cá nhân; ví merchant/doanh nghiệp không có nút này.
+  if (can('cancel') && record.ownerType === 'USER') {
+    items.push({
+      key: '5',
+      label: 'Xóa ví',
+      danger: true,
+      onClick: () => openModal?.('close', record)
+    })
   }
 
   return items

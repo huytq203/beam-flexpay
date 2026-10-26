@@ -3,6 +3,7 @@ export enum StatusKey {
   FROZEN = 'FROZEN',
   INACTIVE = 'INACTIVE',
   LOCKED = 'LOCKED',
+  CLOSED = 'CLOSED',
 
   SUCCESS = 'SUCCESS',
   FAILED = 'FAILED',
@@ -18,6 +19,7 @@ export const StatusLabel: Record<StatusKey, string> = {
   [StatusKey.INACTIVE]: 'Ngừng hoạt động',
   [StatusKey.FROZEN]: 'Đóng băng',
   [StatusKey.LOCKED]: 'Khóa',
+  [StatusKey.CLOSED]: 'Đã hủy',
   [StatusKey.SUCCESS]: 'Thành công',
   [StatusKey.FAILED]: 'Thất bại',
   [StatusKey.PENDING]: 'Chờ xử lý',

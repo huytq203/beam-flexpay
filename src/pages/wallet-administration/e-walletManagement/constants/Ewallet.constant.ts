@@ -3,6 +3,7 @@ export enum StatusKey {
   INACTIVE = 'INACTIVE',
   // FROZEN = 'FROZEN',
   LOCKED = 'LOCKED',
+  CLOSED = 'CLOSED'
 }
 
 export const StatusLabel: Record<StatusKey, string> = {
@@ -10,24 +11,24 @@ export const StatusLabel: Record<StatusKey, string> = {
   [StatusKey.INACTIVE]: 'Ngừng hoạt động',
   // [StatusKey.FROZEN]: 'Đóng băng',
   [StatusKey.LOCKED]: 'Khóa',
+  [StatusKey.CLOSED]: 'Đã hủy'
 } as const
-
 
 export enum StatusAccountKey {
   TRUE = 'true',
-  FALSE = 'false',
+  FALSE = 'false'
 }
 
 export const StatusAccountLabel: Record<StatusAccountKey, string> = {
   [StatusAccountKey.TRUE]: 'Đang hoạt động',
-  [StatusAccountKey.FALSE]: 'Ngừng hoạt động',
+  [StatusAccountKey.FALSE]: 'Ngừng hoạt động'
 } as const
 
 export enum WalletTypeKey {
   USER = 'USER',
   MERCHANT = 'MERCHANT',
   ENTERPRISE = 'ENTERPRISE',
-  SYSTEM = 'SYSTEM',
+  SYSTEM = 'SYSTEM'
 }
 
 /** Giá trị gửi lên `frozen`; "Tất cả" = bỏ trống, không gửi tham số. */
@@ -40,5 +41,5 @@ export const WalletTypeLabel: Record<WalletTypeKey, string> = {
   [WalletTypeKey.USER]: 'Cá nhân',
   [WalletTypeKey.MERCHANT]: 'Thu hộ merchant',
   [WalletTypeKey.ENTERPRISE]: 'Doanh nghiệp',
-  [WalletTypeKey.SYSTEM]: 'Hệ thống',
+  [WalletTypeKey.SYSTEM]: 'Hệ thống'
 } as const
