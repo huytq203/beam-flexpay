@@ -31,15 +31,19 @@ describe('merchant gateway navigation', () => {
     )
   })
 
-  it('hiển thị group quản lý sub-merchant kèm cấu hình quyết toán và hạn mức rút', () => {
-    const group = navigationItems.find(
+  it('tách quyết toán, hạn mức, tạm giữ, đối soát sang group riêng', () => {
+    const sub = navigationItems.find(
       (item) => item.key === 'sub-merchant-management'
     )
+    const settlement = navigationItems.find(
+      (item) => item.key === 'settlement-management'
+    )
 
-    expect(group?.label).toBe('Quản lý sub-merchant')
-    expect(group?.children?.map((item) => item.key)).toEqual([
+    expect(sub?.children?.map((item) => item.key)).toEqual([
       'sub-merchant',
-      'terminal',
+      'terminal'
+    ])
+    expect(settlement?.children?.map((item) => item.key)).toEqual([
       'settlement-config',
       'settlement-scope',
       'settlement-item',
@@ -48,6 +52,14 @@ describe('merchant gateway navigation', () => {
       'reconciliation',
       'balance-report'
     ])
+  })
+
+  it('không còn mục Webhook riêng; Gán Sales nằm ở nhóm phân quyền', () => {
+    expect(findItem(navigationItems, 'webhook')).toBeUndefined()
+    const parent = navigationItems.find((item) =>
+      item.children?.some((child) => child.key === 'sales-assignment')
+    )
+    expect(parent?.key).toBe('secure-panel/role-v2')
   })
 })
 

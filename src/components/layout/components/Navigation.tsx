@@ -196,6 +196,19 @@ const roleManagementV2: ItemTypeCustom = {
       label: 'Ma trận phân quyền'
     },
     {
+      key: 'sales-assignment',
+      screen: 'MERCHANT_ASSIGNMENT',
+      link: `${MERCHANT}/sales-assignment`,
+      icon: (
+        <UserCheckIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Gán Sales phụ trách'
+    },
+    {
       key: 'audit-log',
       screen: 'AUDIT_LOG',
       icon: (
@@ -374,18 +387,6 @@ const merchantManagement: ItemTypeCustom = {
       label: 'Key kết nối'
     },
     {
-      key: 'webhook',
-      screen: 'MERCHANT_WEBHOOK',
-      icon: (
-        <KeyIcon
-          size={size}
-          weight={weight}
-          color={COlOR}
-        />
-      ),
-      label: 'Webhook (IPN)'
-    },
-    {
       key: 'payment-method',
       screen: 'MERCHANT_PAYMENT_METHOD',
       icon: (
@@ -432,19 +433,6 @@ const merchantManagement: ItemTypeCustom = {
         />
       ),
       label: 'Đơn hàng merchant'
-    },
-    {
-      key: 'sales-assignment',
-      screen: 'MERCHANT_ASSIGNMENT',
-      link: `${MERCHANT}/sales-assignment`,
-      icon: (
-        <UserCheckIcon
-          size={size}
-          weight={weight}
-          color={COlOR}
-        />
-      ),
-      label: 'Gán Sales phụ trách'
     }
   ]
 }
@@ -514,7 +502,22 @@ const subMerchantManagement: ItemTypeCustom = {
         />
       ),
       label: 'Quản lý Terminal'
-    },
+    }
+  ]
+}
+
+const settlementManagement: ItemTypeCustom = {
+  key: 'settlement-management',
+  groupLabel: 'Nhóm quản lý cổng ĐVCNTT',
+  icon: (
+    <MoneyIcon
+      size={size}
+      weight={weight}
+      color={COlOR}
+    />
+  ),
+  label: 'Quyết toán & đối soát',
+  children: [
     {
       key: 'settlement-config',
       screen: 'MERCHANT_SETTLEMENT_CONFIG',
@@ -657,6 +660,7 @@ export const navigationItems: ItemTypeCustom[] = [
   businessWalletManagement,
   merchantManagement,
   subMerchantManagement,
+  settlementManagement,
   merchantUserManagement,
   // feeManagementV3,
   feeManagementV4
