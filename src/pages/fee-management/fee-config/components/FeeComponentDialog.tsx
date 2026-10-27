@@ -48,6 +48,7 @@ import {
 import { useFeeComponentFieldHandlers } from '../hooks/useFeeComponentFieldHandlers'
 import { useFeeComponentSubmit } from '../hooks/useFeeComponentSubmit'
 import { usePayerSelectOptions } from '../hooks/usePayerSelectOptions'
+import { hasBaseOnBothSides } from '../utils/payerSelectOptions'
 import { FeeComponentFields } from './FeeComponentFields'
 
 interface FeeComponentDialogProps {
@@ -177,8 +178,13 @@ export const FeeComponentDialog = ({
 
   const isVat = componentType === VAT_COMPONENT_TYPE
   const tiered = usesTiers(calculationMethod)
-  // Phí phụ thuộc (VAT, phí tính trên phí khác) chỉ khai một dòng khi cả hai bên cùng chịu.
-  const canSplit = bearerSplit && isAmountBase(baseOn) && !isVat
+  // VAT chỉ chọn "Cả hai bên" (mỗi bên một mức, lưu thành hai dòng) khi phí gốc có ở cả hai bên; các
+  // phí phụ thuộc khác không tách.
+  const canSplit =
+    bearerSplit &&
+    (isVat
+      ? hasBaseOnBothSides(baseComponentType, precedingComponents)
+      : isAmountBase(baseOn))
   const isBoth = payerType === BOTH_BEARERS
 
   const payerSelectOptions = usePayerSelectOptions({
