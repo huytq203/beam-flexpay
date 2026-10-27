@@ -1,10 +1,15 @@
 import {
   FEE_SCOPE,
-  POLICY_KIND,
-  type PolicyKind
+  POLICY_KIND
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
+import {
+  FEE_SCREEN,
+  FEE_SCREEN_CONFIG,
+  visibleServiceTypesFor,
+  type FeeScreen
+} from '@pages/fee-management/fee-config/constants/feeScreen'
 import { CardComponent, Table, TooltipComponent } from '@components/index'
-import { PATHS } from '@constants/pathConstant'
+import { PUBLISHABLE_SERVICE_TYPES } from '@utils/fee-execution'
 import { useExportCsv } from '@hooks/useExportCsv'
 import { useUrlFilters } from '@hooks/useUrlFilters'
 import { useCustomerSegmentNames } from '@hooks/useCustomerSegmentNames'
@@ -27,14 +32,14 @@ import { splitPolicyStatusFilter } from './utils/policyStatusFilter'
 
 interface FeePolicyListPageProps {
   /**
-   * Loại chính sách của màn: Cấu hình phí chỉ có chính sách phí khách (`CUSTOMER_FEE`), Cấu hình
-   * phí đầu vào chỉ có chính sách chi phí đầu vào (`INPUT_COST`). Hai loại là hai màn riêng, mỗi
-   * màn luôn gửi đúng một `policyKind` xuống API.
+   * Màn đang dùng bộ danh sách này: Cấu hình phí (`CUSTOMER_FEE`), Cấu hình phí đầu vào (`INPUT_COST`)
+   * hoặc Cấu hình phí ĐVCNTT. Mỗi màn luôn gửi đúng một `policyKind` xuống API; đường dẫn, quyền, tên file
+   * CSV và miền phí cố định của màn đọc từ `FEE_SCREEN_CONFIG`.
    */
-  policyKind: PolicyKind
+  screen: FeeScreen
 }
 
-export const FeePolicyListPage = ({ policyKind }: FeePolicyListPageProps) => {
+export const FeePolicyListPage = ({ screen }: FeePolicyListPageProps) => {
   const navigate = useNavigate()
   const {
     filters,
@@ -46,14 +51,28 @@ export const FeePolicyListPage = ({ policyKind }: FeePolicyListPageProps) => {
     setPageSize
   } = useUrlFilters({ keys: FILTER_KEYS })
 
+  const config = FEE_SCREEN_CONFIG[screen]
+  const { policyKind } = config
   const isInputCost = policyKind === POLICY_KIND.INPUT_COST
+  const isMerchantScreen = screen === FEE_SCREEN.MERCHANT_FEE
+  // Màn ĐVCNTT chỉ có thu hộ / chi hộ: `serviceType` ngoài hai loại đó trên URL bị bỏ, không hiện và không gửi API.
+  const serviceType =
+    isMerchantScreen &&
+    filters.serviceType &&
+    !visibleServiceTypesFor(screen, PUBLISHABLE_SERVICE_TYPES).includes(
+      filters.serviceType
+    )
+      ? undefined
+      : filters.serviceType
   const feeScope = isInputCost ? FEE_SCOPE.INPUT_COST : FEE_SCOPE.OUTPUT_FEE
   const [changing, setChanging] = useState<StatusChangePolicy | null>(null)
   const customerSegmentNames = useCustomerSegmentNames()
   const exportFilters = {
     policyKind,
+    // Chỉ màn ĐVCNTT ép miền; màn chung không gửi `feeDomain`.
+    feeDomain: config.feeDomain,
     keyword: filters.keyword,
-    serviceType: filters.serviceType,
+    serviceType,
     status: filters.status,
     // Phí đầu vào không có đối tượng khách, người chịu luôn là Hệ thống và không có bên chịu phí chuyển tiền.
     appliedTarget: isInputCost ? undefined : filters.appliedTarget,
@@ -84,7 +103,7 @@ export const FeePolicyListPage = ({ policyKind }: FeePolicyListPageProps) => {
   const { exportFile, isExporting } = useExportCsv({
     trigger: triggerExport,
     reset: resetExport,
-    filenamePrefix: 'cau-hinh-phi'
+    filenamePrefix: config.csvPrefix
   })
 
   const handleToggleAll = () =>
@@ -105,12 +124,8 @@ export const FeePolicyListPage = ({ policyKind }: FeePolicyListPageProps) => {
       }
       exporting={isExporting}
       exportDisabled={total === 0 || isError}
-      screen={isInputCost ? 'FEE_INPUT_COST' : 'FEE_CONFIG'}
-      createPath={
-        isInputCost
-          ? PATHS.FEE_V4.INPUT_COST_CREATE
-          : PATHS.FEE_V4.POLICY_CREATE
-      }
+      screen={config.permissionScreen}
+      createPath={config.createPath}
     />
   )
 
@@ -119,8 +134,8 @@ export const FeePolicyListPage = ({ policyKind }: FeePolicyListPageProps) => {
       <CardComponent className='mb-3!'>
         <div>
           <FeePolicyFilterBar
-            inputCost={isInputCost}
-            serviceType={filters.serviceType}
+            screen={screen}
+            serviceType={serviceType}
             values={{
               keyword: filters.keyword ?? '',
               status: filters.status ?? '',
@@ -155,7 +170,7 @@ export const FeePolicyListPage = ({ policyKind }: FeePolicyListPageProps) => {
                 keepFilters(filters, {
                   ...values,
                   direction: null,
-                  serviceType: filters.serviceType ?? null,
+                  serviceType: serviceType ?? null,
                   validFrom: dateOnly(values.validFrom),
                   validTo: dateOnly(values.validTo),
                   createdAtFrom: dateOnly(values.createdAtFrom),
@@ -179,13 +194,8 @@ export const FeePolicyListPage = ({ policyKind }: FeePolicyListPageProps) => {
             dataSource={rows}
             columns={getFeePolicyColumns({
               feeScope,
-              screen: isInputCost ? 'FEE_INPUT_COST' : 'FEE_CONFIG',
-              onEdit: (id) =>
-                navigate(
-                  isInputCost
-                    ? PATHS.FEE_V4.INPUT_COST_EDIT(id)
-                    : PATHS.FEE_V4.POLICY_EDIT(id)
-                ),
+              screen: config.permissionScreen,
+              onEdit: (id) => navigate(config.editPath(id)),
               onChangeStatus: (id, name, policyStatus) =>
                 setChanging({ id, name, status: policyStatus }),
               customerSegmentNames
@@ -262,7 +272,7 @@ export const FeePolicyListPage = ({ policyKind }: FeePolicyListPageProps) => {
 
 /** Màn Cấu hình phí: chính sách phí khách (phí đầu ra). */
 const FeePolicyList = () => (
-  <FeePolicyListPage policyKind={POLICY_KIND.CUSTOMER_FEE} />
+  <FeePolicyListPage screen={FEE_SCREEN.CUSTOMER_FEE} />
 )
 
 export default FeePolicyList

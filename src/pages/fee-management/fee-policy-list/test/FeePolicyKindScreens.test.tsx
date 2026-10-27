@@ -143,6 +143,14 @@ describe('hai màn danh sách: Cấu hình phí và Cấu hình phí đầu vào
     expect(requests[0].searchParams.get('policyKind')).toBe('CUSTOMER_FEE')
     expect(requests[0].searchParams.get('feeScope')).toBeNull()
     expect(requests[0].searchParams.get('feeDomain')).toBeNull()
+    // Thu hộ / chi hộ chỉ có ở màn Cấu hình phí ĐVCNTT, không có tab ở màn chung.
+    const serviceTypeTabs = within(
+      screen.getByRole('group', { name: 'Loại giao dịch' })
+    )
+    expect(serviceTypeTabs.queryByText('Thu hộ VA')).not.toBeInTheDocument()
+    expect(
+      serviceTypeTabs.queryByText('Chi hộ chuyển khoản ngân hàng')
+    ).not.toBeInTheDocument()
   })
 
   it('Cấu hình phí chỉ hiện thành phần thu của khách và vẫn có bộ lọc đối tượng khách', async () => {

@@ -28,8 +28,8 @@ import { formatDateTimeUTC } from '@/pages/wallet-administration/e-walletManagem
 interface FeePolicyColumnArgs {
   /** Luồng phí đang xem; quyết định cột thành phần phí hiện thành phần nào. */
   feeScope: FeeScope
-  /** Màn cấp quyền thao tác: Cấu hình phí hoặc Cấu hình phí đầu vào. */
-  screen?: 'FEE_CONFIG' | 'FEE_INPUT_COST'
+  /** Màn cấp quyền thao tác: Cấu hình phí, Cấu hình phí đầu vào hoặc Cấu hình phí ĐVCNTT. */
+  screen?: 'FEE_CONFIG' | 'FEE_INPUT_COST' | 'MERCHANT_FEE_CONFIG'
   onEdit: (id: string) => void
   /** Mở dialog khóa / mở (ngay hoặc hẹn giờ) cho một chính sách. */
   onChangeStatus: (id: string, name: string, status: string) => void

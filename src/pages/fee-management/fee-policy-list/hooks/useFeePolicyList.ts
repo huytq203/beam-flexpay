@@ -7,6 +7,8 @@ import { splitPolicyStatusFilter } from '../utils/policyStatusFilter'
 export interface FeePolicyListFilters {
   /** Loại chính sách đang xem: tab đầu ra = CUSTOMER_FEE, tab đầu vào = INPUT_COST. */
   policyKind: PolicyKind
+  /** Miền phí cố định của màn; chỉ màn ĐVCNTT đặt (`MERCHANT`), màn chung để trống và không gửi. */
+  feeDomain?: string
   keyword?: string
   serviceType?: string
   status?: string
@@ -44,8 +46,8 @@ export interface UseFeePolicyListResult {
 }
 
 /**
- * Tab luồng phí chọn `policyKind` và gửi thẳng xuống API (backend lọc theo loại chính sách); miền phí chỉ còn
- * là nhãn phân loại và không tham gia lọc.
+ * Mỗi màn chọn `policyKind` và gửi thẳng xuống API (backend lọc theo loại chính sách). Miền phí chỉ tham gia
+ * lọc khi màn đặt `feeDomain` cố định (màn ĐVCNTT); màn chung không gửi.
  *
  * Bộ lọc gửi thẳng một `serviceType` cụ thể; chiều tiền chỉ còn là thông tin
  * hiển thị của giao dịch và không tham gia truy vấn.
@@ -59,6 +61,7 @@ export const useFeePolicyList = ({
     () => ({
       keyword: filters.keyword || '',
       policyKind: filters.policyKind,
+      feeDomain: filters.feeDomain || undefined,
       serviceType: filters.serviceType || undefined,
       ...splitPolicyStatusFilter(filters.status),
       appliedTarget: filters.appliedTarget || undefined,
