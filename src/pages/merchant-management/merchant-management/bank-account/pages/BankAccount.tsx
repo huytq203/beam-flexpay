@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router-dom'
-import { TabComponent } from '@components/index'
+import { CardComponent, TabComponent } from '@components/index'
 import { BankAccountChangeRequestsPanel } from '../components/BankAccountChangeRequestsPanel'
 import { BankAccountListPanel } from '../components/BankAccountListPanel'
 
@@ -14,15 +14,18 @@ const BankAccount = () => {
 
   return (
     <div className='flex min-w-0 flex-col gap-3'>
-      <TabComponent
-        activeKey={tab}
-        items={[
-          { key: 'accounts', label: 'Tài khoản ngân hàng' },
-          { key: 'requests', label: 'Yêu cầu chờ duyệt' }
-        ]}
-        // Mỗi tab có bộ lọc và phân trang riêng nên đổi tab bỏ mọi tham số cũ.
-        onChange={(key) => setSearchParams({ [TAB_PARAM]: key })}
-      />
+      <CardComponent className='border border-border bg-background shadow-none'>
+        <TabComponent
+          className='[&_.ant-tabs-nav]:mb-0!'
+          activeKey={tab}
+          items={[
+            { key: 'accounts', label: 'Tài khoản ngân hàng' },
+            { key: 'requests', label: 'Yêu cầu chờ duyệt' }
+          ]}
+          // Mỗi tab có bộ lọc và phân trang riêng nên đổi tab bỏ mọi tham số cũ.
+          onChange={(key) => setSearchParams({ [TAB_PARAM]: key })}
+        />
+      </CardComponent>
       {tab === 'accounts' ? (
         <BankAccountListPanel />
       ) : (
