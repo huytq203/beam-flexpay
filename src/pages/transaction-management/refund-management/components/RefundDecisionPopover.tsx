@@ -100,7 +100,7 @@ export function RefundDecisionPopover({
         title='Từ chối yêu cầu hoàn tiền'
         description={`Yêu cầu “${refund.refundCode}” sẽ chuyển sang trạng thái bị từ chối.`}
         label='Lý do từ chối'
-        placeholder='Nhập lý do (5 đến 500 ký tự)'
+        placeholder='Nhập lý do...'
         minLength={REASON_MIN}
         maxLength={REASON_MAX}
         okText='Xác nhận từ chối'
