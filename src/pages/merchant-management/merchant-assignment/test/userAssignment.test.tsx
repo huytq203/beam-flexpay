@@ -57,26 +57,45 @@ describe('hành động "Gán phụ trách merchant" ở danh sách tài khoản
 })
 
 describe('hộp thoại gán phụ trách theo người dùng', () => {
-  const open = (onClose = () => {}) =>
-    renderWith(
+  const open = (onClose = () => {}) => {
+    server.use(
+      http.get('*/users/u-1/assignments', () =>
+        envelope({
+          content: [
+            {
+              level: 'MASTER',
+              merchantId: 'm1',
+              merchantCode: 'MC1',
+              merchantName: 'Cà phê Mộc',
+              adminUserId: 'u-1',
+              assignedAt: '2026-10-22T10:15:30'
+            }
+          ],
+          totalElements: 1,
+          number: 1,
+          size: 100
+        })
+      )
+    )
+    return renderWith(
       <UserAssignmentDialog
         user={{ id: 'u-1', label: 'An (sales.an)' }}
         onClose={onClose}
       />,
       [PERMISSION.MERCHANT_ASSIGNMENT_MANAGE]
     )
+  }
 
-  it('nói rõ chỉ thêm được và chặn khi chưa chọn merchant', async () => {
+  it('hiện danh sách đang phụ trách và chặn khi chưa chọn merchant', async () => {
     const user = userEvent.setup()
     open()
     const dialog = await screen.findByRole('dialog', {
       name: 'Gán phụ trách merchant'
     })
     expect(
-      within(dialog).getByText(
-        /Danh sách hiện tại xem ở chi tiết từng merchant/
-      )
+      await within(dialog).findByText('Cà phê Mộc (MC1)')
     ).toBeInTheDocument()
+    expect(within(dialog).getByText(/Gán lúc/)).toBeInTheDocument()
     await user.click(
       within(dialog).getByRole('button', { name: 'Gán phụ trách' })
     )

@@ -14,7 +14,7 @@ const OWN_ERROR_HANDLING = { suppressErrorNotification: true } as const
 const unwrap = <T>(response: MerchantEnvelope<T>): T => response.data
 const ITEMS_TAG = { type: 'merchant' as const, id: 'settlement-items' }
 
-// Chỉ đọc. `sort` bị BE bỏ qua (luôn paidAt giảm dần) nên không gửi.
+// Chỉ đọc. Sắp xếp qua `sortBy`/`sortDirection` (list và export); tham số `sort` kiểu Spring không còn tác dụng nên không gửi.
 const service = apiMerchant.injectEndpoints({
   endpoints: (builder) => ({
     listSettlementItems: builder.query<

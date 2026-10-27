@@ -97,6 +97,11 @@ export type PaymentAnomalyStatus = 'OPEN' | 'RESOLVED'
 export interface MerchantPaymentAnomaly {
   id: string
   orderId: string
+  /** Null khi đơn không còn tra được. */
+  orderCode?: string | null
+  /** Null khi Merchant/Sub không còn tra được. */
+  merchantName?: string | null
+  subMerchantName?: string | null
   bankCode: OrderBankCode
   paymentRef?: string | null
   billNumber?: string | null
@@ -107,6 +112,10 @@ export interface MerchantPaymentAnomaly {
   reason: PaymentAnomalyReason
   status: PaymentAnomalyStatus
   createdAt: string
+  /** Ba trường dưới chỉ có sau khi đã xử lý. */
+  resolvedBy?: string | null
+  resolvedAt?: string | null
+  resolutionReason?: string | null
 }
 
 export interface PaymentAnomalyListParams {
@@ -152,6 +161,21 @@ const merchantOrder = apiMerchant.injectEndpoints({
       transformResponse: unwrap,
       extraOptions: OWN_ERROR_HANDLING,
       providesTags: ['Order']
+    }),
+    // Người xử lý lấy từ người đăng nhập; `reason` bắt buộc, tối đa 500 ký tự.
+    // 409 mã 4329 khi khoản này đã được xử lý.
+    resolveMerchantPaymentAnomaly: build.mutation<
+      MerchantPaymentAnomaly,
+      { id: string; body: { reason: string } }
+    >({
+      query: ({ id, body }) => ({
+        url: `/merchant-orders/payment-anomalies/${id}/resolve`,
+        method: 'POST',
+        body
+      }),
+      transformResponse: unwrap,
+      extraOptions: OWN_ERROR_HANDLING,
+      invalidatesTags: ['Order']
     }),
     postMerchantOrder: build.mutation<MerchantOrder, MerchantOrderCreateBody>({
       query: (body) => ({ url: '/merchant-orders', method: 'POST', body }),
@@ -208,6 +232,7 @@ export const {
   useGetMerchantOrderQuery,
   useGetMerchantOrderByIdQuery,
   useGetMerchantPaymentAnomaliesQuery,
+  useResolveMerchantPaymentAnomalyMutation,
   usePostMerchantOrderMutation,
   usePostRefreshQrMutation,
   usePostMerchantOrderConfirmMutation,

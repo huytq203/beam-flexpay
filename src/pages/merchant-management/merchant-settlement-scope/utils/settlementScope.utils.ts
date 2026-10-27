@@ -4,7 +4,6 @@ import type {
   HistoryRow,
   HistoryRowRaw,
   HistorySnapshot,
-  RemovalPreview,
   ScopeConfigView,
   ScopeUpdateBody
 } from '../types/settlementScope.types'
@@ -67,21 +66,6 @@ export const isLoosening = (
     values.settlementMode === 'AUTOMATIC' &&
     view.settlementMode.value !== 'AUTOMATIC'
   const shorter = currentDays != null && values.holdbackDays < currentDays
-  return toAutomatic || shorter
-}
-
-/** Gỡ khối riêng là nới lỏng nếu Hệ thống tự động hơn hoặc T+N ngắn hơn (preview không báo trước 403). */
-export const removalNeedsApprover = ({
-  current,
-  afterRemoval
-}: RemovalPreview): boolean => {
-  const toAutomatic =
-    afterRemoval.settlementMode.value === 'AUTOMATIC' &&
-    current.settlementMode.value !== 'AUTOMATIC'
-  const currentDays = current.holdbackDays.value
-  const afterDays = afterRemoval.holdbackDays.value
-  const shorter =
-    currentDays != null && afterDays != null && afterDays < currentDays
   return toAutomatic || shorter
 }
 

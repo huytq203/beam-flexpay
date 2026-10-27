@@ -67,6 +67,20 @@ describe('Bộ lọc hoàn tiền', () => {
     expect(lastPayload()).toEqual(expect.objectContaining({ hasRefund: false }))
   })
 
+  it('bấm thẻ "Thất bại" gửi status FAILED kèm hasRefund=false, bỏ chọn thẻ thì không gửi', () => {
+    const { result } = renderHook(() => useTransaction(), {
+      wrapper: MemoryRouter
+    })
+
+    act(() => result.current.handleSummaryStatusChange('FAILED'))
+    expect(lastPayload()).toEqual(
+      expect.objectContaining({ status: 'FAILED', hasRefund: false })
+    )
+
+    act(() => result.current.handleSummaryStatusChange(undefined))
+    expect(lastPayload().hasRefund).toBeUndefined()
+  })
+
   it('bỏ trống "Có hoàn tiền?" thì không gửi hasRefund', () => {
     const { result } = renderHook(() => useTransaction(), {
       wrapper: MemoryRouter

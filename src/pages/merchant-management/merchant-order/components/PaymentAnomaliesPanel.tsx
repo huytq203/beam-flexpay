@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { getApiErrorDetail } from '@/app/utils/api-error'
 import { ButtonComponent, Table } from '@components/index'
 import { AccessPageShell } from '../../merchant-access/components/AccessPageShell'
@@ -6,19 +7,24 @@ import { ORDER_PAGE_SIZE_OPTIONS } from '../constants/merchantOrder.constants'
 import { usePaymentAnomalyListData } from '../hooks/usePaymentAnomalyListData'
 import type { MerchantPaymentAnomaly } from '../types/merchantOrder.types'
 import { PaymentAnomalyFilters } from './PaymentAnomalyFilters'
+import { PaymentAnomalyResolveDialog } from './PaymentAnomalyResolveDialog'
 
 interface Props {
   onViewOrder: (orderId: string) => void
 }
 
-/** Tiền ngân hàng đã báo có nhưng không ghi có merchant; chỉ đọc, BE chưa có API xử lý. */
+/** Tiền ngân hàng đã báo có nhưng không ghi có merchant; vận hành xử lý rồi đánh dấu Đã xử lý kèm lý do. */
 export function PaymentAnomaliesPanel({ onViewOrder }: Props) {
   const data = usePaymentAnomalyListData()
+  const [resolving, setResolving] = useState<MerchantPaymentAnomaly | null>(
+    null
+  )
   const { anomaliesQuery } = data
   const columns = createPaymentAnomalyColumns({
     page: data.page,
     pageSize: data.pageSize,
-    onViewOrder
+    onViewOrder,
+    onResolve: setResolving
   })
 
   return (
@@ -37,9 +43,8 @@ export function PaymentAnomaliesPanel({ onViewOrder }: Props) {
     >
       <p className='mb-3 text-xs text-muted-foreground'>
         Khoản tiền ngân hàng đã báo có nhưng không ghi có cho merchant (đơn
-        không còn thanh toán được, trễ, sai số tiền hoặc trùng). Hiện chỉ xem:
-        hệ thống chưa có thao tác chuyển sang Đã xử lý, vận hành xử lý ngoài hệ
-        thống.
+        không còn thanh toán được, trễ, sai số tiền hoặc trùng). Sau khi xử lý
+        ngoài hệ thống, đánh dấu Đã xử lý kèm lý do để lưu vết.
       </p>
       {anomaliesQuery.isError && (
         <div
@@ -76,6 +81,13 @@ export function PaymentAnomaliesPanel({ onViewOrder }: Props) {
         scroll={{ x: 'max-content' }}
         size='small'
       />
+      {resolving && (
+        <PaymentAnomalyResolveDialog
+          key={resolving.id}
+          anomaly={resolving}
+          onClose={() => setResolving(null)}
+        />
+      )}
     </AccessPageShell>
   )
 }

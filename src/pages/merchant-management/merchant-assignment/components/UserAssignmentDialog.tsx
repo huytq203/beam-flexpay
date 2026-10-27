@@ -14,6 +14,7 @@ import { useAssignmentActions } from '../hooks/useAssignmentActions'
 import type { AssignmentLevel } from '../types/merchantAssignment.types'
 import { toMasterScope, toSubScope } from '../utils/merchantAssignment.utils'
 import { AssignmentReasonField } from './AssignmentReasonField'
+import { UserAssignmentsList } from './UserAssignmentsList'
 
 interface Props {
   /** `id` = Keycloak subject của tài khoản nội bộ, đúng giá trị `adminUserId` của BE. */
@@ -26,10 +27,7 @@ const LEVEL_OPTIONS = (['master', 'sub'] as const).map((level) => ({
   label: ASSIGNMENT_LEVEL_LABELS[level]
 }))
 
-/**
- * Gán một người nội bộ làm Sales phụ trách Master/Sub-merchant. BE không có API
- * liệt kê dòng gán theo người nên hộp thoại này chỉ thêm, không hiện danh sách.
- */
+/** Gán một người nội bộ làm Sales phụ trách Master/Sub-merchant và xem họ đang phụ trách gì. */
 export function UserAssignmentDialog({ user, onClose }: Props) {
   const [level, setLevel] = useState<AssignmentLevel>('master')
   const [target, setTarget] = useState<PickedEntity>()
@@ -99,10 +97,7 @@ export function UserAssignmentDialog({ user, onClose }: Props) {
             action.clearError()
           }}
         />
-        <p className='text-xs text-muted-foreground'>
-          Danh sách hiện tại xem ở chi tiết từng merchant (nút &quot;Sales phụ
-          trách&quot; ở danh sách Merchant và Sub-merchant).
-        </p>
+        <UserAssignmentsList userId={user.id} />
         {action.error && (
           <p
             role='alert'

@@ -21,7 +21,11 @@ const row = (id: string, overrides: Record<string, unknown> = {}) => ({
   id,
   orderId: `order-${id}`,
   orderCode: `ORD-${id}`,
+  merchantId: 'master-1',
+  merchantName: 'Merchant Mộc',
   subMerchantId: SUB_ID,
+  subMerchantCode: 'SUB001',
+  subMerchantName: 'Điểm bán Quận 1',
   paidAt: '2026-10-21T03:15:30.123Z',
   grossAmount: 1000000,
   feeAmount: 11000,
@@ -56,7 +60,8 @@ export const TOTALS = {
   feeAmount: 16500,
   recognisedAmount: 1483500,
   firstTrancheAmount: 1383500,
-  heldAmount: 100000
+  heldAmount: 100000,
+  bySub: []
 }
 
 export const DETAIL = {

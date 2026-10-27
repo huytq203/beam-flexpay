@@ -5,7 +5,7 @@ import type {
   AdminAssignment,
   AssignmentScope
 } from '../types/merchantAssignment.types'
-import { AdminUserName } from './AdminUserName'
+import { AssigneeCell } from './AssigneeCell'
 import { AssignmentReasonField } from './AssignmentReasonField'
 
 interface Props {
@@ -30,7 +30,7 @@ export function AssignmentRemoveDialog({ scope, assignment, onClose }: Props) {
     >
       <div className='space-y-3 text-sm'>
         <p className='text-muted-foreground'>{scope.label}</p>
-        <AdminUserName userId={assignment.adminUserId} />
+        <AssigneeCell {...assignment} />
         <p className='text-muted-foreground'>
           Người này sẽ mất quyền chạm tới dữ liệu chỉ có được nhờ dòng gán này.
           Dòng gán ở cấp khác của cùng người không bị ảnh hưởng.

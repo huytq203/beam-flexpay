@@ -9,6 +9,7 @@ import {
 } from '@components/index'
 import { WebhookDeliveries } from '../components/WebhookDeliveries'
 import { WebhookListPanel } from '../components/WebhookListPanel'
+import { WebhookDeleteDialog } from '../components/WebhookDeleteDialog'
 import { WebhookEditDialog } from '../components/WebhookEditDialog'
 import { WebhookScopeBar } from '../components/WebhookScopeBar'
 import { WebhookSummary } from '../components/WebhookSummary'
@@ -17,6 +18,7 @@ const WebhookPage = () => {
   const [merchant, setMerchant] = useState<PickedEntity>()
   const [sub, setSub] = useState<PickedEntity>()
   const [isEditing, setIsEditing] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const scope = merchant
     ? { merchantId: merchant.id, subMerchantId: sub?.id }
@@ -38,9 +40,22 @@ const WebhookPage = () => {
     return (
       <main className='flex min-w-0 flex-col gap-3'>
         <WebhookListPanel
-          onOpen={(row) =>
-            setMerchant({ id: row.id, code: row.code, name: row.name })
-          }
+          onOpen={(row) => {
+            setMerchant({
+              id: row.merchantId,
+              code: row.merchantCode,
+              name: row.merchantName
+            })
+            setSub(
+              row.subMerchantId
+                ? {
+                    id: row.subMerchantId,
+                    code: row.subMerchantCode ?? '',
+                    name: row.subMerchantName ?? ''
+                  }
+                : undefined
+            )
+          }}
         />
       </main>
     )
@@ -82,17 +97,34 @@ const WebhookPage = () => {
                 ' · Merchant đã chấm dứt hợp tác, chỉ xem, không sửa được'}
             </p>
           </div>
-          <Can
-            screen='MERCHANT_WEBHOOK'
-            action='edit'
-          >
-            <ButtonComponent
-              content='Sửa cấu hình'
-              htmlType='button'
-              disabled={!webhook.data || isTerminated}
-              onClick={() => setIsEditing(true)}
-            />
-          </Can>
+          <div className='flex items-center gap-2'>
+            {sub && webhook.data && !webhook.data.inherited && (
+              <Can
+                screen='MERCHANT_WEBHOOK'
+                action='delete'
+              >
+                <ButtonComponent
+                  content='Xóa cấu hình riêng'
+                  danger
+                  type='default'
+                  htmlType='button'
+                  disabled={isTerminated}
+                  onClick={() => setIsDeleting(true)}
+                />
+              </Can>
+            )}
+            <Can
+              screen='MERCHANT_WEBHOOK'
+              action='edit'
+            >
+              <ButtonComponent
+                content='Sửa cấu hình'
+                htmlType='button'
+                disabled={!webhook.data || isTerminated}
+                onClick={() => setIsEditing(true)}
+              />
+            </Can>
+          </div>
         </div>
         {webhook.isError && (
           <div
@@ -123,8 +155,24 @@ const WebhookPage = () => {
           <h2 className='mb-3 text-base font-semibold text-foreground'>
             Lịch sử gửi IPN
           </h2>
-          <WebhookDeliveries merchantId={merchant.id} />
+          <WebhookDeliveries
+            key={sub?.id ?? 'master'}
+            merchantId={merchant.id}
+            subMerchantId={sub?.id}
+          />
         </CardComponent>
+      )}
+      {isDeleting && scope?.subMerchantId && webhook.data && (
+        <WebhookDeleteDialog
+          merchantId={scope.merchantId}
+          subMerchantId={scope.subMerchantId}
+          scopeLabel={scopeLabel}
+          rowRevision={webhook.data.rowRevision}
+          onClose={() => {
+            setIsDeleting(false)
+            void webhook.refetch()
+          }}
+        />
       )}
       {isEditing && scope && webhook.data && (
         <WebhookEditDialog

@@ -7,12 +7,24 @@ import {
   formatOrderMoney
 } from '../../merchant-order/utils/merchantOrder.utils'
 import { TrancheCell } from '../components/TrancheCell'
-import type { SettlementItemRow } from '../types/settlementItem.types'
+import type {
+  SettlementItemRow,
+  SettlementItemSort,
+  SettlementSortBy
+} from '../types/settlementItem.types'
 
 interface Options {
   page: number
   pageSize: number
+  /** Sắp xếp đang áp; chưa chọn thì BE xếp theo thời điểm thanh toán giảm dần. */
+  sort: SettlementItemSort
   onView: (item: SettlementItemRow) => void
+}
+
+const sortOrderOf = (sort: SettlementItemSort, field: SettlementSortBy) => {
+  const active = sort.sortBy ?? 'paidAt'
+  if (active !== field) return null
+  return (sort.sortDirection ?? 'DESC') === 'ASC' ? 'ascend' : 'descend'
 }
 
 const money = (value: number) => (
@@ -22,6 +34,7 @@ const money = (value: number) => (
 export const createSettlementItemColumns = ({
   page,
   pageSize,
+  sort,
   onView
 }: Options): NonNullable<TableComponentProps<SettlementItemRow>['columns']> => [
   {
@@ -44,18 +57,46 @@ export const createSettlementItemColumns = ({
     )
   },
   {
+    title: 'Merchant',
+    width: 180,
+    render: (_, item) => item.merchantName || item.merchantId
+  },
+  {
+    title: 'Sub-merchant',
+    width: 200,
+    render: (_, item) => (
+      <div className='min-w-0'>
+        <div>{item.subMerchantName || item.subMerchantId}</div>
+        {item.subMerchantCode && (
+          <div className='text-xs text-muted-foreground'>
+            {item.subMerchantCode}
+          </div>
+        )}
+      </div>
+    )
+  },
+  {
     title: 'Thanh toán lúc',
+    key: 'paidAt',
+    sorter: true,
+    sortOrder: sortOrderOf(sort, 'paidAt'),
     width: 170,
     render: (_, item) => formatOrderDateTime(item.paidAt)
   },
   {
     title: 'Khách trả',
+    key: 'customerPaid',
+    sorter: true,
+    sortOrder: sortOrderOf(sort, 'customerPaid'),
     align: 'right',
     width: 140,
     render: (_, item) => money(item.grossAmount)
   },
   {
     title: 'Phí',
+    key: 'fee',
+    sorter: true,
+    sortOrder: sortOrderOf(sort, 'fee'),
     align: 'right',
     width: 120,
     render: (_, item) => money(item.feeAmount)

@@ -1,5 +1,7 @@
 import type { MerchantEnvelope, MerchantPage } from '@type/merchant'
 import type {
+  ConfigListQuery,
+  ConfigListRow,
   EffectiveAtDto,
   HistoryQuery,
   HistoryRowRaw,
@@ -17,6 +19,7 @@ const MASTER_TAG = (id: string) => ({
   id: `settlement-scope-master-${id}`
 })
 const SYSTEM_TAG = { type: 'merchant' as const, id: 'settlement-scope-system' }
+const LIST_TAG = { type: 'merchant' as const, id: 'settlement-scope-list' }
 const HISTORY_TAG = {
   type: 'merchant' as const,
   id: 'settlement-scope-history'
@@ -24,6 +27,16 @@ const HISTORY_TAG = {
 
 const service = apiMerchant.injectEndpoints({
   endpoints: (builder) => ({
+    // Mọi Master trong phạm vi gán, kể cả Master chưa có cấu hình riêng; trang từ 1.
+    listSettlementConfigs: builder.query<
+      MerchantPage<ConfigListRow>,
+      ConfigListQuery
+    >({
+      query: (params) => ({ url: '/settlement-config', params }),
+      extraOptions: OWN_ERROR_HANDLING,
+      transformResponse: unwrap<MerchantPage<ConfigListRow>>,
+      providesTags: [LIST_TAG]
+    }),
     getMasterSettlementConfig: builder.query<ScopeConfigView, string>({
       query: (id) => `/merchants/${id}/settlement-config`,
       extraOptions: OWN_ERROR_HANDLING,
@@ -47,7 +60,11 @@ const service = apiMerchant.injectEndpoints({
       }),
       extraOptions: OWN_ERROR_HANDLING,
       transformResponse: unwrap<ScopeConfigView>,
-      invalidatesTags: (_r, _e, { id }) => [MASTER_TAG(id), HISTORY_TAG]
+      invalidatesTags: (_r, _e, { id }) => [
+        MASTER_TAG(id),
+        HISTORY_TAG,
+        LIST_TAG
+      ]
     }),
     removeMasterSettlementConfig: builder.mutation<
       ScopeConfigView,
@@ -60,7 +77,11 @@ const service = apiMerchant.injectEndpoints({
       }),
       extraOptions: OWN_ERROR_HANDLING,
       transformResponse: unwrap<ScopeConfigView>,
-      invalidatesTags: (_r, _e, { id }) => [MASTER_TAG(id), HISTORY_TAG]
+      invalidatesTags: (_r, _e, { id }) => [
+        MASTER_TAG(id),
+        HISTORY_TAG,
+        LIST_TAG
+      ]
     }),
     getSystemSettlementConfig: builder.query<ScopeConfigView, void>({
       query: () => '/settlement-config/system',
@@ -79,7 +100,7 @@ const service = apiMerchant.injectEndpoints({
       }),
       extraOptions: OWN_ERROR_HANDLING,
       transformResponse: unwrap<ScopeConfigView>,
-      invalidatesTags: [SYSTEM_TAG, HISTORY_TAG]
+      invalidatesTags: [SYSTEM_TAG, HISTORY_TAG, LIST_TAG]
     }),
     // BE phân trang ở server (Page, trang từ 1), mới nhất trước.
     getSettlementConfigHistory: builder.query<
@@ -109,6 +130,7 @@ const service = apiMerchant.injectEndpoints({
 })
 
 export const {
+  useListSettlementConfigsQuery,
   useGetMasterSettlementConfigQuery,
   useGetMasterRemovalPreviewQuery,
   useUpdateMasterSettlementConfigMutation,

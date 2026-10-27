@@ -10,6 +10,7 @@ import { createAppStore } from '@/app/store'
 import { savePermissions } from '@slices/authSlice'
 import { suppressAntPseudoElementWarning } from '../../sub-merchant-management/sub-merchant/test/domTestSetup'
 import { AssignmentListPanel } from '../components/AssignmentListPanel'
+import { AssignmentOverviewPanel } from '../components/AssignmentOverviewPanel'
 import { AssignmentFormDialog } from '../components/AssignmentFormDialog'
 import { AssignmentRemoveDialog } from '../components/AssignmentRemoveDialog'
 import type {
@@ -28,11 +29,17 @@ export const SCOPE: AssignmentScope = {
 export const ASSIGNMENTS: AdminAssignment[] = [
   {
     adminUserId: 'u-sales-1',
+    adminFullName: 'Nguyễn An',
+    adminUsername: 'sales.an',
+    adminEmail: 'an@beam.vn',
     assignedAt: '2026-10-22T10:15:30',
     assignedBy: 'u-admin'
   },
   {
     adminUserId: 'u-sales-2',
+    adminFullName: 'Trần Bình',
+    adminUsername: 'sales.binh',
+    adminEmail: 'binh@beam.vn',
     assignedAt: '2026-10-21T08:00:00',
     assignedBy: null
   }
@@ -59,11 +66,15 @@ const USERS: Record<string, Record<string, unknown>> = {
   }
 }
 
-const envelope = (data: unknown) => HttpResponse.json({ data, success: true })
+export const envelope = (data: unknown) =>
+  HttpResponse.json({ data, success: true })
 
 afterEach(() => sessionStorage.clear())
 beforeEach(() => {
   server.use(
+    http.get('*/merchant-assignments/me', () =>
+      envelope({ canManageAssignments: true, roles: ['ADMIN'] })
+    ),
     http.get('*/merchants/m1/assignments', () => envelope(ASSIGNMENTS)),
     http.get('*/users/managers/:id', ({ params }) => {
       const user = USERS[String(params.id)]
@@ -115,6 +126,19 @@ export const renderPanel = (
     />,
     permissions
   )
+
+export const renderSubPanel = (permissions: string[] = MANAGE) =>
+  renderWithStore(
+    <AssignmentListPanel
+      scope={{ level: 'sub', id: 's1', label: 'Sub-merchant Quầy 1 (SB0001)' }}
+      onAssign={() => {}}
+      onRemove={() => {}}
+    />,
+    permissions
+  )
+
+export const renderOverview = (permissions: string[] = VIEW_ONLY) =>
+  renderWithStore(<AssignmentOverviewPanel />, permissions)
 
 export const renderAssignDialog = (onClose = () => {}) =>
   renderWithStore(

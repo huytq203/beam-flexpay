@@ -133,6 +133,11 @@ export const FUNCTION_GROUPS: ReadonlyArray<{
       ['BALANCE_REPORT_VIEW', 'RECONCILIATION_RUN'].includes(code)
   },
   {
+    key: 'refund',
+    label: 'Hoàn tiền',
+    match: (code) => code.startsWith('REFUND_')
+  },
+  {
     key: 'escrow',
     label: 'Ký quỹ',
     match: (code) => code.startsWith('ESCROW_')
