@@ -194,6 +194,11 @@ export const FeeComponentDialog = ({
     baseComponentType,
     precedingComponents,
     payerType,
+    serviceType,
+    siblings: existingComponents.filter(
+      ({ key }) => key !== initialValue?.key && key !== initialPartner?.key
+    ),
+    editing: initialValue !== null,
     setValue
   })
   const vatBaseComponentType = getVatBaseForCategory(

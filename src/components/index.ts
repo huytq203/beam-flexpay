@@ -58,6 +58,7 @@ export {
 } from './transaction/transaction-flow-columns'
 export { WithdrawalDecisionPanel } from './withdrawal/WithdrawalDecisionPanel'
 export type { WithdrawalDecisionPanelProps } from './withdrawal/WithdrawalDecisionPanel'
+export { WithdrawDecisionAction } from './withdrawal/WithdrawDecisionAction'
 export { WithdrawalStatusTag } from './withdrawal/WithdrawalStatusTag'
 export type { WithdrawalStatusTagProps } from './withdrawal/WithdrawalStatusTag'
 export { ScrollToTopButton } from './ui/scroll-to-top-button/ScrollToTopButton'

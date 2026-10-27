@@ -99,8 +99,8 @@ export const CONFIG_STATUS: Record<
 
 export const GLCodeLabels: Record<string, string> = {
   REV_USER_FEE: 'Doanh thu phí người dùng',
-  USER_WALLET_VND: 'Ví người dùng VND',
-  SYS_BANK_SETTLEMENT_VND: 'Tài khoản thanh toán ngân hàng VND',
+  USER_WALLET_VND: 'Ví người dùng',
+  SYS_BANK_SETTLEMENT_VND: 'Tài khoản thanh toán ngân hàng',
   SYSTEM: 'Hệ thống'
 }
 
@@ -117,32 +117,44 @@ export const OwnerTypeLabels: Record<string, string> = {
  */
 
 /**
- * Vai trò của dòng trong bút toán chuyển tiền ví → ví. wallet-core không trả vai
- * trò nên suy từ chủ tài khoản + chiều ghi: tài khoản doanh thu là phí, ví bị Nợ
- * là người gửi, ví được Có là người nhận. Dòng phí ghi rõ bên chịu theo
- * `feeBearer` (hai bên cùng chịu thì chỉ ghi "Phí"). Loại giao dịch khác không
- * có vai trò chung theo cách này nên trả `null`.
+ * Vai trò của dòng trong bút toán. wallet-core không trả vai trò nên suy từ chủ tài
+ * khoản + chiều ghi: ví người dùng/merchant bị Nợ là người gửi, được Có là người nhận;
+ * tài khoản doanh thu là phí, ghi rõ bên chịu. Các dòng còn lại (ví dụ tài khoản thanh
+ * toán ngân hàng) tính là bên nhận. `feeOrder` là thứ tự ghi của dòng phí trong bút
+ * toán, dùng khi hai bên chịu phí bằng nhau nên số tiền không phân biệt được.
  */
 export const getLedgerEntryRole = (entry: {
-  transactionType?: string | null
   direction: string
+  amount?: number
   feeBearer?: string
+  senderFeeAmount?: number
+  receiverFeeAmount?: number
+  feeOrder?: number
   account?: { ownerType?: string; glCode?: string }
-}): string | null => {
-  if (entry.transactionType !== 'P2P_TRANSFER') return null
+}): string => {
   if (entry.account?.glCode?.startsWith('REV_')) return getFeeRole(entry)
-  return entry.direction === DirectionConstants.DEBIT
-    ? 'Người gửi'
-    : 'Người nhận'
+  const isSenderSide =
+    entry.direction === DirectionConstants.DEBIT &&
+    entry.account?.ownerType !== 'SYSTEM'
+  return isSenderSide ? 'Người gửi' : 'Người nhận'
 }
 
-const getFeeRole = (entry: { feeBearer?: string }): string => {
-  switch (entry.feeBearer) {
-    case 'RECEIVER':
-      return 'Phí (bên nhận)'
-    case 'SENDER':
-      return 'Phí (bên gửi)'
-    default:
-      return 'Phí'
+/** BE để trống `feeBearer` khi người gửi chịu phí. */
+const getFeeRole = (entry: {
+  amount?: number
+  feeBearer?: string
+  senderFeeAmount?: number
+  receiverFeeAmount?: number
+  feeOrder?: number
+}): string => {
+  if (entry.feeBearer === 'RECEIVER') return 'Phí (bên nhận)'
+  if (entry.feeBearer !== 'BOTH') return 'Phí (bên gửi)'
+  const { amount, senderFeeAmount, receiverFeeAmount } = entry
+  if (senderFeeAmount === receiverFeeAmount) {
+    if (entry.feeOrder === 0) return 'Phí (bên gửi)'
+    return entry.feeOrder === 1 ? 'Phí (bên nhận)' : 'Phí'
   }
+  if (amount === senderFeeAmount) return 'Phí (bên gửi)'
+  if (amount === receiverFeeAmount) return 'Phí (bên nhận)'
+  return 'Phí'
 }

@@ -82,4 +82,27 @@ describe('groupLedgerByJournal', () => {
     )
     expect(rows.map((row) => row.isJournalStart)).toEqual([true, true])
   })
+
+  it('hai dòng phí bằng nhau: dòng ghi trước (số dư thấp hơn) là bên gửi', () => {
+    const fee = (id: string, balanceAfter: number) =>
+      ({
+        ...entry(id, 'JRN-A', 'CREDIT'),
+        amount: 3045,
+        balanceAfter,
+        feeBearer: 'BOTH',
+        senderFeeAmount: 3045,
+        receiverFeeAmount: 3045,
+        account: { ownerType: 'SYSTEM', glCode: 'REV_USER_FEE' }
+      }) as LedgerEntry
+
+    const rows = groupLedgerByJournal(
+      [fee('later', 2_875_196), fee('earlier', 2_872_151)],
+      0
+    )
+
+    expect(rows.map((row) => [row.id, row.role])).toEqual([
+      ['later', 'Phí (bên nhận)'],
+      ['earlier', 'Phí (bên gửi)']
+    ])
+  })
 })

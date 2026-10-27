@@ -5,6 +5,7 @@ import { BOTH_BEARERS, SENDER_PAYER } from '../utils/bearerPairs'
 import {
   buildPayerSelectOptions,
   dependentPayerFor,
+  restrictPayerOptions,
   type PayerOption
 } from '../utils/payerSelectOptions'
 
@@ -15,6 +16,11 @@ interface UsePayerSelectOptionsInput {
   baseComponentType: string | null | undefined
   precedingComponents: readonly FeeComponentFormValues[]
   payerType: string
+  serviceType: string
+  /** Các thành phần khác của chính sách (không gồm thành phần đang sửa và bạn cặp của nó). */
+  siblings: readonly FeeComponentFormValues[]
+  /** Đang sửa: giữ nguyên người chịu hiện có dù cấu hình cũ không còn khớp luật. */
+  editing: boolean
   setValue: UseFormSetValue<FeeComponentFormValues>
 }
 
@@ -30,6 +36,9 @@ export const usePayerSelectOptions = ({
   baseComponentType,
   precedingComponents,
   payerType,
+  serviceType,
+  siblings,
+  editing,
   setValue
 }: UsePayerSelectOptionsInput): PayerOption[] => {
   const basePayer = isVat
@@ -41,13 +50,32 @@ export const usePayerSelectOptions = ({
     ? basePayer
     : null
 
+  const built = buildPayerSelectOptions(payerTypeOptions, canSplit, vatPayer)
+  const options = isVat
+    ? built
+    : restrictPayerOptions(serviceType, built, siblings)
+  const firstOption = options[0]?.value
+  const payerAllowed = options.some(({ value }) => value === payerType)
+
   useEffect(() => {
     if (payerType === BOTH_BEARERS && !canSplit) {
       setValue('payerType', SENDER_PAYER, { shouldValidate: true })
     } else if (vatPayer && payerType !== vatPayer) {
       setValue('payerType', vatPayer, { shouldValidate: true })
+    } else if (!isVat && !editing && !payerAllowed && firstOption) {
+      // Bên còn lại đã có phí: chọn sẵn đúng bên được phép thay vì để giá trị mặc định bị ẩn.
+      setValue('payerType', firstOption, { shouldValidate: true })
     }
-  }, [canSplit, payerType, setValue, vatPayer])
+  }, [
+    canSplit,
+    editing,
+    firstOption,
+    isVat,
+    payerAllowed,
+    payerType,
+    setValue,
+    vatPayer
+  ])
 
-  return buildPayerSelectOptions(payerTypeOptions, canSplit, vatPayer)
+  return options
 }

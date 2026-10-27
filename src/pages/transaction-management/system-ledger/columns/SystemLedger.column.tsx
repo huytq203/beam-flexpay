@@ -6,7 +6,6 @@ import {
   DirectionConstants,
   GLCodeLabels,
   LedgerTransactionType,
-  getLedgerEntryRole,
   type LedgerTransactionTypeKey
 } from '../constants/SystemLedger.constant'
 import type { LedgerRow } from '../utils/groupLedgerByJournal'
@@ -106,11 +105,9 @@ export const systemLedgerColumns: ColumnsType<LedgerRow> = [
     key: 'role',
     width: 130,
     render(_, record) {
-      const role = getLedgerEntryRole(record)
-      if (!role) return EMPTY
       return (
         <span className='rounded-sm border border-border px-2 py-0.5 text-xs whitespace-nowrap'>
-          {role}
+          {record.role}
         </span>
       )
     }

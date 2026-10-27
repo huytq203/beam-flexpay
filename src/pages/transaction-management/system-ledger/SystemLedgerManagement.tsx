@@ -78,7 +78,6 @@ const SystemLedgerManagement = () => {
                   // tooltip={`File lấy trọn bộ lọc đang áp, không giới hạn theo trang. ${EXPORT_ORDER_HINT}`}
                 />
               </div>
-           
             </div>
             <LedgerSummary
               summary={summary}

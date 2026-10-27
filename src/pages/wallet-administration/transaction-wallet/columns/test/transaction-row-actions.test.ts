@@ -165,7 +165,11 @@ describe('canShowRefundTransactionAction', () => {
     ],
     ['thiếu transactionId', { transactionId: null }],
     ['loại REVERSAL', { transactionType: 'REVERSAL' }],
-    ['đã hoàn toàn bộ', { refundedAmount: 100_000, refunded: true }]
+    ['đã hoàn toàn bộ', { refundedAmount: 100_000, refunded: true }],
+    [
+      'số tiền đang chờ hoàn bằng số tiền giao dịch',
+      { refundedAmount: 0, pendingRefundAmount: 100_000, refunded: true }
+    ]
   ])('ẩn khi %s', (_name, overrides) => {
     expect(canShowRefundTransactionAction(transaction(overrides))).toBe(false)
   })

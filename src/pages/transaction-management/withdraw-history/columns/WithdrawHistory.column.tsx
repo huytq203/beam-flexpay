@@ -4,7 +4,8 @@ import {
   CopyableText,
   MaskText,
   StuckTransactionUpdateAction,
-  TooltipComponent
+  TooltipComponent,
+  WithdrawDecisionAction
 } from '@components/index'
 import { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
@@ -18,7 +19,6 @@ import {
   resolveDisplayStatus,
   WITHDRAW_DISPLAY_STATUS_CONFIG
 } from '../constants/withdrawDisplayStatus'
-import { WithdrawDecisionAction } from '../components/WithdrawDecisionAction'
 import { BankEnum, BankLabel } from '../constants/bank.constant'
 import { WithdrawalStatus } from '@type/withdrawalApproval.type'
 import { UnifiedContentJournal } from '@/app/types/apiResponseJournal'

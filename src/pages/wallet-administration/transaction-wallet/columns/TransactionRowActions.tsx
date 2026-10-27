@@ -2,12 +2,14 @@ import type { UnifiedContentJournal } from '@type/apiResponseJournal'
 import {
   ButtonComponent,
   StuckTransactionUpdateAction,
-  TooltipComponent
+  TooltipComponent,
+  WithdrawDecisionAction
 } from '@components/index'
 import { ArrowCounterClockwiseIcon, SnowflakeIcon } from '@components/icons'
 import {
   canShowRefundTransactionAction,
   getFreezeTransactionAction,
+  isPendingApprovalTransaction,
   shouldHideStuckUpdateAction
 } from './transaction-row-actions'
 
@@ -40,6 +42,9 @@ export function TransactionRowActions({
 
   return (
     <div className='flex items-center justify-center gap-1'>
+      {isWithdrawal && isPendingApprovalTransaction(record) && (
+        <WithdrawDecisionAction transactionCode={record.transactionCode} />
+      )}
       <StuckTransactionUpdateAction
         compact
         transactionCode={record.transactionCode}

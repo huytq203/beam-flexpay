@@ -9,7 +9,6 @@ import {
 } from '../schemas/feeConfig.schema'
 import { FeeComponentDialog } from '../components/FeeComponentDialog'
 import {
-  BOTH_BEARERS_DUPLICATE_MESSAGE,
   findBearerPartner,
   groupBearerPairs
 } from '../utils/bearerPairs'
@@ -162,21 +161,16 @@ describe('FeeComponentDialog cả hai bên cùng chịu', () => {
     expect(fixed[1]).toHaveValue('2.000')
   })
 
-  it('báo trùng khi bên người nhận đã có thành phần cùng loại phí', async () => {
-    const onSave = renderTransferDialog({
+  it('đã có phí một bên thì không còn lựa chọn cả hai bên', async () => {
+    renderTransferDialog({
       existingComponents: [component({ payerType: 'RECEIVER' })]
     })
 
     await userEvent.click(screen.getByLabelText(/Loại phí/))
     await userEvent.click(await screen.findByText('Phí giao dịch cơ bản'))
     await userEvent.click(screen.getByLabelText(/Người chịu/))
-    await userEvent.click(await screen.findByTitle('Cả hai bên cùng chịu'))
-    await userEvent.click(screen.getByRole('button', { name: 'Thêm' }))
 
-    expect(
-      await screen.findByText(BOTH_BEARERS_DUPLICATE_MESSAGE)
-    ).toBeInTheDocument()
-    expect(onSave).not.toHaveBeenCalled()
+    expect(screen.queryByTitle('Cả hai bên cùng chịu')).not.toBeInTheDocument()
   })
 })
 
@@ -194,8 +188,10 @@ describe('FeeComponentDialog VAT cả hai bên cùng chịu', () => {
 
     await userEvent.click(screen.getByLabelText(/Loại phí/))
     await userEvent.click(await screen.findByTitle('VAT'))
-    await userEvent.click(screen.getByLabelText(/Người chịu/))
-    await userEvent.click(await screen.findByTitle('Cả hai bên cùng chịu'))
+    // Policy đã có cặp người chuyển / người nhận nên phí mới tự chọn sẵn "Cả hai bên".
+    expect(
+      screen.getByLabelText(/Người chịu/).closest('.ant-select')
+    ).toHaveTextContent('Cả hai bên cùng chịu')
 
     const rates = screen.getAllByLabelText(/Phí linh hoạt/)
     expect(rates).toHaveLength(2)

@@ -17,6 +17,14 @@ export const TRANSFER_BEARER_BASE_MESSAGE =
 export const TRANSFER_BEARER_DEPENDENT_SIDE_MESSAGE =
   'VAT (phí phụ thuộc) phải cùng người chịu với phí gốc: phí gốc chỉ một bên chịu thì VAT cũng do đúng bên đó chịu'
 
+export const ONE_SIDE_BEARER_MESSAGE =
+  'Nạp tiền và rút tiền chỉ cấu hình phí cho một bên chịu (người chuyển hoặc người nhận), không cấu hình cả hai'
+
+const ONE_SIDE_SERVICES: readonly string[] = [
+  'EWALLET_DEPOSIT',
+  'EWALLET_WITHDRAWAL'
+]
+
 const isReceiver = (payerType: string) => payerType === 'RECEIVER'
 
 /**
@@ -31,8 +39,15 @@ export const validateTransferBearers = (
   components: readonly BearerComponent[],
   originalTransactionType?: string | null
 ): string | null => {
-  if (!supportsBearerSplit(serviceType, originalTransactionType)) return null
   const output = components.filter((item) => item.feeScope === 'OUTPUT_FEE')
+  if (serviceType && ONE_SIDE_SERVICES.includes(serviceType)) {
+    // Đổi loại giao dịch giữ nguyên thành phần cũ, nên cặp hai bên của chuyển tiền có thể còn sót lại.
+    return output.some((item) => isReceiver(item.payerType)) &&
+      output.some((item) => !isReceiver(item.payerType))
+      ? ONE_SIDE_BEARER_MESSAGE
+      : null
+  }
+  if (!supportsBearerSplit(serviceType, originalTransactionType)) return null
   const hasReceiver = output.some((item) => isReceiver(item.payerType))
   const hasSender = output.some((item) => !isReceiver(item.payerType))
   if (!hasReceiver || !hasSender) return null

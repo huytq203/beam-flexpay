@@ -56,9 +56,19 @@ const isFullyRefunded = (transaction: UnifiedContentJournal): boolean => {
   )
 }
 
+/** Toàn bộ số tiền giao dịch đã nằm trong yêu cầu hoàn đang chờ: tạo thêm sẽ bị BE từ chối. */
+const isFullyPendingRefund = (transaction: UnifiedContentJournal): boolean => {
+  const { pendingRefundAmount } = readRefundFields(transaction)
+  return (
+    pendingRefundAmount != null &&
+    transaction.amount > 0 &&
+    pendingRefundAmount >= transaction.amount
+  )
+}
+
 /**
  * Ma trận nút Lịch sử giao dịch: Hoàn tiền chỉ với giao dịch thành công, không bị đóng
- * băng, chưa hoàn toàn bộ, thuộc loại hoàn được và có `transactionId` (id wallet-core mà
+ * băng, chưa hoàn toàn bộ, chưa có yêu cầu hoàn chờ đủ số tiền, thuộc loại hoàn được và có `transactionId` (id wallet-core mà
  * BE cần). Hoàn một phần vẫn hiện nút; số tiền còn hoàn được do BE kiểm khi gửi yêu cầu.
  * Quyền `EWALLET:FULL` kiểm riêng ở nơi gọi.
  */
@@ -68,6 +78,7 @@ export const canShowRefundTransactionAction = (
   transaction.status === StatusEnum.POSTED &&
   !transaction.frozen &&
   !isFullyRefunded(transaction) &&
+  !isFullyPendingRefund(transaction) &&
   Boolean(transaction.transactionId) &&
   getRefundOriginalType(transaction.transactionType) !== null
 

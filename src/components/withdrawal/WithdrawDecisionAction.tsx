@@ -7,7 +7,7 @@ import {
   ReasonDialog,
   TooltipComponent
 } from '@components/index'
-import { useWithdrawalDecision } from '@components/withdrawal/useWithdrawalDecision'
+import { useWithdrawalDecision } from './useWithdrawalDecision'
 import {
   WITHDRAWAL_NOTE_MAX_LENGTH,
   WITHDRAWAL_NOTE_MIN_LENGTH,
@@ -15,7 +15,7 @@ import {
   WITHDRAWAL_REASON_MIN_LENGTH
 } from '@type/withdrawalApproval.type'
 
-interface WithdrawDecisionActionProps {
+export interface WithdrawDecisionActionProps {
   transactionCode: string
 }
 

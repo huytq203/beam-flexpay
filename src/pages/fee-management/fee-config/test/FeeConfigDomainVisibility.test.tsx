@@ -71,10 +71,23 @@ describe('trang tạo chính sách', () => {
     ).toBeInTheDocument()
   })
 
+  it('chưa chọn loại giao dịch thì chưa thêm được phí đầu ra', () => {
+    renderCreatePage()
+
+    expect(
+      screen.getByRole('button', { name: 'Thêm phí đầu ra' })
+    ).toBeDisabled()
+    expect(
+      screen.getByText('Chọn loại giao dịch trước khi thêm phí')
+    ).toBeInTheDocument()
+  })
+
   it('mở hộp thoại phí đầu ra ở tab thu, người hưởng là Hệ thống', async () => {
     const user = userEvent.setup()
     renderCreatePage()
 
+    await user.click(screen.getByLabelText(/Loại giao dịch/))
+    await user.click(await screen.findByText(DEPOSIT_LABEL))
     await user.click(screen.getByRole('button', { name: 'Thêm phí đầu ra' }))
 
     expect(
