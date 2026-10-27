@@ -45,7 +45,12 @@ export const FeeSetting = ({
     handleSearch,
     handleExport,
     isExporting
-  } = useFeeSettingRules({ walletLabel, subjectId })
+  } = useFeeSettingRules({
+    accountLabel: walletLabel,
+    subjectId,
+    subjectType: 'USER',
+    feeDomain: 'EWALLET'
+  })
 
   if (!hasValidSubject) {
     return (

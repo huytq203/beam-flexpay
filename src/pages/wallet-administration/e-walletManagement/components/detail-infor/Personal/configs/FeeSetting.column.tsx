@@ -30,6 +30,15 @@ const APPLIED_OBJECT_LABELS: Readonly<Record<string, string>> = {
   ALL: 'Tất cả'
 }
 
+/** Phạm vi của merchant gọi theo merchant, không theo tài khoản / khách hàng. */
+const MERCHANT_APPLIED_OBJECT_LABELS: Readonly<Record<string, string>> = {
+  ...APPLIED_OBJECT_LABELS,
+  ACCOUNT: 'Merchant cụ thể',
+  CUSTOMER_GROUP: 'Nhóm merchant'
+}
+
+export type FeeRuleSubjectType = 'USER' | 'MERCHANT'
+
 export interface ApplicableFeeRuleTableRow extends GroupedFeeRule {
   rowKey: string
   no: number
@@ -82,7 +91,8 @@ const getPaymentDetail = (record: ApplicableFeeRuleTableRow): string => {
 }
 
 export const getApplicableFeeRuleColumns = (
-  customerSegmentNames: CustomerSegmentNames
+  customerSegmentNames: CustomerSegmentNames,
+  subjectType: FeeRuleSubjectType = 'USER'
 ): ColumnsType<ApplicableFeeRuleTableRow> => [
   {
     title: '#',
@@ -97,7 +107,12 @@ export const getApplicableFeeRuleColumns = (
     render: (_, record) => (
       <div className='flex flex-col gap-0.5'>
         <span className='font-medium text-foreground'>
-          {getLabel(record.appliedObjectType, APPLIED_OBJECT_LABELS)}
+          {getLabel(
+            record.appliedObjectType,
+            subjectType === 'MERCHANT'
+              ? MERCHANT_APPLIED_OBJECT_LABELS
+              : APPLIED_OBJECT_LABELS
+          )}
         </span>
         <span className='text-xs text-muted-foreground'>
           {getAppliedObjectDetail(record, customerSegmentNames)}
