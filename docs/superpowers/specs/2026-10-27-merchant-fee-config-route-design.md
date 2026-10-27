@@ -80,7 +80,7 @@ phí thu hộ / chi hộ, với cách làm giống như bên ví user.
 
 | | Cấu hình phí đầu ra (hiện có) | Cấu hình phí ĐVCNTT (mới) |
 |---|---|---|
-| Lọc danh sách | không đổi | luôn gửi `feeDomain=MERCHANT` (cả `/search` lẫn `/export`) |
+| Lọc danh sách | không đổi | luôn gửi `feeDomain=MERCHANT` (cả `/search` lẫn `/export`). Chính sách thu hộ / chi hộ cũ ở miền `BANK` không có hoặc không cần hiện, theo xác nhận của chủ sản phẩm ngày 2026-10-27 |
 | Ô lọc Loại giao dịch | không đổi | chỉ Thu hộ VA, Chi hộ chuyển khoản |
 | Ô Loại giao dịch khi tạo | ẩn thu hộ / chi hộ | chỉ thu hộ / chi hộ |
 | Nút Tạo, link Sửa | đường dẫn `FEE_V4` | đường dẫn `${MERCHANT}/fee-config` |
