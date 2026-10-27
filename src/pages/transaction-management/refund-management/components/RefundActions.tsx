@@ -11,6 +11,7 @@ import type { RefundTarget } from '../schemas/refund.schema'
 import { getSettleLabel, type RefundActionFlags } from '../utils/refund.utils'
 import { RefundDecisionPopover } from './RefundDecisionPopover'
 import { RefundActionButton } from './RefundActionButton'
+import { RefundPayoutDecisionPopover } from './RefundPayoutDecisionPopover'
 
 interface RefundActionsProps {
   refund: RefundTarget
@@ -60,13 +61,14 @@ export function RefundActions({
       onClick={() => onReject(refund)}
     />
   )
-  const approveButton = (
+  const renderApproveButton = (isPopoverOpen = false) => (
     <RefundActionButton
       variant={variant}
       tone={isInline ? 'default' : 'primary'}
       label={isInline ? 'Duyệt / Từ chối' : 'Duyệt'}
       ariaLabel={nameFor('Duyệt')}
       icon={<CheckOutlined aria-hidden />}
+      isTooltipHidden={isPopoverOpen}
       onClick={openOrNothing(onApprove)}
     />
   )
@@ -91,34 +93,50 @@ export function RefundActions({
       {flags.decide &&
         (isInline ? (
           <RefundDecisionPopover refund={refund}>
-            {approveButton}
+            {renderApproveButton}
           </RefundDecisionPopover>
         ) : (
           <>
             {rejectButton}
-            {approveButton}
+            {renderApproveButton()}
           </>
         ))}
-      {flags.payoutDecide && (
-        <>
-          <RefundActionButton
-            variant={variant}
-            tone='danger'
-            label='Từ chối chi'
-            ariaLabel={nameFor('Từ chối chi')}
-            icon={<CloseOutlined aria-hidden />}
-            onClick={() => onPayoutReject(refund)}
-          />
-          <RefundActionButton
-            variant={variant}
-            tone={isInline ? 'default' : 'primary'}
-            label='Duyệt chi'
-            ariaLabel={nameFor('Duyệt chi')}
-            icon={<BankIcon aria-hidden />}
-            onClick={() => onPayoutApprove(refund)}
-          />
-        </>
-      )}
+      {flags.payoutDecide &&
+        (isInline ? (
+          <RefundPayoutDecisionPopover
+            refund={refund}
+            onApprove={onPayoutApprove}
+            onReject={onPayoutReject}
+          >
+            {(isOpen) => (
+              <RefundActionButton
+                variant='icon'
+                label='Duyệt chi / Từ chối chi'
+                ariaLabel={nameFor('Duyệt chi')}
+                icon={<CheckOutlined aria-hidden />}
+                isTooltipHidden={isOpen}
+                onClick={() => undefined}
+              />
+            )}
+          </RefundPayoutDecisionPopover>
+        ) : (
+          <>
+            <RefundActionButton
+              variant={variant}
+              tone='danger'
+              label='Từ chối chi'
+              icon={<CloseOutlined aria-hidden />}
+              onClick={() => onPayoutReject(refund)}
+            />
+            <RefundActionButton
+              variant={variant}
+              tone='primary'
+              label='Duyệt chi'
+              icon={<BankIcon aria-hidden />}
+              onClick={() => onPayoutApprove(refund)}
+            />
+          </>
+        ))}
       {flags.settle && (
         <RefundActionButton
           variant={variant}

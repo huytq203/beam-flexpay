@@ -65,7 +65,7 @@ export const FormSearch = ({
         {' '}
         <Icons.FunnelIcon /> Bộ lọc tìm kiếm
       </p>
-      <div className='grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-3'>
+      <div className='grid grid-cols-1 md:grid-cols-3 xl:grid-cols-3 gap-3'>
         <div className='col-span-1'>
           <FormInput
             control={formSearch.control}

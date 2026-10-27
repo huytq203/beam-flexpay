@@ -9,6 +9,8 @@ interface RefundActionButtonProps {
   onClick: () => void
   tone?: 'default' | 'primary' | 'danger'
   loading?: boolean
+  /** Tắt tooltip khi nút đang mở popover, tránh tooltip đè lên nút trong popover. */
+  isTooltipHidden?: boolean
 }
 
 export function RefundActionButton({
@@ -18,7 +20,8 @@ export function RefundActionButton({
   variant,
   onClick,
   tone = 'default',
-  loading
+  loading,
+  isTooltipHidden
 }: RefundActionButtonProps) {
   const type = tone === 'primary' ? 'primary' : 'default'
   if (variant === 'text') {
@@ -35,7 +38,10 @@ export function RefundActionButton({
     )
   }
   return (
-    <TooltipComponent title={label}>
+    <TooltipComponent
+      title={label}
+      open={isTooltipHidden ? false : undefined}
+    >
       <ButtonComponent
         htmlType='button'
         size='small'
