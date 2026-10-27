@@ -16,6 +16,7 @@ import {
   STATE_BANK,
   FEEMANAGEMENT_V4,
   TRANSACTIONMANAGEMENT,
+  MERCHANT,
 } from './routersConstant'
 
 export const PATHS = {
@@ -148,6 +149,13 @@ export const PATHS = {
       `${FEEMANAGEMENT_V4}/fee-input-cost/edit/${id}`,
     /** Báo cáo phí đầu vào (chỉ đọc) để đối soát cuối tháng. */
     INPUT_COST_REPORT: `${FEEMANAGEMENT_V4}/fee-input-cost-report`,
+  },
+
+  /** Màn Cấu hình phí ĐVCNTT: dùng lại màn chính sách phí, nằm dưới nhóm menu merchant. */
+  MERCHANT_FEE: {
+    LIST: `${MERCHANT}/fee-config`,
+    CREATE: `${MERCHANT}/fee-config/create`,
+    EDIT: (id: string) => `${MERCHANT}/fee-config/edit/${id}`
   },
 
   TRANSACTION_MANAGEMENT: {

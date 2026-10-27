@@ -575,6 +575,14 @@ export const SCREENS = {
     path: `${FEEMANAGEMENT_V4}/fee-input-cost`,
     actions: { ...FEE_ACTIONS }
   },
+  /**
+   * Màn Cấu hình phí ĐVCNTT (thu hộ, chi hộ của merchant): danh sách, tạo và sửa dưới nhóm menu
+   * merchant. Cùng họ quyền FEE: backend không phân biệt màn ở quyền, chỉ khác đường dẫn.
+   */
+  MERCHANT_FEE_CONFIG: {
+    path: `${MERCHANT}/fee-config`,
+    actions: { ...FEE_ACTIONS }
+  },
   /** Báo cáo phí đầu vào (chỉ đọc): cùng họ quyền FEE, chỉ dùng hành động xem. */
   FEE_INPUT_COST_REPORT: {
     path: `${FEEMANAGEMENT_V4}/fee-input-cost-report`,
