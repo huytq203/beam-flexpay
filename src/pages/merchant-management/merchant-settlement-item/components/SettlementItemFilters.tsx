@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import {
   DateInput,
+  MerchantPickerDialog,
   PickerTrigger,
   SubMerchantPickerDialog,
   describePicked,
@@ -22,6 +23,9 @@ import {
 interface Props {
   draft: Filters
   error?: SettlementItemFilterError
+  getMerchant: (
+    id: string
+  ) => { id: string; name: string; code?: string } | undefined
   getSub: (
     id: string
   ) => { id: string; name: string; code?: string } | undefined
@@ -35,13 +39,17 @@ const labelClass = 'mb-1 block text-sm font-medium text-foreground'
 export function SettlementItemFilters({
   draft,
   error,
+  getMerchant,
   getSub,
   onChange,
   onApply,
   onReset
 }: Props) {
+  const [pickingMerchant, setPickingMerchant] = useState(false)
   const [picking, setPicking] = useState(false)
+  const [merchant, setMerchant] = useState<PickedEntity>()
   const [sub, setSub] = useState<PickedEntity>()
+  const merchantValue = resolvePicked(draft.merchantId, merchant, getMerchant)
   const subValue = resolvePicked(draft.subMerchantId, sub, getSub)
   const from = fromDateString(draft.paidFrom)
   const to = fromDateString(draft.paidTo)
@@ -55,10 +63,25 @@ export function SettlementItemFilters({
       }}
       onReset={onReset}
     >
-      <div className='grid grid-cols-1 gap-3 md:grid-cols-2'>
+      <div className='grid grid-cols-1 gap-3 md:grid-cols-3'>
+        <PickerTrigger
+          id='settlement-item-filter-merchant'
+          label='Merchant'
+          value={describePicked(merchantValue)}
+          placeholder='Tất cả Merchant'
+          onOpen={() => setPickingMerchant(true)}
+          // Đổi Master thì bỏ Sub đã chọn: Sub không thuộc Master bị BE từ chối 400.
+          onClear={() =>
+            onChange({
+              ...draft,
+              merchantId: undefined,
+              subMerchantId: undefined
+            })
+          }
+        />
         <PickerTrigger
           id='settlement-item-filter-sub'
-          label='Sub-merchant (bắt buộc)'
+          label='Sub-merchant'
           value={describePicked(subValue)}
           placeholder='Chọn Sub-merchant'
           onOpen={() => setPicking(true)}
@@ -98,8 +121,24 @@ export function SettlementItemFilters({
         </p>
       )}
       <AccessFilterActions />
+      <MerchantPickerDialog
+        open={pickingMerchant}
+        selectedId={draft.merchantId}
+        onCancel={() => setPickingMerchant(false)}
+        onSelect={(value) => {
+          setMerchant(toPickedEntity(value))
+          onChange({
+            ...draft,
+            merchantId: value.id,
+            subMerchantId:
+              value.id === draft.merchantId ? draft.subMerchantId : undefined
+          })
+          setPickingMerchant(false)
+        }}
+      />
       <SubMerchantPickerDialog
         open={picking}
+        merchantId={draft.merchantId}
         selectedId={draft.subMerchantId}
         onCancel={() => setPicking(false)}
         onSelect={(value) => {

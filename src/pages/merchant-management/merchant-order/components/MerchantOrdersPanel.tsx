@@ -1,7 +1,12 @@
 import { Can } from '@/app/permissions'
 import { getApiErrorDetail } from '@/app/utils/api-error'
 import { PlusOutlined } from '@components/icons'
-import { ButtonComponent, PopoverComponent, Table } from '@components/index'
+import {
+  ButtonComponent,
+  ExportCsvButton,
+  PopoverComponent,
+  Table
+} from '@components/index'
 import { useAccessMerchants } from '../../merchant-access/hooks/useAccessMerchants'
 import { AccessPageShell } from '../../merchant-access/components/AccessPageShell'
 import { createMerchantOrderColumns } from '../columns/merchantOrder.columns'
@@ -49,6 +54,16 @@ export function MerchantOrdersPanel({ onView, onAction, onCreate }: Props) {
               content='Quy trình trạng thái'
             />
           </PopoverComponent>
+          <Can
+            screen='MERCHANT_ORDER'
+            action='export'
+          >
+            <ExportCsvButton
+              onExport={data.exportCsv}
+              loading={data.isExporting}
+              disabled={!data.total}
+            />
+          </Can>
           <Can
             screen='MERCHANT_ORDER'
             action='create'

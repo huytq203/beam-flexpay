@@ -1,94 +1,62 @@
-import { useState } from 'react'
+import { Can } from '@/app/permissions'
+import type { WebhookListRow } from '@/app/services/merchantWebhookApi'
 import {
-  useGetGatewayMerchantsQuery,
-  type GatewayMerchant
-} from '@/app/services/merchantGatewayApi'
-import { ButtonComponent, CardComponent, Input, Table } from '@components/index'
-import { createWebhookMerchantColumns } from '../columns/webhookMerchant.columns'
-
-const PAGE_SIZE = 10
+  ButtonComponent,
+  CardComponent,
+  ExportCsvButton,
+  Table
+} from '@components/index'
+import { createWebhookListColumns } from '../columns/webhookList.columns'
+import { useWebhookList } from '../hooks/useWebhookList'
+import { WebhookListFilters } from './WebhookListFilters'
 
 interface WebhookListPanelProps {
-  onOpen: (merchant: GatewayMerchant) => void
+  onOpen: (row: WebhookListRow) => void
 }
 
 export function WebhookListPanel({ onOpen }: WebhookListPanelProps) {
-  const [page, setPage] = useState(1)
-  const [draft, setDraft] = useState({ name: '', code: '' })
-  const [applied, setApplied] = useState({ name: '', code: '' })
-  const query = useGetGatewayMerchantsQuery({
-    page,
-    size: PAGE_SIZE,
-    name: applied.name.trim() || undefined,
-    code: applied.code.trim() || undefined
-  })
-
-  const apply = () => {
-    setPage(1)
-    setApplied(draft)
-  }
-  const reset = () => {
-    setPage(1)
-    setDraft({ name: '', code: '' })
-    setApplied({ name: '', code: '' })
-  }
+  const list = useWebhookList()
+  const { query, page, pageSize } = list
 
   return (
     <>
       <CardComponent className='border border-border bg-background shadow-none'>
-        <form
-          className='grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_auto]'
-          onSubmit={(event) => {
-            event.preventDefault()
-            apply()
-          }}
-        >
-          <Input
-            aria-label='Tên Merchant'
-            placeholder='Tìm theo tên Merchant'
-            value={draft.name}
-            onChange={(event) =>
-              setDraft({ ...draft, name: event.target.value })
-            }
-          />
-          <Input
-            aria-label='Mã Merchant'
-            placeholder='Tìm theo mã Merchant'
-            value={draft.code}
-            onChange={(event) =>
-              setDraft({ ...draft, code: event.target.value })
-            }
-          />
-          <div className='flex gap-2'>
-            <ButtonComponent
-              type='default'
-              htmlType='button'
-              content='Xóa bộ lọc'
-              onClick={reset}
-            />
-            <ButtonComponent
-              htmlType='submit'
-              content='Tìm kiếm'
-            />
-          </div>
-        </form>
+        <WebhookListFilters
+          draft={list.draft}
+          onChange={list.setDraft}
+          onApply={list.apply}
+          onReset={list.reset}
+        />
       </CardComponent>
       <CardComponent className='border border-border bg-background shadow-none'>
-        <div className='mb-3 border-b border-border pb-3'>
-          <h1 className='text-base font-semibold text-foreground'>
-            Webhook (IPN) theo Merchant
-          </h1>
-          <p className='mt-1 text-xs text-muted-foreground'>
-            {query.data?.totalElements ?? 0} merchant · Cấu hình đọc riêng cho
-            từng Master trong trang. Mở chi tiết để sửa, xem Sub và lịch sử gửi.
-          </p>
+        <div className='mb-3 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3'>
+          <div>
+            <h1 className='text-base font-semibold text-foreground'>
+              Webhook (IPN) theo Merchant và Sub-merchant
+            </h1>
+            <p className='mt-1 text-xs text-muted-foreground'>
+              {query.data?.totalElements ?? 0} dòng · Sub-merchant chưa có cấu
+              hình riêng hiển thị URL kế thừa của Master. Mở chi tiết để sửa,
+              xóa cấu hình riêng của Sub và xem lịch sử gửi.
+            </p>
+          </div>
+          <Can
+            screen='MERCHANT_WEBHOOK'
+            action='export'
+          >
+            <ExportCsvButton
+              onExport={list.exportCsv}
+              loading={list.isExporting}
+              disabled={!query.data?.totalElements}
+            />
+          </Can>
         </div>
         {query.isError && (
           <div
             role='alert'
             className='mb-3 flex items-center justify-between gap-2 text-sm text-danger-strong'
           >
-            Không thể tải danh sách merchant.
+            Không thể tải danh sách webhook.
             <ButtonComponent
               type='default'
               size='small'
@@ -97,20 +65,22 @@ export function WebhookListPanel({ onOpen }: WebhookListPanelProps) {
             />
           </div>
         )}
-        <Table<GatewayMerchant>
-          rowKey='id'
+        <Table<WebhookListRow>
+          rowKey={(row) => `${row.merchantId}:${row.subMerchantId ?? ''}`}
           size='small'
           loading={query.isFetching}
           onRefresh={query.refetch}
           dataSource={query.data?.content ?? []}
+          scroll={{ x: 'max-content' }}
           pagination={{
             current: page,
-            pageSize: PAGE_SIZE,
+            pageSize,
             total: query.data?.totalElements ?? 0,
-            showSizeChanger: false,
-            onChange: setPage
+            showSizeChanger: true,
+            pageSizeOptions: [20, 50, 100],
+            onChange: list.paginate
           }}
-          columns={createWebhookMerchantColumns(page, PAGE_SIZE, onOpen)}
+          columns={createWebhookListColumns(page, pageSize, onOpen)}
         />
       </CardComponent>
     </>

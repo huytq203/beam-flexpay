@@ -5,9 +5,12 @@ import type {
 } from '../types/settlementItem.types'
 
 export const SETTLEMENT_FILTER_KEYS = [
+  'merchantId',
   'subMerchantId',
   'paidFrom',
-  'paidTo'
+  'paidTo',
+  'sortBy',
+  'sortDirection'
 ] as const
 export type SettlementFilterKey = (typeof SETTLEMENT_FILTER_KEYS)[number]
 
@@ -56,10 +59,13 @@ export const SETTLEMENT_LINE_KIND_LABELS: Record<SettlementLineKind, string> = {
   FEE_REFUND: 'Hoàn phí'
 }
 
+/** Khoảng ngày thanh toán tối đa (gồm hai đầu); BE từ chối quá 92 ngày. */
+export const SETTLEMENT_MAX_RANGE_DAYS = 92
+
 export const SETTLEMENT_FILTER_MESSAGES = {
-  sub: 'Vui lòng chọn Sub-merchant.',
   dates: 'Vui lòng chọn đủ khoảng ngày thanh toán (từ ngày, đến ngày).',
-  range: 'Ngày kết thúc không được trước ngày bắt đầu.'
+  range: 'Ngày kết thúc không được trước ngày bắt đầu.',
+  span: `Khoảng ngày thanh toán tối đa ${SETTLEMENT_MAX_RANGE_DAYS} ngày.`
 } as const
 
 export const SETTLEMENT_INTEGRITY_CHECKS = [

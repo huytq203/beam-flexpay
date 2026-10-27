@@ -38,7 +38,7 @@ export const matchesSearch = (
 }
 
 /**
- * Gom các dòng BE trả về thành nhóm để dễ đọc 67 dòng. Không thêm, bớt hay đổi dòng:
+ * Gom các dòng BE trả về thành nhóm để dễ đọc 68 dòng. Không thêm, bớt hay đổi dòng:
  * mã chưa biết rơi vào nhóm "Khác". Nhóm xếp theo dòng có `sortOrder` nhỏ nhất.
  */
 export const groupMatrixRows = (rows: AdminFunctionRow[]): MatrixGroup[] => {

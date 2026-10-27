@@ -1,11 +1,16 @@
-import { ButtonComponent, Table } from '@components/index'
+import { Can } from '@/app/permissions'
+import { ButtonComponent, ExportCsvButton, Table } from '@components/index'
 import { AccessPageShell } from '../../merchant-access/components/AccessPageShell'
 import { useAccessMerchants } from '../../merchant-access/hooks/useAccessMerchants'
 import { createSettlementItemColumns } from '../columns/settlementItem.columns'
 import { SETTLEMENT_PAGE_SIZE_OPTIONS } from '../constants/settlementItem.constants'
 import { useSettlementItemList } from '../hooks/useSettlementItemList'
 import type { SettlementItemRow } from '../types/settlementItem.types'
-import { describeSettlementError } from '../utils/settlementItem.utils'
+import {
+  describeSettlementError,
+  fromTableSorter
+} from '../utils/settlementItem.utils'
+import { SettlementItemBySub } from './SettlementItemBySub'
 import { SettlementItemFilters } from './SettlementItemFilters'
 import { SettlementItemTotals } from './SettlementItemTotals'
 
@@ -14,12 +19,13 @@ interface Props {
 }
 
 export function SettlementItemsPanel({ onView }: Props) {
-  const { getSubMerchant } = useAccessMerchants()
+  const { getMerchant, getSubMerchant } = useAccessMerchants()
   const data = useSettlementItemList()
   const { listQuery, totalsQuery } = data
   const columns = createSettlementItemColumns({
     page: data.page,
     pageSize: data.pageSize,
+    sort: data.sort,
     onView
   })
 
@@ -27,11 +33,23 @@ export function SettlementItemsPanel({ onView }: Props) {
     <AccessPageShell
       title='Danh sách mục quyết toán'
       count={data.hasQuery ? listQuery.data?.totalElements : undefined}
-      actions={null}
+      actions={
+        <Can
+          screen='MERCHANT_SETTLEMENT_ITEM'
+          action='export'
+        >
+          <ExportCsvButton
+            onExport={data.exportCsv}
+            loading={data.isExporting}
+            disabled={!data.hasQuery || !data.total}
+          />
+        </Can>
+      }
       toolbar={
         <SettlementItemFilters
           draft={data.draft}
           error={data.filterError}
+          getMerchant={getMerchant}
           getSub={getSubMerchant}
           onChange={data.setDraft}
           onApply={data.apply}
@@ -43,10 +61,13 @@ export function SettlementItemsPanel({ onView }: Props) {
         <SettlementItemTotals
           totals={totalsQuery.data}
           loading={totalsQuery.isFetching}
-          // Sub sai/ngoài phạm vi làm cả hai API lỗi: chỉ báo một lần ở danh sách.
+          // Merchant/Sub sai hoặc ngoài phạm vi làm cả hai API lỗi: chỉ báo một lần ở danh sách.
           error={listQuery.isError ? undefined : totalsQuery.error}
           onRetry={() => void totalsQuery.refetch()}
         />
+      )}
+      {data.hasQuery && (
+        <SettlementItemBySub rows={totalsQuery.data?.bySub ?? []} />
       )}
       {listQuery.isError && (
         <div
@@ -69,9 +90,12 @@ export function SettlementItemsPanel({ onView }: Props) {
         locale={{
           emptyText: data.hasQuery
             ? 'Không có mục quyết toán nào trong khoảng ngày đã chọn'
-            : 'Chọn Sub-merchant và khoảng ngày thanh toán rồi bấm Tìm kiếm'
+            : 'Chọn khoảng ngày thanh toán (tối đa 92 ngày) rồi bấm Tìm kiếm'
         }}
         onRefresh={data.hasQuery ? listQuery.refetch : undefined}
+        onChange={(_pagination, _filters, sorter, extra) => {
+          if (extra.action === 'sort') data.setSort(fromTableSorter(sorter))
+        }}
         pagination={{
           current: data.page,
           pageSize: data.pageSize,
@@ -85,9 +109,10 @@ export function SettlementItemsPanel({ onView }: Props) {
         size='small'
       />
       <p className='mt-2 text-xs text-muted-foreground'>
-        * Sắp xếp cố định theo thời điểm thanh toán mới nhất trước. Chỉ gồm mục
-        thuộc phạm vi được gán cho bạn; dòng tổng tính trên toàn bộ khoảng lọc
-        và không trừ các dòng hoàn doanh thu.
+        * Mặc định xếp theo thời điểm thanh toán mới nhất trước; bấm tiêu đề cột
+        để sắp xếp theo thời điểm thanh toán, khách trả hoặc phí. Bỏ trống
+        Merchant và Sub là mọi mục thuộc phạm vi được gán cho bạn; dòng tổng
+        tính trên toàn bộ khoảng lọc và không trừ các dòng hoàn doanh thu.
       </p>
     </AccessPageShell>
   )

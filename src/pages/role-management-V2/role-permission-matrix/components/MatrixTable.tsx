@@ -6,6 +6,7 @@ import type {
   MatrixGroup
 } from '../types/rolePermissionMatrix.types'
 import { toTableRows } from '../utils/matrixGroups.utils'
+import { MatrixLegend } from './MatrixLegend'
 
 interface Props {
   roles: AdminRole[]
@@ -47,11 +48,7 @@ export function MatrixTable({
           onChange={(event) => onSearch(event.target.value)}
         />
       </div>
-      <p className='text-xs text-muted-foreground'>
-        R xem, C tạo mới, U sửa, D xóa/khóa, A phê duyệt, E xuất file, dấu gạch
-        là không có quyền. (Assigned) là chỉ áp dụng trên merchant được gán cho
-        chính người dùng.
-      </p>
+      <MatrixLegend />
       {isError ? (
         <div role='alert'>
           <p>Không tải được ma trận phân quyền.</p>

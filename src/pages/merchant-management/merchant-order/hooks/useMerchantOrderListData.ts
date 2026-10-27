@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useGetMerchantOrderQuery } from '@/app/services/apiOrderMerchant.api'
+import { useExportMerchantOrdersMutation } from '@services/apiExportCsv'
+import { useExportCsv } from '@hooks/useExportCsv'
 import { useUrlFilters } from '@hooks/useUrlFilters'
 import {
   EMPTY_ORDER_FILTERS,
@@ -22,13 +24,24 @@ export function useMerchantOrderListData() {
   const filters = fromOrderUrlFilters(url.filters)
   const [draft, setDraft] = useState<OrderFilters>(filters)
   // BE chỉ nhận đúng các bộ lọc này; chuỗi rỗng không gửi để khỏi lọc nhầm.
-  const ordersQuery = useGetMerchantOrderQuery({
-    page: url.page,
-    size: url.size,
+  const params = {
     merchantCode: filters.merchantCode.trim() || undefined,
     merchantId: filters.merchantId,
     orderCode: filters.orderCode.trim() || undefined,
     status: filters.status
+  }
+  const ordersQuery = useGetMerchantOrderQuery({
+    page: url.page,
+    size: url.size,
+    ...params
+  })
+  // Xuất CSV dùng đúng bộ lọc đang áp, không phân trang.
+  const [triggerExport, { reset: resetExport }] =
+    useExportMerchantOrdersMutation()
+  const exporter = useExportCsv({
+    trigger: triggerExport,
+    reset: resetExport,
+    filenamePrefix: 'merchant-orders'
   })
 
   return {
@@ -38,6 +51,8 @@ export function useMerchantOrderListData() {
     pageSize: url.size,
     setPagination: url.setPagination,
     ordersQuery,
+    isExporting: exporter.isExporting,
+    exportCsv: (): void => void exporter.exportFile(params),
     orders: ordersQuery.data?.content ?? [],
     total: ordersQuery.data?.totalElements ?? 0,
     apply: (): void => url.applyFilters(toOrderUrlFilters(draft)),

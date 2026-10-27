@@ -184,18 +184,6 @@ const roleManagementV2: ItemTypeCustom = {
       label: 'Quản lý quyền'
     },
     {
-      key: 'role-permission-matrix',
-      screen: 'ROLE_PERMISSION_MATRIX',
-      icon: (
-        <SlidersHorizontalIcon
-          size={size}
-          weight={weight}
-          color={COlOR}
-        />
-      ),
-      label: 'Ma trận phân quyền'
-    },
-    {
       key: 'sales-assignment',
       screen: 'MERCHANT_ASSIGNMENT',
       link: `${MERCHANT}/sales-assignment`,
@@ -649,6 +637,20 @@ const merchantUserManagement: ItemTypeCustom = {
         />
       ),
       label: 'Nhóm quyền Merchant'
+    },
+    {
+      key: 'role-permission-matrix',
+      screen: 'ROLE_PERMISSION_MATRIX',
+      // Route vẫn nằm dưới role-v2; chỉ đổi chỗ đặt trên sidebar.
+      link: `/${_ROLEMANAGEMENT_V2}/role-permission-matrix`,
+      icon: (
+        <SlidersHorizontalIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Ma trận phân quyền'
     }
   ]
 }

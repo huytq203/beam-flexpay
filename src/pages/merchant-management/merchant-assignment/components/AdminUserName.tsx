@@ -1,11 +1,10 @@
 import { useGetUserByIdQuery } from '@services/apiUserManagement'
+import { SYSTEM_USER_ID } from '../utils/assignmentDisplay.utils'
 import { toAdminUserName } from '../utils/merchantAssignment.utils'
 
-/** BE ghi UUID toàn số 0 cho thao tác do hệ thống (seed, job) thực hiện. */
-const SYSTEM_USER_ID = '00000000-0000-0000-0000-000000000000'
-
 /**
- * BE chỉ trả UUID (Keycloak subject), không trả tên, nên tra danh bạ admin.
+ * Dùng cho cột "Gán bởi" của danh sách theo Merchant, nơi BE chỉ trả UUID
+ * (Keycloak subject), không trả tên, nên tra danh bạ admin.
  * Tra không ra (user đã xóa, không đủ quyền xem) thì hiện UUID để không mất dấu.
  */
 export function AdminUserName({ userId }: { userId?: string | null }) {

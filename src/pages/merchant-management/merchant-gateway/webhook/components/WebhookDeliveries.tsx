@@ -5,11 +5,21 @@ import { createWebhookDeliveryColumns } from '../columns/webhookDelivery.columns
 
 const PAGE_SIZE = 20
 
-/** `page` của API bắt đầu từ 0; lịch sử chỉ giữ khoảng 30 ngày và chưa lọc theo Sub. */
-export function WebhookDeliveries({ merchantId }: { merchantId: string }) {
+/** `page` của API bắt đầu từ 0; lịch sử chỉ giữ khoảng 30 ngày. */
+interface WebhookDeliveriesProps {
+  merchantId: string
+  /** Có thì chỉ hiện các lần giao của đơn thuộc Sub này; bỏ trống = cả cây Master. */
+  subMerchantId?: string
+}
+
+export function WebhookDeliveries({
+  merchantId,
+  subMerchantId
+}: WebhookDeliveriesProps) {
   const [page, setPage] = useState(0)
   const query = useGetWebhookDeliveriesQuery({
     merchantId,
+    subMerchantId,
     page,
     size: PAGE_SIZE
   })
@@ -17,9 +27,12 @@ export function WebhookDeliveries({ merchantId }: { merchantId: string }) {
   return (
     <div className='space-y-2'>
       <p className='text-xs text-muted-foreground'>
-        Mỗi dòng là một sự kiện, hiển thị kết quả lần gửi gần nhất. Bao gồm đơn
-        của mọi Sub thuộc Master, lưu khoảng 30 ngày. Nếu toàn &quot;Chờ
-        gửi&quot;, kiểm tra worker gửi IPN đã bật ở môi trường này chưa.
+        Mỗi dòng là một sự kiện, hiển thị kết quả lần gửi gần nhất.{' '}
+        {subMerchantId
+          ? 'Chỉ gồm đơn của Sub-merchant đang chọn, lưu khoảng 30 ngày.'
+          : 'Bao gồm đơn của mọi Sub thuộc Master, lưu khoảng 30 ngày.'}{' '}
+        Nếu toàn &quot;Chờ gửi&quot;, kiểm tra worker gửi IPN đã bật ở môi
+        trường này chưa.
       </p>
       {query.isError && (
         <div

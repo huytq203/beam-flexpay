@@ -5,7 +5,10 @@ import {
   EntityPickerModal,
   usePickerSearch
 } from '@components/index'
-import { ADMIN_PICKER_SORT_BY } from '../constants/merchantAssignment.constants'
+import {
+  ADMIN_PICKER_SORT_BY,
+  ASSIGNEE_ROLE
+} from '../constants/merchantAssignment.constants'
 import type { AdminUserOption } from '../types/merchantAssignment.types'
 import { toAdminUserOption } from '../utils/merchantAssignment.utils'
 
@@ -52,13 +55,14 @@ export function AdminUserPickerDialog(props: Props) {
 
 function AdminUserPickerBody({ selectedId, onCancel, onSelect }: Props) {
   const search = usePickerSearch()
-  // `status: true` chỉ lấy tài khoản còn hoạt động.
+  // `status: true` chỉ lấy tài khoản còn hoạt động; `role` chỉ lấy người có vai trò Kinh doanh.
   const query = useGetUserQuery({
     page: search.params.page,
     size: search.params.size,
     sortBy: ADMIN_PICKER_SORT_BY,
     sortDirection: 'DESC',
     status: true,
+    role: ASSIGNEE_ROLE,
     ...(search.params.name ? { keyword: search.params.name } : {})
   })
 
@@ -66,7 +70,7 @@ function AdminUserPickerBody({ selectedId, onCancel, onSelect }: Props) {
     <EntityPickerContent<AdminUserOption>
       entityLabel='người dùng'
       keywordOnly
-      note='Chỉ hiển thị tài khoản nội bộ đang hoạt động.'
+      note='Chỉ hiển thị tài khoản nội bộ đang hoạt động có vai trò Kinh doanh (SALES).'
       columns={columns}
       search={search}
       selectedId={selectedId}

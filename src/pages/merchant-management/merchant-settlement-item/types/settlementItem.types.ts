@@ -18,7 +18,11 @@ export interface SettlementItemRow {
   id: string
   orderId: string
   orderCode: string
+  merchantId: string
+  merchantName: string | null
   subMerchantId: string
+  subMerchantCode: string | null
+  subMerchantName: string | null
   paidAt: string
   grossAmount: number
   feeAmount: number
@@ -32,14 +36,26 @@ export interface SettlementItemRow {
   holdReleaseAt: string
 }
 
-/** Dòng tổng của toàn bộ khoảng lọc, không phải tổng của trang. */
-export interface SettlementItemTotals {
+export interface SettlementItemSubTotals {
+  subMerchantId: string
+  subMerchantCode: string | null
+  subMerchantName: string | null
   count: number
   grossAmount: number
   feeAmount: number
   recognisedAmount: number
   firstTrancheAmount: number
   heldAmount: number
+}
+
+/** Dòng tổng của toàn bộ khoảng lọc, không phải tổng của trang. */
+export interface SettlementItemTotals
+  extends Omit<
+    SettlementItemSubTotals,
+    'subMerchantId' | 'subMerchantCode' | 'subMerchantName'
+  > {
+  /** Chỉ có khi tra theo Merchant (không chọn Sub); ngược lại là mảng rỗng. */
+  bySub: SettlementItemSubTotals[]
 }
 
 export interface SettlementItemLine {
@@ -76,23 +92,42 @@ export interface SettlementItemDetail {
   singleItemForPayment: boolean
 }
 
-/** Cả ba tham số đều bắt buộc: thiếu thì BE trả 500. */
+/**
+ * Khoảng ngày bắt buộc (tối đa 92 ngày); Merchant và Sub tùy chọn, bỏ cả hai là
+ * mọi thứ trong phạm vi được gán. Sub không thuộc Merchant đã chọn: 400.
+ */
 export interface SettlementItemQuery {
-  subMerchantId: string
+  merchantId?: string
+  subMerchantId?: string
   paidFrom: string
   paidTo: string
 }
 
-export interface SettlementItemListParams extends SettlementItemQuery {
+export type SettlementSortBy = 'paidAt' | 'customerPaid' | 'fee'
+export type SettlementSortDirection = 'ASC' | 'DESC'
+
+/** Sắp xếp chỉ list và export nhận; `/totals` không. */
+export interface SettlementItemSort {
+  sortBy?: SettlementSortBy
+  sortDirection?: SettlementSortDirection
+}
+
+export interface SettlementItemListParams
+  extends SettlementItemQuery,
+    SettlementItemSort {
   page: number
   size: number
 }
 
+export type SettlementItemExportParams = SettlementItemQuery &
+  SettlementItemSort
+
 /** Bộ lọc nháp trên form; ngày dạng `YYYY-MM-DD`. */
 export interface SettlementItemFilters {
+  merchantId?: string
   subMerchantId?: string
   paidFrom?: string
   paidTo?: string
 }
 
-export type SettlementItemFilterError = 'sub' | 'dates' | 'range'
+export type SettlementItemFilterError = 'dates' | 'range' | 'span'

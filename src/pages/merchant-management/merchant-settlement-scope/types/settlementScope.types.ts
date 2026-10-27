@@ -30,6 +30,41 @@ export interface ScopeConfigView {
 export interface RemovalPreview {
   current: ScopeConfigView
   afterRemoval: ScopeConfigView
+  /** `true` khi người gọi thiếu quyền APPROVE: `DELETE` sẽ bị 403 (mã 5793). */
+  requiresApproval: boolean
+  /** Tiếng Việt, hiển thị nguyên văn. */
+  reason: string
+}
+
+/** Nguồn của dòng trong danh sách Master (khác `ScopeSource` là cấp nguồn của từng giá trị). */
+export type ConfigListSource = 'OWN' | 'INHERITED' | 'SYSTEM_DEFAULT'
+
+/** Một Master trong `GET /settlement-config`, kể cả Master chưa có dòng cấu hình riêng. */
+export interface ConfigListRow {
+  merchantId: string
+  merchantCode: string
+  merchantName: string
+  merchantStatus: string
+  source: ConfigListSource
+  active: boolean
+  settlementMode: ScopeField<SettlementMode>
+  autoFrequency: ScopeField<AutoFrequency>
+  holdReason: ScopeField<string>
+  holdbackDays: ScopeField<number>
+  /** Số lần thay đổi trong lịch sử, chỉ tăng. */
+  version: number
+  updatedAt?: string | null
+  /** Null khi Master chưa có dòng riêng. */
+  updatedBy?: string | null
+}
+
+export interface ConfigListQuery {
+  /** Trang bắt đầu từ 1. */
+  page: number
+  size: number
+  /** Khớp một phần mã/tên Master, tối đa 100 ký tự. */
+  search?: string
+  source?: ConfigListSource
 }
 
 /** Chỉ bốn trường quyết toán; ba trường hạn mức BE từ chối nên không khai báo. */
