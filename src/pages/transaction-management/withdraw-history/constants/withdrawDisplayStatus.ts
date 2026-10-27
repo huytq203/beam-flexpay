@@ -20,8 +20,8 @@ const TONE_CLASS: Record<WithdrawalStatusTone, string> = {
 const WITHDRAWAL_STEPS = [
   WithdrawalStatus.AUTHORIZED,
   WithdrawalStatus.PENDING_APPROVAL,
-  // WithdrawalStatus.APPROVED,
-  // WithdrawalStatus.PAYING,
+  WithdrawalStatus.APPROVED,
+  WithdrawalStatus.PAYING,
   WithdrawalStatus.RECONCILIATION_REQUIRED
 ] as const
 

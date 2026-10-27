@@ -12,8 +12,8 @@ export const WithdrawalStatus = {
   /** Vượt ngưỡng: dừng lại, chưa gửi gì sang ngân hàng, chờ admin quyết định. */
   PENDING_APPROVAL: 'PENDING_APPROVAL',
   /** Đã duyệt và ĐANG chi — chưa có đồng nào rời khỏi ngân hàng. */
-  // APPROVED: 'APPROVED',
-  // PAYING: 'PAYING',
+  APPROVED: 'APPROVED',
+  PAYING: 'PAYING',
   /** Trạng thái thành công duy nhất: tiền đã ra, sổ đã ghi. */
   POSTED: 'POSTED',
   FAILED: 'FAILED',
@@ -57,20 +57,20 @@ export const WITHDRAWAL_STATUS_PRESENTATION: Record<
       'Lệnh vượt ngưỡng nên dừng lại trước khi chi. Chưa gửi gì sang ngân hàng, tiền vẫn bị khoá trong ví khách.',
     tone: 'wait'
   },
-  // [WithdrawalStatus.APPROVED]: {
-  //   label: 'Đã duyệt — đang chi',
-  //   fundsLabel: 'Bị khoá, chưa trừ',
-  //   guidance:
-  //     'Đã duyệt và đang chi — chưa có đồng nào rời khỏi ngân hàng. Chỉ khi về “Đã chi — hoàn tất” thì tiền mới thật sự ra.',
-  //   tone: 'wait'
-  // },
-  // [WithdrawalStatus.PAYING]: {
-  //   label: 'Đang chi',
-  //   fundsLabel: 'Bị khoá, chưa trừ',
-  //   guidance:
-  //     'Hệ thống đang gọi ngân hàng. Tiền vẫn bị khoá cho tới khi có kết quả.',
-  //   tone: 'wait'
-  // },
+  [WithdrawalStatus.APPROVED]: {
+    label: 'Đã duyệt — đang chi',
+    fundsLabel: 'Bị khoá, chưa trừ',
+    guidance:
+      'Đã duyệt và đang chi — chưa có đồng nào rời khỏi ngân hàng. Chỉ khi về “Đã chi — hoàn tất” thì tiền mới thật sự ra.',
+    tone: 'wait'
+  },
+  [WithdrawalStatus.PAYING]: {
+    label: 'Đang chi',
+    fundsLabel: 'Bị khoá, chưa trừ',
+    guidance:
+      'Hệ thống đang gọi ngân hàng. Tiền vẫn bị khoá cho tới khi có kết quả.',
+    tone: 'wait'
+  },
   [WithdrawalStatus.POSTED]: {
     label: 'Đã chi — hoàn tất',
     fundsLabel: 'Đã trừ khỏi ví',

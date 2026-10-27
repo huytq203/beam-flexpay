@@ -211,9 +211,10 @@ describe('Lịch sử rút tiền — xuất CSV', () => {
     expect(screen.queryByRole('radio')).not.toBeInTheDocument()
   })
 
-  it('ẩn nút Xử lý chi tiền khi lệnh đang chờ duyệt', () => {
+  it('lệnh chờ duyệt: thay nút Xử lý chi tiền bằng Phê duyệt, bấm mở popover Duyệt/Từ chối', async () => {
     mocks.hasRow = true
     mocks.displayStatus = 'PENDING_APPROVAL'
+    const user = userEvent.setup()
     renderScreen()
 
     expect(
@@ -222,5 +223,22 @@ describe('Lịch sử rút tiền — xuất CSV', () => {
     expect(
       screen.getByRole('button', { name: 'Xem chi tiết' })
     ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /Phê duyệt lệnh rút/ }))
+
+    expect(
+      await screen.findByRole('button', { name: 'Duyệt' })
+    ).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Từ chối' }))
+    expect(await screen.findByText('Từ chối lệnh rút')).toBeInTheDocument()
+  })
+
+  it('lệnh không chờ duyệt thì không có nút Phê duyệt', () => {
+    mocks.hasRow = true
+    renderScreen()
+
+    expect(
+      screen.queryByRole('button', { name: /Phê duyệt lệnh rút/ })
+    ).not.toBeInTheDocument()
   })
 })
