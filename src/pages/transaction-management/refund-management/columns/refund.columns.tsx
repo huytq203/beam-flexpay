@@ -1,6 +1,7 @@
 import { RefundStatusBadge } from '@components/status-badge/RefundStatusBadge'
 import type { TableComponentProps } from '@components/ui/table-component/TableComponent'
 import { REFUND_TYPE_LABELS } from '@constants/refund.constant'
+import WalletLink from '@components/wallet-link/WalletLink'
 import { CellLines } from '../components/CellLines'
 import { PartyAmountLines } from '../components/PartyAmountLines'
 import { RefundActions } from '../components/RefundActions'
@@ -74,8 +75,25 @@ export const createRefundColumns = (
       key: 'customer',
       render: (_value, record) => (
         <CellLines
-          primary={record.customerName || '-'}
-          secondary={[record.customerPhone]}
+          primary={
+            <WalletLink
+              ownerId={record.userId ?? record.merchantId}
+              username={record.customerPhone}
+            >
+              {record.customerName || '-'}
+            </WalletLink>
+          }
+          secondary={[
+            record.customerPhone && (
+              <WalletLink
+                key='phone'
+                ownerId={record.userId ?? record.merchantId}
+                username={record.customerPhone}
+              >
+                {record.customerPhone}
+              </WalletLink>
+            )
+          ]}
         />
       )
     },

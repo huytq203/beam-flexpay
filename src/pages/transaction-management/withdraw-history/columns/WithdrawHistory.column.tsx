@@ -1,4 +1,5 @@
 import { EyeFilled } from '@components/icons'
+import WalletLink from '@components/wallet-link/WalletLink'
 import {
   ButtonComponent,
   CopyableText,
@@ -62,7 +63,12 @@ const getColumn = ({
       const from = record.from
       return (
         <div className='text-center'>
-          <MaskText value={from?.displayName} />
+          <WalletLink
+            ownerId={from?.id}
+            username={from?.username}
+          >
+            <MaskText value={from?.displayName} />
+          </WalletLink>
           {/* <p className="font-medium">{from?.displayName || from?.username || '--'}</p> */}
           {/* <span className={`text-xs px-1.5 py-0.5 rounded-sm ${from?.type === 'USER' ? 'text-violet-700 bg-violet-50 border border-violet-300' : 'text-gray-500 bg-gray-50 border border-gray-200'}`}>
                         {from?.type ?? '--'}

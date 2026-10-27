@@ -1,5 +1,5 @@
 import { DialogModal, TextArea } from '@components/index'
-import { AdminUserName } from '../../merchant-assignment/components/AdminUserName'
+import { AdminUserName } from './AdminUserName'
 import type { useHoldRuleDecisions } from '../hooks/useHoldRuleDecisions'
 import { HoldRuleConfigList } from './HoldRuleConfigList'
 import { HoldRuleTargetCell } from './HoldRuleTargetCell'

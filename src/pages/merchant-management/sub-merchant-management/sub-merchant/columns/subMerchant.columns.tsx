@@ -8,7 +8,6 @@ import {
 } from '@phosphor-icons/react'
 
 import { Can } from '@/app/permissions'
-import { AssignmentRowButton } from '../../../merchant-assignment/components/AssignmentRowButton'
 import {
   ButtonComponent,
   TagComponent,
@@ -24,7 +23,6 @@ interface SubMerchantColumnActions {
   onView: (row: SubMerchantRow) => void
   onEdit: (row: SubMerchantRow) => void
   onStatus: (row: SubMerchantRow) => void
-  onAssignment: (row: SubMerchantRow) => void
 }
 
 const renderActionButton = (
@@ -105,8 +103,7 @@ const BASE_COLUMNS: ColumnType<SubMerchantRow>[] = [
 const createActionColumn = ({
   onView,
   onEdit,
-  onStatus,
-  onAssignment
+  onStatus
 }: SubMerchantColumnActions): ColumnType<SubMerchantRow> => ({
   title: 'Thao tác',
   align: 'center',
@@ -131,10 +128,6 @@ const createActionColumn = ({
             () => onView(row)
           )}
         </Can>
-        <AssignmentRowButton
-          name={row.name}
-          onClick={() => onAssignment(row)}
-        />
         {row.status !== 'SUSPENDED_BY_PARENT' && (
           <Can
             screen='MERCHANT_SUB_MERCHANT'

@@ -636,15 +636,6 @@ const merchantManagement = {
                 '@pages/merchant-management/merchant-settlement-item/pages/SettlementItemListPage'
               )
           )
-        },
-        {
-          path: SCREENS.MERCHANT_ASSIGNMENT.path,
-          element: page(
-            () =>
-              import(
-                '@pages/merchant-management/merchant-assignment/pages/MerchantAssignmentPage'
-              )
-          )
         }
       ]
     }

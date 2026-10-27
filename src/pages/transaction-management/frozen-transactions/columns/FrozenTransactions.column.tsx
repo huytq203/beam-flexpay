@@ -15,6 +15,7 @@ import {
 import { FreezeItem } from '@type/freeze.type'
 import { ColumnType } from 'antd/es/table'
 import dayjs from 'dayjs'
+import WalletLink from '@components/wallet-link/WalletLink'
 
 type FreezeRow = { no: number } & FreezeItem
 
@@ -53,10 +54,12 @@ export const getColumn = ({
     key: 'customer',
     render: (_, record) => (
       <div className='flex flex-col gap-1'>
-        <MaskText
-          active={true}
-          value={record.ownerUsername}
-        />
+        <WalletLink walletId={record.accountId}>
+          <MaskText
+            active={true}
+            value={record.ownerUsername}
+          />
+        </WalletLink>
         <StatusBadge
           className='text-[12px]'
           status={record.ownerType as OwnerType}

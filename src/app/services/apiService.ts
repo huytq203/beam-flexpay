@@ -70,7 +70,7 @@ export const apiUserWallet = createApi({
 export const apiMerchant = createApi({
   reducerPath: 'merchant',
   baseQuery: fetchBaseQueryMerchant,
-  tagTypes: ['merchant', 'Order', 'Assignment'],
+  tagTypes: ['merchant', 'Order'],
   endpoints: () => ({}),
   refetchOnMountOrArgChange: true
 })

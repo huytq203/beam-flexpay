@@ -34,8 +34,7 @@ describe('cột thao tác màn Merchant', () => {
             onEdit: vi.fn(),
             onView: vi.fn(),
             onApprove,
-            onTerminate: vi.fn(),
-            onAssignment: vi.fn()
+            onTerminate: vi.fn()
           })}
         />
       </Provider>
@@ -53,18 +52,6 @@ describe('cột thao tác màn Merchant', () => {
     renderColumns(['EWALLET:MERCHANT:VIEW'])
     expect(screen.getByLabelText('Xem chi tiết merchant')).toBeInTheDocument()
     expect(screen.queryByLabelText('Sửa merchant')).toBeNull()
-  })
-
-  it('chỉ hiện Sales phụ trách khi có quyền xem gán', () => {
-    renderColumns(['EWALLET:MERCHANT:VIEW'])
-    expect(screen.queryByLabelText('Sales phụ trách Merchant A')).toBeNull()
-  })
-
-  it('hiện Sales phụ trách khi có quyền xem gán', () => {
-    renderColumns(['EWALLET:MERCHANT_ASSIGNMENT:VIEW'])
-    expect(
-      screen.getByLabelText('Sales phụ trách Merchant A')
-    ).toBeInTheDocument()
   })
 
   it('chỉ hiện phê duyệt cho hồ sơ chờ duyệt và có quyền', () => {

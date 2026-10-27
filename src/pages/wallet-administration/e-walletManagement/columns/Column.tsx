@@ -1,4 +1,5 @@
 import React from 'react'
+import WalletLink from '@components/wallet-link/WalletLink'
 import { ColumnType } from 'antd/es/table'
 import { MoreOutlined } from '@components/icons'
 import {
@@ -71,16 +72,20 @@ export const getColumn = ({
         return (
           <div className='flex min-w-0 max-w-full flex-col gap-1'>
             <div className='flex min-w-0 items-center gap-1.5'>
-              <TooltipComponent title={ownerName}>
-                <span className='min-w-0 truncate text-xs font-semibold text-foreground'>
-                  {ownerName}
-                </span>
-              </TooltipComponent>
+              <WalletLink walletId={record.id}>
+                <TooltipComponent title={ownerName}>
+                  <span className='min-w-0 truncate text-xs font-semibold'>
+                    {ownerName}
+                  </span>
+                </TooltipComponent>
+              </WalletLink>
 
               {!isSystem && record.ownerFullName && (
-                <span className='text-xs text-muted-foreground font-semibold'>
-                  - {record.ownerUsername}
-                </span>
+                <WalletLink walletId={record.id}>
+                  <span className='text-xs font-semibold'>
+                    - {record.ownerUsername}
+                  </span>
+                </WalletLink>
               )}
             </div>
 

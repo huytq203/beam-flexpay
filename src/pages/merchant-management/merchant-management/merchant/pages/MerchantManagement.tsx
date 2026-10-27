@@ -18,8 +18,6 @@ import {
   useExportMerchantsMutation
 } from '@services/apiMerchant'
 import type { ContentMerchant } from '@type/merchant'
-import { AssignmentScopeDrawer } from '../../../merchant-assignment/components/AssignmentScopeDrawer'
-import { toMasterScope } from '../../../merchant-assignment/utils/merchantAssignment.utils'
 
 const MerchantManagement = () => {
   const {
@@ -42,8 +40,6 @@ const MerchantManagement = () => {
   const [merchantToApprove, setMerchantToApprove] =
     useState<ContentMerchant | null>(null)
   const [merchantToTerminate, setMerchantToTerminate] =
-    useState<ContentMerchant | null>(null)
-  const [merchantToAssign, setMerchantToAssign] =
     useState<ContentMerchant | null>(null)
   const navigate = useNavigate()
 
@@ -122,8 +118,7 @@ const MerchantManagement = () => {
             onEdit: (id) => navigate(`create/${id}`),
             onView: (id) => navigate(`detail/${id}`),
             onApprove: setMerchantToApprove,
-            onTerminate: setMerchantToTerminate,
-            onAssignment: setMerchantToAssign
+            onTerminate: setMerchantToTerminate
           })}
           dataSource={data}
           loading={isFetching}
@@ -136,10 +131,6 @@ const MerchantManagement = () => {
           }}
         />
       </CardComponent>
-      <AssignmentScopeDrawer
-        scope={merchantToAssign ? toMasterScope(merchantToAssign) : undefined}
-        onClose={() => setMerchantToAssign(null)}
-      />
       <TerminateMerchantDialog
         merchant={merchantToTerminate}
         onClose={() => setMerchantToTerminate(null)}
