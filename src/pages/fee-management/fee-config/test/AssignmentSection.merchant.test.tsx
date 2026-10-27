@@ -26,6 +26,9 @@ const renderSection = (overrides: Partial<FeeConfigFormValues>) => {
   return renderWithProviders(<Harness values={baseForm(overrides)} />)
 }
 
+const PRIORITY_HINT =
+  'Merchant cụ thể được ưu tiên hơn nhóm merchant, nhóm merchant được ưu tiên hơn tất cả.'
+
 const merchantFlow = {
   feeDomain: 'MERCHANT' as const,
   serviceType: 'MERCHANT_VA_BILL_COLLECTION',
@@ -40,7 +43,7 @@ describe('AssignmentSection — thu hộ / chi hộ', () => {
     expect(
       screen.queryByText('Đơn vị chấp nhận thanh toán')
     ).not.toBeInTheDocument()
-    expect(screen.getByText(/Merchant cụ thể được ưu tiên/)).toBeInTheDocument()
+    expect(screen.getByText(PRIORITY_HINT)).toBeInTheDocument()
   })
 
   it('Merchant cụ thể hiện ô chọn merchant, không hiện ô cá nhân', () => {
@@ -71,8 +74,6 @@ describe('AssignmentSection — thu hộ / chi hộ', () => {
 
     expect(screen.getByText('Tất cả khách hàng')).toBeInTheDocument()
     expect(screen.queryByText('Tất cả merchant')).not.toBeInTheDocument()
-    expect(
-      screen.queryByText(/Merchant cụ thể được ưu tiên/)
-    ).not.toBeInTheDocument()
+    expect(screen.queryByText(PRIORITY_HINT)).not.toBeInTheDocument()
   })
 })

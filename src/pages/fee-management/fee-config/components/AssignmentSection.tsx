@@ -262,9 +262,8 @@ export const AssignmentSection = ({
       </div>
       {merchantFlow && (
         <p className='mt-2 text-[13px] text-muted-foreground'>
-          Khi nhiều chính sách cùng áp dụng cho một giao dịch: Merchant cụ thể
-          được ưu tiên hơn Nhóm merchant, và Nhóm merchant được ưu tiên hơn Tất
-          cả merchant.
+          Merchant cụ thể được ưu tiên hơn nhóm merchant, nhóm merchant được ưu
+          tiên hơn tất cả.
         </p>
       )}
     </section>
