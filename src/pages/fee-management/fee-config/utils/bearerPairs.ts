@@ -12,17 +12,20 @@ const isSender = (payerType: string) =>
   payerType === SENDER_PAYER || payerType === 'SENDER'
 
 /**
- * Chỉ phí đầu ra tính trên số tiền mới tách theo hai bên; phí phụ thuộc (VAT) khai một dòng và
- * backend tự chia theo phí của từng bên, khớp `validateTransferBearers`.
+ * Phí đầu ra tính trên số tiền tách theo hai bên. VAT (phí phụ thuộc) khai một dòng cho cả hai bên
+ * hoặc mỗi bên một dòng với mức riêng, nên cặp VAT hai dòng cũng ghép thành một thẻ; các phí phụ
+ * thuộc khác vẫn khai một dòng, khớp `validateTransferBearers`.
  */
 export const canSplitBearers = (
   serviceType: string | null | undefined,
-  component: Pick<FeeComponentFormValues, 'feeScope' | 'baseOn'>,
+  component: Pick<FeeComponentFormValues, 'feeScope' | 'baseOn'> &
+    Partial<Pick<FeeComponentFormValues, 'componentType'>>,
   originalTransactionType?: string | null
 ): boolean =>
   supportsBearerSplit(serviceType, originalTransactionType) &&
   component.feeScope === 'OUTPUT_FEE' &&
-  component.baseOn === 'AMOUNT'
+  (component.baseOn === 'AMOUNT' ||
+    (component.baseOn === 'FEE_COMPONENT' && component.componentType === 'VAT'))
 
 /**
  * Vị trí thành phần cùng loại phí của bên còn lại, hoặc null nếu thành phần này đứng một mình.

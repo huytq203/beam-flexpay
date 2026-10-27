@@ -69,15 +69,15 @@ const openPayerSelect = async (serviceType: string) => {
 }
 
 describe('cả hai bên cùng chịu theo loại giao dịch', () => {
-  it('bật cho chuyển, nạp, rút và hoàn nạp / hoàn chuyển tiền', () => {
+  it('bật cho chuyển tiền và hoàn nạp / hoàn chuyển tiền', () => {
     expect(supportsBearerSplit('EWALLET_TRANSFER_INTERNAL')).toBe(true)
-    expect(supportsBearerSplit('EWALLET_DEPOSIT')).toBe(true)
-    expect(supportsBearerSplit('EWALLET_WITHDRAWAL')).toBe(true)
     expect(supportsBearerSplit('EWALLET_REFUND', 'CASH_IN')).toBe(true)
     expect(supportsBearerSplit('EWALLET_REFUND', 'P2P_TRANSFER')).toBe(true)
   })
 
-  it('tắt ở hoàn rút tiền, hoàn chưa chọn loại gốc và luồng merchant', () => {
+  it('tắt ở nạp, rút, hoàn rút tiền, hoàn chưa chọn loại gốc và luồng merchant', () => {
+    expect(supportsBearerSplit('EWALLET_DEPOSIT')).toBe(false)
+    expect(supportsBearerSplit('EWALLET_WITHDRAWAL')).toBe(false)
     expect(supportsBearerSplit('EWALLET_REFUND', 'CASH_OUT')).toBe(false)
     expect(supportsBearerSplit('EWALLET_REFUND', '')).toBe(false)
     expect(supportsBearerSplit('EWALLET_REFUND')).toBe(false)
@@ -85,9 +85,10 @@ describe('cả hai bên cùng chịu theo loại giao dịch', () => {
     expect(supportsBearerSplit(null)).toBe(false)
   })
 
-  it('ghép cặp người chuyển / người nhận ở nạp và hoàn nạp tiền', () => {
+  it('ghép cặp người chuyển / người nhận ở chuyển tiền và hoàn nạp tiền', () => {
     const pair = [component({}), component({ payerType: 'RECEIVER' })]
-    expect(findBearerPartner('EWALLET_DEPOSIT', pair, 0)).toBe(1)
+    expect(findBearerPartner('EWALLET_TRANSFER_INTERNAL', pair, 0)).toBe(1)
+    expect(findBearerPartner('EWALLET_DEPOSIT', pair, 0)).toBeNull()
     expect(findBearerPartner('EWALLET_REFUND', pair, 0, 'CASH_IN')).toBe(1)
     expect(findBearerPartner('EWALLET_REFUND', pair, 0)).toBeNull()
   })
@@ -95,8 +96,7 @@ describe('cả hai bên cùng chịu theo loại giao dịch', () => {
 
 describe('FeeComponentDialog ô Người chịu', () => {
   it.each([
-    ['EWALLET_DEPOSIT', undefined],
-    ['EWALLET_WITHDRAWAL', undefined],
+    ['EWALLET_TRANSFER_INTERNAL', undefined],
     ['EWALLET_REFUND', 'CASH_IN'],
     ['EWALLET_REFUND', 'P2P_TRANSFER']
   ])('%s %s có lựa chọn cả hai bên', async (serviceType, originalType) => {
@@ -104,6 +104,15 @@ describe('FeeComponentDialog ô Người chịu', () => {
     await openPayerSelect(serviceType)
     expect(await screen.findByTitle(BOTH_LABEL)).toBeInTheDocument()
   })
+
+  it.each(['EWALLET_DEPOSIT', 'EWALLET_WITHDRAWAL'])(
+    '%s không có lựa chọn cả hai bên',
+    async (serviceType) => {
+      renderDialog(serviceType)
+      await openPayerSelect(serviceType)
+      expect(screen.queryByTitle(BOTH_LABEL)).toBeNull()
+    }
+  )
 
   it('hoàn rút tiền không có lựa chọn cả hai bên', async () => {
     renderDialog('EWALLET_REFUND', 'CASH_OUT')
@@ -114,9 +123,9 @@ describe('FeeComponentDialog ô Người chịu', () => {
     expect(screen.queryByTitle(BOTH_LABEL)).toBeNull()
   })
 
-  it('nạp tiền cả hai bên lưu thành hai thành phần USER + RECEIVER', async () => {
-    const onSave = renderDialog('EWALLET_DEPOSIT')
-    await openPayerSelect('EWALLET_DEPOSIT')
+  it('chuyển tiền cả hai bên lưu thành hai thành phần USER + RECEIVER', async () => {
+    const onSave = renderDialog('EWALLET_TRANSFER_INTERNAL')
+    await openPayerSelect('EWALLET_TRANSFER_INTERNAL')
     await userEvent.click(await screen.findByTitle(BOTH_LABEL))
     const fixed = screen.getAllByLabelText(/Phí cố định/)
     await userEvent.type(fixed[0], '1000')

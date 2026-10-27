@@ -34,6 +34,28 @@ export const dependentPayerFor = (
   return sides.size === 1 ? bases[0].payerType : null
 }
 
+/**
+ * Phí gốc có ở cả hai bên: VAT khi đó chọn được "Cả hai bên" với mỗi bên một mức, hoặc chỉ một bên
+ * (một dòng, tự áp cho cả hai bên). Phí gốc một bên thì VAT bị khoá theo bên đó (`dependentPayerFor`).
+ */
+export const hasBaseOnBothSides = (
+  baseType: string | null | undefined,
+  preceding: readonly FeeComponentFormValues[]
+): boolean => {
+  if (!baseType) return false
+  const sides = new Set(
+    preceding
+      .filter(
+        (component) =>
+          component.feeScope === 'OUTPUT_FEE' &&
+          component.baseOn === 'AMOUNT' &&
+          component.componentType === baseType
+      )
+      .map((component) => sideOf(component.payerType))
+  )
+  return sides.size === 2
+}
+
 /** Người chịu bày trên hộp thoại: VAT khoá theo bên của phí gốc, phí thường thêm "Cả hai bên" khi tách được. */
 export const buildPayerSelectOptions = (
   payerTypeOptions: readonly PayerOption[],

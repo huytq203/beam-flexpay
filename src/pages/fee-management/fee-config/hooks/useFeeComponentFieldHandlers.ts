@@ -82,7 +82,13 @@ export const useFeeComponentFieldHandlers = ({
       next === 'SYSTEM' ? 'BANK' : outputBeneficiaryFor(componentType),
       { shouldValidate: true }
     )
-    setValue('baseComponentType', null, { shouldValidate: true })
+    // VAT chỉ đổi được người chịu khi phí gốc có ở cả hai bên (còn không thì ô bị khoá), nên giữ nguyên
+    // phí gốc của nó; phí thường tính trên phí khác thì chọn lại vì danh sách phí gốc theo bên.
+    setValue(
+      'baseComponentType',
+      componentType === VAT_COMPONENT_TYPE ? vatBaseAbove : null,
+      { shouldValidate: true }
+    )
   }
 
   return { handleComponentTypeChange, handleMethodChange, handlePayerChange }

@@ -82,7 +82,7 @@ const FormSearch = ({ filters, handleSearch, onReset, status }: props) => {
             name='partyUsername'
             label='Tài khoản'
             className='col-span-1'
-            placeholder='Username tài khoản...'
+            placeholder='Nhập số điện thoại...'
           />
           {/* <FormInput control={formSearch.control} name='bankCode' label='Mã ngân hàng' className='col-span-1' placeholder='Nhập mã ngân hàng...' /> */}
           <FormSelect

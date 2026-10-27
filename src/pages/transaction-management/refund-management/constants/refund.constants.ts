@@ -18,14 +18,20 @@ export const REFUND_SOURCE_LABELS: Record<RefundSource, string> = {
 export const REFUND_ORIGINAL_TYPE_LABELS: Record<RefundOriginalType, string> = {
   CASH_IN: 'Nạp tiền',
   CASH_OUT: 'Rút tiền',
-  P2P_TRANSFER: 'Chuyển tiền',
+  P2P_TRANSFER: 'Chuyển tiền'
 }
 
 export const REFUND_DEBTOR_LABELS: Record<RefundOriginalType, string> = {
-  P2P_TRANSFER: 'Ví người nhận bị trừ',
+  P2P_TRANSFER: 'Tiền trừ vào ví người nhận',
   CASH_OUT: 'Quỹ tạm giữ hệ thống bị trừ',
-  CASH_IN: 'Ví khách bị trừ'
+  CASH_IN: 'Tổng tiền trừ ví'
 }
+
+export const REFUND_CREDIT_LABELS: Partial<Record<RefundOriginalType, string>> =
+  {
+    P2P_TRANSFER: 'Tiền cộng vào ví người chuyển',
+    CASH_IN: 'Tổng tiền cộng ngân hàng'
+  }
 
 export const REFUND_CHANNEL_OPTIONS = Object.values(RefundChannel).map(
   (value) => ({ value, label: REFUND_CHANNEL_LABELS[value] })

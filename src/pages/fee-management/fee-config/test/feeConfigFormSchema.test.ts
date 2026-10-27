@@ -137,12 +137,22 @@ describe('feeConfigFormSchema', () => {
       expect(errorPaths(result)).toContain('components')
     })
 
-    it('cả hai chịu mà khai hai dòng VAT thì bị chặn', () => {
+    it('cả hai chịu: VAT mỗi bên một dòng (mỗi bên một mức) thì hợp lệ', () => {
       const result = transfer([
         { payerType: 'USER' },
         { payerType: 'RECEIVER' },
         { payerType: 'USER', vat: true },
         { payerType: 'RECEIVER', vat: true }
+      ])
+      expect(errorPaths(result)).not.toContain('components')
+    })
+
+    it('cả hai chịu mà khai hai dòng VAT cùng một bên thì bị chặn', () => {
+      const result = transfer([
+        { payerType: 'USER' },
+        { payerType: 'RECEIVER' },
+        { payerType: 'USER', vat: true },
+        { payerType: 'USER', vat: true }
       ])
       expect(errorPaths(result)).toContain('components')
     })

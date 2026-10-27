@@ -73,19 +73,39 @@ describe('ghép cặp người chuyển / người nhận', () => {
     ])
   })
 
-  it('không ghép ở hoàn rút tiền, phí đầu vào hay phí tính trên phí khác', () => {
+  it('không ghép ở hoàn rút tiền, phí đầu vào hay phí phụ thuộc không phải VAT', () => {
     const pair = [component({}), component({ payerType: 'RECEIVER' })]
     expect(findBearerPartner('EWALLET_REFUND', pair, 0, 'CASH_OUT')).toBeNull()
 
-    const vat = [
-      component({ componentType: 'VAT', baseOn: 'FEE_COMPONENT' }),
+    const dependent = [
+      component({ componentType: 'PLATFORM_FEE', baseOn: 'FEE_COMPONENT' }),
       component({
-        componentType: 'VAT',
+        componentType: 'PLATFORM_FEE',
         baseOn: 'FEE_COMPONENT',
         payerType: 'RECEIVER'
       })
     ]
-    expect(findBearerPartner(TRANSFER, vat, 0)).toBeNull()
+    expect(findBearerPartner(TRANSFER, dependent, 0)).toBeNull()
+  })
+
+  it('ghép hai dòng VAT mỗi bên một dòng thành một thẻ', () => {
+    const vat = [
+      component({
+        componentType: 'VAT',
+        baseOn: 'FEE_COMPONENT',
+        baseComponentType: 'TRANSACTION_FEE',
+        payerType: 'RECEIVER'
+      }),
+      component({
+        componentType: 'VAT',
+        baseOn: 'FEE_COMPONENT',
+        baseComponentType: 'TRANSACTION_FEE'
+      })
+    ]
+    expect(findBearerPartner(TRANSFER, vat, 0)).toBe(1)
+    expect(groupBearerPairs(TRANSFER, vat, [0, 1])).toEqual([
+      { primary: 1, partner: 0 }
+    ])
   })
 })
 
@@ -157,5 +177,65 @@ describe('FeeComponentDialog cả hai bên cùng chịu', () => {
       await screen.findByText(BOTH_BEARERS_DUPLICATE_MESSAGE)
     ).toBeInTheDocument()
     expect(onSave).not.toHaveBeenCalled()
+  })
+})
+
+describe('FeeComponentDialog VAT cả hai bên cùng chịu', () => {
+  const bases = [
+    component({ payerType: 'USER', fixedAmount: 1000 }),
+    component({ payerType: 'RECEIVER', fixedAmount: 2000 })
+  ]
+
+  it('phí gốc ở cả hai bên: VAT chọn được "Cả hai bên", lưu hai dòng mỗi bên một mức', async () => {
+    const onSave = renderTransferDialog({
+      precedingComponents: bases,
+      existingComponents: bases
+    })
+
+    await userEvent.click(screen.getByLabelText(/Loại phí/))
+    await userEvent.click(await screen.findByTitle('VAT'))
+    await userEvent.click(screen.getByLabelText(/Người chịu/))
+    await userEvent.click(await screen.findByTitle('Cả hai bên cùng chịu'))
+
+    const rates = screen.getAllByLabelText(/Phí linh hoạt/)
+    expect(rates).toHaveLength(2)
+    await userEvent.type(rates[0], '8')
+    await userEvent.type(rates[1], '10')
+    await userEvent.click(screen.getByRole('button', { name: 'Thêm' }))
+
+    await waitFor(() => expect(onSave).toHaveBeenCalled())
+    const [sender, receiver] = onSave.mock.calls[0][0]
+    expect(sender).toEqual(
+      expect.objectContaining({
+        componentType: 'VAT',
+        baseOn: 'FEE_COMPONENT',
+        baseComponentType: 'TRANSACTION_FEE',
+        payerType: 'USER',
+        percentage: 8
+      })
+    )
+    expect(receiver).toEqual(
+      expect.objectContaining({
+        componentType: 'VAT',
+        baseOn: 'FEE_COMPONENT',
+        baseComponentType: 'TRANSACTION_FEE',
+        payerType: 'RECEIVER',
+        percentage: 10
+      })
+    )
+  })
+
+  it('phí gốc chỉ một bên: VAT khoá theo bên đó, không có "Cả hai bên"', async () => {
+    const onlyReceiver = [component({ payerType: 'RECEIVER' })]
+    renderTransferDialog({
+      precedingComponents: onlyReceiver,
+      existingComponents: onlyReceiver
+    })
+
+    await userEvent.click(screen.getByLabelText(/Loại phí/))
+    await userEvent.click(await screen.findByTitle('VAT'))
+    await userEvent.click(screen.getByLabelText(/Người chịu/))
+
+    expect(screen.queryByTitle('Cả hai bên cùng chịu')).not.toBeInTheDocument()
   })
 })

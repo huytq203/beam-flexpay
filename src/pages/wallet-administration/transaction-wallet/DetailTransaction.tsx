@@ -1,7 +1,6 @@
 import {
   ButtonComponent,
   CardComponent,
-  Table,
   WithdrawalDecisionPanel
 } from '@components/index'
 import Column from './columns/DetailTransaction.column'
@@ -10,7 +9,6 @@ import InfoUser from './components/InfoUser'
 import UserFees from './components/UserFees'
 import FeeNCC from './components/FeeNCC'
 import { DetailTransactionHeader } from './components/DetailTransactionHeader'
-import { DetailSectionTitle } from './components/DetailSectionTitle'
 import { TransactionRefundList } from './components/TransactionRefundList'
 import useDetailTransaction from './hooks/useDetailTransaction'
 import { useResetTransactionSnapshot } from './hooks/useTransactionSnapshot'
@@ -94,7 +92,7 @@ const DetailTransaction = () => {
             }
           />
 
-          <CardComponent
+          {/* <CardComponent
             content={
               <>
                 <DetailSectionTitle>
@@ -114,7 +112,7 @@ const DetailTransaction = () => {
                 />
               </>
             }
-          />
+          /> */}
 
           <CardComponent
             content={

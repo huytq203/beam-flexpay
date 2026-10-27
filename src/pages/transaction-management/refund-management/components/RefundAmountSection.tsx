@@ -1,4 +1,7 @@
-import { REFUND_DEBTOR_LABELS } from '../constants/refund.constants'
+import {
+  REFUND_CREDIT_LABELS,
+  REFUND_DEBTOR_LABELS
+} from '../constants/refund.constants'
 import { type RefundDetail } from '../schemas/refund.schema'
 import { formatVnd } from '../utils/refund.utils'
 import { DetailRows, DetailSection } from './DetailSection'
@@ -20,23 +23,27 @@ export function RefundAmountSection({ refund }: RefundAmountSectionProps) {
       numeric: true
     },
     {
-      label: 'Phí gốc hoàn cho khách',
+      label: 'Phí gốc hoàn cho người chuyển',
       value: formatVnd(refund.senderFeeReversal),
       numeric: true
     },
-
     {
-      label: 'Phí xử lý bên chuyển',
+      label: 'Phí gốc hoàn cho người nhận',
+      value: formatVnd(refund.receiverFeeReversal),
+      numeric: true
+    },
+    {
+      label: 'Phí hoàn người chuyển',
       value: formatVnd(refund.senderProcessingFee),
       numeric: true
     },
     {
-      label: 'Phí xử lý bên nhận',
+      label: 'Phí hoàn người nhận',
       value: formatVnd(refund.receiverProcessingFee),
       numeric: true
     },
     {
-      label: 'Khách thực nhận',
+      label: REFUND_CREDIT_LABELS[refund.originalType] ?? 'Khách thực nhận',
       value: formatVnd(refund.netCredit),
       strong: true
     },

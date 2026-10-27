@@ -114,7 +114,7 @@ export const createRefundColumns = (
       )
     },
     {
-      title: 'Phí xử lý',
+      title: 'Phí hoàn',
       key: 'processingFee',
       align: 'right',
       render: (_value, record) => (
@@ -125,7 +125,7 @@ export const createRefundColumns = (
       )
     },
     {
-      title: 'Phí GD hoàn lại',
+      title: 'Phí GD gốc',
       key: 'feeReversal',
       align: 'right',
       render: (_value, record) => (

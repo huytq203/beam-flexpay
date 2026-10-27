@@ -87,15 +87,12 @@ export const validateRefundDebitedSide = (
     : null
 
 /**
- * Chuyển tiền, nạp và rút cho người chuyển chịu, người nhận chịu hoặc cả hai chịu. Cả hai chịu là hai
- * thành phần cùng loại phí, mỗi bên một thành phần; riêng phí phụ thuộc (VAT) chỉ khai một dòng và
- * backend tự tách theo phí của từng bên. Luật kiểm tra nằm ở `validateTransferBearers`.
+ * Chỉ chuyển tiền cho người chuyển chịu, người nhận chịu hoặc cả hai chịu; nạp và rút chỉ chọn một
+ * trong hai bên. Cả hai chịu là hai
+ * thành phần cùng loại phí, mỗi bên một thành phần; riêng phí phụ thuộc (VAT) khai một dòng (backend tự tách
+ * theo phí của từng bên, cùng mức) hoặc hai dòng mỗi bên một dòng (mỗi bên một mức). Luật kiểm tra nằm ở `validateTransferBearers`.
  */
-const BEARER_SPLIT_SERVICES: readonly string[] = [
-  'EWALLET_TRANSFER_INTERNAL',
-  'EWALLET_DEPOSIT',
-  'EWALLET_WITHDRAWAL'
-]
+const BEARER_SPLIT_SERVICES: readonly string[] = ['EWALLET_TRANSFER_INTERNAL']
 
 /** Phí hoàn chỉ cho cả hai chịu khi bản gán nêu rõ hoàn nạp tiền hoặc hoàn chuyển tiền. */
 const BEARER_SPLIT_REFUND_ORIGINAL_TYPES: readonly string[] = [

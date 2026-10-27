@@ -4,8 +4,7 @@ import type { NotificationListItem } from '@/app/services/merchantNotificationAp
 import { formatUTCToLocalDateTime } from '@utils/helper-functions/date'
 import {
   ArrowCounterClockwiseIcon,
-  EditOutlined,
-  PlusOutlined
+  EditOutlined
 } from '@components/icons'
 import { TagComponent } from '@components/index'
 import { NotificationRowAction as RowAction } from '../components/NotificationRowAction'
@@ -13,6 +12,7 @@ import {
   CHANNEL_LABEL,
   SOURCE_PRESENTATION
 } from '../constants/notification.constants'
+import { SettingOutlined } from '@ant-design/icons'
 
 interface NotificationColumnOptions {
   page: number
@@ -122,7 +122,7 @@ export const createNotificationColumns = ({
           ) : (
             <RowAction
               label={`Thiết lập cấu hình riêng ${row.merchantName}`}
-              icon={<PlusOutlined aria-hidden />}
+              icon={<SettingOutlined aria-hidden />}
               onClick={() => onSetup(row)}
             />
           )}

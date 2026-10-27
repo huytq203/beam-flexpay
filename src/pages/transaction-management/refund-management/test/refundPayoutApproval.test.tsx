@@ -207,4 +207,34 @@ describe('màn Quản lý hoàn tiền: duyệt chi', () => {
     await waitFor(() => expect(body).toEqual({ reason: 'Sai thông tin chi' }))
     await waitFor(() => expect(screen.getAllByRole('dialog')).toHaveLength(1))
   })
+
+  it('trên lưới chỉ có 1 icon phê duyệt chi, chọn Từ chối chi thì mở hộp thoại từ chối', async () => {
+    mockList(() => [AWAITING])
+    renderRefundPage(ACCOUNTANT)
+
+    const row = (await screen.findByText('RF-PAYOUT-1')).closest('tr')
+    if (!row) throw new Error('Không thấy dòng')
+    expect(
+      within(row).queryByRole('button', { name: 'Từ chối chi RF-PAYOUT-1' })
+    ).not.toBeInTheDocument()
+
+    await userEvent.click(
+      within(row).getByRole('button', { name: 'Duyệt chi RF-PAYOUT-1' })
+    )
+    const popover = (
+      await screen.findByText(/Chọn kết quả duyệt chi/)
+    ).closest<HTMLElement>('.ant-popover')
+    if (!popover) throw new Error('Không thấy popover phê duyệt chi')
+    expect(
+      within(popover).getByRole('button', { name: 'Duyệt chi' })
+    ).toBeInTheDocument()
+    await userEvent.click(
+      within(popover).getByRole('button', { name: 'Từ chối chi' })
+    )
+
+    const dialog = await screen.findByRole('dialog')
+    expect(
+      within(dialog).getByRole('button', { name: 'Từ chối chi' })
+    ).toBeInTheDocument()
+  })
 })

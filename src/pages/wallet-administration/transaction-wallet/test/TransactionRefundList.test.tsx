@@ -71,7 +71,7 @@ describe('khối Yêu cầu hoàn tiền ở chi tiết giao dịch', () => {
     expect(within(rows[1]).getByText('RF1')).toBeInTheDocument()
     expect(within(rows[1]).getByText('Thất bại hoàn tiền')).toBeInTheDocument()
     expect(
-      within(rows[1]).getByText('Hoàn chuyển tiền / thanh toán')
+      within(rows[1]).getByText('Hoàn chuyển tiền')
     ).toBeInTheDocument()
   })
 

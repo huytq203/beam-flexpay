@@ -188,8 +188,7 @@ export const WithdrawalDecisionPanel = ({
         open={openDecision === 'approve'}
         title='Duyệt lệnh rút vượt ngưỡng'
         description={`Duyệt xong hệ thống sẽ chi ${grossLabel} cho khách. Thao tác này không hoàn tác được.`}
-        label='Căn cứ duyệt'
-        hint={`${WITHDRAWAL_NOTE_MIN_LENGTH}–${WITHDRAWAL_NOTE_MAX_LENGTH} ký tự, lưu vào audit log`}
+        label='Lý do duyệt'
         placeholder='Ví dụ: đã đối chiếu hồ sơ khách hàng và nguồn tiền, đồng ý chi'
         okText='Xác nhận duyệt'
         minLength={WITHDRAWAL_NOTE_MIN_LENGTH}

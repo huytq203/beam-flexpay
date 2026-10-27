@@ -54,8 +54,8 @@ describe('isWithdrawalPendingApproval / isWithdrawalSettling', () => {
   })
 
   it('chỉ theo dõi tiếp ở khoảng đã duyệt nhưng chưa ghi sổ', () => {
-    // expect(isWithdrawalSettling(WithdrawalStatus.APPROVED)).toBe(true)
-    // expect(isWithdrawalSettling(WithdrawalStatus.PAYING)).toBe(true)
+    expect(isWithdrawalSettling(WithdrawalStatus.APPROVED)).toBe(true)
+    expect(isWithdrawalSettling(WithdrawalStatus.PAYING)).toBe(true)
     expect(isWithdrawalSettling(WithdrawalStatus.POSTED)).toBe(false)
     expect(isWithdrawalSettling(WithdrawalStatus.PENDING_APPROVAL)).toBe(false)
   })

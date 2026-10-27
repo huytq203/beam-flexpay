@@ -132,7 +132,7 @@ export function CreateRefundDialog({
           required
           rows={3}
           maxLength={REFUND_REASON_MAX}
-          placeholder='Nhập lý do (10 đến 500 ký tự)'
+          placeholder='Nhập lý do...'
           className='flex flex-col gap-1'
         />
 

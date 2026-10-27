@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { FeeComponentFormValues } from '../schemas/feeConfig.schema'
 import {
+  TRANSFER_BEARER_DEPENDENT_MESSAGE,
   TRANSFER_BEARER_DEPENDENT_SIDE_MESSAGE,
   validateTransferBearers
 } from '../utils/transferBearers'
@@ -68,11 +69,7 @@ describe('VAT cùng người chịu với phí gốc', () => {
     ])
   })
 
-  it.each([
-    'EWALLET_DEPOSIT',
-    'EWALLET_WITHDRAWAL',
-    'EWALLET_TRANSFER_INTERNAL'
-  ])(
+  it.each(['EWALLET_TRANSFER_INTERNAL'])(
     '%s: phí người nhận chịu mà VAT khai người chuyển bị chặn lúc lưu',
     (serviceType) => {
       expect(
@@ -83,4 +80,34 @@ describe('VAT cùng người chịu với phí gốc', () => {
       ).toBeNull()
     }
   )
+
+  describe('cả hai bên cùng chịu: VAT mỗi bên một dòng', () => {
+    const both = [fee('USER'), fee('RECEIVER')]
+
+    it('một dòng cho cả hai bên hoặc hai dòng mỗi bên một dòng đều hợp lệ', () => {
+      expect(
+        validateTransferBearers('EWALLET_TRANSFER_INTERNAL', [
+          ...both,
+          vat('USER')
+        ])
+      ).toBeNull()
+      expect(
+        validateTransferBearers('EWALLET_TRANSFER_INTERNAL', [
+          ...both,
+          vat('USER'),
+          vat('RECEIVER')
+        ])
+      ).toBeNull()
+    })
+
+    it('hai dòng cùng một bên bị chặn', () => {
+      expect(
+        validateTransferBearers('EWALLET_TRANSFER_INTERNAL', [
+          ...both,
+          vat('USER'),
+          vat('USER')
+        ])
+      ).toBe(TRANSFER_BEARER_DEPENDENT_MESSAGE)
+    })
+  })
 })

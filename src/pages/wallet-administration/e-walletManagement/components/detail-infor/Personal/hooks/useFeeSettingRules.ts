@@ -10,7 +10,7 @@ import usePagination from '@hooks/usePagination'
 import { useExportApplicableFeeRulesMutation } from '@services/apiExportCsv'
 import { useCallback, useMemo, useState } from 'react'
 import type { ApplicableFeeRuleTableRow } from '../configs/FeeSetting.column'
-import { createApplicableFeeRuleRowKey } from '../utils/applicable-fee-rule'
+import { groupFeeRulesByPolicy } from '../utils/group-fee-rules'
 
 /** Ô lọc để trống là "không lọc" — không gửi chuỗi rỗng xuống API. */
 const dropEmpty = (filter: ApplicableFeeRuleFilter): ApplicableFeeRuleFilter =>
@@ -107,9 +107,9 @@ export const useFeeSettingRules = ({
 
   const dataSource = useMemo<ApplicableFeeRuleTableRow[]>(
     () =>
-      (data?.content ?? []).map((rule, index) => ({
+      groupFeeRulesByPolicy(data?.content ?? []).map((rule, index) => ({
         ...rule,
-        rowKey: createApplicableFeeRuleRowKey(rule),
+        rowKey: rule.groupKey,
         no: (page - 1) * size + index + 1,
         accountLabel: walletLabel
       })),

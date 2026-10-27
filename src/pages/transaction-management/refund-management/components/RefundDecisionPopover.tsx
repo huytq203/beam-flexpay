@@ -12,7 +12,8 @@ import { RefundNote } from './RefundNote'
 
 interface RefundDecisionPopoverProps {
   refund: RefundTarget
-  children: ReactNode
+  /** Nhận trạng thái mở để nút kích hoạt tắt tooltip của nó khi popover đang hiện. */
+  children: (isOpen: boolean) => ReactNode
 }
 
 export function RefundDecisionPopover({
@@ -92,14 +93,14 @@ export function RefundDecisionPopover({
         onOpenChange={handleOpenChange}
       >
         {/* Popover cần phần tử DOM để gắn sự kiện; nút bọc ngoài không nhận props lạ. */}
-        <span className='inline-flex'>{children}</span>
+        <span className='inline-flex'>{children(open)}</span>
       </PopoverComponent>
       <ReasonDialog
         open={isRejectOpen}
         title='Từ chối yêu cầu hoàn tiền'
         description={`Yêu cầu “${refund.refundCode}” sẽ chuyển sang trạng thái bị từ chối.`}
         label='Lý do từ chối'
-        placeholder='Nhập lý do (5 đến 500 ký tự)'
+        placeholder='Nhập lý do...'
         minLength={REASON_MIN}
         maxLength={REASON_MAX}
         okText='Xác nhận từ chối'

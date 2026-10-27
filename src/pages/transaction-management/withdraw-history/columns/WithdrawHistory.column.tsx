@@ -19,7 +19,9 @@ import {
   resolveDisplayStatus,
   WITHDRAW_DISPLAY_STATUS_CONFIG
 } from '../constants/withdrawDisplayStatus'
+import { WithdrawDecisionAction } from '../components/WithdrawDecisionAction'
 import { BankEnum, BankLabel } from '../constants/bank.constant'
+import { WithdrawalStatus } from '@type/withdrawalApproval.type'
 import { UnifiedContentJournal } from '@/app/types/apiResponseJournal'
 import { formatNumber } from '@/app/utils'
 import { cn } from '@/app/utils/cn'
@@ -208,12 +210,18 @@ const getColumn = ({
     render(_, record) {
       return (
         <div className='flex justify-center items-center gap-2'>
-          <StuckTransactionUpdateAction
-            compact
-            transactionCode={record.transactionCode}
-            transactionType={record.transactionType}
-            journalStatus={record.status}
-          />
+          {/* Chờ duyệt chỉ chốt qua Duyệt/Từ chối, không xử lý giao dịch treo. */}
+          {resolveDisplayStatus(record) ===
+          WithdrawalStatus.PENDING_APPROVAL ? (
+            <WithdrawDecisionAction transactionCode={record.transactionCode} />
+          ) : (
+            <StuckTransactionUpdateAction
+              compact
+              transactionCode={record.transactionCode}
+              transactionType={record.transactionType}
+              journalStatus={record.status}
+            />
+          )}
           <TooltipComponent title='Xem chi tiết'>
             <ButtonComponent
               aria-label='Xem chi tiết'

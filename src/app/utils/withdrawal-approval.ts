@@ -26,9 +26,9 @@ export const isWithdrawalPendingApproval = (
  * mỗi 30 giây, nên đây là khoảng FE cần theo dõi tiếp thay vì coi là đã xong.
  */
 export const isWithdrawalSettling = (
-  _status: string | null | undefined
-): boolean => false
-// status === WithdrawalStatus.APPROVED || status === WithdrawalStatus.PAYING
+  status: string | null | undefined
+): boolean =>
+  status === WithdrawalStatus.APPROVED || status === WithdrawalStatus.PAYING
 
 export type WithdrawalDecision = 'approve' | 'reject'
 

@@ -34,7 +34,7 @@ export type RefundDisplayStatus =
 export const REFUND_TYPE_LABELS: Record<RefundType, string> = {
   WITHDRAW_BANK: 'Hoàn nạp tiền',
   WITHDRAW_REVERSAL: 'Hoàn rút tiền',
-  REFUND_EWALLET: 'Hoàn chuyển tiền / thanh toán'
+  REFUND_EWALLET: 'Hoàn chuyển tiền '
 }
 
 const isRefundType = (value: string): value is RefundType =>

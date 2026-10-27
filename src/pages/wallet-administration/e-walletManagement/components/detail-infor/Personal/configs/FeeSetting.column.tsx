@@ -2,6 +2,8 @@ import type {
   ApplicableFeeRule,
   FeeEffectiveStatus
 } from '@/app/schemas/applicable-fee-rule.schema'
+import type { ReactNode } from 'react'
+import type { GroupedFeeRule } from '../utils/group-fee-rules'
 import {
   CARD_TYPE_LABELS,
   COMPONENT_TYPE_LABELS,
@@ -28,10 +30,33 @@ const APPLIED_OBJECT_LABELS: Readonly<Record<string, string>> = {
   ALL: 'Tất cả'
 }
 
-export interface ApplicableFeeRuleTableRow extends ApplicableFeeRule {
+export interface ApplicableFeeRuleTableRow extends GroupedFeeRule {
   rowKey: string
   no: number
   accountLabel: string
+}
+
+/** Một thành phần thì hiện thẳng; nhiều thành phần thì xếp dọc, mỗi khối có nhãn. */
+const renderComponents = (
+  record: ApplicableFeeRuleTableRow,
+  render: (rule: ApplicableFeeRule) => ReactNode
+): ReactNode => {
+  if (record.components.length === 1) return render(record.components[0])
+  return (
+    <div className='flex flex-col gap-2'>
+      {record.components.map((rule) => (
+        <div
+          key={rule.componentType}
+          className='flex flex-col'
+        >
+          <span className='text-xs text-muted-foreground'>
+            {getLabel(rule.componentType, COMPONENT_TYPE_LABELS)}
+          </span>
+          {render(rule)}
+        </div>
+      ))}
+    </div>
+  )
 }
 
 const getAppliedObjectDetail = (
@@ -49,9 +74,7 @@ const getAppliedObjectDetail = (
 
 const getPaymentDetail = (record: ApplicableFeeRuleTableRow): string => {
   const details = [
-    record.cardType
-      ? getLabel(record.cardType, CARD_TYPE_LABELS)
-      : null,
+    record.cardType ? getLabel(record.cardType, CARD_TYPE_LABELS) : null,
     record.bankCode
   ].filter((value) => value !== null)
 
@@ -92,7 +115,9 @@ export const getApplicableFeeRuleColumns = (
           {record.feePolicyName}
         </span>
         <span className='text-xs text-muted-foreground'>
-          {getLabel(record.componentType, COMPONENT_TYPE_LABELS)}
+          {record.components.length === 1
+            ? getLabel(record.componentType, COMPONENT_TYPE_LABELS)
+            : `${record.components.length} thành phần phí`}
         </span>
       </div>
     )
@@ -101,8 +126,7 @@ export const getApplicableFeeRuleColumns = (
     title: 'Loại giao dịch',
     dataIndex: 'serviceType',
     width: 180,
-    render: (value: string | null) =>
-      getLabel(value, SERVICE_TYPE_LABELS)
+    render: (value: string | null) => getLabel(value, SERVICE_TYPE_LABELS)
   },
   {
     title: 'Phương thức',
@@ -131,23 +155,25 @@ export const getApplicableFeeRuleColumns = (
     title: 'Công thức tính',
     dataIndex: 'formula',
     align: 'right',
-    width: 140,
-    render: (value: string) => (
-      <span className='whitespace-nowrap tabular-nums font-medium'>
-        {value}
-      </span>
-    )
+    width: 160,
+    render: (_, record) =>
+      renderComponents(record, (rule) => (
+        <span className='whitespace-nowrap tabular-nums font-medium'>
+          {rule.formula}
+        </span>
+      ))
   },
   {
     title: 'Min / Max',
     align: 'right',
-    width: 150,
-    render: (_, record) => (
-      <div className='flex flex-col whitespace-nowrap tabular-nums'>
-        <span>Min: {formatFeeLimit(record.minFee)}</span>
-        <span>Max: {formatFeeLimit(record.maxFee)}</span>
-      </div>
-    )
+    width: 160,
+    render: (_, record) =>
+      renderComponents(record, (rule) => (
+        <div className='flex flex-col whitespace-nowrap tabular-nums'>
+          <span>Min: {formatFeeLimit(rule.minFee)}</span>
+          <span>Max: {formatFeeLimit(rule.maxFee)}</span>
+        </div>
+      ))
   },
   {
     title: 'Thời gian tạo',
@@ -177,7 +203,10 @@ export const getApplicableFeeRuleColumns = (
     fixed: 'right',
     width: 120,
     render: (status: FeeEffectiveStatus) => (
-      <StatusBadge status={status} config={EFFECTIVE_STATUS_CONFIG} />
+      <StatusBadge
+        status={status}
+        config={EFFECTIVE_STATUS_CONFIG}
+      />
     )
   }
 ]

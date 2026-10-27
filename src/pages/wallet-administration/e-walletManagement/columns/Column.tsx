@@ -71,7 +71,7 @@ export const getColumn = ({
 
         return (
           <div className='flex min-w-0 max-w-full flex-col gap-1'>
-            <div className='flex min-w-0 items-center gap-1.5'>
+            <div className='flex min-w-0 flex-col'>
               <WalletLink walletId={record.id}>
                 <TooltipComponent title={ownerName}>
                   <span className='min-w-0 truncate text-xs font-semibold'>
@@ -83,7 +83,7 @@ export const getColumn = ({
               {!isSystem && record.ownerFullName && (
                 <WalletLink walletId={record.id}>
                   <span className='text-xs font-semibold'>
-                    - {record.ownerUsername}
+                    {record.ownerUsername}
                   </span>
                 </WalletLink>
               )}

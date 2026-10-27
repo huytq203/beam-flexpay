@@ -11,7 +11,7 @@ interface BearerComponent {
 export const TRANSFER_BEARER_TYPES_MESSAGE =
   'Cả hai bên cùng chịu phí phải cùng loại phí: mỗi loại phí có một thành phần người chuyển và một thành phần người nhận'
 export const TRANSFER_BEARER_DEPENDENT_MESSAGE =
-  'Phí phụ thuộc (ví dụ VAT) chỉ khai một dòng khi cả hai bên cùng chịu phí, hệ thống tự tính theo phí của từng bên'
+  'Phí phụ thuộc (ví dụ VAT) khi cả hai bên cùng chịu phí: khai một dòng cho cả hai bên, hoặc hai dòng mỗi bên một dòng (mỗi bên một mức); không khai hai dòng cùng một bên'
 export const TRANSFER_BEARER_BASE_MESSAGE =
   'Phí phụ thuộc phải tính trên loại phí có ở cả hai bên'
 export const TRANSFER_BEARER_DEPENDENT_SIDE_MESSAGE =
@@ -22,7 +22,7 @@ const isReceiver = (payerType: string) => payerType === 'RECEIVER'
 /**
  * Bản sao phía FE của luật backend cho các luồng cho cả hai bên cùng chịu (`supportsBearerSplit`).
  * Người chuyển chịu hoặc người nhận chịu: không ràng buộc thêm. Cả hai bên cùng chịu: phí tính trên số tiền phải cùng loại ở hai bên, phí phụ
- * thuộc chỉ một dòng mỗi loại và phải dựa trên loại phí có ở cả hai bên.
+ * thuộc một dòng cho cả hai bên hoặc mỗi bên một dòng, và phải dựa trên loại phí có ở cả hai bên.
  *
  * @returns thông báo lỗi, hoặc null nếu hợp lệ
  */
@@ -40,11 +40,16 @@ export const validateTransferBearers = (
   const sender = new Set<string>()
   const receiver = new Set<string>()
   const dependent = new Set<string>()
+  const dependentSides = new Set<string>()
   for (const item of output) {
     if (item.baseOn === 'FEE_COMPONENT') {
-      if (dependent.has(item.componentType)) {
+      // Một dòng áp cho cả hai bên; hai dòng thì mỗi bên một dòng với mức riêng. Hai dòng cùng bên là
+      // tính phí phụ thuộc hai lần.
+      const sideKey = `${item.componentType}:${isReceiver(item.payerType)}`
+      if (dependentSides.has(sideKey)) {
         return TRANSFER_BEARER_DEPENDENT_MESSAGE
       }
+      dependentSides.add(sideKey)
       dependent.add(item.componentType)
     } else {
       ;(isReceiver(item.payerType) ? receiver : sender).add(item.componentType)

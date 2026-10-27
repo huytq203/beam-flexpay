@@ -1,8 +1,24 @@
+import type { ReactNode } from 'react'
 import type { ColumnsType } from 'antd/es/table'
+import {
+  CheckIcon,
+  EyeIcon,
+  PauseCircleIcon,
+  PencilSimpleIcon,
+  PlayCircleIcon,
+  ShieldCheckIcon,
+  StarIcon,
+  TrashIcon,
+  XIcon
+} from '@phosphor-icons/react'
 import { Can } from '@/app/permissions'
 import type { BankAccountDto } from '@/app/services/merchantBankAccountApi'
 import { formatUTCToLocalDateTime } from '@utils/helper-functions/date'
-import { ButtonComponent, TagComponent } from '@components/index'
+import {
+  ButtonComponent,
+  TagComponent,
+  TooltipComponent
+} from '@components/index'
 import type { BankAccountDecisionType } from '../components/BankAccountDecisionDialog'
 import { LINK_STATUS } from '../constants/bankAccount.constants'
 import { maskAccountNumber } from '../utils/bankAccount.utils'
@@ -22,6 +38,26 @@ interface BankAccountColumnOptions {
   currentUserId: string
 }
 
+const ICON_SIZE = 15
+
+const renderIconAction = (
+  label: string,
+  icon: ReactNode,
+  onClick: () => void,
+  danger = false
+) => (
+  <TooltipComponent title={label}>
+    <ButtonComponent
+      aria-label={label}
+      size='small'
+      type='default'
+      danger={danger}
+      icon={icon}
+      onClick={onClick}
+    />
+  </TooltipComponent>
+)
+
 /**
  * Có yêu cầu chờ duyệt thì chỉ còn Phê duyệt / Từ chối, các nút sửa bị ẩn.
  * Người gửi yêu cầu không được tự duyệt (BE trả 403) nên không thấy hai nút.
@@ -38,18 +74,23 @@ const renderDecisionActions = (
       action='approve'
     >
       <div className='flex justify-center gap-1'>
-        <ButtonComponent
-          size='small'
-          type='primary'
-          content='Phê duyệt'
-          onClick={() => onDecide('approve', row)}
-        />
-        <ButtonComponent
-          size='small'
-          danger
-          content='Từ chối'
-          onClick={() => onDecide('reject', row)}
-        />
+        {renderIconAction(
+          'Phê duyệt',
+          <CheckIcon
+            aria-hidden
+            size={ICON_SIZE}
+          />,
+          () => onDecide('approve', row)
+        )}
+        {renderIconAction(
+          'Từ chối',
+          <XIcon
+            aria-hidden
+            size={ICON_SIZE}
+          />,
+          () => onDecide('reject', row),
+          true
+        )}
       </div>
     </Can>
   )
@@ -64,44 +105,60 @@ const renderManageActions = (
     action='edit'
   >
     <div className='flex justify-center gap-1'>
-      <ButtonComponent
-        size='small'
-        type='default'
-        content='Sửa'
-        onClick={() => onEdit(row)}
-      />
-      {row.linkStatus === 'PENDING_VERIFICATION' && (
-        <ButtonComponent
-          size='small'
-          type='default'
-          content='Xác minh'
-          onClick={() => onAction('verify', row)}
-        />
+      {renderIconAction(
+        'Sửa',
+        <PencilSimpleIcon
+          aria-hidden
+          size={ICON_SIZE}
+        />,
+        () => onEdit(row)
       )}
-      {!row.isDefault && (
-        <ButtonComponent
-          size='small'
-          type='default'
-          content='Mặc định'
-          onClick={() => onAction('default', row)}
-        />
+      {row.linkStatus === 'PENDING_VERIFICATION' &&
+        renderIconAction(
+          'Xác minh',
+          <ShieldCheckIcon
+            aria-hidden
+            size={ICON_SIZE}
+          />,
+          () => onAction('verify', row)
+        )}
+      {!row.isDefault &&
+        renderIconAction(
+          'Mặc định',
+          <StarIcon
+            aria-hidden
+            size={ICON_SIZE}
+          />,
+          () => onAction('default', row)
+        )}
+      {renderIconAction(
+        row.holdMode ? 'Bỏ giữ' : 'Tạm giữ',
+        row.holdMode ? (
+          <PlayCircleIcon
+            aria-hidden
+            size={ICON_SIZE}
+          />
+        ) : (
+          <PauseCircleIcon
+            aria-hidden
+            size={ICON_SIZE}
+          />
+        ),
+        () => onAction('hold', row)
       )}
-      <ButtonComponent
-        size='small'
-        type='default'
-        content={row.holdMode ? 'Bỏ giữ' : 'Tạm giữ'}
-        onClick={() => onAction('hold', row)}
-      />
       <Can
         screen='MERCHANT_BANK_ACCOUNT'
         action='delete'
       >
-        <ButtonComponent
-          size='small'
-          danger
-          content='Xóa'
-          onClick={() => onDelete(row)}
-        />
+        {renderIconAction(
+          'Xóa',
+          <TrashIcon
+            aria-hidden
+            size={ICON_SIZE}
+          />,
+          () => onDelete(row),
+          true
+        )}
       </Can>
     </div>
   </Can>
@@ -166,19 +223,21 @@ export const createBankAccountColumns = (
       title: 'Thao tác',
       fixed: 'right',
       align: 'center',
-      width: 360,
+      width: 220,
       render: (_, row) => (
         <div className='flex justify-center gap-1'>
           <Can
             screen='MERCHANT_BANK_ACCOUNT'
             action='viewDetail'
           >
-            <ButtonComponent
-              size='small'
-              type='default'
-              content='Chi tiết'
-              onClick={() => options.onView(row)}
-            />
+            {renderIconAction(
+              'Chi tiết',
+              <EyeIcon
+                aria-hidden
+                size={ICON_SIZE}
+              />,
+              () => options.onView(row)
+            )}
           </Can>
           {row.pendingChangeRequest
             ? renderDecisionActions(row, options)

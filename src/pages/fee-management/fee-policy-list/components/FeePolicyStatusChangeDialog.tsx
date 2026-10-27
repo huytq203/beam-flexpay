@@ -34,11 +34,6 @@ const DIALOG_TITLE: Readonly<Record<FeePolicyScheduleAction, string>> = {
   DEACTIVATE: 'Khóa chính sách phí'
 }
 
-const IMMEDIATE_BUTTON: Readonly<Record<FeePolicyScheduleAction, string>> = {
-  ACTIVATE: 'Kích hoạt ngay',
-  DEACTIVATE: 'Ngừng áp dụng ngay'
-}
-
 const IMMEDIATE_SUCCESS: Readonly<Record<FeePolicyScheduleAction, string>> = {
   ACTIVATE: 'Đã kích hoạt chính sách phí',
   DEACTIVATE: 'Đã ngừng áp dụng chính sách phí'
@@ -154,7 +149,7 @@ const StatusChangeForm = ({ policy, onClose }: StatusChangeFormProps) => {
           htmlType='submit'
           type='primary'
           danger={isNow && immediateAction === 'DEACTIVATE'}
-          content={isNow ? IMMEDIATE_BUTTON[immediateAction] : 'Xác nhận'}
+          content={'Xác nhận'}
           className='w-full'
           loading={isLoading}
         />
