@@ -2,6 +2,7 @@ import { validateRefundDebitedSide } from '@utils/fee-execution'
 import { z } from 'zod'
 import {
   allowsProviderCriteria,
+  isMerchantAssignmentFlow,
   isPaymentMethodAllowed
 } from '../constants/feeConfigFields'
 import { allowsOriginalTypeCriteria } from '../constants/feeRefundOriginalType'
@@ -119,12 +120,23 @@ export const checkFeeConfigCommonRules = (
     })
   }
 
-  if (form.assignmentScope === 'SUBJECT' && !form.subjectId) {
-    ctx.addIssue({
-      code: 'custom',
-      path: ['subjectId'],
-      message: 'Chọn cá nhân được áp dụng'
-    })
+  if (form.assignmentScope === 'SUBJECT') {
+    // Luồng merchant chọn qua ô Merchant (`merchantId`), luồng ví qua ô cá nhân (`subjectId`).
+    if (isMerchantAssignmentFlow(form.feeDomain, form.serviceType)) {
+      if (!form.merchantId) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['merchantId'],
+          message: 'Chọn merchant được áp dụng'
+        })
+      }
+    } else if (!form.subjectId) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['subjectId'],
+        message: 'Chọn cá nhân được áp dụng'
+      })
+    }
   }
 
   if (form.feeDomain === 'BANK' && !form.bankCode) {

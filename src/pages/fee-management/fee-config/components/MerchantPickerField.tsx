@@ -12,6 +12,8 @@ interface MerchantPickerFieldProps {
   control: Control<FeeConfigFormValues>
   className?: string
   readOnly?: boolean
+  /** Bắt buộc chọn (phạm vi "Merchant cụ thể"): ô trống không còn mang nghĩa "mọi đơn vị". */
+  required?: boolean
 }
 
 const HEAD =
@@ -34,7 +36,8 @@ const Fact = ({ label, value }: { label: string; value: string }) => (
 export const MerchantPickerField = ({
   control,
   className,
-  readOnly = false
+  readOnly = false,
+  required = false
 }: MerchantPickerFieldProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [picked, setPicked] = useState<ContentMerchant | null>(null)
@@ -50,6 +53,7 @@ export const MerchantPickerField = ({
           error={fieldState.error?.message}
           className={className}
           readOnly={readOnly}
+          required={required}
           isOpen={isOpen}
           onOpen={() => setIsOpen(true)}
           onClose={() => setIsOpen(false)}
@@ -74,6 +78,7 @@ interface MerchantPickerBodyProps {
   error?: string
   className?: string
   readOnly: boolean
+  required: boolean
   isOpen: boolean
   onOpen: () => void
   onClose: () => void
@@ -87,6 +92,7 @@ const MerchantPickerBody = ({
   error,
   className,
   readOnly,
+  required,
   isOpen,
   onOpen,
   onClose,
@@ -144,9 +150,11 @@ const MerchantPickerBody = ({
             />
           )}
           <span className='text-[13px] text-muted-foreground'>
-            {readOnly
-              ? 'Chính sách áp dụng cho mọi đơn vị.'
-              : 'Bỏ trống nghĩa là chính sách áp cho mọi đơn vị.'}
+            {required
+              ? 'Chọn merchant được áp dụng cho chính sách này.'
+              : readOnly
+                ? 'Chính sách áp dụng cho mọi đơn vị.'
+                : 'Bỏ trống nghĩa là chính sách áp cho mọi đơn vị.'}
           </span>
         </div>
       )}

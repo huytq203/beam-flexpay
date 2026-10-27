@@ -101,8 +101,9 @@ export const getFeeDomainForServiceType = (
 
 /**
  * Các ô gán đối tượng hiện ra theo LOẠI GIAO DỊCH, không theo miền phí: thu hộ và
- * chi hộ nhận Merchant (kèm Ngân hàng để cấu hình ưu đãi riêng cho một cặp), còn
- * nạp, rút, chuyển nội bộ nhận ví riêng hoặc nhóm khách. Ngân hàng luôn tuỳ chọn.
+ * chi hộ chọn Tất cả / Nhóm merchant / Merchant cụ thể (kèm Ngân hàng để cấu hình ưu đãi
+ * riêng cho một cặp), còn nạp, rút, chuyển nội bộ nhận ví riêng hoặc nhóm khách. Ngân hàng
+ * luôn tuỳ chọn.
  *
  * Chính sách Bank/NCC cũ (miền BANK) giữ luật cũ: bắt buộc đúng một ngân hàng.
  */
@@ -115,8 +116,10 @@ export const getFormFieldRules = (
   return {
     bankRequired: false,
     showMerchant: merchantFlow,
+    // Luồng merchant gán qua `merchantId` (cặp chủ thể MERCHANT) nên không có ô ví riêng; nhóm
+    // merchant dùng chung ô phân khúc.
     showSubject: !merchantFlow,
-    showSegment: !merchantFlow,
+    showSegment: true,
     serviceTypes: PUBLISHABLE_SERVICE_TYPES
   }
 }
@@ -274,6 +277,9 @@ export {
   DEFAULT_PRIORITY,
   ASSIGNMENT_SCOPE,
   ASSIGNMENT_SCOPE_OPTIONS,
+  getAssignmentScopeOptions,
+  isMerchantAssignmentFlow,
+  toAssignmentScopeFields,
   type AssignmentScope
 } from './feeAssignment'
 
@@ -303,9 +309,13 @@ export {
 export const VAT_COMPONENT_TYPE = 'VAT'
 
 /**
- * Loại chủ thể gửi kèm khi bản gán chỉ định đúng một ví.
- *
- * Dịch vụ phí chặn ở bước duyệt nếu loại này không khớp luồng, nên chỉ miền Ví
- * mới gửi — luồng thu hộ và chi hộ dùng ô ĐVCNTT.
+ * Loại chủ thể gửi kèm khi bản gán chỉ định đúng một ví (luồng ví). Dịch vụ phí chặn ở bước
+ * duyệt nếu loại này không khớp luồng, nên phải chọn theo loại giao dịch.
  */
 export const WALLET_SUBJECT_TYPE = 'USER'
+
+/**
+ * Loại chủ thể của bản gán "Merchant cụ thể" ở thu hộ / chi hộ. Backend bắt `subjectId` bằng
+ * `merchantId`; cặp này được 512 điểm, còn `merchantId` đứng riêng chỉ 128 và thua nhóm (256).
+ */
+export const MERCHANT_SUBJECT_TYPE = 'MERCHANT'

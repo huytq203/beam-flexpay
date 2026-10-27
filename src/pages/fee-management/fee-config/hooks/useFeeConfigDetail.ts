@@ -9,6 +9,7 @@ import {
   FEE_SCOPE,
   POLICY_KIND,
   resolveFeeScope,
+  toAssignmentScopeFields,
   type FeeScope,
   type PolicyKind
 } from '../constants/feeConfigFields'
@@ -206,16 +207,8 @@ export const useFeeConfigDetail = (
       providerCode: assignment?.providerCode ?? '',
       originalTransactionType: assignment?.originalTransactionType ?? '',
       paymentMethod: assignment?.paymentMethod ?? '',
-      merchantId: assignment?.merchantId ?? '',
-      subjectId: assignment?.subjectId ?? '',
-      customerGroup: assignment?.customerGroup ?? '',
-      // Bản gán chỉ lưu tiêu chí, không lưu phạm vi; suy ngược ra để ô chọn hiện
-      // đúng thứ người tạo đã chọn. Cá nhân trước vì nó hẹp hơn nhóm.
-      assignmentScope: assignment?.subjectId
-        ? 'SUBJECT'
-        : assignment?.customerGroup
-          ? 'SEGMENT'
-          : 'ALL',
+      // Phạm vi suy ngược từ tiêu chí của bản gán; luồng merchant đọc cả merchantId lẫn subjectId.
+      ...toAssignmentScopeFields(feeDomain, policy.serviceType, assignment),
       components: formComponents
     },
     snapshot: {

@@ -124,29 +124,29 @@ describe('trang tạo chính sách', () => {
 
   // Thu hộ VA và chi hộ đang tạm ẩn (TEMPORARILY_HIDDEN_SERVICE_TYPES nên không chọn được từ
   // form). Bỏ skip khi bật lại hai loại này.
-  it.skip('chỉ hiện ô Merchant khi chọn loại giao dịch thu hộ hoặc chi hộ', async () => {
+  it.skip('thu hộ hoặc chi hộ hiện ô Đối tượng áp dụng theo merchant, ô Merchant chỉ hiện khi chọn Merchant cụ thể', async () => {
     const user = userEvent.setup()
     renderCreatePage()
 
-    expect(
-      screen.queryByText('Đơn vị chấp nhận thanh toán')
-    ).not.toBeInTheDocument()
+    expect(screen.queryByText('Đối tượng áp dụng')).not.toBeInTheDocument()
 
     await user.click(screen.getByLabelText(/Loại giao dịch/))
     await user.click(await screen.findByText(MERCHANT_COLLECTION_LABEL))
 
+    expect(await screen.findByText('Đối tượng áp dụng')).toBeInTheDocument()
+    expect(screen.getByText('Tất cả merchant')).toBeInTheDocument()
+    // Chưa chọn "Merchant cụ thể" thì chưa có ô chọn merchant.
     expect(
-      await screen.findByText('Đơn vị chấp nhận thanh toán')
-    ).toBeInTheDocument()
+      screen.queryByText('Đơn vị chấp nhận thanh toán')
+    ).not.toBeInTheDocument()
     // Ngân hàng luôn có mặt để cấu hình ưu đãi riêng cho một cặp merchant + ngân hàng.
     expect(screen.getByLabelText(/Ngân hàng/)).toBeInTheDocument()
 
     await user.click(screen.getByLabelText(/Loại giao dịch/))
     await user.click(await screen.findByText(DEPOSIT_LABEL))
 
-    expect(
-      screen.queryByText('Đơn vị chấp nhận thanh toán')
-    ).not.toBeInTheDocument()
+    expect(screen.queryByText('Tất cả merchant')).not.toBeInTheDocument()
+    expect(screen.getByText('Tất cả khách hàng')).toBeInTheDocument()
   })
 
   it('phí đầu ra tạm ẩn Hoàn tiền giao dịch ví khỏi ô Loại giao dịch', async () => {

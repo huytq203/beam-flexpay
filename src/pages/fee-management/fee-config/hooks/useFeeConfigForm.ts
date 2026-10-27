@@ -142,6 +142,8 @@ export const useFeeConfigForm = (
       originalTransactionType: allowsOriginalTypeCriteria(next)
         ? current.originalTransactionType
         : '',
+      // Luật mới còn ô nào thì giữ giá trị ô đó (kể cả phạm vi + merchantId khi chuyển giữa thu hộ
+      // và chi hộ); ô không còn thì xoá, để khỏi gửi tiêu chí không ai nhìn thấy để sửa.
       merchantId: rules.showMerchant ? current.merchantId : '',
       subjectId: rules.showSubject ? current.subjectId : '',
       customerGroup: rules.showSegment ? current.customerGroup : '',

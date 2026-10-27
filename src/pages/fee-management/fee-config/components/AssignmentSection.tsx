@@ -6,11 +6,12 @@ import { useEffect } from 'react'
 import type { Control } from 'react-hook-form'
 import { useController, useWatch } from 'react-hook-form'
 import {
-  ASSIGNMENT_SCOPE_OPTIONS,
   allowsBankCriteria,
   allowsProviderCriteria,
+  getAssignmentScopeOptions,
   getPaymentMethodOptions,
-  getFormFieldRules
+  getFormFieldRules,
+  isMerchantAssignmentFlow
 } from '../constants/feeConfigFields'
 import {
   ORIGINAL_TYPE_OPTIONS,
@@ -51,7 +52,13 @@ export const AssignmentSection = ({
     name: 'customerGroup'
   })
   const { field: subjectField } = useController({ control, name: 'subjectId' })
+  const { field: merchantField } = useController({
+    control,
+    name: 'merchantId'
+  })
   const rules = getFormFieldRules(feeDomain, serviceType)
+  // Thu hộ / chi hộ chọn phạm vi theo merchant; miền Bank cũ giữ ô Merchant đứng riêng.
+  const merchantFlow = isMerchantAssignmentFlow(feeDomain, serviceType)
   const showProvider = allowsProviderCriteria(serviceType)
   const showBank = allowsBankCriteria(serviceType)
   const showOriginalType = allowsOriginalTypeCriteria(serviceType)
@@ -96,10 +103,15 @@ export const AssignmentSection = ({
    * giá trị cũ là gửi lên backend một tiêu chí mà màn hình không còn hiện ô nào để sửa.
    *
    * `FormSelect` đã tự ghi giá trị vào form trước khi gọi hàm này, nên ở đây chỉ dọn dẹp.
+   * Luồng merchant chọn "Merchant cụ thể" qua `merchantId`, nên đổi phạm vi thì xoá ô đó thay
+   * cho ô cá nhân.
    */
   const handleScopeChange = (next: string | number) => {
     if (next !== 'SEGMENT') segmentField.onChange('')
-    if (next !== 'SUBJECT') subjectField.onChange('')
+    if (next !== 'SUBJECT') {
+      subjectField.onChange('')
+      if (merchantFlow) merchantField.onChange('')
+    }
   }
 
   // Danh mục phân khúc nhỏ và hiếm đổi nên lấy trọn, không phân trang.
@@ -195,7 +207,7 @@ export const AssignmentSection = ({
             className={`col-span-12 flex flex-col ${colSpan}`}
           />
         )}
-        {rules.showMerchant && (
+        {rules.showMerchant && !merchantFlow && (
           <MerchantPickerField
             control={control}
             readOnly={readOnly}
@@ -210,7 +222,7 @@ export const AssignmentSection = ({
             label='Đối tượng áp dụng'
             placeholder='Chọn đối tượng áp dụng'
             allowClear={false}
-            options={[...ASSIGNMENT_SCOPE_OPTIONS]}
+            options={[...getAssignmentScopeOptions(serviceType)]}
             onChange={handleScopeChange}
             disabled={readOnly}
             className={`col-span-12 flex flex-col ${colSpan}`}
@@ -221,8 +233,10 @@ export const AssignmentSection = ({
             name='customerGroup'
             control={control}
             required
-            label='Nhóm khách hàng'
-            placeholder='Chọn nhóm khách hàng'
+            label={merchantFlow ? 'Nhóm merchant' : 'Nhóm khách hàng'}
+            placeholder={
+              merchantFlow ? 'Chọn nhóm merchant' : 'Chọn nhóm khách hàng'
+            }
             showSearch
             optionFilterProp='label'
             options={segmentOptions}
@@ -237,7 +251,22 @@ export const AssignmentSection = ({
             className='col-span-12 flex flex-col'
           />
         )}
+        {merchantFlow && scope === 'SUBJECT' && (
+          <MerchantPickerField
+            control={control}
+            readOnly={readOnly}
+            required
+            className='col-span-12 flex flex-col'
+          />
+        )}
       </div>
+      {merchantFlow && (
+        <p className='mt-2 text-[13px] text-muted-foreground'>
+          Khi nhiều chính sách cùng áp dụng cho một giao dịch: Merchant cụ thể
+          được ưu tiên hơn Nhóm merchant, và Nhóm merchant được ưu tiên hơn Tất
+          cả merchant.
+        </p>
+      )}
     </section>
   )
 }
