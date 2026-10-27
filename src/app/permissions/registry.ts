@@ -526,17 +526,6 @@ export const SCREENS = {
       full: PERMISSION.ADMIN_FULL
     }
   },
-  MERCHANT_ASSIGNMENT: {
-    path: `${MERCHANT}/sales-assignment`,
-    actions: {
-      view: PERMISSION.MERCHANT_ASSIGNMENT_VIEW,
-      create: PERMISSION.MERCHANT_ASSIGNMENT_MANAGE,
-      edit: PERMISSION.MERCHANT_ASSIGNMENT_MANAGE,
-      update: PERMISSION.MERCHANT_ASSIGNMENT_MANAGE,
-      delete: PERMISSION.MERCHANT_ASSIGNMENT_MANAGE,
-      full: PERMISSION.ADMIN_FULL
-    }
-  },
   MERCHANT_ORDER: {
     path: `${MERCHANT}/merchant-order`,
     actions: {

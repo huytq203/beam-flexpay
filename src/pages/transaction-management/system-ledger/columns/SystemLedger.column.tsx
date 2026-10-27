@@ -1,5 +1,6 @@
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
+import WalletLink from '@components/wallet-link/WalletLink'
 import { MaskText, TooltipComponent, TypographyText } from '@components/index'
 import { formatNumber } from '@utils/formatNumber'
 import {
@@ -53,20 +54,31 @@ const renderJournalCode = (record: LedgerRow) => {
 }
 
 const renderAccount = (record: LedgerRow) => {
+  const walletId = record.account?.id
   if (record.account?.ownerType === 'SYSTEM') {
-    return <span className='font-semibold'>Hệ thống</span>
+    return (
+      <WalletLink walletId={walletId}>
+        <span className='font-semibold'>Hệ thống</span>
+      </WalletLink>
+    )
   }
   const username = record.account?.ownerUsername
   if (!username) return EMPTY
   // BE có lúc đã che sẵn; che thêm lần nữa sẽ làm hỏng chuỗi.
   if (username.includes('*')) {
-    return <span className='font-medium tabular-nums'>{username}</span>
+    return (
+      <WalletLink walletId={walletId}>
+        <span className='font-medium tabular-nums'>{username}</span>
+      </WalletLink>
+    )
   }
   return (
-    <MaskText
-      value={username}
-      className='tabular-nums'
-    />
+    <WalletLink walletId={walletId}>
+      <MaskText
+        value={username}
+        className='tabular-nums'
+      />
+    </WalletLink>
   )
 }
 

@@ -26,8 +26,6 @@ import {
 } from '../hooks/useSubMerchantExport'
 import type { SubMerchantRow } from '../types/subMerchant.type'
 import { globalMessage } from '@hooks/useMessage'
-import { AssignmentScopeDrawer } from '../../../merchant-assignment/components/AssignmentScopeDrawer'
-import { toSubScope } from '../../../merchant-assignment/utils/merchantAssignment.utils'
 
 interface SubMerchantListPageProps {
   initialListState?: ManagementListState
@@ -40,7 +38,6 @@ export default function SubMerchantListPage({
   const { filters, page, pageSize, search, reset, changePage } =
     useSubMerchantListFilters()
   const [viewingId, setViewingId] = useState<string>()
-  const [assigningRow, setAssigningRow] = useState<SubMerchantRow>()
   const listParams: SubMerchantExportParams = {
     merchantId: filters.parentMerchant?.id,
     name: filters.query.trim() || undefined,
@@ -147,7 +144,6 @@ export default function SubMerchantListPage({
           </div>
           <SubMerchantTable
             filtered={isFiltered}
-            onAssignment={setAssigningRow}
             onEdit={openEdit}
             onPageChange={changePage}
             onRetry={() => void query.refetch()}
@@ -161,10 +157,6 @@ export default function SubMerchantListPage({
           />
         </section>
       </CardComponent>
-      <AssignmentScopeDrawer
-        scope={assigningRow ? toSubScope(assigningRow) : undefined}
-        onClose={() => setAssigningRow(undefined)}
-      />
       <SubMerchantDetailModal
         subMerchantId={viewingId}
         onClose={() => setViewingId(undefined)}

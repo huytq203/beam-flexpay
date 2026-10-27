@@ -11,7 +11,6 @@ export type ModalType =
   | 'resetPass'
   | 'assignRoles'
   | 'resetPassword'
-  | 'assignMerchant'
   | null
 
 export type SelectedUser = UserInfor

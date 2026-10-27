@@ -54,12 +54,9 @@ describe('merchant gateway navigation', () => {
     ])
   })
 
-  it('không còn mục Webhook riêng; Gán Sales nằm ở nhóm phân quyền', () => {
+  it('không còn mục Webhook riêng và mục Gán Sales phụ trách', () => {
     expect(findItem(navigationItems, 'webhook')).toBeUndefined()
-    const parent = navigationItems.find((item) =>
-      item.children?.some((child) => child.key === 'sales-assignment')
-    )
-    expect(parent?.key).toBe('secure-panel/role-v2')
+    expect(findItem(navigationItems, 'sales-assignment')).toBeUndefined()
   })
 })
 

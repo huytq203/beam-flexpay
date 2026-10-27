@@ -9,8 +9,6 @@ import DialogAddUser from './components/DialogAddUser'
 import DialogEditUser from './components/DialogEditUser'
 import DialogUserDetail from './components/DialogUserDetail'
 import DialogAssignRoles from './components/DialogAssignRoles'
-import { UserAssignmentDialog } from '../../merchant-management/merchant-assignment/components/UserAssignmentDialog'
-import { toAdminUserName } from '../../merchant-management/merchant-assignment/utils/merchantAssignment.utils'
 import AlertResetPassword from './components/AlertResetPassword'
 import useFetchDataUser from './hooks/useFetchDataUser'
 import useHandleUser from './hooks/useHandleUser'
@@ -209,17 +207,6 @@ const UserManagement = () => {
           />
         }
       />
-
-      {handle.modalType === 'assignMerchant' && handle.selectedUser && (
-        <UserAssignmentDialog
-          key={handle.selectedUser.id}
-          user={{
-            id: handle.selectedUser.id,
-            label: `${toAdminUserName(handle.selectedUser)} (${handle.selectedUser.username})`
-          }}
-          onClose={handle.closeModal}
-        />
-      )}
 
       {/* Reset Password */}
       <ModalComponent
