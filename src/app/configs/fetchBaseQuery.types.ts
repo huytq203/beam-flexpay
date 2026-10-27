@@ -230,7 +230,6 @@ const MERCHANT_PICKER_ROUTES = [
   '/bank-account',
   '/payment-method',
   '/merchant-order',
-  '/sales-assignment',
   '/settlement-scope',
   '/settlement-item',
   '/hold-rule',
@@ -376,11 +375,6 @@ export const WHITE_LIST: WhiteListItem[] = [
 
     ...MERCHANT_PICKER_WHITE_LIST,
 
-    // Ngăn "Sales phụ trách" mở từ danh sách Merchant/Sub-merchant và hộp thoại gán
-    // theo người dùng tự hiển thị loading; overlay toàn màn sẽ che các ngăn/hộp thoại đó.
-    { pathname: MERCHANT + '/merchant-management', requestUrlEndsWith: '/assignments' },
-    { pathname: MERCHANT + '/merchant-management', requestUrl: '/users/managers' },
-    { pathname: MERCHANT + '/sub-merchant', requestUrl: '/users/managers' },
     { pathname: ROLEMANAGEMENT_V2 + '/user-account', requestUrl: '/merchants' },
     { pathname: ROLEMANAGEMENT_V2 + '/user-account', requestUrl: '/sub-merchants' }
 ]

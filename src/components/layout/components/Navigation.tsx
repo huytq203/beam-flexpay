@@ -33,7 +33,6 @@ import {
   SlidersHorizontalIcon,
   StorefrontIcon,
   TerminalIcon,
-  UserCheckIcon,
   UserGearIcon,
   UsersThreeIcon,
   WalletIcon
@@ -182,19 +181,6 @@ const roleManagementV2: ItemTypeCustom = {
         />
       ),
       label: 'Quản lý quyền'
-    },
-    {
-      key: 'sales-assignment',
-      screen: 'MERCHANT_ASSIGNMENT',
-      link: `${MERCHANT}/sales-assignment`,
-      icon: (
-        <UserCheckIcon
-          size={size}
-          weight={weight}
-          color={COlOR}
-        />
-      ),
-      label: 'Gán Sales phụ trách'
     },
     {
       key: 'audit-log',

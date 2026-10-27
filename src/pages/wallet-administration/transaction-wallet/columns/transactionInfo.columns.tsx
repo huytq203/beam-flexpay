@@ -1,12 +1,11 @@
 import dayjs from 'dayjs'
 import type { ColumnsType } from 'antd/es/table'
 import { Link } from 'react-router-dom'
+import { PartyCell } from './PartyCell'
 import type { UnifiedContentJournal } from '@type/apiResponseJournal'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { PATHS } from '@constants/pathConstant'
 import {
-  BankEnum,
-  BankLabel,
   PaymentMethodEnum,
   SourceDomain,
   type TransactionKey
@@ -161,24 +160,12 @@ export const infoColumns: ColumnsType<UnifiedContentJournal> = [
     title: 'Người chuyển',
     align: 'center',
     dataIndex: 'from',
-    render: (value) => (
-      <span className='font-medium text-gray-500'>
-        {value?.type === 'BANK'
-          ? `${BankLabel[value?.displayName as BankEnum]} ${value?.username ? `- ${value?.username}` : ''}`
-          : value?.username}
-      </span>
-    )
+    render: (value) => <PartyCell party={value} />
   },
   {
     title: 'Người nhận',
     align: 'center',
     dataIndex: 'to',
-    render: (value) => (
-      <span className='font-medium text-gray-500'>
-        {value?.type === 'BANK'
-          ? `${BankLabel[value?.displayName as BankEnum]}  ${value?.username ? `- ${value?.username}` : ''}`
-          : value?.username}
-      </span>
-    )
+    render: (value) => <PartyCell party={value} />
   }
 ]

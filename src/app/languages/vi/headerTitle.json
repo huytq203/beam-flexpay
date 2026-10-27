@@ -141,7 +141,6 @@
     "/secure-panel/merchant/business-wallet-account":"Quản lý ví doanh nghiệp",
     "/secure-panel/merchant/business-wallet-account/create":"Thêm mới ví doanh nghiệp",
     "/secure-panel/merchant/business-wallet-account/edit/*":"Cập nhật ví doanh nghiệp",
-    "/secure-panel/merchant/sales-assignment":"Gán Sales phụ trách",
     "/secure-panel/merchant/merchant-order":"Danh sách Order Merchant",
     "/secure-panel/merchant/merchant-order/qr/*":"QR Code",
     "/secure-panel/merchant/dashboard-merchant":"Dashboard Merchant",

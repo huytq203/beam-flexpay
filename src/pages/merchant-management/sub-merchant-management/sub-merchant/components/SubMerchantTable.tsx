@@ -17,7 +17,6 @@ interface SubMerchantTableProps {
   filtered: boolean
   onView: (row: SubMerchantRow) => void
   onEdit: (row: SubMerchantRow) => void
-  onAssignment: (row: SubMerchantRow) => void
   onPageChange: (page: number, pageSize: number) => void
   onRetry: () => void
   onToggleStatus: (id: string, reason: string) => Promise<boolean>
@@ -32,7 +31,6 @@ export function SubMerchantTable({
   filtered,
   onView,
   onEdit,
-  onAssignment,
   onPageChange,
   onRetry,
   onToggleStatus
@@ -43,7 +41,6 @@ export function SubMerchantTable({
     pageSize,
     onView,
     onEdit,
-    onAssignment,
     onStatus: setStatusRow
   })
 

@@ -54,15 +54,6 @@ describe('quyền merchant mới', () => {
       expect(order.actions[action]).toBe(PERMISSION.ORDER_UPDATE)
     }
   })
-  it('gán Sales phụ trách: xem cần ASSIGNMENT:VIEW, gán/gỡ cần ASSIGNMENT:MANAGE', () => {
-    const assignment = SCREENS.MERCHANT_ASSIGNMENT
-    expect(assignment.actions.view).toBe(PERMISSION.MERCHANT_ASSIGNMENT_VIEW)
-    for (const action of ['create', 'edit', 'update', 'delete'] as const) {
-      expect(assignment.actions[action]).toBe(
-        PERMISSION.MERCHANT_ASSIGNMENT_MANAGE
-      )
-    }
-  })
   it('quy tắc tạm giữ: xem/đề xuất cần HOLD_RULE:MANAGE, duyệt cần HOLD_RULE:APPROVE', () => {
     const rule = SCREENS.MERCHANT_HOLD_RULE
     expect(PERMISSION.MERCHANT_HOLD_RULE_APPROVE).toBe(

@@ -12,22 +12,19 @@ import type { MerchantStatus } from '@type/merchant'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { STATUS_CONFIG } from '../constants/Merchant.constant'
 import { Can } from '@/app/permissions'
-import { AssignmentRowButton } from '../../../merchant-assignment/components/AssignmentRowButton'
 
 interface MerchantColumnProps {
   onEdit: (id: string) => void
   onView?: (id: string) => void
   onApprove: (merchant: ContentMerchant) => void
   onTerminate: (merchant: ContentMerchant) => void
-  onAssignment: (merchant: ContentMerchant) => void
 }
 
 export const MerchantColumn = ({
   onEdit,
   onView,
   onApprove,
-  onTerminate,
-  onAssignment
+  onTerminate
 }: MerchantColumnProps): ColumnType<ContentMerchant>[] => [
   {
     title: '#',
@@ -110,10 +107,6 @@ export const MerchantColumn = ({
             />
           </TooltipComponent>
         </Can>
-        <AssignmentRowButton
-          name={record.name}
-          onClick={() => onAssignment(record)}
-        />
         {record.status === 'PENDING_APPROVAL' && (
           <Can
             screen='MERCHANT_MANAGEMENT'
