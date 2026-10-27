@@ -10,7 +10,10 @@ import { FeeComponentList } from './components/FeeComponentList'
 import { InputCostRouteSection } from './components/InputCostRouteSection'
 import { PolicyGeneralSection } from './components/PolicyGeneralSection'
 import { useFeeConfigDetail } from './hooks/useFeeConfigDetail'
-import { buildEmptyForm, useFeeConfigForm } from './hooks/useFeeConfigForm'
+import {
+  buildEmptyFormForScreen,
+  useFeeConfigForm
+} from './hooks/useFeeConfigForm'
 import {
   useFeeConfigSubmit,
   type FeeConfigSnapshot
@@ -56,7 +59,7 @@ const FeeConfigForm = ({
   )
   const { submit, isSubmitting, orphan, dismissOrphan } = useFeeConfigSubmit(
     snapshot,
-    policyKind
+    screen
   )
   const { control, handleSubmit, watch, formState } = form
 
@@ -232,7 +235,7 @@ export const FeeConfigPage = ({ screen }: FeeConfigPageProps) => {
       key={id ?? 'create'}
       snapshot={snapshot}
       feeCode={feeCode}
-      defaultValues={values ?? buildEmptyForm()}
+      defaultValues={values ?? buildEmptyFormForScreen(screen)}
       readOnly={Boolean(id && !isEditable)}
     />
   )

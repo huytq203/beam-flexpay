@@ -50,7 +50,8 @@ export const MerchantFeeRulesCard = ({
     subjectType: 'MERCHANT',
     feeDomain: 'MERCHANT',
     // Thiếu merchantId thì backend thêm `merchantId IS NULL` và khối mất mọi bản gán riêng.
-    merchantId
+    merchantId,
+    exportFilenamePrefix: 'cau-hinh-phi-dvcntt'
   })
 
   if (!hasValidSubject) {

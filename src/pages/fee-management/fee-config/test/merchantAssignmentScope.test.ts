@@ -199,6 +199,46 @@ describe('schema: Merchant cụ thể bắt buộc chọn merchant', () => {
   })
 })
 
+describe('schema: thông báo thiếu nhóm theo luồng', () => {
+  const segmentMessage = (form: ReturnType<typeof baseForm>) => {
+    const result = feeConfigFormSchema.safeParse(form)
+    if (result.success) return undefined
+    return result.error.issues.find(
+      (issue) => issue.path[0] === 'customerGroup'
+    )?.message
+  }
+
+  it('thu hộ / chi hộ báo "Chọn nhóm merchant được áp dụng"', () => {
+    for (const serviceType of [
+      'MERCHANT_VA_BILL_COLLECTION',
+      'PAYOUT_BANK_TRANSFER'
+    ]) {
+      expect(
+        segmentMessage(
+          merchantForm({
+            serviceType,
+            assignmentScope: 'SEGMENT',
+            customerGroup: ''
+          })
+        )
+      ).toBe('Chọn nhóm merchant được áp dụng')
+    }
+  })
+
+  it('luồng ví giữ "Chọn nhóm khách hàng được áp dụng"', () => {
+    expect(
+      segmentMessage(
+        baseForm({
+          serviceType: 'EWALLET_DEPOSIT',
+          paymentMethod: '',
+          assignmentScope: 'SEGMENT',
+          customerGroup: ''
+        })
+      )
+    ).toBe('Chọn nhóm khách hàng được áp dụng')
+  })
+})
+
 describe('nhãn và luật ô theo loại giao dịch', () => {
   it('thu hộ / chi hộ dùng ba nhãn merchant', () => {
     for (const serviceType of [

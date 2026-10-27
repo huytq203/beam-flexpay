@@ -10,6 +10,7 @@ import { SERVICE_TYPE_LABELS } from '@constants/feeLabels'
 import type { ComponentType } from 'react'
 import FeeConfig from '../FeeConfig'
 import InputCostConfig from '../InputCostConfig'
+import MerchantFeeConfig from '../MerchantFeeConfig'
 
 const MERCHANT_COLLECTION_LABEL =
   SERVICE_TYPE_LABELS.MERCHANT_VA_BILL_COLLECTION
@@ -122,19 +123,15 @@ describe('trang tạo chính sách', () => {
     ).not.toBeInTheDocument()
   })
 
-  // Thu hộ VA và chi hộ đang tạm ẩn (TEMPORARILY_HIDDEN_SERVICE_TYPES nên không chọn được từ
-  // form). Bỏ skip khi bật lại hai loại này.
-  it.skip('thu hộ hoặc chi hộ hiện ô Đối tượng áp dụng theo merchant, ô Merchant chỉ hiện khi chọn Merchant cụ thể', async () => {
+  // Thu hộ VA và chi hộ chỉ chọn được ở màn ĐVCNTT (màn phí chung ẩn vĩnh viễn hai loại này).
+  it('màn ĐVCNTT: thu hộ hiện ô Đối tượng áp dụng theo merchant, ô Merchant chỉ hiện khi chọn Merchant cụ thể', async () => {
     const user = userEvent.setup()
-    renderCreatePage()
+    renderCreatePage(MerchantFeeConfig)
 
-    expect(screen.queryByText('Đối tượng áp dụng')).not.toBeInTheDocument()
-
-    await user.click(screen.getByLabelText(/Loại giao dịch/))
-    await user.click(await screen.findByText(MERCHANT_COLLECTION_LABEL))
-
+    // Màn ĐVCNTT chọn sẵn Thu hộ VA nên phạm vi theo merchant hiện ngay.
     expect(await screen.findByText('Đối tượng áp dụng')).toBeInTheDocument()
     expect(screen.getByText('Tất cả merchant')).toBeInTheDocument()
+    expect(screen.queryByText('Tất cả khách hàng')).not.toBeInTheDocument()
     // Chưa chọn "Merchant cụ thể" thì chưa có ô chọn merchant.
     expect(
       screen.queryByText('Đơn vị chấp nhận thanh toán')
@@ -142,11 +139,21 @@ describe('trang tạo chính sách', () => {
     // Ngân hàng luôn có mặt để cấu hình ưu đãi riêng cho một cặp merchant + ngân hàng.
     expect(screen.getByLabelText(/Ngân hàng/)).toBeInTheDocument()
 
-    await user.click(screen.getByLabelText(/Loại giao dịch/))
-    await user.click(await screen.findByText(DEPOSIT_LABEL))
+    await user.click(screen.getByLabelText(/Đối tượng áp dụng/))
+    await user.click(await screen.findByText('Merchant cụ thể'))
 
-    expect(screen.queryByText('Tất cả merchant')).not.toBeInTheDocument()
-    expect(screen.getByText('Tất cả khách hàng')).toBeInTheDocument()
+    expect(
+      await screen.findByText('Đơn vị chấp nhận thanh toán')
+    ).toBeInTheDocument()
+
+    // Đổi sang chi hộ vẫn giữ phạm vi theo merchant.
+    await user.click(screen.getByLabelText(/Loại giao dịch/))
+    await user.click(await screen.findByText('Chi hộ chuyển khoản ngân hàng'))
+
+    expect(
+      screen.getByLabelText(/Đối tượng áp dụng/).closest('.ant-select')
+    ).toHaveTextContent('Merchant cụ thể')
+    expect(screen.queryByText('Cá nhân')).not.toBeInTheDocument()
   })
 
   it('phí đầu ra tạm ẩn Hoàn tiền giao dịch ví khỏi ô Loại giao dịch', async () => {

@@ -14,10 +14,16 @@ import {
   renderMerchantDetail
 } from './merchantDetail.setup'
 
-const mocks = vi.hoisted(() => ({ exportFile: vi.fn() }))
+const mocks = vi.hoisted(() => ({
+  exportFile: vi.fn(),
+  exportCsvArgs: [] as Array<{ filenamePrefix: string }>
+}))
 
 vi.mock('@hooks/useExportCsv', () => ({
-  useExportCsv: () => ({ exportFile: mocks.exportFile, isExporting: false })
+  useExportCsv: (args: { filenamePrefix: string }) => {
+    mocks.exportCsvArgs.push(args)
+    return { exportFile: mocks.exportFile, isExporting: false }
+  }
 }))
 
 // Schema query bắt `merchantId` là uuid, nên dùng id đúng dạng ở các case gọi API.
@@ -96,6 +102,7 @@ const renderCard = () =>
 describe('MerchantFeeRulesCard', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mocks.exportCsvArgs.length = 0
   })
 
   it('gửi merchantId cùng subject MERCHANT và miền MERCHANT', async () => {
@@ -159,6 +166,17 @@ describe('MerchantFeeRulesCard', () => {
       appliedObjectTypes: 'ACCOUNT,CUSTOMER_GROUP',
       feeDomain: 'MERCHANT'
     })
+  })
+
+  it('file CSV dùng tiền tố cau-hinh-phi-dvcntt', async () => {
+    mockRules([rule])
+    renderCard()
+
+    await screen.findByText('Merchant cụ thể')
+
+    expect(mocks.exportCsvArgs.at(-1)?.filenamePrefix).toBe(
+      'cau-hinh-phi-dvcntt'
+    )
   })
 })
 

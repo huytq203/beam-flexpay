@@ -10,6 +10,7 @@ import {
   allowsBankCriteria,
   allowsProviderCriteria
 } from '../constants/feeConfigFields'
+import { FEE_SCREEN, type FeeScreen } from '../constants/feeScreen'
 import { allowsOriginalTypeCriteria } from '../constants/feeRefundOriginalType'
 import {
   feeConfigFormSchema,
@@ -42,6 +43,20 @@ export const buildEmptyForm = (
   validTo: '',
   components: []
 })
+
+/**
+ * Form trống của màn tạo. Màn ĐVCNTT chọn sẵn thu hộ VA (miền Merchant) để phạm vi đối tượng và bên chịu
+ * phí hiện nhãn merchant ngay từ đầu, thay vì nhãn ví khi chưa chọn loại giao dịch. Màn khác để trống như cũ.
+ */
+export const buildEmptyFormForScreen = (
+  screen: FeeScreen
+): FeeConfigFormValues =>
+  screen === FEE_SCREEN.MERCHANT_FEE
+    ? {
+        ...buildEmptyForm(FeeDomain.MERCHANT),
+        serviceType: 'MERCHANT_VA_BILL_COLLECTION'
+      }
+    : buildEmptyForm()
 
 export interface UseFeeConfigFormResult {
   form: UseFormReturn<FeeConfigFormValues>
@@ -151,7 +166,10 @@ export const useFeeConfigForm = (
       ...current,
       feeDomain: domain,
       serviceType: next,
-      components: toMerchantPayers(resetGrossBase(current.components, next), next),
+      components: toMerchantPayers(
+        resetGrossBase(current.components, next),
+        next
+      ),
       // Chuyển ví không có ngân hàng; giữ lại là gửi một tiêu chí không còn ô nào để sửa.
       bankCode: allowsBankCriteria(next) ? current.bankCode : '',
       // NCC chỉ có nghĩa với nạp/rút ví; giữ lại là gửi một tiêu chí không còn ô nào để sửa.

@@ -6,7 +6,10 @@ import {
   MERCHANT_PAYER_FILTER_OPTIONS,
   PAYER_TYPE_FILTER_OPTIONS
 } from '../constants/feePolicyFilterOptions'
-import { FEE_SCREEN, type FeeScreen } from '@pages/fee-management/fee-config/constants/feeScreen'
+import {
+  FEE_SCREEN,
+  type FeeScreen
+} from '@pages/fee-management/fee-config/constants/feeScreen'
 import type { FeePolicyFilterValues } from './FeePolicyFilterBar'
 
 interface FeePolicyPartyFiltersProps {
@@ -50,7 +53,8 @@ export const FeePolicyPartyFilters = ({
       options={BENEFICIARY_TYPE_FILTER_OPTIONS}
       className='flex flex-col'
     />
-    {!inputCost && (
+    {/* Bên chịu phí là khái niệm của chuyển tiền ví (Người chuyển / Người nhận), vô nghĩa với thu hộ / chi hộ. */}
+    {!inputCost && screen !== FEE_SCREEN.MERCHANT_FEE && (
       <FormSelect
         name='feeBearer'
         control={control}

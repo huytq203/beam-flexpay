@@ -81,7 +81,8 @@ export const FeePolicyListPage = ({ screen }: FeePolicyListPageProps) => {
     paymentMethod: filters.paymentMethod,
     payerType: isInputCost ? undefined : filters.payerType,
     beneficiaryType: filters.beneficiaryType,
-    feeBearer: isInputCost ? undefined : filters.feeBearer,
+    // Màn ĐVCNTT không có bộ lọc bên chịu phí nên không gửi dù URL mang theo.
+    feeBearer: isInputCost || isMerchantScreen ? undefined : filters.feeBearer,
     validFrom: filters.validFrom,
     validTo: filters.validTo,
     createdAtFrom: filters.createdAtFrom,
@@ -171,6 +172,8 @@ export const FeePolicyListPage = ({ screen }: FeePolicyListPageProps) => {
                   ...values,
                   direction: null,
                   serviceType: serviceType ?? null,
+                  // Màn ĐVCNTT không có ô này: xoá giá trị dư từ URL cũ thay vì giữ lại mãi.
+                  ...(isMerchantScreen ? { feeBearer: null } : {}),
                   validFrom: dateOnly(values.validFrom),
                   validTo: dateOnly(values.validTo),
                   createdAtFrom: dateOnly(values.createdAtFrom),

@@ -9,6 +9,7 @@ import {
   allowsBankCriteria,
   allowsProviderCriteria
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
+import { allowsMerchantCriteria } from '@utils/fee-execution'
 import { toReadoutComponent } from '../utils/toReadoutComponent'
 import { FeeComponentList } from './FeeComponentList'
 import type {
@@ -56,9 +57,21 @@ const Fact = ({ label, children }: FactProps) => (
   </div>
 )
 
+/**
+ * Nhóm đối tượng của một bản gán. Thu hộ / chi hộ (theo loại giao dịch của bản gán) gọi theo merchant:
+ * bản gán mới mang cặp chủ thể MERCHANT + subjectId, bản gán cũ chỉ có merchantId, cả hai là "Merchant
+ * cụ thể". Bản gán ví giữ nguyên nhãn khách hàng.
+ */
 const assignmentScope = (
   assignment: FeeAssignment
 ): { label: string; value: string } => {
+  if (allowsMerchantCriteria(assignment.serviceType)) {
+    const merchantId = assignment.subjectId || assignment.merchantId
+    if (merchantId) return { label: 'Merchant cụ thể', value: merchantId }
+    if (assignment.customerGroup)
+      return { label: 'Nhóm merchant', value: assignment.customerGroup }
+    return { label: 'Tất cả merchant', value: 'Không giới hạn đối tượng' }
+  }
   if (assignment.subjectId)
     return { label: 'Cá nhân', value: assignment.subjectId }
   if (assignment.customerGroup)
@@ -71,17 +84,25 @@ const assignmentScope = (
   return { label: 'Tất cả', value: 'Không giới hạn đối tượng' }
 }
 
+/**
+ * Tìm chủ thể của bản gán trong danh sách đã áp để hiện tên. Bản gán merchant cũ chỉ có `merchantId` nên
+ * tra theo cặp MERCHANT + merchantId.
+ */
 const findAppliedSubject = (
   assignment: FeeAssignment,
   appliedTargets?: AppliedTarget[]
 ): AppliedSubject | undefined => {
-  if (!assignment.subjectId) return undefined
+  const merchantFlow = allowsMerchantCriteria(assignment.serviceType)
+  const subjectId =
+    assignment.subjectId || (merchantFlow ? assignment.merchantId : null)
+  if (!subjectId) return undefined
+  const subjectType =
+    assignment.subjectType || (merchantFlow ? 'MERCHANT' : null)
   return appliedTargets
     ?.flatMap((target) => target.subjects ?? [])
     .find(
       (subject) =>
-        subject.subjectId === assignment.subjectId &&
-        subject.subjectType === assignment.subjectType
+        subject.subjectId === subjectId && subject.subjectType === subjectType
     )
 }
 

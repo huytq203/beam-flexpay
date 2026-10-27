@@ -122,7 +122,10 @@ export const checkFeeConfigCommonRules = (
     ctx.addIssue({
       code: 'custom',
       path: ['customerGroup'],
-      message: 'Chọn nhóm khách hàng được áp dụng'
+      // Thu hộ / chi hộ gọi ô này là "Nhóm merchant" nên thông báo cũng phải nói merchant.
+      message: isMerchantAssignmentFlow(form.feeDomain, form.serviceType)
+        ? 'Chọn nhóm merchant được áp dụng'
+        : 'Chọn nhóm khách hàng được áp dụng'
     })
   }
 

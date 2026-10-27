@@ -130,10 +130,11 @@ const buildColumns = ({
     title: 'Đối tượng áp dụng',
     dataIndex: 'appliedTargets',
     width: 250,
-    render: (appliedTargets: AppliedTarget[] | undefined) => (
+    render: (appliedTargets: AppliedTarget[] | undefined, row) => (
       <AppliedTargetCell
         targets={appliedTargets}
         customerSegmentNames={customerSegmentNames}
+        serviceType={row.serviceType}
       />
     )
   },

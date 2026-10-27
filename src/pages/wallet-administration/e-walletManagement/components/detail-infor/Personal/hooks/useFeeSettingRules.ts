@@ -33,6 +33,8 @@ interface UseFeeSettingRulesParams {
    * `merchantId IS NULL` và mất mọi bản gán riêng của merchant. Tab ví không truyền.
    */
   merchantId?: string
+  /** Tiền tố tên file CSV xuất ra; mặc định là của tab ví, thẻ merchant truyền tiền tố riêng. */
+  exportFilenamePrefix?: string
 }
 
 export const useFeeSettingRules = ({
@@ -40,7 +42,8 @@ export const useFeeSettingRules = ({
   subjectId,
   subjectType,
   feeDomain,
-  merchantId
+  merchantId,
+  exportFilenamePrefix = 'cau-hinh-phi'
 }: UseFeeSettingRulesParams) => {
   const { page, size, setPage, setPageSize } = usePagination()
   const [filter, setFilter] = useState<ApplicableFeeRuleFilter>({})
@@ -101,7 +104,7 @@ export const useFeeSettingRules = ({
   const { exportFile, isExporting } = useExportCsv({
     trigger: triggerExport,
     reset: resetExport,
-    filenamePrefix: 'cau-hinh-phi'
+    filenamePrefix: exportFilenamePrefix
   })
 
   /** Endpoint xuất không nhận page/size — file lấy trọn bộ lọc, không theo trang. */

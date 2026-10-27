@@ -13,7 +13,10 @@ import { getFormFieldRules, POLICY_KIND } from '../constants/feeConfigFields'
 import { FEE_SCREEN, visibleServiceTypesFor } from '../constants/feeScreen'
 import { HIDDEN_SERVICE_TYPES_BY_POLICY_KIND } from '../constants/policyKindServiceTypes'
 import { withoutHiddenServiceTypes } from '@utils/fee-execution'
-import { buildEmptyForm } from '../hooks/useFeeConfigForm'
+import {
+  buildEmptyForm,
+  buildEmptyFormForScreen
+} from '../hooks/useFeeConfigForm'
 import type { FeeConfigFormValues } from '../schemas/feeConfig.schema'
 
 const mockUseFeeConfigDetail = vi.hoisted(() => vi.fn())
@@ -193,6 +196,49 @@ describe('màn tạo theo screen: ô Loại giao dịch', () => {
     expect(options).toContain('Nạp tiền ví')
     expect(options).not.toContain('Thu hộ VA')
     expect(options).not.toContain('Chi hộ chuyển khoản ngân hàng')
+  })
+})
+
+describe('màn tạo theo screen: giá trị khởi tạo', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUseFeeConfigDetail.mockReturnValue(createDetail)
+  })
+
+  it('màn ĐVCNTT chọn sẵn Thu hộ VA và hiện phạm vi theo merchant', () => {
+    renderScreens(MERCHANT_CREATE)
+
+    expect(
+      screen
+        .getByRole('combobox', { name: /Loại giao dịch/ })
+        .closest('.ant-select')
+    ).toHaveTextContent('Thu hộ VA')
+    expect(screen.getByText('Tất cả merchant')).toBeInTheDocument()
+    expect(screen.queryByText('Tất cả khách hàng')).not.toBeInTheDocument()
+  })
+
+  it('màn phí chung vẫn để trống loại giao dịch', () => {
+    renderScreens(PATHS.FEE_V4.POLICY_CREATE)
+
+    expect(
+      screen
+        .getByRole('combobox', { name: /Loại giao dịch/ })
+        .closest('.ant-select')
+    ).not.toHaveTextContent('Thu hộ VA')
+    expect(screen.queryByText('Tất cả merchant')).not.toBeInTheDocument()
+  })
+
+  it('buildEmptyFormForScreen: ĐVCNTT điền sẵn miền và loại, màn khác như buildEmptyForm', () => {
+    expect(buildEmptyFormForScreen(FEE_SCREEN.MERCHANT_FEE)).toMatchObject({
+      feeDomain: FeeDomain.MERCHANT,
+      serviceType: 'MERCHANT_VA_BILL_COLLECTION'
+    })
+    expect(buildEmptyFormForScreen(FEE_SCREEN.CUSTOMER_FEE)).toEqual(
+      buildEmptyForm()
+    )
+    expect(buildEmptyFormForScreen(FEE_SCREEN.INPUT_COST)).toEqual(
+      buildEmptyForm()
+    )
   })
 })
 

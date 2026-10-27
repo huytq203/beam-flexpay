@@ -53,6 +53,27 @@ describe('AssignmentSection — thu hộ / chi hộ', () => {
     expect(screen.getByText('Đơn vị chấp nhận thanh toán')).toBeInTheDocument()
   })
 
+  it('Merchant cụ thể bắt buộc nên nhãn ô merchant có dấu *, ô tuỳ chọn của miền Bank thì không', () => {
+    const { unmount } = renderSection({
+      ...merchantFlow,
+      assignmentScope: 'SUBJECT'
+    })
+    const requiredLabel = screen.getByText('Đơn vị chấp nhận thanh toán')
+    expect(requiredLabel).toHaveTextContent('*')
+    // Cùng kiểu dấu với nhãn FormSelect bắt buộc ("Đối tượng áp dụng").
+    expect(requiredLabel.querySelector('span')).toHaveClass('text-red-600')
+    unmount()
+
+    renderSection({
+      feeDomain: 'BANK',
+      serviceType: 'MERCHANT_VA_BILL_COLLECTION',
+      paymentMethod: ''
+    })
+    expect(
+      screen.getByText('Đơn vị chấp nhận thanh toán')
+    ).not.toHaveTextContent('*')
+  })
+
   it('Nhóm merchant hiện ô nhóm với nhãn merchant', async () => {
     server.use(
       http.get('*/customer-segments*', () =>

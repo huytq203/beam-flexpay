@@ -33,6 +33,13 @@ const APPLIED_TARGET_OPTIONS = [
   { label: 'Riêng ví', value: 'ACCOUNT' }
 ]
 
+/** Màn ĐVCNTT: cùng giá trị gửi BE, chỉ đổi nhãn sang merchant. */
+const MERCHANT_APPLIED_TARGET_OPTIONS = [
+  { label: 'Tất cả', value: 'ALL' },
+  { label: 'Theo nhóm merchant', value: 'CUSTOMER_GROUP' },
+  { label: 'Merchant cụ thể', value: 'ACCOUNT' }
+]
+
 export interface FeePolicyFilterValues {
   keyword: string
   status: string
@@ -129,7 +136,10 @@ export const FeePolicyFilterBar = ({
   )
   // Lọc theo LOẠI đối tượng, không theo từng phân khúc: người vận hành muốn
   // gom Tất cả chính sách cấu hình theo nhóm, tên nhóm cụ thể đã hiện ở cột.
-  const appliedTargetOptions = APPLIED_TARGET_OPTIONS
+  const appliedTargetOptions =
+    screen === FEE_SCREEN.MERCHANT_FEE
+      ? MERCHANT_APPLIED_TARGET_OPTIONS
+      : APPLIED_TARGET_OPTIONS
   const paymentMethodOptions = serviceType
     ? [...getPaymentMethodOptions(serviceType)]
     : BACKEND_PAYMENT_METHODS.map((value) => ({
