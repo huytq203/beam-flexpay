@@ -93,7 +93,7 @@ export const WITHDRAWAL_STATUS_PRESENTATION: Record<
 }
 
 /** Ràng buộc độ dài của `POST /withdrawals/{transactionCode}/approve`. */
-export const WITHDRAWAL_NOTE_MIN_LENGTH = 10
+export const WITHDRAWAL_NOTE_MIN_LENGTH = 1
 export const WITHDRAWAL_NOTE_MAX_LENGTH = 500
 
 /** Ràng buộc độ dài của `POST /withdrawals/{transactionCode}/reject`: chỉ bắt buộc nhập, không đặt tối thiểu. */
