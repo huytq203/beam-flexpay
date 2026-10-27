@@ -12,6 +12,7 @@ const mocks = vi.hoisted(() => ({
   getUnified: vi.fn(),
   openDetail: vi.fn(),
   hasRow: false,
+  displayStatus: null as string | null,
   totalElements: 12
 }))
 
@@ -27,6 +28,7 @@ vi.mock('@services/apiJournal', () => ({
                 transactionCode: 'FW26XL3DA',
                 description: 'Rút tiền về tài khoản',
                 status: 'PENDING',
+                displayStatus: mocks.displayStatus,
                 amount: 50000,
                 feeAmount: 100,
                 grossAmount: 50100,
@@ -95,6 +97,7 @@ describe('Lịch sử rút tiền — xuất CSV', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mocks.hasRow = false
+    mocks.displayStatus = null
     mocks.totalElements = 12
   })
 
@@ -206,5 +209,18 @@ describe('Lịch sử rút tiền — xuất CSV', () => {
     expect(await screen.findByText('Xử lý chi tiền')).toBeInTheDocument()
     expect(mocks.openDetail).not.toHaveBeenCalled()
     expect(screen.queryByRole('radio')).not.toBeInTheDocument()
+  })
+
+  it('ẩn nút Xử lý chi tiền khi lệnh đang chờ duyệt', () => {
+    mocks.hasRow = true
+    mocks.displayStatus = 'PENDING_APPROVAL'
+    renderScreen()
+
+    expect(
+      screen.queryByRole('button', { name: 'Xử lý chi tiền' })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Xem chi tiết' })
+    ).toBeInTheDocument()
   })
 })
