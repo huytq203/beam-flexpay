@@ -123,6 +123,20 @@ describe('màn Cấu hình phí ĐVCNTT: danh sách theo miền MERCHANT', () =>
     ])
   })
 
+  const payerFilterOptions = async () => {
+    await userEvent.click(await screen.findByLabelText('Người chịu phí'))
+    return (await screen.findAllByRole('option')).map((option) =>
+      option.getAttribute('aria-label')
+    )
+  }
+
+  it('bộ lọc người chịu phí chỉ có Merchant và Khách hàng', async () => {
+    renderMerchant('/merchant/fee-config')
+    await screen.findByText('Phí thu hộ VA merchant')
+
+    expect(await payerFilterOptions()).toEqual(['Merchant', 'Khách hàng'])
+  })
+
   it('nút thêm chính sách chuyển tới màn tạo của ĐVCNTT', async () => {
     const user = userEvent.setup()
     renderMerchant('/merchant/fee-config')
@@ -180,5 +194,17 @@ describe('màn Cấu hình phí ĐVCNTT: danh sách theo miền MERCHANT', () =>
     expect(requests[0].searchParams.get('feeDomain')).toBeNull()
     expect(tabNames()).not.toContain('Thu hộ VA')
     expect(tabNames()).not.toContain('Chi hộ chuyển khoản ngân hàng')
+  })
+
+  it('màn Cấu hình phí chung giữ nguyên bộ lọc người chịu phí', async () => {
+    renderWithProviders(
+      <MessageProvider>
+        <FeePolicyList />
+      </MessageProvider>,
+      { route: '/fee' }
+    )
+
+    // List ảo của antd trong jsdom chỉ dựng hai dòng đầu: đủ để thấy nhãn ví không đổi.
+    expect(await payerFilterOptions()).toEqual(['Người chuyển', 'Người nhận'])
   })
 })

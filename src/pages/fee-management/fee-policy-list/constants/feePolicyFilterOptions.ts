@@ -11,6 +11,12 @@ export const PAYER_TYPE_FILTER_OPTIONS = [
   { value: 'SYSTEM', label: PAYER_TYPE_LABEL.SYSTEM }
 ] as const
 
+/** Màn ĐVCNTT: hai bên của thu hộ / chi hộ là Merchant và Khách hàng, không có người chuyển / nhận. */
+export const MERCHANT_PAYER_FILTER_OPTIONS = [
+  { value: 'MERCHANT', label: 'Merchant' },
+  { value: 'USER', label: 'Khách hàng' }
+] as const
+
 export const BENEFICIARY_TYPE_FILTER_OPTIONS = Object.entries(
   BENEFICIARY_TYPE_LABEL
 ).map(([value, label]) => ({ value, label }))

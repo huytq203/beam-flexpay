@@ -179,6 +179,20 @@ export const checkFeeConfigCommonRules = (
   // tham chiếu đã đứng trước nó — backend kiểm theo đúng thứ tự trong mảng.
   const seen = new Set<string>()
   const identities = new Set<string>()
+  // Màn chỉ hiện lỗi gốc của `components`; lỗi từng dòng bên dưới không có thẻ nào hiển thị.
+  if (
+    allowsMerchantCriteria(form.serviceType) &&
+    form.components.some(
+      (component) =>
+        component.feeScope === 'OUTPUT_FEE' && component.payerType !== 'MERCHANT'
+    )
+  ) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['components'],
+      message: MERCHANT_PAYER_ONLY_MESSAGE
+    })
+  }
   form.components.forEach((component, index) => {
     // Thu hộ / chi hộ: backend chỉ chạy được payer MERCHANT. Chặn ở schema để dữ liệu cũ hay sửa tay
     // không lọt qua; payload không còn âm thầm đổi payer thay người vận hành.

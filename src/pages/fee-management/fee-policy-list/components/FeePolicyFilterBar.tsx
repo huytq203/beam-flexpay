@@ -231,6 +231,7 @@ export const FeePolicyFilterBar = ({
           control={control}
           serviceType={serviceType}
           inputCost={inputCost}
+          screen={screen}
         />
         <FormDatePicker
           name='validFrom'

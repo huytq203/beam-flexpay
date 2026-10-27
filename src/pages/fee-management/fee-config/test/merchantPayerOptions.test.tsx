@@ -162,6 +162,13 @@ describe('schema chặn payer khác Merchant của thu hộ / chi hộ', () => {
     })
   })
 
+  it('thu hộ cũ mang RECEIVER còn có lỗi gốc ở components để màn hiển thị', () => {
+    expect(issuePaths(merchantForm('RECEIVER'))).toContainEqual({
+      path: 'components',
+      message: 'Thu hộ / chi hộ hiện chỉ hỗ trợ Merchant chịu phí'
+    })
+  })
+
   it('Merchant hợp lệ, không có lỗi payerType', () => {
     expect(
       issuePaths(merchantForm('MERCHANT')).filter(({ path }) =>

@@ -232,6 +232,34 @@ describe('nhãn và luật ô theo loại giao dịch', () => {
   })
 })
 
+describe('đổi loại giao dịch đưa payer phí đầu ra về Merchant', () => {
+  const withPayers = () =>
+    merchantForm({
+      serviceType: '',
+      feeDomain: 'EWALLET',
+      components: [
+        { ...merchantForm().components[0], payerType: 'USER' },
+        { ...merchantForm().components[0], key: 'c2', payerType: 'RECEIVER' }
+      ]
+    })
+
+  it('sang thu hộ / chi hộ: mọi phí đầu ra về MERCHANT trên form', () => {
+    const { result } = renderHook(() => useFeeConfigForm(withPayers()))
+    act(() => result.current.changeServiceType('MERCHANT_VA_BILL_COLLECTION'))
+    expect(
+      result.current.form.getValues('components').map((c) => c.payerType)
+    ).toEqual(['MERCHANT', 'MERCHANT'])
+  })
+
+  it('sang luồng ví giữ nguyên payer', () => {
+    const { result } = renderHook(() => useFeeConfigForm(withPayers()))
+    act(() => result.current.changeServiceType('EWALLET_DEPOSIT'))
+    expect(
+      result.current.form.getValues('components').map((c) => c.payerType)
+    ).toEqual(['USER', 'RECEIVER'])
+  })
+})
+
 describe('đổi loại giao dịch giữ phạm vi merchant', () => {
   it('từ thu hộ sang chi hộ giữ assignmentScope và merchantId', () => {
     const { result } = renderHook(() =>
