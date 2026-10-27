@@ -1,0 +1,216 @@
+{
+  "EWALLET_DEPOSIT": {
+    "o": [
+      {
+        "value": "USER",
+        "label": "Người chuyển"
+      },
+      {
+        "value": "RECEIVER",
+        "label": "Người nhận"
+      }
+    ],
+    "t": {
+      "sender": "Người chuyển chịu",
+      "receiver": "Người nhận chịu"
+    },
+    "p": [
+      {
+        "value": "USER",
+        "label": "Người chuyển"
+      },
+      {
+        "value": "RECEIVER",
+        "label": "Người nhận"
+      },
+      {
+        "value": "SYSTEM",
+        "label": "Hệ thống/platform"
+      }
+    ],
+    "l": [
+      "Người chuyển",
+      "Người chuyển",
+      "Người nhận",
+      "Merchant",
+      "Hệ thống/platform"
+    ]
+  },
+  "EWALLET_WITHDRAWAL": {
+    "o": [
+      {
+        "value": "USER",
+        "label": "Người chuyển"
+      },
+      {
+        "value": "RECEIVER",
+        "label": "Người nhận"
+      }
+    ],
+    "t": {
+      "sender": "Người chuyển chịu",
+      "receiver": "Người nhận chịu"
+    },
+    "p": [
+      {
+        "value": "USER",
+        "label": "Người chuyển"
+      },
+      {
+        "value": "RECEIVER",
+        "label": "Người nhận"
+      },
+      {
+        "value": "SYSTEM",
+        "label": "Hệ thống/platform"
+      }
+    ],
+    "l": [
+      "Người chuyển",
+      "Người chuyển",
+      "Người nhận",
+      "Merchant",
+      "Hệ thống/platform"
+    ]
+  },
+  "EWALLET_TRANSFER_INTERNAL": {
+    "o": [
+      {
+        "value": "USER",
+        "label": "Người chuyển"
+      },
+      {
+        "value": "RECEIVER",
+        "label": "Người nhận"
+      }
+    ],
+    "t": {
+      "sender": "Người chuyển chịu",
+      "receiver": "Người nhận chịu"
+    },
+    "p": [
+      {
+        "value": "USER",
+        "label": "Người chuyển"
+      },
+      {
+        "value": "RECEIVER",
+        "label": "Người nhận"
+      },
+      {
+        "value": "SYSTEM",
+        "label": "Hệ thống/platform"
+      }
+    ],
+    "l": [
+      "Người chuyển",
+      "Người chuyển",
+      "Người nhận",
+      "Merchant",
+      "Hệ thống/platform"
+    ]
+  },
+  "EWALLET_REFUND": {
+    "o": [
+      {
+        "value": "USER",
+        "label": "Người nhận"
+      },
+      {
+        "value": "RECEIVER",
+        "label": "Người chuyển"
+      }
+    ],
+    "t": {
+      "sender": "Người nhận chịu",
+      "receiver": "Người chuyển chịu"
+    },
+    "p": [
+      {
+        "value": "USER",
+        "label": "Người nhận"
+      },
+      {
+        "value": "RECEIVER",
+        "label": "Người chuyển"
+      },
+      {
+        "value": "SYSTEM",
+        "label": "Hệ thống/platform"
+      }
+    ],
+    "l": [
+      "Người nhận",
+      "Người nhận",
+      "Người chuyển",
+      "Merchant",
+      "Hệ thống/platform"
+    ]
+  },
+  "undefined": {
+    "o": [
+      {
+        "value": "USER",
+        "label": "Người chuyển"
+      },
+      {
+        "value": "RECEIVER",
+        "label": "Người nhận"
+      }
+    ],
+    "t": {
+      "sender": "Người chuyển chịu",
+      "receiver": "Người nhận chịu"
+    },
+    "p": [
+      {
+        "value": "USER",
+        "label": "Người chuyển"
+      },
+      {
+        "value": "SYSTEM",
+        "label": "Hệ thống/platform"
+      }
+    ],
+    "l": [
+      "Người chuyển",
+      "Người chuyển",
+      "Người nhận",
+      "Merchant",
+      "Hệ thống/platform"
+    ]
+  },
+  "null": {
+    "o": [
+      {
+        "value": "USER",
+        "label": "Người chuyển"
+      },
+      {
+        "value": "RECEIVER",
+        "label": "Người nhận"
+      }
+    ],
+    "t": {
+      "sender": "Người chuyển chịu",
+      "receiver": "Người nhận chịu"
+    },
+    "p": [
+      {
+        "value": "USER",
+        "label": "Người chuyển"
+      },
+      {
+        "value": "SYSTEM",
+        "label": "Hệ thống/platform"
+      }
+    ],
+    "l": [
+      "Người chuyển",
+      "Người chuyển",
+      "Người nhận",
+      "Merchant",
+      "Hệ thống/platform"
+    ]
+  }
+}

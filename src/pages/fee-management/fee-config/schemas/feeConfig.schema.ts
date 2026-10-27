@@ -1,4 +1,7 @@
-import { validateRefundDebitedSide } from '@utils/fee-execution'
+import {
+  allowsMerchantCriteria,
+  validateRefundDebitedSide
+} from '@utils/fee-execution'
 import { z } from 'zod'
 import {
   allowsProviderCriteria,
@@ -62,6 +65,9 @@ export const feeConfigObjectSchema = z.object({
     .min(1, 'Chính sách phải có ít nhất một thành phần phí')
     .max(32, 'Tối đa 32 thành phần phí')
 })
+
+export const MERCHANT_PAYER_ONLY_MESSAGE =
+  'Thu hộ / chi hộ hiện chỉ hỗ trợ Merchant chịu phí'
 
 export type FeeConfigObjectValues = z.infer<typeof feeConfigObjectSchema>
 
@@ -174,6 +180,19 @@ export const checkFeeConfigCommonRules = (
   const seen = new Set<string>()
   const identities = new Set<string>()
   form.components.forEach((component, index) => {
+    // Thu hộ / chi hộ: backend chỉ chạy được payer MERCHANT. Chặn ở schema để dữ liệu cũ hay sửa tay
+    // không lọt qua; payload không còn âm thầm đổi payer thay người vận hành.
+    if (
+      allowsMerchantCriteria(form.serviceType) &&
+      component.feeScope === 'OUTPUT_FEE' &&
+      component.payerType !== 'MERCHANT'
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['components', index, 'payerType'],
+        message: MERCHANT_PAYER_ONLY_MESSAGE
+      })
+    }
     const identity = `${component.componentType}:${component.payerType}:${component.beneficiaryType}`
     if (identities.has(identity)) {
       ctx.addIssue({

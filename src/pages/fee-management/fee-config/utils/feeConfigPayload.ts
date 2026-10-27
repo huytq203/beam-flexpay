@@ -6,6 +6,7 @@ import {
   type FeePolicySetupRequest
 } from '@/app/schemas/fee-setup.schema'
 import {
+  allowsMerchantCriteria,
   EXECUTABLE_CURRENCY,
   getExecutablePayer,
   getSelectablePayers
@@ -120,15 +121,14 @@ export const toSetupRequest = (
           ? 0
           : orZero(component.maxFee),
         // Giữ SYSTEM cho cost estimate; chỉ chuẩn hoá payer cũ SENDER/RECEIVER.
-        // Payer ngoài tập cho phép (hoàn tiền chỉ còn USER) về mặc định.
+        // Payer ngoài tập cho phép (hoàn tiền chỉ còn USER) về mặc định. Thu hộ / chi hộ không đổi
+        // âm thầm: schema đã chặn mọi payer khác MERCHANT trước khi tới đây.
         payerType:
-          component.payerType === 'SYSTEM'
-            ? 'SYSTEM'
-            : getSelectablePayers(form.serviceType).includes(
-                  component.payerType
-                )
-              ? component.payerType
-              : executablePayer,
+          component.payerType === 'SYSTEM' ||
+          allowsMerchantCriteria(form.serviceType) ||
+          getSelectablePayers(form.serviceType).includes(component.payerType)
+            ? component.payerType
+            : executablePayer,
         // Phí đầu ra: VAT về Ngân hàng, loại phí khác về Hệ thống; phí đầu vào giữ lựa chọn.
         beneficiaryType:
           component.payerType !== 'SYSTEM'

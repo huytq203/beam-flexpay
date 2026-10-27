@@ -1,4 +1,5 @@
 import {
+  allowsMerchantCriteria,
   EXECUTABLE_BENEFICIARIES,
   getSelectablePayers
 } from '@utils/fee-execution'
@@ -43,9 +44,32 @@ const REFUND_PAYER_LABEL: Readonly<Record<string, string>> = {
   RECEIVER: 'Người chuyển'
 }
 
+/**
+ * Thu hộ / chi hộ có hai bên là Merchant và Khách hàng, không có "người chuyển / người nhận". USER,
+ * SENDER, RECEIVER đều là phía khách nên dữ liệu cũ hiện đúng nhãn.
+ */
+const MERCHANT_FLOW_PAYER_LABEL: Readonly<Record<string, string>> = {
+  MERCHANT: 'Merchant',
+  USER: 'Khách hàng',
+  SENDER: 'Khách hàng',
+  RECEIVER: 'Khách hàng'
+}
+
+/**
+ * Giá trị chỉ để HIỂN THỊ cho lựa chọn "Khách hàng" bị khóa của thu hộ / chi hộ, không bao giờ được
+ * gửi đi. Backend làm xong thì spec backend quyết định giá trị thật.
+ */
+export const MERCHANT_CUSTOMER_PAYER = 'MERCHANT_CUSTOMER'
+
+/** Nhãn khóa của lựa chọn chưa hỗ trợ. */
+const COMING_SOON_SUFFIX = ' · Sắp hỗ trợ'
+
 const payerLabelsFor = (
   serviceType?: string | null
 ): Readonly<Record<string, string>> => {
+  if (allowsMerchantCriteria(serviceType)) {
+    return { ...PAYER_TYPE_LABEL, ...MERCHANT_FLOW_PAYER_LABEL }
+  }
   if (serviceType === 'EWALLET_REFUND') {
     return { ...PAYER_TYPE_LABEL, ...REFUND_PAYER_LABEL }
   }
@@ -63,10 +87,14 @@ export const getPayerLabel = (
 /** Tiêu đề hai khối mức phí khi cả hai bên cùng chịu. */
 export const getBearerSideTitles = (
   serviceType?: string | null
-): { sender: string; receiver: string } =>
-  serviceType === 'EWALLET_REFUND'
+): { sender: string; receiver: string } => {
+  if (allowsMerchantCriteria(serviceType)) {
+    return { sender: 'Merchant chịu', receiver: 'Khách hàng chịu' }
+  }
+  return serviceType === 'EWALLET_REFUND'
     ? { sender: 'Người nhận chịu', receiver: 'Người chuyển chịu' }
     : { sender: 'Người chuyển chịu', receiver: 'Người nhận chịu' }
+}
 
 /**
  * Người chịu phí được phép chọn: chỉ đúng payer mà `FeeExecutionCapabilityRegistry`
@@ -98,7 +126,24 @@ const OUTPUT_PAYERS: readonly string[] = ['USER', 'RECEIVER']
  */
 export const getOutputPayerOptions = (
   serviceType: string | null | undefined
-): { value: string; label: string }[] => {
+): { value: string; label: string; disabled?: boolean }[] => {
+  // Thu hộ / chi hộ: chỉ Merchant chịu được; hai lựa chọn còn lại vẫn hiện nhưng bị khóa để người vận
+  // hành biết sắp có. Không nối USER / RECEIVER vì backend không chạy được các payer đó.
+  if (allowsMerchantCriteria(serviceType)) {
+    return [
+      { value: 'MERCHANT', label: MERCHANT_FLOW_PAYER_LABEL.MERCHANT },
+      {
+        value: MERCHANT_CUSTOMER_PAYER,
+        label: `${MERCHANT_FLOW_PAYER_LABEL.USER}${COMING_SOON_SUFFIX}`,
+        disabled: true
+      },
+      {
+        value: 'BOTH',
+        label: `Cả hai bên cùng chịu${COMING_SOON_SUFFIX}`,
+        disabled: true
+      }
+    ]
+  }
   const defaults = getSelectablePayers(serviceType)
   const ordered = [...(defaults.length > 0 ? defaults : ['USER'])]
   OUTPUT_PAYERS.forEach((payer) => {
