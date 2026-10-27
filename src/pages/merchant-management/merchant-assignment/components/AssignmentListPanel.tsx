@@ -20,8 +20,8 @@ interface Props {
 }
 
 export function AssignmentListPanel({ scope, onAssign, onRemove }: Props) {
-  const { query, rows } = useAssignmentList(scope)
-  const columns = createAssignmentColumns({ onRemove })
+  const { query, rows, directRows, canManage } = useAssignmentList(scope)
+  const columns = createAssignmentColumns({ onRemove, canManage })
 
   return (
     <CardComponent className='border border-border bg-background shadow-none'>
@@ -48,18 +48,20 @@ export function AssignmentListPanel({ scope, onAssign, onRemove }: Props) {
                 {rows.length} người phụ trách
               </span>
             )}
-            <Can
-              screen='MERCHANT_ASSIGNMENT'
-              action='create'
-            >
-              <ButtonComponent
-                content='Gán Sales'
-                htmlType='button'
-                icon={<PlusOutlined aria-hidden />}
-                disabled={!scope || query.isError}
-                onClick={() => onAssign(rows)}
-              />
-            </Can>
+            {canManage && (
+              <Can
+                screen='MERCHANT_ASSIGNMENT'
+                action='create'
+              >
+                <ButtonComponent
+                  content='Gán Sales'
+                  htmlType='button'
+                  icon={<PlusOutlined aria-hidden />}
+                  disabled={!scope || query.isError}
+                  onClick={() => onAssign(directRows)}
+                />
+              </Can>
+            )}
           </div>
         </header>
         {scope && (
@@ -95,7 +97,9 @@ export function AssignmentListPanel({ scope, onAssign, onRemove }: Props) {
           }}
           onRefresh={scope ? query.refetch : undefined}
           pagination={false}
-          rowKey='adminUserId'
+          rowKey={(row) =>
+            `${row.adminUserId}:${row.inheritedFromMaster ? 'master' : 'direct'}`
+          }
           scroll={{ x: 'max-content' }}
           size='small'
         />

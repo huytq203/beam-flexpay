@@ -4,6 +4,8 @@ import {
   useGetSettlementItemTotalsQuery,
   useListSettlementItemsQuery
 } from '@/app/services/merchantSettlementItemApi'
+import { useExportSettlementItemsMutation } from '@services/apiExportCsv'
+import { useExportCsv } from '@hooks/useExportCsv'
 import { useUrlFilters } from '@hooks/useUrlFilters'
 import {
   EMPTY_SETTLEMENT_FILTERS,
@@ -13,18 +15,21 @@ import {
 } from '../constants/settlementItem.constants'
 import type {
   SettlementItemFilterError,
-  SettlementItemFilters
+  SettlementItemFilters,
+  SettlementItemSort
 } from '../types/settlementItem.types'
 import {
   fromSettlementUrlFilters,
+  fromSettlementUrlSort,
   toSettlementQuery,
   toSettlementUrlFilters,
   validateSettlementFilters
 } from '../utils/settlementItem.utils'
 
 /**
- * Danh sách và dòng tổng gọi song song. Sub + khoảng ngày là bắt buộc: thiếu
- * một tham số BE trả 500, nên bộ lọc chưa đủ thì không gọi API (`skip`).
+ * Danh sách và dòng tổng gọi song song. Chỉ khoảng ngày là bắt buộc (Merchant
+ * và Sub tùy chọn): chưa đủ hợp lệ thì không gọi API (`skip`). Sắp xếp nằm
+ * trên URL và chỉ list/export nhận, `/totals` không.
  */
 export function useSettlementItemList() {
   const url = useUrlFilters<SettlementFilterKey>({
@@ -35,11 +40,19 @@ export function useSettlementItemList() {
   const filters = fromSettlementUrlFilters(url.filters)
   const [draft, setDraft] = useState<SettlementItemFilters>(filters)
   const [filterError, setFilterError] = useState<SettlementItemFilterError>()
+  const sort = fromSettlementUrlSort(url.filters)
   const query = toSettlementQuery(filters)
   const listQuery = useListSettlementItemsQuery(
-    query ? { ...query, page: url.page, size: url.size } : skipToken
+    query ? { ...query, ...sort, page: url.page, size: url.size } : skipToken
   )
   const totalsQuery = useGetSettlementItemTotalsQuery(query ?? skipToken)
+  const [triggerExport, { reset: resetExport }] =
+    useExportSettlementItemsMutation()
+  const exporter = useExportCsv({
+    trigger: triggerExport,
+    reset: resetExport,
+    filenamePrefix: 'merchant-settlement-items'
+  })
 
   return {
     draft,
@@ -56,11 +69,27 @@ export function useSettlementItemList() {
     totalsQuery,
     items: listQuery.data?.content ?? [],
     total: listQuery.data?.totalElements ?? 0,
-    selectedSubId: filters.subMerchantId,
+    sort,
+    isExporting: exporter.isExporting,
+    // Xuất đúng bộ lọc và sắp xếp đang áp, không phân trang.
+    exportCsv: (): void => {
+      if (query) void exporter.exportFile({ ...query, ...sort })
+    },
+    setSort: (next: SettlementItemSort): void =>
+      url.applyFilters({
+        ...toSettlementUrlFilters(filters),
+        sortBy: next.sortBy,
+        sortDirection: next.sortDirection
+      }),
     apply: (): void => {
       const error = validateSettlementFilters(draft)
       setFilterError(error)
-      if (!error) url.applyFilters(toSettlementUrlFilters(draft))
+      if (!error)
+        url.applyFilters({
+          ...toSettlementUrlFilters(draft),
+          sortBy: sort.sortBy,
+          sortDirection: sort.sortDirection
+        })
     },
     reset: (): void => {
       setDraft(EMPTY_SETTLEMENT_FILTERS)

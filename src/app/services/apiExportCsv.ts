@@ -374,6 +374,26 @@ export const apiExportMerchantCsv = apiMerchant.injectEndpoints({
     exportSubMerchants: build.mutation<ExportedFile, MerchantListExportFilters>(
       { queryFn: merchantExport('/sub-merchants/export') }
     ),
+    // Mục quyết toán: tối đa 50.000 dòng (vượt: 5101 MERCHANT_EXPORT_TOO_LARGE); nhận sortBy/sortDirection.
+    exportSettlementItems: build.mutation<
+      ExportedFile,
+      MerchantListExportFilters
+    >({ queryFn: merchantExport('/merchant-settlement-items/export') }),
+    // Đơn hàng: xuất toàn bộ khớp bộ lọc trong phạm vi gán; trần số dòng chưa xác minh.
+    exportMerchantOrders: build.mutation<
+      ExportedFile,
+      MerchantListExportFilters
+    >({ queryFn: merchantExport('/merchant-orders/export') }),
+    // Danh sách cấu hình quyết toán Master: bỏ page/size, BE xuất mọi dòng khớp lọc.
+    exportSettlementConfigs: build.mutation<
+      ExportedFile,
+      MerchantListExportFilters
+    >({ queryFn: merchantExport('/settlement-config/export') }),
+    // Danh sách webhook Master/Sub: cùng bộ lọc với màn danh sách, bỏ phân trang.
+    exportMerchantWebhooks: build.mutation<
+      ExportedFile,
+      MerchantListExportFilters
+    >({ queryFn: merchantExport('/merchants/webhooks/export') }),
     exportMerchantNotifications: build.mutation<
       ExportedFile,
       Omit<NotificationListQuery, 'page' | 'size'>
@@ -413,7 +433,14 @@ export const {
   useExportMerchantPaymentMethodsMutation,
   useExportMerchantUsersMutation,
   useExportAuditLogsMutation,
-  useExportSubMerchantsMutation
+  useExportSubMerchantsMutation,
+  useExportMerchantOrdersMutation,
+  useExportSettlementItemsMutation
+} = apiExportMerchantCsv
+
+export const {
+  useExportSettlementConfigsMutation,
+  useExportMerchantWebhooksMutation
 } = apiExportMerchantCsv
 
 export const {

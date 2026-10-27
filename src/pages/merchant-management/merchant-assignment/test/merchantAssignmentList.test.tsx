@@ -9,12 +9,12 @@ import { MANAGE, VIEW_ONLY, renderPanel } from './merchantAssignment.setup'
 vi.setConfig({ testTimeout: 30000 })
 
 describe('danh sách Sales phụ trách', () => {
-  it('hiển thị cột # cùng tên người phụ trách tra từ danh bạ admin', async () => {
+  it('hiển thị cột # cùng tên người phụ trách do BE trả sẵn', async () => {
     renderPanel()
     expect(screen.getByRole('columnheader', { name: '#' })).toBeInTheDocument()
     const row = (await screen.findByText('Nguyễn An')).closest('tr')!
     expect(within(row).getByText('1')).toBeInTheDocument()
-    expect(within(row).getByText('sales.an')).toBeInTheDocument()
+    expect(within(row).getByText(/sales.an/)).toBeInTheDocument()
     expect(await screen.findByText('Trần Bình')).toBeInTheDocument()
     expect(screen.getByText('2 người phụ trách')).toBeInTheDocument()
   })

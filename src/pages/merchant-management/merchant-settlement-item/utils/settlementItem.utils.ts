@@ -1,13 +1,19 @@
+import type { SorterResult } from 'antd/es/table/interface'
 import dayjs from 'dayjs'
 import { getApiErrorDetail } from '@/app/utils/api-error'
 import {
   SETTLEMENT_FILTER_MESSAGES,
+  SETTLEMENT_MAX_RANGE_DAYS,
   type SettlementFilterKey
 } from '../constants/settlementItem.constants'
 import type {
   SettlementItemFilterError,
   SettlementItemFilters,
-  SettlementItemQuery
+  SettlementItemQuery,
+  SettlementItemRow,
+  SettlementItemSort,
+  SettlementSortBy,
+  SettlementSortDirection
 } from '../types/settlementItem.types'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
@@ -23,16 +29,18 @@ export const fromDateString = (value?: string): dayjs.Dayjs | null =>
   isValidDate(value) ? dayjs(value, DATE_FORMAT) : null
 
 /**
- * BE trả 500 khi thiếu hoặc sai kiểu tham số, nên FE phải tự chặn: cần Sub, đủ
- * hai ngày đúng định dạng và `paidTo` không trước `paidFrom`.
+ * Chỉ khoảng ngày là bắt buộc (Merchant/Sub tùy chọn): đủ hai ngày đúng định
+ * dạng, `paidTo` không trước `paidFrom` và tối đa 92 ngày gồm hai đầu. BE trả
+ * 400 nếu sai; FE chặn trước để khỏi một vòng gọi API.
  */
 export const validateSettlementFilters = (
   filters: SettlementItemFilters
 ): SettlementItemFilterError | undefined => {
-  if (!filters.subMerchantId) return 'sub'
   if (!isValidDate(filters.paidFrom) || !isValidDate(filters.paidTo))
     return 'dates'
-  return filters.paidTo < filters.paidFrom ? 'range' : undefined
+  if (filters.paidTo < filters.paidFrom) return 'range'
+  const days = dayjs(filters.paidTo).diff(dayjs(filters.paidFrom), 'day') + 1
+  return days > SETTLEMENT_MAX_RANGE_DAYS ? 'span' : undefined
 }
 
 export const describeFilterError = (error: SettlementItemFilterError): string =>
@@ -45,7 +53,8 @@ export const toSettlementQuery = (
   validateSettlementFilters(filters)
     ? undefined
     : {
-        subMerchantId: filters.subMerchantId as string,
+        merchantId: filters.merchantId,
+        subMerchantId: filters.subMerchantId,
         paidFrom: filters.paidFrom as string,
         paidTo: filters.paidTo as string
       }
@@ -53,6 +62,7 @@ export const toSettlementQuery = (
 type Raw = Partial<Record<SettlementFilterKey, string>>
 
 export const fromSettlementUrlFilters = (raw: Raw): SettlementItemFilters => ({
+  merchantId: raw.merchantId,
   subMerchantId: raw.subMerchantId,
   paidFrom: raw.paidFrom,
   paidTo: raw.paidTo
@@ -61,10 +71,29 @@ export const fromSettlementUrlFilters = (raw: Raw): SettlementItemFilters => ({
 export const toSettlementUrlFilters = (
   filters: SettlementItemFilters
 ): Record<SettlementFilterKey, string | undefined> => ({
+  merchantId: filters.merchantId,
   subMerchantId: filters.subMerchantId,
   paidFrom: filters.paidFrom,
-  paidTo: filters.paidTo
+  paidTo: filters.paidTo,
+  // Sắp xếp do bảng quản lý; hook giữ lại giá trị đang áp khi tìm kiếm.
+  sortBy: undefined,
+  sortDirection: undefined
 })
+
+const SORT_FIELDS: readonly SettlementSortBy[] = [
+  'paidAt',
+  'customerPaid',
+  'fee'
+]
+
+/** Giá trị lạ trên URL bị bỏ: BE trả 400 với `sortBy` ngoài danh sách. */
+export const fromSettlementUrlSort = (raw: Raw): SettlementItemSort => {
+  const sortBy = SORT_FIELDS.find((field) => field === raw.sortBy)
+  if (!sortBy) return {}
+  const sortDirection: SettlementSortDirection =
+    raw.sortDirection === 'ASC' ? 'ASC' : 'DESC'
+  return { sortBy, sortDirection }
+}
 
 /** `message` của BE là tên mã lỗi; rẽ nhánh theo đó, không theo câu `detail`. */
 export const getSettlementErrorCode = (error: unknown): string | undefined => {
@@ -107,4 +136,14 @@ export const formatSnapshotValue = (value: unknown): string => {
   if (value === null || value === undefined) return '—'
   if (typeof value === 'object') return JSON.stringify(value)
   return String(value)
+}
+
+/** Sự kiện sắp xếp của bảng → tham số BE; bỏ sắp xếp thì BE dùng mặc định. */
+export const fromTableSorter = (
+  sorter: SorterResult<SettlementItemRow> | SorterResult<SettlementItemRow>[]
+): SettlementItemSort => {
+  const current = Array.isArray(sorter) ? sorter[0] : sorter
+  const sortBy = SORT_FIELDS.find((field) => field === current?.columnKey)
+  if (!sortBy || !current?.order) return {}
+  return { sortBy, sortDirection: current.order === 'ascend' ? 'ASC' : 'DESC' }
 }

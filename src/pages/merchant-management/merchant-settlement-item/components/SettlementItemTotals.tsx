@@ -10,7 +10,11 @@ interface Props {
   onRetry: () => void
 }
 
-const ITEMS: readonly { key: keyof Totals; label: string; money: boolean }[] = [
+const ITEMS: readonly {
+  key: Exclude<keyof Totals, 'bySub'>
+  label: string
+  money: boolean
+}[] = [
   { key: 'count', label: 'Số mục', money: false },
   { key: 'grossAmount', label: 'Khách trả', money: true },
   { key: 'feeAmount', label: 'Phí', money: true },

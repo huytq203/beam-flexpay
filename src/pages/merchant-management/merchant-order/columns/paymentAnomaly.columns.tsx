@@ -1,4 +1,5 @@
-import { EyeOutlined } from '@components/icons'
+import { CheckCircleOutlined, EyeOutlined } from '@components/icons'
+import { Can } from '@/app/permissions'
 import { CopyableText, TagComponent } from '@components/index'
 import type { TableComponentProps } from '@components/ui/table-component/TableComponent'
 import { AccessActionButton } from '../../merchant-access/components/AccessActionButton'
@@ -18,12 +19,14 @@ interface Options {
   page: number
   pageSize: number
   onViewOrder: (orderId: string) => void
+  onResolve: (anomaly: MerchantPaymentAnomaly) => void
 }
 
 export const createPaymentAnomalyColumns = ({
   page,
   pageSize,
-  onViewOrder
+  onViewOrder,
+  onResolve
 }: Options): NonNullable<
   TableComponentProps<MerchantPaymentAnomaly>['columns']
 > => [
@@ -37,6 +40,21 @@ export const createPaymentAnomalyColumns = ({
     title: 'Ghi nhận lúc',
     width: 170,
     render: (_, row) => formatOrderDateTime(row.createdAt)
+  },
+  {
+    title: 'Merchant',
+    width: 180,
+    render: (_, row) => row.merchantName || '—'
+  },
+  {
+    title: 'Sub-merchant',
+    width: 180,
+    render: (_, row) => row.subMerchantName || '—'
+  },
+  {
+    title: 'Mã đơn hàng',
+    width: 160,
+    render: (_, row) => row.orderCode || '—'
   },
   {
     title: 'Ngân hàng',
@@ -86,6 +104,24 @@ export const createPaymentAnomalyColumns = ({
     )
   },
   {
+    title: 'Người xử lý',
+    width: 200,
+    render: (_, row) =>
+      row.resolvedBy ? (
+        <div className='space-y-0.5 text-xs'>
+          <div>{row.resolvedBy}</div>
+          {row.resolvedAt && <div>{formatOrderDateTime(row.resolvedAt)}</div>}
+        </div>
+      ) : (
+        '—'
+      )
+  },
+  {
+    title: 'Lý do xử lý',
+    width: 240,
+    render: (_, row) => row.resolutionReason || '—'
+  },
+  {
     title: 'Mã đơn (ID)',
     width: 190,
     render: (_, row) => (
@@ -98,13 +134,27 @@ export const createPaymentAnomalyColumns = ({
   {
     title: 'Thao tác',
     fixed: 'right',
-    width: 90,
+    width: 110,
     render: (_, row) => (
-      <AccessActionButton
-        label='Xem đơn liên quan'
-        icon={<EyeOutlined aria-hidden />}
-        onClick={() => onViewOrder(row.orderId)}
-      />
+      <div className='flex gap-1'>
+        <AccessActionButton
+          label='Xem đơn liên quan'
+          icon={<EyeOutlined aria-hidden />}
+          onClick={() => onViewOrder(row.orderId)}
+        />
+        <Can
+          screen='MERCHANT_ORDER'
+          action='resolveAnomaly'
+        >
+          {row.status === 'OPEN' && (
+            <AccessActionButton
+              label='Đánh dấu đã xử lý'
+              icon={<CheckCircleOutlined aria-hidden />}
+              onClick={() => onResolve(row)}
+            />
+          )}
+        </Can>
+      </div>
     )
   }
 ]

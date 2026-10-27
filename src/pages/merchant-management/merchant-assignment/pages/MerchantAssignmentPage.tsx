@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { CardComponent, type PickedEntity } from '@components/index'
 import { AssignmentFormDialog } from '../components/AssignmentFormDialog'
 import { AssignmentListPanel } from '../components/AssignmentListPanel'
+import { AssignmentOverviewPanel } from '../components/AssignmentOverviewPanel'
 import { AssignmentRemoveDialog } from '../components/AssignmentRemoveDialog'
 import { AssignmentScopeBar } from '../components/AssignmentScopeBar'
 import type {
@@ -41,11 +42,15 @@ export default function MerchantAssignmentPage() {
           onSubChange={setSub}
         />
       </CardComponent>
-      <AssignmentListPanel
-        scope={scope}
-        onAssign={setAssigning}
-        onRemove={setRemoving}
-      />
+      {scope ? (
+        <AssignmentListPanel
+          scope={scope}
+          onAssign={setAssigning}
+          onRemove={setRemoving}
+        />
+      ) : (
+        <AssignmentOverviewPanel />
+      )}
       {scope && assigning && (
         <AssignmentFormDialog
           key={scope.id}

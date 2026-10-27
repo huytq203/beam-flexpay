@@ -1,5 +1,9 @@
 import { MODE_OPTIONS } from '../../merchant-settlement/constants/settlementConfig.constants'
-import type { HistoryLevel, ScopeSource } from '../types/settlementScope.types'
+import type {
+  ConfigListSource,
+  HistoryLevel,
+  ScopeSource
+} from '../types/settlementScope.types'
 
 export const SCOPE_SOURCE_LABEL: Record<ScopeSource, string> = {
   SYSTEM: 'Mặc định hệ thống',
@@ -25,6 +29,18 @@ export const SYSTEM_MODE_OPTIONS = MODE_OPTIONS.filter(
 )
 
 export const MIN_REASON_LENGTH = 10
+
+export const CONFIG_SOURCE_LABEL: Record<ConfigListSource, string> = {
+  OWN: 'Cấu hình riêng',
+  INHERITED: 'Kế thừa',
+  SYSTEM_DEFAULT: 'Mặc định hệ thống'
+}
+
+export const CONFIG_SOURCE_OPTIONS = Object.entries(CONFIG_SOURCE_LABEL).map(
+  ([value, label]) => ({ value, label })
+)
+
+export const CONFIG_SEARCH_MAX = 100
 
 export const SCOPE_TAB_KEYS = {
   master: 'master',

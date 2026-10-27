@@ -10,10 +10,7 @@ import {
   feedback
 } from '@components/index'
 import { MIN_REASON_LENGTH } from '../constants/settlementScope.constants'
-import {
-  getScopeErrorMessage,
-  removalNeedsApprover
-} from '../utils/settlementScope.utils'
+import { getScopeErrorMessage } from '../utils/settlementScope.utils'
 import { ScopeConfigSummary } from './ScopeConfigSummary'
 
 interface ScopeRemovalDialogProps {
@@ -58,7 +55,8 @@ export function ScopeRemovalDialog({
       okButtonProps={{
         danger: true,
         loading: isLoading,
-        disabled: !data
+        // BE đã báo 403 trước (mã 5793) nên khóa nút thay vì chờ lỗi.
+        disabled: !data || data.requiresApproval
       }}
       onCancel={onClose}
       onOk={() => void confirm()}
@@ -95,13 +93,12 @@ export function ScopeRemovalDialog({
               <ScopeConfigSummary view={data.afterRemoval} />
             </div>
           </div>
-          {removalNeedsApprover(data) && (
+          {data.requiresApproval && (
             <p
               className='text-sm text-warning-strong'
               role='note'
             >
-              Việc gỡ này làm Master chuyển sang tự động hoặc rút ngắn T+N nên
-              cần quyền phê duyệt cấu hình quyết toán.
+              {data.reason}
             </p>
           )}
           <div>

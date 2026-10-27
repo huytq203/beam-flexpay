@@ -20,6 +20,37 @@ export interface BankAccountChangeRequest {
   createdAt: string
 }
 
+/**
+ * Dòng của hàng đợi `GET /merchant-bank-accounts/change-requests`: thêm thông
+ * tin Merchant/Sub và giá trị hiện tại để so với `proposed*`.
+ */
+export interface BankAccountChangeRequestItem extends BankAccountChangeRequest {
+  /** Trùng `id`. */
+  changeRequestId: string
+  merchantId?: string | null
+  merchantName?: string | null
+  subMerchantId?: string | null
+  subMerchantName?: string | null
+  currentBankCode?: string | null
+  /** BE đã mask. */
+  currentAccountNumber?: string | null
+  currentAccountName?: string | null
+  /** Tên đăng nhập lúc tạo yêu cầu, không phải họ tên. */
+  requestedByName?: string | null
+  /** Trùng `createdAt`. */
+  requestedAt?: string | null
+}
+
+export type BankAccountChangeRequestStatus = BankAccountChangeRequest['status']
+
+/** `status` bỏ trống thì BE trả PENDING; `requestedBy` là UUID người đề xuất. */
+export interface BankAccountChangeRequestQuery {
+  page: number
+  size: number
+  status?: BankAccountChangeRequestStatus
+  requestedBy?: string
+}
+
 export interface BankAccountDto {
   id: string
   version?: number
@@ -151,6 +182,19 @@ const service = apiMerchant.injectEndpoints({
       ) => response.data,
       providesTags: ['merchant']
     }),
+    listBankAccountChangeRequests: builder.query<
+      MerchantPage<BankAccountChangeRequestItem>,
+      BankAccountChangeRequestQuery
+    >({
+      query: (params) => ({
+        url: '/merchant-bank-accounts/change-requests',
+        params
+      }),
+      transformResponse: (
+        response: MerchantEnvelope<MerchantPage<BankAccountChangeRequestItem>>
+      ) => response.data,
+      providesTags: ['merchant']
+    }),
     createBankAccount: builder.mutation<BankAccountDto, BankAccountCreate>({
       query: (body) => ({
         url: '/merchant-bank-accounts',
@@ -252,6 +296,7 @@ const service = apiMerchant.injectEndpoints({
 export const {
   useChallengeBankAccountOtpMutation,
   useListBankAccountsQuery,
+  useListBankAccountChangeRequestsQuery,
   useGetBankAccountQuery,
   useDeleteBankAccountMutation,
   useCreateBankAccountMutation,

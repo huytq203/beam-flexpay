@@ -333,6 +333,7 @@ export const SCREENS = {
     path: `${MERCHANT}/webhook`,
     actions: {
       view: PERMISSION.API_CREDENTIAL_VIEW,
+      export: PERMISSION.API_CREDENTIAL_VIEW,
       create: PERMISSION.API_CREDENTIAL_MANAGE,
       edit: PERMISSION.API_CREDENTIAL_MANAGE,
       update: PERMISSION.API_CREDENTIAL_MANAGE,
@@ -421,7 +422,11 @@ export const SCREENS = {
   },
   MERCHANT_SETTLEMENT_SCOPE: {
     path: `${MERCHANT}/settlement-scope`,
-    actions: { ...SETTLEMENT_CONFIG_ACTIONS }
+    // BE xuất danh sách Master bằng đúng quyền xem.
+    actions: {
+      ...SETTLEMENT_CONFIG_ACTIONS,
+      export: PERMISSION.SUB_MERCHANT_SETTLEMENT_CONFIG_VIEW
+    }
   },
   MERCHANT_WITHDRAWAL_LIMIT: {
     path: `${MERCHANT}/withdrawal-limit`,
@@ -512,6 +517,7 @@ export const SCREENS = {
     actions: {
       view: PERMISSION.SETTLEMENT_VIEW,
       viewDetail: PERMISSION.SETTLEMENT_VIEW,
+      export: PERMISSION.SETTLEMENT_VIEW,
       // Màn chỉ đọc: không có thao tác ghi nào, các hành động ghi chỉ dành cho quyền tổng.
       create: PERMISSION.ADMIN_FULL,
       edit: PERMISSION.ADMIN_FULL,
@@ -542,11 +548,14 @@ export const SCREENS = {
       full: PERMISSION.ORDER_FULL,
       viewQr: PERMISSION.ORDER_VIEW,
       viewDetail: PERMISSION.ORDER_VIEW,
+      export: PERMISSION.ORDER_VIEW,
       // BE dùng ORDER:UPDATE cho cả bốn thao tác xử lý đơn (admin chưa có quyền hủy riêng).
       confirm: PERMISSION.ORDER_UPDATE,
       retryCredit: PERMISSION.ORDER_UPDATE,
       refreshQr: PERMISSION.ORDER_UPDATE,
-      cancel: PERMISSION.ORDER_UPDATE
+      cancel: PERMISSION.ORDER_UPDATE,
+      // Cùng quyền ORDER:UPDATE với confirm/cancel đơn.
+      resolveAnomaly: PERMISSION.ORDER_UPDATE
     }
   },
   /**

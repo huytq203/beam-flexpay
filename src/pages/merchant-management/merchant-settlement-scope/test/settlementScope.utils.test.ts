@@ -3,7 +3,6 @@ import {
   buildScopeBody,
   diffSnapshot,
   getScopeErrorMessage,
-  removalNeedsApprover,
   toHistoryRow
 } from '../utils/settlementScope.utils'
 import { masterView, systemView } from './scopeConfig.setup'
@@ -111,7 +110,7 @@ describe('toHistoryRow', () => {
   })
 })
 
-describe('diffSnapshot / removalNeedsApprover / getScopeErrorMessage', () => {
+describe('diffSnapshot / getScopeErrorMessage', () => {
   it('diff liệt kê trường đổi, bỏ trường giống nhau', () => {
     const changes = diffSnapshot(
       { settlementMode: 'MANUAL_ONLY', holdbackDays: 2 },
@@ -120,26 +119,6 @@ describe('diffSnapshot / removalNeedsApprover / getScopeErrorMessage', () => {
     expect(changes).toEqual([
       { key: 'settlementMode', before: 'MANUAL_ONLY', after: 'AUTOMATIC' }
     ])
-  })
-
-  it('gỡ khối làm Hệ thống tự động thì cần người duyệt, T+N dài hơn thì không', () => {
-    const current = masterView()
-    expect(
-      removalNeedsApprover({
-        current,
-        afterRemoval: systemView({
-          settlementMode: { value: 'AUTOMATIC', source: 'SYSTEM' }
-        })
-      })
-    ).toBe(true)
-    expect(
-      removalNeedsApprover({
-        current,
-        afterRemoval: systemView({
-          holdbackDays: { value: 5, source: 'SYSTEM' }
-        })
-      })
-    ).toBe(false)
   })
 
   it('map lỗi theo message, VALIDATION_ERROR lấy câu của trường', () => {

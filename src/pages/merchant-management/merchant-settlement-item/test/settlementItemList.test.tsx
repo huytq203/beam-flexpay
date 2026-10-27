@@ -5,7 +5,9 @@ import { describe, expect, it } from 'vitest'
 import { server } from '@/test/mocks/server'
 import { PERMISSION } from '@/app/permissions'
 import {
+  ITEMS,
   PATH,
+  TOTALS,
   VALID_URL,
   VIEW_ONLY,
   page,
@@ -49,7 +51,7 @@ describe('danh sách mục quyết toán', () => {
     expect(params.has('sort')).toBe(false)
   })
 
-  it('thiếu bộ lọc bắt buộc thì không gọi API và báo lỗi khi tìm kiếm', async () => {
+  it('thiếu khoảng ngày thì không gọi API và báo lỗi khi tìm kiếm', async () => {
     let calls = 0
     server.use(
       http.get('*/merchant-settlement-items', () => {
@@ -63,11 +65,11 @@ describe('danh sách mục quyết toán', () => {
     )
     renderPage(VIEW_ONLY, PATH)
     expect(
-      await screen.findByText(/Chọn Sub-merchant và khoảng ngày thanh toán/)
+      await screen.findByText(/Chọn khoảng ngày thanh toán/)
     ).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: /Tìm kiếm/ }))
     expect(
-      await screen.findByText('Vui lòng chọn Sub-merchant.')
+      await screen.findByText(/Vui lòng chọn đủ khoảng ngày thanh toán/)
     ).toBeInTheDocument()
     expect(calls).toBe(0)
   })
@@ -85,9 +87,95 @@ describe('danh sách mục quyết toán', () => {
       `${VALID_URL.split('?')[0]}?subMerchantId=abc&paidFrom=2026-10-22&paidTo=2026-10-01`
     )
     expect(
-      await screen.findByText(/Chọn Sub-merchant và khoảng ngày thanh toán/)
+      await screen.findByText(/Chọn khoảng ngày thanh toán/)
     ).toBeInTheDocument()
     expect(calls).toBe(0)
+  })
+
+  it('khoảng ngày quá 92 ngày trên URL bị chặn, không gọi API', async () => {
+    let calls = 0
+    server.use(
+      http.get('*/merchant-settlement-items', () => {
+        calls += 1
+        return page([])
+      })
+    )
+    renderPage(VIEW_ONLY, `${PATH}?paidFrom=2026-01-01&paidTo=2026-04-03`)
+    expect(
+      await screen.findByText(/Chọn khoảng ngày thanh toán/)
+    ).toBeInTheDocument()
+    expect(calls).toBe(0)
+  })
+
+  it('chỉ cần khoảng ngày: gọi API không kèm Sub, gửi merchantId và sortBy từ URL', async () => {
+    const queries: string[] = []
+    server.use(
+      http.get('*/merchant-settlement-items', ({ request }) => {
+        queries.push(new URL(request.url).search)
+        return page(ITEMS)
+      })
+    )
+    renderPage(
+      VIEW_ONLY,
+      `${PATH}?merchantId=master-1&paidFrom=2026-10-01&paidTo=2026-10-22&sortBy=fee&sortDirection=ASC`
+    )
+    expect(await screen.findByText('ORD-a1')).toBeInTheDocument()
+    const params = new URLSearchParams(queries[0])
+    expect(params.get('merchantId')).toBe('master-1')
+    expect(params.has('subMerchantId')).toBe(false)
+    expect(params.get('sortBy')).toBe('fee')
+    expect(params.get('sortDirection')).toBe('ASC')
+    expect(params.get('page')).toBe('1')
+  })
+
+  it('bấm tiêu đề cột Phí thì gọi lại list với sortBy=fee và totals không nhận sort', async () => {
+    const lists: string[] = []
+    const totals: string[] = []
+    server.use(
+      http.get('*/merchant-settlement-items', ({ request }) => {
+        lists.push(new URL(request.url).search)
+        return page(ITEMS)
+      }),
+      http.get('*/merchant-settlement-items/totals', ({ request }) => {
+        totals.push(new URL(request.url).search)
+        return HttpResponse.json({ data: TOTALS })
+      })
+    )
+    renderPage()
+    await screen.findByText('ORD-a1')
+    await userEvent.click(screen.getByRole('columnheader', { name: 'Phí' }))
+    await waitFor(() =>
+      expect(lists.some((q) => q.includes('sortBy=fee'))).toBe(true)
+    )
+    expect(totals.every((q) => !q.includes('sortBy'))).toBe(true)
+  })
+
+  it('hiển thị bảng theo Sub khi totals có bySub', async () => {
+    server.use(
+      http.get('*/merchant-settlement-items/totals', () =>
+        HttpResponse.json({
+          data: {
+            ...TOTALS,
+            bySub: [
+              {
+                subMerchantId: 'sub-9',
+                subMerchantCode: 'SUB009',
+                subMerchantName: 'Cửa hàng Chín',
+                count: 2,
+                grossAmount: 1500000,
+                feeAmount: 16500,
+                recognisedAmount: 1483500,
+                firstTrancheAmount: 1383500,
+                heldAmount: 100000
+              }
+            ]
+          }
+        })
+      )
+    )
+    renderPage()
+    const section = await screen.findByLabelText('Tổng theo Sub-merchant')
+    expect(within(section).getByText('Cửa hàng Chín')).toBeInTheDocument()
   })
 
   it('map lỗi 404 theo message sang câu tiếng Việt và cho thử lại', async () => {

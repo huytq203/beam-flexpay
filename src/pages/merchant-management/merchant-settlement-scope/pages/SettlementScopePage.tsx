@@ -9,6 +9,7 @@ import {
 import { FORBIDDENERROR } from '@constants/routersConstant'
 import { ManagementPageHeader } from '../../sub-merchant-management/shared/ManagementPageHeader'
 import { EffectiveAtPanel } from '../components/EffectiveAtPanel'
+import { MasterConfigListPanel } from '../components/MasterConfigListPanel'
 import { ScopeConfigPanel } from '../components/ScopeConfigPanel'
 import { ScopeHistoryPanel } from '../components/ScopeHistoryPanel'
 import { ScopeTargetPicker } from '../components/ScopeTargetPicker'
@@ -41,9 +42,15 @@ export default function SettlementScopePage() {
           masterId={master.id}
         />
       ) : (
-        <p className='text-sm text-muted-foreground'>
-          Chọn Merchant để xem cấu hình quyết toán cấp Master
-        </p>
+        <MasterConfigListPanel
+          onOpen={(row) =>
+            setMaster({
+              id: row.merchantId,
+              code: row.merchantCode,
+              name: row.merchantName
+            })
+          }
+        />
       )}
     </div>
   )

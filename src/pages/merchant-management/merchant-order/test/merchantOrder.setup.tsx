@@ -70,14 +70,17 @@ export const FULL_ACCESS = [
   PERMISSION.ORDER_UPDATE
 ]
 
-export const renderPage = (permissions: string[] = FULL_ACCESS) => {
+export const renderPage = (
+  permissions: string[] = FULL_ACCESS,
+  search = ''
+) => {
   const store = createAppStore()
   store.dispatch(savePermissions(permissions))
   return render(
     <Provider store={store}>
       <MessageProvider>
         <MemoryRouter
-          initialEntries={['/secure-panel/merchant/merchant-order']}
+          initialEntries={[`/secure-panel/merchant/merchant-order${search}`]}
         >
           <Routes>
             <Route
