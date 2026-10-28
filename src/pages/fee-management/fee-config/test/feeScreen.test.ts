@@ -3,6 +3,7 @@ import { PUBLISHABLE_SERVICE_TYPES } from '@utils/fee-execution'
 import {
   FEE_SCREEN_CONFIG,
   feeScreenOfPolicy,
+  listServiceTypesFor,
   visibleServiceTypesFor
 } from '../constants/feeScreen'
 
@@ -41,6 +42,24 @@ describe('visibleServiceTypesFor', () => {
         'EWALLET_DEPOSIT'
       )
     ).toContain('EWALLET_DEPOSIT')
+  })
+})
+
+describe('listServiceTypesFor', () => {
+  it('tab lọc màn phí đầu vào ẩn Chuyển tiền cùng hệ thống, màn đầu ra vẫn hiện', () => {
+    expect(listServiceTypesFor('INPUT_COST')).not.toContain(
+      'EWALLET_TRANSFER_INTERNAL'
+    )
+    expect(listServiceTypesFor('INPUT_COST')).toContain('EWALLET_DEPOSIT')
+    expect(listServiceTypesFor('CUSTOMER_FEE')).toContain(
+      'EWALLET_TRANSFER_INTERNAL'
+    )
+  })
+
+  it('giữ tab Chuyển tiền cùng hệ thống khi URL đang lọc theo loại đó', () => {
+    expect(
+      listServiceTypesFor('INPUT_COST', 'EWALLET_TRANSFER_INTERNAL')
+    ).toContain('EWALLET_TRANSFER_INTERNAL')
   })
 })
 

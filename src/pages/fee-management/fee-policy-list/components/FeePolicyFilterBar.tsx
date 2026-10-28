@@ -16,13 +16,9 @@ import { POLICY_STATUS_FILTER_OPTIONS } from '../utils/policyStatusFilter'
 import {
   FEE_SCREEN,
   FEE_SCREEN_CONFIG,
-  visibleServiceTypesFor,
+  listServiceTypesFor,
   type FeeScreen
 } from '@pages/fee-management/fee-config/constants/feeScreen'
-import {
-  PUBLISHABLE_SERVICE_TYPES,
-  withoutHiddenServiceTypes
-} from '@utils/fee-execution'
 import { useGetBankQuery } from '@services/apiFeeBank'
 import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
@@ -122,12 +118,7 @@ export const FeePolicyFilterBar = ({
 
   const inputCost =
     FEE_SCREEN_CONFIG[screen].policyKind === POLICY_KIND.INPUT_COST
-  // Màn ĐVCNTT chỉ hiện hai loại merchant và không giữ loại ngoài đó dù URL có. Hai màn ví giữ nguyên
-  // như trước: chỉ ẩn các loại tạm ẩn chung (loại đang chọn vẫn hiện), không ẩn thêm theo loại chính sách.
-  const serviceTypeOptions =
-    screen === FEE_SCREEN.MERCHANT_FEE
-      ? visibleServiceTypesFor(screen, PUBLISHABLE_SERVICE_TYPES)
-      : withoutHiddenServiceTypes(PUBLISHABLE_SERVICE_TYPES, serviceType)
+  const serviceTypeOptions = listServiceTypesFor(screen, serviceType)
   const labels = Object.fromEntries(
     serviceTypeOptions.map((value) => [
       value,

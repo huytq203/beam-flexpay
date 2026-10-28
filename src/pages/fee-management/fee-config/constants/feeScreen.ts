@@ -1,6 +1,7 @@
 import { PATHS } from '@constants/pathConstant'
 import {
   allowsMerchantCriteria,
+  PUBLISHABLE_SERVICE_TYPES,
   withoutHiddenServiceTypes
 } from '@utils/fee-execution'
 import { POLICY_KIND, type PolicyKind } from './feeConfigFields'
@@ -99,3 +100,26 @@ export const visibleServiceTypesFor = (
     HIDDEN_SERVICE_TYPES_BY_POLICY_KIND[FEE_SCREEN_CONFIG[screen].policyKind]
   )
 }
+
+/** Loại giao dịch ẩn thêm khỏi tab lọc danh sách của từng màn ví, ngoài các loại tạm ẩn chung. */
+const LIST_HIDDEN_SERVICE_TYPES: Readonly<
+  Partial<Record<FeeScreen, readonly string[]>>
+> = {
+  [FEE_SCREEN.INPUT_COST]: ['EWALLET_TRANSFER_INTERNAL']
+}
+
+/**
+ * Loại giao dịch hiện ở tab lọc danh sách. Màn ĐVCNTT giống ô chọn và bỏ loại ngoài thu hộ / chi hộ dù
+ * URL có; hai màn ví giữ loại đang lọc trên URL để tab đang chọn không biến mất.
+ */
+export const listServiceTypesFor = (
+  screen: FeeScreen,
+  current?: string | null
+): readonly string[] =>
+  screen === FEE_SCREEN.MERCHANT_FEE
+    ? visibleServiceTypesFor(screen, PUBLISHABLE_SERVICE_TYPES)
+    : withoutHiddenServiceTypes(
+        PUBLISHABLE_SERVICE_TYPES,
+        current,
+        LIST_HIDDEN_SERVICE_TYPES[screen]
+      )

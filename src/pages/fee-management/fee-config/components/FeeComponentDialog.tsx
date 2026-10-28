@@ -1,8 +1,7 @@
 import { ModalComponent } from '@components/index'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { supportsBearerSplit } from '@utils/fee-execution'
 import { useEffect, useMemo } from 'react'
-import { useForm, useWatch } from 'react-hook-form'
+import { useWatch } from 'react-hook-form'
 import {
   getBearerSideTitles,
   getOutputBeneficiaryOptions
@@ -15,9 +14,7 @@ import {
   type FeeScope
 } from '../constants/feeConfigFields'
 import {
-  createFeeComponentFormSchema,
   DUPLICATE_FEE_COMPONENT_MESSAGE,
-  feeComponentFormSchema,
   usesTiers,
   type FeeComponentFormValues
 } from '../schemas/feeConfig.schema'
@@ -35,17 +32,13 @@ import {
   getBaseOnOptions,
   isAmountBase
 } from '../utils/feeComponentBaseOptions'
-import { emptyComponent } from '../utils/feeComponentDefaults'
-import {
-  BOTH_BEARERS,
-  RECEIVER_PAYER,
-  SENDER_PAYER
-} from '../utils/bearerPairs'
+import { BOTH_BEARERS, SENDER_PAYER } from '../utils/bearerPairs'
 import {
   buildDialogDefaults,
   getComponentPartyOptions
 } from '../utils/feeComponentParties'
 import { useFeeComponentFieldHandlers } from '../hooks/useFeeComponentFieldHandlers'
+import { useFeeComponentForms } from '../hooks/useFeeComponentForms'
 import { useFeeComponentSubmit } from '../hooks/useFeeComponentSubmit'
 import { usePayerSelectOptions } from '../hooks/usePayerSelectOptions'
 import { hasBaseOnBothSides } from '../utils/payerSelectOptions'
@@ -118,34 +111,15 @@ export const FeeComponentDialog = ({
     [feeScope, initialPartner, initialValue, parties]
   )
 
-  const componentSchema = useMemo(
-    () => createFeeComponentFormSchema(existingComponents, initialValue?.key),
-    [existingComponents, initialValue?.key]
-  )
-
-  const form = useForm<FeeComponentFormValues>({
-    resolver: zodResolver(componentSchema),
+  const { form, receiverForm } = useFeeComponentForms({
+    existingComponents,
+    initialValue,
+    initialPartner,
     defaultValues,
-    mode: 'onTouched'
+    feeScope,
+    defaultBeneficiaryType
   })
   const { control, setValue, trigger, formState } = form
-
-  /**
-   * Mức phí người nhận khi cả hai bên cùng chịu. Phần dùng chung (loại phí, cách tính, người hưởng)
-   * lấy từ form chính lúc lưu, nên form này chỉ giữ mức phí và giới hạn.
-   */
-  const receiverDefaults = useMemo(
-    () =>
-      initialPartner ??
-      emptyComponent(feeScope, RECEIVER_PAYER, defaultBeneficiaryType),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- chỉ dựng một lần cho mỗi lần mở
-    []
-  )
-  const receiverForm = useForm<FeeComponentFormValues>({
-    resolver: zodResolver(feeComponentFormSchema),
-    defaultValues: receiverDefaults,
-    mode: 'onTouched'
-  })
 
   const componentType = useWatch({ control, name: 'componentType' })
   const baseOn = useWatch({ control, name: 'baseOn' })
