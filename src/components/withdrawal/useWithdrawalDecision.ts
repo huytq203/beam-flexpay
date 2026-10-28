@@ -112,7 +112,8 @@ export const useWithdrawalDecision = (
       runDecision(
         'approve',
         () => approveWithdrawal({ transactionCode, note }).unwrap(),
-        'Đã duyệt lệnh rút. Hệ thống đang chi, tiền chưa rời ngân hàng.'
+        // Câu trung lập cho cả hai chế độ chi: lệnh chi tay chưa đi đâu cho tới khi kế toán chốt.
+        'Đã duyệt lệnh rút. Tiền chưa rời ngân hàng cho tới khi chi xong.'
       ),
     reject: (reason) =>
       runDecision(

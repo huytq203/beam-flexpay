@@ -190,7 +190,7 @@ describe('WithdrawalDecisionPanel', () => {
 
   //   renderPanel()
 
-  //   expect(await screen.findByText('Đã duyệt — đang chi')).toBeInTheDocument()
+  //   expect(await screen.findByText('Đã duyệt chờ chi')).toBeInTheDocument()
   //   expect(
   //     screen.getByText(/chưa có đồng nào rời khỏi ngân hàng/i)
   //   ).toBeInTheDocument()
@@ -322,6 +322,29 @@ describe('WithdrawalDecisionPanel — chi thủ công theo payoutMode', () => {
     return captured
   }
 
+  it('APPROVED + MANUAL: nhãn "Đã duyệt chờ chi", không câu nào nói hệ thống "đang chi"', async () => {
+    mockWithdrawal(WithdrawalStatus.APPROVED, MANUAL_AWAITING)
+
+    renderPanel()
+
+    expect(await screen.findByText('Đã duyệt chờ chi')).toBeInTheDocument()
+    // Lệnh chi tay chưa đi đâu cả: mọi câu mô tả phải nói "chờ chi", không được nói "đang chi".
+    expect(screen.queryByText(/đang chi/i)).not.toBeInTheDocument()
+  })
+
+  it('ô "Ảnh biên lai" trong dialog Chi thành công có dấu bắt buộc', async () => {
+    mockWithdrawal(WithdrawalStatus.APPROVED, MANUAL_AWAITING)
+
+    const { user } = renderPanel()
+
+    await user.click(
+      await screen.findByRole('button', { name: /Chi thành công/ })
+    )
+    const dialog = await screen.findByRole('dialog')
+    const label = within(dialog).getByText('Ảnh biên lai', { selector: 'span' })
+    expect(label.textContent).toBe('Ảnh biên lai*')
+  })
+
   it('APPROVED + MANUAL đang chờ chốt tay: hiện "Chi thành công" và "Chi thất bại"', async () => {
     mockWithdrawal(WithdrawalStatus.APPROVED, MANUAL_AWAITING)
 
@@ -359,7 +382,7 @@ describe('WithdrawalDecisionPanel — chi thủ công theo payoutMode', () => {
 
     renderPanel()
 
-    expect(await screen.findByText('Đã duyệt — đang chi')).toBeInTheDocument()
+    expect(await screen.findByText('Đã duyệt chờ chi')).toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: /Chi thành công/ })
     ).not.toBeInTheDocument()
@@ -370,7 +393,7 @@ describe('WithdrawalDecisionPanel — chi thủ công theo payoutMode', () => {
 
     renderPanel(['EWALLET:TRANSACTION:VIEW'])
 
-    expect(await screen.findByText('Đã duyệt — đang chi')).toBeInTheDocument()
+    expect(await screen.findByText('Đã duyệt chờ chi')).toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: /Chi thành công/ })
     ).not.toBeInTheDocument()

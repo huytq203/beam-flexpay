@@ -97,6 +97,7 @@ export const ManualPayoutForm = ({
             {receiptTransactionCode ? (
               <StuckReceiptField
                 transactionCode={receiptTransactionCode}
+                required
                 disabled={isSubmitting}
               />
             ) : (

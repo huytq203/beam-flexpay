@@ -77,7 +77,7 @@ export enum StatusEnum {
 export const StatusType: Record<StatusEnum, string> = {
   [StatusEnum.PENDING]: 'Chờ xử lý',
   [StatusEnum.PENDING_APPROVAL]: 'Chờ duyệt',
-  [StatusEnum.APPROVED]: 'Đã duyệt — đang chi',
+  [StatusEnum.APPROVED]: 'Đã duyệt chờ chi',
   [StatusEnum.PAYING]: 'Đang chi',
   [StatusEnum.POSTED]: 'Đã thành công',
   [StatusEnum.FAILED]: 'Thất bại',
@@ -118,7 +118,7 @@ export const CONFIG_STATUS: Record<
     shimmerColor: 'rgba(252, 186, 3, 0.2)'
   },
   [StatusEnum.APPROVED]: {
-    label: 'Đã duyệt — đang chi',
+    label: 'Đã duyệt chờ chi',
     className: 'warning-status',
     shimmerColor: 'rgba(252, 186, 3, 0.2)'
   },

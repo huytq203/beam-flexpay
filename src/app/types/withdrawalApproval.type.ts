@@ -58,10 +58,12 @@ export const WITHDRAWAL_STATUS_PRESENTATION: Record<
     tone: 'wait'
   },
   [WithdrawalStatus.APPROVED]: {
-    label: 'Đã duyệt — đang chi',
+    label: 'Đã duyệt chờ chi',
     fundsLabel: 'Bị khoá, chưa trừ',
+    // Không nói "đang chi": với kênh chi thủ công, lệnh đứng yên ở đây cho tới khi kế toán chuyển khoản
+    // tay và chốt kết quả. Kênh API có thêm câu riêng ở khối duyệt nói rõ hệ thống đang chi.
     guidance:
-      'Đã duyệt và đang chi — chưa có đồng nào rời khỏi ngân hàng. Chỉ khi về “Đã chi — hoàn tất” thì tiền mới thật sự ra.',
+      'Đã duyệt, chờ chi — chưa có đồng nào rời khỏi ngân hàng. Chỉ khi về “Đã chi — hoàn tất” thì tiền mới thật sự ra.',
     tone: 'wait'
   },
   [WithdrawalStatus.PAYING]: {

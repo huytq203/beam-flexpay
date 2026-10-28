@@ -15,6 +15,11 @@ interface StuckReceiptFieldProps {
   transactionCode: string
   /** Đang gửi cập nhật: khoá chọn/gỡ để biên lai không đổi giữa chừng. */
   disabled?: boolean
+  /**
+   * Hiện dấu `*` cạnh nhãn. Chỉ là dấu hiệu cho người dùng — form gọi tới tự chặn gửi khi thiếu
+   * biên lai (chi tay bắt buộc UNC; chốt giao dịch treo thì biên lai tuỳ chọn nên mặc định tắt).
+   */
+  required?: boolean
 }
 
 /**
@@ -23,7 +28,8 @@ interface StuckReceiptFieldProps {
  */
 export const StuckReceiptField = ({
   transactionCode,
-  disabled = false
+  disabled = false,
+  required = false
 }: StuckReceiptFieldProps) => {
   const { control, setValue } =
     useFormContext<StuckTransactionUpdateFormValues>()
@@ -63,7 +69,11 @@ export const StuckReceiptField = ({
 
   return (
     <div className='flex flex-col gap-1 sm:col-span-3'>
-      <span className='text-sm font-medium text-foreground'>Ảnh biên lai</span>
+      <span className='text-sm font-medium text-foreground'>
+        Ảnh biên lai
+        {/* Cùng kiểu dấu bắt buộc với `FormField` để các ô trong một form trông như nhau. */}
+        {required && <span className='ml-1 text-red-600'>*</span>}
+      </span>
       <input
         ref={inputRef}
         type='file'
