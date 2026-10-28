@@ -46,17 +46,27 @@ export const getBaseOnOptions = ({
   isBank,
   isVat,
   hasPrecedingComponents,
-  allowGrossAmount = false
+  allowGrossAmount = false,
+  savedBaseOn
 }: {
   isBank: boolean
   isVat: boolean
   hasPrecedingComponents: boolean
   /** Chi phí đầu vào của nạp/rút ví mới được tính trên số tiền qua đối tác. */
   allowGrossAmount?: boolean
+  /** Cơ sở tính đã lưu của thành phần đang sửa; luôn giữ trong danh sách để hiện đúng nhãn. */
+  savedBaseOn?: string | null
 }) => {
   const base =
     isVat || (!isBank && hasPrecedingComponents)
       ? BASE_ON_OPTIONS
       : AMOUNT_ONLY_BASE_ON_OPTIONS
-  return allowGrossAmount && !isVat ? [...base, GROSS_AMOUNT_OPTION] : base
+  if (!allowGrossAmount || isVat) return base
+  // Nạp/rút ví: chi phí đầu vào tính trên số tiền qua đối tác thay cho số tiền giao dịch.
+  return [
+    ...base.filter(
+      ({ value }) => value !== 'AMOUNT' || savedBaseOn === 'AMOUNT'
+    ),
+    GROSS_AMOUNT_OPTION
+  ]
 }

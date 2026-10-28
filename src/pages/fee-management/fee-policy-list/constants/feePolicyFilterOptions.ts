@@ -30,3 +30,16 @@ export const FEE_BEARER_FILTER_OPTIONS = [
   { value: 'RECEIVER', label: 'Chỉ người nhận chịu' },
   { value: 'BOTH', label: 'Cả hai bên cùng chịu' }
 ] as const
+
+export const APPLIED_TARGET_OPTIONS = [
+  { label: 'Tất cả', value: 'ALL' },
+  { label: 'Theo nhóm khách hàng', value: 'CUSTOMER_GROUP' },
+  { label: 'Riêng ví', value: 'ACCOUNT' }
+]
+
+/** Màn ĐVCNTT: cùng giá trị gửi BE, chỉ đổi nhãn sang merchant. */
+export const MERCHANT_APPLIED_TARGET_OPTIONS = [
+  { label: 'Tất cả', value: 'ALL' },
+  { label: 'Theo nhóm merchant', value: 'CUSTOMER_GROUP' },
+  { label: 'Merchant cụ thể', value: 'ACCOUNT' }
+]

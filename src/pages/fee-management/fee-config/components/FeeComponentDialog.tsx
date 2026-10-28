@@ -30,6 +30,7 @@ import {
 import {
   allowsGrossAmountBase,
   getBaseOnOptions,
+  GROSS_AMOUNT_BASE,
   isAmountBase
 } from '../utils/feeComponentBaseOptions'
 import { BOTH_BEARERS, SENDER_PAYER } from '../utils/bearerPairs'
@@ -93,6 +94,7 @@ export const FeeComponentDialog = ({
   )
   const { payerTypeOptions, beneficiaryTypeOptions, defaultBeneficiaryType } =
     parties
+  const allowGrossAmount = allowsGrossAmountBase(serviceType, feeScope)
 
   /**
    * Dựng giá trị mặc định đúng một lần cho mỗi lần mở.
@@ -106,9 +108,10 @@ export const FeeComponentDialog = ({
         parties,
         feeScope,
         initialValue,
-        hasPartner: Boolean(initialPartner)
+        hasPartner: Boolean(initialPartner),
+        defaultBaseOn: allowGrossAmount ? GROSS_AMOUNT_BASE : undefined
       }),
-    [feeScope, initialPartner, initialValue, parties]
+    [allowGrossAmount, feeScope, initialPartner, initialValue, parties]
   )
 
   const { form, receiverForm } = useFeeComponentForms({
@@ -225,7 +228,8 @@ export const FeeComponentDialog = ({
     isBank: isInputCost,
     isVat,
     hasPrecedingComponents,
-    allowGrossAmount: allowsGrossAmountBase(serviceType, feeScope)
+    allowGrossAmount,
+    savedBaseOn: initialValue?.baseOn
   })
 
   const submit = useFeeComponentSubmit({

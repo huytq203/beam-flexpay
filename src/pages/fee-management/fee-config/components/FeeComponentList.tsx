@@ -146,9 +146,9 @@ export const FeeComponentList = ({
       (editingIndex === null || index < editingIndex)
   )
   const isInput = scope === FEE_SCOPE.INPUT_COST
-  // Luật người chịu phí theo loại giao dịch, nên chưa chọn thì chưa cho cấu hình trước: cấu hình dở đó
-  // sẽ lọt qua các luật chặn khi loại giao dịch được chọn sau.
-  const needsServiceType = !isInput && !serviceType
+  // Luật người chịu phí và cơ sở tính (số tiền qua đối tác) theo loại giao dịch, nên chưa chọn thì chưa
+  // cho cấu hình trước: cấu hình dở đó sẽ lọt qua các luật chặn khi loại giao dịch được chọn sau.
+  const needsServiceType = !serviceType
   const groups = groupBearerPairs(
     serviceType,
     components,
@@ -177,20 +177,20 @@ export const FeeComponentList = ({
                   Chọn loại giao dịch trước khi thêm phí
                 </span>
               )}
-            <ButtonComponent
-              htmlType='button'
-              disabled={needsServiceType}
-              type={isInput ? 'default' : 'primary'}
-              content={ADD_LABEL[scope]}
-              icon={
-                <PlusIcon
-                  size={16}
-                  weight='bold'
-                  aria-hidden
-                />
-              }
-              onClick={() => setAdding(true)}
-            />
+              <ButtonComponent
+                htmlType='button'
+                disabled={needsServiceType}
+                type={isInput ? 'default' : 'primary'}
+                content={ADD_LABEL[scope]}
+                icon={
+                  <PlusIcon
+                    size={16}
+                    weight='bold'
+                    aria-hidden
+                  />
+                }
+                onClick={() => setAdding(true)}
+              />
             </div>
           )}
         </div>

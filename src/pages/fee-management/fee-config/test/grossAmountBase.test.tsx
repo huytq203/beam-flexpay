@@ -11,6 +11,10 @@ import {
   allowsGrossAmountBase,
   getBaseOnOptions
 } from '../utils/feeComponentBaseOptions'
+import {
+  buildDialogDefaults,
+  getComponentPartyOptions
+} from '../utils/feeComponentParties'
 import { toSetupRequest } from '../utils/feeConfigPayload'
 import { buildFeeBasis } from '../../fee-policy-list/utils/feeBasis'
 import { groupReadoutComponents } from '../../fee-policy-list/utils/groupReadoutComponents'
@@ -56,9 +60,21 @@ describe('GROSS_AMOUNT — tuỳ chọn cơ sở tính', () => {
       allowGrossAmount
     }).map(({ value }) => value)
 
-  it('chỉ hiện khi được phép', () => {
-    expect(values(true)).toEqual(['AMOUNT', 'GROSS_AMOUNT'])
+  it('nạp/rút ví chỉ còn số tiền qua đối tác, thay cho số tiền giao dịch', () => {
+    expect(values(true)).toEqual(['GROSS_AMOUNT'])
     expect(values(false)).toEqual(['AMOUNT'])
+  })
+
+  it('giữ số tiền giao dịch cho thành phần đã lưu với cơ sở đó', () => {
+    expect(
+      getBaseOnOptions({
+        isBank: true,
+        isVat: false,
+        hasPrecedingComponents: false,
+        allowGrossAmount: true,
+        savedBaseOn: 'AMOUNT'
+      }).map(({ value }) => value)
+    ).toEqual(['AMOUNT', 'GROSS_AMOUNT'])
   })
 
   it('có nhãn Số tiền qua đối tác', () => {
@@ -69,6 +85,17 @@ describe('GROSS_AMOUNT — tuỳ chọn cơ sở tính', () => {
       allowGrossAmount: true
     }).find(({ value }) => value === 'GROSS_AMOUNT')
     expect(option?.label).toBe('Số tiền qua đối tác')
+  })
+
+  it('thành phần mới của phí đầu vào nạp/rút mặc định tính trên số tiền qua đối tác', () => {
+    const defaults = buildDialogDefaults({
+      parties: getComponentPartyOptions(true, 'EWALLET_DEPOSIT'),
+      feeScope: 'INPUT_COST',
+      initialValue: null,
+      hasPartner: false,
+      defaultBaseOn: 'GROSS_AMOUNT'
+    })
+    expect(defaults.baseOn).toBe('GROSS_AMOUNT')
   })
 
   it('không bao giờ hiện cho VAT', () => {
@@ -108,9 +135,9 @@ describe('GROSS_AMOUNT — schema', () => {
       inputForm('EWALLET_TRANSFER_INTERNAL')
     )
     expect(result.success).toBe(false)
-    expect(
-      result.error?.issues.map((issue) => issue.path.join('.'))
-    ).toContain('components.0.baseOn')
+    expect(result.error?.issues.map((issue) => issue.path.join('.'))).toContain(
+      'components.0.baseOn'
+    )
   })
 
   it('từ chối ở phí đầu ra (form phí khách)', () => {
@@ -127,9 +154,9 @@ describe('GROSS_AMOUNT — schema', () => {
       })
     )
     expect(result.success).toBe(false)
-    expect(
-      result.error?.issues.map((issue) => issue.path.join('.'))
-    ).toContain('components.0.baseOn')
+    expect(result.error?.issues.map((issue) => issue.path.join('.'))).toContain(
+      'components.0.baseOn'
+    )
   })
 })
 

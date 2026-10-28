@@ -108,6 +108,16 @@ describe('trang tạo chính sách', () => {
     expect(
       screen.queryByRole('button', { name: 'Thêm phí đầu ra' })
     ).not.toBeInTheDocument()
+    // Chưa chọn loại giao dịch thì chưa thêm được phí đầu vào.
+    expect(
+      screen.getByRole('button', { name: 'Thêm phí đầu vào' })
+    ).toBeDisabled()
+    expect(
+      screen.getByText('Chọn loại giao dịch trước khi thêm phí')
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByLabelText(/Loại giao dịch/))
+    await user.click(await screen.findByText(DEPOSIT_LABEL))
     await user.click(screen.getByRole('button', { name: 'Thêm phí đầu vào' }))
 
     expect(

@@ -12,6 +12,10 @@ import {
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import { FeePolicyPartyFilters } from './FeePolicyPartyFilters'
 import { FeePolicyProviderFilter } from './FeePolicyProviderFilter'
+import {
+  APPLIED_TARGET_OPTIONS,
+  MERCHANT_APPLIED_TARGET_OPTIONS
+} from '../constants/feePolicyFilterOptions'
 import { POLICY_STATUS_FILTER_OPTIONS } from '../utils/policyStatusFilter'
 import {
   FEE_SCREEN,
@@ -20,21 +24,9 @@ import {
   type FeeScreen
 } from '@pages/fee-management/fee-config/constants/feeScreen'
 import { useGetBankQuery } from '@services/apiFeeBank'
+import { cn } from '@lib/utils/cn'
 import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
-
-const APPLIED_TARGET_OPTIONS = [
-  { label: 'Tất cả', value: 'ALL' },
-  { label: 'Theo nhóm khách hàng', value: 'CUSTOMER_GROUP' },
-  { label: 'Riêng ví', value: 'ACCOUNT' }
-]
-
-/** Màn ĐVCNTT: cùng giá trị gửi BE, chỉ đổi nhãn sang merchant. */
-const MERCHANT_APPLIED_TARGET_OPTIONS = [
-  { label: 'Tất cả', value: 'ALL' },
-  { label: 'Theo nhóm merchant', value: 'CUSTOMER_GROUP' },
-  { label: 'Merchant cụ thể', value: 'ACCOUNT' }
-]
 
 export interface FeePolicyFilterValues {
   keyword: string
@@ -184,7 +176,11 @@ export const FeePolicyFilterBar = ({
           control={control}
           label='Tên chính sách / Mã phí'
           placeholder='Nhập tên chính sách hoặc mã phí (FF...)'
-          className='flex flex-col md:col-span-2 xl:col-span-3'
+          // Phí đầu vào có đúng 10 ô lọc: ô này rộng 1 cột để lưới 5 cột vừa khít 2 hàng, không lệch.
+          className={cn(
+            'flex flex-col',
+            !inputCost && 'md:col-span-2 xl:col-span-3'
+          )}
         />
         <FormSelect
           name='status'

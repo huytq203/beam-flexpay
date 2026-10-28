@@ -64,6 +64,8 @@ interface DialogDefaultsInput {
   feeScope: FeeScope
   initialValue: FeeComponentFormValues | null
   hasPartner: boolean
+  /** Cơ sở tính của thành phần mới; bỏ trống là số tiền giao dịch. */
+  defaultBaseOn?: string
 }
 
 /** Giá trị mở hộp thoại; payer/người hưởng cũ không còn hợp lệ thì về mặc định của luồng. */
@@ -71,7 +73,8 @@ export const buildDialogDefaults = ({
   parties,
   feeScope,
   initialValue,
-  hasPartner
+  hasPartner,
+  defaultBaseOn
 }: DialogDefaultsInput): FeeComponentFormValues => {
   const {
     payerTypeOptions,
@@ -80,7 +83,12 @@ export const buildDialogDefaults = ({
     defaultBeneficiaryType
   } = parties
   if (!initialValue) {
-    return emptyComponent(feeScope, defaultPayerType, defaultBeneficiaryType)
+    const component = emptyComponent(
+      feeScope,
+      defaultPayerType,
+      defaultBeneficiaryType
+    )
+    return defaultBaseOn ? { ...component, baseOn: defaultBaseOn } : component
   }
   const hasAllowedPayer = payerTypeOptions.some(
     ({ value, disabled }) => !disabled && value === initialValue.payerType
