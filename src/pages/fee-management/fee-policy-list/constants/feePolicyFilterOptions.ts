@@ -1,5 +1,6 @@
 import {
   BENEFICIARY_TYPE_LABEL,
+  getMerchantCounterpartyLabel,
   PAYER_TYPE_LABEL
 } from '@pages/fee-management/fee-config/constants/feeComponentParties'
 
@@ -11,11 +12,13 @@ export const PAYER_TYPE_FILTER_OPTIONS = [
   { value: 'SYSTEM', label: PAYER_TYPE_LABEL.SYSTEM }
 ] as const
 
-/** Màn ĐVCNTT: hai bên của thu hộ / chi hộ là Merchant và Khách hàng, không có người chuyển / nhận. */
-export const MERCHANT_PAYER_FILTER_OPTIONS = [
+/** Màn ĐVCNTT: hai bên của thu hộ / chi hộ là Merchant và người nộp / nhận tiền theo tab đang chọn. */
+export const getMerchantPayerFilterOptions = (
+  serviceType: string | undefined
+) => [
   { value: 'MERCHANT', label: 'Merchant' },
-  { value: 'USER', label: 'Khách hàng' }
-] as const
+  { value: 'USER', label: getMerchantCounterpartyLabel(serviceType) }
+]
 
 export const BENEFICIARY_TYPE_FILTER_OPTIONS = Object.entries(
   BENEFICIARY_TYPE_LABEL

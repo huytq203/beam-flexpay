@@ -45,18 +45,36 @@ const REFUND_PAYER_LABEL: Readonly<Record<string, string>> = {
 }
 
 /**
- * Thu hộ / chi hộ có hai bên là Merchant và Khách hàng, không có "người chuyển / người nhận". USER,
- * SENDER, RECEIVER đều là phía khách nên dữ liệu cũ hiện đúng nhãn.
+ * Bên đối diện merchant: thu hộ là người nộp tiền vào VA, chi hộ là người nhận tiền chi ra (thường
+ * không phải khách hàng của merchant, ví dụ nhân viên nhận lương). Chưa chọn loại giao dịch (tab Tất
+ * cả của màn ĐVCNTT) thì gọi chung cả hai.
  */
-const MERCHANT_FLOW_PAYER_LABEL: Readonly<Record<string, string>> = {
-  MERCHANT: 'Merchant',
-  USER: 'Khách hàng',
-  SENDER: 'Khách hàng',
-  RECEIVER: 'Khách hàng'
+export const getMerchantCounterpartyLabel = (
+  serviceType?: string | null
+): string => {
+  if (serviceType === 'MERCHANT_VA_BILL_COLLECTION') return 'Người nộp tiền'
+  if (serviceType === 'PAYOUT_BANK_TRANSFER') return 'Người nhận tiền'
+  return 'Người nộp / nhận tiền'
 }
 
 /**
- * Giá trị chỉ để HIỂN THỊ cho lựa chọn "Khách hàng" bị khóa của thu hộ / chi hộ, không bao giờ được
+ * Thu hộ / chi hộ có hai bên là Merchant và bên đối diện, không có "người chuyển / người nhận" của
+ * ví. USER, SENDER, RECEIVER đều là phía đối diện nên dữ liệu cũ hiện đúng nhãn.
+ */
+const merchantFlowPayerLabels = (
+  serviceType?: string | null
+): Readonly<Record<string, string>> => {
+  const counterparty = getMerchantCounterpartyLabel(serviceType)
+  return {
+    MERCHANT: 'Merchant',
+    USER: counterparty,
+    SENDER: counterparty,
+    RECEIVER: counterparty
+  }
+}
+
+/**
+ * Giá trị chỉ để HIỂN THỊ cho lựa chọn bên đối diện bị khóa của thu hộ / chi hộ, không bao giờ được
  * gửi đi. Backend làm xong thì spec backend quyết định giá trị thật.
  */
 export const MERCHANT_CUSTOMER_PAYER = 'MERCHANT_CUSTOMER'
@@ -68,7 +86,7 @@ const payerLabelsFor = (
   serviceType?: string | null
 ): Readonly<Record<string, string>> => {
   if (allowsMerchantCriteria(serviceType)) {
-    return { ...PAYER_TYPE_LABEL, ...MERCHANT_FLOW_PAYER_LABEL }
+    return { ...PAYER_TYPE_LABEL, ...merchantFlowPayerLabels(serviceType) }
   }
   if (serviceType === 'EWALLET_REFUND') {
     return { ...PAYER_TYPE_LABEL, ...REFUND_PAYER_LABEL }
@@ -89,7 +107,10 @@ export const getBearerSideTitles = (
   serviceType?: string | null
 ): { sender: string; receiver: string } => {
   if (allowsMerchantCriteria(serviceType)) {
-    return { sender: 'Merchant chịu', receiver: 'Khách hàng chịu' }
+    return {
+      sender: 'Merchant chịu',
+      receiver: `${getMerchantCounterpartyLabel(serviceType)} chịu`
+    }
   }
   return serviceType === 'EWALLET_REFUND'
     ? { sender: 'Người nhận chịu', receiver: 'Người chuyển chịu' }
@@ -127,21 +148,27 @@ const OUTPUT_PAYERS: readonly string[] = ['USER', 'RECEIVER']
 export const getOutputPayerOptions = (
   serviceType: string | null | undefined
 ): { value: string; label: string; disabled?: boolean }[] => {
-  // Thu hộ / chi hộ: chỉ Merchant chịu được; hai lựa chọn còn lại vẫn hiện nhưng bị khóa để người vận
+  // Thu hộ / chi hộ: chỉ Merchant chịu được; lựa chọn còn lại vẫn hiện nhưng bị khóa để người vận
   // hành biết sắp có. Không nối USER / RECEIVER vì backend không chạy được các payer đó.
   if (allowsMerchantCriteria(serviceType)) {
     return [
-      { value: 'MERCHANT', label: MERCHANT_FLOW_PAYER_LABEL.MERCHANT },
+      { value: 'MERCHANT', label: 'Merchant' },
       {
         value: MERCHANT_CUSTOMER_PAYER,
-        label: `${MERCHANT_FLOW_PAYER_LABEL.USER}${COMING_SOON_SUFFIX}`,
+        label: `${getMerchantCounterpartyLabel(serviceType)}${COMING_SOON_SUFFIX}`,
         disabled: true
       },
-      {
-        value: 'BOTH',
-        label: `Cả hai bên cùng chịu${COMING_SOON_SUFFIX}`,
-        disabled: true
-      }
+      // Chia phí như SHA của SWIFT chỉ có ở chi hộ; thu hộ để người nộp gánh một phần phí gần như
+      // không nơi nào làm nên không bày ra.
+      ...(serviceType === 'PAYOUT_BANK_TRANSFER'
+        ? [
+            {
+              value: 'BOTH',
+              label: `Cả hai bên cùng chịu${COMING_SOON_SUFFIX}`,
+              disabled: true
+            }
+          ]
+        : [])
     ]
   }
   const defaults = getSelectablePayers(serviceType)

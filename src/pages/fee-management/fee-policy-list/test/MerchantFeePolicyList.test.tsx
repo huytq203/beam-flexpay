@@ -130,11 +130,21 @@ describe('màn Cấu hình phí ĐVCNTT: danh sách theo miền MERCHANT', () =>
     )
   }
 
-  it('bộ lọc người chịu phí chỉ có Merchant và Khách hàng', async () => {
+  it('bộ lọc người chịu phí chỉ có Merchant và người nộp / nhận tiền', async () => {
     renderMerchant('/merchant/fee-config')
     await screen.findByText('Phí thu hộ VA merchant')
 
-    expect(await payerFilterOptions()).toEqual(['Merchant', 'Khách hàng'])
+    expect(await payerFilterOptions()).toEqual([
+      'Merchant',
+      'Người nộp / nhận tiền'
+    ])
+  })
+
+  it('tab Chi hộ gọi bên đối diện là Người nhận tiền', async () => {
+    renderMerchant('/merchant/fee-config?serviceType=PAYOUT_BANK_TRANSFER')
+    await waitFor(() => expect(requests.length).toBeGreaterThan(0))
+
+    expect(await payerFilterOptions()).toEqual(['Merchant', 'Người nhận tiền'])
   })
 
   it('nút thêm chính sách chuyển tới màn tạo của ĐVCNTT', async () => {

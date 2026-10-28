@@ -29,15 +29,29 @@ const MERCHANT_SERVICES = [
   'PAYOUT_BANK_TRANSFER'
 ] as const
 
+const COLLECTION_OPTIONS = [
+  { value: 'MERCHANT', label: 'Merchant' },
+  {
+    value: 'MERCHANT_CUSTOMER',
+    label: 'Người nộp tiền · Sắp hỗ trợ',
+    disabled: true
+  }
+]
+
 const MERCHANT_OPTIONS = [
   { value: 'MERCHANT', label: 'Merchant' },
   {
     value: 'MERCHANT_CUSTOMER',
-    label: 'Khách hàng · Sắp hỗ trợ',
+    label: 'Người nhận tiền · Sắp hỗ trợ',
     disabled: true
   },
   { value: 'BOTH', label: 'Cả hai bên cùng chịu · Sắp hỗ trợ', disabled: true }
 ]
+
+const COUNTERPARTY = {
+  MERCHANT_VA_BILL_COLLECTION: 'Người nộp tiền',
+  PAYOUT_BANK_TRANSFER: 'Người nhận tiền'
+} as const
 
 const component = (
   overrides: Partial<FeeComponentFormValues> = {}
@@ -68,28 +82,34 @@ const merchantForm = (payerType: string) =>
   })
 
 describe('người chịu phí của thu hộ / chi hộ', () => {
-  it.each(MERCHANT_SERVICES)(
-    '%s: Merchant chọn được, Khách hàng và Cả hai bên bị khóa',
-    (serviceType) => {
-      expect(getOutputPayerOptions(serviceType)).toEqual(MERCHANT_OPTIONS)
-      expect(MERCHANT_CUSTOMER_PAYER).toBe('MERCHANT_CUSTOMER')
-    }
-  )
+  it('thu hộ: Merchant chọn được, Người nộp tiền bị khóa, không có Cả hai bên', () => {
+    expect(getOutputPayerOptions('MERCHANT_VA_BILL_COLLECTION')).toEqual(
+      COLLECTION_OPTIONS
+    )
+    expect(MERCHANT_CUSTOMER_PAYER).toBe('MERCHANT_CUSTOMER')
+  })
 
-  it('tiêu đề hai khối khi cả hai bên chịu là Merchant / Khách hàng', () => {
+  it('chi hộ: Merchant chọn được, Người nhận tiền và Cả hai bên bị khóa', () => {
+    expect(getOutputPayerOptions('PAYOUT_BANK_TRANSFER')).toEqual(
+      MERCHANT_OPTIONS
+    )
+  })
+
+  it('tiêu đề hai khối khi cả hai bên chịu chi hộ là Merchant / Người nhận tiền', () => {
     expect(getBearerSideTitles('PAYOUT_BANK_TRANSFER')).toEqual({
       sender: 'Merchant chịu',
-      receiver: 'Khách hàng chịu'
+      receiver: 'Người nhận tiền chịu'
     })
   })
 
   it.each(MERCHANT_SERVICES)(
-    '%s: nhãn payer là Merchant / Khách hàng, dữ liệu cũ hiện đúng nhãn',
+    '%s: nhãn payer là Merchant / bên đối diện, dữ liệu cũ hiện đúng nhãn',
     (serviceType) => {
+      const counterparty = COUNTERPARTY[serviceType]
       expect(getPayerLabel('MERCHANT', serviceType)).toBe('Merchant')
-      expect(getPayerLabel('USER', serviceType)).toBe('Khách hàng')
-      expect(getPayerLabel('SENDER', serviceType)).toBe('Khách hàng')
-      expect(getPayerLabel('RECEIVER', serviceType)).toBe('Khách hàng')
+      expect(getPayerLabel('USER', serviceType)).toBe(counterparty)
+      expect(getPayerLabel('SENDER', serviceType)).toBe(counterparty)
+      expect(getPayerLabel('RECEIVER', serviceType)).toBe(counterparty)
       expect(getPayerTypeOptions(serviceType)[0]).toEqual({
         value: 'MERCHANT',
         label: 'Merchant'
@@ -213,11 +233,11 @@ describe('FeeComponentDialog của thu hộ', () => {
       />
     )
 
-  it('Khách hàng · Sắp hỗ trợ bị khóa, bấm vào vẫn giữ Merchant', async () => {
+  it('Người nộp tiền · Sắp hỗ trợ bị khóa, bấm vào vẫn giữ Merchant', async () => {
     renderDialog()
 
     await userEvent.click(screen.getByLabelText(/Người chịu/))
-    const locked = await screen.findAllByText('Khách hàng · Sắp hỗ trợ')
+    const locked = await screen.findAllByText('Người nộp tiền · Sắp hỗ trợ')
     // antd bản này đánh dấu option khóa bằng class `ant-select-item-option-disabled` (không có
     // aria-disabled trên dòng hiển thị); list ảo trong jsdom cũng chỉ dựng hai dòng đầu.
     const option = locked
@@ -236,13 +256,13 @@ describe('FeeComponentDialog của thu hộ', () => {
     )
   })
 
-  it('không hiện "Người chuyển" hay "Người nhận" trong dialog', async () => {
+  it('chi hộ không hiện "Người chuyển" hay "Người nhận" của ví trong dialog', async () => {
     renderDialog('PAYOUT_BANK_TRANSFER')
 
     await userEvent.click(screen.getByLabelText(/Người chịu/))
-    await screen.findAllByText('Khách hàng · Sắp hỗ trợ')
+    await screen.findAllByText('Người nhận tiền · Sắp hỗ trợ')
 
     expect(document.body.textContent).not.toContain('Người chuyển')
-    expect(document.body.textContent).not.toContain('Người nhận')
+    expect(document.body.textContent).not.toMatch(/Người nhận(?! tiền)/)
   })
 })

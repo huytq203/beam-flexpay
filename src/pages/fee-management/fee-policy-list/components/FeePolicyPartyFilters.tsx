@@ -3,7 +3,7 @@ import type { Control } from 'react-hook-form'
 import {
   BENEFICIARY_TYPE_FILTER_OPTIONS,
   FEE_BEARER_FILTER_OPTIONS,
-  MERCHANT_PAYER_FILTER_OPTIONS,
+  getMerchantPayerFilterOptions,
   PAYER_TYPE_FILTER_OPTIONS
 } from '../constants/feePolicyFilterOptions'
 import {
@@ -17,7 +17,7 @@ interface FeePolicyPartyFiltersProps {
   serviceType: string | undefined
   /** Phí đầu vào: người chịu luôn là Hệ thống và không có bên chịu phí chuyển tiền. */
   inputCost?: boolean
-  /** Màn ĐVCNTT đổi danh sách người chịu sang Merchant / Khách hàng. */
+  /** Màn ĐVCNTT đổi danh sách người chịu sang Merchant / người nộp, nhận tiền. */
   screen?: FeeScreen
 }
 
@@ -36,11 +36,11 @@ export const FeePolicyPartyFilters = ({
         label='Người chịu phí'
         placeholder='Tất cả người chịu'
         allowClear
-        options={[
-          ...(screen === FEE_SCREEN.MERCHANT_FEE
-            ? MERCHANT_PAYER_FILTER_OPTIONS
-            : PAYER_TYPE_FILTER_OPTIONS)
-        ]}
+        options={
+          screen === FEE_SCREEN.MERCHANT_FEE
+            ? getMerchantPayerFilterOptions(serviceType)
+            : [...PAYER_TYPE_FILTER_OPTIONS]
+        }
         className='flex flex-col'
       />
     )}
