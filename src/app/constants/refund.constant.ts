@@ -8,7 +8,7 @@ import type { StatusTone } from '@components/status-badge/StatusToneBadge'
 /** Suy ra từ loại giao dịch gốc, BE không lưu cột riêng. */
 export const RefundType = {
   WITHDRAW_BANK: 'WITHDRAW_BANK',
-  WITHDRAW_REVERSAL: 'WITHDRAW_REVERSAL',
+  // WITHDRAW_REVERSAL: 'WITHDRAW_REVERSAL',
   REFUND_EWALLET: 'REFUND_EWALLET'
 } as const
 export type RefundType = (typeof RefundType)[keyof typeof RefundType]
@@ -33,7 +33,7 @@ export type RefundDisplayStatus =
 // WITHDRAW_REVERSAL là "Nạp hoàn ví"/"Nạp hoàn trả", chờ BA chốt tên chính thức.
 export const REFUND_TYPE_LABELS: Record<RefundType, string> = {
   WITHDRAW_BANK: 'Hoàn nạp tiền',
-  WITHDRAW_REVERSAL: 'Hoàn rút tiền',
+  // WITHDRAW_REVERSAL: 'Hoàn rút tiền',
   REFUND_EWALLET: 'Hoàn chuyển tiền '
 }
 

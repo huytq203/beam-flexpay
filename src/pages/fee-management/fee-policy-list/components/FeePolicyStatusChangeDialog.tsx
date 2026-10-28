@@ -35,8 +35,8 @@ const DIALOG_TITLE: Readonly<Record<FeePolicyScheduleAction, string>> = {
 }
 
 const IMMEDIATE_SUCCESS: Readonly<Record<FeePolicyScheduleAction, string>> = {
-  ACTIVATE: 'Đã kích hoạt chính sách phí',
-  DEACTIVATE: 'Đã ngừng áp dụng chính sách phí'
+  ACTIVATE: 'Đã mở khóa chính sách phí',
+  DEACTIVATE: 'Đã khóa chính sách phí'
 }
 
 const SCHEDULED_SUCCESS: Readonly<Record<FeePolicyScheduleAction, string>> = {

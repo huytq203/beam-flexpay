@@ -92,30 +92,30 @@ const feeManagementV4: ItemTypeCustom = {
       ),
       label: 'Cấu hình phí đầu vào'
     },
-    // {
-    //   key: 'fee-input-cost-report',
-    //   screen: 'FEE_INPUT_COST_REPORT',
-    //   icon: (
-    //     <ChartBarIcon
-    //       size={size}
-    //       weight={weight}
-    //       color={COlOR}
-    //     />
-    //   ),
-    //   label: 'Báo cáo phí đầu vào'
-    // },
-    // {
-    //   key: 'wallet-limit',
-    //   screen: 'WALLET_LIMIT',
-    //   icon: (
-    //     <SlidersHorizontalIcon
-    //       size={size}
-    //       weight={weight}
-    //       color={COlOR}
-    //     />
-    //   ),
-    //   label: 'Hạn mức ví'
-    // }
+    {
+      key: 'fee-input-cost-report',
+      screen: 'FEE_INPUT_COST_REPORT',
+      icon: (
+        <ChartBarIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Báo cáo phí đầu vào'
+    },
+    {
+      key: 'wallet-limit',
+      screen: 'WALLET_LIMIT',
+      icon: (
+        <SlidersHorizontalIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Hạn mức ví'
+    }
     /*
      * Tạm ẩn mục Tháng đặc biệt (giữ nguyên code, bật lại khi cần):
      * {

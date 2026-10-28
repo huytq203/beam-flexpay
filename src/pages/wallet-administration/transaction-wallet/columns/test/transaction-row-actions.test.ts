@@ -84,6 +84,24 @@ describe('getFreezeTransactionAction', () => {
       )
     ).toBeNull()
   })
+
+  it('ẩn đóng băng khi đã hoàn đủ và không còn yêu cầu hoàn đang chờ', () => {
+    expect(
+      getFreezeTransactionAction(
+        transaction({ refundedAmount: 100_000, pendingRefundAmount: 0 })
+      )
+    ).toBeNull()
+  })
+
+  it.each([
+    ['mới hoàn một phần', { refundedAmount: 40_000, pendingRefundAmount: 0 }],
+    [
+      'đã hoàn đủ nhưng còn yêu cầu hoàn đang chờ',
+      { refundedAmount: 100_000, pendingRefundAmount: 20_000 }
+    ]
+  ])('vẫn cho đóng băng khi %s', (_name, overrides) => {
+    expect(getFreezeTransactionAction(transaction(overrides))).toBe('freeze')
+  })
 })
 
 describe('getFreezeTargetParties', () => {
