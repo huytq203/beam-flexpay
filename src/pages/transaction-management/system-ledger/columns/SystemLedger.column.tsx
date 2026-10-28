@@ -6,8 +6,7 @@ import { formatNumber } from '@utils/formatNumber'
 import {
   DirectionConstants,
   GLCodeLabels,
-  LedgerTransactionType,
-  type LedgerTransactionTypeKey
+  getLedgerTransactionTypeLabel
 } from '../constants/SystemLedger.constant'
 import type { LedgerRow } from '../utils/groupLedgerByJournal'
 
@@ -25,7 +24,7 @@ const renderTransaction = (record: LedgerRow) => {
       <span className='font-semibold text-foreground'>{code}</span>
       {type && (
         <span className='text-xs text-secondary-foreground'>
-          {LedgerTransactionType[type as LedgerTransactionTypeKey] ?? type}
+          {getLedgerTransactionTypeLabel(type)}
         </span>
       )}
       {id && (

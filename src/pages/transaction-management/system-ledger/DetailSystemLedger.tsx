@@ -2,7 +2,7 @@ import { CardComponent } from '@components/index'
 import React from 'react'
 import useDetailSystemLedger from './hooks/useDetailSystemLedger'
 import dayjs from 'dayjs'
-import { GLCodeLabels, LedgerTransactionType, OwnerTypeLabels, StatusLabel, type LedgerTransactionTypeKey } from './constants/SystemLedger.constant'
+import { GLCodeLabels, OwnerTypeLabels, StatusLabel, getLedgerTransactionTypeLabel } from './constants/SystemLedger.constant'
 import { formatCurrency } from '@/app/utils'
 
 const DetailSystemLedger = () => {
@@ -52,7 +52,7 @@ const DetailSystemLedger = () => {
                 </div>
                 <div className='flex justify-between'>
                   <span className='text-gray-500'>Type:</span>
-                  <span className='font-medium'>{LedgerTransactionType[ledgerEntry.transactionType as LedgerTransactionTypeKey] ?? ledgerEntry.transactionType ?? '--'}</span>
+                  <span className='font-medium'>{getLedgerTransactionTypeLabel(ledgerEntry.transactionType)}</span>
                 </div>
                 <hr />
                 <div className='flex justify-between'>

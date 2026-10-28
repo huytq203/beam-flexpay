@@ -8,6 +8,33 @@ export const TransactionType = {
 
 export type TransactionKey = keyof typeof TransactionType
 
+/**
+ * Loại bút toán chi tiết của wallet-core được gộp vào một nhóm hiển thị.
+ * `REFUND_BANK_PAYOUT` là journal chi hoàn ra ngân hàng của lệnh nạp thành công
+ * (28/10): về nghiệp vụ vẫn là "Hoàn tiền", nên đi chung badge với `REVERSAL`
+ * thay vì sinh thêm một loại mới trên màn hình.
+ */
+const TRANSACTION_TYPE_ALIASES: Record<string, TransactionKey> = {
+  REFUND_BANK_PAYOUT: 'REVERSAL'
+}
+
+/** Mã loại → khoá hiển thị đã biết; `null` khi là loại FE chưa biết. */
+export const toTransactionTypeKey = (
+  type: string | null | undefined
+): TransactionKey | null => {
+  if (!type) return null
+  if (type in TransactionType) return type as TransactionKey
+  return TRANSACTION_TYPE_ALIASES[type] ?? null
+}
+
+/** Nhãn tiếng Việt; loại lạ giữ nguyên mã thô để người vận hành vẫn đối chiếu được. */
+export const getTransactionTypeLabel = (
+  type: string | null | undefined
+): string => {
+  const key = toTransactionTypeKey(type)
+  return key ? TransactionType[key] : (type ?? '--')
+}
+
 export enum PaymentMethodEnum {
   ATM = 'ATM',
   CC = 'CC',
