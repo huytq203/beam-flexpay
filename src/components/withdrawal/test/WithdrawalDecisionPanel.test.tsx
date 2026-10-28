@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import {
+  fireEvent,
+  screen,
+  waitFor,
+  within
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { Provider } from 'react-redux'
@@ -29,13 +34,21 @@ const withdrawal = (status: string) => ({
   updatedAt: null
 })
 
-const mockWithdrawal = (status: string) => {
+const mockWithdrawal = (status: string, extra: object = {}) => {
   server.use(
     http.get('*/withdrawals', () =>
-      HttpResponse.json({ data: withdrawal(status) })
+      HttpResponse.json({ data: { ...withdrawal(status), ...extra } })
     )
   )
 }
+
+/** Lệnh rút về ngân hàng không có API: BE đánh dấu chờ admin chốt tay. */
+const MANUAL_AWAITING = {
+  payoutMode: 'MANUAL',
+  awaitingManualConfirmation: true
+}
+const RECEIPT_KEY = 'receipts/CO2609070001/unc.png'
+const BANK_REFERENCE = 'FT26301ABCDE'
 
 const renderPanel = (
   permissions: string[] = [APPROVER_PERMISSION],
@@ -271,4 +284,211 @@ describe('WithdrawalDecisionPanel', () => {
   //   // Không đổ chuỗi máy của BE ra màn hình.
   //   expect(screen.queryByText(/BUSINESS_ERROR/)).not.toBeInTheDocument()
   // })
+})
+
+describe('WithdrawalDecisionPanel — chi thủ công theo payoutMode', () => {
+  const mockReceiptUpload = () =>
+    server.use(
+      http.post(`*/transactions/${TRANSACTION_CODE}/receipt`, () =>
+        HttpResponse.json({
+          data: {
+            receiptKey: RECEIPT_KEY,
+            contentType: 'image/png',
+            sizeBytes: 12
+          }
+        })
+      )
+    )
+
+  const captureUpdate = () => {
+    const captured: { body: unknown } = { body: null }
+    server.use(
+      http.post(
+        `*/transactions/${TRANSACTION_CODE}/update-status`,
+        async ({ request }) => {
+          captured.body = await request.json()
+          const body = captured.body as { newStatus: string }
+          return HttpResponse.json({
+            success: true,
+            data: {
+              transactionCode: TRANSACTION_CODE,
+              previousStatus: 'APPROVED',
+              newStatus: body.newStatus
+            }
+          })
+        }
+      )
+    )
+    return captured
+  }
+
+  it('APPROVED + MANUAL đang chờ chốt tay: hiện "Chi thành công" và "Chi thất bại"', async () => {
+    mockWithdrawal(WithdrawalStatus.APPROVED, MANUAL_AWAITING)
+
+    renderPanel()
+
+    expect(
+      await screen.findByRole('button', { name: /Chi thành công/ })
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /Chi thất bại/ })
+    ).toBeInTheDocument()
+  })
+
+  it('APPROVED + API: không có hai nút, nói rõ hệ thống đang chi qua ngân hàng', async () => {
+    mockWithdrawal(WithdrawalStatus.APPROVED, {
+      payoutMode: 'API',
+      awaitingManualConfirmation: false
+    })
+
+    renderPanel()
+
+    expect(
+      await screen.findByText(/Hệ thống đang chi qua ngân hàng/)
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /Chi thành công/ })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /Chi thất bại/ })
+    ).not.toBeInTheDocument()
+  })
+
+  it('không tự suy chế độ: thiếu awaitingManualConfirmation thì không hiện nút', async () => {
+    mockWithdrawal(WithdrawalStatus.APPROVED, { payoutMode: 'MANUAL' })
+
+    renderPanel()
+
+    expect(await screen.findByText('Đã duyệt — đang chi')).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /Chi thành công/ })
+    ).not.toBeInTheDocument()
+  })
+
+  it('thiếu quyền thì không hiện nút chốt tay', async () => {
+    mockWithdrawal(WithdrawalStatus.APPROVED, MANUAL_AWAITING)
+
+    renderPanel(['EWALLET:TRANSACTION:VIEW'])
+
+    expect(await screen.findByText('Đã duyệt — đang chi')).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /Chi thành công/ })
+    ).not.toBeInTheDocument()
+  })
+
+  it('"Chi thành công" khoá nút gửi khi thiếu mã tham chiếu hoặc chưa tải UNC, đủ thì gửi update-status POSTED', async () => {
+    mockWithdrawal(WithdrawalStatus.APPROVED, MANUAL_AWAITING)
+    mockReceiptUpload()
+    const captured = captureUpdate()
+
+    const { user } = renderPanel()
+
+    await user.click(
+      await screen.findByRole('button', { name: /Chi thành công/ })
+    )
+    const dialog = await screen.findByRole('dialog')
+    const submit = within(dialog).getByRole('button', {
+      name: 'Xác nhận chi thành công'
+    })
+    expect(submit).toBeDisabled()
+
+    const reference = () =>
+      within(dialog).getByLabelText(/^Mã tham chiếu ngân hàng/)
+    fireEvent.change(within(dialog).getByLabelText(/^Lý do/), {
+      target: { value: NOTE }
+    })
+    fireEvent.change(reference(), { target: { value: BANK_REFERENCE } })
+    // Còn thiếu ảnh UNC.
+    expect(submit).toBeDisabled()
+
+    fireEvent.change(within(dialog).getByLabelText('Ảnh biên lai'), {
+      target: {
+        files: [new File(['unc'], 'unc.png', { type: 'image/png' })]
+      }
+    })
+    await waitFor(() => expect(submit).toBeEnabled())
+
+    // Xoá mã tham chiếu thì lại khoá.
+    fireEvent.change(reference(), { target: { value: '' } })
+    await waitFor(() => expect(submit).toBeDisabled())
+    fireEvent.change(reference(), { target: { value: BANK_REFERENCE } })
+    await waitFor(() => expect(submit).toBeEnabled())
+
+    await user.click(submit)
+
+    await waitFor(() =>
+      expect(captured.body).toEqual({
+        newStatus: 'POSTED',
+        bankReference: BANK_REFERENCE,
+        receiptKey: RECEIPT_KEY,
+        note: NOTE
+      })
+    )
+  })
+
+  it('"Chi thất bại" chỉ cần lý do và gửi update-status FAILED', async () => {
+    mockWithdrawal(WithdrawalStatus.APPROVED, MANUAL_AWAITING)
+    const captured = captureUpdate()
+
+    const { user } = renderPanel()
+
+    await user.click(
+      await screen.findByRole('button', { name: /Chi thất bại/ })
+    )
+    const dialog = await screen.findByRole('dialog')
+    expect(
+      within(dialog).queryByLabelText(/^Mã tham chiếu ngân hàng/)
+    ).not.toBeInTheDocument()
+    const submit = within(dialog).getByRole('button', {
+      name: 'Xác nhận chi thất bại'
+    })
+    expect(submit).toBeDisabled()
+
+    fireEvent.change(within(dialog).getByLabelText(/^Lý do/), {
+      target: { value: REASON }
+    })
+    await waitFor(() => expect(submit).toBeEnabled())
+    await user.click(submit)
+
+    await waitFor(() =>
+      expect(captured.body).toEqual({ newStatus: 'FAILED', note: REASON })
+    )
+  })
+
+  it('lỗi BE hiện errors[0].message và giữ dialog', async () => {
+    mockWithdrawal(WithdrawalStatus.APPROVED, MANUAL_AWAITING)
+    const message =
+      'Lệnh rút đang được hệ thống chi qua ngân hàng, chưa thể cập nhật tay'
+    server.use(
+      http.post(`*/transactions/${TRANSACTION_CODE}/update-status`, () =>
+        HttpResponse.json(
+          {
+            success: false,
+            message: 'RECONCILIATION_CONFLICT',
+            detail: 'Conflict',
+            errors: [{ message }]
+          },
+          { status: 409 }
+        )
+      )
+    )
+
+    const { user } = renderPanel()
+
+    await user.click(
+      await screen.findByRole('button', { name: /Chi thất bại/ })
+    )
+    const dialog = await screen.findByRole('dialog')
+    fireEvent.change(within(dialog).getByLabelText(/^Lý do/), {
+      target: { value: REASON }
+    })
+    const submit = within(dialog).getByRole('button', {
+      name: 'Xác nhận chi thất bại'
+    })
+    await waitFor(() => expect(submit).toBeEnabled())
+    await user.click(submit)
+
+    expect(await within(dialog).findByText(message)).toBeInTheDocument()
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+  })
 })

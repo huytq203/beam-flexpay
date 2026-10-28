@@ -1,4 +1,11 @@
+import {
+  ManualPayoutOutcome,
+  readFirstErrorMessage,
+  type ManualPayoutSubmitValues
+} from '@components/payout/manualPayout.utils'
+import { describeSubmitError } from '@components/transaction/stuckTransaction.utils'
 import { useMessage } from '@hooks/useMessage'
+import { useUpdateStuckTransactionStatusMutation } from '@services/apiStuckTransaction'
 import { useLazyGetWithdrawalByTransactionCodeQuery } from '@services/apiJournal'
 import {
   useApproveWithdrawalMutation,
@@ -15,6 +22,15 @@ export interface WithdrawalDecisionApi {
   isApproving: boolean
   isRejecting: boolean
   isDeciding: boolean
+  /**
+   * Chốt tay lệnh chi thủ công qua `update-status` sẵn có. Trả `null` khi xong,
+   * hoặc câu lỗi tiếng Việt để dialog hiển thị và giữ nguyên cho người dùng sửa.
+   */
+  confirmManualPayout: (
+    outcome: ManualPayoutOutcome,
+    values: ManualPayoutSubmitValues
+  ) => Promise<string | null>
+  isConfirmingManual: boolean
 }
 
 /**
@@ -34,8 +50,37 @@ export const useWithdrawalDecision = (
   const [rejectWithdrawal, { isLoading: isRejecting }] =
     useRejectWithdrawalMutation()
   const [readWithdrawal] = useLazyGetWithdrawalByTransactionCodeQuery()
+  const [updateStatus, { isLoading: isConfirmingManual }] =
+    useUpdateStuckTransactionStatusMutation()
 
-  const isDeciding = isApproving || isRejecting
+  const isDeciding = isApproving || isRejecting || isConfirmingManual
+
+  const confirmManualPayout = async (
+    outcome: ManualPayoutOutcome,
+    values: ManualPayoutSubmitValues
+  ): Promise<string | null> => {
+    if (isDeciding || !transactionCode) return null
+    const isSuccess = outcome === ManualPayoutOutcome.SUCCESS
+    try {
+      // Thành công = POSTED (ghi sổ, tiền đã ra); thất bại = FAILED (nhả tiền giữ về ví).
+      await updateStatus({
+        transactionCode,
+        newStatus: isSuccess ? 'POSTED' : 'FAILED',
+        note: values.note,
+        ...(isSuccess
+          ? { bankReference: values.bankReference, receiptKey: values.receiptKey }
+          : {})
+      }).unwrap()
+      successMess(
+        isSuccess
+          ? 'Đã chốt chi thành công. Bút toán đã ghi vào sổ cái.'
+          : 'Đã chốt chi thất bại. Toàn bộ tiền bị giữ đã trả về ví khách.'
+      )
+      return null
+    } catch (error) {
+      return readFirstErrorMessage(error) ?? describeSubmitError(error)
+    }
+  }
 
   const runDecision = async (
     decision: WithdrawalDecision,
@@ -61,6 +106,8 @@ export const useWithdrawalDecision = (
     isApproving,
     isRejecting,
     isDeciding,
+    isConfirmingManual,
+    confirmManualPayout,
     approve: (note) =>
       runDecision(
         'approve',

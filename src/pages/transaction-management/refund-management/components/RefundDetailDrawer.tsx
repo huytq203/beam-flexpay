@@ -31,6 +31,8 @@ interface RefundDetailDrawerProps {
   onPayoutRefresh: (refund: RefundTarget) => void
   onPayoutApprove: (refund: RefundTarget) => void
   onPayoutReject: (refund: RefundTarget) => void
+  onManualPayoutSuccess: (refund: RefundTarget) => void
+  onManualPayoutFail: (refund: RefundTarget) => void
 }
 
 export function RefundDetailDrawer({
@@ -44,7 +46,9 @@ export function RefundDetailDrawer({
   onSettle,
   onPayoutRefresh,
   onPayoutApprove,
-  onPayoutReject
+  onPayoutReject,
+  onManualPayoutSuccess,
+  onManualPayoutFail
 }: RefundDetailDrawerProps) {
   const { data, isLoading, error, refetch } = useGetRefundDetailQuery(refundId)
   const flags = data ? getRefundActions(data, context) : undefined
@@ -53,7 +57,9 @@ export function RefundDetailDrawer({
       (flags.decide ||
         flags.payoutDecide ||
         flags.settle ||
-        flags.payoutRefresh)
+        flags.payoutRefresh ||
+        flags.manualPayoutSuccess ||
+        flags.manualPayoutFail)
   )
 
   const renderBody = () => {
@@ -118,6 +124,8 @@ export function RefundDetailDrawer({
             onPayoutRefresh={onPayoutRefresh}
             onPayoutApprove={onPayoutApprove}
             onPayoutReject={onPayoutReject}
+            onManualPayoutSuccess={onManualPayoutSuccess}
+            onManualPayoutFail={onManualPayoutFail}
             isPayoutRefreshing={isPayoutRefreshing}
           />
         ) : undefined

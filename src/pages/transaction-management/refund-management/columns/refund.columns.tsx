@@ -30,6 +30,8 @@ export interface RefundColumnOptions {
   onPayoutRefresh: (refund: RefundListItem) => void
   onPayoutApprove: (refund: RefundListItem) => void
   onPayoutReject: (refund: RefundListItem) => void
+  onManualPayoutSuccess: (refund: RefundListItem) => void
+  onManualPayoutFail: (refund: RefundListItem) => void
 }
 
 type RefundColumns = NonNullable<TableComponentProps<RefundListItem>['columns']>
@@ -195,6 +197,8 @@ export const createRefundColumns = (
           onPayoutRefresh={options.onPayoutRefresh}
           onPayoutApprove={options.onPayoutApprove}
           onPayoutReject={options.onPayoutReject}
+          onManualPayoutSuccess={options.onManualPayoutSuccess}
+          onManualPayoutFail={options.onManualPayoutFail}
           isPayoutRefreshing={payoutRefreshingId === record.id}
         />
       )

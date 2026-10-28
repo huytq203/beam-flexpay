@@ -125,3 +125,18 @@ export interface WithdrawalDecisionResult {
   updatedBy: string | null
   updatedAt: string | null
 }
+
+/**
+ * Chế độ chi do BE quyết theo ngân hàng thụ hưởng (28/10):
+ * - `API`: hệ thống tự gửi lệnh sang ngân hàng có rail chi.
+ * - `MANUAL`: ngân hàng chưa có API, admin chuyển khoản tay rồi chốt kết quả.
+ *
+ * FE chỉ đọc để hiển thị, **không** tự suy chế độ từ mã ngân hàng và không có ô
+ * chọn chế độ. Có hiện nút chốt tay hay không đọc từ `awaitingManualConfirmation`.
+ */
+export const PayoutMode = {
+  API: 'API',
+  MANUAL: 'MANUAL'
+} as const
+
+export type PayoutMode = (typeof PayoutMode)[keyof typeof PayoutMode]
