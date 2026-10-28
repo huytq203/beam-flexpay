@@ -1,6 +1,7 @@
 import { COMPONENT_TYPE_LABELS, getFeeLabel } from '@constants/feeLabels'
 import {
   BENEFICIARY_TYPE_LABEL,
+  VAT_COMPONENT_TYPE,
   getPayerLabel
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import type { FeeComponentFormValues } from '@pages/fee-management/fee-config/schemas/feeConfig.schema'
@@ -36,13 +37,14 @@ export const FeeComponentGroupReadout = ({
   serviceType
 }: FeeComponentGroupReadoutProps) => {
   const [first] = members
+  const showLimits = first.componentType !== VAT_COMPONENT_TYPE
   const basis =
     getAmountBaseLabel(first.baseOn) ??
     getFeeLabel(
-          first.baseComponentType,
-          COMPONENT_TYPE_LABELS,
-          'Thành phần khác'
-        )
+      first.baseComponentType,
+      COMPONENT_TYPE_LABELS,
+      'Thành phần khác'
+    )
 
   return (
     <div className='flex flex-col gap-3'>
@@ -69,8 +71,7 @@ export const FeeComponentGroupReadout = ({
                 'Người chịu phí',
                 'Người hưởng phí',
                 'Mức phí',
-                'Sàn',
-                'Trần'
+                ...(showLimits ? ['Sàn', 'Trần'] : [])
               ].map((heading) => (
                 <th
                   key={heading}
@@ -96,12 +97,16 @@ export const FeeComponentGroupReadout = ({
                 <td className='py-1.5 pr-6 tabular-nums'>
                   {describeFormula(member)}
                 </td>
-                <td className='py-1.5 pr-6 tabular-nums'>
-                  {formatFeeLimit(member.minFee)}
-                </td>
-                <td className='py-1.5 pr-6 tabular-nums'>
-                  {formatFeeLimit(member.maxFee)}
-                </td>
+                {showLimits && (
+                  <>
+                    <td className='py-1.5 pr-6 tabular-nums'>
+                      {formatFeeLimit(member.minFee)}
+                    </td>
+                    <td className='py-1.5 pr-6 tabular-nums'>
+                      {formatFeeLimit(member.maxFee)}
+                    </td>
+                  </>
+                )}
               </tr>
             ))}
           </tbody>

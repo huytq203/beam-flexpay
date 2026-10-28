@@ -51,7 +51,7 @@ const describeRate = (
 ): string | undefined => {
   const [first] = members
   if (usesTiers(first.calculationMethod))
-    return `Biểu ${first.tiers.length} bậc`
+    return `Biểu phí ${first.tiers.length} bậc`
   const rates = new Set(members.map((member) => member.percentage ?? 0))
   if (rates.size > 1) return 'Mức phí từng bên'
   const [rate] = rates

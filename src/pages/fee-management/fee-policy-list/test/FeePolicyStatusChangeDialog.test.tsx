@@ -67,7 +67,7 @@ describe('dialog khóa / mở chính sách phí', () => {
     expect(screen.queryByRole('combobox')).toBeNull()
   })
 
-  it('bỏ trống thời điểm: chính sách đang bật thì ngừng áp dụng ngay, không gửi runAt', async () => {
+  it('bỏ trống thời điểm: chính sách đang bật thì Xác nhận, không gửi runAt', async () => {
     const sent = captureBody()
     const user = userEvent.setup()
     const onClose = renderDialog()
@@ -76,7 +76,7 @@ describe('dialog khóa / mở chính sách phí', () => {
       await screen.findByRole('textbox', { name: /Lý do/ }),
       ' Tạm dừng khuyến mãi '
     )
-    await user.click(screen.getByRole('button', { name: 'Ngừng áp dụng ngay' }))
+    await user.click(screen.getByRole('button', { name: 'Xác nhận' }))
 
     await waitFor(() => expect(onClose).toHaveBeenCalled())
     expect(sent.body).toEqual({
@@ -105,9 +105,7 @@ describe('dialog khóa / mở chính sách phí', () => {
     const user = userEvent.setup()
     renderDialog()
 
-    await user.click(
-      await screen.findByRole('button', { name: 'Ngừng áp dụng ngay' })
-    )
+    await user.click(await screen.findByRole('button', { name: 'Xác nhận' }))
 
     expect(await screen.findByText('Vui lòng nhập lý do')).toBeInTheDocument()
     expect(sent.calls).toBe(0)
@@ -170,7 +168,7 @@ describe('dialog khóa / mở chính sách phí', () => {
     await screen.findAllByPlaceholderText(PLACEHOLDER)
     await pickRunAt(user, endAt, END_PICKER)
     await user.type(screen.getByRole('textbox', { name: /Lý do/ }), 'Khóa tạm')
-    await user.click(screen.getByRole('button', { name: 'Ngừng áp dụng ngay' }))
+    await user.click(screen.getByRole('button', { name: 'Xác nhận' }))
 
     await waitFor(() => expect(onClose).toHaveBeenCalled())
     expect(sent.body).toEqual({

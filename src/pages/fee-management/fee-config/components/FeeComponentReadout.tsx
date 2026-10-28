@@ -3,6 +3,7 @@ import { formatFeeLimit, formatTierRange } from '@utils/fee-format'
 import { getAmountBaseLabel } from '../utils/feeComponentBaseOptions'
 import {
   BENEFICIARY_TYPE_LABEL,
+  VAT_COMPONENT_TYPE,
   getPayerLabel
 } from '../constants/feeConfigFields'
 import {
@@ -54,10 +55,10 @@ export const FeeComponentReadout = ({
   const basis =
     getAmountBaseLabel(component.baseOn) ??
     getFeeLabel(
-          component.baseComponentType,
-          COMPONENT_TYPE_LABELS,
-          'Thành phần khác'
-        )
+      component.baseComponentType,
+      COMPONENT_TYPE_LABELS,
+      'Thành phần khác'
+    )
 
   return (
     <div className='flex flex-col gap-3'>
@@ -92,14 +93,19 @@ export const FeeComponentReadout = ({
             value={describeFormula(component)}
           />
         )}
-        <Fact
-          label='Sàn'
-          value={formatFeeLimit(component.minFee)}
-        />
-        <Fact
-          label='Trần'
-          value={formatFeeLimit(component.maxFee)}
-        />
+        {/* VAT chỉ có thuế suất, không có sàn/trần. */}
+        {component.componentType !== VAT_COMPONENT_TYPE && (
+          <>
+            <Fact
+              label='Sàn'
+              value={formatFeeLimit(component.minFee)}
+            />
+            <Fact
+              label='Trần'
+              value={formatFeeLimit(component.maxFee)}
+            />
+          </>
+        )}
       </div>
 
       {tiered && (

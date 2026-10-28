@@ -54,7 +54,7 @@ describe('bậc phí 0 đồng', () => {
     }
   )
 
-  it('báo thiếu mức phí nếu để trống cả phần trăm lẫn cố định', () => {
+  it('coi bậc để trống cả phần trăm lẫn cố định là bậc miễn phí', () => {
     const result = feeComponentFormSchema.safeParse(
       component(CalculationMethod.FLAT_TIER, [
         {
@@ -66,11 +66,7 @@ describe('bậc phí 0 đồng', () => {
         }
       ])
     )
-    expect(result.success).toBe(false)
-    if (result.success) return
-    expect(result.error.issues.map((issue) => issue.path.join('.'))).toContain(
-      'tiers.0.percentage'
-    )
+    expect(result.success).toBe(true)
   })
 
   it('không cho đặt sàn dương trên bậc miễn phí', () => {

@@ -113,7 +113,7 @@ const AssignmentRow = ({ assignment, appliedTargets }: AssignmentRowProps) => {
   return (
     <div className='grid grid-cols-1 gap-x-8 gap-y-2 rounded-lg border border-border px-3 py-2 sm:grid-cols-2 lg:grid-cols-4'>
       <Fact label='Nhóm đối tượng áp dụng'>{scope.label}</Fact>
-      <Fact label={'Đối tượng được áp '}>
+      <Fact label={'Đối tượng được áp dụng '}>
         {subject ? (
           <span className='flex flex-col'>
             <span className='font-semibold'>

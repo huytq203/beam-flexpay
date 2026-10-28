@@ -25,7 +25,6 @@ export {
   getTierStart,
   feeComponentFormSchema,
   DUPLICATE_FEE_COMPONENT_MESSAGE,
-  TIER_RATE_MISSING_MESSAGE,
   createFeeComponentFormSchema
 } from './feeComponent.schema'
 export type {
@@ -187,7 +186,8 @@ export const checkFeeConfigCommonRules = (
     allowsMerchantCriteria(form.serviceType) &&
     form.components.some(
       (component) =>
-        component.feeScope === 'OUTPUT_FEE' && component.payerType !== 'MERCHANT'
+        component.feeScope === 'OUTPUT_FEE' &&
+        component.payerType !== 'MERCHANT'
     )
   ) {
     ctx.addIssue({

@@ -46,7 +46,7 @@ export const FeeRateFields = ({
             control={control}
             idPrefix={idPrefix}
             allowEmpty
-            label={'Phí linh hoạt (%)'}
+            label={isVat ? 'VAT (%)' : 'Phí linh hoạt (%)'}
             placeholder='Để trống sẽ tự điền 0'
             className={
               isVat
@@ -144,7 +144,7 @@ export const FeeSideFields = ({
           control={control}
           idPrefix={idPrefix}
           allowEmpty
-          label='Phí linh hoạt (%)'
+          label={isVat ? 'VAT (%)' : 'Phí linh hoạt (%)'}
           placeholder='Trống = 0'
           className='col-span-1 flex flex-col'
         />

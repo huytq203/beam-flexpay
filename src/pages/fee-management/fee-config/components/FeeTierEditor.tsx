@@ -6,7 +6,6 @@ import type { Control } from 'react-hook-form'
 import { Fragment } from 'react'
 import { useFieldArray, useFormState, useWatch } from 'react-hook-form'
 import {
-  TIER_RATE_MISSING_MESSAGE,
   getTierStart,
   type FeeComponentFormValues
 } from '../schemas/feeConfig.schema'
@@ -46,7 +45,7 @@ export const FeeTierEditor = ({
 }: FeeTierEditorProps) => {
   const { fields, append, remove } = useFieldArray({ control, name: 'tiers' })
   const tiers = useWatch({ control, name: 'tiers' }) ?? []
-  const { errors } = useFormState({ control })
+  const { errors, isSubmitted } = useFormState({ control })
 
   /**
    * Lỗi của một bậc gom lại thành một dòng riêng dưới hàng đó, không in vào từng ô: ô hẹp
@@ -57,14 +56,12 @@ export const FeeTierEditor = ({
     if (!rowErrors) return []
     return [
       ...new Set(
-        TIER_FIELDS.map((field) => rowErrors[field]?.message)
-          .filter((message): message is string => Boolean(message))
+        TIER_FIELDS.map((field) => rowErrors[field]?.message).filter(
+          (message): message is string => Boolean(message)
+        )
       )
     ]
   }
-  const hasRateMissingError = tiers.some((_, index) =>
-    rowMessages(index).includes(TIER_RATE_MISSING_MESSAGE)
-  )
 
   const lastMax = tiers.at(-1)?.maxValue
   const canAppend =
@@ -109,12 +106,10 @@ export const FeeTierEditor = ({
         )}
       </div>
 
-      {/* Lỗi của hàng đã nói đúng câu này, nên gợi ý chỉ hiện khi chưa có lỗi đó. */}
-      {!hasRateMissingError && (
-        <p className='mb-2 text-[13px] text-muted-foreground'>
-          Bậc không thu phí: nhập 0 vào Phí linh hoạt (%) hoặc Phí cố định, để trống Sàn.
-        </p>
-      )}
+      <p className='mb-2 text-[13px] text-muted-foreground'>
+        Ô để trống được tính là 0. Bậc không thu phí: để trống Phí linh hoạt (%)
+        và Phí cố định, để trống Sàn.
+      </p>
 
       {fields.length === 0 ? (
         <p className='rounded-lg border border-dashed border-border px-4 py-6 text-center text-[13px] text-muted-foreground'>
@@ -128,7 +123,9 @@ export const FeeTierEditor = ({
               <tr className='bg-muted'>
                 <th className={`${HEAD} px-3 py-2 text-right`}>Từ</th>
                 <th className={`${HEAD} px-3 py-2 text-left`}>Đến</th>
-                <th className={`${HEAD} px-3 py-2 text-left`}>Phí linh hoạt (%)</th>
+                <th className={`${HEAD} px-3 py-2 text-left`}>
+                  Phí linh hoạt (%)
+                </th>
                 <th className={`${HEAD} px-3 py-2 text-left`}>Phí cố định</th>
                 <th className={`${HEAD} px-3 py-2 text-left`}>Sàn</th>
                 <th className={`${HEAD} px-3 py-2 text-left`}>Trần</th>
@@ -138,108 +135,105 @@ export const FeeTierEditor = ({
             <tbody>
               {fields.map((field, index) => {
                 const messages = rowMessages(index)
-                const rateInvalid = messages.includes(TIER_RATE_MISSING_MESSAGE)
                 return (
-                <Fragment key={field.id}>
-                <tr className='border-t border-border align-middle'>
-                  <td className='whitespace-nowrap px-3 py-2 text-right text-[13px] tabular-nums text-foreground'>
-                    {formatFeeNumber(getTierStart(tiers, index))}
-                  </td>
-                  <td className='px-3 py-2'>
-                    <FormInputNumber
-                      thousandSeparator
-                      name={`tiers.${index}.maxValue`}
-                      control={control}
-                      idPrefix={idPrefix}
-                      // Bậc cuối để trống nghĩa là chạy tới vô cùng, nên ô này
-                      // phải giữ trạng rỗng thay vì rơi về 0.
-                      allowEmpty
-                      placeholder='Trống = vô cùng'
-                      hideError
-                      className='flex flex-col'
-                    />
-                  </td>
-                  <td className='px-3 py-2'>
-                    <FormInputNumber
-                      thousandSeparator
-                      name={`tiers.${index}.percentage`}
-                      control={control}
-                      idPrefix={idPrefix}
-                      invalid={rateInvalid}
-                      allowEmpty
-                      placeholder='0'
-                      hideError
-                      className='flex flex-col'
-                    />
-                  </td>
-                  <td className='px-3 py-2'>
-                    <FormInputNumber
-                      thousandSeparator
-                      name={`tiers.${index}.fixedAmount`}
-                      control={control}
-                      idPrefix={idPrefix}
-                      invalid={rateInvalid}
-                      allowEmpty
-                      placeholder='0'
-                      hideError
-                      className='flex flex-col'
-                    />
-                  </td>
-                  <td className='px-3 py-2'>
-                    <FormInputNumber
-                      thousandSeparator
-                      name={`tiers.${index}.minFee`}
-                      control={control}
-                      idPrefix={idPrefix}
-                      allowEmpty
-                      placeholder='0'
-                      hideError
-                      className='flex flex-col'
-                    />
-                  </td>
-                  <td className='px-3 py-2'>
-                    <FormInputNumber
-                      thousandSeparator
-                      name={`tiers.${index}.maxFee`}
-                      control={control}
-                      idPrefix={idPrefix}
-                      allowEmpty
-                      placeholder='0'
-                      hideError
-                      className='flex flex-col'
-                    />
-                  </td>
-                  <td className='px-3 py-2 text-center'>
-                    {index === fields.length - 1 && (
-                      <TooltipComponent title='Xoá bậc cuối'>
-                        <ButtonComponent
-                          htmlType='button'
-                          type='default'
-                          aria-label='Xoá bậc cuối'
-                          icon={
-                            <TrashIcon
-                              size={14}
-                              weight='bold'
-                              aria-hidden
-                            />
-                          }
-                          onClick={() => remove(index)}
+                  <Fragment key={field.id}>
+                    <tr className='border-t border-border align-middle'>
+                      <td className='whitespace-nowrap px-3 py-2 text-right text-[13px] tabular-nums text-foreground'>
+                        {formatFeeNumber(getTierStart(tiers, index))}
+                      </td>
+                      <td className='px-3 py-2'>
+                        <FormInputNumber
+                          thousandSeparator
+                          name={`tiers.${index}.maxValue`}
+                          control={control}
+                          idPrefix={idPrefix}
+                          // Bậc cuối để trống nghĩa là chạy tới vô cùng, nên ô này
+                          // phải giữ trạng rỗng thay vì rơi về 0.
+                          allowEmpty
+                          placeholder='Trống = vô cùng'
+                          hideError
+                          className='flex flex-col'
                         />
-                      </TooltipComponent>
+                      </td>
+                      <td className='px-3 py-2'>
+                        <FormInputNumber
+                          thousandSeparator
+                          name={`tiers.${index}.percentage`}
+                          control={control}
+                          idPrefix={idPrefix}
+                          allowEmpty
+                          placeholder='0'
+                          hideError
+                          className='flex flex-col'
+                        />
+                      </td>
+                      <td className='px-3 py-2'>
+                        <FormInputNumber
+                          thousandSeparator
+                          name={`tiers.${index}.fixedAmount`}
+                          control={control}
+                          idPrefix={idPrefix}
+                          allowEmpty
+                          placeholder='0'
+                          hideError
+                          className='flex flex-col'
+                        />
+                      </td>
+                      <td className='px-3 py-2'>
+                        <FormInputNumber
+                          thousandSeparator
+                          name={`tiers.${index}.minFee`}
+                          control={control}
+                          idPrefix={idPrefix}
+                          allowEmpty
+                          placeholder='0'
+                          hideError
+                          className='flex flex-col'
+                        />
+                      </td>
+                      <td className='px-3 py-2'>
+                        <FormInputNumber
+                          thousandSeparator
+                          name={`tiers.${index}.maxFee`}
+                          control={control}
+                          idPrefix={idPrefix}
+                          allowEmpty
+                          placeholder='0'
+                          hideError
+                          className='flex flex-col'
+                        />
+                      </td>
+                      <td className='px-3 py-2 text-center'>
+                        {index === fields.length - 1 && (
+                          <TooltipComponent title='Xoá bậc cuối'>
+                            <ButtonComponent
+                              htmlType='button'
+                              type='default'
+                              aria-label='Xoá bậc cuối'
+                              icon={
+                                <TrashIcon
+                                  size={14}
+                                  weight='bold'
+                                  aria-hidden
+                                />
+                              }
+                              onClick={() => remove(index)}
+                            />
+                          </TooltipComponent>
+                        )}
+                      </td>
+                    </tr>
+                    {messages.length > 0 && (
+                      <tr>
+                        <td
+                          colSpan={COLUMN_COUNT}
+                          className='px-3 pb-2 text-[13px] font-medium text-danger-strong'
+                        >
+                          <p role='alert'>{messages.join(' · ')}</p>
+                        </td>
+                      </tr>
                     )}
-                  </td>
-                </tr>
-                {messages.length > 0 && (
-                  <tr>
-                    <td
-                      colSpan={COLUMN_COUNT}
-                      className='px-3 pb-2 text-[13px] font-medium text-danger-strong'
-                    >
-                      <p role='alert'>{messages.join(' · ')}</p>
-                    </td>
-                  </tr>
-                )}
-                </Fragment>
+                  </Fragment>
                 )
               })}
             </tbody>

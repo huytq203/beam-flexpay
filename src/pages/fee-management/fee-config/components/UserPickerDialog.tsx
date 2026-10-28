@@ -1,8 +1,15 @@
 import { MagnifyingGlassIcon } from '@components/icons'
-import { ButtonComponent, Input, MaskText, ModalComponent, Table } from '@components/index'
+import {
+  ButtonComponent,
+  Input,
+  MaskText,
+  ModalComponent,
+  Table
+} from '@components/index'
 import useDebounce from '@hooks/useDebounce'
 import { useGetAccountQuery } from '@services/apiWalletAccount.api'
 import type { ContentAccountWallet } from '@type/responseAccountWallet'
+import StatusBadge from '@components/status-badge/StatusBadge'
 import { formatFeeNumber } from '@utils/fee-format'
 import type { ColumnsType } from 'antd/es/table'
 import { useState } from 'react'
@@ -57,9 +64,7 @@ const columns: ColumnsType<ContentAccountWallet> = [
     title: 'Trạng thái',
     dataIndex: 'status',
     width: 120,
-    render: (status: string) => (
-      <span className='text-[13px] text-foreground'>{status}</span>
-    )
+    render: (status: string) => <StatusBadge status={status} />
   }
 ]
 
@@ -110,7 +115,12 @@ export const UserPickerDialog = ({
           placeholder='Tìm theo số điện thoại'
           value={username}
           allowClear
-          prefix={<MagnifyingGlassIcon size={16} aria-hidden />}
+          prefix={
+            <MagnifyingGlassIcon
+              size={16}
+              aria-hidden
+            />
+          }
           onChange={(event) => {
             setUsername(event.target.value)
             setPage(1)

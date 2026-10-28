@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { getFeeScopeOfPayer } from '../constants/feeConfigFields'
 import { GROSS_AMOUNT_BASE } from '../utils/feeComponentBaseOptions'
 import { addFeeBoundIssues } from './feeBounds'
+import { addTierRangeIssues } from './feeTierRange'
 
 /**
  * Một schema phủ cả ba phần của màn: thông tin chính sách, tiêu chí gán đối
@@ -58,10 +59,6 @@ const numberOrZero = (value: number | null | undefined): number => value ?? 0
  * riêng chỉ tạo ra cơ hội để hai con số lệch nhau sau khi người dùng sửa lại
  * một bậc phía trên — đúng loại lỗi khoảng cách mà không ai tự nhìn ra.
  */
-/** Bậc phí không khai Phí % lẫn Phí cố định: lỗi của cả cặp, đặt trên ô Phí %. */
-export const TIER_RATE_MISSING_MESSAGE =
-  'Nhập 0 vào Phí linh hoạt (%) hoặc Phí cố định nếu bậc này miễn phí'
-
 export const feeTierFormSchema = z.object({
   /** Bỏ trống là bậc cuối, chạy tới vô cùng. */
   maxValue: money,
@@ -204,13 +201,8 @@ export const feeComponentFormSchema = z
 
     component.tiers.forEach((tier, index) => {
       addFeeBoundIssues(tier, ctx, ['tiers', index])
-      if (tier.percentage === null && tier.fixedAmount === null) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['tiers', index, 'percentage'],
-          message: TIER_RATE_MISSING_MESSAGE
-        })
-      } else if (
+      // Ô trống mặc định là 0 (payload cũng quy về 0), nên bậc không khai gì là bậc miễn phí.
+      if (
         numberOrZero(tier.percentage) === 0 &&
         numberOrZero(tier.fixedAmount) === 0 &&
         numberOrZero(tier.minFee) > 0
@@ -221,27 +213,13 @@ export const feeComponentFormSchema = z
           message: 'Bậc miễn phí không được đặt sàn phí'
         })
       }
-      const isLast = index === component.tiers.length - 1
-      if (tier.maxValue === null && !isLast) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['tiers', index, 'maxValue'],
-          message: 'Chỉ bậc cuối cùng được để trống giá trị đến'
-        })
-        return
-      }
-      if (tier.maxValue === null) return
-
-      // Khoảng bậc bao gồm cả hai đầu; bậc sau bắt đầu tại max trước + 1 nên
-      // không thể hở hoặc cùng nhận một giá trị với bậc trước.
-      const start = getTierStart(component.tiers, index)
-      if (tier.maxValue < start) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['tiers', index, 'maxValue'],
-          message: `Giá trị đến phải từ ${start} trở lên`
-        })
-      }
+      addTierRangeIssues(
+        tier.maxValue,
+        getTierStart(component.tiers, index),
+        index === component.tiers.length - 1,
+        ctx,
+        ['tiers', index]
+      )
     })
   })
 
