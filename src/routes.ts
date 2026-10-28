@@ -430,6 +430,30 @@ const merchantManagement = {
               )
           )
         },
+        // Cấu hình phí ĐVCNTT: dùng lại màn chính sách phí, lọc miền MERCHANT
+        {
+          path: SCREENS.MERCHANT_FEE_CONFIG.path,
+          element: page(
+            () =>
+              import(
+                '@/pages/fee-management/fee-policy-list/MerchantFeePolicyList'
+              )
+          )
+        },
+        {
+          path: `${SCREENS.MERCHANT_FEE_CONFIG.path}/create`,
+          element: page(
+            () =>
+              import('@/pages/fee-management/fee-config/MerchantFeeConfig')
+          )
+        },
+        {
+          path: `${SCREENS.MERCHANT_FEE_CONFIG.path}/edit/:id`,
+          element: page(
+            () =>
+              import('@/pages/fee-management/fee-config/MerchantFeeConfig')
+          )
+        },
         {
           path: SCREENS.MERCHANT_NOTIFICATION.path,
           element: page(

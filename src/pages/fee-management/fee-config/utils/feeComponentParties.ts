@@ -17,6 +17,7 @@ import { emptyComponent } from './feeComponentDefaults'
 interface PartyOption {
   value: string
   label: string
+  disabled?: boolean
 }
 
 export interface ComponentPartyOptions {
@@ -82,7 +83,7 @@ export const buildDialogDefaults = ({
     return emptyComponent(feeScope, defaultPayerType, defaultBeneficiaryType)
   }
   const hasAllowedPayer = payerTypeOptions.some(
-    ({ value }) => value === initialValue.payerType
+    ({ value, disabled }) => !disabled && value === initialValue.payerType
   )
   const hasAllowedBeneficiary = beneficiaryTypeOptions.some(
     ({ value }) => value === initialValue.beneficiaryType

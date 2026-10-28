@@ -6,6 +6,7 @@ import {
   type FeePolicySetupRequest
 } from '@/app/schemas/fee-setup.schema'
 import {
+  allowsMerchantCriteria,
   EXECUTABLE_CURRENCY,
   getExecutablePayer,
   getSelectablePayers
@@ -15,6 +16,8 @@ import {
   allowsBankCriteria,
   allowsProviderCriteria,
   FEE_SCOPE,
+  isMerchantAssignmentFlow,
+  MERCHANT_SUBJECT_TYPE,
   POLICY_KIND,
   WALLET_SUBJECT_TYPE,
   type PolicyKind
@@ -118,15 +121,14 @@ export const toSetupRequest = (
           ? 0
           : orZero(component.maxFee),
         // Giữ SYSTEM cho cost estimate; chỉ chuẩn hoá payer cũ SENDER/RECEIVER.
-        // Payer ngoài tập cho phép (hoàn tiền chỉ còn USER) về mặc định.
+        // Payer ngoài tập cho phép (hoàn tiền chỉ còn USER) về mặc định. Thu hộ / chi hộ không đổi
+        // âm thầm: schema đã chặn mọi payer khác MERCHANT trước khi tới đây.
         payerType:
-          component.payerType === 'SYSTEM'
-            ? 'SYSTEM'
-            : getSelectablePayers(form.serviceType).includes(
-                  component.payerType
-                )
-              ? component.payerType
-              : executablePayer,
+          component.payerType === 'SYSTEM' ||
+          allowsMerchantCriteria(form.serviceType) ||
+          getSelectablePayers(form.serviceType).includes(component.payerType)
+            ? component.payerType
+            : executablePayer,
         // Phí đầu ra: VAT về Ngân hàng, loại phí khác về Hệ thống; phí đầu vào giữ lựa chọn.
         beneficiaryType:
           component.payerType !== 'SYSTEM'
@@ -146,6 +148,51 @@ export const toSetupRequest = (
             }))
           : []
       }))
+  }
+}
+
+type AssignmentSubjectFields = Pick<
+  FeeAssignmentCreateRequest,
+  'merchantId' | 'subjectType' | 'subjectId' | 'customerGroup'
+>
+
+/**
+ * Tiêu chí đối tượng của bản gán theo phạm vi.
+ *
+ * Phạm vi loại trừ nhau: gửi kèm tiêu chí của phạm vi không được chọn sẽ tạo ra bản gán hẹp
+ * hơn ý người vận hành, mà màn hình lại không hiện ô đó để họ thấy.
+ * Cặp chủ thể phải cùng có hoặc cùng vắng: backend từ chối bản gán khai nửa cặp.
+ */
+const toAssignmentSubjectFields = (
+  form: FeeConfigFormValues
+): AssignmentSubjectFields => {
+  const { assignmentScope } = form
+  const customerGroup =
+    assignmentScope === 'SEGMENT' ? form.customerGroup || undefined : undefined
+
+  if (isMerchantAssignmentFlow(form.feeDomain, form.serviceType)) {
+    // Merchant cụ thể gửi cả merchantId lẫn cặp MERCHANT: chỉ có merchantId thì bản gán được
+    // 128 điểm và thua bản gán nhóm (256); cặp chủ thể được 512. Backend bắt subjectId == merchantId.
+    const merchantId =
+      assignmentScope === 'SUBJECT' ? form.merchantId || undefined : undefined
+    return {
+      merchantId,
+      subjectType: merchantId ? MERCHANT_SUBJECT_TYPE : undefined,
+      subjectId: merchantId,
+      customerGroup
+    }
+  }
+
+  return {
+    // Luồng ví không có ô Merchant; chính sách Bank cũ giữ merchantId đứng riêng như trước.
+    merchantId: form.merchantId || undefined,
+    subjectType:
+      assignmentScope === 'SUBJECT' && form.subjectId
+        ? WALLET_SUBJECT_TYPE
+        : undefined,
+    subjectId:
+      assignmentScope === 'SUBJECT' ? form.subjectId || undefined : undefined,
+    customerGroup
   }
 }
 
@@ -174,22 +221,7 @@ export const toAssignmentRequest = (
     ? form.originalTransactionType || undefined
     : undefined,
   paymentMethod: form.paymentMethod || undefined,
-  merchantId: form.merchantId || undefined,
-  // Phạm vi loại trừ nhau: gửi kèm tiêu chí của phạm vi không được chọn sẽ tạo ra bản gán
-  // hẹp hơn ý người vận hành, mà màn hình lại không hiện ô đó để họ thấy.
-  // Cặp chủ thể phải cùng có hoặc cùng vắng: backend từ chối bản gán khai nửa cặp.
-  subjectType:
-    form.assignmentScope === 'SUBJECT' && form.subjectId
-      ? WALLET_SUBJECT_TYPE
-      : undefined,
-  subjectId:
-    form.assignmentScope === 'SUBJECT'
-      ? form.subjectId || undefined
-      : undefined,
-  customerGroup:
-    form.assignmentScope === 'SEGMENT'
-      ? form.customerGroup || undefined
-      : undefined,
+  ...toAssignmentSubjectFields(form),
   effectiveFromDate: form.validFrom
     ? toAssignmentMoment(form.validFrom)
     : undefined,

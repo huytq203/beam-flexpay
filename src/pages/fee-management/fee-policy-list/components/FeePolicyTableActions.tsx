@@ -9,8 +9,8 @@ interface FeePolicyTableActionsProps {
   exportDisabled: boolean
   /** Màn tạo chính sách: phí đầu ra và phí đầu vào dùng hai form khác nhau. */
   createPath: string
-  /** Màn cấp quyền thao tác: Cấu hình phí hoặc Cấu hình phí đầu vào. */
-  screen: 'FEE_CONFIG' | 'FEE_INPUT_COST'
+  /** Màn cấp quyền thao tác: Cấu hình phí, Cấu hình phí đầu vào hoặc Cấu hình phí ĐVCNTT. */
+  screen: 'FEE_CONFIG' | 'FEE_INPUT_COST' | 'MERCHANT_FEE_CONFIG'
 }
 
 /** Nút xuất CSV theo bộ lọc đang áp và nút thêm chính sách phí trên thanh công cụ của bảng. */

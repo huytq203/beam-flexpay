@@ -10,12 +10,15 @@ import {
   type CustomerSegmentNames
 } from '@hooks/useCustomerSegmentNames'
 import { cn } from '@lib/utils/cn'
+import { allowsMerchantCriteria } from '@utils/fee-execution'
 import type { AppliedSubject, AppliedTarget } from '@type/fee.type'
 import type { ComponentType } from 'react'
 
 interface AppliedTargetCellProps {
   targets?: AppliedTarget[]
   customerSegmentNames: CustomerSegmentNames
+  /** Loại giao dịch của chính sách: thu hộ / chi hộ đổi nhãn đối tượng sang merchant. */
+  serviceType?: string
 }
 
 interface TargetPresentation {
@@ -31,8 +34,11 @@ interface TargetPresentation {
   tone: string
 }
 
-const getSubjectPresentation = (subject: AppliedSubject) => {
-  const isMerchant = subject.subjectType === 'MERCHANT'
+const getSubjectPresentation = (
+  subject: AppliedSubject,
+  merchantFlow: boolean
+) => {
+  const isMerchant = merchantFlow || subject.subjectType === 'MERCHANT'
   const fallbackName = isMerchant ? 'Merchant' : 'Thành viên ví'
 
   return {
@@ -44,12 +50,13 @@ const getSubjectPresentation = (subject: AppliedSubject) => {
 
 const getTargetPresentation = (
   target: AppliedTarget,
-  customerSegmentNames: CustomerSegmentNames
+  customerSegmentNames: CustomerSegmentNames,
+  merchantFlow: boolean
 ): TargetPresentation => {
   if (target.type === 'ALL') {
     return {
       eyebrow: 'Phạm vi chung',
-      title: 'Tất cả khách hàng',
+      title: merchantFlow ? 'Tất cả merchant' : 'Tất cả khách hàng',
       detail: 'Không giới hạn đối tượng',
       Icon: UserIcon,
       tone: 'text-slate-600'
@@ -60,7 +67,7 @@ const getTargetPresentation = (
 
   if (target.type === 'CUSTOMER_GROUP') {
     return {
-      eyebrow: 'Phân khúc',
+      eyebrow: merchantFlow ? 'Nhóm merchant' : 'Phân khúc',
       title: target.code
         ? getCustomerSegmentName(target.code, customerSegmentNames)
         : 'Chưa xác định phân khúc',
@@ -72,19 +79,27 @@ const getTargetPresentation = (
 
   const singleSubject =
     subjectTotal === 1 && target.subjects?.length === 1
-      ? getSubjectPresentation(target.subjects[0])
+      ? getSubjectPresentation(target.subjects[0], merchantFlow)
       : null
 
   return {
     eyebrow: 'Gán trực tiếp',
-    title: singleSubject?.name ?? `${subjectTotal} ví riêng`,
+    title:
+      singleSubject?.name ??
+      `${subjectTotal} ${merchantFlow ? 'merchant cụ thể' : 'ví riêng'}`,
     detail: singleSubject?.identifier ?? 'Ưu tiên cao nhất',
-    Icon: WalletIcon,
+    Icon: merchantFlow ? StorefrontIcon : WalletIcon,
     tone: 'text-teal-700'
   }
 }
 
-const AppliedSubjectTooltip = ({ target }: { target: AppliedTarget }) => {
+const AppliedSubjectTooltip = ({
+  target,
+  merchantFlow
+}: {
+  target: AppliedTarget
+  merchantFlow: boolean
+}) => {
   const subjects = target.subjects ?? []
   const total = Math.max(target.subjectCount ?? target.count, subjects.length)
   const remaining = Math.max(total - subjects.length, 0)
@@ -100,7 +115,10 @@ const AppliedSubjectTooltip = ({ target }: { target: AppliedTarget }) => {
 
       <div className='max-h-72 divide-y divide-border/70 overflow-y-auto px-3'>
         {subjects.map((subject) => {
-          const { name, identifier, Icon } = getSubjectPresentation(subject)
+          const { name, identifier, Icon } = getSubjectPresentation(
+            subject,
+            merchantFlow
+          )
 
           return (
             <div
@@ -137,14 +155,17 @@ const AppliedSubjectTooltip = ({ target }: { target: AppliedTarget }) => {
 
 const TargetSummary = ({
   target,
-  customerSegmentNames
+  customerSegmentNames,
+  merchantFlow
 }: {
   target: AppliedTarget
   customerSegmentNames: CustomerSegmentNames
+  merchantFlow: boolean
 }) => {
   const { eyebrow, title, detail, Icon, tone } = getTargetPresentation(
     target,
-    customerSegmentNames
+    customerSegmentNames,
+    merchantFlow
   )
 
   return (
@@ -169,8 +190,11 @@ const TargetSummary = ({
 
 export const AppliedTargetCell = ({
   targets,
-  customerSegmentNames
+  customerSegmentNames,
+  serviceType
 }: AppliedTargetCellProps) => {
+  const merchantFlow = allowsMerchantCriteria(serviceType)
+
   if (!targets?.length) {
     return <span className='text-[13px] text-muted-foreground'>Chưa gán</span>
   }
@@ -191,12 +215,17 @@ export const AppliedTargetCell = ({
               <TargetSummary
                 target={target}
                 customerSegmentNames={customerSegmentNames}
+                merchantFlow={merchantFlow}
               />
             </div>
           )
         }
 
-        const { title } = getTargetPresentation(target, customerSegmentNames)
+        const { title } = getTargetPresentation(
+          target,
+          customerSegmentNames,
+          merchantFlow
+        )
         const total = Math.max(
           target.subjectCount ?? target.count,
           target.subjects?.length ?? 0
@@ -212,7 +241,12 @@ export const AppliedTargetCell = ({
               root: { maxWidth: 340 },
               body: { padding: 0, boxShadow: 'none' }
             }}
-            title={<AppliedSubjectTooltip target={target} />}
+            title={
+              <AppliedSubjectTooltip
+                target={target}
+                merchantFlow={merchantFlow}
+              />
+            }
           >
             <button
               type='button'
@@ -222,6 +256,7 @@ export const AppliedTargetCell = ({
               <TargetSummary
                 target={target}
                 customerSegmentNames={customerSegmentNames}
+                merchantFlow={merchantFlow}
               />
             </button>
           </TooltipComponent>

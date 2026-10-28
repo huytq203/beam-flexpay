@@ -73,3 +73,25 @@ describe('quản lý hoàn tiền navigation', () => {
     ).toBe(SCREENS.REFUND_MANAGEMENT.path)
   })
 })
+
+describe('cấu hình phí ĐVCNTT navigation', () => {
+  it('nằm ngay sau Quản lý danh sách merchant, trỏ tới màn MERCHANT_FEE_CONFIG', () => {
+    const parent = navigationItems.find(
+      (item) => item.key === 'secure-panel/merchant'
+    )
+    const keys = parent?.children?.map((item) => item.key) ?? []
+    const item = findItem(navigationItems, 'fee-config')
+
+    expect(keys.indexOf('fee-config')).toBe(
+      keys.indexOf('merchant-management') + 1
+    )
+    expect(item?.screen).toBe('MERCHANT_FEE_CONFIG')
+    expect(item?.label).toBe('Cấu hình phí ĐVCNTT')
+    expect(
+      parent && item && `/${resolveNavLink(parent, item).replace(/^\//, '')}`
+    ).toBe('/secure-panel/merchant/fee-config')
+    expect(SCREENS.MERCHANT_FEE_CONFIG.path).toBe(
+      '/secure-panel/merchant/fee-config'
+    )
+  })
+})

@@ -51,6 +51,8 @@ describe('toSetupRequest', () => {
       feeDomain: 'MERCHANT',
       serviceType: 'MERCHANT_VA_BILL_COLLECTION'
     })
+    // Payload không còn đổi USER về MERCHANT hộ người dùng; form hợp lệ đã mang MERCHANT từ schema.
+    form.components[0].payerType = 'MERCHANT'
 
     expect(toSetupRequest(form).components[0].payerType).toBe('MERCHANT')
   })

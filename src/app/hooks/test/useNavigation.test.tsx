@@ -61,7 +61,11 @@ describe('useNavigationEw', () => {
   it('chỉ có FEE thì chỉ hiện nhóm Quản lý phí', () => {
     const permissions = ['EWALLET:FEE:CREATE']
 
-    expect(groupKeysOf(permissions)).toEqual(['secure-panel/fee-v4'])
+    // Cấu hình phí ĐVCNTT cùng họ quyền FEE nên nhóm merchant cũng hiện (chỉ với mục đó)
+    expect(groupKeysOf(permissions)).toEqual([
+      'secure-panel/merchant',
+      'secure-panel/fee-v4'
+    ])
     expect(childKeysOf(permissions, 'secure-panel/fee-v4')).toEqual([
       'fee-policy',
       'fee-input-cost',
@@ -126,5 +130,20 @@ describe('useNavigationEw', () => {
       'Quản lý merchant',
       'Quản lý merchant'
     ])
+  })
+
+  it('người có quyền FEE thấy Cấu hình phí ĐVCNTT trong nhóm merchant', () => {
+    expect(childKeysOf(['EWALLET:FEE:VIEW'], 'secure-panel/merchant')).toEqual([
+      'fee-config'
+    ])
+  })
+
+  it('người không có quyền FEE không thấy Cấu hình phí ĐVCNTT', () => {
+    expect(
+      childKeysOf(['EWALLET:MERCHANT:VIEW'], 'secure-panel/merchant')
+    ).not.toContain('fee-config')
+    expect(groupKeysOf(['EWALLET:USER:VIEW'])).not.toContain(
+      'secure-panel/merchant'
+    )
   })
 })

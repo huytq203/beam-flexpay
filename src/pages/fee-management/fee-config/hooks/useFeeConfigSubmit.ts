@@ -1,4 +1,3 @@
-import { PATHS } from '@constants/pathConstant'
 import { useMessage } from '@hooks/useMessage'
 import {
   usePostAssignMutation,
@@ -11,7 +10,12 @@ import {
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { FeeConfigFormValues } from '../schemas/feeConfig.schema'
-import { POLICY_KIND, type PolicyKind } from '../constants/feeConfigFields'
+import { POLICY_KIND } from '../constants/feeConfigFields'
+import {
+  FEE_SCREEN,
+  FEE_SCREEN_CONFIG,
+  type FeeScreen
+} from '../constants/feeScreen'
 import {
   toAssignmentRequest,
   toInputCostAssignmentRequest,
@@ -59,12 +63,12 @@ export interface UseFeeConfigSubmitResult {
  */
 export const useFeeConfigSubmit = (
   snapshot: FeeConfigSnapshot | null,
-  policyKind: PolicyKind = POLICY_KIND.CUSTOMER_FEE
+  screen: FeeScreen = FEE_SCREEN.CUSTOMER_FEE
 ): UseFeeConfigSubmitResult => {
+  // Đường về danh sách theo màn chứ không theo loại chính sách: màn ĐVCNTT cùng loại phí đầu ra với màn
+  // phí chung nhưng có danh sách riêng, lưu xong phải về đúng danh sách vừa đi vào.
+  const { policyKind, listPath } = FEE_SCREEN_CONFIG[screen]
   const isInputCost = policyKind === POLICY_KIND.INPUT_COST
-  const listPath = isInputCost
-    ? PATHS.FEE_V4.INPUT_COST_LIST
-    : PATHS.FEE_V4.POLICY_LIST
   const toAssignment = isInputCost
     ? toInputCostAssignmentRequest
     : toAssignmentRequest

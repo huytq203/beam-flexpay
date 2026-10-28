@@ -164,7 +164,7 @@ describe('loại giao dịch tạm ẩn', () => {
 })
 
 describe('getFormFieldRules — ô gán đối tượng theo loại giao dịch', () => {
-  it('thu hộ và chi hộ mở ô Merchant cùng ô Ngân hàng tuỳ chọn', () => {
+  it('thu hộ và chi hộ mở ô Merchant và nhóm merchant cùng ô Ngân hàng tuỳ chọn, không có ví riêng', () => {
     for (const serviceType of [
       'MERCHANT_VA_BILL_COLLECTION',
       'PAYOUT_BANK_TRANSFER'
@@ -173,7 +173,8 @@ describe('getFormFieldRules — ô gán đối tượng theo loại giao dịch'
       expect(rules.showMerchant).toBe(true)
       expect(rules.bankRequired).toBe(false)
       expect(rules.showSubject).toBe(false)
-      expect(rules.showSegment).toBe(false)
+      // Nhóm merchant dùng chung ô phân khúc.
+      expect(rules.showSegment).toBe(true)
     }
   })
 

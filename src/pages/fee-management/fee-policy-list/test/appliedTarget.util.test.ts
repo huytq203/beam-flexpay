@@ -171,4 +171,46 @@ describe('helper đối tượng áp dụng', () => {
 
     expect(getAppliedSubjectLines(target)).toEqual([])
   })
+
+  describe('chính sách thu hộ / chi hộ gọi đối tượng riêng là merchant', () => {
+    const merchantSubject: AppliedSubject = {
+      subjectType: 'MERCHANT',
+      subjectId: 'm-1',
+      fullName: 'Cửa hàng A',
+      displayName: 'merchant-a'
+    }
+
+    it('một merchant: "Merchant cụ thể" kèm tên, không lặp tiền tố Merchant', () => {
+      const target: AppliedTarget = {
+        type: 'ACCOUNT',
+        code: null,
+        count: 1,
+        subjectCount: 1,
+        subjects: [merchantSubject]
+      }
+
+      expect(
+        getAppliedTargetLabel(
+          target,
+          customerSegmentNames,
+          'MERCHANT_VA_BILL_COLLECTION'
+        )
+      ).toBe('Merchant cụ thể · Cửa hàng A · merchant-a')
+    })
+
+    it('nhiều merchant: "N merchant cụ thể"; loại ví vẫn "N ví riêng"', () => {
+      const target: AppliedTarget = { type: 'ACCOUNT', code: null, count: 3 }
+
+      expect(
+        getAppliedTargetLabel(
+          target,
+          customerSegmentNames,
+          'PAYOUT_BANK_TRANSFER'
+        )
+      ).toBe('3 merchant cụ thể')
+      expect(
+        getAppliedTargetLabel(target, customerSegmentNames, 'EWALLET_DEPOSIT')
+      ).toBe('3 ví riêng')
+    })
+  })
 })

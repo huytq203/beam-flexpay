@@ -7,6 +7,8 @@ import type { SelectProps } from "antd";
 interface SelectOption {
   label: string|boolean | ReactNode;
   value: string | number | null | undefined;
+  /** Hiện trong danh sách nhưng không chọn được; antd Select nhận qua option.disabled. */
+  disabled?: boolean;
 }
 
 interface FormSelectProps<T extends FieldValues>

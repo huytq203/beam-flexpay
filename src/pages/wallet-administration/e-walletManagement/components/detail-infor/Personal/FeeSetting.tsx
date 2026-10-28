@@ -1,10 +1,9 @@
-import { ButtonComponent, ExportCsvButton, Table } from '@components/index'
-import { SkeletonTable } from '@components/ui/skeletons/Skeleton'
+import { getApplicableFeeRuleColumns } from './configs/FeeSetting.column'
+import { FeeSettingCard } from './components/FeeSettingCard'
 import {
-  getApplicableFeeRuleColumns,
-  type ApplicableFeeRuleTableRow
-} from './configs/FeeSetting.column'
-import { FeeRulesEmptyState, FeeSettingCard } from './components/FeeSettingCard'
+  FeeRulesBody,
+  FeeRulesExportButton
+} from './components/FeeRulesBody'
 import { SubjectSegmentCard } from '@components/fee/SubjectSegmentCard'
 import { useFeeSettingRules } from './hooks/useFeeSettingRules'
 import { useCustomerSegmentNames } from '@hooks/useCustomerSegmentNames'
@@ -45,7 +44,12 @@ export const FeeSetting = ({
     handleSearch,
     handleExport,
     isExporting
-  } = useFeeSettingRules({ walletLabel, subjectId })
+  } = useFeeSettingRules({
+    accountLabel: walletLabel,
+    subjectId,
+    subjectType: 'USER',
+    feeDomain: 'EWALLET'
+  })
 
   if (!hasValidSubject) {
     return (
@@ -58,11 +62,10 @@ export const FeeSetting = ({
   }
 
   const exportButton = (
-    <ExportCsvButton
+    <FeeRulesExportButton
       onExport={handleExport}
       loading={isExporting}
-      disabled={totalElements === 0}
-      totalRows={totalElements}
+      totalElements={totalElements}
       tooltip={EXPORT_TOOLTIP}
     />
   )
@@ -83,73 +86,25 @@ export const FeeSetting = ({
   //   />
   // )
 
-  const body = () => {
-    if (isLoading) {
-      return (
-        <SkeletonTable
-          columns={applicableFeeRuleColumns.length}
-          rows={size}
-          noContainer
-        />
-      )
-    }
-
-    if (isError) {
-      return (
-        <div
-          role='alert'
-          className='flex min-h-44 flex-col items-center justify-center gap-3 text-center'
-        >
-          <div>
-            <p className='font-medium text-foreground'>
-              Không tải được quy tắc phí
-            </p>
-            <p className='mt-1 text-sm text-muted-foreground'>
-              Vui lòng thử lại hoặc kiểm tra quyền xem chính sách phí.
-            </p>
-          </div>
-          <ButtonComponent
-            type='default'
-            content='Thử lại'
-            onClick={() => refetch()}
-          />
-        </div>
-      )
-    }
-
-    if (dataSource.length === 0) {
-      return <FeeRulesEmptyState filtered={hasFilter} />
-    }
-
-    return (
-      <Table<ApplicableFeeRuleTableRow>
-        rowKey='rowKey'
-        size='small'
-        scroll={{ x: 'max-content' }}
-        columns={applicableFeeRuleColumns}
-        dataSource={dataSource}
-        loading={isFetching}
-        onRefresh={refetch}
-        pagination={{
-          current: page,
-          pageSize: size,
-          total: totalElements,
-          showSizeChanger: true,
-          onChange: (nextPage, nextPageSize) => {
-            setPage(nextPage)
-            setPageSize(nextPageSize)
-          }
-        }}
-      />
-    )
-  }
-
   return (
     <div className='space-y-3!'>
       {/* {filterCard} */}
       <SubjectSegmentCard subjectId={subjectId ?? ''} />
       <FeeSettingCard totalRows={totalElements} action={exportButton}>
-        {body()}
+        <FeeRulesBody
+          columns={applicableFeeRuleColumns}
+          dataSource={dataSource}
+          page={page}
+          size={size}
+          totalElements={totalElements}
+          isLoading={isLoading}
+          isFetching={isFetching}
+          isError={isError}
+          hasFilter={hasFilter}
+          refetch={refetch}
+          setPage={setPage}
+          setPageSize={setPageSize}
+        />
       </FeeSettingCard>
     </div>
   )

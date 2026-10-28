@@ -4,39 +4,33 @@ import {
   CardComponent,
   ModalComponent
 } from '@components/index'
-import { PATHS } from '@constants/pathConstant'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { AssignmentSection } from './components/AssignmentSection'
 import { FeeComponentList } from './components/FeeComponentList'
 import { InputCostRouteSection } from './components/InputCostRouteSection'
 import { PolicyGeneralSection } from './components/PolicyGeneralSection'
 import { useFeeConfigDetail } from './hooks/useFeeConfigDetail'
-import { buildEmptyForm, useFeeConfigForm } from './hooks/useFeeConfigForm'
+import {
+  buildEmptyFormForScreen,
+  useFeeConfigForm
+} from './hooks/useFeeConfigForm'
 import {
   useFeeConfigSubmit,
   type FeeConfigSnapshot
 } from './hooks/useFeeConfigSubmit'
+import { FEE_SCOPE, POLICY_KIND } from './constants/feeConfigFields'
 import {
-  FEE_SCOPE,
-  POLICY_KIND,
-  type PolicyKind
-} from './constants/feeConfigFields'
+  FEE_SCREEN,
+  FEE_SCREEN_CONFIG,
+  feeScreenOfPolicy,
+  type FeeScreen
+} from './constants/feeScreen'
 import type { FeeConfigFormValues } from './schemas/feeConfig.schema'
 import { inputCostFormSchema } from './schemas/inputCostConfig.schema'
 
-const editPathOf = (policyKind: PolicyKind, id: string) =>
-  policyKind === POLICY_KIND.INPUT_COST
-    ? PATHS.FEE_V4.INPUT_COST_EDIT(id)
-    : PATHS.FEE_V4.POLICY_EDIT(id)
-
-const listPathOf = (policyKind: PolicyKind) =>
-  policyKind === POLICY_KIND.INPUT_COST
-    ? PATHS.FEE_V4.INPUT_COST_LIST
-    : PATHS.FEE_V4.POLICY_LIST
-
 interface FeeConfigFormProps {
-  /** Loại chính sách của form: quyết định ô gán, luồng thành phần và payload. */
-  policyKind: PolicyKind
+  /** Màn của form: quyết định loại chính sách (ô gán, luồng thành phần, payload), đường dẫn và ô chọn loại giao dịch. */
+  screen: FeeScreen
   defaultValues: FeeConfigFormValues
   snapshot: FeeConfigSnapshot | null
   feeCode?: string | null
@@ -50,13 +44,14 @@ interface FeeConfigFormProps {
  * xong mới reset là mất những gì người dùng vừa gõ trong lúc chờ.
  */
 const FeeConfigForm = ({
-  policyKind,
+  screen,
   defaultValues,
   snapshot,
   feeCode,
   readOnly = false
 }: FeeConfigFormProps) => {
   const navigate = useNavigate()
+  const { policyKind, listPath, editPath } = FEE_SCREEN_CONFIG[screen]
   const isInputCost = policyKind === POLICY_KIND.INPUT_COST
   const { form, changeServiceType } = useFeeConfigForm(
     defaultValues,
@@ -64,7 +59,7 @@ const FeeConfigForm = ({
   )
   const { submit, isSubmitting, orphan, dismissOrphan } = useFeeConfigSubmit(
     snapshot,
-    policyKind
+    screen
   )
   const { control, handleSubmit, watch, formState } = form
 
@@ -76,7 +71,7 @@ const FeeConfigForm = ({
         className='mb-3!'
         content='Về danh sách'
         icon={<ArrowLeftOutlined />}
-        onClick={() => navigate(listPathOf(policyKind))}
+        onClick={() => navigate(listPath)}
       />
       {/* Miền phí suy ra từ loại giao dịch nên không còn hàng chọn miền ở màn sửa và chi tiết. */}
       {readOnly && (
@@ -89,7 +84,7 @@ const FeeConfigForm = ({
           control={control}
           readOnly={readOnly}
           feeCode={feeCode}
-          policyKind={policyKind}
+          screen={screen}
           onServiceTypeChange={changeServiceType}
         />
       </CardComponent>
@@ -124,7 +119,7 @@ const FeeConfigForm = ({
           type='default'
           content={readOnly ? 'Về danh sách' : 'Huỷ'}
           icon={readOnly ? <ArrowLeftOutlined /> : undefined}
-          onClick={() => navigate(listPathOf(policyKind))}
+          onClick={() => navigate(listPath)}
         />
         {!readOnly && (
           <ButtonComponent
@@ -142,7 +137,7 @@ const FeeConfigForm = ({
         okText='Mở màn sửa để gán'
         cancelText='Để sau'
         onOk={() => {
-          if (orphan) navigate(editPathOf(policyKind, orphan.id))
+          if (orphan) navigate(editPath(orphan.id))
         }}
         onCancel={dismissOrphan}
       >
@@ -161,17 +156,17 @@ const FeeConfigForm = ({
 }
 
 interface FeeConfigPageProps {
-  policyKind: PolicyKind
+  screen: FeeScreen
 }
 
 /**
  * Màn cấu hình phí: gộp tạo chính sách, gán đối tượng và cấu hình thành phần
- * vào một biểu mẫu, thay cho ba màn rời trước đây. Một màn phục vụ hai loại chính sách
- * (phí khách và phí đầu vào) vì chung phần lớn ô nhập; loại không đổi được sau khi tạo.
+ * vào một biểu mẫu, thay cho ba màn rời trước đây. Một biểu mẫu phục vụ ba màn (phí khách, phí đầu vào
+ * và phí ĐVCNTT) vì chung phần lớn ô nhập; loại chính sách không đổi được sau khi tạo.
  */
-export const FeeConfigPage = ({ policyKind }: FeeConfigPageProps) => {
-  const navigate = useNavigate()
+export const FeeConfigPage = ({ screen }: FeeConfigPageProps) => {
   const { id } = useParams<{ id: string }>()
+  const { policyKind } = FEE_SCREEN_CONFIG[screen]
   const isInputCost = policyKind === POLICY_KIND.INPUT_COST
   const {
     values,
@@ -220,30 +215,33 @@ export const FeeConfigPage = ({ policyKind }: FeeConfigPageProps) => {
   }
 
   // Mở nhầm màn của loại kia (liên kết cũ, gõ tay URL): chuyển sang đúng màn thay vì
-  // hiện form thiếu thành phần.
-  if (id && savedKind && savedKind !== policyKind) {
-    return (
-      <Navigate
-        replace
-        to={editPathOf(savedKind, id)}
-      />
-    )
+  // hiện form thiếu thành phần. Màn đúng suy từ loại chính sách và miền phí đã lưu.
+  if (id && savedKind) {
+    const savedScreen = feeScreenOfPolicy(savedKind, values?.feeDomain)
+    if (savedScreen !== screen) {
+      return (
+        <Navigate
+          replace
+          to={FEE_SCREEN_CONFIG[savedScreen].editPath(id)}
+        />
+      )
+    }
   }
 
   return (
     <FeeConfigForm
-      policyKind={policyKind}
+      screen={screen}
       // Khoá theo id để đổi bản ghi là dựng lại form với giá trị mới.
       key={id ?? 'create'}
       snapshot={snapshot}
       feeCode={feeCode}
-      defaultValues={values ?? buildEmptyForm()}
+      defaultValues={values ?? buildEmptyFormForScreen(screen)}
       readOnly={Boolean(id && !isEditable)}
     />
   )
 }
 
 /** Màn chính sách phí khách (phí đầu ra). */
-const FeeConfig = () => <FeeConfigPage policyKind={POLICY_KIND.CUSTOMER_FEE} />
+const FeeConfig = () => <FeeConfigPage screen={FEE_SCREEN.CUSTOMER_FEE} />
 
 export default FeeConfig

@@ -1,7 +1,11 @@
-import { validateRefundDebitedSide } from '@utils/fee-execution'
+import {
+  allowsMerchantCriteria,
+  validateRefundDebitedSide
+} from '@utils/fee-execution'
 import { z } from 'zod'
 import {
   allowsProviderCriteria,
+  isMerchantAssignmentFlow,
   isPaymentMethodAllowed
 } from '../constants/feeConfigFields'
 import { allowsOriginalTypeCriteria } from '../constants/feeRefundOriginalType'
@@ -62,6 +66,9 @@ export const feeConfigObjectSchema = z.object({
     .max(32, 'Tối đa 32 thành phần phí')
 })
 
+export const MERCHANT_PAYER_ONLY_MESSAGE =
+  'Thu hộ / chi hộ hiện chỉ hỗ trợ Merchant chịu phí'
+
 export type FeeConfigObjectValues = z.infer<typeof feeConfigObjectSchema>
 
 /**
@@ -115,16 +122,30 @@ export const checkFeeConfigCommonRules = (
     ctx.addIssue({
       code: 'custom',
       path: ['customerGroup'],
-      message: 'Chọn nhóm khách hàng được áp dụng'
+      // Thu hộ / chi hộ gọi ô này là "Nhóm merchant" nên thông báo cũng phải nói merchant.
+      message: isMerchantAssignmentFlow(form.feeDomain, form.serviceType)
+        ? 'Chọn nhóm merchant được áp dụng'
+        : 'Chọn nhóm khách hàng được áp dụng'
     })
   }
 
-  if (form.assignmentScope === 'SUBJECT' && !form.subjectId) {
-    ctx.addIssue({
-      code: 'custom',
-      path: ['subjectId'],
-      message: 'Chọn cá nhân được áp dụng'
-    })
+  if (form.assignmentScope === 'SUBJECT') {
+    // Luồng merchant chọn qua ô Merchant (`merchantId`), luồng ví qua ô cá nhân (`subjectId`).
+    if (isMerchantAssignmentFlow(form.feeDomain, form.serviceType)) {
+      if (!form.merchantId) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['merchantId'],
+          message: 'Chọn merchant được áp dụng'
+        })
+      }
+    } else if (!form.subjectId) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['subjectId'],
+        message: 'Chọn cá nhân được áp dụng'
+      })
+    }
   }
 
   if (form.feeDomain === 'BANK' && !form.bankCode) {
@@ -161,7 +182,34 @@ export const checkFeeConfigCommonRules = (
   // tham chiếu đã đứng trước nó — backend kiểm theo đúng thứ tự trong mảng.
   const seen = new Set<string>()
   const identities = new Set<string>()
+  // Màn chỉ hiện lỗi gốc của `components`; lỗi từng dòng bên dưới không có thẻ nào hiển thị.
+  if (
+    allowsMerchantCriteria(form.serviceType) &&
+    form.components.some(
+      (component) =>
+        component.feeScope === 'OUTPUT_FEE' && component.payerType !== 'MERCHANT'
+    )
+  ) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['components'],
+      message: MERCHANT_PAYER_ONLY_MESSAGE
+    })
+  }
   form.components.forEach((component, index) => {
+    // Thu hộ / chi hộ: backend chỉ chạy được payer MERCHANT. Chặn ở schema để dữ liệu cũ hay sửa tay
+    // không lọt qua; payload không còn âm thầm đổi payer thay người vận hành.
+    if (
+      allowsMerchantCriteria(form.serviceType) &&
+      component.feeScope === 'OUTPUT_FEE' &&
+      component.payerType !== 'MERCHANT'
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['components', index, 'payerType'],
+        message: MERCHANT_PAYER_ONLY_MESSAGE
+      })
+    }
     const identity = `${component.componentType}:${component.payerType}:${component.beneficiaryType}`
     if (identities.has(identity)) {
       ctx.addIssue({

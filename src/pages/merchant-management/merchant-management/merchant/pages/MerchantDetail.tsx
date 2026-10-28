@@ -11,6 +11,7 @@ import StatusBadge from '@components/status-badge/StatusBadge'
 import { STATUS_CONFIG } from '../constants/Merchant.constant'
 import { MerchantDetailsSections } from '../components/MerchantDetailsSections'
 import { MerchantActionDialog } from '../components/MerchantActionDialog'
+import { MerchantFeeRulesCard } from '../components/MerchantFeeRulesCard'
 import { MerchantHistoryTabs } from '../components/MerchantHistoryTabs'
 import { useMerchantDetailActions } from '../hooks/useMerchantDetailActions'
 
@@ -151,6 +152,15 @@ const MerchantDetail = () => {
             subjectType='MERCHANT'
             subjectId={data.id}
           />
+          <Can
+            screen='MERCHANT_FEE_CONFIG'
+            action='view'
+          >
+            <MerchantFeeRulesCard
+              merchantId={data.id}
+              merchantLabel={data.name}
+            />
+          </Can>
           <Can
             screen='MERCHANT_MANAGEMENT'
             action='viewHistory'

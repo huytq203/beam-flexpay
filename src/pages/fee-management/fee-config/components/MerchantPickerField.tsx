@@ -12,6 +12,8 @@ interface MerchantPickerFieldProps {
   control: Control<FeeConfigFormValues>
   className?: string
   readOnly?: boolean
+  /** Bắt buộc chọn (phạm vi "Merchant cụ thể"): ô trống không còn mang nghĩa "mọi đơn vị". */
+  required?: boolean
 }
 
 const HEAD =
@@ -34,7 +36,8 @@ const Fact = ({ label, value }: { label: string; value: string }) => (
 export const MerchantPickerField = ({
   control,
   className,
-  readOnly = false
+  readOnly = false,
+  required = false
 }: MerchantPickerFieldProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [picked, setPicked] = useState<ContentMerchant | null>(null)
@@ -50,6 +53,7 @@ export const MerchantPickerField = ({
           error={fieldState.error?.message}
           className={className}
           readOnly={readOnly}
+          required={required}
           isOpen={isOpen}
           onOpen={() => setIsOpen(true)}
           onClose={() => setIsOpen(false)}
@@ -74,6 +78,7 @@ interface MerchantPickerBodyProps {
   error?: string
   className?: string
   readOnly: boolean
+  required: boolean
   isOpen: boolean
   onOpen: () => void
   onClose: () => void
@@ -87,6 +92,7 @@ const MerchantPickerBody = ({
   error,
   className,
   readOnly,
+  required,
   isOpen,
   onOpen,
   onClose,
@@ -102,17 +108,36 @@ const MerchantPickerBody = ({
 
   return (
     <div className={className}>
-      <p className='font-medium'>Đơn vị chấp nhận thanh toán</p>
+      <p className='font-medium'>
+        Đơn vị chấp nhận thanh toán
+        {/* Cùng dấu bắt buộc với nhãn của `FormField` để ô này không lạc khỏi các ô bắt buộc bên cạnh. */}
+        {required && <span className='ml-1 text-red-600'>*</span>}
+      </p>
 
       {merchant ? (
         <div className='mt-2 rounded-lg border border-border bg-muted px-4 py-3'>
           <div className='flex flex-wrap items-start justify-between gap-3'>
             <div className='flex flex-wrap gap-x-8 gap-y-3'>
-              <Fact label='Đơn vị' value={merchant.name} />
-              <Fact label='Mã' value={merchant.code} />
-              <Fact label='Email' value={merchant.contactEmail ?? '—'} />
-              <Fact label='Điện thoại' value={merchant.contactPhone ?? '—'} />
-              <Fact label='Trạng thái' value={merchant.status} />
+              <Fact
+                label='Đơn vị'
+                value={merchant.name}
+              />
+              <Fact
+                label='Mã'
+                value={merchant.code}
+              />
+              <Fact
+                label='Email'
+                value={merchant.contactEmail ?? '—'}
+              />
+              <Fact
+                label='Điện thoại'
+                value={merchant.contactPhone ?? '—'}
+              />
+              <Fact
+                label='Trạng thái'
+                value={merchant.status}
+              />
             </div>
             {!readOnly && (
               <div className='flex gap-2'>
@@ -139,14 +164,22 @@ const MerchantPickerBody = ({
               htmlType='button'
               type='default'
               content='Chọn đơn vị'
-              icon={<StorefrontIcon size={16} weight='bold' aria-hidden />}
+              icon={
+                <StorefrontIcon
+                  size={16}
+                  weight='bold'
+                  aria-hidden
+                />
+              }
               onClick={onOpen}
             />
           )}
           <span className='text-[13px] text-muted-foreground'>
-            {readOnly
-              ? 'Chính sách áp dụng cho mọi đơn vị.'
-              : 'Bỏ trống nghĩa là chính sách áp cho mọi đơn vị.'}
+            {required
+              ? 'Chọn merchant được áp dụng cho chính sách này.'
+              : readOnly
+                ? 'Chính sách áp dụng cho mọi đơn vị.'
+                : 'Bỏ trống nghĩa là chính sách áp cho mọi đơn vị.'}
           </span>
         </div>
       )}

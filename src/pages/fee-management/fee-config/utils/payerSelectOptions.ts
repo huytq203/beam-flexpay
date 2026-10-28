@@ -4,6 +4,8 @@ import { BOTH_BEARERS, RECEIVER_PAYER } from './bearerPairs'
 export interface PayerOption {
   value: string
   label: string
+  /** Lựa chọn chưa hỗ trợ: vẫn hiện trong danh sách nhưng không chọn được. */
+  disabled?: boolean
 }
 
 export const BOTH_BEARERS_OPTION: PayerOption = {
@@ -64,7 +66,9 @@ export const buildPayerSelectOptions = (
 ): PayerOption[] => {
   const locked = payerTypeOptions.filter(({ value }) => value === vatPayer)
   if (locked.length > 0) return locked
-  return canSplit
+  // Luồng merchant đã có sẵn "Cả hai bên cùng chịu" bản bị khóa trong danh sách, không thêm bản thường.
+  const hasBoth = payerTypeOptions.some(({ value }) => value === BOTH_BEARERS)
+  return canSplit && !hasBoth
     ? [...payerTypeOptions, BOTH_BEARERS_OPTION]
     : [...payerTypeOptions]
 }

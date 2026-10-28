@@ -2,14 +2,18 @@ import {
   applicableFeeRuleQuerySchema,
   type ApplicableFeeRuleExportQuery,
   type ApplicableFeeRuleFilter,
-  type ApplicableFeeRuleQuery
+  type ApplicableFeeRuleQuery,
+  type FeeDomain
 } from '@/app/schemas/applicable-fee-rule.schema'
 import { useGetApplicableFeeRulesQuery } from '@/app/services/apiApplicableFeeRule'
 import { useExportCsv } from '@hooks/useExportCsv'
 import usePagination from '@hooks/usePagination'
 import { useExportApplicableFeeRulesMutation } from '@services/apiExportCsv'
 import { useCallback, useMemo, useState } from 'react'
-import type { ApplicableFeeRuleTableRow } from '../configs/FeeSetting.column'
+import type {
+  ApplicableFeeRuleTableRow,
+  FeeRuleSubjectType
+} from '../configs/FeeSetting.column'
 import { groupFeeRulesByPolicy } from '../utils/group-fee-rules'
 
 /** Ô lọc để trống là "không lọc" — không gửi chuỗi rỗng xuống API. */
@@ -19,27 +23,44 @@ const dropEmpty = (filter: ApplicableFeeRuleFilter): ApplicableFeeRuleFilter =>
   )
 
 interface UseFeeSettingRulesParams {
-  walletLabel: string
+  /** Tên hiện ở dòng phụ của cột "Đối tượng áp dụng" cho bản gán riêng (ví hoặc merchant). */
+  accountLabel: string
   subjectId?: string
+  subjectType: FeeRuleSubjectType
+  feeDomain: FeeDomain
+  /**
+   * Merchant đang xem. Bắt buộc gửi khi xem merchant: thiếu thì backend thêm điều kiện
+   * `merchantId IS NULL` và mất mọi bản gán riêng của merchant. Tab ví không truyền.
+   */
+  merchantId?: string
+  /** Tiền tố tên file CSV xuất ra; mặc định là của tab ví, thẻ merchant truyền tiền tố riêng. */
+  exportFilenamePrefix?: string
 }
 
 export const useFeeSettingRules = ({
-  walletLabel,
-  subjectId
+  accountLabel,
+  subjectId,
+  subjectType,
+  feeDomain,
+  merchantId,
+  exportFilenamePrefix = 'cau-hinh-phi'
 }: UseFeeSettingRulesParams) => {
   const { page, size, setPage, setPageSize } = usePagination()
   const [filter, setFilter] = useState<ApplicableFeeRuleFilter>({})
   const normalizedSubjectId = subjectId?.trim() ?? ''
-  // Chỉ lấy quy tắc riêng ví + theo nhóm; quy tắc chung không hiện ở tab này.
-  // Backend tự tra nhóm của chủ ví từ subjectId, FE không gửi customerGroup.
+  const normalizedMerchantId = merchantId?.trim() ?? ''
+  // Chỉ lấy quy tắc riêng (ví hoặc merchant) + theo nhóm; quy tắc chung không hiện ở đây.
+  // Backend tự tra nhóm của chủ thể từ subjectId, FE không gửi customerGroup.
+  // `merchantId` chỉ có khi xem merchant; bỏ hẳn khóa khi rỗng để tab ví gửi y như cũ.
   const subjectScope = useMemo(
     () => ({
-      subjectType: 'USER' as const,
+      subjectType,
       subjectId: normalizedSubjectId,
       appliedObjectTypes: 'ACCOUNT,CUSTOMER_GROUP',
-      feeDomain: 'EWALLET' as const
+      feeDomain,
+      ...(normalizedMerchantId ? { merchantId: normalizedMerchantId } : {})
     }),
-    [normalizedSubjectId]
+    [subjectType, normalizedSubjectId, feeDomain, normalizedMerchantId]
   )
 
   const parsedQuery = applicableFeeRuleQuerySchema.safeParse({
@@ -49,7 +70,7 @@ export const useFeeSettingRules = ({
     size
   })
   const fallbackQuery: ApplicableFeeRuleQuery = {
-    feeDomain: 'EWALLET',
+    feeDomain,
     page,
     size
   }
@@ -83,7 +104,7 @@ export const useFeeSettingRules = ({
   const { exportFile, isExporting } = useExportCsv({
     trigger: triggerExport,
     reset: resetExport,
-    filenamePrefix: 'cau-hinh-phi'
+    filenamePrefix: exportFilenamePrefix
   })
 
   /** Endpoint xuất không nhận page/size — file lấy trọn bộ lọc, không theo trang. */
@@ -111,9 +132,9 @@ export const useFeeSettingRules = ({
         ...rule,
         rowKey: rule.groupKey,
         no: (page - 1) * size + index + 1,
-        accountLabel: walletLabel
+        accountLabel
       })),
-    [data, page, size, walletLabel]
+    [data, page, size, accountLabel]
   )
 
   return {

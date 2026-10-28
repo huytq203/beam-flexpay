@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 export const feeDomainSchema = z.enum(['BANK', 'EWALLET', 'MERCHANT'])
 
+export type FeeDomain = z.infer<typeof feeDomainSchema>
+
 export const feeAppliedObjectTypeSchema = z.enum([
   'ACCOUNT',
   'CUSTOMER_GROUP',

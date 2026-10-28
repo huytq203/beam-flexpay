@@ -7,11 +7,18 @@ import {
 } from '@constants/feeLabels'
 import {
   BACKEND_PAYMENT_METHODS,
-  getPaymentMethodOptions
+  getPaymentMethodOptions,
+  POLICY_KIND
 } from '@pages/fee-management/fee-config/constants/feeConfigFields'
 import { FeePolicyPartyFilters } from './FeePolicyPartyFilters'
 import { FeePolicyProviderFilter } from './FeePolicyProviderFilter'
 import { POLICY_STATUS_FILTER_OPTIONS } from '../utils/policyStatusFilter'
+import {
+  FEE_SCREEN,
+  FEE_SCREEN_CONFIG,
+  visibleServiceTypesFor,
+  type FeeScreen
+} from '@pages/fee-management/fee-config/constants/feeScreen'
 import {
   PUBLISHABLE_SERVICE_TYPES,
   withoutHiddenServiceTypes
@@ -24,6 +31,13 @@ const APPLIED_TARGET_OPTIONS = [
   { label: 'Tất cả', value: 'ALL' },
   { label: 'Theo nhóm khách hàng', value: 'CUSTOMER_GROUP' },
   { label: 'Riêng ví', value: 'ACCOUNT' }
+]
+
+/** Màn ĐVCNTT: cùng giá trị gửi BE, chỉ đổi nhãn sang merchant. */
+const MERCHANT_APPLIED_TARGET_OPTIONS = [
+  { label: 'Tất cả', value: 'ALL' },
+  { label: 'Theo nhóm merchant', value: 'CUSTOMER_GROUP' },
+  { label: 'Merchant cụ thể', value: 'ACCOUNT' }
 ]
 
 export interface FeePolicyFilterValues {
@@ -43,8 +57,11 @@ export interface FeePolicyFilterValues {
 }
 
 interface FeePolicyFilterBarProps {
-  /** Tab Phí đầu vào: ẩn bộ lọc đối tượng khách, người chịu phí và bên chịu phí chuyển tiền. */
-  inputCost?: boolean
+  /**
+   * Màn đang lọc: quyết định tab loại giao dịch nào hiện; màn Phí đầu vào còn ẩn bộ lọc đối tượng khách,
+   * người chịu phí và bên chịu phí chuyển tiền.
+   */
+  screen?: FeeScreen
   serviceType: string | undefined
   values: FeePolicyFilterValues
   onServiceTypeChange: (serviceType: string | undefined) => void
@@ -54,7 +71,7 @@ interface FeePolicyFilterBarProps {
 
 /** Bộ lọc dùng chung cho cả hai luồng phí; loại giao dịch là Tất cả loại đã duyệt được. */
 export const FeePolicyFilterBar = ({
-  inputCost = false,
+  screen = FEE_SCREEN.CUSTOMER_FEE,
   serviceType,
   values,
   onServiceTypeChange,
@@ -103,14 +120,26 @@ export const FeePolicyFilterBar = ({
     values: syncedValues
   })
 
+  const inputCost =
+    FEE_SCREEN_CONFIG[screen].policyKind === POLICY_KIND.INPUT_COST
+  // Màn ĐVCNTT chỉ hiện hai loại merchant và không giữ loại ngoài đó dù URL có. Hai màn ví giữ nguyên
+  // như trước: chỉ ẩn các loại tạm ẩn chung (loại đang chọn vẫn hiện), không ẩn thêm theo loại chính sách.
+  const serviceTypeOptions =
+    screen === FEE_SCREEN.MERCHANT_FEE
+      ? visibleServiceTypesFor(screen, PUBLISHABLE_SERVICE_TYPES)
+      : withoutHiddenServiceTypes(PUBLISHABLE_SERVICE_TYPES, serviceType)
   const labels = Object.fromEntries(
-    withoutHiddenServiceTypes(PUBLISHABLE_SERVICE_TYPES, serviceType).map(
-      (value) => [value, SERVICE_TYPE_LABELS[value] ?? value]
-    )
+    serviceTypeOptions.map((value) => [
+      value,
+      SERVICE_TYPE_LABELS[value] ?? value
+    ])
   )
   // Lọc theo LOẠI đối tượng, không theo từng phân khúc: người vận hành muốn
   // gom Tất cả chính sách cấu hình theo nhóm, tên nhóm cụ thể đã hiện ở cột.
-  const appliedTargetOptions = APPLIED_TARGET_OPTIONS
+  const appliedTargetOptions =
+    screen === FEE_SCREEN.MERCHANT_FEE
+      ? MERCHANT_APPLIED_TARGET_OPTIONS
+      : APPLIED_TARGET_OPTIONS
   const paymentMethodOptions = serviceType
     ? [...getPaymentMethodOptions(serviceType)]
     : BACKEND_PAYMENT_METHODS.map((value) => ({
@@ -212,6 +241,7 @@ export const FeePolicyFilterBar = ({
           control={control}
           serviceType={serviceType}
           inputCost={inputCost}
+          screen={screen}
         />
         <FormDatePicker
           name='validFrom'

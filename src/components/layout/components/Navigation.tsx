@@ -336,6 +336,19 @@ const merchantManagement: ItemTypeCustom = {
       label: 'Quản lý danh sách merchant'
     },
     {
+      key: 'fee-config',
+      screen: 'MERCHANT_FEE_CONFIG',
+      link: `${MERCHANT}/fee-config`,
+      icon: (
+        <ReceiptIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Cấu hình phí ĐVCNTT'
+    },
+    {
       key: 'bank-account',
       screen: 'MERCHANT_BANK_ACCOUNT',
       link: `${MERCHANT}/bank-account`,

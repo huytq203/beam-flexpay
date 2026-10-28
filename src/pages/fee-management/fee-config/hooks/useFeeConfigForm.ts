@@ -1,4 +1,5 @@
 import { FeeDomain } from '@components/fee/feeDomain'
+import { allowsMerchantCriteria } from '@utils/fee-execution'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, type UseFormReturn } from 'react-hook-form'
 import {
@@ -9,6 +10,7 @@ import {
   allowsBankCriteria,
   allowsProviderCriteria
 } from '../constants/feeConfigFields'
+import { FEE_SCREEN, type FeeScreen } from '../constants/feeScreen'
 import { allowsOriginalTypeCriteria } from '../constants/feeRefundOriginalType'
 import {
   feeConfigFormSchema,
@@ -41,6 +43,20 @@ export const buildEmptyForm = (
   validTo: '',
   components: []
 })
+
+/**
+ * Form trống của màn tạo. Màn ĐVCNTT chọn sẵn thu hộ VA (miền Merchant) để phạm vi đối tượng và bên chịu
+ * phí hiện nhãn merchant ngay từ đầu, thay vì nhãn ví khi chưa chọn loại giao dịch. Màn khác để trống như cũ.
+ */
+export const buildEmptyFormForScreen = (
+  screen: FeeScreen
+): FeeConfigFormValues =>
+  screen === FEE_SCREEN.MERCHANT_FEE
+    ? {
+        ...buildEmptyForm(FeeDomain.MERCHANT),
+        serviceType: 'MERCHANT_VA_BILL_COLLECTION'
+      }
+    : buildEmptyForm()
 
 export interface UseFeeConfigFormResult {
   form: UseFormReturn<FeeConfigFormValues>
@@ -82,6 +98,23 @@ export const useFeeConfigForm = (
         ? { ...component, baseOn: 'AMOUNT', baseComponentType: null }
         : component
     )
+
+  /**
+   * Chuyển sang thu hộ / chi hộ thì phí đầu ra chỉ còn Merchant chịu được: đưa payer về MERCHANT ngay
+   * trên form để người vận hành thấy, không đợi lúc lưu mới bị chặn hay bị đổi ngầm. Luồng ví giữ nguyên.
+   */
+  const toMerchantPayers = (
+    components: FeeComponentFormValues[],
+    serviceType: string
+  ): FeeComponentFormValues[] =>
+    allowsMerchantCriteria(serviceType)
+      ? components.map((component) =>
+          component.feeScope === 'OUTPUT_FEE' &&
+          component.payerType !== 'MERCHANT'
+            ? { ...component, payerType: 'MERCHANT' }
+            : component
+        )
+      : components
 
   const changeDomain = (next: FeeDomain) => {
     const current = form.getValues()
@@ -133,7 +166,10 @@ export const useFeeConfigForm = (
       ...current,
       feeDomain: domain,
       serviceType: next,
-      components: resetGrossBase(current.components, next),
+      components: toMerchantPayers(
+        resetGrossBase(current.components, next),
+        next
+      ),
       // Chuyển ví không có ngân hàng; giữ lại là gửi một tiêu chí không còn ô nào để sửa.
       bankCode: allowsBankCriteria(next) ? current.bankCode : '',
       // NCC chỉ có nghĩa với nạp/rút ví; giữ lại là gửi một tiêu chí không còn ô nào để sửa.
@@ -142,6 +178,8 @@ export const useFeeConfigForm = (
       originalTransactionType: allowsOriginalTypeCriteria(next)
         ? current.originalTransactionType
         : '',
+      // Luật mới còn ô nào thì giữ giá trị ô đó (kể cả phạm vi + merchantId khi chuyển giữa thu hộ
+      // và chi hộ); ô không còn thì xoá, để khỏi gửi tiêu chí không ai nhìn thấy để sửa.
       merchantId: rules.showMerchant ? current.merchantId : '',
       subjectId: rules.showSubject ? current.subjectId : '',
       customerGroup: rules.showSegment ? current.customerGroup : '',
