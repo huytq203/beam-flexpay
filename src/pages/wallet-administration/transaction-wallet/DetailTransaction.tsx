@@ -12,7 +12,8 @@ import { DetailTransactionHeader } from './components/DetailTransactionHeader'
 import { TransactionRefundList } from './components/TransactionRefundList'
 import useDetailTransaction from './hooks/useDetailTransaction'
 import { useResetTransactionSnapshot } from './hooks/useTransactionSnapshot'
-import { formatCurrency } from '@utils/formatNumber'
+import { GrossProfitCard } from './components/GrossProfitCard'
+import { buildGrossProfit } from './utils/grossProfit'
 
 const DetailTransaction = () => {
   const {
@@ -29,11 +30,6 @@ const DetailTransaction = () => {
   useResetTransactionSnapshot(getTransactionById?.transactionCode)
   const column = Column(getTransactionById?.currency)
   const currency = getTransactionById?.currency ?? 'VND'
-  const grossProfit = profit?.grossProfit ?? getTransactionById?.feeAmount
-  const providerCostAvailable =
-    fee?.totalInputCost != null || !!profit?.providerCostAvailable
-  const grossProfitLabel =
-    profit?.grossProfitLabel ?? 'Lợi nhuận gộp (chưa trừ chi phí nhà cung cấp)'
 
   if (isLoading) {
     return (
@@ -144,22 +140,10 @@ const DetailTransaction = () => {
             }
           />
 
-          <div className='flex min-h-36 flex-col items-center justify-center rounded-md border border-blue-300 bg-blue-50 px-4 py-5 text-center'>
-            <p className='font-semibold text-blue-950'>{grossProfitLabel}</p>
-            <p className='mt-2 text-xl font-semibold text-green-700'>
-              {grossProfit == null
-                ? '--'
-                : formatCurrency(grossProfit, {
-                    symbol: currency,
-                    position: 'after'
-                  })}
-            </p>
-            {!providerCostAvailable && (
-              <p className='mt-1 text-sm text-blue-800'>
-                Chưa có dữ liệu chi phí nhà cung cấp.
-              </p>
-            )}
-          </div>
+          <GrossProfitCard
+            profit={buildGrossProfit(getTransactionById, profit, fee)}
+            currency={currency}
+          />
         </div>
       </div>
     </>

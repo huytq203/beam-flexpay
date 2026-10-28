@@ -5,6 +5,7 @@ import type {
 } from '@type/apiResponseJournal'
 import { formatCurrency } from '@utils/formatNumber'
 import React from 'react'
+import { resolveProviderCost } from '../utils/grossProfit'
 import { DetailSectionTitle } from './DetailSectionTitle'
 
 interface FeeNCCProps {
@@ -23,12 +24,7 @@ const FeeNCC = ({ data, profit, fee }: FeeNCCProps) => {
   const currency = data?.currency ?? 'VND'
   const formatMoney = (value: number) =>
     formatCurrency(value, { symbol: currency, position: 'after' })
-  // Ưu tiên phí đầu vào wallet-core đọc từ fee service; không có thì mới dùng profit cũ.
-  const providerCost = fee
-    ? fee.totalInputCost
-    : profit?.providerCostAvailable
-      ? profit.providerCost
-      : null
+  const providerCost = resolveProviderCost(fee, profit)
   const items = (fee?.inputCosts ?? []).filter((item) => item.amount != null)
   // NCC theo báo giá phí (có tên); fee bản cũ chưa trả thì lấy mã NCC ghi trên journal.
   const provider = fee?.providerCode
