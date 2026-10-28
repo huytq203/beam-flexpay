@@ -75,23 +75,36 @@ describe('quản lý hoàn tiền navigation', () => {
 })
 
 describe('cấu hình phí ĐVCNTT navigation', () => {
-  it('nằm ngay sau Quản lý danh sách merchant, trỏ tới màn MERCHANT_FEE_CONFIG', () => {
+  it('là nhóm riêng ngay sau Quản lý ĐVCNTT, mục con Cấu hình phí đầu vào trỏ tới MERCHANT_FEE_CONFIG', () => {
+    const groupKeys = navigationItems.map((item) => item.key)
     const parent = navigationItems.find(
-      (item) => item.key === 'secure-panel/merchant'
+      (item) => item.key === 'merchant-fee-management'
     )
-    const keys = parent?.children?.map((item) => item.key) ?? []
-    const item = findItem(navigationItems, 'fee-config')
+    const item = parent?.children?.[0]
 
-    expect(keys.indexOf('fee-config')).toBe(
-      keys.indexOf('merchant-management') + 1
+    expect(groupKeys.indexOf('merchant-fee-management')).toBe(
+      groupKeys.indexOf('secure-panel/merchant') + 1
     )
+    expect(parent?.groupLabel).toBe('Nhóm quản lý cổng ĐVCNTT')
+    expect(parent?.label).toBe('Cấu hình phí ĐVCNTT')
+    expect(parent?.children).toHaveLength(1)
+    expect(item?.key).toBe('fee-config')
     expect(item?.screen).toBe('MERCHANT_FEE_CONFIG')
-    expect(item?.label).toBe('Cấu hình phí ĐVCNTT')
+    expect(item?.label).toBe('Cấu hình phí đầu vào')
     expect(
       parent && item && `/${resolveNavLink(parent, item).replace(/^\//, '')}`
     ).toBe('/secure-panel/merchant/fee-config')
     expect(SCREENS.MERCHANT_FEE_CONFIG.path).toBe(
       '/secure-panel/merchant/fee-config'
+    )
+  })
+
+  it('không còn nằm trong nhóm Quản lý ĐVCNTT', () => {
+    const merchant = navigationItems.find(
+      (item) => item.key === 'secure-panel/merchant'
+    )
+    expect(merchant?.children?.map((item) => item.key)).not.toContain(
+      'fee-config'
     )
   })
 })
