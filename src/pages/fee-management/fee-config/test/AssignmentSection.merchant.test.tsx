@@ -86,6 +86,27 @@ describe('AssignmentSection — thu hộ / chi hộ', () => {
     expect(screen.queryByText('Nhóm khách hàng')).not.toBeInTheDocument()
   })
 
+  it('có ô Nhà cung cấp bị khoá kèm nhãn Sắp hỗ trợ, trải đều bốn ô một hàng', () => {
+    renderSection({ ...merchantFlow, assignmentScope: 'ALL' })
+
+    const provider = screen.getByRole('combobox', {
+      name: 'Nhà cung cấp · Sắp hỗ trợ'
+    })
+    expect(provider).toBeDisabled()
+    expect(screen.getByText('Tất cả NCC')).toBeInTheDocument()
+    expect(provider.closest('.md\\:col-span-3')).not.toBeNull()
+  })
+
+  it('miền Bank cũ không có ô Nhà cung cấp', () => {
+    renderSection({
+      feeDomain: 'BANK',
+      serviceType: 'MERCHANT_VA_BILL_COLLECTION',
+      paymentMethod: ''
+    })
+
+    expect(screen.queryByText(/Nhà cung cấp/)).not.toBeInTheDocument()
+  })
+
   it('luồng ví giữ nhãn khách hàng và không có dòng gợi ý merchant', () => {
     renderSection({
       serviceType: 'EWALLET_DEPOSIT',
@@ -95,6 +116,9 @@ describe('AssignmentSection — thu hộ / chi hộ', () => {
 
     expect(screen.getByText('Tất cả khách hàng')).toBeInTheDocument()
     expect(screen.queryByText('Tất cả merchant')).not.toBeInTheDocument()
+    // Ô NCC của ví vẫn chọn được, không mang nhãn Sắp hỗ trợ.
+    expect(screen.getByRole('combobox', { name: 'Nhà cung cấp' })).toBeEnabled()
+    expect(screen.queryByText(/Sắp hỗ trợ/)).not.toBeInTheDocument()
     expect(screen.queryByText(PRIORITY_HINT)).not.toBeInTheDocument()
   })
 })

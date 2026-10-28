@@ -60,6 +60,9 @@ export const AssignmentSection = ({
   // Thu hộ / chi hộ chọn phạm vi theo merchant; miền Bank cũ giữ ô Merchant đứng riêng.
   const merchantFlow = isMerchantAssignmentFlow(feeDomain, serviceType)
   const showProvider = allowsProviderCriteria(serviceType)
+  // Backend phí chưa nhận NCC cho thu hộ / chi hộ: hiện ô khoá để báo trước, giá trị không được gửi
+  // vì `allowsProviderCriteria` loại các loại giao dịch này khỏi payload.
+  const showLockedProvider = merchantFlow && !showProvider
   const showBank = allowsBankCriteria(serviceType)
   const showOriginalType = allowsOriginalTypeCriteria(serviceType)
   // Báo giá hoàn tiền không nêu phương thức thanh toán nên bản gán có phương thức sẽ không bao giờ khớp;
@@ -68,7 +71,8 @@ export const AssignmentSection = ({
   // Chuyển ví chỉ có hai ô (phương thức, đối tượng); nạp/rút ví có thêm NCC nên đủ bốn ô một hàng.
   const isInternalTransfer = serviceType === 'EWALLET_TRANSFER_INTERNAL'
   // Phí hoàn tiền ẩn ô phương thức nên còn đúng bốn ô (NCC, loại giao dịch gốc, ngân hàng, đối tượng): một hàng.
-  const colSpan = showProvider
+  // Thu hộ / chi hộ có ô NCC khoá, ngân hàng, phương thức và đối tượng: cũng bốn ô một hàng.
+  const colSpan = showProvider || showLockedProvider
     ? 'md:col-span-3'
     : isInternalTransfer
       ? 'md:col-span-6'
@@ -160,6 +164,17 @@ export const AssignmentSection = ({
             optionFilterProp='label'
             options={providerOptions}
             disabled={readOnly}
+            className={`col-span-12 flex flex-col ${colSpan}`}
+          />
+        )}
+        {showLockedProvider && (
+          <FormSelect
+            name='providerCode'
+            control={control}
+            label='Nhà cung cấp · Sắp hỗ trợ'
+            placeholder='Tất cả NCC'
+            options={[]}
+            disabled
             className={`col-span-12 flex flex-col ${colSpan}`}
           />
         )}
