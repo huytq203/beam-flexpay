@@ -126,10 +126,48 @@ export const buildTransactionFlow = (record: FlowSource): TransactionFlow => {
   }
 }
 
+type DeductionSource = FlowSource & Pick<UnifiedContentJournal, 'from'>
+
+export interface FeeDeduction {
+  walletFee: number
+  bankFee: number
+  /** Chỉ chuyển tiền trong hệ thống: phí trừ ví tách riêng người chuyển / người nhận. */
+  walletSplit: { senderFee: number; receiverFee: number } | null
+}
+
+const bySource = (
+  record: DeductionSource,
+  fee: number
+): Omit<FeeDeduction, 'walletSplit'> =>
+  record.from?.type === 'BANK'
+    ? { walletFee: 0, bankFee: fee }
+    : { walletFee: fee, bankFee: 0 }
+
+/**
+ * Phí bị trừ ở đâu: chuyển tiền trong hệ thống luôn trừ ví hai bên; loại khác (nạp, rút, thanh toán,
+ * hoàn) xét nguồn tiền — nguồn là bank thì phí trừ bank, còn lại trừ ví.
+ */
+export const resolveFeeDeduction = (record: DeductionSource): FeeDeduction => {
+  const { senderFee, receiverFee } = resolveAmounts(
+    record,
+    resolveBearer(record.feeBearer)
+  )
+  if (record.transactionType === 'P2P_TRANSFER') {
+    return {
+      walletFee: senderFee + receiverFee,
+      bankFee: 0,
+      walletSplit: { senderFee, receiverFee }
+    }
+  }
+  return { ...bySource(record, senderFee + receiverFee), walletSplit: null }
+}
+
 export interface PersonalFlow
   extends Omit<TransactionFlow, 'senderFee' | 'receiverFee'> {
   /** Phí của chính chủ ví đang xem (người chuyển hoặc người nhận). */
   fee: number
+  walletFee: number
+  bankFee: number
 }
 
 /**
@@ -137,19 +175,23 @@ export interface PersonalFlow
  * (người nhận: phí nhận + số cộng ví; người chuyển: phí chuyển + số trừ ví).
  */
 export const buildPersonalFlow = (
-  record: FlowSource & Pick<UnifiedContentJournal, 'to'>,
+  record: DeductionSource & Pick<UnifiedContentJournal, 'to'>,
   viewerId: string | null | undefined
 ): PersonalFlow => {
   const flow = buildTransactionFlow(record)
   const { senderFee, receiverFee, ...rest } = flow
   if (record.transactionType !== 'P2P_TRANSFER') {
-    return { ...rest, fee: senderFee + receiverFee }
+    const fee = senderFee + receiverFee
+    return { ...rest, fee, ...bySource(record, fee) }
   }
   const amounts = resolveAmounts(record, resolveBearer(record.feeBearer))
   const isReceiver = Boolean(viewerId) && record.to?.id === viewerId
+  const fee = isReceiver ? receiverFee : senderFee
   return {
     principal: flow.principal,
-    fee: isReceiver ? receiverFee : senderFee,
+    fee,
+    walletFee: fee,
+    bankFee: 0,
     totals: {
       ...NO_TOTALS,
       walletCredit: isReceiver ? amounts.credited : 0,

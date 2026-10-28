@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import {
   buildPersonalFlow,
-  buildTransactionFlow
+  buildTransactionFlow,
+  resolveFeeDeduction
 } from '@utils/transaction-flow'
 
 type FlowInput = Parameters<typeof buildTransactionFlow>[0]
@@ -143,6 +144,7 @@ describe('buildPersonalFlow — lịch sử ví riêng', () => {
     feeBearer: 'BOTH',
     senderFeeAmount: 200_000,
     receiverFeeAmount: 100_000,
+    from: { id: 'sender', username: null, displayName: null, type: 'USER' },
     to: { id: 'receiver', username: null, displayName: null, type: 'USER' }
   }
 
@@ -150,7 +152,9 @@ describe('buildPersonalFlow — lịch sử ví riêng', () => {
     const flow = buildPersonalFlow(p2p, 'receiver')
     expect(flow).toMatchObject({
       principal: 1_000_000,
-      fee: 100_000
+      fee: 100_000,
+      walletFee: 100_000,
+      bankFee: 0
     })
     expect(flow.totals).toMatchObject({ walletCredit: 900_000, walletDebit: 0 })
   })
@@ -180,6 +184,63 @@ describe('buildPersonalFlow — lịch sử ví riêng', () => {
     expect(cashOut.totals).toMatchObject({
       walletDebit: 1_200_000,
       bankCredit: 1_000_000
+    })
+  })
+})
+
+describe('resolveFeeDeduction — cột Phí trừ ví / Phí trừ bank', () => {
+  const party = (type: string) => ({
+    id: null,
+    username: null,
+    displayName: null,
+    type
+  })
+
+  it('nạp tiền từ bank: phí vào Phí trừ bank', () => {
+    expect(
+      resolveFeeDeduction({
+        ...record({
+          transactionType: 'CASH_IN',
+          amount: 100_000,
+          grossAmount: 102_024,
+          feeAmount: 2024,
+          feeBearer: null
+        }),
+        from: party('BANK')
+      })
+    ).toEqual({ walletFee: 0, bankFee: 2024, walletSplit: null })
+  })
+
+  it('rút tiền từ ví: phí vào Phí trừ ví', () => {
+    expect(
+      resolveFeeDeduction({
+        ...record({
+          transactionType: 'CASH_OUT',
+          amount: 100_000,
+          grossAmount: 101_000,
+          feeAmount: 1000
+        }),
+        from: party('USER')
+      })
+    ).toEqual({ walletFee: 1000, bankFee: 0, walletSplit: null })
+  })
+
+  it('chuyển tiền: phí trừ ví tách riêng người chuyển / người nhận', () => {
+    expect(
+      resolveFeeDeduction({
+        ...record({
+          grossAmount: 1_200_000,
+          feeAmount: 300_000,
+          feeBearer: 'BOTH',
+          senderFeeAmount: 200_000,
+          receiverFeeAmount: 100_000
+        }),
+        from: party('USER')
+      })
+    ).toEqual({
+      walletFee: 300_000,
+      bankFee: 0,
+      walletSplit: { senderFee: 200_000, receiverFee: 100_000 }
     })
   })
 })

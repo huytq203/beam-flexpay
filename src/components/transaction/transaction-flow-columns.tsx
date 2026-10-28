@@ -3,12 +3,13 @@ import type { UnifiedContentJournal } from '@type/apiResponseJournal'
 import {
   buildPersonalFlow,
   buildTransactionFlow,
+  resolveFeeDeduction,
   type PersonalFlow,
   type TransactionFlow
 } from '@utils/transaction-flow'
-import { MoneyCell, type FlowTone } from './TransactionMoneyCell'
+import { MoneyCell, SplitFeeCell, type FlowTone } from './TransactionMoneyCell'
 
-type FlowRecord = Parameters<typeof buildTransactionFlow>[0] &
+type FlowRecord = Parameters<typeof resolveFeeDeduction>[0] &
   Pick<UnifiedContentJournal, 'currency'>
 
 const flowColumn = <T extends FlowRecord>(
@@ -27,13 +28,45 @@ const flowColumn = <T extends FlowRecord>(
   )
 })
 
+const walletFeeColumn = <T extends FlowRecord>(): ColumnType<T> => ({
+  title: 'Phí trừ ví',
+  align: 'right',
+  render: (_, record) => {
+    const { walletFee, walletSplit } = resolveFeeDeduction(record)
+    return walletSplit ? (
+      <SplitFeeCell
+        {...walletSplit}
+        currency={record.currency}
+      />
+    ) : (
+      <MoneyCell
+        amount={walletFee}
+        currency={record.currency}
+        tone='fee'
+      />
+    )
+  }
+})
+
+const bankFeeColumn = <T extends FlowRecord>(): ColumnType<T> => ({
+  title: 'Phí trừ bank',
+  align: 'right',
+  render: (_, record) => (
+    <MoneyCell
+      amount={resolveFeeDeduction(record).bankFee}
+      currency={record.currency}
+      tone='fee'
+    />
+  )
+})
+
 /** 7 cột số tiền theo bảng nghiệp vụ "Lịch sử chung", dùng chung cho mọi danh sách giao dịch. */
 export const transactionFlowColumns = <
   T extends FlowRecord
 >(): ColumnType<T>[] => [
   flowColumn('Giá trị giao dịch', 'principal', (flow) => flow.principal),
-  flowColumn('Phí người nhận', 'fee', (flow) => flow.receiverFee),
-  flowColumn('Phí người chuyển', 'fee', (flow) => flow.senderFee),
+  walletFeeColumn<T>(),
+  bankFeeColumn<T>(),
   flowColumn(
     'Tổng tiền trừ ví',
     'negative',
@@ -88,7 +121,8 @@ export const personalFlowColumns = <T extends PersonalRecord>(
     viewerId,
     (f) => f.principal
   ),
-  personalColumn('Phí giao dịch', 'fee', viewerId, (f) => f.fee),
+  personalColumn('Phí trừ ví', 'fee', viewerId, (f) => f.walletFee),
+  personalColumn('Phí trừ bank', 'fee', viewerId, (f) => f.bankFee),
   personalColumn(
     'Tổng tiền trừ ví',
     'negative',

@@ -32,3 +32,40 @@ export function MoneyCell({ amount, currency, tone }: MoneyCellProps) {
     </div>
   )
 }
+
+interface SplitFeeCellProps {
+  senderFee: number
+  receiverFee: number
+  currency: string
+}
+
+/** Phí trừ ví của chuyển tiền trong hệ thống: tách người chuyển / người nhận trong cùng một ô. */
+export function SplitFeeCell({
+  senderFee,
+  receiverFee,
+  currency
+}: SplitFeeCellProps) {
+  const rows = [
+    ['Người chuyển', senderFee],
+    ['Người nhận', receiverFee]
+  ] as const
+  return (
+    <dl className='flex flex-col items-end gap-1'>
+      {rows.map(([label, amount]) => (
+        <div
+          key={label}
+          className='flex items-baseline gap-2'
+        >
+          <dt className='whitespace-nowrap text-xs text-gray-500'>{label}</dt>
+          <dd>
+            <MoneyCell
+              amount={amount}
+              currency={currency}
+              tone='fee'
+            />
+          </dd>
+        </div>
+      ))}
+    </dl>
+  )
+}
