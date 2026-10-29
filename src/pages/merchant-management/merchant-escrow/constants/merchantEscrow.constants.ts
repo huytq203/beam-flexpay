@@ -1,0 +1,68 @@
+import type {
+  EscrowLedgerKind,
+  EscrowOrderStatus,
+  EscrowPieceStatus,
+  EscrowReturnReason,
+  EscrowRisk,
+  EscrowState
+} from '../types/merchantEscrow.types'
+
+// Nhãn lấy theo cột "Ý nghĩa" của spec FE-API-GAP-merchant-2026-10-22 §3.9–3.11.
+// Chưa có hằng loại chứng từ (ESCROW_DOCUMENT_TYPE): chờ BA chốt ở Task 5.
+
+export const ESCROW_STATE_LABEL: Record<EscrowState, string> = {
+  NOT_CONFIGURED: 'Chưa cấu hình',
+  SHORT: 'Thiếu',
+  MET: 'Đủ',
+  SURPLUS: 'Dư',
+  UNKNOWN: 'Chưa đọc được số dư'
+}
+
+export const ESCROW_RISK_LABEL: Record<EscrowRisk, string> = {
+  HIGH: 'Cao (dưới 30%)',
+  MEDIUM: 'Trung bình (30% đến dưới 80%)',
+  LOW: 'Thấp (từ 80%)'
+}
+
+export const ESCROW_ORDER_STATUS_LABEL: Record<EscrowOrderStatus, string> = {
+  PENDING_APPROVAL: 'Chờ duyệt',
+  RETURNED: 'Đã trả lại người lập',
+  APPROVING: 'Đã duyệt, đang ghi sổ',
+  APPROVED: 'Đã ghi sổ',
+  REJECTED: 'Bị từ chối',
+  CANCELLED: 'Đã hủy'
+}
+
+export const ESCROW_RETURN_REASON_LABEL: Record<EscrowReturnReason, string> = {
+  REQUIREMENT_REDUCED: 'Mức yêu cầu giảm',
+  CONTRACT_TERMINATED: 'Chấm dứt hợp đồng',
+  AGREEMENT_TO_END: 'Hai bên thỏa thuận chấm dứt ký quỹ',
+  OTHER: 'Khác'
+}
+
+export const ESCROW_LEDGER_KIND_LABEL: Record<EscrowLedgerKind, string> = {
+  DEPOSIT_TRANSFER: 'Nạp bằng chuyển khoản',
+  DEPOSIT_SUB_REVENUE: 'Nạp từ doanh thu của Sub',
+  WITHDRAWAL_SETOFF: 'Cấn trừ vào lệnh rút của Sub',
+  RETURN: 'Hoàn trả ký quỹ cho Merchant',
+  TERMINATION_DEDUCTION: 'Khấu trừ khi chấm dứt hợp tác',
+  ADJUSTMENT: 'Điều chỉnh'
+}
+
+export const ESCROW_PIECE_STATUS_LABEL: Record<EscrowPieceStatus, string> = {
+  RESERVING: 'Đang chờ giữ chỗ',
+  RESERVED: 'Đã giữ chỗ, chờ thực hiện',
+  SETTLING: 'Đang ghi có / chờ ngân hàng',
+  DONE: 'Hoàn tất',
+  TRANSFER_FAILED: 'Chuyển khoản lỗi, cần Kế toán xử lý',
+  RELEASING: 'Đang trả về ký quỹ',
+  RELEASED: 'Đã trả về ký quỹ',
+  CANCELLED: 'Đã hủy'
+}
+
+/** Tối đa chứng từ đính kèm mỗi lệnh. */
+export const ESCROW_MAX_DOCUMENTS = 5
+/** Dung lượng tối đa mỗi chứng từ: 10 MiB. */
+export const ESCROW_MAX_DOCUMENT_BYTES = 10_485_760
+/** Độ dài tối đa của mã tham chiếu chuyển khoản. */
+export const ESCROW_TRANSFER_REF_MAX = 50

@@ -119,7 +119,7 @@ export interface CredentialChangeBody {
   ipWhitelist?: string[]
 }
 
-type WithOtp<T> = T & { sensitiveOtp: SensitiveOtpConfirmation }
+export type WithOtp<T> = T & { sensitiveOtp: SensitiveOtpConfirmation }
 type WithId<T> = T & { id: string }
 
 /** Lệnh ghi gửi thử không kèm OTP để BE chạy hết kiểm tra nghiệp vụ trước. */
