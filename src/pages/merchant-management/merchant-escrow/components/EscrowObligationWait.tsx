@@ -6,6 +6,7 @@ import {
 } from '@/app/services/merchantEscrowApi'
 import { getApiErrorDetail } from '@/app/utils/api-error'
 import { ButtonComponent, feedback, InputNumber } from '@components/index'
+import { EscrowLoadError } from './EscrowLoadError'
 
 const MIN_DAYS = 1
 const MAX_DAYS = 365
@@ -52,6 +53,13 @@ export function EscrowObligationWait({ masterId }: { masterId: string }) {
         Số ngày phải chờ sau giao dịch cuối của Master trước khi được hoàn ký
         quỹ với lý do chấm dứt hợp đồng (từ {MIN_DAYS} đến {MAX_DAYS} ngày).
       </p>
+      {query.isError && (
+        <EscrowLoadError
+          error={query.error}
+          fallback='Không tải được số ngày chờ nghĩa vụ.'
+          onRetry={() => void query.refetch()}
+        />
+      )}
       <p className='text-sm'>
         Hiện tại: <strong className='tabular-nums'>{query.data ?? ''}</strong>{' '}
         ngày

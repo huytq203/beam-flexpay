@@ -495,6 +495,49 @@ describe('EscrowConfigProposalsPanel', { timeout: 30000 }, () => {
     expect(await screen.findByText('Phụ lục giảm mức')).toBeInTheDocument()
   })
 
+  it('dialog duyệt liệt kê từng trường đổi (tắt chuyển khoản, BLOCK -> WARN_ONLY) với nhãn tiếng Việt', async () => {
+    const user = userEvent.setup()
+    const current = config({
+      allowTransfer: true,
+      overdueAction: 'BLOCK_PAYMENTS'
+    })
+    const sameAmountProposal = config({
+      id: 'cfg-5',
+      version: 5,
+      approvalStatus: 'PENDING_APPROVAL',
+      allowTransfer: false,
+      allowSetoff: true,
+      overdueAction: 'WARN_ONLY',
+      reducesProtection: true,
+      reason: 'Nới điều kiện'
+    })
+    server.use(
+      http.get('*/merchant-escrows/config-proposals/pending', () =>
+        env([sameAmountProposal])
+      ),
+      http.get('*/merchant-escrows/master-1', () =>
+        env(escrowOverview({ current }))
+      )
+    )
+    renderWithStore(<EscrowConfigProposalsPanel />, [VIEW, APPROVE])
+    await user.click(await screen.findByRole('button', { name: 'Duyệt' }))
+    const dialog = await findDialog('Duyệt đề xuất cấu hình')
+    const table = await within(dialog).findByRole('table')
+    const body = within(table)
+    const transferRow = body
+      .getByText('Cho phép nạp bằng chuyển khoản')
+      .closest('tr')!
+    expect(transferRow).toHaveTextContent('Có')
+    expect(transferRow).toHaveTextContent('Không')
+    expect(transferRow).toHaveTextContent('Giảm bảo đảm')
+    const overdueRow = body.getByText('Xử lý khi quá hạn').closest('tr')!
+    expect(overdueRow).toHaveTextContent('Chặn thanh toán')
+    expect(overdueRow).toHaveTextContent('Chỉ cảnh báo')
+    expect(overdueRow).toHaveTextContent('Giảm bảo đảm')
+    // Mức tiền không đổi nên không được liệt kê.
+    expect(body.queryByText('Mức ký quỹ yêu cầu')).toBeNull()
+  })
+
   it('nút Duyệt ẩn với người không có MERCHANT_ESCROW_CONFIG:APPROVE', async () => {
     mockPending()
     renderWithStore(<EscrowConfigProposalsPanel />, [VIEW, UPDATE])

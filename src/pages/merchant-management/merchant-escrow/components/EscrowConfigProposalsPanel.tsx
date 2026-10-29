@@ -33,6 +33,7 @@ import {
   ESCROW_REQUIREMENT_MODE_LABEL
 } from '../constants/merchantEscrow.constants'
 import type { EscrowConfig } from '../types/merchantEscrow.types'
+import { EscrowProposalDiff } from './EscrowProposalDiff'
 
 const SCREEN = 'MERCHANT_ESCROW' as const
 
@@ -67,6 +68,8 @@ function ApproveDialog({
   const [approve] = useApproveEscrowConfigMutation()
   const { otp, begin } = useCredentialOtp<EscrowConfig>()
   const [note, setNote] = useState('')
+  // Cấu hình đang áp dụng để so; dùng chung cache overview với cột Master.
+  const { data: overview } = useGetEscrowOverviewQuery(proposal.masterId)
 
   const start = () =>
     void begin({
@@ -104,8 +107,19 @@ function ApproveDialog({
       <div className='flex flex-col gap-3'>
         <p className='text-sm'>
           Duyệt phiên bản {proposal.version}: mức yêu cầu{' '}
-          {formatCurrency(proposal.requiredAmount)} được áp dụng ngay.
+          {formatCurrency(proposal.requiredAmount)} được áp dụng ngay. Các tham
+          số thay đổi:
         </p>
+        {overview ? (
+          <EscrowProposalDiff
+            current={overview.current}
+            proposal={proposal}
+          />
+        ) : (
+          <p className='text-sm text-muted-foreground'>
+            Đang tải cấu hình đang áp dụng...
+          </p>
+        )}
         <div>
           <label
             className='mb-1 block text-sm font-medium'

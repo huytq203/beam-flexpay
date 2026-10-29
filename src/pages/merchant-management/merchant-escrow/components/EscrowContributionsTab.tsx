@@ -5,6 +5,7 @@ import { DateInput, Table } from '@components/index'
 import type { TableComponentProps } from '@components/ui/table-component/TableComponent'
 import { formatCurrency } from '@utils/formatNumber'
 import { ESCROW_CONTRIBUTION_FORM_LABEL } from '../constants/merchantEscrow.constants'
+import { EscrowLoadError } from './EscrowLoadError'
 import type {
   EscrowContributionForm,
   EscrowContributionRow
@@ -74,6 +75,13 @@ export function EscrowContributionsTab({ masterId }: { masterId: string }) {
           onChange={(value: Dayjs | null) => setAsOf(value)}
         />
       </div>
+      {query.isError && (
+        <EscrowLoadError
+          error={query.error}
+          fallback='Không tải được đóng góp của các Sub.'
+          onRetry={() => void query.refetch()}
+        />
+      )}
       <Table<EscrowContributionRow>
         columns={columns}
         dataSource={[...rows]}

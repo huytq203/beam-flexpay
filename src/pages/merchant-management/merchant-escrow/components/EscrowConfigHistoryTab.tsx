@@ -8,6 +8,10 @@ import {
   ESCROW_CONFIG_SOURCE_LABEL
 } from '../constants/merchantEscrow.constants'
 import type { EscrowConfig } from '../types/merchantEscrow.types'
+import { EscrowLoadError } from './EscrowLoadError'
+
+/** authorId cố định BE dùng cho thao tác do hệ thống tạo (job soát xét định kỳ). */
+const SYSTEM_AUTHOR_ID = '00000000-0000-0000-0000-000000000001'
 
 const columns: NonNullable<TableComponentProps<EscrowConfig>['columns']> = [
   { title: 'Phiên bản', dataIndex: 'version', width: 90, align: 'right' },
@@ -30,7 +34,12 @@ const columns: NonNullable<TableComponentProps<EscrowConfig>['columns']> = [
       <span className='tabular-nums'>{formatCurrency(r.requiredAmount)}</span>
     )
   },
-  { title: 'Người lập', dataIndex: 'authorId', width: 160 },
+  {
+    title: 'Người lập',
+    width: 160,
+    render: (_, r) =>
+      r.authorId === SYSTEM_AUTHOR_ID ? 'Hệ thống' : r.authorId
+  },
   { title: 'Người duyệt', dataIndex: 'approverId', width: 160 },
   {
     title: 'Ghi chú',
@@ -48,15 +57,24 @@ const columns: NonNullable<TableComponentProps<EscrowConfig>['columns']> = [
 export function EscrowConfigHistoryTab({ masterId }: { masterId: string }) {
   const query = useGetEscrowConfigHistoryQuery(masterId)
   return (
-    <Table<EscrowConfig>
-      columns={columns}
-      dataSource={[...(query.data ?? [])]}
-      loading={query.isFetching}
-      onRefresh={query.refetch}
-      pagination={false}
-      rowKey='id'
-      scroll={{ x: 'max-content' }}
-      size='small'
-    />
+    <div className='flex flex-col gap-3'>
+      {query.isError && (
+        <EscrowLoadError
+          error={query.error}
+          fallback='Không tải được lịch sử cấu hình.'
+          onRetry={() => void query.refetch()}
+        />
+      )}
+      <Table<EscrowConfig>
+        columns={columns}
+        dataSource={[...(query.data ?? [])]}
+        loading={query.isFetching}
+        onRefresh={query.refetch}
+        pagination={false}
+        rowKey='id'
+        scroll={{ x: 'max-content' }}
+        size='small'
+      />
+    </div>
   )
 }

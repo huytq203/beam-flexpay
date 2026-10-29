@@ -28,10 +28,12 @@ const Field = ({ label, value }: { label: string; value: string }) => (
  */
 export function EscrowStandingCard({ overview }: { overview: EscrowOverview }) {
   const unknown = overview.state === 'UNKNOWN'
-  const money = (value: number | null) =>
-    unknown || value === null
-      ? ESCROW_STATE_LABEL.UNKNOWN
-      : formatCurrency(value)
+  // Chỉ UNKNOWN mới là "không đọc được số dư". Các null còn lại là "không áp dụng": Master chưa
+  // cấu hình thì BE vẫn trả số dư nhưng thiếu/dư/% là null, mức yêu cầu 0 thì % là null.
+  const money = (value: number | null) => {
+    if (unknown) return ESCROW_STATE_LABEL.UNKNOWN
+    return value === null ? '—' : formatCurrency(value)
+  }
   const { current, pending } = overview
 
   return (
@@ -77,9 +79,11 @@ export function EscrowStandingCard({ overview }: { overview: EscrowOverview }) {
         <Field
           label='Tỷ lệ đạt'
           value={
-            unknown || overview.percent === null
+            unknown
               ? ESCROW_STATE_LABEL.UNKNOWN
-              : `${overview.percent}%`
+              : overview.percent === null
+                ? '—'
+                : `${overview.percent}%`
           }
         />
         <Field

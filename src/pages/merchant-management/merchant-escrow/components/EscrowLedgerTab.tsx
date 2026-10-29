@@ -6,7 +6,12 @@ import {
   useVerifyEscrowLedgerMutation
 } from '@/app/services/merchantEscrowApi'
 import { getApiErrorDetail } from '@/app/utils/api-error'
-import { ButtonComponent, feedback, Table } from '@components/index'
+import {
+  ButtonComponent,
+  DialogModal,
+  feedback,
+  Table
+} from '@components/index'
 import type { TableComponentProps } from '@components/ui/table-component/TableComponent'
 import { formatCurrency } from '@utils/formatNumber'
 import { formatUTCToLocalDateTime } from '@utils/helper-functions/date'
@@ -15,6 +20,7 @@ import type {
   EscrowLedgerEntry,
   EscrowVerification
 } from '../types/merchantEscrow.types'
+import { EscrowLoadError } from './EscrowLoadError'
 
 const DEFAULT_SIZE = 20
 
@@ -64,6 +70,7 @@ export function EscrowLedgerTab({ masterId }: { masterId: string }) {
   const [page, setPage] = useState(1)
   const [size, setSize] = useState(DEFAULT_SIZE)
   const [result, setResult] = useState<EscrowVerification>()
+  const [confirmingClear, setConfirmingClear] = useState(false)
   const query = useGetEscrowLedgerQuery({ masterId, page: page - 1, size })
   const [verify, verifying] = useVerifyEscrowLedgerMutation()
   const [clearBlock, clearing] = useClearEscrowReturnBlockMutation()
@@ -84,6 +91,7 @@ export function EscrowLedgerTab({ masterId }: { masterId: string }) {
     try {
       await clearBlock(masterId).unwrap()
       feedback.success('Đã gỡ chặn hoàn trả')
+      setConfirmingClear(false)
       setResult(undefined)
     } catch (error) {
       feedback.error(getApiErrorDetail(error, 'Không gỡ được chặn hoàn trả'))
@@ -122,26 +130,49 @@ export function EscrowLedgerTab({ masterId }: { masterId: string }) {
             Đóng góp khớp số dư: {result.contributionsMatch ? 'Có' : 'Không'}
           </p>
           {mismatch && (
-            <>
-              <p className='font-medium'>
-                Đóng góp không khớp số dư hoặc sổ bị đứt: hoàn trả đang bị chặn
-                cho đến khi kiểm tra xong.
-              </p>
-              <Can
-                screen='MERCHANT_ESCROW_DETAIL'
-                action='clearBlock'
-              >
-                <ButtonComponent
-                  className='mt-2'
-                  type='default'
-                  content='Gỡ chặn hoàn trả'
-                  loading={clearing.isLoading}
-                  onClick={() => void runClear()}
-                />
-              </Can>
-            </>
+            <p className='font-medium'>
+              Đóng góp không khớp số dư hoặc sổ bị đứt: hoàn trả đang bị chặn
+              cho đến khi kiểm tra xong.
+            </p>
           )}
+          {/* Nút luôn hiện sau mỗi lần kiểm tra, kể cả khi sổ đã sạch: BE tự chặn khi phát hiện
+              lệch nhưng KHÔNG tự gỡ khi verify sạch, và không có API đọc trạng thái chặn. Luồng
+              thật là lệch -> bị chặn -> kế toán điều chỉnh -> kiểm tra sạch -> cần gỡ tay. Nếu
+              ẩn nút lúc sạch thì Master kẹt chặn vĩnh viễn. Gỡ chặn là idempotent nên bấm khi
+              không bị chặn cũng vô hại. */}
+          <Can
+            screen='MERCHANT_ESCROW_DETAIL'
+            action='clearBlock'
+          >
+            <ButtonComponent
+              className='mt-2'
+              type='default'
+              content='Gỡ chặn hoàn trả'
+              loading={clearing.isLoading}
+              onClick={() => setConfirmingClear(true)}
+            />
+          </Can>
         </div>
+      )}
+      <DialogModal
+        open={confirmingClear}
+        title='Gỡ chặn hoàn trả'
+        okText='Xác nhận gỡ chặn'
+        okButtonProps={{ loading: clearing.isLoading }}
+        onOk={() => void runClear()}
+        onCancel={() => setConfirmingClear(false)}
+      >
+        <p className='text-sm'>
+          Nếu Master đang bị chặn lập lệnh hoàn trả do sổ lệch và sổ đã được xử
+          lý, gỡ chặn để cho phép lập lệnh hoàn trả.
+        </p>
+      </DialogModal>
+      {query.isError && (
+        <EscrowLoadError
+          error={query.error}
+          fallback='Không tải được sổ cái ký quỹ.'
+          onRetry={() => void query.refetch()}
+        />
       )}
       <Table<EscrowLedgerEntry>
         columns={buildColumns(showEventKey)}

@@ -165,7 +165,7 @@ export interface EscrowLedgerEntry {
   masterId: string
   seq: number
   kind: EscrowLedgerKind
-  eventKey: string
+  eventKey: string | null
   sourceType: string | null
   sourceId: string | null
   amountDelta: number

@@ -1,35 +1,10 @@
 import { DialogModal, TextArea } from '@components/index'
 import { formatCurrency } from '@utils/formatNumber'
-import {
-  ESCROW_OVERDUE_ACTION_LABEL,
-  ESCROW_REQUIREMENT_MODE_LABEL,
-  ESCROW_REVIEW_CYCLE_LABEL,
-  ESCROW_STATE_LABEL
-} from '../constants/merchantEscrow.constants'
+import { ESCROW_STATE_LABEL } from '../constants/merchantEscrow.constants'
+import { formatEscrowValue } from '../utils/escrowConfigDiff'
 import type { EscrowConfigPreview as Preview } from '../types/merchantEscrow.types'
 
-/** Các tham số BE trả giá trị là số tiền dạng chuỗi (`"50000000"`). */
-const MONEY_PARAMETERS = new Set([
-  'Mức ký quỹ yêu cầu',
-  'Mức tối thiểu',
-  'Mức tối đa'
-])
-
-const ENUM_LABEL: Record<string, string> = {
-  ...ESCROW_REQUIREMENT_MODE_LABEL,
-  ...ESCROW_REVIEW_CYCLE_LABEL,
-  ...ESCROW_OVERDUE_ACTION_LABEL,
-  true: 'Có',
-  false: 'Không'
-}
-
-/** BE trả giá trị cũ/mới là chuỗi thô (`"true"`, `"FIXED"`, số tiền); đổi sang nhãn đọc được. */
-const formatValue = (parameter: string, value: string | null): string => {
-  if (value === null) return '—'
-  if (MONEY_PARAMETERS.has(parameter) && /^-?\d+$/.test(value))
-    return formatCurrency(Number(value))
-  return ENUM_LABEL[value] ?? value
-}
+const formatValue = formatEscrowValue
 
 const money = (value: number | null) =>
   value === null ? ESCROW_STATE_LABEL.UNKNOWN : formatCurrency(value)

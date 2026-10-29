@@ -19,11 +19,18 @@ import {
 } from '../constants/merchantEscrow.constants'
 import type { EscrowConfig } from '../types/merchantEscrow.types'
 import { EscrowConfigForm } from './EscrowConfigForm'
+import { EscrowProposalDiff } from './EscrowProposalDiff'
 
 const SCREEN = 'MERCHANT_ESCROW_DETAIL' as const
 
 /** Thông tin đề xuất đang chờ duyệt của Master và nút rút lại đề xuất. */
-function PendingProposal({ pending }: { pending: EscrowConfig }) {
+function PendingProposal({
+  pending,
+  current
+}: {
+  pending: EscrowConfig
+  current: EscrowConfig | null
+}) {
   const [cancelProposal, { isLoading }] = useCancelEscrowConfigMutation()
   const [confirming, setConfirming] = useState(false)
 
@@ -76,6 +83,12 @@ function PendingProposal({ pending }: { pending: EscrowConfig }) {
         <dt className='text-muted-foreground'>Ngày đề xuất</dt>
         <dd>{formatUTCToLocalDateTime(pending.createdAt)}</dd>
       </dl>
+      <div className='mt-3'>
+        <EscrowProposalDiff
+          current={current}
+          proposal={pending}
+        />
+      </div>
       <DialogModal
         open={confirming}
         title='Hủy đề xuất cấu hình'
@@ -126,7 +139,12 @@ export function EscrowConfigPanel({ masterId }: { masterId: string }) {
         )}
       </header>
       <div className='flex flex-col gap-3'>
-        {pending && <PendingProposal pending={pending} />}
+        {pending && (
+          <PendingProposal
+            pending={pending}
+            current={current}
+          />
+        )}
         {pending && !editing && (
           <Can
             screen={SCREEN}

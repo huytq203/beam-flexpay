@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
 import { Route, Routes } from 'react-router-dom'
+import { findDialog } from '../../merchant-gateway/key-connection/test/keyConnection.setup'
+import { within } from '@testing-library/react'
 import { PERMISSION } from '@/app/permissions'
 import { server } from '@/test/mocks/server'
 import EscrowDetailPage from '../pages/EscrowDetailPage'
@@ -90,6 +92,123 @@ describe('EscrowDetailPage', { timeout: 30000 }, () => {
       (await screen.findAllByText('Chưa đọc được số dư')).length
     ).toBeGreaterThan(0)
     expect(screen.queryByText(/^0\s*₫$/)).not.toBeInTheDocument()
+    // Ô "Số dư ký quỹ" phải đúng là ô mang nhãn UNKNOWN.
+    const balanceCell = screen.getByText('Số dư ký quỹ').nextElementSibling
+    expect(balanceCell).toHaveTextContent('Chưa đọc được số dư')
+  })
+
+  it('Master chưa cấu hình: có số dư, thiếu/dư/tỷ lệ null thì hiện "—" chứ không phải "Chưa đọc được số dư"', async () => {
+    mockBase(
+      escrowOverview({
+        state: 'NOT_CONFIGURED',
+        requiredAmount: 0,
+        balance: 10_000_000,
+        shortfall: null,
+        surplus: null,
+        percent: null
+      })
+    )
+    renderPage([VIEW])
+    const balanceCell = (await screen.findByText('Số dư ký quỹ'))
+      .nextElementSibling
+    expect(balanceCell).toHaveTextContent(/10\.000\.000\s*₫/)
+    expect(screen.queryByText('Chưa đọc được số dư')).not.toBeInTheDocument()
+    expect(screen.getByText('Còn thiếu').nextElementSibling).toHaveTextContent(
+      '—'
+    )
+    expect(screen.getByText('Tỷ lệ đạt').nextElementSibling).toHaveTextContent(
+      '—'
+    )
+  })
+
+  it('verify sạch vẫn hiện nút Gỡ chặn hoàn trả: bấm, xác nhận trong dialog rồi gửi POST clear', async () => {
+    mockBase(escrowOverview(), [ledgerEntry()])
+    let cleared = false
+    server.use(
+      http.post('*/merchant-escrows/master-1/ledger/verify', () =>
+        env({
+          continuous: true,
+          breaks: [],
+          balance: 10_000_000,
+          contributionTotal: 10_000_000,
+          contributionsMatch: true
+        })
+      ),
+      http.post('*/merchant-escrows/master-1/return-block/clear', () => {
+        cleared = true
+        return env(null)
+      })
+    )
+    const user = userEvent.setup()
+    renderPage([VIEW, ORDER_APPROVE])
+    await user.click(await screen.findByText('Sổ cái'))
+    await user.click(await screen.findByRole('button', { name: 'Kiểm tra sổ' }))
+    await user.click(
+      await screen.findByRole('button', { name: 'Gỡ chặn hoàn trả' })
+    )
+    const dialog = await findDialog('Gỡ chặn hoàn trả')
+    expect(
+      within(dialog).getByText(/Nếu Master đang bị chặn lập lệnh hoàn trả/)
+    ).toBeInTheDocument()
+    expect(cleared).toBe(false)
+    await user.click(
+      within(dialog).getByRole('button', { name: /Xác nhận gỡ chặn/ })
+    )
+    await waitFor(() => expect(cleared).toBe(true))
+  })
+
+  it('sổ cái trả 500 thì hiện cảnh báo kèm nút Thử lại', async () => {
+    mockBase(escrowOverview())
+    server.use(
+      http.get('*/merchant-escrows/master-1/ledger', () =>
+        HttpResponse.json(
+          {
+            success: false,
+            message: 'x',
+            status: '0',
+            detail: 'Lỗi máy chủ sổ cái'
+          },
+          { status: 500 }
+        )
+      )
+    )
+    const user = userEvent.setup()
+    renderPage([VIEW])
+    await user.click(await screen.findByText('Sổ cái'))
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent(/Lỗi máy chủ sổ cái|Không tải được sổ cái/)
+    expect(
+      within(alert).getByRole('button', { name: 'Thử lại' })
+    ).toBeInTheDocument()
+  })
+
+  it('Lịch sử cấu hình: authorId hệ thống hiện "Hệ thống"', async () => {
+    mockBase(escrowOverview())
+    server.use(
+      http.get('*/merchant-escrows/master-1/config-history', () =>
+        env([
+          {
+            id: 'c1',
+            masterId: 'master-1',
+            version: 1,
+            approvalStatus: 'APPROVED',
+            source: 'REVIEW',
+            requirementMode: 'FIXED',
+            requiredAmount: 1,
+            allowTransfer: true,
+            allowSetoff: false,
+            deadlineDays: 30,
+            reminderDays: 7,
+            authorId: '00000000-0000-0000-0000-000000000001',
+            createdAt: '2026-10-20T03:00:00Z'
+          }
+        ])
+      )
+    )
+    const user = userEvent.setup()
+    renderPage([VIEW])
+    await user.click(await screen.findByText('Lịch sử cấu hình'))
+    expect(await screen.findByText('Hệ thống')).toBeInTheDocument()
   })
 
   it('verify lệch đóng góp thì cảnh báo và hiện nút Gỡ chặn hoàn trả cho người có quyền', async () => {
