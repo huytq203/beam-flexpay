@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
+import type { EscrowConfig } from '../../types/merchantEscrow.types'
 import {
   escrowConfigSchema,
+  toEscrowConfigFormValues,
   toEscrowConfigRequest,
   type EscrowConfigFormValues
 } from '../escrowConfig.schema'
@@ -144,5 +146,29 @@ describe('toEscrowConfigRequest', () => {
       overdueAction: 'WARN_ONLY',
       reason: 'Phụ lục'
     })
+  })
+})
+
+describe('toEscrowConfigFormValues', () => {
+  const base = { requirementMode: 'FIXED', requiredAmount: 0 } as EscrowConfig
+
+  it('cờ xác nhận cũ còn sót khi cấn trừ đang tắt thì không tick sẵn', () => {
+    expect(
+      toEscrowConfigFormValues({
+        ...base,
+        allowSetoff: false,
+        setoffAcknowledged: true
+      }).setoffAcknowledged
+    ).toBe(false)
+  })
+
+  it('cấn trừ đang bật thì giữ xác nhận', () => {
+    expect(
+      toEscrowConfigFormValues({
+        ...base,
+        allowSetoff: true,
+        setoffAcknowledged: true
+      }).setoffAcknowledged
+    ).toBe(true)
   })
 })

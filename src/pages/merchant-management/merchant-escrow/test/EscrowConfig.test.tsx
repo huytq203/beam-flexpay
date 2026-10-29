@@ -253,6 +253,90 @@ describe('EscrowConfigPanel', { timeout: 30000 }, () => {
     )
   })
 
+  it('cờ xác nhận cấn trừ cũ không được tick sẵn: bật lại cấn trừ phải tick mới gửi được', async () => {
+    const user = userEvent.setup()
+    mockOverview(
+      escrowOverview({
+        current: config({ allowSetoff: false, setoffAcknowledged: true })
+      })
+    )
+    let requests = 0
+    server.use(
+      http.post('*/merchant-escrows/master-1/config-preview', () => {
+        requests += 1
+        return env(preview())
+      }),
+      http.post('*/merchant-escrows/master-1/config/otp-challenge', () => {
+        requests += 1
+        return env(CHALLENGE)
+      })
+    )
+    renderWithStore(<EscrowConfigPanel masterId='master-1' />, [VIEW, UPDATE])
+    await user.click(
+      await screen.findByRole('button', { name: 'Sửa cấu hình' })
+    )
+    await user.click(
+      screen.getByRole('checkbox', { name: 'Cho phép cấn trừ tại lệnh rút' })
+    )
+    expect(
+      screen.getByRole('checkbox', {
+        name: 'Đã đọc cảnh báo hệ quả của việc cấn trừ tại lệnh rút'
+      })
+    ).not.toBeChecked()
+    await user.click(screen.getByRole('button', { name: 'Xem trước và lưu' }))
+
+    expect(
+      await screen.findByText(
+        'Cần xác nhận đã đọc cảnh báo hệ quả của việc cấn trừ tại lệnh rút trước khi lưu'
+      )
+    ).toBeInTheDocument()
+    expect(requests).toBe(0)
+  })
+
+  it('BE thật: preview 400 vì thiếu lý do giảm bảo đảm → nhập "Lý do thay đổi" rồi xem trước lại thành công', async () => {
+    const user = userEvent.setup()
+    mockOverview(escrowOverview({ current: config() }))
+    const reasons: unknown[] = []
+    server.use(
+      http.post(
+        '*/merchant-escrows/master-1/config-preview',
+        async ({ request }) => {
+          const body = (await request.json()) as { reason: string }
+          reasons.push(body.reason)
+          if (!body.reason)
+            return apiError(
+              'MERCHANT_ESCROW_CONFIG_INVALID',
+              'Thay đổi làm giảm mức bảo đảm phải ghi lý do',
+              400
+            )
+          return env(
+            preview({
+              requiredAmount: 30_000_000,
+              reducesProtection: true,
+              needsApproval: true
+            })
+          )
+        }
+      )
+    )
+    renderWithStore(<EscrowConfigPanel masterId='master-1' />, [VIEW, UPDATE])
+    await openEditorAndSetAmount(user, '30000000')
+    expect(
+      await screen.findByText('Thay đổi làm giảm mức bảo đảm phải ghi lý do')
+    ).toBeInTheDocument()
+
+    await user.type(
+      screen.getByLabelText(/Lý do thay đổi/),
+      'Merchant đã ký phụ lục'
+    )
+    await user.click(screen.getByRole('button', { name: 'Xem trước và lưu' }))
+    const dialog = await findDialog('Xem trước thay đổi cấu hình')
+    expect(
+      within(dialog).getByText('Thay đổi này cần người duyệt')
+    ).toBeInTheDocument()
+    expect(reasons).toEqual(['', 'Merchant đã ký phụ lục'])
+  })
+
   it('đề xuất đang chờ: người có update thấy Hủy đề xuất, gửi POST cancel', async () => {
     const user = userEvent.setup()
     vi.spyOn(feedback, 'success').mockImplementation(() => {})

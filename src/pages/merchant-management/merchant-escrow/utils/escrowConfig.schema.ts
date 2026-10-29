@@ -137,10 +137,10 @@ export const toEscrowConfigFormValues = (
   reviewCycle: current?.reviewCycle ?? '',
   allowTransfer: current?.allowTransfer ?? false,
   allowSetoff: current?.allowSetoff ?? false,
-  // Cấn trừ đã bật từ trước thì người cấu hình đã xác nhận hệ quả lúc bật (BE cũng miễn).
-  setoffAcknowledged: Boolean(
-    current?.allowSetoff || current?.setoffAcknowledged
-  ),
+  // Chỉ coi là đã xác nhận khi cấu hình đang áp dụng ĐANG bật cấn trừ (BE cũng chỉ miễn lúc đó).
+  // Cờ `setoffAcknowledged` còn sót từ phiên bản cũ đã tắt cấn trừ không được dùng: bật lại cấn
+  // trừ phải tick xác nhận lần nữa.
+  setoffAcknowledged: current?.allowSetoff ?? false,
   deadlineDays: current?.deadlineDays ?? null,
   reminderDays: current?.reminderDays ?? null,
   overdueAction: current?.overdueAction ?? '',
