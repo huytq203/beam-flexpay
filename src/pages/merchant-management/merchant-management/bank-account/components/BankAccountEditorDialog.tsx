@@ -1,6 +1,7 @@
 import type { BankAccountDto } from '@/app/services/merchantBankAccountApi'
 import { DialogModal, type PickedEntity } from '@components/index'
 import { useBankAccountEditor } from '../hooks/useBankAccountEditor'
+import { isMasterAccount } from '../utils/bankAccount.utils'
 import { BankAccountFormFields } from './BankAccountFormFields'
 import { BankAccountFormSection } from './BankAccountFormSection'
 import { BankAccountNotice } from './BankAccountNotice'
@@ -69,6 +70,10 @@ export function BankAccountEditorDialog({
             isCreate={isCreate}
             draft={editor.draft}
             isDefault={editor.isDefault}
+            // Tạo mới: chưa chọn Sub là TK Master. Sửa: theo TK đang sửa.
+            showHolderNameExemption={
+              row === null ? !editor.subMerchant : isMasterAccount(row)
+            }
             onPatch={editor.patch}
             onDefaultChange={editor.setIsDefault}
           />

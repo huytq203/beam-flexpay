@@ -74,5 +74,27 @@ describe('BankAccount API', () => {
     await user.type(screen.getByLabelText('Mã OTP'), '123456')
     await user.click(screen.getByRole('button', { name: 'Xác nhận' }))
     await waitFor(() => expect(createdBody).toMatchObject({ merchantId: 'merchant-1', bankCode: 'VCB', accountName: 'CÔNG TY A', otp: { otpSessionId: 'session-1', otp: '123456' } }))
+    expect(createdBody).not.toHaveProperty('allowDifferentHolderName')
+  })
+
+  it('TK Master tích "dùng tên khác pháp nhân" thì gửi allowDifferentHolderName=true', async () => {
+    let createdBody: unknown
+    server.use(
+      http.post('*/sensitive-operations/otp-challenge', () => HttpResponse.json({ data: { otpSessionId: 'session-1', maskedRecipient: '******5678', expiresInSeconds: 180, canResendAfterSeconds: 30 }, success: true })),
+      http.post('*/merchant-bank-accounts', async ({ request }) => { createdBody = await request.json(); return HttpResponse.json({ data: {}, success: true }) })
+    )
+    const user = userEvent.setup()
+    renderPage([PERMISSION.MERCHANT_BANK_ACCOUNT_VIEW, PERMISSION.MERCHANT_BANK_ACCOUNT_MANAGE])
+    await screen.findByText('Công ty A')
+    await user.click(screen.getByRole('button', { name: /Thêm tài khoản/ }))
+    await user.click(screen.getByRole('combobox', { name: 'Ngân hàng' }))
+    await user.click(await screen.findByText('Vietcombank (VCB)'))
+    await user.type(screen.getByLabelText(/^Số tài khoản/), '0071000124821')
+    await user.type(screen.getByLabelText(/^Tên chủ tài khoản/), 'Nguyen Van B')
+    await user.click(screen.getByRole('checkbox', { name: /tên khác tên pháp nhân/ }))
+    await user.click(within(screen.getByRole('dialog', { name: 'Thêm tài khoản ngân hàng' })).getByRole('button', { name: 'Thêm mới' }))
+    await user.type(await screen.findByLabelText('Mã OTP'), '123456')
+    await user.click(screen.getByRole('button', { name: 'Xác nhận' }))
+    await waitFor(() => expect(createdBody).toMatchObject({ merchantId: 'merchant-1', accountName: 'NGUYEN VAN B', allowDifferentHolderName: true }))
   })
 })
