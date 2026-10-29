@@ -6,7 +6,8 @@ export const apiFeePaymentPartner = apiFeeService.injectEndpoints({
   endpoints: (build) => ({
     getPaymentPartners: build.query<FeePaymentPartner[], void>({
       query: () => ({ url: `/fee/payment-partners`, method: 'GET' }),
-      transformResponse: (res: ResponseType<FeePaymentPartner[]>) => res.data
+      transformResponse: (res: ResponseType<FeePaymentPartner[]>) => res.data,
+      extraOptions: { suppressGlobalLoading: true }
     })
   })
 })

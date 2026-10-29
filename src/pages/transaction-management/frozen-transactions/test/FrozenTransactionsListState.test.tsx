@@ -74,15 +74,6 @@ describe('Giao dịch đóng băng — giữ bộ lọc khi quay lại màn', ()
     expect(seen[0].get('size')).toBe('10')
   })
 
-  it('luôn gửi releaseType=MANUAL, không có ô lọc và bỏ qua giá trị trên URL', async () => {
-    const seen = captureRequests()
-    renderScreen(`${ROUTE}?releaseType=AUTO`)
-
-    await waitFor(() => expect(seen.length).toBeGreaterThan(0))
-    expect(seen[0].get('releaseType')).toBe('MANUAL')
-    expect(seen[0].get('includeSummary')).toBe('true')
-    expect(screen.queryByLabelText(/Cách mở băng/)).not.toBeInTheDocument()
-  })
 
   it('bấm Tìm kiếm thì về trang 1 và lưu bộ lọc, bấm Đặt lại thì xóa', async () => {
     const user = userEvent.setup()

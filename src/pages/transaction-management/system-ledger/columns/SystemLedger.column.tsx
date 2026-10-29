@@ -1,7 +1,7 @@
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import WalletLink from '@components/wallet-link/WalletLink'
-import { MaskText, TooltipComponent, TypographyText } from '@components/index'
+import { MaskText, TypographyText } from '@components/index'
 import { formatNumber } from '@utils/formatNumber'
 import {
   DirectionConstants,
@@ -16,24 +16,18 @@ const renderTransaction = (record: LedgerRow) => {
   if (!record.isJournalStart) return null
   const code = record.transaction?.transactionCode
   if (!code) return EMPTY
-  const id = record.transaction?.id
   const type = record.transactionType
 
   return (
     <div className='flex flex-col gap-0.5'>
-      <span className='font-semibold text-foreground'>{code}</span>
+      <span className='inline-flex items-center gap-1 font-semibold text-foreground'>
+        {code}
+        <TypographyText copyable={{ text: code }} />
+      </span>
       {type && (
         <span className='text-xs text-secondary-foreground'>
           {getLedgerTransactionTypeLabel(type)}
         </span>
-      )}
-      {id && (
-        <TooltipComponent title={id}>
-          <span className='inline-flex max-w-45 items-center gap-1 text-xs text-muted-foreground'>
-            <span className='truncate'>{id}</span>
-            <TypographyText copyable={{ text: id }} />
-          </span>
-        </TooltipComponent>
       )}
     </div>
   )

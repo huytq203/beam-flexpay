@@ -35,8 +35,8 @@ interface FeeComponentListProps {
 }
 
 const ADD_LABEL: Readonly<Record<FeeScope, string>> = {
-  OUTPUT_FEE: 'Thêm phí đầu ra',
-  INPUT_COST: 'Thêm phí đầu vào'
+  OUTPUT_FEE: 'Thêm thành phần phí',
+  INPUT_COST: 'Thêm thành phần phí'
 }
 
 const EMPTY_LABEL: Readonly<Record<FeeScope, string>> = {

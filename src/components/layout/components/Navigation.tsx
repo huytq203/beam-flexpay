@@ -258,7 +258,7 @@ const transactionManagement: ItemTypeCustom = {
           color={COlOR}
         />
       ),
-      label: 'Quản lý giao dịch'
+      label: 'Danh sách giao dịch'
     },
     {
       key: 'frozen-transactions',

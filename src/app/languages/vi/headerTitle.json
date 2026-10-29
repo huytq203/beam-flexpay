@@ -114,7 +114,7 @@
     "/secure-panel/role-v2/audit-log":"Nhật ký hệ thống",
 
     "/secure-panel/wallet-administration/e-walletManagement": "Quản lý ví điện tử",
-    "/secure-panel/transaction-management/transaction-wallet": "Quản lý giao dịch",
+    "/secure-panel/transaction-management/transaction-wallet": "Danh sách giao dịch",
     "/secure-panel/transaction-management/transaction-wallet/*": "Chi tiết giao dịch ",
     "/secure-panel/wallet-administration/confirm-eKYC": "Duyệt eKYC",
     "/secure-panel/wallet-administration/e-walletManagement/*": "Chi tiết ví điện tử",
