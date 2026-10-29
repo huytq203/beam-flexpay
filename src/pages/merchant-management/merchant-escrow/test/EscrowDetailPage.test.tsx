@@ -8,6 +8,8 @@ import { server } from '@/test/mocks/server'
 import EscrowDetailPage from '../pages/EscrowDetailPage'
 import { escrowOverview, renderWithStore } from './escrow.setup'
 import type {
+  EscrowConfig,
+  EscrowContributionRow,
   EscrowLedgerEntry,
   EscrowOverview
 } from '../types/merchantEscrow.types'
@@ -174,5 +176,71 @@ describe('EscrowDetailPage', { timeout: 30000 }, () => {
       await screen.findByText('Số ngày chờ nghĩa vụ phải từ 1 đến 365')
     ).toBeInTheDocument()
     expect(puts).toBe(0)
+  })
+
+  it('Đóng góp: đủ ba cột hình thức tiếng Việt và số tiền từng Sub', async () => {
+    mockBase(escrowOverview())
+    const row: EscrowContributionRow = {
+      subMerchantId: 's1',
+      subCode: 'SUB01',
+      subName: 'Sub một',
+      amount: 7_000_000,
+      byForm: { TRANSFER: 5_000_000, SUB_REVENUE: 2_000_000 }
+    }
+    server.use(
+      http.get('*/merchant-escrows/master-1/contributions', () => env([row]))
+    )
+    const user = userEvent.setup()
+    renderPage([VIEW])
+    await user.click(await screen.findByRole('tab', { name: 'Đóng góp' }))
+    for (const h of ['Chuyển khoản', 'Từ doanh thu Sub', 'Cấn trừ lệnh rút'])
+      expect((await screen.findAllByText(h)).length).toBeGreaterThan(0)
+    expect(await screen.findByText(/5\.000\.000\s*₫/)).toBeInTheDocument()
+    expect(screen.getByText(/7\.000\.000\s*₫/)).toBeInTheDocument()
+  })
+
+  it('Đóng góp: chọn 28/10/2026 gửi asOf = cuối ngày giờ VN đổi sang UTC', async () => {
+    mockBase(escrowOverview())
+    const asOfs: (string | null)[] = []
+    server.use(
+      http.get('*/merchant-escrows/master-1/contributions', ({ request }) => {
+        asOfs.push(new URL(request.url).searchParams.get('asOf'))
+        return env([])
+      })
+    )
+    const user = userEvent.setup()
+    renderPage([VIEW])
+    await user.click(await screen.findByRole('tab', { name: 'Đóng góp' }))
+    await user.type(
+      await screen.findByLabelText('Tính đến hết ngày'),
+      '28/10/2026{Enter}'
+    )
+    await waitFor(() => expect(asOfs).toContain('2026-10-28T16:59:59.999Z'))
+  })
+
+  it('Lịch sử cấu hình: hiện nhãn trạng thái và nguồn theo đặc tả', async () => {
+    mockBase(escrowOverview())
+    const cfg = {
+      id: 'c1',
+      masterId: 'master-1',
+      version: 2,
+      approvalStatus: 'APPROVED',
+      source: 'REVIEW',
+      requiredAmount: 50_000_000,
+      reason: 'Soát xét quý',
+      createdAt: '2026-10-01T00:00:00Z'
+    } as EscrowConfig
+    server.use(
+      http.get('*/merchant-escrows/master-1/config-history', () => env([cfg]))
+    )
+    const user = userEvent.setup()
+    renderPage([VIEW])
+    await user.click(
+      await screen.findByRole('tab', { name: 'Lịch sử cấu hình' })
+    )
+    expect(await screen.findByText('Đã áp dụng')).toBeInTheDocument()
+    expect(
+      screen.getByText('Do job soát xét định kỳ đề xuất')
+    ).toBeInTheDocument()
   })
 })

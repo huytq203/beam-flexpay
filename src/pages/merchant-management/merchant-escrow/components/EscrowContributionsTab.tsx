@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import type { Dayjs } from 'dayjs'
+import dayjs, { type Dayjs } from 'dayjs'
 import { useGetEscrowContributionsQuery } from '@/app/services/merchantEscrowApi'
 import { DateInput, Table } from '@components/index'
 import type { TableComponentProps } from '@components/ui/table-component/TableComponent'
 import { formatCurrency } from '@utils/formatNumber'
-import { ESCROW_LEDGER_KIND_LABEL } from '../constants/merchantEscrow.constants'
+import { ESCROW_CONTRIBUTION_FORM_LABEL } from '../constants/merchantEscrow.constants'
 import type {
-  EscrowContributionRow,
-  EscrowLedgerKind
+  EscrowContributionForm,
+  EscrowContributionRow
 } from '../types/merchantEscrow.types'
 
 const money = (value: number) => (
@@ -21,15 +21,20 @@ type Columns = NonNullable<
 /** Đóng góp của từng Sub vào ký quỹ Master, tách theo hình thức nạp (`byForm`). */
 export function EscrowContributionsTab({ masterId }: { masterId: string }) {
   const [asOf, setAsOf] = useState<Dayjs | null>(null)
-  // BE nhận ISO-8601 UTC (sai định dạng thì 500): lấy cuối ngày đã chọn để "tính đến hết ngày".
+  // BE nhận ISO-8601 UTC (sai định dạng thì 500). "Hết ngày" tính theo giờ Việt Nam (UTC+7,
+  // không có giờ mùa hè) dù trình duyệt đang ở múi giờ nào, nên ghép chuỗi có offset +07:00.
   const query = useGetEscrowContributionsQuery({
     masterId,
-    asOf: asOf ? asOf.endOf('day').toISOString() : undefined
+    asOf: asOf
+      ? dayjs(`${asOf.format('YYYY-MM-DD')}T23:59:59.999+07:00`).toISOString()
+      : undefined
   })
   const rows = query.data ?? []
 
-  // Các hình thức có mặt trong dữ liệu quyết định cột động.
-  const forms = Array.from(new Set(rows.flatMap((r) => Object.keys(r.byForm))))
+  // Ba hình thức cố định để bảng rỗng vẫn có đủ cột.
+  const forms = Object.keys(
+    ESCROW_CONTRIBUTION_FORM_LABEL
+  ) as EscrowContributionForm[]
   const columns: Columns = [
     {
       title: 'Sub-merchant',
@@ -38,7 +43,7 @@ export function EscrowContributionsTab({ masterId }: { masterId: string }) {
         row.subCode ? `${row.subCode} - ${row.subName ?? ''}` : 'Không gắn Sub'
     },
     ...forms.map((form) => ({
-      title: ESCROW_LEDGER_KIND_LABEL[form as EscrowLedgerKind] ?? form,
+      title: ESCROW_CONTRIBUTION_FORM_LABEL[form],
       align: 'right' as const,
       width: 180,
       render: (_: unknown, row: EscrowContributionRow) =>

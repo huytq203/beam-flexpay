@@ -21,7 +21,7 @@ const DEFAULT_SIZE = 20
 type Columns = NonNullable<TableComponentProps<EscrowLedgerEntry>['columns']>
 
 const buildColumns = (showEventKey: boolean): Columns => [
-  { title: 'Seq', dataIndex: 'seq', width: 70, align: 'right' },
+  { title: 'STT', dataIndex: 'seq', width: 70, align: 'right' },
   {
     title: 'Loại',
     width: 240,

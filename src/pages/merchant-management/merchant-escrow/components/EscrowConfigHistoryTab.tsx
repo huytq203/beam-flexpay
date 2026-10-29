@@ -3,32 +3,24 @@ import { Table } from '@components/index'
 import type { TableComponentProps } from '@components/ui/table-component/TableComponent'
 import { formatCurrency } from '@utils/formatNumber'
 import { formatUTCToLocalDateTime } from '@utils/helper-functions/date'
+import {
+  ESCROW_CONFIG_APPROVAL_LABEL,
+  ESCROW_CONFIG_SOURCE_LABEL
+} from '../constants/merchantEscrow.constants'
 import type { EscrowConfig } from '../types/merchantEscrow.types'
-
-// Trạng thái duyệt/nguồn là chuỗi tự do ở BE: nhãn biết trước thì dịch, còn lại giữ nguyên.
-const APPROVAL_LABEL: Record<string, string> = {
-  PENDING_APPROVAL: 'Chờ duyệt',
-  APPROVED: 'Đã duyệt',
-  REJECTED: 'Bị từ chối',
-  CANCELLED: 'Đã hủy',
-  SUPERSEDED: 'Đã bị thay thế'
-}
-const SOURCE_LABEL: Record<string, string> = {
-  MANUAL: 'Thủ công',
-  REVIEW: 'Rà soát định kỳ'
-}
 
 const columns: NonNullable<TableComponentProps<EscrowConfig>['columns']> = [
   { title: 'Phiên bản', dataIndex: 'version', width: 90, align: 'right' },
   {
     title: 'Trạng thái duyệt',
     width: 140,
-    render: (_, r) => APPROVAL_LABEL[r.approvalStatus] ?? r.approvalStatus
+    render: (_, r) =>
+      ESCROW_CONFIG_APPROVAL_LABEL[r.approvalStatus] ?? r.approvalStatus
   },
   {
     title: 'Nguồn',
     width: 130,
-    render: (_, r) => SOURCE_LABEL[r.source] ?? r.source
+    render: (_, r) => ESCROW_CONFIG_SOURCE_LABEL[r.source] ?? r.source
   },
   {
     title: 'Mức yêu cầu',

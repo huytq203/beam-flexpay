@@ -1,4 +1,7 @@
 import type {
+  EscrowConfigApprovalStatus,
+  EscrowConfigSource,
+  EscrowContributionForm,
   EscrowLedgerKind,
   EscrowOrderStatus,
   EscrowPieceStatus,
@@ -66,3 +69,28 @@ export const ESCROW_MAX_DOCUMENTS = 5
 export const ESCROW_MAX_DOCUMENT_BYTES = 10_485_760
 /** Độ dài tối đa của mã tham chiếu chuyển khoản. */
 export const ESCROW_TRANSFER_REF_MAX = 50
+
+/** Khóa `byForm` của bảng đóng góp (khác với `EscrowLedgerKind`). Thứ tự = thứ tự cột. */
+export const ESCROW_CONTRIBUTION_FORM_LABEL: Record<
+  EscrowContributionForm,
+  string
+> = {
+  TRANSFER: 'Chuyển khoản',
+  SUB_REVENUE: 'Từ doanh thu Sub',
+  SETOFF: 'Cấn trừ lệnh rút'
+}
+
+export const ESCROW_CONFIG_APPROVAL_LABEL: Record<
+  EscrowConfigApprovalStatus,
+  string
+> = {
+  PENDING_APPROVAL: 'Đề xuất chờ duyệt',
+  APPROVED: 'Đã áp dụng',
+  REJECTED: 'Bị từ chối',
+  CANCELLED: 'Người cấu hình đã huỷ'
+}
+
+export const ESCROW_CONFIG_SOURCE_LABEL: Record<EscrowConfigSource, string> = {
+  MANUAL: 'Do người dùng lưu',
+  REVIEW: 'Do job soát xét định kỳ đề xuất'
+}

@@ -13,6 +13,14 @@ export type EscrowOrderStatus =
   | 'REJECTED'
   | 'CANCELLED'
 
+/** Trạng thái duyệt của một phiên bản cấu hình. */
+export type EscrowConfigApprovalStatus =
+  'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'CANCELLED'
+/** Nguồn phiên bản cấu hình: người dùng lưu hoặc job soát xét định kỳ đề xuất. */
+export type EscrowConfigSource = 'MANUAL' | 'REVIEW'
+/** Hình thức đóng góp (khóa của `ContributionRow.byForm`). */
+export type EscrowContributionForm = 'TRANSFER' | 'SUB_REVENUE' | 'SETOFF'
+
 export type EscrowSource = 'BANK_TRANSFER' | 'SUB_REVENUE'
 export type EscrowReturnReason =
   'REQUIREMENT_REDUCED' | 'CONTRACT_TERMINATED' | 'AGREEMENT_TO_END' | 'OTHER'
@@ -68,8 +76,8 @@ export interface EscrowConfig {
   id: string
   masterId: string
   version: number
-  approvalStatus: string
-  source: string
+  approvalStatus: EscrowConfigApprovalStatus
+  source: EscrowConfigSource
   requirementMode: EscrowRequirementMode | null
   requiredAmount: number
   revenueDays: number | null
