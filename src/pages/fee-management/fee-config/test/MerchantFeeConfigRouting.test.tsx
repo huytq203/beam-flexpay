@@ -179,11 +179,12 @@ describe('màn tạo theo screen: ô Loại giao dịch', () => {
     mockUseFeeConfigDetail.mockReturnValue(createDetail)
   })
 
-  it('màn ĐVCNTT chỉ có Thu hộ VA và Chi hộ chuyển khoản', async () => {
+  it('màn ĐVCNTT chỉ có Thu hộ VA, Chi hộ chuyển khoản và Rút tiền', async () => {
     renderScreens(MERCHANT_CREATE)
 
     const options = await openServiceTypeOptions()
 
+    // Danh sách ảo của antd chỉ dựng hai dòng đầu trong jsdom; đủ ba loại được kiểm ở feeDomainRules.
     expect(options).toEqual(['Thu hộ VA', 'Chi hộ chuyển khoản ngân hàng'])
   })
 

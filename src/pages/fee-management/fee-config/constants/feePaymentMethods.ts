@@ -64,6 +64,9 @@ export const PAYMENT_METHOD_OPTIONS_BY_SERVICE_TYPE: Readonly<
   MERCHANT_VA_BILL_COLLECTION: [
     { value: 'VA', label: 'Tài khoản định danh (VA)' }
   ],
+  MERCHANT_DISBURSEMENT: [
+    { value: 'BANK_TRANSFER', label: 'Tài khoản ngân hàng' }
+  ],
   PAYOUT_BANK_TRANSFER: [
     { value: 'BANK_TRANSFER', label: 'Tài khoản ngân hàng' }
   ]

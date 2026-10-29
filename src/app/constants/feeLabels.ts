@@ -12,7 +12,8 @@ export const SERVICE_TYPE_LABELS: Readonly<Record<string, string>> = {
   EWALLET_REFUND: 'Hoàn tiền giao dịch ví',
   EWALLET_CASHBACK: 'Hoàn tiền (cashback)',
   MERCHANT_VA_BILL_COLLECTION: 'Thu hộ VA',
-  PAYOUT_BANK_TRANSFER: 'Chi hộ chuyển khoản ngân hàng'
+  MERCHANT_DISBURSEMENT: 'Chi hộ chuyển khoản ngân hàng',
+  PAYOUT_BANK_TRANSFER: 'Rút tiền'
 }
 
 export const PAYMENT_METHOD_LABELS: Readonly<Record<string, string>> = {

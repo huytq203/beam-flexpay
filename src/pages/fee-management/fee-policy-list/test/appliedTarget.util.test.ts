@@ -205,6 +205,13 @@ describe('helper đối tượng áp dụng', () => {
         getAppliedTargetLabel(
           target,
           customerSegmentNames,
+          'MERCHANT_DISBURSEMENT'
+        )
+      ).toBe('3 merchant cụ thể')
+      expect(
+        getAppliedTargetLabel(
+          target,
+          customerSegmentNames,
           'PAYOUT_BANK_TRANSFER'
         )
       ).toBe('3 merchant cụ thể')

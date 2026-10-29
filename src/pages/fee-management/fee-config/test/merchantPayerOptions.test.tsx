@@ -26,6 +26,7 @@ import walletBaseline from './merchantPayerOptions.walletBaseline.json'
 
 const MERCHANT_SERVICES = [
   'MERCHANT_VA_BILL_COLLECTION',
+  'MERCHANT_DISBURSEMENT',
   'PAYOUT_BANK_TRANSFER'
 ] as const
 
@@ -50,6 +51,7 @@ const MERCHANT_OPTIONS = [
 
 const COUNTERPARTY = {
   MERCHANT_VA_BILL_COLLECTION: 'Người nộp tiền',
+  MERCHANT_DISBURSEMENT: 'Người nhận tiền',
   PAYOUT_BANK_TRANSFER: 'Người nhận tiền'
 } as const
 
@@ -90,13 +92,19 @@ describe('người chịu phí của thu hộ / chi hộ', () => {
   })
 
   it('chi hộ: Merchant chọn được, Người nhận tiền và Cả hai bên bị khóa', () => {
-    expect(getOutputPayerOptions('PAYOUT_BANK_TRANSFER')).toEqual(
+    expect(getOutputPayerOptions('MERCHANT_DISBURSEMENT')).toEqual(
       MERCHANT_OPTIONS
     )
   })
 
+  it('rút tiền: chỉ Merchant chịu phí', () => {
+    expect(getOutputPayerOptions('PAYOUT_BANK_TRANSFER')).toEqual([
+      { value: 'MERCHANT', label: 'Merchant' }
+    ])
+  })
+
   it('tiêu đề hai khối khi cả hai bên chịu chi hộ là Merchant / Người nhận tiền', () => {
-    expect(getBearerSideTitles('PAYOUT_BANK_TRANSFER')).toEqual({
+    expect(getBearerSideTitles('MERCHANT_DISBURSEMENT')).toEqual({
       sender: 'Merchant chịu',
       receiver: 'Người nhận tiền chịu'
     })
@@ -257,7 +265,7 @@ describe('FeeComponentDialog của thu hộ', () => {
   })
 
   it('chi hộ không hiện "Người chuyển" hay "Người nhận" của ví trong dialog', async () => {
-    renderDialog('PAYOUT_BANK_TRANSFER')
+    renderDialog('MERCHANT_DISBURSEMENT')
 
     await userEvent.click(screen.getByLabelText(/Người chịu/))
     await screen.findAllByText('Người nhận tiền · Sắp hỗ trợ')

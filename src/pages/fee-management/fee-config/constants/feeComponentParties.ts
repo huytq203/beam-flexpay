@@ -53,6 +53,7 @@ export const getMerchantCounterpartyLabel = (
   serviceType?: string | null
 ): string => {
   if (serviceType === 'MERCHANT_VA_BILL_COLLECTION') return 'Người nộp tiền'
+  if (serviceType === 'MERCHANT_DISBURSEMENT') return 'Người nhận tiền'
   if (serviceType === 'PAYOUT_BANK_TRANSFER') return 'Người nhận tiền'
   return 'Người nộp / nhận tiền'
 }
@@ -150,6 +151,10 @@ export const getOutputPayerOptions = (
 ): { value: string; label: string; disabled?: boolean }[] => {
   // Thu hộ / chi hộ: chỉ Merchant chịu được; lựa chọn còn lại vẫn hiện nhưng bị khóa để người vận
   // hành biết sắp có. Không nối USER / RECEIVER vì backend không chạy được các payer đó.
+  // Rút tiền: merchant rút về tài khoản của chính mình và phí luôn trừ vào tiền rút nên chỉ Merchant.
+  if (serviceType === 'PAYOUT_BANK_TRANSFER') {
+    return [{ value: 'MERCHANT', label: 'Merchant' }]
+  }
   if (allowsMerchantCriteria(serviceType)) {
     return [
       { value: 'MERCHANT', label: 'Merchant' },
@@ -160,7 +165,7 @@ export const getOutputPayerOptions = (
       },
       // Chia phí như SHA của SWIFT chỉ có ở chi hộ; thu hộ để người nộp gánh một phần phí gần như
       // không nơi nào làm nên không bày ra.
-      ...(serviceType === 'PAYOUT_BANK_TRANSFER'
+      ...(serviceType === 'MERCHANT_DISBURSEMENT'
         ? [
             {
               value: 'BOTH',

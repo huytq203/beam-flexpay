@@ -22,9 +22,10 @@ describe('getDomainFieldRules', () => {
     expect(rules.showMerchant).toBe(false)
   })
 
-  it('miền ĐVCNTT chỉ bày thu hộ và chi hộ', () => {
+  it('miền ĐVCNTT chỉ bày thu hộ, chi hộ và rút tiền', () => {
     const rules = getDomainFieldRules(FeeDomain.MERCHANT)
     expect([...rules.serviceTypes].sort()).toEqual([
+      'MERCHANT_DISBURSEMENT',
       'MERCHANT_VA_BILL_COLLECTION',
       'PAYOUT_BANK_TRANSFER'
     ])
@@ -124,7 +125,11 @@ describe('EWALLET_TRANSFER_INTERNAL', () => {
 })
 
 describe('loại giao dịch tạm ẩn', () => {
-  const HIDDEN = ['MERCHANT_VA_BILL_COLLECTION', 'PAYOUT_BANK_TRANSFER']
+  const HIDDEN = [
+    'MERCHANT_VA_BILL_COLLECTION',
+    'MERCHANT_DISBURSEMENT',
+    'PAYOUT_BANK_TRANSFER'
+  ]
 
   it('ẩn thu hộ VA và chi hộ khỏi danh sách chọn', () => {
     const visible = withoutHiddenServiceTypes(PUBLISHABLE_SERVICE_TYPES)
@@ -167,6 +172,7 @@ describe('getFormFieldRules — ô gán đối tượng theo loại giao dịch'
   it('thu hộ và chi hộ mở ô Merchant và nhóm merchant cùng ô Ngân hàng tuỳ chọn, không có ví riêng', () => {
     for (const serviceType of [
       'MERCHANT_VA_BILL_COLLECTION',
+      'MERCHANT_DISBURSEMENT',
       'PAYOUT_BANK_TRANSFER'
     ]) {
       const rules = getFormFieldRules(FeeDomain.MERCHANT, serviceType)
@@ -199,6 +205,7 @@ describe('getFormFieldRules — ô gán đối tượng theo loại giao dịch'
       'EWALLET_REFUND',
       'EWALLET_TRANSFER_INTERNAL',
       'EWALLET_WITHDRAWAL',
+      'MERCHANT_DISBURSEMENT',
       'MERCHANT_VA_BILL_COLLECTION',
       'PAYOUT_BANK_TRANSFER'
     ])
@@ -215,6 +222,9 @@ describe('getFormFieldRules — ô gán đối tượng theo loại giao dịch'
       FeeDomain.EWALLET
     )
     expect(getFeeDomainForServiceType('PAYOUT_BANK_TRANSFER')).toBe(
+      FeeDomain.MERCHANT
+    )
+    expect(getFeeDomainForServiceType('MERCHANT_DISBURSEMENT')).toBe(
       FeeDomain.MERCHANT
     )
     expect(getFeeDomainForServiceType('')).toBe(FeeDomain.EWALLET)

@@ -82,6 +82,7 @@ describe('cả hai bên cùng chịu theo loại giao dịch', () => {
     expect(supportsBearerSplit('EWALLET_REFUND', '')).toBe(false)
     expect(supportsBearerSplit('EWALLET_REFUND')).toBe(false)
     expect(supportsBearerSplit('PAYOUT_BANK_TRANSFER')).toBe(false)
+    expect(supportsBearerSplit('MERCHANT_DISBURSEMENT')).toBe(false)
     expect(supportsBearerSplit(null)).toBe(false)
   })
 

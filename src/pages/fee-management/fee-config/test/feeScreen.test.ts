@@ -8,10 +8,14 @@ import {
 } from '../constants/feeScreen'
 
 describe('visibleServiceTypesFor', () => {
-  it('màn ĐVCNTT chỉ hiện hai loại thu hộ / chi hộ', () => {
+  it('màn ĐVCNTT chỉ hiện ba loại thu hộ / chi hộ / rút tiền', () => {
     expect(
       visibleServiceTypesFor('MERCHANT_FEE', PUBLISHABLE_SERVICE_TYPES)
-    ).toEqual(['MERCHANT_VA_BILL_COLLECTION', 'PAYOUT_BANK_TRANSFER'])
+    ).toEqual([
+      'MERCHANT_VA_BILL_COLLECTION',
+      'MERCHANT_DISBURSEMENT',
+      'PAYOUT_BANK_TRANSFER'
+    ])
   })
 
   it('màn phí đầu ra ẩn thu hộ, chi hộ và hoàn tiền', () => {
@@ -21,6 +25,7 @@ describe('visibleServiceTypesFor', () => {
     )
     expect(visible).not.toContain('MERCHANT_VA_BILL_COLLECTION')
     expect(visible).not.toContain('PAYOUT_BANK_TRANSFER')
+    expect(visible).not.toContain('MERCHANT_DISBURSEMENT')
     expect(visible).not.toContain('EWALLET_REFUND')
   })
 
