@@ -466,6 +466,59 @@ export const SCREENS = {
       confirm: PERMISSION.MERCHANT_RECONCILIATION_CONFIRM
     }
   },
+  /** Ký quỹ Merchant: danh sách và cấu hình theo Master. `update` = lập cấu hình, `approve` = duyệt cấu hình. */
+  MERCHANT_ESCROW: {
+    path: `${MERCHANT}/escrow`,
+    actions: {
+      view: PERMISSION.MERCHANT_ESCROW_VIEW,
+      create: PERMISSION.ADMIN_FULL,
+      edit: PERMISSION.MERCHANT_ESCROW_CONFIG_UPDATE,
+      update: PERMISSION.MERCHANT_ESCROW_CONFIG_UPDATE,
+      delete: PERMISSION.ADMIN_FULL,
+      full: PERMISSION.ADMIN_FULL,
+      approve: PERMISSION.MERCHANT_ESCROW_CONFIG_APPROVE
+    }
+  },
+  /** Chi tiết Master; `clearBlock` gỡ chặn hoàn trả (cùng quyền duyệt lệnh). */
+  MERCHANT_ESCROW_DETAIL: {
+    path: `${MERCHANT}/escrow/:masterId`,
+    actions: {
+      view: PERMISSION.MERCHANT_ESCROW_VIEW,
+      create: PERMISSION.ADMIN_FULL,
+      edit: PERMISSION.MERCHANT_ESCROW_CONFIG_UPDATE,
+      update: PERMISSION.MERCHANT_ESCROW_CONFIG_UPDATE,
+      delete: PERMISSION.ADMIN_FULL,
+      full: PERMISSION.ADMIN_FULL,
+      approve: PERMISSION.MERCHANT_ESCROW_CONFIG_APPROVE,
+      clearBlock: PERMISSION.MERCHANT_ESCROW_ORDER_APPROVE
+    }
+  },
+  MERCHANT_ESCROW_ORDER: {
+    path: `${MERCHANT}/escrow-orders`,
+    actions: {
+      view: PERMISSION.MERCHANT_ESCROW_VIEW,
+      create: PERMISSION.MERCHANT_ESCROW_ORDER_CREATE,
+      edit: PERMISSION.MERCHANT_ESCROW_ORDER_CREATE,
+      update: PERMISSION.MERCHANT_ESCROW_ORDER_CREATE,
+      delete: PERMISSION.ADMIN_FULL,
+      full: PERMISSION.ADMIN_FULL,
+      approve: PERMISSION.MERCHANT_ESCROW_ORDER_APPROVE
+    }
+  },
+  /** `approveSenior` cần cho lệnh hoàn trả lý do OTHER (`requiresSenior`). */
+  MERCHANT_ESCROW_RETURN: {
+    path: `${MERCHANT}/escrow-returns`,
+    actions: {
+      view: PERMISSION.MERCHANT_ESCROW_VIEW,
+      create: PERMISSION.MERCHANT_ESCROW_ORDER_CREATE,
+      edit: PERMISSION.MERCHANT_ESCROW_ORDER_CREATE,
+      update: PERMISSION.MERCHANT_ESCROW_ORDER_CREATE,
+      delete: PERMISSION.ADMIN_FULL,
+      full: PERMISSION.ADMIN_FULL,
+      approve: PERMISSION.MERCHANT_ESCROW_ORDER_APPROVE,
+      approveSenior: PERMISSION.MERCHANT_ESCROW_ORDER_APPROVE_SENIOR
+    }
+  },
   /** Chỉ đọc; trang cho vào thêm khi có một trong ba quyền đối soát (BE cũng nhận). */
   MERCHANT_BALANCE_REPORT: {
     path: `${MERCHANT}/balance-report`,

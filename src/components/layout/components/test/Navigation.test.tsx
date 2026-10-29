@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { SCREENS } from '@/app/permissions'
+import { PERMISSION, SCREENS, grantsScreenAccess } from '@/app/permissions'
 import {
   navigationItems,
   resolveNavLink,
@@ -106,5 +106,28 @@ describe('cấu hình phí ĐVCNTT navigation', () => {
     expect(merchant?.children?.map((item) => item.key)).not.toContain(
       'fee-config'
     )
+  })
+})
+
+describe('ký quỹ ĐVCNTT navigation', () => {
+  it('section Ký quỹ nằm ngay sau Quyết toán & đối soát, mục escrow trỏ MERCHANT_ESCROW', () => {
+    const keys = navigationItems.map((item) => item.key)
+    const section = navigationItems.find((item) => item.label === 'Ký quỹ')
+    const item = findItem(navigationItems, 'escrow')
+
+    expect(section?.groupLabel).toBe('Nhóm quản lý cổng ĐVCNTT')
+    expect(keys.indexOf(section?.key ?? '')).toBe(
+      keys.indexOf('settlement-management') + 1
+    )
+    expect(item?.screen).toBe('MERCHANT_ESCROW')
+    expect(item?.label).toBe('Danh sách ký quỹ')
+  })
+
+  it('hiện khi có EWALLET:MERCHANT_ESCROW:VIEW, ẩn khi không có', () => {
+    const screen = SCREENS[findItem(navigationItems, 'escrow')!.screen!]
+    expect(grantsScreenAccess([PERMISSION.MERCHANT_ESCROW_VIEW], screen)).toBe(
+      true
+    )
+    expect(grantsScreenAccess([], screen)).toBe(false)
   })
 })
