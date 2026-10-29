@@ -13,8 +13,7 @@ const getFileSize = (file: UploadFile) =>
 const getFileType = (file: UploadFile) =>
   file.originFileObj?.type ?? file.type ?? ''
 
-export const CreateMerchantSchema = z
-  .object({
+const merchantShape = {
     walletType: z.string().min(1, 'Vui lòng chọn loại ví'),
     walletId: z.string().min(1, 'Vui lòng chọn ví điện tử'),
     signSeparateSubMerchantContract: z.boolean(),
@@ -78,9 +77,22 @@ export const CreateMerchantSchema = z
     productDescription: z
       .string()
       .max(1000, 'Mô tả không được vượt quá 1000 ký tự'),
-    adminPassword: z.string().optional()
-  })
-  .superRefine((data, context) => {
+    adminPassword: z.string().optional(),
+    // Số tiền ký quỹ ban đầu (VND). null = chưa nhập; 0 = ĐVCNTT không phải
+    // ký quỹ. Chỉ bắt buộc khi tạo mới (xem requireEscrow bên dưới).
+    escrowAmount: z
+      .number()
+      .int('Số tiền ký quỹ phải là số nguyên')
+      .min(0, 'Số tiền ký quỹ không được âm')
+      .nullable()
+  }
+
+/**
+ * Dùng chung cho tạo và sửa. Khi sửa, mức ký quỹ được điều chỉnh ở màn Ký quỹ
+ * nên ô này không hiển thị và không bắt buộc (requireEscrow = false).
+ */
+const buildMerchantSchema = (requireEscrow: boolean) =>
+  z.object(merchantShape).superRefine((data, context) => {
     if (
       !data.signSeparateSubMerchantContract &&
       data.merchantContract.length === 0
@@ -91,6 +103,16 @@ export const CreateMerchantSchema = z
         message: 'Vui lòng tải lên hợp đồng ĐVCNTT cấp Master'
       })
     }
+    if (requireEscrow && data.escrowAmount === null) {
+      context.addIssue({
+        code: 'custom',
+        path: ['escrowAmount'],
+        message: 'Vui lòng nhập số tiền ký quỹ'
+      })
+    }
   })
+
+export const CreateMerchantSchema = buildMerchantSchema(true)
+export const EditMerchantSchema = buildMerchantSchema(false)
 
 export type CreateMerchantSchemaType = z.infer<typeof CreateMerchantSchema>
