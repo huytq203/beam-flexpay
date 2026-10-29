@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { FunnelIcon } from '@components/icons'
 import { CardComponent } from '@components/index'
+import { ManualPayoutOutcome } from '@components/payout/manualPayout.utils'
 import { createRefundColumns } from './columns/refund.columns'
 import { ApproveRefundDialog } from './components/ApproveRefundDialog'
 import { ApproveRefundPayoutDialog } from './components/ApproveRefundPayoutDialog'
+import { ManualPayoutDialog } from './components/ManualPayoutDialog'
 import { RefundDetailDrawer } from './components/RefundDetailDrawer'
 import { RefundFilters } from './components/RefundFilters'
 import { RefundListCard } from './components/RefundListCard'
@@ -16,7 +18,14 @@ import { useRefundPermissions } from './hooks/useRefundPermissions'
 import type { RefundTarget } from './schemas/refund.schema'
 
 type RefundDialog = {
-  kind: 'approve' | 'reject' | 'settle' | 'payoutApprove' | 'payoutReject'
+  kind:
+    | 'approve'
+    | 'reject'
+    | 'settle'
+    | 'payoutApprove'
+    | 'payoutReject'
+    | 'manualPayoutSuccess'
+    | 'manualPayoutFail'
   refund: RefundTarget
 } | null
 
@@ -45,6 +54,10 @@ const RefundManagement = () => {
     onSettle: (refund) => setDialog({ kind: 'settle', refund }),
     onPayoutApprove: (refund) => setDialog({ kind: 'payoutApprove', refund }),
     onPayoutReject: (refund) => setDialog({ kind: 'payoutReject', refund }),
+    onManualPayoutSuccess: (refund) =>
+      setDialog({ kind: 'manualPayoutSuccess', refund }),
+    onManualPayoutFail: (refund) =>
+      setDialog({ kind: 'manualPayoutFail', refund }),
     onPayoutRefresh: handlePayoutRefresh
   })
 
@@ -100,6 +113,8 @@ const RefundManagement = () => {
           onSettle={openFromDrawer('settle')}
           onPayoutApprove={openFromDrawer('payoutApprove')}
           onPayoutReject={openFromDrawer('payoutReject')}
+          onManualPayoutSuccess={openFromDrawer('manualPayoutSuccess')}
+          onManualPayoutFail={openFromDrawer('manualPayoutFail')}
           onPayoutRefresh={handlePayoutRefresh}
         />
       )}
@@ -125,6 +140,18 @@ const RefundManagement = () => {
       {dialog?.kind === 'payoutReject' && (
         <RejectRefundPayoutDialog
           refund={dialog.refund}
+          onClose={closeDialog}
+        />
+      )}
+      {(dialog?.kind === 'manualPayoutSuccess' ||
+        dialog?.kind === 'manualPayoutFail') && (
+        <ManualPayoutDialog
+          refund={dialog.refund}
+          outcome={
+            dialog.kind === 'manualPayoutSuccess'
+              ? ManualPayoutOutcome.SUCCESS
+              : ManualPayoutOutcome.FAILED
+          }
           onClose={closeDialog}
         />
       )}

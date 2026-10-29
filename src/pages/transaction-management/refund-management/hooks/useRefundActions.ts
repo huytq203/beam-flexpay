@@ -1,6 +1,9 @@
+import { readFirstErrorMessage } from '@components/payout/manualPayout.utils'
 import { globalMessage } from '@hooks/useMessage'
 import {
+  type ManualPayoutRefundArg,
   useApproveRefundMutation,
+  useManualPayoutRefundMutation,
   useApproveRefundPayoutMutation,
   useRefreshRefundPayoutMutation,
   useRejectRefundMutation,
@@ -36,6 +39,31 @@ export const useRefundActions = () => {
   const [rejectRefundPayout, rejectingPayout] = useRejectRefundPayoutMutation()
   const [settleRefund, settling] = useSettleRefundMutation()
   const [refreshPayout, refreshing] = useRefreshRefundPayoutMutation()
+  const [manualPayoutRefund, confirmingManual] =
+    useManualPayoutRefundMutation()
+
+  /**
+   * Chốt tay lệnh chi hoàn MANUAL. Câu lỗi lấy `errors[0].message` của BE trước,
+   * thiếu thì rơi về cách đọc chung của màn hoàn tiền.
+   */
+  const manualPayout = async (
+    arg: ManualPayoutRefundArg
+  ): Promise<RefundActionResult> => {
+    try {
+      const refund = await manualPayoutRefund(arg).unwrap()
+      globalMessage.success(
+        arg.outcome === 'SUCCESS'
+          ? `Đã chốt chi thành công ${refund.refundCode}.`
+          : `Đã chốt chi thất bại ${refund.refundCode}, tiền đang giữ đã được nhả.`
+      )
+      return { ok: true, refund }
+    } catch (error) {
+      return {
+        ok: false,
+        message: readFirstErrorMessage(error) ?? getRefundErrorText(error)
+      }
+    }
+  }
 
   const approve = async (id: string): Promise<RefundActionResult> => {
     try {
@@ -127,6 +155,8 @@ export const useRefundActions = () => {
     rejectPayout,
     settle,
     refreshPayoutOrder,
+    manualPayout,
+    isConfirmingManualPayout: confirmingManual.isLoading,
     isApproving: approving.isLoading,
     isRejecting: rejecting.isLoading,
     isApprovingPayout: approvingPayout.isLoading,

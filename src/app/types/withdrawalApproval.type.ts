@@ -58,10 +58,12 @@ export const WITHDRAWAL_STATUS_PRESENTATION: Record<
     tone: 'wait'
   },
   [WithdrawalStatus.APPROVED]: {
-    label: 'Đã duyệt — đang chi',
+    label: 'Đã duyệt chờ chi',
     fundsLabel: 'Bị khoá, chưa trừ',
+    // Không nói "đang chi": với kênh chi thủ công, lệnh đứng yên ở đây cho tới khi kế toán chuyển khoản
+    // tay và chốt kết quả. Kênh API có thêm câu riêng ở khối duyệt nói rõ hệ thống đang chi.
     guidance:
-      'Đã duyệt và đang chi — chưa có đồng nào rời khỏi ngân hàng. Chỉ khi về “Đã chi — hoàn tất” thì tiền mới thật sự ra.',
+      'Đã duyệt, chờ chi — chưa có đồng nào rời khỏi ngân hàng. Chỉ khi về “Đã chi — hoàn tất” thì tiền mới thật sự ra.',
     tone: 'wait'
   },
   [WithdrawalStatus.PAYING]: {
@@ -125,3 +127,18 @@ export interface WithdrawalDecisionResult {
   updatedBy: string | null
   updatedAt: string | null
 }
+
+/**
+ * Chế độ chi do BE quyết theo ngân hàng thụ hưởng (28/10):
+ * - `API`: hệ thống tự gửi lệnh sang ngân hàng có rail chi.
+ * - `MANUAL`: ngân hàng chưa có API, admin chuyển khoản tay rồi chốt kết quả.
+ *
+ * FE chỉ đọc để hiển thị, **không** tự suy chế độ từ mã ngân hàng và không có ô
+ * chọn chế độ. Có hiện nút chốt tay hay không đọc từ `awaitingManualConfirmation`.
+ */
+export const PayoutMode = {
+  API: 'API',
+  MANUAL: 'MANUAL'
+} as const
+
+export type PayoutMode = (typeof PayoutMode)[keyof typeof PayoutMode]

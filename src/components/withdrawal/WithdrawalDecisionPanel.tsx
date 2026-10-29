@@ -1,13 +1,16 @@
 import { useState } from 'react'
-import { ButtonComponent, ReasonDialog } from '@components/index'
+import { ButtonComponent, DialogModal, ReasonDialog } from '@components/index'
 import {
   ArrowCounterClockwiseIcon,
   CheckCircleOutlined,
   CloseCircleOutlined
 } from '@components/icons'
+import { ManualPayoutForm } from '@components/payout/ManualPayoutForm'
+import { ManualPayoutOutcome } from '@components/payout/manualPayout.utils'
 import { PERMISSION, useAccess } from '@/app/permissions'
 import { cn } from '@/lib/utils/cn'
 import {
+  PayoutMode,
   WITHDRAWAL_NOTE_MAX_LENGTH,
   WITHDRAWAL_NOTE_MIN_LENGTH,
   WITHDRAWAL_REASON_MAX_LENGTH,
@@ -52,14 +55,25 @@ export const WithdrawalDecisionPanel = ({
   const [openDecision, setOpenDecision] = useState<'approve' | 'reject' | null>(
     null
   )
+  // Kết quả chi thủ công đang mở dialog chốt; `null` khi đóng.
+  const [manualOutcome, setManualOutcome] =
+    useState<ManualPayoutOutcome | null>(null)
+  const [manualError, setManualError] = useState<string | null>(null)
   const { has } = useAccess()
   const code = transactionCode ?? ''
   const isWithdrawal = transactionType === CASH_OUT
 
   const { withdrawal, status, isLoading, isFetching, isError, refetch } =
     useWithdrawalStatus(code, !isWithdrawal)
-  const { approve, reject, isApproving, isRejecting, isDeciding } =
-    useWithdrawalDecision(code)
+  const {
+    approve,
+    reject,
+    confirmManualPayout,
+    isApproving,
+    isRejecting,
+    isConfirmingManual,
+    isDeciding
+  } = useWithdrawalDecision(code)
 
   if (!isWithdrawal || !code) return null
 
@@ -103,6 +117,24 @@ export const WithdrawalDecisionPanel = ({
   const presentation = getWithdrawalStatusPresentation(status)
   const isPending = isWithdrawalPendingApproval(status)
   const canDecide = isPending && has(PERMISSION.EWALLET_FULL)
+  // Chỉ đọc cờ BE trả về, không tự suy từ trạng thái/ngân hàng (chốt 28/10).
+  // Quyền khớp nút "Xử lý chi tiền" vì cùng gọi `update-status`.
+  const canConfirmManual =
+    withdrawal.awaitingManualConfirmation === true &&
+    has(PERMISSION.EWALLET_FULL)
+  const isApiSettling =
+    withdrawal.payoutMode === PayoutMode.API &&
+    withdrawal.awaitingManualConfirmation !== true &&
+    isWithdrawalSettling(status)
+  const openManual = (outcome: ManualPayoutOutcome) => {
+    setManualError(null)
+    setManualOutcome(outcome)
+  }
+  const closeManual = () => {
+    if (isConfirmingManual) return
+    setManualOutcome(null)
+    setManualError(null)
+  }
   const grossLabel =
     withdrawal.grossAmount == null
       ? 'toàn bộ số tiền của lệnh'
@@ -166,8 +198,44 @@ export const WithdrawalDecisionPanel = ({
                 />
               </>
             )}
+            {canConfirmManual && (
+              <>
+                <ButtonComponent
+                  htmlType='button'
+                  type='primary'
+                  danger
+                  content='Chi thất bại'
+                  icon={<CloseCircleOutlined />}
+                  className='pointer-coarse:h-11!'
+                  disabled={isDeciding}
+                  onClick={() => openManual(ManualPayoutOutcome.FAILED)}
+                />
+                <ButtonComponent
+                  htmlType='button'
+                  type='primary'
+                  content='Chi thành công'
+                  icon={<CheckCircleOutlined />}
+                  className='pointer-coarse:h-11!'
+                  disabled={isDeciding}
+                  onClick={() => openManual(ManualPayoutOutcome.SUCCESS)}
+                />
+              </>
+            )}
           </div>
         </div>
+
+        {canConfirmManual && (
+          <p className='m-0 max-w-[68ch] min-w-0 text-[13px] leading-5 break-words text-foreground'>
+            Ngân hàng thụ hưởng chưa có kết nối API: hệ thống không tự chi. Hãy
+            chuyển khoản tay rồi chốt kết quả bằng Chi thành công hoặc Chi thất
+            bại.
+          </p>
+        )}
+        {isApiSettling && (
+          <p className='m-0 max-w-[68ch] min-w-0 text-[13px] leading-5 break-words text-muted-foreground'>
+            Hệ thống đang chi qua ngân hàng, không cần chốt tay.
+          </p>
+        )}
 
         <WithdrawalSummary
           withdrawal={withdrawal}
@@ -217,6 +285,43 @@ export const WithdrawalDecisionPanel = ({
         }}
         onCancel={() => setOpenDecision(null)}
       />
+
+      <DialogModal
+        open={manualOutcome !== null}
+        title={
+          manualOutcome === ManualPayoutOutcome.FAILED
+            ? 'Xác nhận chi thất bại'
+            : 'Xác nhận chi thành công'
+        }
+        footer={null}
+        width={{ xs: '100%', sm: 560 }}
+        closable={{ 'aria-label': 'Đóng' }}
+        destroyOnHidden
+        onOk={closeManual}
+        onCancel={closeManual}
+      >
+        {manualOutcome && (
+          <ManualPayoutForm
+            outcome={manualOutcome}
+            receiptTransactionCode={code}
+            isSubmitting={isConfirmingManual}
+            error={manualError}
+            consequence={
+              manualOutcome === ManualPayoutOutcome.SUCCESS
+                ? `Xác nhận đã chuyển khoản tay ${grossLabel} cho khách. Hệ thống ghi bút toán vào sổ cái; thao tác này không hoàn tác được.`
+                : 'Xác nhận chuyển khoản tay không thành. Toàn bộ tiền bị giữ, gồm cả phí, sẽ được trả về ví khách.'
+            }
+            onSubmit={(values) => {
+              setManualError(null)
+              void confirmManualPayout(manualOutcome, values).then((error) => {
+                if (error) setManualError(error)
+                else setManualOutcome(null)
+              })
+            }}
+            onCancel={closeManual}
+          />
+        )}
+      </DialogModal>
     </>
   )
 }

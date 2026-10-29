@@ -24,6 +24,9 @@ interface RefundActionsProps {
   onPayoutRefresh: (refund: RefundTarget) => void
   onPayoutApprove: (refund: RefundTarget) => void
   onPayoutReject: (refund: RefundTarget) => void
+  /** Chốt tay lệnh chi MANUAL: mở dialog Chi thành công / Chi thất bại. */
+  onManualPayoutSuccess: (refund: RefundTarget) => void
+  onManualPayoutFail: (refund: RefundTarget) => void
   isPayoutRefreshing?: boolean
 }
 
@@ -38,6 +41,8 @@ export function RefundActions({
   onPayoutRefresh,
   onPayoutApprove,
   onPayoutReject,
+  onManualPayoutSuccess,
+  onManualPayoutFail,
   isPayoutRefreshing
 }: RefundActionsProps) {
   const { can } = useScreenAccess('REFUND_MANAGEMENT')
@@ -137,6 +142,26 @@ export function RefundActions({
             />
           </>
         ))}
+      {flags.manualPayoutFail && (
+        <RefundActionButton
+          variant={variant}
+          tone='danger'
+          label='Chi thất bại'
+          ariaLabel={nameFor('Chi thất bại')}
+          icon={<CloseOutlined aria-hidden />}
+          onClick={() => onManualPayoutFail(refund)}
+        />
+      )}
+      {flags.manualPayoutSuccess && (
+        <RefundActionButton
+          variant={variant}
+          tone={isInline ? 'default' : 'primary'}
+          label='Chi thành công'
+          ariaLabel={nameFor('Chi thành công')}
+          icon={<CheckOutlined aria-hidden />}
+          onClick={() => onManualPayoutSuccess(refund)}
+        />
+      )}
       {flags.settle && (
         <RefundActionButton
           variant={variant}

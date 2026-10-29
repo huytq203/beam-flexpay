@@ -6,8 +6,7 @@ import {
   CONFIG_STATUS,
   PaymentMethod,
   PaymentMethodKey,
-  TransactionKey,
-  TransactionType
+  getTransactionTypeLabel
 } from '../constants/Transaction.constant'
 import dayjs from 'dayjs'
 import { formatCurrency } from '@utils/formatNumber'
@@ -28,7 +27,6 @@ interface CommonInfoProps {
 const CommonInfo = ({ data, feeCode }: CommonInfoProps) => {
   const refundFields = data ? readRefundFields(data) : {}
   const pendingRefund = getPendingRefundAmount(refundFields)
-  const typesKey = data?.transactionType as TransactionKey
   const completedAt = data?.completedAt ?? data?.postedAt ?? data?.archivedAt
   const isCashIn = data?.transactionType === 'CASH_IN'
   const beneficiaryAccount = isCashIn
@@ -91,7 +89,7 @@ const CommonInfo = ({ data, feeCode }: CommonInfoProps) => {
             <p className='text-gray-500'>Loại & Phương thức:</p>
             <div className='font-medium'>
               <p>
-                {TransactionType[typesKey] ?? data?.transactionType ?? '--'}
+                {getTransactionTypeLabel(data?.transactionType)}
               </p>
               <p>
                 {PaymentMethod[data?.paymentMethod as PaymentMethodKey] ??
