@@ -8,7 +8,7 @@ import { PATHS } from '@constants/pathConstant'
 import {
   PaymentMethodEnum,
   SourceDomain,
-  type TransactionKey
+  toTransactionTypeKey
 } from '../constants/Transaction.constant'
 import {
   PAYMENT_METHOD_BADGE_CONFIG,
@@ -78,13 +78,14 @@ export const infoColumns: ColumnsType<UnifiedContentJournal> = [
     dataIndex: 'transactionType',
     align: 'center',
     render(value, record) {
-      const typeKey = record.transactionType as TransactionKey
-      const isKnownType = Boolean(TRANSACTION_TYPE_BADGE_CONFIG[typeKey])
+      // Gộp loại chi tiết (REFUND_BANK_PAYOUT...) về nhóm hiển thị; loại lạ hiện mã thô.
+      const typeKey = toTransactionTypeKey(record.transactionType)
+      const isKnownType = typeKey !== null
 
       return (
         <div className='flex flex-col gap-1 text-start'>
           <StatusBadge
-            status={isKnownType ? typeKey : 'UNKNOWN'}
+            status={typeKey ?? 'UNKNOWN'}
             config={
               isKnownType
                 ? TRANSACTION_TYPE_BADGE_CONFIG

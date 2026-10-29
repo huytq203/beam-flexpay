@@ -5,6 +5,7 @@ import type {
   TransactionDetail360,
   UnifiedContentJournal
 } from '@type/apiResponseJournal'
+import { PayoutMode } from '@type/withdrawalApproval.type'
 import { z } from 'zod'
 
 const withdrawalBeneficiarySchema = z.object({
@@ -36,7 +37,11 @@ const withdrawalDetailResponseSchema = z.object({
     bankRefId: z.string().nullish(),
     processedAt: z.string().nullish(),
     updatedBy: z.string().nullish(),
-    updatedAt: z.string().nullish()
+    updatedAt: z.string().nullish(),
+    /** Chế độ chi do BE quyết (`API`/`MANUAL`); FE không tự suy. */
+    payoutMode: z.enum(PayoutMode).nullish(),
+    /** `true` khi admin phải bấm Chi thành công / Chi thất bại; vắng = không hiện nút. */
+    awaitingManualConfirmation: z.boolean().nullish()
   })
 })
 

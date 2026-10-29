@@ -38,6 +38,20 @@ export interface RejectRefundArg {
   reason: string
 }
 
+/**
+ * Body `POST /refunds/{id}/manual-payout`: admin chốt kết quả chuyển khoản tay của
+ * lệnh chi hoàn MANUAL. `SUCCESS` bắt buộc `bankReference` + `receiptKey` (ảnh UNC).
+ */
+export interface ManualPayoutRefundArg {
+  id: string
+  outcome: 'SUCCESS' | 'FAILED'
+  bankReference?: string
+  receiptKey?: string
+  /** Ngày ghi có (yyyy-MM-dd); vắng thì BE lấy ngày hôm nay giờ VN. */
+  valueDate?: string
+  note: string
+}
+
 export interface SettleRefundArg {
   id: string
   success: boolean
@@ -147,6 +161,17 @@ export const apiRefund = apiUserWallet.injectEndpoints({
         unwrap(response),
       invalidatesTags: (_result, _error, { id }) => [refundTag(id), LIST_TAG]
     }),
+    manualPayoutRefund: build.mutation<RefundDetail, ManualPayoutRefundArg>({
+      query: ({ id, ...body }) => ({
+        url: `${REFUNDS_URL}/${encodeURIComponent(id)}/manual-payout`,
+        method: 'POST',
+        body
+      }),
+      extraOptions: OWN_ERROR_HANDLING,
+      transformResponse: (response: RefundEnvelope<RefundDetail>) =>
+        unwrap(response),
+      invalidatesTags: (_result, _error, { id }) => [refundTag(id), LIST_TAG]
+    }),
     refreshRefundPayout: build.mutation<RefundDetail, string>({
       query: (id) => ({
         url: `${REFUNDS_URL}/${encodeURIComponent(id)}/payout/refresh`,
@@ -169,5 +194,6 @@ export const {
   useApproveRefundPayoutMutation,
   useRejectRefundPayoutMutation,
   useSettleRefundMutation,
+  useManualPayoutRefundMutation,
   useRefreshRefundPayoutMutation
 } = apiRefund

@@ -98,6 +98,11 @@ export interface BankAccountCreate {
   accountName: string
   branchName?: string
   isDefault?: boolean
+  /**
+   * Quyết định 22/10 (FR-MER-0608-01): Admin cho phép TK Master mang tên chủ TK khác tên pháp nhân
+   * đã xác thực KYB. Bỏ trống/false thì BE bắt tên phải khớp pháp nhân (lỗi 5729); TK Sub bỏ qua.
+   */
+  allowDifferentHolderName?: boolean
   otp: SensitiveOtpConfirmation
 }
 
@@ -121,6 +126,8 @@ export interface BankAccountUpdate {
   accountNumber?: string
   accountName?: string
   branchName?: string
+  /** Bật/tắt ô "dùng tên khác pháp nhân" của TK Master; bỏ trống là giữ nguyên, đổi thì cần OTP. */
+  allowDifferentHolderName?: boolean
   status?: BankAccountDto['status']
   reason?: string
   otp?: SensitiveOtpConfirmation

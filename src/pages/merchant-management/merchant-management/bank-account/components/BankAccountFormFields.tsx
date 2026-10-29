@@ -7,6 +7,8 @@ interface BankAccountFormFieldsProps {
   isCreate: boolean
   draft: BankAccountDraft
   isDefault: boolean
+  /** Chỉ TK Master có ô "dùng tên khác pháp nhân"; TK Sub vốn không bị so tên. */
+  showHolderNameExemption: boolean
   onPatch: (value: Partial<BankAccountDraft>) => void
   onDefaultChange: (value: boolean) => void
 }
@@ -23,9 +25,12 @@ export function BankAccountFormFields({
   isCreate,
   draft,
   isDefault,
+  showHolderNameExemption,
   onPatch,
   onDefaultChange
 }: BankAccountFormFieldsProps) {
+  const holderNameExempt =
+    showHolderNameExemption && draft.allowDifferentHolderName
   const banks = useGetBankQuery({ page: 1, size: 100 })
   const bankError = banks.isError
     ? 'Không tải được danh sách ngân hàng'
@@ -92,8 +97,22 @@ export function BankAccountFormFields({
           placeholder='Tên khớp thông tin KYB/eKYC'
         />
         <p className='mt-1 text-xs text-muted-foreground'>
-          Tên phải khớp pháp nhân hoặc chủ ví đã xác thực.
+          {holderNameExempt
+            ? 'Đã cho phép tên chủ tài khoản khác tên pháp nhân đã xác thực KYB.'
+            : 'Tên phải khớp pháp nhân hoặc chủ ví đã xác thực.'}
         </p>
+        {showHolderNameExemption && (
+          // Quyết định 22/10 (FR-MER-0608-01): Admin được miễn so tên cho TK Master; bật/tắt đều qua OTP.
+          <CheckboxComponent
+            className='mt-2'
+            checked={draft.allowDifferentHolderName}
+            onChange={(event) =>
+              onPatch({ allowDifferentHolderName: event.target.checked })
+            }
+          >
+            Dùng tài khoản có tên khác tên pháp nhân
+          </CheckboxComponent>
+        )}
       </div>
       <div>
         <label

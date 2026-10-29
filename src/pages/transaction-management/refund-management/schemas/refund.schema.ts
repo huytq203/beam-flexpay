@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { RefundDisplayStatus, RefundType } from '@constants/refund.constant'
+import { PayoutMode } from '@type/withdrawalApproval.type'
 
 export const RefundStatus = {
   PENDING_APPROVAL: 'PENDING_APPROVAL',
@@ -66,7 +67,11 @@ export const refundListItemSchema = z.object({
   beneficiaryAccountName: optionalText,
   payoutCode: optionalText,
   customerName: optionalText,
-  customerPhone: optionalText
+  customerPhone: optionalText,
+  /** Chế độ chi của lệnh chi hoàn do BE quyết (`API`/`MANUAL`); bản deploy cũ không trả. */
+  payoutMode: z.enum(PayoutMode).nullish(),
+  /** `true` khi lệnh chi MANUAL đang chờ admin chốt tay; FE chỉ đọc cờ này để hiện nút. */
+  awaitingManualConfirmation: z.boolean().nullish()
 })
 export type RefundListItem = z.infer<typeof refundListItemSchema>
 

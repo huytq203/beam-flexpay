@@ -82,12 +82,15 @@ export interface RefundActionFlags {
   payoutDecide: boolean
   settle: boolean
   payoutRefresh: boolean
+  /** Chi thành công / Chi thất bại cho lệnh chi hoàn MANUAL đang chờ chốt tay. */
+  manualPayoutSuccess: boolean
+  manualPayoutFail: boolean
   isOwnRequest: boolean
 }
 
 type RefundActionSubject = Pick<
   RefundTarget,
-  'status' | 'channel' | 'createdBy'
+  'status' | 'channel' | 'createdBy' | 'awaitingManualConfirmation'
 >
 
 const IN_FLIGHT_STATUSES: readonly RefundStatus[] = [
@@ -107,7 +110,13 @@ export const getRefundActions = (
   const canCompare = createdBy.trim() !== '' && context.username.trim() !== ''
   const isOwnRequest = canCompare && isSameUsername(createdBy, context.username)
   const inFlight = IN_FLIGHT_STATUSES.includes(refund.status)
+  // Đọc đúng cờ BE trả về, không tự suy từ trạng thái/ngân hàng. Quyền khớp
+  // `manual-payout` (PAYOUT:APPROVE), như duyệt chi.
+  const manualPayout =
+    refund.awaitingManualConfirmation === true && context.canPayoutApprove
   return {
+    manualPayoutSuccess: manualPayout,
+    manualPayoutFail: manualPayout,
     isOwnRequest,
     payoutDecide:
       refund.status === RefundStatus.PENDING_PAYOUT_APPROVAL &&
@@ -121,9 +130,11 @@ export const getRefundActions = (
       inFlight &&
       refund.channel === RefundChannel.TO_WALLET &&
       context.canSettle,
+    // Lệnh chi MANUAL chưa gửi sang ngân hàng nên không có gì để tra lại.
     payoutRefresh:
       inFlight &&
       refund.channel === RefundChannel.TO_BANK &&
+      refund.awaitingManualConfirmation !== true &&
       context.canPayoutRefresh
   }
 }

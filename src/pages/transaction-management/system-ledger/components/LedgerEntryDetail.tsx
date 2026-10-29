@@ -5,11 +5,10 @@ import type { ReactNode } from 'react'
 import {
   DirectionShortLabel,
   FeeBearerLabel,
-  LedgerTransactionType,
+  getLedgerTransactionTypeLabel,
   OwnerTypeLabels,
   StatusConstants,
-  type DirectionKey,
-  type LedgerTransactionTypeKey
+  type DirectionKey
 } from '../constants/SystemLedger.constant'
 import { LedgerEntry } from '@type/systemLedger'
 
@@ -62,11 +61,7 @@ export const LedgerEntryDetail = ({ record }: { record: LedgerEntry }) => {
           </Row>
           <Row label='Loại giao dịch'>
             <span className='font-medium'>
-              {LedgerTransactionType[
-                record.transactionType as LedgerTransactionTypeKey
-              ] ??
-                record.transactionType ??
-                '--'}
+              {getLedgerTransactionTypeLabel(record.transactionType)}
             </span>
           </Row>
           <Row label='Tổng tiền'>
