@@ -16,8 +16,10 @@ import type {
   EscrowReturnPiece,
   EscrowReturnPlan,
   EscrowReturnResubmit,
+  EscrowRisk,
   EscrowRow,
   EscrowSaveResult,
+  EscrowState,
   EscrowVerification
 } from '@/pages/merchant-management/merchant-escrow/types/merchantEscrow.types'
 import { apiMerchant } from './apiService'
@@ -37,8 +39,10 @@ const RETURNS = '/merchant-escrow-returns'
 
 export interface EscrowListParams {
   search?: string
-  state?: string
-  risk?: string
+  /** `OVERDUE` chỉ là bộ lọc (đã quá hạn), không phải trạng thái của dòng. */
+  state?: EscrowState | 'OVERDUE'
+  risk?: EscrowRisk
+  /** `OVERDUE` hoặc số ngày còn lại tối đa (vd. '7', '30'). */
   dueIn?: string
   page: number
   size: number
