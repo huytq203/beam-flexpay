@@ -12,6 +12,11 @@ import { MoneyCell, SplitFeeCell, type FlowTone } from './TransactionMoneyCell'
 type FlowRecord = Parameters<typeof resolveFeeDeduction>[0] &
   Pick<UnifiedContentJournal, 'currency'>
 
+/** Cột phí có thể rộng (ô tách người chuyển/nhận) nên header căn giữa, số vẫn căn phải. */
+const centeredTitle = (title: string) => (
+  <div className='text-center!'>{title}</div>
+)
+
 const flowColumn = <T extends FlowRecord>(
   title: string,
   tone: FlowTone,
@@ -29,7 +34,7 @@ const flowColumn = <T extends FlowRecord>(
 })
 
 const walletFeeColumn = <T extends FlowRecord>(): ColumnType<T> => ({
-  title: 'Phí trừ ví',
+  title: centeredTitle('Phí trừ ví'),
   align: 'right',
   render: (_, record) => {
     const { walletFee, walletSplit } = resolveFeeDeduction(record)
@@ -49,7 +54,7 @@ const walletFeeColumn = <T extends FlowRecord>(): ColumnType<T> => ({
 })
 
 const bankFeeColumn = <T extends FlowRecord>(): ColumnType<T> => ({
-  title: 'Phí trừ bank',
+  title: centeredTitle('Phí trừ bank'),
   align: 'right',
   render: (_, record) => (
     <MoneyCell
@@ -95,9 +100,10 @@ const personalColumn = <T extends PersonalRecord>(
   title: string,
   tone: FlowTone,
   viewerId: string | null | undefined,
-  pick: (flow: PersonalFlow) => number | null
+  pick: (flow: PersonalFlow) => number | null,
+  centerHeader = false
 ): ColumnType<T> => ({
-  title,
+  title: centerHeader ? centeredTitle(title) : title,
   align: 'right',
   render: (_, record) => {
     const flow = buildPersonalFlow(record, viewerId)
@@ -121,8 +127,8 @@ export const personalFlowColumns = <T extends PersonalRecord>(
     viewerId,
     (f) => f.principal
   ),
-  personalColumn('Phí trừ ví', 'fee', viewerId, (f) => f.walletFee),
-  personalColumn('Phí trừ bank', 'fee', viewerId, (f) => f.bankFee),
+  personalColumn('Phí trừ ví', 'fee', viewerId, (f) => f.walletFee, true),
+  personalColumn('Phí trừ bank', 'fee', viewerId, (f) => f.bankFee, true),
   personalColumn(
     'Tổng tiền trừ ví',
     'negative',

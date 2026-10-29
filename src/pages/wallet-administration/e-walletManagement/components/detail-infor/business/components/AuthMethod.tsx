@@ -15,7 +15,6 @@ const AuthMethod = () => {
                     </div>
                     <div className="flex flex-col items-end">
                         <p className='flex items-center gap-1 text-green-700 bg-green-100 px-2 rounded-full'><CheckCircleFilled/>Đang kích hoạt</p>
-                        <p className='text-sm font-medium text-red-500'>Hủy kích hoạt (Reset)</p>
                     </div>
                 </div>
                 <hr />

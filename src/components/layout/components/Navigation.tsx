@@ -104,18 +104,18 @@ const feeManagementV4: ItemTypeCustom = {
     //   ),
     //   label: 'Báo cáo phí đầu vào'
     // },
-    // {
-    //   key: 'wallet-limit',
-    //   screen: 'WALLET_LIMIT',
-    //   icon: (
-    //     <SlidersHorizontalIcon
-    //       size={size}
-    //       weight={weight}
-    //       color={COlOR}
-    //     />
-    //   ),
-    //   label: 'Hạn mức ví'
-    // }
+    {
+      key: 'wallet-limit',
+      screen: 'WALLET_LIMIT',
+      icon: (
+        <SlidersHorizontalIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Hạn mức ví'
+    }
     /*
      * Tạm ẩn mục Tháng đặc biệt (giữ nguyên code, bật lại khi cần):
      * {

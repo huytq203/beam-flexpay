@@ -1,5 +1,4 @@
 import { DeviceMobileSpeakerIcon, HistoryOutlined } from '@components/icons'
-import { ButtonComponent } from '@components/index'
 import React from 'react'
 
 const HistoryLogin = () => {
@@ -23,11 +22,6 @@ const HistoryLogin = () => {
                     </div>
                 </div>
             ))}
-
-
-            <div className="flex-1 ">
-                <ButtonComponent danger type='default' className='w-full' content={'Đăng xuất khỏi thiết bị'} />
-            </div>
         </div>
     )
 }

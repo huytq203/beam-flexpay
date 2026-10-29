@@ -16,7 +16,7 @@ export const StuckRefundConfirmDialog = ({
 }: StuckRefundConfirmDialogProps) => (
   <DialogModal
     open={open}
-    title='Xử lý chi tiền hoàn'
+    title='Xử lý hoàn'
     width={{ xs: '100%', sm: 480 }}
     footer={null}
     maskClosable={false}

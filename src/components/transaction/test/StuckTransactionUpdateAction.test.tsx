@@ -55,7 +55,7 @@ describe('StuckTransactionUpdateAction - hiển thị nút', () => {
     expect(screen.queryByRole('button', { name: TRIGGER })).toBeNull()
 
     renderAction({ transactionType: 'P2P_TRANSFER', compact: true })
-    expect(screen.queryByRole('button', { name: /Xử lý chi tiền/ })).toBeNull()
+    expect(screen.queryByRole('button', { name: /Xử lý/ })).toBeNull()
   })
 
   it('ẩn nút khi tài khoản thiếu quyền', () => {

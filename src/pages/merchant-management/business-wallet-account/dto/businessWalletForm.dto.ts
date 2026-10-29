@@ -9,7 +9,7 @@ import {
   type BusinessWalletFormValues
 } from '../schemas/business-wallet.schema'
 
-const storedFile = (file?: EnterpriseWalletDocument) =>
+const storedFile = (file?: EnterpriseWalletDocument | null) =>
   file?.id
     ? [
         {

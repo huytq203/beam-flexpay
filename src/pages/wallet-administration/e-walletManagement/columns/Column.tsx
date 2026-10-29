@@ -74,7 +74,7 @@ export const getColumn = ({
             <div className='flex min-w-0 flex-col'>
               <WalletLink walletId={record.id}>
                 <TooltipComponent title={ownerName}>
-                  <span className='min-w-0 truncate text-xs font-semibold'>
+                  <span className='min-w-0 truncate text-md font-semibold'>
                     {ownerName}
                   </span>
                 </TooltipComponent>
@@ -82,7 +82,7 @@ export const getColumn = ({
 
               {!isSystem && record.ownerFullName && (
                 <WalletLink walletId={record.id}>
-                  <span className='text-xs font-semibold'>
+                  <span className='text-md font-semibold'>
                     {record.ownerUsername}
                   </span>
                 </WalletLink>
@@ -92,7 +92,7 @@ export const getColumn = ({
             {record.walletCode && (
               <div className='min-w-0 max-w-full'>
                 <TypographyText
-                  className='inline-flex max-w-full cursor-pointer items-center font-mono text-[11px]! text-muted-foreground!'
+                  className='inline-flex max-w-full cursor-pointer items-center font-mono text-[12px]! text-muted-foreground!'
                   copyable={{ text: record.walletCode }}
                 >
                   <span className='truncate'>{record.walletCode}</span>
@@ -118,11 +118,11 @@ export const getColumn = ({
             : ''
         return (
           <div className='flex flex-col gap-0.5'>
-            <span className='font-medium text-gray-800 text-[12px]'>
+            <span className='font-medium text-gray-800 text-[14px]'>
               {ownerTypeLabel}
             </span>
             {glLabel && (
-              <span className='text-gray-400 text-[10px]'>{glLabel}</span>
+              <span className='text-gray-400 text-[12px]'>{glLabel}</span>
             )}
           </div>
         )

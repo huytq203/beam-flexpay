@@ -1,52 +1,80 @@
-const LegalRecords = () => {
-  return (
-    <>
-      {' '}
-      <div className='grid grid-cols-2 gap-2 mb-3'>
-        <div className='col-span-2'>
-          <div className=''>
-            <p className='text-gray-500'>Tên công ty (Theo ĐKKD):</p>
-            <p className='font-medium'>CÔNG TY TNHH CÔNG NGHỆ TƯƠNG LAI</p>
-          </div>
-        </div>
-        <div className='col-span-1'>
-          <div className=''>
-            <p className='text-gray-500'>Mã số thuế:</p>
-            <p className='font-medium'>4789327498732</p>
-          </div>
-        </div>
-        <div className='col-span-1'>
-          <div className=''>
-            <p className='text-gray-500'>Ngày thành lập:</p>
-            <p className='font-medium'>10/10/2025</p>
-          </div>
-        </div>
-        <div className='col-span-1'>
-          <div className=''>
-            <p className='text-gray-500'>Địa chỉ trụ sở chính:</p>
-            <p className='font-medium'>XXX, Đường YYY, TP ZZZ</p>
-          </div>
-        </div>
-      </div>
-      <hr />
-      <p className='font-bold text-gray-500 pt-8 pb-4'>Đính kèm hồ sơ</p>
-      <div className='flex justify-between gap-4'>
+import type { UploadFile } from '@components/form'
+import { TYPEDATE } from '@constants/date.constant'
+import {
+  EnterpriseWalletVerificationStatus,
+  type EnterpriseWalletDto
+} from '@type/enterpriseWallet'
+import {
+  BUSINESS_TYPE_LABEL,
+  VERIFICATION_STATUS_LABEL
+} from '../constants/enterpriseWallet.constant'
+import { formatDate, formatText } from '../utils/enterprise-wallet-format'
+import { EnterpriseDocumentList } from './EnterpriseDocumentList'
+import {
+  type ProfileField,
+  ProfileFields,
+  ProfileHeading
+} from './ProfileFields'
 
-        <div className='flex flex-1 flex-col items-center gap-2'>
-          <div className='w-full h-40 flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-400 text-sm'>
-           Xem ảnh
-          </div>
-        </div>
-
-        <div className='flex flex-1 flex-col items-center gap-2'>
-          <div className='w-full h-40 flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 text-gray-400 text-sm'>
-           Xem ảnh
-          </div>
-        </div>
-
-      
-      </div>
-    </>
-  )
+interface LegalRecordsProps {
+  wallet: EnterpriseWalletDto
+  resolveFileUrl: (file: UploadFile) => Promise<string>
 }
+
+const buildFields = (wallet: EnterpriseWalletDto): ProfileField[] => {
+  const fields: ProfileField[] = [
+    {
+      label: 'Tên doanh nghiệp (theo ĐKKD)',
+      value: formatText(wallet.legalName),
+      isWide: true
+    },
+    { label: 'Mã số thuế', value: formatText(wallet.taxCode) },
+    {
+      label: 'Loại hình',
+      value: wallet.businessType
+        ? BUSINESS_TYPE_LABEL[wallet.businessType]
+        : formatText()
+    },
+    { label: 'Email đăng ký', value: formatText(wallet.registeredEmail) },
+    {
+      label: 'Trạng thái xác minh',
+      value: VERIFICATION_STATUS_LABEL[wallet.verificationStatus]
+    },
+    {
+      label: 'Địa chỉ trụ sở chính',
+      value: formatText(wallet.headOfficeAddress),
+      isWide: true
+    },
+    {
+      label: 'Ngày tạo hồ sơ',
+      value: formatDate(wallet.createdAt, TYPEDATE.fullTime)
+    }
+  ]
+  if (
+    wallet.verificationStatus === EnterpriseWalletVerificationStatus.REJECTED
+  ) {
+    fields.push({
+      label: 'Lý do từ chối',
+      value: formatText(wallet.kybRejectedReason),
+      isWide: true
+    })
+  }
+  return fields
+}
+
+const LegalRecords = ({ wallet, resolveFileUrl }: LegalRecordsProps) => (
+  <>
+    <ProfileFields fields={buildFields(wallet)} />
+    <hr className='mt-4 border-border' />
+    <ProfileHeading>Đính kèm hồ sơ</ProfileHeading>
+    <EnterpriseDocumentList
+      resolveFileUrl={resolveFileUrl}
+      items={[
+        { label: 'Giấy phép ĐKKD', document: wallet.businessLicense },
+        { label: 'Giấy ủy quyền', document: wallet.authorizationLetter }
+      ]}
+    />
+  </>
+)
+
 export default LegalRecords

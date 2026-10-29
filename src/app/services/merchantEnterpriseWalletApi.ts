@@ -1,42 +1,14 @@
 import { apiMerchant } from './apiService'
 import type { MerchantEnvelope, MerchantPage } from '@type/merchant'
+import type {
+  EnterpriseBusinessType,
+  EnterpriseWalletDto
+} from '@type/enterpriseWallet'
 
-export interface EnterpriseWalletDto {
-  id: string
-  registeredEmail: string
-  verificationStatus: 'DRAFT' | 'PENDING_APPROVAL' | 'VERIFIED' | 'REJECTED'
-  bankLinkStatus?: 'BANK_UNLINKED' | 'BANK_LINKED'
-  legalName?: string
-  taxCode?: string
-  businessType?: 'ENTERPRISE' | 'HOUSEHOLD'
-  headOfficeAddress?: string
-  legalRepresentativeName?: string
-  legalRepresentativeIdNumber?: string
-  managerName?: string
-  managerTitle?: string
-  managerIdNumber?: string
-  managerIdExpiryDate?: string
-  otpPhone?: string
-  businessLicense?: EnterpriseWalletDocument
-  idCardFront?: EnterpriseWalletDocument
-  idCardBack?: EnterpriseWalletDocument
-  authorizationLetter?: EnterpriseWalletDocument
-  internalWallet?: boolean
-  kybRejectedReason?: string | null
-  kybRejectedAt?: string | null
-  kybRejectedBy?: string | null
-  createdAt?: string
-  updatedAt?: string
-}
-
-export interface EnterpriseWalletDocument {
-  id?: string
-  filename?: string
-  contentType?: string
-  sizeBytes?: number
-  url?: string | null
-  urlExpiresAt?: string | null
-}
+export type {
+  EnterpriseWalletDocument,
+  EnterpriseWalletDto
+} from '@type/enterpriseWallet'
 
 export interface EnterpriseWalletQuery {
   page: number
@@ -52,7 +24,7 @@ export interface EnterpriseWalletPayload {
   registeredEmail?: string
   legalName?: string
   taxCode?: string
-  businessType?: 'ENTERPRISE' | 'HOUSEHOLD'
+  businessType?: EnterpriseBusinessType
   headOfficeAddress?: string
   legalRepresentativeName?: string
   legalRepresentativeIdNumber?: string
@@ -163,6 +135,7 @@ export const merchantEnterpriseWalletService = apiMerchant.injectEndpoints({
 export const {
   useListEnterpriseWalletsQuery,
   useGetEnterpriseWalletQuery,
+  useLazyGetEnterpriseWalletQuery,
   useCreateEnterpriseWalletMutation,
   useSaveEnterpriseWalletDraftMutation,
   useSubmitEnterpriseWalletMutation,

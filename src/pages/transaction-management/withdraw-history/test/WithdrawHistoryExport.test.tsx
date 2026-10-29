@@ -196,29 +196,29 @@ describe('Lịch sử rút tiền — xuất CSV', () => {
     expect(screen.getByRole('button', { name: /Xuất CSV/i })).toBeDisabled()
   })
 
-  it('mở thẳng modal Xử lý chi tiền từ icon trong cột thao tác', async () => {
+  it('mở thẳng modal Xử lý từ icon trong cột thao tác', async () => {
     mocks.hasRow = true
     const user = userEvent.setup()
     renderScreen()
     const action = screen.getByRole('button', {
-      name: 'Xử lý chi tiền'
+      name: 'Xử lý'
     })
 
     expect(action).toBeEnabled()
     await user.click(action)
-    expect(await screen.findByText('Xử lý chi tiền')).toBeInTheDocument()
+    expect(await screen.findByText('Xử lý')).toBeInTheDocument()
     expect(mocks.openDetail).not.toHaveBeenCalled()
     expect(screen.queryByRole('radio')).not.toBeInTheDocument()
   })
 
-  it('lệnh chờ duyệt: thay nút Xử lý chi tiền bằng Phê duyệt, bấm mở popover Duyệt/Từ chối', async () => {
+  it('lệnh chờ duyệt: thay nút Xử lý bằng Phê duyệt, bấm mở popover Duyệt/Từ chối', async () => {
     mocks.hasRow = true
     mocks.displayStatus = 'PENDING_APPROVAL'
     const user = userEvent.setup()
     renderScreen()
 
     expect(
-      screen.queryByRole('button', { name: 'Xử lý chi tiền' })
+      screen.queryByRole('button', { name: 'Xử lý' })
     ).not.toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Xem chi tiết' })

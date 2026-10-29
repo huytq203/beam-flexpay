@@ -44,7 +44,7 @@ export interface StuckTransactionUpdateActionProps {
 }
 
 /**
- * Nút "Xử lý chi tiền" và form chốt kết quả.
+ * Nút "Xử lý" và form chốt kết quả.
  *
  * Nút **biến mất** khi lệnh rút đang ở `PENDING_APPROVAL`: BE từ chối những lệnh
  * đó ở endpoint này, và quan trọng hơn, cùng chữ "Thành công" ở đây nghĩa là
@@ -112,7 +112,7 @@ export const StuckTransactionUpdateAction = ({
       }
 
       if (!canUpdateStuckTransaction(journalStatus, latestWithdrawal.status)) {
-        errorMess('Lệnh rút đang chờ phê duyệt, không thể Xử lý chi tiền.')
+        errorMess('Lệnh rút đang chờ phê duyệt, không thể Xử lý.')
         return
       }
     }
@@ -141,7 +141,7 @@ export const StuckTransactionUpdateAction = ({
     }
   }
 
-  const actionLabel = 'Xử lý chi tiền'
+  const actionLabel = 'Xử lý'
   const trigger = (
     <ButtonComponent
       aria-label={actionLabel}
@@ -165,7 +165,7 @@ export const StuckTransactionUpdateAction = ({
       )}
       <DialogModal
         open={isOpen}
-        title='Xử lý chi tiền'
+        title='Xử lý'
         footer={null}
         width={{ xs: '100%', sm: 640 }}
         closable={{ 'aria-label': 'Đóng' }}

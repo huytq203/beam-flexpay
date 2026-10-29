@@ -12,28 +12,41 @@ function ScreenLoading({ open = false }: ScreenLoadingProps) {
   const [isOpen, { setTrue, setFalse }] = useBoolean(false)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
   const startTimeRef = useRef<number>(0)
+  // Số request đang bật loader. Không đếm thì request xong trước đóng loader trong khi request
+  // khác vẫn chạy, rồi request sau lại mở — màn nháy liên tục.
+  const pendingRef = useRef(0)
 
   useEffect(() => {
-    window.events.on('show-loading', () => {
-      startTimeRef.current = Date.now()
-      setTrue()
-    })
+    const clearHideTimer = () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
 
-    window.events.on('hide-loading', () => {
+    const handleShow = () => {
+      clearHideTimer()
+      if (pendingRef.current === 0) startTimeRef.current = Date.now()
+      pendingRef.current += 1
+      setTrue()
+    }
+
+    const handleHide = () => {
+      pendingRef.current = Math.max(0, pendingRef.current - 1)
+      if (pendingRef.current > 0) return
       const elapsedTime = Date.now() - startTimeRef.current
       const minDisplayTime = 300
       if (elapsedTime < minDisplayTime) {
-        timeoutRef.current = setTimeout(() => {
-          setFalse()
-        }, minDisplayTime - elapsedTime)
+        timeoutRef.current = setTimeout(setFalse, minDisplayTime - elapsedTime)
       } else {
         setFalse()
       }
-    })
+    }
+
+    window.events.on('show-loading', handleShow)
+    window.events.on('hide-loading', handleHide)
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
+      window.events.off('show-loading', handleShow)
+      window.events.off('hide-loading', handleHide)
+      clearHideTimer()
     }
   }, [setFalse, setTrue])
 

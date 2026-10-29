@@ -1,10 +1,5 @@
 import { FeeDomain, isFeeDomain } from '@components/fee/feeDomain'
-import { useGetAssignmentsByPolicyQuery } from '@services/apiFeeAssignment'
-import { useGetFeeComponentPoliciesByIdQuery } from '@services/apiFeeComponent'
-import { useLazyGetFeeComponentTierQuery } from '@services/apiFeeComponentTier'
-import { useGetFeePolicyByIdQuery } from '@services/apiFeePolicy.api'
-import type { FeeComponentTier, FeePolicyComponent } from '@type/fee.type'
-import { useEffect, useState } from 'react'
+import { useGetFeePolicyConfigQuery } from '@services/apiFeePolicyConfig'
 import {
   FEE_SCOPE,
   POLICY_KIND,
@@ -43,9 +38,9 @@ const toIsoOrEmpty = (value: string | null | undefined): string =>
 /**
  * Nạp lại một chính sách để sửa.
  *
- * Bậc phí phải gọi riêng cho từng thành phần vì backend không trả kèm. Dùng
- * trigger lazy của RTK Query rồi gom bằng `Promise.all` — vẫn là RTK Query, chỉ
- * là không gọi được hook trong vòng lặp.
+ * Policy, thành phần, bản gán và bậc phí gom trong một query `getFeePolicyConfig`, nên loader
+ * toàn màn chỉ bật một lần. Chỉ coi là đang tải ở lần đầu (`isLoading`): sau khi lưu, query
+ * refetch vì bị invalidate, nếu quay về trạng thái tải thì form bị dựng lại và màn nháy.
  */
 export const useFeeConfigDetail = (
   policyId: string | undefined,
@@ -57,81 +52,15 @@ export const useFeeConfigDetail = (
   scope: FeeScope = FEE_SCOPE.OUTPUT_FEE
 ): UseFeeConfigDetailResult => {
   const skip = !policyId
-
-  const policyQuery = useGetFeePolicyByIdQuery(policyId as string, { skip })
-  const componentQuery = useGetFeeComponentPoliciesByIdQuery(
-    policyId as string,
+  const { data, isLoading, isError } = useGetFeePolicyConfigQuery(
+    policyId ?? '',
     { skip }
   )
-  const assignmentQuery = useGetAssignmentsByPolicyQuery(policyId as string, {
-    skip
-  })
-  const [fetchTiers] = useLazyGetFeeComponentTierQuery()
 
-  /**
-   * Kết quả tải bậc phí kèm id chính sách nó thuộc về. Chỉ tải đúng một lần cho
-   * mỗi chính sách: khi lưu, các mutation làm query thành phần refetch và đổi id
-   * thành phần liên tục; nếu tải lại bậc theo mỗi lần đổi thì màn quay về trạng
-   * thái "đang tải" và form bị dựng lại, người dùng thấy nháy.
-   */
-  const [tierResult, setTierResult] = useState<{
-    policyId: string
-    data: Record<string, FeeComponentTier[]>
-    hasError: boolean
-  } | null>(null)
-
-  const components = componentQuery.data as FeePolicyComponent[] | undefined
-  const hasComponents = (components?.length ?? 0) > 0
-  const loadedPolicyId = tierResult?.policyId
-
-  useEffect(() => {
-    if (!policyId || !components || components.length === 0) return
-    if (loadedPolicyId === policyId) return
-
-    let cancelled = false
-
-    Promise.all(
-      components.map(async (component) => {
-        const rows = await fetchTiers(component.id).unwrap()
-        return [component.id, (rows ?? []) as FeeComponentTier[]] as const
-      })
-    )
-      .then((entries) => {
-        if (cancelled) return
-        setTierResult({
-          policyId,
-          data: Object.fromEntries(entries),
-          hasError: false
-        })
-      })
-      .catch(() => {
-        if (!cancelled) setTierResult({ policyId, data: {}, hasError: true })
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [policyId, components, loadedPolicyId, fetchTiers])
-
-  const isTierResultCurrent = tierResult?.policyId === policyId
-  const isLoadingTiers = hasComponents && !isTierResultCurrent
-  const hasTierError = isTierResultCurrent && Boolean(tierResult?.hasError)
-  const tiersByComponent = isTierResultCurrent ? (tierResult?.data ?? {}) : {}
-
-  const policy = policyQuery.data
-  const assignment = assignmentQuery.data?.[0]
-
-  const isLoading =
-    policyQuery.isLoading ||
-    componentQuery.isLoading ||
-    assignmentQuery.isLoading ||
-    isLoadingTiers
-
-  const isError =
-    policyQuery.isError ||
-    componentQuery.isError ||
-    assignmentQuery.isError ||
-    hasTierError
+  const policy = data?.policy
+  const components = data?.components
+  const assignment = data?.assignments[0]
+  const tiersByComponent = data?.tiersByComponent ?? {}
 
   if (skip || isLoading || isError || !policy) {
     return {

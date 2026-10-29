@@ -50,13 +50,13 @@ export function SplitFeeCell({
     ['Người nhận', receiverFee]
   ] as const
   return (
-    <dl className='flex flex-col items-end gap-1'>
+    <dl className='flex w-full flex-col gap-1'>
       {rows.map(([label, amount]) => (
         <div
           key={label}
-          className='flex items-baseline gap-2'
+          className='flex items-baseline justify-between gap-2'
         >
-          <dt className='whitespace-nowrap text-xs text-gray-500'>{label}</dt>
+          <dt className='whitespace-nowrap text-xs text-gray-500'>{label}:</dt>
           <dd>
             <MoneyCell
               amount={amount}

@@ -9,7 +9,7 @@ import {
 /** Nhãn công thức tính, dùng chung cho thẻ thành phần và phần xem trước. */
 export const CALCULATION_METHOD_LABEL: Readonly<Record<string, string>> = {
   [CalculationMethod.DIRECT]: 'Mặc định',
-  [CalculationMethod.FLAT_TIER]: 'Lũy tiến toàn phần',
+  [CalculationMethod.FLAT_TIER]: 'Bậc lũy tiến',
   [CalculationMethod.PROGRESSIVE_TIER]: 'Lũy tiến từng phần',
   [CalculationMethod.FREE]: 'Miễn phí'
 }

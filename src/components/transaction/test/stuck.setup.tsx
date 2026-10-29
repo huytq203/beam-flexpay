@@ -12,7 +12,7 @@ import { StuckTransactionUpdateAction } from '../StuckTransactionUpdateAction'
 export const CODE = 'TXN20261008000456'
 export const FULL = 'EWALLET:EWALLET:FULL'
 export const NOTE = 'Đã đối chiếu sao kê ngân hàng, tiền đã về cho khách'
-export const TRIGGER = /Xử lý chi tiền/
+export const TRIGGER = /Xử lý/
 
 export type User = ReturnType<typeof userEvent.setup>
 type Json = Record<string, unknown>
