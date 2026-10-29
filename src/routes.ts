@@ -536,6 +536,24 @@ const merchantManagement = {
           )
         },
         {
+          path: SCREENS.MERCHANT_ESCROW.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-escrow/pages/EscrowListPage'
+              )
+          )
+        },
+        {
+          path: SCREENS.MERCHANT_ESCROW_DETAIL.path,
+          element: page(
+            () =>
+              import(
+                '@pages/merchant-management/merchant-escrow/pages/EscrowDetailPage'
+              )
+          )
+        },
+        {
           path: SCREENS.MERCHANT_RECONCILIATION.path,
           element: page(
             () =>

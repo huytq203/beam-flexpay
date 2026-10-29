@@ -614,6 +614,34 @@ const settlementManagement: ItemTypeCustom = {
   ]
 }
 
+const escrowManagement: ItemTypeCustom = {
+  key: 'escrow-management',
+  groupLabel: 'Nhóm quản lý cổng ĐVCNTT',
+  icon: (
+    <HandCoinsIcon
+      size={size}
+      weight={weight}
+      color={COlOR}
+    />
+  ),
+  label: 'Ký quỹ',
+  children: [
+    {
+      key: 'escrow',
+      screen: 'MERCHANT_ESCROW',
+      link: `${MERCHANT}/escrow`,
+      icon: (
+        <HandCoinsIcon
+          size={size}
+          weight={weight}
+          color={COlOR}
+        />
+      ),
+      label: 'Danh sách ký quỹ'
+    }
+  ]
+}
+
 const merchantUserManagement: ItemTypeCustom = {
   key: 'merchant-user-management',
   groupLabel: 'Nhóm quản lý cổng ĐVCNTT',
@@ -678,6 +706,7 @@ export const navigationItems: ItemTypeCustom[] = [
   merchantFeeManagement,
   subMerchantManagement,
   settlementManagement,
+  escrowManagement,
   merchantUserManagement,
   // feeManagementV3,
   feeManagementV4
