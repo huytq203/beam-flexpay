@@ -151,6 +151,16 @@ describe('màn Cấu hình phí ĐVCNTT: danh sách theo miền MERCHANT', () =>
     expect(await payerFilterOptions()).toEqual(['Merchant', 'Người nhận tiền'])
   })
 
+  it('tab Rút tiền chỉ cho lọc người chịu phí là Merchant', async () => {
+    renderMerchant('/merchant/fee-config?serviceType=PAYOUT_BANK_TRANSFER')
+    await waitFor(() => expect(requests.length).toBeGreaterThan(0))
+    expect(requests[0].searchParams.get('serviceType')).toBe(
+      'PAYOUT_BANK_TRANSFER'
+    )
+
+    expect(await payerFilterOptions()).toEqual(['Merchant'])
+  })
+
   it('nút thêm chính sách chuyển tới màn tạo của ĐVCNTT', async () => {
     const user = userEvent.setup()
     renderMerchant('/merchant/fee-config')
