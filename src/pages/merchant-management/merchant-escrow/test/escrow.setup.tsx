@@ -4,10 +4,7 @@ import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
 import { createAppStore } from '@/app/store'
 import { savePermissions } from '@slices/authSlice'
-import type {
-  EscrowOverview,
-  EscrowRow
-} from '../types/merchantEscrow.types'
+import type { EscrowOverview, EscrowRow } from '../types/merchantEscrow.types'
 
 /** Một dòng danh sách Master mặc định: thiếu 30 triệu, đạt 40%. */
 export const escrowRow = (over: Partial<EscrowRow> = {}): EscrowRow => ({

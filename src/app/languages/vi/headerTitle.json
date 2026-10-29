@@ -138,6 +138,7 @@
     "/secure-panel/merchant/hold-rule":"Quy tắc tạm giữ",
     "/secure-panel/merchant/reconciliation":"Đối soát số dư",
     "/secure-panel/merchant/escrow":"Danh sách ký quỹ",
+    "/secure-panel/merchant/escrow/*":"Chi tiết ký quỹ",
     "/secure-panel/merchant/balance-report":"Báo cáo số dư",
     "/secure-panel/merchant/settlement-item":"Mục quyết toán",
     "/secure-panel/merchant/key-connection":"Quản lý kết nối",

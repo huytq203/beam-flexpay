@@ -1,0 +1,178 @@
+import { screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
+import { describe, expect, it } from 'vitest'
+import { Route, Routes } from 'react-router-dom'
+import { PERMISSION } from '@/app/permissions'
+import { server } from '@/test/mocks/server'
+import EscrowDetailPage from '../pages/EscrowDetailPage'
+import { escrowOverview, renderWithStore } from './escrow.setup'
+import type {
+  EscrowLedgerEntry,
+  EscrowOverview
+} from '../types/merchantEscrow.types'
+
+const VIEW = PERMISSION.MERCHANT_ESCROW_VIEW
+const UPDATE = PERMISSION.MERCHANT_ESCROW_CONFIG_UPDATE
+const ORDER_APPROVE = PERMISSION.MERCHANT_ESCROW_ORDER_APPROVE
+
+const env = (data: unknown) => HttpResponse.json({ data })
+const emptyPage = {
+  content: [],
+  totalElements: 0,
+  totalPages: 0,
+  size: 20,
+  number: 0,
+  first: true,
+  last: true,
+  empty: true
+}
+
+const ledgerEntry = (
+  over: Partial<EscrowLedgerEntry> = {}
+): EscrowLedgerEntry => ({
+  id: 'l1',
+  masterId: 'master-1',
+  seq: 1,
+  kind: 'DEPOSIT_TRANSFER',
+  eventKey: 'EV-1',
+  sourceType: null,
+  sourceId: null,
+  amountDelta: 10_000_000,
+  balanceAfter: 10_000_000,
+  note: null,
+  createdBy: null,
+  occurredAt: '2026-10-20T03:00:00Z',
+  ...over
+})
+
+/** Dựng các endpoint nền; từng test ghi đè phần cần. */
+const mockBase = (overview: EscrowOverview, ledger: EscrowLedgerEntry[] = []) =>
+  server.use(
+    http.get('*/merchant-escrows/master-1', () => env(overview)),
+    http.get('*/merchant-escrows/master-1/ledger', () =>
+      env({ ...emptyPage, content: ledger, totalElements: ledger.length })
+    ),
+    http.get('*/merchant-escrows/master-1/contributions', () => env([])),
+    http.get('*/merchant-escrows/master-1/config-history', () => env([])),
+    http.get('*/merchant-escrow-returns/obligation-wait/master-1', () =>
+      env(90)
+    )
+  )
+
+const renderPage = (permissions: string[]) =>
+  renderWithStore(
+    <Routes>
+      <Route
+        path='/escrow/:masterId'
+        element={<EscrowDetailPage />}
+      />
+    </Routes>,
+    permissions,
+    '/escrow/master-1'
+  )
+
+describe('EscrowDetailPage', { timeout: 30000 }, () => {
+  it('state UNKNOWN hiện "Chưa đọc được số dư" thay vì 0 ₫', async () => {
+    mockBase(
+      escrowOverview({
+        state: 'UNKNOWN',
+        balance: null,
+        shortfall: null,
+        surplus: null,
+        percent: null
+      })
+    )
+    renderPage([VIEW])
+    expect(
+      (await screen.findAllByText('Chưa đọc được số dư')).length
+    ).toBeGreaterThan(0)
+    expect(screen.queryByText(/^0\s*₫$/)).not.toBeInTheDocument()
+  })
+
+  it('verify lệch đóng góp thì cảnh báo và hiện nút Gỡ chặn hoàn trả cho người có quyền', async () => {
+    mockBase(escrowOverview(), [ledgerEntry()])
+    server.use(
+      http.post('*/merchant-escrows/master-1/ledger/verify', () =>
+        env({
+          continuous: true,
+          breaks: [],
+          balance: 10_000_000,
+          contributionTotal: 9_000_000,
+          contributionsMatch: false
+        })
+      )
+    )
+    const user = userEvent.setup()
+    renderPage([VIEW, ORDER_APPROVE])
+    await user.click(await screen.findByText('Sổ cái'))
+    await user.click(await screen.findByRole('button', { name: 'Kiểm tra sổ' }))
+    expect(
+      await screen.findByText(/Đóng góp không khớp số dư/)
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Gỡ chặn hoàn trả' })
+    ).toBeInTheDocument()
+  })
+
+  it('không có quyền duyệt thì không thấy nút Gỡ chặn hoàn trả', async () => {
+    mockBase(escrowOverview(), [ledgerEntry()])
+    server.use(
+      http.post('*/merchant-escrows/master-1/ledger/verify', () =>
+        env({
+          continuous: false,
+          breaks: ['seq 3'],
+          balance: 1,
+          contributionTotal: 2,
+          contributionsMatch: false
+        })
+      )
+    )
+    const user = userEvent.setup()
+    renderPage([VIEW])
+    await user.click(await screen.findByText('Sổ cái'))
+    await user.click(await screen.findByRole('button', { name: 'Kiểm tra sổ' }))
+    await screen.findByText(/Đóng góp không khớp số dư/)
+    expect(
+      screen.queryByRole('button', { name: 'Gỡ chặn hoàn trả' })
+    ).not.toBeInTheDocument()
+  })
+
+  it('sổ cái hiện số tiền âm của RETURN màu đỏ', async () => {
+    mockBase(escrowOverview(), [
+      ledgerEntry({ kind: 'RETURN', amountDelta: -5_000_000 })
+    ])
+    const user = userEvent.setup()
+    renderPage([VIEW])
+    await user.click(await screen.findByText('Sổ cái'))
+    const cell = await screen.findByText(/-5\.000\.000\s*₫/)
+    expect(cell.className).toMatch(/danger/)
+  })
+
+  it('nhập 0 ngày chờ nghĩa vụ thì báo lỗi và không gọi PUT', async () => {
+    mockBase(escrowOverview())
+    let puts = 0
+    server.use(
+      http.put('*/merchant-escrow-returns/obligation-wait/master-1', () => {
+        puts += 1
+        return env(1)
+      })
+    )
+    const user = userEvent.setup()
+    renderPage([VIEW, UPDATE])
+    await user.click(
+      await screen.findByRole('tab', { name: 'Số ngày chờ nghĩa vụ' })
+    )
+    const input = await screen.findByRole('spinbutton', {
+      name: 'Số ngày chờ nghĩa vụ'
+    })
+    await waitFor(() => expect(input).toHaveValue('90'))
+    await user.clear(input)
+    await user.type(input, '0')
+    await user.click(screen.getByRole('button', { name: 'Lưu' }))
+    expect(
+      await screen.findByText('Số ngày chờ nghĩa vụ phải từ 1 đến 365')
+    ).toBeInTheDocument()
+    expect(puts).toBe(0)
+  })
+})
