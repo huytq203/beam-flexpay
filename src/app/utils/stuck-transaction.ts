@@ -21,6 +21,7 @@ const STUCK_STATUSES = new Set<string>([
   'CREDIT_PENDING',
   'PROCESSING',
   'CREDIT_FAILED',
+  // alias chuyển tiếp, gỡ sau 1 sprint: BE đã đổi RECONCILIATION_REQUIRED thành PROCESSING
   'RECONCILIATION_REQUIRED'
 ])
 

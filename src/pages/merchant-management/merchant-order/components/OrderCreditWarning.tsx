@@ -6,7 +6,10 @@ import type { MerchantOrder } from '../types/merchantOrder.types'
  * thái và lý do trong thân phản hồi thay vì coi là thành công.
  */
 export function OrderCreditWarning({ order }: { order: MerchantOrder }) {
-  const needsRetry = order.status === 'CREDIT_RECONCILIATION_REQUIRED'
+  // Ghi có kẹt ở CREDIT_POSTING (hoặc alias cũ) thì BE cho Ghi có lại.
+  const needsRetry =
+    order.status === 'CREDIT_POSTING' ||
+    order.status === 'CREDIT_RECONCILIATION_REQUIRED'
   return (
     <div
       role='alert'

@@ -1,7 +1,4 @@
-import type {
-  MerchantOrder,
-  MerchantOrderStatus
-} from '../types/merchantOrder.types'
+import type { MerchantOrder } from '../types/merchantOrder.types'
 import { RETRY_CREDIT_STATUSES } from '../constants/merchantOrder.constants'
 
 export const formatOrderMoney = (value?: number | null): string =>
@@ -53,10 +50,6 @@ export const canCancelOrder = (order: MerchantOrder): boolean =>
 
 export const canRetryCredit = (order: MerchantOrder): boolean =>
   RETRY_CREDIT_STATUSES.includes(order.status)
-
-export const needsCreditReconciliation = (
-  status: MerchantOrderStatus
-): boolean => status === 'CREDIT_RECONCILIATION_REQUIRED'
 
 /** Phí chỉ là số cuối cùng khi đơn đã SUCCESS; trước đó là ước tính. */
 export const isFeeFinal = (order: MerchantOrder): boolean =>

@@ -74,10 +74,17 @@ describe('getWithdrawalDecisionFailureMessage', () => {
     ).toContain('đã bị người khác từ chối')
     expect(
       getWithdrawalDecisionFailureMessage(
+        WithdrawalStatus.PROCESSING,
+        'approve'
+      )
+    ).toContain('đang được xử lý')
+    // alias chuyển tiếp, gỡ sau 1 sprint
+    expect(
+      getWithdrawalDecisionFailureMessage(
         WithdrawalStatus.RECONCILIATION_REQUIRED,
         'approve'
       )
-    ).toContain('chờ đối soát')
+    ).toContain('đang được xử lý')
   })
 
   it('trấn an rằng tiền còn nguyên khi lệnh từ chối hỏng giữa chừng', () => {

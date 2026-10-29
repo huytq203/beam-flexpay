@@ -11,8 +11,9 @@ import type {
 export const ORDER_STATUS_LABELS: Record<MerchantOrderStatus, string> = {
   ACTIVE: 'Chờ thanh toán',
   PAYMENT_CONFIRMED: 'Đã nhận tiền',
-  CREDIT_POSTING: 'Đang ghi có',
-  CREDIT_RECONCILIATION_REQUIRED: 'Cần đối soát ghi có',
+  CREDIT_POSTING: 'Đang xử lý',
+  // Alias chuyển tiếp, gỡ sau 1 sprint: BE đã đổi sang CREDIT_POSTING.
+  CREDIT_RECONCILIATION_REQUIRED: 'Đang xử lý',
   SUCCESS: 'Thành công',
   FAILED: 'Phát hành thất bại',
   EXPIRED: 'Hết hạn',
@@ -25,9 +26,10 @@ export const ORDER_STATUS_DESCRIPTIONS: Record<MerchantOrderStatus, string> = {
   ACTIVE: 'Đã phát hành QR/VA, đang chờ khách thanh toán trong hạn.',
   PAYMENT_CONFIRMED:
     'Đã ghi nhận tiền ngân hàng báo có, đang bắt đầu ghi có cho merchant.',
-  CREDIT_POSTING: 'Đã giữ chỗ bút toán và gắn báo giá phí, đang ghi sổ ví.',
+  CREDIT_POSTING:
+    'Đã giữ chỗ bút toán và gắn báo giá phí, đang ghi có vào ví; nếu kẹt có thể Ghi có lại.',
   CREDIT_RECONCILIATION_REQUIRED:
-    'Tiền đã về nhưng chưa rõ kết quả ghi có, cần ghi có lại.',
+    'Đang ghi có vào ví; nếu kẹt có thể Ghi có lại (giá trị cũ, BE nay trả Đang xử lý).',
   SUCCESS: 'Đã ghi có cho merchant (trạng thái cuối).',
   FAILED: 'Ngân hàng từ chối phát hành QR/VA khi tạo đơn (trạng thái cuối).',
   EXPIRED: 'Quá hạn thanh toán, job nền đã đóng đơn (trạng thái cuối).',
@@ -42,7 +44,8 @@ export const ORDER_STATUS_COLORS: Record<MerchantOrderStatus, StatusColor> = {
   ACTIVE: 'info',
   PAYMENT_CONFIRMED: 'warning',
   CREDIT_POSTING: 'warning',
-  CREDIT_RECONCILIATION_REQUIRED: 'danger',
+  // Alias chuyển tiếp: cùng tông cảnh báo với CREDIT_POSTING.
+  CREDIT_RECONCILIATION_REQUIRED: 'warning',
   SUCCESS: 'success',
   FAILED: 'danger',
   EXPIRED: 'default',
@@ -51,12 +54,14 @@ export const ORDER_STATUS_COLORS: Record<MerchantOrderStatus, StatusColor> = {
   CREDIT_PENDING: 'warning'
 }
 
-/** Trạng thái dùng để lọc; PENDING/CREDIT_PENDING không còn luồng nào đặt. */
+/**
+ * Trạng thái dùng để lọc; PENDING/CREDIT_PENDING không còn luồng nào đặt, còn alias
+ * CREDIT_RECONCILIATION_REQUIRED đã bị gỡ khỏi bộ lọc (gỡ hẳn sau 1 sprint).
+ */
 export const ORDER_STATUS_FILTER_VALUES: readonly MerchantOrderStatus[] = [
   'ACTIVE',
   'PAYMENT_CONFIRMED',
   'CREDIT_POSTING',
-  'CREDIT_RECONCILIATION_REQUIRED',
   'SUCCESS',
   'FAILED',
   'EXPIRED',
@@ -65,10 +70,11 @@ export const ORDER_STATUS_FILTER_VALUES: readonly MerchantOrderStatus[] = [
 
 /** Các trạng thái cho phép `retry-credit` (kể cả SUCCESS idempotent, không mời gọi). */
 export const RETRY_CREDIT_STATUSES: readonly MerchantOrderStatus[] = [
-  'CREDIT_RECONCILIATION_REQUIRED',
   'PAYMENT_CONFIRMED',
   'CREDIT_POSTING',
-  'CREDIT_PENDING'
+  'CREDIT_PENDING',
+  // Alias chuyển tiếp, gỡ sau 1 sprint: đơn cũ có thể còn giá trị này.
+  'CREDIT_RECONCILIATION_REQUIRED'
 ]
 
 export const BANK_LABELS: Record<OrderBankCode, string> = {

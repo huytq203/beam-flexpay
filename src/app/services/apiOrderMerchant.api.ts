@@ -8,6 +8,7 @@ export type MerchantOrderStatus =
   | 'PAYMENT_CONFIRMED'
   | 'CREDIT_PENDING'
   | 'CREDIT_POSTING'
+  /** Alias chuyển tiếp, gỡ sau 1 sprint: BE đã đổi sang CREDIT_POSTING. */
   | 'CREDIT_RECONCILIATION_REQUIRED'
   | 'SUCCESS'
   | 'FAILED'

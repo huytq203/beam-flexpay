@@ -2,6 +2,7 @@ import { screen, within } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
 import { server } from '@/test/mocks/server'
+import { ORDER_STATUS_FILTER_VALUES } from '../constants/merchantOrder.constants'
 import {
   FULL_ACCESS,
   ORDERS,
@@ -16,7 +17,8 @@ describe('danh sách đơn hàng merchant', () => {
     const row = (await screen.findByText('ORD-a1')).closest('tr')!
     expect(within(row).getByText('1')).toBeInTheDocument()
     expect(within(row).getByText('Chờ thanh toán')).toBeInTheDocument()
-    expect(screen.getByText('Cần đối soát ghi có')).toBeInTheDocument()
+    expect(screen.getByText('Đang xử lý')).toBeInTheDocument()
+    expect(screen.queryByText('Cần đối soát ghi có')).toBeNull()
     expect(screen.getByRole('columnheader', { name: '#' })).toBeInTheDocument()
   })
 
@@ -73,5 +75,25 @@ describe('danh sách đơn hàng merchant', () => {
     expect(screen.queryByLabelText('Hủy đơn ORD-b2')).toBeNull()
     expect(screen.queryByLabelText('Hủy đơn ORD-c3')).toBeNull()
     expect(ORDERS).toHaveLength(3)
+  })
+
+  it('alias chuyển tiếp CREDIT_RECONCILIATION_REQUIRED vẫn hiện “Đang xử lý” và cho Ghi có lại', async () => {
+    // alias chuyển tiếp, gỡ sau 1 sprint: BE cũ còn có thể trả giá trị này
+    server.use(
+      http.get('*/merchant-orders', () =>
+        page([{ ...ORDERS[1], status: 'CREDIT_RECONCILIATION_REQUIRED' }])
+      )
+    )
+    renderPage(FULL_ACCESS)
+    await screen.findByText('ORD-b2')
+    expect(screen.getByText('Đang xử lý')).toBeInTheDocument()
+    expect(screen.getByLabelText('Ghi có lại đơn ORD-b2')).toBeInTheDocument()
+  })
+
+  it('bộ lọc trạng thái không còn mục “Cần đối soát ghi có”', () => {
+    expect(ORDER_STATUS_FILTER_VALUES).not.toContain(
+      'CREDIT_RECONCILIATION_REQUIRED'
+    )
+    expect(ORDER_STATUS_FILTER_VALUES).toContain('CREDIT_POSTING')
   })
 })

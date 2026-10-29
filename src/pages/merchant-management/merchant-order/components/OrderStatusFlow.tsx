@@ -12,10 +12,6 @@ const MAIN_FLOW: readonly MerchantOrderStatus[] = [
   'SUCCESS'
 ]
 const SIDE_STATES: readonly { status: MerchantOrderStatus; note: string }[] = [
-  {
-    status: 'CREDIT_RECONCILIATION_REQUIRED',
-    note: 'Từ Đã nhận tiền/Đang ghi có khi lỗi hoặc chưa rõ kết quả; ghi có lại để về Thành công.'
-  },
   { status: 'CANCELLED', note: 'Từ Chờ thanh toán khi hủy đơn.' },
   { status: 'EXPIRED', note: 'Từ Chờ thanh toán khi quá hạn (job nền).' },
   { status: 'FAILED', note: 'Ngân hàng từ chối phát hành QR/VA lúc tạo đơn.' }

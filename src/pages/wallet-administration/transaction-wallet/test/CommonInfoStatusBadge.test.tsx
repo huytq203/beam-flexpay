@@ -24,7 +24,9 @@ describe('badge trạng thái ở thông tin chung giao dịch', () => {
     ['FAILED', 'Thất bại', 'text-danger-strong'],
     ['PENDING', 'Chờ xử lý', 'text-warning-strong'],
     ['AUTHORIZED', 'Đã cấp phép', 'text-warning-strong'],
-    ['RECONCILIATION_REQUIRED', 'Cần đối soát', 'text-warning-strong'],
+    ['PROCESSING', 'Đang xử lý', 'text-warning-strong'],
+    // alias chuyển tiếp, gỡ sau 1 sprint: BE cũ còn có thể trả giá trị này
+    ['RECONCILIATION_REQUIRED', 'Đang xử lý', 'text-warning-strong'],
     ['CREDIT_FAILED', 'Ghi có thất bại', 'text-danger-strong']
   ])('%s hiện “%s” đúng tông màu', (status, label, toneClass) => {
     renderWithProviders(<CommonInfo data={transactionWith(status)} />)

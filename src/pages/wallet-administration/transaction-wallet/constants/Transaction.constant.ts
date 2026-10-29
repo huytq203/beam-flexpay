@@ -95,6 +95,7 @@ export const JournalProgressStatus = {
   CREDIT_PENDING: 'CREDIT_PENDING',
   PROCESSING: 'PROCESSING',
   CREDIT_FAILED: 'CREDIT_FAILED',
+  /** Alias chuyển tiếp, gỡ sau 1 sprint: BE đã đổi sang PROCESSING, giữ để dữ liệu/BE cũ vẫn hiện đúng nhãn. */
   RECONCILIATION_REQUIRED: 'RECONCILIATION_REQUIRED'
 } as const
 export type JournalProgressStatus =
@@ -163,8 +164,9 @@ export const CONFIG_STATUS: Record<
     className: 'warning-status',
     shimmerColor: WARNING_SHIMMER
   },
+  // Alias chuyển tiếp, gỡ sau 1 sprint: hiển thị như PROCESSING (không còn trạng thái "cần đối soát").
   [JournalProgressStatus.RECONCILIATION_REQUIRED]: {
-    label: 'Cần đối soát',
+    label: 'Đang xử lý',
     className: 'warning-status',
     shimmerColor: WARNING_SHIMMER
   },

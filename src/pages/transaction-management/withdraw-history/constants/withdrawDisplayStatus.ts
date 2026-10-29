@@ -22,6 +22,8 @@ const WITHDRAWAL_STEPS = [
   WithdrawalStatus.PENDING_APPROVAL,
   WithdrawalStatus.APPROVED,
   WithdrawalStatus.PAYING,
+  WithdrawalStatus.PROCESSING,
+  // alias chuyển tiếp, gỡ sau 1 sprint
   WithdrawalStatus.RECONCILIATION_REQUIRED
 ] as const
 

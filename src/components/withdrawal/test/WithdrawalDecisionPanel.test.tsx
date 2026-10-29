@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  fireEvent,
-  screen,
-  waitFor,
-  within
-} from '@testing-library/react'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { Provider } from 'react-redux'
@@ -205,7 +200,7 @@ describe('WithdrawalDecisionPanel', () => {
    * gửi null, và `bankRefId` trùng đúng `id` của chính bản ghi — tức KHÔNG phải
    * mã ngân hàng trả về.
    */
-  it('đọc đúng payload thật của lệnh chờ đối soát', async () => {
+  it('đọc đúng payload thật của lệnh đang xử lý', async () => {
     server.use(
       http.get('*/withdrawals', () =>
         HttpResponse.json({
@@ -218,7 +213,7 @@ describe('WithdrawalDecisionPanel', () => {
             amount: 50000,
             grossAmount: 50250,
             fee: 250,
-            status: 'RECONCILIATION_REQUIRED',
+            status: 'PROCESSING',
             failureReason:
               'Payment Hub requires reconciliation: BANK_UNKNOWN: Bank outcome unknown; query-only refresh or manual reconciliation is required. VPBank Client Error: I/O error on POST request for "https://apigw-ext.dev.vpbank.com.vn/it-df-msd/uat/iapi/v1/cash-out": Read',
             updatedAt: '2026-08-26T12:37:33.957134',
@@ -235,8 +230,8 @@ describe('WithdrawalDecisionPanel', () => {
 
     const { user } = renderPanel()
 
-    expect(await screen.findByText('Chờ đối soát')).toBeInTheDocument()
-    expect(screen.getByText('Bị khoá, chờ đối soát')).toBeInTheDocument()
+    expect(await screen.findByText('Đang xử lý')).toBeInTheDocument()
+    expect(screen.getByText('Bị khoá, chưa trừ')).toBeInTheDocument()
     expect(screen.getByText('50.250 VND')).toBeInTheDocument()
 
     // Không được mời duyệt một lệnh đã rời khỏi hàng chờ duyệt.

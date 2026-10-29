@@ -26,9 +26,7 @@ describe('trạng thái hiển thị của lệnh rút', () => {
     //   'Đã duyệt — đang chi'
     // )
     // expect(WITHDRAW_DISPLAY_STATUS_CONFIG.PAYING.label).toBe('Đang chi')
-    expect(WITHDRAW_DISPLAY_STATUS_CONFIG.RECONCILIATION_REQUIRED.label).toBe(
-      'Chờ đối soát'
-    )
+    expect(WITHDRAW_DISPLAY_STATUS_CONFIG.PROCESSING.label).toBe('Đang xử lý')
     expect(WITHDRAW_DISPLAY_STATUS_CONFIG.POSTED.label).toBe('Đã thành công')
     expect(WITHDRAW_DISPLAY_STATUS_CONFIG.PENDING.label).toBe('Chờ xử lý')
   })
@@ -40,5 +38,15 @@ describe('trạng thái hiển thị của lệnh rút', () => {
     // expect(WITHDRAW_DISPLAY_STATUS_CONFIG.APPROVED.className).not.toMatch(
     //   /success/
     // )
+  })
+
+  it('alias chuyển tiếp RECONCILIATION_REQUIRED vẫn hiện “Đang xử lý”, tông cảnh báo', () => {
+    // alias chuyển tiếp, gỡ sau 1 sprint
+    const alias = WITHDRAW_DISPLAY_STATUS_CONFIG.RECONCILIATION_REQUIRED
+    expect(alias.label).toBe('Đang xử lý')
+    expect(alias.className).toBe('warning-status')
+    expect(WITHDRAW_DISPLAY_STATUS_CONFIG.PROCESSING.className).toBe(
+      'warning-status'
+    )
   })
 })

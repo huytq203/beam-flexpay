@@ -37,7 +37,7 @@ const order = (id: string, overrides: Record<string, unknown> = {}) => ({
 export const ORDERS = [
   order('a1'),
   order('b2', {
-    status: 'CREDIT_RECONCILIATION_REQUIRED',
+    status: 'CREDIT_POSTING',
     creditFailureReason: 'Chưa rõ kết quả ghi có ví merchant'
   }),
   order('c3', { status: 'SUCCESS' })

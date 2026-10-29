@@ -43,7 +43,7 @@ export const FAILED_PLAIN = action('FAILED', [])
 export const mockRefresh = (
   allowedActions: object[],
   bankCheck?: object,
-  status = 'RECONCILIATION_REQUIRED'
+  status = 'PROCESSING'
 ): { calls: number } => {
   const counter = { calls: 0 }
   server.use(

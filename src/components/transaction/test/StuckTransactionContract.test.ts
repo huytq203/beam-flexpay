@@ -8,6 +8,8 @@ import { describe, expect, it } from 'vitest'
 describe('hợp đồng cập nhật giao dịch treo', () => {
   it('cho phép các trạng thái treo mới của BE', () => {
     expect(isStuckJournalStatus('CREDIT_PENDING')).toBe(true)
+    expect(isStuckJournalStatus('PROCESSING')).toBe(true)
+    // alias chuyển tiếp, gỡ sau 1 sprint
     expect(isStuckJournalStatus('RECONCILIATION_REQUIRED')).toBe(true)
     expect(isStuckJournalStatus('POSTED')).toBe(false)
   })

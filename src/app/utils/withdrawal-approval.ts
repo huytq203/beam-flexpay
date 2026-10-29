@@ -52,8 +52,12 @@ export const getWithdrawalDecisionFailureMessage = (
     return 'Lệnh rút đã bị người khác từ chối. Màn hình đã cập nhật trạng thái mới nhất.'
   }
 
-  if (freshStatus === WithdrawalStatus.RECONCILIATION_REQUIRED) {
-    return 'Lệnh rút đã chuyển sang chờ đối soát, không còn duyệt hay từ chối được.'
+  // RECONCILIATION_REQUIRED: alias chuyển tiếp, gỡ sau 1 sprint
+  if (
+    freshStatus === WithdrawalStatus.PROCESSING ||
+    freshStatus === WithdrawalStatus.RECONCILIATION_REQUIRED
+  ) {
+    return 'Lệnh rút đang được xử lý, không còn duyệt hay từ chối được.'
   }
 
   if (isWithdrawalPendingApproval(freshStatus)) {

@@ -17,7 +17,9 @@ export const WithdrawalStatus = {
   /** Trạng thái thành công duy nhất: tiền đã ra, sổ đã ghi. */
   POSTED: 'POSTED',
   FAILED: 'FAILED',
-  /** Ngân hàng không nhận hoặc trả lời không rõ — tiền vẫn bị giữ chờ đối soát. */
+  /** Ngân hàng chưa trả kết quả rõ — hệ thống tiếp tục xử lý, tiền vẫn bị giữ. */
+  PROCESSING: 'PROCESSING',
+  /** Alias chuyển tiếp, gỡ sau 1 sprint: BE đã đổi sang `PROCESSING`; giữ để BE/dữ liệu cũ vẫn hiện "Đang xử lý". */
   RECONCILIATION_REQUIRED: 'RECONCILIATION_REQUIRED'
 } as const
 
@@ -37,6 +39,15 @@ export interface WithdrawalStatusPresentation {
   /** Một câu nói rõ điều người vận hành dễ hiểu sai nhất ở trạng thái này. */
   guidance: string
   tone: WithdrawalStatusTone
+}
+
+/** Dùng chung cho `PROCESSING` và alias cũ `RECONCILIATION_REQUIRED` để hai giá trị không bao giờ lệch nhãn. */
+const PROCESSING_PRESENTATION: WithdrawalStatusPresentation = {
+  label: 'Đang xử lý',
+  fundsLabel: 'Bị khoá, chưa trừ',
+  guidance:
+    'Hệ thống đang xử lý lệnh rút, chưa có kết quả cuối. Tiền vẫn bị giữ cho tới khi có kết quả.',
+  tone: 'wait'
 }
 
 export const WITHDRAWAL_STATUS_PRESENTATION: Record<
@@ -85,13 +96,9 @@ export const WITHDRAWAL_STATUS_PRESENTATION: Record<
     guidance: 'Toàn bộ tiền bị giữ đã được trả về ví khách, gồm cả phí.',
     tone: 'stop'
   },
-  [WithdrawalStatus.RECONCILIATION_REQUIRED]: {
-    label: 'Chờ đối soát',
-    fundsLabel: 'Bị khoá, chờ đối soát',
-    guidance:
-      'Ngân hàng không nhận hoặc trả lời không rõ. Tiền vẫn bị giữ, chờ người đối soát xử lý.',
-    tone: 'stop'
-  }
+  [WithdrawalStatus.PROCESSING]: PROCESSING_PRESENTATION,
+  // Alias chuyển tiếp, gỡ sau 1 sprint: hiển thị y hệt PROCESSING (tông cảnh báo).
+  [WithdrawalStatus.RECONCILIATION_REQUIRED]: PROCESSING_PRESENTATION
 }
 
 /** Ràng buộc độ dài của `POST /withdrawals/{transactionCode}/approve`. */
