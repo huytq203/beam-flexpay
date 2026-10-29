@@ -170,14 +170,19 @@ export const escrowApi = apiMerchant.injectEndpoints({
       extraOptions: OWN_ERROR_HANDLING,
       transformResponse: unwrap<CredentialOtpChallenge>
     }),
+    // `note` tùy chọn, BE lưu vào `decisionNote` của phiên bản được duyệt.
     approveEscrowConfig: builder.mutation<
       EscrowConfig,
-      { id: string; sensitiveOtp: { otpSessionId: string; otp: string } }
+      {
+        id: string
+        note?: string
+        sensitiveOtp: { otpSessionId: string; otp: string }
+      }
     >({
-      query: ({ id, sensitiveOtp }) => ({
+      query: ({ id, note, sensitiveOtp }) => ({
         url: `${ESCROWS}/config-proposals/${id}/approve`,
         method: 'POST',
-        body: { sensitiveOtp }
+        body: { note, sensitiveOtp }
       }),
       extraOptions: OWN_ERROR_HANDLING,
       transformResponse: unwrap<EscrowConfig>,

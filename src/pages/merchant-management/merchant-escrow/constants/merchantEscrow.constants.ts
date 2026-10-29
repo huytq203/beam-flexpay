@@ -4,8 +4,11 @@ import type {
   EscrowContributionForm,
   EscrowLedgerKind,
   EscrowOrderStatus,
+  EscrowOverdueAction,
   EscrowPieceStatus,
+  EscrowRequirementMode,
   EscrowReturnReason,
+  EscrowReviewCycle,
   EscrowRisk,
   EscrowState
 } from '../types/merchantEscrow.types'
@@ -94,3 +97,25 @@ export const ESCROW_CONFIG_SOURCE_LABEL: Record<EscrowConfigSource, string> = {
   MANUAL: 'Do người dùng lưu',
   REVIEW: 'Do job soát xét định kỳ đề xuất'
 }
+
+/** Cách xác định mức ký quỹ (spec §3.9, bảng giá trị enum). */
+export const ESCROW_REQUIREMENT_MODE_LABEL: Record<
+  EscrowRequirementMode,
+  string
+> = {
+  FIXED: 'Số tiền cố định',
+  AVERAGE_REVENUE: 'Theo doanh thu bình quân'
+}
+
+/** Chu kỳ job soát xét tự đề xuất lại mức theo doanh thu (chỉ khi AVERAGE_REVENUE). */
+export const ESCROW_REVIEW_CYCLE_LABEL: Record<EscrowReviewCycle, string> = {
+  MONTHLY: 'Hằng tháng',
+  QUARTERLY: 'Hằng quý',
+  NONE: 'Không soát xét tự động'
+}
+
+export const ESCROW_OVERDUE_ACTION_LABEL: Record<EscrowOverdueAction, string> =
+  {
+    WARN_ONLY: 'Chỉ cảnh báo',
+    BLOCK_PAYMENTS: 'Chặn thanh toán'
+  }

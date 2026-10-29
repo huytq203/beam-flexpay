@@ -2,12 +2,13 @@ import { useParams } from 'react-router-dom'
 import { useGetEscrowOverviewQuery } from '@/app/services/merchantEscrowApi'
 import { ButtonComponent, CardComponent, TabComponent } from '@components/index'
 import { EscrowConfigHistoryTab } from '../components/EscrowConfigHistoryTab'
+import { EscrowConfigPanel } from '../components/EscrowConfigPanel'
 import { EscrowContributionsTab } from '../components/EscrowContributionsTab'
 import { EscrowLedgerTab } from '../components/EscrowLedgerTab'
 import { EscrowObligationWait } from '../components/EscrowObligationWait'
 import { EscrowStandingCard } from '../components/EscrowStandingCard'
 
-/** Chi tiết ký quỹ của một Master. Task 4 gắn thêm panel cấu hình bên dưới thẻ tình trạng. */
+/** Chi tiết ký quỹ của một Master: thẻ tình trạng, panel cấu hình (sửa/đề xuất chờ duyệt) và các tab. */
 export default function EscrowDetailPage() {
   const { masterId = '' } = useParams<{ masterId: string }>()
   const query = useGetEscrowOverviewQuery(masterId, { skip: !masterId })
@@ -32,6 +33,7 @@ export default function EscrowDetailPage() {
   return (
     <main className='flex min-w-0 flex-col gap-3'>
       {query.data && <EscrowStandingCard overview={query.data} />}
+      <EscrowConfigPanel masterId={masterId} />
       <CardComponent className='border border-border bg-background shadow-none'>
         <TabComponent
           items={[

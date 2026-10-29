@@ -2,9 +2,15 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { SCREENS } from '@/app/permissions'
 import { useGetEscrowListQuery } from '@/app/services/merchantEscrowApi'
-import { ButtonComponent, Table } from '@components/index'
+import {
+  ButtonComponent,
+  CardComponent,
+  TabComponent,
+  Table
+} from '@components/index'
 import { AccessPageShell } from '../../merchant-access/components/AccessPageShell'
 import { createEscrowListColumns } from '../columns/escrowList.columns'
+import { EscrowConfigProposalsPanel } from '../components/EscrowConfigProposalsPanel'
 import {
   EscrowFilters,
   type EscrowListFilters
@@ -21,7 +27,7 @@ const clean = (filters: EscrowListFilters): EscrowListFilters => {
 }
 
 /** Danh sách ký quỹ theo Master (FR-MER-0625): lọc, phân trang, bấm mã để vào chi tiết. */
-export default function EscrowListPage() {
+function EscrowMasterList() {
   const navigate = useNavigate()
   const [draft, setDraft] = useState<EscrowListFilters>({})
   const [applied, setApplied] = useState<EscrowListFilters>({})
@@ -100,5 +106,33 @@ export default function EscrowListPage() {
         size='small'
       />
     </AccessPageShell>
+  )
+}
+
+/**
+ * Trang Ký quỹ: tab mặc định là danh sách Master; tab "Chờ duyệt cấu hình" là hàng đợi đề xuất
+ * cấu hình của mọi Master trong phạm vi, để người duyệt không phải mở từng Master.
+ */
+export default function EscrowListPage() {
+  const [tab, setTab] = useState('list')
+  return (
+    <div className='flex min-w-0 flex-col gap-3'>
+      <TabComponent
+        activeKey={tab}
+        onChange={setTab}
+        items={[
+          { key: 'list', label: 'Danh sách ký quỹ' },
+          { key: 'proposals', label: 'Chờ duyệt cấu hình' }
+        ]}
+      />
+      {/* Chỉ dựng tab đang mở để hàng chờ duyệt không tải khi người dùng chỉ xem danh sách. */}
+      {tab === 'list' ? (
+        <EscrowMasterList />
+      ) : (
+        <CardComponent className='border border-border bg-background shadow-none'>
+          <EscrowConfigProposalsPanel />
+        </CardComponent>
+      )}
+    </div>
   )
 }

@@ -4,17 +4,12 @@ import {
   formatUTCToLocalDate,
   formatUTCToLocalDateTime
 } from '@utils/helper-functions/date'
-import { ESCROW_STATE_LABEL } from '../constants/merchantEscrow.constants'
+import {
+  ESCROW_OVERDUE_ACTION_LABEL as OVERDUE_ACTION_LABEL,
+  ESCROW_REQUIREMENT_MODE_LABEL as MODE_LABEL,
+  ESCROW_STATE_LABEL
+} from '../constants/merchantEscrow.constants'
 import type { EscrowOverview } from '../types/merchantEscrow.types'
-
-const MODE_LABEL = {
-  FIXED: 'Số tiền cố định',
-  AVERAGE_REVENUE: 'Theo doanh thu bình quân'
-} as const
-const OVERDUE_ACTION_LABEL = {
-  WARN_ONLY: 'Chỉ cảnh báo',
-  BLOCK_PAYMENTS: 'Chặn thanh toán'
-} as const
 
 const yesNo = (value: boolean) => (value ? 'Có' : 'Không')
 
