@@ -29,7 +29,12 @@ const clean = (filters: EscrowListFilters): EscrowListFilters => {
 }
 
 /** Danh sách ký quỹ theo Master (FR-MER-0625): lọc, phân trang, bấm mã để vào chi tiết. */
-function EscrowMasterList() {
+interface EscrowMasterListProps {
+  /** Mở hàng chờ duyệt lệnh nạp đã lọc theo Master (SRS 3.6.26 STT 12). */
+  onOpenQueue: (masterId: string) => void
+}
+
+function EscrowMasterList({ onOpenQueue }: EscrowMasterListProps) {
   const navigate = useNavigate()
   const [draft, setDraft] = useState<EscrowListFilters>({})
   const [applied, setApplied] = useState<EscrowListFilters>({})
@@ -53,7 +58,8 @@ function EscrowMasterList() {
     page,
     pageSize: size,
     onOpen: (row: EscrowRow) => navigate(detailPath(row)),
-    onOpenOrders: (row: EscrowRow) => navigate(`${detailPath(row)}?tab=orders`),
+    // SRS 3.6.26 STT 12: số lệnh chờ duyệt mở hàng chờ phê duyệt đã lọc sẵn Master, ngay trong trang này.
+    onOpenOrders: (row: EscrowRow) => onOpenQueue(row.masterId),
     onCreateOrder: setOrderTarget
   })
 
@@ -132,11 +138,23 @@ function EscrowMasterList() {
  */
 export default function EscrowListPage() {
   const [tab, setTab] = useState('list')
+  // Master đã chọn sẵn cho hàng chờ khi mở từ số lệnh chờ duyệt trên dòng; bấm tab tay thì bỏ lọc.
+  const [queueMasterId, setQueueMasterId] = useState<string>()
+  const openQueue = (masterId: string) => {
+    setQueueMasterId(masterId)
+    setTab('orders')
+  }
   return (
     <div className='flex min-w-0 flex-col gap-3'>
+      {/* TabComponent dùng chung không chuyển `activeKey` xuống antd (luôn ở dạng không điều khiển),
+          nên đặt `key` theo tab để thanh tab dựng lại đúng tab khi đổi bằng code. */}
       <TabComponent
-        activeKey={tab}
-        onChange={setTab}
+        key={tab}
+        defaultActiveKey={tab}
+        onChange={(next) => {
+          setQueueMasterId(undefined)
+          setTab(next)
+        }}
         items={[
           { key: 'list', label: 'Danh sách ký quỹ' },
           { key: 'proposals', label: 'Chờ duyệt cấu hình' },
@@ -144,7 +162,7 @@ export default function EscrowListPage() {
         ]}
       />
       {/* Chỉ dựng tab đang mở để hàng chờ duyệt không tải khi người dùng chỉ xem danh sách. */}
-      {tab === 'list' && <EscrowMasterList />}
+      {tab === 'list' && <EscrowMasterList onOpenQueue={openQueue} />}
       {tab === 'proposals' && (
         <CardComponent className='border border-border bg-background shadow-none'>
           <EscrowConfigProposalsPanel />
@@ -152,7 +170,10 @@ export default function EscrowListPage() {
       )}
       {tab === 'orders' && (
         <CardComponent className='border border-border bg-background shadow-none'>
-          <EscrowOrderQueue />
+          <EscrowOrderQueue
+            key={queueMasterId ?? 'all'}
+            initialMasterId={queueMasterId}
+          />
         </CardComponent>
       )}
     </div>

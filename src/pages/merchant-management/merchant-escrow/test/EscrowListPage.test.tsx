@@ -117,11 +117,21 @@ describe('EscrowListPage', { timeout: 30000 }, () => {
     )
   })
 
-  it('bấm số lệnh chờ duyệt mở thẳng tab lệnh nạp của Master', async () => {
+  it('bấm số lệnh chờ duyệt chuyển sang tab Chờ duyệt lệnh nạp đã lọc theo Master đó (SRS 3.6.26 STT 12)', async () => {
+    const orderUrls: URL[] = []
     server.use(
       http.get('*/merchant-escrows', () =>
         HttpResponse.json(page([escrowRow({ masterId: 'abc-123' })]))
-      )
+      ),
+      http.get('*/merchants', () =>
+        HttpResponse.json({ data: { content: [], totalElements: 0 } })
+      ),
+      http.get('*/merchant-escrow-orders', ({ request }) => {
+        orderUrls.push(new URL(request.url))
+        return HttpResponse.json({
+          data: { content: [], totalElements: 0, totalPages: 0, size: 20, number: 0 }
+        })
+      })
     )
     const user = userEvent.setup()
     renderWithStore(
@@ -141,8 +151,13 @@ describe('EscrowListPage', { timeout: 30000 }, () => {
         name: 'Xem 2 lệnh chờ duyệt của MC000001'
       })
     )
-    expect(screen.getByTestId('where-full')).toHaveTextContent(
-      '/secure-panel/merchant/escrow/abc-123?tab=orders'
-    )
+    // Ở lại trang Danh sách ký quỹ, tab hàng chờ được chọn và gọi API đã lọc sẵn Master.
+    expect(
+      await screen.findByRole('tab', { name: 'Chờ duyệt lệnh nạp', selected: true })
+    ).toBeInTheDocument()
+    expect(screen.getByTestId('where-full')).not.toHaveTextContent('abc-123')
+    await waitFor(() => expect(orderUrls.length).toBeGreaterThan(0))
+    expect(orderUrls[0].searchParams.get('masterId')).toBe('abc-123')
+    expect(orderUrls[0].searchParams.get('status')).toBe('PENDING_APPROVAL')
   })
 })

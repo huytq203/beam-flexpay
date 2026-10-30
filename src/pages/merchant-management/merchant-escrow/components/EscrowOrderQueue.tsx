@@ -136,11 +136,16 @@ const buildColumns = (
  * Hàng chờ phê duyệt lệnh nạp ký quỹ (SRS 3.6.29, phần lệnh nạp). Lọc theo trạng thái và Master,
  * bấm mã lệnh mở drawer chi tiết có khối Duyệt/Từ chối/Trả lại.
  */
-export function EscrowOrderQueue() {
+interface EscrowOrderQueueProps {
+  /** Master lọc sẵn khi mở từ số lệnh chờ duyệt trên Danh sách ký quỹ (SRS 3.6.26 STT 12). */
+  initialMasterId?: string
+}
+
+export function EscrowOrderQueue({ initialMasterId }: EscrowOrderQueueProps = {}) {
   const [status, setStatus] = useState<EscrowOrderStatus | undefined>(
     DEFAULT_STATUS
   )
-  const [masterId, setMasterId] = useState<string | undefined>()
+  const [masterId, setMasterId] = useState<string | undefined>(initialMasterId)
   const [page, setPage] = useState(1)
   const [size, setSize] = useState(DEFAULT_SIZE)
   const [openedId, setOpenedId] = useState<string | null>(null)
