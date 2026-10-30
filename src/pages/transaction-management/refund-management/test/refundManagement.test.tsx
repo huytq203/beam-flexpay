@@ -182,7 +182,9 @@ describe('quy tắc nút', () => {
       refundCode: 'RF-B',
       status: 'WAITING_FUNDS',
       channel: 'TO_BANK',
-      createdBy: 'a'
+      createdBy: 'a',
+      // Nút làm mới chỉ hiện khi BE nói làm mới được.
+      payoutRefreshable: true
     })
     mockList(() => [wallet, bank])
     const { unmount } = renderRefundPage(APPROVER)
