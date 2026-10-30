@@ -18,7 +18,14 @@ export const WithdrawalStatus = {
   POSTED: 'POSTED',
   FAILED: 'FAILED',
   /** Ngân hàng không nhận hoặc trả lời không rõ — tiền vẫn bị giữ chờ đối soát. */
-  RECONCILIATION_REQUIRED: 'RECONCILIATION_REQUIRED'
+  RECONCILIATION_REQUIRED: 'RECONCILIATION_REQUIRED',
+  /**
+   * Lệnh chi hoàn tiền ra ngân hàng: bản ghi hoàn đã được phê duyệt (và đã Thành công), lệnh chi chờ Kế toán
+   * duyệt chi ở màn Lịch sử rút tiền (Bước 3, 30/10).
+   */
+  PENDING_PAYOUT_APPROVAL: 'PENDING_PAYOUT_APPROVAL',
+  /** Lệnh chi hoàn tiền đã được duyệt chi, chưa có kết quả (chi thủ công thì chờ chốt tay). */
+  PAYOUT_APPROVED: 'PAYOUT_APPROVED'
 } as const
 
 export type WithdrawalStatus =
@@ -84,6 +91,20 @@ export const WITHDRAWAL_STATUS_PRESENTATION: Record<
     fundsLabel: 'Đã trả lại ví',
     guidance: 'Toàn bộ tiền bị giữ đã được trả về ví khách, gồm cả phí.',
     tone: 'stop'
+  },
+  [WithdrawalStatus.PENDING_PAYOUT_APPROVAL]: {
+    label: 'Đã duyệt chờ chi',
+    fundsLabel: 'Bị khoá, chưa trừ',
+    guidance:
+      'Yêu cầu hoàn tiền đã được phê duyệt, lệnh chi chờ Kế toán duyệt chi. Chưa gửi gì sang ngân hàng.',
+    tone: 'wait'
+  },
+  [WithdrawalStatus.PAYOUT_APPROVED]: {
+    label: 'Đã duyệt chi',
+    fundsLabel: 'Bị khoá, chưa trừ',
+    guidance:
+      'Đã duyệt chi, chưa có kết quả từ ngân hàng. Chỉ khi về “Đã chi — hoàn tất” thì tiền mới thật sự ra.',
+    tone: 'wait'
   },
   [WithdrawalStatus.RECONCILIATION_REQUIRED]: {
     label: 'Chờ đối soát',

@@ -1,5 +1,10 @@
 import { useState } from 'react'
-import { ButtonComponent, DialogModal, ReasonDialog } from '@components/index'
+import {
+  ButtonComponent,
+  DialogModal,
+  ReasonDialog,
+  TooltipComponent
+} from '@components/index'
 import {
   ArrowCounterClockwiseIcon,
   CheckCircleOutlined,
@@ -28,6 +33,8 @@ import { useWithdrawalDecision } from './useWithdrawalDecision'
 import { useWithdrawalStatus } from './useWithdrawalStatus'
 
 const CASH_OUT = 'CASH_OUT'
+/** Lệnh chi hoàn tiền ra ngân hàng: duyệt chi ở đây như lệnh rút (Bước 3, 30/10). */
+const REFUND_BANK_PAYOUT = 'REFUND_BANK_PAYOUT'
 const SHELL = 'rounded-lg border border-border bg-background p-4'
 
 export interface WithdrawalDecisionPanelProps {
@@ -61,7 +68,8 @@ export const WithdrawalDecisionPanel = ({
   const [manualError, setManualError] = useState<string | null>(null)
   const { has } = useAccess()
   const code = transactionCode ?? ''
-  const isWithdrawal = transactionType === CASH_OUT
+  const isRefundPayout = transactionType === REFUND_BANK_PAYOUT
+  const isWithdrawal = transactionType === CASH_OUT || isRefundPayout
 
   const { withdrawal, status, isLoading, isFetching, isError, refetch } =
     useWithdrawalStatus(code, !isWithdrawal)
@@ -116,12 +124,17 @@ export const WithdrawalDecisionPanel = ({
 
   const presentation = getWithdrawalStatusPresentation(status)
   const isPending = isWithdrawalPendingApproval(status)
-  const canDecide = isPending && has(PERMISSION.EWALLET_FULL)
+  // Lệnh chi hoàn: kế toán có quyền duyệt chi (PAYOUT:APPROVE) thao tác được như ở màn Hoàn tiền trước đây
+  // (chốt 30/10); lệnh rút thường vẫn chỉ EWALLET:FULL.
+  const canAct =
+    has(PERMISSION.EWALLET_FULL) ||
+    (isRefundPayout && has(PERMISSION.PAYOUT_APPROVE))
+  const canDecide = isPending && canAct
   // Chỉ đọc cờ BE trả về, không tự suy từ trạng thái/ngân hàng (chốt 28/10).
   // Quyền khớp nút "Xử lý chi tiền" vì cùng gọi `update-status`.
   const canConfirmManual =
     withdrawal.awaitingManualConfirmation === true &&
-    has(PERMISSION.EWALLET_FULL)
+    canAct
   const isApiSettling =
     withdrawal.payoutMode === PayoutMode.API &&
     withdrawal.awaitingManualConfirmation !== true &&
@@ -186,10 +199,27 @@ export const WithdrawalDecisionPanel = ({
                   disabled={isDeciding}
                   onClick={() => setOpenDecision('reject')}
                 />
+                {/* Chế độ chi do BE trả (không tự suy): API thì duyệt xong hệ thống gọi ngân hàng ngay,
+                    thủ công thì sau khi duyệt kế toán chuyển khoản ngoài rồi chốt Chi thành công/thất bại. */}
+                {isRefundPayout && withdrawal.payoutMode && (
+                  <TooltipComponent
+                    title={
+                      withdrawal.payoutMode === PayoutMode.API
+                        ? 'Duyệt xong hệ thống gọi ngân hàng chi ngay và tự cập nhật kết quả.'
+                        : 'Ngân hàng chưa có API: duyệt xong chuyển khoản ngoài rồi cập nhật Chi thành công hoặc Chi thất bại.'
+                    }
+                  >
+                    <span className='rounded-sm border border-border px-2 py-0.5 text-xs leading-5 text-muted-foreground'>
+                      {withdrawal.payoutMode === PayoutMode.API
+                        ? 'Duyệt API'
+                        : 'Duyệt thủ công'}
+                    </span>
+                  </TooltipComponent>
+                )}
                 <ButtonComponent
                   htmlType='button'
                   type='primary'
-                  content='Duyệt'
+                  content={isRefundPayout ? 'Duyệt chi' : 'Duyệt'}
                   icon={<CheckCircleOutlined />}
                   className='pointer-coarse:h-11!'
                   loading={isApproving}
@@ -254,8 +284,14 @@ export const WithdrawalDecisionPanel = ({
 
       <ReasonDialog
         open={openDecision === 'approve'}
-        title='Duyệt lệnh rút vượt ngưỡng'
-        description={`Duyệt xong hệ thống sẽ chi ${grossLabel} cho khách. Thao tác này không hoàn tác được.`}
+        title={
+          isRefundPayout ? 'Duyệt chi lệnh hoàn tiền' : 'Duyệt lệnh rút vượt ngưỡng'
+        }
+        description={
+          isRefundPayout && withdrawal.payoutMode !== PayoutMode.API
+            ? `Duyệt xong hãy chuyển ${grossLabel} cho khách ngoài hệ thống rồi cập nhật kết quả. Thao tác này không hoàn tác được.`
+            : `Duyệt xong hệ thống sẽ chi ${grossLabel} cho khách. Thao tác này không hoàn tác được.`
+        }
         label='Lý do duyệt'
         placeholder='Ví dụ: đã đối chiếu hồ sơ khách hàng và nguồn tiền, đồng ý chi'
         okText='Xác nhận duyệt'
@@ -270,7 +306,7 @@ export const WithdrawalDecisionPanel = ({
 
       <ReasonDialog
         open={openDecision === 'reject'}
-        title='Từ chối lệnh rút'
+        title={isRefundPayout ? 'Từ chối chi lệnh hoàn tiền' : 'Từ chối lệnh rút'}
         description='Toàn bộ tiền bị giữ, gồm cả phí, sẽ được trả về ví khách ngay.'
         label='Lý do từ chối'
         hint={`Tối đa ${WITHDRAWAL_REASON_MAX_LENGTH} ký tự, hiển thị được với khách`}
