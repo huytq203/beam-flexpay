@@ -50,6 +50,15 @@ describe('StuckTransactionUpdateAction - hiển thị nút', () => {
   //   expect(await screen.findByRole('button', { name: TRIGGER })).toBeVisible()
   // })
 
+  it('ẩn nút khi lệnh chi hoàn (REFUND_BANK_PAYOUT) đang chờ duyệt chi', async () => {
+    mockWithdrawalStatus(WithdrawalStatus.PENDING_PAYOUT_APPROVAL)
+    renderAction({ transactionType: 'REFUND_BANK_PAYOUT' })
+
+    await waitFor(() =>
+      expect(screen.queryByRole('button', { name: TRIGGER })).toBeNull()
+    )
+  })
+
   it('chuyển tiền (P2P_TRANSFER) không có nút cập nhật, cả ở dạng icon trong danh sách', () => {
     renderAction({ transactionType: 'P2P_TRANSFER' })
     expect(screen.queryByRole('button', { name: TRIGGER })).toBeNull()

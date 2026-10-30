@@ -29,6 +29,12 @@ import {
 } from './stuckTransaction.utils'
 
 const CASH_OUT = 'CASH_OUT'
+/**
+ * Loại bút toán có lệnh rút ở user-wallet: lệnh rút của khách và lệnh chi hoàn tiền ra ngân hàng. Cả hai phải đọc
+ * trạng thái lệnh rút để ẩn nút khi lệnh còn chờ duyệt (lệnh chi hoàn: chờ Kế toán duyệt chi).
+ */
+const hasWithdrawalRecord = (transactionType: string | null | undefined) =>
+  transactionType === CASH_OUT || transactionType === 'REFUND_BANK_PAYOUT'
 
 export interface StuckTransactionUpdateActionProps {
   transactionCode?: string | null
@@ -81,7 +87,7 @@ export const StuckTransactionUpdateAction = ({
       !canAccess ||
       compact ||
       !isStuckJournalStatus(journalStatus) ||
-      transactionType !== CASH_OUT,
+      !hasWithdrawalRecord(transactionType),
     refetchOnMountOrArgChange: false
   })
   const [updateStatus, { isLoading }] =
@@ -105,7 +111,7 @@ export const StuckTransactionUpdateAction = ({
   }
 
   const handleOpen = async (): Promise<void> => {
-    if (compact && transactionType === CASH_OUT) {
+    if (compact && hasWithdrawalRecord(transactionType)) {
       const latestWithdrawal = await readWithdrawal(code)
         .unwrap()
         .catch(() => null)

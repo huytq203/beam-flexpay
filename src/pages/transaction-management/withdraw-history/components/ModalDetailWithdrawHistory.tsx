@@ -16,6 +16,10 @@ import {
 import { formatNumber } from '@utils/index'
 import { buildTransactionFlow } from '@utils/transaction-flow'
 import { StatusKey } from '../constants/WithdrawHistory.constant'
+import {
+  resolveDisplayStatus,
+  WITHDRAW_DISPLAY_STATUS_CONFIG
+} from '../constants/withdrawDisplayStatus'
 
 
 import { BeneficiaryInfo, InfoRow } from './WithdrawDetailParts'
@@ -35,6 +39,12 @@ const JOURNAL_STATUS_CONFIG = {
     className: 'danger-status',
     shimmerColor: 'rgba(255, 86, 59, 0.2)'
   }
+}
+
+/** Nhãn sổ cái (kể cả ARCHIVED) cộng các bước chỉ có ở lệnh rút; bước lệnh rút thắng khi trùng khóa. */
+const DETAIL_STATUS_CONFIG = {
+  ...JOURNAL_STATUS_CONFIG,
+  ...WITHDRAW_DISPLAY_STATUS_CONFIG
 }
 
 const DialogDetailWithdrawHistory = ({
@@ -168,23 +178,14 @@ const DialogDetailWithdrawHistory = ({
                     </span>
                   }
                 />
-                {/* {resolveDisplayStatus(data) !== data.status && (
-                  <InfoRow
-                    label='Trạng thái'
-                    value={
-                      <StatusBadge
-                        status={resolveDisplayStatus(data)}
-                        config={WITHDRAW_DISPLAY_STATUS_CONFIG}
-                      />
-                    }
-                  />
-                )} */}
+                {/* Cùng một trạng thái với cột danh sách và khối lệnh rút: bước của lệnh rút (chờ duyệt, đã duyệt chờ
+                    chi, đang chi...) nếu có, còn lại là trạng thái sổ cái (gồm "Đã lưu trữ"). */}
                 <InfoRow
                   label='Trạng thái'
                   value={
                     <StatusBadge
-                      status={data.status}
-                      config={JOURNAL_STATUS_CONFIG}
+                      status={resolveDisplayStatus(data)}
+                      config={DETAIL_STATUS_CONFIG}
                     />
                   }
                 />

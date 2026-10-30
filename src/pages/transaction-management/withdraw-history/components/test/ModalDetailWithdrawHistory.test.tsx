@@ -196,6 +196,45 @@ describe('useHandle withdraw detail', () => {
 })
 
 describe('ModalDetailWithdrawHistory', () => {
+  /**
+   * Dòng "Trạng thái" của khối thông tin giao dịch đọc trạng thái HIỂN THỊ (displayStatus) như cột danh sách: lệnh
+   * chi hoàn đang chờ Kế toán duyệt chi hiện "Đã duyệt chờ chi", không phải "Chờ xử lý" của sổ cái.
+   */
+  it('dòng Trạng thái theo displayStatus của lệnh rút, không theo sổ cái', () => {
+    renderWithProviders(
+      <MessageProvider>
+        <DialogDetailWithdrawHistory
+          data={{
+            ...journal,
+            status: 'PENDING',
+            displayStatus: 'PENDING_PAYOUT_APPROVAL',
+            transactionType: 'P2P_TRANSFER'
+          }}
+          withdrawalDetail={withdrawalResponse.data}
+        />
+      </MessageProvider>
+    )
+
+    const row = screen.getByText('Trạng thái:').parentElement
+    expect(row?.textContent).toContain('Đã duyệt chờ chi')
+    expect(row?.textContent).not.toContain('Chờ xử lý')
+  })
+
+  it('dòng Trạng thái giữ nhãn sổ cái khi không có bước lệnh rút (Đã lưu trữ)', () => {
+    renderWithProviders(
+      <MessageProvider>
+        <DialogDetailWithdrawHistory
+          data={{ ...journal, status: 'ARCHIVED', transactionType: 'P2P_TRANSFER' }}
+          withdrawalDetail={withdrawalResponse.data}
+        />
+      </MessageProvider>
+    )
+
+    expect(screen.getByText('Trạng thái:').parentElement?.textContent).toContain(
+      'Đã lưu trữ'
+    )
+  })
+
   it('hiển thị thông tin thụ hưởng đã tải trước', () => {
     renderWithProviders(
       <MessageProvider>
