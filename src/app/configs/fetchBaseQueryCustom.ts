@@ -42,7 +42,6 @@ import Swal from 'sweetalert2'
 // ============================================================================
 
 let isRefreshing = false
-let refreshPromise: Promise<string | null> | null = null
 
 // ============================================================================
 // NOTIFICATION HELPER
@@ -95,7 +94,8 @@ const prepareAuthHeaders = (
   { getState }: Pick<BaseQueryApi, 'getState'>
 ): Headers => {
   const accessToken =
-    Cookies.get(CookieKey.ACCESS_TOKEN) ?? (getState() as RootState).auth.accessToken
+    Cookies.get(CookieKey.ACCESS_TOKEN) ??
+    (getState() as RootState).auth.accessToken
 
   if (accessToken) {
     headers.set('authorization', `Bearer ${accessToken}`)
@@ -113,7 +113,6 @@ const baseQueryOld = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL,
   prepareHeaders: prepareAuthHeaders
 })
-
 
 export const baseQueryFee = fetchBaseQuery({
   baseUrl: ENV.API_FEE,
@@ -139,8 +138,6 @@ export const baseQueryMerchant = fetchBaseQuery({
   prepareHeaders: prepareAuthHeaders
 })
 
-
-
 // ============================================================================
 // TOKEN REFRESH
 // ============================================================================
@@ -149,8 +146,6 @@ export const baseQueryMerchant = fetchBaseQuery({
  * Refresh access token using refresh token stored in cookies
  * Uses singleton pattern to prevent multiple simultaneous refresh requests
  */
-
-
 
 type AccessTokenDispatch = (
   action: ReturnType<typeof updateAccessToken>
@@ -182,33 +177,71 @@ const runExclusive = async <T>(task: () => Promise<T>): Promise<T> => {
 }
 
 /**
+ * `expired`: refresh token không còn dùng được → phải đăng nhập lại.
+ * `unavailable`: lỗi mạng, timeout hoặc 5xx của BE auth → phiên có thể vẫn còn,
+ * không được đẩy user ra ngoài chỉ vì một lần chập chờn.
+ */
+export type RefreshOutcome =
+  | { status: 'ok'; token: string }
+  | { status: 'expired' }
+  | { status: 'unavailable' }
+
+const EXPIRED: RefreshOutcome = { status: 'expired' }
+const UNAVAILABLE: RefreshOutcome = { status: 'unavailable' }
+
+// Request refresh treo thì mọi request đang chờ (và tab khác đang chờ Web Lock) treo theo.
+export const REFRESH_TIMEOUT_MS = 15_000
+
+let refreshOutcomePromise: Promise<RefreshOutcome> | null = null
+
+const isTransientStatus = (status: number): boolean =>
+  status >= 500 || status === 408 || status === 429
+
+const fetchWithTimeout = async (
+  url: string,
+  init: RequestInit
+): Promise<Response> => {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), REFRESH_TIMEOUT_MS)
+  try {
+    return await fetch(url, { ...init, signal: controller.signal })
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
+/**
  * @param failedToken access token vừa bị BE trả 401. Cookie dùng chung giữa các
  * tab: nếu cookie đang giữ token khác, còn hạn (tab khác vừa refresh, hoặc tab
  * mới mở khi phiên còn hiệu lực) thì dùng lại thay vì refresh thêm lần nữa.
  */
-export const refreshAccessToken = async (
+export const requestTokenRefresh = async (
   dispatch: AccessTokenDispatch,
   failedToken?: string | null
-): Promise<string | null> => {
-  if (isRefreshing && refreshPromise) {
-    return refreshPromise
+): Promise<RefreshOutcome> => {
+  if (isRefreshing && refreshOutcomePromise) {
+    return refreshOutcomePromise
   }
 
   isRefreshing = true
 
-  refreshPromise = runExclusive(async () => {
+  refreshOutcomePromise = runExclusive(async (): Promise<RefreshOutcome> => {
     try {
       const current = Cookies.get(CookieKey.ACCESS_TOKEN)
-      if (current && current !== failedToken && !isAccessTokenExpired(current)) {
+      if (
+        current &&
+        current !== failedToken &&
+        !isAccessTokenExpired(current)
+      ) {
         dispatch(updateAccessToken({ token: current }))
-        return current
+        return { status: 'ok', token: current }
       }
 
       const refreshToken = Cookies.get(CookieKey.REFRESH_TOKEN)
-      if (!refreshToken) return null
+      if (!refreshToken) return EXPIRED
 
       const refreshUrl = `${ENV.API_LOGIN.replace(/\/$/, '')}/auth/refresh`
-      const response = await fetch(refreshUrl, {
+      const response = await fetchWithTimeout(refreshUrl, {
         method: 'POST',
         credentials: 'include',
         headers: { 'content-type': 'application/json' },
@@ -216,27 +249,37 @@ export const refreshAccessToken = async (
       })
 
       if (!response.ok) {
-        console.error(`[Auth] Refresh token failed with HTTP ${response.status}`)
-        return null
+        console.error(
+          `[Auth] Refresh token failed with HTTP ${response.status}`
+        )
+        // 4xx: BE từ chối refresh token. 5xx/408/429: BE auth gặp sự cố, phiên chưa chắc đã hết.
+        return isTransientStatus(response.status) ? UNAVAILABLE : EXPIRED
       }
 
-      const refreshResult = (await response.json()) as RefreshResponse | TokenData
+      const refreshResult = (await response.json()) as
+        | RefreshResponse
+        | TokenData
       const data = getRefreshData(refreshResult)
       const newAccessToken = data?.[TokenType.ACCESS_TOKEN]
 
-      if (!newAccessToken) return null
+      if (!newAccessToken) return EXPIRED
 
       // Sử dụng expiresIn từ API (đơn vị giây), fallback 300 giây
-      const expiresInSeconds = data?.[TokenType.EXPIRES_IN] || CookieExpiry.ACCESS_TOKEN_SECONDS
+      const expiresInSeconds =
+        data?.[TokenType.EXPIRES_IN] || CookieExpiry.ACCESS_TOKEN_SECONDS
       // Sử dụng refreshExpiresIn từ API (đơn vị giây), fallback 1800 giây
-      const refreshExpiresInSeconds = data?.[TokenType.REFRESH_EXPIRES_IN] || CookieExpiry.REFRESH_TOKEN_SECONDS
+      const refreshExpiresInSeconds =
+        data?.[TokenType.REFRESH_EXPIRES_IN] ||
+        CookieExpiry.REFRESH_TOKEN_SECONDS
 
       // Cập nhật Redux store với access token mới và permissions
-      dispatch(updateAccessToken({
-        token: newAccessToken,
-        expiresIn: expiresInSeconds,
-        refreshExpiresIn: refreshExpiresInSeconds
-      }))
+      dispatch(
+        updateAccessToken({
+          token: newAccessToken,
+          expiresIn: expiresInSeconds,
+          refreshExpiresIn: refreshExpiresInSeconds
+        })
+      )
 
       if (data?.[TokenType.REFRESH_TOKEN]) {
         setRefreshTokenCookie(
@@ -245,34 +288,40 @@ export const refreshAccessToken = async (
         )
       }
 
-      return newAccessToken
+      return { status: 'ok', token: newAccessToken }
     } catch (error) {
       console.error('[Auth] Refresh token failed:', error)
-      return null
+      return UNAVAILABLE
     } finally {
       isRefreshing = false
-      refreshPromise = null
+      refreshOutcomePromise = null
     }
   })
 
-  return refreshPromise
+  return refreshOutcomePromise
 }
 
-
+/** Dùng cho bootstrap phiên trong AppLayout: chỉ cần biết có token hay không. */
+export const refreshAccessToken = async (
+  dispatch: AccessTokenDispatch,
+  failedToken?: string | null
+): Promise<string | null> => {
+  const outcome = await requestTokenRefresh(dispatch, failedToken)
+  return outcome.status === 'ok' ? outcome.token : null
+}
 
 // ============================================================================
 // INACTIVITY TRACKING
 // ============================================================================
-let inactivityTimer: NodeJS.Timeout | null = null;
+let inactivityTimer: NodeJS.Timeout | null = null
 
-const IS_INACTIVITY_TRACKING_ENABLED = import.meta.env.PROD;
-const INACTIVITY_TIMEOUT = 15 * 60 * 1000;
-const RESET_THROTTLE = 2000;
-const TIME_OLD = 'last_activity_time';
+const IS_INACTIVITY_TRACKING_ENABLED = import.meta.env.PROD
+const INACTIVITY_TIMEOUT = 15 * 60 * 1000
+const RESET_THROTTLE = 2000
+const TIME_OLD = 'last_activity_time'
 
-let lastResetTime = 0;
-let isExpired = false;
-
+let lastResetTime = 0
+let isExpired = false
 
 export const forceLogout = (): void => {
   Cookies.remove(CookieKey.ACCESS_TOKEN)
@@ -281,19 +330,19 @@ export const forceLogout = (): void => {
   clearListStates()
   broadcastLogout()
   window.location.href = PATHS.AUTH.LOGIN
-  localStorage.removeItem(TIME_OLD);
+  localStorage.removeItem(TIME_OLD)
 }
 
 const handleSessionExpired = () => {
-  if (isExpired) return;
+  if (isExpired) return
 
   // Trong khu vực auth (đăng nhập, quên mật khẩu, đặt lại mật khẩu) chưa có phiên
   // nào để hết hạn. 401 ở đây là lỗi nghiệp vụ của chính màn đó — ví dụ token đặt
   // lại mật khẩu đã hết hạn — nên để màn tự hiển thị, đừng chèn modal hết phiên.
-  if (normalizePathname(window.location.pathname).startsWith(AUTHENTICATION)) return;
+  if (normalizePathname(window.location.pathname).startsWith(AUTHENTICATION))
+    return
 
-  isExpired = true;
-
+  isExpired = true
 
   Swal.fire({
     title: 'Phiên đăng nhập hết hạn',
@@ -304,7 +353,7 @@ const handleSessionExpired = () => {
     // imageAlt: 'Capybara',
     icon: 'warning',
     iconColor: '#F59E0B',
-    
+
     showCancelButton: false,
     confirmButtonText: 'Đăng nhập lại',
     allowOutsideClick: false,
@@ -314,7 +363,8 @@ const handleSessionExpired = () => {
     padding: '1.5rem',
     background: 'rgba(255, 255, 255, 0.95)',
     backdrop: 'rgba(15, 23, 42, 0.4)',
-    footer: '<span class="session-expired-footer-text">Dữ liệu chưa lưu có thể bị mất. Vui lòng kiểm tra lại sau khi đăng nhập.</span>',
+    footer:
+      '<span class="session-expired-footer-text">Dữ liệu chưa lưu có thể bị mất. Vui lòng kiểm tra lại sau khi đăng nhập.</span>',
     customClass: {
       container: 'session-expired-container',
       popup: 'session-expired-popup',
@@ -328,89 +378,100 @@ const handleSessionExpired = () => {
   }).then((result) => {
     // Tùy chọn: Chuyển hướng hoặc reload nếu forceLogout chưa làm
     if (result.isConfirmed) {
-      localStorage.removeItem(TIME_OLD);
-      forceLogout();
+      localStorage.removeItem(TIME_OLD)
+      forceLogout()
     }
-  });
-};
+  })
+}
 
+export const resetInactivityTimer = (
+  isFromEvent = false,
+  isInitial = false
+) => {
+  if (!IS_INACTIVITY_TRACKING_ENABLED) return
+  if (isExpired) return // Nếu đã out thì không rải event nữa
 
-export const resetInactivityTimer = (isFromEvent = false, isInitial = false) => {
-  if (!IS_INACTIVITY_TRACKING_ENABLED) return;
-  if (isExpired) return; // Nếu đã out thì không rải event nữa
+  const currentTime = Date.now()
 
-  const currentTime = Date.now();
-
-  const pathName = normalizePathname(window.location.pathname);
+  const pathName = normalizePathname(window.location.pathname)
   if (pathName === PATHS.AUTH.LOGIN) {
-    localStorage.removeItem(TIME_OLD);
-    return;
+    localStorage.removeItem(TIME_OLD)
+    return
   }
 
   if (isFromEvent && currentTime - lastResetTime < RESET_THROTTLE) {
-    return;
+    return
   }
-  lastResetTime = currentTime;
+  lastResetTime = currentTime
 
-  const lastActivity = Number(localStorage.getItem(TIME_OLD) || 0);
+  const lastActivity = Number(localStorage.getItem(TIME_OLD) || 0)
 
   if (lastActivity && currentTime - lastActivity > INACTIVITY_TIMEOUT) {
     if (isInitial) {
-      forceLogout();
+      forceLogout()
     } else {
-      handleSessionExpired();
+      handleSessionExpired()
     }
-    return;
+    return
   }
 
-  localStorage.setItem(TIME_OLD, currentTime.toString());
+  localStorage.setItem(TIME_OLD, currentTime.toString())
 
-  if (inactivityTimer) clearTimeout(inactivityTimer);
+  if (inactivityTimer) clearTimeout(inactivityTimer)
 
   inactivityTimer = setTimeout(() => {
-    const latestActivity = Number(localStorage.getItem(TIME_OLD) || 0);
+    const latestActivity = Number(localStorage.getItem(TIME_OLD) || 0)
 
     if (Date.now() - latestActivity >= INACTIVITY_TIMEOUT) {
-      handleSessionExpired();
+      handleSessionExpired()
     } else {
-      resetInactivityTimer();
+      resetInactivityTimer()
     }
-  }, INACTIVITY_TIMEOUT);
-};
+  }, INACTIVITY_TIMEOUT)
+}
 
 export { LOGOUT_SIGNAL_KEY }
 
-let isTrackerInitialized = false;
+let isTrackerInitialized = false
 
 export const initInactivityTracker = () => {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') return
 
   if (!isTrackerInitialized) {
-    isTrackerInitialized = true;
+    isTrackerInitialized = true
     // Cho phép nhiều tab: chỉ đăng xuất thật ở tab khác mới làm tab này hết phiên.
     // Trước đây tab nào vào trang đăng nhập (xóa mốc hoạt động) cũng làm các tab
     // còn lại bật popup dây chuyền.
     window.addEventListener('storage', (event) => {
       if (event.key === LOGOUT_SIGNAL_KEY && event.newValue) {
-        handleSessionExpired();
+        handleSessionExpired()
       }
-    });
+    })
 
     if (IS_INACTIVITY_TRACKING_ENABLED) {
-      const interactions = ['mousedown', 'keydown', 'scroll', 'touchstart', 'wheel'];
+      const interactions = [
+        'mousedown',
+        'keydown',
+        'scroll',
+        'touchstart',
+        'wheel'
+      ]
       interactions.forEach((event) => {
-        window.addEventListener(event, () => resetInactivityTimer(true), { capture: true, passive: true });
-      });
+        window.addEventListener(event, () => resetInactivityTimer(true), {
+          capture: true,
+          passive: true
+        })
+      })
     }
   }
 
   if (!IS_INACTIVITY_TRACKING_ENABLED) {
-    localStorage.removeItem(TIME_OLD);
-    return;
+    localStorage.removeItem(TIME_OLD)
+    return
   }
 
-  resetInactivityTimer(false, true);
-};
+  resetInactivityTimer(false, true)
+}
 
 // ============================================================================
 // FACTORY FUNCTION - Create custom base query with loading & error handling
@@ -431,7 +492,7 @@ export interface CustomBaseQueryExtraOptions {
  * - Loading indicator management (with whitelist)
  * - Automatic token refresh on 401 Unauthorized
  * - Error notification handling
- * 
+ *
  * @param baseQuery - The base fetch query to wrap
  * @returns Custom base query function
  */
@@ -477,52 +538,42 @@ const createCustomBaseQuery = (
     const result = await baseQuery(args, api, extraOptions)
     if (shouldShowLoading) hideLoading()
 
-    if (result.error && result.error.status && !handlesErrorLocally) {
-      const status = result.error.status
+    if (!result.error?.status || handlesErrorLocally) return result
 
-      switch (status) {
-        case HttpStatus.UNAUTHORIZED: {
-          const newAccessToken = await refreshAccessToken(
-            api.dispatch,
-            sentToken
-          )
-          if (!newAccessToken) {
-            handleSessionExpired()
-            break
-          }
-
-          // Refresh thành công → retry request 1 lần với token mới.
-          const retryResult = await baseQuery(args, api, extraOptions)
-          // Vẫn 401 dù token mới → phiên thật sự không dùng được, buộc hết phiên.
-          if (retryResult.error?.status === HttpStatus.UNAUTHORIZED) {
-            handleSessionExpired()
-          }
-          return retryResult
-        }
-
-        case HttpStatus.BAD_REQUEST: {
-          const errorData = result.error.data as ApiErrorResponse
-          if (errorData?.message && !hidesErrorNotification) {
-            openNotification(errorData.message)
-          }
-          break
-        }
-
-        case FETCH_ERROR:
-          break
-
-        default: {
-          const errorData = result.error.data as ApiErrorResponse
-          if (errorData?.message && !hidesErrorNotification) {
-            openNotification(errorData.message)
-          }
-          break
-        }
-      }
+    if (result.error.status !== HttpStatus.UNAUTHORIZED) {
+      notifyRequestError(result.error, hidesErrorNotification)
+      return result
     }
 
-    return result
+    const outcome = await requestTokenRefresh(api.dispatch, sentToken)
+    if (outcome.status === 'expired') {
+      handleSessionExpired()
+      return result
+    }
+    if (outcome.status === 'unavailable') {
+      openNotification('errors.session-refresh-unavailable')
+      return result
+    }
+
+    // Refresh thành công → retry request 1 lần với token mới.
+    const retryResult = await baseQuery(args, api, extraOptions)
+    if (retryResult.error?.status === HttpStatus.UNAUTHORIZED) {
+      // Vẫn 401 dù token mới → phiên thật sự không dùng được, buộc hết phiên.
+      handleSessionExpired()
+    } else if (retryResult.error) {
+      notifyRequestError(retryResult.error, hidesErrorNotification)
+    }
+    return retryResult
   }
+}
+
+const notifyRequestError = (
+  error: FetchBaseQueryError,
+  hidesErrorNotification: boolean
+): void => {
+  if (error.status === FETCH_ERROR || hidesErrorNotification) return
+  const errorData = error.data as ApiErrorResponse | undefined
+  if (errorData?.message) openNotification(errorData.message)
 }
 
 // ============================================================================
@@ -531,6 +582,8 @@ const createCustomBaseQuery = (
 export const fetchBaseQueryCustom = createCustomBaseQuery(baseAuthQuery)
 export const fetchBaseQueryFee = createCustomBaseQuery(baseQueryFee)
 export const fetchBaseQueryOld = createCustomBaseQuery(baseQueryOld)
-export const fetchBaseQueryWalletCore = createCustomBaseQuery(baseQueryWalletCore)
-export const fetchBaseQueryUserWallet = createCustomBaseQuery(baseQueryUserWallet)
+export const fetchBaseQueryWalletCore =
+  createCustomBaseQuery(baseQueryWalletCore)
+export const fetchBaseQueryUserWallet =
+  createCustomBaseQuery(baseQueryUserWallet)
 export const fetchBaseQueryMerchant = createCustomBaseQuery(baseQueryMerchant)
