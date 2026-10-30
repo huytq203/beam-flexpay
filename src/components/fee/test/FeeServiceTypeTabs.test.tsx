@@ -10,7 +10,8 @@ const LABELS = {
   EWALLET_TRANSFER_EXTERNAL: 'Chuyển tiền liên ngân hàng',
   EWALLET_CASHBACK: 'Hoàn tiền (cashback)',
   MERCHANT_VA_BILL_COLLECTION: 'Thu hộ VA',
-  PAYOUT_BANK_TRANSFER: 'Chi hộ chuyển khoản ngân hàng'
+  MERCHANT_DISBURSEMENT: 'Chi hộ chuyển khoản ngân hàng',
+  PAYOUT_BANK_TRANSFER: 'Rút tiền'
 }
 
 const setup = (serviceType?: string) => {
@@ -60,7 +61,7 @@ describe('FeeServiceTypeTabs', () => {
   })
 
   it('đánh dấu chip đang chọn cho trình đọc màn hình', () => {
-    setup('PAYOUT_BANK_TRANSFER')
+    setup('MERCHANT_DISBURSEMENT')
 
     expect(
       screen.getByRole('button', { name: /Chi hộ chuyển khoản ngân hàng/ })

@@ -23,6 +23,7 @@ export interface IUserProfile {
 
 export interface AdminForgotPasswordRequest {
   email: string
+  captchaToken: string
 }
 
 export interface AdminResetTokenValidationResponse {

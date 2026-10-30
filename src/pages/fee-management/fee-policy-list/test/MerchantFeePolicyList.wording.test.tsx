@@ -84,7 +84,7 @@ const merchantPage = {
     policy({
       id: 'pm-many',
       name: 'Chi hộ nhiều merchant',
-      serviceType: 'PAYOUT_BANK_TRANSFER',
+      serviceType: 'MERCHANT_DISBURSEMENT',
       feeDomain: 'MERCHANT',
       appliedTargets: [{ type: 'ACCOUNT', code: null, count: 2 }],
       configuration: { assignments: [], components: [] }
@@ -92,14 +92,14 @@ const merchantPage = {
     policy({
       id: 'pm-group',
       name: 'Chi hộ nhóm merchant',
-      serviceType: 'PAYOUT_BANK_TRANSFER',
+      serviceType: 'MERCHANT_DISBURSEMENT',
       feeDomain: 'MERCHANT',
       appliedTargets: [{ type: 'CUSTOMER_GROUP', code: 'G1', count: 3 }],
       configuration: {
         assignments: [
           assignment({
             id: 'a-group',
-            serviceType: 'PAYOUT_BANK_TRANSFER',
+            serviceType: 'MERCHANT_DISBURSEMENT',
             customerGroup: 'G1'
           })
         ],

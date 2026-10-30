@@ -1,4 +1,5 @@
 import { RefundStatusBadge } from '@components/status-badge/RefundStatusBadge'
+import { TypographyText } from '@components/index'
 import type { TableComponentProps } from '@components/ui/table-component/TableComponent'
 import { REFUND_TYPE_LABELS } from '@constants/refund.constant'
 import WalletLink from '@components/wallet-link/WalletLink'
@@ -63,7 +64,12 @@ export const createRefundColumns = (
       key: 'refundCode',
       render: (_value, record) => (
         <CellLines
-          primary={record.refundCode}
+          primary={
+            <span className='inline-flex items-center gap-1'>
+              {record.refundCode}
+              <TypographyText copyable={{ text: record.refundCode }} />
+            </span>
+          }
           secondary={[
             record.originalTransactionCode &&
               `GD gốc ${record.originalTransactionCode}`,

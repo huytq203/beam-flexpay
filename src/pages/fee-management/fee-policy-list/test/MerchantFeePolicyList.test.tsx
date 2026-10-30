@@ -112,14 +112,15 @@ describe('màn Cấu hình phí ĐVCNTT: danh sách theo miền MERCHANT', () =>
     await screen.findByText('Phí thu hộ VA merchant')
   })
 
-  it('tab lọc chỉ có Thu hộ VA và Chi hộ chuyển khoản ngân hàng, cộng tab Tất cả', async () => {
+  it('tab lọc chỉ có Thu hộ VA, Chi hộ chuyển khoản ngân hàng và Rút tiền, cộng tab Tất cả', async () => {
     renderMerchant('/merchant/fee-config?serviceType=EWALLET_DEPOSIT')
     await screen.findByText('Phí thu hộ VA merchant')
 
     expect(tabNames()).toEqual([
       'Tất cả',
       'Thu hộ VA',
-      'Chi hộ chuyển khoản ngân hàng'
+      'Chi hộ chuyển khoản ngân hàng',
+      'Rút tiền'
     ])
   })
 
@@ -140,11 +141,24 @@ describe('màn Cấu hình phí ĐVCNTT: danh sách theo miền MERCHANT', () =>
     ])
   })
 
-  it('tab Chi hộ gọi bên đối diện là Người nhận tiền', async () => {
-    renderMerchant('/merchant/fee-config?serviceType=PAYOUT_BANK_TRANSFER')
+  it('tab Chi hộ gửi serviceType=MERCHANT_DISBURSEMENT và gọi bên đối diện là Người nhận tiền', async () => {
+    renderMerchant('/merchant/fee-config?serviceType=MERCHANT_DISBURSEMENT')
     await waitFor(() => expect(requests.length).toBeGreaterThan(0))
+    expect(requests[0].searchParams.get('serviceType')).toBe(
+      'MERCHANT_DISBURSEMENT'
+    )
 
     expect(await payerFilterOptions()).toEqual(['Merchant', 'Người nhận tiền'])
+  })
+
+  it('tab Rút tiền chỉ cho lọc người chịu phí là Merchant', async () => {
+    renderMerchant('/merchant/fee-config?serviceType=PAYOUT_BANK_TRANSFER')
+    await waitFor(() => expect(requests.length).toBeGreaterThan(0))
+    expect(requests[0].searchParams.get('serviceType')).toBe(
+      'PAYOUT_BANK_TRANSFER'
+    )
+
+    expect(await payerFilterOptions()).toEqual(['Merchant'])
   })
 
   it('nút thêm chính sách chuyển tới màn tạo của ĐVCNTT', async () => {

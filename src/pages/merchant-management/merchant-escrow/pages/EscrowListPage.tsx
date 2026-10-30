@@ -11,6 +11,7 @@ import {
 import { AccessPageShell } from '../../merchant-access/components/AccessPageShell'
 import { createEscrowListColumns } from '../columns/escrowList.columns'
 import { EscrowConfigProposalsPanel } from '../components/EscrowConfigProposalsPanel'
+import { EscrowOrderCreateDialog } from '../components/EscrowOrderCreateDialog'
 import {
   EscrowFilters,
   type EscrowListFilters
@@ -41,13 +42,17 @@ function EscrowMasterList() {
     size
   })
 
+  // Master đang được lập lệnh nạp ngay trên dòng (SRS 3.6.26 STT 14); null = dialog đóng.
+  const [orderTarget, setOrderTarget] = useState<EscrowRow | null>(null)
+
+  const detailPath = (row: EscrowRow) =>
+    SCREENS.MERCHANT_ESCROW_DETAIL.path.replace(':masterId', row.masterId)
   const columns = createEscrowListColumns({
     page,
     pageSize: size,
-    onOpen: (row: EscrowRow) =>
-      navigate(
-        SCREENS.MERCHANT_ESCROW_DETAIL.path.replace(':masterId', row.masterId)
-      )
+    onOpen: (row: EscrowRow) => navigate(detailPath(row)),
+    onOpenOrders: (row: EscrowRow) => navigate(`${detailPath(row)}?tab=orders`),
+    onCreateOrder: setOrderTarget
   })
 
   return (
@@ -105,6 +110,15 @@ function EscrowMasterList() {
         scroll={{ x: 'max-content' }}
         size='small'
       />
+      {/* Chỉ dựng khi mở để mỗi lần mở là form mới và tình trạng ký quỹ được tải lại. */}
+      {orderTarget && (
+        <EscrowOrderCreateDialog
+          open
+          masterId={orderTarget.masterId}
+          masterLabel={`${orderTarget.code} - ${orderTarget.name}`}
+          onClose={() => setOrderTarget(null)}
+        />
+      )}
     </AccessPageShell>
   )
 }

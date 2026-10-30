@@ -65,10 +65,7 @@ describe('trang tạo chính sách', () => {
       screen.queryByRole('tablist', { name: 'Luồng phí' })
     ).not.toBeInTheDocument()
     expect(
-      screen.queryByRole('button', { name: 'Thêm phí đầu vào' })
-    ).not.toBeInTheDocument()
-    expect(
-      screen.getByRole('button', { name: 'Thêm phí đầu ra' })
+      screen.getByRole('button', { name: 'Thêm thành phần phí' })
     ).toBeInTheDocument()
   })
 
@@ -76,7 +73,7 @@ describe('trang tạo chính sách', () => {
     renderCreatePage()
 
     expect(
-      screen.getByRole('button', { name: 'Thêm phí đầu ra' })
+      screen.getByRole('button', { name: 'Thêm thành phần phí' })
     ).toBeDisabled()
     expect(
       screen.getByText('Chọn loại giao dịch trước khi thêm phí')
@@ -89,10 +86,12 @@ describe('trang tạo chính sách', () => {
 
     await user.click(screen.getByLabelText(/Loại giao dịch/))
     await user.click(await screen.findByText(DEPOSIT_LABEL))
-    await user.click(screen.getByRole('button', { name: 'Thêm phí đầu ra' }))
+    await user.click(
+      screen.getByRole('button', { name: 'Thêm thành phần phí' })
+    )
 
     expect(
-      within(await screen.findByRole('dialog')).getByText('Thêm phí đầu ra')
+      within(await screen.findByRole('dialog')).getByText('Thêm thành phần phí')
     ).toBeInTheDocument()
     expect(screen.getByLabelText(/Người chịu/)).not.toBeDisabled()
   })
@@ -105,12 +104,9 @@ describe('trang tạo chính sách', () => {
     expect(screen.queryByText('Nhóm khách hàng')).not.toBeInTheDocument()
     expect(screen.queryByText('Loại thẻ')).not.toBeInTheDocument()
     expect(screen.getByText('Tuyến thanh toán')).toBeInTheDocument()
-    expect(
-      screen.queryByRole('button', { name: 'Thêm phí đầu ra' })
-    ).not.toBeInTheDocument()
     // Chưa chọn loại giao dịch thì chưa thêm được phí đầu vào.
     expect(
-      screen.getByRole('button', { name: 'Thêm phí đầu vào' })
+      screen.getByRole('button', { name: 'Thêm thành phần phí' })
     ).toBeDisabled()
     expect(
       screen.getByText('Chọn loại giao dịch trước khi thêm phí')
@@ -118,10 +114,12 @@ describe('trang tạo chính sách', () => {
 
     await user.click(screen.getByLabelText(/Loại giao dịch/))
     await user.click(await screen.findByText(DEPOSIT_LABEL))
-    await user.click(screen.getByRole('button', { name: 'Thêm phí đầu vào' }))
+    await user.click(
+      screen.getByRole('button', { name: 'Thêm thành phần phí' })
+    )
 
     expect(
-      within(await screen.findByRole('dialog')).getByText('Thêm phí đầu vào')
+      within(await screen.findByRole('dialog')).getByText('Thêm thành phần phí')
     ).toBeInTheDocument()
     expect(
       screen.getByLabelText(/Người chịu/).closest('.ant-select')

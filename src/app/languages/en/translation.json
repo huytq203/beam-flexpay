@@ -1,4 +1,7 @@
 {
+  "errors": {
+    "session-refresh-unavailable": "Cannot reach the authentication server. Please try again in a few minutes."
+  },
   "common": {
     "title": "Digital Wallet"
   },

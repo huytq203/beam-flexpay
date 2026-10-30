@@ -82,10 +82,10 @@ export const canShowRefundTransactionAction = (
   Boolean(transaction.transactionId) &&
   getRefundOriginalType(transaction.transactionType) !== null
 
-/** Đã hoàn đủ và không còn yêu cầu hoàn đang chờ: tiền đã trả lại hết, đóng băng không còn ý nghĩa. */
-const isRefundSettled = (transaction: UnifiedContentJournal): boolean => {
-  const { pendingRefundAmount } = readRefundFields(transaction)
-  return isFullyRefunded(transaction) && !pendingRefundAmount
+/** Đã hoàn (dù một phần) hoặc đang có yêu cầu hoàn chờ: tiền đang/đã trả lại nên không cho đóng băng. */
+const hasRefundActivity = (transaction: UnifiedContentJournal): boolean => {
+  const { refundedAmount, pendingRefundAmount } = readRefundFields(transaction)
+  return (refundedAmount ?? 0) > 0 || (pendingRefundAmount ?? 0) > 0
 }
 
 export type FreezeTransactionAction = 'freeze' | 'unfreeze'
@@ -95,7 +95,7 @@ export const getFreezeTransactionAction = (
 ): FreezeTransactionAction | null => {
   if (!canShowFreezeTransactionAction(transaction)) return null
   if (transaction.frozen) return 'unfreeze'
-  return isRefundSettled(transaction) ? null : 'freeze'
+  return hasRefundActivity(transaction) ? null : 'freeze'
 }
 
 /**

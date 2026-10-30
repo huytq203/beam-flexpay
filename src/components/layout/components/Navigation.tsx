@@ -181,10 +181,31 @@ const roleManagementV2: ItemTypeCustom = {
         />
       ),
       label: 'Quản lý quyền'
-    },
+    }
+  ]
+}
+
+/**
+ * Nhật ký hệ thống tra cứu thao tác của mọi phân hệ, nên đứng riêng ở cuối menu thay vì
+ * nằm lẫn trong nhóm tài khoản. `link` giữ nguyên URL cũ dưới role-v2 để bookmark và
+ * route đã đăng ký không đổi.
+ */
+const systemManagement: ItemTypeCustom = {
+  key: 'system-management',
+  groupLabel: 'Nhóm hệ thống',
+  icon: (
+    <ClipboardTextIcon
+      size={size}
+      weight={weight}
+      color={COlOR}
+    />
+  ),
+  label: 'Hệ thống',
+  children: [
     {
       key: 'audit-log',
       screen: 'AUDIT_LOG',
+      link: `/${_ROLEMANAGEMENT_V2}/audit-log`,
       icon: (
         <ClipboardTextIcon
           size={size}
@@ -258,7 +279,7 @@ const transactionManagement: ItemTypeCustom = {
           color={COlOR}
         />
       ),
-      label: 'Quản lý giao dịch'
+      label: 'Danh sách giao dịch'
     },
     {
       key: 'frozen-transactions',
@@ -709,5 +730,6 @@ export const navigationItems: ItemTypeCustom[] = [
   escrowManagement,
   merchantUserManagement,
   // feeManagementV3,
-  feeManagementV4
+  feeManagementV4,
+  systemManagement
 ]

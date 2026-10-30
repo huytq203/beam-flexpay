@@ -1,3 +1,4 @@
+import { Can } from '@/app/permissions'
 import type { TableComponentProps } from '@components/ui/table-component/TableComponent'
 import { formatCurrency } from '@utils/formatNumber'
 import {
@@ -8,12 +9,16 @@ import {
   ESCROW_RISK_LABEL,
   ESCROW_STATE_LABEL
 } from '../constants/merchantEscrow.constants'
+import { EscrowCreateOrderAction } from '../components/EscrowCreateOrderAction'
 import type { EscrowRow } from '../types/merchantEscrow.types'
 
 interface Options {
   page: number
   pageSize: number
   onOpen: (row: EscrowRow) => void
+  /** Mở thẳng tab lệnh nạp của Master (badge số lệnh chờ duyệt). */
+  onOpenOrders: (row: EscrowRow) => void
+  onCreateOrder: (row: EscrowRow) => void
 }
 
 const money = (value: number | null) => (
@@ -28,7 +33,9 @@ const riskName = (label: string) => label.split(' (')[0]
 export const createEscrowListColumns = ({
   page,
   pageSize,
-  onOpen
+  onOpen,
+  onOpenOrders,
+  onCreateOrder
 }: Options): NonNullable<TableComponentProps<EscrowRow>['columns']> => [
   {
     title: '#',
@@ -118,13 +125,45 @@ export const createEscrowListColumns = ({
   },
   {
     title: 'Lệnh chờ duyệt',
-    dataIndex: 'waitingOrders',
     align: 'right',
-    width: 130
+    width: 130,
+    // Có lệnh chờ thì bấm vào mở thẳng tab lệnh nạp của Master. Số này gồm cả lệnh hoàn trả; hàng
+    // chờ duyệt chung (SRS 3.6.29) chưa có màn nên tạm dẫn về tab lệnh nạp.
+    render: (_, row) =>
+      row.waitingOrders > 0 ? (
+        <button
+          type='button'
+          className='font-medium text-primary tabular-nums underline-offset-2 hover:underline'
+          aria-label={`Xem ${row.waitingOrders} lệnh chờ duyệt của ${row.code}`}
+          onClick={() => onOpenOrders(row)}
+        >
+          {row.waitingOrders}
+        </button>
+      ) : (
+        <span className='tabular-nums'>0</span>
+      )
   },
   {
     title: 'Đồng bộ số dư lúc',
     width: 170,
     render: (_, row) => formatUTCToLocalDateTime(row.balanceSyncedAt)
+  },
+  {
+    title: 'Thao tác',
+    align: 'center',
+    width: 100,
+    fixed: 'right',
+    // Không có quyền lập lệnh thì ẩn hẳn nút (quy ước của `Can`).
+    render: (_, row) => (
+      <Can
+        screen='MERCHANT_ESCROW_ORDER'
+        action='create'
+      >
+        <EscrowCreateOrderAction
+          row={row}
+          onCreate={onCreateOrder}
+        />
+      </Can>
+    )
   }
 ]

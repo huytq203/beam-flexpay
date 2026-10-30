@@ -23,8 +23,6 @@ export const FROZEN_FILTER_KEYS = [
 
 export type FrozenFilterKey = (typeof FROZEN_FILTER_KEYS)[number]
 export type FrozenFilters = Partial<Record<FrozenFilterKey, string>>
-/** Màn này chỉ quản lý lệnh đóng băng thủ công nên luôn gửi cố định, không cho lọc. */
-const RELEASE_TYPE = 'MANUAL'
 // Username của ví chính là SĐT nên không đưa lên URL (rule 05).
 const FROZEN_SENSITIVE_KEYS: readonly FrozenFilterKey[] = ['username']
 
@@ -46,7 +44,6 @@ const useFrozenTransactions = () => {
     page: page,
     size: pageSize,
     ...filter,
-    releaseType: RELEASE_TYPE,
     includeSummary: true
   }
   const { data, isFetching, isLoading, refetch } = useGetFreezesQuery(payload)
@@ -79,10 +76,7 @@ const useFrozenTransactions = () => {
 
   /** Endpoint xuất không nhận page/size — file lấy trọn bộ lọc đang áp, không theo trang. */
   const handleExport = () => {
-    const exportParams: ExportFreezesQuery = {
-      ...filter,
-      releaseType: RELEASE_TYPE
-    }
+    const exportParams: ExportFreezesQuery = { ...filter }
     void exportFile(exportParams)
   }
 

@@ -33,6 +33,14 @@ export const ESCROW_CONFIG_MESSAGE = {
 const MAX_REVENUE_DAYS = 90
 const MAX_DEADLINE_DAYS = 365
 
+/**
+ * Số mặc định khi người dùng không điền: trùng `REGISTRATION_DEADLINE_DAYS`/`REGISTRATION_REMINDER_DAYS`
+ * của `MerchantEscrowConfigService` (BE dùng khi tạo ĐVCNTT kèm ký quỹ, chốt 29/10). Ô trống được hiểu
+ * là số này cả khi kiểm luật lẫn khi gửi, và form điền sẵn số này khi Master chưa có cấu hình.
+ */
+export const ESCROW_DEFAULT_DEADLINE_DAYS = 30
+export const ESCROW_DEFAULT_REMINDER_DAYS = 7
+
 const REQUIREMENT_MODES: EscrowRequirementMode[] = ['FIXED', 'AVERAGE_REVENUE']
 const REVIEW_CYCLES: EscrowReviewCycle[] = ['MONTHLY', 'QUARTERLY', 'NONE']
 const OVERDUE_ACTIONS: EscrowOverdueAction[] = ['WARN_ONLY', 'BLOCK_PAYMENTS']
@@ -91,17 +99,13 @@ export const escrowConfigSchema = z
         fail('reviewCycle', ESCROW_CONFIG_MESSAGE.reviewCycle)
     }
 
-    const deadlineValid =
-      v.deadlineDays !== null &&
-      v.deadlineDays >= 1 &&
-      v.deadlineDays <= MAX_DEADLINE_DAYS
-    if (!deadlineValid) fail('deadlineDays', ESCROW_CONFIG_MESSAGE.deadlineDays)
+    // Ô để trống = số mặc định, kiểm đúng con số sẽ gửi đi.
+    const deadlineDays = v.deadlineDays ?? ESCROW_DEFAULT_DEADLINE_DAYS
+    const reminderDays = v.reminderDays ?? ESCROW_DEFAULT_REMINDER_DAYS
+    if (deadlineDays < 1 || deadlineDays > MAX_DEADLINE_DAYS)
+      fail('deadlineDays', ESCROW_CONFIG_MESSAGE.deadlineDays)
     // BE: 0 ≤ reminderDays < deadlineDays — nhắc trước đúng ngày hạn thì vô nghĩa.
-    if (
-      v.reminderDays === null ||
-      v.reminderDays < 0 ||
-      (v.deadlineDays !== null && v.reminderDays >= v.deadlineDays)
-    )
+    if (reminderDays < 0 || reminderDays >= deadlineDays)
       fail('reminderDays', ESCROW_CONFIG_MESSAGE.reminderDays)
 
     if (!OVERDUE_ACTIONS.includes(v.overdueAction as EscrowOverdueAction))
@@ -124,7 +128,7 @@ export const escrowConfigSchema = z
 
 export type EscrowConfigFormValues = z.infer<typeof escrowConfigSchema>
 
-/** Giá trị khởi đầu của form: lấy từ cấu hình đang áp dụng, chưa có thì để trống để người dùng chọn. */
+/** Giá trị khởi đầu của form: lấy từ cấu hình đang áp dụng; chưa có thì để trống, riêng thời hạn/cảnh báo điền số mặc định. */
 export const toEscrowConfigFormValues = (
   current: EscrowConfig | null
 ): EscrowConfigFormValues => ({
@@ -141,8 +145,9 @@ export const toEscrowConfigFormValues = (
   // Cờ `setoffAcknowledged` còn sót từ phiên bản cũ đã tắt cấn trừ không được dùng: bật lại cấn
   // trừ phải tick xác nhận lần nữa.
   setoffAcknowledged: current?.allowSetoff ?? false,
-  deadlineDays: current?.deadlineDays ?? null,
-  reminderDays: current?.reminderDays ?? null,
+  // Chưa có cấu hình thì điền sẵn số mặc định để người dùng thấy hệ thống sẽ áp số nào.
+  deadlineDays: current?.deadlineDays ?? ESCROW_DEFAULT_DEADLINE_DAYS,
+  reminderDays: current?.reminderDays ?? ESCROW_DEFAULT_REMINDER_DAYS,
   overdueAction: current?.overdueAction ?? '',
   reason: ''
 })
@@ -168,8 +173,8 @@ export const toEscrowConfigRequest = (
     allowTransfer: values.allowTransfer,
     allowSetoff: values.allowSetoff,
     setoffAcknowledged: values.setoffAcknowledged,
-    deadlineDays: values.deadlineDays ?? 0,
-    reminderDays: values.reminderDays ?? 0,
+    deadlineDays: values.deadlineDays ?? ESCROW_DEFAULT_DEADLINE_DAYS,
+    reminderDays: values.reminderDays ?? ESCROW_DEFAULT_REMINDER_DAYS,
     overdueAction: values.overdueAction as EscrowOverdueAction,
     reason: values.reason.trim()
   }

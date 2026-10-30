@@ -85,19 +85,22 @@ describe('getFreezeTransactionAction', () => {
     ).toBeNull()
   })
 
-  it('ẩn đóng băng khi đã hoàn đủ và không còn yêu cầu hoàn đang chờ', () => {
-    expect(
-      getFreezeTransactionAction(
-        transaction({ refundedAmount: 100_000, pendingRefundAmount: 0 })
-      )
-    ).toBeNull()
+  it.each([
+    ['đã hoàn đủ', { refundedAmount: 100_000, pendingRefundAmount: 0 }],
+    ['mới hoàn một phần', { refundedAmount: 40_000, pendingRefundAmount: 0 }],
+    [
+      'có yêu cầu hoàn đang chờ',
+      { refundedAmount: 0, pendingRefundAmount: 20_000 }
+    ]
+  ])('ẩn đóng băng khi %s', (_name, overrides) => {
+    expect(getFreezeTransactionAction(transaction(overrides))).toBeNull()
   })
 
   it.each([
-    ['mới hoàn một phần', { refundedAmount: 40_000, pendingRefundAmount: 0 }],
+    ['chưa có hoàn tiền', { refundedAmount: 0, pendingRefundAmount: 0 }],
     [
-      'đã hoàn đủ nhưng còn yêu cầu hoàn đang chờ',
-      { refundedAmount: 100_000, pendingRefundAmount: 20_000 }
+      'BE chưa tra được hoàn tiền',
+      { refundedAmount: null, pendingRefundAmount: null }
     ]
   ])('vẫn cho đóng băng khi %s', (_name, overrides) => {
     expect(getFreezeTransactionAction(transaction(overrides))).toBe('freeze')

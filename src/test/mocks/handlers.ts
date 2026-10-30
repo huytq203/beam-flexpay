@@ -128,6 +128,17 @@ export const errorHandlers = {
       { status: 429 }
     )
   ),
+  forgotPasswordCaptchaInvalid: http.post('*/auth/forgot-password', () =>
+    HttpResponse.json(
+      {
+        success: false,
+        message: 'CAPTCHA_INVALID',
+        detail: 'Xác thực captcha thất bại',
+        status: '25001'
+      },
+      { status: 400 }
+    )
+  ),
   forgotPasswordOffline: http.post('*/auth/forgot-password', () =>
     HttpResponse.error()
   ),

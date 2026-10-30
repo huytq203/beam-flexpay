@@ -211,6 +211,7 @@ describe('schema: thông báo thiếu nhóm theo luồng', () => {
   it('thu hộ / chi hộ báo "Chọn nhóm merchant được áp dụng"', () => {
     for (const serviceType of [
       'MERCHANT_VA_BILL_COLLECTION',
+      'MERCHANT_DISBURSEMENT',
       'PAYOUT_BANK_TRANSFER'
     ]) {
       expect(
@@ -243,6 +244,7 @@ describe('nhãn và luật ô theo loại giao dịch', () => {
   it('thu hộ / chi hộ dùng ba nhãn merchant', () => {
     for (const serviceType of [
       'MERCHANT_VA_BILL_COLLECTION',
+      'MERCHANT_DISBURSEMENT',
       'PAYOUT_BANK_TRANSFER'
     ]) {
       expect(getAssignmentScopeOptions(serviceType)).toEqual([
@@ -308,6 +310,17 @@ describe('đổi loại giao dịch giữ phạm vi merchant', () => {
       )
     )
     act(() => result.current.changeServiceType('PAYOUT_BANK_TRANSFER'))
+    expect(result.current.form.getValues('assignmentScope')).toBe('SUBJECT')
+    expect(result.current.form.getValues('merchantId')).toBe('m1')
+  })
+
+  it('từ thu hộ sang chi hộ mới giữ assignmentScope và merchantId', () => {
+    const { result } = renderHook(() =>
+      useFeeConfigForm(
+        merchantForm({ assignmentScope: 'SUBJECT', merchantId: 'm1' })
+      )
+    )
+    act(() => result.current.changeServiceType('MERCHANT_DISBURSEMENT'))
     expect(result.current.form.getValues('assignmentScope')).toBe('SUBJECT')
     expect(result.current.form.getValues('merchantId')).toBe('m1')
   })

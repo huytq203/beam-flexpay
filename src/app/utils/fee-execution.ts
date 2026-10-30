@@ -17,6 +17,8 @@ const EXECUTABLE_PAYER_BY_SERVICE: Readonly<Record<string, string>> = {
   EWALLET_TRANSFER_INTERNAL: 'USER',
   EWALLET_REFUND: 'USER',
   MERCHANT_VA_BILL_COLLECTION: 'MERCHANT',
+  // Thứ tự khoá quyết định thứ tự tab màn ĐVCNTT: Thu hộ, Chi hộ, Rút tiền.
+  MERCHANT_DISBURSEMENT: 'MERCHANT',
   PAYOUT_BANK_TRANSFER: 'MERCHANT'
 }
 
@@ -141,10 +143,11 @@ export const PUBLISHABLE_SERVICE_TYPES: readonly string[] = Object.keys(
  * Loại giao dịch tạm ẩn khỏi các ô chọn và tab lọc của màn chung (phí đầu ra, phí đầu vào). Chỉ là ẩn
  * giao diện: `PUBLISHABLE_SERVICE_TYPES` và mọi luật kiểm tra vẫn nhận đủ các loại này nên chính sách
  * đã có vẫn đọc, sửa và duyệt bình thường. Màn Cấu hình phí ĐVCNTT không dùng danh sách này: nó chỉ hiện
- * đúng hai loại này (xem `visibleServiceTypesFor`).
+ * đúng ba loại này (xem `visibleServiceTypesFor`).
  */
 export const TEMPORARILY_HIDDEN_SERVICE_TYPES: readonly string[] = [
   'MERCHANT_VA_BILL_COLLECTION',
+  'MERCHANT_DISBURSEMENT',
   'PAYOUT_BANK_TRANSFER'
 ]
 

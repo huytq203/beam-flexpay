@@ -4,6 +4,8 @@ import {
   escrowConfigSchema,
   toEscrowConfigFormValues,
   toEscrowConfigRequest,
+  ESCROW_DEFAULT_DEADLINE_DAYS,
+  ESCROW_DEFAULT_REMINDER_DAYS,
   type EscrowConfigFormValues
 } from '../escrowConfig.schema'
 
@@ -170,5 +172,26 @@ describe('toEscrowConfigFormValues', () => {
         setoffAcknowledged: true
       }).setoffAcknowledged
     ).toBe(true)
+  })
+
+  it('chưa có cấu hình thì thời hạn và cảnh báo trước hạn điền sẵn số mặc định 30 và 7 ngày', () => {
+    const values = toEscrowConfigFormValues(null)
+    expect(values.deadlineDays).toBe(ESCROW_DEFAULT_DEADLINE_DAYS)
+    expect(values.reminderDays).toBe(ESCROW_DEFAULT_REMINDER_DAYS)
+    expect([ESCROW_DEFAULT_DEADLINE_DAYS, ESCROW_DEFAULT_REMINDER_DAYS]).toEqual([30, 7])
+  })
+})
+
+describe('số mặc định khi để trống', () => {
+  it('xóa trống thời hạn và cảnh báo trước hạn thì không báo lỗi và gửi 30/7', () => {
+    const empty = { ...valid, deadlineDays: null, reminderDays: null }
+    expect(errorsOf(empty)).toEqual({})
+    const request = toEscrowConfigRequest(empty, null)
+    expect(request.deadlineDays).toBe(30)
+    expect(request.reminderDays).toBe(7)
+  })
+
+  it('chỉ để trống cảnh báo trước hạn mà thời hạn ≤ 7 thì vẫn báo lỗi như BE', () => {
+    expect(errorsOf({ ...valid, deadlineDays: 5, reminderDays: null })).toHaveProperty('reminderDays')
   })
 })

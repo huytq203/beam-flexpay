@@ -244,9 +244,11 @@ export const FeeComponentDialog = ({
   return (
     <ModalComponent
       open={open}
-      title={`${initialValue ? 'Sửa' : 'Thêm'} ${
-        isInputCost ? 'phí đầu vào' : 'phí đầu ra'
-      }`}
+      title={
+        initialValue
+          ? `Sửa ${isInputCost ? 'phí đầu vào' : 'phí đầu ra'}`
+          : 'Thêm thành phần phí'
+      }
       okText={initialValue ? 'Lưu thành phần' : 'Thêm'}
       cancelText='Huỷ'
       // antd tự giới hạn về `calc(100vw - 32px)` ở màn hẹp, nên một số cố

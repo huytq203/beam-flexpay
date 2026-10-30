@@ -17,11 +17,13 @@ import {
 } from '@ant-design/icons'
 import { PATHS } from '@constants/pathConstant'
 import { useAdminForgotPasswordMutation } from '@services/authEndpoints'
+import { useGoogleReCaptcha } from '@utils/recaptcha'
 import { Button, Form, Input } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
+  CAPTCHA_SUBMIT_ERROR,
   toForgotPasswordErrorMessage,
   type ResetMutationError
 } from '../password-reset-error'
@@ -45,7 +47,11 @@ function ForgotPassword() {
   const rootRef = useRef<HTMLDivElement>(null)
   const successHeadingRef = useRef<HTMLHeadingElement>(null)
   const [form] = Form.useForm<ForgotPasswordForm>()
-  const [forgotPassword, { isLoading }] = useAdminForgotPasswordMutation()
+  const [forgotPassword, { isLoading: isSending }] =
+    useAdminForgotPasswordMutation()
+  const { executeRecaptcha } = useGoogleReCaptcha()
+  const [isVerifyingCaptcha, setIsVerifyingCaptcha] = useState(false)
+  const isLoading = isVerifyingCaptcha || isSending
   const [submittedEmail, setSubmittedEmail] = useState('')
   const [submitError, setSubmitError] = useState<string | null>(null)
 
@@ -62,8 +68,19 @@ function ForgotPassword() {
     const normalizedEmail = email.trim().toLowerCase()
     setSubmitError(null)
 
+    let captchaToken: string
+    setIsVerifyingCaptcha(true)
     try {
-      await forgotPassword({ email: normalizedEmail }).unwrap()
+      captchaToken = await executeRecaptcha('forgot_password')
+    } catch {
+      setSubmitError(CAPTCHA_SUBMIT_ERROR)
+      return
+    } finally {
+      setIsVerifyingCaptcha(false)
+    }
+
+    try {
+      await forgotPassword({ email: normalizedEmail, captchaToken }).unwrap()
       setSubmittedEmail(normalizedEmail)
     } catch (error) {
       setSubmitError(

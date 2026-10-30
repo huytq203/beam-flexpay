@@ -10,6 +10,8 @@ interface ApiErrorBody {
 }
 
 const RESET_TOKEN_ERROR_CODES = new Set(['23015', '23016', '23017'])
+// 25001 CAPTCHA_INVALID, 25002 CAPTCHA_MISSING
+const CAPTCHA_ERROR_CODES = new Set(['25001', '25002'])
 const LEGACY_EXPIRED_HTTP_STATUSES = new Set([401, 403, 410])
 
 export const FALLBACK_SUBMIT_ERROR =
@@ -20,6 +22,8 @@ export const DEFAULT_INVALID_LINK_MESSAGE =
   'Liên kết không hợp lệ, đã hết hạn hoặc đã được sử dụng.'
 export const RATE_LIMIT_ERROR =
   'Bạn đã yêu cầu quá nhiều lần. Vui lòng thử lại sau.'
+export const CAPTCHA_SUBMIT_ERROR =
+  'Không xác thực được Captcha. Vui lòng tải lại trang rồi thử lại.'
 
 const isFetchError = (
   error: ResetMutationError
@@ -106,7 +110,9 @@ export const toSubmitErrorMessage = (
 export const toForgotPasswordErrorMessage = (
   error: ResetMutationError
 ): string => {
-  if (getApiErrorCode(error) === '23018') return RATE_LIMIT_ERROR
+  const code = getApiErrorCode(error)
+  if (code === '23018') return RATE_LIMIT_ERROR
+  if (code && CAPTCHA_ERROR_CODES.has(code)) return CAPTCHA_SUBMIT_ERROR
   if (isNetworkError(error)) return NETWORK_SUBMIT_ERROR
   return (
     readApiMessage(error) ??

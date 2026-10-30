@@ -58,13 +58,15 @@ export interface CreateMerchantPayload {
   contractStagingId?: string
   logoStagingId?: string
   productImageStagingIds?: string[]
+  /** Số tiền ký quỹ ban đầu (VND, ≥ 0; 0 = không ký quỹ). Chỉ gửi khi tạo. */
+  escrowAmount?: number
   submitForApproval?: boolean
 }
 
 export interface UpdateMerchantPayload
   extends Omit<
     CreateMerchantPayload,
-    'enterpriseWalletId' | 'submitForApproval'
+    'enterpriseWalletId' | 'submitForApproval' | 'escrowAmount'
   > {
   name: string
   mccCode: string

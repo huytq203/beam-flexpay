@@ -13,6 +13,7 @@ import type { MerchantType, SelectableWallet } from '@type/merchant'
 import { resolveLiveDocumentUrl } from '@services/merchantDocumentUrl'
 import {
   CreateMerchantSchema,
+  EditMerchantSchema,
   type CreateMerchantSchemaType
 } from '../schemas/Merchant.schema'
 import useHandle from './useHandle'
@@ -29,7 +30,8 @@ const EMPTY_FORM_VALUES: CreateMerchantSchemaType = {
   productImages: [],
   website: '',
   productDescription: '',
-  adminPassword: ''
+  adminPassword: '',
+  escrowAmount: null
 }
 
 export const useMerchantForm = () => {
@@ -82,7 +84,7 @@ export const useMerchantForm = () => {
     setError,
     formState: { errors, isDirty }
   } = useForm<CreateMerchantSchemaType>({
-    resolver: zodResolver(CreateMerchantSchema),
+    resolver: zodResolver(isEditMode ? EditMerchantSchema : CreateMerchantSchema),
     defaultValues: EMPTY_FORM_VALUES
   })
 
@@ -244,6 +246,7 @@ export const useMerchantForm = () => {
           contractStagingId,
           logoStagingId,
           productImageStagingIds,
+          escrowAmount: data.escrowAmount ?? undefined,
           submitForApproval: true
         },
         () => {

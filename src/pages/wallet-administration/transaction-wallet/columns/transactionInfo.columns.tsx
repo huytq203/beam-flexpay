@@ -3,6 +3,7 @@ import type { ColumnsType } from 'antd/es/table'
 import { Link } from 'react-router-dom'
 import { PartyCell } from './PartyCell'
 import type { UnifiedContentJournal } from '@type/apiResponseJournal'
+import { TypographyText } from '@components/index'
 import StatusBadge from '@components/status-badge/StatusBadge'
 import { PATHS } from '@constants/pathConstant'
 import {
@@ -51,25 +52,17 @@ export const infoColumns: ColumnsType<UnifiedContentJournal> = [
     dataIndex: 'transactionCode',
     align: 'center',
     render(value, record) {
+      if (!record.transactionCode) return <span>--</span>
       return (
-        <div>
-          {record.transactionCode ? (
-            <Link
-              to={PATHS.TRANSACTION_MANAGEMENT.DETAIL_TRANSACTION(record.id)}
-              className='text-blue-500 font-bold underline underline-offset-2'
-            >
-              {record.transactionCode}
-            </Link>
-          ) : (
-            // <span
-
-            //     className="font-medium"
-            // >
-            //    <TypographyText copyable >{record.transactionCode}</TypographyText>
-            // </span>
-            <span>--</span>
-          )}
-        </div>
+        <span className='inline-flex items-center gap-1'>
+          <Link
+            to={PATHS.TRANSACTION_MANAGEMENT.DETAIL_TRANSACTION(record.id)}
+            className='text-blue-500 font-bold underline underline-offset-2'
+          >
+            {record.transactionCode}
+          </Link>
+          <TypographyText copyable={{ text: record.transactionCode }} />
+        </span>
       )
     }
   },

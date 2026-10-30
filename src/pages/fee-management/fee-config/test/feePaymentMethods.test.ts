@@ -18,7 +18,8 @@ describe('phương thức giao dịch theo loại giao dịch', () => {
       ['WALLET_BALANCE', 'ATM', 'LINKED_ACCOUNT', 'BANK_TRANSFER', 'CC']
     ],
     ['MERCHANT_VA_BILL_COLLECTION', ['VA']],
-    ['PAYOUT_BANK_TRANSFER', ['BANK_TRANSFER']]
+    ['PAYOUT_BANK_TRANSFER', ['BANK_TRANSFER']],
+    ['MERCHANT_DISBURSEMENT', ['BANK_TRANSFER']]
   ])('%s trả đúng tập phương thức', (serviceType, expected) => {
     expect(valuesFor(serviceType)).toEqual(expected)
   })
@@ -43,7 +44,8 @@ describe('phương thức giao dịch theo loại giao dịch', () => {
       'EWALLET_TRANSFER_EXTERNAL',
       'EWALLET_CASHBACK',
       'MERCHANT_VA_BILL_COLLECTION',
-      'PAYOUT_BANK_TRANSFER'
+      'PAYOUT_BANK_TRANSFER',
+      'MERCHANT_DISBURSEMENT'
     ]).flatMap(valuesFor)
 
     expect(allValues).not.toContain('QR')

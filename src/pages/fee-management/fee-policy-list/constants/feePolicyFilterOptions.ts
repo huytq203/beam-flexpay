@@ -15,10 +15,14 @@ export const PAYER_TYPE_FILTER_OPTIONS = [
 /** Màn ĐVCNTT: hai bên của thu hộ / chi hộ là Merchant và người nộp / nhận tiền theo tab đang chọn. */
 export const getMerchantPayerFilterOptions = (
   serviceType: string | undefined
-) => [
-  { value: 'MERCHANT', label: 'Merchant' },
-  { value: 'USER', label: getMerchantCounterpartyLabel(serviceType) }
-]
+) =>
+  // Rút tiền luôn trừ phí vào tiền rút, chỉ Merchant chịu: không có chính sách nào do bên nhận chịu.
+  serviceType === 'PAYOUT_BANK_TRANSFER'
+    ? [{ value: 'MERCHANT', label: 'Merchant' }]
+    : [
+        { value: 'MERCHANT', label: 'Merchant' },
+        { value: 'USER', label: getMerchantCounterpartyLabel(serviceType) }
+      ]
 
 export const BENEFICIARY_TYPE_FILTER_OPTIONS = Object.entries(
   BENEFICIARY_TYPE_LABEL

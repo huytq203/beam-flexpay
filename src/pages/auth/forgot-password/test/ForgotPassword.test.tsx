@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
@@ -13,8 +13,23 @@ const renderScreen = () =>
   renderWithProviders(<ForgotPassword />, { route: ROUTE })
 
 describe('ForgotPassword', () => {
-  it('chuẩn hoá email, gọi đúng API và luôn hiện trạng thái trung tính', async () => {
+  beforeEach(() => {
+    window.grecaptcha = {
+      ready: (callback) => callback(),
+      execute: () => Promise.resolve('captcha-token')
+    }
+  })
+
+  it('chuẩn hoá email, gửi kèm captcha và luôn hiện trạng thái trung tính', async () => {
     let requestBody: unknown
+    let captchaAction: string | undefined
+    window.grecaptcha = {
+      ready: (callback) => callback(),
+      execute: (_siteKey, { action }) => {
+        captchaAction = action
+        return Promise.resolve('captcha-token')
+      }
+    }
     server.use(
       http.post('*/auth/forgot-password', async ({ request }) => {
         requestBody = await request.json()
@@ -37,7 +52,11 @@ describe('ForgotPassword', () => {
         name: 'Kiểm tra hộp thư của bạn'
       })
     ).toBeInTheDocument()
-    expect(requestBody).toEqual({ email: 'admin@flexpay.vn' })
+    expect(requestBody).toEqual({
+      email: 'admin@flexpay.vn',
+      captchaToken: 'captcha-token'
+    })
+    expect(captchaAction).toBe('forgot_password')
     expect(
       screen.getByText(/nếu email khớp với tài khoản đã đăng ký/i)
     ).toBeInTheDocument()
@@ -105,5 +124,52 @@ describe('ForgotPassword', () => {
     expect(
       screen.getByRole('textbox', { name: 'Email tài khoản' })
     ).toHaveValue('admin@flexpay.vn')
+  })
+
+  it('không gọi API khi không lấy được captcha', async () => {
+    let requestCount = 0
+    server.use(
+      http.post('*/auth/forgot-password', () => {
+        requestCount += 1
+        return HttpResponse.json({ data: null })
+      })
+    )
+    window.grecaptcha = {
+      ready: (callback) => callback(),
+      execute: () => Promise.reject(new Error('blocked'))
+    }
+    const user = userEvent.setup()
+    renderScreen()
+
+    await user.type(
+      screen.getByRole('textbox', { name: 'Email tài khoản' }),
+      'admin@flexpay.vn'
+    )
+    await user.click(
+      screen.getByRole('button', { name: 'Gửi liên kết đặt lại' })
+    )
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Không xác thực được Captcha. Vui lòng tải lại trang rồi thử lại.'
+    )
+    expect(requestCount).toBe(0)
+  })
+
+  it('hiện thông báo captcha khi BE từ chối token', async () => {
+    server.use(errorHandlers.forgotPasswordCaptchaInvalid)
+    const user = userEvent.setup()
+    renderScreen()
+
+    await user.type(
+      screen.getByRole('textbox', { name: 'Email tài khoản' }),
+      'admin@flexpay.vn'
+    )
+    await user.click(
+      screen.getByRole('button', { name: 'Gửi liên kết đặt lại' })
+    )
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Không xác thực được Captcha. Vui lòng tải lại trang rồi thử lại.'
+    )
   })
 })

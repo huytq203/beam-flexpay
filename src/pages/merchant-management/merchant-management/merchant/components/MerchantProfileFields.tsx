@@ -2,6 +2,7 @@ import type { Control } from 'react-hook-form'
 import type { UploadFile } from '@components/form'
 import {
   FormInput,
+  FormInputNumber,
   FormSelect,
   FormSwitch,
   FormTextArea,
@@ -27,12 +28,14 @@ const merchantTypeOptions = [
 interface Props {
   control: Control<CreateMerchantSchemaType>
   signsAtSubMerchant: boolean
+  isEditMode?: boolean
   resolveFileUrl: (file: UploadFile) => Promise<string>
 }
 
 export function MerchantProfileFields({
   control,
   signsAtSubMerchant,
+  isEditMode = false,
   resolveFileUrl
 }: Props) {
   return (
@@ -110,6 +113,29 @@ export function MerchantProfileFields({
               Có thể khác tên pháp lý, tối đa 200 ký tự.
             </p>
           </div>
+
+          {/* Ký quỹ chỉ nhập lúc tạo; khi sửa điều chỉnh ở màn Ký quỹ. */}
+          {!isEditMode && (
+            <div className='md:col-span-2'>
+              <FormInputNumber
+                control={control}
+                name='escrowAmount'
+                label={requiredLabel('Số tiền ký quỹ (VND)')}
+                className='flex flex-col'
+                classNameLable='text-sm font-medium text-foreground'
+                allowEmpty
+                thousandSeparator
+                precision={0}
+                min={0}
+                placeholder='Nhập 0 nếu không phải ký quỹ'
+                style={{ width: '100%' }}
+              />
+              <p className='mt-1.5 text-xs leading-5 text-muted-foreground'>
+                Hạn nộp 30 ngày tính từ khi ĐVCNTT được duyệt. Nhập 0 nếu ĐVCNTT
+                không phải ký quỹ. Điều chỉnh mức và điều khoản ở màn Ký quỹ.
+              </p>
+            </div>
+          )}
 
           <div className='md:col-span-2'>
             <FormUploadCombined

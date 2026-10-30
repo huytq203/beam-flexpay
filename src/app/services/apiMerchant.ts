@@ -84,6 +84,8 @@ export const merchantService = apiMerchant.injectEndpoints({
           | 'MERCHANT_CONTRACT'
           | 'MERCHANT_LOGO'
           | 'MERCHANT_PRODUCT_IMAGE'
+          // Chứng từ lệnh nạp ký quỹ (SRS 3.6.27 STT 8), BE nhận từ flex.merchant MR !75.
+          | 'ESCROW_DEPOSIT_EVIDENCE'
       }
     >({
       query: ({ file, documentType }) => {
