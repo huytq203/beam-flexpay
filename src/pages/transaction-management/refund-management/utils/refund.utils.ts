@@ -90,7 +90,11 @@ export interface RefundActionFlags {
 
 type RefundActionSubject = Pick<
   RefundTarget,
-  'status' | 'channel' | 'createdBy' | 'awaitingManualConfirmation'
+  | 'status'
+  | 'channel'
+  | 'createdBy'
+  | 'awaitingManualConfirmation'
+  | 'payoutRefreshable'
 >
 
 const IN_FLIGHT_STATUSES: readonly RefundStatus[] = [
@@ -130,11 +134,12 @@ export const getRefundActions = (
       inFlight &&
       refund.channel === RefundChannel.TO_WALLET &&
       context.canSettle,
-    // Lệnh chi MANUAL chưa gửi sang ngân hàng nên không có gì để tra lại.
+    // Đọc đúng cờ BE: chỉ lệnh chi đang chờ đối soát và đã từng gửi ngân hàng mới làm mới được
+    // (lệnh đang chi, chờ đủ tiền, chi tay MANUAL đều bị BE từ chối nên không hiện nút).
     payoutRefresh:
       inFlight &&
       refund.channel === RefundChannel.TO_BANK &&
-      refund.awaitingManualConfirmation !== true &&
+      refund.payoutRefreshable === true &&
       context.canPayoutRefresh
   }
 }
