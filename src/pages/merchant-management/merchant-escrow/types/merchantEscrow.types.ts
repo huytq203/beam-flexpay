@@ -199,6 +199,12 @@ export interface EscrowDocumentRef {
   sizeBytes: number
 }
 
+/** Link xem chứng từ (MerchantEscrowOrderService.ReadUrl): sống 5 phút, `expiresAt` là LocalDateTime. */
+export interface EscrowDocumentReadUrl {
+  url: string
+  expiresAt: string
+}
+
 /** Lệnh nạp ký quỹ (MerchantEscrowOrderService.Order). */
 export interface EscrowOrder {
   id: string

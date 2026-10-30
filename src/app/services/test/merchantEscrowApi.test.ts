@@ -117,6 +117,34 @@ describe('merchantEscrowApi', () => {
     expect(r).toHaveLength(2)
   })
 
+  it('getEscrowOrderDocumentReadUrl gọi GET read-url theo fileRef và không cache giữa hai lần bấm', async () => {
+    let calls = 0
+    server.use(
+      http.get(
+        '*/merchant-escrow-orders/o-1/documents/f-1/read-url',
+        ({ request }) => {
+          calls += 1
+          expect(request.method).toBe('GET')
+          return HttpResponse.json({
+            data: { url: `https://files/x?sig=${calls}`, expiresAt: '2026-10-30T10:05:00' }
+          })
+        }
+      )
+    )
+    const store = createAppStore()
+    const read = () =>
+      store
+        .dispatch(
+          escrowApi.endpoints.getEscrowOrderDocumentReadUrl.initiate({
+            id: 'o-1',
+            fileId: 'f-1'
+          })
+        )
+        .unwrap()
+    expect((await read()).url).toBe('https://files/x?sig=1')
+    expect((await read()).url).toBe('https://files/x?sig=2')
+  })
+
   it('cancelEscrowOrder gửi reason trên query', async () => {
     let search = ''
     server.use(
