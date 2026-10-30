@@ -97,7 +97,7 @@ const buildHeader = (title) => [
 ]
 
 const buildFooter = () =>
-  [env.CI_JOB_URL && `Job: ${env.CI_JOB_URL}`].filter(Boolean)
+  [env.CI_PIPELINE_URL && `Pipeline: ${env.CI_PIPELINE_URL}`].filter(Boolean)
 
 const buildReportMessage = (findings, isFailing) => {
   const { vulns, secrets, misconfigs } = findings
