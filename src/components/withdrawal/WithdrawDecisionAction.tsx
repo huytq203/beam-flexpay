@@ -17,21 +17,30 @@ import {
 
 export interface WithdrawDecisionActionProps {
   transactionCode: string
+  /** `REFUND_BANK_PAYOUT`: lệnh chi hoàn tiền — đổi chữ thành "Duyệt chi" và mở cho quyền PAYOUT:APPROVE. */
+  transactionType?: string | null
 }
 
 type Decision = 'approve' | 'reject'
 
 /** Popover chỉ chọn nhánh; mỗi nhánh cần lý do nên mở dialog riêng để xác nhận. */
 export const WithdrawDecisionAction = ({
-  transactionCode
+  transactionCode,
+  transactionType
 }: WithdrawDecisionActionProps) => {
+  const isRefundPayout = transactionType === 'REFUND_BANK_PAYOUT'
   const [popoverOpen, setPopoverOpen] = useState(false)
   const [decision, setDecision] = useState<Decision | null>(null)
   const { has } = useAccess()
   const { approve, reject, isApproving, isRejecting } =
     useWithdrawalDecision(transactionCode)
 
-  if (!has(PERMISSION.EWALLET_FULL)) return null
+  // Lệnh chi hoàn: kế toán có PAYOUT:APPROVE cũng duyệt chi được (chốt 30/10); lệnh rút thường chỉ EWALLET:FULL.
+  if (
+    !has(PERMISSION.EWALLET_FULL) &&
+    !(isRefundPayout && has(PERMISSION.PAYOUT_APPROVE))
+  )
+    return null
 
   const choose = (next: Decision) => () => {
     setPopoverOpen(false)
@@ -56,7 +65,7 @@ export const WithdrawDecisionAction = ({
         <ButtonComponent
           htmlType='button'
           type='default'
-          content='Duyệt'
+          content={isRefundPayout ? 'Duyệt chi' : 'Duyệt'}
           className='w-full'
           onClick={choose('approve')}
         />
@@ -71,12 +80,14 @@ export const WithdrawDecisionAction = ({
         trigger='click'
         placement='bottomRight'
         destroyOnHidden
-        title='Phê duyệt lệnh rút'
+        title={isRefundPayout ? 'Duyệt chi lệnh hoàn tiền' : 'Phê duyệt lệnh rút'}
         content={content}
         onOpenChange={setPopoverOpen}
       >
         <span className='inline-flex'>
-          <TooltipComponent title={popoverOpen ? '' : 'Phê duyệt'}>
+          <TooltipComponent
+            title={popoverOpen ? '' : isRefundPayout ? 'Duyệt chi' : 'Phê duyệt'}
+          >
             <ButtonComponent
               htmlType='button'
               size='small'
@@ -90,8 +101,14 @@ export const WithdrawDecisionAction = ({
 
       <ReasonDialog
         open={decision === 'approve'}
-        title='Duyệt lệnh rút vượt ngưỡng'
-        description='Duyệt xong hệ thống sẽ chi tiền cho khách. Thao tác này không hoàn tác được.'
+        title={
+          isRefundPayout ? 'Duyệt chi lệnh hoàn tiền' : 'Duyệt lệnh rút vượt ngưỡng'
+        }
+        description={
+          isRefundPayout
+            ? 'Duyệt chi xong: ngân hàng có API thì hệ thống chi ngay; ngân hàng chưa có API thì chuyển khoản ngoài rồi cập nhật kết quả. Thao tác này không hoàn tác được.'
+            : 'Duyệt xong hệ thống sẽ chi tiền cho khách. Thao tác này không hoàn tác được.'
+        }
         label='Lý do duyệt'
         placeholder='Ví dụ: đã đối chiếu hồ sơ khách hàng và nguồn tiền, đồng ý chi'
         okText='Xác nhận duyệt'
@@ -106,7 +123,7 @@ export const WithdrawDecisionAction = ({
 
       <ReasonDialog
         open={decision === 'reject'}
-        title='Từ chối lệnh rút'
+        title={isRefundPayout ? 'Từ chối chi lệnh hoàn tiền' : 'Từ chối lệnh rút'}
         description='Toàn bộ tiền bị giữ, gồm cả phí, sẽ được trả về ví khách ngay.'
         label='Lý do từ chối'
         hint={`Tối đa ${WITHDRAWAL_REASON_MAX_LENGTH} ký tự, hiển thị được với khách`}

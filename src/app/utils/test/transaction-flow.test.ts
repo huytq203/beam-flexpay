@@ -244,3 +244,35 @@ describe('resolveFeeDeduction — cột Phí trừ ví / Phí trừ bank', () =>
     })
   })
 })
+
+/**
+ * Lệnh chi hoàn tiền ra ngân hàng (REFUND_BANK_PAYOUT) là một lệnh rút: trừ ví, cộng bank — trước đây không có
+ * trong bảng luồng nên màn Lịch sử rút tiền hiện "-0". Journal hoàn về ví (REFUND_WALLET_CREDIT) cộng ví như REVERSAL.
+ */
+describe('buildTransactionFlow — journal hoàn tiền', () => {
+  it('lệnh chi hoàn ra ngân hàng trừ ví và cộng bank như rút tiền', () => {
+    const flow = buildTransactionFlow(
+      record({
+        transactionType: 'REFUND_BANK_PAYOUT',
+        amount: 10_203,
+        grossAmount: 10_203,
+        feeAmount: 0
+      })
+    )
+    expect(flow.totals?.walletDebit).toBe(10_203)
+    expect(flow.totals?.bankCredit).toBe(10_203)
+  })
+
+  it('hoàn về ví cộng ví', () => {
+    const flow = buildTransactionFlow(
+      record({
+        transactionType: 'REFUND_WALLET_CREDIT',
+        amount: 50_000,
+        grossAmount: 50_000,
+        feeAmount: 0
+      })
+    )
+    expect(flow.totals?.walletCredit).toBe(50_000)
+    expect(flow.totals?.walletDebit).toBe(0)
+  })
+})

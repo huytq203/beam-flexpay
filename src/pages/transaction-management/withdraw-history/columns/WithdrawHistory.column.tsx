@@ -21,7 +21,7 @@ import {
   WITHDRAW_DISPLAY_STATUS_CONFIG
 } from '../constants/withdrawDisplayStatus'
 import { BankEnum, BankLabel } from '../constants/bank.constant'
-import { WithdrawalStatus } from '@type/withdrawalApproval.type'
+import { isWithdrawalPendingApproval } from '@utils/withdrawal-approval'
 import { UnifiedContentJournal } from '@/app/types/apiResponseJournal'
 import { formatNumber } from '@/app/utils'
 import { cn } from '@/app/utils/cn'
@@ -210,10 +210,13 @@ const getColumn = ({
     render(_, record) {
       return (
         <div className='flex justify-center items-center gap-2'>
-          {/* Chờ duyệt chỉ chốt qua Duyệt/Từ chối, không xử lý giao dịch treo. */}
-          {resolveDisplayStatus(record) ===
-          WithdrawalStatus.PENDING_APPROVAL ? (
-            <WithdrawDecisionAction transactionCode={record.transactionCode} />
+          {/* Chờ duyệt (vượt ngưỡng) và chờ duyệt chi (lệnh chi hoàn) chỉ chốt qua Duyệt/Từ chối,
+              không xử lý giao dịch treo. */}
+          {isWithdrawalPendingApproval(resolveDisplayStatus(record)) ? (
+            <WithdrawDecisionAction
+              transactionCode={record.transactionCode}
+              transactionType={record.transactionType}
+            />
           ) : (
             <StuckTransactionUpdateAction
               compact

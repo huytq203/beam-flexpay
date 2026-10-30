@@ -78,7 +78,10 @@ const FLOW_BY_TYPE: Readonly<Record<string, FlowRoute>> = {
   CASH_OUT: { debited: 'WALLET', credited: 'BANK' },
   P2P_TRANSFER: { debited: 'WALLET' },
   MERCHANT_PAYMENT: { debited: 'WALLET' },
-  REVERSAL: { credited: 'WALLET' }
+  REVERSAL: { credited: 'WALLET' },
+  // Lệnh chi hoàn ra ngân hàng là một lệnh rút (trừ ví, cộng bank); hoàn về ví cộng ví như REVERSAL.
+  REFUND_BANK_PAYOUT: { debited: 'WALLET', credited: 'BANK' },
+  REFUND_WALLET_CREDIT: { credited: 'WALLET' }
 }
 
 const NO_TOTALS = {

@@ -22,7 +22,10 @@ const WITHDRAWAL_STEPS = [
   WithdrawalStatus.PENDING_APPROVAL,
   WithdrawalStatus.APPROVED,
   WithdrawalStatus.PAYING,
-  WithdrawalStatus.RECONCILIATION_REQUIRED
+  WithdrawalStatus.RECONCILIATION_REQUIRED,
+  // Lệnh chi hoàn tiền: chờ Kế toán duyệt chi / đã duyệt chi chưa có kết quả (Bước 3, 30/10).
+  WithdrawalStatus.PENDING_PAYOUT_APPROVAL,
+  WithdrawalStatus.PAYOUT_APPROVED
 ] as const
 
 const stepConfig = Object.fromEntries(

@@ -41,4 +41,16 @@ describe('trạng thái hiển thị của lệnh rút', () => {
     //   /success/
     // )
   })
+
+  it('lệnh chi hoàn tiền có nhãn tiếng Việt, không hiện mã thô (Bước 3)', () => {
+    expect(WITHDRAW_DISPLAY_STATUS_CONFIG.PENDING_PAYOUT_APPROVAL.label).toBe(
+      'Đã duyệt chờ chi'
+    )
+    expect(WITHDRAW_DISPLAY_STATUS_CONFIG.PAYOUT_APPROVED.label).toBe(
+      'Đã duyệt chi'
+    )
+    expect(
+      WITHDRAW_DISPLAY_STATUS_CONFIG.PAYOUT_APPROVED.className
+    ).not.toMatch(/success/)
+  })
 })
