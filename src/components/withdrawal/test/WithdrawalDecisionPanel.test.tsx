@@ -603,3 +603,25 @@ describe('WithdrawalDecisionPanel — lệnh chi hoàn tiền', () => {
     ).not.toBeInTheDocument()
   })
 })
+
+/**
+ * Lệnh chi hoàn API bị treo (RECONCILIATION_REQUIRED): BE vẫn báo awaitingManualConfirmation nhưng khối duyệt KHÔNG
+ * hiện Chi thành công/Chi thất bại — việc chốt đi qua nút "Xử lý" giao dịch treo như lệnh rút thường, tránh hai lối
+ * cho cùng một thao tác và câu "chưa có kết nối API" sai với lệnh API.
+ */
+describe('WithdrawalDecisionPanel — lệnh chi hoàn API bị treo', () => {
+  it('không hiện hai nút chi tay cho lệnh API đang chờ đối soát', async () => {
+    mockWithdrawal(WithdrawalStatus.RECONCILIATION_REQUIRED, {
+      payoutMode: 'API',
+      awaitingManualConfirmation: true
+    })
+
+    renderPanel([APPROVER_PERMISSION], 'REFUND_BANK_PAYOUT')
+
+    expect(await screen.findByText('Lệnh rút tiền')).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /Chi thành công/ })
+    ).not.toBeInTheDocument()
+    expect(screen.queryByText(/chưa có kết nối API/)).not.toBeInTheDocument()
+  })
+})

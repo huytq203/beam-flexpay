@@ -132,8 +132,11 @@ export const WithdrawalDecisionPanel = ({
   const canDecide = isPending && canAct
   // Chỉ đọc cờ BE trả về, không tự suy từ trạng thái/ngân hàng (chốt 28/10).
   // Quyền khớp nút "Xử lý chi tiền" vì cùng gọi `update-status`.
+  // Chỉ lệnh chi THỦ CÔNG chốt tay ở khối này. Lệnh API bị treo (BE cũng báo awaitingManualConfirmation) chốt qua
+  // nút "Xử lý" giao dịch treo như lệnh rút thường — không để hai lối cho cùng một thao tác.
   const canConfirmManual =
     withdrawal.awaitingManualConfirmation === true &&
+    withdrawal.payoutMode === PayoutMode.MANUAL &&
     canAct
   const isApiSettling =
     withdrawal.payoutMode === PayoutMode.API &&
