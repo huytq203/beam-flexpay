@@ -233,4 +233,41 @@ describe('Tab Lệnh nạp ký quỹ', { timeout: 30000 }, () => {
     expect(await within(drawer).findByText(detail)).toBeInTheDocument()
     expect(open).not.toHaveBeenCalled()
   })
+
+  it('chứng từ là ảnh thì xem trước ngay trong màn, không mở tab mới', async () => {
+    const image = {
+      fileRef: 'file-2',
+      fileName: 'uy-nhiem-chi.png',
+      contentType: 'image/png',
+      sizeBytes: 4096
+    }
+    mockPage([order({ documents: [image] })])
+    const open = vi.spyOn(window, 'open').mockImplementation(() => null)
+    server.use(
+      http.get('*/merchant-escrow-orders/o-1', () =>
+        env({ order: order({ documents: [image] }), impact })
+      ),
+      http.get('*/merchant-escrow-orders/o-1/documents/file-2/read-url', () =>
+        env({
+          url: 'https://files.example/unc.png?sig=1',
+          expiresAt: '2026-10-30T10:05:00'
+        })
+      )
+    )
+    const user = userEvent.setup()
+    renderPage()
+    await user.click(await screen.findByText('MEO0123456789AB'))
+    const drawer = await screen.findByRole('dialog', {
+      name: /Lệnh nạp MEO0123456789AB/
+    })
+    await user.click(
+      await within(drawer).findByRole('button', { name: 'Xem uy-nhiem-chi.png' })
+    )
+    await waitFor(() =>
+      expect(
+        document.querySelector('img[src="https://files.example/unc.png?sig=1"]')
+      ).not.toBeNull()
+    )
+    expect(open).not.toHaveBeenCalled()
+  })
 })

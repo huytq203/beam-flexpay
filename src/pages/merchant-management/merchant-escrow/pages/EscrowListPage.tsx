@@ -12,6 +12,7 @@ import { AccessPageShell } from '../../merchant-access/components/AccessPageShel
 import { createEscrowListColumns } from '../columns/escrowList.columns'
 import { EscrowConfigProposalsPanel } from '../components/EscrowConfigProposalsPanel'
 import { EscrowOrderCreateDialog } from '../components/EscrowOrderCreateDialog'
+import { EscrowOrderQueue } from '../components/EscrowOrderQueue'
 import {
   EscrowFilters,
   type EscrowListFilters
@@ -126,7 +127,8 @@ function EscrowMasterList() {
 
 /**
  * Trang Ký quỹ: tab mặc định là danh sách Master; tab "Chờ duyệt cấu hình" là hàng đợi đề xuất
- * cấu hình của mọi Master trong phạm vi, để người duyệt không phải mở từng Master.
+ * cấu hình của mọi Master trong phạm vi, để người duyệt không phải mở từng Master; tab "Chờ duyệt
+ * lệnh nạp" là hàng chờ phê duyệt lệnh nạp (SRS 3.6.29) — đặt chung trang thay vì thêm menu mới.
  */
 export default function EscrowListPage() {
   const [tab, setTab] = useState('list')
@@ -137,15 +139,20 @@ export default function EscrowListPage() {
         onChange={setTab}
         items={[
           { key: 'list', label: 'Danh sách ký quỹ' },
-          { key: 'proposals', label: 'Chờ duyệt cấu hình' }
+          { key: 'proposals', label: 'Chờ duyệt cấu hình' },
+          { key: 'orders', label: 'Chờ duyệt lệnh nạp' }
         ]}
       />
       {/* Chỉ dựng tab đang mở để hàng chờ duyệt không tải khi người dùng chỉ xem danh sách. */}
-      {tab === 'list' ? (
-        <EscrowMasterList />
-      ) : (
+      {tab === 'list' && <EscrowMasterList />}
+      {tab === 'proposals' && (
         <CardComponent className='border border-border bg-background shadow-none'>
           <EscrowConfigProposalsPanel />
+        </CardComponent>
+      )}
+      {tab === 'orders' && (
+        <CardComponent className='border border-border bg-background shadow-none'>
+          <EscrowOrderQueue />
         </CardComponent>
       )}
     </div>
