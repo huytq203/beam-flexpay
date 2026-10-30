@@ -5,7 +5,7 @@ import {
 } from '@/app/services/merchantEscrowApi'
 import { getApiErrorDetail } from '@/app/utils/api-error'
 import { ButtonComponent, DrawerComponent } from '@components/index'
-import { formatCurrency } from '@utils/formatNumber'
+import { formatCurrency, formatFileSize } from '@utils/formatNumber'
 import { formatUTCToLocalDateTime } from '@utils/helper-functions/date'
 import {
   ESCROW_ORDER_STATUS_LABEL,
@@ -207,7 +207,7 @@ function OrderDocuments({
                   {doc.fileName}
                 </span>
                 <span className='text-xs text-muted-foreground'>
-                  {(doc.sizeBytes / 1024 / 1024).toFixed(1)} MB
+                  {formatFileSize(doc.sizeBytes)}
                 </span>
               </span>
               <ButtonComponent

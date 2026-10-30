@@ -12,6 +12,7 @@ import {
   type PreviewState
 } from './UploadFilePreview'
 import { isImageFile } from './uploadFile.utils'
+import { formatFileSize } from '@utils/formatNumber'
 
 const { Dragger } = Upload
 const DEFAULT_MAX_FILE_SIZE_IN_MB = 5
@@ -179,9 +180,7 @@ export function UploadControl({
                 </span>
                 <span className='text-xs text-muted-foreground'>
                   {isImageFile(file) ? 'Ảnh' : 'PDF'}
-                  {file.size
-                    ? ` · ${(file.size / 1024 / 1024).toFixed(1)} MB`
-                    : ''}
+                  {file.size ? ` · ${formatFileSize(file.size)}` : ''}
                 </span>
               </span>
               <ButtonComponent

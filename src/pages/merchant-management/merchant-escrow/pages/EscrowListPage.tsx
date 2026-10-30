@@ -32,13 +32,14 @@ function EscrowMasterList() {
   const navigate = useNavigate()
   const [draft, setDraft] = useState<EscrowListFilters>({})
   const [applied, setApplied] = useState<EscrowListFilters>({})
-  // Trang BE đánh số từ 0, bảng antd từ 1.
+  // flex.merchant bật `spring.data.web.pageable.one-indexed-parameters=true`: BE và bảng antd đều đánh
+  // số trang từ 1, gửi nguyên `page`. Gửi page-1 thì trang 1 và trang 2 cùng ra trang đầu.
   const [page, setPage] = useState(1)
   const [size, setSize] = useState(DEFAULT_SIZE)
 
   const query = useGetEscrowListQuery({
     ...applied,
-    page: page - 1,
+    page,
     size
   })
 

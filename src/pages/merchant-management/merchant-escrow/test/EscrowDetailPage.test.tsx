@@ -77,6 +77,20 @@ const renderPage = (permissions: string[]) =>
   )
 
 describe('EscrowDetailPage', { timeout: 30000 }, () => {
+  it('sổ cái gửi page=1 cho trang đầu (BE đánh số trang từ 1)', async () => {
+    mockBase(escrowOverview())
+    const urls: URL[] = []
+    server.use(
+      http.get('*/merchant-escrows/master-1/ledger', ({ request }) => {
+        urls.push(new URL(request.url))
+        return env(emptyPage)
+      })
+    )
+    renderPage([VIEW])
+    await waitFor(() => expect(urls.length).toBeGreaterThan(0))
+    expect(urls[0].searchParams.get('page')).toBe('1')
+  })
+
   it('state UNKNOWN hiện "Chưa đọc được số dư" thay vì 0 ₫', async () => {
     mockBase(
       escrowOverview({
