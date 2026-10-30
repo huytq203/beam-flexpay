@@ -28,6 +28,7 @@ describe('isStuckJournalStatus', () => {
 describe('canShowStuckUpdateForType', () => {
   it('ẩn nút cho chuyển tiền', () => {
     expect(canShowStuckUpdateForType('P2P_TRANSFER')).toBe(false)
+    expect(canShowStuckUpdateForType('REFUND_WALLET_CREDIT')).toBe(false)
   })
 
   it('Bước 3: lệnh chi hoàn ra ngân hàng treo được làm mới/chốt ở màn rút tiền như lệnh rút', () => {

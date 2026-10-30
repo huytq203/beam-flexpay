@@ -27,6 +27,13 @@ describe('nhãn loại giao dịch màn giao dịch ví', () => {
     expect(screen.getByText('Hoàn tiền')).toBeInTheDocument()
   })
 
+  it('REFUND_WALLET_CREDIT (hoàn chuyển/rút tiền về ví) cũng là "Hoàn tiền"', () => {
+    expect(toTransactionTypeKey('REFUND_WALLET_CREDIT')).toBe('REVERSAL')
+    expect(getTransactionTypeLabel('REFUND_WALLET_CREDIT')).toBe('Hoàn tiền')
+    renderTypeCell('REFUND_WALLET_CREDIT')
+    expect(screen.getByText('Hoàn tiền')).toBeInTheDocument()
+  })
+
   it('loại đã biết giữ nguyên nhãn', () => {
     expect(getTransactionTypeLabel('CASH_OUT')).toBe('Rút tiền')
     expect(getTransactionTypeLabel('REVERSAL')).toBe('Hoàn tiền')

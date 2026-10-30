@@ -18,6 +18,12 @@ import {
   readRefundFields
 } from '../dto/transactionRefund.dto'
 
+/** Loại journal hoàn có mã hoàn và mã giao dịch gốc trong `details`. */
+const REFUND_JOURNAL_TYPES = new Set<string>([
+  'REFUND_BANK_PAYOUT',
+  'REFUND_WALLET_CREDIT'
+])
+
 /** Đọc một khóa chuỗi trong `details`; giá trị không phải chuỗi hoặc rỗng coi như không có. */
 const readDetail = (
   details: Record<string, unknown> | undefined,
@@ -38,10 +44,11 @@ const CommonInfo = ({ data, feeCode }: CommonInfoProps) => {
   const pendingRefund = getPendingRefundAmount(refundFields)
   const completedAt = data?.completedAt ?? data?.postedAt ?? data?.archivedAt
   const isCashIn = data?.transactionType === 'CASH_IN'
-  // Lệnh chi hoàn nạp mang mã FW như lệnh rút; mã hoàn của lần chi (RF-…-Pn) và mã nạp gốc
-  // nằm trong metadata journal (`details`) để tra ngược về yêu cầu hoàn.
+  // Journal hoàn mang mã FW (chi hoàn nạp ra ngân hàng, hoàn chuyển/rút tiền về ví); mã hoàn
+  // (RF-…, có thể kèm -Pn) và mã giao dịch gốc nằm trong metadata journal (`details`) để tra ngược.
   const refundPayoutRefs =
-    data?.transactionType === 'REFUND_BANK_PAYOUT'
+    data?.transactionType &&
+    REFUND_JOURNAL_TYPES.has(data.transactionType)
       ? {
           refund: readDetail(data.details, 'payoutReference') ??
             readDetail(data.details, 'refundCode'),

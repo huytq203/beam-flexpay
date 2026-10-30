@@ -12,10 +12,12 @@ export type TransactionKey = keyof typeof TransactionType
  * Loại bút toán chi tiết của wallet-core được gộp vào một nhóm hiển thị.
  * `REFUND_BANK_PAYOUT` là journal chi hoàn ra ngân hàng của lệnh nạp thành công
  * (28/10): về nghiệp vụ vẫn là "Hoàn tiền", nên đi chung badge với `REVERSAL`
- * thay vì sinh thêm một loại mới trên màn hình.
+ * thay vì sinh thêm một loại mới trên màn hình. `REFUND_WALLET_CREDIT` là journal
+ * hoàn chuyển/rút tiền về ví (30/10), cũng thuộc nhóm "Hoàn tiền".
  */
 const TRANSACTION_TYPE_ALIASES: Record<string, TransactionKey> = {
-  REFUND_BANK_PAYOUT: 'REVERSAL'
+  REFUND_BANK_PAYOUT: 'REVERSAL',
+  REFUND_WALLET_CREDIT: 'REVERSAL'
 }
 
 /** Mã loại → khoá hiển thị đã biết; `null` khi là loại FE chưa biết. */

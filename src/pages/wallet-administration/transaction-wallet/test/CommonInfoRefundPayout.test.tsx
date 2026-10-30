@@ -34,6 +34,28 @@ describe('thông tin chung của lệnh chi hoàn tiền', () => {
     expect(screen.getByText('FW26QXRPO')).toBeInTheDocument()
   })
 
+  it('hoàn chuyển/rút tiền về ví (REFUND_WALLET_CREDIT) cũng hiện mã hoàn và giao dịch gốc', () => {
+    renderWithProviders(
+      <CommonInfo
+        data={
+          {
+            ...payout,
+            transactionCode: 'FW26WCRED',
+            transactionType: 'REFUND_WALLET_CREDIT',
+            details: {
+              refundCode: 'RF-20261030-000001',
+              originalTransactionCode: 'FW26P2P01'
+            }
+          } as unknown as UnifiedContentJournal
+        }
+      />
+    )
+
+    expect(screen.getByText('Mã hoàn tiền:')).toBeInTheDocument()
+    expect(screen.getByText('RF-20261030-000001')).toBeInTheDocument()
+    expect(screen.getByText('FW26P2P01')).toBeInTheDocument()
+  })
+
   it('không hiện hai dòng này với giao dịch không phải lệnh chi hoàn', () => {
     renderWithProviders(
       <CommonInfo
