@@ -1,57 +1,72 @@
 stages:
-  - build
-  - deploy
-variables:
-  DOCKER_REGISTRY: "registry.beamewa.com.vn"
-  DOCKER_IMAGE: "$DOCKER_REGISTRY/beam-uat/cms-frontend"
-  DOCKER_TAG: "$CI_COMMIT_SHA"
-  NODE_OPTIONS: "--max-old-space-size=3072"
-.dev-env-module:
-  variables:
-    ENV: dev
-    ENV_FILE: .env.dev
-    DOCKER_FILE: Dockerfile
-.uat-env-module:
-  variables:
-    ENV: uat
-    ENV_FILE: .env.uat
-    DOCKER_FILE: Dockerfile
-.build-module:
-  allow_failure: false
-  when: manual
+  - security
+
+# ---------------------------------------------------------------------------
+# Security scan (Trivy) → thông báo Halo
+# CI/CD variables cần khai (Settings → CI/CD → Variables, Masked):
+#   HALO_BOT_TOKEN, HALO_CONVERSATION_UUID, (tuỳ chọn) HALO_API_BASE
+# ---------------------------------------------------------------------------
+.trivy-halo-notify:
   script:
-    - export NODE_OPTIONS="--max-old-space-size=8192"
-    - docker build -f $DOCKER_FILE -t $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA .
-    - docker push $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA
+    - >
+      docker run --rm --user "$(id -u):$(id -g)"
+      -v "$CI_PROJECT_DIR:/workspace:ro" -w /workspace
+      -e HALO_BOT_TOKEN -e HALO_CONVERSATION_UUID -e HALO_API_BASE
+      -e TRIVY_FAIL_SEVERITY -e CI_PROJECT_PATH -e CI_COMMIT_REF_NAME
+      -e CI_COMMIT_SHORT_SHA -e CI_PIPELINE_ID -e CI_JOB_ID -e CI_JOB_URL
+      -e GITLAB_USER_LOGIN
+      "$NODE_IMAGE" node scripts/security/trivy-halo-notify.mjs
+      "security-reports/trivy/trivy-report.json"
+
+trivy-scan:
+  stage: security
+  variables:
+    # Pin cả digest: từng có bản Trivy bị chèn mã độc (0.69.4–0.69.6).
+    TRIVY_IMAGE: "aquasec/trivy:0.76.0@sha256:2416d1f74045b57274df1a340eee6b510cacd73c66a6ccb8da092b117eb7d222"
+    NODE_IMAGE: "node:22-alpine@sha256:fe4f6d74e20370acb04ad889077d14d0f64a9c8ea6a42bc60cddf1e844699914"
+    TRIVY_SCANNERS: "vuln,secret,misconfig"
+    TRIVY_SEVERITY: "MEDIUM,HIGH,CRITICAL"
+    # Job fail (pipeline đỏ) khi có lỗi ở các mức này.
+    TRIVY_FAIL_SEVERITY: "CRITICAL"
+    TRIVY_SKIP_DIRS: "node_modules,dist,dev-dist,.yarn,.trivycache,security-reports"
+  cache:
+    key: trivy-db
+    paths:
+      - .trivycache/
+  script:
+    - mkdir -p .trivycache security-reports/trivy
+    - rm -f security-reports/trivy/*
+    - >
+      docker run --rm --user "$(id -u):$(id -g)"
+      -v "$CI_PROJECT_DIR:/workspace" -w /workspace
+      -e TRIVY_SCANNERS -e TRIVY_SEVERITY -e TRIVY_SKIP_DIRS
+      "$TRIVY_IMAGE" fs --cache-dir .trivycache --no-progress
+      --skip-version-check --format json
+      --output security-reports/trivy/trivy-report.json .
+    - >
+      docker run --rm --user "$(id -u):$(id -g)"
+      -v "$CI_PROJECT_DIR:/workspace" -w /workspace -e TRIVY_SCANNERS
+      "$TRIVY_IMAGE" convert --skip-version-check --format table
+      --output security-reports/trivy/trivy-report.txt
+      security-reports/trivy/trivy-report.json
+    - cat security-reports/trivy/trivy-report.txt
+    - !reference [.trivy-halo-notify, script]
+  after_script:
+    # Trivy lỗi giữa chừng (không có report) → vẫn báo lên Halo.
+    - |
+      if [ "$CI_JOB_STATUS" = "failed" ] && [ ! -s security-reports/trivy/trivy-report.json ]; then
+        docker run --rm --user "$(id -u):$(id -g)" \
+          -v "$CI_PROJECT_DIR:/workspace:ro" -w /workspace \
+          -e HALO_BOT_TOKEN -e HALO_CONVERSATION_UUID -e HALO_API_BASE \
+          -e CI_PROJECT_PATH -e CI_COMMIT_REF_NAME -e CI_COMMIT_SHORT_SHA \
+          -e CI_PIPELINE_ID -e CI_JOB_ID -e CI_JOB_URL -e GITLAB_USER_LOGIN \
+          "$NODE_IMAGE" node scripts/security/trivy-halo-notify.mjs \
+          security-reports/trivy/trivy-report.json || true
+      fi
+  artifacts:
+    when: always
+    expire_in: 30 days
+    paths:
+      - security-reports/trivy/
   tags:
     - beam_ci
-.deploy-module:
-  allow_failure: false
-  script:
-    - docker service update --with-registry-auth --image $DOCKER_IMAGE-$ENV:$CI_COMMIT_SHA beam_cms
-build-dev:
-  stage: build
-  extends:
-    - .dev-env-module
-    - .build-module
-build-uat:
-  stage: build
-  extends:
-    - .uat-env-module
-    - .build-module
-deploy-dev:
-  stage: deploy
-  extends:
-    - .dev-env-module
-    - .deploy-module
-  needs: ["build-dev"]
-  tags:
-    - beam_cd_dev
-deploy-uat:
-  stage: deploy
-  extends:
-    - .uat-env-module
-    - .deploy-module
-  needs: ["build-uat"]
-  tags:
-    - beam_cd_uat

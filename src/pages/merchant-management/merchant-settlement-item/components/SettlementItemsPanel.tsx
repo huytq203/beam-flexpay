@@ -108,12 +108,6 @@ export function SettlementItemsPanel({ onView }: Props) {
         scroll={{ x: 'max-content' }}
         size='small'
       />
-      <p className='mt-2 text-xs text-muted-foreground'>
-        * Mặc định xếp theo thời điểm thanh toán mới nhất trước; bấm tiêu đề cột
-        để sắp xếp theo thời điểm thanh toán, khách trả hoặc phí. Bỏ trống
-        Merchant và Sub là mọi mục thuộc phạm vi được gán cho bạn; dòng tổng
-        tính trên toàn bộ khoảng lọc và không trừ các dòng hoàn doanh thu.
-      </p>
     </AccessPageShell>
   )
 }

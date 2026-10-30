@@ -27,3 +27,6 @@ deploy
 commitlint.config.ts
 .gitignore
 **/.gitignore
+# Trivy security scan
+.trivycache
+security-reports/trivy

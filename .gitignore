@@ -44,3 +44,7 @@ CLAUDE.md
 # PWA dev build output
 dev-dist
 package-lock.json
+
+# Trivy security scan
+.trivycache/
+security-reports/trivy/
