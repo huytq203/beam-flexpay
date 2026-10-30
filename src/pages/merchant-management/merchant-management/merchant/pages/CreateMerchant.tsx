@@ -88,6 +88,7 @@ const CreateMerchant = () => {
           <MerchantProfileFields
             control={control}
             signsAtSubMerchant={signsAtSubMerchant}
+            isEditMode={isEditMode}
             resolveFileUrl={resolveFileUrl}
           />
           {requiresAdminPassword && (

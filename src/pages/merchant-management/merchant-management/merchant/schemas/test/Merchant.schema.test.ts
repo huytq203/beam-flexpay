@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CreateMerchantSchema } from '../Merchant.schema'
+import { CreateMerchantSchema, EditMerchantSchema } from '../Merchant.schema'
 
 const validForm = {
   walletType: 'BUSINESS',
@@ -12,7 +12,8 @@ const validForm = {
   merchantLogo: [],
   productImages: [],
   website: 'https://www.highlandscoffee.com.vn',
-  productDescription: 'Chuỗi cửa hàng cà phê và đồ uống.'
+  productDescription: 'Chuỗi cửa hàng cà phê và đồ uống.',
+  escrowAmount: 50_000_000
 }
 
 describe('CreateMerchantSchema', () => {
@@ -65,5 +66,41 @@ describe('CreateMerchantSchema', () => {
       ]
     })
     expect(invalid.success).toBe(false)
+  })
+})
+
+describe('Số tiền ký quỹ khi tạo ĐVCNTT', () => {
+  const escrowErrors = (
+    schema: typeof CreateMerchantSchema,
+    value: unknown
+  ) => {
+    const result = schema.safeParse({ ...validForm, escrowAmount: value })
+    return result.success
+      ? []
+      : (result.error.flatten().fieldErrors.escrowAmount ?? [])
+  }
+
+  it('bắt buộc nhập khi tạo', () => {
+    expect(escrowErrors(CreateMerchantSchema, null)).toContain(
+      'Vui lòng nhập số tiền ký quỹ'
+    )
+  })
+
+  it('từ chối số âm và số thập phân', () => {
+    expect(escrowErrors(CreateMerchantSchema, -1)).toContain(
+      'Số tiền ký quỹ không được âm'
+    )
+    expect(escrowErrors(CreateMerchantSchema, 1.5)).toContain(
+      'Số tiền ký quỹ phải là số nguyên'
+    )
+  })
+
+  it('chấp nhận 0 (không phải ký quỹ) và số dương', () => {
+    expect(escrowErrors(CreateMerchantSchema, 0)).toEqual([])
+    expect(escrowErrors(CreateMerchantSchema, 50_000_000)).toEqual([])
+  })
+
+  it('schema cập nhật không bắt buộc ký quỹ', () => {
+    expect(escrowErrors(EditMerchantSchema, null)).toEqual([])
   })
 })

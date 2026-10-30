@@ -131,3 +131,29 @@ describe('ký quỹ ĐVCNTT navigation', () => {
     expect(grantsScreenAccess([], screen)).toBe(false)
   })
 })
+
+describe('nhật ký hệ thống navigation', () => {
+  // Nhật ký hệ thống tra cứu thao tác của mọi phân hệ nên đứng riêng ở cuối menu,
+  // không nằm lẫn trong nhóm tài khoản (ngay dưới Quản trị ví cá nhân) như trước.
+  it('là section cuối cùng của menu', () => {
+    const last = navigationItems[navigationItems.length - 1]
+    expect(last.children?.map((item) => item.key)).toEqual(['audit-log'])
+    expect(last.groupLabel).toBe('Nhóm hệ thống')
+  })
+
+  it('không còn nằm trong section Quản lý tài khoản', () => {
+    const account = navigationItems.find(
+      (item) => item.label === 'Quản lý tài khoản'
+    )
+    expect(account?.children?.map((item) => item.key)).not.toContain(
+      'audit-log'
+    )
+  })
+
+  it('giữ nguyên URL và screen AUDIT_LOG', () => {
+    const last = navigationItems[navigationItems.length - 1]
+    const item = findItem(navigationItems, 'audit-log')
+    expect(item?.screen).toBe('AUDIT_LOG')
+    expect(resolveNavLink(last, item!)).toBe(SCREENS.AUDIT_LOG.path)
+  })
+})
