@@ -515,3 +515,91 @@ describe('WithdrawalDecisionPanel — chi thủ công theo payoutMode', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument()
   })
 })
+
+/**
+ * Bước 3 (30/10): lệnh chi hoàn tiền ra ngân hàng (`REFUND_BANK_PAYOUT`) được duyệt chi ở màn Lịch sử rút tiền,
+ * trên chính lệnh rút đó. Trước duyệt chi: "Đã duyệt chờ chi" + Duyệt chi/Từ chối kèm nhãn "Duyệt API" hoặc
+ * "Duyệt thủ công" theo `payoutMode` BE trả. Sau duyệt chi: "Đã duyệt chi"; chi thủ công thì chốt tay như lệnh rút.
+ */
+describe('WithdrawalDecisionPanel — lệnh chi hoàn tiền', () => {
+  it('chờ duyệt chi: nhãn "Đã duyệt chờ chi", có Duyệt chi/Từ chối và nhãn "Duyệt API"', async () => {
+    mockWithdrawal('PENDING_PAYOUT_APPROVAL', { payoutMode: 'API' })
+
+    renderPanel([APPROVER_PERMISSION], 'REFUND_BANK_PAYOUT')
+
+    expect(
+      await screen.findByRole('button', { name: /Duyệt chi/ })
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Từ chối/ })).toBeInTheDocument()
+    expect(screen.getByText('Duyệt API')).toBeInTheDocument()
+    expect(screen.getAllByText('Đã duyệt chờ chi').length).toBeGreaterThan(0)
+  })
+
+  it('ngân hàng không có API: nhãn "Duyệt thủ công"', async () => {
+    mockWithdrawal('PENDING_PAYOUT_APPROVAL', { payoutMode: 'MANUAL' })
+
+    renderPanel([APPROVER_PERMISSION], 'REFUND_BANK_PAYOUT')
+
+    expect(await screen.findByText('Duyệt thủ công')).toBeInTheDocument()
+  })
+
+  it('duyệt chi gọi đúng endpoint duyệt lệnh rút theo mã giao dịch', async () => {
+    mockWithdrawal('PENDING_PAYOUT_APPROVAL', { payoutMode: 'MANUAL' })
+    let approveBody: unknown = null
+    server.use(
+      http.post(
+        `*/withdrawals/${TRANSACTION_CODE}/approve`,
+        async ({ request }) => {
+          approveBody = await request.json()
+          return HttpResponse.json({
+            data: {
+              transactionCode: TRANSACTION_CODE,
+              previousStatus: 'PENDING_PAYOUT_APPROVAL',
+              newStatus: 'PAYOUT_APPROVED'
+            }
+          })
+        }
+      )
+    )
+
+    const { user } = renderPanel([APPROVER_PERMISSION], 'REFUND_BANK_PAYOUT')
+
+    await user.click(await screen.findByRole('button', { name: /Duyệt chi/ }))
+    await fillReason(/Lý do duyệt/, NOTE)
+    await user.click(screen.getByRole('button', { name: 'Xác nhận duyệt' }))
+
+    await waitFor(() => expect(approveBody).toEqual({ note: NOTE }))
+  })
+
+  it('đã duyệt chi + thủ công: nhãn "Đã duyệt chi" và hai nút chốt tay', async () => {
+    mockWithdrawal('PAYOUT_APPROVED', MANUAL_AWAITING)
+
+    renderPanel([APPROVER_PERMISSION], 'REFUND_BANK_PAYOUT')
+
+    expect(
+      await screen.findByRole('button', { name: /Chi thành công/ })
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Chi thất bại/ })).toBeInTheDocument()
+    expect(screen.getAllByText('Đã duyệt chi').length).toBeGreaterThan(0)
+    expect(
+      screen.queryByRole('button', { name: /Duyệt chi/ })
+    ).not.toBeInTheDocument()
+  })
+
+  it('kế toán chỉ có PAYOUT:APPROVE duyệt chi được lệnh chi hoàn, không duyệt được lệnh rút thường', async () => {
+    mockWithdrawal('PENDING_PAYOUT_APPROVAL', { payoutMode: 'API' })
+    renderPanel(['EWALLET:PAYOUT:APPROVE'], 'REFUND_BANK_PAYOUT')
+    expect(
+      await screen.findByRole('button', { name: /Duyệt chi/ })
+    ).toBeInTheDocument()
+  })
+
+  it('PAYOUT:APPROVE không thấy nút duyệt lệnh rút thường', async () => {
+    mockWithdrawal(WithdrawalStatus.PENDING_APPROVAL)
+    renderPanel(['EWALLET:PAYOUT:APPROVE'], 'CASH_OUT')
+    expect(await screen.findByText('Lệnh rút tiền')).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /^Duyệt/ })
+    ).not.toBeInTheDocument()
+  })
+})

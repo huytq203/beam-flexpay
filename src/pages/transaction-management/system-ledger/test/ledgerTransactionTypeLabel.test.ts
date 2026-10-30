@@ -12,6 +12,12 @@ describe('nhãn loại giao dịch màn sổ cái', () => {
     expect(getLedgerTransactionTypeLabel('REVERSAL')).toBe('Hoàn tiền')
   })
 
+  it('REFUND_WALLET_CREDIT (hoàn chuyển/rút tiền về ví) cũng hiển thị "Hoàn tiền"', () => {
+    expect(getLedgerTransactionTypeLabel('REFUND_WALLET_CREDIT')).toBe(
+      'Hoàn tiền'
+    )
+  })
+
   it('loại đã biết giữ nguyên nhãn, loại lạ hiện mã thô, rỗng là --', () => {
     expect(getLedgerTransactionTypeLabel('CASH_IN')).toBe('Nạp tiền')
     expect(getLedgerTransactionTypeLabel('SOMETHING_NEW')).toBe('SOMETHING_NEW')

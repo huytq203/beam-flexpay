@@ -86,7 +86,7 @@ describe('Lịch sử rút tiền — giữ bộ lọc khi quay lại màn', () 
         page: 2,
         size: 10,
         keyword: 'FW26',
-        transactionType: 'CASH_OUT'
+        transactionType: 'CASH_OUT,REFUND_BANK_PAYOUT'
       })
     )
     expect(screen.getByTitle('2')).toHaveClass('ant-pagination-item-active')

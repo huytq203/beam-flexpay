@@ -16,11 +16,8 @@ const hasAllowedType = (file: File): boolean =>
     ? ALLOWED_MIME_TYPES.has(file.type.toLowerCase())
     : ALLOWED_EXTENSION.test(file.name)
 
-export const formatFileSize = (bytes: number): string => {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`
-}
+// Đã chuyển về app/utils để màn khác dùng chung; giữ export ở đây cho chỗ đang import.
+export { formatFileSize } from '@utils/formatNumber'
 
 /** Trả câu lỗi tiếng Việt, hoặc `null` khi file hợp lệ để gửi lên BE. */
 export const validateReceiptFile = (file: File): string | null => {

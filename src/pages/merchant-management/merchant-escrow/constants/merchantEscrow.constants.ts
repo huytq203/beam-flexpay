@@ -10,6 +10,7 @@ import type {
   EscrowReturnReason,
   EscrowReviewCycle,
   EscrowRisk,
+  EscrowSource,
   EscrowState
 } from '../types/merchantEscrow.types'
 
@@ -37,6 +38,12 @@ export const ESCROW_ORDER_STATUS_LABEL: Record<EscrowOrderStatus, string> = {
   APPROVED: 'Đã ghi sổ',
   REJECTED: 'Bị từ chối',
   CANCELLED: 'Đã hủy'
+}
+
+/** Nguồn tiền của lệnh nạp (SRS 3.6.27 STT 3, FR-MER-0627-01). */
+export const ESCROW_SOURCE_LABEL: Record<EscrowSource, string> = {
+  BANK_TRANSFER: 'Chuyển khoản từ bên ngoài',
+  SUB_REVENUE: 'Trích từ số dư doanh thu của Sub-merchant'
 }
 
 export const ESCROW_RETURN_REASON_LABEL: Record<EscrowReturnReason, string> = {

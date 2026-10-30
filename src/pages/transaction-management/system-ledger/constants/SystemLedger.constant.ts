@@ -52,12 +52,14 @@ export type LedgerTransactionTypeKey = keyof typeof LedgerTransactionType
  * Nhãn chỉ để HIỂN THỊ, rộng hơn `LedgerTransactionType` (vốn còn làm lựa chọn
  * của ô lọc). Bút toán hoàn tiền — gồm `REFUND_BANK_PAYOUT`, journal chi hoàn ra
  * ngân hàng của lệnh nạp thành công (28/10) — thuộc nhóm `REVERSAL` "Hoàn tiền",
- * khớp nhãn của màn Quản lý giao dịch.
+ * khớp nhãn của màn Quản lý giao dịch. `REFUND_WALLET_CREDIT` (hoàn chuyển/rút tiền
+ * về ví, 30/10) cùng nhóm.
  */
 const LEDGER_TRANSACTION_TYPE_DISPLAY: Record<string, string> = {
   ...LedgerTransactionType,
   REVERSAL: 'Hoàn tiền',
-  REFUND_BANK_PAYOUT: 'Hoàn tiền'
+  REFUND_BANK_PAYOUT: 'Hoàn tiền',
+  REFUND_WALLET_CREDIT: 'Hoàn tiền'
 }
 
 /** Nhãn tiếng Việt của loại giao dịch; loại lạ giữ mã thô, thiếu thì `--`. */

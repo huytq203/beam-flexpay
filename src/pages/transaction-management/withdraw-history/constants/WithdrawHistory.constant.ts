@@ -108,15 +108,21 @@ export const SourceDomainLabel: Record<SourceDomain, string> = {
 /**
  * Hai loại lệnh rút mà lưới này nhận. Lọc rỗng là cả hai — màn luôn ghim
  * `transactionType` về nhóm rút, không bao giờ mở sang loại giao dịch khác.
+ * `REFUND_BANK_PAYOUT` là journal của lệnh chi hoàn nạp ra ngân hàng (wallet-core
+ * tạo từ lúc tạo lệnh chi), nên key phải đúng mã đó — mã `REFUND` không khớp journal nào.
  */
 export const WithdrawTransactionType = {
     CASH_OUT: 'Rút tiền',
-    REFUND:'Hoàn tiền'
+    REFUND_BANK_PAYOUT: 'Hoàn tiền'
 } as const
 
 export type WithdrawTransactionTypeKey = keyof typeof WithdrawTransactionType
 
-/** Giá trị mặc định khi người dùng chưa chọn loại lệnh rút cụ thể. */
-export const DEFAULT_WITHDRAW_TRANSACTION_TYPE =
-    'CASH_OUT' satisfies WithdrawTransactionTypeKey
+/**
+ * Giá trị mặc định khi người dùng chưa chọn loại lệnh rút cụ thể: cả hai loại, gửi
+ * dạng danh sách phân cách dấu phẩy (wallet-core lọc IN) cho cả lưới lẫn file xuất.
+ */
+export const DEFAULT_WITHDRAW_TRANSACTION_TYPE = (
+    Object.keys(WithdrawTransactionType) as WithdrawTransactionTypeKey[]
+).join(',')
 

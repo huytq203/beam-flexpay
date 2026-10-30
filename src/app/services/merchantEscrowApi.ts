@@ -4,6 +4,7 @@ import type {
   EscrowConfigPreview,
   EscrowConfigRequest,
   EscrowContributionRow,
+  EscrowDocumentReadUrl,
   EscrowLedgerEntry,
   EscrowOrder,
   EscrowOrderCreate,
@@ -232,6 +233,19 @@ export const escrowApi = apiMerchant.injectEndpoints({
       extraOptions: OWN_ERROR_HANDLING,
       transformResponse: unwrap<EscrowOrderView>,
       providesTags: TAG
+    }),
+    // Link xem chứng từ sống 5 phút và mỗi lần lấy BE ghi nhật ký người xem, nên dùng mutation
+    // (không cache): mỗi lần bấm "Xem" phải xin link mới. `fileId` là `fileRef` của chứng từ.
+    getEscrowOrderDocumentReadUrl: builder.mutation<
+      EscrowDocumentReadUrl,
+      { id: string; fileId: string }
+    >({
+      query: ({ id, fileId }) => ({
+        url: `${ORDERS}/${id}/documents/${fileId}/read-url`,
+        method: 'GET'
+      }),
+      extraOptions: OWN_ERROR_HANDLING,
+      transformResponse: unwrap<EscrowDocumentReadUrl>
     }),
     previewEscrowOrder: builder.mutation<EscrowOrderImpact, EscrowOrderCreate>({
       query: (body) => ({ url: `${ORDERS}/preview`, method: 'POST', body }),
@@ -520,6 +534,7 @@ export const {
   useCancelEscrowConfigMutation,
   useGetEscrowOrdersQuery,
   useGetEscrowOrderQuery,
+  useGetEscrowOrderDocumentReadUrlMutation,
   usePreviewEscrowOrderMutation,
   useChallengeEscrowOrderCreateMutation,
   useChallengeEscrowOrderDecisionMutation,

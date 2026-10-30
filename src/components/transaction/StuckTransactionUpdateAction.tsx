@@ -65,7 +65,11 @@ export const StuckTransactionUpdateAction = ({
   const { has } = useAccess()
   const { successMess, errorMess } = useMessage()
   const code = transactionCode ?? ''
-  const canAccess = has(PERMISSION.EWALLET_FULL)
+  // Lệnh chi hoàn ra ngân hàng treo: kế toán có PAYOUT:APPROVE cũng chốt/làm mới được (chốt 30/10).
+  const canAccess =
+    has(PERMISSION.EWALLET_FULL) ||
+    (transactionType === 'REFUND_BANK_PAYOUT' &&
+      has(PERMISSION.PAYOUT_APPROVE))
   const [readWithdrawal, { isFetching: isCheckingWithdrawal }] =
     useLazyGetWithdrawalByTransactionCodeQuery()
 

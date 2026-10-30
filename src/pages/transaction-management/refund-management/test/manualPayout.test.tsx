@@ -60,8 +60,11 @@ describe('getRefundActions: chi thủ công', () => {
     expect(flags.payoutRefresh).toBe(false)
   })
 
-  it('PROCESSING + API: không có hai hành động, vẫn làm mới lệnh chi', () => {
-    const flags = getRefundActions(API_PROCESSING, context)
+  it('PROCESSING + API chờ đối soát: không có hai hành động, vẫn làm mới lệnh chi', () => {
+    const flags = getRefundActions(
+      { ...API_PROCESSING, payoutRefreshable: true },
+      context
+    )
     expect(flags.manualPayoutSuccess).toBe(false)
     expect(flags.manualPayoutFail).toBe(false)
     expect(flags.payoutRefresh).toBe(true)

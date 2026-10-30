@@ -17,9 +17,15 @@ export const getWithdrawalStatusPresentation = (
 ): WithdrawalStatusPresentation | null =>
   isWithdrawalStatus(status) ? WITHDRAWAL_STATUS_PRESENTATION[status] : null
 
+/**
+ * Lệnh đang chờ quyết định Duyệt/Từ chối: lệnh rút vượt ngưỡng chờ duyệt, hoặc lệnh chi hoàn tiền chờ Kế toán
+ * duyệt chi. Cả hai dùng chung endpoint `withdrawals/{transactionCode}/approve|reject`.
+ */
 export const isWithdrawalPendingApproval = (
   status: string | null | undefined
-): boolean => status === WithdrawalStatus.PENDING_APPROVAL
+): boolean =>
+  status === WithdrawalStatus.PENDING_APPROVAL ||
+  status === WithdrawalStatus.PENDING_PAYOUT_APPROVAL
 
 /**
  * Lệnh đã duyệt nhưng tiền chưa ra khỏi ngân hàng. Job nền của user-wallet quét
@@ -28,7 +34,9 @@ export const isWithdrawalPendingApproval = (
 export const isWithdrawalSettling = (
   status: string | null | undefined
 ): boolean =>
-  status === WithdrawalStatus.APPROVED || status === WithdrawalStatus.PAYING
+  status === WithdrawalStatus.APPROVED ||
+  status === WithdrawalStatus.PAYOUT_APPROVED ||
+  status === WithdrawalStatus.PAYING
 
 export type WithdrawalDecision = 'approve' | 'reject'
 

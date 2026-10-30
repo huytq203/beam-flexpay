@@ -71,7 +71,12 @@ export const refundListItemSchema = z.object({
   /** Chế độ chi của lệnh chi hoàn do BE quyết (`API`/`MANUAL`); bản deploy cũ không trả. */
   payoutMode: z.enum(PayoutMode).nullish(),
   /** `true` khi lệnh chi MANUAL đang chờ admin chốt tay; FE chỉ đọc cờ này để hiện nút. */
-  awaitingManualConfirmation: z.boolean().nullish()
+  awaitingManualConfirmation: z.boolean().nullish(),
+  /**
+   * `true` khi nút "Làm mới lệnh chi" hợp lệ (yêu cầu đang xử lý, lệnh chi chờ đối soát và đã gửi
+   * ngân hàng). BE quyết; thiếu (bản deploy cũ) thì không hiện nút.
+   */
+  payoutRefreshable: z.boolean().nullish()
 })
 export type RefundListItem = z.infer<typeof refundListItemSchema>
 

@@ -12,10 +12,12 @@ export type TransactionKey = keyof typeof TransactionType
  * Loại bút toán chi tiết của wallet-core được gộp vào một nhóm hiển thị.
  * `REFUND_BANK_PAYOUT` là journal chi hoàn ra ngân hàng của lệnh nạp thành công
  * (28/10): về nghiệp vụ vẫn là "Hoàn tiền", nên đi chung badge với `REVERSAL`
- * thay vì sinh thêm một loại mới trên màn hình.
+ * thay vì sinh thêm một loại mới trên màn hình. `REFUND_WALLET_CREDIT` là journal
+ * hoàn chuyển/rút tiền về ví (30/10), cũng thuộc nhóm "Hoàn tiền".
  */
 const TRANSACTION_TYPE_ALIASES: Record<string, TransactionKey> = {
-  REFUND_BANK_PAYOUT: 'REVERSAL'
+  REFUND_BANK_PAYOUT: 'REVERSAL',
+  REFUND_WALLET_CREDIT: 'REVERSAL'
 }
 
 /** Mã loại → khoá hiển thị đã biết; `null` khi là loại FE chưa biết. */
@@ -60,6 +62,9 @@ export enum StatusEnum {
   PENDING_APPROVAL = 'PENDING_APPROVAL',
   /** Chỉ là `displayStatus` / giá trị lọc của lệnh rút: sổ cái lúc đó vẫn PENDING. */
   APPROVED = 'APPROVED',
+  /** Chỉ là `displayStatus` của lệnh chi hoàn tiền: chờ Kế toán duyệt chi / đã duyệt chi chưa có kết quả. */
+  PENDING_PAYOUT_APPROVAL = 'PENDING_PAYOUT_APPROVAL',
+  PAYOUT_APPROVED = 'PAYOUT_APPROVED',
   PAYING = 'PAYING',
   POSTED = 'POSTED',
   FAILED = 'FAILED',
@@ -78,6 +83,8 @@ export const StatusType: Record<StatusEnum, string> = {
   [StatusEnum.PENDING]: 'Chờ xử lý',
   [StatusEnum.PENDING_APPROVAL]: 'Chờ duyệt',
   [StatusEnum.APPROVED]: 'Đã duyệt chờ chi',
+  [StatusEnum.PENDING_PAYOUT_APPROVAL]: 'Đã duyệt chờ chi (hoàn tiền)',
+  [StatusEnum.PAYOUT_APPROVED]: 'Đã duyệt chi',
   [StatusEnum.PAYING]: 'Đang chi',
   [StatusEnum.POSTED]: 'Đã thành công',
   [StatusEnum.FAILED]: 'Thất bại',
@@ -119,6 +126,16 @@ export const CONFIG_STATUS: Record<
   },
   [StatusEnum.APPROVED]: {
     label: 'Đã duyệt chờ chi',
+    className: 'warning-status',
+    shimmerColor: 'rgba(252, 186, 3, 0.2)'
+  },
+  [StatusEnum.PENDING_PAYOUT_APPROVAL]: {
+    label: 'Đã duyệt chờ chi',
+    className: 'warning-status',
+    shimmerColor: 'rgba(252, 186, 3, 0.2)'
+  },
+  [StatusEnum.PAYOUT_APPROVED]: {
+    label: 'Đã duyệt chi',
     className: 'warning-status',
     shimmerColor: 'rgba(252, 186, 3, 0.2)'
   },

@@ -90,21 +90,39 @@ describe('getRefundActions', () => {
     expect(getRefundActions(item, ctx).decide).toBe(false)
   })
 
-  it('quyết toán cho TO_WALLET, làm mới lệnh chi cho TO_BANK', () => {
+  it('quyết toán cho TO_WALLET; làm mới lệnh chi chỉ khi BE báo payoutRefreshable', () => {
     const full = { ...ctx, canSettle: true, canPayoutRefresh: true }
     const wallet = makeRefund({ status: 'PROCESSING' })
-    const bank = makeRefund({ status: 'WAITING_FUNDS', channel: 'TO_BANK' })
+    const stuckBank = makeRefund({
+      status: 'PROCESSING',
+      channel: 'TO_BANK',
+      payoutRefreshable: true
+    })
+    // Đang chi / chờ đủ tiền: BE từ chối làm mới (từng trả 500), nên không hiện nút.
+    const payingBank = makeRefund({
+      status: 'PROCESSING',
+      channel: 'TO_BANK',
+      payoutRefreshable: false
+    })
     expect(getRefundActions(wallet, full)).toMatchObject({
       settle: true,
       payoutRefresh: false
     })
-    expect(getRefundActions(bank, full)).toMatchObject({
+    expect(getRefundActions(stuckBank, full)).toMatchObject({
       settle: false,
       payoutRefresh: true
     })
+    expect(getRefundActions(payingBank, full).payoutRefresh).toBe(false)
     expect(
-      getRefundActions(makeRefund({ status: 'PENDING_APPROVAL' }), full)
-    ).toMatchObject({ settle: false, payoutRefresh: false })
+      getRefundActions(
+        makeRefund({ status: 'WAITING_FUNDS', channel: 'TO_BANK' }),
+        full
+      ).payoutRefresh
+    ).toBe(false)
+    expect(
+      getRefundActions(stuckBank, { ...full, canPayoutRefresh: false })
+        .payoutRefresh
+    ).toBe(false)
   })
 
   it('đổi nhãn Quyết toán lại khi đang PROCESSING kèm lỗi', () => {

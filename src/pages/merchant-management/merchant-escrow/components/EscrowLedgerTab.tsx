@@ -71,7 +71,8 @@ export function EscrowLedgerTab({ masterId }: { masterId: string }) {
   const [size, setSize] = useState(DEFAULT_SIZE)
   const [result, setResult] = useState<EscrowVerification>()
   const [confirmingClear, setConfirmingClear] = useState(false)
-  const query = useGetEscrowLedgerQuery({ masterId, page: page - 1, size })
+  // BE đánh số trang từ 1 (one-indexed-parameters), gửi nguyên số trang của bảng.
+  const query = useGetEscrowLedgerQuery({ masterId, page, size })
   const [verify, verifying] = useVerifyEscrowLedgerMutation()
   const [clearBlock, clearing] = useClearEscrowReturnBlockMutation()
 

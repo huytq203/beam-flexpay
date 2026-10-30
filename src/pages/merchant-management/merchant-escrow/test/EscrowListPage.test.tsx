@@ -25,6 +25,12 @@ const page = (content: EscrowRow[]) => ({
 })
 
 const Where = () => <div data-testid='where'>{useLocation().pathname}</div>
+const WhereWithSearch = () => {
+  const location = useLocation()
+  return (
+    <div data-testid='where-full'>{location.pathname + location.search}</div>
+  )
+}
 
 describe('EscrowListPage', { timeout: 30000 }, () => {
   it('hiện dòng Master với số dư và phần thiếu định dạng tiền', async () => {
@@ -40,6 +46,29 @@ describe('EscrowListPage', { timeout: 30000 }, () => {
     expect(screen.getByText(/30\.000\.000\s*₫/)).toBeInTheDocument()
     expect(screen.getByText('40%')).toBeInTheDocument()
     expect(screen.getByText('Trung bình')).toBeInTheDocument()
+  })
+
+  it('trang đầu gửi page=1 và bấm trang 2 gửi page=2 (BE đánh số trang từ 1)', async () => {
+    const urls: URL[] = []
+    const rows = Array.from({ length: 20 }, (_, i) =>
+      escrowRow({ masterId: `m-${i}`, code: `MC9${String(i).padStart(5, '0')}` })
+    )
+    server.use(
+      http.get('*/merchant-escrows', ({ request }) => {
+        urls.push(new URL(request.url))
+        return HttpResponse.json({
+          data: { ...page(rows).data, totalElements: 25, totalPages: 2, last: false }
+        })
+      })
+    )
+    const user = userEvent.setup()
+    renderWithStore(<EscrowListPage />, [VIEW])
+    await screen.findByText('MC900000')
+    expect(urls[0].searchParams.get('page')).toBe('1')
+    await user.click(screen.getByTitle('2'))
+    await waitFor(() =>
+      expect(urls.at(-1)?.searchParams.get('page')).toBe('2')
+    )
   })
 
   it('chọn lọc Đã quá hạn gửi dueIn=OVERDUE', async () => {
@@ -85,6 +114,35 @@ describe('EscrowListPage', { timeout: 30000 }, () => {
     await user.click(await screen.findByText('MC000001'))
     expect(screen.getByTestId('where')).toHaveTextContent(
       '/secure-panel/merchant/escrow/abc-123'
+    )
+  })
+
+  it('bấm số lệnh chờ duyệt mở thẳng tab lệnh nạp của Master', async () => {
+    server.use(
+      http.get('*/merchant-escrows', () =>
+        HttpResponse.json(page([escrowRow({ masterId: 'abc-123' })]))
+      )
+    )
+    const user = userEvent.setup()
+    renderWithStore(
+      <>
+        <Routes>
+          <Route
+            path='*'
+            element={<EscrowListPage />}
+          />
+        </Routes>
+        <WhereWithSearch />
+      </>,
+      [VIEW]
+    )
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'Xem 2 lệnh chờ duyệt của MC000001'
+      })
+    )
+    expect(screen.getByTestId('where-full')).toHaveTextContent(
+      '/secure-panel/merchant/escrow/abc-123?tab=orders'
     )
   })
 })
