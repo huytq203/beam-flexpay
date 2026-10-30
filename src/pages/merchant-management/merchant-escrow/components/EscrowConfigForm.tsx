@@ -22,11 +22,14 @@ import type {
 } from '../types/merchantEscrow.types'
 import {
   ESCROW_CONFIG_MESSAGE,
+  ESCROW_DEFAULT_DEADLINE_DAYS,
+  ESCROW_DEFAULT_REMINDER_DAYS,
   escrowConfigSchema,
   toEscrowConfigFormValues,
   type EscrowConfigFormValues
 } from '../utils/escrowConfig.schema'
 import { EscrowConfigPreview } from './EscrowConfigPreview'
+import { EscrowSetoffWarningDialog } from './EscrowSetoffWarningDialog'
 
 const toOptions = (labels: Record<string, string>) =>
   Object.entries(labels).map(([value, label]) => ({ value, label }))
@@ -74,6 +77,7 @@ export function EscrowConfigForm({
     useEscrowConfigSave(masterId, onClose)
   const [shown, setShown] = useState<Preview | null>(null)
   const [reasonError, setReasonError] = useState('')
+  const [warningOpen, setWarningOpen] = useState(false)
   const mode = useWatch({ control: form.control, name: 'requirementMode' })
   const allowSetoff = useWatch({ control: form.control, name: 'allowSetoff' })
   const reason = useWatch({ control: form.control, name: 'reason' })
@@ -152,6 +156,8 @@ export function EscrowConfigForm({
           name='deadlineDays'
           control={form.control}
           label='Thời hạn phải đủ ký quỹ (ngày)'
+          // Để trống thì hệ thống áp số mặc định (xem toEscrowConfigRequest).
+          placeholder={`Mặc định ${ESCROW_DEFAULT_DEADLINE_DAYS}`}
           max={365}
           {...DAYS_PROPS}
         />
@@ -159,6 +165,7 @@ export function EscrowConfigForm({
           name='reminderDays'
           control={form.control}
           label='Cảnh báo trước hạn (ngày)'
+          placeholder={`Mặc định ${ESCROW_DEFAULT_REMINDER_DAYS}`}
           {...DAYS_PROPS}
         />
         <FormSelect
@@ -184,11 +191,21 @@ export function EscrowConfigForm({
           label='Cho phép cấn trừ tại lệnh rút'
         />
         {allowSetoff && (
-          <FormCheckbox
-            name='setoffAcknowledged'
-            control={form.control}
-            label='Đã đọc cảnh báo hệ quả của việc cấn trừ tại lệnh rút'
-          />
+          <div className='flex flex-wrap items-center gap-x-2'>
+            <FormCheckbox
+              name='setoffAcknowledged'
+              control={form.control}
+              label='Đã đọc cảnh báo hệ quả của việc cấn trừ tại lệnh rút'
+            />
+            {/* Đặt ngoài nhãn ô tick: bấm link chỉ mở cảnh báo, không tick hộ người dùng. */}
+            <button
+              type='button'
+              className='text-sm text-primary underline'
+              onClick={() => setWarningOpen(true)}
+            >
+              Xem chi tiết cảnh báo
+            </button>
+          </div>
         )}
       </div>
 
@@ -228,6 +245,10 @@ export function EscrowConfigForm({
         onCancel={() => setShown(null)}
       />
       <CredentialOtpDialog otp={otp} />
+      <EscrowSetoffWarningDialog
+        open={warningOpen}
+        onClose={() => setWarningOpen(false)}
+      />
     </form>
   )
 }

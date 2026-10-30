@@ -293,6 +293,31 @@ describe('EscrowConfigPanel', { timeout: 30000 }, () => {
     expect(requests).toBe(0)
   })
 
+  it('link "Xem chi tiết cảnh báo" mở popup hệ quả cấn trừ mà không tick hộ ô xác nhận', async () => {
+    const user = userEvent.setup()
+    mockOverview(escrowOverview({ current: config({ allowSetoff: false }) }))
+    renderWithStore(<EscrowConfigPanel masterId='master-1' />, [VIEW, UPDATE])
+    await user.click(
+      await screen.findByRole('button', { name: 'Sửa cấu hình' })
+    )
+    await user.click(
+      screen.getByRole('checkbox', { name: 'Cho phép cấn trừ tại lệnh rút' })
+    )
+    await user.click(
+      screen.getByRole('button', { name: 'Xem chi tiết cảnh báo' })
+    )
+
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Hệ quả của việc cấn trừ tại lệnh rút'
+    })
+    expect(within(dialog).getByText(/không về tài khoản ngân hàng/)).toBeInTheDocument()
+    expect(
+      screen.getByRole('checkbox', {
+        name: 'Đã đọc cảnh báo hệ quả của việc cấn trừ tại lệnh rút'
+      })
+    ).not.toBeChecked()
+  })
+
   it('BE thật: preview 400 vì thiếu lý do giảm bảo đảm → nhập "Lý do thay đổi" rồi xem trước lại thành công', async () => {
     const user = userEvent.setup()
     mockOverview(escrowOverview({ current: config() }))
