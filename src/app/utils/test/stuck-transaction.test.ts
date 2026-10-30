@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { StatusEnum } from '@pages/wallet-administration/transaction-wallet/constants/Transaction.constant'
 import { WithdrawalStatus } from '@type/withdrawalApproval.type'
 import {
+  canShowStuckUpdateForType,
   canUpdateStuckTransaction,
   isStuckJournalStatus,
   isTerminalJournalStatus
@@ -21,6 +22,17 @@ describe('isStuckJournalStatus', () => {
     expect(isStuckJournalStatus('TRANG_THAI_MOI')).toBe(false)
     expect(isStuckJournalStatus(null)).toBe(false)
     expect(isStuckJournalStatus(undefined)).toBe(false)
+  })
+})
+
+describe('canShowStuckUpdateForType', () => {
+  it('ẩn nút cho chuyển tiền và lệnh chi hoàn nạp ra ngân hàng', () => {
+    expect(canShowStuckUpdateForType('P2P_TRANSFER')).toBe(false)
+    expect(canShowStuckUpdateForType('REFUND_BANK_PAYOUT')).toBe(false)
+  })
+
+  it('vẫn hiện cho lệnh rút thường', () => {
+    expect(canShowStuckUpdateForType('CASH_OUT')).toBe(true)
   })
 })
 

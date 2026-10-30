@@ -105,13 +105,13 @@ describe('Lịch sử rút tiền — xuất CSV', () => {
     sessionStorage.clear()
   })
 
-  it('luôn ghim lưới về nhóm lệnh rút kể cả khi chưa chọn loại', () => {
+  it('chưa chọn loại thì xem cả rút tiền lẫn lệnh chi hoàn nạp ra ngân hàng', () => {
     renderScreen()
 
     expect(mocks.getUnified).toHaveBeenCalledWith(
       expect.objectContaining({
         size: 10,
-        transactionType: 'CASH_OUT',
+        transactionType: 'CASH_OUT,REFUND_BANK_PAYOUT',
         includeSummary: true
       })
     )
@@ -172,7 +172,7 @@ describe('Lịch sử rút tiền — xuất CSV', () => {
 
     await waitFor(() =>
       expect(mocks.exportFile).toHaveBeenCalledWith({
-        type: 'CASH_OUT',
+        type: 'CASH_OUT,REFUND_BANK_PAYOUT',
         keyword: '0962341913'
       })
     )

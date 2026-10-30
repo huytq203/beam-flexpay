@@ -37,9 +37,11 @@ export const isStuckJournalStatus = (
 
 /**
  * Loại giao dịch không có nút cập nhật giao dịch treo. Chuyển tiền ví → ví (`P2P_TRANSFER`) do
- * wallet-core ghi sổ trong một bước nên không có trạng thái treo cần chốt tay.
+ * wallet-core ghi sổ trong một bước nên không có trạng thái treo cần chốt tay. Lệnh chi hoàn nạp
+ * (`REFUND_BANK_PAYOUT`) được duyệt chi/chốt ở màn Hoàn tiền; journal của nó chỉ được chốt cùng
+ * bút toán capture (user-wallet cũng chặn update-status cho lệnh này), nên không hiện nút ở đây.
  */
-const NON_STUCK_UPDATE_TYPES = new Set<string>(['P2P_TRANSFER'])
+const NON_STUCK_UPDATE_TYPES = new Set<string>(['P2P_TRANSFER', 'REFUND_BANK_PAYOUT'])
 
 export const canShowStuckUpdateForType = (
   transactionType: string | null | undefined

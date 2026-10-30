@@ -18,6 +18,15 @@ import {
   readRefundFields
 } from '../dto/transactionRefund.dto'
 
+/** Đọc một khóa chuỗi trong `details`; giá trị không phải chuỗi hoặc rỗng coi như không có. */
+const readDetail = (
+  details: Record<string, unknown> | undefined,
+  key: string
+): string | null => {
+  const value = details?.[key]
+  return typeof value === 'string' && value.trim() !== '' ? value : null
+}
+
 interface CommonInfoProps {
   data?: UnifiedContentJournal
   /** Mã đối soát của báo giá phí (FF26BH44R), lấy từ khối fee của detail 360. */
@@ -29,6 +38,16 @@ const CommonInfo = ({ data, feeCode }: CommonInfoProps) => {
   const pendingRefund = getPendingRefundAmount(refundFields)
   const completedAt = data?.completedAt ?? data?.postedAt ?? data?.archivedAt
   const isCashIn = data?.transactionType === 'CASH_IN'
+  // Lệnh chi hoàn nạp mang mã FW như lệnh rút; mã hoàn của lần chi (RF-…-Pn) và mã nạp gốc
+  // nằm trong metadata journal (`details`) để tra ngược về yêu cầu hoàn.
+  const refundPayoutRefs =
+    data?.transactionType === 'REFUND_BANK_PAYOUT'
+      ? {
+          refund: readDetail(data.details, 'payoutReference') ??
+            readDetail(data.details, 'refundCode'),
+          original: readDetail(data.details, 'originalTransactionCode')
+        }
+      : null
   const beneficiaryAccount = isCashIn
     ? data?.to?.username || data?.to?.displayName || data?.to?.id || '--'
     : (data?.maskedAccount ?? '--')
@@ -60,6 +79,22 @@ const CommonInfo = ({ data, feeCode }: CommonInfoProps) => {
             value={data?.transactionCode ?? '--'}
           />
         </div>
+        {refundPayoutRefs && (
+          <>
+            <div className='col-span-1'>
+              <CopyableText
+                label='Mã hoàn tiền:'
+                value={refundPayoutRefs.refund ?? '--'}
+              />
+            </div>
+            <div className='col-span-1'>
+              <CopyableText
+                label='Giao dịch gốc:'
+                value={refundPayoutRefs.original ?? '--'}
+              />
+            </div>
+          </>
+        )}
         <div className='col-span-1'>
           <CopyableText
             label='Mã đối soát:'
