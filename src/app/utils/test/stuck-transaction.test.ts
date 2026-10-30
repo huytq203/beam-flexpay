@@ -29,6 +29,7 @@ describe('canShowStuckUpdateForType', () => {
   it('ẩn nút cho chuyển tiền và lệnh chi hoàn nạp ra ngân hàng', () => {
     expect(canShowStuckUpdateForType('P2P_TRANSFER')).toBe(false)
     expect(canShowStuckUpdateForType('REFUND_BANK_PAYOUT')).toBe(false)
+    expect(canShowStuckUpdateForType('REFUND_WALLET_CREDIT')).toBe(false)
   })
 
   it('vẫn hiện cho lệnh rút thường', () => {

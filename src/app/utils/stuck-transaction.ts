@@ -40,8 +40,14 @@ export const isStuckJournalStatus = (
  * wallet-core ghi sổ trong một bước nên không có trạng thái treo cần chốt tay. Lệnh chi hoàn nạp
  * (`REFUND_BANK_PAYOUT`) được duyệt chi/chốt ở màn Hoàn tiền; journal của nó chỉ được chốt cùng
  * bút toán capture (user-wallet cũng chặn update-status cho lệnh này), nên không hiện nút ở đây.
+ * Journal hoàn chuyển/rút tiền về ví (`REFUND_WALLET_CREDIT`) cũng chỉ do capture/quyết toán ở màn
+ * Hoàn tiền chốt.
  */
-const NON_STUCK_UPDATE_TYPES = new Set<string>(['P2P_TRANSFER', 'REFUND_BANK_PAYOUT'])
+const NON_STUCK_UPDATE_TYPES = new Set<string>([
+  'P2P_TRANSFER',
+  'REFUND_BANK_PAYOUT',
+  'REFUND_WALLET_CREDIT'
+])
 
 export const canShowStuckUpdateForType = (
   transactionType: string | null | undefined
