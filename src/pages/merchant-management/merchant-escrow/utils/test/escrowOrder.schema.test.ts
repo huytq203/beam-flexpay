@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   createEscrowOrderSchema,
   ESCROW_ORDER_MESSAGE,
+  formatWaitingTime,
   toEscrowOrderCreate,
   todayInVietnam,
   type EscrowEvidenceFile,
@@ -189,5 +190,14 @@ describe('escrowOrderSchema', () => {
       note: 'x',
       documents: []
     })
+  })
+})
+
+describe('formatWaitingTime', () => {
+  const now = Date.parse('2026-10-30T12:00:00Z')
+  it('dưới một ngày hiện giờ, từ một ngày hiện ngày', () => {
+    expect(formatWaitingTime('2026-10-30T09:30:00Z', now)).toBe('2 giờ')
+    expect(formatWaitingTime('2026-10-29T12:00:00Z', now)).toBe('1 ngày')
+    expect(formatWaitingTime('2026-10-20T03:00:00Z', now)).toBe('10 ngày')
   })
 })

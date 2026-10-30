@@ -219,3 +219,15 @@ export const createOrderBlockReason = (
   !configured || requiredAmount <= 0
     ? 'Master chưa có cấu hình ký quỹ hoặc mức yêu cầu bằng 0; hãy cấu hình ký quỹ trước'
     : null
+
+/**
+ * Thời gian chờ của lệnh tính từ lúc lập (SRS 3.6.29 STT 11): dưới một ngày hiện số giờ, từ một ngày
+ * trở lên hiện số ngày. `now` tách ra để test cố định đồng hồ.
+ */
+export const formatWaitingTime = (
+  createdAt: string,
+  now: number = Date.now()
+): string => {
+  const hours = Math.max(0, Math.floor((now - Date.parse(createdAt)) / 3_600_000))
+  return hours < 24 ? `${hours} giờ` : `${Math.floor(hours / 24)} ngày`
+}

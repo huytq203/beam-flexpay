@@ -34,6 +34,19 @@ describe('UploadControl', () => {
     )
   })
 
+  it('tệp nhỏ hiện dung lượng theo KB thay vì "0.0 MB"', () => {
+    render(
+      <UploadControl
+        value={[
+          { uid: 'a', name: 'sao-ke.png', type: 'image/png', size: 3_174, status: 'done' }
+        ]}
+        onChange={vi.fn()}
+      />
+    )
+    expect(screen.getByText(/3\.1 KB/)).toBeInTheDocument()
+    expect(screen.queryByText(/0\.0 MB/)).not.toBeInTheDocument()
+  })
+
   it('cho phép xóa một ảnh trong danh sách mà giữ các ảnh khác', async () => {
     const onChange = vi.fn()
     const user = userEvent.setup()

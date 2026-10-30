@@ -98,3 +98,13 @@ export function parseNumber(value: string): number {
   const cleaned = value.replace(/\./g, '').replace(',', '.')
   return parseFloat(cleaned) || 0
 }
+
+/**
+ * Dung lượng tệp dễ đọc: B / KB / MB. Tệp vài KB mà làm tròn theo MB sẽ thành "0.0 MB", trông như
+ * tệp rỗng — nên chọn đơn vị theo độ lớn.
+ */
+export const formatFileSize = (bytes: number): string => {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`
+}

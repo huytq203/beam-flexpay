@@ -48,6 +48,29 @@ describe('EscrowListPage', { timeout: 30000 }, () => {
     expect(screen.getByText('Trung bình')).toBeInTheDocument()
   })
 
+  it('trang đầu gửi page=1 và bấm trang 2 gửi page=2 (BE đánh số trang từ 1)', async () => {
+    const urls: URL[] = []
+    const rows = Array.from({ length: 20 }, (_, i) =>
+      escrowRow({ masterId: `m-${i}`, code: `MC9${String(i).padStart(5, '0')}` })
+    )
+    server.use(
+      http.get('*/merchant-escrows', ({ request }) => {
+        urls.push(new URL(request.url))
+        return HttpResponse.json({
+          data: { ...page(rows).data, totalElements: 25, totalPages: 2, last: false }
+        })
+      })
+    )
+    const user = userEvent.setup()
+    renderWithStore(<EscrowListPage />, [VIEW])
+    await screen.findByText('MC900000')
+    expect(urls[0].searchParams.get('page')).toBe('1')
+    await user.click(screen.getByTitle('2'))
+    await waitFor(() =>
+      expect(urls.at(-1)?.searchParams.get('page')).toBe('2')
+    )
+  })
+
   it('chọn lọc Đã quá hạn gửi dueIn=OVERDUE', async () => {
     const urls: URL[] = []
     server.use(
