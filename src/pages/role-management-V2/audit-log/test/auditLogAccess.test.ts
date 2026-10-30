@@ -20,10 +20,10 @@ describe('quyền và menu Nhật ký hệ thống', () => {
       expect(actions[action]).toBe(PERMISSION.ADMIN_FULL)
   })
 
-  it('menu đặt trong nhóm tài khoản và phân quyền', () => {
+  it('menu đặt riêng trong nhóm hệ thống', () => {
     const group = navigationItems.find((item) =>
       (item.children ?? []).some((child) => child.screen === 'AUDIT_LOG')
     )
-    expect(group?.groupLabel).toBe('Nhóm tài khoản và phân quyền')
+    expect(group?.groupLabel).toBe('Nhóm hệ thống')
   })
 })
